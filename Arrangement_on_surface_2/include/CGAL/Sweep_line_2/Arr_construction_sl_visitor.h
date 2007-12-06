@@ -161,8 +161,7 @@ public:
    * \return A handle to the inserted halfedge.
    */
   virtual Halfedge_handle
-  insert_in_face_interior (const X_monotone_curve_2& cv,
-                           Subcurve* sc);
+  insert_in_face_interior (const X_monotone_curve_2& cv, Subcurve* sc);
 
   /*!
    * Insert the given subcurve given its left end-vertex.
@@ -172,8 +171,7 @@ public:
    * \return A handle to the inserted halfedge.
    */
   virtual Halfedge_handle
-  insert_from_left_vertex (const X_monotone_curve_2& cv,
-                           Halfedge_handle he,
+  insert_from_left_vertex (const X_monotone_curve_2& cv, Halfedge_handle he,
                            Subcurve* sc);
 
   /*!
@@ -239,8 +237,7 @@ private:
    */
   inline const typename Arrangement_2::Point_2& _point (const Point_2& p) const
   {
-    return 
-      (static_cast<const typename Arrangement_2::Point_2&> (p));
+    return (static_cast<const typename Arrangement_2::Point_2&> (p));
   }
 
   /*!
@@ -250,10 +247,9 @@ private:
    * from this base class.
    */
   inline const typename Arrangement_2::X_monotone_curve_2&
-    _curve (const X_monotone_curve_2& cv) const
+  _curve (const X_monotone_curve_2& cv) const
   {
-    return 
-      (static_cast<const typename Arrangement_2::X_monotone_curve_2&> (cv));
+    return (static_cast<const typename Arrangement_2::X_monotone_curve_2&>(cv));
   }
 
   /*! Map the given subcurve index to the given halfedge handle. */
@@ -394,8 +390,8 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
 // A notification invoked when a new subcurve is created.
 //
 template <class Hlpr> 
-void Arr_construction_sl_visitor<Hlpr>::add_subcurve
-    (const X_monotone_curve_2& cv, Subcurve* sc)
+void Arr_construction_sl_visitor<Hlpr>::
+add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
 {
   // Obtain all information to perform the insertion of the subcurve into
   // the arrangement.
@@ -497,9 +493,8 @@ void Arr_construction_sl_visitor<Hlpr>::add_subcurve
 //
 template <class Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
-    (const X_monotone_curve_2& cv,
-     Subcurve* sc)
+Arr_construction_sl_visitor<Hlpr>::
+insert_in_face_interior (const X_monotone_curve_2& cv, Subcurve* sc)
 {
   // Check if the vertex to be associated with the left end of the curve has
   // already been created.
@@ -519,18 +514,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
     // In this case the left vertex v1 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this left vertex.
-    Boundary_type   bx = last_event->boundary_in_x();
-    Boundary_type   by = last_event->boundary_in_y();
+    Arr_parameter_space   bx = last_event->parameter_space_in_x();
+    Arr_parameter_space   by = last_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
-    Halfedge_handle l_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v1),
-                                                             _curve(cv),
-                                                             ARR_MIN_END,
-                                                             bx, by)
-        );
+    Halfedge_handle l_prev = Halfedge_handle
+      (m_top_traits->locate_around_boundary_vertex (&(*v1), _curve(cv),
+                                                    ARR_MIN_END, bx, by));
     
     return (this->insert_from_left_vertex (cv, l_prev, sc));
   }
@@ -550,18 +541,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
     // In this case the right vertex v2 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = curr_event->boundary_in_x();
-    Boundary_type   by = curr_event->boundary_in_y();
+    Arr_parameter_space   bx = curr_event->parameter_space_in_x();
+    Arr_parameter_space   by = curr_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
-    Halfedge_handle r_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v2),
-                                                             _curve(cv),
-                                                             ARR_MAX_END,
-                                                             bx, by)
-        );
+    Halfedge_handle r_prev = Halfedge_handle
+      (m_top_traits->locate_around_boundary_vertex (&(*v2), _curve(cv),
+                                                    ARR_MAX_END, bx, by));
     
     return (this->insert_from_right_vertex (cv, r_prev, sc));
   }
@@ -574,11 +561,8 @@ Arr_construction_sl_visitor<Hlpr>::insert_in_face_interior
   // Perform the insertion between the two (currently isolated) vertices in
   // the interior of the current top face, as given by the helper class.
   Halfedge_handle  res =
-    m_arr_access.insert_in_face_interior_ex (_curve(cv),
-                                             m_helper.top_face(),
-                                             v1,
-                                             v2,
-                                             SMALLER);
+    m_arr_access.insert_in_face_interior_ex (_curve(cv), m_helper.top_face(),
+                                             v1, v2, SMALLER);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -614,23 +598,12 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   // created).
   Halfedge_handle   res;
   const bool        swap_preds = 
-                         m_helper.swap_predecessors (this->current_event());
-  if (! swap_preds)
-  {
-    res = m_arr_access.insert_at_vertices_ex (_curve(cv),
-                                              prev1,
-                                              prev2,
-                                              LARGER,
-                                              new_face_created);
-  }
-  else
-  {
-    res = m_arr_access.insert_at_vertices_ex (_curve(cv),
-                                              prev2,
-                                              prev1,
-                                              SMALLER,
-                                              new_face_created);
-  }
+    m_helper.swap_predecessors (this->current_event());
+  res = (! swap_preds) ?
+    m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2,
+                                        LARGER, new_face_created) :
+    m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1,
+                                        SMALLER, new_face_created);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -691,18 +664,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_right_vertex
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve between two existing vertices.
-    Boundary_type   bx = last_event->boundary_in_x();
-    Boundary_type   by = last_event->boundary_in_y();
+    Arr_parameter_space   bx = last_event->parameter_space_in_x();
+    Arr_parameter_space   by = last_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
-    Halfedge_handle l_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v),
-                                                             _curve(cv),
-                                                             ARR_MIN_END,
-                                                             bx, by)
-        );
+    Halfedge_handle l_prev = Halfedge_handle
+      (m_top_traits->locate_around_boundary_vertex (&(*v), _curve(cv),
+                                                    ARR_MIN_END, bx, by));
     bool            dummy;
 
     return (this->insert_at_vertices (cv, prev, l_prev, sc, dummy));
@@ -711,10 +680,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_right_vertex
   // Insert the curve given its left vertex and the predecessor around the
   // right vertex.
   Halfedge_handle  res =
-    m_arr_access.insert_from_vertex_ex (_curve(cv),
-                                        prev,
-                                        v,
-                                        LARGER);
+    m_arr_access.insert_from_vertex_ex (_curve(cv), prev, v, LARGER);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -737,10 +703,10 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_right_vertex
 //
 template <class Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Halfedge_handle
-Arr_construction_sl_visitor<Hlpr>::insert_from_left_vertex
-    (const X_monotone_curve_2& cv,
-     Halfedge_handle prev,
-     Subcurve* sc)
+Arr_construction_sl_visitor<Hlpr>::
+insert_from_left_vertex (const X_monotone_curve_2& cv,
+                         Halfedge_handle prev,
+                         Subcurve* sc)
 {
   // Check if the vertex to be associated with the right end of the curve has
   // already been created.
@@ -757,17 +723,14 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_left_vertex
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = curr_event->boundary_in_x();
-    Boundary_type   by = curr_event->boundary_in_y();
+    Arr_parameter_space   bx = curr_event->parameter_space_in_x();
+    Arr_parameter_space   by = curr_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
-    Halfedge_handle r_prev =
-        Halfedge_handle(
-                m_top_traits->locate_around_boundary_vertex (&(*v),
-                                                             _curve(cv),
-                                                             ARR_MAX_END,
-                                                             bx, by)
+    Halfedge_handle r_prev = Halfedge_handle
+      (m_top_traits->locate_around_boundary_vertex (&(*v), _curve(cv),
+                                                    ARR_MAX_END, bx, by)
         );
     bool            dummy;
 
@@ -777,10 +740,7 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_left_vertex
   // Insert the curve given its right vertex and the predecessor around the
   // left vertex.
   Halfedge_handle  res =
-    m_arr_access.insert_from_vertex_ex (_curve(cv),
-                                        prev,
-                                        v,
-                                        SMALLER);
+    m_arr_access.insert_from_vertex_ex (_curve(cv), prev, v, SMALLER);
 
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
@@ -803,9 +763,9 @@ Arr_construction_sl_visitor<Hlpr>::insert_from_left_vertex
 //
 template <class Hlpr>
 typename Arr_construction_sl_visitor<Hlpr>::Vertex_handle
-Arr_construction_sl_visitor<Hlpr>::insert_isolated_vertex
-    (const Point_2& pt,
-     Status_line_iterator /* iter */)
+Arr_construction_sl_visitor<Hlpr>::
+insert_isolated_vertex (const Point_2& pt,
+                        Status_line_iterator /* iter */)
 {
   // Insert the isolated vertex in the interior of the current top face, as
   // given by the helper class.
@@ -817,8 +777,8 @@ Arr_construction_sl_visitor<Hlpr>::insert_isolated_vertex
 // Reloacte holes and isolated vertices inside a newly created face.
 //
 template <class Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
-    (Halfedge_handle he)
+void Arr_construction_sl_visitor<Hlpr>::
+relocate_in_new_face (Halfedge_handle he)
 {
   // We use a constant indices map so no new entries are added there.
   const Halfedge_indices_map& const_he_indices_table = m_he_indices_table;
@@ -900,8 +860,8 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face
 // Map the given subcurve index to the given halfedge handle.
 //
 template <class Hlpr>
-void Arr_construction_sl_visitor<Hlpr>::_map_new_halfedge
-    (unsigned int i, Halfedge_handle he)
+void Arr_construction_sl_visitor<Hlpr>::
+_map_new_halfedge (unsigned int i, Halfedge_handle he)
 {
   CGAL_assertion (i != 0);
   

@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+
 #ifndef CGAL_ARR_OBSERVER_H
 #define CGAL_ARR_OBSERVER_H
 
@@ -239,13 +240,13 @@ public:
    * Notification before the creation of a new boundary vertex.
    * \param cv The curve incident to the surface boundary.
    * \param ind The relevant curve-end.
-   * \param bound_x The boundary condition of the vertex in x.
-   * \param bound_y The boundary condition of the vertex in y.
+   * \param ps_x The boundary condition of the vertex in x.
+   * \param ps_y The boundary condition of the vertex in y.
    */
   virtual void before_create_boundary_vertex (const X_monotone_curve_2& /*cv*/,
                                               Arr_curve_end /* ind */,
-                                              Boundary_type /* bound_x */,
-                                              Boundary_type /* bound_y */)
+                                              Arr_parameter_space /* ps_x */,
+                                              Arr_parameter_space /* ps_y */)
   {}
 
   /*!

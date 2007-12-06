@@ -56,7 +56,7 @@ public:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_true                        Has_boundary_category;
-  typedef Arr_has_boundary_tag            Boundary_category;
+  typedef Arr_unbounded_boundary_tag      Boundary_category;
 
   typedef typename Kernel::Line_2         Line_2;
   typedef typename Kernel::Ray_2          Ray_2;
@@ -249,22 +249,6 @@ public:
     }
 
     /*!
-     * Check whether the x-coordinate of the left point is infinite.
-     * \return MINUS_INFINITY if the left point is at x = -oo;
-     *         NO_BOUNDARY if the x-coordinate is finite.
-     */
-    Boundary_type left_infinite_in_x_depricated () const
-    {
-      if (is_vert || is_degen)
-        return (NO_BOUNDARY);
-
-      if (is_right)
-        return (has_source ? NO_BOUNDARY : MINUS_INFINITY);
-      else
-        return (has_target ? NO_BOUNDARY : MINUS_INFINITY);
-    }
-
-    /*!
      * Check whether the y-coordinate of the left point is infinite.
      * \return ARR_BOTTOM_BOUNDARY if the left point is at y = -oo;
      *         ARR_INTERIOR if the y-coordinate is finite.
@@ -288,31 +272,6 @@ public:
     }
 
     /*!
-     * Check whether the y-coordinate of the left point is infinite.
-     * \return MINUS_INFINITY if the left point is at y = -oo;
-     *         PLUS_INFINITY if the left point is at y = +oo;
-     *         NO_BOUNDARY if the y-coordinate is finite.
-     */
-    Boundary_type left_infinite_in_y_depricated () const
-    {
-      if (is_horiz || is_degen)
-        return (NO_BOUNDARY);
-
-      if (is_vert)
-      {
-        if (is_right)
-          return (has_source ? NO_BOUNDARY : MINUS_INFINITY);
-        else
-          return (has_target ? NO_BOUNDARY : MINUS_INFINITY);
-      }
-
-      if ((is_right && has_source) || (! is_right && has_target))
-          return (NO_BOUNDARY);
-
-      return (has_pos_slope ? MINUS_INFINITY : PLUS_INFINITY);
-    }
-
-    /*!
      * Check whether the left point is finite.
      */
     bool has_left () const
@@ -324,7 +283,7 @@ public:
     }
 
     /*!
-     * Get the (lexicographically) left endpoint.
+     * Obtain the (lexicographically) left endpoint.
      * \pre The left point is finite.
      */
     const Point_2& left () const
@@ -392,47 +351,6 @@ public:
     }
 
     /*!
-     * Check whether the x-coordinate of the right point is infinite.
-     * \return PLUS_INFINITY if the left point is at x = +oo;
-     *         NO_BOUNDARY if the x-coordinate is finite.
-     */
-    Boundary_type right_infinite_in_x_depricated () const
-    {
-      if (is_vert || is_degen)
-        return (NO_BOUNDARY);
-
-      if (is_right)
-        return (has_target ? NO_BOUNDARY : PLUS_INFINITY);
-      else
-        return (has_source ? NO_BOUNDARY : PLUS_INFINITY);
-    }
-
-    /*!
-     * Check whether the y-coordinate of the right point is infinite.
-     * \return MINUS_INFINITY if the right point is at y = -oo;
-     *         PLUS_INFINITY if the right point is at y = +oo;
-     *         NO_BOUNDARY if the y-coordinate is finite.
-     */
-    Boundary_type right_infinite_in_y_depricated () const
-    {
-      if (is_horiz || is_degen)
-        return (NO_BOUNDARY);
-
-      if (is_vert)
-      {
-        if (is_right)
-          return (has_target ? NO_BOUNDARY : PLUS_INFINITY);
-        else
-          return (has_source ? NO_BOUNDARY : PLUS_INFINITY);
-      }
-
-      if ((is_right && has_target) || (! is_right && has_source))
-          return (NO_BOUNDARY);
-
-      return (has_pos_slope ? PLUS_INFINITY : MINUS_INFINITY);
-    }
-
-    /*!
      * Check whether the y-coordinate of the right point is infinite.
      * \return ARR_BOTTOM_BOUNDARY if the right point is at y = -oo;
      *         ARR_INTERIOR if the y-coordinate is finite.
@@ -467,7 +385,7 @@ public:
     }
 
     /*!
-     * Get the (lexicographically) right endpoint.
+     * Obtain the (lexicographically) right endpoint.
      * \pre The right endpoint is finite.
      */
     const Point_2& right () const
@@ -519,7 +437,7 @@ public:
     }
 
     /*!
-     * Get the supporting line.
+     * Obtain the supporting line.
      */
     const Line_2& supp_line () const
     {
@@ -563,9 +481,9 @@ public:
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
       Comparison_result               res1;
 
-      if (left_infinite_in_x_depricated() == NO_BOUNDARY)
+      if (left_infinite_in_x() == ARR_INTERIOR)
       {
-        if (left_infinite_in_y_depricated() != NO_BOUNDARY)
+        if (left_infinite_in_y() != ARR_INTERIOR)
           // Compare with some point on the curve.
           res1 = compare_x (p, ps);
         else
@@ -584,9 +502,9 @@ public:
 
       Comparison_result               res2;
 
-      if (right_infinite_in_x_depricated() == NO_BOUNDARY)
+      if (right_infinite_in_x() == ARR_INTERIOR)
       {
-        if (right_infinite_in_y_depricated() != NO_BOUNDARY)
+        if (right_infinite_in_y() != ARR_INTERIOR)
           // Compare with some point on the curve.
           res2 = compare_x (p, ps);
         else
@@ -613,11 +531,11 @@ public:
 
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      Boundary_type                   inf = left_infinite_in_y_depricated();
+      Arr_parameter_space             inf = left_infinite_in_y();
       Comparison_result               res1;
 
-      CGAL_assertion (inf != PLUS_INFINITY);
-      if (inf == NO_BOUNDARY)
+      CGAL_assertion (inf != ARR_TOP_BOUNDARY);
+      if (inf == ARR_INTERIOR)
         res1 = compare_y (p, left());
       else
         res1 = LARGER;           // p is obviously above.
@@ -629,9 +547,9 @@ public:
 
       Comparison_result               res2;
 
-      inf = right_infinite_in_y_depricated();
-      CGAL_assertion (inf != MINUS_INFINITY);
-      if (inf == NO_BOUNDARY)
+      inf = right_infinite_in_y();
+      CGAL_assertion (inf != ARR_BOTTOM_BOUNDARY);
+      if (inf == ARR_INTERIOR)
         res2 = compare_y (p, right());
       else
         res2 = SMALLER;          // p is obviously below.
@@ -739,72 +657,13 @@ public:
     }
   };
 
-  /*! Get a Compare_xy_2 functor object. */
+  /*! Obtain a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2();
   }
 
-  class Boundary_in_x_2
-  {
-  public:
-    /*!
-     * Check whether an end of a given x-monotone curve is infinite at x.
-     * \param cv The curve.
-     * \param ind ARR_MIN_END if we refer to cv's minimal end,
-     *            ARR_MAX_END if we refer to its maximal end.
-     * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
-     *         PLUS_INFINITY if the curve end lies at x = +oo.
-     */
-    Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Arr_curve_end ind) const
-    {
-      CGAL_precondition (! cv.is_degenerate());
-
-      if (ind == ARR_MIN_END)
-        return (cv.left_infinite_in_x_depricated());
-      else
-        return (cv.right_infinite_in_x_depricated());
-    }
-  };
-
-  /*! Get an Boundary_in_x_2 functor object. */
-  Boundary_in_x_2 boundary_in_x_2_object () const
-  {
-    return Boundary_in_x_2();
-  }
-
-  class Boundary_in_y_2
-  {
-  public:
-    /*!
-     * Check whether an end of a given x-monotone curve is infinite at y.
-     * \param cv The curve.
-     * \param ind ARR_MIN_END if we refer to cv's minimal end,
-     *            ARR_MAX_END if we refer to its maximal end.
-     * \return MINUS_INFINITY if the curve end lies at y = -oo;
-     *         NO_BOUNDARY if the curve end has a finite y-coordinate;
-     *         PLUS_INFINITY if the curve end lies at y = +oo.
-     */
-    Boundary_type operator() (const X_monotone_curve_2& cv,
-                              Arr_curve_end ind) const
-    {
-      CGAL_precondition (! cv.is_degenerate());
-
-      if (ind == ARR_MIN_END)
-        return (cv.left_infinite_in_y_depricated());
-      else
-        return (cv.right_infinite_in_y_depricated());
-    }
-  };
-
-  /*! Get an Boundary_in_y_2 functor object. */
-  Boundary_in_y_2 boundary_in_y_2_object () const
-  {
-    return Boundary_in_y_2();
-  }
-
+  /*! A functor that obtains the left endpoint of a segment or a ray. */
   class Construct_min_vertex_2
   {
   public:
@@ -823,12 +682,13 @@ public:
     }
   };
 
-  /*! Get a Construct_min_vertex_2 functor object. */
+  /*! Obtain a Construct_min_vertex_2 functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
     return Construct_min_vertex_2();
   }
 
+  /*! A functor that obtains the right endpoint of a segment or a ray. */
   class Construct_max_vertex_2
   {
   public:
@@ -847,12 +707,13 @@ public:
     }
   };
 
-  /*! Get a Construct_max_vertex_2 functor object. */
+  /*! Obtain a Construct_max_vertex_2 functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return Construct_max_vertex_2();
   }
 
+  /*! A functor that checks whether a given linear curve is vertical. */
   class Is_vertical_2
   {
   public:
@@ -868,7 +729,7 @@ public:
     }
   };
 
-  /*! Get an Is_vertical_2 functor object. */
+  /*! Obtain an Is_vertical_2 functor object. */
   Is_vertical_2 is_vertical_2_object () const
   {
     return Is_vertical_2();
@@ -927,12 +788,15 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_2 functor object. */
+  /*! Obtain a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
     return Compare_y_at_x_2(this);
   }
 
+  /*! A functor that compares compares the y-coordinates of two linear
+   * curves immediately to the left of their intersection point.
+   */
   class Compare_y_at_x_left_2
   {
   public:
@@ -984,12 +848,15 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_left_2 functor object. */
+  /*! Obtain a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
     return Compare_y_at_x_left_2();
   }
 
+  /*! A functor that compares compares the y-coordinates of two linear
+   * curves immediately to the right of their intersection point.
+   */
   class Compare_y_at_x_right_2
   {
   public:
@@ -1039,12 +906,15 @@ public:
     }
   };
 
-  /*! Get a Compare_y_at_x_right_2 functor object. */
+  /*! Obtain a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return Compare_y_at_x_right_2();
   }
 
+  /*! A functor that checks whether two points and two linear curves are
+   * identical.
+   */
   class Equal_2
   {
   public:
@@ -1099,7 +969,7 @@ public:
     }
   };
 
-  /*! Get an Equal_2 functor object. */
+  /*! Obtain an Equal_2 functor object. */
   Equal_2 equal_2_object () const
   {
     return Equal_2();
@@ -1109,6 +979,32 @@ public:
   /// \name Functor definitions to handle boundaries
   //@{
 
+  /*! A function object that determines whether a curve end is bounded.
+   */
+  class Is_bounded_2 {
+  public:
+    /*! Is the end of an x-monotone curve bounded?
+     * \param xcv The x-monotone curve.
+     * \param ce The end of xcv identifier.
+     * \return true is the curve end is bounded, and false otherwise
+     */
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    {
+      CGAL_precondition (! xcv.is_degenerate());
+      return (ce == ARR_MIN_END) ?
+        ((xcv.left_infinite_in_x() == ARR_INTERIOR) &&
+         (xcv.left_infinite_in_y() == ARR_INTERIOR)) :
+        ((xcv.right_infinite_in_x() == ARR_INTERIOR) &&
+         (xcv.right_infinite_in_y() == ARR_INTERIOR));
+    }
+  };
+
+  /*! Obtain a Is_bounded_2 function object. */
+  Is_bounded_2 is_bounded_2_object() const
+  {
+    return Is_bounded_2();
+  }
+  
   /*! A function object that obtains the parameter space of a geometric
    * entity along the x-axis
    */
@@ -1348,7 +1244,7 @@ public:
     }
   };
 
-  /*! Get a Make_x_monotone_2 functor object. */
+  /*! Obtain a Make_x_monotone_2 functor object. */
   Make_x_monotone_2 make_x_monotone_2_object () const
   {
     return Make_x_monotone_2();
@@ -1394,7 +1290,7 @@ public:
     }
   };
 
-  /*! Get a Split_2 functor object. */
+  /*! Obtain a Split_2 functor object. */
   Split_2 split_2_object () const
   {
     return Split_2();
@@ -1519,7 +1415,7 @@ public:
     }
   };
 
-  /*! Get an Intersect_2 functor object. */
+  /*! Obtain an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () const
   {
     return Intersect_2();
@@ -1559,7 +1455,7 @@ public:
     }
   };
 
-  /*! Get an Are_mergeable_2 functor object. */
+  /*! Obtain an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object () const
   {
     return Are_mergeable_2();
@@ -1622,7 +1518,7 @@ public:
     }
   };
 
-  /*! Get a Merge_2 functor object. */
+  /*! Obtain a Merge_2 functor object. */
   Merge_2 merge_2_object () const
   {
     return Merge_2();
@@ -1657,7 +1553,7 @@ public:
     }
   };
 
-  /*! Get an Approximate_2 functor object. */
+  /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object () const
   {
     return Approximate_2();
@@ -1684,7 +1580,7 @@ public:
     }
   };
 
-  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
   {
     return Construct_x_monotone_curve_2();

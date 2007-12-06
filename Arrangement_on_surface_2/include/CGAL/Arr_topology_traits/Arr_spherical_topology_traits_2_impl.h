@@ -92,7 +92,7 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   // Go over the DCEL vertices and locate the south and north pole (if any)
   // and any other vertex on the line of discontinuity.
   typename Dcel::Vertex_iterator       vit;
-  Boundary_type                        bx, by;
+  Arr_parameter_space                        bx, by;
   Halfedge                            *he;
   Arr_curve_end                            ind;
 
@@ -103,12 +103,12 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   for (vit = this->m_dcel.vertices_begin();
        vit != this->m_dcel.vertices_end(); ++vit)
   {
-    bx = vit->boundary_in_x();
-    by = vit->boundary_in_y();
+    bx = vit->parameter_space_in_x();
+    by = vit->parameter_space_in_y();
 
     if (by == AFTER_SINGULARITY) m_south_pole = &(*vit);
     else if (by == BEFORE_SINGULARITY) m_north_pole = &(*vit);
-    else if (bx != NO_BOUNDARY) {
+    else if (bx != ARR_INTERIOR) {
       const Point_2 & key = vit->point();
       m_boundary_vertices.insert(Vertex_value(key, &(*vit)));
     }
@@ -175,20 +175,20 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
             << std::endl;
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
-  if (((v != NULL) && (v->boundary_in_y() == BEFORE_SINGULARITY)) ||
-      (m_traits->boundary_in_y_2_object()(p) == BEFORE_SINGULARITY))
+  if (((v != NULL) && (v->parameter_space_in_y() == BEFORE_SINGULARITY)) ||
+      (m_traits->parameter_space_in_y_2_object()(p) == BEFORE_SINGULARITY))
     return false;
 
   /*! \todo a temporary test
-   * if (((v != NULL) && (v->boundary_in_y() == AFTER_SINGULARITY)) ||
+   * if (((v != NULL) && (v->parameter_space_in_y() == AFTER_SINGULARITY)) ||
    *   (p.is_min_boundary()))
    * return false;  
    */
   
-  typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
-    m_traits->boundary_in_x_2_object();
-  typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
-    m_traits->boundary_in_y_2_object();
+  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+    m_traits->parameter_space_in_x_2_object();
+  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+    m_traits->parameter_space_in_y_2_object();
   typename Traits_adaptor_2::Compare_x_2 compare_x =
     m_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
@@ -245,11 +245,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
 
     Comparison_result res_pending = EQUAL, res_last = EQUAL,
       res_source = EQUAL, res_target;
-    Boundary_type bnd_pending = NO_BOUNDARY, bnd_last = NO_BOUNDARY,
-      bnd_source, bnd_target = NO_BOUNDARY;
+    Arr_parameter_space bnd_pending = ARR_INTERIOR, bnd_last = ARR_INTERIOR,
+      bnd_source, bnd_target = ARR_INTERIOR;
 
-    Boundary_type bnd_p = NO_BOUNDARY;
-    if (v != NULL) bnd_p = v->boundary_in_x();
+    Arr_parameter_space bnd_p = ARR_INTERIOR;
+    if (v != NULL) bnd_p = v->parameter_space_in_x();
     
     do {
       /* Compare p to the target vertex of the current halfedge. If the
@@ -266,8 +266,8 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
          */
-        Boundary_type bnd1 = boundary_in_y(curr->curve(), ARR_MAX_END);
-        Boundary_type bnd2 = boundary_in_y(curr->next()->curve(), ARR_MAX_END);
+        Arr_parameter_space bnd1 = parameter_space_in_y(curr->curve(), ARR_MAX_END);
+        Arr_parameter_space bnd2 = parameter_space_in_y(curr->next()->curve(), ARR_MAX_END);
         if ((bnd1 == BEFORE_SINGULARITY) && (bnd2 == BEFORE_SINGULARITY)) {
           // Compare the x-coordinates:
           Comparison_result rc1 =
@@ -304,21 +304,21 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         ind_target = ARR_MIN_END;
       }
 
-      bnd_source = boundary_in_x(curr->curve(), ind_source);
-      bnd_target = boundary_in_x(curr->curve(), ind_target);
+      bnd_source = parameter_space_in_x(curr->curve(), ind_source);
+      bnd_target = parameter_space_in_x(curr->curve(), ind_target);
 
-      if (bnd_p != NO_BOUNDARY) {
+      if (bnd_p != ARR_INTERIOR) {
         if (bnd_source == bnd_target) {
           curr = curr->next();
           continue;
         }
         
-        if (bnd_target != NO_BOUNDARY) {
+        if (bnd_target != ARR_INTERIOR) {
           change_pending = true;
           bnd_pending = (bnd_target == AFTER_DISCONTINUITY) ?
             BEFORE_DISCONTINUITY : AFTER_DISCONTINUITY;
         }
-        if (bnd_source != NO_BOUNDARY) {
+        if (bnd_source != ARR_INTERIOR) {
           if (change_pending) {
             change_pending = false;
             if (bnd_pending == bnd_source) {
@@ -337,11 +337,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         continue;
       }
       
-      res_source = (bnd_source == NO_BOUNDARY) ?
+      res_source = (bnd_source == ARR_INTERIOR) ?
         compare_x(p, curr->opposite()->vertex()->point()) :
         compare_x_near_bnd(p, curr->curve(), ind_source);
       
-      res_target = (bnd_target == NO_BOUNDARY) ?
+      res_target = (bnd_target == ARR_INTERIOR) ?
         compare_x(p, curr->vertex()->point()) :
         compare_x_near_bnd(p, curr->curve(), ind_target);
 
@@ -379,7 +379,7 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     } while (curr != first);
 
     if (last_pending) {
-      if (bnd_p != NO_BOUNDARY) {
+      if (bnd_p != ARR_INTERIOR) {
         if (bnd_last == bnd_target) {
           Comparison_result res_y_at_x = compare_y_at_x(p, curr->curve());
           if (res_y_at_x == EQUAL) return false;
@@ -419,7 +419,7 @@ template <class GeomTraits, class Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex * v,
           const X_monotone_curve_2 & xc, Arr_curve_end ind,
-          Boundary_type bound_x, Boundary_type bound_y) const
+          Arr_parameter_space bound_x, Arr_parameter_space bound_y) const
 {
 #if 0
   std::cout << "are_equal"
@@ -434,15 +434,15 @@ are_equal(const Vertex * v,
 
   // If the given boundary conditions do not match those of the given
   // vertex, v cannot represent the curve end.
-  if (bound_y != v->boundary_in_y()) return false;
+  if (bound_y != v->parameter_space_in_y()) return false;
 
-  if (bound_y != NO_BOUNDARY) return (bound_y == v->boundary_in_y());
+  if (bound_y != ARR_INTERIOR) return (bound_y == v->parameter_space_in_y());
   
-  if (((bound_x == NO_BOUNDARY) && (v->boundary_in_x() != NO_BOUNDARY)) ||
-      ((bound_x != NO_BOUNDARY) && (v->boundary_in_x() == NO_BOUNDARY))) 
+  if (((bound_x == ARR_INTERIOR) && (v->parameter_space_in_x() != ARR_INTERIOR)) ||
+      ((bound_x != ARR_INTERIOR) && (v->parameter_space_in_x() == ARR_INTERIOR))) 
     return false;
 
-  CGAL_assertion(bound_x != NO_BOUNDARY);
+  CGAL_assertion(bound_x != ARR_INTERIOR);
   /* Both vertices have the same x boundary conditions =>
    * comapare their y-position.
    */
@@ -460,8 +460,8 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 notify_on_boundary_vertex_creation(Vertex * v,
                                    const X_monotone_curve_2 & xc,
                                    Arr_curve_end ind,
-                                   Boundary_type CGAL_assertion_code(bound_x),
-                                   Boundary_type bound_y)
+                                   Arr_parameter_space CGAL_assertion_code(bound_x),
+                                   Arr_parameter_space bound_y)
 {
   // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
   if (bound_y == AFTER_SINGULARITY) {
@@ -472,7 +472,7 @@ notify_on_boundary_vertex_creation(Vertex * v,
     m_north_pole = v;
     return;
   }
-  CGAL_assertion(bound_x != NO_BOUNDARY);
+  CGAL_assertion(bound_x != ARR_INTERIOR);
   const Point_2 & key = (ind == ARR_MIN_END) ?
     m_traits->construct_min_vertex_2_object()(xc) :
     m_traits->construct_max_vertex_2_object()(xc);
@@ -487,7 +487,7 @@ CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face * /* f */,
                       const X_monotone_curve_2 & xc, Arr_curve_end ind,
-                      Boundary_type bound_x, Boundary_type bound_y)
+                      Arr_parameter_space bound_x, Arr_parameter_space bound_y)
 {
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (bound_y == AFTER_SINGULARITY) {
@@ -525,8 +525,8 @@ Arr_spherical_topology_traits_2<GeomTraits,Dcel>::
 locate_around_boundary_vertex(Vertex * v,
                               const X_monotone_curve_2 & xc,
                               Arr_curve_end ind,
-                              Boundary_type bound_x,
-                              Boundary_type bound_y) const
+                              Arr_parameter_space bound_x,
+                              Arr_parameter_space bound_y) const
 {
   // std::cout << "locate_around_boundary_vertex()" << std::endl;
   if (bound_y == AFTER_SINGULARITY) {
@@ -549,7 +549,7 @@ locate_around_boundary_vertex(Vertex * v,
 template <class GeomTraits, class Dcel>
 CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
-                 Boundary_type bound_x, Boundary_type bound_y)
+                 Arr_parameter_space bound_x, Arr_parameter_space bound_y)
 {
   // Act according to the boundary conditions.
   if (bound_y == BEFORE_SINGULARITY) {
@@ -615,7 +615,7 @@ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge *
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 erase_redundant_vertex(Vertex * v)
 {
-  const Boundary_type bound_y = v->boundary_in_y();
+  const Arr_parameter_space bound_y = v->parameter_space_in_y();
   if (bound_y == AFTER_SINGULARITY) {
     m_south_pole = NULL;
     return NULL;
@@ -624,8 +624,8 @@ erase_redundant_vertex(Vertex * v)
     m_north_pole = NULL;
     return NULL;
   }
-  CGAL_assertion_code(const Boundary_type bound_x = v->boundary_in_x(););
-  CGAL_assertion(bound_x != NO_BOUNDARY);
+  CGAL_assertion_code(const Arr_parameter_space bound_x = v->parameter_space_in_x(););
+  CGAL_assertion(bound_x != ARR_INTERIOR);
   m_boundary_vertices.erase(v->point());
   return NULL;
 }
@@ -881,8 +881,8 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
             << prev2->vertex()->point() << std::endl;
 #endif
   int counter = 0;
-  typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
-    m_traits->boundary_in_x_2_object();
+  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+    m_traits->parameter_space_in_x_2_object();
 
   // Start with the next of prev1:
   const Halfedge * curr = prev1->next();
@@ -896,8 +896,8 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
     curr_src_ind = ARR_MAX_END;
     curr_trg_ind = ARR_MIN_END;
   }
-  Boundary_type first_src_bc = boundary_in_x(curr->curve(), curr_src_ind);
-  Boundary_type curr_trg_bc = boundary_in_x(curr->curve(), curr_trg_ind);  
+  Arr_parameter_space first_src_bc = parameter_space_in_x(curr->curve(), curr_src_ind);
+  Arr_parameter_space curr_trg_bc = parameter_space_in_x(curr->curve(), curr_trg_ind);  
   while (curr != prev2) {
     const Halfedge * next = curr->next();
     Arr_curve_end next_src_ind;
@@ -909,8 +909,8 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
       next_src_ind = ARR_MAX_END;
       next_trg_ind = ARR_MIN_END;
     }
-    Boundary_type next_src_bc = boundary_in_x(next->curve(), next_src_ind);
-    Boundary_type next_trg_bc = boundary_in_x(next->curve(), next_trg_ind);
+    Arr_parameter_space next_src_bc = parameter_space_in_x(next->curve(), next_src_ind);
+    Arr_parameter_space next_trg_bc = parameter_space_in_x(next->curve(), next_trg_ind);
     if (curr_trg_bc != next_src_bc) {
       if (curr_trg_bc == BEFORE_DISCONTINUITY) ++counter;
       else --counter;
@@ -918,7 +918,7 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
     curr = next;
     curr_trg_bc = next_trg_bc;
   }
-  Boundary_type last_trg_bc = curr_trg_bc;
+  Arr_parameter_space last_trg_bc = curr_trg_bc;
   if (last_trg_bc != first_src_bc) {
     if (last_trg_bc == BEFORE_DISCONTINUITY) ++counter;
     else if (last_trg_bc == AFTER_DISCONTINUITY) --counter;

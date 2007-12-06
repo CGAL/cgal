@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
+//                 Efi Fogel    <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
@@ -49,8 +50,8 @@ class Arr_bounded_planar_topology_traits_2 :
 {
 private:
 
-  typedef Arr_planar_topology_traits_base_2<GeomTraits_,
-                                            Dcel_>        Base;
+  typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
+                                                          Base;
 
 public:
 
@@ -73,8 +74,8 @@ public:
   typedef typename Base::Isolated_vertex                  Isolated_vertex;
   //@}
 
-  typedef Arr_bounded_planar_topology_traits_2<Geometry_traits_2,
-                                               Dcel>      Self;
+  typedef Arr_bounded_planar_topology_traits_2<Geometry_traits_2, Dcel>
+                                                          Self;
 
   /*! \struct
    * An auxiliary structure for rebinding the topology traits with a new 
@@ -329,12 +330,11 @@ public:
                                  ArrangementA_2,
                                  ArrangementB_2>     Geom_ovl_traits_2;
 
-    typedef _Overlay_helper<Geom_ovl_traits_2,
-                            ArrangementA_2,
-                            ArrangementB_2>          Ovl_helper;
+    typedef _Overlay_helper<Geom_ovl_traits_2, ArrangementA_2, ArrangementB_2>
+                                                     Ovl_helper;
 
-    typedef Arr_overlay_sl_visitor<Ovl_helper,
-                                   Overlay_traits>   Base;
+    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>
+                                                     Base;
 
     typedef typename Base::Traits_2                  Traits_2;
     typedef typename Base::Event                     Event;
@@ -381,9 +381,10 @@ public:
    */
   bool are_equal (const Vertex *v,
                   const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Boundary_type bound_x, Boundary_type bound_y) const
+                  Arr_parameter_space bound_x,
+                  Arr_parameter_space bound_y) const
   {
-    CGAL_assertion (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY);
+    CGAL_assertion (bound_x == ARR_INTERIOR && bound_y == ARR_INTERIOR);
 
     if (ind == ARR_MIN_END)
     {
@@ -416,8 +417,8 @@ public:
   CGAL::Object place_boundary_vertex (Face *,
                                       const X_monotone_curve_2&,
                                       Arr_curve_end,
-                                      Boundary_type,
-                                      Boundary_type)
+                                      Arr_parameter_space,
+                                      Arr_parameter_space)
   {
     // This function should never be called:
     CGAL_error();
@@ -439,8 +440,8 @@ public:
   Halfedge* locate_around_boundary_vertex (Vertex *,
                                            const X_monotone_curve_2&,
                                            Arr_curve_end,
-                                           Boundary_type,
-                                           Boundary_type ) const
+                                           Arr_parameter_space,
+                                           Arr_parameter_space ) const
   {
     CGAL_error();
     return (NULL);
@@ -457,8 +458,8 @@ public:
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2&,
                                  Arr_curve_end,
-                                 Boundary_type,
-                                 Boundary_type)
+                                 Arr_parameter_space,
+                                 Arr_parameter_space)
   {
     // This function should never be called:
     CGAL_error();
@@ -552,8 +553,7 @@ public:
   virtual Comparison_result compare_x (const Point_2& p,
                                        const Vertex* v) const
   {
-    return (this->traits->compare_x_2_object() (p,
-                                                v->point()));
+    return (this->traits->compare_x_2_object() (p, v->point()));
   }
 
   /*!
@@ -565,8 +565,7 @@ public:
   virtual Comparison_result compare_xy (const Point_2& p,
                                         const Vertex* v) const
   {
-    return (this->traits->compare_xy_2_object() (p,
-                                                 v->point()));
+    return (this->traits->compare_xy_2_object() (p, v->point()));
   }
 
   /*!
@@ -580,8 +579,7 @@ public:
   virtual Comparison_result compare_y_at_x (const Point_2& p,
                                             const Halfedge* he) const
   {
-    return (this->traits->compare_y_at_x_2_object() (p,
-                                                     he->curve()));
+    return (this->traits->compare_y_at_x_2_object() (p, he->curve()));
   }
   //@}
 };

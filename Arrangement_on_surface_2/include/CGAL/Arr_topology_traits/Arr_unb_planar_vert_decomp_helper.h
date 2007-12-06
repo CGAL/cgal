@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+//                 Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_VERT_DECOMP_HELPER_H
@@ -121,9 +122,10 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep ()
     Vertex_const_handle  v_tr = 
       Vertex_const_handle (m_top_traits->top_right_vertex());
   );
-  CGAL_assertion ((m_top_fict->source() == v_tr) ||
-                  (m_top_fict->source()->boundary_in_x() == NO_BOUNDARY &&
-                   m_top_fict->source()->boundary_in_y() == PLUS_INFINITY));
+  CGAL_assertion
+    ((m_top_fict->source() == v_tr) ||
+     (m_top_fict->source()->parameter_space_in_x() == ARR_INTERIOR &&
+      m_top_fict->source()->parameter_space_in_y() == ARR_TOP_BOUNDARY));
 
   // Initialize the fictitious halfedge lying on the bottom edge of the
   // bounding rectangle. We start from the leftmost halfedge, which is
@@ -132,16 +134,17 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep ()
     Vertex_const_handle (m_top_traits->bottom_left_vertex());
 
   m_bottom_fict = v_bl->incident_halfedges();
-  if (m_bottom_fict->source()->boundary_in_x() == MINUS_INFINITY)
+  if (m_bottom_fict->source()->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
       m_bottom_fict = m_bottom_fict->next()->twin();
 
   CGAL_assertion_code (
     Vertex_const_handle  v_br = 
       Vertex_const_handle (m_top_traits->bottom_right_vertex());
   );
-  CGAL_assertion ((m_bottom_fict->source() == v_br) ||
-                  (m_bottom_fict->source()->boundary_in_x() == NO_BOUNDARY &&
-                   m_bottom_fict->source()->boundary_in_y() == MINUS_INFINITY));
+  CGAL_assertion
+    ((m_bottom_fict->source() == v_br) ||
+     (m_bottom_fict->source()->parameter_space_in_x() == ARR_INTERIOR &&
+      m_bottom_fict->source()->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY));
 
   return;
 }
@@ -151,8 +154,8 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr>
-void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::after_handle_event
-    (Event* event)
+void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::
+after_handle_event (Event* event)
 {
   // If the event is at infinity and occurs on the top edge of the fictitious
   // face (namely x is finite and y = +oo), we have to update the fictitious
@@ -160,19 +163,19 @@ void Arr_unb_planar_vert_decomp_helper<Tr, Arr>::after_handle_event
   if (event->is_finite())
     return;
 
-  if (event->boundary_in_x() != NO_BOUNDARY)
+  if (event->parameter_space_in_x() != ARR_INTERIOR)
     return;
 
-  Boundary_type     by = event->boundary_in_y();
+  Arr_parameter_space     ps_y = event->parameter_space_in_y();
 
-  if (by == PLUS_INFINITY)
+  if (ps_y == ARR_TOP_BOUNDARY)
   {
     // Update the fictitious top halfedge.
     m_top_fict = m_top_fict->twin()->next()->twin();
   }
   else
   {
-    CGAL_assertion (by == PLUS_INFINITY);
+    CGAL_assertion (ps_y == ARR_BOTTOM_BOUNDARY);
 
     // Update the fictitious bottom halfedge.
     m_bottom_fict = m_bottom_fict->prev();

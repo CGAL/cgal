@@ -126,10 +126,10 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
     // Ignore events that do not have boundary conditions.
-    const Boundary_type bound_x = event->boundary_in_x();
-    const Boundary_type bound_y = event->boundary_in_y();
+    const Arr_parameter_space bound_x = event->parameter_space_in_x();
+    const Arr_parameter_space bound_y = event->parameter_space_in_y();
     
-    if (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY) {
+    if (bound_x == ARR_INTERIOR && bound_y == ARR_INTERIOR) {
         return;
     }
     

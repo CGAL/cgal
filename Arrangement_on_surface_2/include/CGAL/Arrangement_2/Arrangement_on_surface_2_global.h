@@ -493,8 +493,8 @@ void insert (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
 //
 template <class GeomTraits, class TopTraits>
 void insert (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-                   const typename GeomTraits::X_monotone_curve_2& c,
-                   const Object& obj)
+             const typename GeomTraits::X_monotone_curve_2& c,
+             const Object& obj)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>  Arr;
   typedef typename TopTraits::Zone_insertion_visitor       Zone_visitor;
@@ -558,32 +558,34 @@ CGAL_DEPRECATED void insert_x_monotone_curve
 {
   insert(arr, c, obj);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class PointLocation>
-CGAL_DEPRECATED void insert_curve
-(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
- const typename GeomTraits::Curve_2& c,
- const PointLocation& pl)
+CGAL_DEPRECATED
+void insert_curve(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  const typename GeomTraits::Curve_2& c,
+                  const PointLocation& pl)
 {
   insert(arr, c, pl);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
-CGAL_DEPRECATED void insert_curve
-(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
- const typename GeomTraits::Curve_2& c)
+CGAL_DEPRECATED
+void insert_curve(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                  const typename GeomTraits::Curve_2& c)
 {
   insert(arr, c);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class InputIterator>
-CGAL_DEPRECATED void insert_curves 
-(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
- InputIterator begin, InputIterator end)
+CGAL_DEPRECATED
+void insert_curves (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+                    InputIterator begin, InputIterator end)
 {
   insert(arr, begin, end);
 }
-
 
 //-----------------------------------------------------------------------------
 // Insert an x-monotone curve into the arrangement, such that the curve
@@ -610,12 +612,14 @@ insert_non_intersecting_curve
 
   // Check whether the left end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Boundary_type  bx1 = geom_traits->boundary_in_x_2_object()(c, ARR_MIN_END);
-  const Boundary_type  by1 = geom_traits->boundary_in_y_2_object()(c, ARR_MIN_END);
+  const Arr_parameter_space  bx1 =
+    geom_traits->parameter_space_in_x_2_object()(c, ARR_MIN_END);
+  const Arr_parameter_space  by1 =
+    geom_traits->parameter_space_in_y_2_object()(c, ARR_MIN_END);
   CGAL::Object                 obj1;
   const Vertex_const_handle   *vh1 = NULL;
 
-  if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
+  if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR)
   {
     // We have a normal left endpoint with no boundary conditions:
     // use a point-location query.
@@ -644,12 +648,14 @@ insert_non_intersecting_curve
 
   // Check whether the right end has boundary conditions, and locate it in the
   // arrangement accordingly.
-  const Boundary_type  bx2 = geom_traits->boundary_in_x_2_object()(c, ARR_MAX_END);
-  const Boundary_type  by2 = geom_traits->boundary_in_y_2_object()(c, ARR_MAX_END);
+  const Arr_parameter_space  bx2 =
+    geom_traits->parameter_space_in_x_2_object()(c, ARR_MAX_END);
+  const Arr_parameter_space  by2 =
+    geom_traits->parameter_space_in_y_2_object()(c, ARR_MAX_END);
   CGAL::Object                 obj2;
   const Vertex_const_handle   *vh2 = NULL;
 
-  if (bx2 == NO_BOUNDARY && by2 == NO_BOUNDARY)
+  if (bx2 == ARR_INTERIOR && by2 == ARR_INTERIOR)
   {
     // We have a normal right endpoint with no boundary conditions:
     // use a point-location query.
@@ -702,8 +708,7 @@ insert_non_intersecting_curve
       // In this case insert_from_left_vertex() returns a halfedge directed
       // to the new vertex it creates, so it is already directed from left to
       // right.
-      new_he = arr.insert_from_left_vertex (c,
-                                            arr.non_const_handle (*vh1));
+      new_he = arr.insert_from_left_vertex (c, arr.non_const_handle (*vh1));
     }
   }
   else
@@ -714,8 +719,7 @@ insert_non_intersecting_curve
       // In this case insert_from_left_vertex() returns a halfedge directed
       // to the new vertex it creates, so it is directed from right to left
       // and we take its twin halfedge instead.
-      new_he = arr.insert_from_right_vertex (c,
-                                             arr.non_const_handle (*vh2));
+      new_he = arr.insert_from_right_vertex (c, arr.non_const_handle (*vh2));
       new_he = new_he->twin();
     }
     else
@@ -736,8 +740,7 @@ insert_non_intersecting_curve
 
       if (fh1 != NULL && fh2 != NULL && *fh1 == *fh2)
       {
-        new_he = arr.insert_in_face_interior (c,
-                                              arr.non_const_handle (*fh1));
+        new_he = arr.insert_in_face_interior (c, arr.non_const_handle (*fh1));
       }
     }
   }
@@ -942,9 +945,8 @@ void insert_non_intersecting_curves
 template <class GeomTraits, class TopTraits>
 typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Face_handle
 remove_edge
-    (Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
-     typename Arrangement_on_surface_2<GeomTraits,
-                                       TopTraits>::Halfedge_handle e)
+(Arrangement_on_surface_2<GeomTraits, TopTraits>& arr,
+ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle e)
 {
   typedef Arrangement_on_surface_2<GeomTraits, TopTraits>   Arr;
   typedef Arr_traits_adaptor_2<GeomTraits>                  Traits_adaptor_2;

@@ -87,7 +87,7 @@ protected:
                       // isolated). The LSB of the pointer indicates whether
                       // the vertex is isolated.
   Point      *p_pt;   // The point associated with the vertex.
-  char        bcs[2]; // The boundary conditions (condensed in two bytes).
+  char        pss[2]; // The x and y parameter spaces (condensed in two bytes).
 
 public:
 
@@ -96,7 +96,7 @@ public:
     p_inc (NULL),
     p_pt (NULL)
   {
-    bcs[0] = bcs[1] = static_cast<char> (CGAL::NO_BOUNDARY);
+    pss[0] = pss[1] = static_cast<char> (CGAL::ARR_INTERIOR);
   }
   
   /*! Destructor. */
@@ -129,22 +129,22 @@ public:
   }
 
   /*! Get the boundary type in x. */
-  Boundary_type boundary_in_x () const
+  Arr_parameter_space parameter_space_in_x () const
   {
-    return (Boundary_type (bcs[0]));
+    return (Arr_parameter_space (pss[0]));
   }
 
   /*! Get the boundary type in y. */
-  Boundary_type boundary_in_y () const
+  Arr_parameter_space parameter_space_in_y () const
   {
-    return (Boundary_type (bcs[1]));
+    return (Arr_parameter_space (pss[1]));
   }
 
   /*! Set the boundary conditions of the vertex. */
-  void set_boundary (Boundary_type bound_x, Boundary_type bound_y)
+  void set_boundary (Arr_parameter_space bound_x, Arr_parameter_space bound_y)
   {
-    bcs[0] = static_cast<char> (bound_x);
-    bcs[1] = static_cast<char> (bound_y);
+    pss[0] = static_cast<char> (bound_x);
+    pss[1] = static_cast<char> (bound_y);
     return;
   }
 
@@ -152,8 +152,8 @@ public:
   virtual void assign (const Arr_vertex_base<Point>& v)
   {
     p_pt = v.p_pt;
-    bcs[0] = v.bcs[0];
-    bcs[1] = v.bcs[1];
+    pss[0] = v.pss[0];
+    pss[1] = v.pss[1];
   }
 };
 
@@ -300,12 +300,7 @@ public:
   /*! Set the face as bounded or unbounded. */
   void set_unbounded (bool unbounded)
   {
-    if (unbounded)
-      flags = (flags | IS_UNBOUNDED);
-    else
-      flags = (flags & ~IS_UNBOUNDED);
-
-    return;
+    flags = (unbounded) ? (flags | IS_UNBOUNDED) : (flags & ~IS_UNBOUNDED);
   }
 
   /*! Check if the face is fictitious. */
@@ -317,12 +312,7 @@ public:
   /*! Set the face as fictitious or valid. */
   void set_fictitious (bool fictitious)
   {
-    if (fictitious)
-      flags = (flags | IS_FICTITIOUS);
-    else
-      flags = (flags & ~IS_FICTITIOUS);
-
-    return;
+    flags = (fictitious) ? (flags | IS_FICTITIOUS) : (flags & ~IS_FICTITIOUS);
   }
 
   /*! Assign from another face. */
@@ -968,7 +958,7 @@ public:
 
   typedef Arr_isolated_vertex<V,H,F>                Self;
   typedef Arr_face<V,H,F>                           Face;
-  typedef typename Face::Isolated_vertex_iterator Isolated_vertex_iterator;
+  typedef typename Face::Isolated_vertex_iterator   Isolated_vertex_iterator;
 
 private:
 
@@ -1075,11 +1065,11 @@ protected:
 
 public:
 
-  typedef typename Halfedge_list::size_type             Size;
-  typedef typename Halfedge_list::size_type             size_type;
-  typedef typename Halfedge_list::difference_type       difference_type;
-  typedef typename Halfedge_list::difference_type       Difference;
-  typedef std::bidirectional_iterator_tag               iterator_category;
+  typedef typename Halfedge_list::size_type              Size;
+  typedef typename Halfedge_list::size_type              size_type;
+  typedef typename Halfedge_list::difference_type        difference_type;
+  typedef typename Halfedge_list::difference_type        Difference;
+  typedef std::bidirectional_iterator_tag                iterator_category;
 
 protected:
 
@@ -1103,23 +1093,23 @@ public:
   typedef typename Vertex_list::iterator              Vertex_iterator;
   typedef typename Halfedge_list::iterator            Halfedge_iterator;
   typedef typename Face_list::iterator                Face_iterator;
-  typedef CGAL::N_step_adaptor_derived<Halfedge_iterator, 
-                                       2>             Edge_iterator;
+  typedef CGAL::N_step_adaptor_derived<Halfedge_iterator, 2>
+                                                      Edge_iterator;
   
   // Definitions of const iterators.
   typedef typename Vertex_list::const_iterator        Vertex_const_iterator;
   typedef typename Halfedge_list::const_iterator      Halfedge_const_iterator;
   typedef typename Face_list::const_iterator          Face_const_iterator;
-  typedef CGAL::N_step_adaptor_derived<Halfedge_const_iterator, 
-                                       2>             Edge_const_iterator;
+  typedef CGAL::N_step_adaptor_derived<Halfedge_const_iterator, 2>
+                                                      Edge_const_iterator;
 
 private:
 
   // Copy constructor - not supported.
-  Arr_dcel_base (const Self& ) ;
+  Arr_dcel_base (const Self&) ;
 
   // Assignment operator - not supported.
-  Self& operator= (const Self& );
+  Self& operator= (const Self&);
 
 public:
 

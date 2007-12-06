@@ -421,99 +421,6 @@ public:
   /*! Obtain a Compare_xy_2 function object */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(this); }
 
-  /*! A functor that determines whether an endpoint of an x-monotone arc lies
-   * on a boundary of the parameter space along the x axis.
-   */
-  class Boundary_in_x_2 {
-  public:
-    /*! Determine whether an endpoint of an x-monotone curve lies on an
-     * x-boundary.
-     * Note that if the curve end coincides with a pole, then unless the curve
-     * coincides with discontinuity arc, the curve end is considered not to be
-     * on a boundary. If the curve coincides with discontinuity arc, it is
-     * assumed to be smaller than any other object.
-     * \param xc the curve.
-     * \param ind ARR_MIN_END - the minimal end of xc or
-     *            ARR_MAX_END - the maximal end of xc.
-     * \return
-     *   AFTER_DISCONTINUITY  - the curve end is on the open discontinuity arc 
-     *                          and it is the left endpoint
-     *   NO_BOUNDARY          - the curve end does not lie on the open
-     *                          discontinuity arc.
-     *   BEFORE_DISCONTINUITY - the curve end is on the open discontinuity arc
-     *                          and it is the right endpoint
-     */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Arr_curve_end ind) const
-    {
-      if (xc.is_vertical()) {
-        if (xc.is_on_boundary()) return AFTER_DISCONTINUITY;
-        return NO_BOUNDARY;
-      }
-
-      return (ind == ARR_MIN_END) ?
-        // Process left:
-        ((xc.left().is_no_boundary()) ? NO_BOUNDARY : AFTER_DISCONTINUITY) :
-
-        // ind == ARR_MAX_END => process left():
-        ((xc.right().is_no_boundary()) ? NO_BOUNDARY : BEFORE_DISCONTINUITY);
-    }
-  };
-
-  /*! Obtain an Boundary_in_x_2 functor object. */
-  Boundary_in_x_2 boundary_in_x_2_object() const { return Boundary_in_x_2(); }
-
-  /*! A functor that determines whether an endpoint of an x-monotone arc lies
-   * on a boundary of the parameter space along the y axis.
-   */
-  class Boundary_in_y_2 {
-  public:
-    /*! Determine whether an end of an x-monotone curve lies on a y-boundary.
-     * \param xc the curve.
-     * \param ind ARR_MIN_END - the minimal end of xc or
-     *            ARR_MAX_END - the maximal end of xc.
-     * \return
-     *   the curve end is on the boundary and
-     *     is the right endpoint                    => AFTER_SINGULARITY, else
-     *   the curve end does not lie on the boundary => NO_BOUNDARY, 
-     *   the curve end is on the boundary and
-     *     is the left endpoint                     => BEFORE_SINGULARITY.
-     */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
-                             Arr_curve_end ind) const
-    {
-      return (ind == ARR_MIN_END) ?
-        ((xc.left().is_min_boundary()) ? AFTER_SINGULARITY : NO_BOUNDARY) :
-
-        // ind == ARR_MAX_END
-        ((xc.right().is_max_boundary()) ? BEFORE_SINGULARITY : NO_BOUNDARY);
-    }
-
-    /*! Determine whether a point lies on a y-boundary.
-     * \param p the point.
-     * \return
-     *   the point is on the bottom boundary and => AFTER_SINGULARITY, else
-     *   the point is on the top boundary        => BEFORE_SINGULARITY.
-     *   otherwise                               => NO_BOUNDARY, 
-     */
-    Boundary_type operator()(const Point_2 & p) const
-    {
-      switch (p.discontinuity_type()) {
-       case Point_2::MIN_BOUNDARY_LOC: return AFTER_SINGULARITY;
-       case Point_2::MAX_BOUNDARY_LOC: return BEFORE_SINGULARITY;
-
-       case Point_2::NO_BOUNDARY_LOC:
-       case Point_2::MID_BOUNDARY_LOC:
-       default: return NO_BOUNDARY;
-      }
-      CGAL_error();
-      return NO_BOUNDARY;
-    }
-  };
-
-  /*! Obtain an Boundary_in_x_2 functor object. */
-  Boundary_in_y_2 boundary_in_y_2_object() const { return Boundary_in_y_2(); }
-    
   /*! A functor that obtain the left endpoint of an x-monotone arc */
   class Construct_min_vertex_2 {
   public:
@@ -1637,9 +1544,9 @@ public:
      */
     template <typename In_between, typename OutputIterator>
     OutputIterator compute_intersection(const Point_2 & l1_3,
-                                        const Point_2 r1_3,
+                                        const Point_2 & r1_3,
                                         const Point_2 & l2_3,
-                                        const Point_2 r2_3,
+                                        const Point_2 & r2_3,
                                         const Plane_3 & plane,
                                         bool vertical,
                                         const Direction_2 & start,
@@ -1807,6 +1714,14 @@ public:
           m_traits->clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
+          std::cout << "source1: " << xc1.source() << std::endl
+                    << "target1: " << xc1.target() << std::endl
+                    << "normal1: " << xc1.plane().orthogonal_direction() << std::endl;
+
+          std::cout << "source2: " << xc2.source() << std::endl
+                    << "target2: " << xc2.target() << std::endl
+                    << "normal2: " << xc2.plane().orthogonal_direction() << std::endl;
+
           // Both arcs are vertical
           const Plane_3 & plane1 = xc1.plane();
           const Plane_3 & plane2 = xc2.plane();
@@ -1850,20 +1765,30 @@ public:
           Project project =
             (xz_plane) ? Traits::project_xz : Traits::project_yz;
 
-          Plane_3 plane = (xz_plane) ?
-            ((xsign == POSITIVE) ? xc1.plane() : xc1.plane().opposite()) :
-            ((ysign == NEGATIVE) ? xc1.plane() : xc1.plane().opposite());
+          Plane_3 plane =
+            (( xz_plane && (ysign == NEGATIVE)) ||
+             (!xz_plane && (xsign == POSITIVE))) ?
+            (xc1.is_directed_right() ? xc1.plane() : xc1.plane().opposite()) :
+            (xc1.is_directed_right() ? xc1.plane().opposite() : xc1.plane());
           
+          std::cout << ((( xz_plane && (ysign == NEGATIVE)) ||
+                        (!xz_plane && (xsign == POSITIVE))) ?
+                        (xc1.is_directed_right() ? "straight" : "opposite") :
+                        (xc1.is_directed_right() ? "opposite" : "straight"))
+                    << std::endl;
+
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
 
           if ((xz_plane && p_x_is_positive) || (!xz_plane && p_y_is_positive)) {
+            std::cout << "1" << std::endl;
             // The endpoints reside in the positive x-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
                                         xc2.left(), xc2.right(),
                                         plane, true, Traits::neg_y_2(),
                                         ccib, project, oi);
           }
+          std::cout << "2" << std::endl;
           // The endpoints reside in the negative x-halfspace:
           return compute_intersection(xc1.left(), xc1.right(),
                                       xc2.left(), xc2.right(),
@@ -1874,8 +1799,9 @@ public:
         // The arcs are not vertical:
         Direction_3 normal = xc1.plane().orthogonal_direction();
         bool plane_is_positive = (Traits::z_sign(normal) == POSITIVE);
-        Plane_3 plane =
-          (plane_is_positive) ? xc1.plane() : xc1.plane().opposite();
+        Plane_3 plane = (plane_is_positive) ?
+          (xc1.is_directed_right() ? xc1.plane() : xc1.plane().opposite()) :
+          (xc1.is_directed_right() ? xc1.plane().opposite() : xc1.plane());
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
                                     plane, false, Traits::neg_x_2(),
@@ -1932,6 +1858,9 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
+      //! Temporary
+      // return false;
+      
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 
@@ -2190,7 +2119,7 @@ public:
 
   /*! Enumeration of discontinuity type */
   enum Location_type {
-    NO_BOUNDARY_LOC,
+    ARR_INTERIOR_LOC,
     MIN_BOUNDARY_LOC,
     MID_BOUNDARY_LOC,
     MAX_BOUNDARY_LOC
@@ -2225,8 +2154,8 @@ public:
     Direction_3(x, y, z)
   {
     m_location =
-      (CGAL::sign(y) != ZERO) ? NO_BOUNDARY_LOC :
-      ((CGAL::sign(x) == POSITIVE) ? NO_BOUNDARY_LOC :
+      (CGAL::sign(y) != ZERO) ? ARR_INTERIOR_LOC :
+      ((CGAL::sign(x) == POSITIVE) ? ARR_INTERIOR_LOC :
        ((CGAL::sign(x) == NEGATIVE) ? MID_BOUNDARY_LOC :
         ((CGAL::sign(z) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC)));
   }
@@ -2248,7 +2177,7 @@ public:
       Direction_2 dir_xy = Traits::project_xy(dir);
       typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
       const Direction_2 & nx = Traits::neg_x_2();
-      m_location = equal_2(dir_xy, nx) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
+      m_location = equal_2(dir_xy, nx) ? MID_BOUNDARY_LOC : ARR_INTERIOR_LOC;
     }
   }
 
@@ -2271,7 +2200,7 @@ public:
   Location_type discontinuity_type() const
   { return m_location; }
   
-  bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
+  bool is_no_boundary() const { return (m_location == ARR_INTERIOR_LOC); }
   
   bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
   
@@ -2462,7 +2391,7 @@ public:
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
     m_plane = construct_plane_3(source, target);
-      
+
     // Check whether any one of the endpoint coincide with a pole:
     if (source.is_max_boundary()) {
       set_is_vertical(true);

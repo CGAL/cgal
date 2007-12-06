@@ -80,9 +80,9 @@ public:
   typedef typename Traits_2::Boundary_category      Base_boundary_category;
   
   typedef Tag_true                                  Has_boundary_category;
-  typedef Arr_bounded_boundary_tag                  Boundary_category;
   typedef Tag_false                                 Has_left_category;
   typedef Tag_false                                 Has_merge_category;
+  typedef Base_boundary_category                    Boundary_category;
 
   // The color of a feature.
   enum Color
@@ -415,17 +415,19 @@ public:
       bool                                           send_xcv1_first = true;
       OutputIterator                                 oi_end;
 
-      Boundary_in_x_2      inf_in_x = m_traits->boundary_in_x_2_object();
-      Boundary_in_y_2      inf_in_y = m_traits->boundary_in_y_2_object();
-      const Boundary_type  bx1 = inf_in_x (xcv1, ARR_MIN_END);
-      const Boundary_type  by1 = inf_in_y (xcv1, ARR_MIN_END);
-      const Boundary_type  bx2 = inf_in_x (xcv2, ARR_MIN_END);
-      const Boundary_type  by2 = inf_in_y (xcv2, ARR_MIN_END);
+      Parameter_space_in_x_2      ps_x_op =
+        m_traits->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2      ps_y_op =
+        m_traits->parameter_space_in_y_2_object();
+      const Arr_parameter_space  bx1 = ps_x_op (xcv1, ARR_MIN_END);
+      const Arr_parameter_space  by1 = ps_y_op (xcv1, ARR_MIN_END);
+      const Arr_parameter_space  bx2 = ps_x_op (xcv2, ARR_MIN_END);
+      const Arr_parameter_space  by2 = ps_y_op (xcv2, ARR_MIN_END);
 
       Traits_2 * m_base_tr = m_traits;
 
-      if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY &&
-          bx2 == NO_BOUNDARY && by2 == NO_BOUNDARY)
+      if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR &&
+          bx2 == ARR_INTERIOR && by2 == ARR_INTERIOR)
       {
         send_xcv1_first =
           (m_base_tr->compare_xy_2_object()
@@ -830,10 +832,63 @@ public:
       (Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object()));
   }
 
+  /*! A function object that determines whether a curve end is bounded.
+   */
+  class Is_bounded_2 {
+  protected:
+    //! The base traits.
+    const Traits_2 * m_base;
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_bounded_2(const Traits_2 * base) : m_base(base) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_overlay_traits_2<Traits_2,
+                                      Arrangement_red_2,
+                                      Arrangement_blue_2>;
+    
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_no_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_bounded_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_unbounded_boundary_tag)
+    {
+      return m_base->is_bounded_2_object()(xcv.base(), ce);
+    }
+    
+  public:
+    /*! Is the end of an x-monotone curve bounded?
+     * \param xcv The x-monotone curve.
+     * \param ce The end of xcv identifier.
+     * \return true is the curve end is bounded, and false otherwise
+     */
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    {
+      return is_bounded(xcv, ce, Base_boundary_category());
+    }
+  };
+
+  /*! Obtain a Is_bounded_2 function object. */
+  Is_bounded_2 is_bounded_2_object() const
+  {
+    return Is_bounded_2(m_base_traits);
+  }
+  
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
-  class Boundary_in_x_2 {
+  class Parameter_space_in_x_2 {
   protected:
     //! The base traits.
     const Traits_2 * m_base;
@@ -843,7 +898,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Boundary_in_x_2 (const Traits_2 *tr) : m_base (tr) {}
+    Parameter_space_in_x_2 (const Traits_2 * tr) : m_base (tr) {}
  
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_overlay_traits_2<Traits_2,
@@ -851,37 +906,36 @@ public:
                                       Arrangement_blue_2>;
     
   public:
-    Boundary_type operator() (const X_monotone_curve_2& xcv,
-                              Arr_curve_end ce) const
+    Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
+                                    Arr_curve_end ce) const
     {
-      return _boundary_in_x_imp (xcv, ce, Base_has_boundary_category());
+      return parameter_space_in_x (xcv, ce, Base_has_boundary_category());
     }
 
   private:
-    
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& xcv,
-                                      Arr_curve_end ce, Tag_true) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2 & xcv,
+                                              Arr_curve_end ce, Tag_true) const
     {
-      return (m_base->boundary_in_x_2_object() (xcv.base(), ce));
+      return m_base->parameter_space_in_x_2_object() (xcv.base(), ce);
     }
 
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& ,
-                                      Arr_curve_end , Tag_false) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2 & ,
+                                              Arr_curve_end, Tag_false) const
     {
-      return (NO_BOUNDARY);
+      return ARR_INTERIOR;
     }
   };
 
-  /*! Obtain an Boundary_in_x_2 functor object. */
-  Boundary_in_x_2 boundary_in_x_2_object () const
+  /*! Obtain an Parameter_space_in_x_2 functor object. */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object () const
   {
-    return (Boundary_in_x_2 (m_base_traits));
+    return Parameter_space_in_x_2 (m_base_traits);
   } 
 
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
    */
-  class Boundary_in_y_2 {
+  class Parameter_space_in_y_2 {
   protected:
     //! The base traits.
     const Traits_2 * m_base;
@@ -891,7 +945,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Boundary_in_y_2 (const Traits_2 *tr) : m_base (tr) {}
+    Parameter_space_in_y_2 (const Traits_2 *tr) : m_base (tr) {}
    
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_overlay_traits_2<Traits_2,
@@ -899,45 +953,45 @@ public:
                                       Arrangement_blue_2>;
     
   public:
-    Boundary_type operator() (const X_monotone_curve_2& xcv,
-                              Arr_curve_end ce) const
+    Arr_parameter_space operator() (const X_monotone_curve_2 & xcv,
+                                    Arr_curve_end ce) const
     {
-      return boundary_in_y(xcv, ce, Base_has_boundary_category());
+      return parameter_space_in_y(xcv, ce, Base_has_boundary_category());
     }
 
-    Boundary_type operator()(const Point_2 & p) const
+    Arr_parameter_space operator()(const Point_2 & p) const
     {
-      return boundary_in_y(p, Base_has_boundary_category());
+      return parameter_space_in_y(p, Base_has_boundary_category());
     }
     
   private:
-    Boundary_type boundary_in_y(const X_monotone_curve_2 & xcv,
-                                Arr_curve_end ce, Tag_true) const
+    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2 & xcv,
+                                             Arr_curve_end ce, Tag_true) const
     {
-      return m_base->boundary_in_y_2_object()(xcv.base(), ce);
+      return m_base->parameter_space_in_y_2_object()(xcv.base(), ce);
     }
 
-    Boundary_type boundary_in_y(const X_monotone_curve_2 &,
-                                Arr_curve_end, Tag_false) const
+    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2 &,
+                                             Arr_curve_end, Tag_false) const
     {
-      return NO_BOUNDARY;
+      return ARR_INTERIOR;
     }
 
-    Boundary_type boundary_in_y(const Point_2 & p, Tag_true) const
+    Arr_parameter_space parameter_space_in_y(const Point_2 & p, Tag_true) const
     {
-      return m_base->boundary_in_y_2_object()(p.base());
+      return m_base->parameter_space_in_y_2_object()(p.base());
     }
 
-    Boundary_type boundary_in_y(const Point_2 &, Tag_false) const
+    Arr_parameter_space parameter_space_in_y(const Point_2 &, Tag_false) const
     {
-      return NO_BOUNDARY;
+      return ARR_INTERIOR;
     }
   };
 
-  /*! Obtain an Boundary_in_x_2 functor object. */
-  Boundary_in_y_2 boundary_in_y_2_object () const
+  /*! Obtain an Parameter_space_in_y_2 functor object. */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object () const
   {
-    return (Boundary_in_y_2 (m_base_traits));
+    return (Parameter_space_in_y_2 (m_base_traits));
   } 
 
   /*! A functor that compares the x-coordinates of curve ends near the

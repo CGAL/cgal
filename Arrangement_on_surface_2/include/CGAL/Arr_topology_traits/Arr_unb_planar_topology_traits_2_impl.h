@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein  <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_IMPL_H
@@ -81,7 +82,6 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 {
   // Go over the DCEL vertices and locate the four fictitious ones.
   typename Dcel::Vertex_iterator       vit;
-  Boundary_type                        bx, by;
   Halfedge                            *first_he, *next_he;
 
   v_bl = v_tl = v_br = v_tr = NULL;
@@ -102,24 +102,23 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 
     if (next_he->next()->opposite() == first_he)
     {
-      bx = vit->boundary_in_x();
-      by = vit->boundary_in_y();
+      Arr_parameter_space ps_x = vit->parameter_space_in_x();
+      Arr_parameter_space ps_y = vit->parameter_space_in_y();
 
-      if (bx == MINUS_INFINITY && by == MINUS_INFINITY)
+      if (ps_x == ARR_LEFT_BOUNDARY && ps_y == ARR_BOTTOM_BOUNDARY)
         v_bl = &(*vit);
-      else if (bx == MINUS_INFINITY && by == PLUS_INFINITY)
+      else if (ps_x == ARR_LEFT_BOUNDARY && ps_y == ARR_TOP_BOUNDARY)
         v_tl = &(*vit);
-      else if (bx == PLUS_INFINITY && by == MINUS_INFINITY)
+      else if (ps_x == ARR_RIGHT_BOUNDARY && ps_y == ARR_BOTTOM_BOUNDARY)
         v_br = &(*vit);
-      else if (bx == PLUS_INFINITY && by == PLUS_INFINITY)
+      else if (ps_x == ARR_RIGHT_BOUNDARY && ps_y == ARR_TOP_BOUNDARY)
         v_tr = &(*vit);
       else
         // We should never reach here:
         CGAL_error();
     }
   }
-  CGAL_assertion (v_bl != NULL && v_tl != NULL &&
-                  v_br != NULL && v_tr != NULL);
+  CGAL_assertion(v_bl != NULL && v_tl != NULL && v_br != NULL && v_tr != NULL);
 
   // Go over the DCEL faces and locate the fictitious face.
   typename Dcel::Face_iterator         fit;
@@ -158,16 +157,16 @@ void Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
   // Create the four fictitious vertices corresponding to corners of the
   // bounding rectangle.
   v_bl = this->m_dcel.new_vertex();
-  v_bl->set_boundary (MINUS_INFINITY, MINUS_INFINITY);
+  v_bl->set_boundary (ARR_LEFT_BOUNDARY, ARR_BOTTOM_BOUNDARY);
 
   v_tl = this->m_dcel.new_vertex();
-  v_tl->set_boundary (MINUS_INFINITY, PLUS_INFINITY);
+  v_tl->set_boundary (ARR_LEFT_BOUNDARY, ARR_TOP_BOUNDARY);
 
   v_br = this->m_dcel.new_vertex();
-  v_br->set_boundary (PLUS_INFINITY, MINUS_INFINITY);
+  v_br->set_boundary (ARR_RIGHT_BOUNDARY, ARR_BOTTOM_BOUNDARY);
 
   v_tr = this->m_dcel.new_vertex();
-  v_tr->set_boundary (PLUS_INFINITY, PLUS_INFINITY);
+  v_tr->set_boundary (ARR_RIGHT_BOUNDARY, ARR_TOP_BOUNDARY);
 
   // Create a four pairs of twin halfedges connecting the two vertices,
   // and link them together to form the bounding rectangle, forming a hole
@@ -252,21 +251,17 @@ template <class GeomTraits, class Dcel_>
 bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 are_equal(const Vertex *v,
           const X_monotone_curve_2& cv, Arr_curve_end ind,
-          Boundary_type bound_x, Boundary_type bound_y) const
+          Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
 {
-  // Make the given curve end lies at infinity.
-  CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
-                     bound_y == MINUS_INFINITY || bound_y == PLUS_INFINITY);
-
   // In case the given boundary conditions do not match those of the given
   // vertex, v cannot represent the curve end.
-  if (bound_x != v->boundary_in_x() || bound_y != v->boundary_in_y())
+  if (ps_x != v->parameter_space_in_x() || ps_y != v->parameter_space_in_y())
     return (false);
 
   // Compare the curve end with the vertex.
   Comparison_result     res;
 
-  if (bound_x != NO_BOUNDARY)
+  if (ps_x != ARR_INTERIOR)
   {
     // The curve end lies at x = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
@@ -274,14 +269,15 @@ are_equal(const Vertex *v,
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
-      return (v->boundary_in_x() == bound_x && v->boundary_in_y() == bound_y);
+      return (v->parameter_space_in_x() == ps_x &&
+              v->parameter_space_in_y() == ps_y);
 
     CGAL_assertion (v_ind == ind);
     res = this->traits->compare_y_near_boundary_2_object() (cv, *v_cv, v_ind);
   }
   else 
   {
-    CGAL_assertion (bound_y != NO_BOUNDARY);
+    CGAL_assertion (ps_y != ARR_INTERIOR);
 
     // The curve end lies at y = +/- oo and so does v. Check if the curve
     // overlaps with the curve that currently induces v.
@@ -289,8 +285,8 @@ are_equal(const Vertex *v,
     const X_monotone_curve_2  *v_cv = _curve (v, v_ind);
 
     if (v_cv == NULL)
-      return (v->boundary_in_x() == NO_BOUNDARY &&
-              v->boundary_in_y() == bound_y);
+      return (v->parameter_space_in_x() == ARR_INTERIOR &&
+              v->parameter_space_in_y() == ps_y);
 
     res =
       this->traits->compare_x_near_boundary_2_object() (cv, ind, *v_cv, v_ind);
@@ -309,13 +305,8 @@ CGAL::Object
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 place_boundary_vertex(Face *f,
                       const X_monotone_curve_2& cv, Arr_curve_end ind,
-                      Boundary_type bound_x, Boundary_type bound_y)
+                      Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  // Make the given curve end lies at infinity (the only boundary type
-  // allowed for planar topology).
-  CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
-                     bound_y == MINUS_INFINITY || bound_y == PLUS_INFINITY);
-                     
   // Get a halfedge on the outer CCB of f and start traversing the CCB.
   Halfedge           *first = *(f->outer_ccbs_begin());
   Halfedge           *curr = first;
@@ -326,7 +317,7 @@ place_boundary_vertex(Face *f,
     // Note we consider only fictitious halfedges and check whether they
     // contain the relevant curve end.
     if (curr->has_null_curve() &&
-        _is_on_fictitious_edge (cv, ind, bound_x, bound_y, curr,
+        _is_on_fictitious_edge (cv, ind, ps_x, ps_y, curr,
                                 eq_source, eq_target))
     {
       CGAL_assertion (! eq_source && ! eq_target);
@@ -350,12 +341,8 @@ place_boundary_vertex(Face *f,
 template <class GeomTraits, class Dcel_>
 CGAL::Object Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Boundary_type bound_x, Boundary_type bound_y)
+                  Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  // Make the given curve end lies at infinity.
-  CGAL_precondition (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
-                     bound_y == MINUS_INFINITY || bound_y == PLUS_INFINITY);
-
   // Start traversing the inner CCB of the fictitious face and try to locate
   // a feature that contains the curve end.
   Halfedge   *first = *(fict_face->inner_ccbs_begin());
@@ -364,9 +351,7 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
 
   do
   {
-    if (_is_on_fictitious_edge (cv, ind,
-                                bound_x, bound_y,
-                                curr,
+    if (_is_on_fictitious_edge (cv, ind, ps_x, ps_y, curr,
                                 eq_source, eq_target))
     {
       if (eq_source)
@@ -416,13 +401,11 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
 //
 template <class GeomTraits, class Dcel_>
 typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::split_fictitious_edge
-    (Halfedge *e, Vertex *v)
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+split_fictitious_edge (Halfedge *e, Vertex *v)
 {
-  CGAL_precondition (v->boundary_in_x() == MINUS_INFINITY ||
-                     v->boundary_in_x() == PLUS_INFINITY ||
-                     v->boundary_in_y() == MINUS_INFINITY ||
-                     v->boundary_in_y() == PLUS_INFINITY);
+  CGAL_precondition (v->parameter_space_in_x() != ARR_INTERIOR ||
+                     v->parameter_space_in_y() != ARR_INTERIOR);
 
   // Increment the number of vertices at infinity.
   n_inf_verts++;
@@ -544,8 +527,8 @@ bool Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 //
 template <class GeomTraits, class Dcel_>
 typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex
-    (Vertex *v)
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+erase_redundant_vertex (Vertex *v)
 {
   CGAL_precondition (is_redundant (v));
 
@@ -616,22 +599,22 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex
 //
 template <class GeomTraits, class Dcel_>
 Comparison_result
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
-    (const Point_2& p, const Vertex* v) const
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+compare_x (const Point_2& p, const Vertex* v) const
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Boundary_type          inf_x = v->boundary_in_x();
+  const Arr_parameter_space          ps_x = v->parameter_space_in_x();
 
-  if (inf_x == MINUS_INFINITY)
+  if (ps_x == ARR_LEFT_BOUNDARY)
     return (LARGER);
-  else if (inf_x == PLUS_INFINITY)
+  else if (ps_x == ARR_RIGHT_BOUNDARY)
     return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Boundary_type          inf_y = v->boundary_in_y();
+  const Arr_parameter_space          ps_y = v->parameter_space_in_y();
 
-  if (inf_y != NO_BOUNDARY)
+  if (ps_y != ARR_INTERIOR)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
@@ -651,22 +634,22 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_x
 //
 template <class GeomTraits, class Dcel_>
 Comparison_result
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
-    (const Point_2& p, const Vertex* v) const
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+compare_xy (const Point_2& p, const Vertex* v) const
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Boundary_type          inf_x = v->boundary_in_x();
+  const Arr_parameter_space          ps_x = v->parameter_space_in_x();
 
-  if (inf_x == MINUS_INFINITY)
+  if (ps_x == ARR_LEFT_BOUNDARY)
     return (LARGER);
-  else if (inf_x == PLUS_INFINITY)
+  else if (ps_x == ARR_RIGHT_BOUNDARY)
     return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Boundary_type          inf_y = v->boundary_in_y();
+  const Arr_parameter_space          ps_y = v->parameter_space_in_y();
 
-  if (inf_y != NO_BOUNDARY)
+  if (ps_y != ARR_INTERIOR)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
@@ -682,7 +665,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
       return (res);
 
     // In case of equality, consider whether v lies at y = -oo or at y = +oo.
-    return (inf_y == MINUS_INFINITY) ? LARGER : SMALLER;
+    return (ps_y == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
   }
 
   // In this case v represents a normal point, and we compare it with p.
@@ -695,8 +678,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_xy
 //
 template <class GeomTraits, class Dcel_>
 Comparison_result
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
-    (const Point_2& p, const Halfedge* he) const
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+compare_y_at_x (const Point_2& p, const Halfedge* he) const
 {
   // In case of a valid edge, just compare p to its associated curve.
   if (! he->has_null_curve())
@@ -705,14 +688,14 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
   // Otherwise, determine on which edge of the bounding rectangle does he lie.
   // Note this can be either the top edge or the bottom edge (and not the
   // left or the right edge), as p must lie in its x-range.
-  CGAL_assertion ((he->vertex()->boundary_in_x() == NO_BOUNDARY) ||
-                  (he->vertex()->boundary_in_x() != 
-                   he->opposite()->vertex()->boundary_in_x()));
-  CGAL_assertion ((he->vertex()->boundary_in_y() != NO_BOUNDARY) &&
-                  (he->vertex()->boundary_in_y() == 
-                   he->opposite()->vertex()->boundary_in_y()));
+  CGAL_assertion ((he->vertex()->parameter_space_in_x() == ARR_INTERIOR) ||
+                  (he->vertex()->parameter_space_in_x() != 
+                   he->opposite()->vertex()->parameter_space_in_x()));
+  CGAL_assertion ((he->vertex()->parameter_space_in_y() != ARR_INTERIOR) &&
+                  (he->vertex()->parameter_space_in_y() == 
+                   he->opposite()->vertex()->parameter_space_in_y()));
 
-  if (he->vertex()->boundary_in_y() == MINUS_INFINITY)
+  if (he->vertex()->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
     // he lies on the bottom edge, so p is obviously above it.
     return (LARGER);
   else
@@ -726,9 +709,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
 template <class GeomTraits, class Dcel_>
 const typename
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::X_monotone_curve_2* 
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
-    (const Vertex *v,
-     Arr_curve_end& ind) const
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+_curve (const Vertex *v, Arr_curve_end& ind) const
 {
   // Go over the incident halfedges of v until encountering the halfedge
   // associated with a valid curve (v should have three incident halfedges,
@@ -759,11 +741,11 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_curve
 //
 template <class GeomTraits, class Dcel_>
 bool 
-Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
-    (const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Boundary_type bound_x, Boundary_type bound_y,
-     const Halfedge *he,
-     bool& eq_source, bool& eq_target)
+Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
+_is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
+                        Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+                        const Halfedge *he,
+                        bool& eq_source, bool& eq_target)
 {
   eq_source = false;
   eq_target = false;
@@ -771,18 +753,18 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   // Get the end-vertices of the edge.
   const Vertex      *v1 = he->opposite()->vertex();
   const Vertex      *v2 = he->vertex();
-  Boundary_type      he_bound;
   Comparison_result  res1, res2;
-  Arr_curve_end          v_ind = ARR_MIN_END;
+  Arr_curve_end      v_ind = ARR_MIN_END;
 
   // Check if this is a "vertical" ficitious edge.
-  if ((he_bound = v1->boundary_in_x()) != NO_BOUNDARY &&
-      he_bound == v2->boundary_in_x())
+  Arr_parameter_space he_ps_x = v1->parameter_space_in_x();
+  if (he_ps_x != ARR_INTERIOR && he_ps_x == v2->parameter_space_in_x())
   {
     // If the edge lies on x = +/- oo, the curve endpoint must also lie there.
-    CGAL_assertion (he_bound == MINUS_INFINITY || he_bound == PLUS_INFINITY);
+    CGAL_assertion ((he_ps_x == ARR_LEFT_BOUNDARY) ||
+                    (he_ps_x == ARR_RIGHT_BOUNDARY));
 
-    if (he_bound != bound_x)
+    if (he_ps_x != ps_x)
       return (false);
 
     // Compare the y-position of the curve end to the source vertex.
@@ -799,7 +781,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     else
     {
       const Arr_curve_end  ind =
-        (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
+        (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res1 =
         this->traits->compare_y_near_boundary_2_object() (cv,
@@ -825,8 +807,8 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
     }
     else
     {
-      const Arr_curve_end
-        ind = (bound_x == MINUS_INFINITY) ? ARR_MIN_END : ARR_MAX_END;
+      const Arr_curve_end ind =
+        (ps_x == ARR_LEFT_BOUNDARY) ? ARR_MIN_END : ARR_MAX_END;
 
       res2 =
         this->traits->compare_y_near_boundary_2_object() (cv,
@@ -843,15 +825,15 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::_is_on_fictitious_edge
   else
   {
     // If we reched here, we have a "horizontal" fictitious halfedge.
-    he_bound = v1->boundary_in_y();
+    Arr_parameter_space he_ps_y = v1->parameter_space_in_y();
 
-    CGAL_assertion ((he_bound == MINUS_INFINITY ||
-                     he_bound == PLUS_INFINITY) &&
-                    he_bound == v2->boundary_in_y());
+    CGAL_assertion ((he_ps_y == ARR_BOTTOM_BOUNDARY ||
+                     he_ps_y == ARR_TOP_BOUNDARY) &&
+                    he_ps_y == v2->parameter_space_in_y());
 
     // If the edge lies on y = +/- oo, the curve endpoint must also lie there
     // (and must not lies at x = +/- oo.
-    if (bound_x != NO_BOUNDARY || he_bound != bound_y)
+    if (ps_x != ARR_INTERIOR || he_ps_y != ps_y)
       return (false);
 
     // Compare the x-position of the curve end to the source vertex.

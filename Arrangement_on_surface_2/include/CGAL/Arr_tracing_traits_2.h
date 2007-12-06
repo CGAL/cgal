@@ -125,10 +125,10 @@ private:
   bool compare_endpoints_xy_op() const
   { return m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP); }
 
-  bool boundary_in_x_op() const
+  bool parameter_space_in_x_op() const
   { return m_flags & (0x1 << BOUNDARY_IN_X_OP); }
   
-  bool boundary_in_y_op() const
+  bool parameter_space_in_y_op() const
   { return m_flags & (0x1 << BOUNDARY_IN_Y_OP); }
   
   bool compare_x_near_boundary_op() const
@@ -518,7 +518,7 @@ public:
     }
   };
 
-  /*! A functor that splits an arc at a point. */
+  /*! A functor that splits an x-monotone curve at a point. */
   class Split_2 {
   private:
     typename Base::Split_2 m_object;
@@ -551,7 +551,7 @@ public:
     }
   };
 
-  /*! A functor that computes intersections between x-monotone curves. */
+  /*! A functor that computes intersections between two x-monotone curves. */
   class Intersect_2 {
   private:
     typename Base::Intersect_2 m_object;
@@ -723,15 +723,15 @@ public:
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
-  class Boundary_in_x_2 {
+  class Parameter_space_in_x_2 {
   private:
-    typename Base::Boundary_in_x_2 m_object;
+    typename Base::Parameter_space_in_x_2 m_object;
     bool m_enabled;
 
   public:
     /*! Construct */
-    Boundary_in_x_2(const Base * base, bool enabled = true) :
-      m_object(base->boundary_in_x_2_object()), m_enabled(enabled)
+    Parameter_space_in_x_2(const Base * base, bool enabled = true) :
+      m_object(base->parameter_space_in_x_2_object()), m_enabled(enabled)
     {}
     
     /*! Operate
@@ -739,13 +739,13 @@ public:
      * \param ce the curve-end identifier
      * \return the boundary type
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xcv,
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                              Arr_curve_end ce) const
     {
       if (!m_enabled) return m_object(xcv, ce);
-      std::cout << "boundary_in_x" << std::endl
+      std::cout << "parameter_space_in_x" << std::endl
                 << "  ce: " << ce << ", xcv: " << xcv << std::endl;
-      Boundary_type bt = m_object(xcv, ce);
+      Arr_parameter_space bt = m_object(xcv, ce);
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
@@ -754,28 +754,28 @@ public:
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
    */
-  class Boundary_in_y_2 {
+  class Parameter_space_in_y_2 {
   private:
-    typename Base::Boundary_in_y_2 m_object;
+    typename Base::Parameter_space_in_y_2 m_object;
     bool m_enabled;
 
   public:
     /*! Construct */
-    Boundary_in_y_2(const Base * base, bool enabled = true) :
-      m_object(base->boundary_in_y_2_object()), m_enabled(enabled) {}
+    Parameter_space_in_y_2(const Base * base, bool enabled = true) :
+      m_object(base->parameter_space_in_y_2_object()), m_enabled(enabled) {}
     
     /*! Operate
      * \param xcv the curve the end of which is tested
      * \param ce the curve-end identifier
      * \return the boundary type
      */
-    Boundary_type operator()(const X_monotone_curve_2 & xcv,
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                              Arr_curve_end ce) const
     {
       if (!m_enabled) return m_object(xcv, ce);
-        std::cout << "boundary_in_y" << std::endl
+        std::cout << "parameter_space_in_y" << std::endl
                   << "  ce: " << ce << ", xcv: " << xcv << std::endl;
-      Boundary_type bt = m_object(xcv, ce);
+      Arr_parameter_space bt = m_object(xcv, ce);
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
@@ -784,12 +784,12 @@ public:
      * \param p the point
      * \return the boundary type
      */
-    Boundary_type operator()(const Point_2 & p) const
+    Arr_parameter_space operator()(const Point_2 & p) const
     {
       if (!m_enabled) return m_object(p);
-        std::cout << "boundary_in_y" << std::endl
+        std::cout << "parameter_space_in_y" << std::endl
                   << "  point: " << p << std::endl;
-      Boundary_type bt = m_object(p);
+      Arr_parameter_space bt = m_object(p);
       std::cout << "  result: " << bt << std::endl;
       return bt;
     }
@@ -993,11 +993,11 @@ public:
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(this, compare_endpoints_xy_op()); }
 
-  Boundary_in_x_2 boundary_in_x_2_object() const
-  { return Boundary_in_x_2(this, boundary_in_x_op()); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
+  { return Parameter_space_in_x_2(this, parameter_space_in_x_op()); }
 
-  Boundary_in_y_2 boundary_in_y_2_object() const
-  { return Boundary_in_y_2(this, boundary_in_y_op()); }
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
+  { return Parameter_space_in_y_2(this, parameter_space_in_y_op()); }
   
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(this, compare_x_near_boundary_op()); }

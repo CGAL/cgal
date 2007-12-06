@@ -152,8 +152,10 @@ protected:
     formatter.read_vertex_begin();
 
     // Read the boundary conditions.
-    Boundary_type   bound_x = Boundary_type (formatter.read_vertex_index());
-    Boundary_type   bound_y = Boundary_type (formatter.read_vertex_index());
+    Arr_parameter_space   ps_x =
+      Arr_parameter_space (formatter.read_vertex_index());
+    Arr_parameter_space   ps_y =
+      Arr_parameter_space (formatter.read_vertex_index());
     int             has_point = formatter.read_vertex_index();
     DVertex        *new_v;
 
@@ -163,8 +165,7 @@ protected:
       formatter.read_point (m_point);
 
       // Allocate a new DCEL vertex and associate it with this point.
-      new_v = m_arr_access.new_vertex (&m_point,
-                                       bound_x, bound_y);
+      new_v = m_arr_access.new_vertex (&m_point, ps_x, ps_y);
 
       // Read any auxiliary data associated with the vertex.
       formatter.read_vertex_data (Vertex_handle (new_v));
@@ -172,8 +173,7 @@ protected:
     else
     {
       // Allocate a vertex at infinity.
-      new_v = m_arr_access.new_vertex (NULL,
-                                       bound_x, bound_y);
+      new_v = m_arr_access.new_vertex (NULL, ps_x, ps_y);
     }
 
     formatter.read_vertex_end();

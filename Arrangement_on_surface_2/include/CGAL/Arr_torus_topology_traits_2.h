@@ -520,7 +520,7 @@ public:
      */
     bool are_equal (const Vertex *v,
                     const X_monotone_curve_2& cv, Arr_curve_end ind,
-                    Boundary_type bound_x, Boundary_type bound_y) const;
+                    Arr_parameter_space bound_x, Arr_parameter_space bound_y) const;
 
     /*!
      * Given a curve end with boundary conditions and a face that contains the
@@ -539,8 +539,8 @@ public:
     CGAL::Object place_boundary_vertex (Face *f,
                                         const X_monotone_curve_2& cv,
                                         Arr_curve_end ind,
-                                        Boundary_type bound_x,
-                                        Boundary_type bound_y);
+                                        Arr_parameter_space bound_x,
+                                        Arr_parameter_space bound_y);
 
      /*!
       * Locate the predecessor halfedge for the given curve around a given
@@ -557,8 +557,8 @@ public:
     Halfedge* locate_around_boundary_vertex (Vertex *v,
                                              const X_monotone_curve_2& cv,
                                              Arr_curve_end ind,
-                                             Boundary_type bound_x,
-                                             Boundary_type bound_y) const;
+                                             Arr_parameter_space bound_x,
+                                             Arr_parameter_space bound_y) const;
     
     /*!
      * Receive a notification on the creation of a new boundary vertex that
@@ -572,8 +572,8 @@ public:
     void notify_on_boundary_vertex_creation (Vertex *v,
                                              const X_monotone_curve_2& cv,
                                              Arr_curve_end ind,
-                                             Boundary_type bound_x,
-                                             Boundary_type bound_y) const;
+                                             Arr_parameter_space bound_x,
+                                             Arr_parameter_space bound_y) const;
     
     /*!
      * Locate a DCEL feature that contains the given curve end.
@@ -587,8 +587,8 @@ public:
      */
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                    Arr_curve_end ind,
-                                   Boundary_type bound_x,
-                                   Boundary_type bound_y) const;
+                                   Arr_parameter_space bound_x,
+                                   Arr_parameter_space bound_y) const;
     
     /*!
      * Given two predecessor halfedges that belong to the same inner CCB of
@@ -864,16 +864,16 @@ protected:
      * checks whether boundary condition in x and y is valid
      */
     inline 
-    bool  _valid(CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) 
+    bool  _valid(CGAL::Arr_parameter_space bound_x, CGAL::Arr_parameter_space bound_y) 
         const {
         bool res = 
             ((bound_x == CGAL::AFTER_DISCONTINUITY || 
               bound_x == CGAL::BEFORE_DISCONTINUITY) &&
-             bound_y == CGAL::NO_BOUNDARY)
+             bound_y == CGAL::ARR_INTERIOR)
             ||
             ((bound_y == CGAL::AFTER_DISCONTINUITY || 
               bound_y == CGAL::BEFORE_DISCONTINUITY) &&
-             bound_x == CGAL::NO_BOUNDARY);
+             bound_x == CGAL::ARR_INTERIOR);
 #if !NDEBUG
         if (!res) {
             std::cerr << "Not valid: bd_x = " << bound_x 

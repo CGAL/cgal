@@ -158,8 +158,8 @@ protected:
 
     // Write the vertex.
     formatter.write_vertex_begin();
-    formatter.write_vertex_index (static_cast<int> (v->boundary_in_x()));
-    formatter.write_vertex_index (static_cast<int> (v->boundary_in_y()));
+    formatter.write_vertex_index (static_cast<int> (v->parameter_space_in_x()));
+    formatter.write_vertex_index (static_cast<int> (v->parameter_space_in_y()));
 
     if (! v->has_null_point())
     {

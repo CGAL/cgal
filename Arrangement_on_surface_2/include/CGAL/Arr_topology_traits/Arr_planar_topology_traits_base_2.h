@@ -152,8 +152,8 @@ public:
   void notify_on_boundary_vertex_creation (Vertex *,
                                            const X_monotone_curve_2& ,
                                            Arr_curve_end,
-                                           Boundary_type,
-                                           Boundary_type)
+                                           Arr_parameter_space,
+                                           Arr_parameter_space)
   {
     // In the planar-topology traits this function should never be invoked:
     return;

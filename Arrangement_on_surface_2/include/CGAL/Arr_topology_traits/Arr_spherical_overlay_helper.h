@@ -104,8 +104,8 @@ public:
    */  
   void before_handle_event(Event * event)
   {
-    if (event->boundary_in_y() != BEFORE_SINGULARITY &&
-        event->boundary_in_x() != AFTER_DISCONTINUITY)
+    if (event->parameter_space_in_y() != BEFORE_SINGULARITY &&
+        event->parameter_space_in_x() != AFTER_DISCONTINUITY)
       return;
 
     Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
@@ -116,7 +116,7 @@ public:
       (*(event->right_curves_begin())) :
       (*(event->left_curves_begin()));
 
-    if (event->boundary_in_y() == BEFORE_SINGULARITY)
+    if (event->parameter_space_in_y() == BEFORE_SINGULARITY)
     {
       // The curve is incident to the north pole.
       switch (sc->color()) {

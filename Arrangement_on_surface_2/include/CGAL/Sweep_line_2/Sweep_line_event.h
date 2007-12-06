@@ -15,9 +15,10 @@
 // $Id$
 // 
 //
-// Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>,
+// Author(s)     : Tali Zvi        <talizvi@post.tau.ac.il>,
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_SWEEP_LINE_EVENT_H
 #define CGAL_SWEEP_LINE_EVENT_H
@@ -93,8 +94,8 @@ protected:
                                     // their y-value to the right of the point.
 
   char               m_type;        // The event type.
-  char               m_bx;          // The boundary condition in x.
-  char               m_by;          // The boundary condition in y.
+  char               m_ps_x;        // The boundary condition in x.
+  char               m_ps_y;        // The boundary condition in y.
   char               m_finite;      // Is the event finite (associated with
                                     // a valid point.
 
@@ -103,37 +104,29 @@ public:
   /*! Default constructor. */
   Sweep_line_event() :
     m_type (0),
-    m_bx (static_cast<char> (NO_BOUNDARY)),
-    m_by (static_cast<char> (NO_BOUNDARY)),
+    m_ps_x (static_cast<char> (ARR_INTERIOR)),
+    m_ps_y (static_cast<char> (ARR_INTERIOR)),
     m_finite (1)
   {}
 
   /*! Initialize an event that is associated with a valid point. */
   void init (const Point_2& point, Attribute type,
-             Boundary_type bound_x,
-             Boundary_type bound_y)
+             Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
-    CGAL_assertion (bound_x != MINUS_INFINITY && bound_x != PLUS_INFINITY &&
-                    bound_y != MINUS_INFINITY && bound_y != PLUS_INFINITY);
-
     m_point = point;
     m_type = type;
-    m_bx = static_cast<char> (bound_x);
-    m_by = static_cast<char> (bound_y);
+    m_ps_x = static_cast<char> (ps_x);
+    m_ps_y = static_cast<char> (ps_y);
     m_finite = 1;
   }
 
   /*! Initialize an event associates with an unbounded curve end. */
   void init_at_infinity (Attribute type,
-                         Boundary_type bound_x,
-                         Boundary_type bound_y)
+                         Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
-    CGAL_assertion (bound_x == MINUS_INFINITY || bound_x == PLUS_INFINITY ||
-                    bound_y == MINUS_INFINITY || bound_y == PLUS_INFINITY);
-
     m_type = type;
-    m_bx = bound_x;
-    m_by = bound_y;
+    m_ps_x = ps_x;
+    m_ps_y = ps_y;
     m_finite = 0;
   }
 
@@ -338,31 +331,15 @@ public:
   }
 
   /*!
-   * Get an unbounded curve associated with the event.
-   * \pre The event is not associated with a finite point.
-   */
-  const X_monotone_curve_2& unbounded_curve() const
-  {
-    CGAL_precondition (!this->is_finite());
-    
-    // The event cannot be isolated.
-    if(has_left_curves())
-      return (m_leftCurves.front()->last_curve());
-
-    CGAL_assertion(has_right_curves());
-    return (m_rightCurves.front()->last_curve());
-  }
-
-  /*!
    * Get a curve associated with the event (const version).
    * \pre The event has incident curves.
    */
   const X_monotone_curve_2& curve () const
   {
-    if (! m_leftCurves.empty())
+    if (has_left_curves())
       return (m_leftCurves.front()->last_curve());
 
-    CGAL_precondition (! m_rightCurves.empty());
+    CGAL_assertion (has_right_curves());
     return (m_rightCurves.front()->last_curve());
   }
 
@@ -462,18 +439,18 @@ public:
 
   inline bool is_on_boundary () const
   {
-    return (m_bx != static_cast<char> (NO_BOUNDARY) ||
-            m_by != static_cast<char> (NO_BOUNDARY));
+    return (m_ps_x != static_cast<char> (ARR_INTERIOR) ||
+            m_ps_y != static_cast<char> (ARR_INTERIOR));
   }
 
-  inline Boundary_type boundary_in_x() const
+  inline Arr_parameter_space parameter_space_in_x() const
   {
-    return (Boundary_type (m_bx));
+    return (Arr_parameter_space (m_ps_x));
   }
 
-  inline Boundary_type boundary_in_y() const
+  inline Arr_parameter_space parameter_space_in_y() const
   {
-    return (Boundary_type (m_by));
+    return (Arr_parameter_space (m_ps_y));
   }
   //@}
 
@@ -554,39 +531,26 @@ public:
   void Sweep_line_event<Traits, Subcurve>::Print() 
   {
     std::cout << "\tEvent info: "  << "\n" ;
-    if(this->is_finite())
+    if (this->is_finite())
       std::cout << "\t" << m_point << "\n" ;
     else
     {
       std::cout << "\t";
-      Boundary_type bx = this->boundary_in_x();
+      Arr_parameter_space ps_x = this->parameter_space_in_x();
+      Arr_parameter_space ps_y = this->parameter_space_in_y();
 
-      switch(bx)
-      {
-      case MINUS_INFINITY:
-        std::cout<<" X = -oo ";
-        break;
-      case PLUS_INFINITY:
-        std::cout<<" X = +oo ";
-        break;
-      case NO_BOUNDARY:
-      default:
-        {
-          Boundary_type by = this->boundary_in_y();
-
-          switch(by)
-          {
-          case MINUS_INFINITY:
-            std::cout<<" Y = -oo ";
-            break;
-          case PLUS_INFINITY:
-            std::cout<<" Y = +oo ";
-            break;
-          case NO_BOUNDARY:
-          default:
-            CGAL_error();
-          }
-        } 
+      switch (ps_x) {
+       case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; break;
+       case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; break;
+       case ARR_INTERIOR:
+       default:
+        switch (ps_y) {
+         case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; break;
+         case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; break;
+         case ARR_INTERIOR:
+         default:
+          CGAL_error();
+        }
       }
     }
     std::cout<<"\n";

@@ -70,7 +70,8 @@ public:
 
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
-
+  typedef typename Geometry_traits_2::Boundary_category   Boundary_category;
+  
   typedef typename Topology_traits::Dcel                  Dcel;
   typedef typename Dcel::Size                             Size;
 
@@ -602,7 +603,7 @@ public:
     // Blocking access to inherited functions from the Dcel::Vertex.
     bool has_null_point () const;
     void set_point (Point_2* );
-    void set_boundary (Boundary_type , Boundary_type );
+    void set_boundary (Arr_parameter_space , Arr_parameter_space );
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
@@ -1424,6 +1425,32 @@ protected:
   /// \name Allocating and de-allocating points and curves.
   //@{
 
+  /*! Is one of the given x and y parameter spaces unbounded?
+   * These parameter spaces are typically associated with a particular curve
+   * end.
+   * \param ps_x The parameter space in x.
+   * \param ps_y The parameter space in y.
+   */
+  inline bool is_unbounded(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+    const
+  {
+    return
+      (((ps_x != ARR_INTERIOR) && (_boundary_types[ps_x] == ARR_UNBOUNDED)) ||
+       ((ps_y != ARR_INTERIOR) && (_boundary_types[ps_y] == ARR_UNBOUNDED)));
+  }
+  
+  /*! Initialize the boundary_types array */
+  inline void init_boundary_types()
+  {
+    init_boundary_types_imp(Boundary_category());
+  }
+
+  /*! Initialize the boundary_types array */
+  void init_boundary_types_imp(Arr_no_boundary_tag) {}
+  
+  /*! Initialize the boundary_types array */
+  void init_boundary_types_imp(Arr_has_boundary_tag);
+  
   /*! Allocate a new point. */
   Point_2 *_new_point (const Point_2& pt)
   {
@@ -1602,8 +1629,7 @@ protected:
                                                const DVertex *v2,
                                                Tag_false ) const
   {
-    return (geom_traits->compare_xy_2_object() (v1->point(),
-                                                v2->point()));
+    return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
 
   Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
@@ -1672,9 +1698,7 @@ protected:
    * \param to_face The face into which we should move the component.
    * \param he A halfedge lying on the outer component.
    */
-  void _move_outer_ccb (DFace *from_face,
-                        DFace *to_face,
-                        DHalfedge *he);
+  void _move_outer_ccb (DFace *from_face, DFace *to_face, DHalfedge *he);
 
   /*!
    * Move a given inner CCB (hole) from one face to another.
@@ -1682,17 +1706,14 @@ protected:
    * \param to_face The face into which we should move the component.
    * \param he A halfedge lying on the inner component.
    */
-  void _move_inner_ccb (DFace *from_face,
-                        DFace *to_face,
-                        DHalfedge *he);
+  void _move_inner_ccb (DFace *from_face, DFace *to_face, DHalfedge *he);
 
   /*!
    * Insert the given vertex as an isolated vertex inside the given face.
    * \param f The face that should contain the isolated vertex.
    * \param v The isolated vertex.
    */
-  void _insert_isolated_vertex (DFace *f,
-                                DVertex *v);
+  void _insert_isolated_vertex (DFace *f, DVertex *v);
 
   /*!
    * Move a given isolated vertex from one face to another.
@@ -1700,9 +1721,7 @@ protected:
    * \param to_face The face into which we should move the isolated vertex.
    * \param v The isolated vertex.
    */
-  void _move_isolated_vertex (DFace *from_face,
-                              DFace *to_face,
-                              DVertex *v);
+  void _move_isolated_vertex (DFace *from_face, DFace *to_face, DVertex *v);
 
   /*!
    * Create a new vertex and associate it with the given point.
@@ -1717,13 +1736,13 @@ protected:
    * \param ind The relevant curve-end.
    * \param bx The boundary condition in x.
    * \param by The boundary condition in y.
-   * \pre Either bx or by does not equal NO_BOUNDARY.
+   * \pre Either bx or by does not equal ARR_INTERIOR.
    * \return A pointer to the newly created vertex.
    */
   DVertex* _create_boundary_vertex (const X_monotone_curve_2& cv,
                                     Arr_curve_end ind,
-                                    Boundary_type bx,
-                                    Boundary_type by);
+                                    Arr_parameter_space bx,
+                                    Arr_parameter_space by);
 
   /*!
    * Locate the DCEL features that will be used for inserting the given curve
@@ -1740,8 +1759,8 @@ protected:
   DVertex* _place_and_set_curve_end (DFace *f,
                                      const X_monotone_curve_2& cv,
                                      Arr_curve_end ind,
-                                     Boundary_type bx,
-                                     Boundary_type by,
+                                     Arr_parameter_space bx,
+                                     Arr_parameter_space by,
                                      DHalfedge **p_pred);
   
   /*!
@@ -2070,8 +2089,8 @@ protected:
 
   void _notify_before_create_boundary_vertex (const X_monotone_curve_2& cv,
                                               Arr_curve_end ind,
-                                              Boundary_type bx,
-                                              Boundary_type by)
+                                              Arr_parameter_space bx,
+                                              Arr_parameter_space by)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();

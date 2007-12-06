@@ -16,7 +16,8 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_OVERLAY_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_OVERLAY_HELPER_H
@@ -142,7 +143,7 @@ void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep ()
 
   m_red_th = v_red_bl->incident_halfedges();
 
-  if (m_red_th->source()->boundary_in_x() != MINUS_INFINITY)
+  if (m_red_th->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     m_red_th = m_red_th->next()->twin();
   
   if (m_red_th->source() == v_red_tl)
@@ -152,7 +153,7 @@ void Arr_unb_planar_overlay_helper<Tr,ArrR,ArrB,Arr,Evnt,Sbcv>::before_sweep ()
     Vertex_handle_blue (m_blue_top_traits->bottom_left_vertex());
   
   m_blue_th = v_blue_bl->incident_halfedges();
-  if (m_blue_th->source()->boundary_in_x() != MINUS_INFINITY)
+  if (m_blue_th->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     m_blue_th = m_blue_th->next()->twin();
   
   if (m_blue_th->source() == v_blue_tl)
@@ -176,11 +177,11 @@ before_handle_event (Event* e)
   // In case the event occurs on the left edge of the fictitious face (x = -oo)
   // or on its top edge (finite x and y = +oo), update the fictitious top
   // halfedges.
-  if (e->boundary_in_x() == MINUS_INFINITY ||
-      (e->boundary_in_x() == NO_BOUNDARY && 
-       e->boundary_in_y() == PLUS_INFINITY))
+  if (e->parameter_space_in_x() == ARR_LEFT_BOUNDARY ||
+      (e->parameter_space_in_x() == ARR_INTERIOR && 
+       e->parameter_space_in_y() == ARR_TOP_BOUNDARY))
   {
-    switch (e->unbounded_curve().color())
+    switch (e->curve().color())
     {
     case (Traits_2::RED) :
       // Update the red top fictitious halfedge.

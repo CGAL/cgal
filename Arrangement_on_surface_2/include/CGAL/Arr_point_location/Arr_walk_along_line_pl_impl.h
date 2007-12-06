@@ -18,6 +18,7 @@
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Oren Nechushtan
 //                                      and Iddo Hanniel)
+
 #ifndef CGAL_ARR_WALK_ALONG_LINE_POINT_LOCATION_IMPL_H
 #define CGAL_ARR_WALK_ALONG_LINE_POINT_LOCATION_IMPL_H
 
@@ -332,11 +333,11 @@ _vertical_ray_shoot (const Point_2& p,
   // Check whether one of the isolated vertices in the face containing p lies
   // above (or below) it, closer than the closest halfdge we have located.
   typename Traits_adaptor_2::Compare_x_2          compare_x =
-                                        geom_traits->compare_x_2_object();
+    geom_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_xy_2         compare_xy =
-                                        geom_traits->compare_xy_2_object();
+    geom_traits->compare_xy_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2     compare_y_at_x =
-                                        geom_traits->compare_y_at_x_2_object();
+    geom_traits->compare_y_at_x_2_object();
 
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
 
@@ -436,7 +437,7 @@ _vertical_ray_shoot (const Point_2& p,
   {
     // The entire vertical segment is above (below) the query point: Return the
     // endpoint closest to it.
-    const bool    is_directed_up = (closest_he->direction() == ARR_LEFT_TO_RIGHT);
+    const bool is_directed_up = (closest_he->direction() == ARR_LEFT_TO_RIGHT);
 
     if ((shoot_up && is_directed_up) ||
         (! shoot_up && ! is_directed_up))
@@ -507,8 +508,8 @@ _is_in_connected_component (const Point_2& p,
     // skip it.
     if (first->is_fictitious())
     {
-      if (first->source()->boundary_in_y() != NO_BOUNDARY &&
-          first->target()->boundary_in_y() != NO_BOUNDARY)
+      if (first->source()->parameter_space_in_y() != ARR_INTERIOR &&
+          first->target()->parameter_space_in_y() != ARR_INTERIOR)
       {
         found_non_vertical = true;
         break;
@@ -774,8 +775,8 @@ _is_in_connected_component (const Point_2& p,
           } while ((! next_non_vert->is_fictitious() &&
                     is_vertical (next_non_vert->curve())) ||
                    (next_non_vert->is_fictitious() &&
-                    next_non_vert->source()->boundary_in_x() != 
-                    next_non_vert->target()->boundary_in_x()));
+                    next_non_vert->source()->parameter_space_in_x() != 
+                    next_non_vert->target()->parameter_space_in_x()));
 
           // In case the source of the current curve and the target of
           // the next non-vertical curve lie on opposite sides of the
@@ -853,8 +854,7 @@ _is_in_connected_component (const Point_2& p,
 template <class Arrangement>
 typename Arr_walk_along_line_point_location<Arrangement>::Halfedge_const_handle
 Arr_walk_along_line_point_location<Arrangement>::
-_first_around_vertex (Vertex_const_handle v,
-                      bool shoot_up) const
+_first_around_vertex (Vertex_const_handle v, bool shoot_up) const
 {
   // Travrse the incident halfedges of the current vertex and locate the
   // lowest one to its left and the topmost to its right.
@@ -924,10 +924,7 @@ _first_around_vertex (Vertex_const_handle v,
     // halfedge we encounter is the topmost to the right. However, if there
     // is no edge to the right, we first encounter the lowest halfedge to the
     // left.
-    if (top_right != invalid_handle)
-      return (top_right);
-    else
-      return (lowest_left);
+    return (top_right != invalid_handle) ? (top_right) : (lowest_left);
   }
 }
 

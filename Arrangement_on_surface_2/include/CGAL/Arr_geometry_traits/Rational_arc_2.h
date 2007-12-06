@@ -330,10 +330,8 @@ public:
     // Set the numerator and denominator polynomials.
     Nt_traits    nt_traits;
     const bool   valid = 
-      nt_traits.construct_polynomials (&(pcoeffs[0]),
-                                       pcoeffs.size() - 1,
-                                       &(qcoeffs[0]),
-                                       qcoeffs.size() - 1,
+      nt_traits.construct_polynomials (&(pcoeffs[0]), pcoeffs.size() - 1,
+                                       &(qcoeffs[0]), qcoeffs.size() - 1,
                                        _numer, _denom);
 
     CGAL_precondition_msg (valid,
@@ -343,25 +341,25 @@ public:
 
     // Analyze the bahaviour of the rational function at x = -oo (the source).
     Algebraic           y0;
-    const Boundary_type inf_s = _analyze_at_minus_infinity (_numer, _denom,
-                                                            y0);
+    const Arr_parameter_space inf_s =
+      _analyze_at_minus_infinity (_numer, _denom, y0);
 
-    if (inf_s == MINUS_INFINITY)
+    if (inf_s == ARR_BOTTOM_BOUNDARY)
       _info = (_info | SRC_AT_Y_MINUS_INFTY);
-    else if (inf_s == PLUS_INFINITY)
+    else if (inf_s == ARR_TOP_BOUNDARY)
       _info = (_info | SRC_AT_Y_PLUS_INFTY);
-    else // if (inf_s == NO_BOUNDARY)
+    else // if (inf_s == ARR_INTERIOR)
       _ps = Point_2 (0, y0);
 
     // Analyze the bahaviour of the rational function at x = +oo (the target).
-    const Boundary_type inf_t = _analyze_at_plus_infinity (_numer, _denom,
-                                                           y0);
+    const Arr_parameter_space inf_t =
+      _analyze_at_plus_infinity (_numer, _denom, y0);
 
-    if (inf_t == MINUS_INFINITY)
+    if (inf_t == ARR_BOTTOM_BOUNDARY)
       _info = (_info | TRG_AT_Y_MINUS_INFTY);
-    else if (inf_t == PLUS_INFINITY)
+    else if (inf_t == ARR_TOP_BOUNDARY)
       _info = (_info | TRG_AT_Y_PLUS_INFTY);
-    else // if (inf_t == NO_BOUNDARY)
+    else // if (inf_t == ARR_INTERIOR)
       _pt = Point_2 (0, y0);
 
     // Mark that the arc is valid. As it may have poles, we mark it
@@ -398,10 +396,8 @@ public:
     // Set the numerator and denominator polynomials.
     Nt_traits    nt_traits;
     const bool   valid = 
-      nt_traits.construct_polynomials (&(pcoeffs[0]),
-                                       pcoeffs.size() - 1,
-                                       &(qcoeffs[0]),
-                                       qcoeffs.size() - 1,
+      nt_traits.construct_polynomials (&(pcoeffs[0]), pcoeffs.size() - 1,
+                                       &(qcoeffs[0]), qcoeffs.size() - 1,
                                        _numer, _denom);
 
     CGAL_precondition_msg (valid,
@@ -423,13 +419,10 @@ public:
       _ps = Point_2 (x_s, 0);
       
       std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x_s);
-      const CGAL::Sign                   sign_s = 
-        (dir_right ? signs.second : signs.first);
+      const CGAL::Sign sign_s = (dir_right ? signs.second : signs.first);
 
-      if (sign_s == CGAL::NEGATIVE)
-        _info = (_info | SRC_AT_Y_MINUS_INFTY);
-      else
-        _info = (_info | SRC_AT_Y_PLUS_INFTY);
+      _info = (sign_s == CGAL::NEGATIVE) ?
+        (_info | SRC_AT_Y_MINUS_INFTY) : (_info | SRC_AT_Y_PLUS_INFTY);
     }
 
     // Set the properties of the target.
@@ -438,27 +431,27 @@ public:
     if (dir_right)
     {
       // The target point is at x = +oo.
-      const Boundary_type inf_t = _analyze_at_plus_infinity (_numer, _denom,
-                                                             y0);
+      const Arr_parameter_space inf_t =
+        _analyze_at_plus_infinity (_numer, _denom, y0);
 
-      if (inf_t == MINUS_INFINITY)
+      if (inf_t == ARR_BOTTOM_BOUNDARY)
         _info = (_info | TRG_AT_Y_MINUS_INFTY);
-      else if (inf_t == PLUS_INFINITY)
+      else if (inf_t == ARR_TOP_BOUNDARY)
         _info = (_info | TRG_AT_Y_PLUS_INFTY);
-      else // if (inf_t == NO_BOUNDARY)
+      else // if (inf_t == ARR_INTERIOR)
         _pt = Point_2 (0, y0);
     }
     else
     {
       // The target point is at x = -oo.
-      const Boundary_type inf_t = _analyze_at_minus_infinity (_numer, _denom,
-                                                              y0);
+      const Arr_parameter_space inf_t =
+        _analyze_at_minus_infinity (_numer, _denom, y0);
 
-      if (inf_t == MINUS_INFINITY)
+      if (inf_t == ARR_BOTTOM_BOUNDARY)
         _info = (_info | TRG_AT_Y_MINUS_INFTY);
-      else if (inf_t == PLUS_INFINITY)
+      else if (inf_t == ARR_TOP_BOUNDARY)
         _info = (_info | TRG_AT_Y_PLUS_INFTY);
-      else // if (inf_t == NO_BOUNDARY)
+      else // if (inf_t == ARR_INTERIOR)
         _pt = Point_2 (0, y0);
     }
 
@@ -494,10 +487,8 @@ public:
     // Set the numerator and denominator polynomials.
     Nt_traits    nt_traits;
     const bool   valid = 
-      nt_traits.construct_polynomials (&(pcoeffs[0]),
-                                       pcoeffs.size() - 1,
-                                       &(qcoeffs[0]),
-                                       qcoeffs.size() - 1,
+      nt_traits.construct_polynomials (&(pcoeffs[0]), pcoeffs.size() - 1,
+                                       &(qcoeffs[0]), qcoeffs.size() - 1,
                                        _numer, _denom);
 
     CGAL_precondition_msg (valid,
@@ -580,17 +571,6 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the x-coordinate of the source point is infinite. */
-  Boundary_type source_infinite_in_x_depricated () const
-  {
-    if ((_info & SRC_AT_X_MINUS_INFTY) != 0)
-      return (MINUS_INFINITY);
-    else if ((_info & SRC_AT_X_PLUS_INFTY) != 0)
-      return (PLUS_INFINITY);
-    else
-      return (NO_BOUNDARY);
-  }
-
   /*! Check if the y-coordinate of the source point is infinite. */
   Arr_parameter_space source_infinite_in_y () const
   {
@@ -598,17 +578,6 @@ public:
       ((_info & SRC_AT_Y_MINUS_INFTY) != 0) ? ARR_BOTTOM_BOUNDARY :
       ((_info & SRC_AT_Y_PLUS_INFTY) != 0) ? ARR_TOP_BOUNDARY :
       ARR_INTERIOR;
-  }
-
-  /*! Check if the y-coordinate of the source point is infinite. */
-  Boundary_type source_infinite_in_y_depricated () const
-  {
-    if ((_info & SRC_AT_Y_MINUS_INFTY) != 0)
-      return (MINUS_INFINITY);
-    else if ((_info & SRC_AT_Y_PLUS_INFTY) != 0)
-      return (PLUS_INFINITY);
-    else
-      return (NO_BOUNDARY);
   }
 
   /*! Check if the x-coordinate of the target point is infinite. */
@@ -620,17 +589,6 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the x-coordinate of the target point is infinite. */
-  Boundary_type target_infinite_in_x_depricated () const
-  {
-    if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
-      return (MINUS_INFINITY);
-    else if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
-      return (PLUS_INFINITY);
-    else
-      return (NO_BOUNDARY);
-  }
-
   /*! Check if the y-coordinate of the target point is infinite. */
   Arr_parameter_space target_infinite_in_y () const
   {
@@ -640,23 +598,12 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the y-coordinate of the target point is infinite. */
-  Boundary_type target_infinite_in_y_depricated () const
-  {
-    if ((_info & TRG_AT_Y_MINUS_INFTY) != 0)
-      return (MINUS_INFINITY);
-    else if ((_info & TRG_AT_Y_PLUS_INFTY) != 0)
-      return (PLUS_INFINITY);
-    else
-      return (NO_BOUNDARY);
-  }
-  
   /*! Get the source point. */
   const Point_2& source () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       source_infinite_in_x_depricated() == NO_BOUNDARY &&
-                       source_infinite_in_y_depricated() == NO_BOUNDARY);
+                       source_infinite_in_x() == ARR_INTERIOR &&
+                       source_infinite_in_y() == ARR_INTERIOR);
     return (_ps);
   }
 
@@ -664,7 +611,7 @@ public:
   Algebraic source_x () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       source_infinite_in_x_depricated() == NO_BOUNDARY);
+                       source_infinite_in_x() == ARR_INTERIOR);
     return (_ps.x());
   }
 
@@ -672,7 +619,7 @@ public:
   Algebraic source_y () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       source_infinite_in_y_depricated() == NO_BOUNDARY);
+                       source_infinite_in_y() == ARR_INTERIOR);
     return (_ps.y());
   }
 
@@ -680,8 +627,8 @@ public:
   const Point_2& target () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       target_infinite_in_x_depricated() == NO_BOUNDARY &&
-                       target_infinite_in_y_depricated() == NO_BOUNDARY);
+                       target_infinite_in_x() == ARR_INTERIOR &&
+                       target_infinite_in_y() == ARR_INTERIOR);
     return (_pt);
   }
 
@@ -689,7 +636,7 @@ public:
   Algebraic target_x () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       target_infinite_in_x_depricated() == NO_BOUNDARY);
+                       target_infinite_in_x() == ARR_INTERIOR);
     return (_pt.x());
   }
 
@@ -697,7 +644,7 @@ public:
   Algebraic target_y () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-                       target_infinite_in_y_depricated() == NO_BOUNDARY);
+                       target_infinite_in_y() == ARR_INTERIOR);
     return (_pt.y());
   }
 
@@ -708,15 +655,6 @@ public:
       source_infinite_in_x() : target_infinite_in_x();
   }
 
-  /*! Check if the x-coordinate of the left point is infinite. */
-  Boundary_type left_infinite_in_x_depricated () const
-  {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (source_infinite_in_x_depricated());
-    else
-      return (target_infinite_in_x_depricated());
-  }
-  
   /*! Check if the y-coordinate of the left point is infinite. */
   Arr_parameter_space left_infinite_in_y () const
   {
@@ -724,29 +662,11 @@ public:
       source_infinite_in_y() : target_infinite_in_y();
   }
 
-  /*! Check if the y-coordinate of the left point is infinite. */
-  Boundary_type left_infinite_in_y_depricated () const
-  {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (source_infinite_in_y_depricated());
-    else
-      return (target_infinite_in_y_depricated());
-  }
-  
   /*! Check if the x-coordinate of the right point is infinite. */
   Arr_parameter_space right_infinite_in_x () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
       target_infinite_in_x() : source_infinite_in_x();
-  }
-
-  /*! Check if the x-coordinate of the right point is infinite. */
-  Boundary_type right_infinite_in_x_depricated () const
-  {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (target_infinite_in_x_depricated());
-    else
-      return (source_infinite_in_x_depricated());
   }
 
   /*! Check if the y-coordinate of the right point is infinite. */
@@ -756,28 +676,19 @@ public:
       target_infinite_in_y() : source_infinite_in_y();
   }
 
-  /*! Check if the y-coordinate of the right point is infinite. */
-  Boundary_type right_infinite_in_y_depricated () const
-  {
-    if ((_info & IS_DIRECTED_RIGHT) != 0)
-      return (target_infinite_in_y_depricated());
-    else
-      return (source_infinite_in_y_depricated());
-  }
-  
   /*! Get the left endpoint. */
   const Point_2& left () const
   {
-    CGAL_precondition (left_infinite_in_x_depricated() == NO_BOUNDARY &&
-                       left_infinite_in_y_depricated() == NO_BOUNDARY);
+    CGAL_precondition (left_infinite_in_x() == ARR_INTERIOR &&
+                       left_infinite_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
   /*! Get the right endpoint. */
   const Point_2& right () const
   {
-    CGAL_precondition (right_infinite_in_x_depricated() == NO_BOUNDARY &&
-                       right_infinite_in_y_depricated() == NO_BOUNDARY);
+    CGAL_precondition (right_infinite_in_x() == ARR_INTERIOR &&
+                       right_infinite_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
@@ -942,43 +853,6 @@ public:
   }
 
   /*!
-   * Compare the x-coordinate of a vertical asymptote of the arc (one of its
-   * ends) and the given point.
-   */
-  Comparison_result compare_end_depricated (const Point_2& p,
-                                            Arr_curve_end ind) const
-  {
-    Algebraic                x0;
-
-    if (ind == ARR_MIN_END)
-    {
-      CGAL_assertion (left_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      left_infinite_in_y_depricated() != NO_BOUNDARY);
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-        x0 = _ps.x();
-      else
-        x0 = _pt.x();
-    }
-    else
-    {
-      CGAL_assertion (right_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      right_infinite_in_y_depricated() != NO_BOUNDARY);
-      if ((_info & IS_DIRECTED_RIGHT) != 0)
-        x0 = _pt.x();
-      else
-        x0 = _ps.x();
-    }
-
-    // Compare the x-coordinates.
-    const Comparison_result  res = CGAL::compare (p.x(), x0);
-
-    if (res != EQUAL)
-      return (res);
-
-    return ((ind == ARR_MIN_END) ? SMALLER : LARGER);
-  }
-
-  /*!
    * Compare the x-coordinate of a vertical asymptotes of the two arcs.
    */
   Comparison_result compare_ends (Arr_curve_end ind1,
@@ -989,8 +863,8 @@ public:
 
     if (ind1 == ARR_MIN_END)
     {
-      CGAL_assertion (left_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      left_infinite_in_y_depricated() != NO_BOUNDARY);
+      CGAL_assertion (left_infinite_in_x() == ARR_INTERIOR &&
+                      left_infinite_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _ps.x();
       else
@@ -998,8 +872,8 @@ public:
     }
     else
     {
-      CGAL_assertion (right_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      right_infinite_in_y_depricated() != NO_BOUNDARY);
+      CGAL_assertion (right_infinite_in_x() == ARR_INTERIOR &&
+                      right_infinite_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _pt.x();
       else
@@ -1011,8 +885,8 @@ public:
 
     if (ind2 == ARR_MIN_END)
     {
-      CGAL_assertion (arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      arc.left_infinite_in_y_depricated() != NO_BOUNDARY);
+      CGAL_assertion (arc.left_infinite_in_x() == ARR_INTERIOR &&
+                      arc.left_infinite_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._ps.x();
       else
@@ -1020,8 +894,8 @@ public:
     }
     else
     {
-      CGAL_assertion (arc.right_infinite_in_x_depricated() == NO_BOUNDARY &&
-                      arc.right_infinite_in_y_depricated() != NO_BOUNDARY);
+      CGAL_assertion (arc.right_infinite_in_x() == ARR_INTERIOR &&
+                      arc.right_infinite_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._pt.x();
       else
@@ -1116,14 +990,14 @@ public:
     // Both arcs are defined to the same side (left or right) of the vertical
     // asymptote. If one is defined at y = -oo and the other at y = +oo, we
     // preform a "lexicographic" comparison.
-    const Boundary_type  inf_y1 = 
-      (ind1 == ARR_MIN_END ? left_infinite_in_y_depricated() : right_infinite_in_y_depricated());
-    const Boundary_type  inf_y2 = 
-      (ind2 == ARR_MIN_END ? arc.left_infinite_in_y_depricated() : arc.right_infinite_in_y_depricated());
+    const Arr_parameter_space  inf_y1 = 
+      (ind1 == ARR_MIN_END ? left_infinite_in_y() : right_infinite_in_y());
+    const Arr_parameter_space  inf_y2 = (ind2 == ARR_MIN_END) ?
+      arc.left_infinite_in_y() : arc.right_infinite_in_y();
 
-    if (inf_y1 == MINUS_INFINITY && inf_y2 == PLUS_INFINITY)
+    if (inf_y1 == ARR_BOTTOM_BOUNDARY && inf_y2 == ARR_TOP_BOUNDARY)
       return (SMALLER);
-    else if (inf_y1 == PLUS_INFINITY && inf_y2 == MINUS_INFINITY)
+    else if (inf_y1 == ARR_TOP_BOUNDARY && inf_y2 == ARR_BOTTOM_BOUNDARY)
       return (LARGER);
 
     // If we reached here, the denominators Q1 and Q2 are equal. We therefore
@@ -1242,18 +1116,18 @@ public:
    */
   Comparison_result compare_at_minus_infinity (const Self& arc) const
   {
-    CGAL_precondition (left_infinite_in_x_depricated() == MINUS_INFINITY &&
-                       arc.left_infinite_in_x_depricated() == MINUS_INFINITY);
+    CGAL_precondition (left_infinite_in_x() == ARR_LEFT_BOUNDARY &&
+                       arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY);
 
     // Check for easy cases, when the infinity at y of both ends is different.
-    const Boundary_type  inf_y1 = left_infinite_in_y_depricated();
-    const Boundary_type  inf_y2 = arc.left_infinite_in_y_depricated();
+    const Arr_parameter_space  inf_y1 = left_infinite_in_y();
+    const Arr_parameter_space  inf_y2 = arc.left_infinite_in_y();
 
     if (inf_y1 != inf_y2)
     {
-      if (inf_y1 == MINUS_INFINITY || inf_y2 == PLUS_INFINITY)
+      if (inf_y1 == ARR_BOTTOM_BOUNDARY || inf_y2 == ARR_TOP_BOUNDARY)
         return (SMALLER);
-      else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
+      else if (inf_y1 == ARR_TOP_BOUNDARY || inf_y2 == ARR_BOTTOM_BOUNDARY)
         return (LARGER);
       else
         CGAL_error();
@@ -1298,18 +1172,18 @@ public:
    */
   Comparison_result compare_at_plus_infinity (const Self& arc) const
   {
-    CGAL_precondition (right_infinite_in_x_depricated() == PLUS_INFINITY &&
-                       arc.right_infinite_in_x_depricated() == PLUS_INFINITY);
+    CGAL_precondition (right_infinite_in_x() == ARR_RIGHT_BOUNDARY &&
+                       arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY);
 
     // Check for easy cases, when the infinity at y of both ends is different.
-    const Boundary_type  inf_y1 = right_infinite_in_y_depricated();
-    const Boundary_type  inf_y2 = arc.right_infinite_in_y_depricated();
+    const Arr_parameter_space  inf_y1 = right_infinite_in_y();
+    const Arr_parameter_space  inf_y2 = arc.right_infinite_in_y();
 
     if (inf_y1 != inf_y2)
     {
-      if (inf_y1 == MINUS_INFINITY || inf_y2 == PLUS_INFINITY)
+      if (inf_y1 == ARR_BOTTOM_BOUNDARY || inf_y2 == ARR_TOP_BOUNDARY)
         return (SMALLER);
-      else if (inf_y1 == PLUS_INFINITY || inf_y2 == MINUS_INFINITY)
+      else if (inf_y1 == ARR_TOP_BOUNDARY || inf_y2 == ARR_BOTTOM_BOUNDARY)
         return (LARGER);
       else
         CGAL_error();
@@ -1329,8 +1203,8 @@ public:
     //
     // It is clear that we should look at the sign of the polynomial
     // p1(x)*q2(x) - p2(x)*q1(x) at x = +oo.
-    const CGAL::Sign  sign_ip = _sign_at_plus_infinity (_numer*arc._denom - 
-                                                        arc._numer*_denom);
+    const CGAL::Sign  sign_ip =
+      _sign_at_plus_infinity (_numer*arc._denom - arc._numer*_denom);
 
     if (sign_ip == CGAL::ZERO)
     {
@@ -1358,43 +1232,44 @@ public:
       return (false);
 
     // Check that the arc endpoints are the same.
-    Boundary_type inf1 = left_infinite_in_x_depricated();
-    Boundary_type inf2 = arc.left_infinite_in_x_depricated();
+    Arr_parameter_space inf1 = left_infinite_in_x();
+    Arr_parameter_space inf2 = arc.left_infinite_in_x();
 
     if (inf1 != inf2)
       return (false);
 
-    if (inf1 == NO_BOUNDARY)
+    if (inf1 == ARR_INTERIOR)
     {
-        inf1 = left_infinite_in_y_depricated();
-        inf2 = arc.left_infinite_in_y_depricated();
+        inf1 = left_infinite_in_y();
+        inf2 = arc.left_infinite_in_y();
 
         if (inf1 != inf2)
           return (false);
     }
 
-    if (inf1 == NO_BOUNDARY &&
+    if (inf1 == ARR_INTERIOR &&
         CGAL::compare(left().x(), arc.left().x()) != EQUAL)
     {
       return (false);
     }
 
-    inf1 = right_infinite_in_x_depricated();
-    inf2 = arc.right_infinite_in_x_depricated();
+    inf1 = right_infinite_in_x();
+    inf2 = arc.right_infinite_in_x();
 
     if (inf1 != inf2)
       return (false);
 
-    if (inf1 == NO_BOUNDARY)
+    if (inf1 == ARR_INTERIOR)
     {
-        inf1 = right_infinite_in_y_depricated();
-        inf2 = arc.right_infinite_in_y_depricated();
+        inf1 = right_infinite_in_y();
+        inf2 = arc.right_infinite_in_y();
 
         if (inf1 != inf2)
           return (false);
     }
 
-    if (inf1 == NO_BOUNDARY && CGAL::compare(right().x(), arc.right().x()) != EQUAL)
+    if (inf1 == ARR_INTERIOR &&
+        CGAL::compare(right().x(), arc.right().x()) != EQUAL)
       return (false);
 
     // If we reached here, the two arc are equal:
@@ -1420,15 +1295,15 @@ public:
     // other.
     Alg_kernel   ker;
 
-    return ((right_infinite_in_x_depricated() == NO_BOUNDARY &&
-             right_infinite_in_y_depricated() == NO_BOUNDARY &&
-             arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
-             arc.left_infinite_in_y_depricated() == NO_BOUNDARY &&
+    return ((right_infinite_in_x() == ARR_INTERIOR &&
+             right_infinite_in_y() == ARR_INTERIOR &&
+             arc.left_infinite_in_x() == ARR_INTERIOR &&
+             arc.left_infinite_in_y() == ARR_INTERIOR &&
              ker.equal_2_object() (right(), arc.left())) ||
-            (left_infinite_in_x_depricated() == NO_BOUNDARY &&
-             left_infinite_in_y_depricated() == NO_BOUNDARY &&
-             arc.right_infinite_in_x_depricated() == NO_BOUNDARY &&
-             arc.right_infinite_in_y_depricated() == NO_BOUNDARY &&
+            (left_infinite_in_x() == ARR_INTERIOR &&
+             left_infinite_in_y() == ARR_INTERIOR &&
+             arc.right_infinite_in_x() == ARR_INTERIOR &&
+             arc.right_infinite_in_y() == ARR_INTERIOR &&
              ker.equal_2_object() (left(), arc.right())));
   }
   //@}
@@ -1489,12 +1364,12 @@ public:
 
       // Locate the left curve-end with larger x-coordinate.
       bool             at_minus_infinity = false;
-      Boundary_type    inf_l1 = left_infinite_in_x_depricated();
-      Boundary_type    inf_l2 = arc.left_infinite_in_x_depricated();
+      Arr_parameter_space    inf_l1 = left_infinite_in_x();
+      Arr_parameter_space    inf_l2 = arc.left_infinite_in_x();
       Point_2          p_left;
       int              info_left;
 
-      if (inf_l1 == NO_BOUNDARY && inf_l2 == NO_BOUNDARY)
+      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
       {
         // Let p_left be the rightmost of the two left endpoints.
         if (ker.compare_x_2_object() (left1, left2) == LARGER)
@@ -1508,13 +1383,13 @@ public:
           info_left = info_left2;
         }
       }
-      else if (inf_l1 == NO_BOUNDARY)
+      else if (inf_l1 == ARR_INTERIOR)
       {
         // Let p_left be the left endpoint of (*this).
         p_left = left1;
         info_left = info_left1;
       }
-      else if (inf_l2 == NO_BOUNDARY)
+      else if (inf_l2 == ARR_INTERIOR)
       {
         // Let p_left be the left endpoint of the other arc.
         p_left = left2;
@@ -1529,12 +1404,12 @@ public:
 
       // Locate the right curve-end with smaller x-coordinate.
       bool             at_plus_infinity = false;
-      Boundary_type    inf_r1 = right_infinite_in_x_depricated();
-      Boundary_type    inf_r2 = arc.right_infinite_in_x_depricated();
+      Arr_parameter_space    inf_r1 = right_infinite_in_x();
+      Arr_parameter_space    inf_r2 = arc.right_infinite_in_x();
       Point_2          p_right;
       int              info_right;
 
-      if (inf_r1 == NO_BOUNDARY && inf_r2 == NO_BOUNDARY)
+      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
       {
         // Let p_right be the rightmost of the two right endpoints.
         if (ker.compare_x_2_object() (right1, right2) == SMALLER)
@@ -1548,13 +1423,13 @@ public:
           info_right = info_right2;
         }
       }
-      else if (inf_r1 == NO_BOUNDARY)
+      else if (inf_r1 == ARR_INTERIOR)
       {
         // Let p_right be the right endpoint of (*this).
         p_right = right1;
         info_right = info_right1;
       }
-      else if (inf_r2 == NO_BOUNDARY)
+      else if (inf_r2 == ARR_INTERIOR)
       {
         // Let p_right be the right endpoint of the other arc.
         p_right = right2;
@@ -1668,11 +1543,11 @@ public:
       Alg_kernel   ker;
     );
     CGAL_precondition (this->point_position(p) == EQUAL &&
-                       (source_infinite_in_x_depricated() != NO_BOUNDARY ||
-                        source_infinite_in_y_depricated() != NO_BOUNDARY ||
+                       (source_infinite_in_x() != ARR_INTERIOR ||
+                        source_infinite_in_y() != ARR_INTERIOR ||
                         ! ker.equal_2_object() (p, _ps)) &&
-                       (target_infinite_in_x_depricated() != NO_BOUNDARY ||
-                        target_infinite_in_y_depricated() != NO_BOUNDARY ||
+                       (target_infinite_in_x() != ARR_INTERIOR ||
+                        target_infinite_in_y() != ARR_INTERIOR ||
                         ! ker.equal_2_object() (p, _pt)));
 
     // Make copies of the current arc.
@@ -1712,30 +1587,30 @@ public:
     // Check if we should extend the arc to the left or to the right.
     Alg_kernel   ker;
 
-    if (right_infinite_in_x_depricated() == NO_BOUNDARY &&
-        right_infinite_in_y_depricated() == NO_BOUNDARY &&
-        arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
-        arc.left_infinite_in_y_depricated() == NO_BOUNDARY &&
+    if (right_infinite_in_x() == ARR_INTERIOR &&
+        right_infinite_in_y() == ARR_INTERIOR &&
+        arc.left_infinite_in_x() == ARR_INTERIOR &&
+        arc.left_infinite_in_y() == ARR_INTERIOR &&
         ker.equal_2_object() (right(), arc.left()))
     {
       // Extend the arc to the right.
       if ((_info & IS_DIRECTED_RIGHT) != 0)
       {
-        if (arc.right_infinite_in_x_depricated() == NO_BOUNDARY &&
-            arc.right_infinite_in_y_depricated() == NO_BOUNDARY)
+        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
+            arc.right_infinite_in_y() == ARR_INTERIOR)
         {
           _pt = arc.right();
         }
         else
         {
-          if (arc.right_infinite_in_x_depricated() == MINUS_INFINITY)
+          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
             _info = (_info | TRG_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x_depricated() == PLUS_INFINITY)
+          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
             _info = (_info | TRG_AT_X_PLUS_INFTY);
 
-          if (arc.right_infinite_in_y_depricated() == MINUS_INFINITY)
+          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
             _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y_depricated() == PLUS_INFINITY)
+          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
             _info = (_info | TRG_AT_Y_PLUS_INFTY);
 
           _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
@@ -1743,21 +1618,21 @@ public:
       }
       else
       {
-        if (arc.right_infinite_in_x_depricated() == NO_BOUNDARY &&
-            arc.right_infinite_in_y_depricated() == NO_BOUNDARY)
+        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
+            arc.right_infinite_in_y() == ARR_INTERIOR)
         {
           _ps = arc.right();
         }
         else
         {
-          if (arc.right_infinite_in_x_depricated() == MINUS_INFINITY)
+          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
             _info = (_info | SRC_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x_depricated() == PLUS_INFINITY)
+          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
             _info = (_info | SRC_AT_X_PLUS_INFTY);
 
-          if (arc.right_infinite_in_y_depricated() == MINUS_INFINITY)
+          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
             _info = (_info | SRC_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y_depricated() == PLUS_INFINITY)
+          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
             _info = (_info | SRC_AT_Y_PLUS_INFTY);
 
           _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
@@ -1766,30 +1641,30 @@ public:
     }
     else
     {
-      CGAL_precondition (left_infinite_in_x_depricated() == NO_BOUNDARY &&
-                         left_infinite_in_y_depricated() == NO_BOUNDARY &&
-                         arc.right_infinite_in_x_depricated() == NO_BOUNDARY &&
-                         arc.right_infinite_in_y_depricated() == NO_BOUNDARY &&
+      CGAL_precondition (left_infinite_in_x() == ARR_INTERIOR &&
+                         left_infinite_in_y() == ARR_INTERIOR &&
+                         arc.right_infinite_in_x() == ARR_INTERIOR &&
+                         arc.right_infinite_in_y() == ARR_INTERIOR &&
                          ker.equal_2_object() (left(), arc.right()));
 
       // Extend the arc to the left.
       if ((_info & IS_DIRECTED_RIGHT) != 0)
       {
-        if (arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
-            arc.left_infinite_in_y_depricated() == NO_BOUNDARY)
+        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
+            arc.left_infinite_in_y() == ARR_INTERIOR)
         {
           _ps = arc.left();
         }
         else
         {
-          if (arc.left_infinite_in_x_depricated() == MINUS_INFINITY)
+          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
             _info = (_info | SRC_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x_depricated() == PLUS_INFINITY)
+          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
             _info = (_info | SRC_AT_X_PLUS_INFTY);
 
-          if (arc.left_infinite_in_y_depricated() == MINUS_INFINITY)
+          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
             _info = (_info | SRC_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y_depricated() == PLUS_INFINITY)
+          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
             _info = (_info | SRC_AT_Y_PLUS_INFTY);
 
           _ps = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
@@ -1797,21 +1672,21 @@ public:
       }
       else
       {
-        if (arc.left_infinite_in_x_depricated() == NO_BOUNDARY &&
-            arc.left_infinite_in_y_depricated() == NO_BOUNDARY)
+        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
+            arc.left_infinite_in_y() == ARR_INTERIOR)
         {
           _pt = arc.left();
         }
         else
         {
-          if (arc.left_infinite_in_x_depricated() == MINUS_INFINITY)
+          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
             _info = (_info | TRG_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x_depricated() == PLUS_INFINITY)
+          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
             _info = (_info | TRG_AT_X_PLUS_INFTY);
 
-          if (arc.left_infinite_in_y_depricated() == MINUS_INFINITY)
+          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
             _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y_depricated() == PLUS_INFINITY)
+          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
             _info = (_info | TRG_AT_Y_PLUS_INFTY);
 
           _pt = (arc._info & IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
@@ -1865,24 +1740,24 @@ public:
     os << ") on ";
 
     // Print the definition range.
-    Boundary_type      inf_x = source_infinite_in_x_depricated();
-    if (inf_x == MINUS_INFINITY) 
+    Arr_parameter_space      inf_x = source_infinite_in_x();
+    if (inf_x == ARR_LEFT_BOUNDARY) 
       os << "(-oo";
-    else if (inf_x == PLUS_INFINITY)
+    else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "(+oo";
-    else if (source_infinite_in_y_depricated() != NO_BOUNDARY)
+    else if (source_infinite_in_y() != ARR_INTERIOR)
       os << '(' << source_x();
     else
       os << '[' << source().x();
  
     os << ", ";
-    inf_x = target_infinite_in_x_depricated();
+    inf_x = target_infinite_in_x();
 
-    if (inf_x == MINUS_INFINITY) 
+    if (inf_x == ARR_LEFT_BOUNDARY) 
       os << "-oo)";
-    else if (inf_x == PLUS_INFINITY)
+    else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "+oo)";
-    else if (target_infinite_in_y_depricated() != NO_BOUNDARY)
+    else if (target_infinite_in_y() != ARR_INTERIOR)
       os << target_x() << ')';
     else
       os << target().x() << ']';
@@ -1994,13 +1869,11 @@ protected:
       return (false);
 
     // Check if we have a vertical asymptote at the source point.
-    if (eq_src &&
-        (_info & (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY)) != 0)
+    if (eq_src && (_info & (SRC_AT_Y_MINUS_INFTY | SRC_AT_Y_PLUS_INFTY)) != 0)
       return (false);
 
     // Check if we have a vertical asymptote at the target point.
-    if (eq_trg &&
-        (_info & (TRG_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY)) != 0)
+    if (eq_trg && (_info & (TRG_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY)) != 0)
       return (false);
 
     // If we reached here, the value is in the true x-range of the arc.
@@ -2066,9 +1939,9 @@ protected:
    * \param y Output: The value of the horizontal asymptote (if exists).
    * \return The infinity type for the y-coordinate at x = -oo.
    */
-  Boundary_type _analyze_at_minus_infinity (const Polynomial& P,
-                                            const Polynomial& Q,
-                                            Algebraic& y) const
+  Arr_parameter_space _analyze_at_minus_infinity (const Polynomial& P,
+                                                  const Polynomial& Q,
+                                                  Algebraic& y) const
   {
     // Get the degree of the polynomials.
     Nt_traits    nt_traits;
@@ -2079,7 +1952,7 @@ protected:
     {
       // We have a zero polynomial or a zero asymptote.
       y = 0;
-      return (NO_BOUNDARY);
+      return (ARR_INTERIOR);
     }
 
     // Get the leading coefficients.
@@ -2090,16 +1963,15 @@ protected:
     {
       // We have a horizontal asymptote.
       y = p_lead / q_lead;
-      return (NO_BOUNDARY);
+      return (ARR_INTERIOR);
     }
 
     // We have a tendency to infinity.
     const int    def_diff = deg_p - deg_q;
 
-    if (CGAL::sign (p_lead) == CGAL::sign (q_lead))
-      return ((def_diff % 2 == 0) ? PLUS_INFINITY : MINUS_INFINITY);
-    else
-      return ((def_diff % 2 == 0) ? MINUS_INFINITY : PLUS_INFINITY);
+    return (CGAL::sign (p_lead) == CGAL::sign (q_lead)) ?
+      ((def_diff % 2 == 0) ? ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY) :
+      ((def_diff % 2 == 0) ? ARR_BOTTOM_BOUNDARY : ARR_TOP_BOUNDARY);
   }
 
   /*!
@@ -2107,9 +1979,9 @@ protected:
    * \param y Output: The value of the horizontal asymptote (if exists).
    * \return The infinity type for the y-coordinate at x = +oo.
    */
-  Boundary_type _analyze_at_plus_infinity (const Polynomial& P,
-                                           const Polynomial& Q,
-                                           Algebraic& y) const
+  Arr_parameter_space _analyze_at_plus_infinity (const Polynomial& P,
+                                                 const Polynomial& Q,
+                                                 Algebraic& y) const
   {
     // Get the degree of the polynomials.
     Nt_traits    nt_traits;
@@ -2120,7 +1992,7 @@ protected:
     {
       // We have a zero polynomial or a zero asymptote.
       y = 0;
-      return (NO_BOUNDARY);
+      return (ARR_INTERIOR);
     }
 
     // Get the leading coefficients.
@@ -2131,14 +2003,12 @@ protected:
     {
       // We have a horizontal asymptote.
       y = p_lead / q_lead;
-      return (NO_BOUNDARY);
+      return (ARR_INTERIOR);
     }
 
     // We have a tendency to infinity.
-    if (CGAL::sign (p_lead) == CGAL::sign (q_lead))
-      return (PLUS_INFINITY);
-    else
-      return (MINUS_INFINITY);
+    return (CGAL::sign (p_lead) == CGAL::sign (q_lead)) ?
+      ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY;
   }
 
   /*!
@@ -2474,20 +2344,20 @@ class _Rational_arc_2 : public _Base_rational_arc_2<Alg_kernel_, Nt_traits_>
 {
 public:
 
-  typedef Alg_kernel_                                  Alg_kernel;
-  typedef Nt_traits_                                   Nt_traits;
-  typedef _Base_rational_arc_2<Alg_kernel, Nt_traits>  Base;
-  typedef _Rational_arc_2<Alg_kernel, Nt_traits>       Self;
+  typedef Alg_kernel_                                   Alg_kernel;
+  typedef Nt_traits_                                    Nt_traits;
+  typedef _Base_rational_arc_2<Alg_kernel, Nt_traits>   Base;
+  typedef _Rational_arc_2<Alg_kernel, Nt_traits>        Self;
   typedef _Continuous_rational_arc_2<Alg_kernel, Nt_traits>
-                                                       Continuous_arc;
+                                                        Continuous_arc;
 
-  typedef typename Base::Algebraic                Algebraic;
-  typedef typename Base::Point_2                  Point_2;
+  typedef typename Base::Algebraic                      Algebraic;
+  typedef typename Base::Point_2                        Point_2;
 
-  typedef typename Base::Integer                  Integer;
-  typedef typename Base::Rational                 Rational;
-  typedef typename Base::Rat_vector               Rat_vector;
-  typedef typename Base::Polynomial               Polynomial;
+  typedef typename Base::Integer                        Integer;
+  typedef typename Base::Rational                       Rational;
+  typedef typename Base::Rat_vector                     Rat_vector;
+  typedef typename Base::Polynomial                     Polynomial;
 
   /// \name Constrcution methods.
   //@{

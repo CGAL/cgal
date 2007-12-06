@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
 
 #ifndef CGAL_ARRANGEMENT_ZONE_2_H
@@ -155,8 +156,7 @@ public:
    * \param _arr The arrangement for which we compute the zone.
    * \param _visitor A pointer to a zone-visitor object.
    */
-  Arrangement_zone_2 (Arrangement_2& _arr,
-		      Visitor *_visitor) :
+  Arrangement_zone_2 (Arrangement_2& _arr, Visitor *_visitor) :
     arr (_arr),
     arr_access (_arr),
     visitor (_visitor),
@@ -177,23 +177,22 @@ public:
    * \param pl A point-location object associated with the arrangement.
    */
   template <class PointLocation>
-  void init (const X_monotone_curve_2& _cv,
-	     const PointLocation& pl)
+  void init (const X_monotone_curve_2& _cv, const PointLocation& pl)
   {
     // Set the curve and check whether its left end has boundary conditions.
     cv = _cv;
 
-    const Boundary_type  bx1 =
-      geom_traits->boundary_in_x_2_object()(cv, ARR_MIN_END);
-    const Boundary_type  by1 =
-      geom_traits->boundary_in_y_2_object()(cv, ARR_MIN_END);
+    const Arr_parameter_space  bx1 =
+      geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+    const Arr_parameter_space  by1 =
+      geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
-    if (bx1 == NO_BOUNDARY && by1 == NO_BOUNDARY)
+    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR)
     {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
       has_left_pt = true;
-      left_on_boundary = (bx1 != NO_BOUNDARY || by1 != NO_BOUNDARY);
+      left_on_boundary = (bx1 != ARR_INTERIOR || by1 != ARR_INTERIOR);
       left_pt = geom_traits->construct_min_vertex_2_object() (cv);
 
       obj = pl.locate (left_pt);
@@ -203,29 +202,23 @@ public:
       // The left end of the curve has boundary conditions: use the topology
       // traits use the arrangement accessor to locate it.
       // Note that if the curve-end is unbounded, left_pt does not exist.
-      has_left_pt = (bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY &&
-                     by1 != MINUS_INFINITY && by1 != PLUS_INFINITY);
-      left_on_boundary = true;
-
-      if (has_left_pt)
+      if (geom_traits->is_bounded_2_object()(cv, ARR_MIN_END))
         left_pt = geom_traits->construct_min_vertex_2_object() (cv);
 
       obj = arr_access.locate_curve_end (cv, ARR_MIN_END, bx1, by1);
     }
 
     // Check the boundary conditions of th right curve end.
-    const Boundary_type  bx2 =
-      geom_traits->boundary_in_x_2_object()(cv, ARR_MAX_END);
-    const Boundary_type  by2 =
-      geom_traits->boundary_in_y_2_object()(cv, ARR_MAX_END);
+    if (geom_traits->is_bounded_2_object()(cv, ARR_MAX_END)) {
+      const Arr_parameter_space  bx2 =
+        geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+      const Arr_parameter_space  by2 =
+        geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
 
-    if (bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY &&
-        by2 != MINUS_INFINITY && by2 != PLUS_INFINITY)
-    {
       // The right endpoint is valid.
       has_right_pt = true;
-      right_on_boundary = (bx2 != NO_BOUNDARY || by2 != NO_BOUNDARY);
       right_pt = geom_traits->construct_max_vertex_2_object() (cv);
+      right_on_boundary = (bx2 != ARR_INTERIOR) || (by2 != ARR_INTERIOR);
     }
     else
     {
@@ -244,8 +237,7 @@ public:
    * \param _obj An object that represents the location of the left end
    *             of the curve.
    */
-  void init_with_hint (const X_monotone_curve_2& _cv,
-                       const Object& _obj);
+  void init_with_hint (const X_monotone_curve_2& _cv, const Object& _obj);
 
   /*!
    * Compute the zone of the given curve and issue the apporpriate
@@ -263,8 +255,7 @@ private:
    * \return (true) if cv overlaps with the curve associated with he;
    *         (false) if there is no overlap.
    */
-  bool _find_prev_around_vertex (Vertex_handle v,
-                                 Halfedge_handle& he);
+  bool _find_prev_around_vertex (Vertex_handle v, Halfedge_handle& he);
 
   /*!
    * Direct the halfedge for the location of the given subcurve around a split
@@ -280,10 +271,10 @@ private:
    * \return The halfedge whose incident face contains cv_ins
    *         (either query_he or its twin).
    */
-  Halfedge_handle _direct_intersecting_edge_to_right
-                                            (const X_monotone_curve_2& cv_ins,
-                                             const Point_2& cv_left_pt,
-                                             Halfedge_handle query_he);
+  Halfedge_handle
+  _direct_intersecting_edge_to_right(const X_monotone_curve_2& cv_ins,
+                                     const Point_2& cv_left_pt,
+                                     Halfedge_handle query_he);
 
   /*!
    * Direct the halfedge for the location of the given subcurve around a split
@@ -297,9 +288,9 @@ private:
    * \return The halfedge whose incident face contains cv_ins
    *         (either query_he or its twin).
    */
-  Halfedge_handle _direct_intersecting_edge_to_left
-                                            (const X_monotone_curve_2& cv_ins,
-                                             Halfedge_handle query_he);
+  Halfedge_handle
+  _direct_intersecting_edge_to_left(const X_monotone_curve_2& cv_ins,
+                                    Halfedge_handle query_he);
 
   /*!
    * Get the next intersection of cv with the given halfedge.
@@ -367,10 +358,10 @@ private:
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
-                 (p, he->target()->point()) == LARGER) ||
+             (p, he->target()->point()) == LARGER) ||
             (he->direction() == ARR_RIGHT_TO_LEFT &&
              geom_traits->compare_xy_2_object() 
-                 (p, he->source()->point()) == LARGER));
+             (p, he->source()->point()) == LARGER));
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_true) const;

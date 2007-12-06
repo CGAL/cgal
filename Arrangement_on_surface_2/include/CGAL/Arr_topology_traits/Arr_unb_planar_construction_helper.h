@@ -16,7 +16,8 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_CONSTRUCTION_HELPER_H
@@ -48,9 +49,8 @@ public:
   typedef typename Traits_2::X_monotone_curve_2        X_monotone_curve_2;
   typedef typename Traits_2::Point_2                   Point_2;
 
-  typedef Sweep_line_empty_visitor<Traits_2,
-                                   Subcurve,
-                                   Event>              Base_visitor;
+  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
+                                                       Base_visitor;
 
   typedef typename Arrangement_2::Halfedge_handle      Halfedge_handle;
   typedef typename Arrangement_2::Face_handle          Face_handle;
@@ -158,8 +158,8 @@ public:
     // If we insert an edge whose right end lies on the top edge of the
     // ficititous bounding rectangle, we have to flip the order of predecessor
     // halfegdes.
-    return (event->boundary_in_x() == NO_BOUNDARY &&
-            event->boundary_in_y() == PLUS_INFINITY);
+    return ((event->parameter_space_in_x() == ARR_INTERIOR) &&
+            (event->parameter_space_in_y() == ARR_TOP_BOUNDARY));
   }
 
   /*! Get the current top face. */
@@ -246,24 +246,21 @@ before_handle_event (Event* event)
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
   Arr_curve_end                  ind = (event->number_of_left_curves() == 0 &&
-                                    event->number_of_right_curves() == 1) ?
+                                        event->number_of_right_curves() == 1) ?
     ARR_MIN_END : ARR_MAX_END;
   const X_monotone_curve_2&  xc = (ind == ARR_MIN_END) ?
     (*(event->right_curves_begin()))->last_curve() :
     (*(event->left_curves_begin()))->last_curve();
 
-  const Boundary_type        bound_x = event->boundary_in_x();
-  const Boundary_type        bound_y = event->boundary_in_y();
+  const Arr_parameter_space        ps_x = event->parameter_space_in_x();
+  const Arr_parameter_space        ps_y = event->parameter_space_in_y();
 
   // Create a vertex at infinity and split the corresponding fictitious edge.
-  Vertex_handle v_at_inf = m_arr_access.create_boundary_vertex (xc, ind,
-                                                                bound_x,
-                                                                bound_y,
-                                                                false);
+  Vertex_handle v_at_inf =
+    m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y, false);
 
-  switch (bound_x)
-  {
-  case MINUS_INFINITY:
+  switch (ps_x) {
+   case ARR_LEFT_BOUNDARY:
     // The event lies on the left fictitious halfedge.
     m_arr_access.split_fictitious_edge(m_lh, v_at_inf);
     event->set_halfedge_handle(m_lh);
@@ -275,30 +272,29 @@ before_handle_event (Event* event)
     m_prev_minus_inf_x_event = event;
     return;
 
-  case PLUS_INFINITY:
+   case ARR_RIGHT_BOUNDARY:
     // The event lies on the right fictitious halfedge.
     m_arr_access.split_fictitious_edge(m_rh, v_at_inf);
     event->set_halfedge_handle(m_rh);
     m_rh = m_rh->next();
     return;
 
-  case NO_BOUNDARY:
+  case ARR_INTERIOR:
     break;
 
   default:
     CGAL_error();
   }
 
-  switch (bound_y)
-  {
-  case MINUS_INFINITY:
+  switch (ps_y) {
+   case ARR_BOTTOM_BOUNDARY:
     // The event lies on the bottom fictitious halfedge.
     m_arr_access.split_fictitious_edge(m_bh, v_at_inf);
     event->set_halfedge_handle(m_bh);
     m_bh = m_bh->next();
     return;
 
-  case PLUS_INFINITY:
+   case ARR_TOP_BOUNDARY:
     {
       // The event lies on the top fictitious halfedge.
       m_arr_access.split_fictitious_edge(m_th, v_at_inf);
@@ -326,7 +322,7 @@ before_handle_event (Event* event)
     }
     return;
 
-  case NO_BOUNDARY:
+  case ARR_INTERIOR:
   default:
     // We are not supposed to reach here at all.
     CGAL_error();

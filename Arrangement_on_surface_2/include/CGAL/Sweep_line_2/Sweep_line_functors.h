@@ -18,6 +18,7 @@
 // Author(s)     : Tali Zvi <talizvi@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_SWEEP_LINE_FUNCTORS_H
 #define CGAL_SWEEP_LINE_FUNCTORS_H
@@ -54,11 +55,11 @@ public:
 private:
 
   // Data members:
-  Traits_2        *m_traits;             // A geometric-traits object.
+  Traits_2            *m_traits;            // A geometric-traits object.
   
-  Boundary_type    m_bound_in_x;         // Storing curve information when
-  Boundary_type    m_bound_in_y;         // comparing a curve end with
-  Arr_curve_end        m_index;              // boundary conditions.
+  Arr_parameter_space  m_ps_in_x;           // Storing curve information when
+  Arr_parameter_space  m_ps_in_y;           // comparing a curve end with
+  Arr_curve_end        m_index;             // boundary conditions.
 
 public:
   
@@ -74,48 +75,33 @@ public:
    */
   Comparison_result operator()(const Event* e1, const Event* e2) const
   {
-    const bool  bound1 = e1->is_on_boundary();
-    const bool  bound2 = e2->is_on_boundary();
+    const bool  on_boundary1 = e1->is_on_boundary();
+    const bool  on_boundary2 = e2->is_on_boundary();
 
-    if (! bound1 && ! bound2)
+    if (! on_boundary1 && ! on_boundary2)
     {
       // Both events do not have boundary conditions - just compare the points.
-      return (m_traits->compare_xy_2_object()(e1->point(),
-                                              e2->point()));
+      return (m_traits->compare_xy_2_object()(e1->point(), e2->point()));
     }
 
-    if (! bound1)
+    if (! on_boundary1)
     {
       // Compare the point associated with the first event with the second
       // boundary event.
       return ( this->operator()(e1->point(), e2) );
     }
 
-    if (! bound2)
+    if (! on_boundary2)
     {
       // Compare the point associated with the second event with the first
       // boundary event.
       return (CGAL::opposite(this->operator()(e2->point(), e1)));
     }
 
-    // If we reached here, both events lie on a boundary, so we compare the
-    // curve end associated with e1 with the boundary event e2.
-    if (e1->boundary_in_x() == CGAL::MINUS_INFINITY ||
-        e1->boundary_in_x() == CGAL::PLUS_INFINITY ||
-        e1->boundary_in_y() == CGAL::MINUS_INFINITY ||
-        e1->boundary_in_y() == CGAL::PLUS_INFINITY) {
-        return (_compare_curve_end_with_event (e1->unbounded_curve(),
-                                               _curve_end(e1),
-                                               e1->boundary_in_x(),
-                                               e1->boundary_in_y(),
-                                               e2));
-    } else {
-        return (_compare_curve_end_with_event (e1->curve(),
-                                               _curve_end(e1),
-                                               e1->boundary_in_x(),
-                                               e1->boundary_in_y(),
-                                               e2));
-    }
+    return (_compare_curve_end_with_event (e1->curve(), _curve_end(e1),
+                                           e1->parameter_space_in_x(),
+                                           e1->parameter_space_in_y(),
+                                           e2));
   }
 
   /*!
@@ -124,9 +110,9 @@ public:
    */
   Comparison_result operator() (const Point_2& pt, const Event* e2) const
   {
-    const bool  bound2 = e2->is_on_boundary();
+    const bool  on_boundary2 = e2->is_on_boundary();
     
-    if (! bound2)
+    if (! on_boundary2)
     {
       // If e2 is a normal event, just compare pt and the event point.
       return (m_traits->compare_xy_2_object() (pt, e2->point()));
@@ -135,13 +121,13 @@ public:
     // Get the sign of the event's boundary condition in x. Note that a valid
     // point is always larger than any negative boundary event and smaller
     // than any positive boundary event.
-    const CGAL::Sign   sgn_bx2 = CGAL::sign (e2->boundary_in_x());
+    Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
 
-    if (sgn_bx2 == CGAL::NEGATIVE)
+    if (ps_x2 == ARR_LEFT_BOUNDARY)
       return (LARGER);
-    else if (sgn_bx2 == CGAL::POSITIVE)
+    else if (ps_x2 == ARR_RIGHT_BOUNDARY)
       return (SMALLER);
-       
+    
     // Get the curve end that e2 represents, and compare the x-position of the
     // given point and this curve end.
     Arr_curve_end         ind = _curve_end(e2);
@@ -155,42 +141,34 @@ public:
     // event's boundary condition in y. Note that a valid point is always
     // larger than any negative boundary event and smaller than any positive
     // boundary event.
-    const CGAL::Sign   sgn_by2 = CGAL::sign (e2->boundary_in_y());
+    Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
 
-    CGAL_assertion (sgn_by2 != CGAL::ZERO);
-
-    if (sgn_by2 == CGAL::NEGATIVE)
-      return (LARGER);
-    
-    return (SMALLER);
+    CGAL_assertion (ps_y2 != ARR_INTERIOR);
+    return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
   }
 
   /*!
    * Compare a curve end, which should be inserted into the event queue,
    * with an existing event point.
    * Note that the index of the curve end as well as its boundary conditions
-   * must be set beforehand using set_index() and set_boundary_in_x/y(). 
+   * must be set beforehand using set_index() and set_parameter_space_in_x/y(). 
    */
   Comparison_result operator() (const X_monotone_curve_2& cv,
                                 const Event* e2) const
   {
-    return (_compare_curve_end_with_event (cv,
-                                           m_index,
-                                           m_bound_in_x,
-                                           m_bound_in_y,
-                                           e2));
+    return _compare_curve_end_with_event(cv, m_index, m_ps_in_x, m_ps_in_y, e2);
   }
 
   /// \name Set the boundary conditions of a curve end we are about to compare.
   //@{
-  void set_boundary_in_x (Boundary_type bx)
+  void set_parameter_space_in_x (Arr_parameter_space bx)
   {
-    m_bound_in_x = bx;
+    m_ps_in_x = bx;
   }
 
-  void set_boundary_in_y (Boundary_type by)
+  void set_parameter_space_in_y (Arr_parameter_space by)
   {
-    m_bound_in_y = by;
+    m_ps_in_y = by;
   }
 
   void set_index (Arr_curve_end ind)
@@ -205,26 +183,22 @@ private:
    * Compare a given curve end with an event.
    * \param cv The curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \param e2 The event, which may have boundary conditions.
    * \return The comparison result of the curve end with the event.
    */
   Comparison_result 
   _compare_curve_end_with_event (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
-                                 Boundary_type bound_x,
-                                 Boundary_type bound_y,
+                                 Arr_parameter_space ps_x,
+                                 Arr_parameter_space ps_y,
                                  const Event* e2) const
   {
-    // Get the signs of the boundary conditions in x.
-    const CGAL::Sign  sgn_bx1 = CGAL::sign (bound_x);
-    const CGAL::Sign  sgn_bx2 = CGAL::sign (e2->boundary_in_x());
-
     // Check if the curve end has a boundary condition in x.
-    if (sgn_bx1 == CGAL::NEGATIVE)
+    if (ps_x == ARR_LEFT_BOUNDARY)
     {
-      if (sgn_bx2 == CGAL::NEGATIVE)
+      if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
       {
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
@@ -237,9 +211,9 @@ private:
       return (SMALLER);
     }
 
-    if (sgn_bx1 == CGAL::POSITIVE)
+    if (ps_x == ARR_RIGHT_BOUNDARY)
     {
-      if (sgn_bx2 == CGAL::POSITIVE)
+      if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
       {
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
@@ -255,21 +229,17 @@ private:
     // Check if the event has a boundary condition in x. Note that if it
     // has a negative boundary condition, the curve end is larger than it,
     // and if it has a positive boundary condition, the curve end is smaller.
-    if (sgn_bx2 == CGAL::NEGATIVE)
+    if (e2->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
       return (LARGER);
     
-    if (sgn_bx2 == CGAL::POSITIVE)
+    if (e2->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
       return (SMALLER);
 
-    // Get the signs of the boundary conditions in y.
-    const CGAL::Sign  sgn_by1 = CGAL::sign (bound_y);
-    const CGAL::Sign  sgn_by2 = CGAL::sign (e2->boundary_in_y());
+    CGAL_assertion (ps_y != ARR_INTERIOR);
     Comparison_result res;
 
-    CGAL_assertion (sgn_by1 != CGAL::ZERO);
-
     // Act according to the boundary sign of the event.
-    if (sgn_by2 == CGAL::NEGATIVE)
+    if (e2->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
     {
       // Compare the x-positions of the two entities.
       res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
@@ -281,13 +251,13 @@ private:
       // In case of equal x-positions, the curve end is larger than the event,
       // which lies on the bottom boundary (unless it also lies on the bottom
       // boundary).
-      if (sgn_by1 == CGAL::NEGATIVE)
+      if (ps_y == ARR_BOTTOM_BOUNDARY)
         return (EQUAL);
 
       return (LARGER);
     }
 
-    if (sgn_by2 == CGAL::POSITIVE)
+    if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     {
       // Compare the x-positions of the two entities.
       res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
@@ -299,7 +269,7 @@ private:
       // In case of equal x-positions, the curve end is smaller than the event,
       // which lies on the top boundary (unless it also lies on the top
       // boundary).
-      if (sgn_by1 == CGAL::POSITIVE)
+      if (ps_y == ARR_TOP_BOUNDARY)
         return (EQUAL);
 
       return (SMALLER);
@@ -316,20 +286,15 @@ private:
     // In case of equal x-positions, is the curve end has a negative boundary
     // sign, then it lies on the bottom boundary below the event. Otherwise,
     // it lies on the top aboundary above the event e2.
-    if (sgn_by1 == CGAL::NEGATIVE)
-      return (SMALLER);
-    
-    return (LARGER);
+    return (ps_y == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
 
   /*! Detemine if the given event represents a left or a right curve end. */
   inline Arr_curve_end _curve_end (const Event* e) const
   {
-      if (e->has_left_curves()) {
-        return ((e->is_right_end()) ? ARR_MAX_END : ARR_MIN_END);
-      }
-      // else
-      return ((e->is_left_end()) ? ARR_MIN_END : ARR_MAX_END);
+    return (e->has_left_curves()) ?
+      ((e->is_right_end()) ? ARR_MAX_END : ARR_MIN_END) :
+      ((e->is_left_end()) ? ARR_MIN_END : ARR_MAX_END);
   }
 };
 
@@ -385,18 +350,15 @@ public:
                   c2) != (*m_curr_event)->right_curves_end())
     {
       return (m_traits->compare_y_at_x_right_2_object()
-              (c1->last_curve(), c2->last_curve(),
-               (*m_curr_event)->point()));
+              (c1->last_curve(), c2->last_curve(), (*m_curr_event)->point()));
     }
 
-    const CGAL::Sign  sgn_bx1 = 
-      CGAL::sign(m_traits->boundary_in_x_2_object() (c1->last_curve(),
-                                                     ARR_MIN_END));
-    const CGAL::Sign  sgn_by1 = 
-      CGAL::sign(m_traits->boundary_in_y_2_object() (c1->last_curve(),
-                                                     ARR_MIN_END));
+    Arr_parameter_space ps_x1 = 
+      m_traits->parameter_space_in_x_2_object()(c1->last_curve(), ARR_MIN_END);
+    Arr_parameter_space ps_y1 = 
+      m_traits->parameter_space_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
 
-    if (sgn_bx1 == CGAL::ZERO && sgn_by1 == CGAL::ZERO)
+    if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR))
     {
       // The first curve has a valid left endpoint. Compare the y-position
       // of this endpoint to the second subcurve. 
@@ -408,18 +370,15 @@ public:
     // We use the fact that the two curves are interior disjoint. As c2 is
     // already in the status line, then if c1 left end has a negative boundary
     // condition it obviously above it.
-    CGAL_assertion (sgn_bx1 != CGAL::POSITIVE);
+    CGAL_assertion (ps_x1 != ARR_RIGHT_BOUNDARY);
 
-    if (sgn_bx1 == CGAL::NEGATIVE)
+    if (ps_x1 == ARR_LEFT_BOUNDARY)
       return (LARGER);
 
     // For similar reasons, if c1 begins on the bottom boundary it is below
     // c2, if it is on the top boundary it is above it.
-    if (sgn_by1 == CGAL::NEGATIVE) 
-      return (SMALLER);
-
-    CGAL_assertion (sgn_by1 == CGAL::POSITIVE);
-    return (LARGER);
+    CGAL_assertion (ps_y1 != ARR_INTERIOR);
+    return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
   }
 
   /*!
@@ -427,8 +386,7 @@ public:
    */
   Comparison_result operator() (const Point_2& pt, const Subcurve *sc) const
   {
-    return (m_traits->compare_y_at_x_2_object()(pt,
-                                                sc->last_curve()));
+    return (m_traits->compare_y_at_x_2_object()(pt, sc->last_curve()));
   }
 
 };

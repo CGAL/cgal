@@ -68,8 +68,8 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
     std::cout << m_currentEvent->point() << ")" << std::endl;
   else
   {
-    Boundary_type x = m_currentEvent->boundary_in_x(),
-                  y = m_currentEvent->boundary_in_y();
+    Arr_parameter_space x = m_currentEvent->parameter_space_in_x(),
+                  y = m_currentEvent->parameter_space_in_y();
 
     PrintInfinityType(x, y);
   }
@@ -83,48 +83,36 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
 }
 
 template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
-void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintInfinityType
-    (Boundary_type x, Boundary_type y)
+void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
+PrintInfinityType (Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  switch(x)
-  {
-  case MINUS_INFINITY:
-    std::cout<<" X = -oo ";
-    return;
-  case PLUS_INFINITY:
-    std::cout<<" X = +oo ";
-    return;
-  case NO_BOUNDARY:
-  default:
-    break;
+  switch (ps_x) {
+   case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; return;
+   case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; return;
+   case ARR_INTERIOR:
+   default: break;
   }
 
-  switch(y)
-  {
-  case MINUS_INFINITY:
-    std::cout<<" Y = -oo ";
-    return;
-  case PLUS_INFINITY:
-    std::cout<<" Y = +oo ";
-    return;
-  case NO_BOUNDARY:
-  default:
-    CGAL_error();
+  switch (ps_y) {
+   case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; return;
+   case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; return;
+   case ARR_INTERIOR:
+   default: CGAL_error();
   }
 }
 
 template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
-void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintEvent
-    (const Event* e)
+void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
+PrintEvent(const Event* e)
 {
-  if(e->is_finite())
-    std::cout<< e->point();
+  if (e->is_finite())
+    std::cout << e->point();
   else
   {
-    Boundary_type x = e->boundary_in_x(),
-                  y = e->boundary_in_y();
+    Arr_parameter_space x = e->parameter_space_in_x();
+    Arr_parameter_space y = e->parameter_space_in_y();
     PrintInfinityType(x, y);
-    std::cout<<" with unbounded curve: " << e->unbounded_curve();
+    std::cout << " with unbounded curve: " << e->curve();
   } 
 }
 

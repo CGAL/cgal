@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_SWEEP_LINE_2_IMPL_H
@@ -378,8 +379,8 @@ _remove_curve_from_status_line (Subcurve *leftCurve,
 // Compute intersections between the two given curves.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
-    (Subcurve *c1, Subcurve *c2)
+void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_intersect (Subcurve *c1, Subcurve *c2)
 {
   CGAL_PRINT("Looking for intersection between:\n\t";)
   CGAL_SL_DEBUG(c1->Print();)
@@ -406,15 +407,14 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
                                                 c2->last_curve(),
                                                 vi);
 
-  if(vi == vi_end)
+  if (vi == vi_end)
   {
     CGAL_PRINT("no intersection...\n";);
     return; // no intersection at all
   }
   
-  // The two subCurves may start at the same point,in that case we will
-  // ignore the first intersection point (if we got to that stage, they cannot 
-  // overlap).
+  // The two subCurves may start at the same point, in that case we ignore the
+  // first intersection point (if we got to that stage, they cannot  overlap).
   if (reinterpret_cast<Event*>(c1->left_event()) == this->m_currentEvent &&
       reinterpret_cast<Event*>(c2->left_event()) == this->m_currentEvent)
   {
@@ -426,19 +426,24 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     // In case both left curve-ends have boundary conditions and are not
     // unbounded, check whether the left endpoints are the same. If they are,
     // skip the first intersection point.
-    const Boundary_type   bx1 =
-        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), ARR_MIN_END);
-    const Boundary_type   by1 =
-        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), ARR_MIN_END);
-    const Boundary_type   bx2 =
-        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), ARR_MIN_END);
-    const Boundary_type   by2 =
-        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), ARR_MIN_END);
+    const Arr_parameter_space   ps_x1 =
+      this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
+                                                      ARR_MIN_END);
+    const Arr_parameter_space   ps_y1 =
+      this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
+                                                      ARR_MIN_END);
+    const Arr_parameter_space   ps_x2 =
+      this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
+                                                      ARR_MIN_END);
+    const Arr_parameter_space   ps_y2 =
+      this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
+                                                      ARR_MIN_END);
 
-    if (bx1 == bx2 &&
-        (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
-        by1 == by2 &&
-        (bx2 != NO_BOUNDARY && bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY))
+    //! \todo this looks suspicious!
+    if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
+        (ps_x1 != ARR_INTERIOR) && (ps_x2 != ARR_INTERIOR) &&
+        this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MIN_END) &&
+        this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MIN_END))
     {
       if (this->m_traits->equal_2_object()
           (this->m_traits->construct_min_vertex_2_object() (c1->last_curve()),
@@ -471,19 +476,23 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     // In case both right curve-ends have boundary conditions and are not
     // unbounded, check whether the right endpoints are the same. If they are,
     // skip the last intersection point.
-    const Boundary_type   bx1 =
-        this->m_traits->boundary_in_x_2_object()(c1->last_curve(), ARR_MAX_END);
-    const Boundary_type   by1 =
-        this->m_traits->boundary_in_y_2_object()(c1->last_curve(), ARR_MAX_END);
-    const Boundary_type   bx2 =
-        this->m_traits->boundary_in_x_2_object()(c2->last_curve(), ARR_MAX_END);
-    const Boundary_type   by2 =
-        this->m_traits->boundary_in_y_2_object()(c2->last_curve(), ARR_MAX_END);
+    const Arr_parameter_space   ps_x1 =
+        this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
+                                                        ARR_MAX_END);
+    const Arr_parameter_space   ps_y1 =
+        this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
+                                                        ARR_MAX_END);
+    const Arr_parameter_space   ps_x2 =
+        this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
+                                                        ARR_MAX_END);
+    const Arr_parameter_space   ps_y2 =
+        this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
+                                                        ARR_MAX_END);
 
-    if (bx1 == bx2 &&
-        (bx1 != NO_BOUNDARY && bx1 != MINUS_INFINITY && bx1 != PLUS_INFINITY) &&
-        by1 == by2 &&
-        (bx2 != NO_BOUNDARY && bx2 != MINUS_INFINITY && bx2 != PLUS_INFINITY))
+    if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
+        (ps_x1 != ARR_INTERIOR) && (ps_x2 != ARR_INTERIOR) &&
+        this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MAX_END) &&
+        this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MAX_END))
     {
       if (this->m_traits->equal_2_object()
           (this->m_traits->construct_max_vertex_2_object() (c1->last_curve()),
@@ -510,8 +519,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect
     {
       // Skip the intersection point if it is not larger than the current
       // event.
-      if (this->m_queueEventLess (xp_point->first,
-                                  this->m_currentEvent) != LARGER)
+      if (this->m_queueEventLess (xp_point->first, this->m_currentEvent) !=
+          LARGER)
       {
         ++vi;
       }
@@ -560,7 +569,7 @@ _create_intersection_point (const Point_2& xp,
   // insert the event and check if an event at this point already exists.   
   const std::pair<Event*, bool>& pair_res = 
     _push_event (xp, Base_event::DEFAULT,
-                 NO_BOUNDARY, NO_BOUNDARY);
+                 ARR_INTERIOR, ARR_INTERIOR);
     
   Event *e = pair_res.first;
   if(pair_res.second)    
@@ -725,13 +734,13 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
    
   // Get the right end of overlap_cv (if it is bounded from the right).
   Event         *right_end;
-  Boundary_type  bx_r = this->m_traits->boundary_in_x_2_object()(overlap_cv,
-                                                                 ARR_MAX_END);
-  Boundary_type  by_r = this->m_traits->boundary_in_y_2_object()(overlap_cv,
-                                                                 ARR_MAX_END);
+  Arr_parameter_space  ps_x_r =
+    this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MAX_END);
+  Arr_parameter_space  ps_y_r =
+    this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MAX_END);
 
-  CGAL_assertion (CGAL::sign (bx_r) != CGAL::NEGATIVE);
-  if (bx_r != NO_BOUNDARY || by_r != NO_BOUNDARY)
+  CGAL_assertion (ps_x_r != ARR_LEFT_BOUNDARY);
+  if (ps_x_r != ARR_INTERIOR || ps_y_r != ARR_INTERIOR)
   {
     // The overlapping subcurve is either unbounded from the right, or
     // touches the boundary of the surface. In either case, the curves that
@@ -749,20 +758,19 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
       this->m_traits->construct_max_vertex_2_object()(overlap_cv);
 
     const std::pair<Event*, bool>& pair_res =
-      _push_event (end_overlap, Base_event::OVERLAP,
-                   bx_r, by_r);
+      _push_event (end_overlap, Base_event::OVERLAP, ps_x_r, ps_y_r);
 
     right_end = pair_res.first;
   }
 
   // Get the left end of overlap_cv (if it is bounded from the left).
-  Boundary_type  bx_l = this->m_traits->boundary_in_x_2_object()(overlap_cv,
-                                                                 ARR_MIN_END);
-  Boundary_type  by_l = this->m_traits->boundary_in_y_2_object()(overlap_cv,
-                                                                 ARR_MIN_END);
+  Arr_parameter_space  ps_x_l =
+    this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MIN_END);
+  Arr_parameter_space  ps_y_l =
+    this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MIN_END);
   
-  CGAL_assertion (CGAL::sign (bx_l) != CGAL::POSITIVE);
-  if (bx_l == NO_BOUNDARY && by_l == NO_BOUNDARY)
+  CGAL_assertion (ps_x_l != ARR_RIGHT_BOUNDARY);
+  if (ps_x_l == ARR_INTERIOR && ps_y_l == ARR_INTERIOR)
   {
     // The left end of the overlapping subcurve is regular point, so in case
     // the event is also associated with a regular point (not incident to the
@@ -776,14 +784,12 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
       const Point_2&     begin_overlap =
         this->m_traits->construct_min_vertex_2_object()(overlap_cv);
       Comparison_result  res =
-        this->m_traits->compare_xy_2_object() (event->point(),
-                                               begin_overlap);
+        this->m_traits->compare_xy_2_object() (event->point(), begin_overlap);
 
       CGAL_assertion (res != SMALLER);
       if (res == LARGER)
       {
-        this->m_traits->split_2_object() (overlap_cv,
-                                          event->point(),
+        this->m_traits->split_2_object() (overlap_cv, event->point(),
                                           sub_cv1, sub_cv2);
         overlap_cv = sub_cv2;
       }
@@ -797,8 +803,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_overlap
     // curve-end, so we clip the overlapping subcurve accordingly.
     if (! event->is_on_boundary())
     {
-      this->m_traits->split_2_object() (overlap_cv,
-                                        event->point(),
+      this->m_traits->split_2_object() (overlap_cv, event->point(),
                                         sub_cv1, sub_cv2);
       overlap_cv = sub_cv2;
     }

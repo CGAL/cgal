@@ -35,8 +35,8 @@ template <class GeomTraits, class Dcel_>
 Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
 Arr_qdx_topology_traits_2() :
     m_own_traits (true), 
-    m_left(CGAL::NO_BOUNDARY),
-    m_right(CGAL::NO_BOUNDARY),
+    m_left(CGAL::ARR_INTERIOR),
+    m_right(CGAL::ARR_INTERIOR),
     v_left(NULL),
     v_right(NULL),
     f_top(NULL)
@@ -53,8 +53,8 @@ template <class GeomTraits, class Dcel_>
 Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
 Arr_qdx_topology_traits_2 (Geometry_traits_2 *tr) : 
     m_own_traits(false),  
-    m_left(CGAL::NO_BOUNDARY),
-    m_right(CGAL::NO_BOUNDARY),
+    m_left(CGAL::ARR_INTERIOR),
+    m_right(CGAL::ARR_INTERIOR),
     v_left(NULL),
     v_right(NULL),
     f_top(NULL)
@@ -107,7 +107,7 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 {
     // Go over the DCEL vertices and locate all points with boundary condition
     typename Dcel::Vertex_iterator       vit;
-    Boundary_type                        bx, by;
+    Arr_parameter_space                        bx, by;
 
     // TODO what about m_left/m_right if called from accessor?
 
@@ -118,8 +118,8 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
         // If so, then a negative boundary condition indicates it is the left
         // vertex, and a positive boundary condition indicates it is the right
         // vertex.
-        bx = vit->boundary_in_x();
-        if (bx != CGAL::NO_BOUNDARY) {
+        bx = vit->parameter_space_in_x();
+        if (bx != CGAL::ARR_INTERIOR) {
             if (CGAL::sign (bx) == CGAL::NEGATIVE) {
                 CGAL_assertion (bx == MINUS_INFINITY ||
                                 bx == AFTER_SINGULARITY);
@@ -133,8 +133,8 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
         
         // In case the vertex lies on the line of dicontinuity, it is
         // associated with a concrete point. Map this point to the vertex.
-        by = vit->boundary_in_y();
-        if (by != CGAL::NO_BOUNDARY) {
+        by = vit->parameter_space_in_y();
+        if (by != CGAL::ARR_INTERIOR) {
             
             std::pair< typename Line_of_discontinuity::iterator, bool > res =
                 m_line_of_discontinuity.insert (std::make_pair(vit->point(),
@@ -179,16 +179,16 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::init_dcel () // open
 #if 1
     // TODO workaround for missing toptraits constructor (default ctor of Arr)
     // assume elliposid
-    if (this->m_left == CGAL::NO_BOUNDARY &&
-        this->m_right == CGAL::NO_BOUNDARY) {
+    if (this->m_left == CGAL::ARR_INTERIOR &&
+        this->m_right == CGAL::ARR_INTERIOR) {
         //this->m_left = CGAL::AFTER_SINGULARITY;
         //this->m_right = CGAL::BEFORE_SINGULARITY;
         this->m_left = CGAL::MINUS_INFINITY;
         this->m_right = CGAL::PLUS_INFINITY;
     } 
 #endif
-    CGAL_precondition(this->m_left != CGAL::NO_BOUNDARY &&
-                      this->m_right != CGAL::NO_BOUNDARY);
+    CGAL_precondition(this->m_left != CGAL::ARR_INTERIOR &&
+                      this->m_right != CGAL::ARR_INTERIOR);
     CGAL_precondition(this->m_left < this->m_right);
 
     // create the face
@@ -232,7 +232,7 @@ template <class GeomTraits, class Dcel_>
 bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::are_equal
 (const Vertex *v,
  const X_monotone_curve_2& cv, Arr_curve_end ind,
- CGAL::Boundary_type bound_x, CGAL::Boundary_type bound_y) const
+ CGAL::Arr_parameter_space bound_x, CGAL::Arr_parameter_space bound_y) const
 {
     CGAL_precondition (bound_x == m_left || 
                        bound_x == m_right ||
@@ -242,17 +242,17 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::are_equal
     
     // In case the given boundary conditions do not match those of the given
     // vertex, v cannot represent the curve end.
-    if (bound_x != v->boundary_in_x()) {
+    if (bound_x != v->parameter_space_in_x()) {
         return false;
     }
     
-    if (bound_x != CGAL::NO_BOUNDARY) {
-        return (bound_x == v->boundary_in_x());
+    if (bound_x != CGAL::ARR_INTERIOR) {
+        return (bound_x == v->parameter_space_in_x());
     } else  {
-        CGAL_assertion (bound_y != CGAL::NO_BOUNDARY);
+        CGAL_assertion (bound_y != CGAL::ARR_INTERIOR);
         // check wether the two concrete points are equal
         return (this->m_traits->compare_xy_2_object() (
-                // since bound_x == CGAL::NO_BOUNDARY we immediately have
+                // since bound_x == CGAL::ARR_INTERIOR we immediately have
                 // a valid vertex v (with point)
                         v->point(),
                         (ind == CGAL::ARR_MIN_END ?
@@ -273,14 +273,14 @@ CGAL::Object
 Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
     (Face *f,
      const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
-     Boundary_type bound_x, Boundary_type bound_y)
+     Arr_parameter_space bound_x, Arr_parameter_space bound_y)
 {
     //std::cout << "Arr_qdx_topology_traits_2 place_boundary_vertex"  
     //          << std::endl;
 
     CGAL_precondition(
-            (bound_x == CGAL::NO_BOUNDARY && 
-             (bound_y == CGAL::NO_BOUNDARY ||
+            (bound_x == CGAL::ARR_INTERIOR && 
+             (bound_y == CGAL::ARR_INTERIOR ||
               bound_y == CGAL::AFTER_DISCONTINUITY ||
               bound_y == CGAL::BEFORE_DISCONTINUITY))
             ||
@@ -288,7 +288,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
               bound_x == CGAL::PLUS_INFINITY ||
               bound_x == CGAL::AFTER_SINGULARITY ||
               bound_x == CGAL::BEFORE_SINGULARITY) &&
-             bound_y == CGAL::NO_BOUNDARY)
+             bound_y == CGAL::ARR_INTERIOR)
     );
     
     // this topology return either an empty object or a DCEL vertex,
@@ -296,12 +296,12 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
     
     Vertex *v = NULL;
     
-    if (bound_x != CGAL::NO_BOUNDARY) {
+    if (bound_x != CGAL::ARR_INTERIOR) {
         // for points at infinity/singularity
         // curve-end goes to v_left or to v_right
-        v = (bound_x < CGAL::NO_BOUNDARY ? this->v_left : this->v_right);
+        v = (bound_x < CGAL::ARR_INTERIOR ? this->v_left : this->v_right);
     } else {
-        CGAL_assertion(bound_y != CGAL::NO_BOUNDARY);
+        CGAL_assertion(bound_y != CGAL::ARR_INTERIOR);
         // locate curve-end (here a concrete point) 
         // in local structure of for points on 
         // line of discontiuity!
@@ -326,12 +326,12 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
     }
 
     // else we return the vertex we have located.
-    CGAL_assertion(v->boundary_in_x() == bound_x && 
-                   v->boundary_in_y() == bound_y);
+    CGAL_assertion(v->parameter_space_in_x() == bound_x && 
+                   v->parameter_space_in_y() == bound_y);
 
     CGAL_assertion(!v->has_null_point() || 
-                   v->boundary_in_x() == CGAL::AFTER_SINGULARITY ||
-                   v->boundary_in_x() == CGAL::BEFORE_SINGULARITY);
+                   v->parameter_space_in_x() == CGAL::AFTER_SINGULARITY ||
+                   v->parameter_space_in_x() == CGAL::BEFORE_SINGULARITY);
     
     return (CGAL::make_object (v));
 }
@@ -345,16 +345,16 @@ typename Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::Halfedge*
 Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
     (Vertex *v,
      const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Boundary_type bound_x, Boundary_type bound_y) const
+     Arr_parameter_space bound_x, Arr_parameter_space bound_y) const
 {
     CGAL_precondition(
-            (bound_x == CGAL::NO_BOUNDARY || bound_y == CGAL::NO_BOUNDARY) &&
-            !(bound_x != CGAL::NO_BOUNDARY && bound_y != CGAL::NO_BOUNDARY)
+            (bound_x == CGAL::ARR_INTERIOR || bound_y == CGAL::ARR_INTERIOR) &&
+            !(bound_x != CGAL::ARR_INTERIOR && bound_y != CGAL::ARR_INTERIOR)
     );
 
     // std::cout << "locate_around_boundary_vertex()" << std::endl;
     if (bound_x == m_left && ind == CGAL::ARR_MIN_END) {
-        CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
+        CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
         CGAL_assertion(v == v_left);
         bool dummy;
         return (_locate_around_vertex_with_boundary_at_x(
@@ -363,7 +363,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
         );
     }
     if (bound_x == m_right && ind == CGAL::ARR_MAX_END) {
-        CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
+        CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
         CGAL_assertion(v == v_right);
         bool dummy;
         return (_locate_around_vertex_with_boundary_at_x(
@@ -372,7 +372,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
         );
     }
     
-    CGAL_assertion(bound_x == CGAL::NO_BOUNDARY && 
+    CGAL_assertion(bound_x == CGAL::ARR_INTERIOR && 
                    (bound_y == CGAL::AFTER_DISCONTINUITY) ||
                    (bound_y == CGAL::BEFORE_DISCONTINUITY));
     
@@ -555,33 +555,33 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
 (Vertex *v,
  const X_monotone_curve_2& cv,
  Arr_curve_end ind,
- Boundary_type bound_x,
- Boundary_type bound_y) const
+ Arr_parameter_space bound_x,
+ Arr_parameter_space bound_y) const
 {
     // In the planar-topology traits this function should never be invoked:
     //std::cout << "Arr_qdx_topology_traits_2::" 
     //          << "notify_on_boundary_vertex_creation"
     //          << std::endl;       
 
-    CGAL_assertion(v->boundary_in_x() == bound_x);
-    CGAL_assertion(v->boundary_in_y() == bound_y);
+    CGAL_assertion(v->parameter_space_in_x() == bound_x);
+    CGAL_assertion(v->parameter_space_in_y() == bound_y);
     
     // update locate structures
-    if (bound_x < CGAL::NO_BOUNDARY) {
+    if (bound_x < CGAL::ARR_INTERIOR) {
         //std::cout << "LEFT vertex created" << std::endl;
         this->v_left = v; 
-        CGAL_assertion(this->v_left->boundary_in_x() == m_left);
+        CGAL_assertion(this->v_left->parameter_space_in_x() == m_left);
         return;
     }
-    if (bound_x > CGAL::NO_BOUNDARY) {
+    if (bound_x > CGAL::ARR_INTERIOR) {
         //std::cout << "RIGHT vertex created" << std::endl;
         this->v_right = v;
-        CGAL_assertion(this->v_right->boundary_in_x() == m_right);
+        CGAL_assertion(this->v_right->parameter_space_in_x() == m_right);
         return;
     }
 
     // else: boundary in y
-    CGAL_assertion(bound_y != NO_BOUNDARY);
+    CGAL_assertion(bound_y != ARR_INTERIOR);
     CGAL_assertion(!v->has_null_point());
 
     CGAL_assertion_code(
@@ -623,13 +623,13 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
 template <class GeomTraits, class Dcel_>
 CGAL::Object Arr_qdx_topology_traits_2<GeomTraits, Dcel_>:: // open
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Boundary_type bound_x, Boundary_type bound_y)
+                  Arr_parameter_space bound_x, Arr_parameter_space bound_y)
 {
     // NEEDED for incremental insertion
     std::cout << "Arr_qdx_topology_traits_2 locate_curve_end"  
               << std::endl;
-    CGAL_precondition(bound_x != CGAL::NO_BOUNDARY || 
-                      bound_y != CGAL::NO_BOUNDARY);
+    CGAL_precondition(bound_x != CGAL::ARR_INTERIOR || 
+                      bound_y != CGAL::ARR_INTERIOR);
     
     Vertex* v = NULL;
     typename Line_of_discontinuity::iterator  it;
@@ -639,7 +639,7 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
             bool search_face = false;
     );
 
-    if (bound_x != CGAL::NO_BOUNDARY) {
+    if (bound_x != CGAL::ARR_INTERIOR) {
         bool contraction = false;
         switch (bound_x) {
         case AFTER_SINGULARITY:
@@ -680,7 +680,7 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
         }
     }
 
-    if (bound_y != CGAL::NO_BOUNDARY) {
+    if (bound_y != CGAL::ARR_INTERIOR) {
         Point_2 key = (ind == CGAL::ARR_MIN_END ?
                        this->m_traits->construct_min_vertex_2_object()(cv) :
                        this->m_traits->construct_max_vertex_2_object()(cv)); 
@@ -1044,7 +1044,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         return (false);
     }
     
-    CGAL::Boundary_type bound_x = curr->opposite()->vertex()->boundary_in_x();
+    CGAL::Arr_parameter_space bound_x = curr->opposite()->vertex()->parameter_space_in_x();
     if (bound_x < 0) {
         res_source = CGAL::LARGER;
     } else if (bound_x > 0) {
@@ -1056,8 +1056,8 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
     }
     CGAL_assertion(res_source != CGAL::EQUAL);
     
-    CGAL::Boundary_type last_by = CGAL::NO_BOUNDARY;
-    CGAL::Boundary_type curr_by = CGAL::NO_BOUNDARY;
+    CGAL::Arr_parameter_space last_by = CGAL::ARR_INTERIOR;
+    CGAL::Arr_parameter_space curr_by = CGAL::ARR_INTERIOR;
     
 
     do {
@@ -1087,7 +1087,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
             return (false);
         }
         
-        bound_x = curr->vertex()->boundary_in_x();
+        bound_x = curr->vertex()->parameter_space_in_x();
         if (bound_x < 0) {
             res_target = CGAL::LARGER;
         } else if (bound_x > 0) {
@@ -1099,7 +1099,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         CGAL_assertion(res_target != CGAL::EQUAL);  
         
         // read the boundary_type at src of curr
-        curr_by = this->m_traits->boundary_in_y_2_object()(
+        curr_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->curve(), 
                 (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
@@ -1151,7 +1151,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         }
             
         // store as last_by the boundary at target of curr
-        last_by = this->m_traits->boundary_in_y_2_object()(
+        last_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->curve(), 
                 (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
@@ -1268,8 +1268,8 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 (const Vertex *v) const
 {
     //std::cout << "Arr_qdx_topology_traits_2 is_redundant"  << std::endl;
-    CGAL_precondition(v->boundary_in_x() != CGAL::NO_BOUNDARY || 
-                      v->boundary_in_y() != CGAL::NO_BOUNDARY);
+    CGAL_precondition(v->parameter_space_in_x() != CGAL::ARR_INTERIOR || 
+                      v->parameter_space_in_y() != CGAL::ARR_INTERIOR);
     
     // if there are not incident edges just remove it
     // TASK: check whether isolated or degree == 0 is needed!
@@ -1363,20 +1363,20 @@ _face_before_vertex_on_discontinuity (Vertex * v) const {
     Halfedge  *rightmost_bottom = NULL;
     
     do {
-        typename Traits_adaptor_2::Boundary_in_x_2 boundary_in_x =
-        m_traits->boundary_in_x_2_object();
-        typename Traits_adaptor_2::Boundary_in_y_2 boundary_in_y =
-        m_traits->boundary_in_y_2_object();
+        typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        m_traits->parameter_space_in_x_2_object();
+        typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        m_traits->parameter_space_in_y_2_object();
 
         CGAL::Arr_curve_end ind = CGAL::ARR_MIN_END;
         
-        CGAL::Boundary_type bd_x = boundary_in_x(curr->curve(), CGAL::ARR_MAX_END);
-        CGAL::Boundary_type bd_y = boundary_in_y(curr->curve(), CGAL::ARR_MAX_END);
+        CGAL::Arr_parameter_space bd_x = parameter_space_in_x(curr->curve(), CGAL::ARR_MAX_END);
+        CGAL::Arr_parameter_space bd_y = parameter_space_in_y(curr->curve(), CGAL::ARR_MAX_END);
         if (are_equal(v, curr->curve(), CGAL::ARR_MAX_END, bd_x, bd_y)) {
             ind = CGAL::ARR_MAX_END;
         }
         
-        if (boundary_in_y(curr->curve(),ind) < 0) {
+        if (parameter_space_in_y(curr->curve(),ind) < 0) {
             // TOP-side
             if ((leftmost_top == NULL) || 
                 (leftmost_top->direction() == CGAL::ARR_LEFT_TO_RIGHT &&
@@ -1437,8 +1437,8 @@ _crossings_with_line_of_discontinuity(
         const Halfedge* he1, const Halfedge* he2, 
         Discontinuity_crossing& leftmost) const {
     
-    CGAL::Boundary_type thistgt_by = CGAL::NO_BOUNDARY;
-    CGAL::Boundary_type nextsrc_by = CGAL::NO_BOUNDARY;
+    CGAL::Arr_parameter_space thistgt_by = CGAL::ARR_INTERIOR;
+    CGAL::Arr_parameter_space nextsrc_by = CGAL::ARR_INTERIOR;
     
     const Halfedge *curr = he1;
     const Vertex *leftmost_vertex = NULL;
@@ -1450,14 +1450,14 @@ _crossings_with_line_of_discontinuity(
     if (he2 == NULL) {
         // also check prev()->tgt with curr->src()
         // read the boundary_type at tgt of curr
-        thistgt_by = this->m_traits->boundary_in_y_2_object()(
+        thistgt_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->prev()->curve(), 
                 (curr->prev()->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
         );
         
         // read the boundary_type at src of next
-        nextsrc_by = this->m_traits->boundary_in_y_2_object()(
+        nextsrc_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->curve(), 
                 (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
@@ -1524,14 +1524,14 @@ _crossings_with_line_of_discontinuity(
 #endif
         
         // read the boundary_type at tgt of curr
-        thistgt_by = this->m_traits->boundary_in_y_2_object()(
+        thistgt_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->curve(), 
                 (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
         );
         
         // read the boundary_type at src of next
-        nextsrc_by = this->m_traits->boundary_in_y_2_object()(
+        nextsrc_by = this->m_traits->parameter_space_in_y_2_object()(
                 curr->next()->curve(), 
                 (curr->next()->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)

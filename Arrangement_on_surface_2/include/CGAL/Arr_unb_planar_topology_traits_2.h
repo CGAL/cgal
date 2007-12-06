@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+//                 Efi Fogel  <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_UNB_PLANAR_TOPOLOGY_TRAITS_2_H
@@ -402,7 +403,8 @@ public:
    */
   bool are_equal (const Vertex *v,
                   const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Boundary_type bound_x, Boundary_type bound_y) const;
+                  Arr_parameter_space bound_x,
+                  Arr_parameter_space bound_y) const;
 
   /*!
    * Given a curve end with boundary conditions and a face that contains the
@@ -420,8 +422,8 @@ public:
   CGAL::Object place_boundary_vertex (Face *f,
                                       const X_monotone_curve_2& cv,
                                       Arr_curve_end ind,
-                                      Boundary_type bound_x,
-                                      Boundary_type bound_y);
+                                      Arr_parameter_space bound_x,
+                                      Arr_parameter_space bound_y);
 
   /*!
    * Locate the predecessor halfedge for the given curve around a given
@@ -435,11 +437,12 @@ public:
    *      incident to the vertex v.
    * \return An object that contains the curve end.
    */
-  Halfedge* locate_around_boundary_vertex (Vertex* /* v */,
-                                           const X_monotone_curve_2& /* cv */,
-                                           Arr_curve_end /* ind */,
-                                           Boundary_type /* bound_x */,
-                                           Boundary_type /* bound_y */) const
+  Halfedge*
+  locate_around_boundary_vertex (Vertex* /* v */,
+                                 const X_monotone_curve_2& /* cv */,
+                                 Arr_curve_end /* ind */,
+                                 Arr_parameter_space /* bound_x */,
+                                 Arr_parameter_space /* bound_y */) const
   {
     CGAL_error();
     return (NULL);
@@ -458,8 +461,8 @@ public:
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
-                                 Boundary_type bound_x,
-                                 Boundary_type bound_y);
+                                 Arr_parameter_space bound_x,
+                                 Arr_parameter_space bound_y);
 
   /*!
    * Split a fictitious edge using the given vertex.
@@ -626,7 +629,8 @@ protected:
    * \return Whether the curve end lies on the fictitious halfedge.
    */
   bool _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
-                               Boundary_type bound_x, Boundary_type bound_y,
+                               Arr_parameter_space bound_x,
+                               Arr_parameter_space bound_y,
                                const Halfedge *he,
                                bool& eq_source, bool& eq_target);
   //@}

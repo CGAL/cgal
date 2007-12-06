@@ -122,8 +122,8 @@ void Arr_qdx_batched_pl_helper<Tr, Arr>::before_sweep ()
             Vertex_const_handle (m_top_traits->top_right_vertex());
     );
     CGAL_assertion ((m_top_fict->source() == v_tr) ||
-                    (m_top_fict->source()->boundary_in_x() == NO_BOUNDARY &&
-                     m_top_fict->source()->boundary_in_y() == PLUS_INFINITY));
+                    (m_top_fict->source()->parameter_space_in_x() == ARR_INTERIOR &&
+                     m_top_fict->source()->parameter_space_in_y() == PLUS_INFINITY));
 
     return;
 #endif
@@ -146,10 +146,10 @@ void Arr_qdx_batched_pl_helper<Tr, Arr>::after_handle_event
     if (event->is_finite())
         return;
 
-    if (event->boundary_in_x() != NO_BOUNDARY)
+    if (event->parameter_space_in_x() != ARR_INTERIOR)
         return;
 
-    if (event->boundary_in_y() == PLUS_INFINITY)
+    if (event->parameter_space_in_y() == PLUS_INFINITY)
         m_top_fict = m_top_fict->twin()->next()->twin();
 
     return;

@@ -107,8 +107,8 @@ public:
   virtual void before_handle_event(Event * event)
   {
     // Act according to the boundary type:
-    const Boundary_type bound_x = event->boundary_in_x();
-    const Boundary_type bound_y = event->boundary_in_y();
+    const Arr_parameter_space bound_x = event->parameter_space_in_x();
+    const Arr_parameter_space bound_y = event->parameter_space_in_y();
 
     if (bound_y == AFTER_SINGULARITY)
     {
@@ -285,8 +285,8 @@ public:
   {
     // If we insert an edge whose right end lies on the north pole, we have
     // to flip the order of predecessor halfegdes.
-    return (event->boundary_in_x() == NO_BOUNDARY &&
-            event->boundary_in_y() == BEFORE_SINGULARITY);
+    return (event->parameter_space_in_x() == ARR_INTERIOR &&
+            event->parameter_space_in_y() == BEFORE_SINGULARITY);
   }
 
   /*! Get the current top face. */

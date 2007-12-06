@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
 
 #ifndef CGAL_BASIC_SWEEP_LINE_2_IMPL_H
@@ -31,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 // Constructor.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Basic_sweep_line_2
-    (Visitor* visitor) :
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+Basic_sweep_line_2 (Visitor* visitor) :
   m_traits (new Traits_adaptor_2()),
   m_traitsOwner (true),
   m_statusLineCurveLess (m_traits, &m_currentEvent),
@@ -50,8 +51,8 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Basic_sweep_line_2
 // Constructor with a given traits-class.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Basic_sweep_line_2
-    (Traits_2 *traits, Visitor* visitor) :
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+Basic_sweep_line_2 (Traits_2 *traits, Visitor* visitor) :
   m_traits (static_cast<Traits_adaptor_2*> (traits)),
   m_traitsOwner(false),
   m_statusLineCurveLess(m_traits, &m_currentEvent),
@@ -150,8 +151,6 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::deallocate_event
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep ()
 {
-
-  
   CGAL_SL_DEBUG(
   {
       CGAL_PRINT("Ordered sequence of initial events:\n");
@@ -244,14 +243,14 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep ()
 // Initialize an event associated with a point.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_point
-    (const Point_2& pt, Attribute type)
+void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_init_point (const Point_2& pt, Attribute type)
 {
   // Create the event, or obtain an existing event in the queue.
   // Note that an isolated point does not have any boundary conditions.
   const std::pair<Event*, bool>& pair_res = _push_event (pt, type,
-                                                         NO_BOUNDARY,
-                                                         NO_BOUNDARY);
+                                                         ARR_INTERIOR,
+                                                         ARR_INTERIOR);
 
   bool is_new = pair_res.second;
   m_visitor->update_event(pair_res.first, pt, is_new);
@@ -263,8 +262,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_point
 // Initialize the events associated with an x-monotone curve.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve
-    (const X_monotone_curve_2& curve, unsigned int index)
+void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_init_curve (const X_monotone_curve_2& curve, unsigned int index)
 {
   // Construct an initialize a subcurve object.
   m_subCurveAlloc.construct (m_subCurves + index, m_masterSubcurve);
@@ -282,39 +281,29 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve
 // Initialize an event associated with an x-monotone curve end.
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
-void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve_end
-    (const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Subcurve* sc)
+void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind, Subcurve* sc)
 {
   // Get the boundary conditions of the curve end.
-  const Attribute  end_attr = (ind == ARR_MIN_END) ? Base_event::LEFT_END :
-                                                 Base_event::RIGHT_END;
+  const Attribute  end_attr =
+    (ind == ARR_MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
 
-  Boundary_type    bound_x = m_traits->boundary_in_x_2_object()(cv, ind);
-  Boundary_type    bound_y = m_traits->boundary_in_y_2_object()(cv, ind);
+  Arr_parameter_space ps_x = m_traits->parameter_space_in_x_2_object()(cv, ind);
+  Arr_parameter_space ps_y = m_traits->parameter_space_in_y_2_object()(cv, ind);
 
   // Create the corresponding event an push it into the event queue.
   std::pair<Event*, bool> pair_res;
 
-  if (bound_x != MINUS_INFINITY &&
-      bound_x != PLUS_INFINITY &&
-      bound_y != MINUS_INFINITY &&
-      bound_y != PLUS_INFINITY)
-  {
-    // The curve end has no boundary conditions, so it is associated with a
-    // valid endpoint.
+  if (m_traits->is_bounded_2_object()(cv, ind)) {
+    // The curve end is bounded and associated with a valid endpoint.
     const Point_2&  pt = (ind == ARR_MIN_END) ?
       m_traits->construct_min_vertex_2_object()(cv) :
       m_traits->construct_max_vertex_2_object()(cv);
     
-    if (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY) {
-      pair_res = _push_event (pt, end_attr,
-                              bound_x, bound_y,
-                              sc);
+    if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR) {
+      pair_res = _push_event (pt, end_attr, ps_x, ps_y, sc);
     } else {
-      pair_res = _push_event (cv, ind, end_attr,
-                              bound_x, bound_y,
-                              sc);
+      pair_res = _push_event (cv, ind, end_attr, ps_x, ps_y, sc);
     }
 
     // Inform the visitor in case we updated an existing event.
@@ -325,11 +314,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_curve_end
   }
   else
   {
-    // The curve end has boundary conditions, so we use them to insert it
-    // to the event queue.
-    pair_res = _push_event (cv, ind, end_attr,
-                            bound_x, bound_y,
-                            sc);
+    // The curve end is unbounded, insert it into the event queue.
+    pair_res = _push_event (cv, ind, end_attr, ps_x, ps_y, sc);
 
     // Inform the visitor in case we updated an existing event.
     Event   *e = pair_res.first;
@@ -430,10 +416,10 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
 _handle_event_without_left_curves()
 {
   // Check if the event is a boundary event or not.
-  const Boundary_type  bound_x = m_currentEvent->boundary_in_x();
-  const Boundary_type  bound_y = m_currentEvent->boundary_in_y();
+  const Arr_parameter_space  ps_x = m_currentEvent->parameter_space_in_x();
+  const Arr_parameter_space  ps_y = m_currentEvent->parameter_space_in_y();
 
-  if (bound_x == NO_BOUNDARY && bound_y == NO_BOUNDARY)
+  if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
   {
     // The event is associated with a valid point - locate the position of
     // this point on the status line (note this point may be located on a
@@ -450,9 +436,8 @@ _handle_event_without_left_curves()
   
   // We have a boundary event, so we can easily locate a plave for it in the
   // status line.
-  const CGAL::Sign    sgn_bx = CGAL::sign (bound_x);
 
-  if (sgn_bx == CGAL::NEGATIVE)
+  if (ps_x == ARR_LEFT_BOUNDARY)
   {
     // We are still sweeping the left boundary, so by the way we have ordered
     // the events in the queue, we know that the new event should be placed
@@ -463,20 +448,18 @@ _handle_event_without_left_curves()
   {
     // Note that an event with a positive boundary condition at x can only
     // represent a right end of a curve.
-    CGAL_assertion (sgn_bx != CGAL::POSITIVE);
+    CGAL_assertion (ps_x != ARR_RIGHT_BOUNDARY);
 
     // If the sign of the boundary in y is negative, the event should be
     // inserted below all other subcurves; if it is possitive, the event is
     // above all other subcurves.
-    const CGAL::Sign    sgn_by = CGAL::sign (bound_y);
-
-    if (sgn_by == CGAL::NEGATIVE)
+    if (ps_y == ARR_BOTTOM_BOUNDARY)
     {
       m_status_line_insert_hint = m_statusLine.begin();
     }
     else
     {
-      CGAL_assertion (sgn_by == CGAL::POSITIVE);
+      CGAL_assertion (ps_y == ARR_TOP_BOUNDARY);
       m_status_line_insert_hint = m_statusLine.end();
     }
   }
@@ -638,14 +621,14 @@ _remove_curve_from_status_line (Subcurve *sc)
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_allocate_event
-    (const Point_2& pt, Attribute type,
-     Boundary_type bound_x, Boundary_type bound_y)
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_allocate_event (const Point_2& pt, Attribute type,
+                 Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   // Allocate the event.
   Event *e =  m_eventAlloc.allocate(1); 
   m_eventAlloc.construct(e, m_masterEvent);
-  e->init (pt, type, bound_x, bound_y);
+  e->init (pt, type, ps_x, ps_y);
 
   // Insert it to the set of allocated events.
   m_allocated_events.insert(e);
@@ -657,13 +640,13 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_allocate_event
 //
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_allocate_event_at_infinity
-    (Attribute type,
-     Boundary_type bound_x, Boundary_type bound_y)
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_allocate_event_at_infinity(Attribute type,
+                            Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   Event *e =  m_eventAlloc.allocate(1); 
   m_eventAlloc.construct(e, m_masterEvent);
-  e->init_at_infinity (type, bound_x, bound_y);
+  e->init_at_infinity (type, ps_x, ps_y);
 
   m_allocated_events.insert(e);
   return (e);
@@ -675,10 +658,9 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_allocate_event_at_infinity
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
-    (const Point_2& pt, Attribute type,
-     Boundary_type bound_x, Boundary_type bound_y,
-     Subcurve* sc)
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_push_event (const Point_2& pt, Attribute type,
+             Arr_parameter_space ps_x, Arr_parameter_space ps_y, Subcurve* sc)
 {
   // Look for the point in the event queue.
   Event*    e;  
@@ -691,8 +673,7 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
   {
     // The point is not found in the event queue - create a new event and
     // insert it into the queue.
-    e = _allocate_event (pt, type,
-                         bound_x, bound_y);       
+    e = _allocate_event (pt, type, ps_x, ps_y);       
   }
   else
   {
@@ -742,12 +723,11 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 std::pair<typename Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::Event*,
           bool>
-Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
-    (const X_monotone_curve_2& cv, Arr_curve_end ind,
-     Attribute type,
-     Boundary_type bound_x,
-     Boundary_type bound_y,
-     Subcurve* sc)
+Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::
+_push_event (const X_monotone_curve_2& cv, Arr_curve_end ind,
+             Attribute type,
+             Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+             Subcurve* sc)
 {
   //cv has no member named 'base'
   //std::cout << "cv: " << cv.base() << std::endl;
@@ -755,8 +735,8 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
   // Look for the curve end in the event queue.
   Event*    e;  
   
-  m_queueEventLess.set_boundary_in_x (bound_x);
-  m_queueEventLess.set_boundary_in_y (bound_y);
+  m_queueEventLess.set_parameter_space_in_x (ps_x);
+  m_queueEventLess.set_parameter_space_in_y (ps_y);
   m_queueEventLess.set_index (ind);
 
   const std::pair<Event_queue_iterator, bool>& pair_res =
@@ -767,8 +747,7 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
   {
     // The curve end is not found in the event queue - create a new event and
     // insert it into the queue.
-    if (bound_x != MINUS_INFINITY && bound_x != PLUS_INFINITY &&
-        bound_y != MINUS_INFINITY && bound_y != PLUS_INFINITY)
+    if (m_traits->is_bounded_2_object()(cv, ind))
     {
       // The curve end is not unbounded, so it is associated with a valid
       // point.
@@ -776,14 +755,12 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
         m_traits->construct_min_vertex_2_object()(cv) :
         m_traits->construct_max_vertex_2_object()(cv);
 
-      e = _allocate_event (pt, type,
-                           bound_x, bound_y);
+      e = _allocate_event (pt, type, ps_x, ps_y);
     }
     else
     {
       // The curve end is unbounded, so we create an event at infinity.
-      e = _allocate_event_at_infinity (type,
-                                       bound_x, bound_y);
+      e = _allocate_event_at_infinity (type, ps_x, ps_y);
     }
   }
   else
@@ -791,8 +768,8 @@ Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_push_event
     // The event associated with the given curve end already exists in the
     // queue, so we just have to update it.
     e = *(pair_res.first);
-    CGAL_assertion (e->boundary_in_x() == bound_x &&
-                    e->boundary_in_y() == bound_y);
+    CGAL_assertion (e->parameter_space_in_x() == ps_x &&
+                    e->parameter_space_in_y() == ps_y);
 
     e->set_attribute(type);
   }

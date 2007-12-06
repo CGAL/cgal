@@ -16,7 +16,8 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_BATCHED_PL_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_BATCHED_PL_HELPER_H
@@ -112,9 +113,10 @@ void Arr_unb_planar_batched_pl_helper<Tr, Arr>::before_sweep ()
     Vertex_const_handle  v_tr = 
       Vertex_const_handle (m_top_traits->top_right_vertex());
   );
-  CGAL_assertion ((m_top_fict->source() == v_tr) ||
-                  (m_top_fict->source()->boundary_in_x() == NO_BOUNDARY &&
-                   m_top_fict->source()->boundary_in_y() == PLUS_INFINITY));
+  CGAL_assertion
+    ((m_top_fict->source() == v_tr) ||
+     (m_top_fict->source()->parameter_space_in_x() == ARR_INTERIOR &&
+      m_top_fict->source()->parameter_space_in_y() == ARR_TOP_BOUNDARY));
 
   return;
 }
@@ -124,8 +126,8 @@ void Arr_unb_planar_batched_pl_helper<Tr, Arr>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr>
-void Arr_unb_planar_batched_pl_helper<Tr, Arr>::after_handle_event
-    (Event* event)
+void Arr_unb_planar_batched_pl_helper<Tr, Arr>::
+after_handle_event (Event* event)
 {
   // If the event is at infinity and occurs on the top edge of the fictitious
   // face (namely x is finite and y = +oo), we have to update the fictitious
@@ -133,10 +135,10 @@ void Arr_unb_planar_batched_pl_helper<Tr, Arr>::after_handle_event
   if (event->is_finite())
     return;
 
-  if (event->boundary_in_x() != NO_BOUNDARY)
+  if (event->parameter_space_in_x() != ARR_INTERIOR)
     return;
     
-  if (event->boundary_in_y() == PLUS_INFINITY)
+  if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     m_top_fict = m_top_fict->twin()->next()->twin();
     
   return;

@@ -176,8 +176,8 @@ public:
    */
   virtual void before_create_boundary_vertex (const X_monotone_curve_2& /*cv*/,
                                               CGAL::Arr_curve_end /* ind */,
-                                              CGAL::Boundary_type /* bound_x */,
-                                              CGAL::Boundary_type /* bound_y */)
+                                              CGAL::Arr_parameter_space /* bound_x */,
+                                              CGAL::Arr_parameter_space /* bound_y */)
   {
     compare_results("before_create_boundary_vertex");
   }

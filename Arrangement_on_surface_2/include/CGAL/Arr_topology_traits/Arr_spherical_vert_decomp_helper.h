@@ -139,7 +139,7 @@ void
 Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
 {
   // Ignore events that are not incident to the poles.
-  if (event->boundary_in_y() == NO_BOUNDARY)
+  if (event->parameter_space_in_y() == ARR_INTERIOR)
     return;
 
   // The is exactly one curve incident to an event with boundary conditions.
@@ -156,7 +156,7 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
 
-  if (event->boundary_in_y() == BEFORE_SINGULARITY)
+  if (event->parameter_space_in_y() == BEFORE_SINGULARITY)
   {
     // The event is incident to the north pole: update the north face.
     if (ind == ARR_MIN_END)
@@ -164,7 +164,7 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
     else
       m_north_face = xc.halfedge_handle()->face();
   }
-  else if (event->boundary_in_y() == AFTER_SINGULARITY)
+  else if (event->parameter_space_in_y() == AFTER_SINGULARITY)
   {
     // The event is incident to the south pole: update the south face.
     if (ind == ARR_MIN_END)

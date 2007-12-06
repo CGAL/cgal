@@ -16,6 +16,8 @@
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
+//                 Efi Fogel    <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_LANDMARKS_PL_IMPL_H
 #define CGAL_ARR_LANDMARKS_PL_IMPL_H
 
@@ -602,11 +604,11 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
 // the current landmark to the query point, an odd number of times.
 //
 template <class Arr, class Gen>
-bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
-    (const X_monotone_curve_2& cv,
-     const X_monotone_curve_2& seg,
-     bool p_is_left,
-     bool& p_on_curve) const
+bool Arr_landmarks_point_location<Arr, Gen>::
+_have_odd_intersections (const X_monotone_curve_2& cv,
+                         const X_monotone_curve_2& seg,
+                         bool p_is_left,
+                         bool& p_on_curve) const
 {
   p_on_curve = false;
 
@@ -614,17 +616,9 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   const Point_2&  seg_left = m_traits->construct_min_vertex_2_object() (seg);
   const Point_2&  seg_right = m_traits->construct_max_vertex_2_object() (seg);
 
-  // Check the boundary conditions of the left and right curve ends of cv.
-  const Boundary_type  bx_l = m_traits->boundary_in_x_2_object() (cv, ARR_MIN_END);
-  const Boundary_type  by_l = m_traits->boundary_in_y_2_object() (cv, ARR_MIN_END);
-  const Boundary_type  bx_r = m_traits->boundary_in_x_2_object() (cv, ARR_MAX_END);
-  const Boundary_type  by_r = m_traits->boundary_in_y_2_object() (cv, ARR_MAX_END);
-
   // Check if the overlapping x-range of the two curves is trivial.
   // In this case, they cannot cross.
-  if (bx_l != MINUS_INFINITY && bx_l != PLUS_INFINITY &&
-      by_l != MINUS_INFINITY && by_l != PLUS_INFINITY)
-  {
+  if (m_traits->is_bounded_2_object() (cv, ARR_MIN_END)) {
     // Check if the left endpoint of cv has the same x-coordinate as the
     // right endpoint of seg.
     if (m_traits->compare_x_2_object()
@@ -659,9 +653,7 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
     }
   }
   
-  if (bx_r != MINUS_INFINITY && bx_r != PLUS_INFINITY &&
-      by_r != MINUS_INFINITY && by_r != PLUS_INFINITY)
-  {
+  if (m_traits->is_bounded_2_object() (cv, ARR_MAX_END)) {
     // Check if the right endpoint of cv has the same x-coordinate as the
     // left endpoint of seg.
     if (m_traits->compare_x_2_object()
@@ -699,16 +691,16 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   // Compare the two left ends of cv and seg.
   Comparison_result    left_res;
 
-  if (CGAL::sign (bx_l) == CGAL::NEGATIVE)
-  {
+  const Arr_parameter_space  bx_l =
+    m_traits->parameter_space_in_x_2_object() (cv, ARR_MIN_END);
+
+  if (bx_l == ARR_LEFT_BOUNDARY) {
     // The left end of cv lies to the left of seg_left:
     // Compare this point to cv.
     left_res = m_traits->compare_y_at_x_2_object() (seg_left, cv);
   }
-  else if (CGAL::sign (bx_l) == CGAL::POSITIVE)
+  else if (bx_l == ARR_RIGHT_BOUNDARY)
   {
-    CGAL_assertion (bx_l != PLUS_INFINITY);
-
     // The left end of cv lies to the right of seg_left.
     // Compare the left endpoint of cv to seg.
     left_res = m_traits->compare_y_at_x_2_object()
@@ -717,14 +709,15 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
   }
   else
   {
-    if (by_l == MINUS_INFINITY)
+    const Arr_parameter_space  by_l =
+      m_traits->parameter_space_in_y_2_object() (cv, ARR_MIN_END);
+    if (by_l == ARR_BOTTOM_BOUNDARY)
       // The left end of cv is at y = -oo, so cv obviously lies above it.
       left_res = LARGER;
-    else if (by_l == PLUS_INFINITY)
+    else if (by_l == ARR_TOP_BOUNDARY)
       // The left end of cv is at y = +oo, so cv obviously lies below it.
       left_res = SMALLER;
-    else
-    {
+    else {
       // In this case cv has a valid left endpoint: Find the rightmost of
       // these two points and compare it to the other curve.
       const Point_2&    cv_left = m_traits->construct_min_vertex_2_object()(cv);
@@ -758,39 +751,39 @@ bool Arr_landmarks_point_location<Arr, Gen>::_have_odd_intersections
 
     if (left_res == EQUAL)
     {
-        // RWRW: In this case we have an overlap ...
+      // RWRW: In this case we have an overlap ...
     }
   }
 
   // Compare the two right ends of cv and seg.
   Comparison_result    right_res;
 
-  if (CGAL::sign (bx_r) == CGAL::POSITIVE)
-  {
+  const Arr_parameter_space  bx_r =
+    m_traits->parameter_space_in_x_2_object() (cv, ARR_MAX_END);
+
+  if (bx_r == ARR_RIGHT_BOUNDARY) {
     // The right end of cv lies to the right of seg_right:
     // Compare this point to cv.
     right_res = m_traits->compare_y_at_x_2_object() (seg_right, cv);
   }
-  else if (CGAL::sign (bx_r) == CGAL::NEGATIVE)
-  {
-    CGAL_assertion (bx_r != MINUS_INFINITY);
-
+  else if (bx_r == ARR_LEFT_BOUNDARY) {
     // The right end of cv lies to the left of seg_right.
     // Compare the right endpoint of cv to seg.
     right_res = m_traits->compare_y_at_x_2_object()
         (m_traits->construct_max_vertex_2_object() (cv), seg);
     right_res = CGAL::opposite (right_res);
   }
-  else
-  {
-    if (by_r == MINUS_INFINITY)
+  else {
+    const Arr_parameter_space  by_r =
+      m_traits->parameter_space_in_y_2_object() (cv, ARR_MAX_END);
+
+    if (by_r == ARR_BOTTOM_BOUNDARY)
       // The right end of cv is at y = -oo, so cv obviously lies above it.
       right_res = LARGER;
-    else if (by_r == PLUS_INFINITY)
+    else if (by_r == ARR_TOP_BOUNDARY)
       // The right end of cv is at y = +oo, so cv obviously lies below it.
       right_res = SMALLER;
-    else
-    {
+    else {
       // In this case cv has a valid right endpoint: Find the leftmost of
       // these two points and compare it to the other curve.
       const Point_2& cv_right = m_traits->construct_max_vertex_2_object()(cv);

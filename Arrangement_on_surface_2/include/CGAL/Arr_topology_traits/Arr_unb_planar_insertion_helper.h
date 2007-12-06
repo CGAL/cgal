@@ -16,7 +16,8 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Ron Wein <wein@post.tau.ac.il>
+//                 Ron Wein        <wein@post.tau.ac.il>
+//                 Efi Fogel       <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
 #define CGAL_ARR_UNB_PLANAR_INSERTION_HELPER_H
@@ -51,18 +52,13 @@ public:
   typedef typename Traits_2::Point_2                   Point_2;
 
 
-  typedef Arr_unb_planar_construction_helper<Traits_2,
-                                             Arrangement_2,
-                                             Event,
+  typedef Arr_unb_planar_construction_helper<Traits_2, Arrangement_2, Event,
                                              Subcurve> Base;
 
-  typedef Sweep_line_empty_visitor<Traits_2,
-                                   Subcurve,
-                                   Event>              Base_visitor;
+  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
+                                                       Base_visitor;
 
-  typedef Arr_unb_planar_insertion_helper<Traits_2,
-                                          Arrangement_2,
-                                          Event,
+  typedef Arr_unb_planar_insertion_helper<Traits_2, Arrangement_2, Event,
                                           Subcurve>    Self;
 
   typedef Arr_construction_sl_visitor<Self>            Parent_visitor;
@@ -114,7 +110,7 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 {
   // Obtain the four fictitious vertices that form the "corners" of the
   // fictitious face in the DCEL.
-  Vertex_handle   v_bl = 
+  Vertex_handle   v_bl =
     Vertex_handle (this->m_top_traits->bottom_left_vertex());
   Vertex_handle   v_tl = 
     Vertex_handle (this->m_top_traits->top_left_vertex());
@@ -135,23 +131,23 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
   //
   this->m_lh = v_bl->incident_halfedges();
 
-  if (this->m_lh->source()->boundary_in_x() != MINUS_INFINITY)
+  if (this->m_lh->source()->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
     this->m_lh = this->m_lh->next()->twin();
    
   this->m_bh = this->m_lh->next();
-   
+  
   this->m_th = v_tl->incident_halfedges();
-  if (this->m_th->source()->boundary_in_x() == MINUS_INFINITY)
+  if (this->m_th->source()->parameter_space_in_x() == ARR_LEFT_BOUNDARY)
     this->m_th = this->m_th->next()->twin();
 
   this->m_rh = v_br->incident_halfedges();
-  if (this->m_rh->source()->boundary_in_x() == PLUS_INFINITY)
+  if (this->m_rh->source()->parameter_space_in_x() == ARR_RIGHT_BOUNDARY)
     this->m_rh = this->m_rh->twin();
   else
     this->m_rh = this->m_rh->next();
 
   CGAL_assertion_code (
-    Face_handle  fict_face = Face_handle (this->m_top_traits->fictitious_face());
+    Face_handle fict_face = Face_handle (this->m_top_traits->fictitious_face());
   );
   CGAL_assertion (this->m_lh->direction() == ARR_RIGHT_TO_LEFT);
   CGAL_assertion (this->m_lh->face() != fict_face);
@@ -175,15 +171,15 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
-    (Event* event)
+void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::
+before_handle_event (Event* event)
 {
   if (event->is_finite())
     return;
 
   // In case the event lies at inifinity, check whether its incident curve
   // is already in the arrangement.
-  if (event->unbounded_curve().halfedge_handle() == Halfedge_handle())
+  if (event->curve().halfedge_handle() == Halfedge_handle())
   {
     // The curve is not in the arrangement, use the base construction helper
     // to handle the event:
@@ -193,24 +189,24 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
 
   // The curve is already in the arrangement, but has an infinite end,
   // so we have to update the fictitious halfedges.
-  const Boundary_type x_inf = event->boundary_in_x();
+  const Arr_parameter_space ps_x = event->parameter_space_in_x();
       
-  if (x_inf == MINUS_INFINITY)
+  if (ps_x == ARR_LEFT_BOUNDARY)
   {
     // The event lies on the left fictitious halfedge.
     this->m_lh = this->m_lh->twin()->next()->twin();
     this->m_prev_minus_inf_x_event = NULL;
   }
-  else if (x_inf == PLUS_INFINITY)
+  else if (ps_x == ARR_RIGHT_BOUNDARY)
   {
     // The event lies on the right fictitious halfedge.
     this->m_rh = this->m_rh->twin()->prev()->twin();
   }
   else
   {
-    const Boundary_type y_inf = event->boundary_in_y();
-        
-    if (y_inf == MINUS_INFINITY)
+    const Arr_parameter_space ps_y = event->parameter_space_in_y();
+    
+    if (ps_y == ARR_BOTTOM_BOUNDARY)
     {
       // The event lies on the bottom fictitious halfedge.
       this->m_bh = this->m_bh->twin()->prev()->twin();
@@ -218,7 +214,7 @@ void Arr_unb_planar_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     else
     {
       // The event lies on the top fictitious halfedge.
-      CGAL_assertion (y_inf == PLUS_INFINITY);
+      CGAL_assertion (ps_y == ARR_TOP_BOUNDARY);
       this->m_th = this->m_th->twin()->next()->twin();
       this->m_prev_plus_inf_y_event = NULL;
     }

@@ -537,10 +537,10 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_in_face_interior
     // In this case the left vertex v1 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this left vertex.
-    Boundary_type   bx = last_event->boundary_in_x();
-    Boundary_type   by = last_event->boundary_in_y();
+    Arr_parameter_space   bx = last_event->parameter_space_in_x();
+    Arr_parameter_space   by = last_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
     Halfedge_handle l_prev =
         Halfedge_handle(
@@ -568,10 +568,10 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_in_face_interior
     // In this case the right vertex v2 is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = curr_event->boundary_in_x();
-    Boundary_type   by = curr_event->boundary_in_y();
+    Arr_parameter_space   bx = curr_event->parameter_space_in_x();
+    Arr_parameter_space   by = curr_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
     Halfedge_handle r_prev =
         Halfedge_handle(
@@ -709,10 +709,10 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_right_vertex
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve between two existing vertices.
-    Boundary_type   bx = last_event->boundary_in_x();
-    Boundary_type   by = last_event->boundary_in_y();
+    Arr_parameter_space   bx = last_event->parameter_space_in_x();
+    Arr_parameter_space   by = last_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
     Halfedge_handle l_prev =
         Halfedge_handle(
@@ -775,10 +775,10 @@ Arr_torus_construction_sl_visitor<Hlpr>::insert_from_left_vertex
     // In this case the left vertex v is a boundary vertex which already has
     // some incident halfedges. We look for the predecessor halfedge and
     // and insert the curve from this right vertex.
-    Boundary_type   bx = curr_event->boundary_in_x();
-    Boundary_type   by = curr_event->boundary_in_y();
+    Arr_parameter_space   bx = curr_event->parameter_space_in_x();
+    Arr_parameter_space   by = curr_event->parameter_space_in_y();
 
-    CGAL_assertion (bx != NO_BOUNDARY || by != NO_BOUNDARY);
+    CGAL_assertion (bx != ARR_INTERIOR || by != ARR_INTERIOR);
 
     Halfedge_handle r_prev =
         Halfedge_handle(

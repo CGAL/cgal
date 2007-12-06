@@ -109,11 +109,11 @@ public:
      */
     virtual void before_handle_event(Event * event)
     {
-        const Boundary_type bound_x = event->boundary_in_x();
-        const Boundary_type bound_y = event->boundary_in_y();
+        const Arr_parameter_space bound_x = event->parameter_space_in_x();
+        const Arr_parameter_space bound_y = event->parameter_space_in_y();
         
         if (bound_x < 0) {
-            CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
+            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
             // The event has only one right curve.
             CGAL_assertion((event->number_of_left_curves() == 0) &&
                            (event->number_of_right_curves() == 1));
@@ -134,7 +134,7 @@ public:
         }
         
         if (bound_x > 0) {
-            CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
+            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
             // The event has only one left curve.
             CGAL_assertion((event->number_of_left_curves() == 1) &&
                            (event->number_of_right_curves() == 0));
@@ -154,10 +154,10 @@ public:
             return;
         }
         
-        if (bound_y != CGAL::NO_BOUNDARY) {
+        if (bound_y != CGAL::ARR_INTERIOR) {
             CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
                            bound_y == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_x == CGAL::NO_BOUNDARY);
+            CGAL_assertion(bound_x == CGAL::ARR_INTERIOR);
             // there is exactly one event
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
@@ -201,12 +201,12 @@ public:
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        CGAL::Boundary_type bnd_y_min = 
+        CGAL::Arr_parameter_space bnd_y_min = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
-        CGAL::Boundary_type bnd_y_max = 
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
+        CGAL::Arr_parameter_space bnd_y_max = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
         
         if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
             he_on_top_face = 
@@ -262,8 +262,8 @@ public:
         // If we insert an edge whose right end has boundary condition
         // before the curve of discontinuity 
         // have to flip the order of predecessor halfegdes.
-        return (event->boundary_in_x() == CGAL::NO_BOUNDARY &&
-                event->boundary_in_y() == CGAL::BEFORE_DISCONTINUITY);
+        return (event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
+                event->parameter_space_in_y() == CGAL::BEFORE_DISCONTINUITY);
     }
     
     /*! Get the current top face. */

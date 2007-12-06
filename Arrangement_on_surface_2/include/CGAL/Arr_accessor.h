@@ -16,6 +16,8 @@
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
+
 #ifndef CGAL_ARR_ACCESSOR_H
 #define CGAL_ARR_ACCESSOR_H
 
@@ -54,7 +56,7 @@ public:
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                     Ccb_halfedge_circulator;
+                                                        Ccb_halfedge_circulator;
 
 private:
 
@@ -112,8 +114,8 @@ public:
    * \param cv The curve.
    * \param ind ARR_MIN_END if we refer to cv's minimal end;
    *            ARR_MAX_END if we refer to its maximal end.
-   * \param bound_x The boundary condition in x.
-   * \param bound_y The boundary condition in y.
+   * \param ps_x The boundary condition in x.
+   * \param ps_y The boundary condition in y.
    * \pre The relevant end of cv has boundary conditions in x or in y.
    * \return An object that contains the curve end.
    *         This object may wrap a Face_const_handle (the general case),
@@ -121,15 +123,15 @@ public:
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
-                                 Boundary_type bound_x,
-                                 Boundary_type bound_y) const
+                                 Arr_parameter_space ps_x,
+                                 Arr_parameter_space ps_y) const
   {
-    CGAL_precondition (bound_x != NO_BOUNDARY || bound_y != NO_BOUNDARY);
+    CGAL_precondition (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
 
     // Use the topology traits to locate the unbounded curve end.
     CGAL::Object  obj =
       p_arr->topology_traits()->locate_curve_end (cv, ind,
-                                                  bound_x, bound_y);
+                                                  ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
     DFace        *f;
@@ -166,27 +168,21 @@ public:
   {
     typedef
       Arr_traits_basic_adaptor_2<typename Arrangement_2::Geometry_traits_2>
-                                                             Traits_adaptor_2;
+      Traits_adaptor_2;
 
     const Traits_adaptor_2  *m_traits = 
-                   static_cast<Traits_adaptor_2*> (p_arr->geometry_traits());
+      static_cast<Traits_adaptor_2*> (p_arr->geometry_traits());
 
-    const Boundary_type      bx = m_traits->boundary_in_x_2_object() (cv,
-                                                                      ARR_MAX_END);
-    const Boundary_type      by = m_traits->boundary_in_y_2_object() (cv,
-                                                                      ARR_MAX_END);
     Arr_curve_end                ind = ARR_MIN_END;
 
-    if (bx != MINUS_INFINITY && bx != PLUS_INFINITY &&
-        by != MINUS_INFINITY && by != PLUS_INFINITY &&
+    if (m_traits->is_bounded_2_object() (cv, ARR_MAX_END) &&
         m_traits->equal_2_object() (vh->point(),
                                     m_traits->construct_max_vertex_2_object()(cv)))
     {
       ind = ARR_MAX_END;
     }
 
-    DHalfedge*  he = p_arr->_locate_around_vertex (p_arr->_vertex (vh),
-                                                   cv, ind);
+    DHalfedge * he = p_arr->_locate_around_vertex(p_arr->_vertex (vh), cv, ind);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -199,8 +195,8 @@ public:
    * \param cv The curve.
    * \param ind ARR_MIN_END if we refer to cv's minimal end;
    *            ARR_MAX_END if we refer to its maximal end.
-   * \param bound_x The boundary condition in x.
-   * \param bound_y The boundary condition in y.
+   * \param ps_x The boundary condition in x.
+   * \param ps_y The boundary condition in y.
    * \pre The relevant end of cv has boundary conditions in x or in y.
    * \return A handle for a halfedge whose target is v, where cv should be
    *         inserted between this halfedge and the next halfedge around this
@@ -210,16 +206,15 @@ public:
       locate_around_boundary_vertex (Vertex_handle vh,
                                      const X_monotone_curve_2& cv,
                                      Arr_curve_end ind,
-                                     Boundary_type bound_x,
-                                     Boundary_type bound_y) const
+                                     Arr_parameter_space ps_x,
+                                     Arr_parameter_space ps_y) const
   {
-    CGAL_precondition (bound_x != NO_BOUNDARY || bound_y != NO_BOUNDARY);
+    CGAL_precondition (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
 
     // Use the topology traits to locate the unbounded curve end.
     DHalfedge*  he = p_arr->topology_traits()->
                          locate_around_boundary_vertex (p_arr->_vertex (vh),
-                                                        cv, ind,
-                                                        bound_x, bound_y);
+                                                        cv, ind, ps_x, ps_y);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -237,18 +232,16 @@ public:
                          Halfedge_const_handle e2) const
   {
     // If the two halfedges do not belong to the same component, return (-1).
-    const DHalfedge   *he1 = p_arr->_halfedge (e1);
-    const DHalfedge   *he2 = p_arr->_halfedge (e2);
+    const DHalfedge  *he1 = p_arr->_halfedge (e1);
+    const DHalfedge  *he2 = p_arr->_halfedge (e2);
     
     if (he1 == he2)
       return (0);
 
-    const DInner_ccb  *ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() :
-                                                        NULL;
-    const DOuter_ccb  *oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-    const DInner_ccb  *ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() :
-                                                        NULL;
-    const DOuter_ccb  *oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
+    const DInner_ccb *ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
+    const DOuter_ccb *oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
+    const DInner_ccb *ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
+    const DOuter_ccb *oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
 
     if (oc1 != oc2 || ic1 != ic2)
       return (-1);
@@ -286,17 +279,16 @@ public:
    * \param cv The curve.
    * \param ind ARR_MIN_END if we refer to cv's minimal end;
    *            ARR_MAX_END if we refer to its maximal end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \return Whether v represents the left (or right) end of cv.
    */
   bool are_equal (Vertex_const_handle v,
                   const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Boundary_type bound_x, Boundary_type bound_y) const
+                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
     return (p_arr->topology_traits()->are_equal (p_arr->_vertex (v),
-                                                 cv, ind,
-                                                 bound_x, bound_y));
+                                                 cv, ind, ps_x, ps_y));
   }
 
   /*!
@@ -344,31 +336,28 @@ public:
    * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
    * \param ind The relevant curve-end.
-   * \param bx The boundary condition in x.
+   * \param ps_x The boundary condition in x.
    * \param by The boundary condition in y.
    * \param notify Should we send a notification to the topology traits
    *               on the creation of the vertex (true by default).
-   * \pre Either bx or by does not equal NO_BOUNDARY.
+   * \pre Either ps_x or by does not equal ARR_INTERIOR.
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex (const X_monotone_curve_2& cv,
                                         Arr_curve_end ind,
-                                        Boundary_type bound_x,
-                                        Boundary_type bound_y,
+                                        Arr_parameter_space ps_x,
+                                        Arr_parameter_space ps_y,
                                         bool notify = true)
   {
-    DVertex   *v = p_arr->_create_boundary_vertex (cv, ind,
-                                                   bound_x, bound_y);
+    DVertex   *v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
     CGAL_assertion (v != NULL);
 
     // Notify the topology traits on the creation of the boundary vertex.
     if (notify)
     {
-      p_arr->topology_traits()->notify_on_boundary_vertex_creation (v,
-                                                                    cv, ind,
-                                                                    bound_x,
-                                                                    bound_y);
+      p_arr->topology_traits()->notify_on_boundary_vertex_creation(v, cv, ind,
+                                                                   ps_x, ps_y);
     }
 
     return (p_arr->_handle_for (v));
@@ -381,8 +370,8 @@ public:
    * \param f The face that contains the curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition at the x-coordinate.
-   * \param bound_y The boundary condition at the y-coordinate.
+   * \param ps_x The boundary condition at the x-coordinate.
+   * \param ps_y The boundary condition at the y-coordinate.
    * \return A pair of <Vertex_handle, Halfedge_handle>:
    *         The first element is the vertex that corresponds to the curve end.
    *         The second is its predecessor halfedge (if valid).
@@ -390,13 +379,11 @@ public:
   std::pair<Vertex_handle, Halfedge_handle>
   place_and_set_curve_end (Face_handle f,
                            const X_monotone_curve_2& cv, Arr_curve_end ind,
-                           Boundary_type bound_x, Boundary_type bound_y)
+                           Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     DHalfedge  *pred;
-    DVertex    *v = p_arr->_place_and_set_curve_end (p_arr->_face (f),
-                                                     cv, ind,
-                                                     bound_x, bound_y,
-                                                     &pred);
+    DVertex    *v = p_arr->_place_and_set_curve_end (p_arr->_face (f), cv, ind,
+                                                     ps_x, ps_y, &pred);
 
     if (pred == NULL)
       // No predecessor halfedge, return just the vertex:
@@ -432,8 +419,7 @@ public:
     DHalfedge*  he = p_arr->_insert_at_vertices (cv,
                                                  p_arr->_halfedge (prev1),
                                                  p_arr->_halfedge (prev2),
-                                                 res,
-                                                 new_face);
+                                                 res, new_face);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -472,10 +458,8 @@ public:
       p_arr->_dcel().delete_isolated_vertex (iv);
     }
 
-    DHalfedge*  he = p_arr->_insert_from_vertex (cv,
-                                                 p_arr->_halfedge (prev),
-                                                 p_v,
-                                                 res);
+    DHalfedge*  he =
+      p_arr->_insert_from_vertex (cv, p_arr->_halfedge (prev), p_v, res);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -658,8 +642,7 @@ public:
   Halfedge_handle modify_edge_ex (Halfedge_handle e,
                                   const X_monotone_curve_2& cv)
   {
-    p_arr->_modify_edge (p_arr->_halfedge (e),
-                         cv);
+    p_arr->_modify_edge (p_arr->_halfedge (e), cv);
 
     return (e);
   }
@@ -681,9 +664,7 @@ public:
                                  const X_monotone_curve_2& cv1, 
                                  const X_monotone_curve_2& cv2)
   {
-    DHalfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e),
-                                         p,
-                                         cv1, cv2);
+    DHalfedge*  he = p_arr->_split_edge (p_arr->_halfedge (e), p, cv1, cv2);
 
     CGAL_assertion (he != NULL);
     return (p_arr->_handle_for (he));
@@ -721,8 +702,7 @@ public:
    * \return A handle for the first split halfedge, whose source equals the
    *         source of e, and whose target is the split vertex v.
    */
-  Halfedge_handle split_fictitious_edge (Halfedge_handle e,
-                                         Vertex_handle v)
+  Halfedge_handle split_fictitious_edge (Halfedge_handle e, Vertex_handle v)
   {
     CGAL_precondition (e->is_fictitious());
 
@@ -766,14 +746,12 @@ public:
      DHalfedge        *he1 = p_arr->_halfedge (e1);
      DHalfedge        *he2 = p_arr->_halfedge (e2);
 
-    const DInner_ccb  *ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() :
-                                                        NULL;
+    const DInner_ccb  *ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
 
     if (ic1 == NULL)
       return (false);
 
-    const DInner_ccb  *ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() :
-                                                        NULL;
+    const DInner_ccb  *ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
 
     return (ic1 == ic2);
   }
@@ -789,14 +767,12 @@ public:
      DHalfedge        *he1 = p_arr->_halfedge (e1);
      DHalfedge        *he2 = p_arr->_halfedge (e2);
 
-    const DOuter_ccb  *oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() :
-                                                        NULL;
+    const DOuter_ccb  *oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() : NULL;
 
     if (oc1 == NULL)
       return (false);
 
-    const DOuter_ccb  *oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() :
-                                                        NULL;
+    const DOuter_ccb  *oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() : NULL;
 
     return (oc1 == oc2);
   }
@@ -879,32 +855,27 @@ public:
    * Create a new vertex.
    * \param p A pointer to the point (may be NULL in case of a vertex at
    *          infinity).
-   * \param bound_x The boundary condition at x.
-   * \param bound_y The boundary condition at y.
+   * \param ps_x The boundary condition at x.
+   * \param ps_y The boundary condition at y.
    * \return A pointer to the created DCEL vertex.
    */
   Dcel_vertex* new_vertex (const Point_2 *p,
-                           Boundary_type bound_x, Boundary_type bound_y)
+                           Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     Dcel_vertex     *new_v = p_arr->_dcel().new_vertex();
 
     if (p != NULL)
     {
       typename Dcel::Vertex::Point  *p_pt = p_arr->_new_point(*p);
-
       new_v->set_point (p_pt);
     }
     else
     {
-      CGAL_precondition (bound_x == MINUS_INFINITY ||
-                         bound_x == PLUS_INFINITY ||
-                         bound_y == MINUS_INFINITY ||
-                         bound_y == PLUS_INFINITY);
-
+      CGAL_precondition (p_arr->is_unbounded(ps_x, ps_y));
       new_v->set_point (NULL);
     }
 
-    new_v->set_boundary (bound_x, bound_y);
+    new_v->set_boundary (ps_x, ps_y);
     return (new_v);
   }
 
@@ -920,8 +891,7 @@ public:
 
     if (cv != NULL)
     {
-      typename Dcel::Halfedge::X_monotone_curve  *p_cv =
-                                                      p_arr->_new_curve(*cv);
+      typename Dcel::Halfedge::X_monotone_curve  *p_cv = p_arr->_new_curve(*cv);
       new_he->set_curve (p_cv);
     }
     else

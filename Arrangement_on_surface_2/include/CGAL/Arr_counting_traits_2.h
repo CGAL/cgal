@@ -139,10 +139,10 @@ public:
   unsigned int count_compare_endpoints_xy() const
   { return m_counters[COMPARE_ENDPOINTS_XY_OP]; }
   
-  unsigned int count_boundary_in_x() const
+  unsigned int count_parameter_space_in_x() const
   { return m_counters[BOUNDARY_IN_X_OP]; }
   
-  unsigned int count_boundary_in_y() const
+  unsigned int count_parameter_space_in_y() const
   { return m_counters[BOUNDARY_IN_Y_OP]; }
 
   unsigned int count_compare_x_near_boundary() const
@@ -461,18 +461,18 @@ public:
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
-  class Boundary_in_x_2 {
+  class Parameter_space_in_x_2 {
   private:
-    typename Base::Boundary_in_x_2 m_object;
+    typename Base::Parameter_space_in_x_2 m_object;
     mutable unsigned int & m_counter;
 
   public:
     /*! Construct */
-    Boundary_in_x_2(const Base * base, unsigned int & counter) :
-      m_object(base->boundary_in_x_2_object()), m_counter(counter) {}
+    Parameter_space_in_x_2(const Base * base, unsigned int & counter) :
+      m_object(base->parameter_space_in_x_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xc,
                              Arr_curve_end ce) const
     { ++m_counter; return m_object(xc, ce); }
   };
@@ -480,23 +480,23 @@ public:
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
    */
-  class Boundary_in_y_2 {
+  class Parameter_space_in_y_2 {
   private:
-    typename Base::Boundary_in_y_2 m_object;
+    typename Base::Parameter_space_in_y_2 m_object;
     mutable unsigned int & m_counter;
 
   public:
     /*! Construct */
-    Boundary_in_y_2(const Base * base, unsigned int & counter) :
-      m_object(base->boundary_in_y_2_object()), m_counter(counter) {}
+    Parameter_space_in_y_2(const Base * base, unsigned int & counter) :
+      m_object(base->parameter_space_in_y_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    Boundary_type operator()(const X_monotone_curve_2 & xc,
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xc,
                              Arr_curve_end ce) const
     { ++m_counter; return m_object(xc, ce); }
 
     /*! Operate */
-    Boundary_type operator()(const Point_2 & p) const
+    Arr_parameter_space operator()(const Point_2 & p) const
     { ++m_counter; return m_object(p); }
   };
 
@@ -604,11 +604,11 @@ public:
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(this, m_counters[CONSTRUCT_MAX_VERTEX_OP]); }
   
-  Boundary_in_x_2 boundary_in_x_2_object() const
-  { return Boundary_in_x_2(this, m_counters[BOUNDARY_IN_X_OP]); }
+  Parameter_space_in_x_2 parameter_space_in_x_2_object() const
+  { return Parameter_space_in_x_2(this, m_counters[BOUNDARY_IN_X_OP]); }
 
-  Boundary_in_y_2 boundary_in_y_2_object() const
-  { return Boundary_in_y_2(this, m_counters[BOUNDARY_IN_Y_OP]); }  
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
+  { return Parameter_space_in_y_2(this, m_counters[BOUNDARY_IN_Y_OP]); }  
 
   Is_vertical_2 is_vertical_2_object() const
   { return Is_vertical_2(this, m_counters[IS_VERTICAL_OP]); }
@@ -716,9 +716,9 @@ Out_stream & operator<<(Out_stream & os,
      << "# of COMPARE_ENDPOINTS_XY operation = "
      << traits.count_compare_endpoints_xy() << std::endl
      << "# of BOUNDARY_IN_X operation = "
-     << traits.count_boundary_in_x() << std::endl
+     << traits.count_parameter_space_in_x() << std::endl
      << "# of BOUNDARY_IN_Y operation = "
-     << traits.count_boundary_in_y() << std::endl
+     << traits.count_parameter_space_in_y() << std::endl
      << "# of COMPARE_X_NEAR_BOUNDARY operation = "
      << traits.count_compare_x_near_boundary() << std::endl
      << "# of COMPARE_Y_NEAR_BOUNDARY operation = "

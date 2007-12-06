@@ -34,6 +34,7 @@
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -79,11 +80,11 @@ public:
   typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
   typedef typename Base::Equal_2                Equal_2;
 
-  /// \name Overriden functors.
+  /// \name Overriden functors for bounded boundaries.
   //@{
 
-  /*! A functor that compares compares the y-coordinates of two x-monotone
-   * curves immediately to the left of their intersection point.
+  /*! A functor that compares the y-coordinates of two x-monotone curves
+   * immediately to the left of their intersection point.
    */
   class Compare_y_at_x_left_2 {
   public:
@@ -144,27 +145,25 @@ public:
                                                 const Point_2& p,
                                                 Tag_false) const
     {
-      Boundary_in_x_2         boundary_x = m_self->boundary_in_x_2_object();
-      Boundary_in_y_2         boundary_y = m_self->boundary_in_y_2_object();
+      Parameter_space_in_x_2  ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2  ps_y = m_self->parameter_space_in_y_2_object();
       Construct_min_vertex_2  min_vertex =
-                                    m_self->construct_min_vertex_2_object();
+        m_self->construct_min_vertex_2_object();
       Equal_2                 equal = m_self->equal_2_object();
 
       // Check if the left ends of the curves are bounded endpoints.
-      const Boundary_type  bx1 = boundary_x (xcv1, ARR_MIN_END);
-      const Boundary_type  by1 = (bx1 != NO_BOUNDARY ? 
-                                  NO_BOUNDARY : boundary_y (xcv1, ARR_MIN_END));
-      const bool           has_left1 = (bx1 == NO_BOUNDARY &&
-                                        by1 == NO_BOUNDARY);
+      const Arr_parameter_space  ps_x1 = ps_x (xcv1, ARR_MIN_END);
+      const Arr_parameter_space  ps_y1 =
+        (ps_x1 != ARR_INTERIOR ? ARR_INTERIOR : ps_y (xcv1, ARR_MIN_END));
+      const bool has_left1 = (ps_x1 == ARR_INTERIOR && ps_y1 == ARR_INTERIOR);
 
-      const Boundary_type  bx2 = boundary_x (xcv2, ARR_MIN_END);
-      const Boundary_type  by2 = (bx2 != NO_BOUNDARY ? 
-                                  NO_BOUNDARY : boundary_y (xcv2, ARR_MIN_END));
-      const bool           has_left2 = (bx2 == NO_BOUNDARY &&
-                                        by2 == NO_BOUNDARY);
+      const Arr_parameter_space  ps_x2 = ps_x (xcv2, ARR_MIN_END);
+      const Arr_parameter_space  ps_y2 =
+        (ps_x2 != ARR_INTERIOR ? ARR_INTERIOR : ps_y (xcv2, ARR_MIN_END));
+      const bool has_left2 = (ps_x2 == ARR_INTERIOR && ps_y2 == ARR_INTERIOR);
 
-      CGAL_assertion (CGAL::sign (bx1) != POSITIVE &&
-                      CGAL::sign (bx2) != POSITIVE);
+      CGAL_assertion (ps_x1 != ARR_RIGHT_BOUNDARY &&
+                      ps_x2 != ARR_RIGHT_BOUNDARY);
 
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
@@ -216,7 +215,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! Obtain a Compare_y_at_x_left_2 function object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
     return Compare_y_at_x_left_2(this);
@@ -225,7 +224,7 @@ public:
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
-  class Boundary_in_x_2 {
+  class Parameter_space_in_x_2 {
   public:
     /*!
      * Get the boundary condition of the given curve end in x.
@@ -234,13 +233,13 @@ public:
      *            ARR_MAX_END if we refer to its maximal end.
      * \return The boundary condition of the curve end.
      */
-    Boundary_type operator() (const X_monotone_curve_2& xcv,
-                              Arr_curve_end ind) const
+    Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
+                                    Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support boundary conditions, we just
-      // return NO_BOUNDARY.
-      return _boundary_in_x_imp (xcv, ind, Has_boundary_category());
+      // return ARR_INTERIOR.
+      return parameter_space_in_x (xcv, ind, Has_boundary_category());
     }
 
   protected:
@@ -254,7 +253,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Boundary_in_x_2 (const Base * base) : m_base (base) {}
+    Parameter_space_in_x_2 (const Base * base) : m_base (base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
@@ -262,33 +261,34 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& xcv,
-                                      Arr_curve_end ind,
-                                      Tag_true) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2& xcv,
+                                              Arr_curve_end ind,
+                                              Tag_true) const
     {
-      return (m_base->boundary_in_x_2_object() (xcv, ind));
+      return (m_base->parameter_space_in_x_2_object() (xcv, ind));
     }
 
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2&, Arr_curve_end,
-                                      Tag_false) const
+    Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2&,
+                                              Arr_curve_end,
+                                              Tag_false) const
     {
-      return NO_BOUNDARY;
+      return ARR_INTERIOR;
     }
   };
 
-  /*! Obtain an Boundary_in_x_2 functor object. */
-  Boundary_in_x_2 boundary_in_x_2_object () const
+  /*! Obtain an Parameter_space_in_x_2 function object. */
+  Parameter_space_in_x_2 parameter_space_in_x_2_object () const
   {
-    return Boundary_in_x_2(this);
+    return Parameter_space_in_x_2(this);
   }
 
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
    */
-  class Boundary_in_y_2 {
+  class Parameter_space_in_y_2 {
   public:
     /*!
      * Get the boundary condition of the given curve end in y.
@@ -297,13 +297,13 @@ public:
      *            ARR_MAX_END if we refer to its maximal end.
      * \return The boundary condition of the curve end.
      */
-    Boundary_type operator() (const X_monotone_curve_2& xcv,
+    Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
                               Arr_curve_end ind) const
     {
       // The function is implemented based on the Has_boundary category.
       // If the traits class does not support boundary conditions, we just
-      // return NO_BOUNDARY.
-      return boundary_in_y(xcv, ind, Has_boundary_category());
+      // return ARR_INTERIOR.
+      return parameter_space_in_y(xcv, ind, Has_boundary_category());
     }
 
     /*! Determine whether a point lies on a y-boundary.
@@ -311,11 +311,11 @@ public:
      * \return
      *   the point is on the bottom boundary and => AFTER_SINGULARITY, else
      *   the point is on the top boundary        => BEFORE_SINGULARITY.
-     *   otherwise                               => NO_BOUNDARY, 
+     *   otherwise                               => ARR_INTERIOR, 
      */
-    Boundary_type operator()(const Point_2 & p) const
+    Arr_parameter_space operator()(const Point_2 & p) const
     {
-      return boundary_in_y(p, Has_boundary_category());
+      return parameter_space_in_y(p, Has_boundary_category());
     }
       
   protected:
@@ -329,7 +329,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Boundary_in_y_2 (const Base * base) : m_base (base) {}
+    Parameter_space_in_y_2 (const Base * base) : m_base (base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
@@ -337,44 +337,44 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Boundary_type boundary_in_y(const X_monotone_curve_2& xcv,
-                                Arr_curve_end ind,
-                                Tag_true) const
+    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
+                                             Arr_curve_end ind,
+                                             Tag_true) const
     {
-      return (m_base->boundary_in_y_2_object() (xcv, ind));
+      return (m_base->parameter_space_in_y_2_object() (xcv, ind));
     }
 
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type boundary_in_y(const X_monotone_curve_2 &,
-                                 Arr_curve_end,
-                                 Tag_false) const
+    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2 &,
+                                             Arr_curve_end,
+                                             Tag_false) const
     {
-      return NO_BOUNDARY;
+      return ARR_INTERIOR;
     }
 
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Boundary_type boundary_in_y(const Point_2 & p, Tag_true) const
+    Arr_parameter_space parameter_space_in_y(const Point_2 & p, Tag_true) const
     {
-      return m_base->boundary_in_y_2_object()(p);
+      return m_base->parameter_space_in_y_2_object()(p);
     }
 
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Boundary_type boundary_in_y(const Point_2 &, Tag_false) const
+    Arr_parameter_space parameter_space_in_y(const Point_2 &, Tag_false) const
     {
-      return NO_BOUNDARY;
+      return ARR_INTERIOR;
     }
   };
 
-  /*! Obtain an Boundary_in_y_2 function object. */
-  Boundary_in_y_2 boundary_in_y_2_object() const
+  /*! Obtain an Parameter_space_in_y_2 function object. */
+  Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   {
-    return Boundary_in_y_2(this);
+    return Parameter_space_in_y_2(this);
   }
 
   /*! A functor that compares the x-coordinates of curve ends near the
@@ -485,7 +485,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 functor object. */
+  /*! Obtain a Compare_x_near_boundary_2 function object. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object () const
   {
     return Compare_x_near_boundary_2(this);
@@ -595,7 +595,7 @@ public:
     }
   };
   
-  /*! Obtain a Compare_x_on_identification_2 functor object. */
+  /*! Obtain a Compare_x_on_identification_2 function object. */
   Compare_x_on_identification_2 compare_x_on_identification_2_object () const
   {
     return Compare_x_on_identification_2(this);
@@ -660,13 +660,70 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_on_identification_2 functor object. */
+  /*! Obtain a Compare_y_on_identification_2 function object. */
   Compare_y_on_identification_2 compare_y_on_identification_2_object() const
   {
     return Compare_y_on_identification_2(this);
   }
   //@}
 
+  /// \name Overriden functors for unbounded boundaries.
+  //@{
+
+
+  /*! A function object that determines whether a curve end is bounded.
+   */
+  class Is_bounded_2 {
+  protected:
+    //! The base traits.
+    const Base * m_base;
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_bounded_2(const Base * base) : m_base(base) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_traits_basic_adaptor_2<Base>;
+    
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_no_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_bounded_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_unbounded_boundary_tag)
+    {
+      return m_base->is_bounded_2_object()(xcv, ce);
+    }
+    
+  public:
+    /*! Is the end of an x-monotone curve bounded?
+     * \param xcv The x-monotone curve.
+     * \param ce The end of xcv identifier.
+     * \return true is the curve end is bounded, and false otherwise
+     */
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    {
+      return is_bounded(xcv, ce, Boundary_category());
+    }
+  };
+
+  /*! Obtain a Is_bounded_2 function object. */
+  Is_bounded_2 is_bounded_2_object() const
+  {
+    return Is_bounded_2(this);
+  }
+  
+  //@}
+  
   /// \name Additional auxiliary functors.
   //@{
   class Is_in_x_range_2 {
@@ -680,24 +737,24 @@ public:
      */
     bool operator() (const X_monotone_curve_2& xcv, const Point_2& p) const
     {
-      Boundary_in_x_2     boundary_x = m_self->boundary_in_x_2_object();
-      Boundary_in_y_2     boundary_y = m_self->boundary_in_y_2_object();
-      Compare_x_2         compare_x =  m_self->compare_x_2_object();
+      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
+      Compare_x_2            compare_x =  m_self->compare_x_2_object();
       Compare_x_near_boundary_2
         compare_x_near_bnd = m_self->compare_x_near_boundary_2_object();
 
       // Compare p to the position of the left end of the curve.
       // Note that if the left end of xcv lies at x boundary, p is obviously to
       // its right.
-      Boundary_type       bx, by;
+      Arr_parameter_space bx, by;
       Comparison_result   res;
 
-      bx = boundary_x (xcv, ARR_MIN_END);
+      bx = ps_x (xcv, ARR_MIN_END);
 
-      if (bx == NO_BOUNDARY) {
-        by = boundary_y (xcv, ARR_MIN_END);
+      if (bx == ARR_INTERIOR) {
+        by = ps_y (xcv, ARR_MIN_END);
 
-        res =  (by == NO_BOUNDARY) ?
+        res =  (by == ARR_INTERIOR) ?
           // The left endpoint of xcv is a normal point.
           compare_x (p, m_self->construct_min_vertex_2_object() (xcv)) :
           // The left end of xcv lies at y boundary.
@@ -711,14 +768,14 @@ public:
 
       // If necessary, compare p to the right end of the curve.
       // Note that if this end lies at x boundary, p is obviously to its left.
-      bx = boundary_x (xcv, ARR_MAX_END);
+      bx = ps_x (xcv, ARR_MAX_END);
 
-      if (bx != NO_BOUNDARY)
+      if (bx != ARR_INTERIOR)
         return (true);
       
-      by = boundary_y (xcv, ARR_MAX_END);
+      by = ps_y (xcv, ARR_MAX_END);
 
-      res = (by == NO_BOUNDARY) ?
+      res = (by == ARR_INTERIOR) ?
         // The right endpoint of xcv is a normal point.
         compare_x (p, m_self->construct_max_vertex_2_object() (xcv)) :
         // The right end of xcv lies at y boundary:
@@ -737,132 +794,132 @@ public:
     bool operator() (const X_monotone_curve_2& xcv1,
                      const X_monotone_curve_2& xcv2) const
     {
-      Boundary_in_x_2         boundary_x = m_self->boundary_in_x_2_object();
-      Boundary_in_y_2         boundary_y = m_self->boundary_in_y_2_object();
+      Parameter_space_in_x_2  ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2  ps_y = m_self->parameter_space_in_y_2_object();
       Compare_x_2             compare_x = m_self->compare_x_2_object();
       Construct_min_vertex_2  min_vertex =
-                                    m_self->construct_min_vertex_2_object();
+        m_self->construct_min_vertex_2_object();
       Construct_max_vertex_2  max_vertex =
-                                    m_self->construct_max_vertex_2_object();
-      Compare_x_near_boundary_2
-        compare_x_near_bnd = m_self->compare_x_near_boundary_2_object();
+        m_self->construct_max_vertex_2_object();
+      Compare_x_near_boundary_2 compare_x_near_bnd =
+        m_self->compare_x_near_boundary_2_object();
 
       // Locate the rightmost of the two left endpoints of the two curves.
       // Note that we guard for curve ends with boundary conditions.
-      Boundary_type             bx1, by1;
-      Boundary_type             bx2, by2;
+      Arr_parameter_space       ps_x1, ps_y1;
+      Arr_parameter_space       ps_x2, ps_y2;
       const X_monotone_curve_2 *xcv_left;
-      Boundary_type             by_left;
+      Arr_parameter_space       by_left;
       Comparison_result         res;
 
-      bx1 = boundary_x (xcv1, ARR_MIN_END);
-      bx2 = boundary_x (xcv2, ARR_MIN_END);
+      ps_x1 = ps_x (xcv1, ARR_MIN_END);
+      ps_x2 = ps_x (xcv2, ARR_MIN_END);
 
-      if (bx1 != NO_BOUNDARY) {
+      if (ps_x1 != ARR_INTERIOR) {
         // If both curves are defined at x boundary, they obviously overlap in
         // their x-ranges.
-        if (bx2 != NO_BOUNDARY)
+        if (ps_x2 != ARR_INTERIOR)
           return (true);
 
         // As xcv2 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         xcv_left = &xcv2;
-        by_left = boundary_y (xcv2, ARR_MIN_END);
+        by_left = ps_y (xcv2, ARR_MIN_END);
       }
-      else if (bx2 != NO_BOUNDARY) {
+      else if (ps_x2 != ARR_INTERIOR) {
         // As xcv1 is not defined at x boundary, take its left end as the
         // rightmost of the two left curve ends.
         xcv_left = &xcv1;
-        by_left = boundary_y (xcv1, ARR_MIN_END);
+        by_left = ps_y (xcv1, ARR_MIN_END);
       }
       else {
         // Compare the (finite) x-coordinates of the two left ends.
         // We take special care of the case of boundaries in y.
-        by1 = boundary_y (xcv1, ARR_MIN_END);
-        by2 = boundary_y (xcv2, ARR_MIN_END);
+        ps_y1 = ps_y (xcv1, ARR_MIN_END);
+        ps_y2 = ps_y (xcv2, ARR_MIN_END);
 
-        if (by1 == NO_BOUNDARY) {
-          res = (by2 == NO_BOUNDARY) ?
+        if (ps_y1 == ARR_INTERIOR) {
+          res = (ps_y2 == ARR_INTERIOR) ?
             compare_x (min_vertex (xcv1), min_vertex (xcv2)) :
             compare_x_near_bnd (min_vertex (xcv1), xcv2, ARR_MIN_END);
         }
         else {
-          res =  (by2 == NO_BOUNDARY) ?
+          res =  (ps_y2 == ARR_INTERIOR) ?
             opposite(compare_x_near_bnd (min_vertex (xcv2), xcv1, ARR_MIN_END)):
             compare_x_near_bnd (xcv1, ARR_MIN_END, xcv2, ARR_MIN_END);
         }
 
         if (res == LARGER) {
           xcv_left = &xcv1;
-          by_left = by1;
+          by_left = ps_y1;
         }
         else {
           xcv_left = &xcv2;
-          by_left = by2;
+          by_left = ps_y2;
         }
       }
       
       // Locate the leftmost of the two right endpoints of the two curves.
       // Note that we guard for curve ends with boundary conditions.
       const X_monotone_curve_2 *xcv_right;
-      Boundary_type             by_right;
+      Arr_parameter_space             by_right;
 
-      bx1 = boundary_x (xcv1, ARR_MAX_END);
-      bx2 = boundary_x (xcv2, ARR_MAX_END);
+      ps_x1 = ps_x (xcv1, ARR_MAX_END);
+      ps_x2 = ps_x (xcv2, ARR_MAX_END);
 
-      if (bx1 != NO_BOUNDARY) {
+      if (ps_x1 != ARR_INTERIOR) {
         // If both curves are defined at x boundary, they obviously overlap in
         // their x-ranges.
-        if (bx2 != NO_BOUNDARY)
+        if (ps_x2 != ARR_INTERIOR)
           return (true);
 
         // As xcv2 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         xcv_right = &xcv2;
-        by_right = boundary_y (xcv2, ARR_MAX_END);
+        by_right = ps_y (xcv2, ARR_MAX_END);
       }
-      else if (bx2 != NO_BOUNDARY) {
+      else if (ps_x2 != ARR_INTERIOR) {
         // As xcv1 is not defined at x boundary, take its right end as the
         // leftmost of the two right curve ends.
         xcv_right = &xcv1;
-        by_right = boundary_y (xcv1, ARR_MAX_END);
+        by_right = ps_y (xcv1, ARR_MAX_END);
       }
       else {
         // Compare the (finite) x-coordinates of the two right ends.
         // We take special care of the case of boundaries in y.
-        by1 = boundary_y (xcv1, ARR_MAX_END);
-        by2 = boundary_y (xcv2, ARR_MAX_END);
+        ps_y1 = ps_y (xcv1, ARR_MAX_END);
+        ps_y2 = ps_y (xcv2, ARR_MAX_END);
 
-        if (by1 == NO_BOUNDARY) {
-          res = (by2 == NO_BOUNDARY) ?
+        if (ps_y1 == ARR_INTERIOR) {
+          res = (ps_y2 == ARR_INTERIOR) ?
             compare_x (max_vertex (xcv1), max_vertex (xcv2)) :
             compare_x_near_bnd (max_vertex (xcv1), xcv2, ARR_MAX_END);
         }
         else {
-          res = (by2 == NO_BOUNDARY) ?
+          res = (ps_y2 == ARR_INTERIOR) ?
             opposite(compare_x_near_bnd (max_vertex (xcv2), xcv1, ARR_MAX_END)):
             compare_x_near_bnd (xcv1, ARR_MAX_END, xcv2, ARR_MAX_END);
         }
 
         if (res == SMALLER) {
           xcv_right = &xcv1;
-          by_right = by1;
+          by_right = ps_y1;
         }
         else {
           xcv_right = &xcv2;
-          by_right = by2;
+          by_right = ps_y2;
         }
       }
           
       // Now compare the (finite) x-coordiates of the left end of xcv_left and
       // the right end of xcv_right.
-      if (by_left == NO_BOUNDARY) {
-        res = (by_right == NO_BOUNDARY) ?
+      if (by_left == ARR_INTERIOR) {
+        res = (by_right == ARR_INTERIOR) ?
           compare_x (min_vertex (*xcv_left), max_vertex (*xcv_right)) :
           compare_x_near_bnd (min_vertex (*xcv_left), *xcv_right, ARR_MAX_END);
       }
       else {
-        res =  (by_right == NO_BOUNDARY) ?
+        res =  (by_right == ARR_INTERIOR) ?
           opposite(compare_x_near_bnd (max_vertex (*xcv_right),
                                        *xcv_left, ARR_MIN_END)) :
           compare_x_near_bnd (*xcv_left, ARR_MIN_END, *xcv_right, ARR_MAX_END);
@@ -890,7 +947,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
   };
 
-  /*! Obtain an Is_in_x_range_2 functor object. */
+  /*! Obtain an Is_in_x_range_2 function object. */
   Is_in_x_range_2 is_in_x_range_2_object () const
   {
     return Is_in_x_range_2(this);
@@ -916,39 +973,38 @@ public:
       );
       CGAL_precondition (is_in_x_range (xcv1, xcv2));
 
-      Boundary_in_x_2     boundary_x = m_self->boundary_in_x_2_object();
-      Boundary_in_y_2     boundary_y = m_self->boundary_in_y_2_object();
-      Compare_y_at_x_2    compare_y_at_x = m_self->compare_y_at_x_2_object();
-      Construct_min_vertex_2
-                          min_vertex = m_self->construct_min_vertex_2_object();
+      Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
+      Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
+      Compare_y_at_x_2       compare_y_at_x = m_self->compare_y_at_x_2_object();
+      Construct_min_vertex_2 min_vertex =
+        m_self->construct_min_vertex_2_object();
       Compare_x_near_boundary_2
         compare_x_near_bnd = m_self->compare_x_near_boundary_2_object();
       Compare_y_near_boundary_2
         compare_y_near_bnd = m_self->compare_y_near_boundary_2_object();
       
       // First check whether any of the curves is defined at x boundary.
-      const Boundary_type     bx1 = boundary_x (xcv1, ARR_MIN_END);
-      const Boundary_type     bx2 = boundary_x (xcv2, ARR_MIN_END);
-      Comparison_result       res;
+      const Arr_parameter_space ps_x1 = ps_x (xcv1, ARR_MIN_END);
+      const Arr_parameter_space ps_x2 = ps_x (xcv2, ARR_MIN_END);
+      Comparison_result         res;
 
-      CGAL_assertion (CGAL::sign (bx1) != POSITIVE &&
-                      CGAL::sign (bx2) != POSITIVE);
+      CGAL_assertion (ps_x1 != ARR_RIGHT_BOUNDARY &&
+                      ps_x2 != ARR_RIGHT_BOUNDARY);
 
-      if (bx1 != NO_BOUNDARY)
+      if (ps_x1 != ARR_INTERIOR)
       {
-        if (bx2 != NO_BOUNDARY)
+        if (ps_x2 != ARR_INTERIOR)
         {
           // Compare the relative position of the curves at x boundary.
           return (compare_y_near_bnd(xcv1, xcv2, ARR_MIN_END));
         }
         
         // Check if the left end of xcv2 lies at y boundary.
-        const Boundary_type    by2 = boundary_y (xcv2, ARR_MIN_END);
-        const CGAL::Sign       sign_by2 = CGAL::sign (by2);
+        const Arr_parameter_space ps_y2 = ps_y (xcv2, ARR_MIN_END);
 
-        if (sign_by2 == NEGATIVE)
+        if (ps_y2 == ARR_BOTTOM_BOUNDARY)
           return (LARGER);          // xcv2 is obviously below xcv1.
-        else if (sign_by2 == POSITIVE)
+        else if (ps_y2 == ARR_TOP_BOUNDARY)
           return (SMALLER);         // xcv2 is obviously above xcv1.
           
         // Compare the position of the left end of xcv2 (which is a normal
@@ -961,14 +1017,13 @@ public:
 
         return ((res == SMALLER) ? LARGER : SMALLER);
       }
-      else if (bx2 != NO_BOUNDARY) {
+      else if (ps_x2 != ARR_INTERIOR) {
         // Check if the left end of xcv1 lies at y boundary.
-        const Boundary_type    by1 = boundary_y (xcv1, ARR_MIN_END);
-        const CGAL::Sign       sign_by1 = CGAL::sign (by1);
+        const Arr_parameter_space ps_y1 = ps_y (xcv1, ARR_MIN_END);
 
-        if (sign_by1 == NEGATIVE)
+        if (ps_y1 == ARR_BOTTOM_BOUNDARY)
           return (SMALLER);         // xcv1 is obviously below xcv2.
-        else if (sign_by1 == POSITIVE)
+        else if (ps_y1 == ARR_TOP_BOUNDARY)
           return (LARGER);          // xcv1 is obviously above xcv2.
 
         // Compare the position of the left end of xcv1 (which is a normal
@@ -979,22 +1034,20 @@ public:
       }
       
       // Check if the left curve end lies at y = +/- oo.
-      const Boundary_type     by1 = boundary_y (xcv1, ARR_MIN_END);
-      const CGAL::Sign        sign_by1 = CGAL::sign (by1);
-      const Boundary_type     by2 = boundary_y (xcv2, ARR_MIN_END);
-      const CGAL::Sign        sign_by2 = CGAL::sign (by2);
-      Comparison_result       l_res;
+      const Arr_parameter_space ps_y1 = ps_y (xcv1, ARR_MIN_END);
+      const Arr_parameter_space ps_y2 = ps_y (xcv2, ARR_MIN_END);
+      Comparison_result         l_res;
 
-      if (by1 != NO_BOUNDARY)
+      if (ps_y1 != ARR_INTERIOR)
       {
-        if (by2 != NO_BOUNDARY)
+        if (ps_y2 != ARR_INTERIOR)
         {
           // The curve ends have boundary conditions with oposite signs in y,
           // we readily know their relative position (recall that they do not
           // instersect).
-          if (sign_by1 == NEGATIVE && sign_by2 == POSITIVE)
+          if (ps_y1 == ARR_BOTTOM_BOUNDARY && ps_y2 == ARR_TOP_BOUNDARY)
             return (SMALLER);
-          else if (sign_by1 == POSITIVE && sign_by2 == NEGATIVE)
+          else if (ps_y1 == ARR_TOP_BOUNDARY && ps_y2 == ARR_BOTTOM_BOUNDARY)
             return (LARGER);
 
           // Both curves have vertical asymptotes with the same sign in y.
@@ -1003,7 +1056,7 @@ public:
           l_res = compare_x_near_bnd(xcv1, ARR_MIN_END, xcv2, ARR_MIN_END);
           CGAL_assertion (l_res != EQUAL);
 
-          if (sign_by1 == POSITIVE)
+          if (ps_y1 == ARR_TOP_BOUNDARY)
             return (l_res);
           else
             return ((l_res == SMALLER) ? LARGER : SMALLER);
@@ -1028,13 +1081,13 @@ public:
         }
         else
         {
-          if (sign_by1 == NEGATIVE)
+          if (ps_y1 == ARR_BOTTOM_BOUNDARY)
             return (SMALLER);          // xcv1 is obviously below xcv2.
           else
             return (LARGER);           // xcv2 is obviously above xcv1.
         }
       }
-      else if (by2 != NO_BOUNDARY)
+      else if (ps_y2 != ARR_INTERIOR)
       {
         // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
         // Compare the x-positions of this endpoint and the asymptote.
@@ -1049,17 +1102,14 @@ public:
         }
         else
         {
-          if (sign_by2 == NEGATIVE)
-            return (LARGER);           // xcv2 is obviously below xcv1.
-          else
-            return (SMALLER);          // xcv1 is obviously above xcv2.
+          return (ps_y2 == ARR_BOTTOM_BOUNDARY) ? LARGER : SMALLER;
         }
       }
 
       // In this case we compare two normal points.
       Compare_xy_2            compare_xy = m_self->compare_xy_2_object();
       Compare_y_at_x_right_2  compare_y_at_x_right =
-                                 m_self->compare_y_at_x_right_2_object();
+        m_self->compare_y_at_x_right_2_object();
 
       // Get the left endpoints of xcv1 and xcv2.
       const Point_2&  left1 = min_vertex(xcv1);
@@ -1120,7 +1170,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
   };
 
-  /*! Obtain a Compare_y_position_2 functor object. */
+  /*! Obtain a Compare_y_position_2 function object. */
   Compare_y_position_2 compare_y_position_2_object () const
   {
     return Compare_y_position_2(this);
@@ -1156,9 +1206,9 @@ public:
                      bool& xcv_equal_xcv2) const
     {
       Compare_y_at_x_left_2   compare_y_at_x_left =
-                                     m_self->compare_y_at_x_left_2_object();
+        m_self->compare_y_at_x_left_2_object();
       Compare_y_at_x_right_2  compare_y_at_x_right =
-                                    m_self->compare_y_at_x_right_2_object();
+        m_self->compare_y_at_x_right_2_object();
 
       // Initialize output flags.
       xcv_equal_xcv1 = false;
@@ -1346,7 +1396,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;    
   };
 
-  /*! Obtain an Is_between_cw_2 functor object. */
+  /*! Obtain an Is_between_cw_2 function object. */
   Is_between_cw_2 is_between_cw_2_object () const
   {
     return Is_between_cw_2(this);
@@ -1423,7 +1473,7 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
   };
 
-  /*! Obtain a Compare_cw_around_point_2 functor object. */
+  /*! Obtain a Compare_cw_around_point_2 function object. */
   Compare_cw_around_point_2 compare_cw_around_point_2_object () const
   {
     return Compare_cw_around_point_2(this);
@@ -1541,7 +1591,7 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object. */
+  /*! Obtain an Are_mergeable_2 function object. */
   Are_mergeable_2 are_mergeable_2_object () const
   {
     return Are_mergeable_2(this);
@@ -1607,7 +1657,7 @@ public:
     }
   };
 
-  /*! Obtain a Merge_2 functor object. */
+  /*! Obtain a Merge_2 function object. */
   Merge_2 merge_2_object () const
   {
     return Merge_2(this);

@@ -109,16 +109,16 @@ public:
      */
     virtual void before_handle_event(Event * event)
     {
-        const Boundary_type bound_x = event->boundary_in_x();
-        const Boundary_type bound_y = event->boundary_in_y();
+        const Arr_parameter_space bound_x = event->parameter_space_in_x();
+        const Arr_parameter_space bound_y = event->parameter_space_in_y();
         
         //std::cout << "HELPER: event: " << event->point() << std::endl;
         
-        if (bound_x != CGAL::NO_BOUNDARY) {
+        if (bound_x != CGAL::ARR_INTERIOR) {
             //std::cout << "HELPER: before x " << bound_x << std::endl;
             CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
                            bound_x == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_y == CGAL::NO_BOUNDARY);
+            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
@@ -173,11 +173,11 @@ public:
             return;
         }
         
-        if (bound_y != CGAL::NO_BOUNDARY) {
+        if (bound_y != CGAL::ARR_INTERIOR) {
             //std::cout << "HELPER: before y " << bound_y << std::endl;
             CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
                            bound_y == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_x == CGAL::NO_BOUNDARY);
+            CGAL_assertion(bound_x == CGAL::ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
@@ -249,12 +249,12 @@ public:
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        CGAL::Boundary_type bnd_y_min = 
+        CGAL::Arr_parameter_space bnd_y_min = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
-        CGAL::Boundary_type bnd_y_max = 
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
+        CGAL::Arr_parameter_space bnd_y_max = 
             this->m_top_traits->geometry_traits()->
-            boundary_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
         
         if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
             he_on_top_face = 
@@ -322,8 +322,8 @@ public:
     bool swap_predecessors(Event * event) const
     {
         return 
-            (event->boundary_in_x() == NO_BOUNDARY &&
-             event->boundary_in_y() == BEFORE_DISCONTINUITY);
+            (event->parameter_space_in_x() == ARR_INTERIOR &&
+             event->parameter_space_in_y() == BEFORE_DISCONTINUITY);
     }
     
     /*! Get the current top face. */

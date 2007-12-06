@@ -169,10 +169,10 @@ protected:
     mutable Quadric_3 m_quadric;
     
     //! indicates kind of left boundary
-    mutable CGAL::Boundary_type m_left;
+    mutable CGAL::Arr_parameter_space m_left;
     
     //! indicates kind of right boundary
-    mutable CGAL::Boundary_type m_right;
+    mutable CGAL::Arr_parameter_space m_right;
     
     // if non-concrete then inf, if concrete then singularity
     //! a vertex representing the left singularity/infinity of a quadric
@@ -314,38 +314,38 @@ private:
                  eit++) {
 #if 1 // TODO use traits instead
                 CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::ARR_MIN_END)
-                        == CGAL::NO_BOUNDARY
+                        eit->curve().get_parameter_space_in_y(CGAL::ARR_MIN_END)
+                        == CGAL::ARR_INTERIOR
                 ); 
-                if (eit->curve().get_boundary_in_x(CGAL::ARR_MIN_END)
+                if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MIN_END)
                     == CGAL::MINUS_INFINITY) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
-                        eit->curve().get_boundary_in_y(CGAL::ARR_MAX_END)
-                        == CGAL::NO_BOUNDARY
+                        eit->curve().get_parameter_space_in_y(CGAL::ARR_MAX_END)
+                        == CGAL::ARR_INTERIOR
                 ); 
-                if (eit->curve().get_boundary_in_x(CGAL::ARR_MAX_END)
+                if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MAX_END)
                     == CGAL::PLUS_INFINITY) {
                     number_of_vertices_at_plus_inf++;
                 }                    
 #else
                 CGAL_precondition(
-                        m_traits->boundary_in_y_2_object()(
+                        m_traits->parameter_space_in_y_2_object()(
                                 eit->curve(), CGAL::ARR_MIN_END
-                        ) == CGAL::NO_BOUNDARY
+                        ) == CGAL::ARR_INTERIOR
                 ); 
-                if (m_traits->boundary_in_x_2_object()(
+                if (m_traits->parameter_space_in_x_2_object()(
                             eit->curve(), CGAL::ARR_MIN_END
                     ) == CGAL::MINUS_INFINITY) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
-                        m_traits->boundary_in_y_2_object()(
+                        m_traits->parameter_space_in_y_2_object()(
                                 eit->curve(), CGAL::ARR_MAX_END
-                        ) == CGAL::NO_BOUNDARY
+                        ) == CGAL::ARR_INTERIOR
                 ); 
-                if (m_traits->boundary_in_x_2_object()(
+                if (m_traits->parameter_space_in_x_2_object()(
                             eit->curve(), CGAL::ARR_MAX_END
                     ) == CGAL::PLUS_INFINITY) {
                     number_of_vertices_at_plus_inf++;
@@ -416,10 +416,10 @@ public:
         // All vertices not lying at infinity are concrete.
         return (this->m_dcel.size_of_vertices() - 
                 (v_left != 0 && 
-                 v_left->boundary_in_x() == CGAL::MINUS_INFINITY ?
+                 v_left->parameter_space_in_x() == CGAL::MINUS_INFINITY ?
                  1 : 0) -
                 (v_right != 0 && 
-                 v_right->boundary_in_x() == CGAL::PLUS_INFINITY ?
+                 v_right->parameter_space_in_x() == CGAL::PLUS_INFINITY ?
                  1 : 0)
         );
     }
@@ -671,7 +671,7 @@ public:
      */
     bool are_equal (const Vertex *v,
                     const X_monotone_curve_2& cv, Arr_curve_end ind,
-                    Boundary_type bound_x, Boundary_type bound_y) const;
+                    Arr_parameter_space bound_x, Arr_parameter_space bound_y) const;
 
       /*!
      * Given a curve end with boundary conditions and a face that contains the
@@ -690,8 +690,8 @@ public:
     CGAL::Object place_boundary_vertex (Face *f,
                                         const X_monotone_curve_2& cv,
                                         Arr_curve_end ind,
-                                        Boundary_type bound_x,
-                                        Boundary_type bound_y);
+                                        Arr_parameter_space bound_x,
+                                        Arr_parameter_space bound_y);
 
      /*!
       * Locate the predecessor halfedge for the given curve around a given
@@ -708,8 +708,8 @@ public:
     Halfedge* locate_around_boundary_vertex (Vertex *v,
                                              const X_monotone_curve_2& cv,
                                              Arr_curve_end ind,
-                                             Boundary_type bound_x,
-                                             Boundary_type bound_y) const;
+                                             Arr_parameter_space bound_x,
+                                             Arr_parameter_space bound_y) const;
     
     /*!
      * Receive a notification on the creation of a new boundary vertex that
@@ -723,8 +723,8 @@ public:
     void notify_on_boundary_vertex_creation (Vertex *v,
                                              const X_monotone_curve_2& cv,
                                              Arr_curve_end ind,
-                                             Boundary_type bound_x,
-                                             Boundary_type bound_y) const;
+                                             Arr_parameter_space bound_x,
+                                             Arr_parameter_space bound_y) const;
     
     /*!
      * Locate a DCEL feature that contains the given curve end.
@@ -740,8 +740,8 @@ public:
      */
     CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                    Arr_curve_end ind,
-                                   Boundary_type bound_x,
-                                   Boundary_type bound_y);
+                                   Arr_parameter_space bound_x,
+                                   Arr_parameter_space bound_y);
     
     /*!
      * Given two predecessor halfedges that belong to the same inner CCB of
@@ -864,13 +864,13 @@ public:
     }
 
     /*! Get the type of the left boundary */
-    CGAL::Boundary_type left_boundary () const
+    CGAL::Arr_parameter_space left_boundary () const
     {
         return (m_left);
     }
 
     /*! Get the type of the right boundary */
-    CGAL::Boundary_type right_boundary () const
+    CGAL::Arr_parameter_space right_boundary () const
     {
         return (m_right);
     }

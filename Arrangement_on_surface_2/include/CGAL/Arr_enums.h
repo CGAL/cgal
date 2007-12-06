@@ -16,6 +16,7 @@
 // 
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_ENUM_H
 #define CGAL_ARR_ENUM_H
@@ -53,30 +54,6 @@ enum Arr_halfedge_direction
   ARR_LEFT_TO_RIGHT = -1,
   ARR_RIGHT_TO_LEFT = 1
 };
-
-/*! \enum
- * The various boundary conditions.
- */
-enum Boundary_type
-{
-  NO_BOUNDARY = 0,
-  MINUS_INFINITY = -1,
-  PLUS_INFINITY = 1,
-  AFTER_DISCONTINUITY = -2,
-  BEFORE_DISCONTINUITY = 2,
-  AFTER_SINGULARITY = -3,
-  BEFORE_SINGULARITY = 3
-};
-
-inline CGAL::Sign sign (Boundary_type bt)
-{
-  if (static_cast<int> (bt) < 0)
-    return (CGAL::NEGATIVE);
-  else if (static_cast<int> (bt) > 0)
-    return (CGAL::POSITIVE);
-
-  return (CGAL::ZERO);
-}
 
 /*! \enum The various surface boundary types.
  * For example:

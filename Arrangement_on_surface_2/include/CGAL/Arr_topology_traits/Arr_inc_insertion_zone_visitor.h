@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+//                 Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_PLANAR_INC_INSERTION_ZONE_VISITOR_H
 #define CGAL_ARR_PLANAR_INC_INSERTION_ZONE_VISITOR_H
@@ -145,32 +146,31 @@ private:
 //
 template <class Arrangement>
 typename Arr_inc_insertion_zone_visitor<Arrangement>::Result
-Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
-    (const X_monotone_curve_2& cv,
-     Face_handle face,
-     Vertex_handle left_v, Halfedge_handle left_he,
-     Vertex_handle right_v, Halfedge_handle right_he)
+Arr_inc_insertion_zone_visitor<Arrangement>::
+found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
+                Vertex_handle left_v, Halfedge_handle left_he,
+                Vertex_handle right_v, Halfedge_handle right_he)
 {
   // Create an arrangement accessor.
   Arr_accessor<Arrangement_2>    arr_access (*p_arr);
   
   // Get the boundary conditions of the curve ends.
-  const Boundary_type bx_l = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   ARR_MIN_END);
-  const Boundary_type by_l = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   ARR_MIN_END);
+  const Arr_parameter_space bx_l =
+    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space by_l =
+    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
-  const Boundary_type bx_r = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   ARR_MAX_END);
-  const Boundary_type by_r = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   ARR_MAX_END);
+  const Arr_parameter_space bx_r =
+    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+  const Arr_parameter_space by_r =
+    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
 
   // Check if the left and the right endpoints of cv should be associated
   // with arrangement vertices.
-  const bool       vertex_for_left = (left_v != invalid_v) ||
-                                     (left_he != invalid_he);
-  const bool       vertex_for_right = (right_v != invalid_v) ||
-                                      (right_he != invalid_he);
+  const bool vertex_for_left =
+    (left_v != invalid_v) || (left_he != invalid_he);
+  const bool vertex_for_right =
+    (right_v != invalid_v) || (right_he != invalid_he);
 
   // Find the previous halfedges for the left and right endpoints (if any).
   Halfedge_handle  prev_he_left;
@@ -204,14 +204,11 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
   else
   {
     // Check if the left end of cv is bounded of not.
-    if (CGAL::sign(bx_l) == NEGATIVE || by_l != NO_BOUNDARY)
-    {
+    if ((bx_l == ARR_LEFT_BOUNDARY) || (by_l != ARR_INTERIOR)) {
       // Use the arrangement accessor and obtain a vertex associated with
       // the unbounded left end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
-        arr_access.place_and_set_curve_end (face,
-                                            cv, ARR_MIN_END,
-                                            bx_l, by_l);
+        arr_access.place_and_set_curve_end (face, cv, ARR_MIN_END, bx_l, by_l);
 
       if (pos.second != invalid_he)
         // Use the predecessor halfedge, if possible:
@@ -251,14 +248,11 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
   else
   {
     // Check if the right end of cv is bounded of not.    
-    if (CGAL::sign(bx_r) == POSITIVE || by_r != NO_BOUNDARY)
-    {
+    if ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)) {
       // Use the arrangement accessor and obtain a vertex associated with
       // the unbounded right end (possibly with a predecessor halfedge).
       std::pair<Vertex_handle, Halfedge_handle>  pos =
-        arr_access.place_and_set_curve_end (face,
-                                            cv, ARR_MAX_END,
-                                            bx_r, by_r);
+        arr_access.place_and_set_curve_end (face, cv, ARR_MAX_END, bx_r, by_r);
 
       if (pos.second != invalid_he)
         // Use the predecessor halfedge, if possible:
@@ -279,15 +273,15 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
     // now.
     if (left_v == invalid_v)
     {
-      if (bx_l == NO_BOUNDARY && by_l == NO_BOUNDARY)
+      if (bx_l == ARR_INTERIOR && by_l == ARR_INTERIOR)
       {
         left_v = arr_access.create_vertex 
-            (geom_traits->construct_min_vertex_2_object() (cv));
+          (geom_traits->construct_min_vertex_2_object() (cv));
       }
       else
       {
-        left_v = arr_access.create_boundary_vertex (cv, ARR_MIN_END,
-                                                    bx_l, by_l);
+        left_v =
+          arr_access.create_boundary_vertex (cv, ARR_MIN_END, bx_l, by_l);
       }
     }
 
@@ -298,10 +292,10 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // vertex now.
       if (right_v == invalid_v)
       {
-        if (bx_r == NO_BOUNDARY && by_r == NO_BOUNDARY)
+        if (bx_r == ARR_INTERIOR && by_r == ARR_INTERIOR)
         {
           right_v = arr_access.create_vertex 
-              (geom_traits->construct_max_vertex_2_object() (cv));
+            (geom_traits->construct_max_vertex_2_object() (cv));
         }
         else
         {
@@ -311,20 +305,16 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       }
      
       // We should insert the curve in the interior of the face.
-      inserted_he = arr_access.insert_in_face_interior_ex (cv,
-                                                           face,
-                                                           left_v,
-                                                           right_v,
+      inserted_he = arr_access.insert_in_face_interior_ex (cv, face,
+                                                           left_v, right_v,
                                                            SMALLER);
     }
     else
     {
       // The right endpoint is associated with an arrangement vertex, and
       // we have the predecessor halfedge for the insertion.
-      inserted_he = arr_access.insert_from_vertex_ex (cv,
-                                                      prev_he_right,
-                                                      left_v,
-                                                      LARGER);
+      inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_right,
+                                                      left_v, LARGER);
 
       // The returned halfedge is directed to the newly created vertex
       // (the left one), so we take its twin.
@@ -342,23 +332,21 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
       // vertex now.
       if (right_v == invalid_v)
       {
-        if (bx_r == NO_BOUNDARY && by_r == NO_BOUNDARY)
+        if (bx_r == ARR_INTERIOR && by_r == ARR_INTERIOR)
         {
           right_v = arr_access.create_vertex 
               (geom_traits->construct_max_vertex_2_object() (cv));
         }
         else
         {
-          right_v = arr_access.create_boundary_vertex (cv, ARR_MAX_END,
-                                                       bx_r, by_r);
+          right_v =
+            arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
         }
       }
      
       // Use the left predecessor for the insertion.
-      inserted_he = arr_access.insert_from_vertex_ex (cv,
-                                                      prev_he_left,
-                                                      right_v,
-                                                      SMALLER);
+      inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_left,
+                                                      right_v, SMALLER);
     }
     else
     {
@@ -385,86 +373,78 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_subcurve
 //
 template <class Arrangement>
 typename Arr_inc_insertion_zone_visitor<Arrangement>::Result
-Arr_inc_insertion_zone_visitor<Arrangement>::found_overlap
-    (const X_monotone_curve_2& cv,
-     Halfedge_handle he,
-     Vertex_handle left_v, Vertex_handle right_v)
+Arr_inc_insertion_zone_visitor<Arrangement>::
+found_overlap (const X_monotone_curve_2& cv,
+               Halfedge_handle he,
+               Vertex_handle left_v, Vertex_handle right_v)
 {
   // Get the boundary conditions of the curve ends.
-  const Boundary_type bx_l = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   ARR_MIN_END);
-  const Boundary_type by_l = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   ARR_MIN_END);
+  const Arr_parameter_space bx_l =
+    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MIN_END);
+  const Arr_parameter_space by_l =
+    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
-  const Boundary_type bx_r = geom_traits->boundary_in_x_2_object()(cv,
-                                                                   ARR_MAX_END);
-  const Boundary_type by_r = geom_traits->boundary_in_y_2_object()(cv,
-                                                                   ARR_MAX_END);
+  const Arr_parameter_space bx_r =
+    geom_traits->parameter_space_in_x_2_object()(cv, ARR_MAX_END);
+  const Arr_parameter_space by_r =
+    geom_traits->parameter_space_in_y_2_object()(cv, ARR_MAX_END);
 
   // Modify (perhaps split) the overlapping arrangement edge.
   Halfedge_handle   updated_he;
 
   if (left_v == invalid_v &&
-      ! (CGAL::sign(bx_l) == NEGATIVE || by_l != NO_BOUNDARY))
+      ! ((bx_l == ARR_LEFT_BOUNDARY) || (by_l != ARR_INTERIOR)))
   {
     // Split the curve associated with he at the left endpoint of cv.
     geom_traits->split_2_object()
       (he->curve(),
-       geom_traits->construct_min_vertex_2_object() (cv),
-       sub_cv1, sub_cv2);
+       geom_traits->construct_min_vertex_2_object() (cv), sub_cv1, sub_cv2);
 
     if (right_v == invalid_v &&
-        ! (CGAL::sign(bx_r) == POSITIVE || by_r != NO_BOUNDARY))
+        ! ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)))
     {
       // The overlapping curve is contained strictly in the interior of he:
       // Split he as an intermediate step.
-      updated_he = p_arr->split_edge (he,
-                                      sub_cv1, sub_cv2);
+      updated_he = p_arr->split_edge (he, sub_cv1, sub_cv2);
       updated_he = updated_he->next();
 
       // Split the left subcurve at the right endpoint of cv.
       geom_traits->split_2_object()
         (updated_he->curve(),
-         geom_traits->construct_max_vertex_2_object() (cv),
-         sub_cv1, sub_cv2);
+         geom_traits->construct_max_vertex_2_object() (cv), sub_cv1, sub_cv2);
 
       // Split updated_he once again, so that the left portion corresponds
       // to the overlapping curve and the right portion corresponds to
       // sub_cv2.
-      updated_he = p_arr->split_edge (updated_he,
-                                      cv, sub_cv2);
+      updated_he = p_arr->split_edge (updated_he, cv, sub_cv2);
     }
     else
     {
       // Split he, such that the left portion corresponds to sub_cv1 and the
       // right portion corresponds to the overlapping curve.
-      updated_he = p_arr->split_edge (he,
-                                      sub_cv1, cv);
+      updated_he = p_arr->split_edge (he, sub_cv1, cv);
       updated_he = updated_he->next();
     }
   }
   else
   {
     if (right_v == invalid_v &&
-        ! (CGAL::sign(bx_r) == POSITIVE || by_r != NO_BOUNDARY))
+        ! ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)))
     {
       // Split the curve associated with he at the right endpoint of cv.
       geom_traits->split_2_object()
         (he->curve(),
-         geom_traits->construct_max_vertex_2_object() (cv),
-         sub_cv1, sub_cv2);
+         geom_traits->construct_max_vertex_2_object() (cv), sub_cv1, sub_cv2);
 
       // Split he, such that the left portion corresponds to the overlapping
       // curve and the right portion corresponds to sub_cv2.
-      updated_he = p_arr->split_edge (he,
-                                      cv, sub_cv2);
+      updated_he = p_arr->split_edge (he, cv, sub_cv2);
     }
     else
     {
       // The entire edge is overlapped: Modify the curve associated with cv
       // to be the overlapping curve.
-      updated_he = p_arr->modify_edge (he,
-                                       cv);
+      updated_he = p_arr->modify_edge (he, cv);
     }
   }
 
@@ -479,15 +459,12 @@ Arr_inc_insertion_zone_visitor<Arrangement>::found_overlap
 // Split an arrangement edge.
 //
 template <class Arrangement>
-void Arr_inc_insertion_zone_visitor<Arrangement>::_split_edge
-    (Halfedge_handle he,
-     const Point_2& p,
-     Arr_accessor<Arrangement_2>& arr_access)
+void Arr_inc_insertion_zone_visitor<Arrangement>::
+_split_edge (Halfedge_handle he, const Point_2& p,
+             Arr_accessor<Arrangement_2>& arr_access)
 {
   // Split the curve at the split point.
-  geom_traits->split_2_object() (he->curve(),
-                                 p,
-                                 sub_cv1, sub_cv2);
+  geom_traits->split_2_object() (he->curve(), p, sub_cv1, sub_cv2);
 
   // sub_cv1 is always to the left of the split point p and sub_cv2 lies to
   // its right. Thus, if the split edge is directed from left to right then
@@ -495,15 +472,11 @@ void Arr_inc_insertion_zone_visitor<Arrangement>::_split_edge
   // right to left, we have to reverse the subcurve order.
   if (he->direction() == ARR_LEFT_TO_RIGHT)
   {
-    arr_access.split_edge_ex (he,
-                              p,
-                              sub_cv1, sub_cv2);
+    arr_access.split_edge_ex (he, p, sub_cv1, sub_cv2);
   }
   else
   {
-    arr_access.split_edge_ex (he,
-                              p,
-                              sub_cv2, sub_cv1);
+    arr_access.split_edge_ex (he, p, sub_cv2, sub_cv1);
   }
 
   return;

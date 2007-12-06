@@ -153,38 +153,38 @@ protected:
 
   Compare_events   m_queueEventLess; // Comparison functor for the event queue.
 
-  Event_queue     *m_queue;         // The event queue (the X-structure).
+  Event_queue     *m_queue;          // The event queue (the X-structure).
 
-  Subcurve        *m_subCurves;     // An array of the subcurves.
-  Status_line      m_statusLine;    // The status line (the Y-structure).
+  Subcurve        *m_subCurves;      // An array of the subcurves.
+  Status_line      m_statusLine;     // The status line (the Y-structure).
 
   Allocated_events_set m_allocated_events;
-                                    // The events that have been allocated
-                                    // (and have not yet been deallocated).
+                                     // The events that have been allocated
+                                     // (and have not yet been deallocated).
 
   Status_line_iterator m_status_line_insert_hint;
-                                    // An iterator of the status line, which
-                                    // is used as a hint for insertions.
+                                     // An iterator of the status line, which
+                                     // is used as a hint for insertions.
 
   bool             m_is_event_on_above;
-                                    // Indicates if the current event is on the
-                                    // interior of existing curve. This may
-                                    // happen only with events that are
-                                    // associated with isolated query points.
+                                     // Indicates if the current event is on
+                                     // the interior of existing curve. This 
+                                     // may happen only with events that are
+                                     // associated with isolated query points.
 
-  Event_alloc    m_eventAlloc;     // An allocator for the events objects.
-  Subcurve_alloc m_subCurveAlloc;  // An allocator for the subcurve objects.
+  Event_alloc    m_eventAlloc;       // An allocator for the events objects.
+  Subcurve_alloc m_subCurveAlloc;    // An allocator for the subcurve objects.
 
-  Event          m_masterEvent;    // A master Event (created once by the
-                                   // constructor) for the allocator's usage.
+  Event          m_masterEvent;      // A master Event (created once by the
+                                     // constructor) for the allocator's usage.
 
-  Subcurve       m_masterSubcurve; // A master Subcurve (created once by the
-                                   // constructor) for the allocator's usage.
+  Subcurve       m_masterSubcurve;   // A master Subcurve (created once by the
+                                     // constructor) for the allocator's usage.
 
   unsigned int   m_num_of_subCurves; // Number of subcurves.
 
-  Visitor       *m_visitor;        // The sweep-line visitor that will be
-                                   // notified during the sweep.
+  Visitor       *m_visitor;          // The sweep-line visitor that will be
+                                     // notified during the sweep.
 
 public:
 
@@ -470,32 +470,32 @@ protected:
    * Allocate an event object associated with a given point.
    * \param pt The point.
    * \param type The event type.
-   * \param bound_x The boundary condition of the point in x.
-   * \param bound_y The boundary condition of the point in y.
+   * \param ps_x The boundary condition of the point in x.
+   * \param ps_y The boundary condition of the point in y.
    * \pre Neither one of the boundary conditions is +/-oo. 
    * \return The created event.
    */
   Event* _allocate_event (const Point_2& pt, Attribute type,
-                          Boundary_type bound_x, Boundary_type bound_y);
+                          Arr_parameter_space ps_x, Arr_parameter_space ps_y);
 
   /*!
    * Allocate an event at infinity, which is not associated with a valid point.
    * \param type The event type.
-   * \param bound_x The boundary condition of the point in x.
-   * \param bound_y The boundary condition of the point in y.
+   * \param ps_x The boundary condition of the point in x.
+   * \param ps_y The boundary condition of the point in y.
    * \param At least one of the boundary conditions is +/-oo.
    * \return The created event.
    */
   Event* _allocate_event_at_infinity (Attribute type,
-                                      Boundary_type bound_x,
-                                      Boundary_type bound_y);
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y);
 
   /*! 
    * Push a finite event point into the event queue.
    * \param pt The point associated with the event.
    * \param type The event type.
-   * \param bound_x The boundary condition of the point in x.
-   * \param bound_y The boundary condition of the point in y.
+   * \param ps_x The boundary condition of the point in x.
+   * \param ps_y The boundary condition of the point in y.
    * \param sc A subcurve that the new event represents on of its endpoints.
    * \return A pair that comprises a pointer to the event, and a flag
    *         indicating whether this is a new event (if false, the event
@@ -503,8 +503,8 @@ protected:
    */
   std::pair<Event*, bool> _push_event (const Point_2& pt,
                                        Attribute type,
-                                       Boundary_type bound_x,
-                                       Boundary_type bound_y,
+                                       Arr_parameter_space ps_x,
+                                       Arr_parameter_space ps_y,
                                        Subcurve* sc = NULL);
 
   /*! 
@@ -512,8 +512,8 @@ protected:
    * \param cv The x-monotone curve.
    * \param ind The relevant curve end.
    * \param type The event type.
-   * \param bound_x The boundary condition of the point in x.
-   * \param bound_y The boundary condition of the point in y.
+   * \param ps_x The boundary condition of the point in x.
+   * \param ps_y The boundary condition of the point in y.
    * \param sc A subcurve that the new event represents on of its endpoints.
    * \return A pair that comprises a pointer to the event, and a flag
    *         indicating whether this is a new event (if false, the event
@@ -522,8 +522,8 @@ protected:
   std::pair<Event*, bool> _push_event (const X_monotone_curve_2& cv,
                                        Arr_curve_end ind,
                                        Attribute type,
-                                       Boundary_type bound_x,
-                                       Boundary_type bound_y,
+                                       Arr_parameter_space ps_x,
+                                       Arr_parameter_space ps_y,
                                        Subcurve* sc = NULL);
 
   void _update_event_at_infinity(Event* e,
@@ -556,7 +556,7 @@ protected:
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
-  void PrintInfinityType(Boundary_type x, Boundary_type y);
+  void PrintInfinityType(Arr_parameter_space x, Arr_parameter_space y);
   void PrintEvent(const Event* e);
 #endif
 
