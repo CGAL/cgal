@@ -26,9 +26,7 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
-#include <CGAL/Algebraic_curve_kernel_2/Curve_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
-#include <CGAL/Algebraic_curve_kernel_2/Curve_pair_vertical_line_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
@@ -506,7 +504,7 @@ public:
         //! \brief copies in the output iterator the x-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
         //!
-        //! all points (x, y) with f(x,y) = fx(x,y) = 0 are x-critical points
+        //! all points (x, y) with f(x,y) = fy(x,y) = 0 are x-critical points
         //! (i.e, singularities are also counted)
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_2& p, 
@@ -519,32 +517,31 @@ public:
             typename Self::Curve_analysis_2 ca_2(p),
                     ca_2x(curve_2(der_x(cvt(p.f()))));
             typename Self::Curve_pair_analysis_2 cpa_2(ca_2, ca_2x);
-            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
-                cpv_line;
-            typename Self::Curve_analysis_2::Curve_vertical_line_1 cv_line;
+            typename Self::Curve_pair_analysis_2::Status_line_1 cpv_line;
+            typename Self::Curve_analysis_2::Status_line_1 cv_line;
             
             int i, j, n_arcs, n_events =
-                cpa_2.number_of_vertical_lines_with_event();
+                cpa_2.number_of_status_lines_with_event();
             std::pair<int,int> ipair;
             bool vline_constructed = false;
             
             for(i = 0; i < n_events; i++) {
-                cpv_line = cpa_2.vertical_line_at_event(i);
-                // no 2-curve intersections over this vertical line
+                cpv_line = cpa_2.status_line_at_event(i);
+                // no 2-curve intersections over this status line
                 if(!cpv_line.is_intersection())
                     continue;
                 n_arcs = cpv_line.number_of_events();
                 for(j = 0; j < n_arcs; j++) {
-                    ipair = cpv_line.get_curves_at_event(j);
+                    ipair = cpv_line.curves_at_event(j);
                     if(ipair.first == -1||ipair.second == -1) 
                         continue;
                     if(!vline_constructed) {
-                        cv_line = ca_2.vertical_line_at_exact_x(cpv_line.x());
+                        cv_line = ca_2.status_line_at_exact_x(cpv_line.x());
                         vline_constructed = true;
                     }
-                    // ipair.first is an arcno over vertical line of the 
+                    // ipair.first is an arcno over status line of the
                     // curve p
-                    *oi++ = cv_line.get_algebraic_real_2(ipair.first);
+                    *oi++ = cv_line.algebraic_real_2(ipair.first);
                 }
                 vline_constructed = false;
             }
@@ -577,26 +574,26 @@ public:
             typedef typename Self::Curve_analysis_2 Curve_analysis_2;
             typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
             
-            typename Curve_analysis_2::Curve_vertical_line_1 cv_line;
+            typename Curve_analysis_2::Status_line_1 cv_line;
             std::pair<int,int> ipair;
             // p is of type Curve_2 here
             Curve_analysis_2 ca_2(p); 
             int i, j, k, n_arcs, n_events =
-                ca_2.number_of_vertical_lines_with_event();
+                ca_2.number_of_status_lines_with_event();
             
             bool cpa_constructed = false, vline_constructed = false; 
-            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
+            typename Curve_pair_analysis_2::Status_line_1
                 cpv_line;
             Curve_pair_analysis_2 cpa_2;
             
             for(i = 0; i < n_events; i++) {
-                cv_line = ca_2.vertical_line_at_event(i);
+                cv_line = ca_2.status_line_at_event(i);
                 n_arcs = cv_line.number_of_events();
                 for(j = 0; j < n_arcs; j++) {
-                    ipair = cv_line.get_number_of_incident_branches(j);
+                    ipair = cv_line.number_of_incident_branches(j);
                     // general case: no special tests required
                     if(!(ipair.first == 1&&ipair.second == 1)) {
-                        *oi++ = cv_line.get_algebraic_real_2(j);
+                        *oi++ = cv_line.algebraic_real_2(j);
                         continue;
                     }
                     if(!cpa_constructed) {
@@ -609,18 +606,18 @@ public:
                         cpa_constructed = true;
                     }
                     if(!vline_constructed) {
-                        cpv_line = cpa_2.vertical_line_for_x(cv_line.x());
+                        cpv_line = cpa_2.status_line_for_x(cv_line.x());
                         vline_constructed = true;
                     }
                     if(!cpv_line.is_intersection())
                         continue;
                     // obtain the y-position of j-th event of curve p
-                    k = cpv_line.get_event_of_curve(j, 0);
-                    ipair = cpv_line.get_curves_at_event(k);
+                    k = cpv_line.event_of_curve(j, 0);
+                    ipair = cpv_line.curves_at_event(k);
                     
                     // pick up only event comprised of both curve and its der
                     if(ipair.first != -1&&ipair.second != -1)
-                        *oi++ = cv_line.get_algebraic_real_2(j);
+                        *oi++ = cv_line.algebraic_real_2(j);
                 }
                 vline_constructed = false;
             }
@@ -713,21 +710,21 @@ public:
             typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
             
             Curve_analysis_2 ca_2(p);
-            typename Curve_analysis_2::Curve_vertical_line_1
-                cv_line = ca_2.vertical_line_for_x(r.x());
-            // fast check for the presence of vertical line at r.x()
+            typename Curve_analysis_2::Status_line_1
+                cv_line = ca_2.status_line_for_x(r.x());
+            // fast check for the presence of status line at r.x()
             if(cv_line.covers_line())    
                 return true;
 
             Curve_pair_analysis_2 cpa_2(ca_2, Curve_analysis_2(r.curve()));
-            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
-                cpv_line = cpa_2.vertical_line_for_x(r.x());
+            typename Curve_pair_analysis_2::Status_line_1
+                cpv_line = cpa_2.status_line_for_x(r.x());
             
             if(cpv_line.is_event() && cpv_line.is_intersection()) {
                 // get an y-position of the point r
-                int idx = cpv_line.get_event_of_curve(r.arcno(), 1);
+                int idx = cpv_line.event_of_curve(r.arcno(), 1);
                 std::pair<int, int> ipair =
-                      cpv_line.get_curves_at_event(idx);
+                      cpv_line.curves_at_event(idx);
                 if(ipair.first != -1&&ipair.second != -1)
                     return true;
             }
@@ -773,27 +770,27 @@ public:
             
             Curve_analysis_2 ca_2(p), ca_2r(r.curve());
             Curve_pair_analysis_2 cpa_2(ca_2, ca_2r);
-            typename Curve_analysis_2::Curve_vertical_line_1
-                cv_line = ca_2.vertical_line_for_x(r.x()),
-                cv_line_r = ca_2r.vertical_line_for_x(r.x());
+            typename Curve_analysis_2::Status_line_1
+                cv_line = ca_2.status_line_for_x(r.x()),
+                cv_line_r = ca_2r.status_line_for_x(r.x());
             
-            // fast check for the presence of vertical line at r.x()
+            // fast check for the presence of status line at r.x()
             if(cv_line.covers_line())    
                 return CGAL::ZERO;
                 
-            // in case there is no event at this x-coordinate, vertical
+            // in case there is no event at this x-coordinate, status
             // line at some rational x over an interval is returned
-            typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
-                cpv_line = cpa_2.vertical_line_for_x(r.x());
+            typename Curve_pair_analysis_2::Status_line_1
+                cpv_line = cpa_2.status_line_for_x(r.x());
                         
             // get an y-position of the point r
-            int idx = cpv_line.get_event_of_curve(r.arcno(), 1);  
+            int idx = cpv_line.event_of_curve(r.arcno(), 1);
             std::pair<int, int> ipair;
             X_coordinate_1 boundary_x;
             
             if(cpv_line.is_event()) {
                 if(cpv_line.is_intersection()) {
-                    ipair = cpv_line.get_curves_at_event(idx);
+                    ipair = cpv_line.curves_at_event(idx);
                     // easy case: there is a 2-curve intersection at this x
                     if(ipair.first != -1&&ipair.second != -1)
                         return CGAL::ZERO; // intersection of both curves
@@ -808,16 +805,16 @@ public:
                     // shift to the left of r.x() otherwise we would find
                     // arc-numbers of p at event point (r.arcno() is valid
                     // over curve-pair interval)
-                    cpv_line = cpa_2.vertical_line_of_interval(
-                        cpv_line.get_index());
+                    cpv_line = cpa_2.status_line_of_interval(
+                        cpv_line.index());
                     // recompute vertical line of p and y-position of r
                     // (however y-position of r.arcno() should not change
                     // since it can only happen at 2-curve event or at event
                     // of g)
-                    idx = cpv_line.get_event_of_curve(r.arcno(), 1);
+                    idx = cpv_line.event_of_curve(r.arcno(), 1);
                     //  need cv-line over interval ?
-                    cv_line = ca_2.vertical_line_of_interval(
-                        cv_line.get_index());
+                    cv_line = ca_2.status_line_of_interval(
+                        cv_line.index());
                     boundary_x = cpv_line.x();
                     
                 } else if(cv_line_r.is_event()) {
@@ -829,8 +826,8 @@ public:
                 // an event arcno 
                     // need to recompute boundary_x (but leave cpv_line
                     // unchanged otherwise r.arcno() is not valid)
-                    boundary_x = cpa_2.vertical_line_of_interval(
-                        cpv_line.get_index()).x();
+                    boundary_x = cpa_2.status_line_of_interval(
+                        cpv_line.index()).x();
                 }
             } else {
             // there is no event at r.x() of curve p hence we're free to
@@ -839,8 +836,8 @@ public:
                 boundary_x = cpv_line.x();
                // std::cout << "sign over curve pair interval\n";
             }
-            // obtain vertical line at exact rational x
-            cv_line = ca_2.vertical_line_at_exact_x(
+            // obtain status line at exact rational x
+            cv_line = ca_2.status_line_at_exact_x(
                 X_coordinate_1(boundary_x.low()));
             
             int arcno_low = -1, arcno_high = -1, i = idx;
@@ -852,19 +849,19 @@ public:
             // arcno_low and arcno_high are consecutive event indices of
             // curve p at r.x()
             while(i-- > 0) {
-                ipair = cpv_line.get_curves_at_event(i);
+                ipair = cpv_line.curves_at_event(i);
                 if(ipair.first != -1) {
                     arcno_low = ipair.first;
-                    xy1 = cv_line.get_algebraic_real_2(arcno_low);
+                    xy1 = cv_line.algebraic_real_2(arcno_low);
                     break;
                 }
             }
             i = idx;
             while(i++ < cpv_line.number_of_events() - 1) {
-                ipair = cpv_line.get_curves_at_event(i);
+                ipair = cpv_line.curves_at_event(i);
                 if(ipair.first != -1) {
                     arcno_high = ipair.first;
-                    xy2 = cv_line.get_algebraic_real_2(arcno_high);
+                    xy2 = cv_line.algebraic_real_2(arcno_high);
                     break;
                 }
             }
@@ -941,7 +938,7 @@ public:
             */
             typename Self::Curve_pair_analysis_2 cpa_2(
                 (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
-            typename Self::Curve_pair_analysis_2::Curve_pair_vertical_line_1
+            typename Self::Curve_pair_analysis_2::Status_line_1
                 cpv_line;
             // do we need to check which supporting curve is simpler ?    
             typename Polynomial_traits_2::Total_degree total_degree;
@@ -949,22 +946,22 @@ public:
             Polynomial_2_CGAL f1 = cvt(p1.f()), f2 = cvt(p2.f());
             bool first_curve = (total_degree(f1) < total_degree(f2));
             
-            int i, j, n = cpa_2.number_of_vertical_lines_with_event();
+            int i, j, n = cpa_2.number_of_status_lines_with_event();
             std::pair<int, int> ipair;
             for(i = 0; i < n; i++) {
-                cpv_line = cpa_2.vertical_line_at_event(i);
+                cpv_line = cpa_2.status_line_at_event(i);
                 if(!cpv_line.is_intersection())
                     continue;
                 // store x-coord for future use
                 X_coordinate_1 x = cpv_line.x(); 
                 for(j = 0; j < cpv_line.number_of_events(); j++) {
-                    ipair = cpv_line.get_curves_at_event(j);
+                    ipair = cpv_line.curves_at_event(j);
                     if(ipair.first == -1 || ipair.second == -1) 
                         continue;
                     // VOILA!! we've got it !!!
                     *roots++ = Xy_coordinate_2(x, (first_curve ? p1 : p2), 
                             (first_curve ? ipair.first: ipair.second));
-                    *mults++ = cpv_line.get_multiplicity_of_intersection(j);
+                    *mults++ = cpv_line.multiplicity_of_intersection(j);
                 }
             }
             return std::make_pair(roots, mults);
