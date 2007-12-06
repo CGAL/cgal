@@ -15,9 +15,9 @@
 #include <CGAL/Coercion_traits.h>
 
 #define CGAL_DEFINE_TYPES_FROM_AK(AK)                           \
-    typedef typename AT::Integer Integer;                       \
-    typedef typename AT::Rational Rational;                     \
-    typedef typename AT::Field_with_sqrt Field_with_sqrt;       \
+    typedef typename AK::Integer Integer;                       \
+    typedef typename AK::Rational Rational;                     \
+    typedef typename AK::Field_with_sqrt Field_with_sqrt;       \
     typedef CGAL::Polynomial<Integer> Poly_int1;                \
     typedef CGAL::Polynomial<Poly_int1> Poly_int2;              \
     typedef CGAL::Polynomial<Poly_int2> Poly_int3;              \
@@ -1024,6 +1024,7 @@ int main() {
 //    test_coefficients_to<leda::rational>();
 #endif // CGAL_USE_LEDA        
  
+
 #ifdef CGAL_USE_LEDA
     {        
         typedef CGAL::LEDA_arithmetic_kernel AT;
