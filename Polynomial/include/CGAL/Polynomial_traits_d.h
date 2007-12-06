@@ -7,9 +7,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Michael Seel <seel@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Sebastian Limbach <slimbach@mpi-inf.mpg.de>
 //
 // ============================================================================
 #ifndef CGAL_POLYNOMIAL_TRAITS_D_H
@@ -17,41 +16,59 @@
 
 #include <CGAL/basic.h>
 
+
 #include <CGAL/Polynomial/polynomial_utils.h>
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
 
-#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                         \
-    typedef Polynomial_traits_d< Coefficient_ > PTC;                          \
-    typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;             \
-                                                                              \
-public:                                                                       \
-    typedef Polynomial<Coefficient_>                  Polynomial_d;           \
-    typedef Coefficient_                              Coefficient;            \
-    typedef typename PTC::Innermost_coefficient       Innermost_coefficient;  \
-    static const int d                              = PTC::d+1;               \
-                                                                              \
-                                                                              \
-private:                                                                      \
-    typedef std::pair< Exponent_vector, Innermost_coefficient >               \
-    Exponents_coeff_pair;                                                     \
-    typedef std::vector< Exponents_coeff_pair > Monom_rep;                    \
-                                                                              \
-    typedef CGAL::Recursive_const_flattening< d-1,                            \
-    typename CGAL::Polynomial<Coefficient>::const_iterator >                  \
-    Coefficient_flattening;                                                   \
-                                                                              \
-public:                                                                       \
-    typedef typename Coefficient_flattening::Recursive_flattening_iterator    \
-    Innermost_coefficient_iterator;                                           \
-    typedef typename  Polynomial_d::iterator Coefficient_iterator;            \
-                                                                              \
-private:
+#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
+    typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;       \
+    typedef Polynomial_traits_d< Coefficient_ > PTC;                    \
+                                                                        \
+    public:                                                             \
+    typedef Polynomial<Coefficient_>                  Polynomial_d;     \
+    typedef Coefficient_                              Coefficient;      \
+                                                                        \
+    typedef typename Innermost_coefficient<Polynomial_d>::Type          \
+    Innermost_coefficient;                                              \
+    static const int d = Dimension<Polynomial_d>::value;                \
+                                                                        \
+                                                                        \
+    private:                                                            \
+    typedef std::pair< Exponent_vector, Innermost_coefficient >         \
+    Exponents_coeff_pair;                                               \
+    typedef std::vector< Exponents_coeff_pair > Monom_rep;              \
+                                                                        \
+    typedef CGAL::Recursive_const_flattening< d-1,                      \
+    typename CGAL::Polynomial<Coefficient>::const_iterator >            \
+    Coefficient_flattening;                                             \
+                                                                        \
+    public:                                                             \
+    typedef typename Coefficient_flattening::Recursive_flattening_iterator \
+    Innermost_coefficient_iterator;                                     \
+    typedef typename  Polynomial_d::iterator Coefficient_iterator;      \
+                                                                        \
+    private:
 
-CGAL_BEGIN_NAMESPACE
-;
+CGAL_BEGIN_NAMESPACE;
 
 namespace POLYNOMIAL {
+
+// template meta function Innermost_coefficient
+// returns the tpye of the innermost coefficient 
+template <class T> struct Innermost_coefficient{ typedef T Type; };
+template <class Coefficient> 
+struct Innermost_coefficient<Polynomial<Coefficient> >{
+    typedef typename Innermost_coefficient<Coefficient>::Type Type; 
+};
+
+// template meta function Dimension
+// returns the number of variables 
+template <class T> struct Dimension{ static const int value = 0;};
+template <class Coefficient> 
+struct Dimension<Polynomial<Coefficient> > {
+    static const int value = Dimension<Coefficient>::value + 1 ; 
+};
 
 // Base class for functors depending on the algebraic category of the
 // innermost coefficient
@@ -1346,13 +1363,31 @@ public:
 //
 // In order to determine the algebraic category of the innermost coefficient,
 //  the Polynomial_traits_d_base class with "Null_tag" is used.
+
 template< class Polynomial >
 class Polynomial_traits_d
     : public POLYNOMIAL::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
-        typename POLYNOMIAL::Polynomial_traits_d_base< Polynomial, Null_tag, Null_tag >
-                             ::Innermost_coefficient >::Algebraic_category,
-    typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {};
+        typename POLYNOMIAL::Innermost_coefficient<Polynomial>::Type >::Algebraic_category,
+    typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {
+
+//------------ Rebind ----------- 
+private:
+template <class T, int d>
+struct Gen_polynomial_type{
+    typedef CGAL::Polynomial<typename Gen_polynomial_type<T,d-1>::Type> Type;
+};
+template <class T>
+struct Gen_polynomial_type<T,0>{ typedef T Type; };
+
+public:
+template <class T, int d>
+struct Rebind{
+    typedef Polynomial_traits_d<typename Gen_polynomial_type<T,d>::Type> Other;
+};
+//------------ Rebind ----------- 
+
+};
 
 
 CGAL_END_NAMESPACE

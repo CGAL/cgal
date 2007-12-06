@@ -54,7 +54,7 @@ T my_ipower(const T& base, int expn) {
 
 template <class Polynomial_d_>
 Polynomial_d_
-generate_sparse_random_polynomial(int max_degree = 10 ){
+generate_sparse_random_polynomial(int max_degree = 10){
     typedef CGAL::Polynomial_traits_d<Polynomial_d_> PT;
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(PT);
     typename PT::Construct_polynomial construct; 
@@ -87,14 +87,14 @@ generate_sparse_random_polynomial(int max_degree = 10 ){
 void  print_monom(std::vector<int> ev){
     if(ev.size() >= 1) 
         if (ev[0] != 0) 
-            if (ev[0] ==1 ) 
+            if (ev[0] == 1) 
                 std::cout << "x";
             else
                 std::cout << "x^" << ev[0];
     
     if(ev.size() >= 2) 
         if (ev[0] != 0) 
-            if (ev[0] == 1 ) 
+            if (ev[0] == 1) 
                 std::cout << "y";
             else
                 std::cout << "y^" << ev[1];
@@ -106,13 +106,13 @@ void  print_monom(std::vector<int> ev){
 template <class Monom_rep>
 void  print_monom_rep(Monom_rep monom_rep){
     std::sort(monom_rep.begin(), monom_rep.end());
-    for( typename Monom_rep::iterator it = monom_rep.begin();
-         it != monom_rep.end(); ++it){
+    for(typename Monom_rep::iterator it = monom_rep.begin();
+        it != monom_rep.end(); ++it){
         //if(it->second != 0){
-            std::cout << it->second <<"*" ;
-            print_monom(it->first);
-            std::cout <<" + ";
-            //}
+        std::cout << it->second <<"*" ;
+        print_monom(it->first);
+        std::cout <<" + ";
+        //}
     }
     std::cout << std::endl;
 }
@@ -128,38 +128,41 @@ void test_construct_polynomial(){
     const int d = PT::d;
     { // Construct_polynomial
         typedef typename PT::Construct_polynomial Constructor;
-        BOOST_STATIC_ASSERT(!(boost::is_same< Constructor , CGAL::Null_functor >::value));
+        BOOST_STATIC_ASSERT(
+                !(boost::is_same< Constructor , CGAL::Null_functor >::value));
         typedef typename Constructor::result_type result_type;
-        BOOST_STATIC_ASSERT( (boost::is_same< result_type , Polynomial_d >::value));
+        BOOST_STATIC_ASSERT(
+                (boost::is_same< result_type , Polynomial_d >::value));
         Constructor construct;
 
-        CGAL_test_assert( Polynomial_d() == construct()); 
-        CGAL_test_assert( Polynomial_d(3) == construct(3)); 
-        CGAL_test_assert( Polynomial_d(Coeff(3)) == construct(Coeff(3))); 
-        CGAL_test_assert( Polynomial_d(ICoeff(3)) == construct(ICoeff(3))); 
+        CGAL_test_assert(Polynomial_d() == construct()); 
+        CGAL_test_assert(Polynomial_d(3) == construct(3)); 
+        CGAL_test_assert(Polynomial_d(Coeff(3)) == construct(Coeff(3))); 
+        CGAL_test_assert(Polynomial_d(ICoeff(3)) == construct(ICoeff(3))); 
 
-        CGAL_test_assert( construct(Coeff(2)) != Polynomial_d(0)); 
-        CGAL_test_assert( construct(Coeff(2)) == Polynomial_d(2)); 
-        CGAL_test_assert( construct(Coeff(0),Coeff(1)) != Polynomial_d(1)); 
-        CGAL_test_assert( construct() 
+        CGAL_test_assert(construct(Coeff(2)) != Polynomial_d(0)); 
+        CGAL_test_assert(construct(Coeff(2)) == Polynomial_d(2)); 
+        CGAL_test_assert(construct(Coeff(0),Coeff(1)) != Polynomial_d(1)); 
+        CGAL_test_assert(construct() 
                 == construct(Coeff(0)));
-        CGAL_test_assert( construct(Coeff(1)) 
+        CGAL_test_assert(construct(Coeff(1)) 
                 == construct(Coeff(1),Coeff(0)));
-        CGAL_test_assert( construct(Coeff(2),Coeff(1)) 
+        CGAL_test_assert(construct(Coeff(2),Coeff(1)) 
                 == construct(Coeff(2),Coeff(1),Coeff(0)));
-        CGAL_test_assert( construct(Coeff(3),Coeff(2),Coeff(1)) 
+        CGAL_test_assert(construct(Coeff(3),Coeff(2),Coeff(1)) 
                 == construct(Coeff(3),Coeff(2),Coeff(1),Coeff(0)));
-        CGAL_test_assert( construct(Coeff(3),Coeff(2),Coeff(1)) 
+        CGAL_test_assert(construct(Coeff(3),Coeff(2),Coeff(1)) 
                 != construct(Coeff(3),Coeff(2),Coeff(1),Coeff(1)));
         // construct via iterator range
         std::vector<Coeff> coeffs;
-        CGAL_test_assert(construct(coeffs.begin(),coeffs.end())== construct(0));
+        CGAL_test_assert(construct(coeffs.begin(),coeffs.end()) == construct(0));
         for(int i = 0; i<4;i++){coeffs.push_back(Coeff(i));}
-        CGAL_test_assert(construct(coeffs.begin(),coeffs.end() )
+        CGAL_test_assert(construct(coeffs.begin(),coeffs.end())
                 == construct(Coeff(0),Coeff(1),Coeff(2),Coeff(3)));
         
         Monom_rep monom_rep;
-        CGAL_test_assert(construct(monom_rep.begin(),monom_rep.end())== construct(0));
+        CGAL_test_assert(
+                construct(monom_rep.begin(),monom_rep.end()) == construct(0));
         CGAL::Random rnd(7);
         for(int j = 0; j < 2; j++){
             CGAL::Exponent_vector exps(d);
@@ -189,16 +192,16 @@ template< class Polynomial_traits_d >
 void test_get_coefficient() {
     std::cerr << "start test_get_coefficient ";
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Construct_polynomial construct;
     typename PT::Get_coefficient get_coeff;
     
-    Polynomial_d p = construct( Coeff(1), Coeff(2), Coeff(3) );
-    CGAL_test_assert( get_coeff( p, 0 ) == Coeff(1) );
-    CGAL_test_assert( get_coeff( p, 1 ) == Coeff(2) );
-    CGAL_test_assert( get_coeff( p, 2 ) == Coeff(3) );
-    CGAL_test_assert( get_coeff( p, 3 ) == Coeff(0) );
+    Polynomial_d p = construct(Coeff(1), Coeff(2), Coeff(3));
+    CGAL_test_assert(get_coeff(p, 0) == Coeff(1));
+    CGAL_test_assert(get_coeff(p, 1) == Coeff(2));
+    CGAL_test_assert(get_coeff(p, 2) == Coeff(3));
+    CGAL_test_assert(get_coeff(p, 3) == Coeff(0));
     
     std::cerr << " ok" << std::endl;
 }
@@ -207,33 +210,33 @@ template< class Polynomial_traits_d >
 void test_get_innermost_coefficient() {
     std::cerr << "start test_get_innermost_coefficient ";
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Construct_polynomial construct;
     typename PT::Get_innermost_coefficient get_innermost_coeff;
     
-    Polynomial_d p = construct( Coeff(1), Coeff(2), Coeff(3) );
+    Polynomial_d p = construct(Coeff(1), Coeff(2), Coeff(3));
     
     Exponent_vector ev;
     
-    for( int i = 0; i < PT::d-1; ++i ) {
-        ev.push_back( 0 );
+    for(int i = 0; i < PT::d-1; ++i) {
+        ev.push_back(0);
     }
     
-    ev.push_back( 0 );    
-    CGAL_test_assert( get_innermost_coeff( p, ev ) == ICoeff(1) );
+    ev.push_back(0);    
+    CGAL_test_assert(get_innermost_coeff(p, ev) == ICoeff(1));
     
     ev.pop_back();
-    ev.push_back( 1 );
-    CGAL_test_assert( get_innermost_coeff( p, ev ) == ICoeff(2) );
+    ev.push_back(1);
+    CGAL_test_assert(get_innermost_coeff(p, ev) == ICoeff(2));
 
     ev.pop_back();
-    ev.push_back( 2 );
-    CGAL_test_assert( get_innermost_coeff( p, ev ) == ICoeff(3) );
+    ev.push_back(2);
+    CGAL_test_assert(get_innermost_coeff(p, ev) == ICoeff(3));
 
     ev.pop_back();
-    ev.push_back( 3 );
-    CGAL_test_assert( get_innermost_coeff( p, ev ) == ICoeff(0) );
+    ev.push_back(3);
+    CGAL_test_assert(get_innermost_coeff(p, ev) == ICoeff(0));
     
     std::cerr << " ok" << std::endl;
 }
@@ -280,17 +283,17 @@ void test_swap(){
         Polynomial_d p,q;
         p = generate_sparse_random_polynomial<Polynomial_d>();
         q = swap(p,i1,i2);
-        CGAL_test_assert(p!=q || i1 == i2 );
+        CGAL_test_assert(p!=q || i1 == i2);
         q = swap(q,i1,i2);
-        CGAL_test_assert(p==q);
+        CGAL_test_assert(p == q);
         
-        if(i1 != i2 && i1 != i3 && i2 != i3 ){
+        if(i1 != i2 && i1 != i3 && i2 != i3){
             q = swap(q,i1,i2);
-            CGAL_test_assert(p!=q || i1 == i2 );
+            CGAL_test_assert(p!=q || i1 == i2);
             q = swap(q,i1,i3);
             q = swap(q,i1,i2);
             q = swap(q,i2,i3);
-            CGAL_test_assert(p==q);
+            CGAL_test_assert(p == q);
         }
     }
     for(int i = 0; i < 5; i++){
@@ -304,7 +307,7 @@ void test_swap(){
         p = swap(p,n,m);
         q = swap(q,n,m);
         pq_2 = swap(p*q,n,m);
-        CGAL_test_assert(pq_1==pq_2); 
+        CGAL_test_assert(pq_1 == pq_2); 
     }
     std::cerr << " ok "<< std::endl; 
     
@@ -352,19 +355,19 @@ void test_degree(){
     
     Polynomial_d p; 
     p= construct(Coeff(0));
-    CGAL_test_assert(degree(p)==0);
+    CGAL_test_assert(degree(p) == 0);
     p= construct(Coeff(1));
-    CGAL_test_assert(degree(p)==0);
+    CGAL_test_assert(degree(p) == 0);
     p= construct(Coeff(1),Coeff(2));
-    CGAL_test_assert(degree(p)==1);
+    CGAL_test_assert(degree(p) == 1);
 
     
     p= construct(Coeff(0));
-    CGAL_test_assert(degree(p,(PT::d-1))==0);
+    CGAL_test_assert(degree(p,(PT::d-1)) == 0);
     p= construct(Coeff(1));
-    CGAL_test_assert(degree(p,(PT::d-1))==0);
+    CGAL_test_assert(degree(p,(PT::d-1)) == 0);
     p= construct(Coeff(1),Coeff(2));
-    CGAL_test_assert(degree(p,(PT::d-1))==1);
+    CGAL_test_assert(degree(p,(PT::d-1)) == 1);
     std::cerr << " ok "<< std::endl; 
 }
 
@@ -408,9 +411,9 @@ void test_innermost_leading_coefficient() {
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Innermost_leading_coefficient ilcoeff;
-    Polynomial_d p( Coeff(1), Coeff(2), Coeff(3) );
+    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
     
-    CGAL_test_assert( ilcoeff(p) == ICoeff(3) );
+    CGAL_test_assert(ilcoeff(p) == ICoeff(3));
     
     std::cerr << " ok" << std::endl;
 }
@@ -423,9 +426,12 @@ void test_univariate_content(){
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Univariate_content univariate_content;
     
-    CGAL_test_assert( univariate_content( Polynomial_d(0) ) == Coeff(0) );
-    CGAL_test_assert( univariate_content( Polynomial_d(1) ) == Coeff(1) );
-    CGAL_test_assert( univariate_content( Polynomial_d(2) ) == CGAL::integral_division( Coeff(2), CGAL::unit_part( Coeff(2) ) ) );
+    CGAL_test_assert(univariate_content(Polynomial_d(0)) == Coeff(0));
+    CGAL_test_assert(univariate_content(Polynomial_d(1)) == Coeff(1));
+    CGAL_test_assert(
+            univariate_content(Polynomial_d(2)) 
+            == 
+            CGAL::integral_division(Coeff(2), CGAL::unit_part(Coeff(2))));
     
     
     for(int i = 0; i < 5; i++){
@@ -452,10 +458,14 @@ void test_multivariate_content(){
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Multivariate_content mcontent;
     
-    CGAL_test_assert(mcontent(Polynomial_d( 0))== CGAL::integral_division( ICoeff( 0), CGAL::unit_part( ICoeff(0) ) ) );
-    CGAL_test_assert(mcontent(Polynomial_d( 1))== CGAL::integral_division( ICoeff( 1), CGAL::unit_part( ICoeff(1) ) ) );
-    CGAL_test_assert(mcontent(Polynomial_d( 2))== CGAL::integral_division( ICoeff( 2), CGAL::unit_part( ICoeff(2) ) ) );
-    CGAL_test_assert(mcontent(Polynomial_d(-2))== CGAL::integral_division( ICoeff( 2), CGAL::unit_part( ICoeff(2) ) ) );
+    CGAL_test_assert(mcontent(Polynomial_d(0)) == 
+            CGAL::integral_division(ICoeff(0),CGAL::unit_part(ICoeff(0))));
+    CGAL_test_assert(mcontent(Polynomial_d(1)) == 
+            CGAL::integral_division(ICoeff(1), CGAL::unit_part(ICoeff(1))));
+    CGAL_test_assert(mcontent(Polynomial_d(2)) == 
+            CGAL::integral_division(ICoeff(2), CGAL::unit_part(ICoeff(2))));
+    CGAL_test_assert(mcontent(Polynomial_d(-2)) == 
+            CGAL::integral_division(ICoeff(2), CGAL::unit_part(ICoeff(2))));
     
     for(int i = 0; i < 5; i++){
         Polynomial_d p =generate_sparse_random_polynomial<Polynomial_d>();
@@ -465,9 +475,12 @@ void test_multivariate_content(){
         ICoeff content_q = mcontent(q);
            
         CGAL_test_assert(mcontent(p*q) == content_p*content_q); 
-        CGAL_test_assert(mcontent(p*Polynomial_d(2)) == content_p* CGAL::integral_division( ICoeff(2), CGAL::unit_part( ICoeff(2) ) ) );     
+        CGAL_test_assert(mcontent(p*Polynomial_d(2)) 
+                == content_p* 
+                CGAL::integral_division(ICoeff(2), CGAL::unit_part(ICoeff(2))));
         p = CGAL::integral_division(p,content_p);
-        CGAL_test_assert(mcontent(p) == CGAL::integral_division( ICoeff( 1), CGAL::unit_part( ICoeff(1) ) ));
+        CGAL_test_assert(mcontent(p) == 
+                CGAL::integral_division(ICoeff(1), CGAL::unit_part(ICoeff(1))));
         
     }
     
@@ -498,18 +511,18 @@ void test_negate(){
     typename PT::Negate negate;
     typename PT::Swap swap;
     
-    CGAL_test_assert(negate(Polynomial_d(0))==Polynomial_d(0));
-    CGAL_test_assert(negate(Polynomial_d(2))==Polynomial_d(2));
+    CGAL_test_assert(negate(Polynomial_d(0)) == Polynomial_d(0));
+    CGAL_test_assert(negate(Polynomial_d(2)) == Polynomial_d(2));
 
     Polynomial_d p = construct(Coeff(1),Coeff(2),Coeff(3));
-    CGAL_test_assert(negate(p)==construct(Coeff(1),Coeff(-2),Coeff(3)));;
+    CGAL_test_assert(negate(p) == construct(Coeff(1),Coeff(-2),Coeff(3)));;
     
-    for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
         Polynomial_d q = p;
         int n = my_rnd.get_int(0,PT::d-1);
         int m = my_rnd.get_int(0,PT::d-1);
-        CGAL_test_assert(negate(swap(p,n,m),n) ==  swap(negate(p,m),n,m));
+        CGAL_test_assert(negate(swap(p,n,m),n) == swap(negate(p,m),n,m));
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -520,8 +533,8 @@ void test_invert(){
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Invert invert; 
     typename PT::Swap swap; 
-    for( int i = 0 ; i < 5 ; i++){
-        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();       
+    for(int i = 0 ; i < 5 ; i++){
+        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
         std::vector<Coeff> coeffs (p.begin(),p.end());
         p = invert(p);
         std::vector<Coeff> rcoeffs (p.begin(),p.end());
@@ -531,7 +544,8 @@ void test_invert(){
         }   
         int n = my_rnd.get_int(0,PT::d-1);
         
-        CGAL_test_assert( invert(p,n) == swap(invert(swap(p,n,PT::d-1)),n,PT::d-1));
+        CGAL_test_assert(
+                invert(p,n) == swap(invert(swap(p,n,PT::d-1)),n,PT::d-1));
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -543,8 +557,8 @@ void test_translate(){
     typename PT::Translate translate;
     typename PT::Evaluate evaluate;
     typename PT::Move move;
-    for( int i = 0 ; i < 5 ; i++){
-        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();       
+    for(int i = 0 ; i < 5 ; i++){
+        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
         CGAL_test_assert(evaluate(translate(p,ICoeff(5)),ICoeff(3)) 
                 == evaluate(p,ICoeff(8)));
         CGAL_test_assert(evaluate(translate(p,ICoeff(5),0),ICoeff(3),0) 
@@ -562,23 +576,24 @@ void test_translate_homongenous(){
     typename PT::Canonicalize canonicalize;
     typename PT::Evaluate_homogeneous evh;
     //typename PT::Move move;
-    for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         Polynomial_d p,q1,q2;
         p = generate_sparse_random_polynomial<Polynomial_d>(); 
         q1 = transh(transh(p,ICoeff(5),ICoeff(3)),ICoeff(3),ICoeff(2)) ;
         q2 = transh(p,ICoeff(19),ICoeff(6)) ;
-        CGAL_test_assert( canonicalize(q1) != canonicalize(p)) ;
-        CGAL_test_assert( canonicalize(q2) != canonicalize(p) ) ;
-        CGAL_test_assert( canonicalize(q1) == canonicalize(q2));
+        CGAL_test_assert(canonicalize(q1) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q2) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q1) == canonicalize(q2));
         
-        CGAL_test_assert(evh(p,ICoeff(19),ICoeff(6)) == evh(q2,ICoeff(0),ICoeff(1)));
+        CGAL_test_assert(
+                evh(p,ICoeff(19),ICoeff(6)) == evh(q2,ICoeff(0),ICoeff(1)));
         
         q1 = transh(transh(p,ICoeff(5),ICoeff(3),0),ICoeff(3),ICoeff(2),0) ;  
         q2 = transh(p,ICoeff(19),ICoeff(6),0) ;
         
-        CGAL_test_assert( canonicalize(q1) != canonicalize(p)) ;
-        CGAL_test_assert( canonicalize(q2) != canonicalize(p) ) ;
-        CGAL_test_assert( canonicalize(q1) == canonicalize(q2)); 
+        CGAL_test_assert(canonicalize(q1) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q2) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q1) == canonicalize(q2)); 
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -590,9 +605,10 @@ void test_scale() {
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Scale scale;
-    Polynomial_d p( Coeff(1), Coeff(2), Coeff(3) );
+    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
     
-    CGAL_test_assert( scale( p, ICoeff(2) ) == Polynomial_d( Coeff(1), Coeff(4), Coeff(12) ) );
+    CGAL_test_assert(
+            scale(p, ICoeff(2)) == Polynomial_d(Coeff(1), Coeff(4), Coeff(12)));
     
     std::cerr << " ok" << std::endl;
 }
@@ -605,21 +621,21 @@ void test_scale_homogeneous(){
     typename PT::Scale_homogeneous scaleh;
     typename PT::Canonicalize canonicalize;
     //typename PT::Move move;
-    for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         Polynomial_d p,q1,q2;
         p = generate_sparse_random_polynomial<Polynomial_d>(); 
         q1 = scaleh(scaleh(p,ICoeff(5),ICoeff(3)),ICoeff(3),ICoeff(2)) ;
         q2 = scaleh(p,ICoeff(15),ICoeff(6)) ;
-        CGAL_test_assert( canonicalize(q1) != canonicalize(p)) ;
-        CGAL_test_assert( canonicalize(q2) != canonicalize(p) ) ;
-        CGAL_test_assert( canonicalize(q1) == canonicalize(q2));
+        CGAL_test_assert(canonicalize(q1) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q2) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q1) == canonicalize(q2));
         
         q1 = scaleh(scaleh(p,ICoeff(5),ICoeff(3),1),ICoeff(3),ICoeff(2),0) ;  
         q2 = scaleh(p,ICoeff(15),ICoeff(6),0) ;
         
-        CGAL_test_assert( canonicalize(q1) != canonicalize(p)) ;
-        CGAL_test_assert( canonicalize(q2) != canonicalize(p) ) ;
-        CGAL_test_assert( canonicalize(q1) == canonicalize(q2)); 
+        CGAL_test_assert(canonicalize(q1) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q2) != canonicalize(p)) ;
+        CGAL_test_assert(canonicalize(q1) == canonicalize(q2)); 
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -637,7 +653,7 @@ void test_derivative(){
     CGAL_test_assert(diff(Polynomial_d(1)) == Polynomial_d(0));
     CGAL_test_assert(diff(Polynomial_d(Coeff(1), Coeff(2))) == Polynomial_d(2));
     
-    for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         int n = my_rnd.get_int(0,PT::d-1);
         Polynomial_d p,pd;
         p = generate_sparse_random_polynomial<Polynomial_d>(); 
@@ -657,12 +673,12 @@ void test_make_square_free(){
     typename PT::Univariate_content_up_to_constant_factor ucontent_utcf;
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     
-    CGAL_test_assert( Polynomial_d(0) == make_square_free(Polynomial_d(0)));
-    CGAL_test_assert( Polynomial_d(1) == make_square_free(Polynomial_d(1)));
-    CGAL_test_assert( Polynomial_d(1) == make_square_free(Polynomial_d(2)));
+    CGAL_test_assert(Polynomial_d(0) == make_square_free(Polynomial_d(0)));
+    CGAL_test_assert(Polynomial_d(1) == make_square_free(Polynomial_d(1)));
+    CGAL_test_assert(Polynomial_d(1) == make_square_free(Polynomial_d(2)));
     
     //typename PT::Canonicalize canonicalize; 
-    for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         Polynomial_d p;
         p = generate_sparse_random_polynomial<Polynomial_d>(3); 
         
@@ -674,8 +690,8 @@ void test_make_square_free(){
        
         //std::cout <<"f: " << f_intern << std::endl;
         
-        CGAL_test_assert( p * f_intern == make_square_free(p*p*f_intern));
-        CGAL_test_assert( p * f_intern == make_square_free(p*f_intern*f_intern));
+        CGAL_test_assert(p * f_intern == make_square_free(p*p*f_intern));
+        CGAL_test_assert(p * f_intern == make_square_free(p*f_intern*f_intern));
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -704,7 +720,7 @@ void test_square_free_factorization(){
                 p = idiv(p,factors[j]);
             }
         }
-        CGAL_test_assert(typename PT::Total_degree()(p) == 0 );
+        CGAL_test_assert(typename PT::Total_degree()(p) == 0);
         //if(typename PT::Total_degree()(p) != 0){
         //    std::cout<< p << std::endl; 
         //}
@@ -720,27 +736,27 @@ void test_square_free_factorization(){
     std::vector< int > mults;
     ICoeff alpha;
     Polynomial_d rec_p(1);
-    sqff( p, std::back_inserter(factors), std::back_inserter(mults), alpha );
+    sqff(p, std::back_inserter(factors), std::back_inserter(mults), alpha);
     
-    CGAL_test_assert( alpha == CGAL::unit_part( ileading_coeff( p ) ) * 
-                            multivariate_content( p ) );
+    CGAL_test_assert(alpha == CGAL::unit_part(ileading_coeff(p)) * 
+            multivariate_content(p));
     
     //std::cerr << std::endl;
     std::vector< int >::iterator mults_it = mults.begin();
-    for( typename std::vector< Polynomial_d >::iterator it = factors.begin();
-         it != factors.end(); ++it ) {
-        CGAL_test_assert( (*it) == canonicalize( (*it) ) );
+    for(typename std::vector< Polynomial_d >::iterator it = factors.begin();
+        it != factors.end(); ++it) {
+        CGAL_test_assert((*it) == canonicalize((*it)));
         //std::cerr << "faktor= " << (*it) << ", ";
         //std::cerr << "mult= " << (*mults_it) << std::endl; 
-        CGAL_test_assert( mults_it != mults.end() );
-        rec_p *= CGAL::POLYNOMIAL::ipower( (*it),(*mults_it++) );
+        CGAL_test_assert(mults_it != mults.end());
+        rec_p *= CGAL::POLYNOMIAL::ipower((*it),(*mults_it++));
     }
     
-    rec_p *= Polynomial_d( alpha );
+    rec_p *= Polynomial_d(alpha);
     //std::cerr << "ALPHA= " << alpha << std::endl;
     //std::cerr << "    p= " << p << std::endl;
     //std::cerr << "rec_p= " << rec_p << std::endl;
-    CGAL_test_assert( p == rec_p );
+    CGAL_test_assert(p == rec_p);
 
     std::cerr << "ok"<< std::endl; 
     
@@ -757,7 +773,7 @@ void test_pseudo_division(){
         Coeff D;
         Polynomial_d q,r;
         pdiv(f,g,q,r,D);
-        CGAL_test_assert(f*Polynomial_d(D)==g*q+r);
+        CGAL_test_assert(f*Polynomial_d(D) == g*q+r);
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -805,12 +821,18 @@ void test_gcd_up_to_constant_factor(){
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Gcd_up_to_constant_factor gcd_utcf;
     
-    CGAL_test_assert(Polynomial_d(0) == gcd_utcf(Polynomial_d(0),Polynomial_d(0)));
-    CGAL_test_assert(Polynomial_d(1) == gcd_utcf(Polynomial_d(1),Polynomial_d(0)));
-    CGAL_test_assert(Polynomial_d(1) == gcd_utcf(Polynomial_d(0),Polynomial_d(1)));
-    CGAL_test_assert(Polynomial_d(1) == gcd_utcf(Polynomial_d(1),Polynomial_d(1)));
-    CGAL_test_assert(Polynomial_d(1) == gcd_utcf(Polynomial_d(-1),Polynomial_d(-1)));
-    CGAL_test_assert(Polynomial_d(1) == gcd_utcf(Polynomial_d(2),Polynomial_d(2)));
+    CGAL_test_assert(
+            Polynomial_d(0) == gcd_utcf(Polynomial_d(0),Polynomial_d(0)));
+    CGAL_test_assert(
+            Polynomial_d(1) == gcd_utcf(Polynomial_d(1),Polynomial_d(0)));
+    CGAL_test_assert(
+            Polynomial_d(1) == gcd_utcf(Polynomial_d(0),Polynomial_d(1)));
+    CGAL_test_assert(
+            Polynomial_d(1) == gcd_utcf(Polynomial_d(1),Polynomial_d(1)));
+    CGAL_test_assert(
+            Polynomial_d(1) == gcd_utcf(Polynomial_d(-1),Polynomial_d(-1)));
+    CGAL_test_assert(
+            Polynomial_d(1) == gcd_utcf(Polynomial_d(2),Polynomial_d(2)));
     
     std::cerr << " ok "<< std::endl;
 }
@@ -818,13 +840,17 @@ void test_gcd_up_to_constant_factor(){
 // //       Integral_division_up_to_constant_factor;
 template <class Polynomial_traits_d>
 void test_integral_division_up_to_constant_factor(){
-    std::cerr << "start test_integral_division_up_to_constant_factor "; std::cerr.flush();
+    std::cerr << "start test_integral_division_up_to_constant_factor "; 
+    std::cerr.flush();
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     typename PT::Canonicalize canonicalize;
-    CGAL_test_assert(Polynomial_d(0) == idiv_utcf(Polynomial_d(0),Polynomial_d(1)));
-    CGAL_test_assert(Polynomial_d(1) == idiv_utcf(Polynomial_d(1),Polynomial_d(1)));
-    CGAL_test_assert(Polynomial_d(1) == idiv_utcf(Polynomial_d(2),Polynomial_d(1)));
+    CGAL_test_assert(
+            Polynomial_d(0) == idiv_utcf(Polynomial_d(0),Polynomial_d(1)));
+    CGAL_test_assert(
+            Polynomial_d(1) == idiv_utcf(Polynomial_d(1),Polynomial_d(1)));
+    CGAL_test_assert(
+            Polynomial_d(1) == idiv_utcf(Polynomial_d(2),Polynomial_d(1)));
     
     for(int i = 0; i < 5; i++){
         Polynomial_d p,q;
@@ -838,7 +864,8 @@ void test_integral_division_up_to_constant_factor(){
 // //       Content_up_to_constant_factor;
 template <class Polynomial_traits_d>
 void test_univariate_content_up_to_constant_factor(){
-    std::cerr << "start test_univariate_content_up_to_constant_factor "; std::cerr.flush();
+    std::cerr << "start test_univariate_content_up_to_constant_factor "; 
+    std::cerr.flush();
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     typename PT::Univariate_content_up_to_constant_factor ucontent_utcf;
@@ -882,7 +909,9 @@ void test_square_free_factorization_up_to_constant_factor(){
         Polynomial_d p = f1*f1*f2;
         std::vector<Polynomial_d> factors;
         std::vector<int> mults;
-        int n = sqff_utcf(p, std::back_inserter(factors), std::back_inserter(mults));
+        int n = sqff_utcf(p, 
+                std::back_inserter(factors), 
+                std::back_inserter(mults));
         //std::cout << "n: " << n <<std::endl;
         CGAL_test_assert(n == (int) factors.size());
         CGAL_test_assert(n == (int) mults.size());
@@ -891,7 +920,7 @@ void test_square_free_factorization_up_to_constant_factor(){
                 p = idiv_utcf(p,factors[j]);
             }
         }
-        CGAL_test_assert( CGAL::is_one(canonicalize(p)) );
+        CGAL_test_assert(CGAL::is_one(canonicalize(p)));
     }
     std::cerr << "ok"<< std::endl; 
 }
@@ -911,28 +940,31 @@ void test_evaluate(){
     CGAL_test_assert(evaluate(Polynomial_d(1),ICoeff(0)) == Coeff(1));
     CGAL_test_assert(evaluate(Polynomial_d(2),ICoeff(5)) == Coeff(2));
 
-    CGAL_test_assert(evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0))==Coeff(3));
-    CGAL_test_assert(evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1))==Coeff(5));
-    CGAL_test_assert(evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2))==Coeff(7));
+    CGAL_test_assert(
+            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0)) == Coeff(3));
+    CGAL_test_assert(
+            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1)) == Coeff(5));
+    CGAL_test_assert(
+            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2)) == Coeff(7));
     
     for(int i = 0; i < 5; i++){
         int n = my_rnd.get_int(0,PT::d-1);
         Polynomial_d p,q;
         p = generate_sparse_random_polynomial<Polynomial_d>();
-        CGAL_test_assert(
-                evaluate(p,ICoeff(3),n) == evaluate(move(p,n,PT::d-1),ICoeff(3)));
+        CGAL_test_assert(evaluate(p,ICoeff(3),n) == 
+                evaluate(move(p,n,PT::d-1),ICoeff(3)));
     }
     
-    Polynomial_d p( Coeff(1), Coeff(2), Coeff(3) );
+    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
     std::vector< ICoeff > ev;
-    for( int i = 0; i < PT::d-1; ++i ) {
-        ev.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i) {
+        ev.push_back(ICoeff(0));
     }
-    ev.push_back( ICoeff(1) );
-    CGAL_test_assert( evaluate( p, ev.begin(), ev.end() ) == ICoeff(1+2+3) );
+    ev.push_back(ICoeff(1));
+    CGAL_test_assert(evaluate(p, ev.begin(), ev.end()) == ICoeff(1+2+3));
     ev.pop_back();
-    ev.push_back( ICoeff(2) );  
-    CGAL_test_assert( evaluate( p, ev.begin(), ev.end() ) == ICoeff(1+4+12) );
+    ev.push_back(ICoeff(2));  
+    CGAL_test_assert(evaluate(p, ev.begin(), ev.end()) == ICoeff(1+4+12));
     
     
     std::cerr << " ok "<< std::endl;
@@ -949,30 +981,33 @@ void test_evaluate_homogeneous(){
     CGAL_test_assert(evh(Polynomial_d(1),ICoeff(0),ICoeff(2)) == Coeff(1));
     CGAL_test_assert(evh(Polynomial_d(2),ICoeff(5),ICoeff(3)) == Coeff(2));
 
-    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0),ICoeff(1))==Coeff(3));
-    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1),ICoeff(1))==Coeff(5));
-    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2),ICoeff(3))==Coeff(9+4));
+    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0),ICoeff(1)) ==
+            Coeff(3));
+    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1),ICoeff(1)) ==
+            Coeff(5));
+    CGAL_test_assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2),ICoeff(3)) ==
+            Coeff(9+4));
     
     // hdegree parameter no longer available
     /*CGAL_test_assert(evh(Polynomial_d(Coeff(5),Coeff(7)),ICoeff(2),ICoeff(3),2)
-            ==Coeff(5*3*3+7*3*2));*/
+      == Coeff(5*3*3+7*3*2));*/
     
-    Polynomial_d p( Coeff(1), Coeff(2), Coeff(3) );
+    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
     std::vector< ICoeff > ev;
-    for( int i = 0; i < PT::d-1; ++i ) {
-        ev.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i) {
+        ev.push_back(ICoeff(0));
     }
-    ev.push_back( ICoeff(1) );
-    ev.push_back( ICoeff(1) );
-    CGAL_test_assert( evh( p, ev.begin(), ev.end() ) == ICoeff(1+2+3) );
+    ev.push_back(ICoeff(1));
+    ev.push_back(ICoeff(1));
+    CGAL_test_assert(evh(p, ev.begin(), ev.end()) == ICoeff(1+2+3));
     ev.pop_back();
-    ev.push_back( ICoeff(2) );  
-    CGAL_test_assert( evh( p, ev.begin(), ev.end() ) == ICoeff(4+4+3) );
+    ev.push_back(ICoeff(2));  
+    CGAL_test_assert(evh(p, ev.begin(), ev.end()) == ICoeff(4+4+3));
     ev.pop_back();
     ev.pop_back();
-    ev.push_back( ICoeff(2) );  
-    ev.push_back( ICoeff(2) );  
-    CGAL_test_assert( evh( p, ev.begin(), ev.end() ) == ICoeff(4+8+12) );
+    ev.push_back(ICoeff(2));  
+    ev.push_back(ICoeff(2));  
+    CGAL_test_assert(evh(p, ev.begin(), ev.end()) == ICoeff(4+8+12));
         
     std::cerr << " ok "<< std::endl;
 }
@@ -982,26 +1017,26 @@ void test_is_zero_at() {
     std::cerr << "start test_is_zero_at "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Is_zero_at is_zero_at;
     
-    Polynomial_d p( Coeff(-1), Coeff(0), Coeff(1) );
+    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
     std::vector< ICoeff > cv;
-    for( int i = 0; i < PT::d-1; ++i )
-        cv.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i)
+        cv.push_back(ICoeff(0));
         
-    cv.push_back( ICoeff(0) );
-    CGAL_test_assert( !is_zero_at( p, cv.begin(), cv.end() ) );
+    cv.push_back(ICoeff(0));
+    CGAL_test_assert(!is_zero_at(p, cv.begin(), cv.end()));
     
     cv.pop_back();
-    cv.push_back( ICoeff(1) );
-    CGAL_test_assert( is_zero_at( p, cv.begin(), cv.end() ) );
+    cv.push_back(ICoeff(1));
+    CGAL_test_assert(is_zero_at(p, cv.begin(), cv.end()));
     
     cv.pop_back();
-    cv.push_back( ICoeff(-1) );
-    CGAL_test_assert( is_zero_at( p, cv.begin(), cv.end() ) );
+    cv.push_back(ICoeff(-1));
+    CGAL_test_assert(is_zero_at(p, cv.begin(), cv.end()));
     
     std::cerr << " ok" << std::endl;
 }
@@ -1011,32 +1046,32 @@ void test_is_zero_at_homogeneous() {
     std::cerr << "start test_is_zero_at_homogeneous "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Is_zero_at_homogeneous is_zero_at_homogeneous;
     
-    Polynomial_d p( Coeff(-1), Coeff(0), Coeff(1) );
+    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
     std::vector< ICoeff > cv;
-    for( int i = 0; i < PT::d-1; ++i )
-        cv.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i)
+        cv.push_back(ICoeff(0));
         
-    for( int v = 1; v < 5; ++v ) {
-        cv.push_back( ICoeff(0) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( !is_zero_at_homogeneous( p, cv.begin(), cv.end() ) );
-        
-        cv.pop_back();
-        cv.pop_back();
-        cv.push_back( ICoeff(v) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( is_zero_at_homogeneous( p, cv.begin(), cv.end() ) );
+    for(int v = 1; v < 5; ++v) {
+        cv.push_back(ICoeff(0));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(!is_zero_at_homogeneous(p, cv.begin(), cv.end()));
         
         cv.pop_back();
         cv.pop_back();
-        cv.push_back( ICoeff(-v) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( is_zero_at_homogeneous( p, cv.begin(), cv.end() ) );
+        cv.push_back(ICoeff(v));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
+        
+        cv.pop_back();
+        cv.pop_back();
+        cv.push_back(ICoeff(-v));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
         
         cv.pop_back();
         cv.pop_back();
@@ -1050,30 +1085,30 @@ void test_sign_at() {
     std::cerr << "start test_sign_at "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Sign_at sign_at;
     
-    Polynomial_d p( Coeff(-1), Coeff(0), Coeff(1) );
+    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
     std::vector< ICoeff > cv;
-    for( int i = 0; i < PT::d-1; ++i )
-        cv.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i)
+        cv.push_back(ICoeff(0));
         
-    cv.push_back( ICoeff(0) );
-    CGAL_test_assert( sign_at( p, cv.begin(), cv.end() ) == CGAL::NEGATIVE );
+    cv.push_back(ICoeff(0));
+    CGAL_test_assert(sign_at(p, cv.begin(), cv.end()) == CGAL::NEGATIVE);
     
     cv.pop_back();
-    cv.push_back( ICoeff(1) );
-    CGAL_test_assert( sign_at( p, cv.begin(), cv.end() ) == CGAL::ZERO );
+    cv.push_back(ICoeff(1));
+    CGAL_test_assert(sign_at(p, cv.begin(), cv.end()) == CGAL::ZERO);
     
     cv.pop_back();
-    cv.push_back( ICoeff(-1) );
-    CGAL_test_assert( sign_at( p, cv.begin(), cv.end() ) == CGAL::ZERO );
+    cv.push_back(ICoeff(-1));
+    CGAL_test_assert(sign_at(p, cv.begin(), cv.end()) == CGAL::ZERO);
     
     cv.pop_back();
-    cv.push_back( ICoeff(2) );
-    CGAL_test_assert( sign_at( p, cv.begin(), cv.end() ) == CGAL::POSITIVE );
+    cv.push_back(ICoeff(2));
+    CGAL_test_assert(sign_at(p, cv.begin(), cv.end()) == CGAL::POSITIVE);
 
     std::cerr << " ok" << std::endl;
 }
@@ -1083,38 +1118,42 @@ void test_sign_at_homogeneous() {
     std::cerr << "start test_sign_at_homogeneous "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D( Polynomial_traits_d );
+    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Sign_at_homogeneous sign_at_homogeneous;
     
-    Polynomial_d p( Coeff(-1), Coeff(0), Coeff(1) );
+    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
     std::vector< ICoeff > cv;
-    for( int i = 0; i < PT::d-1; ++i )
-        cv.push_back( ICoeff(0) );
+    for(int i = 0; i < PT::d-1; ++i)
+        cv.push_back(ICoeff(0));
         
-    for( int v = 1; v < 5; ++v ) {
-        cv.push_back( ICoeff(0) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( sign_at_homogeneous( p, cv.begin(), cv.end() ) == CGAL::NEGATIVE );
-        
-        cv.pop_back();
-        cv.pop_back();
-        cv.push_back( ICoeff(v) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( sign_at_homogeneous( p, cv.begin(), cv.end() ) == CGAL::ZERO );
+    for(int v = 1; v < 5; ++v) {
+        cv.push_back(ICoeff(0));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(
+                sign_at_homogeneous(p, cv.begin(), cv.end()) == CGAL::NEGATIVE);
         
         cv.pop_back();
         cv.pop_back();
-        cv.push_back( ICoeff(-v) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( sign_at_homogeneous( p, cv.begin(), cv.end() ) == CGAL::ZERO );
+        cv.push_back(ICoeff(v));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(
+                sign_at_homogeneous(p, cv.begin(), cv.end()) == CGAL::ZERO);
+        
+        cv.pop_back();
+        cv.pop_back();
+        cv.push_back(ICoeff(-v));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(
+                sign_at_homogeneous(p, cv.begin(), cv.end()) == CGAL::ZERO);
 
         cv.pop_back();
         cv.pop_back();
-        cv.push_back( ICoeff(v+1) );
-        cv.push_back( ICoeff(v) );
-        CGAL_test_assert( sign_at_homogeneous( p, cv.begin(), cv.end() ) == CGAL::POSITIVE );
+        cv.push_back(ICoeff(v+1));
+        cv.push_back(ICoeff(v));
+        CGAL_test_assert(
+                sign_at_homogeneous(p, cv.begin(), cv.end()) == CGAL::POSITIVE);
         
         cv.pop_back();
         cv.pop_back();
@@ -1131,27 +1170,27 @@ void test_compare() {
     
     typename PT::Compare compare;
     
-    Polynomial_d p0( Coeff(0) );
-    Polynomial_d pp2( Coeff(2) );
-    Polynomial_d pm2( Coeff(-2) );
-    Polynomial_d pp1p2( Coeff(1), Coeff(2) );
-    Polynomial_d pm1m2( Coeff(-1), Coeff(-2) );
+    Polynomial_d p0(Coeff(0));
+    Polynomial_d pp2(Coeff(2));
+    Polynomial_d pm2(Coeff(-2));
+    Polynomial_d pp1p2(Coeff(1), Coeff(2));
+    Polynomial_d pm1m2(Coeff(-1), Coeff(-2));
     
-    CGAL_test_assert( compare( p0, p0 ) == CGAL::EQUAL );
-    CGAL_test_assert( compare( pp2, pp2 ) == CGAL::EQUAL );
-    CGAL_test_assert( compare( pm2, pm2 ) == CGAL::EQUAL );
-    CGAL_test_assert( compare( pp1p2, pp1p2 ) == CGAL::EQUAL );
-    CGAL_test_assert( compare( pm1m2, pm1m2 ) == CGAL::EQUAL );
+    CGAL_test_assert(compare(p0, p0) == CGAL::EQUAL);
+    CGAL_test_assert(compare(pp2, pp2) == CGAL::EQUAL);
+    CGAL_test_assert(compare(pm2, pm2) == CGAL::EQUAL);
+    CGAL_test_assert(compare(pp1p2, pp1p2) == CGAL::EQUAL);
+    CGAL_test_assert(compare(pm1m2, pm1m2) == CGAL::EQUAL);
 
-    CGAL_test_assert( compare( p0, pp2 ) == CGAL::SMALLER );
-    CGAL_test_assert( compare( p0, pm2 ) == CGAL::LARGER );
-    CGAL_test_assert( compare( pp2, pm2 ) == CGAL::LARGER );
-    CGAL_test_assert( compare( pm1m2, pp1p2 ) == CGAL::SMALLER );
+    CGAL_test_assert(compare(p0, pp2) == CGAL::SMALLER);
+    CGAL_test_assert(compare(p0, pm2) == CGAL::LARGER);
+    CGAL_test_assert(compare(pp2, pm2) == CGAL::LARGER);
+    CGAL_test_assert(compare(pm1m2, pp1p2) == CGAL::SMALLER);
     
-    CGAL_test_assert( compare( pp1p2, pp2 ) == CGAL::LARGER );
-    CGAL_test_assert( compare( pm1m2, pp2 ) == CGAL::SMALLER );
-    CGAL_test_assert( compare( pp1p2, pm2 ) == CGAL::LARGER );
-    CGAL_test_assert( compare( pm1m2, pm2 ) == CGAL::SMALLER );
+    CGAL_test_assert(compare(pp1p2, pp2) == CGAL::LARGER);
+    CGAL_test_assert(compare(pm1m2, pp2) == CGAL::SMALLER);
+    CGAL_test_assert(compare(pp1p2, pm2) == CGAL::LARGER);
+    CGAL_test_assert(compare(pm1m2, pm2) == CGAL::SMALLER);
     
     std::cerr << " ok" << std::endl;
 }
@@ -1167,20 +1206,21 @@ void test_resultant(){
     {
         Polynomial_d A(0);
         Polynomial_d B(0);
-        CGAL_test_assert(resultant(A,B)==Coeff(0));
+        CGAL_test_assert(resultant(A,B) == Coeff(0));
     }{
         Polynomial_d A(4);
         Polynomial_d B(8);
-        CGAL_test_assert(resultant(A,B)==Coeff(1));
+        CGAL_test_assert(resultant(A,B) == Coeff(1));
     }{
-        Polynomial_d f(Coeff(2), Coeff(7), Coeff(1), Coeff(8), Coeff(1), Coeff(8));
-        Polynomial_d g(Coeff(3), Coeff(1), Coeff(4), Coeff(1), Coeff(5), Coeff(9));       
-        CGAL_test_assert( resultant(f, g) == Coeff(230664271L)); // Maple
+        Polynomial_d f(Coeff(2),Coeff(7),Coeff(1),Coeff(8),Coeff(1),Coeff(8));
+        Polynomial_d g(Coeff(3),Coeff(1),Coeff(4),Coeff(1),Coeff(5),Coeff(9));
+        
+        CGAL_test_assert(resultant(f,g) == Coeff(230664271L)); // Maple
             
-        Polynomial_d h(Coeff(3), Coeff(4), Coeff(7), Coeff(7));
+        Polynomial_d h(Coeff(3),Coeff(4),Coeff(7),Coeff(7));
         Polynomial_d fh(f*h);
         Polynomial_d gh(g*h);
-        CGAL_test_assert( resultant(fh, gh) == Coeff(0) );
+        CGAL_test_assert(resultant(fh,gh) == Coeff(0));
     } 
     for(int i = 0 ; i < 5 ; i++){
         int n = my_rnd.get_int(0,PT::d-1);
@@ -1205,10 +1245,10 @@ void test_canonicalize(){
     CGAL_test_assert(Polynomial_d(1) == canonicalize(Polynomial_d(2)));
     CGAL_test_assert(Polynomial_d(1) == canonicalize(Polynomial_d(-2)));
 
-     for( int i = 0 ; i < 5 ; i++){
+    for(int i = 0 ; i < 5 ; i++){
         Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(3); 
         Polynomial_d q = generate_sparse_random_polynomial<Polynomial_d>(3); 
-        CGAL_test_assert(canonicalize(p)*canonicalize(q) == canonicalize(p*q) );
+        CGAL_test_assert(canonicalize(p)*canonicalize(q) == canonicalize(p*q));
     }
     std::cerr << " ok "<< std::endl;
 }
@@ -1222,135 +1262,149 @@ struct Test_polynomial_traits_d<Polynomial_traits_d, CGAL::Null_tag > {
         std::cout << "\n start test for dimension: "
                   << Polynomial_traits_d::d << std::endl; 
     
-    //       Construct_polynomial;
+        //       Construct_polynomial;
         test_construct_polynomial<Polynomial_traits_d>();
-    //       Get_coefficient;
+        //       Get_coefficient;
         test_get_coefficient<Polynomial_traits_d>();
-    //       Get_innermost_coefficient;
+        //       Get_innermost_coefficient;
         test_get_innermost_coefficient<Polynomial_traits_d>();
-    //       Get_monom_representation;
+        //       Get_monom_representation;
         test_get_monom_representation<Polynomial_traits_d>();
-    //       Swap;
+        //       Swap;
         test_swap<Polynomial_traits_d>();
-    //       Move;
+        //       Move;
         test_move<Polynomial_traits_d>();
-    //       Degree;
+        //       Degree;
         test_degree<Polynomial_traits_d>();
-    //       Total_degree;
+        //       Total_degree;
         test_total_degree<Polynomial_traits_d>();
-    //       Leading_coefficient;
+        //       Leading_coefficient;
         test_leading_coefficient<Polynomial_traits_d>();
-    //       Innermost_leading_coefficient;
+        //       Innermost_leading_coefficient;
         test_innermost_leading_coefficient<Polynomial_traits_d>();
-    //       Is_zero_at;
+        //       Is_zero_at;
         test_is_zero_at<Polynomial_traits_d>();
-    //       Is_zero_at_homogeneous;
+        //       Is_zero_at_homogeneous;
         test_is_zero_at_homogeneous<Polynomial_traits_d>();
-    //       Sign_at;
+        //       Sign_at;
         test_sign_at<Polynomial_traits_d>();
-    //       Sign_at_homogeneous;
+        //       Sign_at_homogeneous;
         test_sign_at_homogeneous<Polynomial_traits_d>();
-    //       Compare;
+        //       Compare;
         test_compare<Polynomial_traits_d>();
-    //       Shift;
+        //       Shift;
         test_shift<Polynomial_traits_d>();
-    //       Negate;
+        //       Negate;
         test_negate<Polynomial_traits_d>();
-    //       Invert;
+        //       Invert;
         test_invert<Polynomial_traits_d>();
-    //       Translate;
+        //       Translate;
         test_translate<Polynomial_traits_d>();
-    //       Translate_homogeneous;
+        //       Translate_homogeneous;
         test_translate_homongenous<Polynomial_traits_d>();
-    //       Scale;
+        //       Scale;
         test_scale<Polynomial_traits_d>();
-    //       Scale_homogeneous;
+        //       Scale_homogeneous;
         test_scale_homogeneous<Polynomial_traits_d>();
-    //       Derivative;
+        //       Derivative;
         test_derivative<Polynomial_traits_d>();
-    //       Make_square_free;
+        //       Make_square_free;
         test_make_square_free<Polynomial_traits_d>();
-    //       Pseudo_division;
+        //       Pseudo_division;
         test_pseudo_division<Polynomial_traits_d>();
-    //       Pseudo_division_remainder;
+        //       Pseudo_division_remainder;
         test_pseudo_division_remainder<Polynomial_traits_d>();
-    //       Pseudo_division_quotient;
+        //       Pseudo_division_quotient;
         test_pseudo_division_quotient<Polynomial_traits_d>();
-    //       Gcd_up_to_constant_factor;
+        //       Gcd_up_to_constant_factor;
         test_gcd_up_to_constant_factor<Polynomial_traits_d>();
-    //       Integral_division_up_to_constant_factor;
+        //       Integral_division_up_to_constant_factor;
         test_integral_division_up_to_constant_factor<Polynomial_traits_d>();
-    //       Content_up_to_constant_factor;
+        //       Content_up_to_constant_factor;
         test_univariate_content_up_to_constant_factor<Polynomial_traits_d>();
-    //       Square_free_factorization_up_to_constant_factor;
+        //       Square_free_factorization_up_to_constant_factor;
         test_square_free_factorization_up_to_constant_factor<Polynomial_traits_d>();
-    //       Evaluate;
+        //       Evaluate;
         test_evaluate<Polynomial_traits_d>();
-    //       Evaluate_homogeneous;
+        //       Evaluate_homogeneous;
         test_evaluate_homogeneous<Polynomial_traits_d>();
-    //       Resultant;
+        //       Resultant;
         test_resultant<Polynomial_traits_d>();
-    //       Canonicalize;
+        //       Canonicalize;
         test_canonicalize<Polynomial_traits_d>();
         
-    //   private:
-    //       Innermost_leading_coefficient;
+        //   private:
+        //       Innermost_leading_coefficient;
     }
 };
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_without_division_tag > 
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Integral_domain_without_division_tag > 
     : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Null_tag > {};
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_without_division_tag > {};
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Integral_domain_tag > 
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Integral_domain_without_division_tag > {};
 
 template< class Polynomial_traits_d >
 struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_tag > {
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Integral_domain_tag > {
     void operator()() {
-        Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_tag >::operator()();
+        Test_polynomial_traits_d< 
+        Polynomial_traits_d, CGAL::Integral_domain_tag >::operator()();
         // Additional tests... 
         //       Univariate_content;
-            test_univariate_content<Polynomial_traits_d>();
+        test_univariate_content<Polynomial_traits_d>();
         //       Multivariate_content;
-            test_multivariate_content<Polynomial_traits_d>();
+        test_multivariate_content<Polynomial_traits_d>();
         //       Square_free_factorization;
-            test_square_free_factorization<Polynomial_traits_d>();
+        test_square_free_factorization<Polynomial_traits_d>();
     }
 };
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_with_sqrt_tag > 
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Field_with_sqrt_tag > 
     : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_tag > {};
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_with_kth_root_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_with_sqrt_tag > {};
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Field_with_kth_root_tag > 
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Field_with_sqrt_tag > {};
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_with_root_of_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Field_with_kth_root_tag > {};
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Field_with_root_of_tag > 
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Field_with_kth_root_tag > {};
 
 template< class Polynomial_traits_d >
-struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Unique_factorization_domain_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_tag > {
+struct Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Unique_factorization_domain_tag > 
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Integral_domain_tag > {
     void operator()() {
-        Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Integral_domain_tag >::operator()();
+        Test_polynomial_traits_d<
+        Polynomial_traits_d, CGAL::Integral_domain_tag >::operator()();
         // Additional tests... 
         //       Univariate_content;
-            test_univariate_content<Polynomial_traits_d>();
+        test_univariate_content<Polynomial_traits_d>();
         //       Multivariate_content;
-            test_multivariate_content<Polynomial_traits_d>();
+        test_multivariate_content<Polynomial_traits_d>();
         //       Square_free_factorization;
-            test_square_free_factorization<Polynomial_traits_d>();
+        test_square_free_factorization<Polynomial_traits_d>();
     }
 };
 
 template< class Polynomial_traits_d >
 struct Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Euclidean_ring_tag > 
-    : public Test_polynomial_traits_d< Polynomial_traits_d, CGAL::Unique_factorization_domain_tag > {};
+    : public Test_polynomial_traits_d< 
+Polynomial_traits_d, CGAL::Unique_factorization_domain_tag > {};
 
 template< class InnermostCoefficient >
 void test_multiple_dimensions() {
@@ -1363,11 +1417,11 @@ void test_multiple_dimensions() {
         typedef InnermostCoefficient           Innermost_coefficient;
         
         typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-        
-        typedef typename CGAL::Algebraic_structure_traits<Innermost_coefficient>::Algebraic_category Algebraic_category;
+        typedef CGAL::Algebraic_structure_traits<Innermost_coefficient> AST_IC;
+        typedef typename AST_IC::Algebraic_category Algebraic_category;
                 
         BOOST_STATIC_ASSERT(
-                (boost::is_same< typename PT::Polynomial_d,Polynomial_d>::value));
+                (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
         BOOST_STATIC_ASSERT(
                 (boost::is_same< typename PT::Coefficient, Coefficient>::value));
         BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient, 
@@ -1385,11 +1439,11 @@ void test_multiple_dimensions() {
         typedef InnermostCoefficient           Innermost_coefficient;
         
         typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-
-        typedef typename CGAL::Algebraic_structure_traits<Innermost_coefficient>::Algebraic_category Algebraic_category;
+        typedef CGAL::Algebraic_structure_traits<Innermost_coefficient> AST_IC;
+        typedef typename AST_IC::Algebraic_category Algebraic_category;
         
         BOOST_STATIC_ASSERT(
-                (boost::is_same< typename PT::Polynomial_d,Polynomial_d>::value));
+                (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
         BOOST_STATIC_ASSERT(
                 (boost::is_same< typename PT::Coefficient, Coefficient>::value));
         BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient, 
@@ -1405,23 +1459,24 @@ void test_multiple_dimensions() {
         typedef Polynomial_3                   Polynomial_d;
         typedef Polynomial_2                   Coefficient;
         typedef InnermostCoefficient           Innermost_coefficient;
-        
+  
+        typedef CGAL::Algebraic_structure_traits<Innermost_coefficient> AST_IC;
+        typedef typename AST_IC::Algebraic_category Algebraic_category;
         typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
-
-        typedef typename CGAL::Algebraic_structure_traits<Innermost_coefficient>::Algebraic_category Algebraic_category;
+        
         
         BOOST_STATIC_ASSERT(
-                (boost::is_same< typename PT::Polynomial_d, Polynomial_d>::value));
+                (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
         BOOST_STATIC_ASSERT(
                 (boost::is_same< typename PT::Coefficient, Coefficient>::value));
         BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient, 
                         Innermost_coefficient>::value));
         BOOST_STATIC_ASSERT((PT::d == dimension));
         Test_polynomial_traits_d<PT, Algebraic_category>()();
-        } 
+    } 
 
 #ifdef WITH_D10    
-{
+    {
         typedef CGAL::Polynomial< InnermostCoefficient > Polynomial_1;
         typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
         typedef CGAL::Polynomial<Polynomial_2> Polynomial_3;
@@ -1440,49 +1495,118 @@ void test_multiple_dimensions() {
         
         typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
 
-        typedef typename CGAL::Algebraic_structure_traits<Innermost_coefficient>::Algebraic_category Algebraic_category;
+        typedef CGAL::Algebraic_structure_traits<Innermost_coefficient> AST_IC;
+        typedef typename AST_CI::Algebraic_category Algebraic_category;
         
         BOOST_STATIC_ASSERT(
-                (boost::is_same< typename PT::Polynomial_d, Polynomial_d>::value));
+                (boost::is_same<typename PT::Polynomial_d,Polynomial_d>::value));
         BOOST_STATIC_ASSERT(
                 (boost::is_same< typename PT::Coefficient, Coefficient>::value));
         BOOST_STATIC_ASSERT((boost::is_same< typename PT::Innermost_coefficient, 
                         Innermost_coefficient>::value));
         BOOST_STATIC_ASSERT((PT::d == dimension));
         Test_polynomial_traits_d<PT, Algebraic_category>()();
-        } 
+    } 
 #endif
     
 } 
 
-int main(){
+template < typename AK>
+void test_rebind(){
+    typedef typename AK::Integer Integer; 
+    typedef typename AK::Rational Rational;
+    typedef CGAL::Polynomial<Integer> Poly_int_1;                
+    typedef CGAL::Polynomial<Poly_int_1> Poly_int_2;              
+    typedef CGAL::Polynomial<Poly_int_2> Poly_int_3;              
+    typedef CGAL::Polynomial<Rational> Poly_rat_1;               
+    typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;              
+    typedef CGAL::Polynomial<Poly_rat_2> Poly_rat_3;         
+    
+    typedef CGAL::Polynomial_traits_d<Poly_int_1> PT_int_1;
+    typedef CGAL::Polynomial_traits_d<Poly_int_2> PT_int_2;
+    typedef CGAL::Polynomial_traits_d<Poly_int_3> PT_int_3;
+    typedef CGAL::Polynomial_traits_d<Poly_rat_1> PT_rat_1;
+    typedef CGAL::Polynomial_traits_d<Poly_rat_2> PT_rat_2;
+    typedef CGAL::Polynomial_traits_d<Poly_rat_3> PT_rat_3;
+
+    typedef typename PT_int_1:: template Rebind<Integer,1>::Other PT_int_1_;
+    typedef typename PT_int_3:: template Rebind<Integer,2>::Other PT_int_2_;
+    typedef typename PT_rat_3:: template Rebind<Integer,3>::Other PT_int_3_;
+    typedef typename PT_int_1:: template Rebind<Rational,1>::Other PT_rat_1_;
+    typedef typename PT_rat_2:: template Rebind<Rational,2>::Other PT_rat_2_;
+    typedef typename PT_int_2:: template Rebind<Rational,3>::Other PT_rat_3_;
+    
+    BOOST_STATIC_ASSERT((boost::is_same<PT_int_1_,PT_int_1>::value));
+    BOOST_STATIC_ASSERT((boost::is_same<PT_int_2_,PT_int_2>::value));
+    BOOST_STATIC_ASSERT((boost::is_same<PT_int_3_,PT_int_3>::value));
+    BOOST_STATIC_ASSERT((boost::is_same<PT_rat_1_,PT_rat_1>::value));
+    BOOST_STATIC_ASSERT((boost::is_same<PT_rat_2_,PT_rat_2>::value));
+    BOOST_STATIC_ASSERT((boost::is_same<PT_rat_3_,PT_rat_3>::value));
+
+    BOOST_STATIC_ASSERT((!boost::is_same<PT_rat_3_,PT_rat_2>::value));
+}
+
+template < typename AT> 
+void test_AT(){
     CGAL::set_pretty_mode(std::cout);
     CGAL::set_pretty_mode(std::cerr);
+
+    typedef typename AT::Integer Integer;
+    typedef typename AT::Rational Rational;     
     
     std::cerr << std::endl;
-    std::cerr << "Test for coefficient type leda_integer" << std::endl;
+    std::cerr << "Test for coefficient type Integer" << std::endl;
     std::cerr << "--------------------------------------" << std::endl;
-    test_multiple_dimensions<leda_integer>();
+    test_multiple_dimensions<Integer>();
 
     std::cerr << std::endl;
-    std::cerr << "Test for coefficient type leda_rational" << std::endl;
+    std::cerr << "Test for coefficient type Rational" << std::endl;
     std::cerr << "---------------------------------------" << std::endl;
-    test_multiple_dimensions<leda_rational>();
+    test_multiple_dimensions<Rational>();
     
     std::cerr << std::endl;
-    std::cerr << "Test for coefficient type Sqrt_extension< leda_integer, leda_integer >" << std::endl;
-    std::cerr << "----------------------------------------------------------------------" << std::endl;    
-    test_multiple_dimensions< CGAL::Sqrt_extension< leda_integer, leda_integer > >();    
+    std::cerr << "Test for coefficient type Sqrt_extension< Integer, Integer >" 
+              << std::endl;
+    std::cerr << 
+        "----------------------------------------------------------------------"
+              << std::endl;    
+    test_multiple_dimensions< CGAL::Sqrt_extension< Integer, Integer > >();    
 
     std::cerr << std::endl;
-    std::cerr << "Test for coefficient type Sqrt_extension< leda_rational, leda_integer >" << std::endl;
-    std::cerr << "-----------------------------------------------------------------------" << std::endl;    
-    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_integer > >();    
+    std::cerr << "Test for coefficient type Sqrt_extension< Rational, Integer >"
+              << std::endl;
+    std::cerr << 
+        "----------------------------------------------------------------------"
+              << std::endl;    
+    test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Integer > >();    
 
     std::cerr << std::endl;
-    std::cerr << "Test for coefficient type Sqrt_extension< leda_rational, leda_rational >" << std::endl;
-    std::cerr << "------------------------------------------------------------------------" << std::endl;    
-    test_multiple_dimensions< CGAL::Sqrt_extension< leda_rational, leda_rational > >();    
-    
+    std::cerr << 
+        "Test for coefficient type Sqrt_extension< Rational, Rational >" 
+              << std::endl;
+    std::cerr << 
+        "----------------------------------------------------------------------"
+              << std::endl;    
+    test_multiple_dimensions< CGAL::Sqrt_extension< Rational, Rational > >();   
+
+  
+    test_rebind<AT>();
+}    
+  
+
+int main(){
+
+#ifdef CGAL_USE_LEDA
+    {        
+        typedef CGAL::LEDA_arithmetic_kernel AT;
+        test_AT<AT>();
+    }
+#endif
+#ifdef CGAL_USE_CORE
+    {    
+        typedef CGAL::CORE_arithmetic_kernel AT;
+        test_AT<AT>();
+    }
+#endif
     return 0;
 }
