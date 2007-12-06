@@ -35,6 +35,11 @@ with respect to this view.
 \ccNestedType{Coefficient }{ Type representing $R[x_0,\dots,x_{d-2}]$.}\ccGlue
 \ccNestedType{Innermost_coefficient}{ Type representing the base ring $R$.}
 
+\ccNestedType{template <typename T, int d> struct Rebind}
+{This nested template class has to define a type \ccc{Other} which is a model 
+of the concept \ccc{PolynomialTraits_d}, where \ccc{d} is the number of variables 
+and \ccc{T} the \ccc{Innermost_coefficient_type}.}
+
 \ccHeading{Functors}
 
 In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
