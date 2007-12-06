@@ -547,16 +547,16 @@ public:
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
             Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
-            if(tr_adaptor.boundary_in_y_2_object()(*icv, ARR_MIN_END) == NO_BOUNDARY &&
-                tr_adaptor.boundary_in_x_2_object()(*icv, ARR_MIN_END) == NO_BOUNDARY)
+            if(tr_adaptor.parameter_space_in_y_2_object()(*icv, ARR_MIN_END) == ARR_INTERIOR &&
+                tr_adaptor.parameter_space_in_x_2_object()(*icv, ARR_MIN_END) == ARR_INTERIOR)
                 split_points.push_back(Point_2_with_info
                                        (m_traits->construct_min_vertex_2_object()(*icv),
                                         true, false));
             else
               is_min_end_at_inf = true;
 
-            if(tr_adaptor.boundary_in_y_2_object()(*icv, ARR_MAX_END) == NO_BOUNDARY &&
-                tr_adaptor.boundary_in_x_2_object()(*icv, ARR_MAX_END) == NO_BOUNDARY)
+            if(tr_adaptor.parameter_space_in_y_2_object()(*icv, ARR_MAX_END) == ARR_INTERIOR &&
+                tr_adaptor.parameter_space_in_x_2_object()(*icv, ARR_MAX_END) == ARR_INTERIOR)
                 split_points.push_back(Point_2_with_info
                                        (m_traits->construct_max_vertex_2_object()(*icv),
                                         false, true));
@@ -2037,8 +2037,8 @@ protected:
 
     void before_create_boundary_vertex (const X_monotone_curve_2& cv,
                                         Arr_curve_end ind,
-                                        Boundary_type /* bx */,
-                                        Boundary_type /* by */)
+                                        Arr_parameter_space /* bx */,
+                                        Arr_parameter_space /* by */)
     {
       boundary_vertex_cv = cv;
       boundary_vertex_ind = ind;
@@ -2049,8 +2049,8 @@ protected:
       Vertex_handle new_v = 
         big_arr_accessor.create_boundary_vertex (boundary_vertex_cv,
                                                  boundary_vertex_ind,
-                                                 v->boundary_in_x(),
-                                                 v->boundary_in_y(),
+                                                 v->parameter_space_in_x(),
+                                                 v->parameter_space_in_y(),
                                                  false);
       map_vertices[v] = new_v;
     }
