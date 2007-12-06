@@ -122,17 +122,9 @@ public:
     typedef typename Algebraic_curve_kernel_2::Curve_pair_analysis_2
                 Curve_pair_analysis_2;
     
-    //! type of pair vertical line
-    typedef typename Curve_pair_analysis_2::Curve_pair_vertical_line_1
-                Curve_pair_vertical_line_1;
-
     //! type of curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
                 Curve_analysis_2;
-    
-    //! type of vertical line
-    typedef typename Curve_analysis_2::Curve_vertical_line_1
-                Curve_vertical_line_1;
     
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep, Handle_policy, Allocator> Base;
@@ -210,14 +202,15 @@ public:
      * Point at \c x, on \c curve with \c arcno. Finite points on vertical arcs
      * are also constructed in this way
      */
+     // TODO: construct this from curve analysis object ?
     Xy_coordinate_2(const X_coordinate_1& x, const Curve_2& curve, int arcno) :
             Base(Rep(x, curve, arcno)) {
             
         CGAL_precondition(arcno >= 0);
         CGAL_precondition_code(
             Curve_analysis_2 ca(curve);
-            typename Curve_analysis_2::Curve_vertical_line_1 v = 
-                ca.vertical_line_for_x(x);
+            typename Curve_analysis_2::Status_line_1 v =
+                ca.status_line_for_x(x);
         );
         CGAL_precondition(arcno >= 0 && arcno < v.number_of_events());
     }
@@ -346,11 +339,11 @@ private:
         // this is to keep compiler happy ))
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
              (Curve_analysis_2(g)));
-        const Curve_pair_vertical_line_1& vline = 
-            cpa_2.vertical_line_for_x(x());
+        typename Curve_pair_analysis_2::Status_line_1 vline =
+            cpa_2.status_line_for_x(x());
             
-        return CGAL::sign(vline.get_event_of_curve(this->arcno(), 0) - 
-                    vline.get_event_of_curve(q.arcno(), 1));
+        return CGAL::sign(vline.event_of_curve(this->arcno(), 0) -
+                    vline.event_of_curve(q.arcno(), 1));
     }
     
     //!@}
@@ -379,8 +372,8 @@ public:
         
         CGAL_precondition_code(
             typename Curve_2::Poly_d mult =
-                    cpa_2.get_curve_analysis(0).get_polynomial_2().f() *
-                    cpa_2.get_curve_analysis(1).get_polynomial_2().f();
+                    cpa_2.curve_analysis(0).polynomial_2().f() *
+                    cpa_2.curve_analysis(1).polynomial_2().f();
             Total_degree total_degree;
         );
         // common parts
@@ -390,18 +383,18 @@ public:
         CGAL_precondition(total_degree(cvt(mult)) ==
             total_degree(cvt(curve().f())));
 
-        const Curve_pair_vertical_line_1& cpv_line =
-                cpa_2.vertical_line_for_x(x());
+        typename Curve_pair_analysis_2::Status_line_1 cpv_line =
+                cpa_2.status_line_for_x(x());
         // # of arcs must match
         CGAL_precondition_code(
-            const Curve_vertical_line_1& cv_line = 
-                Curve_analysis_2(curve()).vertical_line_for_x(x());
+            typename Curve_analysis_2::Status_line_1 cv_line =
+                Curve_analysis_2(curve()).status_line_for_x(x());
         );
         CGAL_precondition(cpv_line.number_of_events() == 
             cv_line.number_of_events());
 
         int cid = 0;
-        std::pair<int, int> p = cpv_line.get_curves_at_event(arcno());
+        std::pair<int, int> p = cpv_line.curves_at_event(arcno());
         if(p.first != -1 && p.second != -1) {
             // both curves involved: choose simpler one
             // Remark: In this case, a vertical line in the curves can be
@@ -410,15 +403,15 @@ public:
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
             Total_degree total_degree;
-            Poly_2 ff=cvt(cpa_2.get_curve_analysis(0).get_polynomial_2().f()),
-                   gg=cvt(cpa_2.get_curve_analysis(1).get_polynomial_2().f());
+            Poly_2 ff=cvt(cpa_2.curve_analysis(0).polynomial_2().f()),
+                   gg=cvt(cpa_2.curve_analysis(1).polynomial_2().f());
             if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
             cid = (p.first != -1 ? 0 : 1);
         // overwrite data
         this->ptr()->_m_curve =
-            cpa_2.get_curve_analysis(cid).get_polynomial_2();
+            cpa_2.curve_analysis(cid).polynomial_2();
         this->ptr()->_m_arcno = (cid == 0 ? p.first : p.second);
     }
     

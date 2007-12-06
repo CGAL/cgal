@@ -16,6 +16,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
+#include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
+#include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,8 +63,8 @@ public:
 //! Analysis describes the curve’s interesting points and how they are 
 //! connected. The analysis searches for events. Events only occur at a finite 
 //! number of x-coordinates. Each such coordinate defines a 
-//! \c CurveVerticalLine_1 of an event. These coordinates also define open
-//! intervals on the x-axis. Different \c CurveVerticalLine_1 at values within 
+//! \c StatusLine_1 of an event. These coordinates also define open
+//! intervals on the x-axis. Different \c StatusLine_1 at values within
 //! one such interval only differ in the values of the \c Algebraic_real_2 
 //! entries. Topological information are equal for all x-coordinate inside such
 //! an open interval.
@@ -92,8 +94,11 @@ public:
     //! myself
     typedef Curve_analysis_2<Algebraic_curve_kernel_2, Rep> Self;
 
+    //! an instance of a size type
+    typedef int size_type;
+
     //! type of a vertical line
-    typedef CGALi::Curve_vertical_line_1<Self> Curve_vertical_line_1;
+    typedef CGALi::Status_line_CA_1<Self> Status_line_1;
         
     //! type of underlying Event1_info structure
     typedef typename Curve_2::Event1_info Event1_info;
@@ -138,96 +143,114 @@ public:
     //!@{
 
     //! \brief returns the defining polynomial of the analysis
-    Curve_2 get_polynomial_2() const
+    Curve_2 polynomial_2() const
     { 
         return this->ptr()->_m_curve;
     }
 
-    //! \brief alias for \c get_polynomial_2()
-    Curve_2 get_curve_2() const
+    //! \brief alias for \c polynomial_2()
+    Curve_2 curve_2() const
     { 
-        return get_polynomial_2();
+        return polynomial_2();
     }
 
     //! \brief returns number of vertical lines that encode an event
-    int number_of_vertical_lines_with_event() const
+    size_type number_of_status_lines_with_event() const
     {
         return this->ptr()->_m_curve.num_events();
     }
 
-    //! \brief returns an instance of \c CurveVerticalLine_1 at the i-th
+    //! \brief returns an instance of StatusLine_1 at the i-th
     //! event
     //!
-    //! \pre 0 <= i < number_of_vertical_lines_with_event()
-    Curve_vertical_line_1 vertical_line_at_event(int i) const
+    //! \pre 0 <= i < number_of_status_lines_with_event()
+    Status_line_1 status_line_at_event(size_type i) const
     {
-        CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
-        return Curve_vertical_line_1(this->ptr()->_m_curve.event_info(i),
-            *this, i);
+        CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
+
+#ifdef CGAL_ACK_2_USE_STATUS_LINES
+        return this->ptr()->_m_curve.status_line_at_event(*this, i);
+
+#else
+        typedef typename Curve_2::Event1_info Event1_info;
+        Event1_info info = this->ptr()->_m_curve.event_info(i);
+
+        typedef typename Event1_info::Arc_container EArc_container;
+        const EArc_container& src = info.get_arcs();
+
+        typename Status_line_1::Arc_container dst(info.num_arcs());
+        int k = 0;
+        
+        for(typename EArc_container::const_iterator eit = src.begin();
+                eit != src.end(); eit++, k++) 
+            dst[k] = std::make_pair(eit->num_arcs_left(),
+                eit->num_arcs_right());
+                
+        Status_line_1 sline(info.x(), i, *this, info.num_arcs_left(),
+            info.num_arcs_right(), dst, info.has_vertical_line());
+
+        typename Status_line_1::Arc_pair minus_inf, plus_inf;
+        info.num_arcs_approaching_vertical_asymptote(minus_inf.first,
+            minus_inf.second, plus_inf.first, plus_inf.second);
+
+        sline._set_number_of_branches_approaching_infinity(minus_inf,
+                plus_inf);
+        return sline;
+#endif // CGAL_ACK_2_USE_STATUS_LINES
     }
 
-    //! \brief returns an instance of CurveVerticalLine_1 of the i-th 
+    //! \brief returns an instance of StatusLine_1 of the i-th 
     //! interval
     //!
-     //! \pre 0 <= i < number_of_vertical_lines_with_event()
-    Curve_vertical_line_1 vertical_line_of_interval(int i) const
+     //! \pre 0 <= i < number_of_status_lines_with_event()
+    Status_line_1 status_line_of_interval(size_type i) const
     {
-        CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
-        int n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
-        // # of arcs to the left and to the right is the same over an interval
-        Event1_info ei(X_coordinate_1(this->ptr()->_m_curve.
-              boundary_value_in_interval(i)), n_arcs, n_arcs);
-        // initialize n continuous arcs
-        typename Event1_info::Arc_container dummy_arcs(n_arcs);
-        ei.set_arcs(dummy_arcs);
-        ei.fix();
-        return Curve_vertical_line_1(ei, *this, i);
+        CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
+        
+        size_type n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
+        return Status_line_1(X_coordinate_1(this->ptr()->_m_curve.
+              boundary_value_in_interval(i)), i, *this, n_arcs);
     }
 
-    //! \brief returns vertical_line_at_event(i), if x hits i-th event, 
-    //! otherwise vertical_line_of_interval(i), where i is the id of the 
+    //! \brief returns status_line_at_event(i), if x hits i-th event,
+    //! otherwise status_line_of_interval(i), where i is the id of the
     //! interval \c x lies in
     //!
     //! If \c pertub is \c CGAL::NEGATIVE (CGAL::POSITIVE) and x states an 
-    //! event, then \c vertical_line_of_interval(i)
-    //! (\c vertical_line_of_interval(i+1)) is returned.
+    //! event, then \c status_line_of_interval(i)
+    //! (\c status_line_of_interval(i+1)) is returned.
     //! 
     //! \pre \c x is finite
-    Curve_vertical_line_1 vertical_line_for_x(X_coordinate_1 x, 
+    Status_line_1 status_line_for_x(X_coordinate_1 x,
         CGAL::Sign perturb = CGAL::ZERO) const
     {
         // CGAL_precondition(x is finite ??);
-        int i;
+        size_type i;
         bool is_evt;
         this->ptr()->_m_curve.x_to_index(x, i, is_evt);
         if(is_evt) {
             if(perturb == CGAL::ZERO)
-                return vertical_line_at_event(i);
+                return status_line_at_event(i);
             if(perturb == CGAL::POSITIVE)
                 i++;
         } 
-        return vertical_line_of_interval(i);
+        return status_line_of_interval(i);
     }
 
-    //! \brief returns an instance of CurveVerticalLine_1 at a given \c x
+    //! \brief returns an instance of StatusLine_1 at a given \c x
     //!
     //! \pre \c x is finite
-    Curve_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x) const
+    Status_line_1 status_line_at_exact_x(X_coordinate_1 x) const
     {
         // CGAL_precondition(x is finite ??);
-        int i;
+        size_type i;
         bool is_evt;
         this->ptr()->_m_curve.x_to_index(x, i, is_evt);
         if(is_evt) 
-            return vertical_line_at_event(i);
-        // otherwise construct Event1_info at certain x over the ith interval
-        int n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
-        Event1_info ei(x, n_arcs, n_arcs);
-        // initialize n continuous arcs
-        typename Event1_info::Arc_container dummy_arcs(n_arcs);
-        ei.set_arcs(dummy_arcs);
-        ei.fix();
-        return Curve_vertical_line_1(ei, *this, i);
+            return status_line_at_event(i);
+        
+        size_type n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
+        return Status_line_1(x, i, *this, n_arcs);
     }
     
     //!@}

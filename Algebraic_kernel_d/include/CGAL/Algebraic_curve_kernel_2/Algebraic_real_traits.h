@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
-#include <AcX/Algebraic_curve_pair_2.h>
+//#include <AcX/Algebraic_curve_pair_2.h>
 
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
     typedef typename Algebraic_curve_pair_2::Algebraic_curve_2 Curve_2; \
@@ -70,7 +70,7 @@ struct Algebraic_real_traits {
 };
 
 
-template <class AlgebraicCurveKernel_2, class Curve_>
+/*template <class AlgebraicCurveKernel_2, class Curve_>
 struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     AlgebraicCurveKernel_2>, AcX::Algebraic_curve_pair_2<Curve_> > {
     
@@ -233,7 +233,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             return res;
         }
     };
-};
+};*/
     
 template <class Kernel_2>
 struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :

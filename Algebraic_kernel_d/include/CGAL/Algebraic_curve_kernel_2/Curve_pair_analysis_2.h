@@ -15,6 +15,9 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_PAIR_ANALYSIS_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Handle_with_policy.h>
+#include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
+#include <CGAL/Algebraic_curve_kernel_2/Status_line_CPA_1.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,21 +50,22 @@ public:
     {   }
 
      // temporary constructor: directly from curve pair
-    Curve_pair_analysis_2_rep(const Curve_pair_2& curve_pair) : 
+    /*Curve_pair_analysis_2_rep(const Curve_pair_2& curve_pair) : 
         _m_ca1(curve_pair.curve1()), _m_ca2(curve_pair.curve2()), 
             _m_curve_pair(curve_pair)
-    {   }
+    {   }*/
 
     // constructs from two curve analysis instances
     Curve_pair_analysis_2_rep(const Curve_analysis_2& ca1,
-        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2)
-    {  
+        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2) {
+        
         _m_curve_pair = Algebraic_curve_kernel_2::get_curve_pair_cache()
-            (std::make_pair(ca1.get_polynomial_2(), ca2.get_polynomial_2()));
+            (std::make_pair(ca1.polynomial_2(), ca2.polynomial_2()));
+            
         //! attention: is it enough to compare ids only ? or for safety
         //! its better to compare polynomials ?
-        _m_is_swapped = (_m_curve_pair.curve1().id() !=
-             ca1.get_polynomial_2().id());
+        _m_swapped = (_m_curve_pair.curve1().id() !=
+             ca1.polynomial_2().id());
       //  if(_m_is_swapped)
         //    std::cout << "the content was swapped\n";
     }
@@ -73,7 +77,7 @@ public:
     // indicates that the curves in a curve pair were swapped after precaching
     // (this happens when the first curve is defined by a polynomial of higher
     // degree than the second one)
-    bool _m_is_swapped;
+    bool _m_swapped;
     
     // befriending the handle
     friend class Curve_pair_analysis_2<Algebraic_curve_kernel_2, Self>;
@@ -84,9 +88,9 @@ public:
 //! Analysis describes the curve pair's interesting points and how they are 
 //! connected. The analysis searches for events. Events only occur at a finite 
 //! number of x-coordinate. Each such coordinate is covered by a 
-//! \c CurvePairVerticalLine_1, originated by the events of a single curve and 
+//! \c StatusLine_1, originated by the events of a single curve and
 //! also the intersections of two curves. These coordinates also define
-//! open intervals on the x-axis. \c CurvePairVerticalLine 1 at values in 
+//! open intervals on the x-axis. \c StatusLine_1 at values in
 //! between one such interval differ only in the values of the 
 //! \c Algebraic_real_2 entries. Topological information are equal.
 template <class AlgebraicCurveKernel_2, 
@@ -119,12 +123,14 @@ public:
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
             Curve_analysis_2;
 
+    //! an instance of a size type
+    typedef typename Curve_analysis_2::size_type size_type;
+
     //! myself
     typedef Curve_pair_analysis_2<Algebraic_curve_kernel_2, Rep> Self;
 
     //! type of a vertical line
-    typedef CGALi::Curve_pair_vertical_line_1<Self>
-        Curve_pair_vertical_line_1;
+    typedef CGALi::Status_line_CPA_1<Self> Status_line_1;
         
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep> Base;
@@ -166,97 +172,139 @@ public:
     //!\name Access functions
     //!@{
 
-    //! \brief returns curve analysis for c-"th" curve (0 or 1)
-    Curve_analysis_2 get_curve_analysis(bool c) const
+    /*! \brief
+     * returns curve analysis for c-"th" curve (0 or 1)
+     */
+    Curve_analysis_2 curve_analysis(bool c) const
     { 
-        if(this->ptr()->_m_is_swapped)
+        if(this->ptr()->_m_swapped)
             c ^= 1;
         if(c == 0)
             return this->ptr()->_m_ca1;
         return this->ptr()->_m_ca2;
     }
 
-    //! \brief returns number of vertical lines that encode an event
-    int number_of_vertical_lines_with_event() const
+    /*! \brief
+     * returns number of status lines that encode an event
+     */
+    size_type number_of_status_lines_with_event() const
     {
         return this->ptr()->_m_curve_pair.num_events();
     }
 
-    //! \brief given the i-th event of the curve pair this method returns the
-    //! id of the event of the corresponding curve analysis \c c (0 or 1),
-    //! or -1, if the curve has no event at this coordinate.
-    //!
-    //! \pre 0 <= i < number_of_vertical_lines_with_event()
-    int event_of_curve_analysis(int i, bool c) const
+    bool is_swapped() const {
+        return this->ptr()->_m_swapped;
+    }
+
+    /*! \brief
+     *  given the i-th event of the curve pair this method returns the
+     * id of the event of the corresponding curve analysis \c c (0 or 1),
+     * or -1, if the curve has no event at this coordinate.
+     *
+     * \pre 0 <= i \< number_of_status_lines_with_event()
+     */
+    size_type event_of_curve_analysis(size_type i, bool c) const
     {
-        CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
+        CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
         SoX::Index_triple triple = 
             this->ptr()->_m_curve_pair.event_indices(i);
-        if(this->ptr()->_m_is_swapped)
+        if(this->ptr()->_m_swapped)
             c ^= 1;
         return (c == 0 ? triple.ffy : triple.ggy);
     }
 
-    //! \brief returns an instance of \c CurvePairVerticalLine_1 at the i-th
-    //! event
-    //!
-    //! \pre 0 <= i < number_of_vertical_lines_with_event()
-    Curve_pair_vertical_line_1 vertical_line_at_event(int i) const
-    {
-        CGAL_precondition(i >= 0&&i < number_of_vertical_lines_with_event());
-        return Curve_pair_vertical_line_1(
-            this->ptr()->_m_curve_pair.slice_at_event(i), i,
-                this->ptr()->_m_is_swapped);
+    /*! \brief
+     * returns an instance of \c StatusLine_1 at the i-th event
+     *
+     * \pre 0 <= i \< number_of_status_lines_with_event()
+     */
+    Status_line_1 status_line_at_event(size_type i) const {
+    
+        CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
+
+#ifdef CGAL_ACK_2_USE_STATUS_LINES
+        return this->ptr()->_m_curve_pair.status_line_at_event(*this, i);
+#else
+        typename Curve_pair_2::Event2_slice slice =
+            this->ptr()->_m_curve_pair.slice_at_event(i);
+
+        typename Status_line_1::Arc_container arcs(slice.num_arcs());
+        std::copy(slice.arcs_at_event().begin(),
+            slice.arcs_at_event().end(), arcs.begin());
+            
+        // TODO: need to cache status lines ?
+        return Status_line_1(i, arcs, *this);
+#endif // CGAL_ACK_2_USE_STATUS_LINES
     }
 
-    //! \brief returns an instance of CurvePairVerticalLine_1 of the i-th 
-    //! interval between x-events
-    //!
-    //! \pre 0 <= i < number_of_vertical_lines_with_event() 
-    Curve_pair_vertical_line_1 vertical_line_of_interval(int i) const
-    {
-        CGAL_precondition(i >= 0&&i <= number_of_vertical_lines_with_event());
+    /*! \brief
+     * returns an instance of StatusLine_1 of the i-th
+     * interval between x-events
+     *
+     * \pre 0 <= i < number_of_status_lines_with_event()
+     */
+    Status_line_1 status_line_of_interval(size_type i) const {
+    
+        CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
+
+#ifdef CGAL_ACK_2_USE_STATUS_LINES
+
+        return this->ptr()->_m_curve_pair.status_line_of_interval(*this, i);
+#else
+
+        typename Curve_pair_2::Event2_slice slice =
+            this->ptr()->_m_curve_pair.slice_at_interval(i);
+
+        typename Status_line_1::Int_container arcs(slice.num_arcs());
+        std::copy(slice.arcs_at_interval().begin(),
+            slice.arcs_at_interval().end(), arcs.begin());
+            
+        // TODO: need to cache status lines ?
+        return Status_line_1(i, arcs, *this);
+#endif // CGAL_ACK_2_USE_STATUS_LINES
+    }
+
+    /*! \brief
+     * returns status_line_at_event(i), if x hits i-th event,
+     * otherwise status_line_of_interval(i), where i is the id of the
+     * interval \c x lies in.
+     *
+     * If \c pertub is \c CGAL::NEGATIVE (\c CGAL::POSITIVE) and x states an
+     * event, then \c status_line_of_interval(i)
+     * (\c status_line_of_interval(i+1)) is returned.
+     * 
+     * \pre \c x is finite
+     */
+    Status_line_1 status_line_for_x(X_coordinate_1 x,
+        CGAL::Sign perturb = CGAL::ZERO) const {
         
-//         std::cout << "interval id: " << 
-//             this->ptr()->_m_curve_pair.slice_at_interval(i).id() << "\n";
-//         
-        return Curve_pair_vertical_line_1(
-            this->ptr()->_m_curve_pair.slice_at_interval(i), i,
-                this->ptr()->_m_is_swapped); 
-    }
-
-    //! \brief returns vertical_line_at_event(i), if x hits i-th event, 
-    //! otherwise vertical_line_of_interval(i), where i is the id of the 
-    //! interval \c x lies in.
-    //!
-    //! If \c pertub is \c CGAL::NEGATIVE (\c CGAL::POSITIVE) and x states an 
-    //! event, then \c vertical_line_of_interval(i)
-    //! (\c vertical_line_of_interval(i+1)) is returned.
-    //! 
-    //! \pre \c x is finite
-    Curve_pair_vertical_line_1 vertical_line_for_x(X_coordinate_1 x, 
-        CGAL::Sign perturb = CGAL::ZERO) const
-    {
         // CGAL_precondition(x is finite ??);
-        int i;
+        size_type i;
         bool is_evt;
         this->ptr()->_m_curve_pair.x_to_index(x, i, is_evt);
         if(is_evt) {
             if(perturb == CGAL::ZERO)
-                return vertical_line_at_event(i);
+                return status_line_at_event(i);
             if(perturb == CGAL::POSITIVE)
                 i++;
         }
-        return vertical_line_of_interval(i);
+        return status_line_of_interval(i);
     }
 
-    //! \brief returns an instance of CurvePairVerticalLine_1 at a given \c x
-    //!
-    //! \pre \c x is finite
-    Curve_pair_vertical_line_1 vertical_line_at_exact_x(X_coordinate_1 x) const
-    {
+    /*! \brief
+     * returns an instance of StatusLine_1 at a given \c x
+     *
+     * \pre \c x is finite
+     */
+    Status_line_1& status_line_at_exact_x(X_coordinate_1 x) const {
         // CGAL_precondition(x is finite ??);
-        return vertical_line_for_x(x);
+        return status_line_for_x(x);
+    }
+
+
+    // temporary member returning underlying curve pair
+    Curve_pair_2 curve_pair() const {
+        return this->ptr()->_m_curve_pair;
     }
 
     //!@}
