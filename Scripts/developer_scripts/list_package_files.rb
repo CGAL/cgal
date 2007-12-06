@@ -9,48 +9,51 @@
 #
 # == Usage
 #
-# list_package_files [OPTIONS]
+# list_package_files [OPTIONS] package_folder
 #
 # OPTIONS:
 #
 # -h, --help:
 #    show help
 #
-# -d, -package_dir DIR:
-#    Directory where the package exist. Default is the current directory.
+# -i, --include_internal
+#    Include internal files (excluded by default).
 #
-# -a, --all_files
-#    Do not exclude internal 'dont submit' files.
-#
+
 
 require 'getoptlong'
 require 'rdoc/usage'
 
-load 'list_pkg_files_impl.rb'
+require 'list_package_files_impl.rb'
 
-opts = GetoptLong.new( [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-                       [ '--package_dir', '-d', GetoptLong::OPTIONAL_ARGUMENT ],
-                       [ '--all_files', '-a', GetoptLong::OPTIONAL_ARGUMENT ]
+# -- TEST -- 
+# ARGV = [TEST_PKG_DIR]
+# ARGV = ['-i',TEST_PKG_DIR]
+# -- TEST -- 
+
+opts = GetoptLong.new( [ '--help'            , '-h', GetoptLong::NO_ARGUMENT ],
+                       [ '--include_internal', '-i', GetoptLong::NO_ARGUMENT ]
                      )
 
-package_dir = '.'
 
-exclude_internal = true
+include_internal = false
 
 opts.each do |opt, arg|
   case opt
    when '--help'
       RDoc::usage
-    when '--package_dir'
-      package_dir = arg 
-    when '--all_files'
-       exclude_internal = false           
+   when '--include_internal'
+      include_internal = true           
   end
 end
 
-dont_submit = exclude_internal ? pkg_dont_submit_list(package_dir) : ExcludedFiles.new()
-
-puts list_pkg_files(dont_submit,package_dir)
+if ARGV.length > 0
+  package_dir = ARGV.shift
+  puts list_package_files(package_dir, include_internal)
+else
+  RDoc::usage
+end
+  
 
 
 

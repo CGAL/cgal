@@ -1,16 +1,18 @@
 require 'Pathname'
 require 'FileUtils'
 
-load 'common_impl.rb'
+require 'common_impl.rb'
+require 'list_package_files_impl.rb'
 
 def default_mirror_op
   return RUBY_PLATFORM =~ /mswin32|cygwin|mingw|bccwin/ ? :hardlink : :symlink
 end
   
 #
-# "Mirror" the listed files from a given package folder into a given target folder.
+# "Mirror" the listed 'files' from a given source 'package_subdir' folder
+# into a given target 'build_root' folder.
 # Entries in the file list are pathnames relative to the package folder.
-# The directory structure under the package folder is replicated in the build folder,
+# The directory structure under the package folder is replicated in the build root folder,
 # creating new folders as neccesary
 #
 # "Mirroring" a file consist on creating within the build folder a view to a file located into the package folder.
@@ -22,21 +24,18 @@ end
 #
 # By setting mirror_op = :copy, this function can also be used to create
 # a clean copy (instead of a mirror) of the package files inside a build folder.
-# In this case, if the destination file must not exist.
+# In this case, the destination file must not exist. Use remove_package_from_buildtree to remove them first.
 #
-def mirror_pkg_files(files,
-                     package_dir,
-                     build_dir, 
-                     mirror_op = default_mirror_op
-                    )
+def mirror_package(files,
+				   package_subdir,
+				   build_root, 
+				   mirror_op = default_mirror_op
+				  )
 
-  package_dir = as_pathname(package_dir)
-  build_dir   = as_pathname(build_dir)
-
-  assert_exist!(package_dir, 'package directory' )
-  assert_exist!(build_dir  , 'build directory'   )
+  assert_exist!(package_subdir, 'package sub directory' )
+  assert_exist!(build_root    , 'build root directory'  )
   
-  $report << "Mirroring package [#{package_dir}] into [#{build_dir}]\n"
+  $report << "Mirroring package [#{package_subdir}] into [#{build_root}]\n"
 
   # Keep a local hash of subfolders to avoid accessing the filesystem redudantly
   subdir_exist = {}
@@ -47,8 +46,8 @@ def mirror_pkg_files(files,
 
       dir_name, file_name = File.split(file)
       
-      src_file = package_dir + dir_name + file_name
-      dst_file = build_dir   + dir_name + file_name
+      src_file = package_subdir + '/' + dir_name + '/' + file_name
+      dst_file = build_root     + '/' + dir_name + '/' + file_name
       
       assert_exist!(src_file, 'source file')
 
@@ -70,7 +69,7 @@ def mirror_pkg_files(files,
         #
         Pathname.new(dir_name).descend do |local_subdir|
         
-          dst_subdir = build_dir + local_subdir 
+          dst_subdir = build_root + '/' + local_subdir 
           
           unless subdir_exist[dst_subdir]
             unless FileTest.exist?(dst_subdir)
@@ -107,8 +106,9 @@ def mirror_pkg_files(files,
   end
 end
 
-
-#mirror_pkg_files(["include/CGAL/Straight_skeleton_2.h"],$test_pkg_dir, $test_build_dir)
-#mirror_pkg_files(list_pkg_files(pkg_dont_submit_list($test_pkg_dir), $test_pkg_dir),$test_pkg_dir, $test_build_dir)
+# -- TEST -- 
+#mirror_package(["include/CGAL/Straight_skeleton_2.h"],TEST_PKG_DIR, TEST_BUILD_ROOT)
+#mirror_package(list_package_files(TEST_PKG_DIR,false),TEST_PKG_DIR, TEST_BUILD_ROOT)
+# -- TEST -- 
 
 
