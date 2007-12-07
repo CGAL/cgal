@@ -115,7 +115,7 @@ public:
             (*(e->right_curves_begin())) :
             (*(e->left_curves_begin()));
         
-        if (e->parameter_space_in_x() == AFTER_DISCONTINUITY) {
+        if (e->parameter_space_in_x() == ARR_LEFT_BOUNDARY) {
             // left side
             switch (xc->color()) {
             case Traits_2::RED :
@@ -133,7 +133,7 @@ public:
             }
         } else { 
             
-            if (e->parameter_space_in_y() == BEFORE_DISCONTINUITY) {
+            if (e->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
                 
                 Halfedge_handle_red red_he = xc->red_halfedge_handle();
                 Halfedge_handle_blue blue_he = xc->blue_halfedge_handle();

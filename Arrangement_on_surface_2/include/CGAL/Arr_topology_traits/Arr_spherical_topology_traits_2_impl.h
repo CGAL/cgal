@@ -92,9 +92,9 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   // Go over the DCEL vertices and locate the south and north pole (if any)
   // and any other vertex on the line of discontinuity.
   typename Dcel::Vertex_iterator       vit;
-  Arr_parameter_space                        bx, by;
+  Arr_parameter_space                  bx, by;
   Halfedge                            *he;
-  Arr_curve_end                            ind;
+  Arr_curve_end                        ind;
 
   m_north_pole = NULL;
   m_south_pole = NULL;
@@ -106,8 +106,8 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
     bx = vit->parameter_space_in_x();
     by = vit->parameter_space_in_y();
 
-    if (by == AFTER_SINGULARITY) m_south_pole = &(*vit);
-    else if (by == BEFORE_SINGULARITY) m_north_pole = &(*vit);
+    if (by == ARR_BOTTOM_BOUNDARY) m_south_pole = &(*vit);
+    else if (by == ARR_TOP_BOUNDARY) m_north_pole = &(*vit);
     else if (bx != ARR_INTERIOR) {
       const Point_2 & key = vit->point();
       m_boundary_vertices.insert(Vertex_value(key, &(*vit)));
@@ -119,8 +119,7 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   typename Dcel::Face_iterator         fit;
   
   m_spherical_face = NULL;
-  for (fit = this->m_dcel.faces_begin();
-       fit != this->m_dcel.faces_end(); ++fit)
+  for (fit = this->m_dcel.faces_begin(); fit != this->m_dcel.faces_end(); ++fit)
   {
     if (fit->number_of_outer_ccbs() == 0)
     {
@@ -175,25 +174,25 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
             << std::endl;
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
-  if (((v != NULL) && (v->parameter_space_in_y() == BEFORE_SINGULARITY)) ||
-      (m_traits->parameter_space_in_y_2_object()(p) == BEFORE_SINGULARITY))
+  if (((v != NULL) && (v->parameter_space_in_y() == ARR_TOP_BOUNDARY)) ||
+      (m_traits->parameter_space_in_y_2_object()(p) == ARR_TOP_BOUNDARY))
     return false;
 
   /*! \todo a temporary test
-   * if (((v != NULL) && (v->parameter_space_in_y() == AFTER_SINGULARITY)) ||
+   * if (((v != NULL) && (v->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)) ||
    *   (p.is_min_boundary()))
    * return false;  
    */
   
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
     m_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+  typename Traits_adaptor_2::Parameter_space_in_y_2 ps_y_op =
     m_traits->parameter_space_in_y_2_object();
-  typename Traits_adaptor_2::Compare_x_2 compare_x =
+  typename Traits_adaptor_2::Compare_x_2 cmp_x_op =
     m_traits->compare_x_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
+  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
     m_traits->compare_y_at_x_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 compare_x_near_bnd =
+  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bnd =
     m_traits->compare_x_near_boundary_2_object();
   
   /* Maintain a counter of the number of x-monotone curves that intersect an
@@ -266,14 +265,14 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
          */
-        Arr_parameter_space bnd1 = parameter_space_in_y(curr->curve(), ARR_MAX_END);
-        Arr_parameter_space bnd2 = parameter_space_in_y(curr->next()->curve(), ARR_MAX_END);
-        if ((bnd1 == BEFORE_SINGULARITY) && (bnd2 == BEFORE_SINGULARITY)) {
+        Arr_parameter_space bnd1 = ps_y_op(curr->curve(), ARR_MAX_END);
+        Arr_parameter_space bnd2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
+        if ((bnd1 == ARR_TOP_BOUNDARY) && (bnd2 == ARR_TOP_BOUNDARY)) {
           // Compare the x-coordinates:
           Comparison_result rc1 =
-            compare_x_near_bnd(p, curr->curve(), ARR_MAX_END);
+            cmp_x_near_bnd(p, curr->curve(), ARR_MAX_END);
           Comparison_result rc2 =
-            compare_x_near_bnd(p, curr->next()->curve(), ARR_MAX_END);
+            cmp_x_near_bnd(p, curr->next()->curve(), ARR_MAX_END);
           if (rc1 == opposite(rc2)) ++num_intersections;
         }
         curr = curr->next();
@@ -304,8 +303,8 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         ind_target = ARR_MIN_END;
       }
 
-      bnd_source = parameter_space_in_x(curr->curve(), ind_source);
-      bnd_target = parameter_space_in_x(curr->curve(), ind_target);
+      bnd_source = ps_x_op(curr->curve(), ind_source);
+      bnd_target = ps_x_op(curr->curve(), ind_target);
 
       if (bnd_p != ARR_INTERIOR) {
         if (bnd_source == bnd_target) {
@@ -315,21 +314,21 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         
         if (bnd_target != ARR_INTERIOR) {
           change_pending = true;
-          bnd_pending = (bnd_target == AFTER_DISCONTINUITY) ?
-            BEFORE_DISCONTINUITY : AFTER_DISCONTINUITY;
+          bnd_pending = (bnd_target == ARR_LEFT_BOUNDARY) ?
+            ARR_RIGHT_BOUNDARY : ARR_LEFT_BOUNDARY;
         }
         if (bnd_source != ARR_INTERIOR) {
           if (change_pending) {
             change_pending = false;
             if (bnd_pending == bnd_source) {
-              Comparison_result res_y_at_x = compare_y_at_x(p, curr->curve());
+              Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
               if (res_y_at_x == EQUAL) return false;
               if (res_y_at_x == SMALLER) num_intersections++;
             }
           } else {
             // This must be the first curve. Remember to check the last curve
-            bnd_last = (bnd_source == AFTER_DISCONTINUITY) ?
-              BEFORE_DISCONTINUITY : AFTER_DISCONTINUITY;
+            bnd_last = (bnd_source == ARR_LEFT_BOUNDARY) ?
+              ARR_RIGHT_BOUNDARY : ARR_LEFT_BOUNDARY;
             last_pending = true;
           }
         }
@@ -338,12 +337,12 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       }
       
       res_source = (bnd_source == ARR_INTERIOR) ?
-        compare_x(p, curr->opposite()->vertex()->point()) :
-        compare_x_near_bnd(p, curr->curve(), ind_source);
+        cmp_x_op(p, curr->opposite()->vertex()->point()) :
+        cmp_x_near_bnd(p, curr->curve(), ind_source);
       
       res_target = (bnd_target == ARR_INTERIOR) ?
-        compare_x(p, curr->vertex()->point()) :
-        compare_x_near_bnd(p, curr->curve(), ind_target);
+        cmp_x_op(p, curr->vertex()->point()) :
+        cmp_x_near_bnd(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
@@ -361,7 +360,7 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         if (change_pending) {
           change_pending = false;
           if (res_pending == res_target) {
-            Comparison_result res_y_at_x = compare_y_at_x(p, curr->curve());
+            Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
             if (res_y_at_x == EQUAL) return false;
             if (res_y_at_x == SMALLER) num_intersections++;
           }
@@ -381,7 +380,7 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     if (last_pending) {
       if (bnd_p != ARR_INTERIOR) {
         if (bnd_last == bnd_target) {
-          Comparison_result res_y_at_x = compare_y_at_x(p, curr->curve());
+          Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
           if (res_y_at_x == EQUAL) return false;
           if (res_y_at_x == SMALLER) num_intersections++;
         }
@@ -389,7 +388,7 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       }
 
       if (res_last == res_source) {
-        Comparison_result res_y_at_x = compare_y_at_x(p, curr->curve());
+        Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
         if (res_y_at_x == EQUAL) return false;
         if (res_y_at_x == SMALLER) num_intersections++;
       }
@@ -419,7 +418,7 @@ template <class GeomTraits, class Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex * v,
           const X_monotone_curve_2 & xc, Arr_curve_end ind,
-          Arr_parameter_space bound_x, Arr_parameter_space bound_y) const
+          Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
 {
 #if 0
   std::cout << "are_equal"
@@ -427,22 +426,20 @@ are_equal(const Vertex * v,
             << ", xc: " << xc << ", " << ind
             << std::endl;
 #endif
-  CGAL_precondition (bound_x == AFTER_DISCONTINUITY ||
-                     bound_x == BEFORE_DISCONTINUITY ||
-                     bound_y == AFTER_SINGULARITY ||
-                     bound_y == BEFORE_SINGULARITY);
+  CGAL_precondition (ps_x == ARR_LEFT_BOUNDARY || ps_x == ARR_RIGHT_BOUNDARY ||
+                     ps_y == ARR_BOTTOM_BOUNDARY || ps_y == ARR_TOP_BOUNDARY);
 
   // If the given boundary conditions do not match those of the given
   // vertex, v cannot represent the curve end.
-  if (bound_y != v->parameter_space_in_y()) return false;
+  if (ps_y != v->parameter_space_in_y()) return false;
 
-  if (bound_y != ARR_INTERIOR) return (bound_y == v->parameter_space_in_y());
+  if (ps_y != ARR_INTERIOR) return (ps_y == v->parameter_space_in_y());
   
-  if (((bound_x == ARR_INTERIOR) && (v->parameter_space_in_x() != ARR_INTERIOR)) ||
-      ((bound_x != ARR_INTERIOR) && (v->parameter_space_in_x() == ARR_INTERIOR))) 
+  if (((ps_x == ARR_INTERIOR) && (v->parameter_space_in_x() != ARR_INTERIOR)) ||
+      ((ps_x != ARR_INTERIOR) && (v->parameter_space_in_x() == ARR_INTERIOR))) 
     return false;
 
-  CGAL_assertion(bound_x != ARR_INTERIOR);
+  CGAL_assertion(ps_x != ARR_INTERIOR);
   /* Both vertices have the same x boundary conditions =>
    * comapare their y-position.
    */
@@ -460,19 +457,20 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 notify_on_boundary_vertex_creation(Vertex * v,
                                    const X_monotone_curve_2 & xc,
                                    Arr_curve_end ind,
-                                   Arr_parameter_space CGAL_assertion_code(bound_x),
-                                   Arr_parameter_space bound_y)
+                                   Arr_parameter_space
+                                     CGAL_assertion_code(ps_x),
+                                   Arr_parameter_space ps_y)
 {
   // std::cout << "notify_on_boundary_vertex_creation()" << std::endl;
-  if (bound_y == AFTER_SINGULARITY) {
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
     m_south_pole = v;
     return;
   }
-  if (bound_y == BEFORE_SINGULARITY) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
     m_north_pole = v;
     return;
   }
-  CGAL_assertion(bound_x != ARR_INTERIOR);
+  CGAL_assertion(ps_x != ARR_INTERIOR);
   const Point_2 & key = (ind == ARR_MIN_END) ?
     m_traits->construct_min_vertex_2_object()(xc) :
     m_traits->construct_max_vertex_2_object()(xc);
@@ -487,21 +485,20 @@ CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face * /* f */,
                       const X_monotone_curve_2 & xc, Arr_curve_end ind,
-                      Arr_parameter_space bound_x, Arr_parameter_space bound_y)
+                      Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   // std::cout << "place_boundary_vertex()" << std::endl;
-  if (bound_y == AFTER_SINGULARITY) {
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
     if (m_south_pole == NULL) return Object();
     return CGAL::make_object(m_south_pole);
   }
 
-  if (bound_y == BEFORE_SINGULARITY) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
     if (m_north_pole == NULL) return Object();
     return CGAL::make_object(m_north_pole);
   }
 
-  CGAL_assertion((bound_x == AFTER_DISCONTINUITY) ||
-                 (bound_x == BEFORE_DISCONTINUITY));
+  CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
 
   const Point_2 & key = (ind == ARR_MIN_END) ?
     m_traits->construct_min_vertex_2_object()(xc) :
@@ -525,22 +522,21 @@ Arr_spherical_topology_traits_2<GeomTraits,Dcel>::
 locate_around_boundary_vertex(Vertex * v,
                               const X_monotone_curve_2 & xc,
                               Arr_curve_end ind,
-                              Arr_parameter_space bound_x,
-                              Arr_parameter_space bound_y) const
+                              Arr_parameter_space ps_x,
+                              Arr_parameter_space ps_y) const
 {
   // std::cout << "locate_around_boundary_vertex()" << std::endl;
-  if (bound_y == AFTER_SINGULARITY) {
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
     CGAL_assertion(v == m_south_pole);
     return (_locate_around_pole(m_south_pole, xc, ind));
   }
 
-  if (bound_y == BEFORE_SINGULARITY) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
     CGAL_assertion(v == m_north_pole);
     return (_locate_around_pole(m_north_pole, xc, ind));
   }
 
-  CGAL_assertion((bound_x == AFTER_DISCONTINUITY) ||
-                 (bound_x == BEFORE_DISCONTINUITY));
+  CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
 
   return (_locate_around_vertex_on_discontinuity(v, xc, ind));
 }
@@ -549,10 +545,10 @@ locate_around_boundary_vertex(Vertex * v,
 template <class GeomTraits, class Dcel>
 CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
-                 Arr_parameter_space bound_x, Arr_parameter_space bound_y)
+                 Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
   // Act according to the boundary conditions.
-  if (bound_y == BEFORE_SINGULARITY) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
     // In case the curve end coincides with the north pole, return the vertex
     // representing the north pole, if one exists. Otherwise, return the face
     // containing this pole (the spherical face).
@@ -563,7 +559,7 @@ locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
   typename Vertex_map::iterator  it;
   Vertex                        *v = NULL;
 
-  if (bound_y == AFTER_SINGULARITY) {
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // In case the curve end coincides with the south pole, return the vertex
     // representing the south pole, if one exists. Otherwise, search for the
     // face containing this pole.
@@ -571,8 +567,8 @@ locate_curve_end(const X_monotone_curve_2 & xc, Arr_curve_end ind,
     it = m_boundary_vertices.begin();
   }
   else {
-    CGAL_assertion((bound_x == AFTER_DISCONTINUITY) ||
-                   (bound_x == BEFORE_DISCONTINUITY));
+    CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) ||
+                   (ps_x == ARR_RIGHT_BOUNDARY));
 
     // Check if the given curve end is incident to a vertex on the line of
     // discontinuity. If so, return this vertex. Otherwise, locate the first
@@ -615,17 +611,17 @@ typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge *
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 erase_redundant_vertex(Vertex * v)
 {
-  const Arr_parameter_space bound_y = v->parameter_space_in_y();
-  if (bound_y == AFTER_SINGULARITY) {
+  const Arr_parameter_space ps_y = v->parameter_space_in_y();
+  if (ps_y == ARR_BOTTOM_BOUNDARY) {
     m_south_pole = NULL;
     return NULL;
   }
-  if (bound_y == BEFORE_SINGULARITY) {
+  if (ps_y == ARR_TOP_BOUNDARY) {
     m_north_pole = NULL;
     return NULL;
   }
-  CGAL_assertion_code(const Arr_parameter_space bound_x = v->parameter_space_in_x(););
-  CGAL_assertion(bound_x != ARR_INTERIOR);
+  CGAL_assertion_code(Arr_parameter_space ps_x = v->parameter_space_in_x());
+  CGAL_assertion(ps_x != ARR_INTERIOR);
   m_boundary_vertices.erase(v->point());
   return NULL;
 }
@@ -674,7 +670,8 @@ _locate_around_vertex_on_discontinuity(Vertex * v,
   bool eq_curr, eq_next;
 
   while (!is_between_cw(xc, (ind == ARR_MIN_END), curr->curve(), 
-                        (curr->direction() == ARR_RIGHT_TO_LEFT), next->curve(), 
+                        (curr->direction() == ARR_RIGHT_TO_LEFT),
+                        next->curve(), 
                         (next->direction() == ARR_RIGHT_TO_LEFT), v->point(),
                         eq_curr, eq_next))
   {
@@ -727,7 +724,7 @@ _locate_around_pole(Vertex * v,
   
   // Traverse all other halfedges, and compare their x-positions next to the
   // pole with the query curve xc.
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x =
+  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bnd =
     m_traits->compare_x_near_boundary_2_object();
   Arr_curve_end curr_end, next_end;
   Comparison_result curr_res, next_res;
@@ -735,12 +732,13 @@ _locate_around_pole(Vertex * v,
   
   curr_end =
     (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-  curr_res = cmp_x(xc, ind, curr->curve(), curr_end);
+  curr_res = cmp_x_near_bnd(xc, ind, curr->curve(), curr_end);
   do {
     next_end =
       (next->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-    next_res = cmp_x(xc, ind, next->curve(), next_end);
-    curr_next_res = cmp_x(curr->curve(), curr_end, next->curve(), next_end);
+    next_res = cmp_x_near_bnd(xc, ind, next->curve(), next_end);
+    curr_next_res =
+      cmp_x_near_bnd(curr->curve(), curr_end, next->curve(), next_end);
     if (curr_next_res == cross_res) {
       // The line of discontinuity must lie between curr and next, so the
       // comparison result of xc with the two curves should be equal:
@@ -795,10 +793,10 @@ _face_below_vertex_on_discontinuity(Vertex * v) const
   // Otherwise, we traverse the halfedges around v and locate the first
   // halfedge we encounter if we go from "6 o'clock" clockwise.
   // First locate the lower left and the top right halfedges around v.
-  typename Traits_adaptor_2::Compare_y_at_x_right_2 compare_y_at_x_right =
-                                  m_traits->compare_y_at_x_right_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_left_2  compare_y_at_x_left =
-                                  m_traits->compare_y_at_x_left_2_object();
+  typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_y_at_x_op_right =
+    m_traits->compare_y_at_x_right_2_object();
+  typename Traits_adaptor_2::Compare_y_at_x_left_2  cmp_y_at_x_op_left =
+    m_traits->compare_y_at_x_left_2_object();
 
   Halfedge  *lowest_left = NULL;
   Halfedge  *top_right = NULL;
@@ -811,7 +809,7 @@ _face_below_vertex_on_discontinuity(Vertex * v) const
       // The curve associated with the current halfedge is defined to the left
       // of v.
       if (lowest_left == NULL ||
-          compare_y_at_x_left(curr->curve(), lowest_left->curve(), v->point())
+          cmp_y_at_x_op_left(curr->curve(), lowest_left->curve(), v->point())
           == SMALLER)
       {
         lowest_left = curr;
@@ -822,7 +820,7 @@ _face_below_vertex_on_discontinuity(Vertex * v) const
       // The curve associated with the current halfedge is defined to the right
       // of v.
       if (top_right == NULL ||
-          compare_y_at_x_right(curr->curve(), top_right->curve(), v->point())
+          cmp_y_at_x_op_right(curr->curve(), top_right->curve(), v->point())
           == LARGER)
       {
         top_right = curr;
@@ -868,7 +866,7 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
    * contains everythin is incident to the north pole.
    * We count the number of times that path from prev1 to prev2 crosses the
    * discontinuity arc from left and from right, that is from
-   * AFTER_DISCONTINUITY to BEFORE_DISCONTINUITY, and the number of times it
+   * ARR_LEFT_BOUNDARY to ARR_RIGHT_BOUNDARY, and the number of times it
    * crosses the other way around.
    */
 #if 1
@@ -881,7 +879,7 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
             << prev2->vertex()->point() << std::endl;
 #endif
   int counter = 0;
-  typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
     m_traits->parameter_space_in_x_2_object();
 
   // Start with the next of prev1:
@@ -896,8 +894,8 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
     curr_src_ind = ARR_MAX_END;
     curr_trg_ind = ARR_MIN_END;
   }
-  Arr_parameter_space first_src_bc = parameter_space_in_x(curr->curve(), curr_src_ind);
-  Arr_parameter_space curr_trg_bc = parameter_space_in_x(curr->curve(), curr_trg_ind);  
+  Arr_parameter_space first_src_ps = ps_x_op(curr->curve(), curr_src_ind);
+  Arr_parameter_space curr_trg_ps = ps_x_op(curr->curve(), curr_trg_ind);  
   while (curr != prev2) {
     const Halfedge * next = curr->next();
     Arr_curve_end next_src_ind;
@@ -909,21 +907,21 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
       next_src_ind = ARR_MAX_END;
       next_trg_ind = ARR_MIN_END;
     }
-    Arr_parameter_space next_src_bc = parameter_space_in_x(next->curve(), next_src_ind);
-    Arr_parameter_space next_trg_bc = parameter_space_in_x(next->curve(), next_trg_ind);
-    if (curr_trg_bc != next_src_bc) {
-      if (curr_trg_bc == BEFORE_DISCONTINUITY) ++counter;
+    Arr_parameter_space next_src_ps = ps_x_op(next->curve(), next_src_ind);
+    Arr_parameter_space next_trg_ps = ps_x_op(next->curve(), next_trg_ind);
+    if (curr_trg_ps != next_src_ps) {
+      if (curr_trg_ps == ARR_RIGHT_BOUNDARY) ++counter;
       else --counter;
     }
     curr = next;
-    curr_trg_bc = next_trg_bc;
+    curr_trg_ps = next_trg_ps;
   }
-  Arr_parameter_space last_trg_bc = curr_trg_bc;
-  if (last_trg_bc != first_src_bc) {
-    if (last_trg_bc == BEFORE_DISCONTINUITY) ++counter;
-    else if (last_trg_bc == AFTER_DISCONTINUITY) --counter;
-    else if (first_src_bc == AFTER_DISCONTINUITY) ++counter;
-    else if (first_src_bc == BEFORE_DISCONTINUITY) --counter;
+  Arr_parameter_space last_trg_ps = curr_trg_ps;
+  if (last_trg_ps != first_src_ps) {
+    if (last_trg_ps == ARR_RIGHT_BOUNDARY) ++counter;
+    else if (last_trg_ps == ARR_LEFT_BOUNDARY) --counter;
+    else if (first_src_ps == ARR_LEFT_BOUNDARY) ++counter;
+    else if (first_src_ps == ARR_RIGHT_BOUNDARY) --counter;
   }
 
   // a temporary fix in case that if we traverse from prev1 to prev2 then

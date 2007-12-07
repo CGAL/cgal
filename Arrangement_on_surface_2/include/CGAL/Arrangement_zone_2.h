@@ -187,8 +187,7 @@ public:
     const Arr_parameter_space  by1 =
       geom_traits->parameter_space_in_y_2_object()(cv, ARR_MIN_END);
 
-    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR)
-    {
+    if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR) {
       // The curve has a finite left endpoint with no boundary conditions:
       // locate it in the arrangement.
       has_left_pt = true;
@@ -197,14 +196,15 @@ public:
 
       obj = pl.locate (left_pt);
     }
-    else
-    {
+    else {
       // The left end of the curve has boundary conditions: use the topology
       // traits use the arrangement accessor to locate it.
       // Note that if the curve-end is unbounded, left_pt does not exist.
-      if (geom_traits->is_bounded_2_object()(cv, ARR_MIN_END))
+      // Note that if the curve-end is unbounded, left_pt does not exist.
+      has_left_pt = geom_traits->is_bounded_2_object()(cv, ARR_MIN_END);
+      left_on_boundary = true;
+      if (has_left_pt)
         left_pt = geom_traits->construct_min_vertex_2_object() (cv);
-
       obj = arr_access.locate_curve_end (cv, ARR_MIN_END, bx1, by1);
     }
 
@@ -220,8 +220,7 @@ public:
       right_pt = geom_traits->construct_max_vertex_2_object() (cv);
       right_on_boundary = (bx2 != ARR_INTERIOR) || (by2 != ARR_INTERIOR);
     }
-    else
-    {
+    else {
       // The right end of the curve lies at infinity.
       has_right_pt = false;
       right_on_boundary = true;

@@ -87,19 +87,15 @@ public:
   /*! Get the current top object. */
   CGAL::Object top_object () const
   {
-    if (m_valid_north_pole)
-      return (CGAL::make_object (m_north_pole));
-    else
-      return (CGAL::make_object (m_north_face));
+    return (m_valid_north_pole) ?
+      CGAL::make_object (m_north_pole) : CGAL::make_object (m_north_face);
   }
 
   /*! Get the current bottom object. */
   CGAL::Object bottom_object () const
   {
-    if (m_valid_south_pole)
-      return (CGAL::make_object (m_south_pole));
-    else
-      return (CGAL::make_object (m_south_face));
+    return (m_valid_south_pole) ?
+      CGAL::make_object(m_south_pole) : CGAL::make_object(m_south_face);
   }
 };
 
@@ -126,8 +122,6 @@ void Arr_spherical_vert_decomp_helper<Tr, Arr>::before_sweep()
     m_south_pole = Vertex_const_handle (m_top_traits->south_pole());
 
   m_south_face = Face_const_handle (m_top_traits->south_face());
-
-  return;
 }
 
 //-----------------------------------------------------------------------------
@@ -149,14 +143,14 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
 
-  const Arr_curve_end   ind = (event->number_of_left_curves() == 0 &&
-                           event->number_of_right_curves() == 1) ? ARR_MIN_END :
-                                                                   ARR_MAX_END;
+  const Arr_curve_end   ind =
+    (event->number_of_left_curves() == 0 &&
+     event->number_of_right_curves() == 1) ? ARR_MIN_END : ARR_MAX_END;
   const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
-        (*(event->right_curves_begin()))->last_curve() :
-        (*(event->left_curves_begin()))->last_curve();
+    (*(event->right_curves_begin()))->last_curve() :
+    (*(event->left_curves_begin()))->last_curve();
 
-  if (event->parameter_space_in_y() == BEFORE_SINGULARITY)
+  if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
   {
     // The event is incident to the north pole: update the north face.
     if (ind == ARR_MIN_END)
@@ -164,7 +158,7 @@ Arr_spherical_vert_decomp_helper<Tr, Arr>::after_handle_event (Event *event)
     else
       m_north_face = xc.halfedge_handle()->face();
   }
-  else if (event->parameter_space_in_y() == AFTER_SINGULARITY)
+  else if (event->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
   {
     // The event is incident to the south pole: update the south face.
     if (ind == ARR_MIN_END)

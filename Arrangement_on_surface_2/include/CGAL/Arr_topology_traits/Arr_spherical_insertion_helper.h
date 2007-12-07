@@ -109,10 +109,10 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
   // Ignore events that do not have boundary conditions.
-  const Arr_parameter_space bound_x = event->parameter_space_in_x();
-  const Arr_parameter_space bound_y = event->parameter_space_in_y();
+  const Arr_parameter_space ps_x = event->parameter_space_in_x();
+  const Arr_parameter_space ps_y = event->parameter_space_in_y();
 
-  if (bound_x == ARR_INTERIOR && bound_y == ARR_INTERIOR)
+  if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR)
     return;
 
   // The is exactly one curve incident to an event with boundary conditions.
@@ -122,12 +122,12 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
                  ((event->number_of_left_curves() == 1) &&
                   (event->number_of_right_curves() == 0)));
 
-  const Arr_curve_end   ind = (event->number_of_left_curves() == 0 &&
-                           event->number_of_right_curves() == 1) ? ARR_MIN_END :
-                                                                   ARR_MAX_END;
+  const Arr_curve_end   ind =
+    (event->number_of_left_curves() == 0 &&
+     event->number_of_right_curves() == 1) ? ARR_MIN_END : ARR_MAX_END;
   const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
-        (*(event->right_curves_begin()))->last_curve() :
-        (*(event->left_curves_begin()))->last_curve();
+    (*(event->right_curves_begin()))->last_curve() :
+    (*(event->left_curves_begin()))->last_curve();
 
   if (xc.halfedge_handle() == Halfedge_handle())
   {
@@ -140,14 +140,12 @@ void Arr_spherical_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
   // In case we encounter an existing curve incident to the curve of
   // discontinuity (and exteding to its right) or to the north pole,
   // we have to update the current top face (the spherical face).
-  if (bound_y == BEFORE_SINGULARITY)
+  if (ps_y == ARR_TOP_BOUNDARY)
   {
-    if (ind == ARR_MIN_END)
-      this->m_spherical_face = xc.halfedge_handle()->twin()->face();
-    else
-      this->m_spherical_face = xc.halfedge_handle()->face();
+    this->m_spherical_face = (ind == ARR_MIN_END) ?
+      xc.halfedge_handle()->twin()->face() : xc.halfedge_handle()->face();
   }
-  else if (bound_x == AFTER_DISCONTINUITY)
+  else if (ps_x == ARR_LEFT_BOUNDARY)
   {
     CGAL_assertion (ind == ARR_MIN_END);
     this->m_spherical_face = xc.halfedge_handle()->twin()->face();

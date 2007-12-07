@@ -146,14 +146,14 @@ public:
    * \param v The new boundary vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    */
   void notify_on_boundary_vertex_creation (Vertex *,
                                            const X_monotone_curve_2& ,
                                            Arr_curve_end,
-                                           Arr_parameter_space,
-                                           Arr_parameter_space)
+                                           Arr_parameter_space /* ps_x */,
+                                           Arr_parameter_space /* ps_y */)
   {
     // In the planar-topology traits this function should never be invoked:
     return;

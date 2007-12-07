@@ -533,6 +533,7 @@ CGAL_DEPRECATED void insert_x_monotone_curve
 {
   insert(arr, c, pl);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
 CGAL_DEPRECATED void insert_x_monotone_curve
@@ -541,6 +542,7 @@ CGAL_DEPRECATED void insert_x_monotone_curve
 {
   insert(arr, c);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits, class InputIterator>
 CGAL_DEPRECATED void insert_x_monotone_curves 
@@ -549,6 +551,7 @@ CGAL_DEPRECATED void insert_x_monotone_curves
 {
   insert(arr, begin, end);
 }
+
 /* DEPRECATED use insert() instead */
 template <class GeomTraits, class TopTraits>
 CGAL_DEPRECATED void insert_x_monotone_curve

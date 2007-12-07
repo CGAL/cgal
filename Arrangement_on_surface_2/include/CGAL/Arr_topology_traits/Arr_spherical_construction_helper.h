@@ -66,9 +66,10 @@ protected:
   // Data members:
 
   //! The topology-traits class
-  Topology_traits        * m_top_traits;
-  Arr_accessor<Arrangement_2>
-                           m_arr_access;  // An arrangement accessor.
+  Topology_traits * m_top_traits;
+
+  //! An arrangement accessor
+  Arr_accessor<Arrangement_2> m_arr_access;
 
   //! The unbounded arrangement face
   Face_handle m_spherical_face;
@@ -107,11 +108,11 @@ public:
   virtual void before_handle_event(Event * event)
   {
     // Act according to the boundary type:
-    const Arr_parameter_space bound_x = event->parameter_space_in_x();
-    const Arr_parameter_space bound_y = event->parameter_space_in_y();
+    Arr_parameter_space ps_x = event->parameter_space_in_x();
+    Arr_parameter_space ps_y = event->parameter_space_in_y();
 
-    if (bound_y == AFTER_SINGULARITY)
-    {
+    if (ps_y == ARR_BOTTOM_BOUNDARY) {
+      // Bootom contraction boundary:
       // The event has only one (right or left) curve.
       CGAL_assertion(((event->number_of_left_curves() == 0) &&
                       (event->number_of_right_curves() == 1)) ||
@@ -129,7 +130,7 @@ public:
       if (m_top_traits->south_pole() == NULL)
       {
         Vertex_handle v =
-            m_arr_access.create_boundary_vertex (xc, ind, bound_x, bound_y);
+            m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y);
         event->set_vertex_handle(v);
       }
       else
@@ -139,8 +140,8 @@ public:
       return;
     }
 
-    if (bound_y == BEFORE_SINGULARITY)
-    {
+    if (ps_y == ARR_TOP_BOUNDARY) {
+      // Top contraction boundary:
       // The event has only one (right or left) curve.
       CGAL_assertion(((event->number_of_left_curves() == 0) &&
                       (event->number_of_right_curves() == 1)) ||
@@ -159,7 +160,7 @@ public:
       if (m_top_traits->north_pole() == NULL)
       {
         Vertex_handle v = 
-            m_arr_access.create_boundary_vertex (xc, ind, bound_x, bound_y);
+            m_arr_access.create_boundary_vertex (xc, ind, ps_x, ps_y);
         event->set_vertex_handle(v);
 
         // Since this is the first event corresponding to the north pole,
@@ -178,7 +179,7 @@ public:
         DHalfedge * dprev =
           m_top_traits->locate_around_boundary_vertex(m_top_traits->
                                                       north_pole(), xc, ind,
-                                                      bound_x, bound_y);
+                                                      ps_x, ps_y);
 
         if (dprev != NULL)
         {
@@ -203,8 +204,7 @@ public:
       return;
     }
 
-    if (bound_x == AFTER_DISCONTINUITY)
-    {
+    if (ps_x == ARR_LEFT_BOUNDARY) {
       // The event has only right curves.
       CGAL_assertion(event->number_of_left_curves() == 0 &&
                      event->number_of_right_curves() == 1);
@@ -217,8 +217,7 @@ public:
       if (v == NULL)
       {
         Vertex_handle vh =  
-            m_arr_access.create_boundary_vertex (xc, ARR_MIN_END,
-                                                 bound_x, bound_y);
+          m_arr_access.create_boundary_vertex (xc, ARR_MIN_END, ps_x, ps_y);
         event->set_vertex_handle(vh);
       }
       else
@@ -228,8 +227,7 @@ public:
       return;
     }
 
-    if (bound_x == BEFORE_DISCONTINUITY)
-    {
+    if (ps_x == ARR_RIGHT_BOUNDARY) {
        // The event has only left curves.
       CGAL_assertion(event->number_of_left_curves() == 1 &&
                      event->number_of_right_curves() == 0);
@@ -242,8 +240,7 @@ public:
       if (v == NULL)
       {
         Vertex_handle vh = 
-            m_arr_access.create_boundary_vertex (xc, ARR_MAX_END,
-                                                 bound_x, bound_y);
+          m_arr_access.create_boundary_vertex (xc, ARR_MAX_END, ps_x, ps_y);
         event->set_vertex_handle(vh);
       }
       else
@@ -286,7 +283,7 @@ public:
     // If we insert an edge whose right end lies on the north pole, we have
     // to flip the order of predecessor halfegdes.
     return (event->parameter_space_in_x() == ARR_INTERIOR &&
-            event->parameter_space_in_y() == BEFORE_SINGULARITY);
+            event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
   }
 
   /*! Get the current top face. */

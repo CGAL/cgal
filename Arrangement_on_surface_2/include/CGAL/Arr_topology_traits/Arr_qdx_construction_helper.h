@@ -109,11 +109,11 @@ public:
      */
     virtual void before_handle_event(Event * event)
     {
-        const Arr_parameter_space bound_x = event->parameter_space_in_x();
-        const Arr_parameter_space bound_y = event->parameter_space_in_y();
+        const Arr_parameter_space ps_x = event->parameter_space_in_x();
+        const Arr_parameter_space ps_y = event->parameter_space_in_y();
         
-        if (bound_x < 0) {
-            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
+        if (ps_x < 0) {
+            CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
             // The event has only one right curve.
             CGAL_assertion((event->number_of_left_curves() == 0) &&
                            (event->number_of_right_curves() == 1));
@@ -124,7 +124,7 @@ public:
             if (m_top_traits->leftmost_vertex() == NULL)
             {
                 m_arr_access.create_boundary_vertex (xc, CGAL::ARR_MIN_END,
-                                                     bound_x, bound_y);
+                                                     ps_x, ps_y);
             }
 
             event->set_vertex_handle(
@@ -133,8 +133,8 @@ public:
             return;
         }
         
-        if (bound_x > 0) {
-            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
+        if (ps_x > 0) {
+            CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
             // The event has only one left curve.
             CGAL_assertion((event->number_of_left_curves() == 1) &&
                            (event->number_of_right_curves() == 0));
@@ -145,7 +145,7 @@ public:
             if (m_top_traits->rightmost_vertex() == NULL)
             {
                 m_arr_access.create_boundary_vertex (xc, CGAL::ARR_MAX_END,
-                                                     bound_x, bound_y);
+                                                     ps_x, ps_y);
             } 
 
             event->set_vertex_handle(
@@ -154,15 +154,15 @@ public:
             return;
         }
         
-        if (bound_y != CGAL::ARR_INTERIOR) {
-            CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
-                           bound_y == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_x == CGAL::ARR_INTERIOR);
+        if (ps_y != CGAL::ARR_INTERIOR) {
+            CGAL_assertion(ps_y == CGAL::BEFORE_DISCONTINUITY ||
+                           ps_y == CGAL::AFTER_DISCONTINUITY);
+            CGAL_assertion(ps_x == CGAL::ARR_INTERIOR);
             // there is exactly one event
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             const X_monotone_curve_2 & xc =
-                (bound_y == CGAL::AFTER_DISCONTINUITY ? 
+                (ps_y == CGAL::AFTER_DISCONTINUITY ? 
                  // AFTER DISCONTINUITY
                  (event->number_of_right_curves() > 0 ? 
                   (*(event->right_curves_begin()))->last_curve() :
@@ -174,7 +174,7 @@ public:
                 );
             
             CGAL::Arr_curve_end ind =  
-                (bound_y == CGAL::AFTER_DISCONTINUITY ? 
+                (ps_y == CGAL::AFTER_DISCONTINUITY ? 
                  (event->number_of_right_curves() > 0 ? 
                   CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) : 
                  (event->number_of_left_curves() > 0 ? 
@@ -187,7 +187,7 @@ public:
             
             if (v == NULL) {
                 m_arr_access.create_boundary_vertex (xc, ind,
-                                                     bound_x, bound_y);
+                                                     ps_x, ps_y);
             } 
             
             event->set_vertex_handle(vh);

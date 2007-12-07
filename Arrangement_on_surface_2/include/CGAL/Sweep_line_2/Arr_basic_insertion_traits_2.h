@@ -63,8 +63,8 @@ public:
   typedef typename Traits_2::Boundary_category      Base_boundary_category;
 
   typedef Tag_true                                  Has_boundary_category;
-  typedef Arr_bounded_boundary_tag                  Boundary_category;
   typedef Tag_false                                 Has_left_category;
+  typedef Base_boundary_category                    Boundary_category;
 
 protected:
 
@@ -820,9 +820,9 @@ public:
   }
 
 
-/*! A functor that compares the y-coordinates of two points on the 
- * identification curve.
- */
+  /*! A functor that compares the y-coordinates of two points on the 
+   * identification curve.
+   */
   class Compare_y_on_identification_2 
   {
   protected:
@@ -875,6 +875,56 @@ public:
   Compare_y_on_identification_2 compare_y_on_identification_2_object() const
   {
     return Compare_y_on_identification_2(m_base_traits);
+  }
+
+  /*! A function object that determines whether a curve end is bounded. */
+  class Is_bounded_2 {
+  protected:
+    //! The base traits.
+    const Traits_2 * m_base;
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_bounded_2(const Traits_2 * base) : m_base(base) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
+    
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_no_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_has_boundary_tag)
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                    Arr_unbounded_boundary_tag)
+    {
+      return m_base->is_bounded_2_object()(xcv, ce);
+    }
+    
+  public:
+    /*! Is the end of an x-monotone curve bounded?
+     * \param xcv The x-monotone curve.
+     * \param ce The end of xcv identifier.
+     * \return true is the curve end is bounded, and false otherwise
+     */
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    {
+      return is_bounded(xcv, ce, Boundary_category());
+    }
+  };
+
+  /*! Obtain a Is_bounded_2 function object. */
+  Is_bounded_2 is_bounded_2_object() const
+  {
+    return Is_bounded_2(m_base_traits);
   }
 };
 

@@ -126,10 +126,10 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
     // Ignore events that do not have boundary conditions.
-    const Arr_parameter_space bound_x = event->parameter_space_in_x();
-    const Arr_parameter_space bound_y = event->parameter_space_in_y();
+    Arr_parameter_space ps_x = event->parameter_space_in_x();
+    Arr_parameter_space ps_y = event->parameter_space_in_y();
     
-    if (bound_x == ARR_INTERIOR && bound_y == ARR_INTERIOR) {
+    if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR) {
         return;
     }
     
@@ -161,11 +161,11 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     
     // In case we encounter an existing curve incident to the left or 
     // top face, we have to update the current top face
-    if (bound_x == AFTER_DISCONTINUITY) {
+    if (ps_x == ARR_LEFT_BOUNDARY) {
         // left side
         CGAL_assertion (ind == ARR_MIN_END);
         this->m_top_face = he->twin()->face();
-    } else if (bound_y == BEFORE_DISCONTINUITY) {
+    } else if (ps_y == ARR_TOP_BOUNDARY) {
         // top side
 
         if (ind == CGAL::ARR_MIN_END) {

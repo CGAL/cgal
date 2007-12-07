@@ -221,6 +221,11 @@ public:
     return Compare_y_at_x_left_2(this);
   }
 
+  //@}
+
+  /// \name Overriden functors for unbounded boundaries.
+  //@{
+
   /*! A functor that determines whether an endpoint of an x-monotone curve lies
    * on a boundary of the parameter space along the x axis.
    */
@@ -665,14 +670,8 @@ public:
   {
     return Compare_y_on_identification_2(this);
   }
-  //@}
 
-  /// \name Overriden functors for unbounded boundaries.
-  //@{
-
-
-  /*! A function object that determines whether a curve end is bounded.
-   */
+  /*! A function object that determines whether a curve end is bounded. */
   class Is_bounded_2 {
   protected:
     //! The base traits.
@@ -695,7 +694,7 @@ public:
     { return true; }
 
     bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_bounded_boundary_tag)
+                    Arr_has_boundary_tag)
     { return true; }
 
     bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,

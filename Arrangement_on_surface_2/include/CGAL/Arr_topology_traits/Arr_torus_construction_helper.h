@@ -109,23 +109,23 @@ public:
      */
     virtual void before_handle_event(Event * event)
     {
-        const Arr_parameter_space bound_x = event->parameter_space_in_x();
-        const Arr_parameter_space bound_y = event->parameter_space_in_y();
+        Arr_parameter_space ps_x = event->parameter_space_in_x();
+        Arr_parameter_space ps_y = event->parameter_space_in_y();
         
         //std::cout << "HELPER: event: " << event->point() << std::endl;
         
-        if (bound_x != CGAL::ARR_INTERIOR) {
-            //std::cout << "HELPER: before x " << bound_x << std::endl;
-            CGAL_assertion(bound_x == CGAL::BEFORE_DISCONTINUITY ||
-                           bound_x == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_y == CGAL::ARR_INTERIOR);
+        if (ps_x != ARR_INTERIOR) {
+            //std::cout << "HELPER: before x " << ps_x << std::endl;
+            CGAL_assertion(ps_x == ARR_RIGHT_BOUNDARY ||
+                           ps_x == ARR_LEFT_BOUNDARY);
+            CGAL_assertion(ps_y == ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
             // TODO isolated point
 
             // added for hole-location
-            if (bound_x == CGAL::AFTER_DISCONTINUITY && 
+            if (ps_x == ARR_LEFT_BOUNDARY && 
                 m_top_traits->is_identification_WE_empty()) {
                 // The list m_subcurves_at_tf contains all subcurves 
                 // whose left endpoint lies between the curve of 
@@ -140,18 +140,18 @@ public:
             }
             
             const X_monotone_curve_2 & xc =
-                (bound_x == CGAL::AFTER_DISCONTINUITY ? 
+                (ps_x == ARR_LEFT_BOUNDARY ? 
                  // AFTER DISCONTINUITY
                  (*(event->right_curves_begin()))->last_curve() :
                  // BEFORE_DISCONTINUITY
                  (*(event->left_curves_rbegin()))->last_curve()
                 );
             
-            CGAL::Arr_curve_end ind = (bound_x == CGAL::AFTER_DISCONTINUITY ?
-                                   CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+            Arr_curve_end ind = (ps_x == ARR_LEFT_BOUNDARY ?
+                                   ARR_MIN_END : ARR_MAX_END);
             
             const Point_2& key = 
-                (ind == CGAL::ARR_MIN_END ?
+                (ind == ARR_MIN_END ?
                  this->m_top_traits->geometry_traits()->
                  construct_min_vertex_2_object()(xc) :
                  this->m_top_traits->geometry_traits()->
@@ -164,7 +164,7 @@ public:
             if (v == NULL) {
                 vh = m_arr_access.create_boundary_vertex(
                         xc, ind,
-                        bound_x, bound_y
+                        ps_x, ps_y
                 );
             }
             
@@ -173,18 +173,18 @@ public:
             return;
         }
         
-        if (bound_y != CGAL::ARR_INTERIOR) {
-            //std::cout << "HELPER: before y " << bound_y << std::endl;
-            CGAL_assertion(bound_y == CGAL::BEFORE_DISCONTINUITY ||
-                           bound_y == CGAL::AFTER_DISCONTINUITY);
-            CGAL_assertion(bound_x == CGAL::ARR_INTERIOR);
+        if (ps_y != ARR_INTERIOR) {
+            //std::cout << "HELPER: before y " << ps_y << std::endl;
+            CGAL_assertion(ps_y == ARR_TOP_BOUNDARY ||
+                           ps_y == ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(ps_x == ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
             // TODO isolated point
             
             // added for hole-location
-            if (bound_y == CGAL::BEFORE_DISCONTINUITY && 
+            if (ps_y == ARR_TOP_BOUNDARY && 
                 m_top_traits->is_identification_NS_empty()) {
                 // The list m_subcurves_at_tf contains all subcurves 
                 // whose left endpoint lies between the curve of 
@@ -199,7 +199,7 @@ public:
             }
 
             const X_monotone_curve_2 & xc =
-                (bound_y == CGAL::AFTER_DISCONTINUITY ? 
+                (ps_y == ARR_BOTTOM_BOUNDARY ? 
                  // AFTER DISCONTINUITY
                  (event->number_of_right_curves() > 0 ? 
                   (*(event->right_curves_begin()))->last_curve() :
@@ -210,16 +210,16 @@ public:
                   (*(event->right_curves_begin()))->last_curve()) 
                 );
             
-            CGAL::Arr_curve_end ind =  
-                (bound_y == CGAL::AFTER_DISCONTINUITY ? 
+            Arr_curve_end ind =  
+                (ps_y == ARR_BOTTOM_BOUNDARY ? 
                  (event->number_of_right_curves() > 0 ? 
-                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) : 
+                  ARR_MIN_END : ARR_MAX_END) : 
                  (event->number_of_left_curves() > 0 ? 
-                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
+                  ARR_MAX_END : ARR_MIN_END)
                 );
 
             const Point_2& key = 
-                (ind == CGAL::ARR_MIN_END ?
+                (ind == ARR_MIN_END ?
                  this->m_top_traits->geometry_traits()->
                  construct_min_vertex_2_object()(xc) :
                  this->m_top_traits->geometry_traits()->
@@ -231,9 +231,7 @@ public:
             
             if (v == NULL) {
                 //std::cout << "HELPER: new y" << std::endl;
-                vh = m_arr_access.create_boundary_vertex(
-                        xc, ind,
-                        bound_x, bound_y);
+                vh = m_arr_access.create_boundary_vertex(xc, ind, ps_x, ps_y);
             }
 
             event->set_vertex_handle(vh);
@@ -249,19 +247,19 @@ public:
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        CGAL::Arr_parameter_space bnd_y_min = 
+        Arr_parameter_space bnd_y_min = 
             this->m_top_traits->geometry_traits()->
-            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
-        CGAL::Arr_parameter_space bnd_y_max = 
+            parameter_space_in_y_2_object()(he->curve(), ARR_MIN_END);
+        Arr_parameter_space bnd_y_max = 
             this->m_top_traits->geometry_traits()->
-            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
+            parameter_space_in_y_2_object()(he->curve(), ARR_MAX_END);
         
-        if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
+        if (bnd_y_min == ARR_TOP_BOUNDARY) {
             he_on_top_face = 
-                (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? he : he->twin());
-        } else if (bnd_y_max == CGAL::BEFORE_DISCONTINUITY) {
+                (he->direction() == ARR_RIGHT_TO_LEFT ? he : he->twin());
+        } else if (bnd_y_max == ARR_TOP_BOUNDARY) {
             he_on_top_face = 
-                (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? he : he->twin());
+                (he->direction() == ARR_LEFT_TO_RIGHT ? he : he->twin());
         } else {
             return;
         }
@@ -277,7 +275,7 @@ public:
                 std::cout << "move sc " << *itr << " from tf to " 
                           << he_on_top_face->curve()
                           << (he_on_top_face->direction() == 
-                              CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                              ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                           << std::endl;
             }
 #endif
@@ -323,7 +321,7 @@ public:
     {
         return 
             (event->parameter_space_in_x() == ARR_INTERIOR &&
-             event->parameter_space_in_y() == BEFORE_DISCONTINUITY);
+             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
     }
     
     /*! Get the current top face. */

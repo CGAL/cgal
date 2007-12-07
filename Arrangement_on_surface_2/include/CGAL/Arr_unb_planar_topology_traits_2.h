@@ -396,15 +396,14 @@ public:
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \pre The curve has a boundary condition in either x or y.
    * \return Whether v represents the given curve end.
    */
   bool are_equal (const Vertex *v,
                   const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Arr_parameter_space bound_x,
-                  Arr_parameter_space bound_y) const;
+                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const;
 
   /*!
    * Given a curve end with boundary conditions and a face that contains the
@@ -413,8 +412,8 @@ public:
    * \param f The face.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    *         In our case this object always wraps a fictitious edge.
@@ -422,8 +421,8 @@ public:
   CGAL::Object place_boundary_vertex (Face *f,
                                       const X_monotone_curve_2& cv,
                                       Arr_curve_end ind,
-                                      Arr_parameter_space bound_x,
-                                      Arr_parameter_space bound_y);
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y);
 
   /*!
    * Locate the predecessor halfedge for the given curve around a given
@@ -431,8 +430,8 @@ public:
    * \param v The vertex.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \pre The curve has a boundary condition in either x or y, and should be
    *      incident to the vertex v.
    * \return An object that contains the curve end.
@@ -441,8 +440,8 @@ public:
   locate_around_boundary_vertex (Vertex* /* v */,
                                  const X_monotone_curve_2& /* cv */,
                                  Arr_curve_end /* ind */,
-                                 Arr_parameter_space /* bound_x */,
-                                 Arr_parameter_space /* bound_y */) const
+                                 Arr_parameter_space /* ps_x */,
+                                 Arr_parameter_space /* ps_y */) const
   {
     CGAL_error();
     return (NULL);
@@ -452,8 +451,8 @@ public:
    * Locate a DCEL feature that contains the given unbounded curve end.
    * \param cv The x-monotone curve.
    * \param ind The curve end.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \pre The curve end is unbounded in either x or y.
    * \return An object that contains the curve end.
    *         In our case this object may either wrap an unbounded face,
@@ -461,8 +460,8 @@ public:
    */
   CGAL::Object locate_curve_end (const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
-                                 Arr_parameter_space bound_x,
-                                 Arr_parameter_space bound_y);
+                                 Arr_parameter_space ps_x,
+                                 Arr_parameter_space ps_y);
 
   /*!
    * Split a fictitious edge using the given vertex.
@@ -621,16 +620,16 @@ protected:
    * halfedge.
    * \param cv The curve.
    * \param ind Whether we refer to the minimal or maximal end of cv.
-   * \param bound_x The boundary condition of the curve end in x.
-   * \param bound_y The boundary condition of the curve end in y.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
    * \param he The fictitious halfedge.
    * \param eq_source Output: Whether the curve coincides with he's source.
    * \param eq_target Output: Whether the curve coincides with he's target.
    * \return Whether the curve end lies on the fictitious halfedge.
    */
   bool _is_on_fictitious_edge (const X_monotone_curve_2& cv, Arr_curve_end ind,
-                               Arr_parameter_space bound_x,
-                               Arr_parameter_space bound_y,
+                               Arr_parameter_space ps_x,
+                               Arr_parameter_space ps_y,
                                const Halfedge *he,
                                bool& eq_source, bool& eq_target);
   //@}

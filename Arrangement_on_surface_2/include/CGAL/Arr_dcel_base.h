@@ -141,10 +141,10 @@ public:
   }
 
   /*! Set the boundary conditions of the vertex. */
-  void set_boundary (Arr_parameter_space bound_x, Arr_parameter_space bound_y)
+  void set_boundary (Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
-    pss[0] = static_cast<char> (bound_x);
-    pss[1] = static_cast<char> (bound_y);
+    pss[0] = static_cast<char> (ps_x);
+    pss[1] = static_cast<char> (ps_y);
     return;
   }
 

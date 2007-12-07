@@ -858,7 +858,7 @@ public:
     { return true; }
 
     bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_bounded_boundary_tag)
+                    Arr_has_boundary_tag)
     { return true; }
 
     bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
