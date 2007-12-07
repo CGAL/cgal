@@ -5,19 +5,18 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_great_circular_arc_on_sphere_traits_2.h>
-#include <CGAL/Arr_tracing_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <list>
 
-typedef CGAL::Gmpq                                            Number_type;
-typedef CGAL::Cartesian<Number_type>                          Kernel;
-typedef CGAL::Arr_great_circular_arc_on_sphere_traits_2<Kernel>              Geom_traits_base;
-typedef CGAL::Arr_tracing_traits_2<Geom_traits_base>          Geom_traits_2;
-typedef Geom_traits_2::Point_2                                Point_2;
-typedef Geom_traits_2::X_monotone_curve_2                     X_monotone_curve_2;
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2>  Topol_traits_2;
+typedef CGAL::Gmpq                                           Number_type;
+typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef CGAL::Arr_great_circular_arc_on_sphere_traits_2<Kernel>
+                                                             Geom_traits_2;
+typedef Geom_traits_2::Point_2                               Point_2;
+typedef Geom_traits_2::X_monotone_curve_2                    X_monotone_curve_2;
+typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
 typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
-                                                              Arrangement_2;
+                                                             Arrangement_2;
 
 int main ()
 {
