@@ -1505,6 +1505,22 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=un
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
 CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
+CMake/cmake/modules/CheckCXXFileRuns.cmake -text
+CMake/cmake/modules/CheckCXXSourceRuns.cmake -text
+CMake/cmake/modules/FindBOOST2.cmake -text
+CMake/cmake/modules/FindBOOST_PROGRAM_OPTIONS.cmake -text
+CMake/cmake/modules/FindCGAL.cmake -text
+CMake/cmake/modules/FindCGAL_CORE.cmake -text
+CMake/cmake/modules/FindCORE.cmake -text
+CMake/cmake/modules/FindGMP.cmake -text
+CMake/cmake/modules/FindGMPXX.cmake -text
+CMake/cmake/modules/FindMPFR.cmake -text
+CMake/cmake/modules/FindZLIB.cmake -text
+CMake/cmake/modules/LogCMakeVariables.cmake -text
+CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
+CMake/cmake/modules/Qt3Macros.cmake -text
+CMake/compiler_config.h.in -text
+CMake/set_compiler_flags.cmake -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
