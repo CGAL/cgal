@@ -251,29 +251,13 @@ public:
 
         typedef typename AK_2::X_real_traits_1 X_traits;
         typedef typename AK_2::Y_real_traits_1 Y_traits;
-        
-        //typename Y_traits::Lower_boundary lower_2;
-        //typename Y_traits::Upper_boundary upper_2;
-        //Boundary eps = Boundary(1)/CGAL::POLYNOMIAL::ipower(Boundary(2), 53);
-        
+       
         for(rit = _m_proots->begin(), mit = _m_pmults->begin(); rit !=
             _m_proots->end(); rit++, mit++, i++) {
 
             std::pair<double, double> res = rit->to_double();
-            /*Boundary prec_x = (rit->x().high() - rit->x().low())*eps,
-                     prec_y = (upper_2(*rit) - lower_2(*rit))*eps;
-            while(1) {
-                Boundary x_len = rit->x().high() - rit->x().low(),
-                         y_len = upper_2(*rit) - lower_2(*rit);
-                
-                if(x_len <= prec_x && y_len <= prec_y)
-                    break;
-                // keep x/y-intervals comparable in size
-                (x_len > y_len) ? rit->x().refine() : refine_2(*rit);
-            }*/
-            BENCH_OUT(i << ":\n (" << NiX::to_double(res.first) << ", " <<
-                res.second <<
-                "); multiplicity: " << *mit << "\n\n");
+            BENCH_OUT(i << ":\n (" << res.first << ", " <<
+                res.second << "); multiplicity: " << *mit << "\n\n");
         }
     }
     
