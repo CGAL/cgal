@@ -69,8 +69,8 @@ void test_algebraic_curve_kernel_2() {
     typedef typename AK_2::Curve_2 Curve_2;
     typedef typename Curve_2::Poly_d Internal_poly_2;
     typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
-    typedef typename Curve_analysis_2::Curve_vertical_line_1
-        Curve_vertical_line_1;
+    typedef typename Curve_analysis_2::Status_line_1
+        Status_line_1;
 
     typedef typename AK_2::X_coordinate_1 X_coordinate_1;
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
@@ -98,16 +98,16 @@ void test_algebraic_curve_kernel_2() {
     std::cerr << "done..\n";
             
     Curve_analysis_2 ca0(c0), ca1(c1);
-    Curve_vertical_line_1 line1, line2;
+    Status_line_1 line1, line2;
     Xy_coordinate_2 xy1, xy2, xy3;
 
     ///////// testing comparison predicates //////////
     
-    line1 = ca0.vertical_line_of_interval(0);
-    xy1 = line1.get_algebraic_real_2(1);
-    line2 = ca1.vertical_line_at_event(1);
-    xy2 = line2.get_algebraic_real_2(2);
-    xy3 = line2.get_algebraic_real_2(1);
+    line1 = ca0.status_line_of_interval(0);
+    xy1 = line1.algebraic_real_2(1);
+    line2 = ca1.status_line_at_event(1);
+    xy2 = line2.algebraic_real_2(2);
+    xy3 = line2.algebraic_real_2(1);
 
     CGAL_test_assert(kernel_2.compare_x_2_object()(xy1, xy2) == CGAL::SMALLER);
     CGAL_test_assert(kernel_2.compare_x_2_object()(xy2, xy3) == CGAL::EQUAL);
@@ -225,27 +225,27 @@ void test_algebraic_curve_kernel_2() {
 
     ///////// testing sign_2 //////////////
 
-    Curve_vertical_line_1 line;
+    Status_line_1 line;
     Xy_coordinate_2 xy;
         
-    int n_lines = ca0.number_of_vertical_lines_with_event(), ii, jj,
+    int n_lines = ca0.number_of_status_lines_with_event(), ii, jj,
         n_events;
     for(ii = 0; ii < n_lines; ii++) {
 
-        line = ca0.vertical_line_at_event(ii);
+        line = ca0.status_line_at_event(ii);
         n_events = line.number_of_events();
         std::cout << ii << "pts at event: \n";
         for(jj = 0; jj < n_events; jj++) {
-            xy = line.get_algebraic_real_2(jj);
+            xy = line.algebraic_real_2(jj);
             std::cout << "sign 2: " <<
                 kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
         }
             
         std::cout << ii << "pts over interval: \n";
-        line = ca0.vertical_line_of_interval(ii);
+        line = ca0.status_line_of_interval(ii);
         n_events = line.number_of_events();
         for(jj = 0; jj < n_events; jj++) {
-            xy = line.get_algebraic_real_2(jj);
+            xy = line.algebraic_real_2(jj);
             std::cout << " sign 2: " <<
                 kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
         }
