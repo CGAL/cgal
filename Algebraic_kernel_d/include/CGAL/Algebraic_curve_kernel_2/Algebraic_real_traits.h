@@ -70,7 +70,7 @@ struct Algebraic_real_traits {
 };
 
 
-/*template <class AlgebraicCurveKernel_2, class Curve_>
+template <class AlgebraicCurveKernel_2, class Curve_>
 struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     AlgebraicCurveKernel_2>, AcX::Algebraic_curve_pair_2<Curve_> > {
     
@@ -183,57 +183,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             }
         }
     };
-
-    //! returns double interval approximation of an y-coordinate of an
-    //! algebraic real with guaranteed first 53 bits of the result
-    struct To_interval
-        : public Unary_function<Type, std::pair<double, double> > {
-
-        typedef std::pair<double, double> result_type;
-        
-        result_type operator()(const Type& r) const {
-
-            Event_line vline = r.curve().event_info_at_x(r.x());
-            int arcno = r.arcno();
-
-            /////////// attention!! need to test for exact zero !!
-               
-            // Refine until both boundaries have the same sign
-            while(CGAL::sign(vline.lower_boundary(arcno)) !=
-                    CGAL::sign(vline.upper_boundary(arcno))) {
-                vline.refine(arcno);
-            }
-            
-            CGAL_assertion(
-                CGAL::sign(vline.lower_boundary(arcno)) != CGAL::ZERO &&
-                CGAL::sign(vline.upper_boundary(arcno)) != CGAL::ZERO);
-
-            typedef typename Get_arithmetic_kernel<Coefficient>::
-                Arithmetic_kernel AT;
-            typedef typename AT::Bigfloat BF;
-            typedef typename AT::Bigfloat_interval BFI;
-
-            long old_precision = get_precision( BF() );
-            set_precision(BF(), 53);
-            long final_prec = set_precision(BF(), get_precision(BF())+4);
-  
-            BFI bfi = CGALi::hull(convert_to_bfi(vline.lower_boundary(arcno)),
-                convert_to_bfi(vline.upper_boundary(arcno)));
-    
-            while(!singleton(bfi) && get_significant_bits(bfi) < final_prec) {
-                vline.refine(arcno);
-                bfi = CGALi::hull(
-                    convert_to_bfi(vline.lower_boundary(arcno)),
-                    convert_to_bfi(vline.upper_boundary(arcno)));
-            }
-            
-            set_precision(BF(),final_prec);
-            result_type res = CGAL::to_interval(bfi);
-            set_precision(BF(), old_precision);
-            return res;
-        }
-    };
-};*/
+};
     
 template <class Kernel_2>
 struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
@@ -300,14 +250,13 @@ struct Algebraic_real_traits<NiX::Algebraic_real<Coefficient_, FieldWithSqrt,
         //! resulting interval is:
         //! <tt>|lower - upper|/|t| <= 2^(-rel_prec)</tt>
         void operator()(Type& t, int rel_prec) const {
-
+            
             if(CGAL::is_zero(t)) {
                 t = Type(0);
                 return;
             } 
-                          
             Boundary len = t.high() - t.low(), prec = len /
-                    CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
+                CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
             while(len > prec) {
                 t.refine();
                 len = t.high() - t.low();

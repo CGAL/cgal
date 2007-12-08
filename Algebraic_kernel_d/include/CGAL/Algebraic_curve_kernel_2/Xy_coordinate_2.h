@@ -19,14 +19,13 @@
 #include <boost/pool/pool_alloc.hpp>
 
 CGAL_BEGIN_NAMESPACE
-//::boost::fast_pool_allocator<Rep_> >
+
 namespace CGALi {
 
 template < class AlgebraicCurveKernel_2, class Rep_, 
       class HandlePolicy_ = CGAL::Handle_policy_no_union,
       class Allocator_ = CGAL_ALLOCATOR(Rep_) >
-      
-      //::boost::fast_pool_allocator<Rep_> >
+       //::boost::fast_pool_allocator<Rep_> >
 class Xy_coordinate_2;
 
 template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
@@ -95,7 +94,7 @@ public:
     
     //! this instance's first template parameter
     typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
-
+    
     //! this instance's second template parameter
     typedef Rep_ Rep;
     
@@ -108,6 +107,10 @@ public:
     //! this instance itself
     typedef Xy_coordinate_2<Algebraic_curve_kernel_2, Rep, Handle_policy,
         Allocator> Self;
+        
+    //! an instance of AlgebraicKernel_1
+    typedef typename Algebraic_curve_kernel_2::Algebraic_kernel_1 
+        Algebraic_kernel_1;
     
     //! type of a curve pair 
     typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
@@ -140,8 +143,6 @@ public:
     //! type for boundary intervals
     typedef boost::numeric::interval<Boundary> Boundary_interval;
     
-
-
     //!@}
 private:
     //! \name private methods
@@ -230,7 +231,7 @@ public:
     /*!\brief 
      * x-coordinate of the point
      */
-    X_coordinate_1 x() const { 
+    const X_coordinate_1& x() const { 
         return this->ptr()->_m_x; 
     }
 
@@ -239,7 +240,7 @@ public:
      *
      * TODO: Loos-algorithm
      */
-    X_coordinate_1 y() const {
+    const X_coordinate_1& y() const {
         CGAL_error_msg("Not yet implemented");
         return this->ptr()->_m_x; 
     }
@@ -327,22 +328,19 @@ private:
     {
         CGAL_precondition(this->compare_x(q) == CGAL::EQUAL);
     
-        Curve_2 f = this->curve();
-        Curve_2 g = q.curve();
-        // may have common factor ?
-        if(!f.is_identical(g) && Self::_simplify(*this,q)) {
-            // restart because supporting curves might be equal now
-            return this->_compare_y_at_x(q);
-        } 
+        Curve_2 f = curve(), g = q.curve();
         if(f.is_identical(g)) 
-            return CGAL::sign(this->arcno() - q.arcno());
+            return CGAL::sign(arcno() - q.arcno());
+        if(Self::_simplify(*this, q)) 
+            // restart since supporting curves might be equal now
+            return _compare_y_at_x(q);
+                
         // this is to keep compiler happy ))
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
              (Curve_analysis_2(g)));
         typename Curve_pair_analysis_2::Status_line_1 vline =
             cpa_2.status_line_for_x(x());
-            
-        return CGAL::sign(vline.event_of_curve(this->arcno(), 0) -
+        return CGAL::sign(vline.event_of_curve(arcno(), 0) -
                     vline.event_of_curve(q.arcno(), 1));
     }
     
@@ -419,8 +417,7 @@ public:
     friend std::ostream& operator << <>(std::ostream& os, const Self& pt);
 
     //!@}
-
-    public:
+public:
     
     //! Returns whether the x-coordinate equals zero
     bool is_x_zero() const {
@@ -488,9 +485,7 @@ public:
         }
         set_precision(BF(),old_prec);
         return std::make_pair(double_x, double_y); 
-
     }
-
 
     public:
     //!\name Approximating functions
@@ -522,12 +517,23 @@ public:
         return Boundary_interval(lower(*this), upper(*this));
     }
     
-    /*!
-     * \brief Refines the x-xoordinate
+    /*!\brief 
+     *  computes at least half's the current interval of the first coordinate 
      */
     void refine_x() const {
-        typename X_real_traits_1::Refine refine;
-        refine(this->ptr()->_m_x);
+        // typename Algebraic_kernel_1::Refine refine
+        // refine(this->ptr()->_m_x)
+        //this->ptr()->_m_x.refine();
+        typename X_real_traits_1::Refine()(this->ptr()->_m_x);
+    }
+    
+    /*!\brief 
+     *  refines the first coordinate w.r.t relative precision
+     */
+    void refine_x(int rel_prec) {
+        // typename Algebraic_kernel_1::Refine refine
+        // refine(this->ptr()->_m_x)
+        typename X_real_traits_1::Refine()(this->ptr()->_m_x, rel_prec);
     }
 
     /*!

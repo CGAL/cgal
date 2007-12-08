@@ -68,7 +68,8 @@ public:
             const Curve_analysis_2& ca, size_type n_arcs) :
             _m_x(x), _m_index(i), _m_ca(ca),_m_num_arcs(n_arcs, n_arcs),
             _m_total_arcs(n_arcs), _m_vertical_line(false), _m_event(false),
-            _m_num_arcs_minus_inf(0, 0), _m_num_arcs_plus_inf(0, 0)  {
+            _m_num_arcs_minus_inf(0, 0), _m_num_arcs_plus_inf(0, 0),
+                _m_xy_coords(n_arcs)  {
     }
 
     // constructs status line at event
@@ -133,7 +134,7 @@ public:
     // temporary added underlying Event1_info object
     Event1_info _m_event_info;*/
     
-    // container storing the vector of events on a status line
+    // stores algebraic real over the vertical line
     mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
     
      // befriending the handle
@@ -435,6 +436,7 @@ public:
         CGAL_precondition(is_event());
         this->ptr()->_m_arcs = arcs;
         this->ptr()->_m_total_arcs = static_cast<int>(arcs.size());
+        this->ptr()->_m_xy_coords.resize(arcs.size());
     }
 
     void _set_v_line() const {
