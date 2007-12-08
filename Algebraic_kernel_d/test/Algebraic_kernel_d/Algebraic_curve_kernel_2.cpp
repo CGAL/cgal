@@ -18,8 +18,8 @@
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
-// reqiured for Kernel_2::decompose tests
-#define AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY
+// required for Kernel_2::decompose tests
+#define AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY 1
 
 #include <NiX/Arithmetic_traits.h>
 #include <NiX/NT_traits.h>
@@ -28,6 +28,8 @@
 
 #include <CGAL/Algebraic_curve_kernel_2.h>
 #include <CGAL/_test_algebraic_curve_kernel_2.h>
+
+#include <CGAL/Sqrt_extension.h>
 
 //#include <CGAL/Arithmetic_kernel.h>
 
