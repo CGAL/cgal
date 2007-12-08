@@ -177,7 +177,6 @@ public:
   // Traits types:
   typedef typename Base::Has_left_category      Has_left_category;
   typedef typename Base::Has_merge_category     Has_merge_category;
-  typedef typename Base::Has_boundary_category  Has_boundary_category;
   typedef typename Base::Boundary_category      Boundary_category;
   
   typedef typename Base::Point_2                Point_2;

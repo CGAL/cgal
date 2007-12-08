@@ -54,7 +54,6 @@ public:
 
   // Tags.
   typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Has_boundary_category  Has_boundary_category;
   typedef typename Base::Boundary_category      Boundary_category;
 
   /// \name Construction.
@@ -241,11 +240,20 @@ public:
     Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
                                     Arr_curve_end ind) const
     {
-      // The function is implemented based on the Has_boundary category.
+      // The function is implemented based on the Boundary category.
       // If the traits class does not support boundary conditions, we just
       // return ARR_INTERIOR.
-      return parameter_space_in_x (xcv, ind, Has_boundary_category());
+      return parameter_space_in_x (xcv, ind, Boundary_category());
     }
+
+    Arr_parameter_space operator() (const Point_2 & p) const
+    {
+      // The function is implemented based on the Boundary category.
+      // If the traits class does not support boundary conditions, we just
+      // return ARR_INTERIOR.
+      return parameter_space_in_x (p, Boundary_category());
+    }
+
 
   protected:
     //! The base traits.
@@ -264,21 +272,36 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
         
     /*!
-     * Implementation of the operator() in case the Has_boundary tag is true.
+     * Implementation of the operator() in case the Boundary tag is true.
      */
     Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2& xcv,
                                               Arr_curve_end ind,
-                                              Tag_true) const
+                                              Arr_has_boundary_tag) const
     {
       return (m_base->parameter_space_in_x_2_object() (xcv, ind));
     }
 
     /*!
-     * Implementation of the operator() in case the Has_boundary tag is false.
+     * Implementation of the operator() in case the Boundary tag is false.
      */
     Arr_parameter_space parameter_space_in_x (const X_monotone_curve_2&,
                                               Arr_curve_end,
-                                              Tag_false) const
+                                              Arr_no_boundary_tag) const
+    {
+      return ARR_INTERIOR;
+    }
+    
+    Arr_parameter_space parameter_space_in_x (const Point_2 & p,
+                                              Arr_has_boundary_tag) const
+    {
+      return (m_base->parameter_space_in_x_2_object() (p));
+    }
+
+    /*!
+     * Implementation of the operator() in case the Boundary tag is false.
+     */
+    Arr_parameter_space parameter_space_in_x (const Point_2 &,
+                                              Arr_no_boundary_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -305,10 +328,10 @@ public:
     Arr_parameter_space operator() (const X_monotone_curve_2& xcv,
                               Arr_curve_end ind) const
     {
-      // The function is implemented based on the Has_boundary category.
+      // The function is implemented based on the Boundary category.
       // If the traits class does not support boundary conditions, we just
       // return ARR_INTERIOR.
-      return parameter_space_in_y(xcv, ind, Has_boundary_category());
+      return parameter_space_in_y(xcv, ind, Boundary_category());
     }
 
     /*! Determine whether a point lies on a y-boundary.
@@ -320,7 +343,7 @@ public:
      */
     Arr_parameter_space operator()(const Point_2 & p) const
     {
-      return parameter_space_in_y(p, Has_boundary_category());
+      return parameter_space_in_y(p, Boundary_category());
     }
       
   protected:
@@ -342,9 +365,9 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2& xcv,
-                                             Arr_curve_end ind,
-                                             Tag_true) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2& xcv,
+                                              Arr_curve_end ind,
+                                              Arr_has_boundary_tag) const
     {
       return (m_base->parameter_space_in_y_2_object() (xcv, ind));
     }
@@ -352,9 +375,9 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Arr_parameter_space parameter_space_in_y(const X_monotone_curve_2 &,
-                                             Arr_curve_end,
-                                             Tag_false) const
+    Arr_parameter_space parameter_space_in_y (const X_monotone_curve_2 &,
+                                              Arr_curve_end,
+                                              Arr_no_boundary_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -362,7 +385,8 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Arr_parameter_space parameter_space_in_y(const Point_2 & p, Tag_true) const
+    Arr_parameter_space parameter_space_in_y (const Point_2 & p,
+                                              Arr_has_boundary_tag) const
     {
       return m_base->parameter_space_in_y_2_object()(p);
     }
@@ -370,7 +394,8 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Arr_parameter_space parameter_space_in_y(const Point_2 &, Tag_false) const
+    Arr_parameter_space parameter_space_in_y (const Point_2 &,
+                                              Arr_no_boundary_tag) const
     {
       return ARR_INTERIOR;
     }
@@ -403,12 +428,12 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
     
     /*!
-     * Implementation of the operator() in case the Has_boundary tag is true.
+     * Implementation of the operator() in case the Boundary tag is true.
      */
-    Comparison_result _compare_point_curve(const Point_2 & p,
-                                           const X_monotone_curve_2 & xcv,
-                                           Arr_curve_end ce,
-                                           Tag_true) const
+    Comparison_result _compare_point_curve (const Point_2 & p,
+                                            const X_monotone_curve_2 & xcv,
+                                            Arr_curve_end ce,
+                                            Arr_has_boundary_tag) const
     {
       return (m_base->compare_x_near_boundary_2_object()(p, xcv, ce));
     }
@@ -418,8 +443,8 @@ public:
      */
     Comparison_result _compare_point_curve(const Point_2 &,
                                            const X_monotone_curve_2 &,
-                                           Arr_curve_end ,
-                                           Tag_false) const
+                                           Arr_curve_end,
+                                           Arr_no_boundary_tag) const
     {
       CGAL_error();
       return EQUAL;
@@ -428,11 +453,11 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Comparison_result _compare_curves(const X_monotone_curve_2 & xcv1, 
-                                      Arr_curve_end ce1,
-                                      const X_monotone_curve_2 & xcv2,
-                                      Arr_curve_end ce2,
-                                      Tag_true) const
+    Comparison_result _compare_curves (const X_monotone_curve_2 & xcv1, 
+                                       Arr_curve_end ce1,
+                                       const X_monotone_curve_2 & xcv2,
+                                       Arr_curve_end ce2,
+                                       Arr_has_boundary_tag) const
     {
       return m_base->compare_x_near_boundary_2_object()(xcv1, ce1, xcv2, ce2);
     }
@@ -440,11 +465,11 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Comparison_result _compare_curves(const X_monotone_curve_2 &,
-                                      Arr_curve_end,
-                                      const X_monotone_curve_2 &,
-                                      Arr_curve_end,
-                                      Tag_false) const
+    Comparison_result _compare_curves (const X_monotone_curve_2 &,
+                                       Arr_curve_end,
+                                       const X_monotone_curve_2 &,
+                                       Arr_curve_end,
+                                       Arr_no_boundary_tag) const
     {
       CGAL_error();
       return EQUAL;
@@ -466,7 +491,7 @@ public:
                                   const X_monotone_curve_2 & xcv,
                                   Arr_curve_end ce) const
     {
-      return _compare_point_curve(p, xcv, ce, Has_boundary_category());
+      return _compare_point_curve(p, xcv, ce, Boundary_category());
     }
 
     /*! Compare the relative x-positions of two curve ends.
@@ -486,7 +511,7 @@ public:
                                   const X_monotone_curve_2 & xcv2,
                                   Arr_curve_end ce2) const
     {
-      return _compare_curves(xcv1, ce1, xcv2, ce2, Has_boundary_category());
+      return _compare_curves(xcv1, ce1, xcv2, ce2, Boundary_category());
     }
   };
 
@@ -519,10 +544,10 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is true.
      */
-    Comparison_result _comp_y_near_bnd_imp (const X_monotone_curve_2 & xcv1,
-                                            const X_monotone_curve_2 & xcv2, 
-                                            Arr_curve_end ce,
-                                            Tag_true) const
+    Comparison_result comp_y_near_bnd (const X_monotone_curve_2 & xcv1,
+                                       const X_monotone_curve_2 & xcv2, 
+                                       Arr_curve_end ce,
+                                       Arr_has_boundary_tag) const
     {
       return m_base->compare_y_near_boundary_2_object()(xcv1, xcv2, ce);
     }
@@ -530,10 +555,10 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Comparison_result _comp_y_near_bnd_imp (const X_monotone_curve_2 &,
-                                            const X_monotone_curve_2 &, 
-                                            Arr_curve_end,
-                                            Tag_false) const
+    Comparison_result comp_y_near_bnd (const X_monotone_curve_2 &,
+                                       const X_monotone_curve_2 &, 
+                                       Arr_curve_end,
+                                       Arr_no_boundary_tag) const
     {
       CGAL_error();
       return EQUAL;
@@ -554,10 +579,10 @@ public:
                                   const X_monotone_curve_2 & xcv2, 
                                   Arr_curve_end ce) const
     {
-      // The function is implemented based on the Has_boundary category.
+      // The function is implemented based on the Boundary category.
       // If the traits class does not support unbounded curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
-      return _comp_y_near_bnd_imp(xcv1, xcv2, ce, Has_boundary_category());
+      return comp_y_near_bnd (xcv1, xcv2, ce, Boundary_category());
     }
   };
 
@@ -627,10 +652,10 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
     
     /*!
-     * Implementation of the operator() in case the Has_boundary tag is true.
+     * Implementation of the operator() in case the boundary tag is true.
      */
-    Comparison_result comp_y_on_idn(const Point_2 & p1, const Point_2 & p2,
-                                    Tag_true) const
+    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+                                     Arr_bounded_boundary_tag) const
     {
       return m_base->compare_y_on_identification_2_object()(p1, p2);
     }
@@ -638,13 +663,20 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Comparison_result comp_y_on_idn(const Point_2 & p1, const Point_2 & p2,
-                                    Tag_false) const
+    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+                                     Arr_no_boundary_tag) const
     {
       CGAL_error();
       return EQUAL;
     }
 
+    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+                                     Arr_has_boundary_tag) const
+    {
+      CGAL_error();
+      return EQUAL;
+    }
+    
   public:
     /*! Compare the relative y-positions of two curve ends.
      * \param xcv1 The first curve.
@@ -658,10 +690,10 @@ public:
      */
     Comparison_result operator() (const Point_2 & p1, const Point_2 & p2) const
     {
-      // The function is implemented based on the Has_boundary category.
+      // The function is implemented based on the Boundary category.
       // If the traits class does not support unbounded curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
-      return comp_y_on_idn(p1, p2, Has_boundary_category());
+      return comp_y_on_idn(p1, p2, Boundary_category());
     }
   };
 
@@ -1499,8 +1531,8 @@ public:
 
   // Tags.
   typedef typename Base::Has_left_category               Has_left_category;
-  typedef typename Base::Has_boundary_category           Has_boundary_category;
   typedef typename Base::Has_merge_category              Has_merge_category;
+  typedef typename Base::Boundary_category               Boundary_category;
 
   /// \name Construction.
   //@{

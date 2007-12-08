@@ -60,7 +60,6 @@ public:
   // Category tags:
   typedef Tag_true                              Has_left_category;
   typedef Tag_true                              Has_merge_category;
-  typedef Tag_true                              Has_boundary_category;
   typedef Arr_bounded_boundary_tag              Boundary_category;
 
   /*! Default constructor */

@@ -1622,19 +1622,19 @@ protected:
   {
     return (_compare_vertices_xy_impl
             (v1, v2,
-             typename Geometry_traits_2::Has_boundary_category()));
+             typename Geometry_traits_2::Boundary_category()));
   }
 
   Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
                                                const DVertex *v2,
-                                               Tag_false ) const
+                                               Arr_no_boundary_tag) const
   {
     return (geom_traits->compare_xy_2_object() (v1->point(), v2->point()));
   }
 
   Comparison_result _compare_vertices_xy_impl (const DVertex *v1,
                                                const DVertex *v2,
-                                               Tag_true ) const;
+                                               Arr_has_boundary_tag) const;
 
   /*!
    * Locate the leftmost vertex on the a given sequence defined by two

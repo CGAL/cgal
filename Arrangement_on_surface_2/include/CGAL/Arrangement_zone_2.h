@@ -27,6 +27,8 @@
  */
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_tags.h>
+
 #include <list>
 #include <map>
 #include <set>
@@ -69,10 +71,7 @@ public:
 
   typedef typename Geometry_traits_2::Point_2            Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename  Geometry_traits_2::Has_boundary_category
-    Has_boundary_category;
-  typedef typename  Geometry_traits_2::Boundary_category
-    Boundary_category;
+  typedef typename  Geometry_traits_2::Boundary_category Boundary_category;
   
 protected:
 
@@ -326,10 +325,11 @@ private:
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl(p, he, Has_boundary_category()));
+    return (_is_to_left_impl(p, he, Boundary_category()));
   }
 
-  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_false) const
+  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
+                        Arr_no_boundary_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -339,7 +339,8 @@ private:
              (p, he->target()->point()) == SMALLER));
   }
 
-  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he, Tag_true) const;
+  bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
+                        Arr_has_boundary_tag) const;
 
   /*!
    * Check if the given point lies completely to the right of the given egde.
@@ -350,10 +351,11 @@ private:
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_right_impl(p, he, Has_boundary_category()));
+    return (_is_to_right_impl(p, he, Boundary_category()));
   }
 
-  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_false) const
+  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
+                         Arr_no_boundary_tag) const
   {
     return ((he->direction() == ARR_LEFT_TO_RIGHT &&
              geom_traits->compare_xy_2_object() 
@@ -363,7 +365,8 @@ private:
              (p, he->source()->point()) == LARGER));
   }
 
-  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he, Tag_true) const;
+  bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,
+                         Arr_has_boundary_tag) const;
 
   /*!
    * Compute the (lexicographically) leftmost intersection of the query

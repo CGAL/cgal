@@ -46,15 +46,14 @@ class Arrangement_with_history_2 :
      typename Default_planar_topology<GeomTraits_,
                                       Dcel_,
                                       typename GeomTraits_::
-                                       Has_boundary_category>::Traits>
+                                        Boundary_category>::Traits>
 {
 private:
 
-  typedef typename GeomTraits_::Has_boundary_category     Has_boundary;
   typedef typename GeomTraits_::Boundary_category         Boundary_category;
   typedef Default_planar_topology<GeomTraits_,
                                   Dcel_,
-                                  Has_boundary>           Default_topology;
+                                  Boundary_category>      Default_topology;
   typedef Arrangement_on_surface_with_history_2<GeomTraits_,
              typename Default_topology::Traits>           Base;
 

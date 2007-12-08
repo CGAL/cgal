@@ -61,20 +61,19 @@ public:
   typedef typename Base_traits_2::Point_2             Point_2;
 
   typedef typename Base_traits_2::Has_left_category   Has_left_category;
-  typedef typename Base_traits_2::Has_boundary_category  Has_boundary_category;
   typedef typename Base_traits_2::Boundary_category   Boundary_category;
 
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;
 
   // Representation of a curve with an addtional data field:
-  typedef _Curve_data_ex<Base_curve_2, Curve_data>  Curve_2;
+  typedef _Curve_data_ex<Base_curve_2, Curve_data>    Curve_2;
   
   // Representation of an x-monotone curve with an addtional data field:
   typedef _Curve_data_ex<Base_x_monotone_curve_2,
-                         X_monotone_curve_data>     X_monotone_curve_2;
+                         X_monotone_curve_data>       X_monotone_curve_2;
 
-  typedef typename Base_traits_2::Multiplicity      Multiplicity;
+  typedef typename Base_traits_2::Multiplicity        Multiplicity;
   
 public:
   
@@ -289,8 +288,7 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      return (_are_mergeable_base_imp (cv1, cv2,
-                                       Base_has_merge_category()));
+      return (_are_mergeable_base_imp (cv1, cv2, Base_has_merge_category()));
     }
 
   private:

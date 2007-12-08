@@ -52,10 +52,9 @@ public:
   typedef typename Base::Base_point_2                 Base_point_2;
   typedef typename Base::Point_2                      Point_2;
 
-  typedef typename Base::Has_boundary_category        Has_boundary_category;
-  typedef typename Base::Boundary_category            Boundary_category;
   typedef typename Base::Has_left_category            Has_left_category;
   typedef Tag_false                                   Has_merge_category;
+  typedef typename Base::Boundary_category            Boundary_category;
 
 public:
 

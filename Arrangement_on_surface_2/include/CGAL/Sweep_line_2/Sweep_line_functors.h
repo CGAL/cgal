@@ -49,7 +49,6 @@ public:
 
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
-  typedef typename Traits_2::Has_boundary_category  Has_boundary_category;
   typedef typename Traits_2::Boundary_category      Boundary_category;
 
 private:

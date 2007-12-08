@@ -37,19 +37,17 @@ struct Default_planar_topology
 {};
 
 template <class GeomTraits, class Dcel>
-struct Default_planar_topology<GeomTraits, Dcel, Tag_true>
+struct Default_planar_topology<GeomTraits, Dcel, Arr_unbounded_boundary_tag>
 {
   // A topology-traits class that supports unbounded curves:
-  typedef Arr_unb_planar_topology_traits_2<GeomTraits,
-                                           Dcel>             Traits;
+  typedef Arr_unb_planar_topology_traits_2<GeomTraits, Dcel>        Traits;
 };
 
 template <class GeomTraits, class Dcel>
-struct Default_planar_topology<GeomTraits, Dcel, Tag_false>
+struct Default_planar_topology<GeomTraits, Dcel, Arr_no_boundary_tag>
 {
   // A topology-traits class that supports only bounded curves:
-  typedef Arr_bounded_planar_topology_traits_2<GeomTraits,
-                                               Dcel>         Traits;
+  typedef Arr_bounded_planar_topology_traits_2<GeomTraits, Dcel>    Traits;
 
 };
 

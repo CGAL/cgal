@@ -50,8 +50,7 @@ class Arr_bounded_planar_topology_traits_2 :
 {
 private:
 
-  typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
-                                                          Base;
+  typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_> Base;
 
 public:
 

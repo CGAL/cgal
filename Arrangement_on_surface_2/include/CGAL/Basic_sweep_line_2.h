@@ -32,6 +32,7 @@
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
 #include <CGAL/Multiset.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_tags.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -93,8 +94,6 @@ public:
   typedef Arr_traits_basic_adaptor_2<Traits_2>          Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename Traits_adaptor_2::Has_boundary_category 
-                                                        Has_boundary_category;
   typedef typename Traits_adaptor_2::Boundary_category  Boundary_category;
 
   typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
@@ -531,14 +530,14 @@ protected:
                                  Arr_curve_end ind,
                                  bool is_new)
   {
-    _update_event_at_infinity(e, cv, ind, is_new, Has_boundary_category());
+    _update_event_at_infinity(e, cv, ind, is_new, Boundary_category());
   }
 
   void _update_event_at_infinity(Event* e,
                                  const X_monotone_curve_2& cv,
                                  Arr_curve_end ind,
                                  bool is_new,
-                                 Tag_true )
+                                 Arr_has_boundary_tag)
   {
     m_visitor->update_event (e, cv, ind, is_new);
   }
@@ -547,7 +546,7 @@ protected:
                                  const X_monotone_curve_2& /* cv */,
                                  Arr_curve_end /* ind */,
                                  bool /* is_new */,
-                                 Tag_false )
+                                 Arr_no_boundary_tag)
   {
     CGAL_error();
   }
