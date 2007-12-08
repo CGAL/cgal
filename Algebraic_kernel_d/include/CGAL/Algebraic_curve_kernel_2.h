@@ -279,6 +279,151 @@ public:
     //! traits class for \c Xy_coorinate_2
     typedef CGALi::Algebraic_real_traits<Xy_coordinate_2> Y_real_traits_1;
     
+    //! returns the first coordinate of \c Xy_coordinate_2
+    struct Get_x_2 :
+        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        
+        X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
+            return xy.x();
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Get_x_2, Get_x_2_object);
+    
+    //! returns the second coordinate of \c Xy_coordinate_2
+    struct Get_y_2 :
+        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        
+        X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
+            return xy.y();
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Get_y_2, Get_y_2_object);
+    
+    struct Refine_x_2 :
+        public Unary_function<Xy_coordinate_2, void> {
+      
+        //! \brief returns at least half's the current interval of the first
+        //! coordinate of \c r
+        //!
+        //! note that an interval may also degenerate to a single point
+        void operator()(const Xy_coordinate_2& r) const {
+            r.refine_x();            
+        }
+        
+        //! \brief refines the current interval of the first coordinate of \c r
+        //! w.r.t. given relative precision
+        //!
+        //! that is:
+        //! <tt>|lower - upper|/|r.x()| <= 2^(-rel_prec)</tt> 
+        void operator()(Xy_coordinate_2& r, int rel_prec) const {  
+            r.refine_x(rel_prec);
+        }
+    };
+    CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
+    
+    struct Refine_y_2 :
+        public Unary_function<Xy_coordinate_2, void> {
+      
+        //! \brief returns at least half's the current interval of the second
+        //! coordinate of \c r
+        //!
+        //! note that an interval may also degenerate to a single point
+        void operator()(const Xy_coordinate_2& r) const {
+            typename Y_real_traits_1::Refine()(r);
+        }
+        
+        //! \brief refines the current interval of the second coordinate of 
+        //! \c r w.r.t. given relative precision
+        //!
+        //! that is:
+        //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
+        void operator()(Xy_coordinate_2& r, int rel_prec) const {  
+            typename Y_real_traits_1::Refine()(r, rel_prec);
+        }
+    };
+    CGAL_Algebraic_Kernel_pred(Refine_y_2, refine_y_2_object);
+    
+    //! computes the current lower boundary of the first coordinate of \c r
+    struct Lower_boundary_x_2 {
+       
+        typedef Xy_coordinate_2 agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r) {
+            return typename X_real_traits_1::Lower_boundary()(r.x());
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Lower_boundary_x_2, lower_boundary_x_2_object);
+    
+    //! computes the current upper boundary of the first coordinate of \c r
+    struct Upper_boundary_x_2 {
+       
+        typedef Xy_coordinate_2 agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r) {
+            return typename X_real_traits_1::Upper_boundary()(r.x());
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Upper_boundary_x_2, upper_boundary_x_2_object);
+    
+    //! computes the current lower boundary of the second coordinate of \c r
+    struct Lower_boundary_y_2 {
+       
+        typedef Xy_coordinate_2 agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r) {
+            return typename Y_real_traits_1::Lower_boundary()(r);
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Lower_boundary_y_2, lower_boundary_y_2_object);
+    
+    //! computes the current lower boundary of the second coordinate of \c r
+    struct Upper_boundary_y_2 {
+       
+        typedef Xy_coordinate_2 agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r) {
+            return typename Y_real_traits_1::Upper_boundary()(r);
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Upper_boundary_y_2, upper_boundary_y_2_object);
+    
+    //! returns the number of boundary type in-between x-coordinates of two
+    //! Xy_coordinate_2 objects
+    struct Boundary_between_x_2 {
+       
+        typedef Xy_coordinate_2 first_agrument_type;
+        typedef Xy_coordinate_2 second_agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r1, 
+                const Xy_coordinate_2& r2) const {
+            return typename X_real_traits_1::Boundary_between()
+                (r1.x(), r2.x());
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Boundary_between_x_2, 
+            boundary_between_x_2_object);
+            
+    //! returns the number of boundary type in-between y-coordinates of two
+    //! Xy_coordinate_2 objects
+    struct Boundary_between_y_2 {
+       
+        typedef Xy_coordinate_2 first_agrument_type;
+        typedef Xy_coordinate_2 second_agrument_type;
+        typedef typename Algebraic_kernel_1::Boundary result_type;
+            
+        result_type operator()(const Xy_coordinate_2& r1, 
+                const Xy_coordinate_2& r2) const {
+            return typename Y_real_traits_1::Boundary_between()(r1, r2);
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Boundary_between_y_2, 
+            boundary_between_y_2_object);
+    
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
          public Binary_function<X_coordinate_1, X_coordinate_1, 
@@ -759,9 +904,6 @@ public:
         
         Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
         {
-            // TODO have a look at point on curve in 
-            // QuadriX/include/SfX/
-            // Algebraic_surface_3_z_at_xy_isolator_traits_base.h
             if(p.id() == r.curve().id()) // point lies on the same curve
                 return CGAL::ZERO;
             
@@ -774,7 +916,7 @@ public:
                 cv_line = ca_2.status_line_for_x(r.x()),
                 cv_line_r = ca_2r.status_line_for_x(r.x());
             
-            // fast check for the presence of status line at r.x()
+            // fast check for the presence of vertical line at r.x()
             if(cv_line.covers_line())    
                 return CGAL::ZERO;
                 
@@ -865,9 +1007,7 @@ public:
                     break;
                 }
             }
-//             std::cout << "arcno_low : " << arcno_low << "; arcno_high: " <<
-//                 arcno_high << "\n";
-                        
+                   
             if(arcno_low != -1) {
                 boundary_y = (arcno_high != -1 ? 
                      typename Traits::Boundary_between()(xy1, xy2) :
@@ -878,17 +1018,9 @@ public:
                 boundary_y = (arcno_high != -1 ? 
                      typename Traits::Lower_boundary()(xy2) : Boundary(0)); 
             }
-//             if(arcno_low != -1&& arcno_high!=-1) {
-//                std::cout << xy1 << "; " << xy2 << "\n";
-//             }
-//             
             if(boundary_x.low() != boundary_x.high())
                 std::cout << "oops very bizarre error occurred..\n";
-
-//             std::cout << "target pt: " <<
-//                 NiX::to_double(boundary_x.low()) << "; " <<
-//                     NiX::to_double(boundary_y) << "\n";
-                    
+              
             NiX::Polynomial<Boundary> poly = 
                 NiX::substitute_x(p.f(), boundary_x.low());
                             
