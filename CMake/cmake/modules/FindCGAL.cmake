@@ -9,19 +9,26 @@ if (CGAL_INCLUDE_DIRS AND CGAL_LIBRARIES)
   set(CGAL_FIND_QUIETLY TRUE)
 endif (CGAL_INCLUDE_DIRS AND CGAL_LIBRARIES)
 
-# TODO: search CGAL in ${CGAL_INSTALL_DIR} and ${CGAL_BINARY_DIR}
-#
-#find_path   (CGAL_INCLUDE_DIRS NAMES CGAL/basic.h
-#	     DOC "The directories containing include files for CGAL and third-party libraries")
-#
-#find_library(CGAL_LIBRARIES NAMES CGAL
-#	     DOC "Path to CGAL and third-party libraries")
+find_path   (CGAL_ROOT NAMES include/CGAL/basic.h
+             PATHS ENV CGAL_ROOT ENV CGALROOT
+      	     DOC "The directories containing include files for CGAL and third-party libraries")
 
-# TODO: include UseCGAL.cmake to define ${CGAL_DEFINITIONS}, ...?
+if ( CGAL_ROOT )
+  set( CGAL_INCLUDE_DIRS ${CGAL_ROOT}/include )
+  
+  if ( AUTO_LINK_ENABLED )
+    set(CGAL_LIBRARIES ${CGAL_ROOT}/lib )
+  else()
+    find_library(CGAL_LIBRARIES NAMES CGAL
+                 PATHS ${CGAL_ROOT}/lib
+          	     DOC "Path to CGAL and third-party libraries")
+  endif()
 
-if(CGAL_INCLUDE_DIRS AND CGAL_LIBRARIES)
-   set(CGAL_FOUND TRUE)
-endif(CGAL_INCLUDE_DIRS AND CGAL_LIBRARIES)
+  if(CGAL_INCLUDE_DIRS AND CGAL_LIBRARIES)
+    set(CGAL_FOUND TRUE)
+  endif()
+  
+endif()
 
 # Print success/error message
 if(CGAL_FOUND)

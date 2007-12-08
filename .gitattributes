@@ -1515,6 +1515,7 @@ CMake/cmake/modules/FindCORE.cmake -text
 CMake/cmake/modules/FindGMP.cmake -text
 CMake/cmake/modules/FindGMPXX.cmake -text
 CMake/cmake/modules/FindMPFR.cmake -text
+CMake/cmake/modules/FindTAUCS.cmake -text
 CMake/cmake/modules/FindZLIB.cmake -text
 CMake/cmake/modules/LogCMakeVariables.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text

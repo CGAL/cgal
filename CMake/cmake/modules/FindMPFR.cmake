@@ -14,14 +14,20 @@ if(GMP_FOUND)
     endif (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
 
     find_path(MPFR_INCLUDE_DIR NAMES mpfr.h
-	      DOC "The directory containing the MPFR include files")
+             PATHS ${GMP_INCLUDE_DIR_SEARCH}
+	           DOC "The directory containing the MPFR include files")
 
-    find_library(MPFR_LIBRARIES NAMES mpfr 
-		 DOC "Path to the MPFR library")
+    if ( AUTO_LINK_ENABLED )
+      SET(MPFR_LIBRARIES ${GMP_LIBRARIES} )
+    else()
+      find_library(MPFR_LIBRARIES NAMES mpfr 
+             PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+      	     DOC "Path to the MPFR library")
+    endif()
 
-    if(MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
-        set(MPFR_FOUND TRUE)
-    endif(MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
+    if( MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
+      set(MPFR_FOUND TRUE)
+    endif()
 
     # Print success/error message
     if(MPFR_FOUND)

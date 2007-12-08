@@ -19,8 +19,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
 # CGAL version number
 set(CGAL_MAJOR_VERSION 3)
-set(CGAL_MINOR_VERSION 3)
-set(CGAL_BUILD_VERSION 212)
+set(CGAL_MINOR_VERSION 4)
+set(CGAL_BUILD_VERSION 1)
 set(CGAL_VERSION
     "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
@@ -37,6 +37,7 @@ set(CMAKE_COLORMAKEFILE ON)
 # TODO: build static and/or dynamic CGAL libraries?
 # CGAL 3.2 builds only static libraries on Windows and static + dynamic on Unix.
 if (WIN32)
+    set(AUTO_LINK_ENABLED TRUE)
     set(BUILD_SHARED_LIBS OFF)
 endif (WIN32)
 
@@ -141,7 +142,7 @@ else(CORE_FOUND)
     macro_optional_find_package(CGAL_CORE)
     if(CGAL_CORE_FOUND)
 	# Compile CORE shipped with CGAL
-	add_subdirectory(src/Core)
+	add_subdirectory(src/CGALCore)
 
         set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_CORE_INCLUDE_DIR})
         set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_CORE_LIBRARIES})
@@ -179,7 +180,13 @@ if(QT_FOUND)
     set(CGAL_USE_QT 1)
 endif(QT_FOUND)
 
-# TODO: Write FindTAUCS.cmake
+# Find TAUCS
+macro_optional_find_package(TAUCS)
+if(TAUCS_FOUND)
+    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${TAUCS_INCLUDE_DIR})
+    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${TAUCS_LIBRARIES})
+    set(CGAL_USE_TAUCS 1)
+endif()
 
 # Find OpenGL
 macro_optional_find_package(OpenGL)
@@ -207,9 +214,6 @@ INSTALL(FILES CHANGES
 
 # Install headers
 add_subdirectory(include/CGAL)
-if (CGAL_USE_CGAL_CORE)
-    add_subdirectory(include/CORE)
-endif (CGAL_USE_CGAL_CORE)
 
 # Install scripts
 add_subdirectory(scripts)
@@ -243,10 +247,10 @@ FOREACH(config_test_cpp ${all_config_tests})
     # compiler_config.h should #define ${config_test_name} is the test failed
     # => flip ${config_test_name}
     if (${config_test_name})
-        set(${config_test_name} 0)
-    else (${config_test_name})
-        set(${config_test_name} 1)
-    endif (${config_test_name})
+      set(${config_test_name} 0)
+    else()
+      set(${config_test_name} 1)
+    endif()
 ENDFOREACH(config_test_cpp ${all_config_tests})
 
 #-----------------------------------------------------------------------------
@@ -258,6 +262,8 @@ ENDFOREACH(config_test_cpp ${all_config_tests})
 CONFIGURE_FILE(${CGAL_SOURCE_DIR}/compiler_config.h.in
                ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
 INSTALL(FILES ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h DESTINATION ${CGAL_INCLUDE_INSTALL_DIR}/CGAL)
+
+message(FATAL_ERROR "stop")
 
 #-----------------------------------------------------------------------------
 # CGAL requires special compiler flags on some platforms.

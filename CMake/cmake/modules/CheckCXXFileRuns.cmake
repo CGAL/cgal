@@ -16,22 +16,20 @@
 # KDE4's CheckCSourceRuns.cmake
 
 MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
-  IF("${VAR}" MATCHES "^${VAR}$")
+  if("${VAR}" MATCHES "^${VAR}$")
     # Set compiler settings
-    SET(MACRO_CHECK_FUNCTION_DEFINITIONS
-      "-D${VAR} ${CMAKE_REQUIRED_FLAGS}")
-    IF(CMAKE_REQUIRED_LIBRARIES)
-      SET(CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES
-        "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
-    ELSE(CMAKE_REQUIRED_LIBRARIES)
+    SET(MACRO_CHECK_FUNCTION_DEFINITIONS "-D${VAR} ${CMAKE_REQUIRED_FLAGS}")
+    if(CMAKE_REQUIRED_LIBRARIES)
+      SET(CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
+    else()
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES)
-    ENDIF(CMAKE_REQUIRED_LIBRARIES)
-    IF(CMAKE_REQUIRED_INCLUDES)
-      SET(CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES
-        "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_REQUIRED_INCLUDES}")
-    ELSE(CMAKE_REQUIRED_INCLUDES)
+    endif()
+    
+    if(CMAKE_REQUIRED_INCLUDES)
+      SET(CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_REQUIRED_INCLUDES}")
+    else()
       SET(CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES)
-    ENDIF(CMAKE_REQUIRED_INCLUDES)
+    endif()
 
     # Try to compile and run the test
     #MESSAGE(STATUS "Performing Test ${TEST}")
@@ -44,20 +42,26 @@ MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
             "${CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES}"
             OUTPUT_VARIABLE OUTPUT)
 
+    # Extract the test description
+    FILE( STRINGS $(FILE) $(TEST_DESC) REGEXP "//|" )
+    
+    # Appends the corresponding #cmakedefine entry to compiler_config.h.in
+    FILE( APPEND ${CGAL_SOURCE_DIR}/compiler_config.h.in $(TEST_DESC) )
+    
     # if it did not compile make the return value fail code of 1
-    IF(NOT ${VAR}_COMPILED)
+    if(NOT ${VAR}_COMPILED)
       SET(${VAR} 1)
-    ENDIF(NOT ${VAR}_COMPILED)
+    endif()
     # if the return value was 0 then it worked
     SET(result_var ${${VAR}})
-    IF("${result_var}" EQUAL 0)
+    if("${result_var}" EQUAL 0)
       SET(${VAR} 1 CACHE INTERNAL "Test ${TEST}")
       MESSAGE(STATUS "Performing Test ${TEST} - Success")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
         "Performing C++ SOURCE FILE Test ${TEST} succeded with the following output:\n"
         "${OUTPUT}\n"
         "Source file was:\n${SOURCE}\n")
-    ELSE("${result_var}" EQUAL 0)
+    else()
       MESSAGE(STATUS "Performing Test ${TEST} - Failed")
       SET(${VAR} "" CACHE INTERNAL "Test ${TEST}")
       FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
@@ -65,7 +69,7 @@ MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
         "${OUTPUT}\n"
         "Return value: ${result_var}\n"
         "Source file was:\n${SOURCE}\n")
-    ENDIF("${result_var}" EQUAL 0)
-  ENDIF("${VAR}" MATCHES "^${VAR}$")
+    endif()
+  endif()
 ENDMACRO(CHECK_CXX_FILE_RUNS)
 
