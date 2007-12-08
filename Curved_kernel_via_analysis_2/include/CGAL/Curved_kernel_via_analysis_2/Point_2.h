@@ -215,7 +215,7 @@ public:
     //! access to underlying \c Xy_coordinate_2 object
     //!
     //! \pre finite x/y coordinates must be set by construction
-    Xy_coordinate_2 xy() const {
+    const Xy_coordinate_2& xy() const {
         CGAL_precondition_msg(this->ptr()->_m_xy, 
             "Denied access to the curve end lying at x/y-infinity");
         return *(this->ptr()->_m_xy);
@@ -224,7 +224,7 @@ public:
     //! access to the point's x-coordinate (y-coordinate can be undefined)
     //!
     //! \pre the point's x must be finite (set by construction)
-    X_coordinate_1 x() const {
+    const X_coordinate_1& x() const {
         CGAL_precondition_msg(this->ptr()->_m_x,
           "Denied access to the curve end's x-coordinate lying at x-infinity");
         return *(this->ptr()->_m_x);
