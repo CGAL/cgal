@@ -206,7 +206,7 @@ public:
     Status_line_1 status_line_of_interval(size_type i) const
     {
         CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
-        
+
         size_type n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
         return Status_line_1(X_coordinate_1(this->ptr()->_m_curve.
               boundary_value_in_interval(i)), i, *this, n_arcs);

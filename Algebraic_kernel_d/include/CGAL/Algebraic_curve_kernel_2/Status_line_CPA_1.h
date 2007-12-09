@@ -310,9 +310,10 @@ public:
     {
         CGAL_precondition(0 <= j && j < number_of_events());
         const Arc_pair& arc = this->ptr()->_m_arcs[j];
-        if(this->ptr()->_m_cpa.is_swapped())
-            return Arc_pair(arc.second, arc.first);
-
+        if(this->ptr()->_m_cpa.is_swapped()) {
+        //std::cerr << "swapped content\n";
+            //return Arc_pair(arc.second, arc.first);
+        }
         return arc;
     }
 

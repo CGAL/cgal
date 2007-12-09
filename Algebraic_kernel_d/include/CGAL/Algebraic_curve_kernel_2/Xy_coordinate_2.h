@@ -155,19 +155,34 @@ private:
     static bool _simplify(const Xy_coordinate_2& p, const Xy_coordinate_2& q) 
     {
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
+
+        /*std::cerr << "simplify called: " << p.curve().id() << "@" <<
+            p.curve().f() << "; and " <<
+             q.curve().id() << q.curve().f() << "\n";*/
         Algebraic_curve_kernel_2 ak_2;
 
         if(ak_2.decompose_2_object()(p.curve(), q.curve(), 
             std::back_inserter(parts_of_f), std::back_inserter(parts_of_g),
                 std::back_inserter(common))) {
+
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
             if(parts_of_f.size() == 1) {
+
+          /*std::cerr << "non-coprime parts f: " << parts_of_f[0].id() << "@" <<
+            parts_of_f[0].f() << "; and " <<
+             common[0].id() << common[0].f() << "\n";*/
+                
                 p.simplify_by(Curve_pair_analysis_2(
                     (Curve_analysis_2(parts_of_f[0])),
                         (Curve_analysis_2(common[0]))));
             } 
             if(parts_of_g.size() == 1) {
+
+            /*std::cerr << "non-coprime parts g: " << parts_of_g[0].id() << "@" <<
+            parts_of_g[0].f() << "; and " <<
+             common[0].id() << common[0].f() << "\n";*/
+                    
                 q.simplify_by(Curve_pair_analysis_2(
                     (Curve_analysis_2(parts_of_g[0])),
                         (Curve_analysis_2(common[0]))));
@@ -332,8 +347,10 @@ private:
         if(f.is_identical(g)) 
             return CGAL::sign(arcno() - q.arcno());
         if(Self::_simplify(*this, q)) 
+            
             // restart since supporting curves might be equal now
             return _compare_y_at_x(q);
+        
                 
         // this is to keep compiler happy ))
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),

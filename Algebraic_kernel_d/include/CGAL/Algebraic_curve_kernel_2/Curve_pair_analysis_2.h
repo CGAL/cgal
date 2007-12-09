@@ -66,8 +66,8 @@ public:
         //! its better to compare polynomials ?
         _m_swapped = (_m_curve_pair.curve1().id() !=
              ca1.polynomial_2().id());
-      //  if(_m_is_swapped)
-        //    std::cout << "the content was swapped\n";
+        if(_m_swapped)
+            ;//std::cout << "\nATTENTION: content was swapped\n";
     }
 
     // data
@@ -224,6 +224,7 @@ public:
 
 #ifdef CGAL_ACK_2_USE_STATUS_LINES
         return this->ptr()->_m_curve_pair.status_line_at_event(*this, i);
+          
 #else
         typename Curve_pair_2::Event2_slice slice =
             this->ptr()->_m_curve_pair.slice_at_event(i);
@@ -231,9 +232,10 @@ public:
         typename Status_line_1::Arc_container arcs(slice.num_arcs());
         std::copy(slice.arcs_at_event().begin(),
             slice.arcs_at_event().end(), arcs.begin());
-            
+
+        Status_line_1 correct(i, arcs, *this);
         // TODO: need to cache status lines ?
-        return Status_line_1(i, arcs, *this);
+        return correct;
 #endif // CGAL_ACK_2_USE_STATUS_LINES
     }
 

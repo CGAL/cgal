@@ -258,8 +258,8 @@ public:
             
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
-            //return Self::get_curve_cache()(f);;
-            return Curve_2(f);
+            return Self::get_curve_cache()(f);
+            //return Curve_2(f);
         }
         Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {

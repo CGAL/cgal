@@ -25,7 +25,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#ifdef AcX_USE_CURVE_PAIR
 //#include <AcX/Algebraic_curve_pair_2.h>
+#endif
 
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
     typedef typename Algebraic_curve_pair_2::Algebraic_curve_2 Curve_2; \
@@ -69,6 +71,7 @@ struct Algebraic_real_traits {
     typedef Null_functor Refine;
 };
 
+#ifdef AcX_USE_CURVE_PAIR
 
 template <class AlgebraicCurveKernel_2, class Curve_>
 struct Algebraic_real_traits_for_y<Xy_coordinate_2<
@@ -184,6 +187,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         }
     };
 };
+
+#endif // AcX_USE_CURVE_PAIR
     
 template <class Kernel_2>
 struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
