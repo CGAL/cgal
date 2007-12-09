@@ -712,8 +712,13 @@ public:
             return (- _compare_arc_numbers(p.xy(), bnd1_x));
         }
         // otherwise return reversed y-order of this arc and point p
-        CGAL::Comparison_result res = - _compare_arc_numbers(p.xy(),
-            CGAL::NO_BOUNDARY, p.x());
+        CGAL::Comparison_result res;
+        if(eq_min)
+             res = kernel_2.compare_xy_2_object()(p.xy(), _minpoint().xy(), true);
+        else if(eq_max)
+             res = kernel_2.compare_xy_2_object()(p.xy(), _maxpoint().xy(), true);
+        else
+             res = -_compare_arc_numbers(p.xy(), CGAL::NO_BOUNDARY, p.x());
         CERR("cmp result: " << res << "\n");
         return res;
     }
@@ -1437,12 +1442,13 @@ public:
         
         if(cv.curve().is_identical(p.curve()))
             return false;
-               
+
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
         Curve_kernel_2 kernel;
         if(kernel.decompose_2_object()(cv.curve(), p.curve(), 
             std::back_inserter(parts_of_f), std::back_inserter(parts_of_g),
                 std::back_inserter(common))) {
+
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
             if(parts_of_f.size() == 1) {
@@ -1679,6 +1685,7 @@ private:
             CGAL::Sign perturb = CGAL::ZERO) const {
         
         Self::simplify(*this, p);
+        CERR("_compare_arc_numbers: " << p << "; and: " << *this << "\n");
         if(curve().is_identical(p.curve())) 
             return CGAL::sign(arcno() - p.arcno());
         return _compare_coprime(p.curve(), p.arcno(), where, x0, perturb);
