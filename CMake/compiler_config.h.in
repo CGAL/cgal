@@ -268,6 +268,30 @@
 #cmakedefine CGAL_CFG_USING_BASE_MEMBER_BUG
 
 //+--------------------------------------------------------------------------
+//| Tests if the input stream operator<< is correct with long long.
+//| pgCC 6.2 has this bug.
+//+--------------------------------------------------------------------------
+#cmakedefine CGAL_CFG_LONG_LONG_IO_BUG
+
+//+--------------------------------------------------------------------------
+//| If a compiler does not support delegating constructors (from C++0x)
+//| CGAL_CFG_NO_DELEGATING_CONSTRUCTORS is set. 
+//+--------------------------------------------------------------------------
+#cmakedefine CGAL_CFG_NO_DELEGATING_CONSTRUCTORS
+
+//+--------------------------------------------------------------------------
+//| If a compiler does not support variadic templates (from C++0x)
+//| CGAL_CFG_NO_VARIADIC_TEMPLATES is set. 
+//+--------------------------------------------------------------------------
+#cmakedefine CGAL_CFG_NO_VARIADIC_TEMPLATES
+
+//+--------------------------------------------------------------------------
+//| If a compiler does not support rvalue references (from C++0x)
+//| CGAL_CFG_NO_RVALUE_REFERENCE is set. 
+//+--------------------------------------------------------------------------
+#cmakedefine CGAL_CFG_NO_RVALUE_REFERENCE
+
+//+--------------------------------------------------------------------------
 //| Is CGAL compiled with support for BOOST?
 //+--------------------------------------------------------------------------
 #ifndef CGAL_NO_BOOST

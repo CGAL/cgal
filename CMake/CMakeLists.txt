@@ -76,6 +76,9 @@ set(CGAL_3RD_PARTY_DEFINITIONS)
 set(CGAL_3RD_PARTY_INCLUDE_DIRS)
 set(CGAL_3RD_PARTY_LIBRARIES)
 
+# Loads the contents of the configuration file to check that it contains all needed flags
+file( READ "${CGAL_SOURCE_DIR}/compiler_config.h.in" COMPILER_CONFIG )
+
 # Find Boost includes and optionaly Boost libraries
 find_package(Boost2 REQUIRED)
 if(Boost_FOUND)
@@ -141,8 +144,6 @@ else(CORE_FOUND)
     # If CORE not available in the system, use CORE shipped with CGAL
     macro_optional_find_package(CGAL_CORE)
     if(CGAL_CORE_FOUND)
-	# Compile CORE shipped with CGAL
-	add_subdirectory(src/CGALCore)
 
         set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_CORE_INCLUDE_DIR})
         set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_CORE_LIBRARIES})
@@ -213,16 +214,16 @@ INSTALL(FILES CHANGES
 	DESTINATION ${CGAL_INSTALL_DIR})
 
 # Install headers
-add_subdirectory(include/CGAL)
+# add_subdirectory(include/CGAL)
+INSTALL(DIRECTORY "include/CGAL" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
 
 # Install scripts
-add_subdirectory(scripts)
-
-# Install CMake modules
-add_subdirectory(cmake/modules)
+# add_subdirectory(scripts)
+INSTALL(DIRECTORY "scripts" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
 
 # Install precompiled third-party libraries (Windows only).
-add_subdirectory(auxiliary)
+# add_subdirectory(auxiliary)
+INSTALL(DIRECTORY "auxiliary" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
 
 # #-----------------------------------------------------------------------------
 # # Save the compiler settings so another project can import them.
@@ -232,14 +233,18 @@ add_subdirectory(auxiliary)
 #-----------------------------------------------------------------------------
 # Platform configuration tests.
 # The variables set are the #defines expected by compiler_config.h
-
 # For each .cpp configuration test
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
 FILE(GLOB all_config_tests "${CGAL_SOURCE_DIR}/config/testfiles/*.cpp")
 FOREACH(config_test_cpp ${all_config_tests})
+    
     # Test's name is .cpp's base name
     GET_FILENAME_COMPONENT(config_test_name ${config_test_cpp} NAME_WE)
+    
+    if ( NOT "${COMPILER_CONFIG}" MATCHES "${config_test_name}" )
+      message( SEND_ERROR "File 'compiler_config.h.in' is not up to date. Flag ${config_test_name} is missing!" )
+    endif()
 
     # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
     CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
@@ -263,14 +268,9 @@ CONFIGURE_FILE(${CGAL_SOURCE_DIR}/compiler_config.h.in
                ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
 INSTALL(FILES ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h DESTINATION ${CGAL_INCLUDE_INSTALL_DIR}/CGAL)
 
-message(FATAL_ERROR "stop")
-
 #-----------------------------------------------------------------------------
 # CGAL requires special compiler flags on some platforms.
 # 1) set settings to compile CGAL libraries.
-
-# Execute install_cgal's set_compiler_flags().
-include(set_compiler_flags)
 
 # Include directories
 set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include
@@ -278,7 +278,7 @@ set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include
                       ${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 # Compiler settings
-set(CGAL_DEFINITIONS ${CGAL_3RD_PARTY_DEFINITIONS} ${ADDITIONAL_CXXFLAGS})
+set(CGAL_DEFINITIONS ${CGAL_3RD_PARTY_DEFINITIONS} )
 
 # Set Microsoft Visual C++ compilation warning level
 if (CMAKE_CXX_COMPILER MATCHES "^(CL|cl)")
@@ -286,21 +286,21 @@ if (CMAKE_CXX_COMPILER MATCHES "^(CL|cl)")
     SET(CMAKE_CXX_WARNING_LEVEL 2
 	CACHE STRING "C++ compiler warning level" FORCE)
     MARK_AS_ADVANCED(CMAKE_CXX_WARNING_LEVEL)
-endif (CMAKE_CXX_COMPILER MATCHES "^(CL|cl)")
+endif()
 
 # Settings to compile CGAL libraries
 if (BUILD_SHARED_LIBS)
     SET(CGAL_LIB_CXX_FLAGS ${CGAL_DEFINITIONS} ${CGAL_SHARED_LIB_CXXFLAGS})
-else (BUILD_SHARED_LIBS)
+else()
     SET(CGAL_LIB_CXX_FLAGS ${CGAL_DEFINITIONS} ${CGAL_LIB_CXXFLAGS})
-endif (BUILD_SHARED_LIBS)
+endif()
 
 # Settings to link CGAL libraries
 SET(CGAL_LIB_EXE_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_LIB_LDFLAGS}")
 SET(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}")
 if (MATH_LIB)
     set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} "-l${MATH_LIB}")
-endif (MATH_LIB)
+endif()
 
 #-----------------------------------------------------------------------------
 # Build and install CGAL and CGALQt libraries
@@ -317,10 +317,15 @@ set(CGAL_LIBRARY_PROPERTIES ${CGAL_LIBRARY_PROPERTIES}
 # Build and install CGAL library
 add_subdirectory(src/CGAL)
 
+if( CGAL_CORE_FOUND )
+  	# Compile CORE shipped with CGAL
+	  add_subdirectory(src/CGALCore)
+endif()
+
 if(QT_FOUND)
     # Build and install CGALQt library
     add_subdirectory(src/CGALQt)
-endif(QT_FOUND)
+endif()
 
 #-----------------------------------------------------------------------------
 # CGAL requires special compiler flags on some platforms.
@@ -335,30 +340,26 @@ ADD_DEFINITIONS(${CGAL_DEFINITIONS})
 # Settings to link with CGAL libraries
 #
 # common linker settings
-set(CGAL_LIBRARIES
-    ${ADDITIONAL_LDFLAGS}
-)
+set(CGAL_LIBRARIES ${ADDITIONAL_LDFLAGS} )
+
 # add CGAL library
 GET_TARGET_PROPERTY(CGAL_LOCATION CGAL LOCATION)
-set(CGAL_LIBRARIES ${CGAL_LIBRARIES}
-    ${CGAL_LOCATION}
-)
+set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGAL_LOCATION} )
+
 # add CGALQt library
 if(QT_FOUND)
-    GET_TARGET_PROPERTY(CGALQt_LOCATION CGALQt LOCATION)
-    set(CGAL_LIBRARIES ${CGAL_LIBRARIES}
-	${CGALQt_LOCATION}
-    )
-endif(QT_FOUND)
+  GET_TARGET_PROPERTY(CGALQt_LOCATION CGALQt LOCATION)
+  set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGALQt_LOCATION} )
+endif()
+
 # add third-party libraries
-set(CGAL_LIBRARIES ${CGAL_LIBRARIES}
-    ${CGAL_3RD_PARTY_LIBRARIES}
-)
+set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 #-----------------------------------------------------------------------------
 # TODO: Configure Dart testing support
 
 set(BUILD_TESTING ON CACHE BOOL "Turn testing on/off")
+
 # INCLUDE(Dart)
 # MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
 if(BUILD_TESTING)
@@ -367,27 +368,27 @@ if(BUILD_TESTING)
 #         ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
 #     FILE(WRITE ${CGAL_BINARY_DIR}/CTestCustom.cmake
 #         "INCLUDE(\"${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
-endif(BUILD_TESTING)
+endif()
 
 #-----------------------------------------------------------------------------
 # Recurse into demo/example/test subdirectories
 # TODO: move compilation of demos/examples/tests from "make all" to "make test"
 
 if(BUILD_TESTING)
-    # Find all folders under demo/example/test which contain a CMakeLists.txt.
-    # TODO: rewrite this section because CMake will not notice when packages
-    # are added or removed.
-    FOREACH(_folder demo examples test)
-        FILE(GLOB_RECURSE all_files "${_folder}/*")
-        FOREACH(_file ${all_files})
-            if(_file MATCHES "CMakeLists\\.txt")
-                GET_FILENAME_COMPONENT(_path ${_file} PATH)
-                #MESSAGE(STATUS "Configure '${_path}'")
-                add_subdirectory(${_path})
-            endif(_file MATCHES "CMakeLists\\.txt")
-        ENDFOREACH(_file)
-    ENDFOREACH(_folder demo examples test)
-endif(BUILD_TESTING)
+  # Find all folders under demo/example/test which contain a CMakeLists.txt.
+  # TODO: rewrite this section because CMake will not notice when packages
+  # are added or removed.
+  FOREACH(_folder demo examples test)
+    FILE(GLOB_RECURSE all_files "${_folder}/*")
+    FOREACH(_file ${all_files})
+      if(_file MATCHES "CMakeLists\\.txt")
+        GET_FILENAME_COMPONENT(_path ${_file} PATH)
+        #MESSAGE(STATUS "Configure '${_path}'")
+        add_subdirectory(${_path})
+      endif()
+    ENDFOREACH()
+  ENDFOREACH()
+endif()
 
 # #-----------------------------------------------------------------------------
 # # Help other projects use CGAL.

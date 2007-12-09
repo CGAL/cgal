@@ -1521,7 +1521,6 @@ CMake/cmake/modules/LogCMakeVariables.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
 CMake/compiler_config.h.in -text
-CMake/set_compiler_flags.cmake -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
