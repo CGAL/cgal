@@ -15,6 +15,11 @@
 
 #include <CGAL/basic.h>
 
+#define AcX_USE_CURVE_PAIR 1
+
+#define NiX_USE_QUADRATIC_REFINEMENT 1
+#define NiX_USE_INTERNAL_MODULAR_GCD 1
+
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
