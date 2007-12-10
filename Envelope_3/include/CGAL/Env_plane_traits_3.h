@@ -23,6 +23,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/functions_on_enums.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/number_utils.h> 
 #include <CGAL/Envelope_3/Envelope_base.h>
@@ -51,9 +52,8 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef typename Kernel::Line_2              Line_2;
   typedef typename Kernel::Line_3              Line_3;
   typedef typename Kernel::Object_3            Object_3;
-  typedef std::pair<Curve_2, 
-                    Multiplicity>              Intersection_curve;
-  typedef Tag_true                             Has_boundary_category;
+  typedef std::pair<Curve_2, Multiplicity>     Intersection_curve;
+  typedef Arr_unbounded_boundary_tag           Boundary_category;
   
 
   class Is_vertical_3

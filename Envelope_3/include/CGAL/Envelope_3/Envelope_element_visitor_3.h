@@ -23,6 +23,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
@@ -59,7 +60,7 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Traits::Has_boundary_category       Has_boundary_category;
+  typedef typename Traits::Boundary_category           Boundary_category;
 
 protected:
   class Copied_face_zone_visitor;
@@ -742,7 +743,8 @@ public:
     const Xy_monotone_surface_3& surf1 = get_aux_surface(vertex, 0);
     const Xy_monotone_surface_3& surf2 = get_aux_surface(vertex, 1);
     const Point_2& point_2 = vertex->point();
-    Comparison_result cur_res = compare_distance_to_envelope(point_2,surf1,surf2);
+    Comparison_result cur_res =
+      compare_distance_to_envelope(point_2, surf1, surf2);
     vertex->set_decision(cur_res);
   }
 
@@ -841,7 +843,7 @@ protected:
         {
           found_edge = true;
           const X_monotone_curve_2& cv = hec->curve();
-          res = compare_distance_to_envelope(cv,surf1,surf2);
+          res = compare_distance_to_envelope(cv, surf1, surf2);
 
           break;
         }
@@ -858,12 +860,13 @@ protected:
           Ccb_halfedge_circulator hec = *hit;
           CGAL_assertion(!hec->is_fictitious());
           const X_monotone_curve_2& cv = hec->curve();
-          res = compare_distance_to_envelope(cv,surf1,surf2);
+          res = compare_distance_to_envelope(cv, surf1, surf2);
         }
         else
         {
           //two infinite surfaces, no outer boundary or holes. 
-          res = compare_distance_to_envelope(surf1,surf2, Has_boundary_category());
+          res =
+            compare_distance_to_envelope(surf1, surf2, Boundary_category());
         }
       }
       
@@ -879,8 +882,8 @@ protected:
             ++hec;
             continue;
           }
-          Comparison_result tmp = 
-                        compare_distance_to_envelope(hec->curve(),surf1,surf2);
+          Comparison_result
+            tmp = compare_distance_to_envelope(hec->curve(), surf1, surf2);
       );
       CGAL_assertion_msg(tmp == res, 
                          "compare over curve returns non-consistent results");
@@ -953,9 +956,10 @@ protected:
 
   // Geometry can be a Point_2 or a X_monotone_curve_2
   template <class Geometry>
-  Comparison_result compare_distance_to_envelope(Geometry& g,
-                                                 const Xy_monotone_surface_3& s1,
-                                                 const Xy_monotone_surface_3& s2)
+  Comparison_result
+  compare_distance_to_envelope(Geometry& g,
+                               const Xy_monotone_surface_3& s1,
+                               const Xy_monotone_surface_3& s2)
   {
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(g, s1, s2);
     return ((type == LOWER) ? res : CGAL::opposite(res));
@@ -963,9 +967,10 @@ protected:
 
 
   // compare two infinite surfaces with no boundary or holes
-  Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3& s1,
-                                                 const Xy_monotone_surface_3& s2,
-                                                 Tag_true)
+  Comparison_result
+  compare_distance_to_envelope(const Xy_monotone_surface_3& s1,
+                               const Xy_monotone_surface_3& s2,
+                               Arr_has_boundary_tag)
   {
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(s1, s2);
     return ((type == LOWER) ? res : CGAL::opposite(res));
@@ -974,7 +979,7 @@ protected:
    // compare two infinite surfaces with no boundary or holes
   Comparison_result compare_distance_to_envelope(const Xy_monotone_surface_3&,
                                                  const Xy_monotone_surface_3&,
-                                                 Tag_false)
+                                                 Arr_no_boundary_tag)
   {
     CGAL_error(); // doesnt' suppose to reach here at all!!!
     return SMALLER;
