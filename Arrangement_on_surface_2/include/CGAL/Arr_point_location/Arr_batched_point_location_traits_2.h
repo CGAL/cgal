@@ -59,8 +59,14 @@ public:
   typedef typename Base_traits_2::Equal_2           Base_equal_2;
   typedef typename Base_traits_2::Is_vertical_2     Base_is_vertical_2;
 
-  typedef Tag_false                                 Has_left_category;
   typedef typename Base_traits_2::Boundary_category Boundary_category;
+
+  /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
+   * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
+   * Thus, AreMergeable_2 and Merge_2 are not needed either.
+   */
+  typedef Tag_false                                 Has_left_category;
+  typedef Tag_false                                 Has_merge_category;
 
 protected:
 

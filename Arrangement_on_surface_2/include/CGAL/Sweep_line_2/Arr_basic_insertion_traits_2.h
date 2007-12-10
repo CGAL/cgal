@@ -59,8 +59,12 @@ public:
   typedef typename Traits_2::Equal_2                Base_equal_2;
   typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
 
-  typedef Tag_false                                 Has_left_category;
   typedef typename Traits_2::Boundary_category      Boundary_category;
+
+  /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm
+   * never uses Compare_y_at_x_left_2.
+   */
+  typedef Tag_false                                 Has_left_category;
 
 protected:
 

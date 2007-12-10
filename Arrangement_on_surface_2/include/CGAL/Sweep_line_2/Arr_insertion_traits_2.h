@@ -53,9 +53,14 @@ public:
   typedef typename Base::Point_2                      Point_2;
 
   typedef typename Base::Has_left_category            Has_left_category;
-  typedef Tag_false                                   Has_merge_category;
   typedef typename Base::Boundary_category            Boundary_category;
 
+  /* Insertion is implemented as sweep-line visitor. The sweep-line algorithm
+   * never never performs merging of curves. Therefore, AreMergeable_2 and
+   * Merge_2 are not needed either.
+   */
+  typedef Tag_false                                   Has_merge_category;
+  
 public:
 
   /*! Constructor with a traits class. */
