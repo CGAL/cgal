@@ -1,10 +1,52 @@
 
 \ccChapterAuthor{Michael Hemmer}
 
-\section{Introduction}
+%\section{Introduction}
 
-New Polynomials package.
+\section{Short Introduction for the reviewer}
 
-Documentation to come. 
+This package introduces a concept \ccc{Polynomial_d}, a concept for multivariate 
+polynomials in $d$ variables. 
+This concept is accompanied with the concepts \ccc{PolynomialTraits_d} and 
+\ccc{PolynomialToolBox_d}, where \ccc{PolynomialToolBox_d} refines 
+\ccc{PolynomialTraits_d}. 
 
-See the Ref-manual for an overview. 
+In principal all functors provided by the \ccc{PolynomialToolBox_d} could 
+be local to the \ccc{PolynomialTraits_d} as well. 
+So far the distinction is due to the fact that the \ccc{AlgebraicKernel_1} 
+and \ccc{AlgebraicKernel_2}
+require a \ccc{PolynomialTraits_d} which should be minimal. Therefore, the more 
+advanced functors are moved into the \ccc{PolynomialToolBox_d}.
+However, I am expecting some discussions on this issue. Therefore, all functors are 
+currently documented as if they are part of \ccc{PolynomialTraits_d}.
+
+Note that, depending on the coefficient type,  
+it is sometimes not possible to provided a certain functor. 
+For instance it is not possible to provide  a \ccc{SignAt} if the coefficient type
+is not \ccc{RealEmbeddable}. A similar argument holds for functors requiring  
+a gcd on the innermost coefficient. However, whenever possible the 
+\ccc{PolynomialToolBox_d} provides an alternative functor, which computes the 
+desired entity up to a constant factor. For an example see 
+\ccc{SquareFreeFactorize} and \ccc{SquareFreeFactorizeUpToConstantFactor}.
+
+The main idea of the concepts is, that the \ccc{PolynomialTraits_d} provides two 
+different views on a multivariate polynomial. 
+
+\begin{itemize}
+\item 
+A recursive view, that sees the polynomial as an element of 
+$R[x_0,\dots,x_{d-2}][x_{d-1}]$. In this view, the polynomial is handled as
+an univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
+\item 
+A symmetric view, which is symmetric with respect to all variables,
+seeing the polynomials as element of $R[x_0,\dots,x_{d-1}]$.
+\end{itemize}
+
+All functors related to the univariate view are written such that 
+outermost variable $x_{d-1}$ is the default variable. For instance, 
+\ccc{PolynomialTraits_d::Degree}$()(p)$ returns the degree of $p$ with respect to $x_{d-1}$. 
+However, it is also possible to call 
+\ccc{PolynomialTraits_d::Degree}$()(p,i)$ returning the 
+degree with respect to variable $x_{i}$. The corresponding functor for the 
+multivariate view is \ccc{PolynomialTraits_d::TotalDegree} which is 
+symmetric in all variables. 
