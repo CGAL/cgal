@@ -47,10 +47,9 @@ public:
   typedef typename Base::Intersect_2               Base_Intersect_2;
   typedef typename Base::Compare_endpoints_xy_2    Base_Compare_endpoints_xy_2;
   typedef typename Base::Construct_opposite_2      Base_Construct_opposite_2;
-  typedef typename Base::Has_boundary_category     Has_boundary_category;
-  typedef typename Base::Boundary_category         Boundary_category;
   typedef typename Base::Has_left_category         Has_left_category;
   typedef typename Base::Has_merge_category        Has_merge_category;
+  typedef typename Base::Boundary_category         Boundary_category;
   
   class Ex_point_2 
   {
