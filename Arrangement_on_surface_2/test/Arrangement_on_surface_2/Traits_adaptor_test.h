@@ -726,15 +726,6 @@ Traits_adaptor_test<T_Traits>::translate_int_or_text(std::string & str_value)
   } else if (str_value == "LARGER" ) {
     return std::pair<enum Enum_type,unsigned int>(SIGN,
                                     static_cast<unsigned int>(CGAL::LARGER));
-  } else if (str_value == "MINUS_INFINITY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (BOUNDARY,static_cast<unsigned int>(CGAL::MINUS_INFINITY));
-  } else if (str_value == "NO_BOUNDARY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (BOUNDARY,static_cast<unsigned int>(CGAL::NO_BOUNDARY));
-  } else if (str_value == "PLUS_INFINITY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (BOUNDARY,static_cast<unsigned int>(CGAL::PLUS_INFINITY));
   } else if (str_value == "BOTTOM_BOUNDARY" ) {
     return std::pair<enum Enum_type,unsigned int>
       (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_BOTTOM_BOUNDARY));
@@ -888,8 +879,8 @@ bool Traits_adaptor_test<T_Traits>::ta_is_between_cw_wrapper
   str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
   bool exp_answer = get_expected_boolean(str_stream) ;
   std::cout << "Test: is_between_cw( " << m_xcurves[xcv] << " , " 
-            << (b==0?"false":"true") << " , " << m_xcurves[xcv1] 
-            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2]
+            << (b==0?"false":"true") << " , " << m_xcurves[xcv1] << " , " 
+            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2] << " , " 
             << (b2==0?"false":"true") << " , " << m_points[p] << " ) ? " ;
   bool real_answer = m_traits.is_between_cw_2_object()
                      ( m_xcurves[xcv] , (b==0?false:true), 
