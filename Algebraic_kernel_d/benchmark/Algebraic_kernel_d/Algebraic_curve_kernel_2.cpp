@@ -42,8 +42,8 @@
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
-#define BENCH_DEBUG_OUT
-#ifdef BENCH_DEBUG_OUT
+#define BENCH_DEBUG_OUT 0
+#if BENCH_DEBUG_OUT
 #define BENCH_OUT(x) std::cerr << x;
 #else
 #define BENCH_OUT(x)
