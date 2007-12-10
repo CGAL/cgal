@@ -277,7 +277,7 @@ private:
     
 
 template<class AlgebraicCurveKernel_2>
-Benchmark_result do_benchmark(std::string filename, int n_samples = 1) 
+Benchmark_result do_benchmark(std::string filename, int n_samples = 5) 
 {
     typedef AlgebraicCurveKernel_2 AK_2;
 
@@ -366,7 +366,7 @@ int main( int argc, char** argv ) {
 
     if(argc > 1) {
         CGAL_assertion(argc >= 2);
-        int n_samples = (argc >= 3) ? std::atoi(argv[2]) : 5;
+        int n_samples = (argc >= 3) ? std::atoi(argv[2]) : 1;
 
 #ifdef LiS_HAVE_CORE
         typedef NiX::CORE_arithmetic_traits AT;
