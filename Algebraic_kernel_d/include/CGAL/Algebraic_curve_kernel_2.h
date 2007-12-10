@@ -451,8 +451,7 @@ public:
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
             
-            CGAL_error_msg("Compare_y_2 functor not yet implemented");
-            return CGAL::EQUAL;
+            return (Compare_x_2()(xy1.y(), xy2.y()));
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);

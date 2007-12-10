@@ -253,11 +253,52 @@ public:
     /*!
      * \brief y-coordinate of this point
      *
-     * TODO: Loos-algorithm
+     * Note: In general, this method results in a extremly large polynomial
+     * for the y-coordinate. It is recommended to use it carefully,
+     * and using get_approximation_y() instead whenever approximations suffice.
      */
-    const X_coordinate_1& y() const {
-        CGAL_error_msg("Not yet implemented");
-        return this->ptr()->_m_x; 
+    X_coordinate_1 y() const {
+        std::cout << "y() starts" << std::endl;
+        typedef typename Algebraic_curve_kernel_2::Polynomial_2::Polynomial_2 
+            Polynomial_2;
+        typedef typename Polynomial_2::NT Polynomial_1;
+        typename NiX::Real_roots<X_coordinate_1,
+            NiX::Descartes<Polynomial_1, Boundary> > real_roots;
+
+        Polynomial_2 r(x().polynomial());
+        Polynomial_2 f = curve().f();
+        std::cout << "res.." << std::flush;
+        Polynomial_1 y_pol 
+            = NiX::make_square_free(
+                    NiX::resultant(transpose_bivariate_polynomial(f),
+                                   transpose_bivariate_polynomial(r)));
+        std::cout << "done, degree=" << y_pol.degree() << std::endl;
+        std::vector<X_coordinate_1> y_roots;
+        std::cout << "roots.." << std::flush;
+        real_roots(y_pol, 
+                   std::back_inserter(y_roots)); 
+        std::cout << "done" << std::endl;
+        Boundary_interval y_iv = get_approximation_y();
+
+        typename std::vector<X_coordinate_1>::const_iterator it 
+            = y_roots.begin();
+
+        std::cout << "Loop starts" << std::endl;
+
+        while(it != y_roots.end()) {
+            if(it->high() < y_iv.lower()) {
+                it++;
+                continue;
+            }
+            if(it->high() >= y_iv.upper()) {
+                break;
+            }
+            refine_y();
+            y_iv = get_approximation_y();
+        }
+        std::cout << "Loop ends" << std::endl;
+        CGAL_assertion(it!=y_roots.end());
+        return X_coordinate_1( y_pol, it->low(), it->high() );
     }
     
     /*!\brief
