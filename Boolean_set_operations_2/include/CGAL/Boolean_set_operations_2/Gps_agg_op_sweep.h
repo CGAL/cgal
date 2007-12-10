@@ -142,7 +142,7 @@ public:
         continue;
 
       event = this->_allocate_event (vh->point(), event_type,
-                                     NO_BOUNDARY, NO_BOUNDARY);
+                                     ARR_INTERIOR, ARR_INTERIOR);
       // \todo When the boolean set operations are exteneded to support
       //       unbounded curves, we will need here a special treatment.
 
@@ -190,7 +190,7 @@ public:
         if (res == SMALLER || q_iter == q_end)
         {
           event = this->_allocate_event (vh->point(), event_type,
-                                         NO_BOUNDARY, NO_BOUNDARY);
+                                         ARR_INTERIOR, ARR_INTERIOR);
           // \todo When the boolean set operations are exteneded to support
           //       unbounded curves, we will need here a special treatment.
           
