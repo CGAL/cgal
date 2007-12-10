@@ -70,15 +70,21 @@ public:
   typedef typename Traits_2::Compare_xy_2           Base_compare_xy_2;
   typedef typename Traits_2::Construct_min_vertex_2 Base_construct_min_vertex_2;
   typedef typename Traits_2::Construct_max_vertex_2 Base_construct_max_vertex_2;
+  typedef typename Traits_2::Is_vertical_2          Base_is_vertical_2;
   typedef typename Traits_2::Compare_y_at_x_2       Base_compare_y_at_x_2;
   typedef typename Traits_2::Compare_y_at_x_right_2 Base_compare_y_at_x_right_2;
   typedef typename Traits_2::Intersect_2            Base_intersect_2;
   typedef typename Traits_2::Split_2                Base_split_2;
   typedef typename Traits_2::Equal_2                Base_equal_2;
 
+  typedef typename Traits_2::Boundary_category      Boundary_category;
+
+  /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
+   * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
+   * Thus, AreMergeable_2 and Merge_2 are not needed either.
+   */
   typedef Tag_false                                 Has_left_category;
   typedef Tag_false                                 Has_merge_category;
-  typedef typename Traits_2::Boundary_category      Boundary_category;
   
   // The color of a feature.
   enum Color
@@ -355,13 +361,13 @@ public:
     Arr_overlay_traits_2 * m_traits;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Intersect_2(Arr_overlay_traits_2 * traits) : m_traits(traits) {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -517,13 +523,13 @@ public:
     Base_split_2    m_base_split;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Split_2 (const Base_split_2& base) : m_base_split (base) {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -558,7 +564,7 @@ public:
     Base_equal_2                 m_base_equal;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
@@ -568,7 +574,7 @@ public:
       m_base_equal (base_equal)
     {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -629,7 +635,7 @@ public:
     Base_equal_2                 m_base_equal;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
@@ -639,7 +645,7 @@ public:
       m_base_equal (base_equal)
     {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -692,6 +698,107 @@ public:
                                m_base_traits->equal_2_object()));
   }
 
+  /*! A functor that checks whether a given x-monotone curve is vertical. */
+  class Is_vertical_2 {
+  protected:
+    //! The base operator.
+    Base_is_vertical_2 m_base_is_vert;
+
+    /*! Constructor.
+     * The constructor is declared protected to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_vertical_2 (const Base_is_vertical_2 & base) : m_base_is_vert(base) {}
+
+    //! Allow its functor obtaining function calling the protected constructor.
+    friend class Arr_overlay_traits_2<Traits_2,
+                                      Arrangement_red_2,
+                                      Arrangement_blue_2>;
+    
+  public:
+    Comparison_result operator() (const X_monotone_curve_2 & xcv) const
+    {
+      return m_base_is_vert (xcv.base());
+    }
+  };
+
+  /*! Obtain a Is_vertical_2 functor object. */
+  Is_vertical_2 is_vertical_2_object () const
+  {
+    return Is_vertical_2(m_base_traits->is_vertical_2_object());
+  }
+
+  /*! A functor that checks whether two points and two x-monotone curves are
+   * identical.
+   */
+  class Equal_2 {
+  protected:
+    //! The base operator.
+    Base_equal_2 m_base_equal;
+
+    /*! Constructor.
+     * The constructor is declared protected to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Equal_2 (const Base_equal_2 & base) : m_base_equal(base) {}
+
+    //! Allow its functor obtaining function calling the protected constructor.
+    friend class Arr_overlay_traits_2<Traits_2,
+                                      Arrangement_red_2,
+                                      Arrangement_blue_2>;
+    
+  public:
+    bool operator() (const Point_2 & p1, const Point_2 & p2) const
+    {
+      return m_base_equal (p1.base(), p2.base());
+    }
+
+    bool operator() (const X_monotone_curve_2 & xcv1,
+                     const X_monotone_curve_2 & xcv2) const
+    {
+      return m_base_equal (xcv1.base(), xcv2.base());
+    }
+  };
+
+  /*! Obtain a Equal_2 functor object. */
+  Equal_2 equal_2_object () const
+  {
+    return Equal_2(m_base_traits->equal_2_object());
+  }
+  
+  /*! A functor that compares the x-coordinates of two points */
+  class Compare_x_2 {
+  protected:
+    //! The base operator.
+    Base_compare_x_2 m_base_cmp_x;
+
+    /*! Constructor.
+     * The constructor is declared protected to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_x_2 (const Base_compare_x_2 & base) : m_base_cmp_x(base) {}
+
+    //! Allow its functor obtaining function calling the protected constructor.
+    friend class Arr_overlay_traits_2<Traits_2,
+                                      Arrangement_red_2,
+                                      Arrangement_blue_2>;
+    
+  public:
+    Comparison_result operator() (const Point_2 & p1, const Point_2 & p2) const
+    {
+      return m_base_cmp_x (p1.base(), p2.base());
+    }
+  };
+
+  /*! Obtain a Construct_min_vertex_2 functor object. */
+  Compare_x_2 compare_x_2_object () const
+  {
+    return Compare_x_2(m_base_traits->compare_x_2_object());
+  }
+
   /*! A functor that compares two points lexigoraphically: by x, then by y. */
   class Compare_xy_2 {
   protected:
@@ -699,7 +806,7 @@ public:
     Base_compare_xy_2 m_base_cmp_xy;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
@@ -707,7 +814,7 @@ public:
         m_base_cmp_xy(base)
     {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -761,7 +868,7 @@ public:
     Base_compare_y_at_x_2 m_base_cmp_y_at_x;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
@@ -769,7 +876,7 @@ public:
         m_base_cmp_y_at_x(base)
     {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -797,7 +904,7 @@ public:
     Base_compare_y_at_x_right_2    m_base_cmp_y_at_x_right;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
@@ -805,7 +912,7 @@ public:
         m_base_cmp_y_at_x_right(base)
     {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -838,13 +945,13 @@ public:
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
      *             stateless traits objects, (which stores data).
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Is_bounded_2(const Traits_2 * base) : m_base(base) {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -890,13 +997,13 @@ public:
     const Traits_2 * m_base;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Parameter_space_in_x_2 (const Traits_2 * tr) : m_base (tr) {}
  
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -956,13 +1063,13 @@ public:
     const Traits_2 * m_base;
 
     /*! Constructor.
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Parameter_space_in_y_2 (const Traits_2 *tr) : m_base (tr) {}
    
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -1024,13 +1131,13 @@ public:
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Compare_x_near_boundary_2(const Traits_2 * base) : m_base(base) {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
@@ -1107,13 +1214,13 @@ public:
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle the
      *             case it is not stateless (e.g., it stores data).
-     * The constructor is declared private to allow only the functor
+     * The constructor is declared protected to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
     Compare_y_near_boundary_2(const Traits_2 * base) : m_base(base) {}
 
-    //! Allow its functor obtaining function calling the private constructor.
+    //! Allow its functor obtaining function calling the protected constructor.
     friend class Arr_overlay_traits_2<Traits_2,
                                       Arrangement_red_2,
                                       Arrangement_blue_2>;
