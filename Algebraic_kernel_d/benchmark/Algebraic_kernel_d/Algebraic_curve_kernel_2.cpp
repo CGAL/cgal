@@ -26,6 +26,14 @@
 #define NiX_USE_INTERNAL_MODULAR_GCD 1
 #endif
 
+#ifndef AcX_USE_CURVE_PAIR
+#define AcX_USE_CURVE_PAIR 1
+#endif
+
+#ifndef AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+#define AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 1
+#endif
+
 #include <NiX/Arithmetic_traits.h>
 #include <NiX/NT_traits.h>
 #include <AcX/Algebraic_curve_2.h>
@@ -269,7 +277,7 @@ private:
     
 
 template<class AlgebraicCurveKernel_2>
-Benchmark_result do_benchmark(std::string filename, int n_samples = 5) 
+Benchmark_result do_benchmark(std::string filename, int n_samples = 1) 
 {
     typedef AlgebraicCurveKernel_2 AK_2;
 
