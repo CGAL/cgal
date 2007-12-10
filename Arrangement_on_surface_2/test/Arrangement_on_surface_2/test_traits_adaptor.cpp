@@ -33,3 +33,50 @@ int main (int argc, char * argv[])
   CGAL::set_warning_handler(prev_warning_handler);
   return (rc) ? 0 : -1;
 }
+
+#if TEST_TRAITS == SPHERICAL_ARC_TRAITS
+
+/*! Read a point */
+
+template <>
+template <class stream>
+bool
+Traits_adaptor_test<Traits >::
+read_point(stream & is, Point_2 & p)
+{
+  Basic_number_type x, y, z;
+  is >> x >> y >> z;
+  //std::cout << "x " << x << " y " << y << " z " << z << std::endl;
+  p = Point_2(x, y, z);
+  return true;
+}
+
+/*! Read a xcurve */
+template <>
+template <class stream>
+bool
+Traits_adaptor_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+{
+  Point_2 p1,p2;
+  read_point(is, p1);
+  read_point(is, p2);
+  CGAL_assertion(p1 != p2);
+  xcv = X_monotone_curve_2(p1, p2);
+  return true;
+}
+
+/*! Read a curve */
+template <>
+template <class stream>
+bool
+Traits_adaptor_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+{
+  Point_2 p1, p2;
+  read_point(is, p1);
+  read_point(is, p2);
+  CGAL_assertion(p1 != p2);
+  cv = Curve_2(p1, p2);
+  return true;
+}
+
+#endif
