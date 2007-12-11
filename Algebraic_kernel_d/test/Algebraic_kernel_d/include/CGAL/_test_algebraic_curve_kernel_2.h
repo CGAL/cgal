@@ -99,7 +99,7 @@ void test_algebraic_curve_kernel_2() {
             
     Curve_analysis_2 ca0(c0), ca1(c1);
     Status_line_1 line1, line2;
-    Xy_coordinate_2 xy1, xy2, xy3;
+    Xy_coordinate_2 xy1, xy2, xy3, xy4;
 
     ///////// testing comparison predicates //////////
     
@@ -115,6 +115,18 @@ void test_algebraic_curve_kernel_2() {
         CGAL::SMALLER);
     CGAL_test_assert(kernel_2.compare_xy_2_object()(xy2, xy3) ==
         CGAL::LARGER);
+
+    Curve_analysis_2 ca2(c2), ca3(c3);
+    xy1 = ca2.status_line_at_event(0).algebraic_real_2(0);
+
+    line2 = ca3.status_line_at_event(0);
+    xy2 = line2.algebraic_real_2(2);
+    xy3 = line2.algebraic_real_2(3);
+    xy4 = line2.algebraic_real_2(4);
+
+    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy2) == CGAL::LARGER);
+    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy3) == CGAL::SMALLER);
+    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy4) == CGAL::SMALLER);
 
     /////// testing squarefreeness and coprimality /////////
      
