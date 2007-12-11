@@ -987,7 +987,7 @@ public:
      * \param ce The end of xcv identifier.
      * \return true is the curve end is bounded, and false otherwise
      */
-    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
       CGAL_precondition (! xcv.is_degenerate());
       return (ce == ARR_MIN_END) ?

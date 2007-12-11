@@ -628,14 +628,14 @@ public:
       return m_base->compare_x_on_identification_2_object ()(p1, p2);
     }
 
-    Comparison_result comp_x_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_x_on_idn (const Point_2 &, const Point_2 &,
                                      Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    Comparison_result comp_x_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_x_on_idn (const Point_2 &, const Point_2 &,
                                      Arr_no_boundary_tag) const
     {
       CGAL_error();
@@ -681,14 +681,14 @@ public:
     /*!
      * Implementation of the operator() in case the Has_boundary tag is false.
      */
-    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_y_on_idn (const Point_2 &, const Point_2 &,
                                      Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    Comparison_result comp_y_on_idn (const Point_2 & p1, const Point_2 & p2,
+    Comparison_result comp_y_on_idn (const Point_2 &, const Point_2 &,
                                      Arr_has_boundary_tag) const
     {
       CGAL_error();
@@ -767,13 +767,13 @@ public:
       return m_base->is_on_identification_2_object ()(p);
     }
     
-    bool is_on_idn (const Point_2 & p, Arr_has_boundary_tag) const
+    bool is_on_idn (const Point_2 &, Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
     
-    bool is_on_idn (const Point_2 & p, Arr_no_boundary_tag) const
+    bool is_on_idn (const Point_2 &, Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
@@ -785,14 +785,13 @@ public:
       return m_base->is_on_identification_2_object ()(xcv);
     }
 
-    bool is_on_idn (const X_monotone_curve_2 & xcv,
-                    Arr_has_boundary_tag) const
+    bool is_on_idn (const X_monotone_curve_2 &, Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    bool is_on_idn (const X_monotone_curve_2 & xcv, Arr_no_boundary_tag) const
+    bool is_on_idn (const X_monotone_curve_2 &, Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
@@ -823,16 +822,16 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
     
-    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_no_boundary_tag)
+    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+                    Arr_no_boundary_tag) const
+    { return true; }
+
+    bool is_bounded(const X_monotone_curve_2 &, Arr_curve_end,
+                    Arr_has_boundary_tag) const
     { return true; }
 
     bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_has_boundary_tag)
-    { return true; }
-
-    bool is_bounded(const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                    Arr_unbounded_boundary_tag)
+                    Arr_unbounded_boundary_tag) const
     {
       return m_base->is_bounded_2_object()(xcv, ce);
     }
@@ -843,7 +842,7 @@ public:
      * \param ce The end of xcv identifier.
      * \return true is the curve end is bounded, and false otherwise
      */
-    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
       return is_bounded(xcv, ce, Boundary_category());
     }

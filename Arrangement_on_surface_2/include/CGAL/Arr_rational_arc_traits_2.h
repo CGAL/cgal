@@ -538,7 +538,7 @@ public:
      * \param ce The end of xcv identifier.
      * \return true is the curve end is bounded, and false otherwise
      */
-    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
       return (ce == ARR_MIN_END) ?
         ((xcv.left_infinite_in_x() == ARR_INTERIOR) &&

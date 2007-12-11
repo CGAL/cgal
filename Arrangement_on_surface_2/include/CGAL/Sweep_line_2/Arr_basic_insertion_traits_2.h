@@ -924,16 +924,16 @@ public:
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_basic_insertion_traits_2<Traits_, Arrangement_>;
     
-    bool is_bounded (const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                     Arr_no_boundary_tag)
+    bool is_bounded (const X_monotone_curve_2 &, Arr_curve_end,
+                     Arr_no_boundary_tag) const
+    { return true; }
+
+    bool is_bounded (const X_monotone_curve_2 &, Arr_curve_end,
+                     Arr_has_boundary_tag) const
     { return true; }
 
     bool is_bounded (const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                     Arr_has_boundary_tag)
-    { return true; }
-
-    bool is_bounded (const X_monotone_curve_2 & xcv, Arr_curve_end ce,
-                     Arr_unbounded_boundary_tag)
+                     Arr_unbounded_boundary_tag) const
     {
       return m_base->is_bounded_2_object()(xcv, ce);
     }
@@ -944,7 +944,7 @@ public:
      * \param ce The end of xcv identifier.
      * \return true is the curve end is bounded, and false otherwise
      */
-    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce)
+    bool operator() (const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
     {
       return is_bounded(xcv, ce, Boundary_category());
     }
