@@ -71,6 +71,10 @@ public:
     // arc number on curve
     mutable int _m_arcno;
 
+    typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
+        
+    mutable Int_map _m_compare_xy;
+
     // befriending the handle
     friend class Xy_coordinate_2<Algebraic_curve_kernel_2, Self>;
 };
@@ -142,6 +146,8 @@ public:
 
     //! type for boundary intervals
     typedef boost::numeric::interval<Boundary> Boundary_interval;
+
+    typedef typename Rep::Int_map Int_map;
     
     //!@}
 private:
@@ -344,12 +350,21 @@ public:
         
         if(is_identical(q)) 
             return CGAL::EQUAL;
-        if(!equal_x) {
-            CGAL::Comparison_result c = compare_x(q);
-            if(c != CGAL::EQUAL) 
-                return c;
+        if(this->id() > q.id())
+            return (- q.compare_xy(*this));
+
+        std::pair<typename Int_map::Hashed_iterator, bool> r =
+            this->ptr()->_m_compare_xy.find(q.id());
+        if(r.second) {
+            //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
+            return r.first->second;
         }
-        return _compare_y_at_x(q);
+
+        CGAL::Comparison_result res = (equal_x ? CGAL::EQUAL : compare_x(q)); 
+        if(res == CGAL::EQUAL)
+            res = _compare_y_at_x(q);
+        this->ptr()->_m_compare_xy.insert(std::make_pair(q.id(), res));
+        return res;
     }
     
     //! equality

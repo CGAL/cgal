@@ -24,13 +24,13 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
+#include <algorithm>
+
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
-
-#include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
-#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 
