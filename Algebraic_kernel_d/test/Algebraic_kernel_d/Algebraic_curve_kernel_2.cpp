@@ -31,8 +31,6 @@
 #include <AcX/Algebraic_curve_2.h>
 #include <AcX/Algebraic_curve_pair_2.h>
 
-#define AcX_USE_CURVE_PAIR
-
 #include <CGAL/Algebraic_curve_kernel_2.h>
 #include <CGAL/_test_algebraic_curve_kernel_2.h>
 
