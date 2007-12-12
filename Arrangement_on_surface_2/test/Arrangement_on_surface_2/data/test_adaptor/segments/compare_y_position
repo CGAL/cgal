@@ -1,5 +1,3 @@
-compare_y_position 0 0 EQUAL
-compare_y_position 1 0 EQUAL
 compare_y_position 2 0 SMALLER
 compare_y_position 3 0 SMALLER
 compare_y_position 4 0 SMALLER
@@ -19,8 +17,6 @@ compare_y_position 17 0 LARGER
 compare_y_position 18 0 LARGER
 compare_y_position 19 0 LARGER
 compare_y_position 20 0 LARGER
-compare_y_position 36 0 EQUAL
-compare_y_position 37 0 EQUAL
 compare_y_position 38 0 SMALLER
 compare_y_position 39 0 SMALLER
 compare_y_position 40 0 SMALLER
@@ -40,15 +36,12 @@ compare_y_position 53 0 LARGER
 compare_y_position 54 0 LARGER
 compare_y_position 55 0 LARGER
 compare_y_position 56 0 LARGER
-compare_y_position 0 1 EQUAL
-compare_y_position 1 1 EQUAL
 compare_y_position 2 1 SMALLER
 compare_y_position 3 1 SMALLER
 compare_y_position 4 1 SMALLER
 compare_y_position 5 1 SMALLER
 compare_y_position 6 1 SMALLER
 compare_y_position 7 1 SMALLER
-compare_y_position 8 1 EQUAL
 compare_y_position 9 1 EQUAL
 compare_y_position 10 1 EQUAL
 compare_y_position 11 1 EQUAL
@@ -61,15 +54,12 @@ compare_y_position 17 1 EQUAL
 compare_y_position 18 1 EQUAL
 compare_y_position 19 1 EQUAL
 compare_y_position 20 1 EQUAL
-compare_y_position 36 1 EQUAL
-compare_y_position 37 1 EQUAL
 compare_y_position 38 1 SMALLER
 compare_y_position 39 1 SMALLER
 compare_y_position 40 1 SMALLER
 compare_y_position 41 1 SMALLER
 compare_y_position 42 1 SMALLER
 compare_y_position 43 1 SMALLER
-compare_y_position 44 1 EQUAL
 compare_y_position 45 1 EQUAL
 compare_y_position 46 1 EQUAL
 compare_y_position 47 1 EQUAL
@@ -84,10 +74,8 @@ compare_y_position 55 1 EQUAL
 compare_y_position 56 1 EQUAL
 compare_y_position 0 2 LARGER
 compare_y_position 1 2 LARGER
-compare_y_position 2 2 EQUAL
 compare_y_position 3 2 LARGER
 compare_y_position 4 2 LARGER
-compare_y_position 5 2 EQUAL
 compare_y_position 6 2 LARGER
 compare_y_position 7 2 LARGER
 compare_y_position 8 2 LARGER
@@ -117,10 +105,8 @@ compare_y_position 31 2 LARGER
 compare_y_position 32 2 LARGER
 compare_y_position 36 2 LARGER
 compare_y_position 37 2 LARGER
-compare_y_position 38 2 EQUAL
 compare_y_position 39 2 LARGER
 compare_y_position 40 2 LARGER
-compare_y_position 41 2 EQUAL
 compare_y_position 42 2 LARGER
 compare_y_position 43 2 LARGER
 compare_y_position 44 2 LARGER
@@ -151,11 +137,9 @@ compare_y_position 68 2 LARGER
 compare_y_position 0 3 LARGER
 compare_y_position 1 3 LARGER
 compare_y_position 2 3 SMALLER
-compare_y_position 3 3 EQUAL
 compare_y_position 4 3 LARGER
 compare_y_position 5 3 SMALLER
 compare_y_position 6 3 SMALLER
-compare_y_position 7 3 EQUAL
 compare_y_position 8 3 LARGER
 compare_y_position 9 3 LARGER
 compare_y_position 10 3 LARGER
@@ -184,11 +168,9 @@ compare_y_position 32 3 LARGER
 compare_y_position 36 3 LARGER
 compare_y_position 37 3 LARGER
 compare_y_position 38 3 SMALLER
-compare_y_position 39 3 EQUAL
 compare_y_position 40 3 LARGER
 compare_y_position 41 3 SMALLER
 compare_y_position 42 3 SMALLER
-compare_y_position 43 3 EQUAL
 compare_y_position 44 3 LARGER
 compare_y_position 45 3 LARGER
 compare_y_position 46 3 LARGER
@@ -218,7 +200,6 @@ compare_y_position 0 4 LARGER
 compare_y_position 1 4 LARGER
 compare_y_position 2 4 SMALLER
 compare_y_position 3 4 SMALLER
-compare_y_position 4 4 EQUAL
 compare_y_position 5 4 SMALLER
 compare_y_position 6 4 SMALLER
 compare_y_position 7 4 SMALLER
@@ -251,7 +232,6 @@ compare_y_position 36 4 LARGER
 compare_y_position 37 4 LARGER
 compare_y_position 38 4 SMALLER
 compare_y_position 39 4 SMALLER
-compare_y_position 40 4 EQUAL
 compare_y_position 41 4 SMALLER
 compare_y_position 42 4 SMALLER
 compare_y_position 43 4 SMALLER
@@ -282,10 +262,8 @@ compare_y_position 67 4 EQUAL
 compare_y_position 68 4 EQUAL
 compare_y_position 0 5 LARGER
 compare_y_position 1 5 LARGER
-compare_y_position 2 5 EQUAL
 compare_y_position 3 5 LARGER
 compare_y_position 4 5 LARGER
-compare_y_position 5 5 EQUAL
 compare_y_position 6 5 LARGER
 compare_y_position 7 5 LARGER
 compare_y_position 8 5 LARGER
@@ -303,7 +281,6 @@ compare_y_position 19 5 LARGER
 compare_y_position 20 5 LARGER
 compare_y_position 21 5 EQUAL
 compare_y_position 22 5 EQUAL
-compare_y_position 23 5 EQUAL
 compare_y_position 24 5 EQUAL
 compare_y_position 25 5 EQUAL
 compare_y_position 26 5 LARGER
@@ -318,10 +295,8 @@ compare_y_position 34 5 EQUAL
 compare_y_position 35 5 LARGER
 compare_y_position 36 5 LARGER
 compare_y_position 37 5 LARGER
-compare_y_position 38 5 EQUAL
 compare_y_position 39 5 LARGER
 compare_y_position 40 5 LARGER
-compare_y_position 41 5 EQUAL
 compare_y_position 42 5 LARGER
 compare_y_position 43 5 LARGER
 compare_y_position 44 5 LARGER
@@ -339,7 +314,6 @@ compare_y_position 55 5 LARGER
 compare_y_position 56 5 LARGER
 compare_y_position 57 5 EQUAL
 compare_y_position 58 5 EQUAL
-compare_y_position 59 5 EQUAL
 compare_y_position 60 5 EQUAL
 compare_y_position 61 5 EQUAL
 compare_y_position 62 5 LARGER
@@ -358,7 +332,6 @@ compare_y_position 2 6 SMALLER
 compare_y_position 3 6 LARGER
 compare_y_position 4 6 LARGER
 compare_y_position 5 6 SMALLER
-compare_y_position 6 6 EQUAL
 compare_y_position 7 6 LARGER
 compare_y_position 8 6 LARGER
 compare_y_position 9 6 LARGER
@@ -394,7 +367,6 @@ compare_y_position 38 6 SMALLER
 compare_y_position 39 6 LARGER
 compare_y_position 40 6 LARGER
 compare_y_position 41 6 SMALLER
-compare_y_position 42 6 EQUAL
 compare_y_position 43 6 LARGER
 compare_y_position 44 6 LARGER
 compare_y_position 45 6 LARGER
@@ -427,11 +399,9 @@ compare_y_position 71 6 EQUAL
 compare_y_position 0 7 LARGER
 compare_y_position 1 7 LARGER
 compare_y_position 2 7 SMALLER
-compare_y_position 3 7 EQUAL
 compare_y_position 4 7 LARGER
 compare_y_position 5 7 SMALLER
 compare_y_position 6 7 SMALLER
-compare_y_position 7 7 EQUAL
 compare_y_position 8 7 LARGER
 compare_y_position 9 7 LARGER
 compare_y_position 10 7 LARGER
@@ -453,7 +423,6 @@ compare_y_position 25 7 SMALLER
 compare_y_position 26 7 EQUAL
 compare_y_position 27 7 EQUAL
 compare_y_position 28 7 EQUAL
-compare_y_position 29 7 EQUAL
 compare_y_position 30 7 LARGER
 compare_y_position 31 7 LARGER
 compare_y_position 32 7 LARGER
@@ -463,11 +432,9 @@ compare_y_position 35 7 SMALLER
 compare_y_position 36 7 LARGER
 compare_y_position 37 7 LARGER
 compare_y_position 38 7 SMALLER
-compare_y_position 39 7 EQUAL
 compare_y_position 40 7 LARGER
 compare_y_position 41 7 SMALLER
 compare_y_position 42 7 SMALLER
-compare_y_position 43 7 EQUAL
 compare_y_position 44 7 LARGER
 compare_y_position 45 7 LARGER
 compare_y_position 46 7 LARGER
@@ -489,7 +456,6 @@ compare_y_position 61 7 SMALLER
 compare_y_position 62 7 EQUAL
 compare_y_position 63 7 EQUAL
 compare_y_position 64 7 EQUAL
-compare_y_position 65 7 EQUAL
 compare_y_position 66 7 LARGER
 compare_y_position 67 7 LARGER
 compare_y_position 68 7 LARGER
@@ -497,14 +463,12 @@ compare_y_position 69 7 SMALLER
 compare_y_position 70 7 SMALLER
 compare_y_position 71 7 SMALLER
 compare_y_position 0 8 EQUAL
-compare_y_position 1 8 EQUAL
 compare_y_position 2 8 SMALLER
 compare_y_position 3 8 SMALLER
 compare_y_position 4 8 SMALLER
 compare_y_position 5 8 SMALLER
 compare_y_position 6 8 SMALLER
 compare_y_position 7 8 SMALLER
-compare_y_position 8 8 EQUAL
 compare_y_position 9 8 SMALLER
 compare_y_position 10 8 SMALLER
 compare_y_position 11 8 SMALLER
@@ -518,14 +482,12 @@ compare_y_position 18 8 EQUAL
 compare_y_position 19 8 EQUAL
 compare_y_position 20 8 EQUAL
 compare_y_position 36 8 EQUAL
-compare_y_position 37 8 EQUAL
 compare_y_position 38 8 SMALLER
 compare_y_position 39 8 SMALLER
 compare_y_position 40 8 SMALLER
 compare_y_position 41 8 SMALLER
 compare_y_position 42 8 SMALLER
 compare_y_position 43 8 SMALLER
-compare_y_position 44 8 EQUAL
 compare_y_position 45 8 SMALLER
 compare_y_position 46 8 SMALLER
 compare_y_position 47 8 SMALLER
@@ -547,7 +509,6 @@ compare_y_position 5 9 SMALLER
 compare_y_position 6 9 SMALLER
 compare_y_position 7 9 SMALLER
 compare_y_position 8 9 LARGER
-compare_y_position 9 9 EQUAL
 compare_y_position 10 9 LARGER
 compare_y_position 11 9 LARGER
 compare_y_position 12 9 LARGER
@@ -580,7 +541,6 @@ compare_y_position 41 9 SMALLER
 compare_y_position 42 9 SMALLER
 compare_y_position 43 9 SMALLER
 compare_y_position 44 9 LARGER
-compare_y_position 45 9 EQUAL
 compare_y_position 46 9 LARGER
 compare_y_position 47 9 LARGER
 compare_y_position 48 9 LARGER
@@ -614,10 +574,8 @@ compare_y_position 6 10 SMALLER
 compare_y_position 7 10 SMALLER
 compare_y_position 8 10 LARGER
 compare_y_position 9 10 SMALLER
-compare_y_position 10 10 EQUAL
 compare_y_position 11 10 LARGER
 compare_y_position 12 10 SMALLER
-compare_y_position 13 10 EQUAL
 compare_y_position 14 10 LARGER
 compare_y_position 15 10 LARGER
 compare_y_position 16 10 LARGER
@@ -647,10 +605,8 @@ compare_y_position 42 10 SMALLER
 compare_y_position 43 10 SMALLER
 compare_y_position 44 10 LARGER
 compare_y_position 45 10 SMALLER
-compare_y_position 46 10 EQUAL
 compare_y_position 47 10 LARGER
 compare_y_position 48 10 SMALLER
-compare_y_position 49 10 EQUAL
 compare_y_position 50 10 LARGER
 compare_y_position 51 10 LARGER
 compare_y_position 52 10 LARGER
@@ -681,7 +637,6 @@ compare_y_position 7 11 SMALLER
 compare_y_position 8 11 LARGER
 compare_y_position 9 11 SMALLER
 compare_y_position 10 11 SMALLER
-compare_y_position 11 11 EQUAL
 compare_y_position 12 11 SMALLER
 compare_y_position 13 11 SMALLER
 compare_y_position 14 11 SMALLER
@@ -714,7 +669,6 @@ compare_y_position 43 11 SMALLER
 compare_y_position 44 11 LARGER
 compare_y_position 45 11 SMALLER
 compare_y_position 46 11 SMALLER
-compare_y_position 47 11 EQUAL
 compare_y_position 48 11 SMALLER
 compare_y_position 49 11 SMALLER
 compare_y_position 50 11 SMALLER
@@ -748,7 +702,6 @@ compare_y_position 8 12 LARGER
 compare_y_position 9 12 SMALLER
 compare_y_position 10 12 LARGER
 compare_y_position 11 12 LARGER
-compare_y_position 12 12 EQUAL
 compare_y_position 13 12 LARGER
 compare_y_position 14 12 LARGER
 compare_y_position 15 12 LARGER
@@ -784,7 +737,6 @@ compare_y_position 44 12 LARGER
 compare_y_position 45 12 SMALLER
 compare_y_position 46 12 LARGER
 compare_y_position 47 12 LARGER
-compare_y_position 48 12 EQUAL
 compare_y_position 49 12 LARGER
 compare_y_position 50 12 LARGER
 compare_y_position 51 12 LARGER
@@ -818,10 +770,8 @@ compare_y_position 6 13 SMALLER
 compare_y_position 7 13 SMALLER
 compare_y_position 8 13 LARGER
 compare_y_position 9 13 SMALLER
-compare_y_position 10 13 EQUAL
 compare_y_position 11 13 LARGER
 compare_y_position 12 13 SMALLER
-compare_y_position 13 13 EQUAL
 compare_y_position 14 13 LARGER
 compare_y_position 15 13 LARGER
 compare_y_position 16 13 LARGER
@@ -836,7 +786,6 @@ compare_y_position 24 13 SMALLER
 compare_y_position 25 13 SMALLER
 compare_y_position 26 13 EQUAL
 compare_y_position 27 13 EQUAL
-compare_y_position 28 13 EQUAL
 compare_y_position 29 13 EQUAL
 compare_y_position 30 13 LARGER
 compare_y_position 31 13 LARGER
@@ -854,10 +803,8 @@ compare_y_position 42 13 SMALLER
 compare_y_position 43 13 SMALLER
 compare_y_position 44 13 LARGER
 compare_y_position 45 13 SMALLER
-compare_y_position 46 13 EQUAL
 compare_y_position 47 13 LARGER
 compare_y_position 48 13 SMALLER
-compare_y_position 49 13 EQUAL
 compare_y_position 50 13 LARGER
 compare_y_position 51 13 LARGER
 compare_y_position 52 13 LARGER
@@ -872,7 +819,6 @@ compare_y_position 60 13 SMALLER
 compare_y_position 61 13 SMALLER
 compare_y_position 62 13 EQUAL
 compare_y_position 63 13 EQUAL
-compare_y_position 64 13 EQUAL
 compare_y_position 65 13 EQUAL
 compare_y_position 66 13 LARGER
 compare_y_position 67 13 LARGER
@@ -894,7 +840,6 @@ compare_y_position 10 14 SMALLER
 compare_y_position 11 14 LARGER
 compare_y_position 12 14 SMALLER
 compare_y_position 13 14 SMALLER
-compare_y_position 14 14 EQUAL
 compare_y_position 15 14 LARGER
 compare_y_position 16 14 LARGER
 compare_y_position 17 14 LARGER
@@ -930,7 +875,6 @@ compare_y_position 46 14 SMALLER
 compare_y_position 47 14 LARGER
 compare_y_position 48 14 SMALLER
 compare_y_position 49 14 SMALLER
-compare_y_position 50 14 EQUAL
 compare_y_position 51 14 LARGER
 compare_y_position 52 14 LARGER
 compare_y_position 53 14 LARGER
@@ -967,7 +911,6 @@ compare_y_position 11 15 SMALLER
 compare_y_position 12 15 SMALLER
 compare_y_position 13 15 SMALLER
 compare_y_position 14 15 SMALLER
-compare_y_position 15 15 EQUAL
 compare_y_position 16 15 LARGER
 compare_y_position 17 15 LARGER
 compare_y_position 18 15 LARGER
@@ -1000,7 +943,6 @@ compare_y_position 47 15 SMALLER
 compare_y_position 48 15 SMALLER
 compare_y_position 49 15 SMALLER
 compare_y_position 50 15 SMALLER
-compare_y_position 51 15 EQUAL
 compare_y_position 52 15 LARGER
 compare_y_position 53 15 LARGER
 compare_y_position 54 15 LARGER
@@ -1034,9 +976,7 @@ compare_y_position 12 16 SMALLER
 compare_y_position 13 16 SMALLER
 compare_y_position 14 16 SMALLER
 compare_y_position 15 16 SMALLER
-compare_y_position 16 16 EQUAL
 compare_y_position 17 16 LARGER
-compare_y_position 18 16 EQUAL
 compare_y_position 19 16 LARGER
 compare_y_position 20 16 LARGER
 compare_y_position 21 16 SMALLER
@@ -1067,9 +1007,7 @@ compare_y_position 48 16 SMALLER
 compare_y_position 49 16 SMALLER
 compare_y_position 50 16 SMALLER
 compare_y_position 51 16 SMALLER
-compare_y_position 52 16 EQUAL
 compare_y_position 53 16 LARGER
-compare_y_position 54 16 EQUAL
 compare_y_position 55 16 LARGER
 compare_y_position 56 16 LARGER
 compare_y_position 57 16 SMALLER
@@ -1101,10 +1039,8 @@ compare_y_position 13 17 SMALLER
 compare_y_position 14 17 SMALLER
 compare_y_position 15 17 SMALLER
 compare_y_position 16 17 SMALLER
-compare_y_position 17 17 EQUAL
 compare_y_position 18 17 SMALLER
 compare_y_position 19 17 SMALLER
-compare_y_position 20 17 EQUAL
 compare_y_position 21 17 SMALLER
 compare_y_position 22 17 SMALLER
 compare_y_position 23 17 SMALLER
@@ -1134,10 +1070,8 @@ compare_y_position 49 17 SMALLER
 compare_y_position 50 17 SMALLER
 compare_y_position 51 17 SMALLER
 compare_y_position 52 17 SMALLER
-compare_y_position 53 17 EQUAL
 compare_y_position 54 17 SMALLER
 compare_y_position 55 17 SMALLER
-compare_y_position 56 17 EQUAL
 compare_y_position 57 17 SMALLER
 compare_y_position 58 17 SMALLER
 compare_y_position 59 17 SMALLER
@@ -1166,9 +1100,7 @@ compare_y_position 12 18 SMALLER
 compare_y_position 13 18 SMALLER
 compare_y_position 14 18 SMALLER
 compare_y_position 15 18 SMALLER
-compare_y_position 16 18 EQUAL
 compare_y_position 17 18 LARGER
-compare_y_position 18 18 EQUAL
 compare_y_position 19 18 LARGER
 compare_y_position 20 18 LARGER
 compare_y_position 21 18 SMALLER
@@ -1177,7 +1109,6 @@ compare_y_position 23 18 SMALLER
 compare_y_position 24 18 SMALLER
 compare_y_position 25 18 SMALLER
 compare_y_position 26 18 EQUAL
-compare_y_position 27 18 EQUAL
 compare_y_position 28 18 EQUAL
 compare_y_position 29 18 EQUAL
 compare_y_position 30 18 LARGER
@@ -1202,9 +1133,7 @@ compare_y_position 48 18 SMALLER
 compare_y_position 49 18 SMALLER
 compare_y_position 50 18 SMALLER
 compare_y_position 51 18 SMALLER
-compare_y_position 52 18 EQUAL
 compare_y_position 53 18 LARGER
-compare_y_position 54 18 EQUAL
 compare_y_position 55 18 LARGER
 compare_y_position 56 18 LARGER
 compare_y_position 57 18 SMALLER
@@ -1213,7 +1142,6 @@ compare_y_position 59 18 SMALLER
 compare_y_position 60 18 SMALLER
 compare_y_position 61 18 SMALLER
 compare_y_position 62 18 EQUAL
-compare_y_position 63 18 EQUAL
 compare_y_position 64 18 EQUAL
 compare_y_position 65 18 EQUAL
 compare_y_position 66 18 LARGER
@@ -1241,7 +1169,6 @@ compare_y_position 15 19 SMALLER
 compare_y_position 16 19 SMALLER
 compare_y_position 17 19 LARGER
 compare_y_position 18 19 SMALLER
-compare_y_position 19 19 EQUAL
 compare_y_position 20 19 LARGER
 compare_y_position 21 19 SMALLER
 compare_y_position 22 19 SMALLER
@@ -1277,7 +1204,6 @@ compare_y_position 51 19 SMALLER
 compare_y_position 52 19 SMALLER
 compare_y_position 53 19 LARGER
 compare_y_position 54 19 SMALLER
-compare_y_position 55 19 EQUAL
 compare_y_position 56 19 LARGER
 compare_y_position 57 19 SMALLER
 compare_y_position 58 19 SMALLER
@@ -1311,10 +1237,8 @@ compare_y_position 13 20 SMALLER
 compare_y_position 14 20 SMALLER
 compare_y_position 15 20 SMALLER
 compare_y_position 16 20 SMALLER
-compare_y_position 17 20 EQUAL
 compare_y_position 18 20 SMALLER
 compare_y_position 19 20 SMALLER
-compare_y_position 20 20 EQUAL
 compare_y_position 21 20 SMALLER
 compare_y_position 22 20 SMALLER
 compare_y_position 23 20 SMALLER
@@ -1326,7 +1250,6 @@ compare_y_position 28 20 SMALLER
 compare_y_position 29 20 SMALLER
 compare_y_position 30 20 EQUAL
 compare_y_position 31 20 EQUAL
-compare_y_position 32 20 EQUAL
 compare_y_position 33 20 SMALLER
 compare_y_position 34 20 SMALLER
 compare_y_position 35 20 SMALLER
@@ -1347,10 +1270,8 @@ compare_y_position 49 20 SMALLER
 compare_y_position 50 20 SMALLER
 compare_y_position 51 20 SMALLER
 compare_y_position 52 20 SMALLER
-compare_y_position 53 20 EQUAL
 compare_y_position 54 20 SMALLER
 compare_y_position 55 20 SMALLER
-compare_y_position 56 20 EQUAL
 compare_y_position 57 20 SMALLER
 compare_y_position 58 20 SMALLER
 compare_y_position 59 20 SMALLER
@@ -1362,7 +1283,6 @@ compare_y_position 64 20 SMALLER
 compare_y_position 65 20 SMALLER
 compare_y_position 66 20 EQUAL
 compare_y_position 67 20 EQUAL
-compare_y_position 68 20 EQUAL
 compare_y_position 69 20 SMALLER
 compare_y_position 70 20 SMALLER
 compare_y_position 71 20 SMALLER
@@ -1384,8 +1304,6 @@ compare_y_position 17 21 LARGER
 compare_y_position 18 21 LARGER
 compare_y_position 19 21 LARGER
 compare_y_position 20 21 LARGER
-compare_y_position 21 21 EQUAL
-compare_y_position 22 21 EQUAL
 compare_y_position 23 21 SMALLER
 compare_y_position 24 21 SMALLER
 compare_y_position 25 21 SMALLER
@@ -1414,8 +1332,6 @@ compare_y_position 53 21 LARGER
 compare_y_position 54 21 LARGER
 compare_y_position 55 21 LARGER
 compare_y_position 56 21 LARGER
-compare_y_position 57 21 EQUAL
-compare_y_position 58 21 EQUAL
 compare_y_position 59 21 SMALLER
 compare_y_position 60 21 SMALLER
 compare_y_position 61 21 SMALLER
@@ -1444,12 +1360,9 @@ compare_y_position 17 22 LARGER
 compare_y_position 18 22 LARGER
 compare_y_position 19 22 LARGER
 compare_y_position 20 22 LARGER
-compare_y_position 21 22 EQUAL
-compare_y_position 22 22 EQUAL
 compare_y_position 23 22 SMALLER
 compare_y_position 24 22 SMALLER
 compare_y_position 25 22 SMALLER
-compare_y_position 26 22 EQUAL
 compare_y_position 27 22 EQUAL
 compare_y_position 28 22 EQUAL
 compare_y_position 29 22 EQUAL
@@ -1474,12 +1387,9 @@ compare_y_position 53 22 LARGER
 compare_y_position 54 22 LARGER
 compare_y_position 55 22 LARGER
 compare_y_position 56 22 LARGER
-compare_y_position 57 22 EQUAL
-compare_y_position 58 22 EQUAL
 compare_y_position 59 22 SMALLER
 compare_y_position 60 22 SMALLER
 compare_y_position 61 22 SMALLER
-compare_y_position 62 22 EQUAL
 compare_y_position 63 22 EQUAL
 compare_y_position 64 22 EQUAL
 compare_y_position 65 22 EQUAL
@@ -1489,7 +1399,6 @@ compare_y_position 68 22 EQUAL
 compare_y_position 2 23 EQUAL
 compare_y_position 3 23 LARGER
 compare_y_position 4 23 LARGER
-compare_y_position 5 23 EQUAL
 compare_y_position 6 23 LARGER
 compare_y_position 7 23 LARGER
 compare_y_position 9 23 EQUAL
@@ -1506,7 +1415,6 @@ compare_y_position 19 23 LARGER
 compare_y_position 20 23 LARGER
 compare_y_position 21 23 LARGER
 compare_y_position 22 23 LARGER
-compare_y_position 23 23 EQUAL
 compare_y_position 24 23 LARGER
 compare_y_position 25 23 LARGER
 compare_y_position 26 23 LARGER
@@ -1522,7 +1430,6 @@ compare_y_position 35 23 LARGER
 compare_y_position 38 23 EQUAL
 compare_y_position 39 23 LARGER
 compare_y_position 40 23 LARGER
-compare_y_position 41 23 EQUAL
 compare_y_position 42 23 LARGER
 compare_y_position 43 23 LARGER
 compare_y_position 45 23 EQUAL
@@ -1539,7 +1446,6 @@ compare_y_position 55 23 LARGER
 compare_y_position 56 23 LARGER
 compare_y_position 57 23 LARGER
 compare_y_position 58 23 LARGER
-compare_y_position 59 23 EQUAL
 compare_y_position 60 23 LARGER
 compare_y_position 61 23 LARGER
 compare_y_position 62 23 LARGER
@@ -1573,7 +1479,6 @@ compare_y_position 20 24 LARGER
 compare_y_position 21 24 LARGER
 compare_y_position 22 24 LARGER
 compare_y_position 23 24 SMALLER
-compare_y_position 24 24 EQUAL
 compare_y_position 25 24 LARGER
 compare_y_position 26 24 LARGER
 compare_y_position 27 24 LARGER
@@ -1606,7 +1511,6 @@ compare_y_position 56 24 LARGER
 compare_y_position 57 24 LARGER
 compare_y_position 58 24 LARGER
 compare_y_position 59 24 SMALLER
-compare_y_position 60 24 EQUAL
 compare_y_position 61 24 LARGER
 compare_y_position 62 24 LARGER
 compare_y_position 63 24 LARGER
@@ -1640,7 +1544,6 @@ compare_y_position 21 25 LARGER
 compare_y_position 22 25 LARGER
 compare_y_position 23 25 SMALLER
 compare_y_position 24 25 SMALLER
-compare_y_position 25 25 EQUAL
 compare_y_position 26 25 LARGER
 compare_y_position 27 25 LARGER
 compare_y_position 28 25 LARGER
@@ -1673,7 +1576,6 @@ compare_y_position 57 25 LARGER
 compare_y_position 58 25 LARGER
 compare_y_position 59 25 SMALLER
 compare_y_position 60 25 SMALLER
-compare_y_position 61 25 EQUAL
 compare_y_position 62 25 LARGER
 compare_y_position 63 25 LARGER
 compare_y_position 64 25 LARGER
@@ -1703,11 +1605,9 @@ compare_y_position 18 26 EQUAL
 compare_y_position 19 26 LARGER
 compare_y_position 20 26 LARGER
 compare_y_position 21 26 EQUAL
-compare_y_position 22 26 EQUAL
 compare_y_position 23 26 SMALLER
 compare_y_position 24 26 SMALLER
 compare_y_position 25 26 SMALLER
-compare_y_position 26 26 EQUAL
 compare_y_position 27 26 SMALLER
 compare_y_position 28 26 SMALLER
 compare_y_position 29 26 SMALLER
@@ -1733,11 +1633,9 @@ compare_y_position 54 26 EQUAL
 compare_y_position 55 26 LARGER
 compare_y_position 56 26 LARGER
 compare_y_position 57 26 EQUAL
-compare_y_position 58 26 EQUAL
 compare_y_position 59 26 SMALLER
 compare_y_position 60 26 SMALLER
 compare_y_position 61 26 SMALLER
-compare_y_position 62 26 EQUAL
 compare_y_position 63 26 SMALLER
 compare_y_position 64 26 SMALLER
 compare_y_position 65 26 SMALLER
@@ -1759,7 +1657,6 @@ compare_y_position 14 27 LARGER
 compare_y_position 15 27 SMALLER
 compare_y_position 16 27 EQUAL
 compare_y_position 17 27 LARGER
-compare_y_position 18 27 EQUAL
 compare_y_position 19 27 LARGER
 compare_y_position 20 27 LARGER
 compare_y_position 21 27 EQUAL
@@ -1768,7 +1665,6 @@ compare_y_position 23 27 SMALLER
 compare_y_position 24 27 SMALLER
 compare_y_position 25 27 SMALLER
 compare_y_position 26 27 LARGER
-compare_y_position 27 27 EQUAL
 compare_y_position 28 27 LARGER
 compare_y_position 29 27 LARGER
 compare_y_position 30 27 LARGER
@@ -1792,7 +1688,6 @@ compare_y_position 50 27 LARGER
 compare_y_position 51 27 SMALLER
 compare_y_position 52 27 EQUAL
 compare_y_position 53 27 LARGER
-compare_y_position 54 27 EQUAL
 compare_y_position 55 27 LARGER
 compare_y_position 56 27 LARGER
 compare_y_position 57 27 EQUAL
@@ -1801,7 +1696,6 @@ compare_y_position 59 27 SMALLER
 compare_y_position 60 27 SMALLER
 compare_y_position 61 27 SMALLER
 compare_y_position 62 27 LARGER
-compare_y_position 63 27 EQUAL
 compare_y_position 64 27 LARGER
 compare_y_position 65 27 LARGER
 compare_y_position 66 27 LARGER
@@ -1820,7 +1714,6 @@ compare_y_position 9 28 SMALLER
 compare_y_position 10 28 EQUAL
 compare_y_position 11 28 LARGER
 compare_y_position 12 28 SMALLER
-compare_y_position 13 28 EQUAL
 compare_y_position 14 28 LARGER
 compare_y_position 15 28 SMALLER
 compare_y_position 16 28 EQUAL
@@ -1835,7 +1728,6 @@ compare_y_position 24 28 SMALLER
 compare_y_position 25 28 SMALLER
 compare_y_position 26 28 LARGER
 compare_y_position 27 28 SMALLER
-compare_y_position 28 28 EQUAL
 compare_y_position 29 28 LARGER
 compare_y_position 30 28 LARGER
 compare_y_position 31 28 LARGER
@@ -1853,7 +1745,6 @@ compare_y_position 45 28 SMALLER
 compare_y_position 46 28 EQUAL
 compare_y_position 47 28 LARGER
 compare_y_position 48 28 SMALLER
-compare_y_position 49 28 EQUAL
 compare_y_position 50 28 LARGER
 compare_y_position 51 28 SMALLER
 compare_y_position 52 28 EQUAL
@@ -1868,7 +1759,6 @@ compare_y_position 60 28 SMALLER
 compare_y_position 61 28 SMALLER
 compare_y_position 62 28 LARGER
 compare_y_position 63 28 SMALLER
-compare_y_position 64 28 EQUAL
 compare_y_position 65 28 LARGER
 compare_y_position 66 28 LARGER
 compare_y_position 67 28 LARGER
@@ -1881,7 +1771,6 @@ compare_y_position 3 29 EQUAL
 compare_y_position 4 29 LARGER
 compare_y_position 5 29 SMALLER
 compare_y_position 6 29 SMALLER
-compare_y_position 7 29 EQUAL
 compare_y_position 9 29 SMALLER
 compare_y_position 10 29 EQUAL
 compare_y_position 11 29 LARGER
@@ -1902,7 +1791,6 @@ compare_y_position 25 29 SMALLER
 compare_y_position 26 29 LARGER
 compare_y_position 27 29 SMALLER
 compare_y_position 28 29 SMALLER
-compare_y_position 29 29 EQUAL
 compare_y_position 30 29 LARGER
 compare_y_position 31 29 LARGER
 compare_y_position 32 29 LARGER
@@ -1914,7 +1802,6 @@ compare_y_position 39 29 EQUAL
 compare_y_position 40 29 LARGER
 compare_y_position 41 29 SMALLER
 compare_y_position 42 29 SMALLER
-compare_y_position 43 29 EQUAL
 compare_y_position 45 29 SMALLER
 compare_y_position 46 29 EQUAL
 compare_y_position 47 29 LARGER
@@ -1935,7 +1822,6 @@ compare_y_position 61 29 SMALLER
 compare_y_position 62 29 LARGER
 compare_y_position 63 29 SMALLER
 compare_y_position 64 29 SMALLER
-compare_y_position 65 29 EQUAL
 compare_y_position 66 29 LARGER
 compare_y_position 67 29 LARGER
 compare_y_position 68 29 LARGER
@@ -1969,7 +1855,6 @@ compare_y_position 26 30 EQUAL
 compare_y_position 27 30 SMALLER
 compare_y_position 28 30 SMALLER
 compare_y_position 29 30 SMALLER
-compare_y_position 30 30 EQUAL
 compare_y_position 31 30 LARGER
 compare_y_position 32 30 LARGER
 compare_y_position 33 30 EQUAL
@@ -2002,7 +1887,6 @@ compare_y_position 62 30 EQUAL
 compare_y_position 63 30 SMALLER
 compare_y_position 64 30 SMALLER
 compare_y_position 65 30 SMALLER
-compare_y_position 66 30 EQUAL
 compare_y_position 67 30 LARGER
 compare_y_position 68 30 LARGER
 compare_y_position 69 30 EQUAL
@@ -2036,7 +1920,6 @@ compare_y_position 27 31 SMALLER
 compare_y_position 28 31 SMALLER
 compare_y_position 29 31 SMALLER
 compare_y_position 30 31 SMALLER
-compare_y_position 31 31 EQUAL
 compare_y_position 32 31 LARGER
 compare_y_position 33 31 SMALLER
 compare_y_position 34 31 SMALLER
@@ -2069,7 +1952,6 @@ compare_y_position 63 31 SMALLER
 compare_y_position 64 31 SMALLER
 compare_y_position 65 31 SMALLER
 compare_y_position 66 31 SMALLER
-compare_y_position 67 31 EQUAL
 compare_y_position 68 31 LARGER
 compare_y_position 69 31 SMALLER
 compare_y_position 70 31 SMALLER
@@ -2091,7 +1973,6 @@ compare_y_position 16 32 SMALLER
 compare_y_position 17 32 EQUAL
 compare_y_position 18 32 SMALLER
 compare_y_position 19 32 SMALLER
-compare_y_position 20 32 EQUAL
 compare_y_position 21 32 SMALLER
 compare_y_position 22 32 EQUAL
 compare_y_position 23 32 SMALLER
@@ -2103,7 +1984,6 @@ compare_y_position 28 32 SMALLER
 compare_y_position 29 32 SMALLER
 compare_y_position 30 32 SMALLER
 compare_y_position 31 32 SMALLER
-compare_y_position 32 32 EQUAL
 compare_y_position 33 32 SMALLER
 compare_y_position 34 32 SMALLER
 compare_y_position 35 32 SMALLER
@@ -2124,7 +2004,6 @@ compare_y_position 52 32 SMALLER
 compare_y_position 53 32 EQUAL
 compare_y_position 54 32 SMALLER
 compare_y_position 55 32 SMALLER
-compare_y_position 56 32 EQUAL
 compare_y_position 57 32 SMALLER
 compare_y_position 58 32 EQUAL
 compare_y_position 59 32 SMALLER
@@ -2136,7 +2015,6 @@ compare_y_position 64 32 SMALLER
 compare_y_position 65 32 SMALLER
 compare_y_position 66 32 SMALLER
 compare_y_position 67 32 SMALLER
-compare_y_position 68 32 EQUAL
 compare_y_position 69 32 SMALLER
 compare_y_position 70 32 SMALLER
 compare_y_position 71 32 SMALLER
@@ -2158,8 +2036,6 @@ compare_y_position 29 33 LARGER
 compare_y_position 30 33 EQUAL
 compare_y_position 31 33 LARGER
 compare_y_position 32 33 LARGER
-compare_y_position 33 33 EQUAL
-compare_y_position 34 33 EQUAL
 compare_y_position 35 33 EQUAL
 compare_y_position 41 33 EQUAL
 compare_y_position 42 33 LARGER
@@ -2179,8 +2055,6 @@ compare_y_position 65 33 LARGER
 compare_y_position 66 33 EQUAL
 compare_y_position 67 33 LARGER
 compare_y_position 68 33 LARGER
-compare_y_position 69 33 EQUAL
-compare_y_position 70 33 EQUAL
 compare_y_position 71 33 EQUAL
 compare_y_position 5 34 EQUAL
 compare_y_position 6 34 LARGER
@@ -2200,9 +2074,6 @@ compare_y_position 29 34 LARGER
 compare_y_position 30 34 EQUAL
 compare_y_position 31 34 LARGER
 compare_y_position 32 34 LARGER
-compare_y_position 33 34 EQUAL
-compare_y_position 34 34 EQUAL
-compare_y_position 35 34 EQUAL
 compare_y_position 41 34 EQUAL
 compare_y_position 42 34 LARGER
 compare_y_position 43 34 LARGER
@@ -2221,9 +2092,6 @@ compare_y_position 65 34 LARGER
 compare_y_position 66 34 EQUAL
 compare_y_position 67 34 LARGER
 compare_y_position 68 34 LARGER
-compare_y_position 69 34 EQUAL
-compare_y_position 70 34 EQUAL
-compare_y_position 71 34 EQUAL
 compare_y_position 5 35 SMALLER
 compare_y_position 6 35 EQUAL
 compare_y_position 7 35 LARGER
@@ -2243,8 +2111,6 @@ compare_y_position 30 35 SMALLER
 compare_y_position 31 35 EQUAL
 compare_y_position 32 35 LARGER
 compare_y_position 33 35 EQUAL
-compare_y_position 34 35 EQUAL
-compare_y_position 35 35 EQUAL
 compare_y_position 41 35 SMALLER
 compare_y_position 42 35 EQUAL
 compare_y_position 43 35 LARGER
@@ -2264,5 +2130,3 @@ compare_y_position 66 35 SMALLER
 compare_y_position 67 35 EQUAL
 compare_y_position 68 35 LARGER
 compare_y_position 69 35 EQUAL
-compare_y_position 70 35 EQUAL
-compare_y_position 71 35 EQUAL
