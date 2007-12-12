@@ -264,32 +264,54 @@ public:
      * and using get_approximation_y() instead whenever approximations suffice.
      */
     X_coordinate_1 y() const {
-        std::cout << "y() starts" << std::endl;
+
         typedef typename Algebraic_curve_kernel_2::Polynomial_2::Polynomial_2 
             Polynomial_2;
+
+        Polynomial_2 f = curve().f();
+
         typedef typename Polynomial_2::NT Polynomial_1;
+
+        // This will be the defining polynomial of y
+        Polynomial_1 y_pol;
+
+        // Filter: If we know that the point is critical, we can use
+        // the resultant of f and f_y with respect to x as polynomial
+        int i;
+        bool is_event;
+        bool point_is_certainly_critical = false;
+        curve().x_to_index(x(),i,is_event);
+        if(is_event) {
+            typename Curve_2::Event1_info ev_info = curve().event_info(i);
+            if(ev_info.num_arcs_left(arcno()) != 1 ||
+               ev_info.num_arcs_left(arcno()) != 1) {
+                
+                point_is_certainly_critical = true;
+                
+                y_pol = NiX::make_square_free(
+                        NiX::resultant
+                            (transpose_bivariate_polynomial(f),
+                             transpose_bivariate_polynomial(NiX::diff(f))));
+            }
+        }
+        if(! point_is_certainly_critical) {
+            
+            Polynomial_2 r(x().polynomial());
+            
+            y_pol = NiX::make_square_free(
+                    NiX::resultant(transpose_bivariate_polynomial(f),
+                                   transpose_bivariate_polynomial(r) ));
+        }
         typename NiX::Real_roots<X_coordinate_1,
             NiX::Descartes<Polynomial_1, Boundary> > real_roots;
 
-        Polynomial_2 r(x().polynomial());
-        Polynomial_2 f = curve().f();
-        std::cout << "res.." << std::flush;
-        Polynomial_1 y_pol 
-            = NiX::make_square_free(
-                    NiX::resultant(transpose_bivariate_polynomial(f),
-                                   transpose_bivariate_polynomial(r)));
-        std::cout << "done, degree=" << y_pol.degree() << std::endl;
         std::vector<X_coordinate_1> y_roots;
-        std::cout << "roots.." << std::flush;
         real_roots(y_pol, 
                    std::back_inserter(y_roots)); 
-        std::cout << "done" << std::endl;
         Boundary_interval y_iv = get_approximation_y();
 
         typename std::vector<X_coordinate_1>::const_iterator it 
             = y_roots.begin();
-
-        std::cout << "Loop starts" << std::endl;
 
         while(it != y_roots.end()) {
             if(it->high() < y_iv.lower()) {
@@ -302,7 +324,6 @@ public:
             refine_y();
             y_iv = get_approximation_y();
         }
-        std::cout << "Loop ends" << std::endl;
         CGAL_assertion(it!=y_roots.end());
         return X_coordinate_1( y_pol, it->low(), it->high() );
     }

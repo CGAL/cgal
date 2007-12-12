@@ -451,6 +451,11 @@ public:
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
             
+            // It is easier if the x coordinates are equal!
+            if(Compare_x_2()(xy1.x(),xy2.x()) == CGAL::EQUAL) {
+                return Compare_xy_2()(xy1,xy2);
+            }
+
             return (Compare_x_2()(xy1.y(), xy2.y()));
         }
     };
