@@ -953,7 +953,7 @@ bool Traits_adaptor_test<T_Traits>::ta_merge_wrapper
                                              (std::istringstream & str_stream)
 {
   typedef typename T_Traits::Has_merge_category          Has_merge_category;
-  return ta_are_mergeable_wrapper_imp(str_stream, Has_merge_category());
+  return ta_merge_wrapper_imp(str_stream, Has_merge_category());
 }
 
 template <class T_Traits>
