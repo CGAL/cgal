@@ -2460,7 +2460,52 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   std::cout << "oc2: " << oc2 << std::endl;
 
   std::cout << "f1: " << &(*f) << std::endl;
+#if 0
+  DHalfedge *curr = prev1;
+  if (curr != curr->next()) {
+
+      curr = curr->next();
+      
+      while (curr != prev1) {
+          
+          if (!curr->has_null_curve()) {
+              std::cout << "curr: " << curr->curve() << std::endl;
+          } else {
+              std::cout << "curr: fictitious" << std::endl;
+          }
+          std::cout << "dir: " 
+                    << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                    << std::endl;
+          curr = curr->next();
+      }
+  } else {
+      std::cout << "only prev1" << std::endl;
+  }
+#endif
   std::cout << "f2: " << &(*f2) << std::endl;
+#if 0
+  curr = prev2;
+  if (curr != curr->next()) {
+      
+      curr = curr->next();
+
+      while (curr != prev2) {
+          
+          if (!curr->has_null_curve()) {
+              std::cout << "curr: " << curr->curve() << std::endl;
+          } else {
+              std::cout << "curr: fictitious" << std::endl;
+          }
+          std::cout << "dir: " 
+                    << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                    << std::endl;
+
+          curr = curr->next();
+      }
+  } else {
+      std::cout << "only prev2" << std::endl;
+  }
+#endif
 #endif
 
   CGAL_precondition_msg
@@ -2684,6 +2729,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     // Create the new face and create a single outer component which should
     // point to he2.
     DFace       *new_f = _dcel().new_face();
+    //std::cout << "New face: " << &(*new_f) << std::endl;
+
     DOuter_ccb  *new_oc = _dcel().new_outer_ccb();
 
     new_face = true;
