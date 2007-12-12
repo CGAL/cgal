@@ -33,6 +33,17 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+template <class Key>
+struct Stub {
+
+    typedef Key agrument_type;
+    typedef Key result_type;
+    
+    inline Key operator()(Key k) const {
+        return k;
+    }
+};
+
 //! \brief this class defines hashed map container with LRU capabilities,
 //!
 //! stores pair of \c KeyType_ and \c ValueType_. Before adding to 
@@ -41,7 +52,8 @@ namespace CGALi {
 //! values of \c KeyType_, \c Creator_ is a mapping from \c KeyType_ to
 //! \c ValueType_, \c Hash_ is function object which returns hash values
 //! for the keys 
-template <class KeyType_, class ValueType_, class Canonicalizer_, 
+template <class KeyType_, class ValueType_,
+    class Canonicalizer_ = Stub<KeyType_>,
     class Hash_ = boost::hash<KeyType_>,
     class Creator_ = CGAL::Creator_1<KeyType_, ValueType_>,
     class Pred_ = std::equal_to<KeyType_> >
@@ -136,7 +148,7 @@ public:
             Value_type val = create(key_);
             insert(Data_type(key, val));
             return val;
-        } 
+        }
         return (p.first)->second;
     }
     
@@ -251,6 +263,17 @@ struct Curve_pair_hasher_2
         Poly_hasher_2<typename Curve_2::Poly_d> hasher;
         return (hasher(p.first.f()) ^ hasher(p.second.f()));
     }  
+};
+
+struct Int_pair_hash {
+
+    typedef size_t result_type;
+    typedef std::pair<int, int> argument_type;
+
+     size_t operator()(const argument_type& p) const
+     {
+        return static_cast<size_t>(p.first ^ p.second);
+     }
 };
 
 } // namespace CGALi
