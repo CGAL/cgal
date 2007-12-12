@@ -568,7 +568,7 @@ bool Traits_adaptor_test<T_Traits>::perform(std::ifstream & is)
     /*if (!test_result)
     std::cout << "bug" << std::endl;*/
     counter++;
-    std::cout << "iter number : " << counter << std::endl;
+    //std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -899,9 +899,9 @@ bool Traits_adaptor_test<T_Traits>::ta_compare_cw_around_point_wrapper
   unsigned int xcv1 , b1 , xcv2 , b2 , p , b3;
   str_stream >> xcv1 >> b1 >> xcv2 >> b2 >> p >> b3;
   unsigned int exp_answer = get_expected_enum(str_stream) ;
-  std::cout << "Test: compare_cw_around_point( " << m_xcurves[xcv1] 
-            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2]
-            << (b2==0?"false":"true") << " , " << m_points[p] 
+  std::cout << "Test: compare_cw_around_point( " << m_xcurves[xcv1] << " , "
+            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2] << " , "
+            << (b2==0?"false":"true") << " , " << m_points[p] << " , "
             << (b3==0?"false":"true") << " ) ? " ;
   unsigned int real_answer = m_traits.compare_cw_around_point_2_object()
                      ( m_xcurves[xcv1] , (b1==0?false:true),

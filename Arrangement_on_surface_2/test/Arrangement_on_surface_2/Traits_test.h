@@ -714,7 +714,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     /*if (!test_result)
     std::cout << "bug" << std::endl;*/
     counter++;
-    std::cout << "iter number : " << counter << std::endl;
+    //std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
@@ -1511,7 +1511,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   std::vector<CGAL::Object> object_vec;
-  (void) m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
+  m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
                                 std::back_inserter(object_vec));
   did_violation_occur();
   std::cout << "Test: intersect( " << m_xcurves[id1] << "," << m_xcurves[id2]
