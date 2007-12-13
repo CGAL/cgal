@@ -59,6 +59,9 @@ class Point_2_rep
     // type of a finite point on curve
     typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
         Xy_coordinate_2;
+
+    typedef typename Curved_kernel_via_analysis_2::Curve_2
+        Curve_2;
     
     // default constructor
     Point_2_rep() 
@@ -70,18 +73,20 @@ class Point_2_rep
         _m_xy(xy), _m_location(CGAL::ARR_INTERIOR) {
     }
 
-    // constructs a point on curve with x-/y-coordinate at infinity
-    Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end,
-        bool has_x_infty = true) {
-        
-        if(has_x_infty)
-            _m_location = (inf_end == CGAL::ARR_MIN_END ?
-                CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
-        else {
-            _m_location = (inf_end == CGAL::ARR_MIN_END ?
+    // constructs a point on curve with y-coordinate at infinity
+    Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) {
+
+        _m_location = (inf_end == CGAL::ARR_MIN_END ?
                 CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
-            _m_x = x;
-        }
+        _m_x = x;
+    }
+
+    // constructs a point at +/-oo in x
+    Point_2_rep(const Curve_2& c, int arcno, CGAL::Arr_curve_end inf_end) :
+        _m_xcurve(c), _m_xarcno(arcno) {
+
+        _m_location = (inf_end == CGAL::ARR_MIN_END ?
+                CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
     }
     
     // curve point finite coordinates. They are valid only if boundary in y 
@@ -90,8 +95,12 @@ class Point_2_rep
     boost::optional<Xy_coordinate_2> _m_xy; 
         
     // x-coordinate of a curve point
-    boost::optional<X_coordinate_1> _m_x; 
-        
+    boost::optional<X_coordinate_1> _m_x;
+
+    boost::optional<Curve_2> _m_xcurve;
+    
+    boost::optional<int> _m_xarcno;
+    
     // surface boundary type
     //mutable CGAL::Arr_boundary_type _m_boundary;
     // location of a point in parameter space
@@ -192,16 +201,16 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
-    explicit Point_2(CGAL::Arr_curve_end inf_end) :
-         Base(Rep(X_coordinate_1(), inf_end, true)) {  
+    Point_2(const Curve_2 c, int arcno, CGAL::Arr_curve_end inf_end) :
+         Base(Rep(c, arcno, inf_end)) {
     }
     
     //!\brief constructs a point with y-coordinate at infinity having
     //! x-coordinate \c x
     //!
     //! \c inf_end defines whether the point lies at +/- infinity
-    explicit Point_2(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
-         Base(Rep(x, inf_end, false)) {  
+    Point_2(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
+         Base(Rep(x, inf_end)) {
     }
     
     //!@}
@@ -234,18 +243,20 @@ public:
     //!
     //! \pre this object must represent a finite point on curve
     inline Curve_2 curve() const {
-        CGAL_precondition_msg(this->ptr()->_m_xy, 
-            "Denied access to the curve end lying at x/y-infinity");
-        return (*(this->ptr()->_m_xy)).curve();
+        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_xcurve),
+            "Denied access to the curve end lying at y-infinity");
+        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).curve() :
+            *(this->ptr()->_m_xcurve));
     }
     
     //! returns an arc number of underlying \c Xy_coordinate_2 object
     //!
     //! \pre this object must represent a finite point on curve
     inline int arcno() const {
-        CGAL_precondition_msg(this->ptr()->_m_xy, 
-            "Denied access to the curve end lying at x/y-infinity");
-        return (*(this->ptr()->_m_xy)).arcno();
+        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_xarcno), 
+            "Denied access to the curve end lying at y-infinity");
+        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).arcno() :
+            *(this->ptr()->_m_xarcno));
     }
     
     //! returns type of a boundary
@@ -258,13 +269,13 @@ public:
     
     //! checks if the point lies at x-infinity (x/y-coordinates are 
     //! inaccessible)
-    bool is_at_x_infinity() const {
+    inline bool is_on_left_right() const {
         return (location() == CGAL::ARR_LEFT_BOUNDARY ||
              location() == CGAL::ARR_RIGHT_BOUNDARY);
     }
     
     //! checks if the point lies at y-infinity (y-coordinate is inaccessible)
-    bool is_at_y_infinity() const {
+    inline bool is_on_bottom_top() const {
         return (location() == CGAL::ARR_BOTTOM_BOUNDARY ||
              location() == CGAL::ARR_TOP_BOUNDARY);
     }

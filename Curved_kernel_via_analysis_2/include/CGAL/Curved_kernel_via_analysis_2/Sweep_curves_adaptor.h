@@ -75,8 +75,9 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2, bool) const
     {
+        typedef typename SweepCurvesAdaptor_2::Native_arc_2 Native_arc_2;
         typename SweepCurvesAdaptor_2::Native_point_2 pt;
-        typename SweepCurvesAdaptor_2::Native_arc_2 arc;
+        Native_arc_2 arc;
         CGAL::Arr_curve_end end;
         CGAL::Arr_parameter_space loc1, loc2;
         bool inverse = false;
@@ -97,35 +98,36 @@ public:
         } else {
             arc = p1.arc();
             end = p1.curve_end();
-            bnd1 = arc.location(end);
+            loc1 = arc.location(end);
 
             if(!p2.is_finite()) { // both points lie at infinity
-                bnd2 = p2.arc().boundary_in_x(p2.curve_end());
-                if(bnd1 != CGAL::NO_BOUNDARY) {
-                    if(bnd1 != bnd2) // cmp + and -oo in x
-                        return (bnd1 < 0 ? CGAL::SMALLER : CGAL::LARGER);
-                    return (_m_adaptor->kernel().compare_y_at_x_2_object()
+                loc2 = p2.arc().location(p2.curve_end());
+                if(Native_arc_2::is_on_left_right(loc1)) {
+                    if(loc1 != loc2) // cmp + and -oo in x
+                        return (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::SMALLER :
+                            CGAL::LARGER);
+                    return (_m_adaptor->kernel().compare_y_near_boundary_2_object()
                         (arc, p2.arc(), end));
                 }
                 // compare curve ends at +/-oo in y
-                if(bnd2 == CGAL::NO_BOUNDARY)
-                    return (_m_adaptor->kernel().compare_x_2_object()(arc,
-                        end, p2.arc(), p2.curve_end()));
-                return (bnd2 < 0 ? CGAL::LARGER : CGAL::SMALLER);
+                if(Native_arc_2::is_on_bottom_top(loc2))
+                    return (_m_adaptor->kernel().compare_x_near_boundary_2_object()
+                        (arc, end, p2.arc(), p2.curve_end()));
+                return (loc2 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
+                    CGAL::SMALLER);
             }
             pt = p2.point();
-            // need to inverse the result since we cmp p2 against p1
-            inverse = true; 
+            inverse = true; // inverse result since we compare p2 against p1
         }
         CGAL::Comparison_result res;
-        if(bnd1 != CGAL::NO_BOUNDARY) // p1 (point) against p2 (arc)
-            res = (bnd1 < 0 ? CGAL::LARGER : CGAL::SMALLER);
+        if(Native_arc_2::is_on_left_right(loc1)) // p1 (point) against p2 (arc)
+            res = (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER : CGAL::SMALLER);
         else {
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adaptor->kernel().kernel().compare_x_2_object()
                 (pt.x(), arc.curve_end_x(end));
             if(res == CGAL::EQUAL) // in case of equality use boundary types:
-                res = (arc.boundary_in_y(end) < 0 ? CGAL::LARGER :
+                res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::LARGER :
                     CGAL::SMALLER);
         }
         return (inverse ? -res : res);
@@ -197,6 +199,7 @@ public:
         SCA_CERR("Compare_y_at_x_2: cv: " << cv << "\n point: " <<
             p << std::endl);
 
+        typedef typename SweepCurvesAdaptor_2::Native_arc_2 Native_arc_2;
         typename SweepCurvesAdaptor_2::Native_point_2 pt;
         typename SweepCurvesAdaptor_2::Native_point_2::X_coordinate_1 x;
         if(cv.is_degenerate()) {
@@ -224,11 +227,13 @@ public:
                 cv.arc());
 
         CGAL::Arr_curve_end end = p.curve_end(), end2;
-        CGAL::Boundary_type bnd_x = p.arc().boundary_in_x(end);
-        if(bnd_x != CGAL::NO_BOUNDARY) {
-            CGAL_precondition(bnd_x == cv.arc().boundary_in_x(end));
+       // CGAL::Boundary_type bnd_x = p.arc().boundary_in_x(end);
+        CGAL::Arr_parameter_space locp = p.arc().location(end);
+        
+        if(Native_arc_2::is_on_left_right(locp)) {
+            CGAL_precondition(locp == cv.arc().location(end));
             // compare two curve ends at +/-oo in x
-            return _m_adaptor->kernel().compare_y_at_x_2_object()(p.arc(),
+            return _m_adaptor->kernel().compare_y_near_boundary_2_object()(p.arc(),
                 cv.arc(), end);
         }
         // p.arc() has vertical asymptote; cases:
@@ -244,21 +249,21 @@ public:
         CGAL_precondition(in_x_range);
         
         if(!cv.arc().is_vertical()) {
-            if(eq_max && cv.arc().boundary_in_y(CGAL::ARR_MAX_END) !=
-                    CGAL::NO_BOUNDARY)
+            if(eq_max && cv.arc().location(CGAL::ARR_MAX_END) ==
+                    CGAL::ARR_TOP_BOUNDARY)
                 end2 = CGAL::ARR_MAX_END;
-            else if(!eq_min || cv.arc().boundary_in_y(CGAL::ARR_MIN_END) ==
-                    CGAL::NO_BOUNDARY) {
+            else if(!eq_min || cv.arc().location(CGAL::ARR_MIN_END) !=
+                    CGAL::ARR_BOTTOM_BOUNDARY) {
               // compare finite point against asymptotic or vertical curve end
-                return (p.arc().boundary_in_y(end) < 0 ? CGAL::SMALLER :
+               return (locp == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::SMALLER :
                     CGAL::LARGER);
            }
         } else if(p.arc().is_vertical())
             return CGAL::EQUAL; // two vertical arcs => coincide
 
         // compare either two asymptotic ends or one vertical arc + asymptote
-        return (_m_adaptor->kernel().compare_x_2_object()(p.arc(), end,
-                 cv.arc(), end2)); // check whether result need to be reversed
+        return (_m_adaptor->kernel().compare_x_near_boundary_2_object()(p.arc(),
+             end, cv.arc(), end2)); // check whether result need to be reversed
     }
     
 private:
@@ -562,6 +567,8 @@ public:
                                           const Point_2& q) const {
         SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv <<
             "\n p: " << p << "\n q: " << q << std::endl);
+        CGAL_error_msg("New_endpoints_opposite_2 deprecated and must not be \
+             called\n");
         //CGAL_precondition(p.is_finite() && q.is_finite());
         //return cv.new_endpoints(p.point(), q.point());
         return cv;
@@ -710,7 +717,7 @@ public:
             else if(CGAL::assign(pt, *it))
                 *oi++ = Generic_arc_2(Generic_point_2(pt));
             else
-                CGAL_error("Bogus object..\n");
+                CGAL_error_msg("Bogus object..\n");
         }
         return oi;
     }

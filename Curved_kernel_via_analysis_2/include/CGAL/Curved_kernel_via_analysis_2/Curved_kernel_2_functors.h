@@ -354,16 +354,19 @@ public:
     Parameter_space_in_x_2(CurvedKernel_2 *) {
     }
 
-    /*!
-     * Check if an end of a given x-monotone curve is infinite at x.
-     * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
-     * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
-     *         PLUS_INFINITY if the curve end lies at x = +oo.
+    /*! Obtains the parameter space at the end of a line along the x-axis.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_LEFT_BOUNDARY  - the line approaches the identification arc from
+     *                        the right at the line left end.
+     *   ARR_INTERIOR       - the line does not approache the identification arc.
+     *   ARR_RIGHT_BOUNDARY - the line approaches the identification arc from
+     *                        the left at the line right end.
      */
-    result_type operator()(const Arc_2& cv, ::CGAL::Arr_curve_end end) const {
+    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end end) const {
 
         CGAL::Arr_parameter_space loc = cv.location(end);
         if(loc == CGAL::ARR_LEFT_BOUNDARY || loc == CGAL::ARR_RIGHT_BOUNDARY)
@@ -386,16 +389,24 @@ public:
     Parameter_space_in_y_2(CurvedKernel_2 *) {
     }
 
-    /*!
-     * Check if an end of a given x-monotone curve is infinite at x.
-     * \param cv The curve.
-     * \param ind MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
-     * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
-     *         PLUS_INFINITY if the curve end lies at x = +oo.
+    /*! Obtains the parameter space at the end of a line along the y-axis .
+     * Note that if the line end coincides with a pole, then unless the line
+     * coincides with the identification arc, the line end is considered to
+     * be approaching the boundary, but not on the boundary.
+     * If the line coincides with the identification arc, it is assumed to
+     * be smaller than any other object.
+     * \param xcv the line
+     * \param ce the line end indicator:
+     *     ARR_MIN_END - the minimal end of xc or
+     *     ARR_MAX_END - the maximal end of xc
+     * \return the parameter space at the ce end of the line xcv.
+     *   ARR_BOTTOM_BOUNDARY  - the line approaches the south pole at the line
+     *                          left end.
+     *   ARR_INTERIOR         - the line does not approache a contraction point.
+     *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
+     *                          right end.
      */
-    result_type operator()(const Arc_2& cv, ::CGAL::Arr_curve_end end) const {
+    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end end) const {
             
         CGAL::Arr_parameter_space loc = cv.location(end);
         if(loc == CGAL::ARR_BOTTOM_BOUNDARY || loc == CGAL::ARR_TOP_BOUNDARY)
