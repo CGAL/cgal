@@ -65,17 +65,15 @@ public:
     // standard constructor : normal arc
     Generic_arc_2_rep(const Arc_2& c) {
         
-        if(c.boundary_in_x(CGAL::MIN_END) != CGAL::NO_BOUNDARY ||
-           c.boundary_in_y(CGAL::MIN_END) != CGAL::NO_BOUNDARY) 
-            _m_min = Generic_point_2(c, CGAL::MIN_END); 
+        if(c.location(CGAL::ARR_MIN_END) != CGAL::ARR_INTERIOR) 
+            _m_min = Generic_point_2(c, CGAL::ARR_MIN_END); 
         else {
-            _m_min = Generic_point_2(c.curve_end(CGAL::MIN_END));
+            _m_min = Generic_point_2(c.curve_end(CGAL::ARR_MIN_END));
             _m_arc = c;
         }
-        _m_max = (c.boundary_in_x(CGAL::MAX_END) != CGAL::NO_BOUNDARY ||
-                  c.boundary_in_y(CGAL::MAX_END) != CGAL::NO_BOUNDARY ?
-                    Generic_point_2(c, CGAL::MAX_END) :
-                    Generic_point_2(c.curve_end(CGAL::MAX_END)));
+        _m_max = (c.location(CGAL::ARR_MAX_END) != CGAL::ARR_INTERIOR ?
+                    Generic_point_2(c, CGAL::ARR_MAX_END) :
+                    Generic_point_2(c.curve_end(CGAL::ARR_MAX_END)));
     }
         
     // standard constructor : degenerate arc

@@ -76,10 +76,28 @@ public:
     typedef CGAL::Tag_true Has_infinite_category;
     //! tag specifies that unbounded arcs supported
     typedef CGAL::Tag_true Has_boundary_category;
+
+    typedef Arr_unbounded_boundary_tag                    Boundary_category;
     
     //! type of inverval arcno cache
     typedef CGALi::Curve_interval_arcno_cache<Self> Curve_interval_arcno_cache;
+
+    typedef std::pair<int, int> Int_pair;
+
+    struct Pair_canonicalizer  :
+        public Unary_function< Int_pair, Int_pair >  {
+        
+        Int_pair operator()(const Int_pair& p) const
+        {
+            if(p.first <= p.second)
+                return p;
+            return std::make_pair(p.second, p.first);
+        }
+    };
     
+    typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
+        Pair_canonicalizer, CGALi::Int_pair_hash> Int_pair_map;
+
     //!@}
 public:
     //! \name Constructors
@@ -88,11 +106,18 @@ public:
     //! default constructor
     Curved_kernel_via_analysis_2() :
         _m_kernel(Curve_kernel_2()), _m_interval_arcno_cache(this) {
+
+        // clear all caches before computing
+        //Curve_kernel_2::get_curve_cache().clear();
+        //Curve_kernel_2::get_curve_pair_cache().clear();
     }
 
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
     Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
         _m_kernel(kernel), _m_interval_arcno_cache(this) {
+
+        //Curve_kernel_2::get_curve_cache().clear();
+        //Curve_kernel_2::get_curve_pair_cache().clear();
     }
     //!@}
     //!\name embedded types and predicates for \c Arrangement_2 package
@@ -108,15 +133,20 @@ public:
     typedef Arc_2 X_monotone_curve_2;
 
     CGAL_Curved_kernel_pred(Compare_x_2, compare_x_2_object)  
-    CGAL_Curved_kernel_pred(Compare_xy_2, compare_xy_2_object)  
+    CGAL_Curved_kernel_pred(Compare_xy_2, compare_xy_2_object)
+    CGAL_Curved_kernel_pred(Compare_x_near_boundary_2,
+        compare_x_near_boundary_2_object)
+    CGAL_Curved_kernel_pred(Compare_y_near_boundary_2,
+        compare_y_near_boundary_2_object)
     CGAL_Curved_kernel_pred(Equal_2, equal_2_object) 
     CGAL_Curved_kernel_pred(Is_vertical_2, is_vertical_2_object) 
     CGAL_Curved_kernel_cons(Construct_min_vertex_2,
             construct_min_vertex_2_object)
     CGAL_Curved_kernel_cons(Construct_max_vertex_2,
             construct_max_vertex_2_object)
-    CGAL_Curved_kernel_pred(Boundary_in_x_2, boundary_in_x_2_object) 
-    CGAL_Curved_kernel_pred(Boundary_in_y_2, boundary_in_y_2_object) 
+    CGAL_Curved_kernel_pred(Parameter_space_in_x_2, parameter_space_in_x_2_object)
+    CGAL_Curved_kernel_pred(Parameter_space_in_y_2, parameter_space_in_y_2_object)
+    CGAL_Curved_kernel_pred(Is_bounded_2, is_bounded_2_object)
     CGAL_Curved_kernel_pred(Compare_y_at_x_2, compare_y_at_x_2_object)   
     CGAL_Curved_kernel_pred(Compare_y_at_x_left_2,
             compare_y_at_x_left_2_object)
@@ -146,6 +176,16 @@ public:
     Curve_kernel_2 kernel() const {
         return _m_kernel;
     }
+
+    /*template <class KeyType_, class ValueType_, class Canonicalizer_, 
+    class Hash_ = boost::hash<KeyType_>,
+    class Creator_ = CGAL::Creator_1<KeyType_, ValueType_>,
+    class Pred_ = std::equal_to<KeyType_> >
+class LRU_hashed_map*/
+
+
+        Int_pair_map _m_compare_xy_map;
+        
     
 #undef CGAL_Curved_kernel_pred
 #undef CGAL_Curved_kernel_cons    

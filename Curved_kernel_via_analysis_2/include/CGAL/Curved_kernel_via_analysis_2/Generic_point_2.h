@@ -60,7 +60,7 @@ public:
     }
 
     // standard constructor : point at infinity
-    Generic_point_2_rep(const Arc_2& c, CGAL::Curve_end end) :
+    Generic_point_2_rep(const Arc_2& c, CGAL::Arr_curve_end end) :
         _m_arc(c), _m_end(end) {
     }
         
@@ -71,9 +71,9 @@ public:
 
     mutable boost::optional<Arc_2> _m_arc; // supporting arc for points at inf
 
-    CGAL::Curve_end _m_end; // stores respective curve end if this is a point
-                            // at infinity
-
+    // stores respective curve end if this is a point at infinity
+    CGAL::Arr_curve_end _m_end; 
+    
     mutable boost::optional<Point_2> _m_point; // stores a finite point
 
     // befriending the handle
@@ -148,7 +148,7 @@ public:
 
     //! \brief 
     //! constructs a 'point at infinity'
-    explicit Generic_point_2(const Arc_2& c, CGAL::Curve_end end) :
+    explicit Generic_point_2(const Arc_2& c, CGAL::Arr_curve_end end) :
             Base(Rep(c, end)) {
     }
     
@@ -173,7 +173,7 @@ public:
     //! returns respective curve end of a point lying at infinity
     //!
     //! \pre !is_finite
-    CGAL::Curve_end curve_end() const {
+    CGAL::Arr_curve_end curve_end() const {
         CGAL_precondition(!is_finite());
         return this->ptr()->_m_end;
     }

@@ -110,11 +110,12 @@ struct Make_x_monotone_2 :
             return oi;
         }
         _m_curve = curve;
-        const typename Curved_kernel_via_analysis_2::
-            Curve_interval_arcno_cache& map_interval_arcno =
+        typedef typename Curved_kernel_via_analysis_2::
+            Curve_interval_arcno_cache CIA_cache;
+        const CIA_cache& map_interval_arcno =
             _m_curved_kernel_2->get_interval_arcno_cache();
         
-        std::pair<int, CGAL::Boundary_type> info1, info2;
+        typename CIA_cache::result_type info1, info2;
         std::vector<Point_2> min_pts, max_pts;
         X_coordinate_1 min_x, max_x;
         int i, k, n;
@@ -130,11 +131,11 @@ struct Make_x_monotone_2 :
         for(k = 0; k < int_line.number_of_events(); k++) {
             
             info1 = map_interval_arcno(evt_line1, 1, k); 
-            if(info1.second != CGAL::NO_BOUNDARY) 
-                arc = Arc_2(CGAL::MIN_END, max_x, (info1.second < 0 ?
-                    CGAL::MIN_END : CGAL::MAX_END), curve, k);
+            if(info1.second != CGAL::ARR_INTERIOR) 
+                arc = Arc_2(CGAL::ARR_MIN_END, max_x, (info1.second < 0 ?
+                    CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), curve, k);
             else
-                arc = Arc_2(max_pts[info1.first], CGAL::MIN_END, curve, k,
+                arc = Arc_2(max_pts[info1.first], CGAL::ARR_MIN_END, curve, k,
                     info1.first);
             *oi++ = CGAL::make_object(arc);
         }
@@ -154,22 +155,24 @@ struct Make_x_monotone_2 :
                 max_pts.push_back(Point_2(max_x, curve, k));
             
             n = ca_2.status_line_of_interval(i+1).number_of_events();
-            CGAL::Curve_end inf1_end, inf2_end;
+            CGAL::Arr_curve_end inf1_end, inf2_end;
             for(k = 0; k < n; k++) {
                 
                 info1 = map_interval_arcno(evt_line1, 0, k); 
                 info2 = map_interval_arcno(evt_line2, 1, k); 
-                inf2_end = (info2.second < 0 ? CGAL::MIN_END : 
-                    CGAL::MAX_END);
-                if(info1.second != CGAL::NO_BOUNDARY) {
-                    inf1_end = (info1.second < 0 ? CGAL::MIN_END : 
-                        CGAL::MAX_END);
-                    if(info2.second != CGAL::NO_BOUNDARY) 
+                inf2_end = (info2.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                    
+                if(info1.second != CGAL::ARR_INTERIOR) {
+                    inf1_end = (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                        CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                    if(info2.second != CGAL::ARR_INTERIOR) 
                         arc = Arc_2(min_x, max_x, inf1_end, inf2_end,curve,k);
                     else 
                         arc = Arc_2(max_pts[info2.first], min_x, inf1_end,
                             curve, k, info2.first);
-                } else if(info2.second != CGAL::NO_BOUNDARY) {
+                            
+                } else if(info2.second != CGAL::ARR_INTERIOR) {
                     arc = Arc_2(min_pts[info1.first],  max_x, inf2_end, curve,
                         k, info1.first);
                 } else 
@@ -193,11 +196,12 @@ struct Make_x_monotone_2 :
         for(k = 0; k < n; k++) {
         
             info1 = map_interval_arcno(evt_line2, 0, k); 
-            if(info1.second != CGAL::NO_BOUNDARY) 
-                arc = Arc_2(CGAL::MAX_END, min_x, (info1.second < 0 ?
-                    CGAL::MIN_END : CGAL::MAX_END), curve, k);
+            if(info1.second != CGAL::ARR_INTERIOR) 
+                arc = Arc_2(CGAL::ARR_MAX_END, min_x, 
+                (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), curve, k);
             else
-                arc = Arc_2(min_pts[info1.first], CGAL::MAX_END, curve, k,
+                arc = Arc_2(min_pts[info1.first], CGAL::ARR_MAX_END, curve, k,
                     info1.first);
             *oi++ = CGAL::make_object(arc);
         }
@@ -217,14 +221,14 @@ private:
         if(cv_line.covers_line()) { // look for vertical arcs
             if(n > 0) {
                 // the first vertical ray
-                *oi++ = CGAL::make_object(Arc_2(pts[0], CGAL::MIN_END,
+                *oi++ = CGAL::make_object(Arc_2(pts[0], CGAL::ARR_MIN_END,
                     _m_curve));
                 for(j = 1; j < n-1; j++)  // interior bounded arcs
                     *oi++ = CGAL::make_object(Arc_2(pts[j], pts[j+1],
                         _m_curve));
                     // the last vertical ray
-                    *oi++ = CGAL::make_object(Arc_2(pts[n-1], CGAL::MAX_END,
-                        _m_curve));
+                    *oi++ = CGAL::make_object(Arc_2(pts[n-1], 
+                        CGAL::ARR_MAX_END, _m_curve));
             } else // unbounded vertical line
                 *oi++ = CGAL::make_object(Arc_2(x, _m_curve));
             return oi;

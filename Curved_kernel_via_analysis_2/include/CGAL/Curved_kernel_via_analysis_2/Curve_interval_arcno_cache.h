@@ -66,10 +66,10 @@ struct Curve_interval_arcno_cache {
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
     
     //! event arc number descriptor: stores an arc number along with curve's
-    //! end type (+/-oo or \c NO_BOUNDARY )
-    typedef std::pair<int, CGAL::Boundary_type> Arcno_desc;
+    //! end type (+/-oo or \c ARR_INTERIOR )
+    typedef std::pair<int, CGAL::Arr_parameter_space> Arcno_desc;
     
-    typedef Status_line_1 first_argument_type;
+    typedef Status_line_1         first_argument_type;
     typedef bool                  second_argument_type;
     typedef int                   thirg_argument_type;
     
@@ -97,7 +97,7 @@ struct Curve_interval_arcno_cache {
         
         CGAL_precondition(interval_arcno >= 0);
         if(!cv_line.is_event()) // # of arcs over interval is constant
-            return std::make_pair(interval_arcno, CGAL::NO_BOUNDARY);
+            return std::make_pair(interval_arcno, CGAL::ARR_INTERIOR);
         
         Curve_analysis_2 ca_2 = cv_line.curve_analysis_2();
         int curve_id = ca_2.curve_2().id();
@@ -145,32 +145,34 @@ struct Curve_interval_arcno_cache {
         int i, _arcno, left_i = 0, right_i = 0;
         // process arcs approaching -oo from left and right
         for(; left_i < n_mininf.first; left_i++)
-            vpair.first[left_i] = std::make_pair(left_i, CGAL::MINUS_INFINITY);
+            vpair.first[left_i] = std::make_pair(left_i, 
+                CGAL::ARR_BOTTOM_BOUNDARY);
             
         for(; right_i < n_mininf.second; right_i++)
             vpair.second[right_i] = std::make_pair(right_i,
-                CGAL::MINUS_INFINITY);
+                CGAL::ARR_BOTTOM_BOUNDARY);
                 
         // process all finite events over this vertical line
         for(_arcno = 0; _arcno < cv_line.number_of_events(); _arcno++) {
             ipair = cv_line.number_of_incident_branches(_arcno);
             for(i = 0; i < ipair.first; i++)
                 vpair.first[left_i++] = std::make_pair(_arcno,
-                    CGAL::NO_BOUNDARY);
+                    CGAL::ARR_INTERIOR);
                     
             for(i = 0; i < ipair.second; i++)
             vpair.second[right_i++] = std::make_pair(_arcno,
-                CGAL::NO_BOUNDARY);
+                CGAL::ARR_INTERIOR);
         }
         // process arcs approaching +oo from left and right
         // this is not clear.. why arcnos at +oo are mapped to the same
         // interval arcnos ?
         for(i = 0; i < n_maxinf.first; i++, left_i++)
-            vpair.first[left_i] = std::make_pair(left_i, CGAL::PLUS_INFINITY); 
+            vpair.first[left_i] = std::make_pair(left_i, 
+                CGAL::ARR_TOP_BOUNDARY); 
                 
         for(i = 0; i < n_maxinf.second; i++, right_i++)
             vpair.second[right_i] = std::make_pair(right_i,
-                CGAL::PLUS_INFINITY);
+                CGAL::ARR_TOP_BOUNDARY);
         
         CGAL_precondition(left_i == static_cast<int>(vpair.first.size()) && 
             right_i == static_cast<int>(vpair.second.size()));

@@ -31,11 +31,11 @@ class Compare_x_2
     
 public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<4>            Arity;
+    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_x_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
         
@@ -48,50 +48,128 @@ public:
      *         EQUAL if x(p1) = x(p2).
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
-        return _m_curved_kernel_2->kernel().compare_x_2_object()
+        return _m_kernel->kernel().compare_x_2_object()
             (p1.x(), p2.x());
-    }
-
-    /*!
-     * Compare the relative positions of a vertical curve and an unbounded end
-     * of the curve \c cv
-     * \param p A reference point; we refer to a vertical line incident to p.
-     * \param cv The compared curve.
-     * \param end MIN_END if we refer to cv's minimal end,
-     *            MAX_END if we refer to its maximal end.
-     * \pre cv's relevant end is defined at y = +/- oo.
-     * \return SMALLER if p lies to the left of cv;
-     *         LARGER if p lies to the right of cv;
-     *         EQUAL in case of an overlap.
-     */
-    result_type operator()(const Point_2& p, const Arc_2& cv, 
-            CGAL::Curve_end end) const {
-        return (cv.compare_end_at_x(end, p));
-    }
-
-   /*!
-     * Compare the relative positions of the unbounded curve ends of \c cv1
-     * and \c cv2
-     * \param cv1 The first curve.
-     * \param end1 MIN_END if we refer to cv1's minimal end,
-     *             MAX_END if we refer to its maximal end.
-     * \param cv2 The second curve.
-     * \param end2 MIN_END if we refer to cv2's minimal end,
-     *             MAX_END if we refer to its maximal end.
-     * \pre the curve ends have a bounded x-coord and unbounded y-coord,
-          namely each of \c cv1 and \c cv2 is vertical or asymptotic
-     * \return SMALLER if cv1 lies to the left of cv2;
-     *         LARGER if cv1 lies to the right cv2;
-     *         EQUAL in case of an overlap.
-     */
-    result_type operator()(const Arc_2& cv1, CGAL::Curve_end end1,
-             const Arc_2& cv2, CGAL::Curve_end end2) const {
-        return cv1.compare_ends_at_x(end1, cv2, end2);
     }
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_kernel;
+};
+
+template < class CurvedKernel_2 >
+class Compare_y_at_x_2
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_2(CurvedKernel_2 *) {
+    }
+
+    /*!
+     * Return the location of the given point with respect to the input curve.
+     * \param cv The curve.
+     * \param p The point.
+     * \pre p is in the x-range of cv.
+     * \return SMALLER if y(p) \< cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    result_type operator()(const Point_2& p, const Arc_2& cv) const
+    {
+      return cv.compare_y_at_x(p);
+    }
+
+};
+
+template <class CurvedKernel_2>
+class Compare_x_near_boundary_2 {
+
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<4>            Arity;
+
+    Compare_x_near_boundary_2(CurvedKernel_2 *) {
+    }
+
+    /*! Compare the x-coordinate of a point with the x-coordinate of
+     * a line end near the boundary at y = +/- oo.
+     * \param p the point direction.
+     * \param xcv the line, the endpoint of which is compared.
+     * \param ce the line-end indicator -
+     *            ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
+     * \return the comparison result:
+     *         SMALLER - x(p) \< x(xc, ce);
+     *         EQUAL   - x(p) = x(xc, ce);
+     *         LARGER  - x(p) > x(xc, ce).     
+     * \pre p lies in the interior of the parameter space.
+     * \pre the ce end of the line xcv lies on a boundary.
+     */
+    result_type operator()(const Point_2& p, const Arc_2& cv,
+              CGAL::Arr_curve_end ce) const {
+                                 
+        return cv.compare_end_at_x(ce, p);
+    }
+
+    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
+     * parameter space at y = +/- oo.
+     * \param xcv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv1 or
+     *            ARR_MAX_END - the maximal end of xcv1.
+     * \param xcv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv2 or
+     *            ARR_MAX_END - the maximal end of xcv2.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce1) \< x(xcv2, ce2);
+     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre the ce1 end of the line xcv1 lies on a boundary.
+     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     */
+    result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
+                           const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
+        return cv1.compare_ends_at_x(ce1, cv2, ce2);
+    }
+};
+
+template < class CurvedKernel_2 >
+class Compare_y_near_boundary_2 
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_near_boundary_2(CurvedKernel_2 *) {
+    }
+
+    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+     * of the parameter space at x = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the line end indicator.
+     * \return the second comparison result.
+     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+     * boundary or on the right boundary of the parameter space.
+     */
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
+               CGAL::Arr_curve_end ce) const {
+        return cv1.compare_y_at_x(cv2, ce);
+    }
 };
 
 template < class CurvedKernel_2 >
@@ -106,7 +184,7 @@ public:
     
     //! standard constructor
     Compare_xy_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
 
@@ -121,13 +199,21 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const
     {
-        return (_m_curved_kernel_2->kernel().compare_xy_2_object()
+        result_type res = (_m_kernel->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy()));
+    
+        /*typename CurvedKernel_2::Int_pair pair(p1.id(), p2.id());
+        if(!_m_kernel->_m_compare_xy_map.find(pair).second)
+            _m_kernel->_m_compare_xy_map.insert(std::make_pair(pair, res));
+        else
+            std::cerr << "precached compare_xy result\n";*/
+        
+        return res;
     }
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_kernel;
 };
 
 //!\brief Tests two objects, whether they are equal
@@ -143,7 +229,7 @@ public:
     
     //! standard constructor
     Equal_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -154,13 +240,14 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (_m_curved_kernel_2->kernel().compare_xy_2_object()
+        return (_m_kernel->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy()) == CGAL::EQUAL);
     }
      
     /*!
      * Check if the two x-monotone curves are the same (have the same graph).
-     * \param cv1 The first curve.
+     * \param cv1 The first curv(_m_kernel->kernel().compare_xy_2_object()
+            (p1.xy(), p2.xy()));e.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
@@ -170,7 +257,7 @@ public:
 
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -213,9 +300,7 @@ public:
     typedef Arity_tag<1> Arity;
     
     //! standard constructor
-    Construct_min_vertex_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Construct_min_vertex_2(CurvedKernel_2 *) {
     }
 
     /*!
@@ -226,11 +311,8 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        return cv.curve_end(CGAL::MIN_END);
+        return cv.curve_end(CGAL::ARR_MIN_END);
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
@@ -244,9 +326,7 @@ public:
     typedef Arity_tag<1> Arity;
     
     //! standard constructor
-    Construct_max_vertex_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Construct_max_vertex_2(CurvedKernel_2 *) {
     }
 
     /*!
@@ -257,130 +337,93 @@ public:
      */
     result_type operator()(const Arc_2& cv) const {
     
-        return cv.curve_end(CGAL::MAX_END);
+        return cv.curve_end(CGAL::ARR_MAX_END);
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
-class Boundary_in_x_2 
+class Parameter_space_in_x_2 
 {
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
-    typedef ::CGAL::Boundary_type result_type;
+    typedef CGAL::Arr_parameter_space result_type;
     typedef Arity_tag<2> Arity;
     
     //! standard constructor
-    Boundary_in_x_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Parameter_space_in_x_2(CurvedKernel_2 *) {
     }
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    result_type operator()(const Arc_2 & cv, 
-            ::CGAL::Curve_end end) const {
-            
-        return cv.boundary_in_x(end);
+    result_type operator()(const Arc_2& cv, ::CGAL::Arr_curve_end end) const {
+
+        CGAL::Arr_parameter_space loc = cv.location(end);
+        if(loc == CGAL::ARR_LEFT_BOUNDARY || loc == CGAL::ARR_RIGHT_BOUNDARY)
+            return loc;
+        return CGAL::ARR_INTERIOR;
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+
 };
 
 template < class CurvedKernel_2 >
-class Boundary_in_y_2 
+class Parameter_space_in_y_2
 {
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
-    typedef ::CGAL::Boundary_type result_type;
+    typedef CGAL::Arr_parameter_space result_type;
     typedef Arity_tag<2> Arity;
     
     //! standard constructor
-    Boundary_in_y_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Parameter_space_in_y_2(CurvedKernel_2 *) {
     }
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    result_type operator()(const Arc_2 & cv, 
-            ::CGAL::Curve_end end) const {
+    result_type operator()(const Arc_2& cv, ::CGAL::Arr_curve_end end) const {
             
-        return cv.boundary_in_y(end);
+        CGAL::Arr_parameter_space loc = cv.location(end);
+        if(loc == CGAL::ARR_BOTTOM_BOUNDARY || loc == CGAL::ARR_TOP_BOUNDARY)
+            return loc;
+        return CGAL::ARR_INTERIOR;
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
-class Compare_y_at_x_2
+class Is_bounded_2
 {
-    typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
-    typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
-    
-    //! standard constructor
-    Compare_y_at_x_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+
+    Is_bounded_2(CurvedKernel_2 *) {
     }
 
-    /*!
-     * Return the location of the given point with respect to the input curve.
-     * \param cv The curve.
-     * \param p The point.
-     * \pre p is in the x-range of cv.
-     * \return SMALLER if y(p) \< cv(x(p)), i.e. the point is below the curve;
-     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
-     *         EQUAL if p lies on the curve.
+    /*! Is the end of an x-monotone curve bounded?
+     * \param xcv The x-monotone curve.
+     * \param ce The end of xcv identifier.
+     * \return true is the curve end is bounded, and false otherwise
      */
-    result_type operator()(const Point_2& p, const Arc_2& cv) const
-    {
-      return cv.compare_y_at_x(p);
+    result_type operator()(const Arc_2& cv, Arr_curve_end ce) const {
+        return (cv.location(ce) == CGAL::ARR_INTERIOR);
     }
-
-    /*!
-     * Compare the relative y-positions of two curves at x = +/- oo.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param end MIN_END if we compare at x = -oo;
-     *            MAX_END if we compare at x = +oo.
-     * \pre The curves are defined at x = +/- oo.
-     * \return SMALLER if cv1 lies below cv2;
-     *         LARGER if cv1 lies above cv2;
-     *         EQUAL in case of an overlap.
-     */
-    result_type operator()(const Arc_2& cv1, const Arc_2& cv2, 
-        CGAL::Curve_end end) const
-    {
-        return (cv1.compare_y_at_x(cv2, end));
-    }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
@@ -394,9 +437,7 @@ public:
     typedef Arity_tag<3>            Arity;
     
     //! standard constructor
-    Compare_y_at_x_left_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Compare_y_at_x_left_2(CurvedKernel_2 *) {
     }
 
     /*!
@@ -413,13 +454,9 @@ public:
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
-             const Point_2& p) const 
-    {
+             const Point_2& p) const {
         return (cv1.compare_y_at_x_left(cv2, p));
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
@@ -433,9 +470,7 @@ public:
     typedef Arity_tag<3>            Arity;
     
     //! standard constructor
-    Compare_y_at_x_right_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Compare_y_at_x_right_2(CurvedKernel_2 *) {
     }
 
      /*!
@@ -452,13 +487,9 @@ public:
      * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
-             const Point_2& p) const 
-    {
+             const Point_2& p) const {
         return (cv1.compare_y_at_x_right(cv2, p));
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >
@@ -472,9 +503,7 @@ public:
     typedef Arity_tag<2>            Arity;
     
     //! standard constructor
-    Is_in_x_range_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Is_in_x_range_2(CurvedKernel_2 *kernel) {
     }
     
     /*!\brief
@@ -487,9 +516,6 @@ public:
     
         return cv.is_in_x_range(p);
     }
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
 };
 
 template < class CurvedKernel_2 >

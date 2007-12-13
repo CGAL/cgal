@@ -67,22 +67,19 @@ class Point_2_rep
     // constructs a "finite" point on curve,
     // implies CGAL::NO_BOUNDARY in x/y
     Point_2_rep(const Xy_coordinate_2& xy) : 
-        _m_xy(xy), _m_x(xy.x()), _m_boundary_x(CGAL::NO_BOUNDARY),
-            _m_boundary_y(CGAL::NO_BOUNDARY) {  
+        _m_xy(xy), _m_location(CGAL::ARR_INTERIOR) {
     }
 
     // constructs a point on curve with x-/y-coordinate at infinity
-    Point_2_rep(const X_coordinate_1& x, CGAL::Curve_end inf_end,
+    Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end,
         bool has_x_infty = true) {
         
-        CGAL::Boundary_type tmp = (inf_end == CGAL::MIN_END ?
-                CGAL::MINUS_INFINITY : CGAL::PLUS_INFINITY);
-        if(has_x_infty) {
-            _m_boundary_x = tmp;
-            _m_boundary_y = CGAL::NO_BOUNDARY;
-        } else {
-            _m_boundary_x = CGAL::NO_BOUNDARY;
-            _m_boundary_y = tmp;
+        if(has_x_infty)
+            _m_location = (inf_end == CGAL::ARR_MIN_END ?
+                CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
+        else {
+            _m_location = (inf_end == CGAL::ARR_MIN_END ?
+                CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
             _m_x = x;
         }
     }
@@ -95,10 +92,10 @@ class Point_2_rep
     // x-coordinate of a curve point
     boost::optional<X_coordinate_1> _m_x; 
         
-    // boundary condition in x
-    mutable CGAL::Boundary_type _m_boundary_x;
-    // boundary condition in y
-    mutable CGAL::Boundary_type _m_boundary_y;
+    // surface boundary type
+    //mutable CGAL::Arr_boundary_type _m_boundary;
+    // location of a point in parameter space
+    mutable CGAL::Arr_parameter_space _m_location;
 
     // befriending the handle
     friend class Point_2<Curved_kernel_via_analysis_2, Self>;
@@ -195,7 +192,7 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
-    explicit Point_2(CGAL::Curve_end inf_end) :
+    explicit Point_2(CGAL::Arr_curve_end inf_end) :
          Base(Rep(X_coordinate_1(), inf_end, true)) {  
     }
     
@@ -203,7 +200,7 @@ private:
     //! x-coordinate \c x
     //!
     //! \c inf_end defines whether the point lies at +/- infinity
-    explicit Point_2(const X_coordinate_1& x, CGAL::Curve_end inf_end) :
+    explicit Point_2(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
          Base(Rep(x, inf_end, false)) {  
     }
     
@@ -225,15 +222,18 @@ public:
     //!
     //! \pre the point's x must be finite (set by construction)
     const X_coordinate_1& x() const {
-        CGAL_precondition_msg(this->ptr()->_m_x,
-          "Denied access to the curve end's x-coordinate lying at x-infinity");
-        return *(this->ptr()->_m_x);
+    
+        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_x),
+          "Denied access to x-coordinate of the curve end \
+            lying at x-infinity");
+        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).x() :
+            *(this->ptr()->_m_x));
     }
     
     //! returns a supporting curve of underlying \c Xy_coordinate_2 object
     //!
     //! \pre this object must represent a finite point on curve
-    Curve_2 curve() const {
+    inline Curve_2 curve() const {
         CGAL_precondition_msg(this->ptr()->_m_xy, 
             "Denied access to the curve end lying at x/y-infinity");
         return (*(this->ptr()->_m_xy)).curve();
@@ -242,36 +242,31 @@ public:
     //! returns an arc number of underlying \c Xy_coordinate_2 object
     //!
     //! \pre this object must represent a finite point on curve
-    int arcno() const {
+    inline int arcno() const {
         CGAL_precondition_msg(this->ptr()->_m_xy, 
             "Denied access to the curve end lying at x/y-infinity");
         return (*(this->ptr()->_m_xy)).arcno();
     }
     
-    //! access to the boundary condition in x
-    CGAL::Boundary_type boundary_in_x() const
-    { return this->ptr()->_m_boundary_x; }
+    //! returns type of a boundary
+    //inline CGAL::Arr_boundary_type boundary() const
+    //{ return this->ptr()->_m_boundary; }
     
-    //! access to the boundary condition in y
-    CGAL::Boundary_type boundary_in_y() const
-    { return this->ptr()->_m_boundary_y; }
+    //! returns location of a point in parameter space
+    inline CGAL::Arr_parameter_space location() const
+    { return this->ptr()->_m_location; }
     
-    //! checks whether this object represents a finite point
-    bool is_finite() const {
-        return (boundary_in_x() == CGAL::NO_BOUNDARY && 
-                boundary_in_y() == CGAL::NO_BOUNDARY);
-    }
-    
-    //! checks whether this object represents a point "lying" at x-infinity
+    //! checks if the point lies at x-infinity (x/y-coordinates are 
+    //! inaccessible)
     bool is_at_x_infinity() const {
-        return (boundary_in_x() == CGAL::MINUS_INFINITY || 
-                boundary_in_x() == CGAL::PLUS_INFINITY);
+        return (location() == CGAL::ARR_LEFT_BOUNDARY ||
+             location() == CGAL::ARR_RIGHT_BOUNDARY);
     }
     
-    //! checks whether this object represents a point "lying" at y-infinity
+    //! checks if the point lies at y-infinity (y-coordinate is inaccessible)
     bool is_at_y_infinity() const {
-        return (boundary_in_y() == CGAL::MINUS_INFINITY || 
-                boundary_in_y() == CGAL::PLUS_INFINITY);
+        return (location() == CGAL::ARR_BOTTOM_BOUNDARY ||
+             location() == CGAL::ARR_TOP_BOUNDARY);
     }
         
     //!\brief compares x-coordinates of two points 
@@ -312,55 +307,55 @@ public:
     
     //!@}
 private:
-    //!\name private methods (provided for access from Arc_2 object)
+    //!\name private methods (provided access from Arc_2 class)
     //!@{
     
-    //! \brief sets boundary condition in x
-    //!
-    //! \pre boundary conditions in x and y are mutually exclusive
-    void _set_boundary_in_x(CGAL::Boundary_type type) const {
-    
-        if(type != CGAL::NO_BOUNDARY && 
-                this->ptr()->_m_boundary_in_y != CGAL::NO_BOUNDARY) 
-            CGAL_error_msg("Denied to set the boundary condition in x while "
-             "the boundary condition in y is set");
-        this->ptr()->_m_boundary_in_x = type;
+    /*! \brief
+     *  sets boundary type and location of a point in parameter space
+     */
+    void _set_boundary(/*CGAL::Arr_boundary_type bnd,*/
+         CGAL::Arr_parameter_space loc) const {
+        //this->ptr()->_m_boundary = bnd;
+        this->ptr()->_m_location = loc;
     }
 
-    //! \brief sets boundary condition in y
-    //!
-    //! \pre boundary conditions in x and y are mutually exclusive
-    void _set_boundary_in_y(CGAL::Boundary_type type) const {
-    
-        if(type != CGAL::NO_BOUNDARY && 
-                this->ptr()->_m_boundary_in_x != CGAL::NO_BOUNDARY) 
-            CGAL_error_msg("Denied to set the boundary condition in y while "
-             "the boundary condition in x is set");
-        this->ptr()->_m_boundary_in_y = type;
-    }
-    
     //! \brief dumps boundary type (for debugging)
-    void _dump_boundary_type(std::ostream& os, CGAL::Boundary_type bnd) const {
-        switch(bnd) {
-        case CGAL::AFTER_SINGULARITY:
-            os << "after_sing";
+    void _dump_boundary_type(std::ostream& os) const {
+
+        /*os << "bnd: ";
+        switch(boundary()) {
+        case CGAL::ARR_UNBOUNDED:
+            os << "ARR_UNBOUNDED";
             break;
-        case CGAL::BEFORE_SINGULARITY:
-            os << "before_sing";
+        case CGAL::ARR_BOUNDED:
+            os << "ARR_BOUNDED";
             break;
-        case CGAL::AFTER_DISCONTINUITY:
-            os << "after_disc";
+        case CGAL::ARR_CONTRACTION:
+            os << "ARR_CONTRACTION";
             break;
-        case CGAL::BEFORE_DISCONTINUITY:
-            os << "before_disc";
+        case CGAL::ARR_IDENTIFICATION:
+            os << "ARR_IDENTIFICATION";
             break;
-        case CGAL::MINUS_INFINITY:
-            os << "-inf";
+        default:
+            os << "bogus boundary type";
+        }*/
+        
+        os << "loc: ";
+        switch(location()) {
+        case CGAL::ARR_LEFT_BOUNDARY:
+            os << "ARR_LEFT_BOUNDARY";
             break;
-        case CGAL::PLUS_INFINITY:
-            os << "+inf";
+        case CGAL::ARR_RIGHT_BOUNDARY:
+            os << "ARR_RIGHT_BOUNDARY";
             break;
-        case CGAL::NO_BOUNDARY:
+        case CGAL::ARR_BOTTOM_BOUNDARY:
+            os << "ARR_BOTTOM_BOUNDARY";
+            break;
+        case CGAL::ARR_TOP_BOUNDARY:
+            os << "ARR_TOP_BOUNDARY";
+            break;
+        case CGAL::ARR_INTERIOR:
+            os << "ARR_INTERIOR";
             break;
         default:
             os << "bogus boundary type";
@@ -387,18 +382,12 @@ std::ostream& operator <<(std::ostream& os,
     switch(::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
         os << "point@" << pt.id() << "(";
-        if(pt.is_finite())
+        if(pt.location() == CGAL::ARR_INTERIOR)
             os << "sup@" << pt.curve().id();
-        os << " X=";
-        pt._dump_boundary_type(os, pt.boundary_in_x());
-        if(pt.boundary_in_x() == CGAL::NO_BOUNDARY)
-            os << NiX::to_double(pt.x());       
-        os << "; Y=";
-        pt._dump_boundary_type(os, pt.boundary_in_y());
-        if(pt.boundary_in_y() == CGAL::NO_BOUNDARY)
-            os << "finite";       
+        os << " ";
+        pt._dump_boundary_type(os);
         os << "; ";
-        if(pt.is_finite())
+        if(pt.location() == CGAL::ARR_INTERIOR)
             os << "ARCNO=" << pt.arcno();    
         os << ")";
         break;

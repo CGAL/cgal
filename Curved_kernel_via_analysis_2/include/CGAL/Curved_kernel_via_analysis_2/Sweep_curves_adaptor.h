@@ -77,8 +77,8 @@ public:
     {
         typename SweepCurvesAdaptor_2::Native_point_2 pt;
         typename SweepCurvesAdaptor_2::Native_arc_2 arc;
-        CGAL::Curve_end end;
-        CGAL::Boundary_type bnd1, bnd2;
+        CGAL::Arr_curve_end end;
+        CGAL::Arr_parameter_space loc1, loc2;
         bool inverse = false;
 
         SCA_CERR("Compare_xy_2: p1: " << p1 << "\n p2: " << p2 << std::endl);
@@ -93,11 +93,11 @@ public:
             pt = p1.point();
             arc = p2.arc();
             end = p2.curve_end();
-            bnd1 = arc.boundary_in_x(end);
+            loc1 = arc.location(end);
         } else {
             arc = p1.arc();
             end = p1.curve_end();
-            bnd1 = arc.boundary_in_x(end);
+            bnd1 = arc.location(end);
 
             if(!p2.is_finite()) { // both points lie at infinity
                 bnd2 = p2.arc().boundary_in_x(p2.curve_end());
@@ -223,7 +223,7 @@ public:
             return _m_adaptor->kernel().compare_y_at_x_2_object()(p.point(),
                 cv.arc());
 
-        CGAL::Curve_end end = p.curve_end(), end2;
+        CGAL::Arr_curve_end end = p.curve_end(), end2;
         CGAL::Boundary_type bnd_x = p.arc().boundary_in_x(end);
         if(bnd_x != CGAL::NO_BOUNDARY) {
             CGAL_precondition(bnd_x == cv.arc().boundary_in_x(end));
@@ -239,15 +239,15 @@ public:
         x = p.arc().curve_end_x(end);
         bool eq_min, eq_max, in_x_range = cv.arc().is_in_x_range(x, &eq_min,
             &eq_max);
-        end2 = CGAL::MIN_END; // relevant cv.arc()'s end for comparison
+        end2 = CGAL::ARR_MIN_END; // relevant cv.arc()'s end for comparison
         (void)in_x_range;
         CGAL_precondition(in_x_range);
         
         if(!cv.arc().is_vertical()) {
-            if(eq_max && cv.arc().boundary_in_y(CGAL::MAX_END) !=
+            if(eq_max && cv.arc().boundary_in_y(CGAL::ARR_MAX_END) !=
                     CGAL::NO_BOUNDARY)
-                end2 = CGAL::MAX_END;
-            else if(!eq_min || cv.arc().boundary_in_y(CGAL::MIN_END) ==
+                end2 = CGAL::ARR_MAX_END;
+            else if(!eq_min || cv.arc().boundary_in_y(CGAL::ARR_MIN_END) ==
                     CGAL::NO_BOUNDARY) {
               // compare finite point against asymptotic or vertical curve end
                 return (p.arc().boundary_in_y(end) < 0 ? CGAL::SMALLER :
