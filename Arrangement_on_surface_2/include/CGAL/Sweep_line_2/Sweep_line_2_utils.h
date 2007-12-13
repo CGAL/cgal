@@ -25,12 +25,15 @@
  * Auxiliary functions for the usage of the various sweep-line visitors.
  */
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 #include <CGAL/Object.h>
 #include <CGAL/assertions.h>
 #include <vector>
 #include <algorithm>
+#include <CGAL/Arr_enums.h>
 
 /*!
  * Subdivide a range of input curves into x-monotone objects.
@@ -162,7 +165,7 @@ void prepare_for_sweep (Arrangement& arr,
   
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit) 
   {
-    if (eit->direction() == ARR_LEFT_TO_RIGHT)
+    if (eit->direction() == CGAL::ARR_LEFT_TO_RIGHT)
       he = eit->twin();
     else
       he = eit;
