@@ -1105,6 +1105,17 @@ public:
       );
       CGAL_precondition (is_in_x_range (xcv1, xcv2));
 
+      /* The traits class which the basic traits adaptor accepts as a template
+       * parameter is a model of the ArrangementBasicTraits_2 concept so it 
+       * needs not to support intersections at all, therefor it is complicated 
+       * to check if the x-curves are disjoint in their interiors. Moreover, 
+       * compare_y_position functor is called only from the arrangement class 
+       * itself (and some related point-location algorithms), and used only 
+       * for two curves associated with two arrangement halfedges. These curves 
+       * are guaranteed to be interior-disjoint. So, it seems that there is no 
+       * gain in checking the precondition, and it is left unimplemented.
+       */
+
       Parameter_space_in_x_2 ps_x = m_self->parameter_space_in_x_2_object();
       Parameter_space_in_y_2 ps_y = m_self->parameter_space_in_y_2_object();
       Compare_y_at_x_2       compare_y_at_x = m_self->compare_y_at_x_2_object();
