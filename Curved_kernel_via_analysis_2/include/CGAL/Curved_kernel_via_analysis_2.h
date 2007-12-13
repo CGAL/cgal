@@ -82,22 +82,6 @@ public:
     //! type of inverval arcno cache
     typedef CGALi::Curve_interval_arcno_cache<Self> Curve_interval_arcno_cache;
 
-    typedef std::pair<int, int> Int_pair;
-
-    struct Pair_canonicalizer  :
-        public Unary_function< Int_pair, Int_pair >  {
-        
-        Int_pair operator()(const Int_pair& p) const
-        {
-            if(p.first <= p.second)
-                return p;
-            return std::make_pair(p.second, p.first);
-        }
-    };
-    
-    typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
-        Pair_canonicalizer, CGALi::Int_pair_hash> Int_pair_map;
-
     //!@}
 public:
     //! \name Constructors
@@ -163,10 +147,6 @@ public:
     CGAL_Curved_kernel_cons(Trim_2, trim_2_object)
     CGAL_Curved_kernel_pred(Is_in_x_range_2, is_in_x_range_2_object)
     
-    /*CGAL_Curved_kernel_cons(Approximate_2, approximate_2_object)
-    CGAL_Curved_kernel_cons(Construct_x_monotone_curve_2,
-        construct_x_monotone_curve_2_object)*/
-    
     //! access to \c Curve_interval_arcno_cache
     const Curve_interval_arcno_cache& get_interval_arcno_cache() const {
         return _m_interval_arcno_cache;
@@ -176,16 +156,6 @@ public:
     Curve_kernel_2 kernel() const {
         return _m_kernel;
     }
-
-    /*template <class KeyType_, class ValueType_, class Canonicalizer_, 
-    class Hash_ = boost::hash<KeyType_>,
-    class Creator_ = CGAL::Creator_1<KeyType_, ValueType_>,
-    class Pred_ = std::equal_to<KeyType_> >
-class LRU_hashed_map*/
-
-
-        Int_pair_map _m_compare_xy_map;
-        
     
 #undef CGAL_Curved_kernel_pred
 #undef CGAL_Curved_kernel_cons    
