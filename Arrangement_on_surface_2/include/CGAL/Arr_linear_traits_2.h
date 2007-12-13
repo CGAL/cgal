@@ -1033,7 +1033,7 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2 ) const
     {
       return ARR_INTERIOR;
     }
@@ -1078,7 +1078,7 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2 ) const
     {
       return ARR_INTERIOR;
     }
@@ -1109,7 +1109,7 @@ public:
      */
     Comparison_result operator()(const Point_2 & p,
                                  const X_monotone_curve_2 & xcv,
-                                 Arr_curve_end ce) const
+                                 Arr_curve_end ) const
     {
       CGAL_precondition (! xcv.is_degenerate());
       CGAL_precondition (xcv.is_vertical());

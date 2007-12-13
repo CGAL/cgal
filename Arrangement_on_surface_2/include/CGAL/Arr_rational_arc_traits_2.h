@@ -583,7 +583,7 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2 ) const
     {
       return ARR_INTERIOR;
     }
@@ -626,7 +626,7 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2 ) const
     {
       return ARR_INTERIOR;
     }
