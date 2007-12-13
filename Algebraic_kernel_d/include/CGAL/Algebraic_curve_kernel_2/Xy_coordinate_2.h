@@ -424,11 +424,9 @@ private:
         if(f.is_identical(g)) 
             return CGAL::sign(arcno() - q.arcno());
         if(Self::_simplify(*this, q)) 
-            
             // restart since supporting curves might be equal now
             return _compare_y_at_x(q);
-        
-                
+                        
         // this is to keep compiler happy ))
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
              (Curve_analysis_2(g)));
