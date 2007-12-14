@@ -365,7 +365,7 @@ std::ostream& operator <<(std::ostream& os,
             pt.location() != CGAL::ARR_RIGHT_BOUNDARY) {
             os << "x=" << NiX::to_double(pt.x());
         } else {
-            if (pt.location() != CGAL::ARR_LEFT_BOUNDARY) {
+            if (pt.location() == CGAL::ARR_LEFT_BOUNDARY) {
                 os << "x=-oo";
             } else {
                 os << "x=+oo";
@@ -377,7 +377,7 @@ std::ostream& operator <<(std::ostream& os,
             os << "y=n/a, "; // TODO give y-coordinate
             os << "ARCNO=" << pt.arcno();
         } else {
-            if (pt.location() != CGAL::ARR_BOTTOM_BOUNDARY) {
+            if (pt.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
                 os << "y=-oo";
             } else {
                 os << "y=+oo";
