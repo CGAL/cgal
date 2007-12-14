@@ -22,7 +22,7 @@
 #include <CGAL/Handle_with_policy.h>
 
 CGAL_BEGIN_NAMESPACE
-
+/*blah*/
 namespace CGALi {
 
 /*!\brief 
