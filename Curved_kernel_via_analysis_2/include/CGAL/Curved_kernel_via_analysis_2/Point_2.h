@@ -75,7 +75,6 @@ class Point_2_rep
 
     // constructs a point on curve with y-coordinate at infinity
     Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) {
-
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                 CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
         _m_x = x;
@@ -332,45 +331,7 @@ private:
 
     //! \brief dumps boundary type (for debugging)
     void _dump_boundary_type(std::ostream& os) const {
-
-        /*os << "bnd: ";
-        switch(boundary()) {
-        case CGAL::ARR_UNBOUNDED:
-            os << "ARR_UNBOUNDED";
-            break;
-        case CGAL::ARR_BOUNDED:
-            os << "ARR_BOUNDED";
-            break;
-        case CGAL::ARR_CONTRACTION:
-            os << "ARR_CONTRACTION";
-            break;
-        case CGAL::ARR_IDENTIFICATION:
-            os << "ARR_IDENTIFICATION";
-            break;
-        default:
-            os << "bogus boundary type";
-        }*/
-        
-        os << "loc: ";
-        switch(location()) {
-        case CGAL::ARR_LEFT_BOUNDARY:
-            os << "ARR_LEFT_BOUNDARY";
-            break;
-        case CGAL::ARR_RIGHT_BOUNDARY:
-            os << "ARR_RIGHT_BOUNDARY";
-            break;
-        case CGAL::ARR_BOTTOM_BOUNDARY:
-            os << "ARR_BOTTOM_BOUNDARY";
-            break;
-        case CGAL::ARR_TOP_BOUNDARY:
-            os << "ARR_TOP_BOUNDARY";
-            break;
-        case CGAL::ARR_INTERIOR:
-            os << "ARR_INTERIOR";
-            break;
-        default:
-            os << "bogus boundary type";
-        }
+        os << "loc=" << location();
     }
     
     //! befriending \c Arc_2 class
@@ -393,13 +354,35 @@ std::ostream& operator <<(std::ostream& os,
     switch(::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
         os << "point@" << pt.id() << "(";
-        if(pt.location() == CGAL::ARR_INTERIOR)
+        if(pt.location() != CGAL::ARR_BOTTOM_BOUNDARY &&
+           pt.location() != CGAL::ARR_TOP_BOUNDARY) {
             os << "sup@" << pt.curve().id();
+        }
         os << " ";
         pt._dump_boundary_type(os);
         os << "; ";
-        if(pt.location() == CGAL::ARR_INTERIOR)
-            os << "ARCNO=" << pt.arcno();    
+        if (pt.location() != CGAL::ARR_LEFT_BOUNDARY &&
+            pt.location() != CGAL::ARR_RIGHT_BOUNDARY) {
+            os << "x=" << NiX::to_double(pt.x());
+        } else {
+            if (pt.location() != CGAL::ARR_LEFT_BOUNDARY) {
+                os << "x=-oo";
+            } else {
+                os << "x=+oo";
+            }
+        }
+        os << ", ";
+        if (pt.location() != CGAL::ARR_BOTTOM_BOUNDARY &&
+            pt.location() != CGAL::ARR_TOP_BOUNDARY) {
+            os << "y=n/a, "; // TODO give y-coordinate
+            os << "ARCNO=" << pt.arcno();
+        } else {
+            if (pt.location() != CGAL::ARR_BOTTOM_BOUNDARY) {
+                os << "y=-oo";
+            } else {
+                os << "y=+oo";
+            }
+        }
         os << ")";
         break;
     case ::CGAL::IO::BINARY:
