@@ -27,11 +27,7 @@
 
 #include <CGAL/enum.h>
 
-
-// TODO will be remove after switched to new interface
-#ifndef CGAL_NEW_GEO_INTERFACE
-#define CGAL_NEW_GEO_INTERFACE 1
-#endif
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,6 +40,26 @@ enum Arr_curve_end
   ARR_MAX_END
 };
 
+//! \brief prints curve end (for debugging)
+inline
+std::ostream& operator<<(
+        std::ostream& os,
+        const Arr_curve_end& ce) {
+    
+    switch(ce) {
+    case CGAL::ARR_MIN_END:
+        os << "ARR_MIN_END";
+        break;
+    case CGAL::ARR_MAX_END:
+        os << "ARR_MAX_END";
+        break;
+    default:
+        CGAL_error_msg("bogus curve end");
+    }
+    return os;
+}
+
+
 /*! \enum
  * Indicator whether a halfedge is directed from left to right (from the
  * xy-lexicographically smaller vertex to the larger one), or from right to
@@ -54,6 +70,25 @@ enum Arr_halfedge_direction
   ARR_LEFT_TO_RIGHT = -1,
   ARR_RIGHT_TO_LEFT = 1
 };
+
+//! \brief prints halfedge direction (for debugging)
+inline
+std::ostream& operator<<(
+        std::ostream& os,
+        const Arr_halfedge_direction& dir) {
+    
+    switch(dir) {
+    case CGAL::ARR_LEFT_TO_RIGHT:
+        os << "ARR_LEFT_TO_RIGHT";
+        break;
+    case CGAL::ARR_RIGHT_TO_LEFT:
+        os << "ARR_RIGHT_TO_LEFT";
+        break;
+    default:
+        CGAL_error_msg("bogus halfedge direction");
+    }
+    return os;
+}
 
 /*! \enum The various surface boundary types.
  * For example:
@@ -68,6 +103,35 @@ enum Arr_boundary_type {
   ARR_NUM_BOUNDARY_TYPES
 };
 
+//! \brief prints boundary type (for debugging)
+inline
+std::ostream& operator<<(
+        std::ostream& os,
+        const Arr_boundary_type& bt) {
+    
+    switch(bt) {
+    case CGAL::ARR_UNBOUNDED:
+        os << "ARR_UNBOUNDED";
+        break;
+    case CGAL::ARR_BOUNDED:
+        os << "ARR_BOUNDED";
+        break;
+    case CGAL::ARR_CONTRACTION:
+        os << "ARR_CONTRACTION";
+        break;
+    case CGAL::ARR_IDENTIFICATION:
+        os << "ARR_IDENTIFICATION";
+        break;
+    case CGAL::ARR_NUM_BOUNDARY_TYPES:
+        os << static_cast<int>(ARR_NUM_BOUNDARY_TYPES);
+        break;
+    default:
+        CGAL_error_msg("bogus boundary type");
+    }
+    return os;
+}
+
+
 /*! \enum The various surface parameter space options categorizing the
  * surface range according to the parameter domain.
  */
@@ -78,6 +142,36 @@ enum Arr_parameter_space {
   ARR_TOP_BOUNDARY,
   ARR_INTERIOR
 };
+
+
+//! \brief prints parameter space (for debugging)
+inline
+std::ostream& operator<<(
+        std::ostream& os,
+        const Arr_parameter_space& ps) {
+    
+    switch(ps) {
+    case CGAL::ARR_LEFT_BOUNDARY:
+        os << "ARR_LEFT_BOUNDARY";
+        break;
+    case CGAL::ARR_RIGHT_BOUNDARY:
+        os << "ARR_RIGHT_BOUNDARY";
+        break;
+    case CGAL::ARR_BOTTOM_BOUNDARY:
+        os << "ARR_BOTTOM_BOUNDARY";
+        break;
+    case CGAL::ARR_TOP_BOUNDARY:
+        os << "ARR_TOP_BOUNDARY";
+        break;
+    case CGAL::ARR_INTERIOR:
+        os << "ARR_INTERIOR";
+        break;
+    default:
+        CGAL_error_msg("bogus parameter space");
+    }
+    return os;
+}
+
 
 CGAL_END_NAMESPACE
 
