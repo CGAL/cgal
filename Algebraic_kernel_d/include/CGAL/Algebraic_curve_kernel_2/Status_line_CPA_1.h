@@ -273,9 +273,10 @@ public:
      */
     size_type event_of_curve(size_type k, bool c) const {
     
-        if(this->ptr()->_m_cpa.is_swapped()) // reverse the curve order since
-            c ^= 1;                 // polynomials are swapped in curve pair
-
+        if(this->ptr()->_m_cpa.is_swapped()){ // reverse the curve order since
+            //std::cout << "evt of curve: content swapped\n";
+            c ^= 1;    // polynomials are swapped in curve pair
+        }
         CGAL_precondition_msg(0 <= k &&
             k < static_cast<size_type>(this->ptr()->_m_arcno_to_pos[c].size()),
                 "Invalid arc number of the c-th curve specified");
@@ -311,7 +312,7 @@ public:
         CGAL_precondition(0 <= j && j < number_of_events());
         const Arc_pair& arc = this->ptr()->_m_arcs[j];
         if(this->ptr()->_m_cpa.is_swapped()) {
-        //std::cerr << "swapped content\n";
+            //std::cout << "swapped content\n";
             //return Arc_pair(arc.second, arc.first);
         }
         return arc;

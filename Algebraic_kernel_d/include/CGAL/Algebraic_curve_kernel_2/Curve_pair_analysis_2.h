@@ -233,9 +233,24 @@ public:
         std::copy(slice.arcs_at_event().begin(),
             slice.arcs_at_event().end(), arcs.begin());
 
-        Status_line_1 correct(i, arcs, *this);
-        // TODO: need to cache status lines ?
-        return correct;
+        Status_line_1 line(i, arcs, *this);
+
+        CGAL_precondition_code(
+        int typo;
+        typename Status_line_1::Arc_pair pair;
+        for(int j = 0; j < slice.num_arcs(); j++) {
+
+            pair = line.curves_at_event(j);
+            if(pair.first != -1 && pair.second != -1)
+                typo = 2;
+            else 
+                typo = (pair.first != -1 ? 0 : 1);
+         /*std::cout << "[" << pair.first << "; " << pair.second << "] and "  <<
+                (int)(slice.arc_at_event(j).first) << "\n";*/
+            CGAL_precondition(typo == slice.arc_at_event(j).first);
+        }    
+        );
+        return line;
 #endif // CGAL_ACK_2_USE_STATUS_LINES
     }
 
@@ -260,9 +275,20 @@ public:
         typename Status_line_1::Int_container arcs(slice.num_arcs());
         std::copy(slice.arcs_at_interval().begin(),
             slice.arcs_at_interval().end(), arcs.begin());
-            
-        // TODO: need to cache status lines ?
-        return Status_line_1(i, arcs, *this);
+
+        Status_line_1 line(i, arcs, *this);
+
+        CGAL_precondition_code(
+         int typo;
+        typename Status_line_1::Arc_pair pair;
+        for(int j = 0; j < slice.num_arcs(); j++) {
+
+            pair = line.curves_at_event(j);
+            typo = (pair.first != -1 ? 0 : 1);
+            CGAL_precondition(typo == slice.arc_at_interval(j));
+        }    );
+
+        return line;
 #endif // CGAL_ACK_2_USE_STATUS_LINES
     }
 
