@@ -32,12 +32,13 @@ namespace CGALi {
 template < class CurvedKernelViaAnalysis_2, class Rep_ > 
 class Point_2;
 
-//! forward class declaration for befriending
-template < class CurvedKernelViaAnalysis_2, class Rep_ > 
-class Arc_2;
-
 template <class CurvedKernelViaAnalysis_2>
 class Arc_2_rep;
+
+//! forward class declaration for befriending
+template < class CurvedKernelViaAnalysis_2, class Rep_ =
+    Arc_2_rep<CurvedKernelViaAnalysis_2> > 
+class Arc_2;
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ > 
 std::ostream& operator<< (std::ostream&,
@@ -62,27 +63,33 @@ class Point_2_rep
 
     typedef typename Curved_kernel_via_analysis_2::Curve_2
         Curve_2;
-    
+
+    typedef CGALi::Arc_2_rep<Curved_kernel_via_analysis_2> Arc_2_rep;
+        
     // default constructor
-    Point_2_rep() 
+    Point_2_rep() :
+        _m_arc_rep(NULL)
     {  }
     
     // constructs a "finite" point on curve,
     // implies CGAL::NO_BOUNDARY in x/y
     Point_2_rep(const Xy_coordinate_2& xy) : 
-        _m_xy(xy), _m_location(CGAL::ARR_INTERIOR) {
+        _m_xy(xy), _m_arc_rep(NULL), _m_location(CGAL::ARR_INTERIOR) {
+
+        
     }
 
     // constructs a point on curve with y-coordinate at infinity
-    Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) {
+    Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
+        _m_arc_rep(NULL) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
-                CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
+             CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
         _m_x = x;
     }
 
     // constructs a point at +/-oo in x
-    Point_2_rep(const Curve_2& c, int arcno, CGAL::Arr_curve_end inf_end) :
-        _m_xcurve(c), _m_xarcno(arcno) {
+    Point_2_rep(CGAL::Arr_curve_end inf_end) :
+        _m_arc_rep(NULL) {
 
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                 CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
@@ -91,15 +98,17 @@ class Point_2_rep
     // curve point finite coordinates. They are valid only if boundary in y 
     // is not set (CGAL::NO_BOUNDARY), otherwise only x-coordinate is
     // accessible (point lies at +/-oo)
-    boost::optional<Xy_coordinate_2> _m_xy; 
+    boost::optional<Xy_coordinate_2> _m_xy;
         
     // x-coordinate of a curve point
     boost::optional<X_coordinate_1> _m_x;
 
-    boost::optional<Curve_2> _m_xcurve;
+    //boost::optional<Curve_2> _m_xcurve;
     
-    boost::optional<int> _m_xarcno;
-    
+    //boost::optional<int> _m_xarcno;
+
+    mutable Arc_2_rep *_m_arc_rep;
+
     // surface boundary type
     //mutable CGAL::Arr_boundary_type _m_boundary;
     // location of a point in parameter space
@@ -151,6 +160,8 @@ public:
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
 
+    typedef CGALi::Arc_2_rep<Curved_kernel_via_analysis_2> Arc_2_rep;
+
     //!@}
 public:
     //!\name public constructors
@@ -174,7 +185,7 @@ public:
     //!
     //! implies no boundary conditions in x/y
     explicit Point_2(const Xy_coordinate_2& p) : 
-        Base(Rep(p)) {  
+        Base(Rep(p)) {
     }
     
     //!\brief standard constructor: constructs a finite point with x-coordinate
@@ -200,8 +211,8 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
-    Point_2(const Curve_2 c, int arcno, CGAL::Arr_curve_end inf_end) :
-         Base(Rep(c, arcno, inf_end)) {
+    Point_2(CGAL::Arr_curve_end inf_end) :
+         Base(Rep(inf_end)) {
     }
     
     //!\brief constructs a point with y-coordinate at infinity having
@@ -210,6 +221,10 @@ private:
     //! \c inf_end defines whether the point lies at +/- infinity
     Point_2(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
          Base(Rep(x, inf_end)) {
+    }
+
+    void _add_ref(Arc_2_rep *arc_rep) const {
+        this->ptr()->_m_arc_rep = arc_rep;
     }
     
     //!@}
@@ -221,7 +236,7 @@ public:
     //!
     //! \pre finite x/y coordinates must be set by construction
     const Xy_coordinate_2& xy() const {
-        CGAL_precondition_msg(this->ptr()->_m_xy, 
+        CGAL_precondition_msg(this->ptr()->_m_xy,
             "Denied access to the curve end lying at x/y-infinity");
         return *(this->ptr()->_m_xy);
     }
@@ -231,31 +246,35 @@ public:
     //! \pre the point's x must be finite (set by construction)
     const X_coordinate_1& x() const {
     
-        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_x),
+        CGAL_precondition_msg(this->ptr()->_m_xy || this->ptr()->_m_x,
           "Denied access to x-coordinate of the curve end \
             lying at x-infinity");
-        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).x() :
-            *(this->ptr()->_m_x));
+        return (location() == CGAL::ARR_INTERIOR ?
+            (*(this->ptr()->_m_xy)).x() : *(this->ptr()->_m_x));
     }
     
     //! returns a supporting curve of underlying \c Xy_coordinate_2 object
     //!
     //! \pre this object must represent a finite point on curve
     inline Curve_2 curve() const {
-        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_xcurve),
+        CGAL_precondition_msg(this->ptr()->_m_xy ||
+            this->ptr()->_m_arc_rep != NULL,
             "Denied access to the curve end lying at y-infinity");
-        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).curve() :
-            *(this->ptr()->_m_xcurve));
+        return (location() == CGAL::ARR_INTERIOR ?
+            (*(this->ptr()->_m_xy)).curve() :
+            this->ptr()->_m_arc_rep->_m_support);
     }
     
     //! returns an arc number of underlying \c Xy_coordinate_2 object
     //!
     //! \pre this object must represent a finite point on curve
     inline int arcno() const {
-        CGAL_precondition_msg((this->ptr()->_m_xy || this->ptr()->_m_xarcno), 
+        CGAL_precondition_msg(this->ptr()->_m_xy ||
+            this->ptr()->_m_arc_rep != NULL,
             "Denied access to the curve end lying at y-infinity");
-        return (this->ptr()->_m_xy ? (*(this->ptr()->_m_xy)).arcno() :
-            *(this->ptr()->_m_xarcno));
+        return (location() == CGAL::ARR_INTERIOR ?
+            (*(this->ptr()->_m_xy)).arcno() :
+            this->ptr()->_m_arc_rep->_m_arcno);
     }
     
     //! returns type of a boundary
@@ -335,8 +354,7 @@ private:
     }
     
     //! befriending \c Arc_2 class
-    friend class Arc_2<Curved_kernel_via_analysis_2,
-        Arc_2_rep<Curved_kernel_via_analysis_2> >;
+    friend class CGALi::Arc_2<Curved_kernel_via_analysis_2>;
     //! befriending output operator
     friend std::ostream& operator << <>(std::ostream&, const Self&);
     
@@ -393,6 +411,7 @@ std::ostream& operator <<(std::ostream& os,
         std::cerr << "ASCII format not yet implemented" << std::endl;
     }
     return os;
+
 }
 
 } // namespace CGALi

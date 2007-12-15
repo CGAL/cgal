@@ -733,8 +733,12 @@ public:
         Point_vector vec;
         typename Point_vector::const_iterator it;
         cv1.intersect(cv2, std::back_inserter(vec));
-        for(it = vec.begin(); it != vec.end(); it++) 
+
+        //std::cout << "results\n";
+        for(it = vec.begin(); it != vec.end(); it++) {
+            //std::cout << it->first << "\n";
             *oi++ = CGAL::make_object(*it);
+        }
         return oi;
     }
 private:
