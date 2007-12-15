@@ -439,7 +439,6 @@ _intersect (Subcurve *c1, Subcurve *c2)
       this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
                                                       ARR_MIN_END);
 
-    //! \todo this looks suspicious!
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
         (ps_x1 != ARR_INTERIOR) && (ps_y2 != ARR_INTERIOR) &&
         this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MIN_END) &&
