@@ -14,7 +14,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-#include <CGAL/Arr_great_circular_arc_on_sphere_traits_2.h>
+#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
 #else
 #error No traits (TRAITS) specified!
@@ -32,7 +32,7 @@ typedef CGAL::Arr_linear_traits_2<Kernel>               Traits_parameter;
 #define TRAITS_TYPE "Linear Lines"
 
 #elif TEST_TRAITS == SPHERICAL_ARC_TRAITS
-typedef CGAL::Arr_great_circular_arc_on_sphere_traits_2<Kernel>        Traits_parameter;
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>        Traits_parameter;
 #define TRAITS_TYPE "Spherical Arc"
 
 #else
