@@ -41,7 +41,7 @@ struct Integer_hash_function
   std::size_t operator() (unsigned int i) const 
   { 
     return i;
-  } 
+  }  
 };
 
 /*! \class Arr_construction_sl_visitor
@@ -282,7 +282,9 @@ void Arr_construction_sl_visitor<Hlpr>::before_handle_event (Event* event)
 {
   // We just have to notify the helper class on the event.
   m_helper.before_handle_event (event);
-
+#if 0
+  std::cout << "VIS: before_handle_event" << std::endl;
+#endif
   return;
 }
 
@@ -294,6 +296,10 @@ template <class Hlpr>
 bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     (Event* event, Status_line_iterator iter, bool /* flag */)
 {
+#if 0
+    std::cout << "VIS: after_handle_event" << std::endl;
+#endif
+
   // Check if the event represents an isolated vertex.
   if (!event->has_left_curves() && !event->has_right_curves())
   {
@@ -317,6 +323,9 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     {
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
+#if 0
+        std::cout << "adding a" << std::endl;
+#endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
     }
 
@@ -346,6 +355,9 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
     {
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
+#if 0
+        std::cout << "adding b" << std::endl;
+#endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
     }
   }
@@ -393,6 +405,10 @@ template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::
 add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
 {
+#if 0
+    std::cout << "VIS: add_subcurve: " << cv << std::endl;
+#endif
+
   // Obtain all information to perform the insertion of the subcurve into
   // the arrangement.
   Event           *last_event = last_event_on_subcurve(sc);
@@ -592,6 +608,9 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
      Subcurve* sc,
      bool& new_face_created)
 {
+#if 0
+    std::cout << "VIS: insert_at_vertices" << std::endl;
+#endif
   // Use the helper class to determine whether the order of predecessor
   // halfedges should be swaped, to that the edge directed from prev1->target()
   // to prev2->target() is incident to the new face (in case a new face is
@@ -624,16 +643,18 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   // Note that we do this before trying to relocate holes in the new
   // face (if one is created).
   m_helper.add_subcurve (res, sc);
-
+  
   if (new_face_created)
   {
-    // In case a new face has been created (pointed by the new halfedge
-    // we obtained), we have to examine the holes and isolated vertices
-    // in the existing face (pointed be the twin halfedge) and relocate
-    // the relevant features in the new face.
-    CGAL_assertion(res->face() != res->twin()->face());
+    if (res->is_on_inner_ccb()) {
+      // In case a new face has been created (pointed by the new halfedge
+      // we obtained), we have to examine the holes and isolated vertices
+      // in the existing face (pointed be the twin halfedge) and relocate
+      // the relevant features in the new face.
+      CGAL_assertion(res->face() != res->twin()->face());
       
-    this->relocate_in_new_face (res);
+      this->relocate_in_new_face (res);
+    }
   }
 
   return (res);
@@ -780,6 +801,12 @@ template <class Hlpr>
 void Arr_construction_sl_visitor<Hlpr>::
 relocate_in_new_face (Halfedge_handle he)
 {
+#if 0
+    std::cout << "VIS: relocate" << std::endl;
+    std::cout << "HeCv: " << he->curve() << std::endl;
+    std::cout << "HeDi: " << (he->direction() == LEFT_TO_RIGHT ? "L2R" : "R2L") << std::endl;
+#endif
+
   // We use a constant indices map so no new entries are added there.
   const Halfedge_indices_map& const_he_indices_table = m_he_indices_table;
 
@@ -806,7 +833,9 @@ relocate_in_new_face (Halfedge_handle he)
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr)
     {
       CGAL_assertion(*itr != 0);
-      
+#if 0      
+      std::cout << "itr: " << *itr << std::endl;
+#endif
       // In case the current subcurve index does not match a valid entry in 
       // m_sc_he_table, we know that this subcurve matches a halfedge that is
       // not yet mapped. This can happen only if this halfedge is he itself.

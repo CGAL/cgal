@@ -39,7 +39,7 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Sweep_line_2/Arr_construction_event.h>
 #include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Arr_topology_traits/Arr_torus_construction_sl_visitor.h>
+#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
 #include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
 #include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
@@ -56,7 +56,7 @@
 #include <CGAL/Arr_topology_traits/Arr_torus_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
-// TODO helpers
+// TODO batched pl helper, vert decom helper
 
 CGAL_BEGIN_NAMESPACE
 
@@ -229,6 +229,32 @@ public:
     //@}
 
 public:
+    ///! \name Boundaries
+    //@{
+    
+    /*! Obtain the boundary type for a given parameter space.
+     * \param ps the parameter space.
+     * \return the boundary type along ps.
+     * \pre ps must not be ARR_INTERIOR.
+     */
+    CGAL::Arr_boundary_type boundary_type(
+            const CGAL::Arr_parameter_space ps
+    ) const {
+        CGAL_precondition(ps != CGAL::ARR_INTERIOR);
+        switch (ps) {
+        case ARR_LEFT_BOUNDARY:
+        case ARR_RIGHT_BOUNDARY: return ARR_IDENTIFICATION;
+            
+        case ARR_BOTTOM_BOUNDARY:
+        case ARR_TOP_BOUNDARY: return ARR_IDENTIFICATION;
+        default: CGAL_error();
+        }
+        // Cannot reach here!
+        return ARR_NUM_BOUNDARY_TYPES;
+    }
+    
+    //@}
+
     ///! \name Accessing the DCEL and constructing iterators.
     //@{
 
@@ -407,7 +433,7 @@ public:
     ///! \name Visitor types.
     //@{
     
-    typedef Arr_torus_construction_sl_visitor<CHelper>
+    typedef Arr_construction_sl_visitor<CHelper>
     Sweep_line_construction_visitor;
     
     typedef Arr_insertion_sl_visitor<IHelper>
@@ -867,7 +893,7 @@ protected:
     bool  _valid(CGAL::Arr_parameter_space ps_x, CGAL::Arr_parameter_space ps_y) 
         const {
         bool res = 
-            ((ps_x == ARR_LEFT_BOUNDARY || ps_x == ARR_TIGHT_BOUNDARY) &&
+            ((ps_x == ARR_LEFT_BOUNDARY || ps_x == ARR_RIGHT_BOUNDARY) &&
              ps_y == ARR_INTERIOR)
             ||
             ((ps_y == ARR_BOTTOM_BOUNDARY || ps_y == ARR_TOP_BOUNDARY) &&
