@@ -1154,15 +1154,15 @@ public:
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this); }
   
-  /*! A functor that indicates whether a geometric object lies on an
-   * identification arc.
+  /*! A functor that indicates whether a geometric object lies on the
+   * horizontal identification arc.
    */
-  class Is_on_identification_2 {
+  class Is_on_x_identification_2 {
   protected:
     typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
     
   public:
-    /*! Determine whether a point lies on an identification arc.
+    /*! Determine whether a point lies on the horizontal identification arc.
      * \param p the point.
      * \return a Boolean indicating whether p lies on the vertical
      * identification arc.
@@ -1172,7 +1172,8 @@ public:
       return p.is_mid_boundary();
     }
 
-    /*! Determine whether an arc coincides with an identification arc.
+    /*! Determine whether an arc coincides with the horizontal identification
+     * arc.
      * \param xcv the arc.
      * \return a Boolean indicating whether xcv coincides with the vertical
      * identification arc.
@@ -1194,9 +1195,54 @@ public:
     }
   };
   
-  /*! Obtain a Is_on_identification_2 function object */
-  Is_on_identification_2 is_on_identification_2_object() const
-  { return Is_on_identification_2(); }
+  /*! Obtain a Is_on_x_identification_2 function object */
+  Is_on_x_identification_2 is_on_x_identification_2_object() const
+  { return Is_on_x_identification_2(); }
+  
+  /*! A functor that indicates whether a geometric object lies on the
+   * vertical identification arc.
+   */
+  class Is_on_y_identification_2 {
+  protected:
+    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    
+  public:
+    /*! Determine whether a point lies on the vertical identification arc.
+     * \param p the point.
+     * \return a Boolean indicating whether p lies on the vertical
+     * identification arc.
+     */
+    bool operator()(const Point_2 & p) const
+    {
+      return p.is_mid_boundary();
+    }
+
+    /*! Determine whether an arc coincides with the vertical identification
+     * arc.
+     * \param xcv the arc.
+     * \return a Boolean indicating whether xcv coincides with the vertical
+     * identification arc.
+     */
+    bool operator()(const X_monotone_curve_2 & xcv) const
+    {
+      // If the curve is not vertical, it cannot coincide with the ident. arc:
+      if (!xcv.is_vertical()) return false;
+
+      // If the normal has an x-component, it cannot coincide either:
+      Direction_3 normal = xcv.plane().orthogonal_direction();
+      CGAL::Sign xsign = Traits::x_sign(normal);
+      if (xsign != ZERO) return false;
+
+      // Check whether xcv coincides or its opposite:
+      CGAL::Sign ysign = Traits::y_sign(normal);
+      return (((ysign == NEGATIVE) && xcv.directed_right()) ||
+              ((ysign == POSITIVE) && !xcv.directed_right()));
+    }
+  };
+  
+  /*! Obtain a Is_on_y_identification_2 function object */
+  Is_on_y_identification_2 is_on_y_identification_2_object() const
+  { return Is_on_y_identification_2(); }
   
   /*! A functor that compares the x-coordinate of two given points
    * that lie on the horizontal identification arc.

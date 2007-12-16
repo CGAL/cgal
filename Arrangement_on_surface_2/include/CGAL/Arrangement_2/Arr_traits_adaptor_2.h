@@ -720,9 +720,9 @@ public:
   }
 
   /*! A function object that determines whether an x-monotone curve or a
-   * point coincide with an identification curve.
+   * point coincide with the horizontal identification curve.
    */
-  class Is_on_identification_2 {
+  class Is_on_x_identification_2 {
   protected:
     //! The base traits.
     const Base * m_base;
@@ -734,13 +734,13 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Is_on_identification_2 (const Base * base) : m_base(base) {}
+    Is_on_x_identification_2 (const Base * base) : m_base(base) {}
     
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
   public:
-    /*! Determones whether a point lies on an identification curve
+    /*! Determones whether a point lies on the horizontal identification curve
      * \param p the point.
      * \return true if p lies on the vertical identification curve, and
      * false otherwise.
@@ -750,7 +750,7 @@ public:
       return is_on_idn (p, Boundary_category());
     }
 
-    /*! Determones whether an x-monotone curve coicide with an
+    /*! Determones whether an x-monotone curve coicide with the horizontal
      * identification curve
      * \param xcv the point.
      * \return true if xcv coincides with an identification curve,
@@ -762,46 +762,131 @@ public:
     }
 
   private:
-    bool is_on_idn (const Point_2 & p, Arr_bounded_boundary_tag) const
+    bool is_on_x_idn (const Point_2 & p, Arr_bounded_boundary_tag) const
     {
-      return m_base->is_on_identification_2_object ()(p);
+      return m_base->is_on_x_identification_2_object ()(p);
     }
     
-    bool is_on_idn (const Point_2 &, Arr_has_boundary_tag) const
+    bool is_on_x_idn (const Point_2 &, Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
     
-    bool is_on_idn (const Point_2 &, Arr_no_boundary_tag) const
+    bool is_on_x_idn (const Point_2 &, Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    bool is_on_idn (const X_monotone_curve_2 & xcv,
+    bool is_on_x_idn (const X_monotone_curve_2 & xcv,
                     Arr_bounded_boundary_tag) const
     {
-      return m_base->is_on_identification_2_object ()(xcv);
+      return m_base->is_on_x_identification_2_object ()(xcv);
     }
 
-    bool is_on_idn (const X_monotone_curve_2 &, Arr_has_boundary_tag) const
+    bool is_on_x_idn (const X_monotone_curve_2 &, Arr_has_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
 
-    bool is_on_idn (const X_monotone_curve_2 &, Arr_no_boundary_tag) const
+    bool is_on_x_idn (const X_monotone_curve_2 &, Arr_no_boundary_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
   };
 
-  /*! Obtain a Is_on_identification_2 function object. */
-  Is_on_identification_2 is_on_identification_2_object() const
+  /*! Obtain a Is_on_x_identification_2 function object. */
+  Is_on_x_identification_2 is_on_x_identification_2_object() const
   {
-    return Is_on_identification_2(this);
+    return Is_on_x_identification_2(this);
+  }
+  
+  /*! A function object that determines whether an x-monotone curve or a
+   * point coincide with the vertical identification curve.
+   */
+  class Is_on_y_identification_2 {
+  protected:
+    //! The base traits.
+    const Base * m_base;
+
+    /*! Constructor.
+     * \param base The base traits class. It must be passed, to handle non
+     *             stateless traits objects, (which stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Is_on_y_identification_2 (const Base * base) : m_base(base) {}
+    
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_traits_basic_adaptor_2<Base>;
+
+  public:
+    /*! Determones whether a point lies on the vertical identification curve
+     * \param p the point.
+     * \return true if p lies on the vertical identification curve, and
+     * false otherwise.
+     */
+    bool operator() (const Point_2 & p) const
+    {
+      return is_on_y_idn (p, Boundary_category());
+    }
+
+    /*! Determones whether an x-monotone curve coicide with the vertical
+     * identification curve
+     * \param xcv the point.
+     * \return true if xcv coincides with an identification curve,
+     * and false otherwise.
+     */
+    bool operator()(const X_monotone_curve_2 & xcv) const
+    {
+      return is_on_y_idn (xcv, Boundary_category());      
+    }
+
+  private:
+    bool is_on_y_idn (const Point_2 & p, Arr_bounded_boundary_tag) const
+    {
+      return m_base->is_on_identification_2_object ()(p);
+    }
+    
+    bool is_on_y_idn (const Point_2 &, Arr_has_boundary_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+    
+    bool is_on_y_idn (const Point_2 &, Arr_no_boundary_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+
+    bool is_on_y_idn (const X_monotone_curve_2 & xcv,
+                    Arr_bounded_boundary_tag) const
+    {
+      return m_base->is_on_identification_2_object ()(xcv);
+    }
+
+    bool is_on_y_idn (const X_monotone_curve_2 &, Arr_has_boundary_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+
+    bool is_on_y_idn (const X_monotone_curve_2 &, Arr_no_boundary_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+  };
+
+  /*! Obtain a Is_on_y_identification_2 function object. */
+  Is_on_y_identification_2 is_on_y_identification_2_object() const
+  {
+    return Is_on_y_identification_2(this);
   }
   
   /*! A function object that determines whether a curve end is bounded. */
