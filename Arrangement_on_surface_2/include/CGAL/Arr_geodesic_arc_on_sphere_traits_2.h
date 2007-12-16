@@ -17,11 +17,11 @@
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
-#ifndef CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
-#define CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_TRAITS_2_H
+#ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
+#define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 
-// #define CGAL_ARR_PLANE                                             1
-// #define CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED    1
+// #define CGAL_ARR_PLANE                                                 1
+// #define CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED 1
 
 /*! \file
  * A class that handles great circular arcs embedded on spheres suitable
@@ -41,7 +41,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template <typename Kernel> class Arr_x_monotone_great_circular_arc_on_sphere_3;
-template <typename Kernel> class Arr_great_circular_arc_on_sphere_3;
+template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_extended_direction_3;
 
 /*! A traits class-template for constructing and maintaining arcs of great
@@ -49,9 +49,9 @@ template <typename Kernel> class Arr_extended_direction_3;
  * kernel, which it also derives from
  */
 template <typename T_Kernel>
-class Arr_great_circular_arc_on_sphere_traits_2 : public T_Kernel {
+class Arr_geodesic_arc_on_sphere_traits_2 : public T_Kernel {
   friend class Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel>;
-  friend class Arr_great_circular_arc_on_sphere_3<T_Kernel>;
+  friend class Arr_geodesic_arc_on_sphere_3<T_Kernel>;
   friend class Arr_extended_direction_3<T_Kernel>;
 
 public:
@@ -63,7 +63,7 @@ public:
   typedef Arr_bounded_boundary_tag              Boundary_category;
 
   /*! Default constructor */
-  Arr_great_circular_arc_on_sphere_traits_2(){}
+  Arr_geodesic_arc_on_sphere_traits_2(){}
 
 protected:
   typedef typename Kernel::Direction_3          Direction_3;
@@ -335,7 +335,7 @@ public:
   typedef Arr_extended_direction_3<Kernel>              Point_2;
   typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel>
                                                         X_monotone_curve_2;
-  typedef Arr_great_circular_arc_on_sphere_3<Kernel>    Curve_2;
+  typedef Arr_geodesic_arc_on_sphere_3<Kernel>    Curve_2;
   typedef unsigned int                                  Multiplicity;
 
 public:
@@ -345,7 +345,7 @@ public:
   /*! A functor that compares the x-coordinates of two directional points */
   class Compare_x_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -355,7 +355,7 @@ public:
      */
     Compare_x_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:    
     /*! Compare the x-coordinates of two directional points.
@@ -384,7 +384,7 @@ public:
    */
   class Compare_xy_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -394,7 +394,7 @@ public:
      */
     Compare_xy_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare two directional points lexigoraphically: by x, then by y.
@@ -473,7 +473,7 @@ public:
    */
   class Compare_y_at_x_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -483,7 +483,7 @@ public:
      */
     Compare_y_at_x_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Return the location of the given point with respect to the input arc.
@@ -533,7 +533,7 @@ public:
    */
   class Compare_y_at_x_left_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -543,7 +543,7 @@ public:
      */
     Compare_y_at_x_left_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare the y value of two x-monotone curves immediately to the left
@@ -619,7 +619,7 @@ public:
    */
   class Compare_y_at_x_right_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -629,7 +629,7 @@ public:
      */
     Compare_y_at_x_right_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare the y value of two x-monotone curves immediately to the right
@@ -705,7 +705,7 @@ public:
    */
   class Equal_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -715,7 +715,7 @@ public:
      */
     Equal_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Determines whether the two x-monotone curves are the same (have the
@@ -867,7 +867,7 @@ public:
    */
   class Compare_x_near_boundary_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -877,7 +877,7 @@ public:
      */
     Compare_x_near_boundary_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare the x-coordinate of a direction with the x-coordinate of an
@@ -1022,7 +1022,7 @@ public:
    */
   class Compare_y_near_boundary_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1032,7 +1032,7 @@ public:
      */
     Compare_y_near_boundary_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare the y-coordinates of 2 curves at their ends near the boundary
@@ -1159,7 +1159,7 @@ public:
    */
   class Is_on_x_identification_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
     
   public:
     /*! Determine whether a point lies on the horizontal identification arc.
@@ -1204,7 +1204,7 @@ public:
    */
   class Is_on_y_identification_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
     
   public:
     /*! Determine whether a point lies on the vertical identification arc.
@@ -1272,7 +1272,7 @@ public:
    */
   class Compare_y_on_identification_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1282,7 +1282,7 @@ public:
      */
     Compare_y_on_identification_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Compare the y-coordinate of two given points that lie on the vertical
@@ -1316,7 +1316,7 @@ public:
    */
   class Make_x_monotone_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1326,7 +1326,7 @@ public:
      */
     Make_x_monotone_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:    
     /*! Cut the given curve into x-monotone subcurves and insert them into the
@@ -1367,7 +1367,7 @@ public:
           *oi++ = make_object(xc2);
           return oi;
         }
-#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+#if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
         // The arc is not vertical => break it at the discontinuity arc:
         const X_monotone_curve_2 xc(c.plane());
         *oi++ = make_object(xc);
@@ -1473,7 +1473,7 @@ public:
   /*! A functor that splits an x-monotone arc at a directional point. */
   class Split_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1483,7 +1483,7 @@ public:
      */
     Split_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Split a given x-monotone curve at a given point into two sub-curves.
@@ -1541,7 +1541,7 @@ public:
   /*! The clockwise-in-between function object */
   class Clockwise_in_between_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1551,7 +1551,7 @@ public:
      */
     Clockwise_in_between_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
     bool operator()(const Direction_2 & d,
@@ -1699,7 +1699,7 @@ public:
     }
 
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1709,7 +1709,7 @@ public:
      */
     Intersect_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Find the intersections of the two given curves and insert them into the
@@ -1729,7 +1729,7 @@ public:
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
 
-      typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+      typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
       typedef typename Kernel::Equal_2                          Equal_2;
       typedef typename Kernel::Counterclockwise_in_between_2
         Counterclockwise_in_between_2;
@@ -1855,7 +1855,7 @@ public:
 
   /*! A functor that tests whether two x-monotone arcs can be merged. */
   class Are_mergeable_2 {
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1865,7 +1865,7 @@ public:
      */
     Are_mergeable_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
     /*! Check whether it is possible to merge two given x-monotone curves.
@@ -1905,7 +1905,7 @@ public:
       bool eq1 = equal(xc1.right(), xc2.left());
       bool eq2 = equal(xc1.left(), xc2.right());
 
-#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+#if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
       if (eq1 && eq2) return true;
 #else
       if (eq1 && eq2) return false;
@@ -1924,7 +1924,7 @@ public:
   /*! A functor that merges two x-monotone arcs into one */
   class Merge_2 {
   protected:
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     /*! The traits (in case it has state) */
     const Traits * m_traits;
@@ -1934,7 +1934,7 @@ public:
      */
     Merge_2(const Traits * traits) : m_traits(traits) {}
 
-    friend class Arr_great_circular_arc_on_sphere_traits_2<Kernel>;
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
     
   public:
     /*! Merge two given x-monotone curves into a single curve (spherical_arc).
@@ -1970,7 +1970,7 @@ public:
       
       bool eq1 = equal(xc1.right(), xc2.left());
 
-#if defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+#if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
       bool eq2 = equal(xc1.left(), xc2.right());
       if (eq1 && eq2) {
         const Point_2 & p =
@@ -2183,7 +2183,7 @@ public:
    */
   Arr_extended_direction_3(const Direction_3 & dir) : Direction_3(dir)
   {
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
     
     const Direction_3 & pp = Traits::pos_pole();
     const Direction_3 & np = Traits::neg_pole();
@@ -2228,7 +2228,7 @@ public:
 };
 
 /*! A Representation of an x-monotone great circular arc embedded on a sphere,
- * as used by the Arr_great_circular_arc_on_sphere_traits_2 traits-class
+ * as used by the Arr_geodesic_arc_on_sphere_traits_2 traits-class
  * An x-monotone great circular arc cannot cross the closed hemi-circle arc of
  * discontinuity, defined as the longitude that lies in the zx-plane, and is
  * contained in the open halfspace (x > 0).
@@ -2401,7 +2401,7 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     Kernel kernel;
     CGAL_precondition(!kernel.equal_3_object()(source, target));
@@ -2520,7 +2520,7 @@ public:
   {
     CGAL_precondition(has_on(point));
     CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
-#if !defined(CGAL_FULL_X_MONOTONE_GREAT_CIRCULAR_ARC_ON_SPHERE_IS_SUPPORTED)
+#if !defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
     CGAL_error_msg( "Full x-monotone arcs are not supported!");
 #endif
   }
@@ -2544,7 +2544,7 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     CGAL_precondition(has_on(source));
     CGAL_precondition(has_on(target));
@@ -2671,7 +2671,7 @@ public:
    */
   bool is_in_x_range(const Arr_extended_direction_3 & point) const
   {
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     CGAL_precondition(!point.is_min_boundary());
     CGAL_precondition(!point.is_max_boundary());
@@ -2739,7 +2739,7 @@ public:
 };
 
 /*! A representation of a general great circular arc embedded on a sphere,
- * used by the Arr_great_circular_arc_on_sphere_traits_2 traits-class
+ * used by the Arr_geodesic_arc_on_sphere_traits_2 traits-class
  * An arc is uniqely represented by a plane p, and two endpoints the source
  * s and the target t, which lie in the plane p. The points of the arc are
  * the locus of points visited when moving from the source s toward the
@@ -2747,7 +2747,7 @@ public:
  * defined by s and t.
  */
 template <typename T_Kernel>
-class Arr_great_circular_arc_on_sphere_3 :
+class Arr_geodesic_arc_on_sphere_3 :
   public Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel> {
 protected:
   typedef T_Kernel                                              Kernel;
@@ -2765,13 +2765,13 @@ protected:
   
 public:
   /*! Default constructor - constructs an empty arc */
-  Arr_great_circular_arc_on_sphere_3() : Base(), m_is_x_monotone(true) {}
+  Arr_geodesic_arc_on_sphere_3() : Base(), m_is_x_monotone(true) {}
   
   /*! Copy constructor
    * \param other the other arc
    */
-  Arr_great_circular_arc_on_sphere_3
-  (const Arr_great_circular_arc_on_sphere_3 & other) : Base(other)
+  Arr_geodesic_arc_on_sphere_3
+  (const Arr_geodesic_arc_on_sphere_3 & other) : Base(other)
   {
     m_is_x_monotone = other.m_is_x_monotone;
   }
@@ -2789,7 +2789,7 @@ public:
    * \pre plane contains src
    * \pre plane contains trg
    */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & src,
+  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & src,
                                      const Arr_extended_direction_3 & trg,
                                      const Plane_3 & plane,
                                      bool is_x_monotone, bool is_vertical,
@@ -2822,7 +2822,7 @@ public:
    * \pre the source and target cannot be equal.
    * \pre the source and target cannot be the opoosite of each other.
    */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
+  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & source,
                                      const Arr_extended_direction_3 & target)
   {
     this->set_source(source);
@@ -2831,7 +2831,7 @@ public:
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel>   Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>   Traits;
     typedef typename Kernel::Direction_2                        Direction_2;
     typedef typename Kernel::Direction_3                        Direction_3;
     
@@ -2918,7 +2918,7 @@ public:
    * \pre plane contain the origin
    * \pre Both endpoints lie on the given plane.
    */
-  Arr_great_circular_arc_on_sphere_3(const Arr_extended_direction_3 & source,
+  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & source,
                                      const Arr_extended_direction_3 & target,
                                      const Plane_3 & plane)
   {
@@ -2930,7 +2930,7 @@ public:
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
-    typedef Arr_great_circular_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
     CGAL_precondition(kernel.has_on_3_object()(plane, point));
@@ -3040,7 +3040,7 @@ public:
   /*! Construct a full spherical_arc from a plane.
    * \param plane the containing plane.
    */
-  Arr_great_circular_arc_on_sphere_3(const Plane_3 & plane)
+  Arr_geodesic_arc_on_sphere_3(const Plane_3 & plane)
   {
     this->set_plane(plane);
     typename Kernel::Direction_3 normal = plane.orthogonal_direction();
@@ -3069,13 +3069,13 @@ OutputStream & operator<<(OutputStream & os,
                           const Arr_extended_direction_3<Kernel> & ed)
 {
   CGAL::To_double<typename Kernel::FT> todouble;
-#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
+#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
   os << static_cast<float>(todouble(ed.dx())) << ", "
      << static_cast<float>(todouble(ed.dy())) << ", "
      << static_cast<float>(todouble(ed.dz()));
-#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
+#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << ")"
      << ", "
      <<
@@ -3092,11 +3092,11 @@ OutputStream &
 operator<<(OutputStream & os,
            const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
 {
-#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
+#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
   os << "(" << arc.left() << "), (" << arc.right() << ")";
-#if defined(CGAL_ARR_GREAT_CIRCULAR_ARC_ON_SPHERE_DETAILS)
+#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "("
      << ", " << (arc.is_vertical() ? " |" : "!|")
      << ", " << (arc.is_directed_right() ? "=>" : "<=")
