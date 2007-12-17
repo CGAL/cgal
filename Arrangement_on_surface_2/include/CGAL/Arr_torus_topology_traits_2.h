@@ -900,6 +900,29 @@ protected:
     }       
 
     /*!
+     * Computes the sign of two halfedges approaching and leaving the
+     * boundary
+     * \param he1 The halfedge entering the boundary
+     * \param he2 The halfedge leaving the boundary
+     * \return the perimetricity of the subpath
+     */
+    CGAL::Sign _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) 
+        const;
+    
+    /*!
+     * Computes the sign of a halfedge and a curve approaching and leaving the
+     * boundary
+     * \param he1 The halfedge entering the boundary
+     * \param cv2 The curve leaving the boundary
+     * \param end2 The end of the curve leaving the boundary
+     * \return the perimetricity of the subpath
+     */
+    CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
+                                const X_monotone_curve_2& cv2,
+                                const CGAL::Arr_curve_end& end2)
+        const;
+    
+    /*!
      * Computes the number of crossing of a path with the curves 
      * of identification
      * \param he1 Beginning of path
@@ -909,7 +932,7 @@ protected:
     CGAL::Sign _sign_of_path(const Halfedge* he1, const Halfedge* he2) 
         const;
 
-     /*!
+    /*!
      * Computes the number of crossing of a path with the curves 
      * of identification
      * \param he1 Beginning of path
