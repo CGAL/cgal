@@ -6,18 +6,25 @@ Computes whether the given univariate polynomial is square free.
 \ccRefines 
 \ccc{AdaptableUnaryFunction}  
 
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef bool result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1  argument_type;}{}
+
 A model of this type must provide:
 
 \ccOperations
 \ccCreationVariable{fo}
-\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
-\ccMethod{bool
-	operator()(AlgebraicKernel_d_1::Polynomial_1 p);}
-{}
+\ccMethod{result_type operator()(argument_type p);}
+{Returns true if \ccc{p} is square free.}
 
 %\ccHasModels
-%\ccSeeAlso
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::MakeSquareFree_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::SquareFreeFactorize_1}\\
 
 \end{ccRefConcept} 
 

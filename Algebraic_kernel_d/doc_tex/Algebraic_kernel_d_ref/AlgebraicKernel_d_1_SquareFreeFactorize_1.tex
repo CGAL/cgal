@@ -17,18 +17,26 @@ The constant factor $a$ is not computed.
 \ccRefines 
 \ccc{AdaptableBinaryFunction} 
 
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef int result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
+
 \ccOperations
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccCreationVariable{fo}
 
 \ccMethod{template < class OutputIterator >
 	int 
-	operator()(AlgebraicKernel_d_1::Polynomial_1,
+	operator()(first_argument_type p,
                OutputIterator res);}
 {Copies in the output iterator the factors of a square-free 
 factorization of \ccc{p}, with their multiplicity, as objects of type 
-\ccc{std::pair< AlgebraicKernel_d_1::Polynomial_1, int>}.}
+\ccc{std::pair<AlgebraicKernel_d_1::Polynomial_1, int>}.}
 
 \ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::IsSquareFree_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::MakeSquareFree_1}\\
 
 \end{ccRefConcept}
