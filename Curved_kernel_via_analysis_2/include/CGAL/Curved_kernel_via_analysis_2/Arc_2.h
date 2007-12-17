@@ -414,7 +414,9 @@ public:
     Point_2 curve_end(CGAL::Arr_curve_end end) const {
         const Point_2& pt = (end == CGAL::ARR_MIN_END ? _minpoint() :
             _maxpoint());
-        //CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR);
+#if !CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE
+        CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR);
+#endif
         return pt;
     }
          
@@ -558,7 +560,7 @@ public:
         CGAL_precondition(is_on_bottom_top(location(end)));
         if(is_singular()) // the curve end goes to singularity => x-order
             return CGAL::EQUAL; // doesn't matter   
-                     
+
         Curve_kernel_2 kernel_2;
         CGAL::Comparison_result res = 
             kernel_2.compare_x_2_object()(p.x(), curve_end_x(end));
@@ -829,7 +831,7 @@ public:
 
         CGAL::Arr_parameter_space loc1 = location(end);
         CGAL_precondition(is_on_left_right(loc1) &&
-                loc1 == cv2.location(end));
+                          loc1 == cv2.location(end));
         // comparing ids is the same as calling is_identical() ??
         if(this->id() == cv2.id()) 
             return CGAL::EQUAL;    
@@ -1768,7 +1770,7 @@ private:
             return CGAL::sign(arcno() - cv2.arcno());
         return _compare_coprime(cv2.curve(), cv2.arcno(), where, x0, perturb);
     }
-    
+
     //! \brief analogous to previous method but compares this arc against
     //! a finite point
     //!
@@ -2293,7 +2295,7 @@ std::ostream& operator<<(std::ostream& os,
 
     switch (::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
-        os << "arc[(sup@" << arc.curve().id();
+        os << "arc@" << arc.id() << "[(sup@" << arc.curve().id();
         if (arc.is_vertical()) {
             os << ", VERTICAL"; 
         } else {
