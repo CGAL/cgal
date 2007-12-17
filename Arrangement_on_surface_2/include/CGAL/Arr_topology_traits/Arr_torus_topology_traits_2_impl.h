@@ -440,11 +440,9 @@ locate_around_boundary_vertex (Vertex *v,
     std::cout << "search: " << std::endl;
 
     std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << curr->direction() << std::endl;
     std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << (next->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << next->direction() << std::endl;
     
     std::cout << "******************************************" << std::endl;
 #endif
@@ -466,11 +464,9 @@ locate_around_boundary_vertex (Vertex *v,
         std::cout << "search: " << std::endl;
         
         std::cout << "curr: " << curr->curve() << std::endl;
-        std::cout << "dir: " << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
+        std::cout << "dir: " << curr->direction() << std::endl;
         std::cout << "next: " << next->curve() << std::endl;
-        std::cout << "dir: " << (next->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                                 "L2R" : "R2L") << std::endl;
+        std::cout << "dir: " << next->direction() << std::endl;
         
         std::cout << "******************************************" << std::endl;
 #endif
@@ -491,11 +487,9 @@ locate_around_boundary_vertex (Vertex *v,
     std::cout << "search: " << std::endl;
 
     std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << curr->direction() << std::endl;
     std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << (next->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << next->direction() << std::endl;
     
     std::cout << "******************************************" << std::endl;
 #endif
@@ -846,14 +840,10 @@ boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
 
 #if 0    
     std::cout << "e1: " << e1->curve() << std::endl;
-    std::cout << "dir1: " 
-            << (e1->direction() == CGAL::CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-              << std::endl;
+    std::cout << "dir1: " << e1->direction() << std::endl;
     std::cout << "e1->occbf: " << &(*e1->outer_ccb()->face()) << std::endl;
     std::cout << "e2: " << e2->curve() << std::endl;
-    std::cout << "dir2: " 
-            << (e2->direction() == CGAL::CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-              << std::endl;
+    std::cout << "dir2: " << e2->direction() << std::endl;
     std::cout << "e2->occbf: " << &(*e2->outer_ccb()->face()) << std::endl;
 #endif
 
@@ -948,6 +938,436 @@ erase_redundant_vertex (Vertex *v)
 template <class GeomTraits, class Dcel_>
 CGAL::Sign
 Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+_sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
+
+    CGAL::Sign result = CGAL::ZERO;
+    
+    CGAL::Arr_curve_end end1 = 
+        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END);
+    
+    CGAL::Arr_curve_end end2 = 
+        (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+         CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+    
+    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        _m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        _m_traits->parameter_space_in_y_2_object();
+    
+    CGAL::Arr_parameter_space he1_psx =
+        parameter_space_in_x(he1->curve(), end1);
+
+    CGAL::Arr_parameter_space he1_psy =
+        parameter_space_in_y(he1->curve(), end1);
+    
+    CGAL::Arr_parameter_space he2_psx =
+        parameter_space_in_x(he2->curve(), end2);
+
+    CGAL::Arr_parameter_space he2_psy =
+        parameter_space_in_y(he2->curve(), end2);
+    
+    if (he1_psx == CGAL::ARR_INTERIOR &&
+        he1_psy == CGAL::ARR_INTERIOR &&
+        he2_psx == CGAL::ARR_INTERIOR &&
+        he2_psy == CGAL::ARR_INTERIOR) {
+        return result;
+    }
+    
+    if (he1_psx != he2_psx) {
+        
+        if (he1_psx == CGAL::ARR_RIGHT_BOUNDARY) {
+            result = CGAL::POSITIVE;
+            //std::cout << "+xp1" << std::endl;
+        } else {
+            result = CGAL::NEGATIVE;
+            //std::cout << "-xn1" << std::endl;
+        }
+        
+    } else { 
+        
+        if (he1_psx != CGAL::ARR_INTERIOR) {
+            // can influence pole
+            
+            CGAL_assertion(he2_psx != CGAL::ARR_INTERIOR);
+            
+            typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
+                yc, yn;
+            
+            if (he1_psx == CGAL::ARR_LEFT_BOUNDARY) {
+                
+                CGAL_assertion(end1 == CGAL::ARR_MIN_END);
+                CGAL_assertion(end2 == CGAL::ARR_MIN_END);
+                
+                yc = he1->curve().curve().
+                    horizontal_asymptote_for_arc_to_minus_infinity(
+                            he1->curve().arcno()
+                    );
+                yn = he2->curve().curve().
+                    horizontal_asymptote_for_arc_to_minus_infinity(
+                            he2->curve().arcno()
+                    );
+                
+            } else {
+                
+                CGAL_assertion(end1 == CGAL::ARR_MAX_END);
+                CGAL_assertion(end2 == CGAL::ARR_MAX_END);
+                
+                yc = he1->curve().curve().
+                    horizontal_asymptote_for_arc_to_plus_infinity(
+                            he1->curve().arcno()
+                    );
+                yn = he2->curve().curve().
+                    horizontal_asymptote_for_arc_to_plus_infinity(
+                            he2->curve().arcno()
+                    );
+            }
+            
+            if (!yc.is_finite() && !yn.is_finite() && yc != yn) {
+                
+                if (yc.infty() == NiX::PLUS_INFTY) {
+                    // bottom to top
+                    result = CGAL::POSITIVE;
+                    //std::cout << "+xp2" << std::endl;
+                } else {
+                    // top to bottom
+                    result = CGAL::NEGATIVE;
+                    //std::cout << "-xp2" << std::endl;
+                }
+            }
+        } else {
+            
+            CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
+            CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
+            
+            if (he1_psy != he2_psy) {
+                if (he1_psy == CGAL::ARR_TOP_BOUNDARY) {
+                    result = CGAL::POSITIVE;
+                    //std::cout << "+yp" << std::endl;
+                } else {
+                    result = CGAL::NEGATIVE;
+                    //std::cout << "-yn" << std::endl;
+                }
+            }
+        }
+    }
+        
+    return result;
+}
+
+//-----------------------------------------------------------------------------
+// Number of crossing with the curve of identification
+//
+template <class GeomTraits, class Dcel_>
+CGAL::Sign
+Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+_sign_of_subpath (const Halfedge* he1,
+                  const X_monotone_curve_2& cv2,
+                  const CGAL::Arr_curve_end& end2) const {
+    
+    //std::cout << "he1: " << he1->curve() << std::endl;
+    //std::cout << "dir1: " << he1->direction() << std::endl;
+    //std::cout << "cv2: " << cv2 << std::endl;
+    //std::cout << "end: " << end2 << std::endl;
+
+    CGAL_assertion(!he1->has_null_curve());
+    
+    CGAL::Sign result = CGAL::EQUAL;
+    
+    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        _m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        _m_traits->parameter_space_in_y_2_object();
+    
+    // check whether cv can influence the counters
+    
+    CGAL::Arr_parameter_space ps_x = 
+        parameter_space_in_x(cv2, end2);
+    CGAL::Arr_parameter_space ps_y = 
+        parameter_space_in_y(cv2, end2);
+    
+    CGAL::Arr_curve_end he1_trg_end =
+        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
+        );
+    
+    CGAL::Arr_parameter_space he1_trg_ps_x = 
+        parameter_space_in_x(he1->curve(), he1_trg_end);
+    CGAL::Arr_parameter_space he1_trg_ps_y = 
+        parameter_space_in_y(he1->curve(), he1_trg_end);
+        
+    if (he1_trg_ps_x != CGAL::ARR_INTERIOR) {
+        
+        if (he1_trg_ps_x != ps_x) {
+            // possible jump over x
+
+            bool modify = true;
+            
+            // check next
+            if (he1->vertex()->halfedge() !=
+                he1->vertex()->halfedge()->opposite()->prev()) {
+                
+                const Halfedge* next1 = he1->next();
+                CGAL_assertion(!next1->has_null_curve());
+                
+                CGAL::Arr_curve_end next1_src_end =
+                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                
+                CGAL::Arr_parameter_space next1_src_ps_x = 
+                    parameter_space_in_x(next1->curve(), 
+                                         next1_src_end);
+                
+                CGAL_assertion(next1_src_ps_x != CGAL::ARR_INTERIOR);
+                
+                modify = (next1_src_ps_x != ps_x);
+            }
+            
+            if (modify) {
+                if (he1_trg_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
+                    result = CGAL::POSITIVE;
+                    //std::cout << "+s1" << std::endl;
+                } else {
+                    result = CGAL::NEGATIVE;
+                    //std::cout << "-s1" << std::endl;
+                }
+            }
+            
+        } else {
+            
+            CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
+            
+            typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
+                yc, yn;
+            
+            if (he1_trg_ps_x == CGAL::ARR_LEFT_BOUNDARY) {
+                
+                yc = he1->curve().curve().
+                    horizontal_asymptote_for_arc_to_minus_infinity(
+                            he1->curve().arcno()
+                    );
+                yn = cv2.curve().
+                    horizontal_asymptote_for_arc_to_minus_infinity(
+                            cv2.arcno()
+                    );
+                
+            } else {
+                
+                yc = he1->curve().curve().
+                    horizontal_asymptote_for_arc_to_plus_infinity(
+                            he1->curve().arcno()
+                    );
+                yn = cv2.curve().
+                    horizontal_asymptote_for_arc_to_plus_infinity(
+                            cv2.arcno()
+                    );
+            }
+            
+            if (!yc.is_finite() && !yn.is_finite() && yc != yn) {
+                
+                if (yc.infty() == NiX::PLUS_INFTY) {
+                    // bottom to top
+                    result = CGAL::POSITIVE;
+                    //std::cout << "+s2" << std::endl;
+                } else {
+                    // top to bottom
+                    result = CGAL::NEGATIVE;
+                    //std::cout << "-s2" << std::endl;
+                }
+            }
+        }
+    }
+    
+    if (he1_trg_ps_y != CGAL::ARR_INTERIOR) {
+        
+        if (he1_trg_ps_y != ps_y) {
+            // possible jump over y
+
+            bool modify = true;
+            
+            // check next
+            if (he1->vertex()->halfedge() !=
+                he1->vertex()->halfedge()->opposite()->prev()) {
+                
+                const Halfedge* next1 = he1->next();
+                CGAL_assertion(!next1->has_null_curve());
+                
+                CGAL::Arr_curve_end next1_src_end =
+                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                
+                CGAL::Arr_parameter_space next1_src_ps_y = 
+                    parameter_space_in_y(next1->curve(), 
+                                         next1_src_end);
+                
+                CGAL_assertion(next1_src_ps_y != CGAL::ARR_INTERIOR);
+                
+                modify = (next1_src_ps_y != ps_y);
+            }
+            
+            if (modify) {
+                if (he1_trg_ps_y == CGAL::ARR_TOP_BOUNDARY) {
+                    result = CGAL::POSITIVE;
+                    //std::cout << "+s3" << std::endl;
+                } else {
+                    result = CGAL::NEGATIVE;
+                    //std::cout << "-s3" << std::endl;
+                }
+            }
+        }
+    }
+    
+    
+#if 0
+    {
+        // now for prev2
+        if (bcv2x != CGAL::ARR_INTERIOR || bcv2y != CGAL::ARR_INTERIOR) {
+            // the counter can change at prev2
+            
+            Arr_curve_end prev2_trg_ind;
+            if (prev2->direction() == CGAL::ARR_LEFT_TO_RIGHT) {
+                prev2_trg_ind = CGAL::ARR_MAX_END;
+            } else {
+                prev2_trg_ind = CGAL::ARR_MIN_END;
+            }
+
+            CGAL_assertion(!prev2->has_null_curve());
+            Arr_parameter_space prev2_trg_bcx = 
+                parameter_space_in_x(prev2->curve(), prev2_trg_ind);
+            Arr_parameter_space prev2_trg_bcy = 
+                parameter_space_in_y(prev2->curve(), prev2_trg_ind);
+            
+            if (prev2_trg_bcx != CGAL::ARR_INTERIOR) {
+                if (prev2_trg_bcx != bcv2x) {
+
+                    bool modify = true;
+
+                    if (prev2->vertex()->halfedge() !=
+                        prev2->vertex()->halfedge()->opposite()->prev()) {
+                        const Halfedge* next2 = prev2->next();
+                        
+                        Arr_curve_end next2_src_ind;
+                        if (next2->direction() == CGAL::ARR_LEFT_TO_RIGHT) {
+                            next2_src_ind = CGAL::ARR_MIN_END;
+                        } else {
+                            next2_src_ind = CGAL::ARR_MAX_END;
+                        }
+                        
+                        CGAL_assertion(!next2->has_null_curve());
+                        CGAL::Arr_parameter_space next2_src_bcx = 
+                            parameter_space_in_x(next2->curve(), 
+                                                 next2_src_ind);
+                        
+                        CGAL_assertion(next2_src_bcx != CGAL::ARR_INTERIOR);
+                        
+                        modify = (next2_src_bcx != bcv2x);
+                    }
+                    
+                    if (modify) {
+                        if (prev2_trg_bcx == CGAL::ARR_RIGHT_BOUNDARY) {
+                            s = (s + 1) % 2;
+                            //std::cout << "+s4" << std::endl;
+                        } else {
+                            s = (s - 1) % 2;
+                            //std::cout << "-s4" << std::endl;
+                        }
+                    }
+
+                } else {
+                    
+                    CGAL_assertion(bcv2x != CGAL::ARR_INTERIOR);
+                    
+                    Asymptote_y yc, yn;
+                    
+                    if (prev2_trg_bcx == CGAL::ARR_LEFT_BOUNDARY) {
+                        
+                        yc = prev2->curve().curve().
+                            horizontal_asymptote_for_arc_to_minus_infinity(
+                                    prev2->curve().arcno()
+                            );
+                        yn = cv.curve().
+                            horizontal_asymptote_for_arc_to_minus_infinity(
+                                    cv.arcno()
+                            );
+                        
+                    } else {
+                        
+                        yc = prev2->curve().curve().
+                            horizontal_asymptote_for_arc_to_plus_infinity(
+                                    prev2->curve().arcno()
+                            );
+                        yn = cv.curve().
+                            horizontal_asymptote_for_arc_to_plus_infinity(
+                                    cv.arcno()
+                            );
+                    }
+                    
+                    if (!yc.is_finite() && !yn.is_finite() && yc != yn) {
+                        
+                        if (yc.infty() == NiX::PLUS_INFTY) {
+                            // bottom to top
+                            s = (s + 1) % 2;
+                            //std::cout << "+s5" << std::endl;
+                        } else {
+                            // top to bottom
+                            s = (s - 1) % 2;
+                            //std::cout << "-s5" << std::endl;
+                        }
+                    }
+                }
+            }
+
+            if (prev2_trg_bcy != CGAL::ARR_INTERIOR) {
+                if (prev2_trg_bcy != bcv2y) {
+                    
+                    bool modify = true;
+
+                    if (prev2->vertex()->halfedge() !=
+                        prev2->vertex()->halfedge()->opposite()->prev()) {
+
+                        const Halfedge* next2 = prev2->next();
+                        
+                        Arr_curve_end next2_src_ind;
+                        if (next2->direction() == CGAL::ARR_LEFT_TO_RIGHT) {
+                            next2_src_ind = CGAL::ARR_MIN_END;
+                        } else {
+                            next2_src_ind = CGAL::ARR_MAX_END;
+                        }
+                        
+                        CGAL_assertion(!next2->has_null_curve());
+                        CGAL::Arr_parameter_space next2_src_bcy = 
+                            parameter_space_in_y(next2->curve(), 
+                                                 next2_src_ind);
+                        
+                        CGAL_assertion(next2_src_bcy != CGAL::ARR_INTERIOR);
+                        
+                        modify = (next2_src_bcy != bcv2y);
+                    }
+                    
+                    if (modify) {
+                        if (prev2_trg_bcy == CGAL::ARR_TOP_BOUNDARY) {
+                            s = (s + 1) % 2;
+                            //std::cout << "+s6" << std::endl;
+                        } else {
+                            s = (s - 1) % 2;
+                            //std::cout << "-s6" << std::endl;
+                        }
+                    }
+                }
+            }
+        }
+    }
+#endif
+    //std::cout << "result: " << result << std::endl;
+    return result;
+}
+
+//-----------------------------------------------------------------------------
+// Number of crossing with the curve of identification
+//
+template <class GeomTraits, class Dcel_>
+CGAL::Sign
+Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
     
     // status: move to arr
@@ -955,6 +1375,61 @@ _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
     //std::cout << "Arr_torus_topology_traits: "
     //          << "_sign_of_paths" << std::endl;
     
+
+#if 1
+
+    CGAL::Sign result = CGAL::ZERO;
+    
+    if (he1->next() == he2 && he2->next () == he1) {
+        return result;
+    }
+    
+    // Start with the next of prev1:
+    const Halfedge* curr = he1->next();
+    
+    while (curr != he2) {
+
+        CGAL_assertion(!curr->has_null_curve());
+        
+        const Halfedge* next = curr->next();
+
+        CGAL_assertion(!next->has_null_curve());
+        
+        CGAL::Sign tmp = _sign_of_subpath(curr, next);
+        
+        if (tmp != CGAL::ZERO) {
+            switch (result) {
+            case ZERO:
+                result = tmp;
+                break;
+            default:
+                CGAL_assertion(result == -tmp || result == tmp);
+                result = CGAL::ZERO;
+            }
+        }
+        
+        curr = next;
+    }
+
+    if (he1 == he2) {
+        CGAL::Sign tmp = _sign_of_subpath(he1, he1->next());
+        
+        if (tmp != CGAL::ZERO) {
+            switch (result) {
+            case ZERO:
+                result = tmp;
+                break;
+            default:
+                CGAL_assertion(result == -tmp || result == tmp);
+                result = CGAL::ZERO;
+            }
+        }
+
+    }
+    
+    return result;
+    
+#else // old cold
     typedef typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
         Asymptote_y;
     
@@ -997,9 +1472,7 @@ _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
     while (curr != he2) {
 
         //std::cout << "curr: " << curr->curve() << std::endl;
-        //std::cout << "dir: " 
-        //          << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-        //          << std::endl;
+        //std::cout << "dir: " << (curr->direction() << std::endl;
 
         const Halfedge * next = curr->next();
         
@@ -1180,6 +1653,8 @@ _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
     //std::cout << "y: " << y_counter << std::endl;
 
     return (CGAL::sign((x_counter + y_counter) % 2));
+#endif
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1192,7 +1667,111 @@ _sign_of_path (const Halfedge* he1, const Halfedge* he2,
                const X_monotone_curve_2& cv) const {
     
     // status: move to arr
+#if 1
+    CGAL::Sign result = _sign_of_path(he2, he1);
 
+
+    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        _m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        _m_traits->parameter_space_in_y_2_object();
+    
+    // check whether cv can influence the counters
+    
+    CGAL::Arr_parameter_space ps_min_x = 
+        parameter_space_in_x(cv, CGAL::ARR_MIN_END);
+    CGAL::Arr_parameter_space ps_min_y = 
+        parameter_space_in_y(cv, CGAL::ARR_MIN_END);
+    
+    CGAL::Arr_parameter_space ps_max_x = 
+        parameter_space_in_x(cv, CGAL::ARR_MAX_END);  
+    CGAL::Arr_parameter_space ps_max_y = 
+        parameter_space_in_y(cv, CGAL::ARR_MAX_END);  
+    
+    if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR || 
+        ps_max_x != CGAL::ARR_INTERIOR || ps_max_y != CGAL::ARR_INTERIOR) {
+        
+        // sign can change!
+        
+        bool equalmin = false;
+        
+        Point_2 minp = this->_m_traits->construct_min_vertex_2_object()(cv);
+        
+        CGAL::Arr_curve_end he1_trg_ind =
+            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+             CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
+            );
+        
+        CGAL::Arr_parameter_space he1_trg_psx = 
+            parameter_space_in_x(he1->curve(), he1_trg_ind);
+        CGAL::Arr_parameter_space he1_trg_psy = 
+            parameter_space_in_y(he1->curve(), he1_trg_ind);
+        
+        bool v1_on_boundary = 
+            (he1_trg_psx != CGAL::ARR_INTERIOR ||
+             he1_trg_psy != CGAL::ARR_INTERIOR);
+        
+        bool min_on_boundary = 
+            (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR);
+        
+        if (v1_on_boundary == min_on_boundary) {
+            if (v1_on_boundary) {
+                // compare at boundary
+                equalmin = this->are_equal(he1->vertex(), cv, 
+                                           CGAL::ARR_MIN_END, 
+                                           ps_min_x, ps_min_y);
+            } else {
+                equalmin = (this->_m_traits->compare_xy_2_object()(
+                                    he1->vertex()->point(), minp
+                            ) == CGAL::EQUAL);
+            }
+        }
+
+        if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR) {
+            
+            CGAL::Sign tmp1 = 
+                _sign_of_subpath(
+                        he1, cv, 
+                        (equalmin ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
+                );
+            
+            if (tmp1 != CGAL::ZERO) {
+                switch (result) {
+                case ZERO:
+                    result = tmp1;
+                    break;
+                default:
+                    CGAL_assertion(result == -tmp1 || result == tmp1);
+                    result = CGAL::ZERO;
+                }
+            }
+        }
+        
+        if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR) {
+            
+            CGAL::Sign tmp2 = 
+                _sign_of_subpath(
+                        he2, cv, 
+                        (equalmin ? CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
+                );
+            
+            if (tmp2 != CGAL::ZERO) {
+                switch (result) {
+                case ZERO:
+                    result = tmp2;
+                    break;
+                default:
+                    CGAL_assertion(result == -tmp2 || result == tmp2);
+                    result = CGAL::ZERO;
+                }
+            }
+        }
+    }
+    
+    return result;
+
+#else
+    
     typedef typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
         Asymptote_y;
     
@@ -1208,13 +1787,9 @@ _sign_of_path (const Halfedge* he1, const Halfedge* he2,
     const Halfedge* prev2 = he2;
     
     //std::cout << "prev1: " << prev1->curve() << std::endl;
-    //std::cout << "dir1: " 
-    //          << (prev1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L")
-    //          << std::endl;
+    //std::cout << "dir1: " << prev1->direction() << std::endl;
     //std::cout << "prev2: " << prev2->curve() << std::endl;
-    //std::cout << "dir2: " 
-    //          << (prev2->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L")
-    //          << std::endl;
+    //std::cout << "dir2: " prev2->direction() << std::endl;
     //std::cout << "cv: " << cv << std::endl;
     typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
         _m_traits->parameter_space_in_x_2_object();
@@ -1543,6 +2118,8 @@ _sign_of_path (const Halfedge* he1, const Halfedge* he2,
     //std::cout << "s: " << s << std::endl;
 
     return (CGAL::sign(s % 2));
+
+#endif
 }
 
 /*! \brief Return the face that lies before the given vertex, which lies
