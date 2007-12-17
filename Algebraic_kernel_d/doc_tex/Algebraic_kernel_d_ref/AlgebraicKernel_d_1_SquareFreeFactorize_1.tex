@@ -19,7 +19,7 @@ The constant factor $a$ is not computed.
 
 \ccTypes
 \ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
-\ccTypedef{typedef int result_type;}{}
+\ccTypedef{typedef std::size_type result_type;}{}
 \ccGlue
 \ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
 
@@ -34,7 +34,7 @@ The constant factor $a$ is not computed.
                OutputIterator res);}
 {Copies in the output iterator the factors of a square-free 
 factorization of \ccc{p}, with their multiplicity, as objects of type 
-\ccc{std::pair<AlgebraicKernel_d_1::Polynomial_1, int>}.}
+\ccc{std::pair<AlgebraicKernel_d_1::Polynomial_1, unsigned int>}.}
 
 \ccSeeAlso
 \ccRefIdfierPage{AlgebraicKernel_d_1::IsSquareFree_1}\\
