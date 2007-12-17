@@ -27,8 +27,6 @@
 
 #include <CGAL/enum.h>
 
-#include <iostream>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \enum
@@ -41,9 +39,10 @@ enum Arr_curve_end
 };
 
 //! \brief prints curve end (for debugging)
+template< class OutputStream >
 inline
-std::ostream& operator<<(
-        std::ostream& os,
+OutputStream& operator<<(
+        OutputStream& os,
         const Arr_curve_end& ce) {
     
     switch(ce) {
@@ -72,9 +71,10 @@ enum Arr_halfedge_direction
 };
 
 //! \brief prints halfedge direction (for debugging)
+template< class OutputStream >
 inline
-std::ostream& operator<<(
-        std::ostream& os,
+OutputStream& operator<<(
+        OutputStream& os,
         const Arr_halfedge_direction& dir) {
     
     switch(dir) {
@@ -104,9 +104,10 @@ enum Arr_boundary_type {
 };
 
 //! \brief prints boundary type (for debugging)
+template< class OutputStream >
 inline
-std::ostream& operator<<(
-        std::ostream& os,
+OutputStream& operator<<(
+        OutputStream& os,
         const Arr_boundary_type& bt) {
     
     switch(bt) {
@@ -145,9 +146,10 @@ enum Arr_parameter_space {
 
 
 //! \brief prints parameter space (for debugging)
+template< class OutputStream >
 inline
-std::ostream& operator<<(
-        std::ostream& os,
+OutputStream& operator<<(
+        OutputStream& os,
         const Arr_parameter_space& ps) {
     
     switch(ps) {
