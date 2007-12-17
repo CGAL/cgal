@@ -1,4 +1,4 @@
-\begin{ccRefConcept}{AlgebraicKernel_d_1::Compare_1}
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::Compare_1}
 
 \ccDefinition
 Compares two \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
@@ -6,18 +6,33 @@ Compares two \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.
 \ccRefines 
 \ccc{AdaptableBinaryFunction} 
 
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1++}
+{Type convertible to CGAL::Comparison_result++}{}
+\ccNestedType{result_type}{Type convertible to \ccc{CGAL::Comparison_result}}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;}{}
+
+
 \ccOperations
 \ccCreationVariable{fo}
-\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccThree{result_type}{fo(first_argument_type,++}{}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{CGAL::Comparison_result 
-	operator()(AlgebraicKernel_d_1::Algebraic_real_1 x,
-                   AlgebraicKernel_d_1::Algebraic_real_1 y);}
-{Compares $x$ and $y$.}
+\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{result_type
+	operator()(first_argument_type x,
+                   second_argument_type y);}
+{Compares \ccc{x} and \ccc{y}.}
 
 
 %\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::AlgebraicReal_1}\\
 
-\end{ccRefConcept} 
+
+\end{ccRefFunctionObjectConcept} 

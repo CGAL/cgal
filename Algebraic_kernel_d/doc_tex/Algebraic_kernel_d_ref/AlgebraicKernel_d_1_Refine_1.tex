@@ -7,12 +7,14 @@ Refines a given \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{argument_type+}{}
 \ccTypedef{typedef void result_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_1::AlgebraicReal_1  argument_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
-\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccThree{result_type}{fo(first_argument_type,++}{}
 
 A model \ccVar\ of this type must provide:
 
@@ -24,9 +26,14 @@ result_type operator()(const argument_type & x);}{
 
 \ccMethod{
 result_type operator()(const argument_type & x, int rel_prec);}{ 
-  This operator refines the current interval of $x$ with respect to the given relative precision. \\
-  That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$\\
+  This operator refines the current interval of $x$ with respect to
+  the given relative precision. \\
+  That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$, where $lower$
+  and $upper$ are lower and upper bounds for $x$, respectively.\\
   In case $x$ equals zero the interval degenerates to the zero interval. 
 } 
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::AlgebraicReal_1}\\
   
 \end{ccRefFunctionObjectConcept}
