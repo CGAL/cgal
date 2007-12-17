@@ -116,6 +116,11 @@ class Point_2_rep
 
     // befriending the handle
     friend class Point_2<Curved_kernel_via_analysis_2, Self>;
+    
+    friend std::ostream& operator << <>(
+            std::ostream&, 
+            const Point_2<Curved_kernel_via_analysis_2, Self>&);
+
 };
 
 //! \brief class defines a point on a generic curve
@@ -372,10 +377,7 @@ std::ostream& operator <<(std::ostream& os,
     switch(::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
         os << "point@" << pt.id() << "(";
-        if(pt.location() != CGAL::ARR_BOTTOM_BOUNDARY &&
-           pt.location() != CGAL::ARR_TOP_BOUNDARY) {
-            os << "sup@" << pt.curve().id();
-        }
+        os << "sup@" << pt.curve().id();
         os << " ";
         pt._dump_boundary_type(os);
         os << "; ";
@@ -392,14 +394,19 @@ std::ostream& operator <<(std::ostream& os,
         os << ", ";
         if (pt.location() != CGAL::ARR_BOTTOM_BOUNDARY &&
             pt.location() != CGAL::ARR_TOP_BOUNDARY) {
-            os << "y=n/a, "; // TODO give y-coordinate
-            os << "ARCNO=" << pt.arcno();
+            os << "y=n/a"; // TODO give y-coordinate
         } else {
             if (pt.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
                 os << "y=-oo";
             } else {
                 os << "y=+oo";
             }
+        }
+        os << ", ";
+        if (pt.ptr()->_m_xy || pt.ptr()->_m_arc_rep != NULL) {
+            os << "ARCNO=" << pt.arcno();
+        } else {
+            os << "VERT" << pt.arcno();
         }
         os << ")";
         break;
