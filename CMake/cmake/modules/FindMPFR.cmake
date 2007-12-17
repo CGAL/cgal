@@ -5,44 +5,45 @@
 
 # TODO: support Windows and MacOSX
 
+include(FindPackageHandleStandardArgs)
+
 # MPFR needs GMP
 find_package(GMP QUIET)
 if(GMP_FOUND)
-    if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
-        # Already in cache, be silent
-        set(MPFR_FIND_QUIETLY TRUE)
-    endif (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
 
-    find_path(MPFR_INCLUDE_DIR NAMES mpfr.h
-             PATHS ${GMP_INCLUDE_DIR_SEARCH}
-	           DOC "The directory containing the MPFR include files")
+  if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
+    # Already in cache, be silent
+    set(MPFR_FIND_QUIETLY TRUE)
+  endif()
 
-    if ( AUTO_LINK_ENABLED )
-      SET(MPFR_LIBRARIES ${GMP_LIBRARIES} )
-    else()
-      find_library(MPFR_LIBRARIES NAMES mpfr 
-             PATHS ${GMP_LIBRARIES_DIR_SEARCH}
-      	     DOC "Path to the MPFR library")
-    endif()
+  find_path(MPFR_INCLUDE_DIR NAMES mpfr.h
+           PATHS ${GMP_INCLUDE_DIR_SEARCH}
+           DOC "The directory containing the MPFR include files"
+           )
 
-    if( MPFR_INCLUDE_DIR AND MPFR_LIBRARIES)
-      set(MPFR_FOUND TRUE)
-    endif()
+  if ( AUTO_LINK_ENABLED )
+  
+    set(MPFR_LIBRARIES "" )
+    
+    find_path(MPFR_LIBRARIES_DIR 
+              NAMES "mpfr${TOOLSET}-mt.lib" "mpfr${TOOLSET}-mt-gd.lib" "mpfr${TOOLSET}-mt-o.lib" "mpfr${TOOLSET}-mt-g.lib"
+              PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+              DOC "Directory containing the MPFR library"
+             ) 
+             
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_LIBRARIES_DIR MPFR_INCLUDE_DIR )
+    
+  else()
+  
+    find_library(MPFR_LIBRARIES NAMES mpfr 
+                 PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+                 DOC "Path to the MPFR library"
+                )
+                
+    get_filename_component(MPFR_LIBRARIES_DIR ${MPFRL_LIBRARIES} PATH)
+    
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES )
+    
+  endif()
 
-    # Print success/error message
-    if(MPFR_FOUND)
-	if(NOT MPFR_FIND_QUIETLY)
-	    message(STATUS "Found MPFR: ${MPFR_LIBRARIES}")
-	endif(NOT MPFR_FIND_QUIETLY)
-    else(MPFR_FOUND)
-	IF(MPFR_FIND_REQUIRED)
-	    MESSAGE(FATAL_ERROR "Could NOT find MPFR. Set the MPFR_INCLUDE_DIR and MPFR_LIBRARIES cmake cache entries.")
-	ELSE(MPFR_FIND_REQUIRED)
-	    if(NOT MPFR_FIND_QUIETLY)
-		MESSAGE(STATUS "Could NOT find MPFR. Set the MPFR_INCLUDE_DIR and MPFR_LIBRARIES cmake cache entries.")
-	    endif(NOT MPFR_FIND_QUIETLY)
-	ENDIF(MPFR_FIND_REQUIRED)
-    endif(MPFR_FOUND)
-
-    mark_as_advanced(MPFR_INCLUDE_DIR MPFR_LIBRARIES)
 endif(GMP_FOUND)

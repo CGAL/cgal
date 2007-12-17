@@ -1,17 +1,41 @@
 # src/CGAL/CMakeLists.txt
 #
-# Build CGAL library.
+# The following variables must be set from the parent script:
+# The first two cannot be empty
 #
-# Make sure the compiler can find include files
-include_directories (${CGAL_INCLUDE_DIRS})
+# CGAL_BINARY_DIR
+# CGAL_LIB_INSTALL_DIR
+#
+# CGAL_INCLUDE_DIRS
+# CGAL_DEFINITIONS
+# CGAL_3RD_PARTY_INCLUDE_DIRS
+# CGAL_3RD_PARTY_LIBRARIES
+# CGAL_3RD_PARTY_DEFINITIONS
+# CGAL_LIB_SHARED_LINKER_FLAGS
+# CGAL_VERSION
+# CGAL_MAJOR_VERSION
+# CGAL_MINOR_VERSION
 
-# Add compiler flags CGAL needs to work on this platform.
-ADD_DEFINITIONS(${CGAL_LIB_CXX_FLAGS})
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CGAL_LIB_EXE_LINKER_FLAGS}")
-SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
+   
+assert(CGAL_BINARY_DIR)
+assert(CGAL_LIB_INSTALL_DIR)
+   
+include_directories (${CGAL_INCLUDE_DIRS})
+include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
+
+add_definitions(${CGAL_DEFINITIONS})
+add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
+
+set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
+
+if (WIN32)
+  set(BUILD_SHARED_LIBS OFF)
+endif()
+
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
 
 # List of source files for CGAL library
-set(CGAL_SOURCES
+set(SOURCES
     assertions.cpp
     Bbox_2_intersections.cpp
     Bbox_3_intersections.cpp
@@ -27,7 +51,7 @@ set(CGAL_SOURCES
     Geomview_stream.cpp
     Interval_arithmetic.cpp
     io.cpp
-    JAMA_numeric_solver.cpp  
+    JAMA_numeric_solver.cpp
     KDS_Log.cpp
     kernel.cpp
     MP_Float.cpp
@@ -39,27 +63,33 @@ set(CGAL_SOURCES
     Turkowski_numeric_solver.cpp
 )
 
-# Create a library called "CGAL" from ${CGAL_SOURCES} source files.
-# The extension is automatically found.
-add_library (CGAL ${CGAL_SOURCES})
+add_library (CGAL ${SOURCES})
 
-# Link it with third party libraries
 target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
-if (CGAL_USE_CGAL_CORE AND NOT AUTO_LINK_ENABLED )
-  add_dependencies(CGAL core++)
+
+if (CGAL_USE_CGAL_CORE)
+  add_dependencies(CGAL CGAL_CORE)
 endif()
 
-# Apply user-defined properties to the library targets.
-if(CGAL_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(CGAL PROPERTIES ${CGAL_LIBRARY_PROPERTIES})
+set_target_properties(CGAL PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
+
+if ( AUTO_LINK_ENABLED )
+
+  set(CGAL_RELEASE_MANGLED_NAME        "cgal${TOOLSET}-mt" ) 
+  set(CGAL_DEBUG_MANGLED_NAME          "cgal${TOOLSET}-mt-gd" ) 
+  set(CGAL_MINSIZEREL_MANGLED_NAME     "cgal${TOOLSET}-mt-o" ) 
+  set(CGAL_RELWITHDEBINFO_MANGLED_NAME "cgal${TOOLSET}-mt-g" ) 
+  
+  set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_DEBUG_MANGLED_NAME}" 
+                                         RELEASE_OUTPUT_NAME        "${CGAL_RELEASE_MANGLED_NAME}" 
+                                         MINSIZEREL_OUTPUT_NAME     "${CGAL_MINSIZEREL_MANGLED_NAME}" 
+                                         RELWITHDEBINFO_OUTPUT_NAME "${CGAL_RELWITHDEBINFO_MANGLED_NAME}" 
+                       )
+  
+  add_custom_command(TARGET CGAL POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
+  add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
+  
 endif()
 
-# Install library
-# WARNING: Use only relative paths; full paths break CPack!
-#          DESTINATION option is mandatory; skipping it breaks CPack!
-INSTALL(TARGETS CGAL
-	      RUNTIME DESTINATION ${CGAL_BIN_INSTALL_DIR}
-	      LIBRARY DESTINATION ${CGAL_LIB_INSTALL_DIR}
-       	ARCHIVE DESTINATION ${CGAL_LIB_INSTALL_DIR}
-        )
+INSTALL(TARGETS CGAL DESTINATION ${CGAL_LIB_INSTALL_DIR} )
 

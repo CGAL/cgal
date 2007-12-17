@@ -1,31 +1,68 @@
 # src/Core/CMakeLists.txt
+#
+# The following variables must be set from the parent script:
+# The first two cannot be empty
+#
+# CGAL_BINARY_DIR
+# CGAL_LIB_INSTALL_DIR
+#
+# CGAL_INCLUDE_DIRS
+# GMP_INCLUDE_DIRS
+# CGAL_DEFINITIONS
+# CGAL_3RD_PARTY_INCLUDE_DIRS
+# CGAL_3RD_PARTY_LIBRARIES
+# CGAL_3RD_PARTY_DEFINITIONS
+# CGAL_LIB_SHARED_LINKER_FLAGS
+# CGAL_VERSION
+# CGAL_MAJOR_VERSION
+# CGAL_MINOR_VERSION
+   
+assert(CGAL_BINARY_DIR)
+assert(CGAL_LIB_INSTALL_DIR)
 
-# CORE needs GMP
-find_package(GMP QUIET)
-if(GMP_FOUND)
-    # Make sure the compiler can find GMP include files
-    include_directories (${GMP_INCLUDE_DIR})
+# Make sure the compiler can find GMP include files
+include_directories (${CGAL_INCLUDE_DIRS})
+include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
-    # Make sure the compiler can find CORE include files
-    include_directories (BEFORE ${CGAL_SOURCE_DIR}/include)
+add_definitions(${CGAL_DEFINITIONS})
+add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
-    # Folder where the compiler will put the CORE library
-    set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
 
-    # Get list of source files in this folder
-    AUX_SOURCE_DIRECTORY(. SOURCES)
+set(SOURCES
+    BigFloat.cpp
+    CoreAux.cpp
+    CoreDefs.cpp
+    CoreIO.cpp
+    Expr.cpp
+    extLong.cpp
+    GmpIO.cpp
+    Real.cpp
+)
 
-    # Create core++ library
-    ADD_LIBRARY(core++ ${SOURCES})
+ADD_LIBRARY(CGAL_CORE ${SOURCES})
 
-    # Link it with GMP
-    target_link_libraries(core++ ${GMP_LIBRARIES})
+if (NOT AUTO_LINK_ENABLED )
 
-    # Install library
-    # WARNING: Use only relative paths; full paths break CPack!
-    #          DESTINATION option is mandatory; skipping it breaks CPack!
-    INSTALL(TARGETS core++
-	    RUNTIME DESTINATION ${CGAL_BIN_INSTALL_DIR}
-	    LIBRARY DESTINATION ${CGAL_LIB_INSTALL_DIR}
-	    ARCHIVE DESTINATION ${CGAL_LIB_INSTALL_DIR})
-endif(GMP_FOUND)
+  set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME "core++" )
+  target_link_libraries( CGAL_CORE ${GMP_LIBRARIES})
+  
+else()
+
+  set(CGAL_CORE_RELEASE_MANGLED_NAME        "cgalcore++${TOOLSET}-mt" ) 
+  set(CGAL_CORE_DEBUG_MANGLED_NAME          "cgalcore++${TOOLSET}-mt-gd" ) 
+  set(CGAL_CORE_MINSIZEREL_MANGLED_NAME     "cgalcore++${TOOLSET}-mt-o" ) 
+  set(CGAL_CORE_RELWITHDEBINFO_MANGLED_NAME "cgalcore++${TOOLSET}-mt-g" ) 
+  
+  set_target_properties( CGAL_CORE PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_CORE_DEBUG_MANGLED_NAME}" 
+                                              RELEASE_OUTPUT_NAME        "${CGAL_CORE_RELEASE_MANGLED_NAME}" 
+                                              MINSIZEREL_OUTPUT_NAME     "${CGAL_CORE_MINSIZEREL_MANGLED_NAME}" 
+                                              RELWITHDEBINFO_OUTPUT_NAME "${CGAL_CORE_RELWITHDEBINFO_MANGLED_NAME}" 
+                       )
+  
+  add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
+  add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
+endif()
+
+# WARNING: Use only relative paths; full paths break CPack!
+install(TARGETS CGAL_CORE DESTINATION ${CGAL_LIB_INSTALL_DIR} )

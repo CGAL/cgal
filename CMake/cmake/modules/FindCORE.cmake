@@ -6,37 +6,21 @@
 # TODO: support Windows and MacOSX
 
 # CORE needs GMP
+include(FindPackageHandleStandardArgs)
+
 find_package(GMP QUIET)
 if(GMP_FOUND)
-    if (CORE_INCLUDE_DIR AND CORE_LIBRARIES)
-        # Already in cache, be silent
-        set(CORE_FIND_QUIETLY TRUE)
-    endif (CORE_INCLUDE_DIR AND CORE_LIBRARIES)
+  if (CORE_INCLUDE_DIR AND CORE_LIBRARIES)
+    # Already in cache, be silent
+    set(CORE_FIND_QUIETLY TRUE)
+  endif (CORE_INCLUDE_DIR AND CORE_LIBRARIES)
 
-    find_path(CORE_INCLUDE_DIR NAMES CORE.h
-	      DOC "The directory containing the CORE include files")
+  find_path(CORE_INCLUDE_DIR NAMES CORE.h DOC "The directory containing the CORE include files")
 
-    find_library(CORE_LIBRARIES NAMES core++
-		 DOC "Path to the core++ library")
+  find_library(CORE_LIBRARIES NAMES core++ DOC "Path to the core++ library")
+  
+  get_filename_component(CORE_LIBRARIES_DIR ${CORE_LIBRARIES} PATH)
 
-    if(CORE_INCLUDE_DIR AND CORE_LIBRARIES)
-        set(CORE_FOUND TRUE)
-    endif(CORE_INCLUDE_DIR AND CORE_LIBRARIES)
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(CORE "DEFAULT_MSG" CORE_LIBRARIES CORE_INCLUDE_DIR )
 
-    # Print success/error message
-    if(CORE_FOUND)
-    	if(NOT CORE_FIND_QUIETLY)
-    	    message(STATUS "Found CORE: ${CORE_LIBRARIES}")
-    	endif(NOT CORE_FIND_QUIETLY)
-        else(CORE_FOUND)
-    	IF(CORE_FIND_REQUIRED)
-    	    MESSAGE(FATAL_ERROR "Could NOT find CORE. Set the CORE_INCLUDE_DIR and CORE_LIBRARIES cmake cache entries.")
-    	ELSE(CORE_FIND_REQUIRED)
-    	    if(NOT CORE_FIND_QUIETLY)
-    		MESSAGE(STATUS "Could NOT find CORE. Set the CORE_INCLUDE_DIR and CORE_LIBRARIES cmake cache entries.")
-    	    endif(NOT CORE_FIND_QUIETLY)
-    	ENDIF(CORE_FIND_REQUIRED)
-    endif(CORE_FOUND)
-
-    mark_as_advanced(CORE_INCLUDE_DIR CORE_LIBRARIES)
 endif(GMP_FOUND)

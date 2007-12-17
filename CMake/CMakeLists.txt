@@ -1,246 +1,82 @@
 # Top level CMakeLists.txt for CGAL
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
 # The name of our project is "CGAL".  CMakeLists files in this project can
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CGAL_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CGAL_BINARY_DIR}.
-project (CGAL)
+project (CGAL CXX)
 
-if (NOT CMAKE_ROOT)
-  message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set")
-endif()
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= BASIC SETUP =-
+#
+#--------------------------------------------------------------------------------------------------
 
-# Check that the version of CMake is high enough.
-# CPack was introduced in cmake 2.4
-# FindQt3 is buggy in CMake 2.4.4.
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_SOURCE_DIR} ${CGAL_SOURCE_DIR}/cmake/modules)
+
+include(CGALcommon)
+include(GeneratorSpecificSettings)
+include(CheckCXXFileRuns)
+#include(LogCMakeVariables)
+#include(Qt3Macros)
+#include(AddFileDependencies)
 
 # CGAL version number
+# TODO: This should be parsed from the VERSION file
 set(CGAL_MAJOR_VERSION 3)
 set(CGAL_MINOR_VERSION 4)
 set(CGAL_BUILD_VERSION 1)
-set(CGAL_VERSION
-    "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
-
-# Just for fun
-set(CMAKE_COLORMAKEFILE ON)
+set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
 
-# # Debug: verbose output
-# set(CMAKE_VERBOSE_MAKEFILE ON)
-# set(CMAKE_START_TEMP_FILE "")
-# set(CMAKE_END_TEMP_FILE "")
-
-#-----------------------------------------------------------------------------
-# TODO: build static and/or dynamic CGAL libraries?
-# CGAL 3.2 builds only static libraries on Windows and static + dynamic on Unix.
-if (WIN32)
-    set(AUTO_LINK_ENABLED TRUE)
-    set(BUILD_SHARED_LIBS OFF)
-endif (WIN32)
-
-#-----------------------------------------------------------------------------
-# Configure install locations.
-# WARNING: Use only relative paths (to ${CMAKE_INSTALL_PREFIX}); full paths break CPack!
-set(CGAL_INSTALL_DIR		.)
-set(CGAL_LIB_INSTALL_DIR	lib)
-set(CGAL_INCLUDE_INSTALL_DIR	include)
-set(CGAL_BIN_INSTALL_DIR	bin)
+# WARNING: Use only relative paths; full paths break CPack!
+set(CGAL_INSTALL_DIR		        .)
+set(CGAL_LIB_INSTALL_DIR	      lib)
+set(CGAL_INCLUDE_INSTALL_DIR	  include)
 set(CGAL_AUXILIARY_INSTALL_DIR	auxiliary)
-set(CGAL_MODULE_INSTALL_DIR	cmake/modules) # or ${CMAKE_ROOT}/Modules
+set(CGAL_CMAKE_INSTALL_DIR     	cmake/modules)
 
-#-----------------------------------------------------------------------------
-# Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CGAL_SOURCE_DIR} ${CGAL_SOURCE_DIR}/cmake/modules)
 
-# include CMake macros (without .cmake extension)
-include(MacroOptionalFindPackage)
-include(CheckCXXFileRuns)
-include(LogCMakeVariables)
-include(Qt3Macros)
-include(AddFileDependencies)
 
-#-----------------------------------------------------------------------------
-# Attempt to use third party libraries (Boost, X11, GMP, GMPXX, MPFR, CORE,
-# Zlib, LIDIA, LEDA, LEDAWIN, Qt, TAUCS and OpenGL)
-# Create #define CGAL_USE_<library name> in compiler_config.h if found.
+#--------------------------------------------------------------------------------------------------
 #
-# Note: macro_optional_find_package() is the same as find_package(<name>) but additionally
-# creates an OPTION(WITH_<name>) so the checking for the software can be disabled
-# via ccmake or -DWITH_<name>=OFF
+#                                    -= DEPENDENCIES =-
+#
+#--------------------------------------------------------------------------------------------------
 
 # Settings to compile an another project with CGAL
 set(CGAL_3RD_PARTY_DEFINITIONS)
 set(CGAL_3RD_PARTY_INCLUDE_DIRS)
 set(CGAL_3RD_PARTY_LIBRARIES)
 
+# This module finds dependent libraries: Boost, GMP, CORE, etc..
+# Updates CGAL_3RD_PARTY_* accordingly
+# Sets CGAL_USE_* which is stored in compiler_config.h
+# Each dependency can be selected or unselected via the option WITH_*
+include(FindCGALDependencies)
+
+
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= Generation of compiler_config.h =-
+#
+#--------------------------------------------------------------------------------------------------
+
 # Loads the contents of the configuration file to check that it contains all needed flags
 file( READ "${CGAL_SOURCE_DIR}/compiler_config.h.in" COMPILER_CONFIG )
 
-# Find Boost includes and optionaly Boost libraries
-find_package(Boost2 REQUIRED)
-if(Boost_FOUND)
-    # Boost prints no message when found
-    message(STATUS "Found Boost. Headers:  ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Found Boost. Libaries: ${Boost_LIBRARY_DIRS}")
-
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
-    set(CGAL_USE_BOOST 1)
-endif(Boost_FOUND)
-
-# Find BOOST_PROGRAM_OPTIONS
-macro_optional_find_package(BOOST_PROGRAM_OPTIONS)
-if(BOOST_PROGRAM_OPTIONS_FOUND)
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${BOOST_PROGRAM_OPTIONS_LIBRARIES})
-    set(CGAL_USE_BOOST_PROGRAM_OPTIONS 1)
-endif(BOOST_PROGRAM_OPTIONS_FOUND)
-
-# Find X11 on Unix
-macro_optional_find_package(X11)
-if(X11_FOUND)
-    # X11 prints no message when found
-    message(STATUS "Found X11: ${X11_X11_LIB}")
-
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${X11_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${X11_X11_LIB})
-    set(CGAL_USE_X11 1)
-endif(X11_FOUND)
-
-# Find GMP
-macro_optional_find_package(GMP)
-if(GMP_FOUND)
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${GMP_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${GMP_LIBRARIES})
-    set(CGAL_USE_GMP 1)
-endif(GMP_FOUND)
-
-# Find GMPXX
-macro_optional_find_package(GMPXX)
-if(GMPXX_FOUND)
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${GMPXX_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${GMPXX_LIBRARIES})
-    set(CGAL_USE_GMPXX 1)
-endif(GMPXX_FOUND)
-
-# Find MPFR
-macro_optional_find_package(MPFR)
-if(MPFR_FOUND)
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${MPFR_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${MPFR_LIBRARIES})
-    set(CGAL_USE_MPFR 1)
-endif(MPFR_FOUND)
-
-# Find CORE in the system
-macro_optional_find_package(CORE QUIET)
-if(CORE_FOUND)
-    message(STATUS "Found CORE: ${CORE_LIBRARIES}")
-
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CORE_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${CORE_LIBRARIES})
-    set(CGAL_USE_CORE 1)
-else(CORE_FOUND)
-    # If CORE not available in the system, use CORE shipped with CGAL
-    macro_optional_find_package(CGAL_CORE)
-    if(CGAL_CORE_FOUND)
-
-        set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_CORE_INCLUDE_DIR})
-        set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_CORE_LIBRARIES})
-        set(CGAL_USE_CGAL_CORE 1)
-        set(CGAL_USE_CORE 1)
-
-        # by compatibility with install_cgal
-        set(CGAL_3RD_PARTY_DEFINITIONS ${CGAL_3RD_PARTY_DEFINITIONS} "-DCGAL_USE_CGAL_CORE")
-    endif(CGAL_CORE_FOUND)
-endif(CORE_FOUND)
-
-# Find Zlib
-macro_optional_find_package(ZLIB)
-if(ZLIB_FOUND)
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${ZLIB_LIBRARIES})
-    set(CGAL_USE_ZLIB 1)
-endif(ZLIB_FOUND)
-
-# TODO: Write FindLIDIA.cmake
-
-# TODO: Write FindLEDA.cmake
-
-# TODO: Write FindLEDAWIN.cmake
-
-# Find Qt3
-macro_optional_find_package(Qt3)
-if(QT_FOUND)
-    # Qt3 prints no message when found
-    message(STATUS "Found Qt3: ${QT_QT_LIBRARY}")
-
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${QT_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${QT_QT_LIBRARY})
-    set(CGAL_3RD_PARTY_DEFINITIONS ${CGAL_3RD_PARTY_DEFINITIONS} ${QT_DEFINITIONS})
-    set(CGAL_USE_QT 1)
-endif(QT_FOUND)
-
-# Find TAUCS
-macro_optional_find_package(TAUCS)
-if(TAUCS_FOUND)
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${TAUCS_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${TAUCS_LIBRARIES})
-    set(CGAL_USE_TAUCS 1)
-endif()
-
-# Find OpenGL
-macro_optional_find_package(OpenGL)
-if(OPENGL_FOUND)
-    # OpenGL prints no message when found
-    message(STATUS "Found OpenGL: ${OPENGL_LIBRARIES}")
-
-    set(CGAL_3RD_PARTY_INCLUDE_DIRS ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR})
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} ${OPENGL_LIBRARIES})
-    set(CGAL_USE_OpenGL 1) # unused by install_cgal
-endif(OPENGL_FOUND)
-
-#-----------------------------------------------------------------------------
-# Installation.
-
-# Install files from top level folder
-# WARNING: Use only relative paths; full paths break CPack!
-#          DESTINATION option is mandatory; skipping it breaks CPack!
-INSTALL(FILES CHANGES
-	      INSTALL INSTALL.MacOSX INSTALL.win32
-	      LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
-	      README
-	      VERSION
-	DESTINATION ${CGAL_INSTALL_DIR})
-
-# Install headers
-# add_subdirectory(include/CGAL)
-INSTALL(DIRECTORY "include/CGAL" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-
-# Install scripts
-# add_subdirectory(scripts)
-INSTALL(DIRECTORY "scripts" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-
-# Install precompiled third-party libraries (Windows only).
-# add_subdirectory(auxiliary)
-INSTALL(DIRECTORY "auxiliary" DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-
-# #-----------------------------------------------------------------------------
-# # Save the compiler settings so another project can import them.
-# CMAKE_EXPORT_BUILD_SETTINGS(${CGAL_BINARY_DIR}/CGALBuildSettings.cmake)
-# INSTALL_FILES(${CGAL_MODULE_INSTALL_DIR} .cmake CGALBuildSettings)
-
-#-----------------------------------------------------------------------------
-# Platform configuration tests.
 # The variables set are the #defines expected by compiler_config.h
 # For each .cpp configuration test
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
-FILE(GLOB all_config_tests "${CGAL_SOURCE_DIR}/config/testfiles/*.cpp")
-FOREACH(config_test_cpp ${all_config_tests})
+
+file(GLOB all_config_tests "${CGAL_SOURCE_DIR}/config/testfiles/*.cpp")
+
+foreach(config_test_cpp ${all_config_tests})
     
     # Test's name is .cpp's base name
-    GET_FILENAME_COMPONENT(config_test_name ${config_test_cpp} NAME_WE)
+    get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
     
     if ( NOT "${COMPILER_CONFIG}" MATCHES "${config_test_name}" )
       message( SEND_ERROR "File 'compiler_config.h.in' is not up to date. Flag ${config_test_name} is missing!" )
@@ -256,118 +92,48 @@ FOREACH(config_test_cpp ${all_config_tests})
     else()
       set(${config_test_name} 1)
     endif()
-ENDFOREACH(config_test_cpp ${all_config_tests})
+endforeach()
 
-#-----------------------------------------------------------------------------
-# TODO: Rewrite here install_cgal's create_standard_header_replacements()
+CONFIGURE_FILE(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
+               
 
-#-----------------------------------------------------------------------------
-# Save third-party libraries' and configuration tests' #defines for use
-# when building CGAL libraries.
-CONFIGURE_FILE(${CGAL_SOURCE_DIR}/compiler_config.h.in
-               ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
-INSTALL(FILES ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h DESTINATION ${CGAL_INCLUDE_INSTALL_DIR}/CGAL)
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= Build =-
+#
+#--------------------------------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# CGAL requires special compiler flags on some platforms.
-# 1) set settings to compile CGAL libraries.
 
-# Include directories
-set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include
-                      ${CGAL_SOURCE_DIR}/include
-                      ${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
-# Compiler settings
-set(CGAL_DEFINITIONS ${CGAL_3RD_PARTY_DEFINITIONS} )
+set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include)
 
-# Set Microsoft Visual C++ compilation warning level
-if (CMAKE_CXX_COMPILER MATCHES "^(CL|cl)")
-    # CGAL 3.2 level is 2
-    SET(CMAKE_CXX_WARNING_LEVEL 2
-	CACHE STRING "C++ compiler warning level" FORCE)
-    MARK_AS_ADVANCED(CMAKE_CXX_WARNING_LEVEL)
-endif()
+set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} )
 
-# Settings to compile CGAL libraries
-if (BUILD_SHARED_LIBS)
-    SET(CGAL_LIB_CXX_FLAGS ${CGAL_DEFINITIONS} ${CGAL_SHARED_LIB_CXXFLAGS})
-else()
-    SET(CGAL_LIB_CXX_FLAGS ${CGAL_DEFINITIONS} ${CGAL_LIB_CXXFLAGS})
-endif()
-
-# Settings to link CGAL libraries
-SET(CGAL_LIB_EXE_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_LIB_LDFLAGS}")
 SET(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}")
-if (MATH_LIB)
-    set(CGAL_3RD_PARTY_LIBRARIES ${CGAL_3RD_PARTY_LIBRARIES} "-l${MATH_LIB}")
-endif()
 
-#-----------------------------------------------------------------------------
-# Build and install CGAL and CGALQt libraries
-
-# Folder where the compiler will put CGAL libraries
-set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
-
-# Append the library version information to the library target properties.
-set(CGAL_LIBRARY_PROPERTIES ${CGAL_LIBRARY_PROPERTIES}
-    VERSION "${CGAL_VERSION}"
-    SOVERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}"
-    )
-
-# Build and install CGAL library
 add_subdirectory(src/CGAL)
 
 if( CGAL_CORE_FOUND )
-  	# Compile CORE shipped with CGAL
-	  add_subdirectory(src/CGALCore)
+  add_subdirectory(src/CGALCore)
 endif()
 
 if(QT_FOUND)
-    # Build and install CGALQt library
-    add_subdirectory(src/CGALQt)
+  add_subdirectory(src/CGALQt)
 endif()
 
-#-----------------------------------------------------------------------------
-# CGAL requires special compiler flags on some platforms.
-# 2) set settings to use (i.e. compile with) CGAL libraries.
 
-# Make sure the compiler can find include files
-include_directories (${CGAL_INCLUDE_DIRS})
-
-# Add compiler flags CGAL needs to work on this platform.
-ADD_DEFINITIONS(${CGAL_DEFINITIONS})
-
-# Settings to link with CGAL libraries
-#
-# common linker settings
-set(CGAL_LIBRARIES ${ADDITIONAL_LDFLAGS} )
-
-# add CGAL library
-GET_TARGET_PROPERTY(CGAL_LOCATION CGAL LOCATION)
-set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGAL_LOCATION} )
-
-# add CGALQt library
-if(QT_FOUND)
-  GET_TARGET_PROPERTY(CGALQt_LOCATION CGALQt LOCATION)
-  set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGALQt_LOCATION} )
-endif()
-
-# add third-party libraries
-set(CGAL_LIBRARIES ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
 #-----------------------------------------------------------------------------
 # TODO: Configure Dart testing support
 
-set(BUILD_TESTING ON CACHE BOOL "Turn testing on/off")
+set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 
 # INCLUDE(Dart)
 # MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
 if(BUILD_TESTING)
     ENABLE_TESTING()
-#     CONFIGURE_FILE(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in
-#         ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
-#     FILE(WRITE ${CGAL_BINARY_DIR}/CTestCustom.cmake
-#         "INCLUDE(\"${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
+#     CONFIGURE_FILE(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
+#     FILE(WRITE ${CGAL_BINARY_DIR}/CTestCustom.cmake "INCLUDE(\"${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -390,18 +156,46 @@ if(BUILD_TESTING)
   ENDFOREACH()
 endif()
 
-# #-----------------------------------------------------------------------------
-# # Help other projects use CGAL.
-#
-# # write the compiler settings and the install dirs
-# # into a cmake file which will be installed
-# CONFIGURE_FILE(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in
-#                ${CGAL_BINARY_DIR}/UseCGAL.cmake @ONLY IMMEDIATE)
-# INSTALL_FILES(${CGAL_MODULE_INSTALL_DIR} .cmake UseCGAL)
 
-#-----------------------------------------------------------------------------
-# Build a CPack installer
-# CPack was introduced in cmake 2.4
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= INSTALLATION =-
+#
+#--------------------------------------------------------------------------------------------------
+
+# DESTINATION option is mandatory; skipping it breaks CPack!
+
+INSTALL(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32
+	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
+	            README "VERSION"  
+	      DESTINATION ${CGAL_INSTALL_DIR}
+       )
+
+INSTALL(DIRECTORY "include/CGAL" DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
+INSTALL(DIRECTORY "auxiliary"    DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
+INSTALL(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
+
+
+
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= USER SIDE SETTINGS =-
+#
+#--------------------------------------------------------------------------------------------------
+
+CONFIGURE_FILE(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake @ONLY IMMEDIATE)
+INSTALL( FILES ${CGAL_BINARY_DIR}/UseCGAL.cmake DESTINATION ${CGAL_CMAKE_INSTALL_DIR})
+
+
+
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                            -= CPack =-
+#
+#--------------------------------------------------------------------------------------------------
+
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
     SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CGAL - Computational Geometry Algorithms Library")
     SET(CPACK_PACKAGE_VENDOR "CGAL Open Source Project")
@@ -446,12 +240,3 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
-
-#-----------------------------------------------------------------------------
-#if(WIN32)
-#  MESSAGE("Configure done. You may need to click on configure again if the OK button is disabled.")
-#endif(WIN32)
-
-#-----------------------------------------------------------------------------
-# DEBUG
-#LOG_CMAKE_VARIABLES("end")

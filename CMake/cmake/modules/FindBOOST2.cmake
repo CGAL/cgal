@@ -1,3 +1,8 @@
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This is FindBoost2, a fork of FindBoost which works also with the default directory structure on windows.
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
 # - Find the Boost includes and libraries.
 # The following variables are set if Boost is found.  If Boost is not
 # found, Boost_FOUND is set to false.
@@ -47,29 +52,15 @@
 #    to use Link Directories.
 #
 
-IF(WIN32)
-  # In windows, automatic linking is performed, so you do not have to specify the libraries.
-  # If you are linking to a dynamic runtime, then you can choose to link to either a static or a
-  # dynamic Boost library, the default is to do a static link.  You can alter this for a specific
-  # library "whatever" by defining BOOST_WHATEVER_DYN_LINK to force Boost library "whatever" to
-  # be linked dynamically.  Alternatively you can force all Boost libraries to dynamic link by
-  # defining BOOST_ALL_DYN_LINK.
-
-  # This feature can be disabled for Boost library "whatever" by defining BOOST_WHATEVER_NO_LIB,
-  # or for all of Boost by defining BOOST_ALL_NO_LIB.
-
-  # If you want to observe which libraries are being linked against then defining
-  # BOOST_LIB_DIAGNOSTIC will cause the auto-linking code to emit a #pragma message each time
-  # a library is selected for linking.
-  SET(Boost_LIB_DIAGNOSTIC_DEFINITIONS "-DBOOST_LIB_DIAGNOSTIC")
-ENDIF()
-
-
 SET(BOOST_INCLUDE_PATH_DESCRIPTION "directory containing the boost include files. E.g /usr/local/include/boost_1_34_1 or c:\\Program Files\\boost\\boost_1_34_1")
 
-SET(BOOST_DIR_MESSAGE "Set the Boost_INCLUDE_DIR cmake cache entry to the ${BOOST_INCLUDE_PATH_DESCRIPTION}")
+SET(BOOST_DIR_MESSAGE "Set the Boost_INCLUDE_DIR cmake cache entry to the directory containing the boost include files.")
 
 SET(BOOST_DIR_SEARCH $ENV{BOOST_ROOT})
+if ( NOT BOOST_DIR_SEARCH ) 
+  SET(BOOST_DIR_SEARCH $ENV{BOOSTROOT} ) 
+endif()
+
 IF(BOOST_DIR_SEARCH)
   FILE(TO_CMAKE_PATH ${BOOST_DIR_SEARCH} BOOST_DIR_SEARCH)
   
@@ -94,18 +85,13 @@ ENDIF()
 #
 # Look for an installation.
 #
-FIND_PATH(Boost_INCLUDE_DIR NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH}
-
-  # Help the user find it if we cannot.
-  DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}"
-)
-
-# Assume we didn't find it.
-SET(Boost_FOUND 0)
+FIND_PATH(Boost_INCLUDE_DIR NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH} DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}" )
 
 # Now try to get the include and library path.
 IF(Boost_INCLUDE_DIR)
 
+  SET(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+  
   # Compose the boost library path.
   # Note that the user may not have installed any libraries
   # so it is quite possible the Boost_LIBRARY_PATH may not exist.
@@ -119,7 +105,7 @@ IF(Boost_INCLUDE_DIR)
   # Strip off the trailing "/include" in the path.
   IF("${Boost_LIBRARY_DIR}" MATCHES "/include$")
     GET_FILENAME_COMPONENT(Boost_LIBRARY_DIR ${Boost_LIBRARY_DIR} PATH)
-  ENDIF("${Boost_LIBRARY_DIR}" MATCHES "/include$")
+  ENDIF()
   
   IF(EXISTS "${Boost_LIBRARY_DIR}/lib")
     SET (Boost_LIBRARY_DIR ${Boost_LIBRARY_DIR}/lib)
@@ -131,25 +117,14 @@ IF(Boost_INCLUDE_DIR)
     ENDIF()
   ENDIF()
 
-  IF(EXISTS "${Boost_INCLUDE_DIR}")
-    SET(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-    # We have found boost. It is possible that the user has not
-    # compiled any libraries so we set Boost_FOUND to be true here.
-    SET(Boost_FOUND 1)
-  ENDIF()
-
   IF(Boost_LIBRARY_DIR AND EXISTS "${Boost_LIBRARY_DIR}")
     SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
   ENDIF()
 ENDIF()
 
-IF(NOT Boost_FOUND)
-  IF(NOT Boost2_FIND_QUIETLY)
-    MESSAGE(STATUS "Boost was not found. ${BOOST_DIR_MESSAGE}")
-  ELSE()
-    IF(Boost2_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Boost was not found. ${BOOST_DIR_MESSAGE}")
-    ENDIF()
-  ENDIF()
-ENDIF()
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost "Boost was not found. ${BOOST_DIR_MESSAGE}" Boost_INCLUDE_DIRS )
+SET(Boost_FOUND ${BOOST_FOUND})
 
+MARK_AS_ADVANCED(Boost_INCLUDE_DIR)
+MARK_AS_ADVANCED(Boost_LIBRARY_DIR)

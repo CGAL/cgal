@@ -380,7 +380,8 @@
 //| Is CGAL compiled with support for CORE?
 //+--------------------------------------------------------------------------
 #ifndef CGAL_NO_CORE
-    #cmakedefine CGAL_USE_CORE
+    // This is handled by CGAL/config.h instead
+    // #cmakedefine CGAL_USE_CORE
     // CORE does not have VERSION macros yet (as of december 2005).
     #define CGAL_CORE_VERSION unknown
 #endif // ! CGAL_NO_CORE

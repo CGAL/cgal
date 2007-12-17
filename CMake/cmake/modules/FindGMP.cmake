@@ -5,49 +5,43 @@
 
 # TODO: support MacOSX
 
+include(FindPackageHandleStandardArgs)
+include(GeneratorSpecificSettings)
+
 if (GMP_INCLUDE_DIR AND GMP_LIBRARIES)
   # Already in cache, be silent
   set(GMP_FIND_QUIETLY TRUE)
-endif (GMP_INCLUDE_DIR AND GMP_LIBRARIES)
+endif()
 
-# After searching in standard places,
-# search for precompiled GMP included with CGAL on Windows
-if(WIN32)
-    SET(GMP_INCLUDE_DIR_SEARCH   ${CGAL_SOURCE_DIR}/auxiliary/gmp/include)
-    SET(GMP_LIBRARIES_DIR_SEARCH ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib)
-endif(WIN32)
+set(GMP_INCLUDE_DIR_SEARCH   ${CGAL_SOURCE_DIR}/auxiliary/gmp/include)
+set(GMP_LIBRARIES_DIR_SEARCH ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib)
 
-find_path   (GMP_INCLUDE_DIR NAMES gmp.h PATHS
-	     ${GMP_INCLUDE_DIR_SEARCH}
-	     DOC "The directory containing the GMP include files")
+find_path(GMP_INCLUDE_DIR NAMES gmp.h PATHS
+	        ${GMP_INCLUDE_DIR_SEARCH}
+	        DOC "The directory containing the GMP include files"
+         )
 
 if ( AUTO_LINK_ENABLED )
-  if ( EXISTS "${GMP_LIBRARIES_DIR_SEARCH}" )
-    SET(GMP_LIBRARIES ${GMP_LIBRARIES_DIR_SEARCH} )
-  endif()  
+    
+  set(GMP_LIBRARIES "" )
+  find_path(GMP_LIBRARIES_DIR 
+            NAMES "gmp${TOOLSET}-mt.lib" "gmp${TOOLSET}-mt-gd.lib" "gmp${TOOLSET}-mt-o.lib" "gmp${TOOLSET}-mt-g.lib"
+            PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+            DOC "Directory containing the GMP library"
+           ) 
+    
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARIES_DIR)
+  
 else()
-  find_library(GMP_LIBRARIES NAMES gmp PATHS
-  	     ${GMP_LIBRARIES_DIR_SEARCH}
-  	     DOC "Path to the GMP library")
+
+  find_library(GMP_LIBRARIES NAMES gmp 
+               PATHS ${GMP_LIBRARIES_DIR_SEARCH}
+  	           DOC "Path to the GMP library"
+              )
+              
+  get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARIES} PATH)
+  
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARIES )
+  
 endif()
 
-if(GMP_INCLUDE_DIR AND GMP_LIBRARIES)
-   set(GMP_FOUND TRUE)
-endif()
-
-# Print success/error message
-if(GMP_FOUND)
-    if(NOT GMP_FIND_QUIETLY)
-        message(STATUS "Found GMP: ${GMP_LIBRARIES}")
-    endif(NOT GMP_FIND_QUIETLY)
-else(GMP_FOUND)
-    if(GMP_FIND_REQUIRED)
-	MESSAGE(FATAL_ERROR "Could NOT find GMP. Set the GMP_INCLUDE_DIR and GMP_LIBRARIES cmake cache entries.")
-    else(GMP_FIND_REQUIRED)
-	if(NOT GMP_FIND_QUIETLY)
-	    MESSAGE(STATUS "Could NOT find GMP. Set the GMP_INCLUDE_DIR and GMP_LIBRARIES cmake cache entries.")
-	endif(NOT GMP_FIND_QUIETLY)
-    endif(GMP_FIND_REQUIRED)
-endif(GMP_FOUND)
-
-mark_as_advanced(GMP_INCLUDE_DIR GMP_LIBRARIES)

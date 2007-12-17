@@ -41,13 +41,7 @@ MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
             "${CHECK_CXX_SOURCE_COMPILES_ADD_LIBRARIES}"
             "${CHECK_CXX_SOURCE_COMPILES_ADD_INCLUDES}"
             OUTPUT_VARIABLE OUTPUT)
-
-    # Extract the test description
-    FILE( STRINGS $(FILE) $(TEST_DESC) REGEXP "//|" )
-    
-    # Appends the corresponding #cmakedefine entry to compiler_config.h.in
-    FILE( APPEND ${CGAL_SOURCE_DIR}/compiler_config.h.in $(TEST_DESC) )
-    
+   
     # if it did not compile make the return value fail code of 1
     if(NOT ${VAR}_COMPILED)
       SET(${VAR} 1)
