@@ -210,6 +210,8 @@ public:
     
     //!@}
 private:
+    // TODO allow to construct without curve, i.e, isolated points on toric
+    //      identifications -> do it also for arcs
     //!@{
     //!\name private constructors for special cases (points at infinity)   
 
