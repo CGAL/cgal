@@ -845,15 +845,11 @@ public:
             if (he != NULL) {
                 if (he == he->next()) {
                     std::cout << "He: " << he->curve() << std::endl;
-                    std::cout << "dir2: " 
-                              << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-                              << std::endl;
+                    std::cout << "dir2: " << he->direction() << std::endl;
                 } else {
                     while (he != it->second->halfedge()) {
                         std::cout << "He: " << he->curve() << std::endl;
-                        std::cout << "dir2: " 
-                                  << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-                                  << std::endl;
+                        std::cout << "dir2: " << he->direction() << std::endl;
                         he = he->next();
                     }
                 }
@@ -868,15 +864,11 @@ public:
             if (he != NULL) {
                 if (he == he->next()) {
                     std::cout << "He: " << he->curve() << std::endl;
-                    std::cout << "dir2: " 
-                              << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-                              << std::endl;
+                    std::cout << "dir2: " << he->direction() << std::endl;
                 } else {
                     while (he != it->second->halfedge()) {
                         std::cout << "He: " << he->curve() << std::endl;
-                        std::cout << "dir2: " 
-                                  << (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-                                  << std::endl;
+                        std::cout << "dir2: " << he->direction() << std::endl;
                         he = he->next();
                     }
                 }
