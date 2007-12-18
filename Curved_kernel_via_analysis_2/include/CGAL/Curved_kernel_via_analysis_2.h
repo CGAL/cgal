@@ -18,11 +18,12 @@
 /*! \file Curved_kernel_via_analysis_2.h
  *  \brief defines class \c Curved_kernel_via_analysis_2
  *  
- *  General Points and Segments
+ *  Defines points and arcs supported by curves that can be analyzed
  */
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
@@ -77,7 +78,7 @@ public:
     //! tag specifies that unbounded arcs supported
     typedef CGAL::Tag_true Has_boundary_category;
 
-    typedef Arr_unbounded_boundary_tag                    Boundary_category;
+    typedef CGAL::Arr_unbounded_boundary_tag Boundary_category;
     
     //! type of inverval arcno cache
     typedef CGALi::Curve_interval_arcno_cache<Self> Curve_interval_arcno_cache;
