@@ -47,6 +47,7 @@ std::ostream& operator<< (std::ostream&,
 template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
 {
+protected:
     // this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -168,6 +169,7 @@ public:
     typedef CGALi::Arc_2_rep<Curved_kernel_via_analysis_2> Arc_2_rep;
 
     //!@}
+    
 public:
     //!\name public constructors
     //!@{
