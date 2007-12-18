@@ -12,17 +12,19 @@
 //
 // ============================================================================
 
-#ifndef CGAL_CURVED_KERNEL_ARC_2_H
-#define CGAL_CURVED_KERNEL_ARC_2_H
+#ifndef CGAL_CURVED_KERNEL_ARC_2_BASE_H
+#define CGAL_CURVED_KERNEL_ARC_2_BASE_H
 
-/*! \file Curved_kernel_via_analysis_2/Arc_2.h
- *  \brief defines class \c Arc_2
+/*! \file Curved_kernel_via_analysis_2/Arc_2_base.h
+ *  \brief defines class \c Arc_2_base
  *  
  *  arc of a generic curve
  */
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
+
+#include <CGAL/Arr_enums.h>
 
 #define CGAL_CKvA_USE_CACHES
 
@@ -33,12 +35,12 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 //! forward class declaration
-template < class CurvedKernelViaAnalysis_2, class Rep_ >
-class Arc_2;
+template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
+class Arc_2_base;
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::ostream& operator<< (std::ostream&,
-    const Arc_2<CurvedKernelViaAnalysis_2, Rep_>&);
+    const Arc_2_base<CurvedKernelViaAnalysis_2, Rep_>&);
 
 #ifndef CERR
 //#define CKvA_DEBUG_PRINT_CERR
@@ -50,7 +52,7 @@ std::ostream& operator<< (std::ostream&,
 #endif
 
 template <class CurvedKernelViaAnalysis_2>
-class Arc_2_rep 
+class Arc_2_base_rep 
 { 
 public:
 
@@ -58,7 +60,7 @@ public:
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
     // myself
-    typedef Arc_2_rep<Curved_kernel_via_analysis_2> Self;
+    typedef Arc_2_base_rep<Curved_kernel_via_analysis_2> Self;
     
     // type of generic curve
     typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
@@ -67,13 +69,13 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
 public:    
     // default constructor
-    Arc_2_rep() : 
+    Arc_2_base_rep() : 
         _m_arcno(-1), _m_arcno_min(-1), _m_arcno_max(-1), 
         _m_is_vertical(false) {  
     }
         
     // standard constructor
-    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
+    Arc_2_base_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
         int arcno = -1, int arcno_p = -1, int arcno_q = -1,
         bool is_vertical = false) : _m_min(p), _m_max(q), _m_support(c),
             _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
@@ -106,12 +108,12 @@ public:
     mutable Int_map _m_cmp_y_at_x;
 
     // befriending the handle
-    friend class Arc_2<Curved_kernel_via_analysis_2, Self>;
+    friend class Arc_2_base<Curved_kernel_via_analysis_2, Self>;
 };
 
 //! \brief class defines a point on a generic curve
-template <class CurvedKernelViaAnalysis_2, class Rep_ >
-class Arc_2
+template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
+class Arc_2_base
       : public CGAL::Handle_with_policy< Rep_ > {
 public:
     //!@{
@@ -121,10 +123,13 @@ public:
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! this instance's second template parameter
+    typedef Arc_2_ Arc_2;
+    
+    //! this instance's third template parameter
     typedef Rep_ Rep;
 
     //! this instance itself
-    typedef Arc_2<Curved_kernel_via_analysis_2, Rep> Self;
+    typedef Arc_2_base<Curved_kernel_via_analysis_2, Arc_2, Rep> Self;
     
     //! type of an x-coordinate
     typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
@@ -170,21 +175,21 @@ public:
     /*!\brief
      * Default constructor
      */
-    Arc_2() : 
+    Arc_2_base() : 
         Base(Rep()) {   
     }
 
     /*!\brief
      * copy constructor
      */
-    Arc_2(const Self& a) : 
+    Arc_2_base(const Self& a) : 
             Base(static_cast<const Base&>(a)) {  
     }
     
     /*!\brief
      * constructs an arc from a given represenation
      */
-    Arc_2(Rep rep) : 
+    Arc_2_base(Rep rep) : 
         Base(rep) { 
     }
     
@@ -200,7 +205,7 @@ public:
     //! the curve \c c
     //!
     //! \pre p.x() != q.x()
-    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c,
+    Arc_2_base(const Point_2& p, const Point_2& q, const Curve_2& c,
         int arcno, int arcno_p, int arcno_q) : 
             Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
@@ -223,7 +228,7 @@ public:
      * \c inf_end defines whether the ray emanates from +/- x-infinity, 
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
-    Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
+    Arc_2_base(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
         const Curve_2& c, int arcno, int arcno_o) :
         Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
         
@@ -247,7 +252,7 @@ public:
      * same as \c arcno )
      * \pre origin.x() != asympt_x
      */
-    Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
+    Arc_2_base(const Point_2& origin, const X_coordinate_1& asympt_x, 
            CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
            int arcno_o) :
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
@@ -267,7 +272,7 @@ public:
      * constructs an arc with two x-infinite ends supported by curve \c c
      * with \c arcno (branch I)
      */
-    Arc_2(const Curve_2& c, int arcno) :
+    Arc_2_base(const Curve_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END),
             Point_2(CGAL::ARR_MAX_END), c, arcno)) {
         // lexicographical order of curve ends (no need to ??)
@@ -288,7 +293,8 @@ public:
      * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
      * \pre asympt_x1 != asympt_x2
      */
-    Arc_2(const X_coordinate_1& asympt_x1, const X_coordinate_1& asympt_x2, 
+    Arc_2_base(const X_coordinate_1& asympt_x1, 
+               const X_coordinate_1& asympt_x2, 
             CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
                 const Curve_2& c, int arcno) :
         Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
@@ -313,7 +319,7 @@ public:
      * \c inf_endx specifies whether the branch goes to +/- x-infinity,
      * \c inf_endy specifies +/-oo the asymptotic end approaches
      */
-    Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
+    Arc_2_base(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
         CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
         Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy),
             c, arcno)) {
@@ -336,7 +342,7 @@ public:
     //! 
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
-    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c) : 
+    Arc_2_base(const Point_2& p, const Point_2& q, const Curve_2& c) : 
         Base(Rep(p, q, c, -1, -1, -1, true)) {  
         
         CGAL_precondition(!p.is_identical(q));
@@ -355,7 +361,7 @@ public:
      * \c inf_end defines whether the ray emanates from +/- y-infninty, 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
+    Arc_2_base(const Point_2& origin, CGAL::Arr_curve_end inf_end,
         const Curve_2& c) :
         Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
         
@@ -370,7 +376,7 @@ public:
      * 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2(const X_coordinate_1& x, const Curve_2& c) :
+    Arc_2_base(const X_coordinate_1& x, const Curve_2& c) :
         Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
                 Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
             
@@ -591,7 +597,7 @@ public:
      *         EQUAL   in case of an overlap.
      */
     CGAL::Comparison_result compare_ends_at_x(CGAL::Arr_curve_end end1,
-             const Self& cv2, CGAL::Arr_curve_end end2) const {
+             const Arc_2_base& cv2, CGAL::Arr_curve_end end2) const {
 
         if(this->id() > cv2.id())
             return (- cv2.compare_ends_at_x(end2, *this, end1));
@@ -613,7 +619,7 @@ public:
     }
 
     CGAL::Comparison_result compare_ends_at_x(CGAL::Arr_curve_end end1,
-             const Self& cv2, CGAL::Arr_curve_end end2,  bool) const {
+             const Arc_2_base& cv2, CGAL::Arr_curve_end end2,  bool) const {
 
         CERR("\ncompare_ends_at_x: this: " << *this << "\n cv2: " <<
             cv2 << "; end1: " << end1 << "; end2: " << end2 << "\n");
@@ -822,7 +828,7 @@ public:
      *         EQUAL in case of an overlap.
      */
     // TODO: pass an additional curve end when handling DISCONTINUITY ?
-    CGAL::Comparison_result compare_y_at_x(const Self& cv2, 
+    CGAL::Comparison_result compare_y_at_x(const Arc_2_base& cv2, 
         CGAL::Arr_curve_end end) const {
         //std::cerr << "compare_y_at_x2\n";
         
@@ -854,7 +860,7 @@ public:
      * \return The relative position of this arc with respect to cv2
             immdiately to the left of p: SMALLER, LARGER or EQUAL.
      */
-    CGAL::Comparison_result compare_y_at_x_left(const Self& cv2, 
+    CGAL::Comparison_result compare_y_at_x_left(const Arc_2_base& cv2, 
         const Point_2 &p) const {
 
         //std::cerr << "compare_y_at_x_left\n";
@@ -920,7 +926,7 @@ public:
      * \return The relative position of cv1 with respect to 
      * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
      */
-    CGAL::Comparison_result compare_y_at_x_right(const Self& cv2, 
+    CGAL::Comparison_result compare_y_at_x_right(const Arc_2_base& cv2, 
         const Point_2 &p) const {
 
          //std::cerr << "compare_y_at_x_right\n";
@@ -1022,7 +1028,7 @@ public:
     }
     
     //!\brief returns \c true iff this arc is equal to \c cv
-    bool is_equal(const Self& cv2) const {
+    bool is_equal(const Arc_2_base& cv2) const {
     
         if(is_identical(cv2))
             return true;
@@ -1057,7 +1063,7 @@ public:
      * multiplicity)
      */
     template < class OutputIterator >
-    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
+    OutputIterator intersect(const Arc_2_base& cv2, OutputIterator oi) const {
         // handle a special case when two arcs are supported by the same 
         // curve => only end-point intersections
         
@@ -1080,7 +1086,7 @@ public:
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
      */
-    bool intersect_right_of_point(const Self& cv2, const Point_2& p, 
+    bool intersect_right_of_point(const Arc_2_base& cv2, const Point_2& p, 
             Point_2& intersection) const {
 
         typedef std::vector<std::pair<Point_2, int> > Point_container;
@@ -1105,7 +1111,7 @@ public:
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
      */
-    bool intersect_left_of_point(const Self& cv2, const Point_2& p, 
+    bool intersect_left_of_point(const Arc_2_base& cv2, const Point_2& p, 
             Point_2& intersection) const {
         // TODO rewrite intersect_left_of_point
         // use static member for Intersect, Left & Right
@@ -1130,7 +1136,8 @@ public:
      *
      * \pre \c p must be an intersection point.
      */
-    int multiplicity_of_intersection(const Self& cv2, const Point_2& p) const {
+    int multiplicity_of_intersection(const Arc_2_base& cv2, const Point_2& p) 
+        const {
 
         // intersection point must lie in the interior of both arcs
         CGAL_precondition_code( // because of macro stupidity one needs 
@@ -1176,7 +1183,7 @@ public:
      * \param c2 Output: The right resulting subcurve (p is its left endpoint)
      * \pre p lies on this arc but is not one of its curve ends
      */
-    void split(const Point_2& p, Self& s1, Self& s2) const {
+    void split(const Point_2& p, Arc_2& s1, Arc_2& s2) const {
         
         CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
@@ -1193,11 +1200,13 @@ public:
     
     //! \brief returns \c true if the two arcs \c *this and \c cv2 overlap, 
     //! overlapping part(s) are inserted to the output iterator \c oi
-    //! (of type \c Arc_2 ); if no overlapping parts found - returns \c false
+    //! (of type \c Arc_2_base ); if no overlapping parts found - 
+    //! returns \c false
     template < class OutputIterator >
-    bool trim_if_overlapped(const Self& cv2, OutputIterator oi) const {
+    bool trim_if_overlapped(const Arc_2_base& cv2, OutputIterator oi) const {
                
-        CERR("\ntrim_if_overlapped: this: " << *this << "; and " << cv2 << "\n");
+        CERR("\ntrim_if_overlapped: this: " << *this << "; and " 
+             << cv2 << "\n");
         // one arc is vertical and the other one is not, or x-ranges are not
         // overlapping => quit
         if(is_vertical() != cv2.is_vertical())
@@ -1341,7 +1350,7 @@ public:
                         rep._m_arcno_max = ipair.first;
                     }
                 }
-                *oi++ = Self(rep);
+                *oi++ = Arc_2(rep);
             }        
         return yes;
     }
@@ -1354,7 +1363,7 @@ public:
      * \pre \c p and \c q lie on *this arc
      */
     // do we need this method separetely ??
-    Self trim(const Point_2& p, const Point_2& q) const {
+    Arc_2 trim(const Point_2& p, const Point_2& q) const {
     
         CERR("trim\n");
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
@@ -1373,7 +1382,7 @@ public:
      * \pre Two curves are mergeable,if they are supported by the same curve 
      * and share a common end-point.
      */  
-    Self merge(const Self& cv2) const {
+    Arc_2 merge(const Arc_2_base& cv2) const {
         
         CERR("merge\n");
         CGAL_precondition(are_mergeable(cv2));
@@ -1394,7 +1403,7 @@ public:
             arcno_t = (replace_src ? arcno(CGAL::ARR_MAX_END) :
                 cv2.arcno(CGAL::ARR_MAX_END));
         }
-        Self arc = _replace_endpoints(src, tgt, arcno_s, arcno_t);
+        Arc_2 arc = _replace_endpoints(src, tgt, arcno_s, arcno_t);
         // arc.set_boundaries_after_merge(*this, s); - no need to, since
         // boundaries are stored in Point_2 type and will be copied implicitly
         return arc;
@@ -1404,7 +1413,7 @@ public:
      * checks whether two curve arcs have infinitely many intersection points,
      * i.e., they overlap
      */
-    bool do_overlap(const Self& cv2) const {
+    bool do_overlap(const Arc_2_base& cv2) const {
     
         CERR("\ndo_overlap\n");
         if(is_identical(cv2)) 
@@ -1466,7 +1475,7 @@ public:
      * \return (true) if the two arcs are mergeable, i.e., they are supported
      * by the same curve and share a common endpoint; (false) otherwise.
      */
-    bool are_mergeable(const Arc_2& cv2) const {
+    bool are_mergeable(const Arc_2_base& cv2) const {
     
         CERR("\nare_mergeable\n");
     
@@ -1526,7 +1535,7 @@ public:
      *
      *  returns true if simplification took place
      */
-    static bool simplify(const Arc_2& cv, const Xy_coordinate_2& p) {
+    static bool simplify(const Arc_2_base& cv, const Xy_coordinate_2& p) {
         
         if(cv.curve().is_identical(p.curve()))
             return false;
@@ -1560,7 +1569,7 @@ public:
      *
      *  returns true if simplification took place
      */
-    static bool simplify(const Arc_2& cv1, const Arc_2& cv2) {
+    static bool simplify(const Arc_2_base& cv1, const Arc_2_base& cv2) {
     
         if(cv1.curve().is_identical(cv2.curve()))
             return false;
@@ -1733,7 +1742,7 @@ protected:
         // check validity of the curve-ends arcnos
         ////////////////////////////////////////////////////////////////
         /// this must be rewritten: we should somehow pass the kernel's
-        /// instance to Arc_2 object
+        /// instance to Arc_2_base object
         Curved_kernel_via_analysis_2 ckernel_2;
         const typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache& map_interval_arcno =
@@ -1760,7 +1769,7 @@ protected:
     //! compare slightly to the left, on, or to the right of \c x0
     //!
     //! \pre !is_on_bottom_top(where)
-    CGAL::Comparison_result _compare_arc_numbers(const Arc_2& cv2, 
+    CGAL::Comparison_result _compare_arc_numbers(const Arc_2_base& cv2, 
         CGAL::Arr_parameter_space where, X_coordinate_1 x0 = X_coordinate_1(), 
             CGAL::Sign perturb = CGAL::ZERO) const {
 
@@ -1893,7 +1902,7 @@ protected:
      * new curve ends are sorted lexicographical in case of need; 
      * all preconditions must be checked by the caller
      */
-    Self _replace_endpoints(const Point_2& src, const Point_2& tgt,
+    Arc_2 _replace_endpoints(const Point_2& src, const Point_2& tgt,
                             int arcno_min = -1, int arcno_max = -1) const {
             
         CERR("\n_replace_endpoints\n");    
@@ -1913,7 +1922,7 @@ protected:
         }
         /* no need to recompute boundaries since they are set during 
         construction of respective curve ends */
-        return Self(rep);
+        return Arc_2(rep);
     }
    
     /*!\brief
@@ -2045,7 +2054,7 @@ protected:
      * of type std::pair<Point_2, int> (intersection + multiplicity)
      */
     template <class OutputIterator>
-    OutputIterator _intersect_at_endpoints(const Arc_2& cv2, 
+    OutputIterator _intersect_at_endpoints(const Arc_2_base& cv2, 
         OutputIterator oi) const {
         
         CERR("\n_intersect_at_endpoints\n");
@@ -2174,7 +2183,7 @@ protected:
      * multiplicity)
      */
     template <class OutputIterator>
-    OutputIterator _intersect_coprime_support(const Self& cv2,
+    OutputIterator _intersect_coprime_support(const Arc_2_base& cv2,
             OutputIterator oi) const {
         // vertical arcs: the interesting case is when only one of the arcs is 
         // vertical - otherwise there is no intersection (different x-coords),
@@ -2189,14 +2198,16 @@ protected:
             // due to coprimality condition, supporting curves are different =>
             // they have no common vertical line therefore there is no 
             // intersection
-            const Arc_2& vert = (is_vertical() ? *this : cv2),
+            const Arc_2_base& vert = (is_vertical() ? *this : cv2),
                 nonvert = (is_vertical() ? cv2 : *this);
             X_coordinate_1 x = vert._minpoint().x();
             // vertical arc does not lie within another arc's x-range => no
             // intersections
             if(!nonvert.is_in_x_range(x)) 
                 return oi;    
-            Point_2 xy(x, nonvert.curve(), nonvert.arcno(x));
+            Point_2 xy = typename Point_2::Construct_point_2()(
+                    x, nonvert.curve(), nonvert.arcno(x), nonvert
+            );
             if(vert.compare_y_at_x(xy) == CGAL::EQUAL) 
                 *oi++ = std::make_pair(xy, 1);
             return oi;
@@ -2271,27 +2282,34 @@ protected:
             if(mult == -1)
                 mult = tmp.multiplicity_of_intersection(pos);
             // pick up the curve with lower degree   
-            if(which_curve) 
-                *oi++ = std::make_pair(Point_2(x0, curve(), arcno1), mult);
-            else
-                *oi++ = std::make_pair(Point_2(x0, cv2.curve(), arcno2), mult);
+            if(which_curve) {
+                Point_2 p = typename Point_2::Construct_point_2()(
+                        x0, curve(), arcno1, *this
+                );
+                *oi++ = std::make_pair(p, mult);
+            } else {
+                Point_2 p = typename Point_2::Construct_point_2()(
+                        x0, cv2.curve(), arcno2, cv2
+                );
+                *oi++ = std::make_pair(p, mult);
+            }
         }
         return oi;
     }
     
     //! befriending output operator
     friend std::ostream& operator << <>(std::ostream&, const Self&);
-    
-    //!@}    
-}; // class Arc_2
 
-/*!\relates Arc_2
+    //!@}    
+}; // class Arc_2_base
+
+/*!\relates Arc_2_base
  * \brief 
  * output operator
  */
-template <class CurvedKernelViaAnalysis_2, class Rep_>
+template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
 std::ostream& operator<<(std::ostream& os,
-    const Arc_2<CurvedKernelViaAnalysis_2, Rep_>& arc) {
+    const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>& arc) {
 
     switch (::CGAL::get_mode(os)) {
     case ::CGAL::IO::PRETTY:
@@ -2323,4 +2341,4 @@ std::ostream& operator<<(std::ostream& os,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_ARC_2_H
+#endif // CGAL_CURVED_KERNEL_ARC_2_BASE_H
