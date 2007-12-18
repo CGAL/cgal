@@ -12,8 +12,9 @@ endif()
 # If found:
 #   ABC_FOUND is set to TRUE
 #   CGAL_USE_ABC is set to 1
-#   CGAL_3RD_PARTY_INCLUDE_DIRS is added with ABC_INCLUDE_DIR
-#   CGAL_3RD_PARTY_LIBRARIES    is added with ABC_LIBRARIES
+#   CGAL_3RD_PARTY_INCLUDE_DIRS    is added with ABC_INCLUDE_DIR
+#   CGAL_3RD_PARTY_LIBRARIES_DIRS  is added with ABC_LIBRARIES_DIR
+#   CGAL_3RD_PARTY_LIBRARIES       is added with ABC_LIBRARIES
 
 find_optional_cgal_dependency(GMP)
 find_optional_cgal_dependency(MPFR)

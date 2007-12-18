@@ -12,14 +12,12 @@ project (CGAL CXX)
 #--------------------------------------------------------------------------------------------------
 
 # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_SOURCE_DIR} ${CGAL_SOURCE_DIR}/cmake/modules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_SOURCE_DIR}/cmake/modules)
 
 include(CGALcommon)
 include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
-#include(LogCMakeVariables)
 #include(Qt3Macros)
-#include(AddFileDependencies)
 
 # CGAL version number
 # TODO: This should be parsed from the VERSION file
@@ -48,6 +46,7 @@ set(CGAL_CMAKE_INSTALL_DIR     	cmake/modules)
 set(CGAL_3RD_PARTY_DEFINITIONS)
 set(CGAL_3RD_PARTY_INCLUDE_DIRS)
 set(CGAL_3RD_PARTY_LIBRARIES)
+set(CGAL_3RD_PARTY_LIBRARIES_DIR)
 
 # This module finds dependent libraries: Boost, GMP, CORE, etc..
 # Updates CGAL_3RD_PARTY_* accordingly
@@ -94,7 +93,7 @@ foreach(config_test_cpp ${all_config_tests})
     endif()
 endforeach()
 
-CONFIGURE_FILE(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
                
 
 #--------------------------------------------------------------------------------------------------
@@ -132,7 +131,7 @@ set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 # MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
 if(BUILD_TESTING)
     ENABLE_TESTING()
-#     CONFIGURE_FILE(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
+#     configure_file(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
 #     FILE(WRITE ${CGAL_BINARY_DIR}/CTestCustom.cmake "INCLUDE(\"${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
 endif()
 
@@ -165,15 +164,15 @@ endif()
 
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-INSTALL(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32
+install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32
 	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
 	            README "VERSION"  
 	      DESTINATION ${CGAL_INSTALL_DIR}
        )
 
-INSTALL(DIRECTORY "include/CGAL" DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
-INSTALL(DIRECTORY "auxiliary"    DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-INSTALL(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
+install(DIRECTORY "include/CGAL" DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
+install(DIRECTORY "auxiliary"    DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
+install(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
 
 
 
@@ -184,10 +183,12 @@ INSTALL(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
 #
 #--------------------------------------------------------------------------------------------------
 
-CONFIGURE_FILE(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake @ONLY IMMEDIATE)
-INSTALL( FILES ${CGAL_BINARY_DIR}/UseCGAL.cmake DESTINATION ${CGAL_CMAKE_INSTALL_DIR})
+configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
 
-
+install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake
+         DESTINATION ${CMAKE_ROOT}/Modules
+       )  
 
 
 #--------------------------------------------------------------------------------------------------
@@ -240,3 +241,4 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
     INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
+
