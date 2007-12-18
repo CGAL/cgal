@@ -25,6 +25,7 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
   typedef CGAL::SM_walls<Sphere_map>             SM_walls;
 
   typedef typename Base::SHalfedge_handle        SHalfedge_handle;
+  typedef typename Base::SHalfloop_handle        SHalfloop_handle;
   typedef typename Base::SFace_handle            SFace_handle;
 
   typedef typename Base::SFace_iterator          SFace_iterator;
@@ -35,9 +36,6 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
 
   void operator()(SNC_structure& snc) {
 
-    //    SNC_structure* sncp(sncpl.sncp);
-    //    SNC_point_locator* pl(sncpl.pl);
-
     SFace_iterator sf;
     CGAL_forall_sfaces(sf, snc) {
       if(!sf->mark() ||
@@ -45,17 +43,23 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
 	 sf->sface_cycles_end()) continue;
 
       SM_decorator SD(&*sf->center_vertex());
+
       SFace_cycle_iterator sfci
 	(++sf->sface_cycles_begin());
       while(sfci != sf->sface_cycles_end()) {
 	SFace_handle sf_new = SD.new_sface();
 	sf_new->mark() = sf->mark();
 	sf_new->volume() = sf->volume();
-	if(!sfci.is_shalfedge())
-	  CGAL_assertion("not implemented, yet");
-	SHalfedge_handle se = sfci;
-	SD.unlink_as_face_cycle(se);
-	SD.link_as_face_cycle(se,sf_new);
+	if(sfci.is_shalfedge()) {
+	  SHalfedge_handle se = sfci;
+	  SD.unlink_as_face_cycle(se);
+	  SD.link_as_face_cycle(se,sf_new);
+	} else if(sfci.is_shalfloop()) {
+       	  SHalfloop_handle sl = sfci;
+	  SD.unlink_as_loop(sl);
+	  SD.link_as_loop(sl, sf_new);
+	} else
+	  CGAL_error_msg("there should be no isolated edges");
 	sfci = ++sf->sface_cycles_begin();
       }
     }
