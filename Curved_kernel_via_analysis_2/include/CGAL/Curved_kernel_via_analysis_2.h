@@ -33,7 +33,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class CurveKernel_2 >
+template < class CurveKernel_2, 
+           template < class CK_2 > class Point_2_ = CGALi::Point_2,
+           template < class CK_2 > class Arc_2_ = CGALi::Arc_2
+ >
 class Curved_kernel_via_analysis_2 {
 
 // declares curved kernel functors, for each functor defines a member function
@@ -51,7 +54,8 @@ public:
     typedef CurveKernel_2 Curve_kernel_2;
 
     //! myself
-    typedef Curved_kernel_via_analysis_2<Curve_kernel_2> Self;
+    typedef Curved_kernel_via_analysis_2<Curve_kernel_2, Point_2_, Arc_2_> 
+    Self;
     
     //! type of general planar curve
     typedef typename Curve_kernel_2::Curve_2 Curve_2;
@@ -78,6 +82,7 @@ public:
     //! tag specifies that unbounded arcs supported
     typedef CGAL::Tag_true Has_boundary_category;
 
+    //! tag specifies which boundary functors are implemented
     typedef CGAL::Arr_unbounded_boundary_tag Boundary_category;
     
     //! type of inverval arcno cache
@@ -109,10 +114,10 @@ public:
     //!@{
         
     //! type of a point on generic curve
-    typedef CGALi::Point_2<Self> Point_2; 
-    
+    typedef Point_2_<Self> Point_2; 
+
     //! type of an arc on generic curve
-    typedef CGALi::Arc_2<Self> Arc_2; 
+    typedef Arc_2_<Self> Arc_2; 
     
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
