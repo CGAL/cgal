@@ -64,21 +64,29 @@ void convex_decomposition_3(Nef_polyhedron& N) {
     Edge_sorter es(res.get_negative_redges());
     N.delegate(es);
 
+    //    CGAL_NEF_SETDTHREAD(229*239*331);
+
     Reflex_sedge_iterator rei;
     for(rei=res.negative_redges_begin(); rei!=res.negative_redges_end(); ++rei) {
-
       Halfedge_handle e = (*rei);
+
+      /*
+      std::cerr << "handle negative reflex edge "
+		<< ": " << e->source()->point() 
+		<< "->" << e->twin()->source()->point() << std::endl;
+      */
+
       Single_wall W(e,Vector_3(-1,0,0));
       if(!W.need_to_create_wall()) continue;
       
       Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
-      if((rvs.is_reflex_vertex(e->source())&2) == 2) {
-	//	std::cerr << "shoot source" << std::endl;
+      //      if((rvs.is_reflex_vertex(e->source())&2) == 2) {
+      if(rvs.need_to_shoot(e, true)) {
 	Ray_hit2 rh2a(Vector_3(-1,0,0), e->source());
 	N.delegate(rh2a);
       }
-      if((rvs.is_reflex_vertex(e->twin()->source())&2) == 2) {
-	//	std::cerr << "shoot target" << std::endl;
+      //      if((rvs.is_reflex_vertex(e->twin()->source())&2) == 2) {
+      if(rvs.need_to_shoot(e->twin(), true)) {
 	Ray_hit2 rh2a(Vector_3(-1,0,0), e->twin()->source());
 	N.delegate(rh2a);
       }  
@@ -99,7 +107,6 @@ void convex_decomposition_3(Nef_polyhedron& N) {
     }
     //    CGAL_NEF_SETDTHREAD(229*233*239);
     N.delegate(esb);
-    CGAL_assertion(N.number_of_shalfloops() == 0);
     N.delegate(res, false, false);
 
     std::cerr << "number of reflex sedges" 
@@ -131,12 +138,14 @@ void convex_decomposition_3(Nef_polyhedron& N) {
       if(!W.need_to_create_wall()) continue;
       
       Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
-      if((rvs.is_reflex_vertex(e->source())&1) == 1) {
+      //      if((rvs.is_reflex_vertex(e->source())&1) == 1) {
+      if(rvs.need_to_shoot(e, false)) {
 	//	  std::cerr << "shoot source" << std::endl;
 	Ray_hit2 rh2a(Vector_3(1,0,0), e->source());
 	N.delegate(rh2a);
       }
-      if((rvs.is_reflex_vertex(e->twin()->source())&1) == 1) {
+      //      if((rvs.is_reflex_vertex(e->twin()->source())&1) == 1) {
+      if(rvs.need_to_shoot(e->twin(), false)) {
 	//	  std::cerr << "shoot target" << std::endl;
 	Ray_hit2 rh2a(Vector_3(1,0,0), e->twin()->source());
 	N.delegate(rh2a);
