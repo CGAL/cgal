@@ -177,8 +177,8 @@ public:
     /*!\brief
      * copy constructor
      */
-    Arc_2(const Self& p) : 
-            Base(static_cast<const Base&>(p)) {  
+    Arc_2(const Self& a) : 
+            Base(static_cast<const Base&>(a)) {  
     }
     
     /*!\brief
@@ -1588,8 +1588,8 @@ public:
     }  
             
     //!@}
-private:
-    //!\name private methods 
+protected:
+    //!\name protected methods 
     //!@{
     
     //! helper function to ensure lexicographical order of the curve ends
@@ -1894,7 +1894,7 @@ private:
      * all preconditions must be checked by the caller
      */
     Self _replace_endpoints(const Point_2& src, const Point_2& tgt,
-            int arcno_min = -1, int arcno_max = -1) const {
+                            int arcno_min = -1, int arcno_max = -1) const {
             
         CERR("\n_replace_endpoints\n");    
             
