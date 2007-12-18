@@ -3,6 +3,9 @@
 
 #include<CGAL/Nef_3/SNC_decorator.h>
 #include<CGAL/Nef_3/is_reflex_sedge.h>
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 229
+#include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -24,6 +27,8 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   typedef typename SNC_structure::SHalfloop_handle        SHalfloop_handle;
   typedef typename SNC_structure::SFace_handle            SFace_handle;
 
+  typedef typename SNC_structure::SVertex_handle    SVertex_handle;
+
   typedef typename SNC_structure::Vertex_iterator         Vertex_iterator;
   typedef typename SNC_structure::Volume_iterator         Volume_iterator;
   typedef typename SNC_structure::SHalfedge_iterator      SHalfedge_iterator;
@@ -33,6 +38,7 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
   typedef typename SNC_structure::SHalfedge_around_sface_circulator SHalfedge_around_sface_circulator;
 
   typedef typename SNC_structure::Sphere_point            Sphere_point;
+  typedef typename SNC_structure::Sphere_segment          Sphere_segment;
 
  public:
   typedef CGAL::Unique_hash_map<Vertex_handle, int>       Reflex_vertex_map;
@@ -108,13 +114,14 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 	CGAL_For_all(sfc, send) {
 	  int isrse = is_reflex_sedge<SNC_structure>(sfc, dir, false);
 	  if(isrse==0) continue;
-	  if(!markedsf[1] || sfp!=sfn) isrse&=1;
+	  //	  if(!markedsf[1] || sfp!=sfn) 
+	  isrse&=1;
 	  result |= isrse;
 	}
       }
     }
     
-    if(sfp!=sfn && markedsf[1]) {
+    if(/*sfp!=sfn &&*/ markedsf[1]) {
       SFace_cycle_iterator sfci(sfn->sface_cycles_begin());
       for(; sfci != sfn->sface_cycles_end(); ++sfci) {
 	SHalfedge_around_sface_circulator 
@@ -130,6 +137,16 @@ class Reflex_vertex_searcher : public Modifier_base<typename Nef_::SNC_structure
 
     vertex_map[vi]=result;
     return result;
+  }
+
+  bool need_to_shoot(SVertex_handle sv, bool turn_around) {
+    Sphere_point upDown = turn_around ? dir.antipode() : dir;
+    Sphere_segment sray(sv->point(), upDown);
+    SM_point_locator smpl(&*sv->source());
+    Sphere_point ip;
+    Object_handle o = smpl.ray_shoot(sray, ip, false, false, true);
+    SHalfedge_handle se;
+    return !(assign(sv, o) || assign(se, o));
   }
 
   void operator()(SNC_structure& snc) {
