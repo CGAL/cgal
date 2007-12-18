@@ -185,8 +185,10 @@ class SM_walls : SM_decorator<SMap> {
     }
 
     SHalfloop_handle sl;
-    if(assign(sl, o))
-      CGAL_error_msg( "not implemented yet");
+    if(assign(sl, o)) {
+      CGAL_NEF_TRACEN( "  found sloop " << ip );
+      return true;
+    }
 
     SFace_handle sf;
     if(assign(sf, o))
@@ -420,11 +422,9 @@ class SM_walls : SM_decorator<SMap> {
 	      << ", " << sv2->point() 
 	      << " at " << sv1->source()->point() );
 
-    /*
-    Sphere_circle test(Sphere_circle(sv1->point(),sv2->point()));
-    CGAL_assertion(normalized(c) == normalized(test) || 
-		   sv1->point().antipode() == sv2->point());
-    */
+    CGAL_assertion_code
+      (Sphere_segment test(sv1->point(),sv2->point(),c));
+    CGAL_assertion(!test.is_long());
 
     bool split_sface = true;
 
