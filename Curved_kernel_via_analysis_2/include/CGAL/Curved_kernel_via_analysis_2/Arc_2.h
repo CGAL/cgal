@@ -26,6 +26,7 @@
 
 #define CGAL_CKvA_USE_CACHES
 
+#include <CGAL/Curved_kernel_via_analysis_2/Arc_2_base.h>
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -49,70 +50,14 @@ std::ostream& operator<< (std::ostream&,
 #endif
 #endif
 
-template <class CurvedKernelViaAnalysis_2>
-class Arc_2_rep 
-{ 
-public:
-
-    // this instance's template parameter
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
-    // myself
-    typedef Arc_2_rep<Curved_kernel_via_analysis_2> Self;
-    
-    // type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
-        
-    // type of a point on generic curve
-    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
-public:    
-    // default constructor
-    Arc_2_rep() : 
-        _m_arcno(-1), _m_arcno_min(-1), _m_arcno_max(-1), 
-        _m_is_vertical(false) {  
-    }
-        
-    // standard constructor
-    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
-        int arcno = -1, int arcno_p = -1, int arcno_q = -1,
-        bool is_vertical = false) : _m_min(p), _m_max(q), _m_support(c),
-            _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
-            _m_is_vertical(is_vertical) {
-        // set end-point arcnos from segment's interior
-        if(_m_arcno_min == -1)
-            _m_arcno_min = _m_arcno;
-        if(_m_arcno_max == -1)
-            _m_arcno_max = _m_arcno;
-    }
-       
-    // source and target end-points of a segment
-    Point_2 _m_min, _m_max;
-    // supporting curve
-    mutable Curve_2 _m_support;
-    // interior arcno, source and target arcno
-    mutable int _m_arcno, _m_arcno_min, _m_arcno_max;
-    // indicates whether arc is vertical
-    bool _m_is_vertical;
-    // stores the index of an interval this arc belongs to
-    mutable boost::optional<int> _m_interval_id;
-
-    typedef std::pair<int, int> Int_pair;
-    typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
-        CGALi::Stub<Int_pair>, CGALi::Int_pair_hash> Int_pair_map;
-    mutable Int_pair_map _m_cmp_ends_at_x;
-
-    typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
-        
-    mutable Int_map _m_cmp_y_at_x;
-
-    // befriending the handle
-    friend class Arc_2<Curved_kernel_via_analysis_2, Self>;
-};
-
 //! \brief class defines a point on a generic curve
 template <class CurvedKernelViaAnalysis_2, class Rep_ >
-class Arc_2
-      : public CGAL::Handle_with_policy< Rep_ > {
+class Arc_2 : 
+        public Arc_2_base< 
+            CurvedKernelViaAnalysis_2, 
+            Arc_2< CurvedKernelViaAnalysis_2, Rep_ >, 
+            Rep_ 
+        > {
 public:
     //!@{
     //!\name publuic typedefs
@@ -153,7 +98,7 @@ public:
         Curve_pair_analysis_2;
     
     //! the handle superclass
-    typedef ::CGAL::Handle_with_policy< Rep > Base;
+    typedef Arc_2_base< Curved_kernel_via_analysis_2, Arc_2< Curved_kernel_via_analysis_2, Rep >, Rep > Base;
 
     typedef typename Rep::Int_pair Int_pair;
 
@@ -211,9 +156,9 @@ public:
         CGAL_precondition(arcno >= 0 && arcno_p >= 0 && arcno_q >= 0);
         // check end-points arcnos validity and coprimality condition
         // for supporting curves
-        _check_pt_arcno_and_coprimality(p, arcno_p, c);
-        _check_pt_arcno_and_coprimality(q, arcno_q, c);    
-        _fix_curve_ends_order(); // lexicographical order of curve ends
+        this->_check_pt_arcno_and_coprimality(p, arcno_p, c);
+        this->_check_pt_arcno_and_coprimality(q, arcno_q, c);    
+        this->_fix_curve_ends_order(); // lexicographical order of curve ends
     }
       
     /*!\brief
@@ -232,10 +177,10 @@ public:
         // for supporting curves
 
         // while order is not fixed yet we can access end-points directly
-        _maxpoint()._add_ref(this->ptr());
+        this->_maxpoint()._add_ref(this->ptr());
         
-        _check_pt_arcno_and_coprimality(origin, arcno_o, c);
-        _fix_curve_ends_order(); // lexicographical order of curve ends
+        this->_check_pt_arcno_and_coprimality(origin, arcno_o, c);
+        this->_fix_curve_ends_order(); // lexicographical order of curve ends
     }
     
     /*!\brief
@@ -253,14 +198,14 @@ public:
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
 
         // while order is not fixed yet we can access end-points directly
-        _maxpoint()._add_ref(this->ptr());
+        this->_maxpoint()._add_ref(this->ptr());
         
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
         CGAL_precondition(kernel_2.compare_x_2_object()(origin.x(), asympt_x) 
             != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
-        _check_pt_arcno_and_coprimality(origin, arcno_o, c);
-        _fix_curve_ends_order(); // lexicographical order of curve ends
+        this->_check_pt_arcno_and_coprimality(origin, arcno_o, c);
+        this->_fix_curve_ends_order(); // lexicographical order of curve ends
     }
 
     /*!\brief
@@ -273,11 +218,11 @@ public:
         // lexicographical order of curve ends (no need to ??)
 
         // while order is not fixed yet we can access end-points directly
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
+        this->_minpoint()._add_ref(this->ptr());
+        this->_maxpoint()._add_ref(this->ptr());
         
         CGAL_precondition(arcno >= 0);
-        _fix_curve_ends_order(); 
+        this->_fix_curve_ends_order(); 
     }
     
     /*!\brief
@@ -295,14 +240,14 @@ public:
             c, arcno)) {
 
         // while order is not fixed yet we can access end-points directly
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
+        this->_minpoint()._add_ref(this->ptr());
+        this->_maxpoint()._add_ref(this->ptr());
             
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
         CGAL_precondition(kernel_2.compare_x_2_object()(asympt_x1, asympt_x2) 
             != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0);
-        _fix_curve_ends_order();
+        this->_fix_curve_ends_order();
     }
     
     /*!\brief
@@ -319,11 +264,11 @@ public:
             c, arcno)) {
 
         // while order is not fixed yet we can access end-points directly
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
+        this->_minpoint()._add_ref(this->ptr());
+        this->_maxpoint()._add_ref(this->ptr());
         
         CGAL_precondition(arcno >= 0); 
-        _fix_curve_ends_order();
+        this->_fix_curve_ends_order();
     }
     
     //!@}
@@ -343,9 +288,9 @@ public:
         CGAL_precondition(p.compare_x(q) == CGAL::EQUAL && 
             p.compare_xy(q, true) != CGAL::EQUAL);
         // check coprimality condition for supporting curves
-        _check_pt_arcno_and_coprimality(p, -1, c);
-        _check_pt_arcno_and_coprimality(p, -1, c);
-        _fix_curve_ends_order();
+        this->_check_pt_arcno_and_coprimality(p, -1, c);
+        this->_check_pt_arcno_and_coprimality(p, -1, c);
+        this->_fix_curve_ends_order();
     }
     
     /*!\brief
@@ -360,8 +305,8 @@ public:
         Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
         
         // check coprimality condition for supporting curves
-        _check_pt_arcno_and_coprimality(origin, -1, c);
-        _fix_curve_ends_order();
+        this->_check_pt_arcno_and_coprimality(origin, -1, c);
+        this->_fix_curve_ends_order();
     }
     
     /*!\brief
@@ -374,10 +319,12 @@ public:
         Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
                 Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
             
-        _fix_curve_ends_order();
+        this->_fix_curve_ends_order();
     }
    
     //!@}
+#if 0
+
 public:
     //!\name access functions
     //!@{
@@ -2278,7 +2225,10 @@ protected:
         }
         return oi;
     }
-    
+
+
+#endif
+   
     //! befriending output operator
     friend std::ostream& operator << <>(std::ostream&, const Self&);
     
