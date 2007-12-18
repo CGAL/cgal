@@ -24,6 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#include <CGAL/Arr_enums.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -33,12 +35,18 @@ template < class CurvedKernelViaAnalysis_2, class Rep_ >
 class Point_2;
 
 template <class CurvedKernelViaAnalysis_2>
-class Arc_2_rep;
+class Arc_2_base_rep;
 
 //! forward class declaration for befriending
 template < class CurvedKernelViaAnalysis_2, class Rep_ =
-    Arc_2_rep<CurvedKernelViaAnalysis_2> > 
+    Arc_2_base_rep<CurvedKernelViaAnalysis_2> > 
 class Arc_2;
+
+//! forward class declaration for befriending
+template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ =
+    Arc_2_base_rep<CurvedKernelViaAnalysis_2> > 
+class Arc_2_base;
+
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ > 
 std::ostream& operator<< (std::ostream&,
@@ -65,7 +73,8 @@ protected:
     typedef typename Curved_kernel_via_analysis_2::Curve_2
         Curve_2;
 
-    typedef CGALi::Arc_2_rep<Curved_kernel_via_analysis_2> Arc_2_rep;
+    typedef CGALi::Arc_2_base_rep<Curved_kernel_via_analysis_2> 
+        Arc_2_base_rep;
         
     // default constructor
     Point_2_rep() :
@@ -108,7 +117,7 @@ protected:
     
     //boost::optional<int> _m_xarcno;
 
-    mutable Arc_2_rep *_m_arc_rep;
+    mutable Arc_2_base_rep *_m_arc_rep;
 
     // surface boundary type
     //mutable CGAL::Arr_boundary_type _m_boundary;
@@ -166,7 +175,8 @@ public:
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
 
-    typedef CGALi::Arc_2_rep<Curved_kernel_via_analysis_2> Arc_2_rep;
+    typedef CGALi::Arc_2_base_rep<Curved_kernel_via_analysis_2> 
+        Arc_2_base_rep;
 
     //!@}
     
@@ -210,6 +220,25 @@ public:
         Base(rep) {  
     }
     
+    //!\brief Functor to construct point on an arc
+    //! \c x on curve \c c with arc number \c arcno
+    //!
+    //! implies no boundary conditions in x/y
+    class Construct_point_2 {
+    public:
+        //! constructs points at x 
+        template < class Arc_2 >
+        Self operator()(
+                const X_coordinate_1& x, const Curve_2& c, int arcno,
+                const Arc_2& arc) {
+            CGAL_assertion(c.id() == arc.curve().id());
+            CGAL_assertion(arcno = arc.arcno());
+            Self pt(Xy_coordinate_2(x, c, arcno));
+            // here we can modify the point, if we want to
+            return pt;
+        }
+    };
+    
     //!@}
 private:
     // TODO allow to construct without curve, i.e, isolated points on toric
@@ -232,7 +261,7 @@ private:
          Base(Rep(x, inf_end)) {
     }
 
-    void _add_ref(Arc_2_rep *arc_rep) const {
+    void _add_ref(Arc_2_base_rep *arc_rep) const {
         this->ptr()->_m_arc_rep = arc_rep;
     }
     
@@ -363,7 +392,7 @@ private:
     }
     
     //! befriending \c Arc_2 class
-    friend class CGALi::Arc_2<Curved_kernel_via_analysis_2>;
+    //friend class CGALi::Arc_2_base<Curved_kernel_via_analysis_2>;
     //! befriending output operator
     friend std::ostream& operator << <>(std::ostream&, const Self&);
     
