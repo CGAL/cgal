@@ -114,18 +114,18 @@ public:
         
         //std::cout << "HELPER: event: " << event->point() << std::endl;
         
-        if (ps_x != ARR_INTERIOR) {
+        if (ps_x != CGAL::ARR_INTERIOR) {
             //std::cout << "HELPER: before x " << ps_x << std::endl;
-            CGAL_assertion(ps_x == ARR_RIGHT_BOUNDARY ||
-                           ps_x == ARR_LEFT_BOUNDARY);
-            CGAL_assertion(ps_y == ARR_INTERIOR);
+            CGAL_assertion(ps_x == CGAL:: ARR_RIGHT_BOUNDARY ||
+                           ps_x == CGAL::ARR_LEFT_BOUNDARY);
+            CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
             // TODO isolated point
 
             // added for hole-location
-            if (ps_x == ARR_LEFT_BOUNDARY && 
+            if (ps_x == CGAL::ARR_LEFT_BOUNDARY && 
                 m_top_traits->is_identification_WE_empty()) {
                 // The list m_subcurves_at_tf contains all subcurves 
                 // whose left endpoint lies between the curve of 
@@ -140,18 +140,18 @@ public:
             }
             
             const X_monotone_curve_2 & xc =
-                (ps_x == ARR_LEFT_BOUNDARY ? 
+                (ps_x == CGAL::ARR_LEFT_BOUNDARY ? 
                  // AFTER DISCONTINUITY
                  (*(event->right_curves_begin()))->last_curve() :
                  // BEFORE_DISCONTINUITY
                  (*(event->left_curves_rbegin()))->last_curve()
                 );
             
-            Arr_curve_end ind = (ps_x == ARR_LEFT_BOUNDARY ?
-                                   ARR_MIN_END : ARR_MAX_END);
+            Arr_curve_end ind = (ps_x == CGAL::ARR_LEFT_BOUNDARY ?
+                                 CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
             
             const Point_2& key = 
-                (ind == ARR_MIN_END ?
+                (ind == CGAL::ARR_MIN_END ?
                  this->m_top_traits->geometry_traits()->
                  construct_min_vertex_2_object()(xc) :
                  this->m_top_traits->geometry_traits()->
@@ -173,18 +173,18 @@ public:
             return;
         }
         
-        if (ps_y != ARR_INTERIOR) {
+        if (ps_y != CGAL::ARR_INTERIOR) {
             //std::cout << "HELPER: before y " << ps_y << std::endl;
-            CGAL_assertion(ps_y == ARR_TOP_BOUNDARY ||
-                           ps_y == ARR_BOTTOM_BOUNDARY);
-            CGAL_assertion(ps_x == ARR_INTERIOR);
+            CGAL_assertion(ps_y == CGAL::ARR_TOP_BOUNDARY ||
+                           ps_y == CGAL::ARR_BOTTOM_BOUNDARY);
+            CGAL_assertion(ps_x == CGAL::ARR_INTERIOR);
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             
             // TODO isolated point
             
             // added for hole-location
-            if (ps_y == ARR_TOP_BOUNDARY && 
+            if (ps_y == CGAL::ARR_TOP_BOUNDARY && 
                 m_top_traits->is_identification_NS_empty()) {
                 // The list m_subcurves_at_tf contains all subcurves 
                 // whose left endpoint lies between the curve of 
@@ -199,7 +199,7 @@ public:
             }
 
             const X_monotone_curve_2 & xc =
-                (ps_y == ARR_BOTTOM_BOUNDARY ? 
+                (ps_y == CGAL::ARR_BOTTOM_BOUNDARY ? 
                  // AFTER DISCONTINUITY
                  (event->number_of_right_curves() > 0 ? 
                   (*(event->right_curves_begin()))->last_curve() :
@@ -211,15 +211,15 @@ public:
                 );
             
             Arr_curve_end ind =  
-                (ps_y == ARR_BOTTOM_BOUNDARY ? 
+                (ps_y == CGAL::ARR_BOTTOM_BOUNDARY ? 
                  (event->number_of_right_curves() > 0 ? 
-                  ARR_MIN_END : ARR_MAX_END) : 
+                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) : 
                  (event->number_of_left_curves() > 0 ? 
-                  ARR_MAX_END : ARR_MIN_END)
+                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
                 );
 
             const Point_2& key = 
-                (ind == ARR_MIN_END ?
+                (ind == CGAL::ARR_MIN_END ?
                  this->m_top_traits->geometry_traits()->
                  construct_min_vertex_2_object()(xc) :
                  this->m_top_traits->geometry_traits()->
@@ -249,17 +249,19 @@ public:
         
         Arr_parameter_space bnd_y_min = 
             this->m_top_traits->geometry_traits()->
-            parameter_space_in_y_2_object()(he->curve(), ARR_MIN_END);
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
         Arr_parameter_space bnd_y_max = 
             this->m_top_traits->geometry_traits()->
-            parameter_space_in_y_2_object()(he->curve(), ARR_MAX_END);
+            parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
         
-        if (bnd_y_min == ARR_TOP_BOUNDARY) {
+        if (bnd_y_min == CGAL::ARR_TOP_BOUNDARY) {
             he_on_top_face = 
-                (he->direction() == ARR_RIGHT_TO_LEFT ? he : he->twin());
-        } else if (bnd_y_max == ARR_TOP_BOUNDARY) {
+                (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
+                 he : he->twin());
+        } else if (bnd_y_max == CGAL::ARR_TOP_BOUNDARY) {
             he_on_top_face = 
-                (he->direction() == ARR_LEFT_TO_RIGHT ? he : he->twin());
+                (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+                 he : he->twin());
         } else {
             return;
         }
@@ -274,8 +276,7 @@ public:
             {
                 std::cout << "move sc " << *itr << " from tf to " 
                           << he_on_top_face->curve()
-                          << (he_on_top_face->direction() == 
-                              ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                          << (he_on_top_face->direction() 
                           << std::endl;
             }
 #endif
@@ -320,8 +321,8 @@ public:
     bool swap_predecessors(Event * event) const
     {
         return 
-            (event->parameter_space_in_x() == ARR_INTERIOR &&
-             event->parameter_space_in_y() == ARR_TOP_BOUNDARY);
+            (event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
+             event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY);
     }
     
     /*! Get the current top face. */

@@ -114,7 +114,7 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::before_sweep ()
         Vertex_const_handle (m_top_traits->top_left_vertex());
 
     m_top_fict = v_tl->incident_halfedges();
-    if (m_top_fict->direction() == ARR_LEFT_TO_RIGHT)
+    if (m_top_fict->direction() == CGAL::ARR_LEFT_TO_RIGHT)
         m_top_fict = m_top_fict->next()->twin();
 
     CGAL_assertion_code (
@@ -122,8 +122,10 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::before_sweep ()
             Vertex_const_handle (m_top_traits->top_right_vertex());
     );
     CGAL_assertion ((m_top_fict->source() == v_tr) ||
-                    (m_top_fict->source()->parameter_space_in_x() == ARR_INTERIOR &&
-                     m_top_fict->source()->parameter_space_in_y() == PLUS_INFINITY));
+                    (m_top_fict->source()->parameter_space_in_x() == 
+                     CGALL::ARR_INTERIOR &&
+                     m_top_fict->source()->parameter_space_in_y() == 
+                     PLUS_INFINITY));
 
     return;
 #endif
@@ -146,7 +148,7 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::after_handle_event
     if (event->is_finite())
         return;
 
-    if (event->parameter_space_in_x() != ARR_INTERIOR)
+    if (event->parameter_space_in_x() != CGAL::ARR_INTERIOR)
         return;
 
     if (event->parameter_space_in_y() == PLUS_INFINITY)
