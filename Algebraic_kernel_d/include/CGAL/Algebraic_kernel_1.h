@@ -35,7 +35,8 @@ namespace CGALi {
             typedef Isolator_                   Isolator;
             
             typedef typename Algebraic_real_1::Coefficient      Coefficient;
-            typedef Polynomial< Coefficient >                   Polynomial_1;
+            typedef typename Algebraic_real_1::Rational         Boundary;
+           typedef Polynomial< Coefficient >                   Polynomial_1;
             
             class Algebraic_real_traits {
               public:
