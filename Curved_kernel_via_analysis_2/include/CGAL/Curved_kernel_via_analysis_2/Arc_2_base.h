@@ -3,7 +3,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
+// $URL$
 // $Id$
 // 
 //
@@ -67,6 +67,7 @@ public:
         
     // type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
 public:    
     // default constructor
     Arc_2_base_rep() : 
@@ -89,12 +90,18 @@ public:
        
     // source and target end-points of a segment
     Point_2 _m_min, _m_max;
+
     // supporting curve
     mutable Curve_2 _m_support;
+
     // interior arcno, source and target arcno
-    mutable int _m_arcno, _m_arcno_min, _m_arcno_max;
+    mutable int _m_arcno;
+    mutable int _m_arcno_min;
+    mutable int _m_arcno_max;
+    
     // indicates whether arc is vertical
     bool _m_is_vertical;
+    
     // stores the index of an interval this arc belongs to
     mutable boost::optional<int> _m_interval_id;
 
@@ -104,11 +111,8 @@ public:
     mutable Int_pair_map _m_cmp_ends_at_x;
 
     typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
-        
+    
     mutable Int_map _m_cmp_y_at_x;
-
-    // befriending the handle
-    friend class Arc_2_base<Curved_kernel_via_analysis_2, Self>;
 };
 
 //! \brief class defines a point on a generic curve
@@ -2297,31 +2301,23 @@ protected:
         return oi;
     }
     
-    //! befriending output operator
-    friend std::ostream& operator << <>(std::ostream&, const Self&);
-
-    //!@}    
-}; // class Arc_2_base
-
-/*!\relates Arc_2_base
- * \brief 
- * output operator
- */
-template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
-std::ostream& operator<<(std::ostream& os,
-    const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>& arc) {
-
-    switch (::CGAL::get_mode(os)) {
-    case ::CGAL::IO::PRETTY:
-        os << "arc@" << arc.id() << "[(sup@" << arc.curve().id();
-        if (arc.is_vertical()) {
-            os << ", VERTICAL"; 
-        } else {
-            os << ", ARCNO=" << arc.arcno(CGAL::ARR_MIN_END) <<
-                "," << arc.arcno() << "," << arc.arcno(CGAL::ARR_MAX_END);
+public:
+    /*!\brief 
+     * output operator
+     */
+    void write(std::ostream& os) const {
+        
+        switch (::CGAL::get_mode(os)) {
+        case ::CGAL::IO::PRETTY:
+            os << "arc@" << this->id() << "[(sup@" << this->curve().id();
+            if (this->is_vertical()) {
+                os << ", VERTICAL"; 
+            } else {
+            os << ", ARCNO=" << this->arcno(CGAL::ARR_MIN_END) <<
+                "," << this->arcno() << "," << this->arcno(CGAL::ARR_MAX_END);
         }
-        os << "); min: " << arc._minpoint() << "; max: " << 
-            arc._maxpoint() << "]";
+        os << "); min: " << this->_minpoint() << "; max: " << 
+            this->_maxpoint() << "]";
         break;
     /*case LiS::IO::BENCHMARK:
         std::cerr << "BENCHMARK format not yet implemented" << std::endl;
@@ -2334,6 +2330,21 @@ std::ostream& operator<<(std::ostream& os,
         // ASCII
         std::cerr << "ASCII format not yet implemented" << std::endl;
     }
+}
+    
+
+    //!@}    
+}; // class Arc_2_base
+
+/*!\relates Arc_2_base
+ * \brief 
+ * output operator
+ */
+template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
+std::ostream& operator<<(std::ostream& os,
+    const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>& arc) {
+    
+    arc.write(os);
     return os;
 }
 
