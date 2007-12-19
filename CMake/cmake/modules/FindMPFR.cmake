@@ -40,7 +40,7 @@ if(GMP_FOUND)
                  DOC "Path to the MPFR library"
                 )
                 
-    get_filename_component(MPFR_LIBRARIES_DIR ${MPFRL_LIBRARIES} PATH)
+    get_filename_component(MPFR_LIBRARIES_DIR ${MPFR_LIBRARIES} PATH)
     
     FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES )
     
