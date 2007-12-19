@@ -21,7 +21,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Curved_kernel_2_Functors {
+namespace Curved_kernel_via_analysis_2_functors {
 
 template <class CurvedKernel_2>
 class Compare_x_2
@@ -801,7 +801,7 @@ private:
     CurvedKernel_2 *_m_curved_kernel_2;
 };
 
-} // Curved_kernel_2_Functors
+} // Curved_kernel_via_analysis_2_functors
 
 CGAL_END_NAMESPACE
 

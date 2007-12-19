@@ -33,6 +33,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// TODO documentation
 template < class CurveKernel_2, 
            template < class CK_2 > class Point_2_ = CGALi::Point_2,
            template < class CK_2 > class Arc_2_ = CGALi::Arc_2
@@ -41,10 +42,11 @@ class Curved_kernel_via_analysis_2 {
 
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
-#define CGAL_Curved_kernel_pred(Y, Z) \
-    typedef Curved_kernel_2_Functors::Y<Self> Y; \
+#define CGAL_CKvA_2_functor_pred(Y, Z) \
+    typedef Curved_kernel_via_analysis_2_functors::Y<Self> Y; \
     Y Z() const { return Y((Curved_kernel_via_analysis_2 *)this); }
-#define CGAL_Curved_kernel_cons(Y, Z) CGAL_Curved_kernel_pred(Y, Z)
+#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
+
 
 public:
     //! \name public typedefs
@@ -122,36 +124,41 @@ public:
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
 
-    CGAL_Curved_kernel_pred(Compare_x_2, compare_x_2_object)  
-    CGAL_Curved_kernel_pred(Compare_xy_2, compare_xy_2_object)
-    CGAL_Curved_kernel_pred(Compare_x_near_boundary_2,
-        compare_x_near_boundary_2_object)
-    CGAL_Curved_kernel_pred(Compare_y_near_boundary_2,
-        compare_y_near_boundary_2_object)
-    CGAL_Curved_kernel_pred(Equal_2, equal_2_object) 
-    CGAL_Curved_kernel_pred(Is_vertical_2, is_vertical_2_object) 
-    CGAL_Curved_kernel_cons(Construct_min_vertex_2,
-            construct_min_vertex_2_object)
-    CGAL_Curved_kernel_cons(Construct_max_vertex_2,
-            construct_max_vertex_2_object)
-    CGAL_Curved_kernel_pred(Parameter_space_in_x_2, parameter_space_in_x_2_object)
-    CGAL_Curved_kernel_pred(Parameter_space_in_y_2, parameter_space_in_y_2_object)
-    CGAL_Curved_kernel_pred(Is_bounded_2, is_bounded_2_object)
-    CGAL_Curved_kernel_pred(Compare_y_at_x_2, compare_y_at_x_2_object)   
-    CGAL_Curved_kernel_pred(Compare_y_at_x_left_2,
-            compare_y_at_x_left_2_object)
-    CGAL_Curved_kernel_pred(Compare_y_at_x_right_2,
-            compare_y_at_x_right_2_object)
+    CGAL_CKvA_2_functor_pred(Compare_x_2, compare_x_2_object);  
+    CGAL_CKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
+        compare_x_near_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_near_boundary_2,
+        compare_y_near_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Equal_2, equal_2_object); 
+    CGAL_CKvA_2_functor_pred(Is_vertical_2, is_vertical_2_object); 
+    CGAL_CKvA_2_functor_cons(Construct_min_vertex_2,
+            construct_min_vertex_2_object);
+    CGAL_CKvA_2_functor_cons(Construct_max_vertex_2,
+            construct_max_vertex_2_object);
+    CGAL_CKvA_2_functor_pred(Parameter_space_in_x_2, 
+                            parameter_space_in_x_2_object);
+    CGAL_CKvA_2_functor_pred(Parameter_space_in_y_2, 
+                            parameter_space_in_y_2_object);
+    CGAL_CKvA_2_functor_pred(Is_bounded_2, is_bounded_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_2, compare_y_at_x_2_object);   
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_left_2,
+            compare_y_at_x_left_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_right_2,
+            compare_y_at_x_right_2_object);
         
     //! predicates to support intersections
-    CGAL_Curved_kernel_cons(Split_2, split_2_object)  
-    CGAL_Curved_kernel_cons(Intersect_2, intersect_2_object)
-    CGAL_Curved_kernel_cons(Make_x_monotone_2, make_x_monotone_2_object)
-    CGAL_Curved_kernel_pred(Are_mergeable_2, are_mergeable_2_object) 
-    CGAL_Curved_kernel_cons(Merge_2, merge_2_object) 
-    CGAL_Curved_kernel_pred(Do_overlap_2, do_overlap_2_object)
-    CGAL_Curved_kernel_cons(Trim_2, trim_2_object)
-    CGAL_Curved_kernel_pred(Is_in_x_range_2, is_in_x_range_2_object)
+    CGAL_CKvA_2_functor_cons(Split_2, split_2_object);  
+    CGAL_CKvA_2_functor_cons(Intersect_2, intersect_2_object);
+    CGAL_CKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
+    CGAL_CKvA_2_functor_pred(Are_mergeable_2, are_mergeable_2_object); 
+    CGAL_CKvA_2_functor_cons(Merge_2, merge_2_object); 
+    CGAL_CKvA_2_functor_pred(Do_overlap_2, do_overlap_2_object);
+    CGAL_CKvA_2_functor_cons(Trim_2, trim_2_object);
+    CGAL_CKvA_2_functor_pred(Is_in_x_range_2, is_in_x_range_2_object);
+
+#undef CGAL_CKvA_2_functor_pred
+#undef CGAL_CKvA_2_functor_cons
     
     //! access to \c Curve_interval_arcno_cache
     const Curve_interval_arcno_cache& get_interval_arcno_cache() const {
@@ -163,9 +170,6 @@ public:
         return _m_kernel;
     }
     
-#undef CGAL_Curved_kernel_pred
-#undef CGAL_Curved_kernel_cons    
-
     //!@}
 private:
     //!@{
