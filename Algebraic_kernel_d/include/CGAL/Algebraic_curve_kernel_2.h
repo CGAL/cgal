@@ -90,6 +90,9 @@ public:
 
     //! type of x-coordinate
     typedef Internal_x_coordinate X_coordinate_1;
+
+    // TODO remove when deriving from AK_1
+    typedef typename Algebraic_kernel_1::Boundary Boundary;
         
     //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
     //! avoid type clashes with \c Polynomial_2 type defined later
@@ -277,7 +280,8 @@ public:
         X_real_traits_1;
 
     //! traits class for \c Xy_coorinate_2
-    typedef CGALi::Algebraic_real_traits<Xy_coordinate_2> Y_real_traits_1;
+    typedef CGALi::Algebraic_real_traits_for_y<Xy_coordinate_2, Curve_pair_2> 
+        Y_real_traits_1;
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
