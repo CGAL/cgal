@@ -68,6 +68,9 @@ public:
     //! type of a finite point on curve
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
+    //! type of boundary of coordinates
+    typedef typename Curve_kernel_2::Boundary Boundary;
+
     //! provides analysis of a single curve
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
