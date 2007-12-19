@@ -31,6 +31,10 @@
 #include <CGAL/Origin.h>
 #include <vector>
 
+#ifdef CGAL_HAS_THREADS
+#  include <boost/thread/tss.hpp>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
@@ -1095,7 +1099,7 @@ public :
 */
 
   Lazy()
-#ifndef CGAL_HAS_THREADS
+#if 1 // ndef CGAL_HAS_THREADS
     : Handle(zero()) {}
 #else
   {
@@ -1141,8 +1145,16 @@ private:
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
+#ifdef CGAL_HAS_THREADS
+    static boost::thread_specific_ptr<Self> z;
+    if (z.get() == NULL) {
+        z.reset(new Self(new Lazy_rep_0<AT, ET, E2A>()));
+    }
+    return * z.get();
+#else
     static const Self z = new Lazy_rep_0<AT, ET, E2A>();
     return z;
+#endif
   }
 
   Self_rep * ptr() const { return (Self_rep*) PTR; }
