@@ -161,7 +161,7 @@ public:
 #undef CGAL_CKvA_2_functor_cons
     
     //! access to \c Curve_interval_arcno_cache
-    const Curve_interval_arcno_cache& get_interval_arcno_cache() const {
+    const Curve_interval_arcno_cache& interval_arcno_cache() const {
         return _m_interval_arcno_cache;
     }
             

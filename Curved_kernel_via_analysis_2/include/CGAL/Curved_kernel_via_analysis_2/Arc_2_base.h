@@ -501,7 +501,7 @@ public:
      *
      * \pre !is_vertical()
      */
-    int get_interval_id() const {
+    int interval_id() const {
         CGAL_precondition(!is_vertical());
         if(!this->ptr()->_m_interval_id) 
             this->ptr()->_m_interval_id = _compute_interval_id();
@@ -1535,7 +1535,7 @@ public:
                         CGAL::EQUAL)
                     return false;
             }
-        } else if(get_interval_id() != cv2.get_interval_id()) 
+        } else if(interval_id() != cv2.interval_id()) 
             return false; // non-vertical case
 
         return true;
@@ -1758,7 +1758,7 @@ protected:
         Curved_kernel_via_analysis_2 ckernel_2;
         const typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache& map_interval_arcno =
-                ckernel_2.get_interval_arcno_cache();
+                ckernel_2.interval_arcno_cache();
         ////////////////////////////////////////////////////////////////
         if(src_line.is_event()) 
             CGAL_precondition(map_interval_arcno(src_line, 0,

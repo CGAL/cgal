@@ -113,7 +113,7 @@ struct Make_x_monotone_2 :
         typedef typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache CIA_cache;
         const CIA_cache& map_interval_arcno =
-            _m_curved_kernel_2->get_interval_arcno_cache();
+            _m_curved_kernel_2->interval_arcno_cache();
         
         typename CIA_cache::result_type info1, info2;
         std::vector<Point_2> min_pts, max_pts;
