@@ -68,6 +68,9 @@ public:
     // type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
 
+    // type of boundary value in x-range
+    typedef typename Curved_kernel_via_analysis_2::Boundary Boundary;
+
 public:    
     // default constructor
     Arc_2_base_rep() : 
@@ -104,6 +107,9 @@ public:
     
     // stores the index of an interval this arc belongs to
     mutable boost::optional<int> _m_interval_id;
+
+    // stores boundary value in x-range of non-vertical interval
+    mutable boost::optional< Boundary > _m_boundary_in_interval;
 
     typedef std::pair<int, int> Int_pair;
     typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
@@ -142,6 +148,9 @@ public:
     //! type of a finite point on curve
     typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
         Xy_coordinate_2;
+    
+    // type of boundary value in x-range
+    typedef typename Curved_kernel_via_analysis_2::Boundary Boundary;
     
     //! type of generic curve
     typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
@@ -483,15 +492,15 @@ public:
 
         Curve_kernel_2 kernel_2;
         if(this->ptr()->_m_arcno_min != this->ptr()->_m_arcno && 
-            !_minpoint().is_on_left_right() &&
-            kernel_2.compare_x_2_object()(x0, _minpoint().x()) == CGAL::EQUAL) 
+           !_minpoint().is_on_left_right() &&
+           kernel_2.compare_x_2_object()(x0, _minpoint().x()) == CGAL::EQUAL)
             return this->ptr()->_m_arcno_min;
-            
+        
         if(this->ptr()->_m_arcno_max != this->ptr()->_m_arcno && 
-            !_maxpoint().is_on_left_right() &&
-            kernel_2.compare_x_2_object()(x0, _maxpoint().x()) == CGAL::EQUAL) 
+           !_maxpoint().is_on_left_right() &&
+           kernel_2.compare_x_2_object()(x0, _maxpoint().x()) == CGAL::EQUAL)
             return this->ptr()->_m_arcno_max;
-  
+        
         return this->ptr()->_m_arcno;
     }
     
@@ -508,6 +517,31 @@ public:
         return *(this->ptr()->_m_interval_id);
     }
     
+    
+    /*!\brief
+     * returns boundary value in interior of x-range of non-vertical
+     * interval
+     */
+    Boundary boundary_in_x_range_interior() const {
+        CGAL_precondition(!is_vertical());
+        if(!this->ptr()->_m_boundary_in_interval) {
+            this->ptr()->_m_boundary_in_interval = 
+                _compute_boundary_in_interval();
+            CGAL_postcondition_code(
+                    Curve_analysis_2 ca_2(curve());
+                    typename Curve_analysis_2::Status_line_1 cv_line = 
+                    ca_2.status_line_at_exact_x(
+                            X_coordinate_1(
+                                    *this->ptr()->_m_boundary_in_interval
+                            )
+                    );
+            );
+            CGAL_postcondition(cv_line.index() == interval_id());
+        }
+        return *(this->ptr()->_m_boundary_in_interval);
+    }
+
+
     //!@}
     //! \name Shortcuts for code readability
     //!@{
@@ -1001,7 +1035,7 @@ public:
      *                       ARR_MAX_END point.
      */
     bool is_in_x_range(const X_coordinate_1& x, 
-            bool *eq_min = NULL, bool *eq_max = NULL) const {
+                       bool *eq_min = NULL, bool *eq_max = NULL) const {
         
         CGAL::Comparison_result res;
         if(eq_min != NULL && eq_max != NULL)
@@ -1905,6 +1939,70 @@ protected:
         typename Curve_analysis_2::Status_line_1 cv_line = 
             ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
         return cv_line.index();
+    }
+
+    //! computes this arc's interval index
+    Boundary _compute_boundary_in_interval() const {
+        CGAL_precondition(!is_vertical());
+        // a curve end at negative boundary => 0th interval
+        
+        Curve_analysis_2 ca_2(curve());
+        // we are interested in interval "to the right"
+        typename Curve_analysis_2::Status_line_1 cv_line = 
+            ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
+        
+        Curve_kernel_2 kernel_2;
+        // compare only y-values; TODO: use _compare_arc_numbers instead ?
+        if (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY &&
+            _maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY) {
+                return Boundary(0);
+        } else {
+            typename Curve_analysis_2::Status_line_1 cv_line = 
+                ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
+            
+            // TODO use functionality of AK_1 here!!!!
+
+            if (_minpoint().location() == CGAL::ARR_INTERIOR &&
+                _maxpoint().location() == CGAL::ARR_INTERIOR) {
+                
+                if ((kernel_2.compare_x_2_object()
+                     (_minpoint().x(), cv_line.x()) == 
+                     CGAL::SMALLER) && 
+                    (kernel_2.compare_x_2_object()
+                     (cv_line.x(), _maxpoint().x()) == 
+                     CGAL::SMALLER)) {
+                    return kernel_2.lower_boundary_x_2_object()(
+                            cv_line.xy_coordinate_2(arcno())
+                    );
+                } else {
+                    typename Curve_analysis_2::Status_line_1 cv_line_min = 
+                        ca_2.status_line_at_exact_x(_minpoint().x());
+                    typename Curve_analysis_2::Status_line_1 cv_line_max = 
+                        ca_2.status_line_at_exact_x(_maxpoint().x());
+                    
+                    return kernel_2.boundary_between_x_2_object()(
+                            cv_line_min.xy_coordinate_2(
+                                    arcno(CGAL::ARR_MIN_END)
+                            ),
+                            cv_line_max.xy_coordinate_2(
+                                    arcno(CGAL::ARR_MAX_END)
+                            )
+                    );
+                }
+                
+            } else {
+                
+                if (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY) {
+                    return kernel_2.lower_boundary_x_2_object()(
+                            cv_line.xy_coordinate_2(arcno())
+                    );
+                } else {
+                    return kernel_2.upper_boundary_x_2_object()(
+                            cv_line.xy_coordinate_2(arcno())
+                    );
+                }
+            }
+        }
     }
     
     /*!\brief 
