@@ -113,11 +113,11 @@ public:
                          event->number_of_right_curves() != 0) ?
             CGAL::ARR_MIN_END : CGAL::ARR_MAX_END;
         
-        const Subcurve  *xc = (ind == ARR_MIN_END) ?
+        const Subcurve  *xc = (ind == CGAL::ARR_MIN_END) ?
             (*(event->right_curves_begin())) :
             (*(event->left_curves_begin()));
         
-        if (event->parameter_space_in_x() == AFTER_DISCONTINUITY) {
+        if (event->parameter_space_in_x() == CGAL::ARR_LEFT_BOUNDARY) {
             // left side
             switch (xc->color()) {
             case Traits_2::RED :
@@ -135,7 +135,7 @@ public:
             }
         } else { 
             
-            if (event->parameter_space_in_y() == BEFORE_DISCONTINUITY) {
+            if (event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY) {
                 
                 Halfedge_handle_red red_he = xc->red_halfedge_handle();
                 Halfedge_handle_blue blue_he = xc->blue_halfedge_handle();
@@ -163,11 +163,11 @@ public:
                     
                     if (ind == CGAL::ARR_MIN_END) {
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
+                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ?
                              blue_he->twin() : blue_he)->face();
                     } else {
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
                              blue_he->twin() : blue_he)->face();
                     }
                     
@@ -182,14 +182,14 @@ public:
                             (red_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
                              red_he->twin() : blue_he)->face();
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 
+                            (blue_he->direction() == CGAL::ARR_RIGHT_TO_LEFT ?
                              blue_he->twin() : blue_he)->face();
                     } else {
                         this->m_red_tf = 
                             (red_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                              red_he->twin() : red_he)->face();
                         this->m_blue_tf = 
-                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+                            (blue_he->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
                              blue_he->twin() : blue_he)->face();
                     }
                     break;

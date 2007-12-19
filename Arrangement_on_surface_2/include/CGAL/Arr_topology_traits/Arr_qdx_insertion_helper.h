@@ -127,10 +127,10 @@ void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
     // Ignore events that do not have boundary conditions.
-    const Arr_parameter_space ps_x = event->parameter_space_in_x();
-    const Arr_parameter_space ps_y = event->parameter_space_in_y();
+    const CGAL::Arr_parameter_space ps_x = event->parameter_space_in_x();
+    const CGAL::Arr_parameter_space ps_y = event->parameter_space_in_y();
     
-    if (ps_x == ARR_INTERIOR && ps_y == ARR_INTERIOR) {
+    if (ps_x == CGAL::ARR_INTERIOR && ps_y == CGAL::ARR_INTERIOR) {
         return;
     }
     
@@ -142,10 +142,10 @@ void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
                    ((event->number_of_left_curves() == 1) &&
                     (event->number_of_right_curves() == 0)));
     
-    const Arr_curve_end ind = ((event->number_of_left_curves() == 0 &&
-                            event->number_of_right_curves() == 1) ? 
-                           ARR_MIN_END :  ARR_MAX_END);
-    const X_monotone_curve_2& xc = (ind == ARR_MIN_END) ?
+    const CGAL::Arr_curve_end ind = ((event->number_of_left_curves() == 0 &&
+                                      event->number_of_right_curves() == 1) ? 
+                                     CGAL::ARR_MIN_END :  CGAL::ARR_MAX_END);
+    const X_monotone_curve_2& xc = (ind == CGAL::ARR_MIN_END) ?
         (*(event->right_curves_begin()))->last_curve() :
         (*(event->left_curves_begin()))->last_curve();
     
@@ -162,13 +162,13 @@ void Arr_qdx_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     
     // In case we encounter an existing curve incident to the left or 
     // top face, we have to update the current top face
-    if (ps_x < 0) {
+    if (ps_x == CGAL::ARR_LEFT_BOUNDARY) {
         // left side
-        CGAL_assertion (ind == ARR_MIN_END);
+        CGAL_assertion (ind == CGAL::ARR_MIN_END);
         this->m_top_face = he->twin()->face();
-    } else if (ps_y == BEFORE_DISCONTINUITY) {
+    } else if (ps_y == CGAL::ARR_TOP_BOUNDARY) {
         // top side (taken from torus)
-
+        
         if (ind == CGAL::ARR_MIN_END) {
             this->m_top_face = 
                 (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? 

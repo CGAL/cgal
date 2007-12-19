@@ -16,10 +16,10 @@
 // $Id$
 // 
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
-//                 Eric Berberich <eric@mpi-inf.mpg.de>
+//                 
 
 #ifndef CGAL_ARR_QdX_CONSTRUCTION_HELPER_H
 #define CGAL_ARR_QdX_CONSTRUCTION_HELPER_H
@@ -109,10 +109,10 @@ public:
      */
     virtual void before_handle_event(Event * event)
     {
-        const Arr_parameter_space ps_x = event->parameter_space_in_x();
-        const Arr_parameter_space ps_y = event->parameter_space_in_y();
+        const CGAL::Arr_parameter_space ps_x = event->parameter_space_in_x();
+        const CGAL::Arr_parameter_space ps_y = event->parameter_space_in_y();
         
-        if (ps_x < 0) {
+        if (ps_x == CGAL::ARR_LEFT_BOUNDARY) {
             CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
             // The event has only one right curve.
             CGAL_assertion((event->number_of_left_curves() == 0) &&
@@ -133,7 +133,7 @@ public:
             return;
         }
         
-        if (ps_x > 0) {
+        if (ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
             CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
             // The event has only one left curve.
             CGAL_assertion((event->number_of_left_curves() == 1) &&
@@ -155,28 +155,30 @@ public:
         }
         
         if (ps_y != CGAL::ARR_INTERIOR) {
-            CGAL_assertion(ps_y == CGAL::BEFORE_DISCONTINUITY ||
-                           ps_y == CGAL::AFTER_DISCONTINUITY);
+            CGAL_assertion(ps_y == CGAL::ARR_TOP_BOUNDARY ||
+                           ps_y == CGAL::ARR_BOTTOM_BOUNDARY);
             CGAL_assertion(ps_x == CGAL::ARR_INTERIOR);
             // there is exactly one event
             CGAL_assertion(event->number_of_left_curves() +
                            event->number_of_right_curves() >= 1);
             const X_monotone_curve_2 & xc =
-                (ps_y == CGAL::AFTER_DISCONTINUITY ? 
-                 // AFTER DISCONTINUITY
+                (ps_y == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                 // bottom
                  (event->number_of_right_curves() > 0 ? 
                   (*(event->right_curves_begin()))->last_curve() :
                   (*(event->left_curves_rbegin()))->last_curve()) :
-                 // BEFORE_DISCONTINUITY
+                 // top
                  (event->number_of_left_curves() > 0 ? 
                   (*(event->left_curves_rbegin()))->last_curve() :
                   (*(event->right_curves_begin()))->last_curve()) 
                 );
             
             CGAL::Arr_curve_end ind =  
-                (ps_y == CGAL::AFTER_DISCONTINUITY ? 
+                (ps_y == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                 // bottom
                  (event->number_of_right_curves() > 0 ? 
                   CGAL::ARR_MIN_END : CGAL::ARR_MAX_END) : 
+                 // top
                  (event->number_of_left_curves() > 0 ? 
                   CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
                 );
@@ -201,17 +203,17 @@ public:
         // Check whether the halfedge (or its twin) lie on the top face.
         Halfedge_handle     he_on_top_face;
         
-        CGAL::Arr_parameter_space bnd_y_min = 
+        CGAL::Arr_parameter_space ps_y_min = 
             this->m_top_traits->geometry_traits()->
             parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MIN_END);
-        CGAL::Arr_parameter_space bnd_y_max = 
+        CGAL::Arr_parameter_space ps_y_max = 
             this->m_top_traits->geometry_traits()->
             parameter_space_in_y_2_object()(he->curve(), CGAL::ARR_MAX_END);
         
-        if (bnd_y_min == CGAL::BEFORE_DISCONTINUITY) {
+        if (ps_y_min == CGAL::ARR_BOTTOM_BOUNDARY) {
             he_on_top_face = 
                 (he->direction() == CGAL::ARR_RIGHT_TO_LEFT ? he : he->twin());
-        } else if (bnd_y_max == CGAL::BEFORE_DISCONTINUITY) {
+        } else if (ps_y_max == CGAL::ARR_TOP_BOUNDARY) {
             he_on_top_face = 
                 (he->direction() == CGAL::ARR_LEFT_TO_RIGHT ? he : he->twin());
         } else {
@@ -263,7 +265,7 @@ public:
         // before the curve of discontinuity 
         // have to flip the order of predecessor halfegdes.
         return (event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
-                event->parameter_space_in_y() == CGAL::BEFORE_DISCONTINUITY);
+                event->parameter_space_in_y() == CGAL::ARR_RIGHT_BOUNDARY);
     }
     
     /*! Get the current top face. */
