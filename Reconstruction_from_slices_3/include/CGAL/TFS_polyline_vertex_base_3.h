@@ -83,7 +83,7 @@ private:
 public :
 
 /**
- * Obtain the index of a vertex. It is in the user responsibility to intialize the index.
+ * Obtain the index of a vertex. It is in the user responsibility to initialize the index.
  */
   int index() const
    { return m_index;}

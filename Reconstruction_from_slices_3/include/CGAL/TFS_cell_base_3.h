@@ -135,6 +135,9 @@ class TFS_cell_base_3
     void unset_heavy_solid_tested_down()   {mask_solidity &=(~MASK_H_SOLID_TEST_D);}
     void unset_heavy_solid_tested_up()     {mask_solidity &=(~MASK_H_SOLID_TEST_U);}
 
+    void unset_solid_tested_down()   {mask_solidity &=(~MASK_SOLID_TEST_D);}
+    void unset_solid_tested_up()     {mask_solidity &=(~MASK_SOLID_TEST_U);}
+
     void set_bifurcation_tested()  {mask_in_out |= MASK_BIFURCATION;}
 };
 

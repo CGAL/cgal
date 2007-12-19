@@ -16,7 +16,7 @@
 // ======================================================================
 
 #ifdef GEOMVIEW_DUMP //TO RM
-#define GEOMVIEW
+#define GEOMVIEW     //TO RM
 #include <CGAL/IO/Geomview_stream.h> //TO RM
 CGAL::Geomview_stream gv;  //TO RM
 #endif // GEOMVIEW_DUMP TO RM
@@ -25,19 +25,19 @@ CGAL::Geomview_stream gv;  //TO RM
 #include <cstdlib> //system
 #include <iostream>
 
-#ifdef GEOMVIEW
-#include <CGAL/IO/Geomview_stream.h>
-#endif //GEOMVIEW
+#ifdef GEOMVIEW //TO RM
+#include <CGAL/IO/Geomview_stream.h> //TO RM
+#endif //GEOMVIEW //TO RM
 
 #include <CGAL/Triangulation_from_slices_3.h>
 #include <CGAL/TFS_polyline_vertex_base_3.h>
-#include <CGAL/TFS_cell_base_3_for_reconstruction.h>
+#include <CGAL/TFS_cell_base_3.h>
 #include <CGAL/Parser_CNT.h>
 #include <CGAL/Reconstruction_from_slices_3.h>
 
 int main (int argc , char ** argv)
 {
-#ifdef GEOMVIEW
+#ifdef GEOMVIEW //TO RM
   const char * command = "Command :\n ./test_reconstruction_from_polylines cnt_file off_file_prefix \
 [-solidlight or -solidheavy] [-heavy]  [-geomview]";
   bool geomview = false;
@@ -65,20 +65,8 @@ int main (int argc , char ** argv)
   const char * off_file_prefix = argv[2];
 
   int l_pref=std::strlen(off_file_prefix);
-
-  char *head=new char[l_pref+10];
-  char *body=new char[l_pref+10];
-
-  std::strcpy(head,off_file_prefix);
-  std::strcpy(body,off_file_prefix);
-
-  std::strcat(head,".head");
-  std::strcat(body,".body");
-
-  char *system_command=new char[3*(l_pref+10)];
-
-  std::strcat(std::strcat(std::strcat(std::strcpy(system_command,"cat "),head)," "),body);
-  std::strcat(std::strcat(std::strcat(system_command," > "),off_file_prefix),".off");
+  char *fname_off=new char[l_pref+10];
+  std::strcat(std::strcpy(fname_off,off_file_prefix),".off");
 
   for (int i=3 ; i<argc ; i++)
     {
@@ -88,7 +76,7 @@ int main (int argc , char ** argv)
 	solidheavy = true;
       else if (std::strcmp(argv[i],"-heavy")==0)
 	heavy = true;
-#ifdef GEOMVIEW
+#ifdef GEOMVIEW  //TO RM
       else if (std::strcmp(argv[i],"-geomview")==0)
 	geomview = true;
 #endif
@@ -102,7 +90,7 @@ int main (int argc , char ** argv)
   // Read data and triangulation construction
   typedef CGAL::Exact_predicates_exact_constructions_kernel Gt;
   typedef CGAL::TFS_polyline_vertex_base_3< CGAL::Triangulation_vertex_base_3<Gt> > PlVb;
-  typedef CGAL::TFS_cell_base_3_for_reconstruction< CGAL::Triangulation_cell_base_3<Gt> > PlCb;
+  typedef CGAL::TFS_cell_base_3< CGAL::Triangulation_cell_base_3<Gt> > PlCb;
   typedef CGAL::Triangulation_data_structure_3<PlVb,PlCb> Tds;
   typedef CGAL::Triangulation_from_slices_3< Gt,Tds> Slice_constrained_triangulation;
 
@@ -112,44 +100,46 @@ int main (int argc , char ** argv)
 
   //   parser_CNT pp(cnt_file,&tpis);
   //   pp.parse();
-
+  
   tpis.load<CNT_parser>(cnt_file);
   std::cout << "Triangulation over" << std::endl;
-  //   std::cout << "Conforming (guaranteed only for small angles)" << std::endl;
-  if(!check_polylines_respect(tpis))
-{
-  std::cout << "Not conform" << std::endl;
-  check_and_conform_polylines(tpis);
-}
-{
-  tag_inner_outer(tpis);
-  std::cout << "In/out tagging over" << std::endl;
-  if(solidlight)
-    {
-     non_solid_connections_removal(tpis,false); // Seems to be more efficient
-     std::cout << "Only heavy solid connections remain" << std::endl;
-    }
-  else if(solidheavy)
-    {
-     non_solid_connections_removal(tpis,true);  // Is the result stable, without the heavy option?
-     std::cout << "Non solid connections removed (Question : all the heavy ones?)" << std::endl;
-    }
-  if(heavy)
-    {
-     stable_non_solid_connections_heavy_removal(tpis);
-     std::cout << "Only non heavy solid connections remain" << std::endl;
-    }
-  //save_in_off_file(tpis,head,body);
-  //std::system(system_command);
-  //std::cout << "Off file over" << std::endl;
-  save_in_wrl_file(tpis, "hello.wrl");
-}
-// else
-//   std::cout << "Non conformal polylines" << std::endl;
-  delete head;
-  delete body;
-  delete system_command;
 
+  if(!check_polylines_respect(tpis))
+    {
+      std::cout << "Not conform" << std::endl;
+      check_and_conform_polylines(tpis);  
+      std::cout << "Conforming over (guaranteed only for small angles)" << std::endl;
+      CGAL_triangulation_assertion(check_polylines_respect(tpis));
+    }
+  {
+    tag_inner_outer(tpis);
+    std::cout << "In/out tagging over" << std::endl;
+    if(solidlight)
+      {
+	non_solid_connections_removal(tpis,false); // Seems to be more efficient
+	std::cout << "Non solid cluster removed." << std::endl;  
+	std::cout << "Only edge-based local non solid connections remain." << std::endl;
+      }
+    else if(solidheavy)
+      {
+	non_solid_connections_removal(tpis,true);
+	std::cout << "Non solid cluster removed." << std::endl; 
+	std::cout << "Some edge-based local non solid connections are also removed (but some can remain)" << std::endl;
+      }
+    if(heavy)
+      {
+	stable_non_solid_connections_heavy_removal(tpis);
+	std::cout << "Non solid cluster removed." << std::endl;	
+        std::cout << "Edge-based local non solid connections removed." << std::endl; 
+      }
+    save_in_off_file(tpis,fname_off);
+    std::cout << "Off file over" << std::endl;
+    save_in_wrl_file(tpis, "hello.wrl",true);
+  }
+  delete fname_off;
+  // else
+  //   std::cout << "Non conformal polylines" << std::endl;
+  
 #ifdef GEOMVIEW
   if(geomview)
     {
@@ -162,11 +152,11 @@ int main (int argc , char ** argv)
       typedef Slice_constrained_triangulation::Cell_handle Cell_handle;
       typedef Slice_constrained_triangulation::Cell_iterator Cell_iterator;
       gvv.clear();
-
+      
       gvv.set_edge_color (CGAL::Color(0,0,0));
       gvv.set_face_color (CGAL::Color(0,0,0));
       gvv.set_bg_color (CGAL::Color(180,180,180));
-
+      
       for (Cell_iterator it=tpis.cells_begin(); it != tpis.cells_end(); ++it)
 	{
 	  Cell_handle c(it);

@@ -38,13 +38,13 @@ CGAL_BEGIN_NAMESPACE
 
 typedef Exact_predicates_exact_constructions_kernel default_Gt;
 typedef Triangulation_from_slices_3<default_Gt, 
-                                  Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<default_Gt> >, 
-                                                                  TFS_cell_base_3<Triangulation_cell_base_3<default_Gt> > > > default_Tr;
+  Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<default_Gt> >, 
+  TFS_cell_base_3<Triangulation_cell_base_3<default_Gt> > > > default_Tr;
 
 // template < class Tr >   = Triangulation_from_slices_3< Gt, 
-                        //           Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<Gt> >, 
-                        //                                           TFS_cell_base_3<Triangulation_cell_base_3<Gt> > > 
-                        // Gt (default) = Exact_predicates_exact_constructions_kernel
+//           Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<Gt> >, 
+//                                           TFS_cell_base_3<Triangulation_cell_base_3<Gt> > > 
+// Gt (default) = Exact_predicates_exact_constructions_kernel
 
 
 /*===========================================================================*/
@@ -65,13 +65,18 @@ void tag_inner_outer(const Tr & tr);
 // Precondition : tr must not have been tagged previously, check_polylines_respect(tr)==true                    
 
 template <class Tr>
-void non_solid_connections_removal(Tr & tr, bool heavy_removal=true);
+void non_solid_connections_removal(Tr & tr, bool heavy_removal=false);
 // Removes non manifoldiness of the surface enclosed between inner and outer cells
+//      -- if heavy_removal=false : removes cluster of facets between two slides
+//         that are not solidly attached ot the upper and the lower slice
+//      -- if heavy_removal=true then stable_non_solid_connections_heavy_removal 
+//         should be call afterwards
 // Precondition : tag_inner_outer(tr) previously called
 
 template <class Tr>
-void non_solid_connections_heavy_removal(Tr & tr);
+void stable_non_solid_connections_heavy_removal(Tr & tr);
 // Removes further local non manifoldiness of the surface enclosed between inner and outer cells
+//   (those located at the level of single edges)
 // Precondition : tag_inner_outer(tr) previously called
 
 template <class Tr>
@@ -169,13 +174,13 @@ bool check_polylines_respect(const Tr & tr)
       Vertex_handle vh1(it),vh2(it->next());
       if (!tr.is_edge(vh1,vh2,ctemp,i,j)){
 	std::cerr << "Error: Cannot find constraint edge " << vh1->point() << " [" << vh1->slice() << "]   " << vh2->point() << " [" << vh1->slice() << "]" << std::endl;
-	//	return false;
+	return false;
       }
     }
   return true;
 }
 
-#ifdef CGAL_RFS_CONFORM
+#ifdef CGAL_RFS_CONFORM // If no access to mesh_2 conforming (for example when slices are not horizontal)
 template < class Tr >
 void check_and_conform_polylines(Tr & tr)
 {  
@@ -448,8 +453,8 @@ typename Tr::Facet get_facet_towards_external_infinite_cell(const Tr & tr)
 
   if(res.first==NULL)
     { 
-      //TO : find whats the trouble ....
-      std::cout << "Configuration to be examined more precisely" << std::endl;
+      //TO CHANGE LATER : ....
+      std::cout << "TO DO The research of an external infinite cell will be improved" << std::endl;
       std::vector<Cell_handle> infinite_cells;
       tr.incident_cells(tr.infinite_vertex(),std::back_inserter(infinite_cells));
       for (typename std::vector<Cell_handle>::iterator cit = infinite_cells.begin(); cit != infinite_cells.end(); ++cit)
@@ -578,9 +583,12 @@ static bool determine_heavy_solidity(Tr & tr, typename Tr::Cell_handle c,
 	    if(!test_heavy_solidity_around_edge(tr,c,tempindex,heavy_solid,
 						std::back_inserter(hCellGroupTet2),std::back_inserter(hCellGroupTet3),
 						2,templi,templj,templk,templl,tempother))
-	      for(hitTet2 = hCellGroupTet2.begin(); hitTet2 != hCellGroupTet2.end(); hitTet2++) 
-		(*hitTet2)->set_non_solid();
-	    else		  
+	      {
+		CGAL_triangulation_assertion(hCellGroupTet3.begin()== hCellGroupTet3.end());
+		for(hitTet2 = hCellGroupTet2.begin(); hitTet2 != hCellGroupTet2.end(); hitTet2++) 
+		  (*hitTet2)->set_non_solid();
+	      }
+	    else //hitTet3 iterator over a non empty set		  
 	      for(hitTet3 = hCellGroupTet3.begin(); hitTet3 != hCellGroupTet3.end(); hitTet3++) 
 		{
 		  (*hitTet3)->unset_heavy_solid_tested_down();
@@ -590,11 +598,11 @@ static bool determine_heavy_solidity(Tr & tr, typename Tr::Cell_handle c,
 	      { 
 		(*hitTet2)->unset_heavy_solid_tested_down();
 		(*hitTet2)->unset_heavy_solid_tested_up();
-/* 		if((*hitTet2)->is_internal()) */
-/* 		  { */
-/* 		    (*hitTet2)->unset_heavy_solid_tested_down(); */
-/* 		    (*hitTet2)->unset_heavy_solid_tested_up(); */
-/* 		  } */
+		/* 		if((*hitTet2)->is_internal()) */
+		/* 		  { */
+		/* 		    (*hitTet2)->unset_heavy_solid_tested_down(); */
+		/* 		    (*hitTet2)->unset_heavy_solid_tested_up(); */
+		/* 		  } */
 	      }
 	  }
       tempindex=slice2, templi=li2, templj=lj2, templk=li1, templl=lj1, tempother=slice1;
@@ -725,29 +733,29 @@ void non_solid_connections_removal(Tr & tr, bool heavy_removal)
     }
 }
 
-template <class Tr>
-void non_solid_connections_heavy_removal(Tr & tr)
-{
-  typename Tr::Finite_cells_iterator it;
-  for (it  = tr.finite_cells_begin();
-       it != tr.finite_cells_end();
-       it++)
-    {
-      typename Tr::Cell_handle c(it);
-      if(c->is_internal())
-	{
-	  int index_slice=c->vertex(0)->slice(), other_slice_index;	  
-	  int tet1, li1, lj1, tet2, li2, lj2, temp;
+/* template <class Tr> */
+/* void non_solid_connections_heavy_removal(Tr & tr) */
+/* { */
+/*   typename Tr::Finite_cells_iterator it; */
+/*   for (it  = tr.finite_cells_begin(); */
+/*        it != tr.finite_cells_end(); */
+/*        it++) */
+/*     { */
+/*       typename Tr::Cell_handle c(it); */
+/*       if(c->is_internal()) */
+/* 	{ */
+/* 	  int index_slice=c->vertex(0)->slice(), other_slice_index;	   */
+/* 	  int tet1, li1, lj1, tet2, li2, lj2, temp; */
 	  
-	  tet1=tr.slices[index_slice].tetrahedra_type(c,li1,lj1,other_slice_index);
-	  tet2=tr.slices[other_slice_index].tetrahedra_type(c,li2,lj2,temp);
-	  CGAL_triangulation_assertion((temp==index_slice)&&(tet1+tet2==4));
+/* 	  tet1=tr.slices[index_slice].tetrahedra_type(c,li1,lj1,other_slice_index); */
+/* 	  tet2=tr.slices[other_slice_index].tetrahedra_type(c,li2,lj2,temp); */
+/* 	  CGAL_triangulation_assertion((temp==index_slice)&&(tet1+tet2==4)); */
 	  
-	  if (tet1==2)
-	    determine_heavy_solidity(tr,c,index_slice,li1,lj1,other_slice_index,li2,lj2);
-	}
-    }
-}
+/* 	  if (tet1==2) */
+/* 	    determine_heavy_solidity(tr,c,index_slice,li1,lj1,other_slice_index,li2,lj2); */
+/* 	} */
+/*     } */
+/* } */
 
 template <class Tr>
 void stable_non_solid_connections_heavy_removal(Tr & tr)
@@ -767,7 +775,7 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 	    {
 	      int index_slice=c->vertex(0)->slice(), other_slice_index;	  
 	      int tet1, li1, lj1, tet2, li2, lj2, temp;
-	  
+	      
 	      tet1=tr.slices[index_slice].tetrahedra_type(c,li1,lj1,other_slice_index);
 	      tet2=tr.slices[other_slice_index].tetrahedra_type(c,li2,lj2,temp);
 	      CGAL_triangulation_assertion((temp==index_slice)&&(tet1+tet2==4));
@@ -781,39 +789,20 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 	    }
 	}
       if(again)
-	for (it  = tr.finite_cells_begin();
-	     it != tr.finite_cells_end();
-	     it++)
-	  {
-	    it->unset_heavy_solid_tested_down();
-	    it->unset_heavy_solid_tested_up();
-/* 	    if(it->is_internal()) */
-/* 	      {		 */
-/* 		if(it->is_heavy_solid_tested_down()) */
-/* 		  it->unset_heavy_solid_tested_down();  */
-/* 		if(it->is_heavy_solid_tested_up()) */
-/* 		  it->unset_heavy_solid_tested_up();  */
-/* 		CGAL_triangulation_assertion(it->is_internal()); */
-/* 	      } */
-/* 	    else */
-/* 	      {	 */
-/* 		CGAL_triangulation_assertion(!it->is_internal());		 */
-/* 		if(it->is_heavy_solid_tested_down()) */
-/* 		  { */
-/* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
-/* 		    it->unset_heavy_solid_tested_down();  */
-/* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
-/* 		  } */
-/* 		if(it->is_heavy_solid_tested_up())		   */
-/* 		  { */
-/* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
-/* 		    it->unset_heavy_solid_tested_up(); */
-/* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
-/* 		  } */
-/* 		CGAL_triangulation_assertion(!it->is_internal()); */
-/* 	      } */
-	  }
-      std::cerr << "Info: Heavy solid removal " << ++cmpt << std::endl;
+	{
+	  for (it  = tr.finite_cells_begin();
+	       it != tr.finite_cells_end();
+	       it++)
+	    {
+	      it->unset_heavy_solid_tested_down();
+	      it->unset_heavy_solid_tested_up();
+	      it->unset_solid_tested_down();
+	      it->unset_solid_tested_up();
+	    }
+	  non_solid_connections_removal(tr,true);
+	  //non_solid_connections_removal(tr,true); //TO DO determine which call is faster
+	  std::cerr << "Info: Heavy solid removal " << ++cmpt << std::endl;
+	}
     }while(again);
 }
 /*===========================================================================*/
@@ -821,10 +810,22 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 /*===========================================================================*/
 
 template <class Tr>
-void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * fname_body_off)
-{
-  std::ofstream headFile(fname_head_off, std::ios::out);
-  std::ofstream oFile(fname_body_off,std::ios::out);
+void save_in_off_file(const Tr & tr, const char * fname_off)
+{  
+  int l_pref=std::strlen(fname_off); 
+  char *fname_head=new char[l_pref+10];
+  char *fname_body=new char[l_pref+10];
+
+  std::strcat(std::strcpy(fname_head,fname_off),".head");
+  std::strcat(std::strcpy(fname_body,fname_off),".body");
+  
+  // TO DO : make the concatenation of head and body 
+  // without system command    
+  char *system_command=new char[3*l_pref+40];
+  std::strcat(std::strcat(std::strcat(std::strcpy(system_command,"cat "),fname_head)," "),fname_body);
+  std::strcat(std::strcat(system_command," > "),fname_off);
+  std::ofstream headFile(fname_head, std::ios::out);
+  std::ofstream oFile(fname_body, std::ios::out);
   headFile << "OFF\n";
   // write nvertex, nface, nedge(=0)
   headFile << tr.number_of_vertices();
@@ -860,12 +861,21 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
   headFile << " " << face_number
 	   << " " << 0 << std::endl;
   headFile.close();
+  // TO DO : make the concatenation of head and body 
+  // without system command  
+  std::system(system_command);
+  std::strcat(std::strcat(std::strcat(std::strcpy(system_command,"rm "),fname_head)," "),fname_body);
+  std::system(system_command);
+  delete fname_head;
+  delete fname_body;
+  delete system_command;
 }
 
 
 template <class Tr>
 void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours)
 {
+  typedef typename Tr::Vertex_handle Vertex_handle;
   std::ofstream oFile(fname_wrl,std::ios::out);
   VRML_2_ostream vos(oFile);
 
@@ -916,7 +926,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
   if(outputContours){
     vit = tr.finite_vertices_begin ();//Vertex_iterator
     while(vit!=tr.finite_vertices_end()){
-      Vertex_handle_3 vh = vit;
+      Vertex_handle vh = vit;
       if(vh->index() != -1){
 	
 	
@@ -944,6 +954,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
   }
   
 }
+
 CGAL_END_NAMESPACE
 
 #endif //CGAL_RECONSTRUCTION_FROM_SLICES_3_H

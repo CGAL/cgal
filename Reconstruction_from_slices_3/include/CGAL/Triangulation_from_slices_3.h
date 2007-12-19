@@ -50,6 +50,8 @@
 #include <CGAL/IO/Geomview_stream.h>
 #endif // GEOMVIEW
 
+#define CGAL_RFS_CONFORM //if no access to mesh_2
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -359,7 +361,7 @@ class Triangulation_from_slices_3<Gt,Tds>::Slice
   std::vector<Vertex_handle> set_of_vertices; //Is just here to fasten conform operations
                                             //TO DO This container could be a template parameter 
                                             //      that could be set to EmptySet by default
-#endif
+#endif //CGAL_RFS_CONFORM
 
   // Construction------------------------------------------------------------------------------
  public :    
@@ -807,7 +809,7 @@ insert(const Point & p, int slice, Locate_type lt, Cell_handle c, int li, int)
 	  return c->vertex(li);
 	// TEST call insert_conflicts_3 (Triangulation_3.h) with redefined find_conflicts_3
 	Conflict_tester_3 tester(p,slice,this);
-	v = insert_conflict_3(c, tester);
+	v = insert_conflict(c, tester);//v = insert_conflict_3(c, tester);
 #ifdef CGAL_RFS_CONFORM
 	slices[slice].set_of_vertices.push_back(v);
 #endif
@@ -823,7 +825,7 @@ insert(const Point & p, int slice, Locate_type lt, Cell_handle c, int li, int)
 	case Tr_Base::EDGE:
 	  {
 	    Conflict_tester_2 tester(p,slice,this);
-	    v = insert_conflict_2(c, tester);
+	    v = insert_conflict(c, tester);//v = insert_conflict_2(c, tester);
 #ifdef CGAL_RFS_CONFORM
 	    slices[slice].set_of_vertices.push_back(v);
 #endif
