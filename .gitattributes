@@ -1806,6 +1806,9 @@ Installation/config/support/S06a-BOOST_PROGRAM_OPTIONS -text
 Installation/config/support/S06b-MS_BOOST_PROGRAM_OPTIONS -text
 Installation/config/support/S06c-BOOST_PROGRAM_OPTIONS_GCC -text
 Installation/config/support/S07-BOOST_BIMAP -text
+Installation/config/support/S08a-BOOST_THREAD -text
+Installation/config/support/S08b-MS_BOOST_THREAD -text
+Installation/config/support/S08c-BOOST_THREAD_GCC -text
 Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
@@ -1855,6 +1858,7 @@ Installation/config/support/S93a-TAUCSFREEBSDLAPACK -text
 Installation/config/support/S93b-TAUCSFREEBSDATLAS -text
 Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/parse_files.awk -text
+Installation/config/support/test_BOOST_THREAD.cpp -text
 Installation/src/CGAL/all_files.cpp -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
