@@ -58,6 +58,7 @@
 
 #if QdX_USE_AcX
 #include <SoX/GAPS/Restricted_cad_3.h>
+#include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
