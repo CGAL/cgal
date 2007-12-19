@@ -239,6 +239,8 @@ public:
     
     //!@}
 private:
+    // TODO make private again
+public:
     // TODO allow to construct without curve, i.e, isolated points on toric
     //      identifications -> do it also for arcs
     //!@{
@@ -350,7 +352,7 @@ public:
         Curve_kernel_2 kernel_2;
         return kernel_2.compare_xy_2_object()(xy(), p.xy(), equal_x);
     }
-    
+
     //! comparison operators (only for finite points):
     //! equality
     bool operator == (const Self& q) const {return q.compare_xy(*this)== 0;}
@@ -390,7 +392,8 @@ protected:
     }
     
     //! befriending \c Arc_2 class
-    //friend class CGALi::Arc_2_base<Curved_kernel_via_analysis_2>;
+    //template < class CKvA_2, class Arc_2, class ArcRep >
+    //friend class CGALi::Arc_2_base< CKvA_2, Arc_2, ArcRep >;
     
     //!@}        
 
