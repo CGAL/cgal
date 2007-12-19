@@ -100,7 +100,7 @@ enum Arr_boundary_type {
   ARR_BOUNDED,
   ARR_CONTRACTION,
   ARR_IDENTIFICATION,
-  ARR_NUM_BOUNDARY_TYPES
+  ARR_NUMBER_OF_BOUNDARY_TYPES
 };
 
 //! \brief prints boundary type (for debugging)
@@ -123,8 +123,8 @@ OutputStream& operator<<(
     case CGAL::ARR_IDENTIFICATION:
         os << "ARR_IDENTIFICATION";
         break;
-    case CGAL::ARR_NUM_BOUNDARY_TYPES:
-        os << static_cast<int>(ARR_NUM_BOUNDARY_TYPES);
+    case CGAL::ARR_NUMBER_OF_BOUNDARY_TYPES:
+        os << static_cast<int>(ARR_NUMBER_OF_BOUNDARY_TYPES);
         break;
     default:
         CGAL_error_msg("bogus boundary type");

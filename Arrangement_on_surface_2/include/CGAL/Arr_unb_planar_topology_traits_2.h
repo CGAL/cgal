@@ -377,7 +377,7 @@ public:
      default: CGAL_error();
     }
     // Cannot reach here!
-    return ARR_NUM_BOUNDARY_TYPES;
+    return ARR_NUMBER_OF_BOUNDARY_TYPES;
   }
   
   
