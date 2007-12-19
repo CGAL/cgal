@@ -12,10 +12,10 @@
 //
 // ============================================================================
 
-#ifndef CGAL_CURVED_KERNEL_ARC_2_FUNCTORS_H
-#define CGAL_CURVED_KERNEL_ARC_2_FUNCTORS_H
+#ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
+#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
 
-/*! \file Curved_kernel_via_analysis_2/Curved_kernel_2_functors.h
+/*! \file Curved_kernel_via_analysis_2/curved_kernel_via_analysis_2_functors.h
  *  \brief defines Curved_kernel_via_analysis_2 function objects
  */
 
@@ -805,4 +805,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_ARC_2_FUNCTORS_H
+#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
