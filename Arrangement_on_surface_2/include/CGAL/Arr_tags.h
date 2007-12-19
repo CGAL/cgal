@@ -28,10 +28,10 @@ CGAL_BEGIN_NAMESPACE
 
 struct Arr_no_boundary_tag {};
 struct Arr_has_boundary_tag {};
-struct Arr_bounded_boundary_tag : public Arr_has_boundary_tag {};
-struct Arr_unbounded_boundary_tag : public Arr_has_boundary_tag {};
-struct Arr_all_boundary_tag : public Arr_bounded_boundary_tag,
-                              public Arr_unbounded_boundary_tag {};
+struct Arr_bounded_boundary_tag : public virtual Arr_has_boundary_tag {};
+struct Arr_unbounded_boundary_tag : public virtual Arr_has_boundary_tag {};
+struct Arr_all_boundary_tag : public virtual Arr_bounded_boundary_tag,
+                              public virtual Arr_unbounded_boundary_tag {};
 
 CGAL_END_NAMESPACE
 
