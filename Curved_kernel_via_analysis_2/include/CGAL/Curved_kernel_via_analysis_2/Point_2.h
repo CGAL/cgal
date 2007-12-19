@@ -55,7 +55,7 @@ std::ostream& operator<< (std::ostream&,
 template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
 {
-protected:
+public:
     // this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -124,8 +124,6 @@ protected:
     // location of a point in parameter space
     mutable CGAL::Arr_parameter_space _m_location;
 
-    // befriending the handle
-    friend class Point_2<Curved_kernel_via_analysis_2, Self>;
     
     friend std::ostream& operator << <>(
             std::ostream&, 
@@ -373,7 +371,7 @@ public:
     bool operator >= (const Self& q) const {return q.compare_xy(*this)<= 0;}
     
     //!@}
-private:
+protected:
     //!\name private methods (provided access from Arc_2 class)
     //!@{
     
@@ -393,10 +391,61 @@ private:
     
     //! befriending \c Arc_2 class
     //friend class CGALi::Arc_2_base<Curved_kernel_via_analysis_2>;
-    //! befriending output operator
-    friend std::ostream& operator << <>(std::ostream&, const Self&);
     
     //!@}        
+
+public:
+    /*!\relates Point_2
+ * \brief 
+ * output operator
+ */
+    void write(std::ostream& os) const {
+        
+        switch(::CGAL::get_mode(os)) {
+        case ::CGAL::IO::PRETTY:
+            os << "point@" << this->id() << "(";
+            os << "sup@" << this->curve().id();
+            os << " ";
+            this->_dump_boundary_type(os);
+            os << "; ";
+            if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
+                this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
+                os << "x=" << NiX::to_double(this->x());
+            } else {
+                if (this->location() == CGAL::ARR_LEFT_BOUNDARY) {
+                    os << "x=-oo";
+                } else {
+                    os << "x=+oo";
+                }
+            }
+            os << ", ";
+            if (this->location() != CGAL::ARR_BOTTOM_BOUNDARY &&
+                this->location() != CGAL::ARR_TOP_BOUNDARY) {
+                os << "y=n/a"; // TODO give y-coordinate
+            } else {
+                if (this->location() == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    os << "y=-oo";
+                } else {
+                    os << "y=+oo";
+                }
+            }
+            os << ", ";
+            if (this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL) {
+                os << "ARCNO=" << this->arcno();
+            } else {
+                os << "VERT" << this->arcno();
+            }
+            os << ")";
+            break;
+        case ::CGAL::IO::BINARY:
+            std::cerr << "BINARY format not yet implemented" << std::endl;
+            break;
+        default:
+            // ASCII 
+            std::cerr << "ASCII format not yet implemented" << std::endl;
+        }
+    }
+    
 }; // class Point_2
 
 /*!\relates Point_2
@@ -407,49 +456,7 @@ template <class CurvedKernelViaAnalysis_2, class Rep_>
 std::ostream& operator <<(std::ostream& os,
     const Point_2<CurvedKernelViaAnalysis_2, Rep_>& pt) {
 
-    switch(::CGAL::get_mode(os)) {
-    case ::CGAL::IO::PRETTY:
-        os << "point@" << pt.id() << "(";
-        os << "sup@" << pt.curve().id();
-        os << " ";
-        pt._dump_boundary_type(os);
-        os << "; ";
-        if (pt.location() != CGAL::ARR_LEFT_BOUNDARY &&
-            pt.location() != CGAL::ARR_RIGHT_BOUNDARY) {
-            os << "x=" << NiX::to_double(pt.x());
-        } else {
-            if (pt.location() == CGAL::ARR_LEFT_BOUNDARY) {
-                os << "x=-oo";
-            } else {
-                os << "x=+oo";
-            }
-        }
-        os << ", ";
-        if (pt.location() != CGAL::ARR_BOTTOM_BOUNDARY &&
-            pt.location() != CGAL::ARR_TOP_BOUNDARY) {
-            os << "y=n/a"; // TODO give y-coordinate
-        } else {
-            if (pt.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
-                os << "y=-oo";
-            } else {
-                os << "y=+oo";
-            }
-        }
-        os << ", ";
-        if (pt.ptr()->_m_xy || pt.ptr()->_m_arc_rep != NULL) {
-            os << "ARCNO=" << pt.arcno();
-        } else {
-            os << "VERT" << pt.arcno();
-        }
-        os << ")";
-        break;
-    case ::CGAL::IO::BINARY:
-        std::cerr << "BINARY format not yet implemented" << std::endl;
-        break;
-    default:
-        // ASCII 
-        std::cerr << "ASCII format not yet implemented" << std::endl;
-    }
+    pt.write(os);
     return os;
 
 }
