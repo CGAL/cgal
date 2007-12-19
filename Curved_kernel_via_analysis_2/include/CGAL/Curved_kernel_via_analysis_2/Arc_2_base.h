@@ -559,10 +559,11 @@ public:
      *         LARGER  if p lies to the right of cv;
      *         EQUAL   in case of an overlap.
      */
-    CGAL::Comparison_result compare_end_at_x(CGAL::Arr_curve_end end,
-        const Point_2& p) const
-    {
-        CERR("\ncompare_end_at_x: this: " << *this << "\n p: " <<
+    CGAL::Comparison_result compare_x_near_boundary(
+            CGAL::Arr_curve_end end,
+            const Point_2& p
+    ) const {
+        CERR("\ncompare_x_near_boundary: this: " << *this << "\n p: " <<
             p << "; curve_end: " << end << "\n");
         //CGAL::Arr_boundary_type bnd = boundary(end);
         
@@ -600,11 +601,13 @@ public:
      *         LARGER  if \c this lies to the right of cv2;
      *         EQUAL   in case of an overlap.
      */
-    CGAL::Comparison_result compare_ends_at_x(CGAL::Arr_curve_end end1,
-             const Arc_2_base& cv2, CGAL::Arr_curve_end end2) const {
+    CGAL::Comparison_result compare_x_near_boundary(
+            CGAL::Arr_curve_end end1,
+            const Arc_2_base& cv2, CGAL::Arr_curve_end end2
+    ) const {
 
         if(this->id() > cv2.id())
-            return (- cv2.compare_ends_at_x(end2, *this, end1));
+            return (- cv2.compare_x_near_boundary(end2, *this, end1));
 
         Int_pair pair(cv2.id(), ((end1 << 16)|end2) );
 
@@ -612,20 +615,23 @@ public:
             this->ptr()->_m_cmp_ends_at_x.find(pair);
 
         if(r.second) {
-            //std::cerr << "precached compare_ends_at_x result\n";
+            //std::cerr << "precached compare_x_near_boundary result\n";
             return r.first->second;
         }
 
-        //std::cerr << "compare_ends_at_x\n";
-        CGAL::Comparison_result res = compare_ends_at_x(end1, cv2, end2, true);
+        //std::cerr << "compare_x_near_boundary\n";
+        CGAL::Comparison_result res = 
+            compare_x_near_boundary(end1, cv2, end2, true);
         this->ptr()->_m_cmp_ends_at_x.insert(std::make_pair(pair, res));
         return res;     
     }
 
-    CGAL::Comparison_result compare_ends_at_x(CGAL::Arr_curve_end end1,
-             const Arc_2_base& cv2, CGAL::Arr_curve_end end2,  bool) const {
+    CGAL::Comparison_result compare_x_near_boundary(
+            CGAL::Arr_curve_end end1,
+            const Arc_2_base& cv2, CGAL::Arr_curve_end end2,  bool
+    ) const {
 
-        CERR("\ncompare_ends_at_x: this: " << *this << "\n cv2: " <<
+        CERR("\ncompare_x_near_boundary: this: " << *this << "\n cv2: " <<
             cv2 << "; end1: " << end1 << "; end2: " << end2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
             bnd2 = cv2.boundary(end2);*/
@@ -832,11 +838,13 @@ public:
      *         EQUAL in case of an overlap.
      */
     // TODO: pass an additional curve end when handling DISCONTINUITY ?
-    CGAL::Comparison_result compare_y_at_x(const Arc_2_base& cv2, 
-        CGAL::Arr_curve_end end) const {
-        //std::cerr << "compare_y_at_x2\n";
+    CGAL::Comparison_result compare_y_near_boundary(
+            const Arc_2_base& cv2, 
+            CGAL::Arr_curve_end end
+    ) const {
+        //std::cerr << "compare_y_near_boundary_2\n";
         
-        CERR("\ncompare_y_at_x(cv2); this: " << *this << "; cv2: " <<
+        CERR("\ncompare_y_near_boundary(cv2); this: " << *this << "; cv2: " <<
             cv2 << "; end: " << end << "\n");
 
         CGAL::Arr_parameter_space loc1 = location(end);

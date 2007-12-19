@@ -117,7 +117,7 @@ public:
     result_type operator()(const Point_2& p, const Arc_2& cv,
               CGAL::Arr_curve_end ce) const {
                                  
-        return cv.compare_end_at_x(ce, p);
+        return cv.compare_x_near_boundary(ce, p);
     }
 
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
@@ -139,7 +139,7 @@ public:
      */
     result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
-        return cv1.compare_ends_at_x(ce1, cv2, ce2);
+        return cv1.compare_x_near_boundary(ce1, cv2, ce2);
     }
 };
 
@@ -168,7 +168,7 @@ public:
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                CGAL::Arr_curve_end ce) const {
-        return cv1.compare_y_at_x(cv2, ce);
+        return cv1.compare_y_near_boundary(cv2, ce);
     }
 };
 
