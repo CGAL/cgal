@@ -243,14 +243,14 @@ public:
         CGAL_precondition(ps != CGAL::ARR_INTERIOR);
         switch (ps) {
         case ARR_LEFT_BOUNDARY:
-        case ARR_RIGHT_BOUNDARY: return ARR_IDENTIFICATION;
+        case ARR_RIGHT_BOUNDARY: return CGAL::ARR_IDENTIFICATION;
             
         case ARR_BOTTOM_BOUNDARY:
-        case ARR_TOP_BOUNDARY: return ARR_IDENTIFICATION;
+        case ARR_TOP_BOUNDARY: return CGAL::ARR_IDENTIFICATION;
         default: CGAL_error();
         }
         // Cannot reach here!
-        return ARR_NUMBER_OF_BOUNDARY_TYPES;
+        return CGAL::ARR_NUMBER_OF_BOUNDARY_TYPES;
     }
     
     //@}
