@@ -146,21 +146,10 @@ public:
     //!
     //! \pre p.x() != q.x()
     Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c,
-        int arcno, int arcno_p, int arcno_q) : 
-            Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
-        
-        CGAL_precondition(!p.is_identical(q));
-        CGAL_precondition(p.compare_x(q) != CGAL::EQUAL);
-        // preconditions for arc-numbers and event points (should the common
-        // parts be moved to a dedicated method ?)
-        CGAL_precondition(arcno >= 0 && arcno_p >= 0 && arcno_q >= 0);
-        // check end-points arcnos validity and coprimality condition
-        // for supporting curves
-        this->_check_pt_arcno_and_coprimality(p, arcno_p, c);
-        this->_check_pt_arcno_and_coprimality(q, arcno_q, c);    
-        this->_fix_curve_ends_order(); // lexicographical order of curve ends
+          int arcno, int arcno_p, int arcno_q) : 
+        Base(p, q, c, arcno, arcno_p, arcno_q) { 
     }
-      
+    
     /*!\brief
      * constructs an arc with one finite end-point \c origin and one
      * x-infinite end, supported by curve \c c with \c arcno (ray I)
@@ -169,18 +158,8 @@ public:
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
-        const Curve_2& c, int arcno, int arcno_o) :
-        Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
-        
-        CGAL_precondition(arcno >= 0 && arcno_o >= 0);
-        // check end-points arcnos validity and coprimality condition
-        // for supporting curves
-
-        // while order is not fixed yet we can access end-points directly
-        this->_maxpoint()._add_ref(this->ptr());
-        
-        this->_check_pt_arcno_and_coprimality(origin, arcno_o, c);
-        this->_fix_curve_ends_order(); // lexicographical order of curve ends
+          const Curve_2& c, int arcno, int arcno_o) :
+        Base(origin, inf_end, c, arcno, arcno_o) {
     }
     
     /*!\brief
@@ -195,17 +174,7 @@ public:
     Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
            CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
            int arcno_o) :
-        Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
-
-        // while order is not fixed yet we can access end-points directly
-        this->_maxpoint()._add_ref(this->ptr());
-        
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_x_2_object()(origin.x(), asympt_x) 
-            != CGAL::EQUAL);
-        CGAL_precondition(arcno >= 0 && arcno_o >= 0);
-        this->_check_pt_arcno_and_coprimality(origin, arcno_o, c);
-        this->_fix_curve_ends_order(); // lexicographical order of curve ends
+        Base(origin, asympt_x, inf_end, c, arcno, arcno_o) {
     }
 
     /*!\brief
@@ -213,16 +182,7 @@ public:
      * with \c arcno (branch I)
      */
     Arc_2(const Curve_2& c, int arcno) :
-        Base(Rep(Point_2(CGAL::ARR_MIN_END),
-            Point_2(CGAL::ARR_MAX_END), c, arcno)) {
-        // lexicographical order of curve ends (no need to ??)
-
-        // while order is not fixed yet we can access end-points directly
-        this->_minpoint()._add_ref(this->ptr());
-        this->_maxpoint()._add_ref(this->ptr());
-        
-        CGAL_precondition(arcno >= 0);
-        this->_fix_curve_ends_order(); 
+        Base(c, arcno) {
     }
     
     /*!\brief
@@ -236,18 +196,7 @@ public:
     Arc_2(const X_coordinate_1& asympt_x1, const X_coordinate_1& asympt_x2, 
             CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
                 const Curve_2& c, int arcno) :
-        Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
-            c, arcno)) {
-
-        // while order is not fixed yet we can access end-points directly
-        this->_minpoint()._add_ref(this->ptr());
-        this->_maxpoint()._add_ref(this->ptr());
-            
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_x_2_object()(asympt_x1, asympt_x2) 
-            != CGAL::EQUAL);
-        CGAL_precondition(arcno >= 0);
-        this->_fix_curve_ends_order();
+        Base(asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno) {
     }
     
     /*!\brief
@@ -260,15 +209,7 @@ public:
      */
     Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
         CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
-        Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy),
-            c, arcno)) {
-
-        // while order is not fixed yet we can access end-points directly
-        this->_minpoint()._add_ref(this->ptr());
-        this->_maxpoint()._add_ref(this->ptr());
-        
-        CGAL_precondition(arcno >= 0); 
-        this->_fix_curve_ends_order();
+        Base(inf_endx, asympt_x, inf_endy, c, arcno) {
     }
     
     //!@}
@@ -282,15 +223,7 @@ public:
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
     Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c) : 
-        Base(Rep(p, q, c, -1, -1, -1, true)) {  
-        
-        CGAL_precondition(!p.is_identical(q));
-        CGAL_precondition(p.compare_x(q) == CGAL::EQUAL && 
-            p.compare_xy(q, true) != CGAL::EQUAL);
-        // check coprimality condition for supporting curves
-        this->_check_pt_arcno_and_coprimality(p, -1, c);
-        this->_check_pt_arcno_and_coprimality(p, -1, c);
-        this->_fix_curve_ends_order();
+        Base(p, q, c) {
     }
     
     /*!\brief
@@ -302,11 +235,7 @@ public:
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
         const Curve_2& c) :
-        Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
-        
-        // check coprimality condition for supporting curves
-        this->_check_pt_arcno_and_coprimality(origin, -1, c);
-        this->_fix_curve_ends_order();
+        Base(origin, inf_end, c) {
     }
     
     /*!\brief
@@ -316,13 +245,12 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2(const X_coordinate_1& x, const Curve_2& c) :
-        Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
-                Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
-            
-        this->_fix_curve_ends_order();
+        Base(x, c) {
     }
    
     //!@}
+
+
 #if 0
 
 public:
