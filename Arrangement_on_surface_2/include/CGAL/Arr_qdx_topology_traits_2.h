@@ -352,7 +352,8 @@ private:
                         == CGAL::ARR_INTERIOR
                 ); 
                 if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MIN_END)
-                    == CGAL::MINUS_INFINITY) {
+                    == CGAL::ARR_LEFT_BOUNDARY &&
+                    m_left == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
@@ -360,7 +361,8 @@ private:
                         == CGAL::ARR_INTERIOR
                 ); 
                 if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MAX_END)
-                    == CGAL::PLUS_INFINITY) {
+                    == CGAL::ARR_RIGHT_BOUNDARY &&
+                    m_right == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_plus_inf++;
                 }                    
 #else
@@ -371,7 +373,8 @@ private:
                 ); 
                 if (m_traits->parameter_space_in_x_2_object()(
                             eit->curve(), CGAL::ARR_MIN_END
-                    ) == CGAL::MINUS_INFINITY) {
+                    ) == CGAL::ARR_LEFT_BOUNDARY &&
+                    m_left == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
@@ -381,7 +384,8 @@ private:
                 ); 
                 if (m_traits->parameter_space_in_x_2_object()(
                             eit->curve(), CGAL::ARR_MAX_END
-                    ) == CGAL::PLUS_INFINITY) {
+                    ) == CGAL::ARR_RIGHT_BOUNDED &&
+                    m_right == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_plus_inf++;
                 }
 #endif
