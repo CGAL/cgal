@@ -12,16 +12,18 @@
 //
 // ============================================================================
 
-#ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
-#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
+#ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
+#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 
 /*! \file Curved_kernel_via_analysis_2/curved_kernel_via_analysis_2_functors.h
- *  \brief defines Curved_kernel_via_analysis_2 function objects
+ *  \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Curved_kernel_via_analysis_2_functors {
+namespace CGALi {
+
+namespace Curved_kernel_via_analysis_2_Functors {
 
 template <class CurvedKernel_2>
 class Compare_x_2
@@ -60,6 +62,7 @@ private:
 template < class CurvedKernel_2 >
 class Compare_y_at_x_2
 {
+public:
     typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
@@ -801,8 +804,81 @@ private:
     CurvedKernel_2 *_m_curved_kernel_2;
 };
 
-} // Curved_kernel_via_analysis_2_functors
+} // namespace Curved_kernel_via_analysis_2_functors
+
+//! collects main set of functors of a curved kernel
+template < 
+    class CurvedKernelViaAnalysis_2, 
+    class Curve_2_, 
+    class Point_2_, 
+    class Arc_2_
+>
+class Curved_kernel_via_analysis_2_functors {
+public:
+    //! this instance's first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! this instance's second template parameter
+    typedef Curve_2_ Curve_2;
+    
+    //! this instance's third template parameter
+    typedef Point_2_ Point_2;
+    
+    //! this instance's fourth template parameter
+    typedef Arc_2_ Arc_2;
+    
+    // declares curved kernel functors, 
+    // for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_CKvA_2_functor_pred(Y, Z) \
+    typedef \
+    Curved_kernel_via_analysis_2_Functors::Y< Curved_kernel_via_analysis_2 > \
+    Y; \
+    Y Z() const { return Y((Curved_kernel_via_analysis_2 *)this); }
+
+#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
+
+    CGAL_CKvA_2_functor_pred(Compare_x_2, compare_x_2_object);  
+    CGAL_CKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
+        compare_x_near_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_near_boundary_2,
+        compare_y_near_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Equal_2, equal_2_object); 
+    CGAL_CKvA_2_functor_pred(Is_vertical_2, is_vertical_2_object); 
+    CGAL_CKvA_2_functor_cons(Construct_min_vertex_2,
+            construct_min_vertex_2_object);
+    CGAL_CKvA_2_functor_cons(Construct_max_vertex_2,
+            construct_max_vertex_2_object);
+    CGAL_CKvA_2_functor_pred(Parameter_space_in_x_2, 
+                            parameter_space_in_x_2_object);
+    CGAL_CKvA_2_functor_pred(Parameter_space_in_y_2, 
+                            parameter_space_in_y_2_object);
+    CGAL_CKvA_2_functor_pred(Is_bounded_2, is_bounded_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_2, compare_y_at_x_2_object);   
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_left_2,
+            compare_y_at_x_left_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_y_at_x_right_2,
+            compare_y_at_x_right_2_object);
+        
+    //! predicates to support intersections
+    CGAL_CKvA_2_functor_cons(Split_2, split_2_object);  
+    CGAL_CKvA_2_functor_cons(Intersect_2, intersect_2_object);
+    CGAL_CKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
+    CGAL_CKvA_2_functor_pred(Are_mergeable_2, are_mergeable_2_object); 
+    CGAL_CKvA_2_functor_cons(Merge_2, merge_2_object); 
+    CGAL_CKvA_2_functor_pred(Do_overlap_2, do_overlap_2_object);
+    CGAL_CKvA_2_functor_cons(Trim_2, trim_2_object);
+    CGAL_CKvA_2_functor_pred(Is_in_x_range_2, is_in_x_range_2_object);
+
+#undef CGAL_CKvA_2_functor_pred
+#undef CGAL_CKvA_2_functor_cons
+
+}; // Curved_kernel_via_analysis_2_functors
+
+} // namespace CGALi
+
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_ARC_2_FUNCTORS_H
+#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H

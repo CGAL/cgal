@@ -33,32 +33,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// TODO documentation
-template < class CurveKernel_2, 
-           template < class CK_2 > class Point_2_ = CGALi::Point_2,
-           template < class CK_2 > class Arc_2_ = CGALi::Arc_2
- >
-class Curved_kernel_via_analysis_2 {
+namespace CGALi {
 
-// declares curved kernel functors, for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_CKvA_2_functor_pred(Y, Z) \
-    typedef Curved_kernel_via_analysis_2_functors::Y<Self> Y; \
-    Y Z() const { return Y((Curved_kernel_via_analysis_2 *)this); }
-#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
-
-
+// todo mode to another file
+template < class CurveKernel_2 >
+class Curved_kernel_via_analysis_2_base {
 public:
-    //! \name public typedefs
-    //!@{
-    
-    //! this instance's template argument
-    typedef CurveKernel_2 Curve_kernel_2;
 
-    //! myself
-    typedef Curved_kernel_via_analysis_2<Curve_kernel_2, Point_2_, Arc_2_> 
-    Self;
+    //! this instance's template parameter
+    typedef CurveKernel_2 Curve_kernel_2;
     
+    //! self
+    typedef Curved_kernel_via_analysis_2_base< Curve_kernel_2 > Self;
+    
+    //!\name Global types
+    //!@{
+
     //! type of general planar curve
     typedef typename Curve_kernel_2::Curve_2 Curve_2;
     
@@ -80,26 +70,33 @@ public:
     
     //! tag specifies that "to the left of" comparisons supported
     typedef CGAL::Tag_true Has_left_category;
+
     //! tag specifies that merge and split functors supported
     typedef CGAL::Tag_true Has_merge_category; 
-    //! tag specifies that infinite functors supported
-    typedef CGAL::Tag_true Has_infinite_category;
+
     //! tag specifies that unbounded arcs supported
     typedef CGAL::Tag_true Has_boundary_category;
 
     //! tag specifies which boundary functors are implemented
     typedef CGAL::Arr_unbounded_boundary_tag Boundary_category;
-    
-    //! type of inverval arcno cache
-    typedef CGALi::Curve_interval_arcno_cache<Self> Curve_interval_arcno_cache;
 
     //!@}
-public:
+
+    //!\name Internal types
+    //!@{
+    
+    //! type of inverval arcno cache
+    typedef CGALi::Curve_interval_arcno_cache< Self > 
+    Curve_interval_arcno_cache;
+
+    //!@}
+
+
     //! \name Constructors
     //!@{
 
     //! default constructor
-    Curved_kernel_via_analysis_2() :
+    Curved_kernel_via_analysis_2_base() :
         _m_kernel(Curve_kernel_2()), _m_interval_arcno_cache(this) {
 
         // clear all caches before computing
@@ -108,60 +105,18 @@ public:
     }
 
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
+    Curved_kernel_via_analysis_2_base(const Curve_kernel_2& kernel) :
         _m_kernel(kernel), _m_interval_arcno_cache(this) {
-
+        
         //Curve_kernel_2::get_curve_cache().clear();
         //Curve_kernel_2::get_curve_pair_cache().clear();
     }
-    //!@}
-    //!\name embedded types and predicates for \c Arrangement_2 package
-    //!@{
-        
-    //! type of a point on generic curve
-    typedef Point_2_<Self> Point_2; 
-
-    //! type of an arc on generic curve
-    typedef Arc_2_<Self> Arc_2; 
     
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
-    typedef Arc_2 X_monotone_curve_2;
+    //!@}
 
-    CGAL_CKvA_2_functor_pred(Compare_x_2, compare_x_2_object);  
-    CGAL_CKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
-        compare_x_near_boundary_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_y_near_boundary_2,
-        compare_y_near_boundary_2_object);
-    CGAL_CKvA_2_functor_pred(Equal_2, equal_2_object); 
-    CGAL_CKvA_2_functor_pred(Is_vertical_2, is_vertical_2_object); 
-    CGAL_CKvA_2_functor_cons(Construct_min_vertex_2,
-            construct_min_vertex_2_object);
-    CGAL_CKvA_2_functor_cons(Construct_max_vertex_2,
-            construct_max_vertex_2_object);
-    CGAL_CKvA_2_functor_pred(Parameter_space_in_x_2, 
-                            parameter_space_in_x_2_object);
-    CGAL_CKvA_2_functor_pred(Parameter_space_in_y_2, 
-                            parameter_space_in_y_2_object);
-    CGAL_CKvA_2_functor_pred(Is_bounded_2, is_bounded_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_y_at_x_2, compare_y_at_x_2_object);   
-    CGAL_CKvA_2_functor_pred(Compare_y_at_x_left_2,
-            compare_y_at_x_left_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_y_at_x_right_2,
-            compare_y_at_x_right_2_object);
-        
-    //! predicates to support intersections
-    CGAL_CKvA_2_functor_cons(Split_2, split_2_object);  
-    CGAL_CKvA_2_functor_cons(Intersect_2, intersect_2_object);
-    CGAL_CKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
-    CGAL_CKvA_2_functor_pred(Are_mergeable_2, are_mergeable_2_object); 
-    CGAL_CKvA_2_functor_cons(Merge_2, merge_2_object); 
-    CGAL_CKvA_2_functor_pred(Do_overlap_2, do_overlap_2_object);
-    CGAL_CKvA_2_functor_cons(Trim_2, trim_2_object);
-    CGAL_CKvA_2_functor_pred(Is_in_x_range_2, is_in_x_range_2_object);
 
-#undef CGAL_CKvA_2_functor_pred
-#undef CGAL_CKvA_2_functor_cons
+    //!\name underlying curve kernel
+    //!@{
     
     //! access to \c Curve_interval_arcno_cache
     const Curve_interval_arcno_cache& interval_arcno_cache() const {
@@ -174,7 +129,8 @@ public:
     }
     
     //!@}
-private:
+
+protected:
     //!@{
     //!\name private members
     
@@ -183,8 +139,86 @@ private:
     
     //! an instance of \c Curve_interval_arcno_cache
     mutable Curve_interval_arcno_cache _m_interval_arcno_cache;
-        
+    
     //!@}
+
+};    
+    
+} // namespace CGALi
+
+
+// TODO documentation
+template < class CurveKernel_2 >
+class Curved_kernel_via_analysis_2 :
+     public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
+     public CGALi::Curved_kernel_via_analysis_2_functors < 
+            Curved_kernel_via_analysis_2< CurveKernel_2 >,
+            typename CurveKernel_2::Curve_2,
+            CGALi::Point_2 < Curved_kernel_via_analysis_2< CurveKernel_2 > >,
+            CGALi::Arc_2 < Curved_kernel_via_analysis_2< CurveKernel_2 > >
+        > 
+{
+public:
+    //! \name public typedefs
+    //!@{
+    
+    //! this instance's template argument
+    typedef CurveKernel_2 Curve_kernel_2;
+
+    //! myself
+    typedef Curved_kernel_via_analysis_2< Curve_kernel_2 > Self;
+    
+    //!@}
+    
+    //!\name embedded types  for \c Arrangement_2 package
+    //!@{
+
+    //! type of curve_2
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+        
+    //! type of a point on generic curve
+    typedef CGALi::Point_2< Self > Point_2; 
+
+    //! type of an arc on generic curve
+    typedef CGALi::Arc_2< Self > Arc_2; 
+
+    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    typedef Arc_2 X_monotone_curve_2;
+
+    //!@}
+    
+protected:
+    //!\name Protected internal types
+
+    //!@{
+    //! class collecting basic types
+    typedef CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >
+    Base_kernel;
+
+    //! class collecting basic types
+    typedef CGALi::Curved_kernel_via_analysis_2_functors < 
+            Self, Curve_2, Point_2, Arc_2
+    >  
+    Base_functors;
+    
+    //!@}
+
+public:
+    //! \name Constructors
+    //!@{
+
+    //! default constructor
+    Curved_kernel_via_analysis_2() :
+        Base_kernel() {
+    }
+    
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
+        Base_kernel(kernel) {
+    }
+    
+    //!@}
+ 
 }; // class Curved_kernel_via_analysis_2
 
 CGAL_END_NAMESPACE
