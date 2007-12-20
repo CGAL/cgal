@@ -13,8 +13,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Number_types/include/CGAL/MP_Float.h $
-// $Id: MP_Float.h 40709 2007-10-25 14:18:35Z slimbach $
+// $URL:$
+// $Id:$
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
 
