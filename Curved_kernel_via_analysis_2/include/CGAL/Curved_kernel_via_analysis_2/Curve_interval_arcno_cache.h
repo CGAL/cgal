@@ -59,12 +59,6 @@ struct Curve_interval_arcno_cache {
     typedef typename Curve_analysis_2::Status_line_1
         Status_line_1;
     
-    //! type of point on curve
-    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
-    
-    //! type of curve arc
-    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
-    
     //! event arc number descriptor: stores an arc number along with curve's
     //! end type (+/-oo or \c ARR_INTERIOR )
     typedef std::pair<int, CGAL::Arr_parameter_space> Arcno_desc;
