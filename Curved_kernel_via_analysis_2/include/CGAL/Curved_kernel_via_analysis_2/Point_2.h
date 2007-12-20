@@ -239,8 +239,6 @@ public:
     
     //!@}
 private:
-    // TODO make private again
-public:
     // TODO allow to construct without curve, i.e, isolated points on toric
     //      identifications -> do it also for arcs
     //!@{
