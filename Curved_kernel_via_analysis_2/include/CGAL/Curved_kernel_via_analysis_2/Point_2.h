@@ -391,7 +391,10 @@ protected:
     
     //! befriending \c Arc_2 class
     //template < class CKvA_2, class Arc_2, class ArcRep >
-    //friend class CGALi::Arc_2_base< CKvA_2, Arc_2, ArcRep >;
+    friend class CGALi::Arc_2_base< 
+        Curved_kernel_via_analysis_2, 
+        typename Curved_kernel_via_analysis_2::Arc_2 
+    >;
     
     //!@}        
 

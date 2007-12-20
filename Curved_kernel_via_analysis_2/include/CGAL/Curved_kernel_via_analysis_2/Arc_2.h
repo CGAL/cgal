@@ -60,7 +60,7 @@ class Arc_2 :
         > {
 public:
     //!@{
-    //!\name publuic typedefs
+    //!\name public typedefs
 
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
