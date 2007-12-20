@@ -341,7 +341,7 @@ public:
         Curve_kernel_2 kernel_2;
         return kernel_2.compare_x_2_object()(x(), p.x());
     }
-    
+
     //!\brief compares two points lexicographical
     //!
     //!\pre compared points have finite x/y-coordinates
@@ -349,6 +349,13 @@ public:
         bool equal_x = false) const {
         Curve_kernel_2 kernel_2;
         return kernel_2.compare_xy_2_object()(xy(), p.xy(), equal_x);
+    }
+
+    //! checks if the point lies on a curve
+    //! inaccessible)
+    inline bool is_on(const Curve_2& curve) const {
+        Curve_kernel_2 kernel_2;
+        return (kernel_2.sign_at_2_object()(curve, xy()) == CGAL::ZERO);
     }
 
     //! comparison operators (only for finite points):
