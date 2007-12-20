@@ -1,4 +1,4 @@
-\begin{ccRefConcept}{AlgebraicKernel_d_2::SignAt_2}
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::SignAt_2}
 
 \ccDefinition
 Computes the sign of a bivariate polynomial 
@@ -8,21 +8,26 @@ Computes the sign of a bivariate polynomial
 \ccRefines 
 \ccc{AdaptableBinaryFunction}
 
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{second_argument_type+}{}
+\ccNestedType{result_type}{Type convertible to \ccc{CGAL::Sign}}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;}{}
+
+\ccOperations
 \ccCreationVariable{fo}
 
 A model \ccVar\ of this type must provide:
 
-\ccMethod{bool
-    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p,
-	     const AlgebraicKernel_d_2::Algebraic_real_2 & r);}
+\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{result_type
+    operator()(const first_argument_type & p, const second_argument_type & r);}
 {Computes the sign of a bivariate polynomial \ccc{p} evaluated at the root 
 \ccc{r} of a system of two bivariate polynomials.} 
 
-\footnote{We want to allow \ccc{UNDECIDED} as result type,
-but this is this is done the same way in the Kernel}
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::AlgebraicReal_2}\\
 
-\footnote{what about coefficients? (like in univariate case). We can have 
-a constructor of \ccc{Algebraic_real_2} from 2 \ccc{Coefficient} and it 
-will solve the question.}
-
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}

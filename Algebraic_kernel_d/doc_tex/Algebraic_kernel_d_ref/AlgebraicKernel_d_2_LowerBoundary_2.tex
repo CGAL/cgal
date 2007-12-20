@@ -8,18 +8,27 @@ Returns the current lower boundary of of the first coordinate of an
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
+\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{argument_type+}{}
 \ccTypedef{typedef AlgebraicKernel_d_1::Boundary  result_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
 A model \ccVar\ of this type must provide:
 
+\ccThree{result_type}{fo(first_argument_type ar2,++}{}
 \ccMethod{
-result_type operator()(const argument_type & a);}{ 
-   Computes current lower boundary of the first coordinate of $a$.
+result_type operator()(const argument_type & ar2);}{ 
+   Returns the current lower boundary of the first coordinate of $ar2$.
 } 
- 
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::Boundary}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::AlgebraicReal_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::LowerBoundaryY_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::UpperBoundaryX_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::UpperBoundaryY_2}\\
+
 \end{ccRefFunctionObjectConcept}
 
 \begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::LowerBoundaryY_2}
@@ -32,18 +41,26 @@ Returns the current lower boundary of of the second coordinate of an
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
+\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{argument_type+}{}
 \ccTypedef{typedef AlgebraicKernel_d_1::Boundary  result_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
 A model \ccVar\ of this type must provide:
 
+\ccThree{result_type}{fo(first_argument_type ar2,++}{}
 \ccMethod{
-result_type operator()(const argument_type & a);}{ 
-   Computes current lower boundary of the second coordinate of $a$.
+result_type operator()(const argument_type & ar2);}{ 
+   Returns the current lower boundary of the second coordinate of $ar2$.
 } 
- 
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::Boundary}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::AlgebraicReal_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::LowerBoundaryX_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::UpperBoundaryX_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::UpperBoundaryY_2}\\
 \end{ccRefFunctionObjectConcept}
 
 

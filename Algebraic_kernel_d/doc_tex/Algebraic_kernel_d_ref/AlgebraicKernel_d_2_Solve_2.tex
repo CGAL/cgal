@@ -1,11 +1,17 @@
-\begin{ccRefConcept}{AlgebraicKernel_d_2::Solve_2}
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::Solve_2}
 
 \ccDefinition
+Computes the pairs of real roots of a system of two bivariate polynomials.
+
+\ccRefines 
+\ccc{AdaptableFunctor} with three arguments
 
 \ccCreationVariable{fo}
 
+\ccOperations
 A model \ccVar\ of this type must provide:
 
+\ccThree{OutputIterator}{fo(first_argument_type,++}{}
 \ccMethod{template < class OutputIterator >
     OutputIterator
     operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1,
@@ -13,9 +19,9 @@ A model \ccVar\ of this type must provide:
 	     OutputIterator res);}
 {Copies in the output iterator the common roots of $p_1$ 
 and $p_2$ with their multiplicity, as objects of type
-\ccc{std::pair< AlgebraicKernel_d_2::Algebraic_real_2, int >}.
+\ccc{std::pair<AlgebraicKernel_d_2::Algebraic_real_2, unsigned int>}.
 \ccPrecond{$p_1$ and $p_2$ are square-free and the set of solutions of 
 the system is 0-dimensional (i.e., the two polynomials must be
 coprime).}}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}

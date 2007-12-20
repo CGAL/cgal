@@ -1,4 +1,4 @@
-\begin{ccRefConcept}{AlgebraicKernel_d_2::GetX_2}
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::GetX_2}
 
 \ccDefinition
 
@@ -9,29 +9,33 @@ Returns the first coordinate of an
 \ccRefines 
 \ccc{AdaptableUnaryFunction}  
 
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_1  result_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
-
-A model of this type must provide:
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_1  result_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
-\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxx}{}
 
+A model of this type must provide:
 
 \ccMethod{
-result_type operator()(const argument_type & a);}{ 
-   Computes the first coordinate of $a$.
+result_type operator()(const argument_type & ar2);}{ 
+   Computes the first coordinate of \ccc{ar2}.
 } 
 
 
 %\ccHasModels
-%\ccSeeAlso
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::AlgebraicReal_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::AlgebraicReal_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::GetY_2}\\
 
-\end{ccRefConcept} 
+\end{ccRefFunctionObjectConcept} 
 
 
-\begin{ccRefConcept}{AlgebraicKernel_d_2::GetY_2}
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::GetY_2}
 
 \ccDefinition
 
@@ -42,24 +46,28 @@ Returns the second coordinate of an
 \ccRefines 
 \ccc{AdaptableUnaryFunction}  
 
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_1  result_type;}{}
-\ccTypedef{typedef AlgebraicKernel_d_2::AlgebraicReal_2  argument_type;}{}
-
-A model of this type must provide:
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_1  result_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
-\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxx}{}
 
+A model of this type must provide:
 
 \ccMethod{
-result_type operator()(const argument_type & a);}{ 
-   Computes the second coordinate of $a$.
+result_type operator()(const argument_type & ar2);}{ 
+   Computes the second coordinate of \ccc{ar2}.
 } 
 
 
 %\ccHasModels
-%\ccSeeAlso
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::AlgebraicReal_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::AlgebraicReal_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::GetY_2}\\
 
-\end{ccRefConcept} 
+\end{ccRefFunctionObjectConcept} 
 
