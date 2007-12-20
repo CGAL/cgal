@@ -440,7 +440,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
                                                       ARR_MIN_END);
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
-        (ps_x1 != ARR_INTERIOR) && (ps_y2 != ARR_INTERIOR) &&
+        ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
         this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MIN_END) &&
         this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MIN_END))
     {
@@ -489,7 +489,7 @@ _intersect (Subcurve *c1, Subcurve *c2)
                                                         ARR_MAX_END);
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
-        (ps_x1 != ARR_INTERIOR) && (ps_y2 != ARR_INTERIOR) &&
+        ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
         this->m_traits->is_bounded_2_object()(c1->last_curve(), ARR_MAX_END) &&
         this->m_traits->is_bounded_2_object()(c2->last_curve(), ARR_MAX_END))
     {
