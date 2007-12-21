@@ -90,7 +90,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         Algebraic_curve_pair_2> Self;
     
     //! type of curve vertical line
-    typedef typename Curve_2::Curve_vertical_line Event_line;
+    typedef typename Curve_2::Status_line Event_line;
 
     //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
