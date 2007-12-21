@@ -23,110 +23,13 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
+#include <CGAL/Curved_kernel_via_analysis_2l/Surface_point_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
-
-// pre-declaration
-template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3, class Rep_ >
-class Surface_point_2l;
-
-// TODO documentation
-template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
-class Surface_point_2l_rep : 
-        public Point_2_rep< CurvedKernelViaAnalysis_2l > {
-
-public:
-
-    //! this instance's first template parameter
-    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
-
-    //! this instance's second template parameter
-    typedef SurfacePair_3 Surface_pair_3;
-
-    //! the instance itself
-    typedef 
-    Surface_point_2l_rep< Curved_kernel_via_analysis_2l, Surface_pair_3 > Self;
-    
-    typedef typename Surface_pair_3::Surface_3 Surface_3;
-
-    //TODO add constructors
-    
-    
-
-    
-public:
-    // TODO add data
-    //! supporting surface
-    mutable Surface_3 _m_surface;
-    
-    //! sheet number of point
-    mutable int _m_sheet;
-    
-    // befriending the handle
-    friend class 
-    Surface_point_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Self >;
-};
-
-
-//! represents a point on a surface
-template < 
-  class CurvedKernelViaAnalysis_2l, 
-  class SurfacePair_3,
-  class Rep_ = 
-    CGALi::Surface_point_2l_rep< CurvedKernelViaAnalysis_2l, SurfacePair_3 >
- >
-class Surface_point_2l : 
-    public CGALi::Point_2< 
-        CurvedKernelViaAnalysis_2l, 
-        Rep_  >
-{
-public:
-
-    //! this instance's first template parameter
-    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
-    
-    //! this instance's second template parameter
-    typedef SurfacePair_3 Surface_pair_3;
-
-    //! this instance's third template parameter
-    typedef Rep_ Rep;
-
-    //! the instance itself
-    typedef 
-    Surface_point_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Rep > 
-    Self;
-    
-    //! the base type
-    typedef CGALi::Point_2< Curved_kernel_via_analysis_2l, Rep > Base;
-    
-public:
-    // TODO add constructors
-    
-    //!\brief Functor to construct point on an arc
-    //! \c x on curve \c c with arc number \c arcno
-    //!
-    //! implies no boundary conditions in x/y
-    class Construct_point_2 {
-    public:
-        //! constructs points at x 
-        template < class Arc_2 >
-        Self operator()(
-                const typename Base::X_coordinate_1& x, 
-                const typename Base::Curve_2& c, int arcno,
-                const Arc_2& arc) {
-            CGAL_assertion(c.id() == arc.curve().id());
-            CGAL_assertion(arcno = arc.arcno());
-            Self pt;//TODO (Xy_coordinate_2(x, c, arcno)); // TODO use surface
-            // here we can modify the point, if we want to
-            return pt;
-        }
-    };
-};
 
 // pre-declaration
 template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3, class Rep_ >
