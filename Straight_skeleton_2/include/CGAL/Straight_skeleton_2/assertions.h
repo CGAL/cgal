@@ -26,7 +26,7 @@
 #  define CGAL_stskel_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_stskel_expensive_postcondition_code(CODE)
 #else
-#  define CGAL_stskel_expensive_postcondition(EX)         ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+#  define CGAL_stskel_expensive_postcondition(EX)         ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_stskel_expensive_postcondition_msg(EX,MSG) ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_stskel_expensive_postcondition_code(CODE)  CODE
 #endif 

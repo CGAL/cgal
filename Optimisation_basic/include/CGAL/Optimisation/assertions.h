@@ -37,7 +37,7 @@
 #  undef   CGAL_OPTIMISATION_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_assertion_code(CODE) CODE
@@ -54,7 +54,7 @@
 #  undef   CGAL_OPTIMISATION_EXACTNESS_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_exactness_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_exactness_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_exactness_assertion_code(CODE) CODE
@@ -71,7 +71,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_expensive_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_assertion_code(CODE) CODE
@@ -92,7 +92,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_ASSERTION_TAG
 #else
 #  define  CGAL_optimisation_expensive_exactness_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_exactness_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_exactness_assertion_code(CODE) CODE
@@ -111,7 +111,7 @@
 #  undef   CGAL_OPTIMISATION_PRECONDITION_TAG
 #else
 #  define  CGAL_optimisation_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_precondition_code(CODE) CODE
@@ -128,7 +128,7 @@
 #  undef   CGAL_OPTIMISATION_EXACTNESS_PRECONDITION_TAG
 #else
 #  define  CGAL_optimisation_exactness_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_exactness_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_exactness_precondition_code(CODE) CODE
@@ -145,7 +145,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 #else
 #  define  CGAL_optimisation_expensive_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_precondition_code(CODE) CODE
@@ -166,7 +166,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_PRECONDITION_TAG
 #else
 #  define  CGAL_optimisation_expensive_exactness_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_exactness_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_exactness_precondition_code(CODE) CODE
@@ -185,7 +185,7 @@
 #  undef   CGAL_OPTIMISATION_POSTCONDITION_TAG
 #else
 #  define  CGAL_optimisation_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_postcondition_code(CODE) CODE
@@ -202,7 +202,7 @@
 #  undef   CGAL_OPTIMISATION_EXACTNESS_POSTCONDITION_TAG
 #else
 #  define  CGAL_optimisation_exactness_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_exactness_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_exactness_postcondition_code(CODE) CODE
@@ -219,7 +219,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_POSTCONDITION_TAG
 #else
 #  define  CGAL_optimisation_expensive_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_postcondition_code(CODE) CODE
@@ -240,7 +240,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_POSTCONDITION_TAG
 #else
 #  define  CGAL_optimisation_expensive_exactness_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_exactness_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_exactness_postcondition_code(CODE) CODE
@@ -259,7 +259,7 @@
 #  undef   CGAL_OPTIMISATION_WARNING_TAG
 #else
 #  define  CGAL_optimisation_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_warning_code(CODE) CODE
@@ -276,7 +276,7 @@
 #  undef   CGAL_OPTIMISATION_EXACTNESS_WARNING_TAG
 #else
 #  define  CGAL_optimisation_exactness_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_exactness_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_exactness_warning_code(CODE) CODE
@@ -293,7 +293,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_WARNING_TAG
 #else
 #  define  CGAL_optimisation_expensive_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_warning_code(CODE) CODE
@@ -314,7 +314,7 @@
 #  undef   CGAL_OPTIMISATION_EXPENSIVE_EXACTNESS_WARNING_TAG
 #else
 #  define  CGAL_optimisation_expensive_exactness_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_optimisation_expensive_exactness_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_optimisation_expensive_exactness_warning_code(CODE) CODE

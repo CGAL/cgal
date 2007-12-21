@@ -37,7 +37,7 @@
 #  define  CGAL_qpe_assertion_code(CODE)
 #else
 #  define  CGAL_qpe_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_assertion_code(CODE) CODE
@@ -52,7 +52,7 @@
 #  define  CGAL_qpe_exactness_assertion_code(CODE)
 #else
 #  define  CGAL_qpe_exactness_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_exactness_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_exactness_assertion_code(CODE) CODE
@@ -67,7 +67,7 @@
 #  define  CGAL_qpe_expensive_assertion_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_assertion_code(CODE) CODE
@@ -86,7 +86,7 @@
 #  define  CGAL_qpe_expensive_exactness_assertion_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_exactness_assertion(EX) \
-     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_exactness_assertion_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::assertion_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_exactness_assertion_code(CODE) CODE
@@ -103,7 +103,7 @@
 #  define  CGAL_qpe_precondition_code(CODE)
 #else
 #  define  CGAL_qpe_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_precondition_code(CODE) CODE
@@ -118,7 +118,7 @@
 #  define  CGAL_qpe_exactness_precondition_code(CODE)
 #else
 #  define  CGAL_qpe_exactness_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_exactness_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_exactness_precondition_code(CODE) CODE
@@ -133,7 +133,7 @@
 #  define  CGAL_qpe_expensive_precondition_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_precondition_code(CODE) CODE
@@ -152,7 +152,7 @@
 #  define  CGAL_qpe_expensive_exactness_precondition_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_exactness_precondition(EX) \
-     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_exactness_precondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::precondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_exactness_precondition_code(CODE) CODE
@@ -169,7 +169,7 @@
 #  define  CGAL_qpe_postcondition_code(CODE)
 #else
 #  define  CGAL_qpe_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_postcondition_code(CODE) CODE
@@ -184,7 +184,7 @@
 #  define  CGAL_qpe_exactness_postcondition_code(CODE)
 #else
 #  define  CGAL_qpe_exactness_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_exactness_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_exactness_postcondition_code(CODE) CODE
@@ -199,7 +199,7 @@
 #  define  CGAL_qpe_expensive_postcondition_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_postcondition_code(CODE) CODE
@@ -218,7 +218,7 @@
 #  define  CGAL_qpe_expensive_exactness_postcondition_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_exactness_postcondition(EX) \
-     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_exactness_postcondition_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::postcondition_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_exactness_postcondition_code(CODE) CODE
@@ -235,7 +235,7 @@
 #  define  CGAL_qpe_warning_code(CODE)
 #else
 #  define  CGAL_qpe_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_warning_code(CODE) CODE
@@ -250,7 +250,7 @@
 #  define  CGAL_qpe_exactness_warning_code(CODE)
 #else
 #  define  CGAL_qpe_exactness_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_exactness_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_exactness_warning_code(CODE) CODE
@@ -265,7 +265,7 @@
 #  define  CGAL_qpe_expensive_warning_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_warning_code(CODE) CODE
@@ -284,7 +284,7 @@
 #  define  CGAL_qpe_expensive_exactness_warning_code(CODE)
 #else
 #  define  CGAL_qpe_expensive_exactness_warning(EX) \
-     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,0))
+     ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__))
 #  define  CGAL_qpe_expensive_exactness_warning_msg(EX,MSG) \
      ((EX)?((void)0): ::CGAL::warning_fail( # EX ,__FILE__,__LINE__,MSG))
 #  define  CGAL_qpe_expensive_exactness_warning_code(CODE) CODE

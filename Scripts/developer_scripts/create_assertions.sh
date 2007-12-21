@@ -63,7 +63,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_assertion_code(CODE)
 #else
 #  define CGAL_xxx_assertion(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_assertion_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_assertion_code(CODE) CODE
@@ -78,7 +78,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_exactness_assertion_code(CODE)
 #else
 #  define CGAL_xxx_exactness_assertion(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_exactness_assertion_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_exactness_assertion_code(CODE) CODE
@@ -94,7 +94,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_assertion_code(CODE)
 #else
 #  define CGAL_xxx_expensive_assertion(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_assertion_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_assertion_code(CODE) CODE
@@ -110,7 +110,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_exactness_assertion_code(CODE)
 #else
 #  define CGAL_xxx_expensive_exactness_assertion(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_exactness_assertion_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_exactness_assertion_code(CODE) CODE
@@ -128,7 +128,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_precondition_code(CODE)
 #else
 #  define CGAL_xxx_precondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_precondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_precondition_code(CODE) CODE
@@ -143,7 +143,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_exactness_precondition_code(CODE)
 #else
 #  define CGAL_xxx_exactness_precondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_exactness_precondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_exactness_precondition_code(CODE) CODE
@@ -158,7 +158,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_precondition_code(CODE)
 #else
 #  define CGAL_xxx_expensive_precondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_precondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_precondition_code(CODE) CODE
@@ -174,7 +174,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_exactness_precondition_code(CODE)
 #else
 #  define CGAL_xxx_expensive_exactness_precondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_exactness_precondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_exactness_precondition_code(CODE) CODE
@@ -192,7 +192,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_postcondition_code(CODE)
 #else
 #  define CGAL_xxx_postcondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_postcondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_postcondition_code(CODE) CODE
@@ -207,7 +207,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_xxx_exactness_postcondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_exactness_postcondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_exactness_postcondition_code(CODE) CODE
@@ -222,7 +222,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_postcondition_code(CODE)
 #else
 #  define CGAL_xxx_expensive_postcondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_postcondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_postcondition_code(CODE) CODE
@@ -238,7 +238,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_xxx_expensive_exactness_postcondition(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_exactness_postcondition_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_exactness_postcondition_code(CODE) CODE
@@ -256,7 +256,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_warning_code(CODE)
 #else
 #  define CGAL_xxx_warning(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_warning_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_warning_code(CODE) CODE
@@ -271,7 +271,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_exactness_warning_code(CODE)
 #else
 #  define CGAL_xxx_exactness_warning(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_exactness_warning_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_exactness_warning_code(CODE) CODE
@@ -286,7 +286,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_warning_code(CODE)
 #else
 #  define CGAL_xxx_expensive_warning(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_warning_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_warning_code(CODE) CODE
@@ -302,7 +302,7 @@ sed -e "s/XXX_/${nameUC}/g" -e "s/xxx_/${nameLC}/g" <<"EOF" \
 #  define CGAL_xxx_expensive_exactness_warning_code(CODE)
 #else
 #  define CGAL_xxx_expensive_exactness_warning(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_xxx_expensive_exactness_warning_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_xxx_expensive_exactness_warning_code(CODE) CODE

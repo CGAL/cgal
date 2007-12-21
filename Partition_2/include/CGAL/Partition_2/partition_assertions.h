@@ -32,7 +32,7 @@
 #  define CGAL_partition_assertion_code(CODE)
 #else
 #  define CGAL_partition_assertion(EX) \
-   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_assertion_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_assertion_code(CODE) CODE
@@ -46,7 +46,7 @@
 #  define CGAL_partition_exactness_assertion_code(CODE)
 #else
 #  define CGAL_partition_exactness_assertion(EX) \
-   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_exactness_assertion_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_exactness_assertion_code(CODE) CODE
@@ -61,7 +61,7 @@
 #  define CGAL_partition_expensive_assertion_code(CODE)
 #else
 #  define CGAL_partition_expensive_assertion(EX) \
-   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_assertion_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_assertion_code(CODE) CODE
@@ -76,7 +76,7 @@
 #  define CGAL_partition_expensive_exactness_assertion_code(CODE)
 #else
 #  define CGAL_partition_expensive_exactness_assertion(EX) \
-   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_exactness_assertion_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_exactness_assertion_code(CODE) CODE
@@ -93,7 +93,7 @@
 #  define CGAL_partition_precondition_code(CODE)
 #else
 #  define CGAL_partition_precondition(EX) \
-   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_precondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_precondition_code(CODE) CODE
@@ -107,7 +107,7 @@
 #  define CGAL_partition_exactness_precondition_code(CODE)
 #else
 #  define CGAL_partition_exactness_precondition(EX) \
-   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_exactness_precondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_exactness_precondition_code(CODE) CODE
@@ -121,7 +121,7 @@
 #  define CGAL_partition_expensive_precondition_code(CODE)
 #else
 #  define CGAL_partition_expensive_precondition(EX) \
-   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_precondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_precondition_code(CODE) CODE
@@ -136,7 +136,7 @@
 #  define CGAL_partition_expensive_exactness_precondition_code(CODE)
 #else
 #  define CGAL_partition_expensive_exactness_precondition(EX) \
-   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_exactness_precondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_exactness_precondition_code(CODE) CODE
@@ -153,7 +153,7 @@
 #  define CGAL_partition_postcondition_code(CODE)
 #else
 #  define CGAL_partition_postcondition(EX) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_postcondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_postcondition_code(CODE) CODE
@@ -167,7 +167,7 @@
 #  define CGAL_partition_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_partition_exactness_postcondition(EX) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_exactness_postcondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_exactness_postcondition_code(CODE) CODE
@@ -181,7 +181,7 @@
 #  define CGAL_partition_expensive_postcondition_code(CODE)
 #else
 #  define CGAL_partition_expensive_postcondition(EX) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_postcondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_postcondition_code(CODE) CODE
@@ -196,7 +196,7 @@
 #  define CGAL_partition_expensive_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_partition_expensive_exactness_postcondition(EX) \
-   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_exactness_postcondition_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_exactness_postcondition_code(CODE) CODE
@@ -213,7 +213,7 @@
 #  define CGAL_partition_warning_code(CODE)
 #else
 #  define CGAL_partition_warning(EX) \
-   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_warning_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_warning_code(CODE) CODE
@@ -227,7 +227,7 @@
 #  define CGAL_partition_exactness_warning_code(CODE)
 #else
 #  define CGAL_partition_exactness_warning(EX) \
-   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_exactness_warning_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_exactness_warning_code(CODE) CODE
@@ -241,7 +241,7 @@
 #  define CGAL_partition_expensive_warning_code(CODE)
 #else
 #  define CGAL_partition_expensive_warning(EX) \
-   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_warning_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_warning_code(CODE) CODE
@@ -256,7 +256,7 @@
 #  define CGAL_partition_expensive_exactness_warning_code(CODE)
 #else
 #  define CGAL_partition_expensive_exactness_warning(EX) \
-   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, 0))
+   ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_partition_expensive_exactness_warning_msg(EX,MSG) \
    ((EX)?((void)0): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_partition_expensive_exactness_warning_code(CODE) CODE
