@@ -50,9 +50,22 @@ public:
     //! the instance itself
     typedef 
     Surface_point_2l_rep< Curved_kernel_via_analysis_2l, Surface_pair_3 > Self;
-    
-    typedef typename Surface_pair_3::Surface_3 Surface_3;
 
+    //! type of base class
+    typedef Point_2_rep< Curved_kernel_via_analysis_2l > Base;
+    
+    //! type of surface
+    typedef typename Surface_pair_3::Surface_3 Surface_3;
+    
+    //!\name Constructors
+    //!@{
+
+    //! default constructor
+    Surface_point_2l_rep() :
+        Base(), _m_sheet(-1) {
+    }
+    
+    //!@}
 public:
     //! supporting surface
     mutable Surface_3 _m_surface;
