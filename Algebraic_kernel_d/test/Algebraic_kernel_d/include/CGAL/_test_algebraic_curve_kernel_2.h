@@ -39,12 +39,17 @@ static const char *ACK_2_ascii_polys[] = {
     
     "P[1(0,P[1(1,1)])(1,P[0(0,-1)])]", // (x-y) // 5
     
-    "P[2(0,P[2(2,1)])(2,P[0(0,-1)])]" // x^2-y^2 // 6
+    "P[2(0,P[2(2,1)])(2,P[0(0,-1)])]", // x^2-y^2 // 6
+
+    "P[1(0,P[2(2,1)])(1,P[0(0,1)])]", // x^2+y // 7 
+
+    "P[2(0,P[2(0,1)(2,2)])(2,P[0(0,-1)])]" // 2x^2-y^2+1 // 8
+
 };
 
 
 
-static const int ACK_2_n_polys = 7;
+static const int ACK_2_n_polys = 9;
 
 template< class AlgebraicCurveKernel_2  >
 void test_algebraic_curve_kernel_2() {
@@ -101,6 +106,29 @@ void test_algebraic_curve_kernel_2() {
     Status_line_1 line1, line2;
     Xy_coordinate_2 xy1, xy2, xy3, xy4;
 
+    ///////////// testing sign_at_2 for non-coprime case /////////////
+    {    
+        Curve_2 c7_c6 = kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
+        Curve_analysis_2 ca_c6(c6);
+        CGAL_test_assert(ca_c6.number_of_status_lines_with_event() > 0);
+        Status_line_1 line = ca_c6.status_line_at_event(0);
+        CGAL_test_assert(line.number_of_events() > 0);
+        Xy_coordinate_2 xy = line.algebraic_real_2(0);
+        CGAL_test_assert(kernel_2.sign_at_2_object()(c7_c6,xy) == CGAL::ZERO);
+    }
+    {    
+        Curve_2 c7_c6 = kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
+        Curve_2 c8_c6 = kernel_2.construct_curve_2_object()(polys[8]*polys[6]);
+        Curve_analysis_2 ca_c7c6(c7_c6);
+        CGAL_test_assert(ca_c7c6.number_of_status_lines_with_event() > 0);
+        Status_line_1 line = ca_c7c6.status_line_at_event(0);
+        CGAL_test_assert(line.number_of_events() > 0);
+        Xy_coordinate_2 xy = line.algebraic_real_2(0);
+        CGAL_test_assert(kernel_2.sign_at_2_object()(c8_c6,xy) == CGAL::ZERO);
+    }
+    
+
+
     ///////// testing comparison predicates //////////
     
     line1 = ca0.status_line_of_interval(0);
@@ -111,6 +139,7 @@ void test_algebraic_curve_kernel_2() {
 
     CGAL_test_assert(kernel_2.compare_x_2_object()(xy1, xy2) == CGAL::SMALLER);
     CGAL_test_assert(kernel_2.compare_x_2_object()(xy2, xy3) == CGAL::EQUAL);
+
     CGAL_test_assert(kernel_2.compare_xy_2_object()(xy1, xy2) ==
         CGAL::SMALLER);
     CGAL_test_assert(kernel_2.compare_xy_2_object()(xy2, xy3) ==
@@ -118,15 +147,20 @@ void test_algebraic_curve_kernel_2() {
 
     Curve_analysis_2 ca2(c2), ca3(c3);
     xy1 = ca2.status_line_at_event(0).algebraic_real_2(0);
-
     line2 = ca3.status_line_at_event(0);
     xy2 = line2.algebraic_real_2(2);
     xy3 = line2.algebraic_real_2(3);
     xy4 = line2.algebraic_real_2(4);
 
+    std::cerr << "y_comp 1" << std::flush;
     CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy2) == CGAL::LARGER);
+    std::cerr << " 2" << std::flush;
     CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy3) == CGAL::SMALLER);
+    std::cerr << " 3" << std::flush;
     CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy4) == CGAL::SMALLER);
+    std::cerr << " 4" << std::flush;
+    CGAL_test_assert(kernel_2.compare_y_2_object()(xy2, xy3) == CGAL::SMALLER);
+    std::cerr << " done" << std::endl;
 
     /////// testing squarefreeness and coprimality /////////
      
@@ -243,7 +277,7 @@ void test_algebraic_curve_kernel_2() {
     int n_lines = ca0.number_of_status_lines_with_event(), ii, jj,
         n_events;
     for(ii = 0; ii < n_lines; ii++) {
-
+        
         line = ca0.status_line_at_event(ii);
         n_events = line.number_of_events();
         std::cout << ii << "pts at event: \n";
@@ -262,7 +296,8 @@ void test_algebraic_curve_kernel_2() {
                 kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
         }
     }
-
+    
+    
     ///////////// testing solve_2 /////////////
 
     points.clear();
@@ -274,6 +309,9 @@ void test_algebraic_curve_kernel_2() {
             xyit++, iit++) {
         //std::cerr << "pt: " << *xyit << "; mult: " << *iit << "\n";
     }
+
+    
+
 }
 
 } //namespace CGALi
