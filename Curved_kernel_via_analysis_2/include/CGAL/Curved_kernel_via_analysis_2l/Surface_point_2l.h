@@ -93,6 +93,9 @@ class Surface_point_2l :
 {
 public:
 
+    //!\name Public types
+    //!@{
+
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
     
@@ -116,6 +119,8 @@ public:
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
 
+    //!@}
+
 public:
 
     //!\name Constructors
@@ -128,7 +133,13 @@ public:
         Base() {   
     }
 
-
+    /*!\brief
+     * constructs from a given represenation
+     */
+    Surface_point_2l(Rep rep) :
+        Base(rep) {
+    }
+    
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
     Surface_point_2l(const Point_2& pt, const Surface_3& surface, int sheet) :
@@ -138,13 +149,6 @@ public:
         this->ptr()->_m_sheet = sheet;
     }
 
-    /*!\brief
-     * constructs from a given represenation
-     */
-    Surface_point_2l(Rep rep) :
-        Base(rep) {
-    }
-    
     //!\brief Functor to construct point on an arc
     //! \c x on curve \c c with arc number \c arcno
     //!
