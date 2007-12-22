@@ -1249,7 +1249,7 @@ public:
     //! (of type \c Arc_2_base ); if no overlapping parts found - 
     //! returns \c false
     template < class OutputIterator >
-    bool trim_if_overlapped(const Arc_2_base& cv2, OutputIterator oi) const {
+    bool trim_if_overlapped(const Arc_2& cv2, OutputIterator oi) const {
                
         CERR("\ntrim_if_overlapped: this: " << *this << "; and " 
              << cv2 << "\n");
