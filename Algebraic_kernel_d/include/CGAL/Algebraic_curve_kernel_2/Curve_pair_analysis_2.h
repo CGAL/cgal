@@ -59,7 +59,7 @@ public:
     Curve_pair_analysis_2_rep(const Curve_analysis_2& ca1,
         const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2) {
         
-        _m_curve_pair = Algebraic_curve_kernel_2::get_curve_pair_cache()
+        _m_curve_pair = Algebraic_curve_kernel_2::curve_pair_cache()
             (std::make_pair(ca1.polynomial_2(), ca2.polynomial_2()));
             
         //! attention: is it enough to compare ids only ? or for safety
