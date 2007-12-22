@@ -203,8 +203,6 @@ private:
          }
     };
 
-    //typedef CGAL::Pair_lexicographical_less_than<Internal_polynomial_2,
-      //  Internal_polynomial_2> Poly_pair_compare;
     
     //! type of curve cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2, Curve_2,
@@ -216,20 +214,63 @@ private:
         Curve_pair_canonicalizer, 
         CGALi::Curve_pair_hasher_2<Curve_2>, 
         Curve_pair_creator, Curve_pair_equal_to> Curve_pair_cache;
+
+    typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
+        Pair_of_internal_polynomial_2;
+
+    template<typename T> class Gcd {
+    public:
+
+        T operator() (std::pair<T,T> pair) {
+            return NiX::gcd(pair.first,pair.second);
+        }
+    } ;     
+
+
+    template<typename T> class Pair_cannonicalize {
+    public:
+        std::pair<T,T> operator() (std::pair<T,T> pair) {
+            if(pair.first > pair.second) {
+                return std::make_pair(pair.second,pair.first);
+            }
+            else {
+                return pair;
+            }
+        }
+    };
+
+    typedef CGAL::Pair_lexicographical_less_than
+    <Internal_polynomial_2,
+     Internal_polynomial_2,
+     std::less<Internal_polynomial_2>,
+     std::less<Internal_polynomial_2> > Internal_polynomial_2_compare;
+    
+    typedef CGAL::Cache<Pair_of_internal_polynomial_2,
+                        Internal_polynomial_2,
+                        Gcd<Internal_polynomial_2>,
+                        Pair_cannonicalize<Internal_polynomial_2>,
+                        Internal_polynomial_2_compare> Gcd_cache_2;
+
+    static Gcd_cache_2& gcd_cache_2() {
+        static Gcd_cache_2 cache;
+        return cache;
+    }
+
+
       
     //!@}
 public:
     //!\name cache access functions
     //!@{
     //! access to the static curve cache
-    static Curve_cache& get_curve_cache() 
+    static Curve_cache& curve_cache() 
     {
         static Curve_cache _m_curve_cache;
         return _m_curve_cache;
     }
     
     //! access to the static curve pair cache
-    static Curve_pair_cache& get_curve_pair_cache() 
+    static Curve_pair_cache& curve_pair_cache() 
     {
         static Curve_pair_cache _m_curve_pair_cache;
         return _m_curve_pair_cache;
@@ -261,13 +302,13 @@ public:
             
         Curve_2 operator()(const Internal_polynomial_2& f) const
         {
-            return Self::get_curve_cache()(f);
+            return Self::curve_cache()(f);
             //return Curve_2(f);
         }
         Curve_2 operator()(const Polynomial_2_CGAL& f) const
         {
             CGAL2NiX_converter cvt;
-            return Self::get_curve_cache()(cvt(f));
+            return Self::curve_cache()(cvt(f));
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
@@ -858,7 +899,8 @@ public:
 
         bool _test_exact_zero(const Polynomial_2& p,
             const Xy_coordinate_2& r) const {
-
+            
+            
             typedef typename Self::Curve_analysis_2 Curve_analysis_2;
             typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
             
@@ -869,7 +911,27 @@ public:
             if(cv_line.covers_line())    
                 return true;
 
-            Curve_pair_analysis_2 cpa_2(ca_2, Curve_analysis_2(r.curve()));
+            // Handle non-coprime polynomial
+            Internal_polynomial_2 gcd = Self::gcd_cache_2()
+                (std::make_pair(p.f(), r.curve().f()));
+            
+            Curve_2 gcd_curve = typename Self::Construct_curve_2()(gcd);
+
+            if(NiX::total_degree(gcd)>0) {
+                
+                Curve_2 r_curve_remainder = typename Self::Construct_curve_2()
+                    (NiX::div_utcf(r.curve().f(), gcd));
+                r.simplify_by( Curve_pair_analysis_2
+                               (Curve_analysis_2(gcd_curve),
+                                Curve_analysis_2(r_curve_remainder) ));
+                if(r.curve().f() == gcd) {
+                    return true;
+                }
+            }
+
+            Curve_pair_analysis_2 cpa_2(ca_2, 
+                                        Curve_analysis_2(r.curve()));
+            
             typename Curve_pair_analysis_2::Status_line_1
                 cpv_line = cpa_2.status_line_for_x(r.x());
             
