@@ -76,7 +76,7 @@ public:
     typedef CGALi::Surface_point_2l< Self, Surface_pair_3 > Point_2; 
 
     //! type of an arc on generic curve
-    typedef CGALi::Arc_2< Self > Arc_2; 
+    typedef CGALi::Surface_arc_2l< Self, Surface_pair_3 > Arc_2; 
 
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
