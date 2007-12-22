@@ -40,7 +40,7 @@ template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
 class Surface_arc_2l_rep : 
         public Arc_2_base_rep< CurvedKernelViaAnalysis_2l > {
 
-protected:
+public:
 
     //! this type's template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
@@ -106,7 +106,8 @@ template <
 class Surface_arc_2l :
     public CGALi::Arc_2_base< 
         CurvedKernelViaAnalysis_2l, 
-        Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >, 
+        //Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >, 
+        typename CurvedKernelViaAnalysis_2l::Arc_2,
         Rep_ 
     > 
 {
@@ -131,7 +132,7 @@ public:
     Self;
     
     //! the base class
-    typedef CGALi::Arc_2_base< Curved_kernel_via_analysis_2l, Self, Rep > 
+    typedef CGALi::Arc_2_base< Curved_kernel_via_analysis_2l, typename Curved_kernel_via_analysis_2l::Arc_2, Rep > 
     Base;
     
     //! type of planar point
