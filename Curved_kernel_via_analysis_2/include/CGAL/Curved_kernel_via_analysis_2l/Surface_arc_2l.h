@@ -75,6 +75,8 @@ protected:
     //! supporting surface
     mutable Surface_3 _m_surface;
 
+    // TODO add Surface_point_2l _m_min, _m_max;
+    
     //! sheet number of arc
     mutable int _m_sheet;
 
@@ -163,13 +165,15 @@ public:
     Surface_arc_2l(Rep rep) : 
         Base(rep) { 
     }
-
+    
     /*!\brief
-     * Standard constructor for an arc on xy-monotone parts of the surface.
-     * It represents the arc on \c surface covertical to \c xy which
+     * Standard constructor for an bounded arc on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre    
+     * \pre arc.curve_end(MIN) = p
+     * \pre arc.curve_end(MAX) = q
      */
     Surface_arc_2l(const Arc_2& arc, 
                    const Surface_point_2l& p,
@@ -177,6 +181,7 @@ public:
                    const Surface_3 surface,
                    int sheet, int sheet_p, int sheet_q) :
         Base(arc) 
+        // TODO rebind, i.e., replace p and q in "arc"
     {
         CGAL_precondition(
                 arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR
@@ -197,9 +202,10 @@ public:
         this->ptr()->_m_surface = surface;
         CGAL_precondition(sheet >= 0);
         // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        this->ptr()->_m_sheet = sheet;
+
         // TODO add precond CGAL_precondition(sheet < #sheets over min);
         // TODO add precond CGAL_precondition(sheet < #sheets over max);
-        this->ptr()->_m_sheet = sheet;
         CGAL_precondition_code(
                 // TODO add sanity checks for sheet_at_min/max wrt to sheet
                 // use "adjacency information"
@@ -207,6 +213,96 @@ public:
         this->ptr()->_m_sheet_min = sheet_p;
         this->ptr()->_m_sheet_max = sheet_q;
     }
+
+    /*!\brief
+     * Standard constructor for a ray on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Surface_arc_2l(const Arc_2& arc, 
+                   const Surface_point_2l& p,
+                   const Surface_3 surface,
+                   int sheet, int sheet_p) :
+        // TODO rebind, i.e., replace p
+        Base(arc) 
+    {
+        bool min_finite = 
+            (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
+        CGAL_precondition_code(
+                bool max_finite = 
+                (arc.curve_end(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR);
+        );
+        CGAL_precondition(min_finite || max_finite && 
+                          !(!min_finite && !max_finite));
+        
+        CGAL_precondition_code(
+                if (min_finite) {
+                    CGAL_precondition(
+                            p.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
+                            CGAL::EQUAL
+                    );
+                } else {
+                    CGAL_precondition(
+                            p.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
+                            CGAL::EQUAL
+                    );
+                }
+        );
+        
+        //this->ptr()->_projected_segment = seg;
+        this->ptr()->_m_surface = surface;
+        CGAL_precondition(sheet >= 0);
+        // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        this->ptr()->_m_sheet = sheet;
+
+        // TODO add precond CGAL_precondition(sheet < #sheets over min/ax);
+        CGAL_precondition_code(
+                // TODO add sanity checks for sheet_at_min/max wrt to sheet
+                // use "adjacency information"
+        );
+        if (min_finite) {
+            this->ptr()->_m_sheet_min = sheet_p;
+            this->ptr()->_m_sheet_max = sheet;
+        } else {
+            this->ptr()->_m_sheet_min = sheet;
+            this->ptr()->_m_sheet_max = sheet_p;
+        }
+    }
+    
+
+    /*!\brief
+     * Standard constructor for a branch on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Surface_arc_2l(const Arc_2& arc, 
+                   const Surface_3 surface,
+                   int sheet) :
+        // TODO rebind?
+        Base(arc) 
+    {
+        bool min_finite = 
+            (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
+        bool max_finite = 
+            (arc.curve_end(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR);
+        CGAL_precondition(!min_finite && !max_finite);
+        
+        //this->ptr()->_projected_segment = seg;
+        this->ptr()->_m_surface = surface;
+        CGAL_precondition(sheet >= 0);
+        // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        this->ptr()->_m_sheet = sheet;
+        this->ptr()->_m_sheet_min = sheet;
+        this->ptr()->_m_sheet_max = sheet;
+    }
+    
+    // constructors for vertical arcs
     
     //! represents a bounded vertical arc
     Surface_arc_2l(const Surface_point_2l& p,
@@ -256,7 +352,62 @@ public:
 
     // TODO missing constructors for arcs whose projection is a bounded arc
     // but whose ends (at least one or both) approach a z-vertical asympote
+
+    
+    // TODO 
+    // access to curve_end(CGAL::Arr_curve_end);
+
+    //!\name Access functions
+    //!@{
+
+#if 0 // TODO remove?
+    /*!\brief
+     * returns projected point
+     */
+    Projected_segment_2 get_projected_segment() const {
+        return this->ptr()->_projected_segment;
+    }
+#endif
+
+    /*\brief
+     * returns the supporting surfaces of 3d-segment
+     */
+    Surface_3 surface() const {
+        return this->ptr()->_m_surface;
+    }
+
+    /*!\brief
+     * returns the sheet of the 3d-segment
+     *
+     * \pre !is_z_vertical()
+     */
+    int sheet() const {
+        CGAL_precondition(!is_z_vertical());
+        return this->ptr()->_m_sheet;
+    }
+
+    /*!\brief
+     * returns the sheet of the 3d-segment at min or max end
+     *
+     * \pre !is_z_vertical()
+     */
+    int sheet(CGAL::Arr_curve_end end) const {
+        CGAL_precondition(!is_z_vertical());
+        return (end == CGAL::ARR_MIN_END ? this->ptr()->_m_sheet_min :
+                this->ptr()->_m_sheet_max);
+    }
+    
+    /*!\brief
+     * return whether arc is z-vertical
+     */
+    bool is_z_vertical() const {
+        return this->ptr()->_m_z_vertical;
+    }
+
+    //!@}
+
 };    
+
 
 
 
