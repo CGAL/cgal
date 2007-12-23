@@ -212,6 +212,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   //END LOCATION 
   int pls_num = NUM_OF_POINT_LOCATION_STRATEGIES;
   int pl_index;
+  int result = 0;
 
   //init all obejct iterators
   for (pl_index=0; pl_index<pls_num; pl_index++)
@@ -221,7 +222,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
    
   //get size of objects
   unsigned int size = objs[0].size();
-//  std::cout <<"size is "<< size << std::endl;
+  //std::cout <<"size is "<< size << std::endl;
 
   for (pl_index=0; pl_index<pls_num; pl_index++)
   {
@@ -229,7 +230,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     {
       std::cout << "Error: size of pl number "<<pl_index<<" is "
         <<objs[pl_index].size()<< std::endl;
-      return (-1);
+      result = -1;
     }
   }
 
@@ -244,15 +245,26 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
       {
         if (! CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
         {
-          std::cout << "Error in point location number " 
-            << pl_index << " did no return a face"<< std::endl;
-          //return (-1);
+          std::cout << "Error in point location number " << pl_index;
+          if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", an halfedge returned instead of a face"<< std::endl;
+          }
+          else if (CGAL::assign(hh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", a vertex returned instead of a face"<< std::endl;
+          }
+          else
+          {
+            std::cout << ", an unknowen object returned instead of a face"<< std::endl;
+          }
+          result = -1;
         }
         else if (fh_curr != fh_ref)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different face"<< std::endl;
-          //return (-1);         
+          result = -1;         
         }
       }  
       //if (fh_ref->is_unbounded())
@@ -264,21 +276,32 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
     //assign object to a halfedge
     else if (CGAL::assign (hh_ref, ob_iter[0][qi]))
     {
-      //std::cout << "Halfedge: "<< hh_ref->curve() << std::endl;
+      std::cout << "Halfedge: "<< hh_ref->curve() << std::endl;
       for (int pl_index=1; pl_index<pls_num; pl_index++)
       {
         if (! CGAL::assign(hh_curr, ob_iter[pl_index][qi]))
         {
-          std::cout << "Error in point location number " 
-            << pl_index << " did no return halfedge"<< std::endl;
-          //return (-1);
+          std::cout << "Error in point location number " << pl_index;
+          if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", a face returned instead of an halfedge"<< std::endl;
+          }
+          else if (CGAL::assign(hh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", a vertex returned instead of an halfedge"<< std::endl;
+          }
+          else
+          {
+            std::cout << ", an unknowen object returned instead of an halfedge"<< std::endl;
+          }
+          result = -1;
         }
         else if ((hh_curr != hh_ref) && (hh_curr->twin() != hh_ref))
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different halfedge"<< std::endl;
-          //std::cout << "Halfedge (curr): "<< hh_curr->curve() << std::endl;
-          //return (-1);         
+          std::cout << "Halfedge (curr): "<< hh_curr->curve() << std::endl;
+          result = -1;         
         }
       }      
     }
@@ -290,28 +313,38 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
       {
         if (! CGAL::assign(vh_curr, ob_iter[pl_index][qi]))
         {
-          std::cout << "Error in point location number " 
-            << pl_index << " did no return a vertex"<< std::endl;
-          //return (-1);
+          std::cout << "Error in point location number " << pl_index;
+          if (CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", a face returned instead of a vertex"<< std::endl;
+          }
+          else if (CGAL::assign(hh_curr, ob_iter[pl_index][qi]))
+          {
+            std::cout << ", an halfedge returned instead of a vertex"<< std::endl;
+          }
+          else
+          {
+            std::cout << ", an unknown object returned instead of a vertex"<< std::endl;
+          }
+          result = -1;
         }
         else if (vh_curr != vh_ref)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different vertex"<< std::endl;
-          //return (-1);         
+          result = -1;         
         }
       }
-      //std::cout << "Vertex: "<< vh_ref->point() << std::endl;
+      std::cout << "Vertex: "<< vh_ref->point() << std::endl;
     }
    
     else
     {
       std::cout << "Illegal point-location result." << std::endl;    
-      //return (-1);
+      result = -1;
     }
   }
-  
-  return (0);
+  return (result);
 }
 
 /*! */
