@@ -60,7 +60,7 @@ double minimin = init_min_double();
 }
 #endif
 
-#ifdef _MSCVER
+#ifdef _MSC_VER
 namespace {
 int dummy_symbol_for_stopping_VC_linker_warning;
 } // namespace
