@@ -60,8 +60,10 @@ double minimin = init_min_double();
 }
 #endif
 
+#ifdef _MSCVER
 namespace {
 int dummy_symbol_for_stopping_VC_linker_warning;
 } // namespace
+#endif
 
 CGAL_END_NAMESPACE
