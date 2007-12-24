@@ -58,6 +58,10 @@ extern bool upper_env;
  */
 class Qt_widget_base_tab : public CGAL::Qt_widget
 {
+private:
+  //! Default color scheme ordering initialized in demo_tab.cpp 
+  static QColor s_color_order[];
+	
 public:
 
   /*!
@@ -65,6 +69,7 @@ public:
   Qt_widget_base_tab(TraitsType  t ,  QWidget *parent ,
                      int tab_number , QColor color ) :
     CGAL::Qt_widget( parent ),
+    change_background_flag(FALSE),    
     current_state(0),
     index(tab_number),
     snap_mode(SNAP_NONE),
@@ -77,8 +82,10 @@ public:
     bbox(CGAL::Bbox_2(-10, -10, 10, 10)),
     wasrepainted(true),
     on_first(false),
-    pm_color(color),
-    change_pm_color(false),
+    edge_color(color),
+    change_edge_color(FALSE),
+    vertex_color(color),
+    change_vertex_color(FALSE),
     snap(false),
     grid(false),
     conic_type(SEGMENT),
@@ -101,8 +108,11 @@ public:
   virtual ~Qt_widget_base_tab(){}
 
   /*! current_state - indecates when a tab state is changed */
-  int current_state;
+  bool change_background_flag;
 
+  /*! current_state - indecates when a tab state is changed */
+  int current_state;
+  
   /*! index - each tab has a uniqe index */
   int index;
 
@@ -139,11 +149,17 @@ public:
   bool    wasrepainted;
   bool    on_first;
 
-  /*! planar map color */
-  QColor pm_color;
+  /*! edge color */
+  QColor edge_color;
 
-  /*! flag to know that pm color has changed */
-  bool change_pm_color;
+  /*! flag to know that edge color has changed */
+  bool change_edge_color;
+
+  /*! vertices color */
+  QColor vertex_color;
+  
+  /*! flag to know that vertices color has changed */  
+  bool change_vertex_color;
 
   /*! snap flag */
   bool snap;
@@ -182,11 +198,6 @@ public:
    */
   QColor unbounded_face_color() { return this->backgroundColor(); }
 
-  /*! set the colo of the unbounded face (its the same as the background
-   * color of the tab)
-   */
-  void set_unbounded_face_color(QColor c) { this->setBackgroundColor(c); }
-
   /*! increment current_state to inidicate that something has changed
    */
   void something_changed(){ current_state++ ; }
@@ -194,6 +205,31 @@ public:
   virtual void change_strategy(Strategy /* s */){}
 
   virtual bool is_empty(){return true;}
+  
+  /*function that aids selecting a color that will be visible for drawing.
+   *par_color_order is an array of (at least 4) different colors sorted
+   *according to preferance. Default argument defined in demo_tab.cpp.
+   *bad_color is an optional color that we wish to avoid (usually the color of the
+   *face the point is in.
+   *Since 3 comparisons are done for each color order_color must have more than 3
+   *colors to guarrantee success*/
+  void setCorrectColor(QColor bad_color=Qt::black, 
+                       QColor *par_color_order = s_color_order,
+                       unsigned int order_size = 4)
+  {
+		unsigned int i=0;
+		while (i<order_size) {				
+		if ((unbounded_face_color() != par_color_order[i]) && 
+			(edge_color != par_color_order[i]) &&
+			(bad_color != par_color_order[i])) 
+			{
+				setColor(par_color_order[i]);
+				return;
+			}
+			++i;
+		}
+  		return;
+  }  
 };
 
 
@@ -338,11 +374,12 @@ public:
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
-    if ( mode == MODE_FILLFACE )
+    if ( (mode == MODE_FILLFACE)  && (!change_background_flag) 
+           && (!change_edge_color) && (!change_vertex_color) )
     {
       Point_2 temp_p (pl_point.x(), pl_point.y());
       CGAL::Object obj = locate(temp_p);
-
+      
       Face_const_handle f;
       if (CGAL::assign (f, obj))
       {
@@ -350,22 +387,27 @@ public:
         set_face_color(ncf, fill_face_color);
       }
     }
-
+    
     // draw all faces (fill them with their color)
     visit_faces(FillFace(this));
-
+    
+    //reset change_background,edge, and vertex flags to FALSE
+    //in order to allow future fill operations. 
+	 change_background_flag=FALSE;
+	 change_edge_color=FALSE;
+	 change_vertex_color=FALSE;	
     if (snap_mode == SNAP_GRID || grid)
       draw_grid();
 
     for (Edge_iterator ei = m_curves_arr->edges_begin();
          ei != m_curves_arr->edges_end(); ++ei)
     {
-      setColor(pm_color);
+      setColor(edge_color);
       m_tab_traits.draw_xcurve(this , ei->curve() );
     }
     // Go over all vertices and for each vertex check the
     // index numbers of the base curves that go through
-    // it and paint the point if they are different (beacuse ew want to
+    // it and paint the point if they are different (beacuse we want to
     // color red the intersection opints between two different planar maps
     // which are overlayed
     *this << CGAL::DISC;
@@ -375,10 +417,10 @@ public:
     for (vit = m_curves_arr->vertices_begin();
          vit != m_curves_arr->vertices_end(); vit++)
     {
-        // draw all vertexes of the planar map is 'draw_vertex' is true
+        // draw all vertexes of the planar map if 'draw_vertex' is true
         // draw_vertex is a flag that indicates if we draw the vertexes
 
-          setColor(pm_color);
+          setColor(vertex_color);
           Coord_point p(CGAL::to_double((*vit).point().x()) /
                         m_tab_traits.COORD_SCALE,
                         CGAL::to_double((*vit).point().y()) /
@@ -389,13 +431,18 @@ public:
     if (mode == MODE_POINT_LOCATION)
     {
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
-      setColor(Qt::yellow);
+
 
       Point_2 temp_p (pl_point.x(), pl_point.y());
       CGAL::Object obj = locate(temp_p);
 
       Face_const_handle f = get_face(obj);
-
+		
+		/* more prudent color selection that selects the drawing color
+		according to my_prefrance. replaced setColor(Qt::yellow)*/
+		QColor my_preferance[4]= {Qt::yellow,Qt::green,Qt::red,Qt::blue};		
+		setCorrectColor(f->color(),my_preferance, 4);		
+		
       if (!f->is_unbounded()) // its an inside face
       {
         Ccb_halfedge_const_circulator cc = f->outer_ccb();
@@ -432,6 +479,8 @@ public:
 
     if (mode == MODE_RAY_SHOOTING_UP)
     {
+		//relevant_face_color will keep the fill color of the face we pass through		
+		QColor relevant_face_color=unbounded_face_color();      
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE ,
@@ -443,6 +492,7 @@ public:
         if (CGAL::assign(ubf, obj))
         {
           CGAL_assertion(ubf->is_unbounded());
+			 //relevant_face_color = unbounded_face_color() as initialized          
           up = Coord_point(pl_draw.x() , y_max());
           static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, up);
         }
@@ -473,8 +523,10 @@ public:
             {
               up = pl_draw;
             }
-
-            setColor(Qt::red);
+				relevant_face_color = he->face()->color();				
+				/*choose color to mark the edge that differs from the current 
+				edge_color, the background, and the relevant face color*/				
+				setCorrectColor(relevant_face_color);				 
             m_tab_traits.draw_xcurve(this , he->curve() );
           }
           else
@@ -486,12 +538,22 @@ public:
                         m_tab_traits.COORD_SCALE,
                             CGAL::to_double(v->point().y()) /
                         m_tab_traits.COORD_SCALE);
-            setColor(Qt::red);
+            
+				//locate face that arrow will be drawn in, and retrieve its color 
+      		CGAL::Object obj1 = locate(temp_p);
+      		Face_const_handle f1 = get_face(obj1);
+      	   relevant_face_color=f1->color();
+            
+            /*choose color to mark the vertice so that it differs from the 
+            edge_color, the background, and the relevant_face_color*/				
+				setCorrectColor(relevant_face_color);				     
             static_cast<CGAL::Qt_widget&>(*this) << up;
           }
         }
 
-        setColor(Qt::yellow);
+        //select arrow color that differs from the color of the face it is in
+		  setCorrectColor(relevant_face_color);        
+        
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,up);
 
@@ -506,18 +568,22 @@ public:
     }
     if (mode == MODE_RAY_SHOOTING_DOWN)
     {
+		//relevant_face_color will keep the fill color of the face we pass through		
+		QColor relevant_face_color=unbounded_face_color();      
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
       Coord_point pl_draw(pl_point.x() / m_tab_traits.COORD_SCALE ,
                           pl_point.y() / m_tab_traits.COORD_SCALE);
-
       CGAL::Object    obj = ray_shoot_down (temp_p);
+      
+      
       if (!obj.is_empty())
       {
         Coord_point down;
         Face_const_handle ubf;
         if (CGAL::assign(ubf, obj))
         {
+			 //relevant_face_color = unbounded_face_color() as initialized           
           down = Coord_point(pl_draw.x() , y_min());
           static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw, down);
         }
@@ -548,7 +614,10 @@ public:
             {
               down = pl_draw;
             }
-            setColor(Qt::red);
+				relevant_face_color = he->face()->color();				
+				/*choose color to mark the edge that differs from the edge_color
+				the background, and the relevant face color*/				
+				setCorrectColor(relevant_face_color);
             m_tab_traits.draw_xcurve(this , he->curve() );
           }
           else
@@ -560,12 +629,22 @@ public:
                           m_tab_traits.COORD_SCALE,
                           CGAL::to_double(v->point().y()) /
                           m_tab_traits.COORD_SCALE);
-            setColor(Qt::red);
+                          
+				//locate face that arrow will be drawn in, and retrieve its color 
+      		CGAL::Object obj1 = locate(temp_p);
+      		Face_const_handle f1 = get_face(obj1);
+      	   relevant_face_color=f1->color();
+            
+            /*choose color to mark the vertice so that it differs from the 
+            edge_color, the background, and the relevant face color*/				
+				setCorrectColor(relevant_face_color);				       
             static_cast<CGAL::Qt_widget&>(*this) << down;
           }
         }
 
-        setColor(Qt::yellow);
+        //select arrow color that differs from the color of the face it is in
+		  setCorrectColor(relevant_face_color);   
+        
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2);
         static_cast<CGAL::Qt_widget&>(*this) << Coord_segment(pl_draw,down);
         // draw an arrow that points to 'down' point
@@ -611,7 +690,7 @@ public:
     typename Diagram_1::Vertex_const_handle   v;
     typename Diagram_1::Curve_const_iterator  cit;
 
-    setColor(CGAL::RED);
+    setCorrectColor();
     while (e != diag.rightmost())
     {
       if (! e->is_empty())
@@ -646,7 +725,7 @@ public:
   {
     f->set_color(c);
     if ( f->is_unbounded())
-      set_unbounded_face_color(c);
+      this->setBackgroundColor(c);;
   }
 
   /*!
@@ -657,7 +736,7 @@ public:
     Face_iterator  fi = m_curves_arr->faces_begin();
     for( ; fi != m_curves_arr->faces_end() ; ++fi )
       fi->set_visited(false);
-    Face_handle ub = m_curves_arr->unbounded_face();
+    Face_handle ub = m_curves_arr->unbounded_face();    
     visit_face_rec (ub,func) ;
 }
 
@@ -839,6 +918,8 @@ public:
       Coord_point p = point(x,y);
 
       lock();
+		//retain old color and rasterOp t preserve way things
+		// are written to the paint device      
       QColor old_color = color();
       RasterOp old_rasterop=rasterOp();
       get_painter().setRasterOp(XorROP);
@@ -881,7 +962,8 @@ public:
     }
   }
 
-  /*! split - split a xcurve in to 2 xcurves
+  /*! split - split a xcurve into 2 xcurves. If several xcurves intersect
+  	* with the inserted curve they are all split at the intersection point.
    *\ param e - mouse click event
    *\ param p - the pressed point
    */
@@ -915,34 +997,30 @@ public:
              hei != m_curves_arr->halfedges_end(); ++hei)
         {
           const X_monotone_curve_2 & xcurve = hei->curve();
-          m_tab_traits.draw_xcurve(this, xcurve);
+          //m_tab_traits.draw_xcurve(this, xcurve); removed, not necessary 
           CGAL::Object             res;
           CGAL::Oneset_iterator<CGAL::Object> oi(res);
 
           m_traits.intersect_2_object()(split_curve, xcurve, oi);
 
-          if (CGAL::assign(p1, res))
-            break;
-        }
-
-        if (hei == m_curves_arr->halfedges_end())
-          return;
-
-        // we dont want to split an already existed vertex...
-        if (m_traits.equal_2_object()(hei->source()->point(), p1.first) ||
-           m_traits.equal_2_object()(hei->target()->point(), p1.first))
-           return;
-
-        //m_tab_traits.draw_xcurve(this, hei->curve());
-        m_curves_arr->split_edge(hei , p1.first);
-
+          if (CGAL::assign(p1, res)) {
+          	if (hei == m_curves_arr->halfedges_end())
+      			return; 
+          	// we dont want to split an already existed vertex...
+       		if (m_traits.equal_2_object()(hei->source()->point(), p1.first) ||
+          		m_traits.equal_2_object()(hei->target()->point(), p1.first))
+           		continue;
+          	//m_tab_traits.draw_xcurve(this, hei->curve());
+				//split the desired half edge at the intersection stored by p1        		
+        		m_curves_arr->split_edge(hei , p1.first);
+          }
+        } //for loop
       }// else
     }
   }
 
-  /*! mousePressEvent_point_location - creats the point location point
-   *\ param e - mouse click event
-   */
+  /* mousePressEvent_point_location - creats the point location point
+   param e - mouse click event*/
   void mousePressEvent_point_location(QMouseEvent *e)
   {
     if (e->button() == Qt::LeftButton && is_pure(e->state()))
@@ -1010,7 +1088,7 @@ public:
     // get the point of the mouse
     if (removable_halfedge != Halfedge_handle())
     {
-      setColor(pm_color);
+      setColor(edge_color);
       if (remove_org_curve)
       {
 
@@ -1090,7 +1168,7 @@ public:
     }
   }
 
-  /*! mouseMoveEvent - enable seeing the line to be drawen
+  /*! mouseMoveEvent - enable seeing the line to be drawn
    *\ param e - mouse click event
    */
   void mouseMoveEvent(QMouseEvent *e)
@@ -1107,10 +1185,12 @@ public:
       return;
     }
     if (mode == MODE_MERGE && !first_time_merge)
-    {
+    {//after closest_edge was selected, highlight second curve according to 
+     //the mouse movement
       if (second_curve != m_curves_arr->halfedges_end())
-      {
-        setColor(pm_color);
+      {//case a second curve exists recolor it to edge_color before searching
+      //for a new second_curve using the new mouse position  
+        setColor(edge_color);
         m_tab_traits.draw_xcurve(this,second_curve->curve());
       }
       Coord_type x, y;
@@ -1119,7 +1199,9 @@ public:
       Coord_point p(x * m_tab_traits.COORD_SCALE,
                     y * m_tab_traits.COORD_SCALE);
       second_curve = m_curves_arr->halfedges_end();
+      //search for a new second_curve 
       find_close_curve(closest_curve, second_curve, p, true);
+		//color the halfedges that are about to be merged      
       setColor(Qt::red);
       m_tab_traits.draw_xcurve(this,closest_curve->curve());
       if (second_curve != m_curves_arr->halfedges_end())
@@ -1128,14 +1210,14 @@ public:
         m_tab_traits.draw_xcurve(this,second_curve->curve());
       }
       else
-      {
+      { //did not find mergable half edges 
         first_time_merge = true;
         redraw();
       }
       return;
     }// merge
 
-    if (active)
+    if (active) //case for split action 
     {
       Coord_type x, y;
       x_real(e->x(), x);
@@ -1287,10 +1369,10 @@ public:
   void mousePressEvent_merge(QMouseEvent *e)
   {
     if (e->button() == Qt::LeftButton && is_pure(e->state()))
-    {
+    {//merge only in case of a left click 
       if ( m_curves_arr->is_empty() )
         return;
-
+		
       setColor(Qt::red);
       Coord_point p(x_real(e->x()) * m_tab_traits.COORD_SCALE ,
                     y_real(e->y()) * m_tab_traits.COORD_SCALE);
@@ -1298,16 +1380,17 @@ public:
       Coord_type min_dist = 0;
 
       if (first_time_merge)
-      {
+      {//find the closest mergable half edge to point p 
         first_time_merge = false;
         Halfedge_iterator hei;
         closest_curve = m_curves_arr->halfedges_end();
 
         for (hei = m_curves_arr->halfedges_begin();
              hei != m_curves_arr->halfedges_end(); ++hei)
-        {
+        {//find  closest curve to mouse pointer 
           Vertex_iterator   vis = hei->source();
           Vertex_iterator   vit = hei->target();
+			 //case the halfedge can't be merged - next iteration         
           if (vis->degree() != 2 && vit->degree() != 2)
             continue;
           X_monotone_curve_2 & xcurve = hei->curve();
@@ -1326,16 +1409,23 @@ public:
           first_time_merge = true;
           return;
         }
+        //draw the first half edge to merge with the setColor() chosen above         
         m_tab_traits.draw_xcurve(this , closest_curve->curve() );
         second_curve = m_curves_arr->halfedges_end();
-      }
-      else
+      }   
+      else //not first_time_merge
       {
         first_time_merge = true;
+        //look for the second halfedge closest to p that is mergable with
+        //closest_curve and merge them 
         find_close_curve(closest_curve, second_curve, p, false);
         redraw();
       }
-    }
+    } else { //not left click event (right click) undo all selections
+    		first_time_merge=TRUE;
+	 		//repaint all curves to edge_color. 
+	 		redraw();    
+    	} 
   }
 
   CGAL::Object locate(const Point_2& pt)
@@ -1469,13 +1559,19 @@ public:
     return m_curves_arr->is_empty();
   }
 
-  /*!
+  /*Function that is invoked by move or click mouse event functions related to merge. 
+   It checks if the parameter closest_curve (first halfedge to merge) is mergable
+   with another halfedge (to be stored in second_curve).Second_curve is updated to
+   store the mergable halfedge closest to mouse point p.
+   If this function is not triggered by a move event the closest_edge and second_edge  
+	are merged.	  
    */
   void find_close_curve(Halfedge_iterator &closest_curve,
                         Halfedge_iterator &second_curve,
                         Coord_point &p,
                         bool move_event)
   {
+	 //boolean var - if "good" curves were found changed to false   
     bool       first = true;
     Coord_type min_dist = 0;
 
@@ -1651,7 +1747,7 @@ public:
       points[3] = (Coord_point(w->x_max(),w->y_min()));
 
       w->setFilled(true);
-      w->setFillColor(f->color());
+      w->setFillColor(w->unbounded_face_color());
 
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);

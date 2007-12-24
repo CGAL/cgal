@@ -168,8 +168,10 @@ private slots:
     void conicType();
     /*! set backGround Color */
     void backGroundColor();
-    /*! set vertexColor Color */
-    void changePmColor();
+    /*! set edge Color */
+    void changeEdgeColor();
+    /*! set vertex Color */
+    void changeVertexColor();
     /*! choose the point location strategy */
     void pointLocationStrategy();
     /*! change the conic type of current tab */

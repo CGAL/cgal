@@ -29,9 +29,10 @@ equation,e.g., segment, circle, ellipse, parabola and hyperbola.
 <LI><A href="#del">Delete object</A></LI>
 <LI><A href="#drg">Drag</A></LI>
 <LI><A href="#loc">Point location</A></LI>
-<LI><A href="#ray">Vertical ray shooting</A></LI>
+<LI><A href="#ray">Vertical ray shooting (up/down)</A></LI>
 <LI><A href="#spl">Split</A></LI>
-<LI><A href="#meg">Merge</A>
+<LI><A href="#meg">Merge</A></LI>
+<LI><A href="#env">Lower/Upper envelope</A>
 </LI>
 </UL>
 <h3>Snap Mode</h3>
@@ -44,16 +45,17 @@ equation,e.g., segment, circle, ellipse, parabola and hyperbola.
 <LI><A href="#overlay">Overlay</A></LI>
 <LI><A href="#properties">Properties</A></LI>
 <LI><A href="#show_hide_grid">Show/Hide grid</A></LI>
-<LI><A href="#bg_color">Background color</A></LI>
-<LI><A href="#pm_color">Planar map color</A></LI>
-<LI><A href="#ray_shooting_direction">Ray-Shooting direction</A>
+<LI><A href="#ubf_color">Unbounded edge (background) color</A></LI>
+<LI><A href="#edge_color">Edge (planar map) color</A></LI>
+<LI><A href="#ver_color">Vertex color</A></LI>
+<LI><A href="#pl_str">Point location strategy</A>
 </LI>
 </UL>
 <h3>File Handling</h3>
 <UL>
 <LI><A href="#format">File format</A></LI>
-<LI><A href="#open_pm">Open planar map file</A></LI>
 <LI><A href="#open">Open special format file</A></LI>
+<LI><A href="#open_pm">Open planar map file</A></LI>
 <LI><A href="#save">Save file</A></LI>
 </UL>
 <A name="choose_seg"></A><h3>Segments planar map</h3>
@@ -90,28 +92,32 @@ the mouse button to put it.
 Press the "point location" button, and left click on any point and face 
 containing that point will be highlighted.
 <A name="ray"></A><h3>Vertical ray shooting</h3>
-First, you have to choose the ray shooting direction (upwards or downwards), by 
-default the upward direction is selected. Left click on any point at the 
-planar map and a ray will be shot until hitting a curve or vertex and it 
-will be highlighted.
+Shooting direction (up/down) is determined by the button/menu item selected.
+Left click on any point at the planar map and a ray will be shot until hitting
+a curve or vertex and it will be highlighted.
 <A name="spl"></A><h3>Split</h3>
 Press the split button, choose a splitter segment (the same as with drawing 
 segments) which intersects a curve at the planar map and at the intersection, 
 a new vertex will be added, that is the edge will be split.
 <A name="meg"></A><h3>Merge</h3>
-Press the merge button, chose a subcurve that can be merged by left click, it 
+Press the merge button, choose a subcurve that can be merged by left click, it 
 will be painted red and stays red if its mergeable, and then choose another 
 neighbor sub_curve that can be merged with it, and it will be painted green 
 and the edge will be merged, that is the vertex between them will be removed.
+A right click on the mouse at any time will repaint the previous edges selected to
+edge color and cancel the current merge action. 
+<A name="env"></A><h3>Lower/Upper envelope</h3>
+Press the (lower/upper) envelope button, and the (lower/upper) envelope of the
+planar map will be highlighted.
 <A name="snap_point"></A><h3>Snap to point</h3>
 To allow both point and grid snap modes, press the snap mode button or go to 
 menu bar -> Snap mode -> Snap Mode. By default the point snap mode is 
-activated. Snap to point allow the user to use an existed planar map point in 
+activated. Snap to point allows the user to use an existed planar map point in 
 insertion of new curves and in the split operation.
 <A name="snap_grid"></A><h3>Snap to grid</h3>
-After the Snap mode button is clicked (see explanation above), you can choose 
+After the Snap mode button was clicked (see explanation above), you can choose 
 to use the grid snap mode by clicking the Grid Snap Mode button or go to menu 
-bar -> Snap mode -> Grid Snap Mode. Snap to grid allow the user to use the grid 
+bar -> Snap mode -> Grid Snap Mode. Snap to grid allows the user to use the grid 
 points in insertion of new curves and in the split operation.
 <A name="overlay"></A><h3>Overlay</h3>
 To overlay two or more planar maps, go to menu bar -> Options -> Overlay. A 
@@ -138,29 +144,32 @@ sub-curve.</LI>
 </UL>
 <A name="show_hide_grid"></A><h3>Show/Hide grid</h3>
 Allow to see the grid without using the grid snap mode.
-<A name="bg_color"></A><h3>Background color</h3>
-Allow to choose different colors for the background.
-<A name="pm_color"></A><h3>Planar map color</h3>
-Allow to choose different colors for the planar map.
-<A name="ray_shooting_direction"></A><h3>Ray-Shooting direction</h3>
-Vertical ray-shooting can be up or down.
+<A name="ubf_color"></A><h3>Unbounded face (background) color</h3>
+Allow to choose different colors for the unbounded face (equivalent to the background).
+<A name="edge_color"></A><h3>Edge (planar map) color</h3>
+Allow to choose different colors for the edges (the planar map).
+<A name="ver_color"></A><h3>Vertex color</h3>
+Allow to choose different colors for the vertices
+<A name="pl_str"></A><h3>Point location strategy</h3>
+Allow to choose different strategies for point location.
+By default, "simple" is selected.
 <A name="format"></A><h3>File format</h3>
-Files have tow main formats:
+Files have two main formats:
 <UL>
-<LI>Planar map format - describe all the planar map components.</LI>
-<LI>Special format - the demo knows to read curves in a special format.</LI>
+<LI>Planar map format (Arr) - describe all the planar map components.</LI>
+<LI>Special format (dat) - the demo knows to read curves in a special format.</LI>
 </UL>
-<A name="open_pm"></A><h3>Open planar map file</h3>
-Go to menu bar -> File -> Open Segment Pm File, and load a suitable file. 
-Opening of a polyline or a conic pm file are not supported yet.
 <A name="open"></A><h3>Open special format file</h3>
 Go to menu bar -> File -> Open Segment/Polyline/Conic File, and load a suitable 
 file.
+<A name="open_pm"></A><h3>Open planar map file</h3>
+Go to menu bar -> File -> Open Segment/Polyline Arr File, and load a suitable file. 
+Opening of a conic Arr file is not supported yet.
 <A name="save"></A><h3>Save file</h3>
 Go to menu bar -> File -> Save/Save as.
 <br>
 <br>
 <hr> <!-- Created: Mon Jan 13 15:27:00 MET 2003 --> <!-- hhmts start --> Last 
-modified: 12/09/2004 <!-- hhmts end -->
+modified: 19/12/2007 <!-- hhmts end -->
 </body>
 </html>

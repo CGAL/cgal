@@ -750,6 +750,7 @@ Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segme
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/random_segments_500_x.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/tilt_grid_200.dat -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/data/segment/world.seg.cut.rand.dat -text
+Arrangement_on_surface_2/demo/Arrangement_on_surface_2/demo_tab.cpp -text
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/help/index.html svneol=native#text/html
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
 Arrangement_on_surface_2/demo/Arrangement_on_surface_2/icons/demo_insert.bmp -text svneol=unset#image/bmp

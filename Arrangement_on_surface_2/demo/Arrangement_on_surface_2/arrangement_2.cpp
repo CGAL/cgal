@@ -294,9 +294,11 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   options->insertSeparator();
   //options->insertItem("Conic Type", this, SLOT(conicType()));
   //options->insertSeparator();
-  options->insertItem("Background Color...", this, SLOT(backGroundColor()));
+  options->insertItem("Unbounded Face Color...", this, SLOT(backGroundColor()));
   options->insertSeparator();
-  options->insertItem("Planar Map Color...", this, SLOT(changePmColor()));
+  options->insertItem("Edge Color...", this, SLOT(changeEdgeColor()));
+  options->insertSeparator();
+  options->insertItem("Vertex Color...", this, SLOT(changeVertexColor()));
   options->insertSeparator();
   options->insertItem("Point-Locaiton Strategy....", this ,
                                          SLOT(pointLocationStrategy()));

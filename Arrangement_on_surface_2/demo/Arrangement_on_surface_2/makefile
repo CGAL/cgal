@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 
 # ARR_CXXFLAGS = -DNDEBUG -O2
 CXXFLAGS = \
-           -I../../include \
+             -I../../include \
 	   -I../../../Envelope_2/include \
            $(ARR_CXXFLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -63,14 +63,17 @@ forms.moc: forms.h
 qt_layer$(OBJ_EXT): qt_layer.cpp 
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) qt_layer.cpp
 
-arrangement_2$(EXE_EXT): arrangement_2$(OBJ_EXT) MyWindow_files$(OBJ_EXT) \
-                         MyWindow_overlay$(OBJ_EXT) \
-                         MyWindow_operations$(OBJ_EXT)  forms$(OBJ_EXT) \
-                         qt_layer$(OBJ_EXT)
+arrangement_2$(EXE_EXT): arrangement_2$(OBJ_EXT) \
+    demo_tab$(OBJ_EXT) \
+    MyWindow_files$(OBJ_EXT) \
+    MyWindow_overlay$(OBJ_EXT) \
+    MyWindow_operations$(OBJ_EXT) \
+    forms$(OBJ_EXT) \
+    qt_layer$(OBJ_EXT)
 	$(CGAL_CXX) $(EXE_OPT)arrangement_2 arrangement_2$(OBJ_EXT) \
 	MyWindow_files$(OBJ_EXT) MyWindow_overlay$(OBJ_EXT) \
 	MyWindow_operations$(OBJ_EXT) forms$(OBJ_EXT) \
-        qt_layer$(OBJ_EXT) $(LDFLAGS)
+        qt_layer$(OBJ_EXT) demo_tab$(OBJ_EXT) $(LDFLAGS)
 
 clean: arrangement_2.clean MyWindow_files.clean MyWindow_overlay.clean \
        MyWindow_operations.clean forms.clean qt_layer.clean

@@ -85,7 +85,7 @@ void MyWindow::aboutQt()
   QMessageBox::aboutQt( this, "About Qt" );
 }
 
-/*! howto - help menue */
+/*! howto - help menu */
 void MyWindow::howto()
 {
   QString home;
@@ -210,25 +210,85 @@ void MyWindow::hideGrid()
 void MyWindow::backGroundColor()
 {
   QColor c = QColorDialog::getColor();
-  Qt_widget_base_tab     *w_demo_p =
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
+  /* if the cancel button is pressed (in the modal color dialog that pops up
+   * as a result of ::getColor()) then an invalid color is returned and no 
+   * change is made
+   */
+  if (c.isValid()) 
+  {  
+    Qt_widget_base_tab     *w_base_p =
+      dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
 
-  w_demo_p->setBackgroundColor( c );
+    w_base_p->change_background_flag=TRUE;
+    w_base_p->fill_face_color=c;  
+    TraitsType t = w_base_p->traits_type;
 
-  something_changed();
+    switch ( t ) {
+    case SEGMENT_TRAITS:
+      {
+        Qt_widget_demo_tab<Segment_tab_traits> *w_demo_p =
+          static_cast<Qt_widget_demo_tab<Segment_tab_traits> *>
+          (myBar->currentPage());
+        Seg_face_handle ubf = w_demo_p->m_curves_arr->unbounded_face();
+        w_demo_p->set_face_color(ubf,c);         
+        break;
+      }
+    case POLYLINE_TRAITS:
+      {
+        Qt_widget_demo_tab<Polyline_tab_traits> *w_demo_p =
+          static_cast<Qt_widget_demo_tab<Polyline_tab_traits> *>
+          (myBar->currentPage());              
+        Pol_face_handle ubf = w_demo_p->m_curves_arr->unbounded_face();
+        w_demo_p->set_face_color(ubf,c);
+        break;
+      }
+    case CONIC_TRAITS:
+      {
+        Qt_widget_demo_tab<Conic_tab_traits> *w_demo_p =
+          static_cast<Qt_widget_demo_tab<Conic_tab_traits> *>
+          (myBar->currentPage()); 
+        Conic_face_handle       ubf = w_demo_p->m_curves_arr->unbounded_face();
+        w_demo_p->set_face_color(ubf,c); 
+        break;
+      }
+    }
+    something_changed();
+  } 
 }
 
-void MyWindow::changePmColor()
+void MyWindow::changeEdgeColor()
 {
   QColor c = QColorDialog::getColor();
-  Qt_widget_base_tab     *w_demo_p =
-    dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
-
-  w_demo_p->pm_color = c;
-  w_demo_p->change_pm_color = true;
-  something_changed();
+  /* if the cancel button is pressed (in the modal color dialog that pops up
+   * as a result of ::getColor()) then an invalid color is returned and no 
+   * change is made
+   */  
+  if (c.isValid())
+  {  
+    Qt_widget_base_tab     *w_demo_p =
+      dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
+    
+    w_demo_p->edge_color = c;
+    w_demo_p->change_edge_color = true;
+    something_changed();
+  }
 }
 
+void MyWindow::changeVertexColor()
+{
+  QColor c = QColorDialog::getColor();
+  /* if the cancel button is pressed (in the modal color dialog that pops up
+   * as a result of ::getColor()) then an invalid color is returned and no 
+   * change is made
+   */  
+  if (c.isValid()) {  
+    Qt_widget_base_tab     *w_demo_p =
+      dynamic_cast<Qt_widget_base_tab  *> (myBar->currentPage());
+    w_demo_p->vertex_color = c;
+    w_demo_p->change_vertex_color = true;
+    something_changed();
+  }
+}
 
 /*! a dialog form to set the pointLocationStrategy */
 void MyWindow::pointLocationStrategy()
@@ -250,11 +310,8 @@ void MyWindow::pointLocationStrategy()
         else
           if(!strcmp(type,"Land marks"))
             w_demo_p -> change_strategy(LANDMARKS);
-
   }
 }
-
-
 
 
 /*! initialize the widget */
@@ -347,19 +404,19 @@ void MyWindow::updateTraitsType( QAction *action )
   {
     if (old_widget->traits_type == SEGMENT_TRAITS) return;
     widget = new Qt_widget_demo_tab<Segment_tab_traits>
-      (SEGMENT_TRAITS , this, old_index, old_widget->pm_color);
+      (SEGMENT_TRAITS , this, old_index, old_widget->edge_color);
   }
   else if (action == setPolylineTraits)
   {
     if (old_widget->traits_type == POLYLINE_TRAITS) return;
     widget = new Qt_widget_demo_tab<Polyline_tab_traits>
-      (POLYLINE_TRAITS , this, old_index, old_widget->pm_color);
+      (POLYLINE_TRAITS , this, old_index, old_widget->edge_color);
   }
   else if (action == setConicTraits)
   {
     if (old_widget->traits_type == CONIC_TRAITS) return;
     widget = new Qt_widget_demo_tab<Conic_tab_traits>
-      (CONIC_TRAITS , this, old_index, old_widget->pm_color);
+      (CONIC_TRAITS , this, old_index, old_widget->edge_color);
   }
 
   if( !old_widget->is_empty() ) // pm is not empty
