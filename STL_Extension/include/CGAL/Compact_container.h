@@ -213,7 +213,7 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    new (ret) value_type(args);
+    new (ret) value_type(args...);
     CGAL_assertion(type(ret) == USED);
     ++size_;
     return iterator(ret, 0);
