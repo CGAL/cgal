@@ -40,7 +40,7 @@
 // 
 #define CGAL_GET(type, name, expr) const type & name() const{expr;} CGAL_EAT_SEMICOLON
 #define CGAL_GETOBJECT(UC, lc, expr) const UC & lc##_object() const {expr;} CGAL_EAT_SEMICOLON
-#define CGAL_GETNR(type, name, expr) const type name() const{expr;} CGAL_EAT_SEMICOLON
+#define CGAL_GETNR(type, name, expr) type name() const{expr;} CGAL_EAT_SEMICOLON
 //#define CGAL_GET(type, name, expr) typename boost::call_traits<type>::param_type name() const {expr;}
 
 #define CGAL_IS(name, expr) bool is_##name() const {expr;} CGAL_EAT_SEMICOLON
