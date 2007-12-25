@@ -25,6 +25,8 @@
 
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_batched_point_location.h>
+
 #include <list>
 #include <algorithm>
 #include <vector>
