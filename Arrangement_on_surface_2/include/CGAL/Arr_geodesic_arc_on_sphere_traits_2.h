@@ -40,7 +40,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <typename Kernel> class Arr_x_monotone_great_circular_arc_on_sphere_3;
+template <typename Kernel> class Arr_x_monotone_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_extended_direction_3;
 
@@ -50,7 +50,7 @@ template <typename Kernel> class Arr_extended_direction_3;
  */
 template <typename T_Kernel>
 class Arr_geodesic_arc_on_sphere_traits_2 : public T_Kernel {
-  friend class Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel>;
+  friend class Arr_x_monotone_geodesic_arc_on_sphere_3<T_Kernel>;
   friend class Arr_geodesic_arc_on_sphere_3<T_Kernel>;
   friend class Arr_extended_direction_3<T_Kernel>;
 
@@ -332,11 +332,10 @@ public:
   
 public:
   // Traits objects
-  typedef Arr_extended_direction_3<Kernel>              Point_2;
-  typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel>
-                                                        X_monotone_curve_2;
-  typedef Arr_geodesic_arc_on_sphere_3<Kernel>    Curve_2;
-  typedef unsigned int                                  Multiplicity;
+  typedef Arr_extended_direction_3<Kernel>                Point_2;
+  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> X_monotone_curve_2;
+  typedef Arr_geodesic_arc_on_sphere_3<Kernel>            Curve_2;
+  typedef unsigned int                                    Multiplicity;
 
 public:
   /// \name Basic functor definitions
@@ -1155,7 +1154,7 @@ public:
   { return Compare_y_near_boundary_2(this); }
   
   /*! A functor that indicates whether a geometric object lies on the
-   * horizontal identification arc.
+   * horizontal identification arc. In this setup there is no such entity.
    */
   class Is_on_x_identification_2 {
   protected:
@@ -1164,34 +1163,25 @@ public:
   public:
     /*! Determine whether a point lies on the horizontal identification arc.
      * \param p the point.
-     * \return a Boolean indicating whether p lies on the vertical
+     * \return a Boolean indicating whether p lies on the horizontal
      * identification arc.
      */
     bool operator()(const Point_2 & p) const
     {
-      return p.is_mid_boundary();
+      CGAL_error_msg("There is no horizontal identification arc!");
+      return false;
     }
 
     /*! Determine whether an arc coincides with the horizontal identification
      * arc.
      * \param xcv the arc.
-     * \return a Boolean indicating whether xcv coincides with the vertical
+     * \return a Boolean indicating whether xcv coincides with the horizontal
      * identification arc.
      */
     bool operator()(const X_monotone_curve_2 & xcv) const
     {
-      // If the curve is not vertical, it cannot coincide with the ident. arc:
-      if (!xcv.is_vertical()) return false;
-
-      // If the normal has an x-component, it cannot coincide either:
-      Direction_3 normal = xcv.plane().orthogonal_direction();
-      CGAL::Sign xsign = Traits::x_sign(normal);
-      if (xsign != ZERO) return false;
-
-      // Check whether xcv coincides or its opposite:
-      CGAL::Sign ysign = Traits::y_sign(normal);
-      return (((ysign == NEGATIVE) && xcv.directed_right()) ||
-              ((ysign == POSITIVE) && !xcv.directed_right()));
+      CGAL_error_msg("There is no horizontal identification arc!");
+      return false;
     }
   };
   
@@ -1879,6 +1869,9 @@ public:
     bool operator()(const X_monotone_curve_2 & xc1,
                     const X_monotone_curve_2 & xc2) const
     {
+      //! \todo temporary:
+      // return false;
+      
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
 
@@ -2236,7 +2229,7 @@ public:
  * \todo It is always directed from its source to its target.
  */
 template <typename T_Kernel>
-class Arr_x_monotone_great_circular_arc_on_sphere_3 {
+class Arr_x_monotone_geodesic_arc_on_sphere_3 {
 protected:
   typedef T_Kernel                                              Kernel;
   
@@ -2314,7 +2307,7 @@ protected:
 
 public:
   /*! Default constructor - constructs an empty arc */
-  Arr_x_monotone_great_circular_arc_on_sphere_3() :
+  Arr_x_monotone_geodesic_arc_on_sphere_3() :
     m_is_vertical(false),
     m_is_directed_right(false),
     m_is_full(false),
@@ -2331,7 +2324,7 @@ public:
    * \param is_full is the arc a full circle?
    * \param is_degenerate is the arc degenerate (single point)?
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
+  Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & src,
    const Arr_extended_direction_3 & trg,
    const Plane_3 & plane,
@@ -2350,8 +2343,8 @@ public:
   /*! Copy constructor
    * \param other the other arc
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
-  (const Arr_x_monotone_great_circular_arc_on_sphere_3 & other)
+  Arr_x_monotone_geodesic_arc_on_sphere_3
+  (const Arr_x_monotone_geodesic_arc_on_sphere_3 & other)
   {
     m_source = other.m_source;
     m_target = other.m_target;
@@ -2364,8 +2357,8 @@ public:
   }
 
   /*! Assignment operator */
-  Arr_x_monotone_great_circular_arc_on_sphere_3 & operator=
-  (const Arr_x_monotone_great_circular_arc_on_sphere_3 & other)
+  Arr_x_monotone_geodesic_arc_on_sphere_3 & operator=
+  (const Arr_x_monotone_geodesic_arc_on_sphere_3 & other)
   {
     m_source = other.m_source;
     m_target = other.m_target;
@@ -2392,7 +2385,7 @@ public:
    * \pre the source and target cannot be equal.
    * \pre the source and target cannot be opposite of each other.
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
+  Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & source,
    const Arr_extended_direction_3 & target) :
     m_source(source),
@@ -2487,7 +2480,7 @@ public:
    * \param plane the containing plane.
    * \pre the plane is not vertical
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3(const Plane_3 & plane) :
+  Arr_x_monotone_geodesic_arc_on_sphere_3(const Plane_3 & plane) :
     m_plane(plane),
     m_is_vertical(false),
     m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
@@ -2507,7 +2500,7 @@ public:
    * \pre the point lies on the plane
    * \pre the point lies on the open discontinuity arc
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
+  Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & point, const Plane_3 & plane) :
     m_source(point),
     m_target(point),
@@ -2533,7 +2526,7 @@ public:
    * \pre Both endpoint lie on the given plane.
    * \pre Both endpoint lie on the given plane.
    */
-  Arr_x_monotone_great_circular_arc_on_sphere_3
+  Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & source,
    const Arr_extended_direction_3 & target,
    const Plane_3 & plane) :
@@ -2707,9 +2700,9 @@ public:
 #endif
   
   /*! Flip the spherical_arc (swap it source and target) */
-  Arr_x_monotone_great_circular_arc_on_sphere_3 opposite() const
+  Arr_x_monotone_geodesic_arc_on_sphere_3 opposite() const
   {
-    Arr_x_monotone_great_circular_arc_on_sphere_3 opp;
+    Arr_x_monotone_geodesic_arc_on_sphere_3 opp;
     opp.m_sourse = this->m_target;
     opp.m_target = this->m_sourse;
     opp.m_plane = this->m_plane;
@@ -2748,10 +2741,10 @@ public:
  */
 template <typename T_Kernel>
 class Arr_geodesic_arc_on_sphere_3 :
-  public Arr_x_monotone_great_circular_arc_on_sphere_3<T_Kernel> {
+  public Arr_x_monotone_geodesic_arc_on_sphere_3<T_Kernel> {
 protected:
   typedef T_Kernel                                              Kernel;
-  typedef Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> Base;
+  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> Base;
 
   typedef typename Base::Plane_3                                Plane_3;
   typedef typename Base::Direction_3                            Direction_3;
@@ -2823,7 +2816,7 @@ public:
    * \pre the source and target cannot be the opoosite of each other.
    */
   Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & source,
-                                     const Arr_extended_direction_3 & target)
+                               const Arr_extended_direction_3 & target)
   {
     this->set_source(source);
     this->set_target(target);
@@ -2831,7 +2824,7 @@ public:
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>   Traits;
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Traits;
     typedef typename Kernel::Direction_2                        Direction_2;
     typedef typename Kernel::Direction_3                        Direction_3;
     
@@ -2900,7 +2893,8 @@ public:
     const Direction_2 & nx = Traits::neg_x_2();
     if (orient == LEFT_TURN) {
       this->set_is_directed_right(true);
-      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(nx, s, t));
+      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(nx,
+                                                                       s, t));
       return;
     }        
 
@@ -3090,7 +3084,7 @@ OutputStream & operator<<(OutputStream & os,
 template <typename Kernel, typename OutputStream>
 OutputStream &
 operator<<(OutputStream & os,
-           const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
+           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> & arc)
 {
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "(";
@@ -3109,7 +3103,7 @@ operator<<(OutputStream & os,
 template <typename Kernel, typename InputStream>
 InputStream &
 operator>>(InputStream & is,
-           const Arr_x_monotone_great_circular_arc_on_sphere_3<Kernel> & arc)
+           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> & arc)
 {
   std::cerr << "Not implemented yet!" << std::endl;
   return is;
