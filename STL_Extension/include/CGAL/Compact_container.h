@@ -206,7 +206,7 @@ public:
 #ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
-  emplace(const Args&... args) const
+  emplace(const Args&... args)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -359,7 +359,7 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
-#endif // CGAL_HAS_VARIADIC_TEMPLATES
+#endif // CGAL_CFG_NO_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
