@@ -646,6 +646,8 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   
   if (new_face_created)
   {
+#if 0
+    // NEW CODE (r41201), WHICH CAUSES A BUG:
     if (res->is_on_inner_ccb()) {
       // In case a new face has been created (pointed by the new halfedge
       // we obtained), we have to examine the holes and isolated vertices
@@ -655,6 +657,15 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
       
       this->relocate_in_new_face (res);
     }
+#else
+    // ORIGINAL CODE, WHICH SEEMS OK:
+    // In case a new face has been created (pointed by the new halfedge
+    // we obtained), we have to examine the holes and isolated vertices
+    // in the existing face (pointed be the twin halfedge) and relocate
+    // the relevant features in the new face.
+    CGAL_assertion(res->face() != res->twin()->face());
+    this->relocate_in_new_face (res);
+#endif
   }
 
   return (res);
