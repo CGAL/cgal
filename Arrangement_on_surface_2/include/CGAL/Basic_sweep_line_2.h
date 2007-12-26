@@ -37,7 +37,7 @@
 #include <algorithm>
 #include <iterator>
 
-#ifndef VERBOSE
+#ifndef CGAL_SL_VERBOSE
 
 #define CGAL_SL_DEBUG(a)
 #define CGAL_PRINT_INSERT(a)
@@ -551,7 +551,7 @@ protected:
     CGAL_error();
   }
 
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
@@ -562,7 +562,7 @@ protected:
 };
 
 //DEBUG UTILITIES
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   #include <CGAL/Sweep_line_2/Sweep_line_2_debug.h>
 #endif
 

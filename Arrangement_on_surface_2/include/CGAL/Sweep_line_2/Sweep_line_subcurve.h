@@ -345,12 +345,12 @@ public:
       return (depth2 + 1);
   }
  
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   void Print() const;
 #endif
 };
 
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   template<class Traits>
   void Sweep_line_subcurve<Traits>::Print() const
   {

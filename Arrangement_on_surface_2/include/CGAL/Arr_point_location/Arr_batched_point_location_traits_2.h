@@ -199,6 +199,23 @@ public:
   typedef Ex_x_monotone_curve_2                     X_monotone_curve_2; 
   typedef Ex_point_2                                Point_2; 
 
+#ifdef CGAL_SL_VERBOSE
+  // For debugging purposes:
+  friend std::ostream& operator<< (std::ostream& os,
+                                   const X_monotone_curve_2& xcv)
+  {
+    os << xcv.base();
+    return (os);
+  }
+
+  // For debugging purposes:
+  friend std::ostream& operator<< (std::ostream& os,
+                                   const Point_2& pt)
+  {
+    os << pt.base();
+    return (os);
+  }
+#endif
 
   /*! A function object that determines whether a curve end is bounded. */
   class Is_bounded_2 {

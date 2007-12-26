@@ -519,13 +519,13 @@ public:
     return (false);
   }
 
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   void Print() ;
 #endif
 
 };
 
-#ifdef VERBOSE
+#ifdef CGAL_SL_VERBOSE
   template<class Traits, class Subcurve>
   void Sweep_line_event<Traits, Subcurve>::Print() 
   {
@@ -574,7 +574,7 @@ public:
     
     std::cout << std::endl;
   } 
-#endif // VERBOSE
+#endif // CGAL_SL_VERBOSE
 
 CGAL_END_NAMESPACE
 
