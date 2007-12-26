@@ -538,8 +538,8 @@ number_of_polygons_with_holes() const
 {
   typedef Arr_bfs_scanner<Arrangement_2, Counting_output_iterator>
     Arr_bfs_scanner;
-  Counting_output_iterator coi;
-  Arr_bfs_scanner scanner(this->m_traits, coi);
+  std::size_t res;
+  Arr_bfs_scanner scanner(this->m_traits, Counting_output_iterator(&res));
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator().current_counter());
 }

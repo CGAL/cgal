@@ -209,9 +209,9 @@ private:
 class Counting_output_iterator
   : public std::iterator< std::output_iterator_tag, void, void, void, void >
 {
-  std::size_t c;
+  std::size_t *c;
 public:
-  Counting_output_iterator() : c(0) {}
+  Counting_output_iterator(std::size_t *cc) : c(cc) { *c = 0; }
 
   Counting_output_iterator& operator++()    { return *this; }
   Counting_output_iterator& operator++(int) { return *this; }
@@ -219,9 +219,9 @@ public:
   Counting_output_iterator& operator*() { return *this; }
 
   template <typename T>
-  void operator=(const T&) { ++c; }
+  void operator=(const T&) { ++*c; }
 
-  std::size_t current_counter() const { return c;}
+  std::size_t current_counter() const { return *c; }
 };
 
 template < class I,

@@ -2369,8 +2369,9 @@ typename Triangulation_data_structure_3<Vb,Cb>::size_type
 Triangulation_data_structure_3<Vb,Cb>::
 degree(const Vertex_handle& v) const
 {
-    Counting_output_iterator cnt;
-    return (int) incident_vertices(v, cnt).current_counter();
+    std::size_t res;
+    incident_vertices(v, Counting_output_iterator(&res));
+    return res;
 }
 
 template <class Vb, class Cb >
