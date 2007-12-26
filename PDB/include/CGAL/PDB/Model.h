@@ -85,9 +85,9 @@ public:
 						    rnum_(rn), chain_(ch){
     }
     Hetatom_data(){}
-    CGAL_GETNR( char*, molecule_name, return resname_.c_str());
+    CGAL_GETNR( const char*, molecule_name, return resname_.c_str());
     
-    CGAL_GETNR( char*, atom_name, return atomname_.c_str());
+    CGAL_GETNR( const char*, atom_name, return atomname_.c_str());
     
     CGAL_GETNR(int, molecule_number, return rnum_);
     
