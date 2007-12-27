@@ -1391,7 +1391,7 @@ typename Largest_empty_iso_rectangle_2<T>::const_iterator
 Largest_empty_iso_rectangle_2<T>::end() const
 {
    typename Point_data_set_of_x::const_iterator i = x_sorted.end();
-   while(--i != x_sorted.begin() && (*i)->type != REG);
+   while(--i != x_sorted.begin() && (*i)->type != REG) {}
    if((*i)->type != REG)
      // The points list is actually empty. Point to end() to make
      // begin() == end()
