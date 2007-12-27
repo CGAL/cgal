@@ -330,7 +330,8 @@ EOF
     foreach $pf (@platforms_to_do) {
 	print OUTPUT "<TR>\n<TD>$pf_no\n";
 	$pf_no++;
-	my $pf_short = join('_',parse_platform_2($pf));
+	# my $pf_short = join('_',parse_platform_2($pf));
+	my $pf_short = $pf;
 	print OUTPUT "<TD NOWRAP>$pf_short\n";
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>;
