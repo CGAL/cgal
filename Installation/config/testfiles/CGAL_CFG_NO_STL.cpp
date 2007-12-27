@@ -30,10 +30,11 @@
 //| A basic test for the STL.
 //| If it fails, it probably means a bad CGAL installation.
 
+#undef NDEBUG
+#include <cassert>
 #include <algorithm>
 #include <list>
 #include <iterator>
-#include <cassert>
 
 using std::list;
 

@@ -26,6 +26,7 @@
 //| If a compiler does not support delegating constructors (from C++0x)
 //| CGAL_CFG_NO_DELEGATING_CONSTRUCTORS is set. 
 
+#undef NDEBUG
 #include <cassert>
 
 struct A {

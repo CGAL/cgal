@@ -26,8 +26,9 @@
 //| If a compiler does not support variadic templates (from C++0x)
 //| CGAL_CFG_NO_VARIADIC_TEMPLATES is set. 
 
-//#include <iostream> // commented to speed up compilation.
+#undef NDEBUG
 #include <cassert>
+//#include <iostream> // commented to speed up compilation.
 
 double total = 0.0;
 
