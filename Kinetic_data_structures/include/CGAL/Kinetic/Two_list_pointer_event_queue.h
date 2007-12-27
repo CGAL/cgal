@@ -748,7 +748,7 @@ public:
   }
 protected:
   unsigned int select(Queue &source, Queue &target/*, bool binf*/) {
-    unsigned int sz= source.size() + target.size();if (sz);
+    CGAL_assertion_code(unsigned int sz= source.size() + target.size();)
     int count=0;
     Iterator it= source.begin();
     while (it != source.end()) {
