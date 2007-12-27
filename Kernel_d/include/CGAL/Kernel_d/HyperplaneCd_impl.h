@@ -43,7 +43,7 @@ weak_cmp(const HyperplaneCd<FT,LA>& h1,
   int i, d = h1.dimension();
   for (i = 0; i <= d && 
               h1.coefficient(i) == FT(0) && 
-              h2.coefficient(i) == FT(0); i++); // no body
+              h2.coefficient(i) == FT(0); i++) {}
   if (h1.coefficient(i) == FT(0)) return SMALLER;
   if (h2.coefficient(i) == FT(0)) return LARGER;
  
@@ -76,7 +76,7 @@ strong_cmp(const HyperplaneCd<FT,LA>& h1,
   int d = h1.dimension();
   for (i = 0; i <=d && 
               h1.coefficient(i)==FT(0) && 
-              h2.coefficient(i)==FT(0); i++) ; // no body
+              h2.coefficient(i)==FT(0); i++) {}
   int c1 = CGAL_NTS sign(h1.coefficient(i));
   int c2 = CGAL_NTS sign(h2.coefficient(i));
   if (c1 != c2) return CGAL_NTS compare(c1,c2);

@@ -76,7 +76,7 @@ linear_solver(const Matrix& A, const Vector& b,
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -135,7 +135,7 @@ linear_solver(const Matrix& A, const Vector& b,
   }
 
 
-  for(i = rank; i < rows && C(i,cols) == 0; ++i); // no body
+  for(i = rank; i < rows && C(i,cols) == 0; ++i) {}
   if (i < rows) 
   { solvable = false; c = L.row(i); }
 
@@ -222,7 +222,7 @@ determinant(const Matrix& A)
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -336,7 +336,7 @@ determinant(const Matrix& A,
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -532,7 +532,7 @@ independent_columns(const Matrix& A,
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -647,7 +647,7 @@ rank(const Matrix& A)
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -755,7 +755,7 @@ inverse(const Matrix& A, Matrix& inverse,
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
@@ -889,7 +889,7 @@ homogeneous_linear_solver(const Matrix &A,
   for(k=0; k<rows; k++) {   
     bool non_zero_found = false; 
     for(i = k; i < rows; i++) { // step through rows $k$ to |rows - 1|
-      for (j = k ; j < cols && C(i,j) == 0; j++) ; 
+      for (j = k ; j < cols && C(i,j) == 0; j++) {}
       // step through columns |k| to |cols - 1|
       if (j < cols) {  
         non_zero_found = true; 
