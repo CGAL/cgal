@@ -394,7 +394,7 @@ int Vector_<NT_,AL_>::
 compare(const Vector_<NT_,AL_>& v1, const Vector_<NT_,AL_>& v2)
 { int i;
   v1.check_dimensions(v2);
-  for(i=0; i < v1.dimension() && v1[i]==v2[i]; i++);
+  for(i=0; i < v1.dimension() && v1[i]==v2[i]; i++) ;
   if (i == v1.dimension()) return 0;
   return (v1[i] < v2[i]) ?  -1 : 1;
 }
