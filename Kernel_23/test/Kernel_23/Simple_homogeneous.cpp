@@ -27,8 +27,8 @@
 
 #include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_io.h"
-#include "CGAL/_test_2.C"
-#include "CGAL/_test_3.C"
+#include "CGAL/_test_2.h"
+#include "CGAL/_test_3.h"
 
 #include "CGAL/_test_new_2.h"
 #include "CGAL/_test_new_3.h"

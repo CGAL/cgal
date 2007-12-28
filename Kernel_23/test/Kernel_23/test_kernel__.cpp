@@ -26,9 +26,9 @@
 #include <CGAL/Testsuite/assert.h>
 
 #include <CGAL/_test_cls_object.h>
-#include <CGAL/_test_cls_quotient.C>
+#include <CGAL/_test_cls_quotient.h>
 #include <CGAL/_test_fct_point_conversion.h>
-#include <CGAL/_test_fct_determinant.C>
+#include <CGAL/_test_fct_determinant.h>
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Precise_numbers.h>
