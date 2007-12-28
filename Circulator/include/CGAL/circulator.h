@@ -34,10 +34,10 @@
 #if defined( __GNUG__ )
     // (__GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 91))
 #define CGAL_NULL_TYPE const void*
-#define CGAL_CIRC_NULL 0
+#define CGAL_NULL 0
 #else // __GNUG__ //
 #define CGAL_NULL_TYPE int
-#define CGAL_CIRC_NULL NULL
+#define CGAL_NULL NULL
 #endif // __GNUG__ //
 #endif // CGAL_NULL_TYPE //
 
@@ -318,7 +318,7 @@ void Assert_is_at_least_random_access_category( const IC& /*ic*/) {
 
 template< class C> inline
 bool I_is_empty_range( const C& c1, const C&, Circulator_tag){
-    return c1 == CGAL_CIRC_NULL;
+    return c1 == CGAL_NULL;
 }
 
 template< class I> inline
@@ -375,7 +375,7 @@ I_min_circulator_size( const C& c) {
     Assert_random_access_category(c);
     typedef typename C::size_type  size_type;
     size_type n = 0;
-    if ( c != CGAL_CIRC_NULL) {
+    if ( c != CGAL_NULL) {
         n = (c-1) - c + 1;
         CGAL_assertion(n > 0);
     }
@@ -386,7 +386,7 @@ template <class C>
 typename C::size_type
 I_circulator_size( const C& c, Forward_circulator_tag) {
     // Simply count.
-    if ( c == CGAL_CIRC_NULL)
+    if ( c == CGAL_NULL)
         return 0;
     typedef typename C::size_type  size_type;
     size_type n = 0;
@@ -419,7 +419,7 @@ template <class C>
 typename C::difference_type
 I_circulator_distance( C c, const C& d, Forward_circulator_tag) {
     // Simply count.
-    if ( c == CGAL_CIRC_NULL)
+    if ( c == CGAL_NULL)
         return 0;
     typedef typename C::difference_type  difference_type;
     difference_type n = 0;
@@ -570,18 +570,18 @@ public:
         return !(*this == i);
     }
     Ref  operator*() const {
-        CGAL_assertion( m_anchor != CGAL_CIRC_NULL);
-        CGAL_assertion( current  != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor != CGAL_NULL);
+        CGAL_assertion( current  != CGAL_NULL);
         return Ref(*current);
     }
     Ptr  operator->() const {
-        CGAL_assertion( m_anchor != CGAL_CIRC_NULL);
-        CGAL_assertion( current  != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor != CGAL_NULL);
+        CGAL_assertion( current  != CGAL_NULL);
         return Ptr(current.operator->());
     }
     Self& operator++() {
-        CGAL_assertion( m_anchor != CGAL_CIRC_NULL);
-        CGAL_assertion( current  != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor != CGAL_NULL);
+        CGAL_assertion( current  != CGAL_NULL);
         ++current;
         if ( current == *m_anchor)
             ++m_winding;
@@ -593,8 +593,8 @@ public:
         return tmp;
     }
     Self& operator--() {
-        CGAL_assertion( m_anchor != CGAL_CIRC_NULL);
-        CGAL_assertion( current != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor != CGAL_NULL);
+        CGAL_assertion( current != CGAL_NULL);
         if ( current == *m_anchor)
             --m_winding;
         --current;
@@ -606,8 +606,8 @@ public:
         return tmp;
     }
     Self& operator+=( difference_type n) {
-        CGAL_assertion( m_anchor != CGAL_CIRC_NULL);
-        CGAL_assertion( current != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor != CGAL_NULL);
+        CGAL_assertion( current != CGAL_NULL);
         if ( n < 0 && current == *m_anchor)  // We are leaving the anchor.
             --m_winding;
         current += n;
@@ -627,8 +627,8 @@ public:
         return tmp += -n;
     }
     difference_type  operator-( const Self& i) const {
-        CGAL_assertion( m_anchor  != CGAL_CIRC_NULL);
-        CGAL_assertion( current   != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor  != CGAL_NULL);
+        CGAL_assertion( current   != CGAL_NULL);
         CGAL_assertion( m_anchor  == i.m_anchor);
         if ( m_winding != i.m_winding) {
             difference_type s = I_min_circulator_size( *m_anchor);
@@ -644,8 +644,8 @@ public:
         return tmp.operator*();
     }
     bool operator<( const Self& i) const {
-        CGAL_assertion( m_anchor  != CGAL_CIRC_NULL);
-        CGAL_assertion( current != CGAL_CIRC_NULL);
+        CGAL_assertion( m_anchor  != CGAL_NULL);
+        CGAL_assertion( current != CGAL_NULL);
         CGAL_assertion( m_anchor  == i.m_anchor);
         return (     (m_winding < i.m_winding)
                  || (    (m_winding == i.m_winding)
@@ -716,12 +716,12 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
     }
     iterator end() {
         // the past-the-end iterator.
-        return anchor == CGAL_CIRC_NULL ?  iterator( &anchor, 0)
+        return anchor == CGAL_NULL ?  iterator( &anchor, 0)
                                         :  iterator( &anchor, 1);
     }
     const_iterator end() const {
         // the past-the-end const iterator.
-        return anchor == CGAL_CIRC_NULL ?  const_iterator( &anchor, 0)
+        return anchor == CGAL_NULL ?  const_iterator( &anchor, 0)
                                         :  const_iterator( &anchor, 1);
     }
 };
@@ -765,7 +765,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -898,7 +898,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -1050,7 +1050,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return empty;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }

@@ -94,7 +94,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return m_empty;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }

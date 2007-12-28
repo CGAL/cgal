@@ -76,7 +76,7 @@ protected :
 
       bool operator==( CGAL_NULL_TYPE p ) const 
       {
-        CGAL_assertion( p == CGAL_CIRC_NULL ); 
+        CGAL_assertion( p == CGAL_NULL ); 
         HalfedgeHandle null ;
         return mHandle == null ;
       }

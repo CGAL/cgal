@@ -66,7 +66,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -109,7 +109,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -156,7 +156,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -208,7 +208,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -267,7 +267,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -305,7 +305,7 @@ public:
 
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -342,7 +342,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -391,7 +391,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return this->_ptr == NULL;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -463,7 +463,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return _i >= _size;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -587,7 +587,7 @@ public:
 // OPERATIONS
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return _i >= _size;
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }

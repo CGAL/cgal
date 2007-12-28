@@ -195,7 +195,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return It::operator==( It(NULL));
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -258,7 +258,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return It::operator==( It(NULL));
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -316,7 +316,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return It::operator==( It(NULL));
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
@@ -379,7 +379,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_CIRC_NULL);
+        CGAL_assertion( p == CGAL_NULL);
         return It::operator==( It(NULL));
     }
     bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }

@@ -371,7 +371,7 @@ public:
 
   bool operator==(CGAL_NULL_TYPE c) const
   {
-    CGAL_triangulation_assertion(c == CGAL_CIRC_NULL);
+    CGAL_triangulation_assertion(c == CGAL_NULL);
     return pos == Cell_handle();
   }
 

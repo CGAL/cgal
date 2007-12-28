@@ -1357,11 +1357,11 @@ void test_Circulator_identity() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -1522,11 +1522,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -1944,11 +1944,11 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -2175,11 +2175,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -4469,11 +4469,11 @@ void test_Circulator_project() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -4634,11 +4634,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -4900,11 +4900,11 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -5065,11 +5065,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -5489,11 +5489,11 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -5720,11 +5720,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -5923,11 +5923,11 @@ void test_Circulator_on_node() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -6038,11 +6038,11 @@ void test_Circulator_on_node() {
     
         // Check tests for empty data structures.
         C_Circulator z = C_Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         C_Circulator i = c_begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == c_begin);
         CGAL_assertion( i == c_begin);
         // Do I reach myself.
@@ -7347,11 +7347,11 @@ l2.destroy();
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        CGAL_assertion(   z == CGAL_CIRC_NULL);
-        CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+        CGAL_assertion(   z == CGAL_NULL);
+        CGAL_assertion( ! (z != CGAL_NULL));
         Circulator i = begin;
-        CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-        CGAL_assertion(   i != CGAL_CIRC_NULL);
+        CGAL_assertion( ! (i == CGAL_NULL));
+        CGAL_assertion(   i != CGAL_NULL);
         CGAL_assertion( i == begin);
         CGAL_assertion( i == begin);
         // Do I reach myself.
@@ -7577,11 +7577,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    CGAL_assertion(   z == CGAL_CIRC_NULL);
-    CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+    CGAL_assertion(   z == CGAL_NULL);
+    CGAL_assertion( ! (z != CGAL_NULL));
     C_Circulator i = c_begin;
-    CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-    CGAL_assertion(   i != CGAL_CIRC_NULL);
+    CGAL_assertion( ! (i == CGAL_NULL));
+    CGAL_assertion(   i != CGAL_NULL);
     CGAL_assertion( i == c_begin);
     CGAL_assertion( i == c_begin);
     // Do I reach myself.
@@ -8348,11 +8348,11 @@ void test_N_step_adaptor_derived() {
         
             // Check tests for empty data structures.
             Circulator z = Circulator();
-            CGAL_assertion(   z == CGAL_CIRC_NULL);
-            CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+            CGAL_assertion(   z == CGAL_NULL);
+            CGAL_assertion( ! (z != CGAL_NULL));
             Circulator i = begin;
-            CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-            CGAL_assertion(   i != CGAL_CIRC_NULL);
+            CGAL_assertion( ! (i == CGAL_NULL));
+            CGAL_assertion(   i != CGAL_NULL);
             CGAL_assertion( i == begin);
             CGAL_assertion( i == begin);
             // Do I reach myself.
@@ -8578,11 +8578,11 @@ void test_N_step_adaptor_derived() {
         
             // Check tests for empty data structures.
             C_Circulator z = C_Circulator();
-            CGAL_assertion(   z == CGAL_CIRC_NULL);
-            CGAL_assertion( ! (z != CGAL_CIRC_NULL));
+            CGAL_assertion(   z == CGAL_NULL);
+            CGAL_assertion( ! (z != CGAL_NULL));
             C_Circulator i = c_begin;
-            CGAL_assertion( ! (i == CGAL_CIRC_NULL));
-            CGAL_assertion(   i != CGAL_CIRC_NULL);
+            CGAL_assertion( ! (i == CGAL_NULL));
+            CGAL_assertion(   i != CGAL_NULL);
             CGAL_assertion( i == c_begin);
             CGAL_assertion( i == c_begin);
             // Do I reach myself.
