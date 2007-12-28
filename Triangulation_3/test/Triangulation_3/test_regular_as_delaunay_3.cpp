@@ -24,7 +24,7 @@
 bool del=true;
 
 #include <CGAL/_test_types.h>
-#include <CGAL/_test_cls_delaunay_3.C>
+#include <CGAL/_test_cls_delaunay_3.h>
 
 typedef CGAL::Regular_triangulation_filtered_traits_3<K>        Traits;
 

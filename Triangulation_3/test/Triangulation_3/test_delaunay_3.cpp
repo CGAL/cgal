@@ -23,7 +23,7 @@
 bool del=true;
 
 #include <CGAL/_test_types.h>
-#include <CGAL/_test_cls_delaunay_3.C>
+#include <CGAL/_test_cls_delaunay_3.h>
 
 int main()
 {

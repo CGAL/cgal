@@ -27,8 +27,8 @@
 #include <list>
 #include <vector>
 
-#include "_test_cls_iterator.C"
-#include "_test_cls_circulator.C"
+#include "_test_cls_iterator.h"
+#include "_test_cls_circulator.h"
 
 #include <CGAL/Random.h>
 

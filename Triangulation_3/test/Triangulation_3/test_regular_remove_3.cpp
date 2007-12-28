@@ -30,7 +30,7 @@
 #include <boost/cstdint.hpp>
 
 #include <CGAL/_test_types.h>
-//#include <CGAL/_test_cls_regular_3.C>
+//#include <CGAL/_test_cls_regular_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
 typedef CGAL::Regular_triangulation_filtered_traits_3<FK> bare_traits;

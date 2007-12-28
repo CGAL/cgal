@@ -23,7 +23,7 @@
 bool del = false;
 
 #include <CGAL/_test_types.h>
-#include <CGAL/_test_cls_triangulation_3.C>
+#include <CGAL/_test_cls_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // Explicit instantiation of the whole class :

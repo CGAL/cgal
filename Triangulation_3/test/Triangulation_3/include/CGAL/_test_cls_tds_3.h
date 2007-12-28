@@ -22,8 +22,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "_test_cls_tds_vertex.C"
-#include "_test_cls_tds_cell.C"
+#include "_test_cls_tds_vertex.h"
+#include "_test_cls_tds_cell.h"
 
 template <class Tds>
 void

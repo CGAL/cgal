@@ -24,7 +24,7 @@
 bool del = false;
 
 #include <CGAL/_test_types.h>
-#include <CGAL/_test_cls_triangulation_simplex_3.C>
+#include <CGAL/_test_cls_triangulation_simplex_3.h>
 
 // Explicit instantiation of the whole class :
 template class CGAL::Triangulation_3<K>;

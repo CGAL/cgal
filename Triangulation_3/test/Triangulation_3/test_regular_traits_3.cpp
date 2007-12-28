@@ -27,7 +27,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-#include <CGAL/_test_cls_regular_euclidean_traits_3.C>
+#include <CGAL/_test_cls_regular_euclidean_traits_3.h>
 
 //needs an exact number type to test the traits class
 #ifdef CGAL_USE_GMP

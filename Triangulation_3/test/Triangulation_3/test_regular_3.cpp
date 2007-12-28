@@ -26,7 +26,7 @@
 #include <list>
 
 #include <CGAL/_test_types.h>
-#include <CGAL/_test_cls_regular_3.C>
+#include <CGAL/_test_cls_regular_3.h>
 
 bool del=true;
 
