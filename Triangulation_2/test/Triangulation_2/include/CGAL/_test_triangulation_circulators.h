@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_triangulation_circulators.C
+// file          : include/CGAL/_test_triangulation_circulators.h
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
@@ -21,9 +21,9 @@
 // ============================================================================
 
 
-//#include <CGAL/_test_cls_vertex_circulator.C>
-//#include <CGAL/_test_cls_edge_circulator.C>
-//#include <CGAL/_test_cls_face_circulator.C>
+//#include <CGAL/_test_cls_vertex_circulator.h>
+//#include <CGAL/_test_cls_edge_circulator.h>
+//#include <CGAL/_test_cls_face_circulator.h>
 
 template < class Tr>
 void

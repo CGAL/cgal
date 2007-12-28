@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_cls_tds_vertex.C
+// file          : include/CGAL/_test_cls_tds_vertex.h
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

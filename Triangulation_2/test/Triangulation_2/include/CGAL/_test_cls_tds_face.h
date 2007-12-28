@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_cls_tds_face.C
+// file          : include/CGAL/_test_cls_tds_face.h
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

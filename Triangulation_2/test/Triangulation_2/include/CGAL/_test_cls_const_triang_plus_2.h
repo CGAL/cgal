@@ -1,4 +1,4 @@
-#include <CGAL/_test_cls_const_Del_triangulation_2.C>
+#include <CGAL/_test_cls_const_Del_triangulation_2.h>
 
 template <class TrP>
 void

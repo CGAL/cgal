@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_types.C
+// file          : include/CGAL/_test_types.h
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

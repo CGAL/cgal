@@ -23,7 +23,7 @@
 // ============================================================================
 
 #include <list>
-#include <CGAL/_test_cls_triangulation_short_2.C>
+#include <CGAL/_test_cls_triangulation_short_2.h>
 
 template <class Triang>
 void 

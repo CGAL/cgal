@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_cls_triangulation_2.C
+// file          : include/CGAL/_test_cls_triangulation_2.h
 // revision      : 
 // revision_date : 
 
@@ -28,10 +28,10 @@
 #include <utility>
 #include <list>
 
-#include <CGAL/_test_fct_is_infinite.C>
-#include <CGAL/_test_triangulation_iterators.C>
-#include <CGAL/_test_triangulation_circulators.C>
-#include <CGAL/_test_line_face_circulator.C>
+#include <CGAL/_test_fct_is_infinite.h>
+#include <CGAL/_test_triangulation_iterators.h>
+#include <CGAL/_test_triangulation_circulators.h>
+#include <CGAL/_test_line_face_circulator.h>
 
 
 template <class Triangul>

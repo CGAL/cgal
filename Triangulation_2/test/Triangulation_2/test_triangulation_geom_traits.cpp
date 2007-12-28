@@ -27,8 +27,8 @@
 #include <CGAL/Triangulation_euclidean_traits_yz_3.h>
 #include <CGAL/Triangulation_euclidean_traits_xz_3.h>
 
-#include <CGAL/_test_types.C>
-#include <CGAL/_test_cls_geom_traits.C>
+#include <CGAL/_test_traits.h>
+#include <CGAL/_test_cls_geom_traits.h>
 
 
 int

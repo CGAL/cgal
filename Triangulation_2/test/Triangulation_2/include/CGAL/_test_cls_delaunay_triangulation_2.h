@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : $URL$
-// file          : include/CGAL/_test_cls_delaunay_triangulation_2.C
+// file          : include/CGAL/_test_cls_delaunay_triangulation_2.h
 // revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann,Mariette Yvinec
@@ -24,7 +24,7 @@
 #include <iterator>
 //#include <vector>
 
-#include <CGAL/_test_cls_triangulation_short_2.C>
+#include <CGAL/_test_cls_triangulation_short_2.h>
 
 template <class Del>
 void

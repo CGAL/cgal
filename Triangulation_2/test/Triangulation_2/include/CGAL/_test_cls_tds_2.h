@@ -11,7 +11,7 @@
 // release       :
 // release_date  :
 // 
-// file          : test/Triangulation/include/CGAL/_test_cls_tds_2.C
+// file          : test/Triangulation/include/CGAL/_test_cls_tds_2.h
 // source        : $URL$
 // revision      : $Id$
 // revision_date : $Date$
@@ -24,8 +24,8 @@
 #include <cassert>
 #include <fstream>
 
-#include <CGAL/_test_cls_tds_vertex.C>
-#include <CGAL/_test_cls_tds_face.C>
+#include <CGAL/_test_cls_tds_vertex.h>
+#include <CGAL/_test_cls_tds_face.h>
 
 
 

@@ -32,8 +32,8 @@
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 
-#include <CGAL/_test_types.C>
-#include <CGAL/_test_cls_triangulation_short_2.C>
+#include <CGAL/_test_traits.h>
+#include <CGAL/_test_cls_triangulation_short_2.h>
 
 
 int main()

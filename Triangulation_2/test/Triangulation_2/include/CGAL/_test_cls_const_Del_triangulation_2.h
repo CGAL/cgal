@@ -22,7 +22,7 @@
 // coordinator   : INRIA Sophia-Antipolis Mariette.Yvinec@sophia.inria.fr
 // ============================================================================
 
-#include <CGAL/_test_cls_constrained_triangulation_2.C>
+#include <CGAL/_test_cls_constrained_triangulation_2.h>
 #include <set>
 #include <iterator>
 

@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : 
-// file          : include/CGAL/_test_fct_is_infinite.C
+// file          : include/CGAL/_test_fct_is_infinite.h
 // revision      : 
 // revision_date : 
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)

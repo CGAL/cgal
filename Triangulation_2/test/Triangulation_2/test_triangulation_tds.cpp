@@ -26,8 +26,8 @@
 
 #include <CGAL/Triangulation_data_structure_2.h>
 
-#include <CGAL/_test_types.C>
-#include <CGAL/_test_cls_tds_2.C>
+#include <CGAL/_test_traits.h>
+#include <CGAL/_test_cls_tds_2.h>
 
 
 

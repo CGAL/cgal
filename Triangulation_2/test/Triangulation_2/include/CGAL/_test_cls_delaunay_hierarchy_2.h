@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : $URL$
-// file          : include/CGAL/_test_cls_delaunay_hierarchy_2.C
+// file          : include/CGAL/_test_cls_delaunay_hierarchy_2.h
 // revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Mariette Yvinec
@@ -20,7 +20,7 @@
 // coordinator   : INRIA Sophia-Antipolis <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
 
-#include <CGAL/_test_cls_delaunay_triangulation_2.C>
+#include <CGAL/_test_cls_delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>
 
