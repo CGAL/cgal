@@ -25,7 +25,7 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 
-#include <CGAL/_test_weighted_alpha_shape_3.C>
+#include <CGAL/_test_weighted_alpha_shape_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 

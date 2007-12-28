@@ -18,12 +18,12 @@
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-#ifndef CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_C
-#define CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_C
+#ifndef CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_H
+#define CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_H
 
 #include <list>
 #include <fstream>
-#include "_count_alpha.C"
+#include "_count_alpha.h"
 
 template <class Weighted_point>
 bool
@@ -161,4 +161,4 @@ _test_weighted_alpha_shape_3()
 
 
 
-#endif //CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_C
+#endif //CGAL_TEST_WEIGHTED_ALPHA_SHAPE_3_H

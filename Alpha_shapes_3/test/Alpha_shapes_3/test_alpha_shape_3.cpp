@@ -25,7 +25,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Alpha_shape_3.h>
 #include <CGAL/Alpha_shape_euclidean_traits_3.h>
-#include <CGAL/_test_cls_alpha_shape_3.C>
+#include <CGAL/_test_cls_alpha_shape_3.h>
 
 
 typedef double coord_type;

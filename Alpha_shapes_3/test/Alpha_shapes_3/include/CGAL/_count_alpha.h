@@ -18,8 +18,8 @@
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-#ifndef CGAL_COUNT_ALPHA_C
-#define CGAL_COUNT_ALPHA_C
+#ifndef CGAL_COUNT_ALPHA_H
+#define CGAL_COUNT_ALPHA_H
 
 #include <list>
 
@@ -325,4 +325,4 @@ void show_alpha_status(AS& A, const typename AS::Alpha_status&  as)
 }
    
 
-#endif //  CGAL_COUNT_ALPHA_C
+#endif //  CGAL_COUNT_ALPHA_H
