@@ -260,4 +260,17 @@ make_list(Iterator begin, Iterator end)
 #endif
 
 
+// Macros for NULL and the NULL type.
+#include <cstddef>
+
+#ifndef CGAL_NULL_TYPE
+#  if defined( __GNUG__ )
+#    define CGAL_NULL_TYPE const void*
+#    define CGAL_NULL 0
+#  else // __GNUG__ //
+#    define CGAL_NULL_TYPE int
+#    define CGAL_NULL NULL
+#  endif // __GNUG__ //
+#endif // CGAL_NULL_TYPE //
+
 #endif // CGAL_CONFIG_H

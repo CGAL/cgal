@@ -30,17 +30,6 @@
 #include <iterator>
 #include <CGAL/circulator_bases.h>
 
-#ifndef CGAL_NULL_TYPE
-#if defined( __GNUG__ )
-    // (__GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 91))
-#define CGAL_NULL_TYPE const void*
-#define CGAL_NULL 0
-#else // __GNUG__ //
-#define CGAL_NULL_TYPE int
-#define CGAL_NULL NULL
-#endif // __GNUG__ //
-#endif // CGAL_NULL_TYPE //
-
 // These are name redefinitions for backwards compatibility
 // with the pre iterator-traits style adaptors.
 
@@ -1139,4 +1128,3 @@ operator+( D n, const
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CIRCULATOR_H //
-// EOF //
