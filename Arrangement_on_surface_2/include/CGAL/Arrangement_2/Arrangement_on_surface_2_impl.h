@@ -179,6 +179,8 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign (const Self& arr)
   // Notify the observers that the assignment has been performed.
   _notify_after_assign ();
 
+  init_boundary_types();
+
   return;
 }
 
