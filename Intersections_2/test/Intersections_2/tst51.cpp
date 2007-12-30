@@ -33,8 +33,8 @@ void one_pair(line_t const & line, trian_t const & trian)
     segment_t seg;
     point_t point;
 
-    if (CGAL::do_intersect(line, trian))
-	;
+    bool b = CGAL::do_intersect(line, trian);
+    (void) b;
 
     CGAL::Object result = CGAL::intersection(line, trian);
     if (CGAL::assign(point, result)) {
