@@ -41,7 +41,8 @@ template <class C_Data, class C_Window, class C_Interface>
 class Segment_tree_d;
 
 template <class C_Data, class C_Window, class C_Interface>
-struct Segment_tree_node: public Tree_node_base
+struct Segment_tree_node
+  : public Tree_node_base<Segment_tree_node<C_Data, C_Window, C_Interface> >
 {
   typedef  C_Data Data;
   typedef  C_Window Window;
@@ -54,21 +55,23 @@ struct Segment_tree_node: public Tree_node_base
   Tree_base<C_Data, C_Window> *sublayer;
 public:
   friend class Segment_tree_d< C_Data,  C_Window,  C_Interface>;
-  
+
+  typedef Tree_node_base<Segment_tree_node<C_Data, C_Window, C_Interface> >  Base;
+
   Segment_tree_node()
-    : Tree_node_base(), sublayer(0)
+    : sublayer(0)
   {}
 
   Segment_tree_node(const Key& p_left_key,
 		    const Key& p_right_key)
-    : Tree_node_base(), left_key(p_left_key), right_key(p_right_key), sublayer(0)
+    : left_key(p_left_key), right_key(p_right_key), sublayer(0)
   {}
 
   Segment_tree_node(Segment_tree_node * p_left,
 		    Segment_tree_node * p_right,
 		    const Key& p_left_key,
 		    const Key& p_right_key)
-    : Tree_node_base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
+    : Base(p_left,p_right), left_key(p_left_key), right_key(p_right_key), sublayer(0)
   {}
   
   ~Segment_tree_node(){
@@ -111,13 +114,13 @@ protected:
   }   
   
   static link_type left(link_type x) { 
-    return static_cast<link_type>(x->left_link);
+    return x->left_link;
   }
   static link_type right(link_type x) {
-    return static_cast<link_type>(x->right_link); 
+    return x->right_link; 
    }
   static link_type parent(link_type x) {
-    return static_cast<link_type>( x->parent_link);
+    return x->parent_link;
   }
 
   link_type header;
@@ -126,7 +129,7 @@ protected:
   link_type leftmost(){return left(header);}
   link_type root() const{
     if(header!=0)
-      return static_cast<link_type>(header->parent_link); 
+      return header->parent_link; 
     return 0;
   }
   

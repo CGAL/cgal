@@ -32,26 +32,21 @@
 #define TREE_BASE_NULL 0
 #endif
 
-#ifndef CGAL__static_cast
-#define CGAL__static_cast(TYPE,EXPR) (TYPE)(EXPR)
-#endif
-
 #define stlvector
 
 CGAL_BEGIN_NAMESPACE
 
-
-
 //link type definition of an ordinary vertex of the tree
+template < typename Node >
 struct Tree_node_base {
-  void *parent_link;
-  void *left_link;
-  void *right_link;
+  Node *parent_link;
+  Node *left_link;
+  Node *right_link;
   Tree_node_base()
-    :parent_link(0), left_link(0), right_link(0)
+    : parent_link(0), left_link(0), right_link(0)
   {}
-  Tree_node_base(void* ll, void* rl)
-    :parent_link(0), left_link(ll), right_link(rl)
+  Tree_node_base(Node* ll, Node* rl)
+    : parent_link(0), left_link(ll), right_link(rl)
   {}
 };
 

@@ -44,7 +44,7 @@ template <class C_Data, class C_Window, class C_Interface>
 class Range_tree_d;
 
 template <class C_Data, class C_Window, class C_Interface>
-struct Range_tree_node: public Tree_node_base
+struct Range_tree_node: public Tree_node_base<Range_tree_node<C_Data, C_Window, C_Interface> >
 {
   private:
   typedef  C_Data Data;
@@ -56,23 +56,24 @@ struct Range_tree_node: public Tree_node_base
   //typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
 public:
   friend class Range_tree_d< C_Data,  C_Window,  C_Interface>;
-  
+
+  typedef Tree_node_base<Range_tree_node<C_Data, C_Window, C_Interface> >  Base;
+
   Range_tree_node()
     : sublayer(0)
   {} 
-  
-  
+
   Range_tree_node( Range_tree_node    * p_left,
 		   Range_tree_node    * p_right,
 		   const  Data & v_obj,
 		   const  Key  & v_key )
-    : Tree_node_base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)
+    : Base(p_left, p_right), object( v_obj ), key( v_key ), sublayer(0)
   {}
   
   Range_tree_node( Range_tree_node    * p_left,
 		   Range_tree_node    * p_right,
 		   const  Key  & v_key )
-    : Tree_node_base(p_left, p_right), key( v_key ), sublayer(0)
+    : Base(p_left, p_right), key( v_key ), sublayer(0)
   {}
 
   virtual ~Range_tree_node()
@@ -112,14 +113,14 @@ protected:
   typedef Range_tree_node<C_Data,C_Window,C_Interface> *link_type;
 
   static link_type& left(link_type x) { 
-    return CGAL__static_cast(link_type&, (*x).left_link);
+    return x->left_link;
   }
   static link_type& right(link_type x) {
-    return CGAL__static_cast(link_type&, (*x).right_link);   
+    return x->right_link;   
   }
 
   static link_type& parent(link_type x) {
-    return CGAL__static_cast(link_type&, (*x).parent_link);
+    return x->parent_link;
   }
 
   link_type header;
@@ -128,7 +129,7 @@ protected:
   link_type leftmost(){return left(header);}
   link_type root() const {
     if(header!=0)
-      return CGAL__static_cast(link_type&, header->parent_link);
+      return header->parent_link;
     // return parent(header);
     else 
       return 0;
