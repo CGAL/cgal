@@ -28,13 +28,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Tree_assertions.h>
 
-#ifndef  USE_ARGUMENT
-#define  USE_ARGUMENT( X )  (void)(X);
-#endif  
-#ifndef  USE_VARIABLE
-#define  USE_VARIABLE( X )  (void)(&(X));
-#endif  
-
 #ifndef TREE_BASE_NULL
 #define TREE_BASE_NULL 0
 #endif
@@ -42,15 +35,6 @@
 #ifndef CGAL__static_cast
 #define CGAL__static_cast(TYPE,EXPR) (TYPE)(EXPR)
 #endif
-
-#ifndef CGAL__const_cast
-#define CGAL__const_cast(TYPE,EXPR) (TYPE)(EXPR)
-#endif
-
-#ifndef CGAL__reinterpret_cast
-#define CGAL__reinterpret_cast(TYPE,EXPR) (TYPE)(EXPR)
-#endif
-
 
 #define stlvector
 
@@ -170,96 +154,74 @@ public:
   typedef Tree_base<C_Data, C_Window> tbt;
 //  Tree_base_type *clone() const { return new Tree_anchor(); }
 
-  bool make_tree(const typename std::list< C_Data>::iterator& beg, 
-		 const typename std::list< C_Data>::iterator& end, 
+  bool make_tree(const typename std::list< C_Data>::iterator& /*beg*/, 
+		 const typename std::list< C_Data>::iterator& /*end*/, 
 		 typename tbt::lit * =0) 
   {
-    USE_ARGUMENT(beg);
-    USE_ARGUMENT(end);
     return true;
   }
 #ifdef stlvector
-  bool make_tree(const typename std::vector< C_Data>::iterator& beg, 
-		 const typename std::vector< C_Data>::iterator& end, 
+  bool make_tree(const typename std::vector< C_Data>::iterator& /*beg*/, 
+		 const typename std::vector< C_Data>::iterator& /*end*/, 
 		 typename tbt::vit * =0) 
   {
-    USE_ARGUMENT(beg);
-    USE_ARGUMENT(end);
     return true;
   }
 #endif
 #ifdef carray
-  bool make_tree(const  C_Data *beg, 
-                 const  C_Data *end) 
+  bool make_tree(const C_Data * /*beg*/, 
+                 const C_Data * /*end*/) 
   {
-    USE_ARGUMENT(beg);
-    USE_ARGUMENT(end);
     return true;
   }
 #endif
    std::back_insert_iterator< std::list< C_Data> > 
       window_query( 
-       C_Window const &win, 
+       C_Window const &, 
        std::back_insert_iterator< std::list< C_Data> > out,
        typename tbt::lbit * =0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
    
   std::back_insert_iterator< std::vector< C_Data> >  
-      window_query( C_Window const &win, 
+      window_query( C_Window const &, 
 		    std::back_insert_iterator< std::vector< C_Data> > out, 
                     typename tbt::vbit * =0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
 #ifdef carray
-   C_Data * window_query( C_Window const &win, 
+   C_Data * window_query( C_Window const &, 
                      C_Data * out){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
 #endif
 #ifdef ostreamiterator
-   std::ostream_iterator< C_Data> window_query( C_Window const &win, 
+   std::ostream_iterator< C_Data> window_query( C_Window const &,
 				        std::ostream_iterator< C_Data> out, 
 					typename tbt::oit *dummy=0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
 #endif
-   std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &win, 
+   std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::list< C_Data> > out,
 				   typename tbt::lbit * =0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
-   std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &win, 
+   std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::vector< C_Data> > out,
 				   typename tbt::vbit * =0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out); 
     return out;
   }
 #ifdef carray
-   C_Data * enclosing_query( C_Window const &win, 
+   C_Data * enclosing_query( C_Window const &, 
                         C_Data * out){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
 #endif
 #ifdef ostreamiterator
-   std::ostream_iterator< C_Data> enclosing_query( C_Window const &win, 
+   std::ostream_iterator< C_Data> enclosing_query( C_Window const &, 
 					   std::ostream_iterator< C_Data> out,
                                            typename tbt::oit *dummy=0){
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(out);
     return out;
   }
 #endif
@@ -267,11 +229,9 @@ public:
 
 protected:
 
-  bool is_inside( C_Window const &win, 
-		  C_Data const& object) const
+  bool is_inside( C_Window const &, 
+		  C_Data const&) const
   {     
-    USE_ARGUMENT(win);
-    USE_ARGUMENT(object);
     return true;
   }
   bool is_anchor()const {return true;}
