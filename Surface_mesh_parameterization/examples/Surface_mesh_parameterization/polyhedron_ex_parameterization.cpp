@@ -297,7 +297,11 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
 // main()
 // ----------------------------------------------------------------------------
 
+#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 int main(int argc, char * argv[])
+#else
+int main()
+#endif
 {
     CGAL::Timer total_timer;
     total_timer.start();
