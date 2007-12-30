@@ -29,8 +29,8 @@
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
 
-#include <CGAL/_test_cls_regular_triangulation_2.C>
-#include <CGAL/_test_cls_regular_hierarchy_2.C>
+#include <CGAL/_test_cls_regular_triangulation_2.h>
+#include <CGAL/_test_cls_regular_hierarchy_2.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

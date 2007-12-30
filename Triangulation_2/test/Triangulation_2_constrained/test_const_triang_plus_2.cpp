@@ -26,8 +26,8 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
-#include <CGAL/_test_cls_hierarchy_2.C>
-#include <CGAL/_test_cls_const_triang_plus_2.C>
+#include <CGAL/_test_cls_hierarchy_2.h>
+#include <CGAL/_test_cls_const_triang_plus_2.h>
 
 
 typedef CGAL::Constrained_Delaunay_triangulation_2<TestK> CDt_ni;  

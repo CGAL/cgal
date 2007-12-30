@@ -26,7 +26,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
-#include <CGAL/_test_cls_constrained_triangulation_2.C>
+#include <CGAL/_test_cls_constrained_triangulation_2.h>
 
 // Explicit instantiation of the whole class :
 template class CGAL::Constrained_triangulation_2<TestK>;
