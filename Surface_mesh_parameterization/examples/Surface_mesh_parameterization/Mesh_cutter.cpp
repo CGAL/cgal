@@ -115,7 +115,7 @@ bool Mesh_cutter::extend()
     m_pBackbone->remove(pHalfedge);
 
     // simplify current backbone
-    while(simplify());
+    while(simplify()) {}
     return true;
 }
 
