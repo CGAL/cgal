@@ -78,8 +78,8 @@ public:
         
     // default constructor
     Point_2_rep() :
-        _m_arc_rep(NULL)
-    {  }
+        _m_arc_rep(NULL) {
+    }
     
     // constructs a "finite" point on curve,
     // implies CGAL::NO_BOUNDARY in x/y
@@ -208,7 +208,7 @@ public:
     //!
     //! implies no boundary conditions in x/y
     Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
-            Base(Rep(Xy_coordinate_2(x, c, arcno))) {
+        Base(Rep(Xy_coordinate_2(x, c, arcno))) {
     }
     
     /*!\brief
@@ -222,7 +222,7 @@ public:
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    class Construct_point_2 {
+    class Construct_point_on_arc_2 {
     public:
         //! constructs points at x 
         template < class Arc_2 >
@@ -444,7 +444,7 @@ public:
             if (this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL) {
                 os << "ARCNO=" << this->arcno();
             } else {
-                os << "VERT" << this->arcno();
+                os << "VERT";
             }
             os << ")";
             break;
