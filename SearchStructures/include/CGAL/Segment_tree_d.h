@@ -17,8 +17,8 @@
 //
 // Author(s)     : Gabriele Neyer
 
-#ifndef CGAL_Segment_tree_d__
-#define CGAL_Segment_tree_d__
+#ifndef CGAL_SEGMENT_TREE_D_H
+#define CGAL_SEGMENT_TREE_D_H
 
 #include <iostream>
 #include <iterator>
@@ -708,8 +708,5 @@ std::allocator<Segment_tree_node<C_Data,C_Window,C_Interface> >
     Segment_tree_d<C_Data,C_Window,C_Interface>::alloc;
 
 CGAL_END_NAMESPACE
+
 #endif
-
-
-
-

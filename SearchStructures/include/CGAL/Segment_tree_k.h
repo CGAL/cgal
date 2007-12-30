@@ -17,8 +17,8 @@
 //
 // Author(s)     : Gabriele Neyer
 
-#ifndef __CGAL_Segment_tree_pre__
-#define __CGAL_Segment_tree_pre__
+#ifndef CGAL_SEGMENT_TREE_K_H
+#define CGAL_SEGMENT_TREE_K_H
 
 // Predefined k-dimensional Segment Trees (k=1..4) 
 // The trees can either be templated with d arbitrary types
@@ -34,6 +34,7 @@
 #include <CGAL/Tree_base.h>
 #include <CGAL/Tree_traits.h>
 #include <CGAL/Segment_tree_d.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class C_Traits_1>
@@ -441,5 +442,7 @@ public:
       delete anchor;
   }
 };
+
 CGAL_END_NAMESPACE
+
 #endif

@@ -17,9 +17,8 @@
 //
 // Author(s)     : Gabriele Neyer
 
-
-#ifndef __CGAL_tree_traits__
-#define __CGAL_tree_traits__
+#ifndef CGAL_TREE_TRAITS_H
+#define CGAL_TREE_TRAITS_H
 
 // Implementation of a minimal tree traits for CGAL trees, derived 
 // from Tree_base.h
@@ -82,7 +81,5 @@ class tree_interval_traits{
 };
 
 CGAL_END_NAMESPACE
+
 #endif
-
-
-

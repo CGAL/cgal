@@ -17,8 +17,8 @@
 //
 // Author(s)     : Gabriele Neyer
 
-#ifndef __CGAL_Tree_base_d__
-#define __CGAL_Tree_base_d__
+#ifndef CGAL_TREE_BASE_H
+#define CGAL_TREE_BASE_H
 
 #include <iterator>
 #include <iostream>

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Gabriele Neyer
 
-#ifndef __CGAL_Range_tree_k__
-#define __CGAL_Range_tree_k__
+#ifndef CGAL_RANGE_TREE_K_H
+#define CGAL_RANGE_TREE_K_H
 
 // Predefined k-dimensional Range Trees (k=1..4) 
 // The trees can either be templated with d arbitrary types
@@ -417,7 +417,5 @@ public:
 };
 
 CGAL_END_NAMESPACE
+
 #endif
-
-
-
