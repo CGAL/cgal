@@ -123,7 +123,7 @@ public:
      * copy constructor
      */
     Arc_2(const Self& a) : 
-            Base(static_cast<const Base&>(a)) {  
+            Base(static_cast<const Base&>(a)) { 
     }
     
     /*!\brief
@@ -924,7 +924,30 @@ public:
     
     //!@}  
     //!\name modification functions
+#endif
     
+ /*!\brief
+     * computes intersection of \c *this arc with \c cv2. Intersection points 
+     * are inserted to the output iterator \c oi as objects of type 
+     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
+     * multiplicity)
+     */
+    template < class OutputIterator >
+    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
+        // handle a special case when two arcs are supported by the same 
+        // curve => only end-point intersections
+        
+        CERR("\nintersect\n");
+        Self::simplify(*this, cv2);
+        if(this->curve().is_identical(cv2.curve()))
+            return _intersect_at_endpoints(cv2, oi);
+        
+        // else general case: distinct supporting curves
+        return _intersect_coprime_support(*this, cv2, oi);
+    }
+    
+#if 0
+
     /*!\brief
      * computes intersection of \c *this arc with \c cv2. Intersection points 
      * are inserted to the output iterator \c oi as objects of type 
@@ -2180,8 +2203,9 @@ std::ostream& operator<<(std::ostream& os,
             os << ", ARCNO=" << arc.arcno(CGAL::ARR_MIN_END) <<
                 "," << arc.arcno() << "," << arc.arcno(CGAL::ARR_MAX_END);
         }
-        os << "); min: " << arc._minpoint() << "; max: " << 
-            arc._maxpoint() << "]";
+        os << "); ";
+        os <<"min: " << arc._minpoint() << "; "; 
+        os<< "max: " << arc._maxpoint() << "]";
         break;
     /*case LiS::IO::BENCHMARK:
         std::cerr << "BENCHMARK format not yet implemented" << std::endl;
