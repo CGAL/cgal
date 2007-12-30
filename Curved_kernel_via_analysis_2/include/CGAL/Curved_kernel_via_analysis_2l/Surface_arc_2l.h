@@ -402,7 +402,7 @@ public:
      * return whether arc is z-vertical
      */
     bool is_z_vertical() const {
-        return this->ptr()->_m_z_vertical;
+        return this->ptr()->_m_is_z_vertical;
     }
 
     //!@}
