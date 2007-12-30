@@ -82,8 +82,8 @@ int main(int, char **) {
   filenames.push_back("data/test10.cin");
   filenames.push_back("data/test11.cin");
 
-  for_each(filenames.begin(), filenames.end(), Test_file(.5));
-  for_each(filenames.begin(), filenames.end(), Test_file(.25));
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.5));
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.25));
 
   return 0;
 }
