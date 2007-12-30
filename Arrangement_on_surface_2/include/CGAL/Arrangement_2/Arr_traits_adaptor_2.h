@@ -1814,7 +1814,6 @@ public:
                              Tag_false) const
     {
       // Curve merging is not supported:
-      CGAL_error();
       return (false);
     }
   };
