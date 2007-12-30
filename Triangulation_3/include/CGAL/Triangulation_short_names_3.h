@@ -20,6 +20,8 @@
 #ifndef CGAL_TRIANGULATION_SHORT_NAMES_3_H
 #define CGAL_TRIANGULATION_SHORT_NAMES_3_H
 
+#if 0 // Disabled to see if it's still really needed.
+
 #define Triangulation_vertex_base_3                 T_vb3
 #define Triangulation_cell_base_3                   T_cb3
 
@@ -46,5 +48,7 @@
 
 #define Triangulation_hierarchy_3                   TH3
 #define Triangulation_hierarchy_vertex_base_3       TH_vb3
+
+#endif // 0
 
 #endif // CGAL_TRIANGULATION_SHORT_NAMES_3_H
