@@ -202,7 +202,7 @@ struct Weighted_point_from_atom {
  */
 template <class It, class K>
 boost::transform_iterator<Weighted_point_from_atom<K>, It>
-make_weighted_point_iterator(It it, K k) {
+make_weighted_point_iterator(It it, K) {
   return boost::make_transform_iterator(it, Weighted_point_from_atom<K>());
 }
 
