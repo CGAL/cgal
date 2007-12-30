@@ -670,8 +670,7 @@ void Regular_complex_d<R>::check_topology() const
           if (j != i) {
             // j must also occur as a vertex of t
             for (k = 0; k <= dcur && 
-                   ( vertex(s,j) != vertex(t,k) || k == l); k++); 
-            // forloop has no body
+                   ( vertex(s,j) != vertex(t,k) || k == l); k++) {}
             if (k > dcur) 
               CGAL_error_msg(              "check_topology: too few shared vertices."); 
           }
