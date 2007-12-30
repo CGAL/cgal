@@ -167,7 +167,7 @@ CGAL_END_NAMESPACE
         {
             // store q_m = p by copying its cartesian coordinates into q[m]
             It i(tco.access_coordinates_begin_d_object()(p)); FT *o;
-            for (o=q[m]; o<q[m]+d; *(o++)=*(i++));
+            for (o=q[m]; o<q[m]+d; *(o++)=*(i++)) {}
         
             // update v_basis by appending q_m^Tq_m
             v_basis[m+1] = prod(q[m],q[m],d);
@@ -293,7 +293,7 @@ CGAL_END_NAMESPACE
         FT prod (const FT* v1, const FT* v2, int k) const
         {
             FT res(FT(0));
-            for (const FT *i=v1, *j=v2; i<v1+k; res += (*(i++))*(*(j++)));
+            for (const FT *i=v1, *j=v2; i<v1+k; res += (*(i++))*(*(j++))) {}
             return res;
         }
         
@@ -425,7 +425,7 @@ CGAL_END_NAMESPACE
         {
             // store q_m = p by copying its cartesian part into q[m]
             It i(tco.access_coordinates_begin_d_object()(p)); RT *o;
-            for (o=q[m]; o<q[m]+d; *(o++)=*(i++));
+            for (o=q[m]; o<q[m]+d; *(o++)=*(i++)) {}
         
             // get homogenizing coordinate
             RT hom = *(i++);
@@ -501,7 +501,7 @@ CGAL_END_NAMESPACE
             RT hD = c[d];
             It i(tco.access_coordinates_begin_d_object()(p)); RT *o;
         
-                for ( o=v; o<v+d; *(o++)=hD*(*(i++)));
+                for ( o=v; o<v+d; *(o++)=hD*(*(i++))) {}
         
                 // get h_p
                 RT h_p = *(i++);
@@ -588,7 +588,7 @@ CGAL_END_NAMESPACE
         RT prod (const RT* v1, const RT* v2, int k) const
         {
             RT res = RT(0);
-            for (const RT *i=v1, *j=v2; i<v1+k; res += (*(i++))*(*(j++)));
+            for (const RT *i=v1, *j=v2; i<v1+k; res += (*(i++))*(*(j++))) {}
             return res;
         }
         
