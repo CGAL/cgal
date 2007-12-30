@@ -341,7 +341,7 @@ class Partition_vertex : public Traits_::Point_2
     {
        Diagonal_iterator d_it = diagonals_begin();
        for (d_it = diagonals_begin(); d_it != diagonals_end() && 
-                                     *d_it != diag_endpoint; d_it++);
+                                     *d_it != diag_endpoint; d_it++) {}
        if (d_it != diagonals_end()) return diag_endpoint_refs.erase(d_it);
        return d_it;
     }
