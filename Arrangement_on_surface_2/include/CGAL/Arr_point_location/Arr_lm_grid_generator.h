@@ -81,6 +81,9 @@ protected:
   ANT                      step_x, step_y;  // Grid step sizes.
   unsigned int             sqrt_n;
 
+  bool            fixed_number_of_lm; // indicates if the constructor got
+                                      // number of landmarks as parameter
+
 private:
 
   /*! Copy constructor - not supported. */
@@ -93,12 +96,25 @@ private:
 public: 
 
     /*! Constructor. */
-  Arr_grid_landmarks_generator (const Arrangement_2& arr,
-                                unsigned int n_landmarks = 0) :
+
+  Arr_grid_landmarks_generator (const Arrangement_2& arr) :
     Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
     ignore_notifications (false),
     updated (false),
-    num_landmarks (n_landmarks)
+    num_landmarks (0),
+    fixed_number_of_lm (false)
+  {
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    build_landmark_set();
+  }
+
+  Arr_grid_landmarks_generator (const Arrangement_2& arr,
+                                unsigned int n_landmarks) :
+    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
+    ignore_notifications (false),
+    updated (false),
+    num_landmarks (n_landmarks),
+    fixed_number_of_lm (true)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     build_landmark_set();
@@ -460,7 +476,7 @@ protected:
     // Create N Halton points. If N was not given to the constructor,
     // set it to be the number of vertices V in the arrangement (actually
     // we generate ceiling(sqrt(V))^2 landmarks to obtain a square grid).
-    if (num_landmarks == 0)
+    if (!fixed_number_of_lm)
       num_landmarks = arr->number_of_vertices();
 
     sqrt_n = static_cast<unsigned int>
