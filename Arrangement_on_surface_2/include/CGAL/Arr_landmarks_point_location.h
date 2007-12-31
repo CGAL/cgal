@@ -27,7 +27,7 @@
 //#define CGAL_DEBUG_LM
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Arr_lm_vertices_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
 #include <set>
 
 CGAL_BEGIN_NAMESPACE

@@ -11,10 +11,12 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $Source: /CVSROOT/CGAL/Packages/Arrangement_2/include/CGAL/Arr_point_location/Arr_lm_halton_generator.h,v $
+// $Revision$ $Date$
+// $Name:  $
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
+//                 Ron Wein     <haranidi@post.tau.ac.il>
 #ifndef CGAL_ARR_LM_HALTON_GENERATOR_H
 #define CGAL_ARR_LM_HALTON_GENERATOR_H
 
@@ -22,39 +24,42 @@
 * Definition of the Arr_halton_landmarks_generator<Arrangement> template.
 */
 
-#include <CGAL/Arr_point_location/Arr_lm_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
-* This class is related to the Landmarks point location, and given as 
-* a parameter (or template parameter) to it. 
-* It inherites from Arr_lm_generator and  implements the 
-* function called "void _create_point_list(Point_list &)" 
-* to creates the set of halton sequence points as landmarks.
-*/
-template <class Arrangement_, 
-	  class Nearest_neighbor_ 
-	  = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
-class Arr_halton_landmarks_generator 
-  : public Arr_landmarks_generator <Arrangement_, Nearest_neighbor_>
+ * A generator for the landmarks point-locatoion class, which uses a
+ * sequence of Halton points as its set of landmarks.
+ */
+template <class Arrangement_,
+          class Nearest_neighbor_  =
+            Arr_landmarks_nearest_neighbor<typename
+                                           Arrangement_::Geometry_traits_2> >
+class Arr_halton_landmarks_generator :
+    public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
-  typedef Arrangement_					 Arrangement_2;
-  typedef typename Arrangement_2::Traits_2		 Traits_2;
-  typedef Arr_halton_landmarks_generator<Arrangement_2, Nearest_neighbor_>
-                                                         Self;
-  typedef typename Traits_2::Point_2		         Point_2;
-  typedef std::vector<Point_2>				 Points_set;
-  typedef typename Arrangement_2::Vertex_const_iterator	 Vertex_const_iterator;
-  
-  
-  
+  typedef Arrangement_                                  Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef Nearest_neighbor_                             Nearest_neighbor;
+
+  typedef Arr_landmarks_generator_base<Arrangement_2,
+                                       Nearest_neighbor>    Base;
+  typedef Arr_halton_landmarks_generator<Arrangement_2,
+                                         Nearest_neighbor>  Self;
+
+  typedef typename Arrangement_2::Point_2               Point_2;
+  typedef std::vector<Point_2>                          Points_set;
+
+  typedef typename Arrangement_2::Vertex_const_iterator
+                                                Vertex_const_iterator;
+
 protected:
-  
-  // Data members:
-  int number_of_landmarks; 
-  
+
+    // Data members:
+  unsigned int     num_landmarks; 
+
 private:
 
   /*! Copy constructor - not supported. */
@@ -63,119 +68,119 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator= (const Self& );
 
-	
+
 public: 
+  
   /*! Constructor. */
-  Arr_halton_landmarks_generator 
-  (const Arrangement_2& arr, int lm_num = -1) : 
-    Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr), 
-    number_of_landmarks (lm_num)
+  Arr_halton_landmarks_generator (const Arrangement_2& arr,
+                                  unsigned int n_landmarks = 0) : 
+    Base (arr),
+    num_landmarks (n_landmarks)
   {
-    CGAL_PRINT_DEBUG("Arr_halton_landmarks_generator constructor. "
-		<<"number_of_landmarks = "<< number_of_landmarks); 
-    
-    this->build_landmarks_set();
+    this->build_landmark_set();
   }
 
 protected:
   
   /*!
-   * create a set of halton points 
-   * the number of points is given as a parametr to this class' constructor.
-   * We first calculate the Arrangement's bounding rectangle. 
-   * This is actually the bounding rectangle of the Arrangement's vertices.
-   * Then, it calculates the halton sequence for this number of points, 
-   * and scales it to fit the arrangement size.
+   * Create a set of Halton points (the number of points is given as a
+   * parameter to the constructor, or is taken from the arrangement size).
+   * The Halton points are constructed in the bounding rectangle of the
+   * arrangement vertices.
    */
-  virtual void _create_points_set (Points_set & points)
+  virtual void _create_points_set (Points_set& points)
   {
-    CGAL_PRINT_DEBUG("create_halton_points_list");
-    
-    //find bounding box
-    double x_min=0, x_max=0, y_min=0, y_max=0;
-    double x,y;
-    Vertex_const_iterator vit;
-    Arrangement_2 *arr = this->arrangement();
-    if(arr->number_of_vertices() == 1)
+    points.clear();
+
+    // Go over the arrangement vertices and construct their boundig box.
+    const Arrangement_2    *arr = this->arrangement();
+    Vertex_const_iterator   vit; 
+    double                  x_min, x_max, y_min, y_max;
+    double                  x, y;
+    bool                    first = true;
+
+    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
     {
-      vit = arr->vertices_begin();
       x = CGAL::to_double(vit->point().x());
       y = CGAL::to_double(vit->point().y());
-      points.push_back(Point_2(x,y)); 
+
+      if (first)
+      {
+        x_min = x_max = x;
+        y_min = y_max = y;
+        first = false;
+      }
+      else
+      {
+        if (x < x_min)
+          x_min = x;
+        else if (x > x_max)
+          x_max = x;
+
+        if (y < y_min)
+          y_min = y;
+        else if (y > y_max)
+          y_max = y;
+      }
+    }
+
+    // Create N Halton points. If N was not given to the constructor,
+    // set it to be the number of vertices in the arrangement.
+    if (num_landmarks == 0)
+      num_landmarks = arr->number_of_vertices();
+
+    if (num_landmarks == 0)
+      return;
+
+    if (num_landmarks == 1)
+    {
+      points.push_back (Point_2 (x_max, y_max)); 
       return;
     }
 
-    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
-    {
-      x = CGAL::to_double(vit->point().x());
-      y = CGAL::to_double(vit->point().y());
-      if (x < x_min) x_min = x;
-      if (x > x_max) x_max = x;
-      if (y < y_min) y_min = y;
-      if (y > y_max) y_max = y;
-    }
-    
-    // n is the number of halton points.
-    //if n is not given in the constructor then this number
-    //is set to be the number of vertices in the arrangement.
-    int n; 
-    if (number_of_landmarks > 0)
-      n = number_of_landmarks;
-    else
-      n= arr->number_of_vertices();
-    
-    //calculate
-    double x_trans = x_max - x_min;
-    double y_trans = y_max - y_min;
-    CGAL_PRINT_DEBUG( "x_max= "<< x_max <<" x_min = "<< x_min );
-    CGAL_PRINT_DEBUG( "y_max= "<< y_max <<" y_min = "<< y_min );
-    CGAL_PRINT_DEBUG( "x_trans= "<< x_trans <<" y_trans = "<< y_trans );
-    
-    //create halton sequence
-    double base_inv;
-    int digit, i, seed2;
-    int base[2], leap[2], seed[2];
-    double r[2], px, py;
-    int ndim = 2;
-    int step = 1;
-    seed[0] = seed[1] = 0; 
+    // Create the Halton sequence.
+    const double  x_scale = x_max - x_min;
+    const double  y_scale = y_max - y_min;
+    double        base_inv;
+    int           digit, i, seed2;
+    int           base[2], leap[2], seed[2];
+    double        r[2];
+    double        px, py;
+    int           ndim = 2;
+    unsigned int  step = 1;
+
+    seed[0] = seed[1] = 0;
     leap[0] = leap[1] = 1;
     base[0] = 2;
     base[1] = 3;
-    for ( step = 1; step <= n; step++ )
+    for (step = 1; step <= num_landmarks; step++)
     {
-      for ( i = 0; i < ndim; i++ )
+      for (i = 0; i < ndim; i++)
       {
-	      seed2 = seed[i] + step * leap[i];
-	      r[i] = 0.0E+00;
-	      base_inv = 1.0E+00 / ( ( double ) base[i] );
-	      while ( seed2 != 0 )
-	      {
-	        digit = seed2 % base[i];
-	        r[i] = r[i] + ( ( double ) digit ) * base_inv;
-	        base_inv = base_inv / ( ( double ) base[i] );
-	        seed2 = seed2 / base[i];
-	      }
+        seed2 = seed[i] + step * leap[i];
+        r[i] = 0;
+        base_inv = 1 / static_cast<double> (base[i]);
+        while (seed2 != 0)
+        {
+          digit = seed2 % base[i];
+          r[i] = r[i] + static_cast<double> (digit) * base_inv;
+          base_inv = base_inv / static_cast<double> (base[i]);
+          seed2 = seed2 / base[i];
+        }
       }
-      //i_to_halton ( ndim, step, seed, leap, base, r );
-      //r[0] is the x_coord
-      //r[1] is the y_coord
-      px = r[0]*x_trans; 
-      py = r[1]*y_trans;
-      Point_2 p(px, py);
-      
-      //put in a list 
-      points.push_back(p); 
-      
-      CGAL_PRINT_DEBUG("halton point "<< step++ <<" is= " << p );
+
+      // Now r[0] and r[1] are the x and y-coordinates of the Halton point
+      // in the unit square. We scale and shift them to fit out bounding box.
+      px = r[0] * x_scale + x_min;
+      py = r[1] * y_scale + y_min;
+
+      points.push_back (Point_2 (px, py));
     }
-    
-    CGAL_PRINT_DEBUG("end create_halton_points_list");
+    return;
   }
 
 };
 
 CGAL_END_NAMESPACE
-
 
 #endif

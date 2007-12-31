@@ -14,77 +14,67 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
+//                 Ron Wein     <wein@post.tau.ac.il>
 #ifndef CGAL_ARR_LANDMARKS_VERTICES_GENERATOR_H
 #define CGAL_ARR_LANDMARKS_VERTICES_GENERATOR_H
 
 /*! \file
-* Definition of the Arr_landmarks_vertices_generator<Arrangement> template.
-*/
+ * Definition of the Arr_landmarks_vertices_generator<Arrangement> template.
+ */
 
 #include <list>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
 
-//#define CGAL_LM_VERTICES_DEBUG
-#ifdef CGAL_LM_VERTICES_DEBUG
-	#define CGAL_PRINT_V_DEBUG(expr)   std::cout << expr << std::endl
-#else
-	#define CGAL_PRINT_V_DEBUG(expr)
-#endif
-
 CGAL_BEGIN_NAMESPACE
 
-/*! \class
-* This class is related to the Landmarks point locatoion, and given as 
-* a parameter (or template parameter) to it. 
-* It creates the list of landmarks, and handles them.
-* It inherites from Arr_observer and updates this list whenever the 
-* arrangement changes.
+/*! \class Arr_landmarks_vertices_generator
+ * A generator for the landmarks point-locatoion class, which uses the
+ * arrangement vertices as its set of landmarks.
 */
-template <class Arrangement_, 
-	  class Nearest_neighbor_ 
-    = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
-class Arr_landmarks_vertices_generator 
-  : public Arr_observer <Arrangement_>
+template <class Arrangement_,
+          class Nearest_neighbor_  =
+            Arr_landmarks_nearest_neighbor<typename
+                                           Arrangement_::Geometry_traits_2> >
+class Arr_landmarks_vertices_generator :
+    public Arr_observer<Arrangement_>
 {
 public:
 
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Traits_2		Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef Nearest_neighbor_                             Nearest_neighbor;
 
   typedef Arr_landmarks_vertices_generator<Arrangement_2,
-					   Nearest_neighbor_>  Self;
+                                           Nearest_neighbor>  Self;
   
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle		Face_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   
-  typedef typename Traits_2::Point_2			Point_2;
-  typedef typename Traits_2::X_monotone_curve_2	        X_monotone_curve_2;
+  typedef typename Arrangement_2::Point_2               Point_2;
+  typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
-  typedef Nearest_neighbor_				Nearest_neighbor;
-  typedef typename Nearest_neighbor_::NN_Point_2	NN_Point_2;
+  typedef typename Nearest_neighbor::NN_Point_2         NN_Point_2;
   typedef std::list<NN_Point_2>                         NN_Point_list;
-  typedef typename NN_Point_list::iterator		NN_Point_list_iterator;
-  
+
 protected:
 
-  typedef Arr_traits_basic_adaptor_2<Traits_2>  Traits_adaptor_2;
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
   const Traits_adaptor_2  *m_traits;  // Its associated traits object.
-  Nearest_neighbor	   nn;      // The associated nearest neighbor object.
-  bool                     ignore_notifications;	
+  Nearest_neighbor         nn;        // The associated nearest neighbor object.
+  bool                     ignore_notifications;
   bool                     updated;
-  int	                   num_small_not_updated_changes;
-  int	                   num_landmarks;
+  int                      num_small_not_updated_changes;
+  int                      num_landmarks;
 
 private:
 
@@ -97,92 +87,81 @@ private:
 public: 
 
   /*! Constructor. */
-  Arr_landmarks_vertices_generator (const Arrangement_2& arr) : 
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)), 
-    ignore_notifications (false), 
-    updated (false), 
-    num_small_not_updated_changes(0), 
+  Arr_landmarks_vertices_generator (const Arrangement_2& arr) :
+    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
+    ignore_notifications (false),
+    updated (false),
+    num_small_not_updated_changes(0),
     num_landmarks(0)
   {
-    CGAL_PRINT_V_DEBUG("Arr_landmarks_vertices_generator constructor"); 
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
-    build_landmarks_set();
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    build_landmark_set();
   }
-  
+
   /*!
-   * Creates the landmarks set (choosing the landmarks) , 
-   * and saving them in the nearest neighbor search structure.
-   * This is a pure virtual function (must be implemented in 
-   * the class that derives from this one)
+   * Creates the landmark set, using all arrangement vertices.
    */
-  void build_landmarks_set ()
+  void build_landmark_set ()
   {
-    CGAL_PRINT_V_DEBUG("build_landmarks_set."); 
-    NN_Point_list      plist; 
-
-    //Go over planar map, and insert all vertices as landmarks
+    // Go over the arrangement, and insert all its vertices as landmarks.
+    NN_Point_list           nnp_list; 
+    const Arrangement_2    *arr = this->arrangement();
     Vertex_const_iterator   vit;
-    Arrangement_2 *arr = this->arrangement();
+    Vertex_const_handle     vh;
 
-    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); vit++)
+    num_landmarks = 0;
+    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
     {
-      //get point from vertex
-      Point_2 p = vit->point() ;
-      Vertex_const_handle vh = vit;
-      Object obj = CGAL::make_object (vh);
-      NN_Point_2 np (p, obj); 
-      
-      //insert point into list
-      plist.push_back(np); 
-      
-      //CGAL_PRINT_V_DEBUG("landmark = "<< p); 
-    } 
+      vh = vit;
+      nnp_list.push_back (NN_Point_2 (vh->point(),
+                                      CGAL::make_object (vh)));
+      num_landmarks++;
+    }
 
-    //the search structure is now updated
-    nn.clean();
-    nn.init(plist.begin(), plist.end());
-    
+    // Update the search structure.
+    nn.clear();
+    nn.init (nnp_list.begin(), nnp_list.end());
+
     num_small_not_updated_changes = 0;
     updated = true;
   }
 
   /*!
-   * clear the tree
+   * Clear the landmark set.
    */
-  void clear_landmarks_set ()
+  void clear_landmark_set ()
   {
-    CGAL_PRINT_V_DEBUG("clear_landmarks_set.");
-    
-    nn.clean();
+    nn.clear();
 
     num_landmarks = 0;
     num_small_not_updated_changes = 0;
-    updated = false;		  
+    updated = false;
   }
 
   /*!
-   * get the nearest neighbor (landmark) to the given point
+   * Get the nearest neighbor (landmark) to the given point.
+   * \param q The query point.
+   * \param obj Output: The location of the nearest landmark point in the
+   *                    arrangement (a vertex, halfedge, or face handle).
+   * \return The nearest landmark point.
    */
-  Point_2 closest_landmark (Point_2 p, Object &obj)
+  virtual Point_2 closest_landmark (const Point_2& q, Object &obj)
   {
-    CGAL_PRINT_V_DEBUG("closest_landmark.");
-
     CGAL_assertion(updated);
-    return nn.find_nearest_neighbor(p, obj);
+    return (nn.find_nearest_neighbor (q, obj));
   }
   
-  //Observer functions that are relevant to overload
-  //-------------------------------------------------
+  /// \name Overloaded observer functions.
+  //@{
   
   /*!
    * Notification after the arrangement has been assigned with another
    * arrangement.
-   * \param u A handle to the unbounded face.
    */
   virtual void after_assign ()
   { 
-    clear_landmarks_set();
-    build_landmarks_set();
+    clear_landmark_set();
+    build_landmark_set();
     ignore_notifications = false;
   }
   
@@ -192,8 +171,8 @@ public:
    */
   virtual void before_attach (const Arrangement_2& arr)
   {
-    clear_landmarks_set();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.traits());
+    clear_landmark_set();
+    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = false;
   }
   
@@ -202,7 +181,7 @@ public:
    */
   virtual void after_attach ()
   {
-    build_landmarks_set();
+    build_landmark_set();
   }
 
   /*! 
@@ -210,80 +189,67 @@ public:
    */
   virtual void before_detach ()
   {
-    clear_landmarks_set();
+    clear_landmark_set();
   }
 
   /*!
    * Notification after the arrangement is cleared.
-   * \param u A handle to the unbounded face.
    */
   virtual void after_clear ()
   { 
-    clear_landmarks_set();
-    build_landmarks_set();
+    clear_landmark_set();
+    build_landmark_set();
   }
 
   /*! Notification before a global operation modifies the arrangement. */
   virtual void before_global_change ()
-  { 
-    clear_landmarks_set();
+  {
+    clear_landmark_set();
     ignore_notifications = true;
   }
 
   /*! Notification after a global operation is completed. */
   virtual void after_global_change ()
   {
-    build_landmarks_set();
+    build_landmark_set();
     ignore_notifications = false;
   }
 
-  /*!
-   * Notification after the creation of a new vertex.
-   * \param v A handle to the created vertex.
-   */
-  virtual void after_create_vertex (Vertex_handle /* v */)
+  /*! Notification after the creation of a new vertex. */
+  virtual void after_create_vertex (Vertex_handle )
   {
     if (! ignore_notifications)
-    {
-      CGAL_PRINT_V_DEBUG("Arr_landmarks_vertices_generator::after_create_vertex");
-      _small_change();
-    }
+      _handle_local_change();
   }
   
-  /*!
-   * Notificaion before the removal of a vertex.
-   * \param v A handle to the vertex to be deleted.
-   */
+  /*! Notificaion after the removal of a vertex. */
   virtual void after_remove_vertex ()
   {
     if (! ignore_notifications)
-    {
-      clear_landmarks_set();
-      build_landmarks_set();
-    }
+      _handle_local_change();
   }
+  //@}
 
 protected:
-  /*!
-   * 
-   */
-  void _small_change ()
-  {
-    CGAL_PRINT_V_DEBUG("small change. num_small_not_updated_changes = " 
-      << num_small_not_updated_changes);
 
-    double nl = static_cast<double> (num_landmarks);
+  /*! Handle a local change. */
+  void _handle_local_change ()
+  {
+    // Rebuild the landmark set only if the number of small
+    // changes is greater than sqrt(num_landmarks).
+    double    nl = static_cast<double> (num_landmarks);
     const int sqrt_num_landmarks = 
       static_cast<int> (std::sqrt (nl) + 0.5);
 
     num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||
-      (num_small_not_updated_changes >=  sqrt_num_landmarks))
+        (num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
-      CGAL_PRINT_V_DEBUG("updating ...");
-      clear_landmarks_set();
-      build_landmarks_set();
+      clear_landmark_set();
+      build_landmark_set();
     }
+
+    return;
   }
 
 };
