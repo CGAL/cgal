@@ -26,9 +26,9 @@
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_landmarks_point_location.h>
-#include <CGAL/Arr_lm_random_generator.h>
-#include <CGAL/Arr_lm_grid_generator.h>
-#include <CGAL/Arr_lm_halton_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_random_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
 
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
