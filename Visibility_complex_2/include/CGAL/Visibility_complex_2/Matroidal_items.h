@@ -1,7 +1,25 @@
-#ifndef VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
-#define VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
+// Copyright (c) 2001-2004  ENS of Paris (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef VISIBILITY_COMPLEX_2_ITEMS_H
+#ifndef CGAL_VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
+#define CGAL_VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
+
+#ifndef CGAL_VISIBILITY_COMPLEX_2_ITEMS_H
 #include <CGAL/Visibility_complex_2/Items.h>
 #endif
 
@@ -68,4 +86,4 @@ public:
 }
 CGAL_END_NAMESPACE
 
-#endif // VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
+#endif // CGAL_VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
