@@ -103,7 +103,6 @@ namespace CGAL{
       last_intersected.push_back(5);
       int status_intersected[4] = {0, 0, 0, 0}; //the number of intersections for each segment
       CGAL::Object obj;
-      Point p_obj;
       std::vector<Point> result; //the vector containing the result vertices
       int next; //the index of the next vertex
 
@@ -149,11 +148,11 @@ namespace CGAL{
               {
                 //test for intersection
                 obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-                if(CGAL::assign(p_obj, obj))
+                if(const Point *p_obj = object_cast<Point>(&obj))
                 {
                   //intersection found
                   outside = true;
-                  result.push_back(p_obj); //add the intersection point
+                  result.push_back(*p_obj); //add the intersection point
                   if(last_intersected.back()!=j)
                     last_intersected.push_back(j);
                   status_intersected[j]++;
@@ -166,7 +165,7 @@ namespace CGAL{
             {
               //test for intersection
               obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-              if(CGAL::assign(p_obj, obj))
+	      if(const Point *p_obj = object_cast<Point>(&obj))
               {
                 //intersection found
                 outside = false;
@@ -190,7 +189,7 @@ namespace CGAL{
                     }
                   }
                 }
-                result.push_back(p_obj); //add the intersection point in the list
+                result.push_back(*p_obj); //add the intersection point in the list
                 if(last_intersected.back()!=j)
                   last_intersected.push_back(j);
                 status_intersected[j]++;
@@ -200,10 +199,11 @@ namespace CGAL{
                     {
                       //test for intersection
                       obj = CGAL::intersection(Segment(p[index], p[next]), s[j]);
-                      if(CGAL::assign(p_obj, obj)) //found the second intersection
+		      if(const Point *p_obj = object_cast<Point>(&obj))
+                           //found the second intersection
                       {
                         outside = true;
-                        result.push_back(p_obj);
+                        result.push_back(*p_obj);
                         if(last_intersected.back()!=j)
                           last_intersected.push_back(j);
                         status_intersected[j]++;
