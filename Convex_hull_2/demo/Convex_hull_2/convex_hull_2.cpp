@@ -23,7 +23,6 @@
 #ifndef CGAL_USE_QT
 #include <iostream>
 
-
 int main(int, char*)
 {
 
@@ -36,15 +35,14 @@ int main(int, char*)
 #else
 
 #include <fstream>
-#include <stack>
-#include <set>
-#include <string>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/point_generators_2.h>
 
+#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
@@ -93,38 +91,17 @@ public:
       *widget << (*itp++);
     }
 
-    std::list<Point_2>	out;
-    std::list<Segment>	Sl;
+    CGAL::Polygon_2<Rep>  out;
     CGAL::convex_hull_points_2(list_of_points.begin(),
 			       list_of_points.end(),
 			       std::back_inserter(out));
 
-    if( out.size() > 1 ) {
-      Point_2 pakt,prev,pstart;
+    *widget << CGAL::BLUE << out;
 
-      std::list<Point_2>::const_iterator it;
-      it=out.begin();
-      prev= *it; pstart=prev;
-      it++;
-
-      for(; it != out.end(); ++it) {
-      	pakt= *it;
-	      Sl.push_back(Segment(prev,pakt));
-	      prev=pakt;
-      }
-      Sl.push_back(Segment(pakt,pstart));
-
-      *widget << CGAL::BLUE;
-      std::list<Segment>::iterator its = Sl.begin();
-      while(its!=Sl.end())
-      {
-        *widget << (*its++);
-      }
-    }
     widget->unlock();
   };
 
-};//end class
+};
 
 class MyWindow : public QMainWindow
 {
