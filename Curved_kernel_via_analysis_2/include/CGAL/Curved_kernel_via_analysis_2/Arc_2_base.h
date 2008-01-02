@@ -24,6 +24,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#include <iostream>
+
 #include <CGAL/Arr_enums.h>
 
 #define CGAL_CKvA_USE_CACHES
@@ -38,9 +40,9 @@ namespace CGALi {
 template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
 class Arc_2_base;
 
-template < class CurvedKernelViaAnalysis_2, class Rep_ >
+template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
 std::ostream& operator<< (std::ostream&,
-    const Arc_2_base<CurvedKernelViaAnalysis_2, Rep_>&);
+    const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>&);
 
 #ifndef CERR
 //#define CKvA_DEBUG_PRINT_CERR
@@ -2446,21 +2448,21 @@ public:
         os << "); min: " << this->_minpoint() << "; max: " << 
             this->_maxpoint() << "]";
         break;
-    /*case LiS::IO::BENCHMARK:
-        std::cerr << "BENCHMARK format not yet implemented" << std::endl;
-        break;
-    */
-    case ::CGAL::IO::BINARY:
-        std::cerr << "BINARY format not yet implemented" << std::endl;
-        break;
-    default:
-        // ASCII
-        std::cerr << "ASCII format not yet implemented" << std::endl;
+        /*case LiS::IO::BENCHMARK:
+          std::cerr << "BENCHMARK format not yet implemented" << std::endl;
+          break;
+        */
+        case ::CGAL::IO::BINARY:
+            std::cerr << "BINARY format not yet implemented" << std::endl;
+            break;
+        default:
+            // ASCII
+            std::cerr << "ASCII format not yet implemented" << std::endl;
+        }
     }
-}
     
-
     //!@}    
+    
 }; // class Arc_2_base
 
 /*!\relates Arc_2_base
@@ -2468,6 +2470,7 @@ public:
  * output operator
  */
 template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
+inline
 std::ostream& operator<<(std::ostream& os,
     const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>& arc) {
     
