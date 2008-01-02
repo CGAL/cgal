@@ -140,6 +140,18 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
     return (_walk_from_face (fh, vh->point(), p, crossed_edges));
   }
 
+  Halfedge_around_vertex_const_circulator  iter,first;
+  first = vh->incident_halfedges();
+  crossed_edges.insert (first);
+  crossed_edges.insert (first->twin());
+  iter = first;
+  ++iter;
+  for ( ; iter!=first ; ++iter)
+  {
+    crossed_edges.insert (iter);
+    crossed_edges.insert (iter->twin());
+  }
+
   // Locate the face around the vertex that contains the curve connecting
   // the vertex and the query point.
   bool                      new_vertex = false;
@@ -524,7 +536,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
   // Go over the CCB.
   typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
     m_traits->is_in_x_range_2_object();
-  Ccb_halfedge_const_circulator                 curr = circ;
+  Ccb_halfedge_const_circulator                 curr = circ , temp_circ;
   const Halfedge_const_handle                   invalid_he;
   Halfedge_const_handle                         he;
 
@@ -581,6 +593,31 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
 
         // Return the halfedge containing p.
         return (he);
+      }
+
+      if ((!curr->target()->is_at_infinity()) && 
+            is_in_x_range(seg , curr->target()->point() ))
+      {
+        if (m_traits->compare_y_at_x_2_object()
+             (curr->target()->point() , seg) == EQUAL)
+        {
+          temp_circ=curr;
+          ++temp_circ;
+          crossed_edges.insert (temp_circ);
+          crossed_edges.insert (temp_circ->twin());
+        }
+      }
+      else if ((!curr->source()->is_at_infinity()) &&
+                 is_in_x_range(seg , curr->source()->point() ))
+      {
+        if (m_traits->compare_y_at_x_2_object() 
+             (curr->source()->point() , seg) == EQUAL)
+        {
+          temp_circ=curr;
+          --temp_circ;
+          crossed_edges.insert (temp_circ);
+          crossed_edges.insert (temp_circ->twin());
+        }
       }
 
       // Return the halfedge we found, and mark that we have already crossed
