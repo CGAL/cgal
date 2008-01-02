@@ -57,12 +57,19 @@ public:
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
     
+    //! type of xy-coordinate
+    typedef typename Base::Xy_coordinate_2 Xy_coordinate_2;
+
     //!\name Constructors
     //!@{
 
     //! default constructor
     Surface_point_2l_rep() :
         Base(), _m_sheet(-1) {
+    }
+    
+    //! standard constructor 
+    Surface_point_2l_rep(const Xy_coordinate_2& xy) : Base(xy) {
     }
     
     //!@}
@@ -114,7 +121,7 @@ public:
     typedef CGALi::Point_2< Curved_kernel_via_analysis_2l, Rep > Base;
     
     //! type of planar point
-    typedef Base Point_2;
+    typedef Base Planar_point_2;
 
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
@@ -142,35 +149,60 @@ public:
     
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
-    Surface_point_2l(const Point_2& pt, const Surface_3& surface, int sheet) :
+    Surface_point_2l(const Planar_point_2& pt, 
+                     const Surface_3& surface, 
+                     int sheet) :
         Base(pt) {
+        this->copy_on_write();
         CGAL_precondition(sheet >= 0);
         this->ptr()->_m_surface = surface;
         this->ptr()->_m_sheet = sheet;
     }
 
+protected:
+    // TODO move to QK
     //!\brief Functor to construct point on an arc
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    class Construct_point_2 {
+    template < class IntersectionPoint_2 >
+    class _Construct_point_on_arc_2 {
     public:
+        typedef IntersectionPoint_2 Intersection_point_2;
+
         //! constructs points at x 
         template < class Arc_2 >
-        Self operator()(
+        Intersection_point_2 operator()(
                 const typename Base::X_coordinate_1& x, 
                 const typename Base::Curve_2& c, int arcno,
                 const Arc_2& arc) {
             CGAL_assertion(c.id() == arc.curve().id());
             CGAL_assertion(arcno = arc.arcno());
-            Self pt;//TODO (Xy_coordinate_2(x, c, arcno)); // TODO use surface
-            // here we can modify the point, if we want to
+            Planar_point_2 p_pt(x, c, arcno);
+            int sheet = arc.sheet();
+            if (arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR) {
+                if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
+                    CGAL::EQUAL) {
+                    sheet = arc.sheet(CGAL::ARR_MIN_END);
+                }
+            } else if (arc.location(CGAL::ARR_MAX_END)== CGAL::ARR_INTERIOR) {
+                if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
+                    CGAL::EQUAL) {
+                    sheet = arc.sheet(CGAL::ARR_MAX_END);
+                }
+            }
+            Intersection_point_2 pt(p_pt, arc.surface(), sheet);
             return pt;
         }
     };
-    
-    //!@}
-    
+
+public:
+    //! constructs point on arc
+    typedef _Construct_point_on_arc_2< Self > Construct_point_on_arc_2;
+
+public:
+
+
     //!\name Access functions
     //!@{
 
