@@ -63,7 +63,7 @@ int main()
   // TESTIT(unsigned int, "unsigned int")
   // TESTIT(unsigned long int, "unsigned long int")
   // TESTIT(unsigned short int, "unsigned short int")
-#if defined CGAL_USE_LONG_LONG && !defined CGAL_CFG_LONG_LONG_IO_BUG
+#ifdef CGAL_USE_LONG_LONG
   TESTIT(long long, "long long")
   // TESTIT(unsigned long long, "unsigned long long")
 #endif

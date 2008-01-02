@@ -74,14 +74,10 @@ int main() {
     test_io<long int>(0);
     test_io<long int>(-12);
 
-#ifdef CGAL_CFG_LONG_LONG_IO_BUG
-    std::cout << "test_io: long long int is not performed due to compiler bug"<< std::endl;
-#else
     std::cout << "test_io: long long int "<< std::endl;
     test_io<long long int>(12);
     test_io<long long int>(0);
     test_io<long long int>(-12);
-#endif
 
     std::cout << "test_io: float "<< std::endl;
     test_io<float>(12);
