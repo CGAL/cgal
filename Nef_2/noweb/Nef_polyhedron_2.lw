@@ -2348,7 +2348,7 @@ int main(int argc, char* argv[])
       break;
     }
   }
-#if !defined(__KCC) && !defined(__BORLANDC__) 
+#if !defined(__BORLANDC__) 
   return 0; // never reached 
 #endif
 }

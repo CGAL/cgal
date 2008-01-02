@@ -2114,13 +2114,6 @@ int main()
     output_first_ciff_separate(__MWERKS__, 16);
     CGAL_STDCOUT << CGAL_STDENDL;
 # endif // (__MWERKS__ == 1)
-#elif defined(__KCC)
-  // KAI CC
-  CGAL_STDCOUT << "KAI CC@";
-  output_first_ciff_separate(__KCC_VERSION / 100, 10);
-  if (__KCC_VERSION % 100 != 0)
-    CGAL_STDCOUT << char(__KCC_VERSION % 100 + int('a') - 1);
-  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__PGI)
   // Portland Group Compiler
   // There does not seem to be a way to find the compiler version from
