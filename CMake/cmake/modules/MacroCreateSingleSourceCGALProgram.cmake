@@ -13,7 +13,7 @@ macro(create_single_source_cgal_program sources )
     
     # Link the executable to CGAL and third-party libraries
     if ( NOT AUTO_LINK_ENABLED )    
-      target_link_libraries(${exe_name} ${CGAL_LIBRARIES})
+      target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
 
     # Add " make test" rule for executable

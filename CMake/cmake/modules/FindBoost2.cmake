@@ -2,7 +2,6 @@
 # This is FindBoost2, a fork of FindBoost which works also with the default directory structure on windows.
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
 # - Find the Boost includes and libraries.
 # The following variables are set if Boost is found.  If Boost is not
 # found, Boost_FOUND is set to false.

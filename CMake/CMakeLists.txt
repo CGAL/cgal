@@ -19,6 +19,21 @@ include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
 #include(Qt3Macros)
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+      FORCE
+     )
+else()
+  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING
+      "The types of build for multiple-configuration generators"
+      FORCE
+     )
+endif()
+
+
+
+
 # CGAL version number
 # TODO: This should be parsed from the VERSION file
 set(CGAL_MAJOR_VERSION 3)
@@ -93,7 +108,7 @@ foreach(config_test_cpp ${all_config_tests})
     endif()
 endforeach()
 
-configure_file(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_SOURCE_DIR}/include/CGAL/compiler_config.h @ONLY IMMEDIATE)
                
 
 #--------------------------------------------------------------------------------------------------
@@ -104,7 +119,7 @@ configure_file(${CGAL_SOURCE_DIR}/compiler_config.h.in ${CGAL_BINARY_DIR}/includ
 
 
 
-set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include)
+set(CGAL_INCLUDE_DIRS ${CGAL_SOURCE_DIR}/include)
 
 set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} )
 
@@ -120,6 +135,7 @@ if(QT_FOUND)
   add_subdirectory(src/CGALQt)
 endif()
 
+add_subdirectory(examples/Straight_skeleton_2)
 
 
 #-----------------------------------------------------------------------------
@@ -183,7 +199,10 @@ install(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
 #
 #--------------------------------------------------------------------------------------------------
 
-configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake @ONLY IMMEDIATE)
+# FinCGAL is paltform independet
+configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_SOURCE_DIR}/cmake/modules/FindCGAL.cmake @ONLY IMMEDIATE)
+
+# UseCGAL OTOH contains platform depedent definitions
 configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
 
 install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake

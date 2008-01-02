@@ -21,12 +21,12 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
 
   find_path(CGAL_INCLUDE_DIR 
             NAMES CGAL/basic.h
-            PATHS ../../include ${CGAL_ROOT}/include
+            PATHS ${CMAKE_SOURCE_DIR}/include ${CGAL_ROOT}/include  
         	  DOC "The directories containing include files for CGAL"
            )
            
   find_path(CGAL_CMAKE_MODULE_PATH CGALcommon.cmake
-            PATHS ../../cmake/modules ${CGAL_ROOT}/cmake/modules ${CMAKE_MODULE_PATH}
+            PATHS ${CMAKE_BINARY_DIR}/cmake/modules ${CGAL_ROOT}/cmake/modules ${CMAKE_MODULE_PATH}
         	  DOC "The directories containing CGAL CMake stuff"
            )
 
@@ -42,7 +42,7 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
     
     find_path(CGAL_LIBRARIES_DIR 
               NAMES "cgal${TOOLSET}-mt.lib" "cgal${TOOLSET}-mt-gd.lib" "cgal${TOOLSET}-mt-o.lib" "cgal${TOOLSET}-mt-g.lib"
-              PATHS ../../lib ${CGAL_ROOT}/lib
+              PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib
          	    DOC "Path to CGAL and third-party libraries"
              ) 
 
@@ -51,8 +51,8 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
   else()
 
     find_library(CGAL_LIBRARIES NAMES CGAL
-                 PATHS ../../lib ${CGAL_ROOT}/lib
-           	     DOC "CGAL libraries"
+                 PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
+                 DOC "CGAL libraries"
                 )
                 
     get_filename_component(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES} PATH)

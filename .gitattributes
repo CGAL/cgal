@@ -1537,8 +1537,9 @@ CMake/UseCGAL.cmake.in -text
 CMake/cmake/modules/CGALcommon.cmake -text
 CMake/cmake/modules/CheckCXXFileRuns.cmake -text
 CMake/cmake/modules/CheckCXXSourceRuns.cmake -text
-CMake/cmake/modules/FindBOOST2.cmake -text
 CMake/cmake/modules/FindBOOST_PROGRAM_OPTIONS.cmake -text
+CMake/cmake/modules/FindBOOST_THREAD.cmake -text
+CMake/cmake/modules/FindBoost2.cmake -text
 CMake/cmake/modules/FindCGALDependencies.cmake -text
 CMake/cmake/modules/FindCGAL_CORE.cmake -text
 CMake/cmake/modules/FindCORE.cmake -text
