@@ -188,25 +188,28 @@ remote_command()
 # $1 = HOST
 build_cgal_libs()
 {
-    if [ -z "`value_of BUILD_ON_${1}`" ]; then
-        eval "BUILD_ON_${1}=\"`value_of COMPILERS_${1}`\""
-    fi
-    if [ "`value_of BUILD_ON_${1}`" = "all" ]; then
-        remote_command ${1} "cd ${CGAL_DIR}; cmake . ; make " >> ${ACTUAL_LOGFILE} 2>&1
+    LOCAL_BUILD_ON="`value_of BUILD_ON_${1}`"
 
-#            "cd ${CGAL_DIR}; export MAKEFLAGS=${MAKEFLAGS};
-#            ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild-all" \
-#              >> ${ACTUAL_LOGFILE} 2>&1
-    else
-        for j in `value_of BUILD_ON_${1}`; do
-            remote_command ${1} "cd ${CGAL_DIR}; cmake -G ${j} . ; make " >> ${ACTUAL_LOGFILE} 2>&1
-              
-#                "cd ${CGAL_DIR}; export MAKEFLAGS=${MAKEFLAGS};
-#                ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild ${j}" \
-#                  >> ${ACTUAL_LOGFILE} 2>&1
-        done
+    if [ -z "${LOCAL_BUILD_ON}" ]; then
+        eval "${LOCAL_BUILD_ON}=\"`value_of COMPILERS_${1}`\""
     fi
-    cp ${CGAL_DIR}/install.log* ${CGAL_TEST_DIR}/
+    
+    if [ "${LOCAL_BUILD_ON}" = "all" ]; then
+      LOCAL_BUILD_ON=""
+      cd ${CGAL_DIR}/cmake/platforms
+      for platform in * 
+      do
+        if [ -d "${platform}" ]; then
+          LOCAL_BUILD_ON="${LOCAL_BUILD_ON} ${platform}"
+        fi
+      done    
+    fi
+    
+    for i in ${LOCAL_BUILD_ON}; do
+      remote_command ${1} "cd ${CGAL_DIR}; cmake ${CGAL_DIR}/cmake/platforms/${i}; ${CGAL_DIR}/cmake/platforms/${i}/make" >> ${ACTUAL_LOGFILE} 2>&1
+    done
+      
+    #cp ${CGAL_DIR}/install.log* ${CGAL_TEST_DIR}/
 }
 
 #-----------------------------------------------
@@ -612,8 +615,8 @@ main_procedure()
     unzip_cgal
   fi
    
-  copy_old_stuff
-  #build_cgal
+  #copy_old_stuff
+  build_cgal
   #update_symlinks
   
   if [ "${BUILD_HOSTS}" = "localhost" ]; then
