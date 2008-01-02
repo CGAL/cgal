@@ -141,12 +141,6 @@
 #cmakedefine CGAL_CFG_NO_LOCALE
 
 //+--------------------------------------------------------------------------
-//| Tests if std::cout supports long double IO.
-//| pgCC 5.2-2 has this bug (only has for double and float).
-//+--------------------------------------------------------------------------
-#cmakedefine CGAL_CFG_NO_LONG_DOUBLE_IO
-
-//+--------------------------------------------------------------------------
 //| The long long built-in integral type is not part of the ISO C++ standard,
 //| but many compilers support it nevertheless since it's part of the ISO
 //| C standard.
