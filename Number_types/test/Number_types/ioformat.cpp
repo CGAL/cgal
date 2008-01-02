@@ -69,9 +69,7 @@ int main()
 #endif
   TESTIT(float, "float")
   TESTIT(double, "double")
-#ifndef CGAL_CFG_NO_LONG_DOUBLE_IO
   TESTIT(long double, "long double")
-#endif
 
   // CGAL number types
   //TESTIT(CGAL::MP_Float, "MP_Float")

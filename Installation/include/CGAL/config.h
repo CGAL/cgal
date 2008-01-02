@@ -69,18 +69,6 @@
 #  define CGAL_USE_LONG_LONG
 #endif
 
-#ifdef CGAL_CFG_NO_LONG_DOUBLE_IO
-#include <iostream>
-namespace std {
-  template < typename _CharT, typename _Traits >
-  inline basic_ostream<_CharT, _Traits> &
-  operator<<(basic_ostream<_CharT, _Traits> & os, const long double &ld)
-  {
-      return os << (double) ld;
-  }
-}
-#endif
-
 
 #ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
 #  define CGAL_TYPENAME_DEFAULT_ARG typename

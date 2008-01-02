@@ -89,14 +89,10 @@ int main() {
     test_io<double>(0);
     test_io<double>(-12);
 
-#ifdef CGAL_CFG_NO_LONG_DOUBLE_IO
-    std::cout << "test_io: long double is not performed due to compiler bug"<< std::endl;
-#else
     std::cout << "test_io: long double "<< std::endl;
     test_io<long double>(12);
     test_io<long double>(0);
     test_io<long double>(-12);
-#endif
 
     //TODO: add more
     std::cout << "ok" <<std::endl;
