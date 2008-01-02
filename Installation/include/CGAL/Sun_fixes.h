@@ -24,6 +24,13 @@
 #ifndef CGAL_SUN_FIXES_H
 #define CGAL_SUN_FIXES_H 1
 
+#ifdef __SUNPRO_CC
+#  include <iterator>
+#  ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
+#    define CGAL_CFG_SUNPRO_RWSTD
+#  endif
+#endif
+
 // Sun CC has an issue with templates that means overloading
 // Qualified_result_of does not work so well.
 #define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
@@ -50,6 +57,7 @@ code, whereever we use this feature.
 #if defined(RWSTD_NO_MEMBER_TEMPLATES) || defined(_RWSTD_NO_MEMBER_TEMPLATES)
 
 #define CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
+#define CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
 
 #endif
 
