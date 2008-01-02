@@ -230,7 +230,7 @@ public:
                 const X_coordinate_1& x, const Curve_2& c, int arcno,
                 const Arc_2& arc) {
             CGAL_assertion(c.id() == arc.curve().id());
-            CGAL_assertion(arcno = arc.arcno());
+            CGAL_assertion(arcno == arc.arcno(x));
             Self pt(Xy_coordinate_2(x, c, arcno));
             // here we can modify the point, if we want to
             return pt;
