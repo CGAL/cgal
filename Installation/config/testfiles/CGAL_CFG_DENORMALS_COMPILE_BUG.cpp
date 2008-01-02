@@ -28,14 +28,15 @@
 // ---------------------------------------------------------------------
 
 //| This flag is set if the compiler bugs when handling denormal values at
-//| compile time.  At least PGCC 5.1-3 has the bug.
+//| compile time.  At least PGCC 7.1-2 has the bug.
 
-template < typename T >
-void use(const T&) {}
- 
+#undef NDEBUG
+#include <cassert>
+
 int main()
 {
   double d = 5e-324;
-  use(d);
+  assert(d != 0);
+  assert(d/2 == 0);
   return 0;
 }
