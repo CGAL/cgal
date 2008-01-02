@@ -27,9 +27,9 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| The long long built-in integral type is not part of the ISO C++ standard,
+//| The long long built-in integral type is not part of the ISO C++ 98 standard,
 //| but many compilers support it nevertheless since it's part of the ISO
-//| C standard.
+//| C standard.  It is part of C++0x.
 //| The following definition is set if it is supported.
 
 template < typename T >
