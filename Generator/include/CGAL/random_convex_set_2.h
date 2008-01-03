@@ -29,11 +29,10 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Random_convex_set_traits_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
+
 template < class OutputIterator, class Point_generator, class Traits >
 OutputIterator
 random_convex_set_2( int n,
@@ -124,11 +123,7 @@ random_convex_set_2( int n,
     bind2nd( Scale(), FT( pg.range()) / maxcoord));
 
 } // random_convex_set_2( n, o, pg, t)
+
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_RANDOM_CONVEX_SET_2_H)
-
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

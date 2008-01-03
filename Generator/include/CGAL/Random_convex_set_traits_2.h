@@ -97,6 +97,7 @@ random_convex_set_2( int n,
   typedef typename Point_generator::value_type Point_2;
   return CGAL_random_convex_set_2(n, o, pg, reinterpret_cast<Point_2*>(0));
 }
+
 template < class OutputIterator, class Point_generator, class R >
 inline
 OutputIterator
