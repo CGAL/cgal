@@ -16,27 +16,17 @@
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>
-//                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
-//                 David Millman <dlm336@cs.nyu.edu>
+//                 Christophe Delage
+//                 David Millman
 
 #ifndef CGAL_APOLLONIUS_GRAPH_NEW_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_NEW_TRAITS_2_H
 
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Apollonius_graph_2/new_traits/New_predicates_C2.h>
-#endif
-
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
-
 CGAL_BEGIN_NAMESPACE
-
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------

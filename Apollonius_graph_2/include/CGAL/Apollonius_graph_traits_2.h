@@ -17,29 +17,18 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
-
 #ifndef CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Apollonius_graph_2/Predicates_C2.h>
 #ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
 #include <CGAL/Apollonius_graph_2/Incircle8_C2.h>
 #include <CGAL/Apollonius_graph_2/Orientation8_C2.h>
 #include <CGAL/Apollonius_graph_2/Finite_edge_test8_C2.h>
 #endif
-#endif
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
-
-
 
 CGAL_BEGIN_NAMESPACE
 
