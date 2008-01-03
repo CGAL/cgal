@@ -1,4 +1,4 @@
-\begin{ccRefClass}{Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
+\begin{ccRefClass}{Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}
 
 \ccInclude{CGAL/Spherical_kernel_3.h}
 
@@ -8,10 +8,11 @@
 
 \ccParameters
 
-The spherical kernel is parameterized by a \ccc{LinearKernel} parameter
-(and derives from it), in order to reuse all needed functionalities on
-basic linear objects provided by one of the \cgal\ kernels. It also
-allows other implementations of these basic functionalities.
+The first parameter of the spherical kernel must be instantiated with
+a model of the \ccc{Kernel} concept. The \ccc{Spherical_kernel_3}
+class template derives from this first parameter, in order to reuse
+all needed functionalities on basic objects provided by a model of the
+Kernel concept. 
 
 The second parameter, \ccc{AlgebraicKernelForSpheres}, is meant to provide the
 spherical kernel with all the algebraic functionalities required for the
@@ -30,7 +31,7 @@ The spherical kernel uses basic number types of the algebraic kernel:
 \ccTypedef{typedef AlgebraicKernelForSpheres::RT RT;}{Ring number type.}
 \ccTypedef{typedef AlgebraicKernelForSpheres::FT FT;}{Field number type.}
 In fact, the two number types \ccc{AlgebraicKernelForSpheres::RT} and
-\ccc{LinearKernel::RT} must coincide, as well as
+\ccc{LinearKernel::RT} must refer to the same type, as well as
 \ccc{AlgebraicKernelForSpheres::FT} and \ccc{LinearKernel::FT}.
 
 The following types are available, as well as all the functionality on
@@ -71,9 +72,5 @@ It defines the same types as \ccc{CGAL::Spherical_kernel_3}.
 \ccIsModel
 
 \ccc{SphericalKernel}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{CGAL::Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
 
 \end{ccRefClass}

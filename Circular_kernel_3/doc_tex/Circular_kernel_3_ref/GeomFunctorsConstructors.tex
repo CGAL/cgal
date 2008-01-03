@@ -152,7 +152,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 	(const SphericalKernel::Line_arc_3 & l);}
-{Constructs the $x$-minimal vertex of \ccc{l}.}
+{Constructs the minimal vertex of \ccc{l} with lexicographically 
+smallest coordinates.}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularMaxVertex_3} 
@@ -168,7 +169,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Circular_arc_point_3 operator()
 	(const SphericalKernel::Line_arc_3 & l);}
-{Constructs the $x$-maximal vertex of \ccc{l}.}
+{Constructs the maximal vertex of \ccc{l} with lexicographically 
+largest coordinates.}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructCircularSourceVertex_3} 

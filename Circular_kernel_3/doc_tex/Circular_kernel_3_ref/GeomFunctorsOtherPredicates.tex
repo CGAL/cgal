@@ -14,6 +14,8 @@ An object \ccVar\ of this type must provide:
 
 where \ccc{Type1} and \ccc{Type2} can be respectively:
 
+\textbf{TODO REMOVE THE USELESS ALWAYS FALSE CASES ? (see Efi's review)}
+
 \begin{tabular}{|l|l|c|}
 \hline
 \ccc{Type1} & \ccc{Type2} & Remark \\
@@ -66,6 +68,7 @@ An object \ccVar\ of this type must provide:
 
 The computation may be faster when the boolean is set to \ccc{true}.
 
+\textbf{TODO REMOVE} 
 For the sake of completeness, the \ccc{operator()} must also be
 defined for a \ccc{Line_arc_3} and a \ccc{Circular_arc_3} (in any order). 
 In this case, it always returns \ccc{false}.
@@ -81,13 +84,13 @@ In this case, it always returns \ccc{false}.
 
 An object \ccVar\ of this type must provide:
 
-\ccMemberFunction{SphericalKernel::Bounded_side 
+\ccMemberFunction{Bounded_side 
 	operator()
 	(const SphericalKernel::Sphere_3& s, 
 	const SphericalKernel::Circular_arc_point_3& p);}
 {For a sphere.}
 
-\ccMemberFunction{SphericalKernel::Bounded_side
+\ccMemberFunction{Bounded_side
 	operator()
 	(const SphericalKernel::Circle_3& s, 
 	const SphericalKernel::Circular_arc_point_3& p);}
@@ -95,8 +98,8 @@ An object \ccVar\ of this type must provide:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{SphericalKernel::Has_on_bounded_side_3}\\
-\ccRefIdfierPage{SphericalKernel::Has_on_unbounded_side_3}
+\ccRefIdfierPage{SphericalKernel::HasOnBoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnUnboundedSide_3}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnBoundedSide_3}
@@ -123,8 +126,8 @@ An object \ccVar\ of this type must provide:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{SphericalKernel::Bounded_side_3}\\
-\ccRefIdfierPage{SphericalKernel::Has_on_unbounded_side_3}
+\ccRefIdfierPage{SphericalKernel::BoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnUnboundedSide_3}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnUnboundedSide_3}
@@ -151,7 +154,7 @@ An object \ccVar\ of this type must provide:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{SphericalKernel::Bounded_side_3}\\
-\ccRefIdfierPage{SphericalKernel::Has_on_bounded_side_3}
+\ccRefIdfierPage{SphericalKernel::BoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnBoundedSide_3}
 
 \end{ccRefFunctionObjectConcept}
