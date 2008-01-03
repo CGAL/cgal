@@ -137,12 +137,7 @@ public:
   {
     int n = number_of_vertices();
 
-#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
-    std::vector<Weighted_point> points;
-    std::copy(first, last, std::back_inserter(points));
-#else
     std::vector<Weighted_point> points(first, last);
-#endif
     std::random_shuffle (points.begin(), points.end());
     spatial_sort (points.begin(), points.end(), geom_traits());
 

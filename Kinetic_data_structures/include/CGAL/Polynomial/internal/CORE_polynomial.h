@@ -30,7 +30,7 @@ struct CORE_polynomial {
   typedef CORE::BigRat NT;
 
   template <class It>
-  CORE_polynomial(It b, It e): p_(std::vector<NT> CGAL_make_vector(b,e)) {
+  CORE_polynomial(It b, It e): p_(std::vector<NT> (b,e)) {
     /*for (int i=0; i<= degree(); ++i){
       CGAL_precondition(P::getCoeffi(i).err()==0);
       }*/

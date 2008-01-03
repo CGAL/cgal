@@ -156,15 +156,7 @@ public:
    template <class ForwardIterator>
    void build(ForwardIterator first, ForwardIterator beyond)
    {
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-      Polygon         polygon;
-
-      for(ForwardIterator fit = first; fit != beyond; fit++){
-	polygon.push_back(*fit);
-      }
-#else
       Polygon         polygon(first,beyond);
-#endif
       Tree            tree(polygon.begin(), polygon.end());
    
       Vertex_map  vertex_map;

@@ -11,7 +11,7 @@ int main() {
 
   std::istream_iterator<Gt::Disk> disk_it(di),disk_end;
   std::istream_iterator<Constraint_input> constraint_it(ci),constraint_end;
-  std::vector<Gt::Disk> disks CGAL_make_vector(disk_it,disk_end);
+  std::vector<Gt::Disk> disks (disk_it,disk_end);
   std::vector<VC::Bitangent_2> result;
   std::vector<VC::Bitangent_2> resultc;
 

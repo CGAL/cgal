@@ -99,16 +99,16 @@ public:
     Min_sphere_d( InputIterator first,
                        InputIterator last)
       : d(-1), 
-#if ( _MSC_VER != 1300) && ! defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER != 1300)
       points( first, last), 
 #endif
       tco( Traits()), 
       ms_basis (tco) 
-#if ( _MSC_VER != 1300) && ! defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER != 1300)
       ,support_end(points.begin())
 #endif
     {
-#if ( _MSC_VER == 1300) || defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER == 1300)
       std::copy(first,last,std::back_inserter(points));
       support_end = points.begin();
 #endif
@@ -125,17 +125,17 @@ public:
                        InputIterator last,
                        const Traits& traits)
       : d(-1),
-#if ( _MSC_VER != 1300) && ! defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER != 1300)
       points( first, last), 
 #endif
       tco( traits), 
       ms_basis (tco)
-#if ( _MSC_VER != 1300) && ! defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER != 1300)
       ,support_end(points.begin())
 #endif
 
     {
-#if ( _MSC_VER == 1300) || defined ( CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG )
+#if ( _MSC_VER == 1300)
       std::copy(first,last,std::back_inserter(points));
       support_end = points.begin();
 #endif

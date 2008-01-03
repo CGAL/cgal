@@ -26,11 +26,7 @@
 #include <iostream>
 #include <CGAL/Polynomial/internal/Rational/Evaluate_polynomial.h>
 #include <sstream>
-
-#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
-// need std::copy
 #include <algorithm>
-#endif
 
 #define CGAL_EXCESSIVE(x)
 
@@ -85,16 +81,8 @@ public:
   }
 
   //! Get coefficients from a vector
-        
-#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
   template <class Iterator>
   Polynomial_impl(Iterator first, Iterator beyond): coefs_(first, beyond) {}
-#else
-  template <class Iterator>
-  Polynomial_impl(Iterator first, Iterator beyond) {
-    std::copy(first, beyond, std::back_inserter(coefs_));
-  }
-#endif
 
   //========================
   // ACCESS TO COEFFICIENTS

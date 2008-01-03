@@ -330,8 +330,7 @@ public:
   {
       int n = number_of_vertices();
 
-      std::vector<Weighted_point> points CGAL_make_vector(first, last);
-
+      std::vector<Weighted_point> points (first, last);
       std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
 

@@ -57,7 +57,6 @@ code, whereever we use this feature.
 #if defined(RWSTD_NO_MEMBER_TEMPLATES) || defined(_RWSTD_NO_MEMBER_TEMPLATES)
 
 #define CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-#define CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
 
 #endif
 

@@ -26,11 +26,7 @@
 #include <iostream>
 #include <CGAL/Polynomial/internal/Rational/Evaluate_polynomial.h>
 #include <sstream>
-
-#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
-// need std::copy
 #include <algorithm>
-#endif
 
 #define CGAL_EXCESSIVE(x)
 

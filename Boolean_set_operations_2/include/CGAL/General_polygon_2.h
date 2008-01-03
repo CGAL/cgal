@@ -48,28 +48,20 @@ public:
 
   template <class CurveIterator>
   General_polygon_2(CurveIterator begin,
-                    CurveIterator end) : m_xcurves CGAL_make_list(begin, end)
+                    CurveIterator end) : m_xcurves (begin, end)
   {}
 
   template <class CurveIterator>
   void init(CurveIterator begin, CurveIterator end)
   {
     m_xcurves.clear();
-#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
-    std::copy(begin, end, std::back_inserter(m_xcurves));
-#else
     m_xcurves.insert(m_xcurves.end(), begin, end);
-#endif
   }
 
   template <class CurveIterator>
   void insert(CurveIterator begin, CurveIterator end)
   {
-#ifdef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
-    std::copy(begin, end, std::back_inserter(m_xcurves));
-#else
     m_xcurves.insert(m_xcurves.end(), begin, end);
-#endif
   }
 
   bool is_empty() const

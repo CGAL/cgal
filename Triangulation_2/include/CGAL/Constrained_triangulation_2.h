@@ -250,7 +250,7 @@ public:
     {
       int n = number_of_vertices(); 
 
-      std::vector<Point> points CGAL_make_vector(first, last);
+      std::vector<Point> points (first, last);
       std::random_shuffle (points.begin(), points.end());
       CGAL::spatial_sort (points.begin(), points.end(), geom_traits());
 
