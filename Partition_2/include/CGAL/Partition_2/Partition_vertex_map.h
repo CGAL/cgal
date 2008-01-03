@@ -508,4 +508,6 @@ private :
   Map m_map ;
 };
 
+}
+
 #endif // CGAL_PARTITION_VERTEX_MAP_H
