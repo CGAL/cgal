@@ -560,6 +560,16 @@ public:
     }
 
 
+    /*!\brief
+     * returns x-coordinate of vertical arc
+     *
+     * \pre is_vertical
+     */
+    X_coordinate_1 x() const {
+        CGAL_precondition(is_vertical());
+        return _minpoint().x();
+    }
+
     //!@}
     //! \name Shortcuts for code readability
     //!@{
