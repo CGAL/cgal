@@ -223,7 +223,7 @@ private:
                 // the first vertical ray
                 *oi++ = CGAL::make_object(Arc_2(pts[0], CGAL::ARR_MIN_END,
                     _m_curve));
-                for(j = 1; j < n-1; j++)  // interior bounded arcs
+                for(j = 0; j < n-1; j++)  // interior bounded arcs
                     *oi++ = CGAL::make_object(Arc_2(pts[j], pts[j+1],
                         _m_curve));
                     // the last vertical ray
