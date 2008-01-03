@@ -31,8 +31,6 @@
 #include <CGAL/Polygon_2_algorithms.h>
 #endif
 
-
-
 CGAL_BEGIN_NAMESPACE
 
 template < class ForwardIterator, class OutputIterator, class Traits >
@@ -720,8 +718,6 @@ min_strip_2(ForwardIterator f,
 } // min_strip_2(f, l, o, t)
 
 
-#ifdef CGAL_REP_CLASS_DEFINED
-
 CGAL_END_NAMESPACE
 #include <CGAL/Min_quadrilateral_traits_2.h>
 CGAL_BEGIN_NAMESPACE
@@ -796,13 +792,6 @@ minimum_enclosing_strip_2(ForwardIterator f,
 { return min_strip_2(f, l, o); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
-#endif // CGAL_REP_CLASS_DEFINED
-
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_MIN_QUADRILATERAL_2_H)
-
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-
