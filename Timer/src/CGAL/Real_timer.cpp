@@ -32,9 +32,6 @@
 #  include <sys/timeb>
 #  include <ctype> 
 
-#elif defined (__MWERKS__)
-#  include <ctime>
-
 #elif defined (__MINGW32__)
 #  include <sys/timeb.h>
 #  include <sys/types.h>
@@ -69,29 +66,11 @@ double Real_timer::get_real_time() const {
     struct timeb t;
     ftime(&t);  
     return double(t.time) + double(t.millitm) / 1000.0;
-#elif defined(__MWERKS__)
-    static bool initialized = false;
-    static std::time_t t_begin;
-    if ( ! initialized) {
-        std::time_t tt;
-        std::time(&tt);
-        struct std::tm* lt = std::localtime(&tt);
-        /// we copy them because mktime can modify
-        struct std::tm t = *lt;
-        t_begin = std::mktime(&t);
-    }
-    std::time_t tt;
-    std::time(&tt);
-    struct std::tm* lt = std::localtime(&tt);
-    /// we copy them because mktime can modify
-    struct std::tm t = *lt;
-    std::time_t t_end = std::mktime(&t);
-    return std::difftime(t_end, t_begin);
 #elif defined (__MINGW32__)
     struct timeb t;
     ftime(&t);
     return double(t.time) + double(t.millitm) / 1000.0;
-#else // ! _MSC_VER && ! __BORLANDC__ && ! __MWERKS__ && ! __MINGW32__//
+#else // ! _MSC_VER && ! __BORLANDC__ && ! __MINGW32__//
     struct timeval t;
     int ret = gettimeofday( &t, NULL);
     CGAL_warning_msg( ret == 0, "Call to gettimeofday() in class "
@@ -101,7 +80,7 @@ double Real_timer::get_real_time() const {
     }
     m_failed = true;
     return 0.0;
-#endif // ! _MSC_VER && ! __BORLANDC__ && ! __MWERKS__  && ! __MINGW32__//
+#endif // ! _MSC_VER && ! __BORLANDC__ && ! __MINGW32__//
 }
 
 double Real_timer::compute_precision() const {

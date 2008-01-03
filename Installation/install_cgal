@@ -2105,15 +2105,6 @@ int main()
   CGAL_STDCOUT << "Borland@" << std::hex;
   output_first_ciff_separate(__BORLANDC__, 16);
   CGAL_STDCOUT << CGAL_STDENDL;
-#elif defined(__MWERKS__)
-  // Metrowerks
-  CGAL_STDCOUT << "Metrowerks@" << std::hex;
-# if (__MWERKS__ == 1)
-    CGAL_STDCOUT << "precw7" << CGAL_STDENDL;
-# else
-    output_first_ciff_separate(__MWERKS__, 16);
-    CGAL_STDCOUT << CGAL_STDENDL;
-# endif // (__MWERKS__ == 1)
 #elif defined(__PGI)
   // Portland Group Compiler
   // There does not seem to be a way to find the compiler version from
