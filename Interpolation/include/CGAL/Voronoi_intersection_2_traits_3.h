@@ -21,21 +21,10 @@
 #define CGAL_VORONOI_INTERSECTION_2_TRAITS_3_H
 
 #include <CGAL/tags.h>
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/predicates_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
-#endif
-
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/predicates/predicates_for_voronoi_intersection_cartesian_2_3.h>
 #include <CGAL/constructions/constructions_for_voronoi_intersection_cartesian_2_3.h>
-#endif
-
 #include <CGAL/function_objects.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -423,7 +412,8 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
 }
 
 ///-----------------------------------------------------------
-//#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
+// Cartesian variants:
+//
 template < class Point, class Vector>
 inline
 Oriented_side
@@ -488,8 +478,8 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
   return Line(Point(x1,y1,z1), Point(x2,y2,z2));
 }
 
-//#endif // CGAL_CARTESIAN_H
-//#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
+
+// Homogeneous variants.
 
 // The 3 following call the cartesian version over FT, because an
 // homogeneous special version has not yet been written.
@@ -557,8 +547,6 @@ plane_intersected_bisector_3(const Point &a, const Vector& n,
 
   return Line(Point(x1,y1,z1), Point(x2,y2,z2));
 }
-
-//#endif // CGAL_HOMOGENEOUS_H
 
 CGAL_END_NAMESPACE
 
