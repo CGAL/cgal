@@ -37,6 +37,5 @@ int main()
 {
   double d = 5e-324;
   assert(d != 0);
-  assert(d/2 == 0);
   return 0;
 }
