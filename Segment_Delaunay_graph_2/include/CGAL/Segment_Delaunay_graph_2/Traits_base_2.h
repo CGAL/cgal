@@ -13,42 +13,22 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
-
-
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_BASE_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_TRAITS_BASE_2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
-
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/Segment_Delaunay_graph_2/Predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
-#endif
-
-
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
 //-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
 // the Traits class
 //-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-//-----------------------------------------------------------------------
-
 
 template<class R, class MTag, class ITag>
 class Segment_Delaunay_graph_traits_base_2
@@ -253,7 +233,6 @@ public:
   }
 
 };
-
 
 CGAL_END_NAMESPACE
 

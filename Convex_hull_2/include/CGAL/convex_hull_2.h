@@ -17,16 +17,11 @@
 //
 // Author(s)     : Stefan Schirra
 
-
 #ifndef CGAL_CONVEX_HULL_2_H
 #define CGAL_CONVEX_HULL_2_H
 
 #include <CGAL/basic.h>
-
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/convex_hull_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/ch_akl_toussaint.h>
 #include <CGAL/ch_bykat.h>
 #include <iterator> 
@@ -192,13 +187,7 @@ upper_hull_points_2(ForwardIterator first, ForwardIterator last,
     typedef typename KTraits::Kernel              Kernel;
     return upper_hull_points_2(first, last, result, Kernel());
 }
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONVEX_HULL_2_H
-
-
-
-
-
-
-

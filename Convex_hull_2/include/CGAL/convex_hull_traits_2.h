@@ -29,6 +29,7 @@
 #include <CGAL/distance_predicates_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class K_>
 class Convex_hull_traits_2 : public K_
 {
@@ -72,10 +73,8 @@ public:
 
 template <class K>
 class convex_hull_traits_2 : public Convex_hull_traits_2<K>
-{
-};
+{};
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CONVEX_HULL_TRAITS_2_H
-
