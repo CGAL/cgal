@@ -4,14 +4,14 @@
 \ccc{Kernel}
 
 \ccHasModels
-\ccc{CGAL::Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}\\
+\ccc{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}\\
 \ccc{Exact_spherical_kernel_3}
 
 \ccTypes
 
 A model of \ccc{SphericalKernel} is supposed to provide some basic types
 
-\ccNestedType{Linear_kernel}{Model of \ccc{LinearKernel}.}
+\ccNestedType{Linear_kernel}{Model of \ccc{Kernel}.}
 \ccGlue
 \ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForSpheres}.}
 
@@ -37,7 +37,7 @@ and to define the following geometric objects
 \ccGlue
 \ccNestedType{Sphere_3}{Model of \ccc{Kernel::Sphere_3}.}
 
-\ccNestedType{Circle_3}{Model of \ccc{SphericalKernel::Circle_3}.}
+\ccNestedType{Circle_3}{Model of \ccc{Kernel::Circle_3}.}
 \ccGlue
 \ccNestedType{Line_arc_3}{Model of \ccc{SphericalKernel::LineArc_3}.}
 \ccGlue
@@ -104,8 +104,8 @@ constructions and other functionalities.
 \ccGlue
 \ccNestedType{Construct_supporting_circle_3}{Model of \ccc{SphericalKernel::ConstructSupportingCircle_3}.}
 
-\ccNestedType{Construct_diametral_sphere_3}{Model of \ccc{SphericalKernel::ConstructDiametralSphere_3}.}
-\ccNestedType{Construct_radical_plane_3}{Model of \ccc{SphericalKernel::ConstructRadicalPlane_3}.\textbf{!!!!!!! could go to Kernel}}
+\ccNestedType{Construct_diametral_sphere_3}{Model of \ccc{SphericalKernel::ConstructDiametralSphere_3}.TO BE MOVED TO KERNEL}
+\ccNestedType{Construct_radical_plane_3}{Model of \ccc{SphericalKernel::ConstructRadicalPlane_3}. TO BE MOVED TO KERNEL}
 
 \ccNestedType{Construct_bbox_3}{Model of \ccc{SphericalKernel::ConstructBbox_3}.}
 

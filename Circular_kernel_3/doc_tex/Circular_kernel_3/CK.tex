@@ -1,22 +1,50 @@
 \section{Introduction}
 
-The goal of the 3D spherical kernel is to offer to the user a large set
-of functionalities on spheres, circles and circular arcs in the 3D
-space, in a similar way as what the 2D circular kernel package (see
-Chapter~\ref{chapter-circular-kernel}) does in the plane. All the
-choices (interface, robustness, representation, and so on) made here
-are consistent with the choices made in the \cgal\ kernel, for which
-we refer the user to the kernel manual.
+The goal of the 3D spherical kernel is to offer to the user a large
+set of functionalities on spheres, circles and circular arcs in the 3D
+space. These functionalities require computing on algebraic numbers,
+which motivates the creation of a new kernel concept extending the
+\cgal\ \ccc{Kernel} concept, which is restricted to objects
+and functionality in a \ccc{FieldNumberType}.
+
+All the choices (interface, robustness, representation, and so on)
+made here are consistent with the choices made in the \cgal\ kernel,
+for which we refer the user to the kernel manual
+(Chapter~\ref{chapter-kernel-23}).
+
+\section{Spherical Kernel Objects\label{section-SK-objects}}
+
+New main geometric objects are introduced by \ccc{Spherical_kernel_3}:
+circular arcs ((model of \ccc{SphericalKernel::CircularArc_3}), points
+of circular arcs (model of \ccc{SphericalKernel::CircularArcPoint_3}),
+and line segments (model of \ccc{SphericalKernel::LineArc_3}) whose
+endpoints are points of this new type.
+
+\ccc{SphericalKernel::CircularArcPoint_3} is used in particular for
+endpoints of arcs and intersection points between spheres, circles or
+arcs. The coordinates of these points are algebraic numbers of degree
+two. Therefore, general predicates offered by the \ccc{Kernel} on
+\ccc{Point_3}, which have coordinates in a \ccc{FieldNumberType},
+would require heavy algebraic computations in algebraic extensions
+of higher degrees and thus are not provided on
+them, which explains the need for a new point type. 
+
+A consistent set of predicates and constructions is offered on this
+new type of points. The spherical kernel currently implements a set of
+fundamental functionalities like intersection, comparisons, inclusion,
+etc. More might be provided in the future, as long as only algebraic
+numbers of degree two are used.
 
 \section{Software Design}
 
 The design of \ccc{Spherical_kernel_3} is similar to the design of
-\ccc{Circular_kernel_2}. It has two template parameters:
+\ccc{Circular_kernel_2} (see Chapter~\ref{chapter-circular-kernel}). 
+It has two template parameters:
 \begin{itemize}
-\item {} the \ccc{LinearKernel}, from which the spherical kernel derives,
-provides all elementary geometric objects like points, lines, spheres, and
-elementary functionality on them. It must model the \cgal\ three 
-dimensional \ccc{Kernel} concept.
+\item {} the first parameter must model the \cgal\ 
+three dimensional \ccc{Kernel} concept. The spherical kernel derives
+from it, and it provides all elementary geometric objects like points,
+lines, spheres, circles and elementary functionality on them.
 %The \cgal\ 2D Kernel can be used as parameter,
 %but the user may plug his own kernel 
 %instead, as long as it follows the \cgal\ kernel concept. 
@@ -27,19 +55,16 @@ robustness of the package relies on the fact that the algebraic kernel
 provides exact computations on algebraic objects.
 \end{itemize}
 
-The 3D spherical kernel uses the extensibility scheme presented in the 
-kernel manual (see Section~\ref{section-extensible-kernel}). 
-The types of \ccc{LinearKernel} are inherited
-by the 3D spherical kernel and some types are taken from the
-\ccc{AlgebraicKernelForSpheres} parameter. New main geometric objects are
-introduced by \ccc{Spherical_kernel_3}: circles in 3D, circular arcs,
-points of circular arcs (used in particular for endpoints of arcs and
-intersection points between arcs), and line segments, whose endpoints
-are points of this new type.
+The 3D spherical kernel uses the extensibility scheme presented in the
+kernel manual (see Section~\ref{section-extensible-kernel}). The types
+of \ccc{Kernel} are inherited by the 3D spherical kernel and some
+types are taken from the \ccc{AlgebraicKernelForSpheres}
+parameter. \ccc{Spherical_kernel_3} introduces new geometric objects
+as mentioned in Section~\ref{section-SK-objects}.
 
 In fact, the spherical kernel is documented as a concept,
 \ccc{SphericalKernel}. One model is currently provided: 
-\ccc{Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}.
+\ccc{Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}.
 
 \section{Example}
 \textit{following example to be improved, and more examples and explanations to be added...}
