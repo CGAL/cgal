@@ -87,7 +87,8 @@ bool operator==( const Polygon_2<Traits_P,Container1_P> &x,
 //-----------------------------------------------------------------------//
 
 template <class Traits_P, class Container_P>
-std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
+std::istream &
+operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 {
   int n; // number of vertices
   is >> n;
@@ -109,8 +110,8 @@ std::istream &operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 //-----------------------------------------------------------------------//
 
 template <class Traits_P, class Container_P>
-std::ostream
-&operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
+std::ostream&
+operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
 {
   typename Polygon_2<Traits_P,Container_P>::Vertex_const_iterator i;
 
@@ -139,15 +140,9 @@ std::ostream
   }
 }
 
-CGAL_END_NAMESPACE
-
 //-----------------------------------------------------------------------//
 //                          transform
 //-----------------------------------------------------------------------//
-
-#ifdef CGAL_REP_CLASS_DEFINED
-
-CGAL_BEGIN_NAMESPACE
 
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
@@ -161,6 +156,3 @@ transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p)
 }
 
 CGAL_END_NAMESPACE
-
-#endif // CGAL_REP_CLASS_DEFINED
-

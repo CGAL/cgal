@@ -33,9 +33,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/enum.h>
 
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Aff_transformation_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
 
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
@@ -368,15 +366,9 @@ bool
 operator!=(const Polygon_2<Traits_P,Container1_P> &x,
            const Polygon_2<Traits_P,Container2_P> &y);
 
-#ifdef CGAL_REP_CLASS_DEFINED
-
-
-
 template <class Transformation, class Traits_P, class Container_P>
 Polygon_2<Traits_P,Container_P>
 transform(const Transformation& t, const Polygon_2<Traits_P,Container_P>& p);
-
-#endif // CGAL_REP_CLASS_DEFINED
 
 //-----------------------------------------------------------------------//
 //               I/O
@@ -411,4 +403,3 @@ operator!=(const Polygon_2<Traits_P,Container1_P> &x,
 CGAL_END_NAMESPACE
 
 #endif
-

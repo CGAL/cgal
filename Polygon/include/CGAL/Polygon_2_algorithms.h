@@ -25,10 +25,8 @@
 #define CGAL_POLYGON_2_ALGORITHMS_H
 
 #include <CGAL/basic.h>
-
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
-
 #include <CGAL/Polygon_2/polygon_assertions.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -141,8 +139,6 @@ Orientation orientation_2(ForwardIterator first,
 //                         implementation
 //-----------------------------------------------------------------------//
 
-#ifdef CGAL_REP_CLASS_DEFINED
-
 template <class ForwardIterator>
 inline
 ForwardIterator left_vertex_2(ForwardIterator first,
@@ -152,7 +148,6 @@ ForwardIterator left_vertex_2(ForwardIterator first,
     typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return left_vertex_2(first, last, K());
 }
-
 
 
 template <class ForwardIterator>
@@ -166,8 +161,6 @@ ForwardIterator right_vertex_2(ForwardIterator first,
 }
 
 
-
-
 template <class ForwardIterator>
 inline
 ForwardIterator top_vertex_2(ForwardIterator first,
@@ -177,7 +170,6 @@ ForwardIterator top_vertex_2(ForwardIterator first,
     typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return top_vertex_2(first, last, K());
 }
-
 
 
 template <class ForwardIterator>
@@ -272,12 +264,9 @@ Orientation orientation_2(ForwardIterator first,
     typename std::iterator_traits<ForwardIterator>::value_type>::Kernel K; 
   return orientation_2(first, last, K());
 }
-#endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_END_NAMESPACE
 
 #include <CGAL/Polygon_2/Polygon_2_algorithms_impl.h>
 
 #endif // CGAL_POLYGON_2_ALGORITHMS_H
-
-
