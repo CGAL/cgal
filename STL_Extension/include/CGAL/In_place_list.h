@@ -215,8 +215,8 @@ public:
   typedef CGALi::In_place_list_iterator<T, Alloc> iterator;
   typedef CGALi::In_place_list_const_iterator<T, Alloc> const_iterator;
 
-  typedef CGAL_reverse_iterator(iterator)         reverse_iterator;
-  typedef CGAL_reverse_iterator(const_iterator)   const_reverse_iterator;
+  typedef std::reverse_iterator<iterator>         reverse_iterator;
+  typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
 
   typedef In_place_list<T,managed,Alloc>          Self;
 

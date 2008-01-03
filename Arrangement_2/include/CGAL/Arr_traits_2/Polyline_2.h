@@ -243,7 +243,7 @@ public:
     friend class _Polyline_2<SegmentTraits_>;
   };
 
-  typedef CGAL_reverse_iterator(const_iterator) const_reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   /*! Get an iterator for the polyline points. */
   const_iterator begin() const

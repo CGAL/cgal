@@ -77,18 +77,6 @@
 #endif
 
 
-#ifndef CGAL_CFG_SUNPRO_RWSTD
-#  define CGAL_reverse_iterator(T) std::reverse_iterator< T >
-#else
-#  define CGAL_reverse_iterator(T) std::reverse_iterator< T , \
-                                   typename T::iterator_category , \
-                                   typename T::value_type , \
-                                   typename T::reference , \
-                                   typename T::pointer , \
-                                   typename T::difference_type >
-#endif
-
-
 // Big endian or little endian machine.
 // ====================================
 

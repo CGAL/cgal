@@ -71,20 +71,12 @@ main(int,char*[])
   std::vector<vertex_descriptor> predecessor(boost::num_vertices(ft));
   // and then turn it into a property map
   boost::iterator_property_map<std::vector<vertex_descriptor>::iterator,
-                               VertexIdPropertyMap
-#ifdef CGAL_CFG_SUNPRO_RWSTD
-				  ,vertex_descriptor,vertex_descriptor& 
-#endif
-				   >
+                               VertexIdPropertyMap>
     predecessor_pmap(predecessor.begin(), vertex_index_pmap);
 
   std::vector<double> distance(boost::num_vertices(ft));
   boost::iterator_property_map<std::vector<double>::iterator,
-                               VertexIdPropertyMap
-#ifdef CGAL_CFG_SUNPRO_RWSTD
-				  ,double,double& 
-#endif
-				   >
+                               VertexIdPropertyMap>
     distance_pmap(distance.begin(), vertex_index_pmap);
 
   // start at an arbitrary vertex

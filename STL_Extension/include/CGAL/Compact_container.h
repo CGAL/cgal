@@ -131,8 +131,8 @@ public:
   typedef typename Allocator::difference_type       difference_type;
   typedef CGALi::CC_iterator<Self, false>           iterator;
   typedef CGALi::CC_iterator<Self, true>            const_iterator;
-  typedef CGAL_reverse_iterator(iterator)           reverse_iterator;
-  typedef CGAL_reverse_iterator(const_iterator)     const_reverse_iterator;
+  typedef std::reverse_iterator<iterator>           reverse_iterator;
+  typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
   friend class CGALi::CC_iterator<Self, false>;
   friend class CGALi::CC_iterator<Self, true>;
