@@ -6,6 +6,12 @@ Computes the pairs of real roots of a system of two bivariate polynomials.
 \ccRefines 
 \ccc{AdaptableFunctor} with three arguments
 
+\ccTypes
+\ccThree{typedef AlgebraicKernel_d_2::Polynomial_2}{second_argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 second_argument_type;}{}
+
 \ccCreationVariable{fo}
 
 \ccOperations
@@ -14,8 +20,8 @@ A model \ccVar\ of this type must provide:
 \ccThree{OutputIterator}{fo(first_argument_type,++}{}
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1,
-	     const AlgebraicKernel_d_2::Polynomial_2 & p2,
+    operator()(const first_argument_type & p1,
+	     const second_argument_type & p2,
 	     OutputIterator res);}
 {Copies in the output iterator the common roots of $p_1$ 
 and $p_2$ with their multiplicity, as objects of type

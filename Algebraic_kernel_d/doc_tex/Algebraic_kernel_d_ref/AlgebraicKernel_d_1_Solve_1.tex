@@ -7,18 +7,18 @@ Computes the real roots of a univariate polynomial.
 \ccc{AdaptableBinaryFunction} 
 
 \ccTypes
-\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{first_argument_type+}{}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
+\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;}{}
 
 \ccCreationVariable{fo}
 
 \ccOperations
 A model of this type must provide:
 
-\ccThree{OutputIterator}{fo(first_argument_type,++}{}
+\ccThree{OutputIterator}{fo(argument_type,++}{}
 \ccMethod{template < class OutputIterator >
     OutputIterator
-    operator()(const first_argument_type &p,
+    operator()(const argument_type &p,
 	     OutputIterator res, bool known_to_be_square_free=false);}
 {Copies in the output iterator the roots of \ccc{p} as objects of type 
 \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. The boolean indicates 
@@ -27,7 +27,7 @@ not known.}
 
 \ccMethod{template < class OutputIterator >
 	OutputIterator
-        operator()(const first_argument_type &p,
+        operator()(const argument_type &p,
 	     OutputIterator res);}
 {Copies in the output iterator the roots of \ccc{p} with their 
 multiplicity, as objects of type 
