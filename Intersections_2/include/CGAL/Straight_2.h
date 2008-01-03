@@ -27,6 +27,7 @@
 
 #include <CGAL/Line_2_Line_2_intersection.h>
 #include <CGAL/squared_distance_utils.h>
+#include <CGAL/Kernel/global_functions_internal_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
