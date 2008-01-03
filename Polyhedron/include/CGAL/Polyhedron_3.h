@@ -34,14 +34,9 @@
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/IO/Verbose_ostream.h>
-
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Polyhedron_traits_3.h>
-#endif // CGAL_REP_CLASS_DEFINED
-
 
 CGAL_BEGIN_NAMESPACE
-
 
 template <class VertexBase>
 class I_Polyhedron_vertex  : public VertexBase  {
@@ -1525,4 +1520,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYHEDRON_3_H //
-// EOF //

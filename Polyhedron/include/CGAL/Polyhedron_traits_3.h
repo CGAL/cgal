@@ -48,4 +48,3 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYHEDRON_TRAITS_3_H //
-// EOF //
