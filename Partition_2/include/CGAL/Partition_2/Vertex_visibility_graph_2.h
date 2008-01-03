@@ -122,15 +122,6 @@ public:
    typedef typename Edge_set::iterator                iterator;
    typedef typename Edge_set::const_iterator          const_iterator;
 
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-  static Indirect_less_xy_2<Traits> indirect_less_xy_2;
-  static bool compare(const Polygon_const_iterator& pit1, const Polygon_const_iterator& pit2)
-  {
-    return indirect_less_xy_2(pit1, pit2);
-  }
-#endif
-
    Vertex_visibility_graph_2()  {}
 
    //
@@ -430,12 +421,6 @@ private:
    Edge_set                              edges;
 };
 
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-template <class Traits>
-Indirect_less_xy_2<Traits>
-Vertex_visibility_graph_2<Traits>::indirect_less_xy_2; 
-#endif
 }
 
 #include <CGAL/Partition_2/Vertex_visibility_graph_2_impl.h>

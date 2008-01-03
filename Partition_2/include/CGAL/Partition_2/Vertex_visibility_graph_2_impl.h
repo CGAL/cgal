@@ -65,11 +65,7 @@ Vertex_visibility_graph_2<Traits>::initialize_vertex_map(
 
    // Sort the event list (iterators to points) from left to right 
    // (using less_xy)
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-   iterator_list.sort(&Self::compare);
-#else
    iterator_list.sort(Indirect_less_xy_2<Traits>());
-#endif
    // Create an ordered list of edge endpoints (iterators), initially empty
    typedef std::set< Point_pair, Segment_less_yx_2 > Ordered_edge_set;
    typedef typename Ordered_edge_set::iterator       Ordered_edge_set_iterator;

@@ -112,10 +112,6 @@ public:
    typedef typename Traits::Less_xy_2   Less_xy_2;
    typedef typename Traits::Point_2     Point_2;
 
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-   CW_indirect_edge_info_compare(){}
-#endif
-
    CW_indirect_edge_info_compare (Vertex_iterator v_info) : vertex_it(v_info),
       left_turn(Traits().left_turn_2_object()),
       less_xy(Traits().less_xy_2_object())
@@ -170,15 +166,6 @@ public:
   typedef typename List::size_type      size_type ;
 
   typedef Circulator_from_iterator<Self_const_iterator> Self_const_circulator;
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-  static CW_indirect_edge_info_compare<Traits> cw_indirect_edge_info_compare;
-
-  static bool compare(const Edge_info& e1, const Edge_info& e2)
-  {
-    return cw_indirect_edge_info_compare(e1,e2);
-  }
-#endif
 
   Self_const_iterator begin() const { return m_list.begin() ; }
   Self_iterator       begin()       { return m_list.begin() ; }
@@ -250,14 +237,7 @@ public:
     // polygon.
     if (m_list.size() > 2)
     {
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-      cw_indirect_edge_info_compare = 
-        CW_indirect_edge_info_compare<Traits>(vertex_it);
-      m_list.sort(&Self::compare);
-#else
-      m_list.sort
-        (CW_indirect_edge_info_compare<Traits>(vertex_it));
-#endif
+      m_list.sort(CW_indirect_edge_info_compare<Traits>(vertex_it));
     }
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
@@ -320,12 +300,6 @@ private :
   List m_list ;
 };
 
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-template <class Traits>
-CW_indirect_edge_info_compare< Traits >
-Edge_list<Traits>::cw_indirect_edge_info_compare;
-#endif
-
 
 template <class Traits>
 std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges) 
@@ -367,14 +341,6 @@ public:
    typedef typename Polygon_2::Vertex_iterator Vertex_iterator;
 
    Partition_vertex_map() {}
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-  static CW_indirect_edge_info_compare<Traits> cw_indirect_edge_info_compare;
-  static bool compare(const Edge_info & e1, const Edge_info& e2)
-  {
-    return cw_indirect_edge_info_compare(e1, e2);
-  }
-#endif
 
    template <class InputIterator>
    Partition_vertex_map(InputIterator first_poly, InputIterator last_poly)
@@ -447,15 +413,8 @@ public:
     // of the union polygon.
           if ((*m_it).second.size() > 2)
           {
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-            cw_indirect_edge_info_compare = 
-              CW_indirect_edge_info_compare<Traits>((*m_it).first.vertex_it());
-           (*m_it).second.sort(&Self::compare);
-#else
             (*m_it).second.sort(
               CW_indirect_edge_info_compare<Traits>((*m_it).first.vertex_it()));
-#endif
        	  }
 
           // find the previous vertex in this vertex's list
@@ -548,14 +507,5 @@ private :
 
   Map m_map ;
 };
-
-#ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-template <class Traits>
-CW_indirect_edge_info_compare<Traits>
-Partition_vertex_map<Traits>::cw_indirect_edge_info_compare;
-#endif
-
-}
-
 
 #endif // CGAL_PARTITION_VERTEX_MAP_H

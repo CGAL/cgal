@@ -54,12 +54,6 @@ code, whereever we use this feature.
  
 #include <stdcomp.h>
 
-#if defined(RWSTD_NO_MEMBER_TEMPLATES) || defined(_RWSTD_NO_MEMBER_TEMPLATES)
-
-#define CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
-
-#endif
-
 //----------------------------------------------------------------------//
 //             fake iterator_traits                                     //
 //----------------------------------------------------------------------//
