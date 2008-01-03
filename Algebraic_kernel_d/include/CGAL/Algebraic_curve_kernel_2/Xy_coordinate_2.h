@@ -71,6 +71,7 @@ public:
     // arc number on curve
     mutable int _m_arcno;
 
+    // TODO int is not sufficient as ids can be re-assigned 
     typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
         
     mutable Int_map _m_compare_xy;
@@ -376,7 +377,8 @@ public:
 
         std::pair<typename Int_map::Hashed_iterator, bool> r =
             this->ptr()->_m_compare_xy.find(q.id());
-        if(r.second) {
+        // TODO deactivated cache by "false" as id could have been re-assigned
+        if(false && r.second) {
             //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
             return r.first->second;
         }
