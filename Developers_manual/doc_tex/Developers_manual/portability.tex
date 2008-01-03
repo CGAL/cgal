@@ -23,7 +23,7 @@ configuration of \cgal\ that allow you to answer such questions as:
 \item Is \leda/\textsc{Gmp} there? (Section~\ref{sec:leda_gmp_support})
 \item What version of \cgal\ am I running? (Section~\ref{sec:which_versions})
 \item Which compiler is this? (Section~\ref{sec:which_compiler})
-\item Does the compiler support Koenig lookup? (Section~\ref{sec:workaround_flags})
+\item Does the compiler support feature X? (Section~\ref{sec:workaround_flags})
 \end{itemize}
 
 Also addressed here are issues related to writing code for 
@@ -249,7 +249,7 @@ Which compilers passed which tests can be determined by looking at the
 for the package \texttt{Installation}.
 }
 
-\noindent Currently (CGAL-3.1-I-33), we have the following configuration
+\noindent Currently (CGAL-3.4-I-181), we have the following configuration
 test files (and flags). The short descriptions that are given in the files are 
 included here. In some cases, it is probably necessary to have a look at the
 actual files to understand what the flag is for. This list is just to
@@ -260,33 +260,11 @@ Be sure to have a look at \texttt{Installation/config/testfiles/} to have an
 uptodate version of this list.
 
 \begin{description}
-\item[{\tt CGAL\_CFG\_CCTYPE\_MACRO\_BUG}]~\\
- \index{cctype functions@{\tt cctype} functions!as macros} %
- \ccIndexSubitem{compiler bugs}{macros} %
- This flag is set if a compiler defines the standard C library
- functions in {\tt cctype} ({\tt isdigit} etc.) as macros.  According
- to the standard they have to be functions.
- 
 \item[{\tt CGAL\_CFG\_LONGNAME\_BUG}]~\\
  \ccIndexMainItem{long-name problem} %
  \ccIndexSubitem{compiler bugs}{long symbol names} %
  This flag is set if a compiler (or assembler or linker) has problems 
  with long symbol names. 
-
-\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_3}]~\\
- \ccIndexSubitem{matching}{pointer type arguments} %
- \ccIndexSubitem{compiler bugs}{function template overloading} %
- This flag is set, if the compiler does not match function arguments
- of pointer type correctly, when the return type depends on the
- parameter's type (\eg, sun C++ 5.3).
-
-\item[{\tt CGAL\_CFG\_MATCHING\_BUG\_4}]~\\
- \ccIndexSubitem{matching}{function template arguments} %
- \ccIndexSubitem{compiler bugs}{function template overloading} %
- This flag is set, if a compiler cannot distinguish the signature of
- overloaded function templates, which have arguments whose type
- depends on the template parameter.  This bug appears for example on
- Sunpro~5.3 and 5.4.
 
 \item[{\tt CGAL\_CFG\_NET2003\_MATCHING\_BUG}]~\\
  \ccIndexSubitem{matching}{member functions} %
@@ -295,27 +273,9 @@ uptodate version of this list.
  to an existing declaration. This bug shows up on VC~7.1~Beta
  (\ccc{cl1310}).
 
-\item[{\tt CGAL\_CFG\_NO\_BIG\_ENDIAN}]~\\
-  \ccIndexMainItem{big-endian}
-  \ccIndexMainItem{little-endian}
-  The byte order of a machine architecture distinguishes into
-  big-endian and little-endian machines.  This flag is
-  set if it is a little-endian machine.
- 
-\item[{\tt CGAL\_CFG\_NO\_KOENIG\_LOOKUP}]~\\
-  \ccIndexMainItem{Koenig lookup} %
-  \ccIndexSubitem{compiler bugs}{name lookup} %
-  This flag is set if the compiler does not support the operator
-  Koenig lookup. That is, it does not search in the namespace of the
-  arguments for the function.
- 
 \item[{\tt CGAL\_CFG\_NO\_LIMITS}]~\\
   \ccIndexMainItem{limits} %
   This flag is set if a compiler does not know the limits.
-
-\item[{\tt CGAL\_CFG\_NO\_LOCALE}]~\\
-  \ccIndexMainItem{locale} %
-  This flag is set if a compiler does not know the locale classic. 
 
 \item[{\tt CGAL\_CFG\_NO\_LONG\_LONG}]~\\
   \index{long long@{\tt long long}} %
@@ -324,35 +284,12 @@ uptodate version of this list.
   nevertheless, since it is part of the \textsc{Iso} C standard. This
   flag is set if it is supported.
   
-% \item[{\tt CGAL\_CFG\_NO\_SFINAE}]~\\ 
-%   \ccIndexSubitem{compiler bugs}{template instantiation} %
-%   \ccIndexMainItem{sfinae} %
-%   \ccIndexMainItem{substitution failure is not an error} %
-%   This flag is set if the compiler doesn't support the SFINAE
-%   principle (Substitution Failure Is Not An Error), which we
-%   eventually plan to use for the next version of the kernel design.
- 
-\item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_DEPENDING\_FUNCTION\_PARAM}]~\\
-  \ccIndexSubitem{compiler bugs}{template parameters} %
-  \ccIndexSubitem{template}{template parameter} %
-  This flag is set of a compiler does not support member functions
-  that have parameter types that are dependent on the template
-  parameter list of the class and are implemented outside of the class
-  body (\eg, g++ 2.95.2).
-  
 \item[{\tt CGAL\_CFG\_NO\_TMPL\_IN\_TMPL\_PARAM}]~\\
   \ccIndexSubitem{compiler bugs}{template parameters} %
   \ccIndexSubitem{template}{template parameter} %
   Nested templates in template parameter, such as ``\texttt{template <
     template <class T> class A>}'' are not supported by any compiler.
   This flag is set if they are not supported.
-
-\item[{\tt CGAL\_CFG\_OUTOFLINE\_TEMPLATE\_MEMBER\_DEFINITION\_BUG}]~\\
-  \ccIndexSubitem{compiler bugs}{member definitions} %
-  This flag is set, if a compiler does not support the definition of
-  member templates out of line, \ie, outside class scope. The solution
-  is to put the definition inside the class. This is a feature of
-  SunPRO 5.5.
 
 \end{description}
 \ccIndexMainItemEnd{workaround flags}
@@ -497,11 +434,7 @@ Recommendations:
       be treated on a per-compiler basis. When you detect a deficiency,
       you should rather write a short test program that triggers the setting
       of a flag for this deficiency during configuration.
-\item Avoid classes having friend functions and member functions with
-      the same name. \texttt{g++ 2.95.*} does not like that. This holds also for
-      operators, especially \ccc{operator-()}.
 \end{itemize}
 }
 
 \ccIndexMainItemEnd{portability}
-
