@@ -1,3 +1,13 @@
+grep 
+TO BE MOVED TO KERNEL
+TODO
+
+ajouter 
+-	Function Object Concept SphericalKernel::ConstructLine_3
+	Line_3 fo.operator()(Circular_arc_point_3 p1, Circular_arc_point_3 p2)
+- same for Line_arc_3
+
+============
 ---- from Daniel
 
 - the arc point/plane orientation--I can't publicly get a  Root_for_spheres_2_3 back from a circular_arc_point so I can't  implement it myself either
@@ -36,7 +46,7 @@ changer les noms des polynomes (cercles et droites) dans le code...
 
 cercle par 3 points
 
---> a transferer dans linear kernel ?
+--> a transferer dans linear kernel 
         - unoriented equal (pb general orientation dans noyau cgal...)
         - intersection de deux Line_3
         - radical plane
