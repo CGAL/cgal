@@ -141,11 +141,12 @@
 #  ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
 #    error "CGAL does not support SunPRO with the old Rogue Wave STL: use STLPort."
 #  endif
-#endif
 
 // Sun CC has an issue with templates that means overloading
 // Qualified_result_of does not work so well.
-#define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
+#  define CGAL_CFG_DONT_OVERLOAD_TOO_MUCH 1
+
+#endif
 
 
 //-------------------------------------------------------------------//
