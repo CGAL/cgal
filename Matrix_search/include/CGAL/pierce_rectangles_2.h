@@ -447,11 +447,6 @@ private:
   bool xgy;
 };
 
-CGAL_END_NAMESPACE
-//#ifdef CGAL_REP_CLASS_DEFINED
-//#include <CGAL/Pierce_rectangles_2_traits.h>
-//#endif // CGAL_REP_CLASS_DEFINED
-CGAL_BEGIN_NAMESPACE
 
 template < class InputIC, class OutputIterator, class Traits >
 inline OutputIterator
@@ -1029,6 +1024,7 @@ struct Four_covering_algorithm {
              bool& ok) const
   { return four_cover_points(d, o, ok); }
 }; // class Four_covering_algorithm
+
 CGAL_END_NAMESPACE
 
 #if defined(BOOST_MSVC)
@@ -1036,7 +1032,3 @@ CGAL_END_NAMESPACE
 #endif
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

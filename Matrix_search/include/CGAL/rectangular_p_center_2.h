@@ -26,13 +26,7 @@
 #include <CGAL/rectangular_3_center_2.h>
 #include <algorithm>
 #include <CGAL/number_utils_classes.h>
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Rectangular_p_center_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
-
-CGAL_BEGIN_NAMESPACE
-CGAL_END_NAMESPACE
-
 #include <CGAL/Cartesian_matrix.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -399,11 +393,6 @@ rectangular_p_center_2(ForwardIterator f,
   return rectangular_p_center_2(f, l, o, r, p, t);
 } // rectangular_p_center_2( ... )
 
-
 CGAL_END_NAMESPACE
 
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_2_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

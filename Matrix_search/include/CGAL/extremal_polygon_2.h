@@ -28,11 +28,10 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Extremal_polygon_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
 
 CGAL_BEGIN_NAMESPACE
+
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
@@ -746,9 +745,4 @@ CGAL_maximum_inscribed_k_gon_2(
 
 CGAL_END_NAMESPACE
 
-
 #endif // ! (CGAL_EXTREMAL_POLYGON_2_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

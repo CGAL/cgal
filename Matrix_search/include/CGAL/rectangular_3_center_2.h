@@ -24,9 +24,7 @@
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/functional.h>
 #include <CGAL/algorithm.h>
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/Rectangular_p_center_traits_2.h>
-#endif // CGAL_REP_CLASS_DEFINED
 #include <algorithm>
 #include <vector>
 
@@ -1600,10 +1598,4 @@ rectangular_3_center_2(
 
 CGAL_END_NAMESPACE
 
-
-
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-
