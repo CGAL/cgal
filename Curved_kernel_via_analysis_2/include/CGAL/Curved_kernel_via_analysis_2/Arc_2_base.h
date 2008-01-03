@@ -1737,9 +1737,10 @@ protected:
             Curve_kernel_2 kernel_2;            
             // check that there are no intersections between min and max
             // curve ends
-            bool inf_src = (_minpoint().location() == 
-                    CGAL::ARR_BOTTOM_BOUNDARY),
-                 inf_tgt = (_maxpoint().location() == CGAL::ARR_TOP_BOUNDARY);
+            bool inf_src = 
+                (_minpoint().location() == CGAL::ARR_BOTTOM_BOUNDARY);
+            bool inf_tgt = 
+                (_maxpoint().location() == CGAL::ARR_TOP_BOUNDARY);
             // either no events over this line or the vertical line has at
             // least one finite end
             CGAL_precondition(cv_line.number_of_events() == 0 ||
