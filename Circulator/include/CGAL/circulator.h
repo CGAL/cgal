@@ -443,31 +443,19 @@ circulator_distance( const C& c, const C& d) {
                                 category());
 }
 template <class C> inline
-#ifdef __SUNPRO_CC
-ptrdiff_t
-#else
 typename std::iterator_traits<C>::difference_type
-#endif // __SUNPRO_CC
 I_iterator_distance(const C& c1, const C& c2, Circulator_tag) {
     return circulator_distance( c1, c2);
 }
 
 template <class I> inline
-#ifdef __SUNPRO_CC
-ptrdiff_t
-#else
 typename std::iterator_traits<I>::difference_type
-#endif // __SUNPRO_CC
 I_iterator_distance(const I& i1, const I& i2, Iterator_tag) {
     return std::distance( i1, i2);
 }
 
 template <class IC> inline
-#ifdef __SUNPRO_CC
-ptrdiff_t
-#else
 typename std::iterator_traits<IC>::difference_type
-#endif // __SUNPRO_CC
 iterator_distance(const IC& ic1, const IC& ic2) {
     typedef typename Circulator_traits<IC>::category category;
     return I_iterator_distance( ic1, ic2, category());
