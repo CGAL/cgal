@@ -3218,21 +3218,10 @@ included before that.
     #ifndef CGAL_CONIC_2_H
     #define CGAL_CONIC_2_H
  
-    #ifndef CGAL_REP_CLASS_DEFINED
-    #  error  no representation class defined
-    #endif // CGAL_REP_CLASS_DEFINED
- 
-    #ifdef CGAL_HOMOGENEOUS_H
-    #  include <CGAL/ConicHPA2.h>
-    #endif
- 
-    #ifdef CGAL_CARTESIAN_H
-    #  include <CGAL/ConicCPA2.h>
-    #endif
+    #include <CGAL/ConicHPA2.h>
+    #include <CGAL/ConicCPA2.h>
 
-    #ifndef CGAL_POINT_2_H
-    #  include <CGAL/Point_2.h>
-    #endif
+    #include <CGAL/Point_2.h>
 
     #ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
     #include <CGAL/IO/forward_decl_window_stream.h>
