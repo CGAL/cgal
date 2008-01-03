@@ -24,8 +24,6 @@
 #ifndef CGAL_CARTESIAN_BASE_H
 #define CGAL_CARTESIAN_BASE_H
 
-#define CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
 #include <CGAL/Kernel/global_functions.h>

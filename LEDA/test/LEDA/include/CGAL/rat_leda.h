@@ -17,7 +17,6 @@
 // 
 //
 // Author(s)     : Stefan Schirra
- 
 
 #ifndef CGAL_RAT_LEDA_H
 #define CGAL_RAT_LEDA_H
@@ -32,10 +31,7 @@
 #endif
 #include <CGAL/Homogeneous.h>
 
-#define CGAL_REP_CLASS_DEFINED
-
 CGAL_BEGIN_NAMESPACE
-
 
 class use_rat_leda_kernel;
 template <>
@@ -192,6 +188,4 @@ compare_xy(const leda_rat_point& p, const leda_rat_point& q)
 }
 CGAL_END_NAMESPACE
 
-
 #endif // CGAL_RAT_LEDA_H
-

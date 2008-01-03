@@ -24,8 +24,6 @@
 #ifndef CGAL_HOMOGENEOUS_BASE_H
 #define CGAL_HOMOGENEOUS_BASE_H
 
-#define CGAL_REP_CLASS_DEFINED
-
 #include <CGAL/basic.h>
 #include <CGAL/basic_classes.h>
 
