@@ -15,7 +15,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Mariette Yvinec, Jean Daniel Boissonnat
+// Author(s)     : Mariette Yvinec, Jean-Daniel Boissonnat
 
 
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_2_H
@@ -29,11 +29,9 @@
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/iterator.h>
 
-#ifdef CGAL_REP_CLASS_DEFINED
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
-#endif
-	
+
 CGAL_BEGIN_NAMESPACE
 
 struct No_intersection_tag{};
@@ -1226,6 +1224,3 @@ limit_intersection(Gt gt,
 CGAL_END_NAMESPACE
 
 #endif //CGAL_CONSTRAINED_TRIANGULATION_2_H
-
-
-

@@ -26,19 +26,11 @@
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/triangulation_assertions.h>
 
-#ifndef CGAL_REP_CLASS_DEFINED
-#error  no representation class defined
-#endif  // CGAL_REP_CLASS_DEFINED
-
-#if defined CGAL_CARTESIAN_H || defined CGAL_SIMPLE_CARTESIAN_H
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/constructions_on_weighted_points_cartesian_2.h>
-#endif
 
-#if defined CGAL_HOMOGENEOUS_H || defined CGAL_SIMPLE_HOMOGENEOUS_H
 #include <CGAL/predicates/Regular_triangulation_rtH2.h>
 #include <CGAL/constructions_on_weighted_points_homogeneous_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE 
 
