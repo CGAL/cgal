@@ -171,7 +171,7 @@ public:
       if( is.does_intersect_internally( ray, f, q) ) {
         if(!hit || 
 	   has_smaller_distance_to_point(ray.source(), q, end_of_seg)) {
-        CGAL_NEF_TRACEN("ray hit facet "<<plane(f)<<" on "<<q);
+        CGAL_NEF_TRACEN("ray hit facet "<< f->plane()<<" on "<<q);
         end_of_seg = q;
         hit = true;
         o = Object_handle(f);
@@ -190,7 +190,7 @@ public:
     CGAL_NEF_TRACEN( "Point locator for " << p);
     Vertex_handle v;
     CGAL_forall_vertices( v, *this->sncp()) {
-      CGAL_NEF_TRACEN("test vertex " << point(v));
+      CGAL_NEF_TRACEN("test vertex " << v->point());
       if ( p == v->point()) {
 	CGAL_NEF_TRACEN("on vertex.");
 	return Object_handle(v);
