@@ -137,10 +137,10 @@ public:
     
     //! type of planar point
     typedef typename Curved_kernel_via_analysis_2l::Point_2::Base 
-    Planar_point_2;
+    Projected_point_2;
     
     //! type of planar arc
-    typedef Base Arc_2;
+    typedef Base Projected_arc_2;
 
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
@@ -176,7 +176,7 @@ public:
      * \pre arc.curve_end(MIN) = p
      * \pre arc.curve_end(MAX) = q
      */
-    Surface_arc_2l(const Arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3 surface,
@@ -223,7 +223,7 @@ public:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(const Arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_3 surface,
                    int sheet, int sheet_p) :
@@ -282,7 +282,7 @@ public:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(const Arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_3 surface,
                    int sheet) :
         // TODO rebind?
@@ -337,7 +337,7 @@ public:
         // Surface_point_2l
     }
 
-    Surface_arc_2l(const Planar_point_2& p,
+    Surface_arc_2l(const Projected_point_2& p,
                    const Surface_3& surface) :
         Base()
         // TODO see above
