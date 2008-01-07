@@ -38,9 +38,7 @@ class Quadric_point_2l;
 template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
 class Quadric_point_2l_rep : 
     public Surface_point_2l_rep< CurvedKernelViaAnalysis_2l, SurfacePair_3 > {
-    
-protected:
-
+public:
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
@@ -51,8 +49,28 @@ protected:
     typedef 
     Surface_point_2l_rep< Curved_kernel_via_analysis_2l, Surface_pair_3 > Self;
     
-    //TODO add constructors
+    //! base class
+    typedef 
+    Surface_point_2l_rep< Curved_kernel_via_analysis_2l, Surface_pair_3 >
+    Base;
+
+    //! type of curve
+    typedef typename Base::Xy_coordinate_2 Xy_coordinate_2;
+
+    //!\name Constructors
+    //!@{
     
+    //! default constructor
+    Quadric_point_2l_rep() :
+        Base() {
+    }
+
+    //! standard constructor 
+    Quadric_point_2l_rep(const Xy_coordinate_2& xy) :
+        Base(xy) {
+    }
+    
+    //!@}
 
 protected:
     // TODO add data
@@ -74,7 +92,7 @@ class Quadric_point_2l :
         CGALi::Quadric_point_2l_rep< 
             CurvedKernelViaAnalysis_2l, SurfacePair_3 
         > 
-    >
+>
 {
 public:
     //! this instance's first template parameter
@@ -96,30 +114,76 @@ public:
     typedef CGALi::Surface_point_2l< 
     Curved_kernel_via_analysis_2l, Surface_pair_3 , Rep > 
     Base;
+
+    //! type of surface
+    typedef typename Surface_pair_3::Surface_3 Surface_3;
+    
+    //! type of planar point
+    typedef typename Base::Projected_point_2 Projected_point_2;
+    
+    //!\name Constructors
+    //!@{
+    
+    /*!\brief
+     * Default constructor
+     */
+    Quadric_point_2l() : 
+        Base() {   
+    }
+
+    /*!\brief
+     * constructs from a given represenation
+     */
+    Quadric_point_2l(Rep rep) :
+        Base(rep) {
+    }
+    
+protected:
+    //!\brief Constructs point on \c sheet of \c surface above \c point
+    //!\pre sheet >= 0
+    Quadric_point_2l(const Projected_point_2& pt, 
+                     const Surface_3& surface, 
+                     int sheet) :
+        Base(pt, surface, sheet) {
+        CGAL_precondition(sheet < 2);
+    }
+    
+    //!@}
     
 public:
-    // TODO add constructors
+    //!\name IO
+    //!@{
     
-    //!\brief Functor to construct point on an arc
-    //! \c x on curve \c c with arc number \c arcno
-    //!
-    //! implies no boundary conditions in x/y
-    class Construct_point_2 {
-    public:
-        //! constructs points at x 
-        template < class Arc_2 >
-        Self operator()(
-                const typename Base::X_coordinate_1& x, 
-                const typename Base::Curve_2& c, int arcno,
-                const Arc_2& arc) {
-            CGAL_assertion(c.id() == arc.curve().id());
-            CGAL_assertion(arcno = arc.arcno());
-            Self pt;//TODO (Xy_coordinate_2(x, c, arcno));
-            // here we can modify the point, if we want to
-            return pt;
-        }
-    };
+    //! write represenation to \c os
+    void write(std::ostream& os) const {
+        os << Base(*this) << " " 
+           << "Surface(" << this->surface() << ", " 
+           << this->sheet() 
+           << ")";
+    }
+    
+    //!@}
+
+    friend class Curved_kernel_via_analysis_2l::Construct_point_2;
 };
+
+/*!\relates Quadric_point_2l
+ * \brief 
+ * output operator
+ */
+template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
+std::ostream& operator<< (
+        std::ostream& os,
+        const 
+        Quadric_point_2l<CurvedKernelViaAnalysis_2l, SurfacePair_3 >& 
+        pt) {
+    
+    pt.write(os);
+    
+    return os;
+}
+
+
 
 // pre-declaration
 template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
@@ -156,7 +220,7 @@ protected:
 
     // befriending the handle
     friend class 
-    Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3 >;
+    Quadric_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3 >;
 
 };
 
@@ -180,7 +244,7 @@ public:
     typedef SurfacePair_3 Surface_pair_3;
 
     //! the class itself
-    typedef Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3 > 
+    typedef Quadric_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3 > 
     Self;
     
     //! the representation
@@ -193,6 +257,15 @@ public:
     CGALi::Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3 > 
     Base;
     
+    //! type of surface
+    typedef typename Surface_pair_3::Surface_3 Surface_3;
+    
+    //! type of planar arc
+    typedef typename Base::Projected_arc_2 Projected_arc_2;
+    
+    //! type of surface point
+    typedef typename Curved_kernel_via_analysis_2l::Point_2 Quadric_point_2l;
+
     //!\name Constructors
     //!@{
 
@@ -202,18 +275,59 @@ public:
     Quadric_arc_2l() : 
         Base() {   
     }
-private:
+
     /*!\brief
      * constructs an arc from a given represenation
      */
     Quadric_arc_2l(Rep rep) : 
         Base(rep) { 
     }
+
+    /*!\brief
+     * constructs an arc on \c sheet of surface \c surface, 
+     * whose projection is \c arc with given \c source and \c target.
+     *
+     * \pre levels must be valid
+     */
+    Quadric_arc_2l(const Projected_arc_2& arc, 
+                   const Quadric_point_2l& p,
+                   const Quadric_point_2l& q,
+                   const Surface_3 surface,
+                   int sheet, int sheet_p, int sheet_q) :
+        Base(arc, p. q. surface, sheet, sheet_p, sheet_q) {
+#if 0 // TODO check what todo with this
+        if (seg.is_vertical() && level > 0) {
+            this->ptr()->is_reversed_ = !this->ptr()->is_reversed_;
+        }
+#endif
+    }    
+    
+    // TODO add other functors
     
     //!@}
-};    
 
-} // namespace CGALi
+public:
+
+    /*!\brief
+     * computes intersection of \c *this arc with \c cv2. Intersection points 
+     * are inserted to the output iterator \c oi as objects of type 
+     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
+     * multiplicity)
+     */
+    template < class OutputIterator >
+    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
+        // handle a special case when two arcs are supported by the same 
+        // curve => only end-point intersections
+        
+        CERR("\nintersect\n");
+        Self::simplify(*this, cv2);
+        if(this->curve().is_identical(cv2.curve()))
+            return _intersect_at_endpoints(cv2, oi);
+        
+        // else general case: distinct supporting curves
+        return Base::_intersect_coprime_support(*this, cv2, oi);
+    }
+};    
 
 namespace Quadrical_kernel_via_analysis_2l_Functors {
 
@@ -251,9 +365,67 @@ private:
     CurvedKernel_2 *_m_kernel;
 };
 
+
+template <class CurvedKernel_2>
+class Compare_xy_2
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Compare_xy_2(CurvedKernel_2 *kernel) :
+        _m_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+        
+    /*!
+     * Compare the coordinates of two points lexicographically
+     * \param p1 The first point.
+     * \param p2 The second point.
+     * \return LARGER if x(p1) >lex x(p2);
+     *         SMALLER if x(p1) \<lex x(p2);
+     *         EQUAL if x(p1) = x(p2).
+     */
+    template < class Point_2_ >
+    result_type operator()(const Point_2_& p1_, const Point_2_& p2_,
+                           bool equal_x = false) const {
+        
+        CGAL_precondition(dynamic_cast<const Point_2*>((&p1_)));
+        const Point_2& p1 = *dynamic_cast<const Point_2*>((&p1_));
+        CGAL_precondition(dynamic_cast<const Point_2*>((&p2_)));
+        const Point_2& p2 = *dynamic_cast<const Point_2*>((&p2_));
+        
+        CGAL::Comparison_result res = 
+            (equal_x ? CGAL::EQUAL : 
+             _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
+            );
+        
+        if (res != CGAL::EQUAL) {
+        } else if (p1.sheet() != p2.sheet()) {
+            res = CGAL::compare(p1.sheet(), p2.sheet());
+        } else {
+            res = _m_kernel->kernel().compare_xy_2_object()(
+                    p1.xy(), p2.xy(), true
+            );
+            if (p1.sheet() == 1 && p2.sheet() == 1) {
+                res = -res;
+            }
+        }
+        return res;
+    }
+    
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_kernel;
+}; // Compare_xy_2
+
 } // Quadrical_kernel_via_analysis_2l_functors
 
-
+} // namespace CGALi
 
 //! basic kernel to maintain points and arcs on a quadric
 template < class CurveKernel_2, class SurfacePair_3 >
@@ -299,38 +471,77 @@ public:
     typedef typename Curve_kernel_2::Curve_2 Curve_2;
         
     //! type of a point on generic curve
-    typedef CGALi::Surface_point_2l< Self, Surface_pair_3 > Point_2; 
+    typedef CGALi::Quadric_point_2l< Self, Surface_pair_3 > Point_2; 
 
     //! type of an arc on generic curve
-    typedef CGALi::Arc_2< Self > Arc_2; 
+    typedef CGALi::Quadric_arc_2l< Self, Surface_pair_3 > Arc_2; 
 
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
 
     //! tag specifies which boundary functors are implemented
     typedef CGAL::Arr_all_boundary_tag Boundary_category;
+
+    //!\name embedded constructions and predicates 
+    //!@{
+    
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l<Self> 
+    Construct_point_2;
+    
+    Construct_point_2 construct_point_2_object() const { 
+        return Construct_point_2(
+                (Quadrical_kernel_via_analysis_2l *)this
+        ); 
+    }
+
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2_Functors::Construct_point_2<Self,
+       typename Point_2::Projected_point_2 > 
+    Construct_projected_point_2;
+    
+    Construct_projected_point_2 construct_projected_point_2_object() const { 
+        return Construct_projected_point_2(
+                (Quadrical_kernel_via_analysis_2l *)this
+        ); 
+    }
+
+// declares curved kernel functors, for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_CKvA_2l_functor_pred(Y, Z) \
+    typedef CGALi::Curved_kernel_via_analysis_2l_Functors::Y<Self> Y; \
+    Y Z() const { return Y((Quadrical_kernel_via_analysis_2l *)this); }
+    
+#define CGAL_CKvA_2l_functor_cons(Y, Z) CGAL_CKvA_2l_functor_pred(Y, Z)
+
+public:
+    
+    CGAL_CKvA_2l_functor_cons(Construct_point_on_arc_2,
+                              construct_point_on_arc_2_object);
+    
+#undef CGAL_CKvA_2l_functor_pred
+#undef CGAL_CKvA_2l_functor_cons
     
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_QKvA_2l_functor_pred(Y, Z) \
-    typedef Quadrical_kernel_via_analysis_2l_Functors::Y<Self> Y; \
+    typedef CGALi::Quadrical_kernel_via_analysis_2l_Functors::Y<Self> Y; \
     Y Z() const { return Y((Quadrical_kernel_via_analysis_2l *)this); }
 
-#define CGAL_QKvA_2l_functor_cons(Y, Z) CGAL_QKvA_functor_pred(Y, Z)
+#define CGAL_QKvA_2l_functor_cons(Y, Z) CGAL_QKvA_2l_functor_pred(Y, Z)
 
     // TODO add make_x_monotone;
-    
-    //!\name embedded types and predicates for \c Arrangement_2 package
-    //!@{
-    
-    CGAL_QKvA_2l_functor_pred(Compare_x_on_identification_2, 
+
+    CGAL_QKvA_2l_functor_cons(Compare_x_on_identification_2, 
                               compare_x_on_identification_2_object);
+    
+    CGAL_QKvA_2l_functor_cons(Compare_xy_2, compare_xy_2_object);
     
     //!@}
     
 #undef CGAL_QKvA_2l_functor_pred
 #undef CGAL_QKvA_2l_functor_cons
-    
+   
 protected:
     //!\name Protected internal types
 
