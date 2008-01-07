@@ -16,8 +16,8 @@
 #ifndef CGAL_CURVED_KERNEL_MAKE_X_MONOTONE_H
 #define CGAL_CURVED_KERNEL_MAKE_X_MONOTONE_H
 
-/*! \file Curved_kernel_via_analysis_2/Make_x_monotone.h
- *  defines \c Make_x_monotone functor
+/*! \file Curved_kernel_via_analysis_2/Make_x_monotone_2.h
+ *  defines \c Make_x_monotone_2 functor
  */
 
 #include <CGAL/basic.h>
