@@ -19,7 +19,7 @@
  *  \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
-#include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -216,7 +216,6 @@ public:
 template < class CurvedKernel_2 >
 class Compare_xy_2
 {
-    typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
@@ -238,9 +237,9 @@ public:
      *                   y(p1) \< y(p2);
      *         EQUAL if the two points are equal.
      */
-    result_type operator()(const Point_2& p1, const Point_2& p2,
-                           bool equal_x = false) const
-    {
+    template < class Point_2_ >
+    result_type operator()(const Point_2_& p1, const Point_2_& p2,
+                           bool equal_x = false) const {
         result_type res = (_m_curved_kernel->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy(), equal_x));
     

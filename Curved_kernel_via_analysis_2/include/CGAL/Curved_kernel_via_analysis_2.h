@@ -28,7 +28,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.h>
-#include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
 
 CGAL_BEGIN_NAMESPACE
