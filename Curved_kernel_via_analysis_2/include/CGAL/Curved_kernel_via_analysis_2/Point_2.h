@@ -508,6 +508,10 @@ public:
     //! befriending \c Arc_2_base_rep class
     friend class Arc_2_base_rep< Curved_kernel_via_analysis_2 >;
 
+    //! befriending the arc base
+    friend class Arc_2_base< Curved_kernel_via_analysis_2, 
+                             typename Curved_kernel_via_analysis_2::Arc_2 >;
+
     //! befriending the construction
     friend class 
     CGALi::Curved_kernel_via_analysis_2_Functors::
