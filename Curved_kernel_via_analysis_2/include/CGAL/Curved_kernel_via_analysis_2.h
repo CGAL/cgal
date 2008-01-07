@@ -218,6 +218,31 @@ public:
     }
     
     //!@}
+
+    //!\name Additinonal functors
+    //!{
+
+// declares curved kernel functors, for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_CKvA_2_functor_pred(Y, Z) \
+    typedef CGALi::Curved_kernel_via_analysis_2_Functors::Y<Self> Y; \
+    Y Z() const { return Y((Curved_kernel_via_analysis_2 *)this); }
+
+#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
+    
+public:
+
+    CGAL_CKvA_2_functor_cons(Construct_point_2, 
+                             construct_point_2_object);
+
+    CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, 
+                             construct_point_on_arc_2_object);
+
+#undef CGAL_CKvA_2_functor_pred
+#undef CGAL_CKvA_2_functor_cons
+
+
+    //!@}
  
 }; // class Curved_kernel_via_analysis_2
 
