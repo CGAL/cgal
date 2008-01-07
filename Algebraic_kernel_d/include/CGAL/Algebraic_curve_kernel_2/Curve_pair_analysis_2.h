@@ -19,6 +19,8 @@
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CPA_1.h>
 
+#include <SoX/GAPS/types.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class AlgebraicCurveKernel_2, class Rep_ > 
