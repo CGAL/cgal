@@ -356,7 +356,7 @@ public:
     //!\brief compares x-coordinates of two points 
     //!
     //!\pre compared points have finite x-coordinates
-    CGAL::Comparison_result compare_x(const Point_2& q) const {
+    virtual CGAL::Comparison_result compare_x(const Point_2& q) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
         CGAL_precondition(this->ptr()->_m_ckva != NULL);
@@ -397,26 +397,37 @@ public:
 
     //! comparison operators (only for finite points):
     //! equality
-    bool operator == (const Self& q) const {
-        return q.compare_xy(*this) == CGAL::EQUAL;
+    bool operator == (const Self& q) const { 
+        return this->compare_xy(q) == CGAL::EQUAL;
     }
     
     //! inequality
-    bool operator != (const Self& q) const {return q.compare_xy(*this)!= 0;}
-
+    bool operator != (const Self& q) const {
+        return this->compare_xy(q) != CGAL::EQUAL;
+    }
+    
     //! less than in (x,y) lexicographic order
-    bool operator <  (const Self& q) const {return q.compare_xy(*this)> 0;}
-
+    bool operator <  (const Self& q) const {
+        return this->compare_xy(q) == CGAL::SMALLER;
+    }
+    
     //! less-equal in (x,y) lexicographic order
-    bool operator <= (const Self& q) const {return q.compare_xy(*this)>= 0;}
+    bool operator <= (const Self& q) const {
+        return this->compare_xy(q) != CGAL::LARGER;
+    }
 
     //! greater than in (x,y) lexicographic order
-    bool operator >  (const Self& q) const {return q.compare_xy(*this)< 0;}
+    bool operator >  (const Self& q) const {
+        return this->compare_xy(q) == CGAL::LARGER;
+    }
 
     //! greater-equal in (x,y) lexicographic order
-    bool operator >= (const Self& q) const {return q.compare_xy(*this)<= 0;}
+    bool operator >= (const Self& q) const {
+        return this->compare_xy(q) != CGAL::SMALLER;
+    }
     
     //!@}
+    
 protected:
     //!\name private methods (provided access from Arc_2 class)
     //!@{
