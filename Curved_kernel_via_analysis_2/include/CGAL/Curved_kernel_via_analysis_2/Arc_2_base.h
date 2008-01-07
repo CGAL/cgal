@@ -303,7 +303,7 @@ public:
      */
     Arc_2_base(const Curve_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END),
-            Point_2(CGAL::ARR_MAX_END), c, arcno)) {
+                 Point_2(CGAL::ARR_MAX_END), c, arcno)) {
         // lexicographical order of curve ends (no need to ??)
 
         CGAL_precondition(arcno >= 0);
