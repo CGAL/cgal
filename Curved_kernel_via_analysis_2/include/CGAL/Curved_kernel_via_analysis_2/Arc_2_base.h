@@ -92,6 +92,15 @@ public:
         if(_m_arcno_max == -1)
             _m_arcno_max = _m_arcno;
     }
+
+    void fix_reps() const {
+        if (_m_min.arc_rep() != NULL) {
+            _m_min._add_ref(this);
+        }
+        if (_m_max.arc_rep() != NULL) {
+            _m_max._add_ref(this);
+        }
+    }
        
     // source and target end-points of a segment
     Point_2 _m_min, _m_max;
@@ -206,12 +215,7 @@ public:
      */
     Arc_2_base(Rep rep) : 
         Base(rep) { 
-        if (rep._m_min.ptr()->_m_arc_rep != NULL) {
-            _minpoint()._add_ref(this->ptr());
-        }
-        if (rep._m_max.ptr()->_m_arc_rep != NULL) {
-            _maxpoint()._add_ref(this->ptr());
-        }
+        this->ptr()->fix_reps();
     }
     
     //!@}
@@ -2346,10 +2350,12 @@ protected:
             // intersections
             if(!nonvert.is_in_x_range(x)) 
                 return oi;    
-            // TODO move CPOA_2 to CK
-            Point_2 xy = typename Point_2::Construct_point_on_arc_2()(
-                    x, nonvert.curve(), nonvert.arcno(x), nonvert
-            );
+            // TODO introduce _m_ckva in pptr
+            Curved_kernel_via_analysis_2 ckva;
+            Point_2 xy = typename 
+                Curved_kernel_via_analysis_2::Construct_point_on_arc_2(&ckva)(
+                        x, nonvert.curve(), nonvert.arcno(x), nonvert
+                );
             if(vert.compare_y_at_x(xy) == CGAL::EQUAL) 
                 *oi++ = std::make_pair(xy, 1);
             return oi;
@@ -2424,15 +2430,19 @@ protected:
             if(mult == -1)
                 mult = tmp.multiplicity_of_intersection(pos);
             // pick up the curve with lower degree   
+
+            // TODO introduce _m_ckva in ptr
+            Curved_kernel_via_analysis_2 ckva;
+            typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
+                construct_point_on_arc(&ckva);
+                
             if(which_curve) {
-                // TODO move CPOA_2 to CK
-                Point_2 p = typename Point_2::Construct_point_on_arc_2()(
+                Point_2 p = construct_point_on_arc(
                         x0, cv1.curve(), arcno1, cv1
                 );
                 *oi++ = std::make_pair(p, mult);
             } else {
-                // TODO move CPOA_2 to CK
-                Point_2 p = typename Point_2::Construct_point_on_arc_2()(
+                Point_2 p = construct_point_on_arc(
                         x0, cv2.curve(), arcno2, cv2
                 );
                 *oi++ = std::make_pair(p, mult);
