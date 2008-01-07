@@ -121,7 +121,7 @@ public:
     typedef CGALi::Point_2< Curved_kernel_via_analysis_2l, Rep > Base;
     
     //! type of planar point
-    typedef Base Planar_point_2;
+    typedef Base Projected_point_2;
 
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
@@ -140,6 +140,8 @@ public:
         Base() {   
     }
 
+protected:
+
     /*!\brief
      * constructs from a given represenation
      */
@@ -149,7 +151,7 @@ public:
     
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
-    Surface_point_2l(const Planar_point_2& pt, 
+    Surface_point_2l(const Projected_point_2& pt, 
                      const Surface_3& surface, 
                      int sheet) :
         Base(pt) {
@@ -158,47 +160,6 @@ public:
         this->ptr()->_m_surface = surface;
         this->ptr()->_m_sheet = sheet;
     }
-
-protected:
-    // TODO move to QK
-    //!\brief Functor to construct point on an arc
-    //! \c x on curve \c c with arc number \c arcno
-    //!
-    //! implies no boundary conditions in x/y
-    template < class IntersectionPoint_2 >
-    class _Construct_point_on_arc_2 {
-    public:
-        typedef IntersectionPoint_2 Intersection_point_2;
-
-        //! constructs points at x 
-        template < class Arc_2 >
-        Intersection_point_2 operator()(
-                const typename Base::X_coordinate_1& x, 
-                const typename Base::Curve_2& c, int arcno,
-                const Arc_2& arc) {
-            CGAL_assertion(c.id() == arc.curve().id());
-            CGAL_assertion(arcno = arc.arcno());
-            Planar_point_2 p_pt(x, c, arcno);
-            int sheet = arc.sheet();
-            if (arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR) {
-                if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
-                    CGAL::EQUAL) {
-                    sheet = arc.sheet(CGAL::ARR_MIN_END);
-                }
-            } else if (arc.location(CGAL::ARR_MAX_END)== CGAL::ARR_INTERIOR) {
-                if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
-                    CGAL::EQUAL) {
-                    sheet = arc.sheet(CGAL::ARR_MAX_END);
-                }
-            }
-            Intersection_point_2 pt(p_pt, arc.surface(), sheet);
-            return pt;
-        }
-    };
-
-public:
-    //! constructs point on arc
-    typedef _Construct_point_on_arc_2< Self > Construct_point_on_arc_2;
 
 public:
 
