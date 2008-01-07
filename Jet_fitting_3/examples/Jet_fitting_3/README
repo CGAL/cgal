@@ -12,7 +12,7 @@ in_points are sampled on 0.1(x²+2y²)
 
 ./Single_estimation data/in_points_file.txt  2 2
 ./Single_estimation data/in_points_d4.txt  4 4
-
+ 
 
 Program Mesh_estimation
 -----------------
