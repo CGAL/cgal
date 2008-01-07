@@ -88,7 +88,7 @@ struct Make_x_monotone_2 :
 
     //! standard constructor
     Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -113,8 +113,12 @@ struct Make_x_monotone_2 :
         typedef typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache CIA_cache;
         const CIA_cache& map_interval_arcno =
-            _m_curved_kernel_2->interval_arcno_cache();
+            _m_curved_kernel->interval_arcno_cache();
         
+        typename Curved_kernel_via_analysis_2::Construct_point_2 
+            construct_point =
+            _m_curved_kernel->construct_point_2_object();
+
         typename CIA_cache::result_type info1, info2;
         std::vector<Point_2> min_pts, max_pts;
         X_coordinate_1 min_x, max_x;
@@ -125,7 +129,7 @@ struct Make_x_monotone_2 :
         max_x = evt_line1.x();
         
         for(k = 0; k < evt_line1.number_of_events(); k++) 
-            max_pts.push_back(Point_2(max_x, curve, k));
+            max_pts.push_back(construct_point(max_x, curve, k));
                         
         //std::cout << "handling events over the 1st interval\n";    
         for(k = 0; k < int_line.number_of_events(); k++) {
@@ -152,7 +156,7 @@ struct Make_x_monotone_2 :
                                 
             n = evt_line2.number_of_events();
             for(k = 0; k < n; k++) 
-                max_pts.push_back(Point_2(max_x, curve, k));
+                max_pts.push_back(construct_point(max_x, curve, k));
             
             n = ca_2.status_line_of_interval(i+1).number_of_events();
             CGAL::Arr_curve_end inf1_end, inf2_end;
@@ -237,31 +241,25 @@ private:
         std::pair<int, int> ipair;
         for(j = 0; j < n; j++) {
             ipair = cv_line.number_of_incident_branches(j);
-            if(ipair.first == 0&&ipair.second == 0) 
+            if(ipair.first == 0&&ipair.second == 0) {
                 //std::cout << "isolated point found\n";
-                *oi++ = CGAL::make_object(Point_2(x, _m_curve, j));
+                typename Curved_kernel_via_analysis_2::Construct_point_2 
+                    construct_point =
+                    _m_curved_kernel->construct_point_2_object();
+                
+                *oi++ = CGAL::make_object(construct_point(x, _m_curve, j));
+            }
         }
         return oi;
     }
             
     //! pointer to \c Curved_kernel_via_analysis_2 
-    Curved_kernel_via_analysis_2 *_m_curved_kernel_2;
+    Curved_kernel_via_analysis_2 *_m_curved_kernel;
     //! to avoid passing curve as a parameter
     Curve_2 _m_curve;
     
     //!@}
 };  // struct Make_x_monotone
-
-/*!
- * \brief 
- * short-hand for \c Make_x_monotone(c, oi)
- */
-/*template <class AlgebraicSegment2, class AlgebraicCurve2, class OutputIterator>
-OutputIterator curve_to_segments(AlgebraicCurve2 c, OutputIterator oi) {
-    Curve_to_segments<AlgebraicSegment2, AlgebraicCurve2, OutputIterator> 
-        c2s;
-    return c2s(c, oi);
-}*/
 
 } // namespace CGALi
 
