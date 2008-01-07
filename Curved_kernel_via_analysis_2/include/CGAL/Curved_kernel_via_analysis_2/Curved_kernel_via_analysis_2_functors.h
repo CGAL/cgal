@@ -1,4 +1,4 @@
-// TODO: Add licence
+
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -19,16 +19,53 @@
  *  \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
+#include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
 namespace Curved_kernel_via_analysis_2_Functors {
 
+template < class CurvedKernel_2, 
+           class Point_2_ = typename CurvedKernel_2::Point_2 >
+class Construct_point_2 
+{
+    typedef Point_2_ Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef Point_2 result_type;
+    typedef typename Point_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Point_2::Curve_2 Curve_2;
+
+    //! standard constructor
+    Construct_point_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+
+    //!\brief constructs a finite point with x-coordinate
+    //! \c x on curve \c c with arc number \c arcno
+    //!
+    //! implies no boundary conditions in x/y
+    Point_2 operator()(const X_coordinate_1& x, const Curve_2& c, int arcno) {
+        Point_2 pt(x,c,arcno);
+        pt.set_ckva(_m_curved_kernel);
+        return pt;
+    }
+    
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
+};
+
+
+
+
 template <class CurvedKernel_2>
 class Compare_x_2
 {
-    typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
     
 public:
@@ -37,7 +74,7 @@ public:
     
     //! standard constructor
     Compare_x_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
         
@@ -49,14 +86,15 @@ public:
      *         SMALLER if x(p1) \< x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
-        return _m_kernel->kernel().compare_x_2_object()
+    template < class Point_2_ >
+    result_type operator()(const Point_2_ &p1, const Point_2_ &p2) const {
+        return _m_curved_kernel->kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -187,7 +225,7 @@ public:
     
     //! standard constructor
     Compare_xy_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
 
@@ -200,14 +238,15 @@ public:
      *                   y(p1) \< y(p2);
      *         EQUAL if the two points are equal.
      */
-    result_type operator()(const Point_2& p1, const Point_2& p2) const
+    result_type operator()(const Point_2& p1, const Point_2& p2,
+                           bool equal_x = false) const
     {
-        result_type res = (_m_kernel->kernel().compare_xy_2_object()
-            (p1.xy(), p2.xy()));
+        result_type res = (_m_curved_kernel->kernel().compare_xy_2_object()
+            (p1.xy(), p2.xy(), equal_x));
     
         /*typename CurvedKernel_2::Int_pair pair(p1.id(), p2.id());
-        if(!_m_kernel->_m_compare_xy_map.find(pair).second)
-            _m_kernel->_m_compare_xy_map.insert(std::make_pair(pair, res));
+        if(!_m_curved_kernel->_m_compare_xy_map.find(pair).second)
+            _m_curved_kernel->_m_compare_xy_map.insert(std::make_pair(pair, res));
         else
             std::cerr << "precached compare_xy result\n";*/
         
@@ -216,7 +255,7 @@ public:
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 //!\brief Tests two objects, whether they are equal
@@ -232,7 +271,7 @@ public:
     
     //! standard constructor
     Equal_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -243,14 +282,15 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (_m_kernel->kernel().compare_xy_2_object()
+        return (_m_curved_kernel->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy()) == CGAL::EQUAL);
     }
      
     /*!
      * Check if the two x-monotone curves are the same (have the same graph).
-     * \param cv1 The first curv(_m_kernel->kernel().compare_xy_2_object()
-            (p1.xy(), p2.xy()));e.
+     * \param cv1 The first 
+     *        curve(_m_curved_kernel->kernel().compare_xy_2_object()
+             (p1.xy(), p2.xy()));.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
@@ -260,7 +300,7 @@ public:
 
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -274,7 +314,7 @@ public:
     
     //! standard constructor
     Is_vertical_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
 
@@ -289,7 +329,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -440,6 +480,43 @@ public:
     }
 };
 
+//!\brief Tests whether a point lies on a supporting curve
+template < class CurvedKernel_2 >
+class Is_on_2
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Curve_2 Curve_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Is_on_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+    
+    /*!
+     * Checks whether \c p lies on \c c 
+     * \param p1 The point to test
+     * \param p2 The curve
+     * \return (true) if the \c p lies on \c c
+     */
+    result_type operator()(const Point_2& p, const Curve_2& c) const {
+        result_type res = 
+            (_m_curved_kernel->kernel().sign_at_2_object()(c, p.xy())
+             == CGAL::ZERO);
+        return res;
+    }
+     
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
+};
+
+
 template < class CurvedKernel_2 >
 class Compare_y_at_x_left_2
 {
@@ -543,7 +620,7 @@ public:
     
     //! standard constructor
     Do_overlap_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -560,7 +637,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -575,7 +652,7 @@ public:
     
     //! standard constructor
     Trim_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -591,7 +668,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -605,7 +682,7 @@ public:
     
     //! standard constructor
     Are_mergeable_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -622,7 +699,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -636,7 +713,7 @@ public:
     
     //! standard constructor
     Merge_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
 
@@ -654,7 +731,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -669,7 +746,7 @@ public:
     
     //! standard constructor
     Split_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -688,7 +765,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -703,7 +780,7 @@ public:
     
     //! standard constructor
     Intersect_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -746,7 +823,7 @@ public:
     }
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2>
@@ -761,7 +838,7 @@ public:
     
     //! standard constructor
     Make_x_monotone_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel_2(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     } 
 
@@ -795,16 +872,60 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
         CGAL::CGALi::Make_x_monotone_2<CurvedKernel_2>
-            make_x_monotone(_m_curved_kernel_2);
+            make_x_monotone(_m_curved_kernel);
         return make_x_monotone(cv, oi);
     }
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel_2;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
-} // namespace Curved_kernel_via_analysis_2_functors
+
+
+//!\brief Functor to construct point on an arc
+//! \c x on curve \c c with arc number \c arcno
+//!
+//! implies no boundary conditions in x/y
+template < class CurvedKernel_2 >
+class Construct_point_on_arc_2 {
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
+public:
+    typedef Point_2 result_type;
+    
+    //! standard constructor
+    Construct_point_on_arc_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+    
+    //! constructs points at x 
+    template < class NewArc_2 >
+    Point_2 operator()(
+            const typename Point_2::X_coordinate_1& x, 
+            const typename Point_2::Curve_2& c, int arcno,
+            const NewArc_2& arc) {
+        CGAL_assertion(c.id() == arc.curve().id());
+        CGAL_assertion(arcno == arc.arcno(x));
+
+        typename CurvedKernel_2::Construct_point_2 construct_point =
+            _m_curved_kernel->construct_point_2_object();
+
+        Point_2 pt = construct_point(x, c, arcno);
+        
+        // here we can modify the point, if we want to
+        return pt;
+    }
+    
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
+};
+
+
+} // namespace Curved_kernel_via_analysis_2_Functors
 
 //! collects main set of functors of a curved kernel
 template < 
@@ -845,6 +966,7 @@ public:
     CGAL_CKvA_2_functor_pred(Compare_y_near_boundary_2,
         compare_y_near_boundary_2_object);
     CGAL_CKvA_2_functor_pred(Equal_2, equal_2_object); 
+    CGAL_CKvA_2_functor_pred(Is_on_2, is_on_2_object); 
     CGAL_CKvA_2_functor_pred(Is_vertical_2, is_vertical_2_object); 
     CGAL_CKvA_2_functor_cons(Construct_min_vertex_2,
             construct_min_vertex_2_object);
