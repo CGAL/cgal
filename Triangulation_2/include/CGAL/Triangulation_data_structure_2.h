@@ -1448,7 +1448,7 @@ split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   f->set_neighbor(2, g);
   g->set_neighbor(0, g2);
   g->set_neighbor(1, g1);
-  g->set_neighbor(2, g);
+  g->set_neighbor(2, f);
   v1->set_face(f);
   v2->set_face(g);
 
