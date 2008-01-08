@@ -1,0 +1,47 @@
+Tuesday (Arc-Day)
+
+==============================================================================
+// TODO add Construct_(planar_)arc_2 to CKvA_2, make
+   constructors protected and add pointers to constructing
+   CKva_2-instance in Arc_2
+
+* Introduce Construct_arc_2
+* Introduce Construct_arc_2l
+
+
+==============================================================================
+// TODO put all functionality into functors and make the other private
+   members static and functors friend
+
+* Functors with caches
+- Compare_x_near_boundary
+- Compare_y_at_x
+
+* Templatize functors and virtualize members
+
+* Other Functors
+- Is_in_x_range
+
+- Correctness of Is_bounded 
+
+- Correctness of same_arc_compare_xy
+
+* remove Curve_kernel_2 in Arc_2_base
+
+
+* Order of (static) members
+
+* remove Arc_base?
+
+==============================================================================
+// TODO Adaptions for QdX
+
+- Rewrite Intersect and other predicates for QdX
+
+- TODO: remove mult in Intersect for QdX as it might does not make sense?
+
+
+==============================================================================
+// TODO Filtered CKvA_2
+
+* Derive CKvA, replace Intersect_2 to obtain Filtered_CKvA_2
