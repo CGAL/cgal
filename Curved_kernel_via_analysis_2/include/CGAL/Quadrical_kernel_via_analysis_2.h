@@ -216,9 +216,6 @@ protected:
     Surface_arc_2l_rep< Quadrical_kernel_via_analysis_2, Surface_pair_3 > 
     Base;
     
-    //TODO add constructors
-    
-    
 protected:
     // TODO add data
     //! gfx approx
@@ -268,6 +265,9 @@ public:
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
     
+    //! type of planar point
+    typedef typename Base::Projected_point_2 Projected_point_2;
+
     //! type of planar arc
     typedef typename Base::Projected_arc_2 Projected_arc_2;
     
@@ -311,14 +311,79 @@ protected:
             this->ptr()->is_reversed_ = !this->ptr()->is_reversed_;
         }
 #endif
+        CGAL_precondition(sheet < 2);
+        CGAL_precondition(sheet_p < 2);
+        CGAL_precondition(sheet_q < 2);
     }    
+
+    /*!\brief
+     * Standard constructor for a ray on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Projected_arc_2& arc, 
+                  const Quadric_point_2& p,
+                  const Surface_3& surface,
+                  int sheet, int sheet_p) :
+        Base(kernel, arc, p, surface, sheet, sheet_p) {
+        
+        CGAL_precondition(sheet < 2);
+        CGAL_precondition(sheet_p < 2);
+    }
     
-    // TODO add other constructors
+
+    /*!\brief
+     * Standard constructor for a branch on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Projected_arc_2& arc, 
+                  const Surface_3& surface,
+                  int sheet) :
+        Base(kernel, arc, surface, sheet) {
+        CGAL_precondition(sheet < 2);
+    }
+    
+    // constructors for vertical arcs
+    
+    //! represents a bounded vertical arc
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Quadric_point_2& p,
+                  const Quadric_point_2& q,
+                  const Surface_3& surface) :
+        Base(kernel, p, q, surface) {
+
+    }
+
+    //! represents a vertical ray
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Quadric_point_2 p,
+                  CGAL::Arr_curve_end inf_end,
+                  const Surface_3& surface) :
+        Base(kernel, p. inf_end, surface) {
+        
+    }
+
+    //! represents a vertical branch
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Projected_point_2& p,
+                  const Surface_3& surface) :
+        Base(kernel, p, surface) {
+    }
     
     //!@}
 
 public:
-
+    // TODO what to do with intersect? replace by derived functor
+    
     /*!\brief
      * computes intersection of \c *this arc with \c cv2. Intersection points 
      * are inserted to the output iterator \c oi as objects of type 
@@ -416,7 +481,7 @@ public:
                 );
             
             if (res != CGAL::EQUAL) {
-                // TODO?
+                // do nothing
             } else if (p1.sheet() != p2.sheet()) {
                 res = CGAL::compare(p1.sheet(), p2.sheet());
             } else {

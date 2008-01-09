@@ -19,8 +19,7 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Adaptions for QdX
 
-- C'tors for QA_2
-
+(5)
 - Rewrite Intersect and other predicates for QdX
 
 - TODO: remove mult in Intersect for QdX as it might does not make sense?
