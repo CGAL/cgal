@@ -358,6 +358,7 @@ public:
         // Surface_point_2l
     }
 
+    //! represents a vertical branch
     Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
                    const Projected_point_2& p,
                    const Surface_3& surface) :

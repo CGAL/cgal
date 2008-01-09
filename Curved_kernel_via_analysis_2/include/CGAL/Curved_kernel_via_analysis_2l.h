@@ -141,7 +141,9 @@ public:
         CGAL_assertion(kernel != NULL);
     }
     
-
+    //!\name Constructing non-vertical arcs
+    //!@{
+    
     /*!\brief
      * Standard constructor for an bounded arc on xy-monotone part
      * of the surface.
@@ -161,7 +163,66 @@ public:
         return surface_arc;
     }
     
-    // TODO missing operators
+    /*!\brief
+     * Standard constructor for a ray on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                              const Surface_point_2l& p,
+                              const Surface_3& surface,
+                              int sheet, int sheet_p) {
+        Surface_arc_2l surface_arc(_m_curved_kernel, 
+                                   arc, p, surface, sheet, sheet_p);
+        return surface_arc;
+    }
+    
+
+    /*!\brief
+     * Standard constructor for a branch on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                   const Surface_3& surface,
+                   int sheet) {
+        Surface_arc_2l surface_arc(_m_curved_kernel, arc, surface, sheet);
+        return surface_arc;
+    }
+    
+    //!@}
+
+    //!\name Constructing vertical arcs
+    //!@{
+    
+    //! represents a bounded vertical arc
+    Surface_arc_2l operator()(const Surface_point_2l& p,
+                              const Surface_point_2l& q,
+                              const Surface_3& surface) {
+        Surface_arc_2l surface_arc(_m_curved_kernel, p, q, surface);
+        return surface_arc;
+    }
+
+    //! represents a vertical ray
+    Surface_arc_2l operator()(const Surface_point_2l p,
+                              CGAL::Arr_curve_end inf_end,
+                              const Surface_3& surface) {
+        Surface_arc_2l surface_arc(_m_curved_kernel, p, inf_end, surface);
+        return surface_arc;
+    }
+
+    //! represents a vertical branch
+    Surface_arc_2l operator()(const Projected_point_2& p,
+                              const Surface_3& surface) {
+        Surface_arc_2l surface_arc(_m_curved_kernel, p, surface);
+        return surface_arc;
+    }
     
 private:
     //! pointer to \c CurvedKernel_2 ?

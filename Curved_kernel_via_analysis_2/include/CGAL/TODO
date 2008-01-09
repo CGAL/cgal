@@ -1,16 +1,6 @@
 Tuesday (Arc-Day)
 
 ==============================================================================
-// TODO add Construct_(planar_)arc_2 to CKvA_2, make
-   constructors protected and add pointers to constructing
-   CKva_2-instance in Arc_2
-
-
-(2)
-* Introduce Construct_arc_2l
-- missing operator()s
-
-==============================================================================
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
