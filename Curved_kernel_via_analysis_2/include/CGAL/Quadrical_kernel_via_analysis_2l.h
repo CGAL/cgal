@@ -141,10 +141,11 @@ public:
 protected:
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
-    Quadric_point_2l(const Projected_point_2& pt, 
+    Quadric_point_2l(Curved_kernel_via_analysis_2l *kernel,
+                     const Projected_point_2& pt, 
                      const Surface_3& surface, 
                      int sheet) :
-        Base(pt, surface, sheet) {
+        Base(kernel, pt, surface, sheet) {
         CGAL_precondition(sheet < 2);
     }
     
@@ -292,7 +293,7 @@ public:
     Quadric_arc_2l(const Projected_arc_2& arc, 
                    const Quadric_point_2l& p,
                    const Quadric_point_2l& q,
-                   const Surface_3 surface,
+                   const Surface_3& surface,
                    int sheet, int sheet_p, int sheet_q) :
         Base(arc, p. q. surface, sheet, sheet_p, sheet_q) {
 #if 0 // TODO check what todo with this
@@ -488,7 +489,7 @@ public:
     typedef 
     CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l<Self> 
     Construct_point_2;
-    
+
     Construct_point_2 construct_point_2_object() const { 
         return Construct_point_2(
                 (Quadrical_kernel_via_analysis_2l *)this
@@ -505,6 +506,17 @@ public:
                 (Quadrical_kernel_via_analysis_2l *)this
         ); 
     }
+
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_arc_2l<Self> 
+    Construct_arc_2;
+
+    Construct_arc_2 construct_arc_2_object() const { 
+        return Construct_arc_2(
+                (Quadrical_kernel_via_analysis_2l *)this
+        ); 
+    }
+
 
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor

@@ -54,8 +54,7 @@ public:
                        const Surface_3& surface,
                        int sheet) const {
         CGAL_precondition(sheet >= 0);
-        Point_2 pt(xy, surface, sheet);
-        pt.set_ckva(_m_kernel);
+        Point_2 pt(_m_kernel, xy, surface, sheet);
         return pt;
     }
     
@@ -121,6 +120,56 @@ private:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_kernel;
 };
+
+
+
+template <class CurvedKernel_2>
+class Construct_arc_2l {
+    typedef typename CurvedKernel_2::Point_2 Surface_point_2l;
+    typedef typename CurvedKernel_2::Arc_2 Surface_arc_2l;
+    
+public:
+    typedef Surface_point_2l result_type;
+    
+    typedef typename Surface_point_2l::Projected_point_2 Projected_point_2;
+    typedef typename Surface_arc_2l::Projected_arc_2 Projected_arc_2;
+    typedef typename Surface_point_2l::Surface_3 Surface_3;
+
+    //! standard constructor
+    Construct_arc_2l(CurvedKernel_2 *kernel) :
+        _m_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+    
+
+    /*!\brief
+     * Standard constructor for an bounded arc on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p
+     * \pre arc.curve_end(MAX) = q
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                              const Surface_point_2l& p,
+                              const Surface_point_2l& q,
+                              const Surface_3& surface,
+                              int sheet, int sheet_p, int sheet_q) {
+        // TODO add ckva*
+        Surface_arc_2l surface_arc(arc, p, q, surface, 
+                                   sheet, sheet_p, sheet_q);
+        return surface_arc;
+    }
+    
+    
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_kernel;
+};
+
+
+
 
 //!\brief Tests whether a point lies on a supporting curve
 template < class CurvedKernel_2 >

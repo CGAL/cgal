@@ -160,6 +160,8 @@ public:
         Base() {   
     }
 
+protected:
+    
     /*!\brief
      * constructs an arc from a given represenation
      */
@@ -179,7 +181,7 @@ public:
     Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_point_2l& q,
-                   const Surface_3 surface,
+                   const Surface_3& surface,
                    int sheet, int sheet_p, int sheet_q) :
         Base(arc) 
         // TODO rebind, i.e., replace p and q in "arc"
@@ -215,6 +217,10 @@ public:
         this->ptr()->_m_sheet_max = sheet_q;
     }
 
+public:
+    // TODO make the following ctors also protected 
+    // -> move to Construct_arc_2l
+
     /*!\brief
      * Standard constructor for a ray on xy-monotone part
      * of the surface.
@@ -225,7 +231,7 @@ public:
      */
     Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
-                   const Surface_3 surface,
+                   const Surface_3& surface,
                    int sheet, int sheet_p) :
         // TODO rebind, i.e., replace p
         Base(arc) 
@@ -283,7 +289,7 @@ public:
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
     Surface_arc_2l(const Projected_arc_2& arc, 
-                   const Surface_3 surface,
+                   const Surface_3& surface,
                    int sheet) :
         // TODO rebind?
         Base(arc) 
