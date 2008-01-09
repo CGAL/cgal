@@ -103,8 +103,7 @@ public:
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
                      int arcno, int arcno_p, int arcno_q) {
         
-        Arc_2 arc(p,q,c,arcno, arcno_p, arcno_q);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,p,q,c,arcno, arcno_p, arcno_q);
         return arc;
     }
     
@@ -117,8 +116,7 @@ public:
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
                      const Curve_2& c, int arcno, int arcno_o) {
-        Arc_2 arc(origin, inf_end, c, arcno, arcno_o);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,origin, inf_end, c, arcno, arcno_o);
         return arc;
     }
 
@@ -134,8 +132,8 @@ public:
     Arc_2 operator()(const Point_2& origin, const X_coordinate_1& asympt_x, 
                      CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
                      int arcno_o) {
-        Arc_2 arc(origin, asympt_x, inf_end, c, arcno, arcno_o);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,
+                  origin, asympt_x, inf_end, c, arcno, arcno_o);
         return arc;
     }
 
@@ -144,8 +142,7 @@ public:
      * with \c arcno (branch I)
      */
     Arc_2 operator()(const Curve_2& c, int arcno) {
-        Arc_2 arc(c, arcno);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel, c, arcno);
         return arc;
     }
     
@@ -162,8 +159,8 @@ public:
                      CGAL::Arr_curve_end inf_end1, 
                      CGAL::Arr_curve_end inf_end2,
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,
+                  asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
         return arc;
     }
     
@@ -179,8 +176,7 @@ public:
                      const X_coordinate_1& asympt_x,
                      CGAL::Arr_curve_end inf_endy, 
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(inf_endx, asympt_x, inf_endy, c, arcno);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel, inf_endx, asympt_x, inf_endy, c, arcno);
         return arc;
     }
     
@@ -196,8 +192,7 @@ public:
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c) {
-        Arc_2 arc(p,q,c);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,p,q,c);
         return arc;
     }
     
@@ -210,8 +205,7 @@ public:
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
                      const Curve_2& c) {
-        Arc_2 arc(origin, inf_end, c);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel,origin, inf_end, c);
         return arc;
     }
     
@@ -222,8 +216,7 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2 operator()(const X_coordinate_1& x, const Curve_2& c) {
-        Arc_2 arc(x, c);
-        arc.set_ckva(_m_curved_kernel);
+        Arc_2 arc(_m_curved_kernel, x, c);
         return arc;
     }
     

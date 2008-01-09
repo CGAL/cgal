@@ -238,10 +238,13 @@ protected:
     //! the curve \c c
     //!
     //! \pre p.x() != q.x()
-    Arc_2_base(const Point_2& p, const Point_2& q, const Curve_2& c,
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Point_2& p, const Point_2& q, const Curve_2& c,
                int arcno, int arcno_p, int arcno_q) : 
             Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
+        _set_ckva(kernel);
+
         CGAL_precondition(!p.is_identical(q));
         CGAL_precondition(p.compare_x(q) != CGAL::EQUAL);
         // preconditions for arc-numbers and event points (should the common
@@ -261,10 +264,13 @@ protected:
      * \c inf_end defines whether the ray emanates from +/- x-infinity, 
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
-    Arc_2_base(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Point_2& origin, CGAL::Arr_curve_end inf_end, 
         const Curve_2& c, int arcno, int arcno_o) :
         Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
         
+        _set_ckva(kernel);
+
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         // check end-points arcnos validity and coprimality condition
         // for supporting curves
@@ -289,10 +295,13 @@ protected:
      * same as \c arcno )
      * \pre origin.x() != asympt_x
      */
-    Arc_2_base(const Point_2& origin, const X_coordinate_1& asympt_x, 
-           CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
-           int arcno_o) :
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Point_2& origin, const X_coordinate_1& asympt_x, 
+               CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
+               int arcno_o) :
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
+        
+        _set_ckva(kernel);
         
         // TODO use _m_ckva
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
@@ -310,10 +319,12 @@ protected:
      * constructs an arc with two x-infinite ends supported by curve \c c
      * with \c arcno (branch I)
      */
-    Arc_2_base(const Curve_2& c, int arcno) :
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Curve_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END),
                  Point_2(CGAL::ARR_MAX_END), c, arcno)) {
-        // lexicographical order of curve ends (no need to ??)
+
+        _set_ckva(kernel);
 
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order(); 
@@ -330,13 +341,16 @@ protected:
      * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
      * \pre asympt_x1 != asympt_x2
      */
-    Arc_2_base(const X_coordinate_1& asympt_x1, 
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const X_coordinate_1& asympt_x1, 
                const X_coordinate_1& asympt_x2, 
-            CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
-                const Curve_2& c, int arcno) :
+               CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
+               const Curve_2& c, int arcno) :
         Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
-            c, arcno)) {
+                 c, arcno)) {
 
+        _set_ckva(kernel);
+        
         // TODO use _m_ckva
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
         CGAL_precondition(kernel_2.compare_x_2_object()(asympt_x1, asympt_x2) 
@@ -356,11 +370,13 @@ protected:
      * \c inf_endx specifies whether the branch goes to +/- x-infinity,
      * \c inf_endy specifies +/-oo the asymptotic end approaches
      */
-    Arc_2_base(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
-        CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
-        Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy),
-            c, arcno)) {
-
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
+               CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
+        Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy), c, arcno)) {
+        
+        _set_ckva(kernel);
+        
         CGAL_precondition(arcno >= 0); 
         _fix_curve_ends_order();
 
@@ -378,8 +394,11 @@ protected:
     //! 
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
-    Arc_2_base(const Point_2& p, const Point_2& q, const Curve_2& c) : 
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Point_2& p, const Point_2& q, const Curve_2& c) : 
         Base(Rep(p, q, c, -1, -1, -1, true)) {  
+        
+        _set_ckva(kernel);
         
         CGAL_precondition(!p.is_identical(q));
         CGAL_precondition(p.compare_x(q) == CGAL::EQUAL && 
@@ -397,10 +416,13 @@ protected:
      * \c inf_end defines whether the ray emanates from +/- y-infninty, 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2_base(const Point_2& origin, CGAL::Arr_curve_end inf_end,
-        const Curve_2& c) :
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const Point_2& origin, CGAL::Arr_curve_end inf_end,
+               const Curve_2& c) :
         Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
-
+        
+        _set_ckva(kernel);
+        
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(origin, -1, c);
         _fix_curve_ends_order();
@@ -418,12 +440,15 @@ protected:
      * 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2_base(const X_coordinate_1& x, const Curve_2& c) :
+    Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
+               const X_coordinate_1& x, const Curve_2& c) :
         Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
-                Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
-         
-        _fix_curve_ends_order();
+                 Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
+        
+        _set_ckva(kernel);
 
+        _fix_curve_ends_order();
+        
         _minpoint()._add_ref(this->ptr());
         _maxpoint()._add_ref(this->ptr());
     }
@@ -444,7 +469,7 @@ protected:
     //!@{
 
     //! sets pointer to ckva instance
-    void set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
+    void _set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
         this->ptr()->_m_ckva = ckva;
     }
     

@@ -5,14 +5,20 @@ Tuesday (Arc-Day)
    constructors protected and add pointers to constructing
    CKva_2-instance in Arc_2
 
+(1)
+* add ckva* to ctors (Point) (are protected anyhow)
+- remove Curve_kernel_2 in Arc_2_base
+
+(2)
 * Introduce Construct_arc_2l
 
-* add ckva* to ctors (are protected anyhow)
-- remove Curve_kernel_2 in Arc_2_base
 
 ==============================================================================
 // TODO put all functionality into functors and make the other private
    members static and functors friend
+
+(3)
+* remove Arc_base?
 
 * Virtualize members
 
@@ -21,9 +27,7 @@ Tuesday (Arc-Day)
 
 - Correctness of Is_bounded 
 
-- Correctness of same_arc_compare_xy
-
-* remove Arc_base?
+- Correctness of same_arc_compare_xy (also for QdX-case)
 
 * Re-Introduce caches (not with "int")
 
@@ -38,4 +42,5 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Filtered CKvA_2
 
+(4)
 * Derive CKvA, replace Intersect_2 to obtain Filtered_CKvA_2
