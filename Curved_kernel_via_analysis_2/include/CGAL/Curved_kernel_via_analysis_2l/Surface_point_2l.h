@@ -170,14 +170,12 @@ public:
     //!\name Access functions
     //!@{
 
-#if 0 // TODO remove?
     /*!\brief
      * returns projected point
      */
     Projected_point_2 projected_point() const {
-        return this->ptr()->_xy;
+        return static_cast< Projected_point_2 >(*this);
     }
-#endif
 
     /*\brief
      * returns the supporting surfaces of 3d-point

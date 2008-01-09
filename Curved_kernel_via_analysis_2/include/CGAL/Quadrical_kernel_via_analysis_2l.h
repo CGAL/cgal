@@ -395,28 +395,53 @@ public:
     result_type operator()(const Point_2_& p1_, const Point_2_& p2_,
                            bool equal_x = false) const {
         
-        CGAL_precondition(dynamic_cast<const Point_2*>((&p1_)));
-        const Point_2& p1 = *dynamic_cast<const Point_2*>((&p1_));
-        CGAL_precondition(dynamic_cast<const Point_2*>((&p2_)));
-        const Point_2& p2 = *dynamic_cast<const Point_2*>((&p2_));
-        
-        CGAL::Comparison_result res = 
-            (equal_x ? CGAL::EQUAL : 
-             _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
-            );
-        
-        if (res != CGAL::EQUAL) {
-        } else if (p1.sheet() != p2.sheet()) {
-            res = CGAL::compare(p1.sheet(), p2.sheet());
-        } else {
-            res = _m_kernel->kernel().compare_xy_2_object()(
-                    p1.xy(), p2.xy(), true
-            );
-            if (p1.sheet() == 1 && p2.sheet() == 1) {
-                res = -res;
+        if (dynamic_cast<const Point_2*>((&p1_))) {
+            const Point_2& p1 = *dynamic_cast<const Point_2*>((&p1_));
+            CGAL_precondition(dynamic_cast<const Point_2*>((&p2_)));
+            const Point_2& p2 = *dynamic_cast<const Point_2*>((&p2_));
+            
+            CGAL::Comparison_result res = 
+                (equal_x ? CGAL::EQUAL : 
+                 _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
+                );
+            
+            if (res != CGAL::EQUAL) {
+                // TODO?
+            } else if (p1.sheet() != p2.sheet()) {
+                res = CGAL::compare(p1.sheet(), p2.sheet());
+            } else {
+                res = _m_kernel->kernel().compare_xy_2_object()(
+                        p1.xy(), p2.xy(), true
+                );
+                if (p1.sheet() == 1 && p2.sheet() == 1) {
+                    res = -res;
+                }
             }
+            return res;
+        } else {
+            CGAL_precondition(!dynamic_cast<const Point_2*>((&p1_)));
+            CGAL_precondition(
+                    dynamic_cast<const typename Point_2::Projected_point_2*>
+                    ((&p1_))
+            );
+            const typename Point_2::Projected_point_2& p1 = 
+                *dynamic_cast<const typename Point_2::Projected_point_2*>
+                ((&p1_));
+            CGAL_precondition(!dynamic_cast<const Point_2*>((&p2_)));
+            CGAL_precondition(
+                    dynamic_cast<const typename Point_2::Projected_point_2*>
+                    ((&p2_))
+            );
+            const typename Point_2::Projected_point_2& p2 = 
+                *dynamic_cast<const typename Point_2::Projected_point_2*>
+                ((&p2_));
+            
+            CGAL::Comparison_result res = 
+                (equal_x ? CGAL::EQUAL : 
+                 _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
+                );
+            return res;
         }
-        return res;
     }
     
 private:
