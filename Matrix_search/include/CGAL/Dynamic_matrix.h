@@ -20,6 +20,8 @@
 #if ! (CGAL_DYNAMIC_MATRIX_H)
 #define CGAL_DYNAMIC_MATRIX_H 1
 
+#include <vector>
+#include <utility>
 #include <CGAL/Optimisation/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
