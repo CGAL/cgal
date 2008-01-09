@@ -7,10 +7,10 @@
 // $Id$
 // 
 //
-// Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
+// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Michael Seel <seel@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
-//
+//                 
 // ============================================================================
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
@@ -1254,7 +1254,7 @@ void Polynomial<NT>::pseudo_division(
         R.simplify_coefficients();
         e--;
         delta = R.degree() - B.degree();
-    } while (delta > 0 || delta == 0 && !R.is_zero());
+    } while (delta > 0 || (delta == 0 && !R.is_zero()));
     // funny termination condition because deg(0) = 0, not -\infty
 
     NT q = POLYNOMIAL::ipower(d, e);
