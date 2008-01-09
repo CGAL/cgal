@@ -104,6 +104,8 @@ namespace CGAL {
     typedef typename GT::Ray_3 Ray_3;
     typedef typename GT::Line_3 Line_3;
 
+    typedef Point_3 Intersection_point;
+
     typedef Surface Surface_3;
 
   private:
@@ -330,9 +332,8 @@ namespace CGAL {
 
           Object o = oracle.intersect_3_object()(surface,
                                                  segment_3(center, p));
-          Point intersection;
-          if (assign(intersection, o)) {
-            *out++= intersection;
+          if (const Point* intersection = object_cast<Point>(&o)) {
+            *out++= *intersection;
             --n;
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
             std::cerr << " = "
