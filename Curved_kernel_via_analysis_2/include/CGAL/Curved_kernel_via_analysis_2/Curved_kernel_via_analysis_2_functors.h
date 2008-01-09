@@ -272,15 +272,14 @@ template < class CurvedKernel_2 >
 class Compare_y_at_x_2
 {
 public:
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
     //! standard constructor
-    Compare_y_at_x_2(CurvedKernel_2 *) {
+    Compare_y_at_x_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
     }
 
     /*!
@@ -292,11 +291,110 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    result_type operator()(const Point_2& p, const Arc_2& cv) const
-    {
-      return cv.compare_y_at_x(p);
+    template < class Point_2_, class Arc_2_ >
+    result_type operator()(const Point_2_& p, const Arc_2_& cv) const {
+     
+        CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
+        CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
+            loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
+        
+        /*CGAL::Boundary_type bndp_x = p.boundary_in_x(), 
+            bndp_y = p.boundary_in_y(), 
+            bnd1_x = boundary_in_x(CGAL::ARR_MIN_END), 
+            bnd2_x = boundary_in_x(CGAL::ARR_MAX_END), 
+            bnd1_y = boundary_in_y(CGAL::ARR_MIN_END),
+            bnd2_y = boundary_in_y(CGAL::ARR_MAX_END);*/
+        
+        //CGAL_precondition(!(is_infinite(bndp_x) || is_infinite(bndp_y)));
+        // handle special case when a curve end coincides with p at singularity
+        /*if((bndp_x == CGAL::AFTER_SINGULARITY && bnd1_x == bndp_x) ||
+            (bndp_x == CGAL::BEFORE_SINGULARITY && bnd2_x == bndp_x) ||
+           (bndp_y == CGAL::AFTER_SINGULARITY && bnd1_y == bndp_y) ||
+            (bndp_y == CGAL::BEFORE_SINGULARITY && bnd2_y == bndp_y))
+            return CGAL::EQUAL;
+        CGAL_precondition_msg(!is_singular(bndp_x), "Target point is not "
+            "within the arc's x-range"); 
+                
+        if(is_singular(bndp_y)) {// singularity in y is always in x-range 
+             if(bndp_y < CGAL::NO_BOUNDARY)
+                 return CGAL::SMALLER;
+             return CGAL::LARGER; // bndp_y > 0
+        }*/
+        bool eq_min = false, eq_max = false, in_x_range = true;
+        /*if(is_on_disc(bndp_x)) {
+            eq_min = (bndp_x < CGAL::NO_BOUNDARY && bnd1_x == bndp_x);
+            eq_max = (bndp_x > CGAL::NO_BOUNDARY && bnd2_x == bndp_x);
+            // report x-range assert violation if the point lies on disc in
+            // x but neither of arc's ends do
+            if(!(eq_min || eq_max))
+                CGAL_error_msg("Target point is not within the arc's x-range");
+        } else // we should be able to access x-coord when point is on disc */
+            in_x_range = cv.is_in_x_range(p.x(), &eq_min, &eq_max);
+
+        CGAL_precondition(in_x_range); // check x-range
+        /*if(is_on_disc(bndp_y)) {
+            if((eq_min && bndp_y < CGAL::NO_BOUNDARY && bnd1_y == bndp_y) ||
+               (eq_max && bndp_y > CGAL::NO_BOUNDARY && bnd2_y == bndp_y))
+               return CGAL::EQUAL;
+             // otherwise handle by the boundary type
+             if(bndp_y < CGAL::NO_BOUNDARY) 
+                 return CGAL::SMALLER;
+             return CGAL::LARGER; // bndp_y > 0
+        }*/
+        
+        if (cv.is_vertical()) {
+            if (cv.is_interior(loc1)) {
+            // for vertical arcs we can ask for .xy() member
+                if (_m_curved_kernel->kernel().compare_xy_2_object()(
+                            p.xy(), cv._minpoint().xy(), true
+                    ) == CGAL::SMALLER) {
+                    return CGAL::SMALLER;
+                }
+            }
+            if (cv.is_interior(loc2)) {
+                if (_m_curved_kernel->kernel().compare_xy_2_object()(
+                            p.xy(), cv._maxpoint().xy(), true
+                    ) == CGAL::LARGER) {
+                    return CGAL::LARGER;
+                }
+            }
+            return CGAL::EQUAL; // p lies on a vertical arc
+        }
+        if (eq_min && loc1 != CGAL::ARR_INTERIOR) {
+            return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    CGAL::LARGER : CGAL::SMALLER);
+        }
+        if (eq_max && loc2 != CGAL::ARR_INTERIOR) {
+            return (loc2 == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    CGAL::LARGER : CGAL::SMALLER);
+        }
+        // what remains to be handled ?    
+        /*if(is_on_disc(bndp_x)) { 
+            // the point and a respective curve end lie on disc in x => need
+            // comparison at x-infinity; 
+            // since we compare point agains the arc: reverse the result
+            return (- _compare_arc_numbers(p.xy(), bnd1_x));
+        }*/
+        // otherwise return reversed y-order of this arc and point p
+        CGAL::Comparison_result res;
+        if (eq_min) {
+            res = _m_curved_kernel->kernel().compare_xy_2_object()(
+                    p.xy(), cv._minpoint().xy(), true
+            );
+        } else if (eq_max) {
+            res = _m_curved_kernel->kernel().compare_xy_2_object()(
+                    p.xy(), cv._maxpoint().xy(), true
+            );
+        } else {
+            res = -cv._compare_arc_numbers(p.xy(), CGAL::ARR_INTERIOR, p.x());
+        }
+        CERR("cmp result: " << res << "\n");
+        return res;
     }
 
+private:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template <class CurvedKernel_2>
@@ -372,8 +470,103 @@ public:
     template < class Arc_2_ >
     result_type operator()(const Arc_2_& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2_& cv2, CGAL::Arr_curve_end ce2) const {
-        return cv1.compare_x_near_boundary(ce1, cv2, ce2);
+       
+        CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
+            cv2 << "; end1: " << end1 << "; end2: " << ce2 << "\n");
+        /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
+            bnd2 = cv2.boundary(ce2);*/
+        CGAL::Arr_parameter_space loc1 = cv1.location(ce1), 
+            loc2 = cv2.location(ce2);
+        CGAL_precondition(cv1.is_on_bottom_top(loc1) && 
+                          cv1.is_on_bottom_top(loc2));
+        
+        if (cv1.is_singular() != cv1.is_singular()) {
+            // only one curve end lies at singularity (another at +/-oo)
+            CGAL_error_msg("SINGULARITY + INF comparison is not yet \
+                implemented");
+        }
+        
+        
+        CGAL::Comparison_result res;
+        if (cv1.is_singular() && cv1.is_singular()) {
+            if (loc1 < loc2) {
+                return CGAL::SMALLER;
+            }
+            if (loc1 > loc2) {
+                return CGAL::LARGER;
+            }
+            // both ends lie at the same singularity => need special handling
+            // but x-order doesn't matter
+        } else  { // establish x-order
+            res = _m_curved_kernel->kernel().compare_x_2_object()(
+                    cv1.curve_end_x(ce1),
+                    cv2.curve_end_x(ce2)
+            );
+            // x-coordinate comparison is enough for these cases
+            // we assume that either both curve ends lie on disc or neither of
+            // them
+            if (res != CGAL::EQUAL || (cv1.is_on_disc() && cv1.is_on_disc())) {
+                CERR("result: " << res << "\n");
+                return res;
+            }
+        }    
+        // now we either +/-oo case: ARR_MIN_END > vertical > ARR_MAX_END
+        // or both ends lie at the same singularity: these cases can be 
+        // handled simultaneously  
+        if (cv1.is_vertical()) {
+            if (!cv2.is_vertical()) {
+                return (ce2 == CGAL::ARR_MIN_END ? 
+                        CGAL::SMALLER : CGAL::LARGER);
+            }
+            // both are vertical
+            if (loc1 == loc2) { // both ends converge to the same infinity
+                return CGAL::EQUAL;
+            }
+            return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    CGAL::SMALLER : CGAL::LARGER);
+        } 
+        
+        if (cv2.is_vertical()) {
+            return (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
+        }
+        
+        // otherwise: both ends have asymptotic behaviour or singularity
+        if (ce1 == ce2) { // both ends approach asymptote from one side
+            
+            if(loc1 == loc2) { // need special y-comparison
+                typename CurvedKernel_2::Point_2::X_coordinate_1 
+                    x0(cv1.curve_end_x(ce1));
+                res = cv1._compare_arc_numbers(
+                        cv2, CGAL::ARR_INTERIOR, x0, 
+                        (ce1 == CGAL::ARR_MIN_END ? 
+                         CGAL::POSITIVE : CGAL::NEGATIVE)
+                );
+                if ((ce1 == CGAL::ARR_MAX_END &&
+                     loc1 == CGAL::ARR_TOP_BOUNDARY) ||
+                    (ce1 == CGAL::ARR_MIN_END &&
+                     loc1 == CGAL::ARR_BOTTOM_BOUNDARY)) {
+                    res = -res;
+                }
+                CERR("result: " << res << "\n");
+                return res;
+            }
+            // else: order can be determined without y-comparison
+            //(loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::SMALLER :
+            res = CGAL::EQUAL;
+                   //CGAL::LARGER);
+            CERR("result: " << res << "\n");
+            return res;
+        }
+        // curve ends approach vertical asymptote (or singularity) from
+        // different sides => no comparisons required
+        res =  (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
+        CERR("result: " << res << "\n");
+        return res;
     }
+
+private:
+    
+    
 
 private:
     //! pointer to \c CurvedKernel_2 ?

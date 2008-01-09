@@ -7,16 +7,14 @@ Tuesday (Arc-Day)
 
 * Introduce Construct_arc_2l
 
+* add ckva* to ctors (are protected anyhow)
+- remove Curve_kernel_2 in Arc_2_base
 
 ==============================================================================
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
-* Functors with caches
-- Compare_x_near_boundary
-- Compare_y_at_x
-
-* Templatize functors and virtualize members
+* Virtualize members
 
 * Other Functors
 - Is_in_x_range
@@ -25,12 +23,9 @@ Tuesday (Arc-Day)
 
 - Correctness of same_arc_compare_xy
 
-* remove Curve_kernel_2 in Arc_2_base
-
-
-* Order of (static) members
-
 * remove Arc_base?
+
+* Re-Introduce caches (not with "int")
 
 ==============================================================================
 // TODO Adaptions for QdX
