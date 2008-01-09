@@ -77,15 +77,19 @@ public:
     // default constructor
     Arc_2_base_rep() : 
         _m_arcno(-1), _m_arcno_min(-1), _m_arcno_max(-1), 
-        _m_is_vertical(false) {  
+        _m_is_vertical(false),
+        _m_ckva(NULL) {  
     }
         
     // standard constructor
     Arc_2_base_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
-        int arcno = -1, int arcno_p = -1, int arcno_q = -1,
-        bool is_vertical = false) : _m_min(p), _m_max(q), _m_support(c),
-            _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
-            _m_is_vertical(is_vertical) {
+                   int arcno = -1, int arcno_p = -1, int arcno_q = -1,
+                   bool is_vertical = false) : 
+        _m_min(p), _m_max(q),
+        _m_support(c),
+        _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
+        _m_is_vertical(is_vertical),
+        _m_ckva(NULL) {
         // set end-point arcnos from segment's interior
         if(_m_arcno_min == -1)
             _m_arcno_min = _m_arcno;
@@ -130,6 +134,9 @@ public:
     typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
     
     mutable Int_map _m_cmp_y_at_x;
+
+    // pointer to underlying ckva
+    mutable Curved_kernel_via_analysis_2 *_m_ckva;
 };
 
 //! \brief class defines a point on a generic curve
@@ -209,7 +216,8 @@ public:
     Arc_2_base(const Self& a) : 
             Base(static_cast<const Base&>(a)) {  
     }
-    
+
+protected:    
     /*!\brief
      * constructs an arc from a given represenation
      */
@@ -231,7 +239,7 @@ public:
     //!
     //! \pre p.x() != q.x()
     Arc_2_base(const Point_2& p, const Point_2& q, const Curve_2& c,
-        int arcno, int arcno_p, int arcno_q) : 
+               int arcno, int arcno_p, int arcno_q) : 
             Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
         CGAL_precondition(!p.is_identical(q));
@@ -285,7 +293,8 @@ public:
            CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
            int arcno_o) :
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
-
+        
+        // TODO use _m_ckva
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
         CGAL_precondition(kernel_2.compare_x_2_object()(origin.x(), asympt_x) 
             != CGAL::EQUAL);
@@ -328,6 +337,7 @@ public:
         Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
             c, arcno)) {
 
+        // TODO use _m_ckva
         CGAL_precondition_code(Curve_kernel_2 kernel_2);
         CGAL_precondition(kernel_2.compare_x_2_object()(asympt_x1, asympt_x2) 
             != CGAL::EQUAL);
@@ -419,18 +429,44 @@ public:
     }
    
     //!@}
+
+    //!\name Destructors
+    //!@{
+
+    //! standard destructor
+    virtual ~Arc_2_base() {
+    }
+    
+    //!@}
+
+protected:    
+    //!\name Pointers
+    //!@{
+
+    //! sets pointer to ckva instance
+    void set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
+        this->ptr()->_m_ckva = ckva;
+    }
+    
+    //! returns pointer to ckva instance
+    inline
+    const Curved_kernel_via_analysis_2* _ckva() const {
+        return this->ptr()->_m_ckva;
+    }
+
+    //!@}
+
+#define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(X, Y, Z) \
+    CGAL_precondition(_ckva() != NULL); \
+    typename Curved_kernel_via_analysis_2::X Y = \
+         _ckva()->Z(); \
+
+
 public:
     //!\name access functions
     //!@{
 
-    //! returns boundary type for arc's end-point \c end
-    /*CGAL::Arr_boundary_type boundary(CGAL::Arr_curve_end end) const {
-        if(end == CGAL::ARR_MIN_END)
-            return _minpoint().boundary();
-        return _maxpoint().boundary();
-    }*/
-
-    //! returns boundary conditions for arc's end-point \c end y-coordinate
+    //! returns location of arc's \c end in parameter space
     CGAL::Arr_parameter_space location(CGAL::Arr_curve_end end) const {
         if(end == CGAL::ARR_MIN_END)
             return _minpoint().location();
@@ -464,26 +500,30 @@ public:
     //!\brief returns arc's curve end \c end x-coordinate 
     //!
     //! \pre accessed curve end has finite x-coordinate
+    inline
     X_coordinate_1 curve_end_x(CGAL::Arr_curve_end end) const {
         CGAL_precondition(
-            !(end == CGAL::ARR_MIN_END ? _minpoint().is_on_left_right() :
-                _maxpoint().is_on_left_right()));
+                !(end == CGAL::ARR_MIN_END ? _minpoint().is_on_left_right() :
+                  _maxpoint().is_on_left_right()));
         return (end == CGAL::ARR_MIN_END ? _minpoint().x() : _maxpoint().x());
     }
 
     //! checks if the arc is vertical 
+    inline
     bool is_vertical() const {
         return this->ptr()->_m_is_vertical;
     }
  
     //! returns supporting curve of the arc
-    Curve_2 curve() const { 
+    inline
+    const Curve_2& curve() const { 
         return this->ptr()->_m_support; 
     }
   
     //! returns arc number
     //!
     //! \pre !is_vertical()
+    inline
     int arcno() const { 
         CGAL_precondition(!is_vertical());
         return this->ptr()->_m_arcno; 
@@ -492,6 +532,7 @@ public:
     //! returns this arc's end arc number
     //!
     //! !is_vertical()
+    inline
     int arcno(CGAL::Arr_curve_end end) const {
         CGAL_precondition(!is_vertical());
         return (end == CGAL::ARR_MIN_END ? this->ptr()->_m_arcno_min :
@@ -508,21 +549,24 @@ public:
      * \pre !is_vertical()
      * \pre \c x0 must be within arcs's x-range.
      */
+    inline
     int arcno(const X_coordinate_1& x0) const {
         CGAL_precondition(!is_vertical());
         CGAL_precondition(is_in_x_range(x0));
+        CGAL_precondition(_ckva() != NULL);
 
-        Curve_kernel_2 kernel_2;
-        if(this->ptr()->_m_arcno_min != this->ptr()->_m_arcno && 
-           !_minpoint().is_on_left_right() &&
-           kernel_2.compare_x_2_object()(x0, _minpoint().x()) == CGAL::EQUAL)
+        if (this->ptr()->_m_arcno_min != this->ptr()->_m_arcno && 
+            !_minpoint().is_on_left_right() &&
+            _ckva()->kernel().compare_x_2_object()(x0, _minpoint().x()) == 
+            CGAL::EQUAL) {
             return this->ptr()->_m_arcno_min;
-        
-        if(this->ptr()->_m_arcno_max != this->ptr()->_m_arcno && 
-           !_maxpoint().is_on_left_right() &&
-           kernel_2.compare_x_2_object()(x0, _maxpoint().x()) == CGAL::EQUAL)
+        }
+        if (this->ptr()->_m_arcno_max != this->ptr()->_m_arcno && 
+            !_maxpoint().is_on_left_right() &&
+            _ckva()->kernel().compare_x_2_object()(x0, _maxpoint().x()) == 
+            CGAL::EQUAL) {
             return this->ptr()->_m_arcno_max;
-        
+        }
         return this->ptr()->_m_arcno;
     }
     
@@ -532,6 +576,7 @@ public:
      *
      * \pre !is_vertical()
      */
+    inline
     int interval_id() const {
         CGAL_precondition(!is_vertical());
         if(!this->ptr()->_m_interval_id) 
@@ -569,12 +614,15 @@ public:
      *
      * \pre is_vertical
      */
-    X_coordinate_1 x() const {
+    inline
+    const X_coordinate_1& x() const {
         CGAL_precondition(is_vertical());
         return _minpoint().x();
     }
 
     //!@}
+
+private:
     //! \name Shortcuts for code readability
     //!@{
     
@@ -609,8 +657,10 @@ public:
         return (loc == CGAL::ARR_LEFT_BOUNDARY || 
                 loc == CGAL::ARR_RIGHT_BOUNDARY);
     }
-    
+
     //!@}
+
+public:    
     //! \name Predicates
     //!@{
     
@@ -629,28 +679,11 @@ public:
             CGAL::Arr_curve_end end,
             const Point_2& p
     ) const {
-        CERR("\ncompare_x_near_boundary: this: " << *this << "\n p: " <<
-            p << "; curve_end: " << end << "\n");
-        //CGAL::Arr_boundary_type bnd = boundary(end);
-        
-        // this curve end has boundary only in y
-        CGAL_precondition(is_on_bottom_top(location(end)));
-        if(is_singular()) // the curve end goes to singularity => x-order
-            return CGAL::EQUAL; // doesn't matter   
 
-        Curve_kernel_2 kernel_2;
-        CGAL::Comparison_result res = 
-            kernel_2.compare_x_2_object()(p.x(), curve_end_x(end));
-        // for vertical arcs equality of x-coordinates means overlapping
-        // in case of discontinuity => x-comparison is enough
-        if(res != CGAL::EQUAL || is_vertical() || is_on_disc()) {
-            CERR("result: " << res << "\n");
-            return res;
-        }
-        // look at the side from which the vertical asymptote is approached 
-        res = (end == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
-        CERR("result: " << res << "\n");
-        return res;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
+                                            compare_x_near_boundary_2,
+                                            compare_x_near_boundary_2_object);
+        return compare_x_near_boundary_2(p, *this, end);
     }
     
     /*!
@@ -671,6 +704,7 @@ public:
             CGAL::Arr_curve_end end1,
             const Arc_2_base& cv2, CGAL::Arr_curve_end end2
     ) const {
+        // TODOuseCK
 
         if(this->id() > cv2.id())
             return (- cv2.compare_x_near_boundary(end2, *this, end1));
@@ -696,7 +730,8 @@ public:
             CGAL::Arr_curve_end end1,
             const Arc_2_base& cv2, CGAL::Arr_curve_end end2,  bool
     ) const {
-
+        // TODOuseCK
+        
         CERR("\ncompare_x_near_boundary: this: " << *this << "\n cv2: " <<
             cv2 << "; end1: " << end1 << "; end2: " << end2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
@@ -788,7 +823,8 @@ public:
      * EQUAL if p lies on the arc.
      */
     CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
-
+        // TODOuseCK
+        
         std::pair<typename Int_map::Hashed_iterator, bool> r =
             this->ptr()->_m_cmp_y_at_x.find(p.id());
             
@@ -802,7 +838,8 @@ public:
    }
     
    CGAL::Comparison_result compare_y_at_x(const Point_2& p, bool) const {
-    
+       // TODOuseCK
+       
         CERR("\ncompare_y_at_x(p); this: " << *this << ";\n p:" << p << "\n");
         CGAL::Arr_parameter_space loc1 = location(CGAL::ARR_MIN_END),
             loc2 = location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
@@ -903,27 +940,15 @@ public:
      *         LARGER if this arc lies above cv2;
      *         EQUAL in case of an overlap.
      */
-    // TODO: pass an additional curve end when handling DISCONTINUITY ?
     CGAL::Comparison_result compare_y_near_boundary(
             const Arc_2_base& cv2, 
             CGAL::Arr_curve_end end
     ) const {
-        //std::cerr << "compare_y_near_boundary_2\n";
         
-        CERR("\ncompare_y_near_boundary(cv2); this: " << *this << "; cv2: " <<
-            cv2 << "; end: " << end << "\n");
-
-        CGAL::Arr_parameter_space loc1 = location(end);
-        CGAL_precondition(is_on_left_right(loc1) &&
-                          loc1 == cv2.location(end));
-        // comparing ids is the same as calling is_identical() ??
-        if(this->id() == cv2.id()) 
-            return CGAL::EQUAL;    
-            
-        // in this setting same handling as for +/-oo ?
-        CGAL::Comparison_result res = _compare_arc_numbers(cv2, loc1);
-        CERR("result: " << res << "\n");
-        return res;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_near_boundary_2,
+                                            compare_y_near_boundary_2,
+                                            compare_y_near_boundary_2_object);
+        return compare_y_near_boundary_2(*this, cv2, end);
     }
     
     /*!
@@ -941,54 +966,10 @@ public:
     CGAL::Comparison_result compare_y_at_x_left(const Arc_2_base& cv2, 
         const Point_2 &p) const {
 
-        //std::cerr << "compare_y_at_x_left\n";
-        CERR("\ncompare_y_at_x_left(cv2); this: " << *this << "; cv2: " <<
-            cv2 << "; p: " << p << "\n");
-
-        CGAL_precondition_code(
-        CGAL::Arr_parameter_space locp = p.location();
-        // ensure that p lies on both arcs and doesn't lie on the negative 
-        // boundary
-        CGAL_precondition(locp != CGAL::ARR_LEFT_BOUNDARY && 
-                 compare_y_at_x(p) == CGAL::EQUAL && 
-             cv2.compare_y_at_x(p) == CGAL::EQUAL);
-        );
-        // check whether both arcs indeed lie to the left of p
-        CGAL_precondition((is_vertical() && 
-            location(CGAL::ARR_MIN_END) == CGAL::ARR_BOTTOM_BOUNDARY)||
-            _same_arc_compare_xy(_minpoint(), p) == CGAL::SMALLER);
-        CGAL_precondition((cv2.is_vertical() &&
-            cv2.location(CGAL::ARR_MIN_END) == CGAL::ARR_BOTTOM_BOUNDARY) ||
-            _same_arc_compare_xy(cv2._minpoint(), p) == CGAL::SMALLER);
-        if(is_vertical()) {
-            // if both are vertical (they overlap), we return EQUAL
-            if(cv2.is_vertical()) 
-                return CGAL::EQUAL;
-            // a vertical arc is always smaller than the arc extending to the
-            // left
-            return CGAL::SMALLER;
-        } 
-        // a vertical arc is always smaller than the arc extending to the left;
-        // due to the order, we have to return the opposite
-        if(cv2.is_vertical()) 
-            return CGAL::LARGER;
-            
-        if(is_singular()) // singularity in y
-            CGAL_error_msg("Handling singularity in y is not yet implemented");
-        
-        // vertical line immediately to the left of p: if p lies on boundary
-        // get the vertical line over the last interval; otherwise
-        // obtain the interval w.r.t. point's x-coordinate (this also valid
-        // for discontinuity in y)
-        /*if(bndp_x == CGAL::BEFORE_SINGULARITY || 
-           bndp_x == CGAL::BEFORE_DISCONTINUITY)
-           return _compare_arc_numbers(cv2, bndp_x);
-        else*/
-
-        CGAL::Comparison_result res = _compare_arc_numbers(cv2,
-             CGAL::ARR_INTERIOR, p.x(), CGAL::NEGATIVE);
-        CERR("result: " << res << "\n");
-        return res;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_left_2,
+                                            compare_y_at_x_left_2,
+                                            compare_y_at_x_left_2_object);
+        return compare_y_at_x_left_2(*this, cv2, p);
     }
     
     /*!
@@ -1006,56 +987,11 @@ public:
      */
     CGAL::Comparison_result compare_y_at_x_right(const Arc_2_base& cv2, 
         const Point_2 &p) const {
-
-         //std::cerr << "compare_y_at_x_right\n";
-        CERR("\ncompare_y_at_x_right(cv2); this: " << *this << "; cv2: " <<
-            cv2 << "; p: " << p << "\n");
         
-        CGAL_precondition_code(
-        CGAL::Arr_parameter_space locp = p.location();
-        // ensure that p lies on both arcs and doesn't lie on the positive
-        // boundary
-        CGAL_precondition(locp != CGAL::ARR_RIGHT_BOUNDARY && 
-          compare_y_at_x(p) == CGAL::EQUAL && cv2.compare_y_at_x(p) ==
-            CGAL::EQUAL);
-        );
-        // check whether both arcs indeed lie to the left of p    
-        CGAL_precondition((is_vertical() && 
-            location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY)||
-            _same_arc_compare_xy(p, _maxpoint()) == CGAL::SMALLER);
-        CGAL_precondition((cv2.is_vertical() &&
-            cv2.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) ||
-            _same_arc_compare_xy(p, cv2._maxpoint()) == CGAL::SMALLER);
-        
-        if(is_vertical()) {
-            // if both are vertical (they overlap), we return EQUAL
-            if(cv2.is_vertical()) 
-                return CGAL::EQUAL;
-            // a vertical arc is always LARGER than arc extending to the
-            // right
-            return CGAL::LARGER;
-        } 
-        // a vertical arc is always LARGER than arc extending to the right; 
-        // due to the order, we have to return the opposite
-        if(cv2.is_vertical()) 
-            return CGAL::SMALLER;
-        
-        if(is_singular()) // singularity in y
-            CGAL_error_msg("Handling singularity in y is not yet \
-                implemented");
-            
-        // vertical line immediately to the right of p: if p lies on boundary
-        // get the vertical line over the first interval; otherwise
-        // obtain the interval w.r.t. point's x-coordinate (this also valid
-        // for discontinuity in y)        
-        /*if(bndp_x == CGAL::AFTER_SINGULARITY || 
-                bndp_x == CGAL::AFTER_DISCONTINUITY)
-           return _compare_arc_numbers(cv2, bndp_x);
-        else*/
-        CGAL::Comparison_result res = _compare_arc_numbers(cv2,
-             CGAL::ARR_INTERIOR, p.x(), CGAL::POSITIVE);
-        CERR("result: " << res << "\n");
-        return res;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_right_2,
+                                            compare_y_at_x_right_2,
+                                            compare_y_at_x_right_2_object);
+        return compare_y_at_x_right(*this, cv2, p);
     }
         
     /*!
@@ -1070,28 +1006,36 @@ public:
                        bool *eq_min = NULL, bool *eq_max = NULL) const {
         
         CGAL::Comparison_result res;
-        if(eq_min != NULL && eq_max != NULL)
+        if (eq_min != NULL && eq_max != NULL) {
             *eq_min = *eq_max = false;
-        Curve_kernel_2 kernel_2;
-        if(_minpoint().location() != CGAL::ARR_LEFT_BOUNDARY) {
+        }
+
+        CGAL_precondition(_ckva() != NULL);
+        
+        if (_minpoint().location() != CGAL::ARR_LEFT_BOUNDARY) {
             // compare x-coordinates    
-            res = kernel_2.compare_x_2_object()(x, _minpoint().x());
-            if(res == CGAL::SMALLER)
+            res = _ckva()->kernel().compare_x_2_object()(x, _minpoint().x());
+            if (res == CGAL::SMALLER) {
                 return false;
-            if(res == CGAL::EQUAL) {
-                if(eq_min != NULL)
-                    *eq_min = true;  
+            }
+            if (res == CGAL::EQUAL) {
+                if(eq_min != NULL) {
+                    *eq_min = true; 
+                } 
                 return true;
             }
         }
         // here x > ARR_MIN_END
-        if(_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY)
+        if (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY) {
              return true; // this is unbounded arc (branch)
-        res = kernel_2.compare_x_2_object()(x, _maxpoint().x());
-        if(res == CGAL::LARGER)
+        }
+        res = _ckva()->kernel().compare_x_2_object()(x, _maxpoint().x());
+        if (res == CGAL::LARGER) {
             return false;
-        if(res == CGAL::EQUAL && eq_max != NULL)
+        }
+        if (res == CGAL::EQUAL && eq_max != NULL) {
             *eq_max = true;
+        }
         return true;
     } 
     
@@ -1100,58 +1044,43 @@ public:
     bool is_in_x_range_interior(const X_coordinate_1& x) const
     {
         bool eq_min, eq_max;
-        if(!is_in_x_range(x, &eq_min, &eq_max) || eq_min || eq_max)
+        if (!is_in_x_range(x, &eq_min, &eq_max) || eq_min || eq_max) {
             return false;
+        }
         return true;
     }
     
     //!\brief returns \c true iff this arc is equal to \c cv
     bool is_equal(const Arc_2_base& cv2) const {
-    
-        if(is_identical(cv2))
-            return true;
-        // only one of the arcs is vertical => not equal
-        if(is_vertical() != cv2.is_vertical())
-            return false;
         
-        // distinct supporting curves implies inequality, provided the
-        // coprimality condition is satisfied
-        if(!curve().is_identical(cv2.curve())) 
-            return false;
-        
-        // here either both or none of the arcs are vertical, check for arcnos
-        // equality
-        if(!is_vertical() && arcno() != cv2.arcno())
-            return false;
-        // otherwise compare respective curve ends: supporting curves and 
-        // arcnos are equal => the curve ends belong to the same arc
-        return ((_same_arc_compare_xy(_minpoint(), cv2._minpoint()) ==
-                    CGAL::EQUAL &&
-                 _same_arc_compare_xy(_maxpoint(), cv2._maxpoint()) ==
-                    CGAL::EQUAL));
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Is_equal_2, 
+                                            is_equal_2,
+                                            is_equal_2_object);
+        return is_equal_2(*this, cv2);
     }
     
     //!@}  
-    //!\name modification functions
     
+    //!\name Constructing functions
+    //!@{
+
     /*!\brief
-     * computes intersection of \c *this arc with \c cv2. Intersection points 
+     * Find all intersections of the two given curves and insert them to the 
+     * output iterator. If two arcs intersect only once, only a single will be
+     * placed to the iterator. Type of output iterator is \c CGAL::Object 
+     * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
+     * with multiplicity (point-wise intersections)
      * are inserted to the output iterator \c oi as objects of type 
      * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
      * multiplicity)
      */
     template < class OutputIterator >
-    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
-        // handle a special case when two arcs are supported by the same 
-        // curve => only end-point intersections
+    OutputIterator intersections(const Self& cv2, OutputIterator oi) const {
         
-        CERR("\nintersect\n");
-        Self::simplify(*this, cv2);
-        if(curve().is_identical(cv2.curve()))
-            return _intersect_at_endpoints(cv2, oi);
-        
-        // else general case: distinct supporting curves
-        return _intersect_coprime_support(*this, cv2, oi);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Intersect_2, 
+                                            intersect_2,
+                                            intersect_2_object);
+        return intersect_2(*this, cv2, oi);
     }
     
     /*!\brief
@@ -1165,17 +1094,18 @@ public:
      * without losing performance.
      */
     bool intersect_right_of_point(const Arc_2& cv2, const Point_2& p, 
-            Point_2& intersection) const {
+                                  Point_2& intersection) const {
 
         typedef std::vector<std::pair<Point_2, int> > Point_container;
         Point_container tmp;
-        intersect(cv2, back_inserter(tmp));
+        _intersection_points(*this, cv2, back_inserter(tmp));
         typename Point_container::const_iterator it;
-        for(it = tmp.begin(); it != tmp.end(); it++) 
+        for (it = tmp.begin(); it != tmp.end(); it++) {
             if(it->first > p) {
                 intersection = it->first;
                 return true;
             }
+        }
         return false;
     }
     
@@ -1190,19 +1120,21 @@ public:
      * without losing performance.
      */
     bool intersect_left_of_point(const Arc_2& cv2, const Point_2& p, 
-            Point_2& intersection) const {
+                                 Point_2& intersection) const {
+        
         // TODO rewrite intersect_left_of_point
         // use static member for Intersect, Left & Right
         // with parameters for direction and where to stop
         typedef std::vector<std::pair<Point_2, int> > Point_container;
         Point_container tmp;
-        intersect(cv2, back_inserter(tmp));
+        _intersection_points(*this, cv2, back_inserter(tmp));
         typename Point_container::const_reverse_iterator it;
-        for(it = tmp.rbegin(); it != tmp.rend(); it++) 
+        for(it = tmp.rbegin(); it != tmp.rend(); it++) {
             if(it->first < p) {
                 intersection = it->first;
                 return true;
             }
+        }
         return false;
     }
 
@@ -1216,6 +1148,8 @@ public:
      */
     int multiplicity_of_intersection(const Arc_2_base& cv2, const Point_2& p) 
         const {
+
+        // TODOuseCK???
 
         // intersection point must lie in the interior of both arcs
         CGAL_precondition_code( // because of macro stupidity one needs 
@@ -1263,34 +1197,31 @@ public:
      */
     void split(const Point_2& p, Arc_2& s1, Arc_2& s2) const {
         
-        CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL);
-        // check that p is not an end-point of the arc
-        CGAL_precondition_code(
-            _same_arc_compare_xy(_minpoint(), p) != CGAL::EQUAL &&
-            _same_arc_compare_xy(_maxpoint(), p) != CGAL::EQUAL);
-                
-        CERR("\nsplit\n");
-        s1 = _replace_endpoints(_minpoint(), p, -1, (is_vertical() ? -1 :
-             arcno()));
-        s2 = _replace_endpoints(p, _maxpoint(), (is_vertical() ? -1 : 
-             arcno()), -1);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Split_2, 
+                                            split_2,
+                                            split_2_object);
+        return split_2(*this, p, s1, s2);
     }
     
     //! \brief returns \c true if the two arcs \c *this and \c cv2 overlap, 
     //! overlapping part(s) are inserted to the output iterator \c oi
     //! (of type \c Arc_2_base ); if no overlapping parts found - 
     //! returns \c false
+    // TODO move to protected members
     template < class OutputIterator >
-    bool trim_if_overlapped(const Arc_2& cv2, OutputIterator oi) const {
+    bool _trim_if_overlapped(const Arc_2& cv2, OutputIterator oi) const {
                
-        CERR("\ntrim_if_overlapped: this: " << *this << "; and " 
+        // TODOuseCK???
+
+        CERR("\n_trim_if_overlapped: this: " << *this << "; and " 
              << cv2 << "\n");
         // one arc is vertical and the other one is not, or x-ranges are not
         // overlapping => quit
-        if(is_vertical() != cv2.is_vertical())
+        if (is_vertical() != cv2.is_vertical()) {
             return false;
+        }
         
-        if(is_vertical()) { // here process vertical case
+        if (is_vertical()) { // here process vertical case
             // check for x-coordinates equality
             Curve_kernel_2 kernel_2;    
             if(kernel_2.compare_x_2_object()(_minpoint().x(),
@@ -1352,7 +1283,7 @@ public:
         Curve_pair_analysis_2 cpa_2;
         Curve_arcno_container found, overlaps;
         
-        CERR("trim_if_overlapped: non-coprime supporting curves\n");
+        CERR("_trim_if_overlapped: non-coprime supporting curves\n");
         
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         // iterate to find all overlapping parts
@@ -1443,14 +1374,8 @@ public:
     // do we need this method separetely ??
     Arc_2 trim(const Point_2& p, const Point_2& q) const {
     
-        CERR("trim\n");
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_xy_2_object()(p.xy(), q.xy()) !=
-            CGAL::EQUAL);
-        CGAL_precondition(compare_y_at_x(p) == CGAL::EQUAL &&
-                          compare_y_at_x(q) == CGAL::EQUAL);  
-        return _replace_endpoints(p, q, (is_vertical() ? -1 : arcno(p.x())),
-                (is_vertical() ? -1 : arcno(q.x())));        
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2, trim_2_object);
+        return trim_2(*this, p, q);
     }
  
     /*!\brief
@@ -1462,29 +1387,8 @@ public:
      */  
     Arc_2 merge(const Arc_2_base& cv2) const {
         
-        CERR("merge\n");
-        CGAL_precondition(are_mergeable(cv2));
-        Self::simplify(*this, cv2);
-        
-        Point_2 src, tgt;
-        int arcno_s = -1, arcno_t = -1;
-        bool replace_src; // true if cv2 < *this otherwise *this arc < cv2 arc
-        // arcs are mergeable => they have one common finite end-point
-        replace_src = (_same_arc_compare_xy(_minpoint(), cv2._maxpoint()) == 
-            CGAL::EQUAL);
-        src = (replace_src ? cv2._minpoint() : _minpoint());
-        tgt = (replace_src ? _maxpoint() : cv2._maxpoint());
-              
-        if(!is_vertical()) {
-            arcno_s = (replace_src ? cv2.arcno(CGAL::ARR_MIN_END) :
-                arcno(CGAL::ARR_MIN_END));
-            arcno_t = (replace_src ? arcno(CGAL::ARR_MAX_END) :
-                cv2.arcno(CGAL::ARR_MAX_END));
-        }
-        Arc_2 arc = _replace_endpoints(src, tgt, arcno_s, arcno_t);
-        // arc.set_boundaries_after_merge(*this, s); - no need to, since
-        // boundaries are stored in Point_2 type and will be copied implicitly
-        return arc;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Merge_2, merge_2, merge_2_object);
+        return merge_2(*this, cv2);
     }
            
     /*!\brief
@@ -1493,58 +1397,10 @@ public:
      */
     bool do_overlap(const Arc_2_base& cv2) const {
     
-        CERR("\ndo_overlap\n");
-        if(is_identical(cv2)) 
-            return true;
-            
-        Self::simplify(*this, cv2);
-        // arcs with coprime support do not overlap    
-        if(!curve().is_identical(cv2.curve()))
-            return false;
-        
-        if(is_vertical() != cv2.is_vertical())
-            return false; // only one arc is vertical => can't overlap
-        if(is_vertical()) { // both arcs are vertical
-            // check for x-coordinates equality
-            Curve_kernel_2 kernel_2;    
-            if(kernel_2.compare_x_2_object()(_minpoint().x(),
-                    cv2._minpoint().x()) != CGAL::EQUAL)
-                return false;
-            // compare y-coordinates of min curve ends
-            switch(_same_arc_compare_xy(_minpoint(), cv2._minpoint(), true)) {
-            case CGAL::EQUAL: // this->source == cv2->source => overlap !
-                return true;            
-            case CGAL::SMALLER: // this->source < cv2->source
-                // check whether this->target > cv2->source
-                return (_same_arc_compare_xy(_maxpoint(), cv2._minpoint(), 
-                    true) == CGAL::LARGER);
-            case CGAL::LARGER: // this->source > cv2->source
-                // check whether this->source < cv2->target
-                return (_same_arc_compare_xy(_minpoint(), cv2._maxpoint(), 
-                    true) == CGAL::SMALLER);
-            }
-        }
-        // processing non-vertical arcs
-        if(arcno() != cv2.arcno()) 
-            return false;
-        /* At this point, we have two non-vertical arcs supported by the same
-         * curve with equal arc numbers in their interior. They do overlap if
-         * their x-ranges overlap. Compare only x-coordinates */
-        switch(_same_arc_compare_xy(_minpoint(), cv2._minpoint(), false, 
-                true)) {
-        case CGAL::EQUAL: // this->source == cv2->source => overlap !
-            return true;            
-        case CGAL::SMALLER: // this->source < cv2->source
-            // check whether this->target > cv2->source
-            return (_same_arc_compare_xy(_maxpoint(), cv2._minpoint(), false, 
-                true) == CGAL::LARGER);
-        case CGAL::LARGER: // this->source > cv2->source
-            // check whether this->source < cv2->target
-            return (_same_arc_compare_xy(_minpoint(), cv2._maxpoint(), false, 
-                true) == CGAL::SMALLER);
-        }
-        CGAL_error_msg("bogus comparison result");
-        return false;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Do_overlap_2, 
+                                            do_overlap_2,
+                                            do_overlap_2_object);
+        return do_overlap_2(*this, cv2);
     }
                
     /*!\brief
@@ -1555,58 +1411,19 @@ public:
      */
     bool are_mergeable(const Arc_2_base& cv2) const {
     
-        CERR("\nare_mergeable\n");
-    
-        if(do_overlap(cv2)) // if arcs overlap they are not mergeable
-            return false;   // this also call simplify
-        
-        // touch in at most one point now and supporting curves are simplified
-        // both arcs must be either vertical or not
-        if(!curve().is_identical(cv2.curve()) || is_vertical() != 
-                cv2.is_vertical()) 
-            return false;
-        // if both arcs are non-vertical => they must have equal arcnos
-        // to be mergeable            
-        if(!is_vertical() && arcno() != cv2.arcno()) 
-            return false;
-        // for non-vertical arcs arc numbers are equal => can use same_arc_cmp
-        bool max_min = (_same_arc_compare_xy(_maxpoint(), cv2._minpoint()) == 
-                    CGAL::EQUAL),
-            min_max = false;
-        if(!max_min) { // both cases cannot happen simultaneously
-            min_max = (_same_arc_compare_xy(_minpoint(), cv2._maxpoint()) == 
-                    CGAL::EQUAL);
-            if(!min_max) // arcs have no common end-point => not mergeable
-                return false;
-        }
-        // check that the common point is not an event point
-        if(is_vertical()) { // both arcs are vertical 
-            Point_2 common = (max_min ? _maxpoint() : _minpoint());
-            // a common end must be a finite point
-            CGAL_precondition(is_interior(common.location()));
-            // check that there are no other non-vertical branches coming 
-            // through this point
-            Curve_analysis_2 ca_2(curve());
-            typename Curve_analysis_2::Status_line_1 cv_line = 
-                ca_2.status_line_for_x(common.x());
-            CGAL_assertion(cv_line.is_event()); // ??
-            // we are not allowed to use number_of_incident_branches()
-            // since the common point might be supported by different curve, 
-            // and therefore its arcno might be not valid for *this arc
-            Curve_kernel_2 kernel_2;
-            for(int k = 0; k < cv_line.number_of_events(); k++) {
-                // use a temporary object for comparison predicate
-                Xy_coordinate_2 tmp(common.x(), curve(), k);
-                if(kernel_2.compare_xy_2_object()(common.xy(), tmp) == 
-                        CGAL::EQUAL)
-                    return false;
-            }
-        } else if(interval_id() != cv2.interval_id()) 
-            return false; // non-vertical case
-
-        return true;
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Are_mergeable_2, 
+                                            are_mergeable_2,
+                                            are_mergeable_2_object);
+        return are_mergeable_2(*this, cv2);
     }
+
+    //!@}
     
+#undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC
+    
+    //!\name Simplification
+    //!@{ 
+
     /*! \brief
      *  simplifies representation of \c cv and/or \c p in case they have
      *  non-coprime supporting curves. 
@@ -1615,26 +1432,31 @@ public:
      */
     static bool simplify(const Arc_2_base& cv, const Xy_coordinate_2& p) {
         
-        if(cv.curve().is_identical(p.curve()))
+        if (cv.curve().is_identical(p.curve())) {
             return false;
+        }
 
+        CGAL_precondition(cv._ckva() != NULL);
+        
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
-        Curve_kernel_2 kernel;
-        if(kernel.decompose_2_object()(cv.curve(), p.curve(), 
-            std::back_inserter(parts_of_f), std::back_inserter(parts_of_g),
-                std::back_inserter(common))) {
-
+        
+        if (cv._ckva()->kernel().decompose_2_object()(
+                    cv.curve(), p.curve(), 
+                    std::back_inserter(parts_of_f), 
+                    std::back_inserter(parts_of_g),
+                    std::back_inserter(common))) {
+            
             CGAL_assertion((parts_of_f.size() == 1 ||
-                       parts_of_g.size() == 1) && common.size() == 1);
-            if(parts_of_f.size() == 1) {
+                            parts_of_g.size() == 1) && common.size() == 1);
+            if (parts_of_f.size() == 1) {
                 cv._simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_f[0])),
-                        (Curve_analysis_2(common[0]))));
+                                        (Curve_analysis_2(parts_of_f[0])),
+                                        (Curve_analysis_2(common[0]))));
             } 
-            if(parts_of_g.size() == 1) {
+            if (parts_of_g.size() == 1) {
                 p.simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_g[0])),
-                        (Curve_analysis_2(common[0]))));
+                                      (Curve_analysis_2(parts_of_g[0])),
+                                      (Curve_analysis_2(common[0]))));
             } 
             return true;
         }
@@ -1649,22 +1471,29 @@ public:
      */
     static bool simplify(const Arc_2_base& cv1, const Arc_2_base& cv2) {
     
-        if(cv1.curve().is_identical(cv2.curve()))
+        if (cv1.curve().is_identical(cv2.curve())) {
             return false;
+        }
+
+        CGAL_precondition(cv1._ckva() != NULL);
+        CGAL_precondition(cv2._ckva() != NULL);
+        CGAL_precondition(cv1._ckva() == cv2._ckva());
         
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
-        Curve_kernel_2 kernel;
-        if(kernel.decompose_2_object()(cv1.curve(), cv2.curve(), 
-            std::back_inserter(parts_of_f), std::back_inserter(parts_of_g),
-                std::back_inserter(common))) {
+        
+        if (cv1._ckva()->kernel().decompose_2_object()(
+                    cv1.curve(), cv2.curve(), 
+                    std::back_inserter(parts_of_f), 
+                    std::back_inserter(parts_of_g),
+                    std::back_inserter(common))) {
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
-            if(parts_of_f.size() == 1) {
+            if (parts_of_f.size() == 1) {
                 cv1._simplify_by(Curve_pair_analysis_2(
                     (Curve_analysis_2(parts_of_f[0])),
                         (Curve_analysis_2(common[0]))));
             } 
-            if(parts_of_g.size() == 1) {
+            if (parts_of_g.size() == 1) {
                 cv2._simplify_by(Curve_pair_analysis_2(
                     (Curve_analysis_2(parts_of_g[0])),
                         (Curve_analysis_2(common[0]))));
@@ -1675,6 +1504,7 @@ public:
     }  
             
     //!@}
+
 protected:
     //!\name protected methods 
     //!@{
@@ -1707,9 +1537,9 @@ protected:
         
         CGAL_precondition_code(
         
-        if(!c.is_identical(pt.curve())) {
+        if (!c.is_identical(pt.curve())) {
             // -1 defines that no arcnos preconditions need to be established
-            if(arcno_on_c != -1) {
+            if (arcno_on_c != -1) {
                 typename Curve_pair_analysis_2::Status_line_1
                     cpv_line;
                 Curve_pair_analysis_2 cpa_2((Curve_analysis_2(pt.curve())),
@@ -1719,14 +1549,17 @@ protected:
                 CGAL_precondition(cpv_line.event_of_curve(pt.arcno(), 0)
                     == cpv_line.event_of_curve(arcno_on_c, 1));
             } 
-            std::vector<Curve_2> dummy[3]; // these are three dummies ?
-            Curve_kernel_2 kernel_2;
+            std::vector< Curve_2 > dummy[3]; // these are three dummies ?
             // ensure that curves are not decomposable
-            CGAL_precondition(!kernel_2.decompose_2_object()(c, pt.curve(),
-                std::back_inserter(dummy[0]), std::back_inserter(dummy[1]),
-                std::back_inserter(dummy[2])));
-        } else if(arcno_on_c != -1)
+            CGAL_precondition(!_ckva()->kernel().decompose_2_object()(
+                                      c, pt.curve(),
+                                      std::back_inserter(dummy[0]), 
+                                      std::back_inserter(dummy[1]),
+                                      std::back_inserter(dummy[2]))
+            );
+        } else if (arcno_on_c != -1) {
             CGAL_precondition(pt.arcno() == arcno_on_c);
+        }
         );
     }
     
@@ -1748,7 +1581,6 @@ protected:
             cv_line = ca_2.status_line_for_x(x0);
             CGAL_precondition(cv_line.is_event() && cv_line.covers_line());
             
-            Curve_kernel_2 kernel_2;            
             // check that there are no intersections between min and max
             // curve ends
             bool inf_src = 
@@ -1764,11 +1596,13 @@ protected:
                 Xy_coordinate_2 tmp(x0, curve(), k);
                 bool res1 = true, res2 = true;
                 if(!inf_src)
-                    res1 = (kernel_2.compare_xy_2_object()(_minpoint().xy(),
-                        tmp, true) == CGAL::SMALLER);
+                    res1 = (_ckva()->kernel().compare_xy_2_object()(
+                                    _minpoint().xy(),
+                                    tmp, true) == CGAL::SMALLER);
                 if(!inf_tgt)
-                    res2 = (kernel_2.compare_xy_2_object()(tmp,
-                        _maxpoint().xy(), true) == CGAL::SMALLER);
+                    res2 = (_ckva()->kernel().compare_xy_2_object()(
+                                    tmp,
+                                    _maxpoint().xy(), true) == CGAL::SMALLER);
                 CGAL_precondition_msg(!(res1 && res2),
                   "Events are not allowed in the interior of a vertical arc!");
             }
@@ -1822,6 +1656,7 @@ protected:
         ////////////////////////////////////////////////////////////////
         /// this must be rewritten: we should somehow pass the kernel's
         /// instance to Arc_2_base object
+        // TODO use _m_ckva
         Curved_kernel_via_analysis_2 ckernel_2;
         const typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache& map_interval_arcno =
@@ -1919,8 +1754,7 @@ protected:
           
             if(!p.is_on_left_right() && !q.is_on_left_right()) {
                 // both xs are finite: require x-comparisons
-                Curve_kernel_2 kernel_2;
-                res = kernel_2.compare_x_2_object()(p.x(), q.x());
+                res = _ckva()->kernel().compare_x_2_object()(p.x(), q.x());
                 if(res != CGAL::EQUAL)
                     return res;
             } else if(locp != locq) {
@@ -1940,9 +1774,10 @@ protected:
         if(locp == locq) {
             if(locp != CGAL::ARR_INTERIOR)
                 return CGAL::EQUAL; // both points are at the same inf in y
-            Curve_kernel_2 kernel_2;
             // compare only y-values; TODO: use _compare_arc_numbers instead ?
-            return kernel_2.compare_xy_2_object()(p.xy(), q.xy(), true);
+            return _ckva()->kernel().compare_xy_2_object()(
+                    p.xy(), q.xy(), true
+            );
         }
         // here: locp != locq && one of them is at inf y
         if(locp == CGAL::ARR_INTERIOR) 
@@ -1988,7 +1823,7 @@ protected:
              ca_2.status_line_of_interval(0)
             );
         
-        Curve_kernel_2 kernel_2;
+        
         // compare only y-values; TODO: use _compare_arc_numbers instead ?
         if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY &&
             location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY) {
@@ -1999,13 +1834,13 @@ protected:
             if (location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR &&
                 location(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR) {
                 
-                if ((kernel_2.compare_x_2_object()
+                if ((_ckva()->kernel().compare_x_2_object()
                      (_minpoint().x(), cv_line.x()) == 
                      CGAL::SMALLER) && 
-                    (kernel_2.compare_x_2_object()
+                    (_ckva()->kernel().compare_x_2_object()
                      (cv_line.x(), _maxpoint().x()) == 
                      CGAL::SMALLER)) {
-                    return kernel_2.lower_boundary_x_2_object()(
+                    return _ckva()->kernel().lower_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 } else {
@@ -2014,7 +1849,7 @@ protected:
                     typename Curve_analysis_2::Status_line_1 cv_line_max = 
                         ca_2.status_line_at_exact_x(_maxpoint().x());
                     
-                    return kernel_2.boundary_between_x_2_object()(
+                    return _ckva()->kernel().boundary_between_x_2_object()(
                             cv_line_min.xy_coordinate_2(
                                     arcno(CGAL::ARR_MIN_END)
                             ),
@@ -2027,11 +1862,11 @@ protected:
             } else {
                 
                 if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY) {
-                    return kernel_2.lower_boundary_x_2_object()(
+                    return _ckva()->kernel().lower_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 } else {
-                    return kernel_2.upper_boundary_x_2_object()(
+                    return _ckva()->kernel().upper_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 }
@@ -2192,18 +2027,47 @@ protected:
     //!\name protected methods
     //!@{
     
-        /*!\brief
+    /*!\brief
+     * computes intersection of \c *this arc with \c cv2. Intersection points 
+     * are inserted to the output iterator \c oi as objects of type 
+     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
+     * multiplicity)
+     */
+    template < class OutputIterator >
+    static OutputIterator _intersection_points(
+            const Arc_2& cv1, const Arc_2& cv2, 
+            OutputIterator oi) {
+        
+        // handle a special case when two arcs are supported by the same 
+        // curve => only end-point intersections
+        
+        CERR("\nintersection_points\n");
+        Self::simplify(cv1, cv2);
+        if (cv1.curve().is_identical(cv2.curve())) {
+            return _intersect_at_endpoints(cv1, cv2, oi);
+        }
+
+        // else general case: distinct supporting curves
+        return _intersect_coprime_support(cv1, cv2, oi);
+    }
+
+    /*!\brief
      * computes intersection of two arcs meeting only at their curve ends.
      * Intersection point is returned in the output interator \c oi as object
      * of type std::pair<Point_2, int> (intersection + multiplicity)
      */
-    template <class OutputIterator>
-    OutputIterator _intersect_at_endpoints(const Arc_2_base& cv2, 
-        OutputIterator oi) const {
+    template < class OutputIterator >
+    static OutputIterator _intersect_at_endpoints(const Arc_2& cv1,
+                                                  const Arc_2& cv2, 
+                                                  OutputIterator oi) {
         
         CERR("\n_intersect_at_endpoints\n");
+
+        CGAL_precondition(cv1._ckva() != NULL);
+        CGAL_precondition(cv2._ckva() != NULL);
+        CGAL_precondition(cv1._ckva() == cv2._ckva());
         
-        CGAL_precondition(!do_overlap(cv2));
+        CGAL_precondition(!cv1.do_overlap(cv2));
         /* Since *this and cv2 do not overlap and cannot contain singularities
          * in the interior, the only remaining candidates for intersections are
          * their finite endpoints (if any), for vertical arcs as well.
@@ -2220,15 +2084,15 @@ protected:
             return oi;          // no intersections
             
         Point_2 pt;
-        Curve_kernel_2 kernel_2;
+        
         CGAL::Arr_curve_end end = CGAL::ARR_MIN_END;
         
         while(1) {
-            CGAL::Arr_parameter_space loc = location(end);
+            CGAL::Arr_parameter_space loc = cv1.location(end);
             //bnd_x = boundary_in_x(end), bnd_y = boundary_in_y(end);
             if(loc != CGAL::ARR_INTERIOR) 
                 goto Lendloop;
-            pt = curve_end(end);
+            pt = cv1.curve_end(end);
             // easy case: intersection at singularity doesn't require to
             // compare x/y-coordinates
             /*if(is_singular(bnd_x)) { 
@@ -2269,14 +2133,20 @@ protected:
               // ordinar normal case:      
               // selection is exclusive since arcs cannot intersect twice
               // at the same finite end-point
-            } else*/ if((f2_min && kernel_2.compare_xy_2_object()(pt.xy(), 
-                        cv2._minpoint().xy()) == CGAL::EQUAL) ||
-                      (f2_max && kernel_2.compare_xy_2_object()(pt.xy(), 
-                        cv2._maxpoint().xy()) == CGAL::EQUAL))
-                *oi++ = std::make_pair(pt, 0); 
+              } else*/ if((f2_min && 
+                           cv1._ckva()->kernel().compare_xy_2_object()(
+                                   pt.xy(), 
+                                   cv2._minpoint().xy()) == CGAL::EQUAL) ||
+                          (f2_max && 
+                           cv1._ckva()->kernel().compare_xy_2_object()(
+                                   pt.xy(), 
+                                   cv2._maxpoint().xy()) == CGAL::EQUAL)) {
+                  *oi++ = std::make_pair(pt, 0); 
+              }
         Lendloop:
-            if(end == CGAL::ARR_MAX_END)
+            if (end == CGAL::ARR_MAX_END) {
                 break;
+            }
             end = CGAL::ARR_MAX_END; 
         }
         return oi;
@@ -2287,34 +2157,39 @@ protected:
     //!
     //! \pre both arcs are not vertical
     bool _joint_x_range(const Self& cv2, Point_2& pt_low, 
-        Point_2& pt_high) const {
+                        Point_2& pt_high) const {
         
         CERR("\n_joint_x_range\n");
         
         CGAL_precondition(!is_vertical() && !cv2.is_vertical());
-        Curve_kernel_2 kernel_2;
+        
         Point_2 pt1 = _minpoint(), pt2 = cv2._minpoint();
         Point_2 low = pt2, high;
         // find intersection x-range: larger source & smaller target
-        if(pt1.location() != CGAL::ARR_LEFT_BOUNDARY) {
-             if(pt2.location() != CGAL::ARR_LEFT_BOUNDARY)
-                low = (kernel_2.compare_x_2_object()(pt1.x(), pt2.x()) == 
-                    CGAL::LARGER ? pt1 : pt2);
-             else 
+        if (pt1.location() != CGAL::ARR_LEFT_BOUNDARY) {
+            if (pt2.location() != CGAL::ARR_LEFT_BOUNDARY) {
+                low = (_ckva()->kernel().compare_x_2_object()(
+                               pt1.x(), pt2.x()) == 
+                       CGAL::LARGER ? pt1 : pt2); 
+            } else {
                 low = pt1;
+            }
         } 
         pt1 = _maxpoint(), pt2 = cv2._maxpoint(), high = pt2;
-        if(pt1.location() != CGAL::ARR_RIGHT_BOUNDARY) {
-             if(pt2.location() != CGAL::ARR_RIGHT_BOUNDARY)
-                high = (kernel_2.compare_x_2_object()(pt1.x(), pt2.x()) == 
-                    CGAL::SMALLER ? pt1 : pt2);
-            else
+        if (pt1.location() != CGAL::ARR_RIGHT_BOUNDARY) {
+            if(pt2.location() != CGAL::ARR_RIGHT_BOUNDARY) {
+                high = (_ckva()->kernel().compare_x_2_object()(
+                                pt1.x(), pt2.x()) == 
+                        CGAL::SMALLER ? pt1 : pt2);
+            } else {
                 high = pt1;
+            }
         } 
-        if(!low.is_on_left_right() && !high.is_on_left_right() &&
-            kernel_2.compare_x_2_object()(low.x(), high.x()) != 
-                CGAL::SMALLER) // disjoint x-ranges 
+        if (!low.is_on_left_right() && !high.is_on_left_right() &&
+            _ckva()->kernel().compare_x_2_object()(low.x(), high.x()) != 
+            CGAL::SMALLER) {// disjoint x-ranges 
             return false;
+        }
         pt_low = low;
         pt_high = high;
         return true;
@@ -2329,7 +2204,7 @@ protected:
     template <class OutputIterator>
     static OutputIterator _intersect_coprime_support(const Arc_2& cv1, 
                                                      const Arc_2& cv2,
-            OutputIterator oi) {
+                                                     OutputIterator oi) {
         // vertical arcs: the interesting case is when only one of the arcs is 
         // vertical - otherwise there is no intersection (different x-coords),
         // or they overlap (not allowed), or they touch at the end-points 
@@ -2338,7 +2213,11 @@ protected:
         CERR("\n_intersect_coprime_support: " << cv1 <<
             " and " << cv2 << "\n");
         
-        if(cv1.is_vertical() || cv2.is_vertical()) {
+        CGAL_precondition(cv1._ckva() != NULL);
+        CGAL_precondition(cv2._ckva() != NULL);
+        CGAL_precondition(cv1._ckva() == cv2._ckva());
+
+        if (cv1.is_vertical() || cv2.is_vertical()) {
             CGAL_assertion(cv1.is_vertical() != cv2.is_vertical());
             // due to coprimality condition, supporting curves are different =>
             // they have no common vertical line therefore there is no 
@@ -2348,25 +2227,28 @@ protected:
             X_coordinate_1 x = vert._minpoint().x();
             // vertical arc does not lie within another arc's x-range => no
             // intersections
-            if(!nonvert.is_in_x_range(x)) 
+            if (!nonvert.is_in_x_range(x)) {
                 return oi;    
-            // TODO introduce _m_ckva in pptr
-            Curved_kernel_via_analysis_2 ckva;
-            Point_2 xy = typename 
-                Curved_kernel_via_analysis_2::Construct_point_on_arc_2(&ckva)(
-                        x, nonvert.curve(), nonvert.arcno(x), nonvert
-                );
-            if(vert.compare_y_at_x(xy) == CGAL::EQUAL) 
+            }
+            typename Curved_kernel_via_analysis_2:: Construct_point_on_arc_2
+                construct_point_on_arc = 
+                cv1._ckva()->construct_point_on_arc_2_object();
+            Point_2 xy = construct_point_on_arc(
+                    x, nonvert.curve(), nonvert.arcno(x), nonvert
+            );
+            if (vert.compare_y_at_x(xy) == CGAL::EQUAL) {
                 *oi++ = std::make_pair(xy, 1);
+            }
             return oi;
         }
-        Curve_kernel_2 kernel_2;
+        
         Point_2 low_x, high_x;
         // x-ranges are disjoint => nothing to do
-        if(!cv1._joint_x_range(cv2, low_x, high_x)) 
+        if (!cv1._joint_x_range(cv2, low_x, high_x)) {
             return oi;
+        }
         bool inf_low = low_x.is_on_left_right(),
-                inf_high = high_x.is_on_left_right();
+            inf_high = high_x.is_on_left_right();
         Curve_2 f = cv1.curve(), g = cv2.curve();
         Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
             (Curve_analysis_2(g)));
@@ -2431,12 +2313,11 @@ protected:
                 mult = tmp.multiplicity_of_intersection(pos);
             // pick up the curve with lower degree   
 
-            // TODO introduce _m_ckva in ptr
-            Curved_kernel_via_analysis_2 ckva;
             typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
-                construct_point_on_arc(&ckva);
-                
-            if(which_curve) {
+                construct_point_on_arc = 
+                cv1._ckva()->construct_point_on_arc_2_object();
+            
+            if (which_curve) {
                 Point_2 p = construct_point_on_arc(
                         x0, cv1.curve(), arcno1, cv1
                 );
@@ -2483,6 +2364,23 @@ public:
     }
     
     //!@}    
+
+    // friends
+    friend class Curved_kernel_via_analysis_2::Compare_x_near_boundary_2;
+    friend class Curved_kernel_via_analysis_2::Compare_y_near_boundary_2;
+
+    friend class Curved_kernel_via_analysis_2::Compare_y_at_x_left_2;
+    friend class Curved_kernel_via_analysis_2::Compare_y_at_x_right_2;
+
+    friend class Curved_kernel_via_analysis_2::Equal_2;
+    friend class Curved_kernel_via_analysis_2::Do_overlap_2;
+
+    friend class Curved_kernel_via_analysis_2::Trim_2;
+    friend class Curved_kernel_via_analysis_2::Split_2;
+    friend class Curved_kernel_via_analysis_2::Are_mergeable_2;
+    friend class Curved_kernel_via_analysis_2::Merge_2;
+    
+    friend class Curved_kernel_via_analysis_2::Intersect_2;
     
 }; // class Arc_2_base
 

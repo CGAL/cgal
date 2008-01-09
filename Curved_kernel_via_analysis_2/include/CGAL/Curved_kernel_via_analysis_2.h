@@ -237,6 +237,9 @@ public:
 
     CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, 
                              construct_point_on_arc_2_object);
+    
+    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
+                             construct_arc_2_object);
 
 #undef CGAL_CKvA_2_functor_pred
 #undef CGAL_CKvA_2_functor_cons

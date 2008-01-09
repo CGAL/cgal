@@ -125,13 +125,16 @@ public:
     Arc_2(const Self& a) : 
             Base(static_cast<const Base&>(a)) { 
     }
-    
+
+    // TODO what to do with this ctor?
     /*!\brief
      * constructs an arc from a given represenation
      */
     Arc_2(Rep rep) : 
         Base(rep) { 
     }
+
+protected:    
     
     //!@}
     //!\name standard constructors for non-vertical arcs
@@ -249,7 +252,7 @@ public:
     }
    
     //!@}
-
+public:
 
 #if 0
 
@@ -2183,6 +2186,10 @@ protected:
     //! befriending output operator
     friend std::ostream& operator << <>(std::ostream&, const Self&);
     
+    // TODO might be a problem with CK_2l
+    //! befriending the constructing functor
+    friend class Curved_kernel_via_analysis_2::Construct_arc_2;
+
     //!@}    
 }; // class Arc_2
 
