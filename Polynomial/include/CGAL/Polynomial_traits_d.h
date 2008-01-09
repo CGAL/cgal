@@ -269,8 +269,6 @@ class Polynomial_traits_d_base {
     
     typedef Null_functor  Construct_polynomial;
     typedef Null_functor  Get_coefficient;
-    typedef Null_functor  Degree;
-    typedef Null_functor  Total_degree;
     typedef Null_functor  Leading_coefficient;
     typedef Null_functor  Univariate_content;
     typedef Null_functor  Multivariate_content;
