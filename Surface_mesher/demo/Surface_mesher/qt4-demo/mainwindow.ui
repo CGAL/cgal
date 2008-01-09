@@ -80,6 +80,7 @@
    <addaction name="separator" />
    <addaction name="actionDisplay_surface" />
    <addaction name="actionDisplay_octree" />
+   <addaction name="actionDisplay_edges_octree" />
   </widget>
   <action name="action_Open" >
    <property name="icon" >
@@ -116,6 +117,9 @@
    <property name="shortcut" >
     <string>Ctrl+I</string>
    </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionDisplay_octree" >
    <property name="checkable" >
@@ -129,6 +133,9 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+T</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionDisplay_surface" >
@@ -144,10 +151,16 @@
    <property name="text" >
     <string>Display &amp;surface</string>
    </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
   </action>
   <action name="action_Options" >
    <property name="text" >
     <string>&amp;Options...</string>
+   </property>
+   <property name="visible" >
+    <bool>true</bool>
    </property>
   </action>
   <action name="actionSubdivision" >
@@ -156,6 +169,9 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionDisplay_all_edges" >
@@ -171,6 +187,9 @@
    <property name="shortcut" >
     <string>Ctrl+A</string>
    </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionDisplay_control_edges" >
    <property name="checkable" >
@@ -184,6 +203,23 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+C</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionDisplay_edges_octree" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="surface_mesher.qrc" >:/icons/bbox-red.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Display edges octree</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
  </widget>

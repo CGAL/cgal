@@ -48,31 +48,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::surface_open(const QString& filename)
 {
-  qWarning() << QString("Opening file \"%1\"...\n").arg(filename);
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   surface->open(filename);
-  QApplication::restoreOverrideCursor();
-  float xmin, ymin, zmin, xmax, ymax, zmax;
-  surface->get_bbox(xmin, ymin, zmin, xmax, ymax, zmax);
-  const float xcenter = (xmin + xmax) / 2;
-  const float ycenter = (ymin + ymax) / 2;
-  const float zcenter = (zmin + zmax) / 2;
-  const float xdelta = (-xmin + xmax);
-  const float ydelta = (-ymin + ymax);
-  const float zdelta = (-zmin + zmax);
-  const float radius = std::max(std::max(xdelta, ydelta), zdelta) * std::sqrt(3.)/ 2.;
-  std::cerr << boost::format("Bounding box: xmin=%1%, ymin=%2%, zmin=%3%\n"
-                             "              xmax=%4%, ymax=%5%, zmax=%6%\n"
-                             "              center=(%7%, %8%, %9%)\n")
-    % xmin % ymin % zmin % xmax % ymax % zmax
-    % xcenter % ycenter % zcenter;
-  viewer_ptr->camera()->setSceneCenter(qglviewer::Vec(xcenter, ycenter, zcenter));
-  viewer_ptr->camera()->setSceneRadius(radius);                                
-  viewer_ptr->setBackgroundColor(Qt::white);
-  viewer_ptr->showEntireScene();
-  
-  QAction* actionInverse_normals = qFindChild<QAction*>(this, "actionInverse_normals");
-  if(actionInverse_normals) actionInverse_normals->setChecked(false);
 }
 
 
