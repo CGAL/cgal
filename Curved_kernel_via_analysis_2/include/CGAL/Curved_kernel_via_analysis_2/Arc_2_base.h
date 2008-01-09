@@ -303,10 +303,9 @@ protected:
         
         _set_ckva(kernel);
         
-        // TODO use _m_ckva
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_x_2_object()(origin.x(), asympt_x) 
-            != CGAL::EQUAL);
+        CGAL_precondition(
+                _ckva()->kernel().compare_x_2_object()(origin.x(), asympt_x) 
+                != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         _check_pt_arcno_and_coprimality(origin, arcno_o, c);
         _fix_curve_ends_order(); // lexicographical order of curve ends
@@ -351,10 +350,9 @@ protected:
 
         _set_ckva(kernel);
         
-        // TODO use _m_ckva
-        CGAL_precondition_code(Curve_kernel_2 kernel_2);
-        CGAL_precondition(kernel_2.compare_x_2_object()(asympt_x1, asympt_x2) 
-            != CGAL::EQUAL);
+        CGAL_precondition(
+                _ckva()->kernel().compare_x_2_object()(asympt_x1, asympt_x2) 
+                != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order();
         
@@ -1365,22 +1363,10 @@ protected:
         }
         // check validity of the curve-ends arcnos
 
-#if 1
-        ////////////////////////////////////////////////////////////////
-        // this must be rewritten: we should somehow pass the kernel's
-        /// instance to Arc_2_base object
-        // TODO use _m_ckva
-        Curved_kernel_via_analysis_2 ckernel_2;
-        const typename Curved_kernel_via_analysis_2::
-            Curve_interval_arcno_cache& map_interval_arcno =
-            ckernel_2.interval_arcno_cache();
-        ////////////////////////////////////////////////////////////////
-#else
-        // this would be nice code, but _ckva() is NULL when called!
         const typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache& map_interval_arcno =
             this->_ckva()->interval_arcno_cache();
-#endif
+
         if (src_line.is_event()) {
             CGAL_precondition(map_interval_arcno(src_line, 0,
                 arcno()).first == this->ptr()->_m_arcno_min);

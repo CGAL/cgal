@@ -7,7 +7,6 @@ Tuesday (Arc-Day)
 
 (1)
 * add ckva* to ctors (Point) (are protected anyhow)
-- remove Curve_kernel_2 in Arc_2_base
 
 (2)
 * Introduce Construct_arc_2l
