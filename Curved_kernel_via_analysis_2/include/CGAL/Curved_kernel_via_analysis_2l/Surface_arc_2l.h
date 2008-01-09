@@ -178,7 +178,8 @@ protected:
      * \pre arc.curve_end(MIN) = p
      * \pre arc.curve_end(MAX) = q
      */
-    Surface_arc_2l(const Projected_arc_2& arc, 
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3& surface,
@@ -186,6 +187,8 @@ protected:
         Base(arc) 
         // TODO rebind, i.e., replace p and q in "arc"
     {
+        _set_ckva(kernel);
+        
         CGAL_precondition(
                 arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR
         );
@@ -229,13 +232,16 @@ public:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(const Projected_arc_2& arc, 
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_3& surface,
                    int sheet, int sheet_p) :
         // TODO rebind, i.e., replace p
         Base(arc) 
     {
+        _set_ckva(kernel);
+        
         bool min_finite = 
             (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
         CGAL_precondition_code(
@@ -288,12 +294,15 @@ public:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(const Projected_arc_2& arc, 
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Projected_arc_2& arc, 
                    const Surface_3& surface,
                    int sheet) :
         // TODO rebind?
         Base(arc) 
     {
+        _set_ckva(kernel);
+
         bool min_finite = 
             (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
         bool max_finite = 
@@ -312,7 +321,8 @@ public:
     // constructors for vertical arcs
     
     //! represents a bounded vertical arc
-    Surface_arc_2l(const Surface_point_2l& p,
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3& surface) :
         Base() 
@@ -323,6 +333,8 @@ public:
         // This point must be used, as the default constructed
         // Base is useless.
     {
+        _set_ckva(kernel);
+        
         CGAL_precondition(p.compare_xy(q) == CGAL::EQUAL);
         // TODO check that surface has a vertical line through p and q
         this->ptr()->_m_is_z_vertical = true;
@@ -330,12 +342,15 @@ public:
     }
 
     //! represents a vertical ray
-    Surface_arc_2l(const Surface_point_2l p,
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Surface_point_2l p,
                    CGAL::Arr_curve_end inf_end,
                    const Surface_3& surface) :
         Base() 
         // TODO see above
     {
+        _set_ckva(kernel);
+
         // TODO chack that surface has a vertical line through p
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
@@ -343,11 +358,14 @@ public:
         // Surface_point_2l
     }
 
-    Surface_arc_2l(const Projected_point_2& p,
+    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
+                   const Projected_point_2& p,
                    const Surface_3& surface) :
         Base()
         // TODO see above
     {
+        _set_ckva(kernel);
+
         // TODO chack that surface has a vertical line through p
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
@@ -367,14 +385,12 @@ public:
     //!\name Access functions
     //!@{
 
-#if 0 // TODO remove?
     /*!\brief
-     * returns projected point
+     * returns projected arc
      */
-    Projected_segment_2 get_projected_segment() const {
-        return this->ptr()->_projected_segment;
+    Projected_arc_2 projected_arc() const {
+        return static_cast< Projected_arc_2 >(*this);
     }
-#endif
 
     /*\brief
      * returns the supporting surfaces of 3d-segment

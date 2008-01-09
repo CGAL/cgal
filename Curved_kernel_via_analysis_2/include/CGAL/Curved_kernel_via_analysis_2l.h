@@ -46,7 +46,7 @@ public:
 
     //! standard constructor
     Construct_point_2l(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -54,13 +54,13 @@ public:
                        const Surface_3& surface,
                        int sheet) const {
         CGAL_precondition(sheet >= 0);
-        Point_2 pt(_m_kernel, xy, surface, sheet);
+        Point_2 pt(_m_curved_kernel, xy, surface, sheet);
         return pt;
     }
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 
@@ -78,7 +78,7 @@ public:
     
     //! standard constructor
     Construct_point_on_arc_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -92,7 +92,7 @@ public:
         CGAL_assertion(arcno == arc.arcno(x));
         typename CurvedKernel_2::Construct_projected_point_2 
             construct_projected_point = 
-            _m_kernel->construct_projected_point_2_object();
+            _m_curved_kernel->construct_projected_point_2_object();
         typename Point_2::Projected_point_2 p_pt = 
             construct_projected_point(x, c, arcno);
         int sheet = arc.sheet();
@@ -110,7 +110,7 @@ public:
             }
         }
         typename CurvedKernel_2::Construct_point_2 construct_point_2 = 
-            _m_kernel->construct_point_2_object();
+            _m_curved_kernel->construct_point_2_object();
         
         Point_2 pt = construct_point_2(p_pt, arc.surface(), sheet);
         return pt;
@@ -118,7 +118,7 @@ public:
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 
@@ -137,7 +137,7 @@ public:
 
     //! standard constructor
     Construct_arc_2l(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
+        _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
     
@@ -156,16 +156,16 @@ public:
                               const Surface_point_2l& q,
                               const Surface_3& surface,
                               int sheet, int sheet_p, int sheet_q) {
-        // TODO add ckva*
-        Surface_arc_2l surface_arc(arc, p, q, surface, 
+        Surface_arc_2l surface_arc(_m_curved_kernel, arc, p, q, surface, 
                                    sheet, sheet_p, sheet_q);
         return surface_arc;
     }
     
+    // TODO missing operators
     
 private:
     //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 

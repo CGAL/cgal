@@ -195,7 +195,7 @@ class Quadric_arc_2;
 // TODO documentation
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadric_arc_2_rep : 
-      public Surface_arc_2l_rep< QuadricalKernelViaAnalysis_2, SurfacePair_3 > 
+      public Surface_arc_2l_rep< QuadricalKernelViaAnalysis_2, SurfacePair_3 >
 {
 
 protected:
@@ -213,7 +213,8 @@ protected:
     
     // the base type
     typedef 
-    Surface_arc_2l_rep< Quadrical_kernel_via_analysis_2, Surface_pair_3 > Base;
+    Surface_arc_2l_rep< Quadrical_kernel_via_analysis_2, Surface_pair_3 > 
+    Base;
     
     //TODO add constructors
     
@@ -283,6 +284,7 @@ public:
         Base() {   
     }
 
+    // TODO check what to do with this c'tor
     /*!\brief
      * constructs an arc from a given represenation
      */
@@ -290,18 +292,20 @@ public:
         Base(rep) { 
     }
 
+protected:
     /*!\brief
      * constructs an arc on \c sheet of surface \c surface, 
      * whose projection is \c arc with given \c source and \c target.
      *
      * \pre levels must be valid
      */
-    Quadric_arc_2(const Projected_arc_2& arc, 
+    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
+                  const Projected_arc_2& arc, 
                   const Quadric_point_2& p,
                   const Quadric_point_2& q,
                   const Surface_3& surface,
                   int sheet, int sheet_p, int sheet_q) :
-        Base(arc, p. q. surface, sheet, sheet_p, sheet_q) {
+        Base(kernel, arc, p. q. surface, sheet, sheet_p, sheet_q) {
 #if 0 // TODO check what todo with this
         if (seg.is_vertical() && level > 0) {
             this->ptr()->is_reversed_ = !this->ptr()->is_reversed_;
@@ -309,7 +313,7 @@ public:
 #endif
     }    
     
-    // TODO add other functors
+    // TODO add other constructors
     
     //!@}
 

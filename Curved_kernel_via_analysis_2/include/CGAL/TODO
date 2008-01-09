@@ -8,7 +8,6 @@ Tuesday (Arc-Day)
 
 (2)
 * Introduce Construct_arc_2l
-- add ckva and construct_arc_2l
 - missing operator()s
 
 ==============================================================================
@@ -30,12 +29,15 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Adaptions for QdX
 
+- C'tors for QA_2
+
 - Rewrite Intersect and other predicates for QdX
 
 - TODO: remove mult in Intersect for QdX as it might does not make sense?
 
 - implement new version of Make_x_monotone_2
 - check collaboration with planar version
+
 
 ==============================================================================
 // TODO Filtered CKvA_2
