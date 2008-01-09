@@ -75,8 +75,6 @@ protected:
     //! supporting surface
     mutable Surface_3 _m_surface;
 
-    // TODO add Surface_point_2l _m_min, _m_max;
-    
     //! sheet number of arc
     mutable int _m_sheet;
 
@@ -132,7 +130,9 @@ public:
     Self;
     
     //! the base class
-    typedef CGALi::Arc_2_base< Curved_kernel_via_analysis_2l, typename Curved_kernel_via_analysis_2l::Arc_2, Rep > 
+    typedef CGALi::Arc_2_base< Curved_kernel_via_analysis_2l, 
+                               typename Curved_kernel_via_analysis_2l::Arc_2, 
+                               Rep > 
     Base;
     
     //! type of planar point
@@ -219,10 +219,6 @@ protected:
         this->ptr()->_m_sheet_min = sheet_p;
         this->ptr()->_m_sheet_max = sheet_q;
     }
-
-public:
-    // TODO make the following ctors also protected 
-    // -> move to Construct_arc_2l
 
     /*!\brief
      * Standard constructor for a ray on xy-monotone part
@@ -376,6 +372,7 @@ public:
     
     //!@}
 
+public:
     // TODO missing constructors for arcs whose projection is a bounded arc
     // but whose ends (at least one or both) approach a z-vertical asympote
 
