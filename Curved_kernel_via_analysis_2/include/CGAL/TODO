@@ -5,8 +5,6 @@ Tuesday (Arc-Day)
    constructors protected and add pointers to constructing
    CKva_2-instance in Arc_2
 
-(1)
-* add ckva* to ctors (Point) (are protected anyhow)
 
 (2)
 * Introduce Construct_arc_2l
@@ -27,6 +25,8 @@ Tuesday (Arc-Day)
 - Correctness of Is_bounded 
 
 - Correctness of same_arc_compare_xy (also for QdX-case)
+
+* Check what to do with some Point_2 + Arc_2 ctors
 
 * Re-Introduce caches (not with "int")
 

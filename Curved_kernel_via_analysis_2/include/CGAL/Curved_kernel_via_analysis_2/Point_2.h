@@ -208,8 +208,11 @@ protected:
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
+    Point_2(Curved_kernel_via_analysis_2 *kernel,
+            const X_coordinate_1& x, const Curve_2& c, int arcno) :
         Base(Rep(Xy_coordinate_2(x, c, arcno))) {
+        
+        _set_ckva(kernel);
     }
     
 #if 0 // TODO remove these constructors?
@@ -257,10 +260,15 @@ protected:
     //!@{
 
     //! sets pointer to ckva instance
-    void set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
+    void _set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
         this->ptr()->_m_ckva = ckva;
     }
     
+    //! return pointer to ckva instance
+    Curved_kernel_via_analysis_2* _ckva() const {
+        return this->ptr()->_m_ckva;
+    }
+
     //! sets pointer to incident arc
     void _add_ref(const Arc_rep *arc_rep) const {
         this->ptr()->_m_arc_rep = arc_rep;
@@ -352,6 +360,11 @@ public:
         return (location() == CGAL::ARR_BOTTOM_BOUNDARY ||
                 location() == CGAL::ARR_TOP_BOUNDARY);
     }
+
+#define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
+    CGAL_precondition(_ckva() != NULL); \
+    typename Curved_kernel_via_analysis_2::X Y = \
+         _ckva()->Z(); \
         
     //!\brief compares x-coordinates of two points 
     //!
@@ -359,12 +372,11 @@ public:
     virtual CGAL::Comparison_result compare_x(const Point_2& q) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
-        CGAL_precondition(this->ptr()->_m_ckva != NULL);
-        typename 
-            Curved_kernel_via_analysis_2::Compare_x_2 ck_compare_x = 
-            this->ptr()->_m_ckva->compare_x_2_object();
 
-        return ck_compare_x(*this, q);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, 
+                                              compare_x_2, 
+                                              compare_x_2_object);
+        return compare_x_2(*this, q);
     }
 
     //!\brief compares two points lexicographical
@@ -374,12 +386,11 @@ public:
                                                bool equal_x = false) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
-        CGAL_precondition(this->ptr()->_m_ckva != NULL);
-        typename 
-            Curved_kernel_via_analysis_2::Compare_xy_2 ck_compare_xy = 
-            this->ptr()->_m_ckva->compare_xy_2_object();
 
-        return ck_compare_xy(*this, q, equal_x);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, 
+                                              compare_xy_2, 
+                                              compare_xy_2_object);
+        return compare_xy_2(*this, q, equal_x);
     }
 
     //! checks if the point lies on a curve
@@ -387,13 +398,15 @@ public:
             const typename Curved_kernel_via_analysis_2::Curve_2& curve
     ) const {
         CGAL_precondition(this->ptr()->_m_xy);
-        CGAL_precondition(this->ptr()->_m_ckva != NULL);
-        typename 
-            Curved_kernel_via_analysis_2::Is_on_2 ck_is_on = 
-            this->ptr()->_m_ckva->is_on_2_object();
-        
-        return ck_is_on(*this, curve);
+
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, 
+                                              is_on_2, 
+                                              is_on_2_object);
+        return is_on_2(*this, curve);
     }
+
+#undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT
+
 
     //! comparison operators (only for finite points):
     //! equality

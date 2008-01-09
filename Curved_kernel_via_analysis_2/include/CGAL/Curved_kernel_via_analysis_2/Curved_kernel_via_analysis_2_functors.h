@@ -59,8 +59,7 @@ public:
     //!
     //! implies no boundary conditions in x/y
     Point_2 operator()(const X_coordinate_1& x, const Curve_2& c, int arcno) {
-        Point_2 pt(x,c,arcno);
-        pt.set_ckva(_m_curved_kernel);
+        Point_2 pt(_m_curved_kernel,x,c,arcno);
         return pt;
     }
     
