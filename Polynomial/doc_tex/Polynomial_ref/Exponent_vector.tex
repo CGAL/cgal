@@ -60,15 +60,9 @@ addition forms an {\em Abelian Group}.
 
 \ccOperations
 
-\ccMethod{void swap(const size_type& i, const size_type& j) const;}{
-       Swap exponent at position i with exponent at position j.     
-        \ccPrecond { i <= \ccVar.size()}
-        \ccPrecond { j <= \ccVar.size()}
-        }
-
 \ccGlue
-\ccFunction{bool  is_valid(const Exponent_vector & ev_);}
-       { Returns true if all entries are not negative. }
+\ccFunction{bool is_valid(ev);}        
+       { Returns true if all entries of ev are not negative. }        
 
 \ccOperations
 

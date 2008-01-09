@@ -44,9 +44,13 @@ Polynomial$(EXE_EXT): Polynomial$(OBJ_EXT)
 Polynomial_traits_d$(EXE_EXT): Polynomial_traits_d$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polynomial_traits_d Polynomial_traits_d$(OBJ_EXT) $(LDFLAGS)
 
+Exponent_vector$(EXE_EXT): Exponent_vector$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Exponent_vector Exponent_vector$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    Polynomial.clean \
-                   Polynomial_traits_d.clean 
+                   Polynomial_traits_d.clean \
+                   Exponent_vector.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
