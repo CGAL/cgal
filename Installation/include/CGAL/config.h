@@ -106,10 +106,6 @@
 #endif
 
 
-#ifndef CGAL_USE_LEDA
-#  define CGAL_USE_CGAL_WINDOW
-#endif
-
 // Symbolic constants to tailor inlining. Inlining Policy.
 // =======================================================
 #ifndef CGAL_MEDIUM_INLINE
