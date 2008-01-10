@@ -525,11 +525,24 @@ public:
     friend class Arc_2_base< Curved_kernel_via_analysis_2, 
                              typename Curved_kernel_via_analysis_2::Arc_2 >;
 
-    //! befriending the construction
-    friend class 
-    CGALi::Curved_kernel_via_analysis_2_Functors::
-    Construct_point_2< Curved_kernel_via_analysis_2, Self >;
+    //! befriending the functors
+
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+    friend class Curved_kernel_via_analysis_2::Z; \
+    friend class Curved_kernel_via_analysis_2_Functors:: \
+    Z< Curved_kernel_via_analysis_2 >; \
     
+    
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_on_arc_2);
+
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
+    
+    // TODO parameter space in x/y (full set)
+
+#undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
+
 }; // class Point_2
 
 

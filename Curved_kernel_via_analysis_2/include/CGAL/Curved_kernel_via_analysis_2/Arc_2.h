@@ -269,7 +269,15 @@ public:
     
     // TODO might be a problem with CK_2l
     //! befriending the constructing functor
-    friend class Curved_kernel_via_analysis_2::Construct_arc_2;
+
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+    friend class Curved_kernel_via_analysis_2::Z; \
+    friend class Curved_kernel_via_analysis_2_Functors:: \
+    Z< Curved_kernel_via_analysis_2 >; \
+    
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2);
+
+#undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
     //!@}    
 }; // class Arc_2

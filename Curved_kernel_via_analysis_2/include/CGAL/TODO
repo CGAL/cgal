@@ -4,7 +4,7 @@ Tuesday (Arc-Day)
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
-(3)
+(2)
 * remove Arc_base?
 
 * Virtualize members
@@ -19,7 +19,9 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Adaptions for QdX
 
-(5)
+(1)
+- New Make_x_monotone_2 for qdx
+
 - Rewrite Intersect and other predicates for QdX
 
 - TODO: remove mult in Intersect for QdX as it might does not make sense?
@@ -27,13 +29,6 @@ Tuesday (Arc-Day)
 - implement new version of Make_x_monotone_2
 - check collaboration with planar version
 
-
-==============================================================================
-// TODO Filtered CKvA_2
-
-(4)
-* Derive CKvA, replace Intersect_2 to obtain Filtered_CKvA_2
-- missing friend declarations for functors
 
 ==============================================================================
 // TODO Tuning

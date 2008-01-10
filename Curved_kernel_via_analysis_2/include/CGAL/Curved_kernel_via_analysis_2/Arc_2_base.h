@@ -2250,27 +2250,38 @@ public:
     
     //!@}    
 
-    // friends
-    friend class Curved_kernel_via_analysis_2::Compare_x_near_boundary_2;
-    friend class Curved_kernel_via_analysis_2::Compare_y_near_boundary_2;
-
-    friend class Curved_kernel_via_analysis_2::Compare_y_at_x_2;
-    friend class Curved_kernel_via_analysis_2::Compare_y_at_x_left_2;
-    friend class Curved_kernel_via_analysis_2::Compare_y_at_x_right_2;
-
-    friend class Curved_kernel_via_analysis_2::Equal_2;
-    friend class Curved_kernel_via_analysis_2::Do_overlap_2;
-
-    friend class Curved_kernel_via_analysis_2::Trim_2;
-    friend class Curved_kernel_via_analysis_2::Split_2;
-    friend class Curved_kernel_via_analysis_2::Are_mergeable_2;
-    friend class Curved_kernel_via_analysis_2::Merge_2;
+    // befriending the functors
     
-    friend class Curved_kernel_via_analysis_2::Intersect_2;
-    friend class Curved_kernel_via_analysis_2_Functors::
-    Intersect_2< Curved_kernel_via_analysis_2 >;
+#define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
+    friend class Curved_kernel_via_analysis_2::Z; \
+    friend class Curved_kernel_via_analysis_2_Functors:: \
+    Z< Curved_kernel_via_analysis_2 >; \
     
-    // TODO add further friends of Functors!
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_on_arc_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_bounded_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_y_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_min_vertex_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_max_vertex_2);
+
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_near_boundary_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_near_boundary_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_left_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_y_at_x_right_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_in_x_range_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Equal_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Do_overlap_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Intersect_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Trim_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Split_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2);
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2);
+    
+#undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
 }; // class Arc_2_base
 
