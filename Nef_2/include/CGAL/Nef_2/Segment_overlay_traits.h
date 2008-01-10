@@ -23,7 +23,7 @@
 #define CGAL_NEF_DEBUG 23
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(CCGAL_USE_LEDA)
+#if defined(CGAL_USE_LEDA)
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
 #include <LEDA/tuple.h>
@@ -443,7 +443,7 @@ public:
 } // namespace CGAL
 
 #endif // defined(CGAL_USE_LEDA)
-#if !defined(CCGAL_USE_LEDA)
+#if !defined(CGAL_USE_LEDA)
 #include <list>
 #include <string>
 #include <sstream>
@@ -979,6 +979,7 @@ public:
 	  ss_iterator sst(sit); ++sst;
 	  if(y2y[*sit] != *sst)
 	    y2y[*sit] = &sl;
+	  y2x[*sit] = XS.end();
 	  GO.passing_segment(v,original(s));
 	}
 
@@ -1103,7 +1104,8 @@ public:
        *sit_pred_succ != &sh) {
       IEvent[std::make_pair(*sit_pred, *sit_pred_succ)] = xxit;
       y2y[*sit_pred] = &sl;
-    }
+      y2x[*sit_pred] = XS.end();
+    } 
     
     CGAL_NEF_TRACEN("pred,succ = "<< *sit_pred <<" "<< *sit_succ);
     compute_intersection(sit_pred); 
@@ -1503,7 +1505,7 @@ public:
 #endif // !defined(CGAL_USE_LEDA)
 
 namespace CGAL {
-#if defined(CCGAL_USE_LEDA)
+#if defined(CGAL_USE_LEDA)
 #define Segment_overlay_traits leda_seg_overlay_traits
 static const char* const sweepversion = "LEDA segment overlay sweep";
 #else
