@@ -31,7 +31,6 @@ OBJECTS_OLD = \
 assertions$(OBJ_EXT) \
 Bbox_2_intersections$(OBJ_EXT) \
 Bbox_3_intersections$(OBJ_EXT) \
-cgal_logo$(OBJ_EXT) \
 Color$(OBJ_EXT) \
 File_header_extended_OFF$(OBJ_EXT) \
 File_header_OFF$(OBJ_EXT) \

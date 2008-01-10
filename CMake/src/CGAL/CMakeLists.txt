@@ -39,7 +39,6 @@ set(SOURCES
     assertions.cpp
     Bbox_2_intersections.cpp
     Bbox_3_intersections.cpp
-    cgal_logo.cpp
     Color.cpp
     File_header_extended_OFF.cpp
     File_header_OFF.cpp
