@@ -260,11 +260,11 @@ class Polynomial_traits_d_base {
     
     struct Degree 
         : public Unary_function< ICoeff , int > {
-        int operator()(const ICoeff& c) const { return 0; }
+        int operator()(const ICoeff&) const { return 0; }
     };
     struct Total_degree 
         : public Unary_function< ICoeff , int > {
-        int operator()(const ICoeff& c) const { return 0; }
+        int operator()(const ICoeff&) const { return 0; }
     };
     
     typedef Null_functor  Construct_polynomial;
@@ -331,7 +331,7 @@ class Polynomial_traits_d_base {
         typedef Coefficient             argument_type;
         
         // returns the exponent vector of inner_most_lcoeff. 
-        result_type operator()(const Coefficient& constant){
+        result_type operator()(const Coefficient&){
             return Exponent_vector();
         }
     };
@@ -1093,9 +1093,9 @@ public:
         // rsqff_utcf computes the sqff recursively for Coeff  
         // end of recursion: ICoeff
         template < class OutputIterator1, class OutputIterator2 >
-        int rsqff_utcf  (ICoeff c, 
-                OutputIterator1 factors, 
-                OutputIterator2 mults) const{
+        int rsqff_utcf  (ICoeff , 
+                OutputIterator1 , 
+                OutputIterator2 ) const{
             return 0;
         }        
         template < class OutputIterator1, class OutputIterator2 >

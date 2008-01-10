@@ -477,7 +477,7 @@ public:
 private:
     // NTX not decomposable
     template <class NTX, class TAG >
-    CGAL::Sign sign_at_(const NTX& x, TAG tag) const{
+    CGAL::Sign sign_at_(const NTX& x, TAG) const{
         CGAL_precondition(degree()>=0);
         return CGAL::sign(evaluate(x));
     }

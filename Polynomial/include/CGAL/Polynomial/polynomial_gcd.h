@@ -211,9 +211,10 @@ Polynomial<NT> gcd_(
     // see [Cohen, 1993], algorithm 3.3.1
 
     // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()) return Polynomial<NT>(NT(1));
         else return p2 / p2.unit_part();
+    }
     if (p2.is_zero())
         return p1 / p1.unit_part();
     if (p2.degree() > p1.degree()) {
@@ -291,9 +292,10 @@ Polynomial<NT> gcd_(
     Polynomial<NT> p1, Polynomial<NT> p2, Field_tag
 ) {
     // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()) return Polynomial<NT>(NT(1));
         else return p2 / p2.unit_part();
+    }
     if (p2.is_zero())
         return p1 / p1.unit_part();
     if (p2.degree() > p1.degree()) {
@@ -350,7 +352,7 @@ Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 namespace POLYNOMIAL {
 
 template <class NT> inline
-NT gcd_utcf_(const NT& a, const NT& b)
+NT gcd_utcf_(const NT&, const NT&)
 { return NT(1); }
 
 template <class NT> inline
@@ -427,7 +429,7 @@ Polynomial<NT> gcd_utcf_(
 ) {
     
     // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()){
             return Polynomial<NT>(NT(1));
         }else{
@@ -437,6 +439,7 @@ Polynomial<NT> gcd_utcf_(
             return canonicalize_polynomial(p2);
 #endif
         }
+    }
     if (p2.is_zero()){
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
         return p1;

@@ -162,7 +162,7 @@ namespace POLYNOMIAL {
     // Polynomial<NT> / NT  -  NT is already the coefficient type and is extended
     template <class NT>
     Polynomial<NT> div_utcf_NT_is_IC(
-        Polynomial<NT> f, const NT& g, CGAL::Tag_false)
+        Polynomial<NT> f, const NT&, CGAL::Tag_false)
     {
         return canonicalize_polynomial(f);
     }
