@@ -63,7 +63,7 @@ public:
         return pt;
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -219,7 +219,7 @@ public:
         return arc;
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -255,7 +255,7 @@ public:
             (p1.x(), p2.x());
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -384,7 +384,7 @@ public:
         return res;
     }
 
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -464,7 +464,7 @@ public:
                            const Arc_2_& cv2, CGAL::Arr_curve_end ce2) const {
        
         CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
-            cv2 << "; end1: " << end1 << "; end2: " << ce2 << "\n");
+            cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
             bnd2 = cv2.boundary(ce2);*/
         CGAL::Arr_parameter_space loc1 = cv1.location(ce1), 
@@ -556,11 +556,7 @@ public:
         return res;
     }
 
-private:
-    
-    
-
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -645,7 +641,7 @@ public:
         return res;
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -715,7 +711,7 @@ public:
                  CGAL::EQUAL));
     }
 
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -744,7 +740,7 @@ public:
     result_type operator()(const Arc_2& cv) const {
         return cv.is_vertical();
     }
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -929,7 +925,7 @@ public:
         return res;
     }
      
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1226,7 +1222,7 @@ public:
         CGAL_error_msg("bogus comparison result");
         return false;
     }
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1269,7 +1265,7 @@ public:
         );
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1362,7 +1358,7 @@ public:
         return true;
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1420,7 +1416,7 @@ public:
         
         c = arc;
     }
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1468,7 +1464,7 @@ public:
         );
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1503,6 +1499,9 @@ public:
     OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
                               OutputIterator oi) const {
         
+        CERR("\nintersect; cv1: " << cv1 
+             << ";\n cv2:" << cv2 << "");
+        
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
         std::vector< Arc_2_ > common_arcs;
@@ -1521,13 +1520,13 @@ public:
         Arc_2_::_intersection_points(cv1, cv2, std::back_inserter(vec));
 
         //std::cout << "results\n";
-        for(it = vec.begin(); it != vec.end(); it++) {
-            //std::cout << it->first << "\n";
+        for (it = vec.begin(); it != vec.end(); it++) {
             *oi++ = CGAL::make_object(*it);
         }
         return oi;
     }
-private:
+
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1582,7 +1581,7 @@ public:
         return make_x_monotone(cv, oi);
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
@@ -1625,7 +1624,7 @@ public:
         return pt;
     }
     
-private:
+protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
