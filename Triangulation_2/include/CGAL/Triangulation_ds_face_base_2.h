@@ -242,6 +242,7 @@ Triangulation_ds_face_base_2<TDS> ::
 set_neighbor(int i, Face_handle n)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
+  CGAL_triangulation_precondition( this != &*n );
   N[i] = n;
 }
 
@@ -276,6 +277,9 @@ inline void
 Triangulation_ds_face_base_2<TDS> :: 
 set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 {
+  CGAL_triangulation_precondition( this != &*n0 );
+  CGAL_triangulation_precondition( this != &*n1 );
+  CGAL_triangulation_precondition( this != &*n2 );
   N[0] = n0;
   N[1] = n1;
   N[2] = n2;
