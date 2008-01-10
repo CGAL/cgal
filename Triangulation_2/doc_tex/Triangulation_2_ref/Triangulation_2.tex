@@ -963,20 +963,11 @@ When dimension $<$ 2, the same information is output
 for faces of maximal dimension instead of faces.
 
 
-%\ccInclude{CGAL/IO/Window_stream.h}
-
-%\ccFunction{Window_stream& operator<<(Window_stream& W,
-%                         const Triangulation_2<Traits,Tds>& T);}
-%{Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
-%The insert operator must be defined for \ccc{Point}
-%and \ccc{Segment}.}
-CGAL also provides  stream operators \ccc{ <<}  to draw triangulations
-on \ccc{CGAL::Window_stream}, the LEDA based graphic package,
-and on \ccc{CGAL::Qt_widget}, the Qt based graphic package.
-These operators requires respectively  the include statements : \\
-\ccc{#include CGAL/IO/Window_stream.h} \\
+CGAL also provides a stream operator \ccc{<<} to draw triangulations
+for \ccc{CGAL::Qt_widget}, the Qt based graphic package.
+These operators require the include statement : \\
 \ccc{#include CGAL/IO/Qt_widget_Triangulation_2.h}\\
-See the \ccc{Window_stream} and \ccc{Qt_widget} classes.
+See the \ccc{Qt_widget} class.
 
 
 
