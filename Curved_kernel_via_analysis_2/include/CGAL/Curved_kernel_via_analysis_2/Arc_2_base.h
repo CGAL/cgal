@@ -2229,19 +2229,21 @@ public:
             if (this->is_vertical()) {
                 os << ", VERTICAL"; 
             } else {
-            os << ", ARCNO=" << this->arcno(CGAL::ARR_MIN_END) <<
-                "," << this->arcno() << "," << this->arcno(CGAL::ARR_MAX_END);
-        }
-        os << "); min: " << this->_minpoint() << "; max: " << 
-            this->_maxpoint() << "]";
-        break;
-        /*case LiS::IO::BENCHMARK:
-          std::cerr << "BENCHMARK format not yet implemented" << std::endl;
-          break;
-        */
-        case ::CGAL::IO::BINARY:
-            std::cerr << "BINARY format not yet implemented" << std::endl;
+                os << ", ARCNO=" << this->arcno(CGAL::ARR_MIN_END) 
+                   << "," << this->arcno() 
+                   << "," << this->arcno(CGAL::ARR_MAX_END);
+            }
+            os << "); ";
+            os <<"min: " << this->_minpoint() << "; "; 
+            os<< "max: " << this->_maxpoint() << "]";
             break;
+            /*case LiS::IO::BENCHMARK:
+              std::cerr << "BENCHMARK format not yet implemented" << std::endl;
+              break;
+            */
+        case ::CGAL::IO::BINARY:
+        std::cerr << "BINARY format not yet implemented" << std::endl;
+        break;
         default:
             // ASCII
             std::cerr << "ASCII format not yet implemented" << std::endl;

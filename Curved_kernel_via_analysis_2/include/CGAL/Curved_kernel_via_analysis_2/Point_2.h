@@ -533,8 +533,9 @@ public:
     Z< Curved_kernel_via_analysis_2 >; \
     
     
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_on_arc_2);
+    friend class Curved_kernel_via_analysis_2::Construct_point_2; 
+    friend class Curved_kernel_via_analysis_2_Functors:: 
+    Construct_point_2< Curved_kernel_via_analysis_2, Self >; 
 
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);

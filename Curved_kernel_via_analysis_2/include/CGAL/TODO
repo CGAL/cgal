@@ -4,7 +4,7 @@ Tuesday (Arc-Day)
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
-(2)
+(1)
 * remove Arc_base?
 
 * Virtualize members
@@ -19,14 +19,13 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Adaptions for QdX
 
-(1)
+(2)
 - New Make_x_monotone_2 for qdx
 
-- Rewrite Intersect and other predicates for QdX
+- Rewrite Intersect and other predicates for QdX (virtualization)
 
 - TODO: remove mult in Intersect for QdX as it might does not make sense?
 
-- implement new version of Make_x_monotone_2
 - check collaboration with planar version
 
 

@@ -583,6 +583,9 @@ public:
     //! tag specifies which boundary functors are implemented
     typedef CGAL::Arr_all_boundary_tag Boundary_category;
 
+    //!@}
+    
+public:
     //!\name embedded constructions and predicates 
     //!@{
     
@@ -616,7 +619,6 @@ public:
                 (Quadrical_kernel_via_analysis_2 *)this
         ); 
     }
-
 
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
