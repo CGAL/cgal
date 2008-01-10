@@ -1748,7 +1748,7 @@ protected:
 protected:
     //!\name Protected intersection methods
     //!@{
-    
+
     //! \brief returns \c true if the two arcs \c *this and \c cv2 overlap, 
     //! overlapping part(s) are inserted to the output iterator \c oi
     //! (of type \c Arc_2_base ); if no overlapping parts found - 
@@ -2267,7 +2267,11 @@ public:
     friend class Curved_kernel_via_analysis_2::Merge_2;
     
     friend class Curved_kernel_via_analysis_2::Intersect_2;
+    friend class Curved_kernel_via_analysis_2_Functors::
+    Intersect_2< Curved_kernel_via_analysis_2 >;
     
+    // TODO add further friends of Functors!
+
 }; // class Arc_2_base
 
 /*!\relates Arc_2_base
