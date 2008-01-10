@@ -997,12 +997,6 @@ public:
   usage.}*/
 
 
-  /*{\Mtext\headerline{Input and Output}
-  A Nef polyhedron |\Mvar| can be visualized in a |Window_stream W|. The 
-  output operator is defined in the file 
-  |CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h|.
-  }*/
-
   /*{\Mimplementation Nef polyhedra are implemented on top of a halfedge
   data structure and use linear space in the number of vertices, edges
   and facets.  Operations like |empty| take constant time. The
