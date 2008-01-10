@@ -381,6 +381,7 @@ protected:
     
     //!@}
 
+#if 0
 public:
     // TODO what to do with intersect? replace by derived functor
     
@@ -403,7 +404,10 @@ public:
         // else general case: distinct supporting curves
         return Base::_intersect_coprime_support(*this, cv2, oi);
     }
-};    
+#endif 
+
+};   
+
 
 namespace Quadrical_kernel_via_analysis_2_Functors {
 
@@ -524,6 +528,131 @@ private:
     CurvedKernel_2 *_m_kernel;
 }; // Compare_xy_2
 
+
+//! checks wether and how two arcs are intersection - with first filtering
+template < class CurvedKernel_2 >
+class Intersect_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Intersect_2< CurvedKernel_2 > {
+
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+
+public:
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Intersect_2< CurvedKernel_2 > Base;
+
+    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+    typedef Arity_tag<3> Arity;    
+    
+    //! standard constructor
+    Intersect_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+        CGAL_assertion(kernel != NULL);
+    }
+    
+    /*!
+     * Find all intersections of the two given curves and insert them to the 
+     * output iterator. If two arcs intersect only once, only a single will be
+     * placed to the iterator. Type of output iterator is \c CGAL::Object 
+     * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
+     * with multiplicity (point-wise intersections)
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param oi The output iterator.
+     * \return The past-the-end iterator.
+     */
+    template < class Arc_2_, class OutputIterator >
+    OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+                              OutputIterator oi) const {
+
+        CERR("\nquadric_2_intersect; cv1: " << cv1 
+             << ";\n cv2:" << cv2 << "");
+        
+        // TODO check whether possible to intersect
+
+        // call projected intersection
+        std::list< CGAL::Object > tmp;
+        Base::operator()(cv1, cv2, std::back_inserter(tmp));
+        for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
+             it != tmp.end(); it++) {
+            // TODO lift objects!
+            // *oi++ = *it;
+        }
+        return oi;
+    }
+}; // Intersect_2;
+
+
+template < class CurvedKernel_2>
+class Make_x_monotone_2 
+{
+    typedef typename CurvedKernel_2::Curve_2 Curve_2;
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+    typedef Arity_tag<2> Arity;   
+    
+    //! standard constructor
+    Make_x_monotone_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
+        CGAL_assertion(kernel != NULL);
+    } 
+
+    /*!
+     * decompose a given arc into list of x-monotone pieces 
+     * (subcurves) and insert them to the output iterator. Since \c Arc_2 
+     * is by definition x-monotone, an input arc is passed to the 
+     * output iterator directly. 
+     * \param cv The curve.
+     * \param oi The output iterator, whose value-type is Object. 
+     * The returned objects are all wrappers X_monotone_curve_2 objects.
+     * \return The past-the-end iterator.
+     */
+    template<class OutputIterator>
+    OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
+    
+        *oi++ = CGAL::make_object(cv);
+        return oi;
+    }
+    
+    /*!
+     * decompose a given curve into list of x-monotone pieces 
+     * (subcurves) and insert them to the output iterator. 
+     * \param cv The curve.
+     * \param oi The output iterator, whose value-type is Object. 
+     * The returned objects are all wrappers X_monotone_curve_2 objects.
+     * \return The past-the-end iterator.
+     */
+    // TODO: move this to separate file Arr_kernel_traits_2.h ?
+    template<class OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
+    
+#if QdX_USE_AcX
+        // TODO compute surface pair 
+        
+#else 
+
+        // TODO obtain projected curve intersection curve
+        
+        // apply planar make_x_monotone 
+
+        CGAL::CGALi::Make_x_monotone_2< CurvedKernel_2 >
+            make_x_monotone(_m_curved_kernel);
+        
+        // lift segments
+#endif
+        
+        return oi;
+    }
+    
+protected:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
+}; // Make_x_monotone_2
+
+
 } // Quadrical_kernel_via_analysis_2_functors
 
 } // namespace CGALi
@@ -569,7 +698,7 @@ public:
     typedef typename Surface_pair_3::Surface_3 Surface_3;
 
     //! type of curve_2
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef Surface_3 Curve_2;
         
     //! type of a point on generic curve
     typedef CGALi::Quadric_point_2< Self, Surface_pair_3 > Point_2; 
@@ -644,12 +773,14 @@ public:
 
 #define CGAL_QKvA_2_functor_cons(Y, Z) CGAL_QKvA_2_functor_pred(Y, Z)
 
-    // TODO add make_x_monotone;
-
-    CGAL_QKvA_2_functor_cons(Compare_x_on_identification_2, 
+    CGAL_QKvA_2_functor_pred(Compare_x_on_identification_2, 
                              compare_x_on_identification_2_object);
     
-    CGAL_QKvA_2_functor_cons(Compare_xy_2, compare_xy_2_object);
+    CGAL_QKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
+
+    CGAL_QKvA_2_functor_cons(Intersect_2, intersect_2_object);
+
+    CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
     
     //!@}
     
@@ -681,13 +812,35 @@ public:
         Base_kernel() {
     }
     
+    //! standard constructor
+    Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
+        Base_kernel(),
+        _m_reference(reference) {
+    }
+    
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
-        Base_kernel(kernel) {
+    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel,
+                                    const Surface_3& reference) :
+        Base_kernel(kernel),
+        _m_reference(reference) {
     }
     
     //!@}
+
+    //!\name Access members
+    //!@{
+
+    //! returns the reference surface
+    inline
+    const Surface_3& reference() {
+        return _m_reference;
+    }
+    //!@}
  
+protected:
+    //!\name Data members
+    Surface_3 _m_reference;
+
 }; // class Quadrical_kernel_via_analysis_2
 
 CGAL_END_NAMESPACE
