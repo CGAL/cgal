@@ -72,7 +72,7 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
         Xy_coordinate_2;
 
-    typedef typename Curved_kernel_via_analysis_2::Curve_2
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2
         Curve_2;
 
     typedef CGALi::Arc_2_base_rep<Curved_kernel_via_analysis_2> 
@@ -170,7 +170,8 @@ public:
         Xy_coordinate_2;
     
     //! type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
+    Curve_2;
     
     //! type of underlying curve analysis
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
@@ -323,9 +324,9 @@ public:
     //! \pre this object must represent a finite point on curve
     inline 
     Curve_2 curve() const {
-        CGAL_precondition_msg(this->ptr()->_m_xy ||
-            this->ptr()->_m_arc_rep != NULL,
-            "Denied access to the curve end lying at y-infinity");
+        CGAL_precondition_msg(
+                this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL,
+                "Denied access to the curve end lying at y-infinity");
         return (location() == CGAL::ARR_INTERIOR ?
                 (*(this->ptr()->_m_xy)).curve() :
                 this->ptr()->_m_arc_rep->_m_support);

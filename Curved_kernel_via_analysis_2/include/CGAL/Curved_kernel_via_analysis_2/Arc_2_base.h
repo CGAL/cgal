@@ -65,7 +65,8 @@ public:
     typedef Arc_2_base_rep<Curved_kernel_via_analysis_2> Self;
     
     // type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
+    Curve_2;
         
     // type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
@@ -171,7 +172,8 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Boundary Boundary;
     
     //! type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
+    Curve_2;
         
     //! type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
