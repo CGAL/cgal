@@ -51,22 +51,7 @@ struct Return_type_of_predicate<CGAL::Sign> {
 };
 
 template <>
-struct Return_type_of_predicate<CGAL::Orientation> {
-    typedef CGAL::Tag_true type;
-};
-
-template <>
-struct Return_type_of_predicate<CGAL::Oriented_side> {
-    typedef CGAL::Tag_true type;
-};
-
-template <>
 struct Return_type_of_predicate<CGAL::Bounded_side> {
-    typedef CGAL::Tag_true type;
-};
-
-template <>
-struct Return_type_of_predicate<CGAL::Comparison_result> {
     typedef CGAL::Tag_true type;
 };
 
