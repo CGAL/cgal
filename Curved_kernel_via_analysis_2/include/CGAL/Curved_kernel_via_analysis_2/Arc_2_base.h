@@ -99,10 +99,10 @@ public:
     }
 
     void fix_reps() const {
-        if (_m_min.arc_rep() != NULL) {
+        if (_m_min._arc_rep() != NULL) {
             _m_min._add_ref(this);
         }
-        if (_m_max.arc_rep() != NULL) {
+        if (_m_max._arc_rep() != NULL) {
             _m_max._add_ref(this);
         }
     }
@@ -514,12 +514,19 @@ public:
 
     //!\name Access functions
 
+    //! returns whether curve-end can be accessed
+    bool is_finite(CGAL::Arr_curve_end end) const {
+        const Point_2& pt = 
+            (end == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
+        return pt.is_finite();
+    }
+
     //!\brief returns arc's finite curve end \c end
     //!
     //! \pre accessed curve end has finite x/y-coordinates
     Point_2 curve_end(CGAL::Arr_curve_end end) const {
-        const Point_2& pt = (end == CGAL::ARR_MIN_END ? _minpoint() :
-            _maxpoint());
+        const Point_2& pt = 
+            (end == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
 #if !CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE
         CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR);
 #endif

@@ -266,6 +266,7 @@ protected:
     }
     
     //! return pointer to ckva instance
+    inline
     Curved_kernel_via_analysis_2* _ckva() const {
         return this->ptr()->_m_ckva;
     }
@@ -276,10 +277,20 @@ protected:
     }
 
     //! returns pointer to incident arc
-    const Arc_rep* arc_rep() const {
+    inline
+    const Arc_rep* _arc_rep() const {
         return this->ptr()->_m_arc_rep;
     }
     
+public:
+
+    //! returns whether the point is valid
+    inline 
+    bool is_finite() const {
+        // TODO on torus these points are also finite
+        return this->ptr()->_m_arc_rep == NULL;
+    }
+
     //!@}
     
 public:
@@ -541,7 +552,7 @@ public:
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
     
-    // TODO parameter space in x/y (full set)
+    // FUTURE TODO parameter space in x/y (full set of tasks)
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
