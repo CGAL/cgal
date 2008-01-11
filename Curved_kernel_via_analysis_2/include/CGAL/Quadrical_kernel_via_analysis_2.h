@@ -560,7 +560,7 @@ public:
         int s2 = cv2.sheet();
         
         if (s1 != s2) {
-            return CGAL::compare(s1, s2);
+            res = CGAL::compare(s1, s2);
         } else {
             bool unbounded_end = false;
             if (ce == CGAL::ARR_MIN_END) {
@@ -594,14 +594,78 @@ public:
 }; // Compare_y_near_boundary_2
 
 
+template < class CurvedKernel_2 >
+class Compare_y_at_x_2 :  
+    public Curved_kernel_via_analysis_2_Functors::
+           Compare_y_at_x_2< CurvedKernel_2 >
+{
+   
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Compare_y_at_x_2< CurvedKernel_2 > Base;
+
+    //! standard constructor
+    Compare_y_at_x_2(CurvedKernel_2 *) {
+    }
+
+    /*!
+     * Return the location of the given point with respect to the input curve.
+     * \param cv The curve.
+     * \param p The point.
+     * \pre p is in the x-range of cv.
+     * \return SMALLER if y(p) \< cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    template < class Point_2_, class Arc_2_ >
+    result_type operator()(const Point_2_& p, const Arc_2_& cv) const {
+     
+        CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n"); 
+        CGAL::Comparison_result res = CGAL::EQUAL;
+        
+        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
+        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv)));
+        const Arc_2& arc = *dynamic_cast<const Arc_2*>((&cv));
+        
+        // FUTURE TODO p can lie on boundary
+
+        int sp = pt.sheet();
+        int sa = arc.sheet();
+        
+        if (sa != sp) {
+            res = CGAL::compare(sp, sa);
+        } else {
+            res = Base::operator()(p, cv);
+            if (sa == 1) {
+                CGAL_assertion(sp == 1);
+                res = -res;
+            }
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+}; // Compare_y_at_x_2
 
 // TODO missing functors
-// - Compare_y_at_x_2
+// knows_y/reverse_y
 // - Compare_y_at_x_left_2
 // - Compare_y_at_x_right_2
+
+// may_have_common_part/intersect_only_at_ends
 // - Do_overlap_2
+// - Equal_2
 // - Are_mergeable_2
 // - (Merge_2 - rewrite sheets?)
+
+// ???
 // - (Is_bounded_2)
 // - (Is_on_2)
 
