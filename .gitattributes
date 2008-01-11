@@ -1534,6 +1534,7 @@ CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 CMake/FindCGAL.cmake.in -text
 CMake/UseCGAL.cmake.in -text
+CMake/cmake/modules/AddSubdirectories.cmake -text
 CMake/cmake/modules/CGALcommon.cmake -text
 CMake/cmake/modules/CheckCXXFileRuns.cmake -text
 CMake/cmake/modules/CheckCXXSourceRuns.cmake -text
@@ -1555,7 +1556,6 @@ CMake/cmake/modules/MacroCreateSingleSourceCGALProgram.cmake -text
 CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
-CMake/compiler_config.h.in -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
