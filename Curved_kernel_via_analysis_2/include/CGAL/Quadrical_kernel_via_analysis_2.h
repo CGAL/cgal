@@ -1212,6 +1212,19 @@ public:
         ); 
     }
 
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2_Functors::Construct_arc_2<Self,
+       typename Point_2::Projected_point_2,
+       typename Arc_2::Projected_arc_2 > 
+    Construct_projected_arc_2;
+    
+    Construct_projected_arc_2 construct_projected_arc_2_object() const { 
+        return Construct_projected_arc_2(
+                (Quadrical_kernel_via_analysis_2 *)this
+        ); 
+    }
+
+
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_CKvA_2l_functor_pred(Y, Z) \
