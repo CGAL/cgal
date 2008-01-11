@@ -381,31 +381,6 @@ protected:
     
     //!@}
 
-#if 0
-public:
-    // TODO what to do with intersect? replace by derived functor
-    
-    /*!\brief
-     * computes intersection of \c *this arc with \c cv2. Intersection points 
-     * are inserted to the output iterator \c oi as objects of type 
-     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
-     * multiplicity)
-     */
-    template < class OutputIterator >
-    OutputIterator intersect(const Self& cv2, OutputIterator oi) const {
-        // handle a special case when two arcs are supported by the same 
-        // curve => only end-point intersections
-        
-        CERR("\nintersect\n");
-        Self::simplify(*this, cv2);
-        if(this->curve().is_identical(cv2.curve()))
-            return _intersect_at_endpoints(cv2, oi);
-        
-        // else general case: distinct supporting curves
-        return Base::_intersect_coprime_support(*this, cv2, oi);
-    }
-#endif 
-
 };   
 
 
@@ -529,6 +504,107 @@ private:
 }; // Compare_xy_2
 
 
+template < class CurvedKernel_2 >
+class Compare_y_near_boundary_2 :  
+    public Curved_kernel_via_analysis_2_Functors::
+           Compare_y_near_boundary_2< CurvedKernel_2 >
+{
+   
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Compare_y_near_boundary_2< CurvedKernel_2 > Base;
+
+    //! standard constructor
+    Compare_y_near_boundary_2(CurvedKernel_2 *) {
+    }
+
+    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+     * of the parameter space at x = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the line end indicator.
+     * \return the second comparison result.
+     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+     * boundary or on the right boundary of the parameter space.
+     */
+    template < class Arc_2_ >
+    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+                           CGAL::Arr_curve_end ce) const {
+        
+        CERR("\nquadric_compare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
+             cv2 << "; end: " << ce << "\n");
+        
+        CGAL::Comparison_result res = CGAL::EQUAL;
+        
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        
+        CGAL_precondition(
+                arc1.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
+                arc1.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
+        );
+        CGAL_precondition(
+                arc2.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
+                arc2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
+        );
+
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
+        
+        if (s1 != s2) {
+            return CGAL::compare(s1, s2);
+        } else {
+            bool unbounded_end = false;
+            if (ce == CGAL::ARR_MIN_END) {
+                unbounded_end = (arc1._minpoint().arc_rep() != NULL);
+            } else {
+                unbounded_end = (arc1._maxpoint().arc_rep() != NULL);
+            }
+            if (unbounded_end) {
+                res = Base::operator()(arc1, arc2, ce);
+                if (s1 == 1) {
+                    CGAL_assertion(s2 == 1);
+                    res = -res;
+                }
+            } else {
+                if (ce == CGAL::ARR_MIN_END) {
+                    res = 
+                        Base::_m_curved_kernel->compare_y_at_x_right_2_object()
+                        (arc1, arc2, arc1._minpoint());
+                } else {
+                    res = 
+                        Base::_m_curved_kernel->compare_y_at_x_left_2_object()
+                        (arc1, arc2, arc1._maxpoint());
+                }
+                // already reversed the case s1 == s2 == 1
+            }
+        }
+
+        CERR("result: " << res << "\n");
+        return res;
+    }
+}; // Compare_y_near_boundary_2
+
+
+
+// TODO missing functors
+// - Compare_y_at_x_2
+// - Compare_y_at_x_left_2
+// - Compare_y_at_x_right_2
+// - Do_overlap_2
+// - Are_mergeable_2
+// - (Merge_2 - rewrite sheets?)
+// - (Is_bounded_2)
+// - (Is_on_2)
+
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernel_2 >
 class Intersect_2 : 
@@ -629,21 +705,11 @@ public:
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
-#if QdX_USE_AcX
         // TODO compute surface pair 
         
-#else 
-
-        // TODO obtain projected curve intersection curve
-        
-        // apply planar make_x_monotone 
-
-        CGAL::CGALi::Make_x_monotone_2< CurvedKernel_2 >
-            make_x_monotone(_m_curved_kernel);
-        
         // lift segments
-#endif
-        
+
+        // TODO maybe adapt it to use QdX::P_curve_2
         return oi;
     }
     
