@@ -504,10 +504,10 @@ public:
      * it's supposed that the user thoroughly understands malicious
      * consequences that may result from the misuse of boundary conditions
      */
-    void set_boundary(CGAL::Arr_curve_end end, 
-       /*CGAL::Arr_boundary_type bnd,*/ CGAL::Arr_parameter_space loc) const {
-        (end == CGAL::ARR_MIN_END ? _minpoint()._set_boundary(loc) :
-            _maxpoint()._set_boundary(loc));
+    void set_location(CGAL::Arr_curve_end end, 
+                      CGAL::Arr_parameter_space loc) const {
+        (end == CGAL::ARR_MIN_END ? 
+         _minpoint()._set_location(loc) : _maxpoint()._set_location(loc));
     }
 
     //!@}

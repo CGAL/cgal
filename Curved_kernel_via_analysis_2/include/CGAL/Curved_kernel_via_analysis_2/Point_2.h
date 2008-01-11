@@ -460,7 +460,7 @@ protected:
     /*! \brief
      *  sets boundary type and location of a point in parameter space
      */
-    void _set_boundary(CGAL::Arr_parameter_space loc) const {
+    void _set_location(CGAL::Arr_parameter_space loc) const {
         this->ptr()->_m_location = loc;
     }
 
