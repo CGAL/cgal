@@ -375,7 +375,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
                             ) ; 
       
     // Degenerate bisector?   
-    if ( are_edges_parallelC2(e0,e1) )
+    if ( certainly( are_edges_parallelC2(e0,e1) ) )
     { 
       CGAL_STSKEL_TRAITS_TRACE("Bisector is not angular." ) ;
       
@@ -413,28 +413,36 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l1=" << n2str(sd_p_l1) ) ;
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
         
-      if ( CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) )
+      Uncertain<bool> equal = CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) ;   
+      if ( ! CGAL_NTS is_indeterminate(equal) )
       {
-        CGAL_STSKEL_TRAITS_TRACE("Point is exactly at bisector"); 
-        
-        rResult = make_uncertain(ON_ORIENTED_BOUNDARY) ;    
-      }
-      else
-      {
-        // Reflex bisector?
-        if ( CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) )
+        if ( equal )
         {
-          rResult = CGAL_NTS certified_is_smaller(sd_p_l0,sd_p_l1) ? make_uncertain(ON_NEGATIVE_SIDE) 
-                                                                   : make_uncertain(ON_POSITIVE_SIDE) ;
-                                                                  
-          CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of reflex bisector" ) ;
+          CGAL_STSKEL_TRAITS_TRACE("Point is exactly at bisector"); 
+          
+          rResult = make_uncertain(ON_ORIENTED_BOUNDARY) ;    
         }
         else
         {
-          rResult = CGAL_NTS certified_is_larger (sd_p_l0,sd_p_l1) ? make_uncertain(ON_NEGATIVE_SIDE)
-                                                                   : make_uncertain(ON_POSITIVE_SIDE) ; 
-                          
-          CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of convex bisector" ) ;
+          Uncertain<bool> smaller = CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) ;
+          if ( ! CGAL_NTS is_indeterminate(smaller) )
+          {
+            // Reflex bisector?
+            if ( smaller )
+            {
+              rResult = CGAL_NTS certified_is_smaller(sd_p_l0,sd_p_l1) ? make_uncertain(ON_NEGATIVE_SIDE) 
+                                                                       : make_uncertain(ON_POSITIVE_SIDE) ;
+                                                                      
+              CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of reflex bisector" ) ;
+            }
+            else
+            {
+              rResult = CGAL_NTS certified_is_larger (sd_p_l0,sd_p_l1) ? make_uncertain(ON_NEGATIVE_SIDE)
+                                                                       : make_uncertain(ON_POSITIVE_SIDE) ; 
+                              
+              CGAL_STSKEL_TRAITS_TRACE("\nEvent point is at " << rResult << " side of convex bisector" ) ;
+            }
+          }
         }
       }
     }
@@ -493,7 +501,7 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
     
     if ( ! CGAL_NTS is_indeterminate(equal_times) )
     {
-      if ( equal_times == true )
+      if ( equal_times )
       {
         Optional_point_2 li = construct_offset_lines_isecC2(l);
         Optional_point_2 ri = construct_offset_lines_isecC2(r);
