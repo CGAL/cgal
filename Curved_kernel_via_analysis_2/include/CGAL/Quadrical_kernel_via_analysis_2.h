@@ -192,7 +192,7 @@ std::ostream& operator<< (
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadric_arc_2;
 
-// TODO documentation
+//! representation class for arcs on a quadric
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadric_arc_2_rep : 
       public Surface_arc_2l_rep< QuadricalKernelViaAnalysis_2, SurfacePair_3 >
@@ -219,7 +219,6 @@ protected:
 protected:
     // TODO add data
     //! gfx approx
-    // TODO
 
     // befriending the handle
     friend class 
@@ -379,6 +378,32 @@ protected:
         Base(kernel, p, surface) {
     }
     
+    //!@}
+
+    //!\name Static members
+    //!@{
+public:
+    inline
+    static bool can_intersect_only_at_curve_ends(const Quadric_arc_2& cv1,
+                                                 const Quadric_arc_2& cv2) {
+        int min_sheet_at_min = std::min(
+                (cv1.is_finite(CGAL::ARR_MIN_END) ? 
+                 cv1.sheet(CGAL::ARR_MIN_END) : cv1.sheet()),
+                (cv2.is_finite(CGAL::ARR_MIN_END) ? 
+                 cv2.sheet(CGAL::ARR_MIN_END) : cv2.sheet())
+        );
+        int min_sheet_at_max = std::min(
+                (cv1.is_finite(CGAL::ARR_MAX_END) ? 
+                 cv1.sheet(CGAL::ARR_MAX_END) : cv1.sheet()),
+                (cv2.is_finite(CGAL::ARR_MAX_END) ? 
+                 cv2.sheet(CGAL::ARR_MAX_END) : cv2.sheet())
+        );
+        
+        return (cv1.sheet() != cv2.sheet() && 
+                min_sheet_at_min == min_sheet_at_max && min_sheet_at_min == 0
+        );
+    }
+
     //!@}
 
 };   
@@ -564,9 +589,9 @@ public:
         } else {
             bool unbounded_end = false;
             if (ce == CGAL::ARR_MIN_END) {
-                unbounded_end = (arc1._minpoint().arc_rep() != NULL);
+                unbounded_end = !(arc1.is_finite(CGAL::ARR_MIN_END));
             } else {
-                unbounded_end = (arc1._maxpoint().arc_rep() != NULL);
+                unbounded_end = !(arc1.is_finite(CGAL::ARR_MAX_END));
             }
             if (unbounded_end) {
                 res = Base::operator()(arc1, arc2, ce);
@@ -654,20 +679,313 @@ public:
     }
 }; // Compare_y_at_x_2
 
-// TODO missing functors
-// knows_y/reverse_y
-// - Compare_y_at_x_left_2
-// - Compare_y_at_x_right_2
 
-// may_have_common_part/intersect_only_at_ends
-// - Do_overlap_2
-// - Equal_2
-// - Are_mergeable_2
-// - (Merge_2 - rewrite sheets?)
+template < class CurvedKernel_2 >
+class Compare_y_at_x_left_2 :
+    public Curved_kernel_via_analysis_2_Functors::
+    Compare_y_at_x_left_2< CurvedKernel_2 > {
+    
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Compare_y_at_x_2< CurvedKernel_2 > Base;
+    
+    //! standard constructor
+    Compare_y_at_x_left_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+    }
 
-// ???
-// - (Is_bounded_2)
-// - (Is_on_2)
+    /*!
+     * Compares the y value of two x-monotone curves immediately to the left
+     * of their intersection point. If one of the curves is vertical
+     * (emanating downward from p), it's always considered to be below the
+     * other curve.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param p The intersection point.
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographically) to its left.
+     * \return The relative position of cv1 with respect to cv2 immdiately to
+     *         the left of p: SMALLER, LARGER or EQUAL.
+     */
+    template < class Arc_2_, class Point_2_ >
+    result_type operator() (const Arc_2_& cv1, const Arc_2_& cv2,
+                            const Point_2_& p) const {
+
+        CERR("\nquadriccompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
+            cv2 << "; p: " << p << "\n");
+
+        CGAL::Comparison_result res = CGAL::EQUAL;
+
+
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
+        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
+        
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
+        
+        if (s1 != s2) {
+            res = CGAL::compare(s1, s2);
+        } else {
+            res = Base::operator()(cv1, cv2);
+            if (s1 == 1) {
+                CGAL_assertion(s2 == 1);
+                res = -res;
+            }
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+}; // Compare_y_at_x_2_left
+
+template < class CurvedKernel_2 >
+class Compare_y_at_x_right_2 :
+    public Curved_kernel_via_analysis_2_Functors::
+    Compare_y_at_x_right_2< CurvedKernel_2 > {
+    
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
+public:
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Compare_y_at_x_2< CurvedKernel_2 > Base;
+    
+    //! standard constructor
+    Compare_y_at_x_right_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*!
+     * Compares the y value of two x-monotone curves immediately to the right
+     * of their intersection point. If one of the curves is vertical
+     * (emanating downward from p), it's always considered to be below the
+     * other curve.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param p The intersection point.
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographically) to its right.
+     * \return The relative position of cv1 with respect to cv2 immdiately to
+     *         the right of p: SMALLER, LARGER or EQUAL.
+     */
+    template < class Arc_2_, class Point_2_ >
+    result_type operator() (const Arc_2_& cv1, const Arc_2_& cv2,
+                            const Point_2_& p) const {
+
+        CERR("\nquadriccompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
+            cv2 << "; p: " << p << "\n");
+
+        CGAL::Comparison_result res = CGAL::EQUAL;
+
+
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
+        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
+        
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
+        
+        if (s1 != s2) {
+            res = CGAL::compare(s1, s2);
+        } else {
+            res = Base::operator()(cv1, cv2);
+            if (s1 == 1) {
+                CGAL_assertion(s2 == 1);
+                res = -res;
+            }
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+}; // Compare_y_at_x_2_right
+
+
+template < class CurvedKernel_2 >
+class Do_overlap_2 : public Curved_kernel_via_analysis_2_Functors::
+    Do_overlap_2< CurvedKernel_2 > {
+    
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+        Do_overlap_2< CurvedKernel_2 > Base;
+
+    //! standard constructor
+    Do_overlap_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Check whether two given curves overlap, i.e., they have infinitely
+     * many intersection points
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the curves overlap; (false) otherwise.
+     */
+    template < class Arc_2_ >
+    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    
+        CERR("\ndo_overlap\n");
+        
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
+
+        bool res = (s1 == s2);
+        
+        if (res) {
+            res = Base::operator()(cv1, cv2);
+        }
+
+        CERR("result: " << res << "\n");
+        return res;
+    }
+}; // Do_overlap_2
+
+//!\brief Tests two objects, whether they are equal
+template < class CurvedKernel_2 >
+class Equal_2 : public Curved_kernel_via_analysis_2_Functors::
+    Equal_2< CurvedKernel_2 >
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    typedef Curved_kernel_via_analysis_2_Functors::Equal_2< CurvedKernel_2 >
+    Base;
+
+    //! standard constructor
+    Equal_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Check if the two points are the same.
+     * \param p1 The first point.
+     * \param p2 The second point.
+     * \return (true) if the two point are the same; (false) otherwise.
+     */
+    result_type operator()(const Point_2& p1, const Point_2& p2) const {
+        return (_m_curved_kernel->compare_xy_2_object()(p1, p2) == 
+                CGAL::EQUAL);
+    }
+     
+    /*!
+     * Check if the two x-monotone curves are the same (have the same graph).
+     * \param cv1 The first 
+     *        curve(_m_curved_kernel->kernel().compare_xy_2_object()
+             (p1.xy(), p2.xy()));.
+     * \param cv2 The second curve.
+     * \return (true) if the two curves are the same; (false) otherwise.
+     */
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
+        
+        bool res = (s1 == s2);
+        
+        if (res) {
+            res = Base::operator()(cv1, cv2);
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+
+protected:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
+}; // Equal_2
+
+
+template < class CurvedKernel_2 >
+class Are_mergeable_2 : public Curved_kernel_via_analysis_2_Functors::
+    Are_mergeable_2< CurvedKernel_2 >
+{
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+   
+public:
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;    
+    
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Are_mergeable_2< CurvedKernel_2 > Base;
+    
+    //! standard constructor
+    Are_mergeable_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Check whether two given curves (arcs) are mergeable
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the two arcs are mergeable, i.e., they are supported
+     * by the same curve and share a common endpoint; (false) otherwise.
+     */
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+    
+        CERR("\nquadricsare_mergeable\n");
+        
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
+
+        bool res = true;
+        
+        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
+            res = false;
+        } else if (Arc_2::can_intersect_only_at_curve_ends(cv1,cv2)) {
+            res = false;
+        }
+        
+        if (res) {
+            res = Base::operator()(cv1, cv2);
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+    
+};
+
+// TODO for Merge_2: Rwrite sheets?
+
+// TODO what to do with Is_bounded_2 and Is_on_2?
 
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernel_2 >
@@ -676,6 +994,7 @@ class Intersect_2 :
             Intersect_2< CurvedKernel_2 > {
 
     typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
 
 public:
     typedef typename 
@@ -708,15 +1027,30 @@ public:
         CERR("\nquadric_2_intersect; cv1: " << cv1 
              << ";\n cv2:" << cv2 << "");
         
-        // TODO check whether possible to intersect
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
 
-        // call projected intersection
-        std::list< CGAL::Object > tmp;
-        Base::operator()(cv1, cv2, std::back_inserter(tmp));
-        for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
-             it != tmp.end(); it++) {
-            // TODO lift objects!
-            // *oi++ = *it;
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
+
+        // handle special case of two segments on same curve and at endpoints
+        if ((s1 == s2 && arc1.curve().id() == arc2.curve().id()) || 
+            Arc_2::can_intersect_only_at_curve_ends(arc1, arc2)) {
+            
+            // TODO intersect_at_endpoints< Algebraic_point_2 >(t, points);
+            
+        } else if (s1 == s2) {
+            
+            // call projected intersection
+            std::list< CGAL::Object > tmp;
+            Base::operator()(arc1, arc2, std::back_inserter(tmp));
+            for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
+                 it != tmp.end(); it++) {
+                // TODO and lift objects!
+                // *oi++ = *it;
+            }
         }
         return oi;
     }
@@ -765,7 +1099,6 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    // TODO: move this to separate file Arr_kernel_traits_2.h ?
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
