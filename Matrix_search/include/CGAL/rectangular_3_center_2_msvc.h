@@ -20,6 +20,8 @@
 #if ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 #define CGAL_RECTANGULAR_3_CENTER_2_MSVC_H 1
 
+#ifdef _MSC_VER
+
 template < class R >
 struct Rectangular_3_center_2_type2_operations0 {
   typedef typename R::FT                         FT;
@@ -818,6 +820,8 @@ public:
   Point construct_y_square(const Point& p, FT r) const
   { return pt_b_l()(p, p, r); }
 };
+
+#endif // _MSC_VER
 
 #endif // ! (CGAL_RECTANGULAR_3_CENTER_2_MSVC_H)
 // ----------------------------------------------------------------------------
