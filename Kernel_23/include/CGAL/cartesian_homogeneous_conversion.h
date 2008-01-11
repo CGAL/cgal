@@ -21,9 +21,11 @@
 //
 // Author(s)     : Stefan Schirra
  
-
 #ifndef CGAL_CARTESIAN_HOMOGENEOUS_CONVERSION_H
 #define CGAL_CARTESIAN_HOMOGENEOUS_CONVERSION_H
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -125,6 +127,5 @@ quotient_cartesian_to_homogeneous(
 }
 
 CGAL_END_NAMESPACE
-
 
 #endif // CGAL_CARTESIAN_HOMOGENEOUS_CONVERSION_H
