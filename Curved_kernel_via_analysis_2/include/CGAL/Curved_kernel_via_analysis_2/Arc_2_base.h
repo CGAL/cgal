@@ -454,7 +454,7 @@ protected:
     }
    
     //!@}
-
+public:
     //!\name Destructors
     //!@{
 
@@ -2269,7 +2269,6 @@ public:
     Z< Curved_kernel_via_analysis_2 >; \
     
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_arc_2);
-    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_on_arc_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_vertical_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_bounded_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Parameter_space_in_x_2);
