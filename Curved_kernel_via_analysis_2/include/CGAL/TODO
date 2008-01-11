@@ -4,9 +4,6 @@ Tuesday (Arc-Day)
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
-(1)
-* remove Arc_base?
-
 * Virtualize members
 
 * Other Functors
@@ -36,3 +33,7 @@ Tuesday (Arc-Day)
 
 * Re-Introduce caches (not with "int")
 
+==============================================================================
+// TODO Questions
+
+* remove Arc_base?
