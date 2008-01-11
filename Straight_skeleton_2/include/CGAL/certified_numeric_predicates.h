@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006-2008 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
