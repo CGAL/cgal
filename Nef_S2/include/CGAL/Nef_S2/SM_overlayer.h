@@ -708,8 +708,6 @@ create_from_segments(Forward_iterator start, Forward_iterator end)
 			  Sphere_circle(0,0,1), Sphere_circle(1,0,0), true);
   partition_to_halfsphere(L.begin(), L.end(), L_neg, From_input, 
 			  Sphere_circle(0,0,-1), Sphere_circle(1,0,0), true);
-  //CGAL_NEF_TRACEN("L_pos="<<(MSDEBUG::print_elements(L_pos),""));
-  //CGAL_NEF_TRACEN("L_neg="<<(MSDEBUG::print_elements(L_neg),""));
 
   typedef SMO_from_segs<Self,Seg_iterator> SM_output;
   typedef typename Sphere_kernel::Positive_halfsphere_geometry PH_geometry;
@@ -2261,9 +2259,6 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   // all other segments in the range are split into their
   // connected components with respect to the xy-plane.
 
-  //CGAL_NEF_TRACEN("Lp="<<(MSDEBUG::print_elements(Lp),""));
-  //CGAL_NEF_TRACEN("Lm="<<(MSDEBUG::print_elements(Lm),""));
-
   SVertex_handle v1,v2;
   SM_output O(*this); 
   typedef typename PHS_traits::INPUT Input_range;
@@ -2285,6 +2280,5 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
 
 
 CGAL_END_NAMESPACE
+
 #endif //CGAL_SM_OVERLAYER_H
-
-

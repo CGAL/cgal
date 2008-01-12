@@ -93,30 +93,4 @@ namespace {
   }
 #endif
 
-#define forall_iterators(x,S)\
-for(x = S.begin(); x != S.end(); ++x) 
-
-namespace MSDEBUG {
-
-template <typename C>
-void print_elements(const C& container)
-{ typename C::const_iterator it;
-  forall_iterators(it,container)
-    std::cerr << *it << " ";
-}
-
-template <typename I>
-void print(I s, I e, std::ostream& os = std::cerr)
-{ while(s!=e) os<<*s++<<" "; }
-
-template <class T>
-std::string make_std_string(const T& t)
-{ std::ostringstream os;
-  os << t;
-  std::string res(os.str()); 
-  return res; 
-}
-} // MSDEBUG
-
-
 #endif //CGAL_KERNEL_D_DEBUG_H

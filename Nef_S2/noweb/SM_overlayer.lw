@@ -578,8 +578,6 @@ CGAL_forall_iterators(it,L) From_input[it]=true;
 Seg_list L_pos,L_neg;
 partition_to_halfsphere(L.begin(), L.end(), L_pos, From_input, +1);
 partition_to_halfsphere(L.begin(), L.end(), L_neg, From_input, -1);
-//TRACEN("L_pos="<<(MSDEBUG::print_elements(L_pos),""));
-//TRACEN("L_neg="<<(MSDEBUG::print_elements(L_neg),""));
 
 @ For the sweep we just create an output decorator object |O| working
 on the sphere map maintained by |SM_overlayer| and plug it into the
@@ -894,8 +892,6 @@ that are defined by two opposite points on the equator.
 Seg_list L_pos,L_neg;
 partition_to_halfsphere(L.begin(), L.end(), L_pos, From, +1);
 partition_to_halfsphere(L.begin(), L.end(), L_neg, From, -1);
-//TRACEN("L_pos="<<(MSDEBUG::print_elements(L_pos),""));
-//TRACEN("L_neg="<<(MSDEBUG::print_elements(L_neg),""));
 
 @ Conside the standard Cartesian $xyz$-coordinate system. The points
 where the $y$-axis pierces $\ST$ are denoted $y^-$ and $y^+$. The
@@ -2138,9 +2134,6 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   // two halfspheres 
   // all other segments in the range are split into their
   // connected components with respect to the xy-plane.
-
-  //TRACEN("Lp="<<(MSDEBUG::print_elements(Lp),""));
-  //TRACEN("Lm="<<(MSDEBUG::print_elements(Lm),""));
 
   Vertex_handle v1,v2;
   SM_output O(*this); 
