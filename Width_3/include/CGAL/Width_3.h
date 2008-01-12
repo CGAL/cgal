@@ -1383,7 +1383,7 @@ class Width_3 {
   template<class InputPolyhedron>
   void width_3_convex(InputPolyhedron &P) {
     DEBUGMSG(WIDTH_3_CONVEX,"\nBegin WIDTH_3_CONVEX");
-    typedef CGAL::Data_access<InputPolyhedron,Traits> DA;
+    typedef CGAL::Width_3_internal::Data_access<InputPolyhedron,Traits> DA;
     typedef typename DA::Polyhedron Polyhedron;
     typedef typename DA::Vertex Vertex;
     typedef typename DA::Facet Facet;

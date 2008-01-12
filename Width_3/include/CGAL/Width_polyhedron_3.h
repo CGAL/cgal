@@ -63,6 +63,7 @@ struct Width_polyhedron_items_3 {
 };
 
 
+namespace Width_3_internal {
 
 template <class InputPolyhedron, class Width_Traits>
 class Data_access {
@@ -211,6 +212,7 @@ class Data_access {
 #endif
 };
 
+} // namespace Width_3_internal
 
 CGAL_END_NAMESPACE
 
