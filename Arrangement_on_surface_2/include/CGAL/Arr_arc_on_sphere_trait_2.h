@@ -26,7 +26,7 @@
  * as a geometry traits class for the arrangement on surface package.
  */
 
-#include <CGAL/tags.h>
+//~ #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #if defined(CGAL_ARR_PLANE)
 #include <CGAL/Arr_geometry_traits/Arr_plane_3.h>
@@ -76,7 +76,7 @@ public:
   typedef CGAL::Spherical_kernel_3<Kernel,CGAL_AK>                          CGAL_SK;
   
   // Traits objects
-  typedef Circular_arc_point_reference_sphere_3<Kernel>              Point_2;
+  typedef Circular_arc_point_on_reference_sphere_3<Kernel>              Point_2;
   typedef Circular_arc_on_reference_sphere_3<Kernel>                 X_monotone_curve_2;
   typedef Circular_arc_on_reference_sphere_3<Kernel>                 Curve_2;
   typedef unsigned int                                  Multiplicity;
@@ -257,12 +257,12 @@ public:
         Point_2* pt1=& (xc.source());
         Point_2* pt2=& (xc.target());
         CGAL::Compare_z_3<Spherical_kernel> cmp=m_traits->SK.compare_z_3_object()
-        if (cmp(*Pt1,*Pt2)==CGAL::LARGER)
-          std::swap(Pt1,Pt2);
-        CGAL::Comparison_result res=cmp(p,*Pt1);
+        if (cmp(*pt1,*pt2)==CGAL::LARGER)
+          std::swap(pt1,pt2);
+        CGAL::Comparison_result res=cmp(p,*pt1);
         if(res!=CGAL::LARGER)
           return res;
-        res=cmp(p,*Pt2);
+        res=cmp(p,*pt2);
         if (res!=CGAL::SMALLER)
           return res;
         return CGAL::EQUAL;
@@ -315,13 +315,18 @@ public:
       if ( pred(xc1) ) return SMALLER;
       if ( pred(xc2) ) return LARGER;
       
+      //TAG_TODO
+      CGAL::Hcircle_type t1=????????????????;
+      CGAL::Hcircle_type t2=????????????????;
+      
+      //if they overlap
+      if ( t1==t2 && xc1.supporting_circle()==xc2.supporting_circle() ) return EQUAL;
+      
       CGAL::Compare_z_3 cmp=m_traits->SK.compare_z_3_object();
       
       if (cmp(xc1.supporting_circle().extremal_point_z(),p)==CGAL::EQUAL){
-        if (cmp(xc1.supporting_circle().extremal_point_z(),xc2.supporting_circle().extremal_point_z())==CGAL::EQUAL){
+        if (cmp(xc2.supporting_circle().extremal_point_z(),p)==CGAL::EQUAL){
           //p is the extremal point of both circles
-          CGAL::Hcircle_type t1=????????????????;
-          CGAL::Hcircle_type t2=????????????????;
           if (t1==t2)
             if (t1=CGAL::UPPER)
               return ( xc1.supporting_circle().squared_radius() < xc2.supporting_circle().squared_radius() )?CGAL::SMALLER:CGAL::LARGER;
@@ -329,10 +334,12 @@ public:
               return ( xc1.supporting_circle().squared_radius() > xc2.supporting_circle().squared_radius() )?CGAL::SMALLER:CGAL::LARGER;
           return (t1==CGAL::UPPER)?CGAL::LARGER:CGAL::SMALLER;
         }
-        return m_traits->SK.compare_z_at_theta_3_object()(p,xc2);
+        //~ return m_traits->SK.compare_z_at_theta_3_object()(p,xc2);
+        return (t1==CGAL::UPPER)?CGAL::LARGER:CGAL::SMALLER;
       }
       if (cmp(xc2.supporting_circle().extremal_point_z(),p)==CGAL::EQUAL)
-        return CGAL::opposite(m_traits->SK.compare_z_at_theta_3_object()(p,xc1));
+        return (t2==CGAL::LOWER)?CGAL::LARGER:CGAL::SMALLER;
+        //~ return CGAL::opposite(m_traits->SK.compare_z_at_theta_3_object()(p,xc1));
       
       return m_traits->SK.compare_z_to_left_3_object()(xc1,xc2,p);
     }
@@ -382,24 +389,32 @@ public:
       if ( pred(xc1) ) return LARGER;
       if ( pred(xc2) ) return SMALLER;
       
+      //TAG_TODO
+      CGAL::Hcircle_type t1=????????????????;
+      CGAL::Hcircle_type t2=????????????????;
+      
+      //if they overlap
+      if ( t1==t2 && xc1.supporting_circle()==xc2.supporting_circle() ) return EQUAL;      
+      
+      
       CGAL::Compare_z_3 cmp=m_traits->SK.compare_z_3_object();
       
       if (cmp(xc1.supporting_circle().extremal_point_z(),p)==CGAL::EQUAL){
-        if (cmp(xc1.supporting_circle().extremal_point_z(),xc2.supporting_circle().extremal_point_z())==CGAL::EQUAL){
+        if (cmp(p,xc2.supporting_circle().extremal_point_z())==CGAL::EQUAL){
           //p is the extremal point of both circles
-          CGAL::Hcircle_type t1=????????????????;
-          CGAL::Hcircle_type t2=????????????????;
           if (t1==t2)
-            if (t1=CGAL::UPPER)
+            if (t1==CGAL::UPPER)
               return ( xc1.supporting_circle().squared_radius() < xc2.supporting_circle().squared_radius() )?CGAL::SMALLER:CGAL::LARGER;
             else
               return ( xc1.supporting_circle().squared_radius() > xc2.supporting_circle().squared_radius() )?CGAL::SMALLER:CGAL::LARGER;
           return (t1==CGAL::UPPER)?CGAL::LARGER:CGAL::SMALLER;
         }
-        return m_traits->SK.compare_z_at_theta_3_object()(p,xc2);
+        return (t1==CGAL::UPPER)?CGAL::LARGER:CGAL::SMALLER;
+        //~ return m_traits->SK.compare_z_at_theta_3_object()(p,xc2);
       }
       if (cmp(xc2.supporting_circle().extremal_point_z(),p)==CGAL::EQUAL)
-        return CGAL::opposite(m_traits->SK.compare_z_at_theta_3_object()(p,xc1));
+        return (t2==CGAL::LOWER)?CGAL::LARGER:CGAL::SMALLER;
+        //~ return CGAL::opposite(m_traits->SK.compare_z_at_theta_3_object()(p,xc1));
       
       typename Spherical_kernel::V_compare_theta_tgt cmpt(p);
       
@@ -493,9 +508,10 @@ public:
         return ARR_INTERIOR;
       }
 
-      return (ce == ARR_MIN_END) ?
+      Point_2 p = (ce == ARR_MIN_END) ?
         (*this(m_traits.construct_min_vertex_2_object(xcv))
         :*this(m_traits.construct_max_vertex_2_object(xcv)));
+      return (*this)(p);
     }
 
     /*! Obtains the parameter space at a point along the x-axis.
@@ -505,7 +521,11 @@ public:
      */
     Arr_parameter_space operator()(const Point_2& p) const
     {
-      return ((p.get_hq()!=0.5 && p.get_hq()!=8.5 ) ? ARR_INTERIOR : ARR_LEFT_BOUNDARY);
+      if (p.get_hq()!=0.5)
+        return ARR_LEFT_BOUNDARY;
+      if (p.get_hq()!=8.5 )
+        return ARR_RIGHT_BOUNDARY;
+      return ARR_INTERIOR;
     }
   };
 
@@ -539,9 +559,10 @@ public:
     Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                                    Arr_curve_end ce) const
     {
-      return (ce == ARR_MIN_END) ?
+      Point_2 p = (ce == ARR_MIN_END) ?
         (*this(m_traits.construct_min_vertex_2_object(xcv))
         :*this(m_traits.construct_max_vertex_2_object(xcv)));
+      return (*this)(p);
     }
 
     /*! Obtains the parameter space at a point along the y-axis.
@@ -550,10 +571,11 @@ public:
      * \pre p does not lie on the horizontal identification curve.
      * There are no horizontal identification arcs!
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2& p) const
     {
       if (CGAL::certainly(CGAL::square(p.z()-p.reference_sphere().center().z())-p.reference_sphere().squared_radius()==0)){
-        #warning cannot use this since z coord of polar and bipolar are designed for the sorting
+        //TAG_TODO
+        //#warning cannot use this since z coord of polar and bipolar are designed for the sorting
         return (CGAL::certainly(CGAL::Sign(p.z()-p.reference_sphere().center().z())> 0))?ARR_TOP_BOUNDARY:ARR_BOTTOM_BOUNDARY;
       }
       return ARR_INTERIOR;
@@ -601,7 +623,8 @@ public:
                                  const X_monotone_curve_2 & xcv,
                                  Arr_curve_end ce) const
     {
-      #here add the case of polar and bipolar circles
+      //TAG_TODO
+      //#here add the case of polar and bipolar circles
       const Point_2 & p2 = (ce == ARR_MIN_END) ? m_traits->SK.construct_min_vertex_2_object(xcv) : m_traits->SK.construct_max_vertex_2_object(xcv);
       return m_traits->SK.compare_x_2_object(point,p2);
     }
@@ -630,6 +653,8 @@ public:
                                  const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce2) const
     {
+      //TAG_TODO
+      //~ #here add the case of polar and bipolar circles
       const Point_2 & p1 = (ce1 == ARR_MIN_END) ? m_traits->SK.construct_min_vertex_2_object(xcv1) : m_traits->SK.construct_max_vertex_2_object(xcv1);
       const Point_2 & p2 = (ce2 == ARR_MIN_END) ? m_traits->SK.construct_min_vertex_2_object(xcv2) : m_traits->SK.construct_max_vertex_2_object(xcv2);
       return m_traits->SK.compare_x_2_object(p1,p2);
@@ -743,7 +768,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2 & xcv) const
     {
-      #problem of bipolar circle!!!!!!!!!
+      //TAG_TODO      #problem of bipolar circle!!!!!!!!!
       // If the curve is not vertical, it cannot coincide with the ident. arc:
       if (!m_traits->is_vertical_2_object(xcv)) return false;
 
@@ -864,7 +889,7 @@ public:
       typename Spherical_kernel::Circular_arc_on_reference_sphere_3 arc;
       if (CGAL::assign(arc,*(L.first())) )
         if (!m_traits->is_on_y_identification_2_object()(arc)){
-          #arc does not cross else cut it
+          //TAG_TODO #arc does not cross else cut it
           *oi++=*(L.first());
         }
       if (L.size()>1 && CGAL::assign(arc,*(++L.first())))
@@ -983,7 +1008,8 @@ public:
         }
       typename Spherical_kernel::Circular_arc_3 arc;
       if (CGAL::assign(arc,L.first())){
-        #*oi++=CGAL::make_object( X_monotone_curve_2(,,) );
+        //TAG_TODO
+        //~ #*oi++=CGAL::make_object( X_monotone_curve_2(,,) );
       }
       Point_2 pt;
       if (CGAL::assign(pt,*(L.first())) 
