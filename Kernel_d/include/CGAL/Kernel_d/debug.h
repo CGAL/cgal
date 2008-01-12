@@ -35,11 +35,13 @@
 #undef CGAL_KD_CTRACEN
 #undef CGAL_KD_ASSERT
 
+#if CGAL_KD_DEBUG>0
 static int debugthread=3141592;
 namespace {
     struct Avoid_warning_for_unused_debugthread { static int x; };
     int Avoid_warning_for_unused_debugthread::x = debugthread;
 }
+#endif
 
 #if CGAL_KD_DEBUG>0
 #define CGAL_KD_SETDTHREAD(l) debugthread=l
