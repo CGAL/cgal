@@ -24,6 +24,8 @@
 #ifndef CGAL_LEDA_REAL_H
 #define CGAL_LEDA_REAL_H
 
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/number_type_basic.h>
 #include <CGAL/leda_coercion_traits.h>
 
@@ -254,5 +256,7 @@ namespace leda {
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+
+#endif // CGAL_USE_LEDA
 
 #endif // CGAL_LEDA_REAL_H

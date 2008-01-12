@@ -24,6 +24,8 @@
 #ifndef CGAL_LEDA_INTEGER_H
 #define CGAL_LEDA_INTEGER_H
 
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/number_type_basic.h>
 
 #include <utility>
@@ -257,5 +259,7 @@ namespace leda {
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+
+#endif // CGAL_USE_LEDA
 
 #endif // CGAL_LEDA_INTEGER_H

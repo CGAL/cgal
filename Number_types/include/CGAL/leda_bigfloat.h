@@ -21,9 +21,10 @@
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
 
-
 #ifndef CGAL_LEDA_BIGFLOAT_H
 #define CGAL_LEDA_BIGFLOAT_H
+
+#ifdef CGAL_USE_LEDA
 
 #include <CGAL/number_type_basic.h>
 
@@ -157,5 +158,7 @@ namespace leda {
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
+
+#endif // CGAL_USE_LEDA
 
 #endif // CGAL_LEDA_BIGFLOAT_H
