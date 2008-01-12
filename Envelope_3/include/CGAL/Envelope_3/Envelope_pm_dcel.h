@@ -51,7 +51,7 @@ protected:
   Dac_decision m_decision;
 public:
   /*! Constructor */
-  Dcel_info() : m_is_set(false), m_decision(NOT_SET)
+  Dcel_info() : m_is_set(false), m_decision(DAC_DECISION_NOT_SET)
   {}
 
   /*! \brief returns true iff data has been set already */
@@ -62,7 +62,7 @@ public:
 
   bool is_decision_set()
   {
-    return (m_decision != NOT_SET);
+    return (m_decision != DAC_DECISION_NOT_SET);
   }
   
   Dac_decision get_decision()
