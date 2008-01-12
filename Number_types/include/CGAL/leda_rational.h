@@ -24,9 +24,10 @@
 #ifndef CGAL_LEDA_RATIONAL_H
 #define CGAL_LEDA_RATIONAL_H
 
+#include <CGAL/number_type_basic.h>
+
 #ifdef CGAL_USE_LEDA
 
-#include <CGAL/number_type_basic.h>
 #include <CGAL/leda_coercion_traits.h>
 #include <CGAL/Interval_nt.h>
 

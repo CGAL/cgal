@@ -24,9 +24,9 @@
 #ifndef CGAL_LEDA_INTEGER_H
 #define CGAL_LEDA_INTEGER_H
 
-#ifdef CGAL_USE_LEDA
-
 #include <CGAL/number_type_basic.h>
+
+#ifdef CGAL_USE_LEDA
 
 #include <utility>
 
