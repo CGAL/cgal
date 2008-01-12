@@ -24,7 +24,7 @@
 #include <CGAL/Compute_anchor_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/Marching_tetrahedra_3.h>
+#include <CGAL/marching_tetrahedra_3.h>
 
 #include <map>
 
