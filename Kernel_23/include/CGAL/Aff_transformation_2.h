@@ -25,6 +25,8 @@
 #ifndef CGAL_AFF_TRANSFORMATION_2_H
 #define CGAL_AFF_TRANSFORMATION_2_H
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
