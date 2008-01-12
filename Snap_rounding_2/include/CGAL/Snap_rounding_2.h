@@ -34,7 +34,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-enum Direction {SEG_UP_RIGHT,SEG_UP_LEFT,SEG_DOWN_RIGHT,SEG_DOWN_LEFT,
+enum SEG_Direction {SEG_UP_RIGHT,SEG_UP_LEFT,SEG_DOWN_RIGHT,SEG_DOWN_LEFT,
                 SEG_UP,SEG_DOWN,SEG_LEFT,SEG_RIGHT,SEG_POINT_SEG};
 
 template<class Traits_>
@@ -58,7 +58,7 @@ public:
   Point_2 source() const { return(p); }
   Point_2 target() const { return(q); }
   inline void set_data(const Point_2 & inp_p,const Point_2 & inp_q);
-  void determine_direction(Direction & seg_dir);
+  void determine_direction(SEG_Direction & seg_dir);
   bool equal(const Segment_2 & s);
   Segment_data(const Segment_data & other);
 };
@@ -86,24 +86,24 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
-  static Direction seg_dir;
+  static SEG_Direction seg_dir;
 
 public:
   Hot_pixel(const Point_2 & inp_point, NT inp_pixel_size);
   ~Hot_pixel();
   inline Point_2 get_center() const;
   inline Point_2 get_center(bool int_output) const;
-  bool intersect_left(const Segment_2 & seg, Direction seg_dir) const;
-  bool intersect_right(const Segment_2 & seg, Direction seg_dir) const;
-  bool intersect_bot(const Segment_2 & seg, Direction seg_dir) const;
-  bool intersect_top(const Segment_2 & seg, Direction seg_dir) const;
-  bool intersect(Segment_data & seg, Direction seg_dir) const;
-  void set_direction(Direction inp_seg_dir) { seg_dir = inp_seg_dir; }
-  Direction get_direction() const { return(seg_dir); }
+  bool intersect_left(const Segment_2 & seg, SEG_Direction seg_dir) const;
+  bool intersect_right(const Segment_2 & seg, SEG_Direction seg_dir) const;
+  bool intersect_bot(const Segment_2 & seg, SEG_Direction seg_dir) const;
+  bool intersect_top(const Segment_2 & seg, SEG_Direction seg_dir) const;
+  bool intersect(Segment_data & seg, SEG_Direction seg_dir) const;
+  void set_direction(SEG_Direction inp_seg_dir) { seg_dir = inp_seg_dir; }
+  SEG_Direction get_direction() const { return(seg_dir); }
 };
 
 /*! */
-template<class Traits_> Direction Hot_pixel<Traits_>::seg_dir;
+template<class Traits_> SEG_Direction Hot_pixel<Traits_>::seg_dir;
 
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
@@ -225,7 +225,7 @@ bool Segment_data<Traits_>::equal(const Segment_2 & s)
 
 /*! */
 template<class Traits_>
-void Segment_data<Traits_>::determine_direction(Direction & seg_dir)
+void Segment_data<Traits_>::determine_direction(SEG_Direction & seg_dir)
 {
   typedef typename Traits_::Compare_y_2         Compare_y_2;
   typedef typename Traits_::Compare_x_2         Compare_x_2;
@@ -316,7 +316,7 @@ Hot_pixel<Traits_>::get_center(bool int_output) const
 /*! */
 template<class Traits_>
 bool Hot_pixel<Traits_>::intersect_left(const Segment_2 & seg,
-                                        Direction seg_dir) const
+                                        SEG_Direction seg_dir) const
 {
   typedef typename Traits_::Compare_y_2         Compare_y_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
@@ -346,7 +346,7 @@ bool Hot_pixel<Traits_>::intersect_left(const Segment_2 & seg,
 /*! */
 template<class Traits_>
 bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
-                                         Direction seg_dir) const
+                                         SEG_Direction seg_dir) const
 {
   typedef typename Traits_::Compare_y_2         Compare_y_2;
   typedef typename Traits_::Compare_x_2         Compare_x_2;
@@ -392,7 +392,7 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
 /*! */
 template<class Traits_>
 bool Hot_pixel<Traits_>::intersect_bot(const Segment_2 & seg,
-                                       Direction seg_dir) const
+                                       SEG_Direction seg_dir) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
@@ -423,7 +423,7 @@ bool Hot_pixel<Traits_>::intersect_bot(const Segment_2 & seg,
 /*! */
 template<class Traits_>
 bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
-                                       Direction seg_dir) const
+                                       SEG_Direction seg_dir) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
@@ -461,7 +461,7 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
 /*! */
 template<class Traits_>
 bool
-Hot_pixel<Traits_>::intersect(Segment_data & seg, Direction my_seg_dir) const
+Hot_pixel<Traits_>::intersect(Segment_data & seg, SEG_Direction my_seg_dir) const
 {
   Segment_2 s = seg.segment();
 
@@ -500,7 +500,7 @@ bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
   
   Comparison_result cx = compare_x(h1->get_center(), h2->get_center());
   Comparison_result cy = compare_y(h1->get_center(), h2->get_center());
-  Direction seg_dir = h1->get_direction();
+  SEG_Direction seg_dir = h1->get_direction();
 
   // Point segment intersects only one pixel, thus ignored
   return(seg_dir == SEG_UP_RIGHT &&
@@ -584,7 +584,7 @@ find_intersected_hot_pixels(Segment_data & seg,
   typedef typename std::list<Hot_pixel *>::iterator     Hot_pixel_iter;
   
   Hot_pixel_iter iter;
-  Direction seg_dir;
+  SEG_Direction seg_dir;
 
   hot_pixels_intersected_set.clear();
   seg.determine_direction(seg_dir);
@@ -650,7 +650,7 @@ reroute_isr(std::set<Hot_pixel *, Hot_pixel_dir_cmp>
     before_last_hot_pixel_iter;
   Segment_data seg;
   Hot_pixel_set hot_pixels_intersected_set;
-  Direction seg_dir;
+  SEG_Direction seg_dir;
 
   if (number_of_intersections > 2 || first_time) {
     before_last_hot_pixel_iter = inp_hot_pixels_intersected_set.end();
@@ -698,7 +698,7 @@ iterate(OutputContainer & output_container,
   Hot_pixel_iter hot_pixel_iter;
   int number_of_intersections;
   Hot_pixel * hp;
-  Direction seg_dir;
+  SEG_Direction seg_dir;
     
   for (Segment_data_iter iter = seg_list.begin(); iter != seg_list.end();
        ++iter)
