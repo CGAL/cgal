@@ -16,6 +16,7 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
+//                 Efi Fogel              <efif@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_BASE_H
 #define CGAL_ENVELOPE_BASE_H
@@ -23,25 +24,25 @@
 CGAL_BEGIN_NAMESPACE
 
 // Envelope types:
-typedef unsigned int   Envelope_type;
-
-const Envelope_type      LOWER = 1;
-const Envelope_type      UPPER = 2;
+enum Envelope_type {
+  ENVELOPE_LOWER = 1,
+  ENVELOPE_UPPER = 2,
+};
 
 // Types of intersection curve between 2 xy-monotone surfaces:
-typedef unsigned int   Intersection_type;
-
-const Intersection_type  UNKNOWN = 0;
-const Intersection_type  TRANSVERSAL = 1;
-const Intersection_type  TANGENT = 2;
+enum Intersection_type {
+  INTERSECTION_UNKNOWN = 0,
+  INTERSECTION_TRANSVERSAL = 1,
+  INTERSECTION_TANGENT = 2
+};
 
 // Decision mark for DCEL features:
 enum Dac_decision
 {
-  FIRST = -1,
-  BOTH,
-  SECOND,
-  NOT_SET
+  DAC_DECISION_FIRST = -1,
+  DAC_DECISION_BOTH,
+  DAC_DECISION_SECOND,
+  DAC_DECISION_NOT_SET
 };
 
 CGAL_END_NAMESPACE

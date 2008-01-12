@@ -143,7 +143,7 @@ protected:
   
 public:
   // c'tor
-  Envelope_element_visitor_3(Envelope_type t = LOWER)
+  Envelope_element_visitor_3(Envelope_type t = ENVELOPE_LOWER)
   {
     // Allocate the traits.
     m_traits = new Traits;
@@ -151,7 +151,7 @@ public:
     type  = t;
   }
 
-  Envelope_element_visitor_3(Traits* tr, Envelope_type t = LOWER)
+  Envelope_element_visitor_3(Traits* tr, Envelope_type t = ENVELOPE_LOWER)
   {
     // Set the traits.
     m_traits = tr;
@@ -906,13 +906,13 @@ protected:
       if (HE_COMP_RES(*he) == SMALLER)
       {
         res = m_traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
-        if(type == UPPER)
+        if(type == ENVELOPE_UPPER)
           res = CGAL::opposite(res);
       }
       else
       {
         res = m_traits->compare_z_at_xy_below_3_object()(cv,surf1,surf2);
-        if(type == UPPER)
+        if(type == ENVELOPE_UPPER)
           res = CGAL::opposite(res);
 
       }
@@ -962,7 +962,7 @@ protected:
                                const Xy_monotone_surface_3& s2)
   {
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(g, s1, s2);
-    return ((type == LOWER) ? res : CGAL::opposite(res));
+    return ((type == ENVELOPE_LOWER) ? res : CGAL::opposite(res));
   }
 
 
@@ -973,7 +973,7 @@ protected:
                                Arr_has_boundary_tag)
   {
     Comparison_result res = m_traits->compare_z_at_xy_3_object()(s1, s2);
-    return ((type == LOWER) ? res : CGAL::opposite(res));
+    return ((type == ENVELOPE_LOWER) ? res : CGAL::opposite(res));
   }
 
    // compare two infinite surfaces with no boundary or holes
@@ -1093,23 +1093,23 @@ protected:
       // from the face to the edge, the envelope goes closer), then if the
       // second map wins on the face, it wins on the edge also
       else if (!hh->is_decision_set() &&
-               face->get_decision() == SECOND &&
+               face->get_decision() == DAC_DECISION_SECOND &&
                hh->get_has_equal_aux_data_in_face(0) &&
                !hh->get_has_equal_aux_data_in_face(1))
       {
-        hh->set_decision(SECOND);
-        hh->twin()->set_decision(SECOND);
+        hh->set_decision(DAC_DECISION_SECOND);
+        hh->twin()->set_decision(DAC_DECISION_SECOND);
 
       }
       // if the second map is continous, but the first isn't, then if the
       // first map wins on the face, it wins on the edge also
       else if (!hh->is_decision_set() &&
-               face->get_decision() == FIRST &&
+               face->get_decision() == DAC_DECISION_FIRST &&
                !hh->get_has_equal_aux_data_in_face(0) &&
                hh->get_has_equal_aux_data_in_face(1))
       {
-        hh->set_decision(FIRST);
-        hh->twin()->set_decision(FIRST);
+        hh->set_decision(DAC_DECISION_FIRST);
+        hh->twin()->set_decision(DAC_DECISION_FIRST);
       }
 
       // conclude to the vertices
@@ -1143,19 +1143,19 @@ protected:
     // if the first map is continous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
-    else if (hh->get_decision() == SECOND &&
+    else if (hh->get_decision() == DAC_DECISION_SECOND &&
              hh->get_has_equal_aux_data_in_target(0) &&
              !hh->get_has_equal_aux_data_in_target(1))
     {
-      vh->set_decision(SECOND);
+      vh->set_decision(DAC_DECISION_SECOND);
     }
     // if the second map is continous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
-    else if (hh->get_decision() == FIRST &&
+    else if (hh->get_decision() == DAC_DECISION_FIRST &&
              !hh->get_has_equal_aux_data_in_target(0) &&
              hh->get_has_equal_aux_data_in_target(1))
     {
-      vh->set_decision(FIRST);
+      vh->set_decision(DAC_DECISION_FIRST);
     }
     // check if we can copy from the face
     // todo: what if has_equal has 3 possible values? (and projected intersection
@@ -1262,7 +1262,7 @@ protected:
       if (can_copy_decision_from_face_to_edge(hh) &&
 
           hh->is_decision_set() &&
-          hh->get_decision() != BOTH)
+          hh->get_decision() != DAC_DECISION_BOTH)
       {
         res = convert_decision_to_comparison_result(hh->get_decision());
         result = true;
@@ -1271,21 +1271,21 @@ protected:
       // from the edge to the face, the envelope goes farther), then if the
       // first map wins on the edge, it wins on the face also
       else if (hh->is_decision_set() &&
-               hh->get_decision() == FIRST &&
+               hh->get_decision() == DAC_DECISION_FIRST &&
                hh->get_has_equal_aux_data_in_face(0) &&
                !hh->get_has_equal_aux_data_in_face(1))
       {
-        res = convert_decision_to_comparison_result(FIRST);
+        res = convert_decision_to_comparison_result(DAC_DECISION_FIRST);
         result = true;
       } 
       // if the second map is continous, but the first isn't, then if the
       // second map wins on the edge, it wins on the face also
       else if (hh->is_decision_set() &&
-               hh->get_decision() == SECOND &&
+               hh->get_decision() == DAC_DECISION_SECOND &&
                !hh->get_has_equal_aux_data_in_face(0) &&
                hh->get_has_equal_aux_data_in_face(1))
       {
-        res = convert_decision_to_comparison_result(SECOND);
+        res = convert_decision_to_comparison_result(DAC_DECISION_SECOND);
         result = true;
       }           
       hec++;
@@ -1302,7 +1302,7 @@ protected:
         Halfedge_handle hh = hec;
         if (can_copy_decision_from_face_to_edge(hh) &&
             hh->is_decision_set() &&
-            hh->get_decision() != BOTH)
+            hh->get_decision() != DAC_DECISION_BOTH)
         {
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
@@ -1311,22 +1311,22 @@ protected:
         // from the edge to the face, the envelope goes farther), then if the
         // first map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
-                 hh->get_decision() == FIRST &&
+                 hh->get_decision() == DAC_DECISION_FIRST &&
                  hh->get_has_equal_aux_data_in_face(0) &&
                  !hh->get_has_equal_aux_data_in_face(1))
         {
-          res = convert_decision_to_comparison_result(FIRST);
+          res = convert_decision_to_comparison_result(DAC_DECISION_FIRST);
 
           result = true;
         }
         // if the second map is continous, but the first isn't, then if the
         // second map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
-                 hh->get_decision() == SECOND &&
+                 hh->get_decision() == DAC_DECISION_SECOND &&
                  !hh->get_has_equal_aux_data_in_face(0) &&
                  hh->get_has_equal_aux_data_in_face(1))
         {
-          res = convert_decision_to_comparison_result(SECOND);
+          res = convert_decision_to_comparison_result(DAC_DECISION_SECOND);
           result = true;
         }
   
@@ -1341,9 +1341,9 @@ protected:
   Comparison_result convert_decision_to_comparison_result(CGAL::Dac_decision d)
   {
     return enum_cast<Comparison_result>(d);
-    /*if (d == FIRST)
+    /*if (d == DAC_DECISION_FIRST)
       return SMALLER;
-    else if (d == SECOND)
+    else if (d == DAC_DECISION_SECOND)
       return LARGER;
     else
       return EQUAL;*/
@@ -1376,19 +1376,19 @@ protected:
     // if the first map is continous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
-    else if (edge->get_decision() == SECOND &&
+    else if (edge->get_decision() == DAC_DECISION_SECOND &&
              edge->twin()->get_has_equal_aux_data_in_target(0) &&
              !edge->twin()->get_has_equal_aux_data_in_target(1))
     {
-      edge->source()->set_decision(SECOND);
+      edge->source()->set_decision(DAC_DECISION_SECOND);
     }
     // if the second map is continous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
-    else if (edge->get_decision() == FIRST &&
+    else if (edge->get_decision() == DAC_DECISION_FIRST &&
              !edge->twin()->get_has_equal_aux_data_in_target(0) &&
              edge->twin()->get_has_equal_aux_data_in_target(1))
     {
-      edge->source()->set_decision(FIRST);
+      edge->source()->set_decision(DAC_DECISION_FIRST);
     }
 
     // take care for target
@@ -1400,19 +1400,19 @@ protected:
     // if the first map is continous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
-    else if (edge->get_decision() == SECOND &&
+    else if (edge->get_decision() == DAC_DECISION_SECOND &&
              edge->get_has_equal_aux_data_in_target(0) &&
              !edge->get_has_equal_aux_data_in_target(1))
     {
-      edge->target()->set_decision(SECOND);
+      edge->target()->set_decision(DAC_DECISION_SECOND);
     }
     // if the second map is continous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
-    else if (edge->get_decision() == FIRST &&
+    else if (edge->get_decision() == DAC_DECISION_FIRST &&
              !edge->get_has_equal_aux_data_in_target(0) &&
              edge->get_has_equal_aux_data_in_target(1))
     {
-      edge->target()->set_decision(FIRST);
+      edge->target()->set_decision(DAC_DECISION_FIRST);
     }
   }
 

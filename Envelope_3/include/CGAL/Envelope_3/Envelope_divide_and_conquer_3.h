@@ -149,7 +149,7 @@ protected:
 
 public:
   // c'tor
-  Envelope_divide_and_conquer_3(Envelope_type type = LOWER)
+  Envelope_divide_and_conquer_3(Envelope_type type = ENVELOPE_LOWER)
   {    
     // Allocate the traits.
     traits = new Traits;                                                     
@@ -159,10 +159,10 @@ public:
     // Allocate the Envelope resolver with our traits
     resolver = new Envelope_resolver(traits, type);
 
-    m_is_lower = ((type == LOWER) ? true : false);
+    m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
 
-  Envelope_divide_and_conquer_3(Traits* tr, Envelope_type type = LOWER)
+  Envelope_divide_and_conquer_3(Traits* tr, Envelope_type type = ENVELOPE_LOWER)
   {
     // Set the traits.
     traits = tr;
@@ -171,7 +171,7 @@ public:
     // Allocate the Envelope resolver with our traits
     resolver = new Envelope_resolver(traits, type);
 
-    m_is_lower = ((type == LOWER) ? true : false);
+    m_is_lower = ((type == ENVELOPE_LOWER) ? true : false);
   }
   
   // virtual destructor.
@@ -467,14 +467,14 @@ public:
       CGAL_assertion(!aux_has_no_data(hh, 1) || !aux_has_no_data(hh, 0));
       if (aux_has_no_data(hh, 0) && !aux_has_no_data(hh, 1))
       {
-        hh->set_decision(SECOND);
-        hh->twin()->set_decision(SECOND);
+        hh->set_decision(DAC_DECISION_SECOND);
+        hh->twin()->set_decision(DAC_DECISION_SECOND);
         continue;
       }
       else if (!aux_has_no_data(hh, 0) && aux_has_no_data(hh, 1))
       {
-        hh->set_decision(FIRST);
-        hh->twin()->set_decision(FIRST);
+        hh->set_decision(DAC_DECISION_FIRST);
+        hh->twin()->set_decision(DAC_DECISION_FIRST);
         continue;
       }
 
@@ -543,7 +543,7 @@ public:
         // if a surface of one map doesn't exist, then we set the second surface
         if (aux_has_no_data(fh, 0) && !aux_has_no_data(fh, 1))
         {
-          fh->set_decision(SECOND);
+          fh->set_decision(DAC_DECISION_SECOND);
           continue;
         }
         else if (aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
@@ -555,7 +555,7 @@ public:
         }
         else if (!aux_has_no_data(fh, 0) && aux_has_no_data(fh, 1))
         {
-          fh->set_decision(FIRST);
+          fh->set_decision(DAC_DECISION_FIRST);
           continue;
         }
 
@@ -594,12 +594,12 @@ public:
       CGAL_assertion(!aux_has_no_data(vh, 1) || !aux_has_no_data(vh, 0));
       if (aux_has_no_data(vh, 0) && !aux_has_no_data(vh, 1))
       {
-        vh->set_decision(SECOND);
+        vh->set_decision(DAC_DECISION_SECOND);
         continue;
       }
       else if (!aux_has_no_data(vh, 0) && aux_has_no_data(vh, 1))
       {
-        vh->set_decision(FIRST);
+        vh->set_decision(DAC_DECISION_FIRST);
         continue;
       }
       resolver->resolve(vh);
@@ -850,10 +850,10 @@ protected:
     bool equal_second = (hh->get_is_equal_aux_data_in_face(1) &&
                          hh->twin()->get_is_equal_aux_data_in_face(1));
 
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
       return equal_first;
    
-    if (decision == SECOND)
+    if (decision == DAC_DECISION_SECOND)
       return equal_second;
     
     return (equal_first && equal_second);
@@ -891,10 +891,10 @@ protected:
     bool equal_first = (h->get_is_equal_aux_data_in_target(0));
     bool equal_second = (h->get_is_equal_aux_data_in_target(1));
 
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
       return equal_first;
    
-    if (decision == SECOND)
+    if (decision == DAC_DECISION_SECOND)
       return equal_second;
     
     return (equal_first && equal_second);
@@ -918,10 +918,10 @@ protected:
     bool equal_first = (vh->get_is_equal_aux_data_in_face(0));
     bool equal_second = (vh->get_is_equal_aux_data_in_face(1));
 
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
       return equal_first;
     
-    if (decision == SECOND)
+    if (decision == DAC_DECISION_SECOND)
       return equal_second;
     
     return (equal_first && equal_second);
@@ -961,10 +961,10 @@ protected:
     bool equal_second = (he1->get_is_equal_aux_data_in_target(1) &&
                          he2->get_is_equal_aux_data_in_target(1));
 
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
       return equal_first;
     
-    if (decision == SECOND)
+    if (decision == DAC_DECISION_SECOND)
       return equal_second;
 
     return (equal_first && equal_second);
@@ -1093,19 +1093,19 @@ protected:
     Vertex_handle v;
     Face_handle f;
 
-    if (decision == FIRST || decision == BOTH)
+    if (decision == DAC_DECISION_FIRST || decision == DAC_DECISION_BOTH)
     {
       Envelope_data_iterator begin, end;
       get_aux_data_iterators(0, fh, begin, end);
       fh->set_data(begin, end);
     }
-    if (decision == SECOND || decision == BOTH)
+    if (decision == DAC_DECISION_SECOND || decision == DAC_DECISION_BOTH)
     {
       // copy data from second envelope
       Envelope_data_iterator begin, end;
       get_aux_data_iterators(1, fh, begin, end);
 
-      if (decision == SECOND)
+      if (decision == DAC_DECISION_SECOND)
         fh->set_data(begin, end);
       else
         fh->add_data(begin, end);
@@ -1145,20 +1145,20 @@ protected:
     // but has same surfaces, i.e. one of the features got BOTH
     // decision, and the other didn't
     has_equal = (h->get_decision() == h->face()->get_decision() ||
-                 h->get_decision() == BOTH ||
-                 h->face()->get_decision() == BOTH);
+                 h->get_decision() == DAC_DECISION_BOTH ||
+                 h->face()->get_decision() == DAC_DECISION_BOTH);
 
     CGAL::Dac_decision decision = h->face()->get_decision();
     bool is_equal_first = (h->get_is_equal_aux_data_in_face(0));
     bool has_equal_first = (h->get_has_equal_aux_data_in_face(0));
     bool is_equal_second = (h->get_is_equal_aux_data_in_face(1));
     bool has_equal_second = (h->get_has_equal_aux_data_in_face(1));
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
     {
       is_equal &= is_equal_first;
       has_equal &= has_equal_first;
     }
-    else if (decision == SECOND)
+    else if (decision == DAC_DECISION_SECOND)
     {
       is_equal &= is_equal_second;
       has_equal &= has_equal_second;
@@ -1170,9 +1170,9 @@ protected:
 
       // we update the flag according to the halfedge decision
       decision = h->get_decision();
-      if (decision == FIRST)
+      if (decision == DAC_DECISION_FIRST)
       has_equal &= has_equal_first;
-      else if (decision == SECOND)
+      else if (decision == DAC_DECISION_SECOND)
       has_equal &= has_equal_second;
       else      
       has_equal &= (has_equal_first & has_equal_second);
@@ -1190,21 +1190,21 @@ protected:
     // but has same surfaces, i.e. one of the features got BOTH
     // decision, and the other didn't
     has_equal = (h->get_decision() == h->target()->get_decision() ||
-                 h->get_decision() == BOTH ||
-                 h->target()->get_decision() == BOTH);
+                 h->get_decision() == DAC_DECISION_BOTH ||
+                 h->target()->get_decision() == DAC_DECISION_BOTH);
 
     CGAL::Dac_decision decision = h->get_decision();
     bool is_equal_first = (h->get_is_equal_aux_data_in_target(0));
     bool has_equal_first = (h->get_has_equal_aux_data_in_target(0));
     bool is_equal_second = (h->get_is_equal_aux_data_in_target(1));
     bool has_equal_second = (h->get_has_equal_aux_data_in_target(1));
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
     {
       is_equal &= is_equal_first;
       has_equal &= has_equal_first;
     }
 
-    else if (decision == SECOND)
+    else if (decision == DAC_DECISION_SECOND)
     {
       is_equal &= is_equal_second;
       has_equal &= has_equal_second;
@@ -1215,9 +1215,9 @@ protected:
       // we check if the vertex has a different decision, and if so,
       // we update the flag according to the vertex decision
       decision = h->target()->get_decision();
-      if (decision == FIRST)
+      if (decision == DAC_DECISION_FIRST)
       has_equal &= has_equal_first;
-      else if (decision == SECOND)
+      else if (decision == DAC_DECISION_SECOND)
       has_equal &= has_equal_second;
 
       else      
@@ -1233,24 +1233,24 @@ protected:
     // but has same surfaces, i.e. one of the features got BOTH
     // decision, and the other didn't
     has_equal = (h->face()->get_decision() == h->target()->get_decision() ||
-                 h->face()->get_decision() == BOTH ||
-                 h->target()->get_decision() == BOTH);
+                 h->face()->get_decision() == DAC_DECISION_BOTH ||
+                 h->target()->get_decision() == DAC_DECISION_BOTH);
 
     CGAL::Dac_decision decision = h->face()->get_decision();
     bool has_equal_first = (h->get_has_equal_aux_data_in_target_and_face(0));
     bool has_equal_second = (h->get_has_equal_aux_data_in_target_and_face(1));
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
       has_equal &= has_equal_first;
-    else if (decision == SECOND)
+    else if (decision == DAC_DECISION_SECOND)
       has_equal &= has_equal_second;
     else
     {
       // we check if the vertex has a different decision, and if so,
       // we update the flag according to the vertex decision
       decision = h->target()->get_decision();
-      if (decision == FIRST)
+      if (decision == DAC_DECISION_FIRST)
         has_equal &= has_equal_first;
-      else if (decision == SECOND)
+      else if (decision == DAC_DECISION_SECOND)
         has_equal &= has_equal_second;
 
       else      
@@ -1268,20 +1268,20 @@ protected:
     // decision, and the other didn't
 
     has_equal = (v->get_decision() == f->get_decision() ||
-                 v->get_decision() == BOTH ||
-                 f->get_decision() == BOTH);
+                 v->get_decision() == DAC_DECISION_BOTH ||
+                 f->get_decision() == DAC_DECISION_BOTH);
 
     CGAL::Dac_decision decision = v->get_decision();
     bool is_equal_first = (v->get_is_equal_aux_data_in_face(0));
     bool has_equal_first = (v->get_has_equal_aux_data_in_face(0));
     bool is_equal_second = (v->get_is_equal_aux_data_in_face(1));
     bool has_equal_second = (v->get_has_equal_aux_data_in_face(1));
-    if (decision == FIRST)
+    if (decision == DAC_DECISION_FIRST)
     {
       is_equal &= is_equal_first;
       has_equal &= has_equal_first;
     }
-    else if (decision == SECOND)
+    else if (decision == DAC_DECISION_SECOND)
     {
       is_equal &= is_equal_second;
       has_equal &= has_equal_second;
@@ -1292,9 +1292,9 @@ protected:
       // we check if the face has a different decision, and if so,
       // we update the flag according to the face decision
       decision = f->get_decision();
-      if (decision == FIRST)
+      if (decision == DAC_DECISION_FIRST)
       has_equal &= has_equal_first;
-      else if (decision == SECOND)
+      else if (decision == DAC_DECISION_SECOND)
         has_equal &= has_equal_second;
       else      
       has_equal &= (has_equal_first & has_equal_second);
@@ -1735,7 +1735,7 @@ protected:
       // first we check if we can set the decision immediately
       // if a surface of one map doesn't exist, then we set the second surface
       if (base->aux_has_no_data(fh, 0) && !base->aux_has_no_data(fh, 1))
-        fh->set_decision(SECOND);
+        fh->set_decision(DAC_DECISION_SECOND);
       else if (base->aux_has_no_data(fh, 0) && base->aux_has_no_data(fh, 1))
       {
 
@@ -1743,7 +1743,7 @@ protected:
         fh->set_no_data();
       }
       else if (!base->aux_has_no_data(fh, 0) && base->aux_has_no_data(fh, 1))
-        fh->set_decision(FIRST);
+        fh->set_decision(DAC_DECISION_FIRST);
       else
         // here, we have both surfaces.
         // we save the face in a list for a later treatment, because the
