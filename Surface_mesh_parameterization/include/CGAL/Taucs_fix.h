@@ -20,6 +20,9 @@
 #ifndef CGAL_TAUCS_FIX
 #define CGAL_TAUCS_FIX
 
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_TAUCS
 
 //
 // Include TAUCS main header taucs.h
@@ -54,5 +57,6 @@ extern "C" {
     #undef max
 #endif
 
+#endif // CGAL_USE_TAUCS
 
 #endif // CGAL_TAUCS_FIX
