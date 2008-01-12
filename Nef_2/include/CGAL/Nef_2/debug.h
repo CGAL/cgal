@@ -18,8 +18,8 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#ifndef CGAL_DEBUG_H
-#define CGAL_DEBUG_H
+#ifndef CGAL_NEF_2_DEBUG_H
+#define CGAL_NEF_2_DEBUG_H
 
 #include <iostream>
 
@@ -85,4 +85,4 @@
 #define CGAL_NEF_CTRACEN(b,t) 
 #endif
 
-#endif // CGAL_DEBUG_H
+#endif // CGAL_NEF_2_DEBUG_H
