@@ -217,7 +217,7 @@ rectangular_3_center_2_type1(
   }
   return o;
 }
-#if 0 // #ifndef _MSC_VER // Try if it is still really needed
+#if 1 // #ifndef _MSC_VER // Try if it is still really needed
 
 template < class R >
 struct Rectangular_3_center_2_type2_operations_base {
