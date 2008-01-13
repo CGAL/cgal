@@ -188,16 +188,17 @@ protected:
         // TODO rebind, i.e., replace p and q in "arc"
     {
         _set_ckva(kernel);
-        
+
+        // TODO remove location tests for contraction!
         CGAL_precondition(
-                arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR
+                arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR
         );
         CGAL_precondition(
                 p.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
                 CGAL::EQUAL
         );
         CGAL_precondition(
-                arc.curve_end(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR
+                arc.location(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR
         );
         CGAL_precondition(
                 q.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
@@ -387,7 +388,7 @@ public:
      * returns projected arc
      */
     Projected_arc_2 projected_arc() const {
-        return static_cast< Projected_arc_2 >(*this);
+        return *dynamic_cast< const Projected_arc_2* >(this);
     }
 
     /*\brief
