@@ -53,25 +53,26 @@ std::ostream& operator<< (std::ostream&,
 #endif
 #endif
 
-template <class CurvedKernelViaAnalysis_2>
+template < class CurvedKernelViaAnalysis_2 >
 class Arc_2_base_rep 
 { 
 public:
 
-    // this instance's template parameter
+    // this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
     // myself
-    typedef Arc_2_base_rep<Curved_kernel_via_analysis_2> Self;
+    typedef Arc_2_base_rep< Curved_kernel_via_analysis_2 > Self;
     
     // type of generic curve
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
     Curve_2;
-        
+    
     // type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
-
+    
     // type of boundary value in x-range
+    // TODO check what to do with Boundary?
     typedef typename Curved_kernel_via_analysis_2::Boundary Boundary;
 
 public:    
@@ -140,20 +141,21 @@ public:
     mutable Curved_kernel_via_analysis_2 *_m_ckva;
 };
 
+// TODO make class abstract!
 //! \brief class defines a point on a generic curve
-template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
+template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ >
 class Arc_2_base
       : public CGAL::Handle_with_policy< Rep_ > {
 public:
     //!@{
     //!\name publuic typedefs
-
+    
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! this instance's second template parameter
     typedef Arc_2_ Arc_2;
-    
+
     //! this instance's third template parameter
     typedef Rep_ Rep;
 
@@ -174,7 +176,7 @@ public:
     //! type of generic curve
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
     Curve_2;
-        
+
     //! type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
     
@@ -493,8 +495,9 @@ public:
 
     //! returns location of arc's \c end in parameter space
     CGAL::Arr_parameter_space location(CGAL::Arr_curve_end end) const {
-        if(end == CGAL::ARR_MIN_END)
+        if (end == CGAL::ARR_MIN_END) {
             return _minpoint().location();
+        }
         return _maxpoint().location();
     }
     
@@ -507,7 +510,7 @@ public:
     void set_location(CGAL::Arr_curve_end end, 
                       CGAL::Arr_parameter_space loc) const {
         (end == CGAL::ARR_MIN_END ? 
-         _minpoint()._set_location(loc) : _maxpoint()._set_location(loc));
+         _minpoint().set_location(loc) : _maxpoint().set_location(loc));
     }
 
     //!@}
@@ -528,7 +531,8 @@ public:
         const Point_2& pt = 
             (end == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
 #if !CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE
-        CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR);
+        CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR ||
+                          pt.is_finite());
 #endif
         return pt;
     }
@@ -774,7 +778,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
                                             compare_x_near_boundary_2,
                                             compare_x_near_boundary_2_object);
-        return compare_y_near_boundary_2(*this, end1, cv2, end2);
+        return compare_x_near_boundary_2(*this, end1, cv2, end2);
     }   
 #endif    
   
@@ -872,7 +876,7 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_right_2,
                                             compare_y_at_x_right_2,
                                             compare_y_at_x_right_2_object);
-        return compare_y_at_x_right(*this, cv2, p);
+        return compare_y_at_x_right_2(*this, cv2, p);
     }
         
     /*!
@@ -934,10 +938,10 @@ public:
     //!\brief returns \c true iff this arc is equal to \c cv
     bool is_equal(const Arc_2_base& cv2) const {
         
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Is_equal_2, 
-                                            is_equal_2,
-                                            is_equal_2_object);
-        return is_equal_2(*this, cv2);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Equal_2, 
+                                            equal_2,
+                                            equal_2_object);
+        return equal_2(*this, cv2);
     }
 
     /*!\brief
@@ -1090,7 +1094,8 @@ public:
     Arc_2 trim(const Point_2& p, const Point_2& q) const {
     
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2, trim_2_object);
-        return trim_2(*this, p, q);
+        CGAL_precondition(dynamic_cast< const Arc_2* >(this));
+        return trim_2(*dynamic_cast< const Arc_2* >(this), p, q);
     }
 
     /*!
@@ -1105,7 +1110,8 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Split_2, 
                                             split_2,
                                             split_2_object);
-        return split_2(*this, p, s1, s2);
+        CGAL_precondition(dynamic_cast< const Arc_2* >(this));
+        split_2(*dynamic_cast< const Arc_2* >(this), p, s1, s2);
     }
     
     /*!\brief
@@ -1129,12 +1135,15 @@ public:
      * \pre Two curves are mergeable,if they are supported by the same curve 
      * and share a common end-point.
      */  
-    Arc_2 merge(const Arc_2_base& cv2) const {
+    Arc_2 merge(const Arc_2& cv2) const {
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Merge_2, merge_2, merge_2_object);
-        return merge_2(*this, cv2);
+        CGAL_precondition(dynamic_cast< const Arc_2* >(this));
+        Arc_2 tmp;
+        merge_2(*dynamic_cast< const Arc_2* >(this), cv2, tmp);
+        return tmp;
     }
-   
+    
     //!@}
     
 #undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC
@@ -2299,7 +2308,7 @@ public:
  * \brief 
  * output operator
  */
-template <class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
+template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_>
 inline
 std::ostream& operator<<(std::ostream& os,
     const Arc_2_base<CurvedKernelViaAnalysis_2, Arc_2_, Rep_>& arc) {
