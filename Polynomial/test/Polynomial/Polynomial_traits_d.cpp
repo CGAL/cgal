@@ -13,7 +13,6 @@
 
 #include <CGAL/_test_basic.h>
 
-
 #include <CGAL/Random.h>
 
 static CGAL::Random my_rnd(346); // some seed 
@@ -83,40 +82,6 @@ generate_sparse_random_polynomial(int max_degree = 10){
     
     return result;
 }
-
-void  print_monom(std::vector<int> ev){
-    if(ev.size() >= 1) 
-        if (ev[0] != 0) 
-            if (ev[0] == 1) 
-                std::cout << "x";
-            else
-                std::cout << "x^" << ev[0];
-    
-    if(ev.size() >= 2) 
-        if (ev[0] != 0) 
-            if (ev[0] == 1) 
-                std::cout << "y";
-            else
-                std::cout << "y^" << ev[1];
-    if(ev.size() >= 3) std::cout << "z^" << ev[2];
-    if(ev.size() >= 4) std::cout << "x^" << ev[3];
-    
-}
-
-template <class Monom_rep>
-void  print_monom_rep(Monom_rep monom_rep){
-    std::sort(monom_rep.begin(), monom_rep.end());
-    for(typename Monom_rep::iterator it = monom_rep.begin();
-        it != monom_rep.end(); ++it){
-        //if(it->second != 0){
-        std::cout << it->second <<"*" ;
-        print_monom(it->first);
-        std::cout <<" + ";
-        //}
-    }
-    std::cout << std::endl;
-}
-
 
 
 template <class Polynomial_traits_d>
@@ -484,6 +449,51 @@ void test_multivariate_content(){
         
     }
     
+    std::cerr << " ok "<< std::endl; 
+}
+
+// //       Multivariate_content;
+template <class Polynomial_traits_d>
+void test_interpolate(){
+    std::cerr << "start test_interpolate "; std::cerr.flush();
+    typedef Polynomial_traits_d PT_d; 
+    typedef typename PT_d::Innermost_coefficient ICoeff;
+    typedef typename PT_d::Polynomial_d Polynomial_d;
+    typedef typename PT_d:: template Rebind<ICoeff,1>::Other PT_1;
+    typedef typename PT_1::Polynomial_d Polynomial_1;
+    
+    typename PT_d::Interpolate interpolate;
+    typename PT_d::Evaluate eval; 
+    
+    for(int i = 0; i < 5; i++){
+        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
+       
+        Polynomial_1 m(1); 
+        Polynomial_d u(0);
+        for (int j = 0; j <= i; j++){ 
+            Polynomial_1 m1 = m; 
+            Polynomial_d u1 = u; 
+            Polynomial_1 m2 = Polynomial_1(ICoeff(-j),ICoeff(2));
+            Polynomial_d u2 = eval(p,ICoeff(j)/ICoeff(2));
+            interpolate(m1,u1,m2,u2,m,u);
+        }
+        CGAL_test_assert(u == p);
+    }
+    
+    for(int i = 0; i < 5; i++){
+        Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
+       
+        Polynomial_1 m(1); 
+        Polynomial_d u(0);
+        for (int j = 0; j <= i; j++){ 
+            Polynomial_1 m2 = m; 
+            Polynomial_d u2 = u; 
+            Polynomial_1 m1 = Polynomial_1(ICoeff(-j),ICoeff(2));
+            Polynomial_d u1 = eval(p,ICoeff(j)/ICoeff(2));
+            interpolate(m1,u1,m2,u2,m,u);
+        }
+        CGAL_test_assert(u == p);
+    }
     std::cerr << " ok "<< std::endl; 
 }
 
@@ -1361,6 +1371,8 @@ Polynomial_traits_d, CGAL::Integral_domain_tag > {
         test_univariate_content<Polynomial_traits_d>();
         //       Multivariate_content;
         test_multivariate_content<Polynomial_traits_d>();
+        //       Interpolate;
+        test_interpolate<Polynomial_traits_d>();
         //       Square_free_factorization;
         test_square_free_factorization<Polynomial_traits_d>();
     }
@@ -1551,9 +1563,10 @@ void test_AT(){
     CGAL::set_pretty_mode(std::cout);
     CGAL::set_pretty_mode(std::cerr);
 
+
     typedef typename AT::Integer Integer;
-    typedef typename AT::Rational Rational;     
-    
+    typedef typename AT::Rational Rational; 
+
     std::cerr << std::endl;
     std::cerr << "Test for coefficient type Integer" << std::endl;
     std::cerr << "--------------------------------------" << std::endl;
@@ -1596,6 +1609,9 @@ void test_AT(){
 
 int main(){
 
+#if 1    
+    test_AT<CGAL::Arithmetic_kernel>();
+#else
 #ifdef CGAL_USE_LEDA
     {        
         typedef CGAL::LEDA_arithmetic_kernel AT;
@@ -1607,6 +1623,7 @@ int main(){
         typedef CGAL::CORE_arithmetic_kernel AT;
         test_AT<AT>();
     }
+#endif
 #endif
     return 0;
 }
