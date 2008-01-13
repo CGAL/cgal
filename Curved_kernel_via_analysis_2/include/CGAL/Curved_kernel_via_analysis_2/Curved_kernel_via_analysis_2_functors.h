@@ -142,7 +142,7 @@ public:
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
                      int arcno, int arcno_p, int arcno_q) {
         
-        Arc_2 arc(_m_curved_kernel,p,q,c,arcno, arcno_p, arcno_q);
+        Arc_2 arc(_m_curved_kernel, p, q, c, arcno, arcno_p, arcno_q);
         return arc;
     }
     
@@ -702,7 +702,8 @@ public:
     typedef Arity_tag<3>            Arity;
     
     //! standard constructor
-    Compare_y_near_boundary_2(CurvedKernel_2 *) {
+    Compare_y_near_boundary_2(CurvedKernel_2 *kernel) :
+        _m_curved_kernel(kernel) {
     }
 
     /*! Compare the y-coordinates of 2 lines at their ends near the boundary
@@ -734,6 +735,10 @@ public:
         CERR("result: " << res << "\n");
         return res;
     }
+
+protected:
+    //! pointer to \c CurvedKernel_2 ?
+    CurvedKernel_2 *_m_curved_kernel;
 };
 
 template < class CurvedKernel_2 >
@@ -1133,7 +1138,7 @@ public:
                  cv1._same_arc_compare_xy(cv1._maxpoint(), cv2._maxpoint()) ==
                  CGAL::EQUAL));
     }
-
+    
 protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
@@ -1305,7 +1310,7 @@ class Trim_2
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
-    typedef bool result_type;
+    typedef Arc_2 result_type;
     typedef Arity_tag<3> Arity;
     
     //! standard constructor
@@ -1320,7 +1325,7 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the curves overlap; (false) otherwise.
      */
-    bool operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
+    Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
     
         CERR("trim\n");
         CGAL_precondition(
@@ -1365,8 +1370,9 @@ public:
      * \param c2 Output: The right resulting subcurve (p is its left endpoint)
      * \pre p lies on cv but is not one of its end-points.
      */
-    void operator()(const Arc_2& cv, const Point_2 & p,
-                    Arc_2& c1, Arc_2& c2) const {
+    template < class Point_2_, class Arc_2_ >
+    void operator()(const Arc_2_& cv, const Point_2_ & p,
+                    Arc_2_& c1, Arc_2_& c2) const {
         
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
@@ -1507,12 +1513,11 @@ public:
      * \pre The two curves are mergeable, that is they are supported by the
      *      same curve and share a common endpoint.
      */  
-    template < class Arc_2_ >
-    void operator()(const Arc_2_& cv1, const Arc_2_& cv2, Arc_2_& c) const {
+    void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
     
         CERR("merge\n");
         CGAL_precondition(cv1.are_mergeable(cv2));
-        Arc_2_::simplify(cv1, cv2);
+        Arc_2::simplify(cv1, cv2);
         
         Point_2 src, tgt;
         int arcno_s = -1, arcno_t = -1;
