@@ -54,6 +54,7 @@ CGAL_BEGIN_NAMESPACE;
 
 namespace POLYNOMIAL {
 
+
 // template meta function Innermost_coefficient
 // returns the tpye of the innermost coefficient 
 template <class T> struct Innermost_coefficient{ typedef T Type; };
@@ -424,6 +425,23 @@ class Polynomial_traits_d_base< Polynomial< Coefficient_ >,
 
     CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
+
+    // We use our own Strict Weak Ordering predicate in order to avoid
+    // problems when calling sort for a Exponents_coeff_pair where the
+    // coeff type has no comparison operators available.
+private:
+    struct Compare_exponents_coeff_pair 
+        : public Binary_function< std::pair< Exponent_vector, Innermost_coefficient >,
+                                  std::pair< Exponent_vector, Innermost_coefficient >,
+                                  bool > {
+        bool operator()( const std::pair< Exponent_vector, Innermost_coefficient >& p1,
+                const std::pair< Exponent_vector, Innermost_coefficient >& p2 ) const {
+            // TODO: Precondition leads to an error within test_translate in Polynomial_traits_d test
+            //CGAL_precondition( p1.first != p2.first );
+            return p1.first < p2.first;
+        }            
+    }; 
+
 public:
 
     //
@@ -521,7 +539,7 @@ public:
                 Input_iterator begin, 
                 Input_iterator end , 
                 Tag_false) const {
-            std::sort(begin,end); 
+            std::sort(begin,end,Compare_exponents_coeff_pair()); 
             return Create_polynomial_from_monom_rep< Coefficient >()
                 ( begin, end ); 
         }
@@ -636,23 +654,7 @@ public:
         typedef int                 second_argument_type;
         typedef int                 third_argument_type;
         typedef Arity_tag< 3 >         Arity;
-        
-        // We use our own Strict Weak Ordering predicate in order to avoid
-        // problems when calling sort for a Exponents_coeff_pair where the
-        // coeff type has no comparison operators available.
-      private:
-        struct Compare_exponents_coeff_pair 
-            : public Binary_function< std::pair< Exponent_vector, Innermost_coefficient >,
-                                      std::pair< Exponent_vector, Innermost_coefficient >,
-                                      bool > {
-            bool operator()( const std::pair< Exponent_vector, Innermost_coefficient >& p1,
-                             const std::pair< Exponent_vector, Innermost_coefficient >& p2 ) const {
-                // TODO: Precondition leads to an error within test_translate in Polynomial_traits_d test
-                //CGAL_precondition( p1.first != p2.first );
-                return p1.first < p2.first;
-            }            
-        }; 
-      
+             
       public:
         
         Polynomial_d operator()(const Polynomial_d& p, int i, int j ) const {
@@ -711,7 +713,7 @@ public:
                         std::swap(it->first[k],it->first[k-1]);
                 
             }
-            std::sort( mon_rep.begin(), mon_rep.end() );
+            std::sort( mon_rep.begin(), mon_rep.end(),Compare_exponents_coeff_pair());
             return construct( mon_rep.begin(), mon_rep.end() );
         }
     };
