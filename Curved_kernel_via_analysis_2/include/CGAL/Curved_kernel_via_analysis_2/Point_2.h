@@ -454,6 +454,7 @@ public:
     //!@}
     
 protected:
+public: // TODO remove public
     //!\name private methods (provided access from Arc_2 class)
     //!@{
     
@@ -461,9 +462,11 @@ protected:
      *  sets boundary type and location of a point in parameter space
      */
     void _set_location(CGAL::Arr_parameter_space loc) const {
+        // TODO add precondition
         this->ptr()->_m_location = loc;
     }
 
+protected:
     //! \brief dumps boundary type (for debugging)
     void _dump_boundary_type(std::ostream& os) const {
         os << "loc=" << location();
