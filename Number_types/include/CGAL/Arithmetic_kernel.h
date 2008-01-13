@@ -142,6 +142,7 @@ public:
 };
 #endif // CGAL_USE_GMPXX
 
+// Define a default Arithmetic_kernel
 #if defined(CGAL_USE_CORE)
 typedef CORE_arithmetic_kernel Arithmetic_kernel;
 #else
@@ -150,7 +151,6 @@ typedef LEDA_arithmetic_kernel Arithmetic_kernel;
 #endif
 #endif
 
-// Define a defualt Arithmetic_kernel
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #ifndef CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
 #define CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL 1
