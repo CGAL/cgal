@@ -64,35 +64,23 @@ protected:
   typedef typename Traits::Instantaneous_kernel IK;
   typedef typename Traits::Active_points_3_table MPT;
   typedef typename Traits::Simulator Simulator;
-  typedef typename GUI::Listener Gui_listener;
-  typedef typename Simulator::Listener Simulator_listener;
-  typedef CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This> Siml;
-  friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This>;
   class Guil;
 
   typedef typename MPT::Data::Coordinate::NT NT;
 
-  class Table_listener: public MPT::Listener
-  {
-    typedef typename MPT::Listener P;
-  public:
-    Table_listener(typename MPT::Handle mpt, This *t): MPT::Listener(mpt), t_(t){}
-
-    virtual void new_notification(typename MPT::Listener::Notification_type et) {
-      if (et == P::IS_EDITING && P::notifier()->is_editing()==false) {
-	if (P::notifier()->inserted_begin() != P::notifier()->inserted_end()
-	    || P::notifier()->erased_begin() != P::notifier()->erased_end()) {
-	  t_->update_tree();
-	  t_->update_coordinates();
-	}
-      }
-    }
-  protected:
-    This *t_;
-  };
-  friend class Table_listener;
+  CGAL_KINETIC_LISTEN1(Simulator, DIRECTION_OF_TIME, reverse_time());
+  CGAL_KINETIC_LISTEN1(GUI, CURRENT_TIME, update_coordinates());
+  CGAL_KINETIC_LISTEN1(MPT, IS_EDITING, editing());
 
 private:
+  void editing() {
+    if (CGAL_KINETIC_NOTIFIER(MPT)->inserted_begin() != CGAL_KINETIC_NOTIFIER(MPT)->inserted_end()
+        || CGAL_KINETIC_NOTIFIER(MPT)->erased_begin() != CGAL_KINETIC_NOTIFIER(MPT)->erased_end()) {
+        update_tree();
+        update_coordinates();
+      }
+  }
+
   //! This cannot be trivially copied with out ill effects
   SoQt_moving_weighted_points_3(const This &){ CGAL_error();}
   const This operator=(const This &o) const
@@ -110,16 +98,16 @@ public:
   SoQt_moving_weighted_points_3( Traits tr,
 				 typename GUI::Handle sim ): tr_(tr),
 							      ik_(tr.instantaneous_kernel_object()),
-							      listener_(tr_.active_points_3_table_handle(), this),
-							      guil_(sim, this),
-							      siml_(sim->simulator(), this),
 							      rt_(tr_.kinetic_kernel_object().reverse_time_object()) {
 
     soss_= NULL;
     draw_labels_= true;
     point_size_= 5;
     direction_of_time_=CGAL::POSITIVE;
-    set_up_scene_graph(guil_.root());
+    CGAL_KINETIC_INIT_LISTEN(MPT, tr_.active_points_3_table_handle());
+    CGAL_KINETIC_INIT_LISTEN(Simulator, tr.simulator_handle());
+    CGAL_KINETIC_INIT_LISTEN(GUI, sim);
+    set_up_scene_graph(root());
   };
 
   virtual ~SoQt_moving_weighted_points_3() {
@@ -169,20 +157,6 @@ protected:
     return direction_of_time_;
   }
   void reverse_time();
-
-  class Guil: public Gui_listener
-  {
-  public:
-    Guil(typename GUI::Handle& h, This *t): Gui_listener(h), t_(t){}
-    void new_notification(typename Gui_listener::Notification_type nt) {
-      if (nt== Gui_listener::CURRENT_TIME) {
-	t_->update_coordinates();
-      }
-    }
-  protected:
-    This *t_;
-  };
-  friend class Guil;
 
   void set_up_scene_graph(SoSeparator* parent);
 
@@ -248,6 +222,10 @@ protected:
     return tr_.active_points_3_table_handle()->size();
   }
 
+  SoSeparator* root() const {
+    return listener_GUI_.root();
+  }
+
   Traits tr_;
   Draw_mode mode_;
   bool draw_labels_;
@@ -261,9 +239,6 @@ protected:
   SoQt_handle<SoGroup> labels_;
   CGAL::Sign direction_of_time_;
   SoOneShotSensor* soss_;
-  Table_listener listener_;
-  Guil guil_;
-  Siml siml_;
   typename Traits::Kinetic_kernel::Reverse_time rt_;
 };
 
@@ -272,7 +247,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
 {
   //std::cout << "updateing coordinates\n";
   //if (parent_==NULL) return;
-  ik_.set_time(guil_.notifier()->current_time());
+  ik_.set_time(NT(CGAL_KINETIC_NOTIFIER(GUI)->current_time()));
 
   coords_->point.setNum(size());
   SbVec3f *pts= coords_->point.startEditing();
@@ -291,7 +266,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
     double w= CGAL::to_double(pt.weight());
     if (w < 0) w=0;
     double radius = std::sqrt(w);
-    pts[it-.index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
+    pts[it->index()].setValue(CGAL::to_double(pt.point().x()), CGAL::to_double(pt.point().y()),
 			      CGAL::to_double(pt.point().z()));
     if (vpts != NULL) vpts[cp].setValue(CGAL::to_double(pt.point().x()),
 					CGAL::to_double(pt.point().y()),
@@ -338,20 +313,20 @@ void SoQt_moving_weighted_points_3<T,G>::update_tree()
   int maxl=-1;
   int num=0;
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin(); it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
-    if (static_cast<int>(it-.index()) > maxl) maxl= it-.index();
+    if (static_cast<int>(it->index()) > maxl) maxl= it->index();
     ++num;
   }
 
   if (labels_ != NULL) {
-    guil_.root()->removeChild(labels_.get());
+    root()->removeChild(labels_.get());
     labels_=NULL;
   }
   if (points_ != NULL) {
-    guil_.root()->removeChild(points_.get());
+    root()->removeChild(points_.get());
     points_=NULL;
   }
   if (spheres_ != NULL) {
-    guil_.root()->removeChild(spheres_.get());
+    root()->removeChild(spheres_.get());
     spheres_=NULL;
   }
   if (maxl==-1) return;
@@ -374,11 +349,11 @@ void SoQt_moving_weighted_points_3<T,G>::update_tree()
     ak->setPart("drawStyle", style_.get());
     points_->setPart("appearance", ak.get());
 
-    guil_.root()->addChild(points_.get());
+    root()->addChild(points_.get());
   }
   else {
     spheres_= new SoGroup;
-    guil_.root()->addChild(spheres_.get());
+    root()->addChild(spheres_.get());
     SoQt_handle<SoMaterial> smat= new SoMaterial;
     smat->diffuseColor.setValue(.8, 0,0);
     if (mode_== TRANSPARENT_SPHERE) {
@@ -413,7 +388,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_tree()
       k->setPart("localTransform", tr.get());
       k->setPart("material", mat.get());
     }
-    guil_.root()->addChild(labels_.get());
+    root()->addChild(labels_.get());
   }
 }
 
@@ -466,7 +441,7 @@ void SoQt_moving_weighted_points_3<T,G>::set_point_size(double ps)
 template <class T, class G>
 void SoQt_moving_weighted_points_3<T,G>::write(std::ostream &out) const
 {
-  ik_.set_time(guil_.notifier()->current_time());
+  ik_.set_time(NT(CGAL_KINETIC_NOTIFIER(GUI)->current_time()));
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
     out << *it;

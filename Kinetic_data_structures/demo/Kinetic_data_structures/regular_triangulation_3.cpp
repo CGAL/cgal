@@ -1,6 +1,9 @@
+#define CGAL_KINETIC_CHECK_EXPENSIVE
+
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
 #include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <fstream>
+#include <control_coin.h>
 #ifdef CGAL_USE_COIN
 #include "include/SoQt_moving_points_3.h"
 #include "include/SoQt_triangulation_3.h"
@@ -21,7 +24,7 @@ int main(int argc, char *argv[])
 
     Traits tr(0,100000);
 
-    CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
+    CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
 
     Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
     Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);
@@ -31,14 +34,18 @@ int main(int argc, char *argv[])
     KDel::Handle kdel= new KDel(tr);
     CoinKDel::Handle cd= new CoinKDel(kdel, qtsim, qtmpt);
 
-    if (argc==1) {
-
+    if (argc==1) { 
+   
+        std::cout << "Reading from " << "data/weighted_points_3" << std::endl;
+        std::ifstream in("data/weighted_points_3");
+        in >> *tr.active_points_3_table_handle();
+        /*
       typedef Traits::Simulator::Time Time;
       typedef CGAL::Kinetic::Insert_event<Traits::Active_points_3_table> MOI;
 
       Traits::Kinetic_kernel::Function_kernel::Construct_function cf= tr.kinetic_kernel_object().function_kernel_object().construct_function_object();
 
-      tr.simulator_handle()->new_event(Time(0.000000), MOI(MP(MPP(cf(10, 1),
+      tr.simulator_handle()->new_event(Time(0.00000001), MOI(MP(MPP(cf(10, 1),
 								  cf(0, .1),
 								 cf(0)), cf(.1)) ,
 							   tr.active_points_3_table_handle()));
@@ -62,12 +69,16 @@ int main(int argc, char *argv[])
 							  tr.active_points_3_table_handle()));
 
       tr.simulator_handle()->set_current_event_number(4);
+        */
     } else {
       std::cout << "Reading from " << argv[1] << std::endl;
       std::ifstream in(argv[1]);
       in >> *tr.active_points_3_table_handle();
     }
     kdel->set_has_certificates(true);
+    std::cout << *kdel << std::endl;
+    std::cout << *tr.simulator_handle() << std::endl;
+    kdel->audit();
 
 
     std::cout << "This program displays a 3D kinetic Delaunay triangulation.\n";

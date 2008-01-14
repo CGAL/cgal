@@ -61,11 +61,14 @@ public:
   typedef Simulator_t Simulator;
 
   //! construct things
-  SoQt_widget_3(int argc, char *argv[], typename Simulator::Handle sh): base_(new Graphical_base(sh)), base_listener_(base_, this) {
+  SoQt_widget_3(int argc, char *argv[], typename Simulator::Handle sh):
+    base_(new Graphical_base(sh)),
+    window_l_(base_){
+    CGAL_KINETIC_INIT_LISTEN(Graphical_base, base_);
     main_window_= SoQt::init(argc, argv, argv[0]);
     viewer_= new SoQt_examiner_viewer(main_window_);
     SoQt::show(main_window_);
-    window_l_ = std::auto_ptr<Window_listener>(new Window_listener(viewer_->button_handler(), base_));
+    window_l_.set_notifier(viewer_->button_handler());
   }
 
   virtual ~SoQt_widget_3(){}
@@ -97,7 +100,7 @@ public:
     return  viewer_;
   }
 
-  class Listener_core
+  /*class Listener_core
   {
   public:
     typedef typename This::Handle Notifier_handle;
@@ -116,53 +119,62 @@ public:
     }
     SoQt_handle<SoSeparator> parent_;
   };
-
+  */
   //! Extend this object to listen for events.
   /*!  If you create an instance of this listener, you will
     automatically be subscribed.
   */
-  typedef Multi_listener<Listener_core> Listener;
-  friend class Multi_listener<Listener_core>;
+  //typedef Multi_listener<Listener_core> Listener;
+  //friend class Multi_listener<Listener_core>;
+
+  struct Listener_core{						
+    typedef typename This::Handle Notifier_handle;		
+    typedef enum {CURRENT_TIME} Notification_type;
+    SoSeparator* root() const {
+      return parent_.get();
+    }
+  private:
+    friend class SoQt_widget_3<Simulator_t>;
+    void set_root(SoSeparator* p) {
+      parent_=SoQt_handle<SoSeparator>(p);
+    }
+    SoQt_handle<SoSeparator> parent_;
+  };								
+public:								
+ 
+  typedef Multi_listener_base<Listener_core> Listener;
+  friend class Multi_listener_base<Listener_core> ;
+private:							
+ void new_listener(Listener *sk) {				
+   listeners_.push_back(sk);
+   SoSeparator* sep= new SoSeparator;
+   viewer_->new_subgraph(sep);
+   sk->set_root(sep);
+ }								
+ void delete_listener(Listener *kds) {				
+   for (unsigned int i=0; i< listeners_.size(); ++i){		
+     if (listeners_[i] == kds) {				
+       std::swap(listeners_[i], listeners_.back());		
+       listeners_.pop_back();	
+       viewer_->delete_subgraph(kds->root());
+       return;							
+     }								
+   }								
+ }								
+ std::vector<Listener*> listeners_;
 
 private:
-  class Base_listener: public Graphical_base::Listener
-  {
-  public:
-    Base_listener(typename Graphical_base::Handle &b, This *t): Graphical_base::Listener(b), t_(t){}
-    virtual void new_notification(typename Graphical_base::Listener::Notification_type nt) {
-      if (nt== Graphical_base::Listener::CURRENT_TIME) {
-	t_->update_coordinates();
-      }
-    }
-  protected:
-    This *t_;
-  };
-  friend class Base_listener;
+
+  CGAL_KINETIC_LISTEN1(Graphical_base, CURRENT_TIME, update_coordinates());
 
   void update_coordinates() {
-    for (typename std::set<Listener*>::iterator dit= drawable_.begin(); dit != drawable_.end(); ++dit) {
-      (*dit)->new_notification(Listener::CURRENT_TIME);
-    }
+    CGAL_KINETIC_MULTINOTIFY(CURRENT_TIME);
   }
-
-  void new_listener(Listener *t) {
-    drawable_.insert(t);
-    SoSeparator* sep= new SoSeparator;
-    viewer_->new_subgraph(sep);
-    t->set_root(sep);
-  }
-  void delete_listener(Listener *t) {
-    drawable_.erase(t);
-    viewer_->delete_subgraph(t->root());
-  }
-
 protected:
   typename Graphical_base::Handle base_;
   QWidget *main_window_;
-  std::set<Listener *> drawable_;
-  Base_listener base_listener_;
-  std::auto_ptr<Window_listener> window_l_;
   SoQt_examiner_viewer* viewer_;
+  Window_listener window_l_;
 };
 
 CGAL_KINETIC_END_NAMESPACE;

@@ -2,6 +2,7 @@
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <algorithm>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
+#include <control_coin.h>
 
 #ifdef CGAL_USE_COIN
 #include "include/SoQt_widget_3.h"
@@ -150,10 +151,10 @@ int main(int argc, char *argv[])
 
 
     if (verbose) {
-        CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::LOTS);
+      CGAL_SET_LOG_LEVEL(CGAL::Log::LOTS);
     }
     else {
-        CGAL_SET_LOG_LEVEL(CGAL::Kinetic::Log::NONE);
+      CGAL_SET_LOG_LEVEL(CGAL::Log::NONE);
     }
 
     if (file.empty()) {

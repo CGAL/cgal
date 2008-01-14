@@ -62,6 +62,7 @@ public:
 
   static Level level() {return state_.level_;}
   static void set_level(Level l) {state_.level_=l;}
+ 
 
   static std::ostream &stream(Level l) {
     if (is_output(l)) {
@@ -103,6 +104,7 @@ private:
 };
 
 
+
 #ifndef CGAL_DISABLE_LOGGING
 #define CGAL_LOG(level, expr) if (CGAL::Log::is_output(level))\
     { CGAL::Log::stream(level) << expr << std::flush;};
@@ -111,6 +113,7 @@ private:
 #define CGAL_ERROR(expr) std::cerr << expr << std::endl;
 #define CGAL_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
 #define CGAL_SET_LOG_LEVEL(level) CGAL::Log::set_level(level);
+#define CGAL_GET_LOG_LEVEL CGAL::Log::level();
 
 template <class T>
 inline int CGAL_assertion_strip_unsigned(const T&t) {
@@ -135,7 +138,17 @@ inline int CGAL_assertion_strip_unsigned(const T&t) {
 #define CGAL_check_bounds(a,b,c)
 #endif
 
+struct Set_log_state{
+  Set_log_state(Log::Level l) {
+    old_level_= CGAL_GET_LOG_LEVEL;
+    CGAL_SET_LOG_LEVEL(l);
+  }
+  ~Set_log_state() {
+    CGAL_SET_LOG_LEVEL(old_level_);
+  }
 
+  Log::Level old_level_;
+};
 
 CGAL_END_NAMESPACE
 #endif

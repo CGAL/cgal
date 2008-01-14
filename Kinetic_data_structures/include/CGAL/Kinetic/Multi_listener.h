@@ -179,7 +179,7 @@ private:							\
 
 
 
-#define CGAL_KINETIC_MULTILISTENER2(A,B) private:			\
+#define CGAL_KINETIC_MULTILISTENER2(A,B) private:               \
   struct Listener_core{						\
     typedef typename This::Handle Notifier_handle;		\
     typedef enum {A,B} Notification_type;			\

@@ -29,7 +29,7 @@ LIBPATH = \
 
 LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) 
+          $(CGAL_LDFLAGS) -lboost_thread-mt
 
 QT_LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
@@ -37,7 +37,7 @@ QT_LDFLAGS =  \
 
 CXXFLAGS_3D= $(CXXFLAGS)
 
-LDFLAGS_3D= -lCoin -lSoQt  $(QT_LDFLAGS) 
+LDFLAGS_3D=  -lCoin -lSoQt  $(QT_LDFLAGS)  -lboost_thread-mt
 
 DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 

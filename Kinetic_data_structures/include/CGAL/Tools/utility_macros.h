@@ -48,9 +48,22 @@
 
 #define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;} CGAL_EAT_SEMICOLON
 
+template <class T>
+struct Utility_macros_param_type {
+  typedef const T& P;
+  typedef const T& R;
+};
+
+template <>
+template <class T>
+struct Utility_macros_param_type<T*> {
+  typedef T* P;
+  typedef T* R;
+};
+
 #define CGAL_FIELDRW(type, name, var)		\
-  const type &name() const {return var;}	\
-  void set_##name(const type &k) {var=k;} CGAL_EAT_SEMICOLON
+  Utility_macros_param_type<type>::R  name() const {return var;}	\
+  void set_##name( Utility_macros_param_type<type>::P k) {var=k;} CGAL_EAT_SEMICOLON
 
 
 #define CGAL_OUTPUT(type)						\

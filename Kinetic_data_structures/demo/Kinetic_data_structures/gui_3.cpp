@@ -4,6 +4,7 @@
 #include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <CGAL/Random.h>
 #include <vector>
+#include <control_coin.h>
 
 #ifdef CGAL_USE_COIN
 #include "include/SoQt_widget_3.h"

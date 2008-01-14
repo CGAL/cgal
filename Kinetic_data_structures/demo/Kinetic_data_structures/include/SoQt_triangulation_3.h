@@ -73,25 +73,11 @@ protected:
 
   typedef typename KDel::Triangulation::Geom_traits::Point_3 Object_key;
 
-  // I just want the root()
-  class Guil: public Qtgui::Listener
-  {
-  public:
-    Guil(typename Qtgui::Handle& h): Qtgui::Listener(h){}
-    void new_notification(typename Qtgui::Listener::Notification_type ) {
-    }
-  };
+  void nothing() const{}
 
-  class KDell: public KDel::Listener
-  {
-  public:
-    KDell(typename KDel::Handle& h, This *t): KDel::Listener(h), t_(t){}
-    void new_notification(typename KDel::Listener::Notification_type ) {
-      t_->generate_geometry();
-    }
-  protected:
-    This *t_;
-  };
+  CGAL_KINETIC_LISTEN1(Qtgui, CURRENT_TIME, nothing());
+  CGAL_KINETIC_LISTEN1(KDel, TRIANGULATION, generate_geometry());
+
   typedef enum {NO_CERT=0, UNFAILING_CERT=1, CERT=2, NEXT_CERT=3, HIDE=-1}
     Color_id;
 
@@ -121,10 +107,10 @@ public:
 		       typename Qtgui::Handle qtgui,
 		       typename Qtmpt::Handle mps): coordinates_(mps->coordinate_node()),
 						     convex_hull_(SHOWN),
-						     facets_style_(SHOWN),
-						     kdell_(kdel, this),
-						     guil_(qtgui) {
-    set_scene_graph_parent(guil_.root());
+						     facets_style_(SHOWN){
+    CGAL_KINETIC_INIT_LISTEN(Qtgui, qtgui);
+    CGAL_KINETIC_INIT_LISTEN(KDel, kdel);
+    set_scene_graph_parent(root());
     //if (0) kk.orientation_3_object();
     // for some reason it does not parse if I remove kk above, I want to get rid of the variable not used warning
   }
@@ -160,12 +146,13 @@ protected:
   CGAL::SoQt_handle<SoCoordinate3> coordinates_;
   Draw_style convex_hull_;
   Draw_style facets_style_;
-  KDell kdell_;
-  Guil guil_;
+  SoSeparator* root() const {
+    return listener_Qtgui_.root();
+  }
 
   const typename KDel::Triangulation& triangulation() const
   {
-    return kdell_.notifier()->triangulation();
+    return CGAL_KINETIC_NOTIFIER(KDel)->triangulation();
   }
 
   void set_scene_graph_parent(SoSeparator* sep);
