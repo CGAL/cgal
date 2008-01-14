@@ -10,8 +10,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Straight_skeleton_2/include/CGAL/Straight_skeleton_2.h $
-// $Id: Straight_skeleton_2.h 32540 2006-07-14 14:13:45Z fcacciola $
+// $URL$
+// $Id$
 // 
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 
