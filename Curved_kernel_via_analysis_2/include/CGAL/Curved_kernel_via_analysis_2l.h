@@ -96,16 +96,16 @@ public:
         typename Point_2::Projected_point_2 p_pt = 
             construct_projected_point(x, c, arcno);
         int sheet = arc.sheet();
-        if (arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR) {
-            // TODO arc.base()
-            if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
-                CGAL::EQUAL) {
+        if (arc.is_finite(CGAL::ARR_MIN_END)) {
+            if (p_pt.compare_xy(
+                        arc.curve_end(CGAL::ARR_MIN_END).projected_point()
+                ) == CGAL::EQUAL) {
                 sheet = arc.sheet(CGAL::ARR_MIN_END);
             }
-        } else if (arc.location(CGAL::ARR_MAX_END)== CGAL::ARR_INTERIOR) {
-            // TODO arc.base()
-            if (p_pt.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
-                CGAL::EQUAL) {
+        } else if (arc.is_finite(CGAL::ARR_MAX_END)) {
+            if (p_pt.compare_xy(
+                        arc.curve_end(CGAL::ARR_MAX_END).projected_point()
+                ) == CGAL::EQUAL) {
                 sheet = arc.sheet(CGAL::ARR_MAX_END);
             }
         }
