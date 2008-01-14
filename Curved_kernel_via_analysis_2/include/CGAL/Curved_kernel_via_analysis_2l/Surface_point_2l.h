@@ -213,7 +213,7 @@ public:
     //!\name Comparisons
     //!@{
     
-    // TODO compare_xyz
+    // TODO compare_xyz (eriC)
     
     //!@}
 

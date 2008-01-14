@@ -105,7 +105,7 @@ protected:
 
 
 template < class CurvedKernel_2, 
-// TODO remove point parameter
+// TODO remove point parameter (eriC)
            class Point_2_ = typename CurvedKernel_2::Point_2 >
 class Construct_point_2 
 {
@@ -157,7 +157,7 @@ public:
     }
     
     //! constructs points at x 
-    // TODO need template parameter?
+    // TODO need template parameter? (eriC)
     template < class NewArc_2 >
     Point_2 operator()(
             const typename Point_2::X_coordinate_1& x, 
@@ -182,7 +182,7 @@ protected:
 
 
 template < class CurvedKernel_2, 
-// TODO remove Point_2 and Arc_2 parameter
+// TODO remove Point_2 and Arc_2 parameter (eriC)
            class Point_2_ = typename CurvedKernel_2::Point_2,
            class Arc_2_ = typename CurvedKernel_2::Arc_2 >
 class Construct_arc_2 
@@ -403,7 +403,7 @@ public:
      * \return true is the curve end is bounded, and false otherwise
      */
     result_type operator()(const Arc_2& cv, Arr_curve_end ce) const {
-        // TODO Is_bounded is not correct
+        // TODO Is_bounded is not correct (eriC)
         return (cv.location(ce) == CGAL::ARR_INTERIOR);
     }
 };
@@ -1608,7 +1608,7 @@ public:
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
         CGAL_precondition_code(
-                // TODO correctness?
+                // TODO correctness? (eriC)
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
@@ -1874,7 +1874,7 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    // TODO: move this to separate file Arr_kernel_traits_2.h ?
+    // FUTURE TODO: move this to separate file Arr_kernel_traits_2.h ?
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
