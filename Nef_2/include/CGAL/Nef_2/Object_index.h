@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#ifndef OBJECT_INDEX_H
-#define OBJECT_INDEX_H
+#ifndef CGAL_NEF_2_OBJECT_INDEX_H
+#define CGAL_NEF_2_OBJECT_INDEX_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
@@ -54,8 +54,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif //OBJECT_INDEX_H
-
-
-
-
+#endif //CGAL_NEF_2_OBJECT_INDEX_H
