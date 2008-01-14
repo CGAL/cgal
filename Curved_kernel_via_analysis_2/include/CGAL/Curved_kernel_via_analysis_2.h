@@ -98,7 +98,7 @@ public:
     //! default constructor
     Curved_kernel_via_analysis_2_base() :
         _m_kernel(Curve_kernel_2()), _m_interval_arcno_cache(this) {
-
+        
         // clear all caches before computing
         //Curve_kernel_2::get_curve_cache().clear();
         //Curve_kernel_2::get_curve_pair_cache().clear();
@@ -120,11 +120,11 @@ public:
     
     //! access to \c Curve_interval_arcno_cache
     const Curve_interval_arcno_cache& interval_arcno_cache() const {
-        return _m_interval_arcno_cache;
+        return this->_m_interval_arcno_cache;
     }
             
     //! returns internal \c Curve_kernel_2 instance
-    Curve_kernel_2 kernel() const {
+    const Curve_kernel_2& kernel() const {
         return _m_kernel;
     }
     
