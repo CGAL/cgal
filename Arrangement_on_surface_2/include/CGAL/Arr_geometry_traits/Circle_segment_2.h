@@ -18,8 +18,8 @@
 // Author(s)     : Ron Wein        <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_CIRCULAR_ARC_2_H
-#define CGAL_CIRCULAR_ARC_2_H
+#ifndef CGAL_CIRCLE_SEGMENT_2_H
+#define CGAL_CIRCLE_SEGMENT_2_H
 
 /*! \file
  * Header file for the _Circle_segment_2<Kernel, Filter> class.
