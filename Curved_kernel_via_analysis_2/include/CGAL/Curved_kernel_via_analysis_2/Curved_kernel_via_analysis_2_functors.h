@@ -142,44 +142,46 @@ public:
 //! \c x on curve \c c with arc number \c arcno
 //!
 //! implies no boundary conditions in x/y
-template < class CurvedKernel_2 >
-class Construct_point_on_arc_2 {
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-    
+template < class CurvedKernelViaAnalysis_2 >
+class Construct_point_on_arc_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+    
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef Point_2 result_type;
     
     //! standard constructor
-    Construct_point_on_arc_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Construct_point_on_arc_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
     }
     
     //! constructs points at x 
-    // TODO need template parameter? (eriC)
-    template < class NewArc_2 >
     Point_2 operator()(
             const typename Point_2::X_coordinate_1& x, 
             const typename Point_2::Curve_2& c, int arcno,
-            const NewArc_2& arc) {
+            const Arc_2& arc) {
         CGAL_assertion(c.id() == arc.curve().id());
         CGAL_assertion(arcno == arc.arcno(x));
 
-        typename CurvedKernel_2::Construct_point_2 construct_point =
-            _m_curved_kernel->construct_point_2_object();
-
+        typename Curved_kernel_via_analysis_2::Construct_point_2 
+            construct_point = this->_ckva()->construct_point_2_object();
+        
         Point_2 pt = construct_point(x, c, arcno);
         
         // here we can modify the point, if we want to
         return pt;
     }
-    
-protected:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
 };
-
 
  
 template < class CurvedKernelViaAnalysis_2 >
