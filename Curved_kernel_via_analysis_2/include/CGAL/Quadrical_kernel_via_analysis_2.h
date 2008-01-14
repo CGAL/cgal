@@ -23,6 +23,7 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_point_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
@@ -443,24 +444,38 @@ public:
     friend class Base::Rebind;
 };   
 
-// TODO derive functors from bases (eriC)
+#define CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES \
+    typedef typename Base::Curve_2 Curve_2; \
+    typedef typename Base::Point_2 Point_2; \
+    typedef typename Base::Arc_2 Arc_2; \
+    typedef typename Base::X_coordinate_1 X_coordinate_1; \
+
 
 namespace Quadrical_kernel_via_analysis_2_Functors {
 
-template <class CurvedKernel_2>
-class Compare_x_on_identification_2
-{
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-    
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_x_on_identification_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
     //! standard constructor
-    Compare_x_on_identification_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Compare_x_on_identification_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
     }
         
     /*!
@@ -472,30 +487,34 @@ public:
      *         EQUAL if x(p1) = x(p2).
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
-        return _m_kernel->kernel().compare_x_2_object()
+        return this->_ckva()->kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
-    
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
 };
 
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_xy_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
-template <class CurvedKernel_2>
-class Compare_xy_2
-{
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-    
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
     //! standard constructor
-    Compare_xy_2(CurvedKernel_2 *kernel) :
-        _m_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Compare_xy_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
     }
         
     /*!
@@ -506,83 +525,53 @@ public:
      *         SMALLER if x(p1) \<lex x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    template < class Point_2_ >
-    result_type operator()(const Point_2_& p1_, const Point_2_& p2_,
+    result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
         
-        if (dynamic_cast<const Point_2*>((&p1_))) {
-            const Point_2& p1 = *dynamic_cast<const Point_2*>((&p1_));
-            CGAL_precondition(dynamic_cast<const Point_2*>((&p2_)));
-            const Point_2& p2 = *dynamic_cast<const Point_2*>((&p2_));
-            
-            CGAL::Comparison_result res = 
-                (equal_x ? CGAL::EQUAL : 
-                 _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
-                );
-            
-            if (res != CGAL::EQUAL) {
-                // do nothing
-            } else if (p1.sheet() != p2.sheet()) {
-                res = CGAL::compare(p1.sheet(), p2.sheet());
-            } else {
-                res = _m_kernel->kernel().compare_xy_2_object()(
-                        p1.xy(), p2.xy(), true
-                );
-                if (p1.sheet() == 1 && p2.sheet() == 1) {
-                    res = -res;
-                }
-            }
-            return res;
+        CGAL::Comparison_result res = 
+            (equal_x ? CGAL::EQUAL : 
+             this->_ckva()->kernel().compare_x_2_object()(p1.x(), p2.x())
+            );
+        
+        if (res != CGAL::EQUAL) {
+            // do nothing
+        } else if (p1.sheet() != p2.sheet()) {
+            res = CGAL::compare(p1.sheet(), p2.sheet());
         } else {
-            CGAL_precondition(!dynamic_cast<const Point_2*>((&p1_)));
-            CGAL_precondition(
-                    dynamic_cast<const typename Point_2::Projected_point_2*>
-                    ((&p1_))
+            res = this->_ckva()->projected_kernel().compare_xy_2_object()(
+                    p1.projected_point(), p2.projected_point(), true
             );
-            const typename Point_2::Projected_point_2& p1 = 
-                *dynamic_cast<const typename Point_2::Projected_point_2*>
-                ((&p1_));
-            CGAL_precondition(!dynamic_cast<const Point_2*>((&p2_)));
-            CGAL_precondition(
-                    dynamic_cast<const typename Point_2::Projected_point_2*>
-                    ((&p2_))
-            );
-            const typename Point_2::Projected_point_2& p2 = 
-                *dynamic_cast<const typename Point_2::Projected_point_2*>
-                ((&p2_));
-            
-            CGAL::Comparison_result res = 
-                (equal_x ? CGAL::EQUAL : 
-                 _m_kernel->kernel().compare_x_2_object()(p1.x(), p2.x())
-                );
-            return res;
+            if (p1.sheet() == 1 && p2.sheet() == 1) {
+                res = -res;
+            }
         }
+        return res;
     }
-    
-private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_kernel;
 }; // Compare_xy_2
 
-
-template < class CurvedKernel_2 >
-class Compare_y_near_boundary_2 :  
-    public Curved_kernel_via_analysis_2_Functors::
-           Compare_y_near_boundary_2< CurvedKernel_2 >
-{
-   
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_y_near_boundary_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_near_boundary_2< CurvedKernel_2 > Base;
 
     //! standard constructor
-    Compare_y_near_boundary_2(CurvedKernel_2 *kernel) :
+    Compare_y_near_boundary_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
 
@@ -595,8 +584,7 @@ public:
      * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
      * boundary or on the right boundary of the parameter space.
      */
-    template < class Arc_2_ >
-    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
         
         CERR("\nquadric_compare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
@@ -604,76 +592,85 @@ public:
         
         CGAL::Comparison_result res = CGAL::EQUAL;
         
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        
         CGAL_precondition(
-                arc1.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
-                arc1.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
+                cv1.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
+                cv1.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
         );
         CGAL_precondition(
-                arc2.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
-                arc2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
+                cv2.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
+                cv2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
         );
 
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
         
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
             bool unbounded_end = false;
             if (ce == CGAL::ARR_MIN_END) {
-                unbounded_end = !(arc1.is_finite(CGAL::ARR_MIN_END));
+                unbounded_end = !(cv1.is_finite(CGAL::ARR_MIN_END));
             } else {
-                unbounded_end = !(arc1.is_finite(CGAL::ARR_MAX_END));
+                unbounded_end = !(cv1.is_finite(CGAL::ARR_MAX_END));
             }
             if (unbounded_end) {
-                res = Base::operator()(arc1, arc2, ce);
+                res = this->_ckva()->projected_kernel().
+                    compare_y_near_boundary_2_object()(
+                            cv1.projected_arc(), cv2.projected_arc(), ce
+                    );
                 if (s1 == 1) {
                     CGAL_assertion(s2 == 1);
                     res = -res;
                 }
             } else {
                 if (ce == CGAL::ARR_MIN_END) {
-                    res = 
-                        Base::_m_curved_kernel->compare_y_at_x_right_2_object()
-                        (arc1, arc2, arc1.curve_end(CGAL::ARR_MIN_END));
+                    res = this->_ckva()->projected_kernel().
+                        compare_y_at_x_right_2_object()(
+                                cv1.projected_arc(), cv2.projected_arc(), 
+                                cv1.projected_arc().curve_end(
+                                        CGAL::ARR_MIN_END
+                                )
+                        );
                 } else {
-                    res = 
-                        Base::_m_curved_kernel->compare_y_at_x_left_2_object()
-                        (arc1, arc2, arc1.curve_end(CGAL::ARR_MAX_END));
+                    res = this->_ckva()->projected_kernel().
+                        compare_y_at_x_left_2_object()(
+                                cv1.projected_arc(), cv2.projected_arc(), 
+                                cv1.projected_arc().curve_end(
+                                        CGAL::ARR_MAX_END
+                                )
+                        );
                 }
                 // already reversed the case s1 == s2 == 1
             }
         }
-
+        
         CERR("result: " << res << "\n");
         return res;
     }
 }; // Compare_y_near_boundary_2
 
-
-template < class CurvedKernel_2 >
-class Compare_y_at_x_2 :  
-    public Curved_kernel_via_analysis_2_Functors::
-           Compare_y_at_x_2< CurvedKernel_2 >
-{
-   
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_y_at_x_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_2< CurvedKernel_2 > Base;
-
     //! standard constructor
-    Compare_y_at_x_2(CurvedKernel_2 *kernel) :
+    Compare_y_at_x_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
 
@@ -686,26 +683,22 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    template < class Point_2_, class Arc_2_ >
-    result_type operator()(const Point_2_& p, const Arc_2_& cv) const {
+    result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
         CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n"); 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
-        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
-        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv)));
-        const Arc_2& arc = *dynamic_cast<const Arc_2*>((&cv));
-        
         // FUTURE TODO p can lie on boundary
 
-        int sp = pt.sheet();
-        int sa = arc.sheet();
+        int sp = p.sheet();
+        int sa = cv.sheet();
         
         if (sa != sp) {
             res = CGAL::compare(sp, sa);
         } else {
-            res = Base::operator()(p, cv);
+            res = this->_ckva()->projected_kernel().compare_y_at_x_2_object()(
+                    p.projected_point(), cv.projected_arc()
+            );
             if (sa == 1) {
                 CGAL_assertion(sp == 1);
                 res = -res;
@@ -717,24 +710,28 @@ public:
     }
 }; // Compare_y_at_x_2
 
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_y_at_x_left_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
-template < class CurvedKernel_2 >
-class Compare_y_at_x_left_2 :
-    public Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_left_2< CurvedKernel_2 > {
-    
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-    
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_left_2< CurvedKernel_2 > Base;
-    
     //! standard constructor
-    Compare_y_at_x_left_2(CurvedKernel_2 *kernel) :
+    Compare_y_at_x_left_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
 
@@ -751,29 +748,26 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    template < class Arc_2_, class Point_2_ >
-    result_type operator() (const Arc_2_& cv1, const Arc_2_& cv2,
-                            const Point_2_& p) const {
+    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+                            const Point_2& p) const {
 
         CERR("\nquadriccompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
         CGAL::Comparison_result res = CGAL::EQUAL;
 
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        //CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
-        //const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
-        
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
         
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = Base::operator()(cv1, cv2, p);
+            res = this->_ckva()->projected_kernel().
+                compare_y_at_x_left_2_object()(
+                        cv1.projected_arc(), 
+                        cv2.projected_arc(), 
+                        p.projected_point()
+                );
             if (s1 == 1) {
                 CGAL_assertion(s2 == 1);
                 res = -res;
@@ -785,23 +779,28 @@ public:
     }
 }; // Compare_y_at_x_2_left
 
-template < class CurvedKernel_2 >
-class Compare_y_at_x_right_2 :
-    public Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_right_2< CurvedKernel_2 > {
-    
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-    
+template < class CurvedKernelViaAnalysis_2l >
+class Compare_y_at_x_right_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_right_2< CurvedKernel_2 > Base;
-    
     //! standard constructor
-    Compare_y_at_x_right_2(CurvedKernel_2 *kernel) :
+    Compare_y_at_x_right_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
 
@@ -818,29 +817,26 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the right of p: SMALLER, LARGER or EQUAL.
      */
-    template < class Arc_2_, class Point_2_ >
-    result_type operator() (const Arc_2_& cv1, const Arc_2_& cv2,
-                            const Point_2_& p) const {
+    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+                            const Point_2& p) const {
 
         CERR("\nquadriccompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        //CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
-        //const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
-        
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
         
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = Base::operator()(cv1, cv2, p);
+            res = this->_ckva()->projected_kernel().
+                compare_y_at_x_right_2_object()(
+                        cv1.projected_arc(), 
+                        cv2.projected_arc(), 
+                        p.projected_point()
+                );
             if (s1 == 1) {
                 CGAL_assertion(s2 == 1);
                 res = -res;
@@ -852,23 +848,28 @@ public:
     }
 }; // Compare_y_at_x_2_right
 
+template < class CurvedKernelViaAnalysis_2l >
+class Do_overlap_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
-template < class CurvedKernel_2 >
-class Do_overlap_2 : public Curved_kernel_via_analysis_2_Functors::
-    Do_overlap_2< CurvedKernel_2 > {
-    
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-   
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type 
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-        Do_overlap_2< CurvedKernel_2 > Base;
-
     //! standard constructor
-    Do_overlap_2(CurvedKernel_2 *kernel) :
+    Do_overlap_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
     
@@ -879,18 +880,12 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the curves overlap; (false) otherwise.
      */
-    template < class Arc_2_ >
-    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
         CERR("\ndo_overlap\n");
         
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
 
         bool res = (s1 == s2);
         
@@ -904,22 +899,28 @@ public:
 }; // Do_overlap_2
 
 //!\brief Tests two objects, whether they are equal
-template < class CurvedKernel_2 >
-class Equal_2 : public Curved_kernel_via_analysis_2_Functors::
-    Equal_2< CurvedKernel_2 >
-{
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+template < class CurvedKernelViaAnalysis_2l >
+class Equal_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
-    typedef Curved_kernel_via_analysis_2_Functors::Equal_2< CurvedKernel_2 >
-    Base;
-
     //! standard constructor
-    Equal_2(CurvedKernel_2 *kernel) :
+    Equal_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
     
@@ -930,7 +931,7 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (_m_curved_kernel->compare_xy_2_object()(p1, p2) == 
+        return (this->_ckva()->compare_xy_2_object()(p1, p2) == 
                 CGAL::EQUAL);
     }
      
@@ -938,53 +939,50 @@ public:
      * Check if the two x-monotone curves are the same (have the same graph).
      * \param cv1 The first 
      *        curve(_m_curved_kernel->kernel().compare_xy_2_object()
-             (p1.xy(), p2.xy()));.
+     (p1.xy(), p2.xy()));.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    template < class Arc_2_ >
-    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
 
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
         
         bool res = (s1 == s2);
         
         if (res) {
-            res = Base::operator()(arc1, arc2);
+            res = this->_ckva()->projected_kernel().equal_2_object()(
+                        cv1.projected_arc(), cv2.projected_arc()
+            );
         }
         
         CERR("result: " << res << "\n");
         return res;
     }
-
-protected:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
 }; // Equal_2
 
+template < class CurvedKernelViaAnalysis_2l >
+class Are_mergeable_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
-template < class CurvedKernel_2 >
-class Are_mergeable_2 : public Curved_kernel_via_analysis_2_Functors::
-    Are_mergeable_2< CurvedKernel_2 >
-{
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-   
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef bool result_type;
     typedef Arity_tag<2> Arity;    
     
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Are_mergeable_2< CurvedKernel_2 > Base;
-    
     //! standard constructor
-    Are_mergeable_2(CurvedKernel_2 *kernel) :
+    Are_mergeable_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
     }
     
@@ -995,36 +993,30 @@ public:
      * \return (true) if the two arcs are mergeable, i.e., they are supported
      * by the same curve and share a common endpoint; (false) otherwise.
      */
-    template < class Arc_2_ >
-    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
         CERR("\nquadricsare_mergeable\n");
         
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        
-
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
 
         bool res = true;
         
-        if (s1 != s2 && arc1.curve().id() == arc2.curve().id()) {
+        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
             res = false;
-        } else if (Arc_2::can_intersect_only_at_curve_ends(arc1,arc2)) {
+        } else if (Arc_2::can_intersect_only_at_curve_ends(cv1,cv2)) {
             res = false;
         }
         
         if (res) {
-            res = Base::operator()(arc1, arc2);
+            res = this->_ckva()->projected_kernel().are_mergeable_2_object()(
+                    cv1.projected_arc(), cv2.projected_arc()
+            );
         }
         
         CERR("result: " << res << "\n");
         return res;
     }
-    
 };
 
 // TODO for Merge_2: Rewrite sheets? (eriC)
@@ -1032,25 +1024,29 @@ public:
 // TODO what to do with Is_bounded_2 and Is_on_2? (eriC)
 
 //! checks wether and how two arcs are intersection - with first filtering
-template < class CurvedKernel_2 >
-class Intersect_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Intersect_2< CurvedKernel_2 > {
-
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+template < class CurvedKernelViaAnalysis_2l >
+class Intersect_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
 public:
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Intersect_2< CurvedKernel_2 > Base;
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
-    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
     typedef Arity_tag<3> Arity;    
     
     //! standard constructor
-    Intersect_2(CurvedKernel_2 *kernel) :
+    Intersect_2(Curved_kernel_via_analysis_2l *kernel) :
         Base(kernel) {
-        CGAL_assertion(kernel != NULL);
     }
     
     /*!
@@ -1064,24 +1060,19 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template < class Arc_2_, class OutputIterator >
-    OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+    template < class OutputIterator >
+    OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
         CERR("\nquadric_2_intersect; cv1: " << cv1 
              << ";\n cv2:" << cv2 << "");
         
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
-        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
-        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
-        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-
-        int s1 = arc1.sheet();
-        int s2 = arc2.sheet();
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
 
         // handle special case of two segments on same curve and at endpoints
-        if ((s1 == s2 && arc1.curve().id() == arc2.curve().id()) || 
-            Arc_2::can_intersect_only_at_curve_ends(arc1, arc2)) {
+        if ((s1 == s2 && cv1.curve().id() == cv2.curve().id()) || 
+            Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
             
             // TODO intersect_at_endpoints(t, points); (eriC)
             
@@ -1089,7 +1080,10 @@ public:
             
             // call projected intersection
             std::list< CGAL::Object > tmp;
-            Base::operator()(arc1, arc2, std::back_inserter(tmp));
+            this->_ckva()->projected_kernel().intersect_2_object()(
+                    cv1.projected_arc(), cv2.projected_arc(), 
+                    std::back_inserter(tmp)
+            );
             for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
                  it != tmp.end(); it++) {
                 // TODO and lift objects! (eriC)
@@ -1101,21 +1095,29 @@ public:
 }; // Intersect_2;
 
 
-template < class CurvedKernel_2>
-class Make_x_monotone_2 
-{
-    typedef typename CurvedKernel_2::Curve_2 Curve_2;
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-   
+template < class CurvedKernelViaAnalysis_2l >
+class Make_x_monotone_2: public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
 public:
-    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type 
+    typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
     typedef Arity_tag<2> Arity;   
     
     //! standard constructor
-    Make_x_monotone_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Make_x_monotone_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
     } 
 
     /*!
@@ -1153,12 +1155,9 @@ public:
         // TODO maybe adapt it to use QdX::P_curve_2 (eriC)
         return oi;
     }
-    
-protected:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
 }; // Make_x_monotone_2
 
+#undef CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES
 
 } // Quadrical_kernel_via_analysis_2_functors
 
