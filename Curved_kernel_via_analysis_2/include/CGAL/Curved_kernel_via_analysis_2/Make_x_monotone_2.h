@@ -63,20 +63,22 @@ struct Make_x_monotone_2 :
     //! this instance's second template parameter
     typedef ConstructArc_2 Construct_arc_2;
 
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
+    Curve_kernel_2;
+    
+
     //! type of x-coordinate
-    typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
-        X_coordinate_1;
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
     //! type of a finite point on curve
-    typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
-        Xy_coordinate_2;
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
     
     //! type of 1-curve analysis
-    typedef typename Curved_kernel_via_analysis_2::Curve_analysis_2
-        Curve_analysis_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! type of vertical line
     typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
