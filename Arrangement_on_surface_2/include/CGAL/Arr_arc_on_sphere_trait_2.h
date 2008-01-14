@@ -882,7 +882,7 @@ public:
         *oi++ = make_object(c.source());
         return oi;
       }
-      std::list<CGAL::object> L;
+      std::list<CGAL::Object> L;
       m_traits->SK.make_theta_monotonic_3_object()(c,std::back_inserter(L));
       if (L.size==0)
         return oi;
