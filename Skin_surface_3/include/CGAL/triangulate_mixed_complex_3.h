@@ -1282,13 +1282,6 @@ orientation(Tmc_Cell_handle ch) {
                                             e_pts[2], e_pts[3]);
   }
   return o;
-//   return CGAL::orientation(ch->vertex(0)->point(), 
-//                            ch->vertex(1)->point(),
-//                            ch->vertex(2)->point(),
-//                            ch->vertex(3)->point());
-
-  // NGHK: Hack, how to use filtered points?
-  return POSITIVE;
 }
 
 template < 
