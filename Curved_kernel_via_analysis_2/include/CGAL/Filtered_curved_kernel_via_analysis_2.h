@@ -3,7 +3,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
+// $URL$
 // $Id$
 // 
 //
@@ -30,12 +30,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifndef CERR
+#define CKvA_DEBUG_PRINT_CERR 1
+
+#ifndef CKvA_CERR
 //#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
-#define CERR(x) std::cout << x
+#define CKvA_CERR(x) std::cout << x
 #else
-#define CERR(x) static_cast<void>(0)
+#define CKvA_CERR(x) static_cast<void>(0)
 #endif
 #endif
 
@@ -49,6 +51,34 @@ class May_have_intersection_2 {
 
     typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
+private:
+
+    typedef typename Arc_2::Curve_kernel_2 Curve_kernel_2;
+    
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
+    typedef typename Curve_kernel_2::X_real_traits_1 X_real_traits_1;
+    typedef typename Curve_kernel_2::Y_real_traits_1 Y_real_traits_1;
+    
+    typename X_real_traits_1::Lower_boundary x_low;
+    typename X_real_traits_1::Upper_boundary x_high;
+    typename X_real_traits_1::Refine x_refine;
+    
+    typename Y_real_traits_1::Lower_boundary y_low;
+    typename Y_real_traits_1::Upper_boundary y_high;
+    typename Y_real_traits_1::Refine y_refine;
+    
+    typedef typename X_coordinate_1::Rational Boundary;
+    
+    static Boundary& b() {
+        static boost::optional<Boundary> _b;
+        if(! _b) {
+            _b= typename CGAL::Fraction_traits<Boundary>::Compose()(1,100);
+        }
+        return _b.get();
+    }
 
 public:
     typedef bool result_type;
@@ -88,6 +118,119 @@ public:
         return false;
     }
 
+private:
+
+    std::pair<double,double> y_interval_for_arc_end(const Arc_2& arc,
+                                                    CGAL::Arr_curve_end end) 
+    const {
+        
+        double min, max;
+
+        switch(arc.location(end)) {
+            
+        case(CGAL::ARR_LEFT_BOUNDARY): {
+
+            NiX::Compactified<X_coordinate_1> asym_info 
+                = arc.curve().horizontal_asymptote_for_arc_to_minus_infinity
+                   (arc.arcno());
+            switch(asym_info.infty()) {
+                
+            case(NiX::MINUS_INFTY): {
+                min = max = -numeric_limits<double>::infinity();
+                break;
+            }
+            case(NiX::PLUS_INFTY): {
+                min = max = numeric_limits<double>::infinity();
+                break;
+            }
+            case(NiX::FINITE): {
+                while(x_high(asym_info.finite()) - 
+                      x_low(asym_info.finite()) > b()) {
+                    x_refine(asym_info.finite());
+                }
+                min = CGAL::to_interval(x_low(asym_info.finite())).first;
+                max = CGAL::to_interval(x_high(asym_info.finite())).second;
+                break;
+            }
+            }
+            break;
+        }
+        case(CGAL::ARR_RIGHT_BOUNDARY ): {
+            
+            NiX::Compactified<X_coordinate_1> asym_info 
+                = arc.curve().horizontal_asymptote_for_arc_to_plus_infinity
+                    (arc.arcno());
+            switch(asym_info.infty()) {
+                
+            case(NiX::MINUS_INFTY): {
+                min = max = -numeric_limits<double>::infinity();
+                break;
+            }
+            case(NiX::PLUS_INFTY): {
+                min = max = numeric_limits<double>::infinity();
+                break;
+            }
+            case(NiX::FINITE): {
+                while(x_high(asym_info.finite()) - 
+                      x_low(asym_info.finite()) > b()) {
+                    x_refine(asym_info.finite());
+                }
+                min = CGAL::to_interval(x_low(asym_info.finite())).first;
+                max = CGAL::to_interval(x_high(asym_info.finite())).second;
+                break;
+            }
+            }
+            break;
+        }
+        case(CGAL::ARR_TOP_BOUNDARY): {
+            min = max = numeric_limits<double>::infinity();
+            break;
+        }
+        case(CGAL::ARR_BOTTOM_BOUNDARY): {
+            min = max = -numeric_limits<double>::infinity();
+            break;
+        }
+        case(CGAL::ARR_INTERIOR): {
+            std::pair<double,double> approx 
+                = y_interval_for_point
+                    (arc.curve_end(end).xy());
+            min = approx.first;
+            max = approx.second;
+            break;
+        }
+        }
+
+        return std::make_pair(min,max);
+
+    }
+
+    std::pair<double,double> y_interval_for_point(const Xy_coordinate_2& y) const{
+
+        double min, max;
+
+        while(y_high(y) - y_low(y) > b()) {
+            y_refine(y);
+        }
+        min = CGAL::to_interval(y_low(y)).first;
+        max = CGAL::to_interval(y_high(y)).second;
+        return std::make_pair(min,max);
+    }
+
+    void update_y(double& y_min, double& y_max, 
+                  std::pair<double,double> y_iv) const {
+
+        if(y_iv.first < y_min) {
+            y_min = y_iv.first;
+        }
+        if(y_iv.second > y_max) {
+            y_max = y_iv.second;
+        }
+
+    }
+
+
+
+public:
 
     /*!\brief
      * Constructs for a given \c arc its covering approximation.
@@ -96,24 +239,74 @@ public:
     OutputIterator construct_covering_approximation(
             const Arc_2& arc, OutputIterator oi
     ) const {
-        
-        CERR("\nconstruct_covering_approximation; arc: " << arc 
+        CKvA_CERR("\nconstruct_covering_approximation; arc: " << arc 
              << ";\n cv:" << arc << "\n");
 
         // TODO use cache for this construction
-        
-        // TODO implement more sophisticated method(s) for covering approx
-        // - using a second resultant
-        // - using the curve-renderer
-        // - using ...
 
-        double x_max = numeric_limits<double>::infinity();
-        double y_max = x_max;
-        double x_min = -x_max;
-        double y_min = -y_min;
+        double x_min, x_max, y_min, y_max;
+        boost::optional<X_coordinate_1> left, right;
+
+
+        if( arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY ) {
+            x_min = -numeric_limits<double>::infinity();
+        } else {
+            left = arc.curve_end_x(CGAL::ARR_MIN_END);
+            while(x_high(left.get())-x_low(left.get()) > b()) {
+                x_refine(left.get());
+            }
+            x_min = CGAL::to_interval(x_low(left.get())).first;
+        }
+
+        if( arc.location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY ) {
+            x_max = numeric_limits<double>::infinity();
+        } else {
+            right = arc.curve_end_x(CGAL::ARR_MAX_END);
+            while(x_high(right.get())-x_low(right.get()) > b()) {
+                x_refine(right.get());
+            }
+            x_max = CGAL::to_interval(x_high(right.get())).second;
+        }
+
+        Curve_2 curve = arc.curve();
+        int arcno = arc.arcno();
+
+        int y_crit_begin = 0, y_crit_end = curve.num_y_critical_coordinates();
+
+        if(left) {
+            
+            while( y_crit_begin < y_crit_end && 
+                   curve.y_critical_coordinate(y_crit_begin) <= left.get()) {
+                y_crit_begin++;
+            }
+        }
+
+        if(right) {
+            
+            while( y_crit_end > y_crit_begin &&
+                   curve.y_critical_coordinate(y_crit_end-1) >= right.get() ) {
+                y_crit_end--;
+            }
+        }
+
+        y_min = numeric_limits<double>::infinity();
+        y_max = -numeric_limits<double>::infinity();
+
+        update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MIN_END));
+        update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MAX_END));
+
+        for(int i = y_crit_begin; i < y_crit_end; i++) {
+            
+            Xy_coordinate_2 curr_xy(curve.y_critical_coordinate(i),
+                                    curve,
+                                    arcno);
+            update_y(y_min,y_max,y_interval_for_point(curr_xy));
+
+        }
+
         CGAL::Bbox_2 bbox(x_min, y_min, x_max, y_max);
         
-        CERR("\nres: " << bbox << "\n");
+        CKvA_CERR("\nres: " << bbox << "\n");
         
         *oi++ = bbox;
         return oi;
@@ -161,7 +354,7 @@ public:
     OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
                               OutputIterator oi) const {
 
-        CERR("\nfiltered_intersect; cv1: " << cv1 
+        CKvA_CERR("\nfiltered_intersect; cv1: " << cv1 
              << ";\n cv2:" << cv2 << "");
 
         typename CurvedKernel_2::May_have_intersection_2
@@ -170,12 +363,12 @@ public:
         
         if (!may_have_intersection_2(cv1, cv2)) {
             // return no one
-            CERR("\nfilter: sucessfull\n");
+            CKvA_CERR("\nfilter: sucessfull\n");
             return oi;
         }
 
         // else 
-        CERR("\nfilter: failed\n");
+        CKvA_CERR("\nfilter: failed\n");
 
         // and call usual intersection
         std::list< CGAL::Object > tmp;
