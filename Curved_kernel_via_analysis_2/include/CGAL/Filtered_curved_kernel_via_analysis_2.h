@@ -45,6 +45,295 @@ namespace CGALi {
 
 namespace Filtered_curved_kernel_via_analysis_2_Functors {
 
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_xy_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Compare_xy_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Compare_xy_2< 
+    Curved_kernel_via_analysis_2 > Base;
+
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Compare_xy_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*!
+     * Compares two points lexigoraphically: by x, then by y.
+     * \param p1 The first point.
+     * \param p2 The second point.
+     * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
+     *         SMALLER if x(p1) \< x(p2), or if x(p1) = x(p2) and 
+     *                   y(p1) \< y(p2);
+     *         EQUAL if the two points are equal.
+     */
+    result_type operator()(const Point_2& p1, const Point_2& p2,
+                           bool equal_x = false) const {
+
+        CERR("\nfilteredcompare_xy_; p1: " << p1 << "; p2: " <<
+             p2 << "\n");
+        
+        Base base_compare_xy(this->_ckva());
+
+        result_type res = base_compare_xy(p1, p2, equal_x);
+
+        CERR("result: " << res << "\n");
+        
+        return res;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_y_near_boundary_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Compare_y_near_boundary_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Compare_y_near_boundary_2< 
+    Curved_kernel_via_analysis_2 > Base;
+    
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
+     * of the parameter space at x = +/- oo.
+     * \param xcv1 the first arc.
+     * \param xcv2 the second arc.
+     * \param ce the line end indicator.
+     * \return the second comparison result.
+     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+     * boundary or on the right boundary of the parameter space.
+     */
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
+                           CGAL::Arr_curve_end ce) const {
+        
+        CERR("\nfilteredcompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
+             cv2 << "; end: " << ce << "\n");
+
+        Base base_compare_y_near_boundary(this->_ckva());
+
+        result_type res = base_compare_y_near_boundary(cv1, cv2, ce);
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_y_at_x_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Compare_y_at_x_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_2< 
+    Curved_kernel_via_analysis_2 > Base;
+    
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*!
+     * Return the location of the given point with respect to the input curve.
+     * \param cv The curve.
+     * \param p The point.
+     * \pre p is in the x-range of cv.
+     * \return SMALLER if y(p) \< cv(x(p)), i.e. the point is below the curve;
+     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
+     *         EQUAL if p lies on the curve.
+     */
+    result_type operator()(const Point_2& p, const Arc_2& cv) const {
+     
+        CERR("\nfilteredcompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
+        
+        Base base_compare_y_at_x(this->_ckva());
+
+        result_type res = base_compare_y_at_x(p, cv);
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_y_at_x_left_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Compare_y_at_x_left_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_left_2< 
+    Curved_kernel_via_analysis_2 > Base;
+
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_left_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Compares the y value of two x-monotone curves immediately to the left
+     * of their intersection point. If one of the curves is vertical
+     * (emanating downward from p), it's always considered to be below the
+     * other curve.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param p The intersection point.
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographically) to its left.
+     * \return The relative position of cv1 with respect to cv2 immdiately to
+     *         the left of p: SMALLER, LARGER or EQUAL.
+     */
+    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+                            const Point_2& p) const {
+
+        CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
+            cv2 << "; p: " << p << "\n");
+
+        
+        Base base_compare_y_at_x_left(this->_ckva());
+
+        result_type res = base_compare_y_at_x_left(cv1, cv2, p);
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_y_at_x_right_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Compare_y_at_x_right_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_right_2< 
+    Curved_kernel_via_analysis_2 > Base;
+
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+    //! standard constructor
+    Compare_y_at_x_right_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Compares the y value of two x-monotone curves immediately to the right
+     * of their intersection point. If one of the curves is vertical
+     * (emanating downward from p), it's always considered to be below the
+     * other curve.
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param p The intersection point.
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographically) to its right.
+     * \return The relative position of cv1 with respect to cv2 immdiately to
+     *         the right of p: SMALLER, LARGER or EQUAL.
+     */
+    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+                            const Point_2& p) const {
+
+        CERR("\ncompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
+            cv2 << "; p: " << p << "\n");
+
+        
+        Base base_compare_y_at_x_right(this->_ckva());
+
+        result_type res = base_compare_y_at_x_right(cv1, cv2, p);
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
+
 //!\brief Tests two objects, whether two arcs can have an intersection
 template < class CurvedKernel_2 >
 class May_have_intersection_2 {
@@ -319,24 +608,32 @@ private:
 
 
 //! checks wether and how two arcs are intersection - with first filtering
-template < class CurvedKernel_2 >
+template < class CurvedKernelViaAnalysis_2 >
 class Intersect_2 : 
         public Curved_kernel_via_analysis_2_Functors::
-            Intersect_2< CurvedKernel_2 > {
-
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-
-public:
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Intersect_2< CurvedKernel_2 > Base;
-
-    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
-    typedef Arity_tag<3> Arity;    
+            Intersect_2< CurvedKernelViaAnalysis_2 > {
     
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Intersect_2< 
+    Curved_kernel_via_analysis_2 > Base;
+
     //! standard constructor
-    Intersect_2(CurvedKernel_2 *kernel) :
+    Intersect_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
-        CGAL_assertion(kernel != NULL);
     }
     
     /*!
@@ -350,18 +647,14 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template < class Arc_2_, class OutputIterator >
-    OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+    template < class OutputIterator >
+    OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
         CKvA_CERR("\nfiltered_intersect; cv1: " << cv1 
              << ";\n cv2:" << cv2 << "");
 
-        typename CurvedKernel_2::May_have_intersection_2
-            may_have_intersection_2 = 
-            Base::_m_curved_kernel->may_have_intersection_2_object();
-        
-        if (!may_have_intersection_2(cv1, cv2)) {
+        if (!this->_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
             // return no one
             CKvA_CERR("\nfilter: sucessfull\n");
             return oi;
@@ -372,12 +665,65 @@ public:
 
         // and call usual intersection
         std::list< CGAL::Object > tmp;
-        Base::operator()(cv1, cv2, std::back_inserter(tmp));
+        Base base_intersection(this->_ckva());
+        base_intersection(cv1, cv2, std::back_inserter(tmp));
         for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
              it != tmp.end(); it++) {
             *oi++ = *it;
         }
         return oi;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2 >
+class Is_on_2 : 
+        public Curved_kernel_via_analysis_2_Functors::
+            Is_on_2< CurvedKernelViaAnalysis_2 > {
+    
+public:
+    //! this instance template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+
+    //! type of point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+
+    //! type of arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! the bae type
+    typedef typename 
+    Curved_kernel_via_analysis_2_Functors::Is_on_2< 
+    Curved_kernel_via_analysis_2 > Base;
+
+    //! the result type
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Is_on_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Checks whether \c p lies on \c c 
+     * \param p1 The point to test
+     * \param p2 The curve
+     * \return (true) if the \c p lies on \c c
+     */
+    result_type operator()(const Point_2& p, const Curve_2& c) const {
+        
+        CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
+        
+        Base base_is_on(this->_ckva());
+        
+        result_type res = base_is_on(p, c);
+        
+        CERR("result: " << res << "\n");
+        
+        return res;
     }
 };
 
@@ -465,6 +811,19 @@ public:
 #define CGAL_FILTERED_CKvA_2_functor_cons(Y, Z) \
     CGAL_FILTERED_CKvA_2_functor_pred(Y, Z)
     
+    CGAL_FILTERED_CKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
+    
+    CGAL_FILTERED_CKvA_2_functor_pred(Compare_y_near_boundary_2, 
+                                      compare_y_near_boundary_2_object);
+
+    CGAL_FILTERED_CKvA_2_functor_pred(Compare_y_at_x_2, 
+                                      compare_y_at_x_2_object);
+    CGAL_FILTERED_CKvA_2_functor_pred(Compare_y_at_x_left_2, 
+                                      compare_y_at_x_left_2_object);
+    CGAL_FILTERED_CKvA_2_functor_pred(Compare_y_at_x_right_2, 
+                                      compare_y_at_x_right_2_object);
+
+    CGAL_FILTERED_CKvA_2_functor_pred(Is_on_2, is_on_2_object);
 
     CGAL_FILTERED_CKvA_2_functor_pred(
             May_have_intersection_2, may_have_intersection_2_object
