@@ -294,7 +294,7 @@ class Infimaximal_box<Tag_true, Kernel> {
 
   static Point_3 target_for_ray_shoot_on_minus_x_direction(Point_3 p) {
     CGAL_warning(is_standard(p));
-    return Point(RT(0,-1), RT(p.hy()[0]), RT(p.hz()[0]), RT(p.hw()[0]));
+    return Point_3(RT(0,-1), RT(p.hy()[0]), RT(p.hz()[0]), RT(p.hw()[0]));
   }
 
   static bool check_point_on_plane(Point_3 p, Plane_3 h) {
