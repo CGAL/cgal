@@ -16,6 +16,8 @@ Tuesday (Arc-Day)
 ==============================================================================
 // TODO Adaptions for QdX
 
+- sheet-numbers after split/trim etc ...
+
 - Construct_point_2 does not take surface as input, as ref surface is given
 
 - New Make_x_monotone_2 for qdx
