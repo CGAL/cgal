@@ -18,8 +18,8 @@
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 
-#ifndef GEN_POINT_LOCATION_H
-#define GEN_POINT_LOCATION_H
+#ifndef CGAL_NEF_2_GEN_POINT_LOCATION_H
+#define CGAL_NEF_2_GEN_POINT_LOCATION_H
 
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
@@ -567,4 +567,3 @@ node positions:
 }*/
 
 #endif // GEN_POINT_LOCATION_H
-

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
-#ifndef GENINFO_H
-#define GENINFO_H
+#ifndef CGAL_NEF_2_GENINFO_H
+#define CGAL_NEF_2_GENINFO_H
 
 #include <memory>
 
@@ -103,5 +103,3 @@ which is used to compile the code and thus the scheme enables platform
 independent programming.}*/
 
 #endif //GENINFO_H
-
-
