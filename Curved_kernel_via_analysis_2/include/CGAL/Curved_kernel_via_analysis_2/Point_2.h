@@ -274,6 +274,7 @@ private:
     //!\brief constructs a point with x-coordinate at infinity
     //! 
     //! \c inf_end defines whether the point lies at +/- infinity
+    // TODO add arc_rep* (eriC)
     Point_2(CGAL::Arr_curve_end inf_end) :
          Base(Rep(inf_end)) {
     }
@@ -282,6 +283,7 @@ private:
     //! x-coordinate \c x
     //!
     //! \c inf_end defines whether the point lies at +/- infinity
+    // TODO add arc_rep* (eriC)
     Point_2(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
          Base(Rep(x, inf_end)) {
     }
@@ -303,6 +305,7 @@ protected:
         return this->ptr()->_m_ckva;
     }
 
+    // TODO  remove (eriC)
     //! sets pointer to incident arc
     void _add_ref(const Arc_rep *arc_rep) const {
         this->ptr()->_m_arc_rep = arc_rep;
