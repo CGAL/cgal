@@ -186,6 +186,7 @@ public:
     
     //! type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+    // Remark: Point_2 is already Kernel_point_2 -> no need to introduce it
     
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -201,9 +202,6 @@ public:
     typedef typename Rep::Int_pair_map Int_pair_map;
 #endif
     
-    //! type of kernel point
-    typedef typename Curved_kernel_via_analysis_2::Point_2 Kernel_point_2;
- 
     //! type of kernel arc
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Kernel_arc_2;
     
