@@ -21,6 +21,10 @@
 #ifndef CGAL_TAUCS_SOLVER_TRAITS
 #define CGAL_TAUCS_SOLVER_TRAITS
 
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_TAUCS
+
 #include <CGAL/auto_link/TAUCS.h>
 #include <CGAL/Taucs_matrix.h>
 #include <CGAL/Taucs_vector.h>
@@ -234,5 +238,7 @@ private:
 
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_USE_TAUCS
 
 #endif // CGAL_TAUCS_SOLVER_TRAITS
