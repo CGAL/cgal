@@ -19,6 +19,7 @@
 #ifndef CGAL_ARRANGE_OFFSET_POLYGONS_2_H
 #define CGAL_ARRANGE_OFFSET_POLYGONS_2_H
 
+#include <boost/shared_ptr.hpp>
 #include <CGAL/Polygon_with_holes_2.h>
 
 CGAL_BEGIN_NAMESPACE
