@@ -20,10 +20,7 @@
 #ifndef CGAL_MIN_ELLIPSE_2_TRAITS_2_H
 #define CGAL_MIN_ELLIPSE_2_TRAITS_2_H
 
-
-#ifndef CGAL_OPTIMISATION_ELLIPSE_2_H
-#  include <CGAL/Min_ellipse_2/Optimisation_ellipse_2.h>
-#endif
+#include <CGAL/Min_ellipse_2/Optimisation_ellipse_2.h>
 
 CGAL_BEGIN_NAMESPACE
 

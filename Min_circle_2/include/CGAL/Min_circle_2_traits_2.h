@@ -20,12 +20,8 @@
 #ifndef CGAL_MIN_CIRCLE_2_TRAITS_2_H
 #define CGAL_MIN_CIRCLE_2_TRAITS_2_H
 
-// includes
-
-#ifndef CGAL_OPTIMISATION_CIRCLE_2_H
-#  include <CGAL/Min_circle_2/Optimisation_circle_2.h>
-#endif
-#  include <CGAL/predicates_on_points_2.h>
+#include <CGAL/Min_circle_2/Optimisation_circle_2.h>
+#include <CGAL/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
