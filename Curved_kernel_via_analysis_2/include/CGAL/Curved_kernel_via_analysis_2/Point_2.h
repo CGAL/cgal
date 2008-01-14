@@ -46,15 +46,7 @@ class Arc_2;
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ > 
 std::ostream& operator<< (std::ostream&,
-    const Point_2<CurvedKernelViaAnalysis_2, Rep_>&);
-
-template < class Point_2, class Rep >
-class Construct_point_from_rep_2 {
-public:
-    Point_2 operator()(Rep rep) const {
-        return Point_2(rep);
-    }
-};
+    const Point_2< CurvedKernelViaAnalysis_2, Rep_ >&);
 
 template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
@@ -64,7 +56,7 @@ public:
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
     //! myself
-    typedef Point_2_rep<Curved_kernel_via_analysis_2> Self;
+    typedef Point_2_rep< Curved_kernel_via_analysis_2 > Self;
 
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
@@ -135,7 +127,7 @@ public:
     // friends
     friend std::ostream& operator << <>(
             std::ostream&, 
-            const Point_2<Curved_kernel_via_analysis_2, Self>&);
+            const Point_2< Curved_kernel_via_analysis_2, Self >&);
 
 };
 
@@ -161,7 +153,7 @@ public:
     typedef Rep_ Rep;
 
     //! this instance itself
-    typedef Point_2<Curved_kernel_via_analysis_2, Rep> Self;
+    typedef Point_2< Curved_kernel_via_analysis_2, Rep > Self;
     
     //! type of underlying curve analysis
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
@@ -182,6 +174,9 @@ public:
     //! type of rep for arcs
     typedef CGALi::Arc_2_rep< Curved_kernel_via_analysis_2 > 
     Arc_rep;
+
+    //! type of kernel point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Kernel_point_2;
     
     //!@}
     
@@ -203,13 +198,17 @@ public:
         //! the rebound type
         typedef Point_2< New_curved_kernel_via_analysis_2, NewRep > Other;
         
+        //! the rebound point
+        typedef typename New_curved_kernel_via_analysis_2::Point_2 
+        Rebound_point_2;
+        
         /*!\brief
-         * constructs a point of type \c Other from the point \c pt 
+         * constructs a point of type \c Rebound_point_2 from the point \c pt 
          * of type \c Self.
          *
          * All known items of the base class rep will be copied.
          */
-        Other operator()(const Self& pt) {
+        Rebound_point_2 operator()(const Self& pt) {
             New_rep newrep;
             newrep._m_xy = pt.ptr()->_m_xy;
             newrep._m_x = pt.ptr()->_m_x;
@@ -217,9 +216,7 @@ public:
             //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
             newrep._m_location = pt.ptr()->_m_location;
             //newrep._m_ckva will be set in calling constructor
-            typedef Construct_point_from_rep_2< Other, New_rep> Construct_2;
-            Construct_2 construct;
-            return construct(newrep);
+            return Rebound_point_2(newrep);
         }
     };
     
@@ -254,14 +251,6 @@ protected:
         _set_ckva(kernel);
     }
     
-private:
-    /*!\brief
-     * constructs from a given represenation
-     */
-    Point_2(Rep rep) : 
-        Base(rep) {  
-    }
-    
     //!@}
 private:
     // FUTURE TODO allow to construct without curve, 
@@ -290,6 +279,20 @@ private:
 
     //!@}
 
+protected:
+    //!\name Constructors for rebind
+    //!@{
+    
+    /*!\brief
+     * constructs from a given represenation
+     */
+    // needed for rebind
+    Point_2(Rep rep) : 
+        Base(rep) {  
+    }
+    
+    //!@}
+    
 protected:    
     //!\name Pointers
     //!@{
@@ -431,21 +434,22 @@ public:
     //!
     //!\pre compared points have finite x-coordinates
     inline
-    CGAL::Comparison_result compare_x(const Point_2& q) const {
+    CGAL::Comparison_result compare_x(const Kernel_point_2& q) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, 
                                               compare_x_2, 
                                               compare_x_2_object);
-        return compare_x_2(*this, q);
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
     //!\brief compares two points lexicographical
     //!
     //!\pre compared points have finite x/y-coordinates
     inline
-    CGAL::Comparison_result compare_xy(const Point_2& q, 
+    CGAL::Comparison_result compare_xy(const Kernel_point_2& q, 
                                        bool equal_x = false) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
@@ -453,7 +457,10 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, 
                                               compare_xy_2, 
                                               compare_xy_2_object);
-        return compare_xy_2(*this, q, equal_x);
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        return compare_xy_2(
+                *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
+        );
     }
 
     //! checks if the point lies on a curve
@@ -466,7 +473,8 @@ public:
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, 
                                               is_on_2, 
                                               is_on_2_object);
-        return is_on_2(*this, curve);
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
 
 #undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT
@@ -475,37 +483,37 @@ public:
     //! comparison operators (only for finite points):
     //! equality
     inline
-    bool operator == (const Self& q) const { 
+    bool operator == (const Kernel_point_2& q) const { 
         return this->compare_xy(q) == CGAL::EQUAL;
     }
     
     //! inequality
     inline
-    bool operator != (const Self& q) const {
+    bool operator != (const Kernel_point_2& q) const {
         return this->compare_xy(q) != CGAL::EQUAL;
     }
     
     //! less than in (x,y) lexicographic order
     inline
-    bool operator <  (const Self& q) const {
+    bool operator <  (const Kernel_point_2& q) const {
         return this->compare_xy(q) == CGAL::SMALLER;
     }
     
     //! less-equal in (x,y) lexicographic order
     inline
-    bool operator <= (const Self& q) const {
+    bool operator <= (const Kernel_point_2& q) const {
         return this->compare_xy(q) != CGAL::LARGER;
     }
 
     //! greater than in (x,y) lexicographic order
     inline
-    bool operator >  (const Self& q) const {
+    bool operator >  (const Kernel_point_2& q) const {
         return this->compare_xy(q) == CGAL::LARGER;
     }
 
     //! greater-equal in (x,y) lexicographic order
     inline
-    bool operator >= (const Self& q) const {
+    bool operator >= (const Kernel_point_2& q) const {
         return this->compare_xy(q) != CGAL::SMALLER;
     }
     
@@ -587,8 +595,6 @@ public:
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
-    friend class Construct_point_from_rep_2< Self, Rep >;
-
 }; // class Point_2
 
 
@@ -596,13 +602,12 @@ public:
  * \brief 
  * output operator
  */
-template <class CurvedKernelViaAnalysis_2, class Rep_>
+template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::ostream& operator <<(std::ostream& os,
-    const Point_2<CurvedKernelViaAnalysis_2, Rep_>& pt) {
+    const Point_2< CurvedKernelViaAnalysis_2, Rep_ >& pt) {
 
     pt.write(os);
     return os;
-
 }
 
 } // namespace CGALi
