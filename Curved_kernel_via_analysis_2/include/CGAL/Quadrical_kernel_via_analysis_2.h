@@ -22,7 +22,11 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Curved_kernel_via_analysis_2l.h>
+#include <CGAL/Curved_kernel_via_analysis_2.h>
+
+#include <CGAL/Curved_kernel_via_analysis_2l/Surface_point_2l.h>
+#include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
+#include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
 #include <QdX/gfx_utils.h>
 
@@ -75,7 +79,7 @@ public:
     //!@}
 
 protected:
-    // TODO add data
+    // TODO add data (eriC)
     //! double approxximation
     boost::optional< QdX::Gfx_point_3 > _m_gfx_point;
     
@@ -93,9 +97,7 @@ class Quadric_point_2 :
         SurfacePair_3,
         CGALi::Quadric_point_2_rep< 
             QuadricalKernelViaAnalysis_2, SurfacePair_3 
-        > 
->
-{
+        > > {
 public:
     //! this instance's first template parameter
     typedef QuadricalKernelViaAnalysis_2 Quadrical_kernel_via_analysis_2;
@@ -111,7 +113,7 @@ public:
     typedef 
     CGALi::Quadric_point_2_rep< 
     Quadrical_kernel_via_analysis_2, Surface_pair_3 > Rep;
-    
+
     //! the base type
     typedef CGALi::Surface_point_2l< 
     Quadrical_kernel_via_analysis_2, Surface_pair_3 , Rep > 
@@ -132,15 +134,13 @@ public:
     Quadric_point_2() : 
         Base() {   
     }
-
-    /*!\brief
-     * constructs from a given represenation
-     */
-    Quadric_point_2(Rep rep) :
-        Base(rep) {
-    }
     
+    //!@}
+
 protected:
+    //!\name Usual constructors 
+    //!@{
+    
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
     Quadric_point_2(Quadrical_kernel_via_analysis_2 *kernel,
@@ -151,6 +151,18 @@ protected:
         CGAL_precondition(sheet < 2);
     }
     
+    //!@}
+    
+protected:
+    //!\name Constructors for rebind
+    //!@{
+    
+    /*!\brief
+     * constructs from a given represenation
+     */
+    Quadric_point_2(Rep rep) :
+        Base(rep) {
+    }
     //!@}
     
 public:
@@ -167,7 +179,11 @@ public:
     
     //!@}
 
+    //! for constructint points
     friend class Quadrical_kernel_via_analysis_2::Construct_point_2;
+
+    //! for rebind
+    friend class Base::Rebind;
 };
 
 /*!\relates Quadric_point_2
@@ -187,7 +203,6 @@ std::ostream& operator<< (
 }
 
 
-
 // pre-declaration
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadric_arc_2;
@@ -199,7 +214,7 @@ class Quadric_arc_2_rep :
 {
 
 protected:
-
+    
     //! this type's first template parameter
     typedef QuadricalKernelViaAnalysis_2 Quadrical_kernel_via_analysis_2;
 
@@ -217,13 +232,12 @@ protected:
     Base;
     
 protected:
-    // TODO add data
+    // TODO add data (eriC)
     //! gfx approx
 
     // befriending the handle
     friend class 
     Quadric_arc_2< Quadrical_kernel_via_analysis_2, Surface_pair_3 >;
-
 };
 
 
@@ -234,9 +248,7 @@ class Quadric_arc_2 :
         QuadricalKernelViaAnalysis_2, 
         SurfacePair_3,
         CGALi::Surface_arc_2l_rep< QuadricalKernelViaAnalysis_2, 
-        SurfacePair_3 > 
-    > 
-{
+        SurfacePair_3 > > {
 
 public:
 
@@ -273,7 +285,7 @@ public:
     //! type of surface point
     typedef typename Quadrical_kernel_via_analysis_2::Point_2 Quadric_point_2;
 
-    //!\name Constructors
+    //!\name Simple constructors
     //!@{
 
     /*!\brief
@@ -283,15 +295,12 @@ public:
         Base() {   
     }
 
-    // TODO check what to do with this c'tor
-    /*!\brief
-     * constructs an arc from a given represenation
-     */
-    Quadric_arc_2(Rep rep) : 
-        Base(rep) { 
-    }
-
+    //!@}
+    
 protected:
+    //!\name Constructors for non-z-vertical arcs
+    //!@{
+    
     /*!\brief
      * constructs an arc on \c sheet of surface \c surface, 
      * whose projection is \c arc with given \c source and \c target.
@@ -304,8 +313,8 @@ protected:
                   const Quadric_point_2& q,
                   const Surface_3& surface,
                   int sheet, int sheet_p, int sheet_q) :
-        Base(kernel, arc, p. q. surface, sheet, sheet_p, sheet_q) {
-#if 0 // TODO check what todo with this
+        Base(kernel, arc, p, q, surface, sheet, sheet_p, sheet_q) {
+#if 0 // TODO check what todo with this (eriC)
         if (seg.is_vertical() && level > 0) {
             this->ptr()->is_reversed_ = !this->ptr()->is_reversed_;
         }
@@ -334,7 +343,6 @@ protected:
         CGAL_precondition(sheet_p < 2);
     }
     
-
     /*!\brief
      * Standard constructor for a branch on xy-monotone part
      * of the surface.
@@ -351,9 +359,12 @@ protected:
         CGAL_precondition(sheet < 2);
     }
     
-    // constructors for vertical arcs
-    
-    //! represents a bounded vertical arc
+    //!@}
+
+    //!\name Constructors for vertical arcs
+    //!@{
+
+    //! Constructs a bounded vertical arc
     Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
                   const Quadric_point_2& p,
                   const Quadric_point_2& q,
@@ -362,7 +373,7 @@ protected:
 
     }
 
-    //! represents a vertical ray
+    //! Constructs a vertical ray
     Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
                   const Quadric_point_2 p,
                   CGAL::Arr_curve_end inf_end,
@@ -371,7 +382,7 @@ protected:
         
     }
 
-    //! represents a vertical branch
+    //! Constructs a vertical branch
     Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
                   const Projected_point_2& p,
                   const Surface_3& surface) :
@@ -380,9 +391,24 @@ protected:
     
     //!@}
 
+    // TODO add missing ctors (eriC)
+
+protected:
+    //!\name Constructors for rebind/replace_endpoints
+    //!@{
+    
+    /*!\brief
+     * constructs an arc from a given represenation
+     */
+    Quadric_arc_2(Rep rep) : 
+        Base(rep) { 
+    }
+
+    //!@}
+    
+public:
     //!\name Static members
     //!@{
-public:
     inline
     static bool can_intersect_only_at_curve_ends(const Quadric_arc_2& cv1,
                                                  const Quadric_arc_2& cv2) {
@@ -406,8 +432,18 @@ public:
 
     //!@}
 
+    // friends
+    //! for constructors
+    friend class Quadrical_kernel_via_analysis_2::Construct_arc_2;
+
+    //! for replace endpoints
+    friend class Base::Rebind::Other;
+
+    //! for rebind
+    friend class Base::Rebind;
 };   
 
+// TODO derive functors from bases (eriC)
 
 namespace Quadrical_kernel_via_analysis_2_Functors {
 
@@ -546,7 +582,8 @@ public:
     Compare_y_near_boundary_2< CurvedKernel_2 > Base;
 
     //! standard constructor
-    Compare_y_near_boundary_2(CurvedKernel_2 *) {
+    Compare_y_near_boundary_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
     }
 
     /*! Compare the y-coordinates of 2 lines at their ends near the boundary
@@ -581,8 +618,8 @@ public:
                 arc2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
         );
 
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
         
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
@@ -603,11 +640,11 @@ public:
                 if (ce == CGAL::ARR_MIN_END) {
                     res = 
                         Base::_m_curved_kernel->compare_y_at_x_right_2_object()
-                        (arc1, arc2, arc1._minpoint());
+                        (arc1, arc2, arc1.curve_end(CGAL::ARR_MIN_END));
                 } else {
                     res = 
                         Base::_m_curved_kernel->compare_y_at_x_left_2_object()
-                        (arc1, arc2, arc1._maxpoint());
+                        (arc1, arc2, arc1.curve_end(CGAL::ARR_MAX_END));
                 }
                 // already reversed the case s1 == s2 == 1
             }
@@ -636,7 +673,8 @@ public:
     Compare_y_at_x_2< CurvedKernel_2 > Base;
 
     //! standard constructor
-    Compare_y_at_x_2(CurvedKernel_2 *) {
+    Compare_y_at_x_2(CurvedKernel_2 *kernel) :
+        Base(kernel) {
     }
 
     /*!
@@ -693,7 +731,7 @@ public:
     typedef Arity_tag<3>            Arity;
     
     typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_2< CurvedKernel_2 > Base;
+    Compare_y_at_x_left_2< CurvedKernel_2 > Base;
     
     //! standard constructor
     Compare_y_at_x_left_2(CurvedKernel_2 *kernel) :
@@ -722,13 +760,12 @@ public:
 
         CGAL::Comparison_result res = CGAL::EQUAL;
 
-
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
         const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
         const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
-        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
+        //CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
+        //const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
         
         int s1 = arc1.sheet();
         int s2 = arc2.sheet();
@@ -736,7 +773,7 @@ public:
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = Base::operator()(cv1, cv2);
+            res = Base::operator()(cv1, cv2, p);
             if (s1 == 1) {
                 CGAL_assertion(s2 == 1);
                 res = -res;
@@ -761,7 +798,7 @@ public:
     typedef Arity_tag<3>            Arity;
     
     typedef Curved_kernel_via_analysis_2_Functors::
-    Compare_y_at_x_2< CurvedKernel_2 > Base;
+    Compare_y_at_x_right_2< CurvedKernel_2 > Base;
     
     //! standard constructor
     Compare_y_at_x_right_2(CurvedKernel_2 *kernel) :
@@ -789,14 +826,13 @@ public:
             cv2 << "; p: " << p << "\n");
 
         CGAL::Comparison_result res = CGAL::EQUAL;
-
-
+        
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
         const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
         const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
-        CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
-        const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
+        //CGAL_precondition(dynamic_cast<const Point_2*>((&p)));
+        //const Point_2& pt = *dynamic_cast<const Point_2*>((&p));        
         
         int s1 = arc1.sheet();
         int s2 = arc2.sheet();
@@ -804,7 +840,7 @@ public:
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = Base::operator()(cv1, cv2);
+            res = Base::operator()(cv1, cv2, p);
             if (s1 == 1) {
                 CGAL_assertion(s2 == 1);
                 res = -res;
@@ -906,7 +942,8 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
      */
-    result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+    template < class Arc_2_ >
+    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
 
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
         const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
@@ -919,7 +956,7 @@ public:
         bool res = (s1 == s2);
         
         if (res) {
-            res = Base::operator()(cv1, cv2);
+            res = Base::operator()(arc1, arc2);
         }
         
         CERR("result: " << res << "\n");
@@ -958,23 +995,30 @@ public:
      * \return (true) if the two arcs are mergeable, i.e., they are supported
      * by the same curve and share a common endpoint; (false) otherwise.
      */
-    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+    template < class Arc_2_ >
+    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
     
         CERR("\nquadricsare_mergeable\n");
         
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv1)));
+        const Arc_2& arc1 = *dynamic_cast<const Arc_2*>((&cv1));
+        CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
+        const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
+        
+
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
 
         bool res = true;
         
-        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
+        if (s1 != s2 && arc1.curve().id() == arc2.curve().id()) {
             res = false;
-        } else if (Arc_2::can_intersect_only_at_curve_ends(cv1,cv2)) {
+        } else if (Arc_2::can_intersect_only_at_curve_ends(arc1,arc2)) {
             res = false;
         }
         
         if (res) {
-            res = Base::operator()(cv1, cv2);
+            res = Base::operator()(arc1, arc2);
         }
         
         CERR("result: " << res << "\n");
@@ -983,9 +1027,9 @@ public:
     
 };
 
-// TODO for Merge_2: Rwrite sheets?
+// TODO for Merge_2: Rewrite sheets? (eriC)
 
-// TODO what to do with Is_bounded_2 and Is_on_2?
+// TODO what to do with Is_bounded_2 and Is_on_2? (eriC)
 
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernel_2 >
@@ -1032,14 +1076,14 @@ public:
         CGAL_precondition(dynamic_cast<const Arc_2*>((&cv2)));
         const Arc_2& arc2 = *dynamic_cast<const Arc_2*>((&cv2));
 
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int s1 = arc1.sheet();
+        int s2 = arc2.sheet();
 
         // handle special case of two segments on same curve and at endpoints
         if ((s1 == s2 && arc1.curve().id() == arc2.curve().id()) || 
             Arc_2::can_intersect_only_at_curve_ends(arc1, arc2)) {
             
-            // TODO intersect_at_endpoints< Algebraic_point_2 >(t, points);
+            // TODO intersect_at_endpoints(t, points); (eriC)
             
         } else if (s1 == s2) {
             
@@ -1048,7 +1092,7 @@ public:
             Base::operator()(arc1, arc2, std::back_inserter(tmp));
             for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
                  it != tmp.end(); it++) {
-                // TODO and lift objects!
+                // TODO and lift objects! (eriC)
                 // *oi++ = *it;
             }
         }
@@ -1084,7 +1128,7 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
+    template < class OutputIterator >
     OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
     
         *oi++ = CGAL::make_object(cv);
@@ -1099,14 +1143,14 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
+    template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
-        // TODO compute surface pair 
+        // TODO compute surface pair  (eriC)
         
         // lift segments
 
-        // TODO maybe adapt it to use QdX::P_curve_2
+        // TODO maybe adapt it to use QdX::P_curve_2 (eriC)
         return oi;
     }
     
@@ -1153,6 +1197,10 @@ public:
     Self;
     
     //!@}
+
+    //! type of projected kernel
+    typedef Curved_kernel_via_analysis_2< Curve_kernel_2 > Projected_kernel_2;
+
     
     //!\name embedded types  for \c Arrangement_2 package
     //!@{
@@ -1181,49 +1229,46 @@ public:
     //!\name embedded constructions and predicates 
     //!@{
     
+    //! type of Construct_point_2 functor
     typedef 
     CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l<Self> 
     Construct_point_2;
-
+    //! returns an instance of Construct_point_2 functor
     Construct_point_2 construct_point_2_object() const { 
         return Construct_point_2(
                 (Quadrical_kernel_via_analysis_2 *)this
         ); 
     }
-
+    
+    //! type of Construct_projected_point_2 functor
     typedef 
-    CGALi::Curved_kernel_via_analysis_2_Functors::Construct_point_2<Self,
-       typename Point_2::Projected_point_2 > 
+    typename Projected_kernel_2::Construct_point_2 
     Construct_projected_point_2;
     
+    //! returns an instance of Construct_projected_point_2 functor
     Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return Construct_projected_point_2(
-                (Quadrical_kernel_via_analysis_2 *)this
-        ); 
+        return _m_projected_kernel.construct_point_2_object();
     }
 
+    //! type of Construct_arc_2 functor
     typedef 
     CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_arc_2l<Self> 
     Construct_arc_2;
-
+    //! returns an instance of Construct_arc_2 functor
     Construct_arc_2 construct_arc_2_object() const { 
         return Construct_arc_2(
                 (Quadrical_kernel_via_analysis_2 *)this
         ); 
     }
 
+    //! type of Construct_projected_arc_2 functor
     typedef 
-    CGALi::Curved_kernel_via_analysis_2_Functors::Construct_arc_2<Self,
-       typename Point_2::Projected_point_2,
-       typename Arc_2::Projected_arc_2 > 
+    typename Projected_kernel_2::Construct_arc_2 
     Construct_projected_arc_2;
-    
+    //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return Construct_projected_arc_2(
-                (Quadrical_kernel_via_analysis_2 *)this
-        ); 
+        return _m_projected_kernel.construct_arc_2_object();
     }
-
 
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
@@ -1253,8 +1298,20 @@ public:
                              compare_x_on_identification_2_object);
     
     CGAL_QKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
+    
+    CGAL_QKvA_2_functor_pred(Compare_y_near_boundary_2, 
+                             compare_y_near_boundary_2_object);
+    CGAL_QKvA_2_functor_pred(Compare_y_at_x_2, compare_y_at_x_2_object);
+    CGAL_QKvA_2_functor_pred(Compare_y_at_x_left_2, 
+                             compare_y_at_x_left_2_object);
+    CGAL_QKvA_2_functor_pred(Compare_y_at_x_right_2, 
+                             compare_y_at_x_right_2_object);
+    
+    CGAL_QKvA_2_functor_pred(Equal_2, equal_2_object);
 
     CGAL_QKvA_2_functor_cons(Intersect_2, intersect_2_object);
+
+    CGAL_QKvA_2_functor_pred(Are_mergeable_2, are_mergeable_2_object);
 
     CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
     
@@ -1265,8 +1322,8 @@ public:
    
 protected:
     //!\name Protected internal types
-
     //!@{
+    
     //! class collecting basic types
     typedef CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >
     Base_kernel;
@@ -1286,12 +1343,14 @@ public:
     //! default constructor
     Quadrical_kernel_via_analysis_2() :
         Base_kernel() {
+        _m_projected_kernel = Projected_kernel_2((this->kernel()));
     }
     
     //! standard constructor
     Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
         Base_kernel(),
         _m_reference(reference) {
+        _m_projected_kernel = Projected_kernel_2((this->kernel()));
     }
     
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
@@ -1299,12 +1358,19 @@ public:
                                     const Surface_3& reference) :
         Base_kernel(kernel),
         _m_reference(reference) {
+        _m_projected_kernel = Projected_kernel_2((this->kernel()));
     }
     
     //!@}
 
     //!\name Access members
     //!@{
+
+    // returns instance of projected kernel
+    inline
+    const Projected_kernel_2& projected_kernel() const {
+        return _m_projected_kernel;
+    }
 
     //! returns the reference surface
     inline
@@ -1316,6 +1382,8 @@ public:
 protected:
     //!\name Data members
     Surface_3 _m_reference;
+
+    Projected_kernel_2 _m_projected_kernel;
 
 }; // class Quadrical_kernel_via_analysis_2
 
