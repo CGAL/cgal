@@ -27,6 +27,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_3_AND_2_3_H
 #define CGAL_ALGEBRAIC_KERNEL_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_3_AND_2_3_H
 
+#include <vector>
+
 namespace CGAL {
   namespace AlgebraicSphereFunctors {
 
