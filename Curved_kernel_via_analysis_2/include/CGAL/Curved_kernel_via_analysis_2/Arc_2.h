@@ -227,7 +227,7 @@ public:
          */
         Other operator()(const Self& pt) {
             New_rep newrep;
-            // TODO fill in details
+            // TODO fill in details (eriC)
             return Other(newrep);
         }
     };
@@ -777,7 +777,7 @@ public:
      *         LARGER  if \c this lies to the right of cv2;
      *         EQUAL   in case of an overlap.
      */
-#if 0 // TODO activate cache again (in functor?)
+#if 0 // TODO activate cache again (in functor?) (Pavel)
     CGAL::Comparison_result compare_x_near_boundary(
             CGAL::Arr_curve_end end1,
             const Kernel_arc_2& cv2, CGAL::Arr_curve_end end2
@@ -853,7 +853,7 @@ public:
      * LARGER if y(p) > arc(x(p)), i.e. the point is above the arc;
      * EQUAL if p lies on the arc.
      */
-#if 0 // TODO activate cache again (in functor?)
+#if 0 // TODO activate cache again (in functor?) (Pavel)
     CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
         
         std::pair<typename Int_map::Hashed_iterator, bool> r =
@@ -1126,7 +1126,7 @@ public:
     bool intersect_left_of_point(const Kernel_arc_2& cv2, const Point_2& p, 
                                  Point_2& intersection) const {
         
-        // TODO rewrite intersect_left_of_point
+        // TODO rewrite intersect_left_of_point (Pavel)
         // use static member for Intersect, Left & Right
         // with parameters for direction and where to stop
         typedef std::vector<std::pair<Point_2, int> > Point_container;
@@ -1384,7 +1384,7 @@ protected:
             CGAL_precondition(cv_line.number_of_events() == 0 ||
                 !(inf_src && inf_tgt));
             for(int k = 0; k < cv_line.number_of_events(); k++) {
-            // TODO: replace by _compare_arc_numbers !!
+            // TODO: replace by _compare_arc_numbers !! (Pavel)
                 Xy_coordinate_2 tmp(x0, curve(), k);
                 bool res1 = true, res2 = true;
                 if(!inf_src)
@@ -1576,9 +1576,11 @@ protected:
             return CGAL::EQUAL;
         }
         if (locp == locq) {
-            if(locp != CGAL::ARR_INTERIOR)
+            if(locp != CGAL::ARR_INTERIOR) {
                 return CGAL::EQUAL; // both points are at the same inf in y
-            // compare only y-values; TODO: use _compare_arc_numbers instead ?
+            }
+            // compare only y-values; 
+            // TODO: use _compare_arc_numbers instead ? (Pavel)
             return _ckva()->kernel().compare_xy_2_object()(
                     p.xy(), q.xy(), true
             );
@@ -1631,13 +1633,13 @@ protected:
              ca_2.status_line_of_interval(0)
             );
         
-        
-        // compare only y-values; TODO: use _compare_arc_numbers instead ?
+        // compare only y-values; 
+        // TODO: use _compare_arc_numbers instead ? (Pavel)
         if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY &&
             location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY) {
             return Boundary(0);
         } else {
-            // TODO use functionality of AK_1 here!!!!
+            // TODO use functionality of AK_1 here!!!! (Pavel)
             
             if (location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR &&
                 location(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR) {
@@ -1861,7 +1863,7 @@ protected:
                 return false;
             }
             ///////////////////////////////////////
-            // TODO: overlapping of non-coprime vertical arcs
+            // TODO: overlapping of non-coprime vertical arcs (Pavel)
             ///////////////////////////////////////
             Kernel_arc_2::simplify(
                     *dynamic_cast< const Kernel_arc_2*>(this), cv2
@@ -2262,7 +2264,7 @@ protected:
         // grabbing all 2-curve events
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
-        // TODO: remove NiX !
+        // TODO: remove NiX ! (Pavel)
         bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
         
         for(int i = low_idx; i <= high_idx; i++) {
