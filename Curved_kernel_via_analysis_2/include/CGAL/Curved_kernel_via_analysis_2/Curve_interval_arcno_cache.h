@@ -44,20 +44,21 @@ struct Curve_interval_arcno_cache {
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+    Curve_kernel_2;
+
     //! type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
     
     //! type of 1-curve analysis
-    typedef typename Curved_kernel_via_analysis_2::Curve_analysis_2
-        Curve_analysis_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! type of x-coordinate
-    typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
-        X_coordinate_1;
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
     //! type of status line
-    typedef typename Curve_analysis_2::Status_line_1
-        Status_line_1;
+    typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
     
     //! event arc number descriptor: stores an arc number along with curve's
     //! end type (+/-oo or \c ARR_INTERIOR )
