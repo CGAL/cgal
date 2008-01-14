@@ -48,26 +48,8 @@ public:
     
     //!\name Global types
     //!@{
-
-    //! type of general planar curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
     
-    //! type of point's x-coordinate
-    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
-    
-    //! type of a finite point on curve
-    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
-    
-    //! type of boundary of coordinates
-    typedef typename Curve_kernel_2::Boundary Boundary;
-
-    //! provides analysis of a single curve
-    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
-    //! provides analysis of a pair of curves
-    typedef typename Curve_kernel_2::Curve_pair_analysis_2
-            Curve_pair_analysis_2;
-    
+public:
     //! tag specifies that "to the left of" comparisons supported
     typedef CGAL::Tag_true Has_left_category;
 
@@ -82,7 +64,9 @@ public:
 
     //!@}
 
-    //!\name Internal types
+public:
+    //!\name Caching
+    
     //!@{
     
     //! type of inverval arcno cache
@@ -90,8 +74,21 @@ public:
     Curve_interval_arcno_cache;
 
     //!@}
+    
+protected:
+    //!\name Internal types
+    //!@{
 
-
+    //! provides analysis of a single curve
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
+    
+    //! provides analysis of a pair of curves
+    typedef typename Curve_kernel_2::Curve_pair_analysis_2
+            Curve_pair_analysis_2;
+    
+    //!@}
+    
+public:
     //! \name Constructors
     //!@{
 
@@ -114,8 +111,7 @@ public:
     
     //!@}
 
-
-    //!\name underlying curve kernel
+    //!\name underlying curve kernel + caching
     //!@{
     
     //! access to \c Curve_interval_arcno_cache
@@ -147,7 +143,7 @@ protected:
 } // namespace CGALi
 
 
-// TODO documentation
+//!\brief kernel for unbounded planar curves, and points and arcs of them
 template < class CurveKernel_2 >
 class Curved_kernel_via_analysis_2 :
      public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
@@ -243,8 +239,7 @@ public:
 
 #undef CGAL_CKvA_2_functor_pred
 #undef CGAL_CKvA_2_functor_cons
-
-
+    
     //!@}
  
 }; // class Curved_kernel_via_analysis_2
