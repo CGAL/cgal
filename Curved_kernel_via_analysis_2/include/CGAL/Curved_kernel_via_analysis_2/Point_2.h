@@ -209,9 +209,7 @@ public:
         typedef NewRep New_rep;
 
         //! the rebound type
-        typedef 
-        Point_2< New_curved_kernel_via_analysis_2, NewRep > 
-        Other;
+        typedef Point_2< New_curved_kernel_via_analysis_2, NewRep > Other;
         
         /*!\brief
          * constructs a point of type \c Other from the point \c pt 
