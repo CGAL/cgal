@@ -190,13 +190,21 @@ public:
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
 
+#if 0 
+    // TODO put cache types to functors 
+    // (might be possible to add to base_functor)
+
     typedef typename Rep::Int_pair Int_pair;
 
     typedef typename Rep::Int_map Int_map;
     
     typedef typename Rep::Int_pair_map Int_pair_map;
+#endif
     
-    //! type of return type
+    //! type of kernel point
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Kernel_point_2;
+ 
+    //! type of kernel arc
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Kernel_arc_2;
     
     //!@}
@@ -218,18 +226,57 @@ public:
 
         //! the rebound type
         typedef Arc_2< New_curved_kernel_via_analysis_2, NewRep > Other;
+
+        //! surface point type
+        typedef typename Other::Point_2 Surface_point_2;
         
+        //! type of rebound arc
+        typedef typename New_curved_kernel_via_analysis_2::Arc_2 Rebound_arc_2;
+
         /*!\brief
-         * constructs a point of type \c Other from the point \c pt 
-         * of type \c Self.
+         * constructs supporing arc of type \c Rebound_arc_2 from the 
+         * (possible unbounded) \c arc
+         * of type \c Self and replaces \c min and \c max point by the 
+         * given instances.
          *
          * All known items of the base class rep will be copied.
          */
-        Other operator()(const Self& pt) {
+        Rebound_arc_2 operator()(const Self& pt, 
+                                 const Surface_point_2& min,
+                                 const Surface_point_2& max) {
             New_rep newrep;
             // TODO fill in details (eriC)
-            return Other(newrep);
+            return Rebound_arc_2(newrep);
         }
+
+        /*!\brief
+         * constructs supporting ray of type \c Rebound_arc_2 
+         * from the ray \c arc 
+         * of type \c Self and replaces the origin by the given instance.
+         *
+         * All known items of the base class rep will be copied.
+         */
+        Rebound_arc_2 operator()(const Self& pt,
+                                 const Surface_point_2& origin) {
+            New_rep newrep;
+            // TODO fill in details (eriC)
+            return Rebound_arc_2(newrep);
+        }
+        
+        /*!\brief
+         * constructs supporting branch of type \c Rebound_arc_2
+         * from the branch \c arc of type \c Self.
+         *
+         * All known items of the base class rep will be copied.
+         */
+        Rebound_arc_2 operator()(const Self& pt) {
+            New_rep newrep;
+            // TODO fill in details (eriC)
+            return Rebound_arc_2(newrep);
+        }
+
+    protected:
+        // TODO collect common assignments
     };
 
 public:
@@ -250,16 +297,9 @@ public:
         Base(static_cast<const Base&>(a)) {  
     }
 
-protected:    
-    /*!\brief
-     * constructs an arc from a given represenation
-     */
-    Arc_2(Rep rep) : 
-        Base(rep) { 
-        this->ptr()->fix_reps();
-    }
-    
     //!@}
+    
+protected:
     //!\name standard constructors for non-vertical arcs
     //!@{
     
@@ -485,6 +525,21 @@ protected:
     }
    
     //!@}
+
+protected:    
+    //!\name Constructor for replace endpoints + rebind
+    //!@{
+    
+    /*!\brief
+     * constructs an arc from a given represenation
+     */
+    Arc_2(Rep rep) : 
+        Base(rep) { 
+        this->ptr()->fix_reps();
+    }
+    
+    //!@}
+
 public:
     //!\name Destructors
     //!@{
@@ -2264,7 +2319,7 @@ protected:
         // grabbing all 2-curve events
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
-        // TODO: remove NiX ! (Pavel)
+        // TODO: remove NiX ! might replace by CurveKernel_2 functor(Pavel)
         bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
         
         for(int i = low_idx; i <= high_idx; i++) {
@@ -2374,7 +2429,7 @@ public:
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Are_mergeable_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Merge_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2);
-    
+
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
 }; // class Arc_2
