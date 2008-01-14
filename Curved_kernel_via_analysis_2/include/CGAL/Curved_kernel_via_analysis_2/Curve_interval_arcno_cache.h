@@ -192,7 +192,7 @@ private:
         
     //! maps from \c Status_line_1 id to a container of interval ->
     //! event arcnos 
-    // TODO: use hash instead ?? cache status lines by x-coordinate ?
+    // TODO: use hash instead ?? cache status lines by x-coordinate ? (Pavel)
     typedef std::map<int, Arcno_vector_pair> Interval_arcno_map;
     
     //! maps from \c Curve_2 id to \c Interval_arcno_map
