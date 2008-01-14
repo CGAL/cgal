@@ -142,7 +142,7 @@ public:
 
 public:
 
-    //!\name Constructors
+    //!\name Simple Constructors
     //!@{
 
     /*!\brief
@@ -152,15 +152,12 @@ public:
         Base() {   
     }
 
+    //!@}
 protected:
 
-    /*!\brief
-     * constructs from a given represenation
-     */
-    Surface_point_2l(Rep rep) :
-        Base(rep) {
-    }
-    
+    //!name Usual constructors
+    //!@{
+
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
     Surface_point_2l(Curved_kernel_via_analysis_2l *kernel,
@@ -178,9 +175,23 @@ protected:
         this->ptr()->_m_sheet = sheet;
     }
 
+    //!@}
+
+protected:
+
+    //!\name Constructor for rebind
+    //!@{
+    
+    /*!\brief
+     * constructs from a given represenation
+     */
+    Surface_point_2l(Rep rep) :
+        Base(rep) {
+    }
+
+    //!@}
+    
 public:
-
-
     //!\name Access functions
     //!@{
 
