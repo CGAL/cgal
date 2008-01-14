@@ -37,18 +37,12 @@ template < class CurvedKernelViaAnalysis_2, class Rep_ >
 class Point_2;
 
 template < class CurvedKernelViaAnalysis_2 >
-class Arc_2_base_rep;
+class Arc_2_rep;
 
 //! forward class declaration for befriending
 template < class CurvedKernelViaAnalysis_2, class Rep_ =
-    Arc_2_base_rep<CurvedKernelViaAnalysis_2> > 
+    Arc_2_rep< CurvedKernelViaAnalysis_2 > > 
 class Arc_2;
-
-//! forward class declaration for befriending
-template < class CurvedKernelViaAnalysis_2, class Arc_2_, class Rep_ =
-    Arc_2_base_rep<CurvedKernelViaAnalysis_2> > 
-class Arc_2_base;
-
 
 template < class CurvedKernelViaAnalysis_2, class Rep_ > 
 std::ostream& operator<< (std::ostream&,
@@ -66,42 +60,42 @@ template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
 {
 public:
-    // this instance's template parameter
+    //! this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
-    // myself
+    
+    //! myself
     typedef Point_2_rep<Curved_kernel_via_analysis_2> Self;
 
-    // type of x-coordinate
-    typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
-        X_coordinate_1;
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+    Curve_kernel_2;
+
+    //! type of x-coordinate
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
-    // type of a finite point on curve
-    typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
-        Xy_coordinate_2;
+    //! type of a finite point on curve
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
-    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2
-        Curve_2;
-
-    typedef CGALi::Arc_2_base_rep<Curved_kernel_via_analysis_2> 
-        Arc_2_base_rep;
+    //! type of supporting curve
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    
+    //! type of arc-rep
+    typedef CGALi::Arc_2_rep< Curved_kernel_via_analysis_2 >  Arc_2_rep;
         
-    // default constructor
+    //! default constructor
     Point_2_rep() :
         _m_arc_rep(NULL),
         _m_ckva(NULL) {
     }
     
-    // constructs a "finite" point on curve,
-    // implies CGAL::NO_BOUNDARY in x/y
+    //! constructs a "finite" point on curve,
+    //! implies CGAL::NO_BOUNDARY in x/y
     Point_2_rep(const Xy_coordinate_2& xy) : 
         _m_xy(xy), _m_arc_rep(NULL), _m_location(CGAL::ARR_INTERIOR),
         _m_ckva(NULL) {
-
-        
     }
 
-    // constructs a point on curve with y-coordinate at infinity
+    //! constructs a point on curve with y-coordinate at infinity
     Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
         _m_arc_rep(NULL),
         _m_ckva(NULL) {
@@ -110,7 +104,7 @@ public:
         _m_x = x;
     }
 
-    // constructs a point at +/-oo in x
+    //! constructs a point at +/-oo in x
     Point_2_rep(CGAL::Arr_curve_end inf_end) :
         _m_arc_rep(NULL),
         _m_ckva(NULL) {
@@ -128,7 +122,7 @@ public:
     boost::optional<X_coordinate_1> _m_x;
 
     // rep of incident arc
-    mutable const Arc_2_base_rep *_m_arc_rep;
+    mutable const Arc_2_rep *_m_arc_rep;
 
     // surface boundary type
     //mutable CGAL::Arr_boundary_type _m_boundary;
@@ -169,30 +163,28 @@ public:
     //! this instance itself
     typedef Point_2<Curved_kernel_via_analysis_2, Rep> Self;
     
-    //! type of x-coordinate
-    typedef typename Curved_kernel_via_analysis_2::X_coordinate_1
-        X_coordinate_1;
-    
-    //! type of a finite point on curve
-    typedef typename Curved_kernel_via_analysis_2::Xy_coordinate_2
-        Xy_coordinate_2;
-    
-    //! type of generic curve
-    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2::Curve_2 
-    Curve_2;
-    
     //! type of underlying curve analysis
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
     
+    //! type of x-coordinate
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
+    
+    //! type of a finite point on curve
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
+    
+    //! type of generic curve
+    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-
-    typedef CGALi::Arc_2_base_rep< Curved_kernel_via_analysis_2 > 
+    
+    //! type of rep for arcs
+    typedef CGALi::Arc_2_rep< Curved_kernel_via_analysis_2 > 
     Arc_rep;
-
+    
     //!@}
-
+    
 public:
     // Rebind
     /*!\brief
@@ -582,12 +574,11 @@ public:
   
     // friends ////////////////////////////////////////////////////////////////
 
-    //! befriending \c Arc_2_base_rep class
-    friend class Arc_2_base_rep< Curved_kernel_via_analysis_2 >;
+    //! befriending \c Arc_2_rep class
+    friend class Arc_2_rep< Curved_kernel_via_analysis_2 >;
 
     //! befriending the arc base
-    friend class Arc_2_base< Curved_kernel_via_analysis_2, 
-                             typename Curved_kernel_via_analysis_2::Arc_2 >;
+    friend class Arc_2< Curved_kernel_via_analysis_2 >;
 
     // befriending the functors
     
