@@ -104,23 +104,27 @@ protected:
 
 
 
-template < class CurvedKernel_2, 
-// TODO remove point parameter (eriC)
-           class Point_2_ = typename CurvedKernel_2::Point_2 >
-class Construct_point_2 
-{
-    typedef Point_2_ Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
-   
+template < class CurvedKernelViaAnalysis_2 >
+class Construct_point_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+    
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef Point_2 result_type;
-    typedef typename Point_2::X_coordinate_1 X_coordinate_1;
-    typedef typename Point_2::Curve_2 Curve_2;
 
     //! standard constructor
-    Construct_point_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Construct_point_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
     }
 
     //!\brief constructs a finite point with x-coordinate
@@ -128,13 +132,9 @@ public:
     //!
     //! implies no boundary conditions in x/y
     Point_2 operator()(const X_coordinate_1& x, const Curve_2& c, int arcno) {
-        Point_2 pt(_m_curved_kernel,x,c,arcno);
+        Point_2 pt(this->_ckva(), x, c, arcno);
         return pt;
     }
-    
-protected:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
 };
 
 
@@ -181,24 +181,28 @@ protected:
 };
 
 
-template < class CurvedKernel_2, 
-// TODO remove Point_2 and Arc_2 parameter (eriC)
-           class Point_2_ = typename CurvedKernel_2::Point_2,
-           class Arc_2_ = typename CurvedKernel_2::Arc_2 >
-class Construct_arc_2 
-{
-    typedef Arc_2_ Arc_2;
-    typedef Point_2_ Point_2;
-   
+ 
+template < class CurvedKernelViaAnalysis_2 >
+class Construct_arc_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
 public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+    
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
     typedef Arc_2 result_type;
-    typedef typename Point_2::X_coordinate_1 X_coordinate_1;
-    typedef typename Point_2::Curve_2 Curve_2;
 
     //! standard constructor
-    Construct_arc_2(CurvedKernel_2 *kernel) :
-        _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+    Construct_arc_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
     }
 
     //! constructing non-vertical arcs
@@ -214,7 +218,7 @@ public:
     //! \pre p.x() != q.x()
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
                      int arcno, int arcno_p, int arcno_q) {
-        Arc_2 arc(_m_curved_kernel, p, q, c, arcno, arcno_p, arcno_q);
+        Arc_2 arc(this->_ckva(), p, q, c, arcno, arcno_p, arcno_q);
         return arc;
     }
     
@@ -227,7 +231,7 @@ public:
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
                      const Curve_2& c, int arcno, int arcno_o) {
-        Arc_2 arc(_m_curved_kernel,origin, inf_end, c, arcno, arcno_o);
+        Arc_2 arc(this->_ckva(),origin, inf_end, c, arcno, arcno_o);
         return arc;
     }
 
@@ -243,7 +247,7 @@ public:
     Arc_2 operator()(const Point_2& origin, const X_coordinate_1& asympt_x, 
                      CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
                      int arcno_o) {
-        Arc_2 arc(_m_curved_kernel,
+        Arc_2 arc(this->_ckva(),
                   origin, asympt_x, inf_end, c, arcno, arcno_o);
         return arc;
     }
@@ -253,7 +257,7 @@ public:
      * with \c arcno (branch I)
      */
     Arc_2 operator()(const Curve_2& c, int arcno) {
-        Arc_2 arc(_m_curved_kernel, c, arcno);
+        Arc_2 arc(this->_ckva(), c, arcno);
         return arc;
     }
     
@@ -270,7 +274,7 @@ public:
                      CGAL::Arr_curve_end inf_end1, 
                      CGAL::Arr_curve_end inf_end2,
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(_m_curved_kernel,
+        Arc_2 arc(this->_ckva(),
                   asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
         return arc;
     }
@@ -287,7 +291,7 @@ public:
                      const X_coordinate_1& asympt_x,
                      CGAL::Arr_curve_end inf_endy, 
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(_m_curved_kernel, inf_endx, asympt_x, inf_endy, c, arcno);
+        Arc_2 arc(this->_ckva(), inf_endx, asympt_x, inf_endy, c, arcno);
         return arc;
     }
     
@@ -303,7 +307,7 @@ public:
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c) {
-        Arc_2 arc(_m_curved_kernel,p,q,c);
+        Arc_2 arc(this->_ckva(),p,q,c);
         return arc;
     }
     
@@ -317,7 +321,7 @@ public:
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
                      const Curve_2& c) {
         
-        Arc_2 arc(_m_curved_kernel, origin, inf_end, c);
+        Arc_2 arc(this->_ckva(), origin, inf_end, c);
         return arc;
     }
     
@@ -328,13 +332,9 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2 operator()(const X_coordinate_1& x, const Curve_2& c) {
-        Arc_2 arc(_m_curved_kernel, x, c);
+        Arc_2 arc(this->_ckva(), x, c);
         return arc;
     }
-    
-protected:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
 };
 
 
@@ -660,8 +660,8 @@ public:
              (p1.xy(), p2.xy(), equal_x));
     
         /*typename Curved_kernel_via_analysis_2::Int_pair pair(p1.id(), p2.id());
-        if(!_m_curved_kernel->_m_compare_xy_map.find(pair).second)
-            _m_curved_kernel->_m_compare_xy_map.insert(std::make_pair(pair, res));
+        if(!this->_ckva()->_m_compare_xy_map.find(pair).second)
+            this->_ckva()->_m_compare_xy_map.insert(std::make_pair(pair, res));
         else
             std::cerr << "precached compare_xy result\n";*/
         
@@ -1315,7 +1315,7 @@ public:
     /*!
      * Check if the two x-monotone curves are the same (have the same graph).
      * \param cv1 The first 
-     *        curve(_m_curved_kernel->kernel().compare_xy_2_object()
+     *        curve(this->_ckva()->kernel().compare_xy_2_object()
              (p1.xy(), p2.xy()));.
      * \param cv2 The second curve.
      * \return (true) if the two curves are the same; (false) otherwise.
