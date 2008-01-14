@@ -21,13 +21,14 @@
 //
 // Author(s)     : Oren Nechushtan
 
-
 #ifndef CGAL_STRAIGHT_2_STREAM_H
 #define CGAL_STRAIGHT_2_STREAM_H
 
-
+#include <CGAL/Straight_2.h>
 
 CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
 
 #ifndef CGAL_NO_OSTREAM_INSERT_STRAIGHT_2
 template <class R>
@@ -122,8 +123,8 @@ std:: istream& operator>>(std:: istream& is,Straight_2_<R>& cv)
 }
 #endif //CGAL_NO_ISTREAM_EXTRACT_STRAIGHT_2
 
+} // CGALi
+
 CGAL_END_NAMESPACE
-
-
 
 #endif // CGAL_STRAIGHT_2_STREAM_H
