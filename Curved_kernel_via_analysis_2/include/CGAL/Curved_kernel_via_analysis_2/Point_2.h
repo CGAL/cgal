@@ -184,6 +184,44 @@ public:
     Arc_rep;
 
     //!@}
+
+public:
+    // Rebind
+    /*!\brief
+     * An auxiliary structure for rebinding the point with a new rep
+     */
+    template < typename NewCKvA_2, typename NewRep >
+    class rebind
+    {
+    public:
+        //! this instance's first template parameter
+        typedef NewCKvA_2 New_curved_kernel_via_analysis_2;
+
+        //! this instance's second template parameter
+        typedef NewRep New_rep;
+
+        //! the rebound type
+        typedef 
+        Point_2< New_curved_kernel_via_analysis_2, NewRep > 
+        Other;
+        
+        /*!\brief
+         * constructs a point of type \c Other from the point \c pt 
+         * of type \c Self.
+         *
+         * All known items of the base class rep will be copied.
+         */
+        Other operator()(const Self& pt) {
+            New_rep newrep;
+            newrep._m_xy = pt.ptr()->_m_xy;
+            newrep._m_x = pt.ptr()->_m_x;
+            // TODO set arc_rep in rebind of arc!
+            //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
+            newrep._m_location = pt.ptr()->_m_location;
+            //newrep._m_ckva = pt.ptr()->_m_ckva;
+            return Other(newrep);
+        }
+    };
     
 public:
     //!\name public constructors
@@ -216,26 +254,29 @@ protected:
         _set_ckva(kernel);
     }
     
-#if 0 // TODO remove these constructors?
+#if 0 // TODO remove this constructor?
     //!\brief standard constructor: constructs a finite point on curve
     //!
     //! implies no boundary conditions in x/y
     explicit Point_2(const Xy_coordinate_2& p) : 
         Base(Rep(p)) {
     }
+#endif
 
+private:
     /*!\brief
      * constructs from a given represenation
      */
     Point_2(Rep rep) : 
         Base(rep) {  
     }
-#endif
     
     //!@}
 private:
-    // TODO allow to construct without curve, i.e, isolated points on toric
-    //      identifications -> do it also for arcs
+    // FUTURE TODO allow to construct without curve, 
+    // i.e, isolated points on toric identifications -> do it also for arcs
+    // FUTURE TODO parameter space in x/y (full set of tasks)
+    
     //!@{
     //!\name private constructors for special cases (points at infinity)   
 
@@ -287,7 +328,7 @@ public:
     //! returns whether the point is valid
     inline 
     bool is_finite() const {
-        // TODO on torus these points are also finite
+        // FUTURE TODO on torus all points are finite
         return this->ptr()->_m_arc_rep == NULL;
     }
 
@@ -355,10 +396,21 @@ public:
             this->ptr()->_m_arc_rep->_m_arcno);
     }
     
+    public: 
+    //!\name methods for location
+    //!@{
+    
+    /*! \brief
+     *  sets boundary type and location of a point in parameter space
+     */
+    void set_location(CGAL::Arr_parameter_space loc) const {
+        this->ptr()->_m_location = loc;
+    }
+    
     //! returns location of a point in parameter space
     inline CGAL::Arr_parameter_space location() const { 
         return this->ptr()->_m_location; 
-    }
+    } 
     
     //! checks if the point lies at x-infinity (x/y-coordinates are 
     //! inaccessible)
@@ -373,6 +425,9 @@ public:
                 location() == CGAL::ARR_TOP_BOUNDARY);
     }
 
+    //!@}      
+
+    
 #define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
     CGAL_precondition(_ckva() != NULL); \
     typename Curved_kernel_via_analysis_2::X Y = \
@@ -381,7 +436,8 @@ public:
     //!\brief compares x-coordinates of two points 
     //!
     //!\pre compared points have finite x-coordinates
-    virtual CGAL::Comparison_result compare_x(const Point_2& q) const {
+    inline
+    CGAL::Comparison_result compare_x(const Point_2& q) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
 
@@ -394,8 +450,9 @@ public:
     //!\brief compares two points lexicographical
     //!
     //!\pre compared points have finite x/y-coordinates
-    virtual CGAL::Comparison_result compare_xy(const Point_2& q, 
-                                               bool equal_x = false) const {
+    inline
+    CGAL::Comparison_result compare_xy(const Point_2& q, 
+                                       bool equal_x = false) const {
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
 
@@ -406,7 +463,8 @@ public:
     }
 
     //! checks if the point lies on a curve
-    inline bool is_on(
+    inline 
+    bool is_on(
             const typename Curved_kernel_via_analysis_2::Curve_2& curve
     ) const {
         CGAL_precondition(this->ptr()->_m_xy);
@@ -422,58 +480,43 @@ public:
 
     //! comparison operators (only for finite points):
     //! equality
+    inline
     bool operator == (const Self& q) const { 
         return this->compare_xy(q) == CGAL::EQUAL;
     }
     
     //! inequality
+    inline
     bool operator != (const Self& q) const {
         return this->compare_xy(q) != CGAL::EQUAL;
     }
     
     //! less than in (x,y) lexicographic order
+    inline
     bool operator <  (const Self& q) const {
         return this->compare_xy(q) == CGAL::SMALLER;
     }
     
     //! less-equal in (x,y) lexicographic order
+    inline
     bool operator <= (const Self& q) const {
         return this->compare_xy(q) != CGAL::LARGER;
     }
 
     //! greater than in (x,y) lexicographic order
+    inline
     bool operator >  (const Self& q) const {
         return this->compare_xy(q) == CGAL::LARGER;
     }
 
     //! greater-equal in (x,y) lexicographic order
+    inline
     bool operator >= (const Self& q) const {
         return this->compare_xy(q) != CGAL::SMALLER;
     }
     
     //!@}
     
-protected:
-public: // TODO remove public
-    //!\name private methods (provided access from Arc_2 class)
-    //!@{
-    
-    /*! \brief
-     *  sets boundary type and location of a point in parameter space
-     */
-    void set_location(CGAL::Arr_parameter_space loc) const {
-        // TODO add precondition
-        this->ptr()->_m_location = loc;
-    }
-
-protected:
-    //! \brief dumps boundary type (for debugging)
-    void _dump_boundary_type(std::ostream& os) const {
-        os << "loc=" << location();
-    }
-    
-    //!@}        
-
 public:
     
     //!\name IO
@@ -488,9 +531,7 @@ public:
         case ::CGAL::IO::PRETTY:
             os << "point@" << this->id() << "(";
             os << "sup@" << this->curve().id();
-            os << " ";
-            this->_dump_boundary_type(os);
-            os << "; ";
+            os << " " << this->location() << "; ";
             if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
                 this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
                 os << "x=" << NiX::to_double(this->x());
@@ -554,8 +595,6 @@ public:
 
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
-    
-    // FUTURE TODO parameter space in x/y (full set of tasks)
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
