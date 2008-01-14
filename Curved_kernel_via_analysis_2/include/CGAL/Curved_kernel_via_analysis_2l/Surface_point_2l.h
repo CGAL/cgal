@@ -54,12 +54,17 @@ public:
     //! type of base class
     typedef Point_2_rep< Curved_kernel_via_analysis_2l > Base;
     
+    //! type of projected kernel
+    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    Projected_kernel_2;
+    
+    //! type of projected point
+    typedef typename Projected_kernel_2::Point_2 Projected_point_2;
+
+
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
     
-    //! type of xy-coordinate
-    typedef typename Base::Xy_coordinate_2 Xy_coordinate_2;
-
     //!\name Constructors
     //!@{
 
@@ -68,12 +73,11 @@ public:
         Base(), _m_sheet(-1) {
     }
     
-    //! standard constructor 
-    Surface_point_2l_rep(const Xy_coordinate_2& xy) : Base(xy) {
-    }
-    
     //!@}
 public:
+    //! projected point
+    mutable Projected_point_2 _m_projected_point;
+    
     //! supporting surface
     mutable Surface_3 _m_surface;
     
@@ -94,9 +98,9 @@ template <
     CGALi::Surface_point_2l_rep< CurvedKernelViaAnalysis_2l, SurfacePair_3 >
  >
 class Surface_point_2l : 
-    public CGALi::Point_2< 
-        CurvedKernelViaAnalysis_2l, 
-        Rep_  >
+        public 
+        CurvedKernelViaAnalysis_2l::Projected_kernel_2::Point_2::
+        template rebind< CurvedKernelViaAnalysis_2l, Rep_  >::Other
 {
 public:
 
@@ -117,15 +121,23 @@ public:
     Surface_point_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Rep > 
     Self;
     
-    //! the base type
-    typedef CGALi::Point_2< Curved_kernel_via_analysis_2l, Rep > Base;
+    //! type of projected kernel
+    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    Projected_kernel_2;
     
-    //! type of planar point
-    typedef Base Projected_point_2;
+    //! type of projected point
+    typedef typename Projected_kernel_2::Point_2 Projected_point_2;
 
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
 
+    //! the rebinding
+    typedef typename Projected_point_2::template 
+    rebind< Curved_kernel_via_analysis_2l, Rep  > Rebind;
+
+    //! the base type
+    typedef typename Rebind::Other Base;
+    
     //!@}
 
 public:
@@ -155,10 +167,12 @@ protected:
                      const Projected_point_2& pt, 
                      const Surface_3& surface, 
                      int sheet) :
-        Base(pt) {
+        Base(Rebind()(pt)) {
         this->copy_on_write();
         
         this->_set_ckva(kernel);
+        
+        this->ptr()->_m_projected_point = pt;
         CGAL_precondition(sheet >= 0);
         this->ptr()->_m_surface = surface;
         this->ptr()->_m_sheet = sheet;
@@ -173,13 +187,15 @@ public:
     /*!\brief
      * returns projected point
      */
-    Projected_point_2 projected_point() const {
-        return static_cast< Projected_point_2 >(*this);
+    inline
+    const Projected_point_2& projected_point() const {
+        return this->ptr()->_m_projected_point;
     }
 
     /*\brief
      * returns the supporting surfaces of 3d-point
      */
+    inline
     Surface_3 surface() const {
         return this->ptr()->_m_surface;
     }
@@ -187,6 +203,7 @@ public:
     /*!\brief
      * returns the sheet number of the 3d-point
      */
+    inline
     int sheet() const {
         return this->ptr()->_m_sheet;
     }
