@@ -141,7 +141,6 @@ public:
     //! \pre p.x() != q.x()
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
                      int arcno, int arcno_p, int arcno_q) {
-        
         Arc_2 arc(_m_curved_kernel, p, q, c, arcno, arcno_p, arcno_q);
         return arc;
     }
@@ -244,7 +243,8 @@ public:
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
                      const Curve_2& c) {
-        Arc_2 arc(_m_curved_kernel,origin, inf_end, c);
+        
+        Arc_2 arc(_m_curved_kernel, origin, inf_end, c);
         return arc;
     }
     
