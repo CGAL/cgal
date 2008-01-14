@@ -54,6 +54,14 @@ template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::ostream& operator<< (std::ostream&,
     const Point_2<CurvedKernelViaAnalysis_2, Rep_>&);
 
+template < class Point_2, class Rep >
+class Construct_point_from_rep_2 {
+public:
+    Point_2 operator()(Rep rep) const {
+        return Point_2(rep);
+    }
+};
+
 template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
 {
@@ -218,8 +226,10 @@ public:
             // TODO set arc_rep in rebind of arc!
             //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
             newrep._m_location = pt.ptr()->_m_location;
-            //newrep._m_ckva = pt.ptr()->_m_ckva;
-            return Other(newrep);
+            //newrep._m_ckva will be set in calling constructor
+            typedef Construct_point_from_rep_2< Other, New_rep> Construct_2;
+            Construct_2 construct;
+            return construct(newrep);
         }
     };
     
@@ -581,22 +591,20 @@ public:
     friend class Arc_2_base< Curved_kernel_via_analysis_2, 
                              typename Curved_kernel_via_analysis_2::Arc_2 >;
 
-    //! befriending the functors
-
+    // befriending the functors
+    
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
     friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
     Z< Curved_kernel_via_analysis_2 >; \
     
-    
-    friend class Curved_kernel_via_analysis_2::Construct_point_2; 
-    friend class Curved_kernel_via_analysis_2_Functors:: 
-    Construct_point_2< Curved_kernel_via_analysis_2, Self >; 
-
+    CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
+
+    friend class Construct_point_from_rep_2< Self, Rep >;
 
 }; // class Point_2
 
