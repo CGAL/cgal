@@ -24,6 +24,7 @@
 #include <iostream>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Tools/Label.h>
+#include <CGAL/Tools/Counter.h>
 //#include <CGAL/Kinetic/Cartesian_static_converter.h>
 
 #define CGAL_MSA(Pred, pred) typedef Adaptor<typename SK::Pred##_2> Pred##_2; \
