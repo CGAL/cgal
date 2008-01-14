@@ -258,7 +258,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
         result_type res = false;
-        // TODO implement Is_on_2 with Curve_2 == Surface_3
+        // TODO implement Is_on_2 with Curve_2 == Surface_3 (eriC)
         CGAL_error_msg("Is_on_2 not implemented for Surfaces");
         return res;
     }
