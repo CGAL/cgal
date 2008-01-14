@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_POINT_WITH_SURFACE_INDEX_H
-#define CGAL_POINT_WITH_SURFACE_INDEX_H
+#ifndef CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_H
+#define CGAL_WEIGHTED_POINT_WITH_SURFACE_INDEX_H
 
 #include <CGAL/Point_traits.h>
 #include <boost/static_assert.hpp>
