@@ -19,9 +19,7 @@
 #ifndef CGAL_VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
 #define CGAL_VISIBILITY_COMPLEX_2_MATROIDAL_ITEMS_H
 
-#ifndef CGAL_VISIBILITY_COMPLEX_2_ITEMS_H
 #include <CGAL/Visibility_complex_2/Items.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 namespace Visibility_complex_2_details {
