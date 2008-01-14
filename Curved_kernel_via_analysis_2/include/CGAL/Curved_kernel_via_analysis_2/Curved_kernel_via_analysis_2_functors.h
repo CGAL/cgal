@@ -37,6 +37,7 @@ namespace CGALi {
 namespace Curved_kernel_via_analysis_2_Functors {
 
 template < class CurvedKernel_2, 
+// TODO remove point parameter
            class Point_2_ = typename CurvedKernel_2::Point_2 >
 class Construct_point_2 
 {
@@ -87,6 +88,7 @@ public:
     }
     
     //! constructs points at x 
+    // TODO need parameter?
     template < class NewArc_2 >
     Point_2 operator()(
             const typename Point_2::X_coordinate_1& x, 
@@ -110,6 +112,7 @@ protected:
 };
 
 template < class CurvedKernel_2, 
+// TODO remove Point_2 and Arc_2 parameter
            class Point_2_ = typename CurvedKernel_2::Point_2,
            class Arc_2_ = typename CurvedKernel_2::Arc_2 >
 class Construct_arc_2 
@@ -263,6 +266,14 @@ protected:
     //! pointer to \c CurvedKernel_2 ?
     CurvedKernel_2 *_m_curved_kernel;
 };
+
+// TODO introduce base functor
+
+
+
+
+
+
 
 
 template < class CurvedKernel_2 >
@@ -447,6 +458,7 @@ public:
 template <class CurvedKernel_2>
 class Compare_x_2
 {
+    typedef typename CurvedKernel_2::Point_2 Point_2;
     typedef typename CurvedKernel_2::Arc_2 Arc_2;
     
 public:
@@ -467,8 +479,7 @@ public:
      *         SMALLER if x(p1) \< x(p2);
      *         EQUAL if x(p1) = x(p2).
      */
-    template < class Point_2_ >
-    result_type operator()(const Point_2_ &p1, const Point_2_ &p2) const {
+    result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
         return _m_curved_kernel->kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
@@ -482,6 +493,9 @@ protected:
 template < class CurvedKernel_2 >
 class Compare_xy_2
 {
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
@@ -501,8 +515,7 @@ public:
      *                   y(p1) \< y(p2);
      *         EQUAL if the two points are equal.
      */
-    template < class Point_2_ >
-    result_type operator()(const Point_2_& p1, const Point_2_& p2,
+    result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
         result_type res = (_m_curved_kernel->kernel().compare_xy_2_object()
             (p1.xy(), p2.xy(), equal_x));
@@ -523,6 +536,9 @@ protected:
 
 template <class CurvedKernel_2>
 class Compare_x_near_boundary_2 {
+
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
 
 public:
     typedef CGAL::Comparison_result result_type;
@@ -546,8 +562,7 @@ public:
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the line xcv lies on a boundary.
      */
-    template < class Point_2_, class Arc_2_ >
-    result_type operator()(const Point_2_& p, const Arc_2_& cv,
+    result_type operator()(const Point_2& p, const Arc_2& cv,
                            CGAL::Arr_curve_end ce) const {
                    
         CERR("\ncompare_x_near_boundary: p: " << p << "\n cv: " <<
@@ -591,9 +606,8 @@ public:
      * \pre the ce1 end of the line xcv1 lies on a boundary.
      * \pre the ce2 end of the line xcv2 lies on a boundary.
      */
-    template < class Arc_2_ >
-    result_type operator()(const Arc_2_& cv1, CGAL::Arr_curve_end ce1,
-                           const Arc_2_& cv2, CGAL::Arr_curve_end ce2) const {
+    result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
+                           const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
        
         CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
@@ -696,7 +710,9 @@ protected:
 template < class CurvedKernel_2 >
 class Compare_y_near_boundary_2 
 {
-   
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
@@ -715,8 +731,7 @@ public:
      * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
      * boundary or on the right boundary of the parameter space.
      */
-    template < class Arc_2_ >
-    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
         
         CERR("\ncompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
@@ -744,7 +759,8 @@ protected:
 template < class CurvedKernel_2 >
 class Compare_y_at_x_2
 {
-public:
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
@@ -764,8 +780,7 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    template < class Point_2_, class Arc_2_ >
-    result_type operator()(const Point_2_& p, const Arc_2_& cv) const {
+    result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
         CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
         CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
@@ -873,6 +888,9 @@ protected:
 template < class CurvedKernel_2 >
 class Compare_y_at_x_left_2
 {
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
 public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
@@ -894,9 +912,8 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    template < class Arc_2_, class Point_2_ >
-    result_type operator() (const Arc_2_& cv1, const Arc_2_& cv2,
-                            const Point_2_& p) const {
+    result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
+                            const Point_2& p) const {
 
         CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
@@ -960,6 +977,8 @@ public:
 template < class CurvedKernel_2 >
 class Compare_y_at_x_right_2
 {
+    typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
    
 public:
     typedef CGAL::Comparison_result result_type;
@@ -982,9 +1001,8 @@ public:
      * \return The relative position of cv1 with respect to 
      * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
      */
-    template < class Arc_2_, class Point_2_ >
-    result_type operator()(const Arc_2_& cv1, const Arc_2_& cv2,
-                           const Point_2_& p) const {
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
+                           const Point_2& p) const {
         
         CERR("\ncompare_y_at_x_right; cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
@@ -1148,7 +1166,8 @@ protected:
 template < class CurvedKernel_2 >
 class Do_overlap_2
 {
-   
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    
 public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
@@ -1166,15 +1185,14 @@ public:
      * \param cv2 The second curve.
      * \return (true) if the curves overlap; (false) otherwise.
      */
-    template < class Arc_2_ >
-    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
         CERR("\ndo_overlap\n");
         if (cv1.is_identical(cv2)) {
             return true;
         }
             
-        Arc_2_::simplify(cv1, cv2);
+        Arc_2::simplify(cv1, cv2);
         // arcs with coprime support do not overlap    
         if (!cv1.curve().is_identical(cv2.curve())) {
             return false;
@@ -1244,6 +1262,7 @@ template < class CurvedKernel_2 >
 class Intersect_2  
 {
     typedef typename CurvedKernel_2::Point_2 Point_2;
+    typedef typename CurvedKernel_2::Arc_2 Arc_2;
 
 public:
     typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
@@ -1266,8 +1285,8 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template < class Arc_2_, class OutputIterator >
-    OutputIterator operator()(const Arc_2_& cv1, const Arc_2_& cv2,
+    template < class OutputIterator >
+    OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
         
         CERR("\nintersect; cv1: " << cv1 
@@ -1275,9 +1294,9 @@ public:
         
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        std::vector< Arc_2_ > common_arcs;
+        std::vector< Arc_2 > common_arcs;
         if (cv1._trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
-            typename std::vector< Arc_2_ >::const_iterator it;
+            typename std::vector< Arc_2 >::const_iterator it;
             for(it = common_arcs.begin(); it < common_arcs.end(); it++) {
                 *oi++ = CGAL::make_object(*it);
             }
@@ -1288,7 +1307,7 @@ public:
         typedef std::vector< Point_and_mult > Point_vector;
         Point_vector vec;
         typename Point_vector::const_iterator it;
-        Arc_2_::_intersection_points(cv1, cv2, std::back_inserter(vec));
+        Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
 
         //std::cout << "results\n";
         for (it = vec.begin(); it != vec.end(); it++) {
@@ -1370,9 +1389,8 @@ public:
      * \param c2 Output: The right resulting subcurve (p is its left endpoint)
      * \pre p lies on cv but is not one of its end-points.
      */
-    template < class Point_2_, class Arc_2_ >
-    void operator()(const Arc_2_& cv, const Point_2_ & p,
-                    Arc_2_& c1, Arc_2_& c2) const {
+    void operator()(const Arc_2& cv, const Point_2 & p,
+                    Arc_2& c1, Arc_2& c2) const {
         
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
@@ -1611,7 +1629,7 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
+    template < class OutputIterator >
     OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
     
         *oi++ = CGAL::make_object(cv);
@@ -1627,7 +1645,7 @@ public:
      * \return The past-the-end iterator.
      */
     // TODO: move this to separate file Arr_kernel_traits_2.h ?
-    template<class OutputIterator>
+    template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
         CGAL::CGALi::Make_x_monotone_2<CurvedKernel_2>
