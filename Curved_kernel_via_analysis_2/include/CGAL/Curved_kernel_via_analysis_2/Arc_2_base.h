@@ -245,7 +245,7 @@ protected:
     Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
                const Point_2& p, const Point_2& q, const Curve_2& c,
                int arcno, int arcno_p, int arcno_q) : 
-            Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
+        Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
         _set_ckva(kernel);
 
@@ -270,7 +270,7 @@ protected:
      */
     Arc_2_base(Curved_kernel_via_analysis_2 *kernel,
                const Point_2& origin, CGAL::Arr_curve_end inf_end, 
-        const Curve_2& c, int arcno, int arcno_o) :
+               const Curve_2& c, int arcno, int arcno_o) :
         Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
         
         _set_ckva(kernel);
