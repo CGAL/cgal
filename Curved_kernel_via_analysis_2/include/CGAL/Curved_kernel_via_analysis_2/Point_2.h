@@ -213,7 +213,7 @@ public:
             New_rep newrep;
             newrep._m_xy = pt.ptr()->_m_xy;
             newrep._m_x = pt.ptr()->_m_x;
-            // TODO set arc_rep in rebind of arc!
+            // TODO set arc_rep in rebind of arc! (eriC)
             //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
             newrep._m_location = pt.ptr()->_m_location;
             //newrep._m_ckva will be set in calling constructor
@@ -254,15 +254,6 @@ protected:
         _set_ckva(kernel);
     }
     
-#if 0 // TODO remove this constructor?
-    //!\brief standard constructor: constructs a finite point on curve
-    //!
-    //! implies no boundary conditions in x/y
-    explicit Point_2(const Xy_coordinate_2& p) : 
-        Base(Rep(p)) {
-    }
-#endif
-
 private:
     /*!\brief
      * constructs from a given represenation
@@ -545,7 +536,7 @@ public:
             os << ", ";
             if (this->location() != CGAL::ARR_BOTTOM_BOUNDARY &&
                 this->location() != CGAL::ARR_TOP_BOUNDARY) {
-                os << "y=n/a"; // TODO give y-coordinate
+                os << "y=n/a"; // TODO give y-coordinate (eriC)
             } else {
                 if (this->location() == CGAL::ARR_BOTTOM_BOUNDARY) {
                     os << "y=-oo";
