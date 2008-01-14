@@ -35,10 +35,10 @@ namespace CGALi {
 template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3, class Rep_ >
 class Surface_arc_2l;
 
-// TODO documentation
+//! representation class for arc on a surface
 template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
 class Surface_arc_2l_rep : 
-        public Arc_2_base_rep< CurvedKernelViaAnalysis_2l > {
+        public Arc_2_rep< CurvedKernelViaAnalysis_2l > {
 
 public:
 
@@ -54,9 +54,18 @@ public:
     Self;
     
     //! the base type
-    typedef Arc_2_base_rep< Curved_kernel_via_analysis_2l > Base;
+    typedef Arc_2_rep< Curved_kernel_via_analysis_2l > Base;
     
+    //! type of projected kernel
+    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    Projected_kernel_2;
+    
+    //! type of projected point
+    typedef typename Projected_kernel_2::Point_2 Projected_point_2;
 
+    //! type of projected point
+    typedef typename Projected_kernel_2::Arc_2 Projected_arc_2;
+    
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
 
@@ -72,6 +81,12 @@ public:
     
     
 protected:
+    //! projected arc
+    mutable boost::optional< Projected_arc_2 > _m_projected_arc;
+
+    //! projected point (for z-vertical arcs)
+    mutable boost::optional< Projected_point_2 > _m_projected_point;
+
     //! supporting surface
     mutable Surface_3 _m_surface;
 
@@ -90,7 +105,6 @@ protected:
     // befriending the handle
     friend class 
     Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Self >;
-
 };
 
 
@@ -102,14 +116,9 @@ template <
     CGALi::Surface_arc_2l_rep< CurvedKernelViaAnalysis_2l, SurfacePair_3 >
 >
 class Surface_arc_2l :
-    public CGALi::Arc_2_base< 
-        CurvedKernelViaAnalysis_2l, 
-        //Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >, 
-        typename CurvedKernelViaAnalysis_2l::Arc_2,
-        Rep_ 
-    > 
-{
-
+        public CurvedKernelViaAnalysis_2l::Projected_kernel_2::Arc_2::
+        template rebind< CurvedKernelViaAnalysis_2l, Rep_ >::Other {
+    
 public:
 
     //!\name Public types
@@ -129,18 +138,15 @@ public:
     Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Rep >
     Self;
     
-    //! the base class
-    typedef CGALi::Arc_2_base< Curved_kernel_via_analysis_2l, 
-                               typename Curved_kernel_via_analysis_2l::Arc_2, 
-                               Rep > 
-    Base;
+    //! type of projected kernel
+    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    Projected_kernel_2;
     
-    //! type of planar point
-    typedef typename Curved_kernel_via_analysis_2l::Point_2::Base 
-    Projected_point_2;
-    
-    //! type of planar arc
-    typedef Base Projected_arc_2;
+    //! type of projected point
+    typedef typename Projected_kernel_2::Point_2 Projected_point_2;
+
+    //! type of projected point
+    typedef typename Projected_kernel_2::Arc_2 Projected_arc_2;
 
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
@@ -148,9 +154,16 @@ public:
     //! type of planar point
     typedef typename Curved_kernel_via_analysis_2l::Point_2 Surface_point_2l;
 
+    //! type of rebinding
+    typedef typename Projected_arc_2::
+    template rebind < Curved_kernel_via_analysis_2l, Rep_ > Rebind;
+    
+    //! the base class
+    typedef typename Rebind::Other Base;
+
     //!@}
     
-    //!\name Constructors
+    //!\name Constructors for non-vertical arcs
     //!@{
 
     /*!\brief
@@ -161,13 +174,6 @@ public:
     }
 
 protected:
-    
-    /*!\brief
-     * constructs an arc from a given represenation
-     */
-    Surface_arc_2l(Rep rep) : 
-        Base(rep) { 
-    }
     
     /*!\brief
      * Standard constructor for an bounded arc on xy-monotone part
@@ -184,38 +190,39 @@ protected:
                    const Surface_point_2l& q,
                    const Surface_3& surface,
                    int sheet, int sheet_p, int sheet_q) :
-        Base(arc) 
-        // TODO rebind, i.e., replace p and q in "arc"
-    {
+        Base(Rebind()(arc, p, q)) {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
-
-        // TODO remove location tests for contraction!
+        
+        this->ptr()->_m_projected_arc = arc;
+        
+        CGAL_precondition(arc.is_finite(CGAL::ARR_MIN_END));
         CGAL_precondition(
-                arc.location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR
-        );
-        CGAL_precondition(
-                p.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
+                p.projected_point().
+                compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
                 CGAL::EQUAL
         );
+        CGAL_precondition(arc.is_finite(CGAL::ARR_MAX_END));
         CGAL_precondition(
-                arc.location(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR
-        );
-        CGAL_precondition(
-                q.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
+                q.projected_point().
+                compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
                 CGAL::EQUAL
         );
         
-        //this->ptr()->_projected_segment = seg;
         this->ptr()->_m_surface = surface;
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
         this->ptr()->_m_sheet = sheet;
 
-        // TODO add precond CGAL_precondition(sheet < #sheets over min);
-        // TODO add precond CGAL_precondition(sheet < #sheets over max);
+        CGAL_precondition(sheet_p >= 0);
+        CGAL_precondition(sheet_q >= 0);
+        // TODO add precond CGAL_precondition(sheet < #sheets over min); (eriC)
+        // TODO add precond CGAL_precondition(sheet < #sheets over max); (eriC)
         CGAL_precondition_code(
-                // TODO add sanity checks for sheet_at_min/max wrt to sheet
-                // use "adjacency information"
+                // TODO add sanity checks for sheet_at_min/max wrt sheet (eriC
+                // use "adjacency information" 
         );
         this->ptr()->_m_sheet_min = sheet_p;
         this->ptr()->_m_sheet_max = sheet_q;
@@ -234,10 +241,13 @@ protected:
                    const Surface_point_2l& p,
                    const Surface_3& surface,
                    int sheet, int sheet_p) :
-        // TODO rebind, i.e., replace p
-        Base(arc) 
-    {
+        Base(Rebind()(arc, p)) {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
+        
+        this->ptr()->_m_projected_arc = arc;
         
         bool min_finite = 
             (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
@@ -251,12 +261,14 @@ protected:
         CGAL_precondition_code(
                 if (min_finite) {
                     CGAL_precondition(
-                            p.compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
+                            p.projected_point().
+                            compare_xy(arc.curve_end(CGAL::ARR_MIN_END)) ==
                             CGAL::EQUAL
                     );
                 } else {
                     CGAL_precondition(
-                            p.compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
+                            p.projected_point().
+                            compare_xy(arc.curve_end(CGAL::ARR_MAX_END)) ==
                             CGAL::EQUAL
                     );
                 }
@@ -265,12 +277,13 @@ protected:
         //this->ptr()->_projected_segment = seg;
         this->ptr()->_m_surface = surface;
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
         this->ptr()->_m_sheet = sheet;
 
-        // TODO add precond CGAL_precondition(sheet < #sheets over min/ax);
+        CGAL_precondition(sheet_p >= 0);
+        // TODO precond CGAL_precondition(sheet_p < #sheets over p.pp); (eriC)
         CGAL_precondition_code(
-                // TODO add sanity checks for sheet_at_min/max wrt to sheet
+                // TODO add sanity checks for sheet_at_min/max wrt sheet (eriC)
                 // use "adjacency information"
         );
         if (min_finite) {
@@ -282,7 +295,6 @@ protected:
         }
     }
     
-
     /*!\brief
      * Standard constructor for a branch on xy-monotone part
      * of the surface.
@@ -295,10 +307,13 @@ protected:
                    const Projected_arc_2& arc, 
                    const Surface_3& surface,
                    int sheet) :
-        // TODO rebind?
-        Base(arc) 
-    {
+        Base(Rebind()(arc)) {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
+        
+        this->ptr()->_m_projected_arc = arc;
 
         bool min_finite = 
             (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
@@ -309,31 +324,45 @@ protected:
         //this->ptr()->_projected_segment = seg;
         this->ptr()->_m_surface = surface;
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc);
+        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
+        
         this->ptr()->_m_sheet = sheet;
         this->ptr()->_m_sheet_min = sheet;
         this->ptr()->_m_sheet_max = sheet;
     }
     
-    // constructors for vertical arcs
+    //!@}
+
+    // TODO missing constructors for arcs whose projection is bounded (eriC)
+    // but whose ends (at least one or both) approach a z-vertical asympote
+    
+    //!\name Constructors for vertical arcs 
+    //!@{
+    
+    // TODO check constructors for vertical/unbounded arcs (eriC/Pavel)
+
+    // Remark for vertical arcs:
+    // Their base is not an arc, i.e., the projection of the arc is a 
+    // single point, so we have to deal with it throughout 
+    // the whole class, i.e., 
+    // This point must be used, as the default constructed Base is useless.
     
     //! represents a bounded vertical arc
     Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
                    const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3& surface) :
-        Base() 
-        // TODO base would be degenerate which is not allowed, so we have
-        // to deal with it throughout the whole class, i.e., 
-        // rep requires to store a single point p.base() 
-        // whenever Base is default constructed. 
-        // This point must be used, as the default constructed
-        // Base is useless.
-    {
+        Base() {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
         
-        CGAL_precondition(p.compare_xy(q) == CGAL::EQUAL);
-        // TODO check that surface has a vertical line through p and q
+        this->ptr()->_m_projected_point = p.projected_point();
+        
+        CGAL_precondition(p.projected_point().
+                          compare_xy(q.projected_point()) == CGAL::EQUAL);
+        // TODO check that surface has a vertical line through p and q (eriC)
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
     }
@@ -343,15 +372,18 @@ protected:
                    const Surface_point_2l p,
                    CGAL::Arr_curve_end inf_end,
                    const Surface_3& surface) :
-        Base() 
-        // TODO see above
-    {
+        Base() {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
+        
+        this->ptr()->_m_projected_point = p.projected_point();
 
-        // TODO chack that surface has a vertical line through p
+        // TODO check that surface has a vertical line through p (eriC)
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
-        // TODO make use of inf_end using private constructors of 
+        // TODO make use of inf_end using private constructors of  (eriC)
         // Surface_point_2l
     }
 
@@ -359,27 +391,39 @@ protected:
     Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
                    const Projected_point_2& p,
                    const Surface_3& surface) :
-        Base()
-        // TODO see above
-    {
+        Base() {
+        
+        this->copy_on_write();
+        
         _set_ckva(kernel);
+        
+        this->ptr()->_m_projected_point = p;
 
-        // TODO chack that surface has a vertical line through p
+        // TODO chack that surface has a vertical line through p (eriC)
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
-        // TODO set curve-ends to -oo and +oo using private constructors of 
-        // Surface_point_2l
+        // TODO set curve-ends to -oo and +oo using private constructors (eriC)
+        // of Surface_point_2l
     }
     
     //!@}
 
-public:
-    // TODO missing constructors for arcs whose projection is a bounded arc
-    // but whose ends (at least one or both) approach a z-vertical asympote
-
+    // TODO put all ordinary functors into Construct_arc_2l-functor
     
-    // TODO 
-    // access to curve_end(CGAL::Arr_curve_end);
+protected:
+    //!\name Constructors for rebind/replace_endpoints
+    //!@{
+    
+    /*!\brief
+     * constructs an arc from a given represenation
+     */
+    Surface_arc_2l(Rep rep) : 
+        Base(rep) { 
+    }
+
+    //!@}
+
+public:
 
     //!\name Access functions
     //!@{
@@ -388,7 +432,9 @@ public:
      * returns projected arc
      */
     Projected_arc_2 projected_arc() const {
-        return *dynamic_cast< const Projected_arc_2* >(this);
+        CGAL_precondition(!this->is_z_vertical());
+        CGAL_precondition(this->ptr()->_m_projected_arc);
+        return *(this->ptr()->_m_projected_arc);
     }
 
     /*\brief
@@ -426,10 +472,23 @@ public:
         return this->ptr()->_m_is_z_vertical;
     }
 
+    /*!\brief
+     * returns projected point of vertical arc
+     *
+     * \pre is_z_vertical()
+     */
+    Projected_point_2 projected_point() const {
+        CGAL_precondition(this->is_z_vertical());
+        CGAL_precondition(this->ptr()->_m_projected_point);
+        return *(this->ptr()->_m_projected_point);
+    }
+    
     //!@}
 
-};    
+    // TODO access to curve_end(CGAL::Arr_curve_end); (eriC)
+    
 
+};    
 
 
 
