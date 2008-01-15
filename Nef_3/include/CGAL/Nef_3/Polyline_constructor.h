@@ -13,8 +13,8 @@
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
-#ifndef CGAL_NEF_POLGON_CONSTRUCTOR_H
-#define CGAL_NEF_POLGON_CONSTRUCTOR_H
+#ifndef CGAL_NEF_POLYLINE_CONSTRUCTOR_H
+#define CGAL_NEF_POLYLINE_CONSTRUCTOR_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -86,4 +86,4 @@ class Polyline_constructor : public Modifier_base<typename Nef3::SNC_structure> 
 };
 
 CGAL_END_NAMESPACE
-#endif // CGAL_NEF_POLGON_CONSTRUCTOR_H
+#endif // CGAL_NEF_POLYLINE_CONSTRUCTOR_H
