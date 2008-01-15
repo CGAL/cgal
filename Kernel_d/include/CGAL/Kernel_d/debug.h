@@ -36,35 +36,35 @@
 #undef CGAL_KD_ASSERT
 
 #if CGAL_KD_DEBUG>0
+namespace CGAL {
+namespace Kernel_d_internal {
 static int debugthread=3141592;
-namespace {
-    struct Avoid_warning_for_unused_debugthread { static int x; };
-    int Avoid_warning_for_unused_debugthread::x = debugthread;
-}
+} // Kernel_d_internal 
+} // CGAL
 #endif
 
 #if CGAL_KD_DEBUG>0
-#define CGAL_KD_SETDTHREAD(l) debugthread=l
+#define CGAL_KD_SETDTHREAD(l) CGAL::Kernel_d_internal::debugthread=l
 #else
 #define CGAL_KD_SETDTHREAD(l)
 #endif
 
 #if CGAL_KD_DEBUG>0
-#define CGAL_KD_TRACE(t)   if((debugthread%CGAL_KD_DEBUG)==0)\
+#define CGAL_KD_TRACE(t)   if((CGAL::Kernel_d_internal::debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<t;std::cerr.flush()
 #else
 #define CGAL_KD_TRACE(t) 
 #endif
 
 #if CGAL_KD_DEBUG>0
-#define CGAL_KD_TRACEV(t)  if((debugthread%CGAL_KD_DEBUG)==0)\
+#define CGAL_KD_TRACEV(t)  if((CGAL::Kernel_d_internal::debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<#t<<" = "<<(t)<<std::endl;std::cerr.flush()
 #else
 #define CGAL_KD_TRACEV(t) 
 #endif
 
 #if CGAL_KD_DEBUG>0
-#define CGAL_KD_TRACEN(t)  if((debugthread%CGAL_KD_DEBUG)==0)\
+#define CGAL_KD_TRACEN(t)  if((CGAL::Kernel_d_internal::debugthread%CGAL_KD_DEBUG)==0)\
  std::cerr<<" "<<t<<std::endl;std::cerr.flush()
 #else
 #define CGAL_KD_TRACEN(t) 
