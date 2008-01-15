@@ -1814,6 +1814,7 @@ Installation/config/support/S07-BOOST_BIMAP -text
 Installation/config/support/S08a-BOOST_THREAD -text
 Installation/config/support/S08b-MS_BOOST_THREAD -text
 Installation/config/support/S08c-BOOST_THREAD_GCC -text
+Installation/config/support/S08d-BOOST_THREAD_MT -text
 Installation/config/support/S15-X11 -text
 Installation/config/support/S20-GMP -text
 Installation/config/support/S21-GMPXX -text
