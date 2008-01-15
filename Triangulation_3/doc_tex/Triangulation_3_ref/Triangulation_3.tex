@@ -958,11 +958,12 @@ see Chapter~\ref{ChapterGeomview} on \ccc{Geomview_stream}.
 \ccFunction{istream& operator>> (istream& is, Triangulation_3 &t);}
 {Reads the underlying combinatorial triangulation from \ccc{is} by
 calling the corresponding input operator of the triangulation data
-structure class, and the non-combinatorial information by calling the
-corresponding input operators of the vertex and the cell
-classes (such as point coordinates), which are provided by overloading
-the stream operators of the vertex and cell types.
-Assigns the resulting triangulation to \ccc{t}.}
+structure class (note that the infinite vertex is numbered 0), and the
+non-combinatorial information by calling the corresponding input
+operators of the vertex and the cell classes (such as point
+coordinates), which are provided by overloading the stream operators
+of the vertex and cell types.  Assigns the resulting triangulation to
+\ccc{t}.}
 
 \ccFunction{ostream& operator<< (ostream& os, const Triangulation_3 &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
