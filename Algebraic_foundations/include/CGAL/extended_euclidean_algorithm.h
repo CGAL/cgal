@@ -12,15 +12,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 // Author(s)     : Michael Hemmer, Dominik Hülse
 //
 // ============================================================================
 
-#ifndef NiX_EXTENDED_EUCLIDEAN_ALGORITHM_H
-#define NiX_EXTENDED_EUCLIDEAN_ALGORITHM_H 1
+#ifndef CGAL_EXTENDED_EUCLIDEAN_ALGORITHM_H
+#define CGAL_EXTENDED_EUCLIDEAN_ALGORITHM_H 1
 
 #include <CGAL/basic.h>
 
