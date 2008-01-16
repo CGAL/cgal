@@ -203,5 +203,26 @@ i.e., also to access $y$-coordinates at given $x$.
 %
 %\end{ccAdvanced}
 
+\ccMethod{CGAL::Object asymptotic_value_of_arc(CGAL::Arr_parameter_space loc, 
+  size_type arcno);}{
+  returns a CGAL::Object that encodes the asymptotic value of a curve-arc 
+  approaching the left or the right boundary ($loc$) of the underlying
+  parameter space. Allowed instantiations of the CGAL::Object are 
+  \ccc{Algebraic_real_1}, in case the x-asympote of the arc is finite,
+  or \ccc{CGAL::ARR_BOTTOM_BOUNDARY} and \ccc{CGAL::ARR_TOP_BOUNDARY} in case
+  the defined arc approaches the respective corners of the parameter space.
+  \ccPrecond{$loc$ is either \ccc{CGAL::ARR_LEFT_BOUNDARY} or 
+    \ccc{CGAL::ARR_RIGHT_BOUNDARY}}
+}
+
+Observe that there is no need to have an analogue member function
+for arcs approaching the top or bottom boundary, as in this cases it 
+suffices to call \ccc{AlgebraicKernel_2::Compare_x_2} to compare their 
+asymptotic values and by the $y$-per-$x$-view (perturbed infinite rectangle)
+only arcs approaching the left or right boundary can reach the corners of the
+rectangle. 
+In addition, by using the parameter space locations, 
+we decouple the interface from the unbounded plane. An example is a 
+two-dimensional arrangement embedded on a torus.
 
 \end{ccRefConcept}
