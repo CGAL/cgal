@@ -176,33 +176,37 @@ public:
   enum SOLUTION { is_vertex_, is_edge_, is_loop_ };
   // enumeration for internal use
 
-  Object_handle locate(const Sphere_point& p)
+  Object_handle locate(const Sphere_point& p, bool skipVEL = false)
   /*{\Mop returns a generic handle |h| to an object (vertex, halfedge,
   face) of the underlying plane map |P| which contains the point |p =
   s.source()| in its relative interior. |s.target()| must be a point
   such that |s| intersects the $1$-skeleton of |P|.}*/
   { CGAL_NEF_TRACEN("locate naivly "<< normalized(p));
     SVertex_iterator v;
-    CGAL_forall_svertices(v,*this) {
-      if ( p == v->point() ) {
-	CGAL_NEF_TRACEN( "  on point"); 
-	return Object_handle(v);
-      }
-    }
-
     SHalfedge_iterator e;
-    CGAL_forall_sedges(e,*this) {
-      if ( segment(e).has_on(p) || 
-	   (e->source() == e->twin()->source() && e->circle().has_on(p))) {
-	CGAL_NEF_TRACEN( "  on segment " << segment(e));
-	return Object_handle(e);
+
+    if(!skipVEL) {
+      CGAL_forall_svertices(v,*this) {
+	if ( p == v->point() ) {
+	  CGAL_NEF_TRACEN( "  on point"); 
+	  return Object_handle(v);
+	}
+      }
+      
+      CGAL_forall_sedges(e,*this) {
+	if ( segment(e).has_on(p) || 
+	     (e->source() == e->twin()->source() && e->circle().has_on(p))) {
+	  CGAL_NEF_TRACEN( "  on segment " << segment(e));
+	  return Object_handle(e);
+	}
+      }
+      
+      if ( this->has_shalfloop() && this->shalfloop()->circle().has_on(p)) {
+	CGAL_NEF_TRACEN( "  on loop");
+	return Object_handle(SHalfloop_handle(this->shalfloop()));
       }
     }
-
-    if ( this->has_shalfloop() && this->shalfloop()->circle().has_on(p)) {
-      CGAL_NEF_TRACEN( "  on loop");
-      return Object_handle(SHalfloop_handle(this->shalfloop()));
-    }
+    
 
     // now in face:
 
