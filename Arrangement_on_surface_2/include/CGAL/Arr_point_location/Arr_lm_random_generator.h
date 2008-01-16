@@ -51,7 +51,7 @@ public:
                                          Nearest_neighbor>  Self;
 
   typedef typename Arrangement_2::Point_2               Point_2;
-  typedef std::vector<Point_2>                          Points_set;
+  typedef typename Base::Points_set                     Points_set;
 
   typedef typename Arrangement_2::Vertex_const_iterator
                                                 Vertex_const_iterator;

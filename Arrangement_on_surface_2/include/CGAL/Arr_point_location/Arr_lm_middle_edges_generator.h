@@ -23,7 +23,7 @@
 * Definition of the Arr_middle_edges_landmarks_generator<Arrangement> template.
 */
 
-#include <CGAL/Arr_point_location/Arr_lm_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,13 +40,13 @@ template <class Arrangement_,
           class Nearest_neighbor_ 
           = Arr_landmarks_nearest_neighbor <typename Arrangement_::Traits_2> >
 class Arr_middle_edges_landmarks_generator 
-  : public Arr_landmarks_generator <Arrangement_, Nearest_neighbor_>
+  : public Arr_landmarks_generator_base <Arrangement_, Nearest_neighbor_>
 {
 public:
   typedef Arrangement_					  Arrangement_2;
   typedef Arr_middle_edges_landmarks_generator<Arrangement_2, 
                                                Nearest_neighbor_>    Self;
-  typedef Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_>  Base;
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor_>  Base;
 
   typedef typename Arrangement_2::Traits_2		Traits_2;
   typedef typename Arrangement_2::Edge_const_iterator	Edge_const_iterator;
@@ -78,11 +78,10 @@ public:
   /*! Constructor. */
   Arr_middle_edges_landmarks_generator 
   (const Arrangement_2& arr, int /* lm_num */ = -1) : 
-    Arr_landmarks_generator<Arrangement_2, Nearest_neighbor_> (arr)
+    Base (arr)
   {
-    CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
-    
-    this->build_landmarks_set();
+    //CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
+    this->build_landmark_set();
   }
   
   //Observer functions that should be empty, because they
@@ -107,8 +106,7 @@ protected:
    */
   virtual void _create_nn_points_set (NN_Points_set &nn_points) 
   {
-    CGAL_PRINT_DEBUG("create_middle_edges_points_list");
-
+    //CGAL_PRINT_DEBUG("create_middle_edges_points_list");
     Edge_const_iterator    eit;
     Halfedge_const_handle  hh;
     Arrangement_2 *arr = this->arrangement();
@@ -132,7 +130,7 @@ protected:
       const Point_2& p2 = hh->target()->point();
       Point_2 p ((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
       
-      CGAL_PRINT_DEBUG("mid point is= " << p);
+      //CGAL_PRINT_DEBUG("mid point is= " << p);
       
       CGAL::Object obj = CGAL::make_object(hh); 
       NN_Point_2 np(p, obj); 

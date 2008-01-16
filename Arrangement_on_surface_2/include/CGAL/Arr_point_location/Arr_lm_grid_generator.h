@@ -23,13 +23,7 @@
 * Definition of the Arr_grid_landmarks_generator<Arrangement> template.
 */
 
-#include <CGAL/Arr_observer.h>
-#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Arr_batched_point_location.h>
-
-#include <list>
-#include <algorithm>
-#include <vector>
+#include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,14 +31,22 @@ CGAL_BEGIN_NAMESPACE
  * A generator for the landmarks point-locatoion class, which uses a
  * set of points on a grid as its set of landmarks.
 */
-template <class Arrangement_>
+template <class Arrangement_,
+          class Nearest_neighbor_  =
+            Arr_landmarks_nearest_neighbor<typename
+                                           Arrangement_::Geometry_traits_2> >
 class Arr_grid_landmarks_generator :
-    public Arr_observer <Arrangement_>
+    public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
 
   typedef Arrangement_                                      Arrangement_2;
-  typedef Arr_grid_landmarks_generator<Arrangement_2>       Self;
+  typedef Nearest_neighbor_                                 Nearest_neighbor;
+
+  typedef Arr_landmarks_generator_base<Arrangement_2,
+                                       Nearest_neighbor>    Base;
+  typedef Arr_grid_landmarks_generator<Arrangement_2,
+                                       Nearest_neighbor>    Self;
 
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
@@ -63,7 +65,7 @@ public:
 
 protected:
 
-  typedef std::vector<Point_2>                           Points_set;
+  typedef typename Base::Points_set                     Points_set;
   typedef std::pair<Point_2,CGAL::Object>                PL_pair;
   typedef std::vector<PL_pair>                           Pairs_set;
 
@@ -98,7 +100,7 @@ public:
     /*! Constructor. */
 
   Arr_grid_landmarks_generator (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
+    Base (arr),
     ignore_notifications (false),
     updated (false),
     num_landmarks (0),
@@ -110,7 +112,7 @@ public:
 
   Arr_grid_landmarks_generator (const Arrangement_2& arr,
                                 unsigned int n_landmarks) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
+    Base (arr),
     ignore_notifications (false),
     updated (false),
     num_landmarks (n_landmarks),

@@ -29,6 +29,8 @@
 #include <CGAL/Arr_point_location/Arr_lm_random_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
+//#include <CGAL/Arr_triangulation_point_location.h>
 
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
@@ -61,6 +63,12 @@ typedef CGAL::Arr_halton_landmarks_generator<Arrangement_2>
                                                     Halton_lm_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Halton_lm_generator> 
                                                     Lm_halton_point_location;
+typedef CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
+                                                    Middle_edges_generator;
+typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Middle_edges_generator> 
+                                                    Lm_middle_edges_point_location;
+//typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
+//                                                    Lm_triangulation_point_location;
 
 // ===> Add new point location type here <===
 
@@ -72,7 +80,7 @@ typedef Objects_vector::iterator                          Object_iterator;
 
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
-#define NUM_OF_POINT_LOCATION_STRATEGIES 7
+#define NUM_OF_POINT_LOCATION_STRATEGIES 8
 
 /*! */
 int check_point_location (Arrangement_2 &arr, Points_list &plist)
@@ -108,6 +116,18 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); 
   std::cout << "Halton lm construction took " << timer.time() <<std::endl;
 
+  timer.reset(); timer.start();
+  Middle_edges_generator             middle_edges_g(arr);
+  Lm_middle_edges_point_location        middle_edges_lm_pl (arr, &middle_edges_g);  // 7
+  timer.stop(); 
+  std::cout << "Middle edges lm construction took " << timer.time() <<std::endl;
+
+/*
+  timer.reset(); timer.start();
+  Lm_triangulation_point_location        triangulation_lm_pl (arr);  // 8
+  timer.stop(); 
+  std::cout << "Triangulation lm construction took " << timer.time() <<std::endl;
+*/
   std::cout << std::endl;
 
   // ===> Add new point location instance here. <===
@@ -205,6 +225,30 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); ///END
   std::cout << "Halton LM location took " << timer.time() <<std::endl;
 
+  timer.reset(); 
+  timer.start(); //START
+  for (piter = plist.begin(); piter != plist.end(); piter++ )
+  {
+    q = (*piter);
+    obj = middle_edges_lm_pl.locate (q);
+    objs[7].push_back(obj);
+  }
+  timer.stop(); ///END
+  std::cout << "Middle edges LM location took " << timer.time() <<std::endl;
+
+/*
+  timer.reset(); 
+  timer.start(); //START
+  for (piter = plist.begin(); piter != plist.end(); piter++ )
+  {
+    q = (*piter);
+    obj = triangulation_lm_pl.locate (q);
+    objs[8].push_back(obj);
+  }
+  timer.stop(); ///END
+  std::cout << "Triangulation LM location took " << timer.time() <<std::endl;
+*/
+
   std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
@@ -219,7 +263,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   {
     ob_iter[pl_index] = objs[pl_index].begin();
   }
-   
+
   //get size of objects
   unsigned int size = objs[0].size();
   //std::cout <<"size is "<< size << std::endl;
@@ -240,7 +284,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   {
     //assign object to a face
     if (CGAL::assign (fh_ref, ob_iter[0][qi]))
-    {    
+    {
       for (int pl_index=1; pl_index<pls_num; pl_index++)
       {
         if (! CGAL::assign(fh_curr, ob_iter[pl_index][qi]))
@@ -264,7 +308,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different face"<< std::endl;
-          result = -1;         
+          result = -1;
         }
       }  
       //if (fh_ref->is_unbounded())
@@ -301,9 +345,9 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
           std::cout << "Error: point location number " 
             << pl_index << " return a different halfedge"<< std::endl;
           std::cout << "Halfedge (curr): "<< hh_curr->curve() << std::endl;
-          result = -1;         
+          result = -1;
         }
-      }      
+      }
     }
 
     //assign object to a vertex
@@ -332,12 +376,12 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
         {
           std::cout << "Error: point location number " 
             << pl_index << " return a different vertex"<< std::endl;
-          result = -1;         
+          result = -1;
         }
       }
       std::cout << "Vertex: "<< vh_ref->point() << std::endl;
     }
-   
+
     else
     {
       std::cout << "Illegal point-location result." << std::endl;    

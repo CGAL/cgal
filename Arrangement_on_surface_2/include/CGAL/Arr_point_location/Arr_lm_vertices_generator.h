@@ -23,10 +23,7 @@
  * Definition of the Arr_landmarks_vertices_generator<Arrangement> template.
  */
 
-#include <list>
-#include <CGAL/Arr_observer.h>
-#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Arr_point_location/Arr_lm_nearest_neighbor.h>
+#include <CGAL/Arr_point_location/Arr_lm_generator_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +36,7 @@ template <class Arrangement_,
             Arr_landmarks_nearest_neighbor<typename
                                            Arrangement_::Geometry_traits_2> >
 class Arr_landmarks_vertices_generator :
-    public Arr_observer<Arrangement_>
+    public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
 
@@ -47,6 +44,8 @@ public:
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef Nearest_neighbor_                             Nearest_neighbor;
 
+  typedef Arr_landmarks_generator_base<Arrangement_2,
+                                       Nearest_neighbor>      Base;
   typedef Arr_landmarks_vertices_generator<Arrangement_2,
                                            Nearest_neighbor>  Self;
   
@@ -60,6 +59,8 @@ public:
   
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
+
+  typedef typename Base::Points_set                     Points_set;
 
   typedef typename Nearest_neighbor::NN_Point_2         NN_Point_2;
   typedef std::list<NN_Point_2>                         NN_Point_list;
@@ -88,7 +89,7 @@ public:
 
   /*! Constructor. */
   Arr_landmarks_vertices_generator (const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
+    Base (arr),
     ignore_notifications (false),
     updated (false),
     num_small_not_updated_changes(0),
@@ -96,6 +97,12 @@ public:
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     build_landmark_set();
+  }
+
+  virtual void _create_points_set (Points_set & /* points */)
+  {
+    std::cerr << "should not reach here!"<< std::endl;
+    CGAL_error();
   }
 
   /*!
