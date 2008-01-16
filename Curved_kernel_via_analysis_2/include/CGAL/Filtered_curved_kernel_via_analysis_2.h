@@ -89,14 +89,14 @@ public:
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
 
-        CERR("\nfilteredcompare_xy_; p1: " << p1 << "; p2: " <<
+        CKvA_CERR("\nfilteredcompare_xy_; p1: " << p1 << "; p2: " <<
              p2 << "\n");
         
         Base base_compare_xy(this->_ckva());
 
         result_type res = base_compare_xy(p1, p2, equal_x);
 
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         
         return res;
     }
@@ -146,14 +146,82 @@ public:
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
         
-        CERR("\nfilteredcompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
-             cv2 << "; end: " << ce << "\n");
+        CKvA_CERR("\nfilteredcompare_y_near_boundary; cv1: " << cv1 
+                  << "; cv2: " << cv2 << "; end: " << ce << "\n");
+
+        CGAL::Arr_parameter_space loc1 = cv1.location(ce);
+        CGAL_precondition(cv1.is_on_left_right(loc1) &&
+                          loc1 == cv2.location(ce));
+        // comparing ids is the same as calling is_identical() ??
+        if (cv1.id() == cv2.id()) {
+            return CGAL::EQUAL;
+        } 
+        
+        typedef typename Arc_2::Curve_kernel_2 Curve_kernel_2;
+
+        typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
+
+        NiX::Compactified<X_coordinate_1> asym_info1, asym_info2;
+        
+        switch(cv1.location(ce)) {
+            
+        case(CGAL::ARR_LEFT_BOUNDARY): {
+
+           asym_info1 = cv1.curve().
+               horizontal_asymptote_for_arc_to_minus_infinity(cv1.arcno());
+           asym_info2 = cv2.curve().
+               horizontal_asymptote_for_arc_to_minus_infinity(cv2.arcno());
+           break;
+        }
+        case(CGAL::ARR_RIGHT_BOUNDARY ): {
+            asym_info1 = cv1.curve().
+                horizontal_asymptote_for_arc_to_plus_infinity(cv1.arcno());
+            asym_info2 = cv2.curve().
+                horizontal_asymptote_for_arc_to_plus_infinity(cv2.arcno());
+           break;
+        } 
+        default: {
+            // Never happens
+            CGAL_error();
+            break;
+        }
+
+        }
+
+        CGAL::Comparison_result filter_res;
+        // Special cases
+        if(asym_info1.infty() == NiX::PLUS_INFTY) {
+            if(asym_info2.infty() == NiX::PLUS_INFTY) {
+                filter_res = CGAL::EQUAL;
+            } else {
+                filter_res = CGAL::LARGER;
+            }
+        } else if(asym_info1.infty() == NiX::MINUS_INFTY) {
+            if(asym_info2.infty() == NiX::MINUS_INFTY) {
+                filter_res = CGAL::EQUAL;
+            } else {
+                filter_res = CGAL::SMALLER;
+            }
+        } else if(asym_info2.infty() == NiX::PLUS_INFTY) {
+            filter_res = CGAL::SMALLER;
+        } else if(asym_info2.infty() == NiX::MINUS_INFTY) {
+            filter_res = CGAL::LARGER;
+        } else {
+            
+            filter_res = this->_ckva()->kernel().
+                compare_x_2_object()(asym_info1.finite(),asym_info2.finite());
+        }
+        if(filter_res != CGAL::EQUAL) {
+            std::cout << "filtered!" << std::endl;
+            return filter_res;
+        }
+        std::cout << "filter failed" << std::endl;
 
         Base base_compare_y_near_boundary(this->_ckva());
 
         result_type res = base_compare_y_near_boundary(cv1, cv2, ce);
         
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         return res;
     }
 };
@@ -201,13 +269,13 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-        CERR("\nfilteredcompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
+        CKvA_CERR("\nfilteredcompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
         
         Base base_compare_y_at_x(this->_ckva());
 
         result_type res = base_compare_y_at_x(p, cv);
         
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         return res;
     }
 };
@@ -260,7 +328,7 @@ public:
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
 
-        CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
+        CKvA_CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
         
@@ -268,7 +336,7 @@ public:
 
         result_type res = base_compare_y_at_x_left(cv1, cv2, p);
         
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         return res;
     }
 };
@@ -321,7 +389,7 @@ public:
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
 
-        CERR("\ncompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
+        CKvA_CERR("\ncompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
         
@@ -329,7 +397,7 @@ public:
 
         result_type res = base_compare_y_at_x_right(cv1, cv2, p);
         
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         return res;
     }
 };
@@ -361,12 +429,8 @@ private:
     
     typedef typename X_coordinate_1::Rational Boundary;
     
-    static Boundary& b() {
-        static boost::optional<Boundary> _b;
-        if(! _b) {
-            _b= typename CGAL::Fraction_traits<Boundary>::Compose()(1,100);
-        }
-        return _b.get();
+    static double& threshold() {
+        return Curve_kernel_2::threshold();
     }
 
 public:
@@ -434,7 +498,7 @@ private:
             }
             case(NiX::FINITE): {
                 while(x_high(asym_info.finite()) - 
-                      x_low(asym_info.finite()) > b()) {
+                      x_low(asym_info.finite()) > threshold()) {
                     x_refine(asym_info.finite());
                 }
                 min = CGAL::to_interval(x_low(asym_info.finite())).first;
@@ -461,7 +525,7 @@ private:
             }
             case(NiX::FINITE): {
                 while(x_high(asym_info.finite()) - 
-                      x_low(asym_info.finite()) > b()) {
+                      x_low(asym_info.finite()) > threshold()) {
                     x_refine(asym_info.finite());
                 }
                 min = CGAL::to_interval(x_low(asym_info.finite())).first;
@@ -480,29 +544,16 @@ private:
             break;
         }
         case(CGAL::ARR_INTERIOR): {
-            std::pair<double,double> approx 
-                = y_interval_for_point
-                    (arc.curve_end(end).xy());
-            min = approx.first;
-            max = approx.second;
+            CGAL::Bbox_2 point_bbox 
+                = arc.curve_end(end).xy().approximation_box_2(threshold());
+            min = point_bbox.xmin();
+            max = point_bbox.xmax();
             break;
         }
         }
 
         return std::make_pair(min,max);
 
-    }
-
-    std::pair<double,double> y_interval_for_point(const Xy_coordinate_2& y) const{
-
-        double min, max;
-
-        while(y_high(y) - y_low(y) > b()) {
-            y_refine(y);
-        }
-        min = CGAL::to_interval(y_low(y)).first;
-        max = CGAL::to_interval(y_high(y)).second;
-        return std::make_pair(min,max);
     }
 
     void update_y(double& y_min, double& y_max, 
@@ -541,8 +592,10 @@ public:
             x_min = -numeric_limits<double>::infinity();
         } else {
             left = arc.curve_end_x(CGAL::ARR_MIN_END);
-            while(x_high(left.get())-x_low(left.get()) > b()) {
+            while(x_high(left.get())-x_low(left.get()) > threshold()) {
+
                 x_refine(left.get());
+
             }
             x_min = CGAL::to_interval(x_low(left.get())).first;
         }
@@ -551,7 +604,7 @@ public:
             x_max = numeric_limits<double>::infinity();
         } else {
             right = arc.curve_end_x(CGAL::ARR_MAX_END);
-            while(x_high(right.get())-x_low(right.get()) > b()) {
+            while(x_high(right.get())-x_low(right.get()) > threshold()) {
                 x_refine(right.get());
             }
             x_max = CGAL::to_interval(x_high(right.get())).second;
@@ -589,7 +642,10 @@ public:
             Xy_coordinate_2 curr_xy(curve.y_critical_coordinate(i),
                                     curve,
                                     arcno);
-            update_y(y_min,y_max,y_interval_for_point(curr_xy));
+            CGAL::Bbox_2 point_bbox = curr_xy.approximation_box_2(threshold());
+            std::pair<double,double> y_iv = std::make_pair(point_bbox.ymin(),
+                                                           point_bbox.ymax());
+            update_y(y_min,y_max,y_iv);
 
         }
 
@@ -721,7 +777,7 @@ public:
         
         result_type res = base_is_on(p, c);
         
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         
         return res;
     }

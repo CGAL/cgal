@@ -13,6 +13,7 @@
 
 // code coverage test for Algebraic_curve_kernel_2
 
+
 #include <CGAL/basic.h>
 
 #ifndef CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
@@ -34,6 +35,9 @@
 #include <AcX/Algebraic_curve_pair_2.h>
 
 #include <CGAL/Algebraic_curve_kernel_2.h>
+
+#include <CGAL/Filtered_algebraic_curve_kernel_2.h>
+
 #include <CGAL/_test_algebraic_curve_kernel_2.h>
 
 #include <CGAL/Sqrt_extension.h>
@@ -52,8 +56,17 @@ void test_algebraic_curve_kernel_2() {
     typedef CGAL::Algebraic_kernel_1<Coefficient> Kernel_1;
     typedef CGAL::Algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
            Kernel_2;
-
+    
+    std::cout << "Non-filtered kernel..." << std::endl;
     CGAL::CGALi::test_algebraic_curve_kernel_2<Kernel_2>();
+
+
+    std::cout << "Filtered kernel..." << std::endl;
+    typedef CGAL::Filtered_algebraic_curve_kernel_2<Kernel_2>
+           Filtered_kernel_2;
+
+    CGAL::CGALi::test_algebraic_curve_kernel_2<Filtered_kernel_2>();
+    
 }
 
 int main() {

@@ -45,7 +45,7 @@ class Algebraic_curve_kernel_2 {
 // the same for construction functors
 #define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
     
-private:
+protected:
     //! \name wrapping types
     //!@{
 
@@ -104,7 +104,7 @@ public:
         Polynomial_traits_2;
     
     //!@}
-private:
+protected:
     //! \name private functors
     //!@{
     
@@ -273,6 +273,8 @@ public:
     static Curve_pair_cache& curve_pair_cache() 
     {
         static Curve_pair_cache _m_curve_pair_cache;
+        std::cout << "CP-cache has size " 
+                  << _m_curve_pair_cache.size() << std::endl;
         return _m_curve_pair_cache;
     }
     
@@ -641,7 +643,7 @@ public:
             *oi2++ = c2;
             return false;
         }
-    private:
+    protected:
         //! pointer to Algebraic_curve_kernel_2 (for caching issues)
         /*Self *_m_pkernel_2; */
     };
@@ -851,51 +853,36 @@ public:
         {
             if(p.id() == r.curve().id()) // point lies on the same curve
                 return CGAL::ZERO;
-        
-            NiX2CGAL_converter cvt;
-            typedef typename Algebraic_kernel_1::Algebraic_real_traits
-                X_real_traits_1;
-            // convert poly to rational rep
-            typedef CGAL::Fraction_traits<Poly_rat_2> FTraits;
-            // divide by maximal coefficient ?
-            typename FTraits::Denominator_type det(1);
-            Poly_rat_2 rat_p = typename FTraits::Compose()(cvt(p.f()), det);
 
-            /*typename FTraits::Numerator_type num;
-             typename FTraits::Decompose()(rat_p, num, det);*/
-            
-            typename Y_real_traits_1::Lower_boundary lower_2;
-            typename Y_real_traits_1::Upper_boundary upper_2;
-            typename Y_real_traits_1::Refine refine_2;
-            
-            X_coordinate_1 x = r.x();
-            CGAL::Sign s_lower;
-            bool zero_tested = false;
-            Boundary eps = Boundary(1)/Boundary(10000);
-            
+            if(_test_exact_zero(p,r)) {
+                return CGAL::ZERO;
+            }
+        
+            Interval ix = r.get_approximation_x();
+            Interval iy = r.get_approximation_y();
+
+            Boundary x_len = ix.upper() - ix.lower(),
+                y_len = iy.upper() - iy.lower();
+
             while(1) {
-                Interval iv, ix(x.low(), x.high()), iy(lower_2(r), upper_2(r));
-                iv = _evaluate_2(rat_p, ix, iy);
-                s_lower = CGAL::sign(iv.lower());
+                Interval iv = r.interval_evaluate_2(p.f());
+                CGAL::Sign s_lower = CGAL::sign(iv.lower());
                 if(s_lower == sign(iv.upper()))
                     return s_lower;
-
-                Boundary x_len = ix.upper() - ix.lower(),
-                         y_len = iy.upper() - iy.lower();
-
-                if(!zero_tested) {
-                    if(x_len < eps||y_len < eps) {
-                        if(_test_exact_zero(p, r))
-                            return CGAL::ZERO;
-                        zero_tested = true;
-                    }
+                
+                if(x_len > y_len) {
+                    r.refine_x();
+                    ix = r.get_approximation_x();
+                    x_len = ix.upper() - ix.lower();
+                } else {
+                    r.refine_y();
+                    iy = r.get_approximation_y();
+                    y_len = iy.upper() - iy.lower();
                 }
-                // keep x/y-intervals comparable in size
-                (x_len > y_len) ? x.refine() : refine_2(r);
             }
         }
         
-    private:
+    protected:
 
         bool _test_exact_zero(const Polynomial_2& p,
             const Xy_coordinate_2& r) const {
@@ -946,27 +933,6 @@ public:
             return false;
         }
     
-        Interval _evaluate_2(const Poly_rat_2& p, const Interval& ix,
-            const Interval& iy) const {
-
-            // CGAL::Polynomial does not provide Coercion_traits for number
-            // types => therefore evaluate manually
-            typename Poly_rat_2::const_iterator it = p.end() - 1;
-            Interval res(_evaluate_1(*it, ix));
-
-            while((it--) != p.begin()) 
-                res = res * iy + (_evaluate_1(*it, ix));
-            return res;
-        }
-
-        Interval _evaluate_1(const Poly_rat_1& p, const Interval& ix) const {
-
-            typename Poly_rat_1::const_iterator it = p.end() - 1;
-            Interval res(*it);
-            while((it--) != p.begin()) 
-                res = res * ix + *it;
-            return res;
-        }
     };
 
     struct Sign_at_2_buggy :

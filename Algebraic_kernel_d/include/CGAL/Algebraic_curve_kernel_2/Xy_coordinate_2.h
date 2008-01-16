@@ -18,6 +18,8 @@
 #include <CGAL/basic.h>
 #include <boost/pool/pool_alloc.hpp>
 
+#include <CGAL/Bbox_2.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -50,6 +52,8 @@ public:
     
     typedef typename Curve_2::X_coordinate X_coordinate_1; 
 
+    typedef CGAL::Bbox_2 Bbox_2;
+
     // constructors
 public:
     // default constructor ()
@@ -70,6 +74,9 @@ public:
     
     // arc number on curve
     mutable int _m_arcno;
+
+    //! A bounding box for the given point
+    mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
 
     // TODO int is not sufficient as ids can be re-assigned 
     typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
@@ -149,6 +156,9 @@ public:
     typedef boost::numeric::interval<Boundary> Boundary_interval;
 
     typedef typename Rep::Int_map Int_map;
+
+    //! Type for the bounding box
+    typedef typename Rep::Bbox_2 Bbox_2;
     
     //!@}
 private:
@@ -384,8 +394,9 @@ public:
         }
 
         CGAL::Comparison_result res = (equal_x ? CGAL::EQUAL : compare_x(q)); 
-        if(res == CGAL::EQUAL)
+        if(res == CGAL::EQUAL) {
             res = _compare_y_at_x(q);
+        }
         this->ptr()->_m_compare_xy.insert(std::make_pair(q.id(), res));
         return res;
     }
@@ -587,8 +598,6 @@ public:
 
     /*!
      * \brief gets approximation of x
-     *
-     * TODO: give a interval width as argument?
      */
     Boundary_interval get_approximation_x() const {
         
@@ -601,14 +610,49 @@ public:
     }
 
     /*!
+     * \brief gets approximation of x that is smaller than bound
+     */
+    Boundary_interval get_approximation_x(Boundary bound) const {
+        
+        CGAL_assertion(bound > 0);
+
+        typename X_real_traits_1::Lower_boundary lower;
+        typename X_real_traits_1::Upper_boundary upper;
+        typename X_real_traits_1::Refine refine;
+
+        while(upper(this->ptr()->_m_x) - lower(this->ptr()->_m_x) >= bound) {
+            refine(this->ptr()->_m_x);
+        }
+        return Boundary_interval(lower(this->ptr()->_m_x), 
+                                 upper(this->ptr()->_m_x));
+    
+    }
+
+    /*!
      * \brief gets approximation of y
      *
-     * TODO: give a interval width as argument?
      */
     Boundary_interval get_approximation_y() const {
         typename Y_real_traits_1::Lower_boundary lower;
         typename Y_real_traits_1::Upper_boundary upper;
         return Boundary_interval(lower(*this), upper(*this));
+    }
+
+    /*!
+     * \brief gets approximation of y that is smaller than bound
+     */
+    Boundary_interval get_approximation_y(Boundary bound) const {
+        
+        CGAL_assertion(bound > 0);
+
+        typename Y_real_traits_1::Lower_boundary lower;
+        typename Y_real_traits_1::Upper_boundary upper;
+        typename Y_real_traits_1::Refine refine;
+
+        while(upper(*this) - lower(*this) >= bound) {
+            refine(*this);
+        }
+        return Boundary_interval(lower(*this),upper(*this));    
     }
     
     /*!\brief 
@@ -636,6 +680,89 @@ public:
     void refine_y() const {
         typename Y_real_traits_1::Refine refine;
         refine(*this);
+    }
+
+    Bbox_2 approximation_box_2() const {
+           
+        double x_min, x_max, y_min, y_max;
+        
+        typename X_real_traits_1::Lower_boundary x_lower;
+        typename X_real_traits_1::Upper_boundary x_upper;
+        
+        typename Y_real_traits_1::Lower_boundary y_lower;
+        typename Y_real_traits_1::Upper_boundary y_upper;
+        
+        x_min = CGAL::to_interval(x_lower(this->x())).first;
+        x_max = CGAL::to_interval(x_upper(this->x())).second;
+        y_min = CGAL::to_interval(y_lower(*this)).first;
+        y_max = CGAL::to_interval(y_upper(*this)).second;
+        return Bbox_2(x_min,y_min,x_max,y_max);
+    }
+
+    Bbox_2 approximation_box_2(double b) const {
+
+        typename X_real_traits_1::Refine x_refine;
+        typename Y_real_traits_1::Refine y_refine;
+
+        if(this->ptr()->_m_bbox_2_pair) {
+            double cached_prec = this->ptr()->_m_bbox_2_pair.get().first;
+            if(cached_prec <= b) {
+                return this->ptr()->_m_bbox_2_pair.get().second;
+            }
+        }
+
+        Bbox_2 box = approximation_box_2();
+        double x_diff = box.xmax()-box.xmin();
+        double y_diff = box.ymax()-box.ymin();
+        while(x_diff >= b || y_diff >= b) {
+            if(x_diff >= y_diff) {
+                x_refine(this->x());
+            } else {
+                y_refine(*this);
+            }
+            box = approximation_box_2();
+            x_diff = box.xmax()-box.xmin();
+            y_diff = box.ymax()-box.ymin();
+        }
+        this->ptr()->_m_bbox_2_pair = std::make_pair(b,box);
+        return box;
+    }
+
+    template<typename Polynomial_2>
+    Boundary_interval interval_evaluate_2(const Polynomial_2& p) const {
+        
+        //TODO: This function assumes a NiX::Polynomial type, do it generically
+
+        //TODO: Assumes that the Coercion of Polynomial's scalar
+        // and boundary is a boundary, repair this
+
+        Boundary_interval iy = get_approximation_y();
+
+        // CGAL::Polynomial does not provide Coercion_traits for number
+        // types => therefore evaluate manually
+        typename Polynomial_2::const_iterator it = p.end() - 1;
+        Boundary_interval res(interval_evaluate_1(*it));
+        
+        while((it--) != p.begin()) 
+            res = res * iy + (interval_evaluate_1(*it));
+        return res;
+    }
+    
+    template<typename Polynomial_1>
+    Boundary_interval interval_evaluate_1(const Polynomial_1& p) const {
+        
+        //TODO: This function assumes a NiX::Polynomial type, do it generically
+
+        //TODO: Assumes that the Coercion of Polynomial's scalar
+        // and boundary is a boundary, repair this
+
+        Boundary_interval ix = get_approximation_x();
+
+        typename Polynomial_1::const_iterator it = p.end() - 1;
+        Boundary_interval res(*it);
+        while((it--) != p.begin()) 
+            res = res * ix + Boundary_interval(*it);
+        return res;
     }
     
 

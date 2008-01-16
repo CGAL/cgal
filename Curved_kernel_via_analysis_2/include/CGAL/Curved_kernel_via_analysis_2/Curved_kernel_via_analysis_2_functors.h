@@ -941,6 +941,8 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
+#if 0
+
         CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
         CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
             loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
@@ -1037,6 +1039,60 @@ public:
         }
         CERR("cmp result: " << res << "\n");
         return res;
+
+#else
+
+        CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
+        CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
+            loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
+        bool eq_min, eq_max;
+        bool is_in_x_range = cv.is_in_x_range(p.x(), &eq_min, &eq_max);
+        
+        CGAL_assertion(is_in_x_range);
+
+        if (cv.is_vertical()) {
+            if (cv.is_interior(loc1)) {
+                // for vertical arcs we can ask for .xy() member
+                if (this->_ckva()->kernel().compare_xy_2_object()(
+                            p.xy(), cv._minpoint().xy(), true
+                    ) == CGAL::SMALLER) {
+                    return CGAL::SMALLER;
+                }
+            }
+            if (cv.is_interior(loc2)) {
+                if (this->_ckva()->kernel().compare_xy_2_object()(
+                            p.xy(), cv._maxpoint().xy(), true
+                    ) == CGAL::LARGER) {
+                    return CGAL::LARGER;
+                }
+            }
+            return CGAL::EQUAL; // p lies on a vertical arc
+        }
+        CGAL::Comparison_result res;
+        if(eq_min) {
+            res = this->_ckva()->kernel().compare_xy_2_object()(
+                    p.xy(), cv._minpoint().xy(), true
+            );
+        } else if(eq_max) {
+            res = this->_ckva()->kernel().compare_xy_2_object()(
+                    p.xy(), cv._maxpoint().xy(), true
+            );
+
+        } else {
+            Point_2 point_on_s
+                = this->_ckva()->construct_point_on_arc_2_object()
+                    ( p.x(), 
+                      cv.curve(), 
+                      cv.arcno(),
+                      cv );
+            res = this->_ckva()->kernel().compare_xy_2_object()
+                (p.xy(),point_on_s.xy(),true);
+        }
+        CERR("cmp result: " << res << "\n");
+        return res;
+
+#endif
+
     }
 };
 
