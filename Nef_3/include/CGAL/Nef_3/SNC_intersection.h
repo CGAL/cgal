@@ -80,11 +80,11 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   SNC_intersection(const SNC_structure& W) : Base(W) {}
 
   bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
-    if(!s.has_on(p))
+    if(!are_strictly_ordered_along_line (s.source(), p, s.target()))
       return false;
-    Comparison_result r1 = compare_xyz(s.source(),p);
-    Comparison_result r2 = compare_xyz(s.target(),p);
-    return (r1 == opposite(r2));
+    if(!s.supporting_line().has_on(p))
+      return false;
+    return true;
   }
 
   bool does_contain_internally( Halffacet_const_handle f, 
@@ -181,7 +181,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Segment_3& s1, 
 				  const Segment_3& s2, 
 				  Point_3& p) const {
-    if(s2.has_on(s1.target())) 
+    if(s2.has_on(s1.target()))
       return false;
     Ray_3 r(s1.source(), s1.target());
     if(!does_intersect_internally(r, s2, p))
@@ -270,14 +270,19 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   bool does_intersect_internally( const Ray_3& ray,
 				  Halffacet_const_handle f,
-				  Point_3& p) const { 
+				  Point_3& p,
+				  bool checkHasOn = false) const { 
     CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
     CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
     CGAL_NEF_TRACEN("-> ray: " << ray);
     CGAL_assertion(!ray.is_degenerate());
-    CGAL_assertion(!h.has_on(ray.source()));
+    if(checkHasOn) {
+      if(h.has_on(ray.source()))
+	return false;
+    } else
+      CGAL_assertion(!h.has_on(ray.source()));
     Object o = intersection( h, ray);
     if( !CGAL::assign( p, o))
       return false;
