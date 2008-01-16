@@ -25,7 +25,6 @@ BEGIN_MESSAGE_MAP(CTextualStatusBar, CStatusBar)
 	//{{AFX_MSG_MAP(CTextualStatusBar)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_WM_NCHITTEST()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -57,27 +56,3 @@ BOOL CTextualStatusBar::PreTranslateMessage(MSG* pMsg)
 	return CStatusBar::PreTranslateMessage(pMsg);
 }
 
-UINT CTextualStatusBar::OnNcHitTest(CPoint point)
-{
-	CStatusBarCtrl& statusBar = GetStatusBarCtrl();
-  int i = -1;
-  CRect rectPane;
-  CPoint ptTmp(point);
-  ScreenToClient(&ptTmp);
-  int nCount = GetCount();
-
-  while (i++ < nCount)
-  {
-      statusBar.GetRect(i, rectPane);
-      if (rectPane.PtInRect(ptTmp) )
-      {
-          CString strTip;
-          m_wndToolTip.GetText(strTip, this);
-          LPCTSTR lpPaneText = GetPaneText(i);
-          if (strTip != lpPaneText)
-              m_wndToolTip.UpdateTipText(lpPaneText, this);
-          break;
-      }
-  }
-	return CStatusBar::OnNcHitTest(point);
-}

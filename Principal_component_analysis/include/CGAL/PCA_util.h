@@ -91,7 +91,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
                              typename K::FT covariance[6], // covariance matrix
                              const typename K::Point_3& c, // centroid
-                             const K& ,                    // kernel
+                             const K& k,                    // kernel
                              const typename K::Triangle_3*,// used for indirection
 			                       const CGAL::PCA_dimension_2_tag& tag)
 {
@@ -114,7 +114,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0/12.0, 1.0/24.0, 1.0/24.0,
 		1.0/24.0, 1.0/12.0, 1.0/24.0,
                 1.0/24.0, 1.0/24.0, 1.0/12.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -129,7 +129,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[0].x(), t[1].x(), t[2].x(), 
 		   t[0].y(), t[1].y(), t[2].y(),
                    t[0].z(), t[1].z(), t[2].z()};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT area = std::sqrt(t.squared_area());
     CGAL_assertion(area != 0.0);
 
@@ -191,7 +191,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0/3.0, 1.0/4.0, 1.0/4.0,
 		1.0/4.0, 1.0/3.0, 1.0/4.0,
                 1.0/4.0, 1.0/4.0, 1.0/3.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -209,7 +209,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0, 
 		   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT volume = t.volume();
     CGAL_assertion(volume != 0.0);
 
@@ -276,7 +276,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {7.0/3.0, 1.5, 1.5,
 		1.5, 7.0/3.0, 1.5,
                 1.5, 1.5, 7.0/3.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -294,7 +294,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0, 
 		   t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT area = pow(delta[0]*delta[0] + delta[3]*delta[3] +
 			            delta[6]*delta[6],1/3.0)*pow(delta[1]*delta[1] +
 									delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 +
@@ -369,7 +369,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {4.0/15.0, 0.0,     0.0,
 		0.0,     4.0/15.0, 0.0,
                 0.0,     0.0,     4.0/15.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -385,7 +385,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {radius, 0.0, 0.0, 
 		   0.0, radius, 0.0,
                    0.0, 0.0, radius};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT volume = 4/3.0 * radius*t.squared_radius();
     CGAL_assertion(volume != 0.0);
 
@@ -451,7 +451,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {4.0/3.0, 0.0,     0.0,
 		0.0,     4.0/3.0, 0.0,
                 0.0,     0.0,     4.0/3.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -467,7 +467,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {radius, 0.0, 0.0, 
 		   0.0, radius, 0.0,
                    0.0, 0.0, radius};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT area = 4 * t.squared_radius();
     CGAL_assertion(area != 0.0);
 
@@ -534,7 +534,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0/60.0,  1.0/120.0, 1.0/120.0,
 		1.0/120.0, 1.0/60.0,  1.0/120.0,
 		1.0/120.0, 1.0/120.0, 1.0/60.0};
-  Matrix moment = init_Matrix<K>(3,temp);
+  Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -553,7 +553,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[1].x()-x0, t[2].x()-x0, t[3].x()-x0, 
 		   t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
                    t[1].z()-z0, t[2].z()-z0, t[3].z()-z0};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT volume = t.volume();
     CGAL_assertion(volume != 0.0);
 
@@ -620,7 +620,7 @@ assemble_covariance_matrix_3(InputIterator first,
   FT temp[9] = {1.0, 0.5, 0.0,
 		0.5, 1.0, 0.0,
                 0.0, 0.0, 0.0};
-  Matrix moment = 1.0/3.0 * init_Matrix<K>(3,temp);
+  Matrix moment = 1.0/3.0 * init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -635,7 +635,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT delta[9] = {t[0].x(), t[1].x(), 0.0, 
 		   t[0].y(), t[1].y(), 0.0,
                    t[0].z(), t[1].z(), 1.0};
-    Matrix transformation = init_Matrix<K>(3,delta);
+    Matrix transformation = init_matrix<K>(3,delta);
     FT length = std::sqrt(t.squared_length());
     CGAL_assertion(length != 0.0);
 
