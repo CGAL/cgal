@@ -14,21 +14,28 @@ typedef K::Iso_cuboid_3   Iso_cuboid_3;
 
 int main()
 {
-  std::list<Iso_cuboid_3> Iso_cuboids;
-  Iso_cuboids.push_back(Iso_cuboid_3(Point_3(0.0,0.0,0.0),Point_3(1.0,1.0,1.0)));
-  Iso_cuboids.push_back(Iso_cuboid_3(Point_3(1.0,1.0,1.0),Point_3(6.0,6.0,6.0)));
+  std::list<Iso_cuboid_3> cuboids;
+  cuboids.push_back(Iso_cuboid_3(Point_3(0.0,0.0,0.0),Point_3(1.0,1.0,1.0)));
+  cuboids.push_back(Iso_cuboid_3(Point_3(1.0,1.0,1.0),Point_3(6.0,6.0,6.0)));
 
   Line_3 line;
-  linear_least_squares_fitting_3(Iso_cuboids.begin(),Iso_cuboids.end(),line,CGAL::PCA_dimension_3_tag());
-
   Plane_3 plane;
-  linear_least_squares_fitting_3(Iso_cuboids.begin(),Iso_cuboids.end(),plane,CGAL::PCA_dimension_3_tag());
+
+	// fit volume
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_3_tag());
   
+  // fit faces
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_2_tag());
 
-  //Use only faces.
-  linear_least_squares_fitting_3(Iso_cuboids.begin(),Iso_cuboids.end(),line,CGAL::PCA_dimension_2_tag());
+	// fit edges
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_1_tag());
 
-  linear_least_squares_fitting_3(Iso_cuboids.begin(),Iso_cuboids.end(),plane,CGAL::PCA_dimension_2_tag());
+	// fit vertices
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_0_tag());
 
   return 0;
 }

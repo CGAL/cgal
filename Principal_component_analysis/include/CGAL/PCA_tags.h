@@ -30,22 +30,10 @@ CGAL_BEGIN_NAMESPACE
 //::between these different types of the same geometry
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-// Fully filled geometry object, such as disks in 2d and balls in 3d
-struct PCA_dimension_3_tag {};
-
-// Empty geometry objects, such as triangles in 2d and hollow cubes with just the planar facets in 3d
-struct PCA_dimension_2_tag {};
-
-// Only relevant for 3d objects, outlines of 3d geometry objects formed by just lines joing appropriate vetrices, such as outline of a cuboid.
-struct PCA_dimension_1_tag {};
-
-// For the vertices of objects.
 struct PCA_dimension_0_tag {};
-
-
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::
-// Struct to denote dimension compile time decisions
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::
+struct PCA_dimension_1_tag {};
+struct PCA_dimension_2_tag {};
+struct PCA_dimension_3_tag {};
 
 /*
 
