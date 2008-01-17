@@ -32,13 +32,11 @@ void test_1()
   // call all versions of the function
   std::cout<<"Test 1"<<std::endl;
   std::cout << "fit 2D line...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
@@ -61,13 +59,11 @@ void test_2()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
@@ -92,13 +88,11 @@ void test_3()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
@@ -128,7 +122,7 @@ void test_4()
   FT quality;
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
+  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag(),k);
   std::cout << "done (quality: " << quality << ")" <<" line: "<<line<< std::endl;
 
   std::list<Point_2> points;
@@ -144,7 +138,6 @@ void test_4()
   FT quality1;
   quality1 = linear_least_squares_fitting_2(points.begin(),points.end(),line1,CGAL::PCA_dimension_0_tag());
   quality1 = linear_least_squares_fitting_2(points.begin(),points.end(),line1,centroid1,CGAL::PCA_dimension_0_tag());
-  quality1 = linear_least_squares_fitting_2(points.begin(),points.end(),line1,centroid1,k1,CGAL::PCA_dimension_0_tag());
   std::cout << "done (quality: " << quality1 << ")" <<" line: "<<line1<<std::endl;
 
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
@@ -180,7 +173,6 @@ void test_5(const unsigned int nb_points)
   Kernel k;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,k,CGAL::PCA_dimension_0_tag());
 
   std::cout << "done (quality: " << quality << ")" <<" line: "<<line<< std::endl;
 
@@ -197,7 +189,6 @@ void test_5(const unsigned int nb_points)
   FT quality1;
   quality1 = linear_least_squares_fitting_2(segments.begin(),segments.end(),line1,CGAL::PCA_dimension_1_tag());
   quality1 = linear_least_squares_fitting_2(segments.begin(),segments.end(),line1,centroid1,CGAL::PCA_dimension_1_tag());
-  quality1 = linear_least_squares_fitting_2(segments.begin(),segments.end(),line1,centroid1,k1,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality1 << ")" <<" line: "<<line1<< std::endl;
 
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))

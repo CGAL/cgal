@@ -41,31 +41,31 @@ namespace CGALi {
 //  0 is worst (isotropic case, returns a line with horizontal
 //              direction by default)
 
-template < typename InputIterator, typename K >
-typename K::FT
+template < typename InputIterator,
+           typename Kernel >
+typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Line_2& line,   // best fit line
-                               typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
-                               const typename K::Triangle_2*,// used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+                               typename Kernel::Line_2& line,   // best fit line
+                               typename Kernel::Point_2& c,     // centroid
+                               const typename Kernel::Triangle_2*,// used for indirection
+                               const Kernel&,                   // kernel
+			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   // types
-  typedef typename K::FT       FT;
-  typedef typename K::Line_2   Line;
-  typedef typename K::Point_2  Point;
-  typedef typename K::Vector_2 Vector;
-  typedef typename K::Triangle_2 Triangle;
+  typedef typename Kernel::FT       FT;
+  typedef typename Kernel::Line_2   Line;
+  typedef typename Kernel::Point_2  Point;
+  typedef typename Kernel::Vector_2 Vector;
+  typedef typename Kernel::Triangle_2 Triangle;
   typedef typename CGAL::Linear_algebraCd<FT> LA;
   typedef typename LA::Matrix Matrix;
-  typedef typename K::Segment_2         Segment_2;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,Kernel(),tag);
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
@@ -79,7 +79,7 @@ linear_least_squares_fitting_2(InputIterator first,
   FT temp[4] = {1/12.0, 1/24.0,
 		1/24.0, 1/12.0};
 
-  Matrix moment = init_matrix<K>(2,temp);
+  Matrix moment = init_matrix<Kernel>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -95,7 +95,7 @@ linear_least_squares_fitting_2(InputIterator first,
     FT delta[4] = {t[1].x() - x0, t[2].x() - x0,
 		   t[1].y() - y0, t[2].y() - y0};
 
-    Matrix transformation = init_matrix<K>(2,delta);
+    Matrix transformation = init_matrix<Kernel>(2,delta);
     FT area = 0.5 * std::abs(LA::determinant(transformation));
     CGAL_assertion(area!=0);
 
@@ -151,19 +151,20 @@ linear_least_squares_fitting_2(InputIterator first,
   } 
 } // end linear_least_squares_fitting_2 for triangle set with 2D tag
 
-template < typename InputIterator, typename K >
-typename K::FT
+template < typename InputIterator,
+           typename Kernel >
+typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Line_2& line,   // best fit line
-                               typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
-                               const typename K::Triangle_2*,// used for indirection
+                               typename Kernel::Line_2& line,   // best fit line
+                               typename Kernel::Point_2& c,     // centroid
+                               const typename Kernel::Triangle_2*,// used for indirection
+                               const Kernel&,                   // kernel
 			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   // types
-  typedef typename K::Triangle_2 Triangle;
-  typedef typename K::Segment_2  Segment_2;
+  typedef typename Kernel::Triangle_2 Triangle;
+  typedef typename Kernel::Segment_2  Segment;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -174,29 +175,30 @@ linear_least_squares_fitting_2(InputIterator first,
       it++)
   {
     const Triangle& t = *it;
-    segments.push_back(Segment_2(t[0],t[1]));
-    segments.push_back(Segment_2(t[1],t[2]));
-    segments.push_back(Segment_2(t[2],t[0]));      
+    segments.push_back(Segment(t[0],t[1]));
+    segments.push_back(Segment(t[1],t[2]));
+    segments.push_back(Segment(t[2],t[0]));      
   }    
   
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag);
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,tag,Kernel());
   
 } // end linear_least_squares_fitting_2 for triangle set with 1D tag
 
-template < typename InputIterator, typename K >
-typename K::FT
+template < typename InputIterator,
+           typename Kernel >
+typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
-                               typename K::Line_2& line,   // best fit line
-                               typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
-                               const typename K::Triangle_2*,// used for indirection
+                               typename Kernel::Line_2& line,   // best fit line
+                               typename Kernel::Point_2& c,     // centroid
+                               const typename Kernel::Triangle_2*,// used for indirection
+                               const Kernel&,                   // kernel
 			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   // types
 
-  typedef typename K::Triangle_2 Triangle;
-  typedef typename K::Point_2  Point_2;
+  typedef typename Kernel::Triangle_2 Triangle;
+  typedef typename Kernel::Point_2 Point;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -207,12 +209,12 @@ linear_least_squares_fitting_2(InputIterator first,
       it++)
   {
     const Triangle& t = *it;
-    points.push_back(Point_2(t[0]));
-    points.push_back(Point_2(t[1]));
-    points.push_back(Point_2(t[2]));      
+    points.push_back(Point(t[0]));
+    points.push_back(Point(t[1]));
+    points.push_back(Point(t[2]));      
   }    
   
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag);
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,tag,Kernel());
   
 } // end linear_least_squares_fitting_2 for triangle set with 0D tag
 

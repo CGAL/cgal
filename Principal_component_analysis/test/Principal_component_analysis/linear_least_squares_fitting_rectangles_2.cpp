@@ -40,7 +40,6 @@ void test_1()
   FT quality;
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,k,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality << ") Line: " << line<<std::endl;
 
   
@@ -70,7 +69,6 @@ void test_2()
   FT quality;
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,k,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
 
@@ -86,7 +84,6 @@ void test_2()
   FT quality1;
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,CGAL::PCA_dimension_2_tag());
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
   
@@ -115,7 +112,6 @@ void test_3()
   FT quality;
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
   quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,centroid,k,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
 
@@ -131,7 +127,6 @@ void test_3()
   FT quality1;
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,CGAL::PCA_dimension_2_tag());
   quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(Iso_rectangles1.begin(),Iso_rectangles1.end(),line1,centroid1,k1,CGAL::PCA_dimension_2_tag());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
   

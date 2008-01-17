@@ -36,7 +36,7 @@ void test_2D()
   FT quality;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,k,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag(),k);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!line.is_horizontal())
@@ -71,7 +71,7 @@ void test_2D_point_set(const unsigned int nb_points)
   Kernel k;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,k,CGAL::PCA_dimension_0_tag());
+  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag(),k);
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 

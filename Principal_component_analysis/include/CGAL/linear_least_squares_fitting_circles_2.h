@@ -46,9 +46,9 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
                                const typename K::Circle_2*,// used for indirection
-			       const CGAL::PCA_dimension_2_tag& tag)
+                               const K&,                   // kernel
+			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   // types
   typedef typename K::FT       FT;
@@ -155,9 +155,9 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
                                const typename K::Circle_2*,// used for indirection
-			        const CGAL::PCA_dimension_1_tag& tag)
+                               const K&,                   // kernel
+			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   // types
   typedef typename K::FT       FT;

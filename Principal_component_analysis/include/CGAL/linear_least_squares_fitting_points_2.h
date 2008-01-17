@@ -43,9 +43,9 @@ linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_2& line,   // best fit line
                                typename K::Point_2& c,     // centroid
-                               const K&,                   // kernel
                                const typename K::Point_2*,// used for indirection
-			                         const CGAL::PCA_dimension_0_tag& tag = CGAL::PCA_dimension_0_tag())   
+                               const K&,                   // kernel
+			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   // types
   typedef typename K::FT       FT;
@@ -59,7 +59,7 @@ linear_least_squares_fitting_2(InputIterator first,
   CGAL_precondition(first != beyond);
 
   // compute centroid
-  c = centroid(first,beyond,K(),t);
+  c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
