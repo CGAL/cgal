@@ -337,7 +337,7 @@ template < class TriangulatedSurfaceMesh,
   class Vertex2FTPropertyMap,
   class Vertex2VectorPropertyMap > 
   Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
-  Ridge_approximation(const TriangulatedSurfaceMesh &P,
+  Ridge_approximation(const TriangulatedSurfaceMesh &p,
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
 		      const Vertex2FTPropertyMap& vertex2b0_pm, 
@@ -346,7 +346,7 @@ template < class TriangulatedSurfaceMesh,
 		      const Vertex2VectorPropertyMap& vertex2d2_pm,
 		      const Vertex2FTPropertyMap& vertex2P1_pm, 
 		      const Vertex2FTPropertyMap& vertex2P2_pm)
-    : P(P), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
+    : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
       P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
   //init the is_visited_map and check that the mesh is a triangular one.

@@ -140,12 +140,12 @@ template < class TriangulatedSurfaceMesh,
 
 template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   Umbilic_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
+Umbilic_approximation(const TriangulatedSurfaceMesh& p, 
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
 		      const Vertex2VectorPropertyMap& vertex2d1_pm, 
 		      const Vertex2VectorPropertyMap& vertex2d2_pm)
-  : P(P), k1(vertex2k1_pm), k2(vertex2k2_pm), 
+  : P(p), k1(vertex2k1_pm), k2(vertex2k2_pm), 
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
   //check that the mesh is a triangular one.
