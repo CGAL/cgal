@@ -21,9 +21,10 @@ int main()
   Line_2 line;
   Point_2 c;
 
+	// fit circles
   linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_1_tag());
 
-  //Fit Disks
+  // fit disks
   linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_2_tag());
 
   return 0;

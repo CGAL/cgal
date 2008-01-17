@@ -21,14 +21,12 @@ int main()
   Line_3 line;
   Plane_3 plane;
 
-  //fit solid spheres
+  // fit balls (dimension 3)
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_3_tag());
-
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_3_tag());
 
-  // Fit hollow spheres
+  // fit spheres (dimension 2)
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_2_tag());
-
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_2_tag());
 
   return 0;
