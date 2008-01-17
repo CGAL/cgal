@@ -434,8 +434,10 @@ public:
   }
 
   virtual ~SNC_point_locator_by_spatial_subdivision() {
-    CGAL_warning( initialized); // required?
-    delete candidate_provider;
+    CGAL_warning(initialized || 
+		 candidate_provider == 0); // required?
+    if(initialized)
+      delete candidate_provider;
   }
 
   /*
