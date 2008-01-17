@@ -137,7 +137,7 @@ template <typename Decorator_>
 SM_io_parser<Decorator_>::
 SM_io_parser(std::istream& iin, const Base& H) :
   Base(H), in(iin), out(std::cout), verbose(0), 
-  vn(0), en(0), fn(0), ln(0)
+  vn(0), en(0), ln(0), fn(0)
 { this->clear(); }
 
 template <typename Decorator_>
@@ -204,7 +204,7 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
  
   if (iso) set_face(v,SFace_of[f]);
   else     set_first_out_edge(v,Edge_of[f]);
-  mark(v) = m; point(v) = p;
+  v->mark() = m; v->point() = p;
   return true; 
 }
 
@@ -245,8 +245,8 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
   set_next(e,Edge_of[ene]);
   set_source(e,SVertex_of[v]);
   set_face(e,SFace_of[f]);
-  mark(e) = m;
-  circle(e) = k;
+  e->mark() = m;
+  e->circle() = k;
   return true;
 }
 
@@ -274,8 +274,8 @@ bool SM_io_parser<Decorator_>::read_loop(SHalfloop_handle l)
     (lo >= 0 && lo < 2 && f >= 0 && f < fn),"wrong index in read_edge");
   
   set_face(l,SFace_of[f]);
-  mark(l) = m;
-  circle(l) = k;
+  l->mark() = m;
+  l->circle() = k;
   return true;
 }
 
@@ -304,23 +304,23 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
   while (in >> ei) { 
     CGAL_assertion_msg(ei >= 0 && ei < en, 
                            "wrong index in face cycle list.");
-    store_boundary_object(Edge_of[ei],f);
+    store_sm_boundary_object(Edge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) { 
     CGAL_assertion_msg(vi >= 0 && vi < vn, 
                            "wrong index in iso vertex list.");
-    store_boundary_object(SVertex_of[vi],f);
+    store_sm_boundary_object(SVertex_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) { 
     CGAL_assertion_msg(li >= 0 && li < 2, 
                            "wrong index in iso vertex list.");
-    store_boundary_object(Loop_of[li],f);
+    store_sm_boundary_object(Loop_of[li],f);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") ) 
     return false;
-  mark(f) = m;
+  f->mark() = m;
   return true;
 }
 
@@ -356,7 +356,7 @@ void SM_io_parser<Decorator_>::print() const
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::read() 
 {
-  if ( !check_sep("Plane_map_2") )  
+  if ( !check_sep("Sphere_map_2") )  
     CGAL_error_msg("SM_io_parser::read: no embedded_PM header.");
   if ( !(check_sep("vertices") && (in >> vn)) ) 
     CGAL_error_msg("SM_io_parser::read: wrong vertex line.");
@@ -370,13 +370,15 @@ void SM_io_parser<Decorator_>::read()
   SVertex_of.resize(vn);
   Edge_of.resize(en);
   SFace_of.resize(fn);
-  for(i=0; i<vn; i++)  SVertex_of[i] =   this->new_vertex();
+  for(i=0; i<vn; i++)  SVertex_of[i] =   this->new_svertex();
   for(i=0; i<en; i++) 
-    if (i%2==0) Edge_of[i] = this->new_edge_pair_without_vertices();
+    if (i%2==0) Edge_of[i] = this->new_shalfedge_pair();
     else Edge_of[i] = Edge_of[i-1]->twin();
-  for(i=0; i<fn; i++)  SFace_of[i] =     this->new_face();
-  if ( ln == 2 ) 
-    { Loop_of[0] = this->new_loop(); Loop_of[1] = this->loop()->twin(); }
+  for(i=0; i<fn; i++)  SFace_of[i] =     this->new_sface();
+  if ( ln == 2 ) { 
+    Loop_of[0] = this->new_shalfloop_pair(); 
+    Loop_of[1] = this->shalfloop()->twin(); 
+  }
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(SVertex_of[i]))
