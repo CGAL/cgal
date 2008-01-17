@@ -619,10 +619,17 @@ public:
   /*{\Mop returns true if |\Mvar| is the whole plane, false otherwise.}*/
   { Const_decorator D(pm());
     Face_const_iterator f = D.faces_begin();
-    return (D.number_of_vertices()==4 &&
-            D.number_of_edges()==4 &&
-            D.number_of_faces()==2 &&
-            D.mark(++f) == true);
+    if(check_tag(typename Is_extended_kernel<Extended_kernel>::
+         value_type()))
+      return (D.number_of_vertices()==4 &&
+              D.number_of_edges()==4 &&
+              D.number_of_faces()==2 &&
+              D.mark(++f) == true);
+    else
+      return (D.number_of_vertices()==0 &&
+          D.number_of_edges()==0 &&
+          D.number_of_faces()==1 &&
+          D.mark(f) == true);
   }
 
   void extract_complement()
