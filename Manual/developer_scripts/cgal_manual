@@ -809,10 +809,12 @@ run_latex() {
             sort_ref_pages $1
         fi
         # Run LaTeX until their is no rerun necessary anymore + one more
-        LastRerun=1
-        while [ $LastRerun -eq 1 ]; do
-            if grep "Rerun to get cross-references right" $1.log > /dev/null;
-                then LastRerun=1; else LastRerun=0; fi
+        # but at most 5 times (prevent infinite loop, as happened for Straight_skeleton) 
+        declare -i LastRerun=5
+        while [ $LastRerun -gt 1 ]; do
+            if grep "Rerun to get cross-references right" $1.log > /dev/null; then
+                 LastRerun=$LastRerun-1; 
+            else LastRerun=0; fi
             # Run makeindex as well if requested
             if [ -r $1.idx ]; then
                 IndexExit=1
@@ -996,10 +998,11 @@ run_pdflatex() {
         sort_ref_pages $1
     fi
     # Run LaTeX until their is no rerun necessary anymore + one more
-    LastRerun=1
-    while [ $LastRerun -eq 1 ]; do
-        if grep "Rerun to get cross-references right" $1.log > /dev/null;
-            then LastRerun=1; else LastRerun=0; fi
+    declare -i LastRerun=5                               
+    while [ $LastRerun -gt 1 ]; do
+        if grep "Rerun to get cross-references right" $1.log > /dev/null; then
+            LastRerun=$LastRerun-1;
+        else LastRerun=0; fi
         # Run makeindex as well if requested
         if [ -r $1.idx ]; then
             IndexExit=1
