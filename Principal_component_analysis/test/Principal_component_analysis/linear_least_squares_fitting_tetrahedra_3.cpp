@@ -1,68 +1,57 @@
-// Example program for the linear_least_square_fitting function on set of tetrahedrons in 3D
+// Example program for the linear_least_square_fitting function
+// on a set of tetrahedra in 3D
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-
 #include <list>
 
 typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_3            Line_3;
-typedef K::Plane_3           Plane_3;
-typedef K::Point_3           Point_3;
-typedef K::Tetrahedron_3          Tetrahedron_3;
+typedef CGAL::Cartesian<FT>  Kernel;
+typedef Kernel::Line_3            Line;
+typedef Kernel::Plane_3           Plane;
+typedef Kernel::Point_3           Point;
+typedef Kernel::Tetrahedron_3     Tetrahedron;
 
 int main()
 {
-  std::list<Tetrahedron_3> tetrahedrons;
-  tetrahedrons.push_back(Tetrahedron_3(Point_3(0.0,0.0,0.0),Point_3(1.0,0.0,0.0),Point_3(0.0,1.0,0.0),Point_3(0.0,0.0,1.0)));
-  tetrahedrons.push_back(Tetrahedron_3(Point_3(0.0,0.0,0.0),Point_3(-1.0,0.0,0.0),Point_3(0.0,-1.0,0.0),Point_3(0.0,0.0,1.0)));
+	// generate two tetrahedra
+	std::list<Tetrahedron> tetrahedra;
+	Point a(0.0,0.0,0.0);
+	Point b(1.0,0.0,0.0);
+	Point c(0.0,1.0,0.0);
+	Point d(0.0,0.0,1.0);
+	Point e(0.0,1.0,1.0);
+  tetrahedra.push_back(Tetrahedron(a,b,c,d));
+  tetrahedra.push_back(Tetrahedron(a,b,c,e));
 
-  Line_3 line;
-  Point_3 c;
-  K k;
+  Kernel kernel;
+  Point centroid;
+  Plane plane;
+  Line line;
 
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,CGAL::PCA_dimension_0_tag());
+	// fit line, no centroid
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_0_tag());
 
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,CGAL::PCA_dimension_0_tag());
+	// fit line, centroid
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,centroid,CGAL::PCA_dimension_0_tag());
 
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,k,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,k,CGAL::PCA_dimension_0_tag());
+	// fit plane, no centroid
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_0_tag());
 
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,k,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),line,c,k,CGAL::PCA_dimension_0_tag());
+	// fit plane, centroid
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
 
-  Plane_3 plane;
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,CGAL::PCA_dimension_0_tag());
-
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,CGAL::PCA_dimension_0_tag());
-
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,k,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,k,CGAL::PCA_dimension_0_tag());
-
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,k,CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedrons.begin(),tetrahedrons.end(),plane,c,k,CGAL::PCA_dimension_0_tag());
-
-    
   return 0;
 }

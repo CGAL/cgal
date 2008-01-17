@@ -39,9 +39,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
-			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
+                               const K& k,                   // kernel
+			                         const CGAL::PCA_dimension_3_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
@@ -70,8 +70,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -101,8 +101,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -133,7 +133,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,k,(Segment*)NULL,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_cuboids_3
 
@@ -145,8 +145,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Plane_3& plane,   // best fit plane
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -169,7 +169,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,k,(Point*)NULL,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_cuboids_3
 
@@ -181,9 +181,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,     // best fit line
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
-			                         const CGAL::PCA_dimension_3_tag& tag = CGAL::PCA_dimension_3_tag())
+                               const K& k,                   // kernel
+			                         const CGAL::PCA_dimension_3_tag& tag)
 {
   typedef typename K::FT          FT;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
@@ -211,8 +211,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,   // best fit line
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_2_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -242,8 +242,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,   // best fit line
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_1_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -274,7 +274,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,k,(Segment*)NULL,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_cuboids_3
 
@@ -286,8 +286,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
                                typename K::Line_3& line,   // best fit line
                                typename K::Point_3& c,       // centroid
-                               const K& k,                   // kernel
                                const typename K::Iso_cuboid_3*,  // used for indirection
+                               const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::FT          FT;
@@ -310,7 +310,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,k,(Point*)NULL,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_cuboids_3
 

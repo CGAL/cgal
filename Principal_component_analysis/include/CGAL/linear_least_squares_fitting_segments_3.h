@@ -91,7 +91,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,k,(Point*)NULL,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_segments_3
 
@@ -155,7 +155,7 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,k,(Point*)NULL,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag);
 
 } // end linear_least_squares_fitting_segments_3
 

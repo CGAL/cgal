@@ -40,11 +40,8 @@ void test_1()
   FT quality;
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ") line: " <<line<< std::endl;
 
-  //  if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
-  // line.has_on(Point_3(2.0,2.0,2.0)) &&  
   if(!(line.has_on(Point_3(2.0,2.0,2.0)) && (double)line.to_vector().x() - 1/std::sqrt(3.0) <=THRESHOLD && (double)line.to_vector().y() - 1.0/std::sqrt(3.0) <= THRESHOLD && (double)line.to_vector().z() - 1.0/std::sqrt(3.0) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
@@ -72,7 +69,6 @@ void test_2()
   FT quality;
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!(line.has_on(Point_3(2.0,2.0,2.0)) && (double)line.to_vector().x() - 1/std::sqrt(3.0) <=THRESHOLD && (double)line.to_vector().y() - 1.0/std::sqrt(3.0) <= THRESHOLD && (double)line.to_vector().z() - 1.0/std::sqrt(3.0) <= THRESHOLD))
@@ -102,7 +98,6 @@ void test_3()
   FT quality;
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout.precision(20);
   std::cout << "done (quality: " << quality << ")"  <<" line: "<<line<<std::endl;
 
@@ -134,7 +129,6 @@ void test_4()
   FT quality;
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ")" <<" line: "<<line<< std::endl;
 
   std::list<Point_3> points;
@@ -150,7 +144,6 @@ void test_4()
   FT quality1;
   quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,CGAL::PCA_dimension_0_tag());
   quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,CGAL::PCA_dimension_0_tag());
-  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,k1,CGAL::PCA_dimension_0_tag());
   std::cout << "done (quality: " << quality1 << ")" <<" line: "<<line1<<std::endl;
 
   if(!(line.has_on(line1.point(0)) && (double)line.to_vector().y()/line.to_vector().x() - (double)line1.to_vector().y()/line1.to_vector().x() <= THRESHOLD && (double)line.to_vector().z()/line.to_vector().x() - (double)line1.to_vector().z()/line1.to_vector().x() <= THRESHOLD))
@@ -180,7 +173,6 @@ void test_5()
   FT quality;
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,k,CGAL::PCA_dimension_1_tag());
   std::cout << "done (quality: " << quality << ") plane: " <<plane<< std::endl;
 
   if(!plane.has_on(segments[0].supporting_line()))
@@ -209,38 +201,20 @@ void test_6() {
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
 
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,k,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,k,CGAL::PCA_dimension_0_tag());
-
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,k,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,k,CGAL::PCA_dimension_0_tag());
-
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_0_tag());
 
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_0_tag());
-
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,k,CGAL::PCA_dimension_0_tag());
-
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,k,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,k,CGAL::PCA_dimension_0_tag());
-
 }
 int main()
 {
-  std::cout << "Test 3D linear_least_squares_fitting_segments"  << std::endl;
-
+  std::cout << "Test linear least squares fitting of 3D segments"  << std::endl;
   test_1();
   test_2();
-  
-  //  test_3();  
+  test_3();  
   test_4();
-  
-  //  test_5();
-  //  test_3D_point_set(100);
-
+  test_5();
   test_6();
   return 0; // success
 }

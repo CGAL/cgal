@@ -35,6 +35,8 @@ struct PCA_dimension_1_tag {};
 struct PCA_dimension_2_tag {};
 struct PCA_dimension_3_tag {};
 
+CGAL_END_NAMESPACE
+
 /*
 
 Advice by L. Saboret
@@ -60,6 +62,6 @@ struct PCA_default_dimension<typename K::Triangle_3> {
 
 */
 
-CGAL_END_NAMESPACE
+
 
 #endif // CGAL_LINEAR_LEAST_SQUARES_FITTING_TAGS_H

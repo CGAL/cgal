@@ -2,56 +2,44 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-
 #include <list>
 
 typedef double               FT;
-typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_3            Line_3;
-typedef K::Plane_3           Plane_3;
-typedef K::Point_3           Point_3;
-typedef K::Triangle_3          Triangle_3;
+typedef CGAL::Cartesian<FT>  Kernel;
+typedef Kernel::Line_3       Line;
+typedef Kernel::Plane_3      Plane;
+typedef Kernel::Point_3      Point;
+typedef Kernel::Triangle_3   Triangle;
 
 int main()
 {
-  std::list<Triangle_3> triangles;
-  triangles.push_back(Triangle_3(Point_3(1.0,0.0,0.0),Point_3(0.0,1.0,0.0),Point_3(0.0,0.0,0.0)));
-  triangles.push_back(Triangle_3(Point_3(-1.0,0.0,0.0),Point_3(0.0,-1.0,0.0),Point_3(0.0,0.0,0.0)));
+  std::list<Triangle> triangles;
 
-  Line_3 line;
-  Point_3 c;
-  K k;
-  
+	Point a(0.0,0.0,0.0);
+	Point b(1.0,0.0,0.0);
+	Point c(0.0,1.0,0.0);
+	Point d(0.0,0.0,1.0);
+  triangles.push_back(Triangle(a,b,c));
+  triangles.push_back(Triangle(a,b,d));
+
+  Line line;
+  Plane plane;
+	Kernel kernel;
+  Point centroid;
+
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_2_tag());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_1_tag());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,centroid,CGAL::PCA_dimension_0_tag());
 
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,k,CGAL::PCA_dimension_0_tag());
-
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,k,CGAL::PCA_dimension_0_tag());
-
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_0_tag());
-
-  Plane_3 plane;
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_2_tag());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_1_tag());
   linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,k,CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,k,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,k,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,k,CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,CGAL::PCA_dimension_0_tag());
-
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
   
   return 0;
 }
