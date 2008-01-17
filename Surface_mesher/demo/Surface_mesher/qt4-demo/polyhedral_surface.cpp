@@ -1,12 +1,17 @@
 #include "polyhedral_surface.h"
+#include "get_polyhedral_surface.h"
 
 #include <QMainWindow>
 #include <QStatusBar>
 #include <QApplication>
 #include <QAction>
+#include <QDialog>
+#include "ui_optionsdialog.h"
+#include <QDoubleSpinBox>
 #include <iostream>
 #include <fstream>
 #include <boost/format.hpp>
+#include "mainwindow.h"
 
 typedef CGAL_polyhedral_surface::Polyhedron Polyhedron;
 
@@ -57,12 +62,38 @@ Polyhedral_surface::Polyhedral_surface(QObject* parent,
   connection_map["actionSubdivision"] = 
     std::make_pair(SIGNAL(triggered()),
                    SLOT(make_one_subdivision_step()));
+  connection_map["action_Options"] =
+    std::make_pair(SIGNAL(triggered()),
+                   SLOT(on_action_Options_triggered()));
 }
 
 Polyhedral_surface::~Polyhedral_surface()
 {
   clear();
   delete surface_ptr;
+}
+
+void Polyhedral_surface::on_action_Options_triggered()
+{
+  QDialog *options_dialog = new QDialog(qobject_cast<QWidget*>(parent));
+  Ui::OptionDialog ui;
+  ui.setupUi(options_dialog);
+
+  QDoubleSpinBox* sb_upper = options_dialog->findChild<QDoubleSpinBox*>("angle_upper_bound");
+  QDoubleSpinBox* sb_lower = options_dialog->findChild<QDoubleSpinBox*>("angle_lower_bound");
+
+  if(!sb_lower || !sb_upper) 
+    return;
+
+  sb_lower->setValue(sharp_edges_angle_lower_bound);
+  sb_upper->setValue(sharp_edges_angle_upper_bound);
+  if(options_dialog->exec() == QDialog::Accepted)
+  {
+    sharp_edges_angle_upper_bound = sb_upper->value();
+    sharp_edges_angle_lower_bound = sb_lower->value();
+    set_sharp_edges_angle_bounds(sharp_edges_angle_lower_bound,
+                                 sharp_edges_angle_upper_bound);
+  }
 }
 
 void Polyhedral_surface::clear() {
@@ -91,14 +122,14 @@ void Polyhedral_surface::connect_actions()
       connect(action, it->second.first,
               this, it->second.second);
   }
+  MainWindow* mw = qobject_cast<MainWindow *>(parent);
+  if(mw)
+    mw->fix_menus_visibility();
 
-  connect(parent, SIGNAL(new_sharp_edges_angle_bounds(double, double)),
-          this, SLOT(set_sharp_edges_angle_bounds(double, double)));
-
-  connect(this, SIGNAL(changed()), this, SLOT(set_message()));
+  connect(this, SIGNAL(changed()), this, SLOT(display_nb_elements_in_status_bar()));
 }
 
-void Polyhedral_surface::set_message() const 
+void Polyhedral_surface::display_nb_elements_in_status_bar() const 
 {
   QMainWindow* mw = qobject_cast<QMainWindow *>(parent);
   if(surface_ptr && mw)

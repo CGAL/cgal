@@ -1,12 +1,13 @@
 #include "mainwindow.h"
-#include "ui_optionsdialog.h"
 
 #include <QFileDialog>
 #include <QUrl>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QtDebug>
-#include <QSpinBox>
+#include <QMenu>
+#include <QAction>
+#include <QtGlobal>
 
 #include "get_polyhedral_surface.h"
 #include <QGLViewer/vec.h>
@@ -31,6 +32,7 @@ MainWindow::MainWindow() :
   surface = get_polyhedral_surface(this,
 				   sharp_edges_angle_lower_bound,
 				   sharp_edges_angle_upper_bound);
+  fix_menus_visibility();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -51,6 +53,24 @@ void MainWindow::surface_open(const QString& filename)
   surface->open(filename);
 }
 
+void MainWindow::fix_menus_visibility()
+{
+  fix_one_menu_visibility(findChild<QMenu*>("menuEdit"));
+  fix_one_menu_visibility(findChild<QMenu*>("menuOptions"));
+}
+
+void MainWindow::fix_one_menu_visibility(QMenu* menu)
+{
+  if(menu) {
+    bool is_non_empty = false;
+    Q_FOREACH(QAction* action, menu->actions()) {
+      is_non_empty = is_non_empty || action->isVisible();
+      if(action->isVisible())
+        QTextStream(stderr) << action->text() << "\n";
+    }
+    menu->setEnabled(is_non_empty);
+  }
+}
 
 void MainWindow::on_action_Open_triggered()
 {
@@ -64,27 +84,4 @@ void MainWindow::on_action_Open_triggered()
 void MainWindow::on_action_Quit_triggered()
 {
   qApp->exit();
-}
-
-void MainWindow::on_action_Options_triggered()
-{
-  QDialog *options_dialog = new QDialog(this);
-  Ui::OptionDialog ui;
-  ui.setupUi(options_dialog);
-
-  QDoubleSpinBox* sb_upper = options_dialog->findChild<QDoubleSpinBox*>("angle_upper_bound");
-  QDoubleSpinBox* sb_lower = options_dialog->findChild<QDoubleSpinBox*>("angle_lower_bound");
-
-  if(!sb_lower || !sb_upper) 
-    return;
-
-  sb_lower->setValue(sharp_edges_angle_lower_bound);
-  sb_upper->setValue(sharp_edges_angle_upper_bound);
-  if(options_dialog->exec() == QDialog::Accepted)
-  {
-    sharp_edges_angle_upper_bound = sb_upper->value();
-    sharp_edges_angle_lower_bound = sb_lower->value();
-    emit new_sharp_edges_angle_bounds(sharp_edges_angle_lower_bound,
-				      sharp_edges_angle_upper_bound);
-  }
 }

@@ -50,7 +50,7 @@ public:
 public slots:
   void clear();
   void connect_actions();
-  void set_message() const;
+  void display_nb_elements_in_status_bar() const;
   void set_dirty();
   void busy() const;
   void not_busy() const;
@@ -64,6 +64,7 @@ public slots:
   void toggle_display_all_edges(bool b);
   void toggle_display_control_edges(bool b);
   void make_one_subdivision_step();
+  void on_action_Options_triggered();
 
 public:
   void open(const QString& filename);

@@ -290,6 +290,7 @@ Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
 Surface_mesher/demo/Surface_mesher/qt4-demo/.qglviewer.xml
 Surface_mesher/demo/Surface_mesher/qt4-demo/Makefile
+Surface_mesher/demo/Surface_mesher/qt4-demo/cgal.prf
 Surface_mesher/demo/Surface_mesher/qt4-demo/input_dump.off
 Surface_mesher/demo/Surface_mesher/qt4-demo/moc_*.cpp
 Surface_mesher/demo/Surface_mesher/qt4-demo/qrc_surface_mesher.cpp

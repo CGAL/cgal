@@ -18,16 +18,15 @@ public:
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
   void surface_open(const QString& filename);
-  
+  void fix_menus_visibility();
+
 private slots:
   void on_action_Open_triggered();
   void on_action_Quit_triggered();
-  void on_action_Options_triggered();
   
-signals:
-  void new_sharp_edges_angle_bounds(double, double);
-
 private:
+  void fix_one_menu_visibility(QMenu* menu);
+
   Surface* surface;
   QGLViewer* viewer_ptr;
   double sharp_edges_angle_lower_bound;

@@ -160,7 +160,7 @@
     <string>&amp;Options...</string>
    </property>
    <property name="visible" >
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSubdivision" >
