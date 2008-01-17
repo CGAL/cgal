@@ -54,7 +54,6 @@ struct Utility_macros_param_type {
   typedef const T& R;
 };
 
-template <>
 template <class T>
 struct Utility_macros_param_type<T*> {
   typedef T* P;
