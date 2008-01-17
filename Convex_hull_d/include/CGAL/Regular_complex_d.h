@@ -35,8 +35,6 @@
 #include <list>
 #include <cstddef>
 
-#undef CGAL_KD_DEBUG
-#define CGAL_KD_DEBUG 93
 #include <CGAL/Kernel_d/debug.h>
 
 #ifdef CGAL_USE_LEDA

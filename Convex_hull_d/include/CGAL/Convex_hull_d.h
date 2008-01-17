@@ -75,8 +75,6 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 #include <list>
 #include <vector>
 
-#undef CGAL_KD_DEBUG
-#define CGAL_KD_DEBUG 93
 #include <CGAL/Kernel_d/debug.h>
 
 CGAL_BEGIN_NAMESPACE

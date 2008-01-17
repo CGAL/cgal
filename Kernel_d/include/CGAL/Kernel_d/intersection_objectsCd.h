@@ -20,15 +20,12 @@
 // 
 //
 // Author(s)     : ?
+
 #ifndef CGAL_INTERSECTION_OBJECTSCD_H
 #define CGAL_INTERSECTION_OBJECTSCD_H
 
 #include <CGAL/basic.h>
-
-#undef CGAL_KD_DEBUG
-#define CGAL_KD_DEBUG 11
 #include <CGAL/Kernel_d/debug.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -139,13 +136,8 @@ not degenerate.}*/
 
 };
 
-
-
 CGAL_END_NAMESPACE
 
 #include <CGAL/Kernel_d/intersection_objects_d.h>
 
 #endif //CGAL_INTERSECTION_OBJECTSCD_H
-
-
-
