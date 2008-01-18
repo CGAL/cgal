@@ -337,7 +337,7 @@ The sweep traits class wraps it all.
 #ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
 #define CGAL_SEGMENT_OVERLAY_TRAITS_H
 
-#include <assert.h>
+#include <cassert>
 #undef _DEBUG
 #define _DEBUG 23
 #include <CGAL/Nef_2/debug.h>

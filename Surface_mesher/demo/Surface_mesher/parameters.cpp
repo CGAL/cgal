@@ -10,7 +10,7 @@
 //
 // Author(s)     : Laurent Rineau
 
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <limits>
 

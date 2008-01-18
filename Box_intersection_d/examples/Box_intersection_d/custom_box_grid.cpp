@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-#include <assert.h>
+#include <cassert>
 
 struct Box {
     typedef int            NT;

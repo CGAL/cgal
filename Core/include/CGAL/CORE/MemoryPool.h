@@ -34,7 +34,7 @@
 #define _CORE_MEMORYPOOL_H_
 
 #include <new>           // for placement new
-#include <assert.h>
+#include <cassert>
 
 CORE_BEGIN_NAMESPACE
 

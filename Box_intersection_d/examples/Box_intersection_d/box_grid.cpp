@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
-#include <assert.h>
+#include <cassert>
 
 typedef CGAL::Box_intersection_d::Box_d<int,2> Box;
 
