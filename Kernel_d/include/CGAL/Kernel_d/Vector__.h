@@ -35,7 +35,8 @@
 #include <vector>
 #include <iterator>
 
-namespace CGALLA {
+namespace CGAL {
+namespace Linear_Algebra {
 
 template <class NT_, class AL_> class Vector_;
 template <class NT_, class AL_> class Matrix_;
@@ -456,6 +457,7 @@ except for |dimension()| and $[\ ]$ which take constant time. The space
 requirement is $O(|v.dimension()|)$. }*/
 
 
-} // CGALLA
-#endif // CGAL__VECTOR___H
+} // Linear_Algebra
+} // CGAL
 
+#endif // CGAL__VECTOR___H

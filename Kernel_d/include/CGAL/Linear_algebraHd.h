@@ -68,10 +68,10 @@ public:
 typedef RT_ RT;
 /*{\Mtypemember the ring type of the components.}*/ 
 
-typedef CGALLA::Vector_<RT_,AL_> Vector;
+typedef Linear_Algebra::Vector_<RT_,AL_> Vector;
 /*{\Mtypemember the vector type.}*/ 
 
-typedef CGALLA::Matrix_<RT_,AL_> Matrix;
+typedef Linear_Algebra::Matrix_<RT_,AL_> Matrix;
 /*{\Mtypemember the matrix type.}*/ 
 
 typedef AL_ allocator_type;

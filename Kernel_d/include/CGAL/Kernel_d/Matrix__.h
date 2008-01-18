@@ -28,7 +28,8 @@
 #include <new>
 #include <cstddef>                 // for std::size_t, std::ptrdiff_t
 
-namespace CGALLA {
+namespace CGAL {
+namespace Linear_Algebra {
 
 template <typename ROW_, typename V_, typename R_, typename P_> 
 class column_iterator_ {
@@ -821,6 +822,7 @@ and all other operations take time $O(nm)$.  The space requirement is
 $O(nm)$.}*/
 
 
-} // CGALLA
-#endif // CGAL_MATRIX___H
+} // Linear_Algebra
+} // CGAL
 
+#endif // CGAL_MATRIX___H

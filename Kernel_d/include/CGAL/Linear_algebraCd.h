@@ -43,8 +43,8 @@ public:
   typedef _FT                     RT;
   typedef _AL                     AL;
   typedef Linear_algebraCd<FT,AL> Self;
-  typedef CGALLA::Vector_<FT,AL>  Vector;
-  typedef CGALLA::Matrix_<FT,AL>  Matrix;
+  typedef Linear_Algebra::Vector_<FT,AL>  Vector;
+  typedef Linear_Algebra::Matrix_<FT,AL>  Matrix;
   typedef const FT*               const_iterator;
   typedef FT*                     iterator;
   
