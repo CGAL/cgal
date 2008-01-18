@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies=""
-				OutputFile="$(OutDir)/fitting_segments_2.exe"
+				OutputFile="$(OutDir)/linear_least_squares_fitting_segments_2.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;;$(CGALROOT)\auxiliary\TAUCS\lib"
 				GenerateDebugInformation="true"
@@ -141,7 +141,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies=""
-				OutputFile="$(OutDir)/fitting_segments_2.exe"
+				OutputFile="$(OutDir)/linear_least_squares_fitting_segments_2.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(CGALROOT)\lib;$(CGALROOT)\auxiliary\gmp\lib;$(CGALROOT)\auxiliary\TAUCS\lib"
 				GenerateDebugInformation="false"

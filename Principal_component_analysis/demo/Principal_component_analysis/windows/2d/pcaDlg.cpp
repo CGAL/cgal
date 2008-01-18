@@ -415,11 +415,13 @@ void CpcaDlg::OnFitLine()
     linear_least_squares_fitting_2(m_points.begin(),
                                    m_points.end(),
                                    m_fitting_line,
-                                   m_centroid);
+                                   m_centroid,
+																	 CGAL::PCA_dimension_0_tag());
   quality =
     linear_least_squares_fitting_2(m_points.begin(),
                                    m_points.end(),
-                                   m_fitting_line);
+                                   m_fitting_line,
+																	 CGAL::PCA_dimension_0_tag());
   CString str;
   str.Format("Fitting quality: %6.3f",quality);
   SetWindowText(str);
