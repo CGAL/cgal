@@ -7,10 +7,10 @@
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_3            Line_3;
-typedef K::Plane_3           Plane_3;
-typedef K::Point_3           Point_3;
-typedef K::Tetrahedron_3     Tetrahedron_3;
+typedef K::Line_3            Line;
+typedef K::Plane_3           Plane;
+typedef K::Point_3           Point;
+typedef K::Tetrahedron_3     Tetrahedron;
 
 int main(void)
 {
@@ -20,16 +20,16 @@ int main(void)
 	Point d( 0.0,1.0,1.0);
 	Point e( 0.0,0.0,0.0);
 
-	std::list<Tetrahedron_3> tetrahedra;
-  tetrahedra.push_back(Tetrahedron_3(a,b,c,d));
-  tetrahedra.push_back(Tetrahedron_3(a,b,c,e));
+	std::list<Tetrahedron> tetrahedra;
+  tetrahedra.push_back(Tetrahedron(a,b,c,d));
+  tetrahedra.push_back(Tetrahedron(a,b,c,e));
 
 	// fit a line
-  Line_3 line;
+  Line line;
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_3_tag());
 
 	// fit a plane
-  Plane_3 plane;
+  Plane plane;
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_3_tag());
     
   return 0;
