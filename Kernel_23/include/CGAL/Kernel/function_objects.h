@@ -920,6 +920,7 @@ namespace CommonKernelFunctors {
     Vector_3
     operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
     { 
+      CGAL_kernel_precondition(! K().collinear_3_object()(p,q,r) ); 
       Vector_3 res = CGAL::cross_product(q-p, r-p);
       return res; }
   };
@@ -1700,9 +1701,11 @@ namespace CommonKernelFunctors {
     Vector_3
     operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
     { 
+      CGAL_kernel_precondition(! K().collinear_3_object()(p,q,r) ); 
       Vector_3 res = CGAL::cross_product(q-p, r-p);
-      res = res / sqrt(res*res);
-      return res; }
+      res = res / CGAL::sqrt(res.squared_length());
+      return res; 
+	}
   };
 
   template <typename K>
