@@ -13,10 +13,12 @@ typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 
 int main()
 {
+  std::cout << "Test 3D linear least squares fitting of cuboids"  << std::endl;
+
   std::list<Iso_cuboid> cuboids;
 	Point a(0.0,0.0,0.0);
-	Point b(1.0,0.0,0.0);
-	Point c(0.0,1.0,0.0);
+	Point b(1.0,2.0,3.0);
+	Point c(4.0,5.0,6.0);
   cuboids.push_back(Iso_cuboid(a,b));
   cuboids.push_back(Iso_cuboid(a,c));
 

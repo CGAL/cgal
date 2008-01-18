@@ -202,7 +202,7 @@ void test_5(const unsigned int nb_points)
 
 int main()
 {
-  std::cout << "Test 2D linear_least_squares_fitting_segments"  << std::endl;
+  std::cout << "Test 2D linear least squares fitting of segments"  << std::endl;
 
   test_1();
   test_2();

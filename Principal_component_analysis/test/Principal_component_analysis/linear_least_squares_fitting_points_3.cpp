@@ -20,6 +20,7 @@ typedef Kernel::Triangle_3 Triangle;
 void test_one_point();
 void test_point_set(const unsigned int nb_points);
 
+
 int main(void)
 {
   std::cout << "Test linear least squares fitting for 3D points"  << std::endl;
@@ -27,6 +28,7 @@ int main(void)
   test_point_set(1000);
   return 0; // success
 }
+
 
 void fit_point_set(std::list<Point>& points,
                    Plane& plane,

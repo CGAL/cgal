@@ -11,7 +11,6 @@
 #include <cstdlib>
 
 // types
-
 typedef CGAL::Cartesian<double> Kernel;
 typedef Kernel::FT FT;
 
@@ -67,8 +66,8 @@ void test_2D_point_set(const unsigned int nb_points)
   Point_2 centroid;
 
   // call all versions of the function
-  FT quality;
   Kernel k;
+  FT quality;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag(),k);
@@ -85,10 +84,8 @@ void test_2D_point_set(const unsigned int nb_points)
 
 int main()
 {
-  std::cout << "Test 2D linear_least_squares_fitting"  << std::endl;
-
+  std::cout << "Test 2D linear least squares fitting of points"  << std::endl;
   test_2D();
   test_2D_point_set(100);
-
   return 0; // success
 }

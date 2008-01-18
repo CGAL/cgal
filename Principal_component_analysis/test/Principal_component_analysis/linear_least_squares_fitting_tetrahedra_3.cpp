@@ -14,6 +14,8 @@ typedef Kernel::Tetrahedron_3     Tetrahedron;
 
 int main()
 {
+  std::cout << "Test 3D linear least squares fitting of tetrahedra"  << std::endl;
+
 	// generate two tetrahedra
 	std::list<Tetrahedron> tetrahedra;
 	Point a(0.0,0.0,0.0);

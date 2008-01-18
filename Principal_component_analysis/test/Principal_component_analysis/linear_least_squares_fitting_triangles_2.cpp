@@ -111,10 +111,8 @@ void test_2()
 
 int main()
 {
-  std::cout << "Test 2D linear_least_squares_fitting_triangles"  << std::endl;
-
+  std::cout << "Test 2D linear least squares fitting of triangles"  << std::endl;
   test_1();
   test_2();
-
   return 0; // success
 }

@@ -139,7 +139,7 @@ void test_3()
 
 int main()
 {
-  std::cout << "Test 2D linear_least_squares_fitting_rectangles"  << std::endl;
+  std::cout << "Test 2D linear least squares fitting of rectangles"  << std::endl;
 
   test_1();
   test_2();

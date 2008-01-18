@@ -13,6 +13,8 @@ typedef Kernel::Triangle_3   Triangle;
 
 int main()
 {
+  std::cout << "Test 3D linear least squares fitting of triangles"  << std::endl;
+
   std::list<Triangle> triangles;
 
 	Point a(0.0,0.0,0.0);
