@@ -21,7 +21,7 @@
 %{
 /* C/C++ declaration section */
 /* ========================= */
-//#include <stdlib.h>  /* for atoi */
+//#include <cstdlib>  /* for atoi */
 #include <string>    /* for std::string */
 #include <fstream>   /* for std::ifstream */
 #include <benchmark_parser.h>

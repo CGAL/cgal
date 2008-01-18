@@ -5,7 +5,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Testsuite/assert.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 
 // types

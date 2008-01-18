@@ -11,8 +11,8 @@
 #include "stdafx.h"
 #include "Vector3d.h"
 
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 
 
 //////////////////////////////////////////////

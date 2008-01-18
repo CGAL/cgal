@@ -51,9 +51,9 @@
 #include "images/zoom_in.xpm"
 #include "images/zoom_out.xpm"
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 //#include <unistd.h> // Header File For sleeping.
 #include <vector>
 

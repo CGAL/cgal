@@ -1,8 +1,8 @@
 #ifndef _POLYHEDRALSURF_H_
 #define _POLYHEDRALSURF_H_
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <algorithm>
 #include <vector>
 #include <list>

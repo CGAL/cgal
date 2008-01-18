@@ -9,8 +9,8 @@
 #include <CGAL/Lazy_exact_nt.h>
 
 #include <list>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 
 typedef CGAL::Lazy_exact_nt<Number_type>                Lazy_exact_nt;
 typedef CGAL::Cartesian<Lazy_exact_nt>                  Kernel;

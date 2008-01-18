@@ -23,7 +23,7 @@
 
 #include <time.h>
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <iostream>
 #include <iomanip>

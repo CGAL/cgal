@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "CGAL/Benchmark/config.hpp"
 #include "CGAL/Benchmark/Benchmark_visitor.hpp"

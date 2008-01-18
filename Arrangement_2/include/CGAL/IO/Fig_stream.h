@@ -24,7 +24,7 @@
 
 #include <vector>
 #include <fstream>
-#include <stdio.h>
+#include <cstdio>
 
 CGAL_BEGIN_NAMESPACE
 

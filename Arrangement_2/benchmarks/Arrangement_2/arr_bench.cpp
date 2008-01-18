@@ -144,7 +144,7 @@ enum MaxFilesNumber {
 #include <qapplication.h>
 #endif
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <list>
 

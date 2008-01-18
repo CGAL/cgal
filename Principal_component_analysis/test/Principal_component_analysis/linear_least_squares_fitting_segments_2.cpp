@@ -8,7 +8,7 @@
 
 #include <vector>
 #include <CGAL/Testsuite/assert.h>
-#include <stdlib.h>
+#include <cstdlib>
 #define THRESHOLD 0.001
 // types
 

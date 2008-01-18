@@ -11,8 +11,8 @@
 #include "stdafx.h"
 #include "Viewport.h"
 
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 
 
 //////////////////////////////////////////////

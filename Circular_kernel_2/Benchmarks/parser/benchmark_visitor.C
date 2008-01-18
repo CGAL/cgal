@@ -21,7 +21,7 @@
 #include <benchmark_parser.h>
 #include <iostream>
 #include <sstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 void Benchmark_visitor::error_handler( std::string s) {
     std::ostringstream message;
