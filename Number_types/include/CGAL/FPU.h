@@ -49,10 +49,10 @@ extern "C" {
      // GCC seems to remove (fixincludes) read_rnd/write_rnd...
 #    include "/usr/include/float.h"
 #  else
-#    include <float.h>
+#    include <cfloat>
 #  endif
 #elif defined __BORLANDC__
-#  include <float.h>
+#  include <cfloat>
 #elif defined _MSC_VER || defined __sparc__ || \
      (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC)
    // Nothing to include.

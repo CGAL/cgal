@@ -33,7 +33,7 @@
 
 
 #ifdef _MSC_VER
-#include <float.h>
+#include <cfloat>
 #endif
 
 #ifdef CGAL_CFG_IEEE_754_BUG

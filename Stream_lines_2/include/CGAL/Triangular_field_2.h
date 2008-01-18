@@ -23,8 +23,8 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
-#include <float.h>
-#include <stdlib.h>
+#include <cfloat>
+#include <cstdlib>
 
 #include <iostream>
 #include <fstream>

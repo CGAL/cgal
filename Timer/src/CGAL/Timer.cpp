@@ -50,7 +50,7 @@
 #endif //  CGAL__GETRUSAGE //
 
 // For the numerical limits
-#include <float.h>
+#include <cfloat>
 
 
 CGAL_BEGIN_NAMESPACE

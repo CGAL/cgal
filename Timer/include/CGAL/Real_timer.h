@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 // For the numerical limits
-#include <float.h>
+#include <cfloat>
 
 CGAL_BEGIN_NAMESPACE
 
