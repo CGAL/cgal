@@ -287,6 +287,8 @@ CGAL_Kernel_cons(Construct_min_vertex_3,
                  construct_min_vertex_3_object)
 CGAL_Kernel_cons(Construct_max_vertex_3,
                  construct_max_vertex_3_object)
+CGAL_Kernel_cons(Construct_normal_3,
+                 construct_normal_3_object)
 CGAL_Kernel_cons(Construct_object_2,
                  construct_object_2_object)
 CGAL_Kernel_cons(Construct_object_3,
@@ -403,6 +405,8 @@ CGAL_Kernel_cons(Construct_triangle_2,
 		 construct_triangle_2_object)
 CGAL_Kernel_cons(Construct_triangle_3,
 		 construct_triangle_3_object)
+CGAL_Kernel_cons(Construct_unit_normal_3,
+                 construct_unit_normal_3_object)
 CGAL_Kernel_cons(Construct_vector_2,
 		 construct_vector_2_object)
 CGAL_Kernel_cons(Construct_vector_3,

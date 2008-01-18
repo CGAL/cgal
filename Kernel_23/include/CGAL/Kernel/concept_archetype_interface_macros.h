@@ -457,6 +457,12 @@ CGAL_Kernel_cons(Construct_min_vertex_3,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_CONSTRUCT_NORMAL_3)
+CGAL_Kernel_cons(Construct_normal_3,
+		 construct_normal_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CONSTRUCT_OBJECT_2)
 CGAL_Kernel_cons(Construct_object_2,
                  construct_object_2_object)
@@ -727,6 +733,12 @@ CGAL_Kernel_cons(Construct_triangle_2,
     defined(CGAL_CA_CONSTRUCT_TRIANGLE_3)
 CGAL_Kernel_cons(Construct_triangle_3,
 		 construct_triangle_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_CONSTRUCT_UNIT_NORMAL_3)
+CGAL_Kernel_cons(Construct_unit_normal_3,
+		 construct_unit_normal_3_object)
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_CONSTRUCT_VECTOR_2)

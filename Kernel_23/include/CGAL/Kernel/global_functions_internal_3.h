@@ -508,6 +508,21 @@ min_vertex(const typename K::Iso_cuboid_3 &ic, const K &k)
   return k.construct_min_vertex_3_object()(ic);
 }
 
+template < class K >
+inline
+typename K::Vector_3
+normal(const typename K::Point_3 &p, const typename K::Point_3 &q, const typename K::Point_3 &r, const K &k)
+{
+  return k.construct_normal_3_object()(p, q, r);
+}
+template < class K >
+inline
+typename K::Vector_3
+unit_normal(const typename K::Point_3 &p, const typename K::Point_3 &q, const typename K::Point_3 &r, const K &k)
+{
+  return k.construct_unit_normal_3_object()(p, q, r);
+}
+
 template <class K >
 inline
 Orientation

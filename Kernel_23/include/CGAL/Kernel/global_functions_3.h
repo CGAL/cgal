@@ -479,6 +479,14 @@ min_vertex(const Iso_cuboid_3<K> &ic)
   return CGALi::min_vertex(ic, K());
 }
 
+template < class K >
+inline
+typename K::Vector_3
+normal(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::normal(p, q, r, K());
+}
+
 // FIXME TODO : what to do with the operators ?
 template < class K >
 inline
@@ -879,6 +887,14 @@ typename K::FT
 squared_radius(const Point_3<K> &p, const Point_3<K> &q)
 {
   return CGALi::squared_radius(p, q, K());
+}
+
+template < class K >
+inline
+typename K::Vector_3
+unit_normal(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::unit_normal(p, q, r, K());
 }
 
 template < class K >

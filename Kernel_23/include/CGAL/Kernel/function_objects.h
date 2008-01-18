@@ -908,6 +908,21 @@ namespace CommonKernelFunctors {
     { return (s.rep().min)(); }
   };
 
+  template <typename K>
+  class Construct_normal_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Vector_3         Vector_3;
+  public:
+    typedef Vector_3           result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Vector_3
+    operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
+    { 
+      Vector_3 res = CGAL::cross_product(q-p, r-p);
+      return res; }
+  };
 
   template <typename K>
   class Construct_object_2
@@ -1673,6 +1688,22 @@ namespace CommonKernelFunctors {
     { return this->operator()(Return_base_tag(), p, q, r); }
   };
 
+  template <typename K>
+  class Construct_unit_normal_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Vector_3         Vector_3;
+  public:
+    typedef Vector_3           result_type;
+    typedef Arity_tag< 1 >    Arity;
+
+    Vector_3
+    operator()(const Point_3& p,const Point_3& q, const Point_3& r) const
+    { 
+      Vector_3 res = CGAL::cross_product(q-p, r-p);
+      res = res / sqrt(res*res);
+      return res; }
+  };
 
   template <typename K>
   class Construct_vertex_3
