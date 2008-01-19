@@ -1406,6 +1406,20 @@ public:
 };
 
 template <typename K>
+class Construct_normal_3
+{
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::Vector_3   Vector_3;
+public:
+    typedef Vector_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Vector_3
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
+    { return Vector_3(); }
+};
+
+template <typename K>
 class Construct_object_2
 {
     typedef typename K::Object_2   Object_2;
@@ -2161,6 +2175,20 @@ public:
     Triangle_3
     operator()( const Point_3&, const Point_3&, const Point_3&) const
     { return Triangle_3(); }
+};
+
+template <typename K>
+class Construct_unit_normal_3
+{
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::Vector_3   Vector_3;
+public:
+    typedef Vector_3          result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Vector_3
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
+    { return Vector_3(); }
 };
 
 template <typename K>
