@@ -50,6 +50,7 @@ _test_new_3_sqrt(const R& rep, CGAL::Tag_true)
 {
   typedef typename R::FT          FT;
   typedef typename R::Point_3     Point_3;
+  typedef typename R::Vector_3    Vector_3;
   typedef typename R::Triangle_3  Triangle_3;
 
   Point_3 p3 (1,1,1);
@@ -65,7 +66,14 @@ _test_new_3_sqrt(const R& rep, CGAL::Tag_true)
   FT tmp11a = compute_area(t2);
      tmp11a = compute_area(p3, p4, p5);
 
+
+  typename R::Construct_unit_normal_3 construct_unit_normal
+    = rep.construct_unit_normal_3_object();
+
+  Vector_3 tmp11b = construct_unit_normal(Point_3(CGAL::ORIGIN), p4, p5);
+
   use(tmp11a);
+  use(tmp11b);
 
   return true;
 }
@@ -267,6 +275,12 @@ test_new_3(const R& rep)
           tmp2f = construct_max_vertex_3(iso1);
           tmp2f = construct_max_vertex_3(s2);
 
+
+  typename R::Construct_normal_3 construct_normal
+    = rep.construct_normal_3_object();
+
+  Vector_3 tmp2g = construct_normal(Point_3(CGAL::ORIGIN), Point_3(1,0,0), Point_3(0,1,0));
+  use(tmp2g);
   typename R::Construct_bbox_3 construct_bbox_3
     = rep.construct_bbox_3_object();
 

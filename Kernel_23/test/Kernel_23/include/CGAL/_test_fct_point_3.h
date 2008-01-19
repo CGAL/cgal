@@ -22,6 +22,36 @@
 #ifndef CGAL__TEST_FCT_POINT_3_H
 #define CGAL__TEST_FCT_POINT_3_H
 
+// Accessory function testing functions that require sqrt().
+// Doesn't instantiate anything if RT doesn't support sqrt().
+template <class R>
+bool
+_test_fct_point_sqrt_3(const R&, CGAL::Tag_false)
+{
+  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+  std::cout << std::endl
+            << "WARNING : FT doesn't support sqrt(),"
+               " hence some functions are not tested." << std::endl;
+  return true;
+}
+
+template <class R>
+bool
+_test_fct_point_sqrt_3(const R&, CGAL::Tag_true)
+{
+ typedef typename  R::RT       RT;
+ typedef typename  R::Point_3  Point_3;
+ typedef typename  R::Vector_3   Vector_3;
+
+ // unit_normal of three points
+ CGAL::Point_3<R> pe0( RT(1), RT(0), RT(0) );
+ CGAL::Point_3<R> pe1( RT(0), RT(1), RT(0) );
+ CGAL::Vector_3<R> res( RT(0), RT(0), RT(1) );
+ CGAL_test_assert( CGAL::unit_normal( CGAL::Point_3<R>(CGAL::ORIGIN), pe0, pe1) \
+                           == res);
+ return true;
+}
+
 template <class R>
 bool
 _test_fct_point_3(const R& )
@@ -137,6 +167,10 @@ _test_fct_point_3(const R& )
  CGAL_test_assert( CGAL::orientation( p7, p8, p9, p5) == CGAL::NEGATIVE );
  CGAL_test_assert( CGAL::orientation( p8, p7, p9, p4) == CGAL::NEGATIVE );
 
+ // normal of three points
+ CGAL::Vector_3<R> res( RT(0), RT(0), RT(1) );
+ CGAL_test_assert( CGAL::normal( CGAL::Point_3<R>(CGAL::ORIGIN), pe0, pe1) \
+                           == res);
  std::cout <<'.';
 
  CGAL::Point_3<R> p10( RT(0), RT(0), RT(16), RT(8) );
@@ -170,6 +204,13 @@ _test_fct_point_3(const R& )
  CGAL_test_assert( CGAL::compare_squared_distance(p0, p3, CGAL::squared_distance(p1,p0)) == CGAL::SMALLER );
  CGAL_test_assert( CGAL::compare_squared_distance(p1, p3, CGAL::squared_distance(p5,p1)) == CGAL::SMALLER );
 
+ // More tests, that require sqrt().
+ {
+     typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
+     static const bool has_sqrt = 
+         ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
+     _test_fct_point_sqrt_3(R(), ::CGAL::Boolean_tag<has_sqrt>());
+ }
  std::cout << "done" << std::endl;
  return true;
 }
