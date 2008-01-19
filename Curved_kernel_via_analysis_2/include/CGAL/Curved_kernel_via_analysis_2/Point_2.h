@@ -23,6 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
+#include <boost/optional.hpp>
 
 #include <CGAL/Arr_enums.h>
 
