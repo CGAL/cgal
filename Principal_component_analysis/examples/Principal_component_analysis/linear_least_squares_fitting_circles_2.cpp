@@ -1,31 +1,27 @@
-// Example program for the linear_least_square_fitting function on a set of circles in 2D
-
+// Example program for linear least squares fitting of 2D circles
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
-
 #include <list>
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_2            Line_2;
-typedef K::Point_2           Point_2;
-typedef K::Circle_2          Circle_2;
+typedef K::Line_2            Line;
+typedef K::Point_2           Point;
+typedef K::Circle_2          Circle;
 
 int main()
 {
-  std::list<Circle_2> circles;
-  circles.push_back(Circle_2(Point_2(0.0,0.0),9));
-  circles.push_back(Circle_2(Point_2(0.0,10.0),49));
-  circles.push_back(Circle_2(Point_2(10.0,0.0),49));
+	// generate a set of 2D circles
+  std::list<Circle> circles;
+  circles.push_back(Circle(Point(1.0,2.0),16.0));
+  circles.push_back(Circle(Point(3.0,4.0),25.0));
 
-  Line_2 line;
-  Point_2 c;
+	// fit line to circles
+  Line line;
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_1_tag());
 
-	// fit circles
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_1_tag());
-
-  // fit disks
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,c,CGAL::PCA_dimension_2_tag());
+	// fit line to disks
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_2_tag());
 
   return 0;
 }

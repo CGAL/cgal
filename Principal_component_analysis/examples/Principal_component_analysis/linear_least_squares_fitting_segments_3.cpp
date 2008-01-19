@@ -1,29 +1,34 @@
-// Example program for the linear_least_square_fitting function on set of segments in 3D
-
+// Example program for linear least squares fitting of 3D segments
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-
 #include <list>
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_3            Line_3;
-typedef K::Plane_3           Plane_3;
-typedef K::Point_3           Point_3;
-typedef K::Segment_3         Segment_3;
+typedef K::Line_3            Line;
+typedef K::Plane_3           Plane;
+typedef K::Point_3           Point;
+typedef K::Segment_3         Segment;
 
 int main()
 {
-  std::list<Segment_3> segments;
-  segments.push_back(Segment_3(Point_3(1.0,1.0,1.0),Point_3(2.0,2.0,2.0)));
-  segments.push_back(Segment_3(Point_3(3.0,3.0,3.0),Point_3(8.0,8.0,8.0)));
+	Point a(1.0,2.0,3.0);
+	Point b(4.0,5.0,6.0);
+	Point c(7.0,8.0,9.0);
+  std::list<Segment> segments;
+  segments.push_back(Segment(a,b));
+  segments.push_back(Segment(a,c));
 
-  Line_3 line;
-  Point_3 c;
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,CGAL::PCA_dimension_1_tag());
+  Line line;
+  Plane plane;
 
-  Plane_3 plane;
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,CGAL::PCA_dimension_1_tag());
+	// fit a line and a plane to segments
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
+
+	// fit a line and a plane to segment end points
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_0_tag());
 
   return 0;
 }

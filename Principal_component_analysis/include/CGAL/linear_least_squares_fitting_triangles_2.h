@@ -203,7 +203,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
-  std::list<Point_2> points;  
+  std::list<Point> points;  
   for(InputIterator it = first;
       it != beyond;
       it++)

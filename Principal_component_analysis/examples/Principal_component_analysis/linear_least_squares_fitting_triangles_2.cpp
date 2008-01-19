@@ -1,28 +1,34 @@
-// Example program for the linear_least_square_fitting function on set of triangles in 2D
-
+// Example program for linear least squares fitting of 2D triangles
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
-
 #include <list>
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_2            Line_2;
-typedef K::Point_2           Point_2;
-typedef K::Triangle_2        Triangle_2;
+typedef K::Line_2            Line;
+typedef K::Point_2           Point;
+typedef K::Triangle_2        Triangle;
 
 int main()
 {
-  std::list<Triangle_2> triangles;
-  Point_2 c;
-  triangles.push_back(Triangle_2(Point_2(0.0,1.0),Point_2(-1.0,0.0),Point_2(1.0,0.0)));
-  triangles.push_back(Triangle_2(Point_2(0.0,-1.0),Point_2(-1.0,0.0),Point_2(1.0,0.0)));
+	// generate 2D triangles
+  std::list<Triangle> triangles;
+	Point a(1.0,2.0,3.0);
+	Point b(4.0,5.0,6.0);
+	Point c(7.0,8.0,9.0);
+	Point d(0.1,0.2,0.3);
+  triangles.push_back(Triangle(a,b,c));
+  triangles.push_back(Triangle(a,b,d));
 
-  Line_2 line;
-  linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_2_tag());
+  // fit line to triangles
+  Line line;
+  linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_2_tag());
 
-  //Fit using the edges
-  linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,c,CGAL::PCA_dimension_1_tag());
+  // fit line to triangle edges
+  linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_1_tag());
+
+	// fit line to triangle vertices
+  linear_least_squares_fitting_2(triangles.begin(),triangles.end(),line,CGAL::PCA_dimension_0_tag());
 
   return 0;
 }

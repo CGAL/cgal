@@ -1,25 +1,26 @@
-// Example program for the linear_least_square_fitting function on set of segments in 2D
-
+// Example program for linear least squares fitting of 2D segments
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
-
 #include <list>
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
-typedef K::Line_2            Line_2;
-typedef K::Point_2           Point_2;
-typedef K::Segment_2         Segment_2;
+typedef K::Line_2            Line;
+typedef K::Point_2           Point;
+typedef K::Segment_2         Segment;
 
 int main()
 {
-  std::list<Segment_2> segments;
-  segments.push_back(Segment_2(Point_2(0.0,1.0),Point_2(-1.0,0.0)));
-  segments.push_back(Segment_2(Point_2(0.0,1.0),Point_2(1.0,0.0)));
+	Point a(1.0,2.0);
+	Point b(3.0,4.0);
+	Point c(5.0,6.0);
+  std::list<Segment> segments;
+  segments.push_back(Segment(a,b));
+  segments.push_back(Segment(a,c));
 
-  Line_2 line;
-  Point_2 c;
-  linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,CGAL::PCA_dimension_1_tag());
+	// fit a line
+  Line line;
+  linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
 
   return 0;
 }
