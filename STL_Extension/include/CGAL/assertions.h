@@ -52,6 +52,10 @@ void warning_fail( const char*, const char*, int, const char* = "");
 // assertions
 // ----------
 
+#ifdef NDEBUG
+#  define CGAL_NDEBUG
+#endif
+
 #ifdef CGAL_NDEBUG
 #  define CGAL_NO_ASSERTIONS
 #  define CGAL_NO_PRECONDITIONS
@@ -59,7 +63,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_NO_WARNINGS
 #endif
 
-#if defined(CGAL_NO_ASSERTIONS) || defined(NDEBUG)
+#if defined(CGAL_NO_ASSERTIONS)
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
@@ -71,8 +75,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
-#if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_exactness_assertion_code(CODE)
@@ -84,9 +87,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
-#if defined(CGAL_NO_ASSERTIONS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_assertion(EX) (static_cast<void>(0))
 #  define CGAL_expensive_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_assertion_code(CODE)
@@ -98,10 +99,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
-#if defined(CGAL_NO_ASSERTIONS) \
-  || !defined(CGAL_CHECK_EXACTNESS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_exactness_assertion(EX) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_assertion_code(CODE)
@@ -117,7 +115,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 // preconditions
 // -------------
 
-#if defined(CGAL_NO_PRECONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_NO_PRECONDITIONS)
 #  define CGAL_precondition(EX) (static_cast<void>(0))
 #  define CGAL_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_precondition_code(CODE)
@@ -129,9 +127,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
-#if defined(CGAL_NO_PRECONDITIONS) \
-  || !defined(CGAL_CHECK_EXACTNESS) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_PRECONDITIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_exactness_precondition_code(CODE)
@@ -143,9 +139,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
-#if defined(CGAL_NO_PRECONDITIONS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_PRECONDITIONS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_precondition(EX) (static_cast<void>(0))
 #  define CGAL_expensive_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_precondition_code(CODE)
@@ -157,10 +151,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
-#if defined(CGAL_NO_PRECONDITIONS) \
-  || !defined(CGAL_CHECK_EXACTNESS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_PRECONDITIONS) || !defined(CGAL_CHECK_EXACTNESS) || !defined(CGAL_CHECK_EXPENSIVE) 
 #  define CGAL_expensive_exactness_precondition(EX) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_precondition_code(CODE)
@@ -176,7 +167,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 // postconditions
 // --------------
 
-#if defined(CGAL_NO_POSTCONDITIONS) || defined(NDEBUG)
+#if defined(CGAL_NO_POSTCONDITIONS)
 #  define CGAL_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_postcondition_code(CODE)
@@ -188,8 +179,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
-#if defined(CGAL_NO_POSTCONDITIONS) || !defined(CGAL_CHECK_EXACTNESS) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_POSTCONDITIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_exactness_postcondition_code(CODE)
@@ -201,8 +191,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
-#if defined(CGAL_NO_POSTCONDITIONS) || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_POSTCONDITIONS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_postcondition_code(CODE)
@@ -214,10 +203,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
-#if defined(CGAL_NO_POSTCONDITIONS) \
-  || !defined(CGAL_CHECK_EXACTNESS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_POSTCONDITIONS) || !defined(CGAL_CHECK_EXACTNESS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_exactness_postcondition(EX) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_postcondition_code(CODE)
@@ -233,7 +219,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 // warnings
 // --------
 
-#if defined(CGAL_NO_WARNINGS) || defined(NDEBUG)
+#if defined(CGAL_NO_WARNINGS)
 #  define CGAL_warning(EX) (static_cast<void>(0))
 #  define CGAL_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_warning_code(CODE)
@@ -245,8 +231,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
-#if defined(CGAL_NO_WARNINGS) || !defined(CGAL_CHECK_EXACTNESS) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_WARNINGS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_exactness_warning_code(CODE)
@@ -258,8 +243,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
-#if defined(CGAL_NO_WARNINGS) || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_WARNINGS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_warning(EX) (static_cast<void>(0))
 #  define CGAL_expensive_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_warning_code(CODE)
@@ -271,10 +255,7 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
-#if defined(CGAL_NO_WARNINGS) \
-  || !defined(CGAL_CHECK_EXACTNESS) \
-  || !defined(CGAL_CHECK_EXPENSIVE) \
-  || defined(NDEBUG)
+#if defined(CGAL_NO_WARNINGS) || !defined(CGAL_CHECK_EXACTNESS) || !defined(CGAL_CHECK_EXPENSIVE)
 #  define CGAL_expensive_exactness_warning(EX) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_expensive_exactness_warning_code(CODE)
