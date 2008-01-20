@@ -3,6 +3,9 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
+#include <cassert>
+#include <iostream>
+
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 
 typedef CGAL::Triangulation_vertex_base_2<K>             Vbb;
