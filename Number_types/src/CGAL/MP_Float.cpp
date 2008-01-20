@@ -351,8 +351,7 @@ to_double_exp(const MP_Float &b)
   CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
                      "Exponent overflow in MP_Float to_double");
 
-  // The cast is necessary for SunPro.
-  return std::make_pair(d, static_cast<int>(exp * log_limb));
+  return std::make_pair(d, exp * log_limb);
 }
 
 // Returns (first * 2^second), an interval surrounding b.
@@ -396,7 +395,7 @@ to_interval_exp(const MP_Float &b)
 
   CGAL_assertion_msg(CGAL::abs(exp*log_limb) < (1<<30)*2.0,
                      "Exponent overflow in MP_Float to_interval");
-  return std::make_pair(d.pair(), static_cast<int>(exp * log_limb));
+  return std::make_pair(d.pair(), exp * log_limb);
 }
 
 // to_double() returns, not the closest double, but a one bit error is allowed.
