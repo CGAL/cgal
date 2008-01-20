@@ -217,7 +217,6 @@ rectangular_3_center_2_type1(
   }
   return o;
 }
-#if 1 // #ifndef _MSC_VER // Try if it is still really needed
 
 template < class R >
 struct Rectangular_3_center_2_type2_operations_base {
@@ -926,11 +925,7 @@ struct Rectangular_3_center_2_type2_operations3
   { return pt_b_l()(p, p, r); }
 };
 
-#else
 
-#include <CGAL/rectangular_3_center_2_msvc.h>
-
-#endif // _MSC_VER
 template < class RandomAccessIterator,
            class Rectangle,
            class OutputIterator,
