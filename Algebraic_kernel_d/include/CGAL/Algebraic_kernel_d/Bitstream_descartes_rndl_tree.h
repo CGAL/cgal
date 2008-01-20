@@ -1087,9 +1087,7 @@ private:
 
     void next_guess_sep(Node_iterator n) {
         n->delta_log_sep_ *= 2;
-        if (-n->delta_log_sep_ >= 1L<<24) {
-            CGAL_warning("delta_log_sep >= 1L<<24");
-        }
+        CGAL_warning_msg(-n->delta_log_sep_ < 1L<<24, "delta_log_sep >= 1L<<24");
         n->log_sep_ += n->delta_log_sep_;
     }
 

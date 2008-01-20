@@ -241,7 +241,7 @@ protected:
     void reduce_warn() {
         CGAL_precondition( this->ptr()->coeff.size() > 0 );
         if (this->ptr()->coeff.back() == NT(0)) {
-            CGAL_warning("unexpected degree loss (zero divisor?)");
+            CGAL_warning_msg(false, "unexpected degree loss (zero divisor?)");
             this->ptr()->reduce();
         }
     }
