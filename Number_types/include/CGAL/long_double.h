@@ -31,9 +31,6 @@
 #ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
 #endif
-#ifdef __sgi
-#  include <fp_class.h>
-#endif
 
 // #include <CGAL/FPU.h>
 #include <CGAL/Interval_nt.h>
@@ -41,32 +38,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // Is_valid moved to top, since used by is_finite
-#ifdef __sgi
-
-template<>
-class Is_valid< long double >
-  : public Unary_function< long double, bool > {
-  public :
-    bool operator()( const long double& x ) const {
-      switch (fp_class_d(x)) {
-      case FP_POS_NORM:
-      case FP_NEG_NORM:
-      case FP_POS_ZERO:
-      case FP_NEG_ZERO:
-      case FP_POS_INF:
-      case FP_NEG_INF:
-      case FP_POS_DENORM:
-      case FP_NEG_DENORM:
-          return true;
-      case FP_SNAN:
-      case FP_QNAN:
-          return false;
-      }
-      return false; // NOT REACHED
-    }
-};
-
-#elif defined CGAL_CFG_IEEE_754_BUG
+#ifdef CGAL_CFG_IEEE_754_BUG
 
 #define CGAL_EXPONENT_DOUBLE_MASK   0x7ff00000
 #define CGAL_MANTISSA_DOUBLE_MASK   0x000fffff
@@ -174,29 +146,7 @@ template <> class Real_embeddable_traits< long double >
     };
 
 // Is_finite depends on platform
-#ifdef __sgi
-    class Is_finite
-      : public Unary_function< Type, bool > {
-      public:
-        bool operator()( const Type& x ) const {
-          switch (fp_class_d(x)) {
-          case FP_POS_NORM:
-          case FP_NEG_NORM:
-          case FP_POS_ZERO:
-          case FP_NEG_ZERO:
-          case FP_POS_DENORM:
-          case FP_NEG_DENORM:
-              return true;
-          case FP_SNAN:
-          case FP_QNAN:
-          case FP_POS_INF:
-          case FP_NEG_INF:
-              return false;
-          }
-          return false; // NOT REACHED
-        }
-    };
-#elif defined CGAL_CFG_IEEE_754_BUG
+#ifdef CGAL_CFG_IEEE_754_BUG
     class Is_finite
       : public Unary_function< Type, bool > {
       public:

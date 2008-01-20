@@ -69,7 +69,7 @@ const double log_5 = log(double(5))/log(double(2));
 
 // Returns the ceil of log_2(5^a).
 inline extLong ceilLg5(const extLong & a) {
-#if defined (_MSC_VER) || defined (__sgi)
+#if defined (_MSC_VER)
   return (int) ::ceil(log_5 * a.toLong());
 #else
   return (int) std::ceil(log_5 * a.toLong());

@@ -52,7 +52,7 @@ private:
 
 
 public:
-#if defined(_MSC_VER) || defined(__sgi)
+#if defined(_MSC_VER)
   bool operator()(bool b) const {
     return Base::operator()(b);
   }

@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
 
-//#if (!defined _MSC_VER || defined __INTEL_COMPILER) && !defined __sgi
+//#if (!defined _MSC_VER || defined __INTEL_COMPILER)
 #  define CGAL_T2_USE_ITERATOR_AS_HANDLE
 //#endif
 

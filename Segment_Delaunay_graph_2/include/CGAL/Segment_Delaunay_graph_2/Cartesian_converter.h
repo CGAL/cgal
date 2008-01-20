@@ -118,7 +118,7 @@ public:
     return convert_site(t, intersections_tag());
   }
 
-#if defined(_MSC_VER) || defined(__sgi)
+#if defined(_MSC_VER)
   K2_Point_2
   operator()(const K1_Point_2& p) const
   {

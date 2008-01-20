@@ -81,7 +81,6 @@ template <> class Real_embeddable_traits< long long int >
 };
 
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
-    (defined(__sgi__)   || defined(__sgi)   || defined(sgi)) || \
     (defined(__i386__)  || defined(__i386)  || defined(i386)) || \
     (defined(__ppc__)   || defined(__ppc)   || defined(ppc)) || \
     (defined(__powerpc__) || defined(__powerpc) || defined(powerpc))
