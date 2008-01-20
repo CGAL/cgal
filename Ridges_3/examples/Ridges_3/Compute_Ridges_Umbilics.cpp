@@ -13,6 +13,7 @@ int main()
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
+#include <cassert>
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>

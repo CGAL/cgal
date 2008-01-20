@@ -1,6 +1,10 @@
 #ifndef CGAL_PSURF_RINGS_H_
 #define CGAL_PSURF_RINGS_H_
 
+#include <cassert>
+#include <vector>
+#include <map>
+
 using namespace std;
 
 //---------------------------------------------------------------------------
