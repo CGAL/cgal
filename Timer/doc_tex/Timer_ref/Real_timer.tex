@@ -53,9 +53,8 @@ first interval.
 
 
 The timer class is based in the C function \ccc{gettimeofday()} on
-POSIX systems, the C function \ccc{_ftime()} on MS Visual C++,
-the C function \ccc{ftime()} on Borland C++, and \ccc{time()}
-on Metrowerks Codewarrior. The system calls to these
+POSIX systems and the C function \ccc{_ftime()} on MS Visual C++.
+The system calls to these
 timers might fail, in which case a warning message will be issued
 through the \cgal\ error handler and the functions return with the
 error codes indicated above.  The \ccc{precision} method computes the
