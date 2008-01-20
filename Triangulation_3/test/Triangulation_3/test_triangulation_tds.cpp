@@ -24,12 +24,7 @@
 typedef CGAL::Triangulation_data_structure_3<>               Tds;
 
 // Explicit instantiation :
-// template class CGAL::Triangulation_data_structure_3<>;
-// SunPRO requires putting all default arguments here.
-template class CGAL::Triangulation_data_structure_3<
-                     CGAL::Triangulation_ds_vertex_base_3<>,
-                     CGAL::Triangulation_ds_cell_base_3<> >;
-
+template class CGAL::Triangulation_data_structure_3<>;
 
 int main()
 {

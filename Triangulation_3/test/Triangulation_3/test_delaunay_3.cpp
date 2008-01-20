@@ -25,6 +25,9 @@ bool del=true;
 #include <CGAL/_test_types.h>
 #include <CGAL/_test_cls_delaunay_3.h>
 
+// Explicit instantiation of the whole class :
+template class CGAL::Delaunay_triangulation_3<K>;
+
 int main()
 {
   typedef CGAL::Delaunay_triangulation_3<K>  Cls;
@@ -41,7 +44,3 @@ int main()
 
   return 0;
 }
-
-// MipsPro prefers this after the other instantiations...
-// Explicit instantiation of the whole class :
-template class CGAL::Delaunay_triangulation_3<K>;
