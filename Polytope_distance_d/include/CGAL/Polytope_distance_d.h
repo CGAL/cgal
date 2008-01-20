@@ -96,8 +96,7 @@ namespace PD_detail {
 	if (i == d_+1) return *(it_ + d_); // homogenizing coordinate
 	return nt_0_;
       }
-      CGAL_optimisation_assertion(false); // never get here
-      return nt_0_;
+      // never get here
     }
     
   private:
