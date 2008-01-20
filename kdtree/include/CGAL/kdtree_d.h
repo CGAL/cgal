@@ -239,12 +239,12 @@ public:
             return  *this;
         }
 
-        ExtPoint( const Point   & point, int  dim )
+        ExtPoint( const Point   & point, int  _dim )
         {
-            init( dim );
+            init( _dim );
 
             def_pnt = point;
-            for  ( int  ind = 0; ind < dim; ind++ ) {
+            for  ( int  ind = 0; ind < _dim; ind++ ) {
                 p_arr[ ind ].p_pnt = &def_pnt;
                 p_arr[ ind ].type = FINITE;
             }
@@ -460,8 +460,8 @@ public:
         bool   is_in( const Point   & o ) const
             // checks if o is completely inside <this>
         {
-            int dim = left.dimension();
-            for (int i = 0; i < dim; i++)
+            int _dim = left.dimension();
+            for (int i = 0; i < _dim; i++)
             {
                 if ( (left.compare( i, o ) > 0 ) ||
                      (right.compare( i, o ) <= 0 ) )
@@ -809,10 +809,6 @@ private:
                                   region, plane, false );
         }
     };
-
-    // SunPro requires this :
-    friend class Box;
-    friend class Node;
 
     typedef Point  * Point_ptr;
 
