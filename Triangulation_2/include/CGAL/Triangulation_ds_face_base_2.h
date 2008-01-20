@@ -36,7 +36,6 @@ public:
   typedef typename TDS::Vertex_handle  Vertex_handle;
   typedef typename TDS::Face_handle    Face_handle;
 
-  // Borland requires this.
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; }; 
 
