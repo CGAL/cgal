@@ -64,9 +64,6 @@ public:
 
     using Base::operator();
 
-    Cartesian_converter() // To shut up a warning with SunPRO.
-	: c(), k() {}
-
     Origin
     operator()(const Origin& o) const
     {
