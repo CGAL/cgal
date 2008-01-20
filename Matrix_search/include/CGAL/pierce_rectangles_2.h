@@ -226,11 +226,6 @@ struct Staircases : public Loc_domain< Traits_ > {
     xgy(t.signed_x_distance_2_object()(this->maxx, this->minx) >
         t.signed_y_distance_2_object()(this->maxy, this->miny))
   {
-#if defined(__sun) && defined(__SUNPRO_CC)
-    // I get linker errors otherweise,  the call from above
-    // does not seem to suffice :-(
-    { Base bb(b, e, t); }
-#endif // defined(__sun) && defined(__SUNPRO_CC)
     using std::sort;
     using std::find_if;
 

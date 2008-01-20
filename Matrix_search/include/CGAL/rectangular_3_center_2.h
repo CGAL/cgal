@@ -330,16 +330,10 @@ struct Rectangular_3_center_2_type2_operations0
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-      Point bpt = constraint_empty ? first_uncovered :
-      minx()(first_uncovered, v(constraint, 0));
-      return v(rect(bpt, v(bbox, 2)), 3);
-  #else
-      return v(rect(constraint_empty ? first_uncovered :
+    return v(rect(constraint_empty ? first_uncovered :
                       minx()(first_uncovered, v(constraint, 0)),
                     v(bbox, 2)),
                3);
-  #endif
     }
   
     Point place_x_square(bool constraint_empty,
@@ -348,14 +342,9 @@ struct Rectangular_3_center_2_type2_operations0
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-      Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
-      return v(rect(bpt, v(bbox, 2)), 3);
-  #else
       return v(rect(constraint_empty ? v(bbox, 2) : v(constraint, 0),
                     v(bbox, 2)),
                3);
-  #endif
     }
   
     Point place_x_square(const Point& so_far,
@@ -376,16 +365,10 @@ struct Rectangular_3_center_2_type2_operations0
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-      Point bpt = constraint_empty ? first_uncovered :
-      miny()(first_uncovered, v(constraint, 0));
-      return v(rect(v(bbox, 2), bpt), 1);
-  #else
       return v(rect(v(bbox, 2),
                     constraint_empty ? first_uncovered :
                       miny()(first_uncovered, v(constraint, 0))),
                1);
-  #endif
     }
   
     Point place_y_square(bool constraint_empty,
@@ -394,14 +377,9 @@ struct Rectangular_3_center_2_type2_operations0
     {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-      Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
-      return v(rect(v(bbox, 2), bpt), 1);
-  #else
       return v(rect(v(bbox, 2),
                     constraint_empty ? v(bbox, 2) : v(constraint, 0)),
                1);
-  #endif
     }
   
     Point place_y_square(const Point& so_far,
@@ -490,16 +468,10 @@ struct Rectangular_3_center_2_type2_operations1
   {
       Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
       Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    maxx()(first_uncovered, v(constraint, 2));
-    return v(rect(bpt, v(bbox, 3)), 2);
-  #else
-    return v(rect(constraint_empty ? first_uncovered :
+      return v(rect(constraint_empty ? first_uncovered :
                     maxx()(first_uncovered, v(constraint, 2)),
                   v(bbox, 3)),
              2);
-  #endif
   }
   
   Point place_x_square(bool constraint_empty,
@@ -508,14 +480,9 @@ struct Rectangular_3_center_2_type2_operations1
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
-    return v(rect(bpt, v(bbox, 3)), 2);
-  #else
     return v(rect(constraint_empty ? v(bbox, 0) : v(constraint, 2),
                   v(bbox, 3)),
              2);
-  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -537,16 +504,10 @@ struct Rectangular_3_center_2_type2_operations1
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    miny()(first_uncovered, v(constraint, 0));
-    return v(rect(v(bbox, 3), bpt), 0);
-  #else
     return v(rect(v(bbox, 3),
                   constraint_empty ? first_uncovered :
                     miny()(first_uncovered, v(constraint, 0))),
              0);
-  #endif
   }
   
   Point place_y_square(bool constraint_empty,
@@ -555,14 +516,9 @@ struct Rectangular_3_center_2_type2_operations1
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
-    return v(rect(v(bbox, 3), bpt), 0);
-  #else
     return v(rect(v(bbox, 3),
                   constraint_empty ? v(bbox, 2) : v(constraint, 0)),
              0);
-  #endif
   }
   
   Point place_y_square(const Point& so_far,
@@ -649,16 +605,10 @@ struct Rectangular_3_center_2_type2_operations2
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    maxx()(first_uncovered, v(constraint, 2));
-    return v(rect(bpt, v(bbox, 0)), 1);
-  #else
     return v(rect(constraint_empty ? first_uncovered :
                     maxx()(first_uncovered, v(constraint, 2)),
                   v(bbox, 0)),
              1);
-  #endif
   }
   
   Point place_x_square(bool constraint_empty,
@@ -667,14 +617,9 @@ struct Rectangular_3_center_2_type2_operations2
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
-    return v(rect(bpt, v(bbox, 0)), 1);
-  #else
     return v(rect(constraint_empty ? v(bbox, 0) : v(constraint, 2),
                   v(bbox, 0)),
              1);
-  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -696,16 +641,10 @@ struct Rectangular_3_center_2_type2_operations2
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    maxy()(first_uncovered, v(constraint, 2));
-    return v(rect(v(bbox, 0), bpt), 3);
-  #else
     return v(rect(v(bbox, 0),
                   constraint_empty ? first_uncovered :
                     maxy()(first_uncovered, v(constraint, 2))),
              3);
-  #endif
   }
   
   Point place_y_square(bool constraint_empty,
@@ -714,14 +653,9 @@ struct Rectangular_3_center_2_type2_operations2
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
-    return v(rect(v(bbox, 0), bpt), 3);
-  #else
     return v(rect(v(bbox, 0),
                   constraint_empty ? v(bbox, 0) : v(constraint, 2)),
              3);
-  #endif
   }
   
   Point place_y_square(const Point& so_far,
@@ -807,16 +741,10 @@ struct Rectangular_3_center_2_type2_operations3
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    minx()(first_uncovered, v(constraint, 0));
-    return v(rect(bpt, v(bbox, 1)), 0);
-  #else
     return v(rect(constraint_empty ? first_uncovered :
                     minx()(first_uncovered, v(constraint, 0)),
                   v(bbox, 1)),
              0);
-  #endif
   }
   
   Point place_x_square(bool constraint_empty,
@@ -825,14 +753,9 @@ struct Rectangular_3_center_2_type2_operations3
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 2) : v(constraint, 0);
-    return v(rect(bpt, v(bbox, 1)), 0);
-  #else
     return v(rect(constraint_empty ? v(bbox, 2) : v(constraint, 0),
                   v(bbox, 1)),
              0);
-  #endif
   }
   
   Point place_x_square(const Point& so_far,
@@ -854,16 +777,10 @@ struct Rectangular_3_center_2_type2_operations3
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? first_uncovered :
-    maxy()(first_uncovered, v(constraint, 2));
-    return v(rect(v(bbox, 1), bpt), 2);
-  #else
     return v(rect(v(bbox, 1),
                   constraint_empty ? first_uncovered :
                     maxy()(first_uncovered, v(constraint, 2))),
              2);
-  #endif
   }
   
   Point place_y_square(bool constraint_empty,
@@ -872,14 +789,9 @@ struct Rectangular_3_center_2_type2_operations3
   {
     Construct_iso_rectangle_2 rect = construct_iso_rectangle_2_object();
     Construct_vertex_2        v    = construct_vertex_2_object();
-  #if defined(__SUNPRO_CC)
-    Point bpt = constraint_empty ? v(bbox, 0) : v(constraint, 2);
-    return v(rect(v(bbox, 1), bpt), 2);
-  #else
     return v(rect(v(bbox, 1),
                   constraint_empty ? v(bbox, 0) : v(constraint, 2)),
              2);
-  #endif
   }
   
   Point place_y_square(const Point& so_far,
