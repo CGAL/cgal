@@ -107,9 +107,7 @@ void test(const Cont &)
   typename Cont::allocator_type Al;
   Cont c7(c0.begin(), c0.end(), Al);
   Cont c8;
-#ifndef __SUNPRO_CC
   c8.insert(c0.rbegin(), c0.rend());
-#endif
 
   CGAL_test_assert(c0 == c1);
   CGAL_test_assert(! (c0 < c1));
