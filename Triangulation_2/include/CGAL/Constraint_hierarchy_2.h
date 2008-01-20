@@ -591,21 +591,13 @@ add_Steiner(T va, T vb, T vc){
   }
 
   if (H_context_list* hcl3 = get_contexts(va,vc)) { // (va,vc) is already a subconstraint
-#ifdef __SUNPRO_CC
-    std::copy(hcl->begin(), hcl->end(), std::back_inserter(*hcl3));
-#else
     hcl3->splice(hcl3->end(), *hcl);
-#endif
     delete hcl;
   }
   else   sc_to_c_map.insert(std::make_pair(make_edge(va,vc), hcl));
 
   if (H_context_list* hcl3 = get_contexts(vc,vb)) {// (vc,vb) is already a subconstraint
-#ifdef __SUNPRO_CC    
-    std::copy(hcl2->begin(), hcl2->end(), std::back_inserter(*hcl3));
-#else
     hcl3->splice(hcl3->end(),*hcl2);
-#endif
     delete hcl2;
   }
   else  sc_to_c_map.insert(std::make_pair(make_edge(vc,vb), hcl2));

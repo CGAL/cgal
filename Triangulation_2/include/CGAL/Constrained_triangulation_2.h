@@ -240,7 +240,7 @@ protected:
 public:
   // the int parameter is a work around for VC7 to compile
   template < class InputIterator >
-#if defined(_MSC_VER) || defined(__SUNPRO_CC)
+#if defined(_MSC_VER)
    int insert(InputIterator first, InputIterator last, int i = 0)
 #else
    int insert(InputIterator first, InputIterator last) 
