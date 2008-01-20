@@ -26,19 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef __BORLANDC__
-namespace {
-// Borland doesn't initialize the FPU exception mask correctly
-// => FP exceptions.
-struct Borland_workaround
-{
-    Borland_workaround() { FPU_set_cw(CGAL_FE_TONEAREST); }
-};
-
-Borland_workaround Borland_workaround_object;
-} // namespace
-#endif // __BORLANDC__
-
 #ifdef CGAL_CFG_DENORMALS_COMPILE_BUG
 // For compilers which bug on denormalized values at compile time.
 // We generate CGAL_IA_MIN_DOUBLE at run time.

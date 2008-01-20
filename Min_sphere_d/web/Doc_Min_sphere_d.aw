@@ -2231,14 +2231,8 @@ compare the results and apply the remaining functions.
     // test constructors
 
     // default
-    #ifdef __BORLANDC__
-    // problems with default traits argument in constructor calls
-    Min_sphereC         msC_empty(tC); assert (msC_empty.is_valid(verbose));
-    Min_sphereH         msH_empty(tH); assert (msH_empty.is_valid(verbose));
-    #else
     Min_sphereC         msC_empty; assert (msC_empty.is_valid(verbose));
     Min_sphereH         msH_empty; assert (msH_empty.is_valid(verbose));
-    #endif
     
     // from range
     Min_sphereC         msC (PC, PC+n, tC); assert (msC.is_valid(verbose));

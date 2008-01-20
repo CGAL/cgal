@@ -74,12 +74,7 @@ public:
 protected:	
   class node : public Rep
   {
-#ifndef __BORLANDC__
     friend class Td_dag<T>;
-#else
-    typedef Td_dag<T> Td_dag;
-    friend class Td_dag;
-#endif
   public:
     node(const T& e,unsigned long _depth=0) : 
       data(e),leftPtr(),rightPtr(),depth_(_depth){}

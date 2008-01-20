@@ -33,11 +33,11 @@
   #include <LEDA/integer.h>
 #endif
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
 #ifndef LEDA_STD_HEADERS
 #  error "LEDA_STD_HEADERS is not defined. Please consult the troubleshooting section of the installation manual."
 #endif // ! LEDA_STD_HEADERS
-#endif // MSVC || BORLAND
+#endif // MSVC
 
 #if defined(LEDA_NAMESPACE)
 using namespace leda;

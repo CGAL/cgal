@@ -414,7 +414,7 @@ $me(P)=me(P,\emptyset)$.
     Min_ellipse_2( InputIterator first,
                    InputIterator last,
                    bool          randomize
-#if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1300)
+#if !defined(_MSC_VER) || _MSC_VER > 1300
                                            = false
 #endif
                                                   ,

@@ -1006,7 +1006,6 @@ namespace INTERN_INTERVAL_NT {
   std::pair<double, double>
   to_interval (const long & l)
   {
-  #ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
     if (sizeof(double) > sizeof(long)) {
       // On 64bit platforms, a long doesn't fit exactly in a double.
       // Well, a perfect fix would be to use std::numeric_limits<>, but...
@@ -1017,7 +1016,6 @@ namespace INTERN_INTERVAL_NT {
       return approx.pair();
     }
     else
-  #endif
       return std::pair<double,double>(l,l);
   }
 

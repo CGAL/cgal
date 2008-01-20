@@ -120,14 +120,6 @@
 #  define CGAL_HUGE_INLINE
 #endif
 
-//----------------------------------------------------------------------//
-//             include separate workaround files
-//----------------------------------------------------------------------//
-
-#if defined(__BORLANDC__) && __BORLANDC__ > 0x520
-#  include <CGAL/Borland_fixes.h>
-#endif
-
 
 //----------------------------------------------------------------------//
 // SunPRO specific.
@@ -167,7 +159,7 @@ using std::max;
 
 //-------------------------------------------------------------------//
 // Is Geomview usable ?
-#if !defined(__BORLANDC__) && !defined(_MSC_VER) && !defined(__MINGW32__)
+#if !defined(_MSC_VER) && !defined(__MINGW32__)
 #  define CGAL_USE_GEOMVIEW
 #endif
 

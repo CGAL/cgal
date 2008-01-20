@@ -51,8 +51,6 @@ extern "C" {
 #  else
 #    include <cfloat>
 #  endif
-#elif defined __BORLANDC__
-#  include <cfloat>
 #elif defined _MSC_VER || defined __sparc__ || \
      (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC)
    // Nothing to include.
@@ -135,7 +133,7 @@ inline double IA_force_to_double(double x)
 // directly, but I think it would be much slower.
 #if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
     ((defined __i386__ && !defined CGAL_SAFE_SSE2) \
-     || defined _MSC_VER || defined __BORLANDC__)
+     || defined _MSC_VER)
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
@@ -285,15 +283,6 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       _RC_UP
 #define CGAL_FE_DOWNWARD     _RC_DOWN
 
-#elif defined __BORLANDC__
-#define CGAL_IA_SETFPCW(CW) _control87(CW,~0)
-#define CGAL_IA_GETFPCW(CW) CW = _control87(0,0)
-typedef unsigned short FPU_CW_t;
-#define CGAL_FE_TONEAREST    (0x0   | 0x127f)
-#define CGAL_FE_TOWARDZERO   (0xC00 | 0x127f)
-#define CGAL_FE_UPWARD       (0x800 | 0x127f)
-#define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
-
 #else
 // This is a version following the ISO C99 standard, which aims at portability.
 // The drawbacks are speed on one hand, and also, on x86, it doesn't fix the
@@ -339,7 +328,7 @@ FPU_get_and_set_cw (FPU_CW_t cw)
 // The following is meant to truncate the mantissa of x86 FPUs to 53 bits.
 inline void force_ieee_double_precision()
 {
-#if defined __i386__ || defined _MSC_VER || defined __BORLANDC__
+#if defined __i386__ || defined _MSC_VER
     FPU_set_cw(CGAL_FE_TONEAREST);
 #endif
 }

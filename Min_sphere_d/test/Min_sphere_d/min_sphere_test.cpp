@@ -118,14 +118,8 @@ int main ()
     // test constructors
     
     // default
-    #ifdef __BORLANDC__
-    // problems with default traits argument in constructor calls
-    Min_sphereC         msC_empty(tC); CGAL_test_assert(msC_empty.is_valid(verbose));
-    Min_sphereH         msH_empty(tH); CGAL_test_assert(msH_empty.is_valid(verbose));
-    #else
     Min_sphereC         msC_empty; CGAL_test_assert(msC_empty.is_valid(verbose));
     Min_sphereH         msH_empty; CGAL_test_assert(msH_empty.is_valid(verbose));
-    #endif
     
     // from range
     Min_sphereC         msC (PC, PC+n, tC); CGAL_test_assert(msC.is_valid(verbose));

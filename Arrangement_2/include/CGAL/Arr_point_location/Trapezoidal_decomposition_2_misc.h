@@ -17,6 +17,7 @@
 //
 // Author(s)     : Oren Nechushtan <theoren@math.tau.ac.il>
 //                 Iddo Hanniel <hanniel@math.tau.ac.il>
+
 #ifndef CGAL_TRAPEZOIDAL_DECOMPOSITION_2_MISC_H
 #define CGAL_TRAPEZOIDAL_DECOMPOSITION_2_MISC_H
 
@@ -45,10 +46,8 @@
 #define CGAL_TD_DEFAULT_SIZE_THRESHOLD 2
 
 #ifndef _MSC_VER
-#ifndef __BORLANDC__
 #if !defined __GNUC__ || __GNUC__>2 || __GNUC__==2 && __GNUC_MINOR__>=95
 #define CGAL_PM_FRIEND_CLASS
-#endif
 #endif
 #endif
 

@@ -77,7 +77,7 @@ typedef CGALi::USizeofSelect<4>::Type  UInteger32;
 #   define CGAL_HAS_INTEGER64
 #endif
 
-#if defined __BORLANDC__ || defined _MSC_VER
+#if defined _MSC_VER
     typedef __int64                  Integer64;
     typedef unsigned __int64         UInteger64;
 #   define CGAL_HAS_INTEGER64

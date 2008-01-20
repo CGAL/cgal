@@ -17,16 +17,16 @@
 //
 // Author(s)     : Lutz Kettner
 
-//Borland, Microsoft and Intel compiler are excluded
-#if defined(__BORLANDC__) || defined(_MSC_VER)
+#include <CGAL/basic.h>>
 
+#ifdef CGAL_USE_GEOMVIEW
 #include <iostream>
 
 int main() {
   std::cout << "Geomview doesn't work on Windows, so no demo." << std::endl;
   return 0;
 }
-#else // not windows
+#else // can have Geomeview
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
@@ -52,5 +52,4 @@ int main() {
     return 0;
 }
 
-#endif // not windows
-// EOF //
+#endif

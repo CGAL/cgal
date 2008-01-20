@@ -150,17 +150,12 @@ static void dump(const PMDEC& D, std::ostream& os = std::cerr);
 //-----------------------------------------------------------------------------
 // OUTPUT AND INPUT:
 //-----------------------------------------------------------------------------
-#ifdef __BORLANDC__
-#define ISSPACENS std::
-#else
-#define ISSPACENS 
-#endif
 
 template <typename PMDEC>
 bool PM_io_parser<PMDEC>::check_sep(const char* sep)
 {
   char c; 
-  do in.get(c); while (ISSPACENS isspace(c));
+  do in.get(c); while (isspace(c));
   while (*sep != '\0') { 
     if (*sep != c) {
       in.putback(c);

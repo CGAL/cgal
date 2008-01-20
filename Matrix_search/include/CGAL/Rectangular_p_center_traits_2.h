@@ -322,14 +322,6 @@ construct_bounding_box_union_2(const Rectangle& r1,
   Rect     rect  = t.construct_iso_rectangle_2_object();
   CVertex  v     = t.construct_vertex_2_object();
 
-#ifdef __BORLANDC__
-  typedef typename Traits::Point_2 Point_2;
-  Point_2 bpt1 = lessx(v(r1, 0), v(r2, 0)) ? v(r1, 0) : v(r2, 0);
-  Point_2 bpt2 = lessy(v(r1, 0), v(r2, 0)) ? v(r1, 0) : v(r2, 0);
-  Point_2 bpt3 = lessx(v(r2, 2), v(r1, 2)) ? v(r1, 2) : v(r2, 2);
-  Point_2 bpt4 = lessy(v(r2, 2), v(r1, 2)) ? v(r1, 2) : v(r2, 2);
-  return rect(v(rect(bpt1, bpt2), 0), v(rect(bpt3, bpt4), 2));
-#else
   return rect(
     v(rect(lessx(v(r1, 0), v(r2, 0)) ? v(r1, 0) : v(r2, 0),
            lessy(v(r1, 0), v(r2, 0)) ? v(r1, 0) : v(r2, 0)),
@@ -337,8 +329,8 @@ construct_bounding_box_union_2(const Rectangle& r1,
     v(rect(lessx(v(r2, 2), v(r1, 2)) ? v(r1, 2) : v(r2, 2),
            lessy(v(r2, 2), v(r1, 2)) ? v(r1, 2) : v(r2, 2)),
       2));
-#endif
 } // construct_bounding_box_union_2(r1, r2, t)
+
 template < class Rectangle >
 inline Rectangle
 construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
@@ -347,12 +339,6 @@ construct_bounding_box_union_2(const Rectangle& r1, const Rectangle& r2)
   return construct_bounding_box_union_2(r1, r2, t);
 } // construct_bounding_box_union_2(r1, r2)
 
-
 CGAL_END_NAMESPACE
 
-
 #endif // ! (CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H)
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
-

@@ -1913,7 +1913,7 @@ After line (*) |N3| is the intersection of |N1| and |N2|.}*/
 #ifndef CGAL_NEF_POLYHEDRON_2_H
 #define CGAL_NEF_POLYHEDRON_2_H
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
 #define CGAL_SIMPLE_HDS
 #endif
 
@@ -2256,7 +2256,7 @@ typedef CGAL::Extended_homogeneous<leda_integer> EKernel;
 typedef CGAL::Filtered_extended_homogeneous<leda_integer> EKernel;
 #endif
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
 #define WIN32CONFIG
 #endif
 
@@ -2348,9 +2348,7 @@ int main(int argc, char* argv[])
       break;
     }
   }
-#if !defined(__BORLANDC__) 
   return 0; // never reached 
-#endif
 }
 
 #else // CGAL_USE_LEDA
@@ -2537,7 +2535,7 @@ static void read_file(leda_string fn)
 
 static bool confirm_overwrite(const char* fname)
 {
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
   return true;
 #else
   leda_panel P;

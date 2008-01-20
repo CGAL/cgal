@@ -41,10 +41,6 @@ misuse memory problems occur.}*/
 
 /*{\Moperations 2 1}*/
 
-#ifdef __BORLANDC__
-#pragma option -w-rch -w-eff -w-ccc
-#endif
-
   static void create(GenPtr& p) 
   /*{\Mstatic create a slot for an object of type |T| referenced 
     via |p|.}*/

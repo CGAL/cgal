@@ -31,7 +31,7 @@
 #include <string>
 #include <cstdlib>
 
-#if !defined(__BORLANDC__) && !defined(_MSC_VER)
+#if !defined(_MSC_VER)
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>

@@ -1173,7 +1173,7 @@ implementation part.
 #define _DEBUG 3
 #include <CGAL/Nef_2/debug.h>
 
-#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if defined(_MSC_VER)
 #include <CGAL/Nef_2/vector_MSC.h>
 #define CGAL_SIMPLE_NEF_INTERFACE
 #define SNIHACK ,char,char

@@ -356,16 +356,8 @@ public:
     CGAL_assertion( length > 0);
     (*((*i.node).prev_link)).next_link = (*i.node).next_link;
     (*((*i.node).next_link)).prev_link = (*i.node).prev_link;
-#ifdef __BORLANDC__
-#pragma warn -8008
-#pragma warn -8066
-#endif
     if (managed)
       put_node(i.node);
-#ifdef __BORLANDC__
-#pragma warn .8008
-#pragma warn .8066
-#endif
     --length;
   }
   void erase(T* pos)  { erase( iterator( pos)); }

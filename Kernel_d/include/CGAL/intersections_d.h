@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 // Actually, we should better list the compilers which are inferior, i.e.
 // the others, which need the additional useless code.
-#if 1 // !defined(__BORLANDC__) && !defined(__PGI) // Try to see which compiler warn these days.
+#if 1 // !defined(__PGI) // Try to see which compiler warn these days.
 #  define CGAL_REMOVE_FLOW_WARNING
 #endif
 

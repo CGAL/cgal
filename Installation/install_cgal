@@ -2100,11 +2100,6 @@ int main()
   CGAL_STDCOUT << "@" << std::hex;
   output_first_ciff_separate(__SUNPRO_CC, 16);
   CGAL_STDCOUT << CGAL_STDENDL;
-#elif defined(__BORLANDC__)
-  // Borland
-  CGAL_STDCOUT << "Borland@" << std::hex;
-  output_first_ciff_separate(__BORLANDC__, 16);
-  CGAL_STDCOUT << CGAL_STDENDL;
 #elif defined(__PGI)
   // Portland Group Compiler
   // There does not seem to be a way to find the compiler version from

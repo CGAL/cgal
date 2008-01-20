@@ -176,9 +176,7 @@ const Mark& mark(Object_handle h) const
   if ( assign(f,h) ) return mark(f);
   CGAL_assertion_msg(0,
   "PM_point_locator::mark: Object_handle holds no object.");
-#if !defined(__BORLANDC__)
   return mark(v); // never reached
-#endif
 }
 
 <<NPL location method>>
@@ -821,9 +819,7 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
       <<TPL segment walk via a collinear edge>>
       break;
   }
-#if !defined(__BORLANDC__)
   return Object_handle(); // never reached warning acceptable
-#endif
 }
 
 @ We walk along |s| and hit a vertex |v|. If we have reached |q| we

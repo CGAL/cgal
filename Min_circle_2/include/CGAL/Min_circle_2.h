@@ -299,7 +299,7 @@ class Min_circle_2 {
     Min_circle_2( InputIterator first,
                   InputIterator last,
                   bool          randomize
-    #if !defined(__BORLANDC__) && (!defined(_MSC_VER) || _MSC_VER > 1300)
+    #if !defined(_MSC_VER) || _MSC_VER > 1300
                                               = false
     #endif
                                                      ,

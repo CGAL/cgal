@@ -33,13 +33,7 @@
 #define  CGAL_ROTATION_TREE_NODE_H
 
 #include <utility>
-//  MSVC6 doesn't work with the CGALi::vector but it does with the std::vector
-//  (from stlport?)
-#if defined(__BORLANDC__)
-#include <vector>
-#else
 #include <CGAL/vector.h>
-#endif // MSVC6
 
 namespace CGAL {
 
@@ -52,11 +46,7 @@ public:
 
    typedef typename Traits::Point_2          Base_point;
    typedef Rotation_tree_node_2<Traits>      Self;
-#if defined(__BORLANDC__)
-   typedef std::vector< Self >               Tree;
-#else
    typedef CGALi::vector< Self >             Tree;
-#endif
    typedef typename Tree::iterator           Tree_iterator;
    typedef std::pair<Tree_iterator, bool>    Node_ref;
 

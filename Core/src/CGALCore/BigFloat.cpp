@@ -41,9 +41,6 @@
  ***************************************************************************/
 
 #include <ctype.h>
-#if defined (__BORLANDC__)
-  #include <mem.h>
-#endif
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
 

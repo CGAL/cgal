@@ -193,9 +193,7 @@ public:
     if ( assign(e,h) ) return mark(e);
     if ( assign(f,h) ) return mark(f);
     CGAL_error_msg("PM_point_locator::mark: Object_handle holds no object.");
-  #if !defined(__BORLANDC__)
     return mark(v); // never reached
-  #endif
   }
 
 
@@ -963,15 +961,9 @@ PM_point_locator<PMD,GEO>::walk_in_triangulation(const Point& q) const
 
       break;
   }
-#if !defined(__BORLANDC__)
   return Object_handle(); // never reached warning acceptable
-#endif
 }
-
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_PM_POINT_LOCATOR_H
-
-
-
