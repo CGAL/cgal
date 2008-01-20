@@ -383,40 +383,6 @@ enclosed by
 \end{verbatim}
 This may not be true anymore for recent VC++ versions.
 
-\item[\textbf{parse error in constructions}]
-\ccIndexSubitem{parse error}{construction}
-The following program will produce a parse error with g++ 3.1.
-
-\begin{verbatim}
-#include <CGAL/Segment_circle_2.h> 
-
-typedef CGAL::Segment_circle_2<double> Curve; 
-typedef Curve::Segment                 Segment; 
-typedef Curve::Point                   Point; 
-
-int main()
-{
-  Segment s1(Point(0,0), Point(1,1));
-  Curve curve(Segment(Point(0,0), Point(1,1))); // parse error
-  
-  // ...
-  return 0;
-}
-\end{verbatim}
-
-This is a well-known bug in the Gnu compiler 
-(see \path|http://gcc.gnu.org/bugs.html#parsing|).
-The workaround is to split :
-
-\verb|   Curve curve(Segment(Point(0,0), Point(1,1)));| 
-
-into, {\textit e.g.,} :
-\begin{verbatim}
-   Segment s (Point(0,0), Point(1,1));
-   Curve rude_curve(s);
-\end{verbatim}
-
-\end{description}
 \ccIndexMainItemEnd{configuration}
 
 
