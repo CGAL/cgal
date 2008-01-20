@@ -301,10 +301,6 @@ public:
   }
 #endif
   
-#if _MSC_VER>=1100
-  friend std::ostream& operator<<(std::ostream&  out, const Self& t);
-#endif
-  
   template <class Container,class Predicate>
   Container& filter(Container& c,const Predicate& pr) const
   {
