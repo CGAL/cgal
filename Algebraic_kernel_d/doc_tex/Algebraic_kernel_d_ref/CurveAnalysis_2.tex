@@ -215,12 +215,13 @@ i.e., also to access $y$-coordinates at given $x$.
     \ccc{CGAL::ARR_RIGHT_BOUNDARY}}
 }
 
-Observe that there is no need to have an analogue member function
-for arcs approaching the top or bottom boundary, as in this cases it 
-suffices to call \ccc{AlgebraicKernel_2::Compare_x_2} to compare their 
-asymptotic values and by the $y$-per-$x$-view (perturbed infinite rectangle)
-only arcs approaching the left or right boundary can reach the corners of the
-rectangle. 
+In our $y$-per-$x$-view we imagine the parameter space to be slightly 
+``heigher'' than ``width'' and so we distinguish three aympototic behaviours
+of arcs. Horizontal, vertical, and none of them. This member covers 
+all non-vertical asymptotic values. We do not introduce a special one
+for vertical asympototes as the respective $x$-coordinates are already defined
+by proper status lines.
+
 In addition, by using the parameter space locations, 
 we decouple the interface from the unbounded plane. An example is a 
 two-dimensional arrangement embedded on a torus.
