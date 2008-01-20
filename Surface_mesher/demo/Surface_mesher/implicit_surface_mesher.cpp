@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 
 /////////////// Types ///////////////

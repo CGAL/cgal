@@ -39,6 +39,7 @@ int main()
 #include <fstream>
 #include <iostream>
 #include <utility>
+#include <cassert>
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

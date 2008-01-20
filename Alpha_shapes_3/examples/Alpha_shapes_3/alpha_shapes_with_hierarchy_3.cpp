@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <list>
+#include <cassert>
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 

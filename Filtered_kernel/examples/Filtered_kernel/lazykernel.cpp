@@ -3,6 +3,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_kernel.h>
 #include <list>
+#include <cassert>
 #include "Cartesian_I.h"
 
 

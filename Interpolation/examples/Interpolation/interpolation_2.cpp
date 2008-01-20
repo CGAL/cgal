@@ -14,6 +14,7 @@
 #include <CGAL/copy_n.h>
 #include <CGAL/Origin.h>
 
+#include <cassert>
 
 struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef K::FT                                         Coord_type;

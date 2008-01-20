@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 Mesh m_mesh;
 DS ppal_data;

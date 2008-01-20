@@ -36,6 +36,7 @@ int main(int, char*)
 #include <stack>
 #include <set>
 #include <string>
+#include <cassert>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>

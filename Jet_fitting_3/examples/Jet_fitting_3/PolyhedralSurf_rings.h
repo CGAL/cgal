@@ -1,6 +1,8 @@
 #ifndef CGAL_PSURF_RINGS_H_
 #define CGAL_PSURF_RINGS_H_
 
+#include <cassert>
+
 using namespace std;
 
 template < class TPoly , class VertexPropertyMap> class T_PolyhedralSurf_rings

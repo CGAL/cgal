@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 #include <qapplication.h>
 #include <qmainwindow.h>

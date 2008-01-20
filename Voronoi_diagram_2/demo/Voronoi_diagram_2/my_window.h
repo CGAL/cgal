@@ -20,6 +20,8 @@
 #ifndef MY_WINDOW_H
 #define MY_WINDOW_H
 
+#include <cassert>
+
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qradiobutton.h>

@@ -23,6 +23,7 @@
 #include <CGAL/partition_2.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 
+#include <cassert>
 
 template <class T>
 class Qt_layer_show_greene_approx : public CGAL::Qt_widget_layer

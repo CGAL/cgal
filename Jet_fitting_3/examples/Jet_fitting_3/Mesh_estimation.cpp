@@ -12,6 +12,7 @@ int main()
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
+#include <cassert>
 
 #include <boost/property_map.hpp>
 
