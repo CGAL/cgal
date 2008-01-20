@@ -106,8 +106,6 @@ namespace MA_detail {
 	if (i == d_+1) return -h_p * h_p;
 	return nt_0_;
       }
-      CGAL_optimisation_assertion(false); // never get here
-      return nt_0_;
     }
     
   private:

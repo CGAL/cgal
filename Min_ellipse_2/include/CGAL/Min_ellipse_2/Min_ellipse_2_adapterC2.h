@@ -68,8 +68,6 @@ are_ordered_along_lineC2( const PT& p, const PT& q, const PT& r,
     else
         return(    ( ( py < qy) && ( qy < ry))
                 || ( ( ry < qy) && ( qy < py)));
-    // keeps g++ happy
-    return false;
 }
 
 template < class PT_, class DA_ >
