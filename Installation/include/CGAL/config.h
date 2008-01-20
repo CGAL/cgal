@@ -136,6 +136,14 @@
 
 #endif
 
+#ifdef __SUNPRO_CC
+// SunPRO 5.9 emits warnings "The variable tag has not yet been assigned a value"
+// even for empty "tag" variables.  No way to write a config/testfile for this.
+#  define CGAL_SUNPRO_INITIALIZE(C) C
+#else
+#  define CGAL_SUNPRO_INITIALIZE(C)
+#endif
+
 
 //-------------------------------------------------------------------//
 // When the global min and max are no longer defined (as macros) 
