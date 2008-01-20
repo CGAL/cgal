@@ -150,16 +150,6 @@ public:
 
   const Traits & traits() const {return _gt;};
 
-  // These friends are required by SUNPRO CC.
-  //! Internal data held under each point that the algorithm requires
-  friend class Point_data;
-  //! A functor used to sort points lexicographically by their x and y
-  //! coordinates
-  friend class Less_xy;
-  //! A functor used to sort points lexicographically by their y and x
-  //! coordinates
-  friend class Less_yx;
-
   //! A constructor given two points parameters. The parameters are two
   //! opposite corners of the bounding box.
   Largest_empty_iso_rectangle_2(const Point_2& bl, const Point_2& tr);
