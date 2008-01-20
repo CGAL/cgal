@@ -40,8 +40,6 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/number_utils_classes.h>
 
-#include <CGAL/Segment_Delaunay_graph_2/SunPro_CC_fix.h>
-
 CGAL_BEGIN_NAMESPACE
 
 #define SDG2_INS CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal
@@ -68,12 +66,8 @@ template<class CK,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Field_with_sqrt_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
-#if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
-#else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
-#endif
 struct Segment_Delaunay_graph_filtered_traits_2
   : public Segment_Delaunay_graph_filtered_traits_base_2<CK, CK_MTag,
 							 EK, EK_MTag,
@@ -228,12 +222,8 @@ template<class CK,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
 	 class FK_MTag = Field_with_sqrt_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
-#if defined(__sun) && defined(__SUNPRO_CC)
-         class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
-#else
 	 class C2F     =
 	 Cartesian_converter<CK, FK, To_interval<typename CK::RT> > >
-#endif
 struct Segment_Delaunay_graph_filtered_traits_without_intersections_2
   : public Segment_Delaunay_graph_filtered_traits_base_2<CK, CK_MTag,
 							 EK, EK_MTag,
