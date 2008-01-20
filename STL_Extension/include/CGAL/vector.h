@@ -25,10 +25,6 @@
 #ifndef CGAL_VECTOR_H
 #define CGAL_VECTOR_H 1
 
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
-#error CGAL::vector not available on MSC VC6
-#else
-
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <iterator>
@@ -36,11 +32,9 @@
 #include <memory>
 #include <cstddef>
 
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
-
 
 // We give the vector container class a class based iterator implementation.
 // It ensures that iterator_traits work on compilers not supporting
@@ -601,7 +595,4 @@ void vector<T, Alloc>::insert( iterator position, size_type n, const T& x) {
 
 CGAL_END_NAMESPACE
 
-#endif // defined( _MSC_VER) && (_MSC_VER <= 1200)
-
 #endif // CGAL_VECTOR_H //
-// EOF //

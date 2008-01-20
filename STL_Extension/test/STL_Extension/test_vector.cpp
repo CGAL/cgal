@@ -28,13 +28,6 @@
 // with templates.
 // ============================================================================
 
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
-// CGAL::vector not available on MSC VC6
-int main() {
-    return 0;
-}
-#else
-
 #include <CGAL/vector.h>
 #include <CGAL/Testsuite/assert.h>
 #include <iostream>
@@ -204,5 +197,3 @@ int main() {
   
     return 0;
 }
-
-#endif // defined( _MSC_VER) && (_MSC_VER <= 1200) //

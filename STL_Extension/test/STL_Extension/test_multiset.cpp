@@ -25,13 +25,6 @@
 // A test for the CGAL::Multiset container.
 // ============================================================================
 
-#if defined( _MSC_VER) && (_MSC_VER <= 1200)
-// CGAL::vector not available on MSC VC6
-int main() {
-  return (0);
-}
-#else
-
 #include <CGAL/basic.h>
 #include <CGAL/Multiset.h>
 #include <string>
@@ -644,5 +637,3 @@ void test_swap_and_replace ()
 
   return;
 }
-
-#endif // defined( _MSC_VER) && (_MSC_VER <= 1200) //
