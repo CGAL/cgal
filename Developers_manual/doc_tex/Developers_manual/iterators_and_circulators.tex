@@ -274,9 +274,7 @@ front_insert_iterators<Container> front_inserter(Container& c);
 Thus, the \ccc{inserter} adaptor can be called for any container that
 has an \ccc{insert} member function, and \ccc{back_inserter}
 (resp. \ccc{front_inserter}) can be called for any container that has a
-\ccc{push_back} (resp. \ccc{push_front}) member function.  Some versions
-of \stl\ (in particular, the one of KCC and Borland) also require that 
-containers define a \ccc{value_type} and a \ccc{const_reference} type.
+\ccc{push_back} (resp. \ccc{push_front}) member function.
 
 The following code will insert 200 copies of the value 7 at the end of
 \ccc{vec}.
