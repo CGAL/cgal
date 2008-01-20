@@ -31,7 +31,6 @@
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_ON_REFERENCE_SPHERE_3_H
 
 #include <iostream>
-#include <cassert>
 
 #include <CGAL/Circular_arc_point_3.h>
 #include <CGAL/Circular_kernel_3/constant.h>

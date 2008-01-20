@@ -32,7 +32,7 @@
 // - It's not specific to circular arcs...
 
 #include <CGAL/basic.h>
-#include <cassert>
+#include <CGAL/kernel_assertions.h>
 #include <utility>
 
 namespace CGAL {

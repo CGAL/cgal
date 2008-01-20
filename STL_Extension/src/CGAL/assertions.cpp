@@ -27,18 +27,8 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
-
-// not_implemented function
-// ------------------------
-void
-not_implemented()
-{
-    assert( false);
-}
-
 
 namespace {
 

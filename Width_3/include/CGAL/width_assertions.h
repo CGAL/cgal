@@ -109,13 +109,6 @@
  #define DEBUGPRINT(doit,msg,var)
  #define DEBUGMSG(doit,msg)
  #define INFOMSG(doit,msg)
-// #define NDEBUG // discard assertions. Changed since it violates std: L.K.
 #endif
 
-#include <cassert>
-
 #endif //#WIDTH_DEBUG_H
-
-
-
-

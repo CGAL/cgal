@@ -38,7 +38,7 @@
 #include <CGAL/OpenNL/sparse_matrix.h>
 #include <CGAL/OpenNL/full_vector.h>
 
-#include <cassert>
+#include <CGAL/assertions.h>
 
 namespace OpenNL {
 

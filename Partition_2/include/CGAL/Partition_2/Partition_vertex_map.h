@@ -23,7 +23,7 @@
 #include <map>
 #include <iostream>
 #include <CGAL/circulator.h>
-#include <cassert>
+#include <CGAL/assertions.h>
 
 #include <sstream>
 

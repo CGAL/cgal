@@ -26,8 +26,6 @@
 #define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
 
 #include <iostream>
-#include <cassert>
-
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
 #include <boost/type_traits/is_same.hpp>

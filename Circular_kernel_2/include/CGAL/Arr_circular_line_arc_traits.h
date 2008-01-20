@@ -26,7 +26,6 @@
 #define CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <cassert>
 #include <boost/variant.hpp>
 
 namespace CGAL {

@@ -29,15 +29,9 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
-
-#include <cassert>
 #include <CGAL/predicates_on_points_2.h>
-
-
-
 #include <CGAL/Line_2.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
-
 #include <CGAL/Object.h>
 
 CGAL_BEGIN_NAMESPACE

@@ -32,8 +32,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <cassert>
-
 CGAL_BEGIN_NAMESPACE
 
 

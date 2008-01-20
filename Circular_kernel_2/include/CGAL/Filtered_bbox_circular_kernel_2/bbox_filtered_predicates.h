@@ -25,7 +25,7 @@
 #ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
 #define CGAL_BBOX_FILTERED_PREDICATES_H  
 
-#include <cassert>
+#include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Object.h>
 #include <CGAL/Bbox_2.h>

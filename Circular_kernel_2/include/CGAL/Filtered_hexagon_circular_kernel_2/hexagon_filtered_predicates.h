@@ -25,8 +25,8 @@
 #ifndef CGAL_HEXAGON_FILTERED_PREDICATES_H  
 #define CGAL_HEXAGON_FILTERED_PREDICATES_H  
 
-#include <cassert>
 #include <fstream>
+#include <CGAL/assertions.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h> 
 #include <CGAL/enum.h>
 #include <CGAL/Object.h>

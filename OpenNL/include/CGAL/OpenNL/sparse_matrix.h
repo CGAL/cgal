@@ -35,10 +35,10 @@
 #define __OPENNL_SPARSE_MATRIX__
 
 #include <CGAL/OpenNL/full_vector.h>
+#include <CGAL/assertions.h>
 
 #include <vector>
 #include <cstdlib>
-#include <cassert>
 
 namespace OpenNL {
 

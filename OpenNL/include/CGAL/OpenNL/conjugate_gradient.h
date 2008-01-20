@@ -38,11 +38,11 @@
 #define __OPENNL_CONJUGATE_GRADIENT__
 
 #include <CGAL/OpenNL/blas.h>
+#include <CGAL/assertions.h>
 
 #include <cmath>
 #include <cfloat>
 #include <climits>
-#include <cassert>
 
 namespace OpenNL {
 

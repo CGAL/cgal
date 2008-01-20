@@ -33,7 +33,6 @@
  */
 
 #include <CGAL/basic.h>
-#include <cassert>
 #include <boost/variant.hpp>
 #include <CGAL/Arr_tags.h>
 

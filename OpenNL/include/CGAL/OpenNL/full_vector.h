@@ -37,9 +37,9 @@
 #define __OPENNL_FULL_VECTOR__
 
 #include <CGAL/OpenNL/blas.h>
+#include <CGAL/assertions.h>
 
 #include <cstdlib>
-#include <cassert>
 
 namespace OpenNL {
 

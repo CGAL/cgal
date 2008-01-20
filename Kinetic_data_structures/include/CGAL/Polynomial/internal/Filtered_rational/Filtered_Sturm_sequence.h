@@ -25,8 +25,6 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
 
-//#include <cassert>
-
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 #define CGAL_POLYNOMIAL_NORMALIZE_GCD_IF_CONSTANT

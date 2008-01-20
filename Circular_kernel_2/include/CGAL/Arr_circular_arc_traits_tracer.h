@@ -26,7 +26,6 @@
 #define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_TRAITS_TRACER_H
 
 #include <CGAL/basic.h>
-#include <cassert>
 #include <CGAL/Profile_counter.h>
 
 namespace CGAL {

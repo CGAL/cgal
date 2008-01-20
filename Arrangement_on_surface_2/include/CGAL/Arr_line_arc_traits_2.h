@@ -33,8 +33,6 @@
  */
 
 #include <CGAL/basic.h>
-#include <cassert>
-
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/global_functions_on_circular_arcs_2.h>

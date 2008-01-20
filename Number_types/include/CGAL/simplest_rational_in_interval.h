@@ -24,13 +24,10 @@
 #ifndef CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H
 #define CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H
 
-
 #include <CGAL/number_type_basic.h>
 #include <CGAL/to_rational.h>
-#include <cassert>
 #include <climits>
 #include <cmath>
-
 
 CGAL_BEGIN_NAMESPACE
 

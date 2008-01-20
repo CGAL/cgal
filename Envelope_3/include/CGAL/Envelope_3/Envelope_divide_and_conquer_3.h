@@ -25,7 +25,6 @@
 #define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
 #include <iostream>
-#include <cassert>
 #include <list>
 #include <set>
 #include <vector>
