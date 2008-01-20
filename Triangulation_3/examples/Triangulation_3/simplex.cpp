@@ -3,9 +3,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <cassert>
 #include <list>
-#include <vector>
+#include <set>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
