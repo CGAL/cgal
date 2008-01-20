@@ -25,16 +25,6 @@
 // implementation: 3D Width of a Point Set
 // ============================================================================
 
-// short cuts for MIPS
-#if ( _COMPILER_VERSION == 730)
-#  define  Homogeneous                         Hom
-#  define  Width_3                             W3
-#  define  Width_default_traits_3              Wdt3
-#  define  Width_polyhedron_default_traits_3   Wpdt3
-#  define  Width_halfedge_default_base         Whdb
-#  define  Width_facet_default_base            Wfdb
-#endif
-
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Width_default_traits_3.h>
 #include <CGAL/Width_3.h>
@@ -80,8 +70,3 @@ int main() {
               << simplex.get_number_of_optimal_solutions() << std::endl;
     return(0);
 }
-
-
-
-
-
