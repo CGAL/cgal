@@ -1035,7 +1035,7 @@ public:
       }
     } // if (sit != ss_iterator() )
     
-    //    assert( sit_pred != YS.end() );
+    //    CGAL_assertion( sit_pred != YS.end() );
     GO.halfedge_below(v,Edge_of[*sit_pred]);
     if ( x2iso[&*event] != 0 ) {
       IsoList* IL = x2iso[&*event];
@@ -1087,7 +1087,7 @@ public:
 	 sit_prev = sit_curr, --sit_curr ) {
       CGAL_NEF_TRACEN("checking outedge "<< *sit_curr <<"\n   "<< *sit_prev);
       if (y2y[*sit_curr] == *sit_prev) { // overlapping
-	assert(collinear(sit_curr, sit_prev));
+	CGAL_assertion(collinear(sit_curr, sit_prev));
 	Edge_of[*sit_curr] = Edge_of[*sit_prev];
       } else {
 	CGAL_NEF_TRACEN("creating new edge ");
