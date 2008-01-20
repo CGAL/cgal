@@ -162,13 +162,9 @@ By setting the flag \ccc{CGAL_NO_<CHECK_TYPE>} all checks of type
 \ccc{<CHECK_TYPE>} are disabled, \eg~adding \ccc{-DCGAL_NO_ASSERTIONS}%
 \index{CGAL_NO_<CHECK_TYPE> flag@{\tt CGAL\_NO\_$<$CHECK\_TYPE$>$} flag}
 to the compiler call switches off all checks for assertions. To disable
-all checks in the library, the flag \ccc{NDEBUG}
-\index{NDEBUG flag@{\tt NDEBUG} flag}
-can be set (which also switches off the \ccc{assert} macro from the C-library)
-\index{assert macro@{\tt assert} macro!disabling}.
-The flag \ccc{CGAL_NDEBUG} disables all checks in \cgal\ but does not affect
-the standard \ccc{assert} macro.
-Setting \ccc{NDEBUG} in turn sets \ccc{CGAL_NDEBUG}.
+all checks in the library, the flag \ccc{CGAL_NDEBUG} can be set.
+Note that the standard flag \ccc{NDEBUG} sets \ccc{CGAL_NDEBUG},
+but it also affects the \ccc{assert} macro.
 \ccIndexSubitemEnd{checks}{disabling}
 
 To enable expensive and exactness checks, respectively, the compile-time
