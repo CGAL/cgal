@@ -26,12 +26,30 @@
 //| If a compiler does not support decltype() (from C++0x)
 //| CGAL_CFG_NO_DECLTYPE is set. 
 
+#include <cassert>
+
+// It also tests if const refs are properly found.
+template <typename>
+struct Is_const_ref
+{ static const bool value = false; };
+
+template <typename T>
+struct Is_const_ref <const T&>
+{ static const bool value = true; };
+
 void use(int) {}
+
+int f_copy(int i) { return i; }
+
+const int& f_cref(const int & i) { return i; }
 
 int main()
 {
   int i = 2;
   decltype(i+i) j = 3;
   use(j);
+  assert(! Is_const_ref<decltype(i)>::value);
+  assert(! Is_const_ref<decltype(f_copy(i))>::value);
+  assert(  Is_const_ref<decltype(f_cref(i))>::value);
   return 0;
 }
