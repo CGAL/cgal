@@ -1617,8 +1617,8 @@ public:
                 this->_ckva()->kernel().compare_xy_2_object()(
                         p.xy(), q.xy()) !=
                 CGAL::EQUAL);
-        CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL &&
-                          cv.compare_y_at_x(q) == CGAL::EQUAL);  
+        CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
         return cv._replace_endpoints(
                 p, q, 
                 (cv.is_vertical() ? -1 : cv.arcno(p.x())),

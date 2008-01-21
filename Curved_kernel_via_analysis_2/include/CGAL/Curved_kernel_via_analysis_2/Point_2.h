@@ -394,7 +394,7 @@ public:
             this->ptr()->_m_arc_rep->_m_arcno);
     }
     
-    public: 
+public: 
     //!\name methods for location
     //!@{
     
