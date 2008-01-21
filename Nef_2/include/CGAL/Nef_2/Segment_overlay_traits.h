@@ -669,7 +669,7 @@ public:
 
     public:
     lt_ssi_pair() {}
-    bool operator()(const is_pair& s0, const is_pair& s1) {
+    bool operator()(const is_pair& s0, const is_pair& s1) const {
       if(s0.second == s1.second)
 	return s0.first < s1.first;
       return s0.second < s1.second;
