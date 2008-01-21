@@ -31,7 +31,7 @@
 #define CGAL_CKvA_USE_CACHES
 
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
-#include <CGAL/Curved_kernel_via_analysis_2/LRU_hashed_map.h>
+#include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -111,7 +111,7 @@ public:
     }
        
     // source and target end-points of a segment
-    Point_2 _m_min, _m_max;
+    mutable Point_2 _m_min, _m_max;
 
     // supporting curve
     mutable Curve_2 _m_support;
@@ -130,6 +130,12 @@ public:
     // stores boundary value in x-range of non-vertical interval
     mutable boost::optional< Boundary > _m_boundary_in_interval;
 
+    // pointer to underlying ckva
+    mutable Curved_kernel_via_analysis_2 *_m_ckva;
+
+
+    // caches
+#if 0
     typedef std::pair<int, int> Int_pair;
     typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
         CGALi::Stub<Int_pair>, CGALi::Int_pair_hash> Int_pair_map;
@@ -138,10 +144,9 @@ public:
     typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
     
     mutable Int_map _m_cmp_y_at_x;
-
-    // pointer to underlying ckva
-    mutable Curved_kernel_via_analysis_2 *_m_ckva;
+#endif
 };
+
 
 //! \brief class defines a point on a generic curve
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
@@ -239,11 +244,15 @@ public:
          *
          * All known items of the base class rep will be copied.
          */
-        Rebound_arc_2 operator()(const Self& pt, 
+        Rebound_arc_2 operator()(const Self& arc, 
                                  const Surface_point_2& min,
                                  const Surface_point_2& max) {
             New_rep newrep;
-            // TODO fill in details (eriC)
+            newrep._m_min = min;
+            newrep._m_max = max;
+            
+            copy_members(arc, newrep);
+
             return Rebound_arc_2(newrep);
         }
 
@@ -254,10 +263,16 @@ public:
          *
          * All known items of the base class rep will be copied.
          */
-        Rebound_arc_2 operator()(const Self& pt,
+        Rebound_arc_2 operator()(const Self& arc,
                                  const Surface_point_2& origin) {
             New_rep newrep;
-            // TODO fill in details (eriC)
+            
+            // TODO origin = min/max?
+
+            copy_members(arc, newrep);
+            
+            // TODO arc_rep (eriC)
+
             return Rebound_arc_2(newrep);
         }
         
@@ -267,14 +282,37 @@ public:
          *
          * All known items of the base class rep will be copied.
          */
-        Rebound_arc_2 operator()(const Self& pt) {
+        Rebound_arc_2 operator()(const Self& arc) {
             New_rep newrep;
-            // TODO fill in details (eriC)
+            
+            copy_members(arc, newrep);
+            
+            // TODO arc_rep (eriC)
+
             return Rebound_arc_2(newrep);
         }
 
     protected:
-        // TODO collect common assignments
+        //! collect common assignments
+        void copy_members(const Self& arc, New_rep& newrep) {
+            
+            newrep._m_support = arc.ptr()->_m_support;
+            
+            newrep._m_arcno = arc.ptr()->_m_arcno;
+            newrep._m_arcno_min = arc.ptr()->_m_arcno_min;
+            newrep._m_arcno_max = arc.ptr()->_m_arcno_max;
+
+            newrep._m_is_vertical = arc.ptr()->_m_is_vertical;
+
+            newrep._m_interval_id = arc.ptr()->_m_interval_id;
+
+            newrep._m_boundary_in_interval = 
+                arc.ptr()->_m_boundary_in_interval;
+            
+            // pointer to underlying ckva
+            //mutable Curved_kernel_via_analysis_2 *_m_ckva;
+        }
+
     };
 
 public:
@@ -1207,7 +1245,7 @@ public:
      */
     // do we need this method separetely ??
     Kernel_arc_2 trim(const Point_2& p, const Point_2& q) const {
-    
+        
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2, trim_2_object);
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         return trim_2(*dynamic_cast< const Kernel_arc_2* >(this), p, q);
@@ -1649,11 +1687,13 @@ protected:
     }
     
     //! returns min end-point of this arc (provided for code readability)
+    inline
     const Point_2& _minpoint() const { 
         return this->ptr()->_m_min; 
     }
     
     //! returns max end-point of this arc (provided for code readability)
+    inline
     const Point_2& _maxpoint() const { 
         return this->ptr()->_m_max; 
     }
@@ -1749,17 +1789,19 @@ protected:
             int arcno_min = -1, int arcno_max = -1) const {
         
         CERR("\n_replace_endpoints\n");    
-            
+
         Rep rep(*(this->ptr()));
         rep._m_min = src;
         rep._m_max = tgt;
-        if(!is_vertical()) {
-            if(arcno_min >= 0) 
+        if (!is_vertical()) {
+            if (arcno_min >= 0) {
                 rep._m_arcno_min = arcno_min;
-            if(arcno_max >= 0) 
+            }
+            if (arcno_max >= 0) {
                 rep._m_arcno_max = arcno_max;
+            }
         }
-        if(_same_arc_compare_xy(src, tgt) == CGAL::LARGER) {
+        if (src > tgt) {
             std::swap(rep._m_min, rep._m_max);
             std::swap(rep._m_arcno_min, rep._m_arcno_max);
         }
@@ -2164,14 +2206,8 @@ protected:
               // ordinar normal case:      
               // selection is exclusive since arcs cannot intersect twice
               // at the same finite end-point
-              } else*/ if((f2_min && 
-                           cv1._ckva()->kernel().compare_xy_2_object()(
-                                   pt.xy(), 
-                                   cv2._minpoint().xy()) == CGAL::EQUAL) ||
-                          (f2_max && 
-                           cv1._ckva()->kernel().compare_xy_2_object()(
-                                   pt.xy(), 
-                                   cv2._maxpoint().xy()) == CGAL::EQUAL)) {
+              } else*/ if((f2_min && pt == cv2._minpoint()) ||
+                          (f2_max && pt == cv2._maxpoint())) {
                   *oi++ = std::make_pair(pt, 0); 
               }
         Lendloop:
