@@ -12,13 +12,25 @@ typedef K::Plane_3           Plane;
 typedef K::Point_3           Point;
 typedef K::Tetrahedron_3     Tetrahedron;
 
+FT random_value()
+{
+	return (FT)rand() / (FT)RAND_MAX;
+}
+
+Point random_point()
+{
+	return Point(random_value(),
+		           random_value(),
+							 random_value());
+}
+
 int main(void)
 {
-	Point a( 0.0,0.0,0.0);
-	Point b( 1.0,0.0,0.0);
-	Point c(-1.0,0.0,0.0);
-	Point d( 0.0,1.0,1.0);
-	Point e( 0.0,0.0,0.0);
+	Point a = random_point();
+	Point b = random_point();
+	Point c = random_point();
+	Point d = random_point();
+	Point e = random_point();
 
 	std::list<Tetrahedron> tetrahedra;
   tetrahedra.push_back(Tetrahedron(a,b,c,d));

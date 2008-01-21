@@ -776,7 +776,7 @@ centroid(InputIterator begin,
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
-  FT sum_volumes = 0;
+  FT sum_volumes = 0.0;
   for(InputIterator it = begin;
       it != end;
       it++)
