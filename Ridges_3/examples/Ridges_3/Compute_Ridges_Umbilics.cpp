@@ -189,7 +189,7 @@ int main()
    po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
-      ("input-file,f", po::value<string>(&if_name)->default_value("data/ellipsoid_u_0.02.off"),
+      ("input-file,f", po::value<string>(&if_name)->default_value("data/poly2x^2+y^2-0.062500.off"),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
        "degree of the jet,  3 <= degre-jet <= 4")
@@ -290,7 +290,7 @@ int main()
 
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())
-    {std::cerr << "not enough points in the model" << std::endl;   exit(0);}
+    {std::cerr << "not enough points in the model" << std::endl;   exit(1);}
 
   //initialize Polyhedral data : normal of facets
   P.compute_facets_normals();
