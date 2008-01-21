@@ -103,7 +103,8 @@ ENDMACRO (QT3_ADD_RESOURCES)
 #    Call this if you want to have automatic moc file handling.
 #    This means if you include "foo.moc" in the source file foo.cpp
 #    a moc file for the header foo.h will be created automatically.
-#    You can set the property SKIP_AUTOMAKE using SET_SOURCE_FILES_PROPERTIES()
+#    if foo.h doesn't exit, the moc is created from foo.cpp
+#    You can set the property SKIP_AUTOMOC using SET_SOURCE_FILES_PROPERTIES()
 #    to exclude some files in the list from being processed.
 MACRO(QT3_AUTOMOC)
     GET_DIRECTORY_PROPERTY(_inc_DIRS INCLUDE_DIRECTORIES)
@@ -144,19 +145,21 @@ MACRO(QT3_AUTOMOC)
                     MARK_AS_ADVANCED(${_header})
 
                     if (NOT ${_header})
-                        MESSAGE(STATUS "Error: ${_basename}.h not found")
-                    else (NOT ${_header})
+                      set( moc_source "${_current_abs_FILE}" )
+                    else(NOT ${_header})
+                      set( moc_source ${${_header}} )
+                    endif(NOT ${_header})
+                    
                         # Add make rule to create .moc
-#                         MESSAGE(STATUS "QT3_AUTOMOC: add rule ${_moc} <- ${${_header}}") # debug
-                        include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-                        ADD_CUSTOM_COMMAND(OUTPUT ${_moc}
-                                           COMMAND ${QT_MOC_EXECUTABLE}
+#                         MESSAGE(STATUS "QT3_AUTOMOC: add rule ${_moc} <- ${moc_source}") # debug
+                     include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+                     ADD_CUSTOM_COMMAND(OUTPUT ${_moc}
+                                        COMMAND ${QT_MOC_EXECUTABLE}
 #                                          ARGS ${_moc_INCS} ${_header} -o ${_moc}
-                                           ${${_header}} -o ${_moc}
-                                           DEPENDS ${${_header}}
-                        )
-                        ADD_FILE_DEPENDENCIES(${_current_abs_FILE} ${_moc})
-                    endif (NOT ${_header})
+                                        ${moc_source} -o ${_moc}
+                                        DEPENDS ${moc_source}
+                                        )
+                     ADD_FILE_DEPENDENCIES(${_current_abs_FILE} ${_moc})
 
                 ENDFOREACH (_current_MOC_INCLUDE)
             ENDIF(_match)

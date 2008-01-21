@@ -11,6 +11,9 @@
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
+set(CGAL_LIBRARIES) 
+set(CGAL_QT_LIBRARIES) 
+
 if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_PATH )
 
   set(CGAL_ROOT $ENV{CGALROOT})
@@ -46,17 +49,20 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
          	    DOC "Path to CGAL and third-party libraries"
              ) 
 
-    set(CGAL_LIBRARIES "") 
-    
   else()
 
     find_library(CGAL_LIBRARIES NAMES CGAL
                  PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
                  DOC "CGAL libraries"
                 )
-                
+    
+    find_library(CGAL_QT_LIBRARIES NAMES CGALQt
+                 PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
+                 DOC "CGALQt libraries"
+                )
+    
     get_filename_component(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES} PATH)
-              
+    
   endif()
   
 endif()

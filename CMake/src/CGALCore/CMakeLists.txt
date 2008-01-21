@@ -20,15 +20,6 @@
 assert(CGAL_BINARY_DIR)
 assert(CGAL_LIB_INSTALL_DIR)
 
-# Make sure the compiler can find GMP include files
-include_directories (${CGAL_INCLUDE_DIRS})
-include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
-
-add_definitions(${CGAL_DEFINITIONS})
-add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
-
-set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
-
 set(SOURCES
     BigFloat.cpp
     CoreAux.cpp
@@ -40,11 +31,11 @@ set(SOURCES
     Real.cpp
 )
 
-ADD_LIBRARY(CGAL_CORE ${SOURCES})
+add_library(CGAL_CORE "all_files.cpp")
 
 if (NOT AUTO_LINK_ENABLED )
 
-  set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME "core++" )
+  set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME "cgalcore++" )
   target_link_libraries( CGAL_CORE ${GMP_LIBRARIES})
   
 else()

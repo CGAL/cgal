@@ -34,12 +34,12 @@ if(GMP_FOUND)
     # We cannot search for the core++ library because it is not yet compiled
     # => hard code the name
     if (WIN32)
-      set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/core++.lib)
+      set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/cgalcore++.lib)
     else()
       if(BUILD_SHARED_LIBS)
-        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcore++.so)
+        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcgalcore++.so)
       else(BUILD_SHARED_LIBS)
-        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcore++.a)
+        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcgalcore++.a)
       endif(BUILD_SHARED_LIBS)
     endif()
     
