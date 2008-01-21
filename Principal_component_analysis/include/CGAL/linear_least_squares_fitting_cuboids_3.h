@@ -166,6 +166,10 @@ linear_least_squares_fitting_3(InputIterator first,
     points.push_back(t[1]);
     points.push_back(t[2]);    
     points.push_back(t[3]);
+    points.push_back(t[4]);
+    points.push_back(t[5]);
+    points.push_back(t[6]);    
+    points.push_back(t[7]);
   }
 
   // compute fitting plane
@@ -307,6 +311,10 @@ linear_least_squares_fitting_3(InputIterator first,
     points.push_back(t[1]);
     points.push_back(t[2]);    
     points.push_back(t[3]);
+    points.push_back(t[4]);
+    points.push_back(t[5]);
+    points.push_back(t[6]);    
+    points.push_back(t[7]);
   }
 
   // compute fitting line

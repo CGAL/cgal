@@ -22,7 +22,6 @@ int main()
   cuboids.push_back(Iso_cuboid(a,b));
   cuboids.push_back(Iso_cuboid(a,c));
 
-  Kernel kernel;
   Line line;
   Plane plane;
   Point centroid;
