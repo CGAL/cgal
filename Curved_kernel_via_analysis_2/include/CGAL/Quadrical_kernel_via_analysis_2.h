@@ -692,6 +692,13 @@ public:
 
         int sp = p.sheet();
         int sa = cv.sheet();
+        if (cv.is_finite(CGAL::ARR_MIN_END) && 
+            p == cv.curve_end(CGAL::ARR_MIN_END)) {
+            sa = cv.sheet(CGAL::ARR_MIN_END);
+        } else if (cv.is_finite(CGAL::ARR_MAX_END) && 
+            p == cv.curve_end(CGAL::ARR_MAX_END)) {
+            sa = cv.sheet(CGAL::ARR_MAX_END);
+        }
         
         if (sa != sp) {
             res = CGAL::compare(sp, sa);
@@ -890,7 +897,10 @@ public:
         bool res = (s1 == s2);
         
         if (res) {
-            res = Base::operator()(cv1, cv2);
+            res = this->_ckva()->projected_kernel().do_overlap_2_object()(
+                    cv1.projected_arc(), 
+                    cv2.projected_arc()
+            );
         }
 
         CERR("result: " << res << "\n");
@@ -1073,9 +1083,20 @@ public:
         // handle special case of two segments on same curve and at endpoints
         if ((s1 == s2 && cv1.curve().id() == cv2.curve().id()) || 
             Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
+
+            std::list< std::pair< Point_2, unsigned int > > ipoints;
+            Arc_2::_intersect_at_endpoints(
+                    cv1, cv2, std::back_inserter(ipoints)
+            );
             
-            // TODO intersect_at_endpoints(t, points); (eriC)
-            
+            for (typename std::list< std::pair< Point_2, unsigned int > >::
+                     const_iterator it = ipoints.begin();
+                 it != ipoints.end(); it++) {
+                
+                // TODO remove intersection on boundary!
+                *oi++ = CGAL::make_object(*it);
+            }
+
         } else if (s1 == s2) {
             
             // call projected intersection
@@ -1086,8 +1107,99 @@ public:
             );
             for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
                  it != tmp.end(); it++) {
-                // TODO and lift objects! (eriC)
-                // *oi++ = *it;
+                
+                typedef typename Curved_kernel_via_analysis_2l::
+                    Projected_kernel_2 Projected_kernel_2;
+                
+                typedef typename Projected_kernel_2::Point_2 P_point_2;
+                typedef typename Projected_kernel_2::Arc_2 P_arc_2;
+
+                P_arc_2 p_arc;
+
+                if (CGAL::assign(p_arc, *it)) {
+                    CGAL_error_msg("Lifting of arcs not yet supported");
+                    // TODO lift overlapping arcs (eriC)
+                } else {
+                    std::pair< P_point_2, unsigned int > p_pt;
+                    CGAL_assertion_code(bool check =)
+                        CGAL::assign(p_pt, *it);
+                    CGAL_assertion(check);
+                    
+                    int sp = s1;
+
+                    // remove intersections on boundary
+                    if (s1 == 1 && 0 == cv1.sheet(CGAL::ARR_MIN_END)) {
+                        if (cv1.is_finite(CGAL::ARR_MIN_END)) {
+                            if (this->_ckva()->projected_kernel().
+                                compare_xy_2_object()(
+                                        p_pt.first, 
+                                        cv1._minpoint().projected_point()
+                                ) == CGAL::EQUAL
+                            ) {
+                                if (cv1.location(CGAL::ARR_MIN_END) !=
+                                    CGAL::ARR_INTERIOR) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (s1 == 1 && 0 == cv1.sheet(CGAL::ARR_MAX_END)) {
+                        if (cv1.is_finite(CGAL::ARR_MAX_END)) {
+                            if (this->_ckva()->projected_kernel().
+                                compare_xy_2_object()(
+                                        p_pt.first, 
+                                        cv1._maxpoint().projected_point()
+                                ) == CGAL::EQUAL
+                            ) {
+                                if (cv1.location(CGAL::ARR_MAX_END) !=
+                                    CGAL::ARR_INTERIOR) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (s1 == 1 && 0 == cv2.sheet(CGAL::ARR_MIN_END)) {
+                        if (cv2.is_finite(CGAL::ARR_MIN_END)) {
+                            if (this->_ckva()->projected_kernel().
+                                compare_xy_2_object()(
+                                        p_pt.first, 
+                                        cv2._minpoint().projected_point()
+                                ) == CGAL::EQUAL
+                            ) {
+                                if (cv2.location(CGAL::ARR_MIN_END) !=
+                                    CGAL::ARR_INTERIOR) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (s1 == 1 && 0 == cv2.sheet(CGAL::ARR_MAX_END)) {
+                        if (cv2.is_finite(CGAL::ARR_MAX_END)) {
+                            if (this->_ckva()->projected_kernel().
+                                compare_xy_2_object()(
+                                        p_pt.first, 
+                                        cv2._maxpoint().projected_point()
+                                ) == CGAL::EQUAL
+                            ) {
+                                if (cv2.location(CGAL::ARR_MAX_END) !=
+                                    CGAL::ARR_INTERIOR) {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    Point_2 pt = this->_ckva()->construct_point_2_object()(
+                            p_pt.first, 
+                            this->_ckva()->reference(),
+                            sp
+                    );
+                    
+                    *oi++ = CGAL::make_object(std::make_pair(pt, p_pt.second));
+                }
             }
         }
         return oi;
@@ -1307,6 +1419,8 @@ public:
                              compare_y_at_x_right_2_object);
     
     CGAL_QKvA_2_functor_pred(Equal_2, equal_2_object);
+
+    CGAL_QKvA_2_functor_pred(Do_overlap_2, do_overlap_2_object);
 
     CGAL_QKvA_2_functor_cons(Intersect_2, intersect_2_object);
 
