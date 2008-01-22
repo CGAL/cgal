@@ -172,10 +172,13 @@ public:
     
     //! write represenation to \c os
     void write(std::ostream& os) const {
-        os << Base(*this) << " " 
-           << "Surface(" << this->surface() << ", " 
-           << this->sheet() 
-           << ")";
+        os << Base(*this);
+        if (this->is_finite()) {
+            os << " " 
+               << "Surface(" << this->surface() << ", " 
+               << this->sheet() 
+               << ")";
+        }
     }
     
     //!@}
@@ -607,13 +610,7 @@ public:
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            bool unbounded_end = false;
-            if (ce == CGAL::ARR_MIN_END) {
-                unbounded_end = !(cv1.is_finite(CGAL::ARR_MIN_END));
-            } else {
-                unbounded_end = !(cv1.is_finite(CGAL::ARR_MAX_END));
-            }
-            if (unbounded_end) {
+            if (!cv1.is_finite(ce)) {
                 res = this->_ckva()->projected_kernel().
                     compare_y_near_boundary_2_object()(
                             cv1.projected_arc(), cv2.projected_arc(), ce
@@ -971,68 +968,6 @@ public:
     }
 }; // Equal_2
 
-template < class CurvedKernelViaAnalysis_2l >
-class Are_mergeable_2 : public 
-Curved_kernel_via_analysis_2_Functors::
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
-
-public:
-    //! this instance' first template parameter
-    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
-
-    //! the base type
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
-    Base;
-
-    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
-    
-    //! the result type
-    typedef bool result_type;
-    typedef Arity_tag<2> Arity;    
-    
-    //! standard constructor
-    Are_mergeable_2(Curved_kernel_via_analysis_2l *kernel) :
-        Base(kernel) {
-    }
-    
-    /*!\brief
-     * Check whether two given curves (arcs) are mergeable
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the two arcs are mergeable, i.e., they are supported
-     * by the same curve and share a common endpoint; (false) otherwise.
-     */
-    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
-    
-        CERR("\nquadricsare_mergeable\n");
-        
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
-
-        bool res = true;
-        
-        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
-            res = false;
-        } else if (Arc_2::can_intersect_only_at_curve_ends(cv1,cv2)) {
-            res = false;
-        }
-        
-        if (res) {
-            res = this->_ckva()->projected_kernel().are_mergeable_2_object()(
-                    cv1.projected_arc(), cv2.projected_arc()
-            );
-        }
-        
-        CERR("result: " << res << "\n");
-        return res;
-    }
-};
-
-// TODO for Merge_2: Rewrite sheets? (eriC)
-
-// TODO what to do with Is_bounded_2 and Is_on_2? (eriC)
-
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernelViaAnalysis_2l >
 class Intersect_2 : public 
@@ -1093,7 +1028,7 @@ public:
                      const_iterator it = ipoints.begin();
                  it != ipoints.end(); it++) {
                 
-                // TODO remove intersection on boundary!
+                // TODO remove intersection on boundary! (eriC)
                 *oi++ = CGAL::make_object(*it);
             }
 
@@ -1128,68 +1063,8 @@ public:
                     int sp = s1;
 
                     // remove intersections on boundary
-                    if (s1 == 1 && 0 == cv1.sheet(CGAL::ARR_MIN_END)) {
-                        if (cv1.is_finite(CGAL::ARR_MIN_END)) {
-                            if (this->_ckva()->projected_kernel().
-                                compare_xy_2_object()(
-                                        p_pt.first, 
-                                        cv1._minpoint().projected_point()
-                                ) == CGAL::EQUAL
-                            ) {
-                                if (cv1.location(CGAL::ARR_MIN_END) !=
-                                    CGAL::ARR_INTERIOR) {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (s1 == 1 && 0 == cv1.sheet(CGAL::ARR_MAX_END)) {
-                        if (cv1.is_finite(CGAL::ARR_MAX_END)) {
-                            if (this->_ckva()->projected_kernel().
-                                compare_xy_2_object()(
-                                        p_pt.first, 
-                                        cv1._maxpoint().projected_point()
-                                ) == CGAL::EQUAL
-                            ) {
-                                if (cv1.location(CGAL::ARR_MAX_END) !=
-                                    CGAL::ARR_INTERIOR) {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (s1 == 1 && 0 == cv2.sheet(CGAL::ARR_MIN_END)) {
-                        if (cv2.is_finite(CGAL::ARR_MIN_END)) {
-                            if (this->_ckva()->projected_kernel().
-                                compare_xy_2_object()(
-                                        p_pt.first, 
-                                        cv2._minpoint().projected_point()
-                                ) == CGAL::EQUAL
-                            ) {
-                                if (cv2.location(CGAL::ARR_MIN_END) !=
-                                    CGAL::ARR_INTERIOR) {
-                                    continue;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (s1 == 1 && 0 == cv2.sheet(CGAL::ARR_MAX_END)) {
-                        if (cv2.is_finite(CGAL::ARR_MAX_END)) {
-                            if (this->_ckva()->projected_kernel().
-                                compare_xy_2_object()(
-                                        p_pt.first, 
-                                        cv2._maxpoint().projected_point()
-                                ) == CGAL::EQUAL
-                            ) {
-                                if (cv2.location(CGAL::ARR_MAX_END) !=
-                                    CGAL::ARR_INTERIOR) {
-                                    continue;
-                                }
-                            }
-                        }
+                    if (on_boundary(cv1, cv2, p_pt.first)) {
+                        continue;
                     }
 
                     Point_2 pt = this->_ckva()->construct_point_2_object()(
@@ -1204,8 +1079,351 @@ public:
         }
         return oi;
     }
+
+
+private:
+    bool on_boundary(const Arc_2& cv1, const Arc_2& cv2, 
+                     const typename Point_2::Projected_point_2& pt) const {
+        
+        if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MIN_END)) {
+            if (cv1.is_finite(CGAL::ARR_MIN_END)) {
+                if (this->_ckva()->projected_kernel().
+                    compare_xy_2_object()(
+                            pt, 
+                            cv1._minpoint().projected_point()
+                    ) == CGAL::EQUAL
+                ) {
+                    if (cv1.location(CGAL::ARR_MIN_END) !=
+                        CGAL::ARR_INTERIOR) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MAX_END)) {
+            if (cv1.is_finite(CGAL::ARR_MAX_END)) {
+                if (this->_ckva()->projected_kernel().
+                    compare_xy_2_object()(
+                            pt, 
+                            cv1._maxpoint().projected_point()
+                    ) == CGAL::EQUAL
+                ) {
+                    if (cv1.location(CGAL::ARR_MAX_END) !=
+                        CGAL::ARR_INTERIOR) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MIN_END)) {
+            if (cv2.is_finite(CGAL::ARR_MIN_END)) {
+                if (this->_ckva()->projected_kernel().
+                    compare_xy_2_object()(
+                            pt, 
+                            cv2._minpoint().projected_point()
+                    ) == CGAL::EQUAL
+                ) {
+                    if (cv2.location(CGAL::ARR_MIN_END) !=
+                        CGAL::ARR_INTERIOR) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MAX_END)) {
+            if (cv2.is_finite(CGAL::ARR_MAX_END)) {
+                if (this->_ckva()->projected_kernel().
+                    compare_xy_2_object()(
+                            pt, 
+                            cv2._maxpoint().projected_point()
+                    ) == CGAL::EQUAL
+                ) {
+                    if (cv2.location(CGAL::ARR_MAX_END) !=
+                        CGAL::ARR_INTERIOR) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 }; // Intersect_2;
 
+
+template < class CurvedKernelViaAnalysis_2l >
+class Trim_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef Arc_2 result_type;
+    typedef Arity_tag<3> Arity;
+    
+    //! standard constructor
+    Trim_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Returns a 
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the curves overlap; (false) otherwise.
+     */
+    Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
+    
+        CERR("trim\n");
+        CGAL_precondition(
+                this->_ckva()->kernel().compare_xy_2_object()(
+                        p.xy(), q.xy()) !=
+                CGAL::EQUAL);
+        CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
+        Arc_2 arc = cv._replace_endpoints(
+                p, q, 
+                (cv.is_vertical() ? -1 : cv.arcno(p.x())),
+                (cv.is_vertical() ? -1 : cv.arcno(q.x()))
+        );
+
+        if (cv.is_z_vertical()) {
+            // TODO set sheet (eriC)
+        }
+        
+        arc.ptr()->_m_projected_arc = this->_ckva()->projected_kernel().
+            trim_2_object()(cv.projected_arc(), 
+                            p.projected_point(),
+                            q.projected_point());
+        
+        return arc;
+    }
+    
+};
+
+template < class CurvedKernelViaAnalysis_2l >
+class Split_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+
+    //! the result type
+    typedef void result_type;
+    typedef Arity_tag<4> Arity;    
+    
+    //! standard constructor
+    Split_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Split a given x-monotone curve at a given point into two sub-curves.
+     * \param cv The curve to split
+     * \param p The split point.
+     * \param c1 Output: The left resulting subcurve (p is its right endpoint)
+     * \param c2 Output: The right resulting subcurve (p is its left endpoint)
+     * \pre p lies on cv but is not one of its end-points.
+     */
+    void operator()(const Arc_2& cv, const Point_2 & p,
+                    Arc_2& c1, Arc_2& c2) const {
+        
+        CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
+        // check that p is not an end-point of the arc
+        CGAL_precondition_code(
+                // TODO correctness? (eriC)
+                cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
+                cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
+        
+        CERR("\nsplit\n");
+        c1 = cv._replace_endpoints(
+                cv._minpoint(), p, -1, (cv.is_vertical() ? -1 : cv.arcno())
+        );
+        if (!cv.is_z_vertical()) {
+            c1.ptr()->_m_sheet_max = cv.sheet();
+        }
+        c2 = cv._replace_endpoints(
+                p, cv._maxpoint(), (cv.is_vertical() ? -1 : cv.arcno()), -1
+        );
+        if (!cv.is_z_vertical()) {
+            c2.ptr()->_m_sheet_min = cv.sheet();
+        }
+        
+        typename Arc_2::Projected_arc_2 p_arc1, p_arc2;
+
+        this->_ckva()->projected_kernel().split_2_object()(
+                cv.projected_arc(), p.projected_point(), p_arc1, p_arc2
+        );
+        
+        c1.ptr()->_m_projected_arc = p_arc1;
+        c2.ptr()->_m_projected_arc = p_arc2;
+    }
+};
+
+
+
+template < class CurvedKernelViaAnalysis_2l >
+class Are_mergeable_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;    
+    
+    //! standard constructor
+    Are_mergeable_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Check whether two given curves (arcs) are mergeable
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \return (true) if the two arcs are mergeable, i.e., they are supported
+     * by the same curve and share a common endpoint; (false) otherwise.
+     */
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
+    
+        CERR("\nquadricsare_mergeable\n");
+        
+        int s1 = cv1.sheet();
+        int s2 = cv2.sheet();
+
+        bool res = true;
+        
+        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
+            res = false;
+        } else if (Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
+            res = false;
+        }
+        
+        if (res) {
+            res = this->_ckva()->projected_kernel().are_mergeable_2_object()(
+                    cv1.projected_arc(), cv2.projected_arc()
+            );
+        }
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
+
+template < class CurvedKernelViaAnalysis_2l >
+class Merge_2 : public 
+Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+
+    //! the result type
+    typedef void result_type;
+    typedef Arity_tag<2> Arity;    
+    
+    //! standard constructor
+    Merge_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+
+    /*!\brief
+     * Merge two given x-monotone curves into a single one
+     * \param cv1 The first curve.
+     * \param cv2 The second curve.
+     * \param c Output: The resulting curve.
+     * \pre The two curves are mergeable, that is they are supported by the
+     *      same curve and share a common endpoint.
+     */  
+    void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
+    
+        CERR("merge\n");
+        CGAL_precondition(cv1.are_mergeable(cv2));
+        Arc_2::simplify(cv1, cv2);
+        
+        Point_2 src, tgt;
+        int arcno_s = -1, arcno_t = -1;
+        int sheet_s = -1, sheet_t = -1;
+        bool replace_src; // true if cv2 < *this otherwise *this arc < cv2 arc
+        // arcs are mergeable => they have one common finite end-point
+        replace_src = (cv1._minpoint() == cv2._maxpoint());
+        src = (replace_src ? cv2._minpoint() : cv1._minpoint());
+        tgt = (replace_src ? cv1._maxpoint() : cv2._maxpoint());
+              
+        if (!cv1.is_vertical()) {
+            arcno_s = (replace_src ? cv2.arcno(CGAL::ARR_MIN_END) :
+                       cv1.arcno(CGAL::ARR_MIN_END));
+            arcno_t = (replace_src ? cv1.arcno(CGAL::ARR_MAX_END) :
+                       cv2.arcno(CGAL::ARR_MAX_END));
+        }
+        Arc_2 arc = cv1._replace_endpoints(src, tgt, arcno_s, arcno_t);
+        
+        if (!cv1.is_z_vertical()) {
+            sheet_s = (replace_src ? cv2.sheet(CGAL::ARR_MIN_END) :
+                       cv1.sheet(CGAL::ARR_MIN_END));
+            sheet_t = (replace_src ? cv1.sheet(CGAL::ARR_MAX_END) :
+                       cv2.sheet(CGAL::ARR_MAX_END));
+            
+            arc.ptr()->_m_sheet_min = sheet_s;
+            arc.ptr()->_m_sheet_max = sheet_t;
+
+            typename Arc_2::Projected_arc_2 p_arc;
+            
+            this->_ckva()->projected_kernel().merge_2_object()(
+                    cv1.projected_arc(), cv2.projected_arc(), p_arc
+            );
+            
+            arc.ptr()->_m_projected_arc = p_arc;
+        }
+        
+        c = arc;
+    }
+};
+
+// TODO for Split/Trim: Rewrite sheets? Rewrite projected arc(eriC)
+
+// TODO what to do with Is_bounded_2 and Is_on_2? (eriC)
 
 template < class CurvedKernelViaAnalysis_2l >
 class Make_x_monotone_2: public 
@@ -1424,7 +1642,11 @@ public:
 
     CGAL_QKvA_2_functor_cons(Intersect_2, intersect_2_object);
 
+    CGAL_QKvA_2_functor_pred(Trim_2, trim_2_object);
+    CGAL_QKvA_2_functor_pred(Split_2, split_2_object);
+
     CGAL_QKvA_2_functor_pred(Are_mergeable_2, are_mergeable_2_object);
+    CGAL_QKvA_2_functor_pred(Merge_2, merge_2_object);
 
     CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
     
