@@ -273,8 +273,6 @@ public:
     static Curve_pair_cache& curve_pair_cache() 
     {
         static Curve_pair_cache _m_curve_pair_cache;
-        std::cout << "CP-cache has size " 
-                  << _m_curve_pair_cache.size() << std::endl;
         return _m_curve_pair_cache;
     }
     
