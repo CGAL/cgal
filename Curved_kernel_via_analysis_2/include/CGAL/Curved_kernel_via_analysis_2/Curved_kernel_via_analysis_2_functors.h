@@ -1153,12 +1153,14 @@ public:
                 (cv1.is_vertical() && 
                  cv1.location(CGAL::ARR_MIN_END) == 
                  CGAL::ARR_BOTTOM_BOUNDARY) ||
-                cv1._same_arc_compare_xy(cv1._minpoint(), p) == CGAL::SMALLER);
+                cv1._minpoint() < p
+        );
         CGAL_precondition(
                 (cv2.is_vertical() &&
                  cv2.location(CGAL::ARR_MIN_END) == CGAL::ARR_BOTTOM_BOUNDARY) 
                 ||
-                cv1._same_arc_compare_xy(cv2._minpoint(), p) == CGAL::SMALLER);
+                cv2._minpoint() < p
+        );
         if (cv1.is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
             if(cv2.is_vertical()) {
@@ -1241,23 +1243,25 @@ public:
             cv2 << "; p: " << p << "\n");
         
         CGAL_precondition_code(
-        CGAL::Arr_parameter_space locp = p.location();
+                CGAL::Arr_parameter_space locp = p.location();
+        );
         // ensure that p lies on both arcs and doesn't lie on the positive
         // boundary
-        CGAL_precondition(
-                locp != CGAL::ARR_RIGHT_BOUNDARY && 
-                cv1.compare_y_at_x(p) == CGAL::EQUAL && 
-                cv2.compare_y_at_x(p) == CGAL::EQUAL);
-        );
+        CGAL_precondition(locp != CGAL::ARR_RIGHT_BOUNDARY);
+        CGAL_precondition(cv1.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        
         // check whether both arcs indeed lie to the left of p    
         CGAL_precondition(
                 (cv1.is_vertical() && 
-                 cv1.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY)||
-                cv1._same_arc_compare_xy(p, cv1._maxpoint()) == CGAL::SMALLER);
+                 cv1.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) ||
+                p < cv1._maxpoint()
+        );
         CGAL_precondition(
                 (cv2.is_vertical() &&
                  cv2.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) ||
-                cv1._same_arc_compare_xy(p, cv2._maxpoint()) == CGAL::SMALLER);
+                p < cv2._maxpoint()
+        );
         
         if (cv1.is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
@@ -1401,6 +1405,7 @@ public:
         }
         // otherwise compare respective curve ends: supporting curves and 
         // arcnos are equal => the curve ends belong to the same arc
+        // TODO check whether same_arc_compare is correct (eriC)
         return ((cv1._same_arc_compare_xy(cv1._minpoint(), cv2._minpoint()) ==
                  CGAL::EQUAL &&
                  cv1._same_arc_compare_xy(cv1._maxpoint(), cv2._maxpoint()) ==
@@ -1625,7 +1630,6 @@ public:
                 (cv.is_vertical() ? -1 : cv.arcno(q.x()))
         );
     }
-    
 };
 
 template < class CurvedKernelViaAnalysis_2 >
