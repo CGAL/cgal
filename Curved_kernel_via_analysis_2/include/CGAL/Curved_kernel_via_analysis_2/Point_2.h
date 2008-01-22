@@ -108,7 +108,7 @@ public:
     
     // curve point finite coordinates. They are valid only if boundary in y 
     // is not set (CGAL::NO_BOUNDARY), otherwise only x-coordinate is
-    // accessible (point lies at +/-oo)
+    // accessible (point lies at +/-oo    
     boost::optional< Xy_coordinate_2 > _m_xy;
         
     // x-coordinate of a curve point
@@ -213,10 +213,10 @@ public:
             New_rep newrep;
             newrep._m_xy = pt.ptr()->_m_xy;
             newrep._m_x = pt.ptr()->_m_x;
-            // TODO set arc_rep in rebind of arc! (eriC)
-            //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
+            // arc_rep will be set in rebind of arc! 
+            // newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
             newrep._m_location = pt.ptr()->_m_location;
-            //newrep._m_ckva will be set in calling constructor
+            // newrep._m_ckva will be set in constructor call
             return Rebound_point_2(newrep);
         }
     };
@@ -308,7 +308,8 @@ protected:
     Curved_kernel_via_analysis_2* _ckva() const {
         return this->ptr()->_m_ckva;
     }
-
+    
+public: // TODO make private
     // TODO  remove (eriC)
     //! sets pointer to incident arc
     void _add_ref(const Arc_rep *arc_rep) const {
@@ -536,8 +537,8 @@ public:
             os << "point@" << this->id() << "(";
             os << "sup@" << this->curve().id();
             os << " " << this->location() << "; ";
-            if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
-                this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
+            os << " &=" << this->_arc_rep() << "; ";
+            if (this->is_finite()) {
                 os << "x=" << NiX::to_double(this->x());
             } else {
                 if (this->location() == CGAL::ARR_LEFT_BOUNDARY) {
@@ -547,8 +548,7 @@ public:
                 }
             }
             os << ", ";
-            if (this->location() != CGAL::ARR_BOTTOM_BOUNDARY &&
-                this->location() != CGAL::ARR_TOP_BOUNDARY) {
+            if (this->is_finite()) {
                 os << "y=n/a"; // TODO give y-coordinate (eriC)
             } else {
                 if (this->location() == CGAL::ARR_BOTTOM_BOUNDARY) {
