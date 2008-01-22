@@ -2,6 +2,7 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 
+#include <climits>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
 
