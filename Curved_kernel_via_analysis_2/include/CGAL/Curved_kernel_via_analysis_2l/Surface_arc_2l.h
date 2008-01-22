@@ -105,6 +105,11 @@ protected:
     // befriending the handle
     friend class 
     Surface_arc_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Self >;
+
+    // for setting sheets + projected_arcs
+    friend class Curved_kernel_via_analysis_2l::Trim_2;
+    friend class Curved_kernel_via_analysis_2l::Split_2;
+    friend class Curved_kernel_via_analysis_2l::Merge_2;
 };
 
 
@@ -315,10 +320,8 @@ protected:
         
         this->ptr()->_m_projected_arc = arc;
 
-        bool min_finite = 
-            (arc.curve_end(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR);
-        bool max_finite = 
-            (arc.curve_end(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR);
+        bool min_finite = arc.is_finite(CGAL::ARR_MIN_END);
+        bool max_finite = arc.is_finite(CGAL::ARR_MAX_END);
         CGAL_precondition(!min_finite && !max_finite);
         
         //this->ptr()->_projected_segment = seg;
