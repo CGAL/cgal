@@ -318,11 +318,6 @@ protected:
                   const Surface_3& surface,
                   int sheet, int sheet_p, int sheet_q) :
         Base(kernel, arc, p, q, surface, sheet, sheet_p, sheet_q) {
-#if 0 // TODO check what todo with this (eriC)
-        if (seg.is_vertical() && level > 0) {
-            this->ptr()->is_reversed_ = !this->ptr()->is_reversed_;
-        }
-#endif
         CGAL_precondition(sheet < 2);
         CGAL_precondition(sheet_p < 2);
         CGAL_precondition(sheet_q < 2);
@@ -1210,6 +1205,8 @@ public:
                             p.projected_point(),
                             q.projected_point());
         
+        // TODO non-bounded arcs (eriC)
+
         return arc;
     }
     
@@ -1254,7 +1251,6 @@ public:
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
         CGAL_precondition_code(
-                // TODO correctness? (eriC)
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
@@ -1280,6 +1276,8 @@ public:
         
         c1.ptr()->_m_projected_arc = p_arc1;
         c2.ptr()->_m_projected_arc = p_arc2;
+
+        // TODO non-bounded arcs (eriC)
     }
 };
 
@@ -1417,13 +1415,11 @@ public:
             arc.ptr()->_m_projected_arc = p_arc;
         }
         
+        // TODO non-bounded arcs (eriC)
+        
         c = arc;
     }
 };
-
-// TODO for Split/Trim: Rewrite sheets? Rewrite projected arc(eriC)
-
-// TODO what to do with Is_bounded_2 and Is_on_2? (eriC)
 
 template < class CurvedKernelViaAnalysis_2l >
 class Make_x_monotone_2: public 
@@ -1649,6 +1645,8 @@ public:
     CGAL_QKvA_2_functor_pred(Merge_2, merge_2_object);
 
     CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
+
+    // TODO implement Is_on_2 (eriC)
     
     //!@}
     
