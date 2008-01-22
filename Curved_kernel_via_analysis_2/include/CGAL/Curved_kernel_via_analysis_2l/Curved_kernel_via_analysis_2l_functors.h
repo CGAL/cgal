@@ -214,9 +214,12 @@ public:
                               const Surface_point_2l& p,
                               const Surface_3& surface,
                               int sheet, int sheet_p) {
-        // TODO precondition (eriC)
-        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END) ||
-                          !arc.is_finite(CGAL::ARR_MAX_END));
+        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END) && 
+                          arc.projected_arc().curve_end(CGAL::ARR_MAX_END) ==
+                          p.projected_point() ||
+                          !arc.is_finite(CGAL::ARR_MAX_END) &&
+                          arc.projected_arc().curve_end(CGAL::ARR_MIN_END) ==
+                          p.projected_point());
         Surface_arc_2l surface_arc(this->_ckva(), 
                                    arc, p, surface, sheet, sheet_p);
         return surface_arc;
@@ -304,7 +307,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
         result_type res = false;
-        // TODO implement Is_on_2 with Curve_2 == Surface_3 (eriC)
+        // FUTURE TODO implement Is_on_2 with Curve_2 == Surface_3 (eriC)
         CGAL_error_msg("Is_on_2 not implemented for Surfaces");
         return res;
     }
