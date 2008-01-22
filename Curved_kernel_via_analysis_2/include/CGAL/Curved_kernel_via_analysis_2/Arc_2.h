@@ -252,7 +252,7 @@ public:
             newrep._m_max = max;
             
             copy_members(arc, newrep);
-
+            
             return Rebound_arc_2(newrep);
         }
 
@@ -267,13 +267,30 @@ public:
                                  const Surface_point_2& origin) {
             New_rep newrep;
             
-            // TODO origin = min/max?
+            typename Self::Point_2::template 
+                rebind< New_curved_kernel_via_analysis_2, 
+                typename Rebound_arc_2::Point_2::Rep > rebind;
+            
 
+            if (arc.is_finite(CGAL::ARR_MIN_END)) {
+                newrep._m_min = origin;
+                newrep._m_max = rebind(arc._maxpoint());
+            } else {
+                newrep._m_min = rebind(arc._minpoint());
+                newrep._m_max = origin;
+            }
+            
             copy_members(arc, newrep);
             
-            // TODO arc_rep (eriC)
-
-            return Rebound_arc_2(newrep);
+            Rebound_arc_2 newarc(newrep);
+            
+            if (arc.is_finite(CGAL::ARR_MIN_END)) {
+                newarc._maxpoint()._add_ref(newarc.ptr());
+            } else {
+                newarc._minpoint()._add_ref(newarc.ptr());
+            }
+            
+            return newarc;
         }
         
         /*!\brief
@@ -287,9 +304,18 @@ public:
             
             copy_members(arc, newrep);
             
-            // TODO arc_rep (eriC)
+            typename Self::Point_2::template 
+                rebind< New_curved_kernel_via_analysis_2, 
+                typename Rebound_arc_2::Point_2::Rep > rebind;
+            
+            newrep._m_min = rebind(arc._minpoint());
+            newrep._m_max = rebind(arc._maxpoint());
 
-            return Rebound_arc_2(newrep);
+            Rebound_arc_2 newarc(newrep);
+            newarc._minpoint()._add_ref(newarc.ptr());
+            newarc._maxpoint()._add_ref(newarc.ptr());
+            
+            return newarc;
         }
 
     protected:
@@ -2353,7 +2379,7 @@ protected:
         // grabbing all 2-curve events
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
-        // TODO: remove NiX ! might replace by CurveKernel_2 functor(Pavel)
+        // TODO: remove NiX ! might replace by CurveKernel_2 functor (Pavel)
         bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
         
         for(int i = low_idx; i <= high_idx; i++) {
