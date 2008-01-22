@@ -405,8 +405,7 @@ public:
      * \return true is the curve end is bounded, and false otherwise
      */
     result_type operator()(const Arc_2& cv, Arr_curve_end ce) const {
-        // TODO Is_bounded is not correct (eriC)
-        return (cv.location(ce) == CGAL::ARR_INTERIOR);
+        return (cv.is_finite(ce));
     }
 };
 
@@ -1404,7 +1403,6 @@ public:
         }
         // otherwise compare respective curve ends: supporting curves and 
         // arcnos are equal => the curve ends belong to the same arc
-        // TODO check whether same_arc_compare is correct (eriC)
         return ((cv1._same_arc_compare_xy(cv1._minpoint(), cv2._minpoint()) ==
                  CGAL::EQUAL &&
                  cv1._same_arc_compare_xy(cv1._maxpoint(), cv2._maxpoint()) ==
@@ -1668,7 +1666,6 @@ public:
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         // check that p is not an end-point of the arc
         CGAL_precondition_code(
-                // TODO correctness? (eriC)
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
