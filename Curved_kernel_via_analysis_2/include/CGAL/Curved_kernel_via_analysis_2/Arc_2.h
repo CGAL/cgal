@@ -1827,7 +1827,7 @@ protected:
                 rep._m_arcno_max = arcno_max;
             }
         }
-        if (src > tgt) {
+        if (_same_arc_compare_xy(src,tgt) == CGAL::LARGER) {
             std::swap(rep._m_min, rep._m_max);
             std::swap(rep._m_arcno_min, rep._m_arcno_max);
         }

@@ -1153,13 +1153,13 @@ public:
                 (cv1.is_vertical() && 
                  cv1.location(CGAL::ARR_MIN_END) == 
                  CGAL::ARR_BOTTOM_BOUNDARY) ||
-                cv1._minpoint() < p
+                cv1._same_arc_compare_xy(cv1._minpoint(), p) == CGAL::SMALLER
         );
         CGAL_precondition(
                 (cv2.is_vertical() &&
                  cv2.location(CGAL::ARR_MIN_END) == CGAL::ARR_BOTTOM_BOUNDARY) 
                 ||
-                cv2._minpoint() < p
+                cv2._same_arc_compare_xy(cv2._minpoint(), p) == CGAL::SMALLER
         );
         if (cv1.is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
@@ -1255,12 +1255,12 @@ public:
         CGAL_precondition(
                 (cv1.is_vertical() && 
                  cv1.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) ||
-                p < cv1._maxpoint()
+                cv1._same_arc_compare_xy(p, cv1._maxpoint()) == CGAL::SMALLER
         );
         CGAL_precondition(
                 (cv2.is_vertical() &&
                  cv2.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) ||
-                p < cv2._maxpoint()
+                cv2._same_arc_compare_xy(p, cv2._maxpoint()) == CGAL::SMALLER
         );
         
         if (cv1.is_vertical()) {
