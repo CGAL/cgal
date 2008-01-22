@@ -1752,16 +1752,14 @@ protected:
              ca_2.status_line_of_interval(0)
             );
         
-        // compare only y-values; 
-        // TODO: use _compare_arc_numbers instead ? (Pavel)
-        if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY &&
-            location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY) {
+
+        if (!is_finite(CGAL::ARR_MIN_END) && !is_finite(CGAL::ARR_MAX_END)) {
             return Boundary(0);
         } else {
             // TODO use functionality of AK_1 here!!!! (Pavel)
             
-            if (location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR &&
-                location(CGAL::ARR_MAX_END) == CGAL::ARR_INTERIOR) {
+            if (is_finite(CGAL::ARR_MIN_END) && 
+                is_finite(CGAL::ARR_MAX_END)) {
                 
                 if ((_ckva()->kernel().compare_x_2_object()
                      (_minpoint().x(), cv_line.x()) == 
@@ -1790,8 +1788,7 @@ protected:
                 
             } else {
                 
-                if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY) {
-                    return _ckva()->kernel().lower_boundary_x_2_object()(
+                return _ckva()->kernel().lower_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 } else {
