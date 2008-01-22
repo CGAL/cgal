@@ -157,8 +157,6 @@ public:
   {
     Mesher_level_conflict_status status = NO_CONFLICT;
 
-    Tr& tr = triangulation_ref_impl();
-
     // p is the circumcener of zone.parent_face.
     const FT& sq_r_of_p_parent = shortest_edge_squared_length(z.parent_face);
 
@@ -168,10 +166,10 @@ public:
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
 
-        if(fh->is_constrained(i) && !is_locally_conform(tr, fh, i, p))
+        if(fh->is_constrained(i) && !is_locally_conform(this->tr, fh, i, p))
           {
-	    const Vertex_handle& v1 = fh->vertex( tr.cw (i));
-	    const Vertex_handle& v2 = fh->vertex( tr.ccw(i));
+	    const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
+	    const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
 
 	    status = CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
 
