@@ -84,7 +84,8 @@ public:
     //! constructs a "finite" point on curve,
     //! implies CGAL::NO_BOUNDARY in x/y
     Point_2_rep(const Xy_coordinate_2& xy) : 
-        _m_xy(xy), _m_arc_rep(NULL), _m_location(CGAL::ARR_INTERIOR),
+        _m_xy(xy), _m_location(CGAL::ARR_INTERIOR), 
+        _m_arc_rep(NULL),
         _m_ckva(NULL) {
     }
 
@@ -93,7 +94,7 @@ public:
         _m_arc_rep(NULL),
         _m_ckva(NULL) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
-             CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
+                       CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
         _m_x = x;
     }
 
@@ -101,27 +102,26 @@ public:
     Point_2_rep(CGAL::Arr_curve_end inf_end) :
         _m_arc_rep(NULL),
         _m_ckva(NULL) {
-
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
-                CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
+                       CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
     }
     
     // curve point finite coordinates. They are valid only if boundary in y 
     // is not set (CGAL::NO_BOUNDARY), otherwise only x-coordinate is
     // accessible (point lies at +/-oo)
-    boost::optional<Xy_coordinate_2> _m_xy;
+    boost::optional< Xy_coordinate_2 > _m_xy;
         
     // x-coordinate of a curve point
-    boost::optional<X_coordinate_1> _m_x;
-
-    // rep of incident arc
-    mutable const Arc_2_rep *_m_arc_rep;
+    boost::optional< X_coordinate_1 > _m_x;
 
     // surface boundary type
     //mutable CGAL::Arr_boundary_type _m_boundary;
     // location of a point in parameter space
     mutable CGAL::Arr_parameter_space _m_location;
 
+    // rep of incident arc
+    mutable const Arc_2_rep *_m_arc_rep;
+    
     // pointer to underlying ckva
     mutable Curved_kernel_via_analysis_2 *_m_ckva;
 
@@ -365,7 +365,7 @@ public:
         CGAL_precondition_msg(this->ptr()->_m_xy || this->ptr()->_m_x,
           "Denied access to x-coordinate of the curve end \
             lying at x-infinity");
-        return (location() == CGAL::ARR_INTERIOR ?
+        return (is_finite() ?
                 (*(this->ptr()->_m_xy)).x() : *(this->ptr()->_m_x));
     }
     
@@ -377,7 +377,7 @@ public:
         CGAL_precondition_msg(
                 this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL,
                 "Denied access to the curve end lying at y-infinity");
-        return (location() == CGAL::ARR_INTERIOR ?
+        return (is_finite() ?
                 (*(this->ptr()->_m_xy)).curve() :
                 this->ptr()->_m_arc_rep->_m_support);
     }
@@ -389,7 +389,7 @@ public:
         CGAL_precondition_msg(this->ptr()->_m_xy ||
             this->ptr()->_m_arc_rep != NULL,
             "Denied access to the curve end lying at y-infinity");
-        return (location() == CGAL::ARR_INTERIOR ?
+        return (is_finite() ?
             (*(this->ptr()->_m_xy)).arcno() :
             this->ptr()->_m_arc_rep->_m_arcno);
     }
@@ -401,6 +401,7 @@ public:
     /*! \brief
      *  sets boundary type and location of a point in parameter space
      */
+    inline
     void set_location(CGAL::Arr_parameter_space loc) const {
         this->ptr()->_m_location = loc;
     }
