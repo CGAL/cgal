@@ -1787,8 +1787,8 @@ protected:
                 }
                 
             } else {
-                
-                return _ckva()->kernel().lower_boundary_x_2_object()(
+                if (is_finite(CGAL::ARR_MIN_END)) {
+                    return _ckva()->kernel().lower_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 } else {
