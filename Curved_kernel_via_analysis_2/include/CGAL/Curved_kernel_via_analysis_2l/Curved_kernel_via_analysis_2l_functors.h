@@ -207,12 +207,16 @@ public:
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     * \pre arc.curve_end(MIN) = p && !arc.is_finite(MAX) ||
+     *      arc.is_finite(MIN) && arc.curve_end(MAX) = p
      */
     Surface_arc_2l operator()(const Projected_arc_2& arc, 
                               const Surface_point_2l& p,
                               const Surface_3& surface,
                               int sheet, int sheet_p) {
+        // TODO precondition (eriC)
+        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END) ||
+                          !arc.is_finite(CGAL::ARR_MAX_END));
         Surface_arc_2l surface_arc(this->_ckva(), 
                                    arc, p, surface, sheet, sheet_p);
         return surface_arc;
@@ -225,11 +229,13 @@ public:
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
+     * \pre !arc.is_finite(MIN) && !arc.is_finite(MAX)
      */
     Surface_arc_2l operator()(const Projected_arc_2& arc, 
                    const Surface_3& surface,
                    int sheet) {
+        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END));
+        CGAL_precondition(!arc.is_finite(CGAL::ARR_MAX_END));
         Surface_arc_2l surface_arc(this->_ckva(), arc, surface, sheet);
         return surface_arc;
     }
