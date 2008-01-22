@@ -1675,7 +1675,7 @@ protected:
           
             if (!p.is_on_left_right() && !q.is_on_left_right()) {
                 // both xs are finite: require x-comparisons
-                res = _ckva()->kernel().compare_x_2_object()(p.x(), q.x());
+                res = _ckva()->compare_x_2_object()(p, q);
                 if(res != CGAL::EQUAL)
                     return res;
             } else if(locp != locq) {
@@ -1698,8 +1698,8 @@ protected:
             }
             // compare only y-values; 
             // TODO: use _compare_arc_numbers instead ? (Pavel)
-            return _ckva()->kernel().compare_xy_2_object()(
-                    p.xy(), q.xy(), true
+            return _ckva()->compare_xy_2_object()(
+                    p, q, true
             );
         }
         // here: locp != locq && one of them is at inf y

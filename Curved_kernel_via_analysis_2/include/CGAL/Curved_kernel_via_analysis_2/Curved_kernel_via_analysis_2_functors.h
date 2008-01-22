@@ -994,15 +994,15 @@ public:
         if (cv.is_vertical()) {
             if (cv.is_interior(loc1)) {
                 // for vertical arcs we can ask for .xy() member
-                if (this->_ckva()->kernel().compare_xy_2_object()(
-                            p.xy(), cv._minpoint().xy(), true
+                if (this->_ckva()->compare_xy_2_object()(
+                            p, cv._minpoint(), true
                     ) == CGAL::SMALLER) {
                     return CGAL::SMALLER;
                 }
             }
             if (cv.is_interior(loc2)) {
-                if (this->_ckva()->kernel().compare_xy_2_object()(
-                            p.xy(), cv._maxpoint().xy(), true
+                if (this->_ckva()->compare_xy_2_object()(
+                            p, cv._maxpoint(), true
                     ) == CGAL::LARGER) {
                     return CGAL::LARGER;
                 }
@@ -1027,12 +1027,12 @@ public:
         // otherwise return reversed y-order of this arc and point p
         CGAL::Comparison_result res;
         if (eq_min) {
-            res = this->_ckva()->kernel().compare_xy_2_object()(
-                    p.xy(), cv._minpoint().xy(), true
+            res = this->_ckva()->compare_xy_2_object()(
+                    p, cv._minpoint(), true
             );
         } else if (eq_max) {
             res = this->_ckva()->kernel().compare_xy_2_object()(
-                    p.xy(), cv._maxpoint().xy(), true
+                    p, cv._maxpoint(), true
             );
         } else {
             res = -cv._compare_arc_numbers(p.xy(), CGAL::ARR_INTERIOR, p.x());
@@ -1053,15 +1053,15 @@ public:
         if (cv.is_vertical()) {
             if (cv.is_interior(loc1)) {
                 // for vertical arcs we can ask for .xy() member
-                if (this->_ckva()->kernel().compare_xy_2_object()(
-                            p.xy(), cv._minpoint().xy(), true
+                if (this->_ckva()->compare_xy_2_object()(
+                            p, cv._minpoint(), true
                     ) == CGAL::SMALLER) {
                     return CGAL::SMALLER;
                 }
             }
             if (cv.is_interior(loc2)) {
-                if (this->_ckva()->kernel().compare_xy_2_object()(
-                            p.xy(), cv._maxpoint().xy(), true
+                if (this->_ckva()->compare_xy_2_object()(
+                            p, cv._maxpoint(), true
                     ) == CGAL::LARGER) {
                     return CGAL::LARGER;
                 }
@@ -1070,12 +1070,12 @@ public:
         }
         CGAL::Comparison_result res;
         if(eq_min) {
-            res = this->_ckva()->kernel().compare_xy_2_object()(
-                    p.xy(), cv._minpoint().xy(), true
+            res = this->_ckva()->compare_xy_2_object()(
+                    p, cv._minpoint(), true
             );
         } else if(eq_max) {
-            res = this->_ckva()->kernel().compare_xy_2_object()(
-                    p.xy(), cv._maxpoint().xy(), true
+            res = this->_ckva()->compare_xy_2_object()(
+                    p, cv._maxpoint(), true
             );
 
         } else {
@@ -1085,8 +1085,7 @@ public:
                       cv.curve(), 
                       cv.arcno(),
                       cv );
-            res = this->_ckva()->kernel().compare_xy_2_object()
-                (p.xy(),point_on_s.xy(),true);
+            res = this->_ckva()->compare_xy_2_object()(p, point_on_s, true);
         }
         CERR("cmp result: " << res << "\n");
         return res;
@@ -1619,9 +1618,8 @@ public:
     
         CERR("trim\n");
         CGAL_precondition(
-                this->_ckva()->kernel().compare_xy_2_object()(
-                        p.xy(), q.xy()) !=
-                CGAL::EQUAL);
+                this->_ckva()->compare_xy_2_object()(p, q) != CGAL::EQUAL
+        );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
         return cv._replace_endpoints(
@@ -1767,7 +1765,7 @@ public:
             // and therefore its arcno might be not valid for *this arc
             for (int k = 0; k < cv_line.number_of_events(); k++) {
                 // use a temporary object for comparison predicate
-                typename Point_2::Xy_coordinate_2 
+                typename Point_2::Xy_coordinate_2
                     tmp(common.x(), cv1.curve(), k);
                 if (this->_ckva()->kernel().compare_xy_2_object()(
                             common.xy(), tmp) == 
