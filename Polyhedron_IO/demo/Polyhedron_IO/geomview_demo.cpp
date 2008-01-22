@@ -17,7 +17,7 @@
 //
 // Author(s)     : Lutz Kettner
 
-#include <CGAL/basic.h>>
+#include <CGAL/basic.h>
 
 #ifdef CGAL_USE_GEOMVIEW
 #include <iostream>
