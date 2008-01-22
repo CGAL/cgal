@@ -8,6 +8,7 @@
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_map.h>
 
+#include <climits>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 typedef CGAL::Cartesian<Number_type>                    Kernel;

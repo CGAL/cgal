@@ -7,6 +7,7 @@
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
+#include <climits>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
