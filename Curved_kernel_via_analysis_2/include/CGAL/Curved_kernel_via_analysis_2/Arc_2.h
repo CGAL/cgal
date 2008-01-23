@@ -443,6 +443,7 @@ protected:
                 != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         _check_pt_arcno_and_coprimality(origin, arcno_o, c);
+
         _fix_curve_ends_order(); // lexicographical order of curve ends
 
         _minpoint()._add_ref(this->ptr());
