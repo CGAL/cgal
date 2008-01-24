@@ -205,7 +205,7 @@ class Curved_kernel_via_analysis_2 :
      >,
      public CGALi::Curved_kernel_via_analysis_2_functors < 
             Curved_kernel_via_analysis_2< CurveKernel_2 >,
-            typename CurveKernel_2::Curve_2,
+            typename CurveKernel_2::Curve_analysis_2,
             CGALi::Point_2 < Curved_kernel_via_analysis_2< CurveKernel_2 > >,
             CGALi::Arc_2 < Curved_kernel_via_analysis_2< CurveKernel_2 > >
         > 
@@ -226,7 +226,7 @@ public:
     //!@{
 
     //! type of curve_2
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
         
     //! type of a point on generic curve
     typedef CGALi::Point_2< Self > Point_2; 

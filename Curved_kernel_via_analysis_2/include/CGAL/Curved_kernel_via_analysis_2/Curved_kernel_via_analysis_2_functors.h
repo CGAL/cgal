@@ -167,8 +167,8 @@ public:
     
     //! constructs points at x 
     Point_2 operator()(
-            const typename Point_2::X_coordinate_1& x, 
-            const typename Point_2::Curve_2& c, int arcno,
+            const X_coordinate_1& x,
+            const Curve_2& c, int arcno,
             const Arc_2& arc) {
         CGAL_assertion(c.id() == arc.curve().id());
         CGAL_assertion(arcno == arc.arcno(x));

@@ -69,9 +69,6 @@ public:
     //! type of a finite point on curve
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
-    //! type of supporting curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
-    
     //! type of arc-rep
     typedef CGALi::Arc_2_rep< Curved_kernel_via_analysis_2 >  Arc_2_rep;
         
@@ -169,7 +166,7 @@ public:
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! type of generic curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -253,7 +250,7 @@ public:
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
+    Point_2(const X_coordinate_1& x, const Curve_analysis_2& c, int arcno) :
         Base(Rep(Xy_coordinate_2(x, c, arcno))) {
     }
     
@@ -366,7 +363,7 @@ public:
     //!
     //! \pre this object must represent a finite point on curve
     inline 
-    Curve_2 curve() const {
+    Curve_analysis_2 curve() const {
         CGAL_precondition_msg(
                 this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL,
                 "Denied access to the curve end lying at y-infinity");
@@ -462,7 +459,7 @@ public:
     //! checks if the point lies on a curve
     inline 
     bool is_on(
-            const typename Curved_kernel_via_analysis_2::Curve_2& curve
+         const typename Curved_kernel_via_analysis_2::Curve_2& curve
     ) const {
         CGAL_precondition(this->ptr()->_m_xy);
 

@@ -31,7 +31,7 @@
 #define CGAL_CKvA_USE_CACHES
 
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
-#include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
+#include <CGAL/Curved_kernel_via_analysis_2/LRU_hashed_map.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,7 +69,7 @@ public:
     Curve_kernel_2;
     
     // type of generic curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     // type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
@@ -86,7 +86,7 @@ public:
     }
         
     // standard constructor
-    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_2& c, 
+    Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, 
                    int arcno = -1, int arcno_p = -1, int arcno_q = -1,
                    bool is_vertical = false) : 
         _m_min(p), _m_max(q),
@@ -114,7 +114,7 @@ public:
     mutable Point_2 _m_min, _m_max;
 
     // supporting curve
-    mutable Curve_2 _m_support;
+    mutable Curve_analysis_2 _m_support;
 
     // interior arcno, source and target arcno
     mutable int _m_arcno;
@@ -178,9 +178,6 @@ public:
     
     // type of boundary value in x-range
     typedef typename Curve_kernel_2::Boundary Boundary;
-    
-    //! type of generic curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
     
     //! type of analysis of a pair of curves
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
@@ -373,7 +370,7 @@ public:
     //! the curve \c c
     //!
     //! \pre p.x() != q.x()
-    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c,
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c,
           int arcno, int arcno_p, int arcno_q) : 
         Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
@@ -397,7 +394,7 @@ public:
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
-          const Curve_2& c, int arcno, int arcno_o) :
+          const Curve_analysis_2& c, int arcno, int arcno_o) :
         Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
         
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
@@ -425,7 +422,7 @@ public:
      * \pre origin.x() != asympt_x
      */
     Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
-          CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
+          CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno,
           int arcno_o) :
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
         
@@ -446,7 +443,7 @@ public:
      * constructs an arc with two x-infinite ends supported by curve \c c
      * with \c arcno (branch I)
      */
-    Arc_2(const Curve_2& c, int arcno) :
+    Arc_2(const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END),
                  Point_2(CGAL::ARR_MAX_END), c, arcno)) {
 
@@ -468,7 +465,7 @@ public:
     Arc_2(const X_coordinate_1& asympt_x1, 
           const X_coordinate_1& asympt_x2, 
           CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
-          const Curve_2& c, int arcno) :
+          const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
                  c, arcno)) {
 
@@ -492,7 +489,7 @@ public:
      * \c inf_endy specifies +/-oo the asymptotic end approaches
      */
     Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
-          CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
+          CGAL::Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy), c, arcno)) {
         
         CGAL_precondition(arcno >= 0); 
@@ -514,7 +511,7 @@ public:
     //! 
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
-    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c) : 
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c) : 
         Base(Rep(p, q, c, -1, -1, -1, true)) {  
         
         CGAL_precondition(!p.is_identical(q));
@@ -534,7 +531,7 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
-          const Curve_2& c) :
+          const Curve_analysis_2& c) :
         Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
         
         // check coprimality condition for supporting curves
@@ -554,7 +551,7 @@ public:
      * 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2(const X_coordinate_1& x, const Curve_2& c) :
+    Arc_2(const X_coordinate_1& x, const Curve_analysis_2& c) :
         Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
                  Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
         
@@ -657,7 +654,7 @@ public:
 
     //! returns supporting curve of the arc
     inline
-    const Curve_2& curve() const { 
+    const Curve_analysis_2& curve() const {
         return this->ptr()->_m_support; 
     }
   
@@ -759,9 +756,8 @@ public:
             this->ptr()->_m_boundary_in_interval = 
                 _compute_boundary_in_interval();
             CGAL_postcondition_code(
-                    Curve_analysis_2 ca_2(curve());
-                    typename Curve_analysis_2::Status_line_1 cv_line = 
-                    ca_2.status_line_at_exact_x(
+                    typename Curve_analysis_2::Status_line_1 cv_line =
+                    curve().status_line_at_exact_x(
                             X_coordinate_1(
                                     *this->ptr()->_m_boundary_in_interval
                             )
@@ -1120,8 +1116,10 @@ public:
             return 1;
         }
         
-        Curve_pair_analysis_2 cpa_2((Curve_analysis_2(curve())),
-            (Curve_analysis_2(cv2.curve())));
+        Curve_pair_analysis_2 cpa_2 =
+            Curved_kernel_via_analysis_2::instance().
+            kernel().construct_curve_pair_2_object(curve(), cv2.curve());
+
         typename Curve_pair_analysis_2::Status_line_1 cpv_line =
                 cpa_2.status_line_for_x(p.x());
 
@@ -1306,7 +1304,7 @@ public:
             return false;
         }
 
-        std::vector<Curve_2> parts_of_f, parts_of_g, common;
+        std::vector<Curve_analysis_2> parts_of_f, parts_of_g, common;
         
         if (Curved_kernel_via_analysis_2::instance().
             kernel().decompose_2_object()(
@@ -1318,15 +1316,16 @@ public:
             CGAL_assertion((parts_of_f.size() == 1 ||
                             parts_of_g.size() == 1) && common.size() == 1);
             if (parts_of_f.size() == 1) {
-                cv._simplify_by(Curve_pair_analysis_2(
-                                        (Curve_analysis_2(parts_of_f[0])),
-                                        (Curve_analysis_2(common[0]))));
+                cv._simplify_by(
+                    Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (parts_of_f[0], common[0]));
             } 
             if (parts_of_g.size() == 1) {
-                p.simplify_by(Curve_pair_analysis_2(
-                                      (Curve_analysis_2(parts_of_g[0])),
-                                      (Curve_analysis_2(common[0]))));
-            } 
+                p.simplify_by(Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (parts_of_g[0], common[0]));
+            }
             return true;
         }
         return false;
@@ -1344,7 +1343,7 @@ public:
             return false;
         }
 
-        std::vector<Curve_2> parts_of_f, parts_of_g, common;
+        std::vector<Curve_analysis_2> parts_of_f, parts_of_g, common;
         
         if (Curved_kernel_via_analysis_2::instance().
             kernel().decompose_2_object()(
@@ -1355,15 +1354,15 @@ public:
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
             if (parts_of_f.size() == 1) {
-                cv1._simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_f[0])),
-                        (Curve_analysis_2(common[0]))));
-            } 
+                cv1._simplify_by(Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (parts_of_f[0], common[0]));
+            }
             if (parts_of_g.size() == 1) {
-                cv2._simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_g[0])),
-                        (Curve_analysis_2(common[0]))));
-            } 
+                cv2._simplify_by(Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (parts_of_g[0], common[0]));
+            }
             return true;
         }
         return false;
@@ -1399,7 +1398,7 @@ protected:
     //! \c c with arc number \c arcno_on_c, also checks that point's supporting
     //! curve and \c c are coprime
     void _check_pt_arcno_and_coprimality(const Point_2& pt, int arcno_on_c, 
-                                         const Curve_2& c) const {
+                                         const Curve_analysis_2& c) const {
         
         CGAL_precondition_code(
         
@@ -1408,14 +1407,15 @@ protected:
             if (arcno_on_c != -1) {
                 typename Curve_pair_analysis_2::Status_line_1
                     cpv_line;
-                Curve_pair_analysis_2 cpa_2((Curve_analysis_2(pt.curve())),
-                    (Curve_analysis_2(c)));
-                    
+                Curve_pair_analysis_2 cpa_2 =
+                    Curved_kernel_via_analysis_2::instance().
+                      kernel().construct_curve_pair_2_object()(pt.curve(), c);
+                   
                 cpv_line = cpa_2.status_line_for_x(pt.x());
                 CGAL_precondition(cpv_line.event_of_curve(pt.arcno(), 0)
                     == cpv_line.event_of_curve(arcno_on_c, 1));
             } 
-            std::vector< Curve_2 > dummy[3]; // these are three dummies ?
+            std::vector< Curve_analysis_2 > dummy[3]; 
             // ensure that curves are not decomposable
             CGAL_precondition(!Curved_kernel_via_analysis_2::instance().
                               kernel().decompose_2_object()(
@@ -1441,11 +1441,10 @@ protected:
 #if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
         || defined(NDEBUG))
 
-        Curve_analysis_2 ca_2(curve());
         if(is_vertical()) {
             X_coordinate_1 x0 = _minpoint().x();
             typename Curve_analysis_2::Status_line_1 cv_line;
-            cv_line = ca_2.status_line_for_x(x0);
+            cv_line = curve().status_line_for_x(x0);
             CGAL_precondition(cv_line.is_event() && cv_line.covers_line());
             
             // check that there are no intersections between min and max
@@ -1483,10 +1482,10 @@ protected:
         bool inf_src = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY),
              inf_tgt = (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY);
         src_line = (inf_src ? ca_2.status_line_of_interval(0) :
-            ca_2.status_line_for_x(_minpoint().x()));
+            curve().status_line_for_x(_minpoint().x()));
         tgt_line = (inf_tgt ? ca_2.status_line_of_interval(
-            ca_2.number_of_status_lines_with_event()) :
-            ca_2.status_line_for_x(_maxpoint().x()));
+            curve().number_of_status_lines_with_event()) :
+            curve().status_line_for_x(_maxpoint().x()));
         
         int src_idx = src_line.index(), tgt_idx = tgt_line.index(),
             diff = tgt_idx - src_idx;
@@ -1510,7 +1509,7 @@ protected:
                 std::swap(low, high);
             std::pair<int, int> ipair;
             for(i = low; i <= high; i++) {
-                tmp = ca_2.status_line_at_event(i);
+                tmp = curve().status_line_at_event(i);
                 for(j = 0; j < tmp.number_of_events(); j++) {
                     ipair = tmp.number_of_incident_branches(j);
                     if(ipair.first != 1||ipair.second != 1)
@@ -1586,7 +1585,7 @@ protected:
     //! computes vertical ordering of two objects having coprime supporting
     //! curves
     CGAL::Comparison_result _compare_coprime(
-            const Curve_2& g, 
+            const Curve_analysis_2& g, 
             int arcno_on_g, 
             CGAL::Arr_parameter_space where, 
             X_coordinate_1 x0, 
@@ -1594,14 +1593,15 @@ protected:
         
         CERR("\n_compare_coprime; this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) 
-             << "; g: " << g.f() <<
+             << "; g: " << g.polynomial_2() <<
             "; arcno_on_g: " << arcno_on_g << "; where: " << where <<
                 "; x = " << (where == CGAL::ARR_INTERIOR ? 
                      NiX::to_double(x0) : 0.0) << "\n");
        
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
-        Curve_pair_analysis_2 cpa_2(
-            (Curve_analysis_2(curve())), (Curve_analysis_2(g)));
+        Curve_pair_analysis_2 cpa_2 = Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (curve(), g);
         
         if(where == CGAL::ARR_INTERIOR) 
             cpv_line = cpa_2.status_line_for_x(x0, perturb);
@@ -1693,10 +1693,9 @@ protected:
         if (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY) {
             return 0;
         }
-        Curve_analysis_2 ca_2(curve());
         // we are interested in interval "to the right"
         typename Curve_analysis_2::Status_line_1 cv_line = 
-            ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
+            curve().status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
         return cv_line.index();
     }
 
@@ -1705,13 +1704,12 @@ protected:
         CGAL_precondition(!is_vertical());
         // a curve end at negative boundary => 0th interval
         
-        Curve_analysis_2 ca_2(curve());
         // we are interested in interval "to the right"
         typename Curve_analysis_2::Status_line_1 cv_line = 
             (location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR ? 
-             ca_2.status_line_for_x(_minpoint().x(), CGAL::POSITIVE)
+             curve().status_line_for_x(_minpoint().x(), CGAL::POSITIVE)
              :
-             ca_2.status_line_of_interval(0)
+             curve().status_line_of_interval(0)
             );
         
 
@@ -1737,9 +1735,9 @@ protected:
                     );
                 } else {
                     typename Curve_analysis_2::Status_line_1 cv_line_min = 
-                        ca_2.status_line_at_exact_x(_minpoint().x());
+                        curve().status_line_at_exact_x(_minpoint().x());
                     typename Curve_analysis_2::Status_line_1 cv_line_max = 
-                        ca_2.status_line_at_exact_x(_maxpoint().x());
+                        curve().status_line_at_exact_x(_maxpoint().x());
                     
                     return Curved_kernel_via_analysis_2::instance().
                         kernel().boundary_between_x_2_object()(
@@ -1813,11 +1811,11 @@ protected:
      */
     void _simplify_by(const Curve_pair_analysis_2& cpa_2) const { 
 
-        typename Curve_2::Poly_d f = curve().f();     
+        typename Curve_analysis_2::Polynomial_2 f = curve().polynomial_2();
         CGAL_precondition_code(
-             typename Curve_2::Poly_d mult =
-                    cpa_2.curve_analysis(0).polynomial_2().f() *
-                    cpa_2.curve_analysis(1).polynomial_2().f();
+             typename Curve_analysis_2::Poly_d mult =
+                    cpa_2.curve_analysis(0).polynomial_2() *
+                    cpa_2.curve_analysis(1).polynomial_2();
         );
         // common parts and full parts
         CGAL_precondition(NiX::resultant(mult, f).is_zero());
@@ -1831,11 +1829,11 @@ protected:
             x0 = _minpoint().x();
             Curve_analysis_2 ca_2(cpa_2.curve_analysis(0));
             if(ca_2.status_line_for_x(x0).covers_line())
-                this->ptr()->_m_support = ca_2.polynomial_2();
+                this->ptr()->_m_support = ca_2;
             else {
                 ca_2 = cpa_2.curve_analysis(1);
                 CGAL_assertion(ca_2.status_line_for_x(x0).covers_line());
-                this->ptr()->_m_support = ca_2.polynomial_2();
+                this->ptr()->_m_support = ca_2;
             }
             return;
         }
@@ -1843,7 +1841,9 @@ protected:
         // processing non-vertical arcs
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         std::pair<int, int> ipair;
-        Curve_2 orig_curve(curve()); // preserve original supporting curve
+        // preserve original supporting curve
+        Curve_analysis_2 orig_curve(curve());
+        
         bool inf1_x = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY);
         int curve_idx;  
         if(!inf1_x) {
@@ -1853,10 +1853,9 @@ protected:
             cpv_line = cpa_2.status_line_of_interval(0);
         
         CGAL_precondition_code(
-            Curve_analysis_2 ca_2(orig_curve);
-            typename Curve_analysis_2::Status_line_1 
-                cv_line = (inf1_x ? ca_2.status_line_of_interval(0) :
-                        ca_2.status_line_for_x(x0, CGAL::POSITIVE));
+            typename Curve_analysis_2::Status_line_1
+                cv_line = (inf1_x ? orig_curve.status_line_of_interval(0) :
+                        orig_curve.status_line_for_x(x0, CGAL::POSITIVE));
         );
         CGAL_precondition(cpv_line.number_of_events() == 
             cv_line.number_of_events());
@@ -1870,10 +1869,8 @@ protected:
             this->ptr()->_m_arcno = (ipair.first != -1 ? ipair.first :
                 ipair.second);
             curve_idx = (ipair.first != -1 ? 0 : 1);
-            this->ptr()->_m_support = cpa_2.curve_analysis(curve_idx)
-                .polynomial_2();
-            
-        }        
+            this->ptr()->_m_support = cpa_2.curve_analysis(curve_idx);
+        }
         // search for source arcno
         /////////////// ATTENTION: this only holds for 2D plane topology !!
         ///////////////////////////////////////////////////////////////////
@@ -1990,8 +1987,9 @@ protected:
         
         // we are left with two non-vertical arcs whose supporting curves
         // are different => look for overlapping parts of the curves
-        typedef std::vector<std::pair<Curve_2, int> > Curve_arcno_container;
-        typedef std::vector<Curve_2> Curve_container;
+        typedef std::vector<std::pair<Curve_analysis_2, int> >
+            Curve_arcno_container;
+        typedef std::vector<Curve_analysis_2> Curve_container;
         Curve_container parts_f, parts_g, common;
                                 
         if (!Curved_kernel_via_analysis_2::instance().
@@ -2019,8 +2017,9 @@ protected:
             for(it_parts = parts_f.begin(); it_parts != parts_f.end(); 
                     it_parts++) {
                
-                cpa_2 = Curve_pair_analysis_2(
-                   (Curve_analysis_2(*it_com)),(Curve_analysis_2(*it_parts)));
+                cpa_2 = Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (*it_com, *it_parts);
                 cpv_line = (inf_x ? cpa_2.status_line_of_interval(0) :
                     cpa_2.status_line_for_x(x0, CGAL::POSITIVE));
                 // no intersections at this curve pair => skip it
@@ -2042,8 +2041,9 @@ protected:
                 /*cpa_2 = Curve_kernel_2::get_curve_pair_cache()
                     (std::make_pair(it_found->first, *it_parts));
                 */
-                cpa_2 = Curve_pair_analysis_2((Curve_analysis_2(
-                    it_found->first)), (Curve_analysis_2(*it_parts)));
+                cpa_2 = Curved_kernel_via_analysis_2::instance().
+                        kernel().construct_curve_pair_2_object()
+                            (it_found->first, *it_parts);
                     
                 cpv_line = (inf_x ? cpa_2.status_line_of_interval(0) :
                     cpa_2.status_line_for_x(x0, CGAL::POSITIVE));
@@ -2305,9 +2305,10 @@ protected:
         }
         bool inf_low = low_x.is_on_left_right(),
             inf_high = high_x.is_on_left_right();
-        Curve_2 f = cv1.curve(), g = cv2.curve();
-        Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
-            (Curve_analysis_2(g)));
+        Curve_analysis_2 f = cv1.curve(), g = cv2.curve();
+        Curve_pair_analysis_2 cpa_2 =
+            Curved_kernel_via_analysis_2::instance().
+                kernel().construct_curve_pair_2_object()(f, g);
             
         int low_idx = 0,       
             high_idx = cpa_2.number_of_status_lines_with_event()-1;

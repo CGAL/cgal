@@ -610,7 +610,8 @@ public:
             x_max = CGAL::to_interval(x_high(right.get())).second;
         }
 
-        Curve_2 curve = arc.curve();
+        typename Curve_2::Internal_curve_2 curve =
+             arc.curve()._internal_curve();
         int arcno = arc.arcno();
 
         int y_crit_begin = 0, y_crit_end = curve.num_y_critical_coordinates();
@@ -798,7 +799,7 @@ class Filtered_curved_kernel_via_analysis_2 :
      public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
      public CGALi::Curved_kernel_via_analysis_2_functors < 
             Filtered_curved_kernel_via_analysis_2< CurveKernel_2 >,
-            typename CurveKernel_2::Curve_2,
+            typename CurveKernel_2::Curve_analysis_2,
             CGALi::Point_2 < 
                 Filtered_curved_kernel_via_analysis_2< CurveKernel_2 > 
             >,

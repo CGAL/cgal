@@ -74,9 +74,6 @@ struct Make_x_monotone_2 :
     //! type of a finite point on curve
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
-    //! type of generic curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
-    
     //! type of 1-curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
@@ -101,20 +98,19 @@ struct Make_x_monotone_2 :
     
     //! function-call operator
     template <class OutputIterator>
-    OutputIterator operator()(Curve_2 curve, OutputIterator oi) {
+    OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi) {
 
         // TODO might be a problem with CK_2l??? (eriC)
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
-        
-        if (NiX::total_degree(curve.f()) < 1) {// use CGAL::Total_degree ? 
+        // use CGAL::Total_degree ?
+        if (NiX::total_degree(curve.polynomial_2()) < 1) {
             return oi;
         }
         
-        Curve_analysis_2 ca_2(curve);
-        Status_line_1 evt_line1, evt_line2, 
-            int_line = ca_2.status_line_of_interval(0);
-        int total_events = ca_2.number_of_status_lines_with_event();
+        Status_line_1 evt_line1, evt_line2,
+            int_line = curve.status_line_of_interval(0);
+        int total_events = curve.number_of_status_lines_with_event();
         // handle special case of a curve without any events
         if(total_events == 0) {
             for(int k = 0; k < int_line.number_of_events(); k++) 
@@ -137,7 +133,7 @@ struct Make_x_monotone_2 :
         int i, k, n;
         Arc_2 arc;
         // first handle segments before first event
-        evt_line1 = ca_2.status_line_at_event(0);
+        evt_line1 = curve.status_line_at_event(0);
         max_x = evt_line1.x();
         
         for(k = 0; k < evt_line1.number_of_events(); k++) 
@@ -165,8 +161,8 @@ struct Make_x_monotone_2 :
                
         // next handle arcs between events, including isolated points
         for (i = 0; i < total_events-1; i++) {
-            evt_line1 = ca_2.status_line_at_event(i);
-            evt_line2 = ca_2.status_line_at_event(i+1);
+            evt_line1 = curve.status_line_at_event(i);
+            evt_line2 = curve.status_line_at_event(i+1);
             max_x = evt_line2.x();
             oi = _handle_vertical_and_isolated(evt_line1, min_x, min_pts, oi);
                                 
@@ -174,7 +170,7 @@ struct Make_x_monotone_2 :
             for(k = 0; k < n; k++) 
                 max_pts.push_back(construct_point(max_x, curve, k));
             
-            n = ca_2.status_line_of_interval(i+1).number_of_events();
+            n = curve.status_line_of_interval(i+1).number_of_events();
             CGAL::Arr_curve_end inf1_end, inf2_end;
             for (k = 0; k < n; k++) {
                 
@@ -194,6 +190,10 @@ struct Make_x_monotone_2 :
                                               inf1_end, curve, k, info2.first);
                     }
                 } else if (info2.second != CGAL::ARR_INTERIOR) {
+
+                    CGAL::Comparison_result res =
+                        Curve_kernel_2().compare_x_2_object()(
+                            min_pts[info1.first].x(), max_x);
                     arc = construct_arc_2(min_pts[info1.first],  max_x,
                                           inf2_end, curve, k, info1.first);
                 } else {
@@ -211,11 +211,11 @@ struct Make_x_monotone_2 :
         // here: min_x/min_pts hold information about the last event line
         // event_line2 - points to the last event line
         // vertical line or isolated points at last event?
-        evt_line2 = ca_2.status_line_at_event(total_events-1);
+        evt_line2 = curve.status_line_at_event(total_events-1);
         min_x = evt_line2.x();
         oi = _handle_vertical_and_isolated(evt_line2, min_x, min_pts, oi);
         
-        n = ca_2.status_line_of_interval(total_events).number_of_events();
+        n = curve.status_line_of_interval(total_events).number_of_events();
         for (k = 0; k < n; k++) {
         
             info1 = map_interval_arcno(evt_line2, 0, k); 
@@ -286,7 +286,7 @@ private:
     //! pointer to \c Curved_kernel_via_analysis_2 
     Curved_kernel_via_analysis_2 *_m_curved_kernel;
     //! to avoid passing curve as a parameter
-    Curve_2 _m_curve;
+    Curve_analysis_2 _m_curve;
     
     //!@}
 };  // struct Make_x_monotone

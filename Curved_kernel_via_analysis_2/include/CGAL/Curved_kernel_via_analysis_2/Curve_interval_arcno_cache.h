@@ -48,9 +48,6 @@ struct Curve_interval_arcno_cache {
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
     Curve_kernel_2;
 
-    //! type of generic curve
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
-    
     //! type of 1-curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
@@ -95,7 +92,9 @@ struct Curve_interval_arcno_cache {
             return std::make_pair(interval_arcno, CGAL::ARR_INTERIOR);
         
         Curve_analysis_2 ca_2 = cv_line.curve_analysis_2();
-        int curve_id = ca_2.curve_2().id();
+        ///////////////////////////////// polynomial or curve id ?
+        int curve_id = ca_2.polynomial_2().id();
+        /////////////////////////////////
         if(_m_last_curve_id != curve_id) {
             typename Curve_to_interval_arcno_map::iterator it;
             if(_m_last_curve_id != -1) { 
