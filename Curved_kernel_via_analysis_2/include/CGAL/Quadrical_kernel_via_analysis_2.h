@@ -31,6 +31,9 @@
 
 #include <QdX/gfx_utils.h>
 
+#include <QdX/Quadric_pair_3.h>
+#include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -126,7 +129,8 @@ public:
     //! type of planar point
     typedef typename Base::Projected_point_2 Projected_point_2;
     
-    //!\name Constructors
+public:
+    //!\name Standard constructors
     //!@{
     
     /*!\brief
@@ -138,17 +142,16 @@ public:
     
     //!@}
 
-protected:
+public:
     //!\name Usual constructors 
     //!@{
     
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
-    Quadric_point_2(Quadrical_kernel_via_analysis_2 *kernel,
-                     const Projected_point_2& pt, 
-                     const Surface_3& surface, 
-                     int sheet) :
-        Base(kernel, pt, surface, sheet) {
+    Quadric_point_2(const Projected_point_2& pt, 
+                    const Surface_3& surface, 
+                    int sheet) :
+        Base(pt, surface, sheet) {
         CGAL_precondition(sheet < 2);
     }
     
@@ -289,6 +292,7 @@ public:
     //! type of surface point
     typedef typename Quadrical_kernel_via_analysis_2::Point_2 Quadric_point_2;
 
+public:
     //!\name Simple constructors
     //!@{
 
@@ -301,7 +305,7 @@ public:
 
     //!@}
     
-protected:
+public:
     //!\name Constructors for non-z-vertical arcs
     //!@{
     
@@ -311,13 +315,12 @@ protected:
      *
      * \pre levels must be valid
      */
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Projected_arc_2& arc, 
+    Quadric_arc_2(const Projected_arc_2& arc, 
                   const Quadric_point_2& p,
                   const Quadric_point_2& q,
                   const Surface_3& surface,
                   int sheet, int sheet_p, int sheet_q) :
-        Base(kernel, arc, p, q, surface, sheet, sheet_p, sheet_q) {
+        Base(arc, p, q, surface, sheet, sheet_p, sheet_q) {
         CGAL_precondition(sheet < 2);
         CGAL_precondition(sheet_p < 2);
         CGAL_precondition(sheet_q < 2);
@@ -331,12 +334,11 @@ protected:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Projected_arc_2& arc, 
+    Quadric_arc_2(const Projected_arc_2& arc, 
                   const Quadric_point_2& p,
                   const Surface_3& surface,
                   int sheet, int sheet_p) :
-        Base(kernel, arc, p, surface, sheet, sheet_p) {
+        Base(arc, p, surface, sheet, sheet_p) {
         
         CGAL_precondition(sheet < 2);
         CGAL_precondition(sheet_p < 2);
@@ -350,42 +352,39 @@ protected:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Projected_arc_2& arc, 
+    Quadric_arc_2(const Projected_arc_2& arc, 
                   const Surface_3& surface,
                   int sheet) :
-        Base(kernel, arc, surface, sheet) {
+        Base(arc, surface, sheet) {
         CGAL_precondition(sheet < 2);
     }
     
     //!@}
 
+public:
     //!\name Constructors for vertical arcs
     //!@{
 
     //! Constructs a bounded vertical arc
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Quadric_point_2& p,
+    Quadric_arc_2(const Quadric_point_2& p,
                   const Quadric_point_2& q,
                   const Surface_3& surface) :
-        Base(kernel, p, q, surface) {
+        Base(p, q, surface) {
 
     }
 
     //! Constructs a vertical ray
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Quadric_point_2 p,
+    Quadric_arc_2(const Quadric_point_2 p,
                   CGAL::Arr_curve_end inf_end,
                   const Surface_3& surface) :
-        Base(kernel, p. inf_end, surface) {
+        Base(p. inf_end, surface) {
         
     }
 
     //! Constructs a vertical branch
-    Quadric_arc_2(Quadrical_kernel_via_analysis_2 *kernel,
-                  const Projected_point_2& p,
+    Quadric_arc_2(const Projected_point_2& p,
                   const Surface_3& surface) :
-        Base(kernel, p, surface) {
+        Base(p, surface) {
     }
     
     //!@}
@@ -485,7 +484,8 @@ public:
      *         EQUAL if x(p1) = x(p2).
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
-        return this->_ckva()->kernel().compare_x_2_object()
+        return Curved_kernel_via_analysis_2l::instance().
+            kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
 };
@@ -528,7 +528,8 @@ public:
         
         CGAL::Comparison_result res = 
             (equal_x ? CGAL::EQUAL : 
-             this->_ckva()->kernel().compare_x_2_object()(p1.x(), p2.x())
+             Curved_kernel_via_analysis_2l::instance().
+             compare_x_2_object()(p1, p2)
             );
         
         if (res != CGAL::EQUAL) {
@@ -536,7 +537,8 @@ public:
         } else if (p1.sheet() != p2.sheet()) {
             res = CGAL::compare(p1.sheet(), p2.sheet());
         } else {
-            res = this->_ckva()->projected_kernel().compare_xy_2_object()(
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().compare_xy_2_object()(
                     p1.projected_point(), p2.projected_point(), true
             );
             if (p1.sheet() == 1 && p2.sheet() == 1) {
@@ -606,7 +608,8 @@ public:
             res = CGAL::compare(s1, s2);
         } else {
             if (!cv1.is_finite(ce)) {
-                res = this->_ckva()->projected_kernel().
+                res = Curved_kernel_via_analysis_2l::instance().
+                    projected_kernel().
                     compare_y_near_boundary_2_object()(
                             cv1.projected_arc(), cv2.projected_arc(), ce
                     );
@@ -616,7 +619,8 @@ public:
                 }
             } else {
                 if (ce == CGAL::ARR_MIN_END) {
-                    res = this->_ckva()->projected_kernel().
+                    res = Curved_kernel_via_analysis_2l::instance().
+                        projected_kernel().
                         compare_y_at_x_right_2_object()(
                                 cv1.projected_arc(), cv2.projected_arc(), 
                                 cv1.projected_arc().curve_end(
@@ -624,7 +628,8 @@ public:
                                 )
                         );
                 } else {
-                    res = this->_ckva()->projected_kernel().
+                    res = Curved_kernel_via_analysis_2l::instance().
+                        projected_kernel().
                         compare_y_at_x_left_2_object()(
                                 cv1.projected_arc(), cv2.projected_arc(), 
                                 cv1.projected_arc().curve_end(
@@ -695,7 +700,8 @@ public:
         if (sa != sp) {
             res = CGAL::compare(sp, sa);
         } else {
-            res = this->_ckva()->projected_kernel().compare_y_at_x_2_object()(
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().compare_y_at_x_2_object()(
                     p.projected_point(), cv.projected_arc()
             );
             if (sa == 1) {
@@ -761,7 +767,8 @@ public:
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = this->_ckva()->projected_kernel().
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().
                 compare_y_at_x_left_2_object()(
                         cv1.projected_arc(), 
                         cv2.projected_arc(), 
@@ -830,7 +837,7 @@ public:
         if (s1 != s2) {
             res = CGAL::compare(s1, s2);
         } else {
-            res = this->_ckva()->projected_kernel().
+            res = Curved_kernel_via_analysis_2l::instance().projected_kernel().
                 compare_y_at_x_right_2_object()(
                         cv1.projected_arc(), 
                         cv2.projected_arc(), 
@@ -889,7 +896,8 @@ public:
         bool res = (s1 == s2);
         
         if (res) {
-            res = this->_ckva()->projected_kernel().do_overlap_2_object()(
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().do_overlap_2_object()(
                     cv1.projected_arc(), 
                     cv2.projected_arc()
             );
@@ -933,7 +941,8 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (this->_ckva()->compare_xy_2_object()(p1, p2) == 
+        return (Curved_kernel_via_analysis_2l::instance().
+                compare_xy_2_object()(p1, p2) == 
                 CGAL::EQUAL);
     }
      
@@ -953,7 +962,8 @@ public:
         bool res = (s1 == s2);
         
         if (res) {
-            res = this->_ckva()->projected_kernel().equal_2_object()(
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().equal_2_object()(
                         cv1.projected_arc(), cv2.projected_arc()
             );
         }
@@ -1023,7 +1033,7 @@ public:
                      const_iterator it = ipoints.begin();
                  it != ipoints.end(); it++) {
                 
-                // TODO remove intersection on boundary! (eriC)
+                // remove intersections on boundary
                 *oi++ = CGAL::make_object(*it);
             }
 
@@ -1031,7 +1041,8 @@ public:
             
             // call projected intersection
             std::list< CGAL::Object > tmp;
-            this->_ckva()->projected_kernel().intersect_2_object()(
+            Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().intersect_2_object()(
                     cv1.projected_arc(), cv2.projected_arc(), 
                     std::back_inserter(tmp)
             );
@@ -1062,11 +1073,17 @@ public:
                         continue;
                     }
 
-                    Point_2 pt = this->_ckva()->construct_point_2_object()(
+                    std::cout << "sf: " << this->_ckva()->reference()
+                              << std::endl;
+
+                    Point_2 pt = 
+                        Curved_kernel_via_analysis_2l::instance().
+                        construct_point_2_object()(
                             p_pt.first, 
+                            // TODO reference instance
                             this->_ckva()->reference(),
                             sp
-                    );
+                        );
                     
                     *oi++ = CGAL::make_object(std::make_pair(pt, p_pt.second));
                 }
@@ -1082,7 +1099,8 @@ private:
         
         if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MIN_END)) {
             if (cv1.is_finite(CGAL::ARR_MIN_END)) {
-                if (this->_ckva()->projected_kernel().
+                if (Curved_kernel_via_analysis_2l::instance().
+                    projected_kernel().
                     compare_xy_2_object()(
                             pt, 
                             cv1._minpoint().projected_point()
@@ -1098,7 +1116,8 @@ private:
         
         if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MAX_END)) {
             if (cv1.is_finite(CGAL::ARR_MAX_END)) {
-                if (this->_ckva()->projected_kernel().
+                if (Curved_kernel_via_analysis_2l::instance().
+                    projected_kernel().
                     compare_xy_2_object()(
                             pt, 
                             cv1._maxpoint().projected_point()
@@ -1114,7 +1133,8 @@ private:
         
         if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MIN_END)) {
             if (cv2.is_finite(CGAL::ARR_MIN_END)) {
-                if (this->_ckva()->projected_kernel().
+                if (Curved_kernel_via_analysis_2l::instance().
+                    projected_kernel().
                     compare_xy_2_object()(
                             pt, 
                             cv2._minpoint().projected_point()
@@ -1130,7 +1150,8 @@ private:
         
         if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MAX_END)) {
             if (cv2.is_finite(CGAL::ARR_MAX_END)) {
-                if (this->_ckva()->projected_kernel().
+                if (Curved_kernel_via_analysis_2l::instance().
+                    projected_kernel().
                     compare_xy_2_object()(
                             pt, 
                             cv2._maxpoint().projected_point()
@@ -1185,7 +1206,8 @@ public:
     
         CERR("trim\n");
         CGAL_precondition(
-                this->_ckva()->kernel().compare_xy_2_object()(
+                Curved_kernel_via_analysis_2l::instance().
+                kernel().compare_xy_2_object()(
                         p.xy(), q.xy()) !=
                 CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
@@ -1200,7 +1222,8 @@ public:
             // TODO set sheet (eriC)
         }
         
-        arc.ptr()->_m_projected_arc = this->_ckva()->projected_kernel().
+        arc.ptr()->_m_projected_arc = 
+            Curved_kernel_via_analysis_2l::instance().projected_kernel().
             trim_2_object()(cv.projected_arc(), 
                             p.projected_point(),
                             q.projected_point());
@@ -1270,7 +1293,8 @@ public:
         
         typename Arc_2::Projected_arc_2 p_arc1, p_arc2;
 
-        this->_ckva()->projected_kernel().split_2_object()(
+        Curved_kernel_via_analysis_2l::instance().
+            projected_kernel().split_2_object()(
                 cv.projected_arc(), p.projected_point(), p_arc1, p_arc2
         );
         
@@ -1331,7 +1355,8 @@ public:
         }
         
         if (res) {
-            res = this->_ckva()->projected_kernel().are_mergeable_2_object()(
+            res = Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().are_mergeable_2_object()(
                     cv1.projected_arc(), cv2.projected_arc()
             );
         }
@@ -1408,7 +1433,8 @@ public:
 
             typename Arc_2::Projected_arc_2 p_arc;
             
-            this->_ckva()->projected_kernel().merge_2_object()(
+            Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().merge_2_object()(
                     cv1.projected_arc(), cv2.projected_arc(), p_arc
             );
             
@@ -1436,6 +1462,9 @@ public:
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+
+    typedef QdX::Quadric_3_z_at_xy_isolator_traits< Curve_2 > Z_at_xy_traits;
+    typedef QdX::Quadric_pair_3< Z_at_xy_traits > Surface_pair_3;
     
     //! the result type 
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
@@ -1473,12 +1502,25 @@ public:
      */
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
-    
-        // TODO compute surface pair  (eriC)
         
-        // lift segments
+        // FUTURE TODO maybe adapt it to use QdX::P_curve_2 (eriC)
+        
+        // construct surface pair 
+        // TODO cache (eriC)
+        // TODO reference instance
+        Surface_pair_3 pair(this->_ckva()->reference(), cv);
+        
+        // compute lifted points and arcs
+        std::list< Point_2 > points;
+        std::list< Arc_2 > arcs;
+        pair.template spatial_intersections< Curved_kernel_via_analysis_2l >(
+                this->_ckva()->reference(),
+                std::back_inserter(arcs),
+                std::back_inserter(points)
+        );
+        
+        // TODO output as CGAL::Objects (eriC)
 
-        // TODO maybe adapt it to use QdX::P_curve_2 (eriC)
         return oi;
     }
 }; // Make_x_monotone_2
@@ -1492,7 +1534,10 @@ public:
 //! basic kernel to maintain points and arcs on a quadric
 template < class CurveKernel_2, class SurfacePair_3 >
 class Quadrical_kernel_via_analysis_2 :
-  public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
+  public CGALi::Curved_kernel_via_analysis_2_base < 
+      Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >, 
+      CurveKernel_2 
+  >,
   public CGALi::Curved_kernel_via_analysis_2_functors < 
     Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
      typename CurveKernel_2::Curve_2,
@@ -1513,10 +1558,9 @@ public:
     //! this instance's first template argument
     typedef CurveKernel_2 Curve_kernel_2;
 
-   //! this instance's second template parameter
+    //! this instance's second template parameter
     typedef SurfacePair_3 Surface_pair_3;
      
-
     //! myself
     typedef Quadrical_kernel_via_analysis_2< Curve_kernel_2, Surface_pair_3 > 
     Self;
@@ -1658,7 +1702,7 @@ protected:
     //!@{
     
     //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >
+    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, CurveKernel_2 >
     Base_kernel;
 
     //! class collecting basic types
