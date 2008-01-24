@@ -1595,7 +1595,7 @@ class Quadrical_kernel_via_analysis_2 :
   >,
   public CGALi::Curved_kernel_via_analysis_2_functors < 
     Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
-     typename CurveKernel_2::Curve_2,
+     typename CurveKernel_2::Curve_analysis_2,
     CGALi::Quadric_point_2< 
       Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
       SurfacePair_3
