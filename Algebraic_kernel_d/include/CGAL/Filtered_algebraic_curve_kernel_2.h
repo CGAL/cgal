@@ -42,6 +42,14 @@ private:
     typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
     typedef Algebraic_curve_kernel_2 Base;
 
+protected:
+
+    // type of an internal curve
+    typedef typename Base::Internal_curve_2 Internal_curve_2;
+
+    // type of an internal curve pair
+    typedef typename Base::Internal_curve_pair_2 Internal_curve_pair_2;
+
 public:
     //! \name types and functors for \c GPA_2< >
     //!@{
@@ -53,13 +61,7 @@ public:
     typedef Filtered_algebraic_curve_kernel_2< Base > Self;
     
     //! type of coefficient
-    typedef typename Base::Internal_coefficient Coefficient;
-
-    //! type of curve pair
-    typedef typename Base::Curve_pair_2 Curve_pair_2;
-
-    //! type of single curve
-    typedef typename Base::Curve_2 Curve_2;
+    typedef typename Base::Coefficient Coefficient;
 
     //! type of x-coordinate
     typedef typename Base::X_coordinate_1 X_coordinate_1;
@@ -87,6 +89,12 @@ public:
     
     //! type of a curve point 
     typedef typename Base::Xy_coordinate_2 Xy_coordinate_2;
+
+    //! type of 1-curve analysis
+    typedef typename Base::Curve_analysis_2 Curve_analysis_2;
+
+    //! type of 2-curve analysis
+    typedef typename Base::Curve_pair_analysis_2 Curve_pair_analysis_2;
     
     //! traits class for \c X_coordinate
     typedef typename Base::X_real_traits_1 X_real_traits_1;
@@ -281,10 +289,6 @@ public:
     //! \name types and functors for \c GPA_2<Algebraic_kernel_2>
     //!@{
     
-    typedef typename Base::Polynomial_2 Polynomial_2; 
-    
-    typedef typename Base::Construct_polynomial_2_ Construct_polynomial_2_;
-
     typedef typename Base::Algebraic_real_1 Algebraic_real_1;
     typedef typename Base::Algebraic_real_2 Algebraic_real_2;
     
@@ -322,30 +326,30 @@ public:
      * returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 :
-        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+        public Binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
 
         typedef typename Xy_coordinate_2::Boundary_interval Interval;
         
         typedef CGAL::Polynomial<Boundary> Poly_rat_1;
         typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
         
-        Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
+        Sign operator()(const Curve_analysis_2& ca,
+                const Xy_coordinate_2& r) const
         {
             std::cout << "Filtered sign at.." << std::flush;
-            if(p.id() == r.curve().id()) {// point lies on the same curve
+            if(ca.is_identical(r.curve())) // point lies on the same curve
                 return CGAL::ZERO;
-            }
-
+            
             r.approximation_box_2(threshold()); 
                 // makes sure refined boundaries 
-            Interval iv = r.interval_evaluate_2(p.f());
+            Interval iv = r.interval_evaluate_2(ca.polynomial_2());
             CGAL::Sign s_lower = CGAL::sign(iv.lower());
             if( s_lower == CGAL::sign(iv.upper()) ) {
                    std::cout << "filtered!" << std::endl;
                    return s_lower;
             }
             std::cout << "filter failed" << std::endl;
-            return typename Base::Sign_at_2()(p,r);
+            return typename Base::Sign_at_2()(ca, r);
         }
         
     };
@@ -371,21 +375,7 @@ public:
 #undef CGAL_Algebraic_Kernel_cons 
     
     //!@}
-    
-
-public:
-    //! \name types and functors for \c GPA_2< both >
-    //!@{
-   
-    //! type of 1-curve analysis
-    typedef typename Base::Curve_analysis_2 Curve_analysis_2; 
-
-    //! type of 2-curve analysis
-    typedef typename Base::Curve_pair_analysis_2 Curve_pair_analysis_2; 
-    
-    //!@}
-    
-  
+ 
 }; // class Filtered_algebraic_curve_kernel_2
 
 CGAL_END_NAMESPACE

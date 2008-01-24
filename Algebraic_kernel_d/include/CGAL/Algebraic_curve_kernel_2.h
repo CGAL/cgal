@@ -25,8 +25,6 @@
 #include <CGAL/Algebraic_kernel_1.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
-#include <algorithm>
-
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
@@ -44,22 +42,25 @@ class Algebraic_curve_kernel_2 {
 
 // the same for construction functors
 #define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
-    
-protected:
-    //! \name wrapping types
-    //!@{
 
-    //! type of an internal curve pair
+protected:    
+    // temporary types
+    
+    // type of an internal curve pair
     typedef AlgebraicCurvePair_2 Internal_curve_pair_2;
 
-    //! type of an internal curve
+    // type of an internal curve
     typedef typename AlgebraicCurvePair_2::Algebraic_curve_2 Internal_curve_2;
 
+public:
+    //!\name public typedefs
+    //!@{
+    
     //! type of internal x_coordinate
-    typedef typename Internal_curve_2::X_coordinate Internal_x_coordinate;
+    typedef typename Internal_curve_2::X_coordinate X_coordinate_1;
     
     //! type of internal coefficient
-    typedef typename Internal_curve_2::Coefficient Internal_coefficient;
+    typedef typename Internal_curve_2::Coefficient Coefficient;
 
     //! type of internal polynomial
     typedef typename Internal_curve_2::Poly_d Internal_polynomial_2;
@@ -67,41 +68,39 @@ protected:
     typedef typename NiX::Polynomial_traits<Internal_polynomial_2>::
         Innermost_coefficient Innermost_coefficient;
    
-    //!@}
-public:
-    //! \name types and functors for \c GPA_2< >
-    //!@{
-    
-    //! type of 1D algebraic kernel 
+    //! type of 1D algebraic kernel
     typedef AlgebraicKernel_1 Algebraic_kernel_1;
 
     //! myself
     typedef Algebraic_curve_kernel_2<AlgebraicCurvePair_2, AlgebraicKernel_1>
         Self;
     
-    //! type of coefficient
-    typedef Internal_coefficient Coefficient;
-
-    //! type of curve pair
-    typedef Internal_curve_pair_2 Curve_pair_2;
-
-    //! type of single curve
-    typedef Internal_curve_2 Curve_2;
-
-    //! type of x-coordinate
-    typedef Internal_x_coordinate X_coordinate_1;
-
     // TODO remove when deriving from AK_1
     typedef typename Algebraic_kernel_1::Boundary Boundary;
         
     //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
     //! avoid type clashes with \c Polynomial_2 type defined later
     typedef ::CGAL::Polynomial<Innermost_coefficient> Polynomial_1_CGAL;
+    
     //! new CGAL bivariate polynomial type
     typedef ::CGAL::Polynomial<Polynomial_1_CGAL> Polynomial_2_CGAL;
+    
     //! bivariate polynomial traits
     typedef ::CGAL::Polynomial_traits_d< Polynomial_2_CGAL >
         Polynomial_traits_2;
+
+    //! type of a curve point
+    typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
+
+    //! type of 1-curve analysis
+    typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
+
+    //! type of 2-curve analysis
+    typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
+
+    //! berfriending representations to make protected typedefs available
+    friend class CGALi::Curve_analysis_2_rep<Self>;
+    friend class CGALi::Curve_pair_analysis_2_rep<Self>;
     
     //!@}
 protected:
@@ -153,19 +152,18 @@ protected:
         }
            
     };
-    
+
     // to remove a confusion with Curve_pair_2
-    typedef std::pair<Curve_2, Curve_2> Pair_of_curves_2;
+    typedef std::pair<Curve_analysis_2, Curve_analysis_2> Pair_of_curves_2;
     
-    //! polynomial pair canonicalizer
+    //! curve analysis pair canonicalizer
     struct Curve_pair_canonicalizer  : 
         public Unary_function< Pair_of_curves_2, Pair_of_curves_2 >  {
         
         Pair_of_curves_2 operator()(const Pair_of_curves_2& p) const
         {
-            typename Curve_2::Less_than less_than;
-            if(less_than(p.second, p.first)) 
-                return std::make_pair(p.second,p.first);
+            if(p.first.id() > p.second.id())
+                return std::make_pair(p.second, p.first);
             return p;
         }
     };
@@ -185,11 +183,10 @@ protected:
     };     
     
     struct Curve_pair_creator :
-         public Unary_function< Pair_of_curves_2, Curve_pair_2 >  {
+         public Unary_function< Pair_of_curves_2, Curve_pair_analysis_2 >  {
            
-        Curve_pair_2 operator()(const Pair_of_curves_2& p) const 
-        {
-            return Curve_pair_2(p.first, p.second);
+        Curve_pair_analysis_2 operator()(const Pair_of_curves_2& p) const {
+            return Curve_pair_analysis_2(p.first, p.second);
         }
     };
     
@@ -197,53 +194,50 @@ protected:
          public Unary_function<Pair_of_curves_2, bool>  {
      
          bool operator()(const Pair_of_curves_2& p1, 
-            const Pair_of_curves_2& p2) const {
+                const Pair_of_curves_2& p2) const {
+            
             return (p1.first.id() == p2.first.id() &&
                  p1.second.id() == p2.second.id());
          }
     };
 
     
-    //! type of curve cache
-    typedef CGALi::LRU_hashed_map<Internal_polynomial_2, Curve_2,
-        Poly_canonicalizer<Internal_polynomial_2>,
-        CGALi::Poly_hasher_2<Internal_polynomial_2> > Curve_cache;
+    //! type of curve analysis cache
+    typedef CGALi::LRU_hashed_map<Internal_polynomial_2,
+        Curve_analysis_2, Poly_canonicalizer<Internal_polynomial_2>,
+        CGALi::Id_hasher> Curve_cache;
         
     //! type of curve pair cache 
-    typedef CGALi::LRU_hashed_map<Pair_of_curves_2, Curve_pair_2,
-        Curve_pair_canonicalizer, 
-        CGALi::Curve_pair_hasher_2<Curve_2>, 
+    typedef CGALi::LRU_hashed_map<Pair_of_curves_2,
+        Curve_pair_analysis_2, Curve_pair_canonicalizer,
+        CGALi::Curve_pair_hasher_2<Curve_analysis_2>,
         Curve_pair_creator, Curve_pair_equal_to> Curve_pair_cache;
 
     typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
         Pair_of_internal_polynomial_2;
 
-    template<typename T> class Gcd {
-    public:
-
+    template<typename T> struct Gcd {
+    
         T operator() (std::pair<T,T> pair) {
             return NiX::gcd(pair.first,pair.second);
         }
     } ;     
 
 
-    template<typename T> class Pair_cannonicalize {
-    public:
+    template<typename T> struct Pair_cannonicalize {
+    
         std::pair<T,T> operator() (std::pair<T,T> pair) {
-            if(pair.first > pair.second) {
+        
+            if(pair.first > pair.second) 
                 return std::make_pair(pair.second,pair.first);
-            }
-            else {
-                return pair;
-            }
+            return pair;
         }
     };
 
     typedef CGAL::Pair_lexicographical_less_than
-    <Internal_polynomial_2,
-     Internal_polynomial_2,
-     std::less<Internal_polynomial_2>,
-     std::less<Internal_polynomial_2> > Internal_polynomial_2_compare;
+        <Internal_polynomial_2, Internal_polynomial_2,
+            std::less<Internal_polynomial_2>,
+            std::less<Internal_polynomial_2> > Internal_polynomial_2_compare;
     
     typedef CGAL::Cache<Pair_of_internal_polynomial_2,
                         Internal_polynomial_2,
@@ -256,8 +250,6 @@ protected:
         return cache;
     }
 
-
-      
     //!@}
 public:
     //!\name cache access functions
@@ -291,38 +283,69 @@ public:
     Algebraic_curve_kernel_2() //: _m_curve_cache() 
     {  }
     
-    //! \brief constructs \c Curve_2 object, uses caching if appropriate
+    /*! \brief
+     * constructs \c Curve_analysis_2 from bivariate polynomial, uses caching
+     * when appropriate
+     */
     struct Construct_curve_2 :
-            public Unary_function< Internal_polynomial_2, Curve_2 >
-    {
-        //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
-        //! no default constructor provided
-        Construct_curve_2(/*Self *pkernel_2*/) 
-        {  }
+        public Unary_function< Internal_polynomial_2, Curve_analysis_2 > {
             
-        Curve_2 operator()(const Internal_polynomial_2& f) const
-        {
+        Curve_analysis_2 operator()
+                (const Internal_polynomial_2& f) const {
             return Self::curve_cache()(f);
-            //return Curve_2(f);
         }
-        Curve_2 operator()(const Polynomial_2_CGAL& f) const
-        {
+        Curve_analysis_2 operator()
+                (const Polynomial_2_CGAL& f) const {
             CGAL2NiX_converter cvt;
             return Self::curve_cache()(cvt(f));
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
-    
-    //! type of a curve point 
-    typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
+
+    /*! \brief
+     * constructs \c Curve_pair_analysis_2 from pair of 1-curve analysis,
+     * caching is used when appropriate
+     */
+    struct Construct_curve_pair_2 :
+            public Binary_function<Curve_analysis_2, Curve_analysis_2,
+                Curve_pair_analysis_2> {
+           
+        Curve_pair_analysis_2 operator()
+           (const Curve_analysis_2& ca1, const Curve_analysis_2& ca2) const {
+                 
+            //const Curve_pair_analysis_2& cpa_2 =
+              //  Self::curve_pair_cache()(std::make_pair(ca1, ca2));
+            // swapped flag indicates that curve analyses were swapped before
+            // caching
+            //std::cerr << ca1.id() << " and " <<  ca2.id() << "\n";
+
+            Pair_of_curves_2 poc(ca1, ca2);
+            bool swap = false; //(ca1.id() > ca2.id());
+            if(swap) {
+                poc.first = ca2;
+                poc.second = ca1;
+            }   
+            
+            std::pair<typename Curve_pair_cache::Hashed_iterator, bool> res =
+                Self::curve_pair_cache().find(poc);
+            if(res.second)
+                return res.first->second;
+
+            Curve_pair_analysis_2 cpa_2(poc.first, poc.second);
+            cpa_2._set_swapped(swap);
+            Self::curve_pair_cache().insert(std::make_pair(poc, cpa_2));
+            return cpa_2;
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
+        construct_curve_pair_2_object);
     
     //! traits class for \c X_coordinate
-    typedef CGALi::Algebraic_real_traits<typename Curve_2::X_coordinate>
-        X_real_traits_1;
+    typedef CGALi::Algebraic_real_traits<X_coordinate_1> X_real_traits_1;
 
     //! traits class for \c Xy_coorinate_2
-    typedef CGALi::Algebraic_real_traits_for_y<Xy_coordinate_2, Curve_pair_2> 
-        Y_real_traits_1;
+    typedef CGALi::Algebraic_real_traits_for_y<Xy_coordinate_2,
+         Internal_curve_pair_2> Y_real_traits_1;
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
@@ -549,17 +572,18 @@ public:
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
-            public Binary_function< Curve_2, Curve_2, bool > { 
+        public Binary_function< Polynomial_2_CGAL, Polynomial_2_CGAL, bool > {
                
-        bool operator()(const Curve_2& c1, const Curve_2& c2) const {
+        bool operator()(const Polynomial_2_CGAL& f,
+                const Polynomial_2_CGAL& g) const {
             // if curve ids are the same - non-decomposable
-            if(c1.id() == c2.id()) 
+            if(f.id() == g.id())
                 return true;
             typename Polynomial_traits_2::Gcd_up_to_constant_factor gcd_utcf;
             typename Polynomial_traits_2::Total_degree total_degree;
-            NiX2CGAL_converter cvt;
-            Polynomial_2_CGAL p1 = cvt(c1.f()), p2 = cvt(c2.f());
-            return (total_degree(gcd_utcf(p1, p2)) == 0);  
+            //NiX2CGAL_converter cvt;
+            //Polynomial_2_CGAL p1 = cvt(c1.f()), p2 = cvt(c2.f());
+            return (total_degree(gcd_utcf(f, g)) == 0);
         }
     };
     CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
@@ -593,69 +617,73 @@ public:
         //! 
         //! returns square-free pairwise coprime factors in \c fit and
         //! multiplicities in \c mit. Template argument type of \c fit is
-        //! \c Curve_2, and \c mit is \c int
+        //! \c Curve_analysis_2, and \c mit is \c int
         template< class OutputIterator1, class OutputIterator2 >
-        int operator()( const Curve_2& c, OutputIterator1 fit, 
-                        OutputIterator2 mit ) const {
+        int operator()(const Curve_analysis_2& ca,
+                     OutputIterator1 fit, OutputIterator2 mit ) const {
                         
             typename Polynomial_traits_2::
                 Square_free_factorization_up_to_constant_factor factorize;
             NiX2CGAL_converter cvt;
             std::vector<Polynomial_2_CGAL> factors;
             
-            int n_factors = factorize(cvt(c.f()), std::back_inserter(factors),
-                    mit); 
+            int n_factors = factorize(cvt(ca.polynomial_2()),
+                 std::back_inserter(factors), mit);
             Construct_curve_2 cc_2;
-            for(int i = 0; i < (int)factors.size(); i++) {
+            for(int i = 0; i < (int)factors.size(); i++) 
                 *fit++ = cc_2(factors[i]);
-            }
+            
             return n_factors;
         }
         
-        //! \brief computes for a given pair of curves \c c1 and \c c2 their 
-        //! common part \c oib and coprime parts \c oi1 and \c oi2 
-        //! respectively; returns \c true if the curves were decomposed
-        //!
-        //! returns true if \c c1 and \c c2 are coprime. Template argument
-        //! type of \c oi{1,2,b} is \c Curve_2
+        /*!\brief
+         * computes for a given pair of curves \c ca1 and \c ca2 their
+         * common part \c oib and coprime parts \c oi1 and \c oi2
+         * respectively; returns \c true if the curves were decomposed
+         *
+         * returns true if \c ca1 and \c ca2 are coprime. Template argument
+         * type of \c oi{1,2,b} is \c Curve_analysis_2
+         */
         template < class OutputIterator > 
-        bool operator()(const Curve_2& c1, const Curve_2& c2,
-            OutputIterator oi1, OutputIterator oi2, OutputIterator oib) {
-            
-            typedef std::vector<Curve_2> Curves;
+        bool operator()(const Curve_analysis_2& ca1,
+            const Curve_analysis_2& ca2, OutputIterator oi1,
+                OutputIterator oi2, OutputIterator oib) const {
+
+            Construct_curve_2 cc_2;
+            typedef std::vector<Internal_curve_2> Curves;
             Curves parts_f, parts_g;
-            if(Curve_2::decompose(c1, c2, 
-                std::back_inserter(parts_f), std::back_inserter(parts_g))) {
-                // move the common part returned through both iterators
-                // oi1/oi2 to oib
-                *oib++ = parts_f[0];
+            
+            if(Internal_curve_2::decompose(ca1._internal_curve(),
+                    ca2._internal_curve(), std::back_inserter(parts_f),
+                     std::back_inserter(parts_g))) {
+
+                typename Curves::const_iterator cit;
+                // this is temporary solution while curves are cached on
+                // AlciX level
                 CGAL_precondition(parts_f[0].f() == parts_g[0].f());
+                *oib++ = cc_2(parts_f[0].f());
+                
                 if(parts_f.size() > 1)
-                    std::copy(parts_f.begin() + 1, parts_f.end(), oi1);
+                    for(cit = parts_f.begin() + 1; cit != parts_f.end(); cit++)
+                        *oi1++ = cc_2(cit->f());
                 if(parts_g.size() > 1)
-                    std::copy(parts_g.begin() + 1, parts_g.end(), oi2);
+                    for(cit = parts_g.begin() + 1; cit != parts_g.end(); cit++)
+                        *oi2++ = cc_2(cit->f());
                 return true;
             }
             // copy original curves to the output iterator:
-            *oi1++ = c1;
-            *oi2++ = c2;
+            *oi1++ = ca1;
+            *oi2++ = ca2;
             return false;
         }
-    protected:
-        //! pointer to Algebraic_curve_kernel_2 (for caching issues)
-        /*Self *_m_pkernel_2; */
     };
     CGAL_Algebraic_Kernel_cons(Decompose_2, decompose_2_object);
     
     //!@}
 public:
-    //! \name types and functors for \c GPA_2<Algebraic_kernel_2>
+    //! \name types and functors for \c CurvedKernelViaAnalysis_2
     //!@{
     
-    typedef Curve_2 Polynomial_2; 
-    
-    typedef Construct_curve_2 Construct_polynomial_2_;
-
     typedef X_coordinate_1 Algebraic_real_1;
     typedef Xy_coordinate_2 Algebraic_real_2;
     
@@ -691,9 +719,9 @@ public:
     CGAL_Algebraic_Kernel_cons(Derivative_y_2, derivative_y_2_object);
 
     struct X_critical_points_2 : 
-        public Binary_function< Polynomial_2, 
-            std::iterator<output_iterator_tag, Xy_coordinate_2>,
-            std::iterator<output_iterator_tag, Xy_coordinate_2> > {
+        public Binary_function< Curve_analysis_2, 
+            std::iterator<std::output_iterator_tag, Xy_coordinate_2>,
+            std::iterator<std::output_iterator_tag, Xy_coordinate_2> > {
        
         //! \brief copies in the output iterator the x-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
@@ -701,18 +729,18 @@ public:
         //! all points (x, y) with f(x,y) = fy(x,y) = 0 are x-critical points
         //! (i.e, singularities are also counted)
         template <class OutputIterator>
-        OutputIterator operator()(const Polynomial_2& p, 
+        OutputIterator operator()(const Curve_analysis_2& ca_2,
                 OutputIterator oi) const {
                 
             typename Self::Derivative_x_2 der_x;
-            typename Self::Construct_curve_2 curve_2;
+            Construct_curve_2 cc_2;
+            Construct_curve_pair_2 ccp_2;
             NiX2CGAL_converter cvt;
             // construct curve analysis of a derivative in y
-            typename Self::Curve_analysis_2 ca_2(p),
-                    ca_2x(curve_2(der_x(cvt(p.f()))));
-            typename Self::Curve_pair_analysis_2 cpa_2(ca_2, ca_2x);
-            typename Self::Curve_pair_analysis_2::Status_line_1 cpv_line;
-            typename Self::Curve_analysis_2::Status_line_1 cv_line;
+            Curve_analysis_2 ca_2x = cc_2(der_x(cvt(ca_2.polynomial_2())));
+            Curve_pair_analysis_2 cpa_2 = ccp_2(ca_2, ca_2x);
+            typename Curve_pair_analysis_2::Status_line_1 cpv_line;
+            typename Curve_analysis_2::Status_line_1 cv_line;
             
             int i, j, n_arcs, n_events =
                 cpa_2.number_of_status_lines_with_event();
@@ -743,10 +771,10 @@ public:
         }
         
         //! \brief computes the ith x-critical point of polynomial \c p
-        Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
+        Xy_coordinate_2 operator()(const Curve_analysis_2& ca, int i) const
         {
             std::vector<Xy_coordinate_2> x_points;
-            (*this)(p, std::back_inserter(x_points));
+            (*this)(ca, std::back_inserter(x_points));
             CGAL_precondition(0 >= i&&i < x_points.size());
             return x_points[i];
         }
@@ -755,23 +783,21 @@ public:
         x_critical_points_2_object);
     
     struct Y_critical_points_2 :
-        public Binary_function< Polynomial_2, 
-            std::iterator<output_iterator_tag, Xy_coordinate_2>,
-            std::iterator<output_iterator_tag, Xy_coordinate_2> > {
+        public Binary_function< Curve_analysis_2, 
+            std::iterator<std::output_iterator_tag, Xy_coordinate_2>,
+            std::iterator<std::output_iterator_tag, Xy_coordinate_2> > {
     
         //! \brief copies in the output iterator the y-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
         template <class OutputIterator>
-        OutputIterator operator()(const Polynomial_2& p, 
+        OutputIterator operator()(const Curve_analysis_2& ca_2, 
             OutputIterator oi) const
         {
-            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
-            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
+            Construct_curve_2 cc_2;
+            Construct_curve_pair_2 ccp_2;
             
             typename Curve_analysis_2::Status_line_1 cv_line;
             std::pair<int,int> ipair;
-            // p is of type Curve_2 here
-            Curve_analysis_2 ca_2(p); 
             int i, j, k, n_arcs, n_events =
                 ca_2.number_of_status_lines_with_event();
             
@@ -792,11 +818,11 @@ public:
                     }
                     if(!cpa_constructed) {
                         typename Self::Derivative_y_2 der_y;
-                        typename Self::Construct_curve_2 curve_2;
                         NiX2CGAL_converter cvt;
                         // construct curve analysis of a derivative in x
-                        Curve_analysis_2 ca_2y(curve_2(der_y(cvt(p.f()))));
-                        cpa_2 = Curve_pair_analysis_2(ca_2, ca_2y);
+                        Curve_analysis_2 ca_2y =
+                            cc_2(der_y(cvt(ca_2.polynomial_2())));
+                        cpa_2 = ccp_2(ca_2, ca_2y);
                         cpa_constructed = true;
                     }
                     if(!vline_constructed) {
@@ -819,10 +845,10 @@ public:
         }
         
         //! \brief computes the ith y-critical point of polynomial \c p
-        Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const
+        Xy_coordinate_2 operator()(const Curve_analysis_2& ca, int i) const
         {
             std::vector<Xy_coordinate_2> y_points;
-            (*this)(p, std::back_inserter(y_points));
+            (*this)(ca, std::back_inserter(y_points));
             CGAL_precondition(0 >= i&&i < y_points.size());
             return y_points[i];
         }
@@ -837,25 +863,20 @@ public:
      * returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 :
-        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+        public Binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
 
-        typedef typename Self::Y_real_traits_1 Y_real_traits_1;
         typedef typename Y_real_traits_1::Boundary Boundary;
-        
         typedef boost::numeric::interval<Boundary> Interval;
         
         typedef CGAL::Polynomial<Boundary> Poly_rat_1;
         typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
         
-        Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
-        {
-            if(p.id() == r.curve().id()) // point lies on the same curve
+        Sign operator()(const Curve_analysis_2& ca_2,
+                const Xy_coordinate_2& r) const {
+                
+            if(ca_2.is_identical(r.curve()) || _test_exact_zero(ca_2, r))
                 return CGAL::ZERO;
-
-            if(_test_exact_zero(p,r)) {
-                return CGAL::ZERO;
-            }
-        
+            
             Interval ix = r.get_approximation_x();
             Interval iy = r.get_approximation_y();
 
@@ -863,7 +884,7 @@ public:
                 y_len = iy.upper() - iy.lower();
 
             while(1) {
-                Interval iv = r.interval_evaluate_2(p.f());
+                Interval iv = r.interval_evaluate_2(ca_2.polynomial_2());
                 CGAL::Sign s_lower = CGAL::sign(iv.lower());
                 if(s_lower == sign(iv.upper()))
                     return s_lower;
@@ -882,14 +903,11 @@ public:
         
     protected:
 
-        bool _test_exact_zero(const Polynomial_2& p,
+        bool _test_exact_zero(const Curve_analysis_2& ca_2,
             const Xy_coordinate_2& r) const {
-            
-            
-            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
-            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
-            
-            Curve_analysis_2 ca_2(p);
+
+            Construct_curve_2 cc_2;
+            Construct_curve_pair_2 ccp_2;
             typename Curve_analysis_2::Status_line_1
                 cv_line = ca_2.status_line_for_x(r.x());
             // fast check for the presence of status line at r.x()
@@ -898,25 +916,21 @@ public:
 
             // Handle non-coprime polynomial
             Internal_polynomial_2 gcd = Self::gcd_cache_2()
-                (std::make_pair(p.f(), r.curve().f()));
-            
-            Curve_2 gcd_curve = typename Self::Construct_curve_2()(gcd);
+               (std::make_pair(ca_2.polynomial_2(), r.curve().polynomial_2()));
 
+            Curve_analysis_2 gcd_curve = cc_2(gcd);
             if(NiX::total_degree(gcd)>0) {
                 
-                Curve_2 r_curve_remainder = typename Self::Construct_curve_2()
-                    (NiX::div_utcf(r.curve().f(), gcd));
-                r.simplify_by( Curve_pair_analysis_2
-                               (Curve_analysis_2(gcd_curve),
-                                Curve_analysis_2(r_curve_remainder) ));
-                if(r.curve().f() == gcd) {
+                Construct_curve_pair_2 ccp_2;
+                Curve_analysis_2 r_curve_remainder =
+                    cc_2(NiX::div_utcf(r.curve().polynomial_2(), gcd));
+                    
+                r.simplify_by(ccp_2(gcd_curve, r_curve_remainder));
+                if(r.curve().polynomial_2() == gcd) 
                     return true;
-                }
             }
 
-            Curve_pair_analysis_2 cpa_2(ca_2, 
-                                        Curve_analysis_2(r.curve()));
-            
+            Curve_pair_analysis_2 cpa_2 = ccp_2(ca_2, r.curve());
             typename Curve_pair_analysis_2::Status_line_1
                 cpv_line = cpa_2.status_line_for_x(r.x());
             
@@ -932,7 +946,7 @@ public:
         }
     
     };
-
+#if 0
     struct Sign_at_2_buggy :
         public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
         
@@ -940,10 +954,7 @@ public:
         {
             if(p.id() == r.curve().id()) // point lies on the same curve
                 return CGAL::ZERO;
-            
-            typedef typename Self::Curve_analysis_2 Curve_analysis_2;
-            typedef typename Self::Curve_pair_analysis_2 Curve_pair_analysis_2;
-            
+           
             Curve_analysis_2 ca_2(p), ca_2r(r.curve());
             Curve_pair_analysis_2 cpa_2(ca_2, ca_2r);
             typename Curve_analysis_2::Status_line_1
@@ -997,7 +1008,7 @@ public:
                 
                    // std::cout << "sign at event of curve r: cpv_line x: "
                      //   << cpv_line.x() << "\n";
-                // this is an event of r.curve() -> therefore cpv_line.x()
+                // this is an event of r.curvve() -> therefore cpv_line.x()
                 // is given as algebraic real (not rational) and r.arcno() is
                 // an event arcno 
                     // need to recompute boundary_x (but leave cpv_line
@@ -1061,6 +1072,7 @@ public:
             return poly.sign_at(boundary_y);
         }
     };
+#endif
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     /*!\brief
@@ -1076,18 +1088,18 @@ public:
      */  
     struct Solve_2 {
     
-        typedef Polynomial_2 first_argument_type;
-        typedef Polynomial_2 second_argument_type;
-        typedef std::iterator<output_iterator_tag, Xy_coordinate_2>
+        typedef Curve_analysis_2 first_argument_type;
+        typedef Curve_analysis_2 second_argument_type;
+        typedef std::iterator<std::output_iterator_tag, Xy_coordinate_2>
             third_argument_type;
-        typedef std::iterator<output_iterator_tag, int>
+        typedef std::iterator<std::output_iterator_tag, int>
             fourth_argument_type;
         typedef std::pair<third_argument_type, fourth_argument_type>
             result_type;
      
         template <class OutputIteratorRoots, class OutputIteratorMult>
         std::pair<OutputIteratorRoots, OutputIteratorMult>
-            operator()(const Polynomial_2& p1, const Polynomial_2& p2,
+           operator()(const Curve_analysis_2& ca1, const Curve_analysis_2& ca2,
                 OutputIteratorRoots roots, OutputIteratorMult mults) const
         {
             // these tests are quite expensive... do we really need them ??
@@ -1097,19 +1109,19 @@ public:
                     not_self_overlapped;
                 typename Self::Has_finite_number_of_intersections_2 
                     do_not_overlap;
-                CGAL_precondition(not_self_overlapped(p1) &&
-                    not_self_overlapped(p2));
-                CGAL_precondition(do_not_overlap(p1, p2));
+                CGAL_precondition(not_self_overlapped(ca1) &&
+                    not_self_overlapped(ca2));
+                CGAL_precondition(do_not_overlap(ca1, ca2));
             );
             */
-            typename Self::Curve_pair_analysis_2 cpa_2(
-                (Curve_analysis_2(p1)),(Curve_analysis_2(p2)));
-            typename Self::Curve_pair_analysis_2::Status_line_1
-                cpv_line;
+            Construct_curve_pair_2 ccp_2;
+            Curve_pair_analysis_2 cpa_2 = ccp_2(ca1, ca2);
+            typename Curve_pair_analysis_2::Status_line_1 cpv_line;
             // do we need to check which supporting curve is simpler ?    
             typename Polynomial_traits_2::Total_degree total_degree;
             NiX2CGAL_converter cvt;
-            Polynomial_2_CGAL f1 = cvt(p1.f()), f2 = cvt(p2.f());
+            Polynomial_2_CGAL f1 = cvt(ca1.polynomial_2()),
+                f2 = cvt(ca2.polynomial_2());
             bool first_curve = (total_degree(f1) < total_degree(f2));
             
             int i, j, n = cpa_2.number_of_status_lines_with_event();
@@ -1125,7 +1137,7 @@ public:
                     if(ipair.first == -1 || ipair.second == -1) 
                         continue;
                     // VOILA!! we've got it !!!
-                    *roots++ = Xy_coordinate_2(x, (first_curve ? p1 : p2), 
+                    *roots++ = Xy_coordinate_2(x, (first_curve ? ca1 : ca2),
                             (first_curve ? ipair.first: ipair.second));
                     *mults++ = cpv_line.multiplicity_of_intersection(j);
                 }
@@ -1139,18 +1151,7 @@ public:
 #undef CGAL_Algebraic_Kernel_cons 
     
     //!@}
-public:
-    //! \name types and functors for \c GPA_2< both >
-    //!@{
-   
-    //! type of 1-curve analysis
-    typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
-
-    //! type of 2-curve analysis
-    typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2; 
     
-    //!@}
-      
 }; // class Algebraic_curve_kernel_2
 
 CGAL_END_NAMESPACE
