@@ -53,8 +53,8 @@ class Gray_level_image_3
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
       std::cerr << ::boost::format("Deletion of image %1%.\n") % image;
-      ::_freeImage(image);
 #endif
+      ::_freeImage(image);
     }
   };
   typedef boost::shared_ptr<_image> Image_shared_ptr;
@@ -64,9 +64,9 @@ class Gray_level_image_3
   float min_x, min_y, min_z;
   float max_x, max_y, max_z;
   bool is_valid;
-
+  bool positive_inside;
 public:
-  Gray_level_image_3(const char* file, float isoval)
+  Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true)
     : isovalue(isoval),
       min_x(0.f),
       min_y(0.f),
@@ -74,7 +74,8 @@ public:
       max_x(0.f),
       max_y(0.f),
       max_z(0.f),
-      is_valid(false)
+      is_valid(false),
+      positive_inside(positive_inside_)
   {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
     std::cerr << 
@@ -87,7 +88,6 @@ public:
       std::cerr << ::boost::format(" = %1%\n") % image_ptr.get();
 #endif
       is_valid = true;
-      ::convertImageTypeToFloat(image_ptr.get());
       isovalue=isoval;
       ::_get_image_bounding_box(image_ptr.get(),
 				&min_x, &min_y, &min_z,
@@ -123,13 +123,24 @@ public:
       return FT(1);
     else{
       float value = ::triLinInterp(image_ptr.get(), X, Y, Z); 
-
-      if (value > isovalue) // inside
-	return FT(-1);
-      else if (value < isovalue) // outside
-	return FT(1);
+      if (positive_inside)
+      {
+         if (value > isovalue) // inside
+	   return FT(-1);
+         else if (value < isovalue) // outside
+	   return FT(1);
+         else
+	   return FT(0);
+      }
       else
-	return FT(0);
+      {      
+         if (value < isovalue) // inside
+	   return FT(-1);
+         else if (value > isovalue) // outside
+          return FT(1);
+         else
+	  return FT(0);
+      }
     }
   }
 }; // end Gray_level_image_3
