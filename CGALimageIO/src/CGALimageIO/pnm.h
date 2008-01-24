@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 
 
 int readPpmImage(const char *name,_image *im);

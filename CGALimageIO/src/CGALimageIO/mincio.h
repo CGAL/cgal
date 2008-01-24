@@ -25,7 +25,7 @@
 
 #ifdef MINC_FILES
 
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 #include <minc.h>
 
 

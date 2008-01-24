@@ -24,7 +24,7 @@
 #define GIS_H
 
 
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 
 
 

@@ -49,7 +49,7 @@
 
 #include <stdio.h> /* memcpy */
 #include <string.h> /* memcpy */
-#include <typedefs.h>
+#include "typedefs.h"
 
 
 

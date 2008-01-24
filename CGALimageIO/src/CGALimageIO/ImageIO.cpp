@@ -32,7 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 
 /* formats actuellement lus 
 

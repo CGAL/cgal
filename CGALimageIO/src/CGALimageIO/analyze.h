@@ -29,7 +29,7 @@
 
 
 
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 
 /* read analyse format header
 

@@ -53,7 +53,7 @@
 
 
 
-#include <recline.h>
+#include "recline.h"
 
 static int _VERBOSE_RECLINE_ = 0;
 

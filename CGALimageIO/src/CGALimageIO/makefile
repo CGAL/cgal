@@ -49,7 +49,7 @@ SOMAJOR=2
 
 LIB_NAME_BASE = CGALimageIO
 
-ADDITIONAL_CXXFLAGS = -I. $(ALL_ZLIB_CXXFLAGS)
+ADDITIONAL_CXXFLAGS = -I../../include $(ALL_ZLIB_CXXFLAGS)
 SHARED_LIB_ADDITIONAL_LDFLAGS = $(ZLIB_LIBPATHFLAGS) $(ZLIB_LDFLAGS)
 
 #---------------------------------------------------------------------#

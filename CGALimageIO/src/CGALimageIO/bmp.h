@@ -49,7 +49,7 @@
 #include <sys/stat.h> /* open, close */
 #include <sys/types.h> /* open, close */
 #include <string.h>
-#include "imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 extern int readBmpImage(const char *name, _image *im);
 extern void *_readBmpImage( const char *name, int *dimx, int *dimy, int *dimz );
 int testBmpHeader(char *magic,const char *name);
