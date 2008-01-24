@@ -153,7 +153,7 @@ public:
      *
      * polynomials defining the analysis must be squarefree and coprime.
      */
-    Curve_pair_analysis_2(const Curve_analysis_2& ca1,
+    explicit Curve_pair_analysis_2(const Curve_analysis_2& ca1,
         const Curve_analysis_2& ca2) : 
             Base(Rep(ca1, ca2)) {  
     }

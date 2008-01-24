@@ -27,7 +27,7 @@ namespace CGALi {
 template < class AlgebraicCurveKernel_2, class Rep_, 
       class HandlePolicy_ = CGAL::Handle_policy_no_union,
       class Allocator_ = CGAL_ALLOCATOR(Rep_) >
-       //::boost::fast_pool_allocator<Rep_> >
+        //::boost::fast_pool_allocator<Rep_> >
 class Xy_coordinate_2;
 
 template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
@@ -52,6 +52,9 @@ public:
     typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
 
     typedef CGAL::Bbox_2 Bbox_2;
+
+    typedef CGAL::Handle_with_policy<Self>
+        Xy_coordinate_2_inst;
 
     // constructors
 public:
@@ -78,8 +81,37 @@ public:
     //! A bounding box for the given point
     mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
 
-    // TODO int is not sufficient as ids can be re-assigned 
-    typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
+    struct triple {
+        std::size_t x_id;
+        int arcno;
+        std::size_t curve_id;
+
+        triple(std::size_t x_id_, int arcno_, std::size_t curve_id_) :
+               x_id(x_id_), arcno(arcno_), curve_id(curve_id_) {
+        }
+
+        friend std::size_t hash_value(triple const& p) {
+             std::size_t seed = p.x_id;
+             boost::hash_combine(seed, p.arcno);
+             boost::hash_combine(seed, p.curve_id);
+             return seed;
+        }
+
+        bool operator ==(triple const& t) const {
+            return (memcmp((triple *)this, (triple *)&t,
+                sizeof(triple)) == 0);
+        }
+    };
+
+    //! type of curve pair analysis cache
+   typedef CGALi::LRU_hashed_map<triple,
+        CGAL::Comparison_result, CGAL::Identity<triple>,
+        boost::hash<triple>,
+        CGAL::Creator_1<triple, CGAL::Comparison_result>
+        > Int_map;
+        
+    // TODO int is not sufficient as ids can be re-assigned
+    //typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
         
     mutable Int_map _m_compare_xy;
 
@@ -151,6 +183,8 @@ public:
 
     typedef typename Rep::Int_map Int_map;
 
+    typedef typename Rep::triple triple;
+
     //! Type for the bounding box
     typedef typename Rep::Bbox_2 Bbox_2;
     
@@ -166,10 +200,6 @@ private:
     static bool _simplify(const Xy_coordinate_2& p, const Xy_coordinate_2& q) 
     {
         std::vector<Curve_analysis_2> parts_of_f, parts_of_g, common;
-
-        /*std::cerr << "simplify called: " << p.curve().id() << "@" <<
-            p.curve().f() << "; and " <<
-             q.curve().id() << q.curve().f() << "\n";*/
         Algebraic_curve_kernel_2 ak_2;
 
         if(ak_2.decompose_2_object()(p.curve(), q.curve(), 
@@ -179,18 +209,11 @@ private:
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
             if(parts_of_f.size() == 1) {
-         /*std::cerr << "non-coprime parts f: " << parts_of_f[0].id() << "@" <<
-            parts_of_f[0].f() << "; and " <<
-             common[0].id() << common[0].f() << "\n";*/
                 p.simplify_by(ak_2.construct_curve_pair_2_object()(
                     parts_of_f[0], common[0]));
             } 
             
             if(parts_of_g.size() == 1) {
-        /*std::cerr << "non-coprime parts g: " << parts_of_g[0].id() << "@" <<
-            parts_of_g[0].f() << "; and " <<
-             common[0].id() << common[0].f() << "\n";*/
-                    
                 q.simplify_by(ak_2.construct_curve_pair_2_object()(
                     parts_of_g[0], common[0]));
             } 
@@ -375,9 +398,9 @@ public:
             return (- q.compare_xy(*this));
 
         /*std::pair<typename Int_map::Hashed_iterator, bool> r =
-            this->ptr()->_m_compare_xy.find(q.id());
-        // TODO deactivated cache by "false" as id could have been re-assigned
-        if(false && r.second) {
+            this->ptr()->_m_compare_xy.find(triple(q.x().id(),
+                q.arcno(), q.curve().id()));
+        if(r.second) {
             //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
             return r.first->second;
         }*/
@@ -386,7 +409,9 @@ public:
         if(res == CGAL::EQUAL) {
             res = _compare_y_at_x(q);
         }
-        //this->ptr()->_m_compare_xy.insert(std::make_pair(q.id(), res));
+//         this->ptr()->_m_compare_xy.insert(std::make_pair(
+//             triple(q.x().id(),
+//                 q.arcno(), q.curve().id()), res));
         return res;
     }
     
@@ -461,14 +486,13 @@ public:
     
         typedef typename Algebraic_curve_kernel_2::Polynomial_2_CGAL Poly_2;
         typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
-        typedef typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
-            Total_degree;
+        typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
+            total_degree;
         
         CGAL_precondition_code(
             typename Curve_analysis_2::Polynomial_2 mult =
                     cpa_2.curve_analysis(0).polynomial_2() *
                     cpa_2.curve_analysis(1).polynomial_2();
-            Total_degree total_degree;
         );
         // common parts
         CGAL_precondition(NiX::resultant(mult,
@@ -497,7 +521,6 @@ public:
             // the point from the composed curved (also including this vertical
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
-            Total_degree total_degree;
             Poly_2 ff = cvt(cpa_2.curve_analysis(0).polynomial_2()),
                    gg = cvt(cpa_2.curve_analysis(1).polynomial_2());
             if(total_degree(ff) > total_degree(gg)) 
@@ -532,7 +555,7 @@ public:
             = curve().polynomial_2()[0];
         bool zero_is_root_of_local_pol 
             = this->ptr()->_m_x.is_root_of(constant_pol);
-        // Since we know that y_iv isstd::pair<Hashed_iterator, bool> find(const Key_type& key) an _isolating_ interval,
+        // Since we know that y_iv is an _isolating_ interval,
         // we can immediately return
         return zero_is_root_of_local_pol;
         

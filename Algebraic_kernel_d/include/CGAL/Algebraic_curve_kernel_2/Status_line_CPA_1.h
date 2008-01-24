@@ -262,7 +262,7 @@ public:
     size_type event_of_curve(size_type k, bool c) const {
     
         if(this->ptr()->_m_cpa.is_swapped()){ // reverse the curve order since
-            //std::cout << "evt of curve: content swapped\n";
+           // std::cout << "evt of curve: content swapped\n";
             c ^= 1;    // polynomials are swapped in curve pair
         }
         CGAL_precondition_msg(0 <= k &&
@@ -301,7 +301,7 @@ public:
         const Arc_pair& arc = this->ptr()->_m_arcs[j];
         if(this->ptr()->_m_cpa.is_swapped()) {
             //std::cout << "swapped content\n";
-            //return Arc_pair(arc.second, arc.first);
+            return Arc_pair(arc.second, arc.first);
         }
         return arc;
     }
@@ -410,4 +410,3 @@ std::ostream& operator<< (std::ostream& os,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ALGEBRAIC_CURVE_KERNEL_STATUS_LINE_CPA_1_H
-
