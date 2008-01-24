@@ -6,5 +6,6 @@
         <file>fileopen.png</file>
         <file>flip.png</file>
         <file>surface.png</file>
+        <file>twosides.png</file>
     </qresource>
 </RCC>

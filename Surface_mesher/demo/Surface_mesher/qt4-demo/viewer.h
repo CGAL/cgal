@@ -7,10 +7,14 @@ class Surface;
 
 class Viewer : public QGLViewer
 {
+  Q_OBJECT
 public:
   Viewer(QWidget* parent) : QGLViewer(parent), parent(parent), surface(0) {};
 
   void set_surface(Surface*);
+
+public slots:
+  void interpolateToFitBoundingBox(double, double, double, double, double, double);
 
 protected :
   virtual void init();

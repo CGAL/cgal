@@ -9,12 +9,13 @@ class QDragEnterEvent;
 class QDropEvent;
 class Surface;
 class QGLViewer;
+class QDoubleSpinBox;
 
 class MainWindow : public  QMainWindow, private Ui::MainWindow 
 {
   Q_OBJECT
 public:
-  MainWindow();
+  MainWindow(MainWindow* other_window = 0);
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
   void surface_open(const QString& filename);
@@ -23,6 +24,7 @@ public:
 private slots:
   void on_action_Open_triggered();
   void on_action_Quit_triggered();
+  void on_action_Clone_triggered();
   
 private:
   void fix_one_menu_visibility(QMenu* menu);
@@ -31,6 +33,9 @@ private:
   QGLViewer* viewer_ptr;
   double sharp_edges_angle_lower_bound;
   double sharp_edges_angle_upper_bound;
+  QDoubleSpinBox* spinbox_isovalue;
+  QDoubleSpinBox* spinbox_radius_bound;
+  QDoubleSpinBox* spinbox_distance_bound;
 };
 
 

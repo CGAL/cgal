@@ -8,16 +8,22 @@
 #include <QMenu>
 #include <QAction>
 #include <QtGlobal>
+#include <QToolBar>
+#include <QDoubleSpinBox>
+#include <QLabel>
 
 #include "get_polyhedral_surface.h"
 #include <QGLViewer/vec.h>
+
+#include "ui_meshing_bar.h"
 
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt
 #include <boost/format.hpp>
 
+#include "volume.h"
 
-MainWindow::MainWindow() : 
+MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
   QMainWindow(),
   sharp_edges_angle_lower_bound(60.),
   sharp_edges_angle_upper_bound(180.)
@@ -28,10 +34,55 @@ MainWindow::MainWindow() :
   viewer_ptr = qFindChild<QGLViewer*>(this, "viewer");
 
   viewer_ptr->restoreStateFromFile();
+
+  if(other_window != 0)
+  {
+    QGLViewer* other_viewer_ptr = qFindChild<QGLViewer*>(other_window, "viewer");
+    viewer_ptr->setCamera(other_viewer_ptr->camera());
+    connect(other_window, SIGNAL(destroyed()),
+            this, SLOT(close()));
+  }
+
+  QToolBar* tb_meshing = qFindChild<QToolBar*>(this, "toolBar_meshing");
+//   tb_meshing->setVisible(false);
+  QAction* action_mc = qFindChild<QAction*>(this, "actionMarching_cubes");
+
+  if(tb_meshing && action_mc) {
+    QWidget* meshing_bar = new QWidget;
+    Ui::meshing_bar ui;
+    ui.setupUi(meshing_bar);
+    tb_meshing->insertWidget(action_mc, 
+                             meshing_bar);
+    tb_meshing->insertSeparator(action_mc);
+  }
+//     tb_meshing->insertWidget(action_mc, 
+//                              new QLabel(tr("Iso-value:")));
+//     spinbox_isovalue = new QDoubleSpinBox(this);
+//     spinbox_isovalue->setObjectName("spinbox_isovalue");
+//     tb_meshing->insertWidget(action_mc, 
+//                              spinbox_isovalue);
   
-  surface = get_polyhedral_surface(this,
-				   sharp_edges_angle_lower_bound,
-				   sharp_edges_angle_upper_bound);
+//     tb_meshing->insertWidget(action_mc, 
+//                              new QLabel(tr("Sizing bound:")));
+//     spinbox_radius_bound = new QDoubleSpinBox(this);
+//     spinbox_radius_bound->setObjectName("spinbox_radius_bound");
+//     tb_meshing->insertWidget(action_mc, 
+//                              spinbox_radius_bound);
+  
+//     tb_meshing->insertWidget(action_mc, 
+//                              new QLabel(tr("Distance bound:")));
+
+//     spinbox_distance_bound = new QDoubleSpinBox(this);
+//     spinbox_distance_bound->setObjectName("spinbox_isovalue");
+//     tb_meshing->insertWidget(action_mc, 
+//                              spinbox_distance_bound);
+
+//   surface = get_polyhedral_surface(this,
+// 				   sharp_edges_angle_lower_bound,
+// 				   sharp_edges_angle_upper_bound);
+
+  surface = new Volume(this);
+  
   fix_menus_visibility();
 }
 
@@ -84,4 +135,10 @@ void MainWindow::on_action_Open_triggered()
 void MainWindow::on_action_Quit_triggered()
 {
   qApp->exit();
+}
+
+void MainWindow::on_action_Clone_triggered()
+{
+  MainWindow* other = new MainWindow(this);
+  other->show();
 }

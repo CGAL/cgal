@@ -14,6 +14,15 @@ QString Viewer::helpString() const
   "<p>No help availlable for now.</p>";
 }
 
+void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
+                                         double xmax, double ymax, double zmax)
+{
+  qglviewer::Camera new_camera = *(camera ());
+  new_camera.fitBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
+                            qglviewer::Vec(xmax, ymax, zmax));
+  camera()->interpolateTo(*new_camera.frame(), 1.);
+}
+
 void Viewer::draw()
 {
   if(surface)

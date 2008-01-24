@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>942</width>
-    <height>600</height>
+    <width>944</width>
+    <height>598</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -27,7 +27,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>942</width>
+     <width>944</width>
      <height>31</height>
     </rect>
    </property>
@@ -49,6 +49,7 @@
     <addaction name="actionDisplay_control_edges" />
     <addaction name="actionDisplay_all_edges" />
     <addaction name="action_Options" />
+    <addaction name="actionDisplay_front_and_back" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -63,7 +64,7 @@
   <widget class="QStatusBar" name="statusbar" />
   <widget class="QToolBar" name="toolBar" >
    <property name="windowTitle" >
-    <string>toolBar</string>
+    <string>Actions toolbar</string>
    </property>
    <property name="allowedAreas" >
     <set>Qt::AllToolBarAreas</set>
@@ -75,12 +76,30 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Open" />
+   <addaction name="action_Clone" />
    <addaction name="separator" />
+   <addaction name="actionDisplay_front_and_back" />
    <addaction name="actionInverse_normals" />
    <addaction name="separator" />
    <addaction name="actionDisplay_surface" />
    <addaction name="actionDisplay_octree" />
    <addaction name="actionDisplay_edges_octree" />
+  </widget>
+  <widget class="QToolBar" name="toolBar_meshing" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle" >
+    <string>Meshing toolbar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMarching_cubes" />
+   <addaction name="actionSurface_mesher" />
   </widget>
   <action name="action_Open" >
    <property name="icon" >
@@ -113,6 +132,9 @@
    </property>
    <property name="text" >
     <string>&amp;Inverse normals</string>
+   </property>
+   <property name="iconText" >
+    <string>Flip</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+I</string>
@@ -220,6 +242,35 @@
    </property>
    <property name="visible" >
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionMarching_cubes" >
+   <property name="text" >
+    <string>Marching cubes</string>
+   </property>
+  </action>
+  <action name="actionSurface_mesher" >
+   <property name="text" >
+    <string>Surface mesher</string>
+   </property>
+  </action>
+  <action name="actionDisplay_front_and_back" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="surface_mesher.qrc" >:/icons/twosides.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Display facets with &amp;front and back</string>
+   </property>
+   <property name="iconText" >
+    <string>Two-sides</string>
+   </property>
+  </action>
+  <action name="action_Clone" >
+   <property name="text" >
+    <string>Clone</string>
    </property>
   </action>
  </widget>
