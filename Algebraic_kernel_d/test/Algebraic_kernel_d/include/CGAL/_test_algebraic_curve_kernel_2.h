@@ -71,8 +71,7 @@ void test_algebraic_curve_kernel_2() {
             Polynomial_1,
             typename AK::Polynomial_1 >::value));*/
 
-    typedef typename AK_2::Curve_2 Curve_2;
-    typedef typename Curve_2::Poly_d Internal_poly_2;
+    typedef typename AK_2::Internal_polynomial_2 Internal_poly_2;
     typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
     typedef typename Curve_analysis_2::Status_line_1
         Status_line_1;
@@ -93,7 +92,7 @@ void test_algebraic_curve_kernel_2() {
     ///////// testing curve construction //////////
     
     AK_2 kernel_2;
-    Curve_2 c0 = kernel_2.construct_curve_2_object()(polys[0]),
+    Curve_analysis_2 c0 = kernel_2.construct_curve_2_object()(polys[0]),
             // make it decomposable
             c1 = kernel_2.construct_curve_2_object()(polys[1]*polys[2]),
             c2 = kernel_2.construct_curve_2_object()(polys[2]),
@@ -102,38 +101,42 @@ void test_algebraic_curve_kernel_2() {
             c6 = kernel_2.construct_curve_2_object()(polys[6]);
     std::cerr << "done..\n";
             
-    Curve_analysis_2 ca0(c0), ca1(c1);
     Status_line_1 line1, line2;
     Xy_coordinate_2 xy1, xy2, xy3, xy4;
 
     ///////////// testing sign_at_2 for non-coprime case /////////////
     {    
-        Curve_2 c7_c6 = kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
-        Curve_analysis_2 ca_c6(c6);
-        CGAL_test_assert(ca_c6.number_of_status_lines_with_event() > 0);
-        Status_line_1 line = ca_c6.status_line_at_event(0);
+        Curve_analysis_2 c7_c6 =
+            kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
+        CGAL_test_assert(c7_c6.number_of_status_lines_with_event() > 0);
+        Status_line_1 line = c7_c6.status_line_at_event(0);
         CGAL_test_assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
-        CGAL_test_assert(kernel_2.sign_at_2_object()(c7_c6,xy) == CGAL::ZERO);
+
+        std::cerr << "done..1.5\n";
+        CGAL_test_assert(kernel_2.sign_at_2_object()(c7_c6, xy) == CGAL::ZERO);
     }
     {    
-        Curve_2 c7_c6 = kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
-        Curve_2 c8_c6 = kernel_2.construct_curve_2_object()(polys[8]*polys[6]);
-        Curve_analysis_2 ca_c7c6(c7_c6);
-        CGAL_test_assert(ca_c7c6.number_of_status_lines_with_event() > 0);
-        Status_line_1 line = ca_c7c6.status_line_at_event(0);
+        Curve_analysis_2 c7_c6 =
+                   kernel_2.construct_curve_2_object()(polys[7]*polys[6]),
+           c8_c6 = kernel_2.construct_curve_2_object()(polys[8]*polys[6]);
+        
+        CGAL_test_assert(c7_c6.number_of_status_lines_with_event() > 0);
+        Status_line_1 line = c7_c6.status_line_at_event(0);
         CGAL_test_assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
-        CGAL_test_assert(kernel_2.sign_at_2_object()(c8_c6,xy) == CGAL::ZERO);
+
+        std::cerr << "done..1.6\n";
+        CGAL_test_assert(kernel_2.sign_at_2_object()(c8_c6, xy) == CGAL::ZERO);
     }
+
+    std::cerr << "done..2\n";
     
-
-
     ///////// testing comparison predicates //////////
     
-    line1 = ca0.status_line_of_interval(0);
+    line1 = c0.status_line_of_interval(0);
     xy1 = line1.algebraic_real_2(1);
-    line2 = ca1.status_line_at_event(1);
+    line2 = c1.status_line_at_event(1);
     xy2 = line2.algebraic_real_2(2);
     xy3 = line2.algebraic_real_2(1);
 
@@ -145,9 +148,8 @@ void test_algebraic_curve_kernel_2() {
     CGAL_test_assert(kernel_2.compare_xy_2_object()(xy2, xy3) ==
         CGAL::LARGER);
 
-    Curve_analysis_2 ca2(c2), ca3(c3);
-    xy1 = ca2.status_line_at_event(0).algebraic_real_2(0);
-    line2 = ca3.status_line_at_event(0);
+    xy1 = c2.status_line_at_event(0).algebraic_real_2(0);
+    line2 = c3.status_line_at_event(0);
     xy2 = line2.algebraic_real_2(2);
     xy3 = line2.algebraic_real_2(3);
     xy4 = line2.algebraic_real_2(4);
@@ -163,6 +165,9 @@ void test_algebraic_curve_kernel_2() {
     std::cerr << " done" << std::endl;
 
     /////// testing squarefreeness and coprimality /////////
+
+    typename AK_2::NiX2CGAL_converter cvt;
+    typename AK_2::CGAL2NiX_converter cvt_back;
      
     /*CGAL_test_assert(
         kernel_2.has_finite_number_of_self_intersections_2_object()
@@ -170,18 +175,18 @@ void test_algebraic_curve_kernel_2() {
     CGAL_test_assert(
         !kernel_2.has_finite_number_of_self_intersections_2_object()
             (polys[4])); // non-squarefree*/
-
+    
     CGAL_test_assert(
         kernel_2.has_finite_number_of_intersections_2_object()
-            (c2, c3)); // coprime
+            (cvt(c2.polynomial_2()), cvt(c3.polynomial_2()))); // coprime
             
     CGAL_test_assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
-            (c1, c2)); // non-coprime
+            (cvt(c1.polynomial_2()), cvt(c2.polynomial_2()))); // non-coprime
             
     CGAL_test_assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
-            (c5, c6)); // non-coprime
+            (cvt(c5.polynomial_2()), cvt(c6.polynomial_2()))); // non-coprime
 
     //////// testing decompose ///////////
             
@@ -191,7 +196,7 @@ void test_algebraic_curve_kernel_2() {
    CGAL_test_assert((kernel_2.decompose_2_object()(polys[3])) ==
         polys[3]);
 
-    typedef std::vector<Curve_2> Curves_2;
+    typedef std::vector<Curve_analysis_2> Curves_2;
     typedef std::vector<int> Int_vector;
     Curves_2 parts;
     Int_vector mults;
@@ -246,9 +251,6 @@ void test_algebraic_curve_kernel_2() {
     
     ///////// testing derivation //////////
 
-    typename AK_2::NiX2CGAL_converter cvt;
-    typename AK_2::CGAL2NiX_converter cvt_back;
-
     cvt_back(kernel_2.derivative_x_2_object()(cvt(polys[0])));
         
     cvt_back(kernel_2.derivative_y_2_object()(cvt(polys[0])));
@@ -274,11 +276,11 @@ void test_algebraic_curve_kernel_2() {
     Status_line_1 line;
     Xy_coordinate_2 xy;
         
-    int n_lines = ca0.number_of_status_lines_with_event(), ii, jj,
+    int n_lines = c0.number_of_status_lines_with_event(), ii, jj,
         n_events;
     for(ii = 0; ii < n_lines; ii++) {
         
-        line = ca0.status_line_at_event(ii);
+        line = c0.status_line_at_event(ii);
         n_events = line.number_of_events();
         std::cout << ii << "pts at event: \n";
         for(jj = 0; jj < n_events; jj++) {
@@ -288,7 +290,7 @@ void test_algebraic_curve_kernel_2() {
         }
             
         std::cout << ii << "pts over interval: \n";
-        line = ca0.status_line_of_interval(ii);
+        line = c0.status_line_of_interval(ii);
         n_events = line.number_of_events();
         for(jj = 0; jj < n_events; jj++) {
             xy = line.algebraic_real_2(jj);
