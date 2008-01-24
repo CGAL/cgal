@@ -1481,9 +1481,9 @@ protected:
             tmp;
         bool inf_src = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY),
              inf_tgt = (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY);
-        src_line = (inf_src ? ca_2.status_line_of_interval(0) :
+        src_line = (inf_src ? curve().status_line_of_interval(0) :
             curve().status_line_for_x(_minpoint().x()));
-        tgt_line = (inf_tgt ? ca_2.status_line_of_interval(
+        tgt_line = (inf_tgt ? curve().status_line_of_interval(
             curve().number_of_status_lines_with_event()) :
             curve().status_line_for_x(_maxpoint().x()));
         
@@ -1813,7 +1813,7 @@ protected:
 
         typename Curve_analysis_2::Polynomial_2 f = curve().polynomial_2();
         CGAL_precondition_code(
-             typename Curve_analysis_2::Poly_d mult =
+             typename Curve_analysis_2::Polynomial_2 mult =
                     cpa_2.curve_analysis(0).polynomial_2() *
                     cpa_2.curve_analysis(1).polynomial_2();
         );
@@ -1878,7 +1878,7 @@ protected:
             
             cpv_line = cpa_2.status_line_for_x(x0);
             CGAL_precondition(cpv_line.number_of_events() == 
-                    ca_2.status_line_for_x(x0).number_of_events());    
+                    orig_curve.status_line_for_x(x0).number_of_events());
             ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_min);
             if(ipair.first != -1 && ipair.second != -1) 
                 // choose simpler supporting curve
@@ -1900,7 +1900,7 @@ protected:
             x0 = _maxpoint().x(); 
             cpv_line = cpa_2.status_line_for_x(x0);
             CGAL_precondition(cpv_line.number_of_events() == 
-                    ca_2.status_line_for_x(x0).number_of_events());  
+                    orig_curve.status_line_for_x(x0).number_of_events());
                     
             ipair = cpv_line.curves_at_event(this->ptr()->_m_arcno_max);
             if(ipair.first != -1 && ipair.second != -1) 
