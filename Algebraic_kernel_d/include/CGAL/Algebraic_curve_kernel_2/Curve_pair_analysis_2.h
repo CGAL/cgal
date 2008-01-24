@@ -38,9 +38,10 @@ public:
     // myself
     typedef Curve_pair_analysis_2_rep<Algebraic_curve_kernel_2> Self;
 
-    // type of curve pair
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-    
+    // internal curve pair type (temporary)
+    typedef typename Algebraic_curve_kernel_2::Internal_curve_pair_2
+        Internal_curve_pair_2;
+
     // type of 1-curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
         Curve_analysis_2;
@@ -51,35 +52,30 @@ public:
     Curve_pair_analysis_2_rep() 
     {   }
 
-     // temporary constructor: directly from curve pair
-    /*Curve_pair_analysis_2_rep(const Curve_pair_2& curve_pair) : 
-        _m_ca1(curve_pair.curve1()), _m_ca2(curve_pair.curve2()), 
-            _m_curve_pair(curve_pair)
-    {   }*/
-
     // constructs from two curve analysis instances
     Curve_pair_analysis_2_rep(const Curve_analysis_2& ca1,
-        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2) {
+        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2),
+            _m_swapped(false) {
         
-        _m_curve_pair = Algebraic_curve_kernel_2::curve_pair_cache()
-            (std::make_pair(ca1.polynomial_2(), ca2.polynomial_2()));
-            
-        //! attention: is it enough to compare ids only ? or for safety
-        //! its better to compare polynomials ?
-        _m_swapped = (_m_curve_pair.curve1().id() !=
-             ca1.polynomial_2().id());
-        if(_m_swapped)
-            ;//std::cout << "\nATTENTION: content was swapped\n";
+        _m_curve_pair = Internal_curve_pair_2(
+            ca1._internal_curve(), ca2._internal_curve());
+      
+        // warning: ca1 and ca2 might already been swapped while calling
+        // this routine
+//         _m_swapped = (_m_curve_pair.curve1().id() !=
+//              ca1.polynomial_2().id());
     }
 
     // data
     mutable Curve_analysis_2 _m_ca1, _m_ca2;
+
     // temporarily this implementation is based on Curve_pair_2 from GAPS
-    mutable Curve_pair_2 _m_curve_pair;
+    mutable Internal_curve_pair_2 _m_curve_pair;
+    
     // indicates that the curves in a curve pair were swapped after precaching
     // (this happens when the first curve is defined by a polynomial of higher
     // degree than the second one)
-    bool _m_swapped;
+    mutable bool _m_swapped;
     
     // befriending the handle
     friend class Curve_pair_analysis_2<Algebraic_curve_kernel_2, Self>;
@@ -99,6 +95,9 @@ template <class AlgebraicCurveKernel_2,
       class Rep_ = CGALi::Curve_pair_analysis_2_rep<AlgebraicCurveKernel_2> >
 class Curve_pair_analysis_2 : public ::CGAL::Handle_with_policy< Rep_ > 
 {
+    // internal curve pair type (temporary)
+    typedef typename Rep_::Internal_curve_pair_2 Internal_curve_pair_2;
+
 public:
     //!@{
     //! \name typedefs
@@ -114,12 +113,6 @@ public:
 
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
-
-    //! type of a curve pair
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
-    //! type of a curve
-    typedef typename Algebraic_curve_kernel_2::Curve_2 Curve_2;
 
     //! type of 1-curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
@@ -154,9 +147,12 @@ public:
         Base(static_cast<const Base&>(p)) {  
     }
 
-    //! constructs a curve pair analysis defined by analysis
-    //! given by \c _m_ca1 and \c _m_ca2. The polynomials defining the analysis
-    //! must be squarefree and coprime.
+    /*!\brief
+     * constructs a curve pair analysis defined by analyses given by \c _m_ca1
+     * and \c _m_ca2.
+     *
+     * polynomials defining the analysis must be squarefree and coprime.
+     */
     Curve_pair_analysis_2(const Curve_analysis_2& ca1,
         const Curve_analysis_2& ca2) : 
             Base(Rep(ca1, ca2)) {  
@@ -228,7 +224,7 @@ public:
         return this->ptr()->_m_curve_pair.status_line_at_event(*this, i);
           
 #else
-        typename Curve_pair_2::Event2_slice slice =
+        typename Internal_curve_pair_2::Event2_slice slice =
             this->ptr()->_m_curve_pair.slice_at_event(i);
 
         typename Status_line_1::Arc_container arcs(slice.num_arcs());
@@ -271,7 +267,7 @@ public:
         return this->ptr()->_m_curve_pair.status_line_of_interval(*this, i);
 #else
 
-        typename Curve_pair_2::Event2_slice slice =
+        typename Internal_curve_pair_2::Event2_slice slice =
             this->ptr()->_m_curve_pair.slice_at_interval(i);
 
         typename Status_line_1::Int_container arcs(slice.num_arcs());
@@ -331,13 +327,21 @@ public:
         return status_line_for_x(x);
     }
 
+    // only set during initialization by ACK_2::Construct_curve_pair_2
+    void _set_swapped(bool swapped) const {
+        this->ptr()->_m_swapped = swapped;
+    }   
 
-    // temporary member returning underlying curve pair
-    Curve_pair_2 curve_pair() const {
+    //!@}
+protected:
+
+    // temporary method returns curve pair representaion
+    Internal_curve_pair_2 _internal_curve_pair() const {
         return this->ptr()->_m_curve_pair;
     }
 
-    //!@}
+    // befriending status line class
+    friend class CGALi::Status_line_CPA_1<Self>;
 }; // class Curve_pair_analysis_2
 
 } // namespace CGALi

@@ -107,7 +107,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
                 r1.curve().id() == r2.curve().id());
             
             Boundary res;
-            Event_line vline = r1.curve().event_info_at_x(r1.x());
+            Event_line vline =
+                 r1.curve()._internal_curve().event_info_at_x(r1.x());
             if(r1.arcno() < r2.arcno()) {
                 res = (vline.upper_boundary(r1.arcno()) +
                     vline.lower_boundary(r2.arcno())) / Boundary(2);
@@ -126,7 +127,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             : public Unary_function<Type, Boundary> {
         
         Boundary operator()(const Type& r) const {
-            Event_line vline = r.curve().event_info_at_x(r.x());
+            Event_line vline = r.curve()._internal_curve().
+                event_info_at_x(r.x());
             return vline.lower_boundary(r.arcno());
         }
     };
@@ -137,7 +139,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             : public Unary_function<Type, Boundary> {
          
         Boundary operator()(const Type& r) const {
-            Event_line vline = r.curve().event_info_at_x(r.x());
+            Event_line vline = r.curve()._internal_curve().
+                event_info_at_x(r.x());
             return vline.upper_boundary(r.arcno());
         }
     };
@@ -151,7 +154,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         //! note that an interval may also degenerate to a single point
         void operator()(const Type& r) const {
         
-            r.curve().event_info_at_x(r.x()).refine(r.arcno());
+            r.curve()._internal_curve().event_info_at_x
+                (r.x()).refine(r.arcno());
         }
         
         //! \brief refines isolating interval of an y-coorinate of algebraic 
@@ -161,7 +165,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
         void operator()(const Type& r, int rel_prec) const {
             
-            Event_line vline = r.curve().event_info_at_x(r.x());
+            Event_line vline =
+                r.curve()._internal_curve().event_info_at_x(r.x());
             int arcno = r.arcno();
             Boundary prec = (vline.interval_length(arcno)) /
                 CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
@@ -193,7 +198,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
 template <class Kernel_2>
 struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
     public Algebraic_real_traits_for_y< Xy_coordinate_2<Kernel_2>,
-        typename Kernel_2::Curve_pair_2 > {
+        typename Kernel_2::Internal_curve_pair_2 > {
 };
   
 template <class Coefficient_, class FieldWithSqrt, class Rational_,

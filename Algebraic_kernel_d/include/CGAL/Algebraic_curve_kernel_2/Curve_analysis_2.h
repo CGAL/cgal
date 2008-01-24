@@ -36,10 +36,14 @@ public:
     // myself
     typedef Curve_analysis_2_rep<Algebraic_curve_kernel_2> Self;
 
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
+    // supporting polynomial type
+    typedef typename Algebraic_curve_kernel_2::Internal_polynomial_2
+        Polynomial_2;
 
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
-    
+    // internal curve type (temporary)
+    typedef typename Algebraic_curve_kernel_2::Internal_curve_2
+        Internal_curve_2;
+
     // constructors
 public:
     // default constructor ()
@@ -47,12 +51,18 @@ public:
     {  }
     
     // standard constructor
-    Curve_analysis_2_rep(const Curve_2& curve) : _m_curve(curve)
-    {   }
+    Curve_analysis_2_rep(const Polynomial_2& f)
+    {
+//////////////////////////////////////////////////////////////////////////////
+//// this should be eliminated in the final version once Intenal_curve_2 is
+//// replaced by Curve_analysis_2
+        _m_curve = Internal_curve_2::get_curve_cache()(f);
+//////////////////////////////////////////////////////////////////////////////
+    }
 
     // data
     // temporarily this implementation uses underlying Curve_2 from SweepX
-    mutable Curve_2 _m_curve;
+    mutable Internal_curve_2 _m_curve;
     
     // befriending the handle
     friend class Curve_analysis_2<Algebraic_curve_kernel_2, Self>;
@@ -72,9 +82,14 @@ template <class AlgebraicCurveKernel_2,
           class Rep_ = CGALi::Curve_analysis_2_rep<AlgebraicCurveKernel_2> >
 class Curve_analysis_2 : public ::CGAL::Handle_with_policy< Rep_ > 
 {
+
+public:
+    // type of intenal curve (temporary)
+    typedef typename Rep_::Internal_curve_2 Internal_curve_2;
+
 public:
     //!@{
-    //! \name typedefs
+    //! \name public typedefs
 
     //! this instance's first template parameter
     typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
@@ -88,8 +103,9 @@ public:
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
-    //! type of a curve
-    typedef typename Algebraic_curve_kernel_2::Curve_2 Curve_2;
+    //! supporting polynomial type
+    typedef typename Algebraic_curve_kernel_2::Internal_polynomial_2
+        Polynomial_2;
 
     //! myself
     typedef Curve_analysis_2<Algebraic_curve_kernel_2, Rep> Self;
@@ -100,9 +116,6 @@ public:
     //! type of a vertical line
     typedef CGALi::Status_line_CA_1<Self> Status_line_1;
         
-    //! type of underlying Event1_info structure
-    typedef typename Curve_2::Event1_info Event1_info;
-
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep> Base;
     
@@ -123,11 +136,13 @@ public:
         Base(static_cast<const Base&>(p)) {  
     }
 
-    //! \brief constructs a curve analysis from a given \c Curve_2 object
-    //!
-    //! for safety purposes implicit conversion from \c Curve_2 is disabled
-    explicit Curve_analysis_2(const Curve_2& c) : 
-        Base(Rep(c)) {  
+    /*!\brief
+     * constructs a curve analysis from a given polynomial
+     *
+     * for safety purposes implicit conversion from \c Polynomial_2 is disabled
+     */
+    explicit Curve_analysis_2(const Polynomial_2& f) :
+        Base(Rep(f)) {
     }
            
     /*!\brief
@@ -142,22 +157,23 @@ public:
     //!\name Access functions
     //!@{
 
-    //! \brief returns the defining polynomial of the analysis
-    Curve_2 polynomial_2() const
+    /*!\brief
+     * returns the defining polynomial of the curve analysis
+     */
+    Polynomial_2 polynomial_2() const
     { 
-        return this->ptr()->_m_curve;
+        return this->ptr()->_m_curve.f();
     }
 
-    //! \brief alias for \c polynomial_2()
-    Curve_2 curve_2() const
-    { 
-        return polynomial_2();
+    // temporary method to access internal curve representation
+    Internal_curve_2 _internal_curve() const {
+        return this->ptr()->_m_curve;
     }
 
     //! \brief returns number of vertical lines that encode an event
     size_type number_of_status_lines_with_event() const
     {
-        return this->ptr()->_m_curve.num_events();
+        return _internal_curve().num_events();
     }
 
     //! \brief returns an instance of StatusLine_1 at the i-th
@@ -169,11 +185,11 @@ public:
         CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
 
 #ifdef CGAL_ACK_2_USE_STATUS_LINES
-        return this->ptr()->_m_curve.status_line_at_event(*this, i);
+        return _internal_curve().status_line_at_event(*this, i);
 
 #else
-        typedef typename Curve_2::Event1_info Event1_info;
-        Event1_info info = this->ptr()->_m_curve.event_info(i);
+        typedef typename Internal_curve_2::Event1_info Event1_info;
+        Event1_info info = _internal_curve().event_info(i);
 
         typedef typename Event1_info::Arc_container EArc_container;
         const EArc_container& src = info.get_arcs();
@@ -207,8 +223,8 @@ public:
     {
         CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
 
-        size_type n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
-        return Status_line_1(X_coordinate_1(this->ptr()->_m_curve.
+        size_type n_arcs = _internal_curve().arcs_over_interval(i);
+        return Status_line_1(X_coordinate_1(_internal_curve().
               boundary_value_in_interval(i)), i, *this, n_arcs);
     }
 
@@ -249,7 +265,7 @@ public:
         if(is_evt) 
             return status_line_at_event(i);
         
-        size_type n_arcs = this->ptr()->_m_curve.arcs_over_interval(i);
+        size_type n_arcs = _internal_curve().arcs_over_interval(i);
         return Status_line_1(x, i, *this, n_arcs);
     }
     

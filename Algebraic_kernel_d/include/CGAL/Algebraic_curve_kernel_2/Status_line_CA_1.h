@@ -54,9 +54,6 @@ class Status_line_CA_1_rep {
     // container of arcs
     typedef std::vector<Arc_pair> Arc_container;
 
-    // type of underlying \c Event1_info
-    typedef typename Curve_analysis_2::Curve_2::Event1_info Event1_info;
-
     // constructors
 public:
     // default constructor ()
@@ -129,10 +126,7 @@ public:
     int lowest_event_;
 
     // stores multiplicities
-    std::vector< int > multiplicities_;
-
-    // temporary added underlying Event1_info object
-    Event1_info _m_event_info;*/
+    std::vector< int > multiplicities_;*/
     
     // stores algebraic real over the vertical line
     mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
@@ -182,9 +176,6 @@ public:
     //! an instance of a size type
     typedef typename Curve_analysis_2::size_type size_type;
 
-    //! type of underlying \c Event1_info
-    //typedef typename Curve_analysis_2::Curve_2::Event1_info Event1_info;
-
     //! encodes number of arcs to the left and to the right
     typedef std::pair<size_type, size_type> Arc_pair;
 
@@ -229,7 +220,7 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
-            ca.curve_2().x_to_index(x, idx, is_event);
+            ca._internal_curve().x_to_index(x, idx, is_event);
             CGAL_precondition(!is_event && idx == i);
         );
     }
@@ -257,7 +248,7 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
-            ca.curve_2().x_to_index(x, idx, is_event);
+            ca._internal_curve().x_to_index(x, idx, is_event);
             CGAL_precondition(is_event && idx == i);
         );
         _set_arcs(arcs);
@@ -278,7 +269,7 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
-            ca.curve_2().x_to_index(x, idx, is_event);
+            ca._internal_curve().x_to_index(x, idx, is_event);
             CGAL_precondition(is_event && idx == i);
         );
     }
@@ -358,7 +349,7 @@ public:
         CGAL_precondition(0 <= j&&j < number_of_events());
         if(!this->ptr()->_m_xy_coords[j])
             this->ptr()->_m_xy_coords[j] = Xy_coordinate_2(x(), 
-                this->ptr()->_m_ca.curve_2(), j);
+                this->ptr()->_m_ca, j);
         return *(this->ptr()->_m_xy_coords[j]);
     }
     
@@ -403,12 +394,6 @@ public:
     Arc_pair number_of_branches_approaching_plus_infinity() const {
         return this->ptr()->_m_num_arcs_plus_inf;
     }
-
-    // temporary access function (for testing)
-    /*Event1_info get_info() const
-    {
-        return this->ptr()->_m_event_info;
-    }*/
 
     //!@}
 public:

@@ -46,31 +46,31 @@ public:
     // myself
     typedef Xy_coordinate_2_rep<Algebraic_curve_kernel_2> Self;
 
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
+        Curve_analysis_2;
 
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
-    
-    typedef typename Curve_2::X_coordinate X_coordinate_1; 
+    typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
 
     typedef CGAL::Bbox_2 Bbox_2;
 
     // constructors
 public:
     // default constructor ()
-    Xy_coordinate_2_rep() : _m_arcno(-1)
-    {   }
+    Xy_coordinate_2_rep() : _m_arcno(-1) {
+    }
     
     // standard constructor
-    Xy_coordinate_2_rep(const X_coordinate_1& x, const Curve_2& curve, 
-                int arcno) : _m_x(x), _m_curve(curve), _m_arcno(arcno)
-    {   }
+    Xy_coordinate_2_rep(const X_coordinate_1& x,
+        const Curve_analysis_2& curve, int arcno) :
+            _m_x(x), _m_curve(curve), _m_arcno(arcno) {
+    }
 
     // data
     // x-coordinate
     X_coordinate_1 _m_x;
     
     // supporting curve
-    mutable Curve_2 _m_curve;
+    mutable Curve_analysis_2 _m_curve;
     
     // arc number on curve
     mutable int _m_arcno;
@@ -124,14 +124,8 @@ public:
     typedef typename Algebraic_curve_kernel_2::Algebraic_kernel_1 
         Algebraic_kernel_1;
     
-    //! type of a curve pair 
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
-    //! type of an algabraic curve
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
-
     //! type of X_coordinate
-    typedef typename Curve_2::X_coordinate X_coordinate_1;
+    typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
 
     //! type of curve pair analysis
     typedef typename Algebraic_curve_kernel_2::Curve_pair_analysis_2
@@ -171,7 +165,7 @@ private:
      */
     static bool _simplify(const Xy_coordinate_2& p, const Xy_coordinate_2& q) 
     {
-        std::vector<Curve_2> parts_of_f, parts_of_g, common;
+        std::vector<Curve_analysis_2> parts_of_f, parts_of_g, common;
 
         /*std::cerr << "simplify called: " << p.curve().id() << "@" <<
             p.curve().f() << "; and " <<
@@ -185,24 +179,20 @@ private:
             CGAL_assertion((parts_of_f.size() == 1 ||
                        parts_of_g.size() == 1) && common.size() == 1);
             if(parts_of_f.size() == 1) {
-
-          /*std::cerr << "non-coprime parts f: " << parts_of_f[0].id() << "@" <<
+         /*std::cerr << "non-coprime parts f: " << parts_of_f[0].id() << "@" <<
             parts_of_f[0].f() << "; and " <<
              common[0].id() << common[0].f() << "\n";*/
-                
-                p.simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_f[0])),
-                        (Curve_analysis_2(common[0]))));
+                p.simplify_by(ak_2.construct_curve_pair_2_object()(
+                    parts_of_f[0], common[0]));
             } 
+            
             if(parts_of_g.size() == 1) {
-
-            /*std::cerr << "non-coprime parts g: " << parts_of_g[0].id() << "@" <<
+        /*std::cerr << "non-coprime parts g: " << parts_of_g[0].id() << "@" <<
             parts_of_g[0].f() << "; and " <<
              common[0].id() << common[0].f() << "\n";*/
                     
-                q.simplify_by(Curve_pair_analysis_2(
-                    (Curve_analysis_2(parts_of_g[0])),
-                        (Curve_analysis_2(common[0]))));
+                q.simplify_by(ak_2.construct_curve_pair_2_object()(
+                    parts_of_g[0], common[0]));
             } 
             return true;
         }
@@ -236,14 +226,14 @@ public:
      * are also constructed in this way
      */
      // TODO: construct this from curve analysis object ?
-    Xy_coordinate_2(const X_coordinate_1& x, const Curve_2& curve, int arcno) :
+    Xy_coordinate_2(const X_coordinate_1& x, const Curve_analysis_2& curve,
+                 int arcno) :
             Base(Rep(x, curve, arcno)) {
             
         CGAL_precondition(arcno >= 0);
         CGAL_precondition_code(
-            Curve_analysis_2 ca(curve);
             typename Curve_analysis_2::Status_line_1 v =
-                ca.status_line_for_x(x);
+                curve.status_line_for_x(x);
         );
         CGAL_precondition(arcno >= 0 && arcno < v.number_of_events());
     }
@@ -276,29 +266,28 @@ public:
      */
     X_coordinate_1 y() const {
 
-        typedef typename Algebraic_curve_kernel_2::Polynomial_2::Polynomial_2 
-            Polynomial_2;
-
-        Polynomial_2 f = curve().f();
-
+        typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
         typedef typename Polynomial_2::NT Polynomial_1;
 
+        Polynomial_2 f = curve().polynomial_2();
         // This will be the defining polynomial of y
         Polynomial_1 y_pol;
 
         // Filter: If we know that the point is critical, we can use
         // the resultant of f and f_y with respect to x as polynomial
-        int i;
-        bool is_event;
         bool point_is_certainly_critical = false;
-        curve().x_to_index(x(),i,is_event);
-        if(is_event) {
-            typename Curve_2::Event1_info ev_info = curve().event_info(i);
-            if(ev_info.num_arcs_left(arcno()) != 1 ||
-               ev_info.num_arcs_left(arcno()) != 1) {
+        typename Curve_analysis_2::Status_line_1 line =
+            curve().status_line_for_x(x());
+        // exacus-related code shouldn't be used here
+        //curve().x_to_index(x(),i,is_event);
+        if(line.is_event()) {
+            //typename Internal_curve_2::Event1_info ev_info =
+              //   curve().event_info(i);
+            typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
+                line.number_of_incident_branches(arcno());
                 
+            if(ipair.first != 1 || ipair.second != 1) {
                 point_is_certainly_critical = true;
-                
                 y_pol = NiX::make_square_free(
                         NiX::resultant
                             (transpose_bivariate_polynomial(f),
@@ -342,7 +331,7 @@ public:
     /*!\brief
      * supporting curve of the point
      */
-    Curve_2 curve() const { 
+    Curve_analysis_2 curve() const {
         return this->ptr()->_m_curve; 
     }
     
@@ -385,19 +374,19 @@ public:
         if(this->id() > q.id())
             return (- q.compare_xy(*this));
 
-        std::pair<typename Int_map::Hashed_iterator, bool> r =
+        /*std::pair<typename Int_map::Hashed_iterator, bool> r =
             this->ptr()->_m_compare_xy.find(q.id());
         // TODO deactivated cache by "false" as id could have been re-assigned
         if(false && r.second) {
             //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
             return r.first->second;
-        }
+        }*/
 
         CGAL::Comparison_result res = (equal_x ? CGAL::EQUAL : compare_x(q)); 
         if(res == CGAL::EQUAL) {
             res = _compare_y_at_x(q);
         }
-        this->ptr()->_m_compare_xy.insert(std::make_pair(q.id(), res));
+        //this->ptr()->_m_compare_xy.insert(std::make_pair(q.id(), res));
         return res;
     }
     
@@ -433,16 +422,18 @@ private:
     {
         CGAL_precondition(this->compare_x(q) == CGAL::EQUAL);
     
-        Curve_2 f = curve(), g = q.curve();
+        Curve_analysis_2 f = curve(), g = q.curve();
         if(f.is_identical(g)) 
             return CGAL::sign(arcno() - q.arcno());
         if(Self::_simplify(*this, q)) 
             // restart since supporting curves might be equal now
             return _compare_y_at_x(q);
                         
-        // this is to keep compiler happy ))
-        Curve_pair_analysis_2 cpa_2((Curve_analysis_2(f)),
-             (Curve_analysis_2(g)));
+        Algebraic_curve_kernel_2 ak_2;
+        Curve_pair_analysis_2 cpa_2 =
+            ak_2.construct_curve_pair_2_object()(f, g);
+            
+            
         typename Curve_pair_analysis_2::Status_line_1 vline =
             cpa_2.status_line_for_x(x());
         return CGAL::sign(vline.event_of_curve(arcno(), 0) -
@@ -466,32 +457,33 @@ public:
      *
      * \pre pair must be a decomposition of curve()
      */
-    void simplify_by(const Curve_pair_analysis_2& cpa_2) const 
-    { 
+    void simplify_by(const Curve_pair_analysis_2& cpa_2) const {
+    
         typedef typename Algebraic_curve_kernel_2::Polynomial_2_CGAL Poly_2;
         typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
         typedef typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
             Total_degree;
         
         CGAL_precondition_code(
-            typename Curve_2::Poly_d mult =
-                    cpa_2.curve_analysis(0).polynomial_2().f() *
-                    cpa_2.curve_analysis(1).polynomial_2().f();
+            typename Curve_analysis_2::Polynomial_2 mult =
+                    cpa_2.curve_analysis(0).polynomial_2() *
+                    cpa_2.curve_analysis(1).polynomial_2();
             Total_degree total_degree;
         );
         // common parts
-        CGAL_precondition(NiX::resultant(mult, curve().f()).is_zero());
+        CGAL_precondition(NiX::resultant(mult,
+            curve().polynomial_2()).is_zero());
         // full parts
-        CGAL_precondition(mult.degree() == curve().f().degree());
+        CGAL_precondition(mult.degree() == curve().polynomial_2().degree());
         CGAL_precondition(total_degree(cvt(mult)) ==
-            total_degree(cvt(curve().f())));
+            total_degree(cvt(curve().polynomial_2())));
 
         typename Curve_pair_analysis_2::Status_line_1 cpv_line =
                 cpa_2.status_line_for_x(x());
         // # of arcs must match
         CGAL_precondition_code(
             typename Curve_analysis_2::Status_line_1 cv_line =
-                Curve_analysis_2(curve()).status_line_for_x(x());
+                curve().status_line_for_x(x());
         );
         CGAL_precondition(cpv_line.number_of_events() == 
             cv_line.number_of_events());
@@ -506,15 +498,14 @@ public:
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
             Total_degree total_degree;
-            Poly_2 ff=cvt(cpa_2.curve_analysis(0).polynomial_2().f()),
-                   gg=cvt(cpa_2.curve_analysis(1).polynomial_2().f());
+            Poly_2 ff = cvt(cpa_2.curve_analysis(0).polynomial_2()),
+                   gg = cvt(cpa_2.curve_analysis(1).polynomial_2());
             if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
             cid = (p.first != -1 ? 0 : 1);
         // overwrite data
-        this->ptr()->_m_curve =
-            cpa_2.curve_analysis(cid).polynomial_2();
+        this->ptr()->_m_curve = cpa_2.curve_analysis(cid);
         this->ptr()->_m_arcno = (cid == 0 ? p.first : p.second);
     }
     
@@ -535,12 +526,13 @@ public:
         if( y_iv.lower() > 0 || y_iv.upper() < 0 ) {
             return false;
         }
-        CGAL_assertion(this->ptr()->_m_curve.f().degree()>=0);
-        typename Curve_2::Polynomial_2::NT constant_pol 
-            = this->ptr()->_m_curve.f()[0];
+        CGAL_assertion(curve().polynomial_2().degree()>=0);
+        
+        typename Curve_analysis_2::Polynomial_2::NT constant_pol
+            = curve().polynomial_2()[0];
         bool zero_is_root_of_local_pol 
             = this->ptr()->_m_x.is_root_of(constant_pol);
-        // Since we know that y_iv is an _isolating_ interval,
+        // Since we know that y_iv isstd::pair<Hashed_iterator, bool> find(const Key_type& key) an _isolating_ interval,
         // we can immediately return
         return zero_is_root_of_local_pol;
         
@@ -777,11 +769,11 @@ std::ostream& operator<< (std::ostream& os,
         Allocator>& pt)
 {
     if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
-        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
             pt.curve().f() << 
             "; arcno: " << pt.arcno() << "]\n";
     } else { // ASCII output
-        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
             pt.curve().f() << 
             "; arcno: " << pt.arcno() << "]\n";
     }

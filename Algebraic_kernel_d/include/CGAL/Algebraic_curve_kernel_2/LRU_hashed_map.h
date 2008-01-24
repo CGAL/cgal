@@ -17,8 +17,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
-
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/hashed_index.hpp>
@@ -213,67 +211,48 @@ public:
     //!@}
 }; // class LRU_hashed_map
 
-//! \brief a simple bivariate polynomial hasher
-//!
-//! picks up at most 12 non-zero low-degree coefficients, sums and
-//! multiplies them and compute floor_log2_abs out of the result
-template <class Poly_2> 
-struct Poly_hasher_2 : public Unary_function< Poly_2, size_t >
+/*! \brief
+ *  returns representation id as a hash value
+ */
+struct Id_hasher
 {
-    typedef typename Poly_2::NT Poly_1;
-    typedef typename Poly_1::NT NT;
-    
-    size_t operator()(const Poly_2& p) const
-    {
-        /*int n_count = 12;  
-        NT res(1), sum;
-        typename Poly_2::const_iterator it_2 = p.begin();
-        while(it_2 != p.end() && n_count > 0) {
-            typename Poly_1::const_iterator it_1 = it_2->begin();
-            sum = NT(0);
-            while(it_1 != it_2->end() && n_count > 0) {
-                NT tmp = *it_1++;
-                if(tmp == NT(0))
-                    continue;
-                sum += tmp;
-                n_count--;
-            }
-            if(sum != 0)
-                res *= sum;
-            it_2++;   
-        }
-        // this is only way to truncate the result back to built-in NT
-        return static_cast<size_t>(CGALi::floor_log2_abs<NT>(res));*/
-        return static_cast<size_t>(p.id());
+    template <class T>
+    size_t operator()(const T& x) const {
+        return static_cast<size_t>(x.id());
     }
 };
     
 //! \brief a simple curve pair hasher
 //!
 //! computes hashes of two curves and then combines them
-template <class Curve_2> 
+template <class Curve_analysis_2> 
 struct Curve_pair_hasher_2 
 {
-    typedef std::pair<Curve_2, Curve_2> Pair_of_curves_2;
+    typedef std::pair<Curve_analysis_2, Curve_analysis_2> Pair_of_curves_2;
     typedef Pair_of_curves_2 argument_type;
     typedef size_t result_type;
         
-    size_t operator()(const Pair_of_curves_2& p) const
-    {
-        Poly_hasher_2<typename Curve_2::Poly_d> hasher;
-        return (hasher(p.first.f()) ^ hasher(p.second.f()));
+    size_t operator()(const Pair_of_curves_2& p) const {
+        // uses code from boost::hash_combine
+        std::size_t seed = p.first.polynomial_2().id() + 0x9e3779b9;
+        seed ^= p.second.polynomial_2().id() + 0x9e3779b9 +
+            (seed << 6) + (seed >> 2);
+        return seed;
     }  
 };
 
-struct Int_pair_hash {
+struct Pair_hasher {
 
     typedef size_t result_type;
-    typedef std::pair<int, int> argument_type;
-
-     size_t operator()(const argument_type& p) const
-     {
-        return static_cast<size_t>(p.first ^ p.second);
-     }
+    
+    template <class T>
+    size_t operator()(const std::pair<T, T>& p) const
+    {
+        std::size_t seed = 0;
+        boost::hash_combine(seed, p.first);
+        boost::hash_combine(seed, p.second);
+        return seed;
+    }
 };
 
 } // namespace CGALi

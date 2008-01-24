@@ -57,12 +57,6 @@ class Status_line_CPA_1_rep {
     // container of integers ?
     typedef std::vector<size_type> Int_container;
 
-    // type of internal algebraic curve pair
-    typedef typename Curve_pair_analysis_2::Curve_pair_2 Curve_pair_2;
-
-    // type of underlying \c Event2_slice
-    //typedef typename Curve_pair_2::Event2_slice Event2_slice;
-
     // constructors
 public:
     // default constructor ()
@@ -142,9 +136,6 @@ public:
     //! this instance itself
     typedef Status_line_CPA_1<Curve_pair_analysis_2, Rep> Self;
 
-    //! type of internal algebraic curve pair
-    typedef typename Curve_pair_analysis_2::Curve_pair_2 Curve_pair_2;
-
     //! type of x-coordinate
     typedef typename Curve_pair_analysis_2::X_coordinate_1 X_coordinate_1; 
 
@@ -162,9 +153,6 @@ public:
 
     //! container of integers ?
     typedef std::vector<size_type> Int_container;
-
-    //! type of underlying \c Event2_slice
-    //typedef typename Curve_pair_2::Event2_slice Event2_slice;
 
      //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -242,8 +230,8 @@ public:
         
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
-                this->ptr()->_m_cpa.curve_pair().event_x(index()) :
-                X_coordinate_1(this->ptr()->_m_cpa.curve_pair().
+                this->ptr()->_m_cpa._internal_curve_pair().event_x(index()) :
+                X_coordinate_1(this->ptr()->_m_cpa._internal_curve_pair().
                     boundary_value_in_interval(index())));
         }
         return *(this->ptr()->_m_x);
