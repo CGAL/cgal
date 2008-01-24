@@ -373,13 +373,10 @@ protected:
     //! the curve \c c
     //!
     //! \pre p.x() != q.x()
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-           const Point_2& p, const Point_2& q, const Curve_2& c,
-           int arcno, int arcno_p, int arcno_q) : 
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c,
+          int arcno, int arcno_p, int arcno_q) : 
         Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
         
-        _set_ckva(kernel);
-
         CGAL_precondition(!p.is_identical(q));
         CGAL_precondition(p.compare_x(q) != CGAL::EQUAL);
         // preconditions for arc-numbers and event points (should the common
@@ -399,13 +396,10 @@ protected:
      * \c inf_end defines whether the ray emanates from +/- x-infinity, 
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const Point_2& origin, CGAL::Arr_curve_end inf_end, 
-               const Curve_2& c, int arcno, int arcno_o) :
+    Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
+          const Curve_2& c, int arcno, int arcno_o) :
         Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
         
-        _set_ckva(kernel);
-
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         // check end-points arcnos validity and coprimality condition
         // for supporting curves
@@ -430,16 +424,14 @@ protected:
      * same as \c arcno )
      * \pre origin.x() != asympt_x
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const Point_2& origin, const X_coordinate_1& asympt_x, 
-               CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
-               int arcno_o) :
+    Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
+          CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
+          int arcno_o) :
         Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
         
-        _set_ckva(kernel);
-        
         CGAL_precondition(
-                _ckva()->kernel().compare_x_2_object()(origin.x(), asympt_x) 
+                Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(origin.x(), asympt_x) 
                 != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         _check_pt_arcno_and_coprimality(origin, arcno_o, c);
@@ -454,12 +446,9 @@ protected:
      * constructs an arc with two x-infinite ends supported by curve \c c
      * with \c arcno (branch I)
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const Curve_2& c, int arcno) :
+    Arc_2(const Curve_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END),
                  Point_2(CGAL::ARR_MAX_END), c, arcno)) {
-
-        _set_ckva(kernel);
 
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order(); 
@@ -476,18 +465,16 @@ protected:
      * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
      * \pre asympt_x1 != asympt_x2
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const X_coordinate_1& asympt_x1, 
-               const X_coordinate_1& asympt_x2, 
-               CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
-               const Curve_2& c, int arcno) :
+    Arc_2(const X_coordinate_1& asympt_x1, 
+          const X_coordinate_1& asympt_x2, 
+          CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
+          const Curve_2& c, int arcno) :
         Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
                  c, arcno)) {
 
-        _set_ckva(kernel);
-        
         CGAL_precondition(
-                _ckva()->kernel().compare_x_2_object()(asympt_x1, asympt_x2) 
+                Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(asympt_x1, asympt_x2) 
                 != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order();
@@ -504,12 +491,9 @@ protected:
      * \c inf_endx specifies whether the branch goes to +/- x-infinity,
      * \c inf_endy specifies +/-oo the asymptotic end approaches
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
-               CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
+    Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
+          CGAL::Arr_curve_end inf_endy, const Curve_2& c, int arcno) :
         Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy), c, arcno)) {
-        
-        _set_ckva(kernel);
         
         CGAL_precondition(arcno >= 0); 
         _fix_curve_ends_order();
@@ -528,11 +512,8 @@ protected:
     //! 
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const Point_2& p, const Point_2& q, const Curve_2& c) : 
+    Arc_2(const Point_2& p, const Point_2& q, const Curve_2& c) : 
         Base(Rep(p, q, c, -1, -1, -1, true)) {  
-        
-        _set_ckva(kernel);
         
         CGAL_precondition(!p.is_identical(q));
         CGAL_precondition(p.compare_x(q) == CGAL::EQUAL && 
@@ -550,12 +531,9 @@ protected:
      * \c inf_end defines whether the ray emanates from +/- y-infninty, 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const Point_2& origin, CGAL::Arr_curve_end inf_end,
-               const Curve_2& c) :
+    Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
+          const Curve_2& c) :
         Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
-        
-        _set_ckva(kernel);
         
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(origin, -1, c);
@@ -574,13 +552,10 @@ protected:
      * 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2(Curved_kernel_via_analysis_2 *kernel,
-               const X_coordinate_1& x, const Curve_2& c) :
+    Arc_2(const X_coordinate_1& x, const Curve_2& c) :
         Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
                  Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
         
-        _set_ckva(kernel);
-
         _fix_curve_ends_order();
         
         _minpoint()._add_ref(this->ptr());
@@ -614,6 +589,7 @@ public:
     //!@}
 
 protected:    
+#if 0 // TODO remove (eriC)
     //!\name Pointers
     //!@{
 
@@ -629,11 +605,15 @@ protected:
     }
 
     //!@}
-
+#endif
 #define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(X, Y, Z) \
-    CGAL_precondition(_ckva() != NULL); \
     typename Curved_kernel_via_analysis_2::X Y = \
-         _ckva()->Z(); \
+         Curved_kernel_via_analysis_2::instance().Z(); \
+
+
+//    CGAL_precondition(_ckva() != NULL); 
+//    typename Curved_kernel_via_analysis_2::X Y = 
+//         _ckva()->Z(); 
 
 
 public:
@@ -735,17 +715,18 @@ public:
     int arcno(const X_coordinate_1& x0) const {
         CGAL_precondition(!is_vertical());
         CGAL_precondition(is_in_x_range(x0));
-        CGAL_precondition(_ckva() != NULL);
 
         if (this->ptr()->_m_arcno_min != this->ptr()->_m_arcno && 
             !_minpoint().is_on_left_right() &&
-            _ckva()->kernel().compare_x_2_object()(x0, _minpoint().x()) == 
+            Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()(x0, _minpoint().x()) == 
             CGAL::EQUAL) {
             return this->ptr()->_m_arcno_min;
         }
         if (this->ptr()->_m_arcno_max != this->ptr()->_m_arcno && 
             !_maxpoint().is_on_left_right() &&
-            _ckva()->kernel().compare_x_2_object()(x0, _maxpoint().x()) == 
+            Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()(x0, _maxpoint().x()) == 
             CGAL::EQUAL) {
             return this->ptr()->_m_arcno_max;
         }
@@ -1061,11 +1042,10 @@ public:
             *eq_min = *eq_max = false;
         }
 
-        CGAL_precondition(_ckva() != NULL);
-        
         if (_minpoint().location() != CGAL::ARR_LEFT_BOUNDARY) {
             // compare x-coordinates    
-            res = _ckva()->kernel().compare_x_2_object()(x, _minpoint().x());
+            res = Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(x, _minpoint().x());
             if (res == CGAL::SMALLER) {
                 return false;
             }
@@ -1080,7 +1060,8 @@ public:
         if (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY) {
              return true; // this is unbounded arc (branch)
         }
-        res = _ckva()->kernel().compare_x_2_object()(x, _maxpoint().x());
+        res = Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()(x, _maxpoint().x());
         if (res == CGAL::LARGER) {
             return false;
         }
@@ -1346,11 +1327,10 @@ public:
             return false;
         }
 
-        CGAL_precondition(cv._ckva() != NULL);
-        
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
         
-        if (cv._ckva()->kernel().decompose_2_object()(
+        if (Curved_kernel_via_analysis_2::instance().
+            kernel().decompose_2_object()(
                     cv.curve(), p.curve(), 
                     std::back_inserter(parts_of_f), 
                     std::back_inserter(parts_of_g),
@@ -1385,13 +1365,10 @@ public:
             return false;
         }
 
-        CGAL_precondition(cv1._ckva() != NULL);
-        CGAL_precondition(cv2._ckva() != NULL);
-        CGAL_precondition(cv1._ckva() == cv2._ckva());
-        
         std::vector<Curve_2> parts_of_f, parts_of_g, common;
         
-        if (cv1._ckva()->kernel().decompose_2_object()(
+        if (Curved_kernel_via_analysis_2::instance().
+            kernel().decompose_2_object()(
                     cv1.curve(), cv2.curve(), 
                     std::back_inserter(parts_of_f), 
                     std::back_inserter(parts_of_g),
@@ -1461,7 +1438,8 @@ protected:
             } 
             std::vector< Curve_2 > dummy[3]; // these are three dummies ?
             // ensure that curves are not decomposable
-            CGAL_precondition(!_ckva()->kernel().decompose_2_object()(
+            CGAL_precondition(!Curved_kernel_via_analysis_2::instance().
+                              kernel().decompose_2_object()(
                                       c, pt.curve(),
                                       std::back_inserter(dummy[0]), 
                                       std::back_inserter(dummy[1]),
@@ -1506,11 +1484,13 @@ protected:
                 Xy_coordinate_2 tmp(x0, curve(), k);
                 bool res1 = true, res2 = true;
                 if(!inf_src)
-                    res1 = (_ckva()->kernel().compare_xy_2_object()(
+                    res1 = (Curved_kernel_via_analysis_2::instance().
+                            kernel().compare_xy_2_object()(
                                     _minpoint().xy(),
                                     tmp, true) == CGAL::SMALLER);
                 if(!inf_tgt)
-                    res2 = (_ckva()->kernel().compare_xy_2_object()(
+                    res2 = (Curved_kernel_via_analysis_2::instance().
+                            kernel().compare_xy_2_object()(
                                     tmp,
                                     _maxpoint().xy(), true) == CGAL::SMALLER);
                 CGAL_precondition_msg(!(res1 && res2),
@@ -1566,7 +1546,7 @@ protected:
 
         const typename Curved_kernel_via_analysis_2::
             Curve_interval_arcno_cache& map_interval_arcno =
-            this->_ckva()->interval_arcno_cache();
+            Curved_kernel_via_analysis_2::instance().interval_arcno_cache();
 
         if (src_line.is_event()) {
             CGAL_precondition(map_interval_arcno(src_line, 0,
@@ -1676,18 +1656,21 @@ protected:
           
             if (!p.is_on_left_right() && !q.is_on_left_right()) {
                 // both xs are finite: require x-comparisons
-                res = _ckva()->compare_x_2_object()(p, q);
-                if(res != CGAL::EQUAL)
+                res = Curved_kernel_via_analysis_2::instance().
+                    compare_x_2_object()(p, q);
+                if (res != CGAL::EQUAL) {
                     return res;
+                }
             } else if(locp != locq) {
                 // at least one of the points lies at infty: suffice to cmp
                 // boundaries
-                if(locp == CGAL::ARR_INTERIOR) 
-                    return (locq == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
-                        CGAL::SMALLER);
+                if(locp == CGAL::ARR_INTERIOR) {
+                    return (locq == CGAL::ARR_LEFT_BOUNDARY ? 
+                            CGAL::LARGER : CGAL::SMALLER);
+                }
                 // here: locp != locq && locp is at infty
-                return (locp == CGAL::ARR_LEFT_BOUNDARY ? CGAL::SMALLER :
-                    CGAL::LARGER);
+                return (locp == CGAL::ARR_LEFT_BOUNDARY ? 
+                        CGAL::SMALLER : CGAL::LARGER);
             } // else: proceed to y-comparison
         }
         if (only_x) {
@@ -1699,9 +1682,8 @@ protected:
             }
             // compare only y-values; 
             // TODO: use _compare_arc_numbers instead ? (Pavel)
-            return _ckva()->compare_xy_2_object()(
-                    p, q, true
-            );
+            return Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(p, q, true);
         }
         // here: locp != locq && one of them is at inf y
         if (locp == CGAL::ARR_INTERIOR) {
@@ -1762,13 +1744,16 @@ protected:
             if (is_finite(CGAL::ARR_MIN_END) && 
                 is_finite(CGAL::ARR_MAX_END)) {
                 
-                if ((_ckva()->kernel().compare_x_2_object()
+                if ((Curved_kernel_via_analysis_2::instance().
+                     kernel().compare_x_2_object()
                      (_minpoint().x(), cv_line.x()) == 
                      CGAL::SMALLER) && 
-                    (_ckva()->kernel().compare_x_2_object()
+                    (Curved_kernel_via_analysis_2::instance().
+                     kernel().compare_x_2_object()
                      (cv_line.x(), _maxpoint().x()) == 
                      CGAL::SMALLER)) {
-                    return _ckva()->kernel().lower_boundary_x_2_object()(
+                    return Curved_kernel_via_analysis_2::instance().
+                        kernel().lower_boundary_x_2_object()(
                             cv_line.xy_coordinate_2(arcno())
                     );
                 } else {
@@ -1777,25 +1762,28 @@ protected:
                     typename Curve_analysis_2::Status_line_1 cv_line_max = 
                         ca_2.status_line_at_exact_x(_maxpoint().x());
                     
-                    return _ckva()->kernel().boundary_between_x_2_object()(
-                            cv_line_min.xy_coordinate_2(
-                                    arcno(CGAL::ARR_MIN_END)
-                            ),
-                            cv_line_max.xy_coordinate_2(
-                                    arcno(CGAL::ARR_MAX_END)
-                            )
-                    );
+                    return Curved_kernel_via_analysis_2::instance().
+                        kernel().boundary_between_x_2_object()(
+                                cv_line_min.xy_coordinate_2(
+                                        arcno(CGAL::ARR_MIN_END)
+                                ),
+                                cv_line_max.xy_coordinate_2(
+                                        arcno(CGAL::ARR_MAX_END)
+                                )
+                        );
                 }
                 
             } else {
                 if (is_finite(CGAL::ARR_MIN_END)) {
-                    return _ckva()->kernel().lower_boundary_x_2_object()(
-                            cv_line.xy_coordinate_2(arcno())
-                    );
+                    return Curved_kernel_via_analysis_2::instance().
+                        kernel().lower_boundary_x_2_object()(
+                                cv_line.xy_coordinate_2(arcno())
+                        );
                 } else {
-                    return _ckva()->kernel().upper_boundary_x_2_object()(
-                            cv_line.xy_coordinate_2(arcno())
-                    );
+                    return Curved_kernel_via_analysis_2::instance().
+                        kernel().upper_boundary_x_2_object()(
+                                cv_line.xy_coordinate_2(arcno())
+                        );
                 }
             }
         }
@@ -1976,7 +1964,8 @@ protected:
         
         if (is_vertical()) { // here process vertical case
             // check for x-coordinates equality
-            if (this->_ckva()->kernel().compare_x_2_object()(
+            if (Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(
                         _minpoint().x(),
                         cv2._minpoint().x()) != CGAL::EQUAL) {
                 return false;
@@ -2026,7 +2015,8 @@ protected:
         typedef std::vector<Curve_2> Curve_container;
         Curve_container parts_f, parts_g, common;
                                 
-        if (!this->_ckva()->kernel().decompose_2_object()(
+        if (!Curved_kernel_via_analysis_2::instance().
+            kernel().decompose_2_object()(
                     curve(), cv2.curve(), 
                     std::back_inserter(parts_f), 
                     std::back_inserter(parts_g),
@@ -2160,10 +2150,6 @@ protected:
         
         CERR("\n_intersect_at_endpoints\n");
 
-        CGAL_precondition(cv1._ckva() != NULL);
-        CGAL_precondition(cv2._ckva() != NULL);
-        CGAL_precondition(cv1._ckva() == cv2._ckva());
-        
         CGAL_precondition(!cv1.do_overlap(cv2));
         /* Since *this and cv2 do not overlap and cannot contain singularities
          * in the interior, the only remaining candidates for intersections are
@@ -2259,7 +2245,8 @@ protected:
         // find intersection x-range: larger source & smaller target
         if (pt1.location() != CGAL::ARR_LEFT_BOUNDARY) {
             if (pt2.location() != CGAL::ARR_LEFT_BOUNDARY) {
-                low = (_ckva()->kernel().compare_x_2_object()(
+                low = (Curved_kernel_via_analysis_2::instance().
+                       kernel().compare_x_2_object()(
                                pt1.x(), pt2.x()) == 
                        CGAL::LARGER ? pt1 : pt2); 
             } else {
@@ -2269,7 +2256,8 @@ protected:
         pt1 = _maxpoint(), pt2 = cv2._maxpoint(), high = pt2;
         if (pt1.location() != CGAL::ARR_RIGHT_BOUNDARY) {
             if(pt2.location() != CGAL::ARR_RIGHT_BOUNDARY) {
-                high = (_ckva()->kernel().compare_x_2_object()(
+                high = (Curved_kernel_via_analysis_2::instance().
+                        kernel().compare_x_2_object()(
                                 pt1.x(), pt2.x()) == 
                         CGAL::SMALLER ? pt1 : pt2);
             } else {
@@ -2277,7 +2265,8 @@ protected:
             }
         } 
         if (!low.is_on_left_right() && !high.is_on_left_right() &&
-            _ckva()->kernel().compare_x_2_object()(low.x(), high.x()) != 
+            Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()(low.x(), high.x()) != 
             CGAL::SMALLER) {// disjoint x-ranges 
             return false;
         }
@@ -2304,10 +2293,6 @@ protected:
         CERR("\n_intersect_coprime_support: " << cv1 <<
             " and " << cv2 << "\n");
         
-        CGAL_precondition(cv1._ckva() != NULL);
-        CGAL_precondition(cv2._ckva() != NULL);
-        CGAL_precondition(cv1._ckva() == cv2._ckva());
-
         if (cv1.is_vertical() || cv2.is_vertical()) {
             CGAL_assertion(cv1.is_vertical() != cv2.is_vertical());
             // due to coprimality condition, supporting curves are different =>
@@ -2323,7 +2308,8 @@ protected:
             }
             typename Curved_kernel_via_analysis_2:: Construct_point_on_arc_2
                 construct_point_on_arc = 
-                cv1._ckva()->construct_point_on_arc_2_object();
+                Curved_kernel_via_analysis_2::instance().
+                construct_point_on_arc_2_object();
             Point_2 xy = construct_point_on_arc(
                     x, nonvert.curve(), nonvert.arcno(x), nonvert
             );
@@ -2406,7 +2392,8 @@ protected:
 
             typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
                 construct_point_on_arc = 
-                cv1._ckva()->construct_point_on_arc_2_object();
+                Curved_kernel_via_analysis_2::instance().
+                construct_point_on_arc_2_object();
             
             if (which_curve) {
                 Point_2 p = construct_point_on_arc(

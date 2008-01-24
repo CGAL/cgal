@@ -241,17 +241,12 @@ public:
             Base(static_cast<const Base&>(p)) {  
     }
 
-protected: 
-
     //!\brief standard constructor: constructs a finite point with x-coordinate
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    Point_2(Curved_kernel_via_analysis_2 *kernel,
-            const X_coordinate_1& x, const Curve_2& c, int arcno) :
+    Point_2(const X_coordinate_1& x, const Curve_2& c, int arcno) :
         Base(Rep(Xy_coordinate_2(x, c, arcno))) {
-        
-        _set_ckva(kernel);
     }
     
     //!@}
@@ -297,6 +292,7 @@ protected:
     //!@}
     
 protected:    
+#if 0 // TODO remove (eriC)
     //!\name Pointers
     //!@{
 
@@ -310,7 +306,8 @@ protected:
     Curved_kernel_via_analysis_2* _ckva() const {
         return this->ptr()->_m_ckva;
     }
-
+#endif
+public:
     // TODO  remove (eriC)
     //! sets pointer to incident arc
     void _add_ref(const Arc_rep *arc_rep) const {
@@ -431,9 +428,13 @@ public:
 
     
 #define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
-    CGAL_precondition(_ckva() != NULL); \
     typename Curved_kernel_via_analysis_2::X Y = \
-         _ckva()->Z(); \
+         Curved_kernel_via_analysis_2::instance().Z(); \
+
+
+//    CGAL_precondition(_ckva() != NULL); 
+//    typename Curved_kernel_via_analysis_2::X Y = 
+//         _ckva()->Z(); 
         
     //!\brief compares x-coordinates of two points 
     //!

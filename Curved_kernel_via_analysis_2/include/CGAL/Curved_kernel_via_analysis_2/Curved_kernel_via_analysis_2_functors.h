@@ -132,7 +132,7 @@ public:
     //!
     //! implies no boundary conditions in x/y
     Point_2 operator()(const X_coordinate_1& x, const Curve_2& c, int arcno) {
-        Point_2 pt(this->_ckva(), x, c, arcno);
+        Point_2 pt(x, c, arcno);
         return pt;
     }
 };
@@ -174,7 +174,8 @@ public:
         CGAL_assertion(arcno == arc.arcno(x));
 
         typename Curved_kernel_via_analysis_2::Construct_point_2 
-            construct_point = this->_ckva()->construct_point_2_object();
+            construct_point = Curved_kernel_via_analysis_2::instance().
+            construct_point_2_object();
         
         Point_2 pt = construct_point(x, c, arcno);
         
@@ -220,7 +221,7 @@ public:
     //! \pre p.x() != q.x()
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
                      int arcno, int arcno_p, int arcno_q) {
-        Arc_2 arc(this->_ckva(), p, q, c, arcno, arcno_p, arcno_q);
+        Arc_2 arc(p, q, c, arcno, arcno_p, arcno_q);
         return arc;
     }
     
@@ -233,7 +234,7 @@ public:
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
                      const Curve_2& c, int arcno, int arcno_o) {
-        Arc_2 arc(this->_ckva(),origin, inf_end, c, arcno, arcno_o);
+        Arc_2 arc(origin, inf_end, c, arcno, arcno_o);
         return arc;
     }
 
@@ -249,8 +250,7 @@ public:
     Arc_2 operator()(const Point_2& origin, const X_coordinate_1& asympt_x, 
                      CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
                      int arcno_o) {
-        Arc_2 arc(this->_ckva(),
-                  origin, asympt_x, inf_end, c, arcno, arcno_o);
+        Arc_2 arc(origin, asympt_x, inf_end, c, arcno, arcno_o);
         return arc;
     }
 
@@ -259,7 +259,7 @@ public:
      * with \c arcno (branch I)
      */
     Arc_2 operator()(const Curve_2& c, int arcno) {
-        Arc_2 arc(this->_ckva(), c, arcno);
+        Arc_2 arc(c, arcno);
         return arc;
     }
     
@@ -276,8 +276,7 @@ public:
                      CGAL::Arr_curve_end inf_end1, 
                      CGAL::Arr_curve_end inf_end2,
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(this->_ckva(),
-                  asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
+        Arc_2 arc(asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
         return arc;
     }
     
@@ -293,7 +292,7 @@ public:
                      const X_coordinate_1& asympt_x,
                      CGAL::Arr_curve_end inf_endy, 
                      const Curve_2& c, int arcno) {
-        Arc_2 arc(this->_ckva(), inf_endx, asympt_x, inf_endy, c, arcno);
+        Arc_2 arc(inf_endx, asympt_x, inf_endy, c, arcno);
         return arc;
     }
     
@@ -309,7 +308,7 @@ public:
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
     Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c) {
-        Arc_2 arc(this->_ckva(),p,q,c);
+        Arc_2 arc(p,q,c);
         return arc;
     }
     
@@ -323,7 +322,7 @@ public:
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
                      const Curve_2& c) {
         
-        Arc_2 arc(this->_ckva(), origin, inf_end, c);
+        Arc_2 arc(origin, inf_end, c);
         return arc;
     }
     
@@ -334,7 +333,7 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2 operator()(const X_coordinate_1& x, const Curve_2& c) {
-        Arc_2 arc(this->_ckva(), x, c);
+        Arc_2 arc(x, c);
         return arc;
     }
 };
@@ -615,7 +614,8 @@ public:
      *         EQUAL if x(p1) = x(p2).
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
-        return this->_ckva()->kernel().compare_x_2_object()
+        return Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()
             (p1.x(), p2.x());
     }
 };
@@ -657,7 +657,8 @@ public:
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
         result_type res = 
-            (this->_ckva()->kernel().compare_xy_2_object()
+            (Curved_kernel_via_analysis_2::instance().
+             kernel().compare_xy_2_object()
              (p1.xy(), p2.xy(), equal_x));
     
         /*typename Curved_kernel_via_analysis_2::Int_pair pair(p1.id(), p2.id());
@@ -720,7 +721,8 @@ public:
             return CGAL::EQUAL; // doesn't matter   
 
         CGAL::Comparison_result res = 
-            this->_ckva()->kernel().compare_x_2_object()(
+            Curved_kernel_via_analysis_2::instance().
+            kernel().compare_x_2_object()(
                     p.x(), cv.curve_end_x(ce)
             );
         // for vertical arcs equality of x-coordinates means overlapping
@@ -782,7 +784,8 @@ public:
             // both ends lie at the same singularity => need special handling
             // but x-order doesn't matter
         } else  { // establish x-order
-            res = this->_ckva()->kernel().compare_x_2_object()(
+            res = Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(
                     cv1.curve_end_x(ce1),
                     cv2.curve_end_x(ce2)
             );
@@ -993,14 +996,16 @@ public:
         if (cv.is_vertical()) {
             if (cv.is_interior(loc1)) {
                 // for vertical arcs we can ask for .xy() member
-                if (this->_ckva()->compare_xy_2_object()(
+                if (Curved_kernel_via_analysis_2::instance().
+                    compare_xy_2_object()(
                             p, cv._minpoint(), true
                     ) == CGAL::SMALLER) {
                     return CGAL::SMALLER;
                 }
             }
             if (cv.is_interior(loc2)) {
-                if (this->_ckva()->compare_xy_2_object()(
+                if (Curved_kernel_via_analysis_2::instance().
+                    compare_xy_2_object()(
                             p, cv._maxpoint(), true
                     ) == CGAL::LARGER) {
                     return CGAL::LARGER;
@@ -1026,11 +1031,13 @@ public:
         // otherwise return reversed y-order of this arc and point p
         CGAL::Comparison_result res;
         if (eq_min) {
-            res = this->_ckva()->compare_xy_2_object()(
+            res = Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(
                     p, cv._minpoint(), true
             );
         } else if (eq_max) {
-            res = this->_ckva()->kernel().compare_xy_2_object()(
+            res = Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(
                     p, cv._maxpoint(), true
             );
         } else {
@@ -1052,14 +1059,16 @@ public:
         if (cv.is_vertical()) {
             if (cv.is_interior(loc1)) {
                 // for vertical arcs we can ask for .xy() member
-                if (this->_ckva()->compare_xy_2_object()(
+                if (Curved_kernel_via_analysis_2::instance().
+                    compare_xy_2_object()(
                             p, cv._minpoint(), true
                     ) == CGAL::SMALLER) {
                     return CGAL::SMALLER;
                 }
             }
             if (cv.is_interior(loc2)) {
-                if (this->_ckva()->compare_xy_2_object()(
+                if (Curved_kernel_via_analysis_2::instance().
+                    compare_xy_2_object()(
                             p, cv._maxpoint(), true
                     ) == CGAL::LARGER) {
                     return CGAL::LARGER;
@@ -1069,22 +1078,26 @@ public:
         }
         CGAL::Comparison_result res;
         if(eq_min) {
-            res = this->_ckva()->compare_xy_2_object()(
-                    p, cv._minpoint(), true
-            );
+            res = Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(
+                        p, cv._minpoint(), true
+                );
         } else if(eq_max) {
-            res = this->_ckva()->compare_xy_2_object()(
-                    p, cv._maxpoint(), true
-            );
-
+            res = Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(
+                        p, cv._maxpoint(), true
+                );
+            
         } else {
             Point_2 point_on_s
-                = this->_ckva()->construct_point_on_arc_2_object()
-                    ( p.x(), 
-                      cv.curve(), 
-                      cv.arcno(),
-                      cv );
-            res = this->_ckva()->compare_xy_2_object()(p, point_on_s, true);
+                = Curved_kernel_via_analysis_2::instance().
+                construct_point_on_arc_2_object()
+                ( p.x(), 
+                  cv.curve(), 
+                  cv.arcno(),
+                  cv );
+            res = Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(p, point_on_s, true);
         }
         CERR("cmp result: " << res << "\n");
         return res;
@@ -1368,7 +1381,8 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (this->_ckva()->compare_xy_2_object()(p1, p2) == 
+        return (Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(p1, p2) == 
                 CGAL::EQUAL);
     }
      
@@ -1461,7 +1475,8 @@ public:
         }
         if (cv1.is_vertical()) { // both arcs are vertical
             // check for x-coordinates equality
-            if (this->_ckva()->kernel().compare_x_2_object()(
+            if (Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(
                         cv1._minpoint().x(),
                         cv2._minpoint().x()) != CGAL::EQUAL) {
                 return false;
@@ -1616,7 +1631,8 @@ public:
     
         CERR("trim\n");
         CGAL_precondition(
-                this->_ckva()->compare_xy_2_object()(p, q) != CGAL::EQUAL
+                Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(p, q) != CGAL::EQUAL
         );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
@@ -1764,7 +1780,8 @@ public:
                 // use a temporary object for comparison predicate
                 typename Point_2::Xy_coordinate_2
                     tmp(common.x(), cv1.curve(), k);
-                if (this->_ckva()->kernel().compare_xy_2_object()(
+                if (Curved_kernel_via_analysis_2::instance().
+                    kernel().compare_xy_2_object()(
                             common.xy(), tmp) == 
                     CGAL::EQUAL) {
                     return false;
@@ -1874,7 +1891,8 @@ public:
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
         result_type res = 
-            (this->_ckva()->kernel().sign_at_2_object()(c, p.xy())
+            (Curved_kernel_via_analysis_2::instance().
+             kernel().sign_at_2_object()(c, p.xy())
              == CGAL::ZERO);
         return res;
     }
