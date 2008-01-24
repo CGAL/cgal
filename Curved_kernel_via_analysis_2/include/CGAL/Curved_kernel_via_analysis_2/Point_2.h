@@ -224,7 +224,7 @@ public:
     };
     
 public:
-    //!\name public constructors
+    //!\name Standard constructors
     //!@{
 
     /*!\brief
@@ -241,6 +241,13 @@ public:
             Base(static_cast<const Base&>(p)) {  
     }
 
+    //!@}
+
+public:
+    //!\name Usual constructors
+    //!@{
+
+
     //!\brief standard constructor: constructs a finite point with x-coordinate
     //! \c x on curve \c c with arc number \c arcno
     //!
@@ -250,6 +257,7 @@ public:
     }
     
     //!@}
+
 private:
     // FUTURE TODO allow to construct without curve, 
     // i.e, isolated points on toric identifications -> do it also for arcs
@@ -291,22 +299,6 @@ protected:
     
     //!@}
     
-protected:    
-#if 0 // TODO remove (eriC)
-    //!\name Pointers
-    //!@{
-
-    //! sets pointer to ckva instance
-    void _set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
-        this->ptr()->_m_ckva = ckva;
-    }
-    
-    //! return pointer to ckva instance
-    inline
-    Curved_kernel_via_analysis_2* _ckva() const {
-        return this->ptr()->_m_ckva;
-    }
-#endif
 public:
     // TODO  remove (eriC)
     //! sets pointer to incident arc
