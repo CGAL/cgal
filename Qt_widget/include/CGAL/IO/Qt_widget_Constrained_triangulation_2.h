@@ -27,9 +27,9 @@
 
 namespace CGAL{
 
-template < class Gt, class Tds>
+template < class Gt, class Tds, class Itag>
 Qt_widget&
-operator<<(Qt_widget& w,  const Constrained_triangulation_2<Gt,Tds> &t)
+operator<<(Qt_widget& w,  const Constrained_triangulation_2<Gt,Tds,Itag> &t)
 {
   w.lock();
   t.draw_triangulation(w);
