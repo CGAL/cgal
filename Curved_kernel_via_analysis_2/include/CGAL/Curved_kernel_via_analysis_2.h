@@ -36,15 +36,23 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 // todo mode to another file
-template < class CurveKernel_2 >
+template < class CurvedKernelViaAnalysis_2, class CurveKernel_2 >
 class Curved_kernel_via_analysis_2_base {
 public:
 
     //! this instance's template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve kernel
     typedef CurveKernel_2 Curve_kernel_2;
-    
+
     //! self
-    typedef Curved_kernel_via_analysis_2_base< Curve_kernel_2 > Self;
+    typedef 
+    Curved_kernel_via_analysis_2_base< 
+        Curved_kernel_via_analysis_2, CurveKernel_2 
+    > 
+    Self;
+
     
     //!\name Global types
     //!@{
@@ -138,6 +146,52 @@ protected:
     
     //!@}
 
+public:
+    //!\name Static Member to provide CKvA instance
+    //!@{
+
+    //! returns static instance
+    static Curved_kernel_via_analysis_2& instance() {
+        return set_instance(_set_instance());
+    }
+    
+    //! sets static instance to \c ckva
+    static Curved_kernel_via_analysis_2& set_instance(
+            const Curved_kernel_via_analysis_2& ckva
+    ) {
+        static Curved_kernel_via_analysis_2 instance;
+        static Curved_kernel_via_analysis_2 binstance;
+        
+        if (&ckva == &_reset_instance()) {
+            instance = binstance;
+        } else if (&ckva != &_set_instance()) {
+            binstance = instance;
+            instance = ckva;
+        }
+        return instance;
+        
+    }
+    
+    //! resets static instance to original one
+    static void reset_instance() {
+        set_instance(_reset_instance());
+    }
+    
+private:
+    static Curved_kernel_via_analysis_2& _set_instance() {
+        static Curved_kernel_via_analysis_2 instance;
+        return instance;
+        
+    }
+    
+    static Curved_kernel_via_analysis_2& _reset_instance() {
+        static Curved_kernel_via_analysis_2 instance;
+        return instance;
+        
+    }
+    
+    //!@}
+
 };    
     
 } // namespace CGALi
@@ -146,7 +200,9 @@ protected:
 //!\brief kernel for unbounded planar curves, and points and arcs of them
 template < class CurveKernel_2 >
 class Curved_kernel_via_analysis_2 :
-     public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
+     public CGALi::Curved_kernel_via_analysis_2_base < 
+            Curved_kernel_via_analysis_2< CurveKernel_2 >, CurveKernel_2 
+     >,
      public CGALi::Curved_kernel_via_analysis_2_functors < 
             Curved_kernel_via_analysis_2< CurveKernel_2 >,
             typename CurveKernel_2::Curve_2,
@@ -188,7 +244,7 @@ protected:
 
     //!@{
     //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >
+    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, CurveKernel_2 >
     Base_kernel;
 
     //! class collecting basic types
@@ -241,7 +297,7 @@ public:
 #undef CGAL_CKvA_2_functor_cons
     
     //!@}
- 
+
 }; // class Curved_kernel_via_analysis_2
 
 CGAL_END_NAMESPACE
