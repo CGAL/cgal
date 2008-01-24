@@ -351,7 +351,7 @@ public:
     //! \pre the point's x must be finite (set by construction)
     inline 
     const X_coordinate_1& x() const {
-
+    
         CGAL_precondition_msg(this->ptr()->_m_xy || this->ptr()->_m_x,
           "Denied access to x-coordinate of the curve end \
             lying at x-infinity");
@@ -415,14 +415,17 @@ public:
     }
 
     //!@}      
-    
-    //!\name Predicates
-    //!@{
+
     
 #define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
     typename Curved_kernel_via_analysis_2::X Y = \
          Curved_kernel_via_analysis_2::instance().Z(); \
 
+
+//    CGAL_precondition(_ckva() != NULL); 
+//    typename Curved_kernel_via_analysis_2::X Y = 
+//         _ckva()->Z(); 
+        
     //!\brief compares x-coordinates of two points 
     //!
     //!\pre compared points have finite x-coordinates
@@ -472,10 +475,6 @@ public:
 
 #undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT
 
-    //!@}
-
-    //!\name Comparison operators
-    //!@{
 
     //! comparison operators (only for finite points):
     //! equality

@@ -1143,7 +1143,7 @@ public:
      * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
      * with multiplicity (point-wise intersections)
      * are inserted to the output iterator \c oi as objects of type 
-     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
+     * \<tt>std::pair\<Point_2, unsigned int></tt> (intersection point +
      * multiplicity)
      */
     template < class OutputIterator >
@@ -1457,20 +1457,23 @@ protected:
             // least one finite end
             CGAL_precondition(cv_line.number_of_events() == 0 ||
                 !(inf_src && inf_tgt));
+
+            typename Curve_kernel_2::Compare_xy_2 cmp_xy(
+                Curved_kernel_via_analysis_2::instance().
+                    kernel().compare_xy_2_object());
+                    
             for(int k = 0; k < cv_line.number_of_events(); k++) {
             // TODO: replace by _compare_arc_numbers !! (Pavel)
+          // no way since _compare_arc_numbers compares only against *this arc
+                              
                 Xy_coordinate_2 tmp(x0, curve(), k);
                 bool res1 = true, res2 = true;
                 if(!inf_src)
-                    res1 = (Curved_kernel_via_analysis_2::instance().
-                            kernel().compare_xy_2_object()(
-                                    _minpoint().xy(),
-                                    tmp, true) == CGAL::SMALLER);
+                    res1 = (cmp_xy(_minpoint().xy(), tmp, true) ==
+                         CGAL::SMALLER);
                 if(!inf_tgt)
-                    res2 = (Curved_kernel_via_analysis_2::instance().
-                            kernel().compare_xy_2_object()(
-                                    tmp,
-                                    _maxpoint().xy(), true) == CGAL::SMALLER);
+                    res2 = (cmp_xy(tmp, _maxpoint().xy(), true) ==
+                         CGAL::SMALLER);
                 CGAL_precondition_msg(!(res1 && res2),
                   "Events are not allowed in the interior of a vertical arc!");
             }
@@ -1596,7 +1599,7 @@ protected:
              << "; g: " << g.polynomial_2() <<
             "; arcno_on_g: " << arcno_on_g << "; where: " << where <<
                 "; x = " << (where == CGAL::ARR_INTERIOR ? 
-                     NiX::to_double(x0) : 0.0) << "\n");
+                     CGAL::to_double(x0) : 0.0) << "\n");
        
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2 = Curved_kernel_via_analysis_2::instance().
@@ -1660,7 +1663,6 @@ protected:
                 return CGAL::EQUAL; // both points are at the same inf in y
             }
             // compare only y-values; 
-            // TODO: use _compare_arc_numbers instead ? (Pavel)
             return Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q, true);
         }
@@ -1816,11 +1818,14 @@ protected:
              typename Curve_analysis_2::Polynomial_2 mult =
                     cpa_2.curve_analysis(0).polynomial_2() *
                     cpa_2.curve_analysis(1).polynomial_2();
+             typedef typename Curve_kernel_2::Polynomial_2_CGAL Poly_2;
+             typename Curve_kernel_2::NiX2CGAL_converter cvt;
+             typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
         );
         // common parts and full parts
         CGAL_precondition(NiX::resultant(mult, f).is_zero());
         CGAL_precondition(mult.degree() == f.degree());
-        CGAL_precondition(NiX::total_degree(mult) == NiX::total_degree(f));
+        CGAL_precondition(deg(cvt(mult)) == deg(cvt(f)));
         
         X_coordinate_1 x0;
         if(is_vertical()) {
@@ -1927,7 +1932,8 @@ protected:
     //! (of type \c Kernel_arc_2 ); if no overlapping parts found - 
     //! returns \c false
     template < class OutputIterator >
-    bool _trim_if_overlapped(const Kernel_arc_2& cv2, OutputIterator oi) const {
+    bool _trim_if_overlapped(const Kernel_arc_2& cv2, OutputIterator oi) const
+    {
                
         CERR("\n_trim_if_overlapped: this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) << "; and " 
@@ -1937,7 +1943,7 @@ protected:
         if (is_vertical() != cv2.is_vertical()) {
             return false;
         }
-        
+
         if (is_vertical()) { // here process vertical case
             // check for x-coordinates equality
             if (Curved_kernel_via_analysis_2::instance().
@@ -1946,13 +1952,10 @@ protected:
                         cv2._minpoint().x()) != CGAL::EQUAL) {
                 return false;
             }
-            ///////////////////////////////////////
-            // TODO: overlapping of non-coprime vertical arcs (Pavel)
-            ///////////////////////////////////////
             Kernel_arc_2::simplify(
                     *dynamic_cast< const Kernel_arc_2*>(this), cv2
             );
-            // coprime support => no overlaps  
+            // coprime support => no overlaps
             if(!curve().is_identical(cv2.curve())) 
                 return false;
                 
@@ -2038,9 +2041,7 @@ protected:
         for (it_found = found.begin(); it_found != found.end(); it_found++) {
             for (it_parts = parts_g.begin(); it_parts != parts_g.end();
                  it_parts++) {
-                /*cpa_2 = Curve_kernel_2::get_curve_pair_cache()
-                    (std::make_pair(it_found->first, *it_parts));
-                */
+                
                 cpa_2 = Curved_kernel_via_analysis_2::instance().
                         kernel().construct_curve_pair_2_object()
                             (it_found->first, *it_parts);
@@ -2343,9 +2344,13 @@ protected:
         // grabbing all 2-curve events
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
-        // TODO: remove NiX ! might replace by CurveKernel_2 functor (Pavel)
-        bool which_curve = (NiX::total_degree(f) < NiX::total_degree(g));
+
+        typedef typename Curve_kernel_2::Polynomial_2_CGAL Poly_2;
+        typename Curve_kernel_2::NiX2CGAL_converter cvt;
+        typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
         
+        bool which_curve = (deg(cvt(f.polynomial_2())) <
+             deg(cvt(g.polynomial_2())));
         for(int i = low_idx; i <= high_idx; i++) {
             typename Curve_pair_analysis_2::Status_line_1 tmp = 
                 cpa_2.status_line_at_event(i);
