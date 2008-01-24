@@ -153,21 +153,17 @@ public:
     }
 
     //!@}
-protected:
 
     //!name Usual constructors
     //!@{
 
     //!\brief Constructs point on \c sheet of \c surface above \c point
     //!\pre sheet >= 0
-    Surface_point_2l(Curved_kernel_via_analysis_2l *kernel,
-                     const Projected_point_2& pt, 
+    Surface_point_2l(const Projected_point_2& pt, 
                      const Surface_3& surface, 
                      int sheet) :
         Base(Rebind()(pt)) {
         this->copy_on_write();
-        
-        this->_set_ckva(kernel);
         
         this->ptr()->_m_projected_point = pt;
         CGAL_precondition(sheet >= 0);

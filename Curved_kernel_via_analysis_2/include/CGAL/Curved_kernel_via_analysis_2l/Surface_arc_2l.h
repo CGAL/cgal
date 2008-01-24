@@ -167,8 +167,9 @@ public:
     typedef typename Rebind::Other Base;
 
     //!@}
-    
-    //!\name Constructors for non-vertical arcs
+
+public:    
+    //!\name Standard constructors
     //!@{
 
     /*!\brief
@@ -177,8 +178,12 @@ public:
     Surface_arc_2l() : 
         Base() {   
     }
+    
+    //!@}
 
-protected:
+public:
+    //!\name Constructors for non-vertical arcs
+    //!@{
     
     /*!\brief
      * Standard constructor for an bounded arc on xy-monotone part
@@ -189,8 +194,7 @@ protected:
      * \pre arc.curve_end(MIN) = p
      * \pre arc.curve_end(MAX) = q
      */
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Projected_arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3& surface,
@@ -198,8 +202,6 @@ protected:
         Base(Rebind()(arc, p, q)) {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_arc = arc;
         
@@ -241,16 +243,13 @@ protected:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Projected_arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_point_2l& p,
                    const Surface_3& surface,
                    int sheet, int sheet_p) :
         Base(Rebind()(arc, p)) {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_arc = arc;
         
@@ -308,15 +307,12 @@ protected:
      *
      * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Projected_arc_2& arc, 
+    Surface_arc_2l(const Projected_arc_2& arc, 
                    const Surface_3& surface,
                    int sheet) :
         Base(Rebind()(arc)) {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_arc = arc;
 
@@ -351,15 +347,12 @@ protected:
     // This point must be used, as the default constructed Base is useless.
     
     //! represents a bounded vertical arc
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Surface_point_2l& p,
+    Surface_arc_2l(const Surface_point_2l& p,
                    const Surface_point_2l& q,
                    const Surface_3& surface) :
         Base() {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_point = p.projected_point();
         
@@ -371,15 +364,12 @@ protected:
     }
 
     //! represents a vertical ray
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Surface_point_2l p,
+    Surface_arc_2l(const Surface_point_2l p,
                    CGAL::Arr_curve_end inf_end,
                    const Surface_3& surface) :
         Base() {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_point = p.projected_point();
 
@@ -391,14 +381,11 @@ protected:
     }
 
     //! represents a vertical branch
-    Surface_arc_2l(Curved_kernel_via_analysis_2l *kernel,
-                   const Projected_point_2& p,
+    Surface_arc_2l(const Projected_point_2& p,
                    const Surface_3& surface) :
         Base() {
         
         this->copy_on_write();
-        
-        _set_ckva(kernel);
         
         this->ptr()->_m_projected_point = p;
 
@@ -411,7 +398,7 @@ protected:
     
     //!@}
 
-    // TODO put all ordinary functors into Construct_arc_2l-functor
+    // TODO put all ordinary functors into Construct_arc_2l-functor (eriC)
     
 protected:
     //!\name Constructors for rebind/replace_endpoints

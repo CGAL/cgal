@@ -72,7 +72,7 @@ public:
                        const Surface_3& surface,
                        int sheet) const {
         CGAL_precondition(sheet >= 0);
-        Point_2 pt(this->_ckva(), xy, surface, sheet);
+        Point_2 pt(xy, surface, sheet);
         return pt;
     }
 };
@@ -196,7 +196,7 @@ public:
                               const Surface_point_2l& q,
                               const Surface_3& surface,
                               int sheet, int sheet_p, int sheet_q) {
-        Surface_arc_2l surface_arc(this->_ckva(), arc, p, q, surface, 
+        Surface_arc_2l surface_arc(arc, p, q, surface, 
                                    sheet, sheet_p, sheet_q);
         return surface_arc;
     }
@@ -220,8 +220,7 @@ public:
                           !arc.is_finite(CGAL::ARR_MAX_END) &&
                           arc.projected_arc().curve_end(CGAL::ARR_MIN_END) ==
                           p.projected_point());
-        Surface_arc_2l surface_arc(this->_ckva(), 
-                                   arc, p, surface, sheet, sheet_p);
+        Surface_arc_2l surface_arc(arc, p, surface, sheet, sheet_p);
         return surface_arc;
     }
     
@@ -239,7 +238,7 @@ public:
                    int sheet) {
         CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END));
         CGAL_precondition(!arc.is_finite(CGAL::ARR_MAX_END));
-        Surface_arc_2l surface_arc(this->_ckva(), arc, surface, sheet);
+        Surface_arc_2l surface_arc(arc, surface, sheet);
         return surface_arc;
     }
     
@@ -252,7 +251,7 @@ public:
     Surface_arc_2l operator()(const Surface_point_2l& p,
                               const Surface_point_2l& q,
                               const Surface_3& surface) {
-        Surface_arc_2l surface_arc(this->_ckva(), p, q, surface);
+        Surface_arc_2l surface_arc(p, q, surface);
         return surface_arc;
     }
 
@@ -260,14 +259,14 @@ public:
     Surface_arc_2l operator()(const Surface_point_2l p,
                               CGAL::Arr_curve_end inf_end,
                               const Surface_3& surface) {
-        Surface_arc_2l surface_arc(this->_ckva(), p, inf_end, surface);
+        Surface_arc_2l surface_arc(p, inf_end, surface);
         return surface_arc;
     }
 
     //! represents a vertical branch
     Surface_arc_2l operator()(const Projected_point_2& p,
                               const Surface_3& surface) {
-        Surface_arc_2l surface_arc(this->_ckva(), p, surface);
+        Surface_arc_2l surface_arc(p, surface);
         return surface_arc;
     }
 };
