@@ -337,7 +337,7 @@ namespace CGAL {
             --n;
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
             std::cerr << " = "
-                      << Self::Intersect_3::debug_point(surface, intersection)
+                      << Self::Intersect_3::debug_point(surface, *intersection)
                       << "\n";
 #endif
           }
