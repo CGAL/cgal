@@ -194,10 +194,6 @@ struct Make_x_monotone_2 :
                                               inf1_end, curve, k, info2.first);
                     }
                 } else if (info2.second != CGAL::ARR_INTERIOR) {
-
-                    CGAL::Comparison_result res =
-                        Curve_kernel_2().compare_x_2_object()(
-                            min_pts[info1.first].x(), max_x);
                     arc = construct_arc_2(min_pts[info1.first],  max_x,
                                           inf2_end, curve, k, info1.first);
                 } else {
