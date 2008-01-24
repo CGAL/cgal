@@ -361,7 +361,7 @@ public:
 
     //!@}
     
-protected:
+public:
     //!\name standard constructors for non-vertical arcs
     //!@{
     
@@ -503,6 +503,8 @@ protected:
     }
     
     //!@}
+
+public:
     //!\name standard constructors for vertical arcs
     //!@{
     
@@ -588,32 +590,9 @@ public:
     
     //!@}
 
-protected:    
-#if 0 // TODO remove (eriC)
-    //!\name Pointers
-    //!@{
-
-    //! sets pointer to ckva instance
-    void _set_ckva(Curved_kernel_via_analysis_2 *ckva) const {
-        this->ptr()->_m_ckva = ckva;
-    }
-    
-    //! returns pointer to ckva instance
-    inline
-    const Curved_kernel_via_analysis_2* _ckva() const {
-        return this->ptr()->_m_ckva;
-    }
-
-    //!@}
-#endif
 #define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(X, Y, Z) \
     typename Curved_kernel_via_analysis_2::X Y = \
          Curved_kernel_via_analysis_2::instance().Z(); \
-
-
-//    CGAL_precondition(_ckva() != NULL); 
-//    typename Curved_kernel_via_analysis_2::X Y = 
-//         _ckva()->Z(); 
 
 
 public:
