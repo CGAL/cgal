@@ -166,19 +166,19 @@ public:
         switch(cv1.location(ce)) {
             
         case(CGAL::ARR_LEFT_BOUNDARY): {
-
-           asym_info1 = cv1.curve().
-               horizontal_asymptote_for_arc_to_minus_infinity(cv1.arcno());
-           asym_info2 = cv2.curve().
-               horizontal_asymptote_for_arc_to_minus_infinity(cv2.arcno());
-           break;
+            
+            asym_info1 = cv1.curve().
+                horizontal_asymptote_for_arc_to_minus_infinity(cv1.arcno());
+            asym_info2 = cv2.curve().
+                horizontal_asymptote_for_arc_to_minus_infinity(cv2.arcno());
+            break;
         }
         case(CGAL::ARR_RIGHT_BOUNDARY ): {
             asym_info1 = cv1.curve().
                 horizontal_asymptote_for_arc_to_plus_infinity(cv1.arcno());
             asym_info2 = cv2.curve().
                 horizontal_asymptote_for_arc_to_plus_infinity(cv2.arcno());
-           break;
+            break;
         } 
         default: {
             // Never happens
@@ -413,7 +413,7 @@ private:
 
     typedef typename Arc_2::Curve_kernel_2 Curve_kernel_2;
     
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     typedef typename Curve_kernel_2::X_real_traits_1 X_real_traits_1;
@@ -610,7 +610,7 @@ public:
             x_max = CGAL::to_interval(x_high(right.get())).second;
         }
 
-        typename Curve_2::Internal_curve_2 curve =
+        typename Curve_analysis_2::Internal_curve_2 curve =
              arc.curve()._internal_curve();
         int arcno = arc.arcno();
 
@@ -641,7 +641,7 @@ public:
         for(int i = y_crit_begin; i < y_crit_end; i++) {
             
             Xy_coordinate_2 curr_xy(curve.y_critical_coordinate(i),
-                                    curve,
+                                    arc.curve(),
                                     arcno);
             CGAL::Bbox_2 point_bbox = curr_xy.approximation_box_2(threshold());
             std::pair<double,double> y_iv = std::make_pair(point_bbox.ymin(),
@@ -796,7 +796,10 @@ public:
 template < class CurveKernel_2 >
 
 class Filtered_curved_kernel_via_analysis_2 :
-     public CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >,
+     public CGALi::Curved_kernel_via_analysis_2_base < 
+         Filtered_curved_kernel_via_analysis_2< CurveKernel_2 >, 
+         CurveKernel_2 
+     >,
      public CGALi::Curved_kernel_via_analysis_2_functors < 
             Filtered_curved_kernel_via_analysis_2< CurveKernel_2 >,
             typename CurveKernel_2::Curve_analysis_2,
@@ -824,7 +827,7 @@ public:
     //!@{
 
     //! type of curve_2
-    typedef typename Curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
         
     //! type of a point on generic curve
     typedef CGALi::Point_2< Self > Point_2; 
@@ -898,7 +901,7 @@ protected:
     //!@{
     
     //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < CurveKernel_2 >
+    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, CurveKernel_2 >
     Base_kernel;
 
     //! class collecting basic types
