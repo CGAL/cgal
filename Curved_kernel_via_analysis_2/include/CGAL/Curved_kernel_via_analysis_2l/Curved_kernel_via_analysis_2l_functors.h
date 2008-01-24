@@ -114,7 +114,8 @@ public:
         CGAL_assertion(arcno == arc.arcno(x));
         typename Curved_kernel_via_analysis_2l::Construct_projected_point_2 
             construct_projected_point = 
-            this->_ckva()->construct_projected_point_2_object();
+            Curved_kernel_via_analysis_2l::instance().
+            construct_projected_point_2_object();
         typename Point_2::Projected_point_2 p_pt = 
             construct_projected_point(x, c, arcno);
         int sheet = arc.sheet();
@@ -132,7 +133,9 @@ public:
             }
         }
         typename Curved_kernel_via_analysis_2l::Construct_point_2 
-            construct_point_2 = this->_ckva()->construct_point_2_object();
+            construct_point_2 = 
+            Curved_kernel_via_analysis_2l::instance().
+            construct_point_2_object();
         
         Point_2 pt = construct_point_2(p_pt, arc.surface(), sheet);
         return pt;
