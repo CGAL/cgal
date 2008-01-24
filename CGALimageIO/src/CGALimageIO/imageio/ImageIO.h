@@ -1,3 +1,23 @@
+// Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// All rights reserved.
+//
+// The files in this directory are part of the ImageIO Library.
+// You can redistribute them and/or  modify them under the terms of the
+// GNU Lesser General Public License as published by the Free Software Foundation;
+// version 2.1 of the License. See the file /usr/share/common-licenses/LGPL-2.1.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+
 #ifndef IMAGEIO_H
 #define IMAGEIO_H
 
@@ -351,6 +371,12 @@ _image* _readImage(const char *name);
    @param name image file name or NULL */
 _image* _readNonInterlacedImage(const char *name);
 
+/** Read an image from a file. The word type is supposed to be unsigned
+    char, and the dimensions are (rx, ry, rz). */
+_image* _readImage_raw(const char *name,const unsigned int rx,
+                       const unsigned int ry,const unsigned int rz);
+
+
 /** Writes given image in file 'name'.<br>
     If name ends with '.gz', file is gzipped.<br>
     If name is NULL, image is sent to stdout.
@@ -417,9 +443,9 @@ void _openWriteImage(_image* im, const char *name) ;
    @param name image file name */
 void _openReadImage(_image *im, const char *name);
 
-// /** close an image file descriptor that was opened using _openImage
-//     @param im opened image descriptor */
-// void _closeImage(_image *im);
+/** close an image file descriptor that was opened using _openImage
+    @param im opened image descriptor */
+void _closeImage(_image *im);
 
 /** return the bounding box of the image
     @param im opened image descriptor */
@@ -491,9 +517,92 @@ int ImageIO_error( const _image *im );
  */
 int ImageIO_close( _image *im );
 
-/** trilinear interpolation in an _image float type
+/** trilinear interpolation in an _image. The returned type is float (cast
+    are made if the image word type is different).
  */
 float triLinInterp(_image* image,float posx, float posy, float posz);
+
+/** Alias for triLinInterp */
+float trilinear_interpolation(_image* image,float posx, float posy, float posz)
+{
+  return triLinInterp(image, posx, posy, posz);
+}
+
+//
+// The following definition are for the evaluate function.
+// 
+template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+struct Word_type_generator
+{
+};
+
+template <SIGN sign>
+struct Word_type_generator<WK_FLOAT, sign, 4>
+{
+  typedef float type;
+};
+
+template <SIGN sign>
+struct Word_type_generator<WK_FLOAT, sign, 8>
+{
+  typedef double type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_SIGNED, 1>
+{
+  typedef char type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>
+{
+  typedef unsigned char type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_SIGNED, 2>
+{
+  typedef short int type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>
+{
+  typedef unsigned short int type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_SIGNED, 4>
+{
+  typedef int type; // warning: assumes sizeof(int)==32
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>
+{
+  typedef unsigned int type; // warning: assumes sizeof(int)==32
+};
+
+template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+typename Word_type_generator<wordKind, sign, wdim>::type
+static_evaluate(_image* image,
+               const unsigned int i,
+               const unsigned int j,
+               const unsigned int k)
+{
+  typedef typename Word_type_generator<wordKind, sign, wdim>::type Word;
+
+  const int dimx = image->xdim;
+  const int dimy = image->ydim;
+  const int dimxy = dimx*dimy;
+
+  Word *array = (Word *) image->data;
+  return array[k * dimxy + j * dimx + i];
+}
+
+float evaluate(_image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
+
 
 /** convert the data of the image to float 
 */
