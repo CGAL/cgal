@@ -523,7 +523,8 @@ int ImageIO_close( _image *im );
 float triLinInterp(_image* image,float posx, float posy, float posz);
 
 /** Alias for triLinInterp */
-float trilinear_interpolation(_image* image,float posx, float posy, float posz)
+inline float trilinear_interpolation(_image* image,
+                                     float posx, float posy, float posz)
 {
   return triLinInterp(image, posx, posy, posz);
 }
