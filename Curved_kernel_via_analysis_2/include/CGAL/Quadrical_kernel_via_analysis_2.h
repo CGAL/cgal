@@ -83,7 +83,7 @@ public:
     //!@}
 
 protected:
-    // TODO add data (eriC)
+    // TODO make use of approx
     //! double approxximation
     boost::optional< QdX::Gfx_point_3 > _m_gfx_point;
     
@@ -1033,7 +1033,7 @@ public:
                      const_iterator it = ipoints.begin();
                  it != ipoints.end(); it++) {
                 
-                // remove intersections on boundary
+                // TODO remove intersections on boundary? (eriC)
                 *oi++ = CGAL::make_object(*it);
             }
 
@@ -1058,8 +1058,49 @@ public:
                 P_arc_2 p_arc;
 
                 if (CGAL::assign(p_arc, *it)) {
-                    CGAL_error_msg("Lifting of arcs not yet supported");
-                    // TODO lift overlapping arcs (eriC)
+
+                    // lift overlapping arcs (eriC)
+                    int smin = s1;
+                    int smax = s1;
+                    Point_2 pt_min;
+                    Point_2 pt_max;
+                    
+                    if (s1 == 1) {
+                        if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                            cv1.projected_arc().curve_end(CGAL::ARR_MIN_END)){
+                            pt_min = cv1.curve_end(CGAL::ARR_MIN_END);
+                            smin = cv1.sheet(CGAL::ARR_MIN_END);
+                        } else if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                                   cv2.projected_arc().
+                                   curve_end(CGAL::ARR_MIN_END)){
+                            pt_min = cv2.curve_end(CGAL::ARR_MIN_END);
+                            smin = cv2.sheet(CGAL::ARR_MIN_END);
+                        }
+                        if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                            cv1.projected_arc().
+                            curve_end(CGAL::ARR_MAX_END)){
+                            pt_max = cv1.curve_end(CGAL::ARR_MAX_END);
+                            smax = cv1.sheet(CGAL::ARR_MAX_END);
+                        } else if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                                   cv2.projected_arc().
+                                   curve_end(CGAL::ARR_MAX_END)){
+                            pt_max = cv2.curve_end(CGAL::ARR_MAX_END);
+                            smax = cv2.sheet(CGAL::ARR_MAX_END);
+                        }
+                    }
+
+                    Arc_2 arc = 
+                        Curved_kernel_via_analysis_2l::instance().
+                        construct_arc_2_object()(
+                                p_arc, 
+                                pt_min, pt_max,
+                                Curved_kernel_via_analysis_2l::instance().
+                                reference(),
+                                s1,
+                                smin, smax
+                        );
+                    // TODO unbounded arcs (eriC)
+                     
                 } else {
                     std::pair< P_point_2, unsigned int > p_pt;
                     CGAL_assertion_code(bool check =)
@@ -1080,8 +1121,8 @@ public:
                         Curved_kernel_via_analysis_2l::instance().
                         construct_point_2_object()(
                             p_pt.first, 
-                            // TODO reference instance
-                            this->_ckva()->reference(),
+                            Curved_kernel_via_analysis_2l::instance().
+                            reference(),
                             sp
                         );
                     
@@ -1218,7 +1259,7 @@ public:
                 (cv.is_vertical() ? -1 : cv.arcno(q.x()))
         );
 
-        if (cv.is_z_vertical()) {
+        if (!cv.is_z_vertical()) {
             // TODO set sheet (eriC)
         }
         
@@ -1228,7 +1269,7 @@ public:
                             p.projected_point(),
                             q.projected_point());
         
-        // TODO non-bounded arcs (eriC)
+        // TODO unbounded arcs (eriC)
 
         return arc;
     }
@@ -1301,7 +1342,7 @@ public:
         c1.ptr()->_m_projected_arc = p_arc1;
         c2.ptr()->_m_projected_arc = p_arc2;
 
-        // TODO non-bounded arcs (eriC)
+        // TODO unbounded arcs (eriC)
     }
 };
 
@@ -1441,7 +1482,7 @@ public:
             arc.ptr()->_m_projected_arc = p_arc;
         }
         
-        // TODO non-bounded arcs (eriC)
+        // TODO unbounded arcs (eriC)
         
         c = arc;
     }
@@ -1506,10 +1547,13 @@ public:
         // FUTURE TODO maybe adapt it to use QdX::P_curve_2 (eriC)
         
         // construct surface pair 
-        // TODO cache (eriC)
-        // TODO reference instance
-        Surface_pair_3 pair(this->_ckva()->reference(), cv);
-        
+        Surface_pair_3 pair = Surface_pair_3::surface_pair_cache()(
+                std::make_pair(
+                        Curved_kernel_via_analysis_2l::instance().reference(),
+                        cv
+                )
+        );
+                
         // compute lifted points and arcs
         std::list< Point_2 > points;
         std::list< Arc_2 > arcs;
@@ -1518,8 +1562,19 @@ public:
                 std::back_inserter(arcs),
                 std::back_inserter(points)
         );
-        
-        // TODO output as CGAL::Objects (eriC)
+
+        // output as CGAL::Objects
+        for (typename std::list< Point_2 >::const_iterator pit = 
+                 points.begin();
+             pit != points.end(); pit++) {
+            *oi++ = CGAL::make_object(*pit);
+        }
+
+        for (typename std::list< Arc_2 >::const_iterator ait = arcs.begin();
+             ait != arcs.end(); ait++) {
+            *oi++ = CGAL::make_object(*ait);
+        }
+
 
         return oi;
     }
