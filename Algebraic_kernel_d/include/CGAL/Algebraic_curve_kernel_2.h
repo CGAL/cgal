@@ -201,13 +201,12 @@ protected:
          }
     };
 
-    
     //! type of curve analysis cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2,
         Curve_analysis_2, Poly_canonicalizer<Internal_polynomial_2>,
         CGALi::Id_hasher> Curve_cache;
         
-    //! type of curve pair cache 
+    //! type of curve pair analysis cache 
     typedef CGALi::LRU_hashed_map<Pair_of_curves_2,
         Curve_pair_analysis_2, Curve_pair_canonicalizer,
         CGALi::Curve_pair_hasher_2<Curve_analysis_2>,
@@ -313,28 +312,29 @@ public:
         Curve_pair_analysis_2 operator()
            (const Curve_analysis_2& ca1, const Curve_analysis_2& ca2) const {
                  
-            //const Curve_pair_analysis_2& cpa_2 =
-              //  Self::curve_pair_cache()(std::make_pair(ca1, ca2));
-            // swapped flag indicates that curve analyses were swapped before
-            // caching
-            //std::cerr << ca1.id() << " and " <<  ca2.id() << "\n";
+            /*Curve_pair_analysis_2 cpa_2 =
+                Self::curve_pair_cache()(std::make_pair(ca1, ca2));
+             cpa_2._set_swapped(ca1.id() > ca2.id());
+             return cpa_2;*/
 
             Pair_of_curves_2 poc(ca1, ca2);
-            bool swap = false; //(ca1.id() > ca2.id());
+            bool swap = (ca1.id() > ca2.id());
             if(swap) {
                 poc.first = ca2;
                 poc.second = ca1;
             }   
-            
             std::pair<typename Curve_pair_cache::Hashed_iterator, bool> res =
                 Self::curve_pair_cache().find(poc);
-            if(res.second)
-                return res.first->second;
+            if(res.second) {
+                Curve_pair_analysis_2 cpa = res.first->second;
+                cpa._set_swapped(swap);
+                return cpa;
+            }
 
             Curve_pair_analysis_2 cpa_2(poc.first, poc.second);
             cpa_2._set_swapped(swap);
-            Self::curve_pair_cache().insert(std::make_pair(poc, cpa_2));
-            return cpa_2;
+            return (Self::curve_pair_cache().
+                insert(std::make_pair(poc, cpa_2))).first->second;
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
