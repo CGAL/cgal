@@ -389,7 +389,7 @@ public:
         
         this->ptr()->_m_projected_point = p;
 
-        // TODO chack that surface has a vertical line through p (eriC)
+        // TODO check that surface has a vertical line through p (eriC)
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
         // TODO set curve-ends to -oo and +oo using private constructors (eriC)
@@ -474,15 +474,9 @@ public:
     }
     
     //!@}
-
-    // TODO access to curve_end(CGAL::Arr_curve_end); (eriC)
-    
-
 };    
 
-
-
-// FUTURE-TODO a surface can have a vertical plane here over the arc_2
+// FUTURE TODO a surface can have a vertical plane here over the arc_2
 // -> Surface_patch_2l{};
 
 
