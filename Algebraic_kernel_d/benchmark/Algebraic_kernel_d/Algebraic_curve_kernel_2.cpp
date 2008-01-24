@@ -39,6 +39,7 @@
 #include <AcX/Algebraic_curve_2.h>
 #include <AcX/Algebraic_curve_pair_2.h>
 
+#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
@@ -96,14 +97,14 @@ class Bench_solve_2 {
 public:
     //! this instance's first template argument    
     typedef AlgebraicCurveKernel_2 AK_2;
-    //! in this setting Curve_2 == Polynomial_2
-    typedef typename AK_2::Curve_2 Curve_2;
+    //! type of 1-curve analysis
+    typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
     //! type of result (bivariate polynomials solution)
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
         
     // shall we pass as a parameter internal polynomials instead of curves  ?
     //! container of input curves
-    typedef std::vector<Curve_2> Curve_vector;
+    typedef std::vector<Curve_analysis_2> Curve_vector;
     //! container of resulting solutions
     typedef std::vector<Xy_coordinate_2> Root_vector;
     //! container of multiplicities
@@ -168,14 +169,14 @@ class Bench_sort {
 public:
     //! this instance's first template argument    
     typedef AlgebraicCurveKernel_2 AK_2;
-    //! in this setting Curve_2 == Polynomial_2
-    typedef typename AK_2::Curve_2 Curve_2;
+    //! type of 1-curve analysis
+    typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
     //! type of result (bivariate polynomials solution)
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
         
     // shall we pass as a parameter internal polynomials instead of curves  ?
     //! container of input curves
-    typedef std::vector<Curve_2> Curve_vector;
+    typedef std::vector<Curve_analysis_2> Curve_vector;
     //! container of resulting solutions
     typedef std::vector<Xy_coordinate_2> Root_vector;
     //! container of multiplicities
@@ -214,14 +215,14 @@ class Bench_to_double {
 public:
     //! this instance's first template argument    
     typedef AlgebraicCurveKernel_2 AK_2;
-    //! in this setting Curve_2 == Polynomial_2
-    typedef typename AK_2::Curve_2 Curve_2;
+//! type of 1-curve analysis
+    typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
     //! type of result (bivariate polynomials solution)
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
         
     // shall we pass as a parameter internal polynomials instead of curves  ?
     //! container of input curves
-    typedef std::vector<Curve_2> Curve_vector;
+    typedef std::vector<Curve_analysis_2> Curve_vector;
     //! container of resulting solutions
     typedef std::vector<Xy_coordinate_2> Root_vector;
     //! container of multiplicities
@@ -256,10 +257,6 @@ public:
         int i = 0;
         typename Root_vector::const_iterator rit;
         typename Mult_vector::const_iterator mit;
-
-        typedef typename AK_2::X_real_traits_1 X_traits;
-        typedef typename AK_2::Y_real_traits_1 Y_traits;
-       
         for(rit = _m_proots->begin(), mit = _m_pmults->begin(); rit !=
             _m_proots->end(); rit++, mit++, i++) {
 
@@ -282,9 +279,9 @@ Benchmark_result do_benchmark(std::string filename, int n_samples = 5)
     typedef AlgebraicCurveKernel_2 AK_2;
 
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
+    typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
+    typedef typename AK_2::Internal_polynomial_2 Internal_polynomial_2;
     
-    typedef typename AK_2::Curve_2 Curve_2;
-    typedef typename Curve_2::Poly_d Internal_polynomial_2;
     typedef typename NiX::Polynomial_traits<Internal_polynomial_2>::
         Innermost_coefficient Integer;
     
@@ -322,7 +319,7 @@ Benchmark_result do_benchmark(std::string filename, int n_samples = 5)
     for(int i = 0; i < n_polys; i++) {
        file >> tmp;
        // CGAL::remove_scalar_factor(poly); ??
-       Curve_2 c = kernel_2.construct_curve_2_object()
+       Curve_analysis_2 c = kernel_2.construct_curve_2_object()
             (NiX::canonicalize_polynomial(tmp));
        curves.push_back(c);
        CGAL_assertion(!file.eof());
@@ -330,13 +327,13 @@ Benchmark_result do_benchmark(std::string filename, int n_samples = 5)
     file.close();       
     
     result.number_of_polys = n_polys;    
-    result.degree_of_polys = curves.front().f().degree();
+    result.degree_of_polys = curves.front().polynomial_2().degree();
     
     Max_bit_size<Integer> max_bit_size;
     double total_bits = 0.0;
     for(typename Curve_vector::iterator it = curves.begin(); 
             it != curves.end(); it++)
-        total_bits += max_bit_size(it->f());
+        total_bits += max_bit_size(it->polynomial_2());
         
     result.bits = total_bits / n_polys;
         
