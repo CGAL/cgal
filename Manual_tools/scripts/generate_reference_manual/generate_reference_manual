@@ -173,7 +173,7 @@ do
             # Insert the doxygen-generated documentation into ${manual_file}
             if [[ -f "${doxygen_output_file}" ]];
             then
-                echo "  ${item} (in ${manual_file})"
+                echo "* ${item} (in ${manual_file})"
                 #echo copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "`pwd`/${doxygen_output_file}" "`pwd`/${manual_file}"
                 copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "${doxygen_output_file}" "${manual_file}"
             else
