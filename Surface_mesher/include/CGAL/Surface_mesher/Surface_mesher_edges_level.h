@@ -20,6 +20,8 @@
 #ifndef CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 #define CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 
+#include <CGAL/Mesh_2/Output_stream.h>
+
 #include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
 #include <CGAL/Surface_mesher/Simple_map_container.h>
@@ -98,12 +100,10 @@ namespace Surface_mesher {
     typedef typename GT::Vector_3 Vector_3;
     typedef typename GT::FT FT;
     typedef typename Surface_mesh_traits::Surface_3 Surface_3;
-    typedef typename Surface_3::Intersection_point Intersection_point;
+    typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
 
     typename GT::Construct_midpoint_3 midpoint = 
       tr.geom_traits().construct_midpoint_3_object();
-    typename GT::Construct_circumcenter_3 circumcenter = 
-      tr.geom_traits().construct_circumcenter_3_object();
     typename GT::Construct_ray_3 create_ray = 
       tr.geom_traits().construct_ray_3_object();
     typename GT::Construct_vector_3 create_vector = 
@@ -247,10 +247,9 @@ namespace Surface_mesher {
 	CGAL_assertion_code(++number_of_finite_incident_cells);
 	CGAL_assertion(!tr.is_infinite(current_cell));
 
-	edge_dual.push_back(circumcenter(va->point(),
-					 vb->point(),
-					 vc->point(),
-					 vd->point()));
+        // Use tr.dual(), which is optimized, when the cell base class as
+        // circumcenter().
+	edge_dual.push_back(tr.dual(current_cell));
 
 // 	const int index_of_next_cell = current_cell->index(next_cell);
 
@@ -305,16 +304,15 @@ namespace Surface_mesher {
       )
         std::cerr << boost::format("intersecion type: %1%\n") % o.type().name();
 #endif // CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
-      Intersection_point point;
-      if(assign(point, o))
+      if(const Intersection_point* point = object_cast<Intersection_point>(&o))
       {
 #ifdef CGAL_SURFACE_MESHER_EDGES_DEBUG_INTERSECTION
         CGAL_assertion_code(
         std::cerr << boost::format("  result=(%1%)\n")
-          % point;
+        % (*point);
 			    )
 #endif
-        return make_object(static_cast<Point_3>(point));
+        return make_object(static_cast<Point_3>(*point));
       }
     }
 
@@ -329,14 +327,13 @@ namespace Surface_mesher {
 		  const Surface_mesh_traits& meshtraits,
 		  const typename Tr::Edge& e)
   {
-    typename Surface_mesh_traits::Surface_3::Intersection_point point;
-    CGAL_assertion_code(bool is_a_point = )
-      assign(point,
-	     compute_edge_intersection_curve(tr,
+    typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
+    // the following object cast can throw a 'Bad_object_cast' exception 
+    Intersection_point point = 
+      object_cast<Intersection_point>(compute_edge_intersection_curve(tr,
 					     surf,
 					     meshtraits,
 					     e));
-    CGAL_assertion(is_a_point);
     return static_cast<typename Tr::Point>(point);
   }
 
@@ -591,7 +588,9 @@ namespace Surface_mesher {
       return NO_CONFLICT;
     }
 
-    void before_insertion_impl(const Edge& e, const Point_3&, const Zone& zone)
+    void before_insertion_impl(const Edge& CGAL_assertion_code(e),
+                               const Point_3&,
+                               const Zone& zone)
     {
       CGAL_assertion_code(bool is_e_removed = false);
       CGAL_assertion_code(const Cell_handle& c = e.first);
@@ -662,6 +661,7 @@ namespace Surface_mesher {
 
     void after_insertion_impl(const Vertex_handle& v)
     {
+      CGAL_MESHES_OUTPUT_STREAM << "-";
       std::vector<Cell_handle> cellules;
       tr.incident_cells (v, std::back_inserter(cellules));
 
@@ -728,13 +728,15 @@ namespace Surface_mesher {
     bool is_edge_in_restricted_triangulation(const Edge& e,
 					     Point_3& p) const
     {
-      typename Surface::Intersection_point point;
-      if(assign(point, compute_edge_intersection_curve(tr,
-						       surf,
-						       meshtraits,
-						       e)))
+      typedef typename Surface_mesh_traits::Intersection_point Intersection_point;
+      const Object obj = compute_edge_intersection_curve(tr,
+                                                         surf,
+                                                         meshtraits,
+                                                         e);
+      if(const Intersection_point* point = 
+         object_cast<Intersection_point>(&obj))
       {
-        p = static_cast<Point_3>(point);
+        p = static_cast<Point_3>(*point);
         return true;
       }
       else
