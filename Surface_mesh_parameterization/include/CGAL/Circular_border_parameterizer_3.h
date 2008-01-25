@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -121,7 +121,7 @@ private:
 };
 
 
-/// Compute the total length of the border
+// Compute the total length of the border
 template<class Adaptor>
 inline
 double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
@@ -146,8 +146,8 @@ double Circular_border_parameterizer_3<Adaptor>::compute_border_length(
     return len;
 }
 
-/// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
-/// on border's shape. Mark them as "parameterized".
+// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+// on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code

@@ -110,8 +110,7 @@ public:
 // Implementation
 //
 
-/// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
-/// Return false on error.
+// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
 template<class Adaptor>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code

@@ -237,15 +237,15 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-/// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
-/// to a piece of the 2D space.
-/// The mapping is linear by pieces (linear in each triangle).
-/// The result is the (u,v) pair image of each vertex of the 3D surface.
-///
-/// Preconditions:
-/// - 'mesh' must be a surface with one connected component.
-/// - 'mesh' must be a triangular mesh.
-/// - the mesh border must be mapped onto a convex polygon.
+// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+// to a piece of the 2D space.
+// The mapping is linear by pieces (linear in each triangle).
+// The result is the (u,v) pair image of each vertex of the 3D surface.
+//
+// Preconditions:
+// - 'mesh' must be a surface with one connected component.
+// - 'mesh' must be a triangular mesh.
+// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -372,10 +372,10 @@ parameterize(Adaptor& mesh)
 }
 
 
-/// Check parameterize() preconditions:
-/// - 'mesh' must be a surface with one connected component.
-/// - 'mesh' must be a triangular mesh.
-/// - the mesh border must be mapped onto a convex polygon.
+// Check parameterize() preconditions:
+// - 'mesh' must be a surface with one connected component.
+// - 'mesh' must be a triangular mesh.
+// - the mesh border must be mapped onto a convex polygon.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -429,13 +429,13 @@ check_parameterize_preconditions(Adaptor& mesh)
     return status;
 }
 
-/// Initialize A, Bu and Bv after border parameterization.
-/// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant".
-///
-/// Preconditions:
-/// - vertices must be indexed.
-/// - A, Bu and Bv must be allocated.
-/// - border vertices must be parameterized.
+// Initialize A, Bu and Bv after border parameterization.
+// Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant".
+//
+// Preconditions:
+// - vertices must be indexed.
+// - A, Bu and Bv must be allocated.
+// - border vertices must be parameterized.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -461,14 +461,14 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
     }
 }
 
-/// Compute the line i of matrix A for i inner vertex:
-/// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
-/// - compute w_ii = - sum of w_ijs.
-///
-/// Preconditions:
-/// - vertices must be indexed.
-/// - vertex i musn't be already parameterized.
-/// - line i of A must contain only zeros.
+// Compute the line i of matrix A for i inner vertex:
+// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
+// - compute w_ii = - sum of w_ijs.
+//
+// Preconditions:
+// - vertices must be indexed.
+// - vertex i musn't be already parameterized.
+// - line i of A must contain only zeros.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -514,7 +514,7 @@ setup_inner_vertex_relations(Matrix& A,
     return Base::OK;
 }
 
-/// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
+// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -537,8 +537,8 @@ set_mesh_uv_from_system(Adaptor& mesh,
     }
 }
 
-/// Check parameterize() postconditions:
-/// - 3D -> 2D mapping is one-to-one.
+// Check parameterize() postconditions:
+// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -562,8 +562,8 @@ check_parameterize_postconditions(const Adaptor& mesh,
     return status;
 }
 
-/// Check if 3D -> 2D mapping is one-to-one.
-/// The default implementation checks each normal.
+// Check if 3D -> 2D mapping is one-to-one.
+// The default implementation checks each normal.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::

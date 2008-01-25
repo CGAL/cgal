@@ -133,7 +133,7 @@ private:
 };
 
 
-/// Compute the total length of the border.
+// Compute the total length of the border.
 template<class Adaptor>
 inline
 double Square_border_parameterizer_3<Adaptor>::compute_border_length(
@@ -158,8 +158,8 @@ double Square_border_parameterizer_3<Adaptor>::compute_border_length(
     return len;
 }
 
-/// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
-/// on border's shape. Mark them as "parameterized".
+// Assign to mesh's border vertices a 2D position (i.e. a (u,v) pair)
+// on border's shape. Mark them as "parameterized".
 template<class Adaptor>
 inline
 typename Parameterizer_traits_3<Adaptor>::Error_code
@@ -248,8 +248,8 @@ Square_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     return Parameterizer_traits_3<Adaptor>::OK;
 }
 
-/// Utility method for parameterize_border().
-/// Compute mesh iterator whose offset is closest to 'value'.
+// Utility method for parameterize_border().
+// Compute mesh iterator whose offset is closest to 'value'.
 template<class Adaptor>
 inline
 typename Adaptor::Border_vertex_iterator

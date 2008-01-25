@@ -219,22 +219,22 @@ private:
 // Implementation
 // ------------------------------------------------------------------------------------
 
-/// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
-/// to a piece of the 2D space.
-/// The mapping is linear by pieces (linear in each triangle).
-/// The result is the (u,v) pair image of each vertex of the 3D surface.
-///
-/// Preconditions:
-/// - 'mesh' must be a surface with one connected component.
-/// - 'mesh' must be a triangular mesh.
-///
-/// Implementation note: Outline of the algorithm:
-/// 1) Find an initial solution by projecting on a plane.
-/// 2) Lock two vertices of the mesh.
-/// 3) Copy the initial u,v coordinates to OpenNL.
-/// 3) Construct the LSCM equation with OpenNL.
-/// 4) Solve the equation with OpenNL.
-/// 5) Copy OpenNL solution to the u,v coordinates.
+// Compute a one-to-one mapping from a triangular 3D surface 'mesh'
+// to a piece of the 2D space.
+// The mapping is linear by pieces (linear in each triangle).
+// The result is the (u,v) pair image of each vertex of the 3D surface.
+//
+// Preconditions:
+// - 'mesh' must be a surface with one connected component.
+// - 'mesh' must be a triangular mesh.
+//
+// Implementation note: Outline of the algorithm:
+// 1) Find an initial solution by projecting on a plane.
+// 2) Lock two vertices of the mesh.
+// 3) Copy the initial u,v coordinates to OpenNL.
+// 3) Construct the LSCM equation with OpenNL.
+// 4) Solve the equation with OpenNL.
+// 5) Copy OpenNL solution to the u,v coordinates.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -339,9 +339,9 @@ parameterize(Adaptor& mesh)
 }
 
 
-/// Check parameterize() preconditions:
-/// - 'mesh' must be a surface with one connected component
-/// - 'mesh' must be a triangular mesh
+// Check parameterize() preconditions:
+// - 'mesh' must be a surface with one connected component
+// - 'mesh' must be a triangular mesh
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -385,13 +385,13 @@ check_parameterize_preconditions(Adaptor& mesh)
     return status;
 }
 
-/// Initialize "A*X = B" linear system after
-/// (at least two) border vertices are parameterized
-///
-/// Preconditions:
-/// - vertices must be indexed
-/// - X and B must be allocated and empty
-/// - (at least two) border vertices must be parameterized
+// Initialize "A*X = B" linear system after
+// (at least two) border vertices are parameterized
+//
+// Preconditions:
+// - vertices must be indexed
+// - X and B must be allocated and empty
+// - (at least two) border vertices must be parameterized
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -422,9 +422,9 @@ initialize_system_from_mesh_border(LeastSquaresSolver& solver,
     }
 }
 
-/// Utility for setup_triangle_relations():
-/// Computes the coordinates of the vertices of a triangle
-/// in a local 2D orthonormal basis of the triangle's plane.
+// Utility for setup_triangle_relations():
+// Computes the coordinates of the vertices of a triangle
+// in a local 2D orthonormal basis of the triangle's plane.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void
@@ -459,17 +459,17 @@ project_triangle(const Point_3& p0, const Point_3& p1, const Point_3& p2,   // i
 }
 
 
-/// Create two lines in the linear system per triangle (one for u, one for v)
-///
-/// Preconditions:
-/// - vertices must be indexed
-///
-/// Implementation note: LSCM equation is:
-///       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
-/// where Uk = uk + i.v_k is the complex number corresponding to (u,v) coords
-///       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
-/// cool: no divide with this expression; makes it more numerically stable
-/// in presence of degenerate triangles
+// Create two lines in the linear system per triangle (one for u, one for v)
+//
+// Preconditions:
+// - vertices must be indexed
+//
+// Implementation note: LSCM equation is:
+//       (Z1 - Z0)(U2 - U0) = (Z2 - Z0)(U1 - U0)
+// where Uk = uk + i.v_k is the complex number corresponding to (u,v) coords
+//       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
+// cool: no divide with this expression; makes it more numerically stable
+// in presence of degenerate triangles
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -558,7 +558,7 @@ setup_triangle_relations(LeastSquaresSolver& solver,
     return Base::OK;
 }
 
-/// Copy X coordinates into the (u,v) pair of each vertex
+// Copy X coordinates into the (u,v) pair of each vertex
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
@@ -583,8 +583,8 @@ set_mesh_uv_from_system(Adaptor& mesh,
     }
 }
 
-/// Check parameterize() postconditions:
-/// - 3D -> 2D mapping is one-to-one.
+// Check parameterize() postconditions:
+// - 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
@@ -606,7 +606,7 @@ check_parameterize_postconditions(const Adaptor& mesh,
     return status;
 }
 
-/// Check if 3D -> 2D mapping is one-to-one.
+// Check if 3D -> 2D mapping is one-to-one.
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 bool LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
