@@ -41,7 +41,7 @@ Tips:
 * \"Words surrounded by double quotes\" will be emphasized.
 
 Known bugs:
-* This tool has been tested with doxygen 1.4.4 to 1.4.6. It may *not* work with other versions of doxygen.
+* This tool has been tested with doxygen 1.4 and 1.5. It may *not* work with other versions of doxygen.
 * So far, this tool documents only concepts, classes, structs and functions.
 
 Contact:
@@ -55,7 +55,7 @@ exit 1
 #######
 
 # Version
-echo "generate_reference_manual version 0.7.5.";
+echo "generate_reference_manual version 0.8.";
 
 # Global variables
 ROOT_FOLDER="" 				    # Package's root folder
@@ -90,21 +90,21 @@ done
 # Test if doxygen is installed
 which doxygen >/dev/null 2>&1
 if [[ $? != 0 ]]; then
-    echo "Error: cannot find doxygen"
+    echo "ERROR: cannot find doxygen"
     exit 1
 fi
 
 # Test if doxygen configuration file generate_reference_manual_Doxyfile is present
 DOXYFILE="$0_Doxyfile"
 if [[ ! (-f "${DOXYFILE}") ]]; then
-    echo "Error: file ${DOXYFILE} does not exist"
+    echo "ERROR: file ${DOXYFILE} does not exist"
     exit 1
 fi
 
 # Test if copy_doxygen_latex_doc is installed
 which copy_doxygen_latex_doc >/dev/null 2>&1
 if [[ $? != 0 ]]; then
-    echo "Error: cannot find copy_doxygen_latex_doc"
+    echo "ERROR: cannot find copy_doxygen_latex_doc"
     exit 1
 fi
 
@@ -112,7 +112,7 @@ fi
 if [[ -d "${ROOT_FOLDER}" ]]; then
     cd "${ROOT_FOLDER}"
 else
-    echo "Error: folder ${ROOT_FOLDER} does not exist"
+    echo "ERROR: folder ${ROOT_FOLDER} does not exist"
     exit 1
 fi
 
@@ -173,14 +173,24 @@ do
             # Insert the doxygen-generated documentation into ${manual_file}
             if [[ -f "${doxygen_output_file}" ]];
             then
-                echo "${item} (${manual_file})"
+                echo "  ${item} (in ${manual_file})"
                 #echo copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "`pwd`/${doxygen_output_file}" "`pwd`/${manual_file}"
                 copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "${doxygen_output_file}" "${manual_file}"
             else
-                echo "Warning: cannot find doxygen documentation for ${item} (${manual_file})"
+                echo "ERROR: cannot find doxygen documentation for ${item} (in ${manual_file})"
             fi
         done
     fi
 done
+
+# Update citations (hard-coded).
+# TODO: add here citations for all packages using generate_reference_manual.
+perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' doc_tex/${PACKAGE}_ref/*.tex
 
 exit 0

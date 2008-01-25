@@ -87,6 +87,10 @@ sub latex_unmangle
         $buf =~ s/\{\\em\s+([^\{]*?)\}/$1/smg;  # replace {\em xxx} by xxx
         $buf =~ s/\\hfill\\label\{\w*\}//g;     # remove \hfill\label{...}
         $buf =~ s/\\label\{\w*\}//g;            # remove \label{...}
+        $buf =~ s/\\doxyref\{(.*?)\}\{p\.\}\{.*?\}/$1/smg;
+                                                # replace \doxyref{xxx}{p.}{...} by xxx
+        $buf =~ s/\{\\footnotesize\s+(.*?)\s*\}\\\\/$1/smg;
+                                                # replace {\footnotesize xxx} by xxx
     }
     #
     $buf =~ s/\\index\{[^\\]*\}//g;             # remove \index{...}
@@ -663,7 +667,7 @@ sub merge_manuals
 sub usage
 {
 print <<"END_USAGE";
-copy_doxygen_latex_doc version 0.7.5.
+copy_doxygen_latex_doc version 0.8.
 
 Extract documentation from a doxygen-generated latex file and insert it in a CGAL Reference Manual's latex file.
 
@@ -681,7 +685,7 @@ Tips:
 * \"Words surrounded by double quotes\" will be emphasized.
 
 Known bugs:
-* This tool has been tested with doxygen 1.4.4 to 1.4.6. It may *not* work with other versions of doxygen.
+* This tool has been tested with doxygen 1.4 and 1.5. It may *not* work with other versions of doxygen.
 * So far, this tool documents only concepts, classes, structs and functions.
 END_USAGE
 

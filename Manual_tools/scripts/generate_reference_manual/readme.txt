@@ -13,7 +13,7 @@ This is a shell script, thus for Unix only.
 generate_reference_manual and copy_doxygen_latex_doc must be in the PATH.
 generate_reference_manual_Doxyfile must be in the same folder as generate_reference_manual.
 
-generate_reference_manual requires Perl and Doxygen (preferably Doxygen 1.4.4).
+generate_reference_manual requires Perl (any recent version) and Doxygen (Doxygen 1.4 or 1.5).
 
 USAGE
 
@@ -45,7 +45,7 @@ TIPS
 
 KNOWNS BUGS
 
-* This tool has been tested on Linux with Doxygen 1.4.4 only. It is likely that it will *not* work with other versions of Doxygen.
+* This tool has been tested on Linux with Doxygen 1.4 and 1.5. It is likely that it will *not* work with other versions of Doxygen.
 * So far, this tool documents only concepts, classes, structs and functions.
 
 CONTACT
