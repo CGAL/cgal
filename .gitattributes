@@ -1549,11 +1549,14 @@ CMake/cmake/modules/FindGMP.cmake -text
 CMake/cmake/modules/FindGMPXX.cmake -text
 CMake/cmake/modules/FindMPFR.cmake -text
 CMake/cmake/modules/FindPackageHandleStandardArgs.cmake -text
+CMake/cmake/modules/FindQGLViewer.cmake -text
+CMake/cmake/modules/FindQt4.cmake -text
 CMake/cmake/modules/FindTAUCS.cmake -text
 CMake/cmake/modules/FindZLIB.cmake -text
 CMake/cmake/modules/GeneratorSpecificSettings.cmake -text
 CMake/cmake/modules/LogCMakeVariables.cmake -text
 CMake/cmake/modules/MacroCreateSingleSourceCGALProgram.cmake -text
+CMake/cmake/modules/MacroCreateSingleSourceCGALQt4Program.cmake -text
 CMake/cmake/modules/MacroCreateSingleSourceCGALQtProgram.cmake -text
 CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
