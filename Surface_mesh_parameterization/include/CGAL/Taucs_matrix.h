@@ -22,9 +22,6 @@
 #define CGAL_TAUCS_MATRIX
 
 #include <CGAL/basic.h>
-
-#ifdef CGAL_USE_TAUCS
-
 #include <CGAL/Taucs_fix.h>
 
 
@@ -376,7 +373,5 @@ template<> struct Taucs_number<taucs_scomplex> {
 
 
 CGAL_END_NAMESPACE
-
-#endif // CGAL_USE_TAUCS
 
 #endif // CGAL_TAUCS_MATRIX

@@ -22,9 +22,6 @@
 #define CGAL_TAUCS_SOLVER_TRAITS
 
 #include <CGAL/basic.h>
-
-#ifdef CGAL_USE_TAUCS
-
 #include <CGAL/auto_link/TAUCS.h>
 #include <CGAL/Taucs_matrix.h>
 #include <CGAL/Taucs_vector.h>
@@ -114,7 +111,7 @@ public:
 
 private:
 
-    /// Test if a floating point number is (close to) 0.0.
+    // Test if a floating point number is (close to) 0.0.
     static inline bool IsZero(NT a)
     {
         return (std::fabs(a) < 10.0 * (std::numeric_limits<NT>::min)());
@@ -227,7 +224,7 @@ public:
 
 private:
 
-    /// Test if a floating point number is (close to) 0.0.
+    // Test if a floating point number is (close to) 0.0.
     static inline bool IsZero(NT a)
     {
         return (std::fabs(a) < 10.0 * (std::numeric_limits<NT>::min)());
@@ -236,7 +233,5 @@ private:
 
 
 CGAL_END_NAMESPACE
-
-#endif // CGAL_USE_TAUCS
 
 #endif // CGAL_TAUCS_SOLVER_TRAITS
