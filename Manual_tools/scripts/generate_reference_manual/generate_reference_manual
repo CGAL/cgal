@@ -129,14 +129,14 @@ mkdir doc_doxygen
 # Run doxygen
 echo ""
 echo "Run doxygen..."
-doxygen "${DOXYFILE}" 2>&1 | grep -v "BoundingBox not found"
+doxygen "${DOXYFILE}" 2>&1 | grep -v "Warning:"
 
 # Turn traces on
 #set -x
 
 # Update the Reference Manual
 echo ""
-echo "Update the Reference Manual:"
+echo "Update the Reference Manual..."
 for manual_file in doc_tex/${PACKAGE}_ref/*.tex
 do
     # Skip main.tex and intro.tex
