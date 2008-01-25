@@ -218,7 +218,7 @@ public:
     //! \brief returns an instance of StatusLine_1 of the i-th 
     //! interval
     //!
-     //! \pre 0 <= i < number_of_status_lines_with_event()
+    //! \pre 0 <= i < number_of_status_lines_with_event()
     Status_line_1 status_line_of_interval(size_type i) const
     {
         CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
@@ -268,7 +268,35 @@ public:
         size_type n_arcs = _internal_curve().arcs_over_interval(i);
         return Status_line_1(x, i, *this, n_arcs);
     }
-    
+
+    /*!\brief
+     * returns the index of the event at the status line defined by
+     * \c s x-coordinate, or -1 if \c s does not lie on the curve.
+     */
+    size_type find(const Xy_coordinate_2& s) const {
+        return 0;
+    }
+
+
+    /*!\brief
+     * returns a \c CGAL::Object that encodes the asymptotic value of a
+     * curve-arc approaching the left or the right boundary \c loc of the
+     * underlying parameter space.
+     *
+     * Allowed instantiations of the \c CGAL::Object are \c Algebraic_real_1 ,
+     * in case the x-asympote of the arc is finite, or
+     * \c CGAL::ARR_BOTTOM_BOUNDARY and \c CGAL::ARR_TOP_BOUNDARY in case
+     * the defined arc approaches the respective corners of the parameter
+     * space.
+     *
+     * \pre \c loc is either \c CGAL::ARR_LEFT_BOUNDARY or
+     *  \c CGAL::ARR_RIGHT_BOUNDARY
+     */  
+//     CGAL::Object asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+//             size_type arcno) const {
+//         return CGAL::Object();
+//     }
+
     //!@}
 }; // class Curve_analysis_2
 

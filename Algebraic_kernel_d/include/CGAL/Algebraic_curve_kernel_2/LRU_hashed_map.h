@@ -129,10 +129,14 @@ public:
     {
         Canonicalizer canonicalize;
         Key_type key = canonicalize(key_);
+
+        std::cerr << "key is: " << key << std::endl;
         std::pair<Hashed_iterator, bool> p = find(key);
         if(!p.second) {
             Creator create;
-            Value_type val = create(key_);
+            Value_type val = create(key);
+
+            std::cerr << "constructed: " << val.id() << std::endl;
             insert(Data_type(key, val));
             return val;
         }
@@ -218,6 +222,14 @@ struct Id_equal_to
         return (x1.id() == x2.id());
    }
 };
+
+struct Poly_hasher {
+
+    template <class Poly_2>
+    std::size_t operator()(const Poly_2& p) const {
+        return static_cast<std::size_t>(NiX::total_degree(p));
+    }
+};
     
 //! \brief a simple curve pair hasher
 //!
@@ -231,9 +243,9 @@ struct Curve_pair_hasher_2
         
     size_t operator()(const Pair_of_curves_2& p) const {
         // uses code from boost::hash_combine
-        std::size_t seed = p.first.polynomial_2().id() + 0x9e3779b9;
-        seed ^= p.second.polynomial_2().id() + 0x9e3779b9 +
-            (seed << 6) + (seed >> 2);
+        Poly_hasher hasher;
+        std::size_t seed = p.first.id() + 0x9e3779b9;
+        seed ^= p.second.id() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;
     }  
 };
