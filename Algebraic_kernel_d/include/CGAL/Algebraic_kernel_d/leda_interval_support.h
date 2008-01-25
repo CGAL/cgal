@@ -287,6 +287,7 @@ leda_bigfloat_interval  inline convert_to_bfi(const ::leda::rational& x) {
 
 } // namespace CGALi
 
+inline
 std::pair<double, double> to_interval( const CGALi::leda_bigfloat_interval& x ) {
     return std::pair< double, double >( CGAL::to_double( x.lower() ),
                                         CGAL::to_double( x.upper() ) );
