@@ -49,6 +49,7 @@
     <addaction name="actionDisplay_control_edges" />
     <addaction name="actionDisplay_all_edges" />
     <addaction name="action_Options" />
+    <addaction name="actionAuto_resize" />
     <addaction name="actionDisplay_front_and_back" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
@@ -78,6 +79,7 @@
    <addaction name="action_Open" />
    <addaction name="action_Clone" />
    <addaction name="separator" />
+   <addaction name="actionAuto_resize" />
    <addaction name="actionDisplay_front_and_back" />
    <addaction name="actionInverse_normals" />
    <addaction name="separator" />
@@ -267,10 +269,33 @@
    <property name="iconText" >
     <string>Two-sides</string>
    </property>
+   <property name="shortcut" >
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="action_Clone" >
    <property name="text" >
     <string>Clone</string>
+   </property>
+  </action>
+  <action name="actionAuto_resize" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="surface_mesher.qrc" >:/icons/resize.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Auto-resize</string>
+   </property>
+   <property name="toolTip" >
+    <string>Automaticaly zoom in or out when the object change.</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

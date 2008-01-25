@@ -224,8 +224,6 @@ void Volume::display_surface_mesher_result()
 
   Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
-  std::cerr << "Image bounding sphere: " << bounding_sphere << "\n";
-
   // definition of the surface
   Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
 
@@ -243,7 +241,6 @@ void Volume::display_surface_mesher_result()
     {
       const Point test = *it + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
       CGAL::Object o = intersect(surface, Segment_3(*it, test));
-      std::cerr << o.type().name() << "\n";
       if (const Point* intersection = CGAL::object_cast<Point>(&o))
         tr.insert(*intersection);
       else 

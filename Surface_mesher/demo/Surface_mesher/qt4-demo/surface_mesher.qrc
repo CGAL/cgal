@@ -5,6 +5,7 @@
         <file>cgal_logo.xpm</file>
         <file>fileopen.png</file>
         <file>flip.png</file>
+        <file>resize.png</file>
         <file>surface.png</file>
         <file>twosides.png</file>
     </qresource>

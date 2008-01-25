@@ -12,8 +12,6 @@ INCLUDEPATH += . \
                ../../../../Data_structure_for_queries_3/include \
                ../../../../Marching_cube/include
 
-QMAKEFEATURES=$(PWD)
-
 unix:LIBS += -lQGLViewer 
 CONFIG += qt cgal
 QT += xml opengl script
@@ -87,6 +85,5 @@ SOURCES += surface_mesher.cpp \
            polyhedral_surface.cpp \
            volume.cpp \
            ../../../../Marching_cube/src/mc/MarchingCubes.cpp \
-           ../../../../Marching_cube/src/mc/ply.c \
-           ../../../../CGALimageIO/src/CGALimageIO/ImageIO.cpp
+           ../../../../Marching_cube/src/mc/ply.c
 RESOURCES += surface_mesher.qrc

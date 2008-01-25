@@ -1,5 +1,6 @@
 #include "viewer.h"
 #include "surface.h"
+#include <QAction>
 
 void Viewer::init()
 {
@@ -17,6 +18,9 @@ QString Viewer::helpString() const
 void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
                                          double xmax, double ymax, double zmax)
 {
+  QAction* auto_resize = parent->findChild<QAction*>("actionAuto_resize");
+  if(!auto_resize || !auto_resize->isChecked())
+    return;
   qglviewer::Camera new_camera = *(camera ());
   new_camera.fitBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
                             qglviewer::Vec(xmax, ymax, zmax));

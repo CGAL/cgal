@@ -33,7 +33,10 @@
      <item>
       <widget class="QLabel" name="label_3" >
        <property name="text" >
-        <string>Iso-value:</string>
+        <string>&amp;Iso-value:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>spinBox_isovalue</cstring>
        </property>
       </widget>
      </item>
@@ -47,7 +50,10 @@
      <item>
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>Sizing bound:</string>
+        <string>&amp;Sizing bound:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>spinBox_radius_bound</cstring>
        </property>
       </widget>
      </item>
@@ -61,7 +67,10 @@
      <item>
       <widget class="QLabel" name="label_2" >
        <property name="text" >
-        <string>Distance bound:</string>
+        <string>&amp;Distance bound:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>spinBox_distance_bound</cstring>
        </property>
       </widget>
      </item>
