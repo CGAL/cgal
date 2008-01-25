@@ -48,7 +48,7 @@ inline
 typename Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
-                               typename Object& object, // plane or line
+                               Object& object, // plane or line
                                typename Kernel::Point_3& centroid, 
                                const Tag& tag, // dimension tag, ranges from 0 to 3
 			                         const Kernel& kernel)
