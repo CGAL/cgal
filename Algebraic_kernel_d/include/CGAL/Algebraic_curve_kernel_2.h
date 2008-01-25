@@ -204,7 +204,7 @@ protected:
     //! type of curve analysis cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2,
         Curve_analysis_2, Poly_canonicalizer<Internal_polynomial_2>,
-        CGALi::Id_hasher> Curve_cache;
+        CGALi::Poly_hasher> Curve_cache;
         
     //! type of curve pair analysis cache 
     typedef CGALi::LRU_hashed_map<Pair_of_curves_2,
