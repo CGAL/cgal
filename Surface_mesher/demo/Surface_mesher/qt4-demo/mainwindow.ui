@@ -51,6 +51,8 @@
     <addaction name="action_Options" />
     <addaction name="actionAuto_resize" />
     <addaction name="actionDisplay_front_and_back" />
+    <addaction name="actionDraw_triangles_edges" />
+    <addaction name="actionUse_Gouraud_shading" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -248,12 +250,18 @@
   </action>
   <action name="actionMarching_cubes" >
    <property name="text" >
-    <string>Marching cubes</string>
+    <string>Marching &amp;cubes</string>
+   </property>
+   <property name="iconText" >
+    <string>Marching &amp;cubes</string>
    </property>
   </action>
   <action name="actionSurface_mesher" >
    <property name="text" >
-    <string>Surface mesher</string>
+    <string>Surface &amp;mesher</string>
+   </property>
+   <property name="iconText" >
+    <string>Surface &amp;mesher</string>
    </property>
   </action>
   <action name="actionDisplay_front_and_back" >
@@ -289,13 +297,53 @@
     <iconset resource="surface_mesher.qrc" >:/icons/resize.png</iconset>
    </property>
    <property name="text" >
-    <string>Auto-resize</string>
+    <string>Auto-&amp;resize</string>
+   </property>
+   <property name="iconText" >
+    <string>Auto-&amp;resize</string>
    </property>
    <property name="toolTip" >
     <string>Automaticaly zoom in or out when the object change.</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionDraw_triangles_edges" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Draw triangles &amp;edges</string>
+   </property>
+   <property name="iconText" >
+    <string>Draw triangles &amp;edges</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionUse_Gouraud_shading" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Use &amp;Gouraud shading (marching cube only)</string>
+   </property>
+   <property name="iconText" >
+    <string>Use &amp;Gouraud shading</string>
+   </property>
+   <property name="statusTip" >
+    <string>Use Gouraud shading to display the marching cubes.</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

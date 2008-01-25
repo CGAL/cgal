@@ -18,13 +18,16 @@ QString Viewer::helpString() const
 void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
                                          double xmax, double ymax, double zmax)
 {
-  QAction* auto_resize = parent->findChild<QAction*>("actionAuto_resize");
-  if(!auto_resize || !auto_resize->isChecked())
-    return;
-  qglviewer::Camera new_camera = *(camera ());
-  new_camera.fitBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
-                            qglviewer::Vec(xmax, ymax, zmax));
-  camera()->interpolateTo(*new_camera.frame(), 1.);
+  QAction* auto_resize = parent()->parent()->findChild<QAction*>("actionAuto_resize");
+  if(!auto_resize)
+    exit(1);
+  if(auto_resize && auto_resize->isChecked())
+  {
+    qglviewer::Camera new_camera = *(camera ());
+    new_camera.fitBoundingBox(qglviewer::Vec(xmin, ymin, zmin),
+                              qglviewer::Vec(xmax, ymax, zmax));
+    camera()->interpolateTo(*new_camera.frame(), 1.);
+  }
 }
 
 void Viewer::draw()

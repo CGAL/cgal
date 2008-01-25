@@ -75,24 +75,30 @@ private:
 
   std::vector<Facet> m_surface;
   std::vector<Facet> m_surface_mc;
+  MarchingCubes mc ;
 
   QMainWindow* parent;
   bool m_inverse_normals;
   bool two_sides;
+  bool draw_triangles_edges;
+  bool use_gouraud;
 
   QDoubleSpinBox* spinBox_isovalue;
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
 private:
   template <typename Iterator>
-  void gl_draw_surface(Iterator begin, Iterator end, bool inverse_normals);
+  void gl_draw_surface(Iterator begin, Iterator end);
 
   template <typename PointsOutputIterator>
   void search_for_connected_components(PointsOutputIterator);
 
 public:
-  void gl_draw_surface(bool inverse_normals = false);
-  void gl_draw_surface_mc(bool inverse_normals = false);
+  void gl_draw_surface();
+  void gl_draw_surface_mc();
+  void gl_draw_marchingcube();
+private:
+  void gl_draw_one_marching_cube_vertex(int);
 
 signals:
 void new_bounding_box(double, double, double, double, double, double);
@@ -100,6 +106,8 @@ void new_bounding_box(double, double, double, double, double, double);
 public slots:
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);
+  void set_draw_triangles_edges(const bool);
+  void set_use_gouraud(const bool);
   void open(const QString& filename);
   void draw();
   void get_bbox(float& /*xmin*/, float& /*ymin*/, float& /*zmin*/,
@@ -114,6 +122,7 @@ private:
   void status_message(QString);
   void busy() const;
   void not_busy() const;
+  void changed_parameters();
 };
 
 template <typename PointsOutputIterator>
@@ -251,7 +260,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it)
 } // end function Volume::search_for_connected_components()
 
 template <typename Iterator>
-void Volume::gl_draw_surface(Iterator begin, Iterator end, bool inverse_normals = false)
+void Volume::gl_draw_surface(Iterator begin, Iterator end)
 {
   ::glBegin(GL_TRIANGLES);
   unsigned int counter = 0;
@@ -261,7 +270,7 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end, bool inverse_normals 
 
     const Vector& n = f.second;
 
-    if(inverse_normals)
+    if(m_inverse_normals)
       ::glNormal3d(-n.x(),-n.y(),-n.z());
     else
       ::glNormal3d(n.x(),n.y(),n.z());
