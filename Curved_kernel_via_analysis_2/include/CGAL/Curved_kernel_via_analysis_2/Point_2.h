@@ -75,7 +75,7 @@ public:
     //! default constructor
     Point_2_rep() :
         _m_arc_rep(NULL),
-        _m_ckva(NULL), _m_is_finite(false) {
+        _m_ckva(NULL) {
     }
     
     //! constructs a "finite" point on curve,
@@ -83,13 +83,13 @@ public:
     Point_2_rep(const Xy_coordinate_2& xy) : 
         _m_xy(xy), _m_location(CGAL::ARR_INTERIOR), 
         _m_arc_rep(NULL),
-        _m_ckva(NULL), _m_is_finite(true) {
+        _m_ckva(NULL) {
     }
 
     //! constructs a point on curve with y-coordinate at infinity
     Point_2_rep(const X_coordinate_1& x, CGAL::Arr_curve_end inf_end) :
         _m_x(x), _m_arc_rep(NULL),
-        _m_ckva(NULL), _m_is_finite(false) {
+        _m_ckva(NULL) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                        CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
         
@@ -98,7 +98,7 @@ public:
     //! constructs a point at +/-oo in x
     Point_2_rep(CGAL::Arr_curve_end inf_end) :
         _m_arc_rep(NULL),
-        _m_ckva(NULL), _m_is_finite(false) {
+        _m_ckva(NULL) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                        CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
     }
@@ -121,8 +121,6 @@ public:
     
     // pointer to underlying ckva
     mutable Curved_kernel_via_analysis_2 *_m_ckva;
-
-    bool _m_is_finite;
 
     // friends
     friend std::ostream& operator << <>(
@@ -212,7 +210,6 @@ public:
             New_rep newrep;
             newrep._m_xy = pt.ptr()->_m_xy;
             newrep._m_x = pt.ptr()->_m_x;
-            newrep._m_is_finite = pt.ptr()->_m_is_finite;
             // TODO set arc_rep in rebind of arc! (eriC)
             //newrep._m_arc_rep = pt.ptr()->_m_arc_rep;
             newrep._m_location = pt.ptr()->_m_location;
@@ -316,8 +313,7 @@ public:
     inline 
     bool is_finite() const {
         // FUTURE TODO on torus all points are finite
-        return this->ptr()->_m_is_finite;
-        //(this->ptr()->_m_arc_rep == NULL;)
+        return this->ptr()->_m_xy;
     }
 
     //!@}
@@ -355,7 +351,7 @@ public:
         CGAL_precondition_msg(this->ptr()->_m_xy || this->ptr()->_m_x,
           "Denied access to x-coordinate of the curve end \
             lying at x-infinity");
-        return (this->ptr()->_m_is_finite ?
+        return (is_finite() ?
                 (*(this->ptr()->_m_xy)).x() : *(this->ptr()->_m_x));
     }
     
@@ -367,8 +363,7 @@ public:
         CGAL_precondition_msg(
                 this->ptr()->_m_xy || this->ptr()->_m_arc_rep != NULL,
                 "Denied access to the curve end lying at y-infinity");
-        return (this->ptr()->_m_is_finite ?
-                (*(this->ptr()->_m_xy)).curve() :
+        return (is_finite() ? (*(this->ptr()->_m_xy)).curve() :
                 this->ptr()->_m_arc_rep->_m_support);
     }
     
@@ -379,8 +374,7 @@ public:
         CGAL_precondition_msg(this->ptr()->_m_xy ||
             this->ptr()->_m_arc_rep != NULL,
             "Denied access to the curve end lying at y-infinity");
-        return (this->ptr()->_m_is_finite ?
-            (*(this->ptr()->_m_xy)).arcno() :
+        return (is_finite() ? (*(this->ptr()->_m_xy)).arcno() :
             this->ptr()->_m_arc_rep->_m_arcno);
     }
     
