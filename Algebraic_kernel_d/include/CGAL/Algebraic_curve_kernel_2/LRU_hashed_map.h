@@ -130,13 +130,11 @@ public:
         Canonicalizer canonicalize;
         Key_type key = canonicalize(key_);
 
-        std::cerr << "key is: " << key << std::endl;
         std::pair<Hashed_iterator, bool> p = find(key);
         if(!p.second) {
             Creator create;
             Value_type val = create(key);
 
-            std::cerr << "constructed: " << val.id() << std::endl;
             insert(Data_type(key, val));
             return val;
         }
