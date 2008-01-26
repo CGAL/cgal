@@ -86,7 +86,7 @@ protected:
   // Data members:
   const Traits_adaptor_2  *m_traits;  // The associated traits object.
   Nearest_neighbor         nn;      // The associated nearest neighbor object.
-  bool                     ignore_notifications;    
+  bool                     ignore_notifications;
   bool                     updated;
   int                      num_small_not_updated_changes;
 
@@ -143,6 +143,10 @@ public:
 
   /*!
    * Get the nearest neighbor (landmark) to the given point.
+   * \param p The query point.
+   * \param obj Output: The location of the nearest landmark point in the
+   *                    arrangement (a vertex, halfedge, or face handle).
+   * \return The nearest landmark point.
    */
   virtual Point_2 closest_landmark (Point_2 p, Object &obj)
   {
@@ -160,7 +164,7 @@ public:
    */
   virtual void before_assign (const Arrangement_2& arr)
   {
-    clear_landmark_set();
+    this->clear_landmark_set();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
@@ -171,7 +175,7 @@ public:
    */
   virtual void after_assign ()
   { 
-    build_landmark_set();
+    this->build_landmark_set();
     ignore_notifications = false;
   }
 
@@ -181,7 +185,7 @@ public:
    */
   virtual void before_attach (const Arrangement_2& arr)
   {
-    clear_landmark_set();
+    this->clear_landmark_set();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     ignore_notifications = true;
   }
@@ -191,7 +195,7 @@ public:
    */
   virtual void after_attach ()
   {
-    build_landmark_set();
+    this->build_landmark_set();
     ignore_notifications = false;
   }
 
@@ -200,7 +204,7 @@ public:
    */
   virtual void before_detach ()
   {
-    clear_landmark_set();
+    this->clear_landmark_set();
   }
 
   /*!
@@ -209,21 +213,21 @@ public:
    */
   virtual void after_clear ()
   { 
-    clear_landmark_set();
-    build_landmark_set();
+    this->clear_landmark_set();
+    this->build_landmark_set();
   }
 
   /*! Notification before a global operation modifies the arrangement. */
   virtual void before_global_change ()
   {
-    clear_landmark_set();
+    this->clear_landmark_set();
     ignore_notifications = true;
   }
 
   /*! Notification after a global operation is completed. */
   virtual void after_global_change ()
   {
-    build_landmark_set();
+    this->build_landmark_set();
     ignore_notifications = false;
   }
   //@}
@@ -234,20 +238,20 @@ public:
   /*! Notification after the creation of a new vertex. */
   virtual void after_create_vertex (Vertex_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after the creation of a new edge. */
   virtual void after_create_edge (Halfedge_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an edge was split. */
   virtual void after_split_edge (Halfedge_handle ,
                                  Halfedge_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after a face was split. */
@@ -255,7 +259,7 @@ public:
                                  Face_handle ,
                                  bool )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an outer CCB was split.*/
@@ -263,7 +267,7 @@ public:
                                       Ccb_halfedge_circulator ,
                                       Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an inner CCB was split. */
@@ -271,93 +275,93 @@ public:
                                       Ccb_halfedge_circulator ,
                                       Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an outer CCB was added to a face. */
   virtual void after_add_outer_ccb (Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an inner CCB was created inside a face. */
   virtual void after_add_inner_ccb (Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an isolated vertex was created inside a face. */
   virtual void after_add_isolated_vertex (Vertex_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an edge was merged. */
   virtual void after_merge_edge (Halfedge_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after a face was merged. */
   virtual void after_merge_face (Face_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an outer CCB was merged. */
   virtual void after_merge_outer_ccb (Face_handle ,
                                       Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an inner CCB was merged. */
   virtual void after_merge_inner_ccb (Face_handle ,
                                       Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an outer CCB is moved from one face to another. */
   virtual void after_move_outer_ccb (Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an inner CCB is moved from one face to another. */
   virtual void after_move_inner_ccb (Ccb_halfedge_circulator )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after an isolated vertex is moved. */
   virtual void after_move_isolated_vertex (Vertex_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notificaion after the removal of a vertex. */
   virtual void after_remove_vertex ()
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notification after the removal of an edge. */
   virtual void after_remove_edge ()
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notificaion after the removal of an outer CCB. */
   virtual void after_remove_outer_ccb (Face_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
 
   /*! Notificaion after the removal of an inner CCB. */
   virtual void after_remove_inner_ccb (Face_handle )
   {
-    _handle_local_change_notification();
+    this->_handle_local_change_notification();
   }
   //@}
 

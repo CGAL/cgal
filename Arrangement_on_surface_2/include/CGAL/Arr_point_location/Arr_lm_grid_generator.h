@@ -65,7 +65,7 @@ public:
 
 protected:
 
-  typedef typename Base::Points_set                     Points_set;
+  typedef typename Base::Points_set                      Points_set;
   typedef std::pair<Point_2,CGAL::Object>                PL_pair;
   typedef std::vector<PL_pair>                           Pairs_set;
 
@@ -73,8 +73,6 @@ protected:
 
   // Data members:
   const Traits_adaptor_2  *m_traits;
-  bool                     ignore_notifications;
-  bool                     updated;
   unsigned int             num_landmarks;
   Pairs_set                lm_pairs;
 
@@ -101,25 +99,21 @@ public:
 
   Arr_grid_landmarks_generator (const Arrangement_2& arr) :
     Base (arr),
-    ignore_notifications (false),
-    updated (false),
     num_landmarks (0),
     fixed_number_of_lm (false)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    build_landmark_set();
+    build_landmark_set();//this->
   }
 
   Arr_grid_landmarks_generator (const Arrangement_2& arr,
                                 unsigned int n_landmarks) :
     Base (arr),
-    ignore_notifications (false),
-    updated (false),
     num_landmarks (n_landmarks),
     fixed_number_of_lm (true)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    build_landmark_set();
+    build_landmark_set();//this->
   }
   
   /*!
@@ -130,17 +124,14 @@ public:
   {
     // Create a set of points on a grid.
     Points_set    points; 
-    
     _create_points_set(points);
-    
     // Locate the landmarks in the arrangement using batched point-location
     // global function. Note that the resulting pairs are returned sorted by
     // their lexicographic xy-order.
     lm_pairs.clear();
     locate (*(this->arrangement()), points.begin(), points.end(),
             std::back_inserter(lm_pairs));
-
-    updated = true;
+    this->updated = true;
     return;
   }
 
@@ -150,8 +141,7 @@ public:
   virtual void clear_landmark_set ()
   {
     lm_pairs.clear();
-    updated = false;
-
+    this->updated = false;
     return;
   }
 
@@ -164,7 +154,7 @@ public:
    */
   virtual Point_2 closest_landmark (const Point_2& q, Object &obj)
   {
-    CGAL_assertion(updated);
+    CGAL_assertion(this->updated);
 
     // Calculate the index of the nearest grid point point to q.
     const ANT     qx = m_traits->approximate_2_object()(q, 0);
@@ -194,17 +184,6 @@ public:
   }
 
 protected:
-
-  /*! Handle a change notification. */
-  void _handle_local_change_notification ()
-  {
-    if (! ignore_notifications)
-    {
-      clear_landmark_set();
-      build_landmark_set();
-    }
-    return;
-  }
 
   /*!
    * Create a set of landmark points on a grid.

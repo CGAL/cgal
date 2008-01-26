@@ -71,10 +71,6 @@ protected:
 
   // Data members:
   const Traits_adaptor_2  *m_traits;  // Its associated traits object.
-  Nearest_neighbor         nn;        // The associated nearest neighbor object.
-  bool                     ignore_notifications;
-  bool                     updated;
-  int                      num_small_not_updated_changes;
   int                      num_landmarks;
 
 private:
@@ -90,13 +86,10 @@ public:
   /*! Constructor. */
   Arr_landmarks_vertices_generator (const Arrangement_2& arr) :
     Base (arr),
-    ignore_notifications (false),
-    updated (false),
-    num_small_not_updated_changes(0),
     num_landmarks(0)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    build_landmark_set();
+    build_landmark_set();//this->
   }
 
   virtual void _create_points_set (Points_set & /* points */)
@@ -108,7 +101,7 @@ public:
   /*!
    * Creates the landmark set, using all arrangement vertices.
    */
-  void build_landmark_set ()
+  virtual void build_landmark_set ()
   {
     // Go over the arrangement, and insert all its vertices as landmarks.
     NN_Point_list           nnp_list; 
@@ -126,42 +119,28 @@ public:
     }
 
     // Update the search structure.
-    nn.clear();
-    nn.init (nnp_list.begin(), nnp_list.end());
+    this->nn.clear();
+    this->nn.init (nnp_list.begin(), nnp_list.end());
 
-    num_small_not_updated_changes = 0;
-    updated = true;
+    this->num_small_not_updated_changes = 0;
+    this->updated = true;
   }
 
   /*!
    * Clear the landmark set.
    */
-  void clear_landmark_set ()
+  virtual void clear_landmark_set ()
   {
-    nn.clear();
-
+    this->nn.clear();
     num_landmarks = 0;
-    num_small_not_updated_changes = 0;
-    updated = false;
-  }
-
-  /*!
-   * Get the nearest neighbor (landmark) to the given point.
-   * \param q The query point.
-   * \param obj Output: The location of the nearest landmark point in the
-   *                    arrangement (a vertex, halfedge, or face handle).
-   * \return The nearest landmark point.
-   */
-  virtual Point_2 closest_landmark (const Point_2& q, Object &obj)
-  {
-    CGAL_assertion(updated);
-    return (nn.find_nearest_neighbor (q, obj));
+    this->num_small_not_updated_changes = 0;
+    this->updated = false;
   }
 
 protected:
 
   /*! Handle a local change. */
-  void _handle_local_change ()
+  void _handle_local_change_notification ()
   {
     // Rebuild the landmark set only if the number of small
     // changes is greater than sqrt(num_landmarks).
@@ -169,12 +148,12 @@ protected:
     const int sqrt_num_landmarks = 
       static_cast<int> (std::sqrt (nl) + 0.5);
 
-    num_small_not_updated_changes++;
+    this->num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||
-        (num_small_not_updated_changes >=  sqrt_num_landmarks))
+        (this->num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
       clear_landmark_set();
-      build_landmark_set();
+      build_landmark_set();//this->
     }
 
     return;
