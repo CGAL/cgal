@@ -230,6 +230,22 @@ protected:
                           const Point_2 & np, 
                           const Point_2 & p,
                           Halfedge_set& crossed_edges) const;
+  /*!
+   * In case the arrangement's curve contained in the segment 
+   * from the nearest landmark to the query point
+   * \param he The given halfedge handle.
+   * \param p_is_left Is the query point the left endpoint of seg.
+   * \param p The query point.
+   * \param crossed_edges In/Out: The set of edges crossed so far.
+   * \return An object representing the arrangement feature containing the
+   *         query point. This object is either a Face_const_handle or a
+   *         Halfedge_const_handle or a Vertex_const_handle.
+   */
+  Object _deal_with_curve_contained_in_segment 
+	  (Halfedge_const_handle he,
+	   bool p_is_left,
+	   const Point_2& p,
+       Halfedge_set& crossed_edges) const;
 
   /*!
    * Walks from a point in a face to the query point.
@@ -256,6 +272,7 @@ protected:
    * \param crossed_edges In/Out: The set of edges crossed so far.
    * \param is_on_edge Output: Does the query point p lies on the edge.
    * \param is_target Output: Is the query point p equal to the target vertex.
+   * \param cv_is_contained_in_seg Output: Whether cv is contained inside seg.
    * \return A handle to the halfedge (if no intersecting edge is found, the
    *         function returns an ivalid halfedge handle).
    */
@@ -266,7 +283,21 @@ protected:
        bool p_is_left,
        Halfedge_set& crossed_edges,
        bool& is_on_edge,
-       bool& is_target) const;
+       bool& is_target,
+       bool& cv_is_contained_in_seg) const;
+
+  /*!
+   * Return the halfedge that contains the query point.
+   * \param he The halfedge handle.
+   * \param crossed_edges In/Out: The set of edges crossed so far.
+   * \param p The query point.
+   * \param is_target Output: Is the query point p equal to the target vertex.
+   */
+  Halfedge_const_handle _in_case_p_is_on_edge
+    (Halfedge_const_handle he,
+     Halfedge_set& crossed_edges,
+     const Point_2& p,
+     bool& is_target) const;
 
   /*!
    * Check whether the given curve intersects a simple segment, which connects
@@ -275,12 +306,16 @@ protected:
    * \param seg The segment connecting the landmark and the query point.
    * \param p_is_left Is the query point the left endpoint of seg.
    * \param p_on_curve Output: Whether p lies on cv.
+   * \param cv_and_seg_overlap Output: Whether cv and seg overlap.
+   * \param cv_is_contained_in_seg Output: Whether cv is contained inside seg.
    * \return Whether the two curves have an odd number of intersections.
    */
    bool _have_odd_intersections (const X_monotone_curve_2& cv,
                                  const X_monotone_curve_2& seg,
                                  bool p_is_left,
-                                 bool& p_on_curve) const;
+                                 bool& p_on_curve,
+                                 bool& cv_and_seg_overlap,
+                                 bool& cv_is_contained_in_seg) const;
 };
 
 CGAL_END_NAMESPACE
