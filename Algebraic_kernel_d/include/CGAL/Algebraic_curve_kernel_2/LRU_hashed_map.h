@@ -244,6 +244,8 @@ struct Curve_pair_hasher_2
     size_t operator()(const Pair_of_curves_2& p) const {
         // uses code from boost::hash_combine
         // TODO use this again? Poly_hasher hasher;
+        // answer: no need to, since curve analyses are cached and therefore
+        // can be uniquely enumerated by ids
         std::size_t seed = p.first.id() + 0x9e3779b9;
         seed ^= p.second.id() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;

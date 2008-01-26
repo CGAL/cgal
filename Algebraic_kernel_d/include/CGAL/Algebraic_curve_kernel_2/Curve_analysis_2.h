@@ -16,6 +16,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
+#include <CGAL/Arr_enums.h>
+
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 
@@ -292,10 +294,24 @@ public:
      * \pre \c loc is either \c CGAL::ARR_LEFT_BOUNDARY or
      *  \c CGAL::ARR_RIGHT_BOUNDARY
      */  
-//     CGAL::Object asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
-//             size_type arcno) const {
-//         return CGAL::Object();
-//     }
+     CGAL::Object asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+             size_type arcno) const {
+
+         CGAL_precondition(loc == CGAL::ARR_LEFT_BOUNDARY ||
+            loc == CGAL::ARR_RIGHT_BOUNDARY);
+
+         typename Internal_curve_2::Asymptote_y asympt =
+            (loc == CGAL::ARR_LEFT_BOUNDARY ?
+              _internal_curve().
+                    horizontal_asymptote_for_arc_to_minus_infinity(arcno) :
+              _internal_curve().
+                    horizontal_asymptote_for_arc_to_plus_infinity(arcno));
+            
+         if(asympt.is_finite())
+            return CGAL::make_object(asympt.finite());        
+         return CGAL::make_object(asympt.infty() == NiX::MINUS_INFTY ?
+            CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
+     }
 
     //!@}
 }; // class Curve_analysis_2
