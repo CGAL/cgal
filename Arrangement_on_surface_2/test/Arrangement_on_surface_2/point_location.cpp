@@ -30,6 +30,7 @@
 #include <CGAL/Arr_point_location/Arr_lm_grid_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_halton_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
+#include <CGAL/Arr_point_location/Arr_lm_specified_points_generator.h>
 //#include <CGAL/Arr_triangulation_point_location.h>
 
 typedef CGAL::Cartesian<Number_type>                    Kernel;
@@ -67,6 +68,12 @@ typedef CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
                                                     Middle_edges_generator;
 typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Middle_edges_generator> 
                                                     Lm_middle_edges_point_location;
+
+typedef CGAL::Arr_landmarks_specified_points_generator<Arrangement_2>
+                                                    Specified_points_generator;
+typedef CGAL::Arr_landmarks_point_location<Arrangement_2, Specified_points_generator> 
+                                                    Lm_specified_points_point_location;
+
 //typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
 //                                                    Lm_triangulation_point_location;
 
@@ -80,7 +87,7 @@ typedef Objects_vector::iterator                          Object_iterator;
 
 // ===> Change the number of point-location startegies
 //      when a new point location is added. <===
-#define NUM_OF_POINT_LOCATION_STRATEGIES 8
+#define NUM_OF_POINT_LOCATION_STRATEGIES 9
 
 /*! */
 int check_point_location (Arrangement_2 &arr, Points_list &plist)
@@ -100,7 +107,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
 
   timer.reset(); timer.start();
   Random_lm_generator             random_g(arr);    
-  Lm_random_point_location        randon_lm_pl (arr, &random_g);  // 4
+  Lm_random_point_location        random_lm_pl (arr, &random_g);  // 4
   timer.stop(); 
   std::cout << "Random lm construction took " << timer.time() <<std::endl;
 
@@ -122,9 +129,19 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); 
   std::cout << "Middle edges lm construction took " << timer.time() <<std::endl;
 
+  Specified_points_generator::Points_set points;
+  //points.push_back(Point_2(1,1));
+  //points.push_back(Point_2(2,2));
+  timer.reset(); timer.start();
+  //Specified_points_generator                specified_points_g(arr,points);
+  Specified_points_generator                specified_points_g(arr);
+  Lm_specified_points_point_location        specified_points_lm_pl (arr, &specified_points_g);  // 8
+  timer.stop(); 
+  std::cout << "Specified_points lm construction took " << timer.time() <<std::endl;
+
 /*
   timer.reset(); timer.start();
-  Lm_triangulation_point_location        triangulation_lm_pl (arr);  // 8
+  Lm_triangulation_point_location        triangulation_lm_pl (arr);  // 9
   timer.stop(); 
   std::cout << "Triangulation lm construction took " << timer.time() <<std::endl;
 */
@@ -196,7 +213,7 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   for (piter = plist.begin(); piter != plist.end(); piter++ )
   {
     q = (*piter);
-    obj = randon_lm_pl.locate (q);
+    obj = random_lm_pl.locate (q);
     objs[4].push_back(obj);
   }
   timer.stop(); ///END
@@ -236,6 +253,16 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); ///END
   std::cout << "Middle edges LM location took " << timer.time() <<std::endl;
 
+  timer.reset(); 
+  timer.start(); //START
+  for (piter = plist.begin(); piter != plist.end(); piter++ )
+  {
+    q = (*piter);
+    obj = specified_points_lm_pl.locate (q);
+    objs[8].push_back(obj);
+  }
+  timer.stop(); ///END
+  std::cout << "Specified points LM location took " << timer.time() <<std::endl;
 /*
   timer.reset(); 
   timer.start(); //START
@@ -248,7 +275,6 @@ int check_point_location (Arrangement_2 &arr, Points_list &plist)
   timer.stop(); ///END
   std::cout << "Triangulation LM location took " << timer.time() <<std::endl;
 */
-
   std::cout << std::endl;
 
   // ===> Add a call to operate the the new point location. <===
