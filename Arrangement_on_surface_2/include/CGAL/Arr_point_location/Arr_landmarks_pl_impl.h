@@ -139,6 +139,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
     return (_walk_from_face (fh, vh->point(), p, crossed_edges));
   }
 
+  // if we walk from a vertex this means we are crossing
+  // all the halfedges that are incident to it
   Halfedge_around_vertex_const_circulator  iter,first;
   first = vh->incident_halfedges();
   crossed_edges.insert (first);
@@ -147,6 +149,10 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
   ++iter;
   for ( ; iter!=first ; ++iter)
   {
+    // Check if we have already inserted the iter (or its twin).
+    // If so, we do not insert it again.
+    if (crossed_edges.count (iter) != 0)
+      continue;
     crossed_edges.insert (iter);
     crossed_edges.insert (iter->twin());
   }
@@ -228,15 +234,15 @@ Object Arr_landmarks_point_location<Arr, Gen>::_find_face_around_vertex
     {
       // Both curves are defined to the right of vp:
       equal_curr =
-        (m_traits->compare_y_at_x_right_2_object() (curr->curve(), seg, vp) ==
-         EQUAL);
+        (m_traits->compare_y_at_x_right_2_object()
+         (curr->curve(), seg, vp) == EQUAL);
     }
     else if (! seg_dir_right && curr->direction() == ARR_LEFT_TO_RIGHT)
     {
       // Both curves are defined to the left of vp:
       equal_curr =
-        (m_traits->compare_y_at_x_left_2_object() (curr->curve(), seg, vp) ==
-         EQUAL);
+        (m_traits->compare_y_at_x_left_2_object()
+         (curr->curve(), seg, vp) == EQUAL);
     }
 
     // In case the curves are not equal, just return the incident face of
@@ -341,8 +347,11 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
 
   // Create an initial set of edges that have been crossed, which currently
   // contains only the halfedge we are currently on (and its twin).
-  crossed_edges.insert (eh);
-  crossed_edges.insert (eh->twin());
+  if (crossed_edges.count (eh) == 0)
+  {
+    crossed_edges.insert (eh);
+    crossed_edges.insert (eh->twin());
+  }
 
   // If p equals one of the edge's endpoints, return the vertex
   // that represents this endpoint.
@@ -353,16 +362,21 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
       Vertex_const_handle vh = eh->source();
       return (CGAL::make_object(vh));
     }
-	Point_2 temp_p = eh->source()->point();
-	if (m_traits->is_in_x_range_2_object()(seg, temp_p))
-	{
-	  if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
-	  {
-        crossed_edges.insert (eh->prev());
-        crossed_edges.insert (eh->prev()->twin());
-		return _walk_from_vertex (eh->source(), p, crossed_edges);
-	  }
-	}
+    // if the source point of the halfedge is located on seg then we insert
+    // the predecessor of the halfedge and its twin to crossed_edges
+    Point_2 temp_p = eh->source()->point();
+    if (m_traits->is_in_x_range_2_object()(seg, temp_p))
+    {
+      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
+      {
+        if (crossed_edges.count (eh->prev()) == 0)
+        {
+          crossed_edges.insert (eh->prev());
+          crossed_edges.insert (eh->prev()->twin());
+          return _walk_from_vertex (eh->source(), p, crossed_edges);
+        }
+      }
+    }
   }
   if (! eh->target()->is_at_infinity())
   {
@@ -371,16 +385,21 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
       Vertex_const_handle vh = eh->target();
       return (CGAL::make_object(vh));
     }
-	Point_2 temp_p = eh->target()->point();
-	if (m_traits->is_in_x_range_2_object()(seg, temp_p))
-	{
-	  if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
-	  {
-        crossed_edges.insert (eh->next());
-        crossed_edges.insert (eh->next()->twin());
-		return _walk_from_vertex (eh->target(), p, crossed_edges);
-	  }
-	}
+    // if the target point of the halfedge is located on seg then we insert
+    // the successor of the halfedge and its twin to crossed_edges
+    Point_2 temp_p = eh->target()->point();
+    if (m_traits->is_in_x_range_2_object()(seg, temp_p))
+    {
+      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
+      {
+        if (crossed_edges.count (eh->next()) == 0)
+        {
+          crossed_edges.insert (eh->next());
+          crossed_edges.insert (eh->next()->twin());
+          return _walk_from_vertex (eh->target(), p, crossed_edges);
+        }
+      }
+    }
   }
 
   // Check whether p is in the x-range of the edge.
@@ -441,10 +460,12 @@ template <class Arr, class Gen>
 Object Arr_landmarks_point_location<Arr, Gen>::
     _deal_with_curve_contained_in_segment
     (Halfedge_const_handle he,
-	 bool p_is_left,
-	 const Point_2& p,
+     bool p_is_left,
+     const Point_2& p,
      Halfedge_set& crossed_edges) const
 {
+  // in this case we want to walk from to the query point from the nearest
+  // vertex either the halfedge's source or target
   Vertex_const_handle  vh;
   bool target_is_left;
   if (m_traits->compare_xy_2_object()
@@ -474,6 +495,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::
       vh = he->target();
     }
   }
+  // vh is the closest vertex among the halfedge's end points
   return (_walk_from_vertex(vh, p, crossed_edges));
 }
 
@@ -524,8 +546,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
         if (he == invalid_he && cv_is_contained_in_seg)
         {
           return _deal_with_curve_contained_in_segment (*inner_ccb_iter,
-			                                            p_is_left,p,
-														crossed_edges);
+                                                        p_is_left,p,
+                                                        crossed_edges);
         }
         if (he != invalid_he)
         {
@@ -568,8 +590,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
         if (he == invalid_he && cv_is_contained_in_seg)
         {
           return _deal_with_curve_contained_in_segment (*outer_ccb_iter,
-			                                            p_is_left,p,
-														crossed_edges);
+                                                        p_is_left,p,
+                                                        crossed_edges);
         }
         if (he != invalid_he)
         {
@@ -648,6 +670,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       {
         if (m_traits->compare_y_at_x_2_object() ( p, he->curve() ) == EQUAL)
         {
+          // special treatment in case the query point is on a vertical curve
           is_on_edge = true;
           return _in_case_p_is_on_edge(he,crossed_edges,p,is_target);
         }
@@ -680,33 +703,45 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       if ((!curr->target()->is_at_infinity()) && 
             is_in_x_range(seg , curr->target()->point() ))
       {
+        // if the target point of curr is located on seg then we insert
+        // the successor of curr and its twin to crossed_edges
         if (m_traits->compare_y_at_x_2_object()
              (curr->target()->point() , seg) == EQUAL)
         {
           temp_circ=curr;
           ++temp_circ;
-          crossed_edges.insert (temp_circ);
-          crossed_edges.insert (temp_circ->twin());
+          if (crossed_edges.count (temp_circ) == 0)
+          {
+            crossed_edges.insert (temp_circ);
+            crossed_edges.insert (temp_circ->twin());
+          }
         }
       }
       else if ((!curr->source()->is_at_infinity()) &&
                  is_in_x_range(seg , curr->source()->point() ))
       {
+        // if the source point of curr is located on seg then we insert
+        // the predecessor of curr and its twin to crossed_edges
         if (m_traits->compare_y_at_x_2_object() 
              (curr->source()->point() , seg) == EQUAL)
         {
           temp_circ=curr;
           --temp_circ;
-          crossed_edges.insert (temp_circ);
-          crossed_edges.insert (temp_circ->twin());
+          if (crossed_edges.count (temp_circ) == 0)
+          {
+            crossed_edges.insert (temp_circ);
+            crossed_edges.insert (temp_circ->twin());
+          }
         }
       }
 
       // Return the halfedge we found, and mark that we have already crossed
       // it (as well as its twin).
-      crossed_edges.insert (he);
-      crossed_edges.insert (he->twin());
-
+      if (crossed_edges.count (he) == 0)
+      {
+        crossed_edges.insert (he);
+        crossed_edges.insert (he->twin());
+      }
       return (he);
     }
     else if (cv_and_seg_overlap || cv_is_contained_in_seg)
@@ -715,6 +750,12 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       // it lies in its interior.
       if (cv_is_contained_in_seg)
       {
+        // cv is contained in seg, obviously we crossed it
+        if (crossed_edges.count (he) == 0)
+        {
+          crossed_edges.insert (he);
+          crossed_edges.insert (he->twin());
+        }
         return (invalid_he);
       }
       if (is_on_edge)
@@ -739,8 +780,12 @@ Arr_landmarks_point_location<Arr, Gen>::_in_case_p_is_on_edge
     (Halfedge_const_handle he, Halfedge_set& crossed_edges,
      const Point_2 & p, bool & is_target) const
 {
-  crossed_edges.insert (he);
-  crossed_edges.insert (he->twin());
+  // cv and seg overlap, obviously we crossed it
+  if (crossed_edges.count (he) == 0)
+  {
+    crossed_edges.insert (he);
+    crossed_edges.insert (he->twin());
+  }
   // Check if p equals one of the edge end-vertices.
   if (! he->target()->is_at_infinity() &&
       m_traits->compare_xy_2_object() (he->target()->point(), p) == EQUAL)
@@ -796,7 +841,8 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
       if ((m_traits->compare_y_at_x_2_object() (cv_left, seg) == EQUAL) &&
           (m_traits->compare_y_at_x_2_object() (cv_right, seg) == EQUAL))
       {
-        //cv_and_seg_overlap = true;
+        // cv is contained in seg non of the answer true or false is correct
+        // we must set a special flag to distinguish this case
         cv_is_contained_in_seg = true;
         return (true);
       }
@@ -862,10 +908,8 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
           p_on_curve = true;
           return (true);
         }
-
         return (res_l != res_r);
       }
-
       return (false);
     }
   }
@@ -873,7 +917,6 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   Comparison_result    left_res;
   const Arr_parameter_space  bx_l =
     m_traits->parameter_space_in_x_2_object() (cv, ARR_MIN_END);
-
   if (bx_l == ARR_LEFT_BOUNDARY) {
     // The left end of cv lies to the left of seg_left:
     // Compare this point to cv.
@@ -902,7 +945,6 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
       // these two points and compare it to the other curve.
       Comparison_result res =
         m_traits->compare_xy_2_object() (cv_left, seg_left);
-
       if (res != LARGER)
       {
         left_res = m_traits->compare_y_at_x_2_object() (seg_left, cv);
@@ -933,6 +975,8 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
     if (left_res == EQUAL)
     {
       // RWRW: In this case we have an overlap ...
+      // cv and seg overlap non of the answer true or false is correct
+      // we must set a special flag to distinguish this case
       if (is_in_x_range(cv,( p_is_left ? seg_left : seg_right )))
         if (m_traits->compare_y_at_x_2_object()
             ( ( p_is_left ? seg_left : seg_right ) , cv) == EQUAL)
@@ -962,7 +1006,6 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   else {
     const Arr_parameter_space  by_r =
       m_traits->parameter_space_in_y_2_object() (cv, ARR_MAX_END);
-
     if (by_r == ARR_BOTTOM_BOUNDARY)
       // The right end of cv is at y = -oo, so cv obviously lies above it.
       right_res = LARGER;
@@ -1005,6 +1048,8 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
     if (right_res == EQUAL)
     {
       // RWRW: In this case we have an overlap ...
+      // cv and seg overlap non of the answer true or false is correct
+      // we must set a special flag to distinguish this case
       if (is_in_x_range(cv,( p_is_left ? seg_left : seg_right )))
         if (m_traits->compare_y_at_x_2_object()
             ( ( p_is_left ? seg_left : seg_right ) , cv) == EQUAL)
