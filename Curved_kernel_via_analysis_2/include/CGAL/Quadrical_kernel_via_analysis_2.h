@@ -186,6 +186,23 @@ public:
     
     //!@}
 
+    //!\name Approximation
+    //!@{
+
+    QdX::Gfx_point_3 to_double() const {
+        if (!this->ptr()->_m_gfx_point) {
+
+            QdX::Gfx_point_3::level(this->sheet());
+            QdX::Gfx_point_3::polynomial(NiX::to_double(this->surface().f()));
+            QdX::Gfx_point_3 pt = QdX::approximate(this->projected_point());
+            
+            this->ptr()->_m_gfx_point = pt;
+        }
+        return *this->ptr()->_m_gfx_point;
+    }
+
+    //!@}
+
     //! for constructint points
     friend class Quadrical_kernel_via_analysis_2::Construct_point_2;
 
@@ -1021,9 +1038,10 @@ public:
         int s2 = cv2.sheet();
 
         // handle special case of two segments on same curve and at endpoints
-        if ((s1 == s2 && cv1.curve().id() == cv2.curve().id()) || 
+        if ((s1 == s2 && cv1.curve().id() == cv2.curve().id() &&
+             !cv1.do_overlap(cv2)) || 
             Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
-
+            
             std::list< std::pair< Point_2, unsigned int > > ipoints;
             Arc_2::_intersect_at_endpoints(
                     cv1, cv2, std::back_inserter(ipoints)
@@ -1065,30 +1083,28 @@ public:
                     Point_2 pt_min;
                     Point_2 pt_max;
                     
-                    if (s1 == 1) {
-                        if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
-                            cv1.projected_arc().curve_end(CGAL::ARR_MIN_END)){
-                            pt_min = cv1.curve_end(CGAL::ARR_MIN_END);
-                            smin = cv1.sheet(CGAL::ARR_MIN_END);
-                        } else if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
-                                   cv2.projected_arc().
-                                   curve_end(CGAL::ARR_MIN_END)){
-                            pt_min = cv2.curve_end(CGAL::ARR_MIN_END);
-                            smin = cv2.sheet(CGAL::ARR_MIN_END);
-                        }
-                        if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
-                            cv1.projected_arc().
-                            curve_end(CGAL::ARR_MAX_END)){
-                            pt_max = cv1.curve_end(CGAL::ARR_MAX_END);
-                            smax = cv1.sheet(CGAL::ARR_MAX_END);
-                        } else if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
-                                   cv2.projected_arc().
-                                   curve_end(CGAL::ARR_MAX_END)){
-                            pt_max = cv2.curve_end(CGAL::ARR_MAX_END);
-                            smax = cv2.sheet(CGAL::ARR_MAX_END);
-                        }
+                    if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                        cv1.projected_arc().curve_end(CGAL::ARR_MIN_END)){
+                        pt_min = cv1.curve_end(CGAL::ARR_MIN_END);
+                        smin = cv1.sheet(CGAL::ARR_MIN_END);
+                    } else if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                               cv2.projected_arc().
+                               curve_end(CGAL::ARR_MIN_END)){
+                        pt_min = cv2.curve_end(CGAL::ARR_MIN_END);
+                        smin = cv2.sheet(CGAL::ARR_MIN_END);
                     }
-
+                    if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                        cv1.projected_arc().
+                        curve_end(CGAL::ARR_MAX_END)){
+                        pt_max = cv1.curve_end(CGAL::ARR_MAX_END);
+                        smax = cv1.sheet(CGAL::ARR_MAX_END);
+                    } else if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                               cv2.projected_arc().
+                               curve_end(CGAL::ARR_MAX_END)){
+                        pt_max = cv2.curve_end(CGAL::ARR_MAX_END);
+                        smax = cv2.sheet(CGAL::ARR_MAX_END);
+                    }
+                    
                     Arc_2 arc = 
                         Curved_kernel_via_analysis_2l::instance().
                         construct_arc_2_object()(
@@ -1567,11 +1583,13 @@ public:
         for (typename std::list< Point_2 >::const_iterator pit = 
                  points.begin();
              pit != points.end(); pit++) {
+            std::cout << "MXM Point: " << *pit << std::endl;
             *oi++ = CGAL::make_object(*pit);
         }
 
         for (typename std::list< Arc_2 >::const_iterator ait = arcs.begin();
              ait != arcs.end(); ait++) {
+            std::cout << "MXM Arc: " << *ait << std::endl;
             *oi++ = CGAL::make_object(*ait);
         }
 
