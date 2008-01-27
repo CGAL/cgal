@@ -990,51 +990,34 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             // can influence pole
             
             CGAL_assertion(he2_psx != CGAL::ARR_INTERIOR);
+
+            CGAL::Object obj1 = 
+                he1->curve().curve().asymptotic_value_of_arc(
+                        he1_psx,
+                        he1->curve().arcno()
+                );
+            CGAL::Object obj2 = 
+                he2->curve().curve().asymptotic_value_of_arc(
+                        he1_psx,
+                        he2->curve().arcno()
+                );
             
-            typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
-                yc, yn;
+            CGAL::Arr_parameter_space ps1, ps2;
             
-            if (he1_psx == CGAL::ARR_LEFT_BOUNDARY) {
-                
-                CGAL_assertion(end1 == CGAL::ARR_MIN_END);
-                CGAL_assertion(end2 == CGAL::ARR_MIN_END);
-                
-                yc = he1->curve().curve().
-                    horizontal_asymptote_for_arc_to_minus_infinity(
-                            he1->curve().arcno()
-                    );
-                yn = he2->curve().curve().
-                    horizontal_asymptote_for_arc_to_minus_infinity(
-                            he2->curve().arcno()
-                    );
-                
-            } else {
-                
-                CGAL_assertion(end1 == CGAL::ARR_MAX_END);
-                CGAL_assertion(end2 == CGAL::ARR_MAX_END);
-                
-                yc = he1->curve().curve().
-                    horizontal_asymptote_for_arc_to_plus_infinity(
-                            he1->curve().arcno()
-                    );
-                yn = he2->curve().curve().
-                    horizontal_asymptote_for_arc_to_plus_infinity(
-                            he2->curve().arcno()
-                    );
-            }
-            
-            if (!yc.is_finite() && !yn.is_finite() && yc != yn) {
-                
-                if (yc.infty() == NiX::PLUS_INFTY) {
-                    // bottom to top
-                    result = CGAL::POSITIVE;
-                    //std::cout << "+xp2" << std::endl;
-                } else {
-                    // top to bottom
-                    result = CGAL::NEGATIVE;
-                    //std::cout << "-xp2" << std::endl;
+            if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
+                if (ps1 != ps2) {
+                    if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
+                        // bottom to top
+                        result = CGAL::POSITIVE;
+                        //std::cout << "+xp2" << std::endl;
+                    } else {
+                        // top to bottom
+                        result = CGAL::NEGATIVE;
+                        //std::cout << "-xp2" << std::endl;
+                    }
                 }
             }
+
         } else {
             
             CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
@@ -1136,43 +1119,31 @@ _sign_of_subpath (const Halfedge* he1,
         } else {
             
             CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
+
+            CGAL::Object obj1 = 
+                he1->curve().curve().asymptotic_value_of_arc(
+                        ps_x,
+                        he1->curve().arcno()
+                );
+            CGAL::Object obj2 = 
+                cv2.curve().asymptotic_value_of_arc(
+                        ps_x,
+                        cv2.arcno()
+                );
             
-            typename Geometry_traits_2::Curve_kernel_2::Curve_2::Asymptote_y
-                yc, yn;
+            CGAL::Arr_parameter_space ps1, ps2;
             
-            if (he1_trg_ps_x == CGAL::ARR_LEFT_BOUNDARY) {
-                
-                yc = he1->curve().curve().
-                    horizontal_asymptote_for_arc_to_minus_infinity(
-                            he1->curve().arcno()
-                    );
-                yn = cv2.curve().
-                    horizontal_asymptote_for_arc_to_minus_infinity(
-                            cv2.arcno()
-                    );
-                
-            } else {
-                
-                yc = he1->curve().curve().
-                    horizontal_asymptote_for_arc_to_plus_infinity(
-                            he1->curve().arcno()
-                    );
-                yn = cv2.curve().
-                    horizontal_asymptote_for_arc_to_plus_infinity(
-                            cv2.arcno()
-                    );
-            }
-            
-            if (!yc.is_finite() && !yn.is_finite() && yc != yn) {
-                
-                if (yc.infty() == NiX::PLUS_INFTY) {
-                    // bottom to top
-                    result = CGAL::POSITIVE;
-                    //std::cout << "+xp4" << std::endl;
-                } else {
-                    // top to bottom
-                    result = CGAL::NEGATIVE;
-                    //std::cout << "-xn4" << std::endl;
+            if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
+                if (ps1 != ps2) {
+                    if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
+                        // bottom to top
+                        result = CGAL::POSITIVE;
+                        //std::cout << "+xp2" << std::endl;
+                    } else {
+                        // top to bottom
+                        result = CGAL::NEGATIVE;
+                        //std::cout << "-xp2" << std::endl;
+                    }
                 }
             }
         }
