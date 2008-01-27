@@ -135,13 +135,15 @@ interest, it is sufficient to override just \ccc{before_split_face()}
      Note that the vertex still has no incident edges and is not connected
      to any other vertex.}
 
-\ccMethod{virtual void before_create_vertex_at_infinity (Boundary_type inf_x,
-                                                         Boundary_type inf_y);}
-    {issued just before a new vertex at infinity is created, with the
-     indication whether this vertex lies at $x = \pm\infty$ and/or
-     $y = \pm\infty$.}
+\ccMethod{virtual void before_create_boundary_vertex (const X_monotone_curve_2& cv ,
+                                                      Arr_curve_end ind ,
+                                                      Arr_parameter_space ps_x ,
+                                                      Arr_parameter_space ps_y );}
+    {issued just before a new vertex at infinity is created, cv is the curve incident
+     to the surface boundary, ind is the relevant curve-end, ps_x is the boundary
+     condition of the vertex in x and ps_y is the boundary condition of the vertex in y.}
 \ccGlue
-\ccMethod{virtual void after_create_vertex_at_infinity (Vertex_handle v);}
+\ccMethod{virtual void after_create_boundary_vertex (Vertex_handle v);}
     {issued immediately after a new vertex \ccc{v} has been created.
      Note that the vertex still has no incident edges and is not connected
      to any other vertex.}
@@ -204,32 +206,53 @@ interest, it is sufficient to override just \ccc{before_split_face()}
      the insertion of the edge \ccc{e} into the arrangement.}
 \ccGlue
 \ccMethod{virtual void after_split_face (Face_handle f1,
-                                 	 Face_handle f2,
-                                 	 bool is_hole);}
+                                         Face_handle f2,
+                                         bool is_hole);}
     {issued immediately after the existing face \ccc{f1} has been split,
      such that a portion of it now forms a new face \ccc{f2}. The flag
      \ccc{is_hole} designates whether \ccc{f2} forms a hole inside \ccc{f1}.}
 
-\ccMethod{virtual void before_split_hole (Face_handle f,
-                                          Ccb_halfedge_circulator h,
-                                          Halfedge_handle e);}
-    {issued just before a hole \ccc{h} inside a face \ccc{f} is split into
+\ccMethod{virtual void before_split_outer_ccb (Face_handle f,
+                                               Ccb_halfedge_circulator h,
+                                               Halfedge_handle e);}
+    {issued just before outer ccb \ccc{h} inside a face \ccc{f} is split into
      two, as a result of the removal of the edge \ccc{e} from the arrangement.}
 \ccGlue
-\ccMethod{virtual void after_split_hole (Face_handle f,
-                                         Ccb_halfedge_circulator h1,
-                                         Ccb_halfedge_circulator h2);}
-    {issued immediately after a hole inside the face \ccc{f} has been split,
+\ccMethod{virtual void after_split_outer_ccb (Face_handle f,
+                                              Ccb_halfedge_circulator h1,
+                                              Ccb_halfedge_circulator h2);}
+    {issued immediately after outer ccb the face \ccc{f} has been split,
      resulting in the two holes \ccc{h1} and \ccc{h2}.}
 
-\ccMethod{virtual void before_add_hole (Face_handle f,
-                                        Halfedge_handle e);}
-    {issued just before the edge \ccc{e} is inserted as a new hole inside
+\ccMethod{virtual void before_split_inner_ccb (Face_handle f,
+                                               Ccb_halfedge_circulator h,
+                                               Halfedge_handle e);}
+    {issued just before inner ccb \ccc{h} inside a face \ccc{f} is split into
+     two, as a result of the removal of the edge \ccc{e} from the arrangement.}
+\ccGlue
+\ccMethod{virtual void after_split_inner_ccb (Face_handle f,
+                                              Ccb_halfedge_circulator h1,
+                                              Ccb_halfedge_circulator h2);}
+    {issued immediately after inner ccb the face \ccc{f} has been split,
+     resulting in the two holes \ccc{h1} and \ccc{h2}.}
+
+\ccMethod{virtual void before_add_outer_ccb (Face_handle f,
+                                             Halfedge_handle e);}
+    {issued just before the edge \ccc{e} is inserted as a new outer ccb inside
      the face \ccc{f}.}
 \ccGlue
-\ccMethod{virtual void after_add_hole (Ccb_halfedge_circulator h);}
-    {issued immediately after a new hole \ccc{h} has been created. The hole
-     always consists of a single pair of twin halfedges.}
+\ccMethod{virtual void after_add_outer_ccb (Ccb_halfedge_circulator h);}
+    {issued immediately after a new outer ccb \ccc{h} has been created. The
+     outer ccb always consists of a single pair of twin halfedges.}
+
+\ccMethod{virtual void before_add_inner_ccb (Face_handle f,
+                                             Halfedge_handle e);}
+    {issued just before the edge \ccc{e} is inserted as a new inner ccb inside
+     the face \ccc{f}.}
+\ccGlue
+\ccMethod{virtual void after_add_inner_ccb (Ccb_halfedge_circulator h);}
+    {issued immediately after a new inner ccb \ccc{h} has been created. The
+     inner_ccb always consists of a single pair of twin halfedges.}
 
 \ccMethod{virtual void before_add_isolated_vertex (Face_handle f,
                                                    Vertex_handle v);}
@@ -271,28 +294,51 @@ interest, it is sufficient to override just \ccc{before_split_face()}
     {issued immediately after two faces have been merged to form the face
      \ccc{f}.}
 
-\ccMethod{virtual void before_merge_hole (Face_handle f,
-                                          Ccb_halfedge_circulator h1,
-                                          Ccb_halfedge_circulator h2,
-                                          Halfedge_handle e);}
-    {issued just before two holes \ccc{h1} and \ccc{h2} inside the face 
+\ccMethod{virtual void before_merge_outer_ccb (Face_handle f,
+                                               Ccb_halfedge_circulator h1,
+                                               Ccb_halfedge_circulator h2,
+                                               Halfedge_handle e);}
+    {issued just before two outer ccbs \ccc{h1} and \ccc{h2} inside the face 
      \ccc{f} are merged to form a single connected component, following the
      insertion of the edge \ccc{e} into the arrangement.}
 \ccGlue
-\ccMethod{virtual void after_merge_hole (Face_handle f,
-                                          Ccb_halfedge_circulator h);}
-    {issued immediately after two holes have been merged to form a single hole
-     \ccc{h} inside the face \ccc{f}.}
+\ccMethod{virtual void after_merge_outer_ccb (Face_handle f,
+                                              Ccb_halfedge_circulator h);}
+    {issued immediately after two outer ccbs have been merged to form a single
+     outer ccb \ccc{h} inside the face \ccc{f}.}
 
-\ccMethod{virtual void before_move_hole (Face_handle from_f,
-                                         Face_handle to_f,
-                                         Ccb_halfedge_circulator h);}
-    {issued just before the hole \ccc{h} is moved from one face to another.
-     This can happen if the face \ccc{to_f} containing the hole has just
+\ccMethod{virtual void before_merge_inner_ccb (Face_handle f,
+                                               Ccb_halfedge_circulator h1,
+                                               Ccb_halfedge_circulator h2,
+                                               Halfedge_handle e);}
+    {issued just before two inner ccbs \ccc{h1} and \ccc{h2} inside the face 
+     \ccc{f} are merged to form a single connected component, following the
+     insertion of the edge \ccc{e} into the arrangement.}
+\ccGlue
+\ccMethod{virtual void after_merge_inner_ccb (Face_handle f,
+                                              Ccb_halfedge_circulator h);}
+    {issued immediately after two inner ccbs have been merged to form a single
+     inner ccb \ccc{h} inside the face \ccc{f}.}
+
+\ccMethod{virtual void before_move_outer_ccb (Face_handle from_f,
+                                              Face_handle to_f,
+                                              Ccb_halfedge_circulator h);}
+    {issued just before the outer ccb \ccc{h} is moved from one face to another.
+     This can happen if the face \ccc{to_f} containing the outer ccb has just
      been split from \ccc{from_f}.}
 \ccGlue
-\ccMethod{virtual void after_move_hole (Ccb_halfedge_circulator h);}
-    {issued immediately after the hole \ccc{h} has been moved to a new face.}
+\ccMethod{virtual void after_move_outer_ccb (Ccb_halfedge_circulator h);}
+    {issued immediately after the outer ccb \ccc{h} has been moved to a new face.}
+
+\ccMethod{virtual void before_move_inner_ccb (Face_handle from_f,
+                                              Face_handle to_f,
+                                              Ccb_halfedge_circulator h);}
+    {issued just before the inner ccb \ccc{h} is moved from one face to another.
+     This can happen if the face \ccc{to_f} containing the inner ccb has just
+     been split from \ccc{from_f}.}
+\ccGlue
+\ccMethod{virtual void after_move_inner_ccb (Ccb_halfedge_circulator h);}
+    {issued immediately after the inner ccb \ccc{h} has been moved to a new face.}
 
 \ccMethod{virtual void before_move_isolated_vertex (Face_handle from_f,
                                                     Face_handle to_f,
@@ -312,14 +358,14 @@ interest, it is sufficient to override just \ccc{before_split_face()}
 \ccMethod{virtual void after_remove_vertex ();}
     {issued immediately after a vertex has been removed (and deleted)
      from the arrangement.}
-
-\ccMethod{virtual void before_remove_vertex_at_infinity (Vertex_handle v);}
-    {issued just before the vertex at infinity \ccc{v} is removed from the
-     arrangement.}
-\ccGlue
-\ccMethod{virtual void after_remove_vertex_at_infinity ();}
-    {issued immediately after a vertex at infinity has been removed
-     (and deleted) from the arrangement.}
+%
+%\ccMethod{virtual void before_remove_vertex_at_infinity (Vertex_handle v);}
+%    {issued just before the vertex at infinity \ccc{v} is removed from the
+%     arrangement.}
+%\ccGlue
+%\ccMethod{virtual void after_remove_vertex_at_infinity ();}
+%    {issued immediately after a vertex at infinity has been removed
+%     (and deleted) from the arrangement.}
 
 \ccMethod{virtual void before_remove_edge (Halfedge_handle e);}
     {issued just before the edge \ccc{e} is removed from the arrangement.}
@@ -328,13 +374,22 @@ interest, it is sufficient to override just \ccc{before_split_face()}
     {issued immediately after an edge has been removed (and deleted)
      from the arrangement.}
 
-\ccMethod{virtual void before_remove_hole (Face_handle f,
+\ccMethod{virtual void before_remove_outer_ccb (Face_handle f,
                                            Ccb_halfedge_circulator h);}
-    {issued just before the hole \ccc{f} is removed from inside the
+    {issued just before the outer ccb \ccc{f} is removed from inside the
      face \ccc{f}.}
 \ccGlue
-\ccMethod{virtual void after_remove_hole (Face_handle f);}
-    {issued immediately after a hole has been removed (and deleted)
+\ccMethod{virtual void after_remove_outer_ccb (Face_handle f);}
+    {issued immediately after a outer ccb has been removed (and deleted)
+     from inside the face \ccc{f}.}
+
+\ccMethod{virtual void before_remove_inner_ccb (Face_handle f,
+                                           Ccb_halfedge_circulator h);}
+    {issued just before the inner ccb \ccc{f} is removed from inside the
+     face \ccc{f}.}
+\ccGlue
+\ccMethod{virtual void after_remove_inner_ccb (Face_handle f);}
+    {issued immediately after a inner ccb has been removed (and deleted)
      from inside the face \ccc{f}.}
 
 \end{ccRefClass}
