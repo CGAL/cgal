@@ -1583,13 +1583,11 @@ public:
         for (typename std::list< Point_2 >::const_iterator pit = 
                  points.begin();
              pit != points.end(); pit++) {
-            std::cout << "MXM Point: " << *pit << std::endl;
             *oi++ = CGAL::make_object(*pit);
         }
 
         for (typename std::list< Arc_2 >::const_iterator ait = arcs.begin();
              ait != arcs.end(); ait++) {
-            std::cout << "MXM Arc: " << *ait << std::endl;
             *oi++ = CGAL::make_object(*ait);
         }
 
