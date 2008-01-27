@@ -772,6 +772,8 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
                          bool& cv_and_seg_overlap,
                          bool& cv_is_contained_in_seg) const
 {
+  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
+    m_traits->is_in_x_range_2_object();
   p_on_curve = false;
   cv_and_seg_overlap = false;
   cv_is_contained_in_seg = false;
@@ -789,7 +791,7 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
     cv_right = m_traits->construct_max_vertex_2_object()(cv);
   if (cv_left_is_bounded && cv_right_is_bounded)
   {
-    if (seg.is_in_x_range(cv_left) && seg.is_in_x_range(cv_right))
+    if (is_in_x_range(seg,cv_left) && is_in_x_range(seg,cv_right))
     {
       if ((m_traits->compare_y_at_x_2_object() (cv_left, seg) == EQUAL) &&
           (m_traits->compare_y_at_x_2_object() (cv_right, seg) == EQUAL))
@@ -922,16 +924,16 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   if (left_res == EQUAL)
   {
     // Compare the two curves to the right of their common left endpoint.
-    if (cv.is_in_x_range(seg_left))
+    if (is_in_x_range(cv,seg_left))
       left_res = m_traits->compare_y_at_x_right_2_object() (seg, cv, seg_left);
-    else if (seg.is_in_x_range(cv_left))
+    else if (is_in_x_range(seg,cv_left))
       left_res = m_traits->compare_y_at_x_right_2_object() (seg, cv, cv_left);
     else
       CGAL_error();
     if (left_res == EQUAL)
     {
       // RWRW: In this case we have an overlap ...
-      if (cv.is_in_x_range(( p_is_left ? seg_left : seg_right )))
+      if (is_in_x_range(cv,( p_is_left ? seg_left : seg_right )))
         if (m_traits->compare_y_at_x_2_object()
             ( ( p_is_left ? seg_left : seg_right ) , cv) == EQUAL)
         {
@@ -994,16 +996,16 @@ _have_odd_intersections (const X_monotone_curve_2& cv,
   if (right_res == EQUAL)
   {
     // Compare the two curves to the left of their common right endpoint.
-    if (cv.is_in_x_range(seg_right))
+    if (is_in_x_range(cv,seg_right))
       right_res = m_traits->compare_y_at_x_left_2_object() (seg, cv, seg_right);
-    else if (seg.is_in_x_range(cv_right))
+    else if (is_in_x_range(seg,cv_right))
       right_res = m_traits->compare_y_at_x_left_2_object() (seg, cv, cv_right);
     else
       CGAL_error();
     if (right_res == EQUAL)
     {
       // RWRW: In this case we have an overlap ...
-      if (cv.is_in_x_range(( p_is_left ? seg_left : seg_right )))
+      if (is_in_x_range(cv,( p_is_left ? seg_left : seg_right )))
         if (m_traits->compare_y_at_x_2_object()
             ( ( p_is_left ? seg_left : seg_right ) , cv) == EQUAL)
         {
