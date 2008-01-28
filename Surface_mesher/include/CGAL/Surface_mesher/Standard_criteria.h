@@ -118,12 +118,22 @@ namespace CGAL {
 
     inline
     void set_angle_min(const FT angle_min) {
-      B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
-      B = B * B;
+      if(angle_min == FT(0)) {
+        B = 0;
+      }
+      else {
+        B = std::sin (CGAL_PI * CGAL::to_double(angle_min) / 180);
+        B = B * B;
+      }
     };
 
     bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
+
+      if(B == FT(0)) {
+        q = 1;
+        return false;
+      }
 
       typedef typename Tr::Geom_traits Geom_traits;
       Geom_traits gt;
@@ -144,9 +154,8 @@ namespace CGAL {
 
       CGAL_assertion (aspect_ratio >= 0 && aspect_ratio <= 1);
       q = aspect_ratio;
-      return aspect_ratio < B;
+      return (B == FT(0)) || (aspect_ratio < B);
     }
-
 
   private:
     static 
@@ -189,18 +198,26 @@ namespace CGAL {
     bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
+      if(B == Quality(0)) {
+        q = 1;
+        return false;
+      }
+
       typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::FT FT;
 
       Geom_traits gt;
+      typename Geom_traits::Compute_squared_distance_3 distance =
+        gt.compute_squared_distance_3_object();
 
       const Point& p1 = fh.first->vertex ((fh.second+1)&3)->point();
       const Point& p2 = fh.first->vertex ((fh.second+2)&3)->point();
       const Point& p3 = fh.first->vertex ((fh.second+3)&3)->point();
 
-      const FT denom = gt.compute_squared_distance_3_object()
-	(gt.construct_circumcenter_3_object()(p1,p2,p3),
-	 fh.first->get_facet_surface_center(fh.second));
+      const Point c = gt.construct_circumcenter_3_object()(p1,p2,p3);
+
+      const FT denom = distance(c, fh.first->get_facet_surface_center(fh.second));
+
       if(denom == FT(0)) {
 	q = 1;
       }
@@ -209,7 +226,6 @@ namespace CGAL {
       }
       return q < FT(1);
     }
-
   };  // end Curvature_size_criterion
 
   // Uniform size Criterion class
@@ -239,7 +255,12 @@ namespace CGAL {
     bool is_bad (const Facet& fh, Quality& q) const {
       CGAL_assertion (fh.first->is_facet_on_surface (fh.second));
 
-      typedef typename Tr::Geom_traits Geom_traits;
+      if(B == Quality(0)) {
+        q = 1;
+        return false;
+      }
+
+     typedef typename Tr::Geom_traits Geom_traits;
       typedef typename Geom_traits::FT FT;
       Geom_traits gt;
 
