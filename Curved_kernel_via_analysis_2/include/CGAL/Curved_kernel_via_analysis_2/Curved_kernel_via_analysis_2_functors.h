@@ -1381,9 +1381,13 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(p1, p2) == 
-                CGAL::EQUAL);
+        CERR("\nequal; p1: " << p1 << "; p2: " << p2 << "\n");
+        
+        result_type res = (Curved_kernel_via_analysis_2::instance().
+                           compare_xy_2_object()(p1, p2) == 
+                           CGAL::EQUAL);
+        CERR("\nres = " << res << "\n");
+        return res;
     }
      
     /*!
