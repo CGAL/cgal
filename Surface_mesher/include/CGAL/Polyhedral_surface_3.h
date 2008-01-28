@@ -33,6 +33,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Inverse_index.h>
 #include <CGAL/circulator.h>
+#include <CGAL/iterator.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -54,7 +55,7 @@
 #include <vector>
 #include <set>
 #include <queue>
-#include <algorithm> // random_shuffle, distance
+#include <algorithm> // random_shuffle, distance, copy, set_intersection
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 #include <boost/format.hpp>
@@ -230,6 +231,14 @@ public:
   typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
   typedef typename Polyhedron::Facet_iterator Facet_iterator;
 
+  struct Compare_vertex_iterators {
+    bool operator()(const typename Polyhedron_3::Vertex_iterator& va,
+                    const typename Polyhedron_3::Vertex_iterator& vb) const
+    {
+      return (&*va)<(&*vb);
+    }
+  };
+
   using Polyhedron::halfedges_begin;
   using Polyhedron::halfedges_end;
   using Polyhedron::edges_begin;
@@ -273,7 +282,6 @@ public:
   typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
 //   typedef typename Subsegments_tree::Point_with_index
 //   Intersection_point;
-  typedef Point_3 Intersection_point;
 
   template <
     class Surface,
@@ -296,9 +304,9 @@ public:
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
     subsegments_tree_ptr(new Subsegments_tree()),
 #endif
-    input_points_ptr(new Input_points()),
-    corner_points_ptr(new Corner_points()),
-    edges_points_ptr(new Edges_points()),
+    input_vertices_ptr(new Input_vertices()),
+    corner_vertices_ptr(new Corner_vertices()),
+    edges_vertices_ptr(new Edges_vertices()),
     sharp_edges_angle_lower_bound(sharp_edges_angle_lower_bound),
     sharp_edges_angle_upper_bound(sharp_edges_angle_upper_bound),
     sharp_vertices_angle_lower_bound(sharp_vertices_angle_lower_bound),
@@ -317,9 +325,9 @@ public:
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
     subsegments_tree_ptr(new Subsegments_tree()),
 #endif
-    input_points_ptr(new Input_points()),
-    corner_points_ptr(new Corner_points()),
-    edges_points_ptr(new Edges_points()),
+    input_vertices_ptr(new Input_vertices()),
+    corner_vertices_ptr(new Corner_vertices()),
+    edges_vertices_ptr(new Edges_vertices()),
     sharp_edges_angle_lower_bound(sharp_edges_angle_lower_bound),
     sharp_edges_angle_upper_bound(sharp_edges_angle_upper_bound)
   {
@@ -421,15 +429,16 @@ public:
     typedef Inverse_index<Vertex_const_it> Index;
     Index index( this->vertices_begin(), this->vertices_end());
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
-    for(typename Polyhedron_3::Vertex_const_iterator vit = 
-          this->vertices_begin();
-        vit != this->vertices_end();
+    for(typename Polyhedron_3::Vertex_const_iterator
+          vit = this->vertices_begin(),
+          end = this->vertices_end();
+        vit != end;
         ++vit)
     {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       subfacets_tree_ptr->add_constrained_vertex(vit->point());
 #endif
-      input_points_ptr->insert(vit->point());
+//       input_vertices_ptr->insert(vit);
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
       vertices_array[i][0] = vit->point().x();
       vertices_array[i][1] = vit->point().y();
@@ -529,7 +538,7 @@ public:
 	  const Point_3 pa = eit->vertex()->point();
 	  const Point_3 pb = eit->opposite()->vertex()->point();
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-	  subsegments_tree_ptr->add_constrained_edge(pa, pb);
+	  subsegments_tree_ptr->add_constrained_edge(pa, pb, eit->tag());
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 	  subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
@@ -646,14 +655,14 @@ public:
 	  it != edges_vertex_counter.end();
 	  ++it)
       {
-	input_points_ptr->erase(it->first);
+	input_vertices_ptr->erase(it->first);
 	if(it->second != 2)
 	{
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
 	  std::cerr << ::boost::format("corner point: (%1%)\n")
 	    % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  corner_points_ptr->push_back(it->first);
+	  corner_vertices_ptr->push_back(it->first);
 	}
 	else
 	{
@@ -661,22 +670,22 @@ public:
 	  std::cerr << ::boost::format("edge point: (%1%)\n")
 	    % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  edges_points_ptr->push_back(it->first);
+	  edges_vertices_ptr->push_back(it->first);
 	}
       }
-//       if(!corner_points_ptr->empty() && edges_points_ptr->empty())
+//       if(!corner_vertices_ptr->empty() && edges_vertices_ptr->empty())
 //       {
 // #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 // 	std::cerr << "Incorrect input data. "
 // 		  << "Swap corner vertices and edges vertices...\n";
 // #endif
-// 	std::swap(corner_points, edges_points);
+// 	std::swap(corner_vertices, edges_vertices);
 //       }
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "Shuffle edges vertices... ";
 #endif
-      std::random_shuffle(edges_points_ptr->begin(), edges_points_ptr->end());
+      std::random_shuffle(edges_vertices_ptr->begin(), edges_vertices_ptr->end());
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr << "done\n";
 #endif
@@ -685,8 +694,8 @@ public:
       std::cerr <<
 	::boost::format("number of corner vertices: %1%\n"
 			"number of edges vertices:  %2%\n")
-	% corner_points_ptr->size()
-	% edges_points_ptr->size();
+	% corner_vertices_ptr->size()
+	% edges_vertices_ptr->size();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
 
@@ -722,7 +731,7 @@ public:
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     } // end "if(this->has_edges())"
 //     subfacets_tree_ptr->input(input_file,
-//                            std::back_inserter(input_points));
+//                            std::back_inserter(input_vertices));
   } // end construct_octree()
 
   void set_sharp_edges_angle_bounds(double lower_bound,
@@ -796,15 +805,21 @@ public:
 
     bool can_continue;
     Halfedge_handle next_he;
+
     tie(can_continue, next_he) = can_follow_sharp_edges(he);
     while(can_continue && next_he->tag() < 0)
     {
+      CGAL_assertion(he->vertex()->tag()<0);
+      he->vertex()->tag(edge_index);
       new_sub_edge(edge_node, edge_index, next_he);
       he = next_he;
       tie(can_continue, next_he) = Self::can_follow_sharp_edges(he);
     }
     if(can_continue)
+    {
+      he->vertex()->tag(edge_index);
       return Vertex_handle();
+    }
     else
       return he->vertex();
   }
@@ -826,6 +841,9 @@ public:
   void construct_incidence_graph()
   {
     incidence_graph.clear();
+    input_vertices_ptr->clear();
+    corner_vertices_ptr->clear();
+    edges_vertices_ptr->clear();
     this->tag_vertices(-1);
     this->tag_halfedges(-1);
     this->tag_facets(-1);
@@ -869,6 +887,7 @@ public:
       }
     }
 
+    // display to std::cerr, for debugging
     std::cerr << "INCIDENCE GRAPH SUMMARY\n";
     std::cerr << "Number of vertices: " << incidence_graph.vertices.size()
               << "\nNumber of edges: " << incidence_graph.edges.size()
@@ -912,7 +931,30 @@ public:
       std::cerr << 
         boost::format("Facet #%1% number of sub-facets: %2%\n")
         % i % incidence_graph.facets[i].sub_facets.size();
-    }    
+    }
+
+
+    for(typename Polyhedron_3::Vertex_iterator 
+          vit = this->vertices_begin(),
+          end = this->vertices_end();
+        vit != end;
+        ++vit)
+    {
+      switch(this->type(vit)) {
+      case Polyhedron::SMOOTH:
+        vit->tag(vit->halfedge()->facet()->tag());
+        CGAL_assertion(vit->tag()>=0);
+        input_vertices_ptr->insert(vit);
+        break;
+      case Polyhedron::DART:
+      case Polyhedron::CORNER:
+        CGAL_assertion(vit->tag()>=0);
+        corner_vertices_ptr->push_back(vit);
+      case Polyhedron::CREASE_REGULAR:
+      case Polyhedron::CREASE_IRREGULAR:
+        edges_vertices_ptr->push_back(vit);
+      }
+    }
   }
 
   void construct_graph_facet(Facet_handle seed_facet,
@@ -1065,15 +1107,159 @@ public:
     ::glEnd(); // end polygon assembly
   }
 
+  template <typename Vertex_handle>
+  bool vertices_not_on_same_curve(const Vertex_handle& v1,
+                                  const Vertex_handle& v2) const
+  {
+    struct Display_curves_indices {
+      void operator()(const std::set<int>& container) const {
+        std::cerr << "(";
+        for(std::set<int>::const_iterator 
+              it = container.begin(),
+              end = container.end();
+            it != end;)
+        {
+          std::cerr << *it;
+          if(++it!=end)
+            std::cerr << " ";
+        }
+        std::cerr << ")";
+      }
+    };
+//     if(v1->point().dimension() < 0) {
+//       if(v2->point().dimension() < 0)
+//         return false; // both in volume
+//       else
+//         return true; // v1 in volume and v2 on a surface
+//     }
+//     else
+//       if(v2->point().dimension() < 0)
+//         return true; // v2 in volume, and v1 on a surface
+
+    if(v1->point().dimension() < 0 || v2->point().dimension() < 0)
+      return true;
+    std::set<int> incident_edges_v1, incident_edges_v2, intersection;
+    incident_edges(v1, CGAL::inserter(incident_edges_v1));
+    incident_edges(v2, CGAL::inserter(incident_edges_v2));
+#ifdef CGAL_SURFACE_MESHER_DEBUG_INCIDES
+    Display_curves_indices()(incident_edges_v1);
+    Display_curves_indices()(incident_edges_v2);
+#endif // CGAL_SURFACE_MESHER_DEBUG_INCIDES
+    std::set_intersection(incident_edges_v1.begin(), incident_edges_v1.end(),
+                          incident_edges_v2.begin(), incident_edges_v2.end(),
+                          CGAL::inserter(intersection));
+    return intersection.empty();
+  }
+
+  template <typename Vertex_handle>
+  bool vertices_not_on_same_surface_patch(const Vertex_handle& v1,
+                                          const Vertex_handle& v2,
+                                          const Vertex_handle& v3) const
+  {
+//     if(v1->point().dimension() < 0) {
+//       if(v2->point().dimension() < 0 && v3->point().dimension() < 0)
+//         return false; // all three vertices in volume
+//       else
+//         return true; // v1 in volume, and (v2 or v3) on a surface
+//     }
+//     else
+//       if(v2->point().dimension() < 0 || v3->point().dimension() < 0
+    if(v1->point().dimension() < 0 ||
+       v2->point().dimension() < 0 ||
+       v3->point().dimension() < 0)
+      return true;
+    std::set<int> incident_facets_v1, incident_facets_v2, incident_facets_v3, intersection;
+    incident_facets(v1, CGAL::inserter(incident_facets_v1));
+    incident_facets(v2, CGAL::inserter(incident_facets_v2));
+    incident_facets(v3, CGAL::inserter(incident_facets_v3));
+
+    std::set_intersection(incident_facets_v1.begin(), incident_facets_v1.end(),
+                          incident_facets_v2.begin(), incident_facets_v2.end(),
+                          CGAL::inserter(intersection));
+    if(intersection.empty())
+      return true;
+    std::set<int> intersection2;
+    std::set_intersection(intersection.begin(), intersection.end(),
+                          incident_facets_v3.begin(), incident_facets_v3.end(),
+                          CGAL::inserter(intersection2));
+    return intersection2.empty();
+  }
+
+  template <typename Vertex_handle, typename OutputIterator>
+  void incident_edges(const Vertex_handle& v,
+                      OutputIterator out_it) const
+  {
+    CGAL_assertion(v->point().element_index() >= 0);
+    switch(v->point().dimension())
+    {
+    case 0: {
+      const int index = v->point().element_index();
+      CGAL_assertion(index <  incidence_graph.vertices.size() );
+      CGAL_assertion(incidence_graph.vertices[index].incident_edges.size() >= 1 );
+      std::copy(incidence_graph.vertices[index].incident_edges.begin(),
+                incidence_graph.vertices[index].incident_edges.end(),
+                out_it);
+      break;
+    }
+    case 1:
+      *out_it++ = v->point().element_index();
+      break;
+    default: 
+      // if dimension=2, nothing to output
+      // if dimension=-1 (point in volume, nothing to output)
+      break;
+    }
+  }
+
+  template <typename Vertex_handle, typename OutputIterator>
+  void incident_facets(const Vertex_handle& v,
+                       OutputIterator out_it) const
+  {
+    CGAL_assertion(v->point().element_index() >= 0);
+    switch(v->point().dimension())
+    {
+    case 0: {
+      std::vector<int> incident_edges;
+      const int index = v->point().element_index();
+      CGAL_assertion(index <  incidence_graph.vertices.size() );
+      std::copy(incidence_graph.vertices[index].incident_edges.begin(),
+                incidence_graph.vertices[index].incident_edges.end(),
+                std::back_inserter(incident_edges));
+      for(std::vector<int>::const_iterator
+            edge_index_it = incident_edges.begin(),
+            end = incident_edges.end();
+          edge_index_it != end;
+          ++edge_index_it)
+      {
+        std::copy(incidence_graph.edges[*edge_index_it].incident_facets.begin(),
+                  incidence_graph.edges[*edge_index_it].incident_facets.end(),
+                  out_it);
+      }
+      break;
+    }
+    case 1: {
+      const int index = v->point().element_index();
+      CGAL_assertion(index <  incidence_graph.edges.size() );
+      std::copy(incidence_graph.edges[index].incident_facets.begin(),
+                incidence_graph.edges[index].incident_facets.end(),
+                out_it);
+      break;
+    }
+    default: // dimension=2
+      *out_it++ = v->point().element_index();
+      break;
+    }
+  }
+
 public:
   Subfacets_tree_ptr subfacets_tree_ptr;
   Subsegments_tree_ptr subsegments_tree_ptr;
-  typedef std::set<Point_3> Input_points;
-  boost::shared_ptr<Input_points> input_points_ptr;
-  typedef std::vector<Point_3> Corner_points;
-  boost::shared_ptr<Corner_points> corner_points_ptr;
-  typedef std::vector<Point_3> Edges_points;
-  boost::shared_ptr<Edges_points> edges_points_ptr;
+  typedef std::set<Vertex_handle, Compare_vertex_iterators> Input_vertices;
+  boost::shared_ptr<Input_vertices> input_vertices_ptr;
+  typedef std::vector<Vertex_handle> Corner_vertices;
+  boost::shared_ptr<Corner_vertices> corner_vertices_ptr;
+  typedef std::vector<Vertex_handle> Edges_vertices;
+  boost::shared_ptr<Edges_vertices> edges_vertices_ptr;
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
   typedef boost::shared_ptr<PointInPolyhedron> PointInPolyhedron_ptr;
   PointInPolyhedron_ptr pinpolyhedron_ptr;

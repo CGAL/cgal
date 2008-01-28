@@ -37,7 +37,7 @@ template <
   typename Has_edges_tag_ = typename Surface::Has_edges_tag,
   bool mesh_the_whole_bounding_box = false
   >
-class Polyhedral_oracle
+class Polyhedral_oracle : Has_edges_tag_
 {
 public:
   typedef typename Surface::Geom_traits GT;
@@ -60,6 +60,8 @@ public:
                             mesh_the_whole_bounding_box> Self;
 
   typedef Surface Surface_3;
+
+  typedef Point Intersection_point;
 
   // Private members
 
@@ -104,7 +106,7 @@ public:
     {
     }
 
-    Object operator()(Surface_3 surface, const Segment_3& s) const
+    Object operator()(const Surface_3& surface, const Segment_3& s) const
     {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
       double pa[3], pb[3];
@@ -163,36 +165,36 @@ public:
                                      OutputIteratorPoints out, 
                                      int n = 20) const // WARNING: why 20?    
     {
-      for (typename std::vector<Point>::const_iterator vit =
-             surface.corner_points_ptr->begin();
-           vit != surface.corner_points_ptr->end();
+      for (typename Surface_3::Corner_vertices::const_iterator vit =
+             surface.corner_vertices_ptr->begin();
+           vit != surface.corner_vertices_ptr->end();
            ++vit)
       {
-        Point p = *vit;
-//         CGAL_assertion(vit->tag() >= 0);
-//         p.set_on_vertex(vit->tag());
+        Point p = (*vit)->point();
+        CGAL_assertion((*vit)->tag() >= 0);
+        p.set_on_vertex((*vit)->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
-      for (typename std::vector<Point>::const_iterator vit =
-             surface.edges_points_ptr->begin();
-           vit != surface.edges_points_ptr->end() && n > 0;
+      for (typename Surface_3::Edges_vertices::const_iterator vit =
+             surface.edges_vertices_ptr->begin();
+           vit != surface.edges_vertices_ptr->end() && n > 0;
            ++vit, --n)
       {
-        Point p = *vit;
-//         CGAL_assertion(vit->tag() >= 0);
-//         p.set_on_curve(vit->tag());
+        Point p = (*vit)->point();
+        CGAL_assertion((*vit)->tag() >= 0);
+        p.set_on_curve((*vit)->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
-      for (typename std::set<Point>::const_iterator vit =
-             surface.input_points_ptr->begin();
-           vit != surface.input_points_ptr->end() && n > 0;
+      for (typename Surface_3::Input_vertices::const_iterator vit =
+             surface.input_vertices_ptr->begin();
+           vit != surface.input_vertices_ptr->end() && n > 0;
            ++vit, --n)
       {
-        Point p = *vit;
-//         CGAL_assertion(vit->tag() >= 0);
-//         p.set_on_surface(vit->tag());
+        Point p = (*vit)->point();
+        CGAL_assertion((*vit)->tag() >= 0);
+        p.set_on_surface((*vit)->tag());
         self.visitor.new_point(p);
         *out++= p;
       }
@@ -205,7 +207,8 @@ public:
     return Construct_initial_points(*this);
   }
 
-  bool is_in_volume(Surface_3& surface, const Point& p)
+  template <class P>
+  bool is_in_volume(const Surface_3& surface, const P& p)
   {
     if(mesh_the_whole_bounding_box)
       return CGAL::do_overlap(surface.bbox(),p.bbox());
@@ -254,18 +257,18 @@ public:
     return (result.second % 2) == 1;
   }
 
-  Object intersect_curves_with_triangle(Surface_3 surface,
+  Object intersect_curves_with_triangle(const Surface_3& surface,
 					const Triangle_3& t) const
   {
     if(! surface.has_edges())
       return Object();
 
-    Object o = surface.subsegments_tree_ptr->intersection(t);
-    Point_with_index pi;
-    if( assign(pi, o) )
+    const Object o = surface.subsegments_tree_ptr->intersection(t);
+    if(const Point_with_index* pi = object_cast<Point_with_index>(&o))
     {
-      Point p = pi;
-//       p.set_on_curve(pi.surface_index());
+      Point p = *pi;
+      CGAL_assertion(pi->surface_index()>=0);
+      p.set_on_curve(pi->surface_index());
       visitor.new_point(p);
       return make_object(p);
     }
@@ -312,12 +315,12 @@ public:
 // 		  << " " << (assign(p, odeux))
 // 		  << std::endl;
 
-      Object o = data_struct.intersection(s.vertex(0), s.vertex(1));
-      Point_with_index pi;
-      if( assign(pi, o) )
+      const Object o = data_struct.intersection(s.vertex(0), s.vertex(1));
+      if(const Point_with_index* pi = object_cast<Point_with_index>(&o))
       {
-        Point p = pi;
-//         p.set_on_surface(pi.surface_index());
+        Point p = *pi;
+        CGAL_assertion(pi->surface_index()>=0);
+        p.set_on_surface(pi->surface_index());
         visitor.new_point(p);
         return make_object(p);
       }
@@ -354,12 +357,12 @@ public:
 
 //       return odeux;
 
-      Object o = data_struct.intersection (r);
-      Point_with_index pi;
-      if( assign(pi, o) )
+      const Object o = data_struct.intersection (r);
+      if(const Point_with_index* pi = object_cast<Point_with_index>(&o))
       {
-        Point p = pi;
-//         p.set_on_surface(pi.surface_index());
+        Point p = *pi;
+        CGAL_assertion(pi->surface_index()>=0);
+        p.set_on_surface(pi->surface_index());
         visitor.new_point(p);
         return make_object(p);
       }
