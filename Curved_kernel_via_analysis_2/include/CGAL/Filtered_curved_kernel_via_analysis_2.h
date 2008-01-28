@@ -161,56 +161,49 @@ public:
 
         typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
 
-        NiX::Compactified<X_coordinate_1> asym_info1, asym_info2;
+        CGAL::Object obj1, obj2;
+        X_coordinate_1 asym_info1, asym_info2;
+        CGAL::Arr_parameter_space ps1, ps2;
         
-        switch(cv1.location(ce)) {
-            
-        case(CGAL::ARR_LEFT_BOUNDARY): {
-            
-            asym_info1 = cv1.curve().
-                horizontal_asymptote_for_arc_to_minus_infinity(cv1.arcno());
-            asym_info2 = cv2.curve().
-                horizontal_asymptote_for_arc_to_minus_infinity(cv2.arcno());
-            break;
-        }
-        case(CGAL::ARR_RIGHT_BOUNDARY ): {
-            asym_info1 = cv1.curve().
-                horizontal_asymptote_for_arc_to_plus_infinity(cv1.arcno());
-            asym_info2 = cv2.curve().
-                horizontal_asymptote_for_arc_to_plus_infinity(cv2.arcno());
-            break;
-        } 
-        default: {
-            // Never happens
-            CGAL_error();
-            break;
-        }
-
-        }
-
-        CGAL::Comparison_result filter_res;
-        // Special cases
-        if(asym_info1.infty() == NiX::PLUS_INFTY) {
-            if(asym_info2.infty() == NiX::PLUS_INFTY) {
-                filter_res = CGAL::EQUAL;
+        obj1 = cv1.curve().asymptotic_value_of_arc(
+                cv1.location(ce), cv1.arcno()
+        );
+        obj2 = cv2.curve().asymptotic_value_of_arc(
+                cv2.location(ce), cv2.arcno()
+        );
+        
+        CGAL::Comparison_result filter_res = CGAL::EQUAL;
+        
+        if (CGAL::assign(ps1, obj1)) {
+            if (CGAL::assign(ps2, obj2)) {
+                if (ps1 == ps2) {
+                    filter_res = CGAL::EQUAL;
+                } else {
+                    filter_res = (ps2 == CGAL::ARR_TOP_BOUNDARY ?
+                                  CGAL::SMALLER : CGAL::LARGER);
+                }
             } else {
-                filter_res = CGAL::LARGER;
+                CGAL_assertion(CGAL::assign(asym_info2, obj2));
+                filter_res = (ps1 == CGAL::ARR_TOP_BOUNDARY ?
+                              CGAL::LARGER : CGAL::SMALLER);
             }
-        } else if(asym_info1.infty() == NiX::MINUS_INFTY) {
-            if(asym_info2.infty() == NiX::MINUS_INFTY) {
-                filter_res = CGAL::EQUAL;
-            } else {
-                filter_res = CGAL::SMALLER;
-            }
-        } else if(asym_info2.infty() == NiX::PLUS_INFTY) {
-            filter_res = CGAL::SMALLER;
-        } else if(asym_info2.infty() == NiX::MINUS_INFTY) {
-            filter_res = CGAL::LARGER;
         } else {
-            
-            filter_res = this->_ckva()->kernel().
-                compare_x_2_object()(asym_info1.finite(),asym_info2.finite());
+            CGAL_assertion_code(bool check = )
+                CGAL::assign(asym_info1, obj1);
+            CGAL_assertion(check);
+            if (CGAL::assign(ps2, obj2)) {
+                filter_res = (ps2 == CGAL::ARR_TOP_BOUNDARY ?
+                              CGAL::SMALLER : CGAL::LARGER);
+            } else {
+                CGAL_assertion_code(bool check = )
+                    CGAL::assign(asym_info2, obj2);
+                CGAL_assertion(check);
+                filter_res = this->_ckva()->kernel().compare_x_2_object()(
+                        asym_info1, asym_info2
+                );
+            }
         }
+        
         if(filter_res != CGAL::EQUAL) {
             std::cout << "filtered!" << std::endl;
             return filter_res;
@@ -481,59 +474,34 @@ private:
 
         switch(arc.location(end)) {
             
-        case(CGAL::ARR_LEFT_BOUNDARY): {
-
-            NiX::Compactified<X_coordinate_1> asym_info 
-                = arc.curve().horizontal_asymptote_for_arc_to_minus_infinity
-                   (arc.arcno());
-            switch(asym_info.infty()) {
-                
-            case(NiX::MINUS_INFTY): {
-                min = max = -numeric_limits<double>::infinity();
-                break;
-            }
-            case(NiX::PLUS_INFTY): {
-                min = max = numeric_limits<double>::infinity();
-                break;
-            }
-            case(NiX::FINITE): {
-                while(x_high(asym_info.finite()) - 
-                      x_low(asym_info.finite()) > threshold()) {
-                    x_refine(asym_info.finite());
-                }
-                min = CGAL::to_interval(x_low(asym_info.finite())).first;
-                max = CGAL::to_interval(x_high(asym_info.finite())).second;
-                break;
-            }
-            }
-            break;
-        }
-        case(CGAL::ARR_RIGHT_BOUNDARY ): {
+        case(CGAL::ARR_LEFT_BOUNDARY): 
+        case(CGAL::ARR_RIGHT_BOUNDARY): {
             
-            NiX::Compactified<X_coordinate_1> asym_info 
-                = arc.curve().horizontal_asymptote_for_arc_to_plus_infinity
-                    (arc.arcno());
-            switch(asym_info.infty()) {
-                
-            case(NiX::MINUS_INFTY): {
-                min = max = -numeric_limits<double>::infinity();
-                break;
-            }
-            case(NiX::PLUS_INFTY): {
-                min = max = numeric_limits<double>::infinity();
-                break;
-            }
-            case(NiX::FINITE): {
-                while(x_high(asym_info.finite()) - 
-                      x_low(asym_info.finite()) > threshold()) {
-                    x_refine(asym_info.finite());
+            CGAL::Object obj = arc.curve().asymptotic_value_of_arc(
+                    arc.location(end), arc.arcno()
+            );
+            
+            CGAL::Arr_parameter_space ps;
+            X_coordinate_1 asym_info;
+            
+            if (CGAL::assign(ps, obj)) {
+                if (ps == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    min = max = -numeric_limits<double>::infinity();
+                } else {
+                    CGAL_assertion(ps == CGAL::ARR_TOP_BOUNDARY);
+                    min = max = numeric_limits<double>::infinity();
                 }
-                min = CGAL::to_interval(x_low(asym_info.finite())).first;
-                max = CGAL::to_interval(x_high(asym_info.finite())).second;
-                break;
+            } else {
+                CGAL_assertion_code(bool check =) 
+                    CGAL::assign(asym_info, obj);
+                CGAL_assertion(check);
+                while(x_high(asym_info) - 
+                      x_low(asym_info) > threshold()) {
+                    x_refine(asym_info);
+                }
+                min = CGAL::to_interval(x_low(asym_info)).first;
+                max = CGAL::to_interval(x_high(asym_info)).second;
             }
-            }
-            break;
         }
         case(CGAL::ARR_TOP_BOUNDARY): {
             min = max = numeric_limits<double>::infinity();
