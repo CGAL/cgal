@@ -346,21 +346,27 @@ private:
                  eit++) {
 #if 1 // TODO use traits instead
                 CGAL_precondition(
-                        eit->curve().get_parameter_space_in_y(
-                                CGAL::ARR_MIN_END
-                        )
-                        == CGAL::ARR_INTERIOR
+                        eit->curve().location(CGAL::ARR_MIN_END)
+                        == CGAL::ARR_INTERIOR ||
+                        eit->curve().location(CGAL::ARR_MIN_END)
+                        == CGAL::ARR_LEFT_BOUNDARY ||
+                        eit->curve().location(CGAL::ARR_MIN_END)
+                        == CGAL::ARR_RIGHT_BOUNDARY
                 ); 
-                if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MIN_END)
+                if (eit->curve().location(CGAL::ARR_MIN_END)
                     == CGAL::ARR_LEFT_BOUNDARY &&
                     m_left == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
-                        eit->curve().get_parameter_space_in_y(CGAL::ARR_MAX_END)
-                        == CGAL::ARR_INTERIOR
+                        eit->curve().location(CGAL::ARR_MAX_END)
+                        == CGAL::ARR_INTERIOR ||
+                        eit->curve().location(CGAL::ARR_MAX_END)
+                        == CGAL::ARR_LEFT_BOUNDARY ||
+                        eit->curve().location(CGAL::ARR_MAX_END)
+                        == CGAL::ARR_RIGHT_BOUNDARY
                 ); 
-                if (eit->curve().get_parameter_space_in_x(CGAL::ARR_MAX_END)
+                if (eit->curve().location(CGAL::ARR_MAX_END)
                     == CGAL::ARR_RIGHT_BOUNDARY &&
                     m_right == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_plus_inf++;

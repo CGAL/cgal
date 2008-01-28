@@ -63,7 +63,7 @@ Arr_qdx_topology_traits_2 (Geometry_traits_2 *tr) :
     m_traits = static_cast<Traits_adaptor_2*>(tr);
     m_line_of_discontinuity = Line_of_discontinuity(Point_2_less(m_traits));
 
-    _initialize_with_quadric(tr->base_quadric());
+    _initialize_with_quadric(tr->reference());
 }
 
 //-----------------------------------------------------------------------------
