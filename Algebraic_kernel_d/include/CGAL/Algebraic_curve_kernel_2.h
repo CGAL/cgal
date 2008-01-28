@@ -143,6 +143,10 @@ protected:
             typename Sf_traits::Scalar_factor scalar_factor;
             typename Sf_traits::Scalar_div scalar_div;
             Scalar g = scalar_factor(p);
+            if (g == Scalar(0)) {
+                CGAL_assertion(p == Poly(Scalar(0)));
+                return p;
+            }
             CGAL_assertion(g != Scalar(0));
             if(g != Scalar(1)) 
                 scalar_div(p,g);
@@ -905,6 +909,11 @@ public:
 
         bool _test_exact_zero(const Curve_analysis_2& ca_2,
             const Xy_coordinate_2& r) const {
+            
+            Internal_polynomial_2 zero_p(Coefficient(0));
+            if (ca_2.polynomial_2() == zero_p) {
+                return true;
+            }
 
             Construct_curve_2 cc_2;
             Construct_curve_pair_2 ccp_2;
