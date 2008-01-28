@@ -35,7 +35,10 @@ int main(int argc, char** argv)
 	<< "\nimage format"
 	<< "\n  " << image->imageFormat->realName 
 	<< " (extension list: " << image->imageFormat->fileExtension << ")" 
-	<< "\nvectors interlaced or not (internal code)"
+	<< "\nvectors interlaced or not ("
+        << SHOWENUM(VM_INTERLACED) << ", "
+        << SHOWENUM(VM_NON_INTERLACED) << ", "
+        << SHOWENUM(VM_SCALAR) << ")"
 	<< SHOW(vectMode)
 	<< "\nword kind ("
 	<< SHOWENUM(WK_FIXED) << ", "
