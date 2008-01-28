@@ -535,9 +535,22 @@ public:
                 }
             }
             os << ", ";
-            if (this->location() != CGAL::ARR_BOTTOM_BOUNDARY &&
-                this->location() != CGAL::ARR_TOP_BOUNDARY) {
-                os << "y=n/a"; // TODO give y-coordinate (eriC)
+            if (is_finite()) {
+                
+                typedef typename Curve_kernel_2::Boundary Rational;
+                typename Curve_kernel_2::Lower_boundary_y_2 lower_boundary_y;
+                typename Curve_kernel_2::Upper_boundary_y_2 upper_boundary_y;
+                typename Curve_kernel_2::Refine_y_2 refine_y;
+                
+                Rational bound(10e-10);
+                
+                while (upper_boundary_y(xy()) - 
+                       lower_boundary_y(xy()) > bound) {
+                    refine_y(xy());
+                }
+                
+                double yd = NiX::to_double(lower_boundary_y(xy()));
+                os << "y=" << yd;
             } else {
                 if (this->location() == CGAL::ARR_BOTTOM_BOUNDARY) {
                     os << "y=-oo";
