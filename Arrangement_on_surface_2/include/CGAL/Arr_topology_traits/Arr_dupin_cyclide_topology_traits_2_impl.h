@@ -156,10 +156,12 @@ void Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
                     Halfedge *e1 = *(fit->outer_ccbs_begin());
                     Halfedge *e2 = *(++fit->outer_ccbs_begin());
                     
-                    // collect data of perimetric paths
-                    CGAL::Sign sign1 = _sign_of_paths(e1, e1);
+                    Sign_of_path sign_of_path(this);
                     
-                    CGAL::Sign sign2 = _sign_of_paths(e2, e2);
+                    // collect data of perimetric paths
+                    CGAL::Sign sign1 = sign_of_paths(e1, e1);
+                    
+                    CGAL::Sign sign2 = sign_of_paths(e2, e2);
                     
                     bool check_lowest = false;
                     
@@ -692,11 +694,13 @@ face_split_after_edge_insertion (const Halfedge *prev1,
     CGAL_precondition (prev2->is_on_inner_ccb());
     CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
     
+    Sign_of_path sign_of_path(this);
+    
     //std::cout << "Path1: " << std::endl;
-    CGAL::Sign sign_12 = _sign_of_path(prev1, prev2, cv);
+    CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
     //std::cout << "sign1: " << sign_12 << std::endl;
     //std::cout << "Path2: " << std::endl;
-    CGAL::Sign sign_21 = _sign_of_path(prev2, prev1, cv);
+    CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
     //std::cout << "sign2: " << sign_21 << std::endl;
     
     // TODO use arr function for to check perimetry
@@ -754,12 +758,13 @@ hole_creation_after_edge_removal (const Halfedge *he) const
         // precondition is: does not form an antenna, or a simply to remove
         // halfedge
         
-         // Check the two cycles that will be created once we remove he and its
+        Sign_of_path sign_of_path(this);
+        
+        // Check the two cycles that will be created once we remove he and its
         // twin (from he->next() to he's twin, not inclusive, and from the
         // successor of he's twin to he, not inclusive).
-        if (_sign_of_path(he->next(), he->opposite()) != CGAL::ZERO
-            &&
-            _sign_of_path(he->opposite()->next(), he) != CGAL::ZERO
+        if (sign_of_path(he->next(), he->opposite()) != CGAL::ZERO &&
+            sign_of_path(he->opposite()->next(), he) != CGAL::ZERO
         ) {
             // Both paths are perimetric, so the two cycles become two separate
             // outer CCBs of the same face, and no hole is created.
@@ -773,8 +778,8 @@ hole_creation_after_edge_removal (const Halfedge *he) const
     } else {
         // The edge to be removed separates two faces.
         // Check the cyclic path from he and back, and from its twin and back.
-        if (_sign_of_path(he, he) != CGAL::ZERO &&
-            _sign_of_path(he->opposite(), he->opposite()) != CGAL::ZERO) {
+        if (sign_of_path(he, he) != CGAL::ZERO &&
+            sign_of_path(he->opposite(), he->opposite()) != CGAL::ZERO) {
             if (dcel().number_of_faces() == 1) {
                 CGAL_assertion_code(
                         Face *f = dcel()->faces_begin();
@@ -823,7 +828,9 @@ is_on_new_perimetric_face_boundary (const Halfedge *prev1,
     // If pole is part of a ccb itself, it incident face is the face that 
     // contains everything.
     
-    CGAL::Sign sign = _sign_of_path(prev2, prev1, cv);
+    Sign_of_path sign_of_path(this);
+    
+    CGAL::Sign sign = sign_of_path(prev2, prev1, cv);
     CGAL_assertion(sign != CGAL::ZERO);
     
     return (sign == CGAL::POSITIVE);
@@ -852,10 +859,12 @@ boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
     std::cout << "e2->occbf: " << &(*e2->outer_ccb()->face()) << std::endl;
 #endif
 
+    Sign_of_path sign_of_path(this);
+
     // compute signs of path (both must be non-zero)
-    CGAL::Sign sign1 = _sign_of_path(e1, e1);
+    CGAL::Sign sign1 = sign_of_path(e1, e1);
     CGAL_assertion(sign1 != CGAL::ZERO);
-    CGAL::Sign sign2 = _sign_of_path(e2, e2);
+    CGAL::Sign sign2 = sign_of_path(e2, e2);
     CGAL_assertion(sign2 != CGAL::ZERO);
     
     return (sign1 != sign2);
@@ -1196,184 +1205,6 @@ _sign_of_subpath (const Halfedge* he1,
     }
     
     //std::cout << "result: " << result << std::endl;
-    return result;
-}
-
-//-----------------------------------------------------------------------------
-// Returns sign of crossings with the curve of identification
-//
-template <class GeomTraits, class Dcel_>
-CGAL::Sign
-Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
-_sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
-    
-    // status: move to arr
-    
-    //std::cout << "Arr_dupin_cyclide_topology_traits: "
-    //          << "_sign_of_subpath" << std::endl;
-    
-    CGAL::Sign result = CGAL::ZERO;
-    
-    if (he1->next() == he2 && he2->next () == he1) {
-        return result;
-    }
-    
-    // Start with the next of prev1:
-    const Halfedge* curr = he1->next();
-    
-    while (curr != he2) {
-
-        CGAL_assertion(!curr->has_null_curve());
-        
-        const Halfedge* next = curr->next();
-
-        CGAL_assertion(!next->has_null_curve());
-        
-        CGAL::Sign tmp = _sign_of_subpath(curr, next);
-        
-        if (tmp != CGAL::ZERO) {
-            switch (result) {
-            case ZERO:
-                result = tmp;
-                break;
-            default:
-                CGAL_assertion(result == -tmp || result == tmp);
-                result = CGAL::ZERO;
-            }
-        }
-        
-        curr = next;
-    }
-
-    if (he1 == he2) {
-        CGAL::Sign tmp = _sign_of_subpath(he1, he1->next());
-        
-        if (tmp != CGAL::ZERO) {
-            switch (result) {
-            case ZERO:
-                result = tmp;
-                break;
-            default:
-                CGAL_assertion(result == -tmp || result == tmp);
-                result = CGAL::ZERO;
-            }
-        }
-
-    }
-    
-    return result;
-}
-
-//-----------------------------------------------------------------------------
-// Returns sign of crossings with the curve of identification
-//
-template <class GeomTraits, class Dcel_>
-CGAL::Sign
-Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
-_sign_of_path (const Halfedge* he1, const Halfedge* he2, 
-               const X_monotone_curve_2& cv) const {
-    
-    // status: move to arr
-    CGAL::Sign result = _sign_of_path(he2, he1);
-
-
-    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-        _m_traits->parameter_space_in_x_2_object();
-    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
-        _m_traits->parameter_space_in_y_2_object();
-    
-    // check whether cv can influence the counters
-    
-    CGAL::Arr_parameter_space ps_min_x = 
-        parameter_space_in_x(cv, CGAL::ARR_MIN_END);
-    CGAL::Arr_parameter_space ps_min_y = 
-        parameter_space_in_y(cv, CGAL::ARR_MIN_END);
-    
-    CGAL::Arr_parameter_space ps_max_x = 
-        parameter_space_in_x(cv, CGAL::ARR_MAX_END);  
-    CGAL::Arr_parameter_space ps_max_y = 
-        parameter_space_in_y(cv, CGAL::ARR_MAX_END);  
-    
-    if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR || 
-        ps_max_x != CGAL::ARR_INTERIOR || ps_max_y != CGAL::ARR_INTERIOR) {
-        
-        // sign can change!
-        
-        bool equalmin = false;
-        
-        Point_2 minp = this->_m_traits->construct_min_vertex_2_object()(cv);
-        
-        CGAL::Arr_curve_end he1_trg_ind =
-            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-             CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
-            );
-        
-        CGAL::Arr_parameter_space he1_trg_psx = 
-            parameter_space_in_x(he1->curve(), he1_trg_ind);
-        CGAL::Arr_parameter_space he1_trg_psy = 
-            parameter_space_in_y(he1->curve(), he1_trg_ind);
-        
-        bool v1_on_boundary = 
-            (he1_trg_psx != CGAL::ARR_INTERIOR ||
-             he1_trg_psy != CGAL::ARR_INTERIOR);
-        
-        bool min_on_boundary = 
-            (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR);
-        
-        if (v1_on_boundary == min_on_boundary) {
-            if (v1_on_boundary) {
-                // compare at boundary
-                equalmin = this->are_equal(he1->vertex(), cv, 
-                                           CGAL::ARR_MIN_END, 
-                                           ps_min_x, ps_min_y);
-            } else {
-                equalmin = (this->_m_traits->compare_xy_2_object()(
-                                    he1->vertex()->point(), minp
-                            ) == CGAL::EQUAL);
-            }
-        }
-
-        if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR) {
-            
-            CGAL::Sign tmp1 = 
-                _sign_of_subpath(
-                        he1, cv, 
-                        (equalmin ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
-                );
-            
-            if (tmp1 != CGAL::ZERO) {
-                switch (result) {
-                case ZERO:
-                    result = tmp1;
-                    break;
-                default:
-                    CGAL_assertion(result == -tmp1 || result == tmp1);
-                    result = CGAL::ZERO;
-                }
-            }
-        }
-        
-        if (ps_min_x != CGAL::ARR_INTERIOR || ps_min_y != CGAL::ARR_INTERIOR) {
-            
-            CGAL::Sign tmp2 = 
-                _sign_of_subpath(
-                        he2, cv, 
-                        (equalmin ? CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
-                );
-            
-            if (tmp2 != CGAL::ZERO) {
-                switch (result) {
-                case ZERO:
-                    result = tmp2;
-                    break;
-                default:
-                    CGAL_assertion(result == -tmp2 || result == tmp2);
-                    result = CGAL::ZERO;
-                }
-            }
-        }
-    }
-    
     return result;
 }
 

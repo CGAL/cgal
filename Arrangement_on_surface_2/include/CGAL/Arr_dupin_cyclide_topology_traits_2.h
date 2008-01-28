@@ -56,6 +56,8 @@
 #include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
+#include <CGAL/Arr_topology_traits/Sign_of_path.h>
+
 // TODO batched pl helper, vert decom helper
 
 CGAL_BEGIN_NAMESPACE
@@ -925,31 +927,12 @@ protected:
      */
     CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
                                 const X_monotone_curve_2& cv2,
-                                const CGAL::Arr_curve_end& end2)
-        const;
+                                const CGAL::Arr_curve_end& end2) const;
     
-    /*!
-     * Computes the number of crossing of a path with the curves 
-     * of identification
-     * \param he1 Beginning of path
-     * \param he2 End of path
-     * \return the perimeticity of a path as CGAL::Sign
-     */
-    CGAL::Sign _sign_of_path(const Halfedge* he1, const Halfedge* he2) 
-        const;
-
-    /*!
-     * Computes the number of crossing of a path with the curves 
-     * of identification
-     * \param he1 Beginning of path
-     * \param he2 End of path
-     * \param cv Curves in between
-     * \return the perimeticity of a path as CGAL::Sign
-     */
-    CGAL::Sign _sign_of_path(
-            const Halfedge* he1, const Halfedge* he2,
-            const X_monotone_curve_2& cv) const;
-
+    //! type of Sign_of_path functor
+    typedef CGALi::Sign_of_path< Geometry_traits_2, Self > Sign_of_path;
+    
+    friend class CGALi::Sign_of_path< Geometry_traits_2, Self >;
 
     /*! Return the face that lies before the given vertex, which lies
      * on the line on an identification
