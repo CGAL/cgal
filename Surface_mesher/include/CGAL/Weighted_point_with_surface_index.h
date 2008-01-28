@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -32,7 +32,7 @@ namespace CGAL {
 template <class Weighted_point>
 class Weighted_point_with_surface_index : public Weighted_point
 {
-  typedef Point_traits<Weighted_point> Point_traits;
+  typedef CGAL::Point_traits<Weighted_point> Point_traits;
   typedef typename Point_traits::Bare_point Bare_point;
   typedef typename Kernel_traits<Bare_point>::Kernel::FT FT;
 
