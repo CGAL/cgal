@@ -18,11 +18,11 @@
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_TORUS_TOPOLOGY_TRAITS_2_H
-#define CGAL_ARR_TORUS_TOPOLOGY_TRAITS_2_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H
+#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_H
 
 /*! \file
- * Definition of the Arr_torus_topology_traits_2<GeomTraits> class.
+ * Definition of the Arr_dupin_cyclide_topology_traits_2<GeomTraits> class.
  */
 
 #include <map>
@@ -50,10 +50,10 @@
 #include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
-#include <CGAL/Arr_topology_traits/Arr_torus_construction_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_torus_insertion_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_torus_overlay_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_torus_batched_pl_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_insertion_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_overlay_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
 // TODO batched pl helper, vert decom helper
@@ -64,13 +64,13 @@ CGAL_BEGIN_NAMESPACE
 template <class GeomTraits_, class TopTraits_> 
 class Arrangement_on_surface_2;
 
-/*! \class Arr_torus_topology_traits_2
+/*! \class Arr_dupin_cyclide_topology_traits_2
  * A topology-traits class that encapsulates the embedding of 2D arrangements
- * on a torus
+ * on a Dupin cyclide
  */
 template <class GeomTraits_,
           class Dcel_ = Arr_default_dcel<GeomTraits_> >
-class Arr_torus_topology_traits_2
+class Arr_dupin_cyclide_topology_traits_2
 {
     
 public:
@@ -94,7 +94,7 @@ public:
     typedef typename Dcel::Isolated_vertex                  Isolated_vertex;
     //}@
     
-    typedef Arr_torus_topology_traits_2<Geometry_traits_2, Dcel> Self;
+    typedef Arr_dupin_cyclide_topology_traits_2<Geometry_traits_2, Dcel> Self;
 
     /*! \struct
      * An auxiliary structure for rebinding the topology traits with a new 
@@ -103,7 +103,7 @@ public:
     template<typename T, typename D>
     struct rebind
     {
-        typedef Arr_torus_topology_traits_2<T,D> other;
+        typedef Arr_dupin_cyclide_topology_traits_2<T,D> other;
     };
     
 protected:
@@ -207,7 +207,7 @@ protected:
     mutable Vertices_on_identification_NS _m_vertices_on_identification_NS;
 
     //! Copy constructor - not supported.
-    Arr_torus_topology_traits_2 (const Self& );
+    Arr_dupin_cyclide_topology_traits_2 (const Self& );
 
     //! assignment operator - not supported.
     Self& operator= (const Self& );
@@ -218,10 +218,10 @@ public:
     //@{
     
     /*! Default constructor. */
-    Arr_torus_topology_traits_2 ();
+    Arr_dupin_cyclide_topology_traits_2 ();
     
     /*! Constructor with a geometry-traits class. */
-    Arr_torus_topology_traits_2 (Geometry_traits_2 *tr);
+    Arr_dupin_cyclide_topology_traits_2 (Geometry_traits_2 *tr);
     
     /*! Assign the contents of another topology-traits class. */
     void assign (const Self& other);
@@ -282,7 +282,8 @@ public:
     /*! Check if the given vertex is concrete (associated with a point). */
     bool is_concrete_vertex (const Vertex *v) const
     {
-        //std::cout << "Arr_torus_topological_traits_2::is_concrete_vertex"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::"
+        //          << "is_concrete_vertex"
         //          << std::endl;
         return (! v->has_null_point());
     }
@@ -290,7 +291,7 @@ public:
     /*! Get the number of concrete vertices. */
     Size number_of_concrete_vertices () const
     {
-        //std::cout << "Arr_torus_topological_traits_2::" 
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::" 
         //          << "number_of_concrete_vertices"
         //          << std::endl;
         // All vertices not lying at infinity are concrete.
@@ -300,7 +301,8 @@ public:
     /*! Check if the given vertex is valid (not a fictitious one). */
     bool is_valid_vertex (const Vertex *v) const
     {
-        //std::cout << "Arr_torus_topological_traits_2::is_valid_vertex"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::"
+        //          << "is_valid_vertex"
         //          << std::endl;
         // all vertices are valid
         return (true);
@@ -309,7 +311,7 @@ public:
     /*! Get the number of valid vertices. */
     Size number_of_valid_vertices () const
     {
-        //std::cout << "Arr_torus_topological_traits_2::"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::"
         //          << "number_of_valid_vertices"
         //          << std::endl;
         // all vertices are valid
@@ -319,7 +321,8 @@ public:
     /*! Check if the given halfedge is valid (not a fictitious one). */
     bool is_valid_halfedge (const Halfedge *he) const
     {
-        //std::cout << "Arr_torus_topological_traits_2::is_valid_halfedge"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::" 
+        //          << "is_valid_halfedge"
         //          << std::endl;
         // all halfedges are valid
         return (true);
@@ -328,7 +331,7 @@ public:
     /*! Get the number of valid halfedges. */
     Size number_of_valid_halfedges () const
     {
-        //std::cout << "Arr_torus_topological_traits_2::" 
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::" 
         //          << "number_of_valid_halfedges"
         //          << std::endl;
         // all halfedges are valid
@@ -338,7 +341,7 @@ public:
     /*! Check if the given face is valid. */
     bool is_valid_face (const Face *f) const
     {
-        //std::cout << "Arr_torus_topological_traits_2::is_valid_face"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::is_valid_face"
         //          << std::endl;
         // all faces are valid
         return (true);
@@ -347,7 +350,8 @@ public:
     /*! Get the number of valid faces. */
     Size number_of_valid_faces () const
     {
-        //std::cout << "Arr_torus_topological_traits_2::number_of_valid_faces"
+        //std::cout << "Arr_dupin_cyclide_topological_traits_2::" 
+        //          << "number_of_valid_faces"
         //          << std::endl;
         // all faces are valid
         return (this->_m_dcel.size_of_faces());
@@ -366,7 +370,7 @@ private:
     typedef Arr_construction_event<Geometry_traits_2,
                                  CSubcurve,
                                  Arr>                            CEvent;
-    typedef Arr_torus_construction_helper<Geometry_traits_2,
+    typedef Arr_dupin_cyclide_construction_helper<Geometry_traits_2,
                                              Arr,
                                              CEvent,
                                              CSubcurve>          CHelper;
@@ -377,7 +381,7 @@ private:
     typedef Arr_construction_event<BInsTraits,
                                  BISubcurve,
                                  Arr>                            BIEvent;
-    typedef Arr_torus_insertion_helper<BInsTraits,
+    typedef Arr_dupin_cyclide_insertion_helper<BInsTraits,
                                           Arr,
                                           BIEvent,
                                           BISubcurve>            BIHelper;
@@ -388,25 +392,25 @@ private:
     typedef Arr_construction_event<InsTraits,
                                  ISubcurve,
                                  Arr>                            IEvent;
-    typedef Arr_torus_insertion_helper<InsTraits,
+    typedef Arr_dupin_cyclide_insertion_helper<InsTraits,
                                           Arr,
                                           IEvent,
                                           ISubcurve>             IHelper;
     
     // Type definition for the batched point-location sweep-line visitor.
     typedef Arr_batched_point_location_traits_2<Arr>             BplTraits;
-    typedef Arr_torus_batched_pl_helper<BplTraits, Arr>          BplHelper;
+    typedef Arr_dupin_cyclide_batched_pl_helper<BplTraits, Arr>  BplHelper;
     
     // Type definition for the overlay sweep-line visitor.
     template <class ExGeomTraits_, class ArrangementA_, class ArrangementB_>
-    struct _Overlay_helper : public Arr_torus_overlay_helper
+    struct _Overlay_helper : public Arr_dupin_cyclide_overlay_helper
     <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
        Arr_construction_event<ExGeomTraits_,
                               Arr_overlay_subcurve<ExGeomTraits_>,
                               Arr>,
        Arr_overlay_subcurve<ExGeomTraits_> >
     {
-        typedef Arr_torus_overlay_helper
+        typedef Arr_dupin_cyclide_overlay_helper
         <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
                Arr_construction_event<ExGeomTraits_,
                                       Arr_overlay_subcurve<ExGeomTraits_>,
@@ -694,7 +698,8 @@ public:
      *         the split vertex v.
      */
     Halfedge* split_fictitious_edge (Halfedge *e, Vertex *v) {
-        //std::cout << "Arr_torus_topology_traits_2::split_fictious_edge" 
+        //std::cout << "Arr_dupin_cyclide_topology_traits_2::"
+        //          << "split_fictious_edge" 
         //          << std::endl;
         // this topology never introduces fictious halfedges
         CGAL_error();
@@ -835,7 +840,7 @@ public:
     }
 
     void print() const {
-        std::cout << "TORUSTOPTRAITS: " << std::endl;
+        std::cout << "DUPINCYCLIDETOPTRAITS: " << std::endl;
         std::cout << "#identNS: " << _m_identification_NS.size() << std::endl;
         for (typename Identification_NS::iterator it = 
                  this->_m_identification_NS.begin();
@@ -882,7 +887,8 @@ protected:
      * checks whether boundary condition in x and y is valid
      */
     inline 
-    bool  _valid(CGAL::Arr_parameter_space ps_x, CGAL::Arr_parameter_space ps_y) 
+    bool  _valid(CGAL::Arr_parameter_space ps_x, 
+                 CGAL::Arr_parameter_space ps_y) 
         const {
         bool res = 
             ((ps_x == ARR_LEFT_BOUNDARY || ps_x == ARR_RIGHT_BOUNDARY) &&
@@ -955,6 +961,6 @@ protected:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Arr_topology_traits/Arr_torus_topology_traits_2_impl.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_topology_traits_2_impl.h>
 
 #endif
