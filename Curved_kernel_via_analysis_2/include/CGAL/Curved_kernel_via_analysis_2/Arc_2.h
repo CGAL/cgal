@@ -1594,13 +1594,22 @@ protected:
             X_coordinate_1 x0, 
             CGAL::Sign perturb) const {
         
+#ifdef CKvA_DEBUG_PRINT_CERR
         CERR("\n_compare_coprime; this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) 
-             << "; g: " << g.polynomial_2() <<
-            "; arcno_on_g: " << arcno_on_g << "; where: " << where <<
-                "; x = " << (where == CGAL::ARR_INTERIOR ? 
-                     CGAL::to_double(x0) : 0.0) << "\n");
-       
+             << "; g: " << g.polynomial_2() 
+             << "; arcno_on_g: " << arcno_on_g << "; where: " << where 
+             << "; x = " 
+        );
+        if (where == CGAL::ARR_INTERIOR) {
+            // TODO fix it (Pavel)
+            CERR("n/a");
+        } else {
+            CERR("n/a");
+        }
+        CERR("\n");
+#endif
+        
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2 = Curved_kernel_via_analysis_2::instance().
                         kernel().construct_curve_pair_2_object()
