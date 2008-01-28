@@ -18,18 +18,18 @@
 // Author(s)     : Eric Berberich <erric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_TORUS_OVERLAY_HELPER_H
-#define CGAL_ARR_TORUS_OVERLAY_HELPER_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_OVERLAY_HELPER_H
+#define CGAL_ARR_DUPIN_CYCLIDE_OVERLAY_HELPER_H
 
 /*!
- * Definition of the Arr_torus_overlay_helper class-template.
+ * Definition of the Arr_dupin_cyclide_overlay_helper class-template.
  */
 
-#include <CGAL/Arr_topology_traits/Arr_torus_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_construction_helper.h>
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \class Arr_torus_overlay_helper
+/*! \class Arr_dupin_cyclide_overlay_helper
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
  * of Arrangement_on_surface_2 objects instantiated with a topology-traits
  * class for unbounded curves in the plane.
@@ -40,7 +40,7 @@ template <class Traits_,
           class Arrangement_,
           class Event_,
           class Subcurve_>
-class Arr_torus_overlay_helper
+class Arr_dupin_cyclide_overlay_helper
 {
 public:
     
@@ -67,7 +67,7 @@ public:
     Vertex_handle_blue;
     
     // Define the helper class for the construction visitor.
-    typedef Arr_torus_construction_helper<Traits_2,
+    typedef Arr_dupin_cyclide_construction_helper<Traits_2,
                                              Arrangement_2,
                                              Event,
                                              Subcurve>    Construction_helper;
@@ -86,7 +86,7 @@ protected:
 public:
     
     /*! Constructor, given the input red and blue arrangements. */
-    Arr_torus_overlay_helper (const Arrangement_red_2 *red_arr,
+    Arr_dupin_cyclide_overlay_helper (const Arrangement_red_2 *red_arr,
                             const Arrangement_blue_2 *blue_arr) :
         m_red_top_traits (red_arr->topology_traits()),
         m_blue_top_traits (blue_arr->topology_traits())
@@ -213,4 +213,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_ARR_DUPIN_CYCLIDE_OVERLAY_HELPER_H

@@ -18,12 +18,12 @@
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_TORUS_TOPOLOGY_TRAITS_2_IMPL_H
-#define CGAL_ARR_TORUS_TOPOLOGY_TRAITS_2_IMPL_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
+#define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
 
 /*! \file
  * Member-function definitions for the
- * Arr_torus_topology_traits_2<GeomTraits> class.
+ * Arr_dupin_cyclide_topology_traits_2<GeomTraits> class.
  */
 
 CGAL_BEGIN_NAMESPACE
@@ -32,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 // Default constructor.
 //
 template <class GeomTraits, class Dcel_>
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
-Arr_torus_topology_traits_2() :
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2() :
     _m_own_traits (true), 
     _m_f_top(NULL)
 {
@@ -48,8 +48,8 @@ Arr_torus_topology_traits_2() :
 // Constructor with a geometry-traits class.
 //
 template <class GeomTraits, class Dcel_>
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
-Arr_torus_topology_traits_2 (Geometry_traits_2 *tr) : 
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2 (Geometry_traits_2 *tr) : 
     _m_own_traits(false),  
     _m_f_top(NULL)
 {
@@ -64,10 +64,10 @@ Arr_torus_topology_traits_2 (Geometry_traits_2 *tr) :
 // Assign the contents of another topology-traits class.
 //
 template <class GeomTraits, class Dcel_>
-void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign (const Self& other)
-{
+void Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
+assign(const Self& other) {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 assign"  << std::endl;
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 assign"  << std::endl;
 
     // Assign the class.
     // Clear the current DCEL and duplicate the other DCEL.
@@ -94,7 +94,7 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::assign (const Self& other)
 // Make the necessary updates after the DCEL structure have been updated.
 //
 template <class GeomTraits, class Dcel_>
-void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+void Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 {
     // status: missing location of f_top
 
@@ -245,10 +245,10 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 // Initialize an empty DCEL structure.
 //
 template <class GeomTraits, class Dcel_>
-void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
+void Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 init_dcel"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 init_dcel"  
     //          << std::endl;
 
     // Clear the current DCEL.
@@ -277,11 +277,11 @@ void Arr_torus_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
 //
 template <class GeomTraits, class Dcel_>
 Comparison_result
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 compare_y_at_x (const Point_2& p, const Halfedge* he) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 compare_y_at_x"
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 compare_y_at_x"
     //          << std::endl;
     
     // all edges are valid, therefore just compare p to its associated curve.
@@ -292,13 +292,13 @@ compare_y_at_x (const Point_2& p, const Halfedge* he) const
 // Check if the given vertex is associated with the given curve end.
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+bool Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 are_equal (const Vertex *v,
            const X_monotone_curve_2& cv, Arr_curve_end ind,
            Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 are_equal"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 are_equal"  
     //          << std::endl;
     
     CGAL_precondition(_valid(ps_x, ps_y));
@@ -346,13 +346,13 @@ are_equal (const Vertex *v,
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Object
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 place_boundary_vertex (Face *f,
                        const X_monotone_curve_2& cv, Arr_curve_end ind,
                        Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 place_boundary_vertex"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 place_boundary_vertex" 
     //          << std::endl;
 
     CGAL_precondition(_valid(ps_x, ps_y));
@@ -397,15 +397,16 @@ place_boundary_vertex (Face *f,
 // vertex with boundary conditions.
 //
 template <class GeomTraits, class Dcel_>
-typename Arr_torus_topology_traits_2<GeomTraits,Dcel_>::Halfedge* 
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+typename Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::Halfedge* 
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 locate_around_boundary_vertex (Vertex *v,
                                const X_monotone_curve_2& cv, Arr_curve_end ind,
                                Arr_parameter_space ps_x,
                                Arr_parameter_space ps_y) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 locate_around_boundary_vertex"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 "
+    //          << "locate_around_boundary_vertex"  
     //          << std::endl;
     
     CGAL_precondition(_valid(ps_x, ps_y));
@@ -502,7 +503,7 @@ locate_around_boundary_vertex (Vertex *v,
 //
 template <class GeomTraits, class Dcel_>
 void 
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 notify_on_boundary_vertex_creation (Vertex *v,
                                     const X_monotone_curve_2& cv,
                                     Arr_curve_end ind,
@@ -510,7 +511,7 @@ notify_on_boundary_vertex_creation (Vertex *v,
                                     Arr_parameter_space ps_y) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2::" 
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2::" 
     //          << "notify_on_boundary_vertex_creation"
     //           << std::endl;       
 
@@ -612,16 +613,16 @@ notify_on_boundary_vertex_creation (Vertex *v,
 // Locate curve end with respect to dcel
 template <class GeomTraits, class Dcel_>
 CGAL::Object 
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Arr_parameter_space ps_x, Arr_parameter_space ps_y) const 
 {
     // status: to implement
-    //std::cout << "Arr_torus_topology_traits_2 locate_curve_end"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 locate_curve_end"  
     //          << std::endl;
     CGAL_precondition(_valid(ps_x, ps_y));
 
-    // torus does not contain unbounded curves
+    // dupin_cyclide does not contain unbounded curves
     
     Vertex* v = NULL;
     typename Identification_NS::iterator ns_it;
@@ -678,13 +679,14 @@ locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
 //
 template <class GeomTraits, class Dcel_>
 std::pair<bool, bool>
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 face_split_after_edge_insertion (const Halfedge *prev1,
                                  const Halfedge *prev2,
                                  const X_monotone_curve_2& cv) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 face_split"  << std::endl;
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 face_split"  
+    //          << std::endl;
     
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());
@@ -700,7 +702,7 @@ face_split_after_edge_insertion (const Halfedge *prev1,
     // TODO use arr function for to check perimetry
     bool perimetric = (sign_12 != CGAL::ZERO && sign_21 != CGAL::ZERO);
     
-    // on a torus except for one case, there is a face split
+    // on a dupin_cyclide except for one case, there is a face split
     if (perimetric) {
         // must be topface
         if (prev1->inner_ccb()->face() == top_face()) {
@@ -730,18 +732,19 @@ face_split_after_edge_insertion (const Halfedge *prev1,
 //
 template <class GeomTraits, class Dcel_>
 bool
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 hole_creation_after_edge_removal (const Halfedge *he) const
 {
     // status: to implement
-    std::cout << "Arr_torus_topology_traits_2 hole_creation"  << std::endl;
+    std::cout << "Arr_dupin_cyclide_topology_traits_2 hole_creation" 
+              << std::endl;
 
-    CGAL_error(); // hole_creation not finally implemented for torus
+    CGAL_error(); // hole_creation not finally implemented for dupin_cyclide
 
     CGAL_precondition (! he->is_on_inner_ccb());
     CGAL_precondition (! he->opposite()->is_on_inner_ccb());
 
-    // TODO hole_creation for torus
+    // TODO hole_creation for dupin_cyclide
     
     // TODO use arr function for to check perimetry
 
@@ -782,7 +785,8 @@ hole_creation_after_edge_removal (const Halfedge *he) const
                 return (true);
             } 
             // else
-            // In this case we disconnect a perimetric cycle around the torus,
+            // In this case we disconnect a perimetric cycle 
+            // around the dupin_cyclide,
             // causing two perimetric faces to merge. 
             // The remainder of the cycle
             // becomes an inner CCB (a hole) in the merged face.
@@ -800,13 +804,13 @@ hole_creation_after_edge_removal (const Halfedge *he) const
 //
 template <class GeomTraits, class Dcel_>
 bool
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 is_on_new_perimetric_face_boundary (const Halfedge *prev1,
                                     const Halfedge *prev2,
                                     const X_monotone_curve_2& cv) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2::" 
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2::" 
     //          << "is_on_new_perimetric_face_boundary"
     //          << std::endl;
 
@@ -830,11 +834,12 @@ is_on_new_perimetric_face_boundary (const Halfedge *prev1,
 //
 template <class GeomTraits, class Dcel_>
 bool
-Arr_torus_topology_traits_2<GeomTraits,Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
     
     // status: correct
-    //std::cout << " Arr_torus_topology_traits_2::boundaries_of_same_face" 
+    //std::cout << " Arr_dupin_cyclide_topology_traits_2::"
+    //          << "boundaries_of_same_face" 
     //          << std::endl;
     // This predicate is only used for case 3.3.2 of the insertion process
 
@@ -860,14 +865,14 @@ boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
 // Determine whether the given vertex lies in the interior of the given face.
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+bool Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 is_in_face (const Face *f, const Point_2& p, const Vertex *v) const
 {
     // status: not implemented
-    std::cout << "TODO: Arr_torus_topology_traits_2::is_in_face" 
+    std::cout << "TODO: Arr_dupin_cyclide_topology_traits_2::is_in_face" 
               << std::endl;
 
-    CGAL_error(); // is_in_face not implemented for torus
+    CGAL_error(); // is_in_face not implemented for dupin_cyclide
     // TODO is_in_face NEEDED for incremental insertion
     
     return false;
@@ -877,12 +882,14 @@ is_in_face (const Face *f, const Point_2& p, const Vertex *v) const
 // Determine whether a boundary vertex is redundant
 //
 template <class GeomTraits, class Dcel_>
-bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_redundant
+bool Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 (const Vertex *v) const
 {
     // status: correct
-    //std::cout << "Arr_torus_topology_traits_2 is_redundant"  << std::endl;
-    CGAL_precondition(_valid(v->parameter_space_in_x(),v->parameter_space_in_y()));
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 is_redundant"  
+    //          << std::endl;
+    CGAL_precondition(_valid(v->parameter_space_in_x(),
+                             v->parameter_space_in_y()));
     
     // if there are not incident edges just remove it
     // TASK: check whether isolated or degree == 0 is needed!
@@ -893,15 +900,17 @@ bool Arr_torus_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 // Determine whether a boundary vertex is redundant
 //
 template <class GeomTraits, class Dcel_>
-typename Arr_torus_topology_traits_2<GeomTraits, Dcel_>::Halfedge* 
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+typename Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::Halfedge* 
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 erase_redundant_vertex (Vertex *v) 
 {
     // status: correct
     
-    //std::cout << "Arr_torus_topology_traits_2 erase_redundant_vertex"  
+    //std::cout << "Arr_dupin_cyclide_topology_traits_2 "
+    //          << "erase_redundant_vertex"  
     //          << std::endl;
-    CGAL_precondition(_valid(v->parameter_space_in_x(),v->parameter_space_in_y()));
+    CGAL_precondition(_valid(v->parameter_space_in_x(),
+                             v->parameter_space_in_y()));
     
     // no incident curve-end can give us the key
     // -> but we stored something else useful: find iterator
@@ -937,7 +946,7 @@ erase_redundant_vertex (Vertex *v)
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Sign
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
 
     CGAL::Sign result = CGAL::ZERO;
@@ -1043,7 +1052,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Sign
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath (const Halfedge* he1,
                   const X_monotone_curve_2& cv2,
                   const CGAL::Arr_curve_end& end2) const {
@@ -1195,12 +1204,12 @@ _sign_of_subpath (const Halfedge* he1,
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Sign
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
     
     // status: move to arr
     
-    //std::cout << "Arr_torus_topology_traits: "
+    //std::cout << "Arr_dupin_cyclide_topology_traits: "
     //          << "_sign_of_subpath" << std::endl;
     
     CGAL::Sign result = CGAL::ZERO;
@@ -1260,7 +1269,7 @@ _sign_of_path(const Halfedge* he1, const Halfedge* he2) const {
 //
 template <class GeomTraits, class Dcel_>
 CGAL::Sign
-Arr_torus_topology_traits_2<GeomTraits, Dcel_>::
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_path (const Halfedge* he1, const Halfedge* he2, 
                const X_monotone_curve_2& cv) const {
     
@@ -1372,8 +1381,8 @@ _sign_of_path (const Halfedge* he1, const Halfedge* he2,
  * on the line of discontinuity.
  */
 template <class GeomTraits, class Dcel>
-typename Arr_torus_topology_traits_2<GeomTraits, Dcel>::Face *
-Arr_torus_topology_traits_2<GeomTraits, Dcel>::
+typename Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel>::Face *
+Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel>::
 _face_before_vertex_on_identifications (Vertex * v) const {
     
     // status: correct
@@ -1466,9 +1475,11 @@ _face_before_vertex_on_identifications (Vertex * v) const {
         Halfedge  *rightmost_bottom = NULL;
         
         do {
-            typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+            typename Traits_adaptor_2::Parameter_space_in_x_2 
+                parameter_space_in_x =
                 _m_traits->parameter_space_in_x_2_object();
-            typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+            typename Traits_adaptor_2::Parameter_space_in_y_2 
+                parameter_space_in_y =
                 _m_traits->parameter_space_in_y_2_object();
             
             CGAL::Arr_curve_end ind = CGAL::ARR_MIN_END;
@@ -1498,7 +1509,8 @@ _face_before_vertex_on_identifications (Vertex * v) const {
                 // same for BOTTOM-side
                 
                 if ((rightmost_bottom == NULL) || 
-                    (rightmost_bottom->direction() == CGAL::ARR_RIGHT_TO_LEFT &&
+                    (rightmost_bottom->direction() == CGAL::ARR_RIGHT_TO_LEFT 
+                     &&
                      rightmost_bottom->direction() != curr->direction()) ||
                     (rightmost_bottom->direction() == curr->direction() &&
                      compare_x(curr->curve(), ind, 

@@ -20,26 +20,26 @@
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Eric Berberich <eric@mpi-inf.mpg.de>
 
-#ifndef CGAL_ARR_TORUS_INSERTION_HELPER_H
-#define CGAL_ARR_TORUS_INSERTION_HELPER_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_INSERTION_HELPER_H
+#define CGAL_ARR_DUPIN_CYCLIDE_INSERTION_HELPER_H
 
 /*!
- * Definition of the Arr_torus_insertion_helper class-template.
+ * Definition of the Arr_dupin_cyclide_insertion_helper class-template.
  */
 
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Arr_topology_traits/Arr_torus_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_dupin_cyclide_construction_helper.h>
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \class Arr_torus_insertion_helper
+/*! \class Arr_dupin_cyclide_insertion_helper
  * A helper class for the insertion sweep-line visitors, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
 template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
-class Arr_torus_insertion_helper :
-    public Arr_torus_construction_helper<Traits_, Arrangement_,
+class Arr_dupin_cyclide_insertion_helper :
+    public Arr_dupin_cyclide_construction_helper<Traits_, Arrangement_,
                                             Event_, Subcurve_>
 {
 public:
@@ -53,7 +53,7 @@ public:
     typedef typename Traits_2::Point_2                   Point_2;
     
     
-    typedef Arr_torus_construction_helper<Traits_2,
+    typedef Arr_dupin_cyclide_construction_helper<Traits_2,
                                              Arrangement_2,
                                              Event,
                                              Subcurve> Base;
@@ -62,7 +62,7 @@ public:
                                    Subcurve,
                                    Event>              Base_visitor;
     
-    typedef Arr_torus_insertion_helper<Traits_2,
+    typedef Arr_dupin_cyclide_insertion_helper<Traits_2,
                                           Arrangement_2,
                                           Event,
                                           Subcurve>    Self;
@@ -83,12 +83,12 @@ protected:
 public:
     
     /*! Constructor. */
-    Arr_torus_insertion_helper (Arrangement_2 *arr) :
+    Arr_dupin_cyclide_insertion_helper (Arrangement_2 *arr) :
         Base (arr)
     {}
     
     /*! Destructor. */
-    virtual ~Arr_torus_insertion_helper(){}
+    virtual ~Arr_dupin_cyclide_insertion_helper(){}
     
     /// \name Notification functions.
     //@{
@@ -112,7 +112,7 @@ public:
 // A notification issued before the sweep process starts.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
+void Arr_dupin_cyclide_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 {
     this->m_top_face = Face_handle(this->m_top_traits->bottom_face());
 }
@@ -122,7 +122,7 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr, class Evnt, class Sbcv> 
-void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
+void Arr_dupin_cyclide_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
     (Event* event)
 {
     // Ignore events that do not have boundary conditions.
@@ -184,4 +184,5 @@ void Arr_torus_insertion_helper<Tr,Arr,Evnt,Sbcv>::before_handle_event
 
 CGAL_END_NAMESPACE
 
-#endif
+#endif // CGAL_ARR_DUPIN_CYCLIDE_INSERTION_HELPER_H
+// EOF

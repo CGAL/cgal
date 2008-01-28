@@ -21,11 +21,11 @@
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Eric Berberich <eric@mpi-inf.mpg.de>
 
-#ifndef CGAL_ARR_TORUS_CONSTRUCTION_HELPER_H
-#define CGAL_ARR_TORUS_CONSTRUCTION_HELPER_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER_H
+#define CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER_H
 
 /*! \file
- * Definition of the Arr_torus_construction_helper class-template.
+ * Definition of the Arr_dupin_cyclide_construction_helper class-template.
  */
 
 #include <CGAL/Sweep_line_empty_visitor.h>
@@ -33,13 +33,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \class Arr_torus_construction_helper
+/*! \class Arr_dupin_cyclide_construction_helper
  * A helper class for the construction sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for curves on an ellipsoid
  */
 template <class Traits_, class Arrangement_, class Event_, class Subcurve_> 
-class Arr_torus_construction_helper
+class Arr_dupin_cyclide_construction_helper
 {
 public:
     typedef Traits_                                         Traits_2;
@@ -85,14 +85,14 @@ protected:
     
 public:
     /*! Constructor. */
-    Arr_torus_construction_helper(Arrangement_2 * arr) :
+    Arr_dupin_cyclide_construction_helper(Arrangement_2 * arr) :
         m_top_traits(arr->topology_traits()),
         m_arr_access(*arr),
         m_he_ind_map_p(NULL)
     {}
     
     /*! Destructor. */
-    virtual ~Arr_torus_construction_helper() {}
+    virtual ~Arr_dupin_cyclide_construction_helper() {}
     
     /// \name Notification functions.
     //@{
@@ -334,4 +334,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ARR_TORUS_CONSTRUCTION_HELPER
+#endif // CGAL_ARR_DUPIN_CYCLIDE_CONSTRUCTION_HELPER

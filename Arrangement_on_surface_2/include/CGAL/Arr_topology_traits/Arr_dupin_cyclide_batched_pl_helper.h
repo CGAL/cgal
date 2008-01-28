@@ -18,11 +18,11 @@
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_TORUS_BATCHED_PL_HELPER_H
-#define CGAL_ARR_TORUS_BATCHED_PL_HELPER_H
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_BATCHED_PL_HELPER_H
+#define CGAL_ARR_DUPIN_CYCLIDE_BATCHED_PL_HELPER_H
 
 /*!
- * Definition of the Arr_torus_batched_pl_helper class-template.
+ * Definition of the Arr_dupin_cyclide_batched_pl_helper class-template.
  */
 
 #include <CGAL/basic.h>
@@ -31,13 +31,13 @@ CGAL_BEGIN_NAMESPACE
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 
-/*! \class Arr_torus_batched_pl_helper
+/*! \class Arr_dupin_cyclide_batched_pl_helper
  * A helper class for the batched point-location sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for unbounded curves in the plane.
  */
 template <class Traits_, class Arrangement_>
-class Arr_torus_batched_pl_helper
+class Arr_dupin_cyclide_batched_pl_helper
 {
 public:
 
@@ -68,7 +68,7 @@ public:
      * Constructor.
      * \param arr The arrangement.
      */
-    Arr_torus_batched_pl_helper (const Arrangement_2 *arr) :
+    Arr_dupin_cyclide_batched_pl_helper (const Arrangement_2 *arr) :
         m_top_traits (arr->topology_traits())
     {}
 
@@ -91,7 +91,7 @@ public:
 #if 0
         return (m_top_fict->face());
 #endif
-        CGAL_error_msg( "Arr_torus_batched_pl_helper::top_face not yet implemented" );
+        CGAL_error_msg( "Arr_dupin_cyclide_batched_pl_helper::top_face not yet implemented" );
         return;
     }
 };
@@ -104,7 +104,7 @@ public:
 // A notification issued before the sweep process starts.
 //
 template <class Tr, class Arr>
-void Arr_torus_batched_pl_helper<Tr, Arr>::before_sweep ()
+void Arr_dupin_cyclide_batched_pl_helper<Tr, Arr>::before_sweep ()
 {
 #if 0
     // Initialize the fictitious halfedge lying on the top edge of the
@@ -129,7 +129,7 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::before_sweep ()
 
     return;
 #endif
-    CGAL_error_msg( "Arr_torus_batched_pl_helper::before_sweep not yet implemented" );
+    CGAL_error_msg( "Arr_dupin_cyclide_batched_pl_helper::before_sweep not yet implemented" );
     return;
 }
 
@@ -138,7 +138,7 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::before_sweep ()
 // event.
 //
 template <class Tr, class Arr>
-void Arr_torus_batched_pl_helper<Tr, Arr>::after_handle_event
+void Arr_dupin_cyclide_batched_pl_helper<Tr, Arr>::after_handle_event
     (Event* event)
 {
 #if 0
@@ -156,10 +156,11 @@ void Arr_torus_batched_pl_helper<Tr, Arr>::after_handle_event
 
     return;
 #endif
-    CGAL_error_msg( "Arr_torus_batched_pl_helper::after_handle_event not yet implemenet" );
+    CGAL_error_msg( "Arr_dupin_cyclide_batched_pl_helper::after_handle_event not yet implemenet" );
     return;
 }
 
 CGAL_END_NAMESPACE
 
-#endif // ARR_TORUS_BATCHED_PL_HELPER
+#endif // ARR_DUPIN_CYCLIDE_BATCHED_PL_HELPER
+// EOF
