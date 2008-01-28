@@ -151,29 +151,29 @@ protected:
     friend class Point_2_less;
 
     //! type of line of discontinuity
-    typedef std::map< Point_2, Vertex*, Point_2_less > Line_of_discontinuity;
+    typedef std::map< Point_2, Vertex*, Point_2_less > Identification;
 
-    typedef std::map< Vertex*, typename Line_of_discontinuity::iterator,
+    typedef std::map< Vertex*, typename Identification::iterator,
                       Vertex_less >
-    Vertices_on_line_of_discontinuity;
+    Vertices_on_identification;
     
     // Data members:
     //! the DCEL
-    Dcel m_dcel;
+    Dcel _m_dcel;
     
     //! the geometry-traits adapter
-    Traits_adaptor_2 *m_traits;
+    Traits_adaptor_2 *_m_traits;
     
     //! Inidicate whether we should evetually free the traits object.
-    bool m_own_traits;
+    bool _m_own_traits;
 
-    mutable Quadric_3 m_quadric;
+    mutable Quadric_3 _m_quadric;
     
     //! indicates kind of left boundary
-    mutable CGAL::Arr_boundary_type m_left;
+    mutable CGAL::Arr_boundary_type _m_left;
     
     //! indicates kind of right boundary
-    mutable CGAL::Arr_boundary_type m_right;
+    mutable CGAL::Arr_boundary_type _m_right;
     
     // if non-concrete then inf, if concrete then singularity
     //! a vertex representing the left singularity/infinity of a quadric
@@ -186,11 +186,11 @@ protected:
     mutable  Face *f_top;
 
     //! used to locate curve-ends on the line of discontinuity
-    mutable Line_of_discontinuity m_line_of_discontinuity;
+    mutable Identification _m_identification;
 
     //! used to locate vertices on the line of discontinuity
-    mutable Vertices_on_line_of_discontinuity 
-    m_vertices_on_line_of_discontinuity;
+    mutable Vertices_on_identification 
+    _m_vertices_on_identification;
 
     // Copy constructor and assignment operator - not supported.
     Arr_qdx_topology_traits_2 (const Self& );
@@ -230,9 +230,9 @@ public:
         CGAL_precondition(ps != CGAL::ARR_INTERIOR);
         switch (ps) {
         case ARR_LEFT_BOUNDARY:
-            return m_left;
+            return _m_left;
         case ARR_RIGHT_BOUNDARY: 
-            return m_right;
+            return _m_right;
             
         case ARR_BOTTOM_BOUNDARY:
         case ARR_TOP_BOUNDARY: 
@@ -267,8 +267,8 @@ private:
         if (base.is_ellipsoid()) {
             // extreme points of projected silhouette match singular points
             CGAL_precondition(csil == 1);
-            m_left = CGAL::ARR_CONTRACTION;
-            m_right = CGAL::ARR_CONTRACTION;
+            _m_left = CGAL::ARR_CONTRACTION;
+            _m_right = CGAL::ARR_CONTRACTION;
         }
         if (base.is_elliptic_cylinder()) {
             // ensure to be a "non-vertical" cylinder:
@@ -282,8 +282,8 @@ private:
                 CGAL_precondition(sils[0].arcs_over_interval(0) == 1 &&
                                   sils[1].arcs_over_interval(0) == 1);
             }
-            m_left = CGAL::ARR_UNBOUNDED;
-            m_right = CGAL::ARR_UNBOUNDED;
+            _m_left = CGAL::ARR_UNBOUNDED;
+            _m_right = CGAL::ARR_UNBOUNDED;
         }
         if (base.is_elliptic_paraboloid()) {
             CGAL_precondition(csil == 1);
@@ -295,11 +295,11 @@ private:
             CGAL_precondition(sils[0].arcs_over_interval(0) != 1); 
             // == 2 || == 0
             if (sils[0].arcs_over_interval(0) == 2) {
-                m_left = CGAL::ARR_UNBOUNDED;
-                m_right = CGAL::ARR_CONTRACTION;
+                _m_left = CGAL::ARR_UNBOUNDED;
+                _m_right = CGAL::ARR_CONTRACTION;
             } else {
-                m_left = CGAL::ARR_CONTRACTION;
-                m_right = CGAL::ARR_UNBOUNDED;
+                _m_left = CGAL::ARR_CONTRACTION;
+                _m_right = CGAL::ARR_UNBOUNDED;
             }
         }
 #else
@@ -315,8 +315,8 @@ private:
             CGAL_precondition(cad.number_of_faces() == 2);
             CGAL_precondition(cad.number_of_unbounded_faces() == 1);
             
-            m_left = CGAL::ARR_CONTRACTION;
-            m_right = CGAL::ARR_CONTRACTION;
+            _m_left = CGAL::ARR_CONTRACTION;
+            _m_right = CGAL::ARR_CONTRACTION;
         }
         if (base.is_elliptic_cylinder()) {
             // ensure to be a "non-vertical" cylinder:
@@ -328,8 +328,8 @@ private:
             CGAL_precondition(cad.number_of_faces() == 3);
             CGAL_precondition(cad.number_of_unbounded_faces() == 3);
             
-            m_left = CGAL::ARR_UNBOUNDED;
-            m_right = CGAL::ARR_UNBOUNDED;
+            _m_left = CGAL::ARR_UNBOUNDED;
+            _m_right = CGAL::ARR_UNBOUNDED;
         }
         if (base.is_elliptic_paraboloid()) {
             
@@ -344,7 +344,6 @@ private:
             for (typename Creator::Restricted_cad_3::Edge_const_iterator
                      eit = cad.edges_begin(); eit != cad.edges_end();
                  eit++) {
-#if 1 // TODO use traits instead
                 CGAL_precondition(
                         eit->curve().location(CGAL::ARR_MIN_END)
                         == CGAL::ARR_INTERIOR ||
@@ -355,7 +354,7 @@ private:
                 ); 
                 if (eit->curve().location(CGAL::ARR_MIN_END)
                     == CGAL::ARR_LEFT_BOUNDARY &&
-                    m_left == CGAL::ARR_UNBOUNDED) {
+                    _m_left == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
@@ -368,33 +367,9 @@ private:
                 ); 
                 if (eit->curve().location(CGAL::ARR_MAX_END)
                     == CGAL::ARR_RIGHT_BOUNDARY &&
-                    m_right == CGAL::ARR_UNBOUNDED) {
+                    _m_right == CGAL::ARR_UNBOUNDED) {
                     number_of_vertices_at_plus_inf++;
                 }                    
-#else
-                CGAL_precondition(
-                        m_traits->parameter_space_in_y_2_object()(
-                                eit->curve(), CGAL::ARR_MIN_END
-                        ) == CGAL::ARR_INTERIOR
-                ); 
-                if (m_traits->parameter_space_in_x_2_object()(
-                            eit->curve(), CGAL::ARR_MIN_END
-                    ) == CGAL::ARR_LEFT_BOUNDARY &&
-                    m_left == CGAL::ARR_UNBOUNDED) {
-                    number_of_vertices_at_minus_inf++;
-                }
-                CGAL_precondition(
-                        m_traits->parameter_space_in_y_2_object()(
-                                eit->curve(), CGAL::ARR_MAX_END
-                        ) == CGAL::ARR_INTERIOR
-                ); 
-                if (m_traits->parameter_space_in_x_2_object()(
-                            eit->curve(), CGAL::ARR_MAX_END
-                    ) == CGAL::ARR_RIGHT_BOUNDED &&
-                    m_right == CGAL::ARR_UNBOUNDED) {
-                    number_of_vertices_at_plus_inf++;
-                }
-#endif
             }
 
             CGAL_assertion(number_of_vertices_at_minus_inf + 
@@ -404,15 +379,15 @@ private:
             
             // == 2 || == 0
             if (number_of_vertices_at_minus_inf > 0) {
-                m_left = CGAL::ARR_UNBOUNDED;
-                m_right = CGAL::ARR_CONTRACTION;
+                _m_left = CGAL::ARR_UNBOUNDED;
+                _m_right = CGAL::ARR_CONTRACTION;
             } else {
-                m_left = CGAL::ARR_CONTRACTION;
-                m_right = CGAL::ARR_UNBOUNDED;
+                _m_left = CGAL::ARR_CONTRACTION;
+                _m_right = CGAL::ARR_UNBOUNDED;
             }
         }
 #endif
-        m_quadric = base;
+        _m_quadric = base;
         this->init_dcel();
     }
     
@@ -425,22 +400,22 @@ public:
     /*! Get the DCEL (const version). */
     const Dcel& dcel () const
     {
-        return (m_dcel);
+        return (_m_dcel);
     }
     
     /*! Get the DCEL (non-const version). */
     Dcel& dcel ()
     {
-        return (m_dcel);
+        return (_m_dcel);
     }
     
     /*! Determine whether the DCEL reprsenets an empty structure. */
     bool is_empty_dcel () const
     {
         // An empty arrangement contains a single face, unbounded or bounded
-        return (this->m_dcel.size_of_faces() == 1 && 
-                this->m_dcel.size_of_vertices() == 0 &&
-                this->m_dcel.size_of_halfedges() == 0);
+        return (this->_m_dcel.size_of_faces() == 1 && 
+                this->_m_dcel.size_of_vertices() == 0 &&
+                this->_m_dcel.size_of_halfedges() == 0);
     }
     
     /*! Check if the given vertex is concrete (associated with a point). */
@@ -458,9 +433,9 @@ public:
         //          << "number_of_concrete_vertices"
         //          << std::endl;
         // All vertices not lying at infinity are concrete.
-        return (this->m_dcel.size_of_vertices() - 
-                ((v_left != NULL && m_left == CGAL::ARR_UNBOUNDED) ? 1 : 0) -
-                ((v_right != NULL && m_right == CGAL::ARR_UNBOUNDED) ? 1 : 0)
+        return (this->_m_dcel.size_of_vertices() - 
+                ((v_left != NULL && _m_left == CGAL::ARR_UNBOUNDED) ? 1 : 0) -
+                ((v_right != NULL && _m_right == CGAL::ARR_UNBOUNDED) ? 1 : 0)
         );
     }
     
@@ -479,7 +454,7 @@ public:
         //std::cout << "Arr_qdx_topological_traits_2::number_of_valid_vertices"
         //          << std::endl;
         // all vertices are valid - even v_left/right lying at inf
-        return (this->m_dcel.size_of_vertices());
+        return (this->_m_dcel.size_of_vertices());
     }
     
     /*! Check if the given halfedge is valid (not a fictitious one). */
@@ -498,7 +473,7 @@ public:
         //          << "number_of_valid_halfedges"
         //          << std::endl;
         // all halfedges are valid
-        return (this->m_dcel.size_of_halfedges());
+        return (this->_m_dcel.size_of_halfedges());
   }
 
     /*! Check if the given face is valid. */
@@ -516,7 +491,7 @@ public:
         //std::cout << "Arr_qdx_topological_traits_2::number_of_valid_faces"
         //          << std::endl;
         // all faces are valid
-        return (this->m_dcel.size_of_faces());
+        return (this->_m_dcel.size_of_faces());
     }
     //@}
 
@@ -903,19 +878,19 @@ public:
     /*! Get the quadric this class has been initialized with */
     const Quadric_3& quadric() const 
     {
-        return (m_quadric);
+        return (_m_quadric);
     }
 
     /*! Get the type of the left boundary */
     CGAL::Arr_parameter_space left_boundary () const
     {
-        return (m_left);
+        return (_m_left);
     }
 
     /*! Get the type of the right boundary */
     CGAL::Arr_parameter_space right_boundary () const
     {
-        return (m_right);
+        return (_m_right);
     }
 
     /*! Get the leftmost vertex (const version). */
@@ -957,9 +932,9 @@ public:
     /*! Get bottom face (const version). */
     const Face* bottom_face () const
     {
-        typename Line_of_discontinuity::const_iterator  it = 
-            m_line_of_discontinuity.begin();
-        if (it == m_line_of_discontinuity.end()) {
+        typename Identification::const_iterator  it = 
+            _m_identification.begin();
+        if (it == _m_identification.end()) {
             return (f_top);
         } else {
             return (_face_before_vertex_on_discontinuity (it->second));
@@ -969,9 +944,9 @@ public:
     /*! Get bottom face */
     Face* bottom_face ()
     {
-        typename Line_of_discontinuity::const_iterator  it = 
-            m_line_of_discontinuity.begin();
-        if (it == m_line_of_discontinuity.end()) {
+        typename Identification::const_iterator  it = 
+            _m_identification.begin();
+        if (it == _m_identification.end()) {
             return (f_top);
         } else {
             return (_face_before_vertex_on_discontinuity (it->second));
@@ -980,9 +955,9 @@ public:
     
     /*! Get the vertex on line of discontinuity associated with \c pt*/
     Vertex* discontinuity_vertex(const Point_2& pt) {
-        typename Line_of_discontinuity::iterator it = 
-            this->m_line_of_discontinuity.find(pt);
-        if (it != this->m_line_of_discontinuity.end()) {
+        typename Identification::iterator it = 
+            this->_m_identification.find(pt);
+        if (it != this->_m_identification.end()) {
             return it->second;
         }
         // else
@@ -992,39 +967,39 @@ public:
     /*! Get the beginning of all pairs of curve-end and its vertices
      *  along the line of discontinuity
      */
-    typename Line_of_discontinuity::iterator 
-    curve_ends_and_vertices_on_line_of_discontinuity_begin() {
-        return m_line_of_discontinuity.begin();
+    typename Identification::iterator 
+    curve_ends_and_vertices_on_identification_begin() {
+        return _m_identification.begin();
     }
 
     /*! Get the past-the-end value of all pairs of curve-end and its vertices
      *  along the line of discontinuity
      */
-    typename Line_of_discontinuity::iterator 
-    curve_ends_and_vertices_on_line_of_discontinuity_end() {
-        return m_line_of_discontinuity.end();
+    typename Identification::iterator 
+    curve_ends_and_vertices_on_identification_end() {
+        return _m_identification.end();
     }
 
     /*! Get the beginning of all pairs of curve-end and its vertices
      *  along the line of discontinuity (const version)
      */
-    typename Line_of_discontinuity::const_iterator 
-    curve_ends_and_vertices_on_line_of_discontinuity_begin() const {
-        return m_line_of_discontinuity.begin();
+    typename Identification::const_iterator 
+    curve_ends_and_vertices_on_identification_begin() const {
+        return _m_identification.begin();
     }
 
     /*! Get the past-the-end value of all pairs of curve-end and its vertices
      *  along the line of discontinuity (const version)
      */
-    typename Line_of_discontinuity::const_iterator 
-    curve_ends_and_vertices_on_line_of_discontinuity_end() const {
-        return m_line_of_discontinuity.end();
+    typename Identification::const_iterator 
+    curve_ends_and_vertices_on_identification_end() const {
+        return _m_identification.end();
     }
 
     /*! Get the geometry traits */
     Geometry_traits_2* geometry_traits ()
     {
-        return (m_traits);
+        return (_m_traits);
     }
     
     //@}
@@ -1134,7 +1109,7 @@ protected:
                BEFORE_TO_AFTER
      */
     std::pair< unsigned int, unsigned int >
-    _crossings_with_line_of_discontinuity(
+    _crossings_with_identification(
             const Halfedge* he1, const Halfedge* he2,
             Discontinuity_crossing& leftmost) const;
 
