@@ -1046,8 +1046,11 @@ public:
         CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
             loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
         bool eq_min, eq_max;
-        bool in_x_range = cv.is_in_x_range(p.x(), &eq_min, &eq_max);
-        (void)in_x_range;
+
+        CGAL_assertion_code (
+           bool in_x_range =
+        );
+        cv.is_in_x_range(p.x(), &eq_min, &eq_max);
         CGAL_assertion(in_x_range);
 
         if (cv.is_vertical()) {
@@ -1624,17 +1627,18 @@ public:
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
     
         CERR("trim\n");
+
+        CGAL_precondition(p.location()==CGAL::ARR_INTERIOR);
+        CGAL_precondition(q.location()==CGAL::ARR_INTERIOR);
+        
         CGAL_precondition(
                 Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q) != CGAL::EQUAL
         );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
-        return cv._replace_endpoints(
-                p, q, 
-                (cv.is_vertical() ? -1 : cv.arcno(p.x())),
-                (cv.is_vertical() ? -1 : cv.arcno(q.x()))
-        );
+
+        return cv._trim(p, q);
     }
 };
 
