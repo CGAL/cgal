@@ -204,8 +204,17 @@ public:
             }
         }
         
-        if(filter_res != CGAL::EQUAL) {
+        if (filter_res != CGAL::EQUAL) {
             std::cout << "filtered!" << std::endl;
+            CGAL_assertion_code(
+            {
+                    Base base_compare_y_near_boundary(this->_ckva());
+                    
+                    CGAL::Comparison_result check_res = 
+                        base_compare_y_near_boundary(cv1, cv2, ce);
+                    CGAL_assertion(check_res == filter_res);
+            }
+            );
             return filter_res;
         }
         std::cout << "filter failed" << std::endl;
@@ -682,6 +691,15 @@ public:
         if (!this->_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
             // return no one
             CKvA_CERR("\nfilter: sucessfull\n");
+
+            CGAL_assertion_code(
+            {
+                std::list< CGAL::Object > tmp;
+                Base base_intersection(this->_ckva());
+                base_intersection(cv1, cv2, std::back_inserter(tmp));
+                CGAL_assertion(tmp.empty());
+            });
+            
             return oi;
         }
 
