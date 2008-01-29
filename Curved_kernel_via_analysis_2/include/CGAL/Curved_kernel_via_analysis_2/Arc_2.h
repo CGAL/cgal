@@ -84,7 +84,19 @@ public:
         _m_is_vertical(false),
         _m_ckva(NULL) {  
     }
-        
+    // copy constructor
+    Arc_2_rep(const Self& s):
+        _m_min(s._m_min), _m_max(s._m_max),
+        _m_support(s._m_support),
+        _m_arcno(s._m_arcno), 
+        _m_arcno_min(s._m_arcno_min), 
+        _m_arcno_max(s._m_arcno_max),
+        _m_is_vertical(s._m_is_vertical),
+        _m_ckva(s._m_ckva)
+    {
+    }
+    
+
     // standard constructor
     Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, 
                    int arcno = -1, int arcno_p = -1, int arcno_q = -1,
@@ -102,10 +114,10 @@ public:
     }
 
     void fix_reps() const {
-        if (_m_min._arc_rep() != NULL) {
+        if (_m_min._arc_rep() == NULL) {
             _m_min._add_ref(this);
         }
-        if (_m_max._arc_rep() != NULL) {
+        if (_m_max._arc_rep() == NULL) {
             _m_max._add_ref(this);
         }
     }
@@ -1367,7 +1379,146 @@ public:
         }
         return false;
     }  
+
+protected:
+
+    Kernel_arc_2 _trim(const Point_2& p, const Point_2& q) const {
+        
+        if(p.location()==CGAL::ARR_INTERIOR && 
+           q.location()==CGAL::ARR_INTERIOR) {
             
+            Kernel_arc_2 new_arc= this->_replace_endpoints(
+                    p, q, 
+                    (this->is_vertical() ? -1 : this->arcno(p.x())),
+                    (this->is_vertical() ? -1 : this->arcno(q.x()))
+            );
+           
+            return new_arc;
+        } else {
+            
+            if(p.location() != CGAL::ARR_INTERIOR &&
+               q.location() != CGAL::ARR_INTERIOR) {
+                return *this;
+            }
+            if(p.location() != CGAL::ARR_INTERIOR &&
+               q.location() == CGAL::ARR_INTERIOR) {
+
+                Kernel_arc_2 left_arc, right_arc;
+                Curved_kernel_via_analysis_2::instance().
+                    split_2_object()(*this,q,left_arc,right_arc);
+                return left_arc;
+            }
+            if(p.location() == CGAL::ARR_INTERIOR &&
+               q.location() != CGAL::ARR_INTERIOR) {
+
+                Kernel_arc_2 left_arc, right_arc;
+                Curved_kernel_via_analysis_2::instance().
+                    split_2_object()(*this,p,left_arc,right_arc);
+                return right_arc;
+
+            }
+            
+        }
+        // Never reached
+        CGAL_error();
+        return *this;
+    }
+
+public:
+
+    
+    bool trim_by_arc(const Kernel_arc_2& cv2, Kernel_arc_2& trimmed1,
+                     Kernel_arc_2& trimmed2) const {
+
+        const Kernel_arc_2& cv1 = *this;
+
+        Point_2 common_left, common_right;
+        
+        bool joint = cv1._joint_x_range(cv2, common_left, common_right);
+        
+        if(! joint) {
+            return false;
+        }
+        
+        typename Curve_kernel_2::Compare_x_2 compare_x;
+        
+        typename Curved_kernel_via_analysis_2_Functors
+            ::Construct_point_on_arc_2<Curved_kernel_via_analysis_2>
+            construct_point_on_arc(&Curved_kernel_via_analysis_2::instance());
+        
+        Point_2 left1, left2;
+        
+        if(common_left.location() != CGAL::ARR_LEFT_BOUNDARY) {
+            if( (cv1.location(CGAL::ARR_MIN_END) != 
+                 CGAL::ARR_LEFT_BOUNDARY)  &&
+                (compare_x(cv1.curve_end_x(CGAL::ARR_MIN_END),
+                           common_left.x()) == CGAL::EQUAL) ) {
+                left1 = cv1._minpoint();
+            } else {
+                
+                left1 = construct_point_on_arc(common_left.x(),
+                                               cv1.curve(),
+                                               cv1.arcno(),
+                                               cv1);
+            }
+            if( (cv2.location(CGAL::ARR_MIN_END) != 
+                 CGAL::ARR_LEFT_BOUNDARY)  &&
+                (compare_x(cv2.curve_end_x(CGAL::ARR_MIN_END),
+                           common_left.x()) == CGAL::EQUAL) ) {
+                left2 = cv2._minpoint();
+            } else {
+                left2 = construct_point_on_arc(common_left.x(),
+                                               cv2.curve(),
+                                               cv2.arcno(),
+                                               cv2);
+            }
+        } else {
+            left1 = cv1._minpoint();
+            left2 = cv2._minpoint();
+        }
+        
+        
+        Point_2 right1, right2;
+        
+        if(common_right.location() != CGAL::ARR_RIGHT_BOUNDARY) {
+            
+            if( (cv1.location(CGAL::ARR_MAX_END) != 
+                 CGAL::ARR_RIGHT_BOUNDARY)  &&
+                (compare_x(cv1.curve_end_x(CGAL::ARR_MAX_END),
+                           common_right.x()) == CGAL::EQUAL) ) {
+                right1 = cv1._maxpoint();
+            } else {
+                
+                right1 = construct_point_on_arc(common_right.x(),
+                                                cv1.curve(),
+                                                cv1.arcno(),
+                                                cv1);
+            }
+            if( (cv2.location(CGAL::ARR_MAX_END) != 
+                 CGAL::ARR_RIGHT_BOUNDARY)  &&
+                (compare_x(cv2.curve_end_x(CGAL::ARR_MAX_END),
+                           common_right.x()) == CGAL::EQUAL) ) {
+                right2 = cv2._maxpoint();
+            } else {
+                right2 = construct_point_on_arc(common_right.x(),
+                                                cv2.curve(),
+                                                cv2.arcno(),
+                                                cv2);
+            }
+            
+        } else {
+            right1 = cv1._maxpoint();
+            right2 = cv2._maxpoint();
+        }
+        
+        
+        trimmed1 = cv1._trim(left1, right1);
+        trimmed2 = cv2._trim(left2, right2);   
+
+        return joint;
+
+    }
+   
     //!@}
 
 protected:
@@ -1776,7 +1927,7 @@ protected:
             }
         }
     }
-    
+
     /*!\brief 
      * replaces this arc's end-points by \c src and \c tgt with arcnos
      * \c arcno_min and \c arcno_max.
