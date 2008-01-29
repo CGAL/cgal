@@ -30,11 +30,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define CKvA_DEBUG_PRINT_CERR 1
-
 #ifndef CKvA_CERR
 //#define CKvA_DEBUG_PRINT_CERR
-#ifdef CKvA_DEBUG_PRINT_CERR
+#if CKvA_DEBUG_PRINT_CERR
 #define CKvA_CERR(x) std::cout << x
 #else
 #define CKvA_CERR(x) static_cast<void>(0)
@@ -149,7 +147,9 @@ public:
         CKvA_CERR("\nfilteredcompare_y_near_boundary; cv1: " << cv1 
                   << "; cv2: " << cv2 << "; end: " << ce << "\n");
 
-        CGAL::Arr_parameter_space loc1 = cv1.location(ce);
+        CGAL_assertion_code (
+                CGAL::Arr_parameter_space loc1 = cv1.location(ce);
+        )
         CGAL_precondition(cv1.is_on_left_right(loc1) &&
                           loc1 == cv2.location(ce));
         // comparing ids is the same as calling is_identical() ??
@@ -205,7 +205,6 @@ public:
         }
         
         if (filter_res != CGAL::EQUAL) {
-            std::cout << "filtered!" << std::endl;
             CGAL_assertion_code(
             {
                     Base base_compare_y_near_boundary(this->_ckva());
@@ -217,7 +216,6 @@ public:
             );
             return filter_res;
         }
-        std::cout << "filter failed" << std::endl;
 
         Base base_compare_y_near_boundary(this->_ckva());
 
@@ -405,11 +403,13 @@ public:
 };
 
 //!\brief Tests two objects, whether two arcs can have an intersection
-template < class CurvedKernel_2 >
+template < class CurvedKernelViaAnalysis_2 >
 class May_have_intersection_2 {
 
-    typedef typename CurvedKernel_2::Point_2 Point_2;
-    typedef typename CurvedKernel_2::Arc_2 Arc_2;
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
 
 private:
 
@@ -440,7 +440,7 @@ public:
     typedef Arity_tag<2> Arity;
     
     //! standard constructor
-    May_have_intersection_2(CurvedKernel_2 *kernel) :
+    May_have_intersection_2(Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
@@ -452,11 +452,27 @@ public:
     template < class Arc_2_ >
     bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
         
-        std::list< CGAL::Bbox_2 > boxes1, boxes2;
-        
-        construct_covering_approximation(cv1, std::back_inserter(boxes1));
-        construct_covering_approximation(cv2, std::back_inserter(boxes2));
+        Arc_2 trimmed_cv1, trimmed_cv2;
 
+        if(! cv1.is_vertical() && ! cv2.is_vertical() ) {
+            
+            if(! cv1.trim_by_arc(cv2,trimmed_cv1,trimmed_cv2)) {
+                return false;
+            }
+
+        } else {
+            trimmed_cv1 = cv1;
+            trimmed_cv2 = cv2;
+        }
+
+        std::list< CGAL::Bbox_2 > boxes1, boxes2;
+
+        construct_covering_approximation(trimmed_cv1, 
+                                         std::back_inserter(boxes1));
+
+        construct_covering_approximation(trimmed_cv2, 
+                                         std::back_inserter(boxes2));
+        
         if (!boxes1.empty() && !boxes2.empty()) {
             // TODO better strategy than quadratic pair of for-loops
             for (typename std::list< CGAL::Bbox_2 >::const_iterator bit1 =
@@ -479,7 +495,7 @@ private:
                                                     CGAL::Arr_curve_end end) 
     const {
         
-        double min, max;
+        double min=0., max=0.;
 
         switch(arc.location(end)) {
             
@@ -523,8 +539,8 @@ private:
         case(CGAL::ARR_INTERIOR): {
             CGAL::Bbox_2 point_bbox 
                 = arc.curve_end(end).xy().approximation_box_2(threshold());
-            min = point_bbox.xmin();
-            max = point_bbox.xmax();
+            min = point_bbox.ymin();
+            max = point_bbox.ymax();
             break;
         }
         }
@@ -636,8 +652,8 @@ public:
     }
 
 private:
-    //! pointer to \c CurvedKernel_2 ?
-    CurvedKernel_2 *_m_curved_kernel;
+    //! pointer to \c Curved_kernel_via_analysis_2 ?
+    Curved_kernel_via_analysis_2 *_m_curved_kernel;
 };
 
 
