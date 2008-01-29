@@ -324,7 +324,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
 #if 0
-        std::cout << "adding a" << std::endl;
+        std::cout << "adding a " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
     }
@@ -334,7 +334,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
   }
 
   // Check if the event has only incident subcurves from its right.
-  if (!event->has_left_curves() && event->is_finite())
+  if (!event->has_left_curves() && !event->is_on_boundary())
   {
     CGAL_assertion(event->has_right_curves());
 
@@ -356,7 +356,7 @@ bool Arr_construction_sl_visitor<Hlpr>::after_handle_event
       // The vertex is not located below any valid curve, so we use the helper
       // class to mark that this index should belong to the current top face.
 #if 0
-        std::cout << "adding b" << std::endl;
+        std::cout << "adding b " << m_sc_counter << std::endl;
 #endif
       m_helper.add_subcurve_in_top_face (m_sc_counter);
     }
@@ -656,7 +656,6 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
       // in the existing face (pointed be the twin halfedge) and relocate
       // the relevant features in the new face.
       CGAL_assertion(res->face() != res->twin()->face());
-      
       this->relocate_in_new_face (res);
     }
 #else
@@ -817,7 +816,7 @@ relocate_in_new_face (Halfedge_handle he)
 #if 0
     std::cout << "VIS: relocate" << std::endl;
     std::cout << "HeCv: " << he->curve() << std::endl;
-    std::cout << "HeDi: " << (he->direction() == LEFT_TO_RIGHT ? "L2R" : "R2L") << std::endl;
+    std::cout << "HeDi: " << he->direction() << std::endl;
 #endif
 
   // We use a constant indices map so no new entries are added there.
@@ -846,9 +845,12 @@ relocate_in_new_face (Halfedge_handle he)
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr)
     {
       CGAL_assertion(*itr != 0);
-#if 0      
+#if 0
       std::cout << "itr: " << *itr << std::endl;
+      std::cout << "m_sc_counter: " << m_sc_counter << std::endl;
+      std::cout << "m_sc_he_table: " << m_sc_he_table.size() << std::endl;
 #endif
+
       // In case the current subcurve index does not match a valid entry in 
       // m_sc_he_table, we know that this subcurve matches a halfedge that is
       // not yet mapped. This can happen only if this halfedge is he itself.
@@ -906,7 +908,10 @@ void Arr_construction_sl_visitor<Hlpr>::
 _map_new_halfedge (unsigned int i, Halfedge_handle he)
 {
   CGAL_assertion (i != 0);
-  
+#if 0
+  std::cout << "map " << i << " to " << he->curve() << " " 
+            << he->direction() << std::endl;
+#endif
   if(i >= m_sc_he_table.size())
     // Resize the index table if we reached it capacity.
     m_sc_he_table.resize(2*i);
