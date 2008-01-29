@@ -1049,7 +1049,7 @@ public:
 
         CGAL_assertion_code (
            bool in_x_range =
-        );
+        )
         cv.is_in_x_range(p.x(), &eq_min, &eq_max);
         CGAL_assertion(in_x_range);
 
