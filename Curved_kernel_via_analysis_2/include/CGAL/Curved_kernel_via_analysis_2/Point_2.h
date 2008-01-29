@@ -41,13 +41,9 @@ template < class CurvedKernelViaAnalysis_2 >
 class Arc_2_rep;
 
 //! forward class declaration for befriending
-template < class CurvedKernelViaAnalysis_2, class Rep_ =
-    Arc_2_rep< CurvedKernelViaAnalysis_2 > > 
+template < class CurvedKernelViaAnalysis_2,
+      class Rep_ = Arc_2_rep<CurvedKernelViaAnalysis_2> >
 class Arc_2;
-
-template < class CurvedKernelViaAnalysis_2, class Rep_ > 
-std::ostream& operator<< (std::ostream&,
-    const Point_2< CurvedKernelViaAnalysis_2, Rep_ >&);
 
 template <class CurvedKernelViaAnalysis_2>
 class Point_2_rep 
@@ -121,11 +117,6 @@ public:
     
     // pointer to underlying ckva
     mutable Curved_kernel_via_analysis_2 *_m_ckva;
-
-    // friends
-    friend std::ostream& operator << <>(
-            std::ostream&, 
-            const Point_2< Curved_kernel_via_analysis_2, Self >&);
 
 };
 

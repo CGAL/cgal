@@ -656,17 +656,11 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
-        result_type res = 
+
+        result_type res =
             (Curved_kernel_via_analysis_2::instance().
              kernel().compare_xy_2_object()
              (p1.xy(), p2.xy(), equal_x));
-    
-        /*typename Curved_kernel_via_analysis_2::Int_pair pair(p1.id(), p2.id());
-        if(!this->_ckva()->_m_compare_xy_map.find(pair).second)
-            this->_ckva()->_m_compare_xy_map.insert(std::make_pair(pair, res));
-        else
-            std::cerr << "precached compare_xy result\n";*/
-        
         return res;
     }
 };
@@ -711,7 +705,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv,
                            CGAL::Arr_curve_end ce) const {
-                   
+
         CERR("\ncompare_x_near_boundary: p: " << p << "\n cv: " <<
              cv << "; curve_end: " << ce << "\n");
         
@@ -756,7 +750,7 @@ public:
      */
     result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
-       
+
         CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
@@ -887,8 +881,8 @@ public:
      * boundary or on the right boundary of the parameter space.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
-                           CGAL::Arr_curve_end ce) const {
-        
+                           CGAL::Arr_curve_end ce) const {\
+
         CERR("\ncompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
              cv2 << "; end: " << ce << "\n");
 
@@ -1052,12 +1046,9 @@ public:
         CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
             loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
         bool eq_min, eq_max;
-        CGAL_assertion_code (
-                bool is_in_x_range = 
-        )
-            cv.is_in_x_range(p.x(), &eq_min, &eq_max);
-        
-        CGAL_assertion(is_in_x_range);
+        bool in_x_range = cv.is_in_x_range(p.x(), &eq_min, &eq_max);
+        (void)in_x_range;
+        CGAL_assertion(in_x_range);
 
         if (cv.is_vertical()) {
             if (cv.is_interior(loc1)) {
@@ -1252,7 +1243,7 @@ public:
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            const Point_2& p) const {
-        
+
         CERR("\ncompare_y_at_x_right; cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
         
@@ -1384,13 +1375,9 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        CERR("\nequal; p1: " << p1 << "; p2: " << p2 << "\n");
-        
-        result_type res = (Curved_kernel_via_analysis_2::instance().
-                           compare_xy_2_object()(p1, p2) == 
-                           CGAL::EQUAL);
-        CERR("\nres = " << res << "\n");
-        return res;
+        return (Curved_kernel_via_analysis_2::instance().
+                compare_xy_2_object()(p1, p2) == 
+                CGAL::EQUAL);
     }
      
     /*!
@@ -1637,21 +1624,18 @@ public:
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
     
         CERR("trim\n");
-
-        CGAL_precondition(p.location()==CGAL::ARR_INTERIOR);
-        CGAL_precondition(q.location()==CGAL::ARR_INTERIOR);
-
         CGAL_precondition(
                 Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q) != CGAL::EQUAL
         );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
-
-        return cv._trim(p,q);
-        
+        return cv._replace_endpoints(
+                p, q, 
+                (cv.is_vertical() ? -1 : cv.arcno(p.x())),
+                (cv.is_vertical() ? -1 : cv.arcno(q.x()))
+        );
     }
-
 };
 
 template < class CurvedKernelViaAnalysis_2 >
@@ -1964,7 +1948,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
         CGAL::CGALi::Make_x_monotone_2<Curved_kernel_via_analysis_2>
-            make_x_monotone(this->_ckva());
+            make_x_monotone(&Curved_kernel_via_analysis_2::instance());
         return make_x_monotone(cv, oi);
     }
 };
@@ -2001,7 +1985,7 @@ public:
     typedef \
     Curved_kernel_via_analysis_2_Functors::Y< Curved_kernel_via_analysis_2 > \
     Y; \
-    Y Z() const { return Y((Curved_kernel_via_analysis_2 *)this); }
+    Y Z() const { return Y(&Curved_kernel_via_analysis_2::instance()); }
 
 #define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
 

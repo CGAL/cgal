@@ -35,6 +35,8 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+
+
 // todo mode to another file
 template < class CurvedKernelViaAnalysis_2, class CurveKernel_2 >
 class Curved_kernel_via_analysis_2_base {
@@ -103,18 +105,11 @@ public:
     //! default constructor
     Curved_kernel_via_analysis_2_base() :
         _m_kernel(Curve_kernel_2()), _m_interval_arcno_cache(this) {
-        
-        // clear all caches before computing
-        //Curve_kernel_2::get_curve_cache().clear();
-        //Curve_kernel_2::get_curve_pair_cache().clear();
     }
 
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
     Curved_kernel_via_analysis_2_base(const Curve_kernel_2& kernel) :
         _m_kernel(kernel), _m_interval_arcno_cache(this) {
-        
-        //Curve_kernel_2::get_curve_cache().clear();
-        //Curve_kernel_2::get_curve_pair_cache().clear();
     }
     
     //!@}
@@ -131,7 +126,7 @@ public:
     const Curve_kernel_2& kernel() const {
         return _m_kernel;
     }
-    
+
     //!@}
 
 protected:

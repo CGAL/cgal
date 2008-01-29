@@ -37,14 +37,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-//! forward class declaration
-template < class CurvedKernelViaAnalysis_2, class Rep_ >
-class Arc_2;
-
-template < class CurvedKernelViaAnalysis_2, class Rep_ >
-std::ostream& operator<< (std::ostream&,
-    const Arc_2<CurvedKernelViaAnalysis_2, Rep_>&);
-
 #ifndef CERR
 //#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
@@ -1714,33 +1706,32 @@ protected:
         Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), cv2);
         if(curve().is_identical(cv2.curve())) 
             return CGAL::sign(arcno() - cv2.arcno());
-        return _compare_coprime(cv2.curve(), cv2.arcno(), where, x0, perturb);
+        return _compare_coprime(cv2, where, x0, perturb);
     }
 
     //! \brief analogous to previous method but compares this arc against
     //! a finite point
     //!
     //! \pre !is_on_bottom_top(where)
-    CGAL::Comparison_result _compare_arc_numbers(
-            const Xy_coordinate_2& p, 
-            CGAL::Arr_parameter_space where, 
-            X_coordinate_1 x0 = X_coordinate_1(), 
-            CGAL::Sign perturb = CGAL::ZERO) const {
-
-        CGAL_precondition(!is_on_bottom_top(where));
-        Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), p);
-        CERR("\n_compare_arc_numbers: " << p << "; and: " 
-             << *dynamic_cast< const Kernel_arc_2*>(this) << "\n");
-        if(curve().is_identical(p.curve())) 
-            return CGAL::sign(arcno() - p.arcno());
-        return _compare_coprime(p.curve(), p.arcno(), where, x0, perturb);
-    }
+//     CGAL::Comparison_result _compare_arc_numbers(
+//             const Xy_coordinate_2& p, 
+//             CGAL::Arr_parameter_space where, 
+//             X_coordinate_1 x0 = X_coordinate_1(), 
+//             CGAL::Sign perturb = CGAL::ZERO) const {
+// 
+//         CGAL_precondition(!is_on_bottom_top(where));
+//         Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), p);
+//         CERR("\n_compare_arc_numbers: " << p << "; and: " 
+//              << *dynamic_cast< const Kernel_arc_2*>(this) << "\n");
+//         if(curve().is_identical(p.curve())) 
+//             return CGAL::sign(arcno() - p.arcno());
+//         return _compare_coprime(p.curve(), p.arcno(), where, x0, perturb);
+//     }
         
     //! computes vertical ordering of two objects having coprime supporting
     //! curves
     CGAL::Comparison_result _compare_coprime(
-            const Curve_analysis_2& g, 
-            int arcno_on_g, 
+            const Kernel_arc_2& cv2,
             CGAL::Arr_parameter_space where, 
             X_coordinate_1 x0, 
             CGAL::Sign perturb) const {
@@ -1748,8 +1739,8 @@ protected:
 #ifdef CKvA_DEBUG_PRINT_CERR
         CERR("\n_compare_coprime; this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) 
-             << "; g: " << g.polynomial_2() 
-             << "; arcno_on_g: " << arcno_on_g << "; where: " << where 
+             << "; g: " << cv2.curve().polynomial_2()
+             << "; arcno_on_g: " << cv2.arcno() << "; where: " << where
         );
         if (where == CGAL::ARR_INTERIOR) {
             CERR("; x = " << NiX::to_double(x0)); // TODO replace by CGAL::
@@ -1760,7 +1751,7 @@ protected:
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         Curve_pair_analysis_2 cpa_2 = Curved_kernel_via_analysis_2::instance().
                         kernel().construct_curve_pair_2_object()
-                            (curve(), g);
+                            (curve(), cv2.curve());
         
         if(where == CGAL::ARR_INTERIOR) 
             cpv_line = cpa_2.status_line_for_x(x0, perturb);
@@ -1770,7 +1761,7 @@ protected:
                     cpa_2.number_of_status_lines_with_event());
         
         CGAL::Sign res = CGAL::sign(cpv_line.event_of_curve(arcno(), 0) -
-                    cpv_line.event_of_curve(arcno_on_g, 1));
+                    cpv_line.event_of_curve(cv2.arcno(), 1));
         CERR("result: " << res << "\n");
         return res;
     }
