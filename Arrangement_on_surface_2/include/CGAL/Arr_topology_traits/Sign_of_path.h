@@ -140,7 +140,7 @@ public:
     CGAL::Sign operator()(const Halfedge* he1, const Halfedge* he2, 
                           const X_monotone_curve_2& cv) const {
         
-        //std::cout << "Sign_of_path(he1, he2)" << std::endl;
+        //std::cout << "Sign_of_path(he1, he2, cv)" << std::endl;
         
         CGAL::Sign result = this->operator()(he2, he1);
         
@@ -213,7 +213,7 @@ public:
             
             if (ps_min_x != CGAL::ARR_INTERIOR || 
                 ps_min_y != CGAL::ARR_INTERIOR) {
-                
+
                 CGAL::Sign tmp1 = 
                     _m_topology_traits->_sign_of_subpath(
                             he1, cv, 
@@ -232,8 +232,8 @@ public:
                 }
             }
             
-            if (ps_min_x != CGAL::ARR_INTERIOR || 
-                ps_min_y != CGAL::ARR_INTERIOR) {
+            if (ps_max_x != CGAL::ARR_INTERIOR || 
+                ps_max_y != CGAL::ARR_INTERIOR) {
                 
                 CGAL::Sign tmp2 = 
                     _m_topology_traits->_sign_of_subpath(
