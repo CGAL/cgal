@@ -279,7 +279,6 @@ public:
         return 0;
     }
 
-
     /*!\brief
      * returns a \c CGAL::Object that encodes the asymptotic value of a
      * curve-arc approaching the left or the right boundary \c loc of the
@@ -314,6 +313,12 @@ public:
      }
 
     //!@}
+
+    // friend function for id-based hashing
+    friend std::size_t hash_value(const Self& x) {
+        return static_cast<std::size_t>(x.id());
+    }
+    
 }; // class Curve_analysis_2
 
 } // namespace CGALi

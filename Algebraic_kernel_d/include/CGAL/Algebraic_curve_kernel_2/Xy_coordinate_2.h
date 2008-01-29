@@ -25,16 +25,11 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 template < class AlgebraicCurveKernel_2, class Rep_, 
-      class HandlePolicy_ = CGAL::Handle_policy_no_union,
+      class HandlePolicy_ = CGAL::Handle_policy_union,
       class Allocator_ = CGAL_ALLOCATOR(Rep_) >
         //::boost::fast_pool_allocator<Rep_> >
 class Xy_coordinate_2;
 
-template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
-           class Allocator > 
-std::ostream& operator<< (std::ostream&, 
-    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep, HandlePolicy,
-        Allocator>&);
 
 template < class AlgebraicCurveKernel_2 >
 class Xy_coordinate_2_rep {
@@ -81,42 +76,6 @@ public:
     //! A bounding box for the given point
     mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
 
-    struct triple {
-        std::size_t x_id;
-        int arcno;
-        std::size_t curve_id;
-
-        triple(std::size_t x_id_, int arcno_, std::size_t curve_id_) :
-               x_id(x_id_), arcno(arcno_), curve_id(curve_id_) {
-        }
-
-        friend std::size_t hash_value(triple const& p) {
-             std::size_t seed = p.x_id;
-             boost::hash_combine(seed, p.arcno);
-             boost::hash_combine(seed, p.curve_id);
-             return seed;
-        }
-
-        bool operator ==(triple const& t) const {
-            return (memcmp((triple *)this, (triple *)&t,
-                sizeof(triple)) == 0);
-        }
-    };
-
-    //! type of curve pair analysis cache
-   typedef CGALi::LRU_hashed_map<triple,
-        CGAL::Comparison_result, CGAL::Identity<triple>,
-        boost::hash<triple>,
-        CGAL::Creator_1<triple, CGAL::Comparison_result>
-        > Int_map;
-        
-    // TODO int is not sufficient as ids can be re-assigned
-    //typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
-        
-    mutable Int_map _m_compare_xy;
-
-    // befriending the handle
-    friend class Xy_coordinate_2<Algebraic_curve_kernel_2, Self>;
 };
 
 //! \brief class \c Xy_coordinate_2 represents a single root of a system of 
@@ -180,10 +139,6 @@ public:
 
     //! type for boundary intervals
     typedef boost::numeric::interval<Boundary> Boundary_interval;
-
-    typedef typename Rep::Int_map Int_map;
-
-    typedef typename Rep::triple triple;
 
     //! Type for the bounding box
     typedef typename Rep::Bbox_2 Bbox_2;
@@ -394,24 +349,17 @@ public:
         
         if(is_identical(q)) 
             return CGAL::EQUAL;
-        if(this->id() > q.id())
-            return (- q.compare_xy(*this));
 
-        /*std::pair<typename Int_map::Hashed_iterator, bool> r =
-            this->ptr()->_m_compare_xy.find(triple(q.x().id(),
-                q.arcno(), q.curve().id()));
-        if(r.second) {
-            //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
-            return r.first->second;
+        // no need to cache comparison of points lying on the same curve
+/*        if(!curve().is_identical(q.curve())) {
+            if(this->id() > q.id())
+                return (- q.compare_xy(*this));
         }*/
 
         CGAL::Comparison_result res = (equal_x ? CGAL::EQUAL : compare_x(q)); 
         if(res == CGAL::EQUAL) {
             res = _compare_y_at_x(q);
         }
-//         this->ptr()->_m_compare_xy.insert(std::make_pair(
-//             triple(q.x().id(),
-//                 q.arcno(), q.curve().id()), res));
         return res;
     }
     
@@ -533,7 +481,7 @@ public:
     }
     
     //! befriending output iterator
-    friend std::ostream& operator << <>(std::ostream& os, const Self& pt);
+   // friend std::ostream& operator << <>(std::ostream& os, const Self& pt);
 
     //!@}
 public:
@@ -779,17 +727,19 @@ public:
             res = res * ix + Boundary_interval(*it);
         return res;
     }
-    
+
+     // friend function to provide a fast hashing
+    friend std::size_t hash_value(const Self& x) {
+        return static_cast<std::size_t>(x.id());
+    }
 
     //!@}
 
 }; // class Xy_coordinate_2
 
-template < class AlgebraicCurveKernel_2, class Rep, class HandlePolicy,
-           class Allocator > 
+template < class AlgebraicCurveKernel_2, class Rep> 
 std::ostream& operator<< (std::ostream& os, 
-    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep, HandlePolicy,
-        Allocator>& pt)
+    const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt)
 {
     if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
         os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<

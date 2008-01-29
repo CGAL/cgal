@@ -59,11 +59,6 @@ public:
         
         _m_curve_pair = Internal_curve_pair_2(
             ca1._internal_curve(), ca2._internal_curve());
-      
-        // warning: ca1 and ca2 might already been swapped while calling
-        // this routine
-//         _m_swapped = (_m_curve_pair.curve1().id() !=
-//              ca1.polynomial_2().id());
     }
 
     // data
@@ -72,9 +67,8 @@ public:
     // temporarily this implementation is based on Curve_pair_2 from GAPS
     mutable Internal_curve_pair_2 _m_curve_pair;
     
-    // indicates that the curves in a curve pair were swapped after precaching
-    // (this happens when the first curve is defined by a polynomial of higher
-    // degree than the second one)
+    // indicates that curve analyses in a curve pair were swapped during
+    // precaching
     mutable bool _m_swapped;
     
     // befriending the handle
@@ -106,6 +100,7 @@ public:
     typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
 
     //! this instance's second template parameter
+
     typedef Rep_ Rep;
 
     //! x-coordinate type

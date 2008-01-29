@@ -23,6 +23,8 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 
+#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+
 using boost::multi_index::multi_index_container;
 using boost::multi_index::get;
 using boost::multi_index::project;
@@ -40,10 +42,10 @@ namespace CGALi {
 //! \c ValueType_, \c Hash_ is function object which returns hash values
 //! for the keys 
 template <class KeyType_, class ValueType_,
-    class Canonicalizer_ = CGAL::Identity<KeyType_>,
     class Hash_ = boost::hash<KeyType_>,
-    class Creator_ = CGAL::Creator_1<KeyType_, ValueType_>,
-    class Pred_ = std::equal_to<KeyType_> >
+    class Pred_ = std::equal_to<KeyType_>,
+    class Canonicalizer_ = CGAL::Identity<KeyType_>,
+    class Creator_ = CGAL::Creator_1<KeyType_, ValueType_> >
 class LRU_hashed_map
 {
 public:
@@ -54,19 +56,20 @@ public:
     typedef KeyType_ Key_type;
     //! this instance's second argument
     typedef ValueType_ Value_type;
-    //! input data canonicalizer
-    typedef Canonicalizer_ Canonicalizer;
-    //! equality predicate
-    typedef Pred_ Pred;
-    //! mapping \c KeyType_ -> \c ValueType_
-    typedef Creator_ Creator;
     //! hash function
     typedef Hash_ Hash;
+    //! equality predicate
+    typedef Pred_ Pred;
+    //! input data canonicalizer
+    typedef Canonicalizer_ Canonicalizer;
+    //! mapping \c KeyType_ -> \c ValueType_
+    typedef Creator_ Creator;
+    
     //! hashed map data type
     typedef std::pair<Key_type, Value_type> Data_type;
     //! myself
-    typedef LRU_hashed_map<Key_type, Value_type, Canonicalizer, Hash, 
-        Creator, Pred> Self;
+    typedef LRU_hashed_map<Key_type, Value_type, Hash, Pred, Canonicalizer, 
+        Creator> Self;
         
     //!@}
 private:
@@ -107,6 +110,12 @@ public:
     typedef typename
         boost::multi_index::nth_index_const_iterator<Hashed_map,0>::type
             Sequenced_const_iterator;
+
+    //! result type of \c find operation: a pair of iterator pointing to
+    //! \c Data_type and a boolean indicating whether an element with
+    //! specified key was found
+    typedef std::pair<Hashed_iterator, bool> Find_result;
+    
     //!@}
 public:
     //!\name constructors and access functions
@@ -129,12 +138,11 @@ public:
     {
         Canonicalizer canonicalize;
         Key_type key = canonicalize(key_);
-
-        std::pair<Hashed_iterator, bool> p = find(key);
+        
+        Find_result p = find(key);
         if(!p.second) {
             Creator create;
             Value_type val = create(key);
-
             insert(Data_type(key, val));
             return val;
         }
@@ -145,17 +153,17 @@ public:
     //!
     //! returns a pair of iterator pointing to \c Data_type and a boolean
     //! indicating whether an element with specified key was found
-    std::pair<Hashed_iterator, bool> find(const Key_type& key)
+    Find_result find(const Key_type& key)
     {
         typename boost::multi_index::nth_index<Hashed_map,1>::type& 
         idx = _m_hashed_map.get<1>();
         Hashed_iterator it = idx.find(key);
         if(it == idx.end()) 
-            return std::make_pair<Hashed_iterator, bool>(it, false);
+            return Find_result(it, false);
         // otherwise put the accessed element on the top
         _m_hashed_map.relocate(_m_hashed_map.begin(), 
                 _m_hashed_map.project<0>(it));
-        return std::make_pair<Hashed_iterator, bool>(it, true);
+        return Find_result(it, true);
     }
         
     //! \brief inserts an entry to the map
@@ -225,7 +233,16 @@ struct Poly_hasher {
 
     template <class Poly_2>
     std::size_t operator()(const Poly_2& p) const {
-        return static_cast<std::size_t>(NiX::total_degree(p));
+
+//         std::cerr << "poly: " << p << "; hash: " <<
+//             static_cast<std::size_t>(ceil_log2_abs(
+//             typename NiX::Polynomial_traits<Poly_2>::Innermost_lcoeff()(p)
+//             * (NiX::total_degree(p)))) << "\n";
+        
+        return static_cast<std::size_t>(ceil_log2_abs(
+            typename NiX::Polynomial_traits<Poly_2>::Innermost_lcoeff()(p)
+            * (NiX::total_degree(p) + 1)));
+
     }
 };
     
@@ -254,8 +271,8 @@ struct Pair_hasher {
 
     typedef size_t result_type;
     
-    template <class T>
-    size_t operator()(const std::pair<T, T>& p) const
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const
     {
         std::size_t seed = 0;
         boost::hash_combine(seed, p.first);
