@@ -1559,9 +1559,6 @@ CMake/cmake/modules/FindTAUCS.cmake -text
 CMake/cmake/modules/FindZLIB.cmake -text
 CMake/cmake/modules/GeneratorSpecificSettings.cmake -text
 CMake/cmake/modules/LogCMakeVariables.cmake -text
-CMake/cmake/modules/MacroCreateSingleSourceCGALProgram.cmake -text
-CMake/cmake/modules/MacroCreateSingleSourceCGALQt4Program.cmake -text
-CMake/cmake/modules/MacroCreateSingleSourceCGALQtProgram.cmake -text
 CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
@@ -3374,6 +3371,7 @@ Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text svneol=unset#applicati
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
+Straight_skeleton_2/demo/Straight_skeleton_2/CMakeLists.txt -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
