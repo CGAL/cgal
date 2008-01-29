@@ -957,6 +957,13 @@ template <class GeomTraits, class Dcel_>
 CGAL::Sign
 Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
+    
+#if 0
+    std::cout << "he1: " << he1->curve() << std::endl;
+    std::cout << "dir1: " << he1->direction() << std::endl;
+    std::cout << "he2: " << he2->curve() << std::endl;
+    std::cout << "dir2: " << he2->direction() << std::endl;
+#endif
 
     CGAL::Sign result = CGAL::ZERO;
     
@@ -1065,11 +1072,13 @@ Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath (const Halfedge* he1,
                   const X_monotone_curve_2& cv2,
                   const CGAL::Arr_curve_end& end2) const {
-    
-    //std::cout << "he1: " << he1->curve() << std::endl;
-    //std::cout << "dir1: " << he1->direction() << std::endl;
-    //std::cout << "cv2: " << cv2 << std::endl;
-    //std::cout << "end: " << end2 << std::endl;
+
+#if 0    
+    std::cout << "he1: " << he1->curve() << std::endl;
+    std::cout << "dir1: " << he1->direction() << std::endl;
+    std::cout << "cv2: " << cv2 << std::endl;
+    std::cout << "end: " << end2 << std::endl;
+#endif
 
     CGAL_assertion(!he1->has_null_curve());
     
