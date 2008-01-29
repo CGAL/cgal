@@ -109,7 +109,7 @@ public:
     static double& threshold() {
         static boost::optional<double> _b;
         if(! _b) {
-            _b = .0001; 
+            _b = .01; 
         }
         return _b.get();
     }
@@ -194,18 +194,14 @@ protected:
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
-            std::cout << "Call approximate_compare_y_2.." << std::flush;
             Bbox_2 bbox1 = xy1.approximation_box_2(threshold()),
                 bbox2 = xy2.approximation_box_2(threshold());
             if(bbox1.ymin() > bbox2.ymax()) {
-                std::cout << "filtered!" << std::endl;
                 return CGAL::LARGER;
             }
             if(bbox1.ymax() < bbox2.ymin()) {
-                std::cout << "filtered!" << std::endl;
                 return CGAL::SMALLER;
             }
-            std::cout << "filter failed!" << std::endl;
             return CGAL::EQUAL;
         }
     };
@@ -336,7 +332,6 @@ public:
         Sign operator()(const Curve_analysis_2& ca,
                 const Xy_coordinate_2& r) const
         {
-            std::cout << "Filtered sign at.." << std::flush;
             if(ca.is_identical(r.curve())) // point lies on the same curve
                 return CGAL::ZERO;
             
@@ -345,10 +340,8 @@ public:
             Interval iv = r.interval_evaluate_2(ca.polynomial_2());
             CGAL::Sign s_lower = CGAL::sign(iv.lower());
             if( s_lower == CGAL::sign(iv.upper()) ) {
-                   std::cout << "filtered!" << std::endl;
                    return s_lower;
             }
-            std::cout << "filter failed" << std::endl;
             return typename Base::Sign_at_2()(ca, r);
         }
         
