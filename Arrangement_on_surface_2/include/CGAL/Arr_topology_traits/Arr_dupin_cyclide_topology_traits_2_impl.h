@@ -862,9 +862,13 @@ boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
     Sign_of_path sign_of_path(this);
 
     // compute signs of path (both must be non-zero)
+    //std::cout << "Path1:" << std::endl;
     CGAL::Sign sign1 = sign_of_path(e1, e1);
-    CGAL_assertion(sign1 != CGAL::ZERO);
+    //std::cout << "Sign1: " << sign1 << std::endl;
+    //std::cout << "Path2:" << std::endl;
     CGAL::Sign sign2 = sign_of_path(e2, e2);
+    //std::cout << "Sign2: " << sign2 << std::endl;
+    CGAL_assertion(sign1 != CGAL::ZERO);
     CGAL_assertion(sign2 != CGAL::ZERO);
     
     return (sign1 != sign2);
@@ -958,13 +962,6 @@ CGAL::Sign
 Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     
-#if 0
-    std::cout << "he1: " << he1->curve() << std::endl;
-    std::cout << "dir1: " << he1->direction() << std::endl;
-    std::cout << "he2: " << he2->curve() << std::endl;
-    std::cout << "dir2: " << he2->direction() << std::endl;
-#endif
-
     CGAL::Sign result = CGAL::ZERO;
     
     CGAL::Arr_curve_end end1 = 
@@ -998,15 +995,22 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         he2_psy == CGAL::ARR_INTERIOR) {
         return result;
     }
+
+#if 0
+    std::cout << "he1: " << he1->curve() << std::endl;
+    std::cout << "dir1: " << he1->direction() << std::endl;
+    std::cout << "he2: " << he2->curve() << std::endl;
+    std::cout << "dir2: " << he2->direction() << std::endl;
+#endif
     
     if (he1_psx != he2_psx) {
         
         if (he1_psx == CGAL::ARR_RIGHT_BOUNDARY) {
             result = CGAL::POSITIVE;
-            //std::cout << "+xp1" << std::endl;
+            //std::cout << "SOShh:xp1" << std::endl;
         } else {
             result = CGAL::NEGATIVE;
-            //std::cout << "-xn1" << std::endl;
+            //std::cout << "SOShh:xn1" << std::endl;
         }
         
     } else { 
@@ -1034,11 +1038,11 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
                     if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
                         // bottom to top
                         result = CGAL::POSITIVE;
-                        //std::cout << "+xp2" << std::endl;
+                        //std::cout << "SOShh:xp2" << std::endl;
                     } else {
                         // top to bottom
                         result = CGAL::NEGATIVE;
-                        //std::cout << "-xp2" << std::endl;
+                        //std::cout << "SOShh:xn2" << std::endl;
                     }
                 }
             }
@@ -1051,10 +1055,10 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             if (he1_psy != he2_psy) {
                 if (he1_psy == CGAL::ARR_TOP_BOUNDARY) {
                     result = CGAL::POSITIVE;
-                    //std::cout << "+yp1" << std::endl;
+                    //std::cout << "SOShh:yp1" << std::endl;
                 } else {
                     result = CGAL::NEGATIVE;
-                    //std::cout << "-yn1" << std::endl;
+                    //std::cout << "SOShh::yn1" << std::endl;
                 }
             }
         }
@@ -1073,13 +1077,6 @@ _sign_of_subpath (const Halfedge* he1,
                   const X_monotone_curve_2& cv2,
                   const CGAL::Arr_curve_end& end2) const {
 
-#if 0    
-    std::cout << "he1: " << he1->curve() << std::endl;
-    std::cout << "dir1: " << he1->direction() << std::endl;
-    std::cout << "cv2: " << cv2 << std::endl;
-    std::cout << "end: " << end2 << std::endl;
-#endif
-
     CGAL_assertion(!he1->has_null_curve());
     
     CGAL::Sign result = CGAL::EQUAL;
@@ -1095,6 +1092,15 @@ _sign_of_subpath (const Halfedge* he1,
         parameter_space_in_x(cv2, end2);
     CGAL::Arr_parameter_space ps_y = 
         parameter_space_in_y(cv2, end2);
+    
+#if 0
+    if (ps_x != CGAL::ARR_INTERIOR || ps_y != CGAL::ARR_INTERIOR) {
+        std::cout << "he1: " << he1->curve() << std::endl;
+        std::cout << "dir1: " << he1->direction() << std::endl;
+        std::cout << "cv2: " << cv2 << std::endl;
+        std::cout << "end: " << end2 << std::endl;
+    }
+#endif
     
     CGAL::Arr_curve_end he1_trg_end =
         (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
@@ -1136,10 +1142,10 @@ _sign_of_subpath (const Halfedge* he1,
             if (modify) {
                 if (he1_trg_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
                     result = CGAL::POSITIVE;
-                    //std::cout << "+xp3" << std::endl;
+                    //std::cout << "SOShcv:xp1" << std::endl;
                 } else {
                     result = CGAL::NEGATIVE;
-                    //std::cout << "-xn3" << std::endl;
+                    //std::cout << "SOShcv:xn1" << std::endl;
                 }
             }
             
@@ -1165,11 +1171,11 @@ _sign_of_subpath (const Halfedge* he1,
                     if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
                         // bottom to top
                         result = CGAL::POSITIVE;
-                        //std::cout << "+xp2" << std::endl;
+                        //std::cout << "SOShcv:xp2" << std::endl;
                     } else {
                         // top to bottom
                         result = CGAL::NEGATIVE;
-                        //std::cout << "-xp2" << std::endl;
+                        //std::cout << "SOShcv:xn2" << std::endl;
                     }
                 }
             }
@@ -1204,10 +1210,10 @@ _sign_of_subpath (const Halfedge* he1,
             if (modify) {
                 if (he1_trg_ps_y == CGAL::ARR_TOP_BOUNDARY) {
                     result = CGAL::POSITIVE;
-                    //std::cout << "+yp2" << std::endl;
+                    //std::cout << "SOShcv:yp1" << std::endl;
                 } else {
                     result = CGAL::NEGATIVE;
-                    //std::cout << "-yn2" << std::endl;
+                    //std::cout << "SOShcv:yn1" << std::endl;
                 }
             }
         }
