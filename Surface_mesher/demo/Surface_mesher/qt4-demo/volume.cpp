@@ -165,9 +165,9 @@ void Volume::display_marchin_cube()
     status_message("Marching cubes...");
 
     timer.start();
-    mc.set_resolution(nx,ny,nz);
     if(mc.ntrigs()!=0)
       mc.clean_all();
+    mc.set_resolution(nx,ny,nz);
     mc.init_all();
 
     // set data
