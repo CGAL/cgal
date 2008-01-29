@@ -1033,7 +1033,7 @@ public:
         }
         // here x > ARR_MIN_END
         if (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY) {
-             return true; // this is unbounded arc (branch)
+            return true; // this is unbounded arc (branch)
         }
         res = Curved_kernel_via_analysis_2::instance().
             kernel().compare_x_2_object()(x, _maxpoint().x());
