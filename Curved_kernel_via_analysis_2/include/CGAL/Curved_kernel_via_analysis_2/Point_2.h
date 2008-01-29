@@ -552,10 +552,38 @@ public:
                 double yd = NiX::to_double(lower_boundary_y(xy()));
                 os << "y=" << yd;
             } else {
-                if (this->location() == CGAL::ARR_BOTTOM_BOUNDARY) {
+                switch (this->location()) {
+                case CGAL::ARR_BOTTOM_BOUNDARY:
                     os << "y=-oo";
-                } else {
+                    break;
+                case CGAL::ARR_TOP_BOUNDARY:
                     os << "y=+oo";
+                    break;
+                case CGAL::ARR_LEFT_BOUNDARY:
+                case CGAL::ARR_RIGHT_BOUNDARY: {
+                    CGAL::Object obj = 
+                        this->curve().asymptotic_value_of_arc(
+                                this->location(), this->arcno()
+                        );
+                    CGAL::Arr_parameter_space ps;
+                    if (CGAL::assign(ps, obj)) {
+                        if (ps == CGAL::ARR_BOTTOM_BOUNDARY) {
+                            os << "y=-oo(asym)";
+                        } else {
+                            os << "y=+oo(asym)";
+                        }
+                    } else {
+                        X_coordinate_1 y;
+                        CGAL_assertion_code(bool check =)
+                            CGAL::assign(y, obj);
+                        CGAL_assertion(check);
+                        os << "y=" << "TODO" << "(asym)";
+                    }
+                    break;
+                }
+                default:
+                    os << "y=?";
+                    break;
                 }
             }
             os << ", ";
