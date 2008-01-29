@@ -145,7 +145,8 @@ struct Make_x_monotone_2 :
             info1 = map_interval_arcno(evt_line1, 1, k); 
             if (info1.second != CGAL::ARR_INTERIOR) {
                 arc = construct_arc_2(CGAL::ARR_MIN_END, max_x, 
-                                      (info1.second < 0 ?
+                                      (info1.second == 
+                                       CGAL::ARR_BOTTOM_BOUNDARY ?
                                        CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), 
                                       curve, k);
             } else {
