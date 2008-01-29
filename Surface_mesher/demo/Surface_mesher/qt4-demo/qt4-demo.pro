@@ -78,7 +78,7 @@ HEADERS += get_polyhedral_surface.h \
            ../../../include/CGAL/Surface_mesher/Verbose_flag.h \
            ../../../include/CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h \
            /home/lrineau/CGAL/Packages/Data_structure_for_queries_3/include/CGAL/Octree/Octree_helping_traits_3.h
-INTERFACES += mainwindow.ui optionsdialog.ui meshing_bar.ui
+INTERFACES += ui/mainwindow.ui ui/optionsdialog.ui ui/meshing_bar.ui
 SOURCES += surface_mesher.cpp \
            viewer.cpp \
            mainwindow.cpp \

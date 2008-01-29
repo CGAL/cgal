@@ -13,7 +13,7 @@
    <string>Surface mesher demo</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="surface_mesher.qrc" >:/icons/cgal_logo.xpm</iconset>
+   <iconset resource="../surface_mesher.qrc" >:/icons/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
@@ -107,7 +107,7 @@
   </widget>
   <action name="action_Open" >
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/fileopen.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/fileopen.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Open...</string>
@@ -132,7 +132,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/flip.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/flip.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Inverse normals</string>
@@ -152,7 +152,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/bbox.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/bbox.png</iconset>
    </property>
    <property name="text" >
     <string>Display oc&amp;tree</string>
@@ -172,7 +172,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/surface.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/surface.png</iconset>
    </property>
    <property name="text" >
     <string>Display &amp;surface</string>
@@ -239,7 +239,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/bbox-red.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/bbox-red.png</iconset>
    </property>
    <property name="text" >
     <string>Display edges octree</string>
@@ -269,7 +269,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/twosides.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/twosides.png</iconset>
    </property>
    <property name="text" >
     <string>Display facets with &amp;front and back</string>
@@ -294,7 +294,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="surface_mesher.qrc" >:/icons/resize.png</iconset>
+    <iconset resource="../surface_mesher.qrc" >:/icons/resize.png</iconset>
    </property>
    <property name="text" >
     <string>Auto-&amp;resize</string>
@@ -355,7 +355,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="surface_mesher.qrc" />
+  <include location="../surface_mesher.qrc" />
  </resources>
  <connections/>
 </ui>

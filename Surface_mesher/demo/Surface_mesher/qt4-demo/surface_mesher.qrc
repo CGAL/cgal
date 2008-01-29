@@ -1,12 +1,12 @@
 <RCC>
-    <qresource prefix="/icons" >
-        <file>bbox-red.png</file>
-        <file>bbox.png</file>
-        <file>cgal_logo.xpm</file>
-        <file>fileopen.png</file>
-        <file>flip.png</file>
-        <file>resize.png</file>
-        <file>surface.png</file>
-        <file>twosides.png</file>
+    <qresource>
+        <file>icons/bbox-red.png</file>
+        <file>icons/bbox.png</file>
+        <file>icons/cgal_logo.xpm</file>
+        <file>icons/fileopen.png</file>
+        <file>icons/flip.png</file>
+        <file>icons/resize.png</file>
+        <file>icons/surface.png</file>
+        <file>icons/twosides.png</file>
     </qresource>
 </RCC>
