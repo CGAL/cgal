@@ -16,15 +16,19 @@
 # CGAL_MAJOR_VERSION
 # CGAL_MINOR_VERSION
 
-find_package(Qt3)
-if(QT_FOUND)
+assert(CGAL_BINARY_DIR)
+assert(CGAL_LIB_INSTALL_DIR)
 
+if( CGAL_USE_QT )
+
+    message( STATUS "moc executable: ${QT_MOC_EXECUTABLE}" )
+    message( STATUS "uic executable: ${QT_UIC_EXECUTABLE}" )
+    
     include(Qt3Macros)
 
-    add_definitions( "-DCGAL_USE_QT" )    
-    
-    assert(CGAL_BINARY_DIR)
-    assert(CGAL_LIB_INSTALL_DIR)
+    message( STATUS "Qt3 include: ${QT_INCLUDE_DIR}" )
+       
+    include_directories( ${QT_INCLUDE_DIR} )
        
     # Make sure the compiler can find generated .moc files
     include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -57,23 +61,35 @@ if(QT_FOUND)
                      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc
                      )
                     
-    add_file_dependencies(Kinetic_Qt_core.cpp          ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_core.moc )
-    add_file_dependencies(Kinetic_Qt_timer.cpp         ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_timer.moc )
-    add_file_dependencies(Kinetic_Qt_widget_2_core.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_widget_2_core.moc )
-    add_file_dependencies(Kinetic_Qt_window_2.cpp      ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_core.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_timer.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_widget_2_core.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget.moc ) 
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_layer.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_standard_toolbar.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_help_window.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_history.moc )
+    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_OpenGL.moc )
 
     add_library (CGAL_QT "all_files.cpp")
-
+    
+    message( STATUS "Qt3 Libraries: ${QT_LIBRARIES}" )
+    
+    target_link_libraries( CGAL_QT ${QT_LIBRARIES} )
+    
+    add_definitions ( ${QT_DEFINITIONS} )
+    
     if (NOT AUTO_LINK_ENABLED )
 
-      set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "CGALQt" )
+      set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "cgal-qt" )
       
     else()
 
-      set(CGAL_QT_RELEASE_MANGLED_NAME        "cgalqt${TOOLSET}-mt" ) 
-      set(CGAL_QT_DEBUG_MANGLED_NAME          "cgalqt${TOOLSET}-mt-gd" ) 
-      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "cgalqt${TOOLSET}-mt-o" ) 
-      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "cgalqt${TOOLSET}-mt-g" ) 
+      set(CGAL_QT_RELEASE_MANGLED_NAME        "cgal-qt${TOOLSET}-mt" ) 
+      set(CGAL_QT_DEBUG_MANGLED_NAME          "cgal-qt${TOOLSET}-mt-gd" ) 
+      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "cgal-qt${TOOLSET}-mt-o" ) 
+      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "cgal-qt${TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
                                              RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 
@@ -87,6 +103,8 @@ if(QT_FOUND)
     endif()
 
     install(TARGETS CGAL_QT DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+else()
+  message( WARNING "CGALQt needs Qt3, cannot be configured.")
 endif()
 
    

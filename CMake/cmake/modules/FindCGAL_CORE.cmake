@@ -22,31 +22,36 @@ if(GMP_FOUND)
             DOC "The directory containing the CORE include files shipped with CGAL"
            )
 
-  if ( AUTO_LINK_ENABLED )
+  if ( CGAL_CORE_INCLUDE_DIR )
   
-    set(CGAL_CORE_LIBRARIES "" )
-    set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
+    set( CGAL_CORE_BASENAME cgal-core )
     
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(CGAL_CORE "DEFAULT_MSG" CGAL_CORE_INCLUDE_DIR )
+    if ( AUTO_LINK_ENABLED )
     
-  else()
-  
-    # We cannot search for the core++ library because it is not yet compiled
-    # => hard code the name
-    if (WIN32)
-      set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/cgalcore++.lib)
+      set(CGAL_CORE_LIBRARIES "" )
+      set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
+      
+      
     else()
-      if(BUILD_SHARED_LIBS)
-        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcgalcore++.so)
-      else(BUILD_SHARED_LIBS)
-        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/libcgalcore++.a)
-      endif(BUILD_SHARED_LIBS)
+    
+      # We cannot search for the cgal-core library because it is not yet compiled
+      # => hard code the name
+      if (WIN32)
+        set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/${CGAL_CORE_BASENAME}.lib)
+      else()
+        if(BUILD_SHARED_LIBS)
+          set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.so)
+        else(BUILD_SHARED_LIBS)
+          set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.a)
+        endif(BUILD_SHARED_LIBS)
+      endif()
+      
+      set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
+      
+      
     endif()
-    
-    set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
-    
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(CGAL_CORE "DEFAULT_MSG" CGAL_CORE_INCLUDE_DIR CGAL_CORE_LIBRARIES )
-    
   endif()
+  
+  find_package_handle_standard_args(CGAL_CORE "DEFAULT_MSG" CGAL_CORE_INCLUDE_DIR )
 
 endif()

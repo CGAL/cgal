@@ -1,1 +1,1 @@
-add_subdirectory(Surface_mesher)
+add_subdirectories(. "demo")

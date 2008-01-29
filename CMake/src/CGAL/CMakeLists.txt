@@ -30,7 +30,11 @@ endif()
 
 #set_target_properties(CGAL PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
 
-if ( AUTO_LINK_ENABLED )
+if (NOT AUTO_LINK_ENABLED )
+
+  set_target_properties( CGAL PROPERTIES OUTPUT_NAME "cgal" )
+  
+else()
 
   set(CGAL_RELEASE_MANGLED_NAME        "cgal${TOOLSET}-mt" ) 
   set(CGAL_DEBUG_MANGLED_NAME          "cgal${TOOLSET}-mt-gd" ) 

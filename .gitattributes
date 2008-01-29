@@ -1540,6 +1540,9 @@ CMake/cmake/modules/AddSubdirectories.cmake -text
 CMake/cmake/modules/CGALcommon.cmake -text
 CMake/cmake/modules/CheckCXXFileRuns.cmake -text
 CMake/cmake/modules/CheckCXXSourceRuns.cmake -text
+CMake/cmake/modules/CreateSingleSourceCGALProgram.cmake -text
+CMake/cmake/modules/CreateSingleSourceCGALQt3Program.cmake -text
+CMake/cmake/modules/CreateSingleSourceCGALQt4Program.cmake -text
 CMake/cmake/modules/FindBOOST_PROGRAM_OPTIONS.cmake -text
 CMake/cmake/modules/FindBOOST_THREAD.cmake -text
 CMake/cmake/modules/FindBoost2.cmake -text
@@ -1561,8 +1564,12 @@ CMake/cmake/modules/MacroCreateSingleSourceCGALQt4Program.cmake -text
 CMake/cmake/modules/MacroCreateSingleSourceCGALQtProgram.cmake -text
 CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
+CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
+CMake/src/CGALImageIO/CMakeLists.txt -text
+CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
+CMake/test/CMakeLists.txt -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf

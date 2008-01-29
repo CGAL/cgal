@@ -20,30 +20,21 @@
 assert(CGAL_BINARY_DIR)
 assert(CGAL_LIB_INSTALL_DIR)
 
-set(SOURCES
-    BigFloat.cpp
-    CoreAux.cpp
-    CoreDefs.cpp
-    CoreIO.cpp
-    Expr.cpp
-    extLong.cpp
-    GmpIO.cpp
-    Real.cpp
-)
-
 add_library(CGAL_CORE "all_files.cpp")
+
+# ${CGAL_CORE_BASENAME} comes defined from FindCGAL_CORE.cmake
 
 if (NOT AUTO_LINK_ENABLED )
 
-  set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME "cgalcore++" )
+  set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME ${CGAL_CORE_BASENAME} )
   target_link_libraries( CGAL_CORE ${GMP_LIBRARIES})
   
 else()
 
-  set(CGAL_CORE_RELEASE_MANGLED_NAME        "cgalcore++${TOOLSET}-mt" ) 
-  set(CGAL_CORE_DEBUG_MANGLED_NAME          "cgalcore++${TOOLSET}-mt-gd" ) 
-  set(CGAL_CORE_MINSIZEREL_MANGLED_NAME     "cgalcore++${TOOLSET}-mt-o" ) 
-  set(CGAL_CORE_RELWITHDEBINFO_MANGLED_NAME "cgalcore++${TOOLSET}-mt-g" ) 
+  set(CGAL_CORE_RELEASE_MANGLED_NAME        "${CGAL_CORE_BASENAME}${TOOLSET}-mt" ) 
+  set(CGAL_CORE_DEBUG_MANGLED_NAME          "${CGAL_CORE_BASENAME}${TOOLSET}-mt-gd" ) 
+  set(CGAL_CORE_MINSIZEREL_MANGLED_NAME     "${CGAL_CORE_BASENAME}${TOOLSET}-mt-o" ) 
+  set(CGAL_CORE_RELWITHDEBINFO_MANGLED_NAME "${CGAL_CORE_BASENAME}${TOOLSET}-mt-g" ) 
   
   set_target_properties( CGAL_CORE PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_CORE_DEBUG_MANGLED_NAME}" 
                                               RELEASE_OUTPUT_NAME        "${CGAL_CORE_RELEASE_MANGLED_NAME}" 

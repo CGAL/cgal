@@ -51,12 +51,12 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
 
   else()
 
-    find_library(CGAL_LIBRARIES NAMES CGAL
+    find_library(CGAL_LIBRARIES NAMES cgal
                  PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
                  DOC "CGAL libraries"
                 )
     
-    find_library(CGAL_QT_LIBRARIES NAMES CGALQt
+    find_library(CGAL_QT_LIBRARIES NAMES cgal-qt
                  PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
                  DOC "CGALQt libraries"
                 )

@@ -17,6 +17,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_SOURCE_DIR}/cmake/modules)
 include(CGALcommon)
 include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
+include(OptionalAddSubdirectory)
 include(AddSubdirectories)
 
 if ( WIN32 )
@@ -126,6 +127,12 @@ add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_CGAL_CORE )
 add_config_flag( CGAL_USE_OPENGL )
 
+find_package(Qt3)
+if(QT_FOUND)
+  set( CGAL_USE_QT TRUE ) 
+  add_config_flag( CGAL_USE_QT )
+endif()
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Build =-
@@ -150,13 +157,7 @@ set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
 
-if( CGAL_CORE_FOUND )
-  add_subdirectory(src/CGALCore)
-endif()
-
-add_subdirectory(src/CGAL)
-
-add_subdirectory(src/CGALQt)
+add_subdirectory(src)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -201,14 +202,14 @@ install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR
 
 set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 
-add_subdirectory(demo)
-add_subdirectory(examples)
+optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
+optional_add_subdirectory( examples OFF EXCLUDE_FROM_ALL )
 
 # INCLUDE(Dart)
 # MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
 if(BUILD_TESTING)
 
-  add_subdirectory(test)
+  add_subdirectory(test ON EXCLUDE_FROM_ALL )
   
   ENABLE_TESTING()
 #     configure_file(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
