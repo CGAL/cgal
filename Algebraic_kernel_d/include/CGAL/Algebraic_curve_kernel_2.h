@@ -144,8 +144,8 @@ protected:
             typename Sf_traits::Scalar_div scalar_div;
             Scalar g = scalar_factor(p);
             if (g == Scalar(0)) {
-                CGAL_assertion(p == Poly(Scalar(0)));
-                return p;
+                     CGAL_assertion(p == Poly(Scalar(0)));
+                     return p;
             }
             CGAL_assertion(g != Scalar(0));
             if(g != Scalar(1)) 
@@ -160,12 +160,11 @@ protected:
     // to remove a confusion with Curve_pair_2
     typedef std::pair<Curve_analysis_2, Curve_analysis_2> Pair_of_curves_2;
     
-    //! curve analysis pair canonicalizer
-    struct Curve_pair_canonicalizer  : 
-        public Unary_function< Pair_of_curves_2, Pair_of_curves_2 >  {
-        
-        Pair_of_curves_2 operator()(const Pair_of_curves_2& p) const
-        {
+    //! orders pair items by ids
+    struct Pair_id_order {
+
+        template<class T1, class T2>
+        std::pair<T1, T2> operator()(const std::pair<T1, T2>& p) const {
             if(p.first.id() > p.second.id())
                 return std::make_pair(p.second, p.first);
             return p;
@@ -174,8 +173,8 @@ protected:
     
     //! polynomial pair gcd creator
     template <class Poly> 
-    struct Poly_pair_gcd_creator
-    {
+    struct Poly_pair_gcd_creator {
+    
         typedef std::pair<Poly, Poly> Poly_pair;
         typedef Poly_pair argument_type;
         typedef Poly result_type;
@@ -185,37 +184,47 @@ protected:
             return NiX::gcd(p.first, p.second);
         }
     };     
-    
-    struct Curve_pair_creator :
-         public Unary_function< Pair_of_curves_2, Curve_pair_analysis_2 >  {
-           
-        Curve_pair_analysis_2 operator()(const Pair_of_curves_2& p) const {
-            return Curve_pair_analysis_2(p.first, p.second);
+
+    template <class Result>
+    struct Pair_creator {
+
+        template<class T1, class T2>
+        Result operator()(const std::pair<T1, T2>& p) const {
+            return Result(p.first, p.second);
         }
     };
     
-    struct Curve_pair_equal_to :
-         public Unary_function<Pair_of_curves_2, bool>  {
-     
-         bool operator()(const Pair_of_curves_2& p1, 
-                const Pair_of_curves_2& p2) const {
-            
+    struct Pair_id_equal_to {
+
+        template <class T1, class T2>
+        bool operator()(const std::pair<T1, T2>& p1,
+                const std::pair<T1, T2>& p2) const {
             return (p1.first.id() == p2.first.id() &&
                  p1.second.id() == p2.second.id());
-         }
+        }
     };
 
     //! type of curve analysis cache
     typedef CGALi::LRU_hashed_map<Internal_polynomial_2,
-        Curve_analysis_2, Poly_canonicalizer<Internal_polynomial_2>,
-        CGALi::Poly_hasher> Curve_cache;
-        
+        Curve_analysis_2, CGALi::Poly_hasher,
+        std::equal_to<Internal_polynomial_2>,
+        Poly_canonicalizer<Internal_polynomial_2> > Curve_cache;
+
+        //CGALi::Curve_pair_hasher_2<Curve_analysis_2>,
     //! type of curve pair analysis cache 
     typedef CGALi::LRU_hashed_map<Pair_of_curves_2,
-        Curve_pair_analysis_2, Curve_pair_canonicalizer,
-        CGALi::Curve_pair_hasher_2<Curve_analysis_2>,
-        Curve_pair_creator, Curve_pair_equal_to> Curve_pair_cache;
+        Curve_pair_analysis_2, CGALi::Pair_hasher, Pair_id_equal_to,
+        Pair_id_order,
+        Pair_creator<Curve_pair_analysis_2> > Curve_pair_cache;
 
+
+    typedef CGALi::LRU_hashed_map<std::pair<
+        typename Self::Xy_coordinate_2,
+        typename Self::Xy_coordinate_2>,
+        CGAL::Comparison_result, CGALi::Pair_hasher,
+        Pair_id_equal_to > Cmp_xy_map;
+      
+    
     typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
         Pair_of_internal_polynomial_2;
 
@@ -248,6 +257,11 @@ protected:
                         Pair_cannonicalize<Internal_polynomial_2>,
                         Internal_polynomial_2_compare> Gcd_cache_2;
 
+    //!@}
+protected:
+    //!\name protected methods and data types
+    //!@{
+                        
     static Gcd_cache_2& gcd_cache_2() {
         static Gcd_cache_2 cache;
         return cache;
@@ -316,12 +330,12 @@ public:
         Curve_pair_analysis_2 operator()
            (const Curve_analysis_2& ca1, const Curve_analysis_2& ca2) const {
                  
-            /*Curve_pair_analysis_2 cpa_2 =
+            Curve_pair_analysis_2 cpa_2 =
                 Self::curve_pair_cache()(std::make_pair(ca1, ca2));
-             cpa_2._set_swapped(ca1.id() > ca2.id());
-             return cpa_2;*/
+            cpa_2._set_swapped(ca1.id() > ca2.id());
+            return cpa_2;
 
-            Pair_of_curves_2 poc(ca1, ca2);
+            /*Pair_of_curves_2 poc(ca1, ca2);
             bool swap = (ca1.id() > ca2.id());
             if(swap) {
                 poc.first = ca2;
@@ -338,7 +352,7 @@ public:
             Curve_pair_analysis_2 cpa_2(poc.first, poc.second);
             cpa_2._set_swapped(swap);
             return (Self::curve_pair_cache().
-                insert(std::make_pair(poc, cpa_2))).first->second;
+                insert(std::make_pair(poc, cpa_2))).first->second;*/
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
@@ -350,6 +364,9 @@ public:
     //! traits class for \c Xy_coorinate_2
     typedef CGALi::Algebraic_real_traits_for_y<Xy_coordinate_2,
          Internal_curve_pair_2> Y_real_traits_1;
+
+        
+ mutable Cmp_xy_map _m_cmp_xy;   
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
@@ -538,14 +555,50 @@ public:
     //! \c equal_x specifies that only y-coordinates need to be compared
     struct Compare_xy_2 :
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
-                Comparison_result > 
-    {
-        Comparison_result operator()(const Xy_coordinate_2& xy1, 
+                Comparison_result > {
+
+         Compare_xy_2(Algebraic_curve_kernel_2 *kernel) :
+             _m_kernel(kernel) {
+         }
+    
+         Comparison_result operator()(const Xy_coordinate_2& xy1, 
              const Xy_coordinate_2& xy2, bool equal_x = false) const {
-             return xy1.compare_xy(xy2, equal_x);
+
+             // handle easy cases first
+             if(xy1.is_identical(xy2))
+                return CGAL::EQUAL;
+                
+             if(equal_x && xy1.curve().is_identical(xy2.curve()))
+                return CGAL::sign(xy1.arcno() - xy2.arcno());
+                
+             bool swap = (xy1.id() > xy2.id());
+             std::pair<Xy_coordinate_2, Xy_coordinate_2> p(xy1, xy2);
+             if(swap) {
+                 p.first = xy2;
+                 p.second = xy1;
+             }
+           
+             typename Cmp_xy_map::Find_result r =
+                _m_kernel->_m_cmp_xy.find(p);
+             if(r.second) {
+               //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
+                 return (swap ? -(r.first->second) : r.first->second);
+             }
+
+             CGAL::Comparison_result res =
+                   p.first.compare_xy(p.second, equal_x);
+             _m_kernel->_m_cmp_xy.insert(std::make_pair(p, res));
+             return (swap ? -res : res);
         }
+
+    private:
+        Algebraic_curve_kernel_2 *_m_kernel;    
+        
     };
-    CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
+    //CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
+    Compare_xy_2 compare_xy_2_object() const {
+        return Compare_xy_2((Algebraic_curve_kernel_2 *)this);
+    }
 
     //! \brief checks whether curve has only finitely many self-intersection
     //! points, i.e., it has no self-overlapped continuous parts
@@ -909,7 +962,7 @@ public:
 
         bool _test_exact_zero(const Curve_analysis_2& ca_2,
             const Xy_coordinate_2& r) const {
-            
+
             Internal_polynomial_2 zero_p(Coefficient(0));
             if (ca_2.polynomial_2() == zero_p) {
                 return true;
