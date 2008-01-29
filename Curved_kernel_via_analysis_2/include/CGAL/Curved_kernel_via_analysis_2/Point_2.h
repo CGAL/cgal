@@ -526,7 +526,7 @@ public:
             os << " " << this->location() << "; ";
             if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
                 this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
-                os << "x=" << NiX::to_double(this->x());
+                os << "x=" << NiX::to_double(this->x()); // TODO CGAL::
             } else {
                 if (this->location() == CGAL::ARR_LEFT_BOUNDARY) {
                     os << "x=-oo";
@@ -549,7 +549,8 @@ public:
                     refine_y(xy());
                 }
                 
-                double yd = NiX::to_double(lower_boundary_y(xy()));
+                double yd = 
+                    NiX::to_double(lower_boundary_y(xy())); // TODO CGAL::
                 os << "y=" << yd;
             } else {
                 switch (this->location()) {
@@ -577,7 +578,8 @@ public:
                         CGAL_assertion_code(bool check =)
                             CGAL::assign(y, obj);
                         CGAL_assertion(check);
-                        os << "y=" << "TODO" << "(asym)";
+                        os << "y=" << NiX::to_double(y) << "(asym)";
+                        // TODO CGAL::
                     }
                     break;
                 }

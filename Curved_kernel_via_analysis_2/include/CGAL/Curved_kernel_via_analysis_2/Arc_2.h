@@ -1750,13 +1750,9 @@ protected:
              << *dynamic_cast< const Kernel_arc_2*>(this) 
              << "; g: " << g.polynomial_2() 
              << "; arcno_on_g: " << arcno_on_g << "; where: " << where 
-             << "; x = " 
         );
         if (where == CGAL::ARR_INTERIOR) {
-            // TODO fix it (Pavel)
-            CERR("n/a");
-        } else {
-            CERR("n/a");
+            CERR("; x = " << NiX::to_double(x0)); // TODO replace by CGAL::
         }
         CERR("\n");
 #endif
