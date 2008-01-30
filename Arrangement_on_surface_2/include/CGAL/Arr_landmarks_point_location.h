@@ -272,6 +272,7 @@ protected:
    * \param crossed_edges In/Out: The set of edges crossed so far.
    * \param is_on_edge Output: Does the query point p lies on the edge.
    * \param is_target Output: Is the query point p equal to the target vertex.
+   * \param new_vertex Output: if found a closer vertex to the query point.
    * \param cv_is_contained_in_seg Output: Whether cv is contained inside seg.
    * \return A handle to the halfedge (if no intersecting edge is found, the
    *         function returns an ivalid halfedge handle).
@@ -284,7 +285,8 @@ protected:
        Halfedge_set& crossed_edges,
        bool& is_on_edge,
        bool& is_target,
-       bool& cv_is_contained_in_seg) const;
+       bool& cv_is_contained_in_seg,
+       Vertex_const_handle& new_vertex) const;
 
   /*!
    * Return the halfedge that contains the query point.

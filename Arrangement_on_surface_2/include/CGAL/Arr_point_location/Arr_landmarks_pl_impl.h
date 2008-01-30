@@ -56,7 +56,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::locate
     return lm_location_obj;
   }
 
-  // Walk from the nearest_vertex to the point p, using walk algorithm, 
+  // Walk from the nearest_vertex to the point p, using walk algorithm,
   // and find the location of the query point p. Note that the set fo edges
   // we have crossed so far is initially empty.
   Halfedge_set                   crossed_edges;
@@ -139,24 +139,47 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
     return (_walk_from_face (fh, vh->point(), p, crossed_edges));
   }
 
-  // if we walk from a vertex this means we are crossing
-  // all the halfedges that are incident to it
-  Halfedge_around_vertex_const_circulator  iter,first;
+  // if we walk from a vertex this means we are crossing the
+  // halfedges that form a corridor in which seg is going through
+  Halfedge_around_vertex_const_circulator  curr_iter,next_iter,first;
   first = vh->incident_halfedges();
-  crossed_edges.insert (first);
-  crossed_edges.insert (first->twin());
-  iter = first;
-  ++iter;
-  for ( ; iter!=first ; ++iter)
+  // Create an x-monotone curve connecting the point associated with the
+  // vertex vp and the query point p.
+  const Point_2&      vp = vh->point();
+  X_monotone_curve_2  seg =
+    m_traits->construct_x_monotone_curve_2_object()(vp, p);
+  const bool          seg_dir_right =
+    (m_traits->compare_xy_2_object()(vp, p) == SMALLER);
+  bool eq_curr_iter, eq_next_iter;
+  curr_iter = first;
+  next_iter = curr_iter;
+  ++next_iter;
+  typename Traits_adaptor_2::Is_between_cw_2  is_between_cw =
+    m_traits->is_between_cw_2_object();
+  // Traverse the halfedges around vp until we find the pair of adjacent
+  // halfedges such as seg is located clockwise in between them.
+  do
   {
-    // Check if we have already inserted the iter (or its twin).
-    // If so, we do not insert it again.
-    if (crossed_edges.count (iter) != 0)
-      continue;
-    crossed_edges.insert (iter);
-    crossed_edges.insert (iter->twin());
-  }
-
+    if (is_between_cw (seg, seg_dir_right, curr_iter->curve(),
+                       (curr_iter->direction() == ARR_RIGHT_TO_LEFT),
+                       next_iter->curve(),
+                       (next_iter->direction() == ARR_RIGHT_TO_LEFT),
+                       vp, eq_curr_iter, eq_next_iter))
+    {
+      // the assemption is that each edge is crossed at most twice
+      CGAL_assertion_msg (crossed_edges.count (curr_iter) < 2,
+        "crossed_edges should contain each halfedge at most twice.");
+      CGAL_assertion_msg (crossed_edges.count (next_iter) < 2,
+        "crossed_edges should contain each halfedge at most twice.");
+      crossed_edges.insert (curr_iter);
+      crossed_edges.insert (curr_iter->twin());
+      crossed_edges.insert (next_iter);
+      crossed_edges.insert (next_iter->twin());
+      break;
+    }
+    ++curr_iter;
+    ++next_iter;
+  } while (curr_iter!=first);
   // Locate the face around the vertex that contains the curve connecting
   // the vertex and the query point.
   bool                      new_vertex = false;
@@ -347,11 +370,11 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
 
   // Create an initial set of edges that have been crossed, which currently
   // contains only the halfedge we are currently on (and its twin).
-  if (crossed_edges.count (eh) == 0)
-  {
-    crossed_edges.insert (eh);
-    crossed_edges.insert (eh->twin());
-  }
+  // the assemption is that each edge is crossed at most twice
+  CGAL_assertion_msg (crossed_edges.count (eh) < 2,
+    "crossed_edges should contain each halfedge at most twice.");
+  crossed_edges.insert (eh);
+  crossed_edges.insert (eh->twin());
 
   // If p equals one of the edge's endpoints, return the vertex
   // that represents this endpoint.
@@ -367,14 +390,16 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
     Point_2 temp_p = eh->source()->point();
     if (m_traits->is_in_x_range_2_object()(seg, temp_p))
     {
-      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
+      //we must make sure that eh is not a tip on an "antena"
+      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL
+          && eh->prev() != eh->twin())
       {
-        if (crossed_edges.count (eh->prev()) == 0)
-        {
-          crossed_edges.insert (eh->prev());
-          crossed_edges.insert (eh->prev()->twin());
-          return _walk_from_vertex (eh->source(), p, crossed_edges);
-        }
+        // the assemption is that each edge is crossed at most twice
+        CGAL_assertion_msg (crossed_edges.count (eh->prev()) < 2,
+          "crossed_edges should contain each halfedge at most twice.");
+        crossed_edges.insert (eh->prev());
+        crossed_edges.insert (eh->prev()->twin());
+        return _walk_from_vertex (eh->source(), p, crossed_edges);
       }
     }
   }
@@ -390,14 +415,16 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
     Point_2 temp_p = eh->target()->point();
     if (m_traits->is_in_x_range_2_object()(seg, temp_p))
     {
-      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL)
+      //we must make sure that eh is not a tip on an "antena"
+      if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL
+          && eh->next() != eh->twin())
       {
-        if (crossed_edges.count (eh->next()) == 0)
-        {
-          crossed_edges.insert (eh->next());
-          crossed_edges.insert (eh->next()->twin());
-          return _walk_from_vertex (eh->target(), p, crossed_edges);
-        }
+        // the assemption is that each edge is crossed at most twice
+        CGAL_assertion_msg (crossed_edges.count (eh->next()) < 2,
+          "crossed_edges should contain each halfedge at most twice.");
+        crossed_edges.insert (eh->next());
+        crossed_edges.insert (eh->next()->twin());
+        return _walk_from_vertex (eh->target(), p, crossed_edges);
       }
     }
   }
@@ -524,6 +551,8 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
   bool                           is_on_edge;
   bool                           is_target;
   bool                           cv_is_contained_in_seg;
+  Vertex_const_handle            new_vertex;
+  const Vertex_const_handle      invalid_vertex;
 
   do
   {
@@ -538,11 +567,9 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
       for (inner_ccb_iter = face->inner_ccbs_begin();
            inner_ccb_iter != face->inner_ccbs_end(); ++inner_ccb_iter)
       {
-        he = _intersection_with_ccb (*inner_ccb_iter,
-                                     seg, p, p_is_left,
-                                     crossed_edges,
-                                     is_on_edge, is_target,
-                                     cv_is_contained_in_seg);
+        he = _intersection_with_ccb (*inner_ccb_iter,seg, p, p_is_left,
+                                     crossed_edges,is_on_edge, is_target,
+                                     cv_is_contained_in_seg,new_vertex);
         if (he == invalid_he && cv_is_contained_in_seg)
         {
           return _deal_with_curve_contained_in_segment (*inner_ccb_iter,
@@ -556,7 +583,11 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
             return (CGAL::make_object (he->target()));
           else if (is_on_edge)
             return (CGAL::make_object (he));
-
+          if (new_vertex != invalid_vertex)
+          {
+            // if we got here it means that a closer vertex then np was found
+            return (_walk_from_vertex(new_vertex, p, crossed_edges));
+          }
           // Otherwise, cross over he to the incident face of its twin.
           if (face != he->twin()->face())
           {
@@ -582,11 +613,9 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
       for (outer_ccb_iter = face->outer_ccbs_begin();
            outer_ccb_iter != face->outer_ccbs_end(); ++outer_ccb_iter)
       {
-        he = _intersection_with_ccb (*outer_ccb_iter,
-                                     seg, p, p_is_left,
-                                     crossed_edges,
-                                     is_on_edge, is_target,
-                                     cv_is_contained_in_seg);
+        he = _intersection_with_ccb (*outer_ccb_iter,seg, p, p_is_left,
+                                     crossed_edges,is_on_edge, is_target,
+                                     cv_is_contained_in_seg,new_vertex);
         if (he == invalid_he && cv_is_contained_in_seg)
         {
           return _deal_with_curve_contained_in_segment (*outer_ccb_iter,
@@ -600,7 +629,11 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_face
             return (CGAL::make_object (he->target()));
           else if (is_on_edge)
             return (CGAL::make_object (he));
-
+          if (new_vertex != invalid_vertex)
+          {
+            // if we got here it means that a closer vertex then np was found
+            return (_walk_from_vertex(new_vertex, p, crossed_edges));
+          }
           // Otherwise, cross over he to the incident face of its twin.
           if (face != he->twin()->face())
           {
@@ -634,7 +667,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
      const Point_2& p, bool p_is_left,
      Halfedge_set& crossed_edges,
      bool& is_on_edge, bool& is_target,
-     bool& cv_is_contained_in_seg) const
+     bool& cv_is_contained_in_seg,Vertex_const_handle & new_vertex) const
 {
   is_on_edge = false;
   is_target = false;
@@ -703,45 +736,33 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       if ((!curr->target()->is_at_infinity()) && 
             is_in_x_range(seg , curr->target()->point() ))
       {
-        // if the target point of curr is located on seg then we insert
-        // the successor of curr and its twin to crossed_edges
+        // if the target point of curr is located on seg
+        // we should walk from it to the query point
         if (m_traits->compare_y_at_x_2_object()
              (curr->target()->point() , seg) == EQUAL)
         {
-          temp_circ=curr;
-          ++temp_circ;
-          if (crossed_edges.count (temp_circ) == 0)
-          {
-            crossed_edges.insert (temp_circ);
-            crossed_edges.insert (temp_circ->twin());
-          }
+          new_vertex = curr->target();
         }
       }
       else if ((!curr->source()->is_at_infinity()) &&
                  is_in_x_range(seg , curr->source()->point() ))
       {
-        // if the source point of curr is located on seg then we insert
-        // the predecessor of curr and its twin to crossed_edges
+        // if the source point of curr is located on seg
+        // we should walk from it to the query point
         if (m_traits->compare_y_at_x_2_object() 
              (curr->source()->point() , seg) == EQUAL)
         {
-          temp_circ=curr;
-          --temp_circ;
-          if (crossed_edges.count (temp_circ) == 0)
-          {
-            crossed_edges.insert (temp_circ);
-            crossed_edges.insert (temp_circ->twin());
-          }
+          new_vertex = curr->source();
         }
       }
 
       // Return the halfedge we found, and mark that we have already crossed
       // it (as well as its twin).
-      if (crossed_edges.count (he) == 0)
-      {
-        crossed_edges.insert (he);
-        crossed_edges.insert (he->twin());
-      }
+      // the assemption is that each edge is crossed at most twice
+      CGAL_assertion_msg (crossed_edges.count (he) < 2,
+        "crossed_edges should contain each halfedge at most twice.");
+      crossed_edges.insert (he);
+      crossed_edges.insert (he->twin());
       return (he);
     }
     else if (cv_and_seg_overlap || cv_is_contained_in_seg)
@@ -751,11 +772,11 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       if (cv_is_contained_in_seg)
       {
         // cv is contained in seg, obviously we crossed it
-        if (crossed_edges.count (he) == 0)
-        {
-          crossed_edges.insert (he);
-          crossed_edges.insert (he->twin());
-        }
+        // the assemption is that each edge is crossed at most twice
+        CGAL_assertion_msg (crossed_edges.count (he) < 2,
+          "crossed_edges should contain each halfedge at most twice.");
+        crossed_edges.insert (he);
+        crossed_edges.insert (he->twin());
         return (invalid_he);
       }
       if (is_on_edge)
@@ -781,11 +802,11 @@ Arr_landmarks_point_location<Arr, Gen>::_in_case_p_is_on_edge
      const Point_2 & p, bool & is_target) const
 {
   // cv and seg overlap, obviously we crossed it
-  if (crossed_edges.count (he) == 0)
-  {
-    crossed_edges.insert (he);
-    crossed_edges.insert (he->twin());
-  }
+  // the assemption is that each edge is crossed at most twice
+  CGAL_assertion_msg (crossed_edges.count (he) < 2,
+    "crossed_edges should contain each halfedge at most twice.");
+  crossed_edges.insert (he);
+  crossed_edges.insert (he->twin());
   // Check if p equals one of the edge end-vertices.
   if (! he->target()->is_at_infinity() &&
       m_traits->compare_xy_2_object() (he->target()->point(), p) == EQUAL)

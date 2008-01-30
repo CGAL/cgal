@@ -480,6 +480,7 @@ bool test(const char* curves_filename, const char* points_filename)
     std::cout << "ERROR in check_point_location."<<std::endl<<std::endl;
     return (false);
   }
+  std::cout << std::endl;
   return (true);
 }
 
