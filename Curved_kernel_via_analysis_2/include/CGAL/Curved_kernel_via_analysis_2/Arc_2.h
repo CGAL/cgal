@@ -73,8 +73,7 @@ public:
     // default constructor
     Arc_2_rep() : 
         _m_arcno(-1), _m_arcno_min(-1), _m_arcno_max(-1), 
-        _m_is_vertical(false),
-        _m_ckva(NULL) {  
+        _m_is_vertical(false) {
     }
     // copy constructor
     Arc_2_rep(const Self& s):
@@ -83,9 +82,7 @@ public:
         _m_arcno(s._m_arcno), 
         _m_arcno_min(s._m_arcno_min), 
         _m_arcno_max(s._m_arcno_max),
-        _m_is_vertical(s._m_is_vertical),
-        _m_ckva(s._m_ckva)
-    {
+        _m_is_vertical(s._m_is_vertical) {
     }
     
 
@@ -96,8 +93,8 @@ public:
         _m_min(p), _m_max(q),
         _m_support(c),
         _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
-        _m_is_vertical(is_vertical),
-        _m_ckva(NULL) {
+        _m_is_vertical(is_vertical) {
+
         // set end-point arcnos from segment's interior
         if(_m_arcno_min == -1)
             _m_arcno_min = _m_arcno;
@@ -124,10 +121,6 @@ public:
 
     // stores boundary value in x-range of non-vertical interval
     mutable boost::optional< Boundary > _m_boundary_in_interval;
-
-    // pointer to underlying ckva
-    mutable Curved_kernel_via_analysis_2 *_m_ckva;
-
 
     // caches
 #if 0
@@ -263,7 +256,6 @@ public:
                 rebind< New_curved_kernel_via_analysis_2, 
                 typename Rebound_arc_2::Point_2::Rep > rebind;
             
-
             if (arc.is_finite(CGAL::ARR_MIN_END)) {
                 newrep._m_min = origin;
                 newrep._m_max = rebind(arc._maxpoint());
@@ -318,11 +310,7 @@ public:
 
             newrep._m_boundary_in_interval = 
                 arc.ptr()->_m_boundary_in_interval;
-            
-            // pointer to underlying ckva
-            //mutable Curved_kernel_via_analysis_2 *_m_ckva;
         }
-
     };
 
 public:
