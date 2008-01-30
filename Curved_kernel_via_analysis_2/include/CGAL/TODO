@@ -1,15 +1,10 @@
-Tuesday (Arc-Day)
-
 ==============================================================================
 // TODO put all functionality into functors and make the other private
    members static and functors friend
 
-* Virtualize members
+- Missing functor: Is_in_x_range
 
-* Other Functors
-- Is_in_x_range
-
-- Correctness of Is_bounded 
+- Correctness of Is_bounded (also for torus?)
 
 - Correctness of same_arc_compare_xy (also for QdX-case)
 
@@ -20,23 +15,12 @@ Tuesday (Arc-Day)
 
 - Construct_point_2 does not take surface as input, as ref surface is given
 
-- New Make_x_monotone_2 for qdx
-
-- Rewrite Intersect and other predicates for QdX (virtualization)
-
 - TODO: remove mult in Intersect for QdX as it might does not make sense?
-
-- check collaboration with planar version
 
 
 ==============================================================================
 // TODO Tuning
 
-* Check what to do with some Point_2 + Arc_2 ctors
-
 * Re-Introduce caches (not with "int")
 
-==============================================================================
-// TODO Questions
 
-* remove Arc_base?
