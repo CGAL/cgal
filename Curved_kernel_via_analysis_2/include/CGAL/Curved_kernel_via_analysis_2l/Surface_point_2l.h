@@ -220,7 +220,7 @@ public:
     //!\name Comparisons
     //!@{
     
-    // TODO compare_xyz (eriC)
+    // FUTURE TODO compare_xyz (eriC)
     
     //!@}
 

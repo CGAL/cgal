@@ -479,6 +479,8 @@ public:
 // FUTURE TODO a surface can have a vertical plane here over the arc_2
 // -> Surface_patch_2l{};
 
+// TODO operator<< (Pavel)
+
 
 } // namespace CGALi
 
