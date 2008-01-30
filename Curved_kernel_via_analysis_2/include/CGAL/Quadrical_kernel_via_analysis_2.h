@@ -83,7 +83,7 @@ public:
     //!@}
 
 protected:
-    // TODO make use of approx
+
     //! double approxximation
     boost::optional< QdX::Gfx_point_3 > _m_gfx_point;
     
