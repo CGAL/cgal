@@ -100,7 +100,6 @@ struct Make_x_monotone_2 :
     template <class OutputIterator>
     OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi) {
 
-        // TODO might be a problem with CK_2l??? (eriC)
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
         // use CGAL::Total_degree ?
@@ -243,7 +242,6 @@ private:
             X_coordinate_1 x, std::vector<Point_2> pts, 
             OutputIterator oi) const {
         
-        // TODO might be a problem with CK_2l??? (eriC)
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
         
@@ -282,6 +280,7 @@ private:
             
     //! pointer to \c Curved_kernel_via_analysis_2 
     Curved_kernel_via_analysis_2 *_m_curved_kernel;
+
     //! to avoid passing curve as a parameter
     Curve_analysis_2 _m_curve;
     
