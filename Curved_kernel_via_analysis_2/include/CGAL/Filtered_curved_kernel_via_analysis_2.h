@@ -474,7 +474,7 @@ public:
                                          std::back_inserter(boxes2));
         
         if (!boxes1.empty() && !boxes2.empty()) {
-            // TODO better strategy than quadratic pair of for-loops
+            // TODO better strategy than quadratic pair of for-loops (MK)
             for (typename std::list< CGAL::Bbox_2 >::const_iterator bit1 =
                      boxes1.begin(); bit1 != boxes1.end(); bit1++) {
                 for (typename std::list< CGAL::Bbox_2 >::const_iterator bit2 =
@@ -575,7 +575,7 @@ public:
         CKvA_CERR("\nconstruct_covering_approximation; arc: " << arc 
              << ";\n cv:" << arc << "\n");
 
-        // TODO use cache for this construction
+        // TODO use cache for this construction (MK)
 
         double x_min, x_max, y_min, y_max;
         boost::optional<X_coordinate_1> left, right;
@@ -868,7 +868,7 @@ public:
 // returning an instance of this functor
 #define CGAL_FILTERED_CKvA_2_functor_pred(Y, Z) \
     typedef CGALi::Filtered_curved_kernel_via_analysis_2_Functors::Y<Self> Y; \
-    Y Z() const { return Y((Filtered_curved_kernel_via_analysis_2 *)this); }
+    Y Z() const { return Y(&Self::instance()); }
 
 #define CGAL_FILTERED_CKvA_2_functor_cons(Y, Z) \
     CGAL_FILTERED_CKvA_2_functor_pred(Y, Z)
