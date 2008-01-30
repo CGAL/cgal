@@ -877,14 +877,15 @@ relocate_in_new_face (Halfedge_handle he)
       }
       else
       {
-        // If necessary, move the hole that the halafedge belongs to into the
+        // If necessary, move the hole that the halfedge belongs to into the
         // new face.
-        if (he_on_face->twin()->face() != new_face)
+        if (he_on_face->twin()->face() != new_face &&
+            he_on_face->twin()->is_on_inner_ccb())
         {
           m_arr_access.move_inner_ccb (he_on_face->twin()->face(),
                                        new_face,
                                        he_on_face->twin()->ccb());
-
+          
           // Perform the relocation process recursively: Namely all holes
           // and isolated vertices that "see" he_on_face from above should also
           // be located inside the new face.
