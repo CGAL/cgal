@@ -166,7 +166,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_vertex
                        (next_iter->direction() == ARR_RIGHT_TO_LEFT),
                        vp, eq_curr_iter, eq_next_iter))
     {
-      // the assemption is that each edge is crossed at most twice
+      // the assumption is that each edge is crossed at most twice
       CGAL_assertion_msg (crossed_edges.count (curr_iter) < 2,
         "crossed_edges should contain each halfedge at most twice.");
       CGAL_assertion_msg (crossed_edges.count (next_iter) < 2,
@@ -370,7 +370,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
 
   // Create an initial set of edges that have been crossed, which currently
   // contains only the halfedge we are currently on (and its twin).
-  // the assemption is that each edge is crossed at most twice
+  // the assumption is that each edge is crossed at most twice
   CGAL_assertion_msg (crossed_edges.count (eh) < 2,
     "crossed_edges should contain each halfedge at most twice.");
   crossed_edges.insert (eh);
@@ -394,7 +394,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
       if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL
           && eh->prev() != eh->twin())
       {
-        // the assemption is that each edge is crossed at most twice
+        // the assumption is that each edge is crossed at most twice
         CGAL_assertion_msg (crossed_edges.count (eh->prev()) < 2,
           "crossed_edges should contain each halfedge at most twice.");
         crossed_edges.insert (eh->prev());
@@ -419,7 +419,7 @@ Object Arr_landmarks_point_location<Arr, Gen>::_walk_from_edge
       if (m_traits->compare_y_at_x_2_object()(temp_p, seg) == EQUAL
           && eh->next() != eh->twin())
       {
-        // the assemption is that each edge is crossed at most twice
+        // the assumption is that each edge is crossed at most twice
         CGAL_assertion_msg (crossed_edges.count (eh->next()) < 2,
           "crossed_edges should contain each halfedge at most twice.");
         crossed_edges.insert (eh->next());
@@ -758,7 +758,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
 
       // Return the halfedge we found, and mark that we have already crossed
       // it (as well as its twin).
-      // the assemption is that each edge is crossed at most twice
+      // the assumption is that each edge is crossed at most twice
       CGAL_assertion_msg (crossed_edges.count (he) < 2,
         "crossed_edges should contain each halfedge at most twice.");
       crossed_edges.insert (he);
@@ -772,7 +772,7 @@ Arr_landmarks_point_location<Arr, Gen>::_intersection_with_ccb
       if (cv_is_contained_in_seg)
       {
         // cv is contained in seg, obviously we crossed it
-        // the assemption is that each edge is crossed at most twice
+        // the assumption is that each edge is crossed at most twice
         CGAL_assertion_msg (crossed_edges.count (he) < 2,
           "crossed_edges should contain each halfedge at most twice.");
         crossed_edges.insert (he);
@@ -802,7 +802,7 @@ Arr_landmarks_point_location<Arr, Gen>::_in_case_p_is_on_edge
      const Point_2 & p, bool & is_target) const
 {
   // cv and seg overlap, obviously we crossed it
-  // the assemption is that each edge is crossed at most twice
+  // the assumption is that each edge is crossed at most twice
   CGAL_assertion_msg (crossed_edges.count (he) < 2,
     "crossed_edges should contain each halfedge at most twice.");
   crossed_edges.insert (he);
