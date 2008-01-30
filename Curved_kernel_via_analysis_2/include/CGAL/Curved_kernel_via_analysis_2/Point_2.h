@@ -194,6 +194,8 @@ public:
             New_rep newrep;
             newrep._m_xy = pt.ptr()->_m_xy;
             newrep._m_x = pt.ptr()->_m_x;
+            newrep._m_curve = pt.ptr()->_m_curve;
+            newrep._m_arcno = pt.ptr()->_m_arcno;
             newrep._m_location = pt.ptr()->_m_location;
             return Rebound_point_2(newrep);
         }
