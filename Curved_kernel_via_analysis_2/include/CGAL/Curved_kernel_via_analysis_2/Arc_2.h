@@ -105,15 +105,6 @@ public:
             _m_arcno_max = _m_arcno;
     }
 
-    void fix_reps() const {
-        if (_m_min._arc_rep() == NULL) {
-            _m_min._add_ref(this);
-        }
-        if (_m_max._arc_rep() == NULL) {
-            _m_max._add_ref(this);
-        }
-    }
-       
     // source and target end-points of a segment
     mutable Point_2 _m_min, _m_max;
 
@@ -285,12 +276,6 @@ public:
             
             Rebound_arc_2 newarc(newrep);
             
-            if (arc.is_finite(CGAL::ARR_MIN_END)) {
-                newarc._maxpoint()._add_ref(newarc.ptr());
-            } else {
-                newarc._minpoint()._add_ref(newarc.ptr());
-            }
-            
             return newarc;
         }
         
@@ -313,8 +298,6 @@ public:
             newrep._m_max = rebind(arc._maxpoint());
 
             Rebound_arc_2 newarc(newrep);
-            newarc._minpoint()._add_ref(newarc.ptr());
-            newarc._maxpoint()._add_ref(newarc.ptr());
             
             return newarc;
         }
@@ -399,7 +382,7 @@ public:
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
           const Curve_analysis_2& c, int arcno, int arcno_o) :
-        Base(Rep(origin, Point_2(inf_end), c, arcno, arcno_o)) {
+        Base(Rep(origin, Point_2(inf_end, c, arcno), c, arcno, arcno_o)) {
         
         CGAL_precondition(arcno >= 0 && arcno_o >= 0);
         // check end-points arcnos validity and coprimality condition
@@ -407,13 +390,6 @@ public:
 
         _check_pt_arcno_and_coprimality(origin, arcno_o, c);
         _fix_curve_ends_order(); // lexicographical order of curve ends
-
-        // while order is not fixed yet we can access end-points directly
-        if (inf_end == CGAL::ARR_MAX_END) {
-            _maxpoint()._add_ref(this->ptr());
-        } else {
-            _minpoint()._add_ref(this->ptr());
-        }
     }
     
     /*!\brief
@@ -428,7 +404,7 @@ public:
     Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
           CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno,
           int arcno_o) :
-        Base(Rep(origin, Point_2(asympt_x, inf_end), c, arcno, arcno_o)) {
+        Base(Rep(origin, Point_2(asympt_x, c, inf_end), c, arcno, arcno_o)) {
         
         CGAL_precondition(
                 Curved_kernel_via_analysis_2::instance().
@@ -438,9 +414,6 @@ public:
         _check_pt_arcno_and_coprimality(origin, arcno_o, c);
 
         _fix_curve_ends_order(); // lexicographical order of curve ends
-
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
     }
 
     /*!\brief
@@ -448,14 +421,11 @@ public:
      * with \c arcno (branch I)
      */
     Arc_2(const Curve_analysis_2& c, int arcno) :
-        Base(Rep(Point_2(CGAL::ARR_MIN_END),
-                 Point_2(CGAL::ARR_MAX_END), c, arcno)) {
+        Base(Rep(Point_2(CGAL::ARR_MIN_END, c, arcno),
+                 Point_2(CGAL::ARR_MAX_END, c, arcno), c, arcno)) {
 
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order(); 
-
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
     }
     
     /*!\brief
@@ -470,7 +440,8 @@ public:
           const X_coordinate_1& asympt_x2, 
           CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
           const Curve_analysis_2& c, int arcno) :
-        Base(Rep(Point_2(asympt_x1, inf_end1), Point_2(asympt_x2, inf_end2),
+        Base(Rep(Point_2(asympt_x1, c, inf_end1), 
+                 Point_2(asympt_x2, c, inf_end2),
                  c, arcno)) {
 
         CGAL_precondition(
@@ -479,9 +450,6 @@ public:
                 != CGAL::EQUAL);
         CGAL_precondition(arcno >= 0);
         _fix_curve_ends_order();
-        
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
     }
     
     /*!\brief
@@ -494,13 +462,11 @@ public:
      */
     Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
           CGAL::Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno) :
-        Base(Rep(Point_2(inf_endx), Point_2(asympt_x, inf_endy), c, arcno)) {
+        Base(Rep(Point_2(inf_endx, c, arcno), 
+                 Point_2(asympt_x, c, inf_endy), c, arcno)) {
         
         CGAL_precondition(arcno >= 0); 
         _fix_curve_ends_order();
-
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
     }
     
     //!@}
@@ -536,17 +502,12 @@ public:
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
           const Curve_analysis_2& c) :
-        Base(Rep(origin, Point_2(origin.x(), inf_end), c, -1, -1, -1, true)) {
+        Base(Rep(origin, Point_2(origin.x(), c, inf_end), 
+                 c, -1, -1, -1, true)) {
         
         // check coprimality condition for supporting curves
         _check_pt_arcno_and_coprimality(origin, -1, c);
         _fix_curve_ends_order();
-
-        if (inf_end == CGAL::ARR_MAX_END) {
-            _maxpoint()._add_ref(this->ptr());
-        } else {
-            _minpoint()._add_ref(this->ptr());
-        }
     }
     
     /*!\brief
@@ -556,13 +517,10 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2(const X_coordinate_1& x, const Curve_analysis_2& c) :
-        Base(Rep(Point_2(x, CGAL::ARR_MIN_END), 
-                 Point_2(x, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
+        Base(Rep(Point_2(x, c, CGAL::ARR_MIN_END), 
+                 Point_2(x, c, CGAL::ARR_MAX_END), c, -1, -1, -1, true)) {
         
         _fix_curve_ends_order();
-        
-        _minpoint()._add_ref(this->ptr());
-        _maxpoint()._add_ref(this->ptr());
     }
    
     //!@}
@@ -576,7 +534,6 @@ protected:
      */
     Arc_2(Rep rep) : 
         Base(rep) { 
-        this->ptr()->fix_reps();
     }
     
     //!@}
