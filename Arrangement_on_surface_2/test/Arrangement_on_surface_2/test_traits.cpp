@@ -49,9 +49,8 @@ int main (int argc, char * argv[])
 
 #if TEST_TRAITS == CORE_CONIC_TRAITS || \
     TEST_TRAITS == RATIONAL_ARC_TRAITS
-/*    TEST_TRAITS == BEZIER_TRAITS || \ */
 
-// bezier traits, conic traits and rational traits use same number 
+// conic traits and rational traits use same number 
 // type CORE:Expr so this code can be shared
 
 /*! Read a point */
@@ -83,7 +82,6 @@ read_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y, z;
   is >> x >> y >> z;
-  //std::cout << "x " << x << " y " << y << " z " << z << std::endl;
   p = Point_2(x, y, z);
   return true;
 }
@@ -774,7 +772,6 @@ read_point(stream & is, Point_2 & p)
 {
   Rational rat_x,rat_y;
   is >> rat_x >> rat_y;
-  //Basic_number_type x(rat_x), y(rat_y);
   p = Point_2(rat_x, rat_y);
   return true;
 }

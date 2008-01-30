@@ -58,15 +58,14 @@ private:
   unsigned int get_expected_enum(std::istringstream & str_stream);
   bool translate_boolean(std::string & str_value);
   unsigned int translate_enumerator(std::string & str_value);
-  std::pair<Enum_type,unsigned int> translate_int_or_text(std::string & str_value);//Enum_type
-  std::pair<Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);//Enum_type
+  std::pair<Enum_type,unsigned int> translate_int_or_text(std::string & str_value);
+  std::pair<Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);
 
   bool compare_points(const Point_2 & exp_answer, const Point_2 & real_answer,
                const char * str = "result")
   {
     typename Traits::Equal_2 equal = m_traits.equal_2_object();
     if (!(equal (exp_answer, real_answer))) {
-    //if (!(m_traits.equal_2_object() (exp_answer, real_answer))) {
       if (!end_of_line_printed) print_end_of_line();
       std::cout << "Expected " << str << ": " << exp_answer << std::endl
                 << "Obtained " << str << ": " << real_answer << std::endl;
@@ -541,8 +540,6 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
     }
-    /*if (!test_result)
-    std::cout << "bug" << std::endl;*/
     counter++;
     std::cout << "iter number : " << counter << std::endl;
     Wrapper_iter wi = m_wrappers.find(str_command);
@@ -560,17 +557,14 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
       {
         test_result=false;
       }
-      // else
+      //true for more information, and false for less
+      bool display_all_violation_info=true;
+      if (display_all_violation_info)
       {
-         //true for more information, and false for less
-         bool display_all_violation_info=true;
-         if (display_all_violation_info)
-         {
-            std::cout << "library " << e.library() << std::endl;
-            std::cout << "filename " << e.filename() << std::endl;
-            std::cout << "line_number " << e.line_number() << std::endl;
-            std::cout << "expression " << e.expression() << std::endl;
-         }
+        std::cout << "library " << e.library() << std::endl;
+        std::cout << "filename " << e.filename() << std::endl;
+        std::cout << "line_number " << e.line_number() << std::endl;
+        std::cout << "expression " << e.expression() << std::endl;
       }
       switch ( e_t )
       {
@@ -931,7 +925,8 @@ parameter_space_x_wrapper_imp (std::istringstream & str_stream,
   std::cout << (exp_answer==CGAL::ARR_LEFT_BOUNDARY?"LEFT_BOUNDARY":
                (exp_answer==CGAL::ARR_RIGHT_BOUNDARY?"RIGHT_BOUNDARY":
                (exp_answer==CGAL::ARR_BOTTOM_BOUNDARY?"BOTTOM_BOUNDARY":
-               (exp_answer==CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR")))) << " ";
+               (exp_answer==CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR"
+                )))) << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -985,7 +980,8 @@ parameter_space_y_wrapper_imp (std::istringstream & str_stream,
   std::cout << (exp_answer==CGAL::ARR_LEFT_BOUNDARY?"LEFT_BOUNDARY":
                (exp_answer==CGAL::ARR_RIGHT_BOUNDARY?"RIGHT_BOUNDARY":
                (exp_answer==CGAL::ARR_BOTTOM_BOUNDARY?"BOTTOM_BOUNDARY":
-               (exp_answer==CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR")))) << " ";
+               (exp_answer==CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR"
+                )))) << " ";
   return compare_and_print(exp_answer, real_answer);
 }
 
@@ -1099,8 +1095,6 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream & str_stream)
   str_stream >> id;
   bool exp_answer = get_expected_boolean(str_stream);
   bool real_answer = m_traits.is_vertical_2_object()(m_xcurves[id]);
-/*  std::cout << "id " << id << (exp_answer?" exp_answer true ":" exp_answer false ")
-            << (real_answer?" real_answer true ":" real_answer false ") << std::endl;*/
   did_violation_occur();
   std::cout << "Test: is_vertical( " << m_xcurves[id]
             << " ) ? ";
@@ -1152,7 +1146,6 @@ Traits_test<T_Traits>::
 compare_y_at_x_left_wrapper_imp(std::istringstream & ,
                                 CGAL::Tag_false)
 {
-//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   CGAL_error();
   return false;
 }
@@ -1462,7 +1455,6 @@ bool
 Traits_test<T_Traits>::
 are_mergeable_wrapper_imp(std::istringstream & , CGAL::Tag_false)
 {
-//  std::istringstream dummy_stream = str_stream; //to avoid warnings of unused variable
   CGAL_error();
   return false;
 }
@@ -1498,7 +1490,6 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & ,
                                               CGAL::Tag_false)
 {
-//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   CGAL_error();
   return false;
 }
@@ -1537,7 +1528,6 @@ template <class T_Traits>
 bool
 Traits_test<T_Traits>::approximate_wrapper(std::istringstream & )
 {
-//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 
@@ -1548,7 +1538,6 @@ template <class T_Traits>
 bool Traits_test<T_Traits>::
 construct_x_monotone_curve_wrapper(std::istringstream & )
 {
-//  std::istringstream dummy_stream(str_stream); //to avoid warnings of unused variable
   return false;
 }
 

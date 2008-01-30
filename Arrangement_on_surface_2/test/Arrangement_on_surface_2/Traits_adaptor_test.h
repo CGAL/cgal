@@ -705,6 +705,7 @@ bool Traits_adaptor_test<T_Traits>::ta_is_between_cw_wrapper
                                              (std::istringstream & str_stream)
 {
   unsigned int xcv , b , xcv1 , b1 , xcv2 , b2 , p;
+  //note that b_ref1 b_ref2 are outputs so they can be tested also
   bool b_ref1,b_ref2;
   str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
   bool exp_answer = get_expected_boolean(str_stream) ;

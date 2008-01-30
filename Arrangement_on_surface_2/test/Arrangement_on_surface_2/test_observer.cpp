@@ -14,6 +14,14 @@
 #include <string>
 #include <vector>
 
+/*
+ this program gets a text file that contains operation on an arrangement
+ such as inserting and removing curves and points. each operation invokes
+ some notifications which compare the expected notification from the input
+ file and the actual notification. it is very important to keep the right
+ order of notification in order to pass the test.
+*/
+
 int ok;
 std::ifstream global_input_file;
 char one_line[128];
@@ -32,7 +40,7 @@ void skip_comments(std::ifstream & is, char * line)
     is.getline(line, 128);
     if (line[0] != '#') break;
   }
-}	    
+}
 
 void compare_results(std::string str)
 {
@@ -49,12 +57,12 @@ void compare_results(std::string str)
 
 // An arrangement observer, used to receive notifications of face splits and
 // face mergers.
-class My_observer : public CGAL::Arr_observer<Arrangement_2>
+class Test_observer : public CGAL::Arr_observer<Arrangement_2>
 {
 
 public:
 
-  My_observer (Arrangement_2& arr) :
+  Test_observer (Arrangement_2& arr) :
     CGAL::Arr_observer<Arrangement_2> (arr)
   {}
 
@@ -711,7 +719,7 @@ int main (int argc, char * argv[])
     Arrangement_2  arr;
     global_input_file.open(argv[1]);
     CGAL_assertion(global_input_file.is_open());
-    My_observer    obs (arr);
+    Test_observer    obs (arr);
     Point_2 p;
     Segment_2 s;
     int i_vh,i_heh;
@@ -732,34 +740,34 @@ int main (int argc, char * argv[])
         str_stream >> s;
         if (c=='i')
         {
-          //insert intersecting segment
+          // si means insert intersecting segment
           insert(arr,s);
           std::cout << "intersecting segment insert " << s << std::endl;
         }
         else if (c=='n')
         {
-          //insert non intersecting segment
+          // sn means insert non intersecting segment
           heh_vec.push_back(insert_non_intersecting_curve (arr, s));
           std::cout << "non intersecting segment insert " << s << std::endl;
         }
       }
       else if (c=='p')
       {
-        //read point
+        // p means read point
         str_stream >> p ;
         std::cout << "point insert " << p << " index " << vh_vec.size() << std::endl;
         vh_vec.push_back(insert_point(arr,p));
       }
       else if (c=='e')
       {
-        //read edge index
+        // e means read edge index to be removed
         str_stream >> i_heh ;
         std::cout << "remove edge " << heh_vec[i_heh]->curve() << std::endl;
         remove_edge(arr,heh_vec[i_heh]);
       }
       else if (c=='v')
       {
-        //read point index
+        // v means read point index to be removed
         str_stream >> i_vh ;
         std::cout << "remove point " << vh_vec[i_vh]->point() << std::endl;
         remove_vertex(arr,vh_vec[i_vh]);

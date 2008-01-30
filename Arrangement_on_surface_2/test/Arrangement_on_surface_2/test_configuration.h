@@ -6,6 +6,8 @@
  *
  */
 
+//note that these values shloud match to the values in cgal_test script
+
 #define DOUBLE_NT                       0
 #define MP_FLOAT_NT                     1
 #define GMPZ_NT                         2

@@ -46,7 +46,6 @@ read_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y, z;
   is >> x >> y >> z;
-  //std::cout << "x " << x << " y " << y << " z " << z << std::endl;
   p = Point_2(x, y, z);
   return true;
 }

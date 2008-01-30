@@ -18,6 +18,8 @@ FULL_ERROR_DESCRIPTION_FILE=ProgramOutput.error.txt
 #                    compile_and_run <target>
 #---------------------------------------------------------------------#
 
+# note that these values shloud match to the values in test_configuration.h file
+
 CARTESIAN_KERNEL=0
 SIMPLE_CARTESIAN_KERNEL=1
 
@@ -210,8 +212,15 @@ compile_and_run_trapped_test()
 execute_commands_old_structure()
 {
 
+# at first the tests where designed in such way that all the test input was
+# in one file, the points, the xcurves, the curves and the execution block
+# this function is used to execute the old tests, one may use it when needed
+# but you should remember that separating the input into smaller files creates
+# much more modular and comfortable test suite
+
 # the old structure is default, so this function executes all commands
 # except the commands that are given as arguments
+
 
   commands_indicator[COMPARE]=1
   commands_indicator[VERTEX]=1
@@ -316,6 +325,10 @@ execute_commands_old_structure()
 
 execute_commands_new_structure()
 {
+
+# the new design for the tests includes separation of the test input into 4
+# parts: points file, xcurves file, curves file and execution block file.
+# one may reuse the input files for the various tests
 
 # the new structure is not default, so this function executes only
 # commands that are given as arguments
@@ -449,59 +462,73 @@ execute_commands_traits_adaptor()
 
   if [ ${commands_indicator[$BOUNDARY_NEAR_X]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/boundary_near_x $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/boundary_near_x $2
   fi
   if [ ${commands_indicator[$BOUNDARY_NEAR_Y]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/boundary_near_y $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/boundary_near_y $2
   fi
   if [ ${commands_indicator[$PARAMETER_SPACE_X]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/parameter_space_x $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/parameter_space_x $2
   fi
   if [ ${commands_indicator[$PARAMETER_SPACE_Y]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/parameter_space_y $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/parameter_space_y $2
   fi
   if [ ${commands_indicator[$COMPARE_Y_AT_X_LEFT]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/compare_y_at_x_left $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/compare_y_at_x_left $2
   fi
   if [ ${commands_indicator[$ARE_MERGEABLE]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/are_mergeable $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/are_mergeable $2
   fi
   if [ ${commands_indicator[$MERGE]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/merge $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/merge $2
   fi
   if [ ${commands_indicator[X_ON_IDENTIFICATION]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/x_on_idintification $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/x_on_idintification $2
   fi
   if [ ${commands_indicator[Y_ON_IDENTIFICATION]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/x_on_idintification $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/x_on_idintification $2
   fi
   if [ ${commands_indicator[IS_BOUNDED]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/is_bounded $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/is_bounded $2
   fi
   if [ ${commands_indicator[IS_IN_X_RANGE]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/is_in_x_range $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/is_in_x_range $2
   fi
   if [ ${commands_indicator[COMPARE_Y_POSITION]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/compare_y_position $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/compare_y_position $2
   fi
   if [ ${commands_indicator[IS_BETWEEN_CW]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/is_between_cw $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/is_between_cw $2
   fi
   if [ ${commands_indicator[COMPARE_CW_AROUND_POINT]} -ne 0 ] ; then
     run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves data/test_adaptor/$1/compare_cw_around_point $2
+    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+    data/test_adaptor/$1/compare_cw_around_point $2
   fi
 }
 
@@ -823,12 +850,6 @@ test_bezier_traits()
     execute_commands_old_structure bezier bezier_traits \
     COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
     BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR ERRORS ARE_MERGEABLE
-    # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_left bezier_traits
-    # !no such file! run_trapped_test test_traits data/bezier/compare_y_at_x_right bezier_traits
-    # !need to think! run_trapped_test test_traits data/bezier/split bezier_traits
-    #run_trapped_test test_traits data/bezier/merge bezier_traits
-    #run_trapped_test test_traits data/bezier/errors bezier_traits
-    # !no such file! run_trapped_test test_traits data/bezier/constructor bezier_traits
   fi
   clean_tests
 }
@@ -940,8 +961,6 @@ fi
 #if any error occured then appened the the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
-  echo "********************************************************" >> $ERRORFILE
-  echo "************* FULL ERROR DESCRIPTION FILE **************" >> $ERRORFILE
-  echo "********************************************************" >> $ERRORFILE
+  echo "******************** appending all error outputs ********************" >> $ERRORFILE
   cat $FULL_ERROR_DESCRIPTION_FILE >> $ERRORFILE
 fi
