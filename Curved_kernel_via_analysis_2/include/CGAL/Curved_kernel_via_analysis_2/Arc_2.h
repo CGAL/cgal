@@ -1466,8 +1466,8 @@ protected:
     //!
     //! must be called once from constructor
     void _fix_curve_ends_order() {
-        CGAL::Comparison_result res = _same_arc_compare_xy(_minpoint(), 
-            _maxpoint());
+        CGAL::Comparison_result res = 
+            _same_arc_compare_xy(_minpoint(), _maxpoint());
         // curve ends cannot be identical
         CGAL_precondition(res != CGAL::EQUAL);
         if(res == CGAL::LARGER) { // swap curve ends and corresponding arcnos
@@ -1567,7 +1567,7 @@ protected:
             }
             return;
         }
-                
+
         typename Curve_analysis_2::Status_line_1 src_line, tgt_line,
             tmp;
         bool inf_src = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY),
@@ -1721,51 +1721,80 @@ protected:
             const Point_2& q, 
             bool equal_x = false, 
             bool only_x = false) const {
+
+        //std::cout << "p: " << p << std::endl;
+        //std::cout << "q: " << q << std::endl;
+        
+        CGAL::Comparison_result res;
+        
         if (p.is_identical(q)) {
-            return CGAL::EQUAL;
+            res = CGAL::EQUAL;
+            return res;
         }
+        
         CGAL::Arr_parameter_space locp = p.location(), locq = q.location();
         if (!equal_x || only_x) {
-            CGAL::Comparison_result res;
           
             if (!p.is_on_left_right() && !q.is_on_left_right()) {
                 // both xs are finite: require x-comparisons
                 res = Curved_kernel_via_analysis_2::instance().
                     compare_x_2_object()(p, q);
                 if (res != CGAL::EQUAL) {
+                    //std::cout << "res1: " << res << std::endl;
                     return res;
                 }
             } else if(locp != locq) {
+                CGAL_assertion(p.is_on_left_right() || q.is_on_left_right());
                 // at least one of the points lies at infty: suffice to cmp
                 // boundaries
-                if(locp == CGAL::ARR_INTERIOR) {
-                    return (locq == CGAL::ARR_LEFT_BOUNDARY ? 
-                            CGAL::LARGER : CGAL::SMALLER);
+                if (locp == CGAL::ARR_LEFT_BOUNDARY) {
+                    res = CGAL::SMALLER;
+                    //std::cout << "res2a: " << res << std::endl;
+                    return res;
+                } else if (locp == CGAL::ARR_RIGHT_BOUNDARY) {
+                    res = CGAL::LARGER;
+                    //std::cout << "res2b: " << res << std::endl;
+                    return res;
+                } else if (locq == CGAL::ARR_LEFT_BOUNDARY) {
+                    res = CGAL::LARGER;
+                    //std::cout << "res2c: " << res << std::endl;
+                    return res;
+                } else if (locq == CGAL::ARR_RIGHT_BOUNDARY) {
+                    res = CGAL::SMALLER;
+                    //std::cout << "res2d: " << res << std::endl;
+                    return res;
                 }
-                // here: locp != locq && locp is at infty
-                return (locp == CGAL::ARR_LEFT_BOUNDARY ? 
-                        CGAL::SMALLER : CGAL::LARGER);
             } // else: proceed to y-comparison
         }
         if (only_x) {
-            return CGAL::EQUAL;
+            res = CGAL::EQUAL;
+            //std::cout << "res4: " << res << std::endl;
+            return res;
         }
         if (locp == locq) {
             if(locp != CGAL::ARR_INTERIOR) {
-                return CGAL::EQUAL; // both points are at the same inf in y
+                res = CGAL::EQUAL; // both points are at the same inf in y
+                //std::cout << "res5: " << res << std::endl;
+                return res;
             }
             // compare only y-values; 
-            return Curved_kernel_via_analysis_2::instance().
+            res = Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q, true);
+            //std::cout << "res6: " << res << std::endl;
+            return res;
         }
         // here: locp != locq && one of them is at inf y
         if (locp == CGAL::ARR_INTERIOR) {
-            return (locq == CGAL::ARR_BOTTOM_BOUNDARY ? 
-                    CGAL::LARGER : CGAL::SMALLER);
+            res = (locq == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                   CGAL::LARGER : CGAL::SMALLER);
+            //std::cout << "res7: " << res << std::endl;
+            return res;
         }
         // here: locp != locq && locp is at infty
-        return (locp == CGAL::ARR_BOTTOM_BOUNDARY ? 
-                CGAL::SMALLER : CGAL::LARGER);
+        res = (locp == CGAL::ARR_BOTTOM_BOUNDARY ? 
+               CGAL::SMALLER : CGAL::LARGER);
+        //std::cout << "res8: " << res << std::endl;
+        return res;
     }
     
     //! returns min end-point of this arc (provided for code readability)
@@ -2344,6 +2373,7 @@ protected:
         }
         pt_low = low;
         pt_high = high;
+
         return true;
     }
     
