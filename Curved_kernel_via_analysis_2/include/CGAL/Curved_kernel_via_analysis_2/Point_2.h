@@ -492,8 +492,8 @@ public:
         switch(::CGAL::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "point@" << this->id() << "(";
-            //os << "sup@" << this->curve().id();
-            os << " " << this->location() << "; ";
+            os << "sup@" << this->curve().id() << ", ";
+            os << "loc=" << this->location() << "; ";
             if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
                 this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
                 os << "x=" << NiX::to_double(this->x()); // TODO CGAL::
