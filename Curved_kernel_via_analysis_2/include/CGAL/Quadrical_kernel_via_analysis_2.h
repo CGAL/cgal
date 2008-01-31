@@ -176,6 +176,7 @@ public:
     //! write represenation to \c os
     void write(std::ostream& os) const {
         os << Base(*this);
+        // TODO output surface/sheet even if point is not finite
         if (this->is_finite()) {
             os << " " 
                << "Surface(" << this->surface() << ", " 
@@ -446,6 +447,8 @@ public:
     }
 
     //!@}
+
+    // TODO write for arc
 
     // friends
     //! for constructors
