@@ -84,8 +84,12 @@ if( CGAL_USE_QT )
 
       set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "cgal-qt" )
       
+      set(CGAL_QT_LIBRARY "cgal-qt" CACHE STRING "The cgal-qt library")
+      
     else()
 
+      set(CGAL_QT_LIBRARY)
+      
       set(CGAL_QT_RELEASE_MANGLED_NAME        "cgal-qt${TOOLSET}-mt" ) 
       set(CGAL_QT_DEBUG_MANGLED_NAME          "cgal-qt${TOOLSET}-mt-gd" ) 
       set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "cgal-qt${TOOLSET}-mt-o" ) 

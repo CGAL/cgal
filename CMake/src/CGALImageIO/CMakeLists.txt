@@ -33,8 +33,12 @@ if(ZLIB_FOUND)
   
     set_target_properties( CGAL_IMAGE_IO PROPERTIES OUTPUT_NAME "cgal-image-io" )
     
+    set(CGAL_IMAGE_IO_LIBRARY "cgal-image-io" CACHE STRING "The cgal-image_io library")
+    
   else()
   
+    set(CGAL_IMAGE_IO_LIBRARY)
+    
     set(CGAL_IMAGE_IO_RELEASE_MANGLED_NAME        "cgal-image-io${TOOLSET}-mt" ) 
     set(CGAL_IMAGE_IO_DEBUG_MANGLED_NAME          "cgal-image-io${TOOLSET}-mt-gd" ) 
     set(CGAL_IMAGE_IO_MINSIZEREL_MANGLED_NAME     "cgal-image-io${TOOLSET}-mt-o" ) 

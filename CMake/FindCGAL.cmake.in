@@ -1,8 +1,6 @@
 # Try to find the CGAL libraries
 # CGAL_FOUND             - system has CGAL lib
 # CGAL_INCLUDE_DIR       - the CGAL include directory 
-# CGAL_LIBRARIES_DIR     - the CGAL libraries directory
-# CGAL_LIBRARIES         - the CGAL libraries 
 # CGAL_CMAKE_MODULE_PATH - the directory containing CGAL related CMake stuff
 
 # CGAL_ROOT              - set to the enviroment variable CGALROOT, IF defined (can be empty)
@@ -33,41 +31,9 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
         	  DOC "The directories containing CGAL CMake stuff"
            )
 
-  if ( "${CMAKE_GENERATOR}" MATCHES "Visual Studio" )
-
-    if ( "${CMAKE_GENERATOR}" MATCHES "2003" )
-      set(TOOLSET "-vc71")
-    elseif ( "${CMAKE_GENERATOR}" MATCHES "2005" )  
-      set(TOOLSET "-vc80")
-    elseif ( "${CMAKE_GENERATOR}" MATCHES "2008" )  
-      set(TOOLSET "-vc90")
-    endif()
-    
-    find_path(CGAL_LIBRARIES_DIR 
-              NAMES "cgal${TOOLSET}-mt.lib" "cgal${TOOLSET}-mt-gd.lib" "cgal${TOOLSET}-mt-o.lib" "cgal${TOOLSET}-mt-g.lib"
-              PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib
-         	    DOC "Path to CGAL and third-party libraries"
-             ) 
-
-  else()
-
-    find_library(CGAL_LIBRARIES NAMES cgal
-                 PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
-                 DOC "CGAL libraries"
-                )
-    
-    find_library(CGAL_QT_LIBRARIES NAMES cgal-qt
-                 PATHS ${CMAKE_BINARY_DIR}/lib ${CGAL_ROOT}/lib 
-                 DOC "CGALQt libraries"
-                )
-    
-    get_filename_component(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES} PATH)
-    
-  endif()
-  
 endif()
 
-if ( CGAL_INCLUDE_DIR AND CGAL_LIBRARIES_DIR AND CGAL_CMAKE_MODULE_PATH )
+if ( CGAL_INCLUDE_DIR AND CGAL_CMAKE_MODULE_PATH )
   set( CGAL_FOUND TRUE )
   set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH})
 else()

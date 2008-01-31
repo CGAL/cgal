@@ -34,8 +34,12 @@ if (NOT AUTO_LINK_ENABLED )
 
   set_target_properties( CGAL PROPERTIES OUTPUT_NAME "cgal" )
   
+  set(CGAL_LIBRARY "cgal" CACHE STRING "The cgal Library" )
+  
 else()
 
+  set(CGAL_LIBRARY)
+  
   set(CGAL_RELEASE_MANGLED_NAME        "cgal${TOOLSET}-mt" ) 
   set(CGAL_DEBUG_MANGLED_NAME          "cgal${TOOLSET}-mt-gd" ) 
   set(CGAL_MINSIZEREL_MANGLED_NAME     "cgal${TOOLSET}-mt-o" ) 

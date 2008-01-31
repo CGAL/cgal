@@ -141,24 +141,31 @@ endif()
 
 
 
-set(CGAL_INCLUDE_DIRS ${CGAL_SOURCE_DIR}/include)
+set(CGAL_INCLUDE_DIR ${CGAL_SOURCE_DIR}/include)
+
+set(CGAL_LIBRARIES_DIR ${CGAL_BINARY_DIR}/lib)
+
+set(CGAL_LIBRARIES CACHE STRING "Selected CGAL Libraries")
 
 set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} )
 
 set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}")
 
-include_directories (${CGAL_INCLUDE_DIRS})
+include_directories (${CGAL_INCLUDE_DIR})
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_DEFINITIONS})
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
-set(LIBRARY_OUTPUT_PATH ${CGAL_BINARY_DIR}/lib)
+set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
 
 add_subdirectory(src)
 
+set( CGAL_LIBRARIES ${CGAL_CORE_LIBRARY} ${CGAL_LIBRARY} ${CGAL_IMAGE_IO_LIBRARY} ${CGAL_PDB_LIBRARY} ${CGAL_QT_LIBRARY} )
+
+message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -190,7 +197,7 @@ configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_SOURCE_DIR}/cmake/mod
 
 
 # UseCGAL OTOH contains platform depedent definitions
-configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_SOURCE_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
 
 
 install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake

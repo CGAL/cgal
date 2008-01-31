@@ -26,8 +26,12 @@ if (NOT AUTO_LINK_ENABLED )
 
   set_target_properties( CGAL_PDB PROPERTIES OUTPUT_NAME "cgal-pdb" )
   
+  set(CGAL_PDB_LIBRARY "cgal-pdb" CACHE STRING "The cgal-pdb library")
+  
 else()
 
+  set(CGAL_PDB_LIBRARY)
+  
   set(CGAL_PDB_RELEASE_MANGLED_NAME        "cgal-pdb${TOOLSET}-mt" ) 
   set(CGAL_PDB_DEBUG_MANGLED_NAME          "cgal-pdb${TOOLSET}-mt-gd" ) 
   set(CGAL_PDB_MINSIZEREL_MANGLED_NAME     "cgal-pdb${TOOLSET}-mt-o" ) 
