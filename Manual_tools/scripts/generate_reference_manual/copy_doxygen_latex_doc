@@ -667,26 +667,14 @@ sub merge_manuals
 sub usage
 {
 print <<"END_USAGE";
-copy_doxygen_latex_doc version 0.8.
-
-Extract documentation from a doxygen-generated latex file and insert it in a CGAL Reference Manual's latex file.
+copy_doxygen_latex_doc extracts a documentation from a doxygen-generated latex file and inserts it in a CGAL Reference Manual's latex file.
 
 Usage:
 copy_doxygen_latex_doc [options] doxygen_generated_documentation.tex template_manual.tex
     -h, --help      Print this help
     -f, --force     Insert missing %START-AUTO..%END-AUTO sections
 
-Tips:
-* A comment starting by 'Concept:' will be converted to a \ccIsModel paragraph.
-* A comment starting by 'Sub-concept:' will be converted to a \ccRefines paragraph.
-* A comment starting by 'Models:' will be converted to a \ccHasModels paragraph.
-* A comment starting by 'Design pattern:' will be converted to a \ccHeading{Design Pattern} paragraph.
-* A comment starting by 'Template parameters:' will be converted to \ccParameters paragraph.
-* \"Words surrounded by double quotes\" will be emphasized.
-
-Known bugs:
-* This tool has been tested with doxygen 1.4 and 1.5. It may *not* work with other versions of doxygen.
-* So far, this tool documents only concepts, classes, structs and functions.
+See generate_reference_manual usage for details.
 END_USAGE
 
 exit;
