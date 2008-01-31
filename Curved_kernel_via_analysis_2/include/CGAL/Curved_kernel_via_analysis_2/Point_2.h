@@ -563,7 +563,7 @@ public:
             if (this->ptr()->_m_xy || this->ptr()->_m_arcno) {
                 os << "ARCNO=" << this->arcno();
             } else {
-                os << "VERT";
+                os << "ARCNO=n/a";
             }
             os << ")";
             break;
