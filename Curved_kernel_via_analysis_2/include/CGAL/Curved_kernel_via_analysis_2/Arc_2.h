@@ -1702,11 +1702,13 @@ protected:
             cpv_line = cpa_2.status_line_for_x(x0, perturb);
         else
             cpv_line = cpa_2.status_line_of_interval(
-                where == CGAL::ARR_LEFT_BOUNDARY ? 0 :
+                    // TODO don't mix up location (where) and finiteness!
+                    where == CGAL::ARR_LEFT_BOUNDARY ? 0 :
                     cpa_2.number_of_status_lines_with_event());
         
-        CGAL::Sign res = CGAL::sign(cpv_line.event_of_curve(arcno(), 0) -
-                    cpv_line.event_of_curve(cv2.arcno(), 1));
+        CGAL::Sign res = 
+            CGAL::sign(cpv_line.event_of_curve(arcno(), 0) -
+                       cpv_line.event_of_curve(cv2.arcno(), 1));
         CERR("result: " << res << "\n");
         return res;
     }
@@ -1827,64 +1829,53 @@ protected:
         CGAL_precondition(!is_vertical());
         // a curve end at negative boundary => 0th interval
         
-        // we are interested in interval "to the right"
-        typename Curve_analysis_2::Status_line_1 cv_line = 
-            (location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR ? 
-             curve().status_line_for_x(_minpoint().x(), CGAL::POSITIVE)
-             :
-             curve().status_line_of_interval(0)
+        Boundary res(0);
+        
+        // TODO use AK_1 instance (Pavel)
+        typename Curve_kernel_2::X_real_traits_1::Lower_boundary 
+            lower_boundary;
+        typename Curve_kernel_2::X_real_traits_1::Upper_boundary 
+            upper_boundary;
+        typename Curve_kernel_2::X_real_traits_1::Boundary_between
+            boundary_between;
+        
+        Boundary b_interval = 
+            lower_boundary(
+                    curve().status_line_of_interval(
+                            interval_id()
+                    ).x()
             );
         
-
-        Boundary res(0);
-
-        if (is_finite(CGAL::ARR_MIN_END) || is_finite(CGAL::ARR_MAX_END)) {
-            // else res == 0 is ok
+        if (is_in_x_range_interior(X_coordinate_1(b_interval))) {
+            res = b_interval;
+        } else {
             
-            // TODO use functionality of AK_1 here!!!! (Pavel)
+            CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
+            bool min_has_x = 
+                (is_finite(CGAL::ARR_MIN_END) || 
+                 min_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+                 min_loc == CGAL::ARR_TOP_BOUNDARY);
             
-            if (is_finite(CGAL::ARR_MIN_END) && 
-                is_finite(CGAL::ARR_MAX_END)) {
-                
-                if ((Curved_kernel_via_analysis_2::instance().
-                     kernel().compare_x_2_object()
-                     (_minpoint().x(), cv_line.x()) == 
-                     CGAL::SMALLER) && 
-                    (Curved_kernel_via_analysis_2::instance().
-                     kernel().compare_x_2_object()
-                     (cv_line.x(), _maxpoint().x()) == 
-                     CGAL::SMALLER)) {
-                    res = Curved_kernel_via_analysis_2::instance().
-                        kernel().lower_boundary_x_2_object()(
-                                cv_line.xy_coordinate_2(arcno())
-                        );
+            CGAL::Arr_parameter_space max_loc = location(CGAL::ARR_MAX_END);
+            bool max_has_x = 
+                (is_finite(CGAL::ARR_MAX_END) || 
+                 max_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+                 max_loc == CGAL::ARR_TOP_BOUNDARY);
+            
+            if (min_has_x) {
+                X_coordinate_1 min_x = _minpoint().x();
+                if (max_has_x) {
+                    X_coordinate_1 max_x = _maxpoint().x();
+                    res = boundary_between(min_x, max_x);
                 } else {
-                    typename Curve_analysis_2::Status_line_1 cv_line_min = 
-                        curve().status_line_at_exact_x(_minpoint().x());
-                    typename Curve_analysis_2::Status_line_1 cv_line_max = 
-                        curve().status_line_at_exact_x(_maxpoint().x());
-                    
-                    res = Curved_kernel_via_analysis_2::instance().
-                        kernel().boundary_between_x_2_object()(
-                                cv_line_min.xy_coordinate_2(
-                                        arcno(CGAL::ARR_MIN_END)
-                                ),
-                                cv_line_max.xy_coordinate_2(
-                                        arcno(CGAL::ARR_MAX_END)
-                                )
-                        );
+                    res = upper_boundary(min_x) + Boundary(1);
                 }
             } else {
-                if (is_finite(CGAL::ARR_MIN_END)) {
-                    res = Curved_kernel_via_analysis_2::instance().
-                        kernel().upper_boundary_x_2_object()(
-                                cv_line.xy_coordinate_2(arcno())
-                        ) + Boundary(1);
+                if (max_has_x) {
+                    X_coordinate_1 max_x = _maxpoint().x();
+                    res = lower_boundary(max_x) - Boundary(1);
                 } else {
-                    res = Curved_kernel_via_analysis_2::instance().
-                        kernel().lower_boundary_x_2_object()(
-                                cv_line.xy_coordinate_2(arcno())
-                        ) - Boundary(1);
+                    // res stays 0
                 }
             }
         }
