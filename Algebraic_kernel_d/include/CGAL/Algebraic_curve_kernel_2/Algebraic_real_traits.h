@@ -102,9 +102,8 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         
         Boundary operator()(const Type& r1, const Type& r2) const {
             
-#if 0
-// TODO add precondition:  CGAL_precondition(r1.y() != r2.y());
-#endif
+            CGAL_precondition(r1.y() != r2.y());
+
             Boundary res;
             Event_line vline1 =
                 r1.curve()._internal_curve().event_info_at_x(r1.x());
@@ -136,7 +135,16 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             }
             
             CGAL::simplify(res);
-            // TODO add postcondition
+            CGAL_postcondition_code(
+                    CGAL::Comparison_result exp = CGAL::SMALLER
+            );
+            CGAL_postcondition_code(
+                    if (r1.y() > r2.y()) {
+                        exp = CGAL::LARGER;
+                    }
+            );
+            CGAL_postcondition(r1.y().compare(res) == exp);
+            CGAL_postcondition(r2.y().compare(res) == -exp);
             return res;
         }
     };
