@@ -102,21 +102,41 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         
         Boundary operator()(const Type& r1, const Type& r2) const {
             
-            CGAL_precondition(r1.arcno() != r2.arcno());
-            CGAL_precondition(r1.x() == r2.x() &&
-                r1.curve().id() == r2.curve().id());
-            
+#if 0
+// TODO add precondition:  CGAL_precondition(r1.y() != r2.y());
+#endif
             Boundary res;
-            Event_line vline =
-                 r1.curve()._internal_curve().event_info_at_x(r1.x());
-            if(r1.arcno() < r2.arcno()) {
-                res = (vline.upper_boundary(r1.arcno()) +
-                    vline.lower_boundary(r2.arcno())) / Boundary(2);
-            } else {
-                res = (vline.lower_boundary(r1.arcno()) +
-                    vline.upper_boundary(r2.arcno())) / Boundary(2);
+            Event_line vline1 =
+                r1.curve()._internal_curve().event_info_at_x(r1.x());
+
+            Event_line vline2 =
+                r2.curve()._internal_curve().event_info_at_x(r2.x());
+            
+            Boundary low1, low2, high1, high2;
+            
+            while (true) {
+                low1 = vline1.lower_boundary(r1.arcno());
+                low2 = vline2.lower_boundary(r2.arcno());
+
+                high1 = vline1.upper_boundary(r1.arcno());
+                high2 = vline2.upper_boundary(r2.arcno());
+                
+                if (low1 > high2) {
+                    res = ((low1 + high2)/Boundary(2));
+                    break;
+                }
+                if (low2 > high1) {
+                    res = ((low2 + high1)/Boundary(2));
+                    break;
+                }
+                
+                // else
+                vline1.refine(r1.arcno());
+                vline2.refine(r2.arcno());
             }
+            
             CGAL::simplify(res);
+            // TODO add postcondition
             return res;
         }
     };
