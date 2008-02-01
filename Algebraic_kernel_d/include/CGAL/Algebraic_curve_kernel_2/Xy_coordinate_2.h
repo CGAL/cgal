@@ -250,7 +250,7 @@ public:
         Polynomial_2 f = curve().polynomial_2();
         // This will be the defining polynomial of y
         Polynomial_1 y_pol;
-
+        // TODO implement cache SL -> y_pol
         // Filter: If we know that the point is critical, we can use
         // the resultant of f and f_y with respect to x as polynomial
         bool point_is_certainly_critical = false;
@@ -272,6 +272,7 @@ public:
                              transpose_bivariate_polynomial(NiX::diff(f))));
             }
         }
+
         if(! point_is_certainly_critical) {
             
             Polynomial_2 r(x().polynomial());
@@ -288,22 +289,41 @@ public:
                    std::back_inserter(y_roots)); 
         Boundary_interval y_iv = get_approximation_y();
 
-        typename std::vector<X_coordinate_1>::const_iterator it 
-            = y_roots.begin();
+        typedef typename std::vector<X_coordinate_1>::const_iterator
+            Iterator;
 
-        while(it != y_roots.end()) {
-            if(it->high() < y_iv.lower()) {
-                it++;
-                continue;
+        std::list< Iterator > candidates;
+        
+        for (Iterator it = y_roots.begin(); it != y_roots.end(); it++) {
+            Boundary_interval it_interval(it->low(), it->high());
+            if (boost::numeric::overlap(it_interval, y_iv)) {
+                candidates.push_back(it);
             }
-            if(it->high() >= y_iv.upper()) {
-                break;
-            }
-            refine_y();
-            y_iv = get_approximation_y();
         }
-        CGAL_assertion(it!=y_roots.end());
-        return X_coordinate_1( y_pol, it->low(), it->high() );
+        CGAL_assertion(!candidates.empty());
+        while (candidates.size() > 1) {
+            refine_y();
+            for (typename std::list< Iterator >::iterator dit, cit =
+                     candidates.begin(); cit != candidates.end(); ) {
+                bool remove = false;
+                Boundary_interval cit_interval((*cit)->low(), (*cit)->high());
+                if (!boost::numeric::overlap(cit_interval, y_iv)) {
+                    dit = cit;
+                    remove = true;
+                } 
+                cit++;
+                if (remove) {
+                    candidates.erase(dit);
+                }
+            }
+        }
+        // TODO cache computation!
+        CGAL_assertion(static_cast< int >(candidates.size()) == 1);
+        return X_coordinate_1(
+                y_pol, 
+                (*candidates.begin())->low(), 
+                (*candidates.begin())->high()
+        );
     }
     
     /*!\brief
@@ -741,13 +761,14 @@ template < class AlgebraicCurveKernel_2, class Rep>
 std::ostream& operator<< (std::ostream& os, 
     const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt)
 {
+    // TODO replace NiX::to_double with CGAL::to_double
     if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
-        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
-            pt.curve().f() << 
+        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+            pt.curve().polynomial_2() << 
             "; arcno: " << pt.arcno() << "]\n";
     } else { // ASCII output
-        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
-            pt.curve().f() << 
+        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+            pt.curve().polynomial_2() << 
             "; arcno: " << pt.arcno() << "]\n";
     }
     return os;    
