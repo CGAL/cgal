@@ -1836,9 +1836,11 @@ protected:
             );
         
 
-        if (!is_finite(CGAL::ARR_MIN_END) && !is_finite(CGAL::ARR_MAX_END)) {
-            return Boundary(0);
-        } else {
+        Boundary res(0);
+
+        if (is_finite(CGAL::ARR_MIN_END) || is_finite(CGAL::ARR_MAX_END)) {
+            // else res == 0 is ok
+            
             // TODO use functionality of AK_1 here!!!! (Pavel)
             
             if (is_finite(CGAL::ARR_MIN_END) && 
@@ -1852,17 +1854,17 @@ protected:
                      kernel().compare_x_2_object()
                      (cv_line.x(), _maxpoint().x()) == 
                      CGAL::SMALLER)) {
-                    return Curved_kernel_via_analysis_2::instance().
+                    res = Curved_kernel_via_analysis_2::instance().
                         kernel().lower_boundary_x_2_object()(
-                            cv_line.xy_coordinate_2(arcno())
-                    );
+                                cv_line.xy_coordinate_2(arcno())
+                        );
                 } else {
                     typename Curve_analysis_2::Status_line_1 cv_line_min = 
                         curve().status_line_at_exact_x(_minpoint().x());
                     typename Curve_analysis_2::Status_line_1 cv_line_max = 
                         curve().status_line_at_exact_x(_maxpoint().x());
                     
-                    return Curved_kernel_via_analysis_2::instance().
+                    res = Curved_kernel_via_analysis_2::instance().
                         kernel().boundary_between_x_2_object()(
                                 cv_line_min.xy_coordinate_2(
                                         arcno(CGAL::ARR_MIN_END)
@@ -1872,21 +1874,22 @@ protected:
                                 )
                         );
                 }
-                
             } else {
                 if (is_finite(CGAL::ARR_MIN_END)) {
-                    return Curved_kernel_via_analysis_2::instance().
-                        kernel().lower_boundary_x_2_object()(
-                                cv_line.xy_coordinate_2(arcno())
-                        );
-                } else {
-                    return Curved_kernel_via_analysis_2::instance().
+                    res = Curved_kernel_via_analysis_2::instance().
                         kernel().upper_boundary_x_2_object()(
                                 cv_line.xy_coordinate_2(arcno())
-                        );
+                        ) + Boundary(1);
+                } else {
+                    res = Curved_kernel_via_analysis_2::instance().
+                        kernel().lower_boundary_x_2_object()(
+                                cv_line.xy_coordinate_2(arcno())
+                        ) - Boundary(1);
                 }
             }
         }
+        CGAL_postcondition(is_in_x_range_interior(X_coordinate_1(res)));
+        return res;
     }
 
     /*!\brief 
