@@ -73,6 +73,9 @@ public:
     // arc number on curve
     mutable int _m_arcno;
 
+    // y-coordinate
+    mutable boost::optional< X_coordinate_1 > _m_y;
+
     //! A bounding box for the given point
     mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
 
@@ -246,84 +249,92 @@ public:
 
         typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
         typedef typename Polynomial_2::NT Polynomial_1;
+        
+        if (!this->ptr()->_m_y) {
+            
+            Polynomial_2 f = curve().polynomial_2();
+            // This will be the defining polynomial of y
+            Polynomial_1 y_pol;
 
-        Polynomial_2 f = curve().polynomial_2();
-        // This will be the defining polynomial of y
-        Polynomial_1 y_pol;
-        // TODO implement cache SL -> y_pol
-        // Filter: If we know that the point is critical, we can use
-        // the resultant of f and f_y with respect to x as polynomial
-        bool point_is_certainly_critical = false;
-        typename Curve_analysis_2::Status_line_1 line =
-            curve().status_line_for_x(x());
-        // exacus-related code shouldn't be used here
-        //curve().x_to_index(x(),i,is_event);
-        if(line.is_event()) {
-            //typename Internal_curve_2::Event1_info ev_info =
-              //   curve().event_info(i);
-            typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
-                line.number_of_incident_branches(arcno());
+            // TODO implement cache SL -> y_pol
+            
+            // Filter: If we know that the point is critical, we can use
+            // the resultant of f and f_y with respect to x as polynomial
+            bool point_is_certainly_critical = false;
+            typename Curve_analysis_2::Status_line_1 line =
+                curve().status_line_for_x(x());
+            // exacus-related code shouldn't be used here
+            //curve().x_to_index(x(),i,is_event);
+            if (line.is_event()) {
+                //typename Internal_curve_2::Event1_info ev_info =
+                //   curve().event_info(i);
+                typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
+                    line.number_of_incident_branches(arcno());
                 
-            if(ipair.first != 1 || ipair.second != 1) {
-                point_is_certainly_critical = true;
-                y_pol = NiX::make_square_free(
-                        NiX::resultant
+                if (ipair.first != 1 || ipair.second != 1) {
+                    point_is_certainly_critical = true;
+                    y_pol = NiX::make_square_free(
+                            NiX::resultant
                             (transpose_bivariate_polynomial(f),
                              transpose_bivariate_polynomial(NiX::diff(f))));
-            }
-        }
-
-        if(! point_is_certainly_critical) {
-            
-            Polynomial_2 r(x().polynomial());
-            
-            y_pol = NiX::make_square_free(
-                    NiX::resultant(transpose_bivariate_polynomial(f),
-                                   transpose_bivariate_polynomial(r) ));
-        }
-        typename NiX::Real_roots<X_coordinate_1,
-            NiX::Descartes<Polynomial_1, Boundary> > real_roots;
-
-        std::vector<X_coordinate_1> y_roots;
-        real_roots(y_pol, 
-                   std::back_inserter(y_roots)); 
-        Boundary_interval y_iv = get_approximation_y();
-
-        typedef typename std::vector<X_coordinate_1>::const_iterator
-            Iterator;
-
-        std::list< Iterator > candidates;
-        
-        for (Iterator it = y_roots.begin(); it != y_roots.end(); it++) {
-            Boundary_interval it_interval(it->low(), it->high());
-            if (boost::numeric::overlap(it_interval, y_iv)) {
-                candidates.push_back(it);
-            }
-        }
-        CGAL_assertion(!candidates.empty());
-        while (candidates.size() > 1) {
-            refine_y();
-            for (typename std::list< Iterator >::iterator dit, cit =
-                     candidates.begin(); cit != candidates.end(); ) {
-                bool remove = false;
-                Boundary_interval cit_interval((*cit)->low(), (*cit)->high());
-                if (!boost::numeric::overlap(cit_interval, y_iv)) {
-                    dit = cit;
-                    remove = true;
-                } 
-                cit++;
-                if (remove) {
-                    candidates.erase(dit);
                 }
             }
+            
+            if (!point_is_certainly_critical) {
+                
+                Polynomial_2 r(x().polynomial());
+                
+                y_pol = NiX::make_square_free(
+                        NiX::resultant(transpose_bivariate_polynomial(f),
+                                       transpose_bivariate_polynomial(r) ));
+            }
+            typename NiX::Real_roots<X_coordinate_1,
+                NiX::Descartes<Polynomial_1, Boundary> > real_roots;
+            
+            std::vector< X_coordinate_1 > y_roots;
+            real_roots(y_pol, std::back_inserter(y_roots)); 
+            
+            Boundary_interval y_iv = get_approximation_y();
+            
+            typedef typename std::vector<X_coordinate_1>::const_iterator
+                Iterator;
+            
+            std::list< Iterator > candidates;
+            
+            for (Iterator it = y_roots.begin(); it != y_roots.end(); it++) {
+                Boundary_interval it_interval(it->low(), it->high());
+                if (boost::numeric::overlap(it_interval, y_iv)) {
+                    candidates.push_back(it);
+                }
+            }
+            CGAL_assertion(!candidates.empty());
+            while (candidates.size() > 1) {
+                refine_y();
+                for (typename std::list< Iterator >::iterator dit, cit =
+                         candidates.begin(); cit != candidates.end(); ) {
+                    bool remove = false;
+                    Boundary_interval 
+                        cit_interval((*cit)->low(), (*cit)->high());
+                    if (!boost::numeric::overlap(cit_interval, y_iv)) {
+                        dit = cit;
+                        remove = true;
+                    } 
+                    cit++;
+                    if (remove) {
+                        candidates.erase(dit);
+                    }
+                }
+            }
+            CGAL_assertion(static_cast< int >(candidates.size()) == 1);
+            this->ptr()->_m_y = 
+                X_coordinate_1(
+                        y_pol, 
+                        (*candidates.begin())->low(), 
+                        (*candidates.begin())->high()
+                );
         }
-        // TODO cache computation!
-        CGAL_assertion(static_cast< int >(candidates.size()) == 1);
-        return X_coordinate_1(
-                y_pol, 
-                (*candidates.begin())->low(), 
-                (*candidates.begin())->high()
-        );
+        CGAL_postcondition(this->ptr()->_m_y);
+        return *this->ptr()->_m_y;
     }
     
     /*!\brief
