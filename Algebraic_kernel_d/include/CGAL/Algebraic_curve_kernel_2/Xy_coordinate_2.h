@@ -250,49 +250,73 @@ public:
         typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
         typedef typename Polynomial_2::NT Polynomial_1;
         
+        typedef std::vector< X_coordinate_1 > Roots;
+        typedef typename Curve_analysis_2::Status_line_1 Key;
+        typedef Roots Data;
+        typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
+            Y_root_map;
+        
+        static Y_root_map y_root_map;
+
         if (!this->ptr()->_m_y) {
             
             Polynomial_2 f = curve().polynomial_2();
             // This will be the defining polynomial of y
             Polynomial_1 y_pol;
 
-            // TODO implement cache SL -> y_pol
-            
             // Filter: If we know that the point is critical, we can use
             // the resultant of f and f_y with respect to x as polynomial
             bool point_is_certainly_critical = false;
             typename Curve_analysis_2::Status_line_1 line =
                 curve().status_line_for_x(x());
-            // exacus-related code shouldn't be used here
-            //curve().x_to_index(x(),i,is_event);
-            if (line.is_event()) {
-                //typename Internal_curve_2::Event1_info ev_info =
-                //   curve().event_info(i);
-                typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
-                    line.number_of_incident_branches(arcno());
+            
+            typename Y_root_map::iterator yit = 
+                y_root_map.find(line);
+
+            if (yit == y_root_map.end()) {
                 
-                if (ipair.first != 1 || ipair.second != 1) {
-                    point_is_certainly_critical = true;
-                    y_pol = NiX::make_square_free(
-                            NiX::resultant
-                            (transpose_bivariate_polynomial(f),
-                             transpose_bivariate_polynomial(NiX::diff(f))));
+                // exacus-related code shouldn't be used here
+                //curve().x_to_index(x(),i,is_event);
+                if (line.is_event()) {
+                    //typename Internal_curve_2::Event1_info ev_info =
+                    //   curve().event_info(i);
+                    typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
+                        line.number_of_incident_branches(arcno());
+                    
+                    if (ipair.first != 1 || ipair.second != 1) {
+                        point_is_certainly_critical = true;
+                        y_pol = 
+                            NiX::make_square_free(
+                                    NiX::resultant
+                                    (transpose_bivariate_polynomial(f),
+                                     transpose_bivariate_polynomial(
+                                             NiX::diff(f)
+                                     )
+                                    )
+                            );
+                    }
                 }
+                
+                if (!point_is_certainly_critical) {
+                    
+                    Polynomial_2 r(x().polynomial());
+                    
+                    y_pol = NiX::make_square_free(
+                            NiX::resultant(transpose_bivariate_polynomial(f),
+                                           transpose_bivariate_polynomial(r))
+                    );
+                }
+                typename NiX::Real_roots<X_coordinate_1,
+                    NiX::Descartes< Polynomial_1, Boundary > > real_roots;
+                
+                Roots y_roots_tmp;
+                real_roots(y_pol, std::back_inserter(y_roots_tmp)); 
+
+                yit = 
+                    y_root_map.insert(yit, std::make_pair(line, y_roots_tmp));
             }
             
-            if (!point_is_certainly_critical) {
-                
-                Polynomial_2 r(x().polynomial());
-                
-                y_pol = NiX::make_square_free(
-                        NiX::resultant(transpose_bivariate_polynomial(f),
-                                       transpose_bivariate_polynomial(r) ));
-            }
-            typename NiX::Real_roots<X_coordinate_1,
-                NiX::Descartes<Polynomial_1, Boundary> > real_roots;
-            
-            std::vector< X_coordinate_1 > y_roots;
-            real_roots(y_pol, std::back_inserter(y_roots)); 
+            Roots y_roots = yit->second;
             
             Boundary_interval y_iv = get_approximation_y();
             
