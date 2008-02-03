@@ -93,8 +93,6 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   // and any other vertex on the line of discontinuity.
   typename Dcel::Vertex_iterator       vit;
   Arr_parameter_space                  bx, by;
-  Halfedge                            *he;
-  Arr_curve_end                        ind;
 
   m_north_pole = NULL;
   m_south_pole = NULL;
@@ -869,7 +867,7 @@ is_on_new_perimetric_face_boundary(const Halfedge * prev1,
    * ARR_LEFT_BOUNDARY to ARR_RIGHT_BOUNDARY, and the number of times it
    * crosses the other way around.
    */
-#if 1
+#if 0
   std::cout << std::endl;
   std::cout << "prev1: "
             << prev1->opposite()->vertex()->point() << ", "
