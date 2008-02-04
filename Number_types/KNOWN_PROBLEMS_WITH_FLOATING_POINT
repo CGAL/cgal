@@ -1,7 +1,3 @@
-                   -----------------------------------
-                   Life is not perfect, unfortunately.
-                   -----------------------------------
-
 Here is a list of problems I found wrt correct handling of IEEE 754 doubles,
 with the rounding modes used in this package.
 
