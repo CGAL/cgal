@@ -51,9 +51,9 @@ CGAL_BEGIN_NAMESPACE
 
 /*!
  */
-template <class PolyhedralSgm,
-          class Polyhedron = Arr_polyhedral_sgm_polyhedron_3<PolyhedralSgm>,
-          class Visitor = Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm> >
+template <typename PolyhedralSgm,
+          typename Polyhedron = Arr_polyhedral_sgm_polyhedron_3<PolyhedralSgm>,
+          typename Visitor = Arr_polyhedral_sgm_initializer_visitor<PolyhedralSgm> >
 class Arr_polyhedral_sgm_initializer :
   public Arr_sgm_initializer<typename PolyhedralSgm::Base>
 {
@@ -283,28 +283,12 @@ private:
   /*! */
   Polyhedron_halfedge_const_handle m_halfedge;
 
-#if 0
-  /*! Handle the introduction of a new boundary edge */
-  virtual void handle_new_boundary_edge(Arr_halfedge_handle edge)
-  {
-    if (!edge->face()->is_unbounded()) {
-      edge->face()->set_point(m_trg_vertex->point());
-      if (m_visitor) {
-        m_visitor->update_dual_vertex(m_trg_vertex, edge->face());
-        m_visitor->update_dual_halfedge(m_halfedge, edge);
-      }
-    } else {
-      edge->twin()->face()->set_point(m_src_vertex->point());
-      if (m_visitor) {
-        m_visitor->update_dual_vertex(m_src_vertex, edge->twin()->face());
-        m_visitor->update_dual_halfedge(m_halfedge, edge->twin());
-      }
-    }
-  }
-
   /*! Handle the introduction of a new edge */
-  virtual void handle_new_edge(Arr_halfedge_handle edge)
+  virtual void handle_new_edge(typename Base::Halfedge_handle edge)
   {
+    typedef typename Base::Face_handle          Arr_face_handle;
+    typedef typename Base::Vertex_handle        Arr_vertex_handle;
+    
     Arr_face_handle src_face = edge->twin()->face();
     Arr_face_handle trg_face = edge->face();
     src_face->set_point(m_src_vertex->point());
@@ -316,9 +300,12 @@ private:
 
       m_visitor->update_dual_halfedge(m_halfedge, edge);
       m_visitor->update_dual_halfedge(m_halfedge, edge->twin());
+
+//       m_visitor->update_dual_face(m_halfedge->opposite()->facet(),
+//                                   edge->source());
+//       m_visitor->update_dual_face(m_halfedge->facet(), edge->target());
     }
-  }  
-#endif
+  }
   
   /*! Update the polyhedron */
   template <class PointIterator_3>  
@@ -449,61 +436,17 @@ private:
         next_hec->set_processed(true);
         next_hec->opposite()->set_processed(true);
         Halfedge_list_iter first = hes.begin();
-        if (v1 != invalid_vertex && v2 != invalid_vertex) {
-#if 0
-          const typename Kernel::Point_3 & pps = (*first)->face()->point();
-          const typename Kernel::Point_3 & ppt = (*first)->twin()->face()->point();
-          std::cout << "XX pps: "
-                    << static_cast<float>(todouble(pps.x()))
-                    << ","
-                    << static_cast<float>(todouble(pps.y()))
-                    << ","
-                    << static_cast<float>(todouble(pps.z()))
-                    << ","
-                    << ", trg: "
-                    << static_cast<float>(todouble(ppt.x()))
-                    << ","
-                    << static_cast<float>(todouble(ppt.y()))
-                    << ","
-                    << static_cast<float>(todouble(ppt.z()))
-                    << std::endl;
-#endif     
-          (*first)->face()->set_point(m_trg_vertex->point());
-          (*first)->twin()->face()->set_point(m_src_vertex->point());
-#if 0
-          std::cout << "src: "
-                    << static_cast<float>(todouble(m_src_vertex->point().x()))
-                    << ","
-                    << static_cast<float>(todouble(m_src_vertex->point().y()))
-                    << ","
-                    << static_cast<float>(todouble(m_src_vertex->point().z()))
-                    << ","
-                    << ", trg: "
-                    << static_cast<float>(todouble(m_trg_vertex->point().x()))
-                    << ","
-                    << static_cast<float>(todouble(m_trg_vertex->point().y()))
-                    << ","
-                    << static_cast<float>(todouble(m_trg_vertex->point().z()))
-                    << std::endl;
-#endif
-        }
+        if (v1 != invalid_vertex && v2 != invalid_vertex)
+          handle_new_edge(*first);
+
         /*! \todo use is_valid!
          * this->m_sgm.is_valid();
          */
-#if 0
         if (m_visitor) {
-          for (unsigned int i = 0; i < 3; ++i) {
-            if (dual1.is_vertex_set(i)) {
-              Arr_vertex_handle & vh = dual1.vertex(i);
-              m_visitor->update_dual_face(hec->facet(), vh);
-            }
-            if (dual2.is_vertex_set(i)) {
-              Arr_vertex_handle & vh = dual2.vertex(i);
-              m_visitor->update_dual_face(next_hec->facet(), vh);
-            }
-          }
+          m_visitor->update_dual_face(m_halfedge->opposite()->facet(),
+                                      (*first)->source());
+          // m_visitor->update_dual_face(m_halfedge->facet(), (*first)->target());
         }
-#endif
       }
       hec = next_hec;
       ++next_hec;
