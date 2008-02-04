@@ -116,13 +116,11 @@ void test_4()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line to segment...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
   quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_2(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag(),k);
   std::cout << "done (quality: " << quality << ")" <<" line: "<<line<< std::endl;
 
   std::list<Point_2> points;
@@ -132,7 +130,6 @@ void test_4()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line to end points...";
-  Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
@@ -170,7 +167,6 @@ void test_5(const unsigned int nb_points)
 
   // call all versions of the function
   FT quality;
-  Kernel k;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
 
@@ -183,7 +179,6 @@ void test_5(const unsigned int nb_points)
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line to segment...";
-  Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;

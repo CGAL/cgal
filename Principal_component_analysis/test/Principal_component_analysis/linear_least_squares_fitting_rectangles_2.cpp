@@ -34,7 +34,6 @@ void test_1()
   // call all versions of the function
   std::cout<<"Test 1"<<std::endl;
   std::cout << "fit 2D line...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
@@ -63,7 +62,6 @@ void test_2()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line to bigger rectangle...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;
@@ -78,7 +76,6 @@ void test_2()
   Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(6.6,19.2)));
   Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(6.6,15.2),Point_2(11.6,19.2)));
   std::cout << "fit 2D line to two small rectangles...";
-  Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
@@ -106,7 +103,6 @@ void test_3()
   // fit a line
   // call all versions of the function
   std::cout << "fit 2D line to bigger rectangle...";
-  Kernel k;
   Line_2 line;
   Point_2 centroid;
   FT quality;

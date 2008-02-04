@@ -31,7 +31,6 @@ int main(void)
 
   Line line;
   Plane plane;
-  Kernel kernel;
   Point centroid;
 
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::PCA_dimension_3_tag());

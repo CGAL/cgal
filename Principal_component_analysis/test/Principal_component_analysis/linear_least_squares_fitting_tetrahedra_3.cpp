@@ -5,12 +5,12 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  Kernel;
-typedef Kernel::Line_3            Line;
-typedef Kernel::Plane_3           Plane;
-typedef Kernel::Point_3           Point;
-typedef Kernel::Tetrahedron_3     Tetrahedron;
+typedef double                FT;
+typedef CGAL::Cartesian<FT>   Kernel;
+typedef Kernel::Line_3        Line;
+typedef Kernel::Plane_3       Plane;
+typedef Kernel::Point_3       Point;
+typedef Kernel::Tetrahedron_3 Tetrahedron;
 
 int main()
 {
@@ -26,10 +26,9 @@ int main()
   tetrahedra.push_back(Tetrahedron(a,b,c,d));
   tetrahedra.push_back(Tetrahedron(a,b,c,e));
 
-  Kernel kernel;
-  Point centroid;
-  Plane plane;
   Line line;
+  Plane plane;
+  Point centroid;
 
 	// fit line, no centroid
   linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line,CGAL::PCA_dimension_3_tag());
