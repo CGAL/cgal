@@ -3539,6 +3539,7 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
     if (ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR) {
       // Stop here if the current vertex lies at infinity.
       if (is_unbounded (ps_x, ps_y)) {
+        at_infinity = true;
         index = 0;
         v_min = NULL;
         return (std::make_pair (index, v_min));
