@@ -345,10 +345,6 @@ sub make_testscripts()
     chdir $BASEDIR;
     chdir 'examples';
 
-    # Windows specific stuff
-    print "Creating VC++ projects in examples\n";
-    system("../developer_scripts/examples/C2vcproj", glob("*"));
-
     print "Creating makefiles in examples\n";
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
