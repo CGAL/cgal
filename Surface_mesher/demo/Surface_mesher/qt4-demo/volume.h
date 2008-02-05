@@ -20,6 +20,8 @@
 #include <QString>
 #include <QFileInfo>
 
+class QTreeWidgetItem;
+
 // kernel
 // #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -27,7 +29,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel1;
 
 #include <CGAL/Point_with_psc_localisation.h>
 struct Kernel : public Kernel1 {
-  typedef CGAL::Point_with_psc_localisation<Kernel::Point_3> Point_3;
+  typedef CGAL::Point_with_psc_localisation<Kernel::Point_3,
+                                            const QTreeWidgetItem*> Point_3;
 };
 
 typedef Kernel::FT FT;
@@ -37,7 +40,7 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Segment_3 Segment_3;
 
-typedef CGAL::Triple<Triangle_3,Vector,int> Facet;
+typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
 typedef CBinary_image_3<FT,Point> Binary_image;
 

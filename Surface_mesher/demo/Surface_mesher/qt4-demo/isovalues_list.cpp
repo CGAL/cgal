@@ -5,6 +5,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QTreeWidgetItemIterator>
+#include <QHeaderView>
 #include <QMetaProperty>
 #include <QItemDelegate>
 #include <QItemEditorFactory>
@@ -82,6 +83,9 @@ Isovalues_list::Isovalues_list(QWidget* parent):
   treeWidget = parent->findChild<QTreeWidget*>("treeWidget");
   Q_ASSERT_X(treeWidget, "Isovalues_list constructor", "cannot find widget \"treeWidget\"");
 
+  treeWidget->sortByColumn(Isovalue, Qt::AscendingOrder);
+  treeWidget->header()->setClickable(false);
+
   Isovalues_delegate* isovalues_delegate = new Isovalues_delegate(parent);
 
   treeWidget->setItemDelegate(isovalues_delegate);
@@ -93,6 +97,11 @@ QColor Isovalues_list::color(const int i) const
     return QColor();
   else
     return treeWidget->topLevelItem(i)->data(Color, Qt::DisplayRole).value<QColor>();
+}
+
+QColor Isovalues_list::color(const QTreeWidgetItem* item) const
+{
+    return item->data(Color, Qt::DisplayRole).value<QColor>();
 }
 
 int Isovalues_list::numberOfIsoValues() const
@@ -122,6 +131,19 @@ bool Isovalues_list::enabled(const int i) const
     return 0.;
   else
     return treeWidget->topLevelItem(i)->data(Isovalue, Qt::CheckStateRole).toDouble();
+}
+
+bool Isovalues_list::enabled(const QTreeWidgetItem* item) const
+{
+    return item->data(Isovalue, Qt::CheckStateRole).toDouble();
+}
+
+const QTreeWidgetItem* Isovalues_list::item(const int i) const
+{
+  if(i < 0 || i > treeWidget->topLevelItemCount())
+    return 0;
+  else
+    return treeWidget->topLevelItem(i);
 }
 
 void Isovalues_list::save_values(QString filename) const

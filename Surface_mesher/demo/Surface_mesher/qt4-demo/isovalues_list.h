@@ -6,6 +6,7 @@
 #include <QList>
 
 class QTreeWidget;
+class QTreeWidgetItem;
 
 class Isovalues_list : public QWidget
 {
@@ -16,9 +17,12 @@ public:
 
   int numberOfIsoValues() const;
   QColor color(const int i) const;
+  QColor color(const QTreeWidgetItem* i) const;
   double isovalue(const int i) const;
   QString name(const int i) const;
   bool enabled(const int i) const;
+  bool enabled(const QTreeWidgetItem* i) const;
+  const QTreeWidgetItem* item(const int i) const;
 
 public slots:
   void save_values(QString) const;

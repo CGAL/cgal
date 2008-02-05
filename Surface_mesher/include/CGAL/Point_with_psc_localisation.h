@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-template <class Point>
+template <class Point, typename Index_type = int>
 class Point_with_psc_localisation : public Point
 {
   typedef CGAL::Point_traits<Point> Point_traits;
@@ -36,9 +36,9 @@ class Point_with_psc_localisation : public Point
   typedef Point_with_psc_localisation<Point> Self;
 
 public:
-  Point_with_psc_localisation() : Point(), index(-1), dim(-1) {}
+  Point_with_psc_localisation() : Point(), index(), dim(-1) {}
 
-  Point_with_psc_localisation(const Point& p) : Point(p), index(-1), dim(-1) {}
+  Point_with_psc_localisation(const Point& p) : Point(p), index(), dim(-1) {}
 			   
 //   Point_with_psc_localisation(const typename Kernel::Point_3& p) : Point(p), index(0) {}
 
@@ -46,16 +46,16 @@ public:
     : Point(p), index(p.element_index()), dim(p.dimension()) {}
 
   Point_with_psc_localisation(const FT& x, const FT& y, const FT& z, const FT& w = FT(1))
-    : Point(Point_traits().point(Bare_point(x, y, z, w))), index(-1), dim(-1) {}
+    : Point(Point_traits().point(Bare_point(x, y, z, w))), index(), dim(-1) {}
 
-  const int& element_index() const
+  const Index_type& element_index() const
   {
-    return Self::index;
+    return index;
   }
 
-  void set_element_index(const int i)
+  void set_element_index(const Index_type i)
   {
-    Self::index = i;
+    index = i;
   }
 
   void set_dimension(const int d)
@@ -68,23 +68,23 @@ public:
     return dim;
   }
 
-  void set_on_surface(const int i)
+  void set_on_surface(const Index_type i)
   {
-    CGAL_assertion(i>=0);
+//     CGAL_assertion(i>=0);
     set_element_index(i);
     set_dimension(2);
   }
 
-  void set_on_curve(const int i)
+  void set_on_curve(const Index_type i)
   {
-    CGAL_assertion(i>=0);
+//     CGAL_assertion(i>=0);
     set_element_index(i);
     set_dimension(1);
   }
 
-  void set_on_vertex(const int i)
+  void set_on_vertex(const Index_type i)
   {
-    CGAL_assertion(i>=0);
+//     CGAL_assertion(i>=0);
     set_element_index(i);
     set_dimension(0);
   }
@@ -97,7 +97,7 @@ public:
   }
 #endif
 private:
-  int index;
+  Index_type index;
   int dim;
 }; // end class Point_with_psc_localisation
 

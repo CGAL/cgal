@@ -16,6 +16,7 @@
 #include <QStatusBar>
 #include <QDoubleSpinBox>
 #include <QMessageBox>
+#include <QTreeWidgetItem>
 
 // surface mesher
 #define CGAL_MESHES_NO_OUTPUT
@@ -58,7 +59,6 @@ class Classify_from_isovalue_list :
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
   boost::shared_ptr<Isovalues> isovalues;
-  Isovalues_list* list;
 
   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
   {
@@ -69,7 +69,6 @@ class Classify_from_isovalue_list :
   };
 public:
   Classify_from_isovalue_list(Isovalues_list * list)
-    : list(list)
   {
     isovalues = boost::shared_ptr<Isovalues>(new Isovalues(list->numberOfIsoValues()));
     for(int i = 0, nbs = list->numberOfIsoValues(); i < nbs; ++i )
@@ -79,13 +78,11 @@ public:
 
   result_type operator()(FT value)
   {
-    if(list == 0)
-      return 0;
     result_type result = 0;
 //     std::cerr << "isovalues: ";
     for(int i = 1, end = isovalues->size(); i <= end; ++i)
     {
-//       std::cerr << list->isovalue(i) << ", ";
+//       std::cerr << (*isovalues)[i-1] << ", ";
       if(value >= (*isovalues)[i-1].first &&
          i >= result)
       {
@@ -103,6 +100,66 @@ public:
   }
 };
 
+class Generate_surface_identifiers :
+  std::binary_function<Classify_from_isovalue_list::result_type,
+                       Classify_from_isovalue_list::result_type,
+                       const QTreeWidgetItem*>
+{
+  Isovalues_list* list;
+public:
+  Generate_surface_identifiers(Isovalues_list* list) : list(list) {};
+
+  result_type operator()(const Classify_from_isovalue_list::result_type& a,
+                         const Classify_from_isovalue_list::result_type& b)
+  {
+    return list->item(std::min(a, b));
+  }
+};
+
+// class Classify_from_isovalue_list :
+//   public std::unary_function<FT, const QTreeWidgetItem*> 
+// {
+//   typedef std::pair<FT, result_type> Isovalue;
+//   typedef std::vector<Isovalue> Isovalues;
+//   boost::shared_ptr<Isovalues> isovalues;
+
+//   struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+//   {
+//     bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
+//     {
+//       return isoval1.first < isoval2.first;
+//     }
+//   };
+// public:
+//   Classify_from_isovalue_list(Isovalues_list * list)
+//   {
+//     isovalues = boost::shared_ptr<Isovalues>(new Isovalues(list->numberOfIsoValues()));
+//     for(int i = 0, nbs = list->numberOfIsoValues(); i < nbs; ++i )
+//       (*isovalues)[i] = std::make_pair(list->isovalue(i), list->item(i));
+//     std::sort(isovalues->begin(), isovalues->end(), Sort_isovalues());
+//   }
+
+//   result_type operator()(FT value)
+//   {
+//     int result = 0;
+// //     std::cerr << "isovalues: ";
+//     for(int i = 1, end = isovalues->size(); i <= end; ++i)
+//     {
+// //       std::cerr << (*isovalues)[i-1] << ", ";
+//       if(value >= (*isovalues)[i-1].first &&
+//          i >= result)
+//       {
+//         result = i;
+//       }
+//     }
+//     if(result>1)
+//       std::cerr << boost::format("result = %1%/%2%\n") % result % isovalues->size();
+//     if(result>0)
+//       return (*isovalues)[result-1].second;
+//     else
+//       return 0;
+//   }
+// };
 Volume::Volume(QObject* parent) : 
   Surface(parent),
   m_sm_angle(30),
@@ -210,20 +267,31 @@ void Volume::open(const QString& filename)
 {
   fileinfo.setFile(filename);
   if(!fileinfo.isReadable())
-    QMessageBox::warning(parent, qApp->applicationName(),
-                         QString(tr("Cannot open file <tt>%1</tt>!")).arg(filename));
-  if(!m_image.read(filename.toStdString().c_str()))
+  {
+    QMessageBox::warning(parent, parent->windowTitle(),
+                         QString(tr("Cannot read file <tt>%1</tt>!")).arg(filename));
     status_message(QString("Opening of file %1 failed!").arg(filename));
-  else {
-    status_message(QString("File %1 successfully opened.").arg(filename));
-    viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
-                                          qglviewer::Vec(m_image.xmax(),
-                                                         m_image.ymax(),
-                                                         m_image.zmax()));
+  }
+  else
+  {
+    if(!m_image.read(filename.toStdString().c_str()))
+    {
+      QMessageBox::warning(parent, parent->windowTitle(),
+                           QString(tr("Error with file <tt>%1</tt>:\nunknown file format!")).arg(filename));
+      status_message(QString("Opening of file %1 failed!").arg(filename));
+    }
+    else
+    {
+      status_message(QString("File %1 successfully opened.").arg(filename));
+      viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
+                                            qglviewer::Vec(m_image.xmax(),
+                                                           m_image.ymax(),
+                                                           m_image.zmax()));
 
-    viewer->showEntireScene();
-    isovalues_list->load_values(fileinfo.absoluteFilePath());
-    emit changed();
+      viewer->showEntireScene();
+      isovalues_list->load_values(fileinfo.absoluteFilePath());
+      emit changed();
+    }
   }
 }
 
@@ -305,7 +373,7 @@ void Volume::display_marchin_cube()
         const Vector v = t[2] - t[0];
         Vector n = CGAL::cross_product(u,v);
         n = n / std::sqrt(n*n);
-        m_surface_mc.push_back(Facet(t,n,isovalue_id));
+        m_surface_mc.push_back(Facet(t,n,isovalues_list->item(isovalue_id)));
       }
       timer.start();
     }
@@ -365,24 +433,13 @@ void Volume::display_surface_mesher_result()
     Tr tr;            // 3D-Delaunay triangulation
     C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
-    // Carefully choosen bounding sphere: the center must be inside the
-    // surface defined by 'image' and the radius must be high enough so that
-    // the sphere actually bounds the whole image.
-
-    //   bool probe = m_image.probe_sink(10000);
-    //   if(!probe)
-    //   {
-    //     status_message("Sink probing failed");
-    //     not_busy();
-    //     return;
-    //   }
-
     Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
     // definition of the surface
     Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
 //     Threshold threshold(m_image.isovalue());
     Classify_from_isovalue_list classify(isovalues_list);
+    Generate_surface_identifiers generate_ids(isovalues_list);
 
     std::vector<Point> seeds;
     search_for_connected_components(std::back_inserter(seeds), classify);
@@ -390,8 +447,9 @@ void Volume::display_surface_mesher_result()
     // surface mesh traits class
     typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
       Surface_3, 
-      Classify_from_isovalue_list> Oracle;
-    Oracle oracle(classify);
+      Classify_from_isovalue_list,
+      Generate_surface_identifiers> Oracle;
+    Oracle oracle(classify, generate_ids);
 
     for(std::vector<Point>::const_iterator it = seeds.begin(), end = seeds.end();
         it != end; ++it)
