@@ -29,8 +29,6 @@ if(GMP_FOUND)
     if ( AUTO_LINK_ENABLED )
     
       set(CGAL_CORE_LIBRARIES "" )
-      set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
-      
       
     else()
     
@@ -45,9 +43,6 @@ if(GMP_FOUND)
           set(CGAL_CORE_LIBRARIES ${CGAL_BINARY_DIR}/lib/lib${CGAL_CORE_BASENAME}.a)
         endif(BUILD_SHARED_LIBS)
       endif()
-      
-      set(CGAL_CORE_LIBRARIES_DIR "${CGAL_BINARY_DIR}/lib" )
-      
       
     endif()
   endif()
