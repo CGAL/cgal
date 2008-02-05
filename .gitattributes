@@ -4172,19 +4172,5 @@ wininst/developer_scripts/WriteEnvStr.nsh -text
 wininst/developer_scripts/cgal-16.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal_very_small_FFFFFF.bmp -text svneol=unset#image/bmp
-wininst/developer_scripts/examples/C2vcproj -text
-wininst/developer_scripts/examples/master.vcproj eol=crlf
-wininst/developer_scripts/examples/master_71.vcproj -text
-wininst/developer_scripts/examples/master_71_head.sln eol=crlf
-wininst/developer_scripts/examples/master_71_proj_line.sln eol=crlf
-wininst/developer_scripts/examples/master_80.vcproj -text
-wininst/developer_scripts/examples/master_80_head.sln eol=crlf
-wininst/developer_scripts/examples/master_80_proj_line.sln eol=crlf
-wininst/developer_scripts/examples/master_head.sln -text
-wininst/developer_scripts/examples/master_proj_line.sln -text
 wininst/developer_scripts/script_cgal_3_3.nsh -text
 wininst/developer_scripts/zirkel.bmp -text svneol=unset#image/bmp
-wininst/src/CGAL/cgallib_71.vcproj -text
-wininst/src/CGAL/cgallib_80.vcproj -text
-wininst/src/CGAL_71.sln eol=crlf
-wininst/src/CGAL_80.sln eol=crlf
