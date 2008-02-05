@@ -1,0 +1,170 @@
+#!/bin/sh
+
+# Copyright (c) 1999,2000,2002-2007
+# Utrecht University (The Netherlands),
+# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).  All rights reserved.
+#
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; version 2.1 of the License.
+# See the file LICENSE.LGPL distributed with CGAL.
+#
+# Licensees holding a valid commercial license may use this file in
+# accordance with the commercial license agreement provided with the software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/scripts/cgal_create_makefile $
+# $Id: cgal_create_makefile 36976 2007-03-09 22:53:24Z reichel $
+#
+# Author(s)     : various
+
+# This script creates a CGAL cmake script with entries for all .C and .cpp
+# files in the current directory.
+#
+# Usage: cgal_create_cmake_script [-options]
+#
+# -d   create a default CGAL cmake script
+# -t   create a CGAL cmake script for the test suite
+# -q   create a CGAL cmake script with Qt support
+
+
+#VERSION=2.0
+
+
+
+create_cmake_script()
+{
+  # print makefile header
+  echo '# Created by the script cgal_create_cmake_script'
+  echo '# This is the CMake script for compiling a CGAL application.'
+  echo
+  
+  
+  echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
+  echo
+
+  echo 'set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGALROOT}/cmake/modules"  )'
+  echo
+  
+  echo 'find_package(CGAL)'
+  echo
+  
+  if [ -n "$QT" ] ; then
+  
+    echo 'find_package(Qt3)'
+    echo
+    echo 'if ( CGAL_FOUND AND QT_FOUND )'
+    echo
+    echo '  include(UseCGAL)'
+    echo '  include(Qt3Macros)'
+    echo
+    
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      # Create an executable for each cpp that  contains a function "main()"
+      BASE=`basename $file .C`
+      BASE=`basename $BASE .cpp`
+      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        exe_name=$BASE
+      fi
+      all="$all $file"
+    done
+    
+    echo "  QT3_AUTOMOC( ${all} )"
+    echo
+    
+    echo '  # Make sure the compiler can find generated .moc files'
+    echo '  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})'
+    
+    echo '  include_directories( ${QT_INCLUDE_DIR} )'
+    
+    if [ -d include ] ; then
+      echo '  include_directories (BEFORE include)'
+    fi
+    echo
+    
+    echo "  add_executable  (${exe_name} ${all})"
+    echo "  add_dependencies(${exe_name} CGAL CGAL_QT)"
+    echo
+    
+    echo '  if ( CGAL_USE_CGAL_CORE )'
+    echo "    add_dependencies(${exe_name} CGAL_CORE)"
+    echo '  endif()'
+    echo
+      
+    echo '  # Link the executable to CGAL and third-party libraries'
+    echo '  if ( AUTO_LINK_ENABLED )'
+    echo "    target_link_libraries(${exe_name}"' ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )'
+    echo '  else()'
+    echo "    target_link_libraries(${exe_name}" '${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})'
+    echo '  endif()'
+    
+  else
+  
+    echo 'if ( CGAL_FOUND )'
+    echo
+    echo '  include(UseCGAL)'
+    echo '  include(CreateSingleSourceCGALProgram)'
+    echo
+  
+    if [ -d include ] ; then
+      echo '  include_directories (BEFORE include)'
+    echo
+    fi
+    
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      # Create an executable for each cpp that  contains a function "main()"
+      BASE=`basename $file .C`
+      BASE=`basename $BASE .cpp`
+      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        echo "  create_single_source_cgal_program( $file )"
+      fi
+    done
+  fi
+  
+  echo
+  echo 'endif()'
+
+}
+
+
+usage()
+{
+     echo "Usage: cgal_create_cmake_script [-options]"
+     echo
+     echo "-d   create a default CGAL CMake script"
+     echo "-t   create a CGAL CMake script for the test suite"
+     echo "-q   create a CGAL CMake script with Qt support"
+}
+
+
+case $# in
+  0) usage
+     exit 1
+esac
+
+
+for i do
+  case $i in
+    -d) ;;
+    -t) TESTSUITE='y';;
+    -q) QT='y';;
+    -*) usage
+        exit 1;;
+  esac
+done
+
+OUTPUTFILE=CMakeLists.txt
+
+if [ -f ${OUTPUTFILE} ] ; then
+  echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
+  mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
+fi
+create_cmake_script > $OUTPUTFILE
+echo "created $OUTPUTFILE ..."
