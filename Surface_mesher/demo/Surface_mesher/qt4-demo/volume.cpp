@@ -1,22 +1,113 @@
 #include <CGAL/basic.h>
+
+#include  <algorithm> // std::sort
+#include <boost/shared_ptr.hpp>
+
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Timer.h>
+
 #include "volume.h"
 #include "viewer.h"
-#include <CGAL/Bbox_3.h>
+#include "isovalues_list.h"
 
 #include <QApplication>
 #include <QAction>
 #include <QMainWindow>
 #include <QStatusBar>
 #include <QDoubleSpinBox>
+#include <QMessageBox>
 
-#include <CGAL/Timer.h>
+// surface mesher
+#define CGAL_MESHES_NO_OUTPUT
+#include <CGAL/Surface_mesh_vertex_base_3.h>
+#include <CGAL/Surface_mesh_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
+#include <CGAL/Surface_mesh_default_criteria_3.h>
+#include <CGAL/make_surface_mesh.h>
+#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Surface_mesh_traits_generator_3.h>
+typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
+typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
+typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
+typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
+
+#include <CGAL/Surface_mesher/Standard_criteria.h>
+#include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
+
+
+struct Threshold : public std::unary_function<FT, unsigned char> {
+  double isovalue;
+
+  Threshold(double isovalue) : isovalue(isovalue) {}
+
+  result_type operator()(FT value)
+  {
+    if(value >=  isovalue)
+      return 1;
+    else
+      return 0;
+  }
+};
+
+class Classify_from_isovalue_list :
+  public std::unary_function<FT, unsigned char> 
+{
+  typedef std::pair<FT, result_type> Isovalue;
+  typedef std::vector<Isovalue> Isovalues;
+  boost::shared_ptr<Isovalues> isovalues;
+  Isovalues_list* list;
+
+  struct Sort_isovalues : std::binary_function<Isovalue, Isovalue, bool> 
+  {
+    bool operator()(const Isovalue& isoval1, const Isovalue& isoval2)
+    {
+      return isoval1.first < isoval2.first;
+    }
+  };
+public:
+  Classify_from_isovalue_list(Isovalues_list * list)
+    : list(list)
+  {
+    isovalues = boost::shared_ptr<Isovalues>(new Isovalues(list->numberOfIsoValues()));
+    for(int i = 0, nbs = list->numberOfIsoValues(); i < nbs; ++i )
+      (*isovalues)[i] = std::make_pair(list->isovalue(i), i);
+    std::sort(isovalues->begin(), isovalues->end(), Sort_isovalues());
+  }
+
+  result_type operator()(FT value)
+  {
+    if(list == 0)
+      return 0;
+    result_type result = 0;
+//     std::cerr << "isovalues: ";
+    for(int i = 1, end = isovalues->size(); i <= end; ++i)
+    {
+//       std::cerr << list->isovalue(i) << ", ";
+      if(value >= (*isovalues)[i-1].first &&
+         i >= result)
+      {
+        result = i;
+      }
+    }
+//     if(result>1)
+//       std::cerr << "result = "  << (int)result << "/" << list->numberOfIsoValues() << std::endl;
+//     else
+//       std::cerr << std::endl;
+    if(result>0)
+      return (*isovalues)[result-1].second + 1;
+    else
+      return 0;
+  }
+};
 
 Volume::Volume(QObject* parent) : 
   Surface(parent),
   m_sm_angle(30),
   m_sm_radius(0),
   m_sm_distance(0),
-  m_isovalue(0),
   m_relative_precision(0.0001),
   m_view_surface(false),
   m_view_mc(false),
@@ -26,14 +117,14 @@ Volume::Volume(QObject* parent) :
 {
   QAction* marching_cube_action = parent->findChild<QAction*>("actionMarching_cubes");
   QAction* surface_mesher_action = parent->findChild<QAction*>("actionSurface_mesher");
-  spinBox_isovalue = parent->findChild<QDoubleSpinBox*>("spinBox_isovalue");
   spinBox_radius_bound = parent->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
   spinBox_distance_bound = parent->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
 
-  if(spinBox_distance_bound && spinBox_radius_bound && spinBox_isovalue)
+  isovalues_list = parent->findChild<Isovalues_list*>("isovalues");
+  Q_ASSERT_X(isovalues_list, "surface meshing", "cannot find widget \"isovalues\"");
+
+ if(spinBox_distance_bound && spinBox_radius_bound)
   {
-    connect(spinBox_isovalue, SIGNAL(valueChanged(double)),
-            this, SLOT(set_isovalue(double)));
     connect(spinBox_radius_bound, SIGNAL(valueChanged(double)),
             this, SLOT(set_radius_bound(double)));
     connect(spinBox_distance_bound, SIGNAL(valueChanged(double)),
@@ -87,7 +178,7 @@ Volume::Volume(QObject* parent) :
   else
     CGAL_error_msg("Cannot find action actionUse_Gouraud_shading!");
 
-  Viewer* viewer = parent->findChild<Viewer*>("viewer");
+  viewer = parent->findChild<Viewer*>("viewer");
   if(viewer)
     connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
             viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
@@ -117,7 +208,11 @@ void Volume::set_use_gouraud(const bool b) {
 
 void Volume::open(const QString& filename)
 {
-  if(!m_image.read(filename.toStdString().c_str(), 0.f))
+  fileinfo.setFile(filename);
+  if(!fileinfo.isReadable())
+    QMessageBox::warning(parent, qApp->applicationName(),
+                         QString(tr("Cannot open file <tt>%1</tt>!")).arg(filename));
+  if(!m_image.read(filename.toStdString().c_str()))
     status_message(QString("Opening of file %1 failed!").arg(filename));
   else {
     status_message(QString("File %1 successfully opened.").arg(filename));
@@ -127,13 +222,14 @@ void Volume::open(const QString& filename)
                                                          m_image.zmax()));
 
     viewer->showEntireScene();
-    spinBox_isovalue->setRange(m_image.min_value, m_image.max_value);
+    isovalues_list->load_values(fileinfo.absoluteFilePath());
     emit changed();
   }
 }
 
 void Volume::status_message(QString string)
 {
+  std::cerr << qPrintable(string) << std::endl;
   parent->statusBar()->showMessage(string, 20000);
 }
 
@@ -151,6 +247,7 @@ void Volume::display_marchin_cube()
 {
   if(m_surface_mc.empty())
   {
+    isovalues_list->save_values(fileinfo.absoluteFilePath());
     unsigned int nx = m_image.xdim();
     unsigned int ny = m_image.ydim();
     unsigned int nz = m_image.zdim();
@@ -165,52 +262,59 @@ void Volume::display_marchin_cube()
     status_message("Marching cubes...");
 
     timer.start();
-    if(mc.ntrigs()!=0)
-      mc.clean_all();
-    mc.set_resolution(nx,ny,nz);
-    mc.init_all();
-
-    // set data
-    for(unsigned int i=0;i<nx;i++)
-      for(unsigned int j=0;j<ny;j++)
-        for(unsigned int k=0;k<nz;k++)
-        {
-          const float& value = m_image.value(i,j,k);
-          mc.set_data(value,i,j,k);
-        }
-    // compute scaling ratio
-    const double xr = m_image.xmax() / nx;
-    const double yr = m_image.ymax() / ny;
-    const double zr = m_image.zmax() / nz;
-
-    mc.run(m_image.isovalue(), xr, yr, zr);
-
-    std::vector<double> facets;
-    mc.get_facets(facets);
     m_surface_mc.clear();
 
+    for(int isovalue_id = 0; 
+        isovalue_id < isovalues_list->numberOfIsoValues();
+        ++isovalue_id)
+    {
+      status_message(QString("Marching cubes, isovalue #%1...").arg(isovalue_id));
+
+      if(mc.ntrigs()!=0)
+        mc.clean_all();
+      mc.set_resolution(nx,ny,nz);
+      mc.init_all();
+
+      // set data
+      for(unsigned int i=0;i<nx;i++)
+        for(unsigned int j=0;j<ny;j++)
+          for(unsigned int k=0;k<nz;k++)
+          {
+            const float& value = m_image.value(i,j,k);
+            mc.set_data(value,i,j,k);
+          }
+      // compute scaling ratio
+      const double xr = m_image.xmax() / nx;
+      const double yr = m_image.ymax() / ny;
+      const double zr = m_image.zmax() / nz;
+
+      mc.run(isovalues_list->isovalue(isovalue_id), xr, yr, zr);
+
+      std::vector<double> facets;
+      mc.get_facets(facets);
+
+      timer.stop();
+      const unsigned int nbt = facets.size() / 9;
+      for(unsigned int i=0;i<nbt;i++)
+      {
+        const Point a(facets[9*i],   facets[9*i+1], facets[9*i+2]);
+        const Point b(facets[9*i+3], facets[9*i+4], facets[9*i+5]);
+        const Point c(facets[9*i+6], facets[9*i+7], facets[9*i+8]);
+        const Triangle_3 t(a,b,c);
+        const Vector u = t[1] - t[0];
+        const Vector v = t[2] - t[0];
+        Vector n = CGAL::cross_product(u,v);
+        n = n / std::sqrt(n*n);
+        m_surface_mc.push_back(Facet(t,n,isovalue_id));
+      }
+      timer.start();
+    }
     timer.stop();
     not_busy();
 
-    const unsigned int nbt = facets.size() / 9;
-    for(unsigned int i=0;i<nbt;i++)
-    {
-      const Point a(facets[9*i],   facets[9*i+1], facets[9*i+2]);
-      const Point b(facets[9*i+3], facets[9*i+4], facets[9*i+5]);
-      const Point c(facets[9*i+6], facets[9*i+7], facets[9*i+8]);
-      const Triangle_3 t(a,b,c);
-      const Vector u = t[1] - t[0];
-      const Vector v = t[2] - t[0];
-      Vector n = CGAL::cross_product(u,v);
-      n = n / std::sqrt(n*n);
-      m_surface_mc.push_back(Facet(t,n));
-    }
-
-    status_message(QString("Marching cubes...done (%2 facets in %1 s)").arg(timer.time()).arg(m_surface_mc.size()));
-
     mc.clean_temps();
+    status_message(QString("Marching cubes...done (%2 facets in %1 s)").arg(timer.time()).arg(m_surface_mc.size()));
   }
-
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
   for(std::vector<Facet>::const_iterator
         it = m_surface_mc.begin(), end = m_surface_mc.end();
@@ -239,6 +343,8 @@ void Volume::display_surface_mesher_result()
      m_view_surface) // Or it is computed and displayed, and one want
                      // to recompute it.
   {
+    isovalues_list->save_values(fileinfo.absoluteFilePath());
+
     unsigned int nx = m_image.xdim();
     unsigned int ny = m_image.ydim();
     unsigned int nz = m_image.zdim();
@@ -275,11 +381,17 @@ void Volume::display_surface_mesher_result()
 
     // definition of the surface
     Surface_3 surface(m_image, bounding_sphere, m_relative_precision);
+//     Threshold threshold(m_image.isovalue());
+    Classify_from_isovalue_list classify(isovalues_list);
 
     std::vector<Point> seeds;
-    search_for_connected_components(std::back_inserter(seeds));
+    search_for_connected_components(std::back_inserter(seeds), classify);
 
-    Oracle oracle;
+    // surface mesh traits class
+    typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
+      Surface_3, 
+      Classify_from_isovalue_list> Oracle;
+    Oracle oracle(classify);
 
     for(std::vector<Point>::const_iterator it = seeds.begin(), end = seeds.end();
         it != end; ++it)
@@ -305,13 +417,28 @@ void Volume::display_surface_mesher_result()
     std::cerr << boost::format("Number of initial points: %1%\n") % tr.number_of_vertices();
 
     // defining meshing criteria
-    CGAL::Surface_mesh_default_criteria_3<Tr> criteria(m_sm_angle,  // angular bound
-                                                       m_sm_radius,  // radius bound
-                                                       m_sm_distance); // distance bound
+    typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
+    CGAL::Surface_mesher::Curvature_size_criterion<Tr>
+      curvature_size_criterion (m_sm_distance);
+    CGAL::Surface_mesher::Uniform_size_criterion<Tr>
+      uniform_size_criterion (m_sm_radius);
+    CGAL::Surface_mesher::Aspect_ratio_criterion<Tr>
+      aspect_ratio_criterion (m_sm_angle);
+    CGAL::Surface_mesher::Vertices_on_the_same_psc_element_criterion<Tr, Surface_3>
+      vertices_on_the_same_psc_element_criterion(surface);
+    
+    std::vector<Criterion*> criterion_vector;
+    criterion_vector.push_back(&aspect_ratio_criterion);
+    criterion_vector.push_back(&uniform_size_criterion);
+    criterion_vector.push_back(&curvature_size_criterion);
+    criterion_vector.push_back(&vertices_on_the_same_psc_element_criterion);
+
+    CGAL::Surface_mesher::Standard_criteria<Criterion> criteria(criterion_vector);
     std::cerr << "Surface_mesher... angle=" << m_sm_angle << ", radius= " << m_sm_radius
               << ", distance=" << m_sm_distance << "\n";
+
     // meshing surface
-    make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag(), 0);
+    make_surface_mesh(c2t3, surface, oracle, criteria, CGAL::Manifold_tag(), 0);
     timer.stop();
     not_busy();
 
@@ -330,7 +457,7 @@ void Volume::display_surface_mesher_result()
       const Vector v = t[2] - t[0];
       Vector n = CGAL::cross_product(u,v);
       n = n / std::sqrt(n*n);
-      m_surface.push_back(Facet(t,n));
+      m_surface.push_back(Facet(t,n,cell->vertex(tr.vertex_triple_index(index, 0))->point().element_index()));
     }
 
     const unsigned int nbt = m_surface.size();
@@ -443,13 +570,6 @@ void Volume::draw()
   m_image.gl_draw_bbox(3.0f,0,0,0);
 }
 
-void Volume::set_isovalue(double d)
-{
-  m_isovalue = d;
-  m_image.isovalue() = d;
-  changed_parameters();
-}
-
 void Volume::set_radius_bound(double d)
 { 
   m_sm_radius = FT(d);
@@ -475,6 +595,39 @@ void Volume::gl_draw_surface_mc()
   else
     gl_draw_surface(m_surface_mc.begin(),
                     m_surface_mc.end());
+}
+
+template <typename Iterator>
+void Volume::gl_draw_surface(Iterator begin, Iterator end)
+{
+  ::glBegin(GL_TRIANGLES);
+  unsigned int counter = 0;
+  for(Iterator it = begin; it != end; ++it)
+  {
+    const Facet& f = *it;
+    if(!isovalues_list->enabled(f.third))
+      continue;
+
+    const Vector& n = f.second;
+
+    if(m_inverse_normals)
+      ::glNormal3d(-n.x(),-n.y(),-n.z());
+    else
+      ::glNormal3d(n.x(),n.y(),n.z());
+
+    const Triangle_3& t = f.first;
+    const Point& a = t[0];
+    const Point& b = t[1];
+    const Point& c = t[2];
+
+    viewer->qglColor(isovalues_list->color(f.third));
+
+    ::glVertex3d(a.x(),a.y(),a.z());
+    ::glVertex3d(b.x(),b.y(),b.z());
+    ::glVertex3d(c.x(),c.y(),c.z());
+    ++counter;
+  }
+  ::glEnd();
 }
 
 void Volume::changed_parameters()

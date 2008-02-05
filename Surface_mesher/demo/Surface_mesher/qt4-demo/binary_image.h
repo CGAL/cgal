@@ -26,7 +26,7 @@
 
 #include <limits>
 
-template <typename FT, typename Point>
+template <typename FT_, typename Point>
 class CBinary_image_3
 {
   struct Image_deleter {
@@ -43,18 +43,39 @@ class CBinary_image_3
 public:
   typedef boost::shared_ptr<_image> Image_shared_ptr;
   Image_shared_ptr image_ptr;
-  float m_isovalue;
   float min_x, min_y, min_z;
   float max_x, max_y, max_z;
-  Point m_sink;
   float min_value;
   float max_value;
+
+  typedef FT_ FT;
+
+  bool private_read(_image* im)
+  {
+    if(im != 0)
+    {
+      if(image() != 0)
+      {
+        ::_freeImage(image());
+      }
+      image_ptr = Image_shared_ptr(im, Image_deleter());
+
+      std::cerr << 
+        boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")
+        % image_ptr.get() % image_ptr->xdim % image_ptr->ydim % image_ptr->zdim;
+
+      max_x = (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
+      max_y = (float)(((image_ptr->ydim) - 1.0)*(image_ptr->vy));
+      max_z = (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
+    }
+    compute_min_max();
+    return im != 0;
+  }
 
 public:
   CBinary_image_3()
   {
     image_ptr = Image_shared_ptr();
-    m_isovalue = 0.0f;
     max_x = max_y = max_z = 0.0f;
   }
 
@@ -62,13 +83,25 @@ public:
   {
     std::cerr << "CBinary_image_3::copy_constructor\n";
     image_ptr = bi.image_ptr;
-    m_isovalue = bi.m_isovalue;
     max_x = bi.max_x;
     max_y = bi.max_y;
     max_z = bi.max_z;
-    m_sink = bi.m_sink;
     min_value = bi.min_value;
     max_value = bi.max_value;
+  }
+
+  ~CBinary_image_3()
+  {
+  }
+
+  const _image* image() const
+  {
+    return image_ptr.get();
+  }
+
+  _image* image()
+  {
+    return image_ptr.get();
   }
 
   float xmax() const { return max_x; }
@@ -77,16 +110,16 @@ public:
 
   void compute_min_max()
   {
-    if(image_ptr.get() == 0) {
+    if(image() == 0) {
       min_value = 0;
       max_value = 0;
       return;
     }
-    min_value = max_value = evaluate(image_ptr.get(),0,0,0);
-    for(int i = 0; i < xmax(); ++i) {
-      for(int j = 0; j < ymax(); ++j)
-        for(int k = 0; k < zmax(); ++k) {
-          const float v = evaluate(image_ptr.get(), i, j, k);
+    min_value = max_value = evaluate(image(),0,0,0);
+    for(unsigned int i = 0; i < xdim(); ++i) {
+      for(unsigned int j = 0; j < ydim(); ++j)
+        for(unsigned int k = 0; k < zdim(); ++k) {
+          const float v = evaluate(image(), i, j, k);
           if(v > max_value) max_value = v;
           if(v < min_value) min_value = v;
         }
@@ -101,12 +134,6 @@ public:
     return Point(cx,cy,cz);
   }
 
-  Point& sink() { return m_sink; }
-  const Point& sink() const { return m_sink; }
-
-  float& isovalue() { return m_isovalue; }
-  float isovalue() const { return m_isovalue; }
-
   FT radius()
   {
     return std::max(std::max(max_x,max_y),max_z);
@@ -120,7 +147,7 @@ public:
               const unsigned int j,
               const unsigned int k)
   {
-    return evaluate(image_ptr.get(),i,j,k);
+    return evaluate(image(),i,j,k);
   }
 
   Point point(const unsigned int i,
@@ -134,53 +161,17 @@ public:
 
 public:
 
-  bool read(const char* file,
-            const float isoval)
+  bool read(const char* file)
   {
-    if(image_ptr.get() != NULL)
-      delete image_ptr.get();
-
-    image_ptr = Image_shared_ptr(::_readImage(file), Image_deleter());
-    std::cerr << boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")
-      % image_ptr.get() % image_ptr->xdim % image_ptr->ydim % image_ptr->zdim;
-    if(image_ptr.get() != NULL)
-    {
-      m_isovalue = isoval;
-      max_x = (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
-      max_y = (float)(((image_ptr->ydim) - 1.0)*(image_ptr->vy));
-      max_z = (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
-      compute_min_max();
-      return true;
-    }
-    compute_min_max();
-    return false;
+    return private_read(::_readImage(file));
   }
 
   bool read_raw(const char* file,
-                const float isoval,
                 const unsigned int rx,
                 const unsigned int ry,
                 const unsigned int rz)
   {
-    if(image_ptr.get() != NULL)
-      delete image_ptr.get();
-
-    image_ptr = Image_shared_ptr(::_readImage_raw(file,rx,ry,rz), Image_deleter());
-    if(image_ptr.get() != NULL)
-    {
-      m_isovalue = isoval;
-      max_x = (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
-      max_y = (float)(((image_ptr->ydim) - 1.0)*(image_ptr->vy));
-      max_z = (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
-      compute_min_max();
-      return true;
-    }
-    compute_min_max();
-    return false;
-  }
-
-  ~CBinary_image_3()
-  {
+    return private_read(::_readImage_raw(file,rx,ry,rz));
   }
 
   void gl_draw(const float point_size,
@@ -307,55 +298,20 @@ public:
              z <= max_z );
   }
 
-  bool probe_sink(const unsigned int nb_max)
-  {
-    unsigned int nb = 0;
-    while(!probe(m_sink)) 
-    {
-      nb++;
-      if(nb > nb_max)
-        return false;
-    }
-    return true;
-  }
-
-  bool probe(Point& center)
-  {
-    float rx = rand_x();
-    float ry = rand_y();
-    float rz = rand_z();
-    float value = ::trilinear_interpolation(image_ptr.get(),rx,ry,rz); 
-    if(value > m_isovalue)
-    {
-      center = Point(rx,ry,rz);
-      return true;
-    }
-    return false;
-  }
-
   float rand_x() { return (float)rand() / (float)RAND_MAX * max_x; }
   float rand_y() { return (float)rand() / (float)RAND_MAX * max_y; }
   float rand_z() { return (float)rand() / (float)RAND_MAX * max_z; }
 
   FT operator()(Point p) const
   {
-    float x = static_cast<float>(CGAL::to_double(p.x()));
-    float y = static_cast<float>(CGAL::to_double(p.y()));
-    float z = static_cast<float>(CGAL::to_double(p.z()));
+    const float x = static_cast<float>(CGAL::to_double(p.x()));
+    const float y = static_cast<float>(CGAL::to_double(p.y()));
+    const float z = static_cast<float>(CGAL::to_double(p.z()));
 
-    if(!inside(x,y,z))
-      return FT(1);
+    if(inside(x,y,z))
+      return FT(::trilinear_interpolation(image_ptr.get(),x,y,z));
     else
-    {
-      float value = ::trilinear_interpolation(image_ptr.get(),x,y,z); 
-      if (value > m_isovalue) // inside
-        return FT(-1);
-      else
-        if (value < m_isovalue) // outside
-          return FT(1);
-        else
-          return FT(0);
-    }
+      return 0;
   }
 }; // end CBinary_image_3
  

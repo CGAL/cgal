@@ -78,10 +78,27 @@ namespace CGAL {
              && print "$1\n";' {implicit_surface_oracle_3.h,Sphere_oracle_3.h} | sort -u
 )
     */
+
+  namespace {
+    
+  template <typename T>
+  struct Return_min : std::binary_function<T, T, T>
+  {
+    T operator()(const T& a, const T& b) const
+    {
+      return std::min(a, b);
+    }
+  };
+
+  } // end anonymous namespace
+
   template <
     class GT,
     class Surface,
-    class Transform_functor = typename Real_embeddable_traits<typename Surface::FT>::Sign,
+    class Transform_functor = 
+      typename Real_embeddable_traits<typename Surface::FT>::Sign,
+    class Surface_identifiers_generator = 
+      Return_min<typename Transform_functor::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
     class Visitor = Null_oracle_visitor
@@ -89,7 +106,12 @@ namespace CGAL {
   class Implicit_surface_oracle_3
   {
     // private types
-    typedef Implicit_surface_oracle_3<GT, Surface, Transform_functor, Point_creator, Visitor> Self;
+    typedef Implicit_surface_oracle_3<GT,
+                                      Surface,
+                                      Transform_functor,
+                                      Surface_identifiers_generator,
+                                      Point_creator,
+                                      Visitor> Self;
 
     typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
     
@@ -119,13 +141,20 @@ namespace CGAL {
     Visitor visitor; // a visitor that can modify a point, before returning
                      // it.
     Transform_functor transform_functor;
+    Surface_identifiers_generator surface_identifiers_generator;
 
   public:
 
     // Constructors
-    Implicit_surface_oracle_3 (Visitor visitor_ = Visitor(),
-                               Transform_functor transform_functor = Transform_functor() ) :
-      visitor(visitor_), transform_functor(transform_functor)
+    Implicit_surface_oracle_3 (Transform_functor transform_functor
+                                 = Transform_functor(),
+                               Surface_identifiers_generator
+                                 surface_identifiers_generator
+                                   = Surface_identifiers_generator(),
+                               Visitor visitor_ = Visitor()) :
+      visitor(visitor_), 
+      transform_functor(transform_functor),
+      surface_identifiers_generator(surface_identifiers_generator)
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
       std::cerr << "CONS: Implicit_surface_oracle_3\n";
@@ -136,10 +165,14 @@ namespace CGAL {
     {
       Visitor visitor;
       Transform_functor transform_functor;
+      Surface_identifiers_generator surface_identifiers_generator;
 
     public:
-      Intersect_3(Visitor visitor, Transform_functor transform_functor)
-        : visitor(visitor), transform_functor(transform_functor)
+      Intersect_3(Visitor visitor, Transform_functor transform_functor,
+                  Surface_identifiers_generator surface_identifiers_generator)
+        : visitor(visitor),
+          transform_functor(transform_functor),
+          surface_identifiers_generator(surface_identifiers_generator)
       {
       }
 
@@ -159,7 +192,7 @@ namespace CGAL {
 
         // if both extremities are on the same side of the surface, return
         // no intersection
-        if(surf_equation(surface, a) * surf_equation(surface, b) > 0)
+        if(surf_equation(surface, a) == surf_equation(surface, b))
           return Object();
 
         // Code for surfaces with boundaries
@@ -217,7 +250,7 @@ namespace CGAL {
         s << p << " (distance=" 
           << CGAL::sqrt(CGAL::squared_distance(p,
                                  surface.bounding_sphere().center()))
-          << ", sign=" << surf_equation(surface, p)
+          << ", value=" << surf_equation(surface, p)
           << ")";
         return s.str();
       }
@@ -247,8 +280,8 @@ namespace CGAL {
         result_type value_at_p1 = surf_equation(surface, p1);
         result_type value_at_p2 = surf_equation(surface, p2);
 
-        // if both extremities are on the same side of the surface, return
-        // no intersection
+        // If both extremities are in the same volume component, returns
+        // no intersection.
         if(value_at_p1 == value_at_p2)
           return Object();
 
@@ -258,7 +291,8 @@ namespace CGAL {
           std::cerr << debug_point(surface, p1) << ", "
                     << debug_point(surface, p2) << "\n";
 #endif
-          const Point mid = midpoint(p1, p2);
+          // mid cannot be const, because it is modified below.
+          Point mid = midpoint(p1, p2);
           const result_type value_at_mid = surf_equation(surface, mid);
 
           if ( squared_distance(p1, p2) < squared_distance_bound )
@@ -267,6 +301,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
+            mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
             visitor.new_point(mid);
             return make_object(mid);
           }
@@ -364,7 +399,9 @@ namespace CGAL {
 
     Intersect_3 intersect_3_object() const
     {
-      return Intersect_3(visitor, transform_functor);
+      return Intersect_3(visitor,
+                         transform_functor, 
+                         surface_identifiers_generator);
     }
 
     bool is_in_volume(const Surface_3& surface, const Point& p) const

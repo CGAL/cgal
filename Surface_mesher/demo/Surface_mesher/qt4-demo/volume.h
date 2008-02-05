@@ -13,15 +13,23 @@
 #include <boost/format.hpp>
 
 #include <queue>
+#include <set>
 #include <vector>
 #include <iterator> // std::back_inserter
 
 #include <QString>
+#include <QFileInfo>
 
 // kernel
 // #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel1;
+
+#include <CGAL/Point_with_psc_localisation.h>
+struct Kernel : public Kernel1 {
+  typedef CGAL::Point_with_psc_localisation<Kernel::Point_3> Point_3;
+};
+
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Sphere_3 Sphere;
@@ -29,28 +37,16 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Segment_3 Segment_3;
 
+typedef CGAL::Triple<Triangle_3,Vector,int> Facet;
+
 typedef CBinary_image_3<FT,Point> Binary_image;
 
 #include <mc/MarchingCubes.h>
 
-// surface mesher
-#include <CGAL/Surface_mesh_vertex_base_3.h>
-#include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/Surface_mesh_traits_generator_3.h>
-typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
-typedef CGAL::Surface_mesh_traits_generator_3<Surface_3>::Type Oracle;
-typedef std::pair<Triangle_3,Vector> Facet;
-
 class QMainWindow;
 class QDoubleSpinBox;
+class Viewer;
+class Isovalues_list;
 
 class Volume : public Surface
 {
@@ -66,7 +62,6 @@ private:
   FT m_sm_angle;
   FT m_sm_radius;
   FT m_sm_distance;
-  double m_isovalue;
   double m_relative_precision;
 
   // visualization
@@ -78,20 +73,22 @@ private:
   MarchingCubes mc ;
 
   QMainWindow* parent;
+  Viewer* viewer;
+  QFileInfo fileinfo;
+  Isovalues_list* isovalues_list;
   bool m_inverse_normals;
   bool two_sides;
   bool draw_triangles_edges;
   bool use_gouraud;
 
-  QDoubleSpinBox* spinBox_isovalue;
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
 private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end);
 
-  template <typename PointsOutputIterator>
-  void search_for_connected_components(PointsOutputIterator);
+  template <typename PointsOutputIterator, typename TransformOperator>
+  void search_for_connected_components(PointsOutputIterator, TransformOperator);
 
 public:
   void gl_draw_surface();
@@ -115,7 +112,6 @@ public slots:
   void close() {}
   void display_marchin_cube();
   void display_surface_mesher_result();
-  void set_isovalue(double);
   void set_radius_bound(double);
   void set_distance_bound(double);
 private:
@@ -125,14 +121,15 @@ private:
   void changed_parameters();
 };
 
-template <typename PointsOutputIterator>
-void Volume::search_for_connected_components(PointsOutputIterator it)
+template <typename PointsOutputIterator, typename TransformOperator>
+void Volume::search_for_connected_components(PointsOutputIterator it, TransformOperator transform)
 {
   const unsigned int nx = m_image.xdim();
   const unsigned int ny = m_image.ydim();
   const unsigned int nz = m_image.zdim();
 
   typedef unsigned char Marker;
+  typedef typename TransformOperator::result_type Label;
 
   static const Marker outside_mark 
     = ( std::numeric_limits<Marker>::is_bounded ? 
@@ -152,7 +149,8 @@ void Volume::search_for_connected_components(PointsOutputIterator it)
 //         Zone zone;
         if(visited[i][j][k]>0)
           continue;
-        if(m_image.value(i, j, k) <= m_isovalue) {
+        const Label current_label = transform(m_image.value(i, j, k));
+        if(current_label == Label()) {
           visited[i][j][k] = outside_mark;
           continue;
         }
@@ -160,8 +158,11 @@ void Volume::search_for_connected_components(PointsOutputIterator it)
         // if we reach here, (i, j, k) is a new connected component
         ++number_of_connected_components;
         std::cerr << boost::format("Found new connected component (#%5%) "
-                                   "at voxel (%1%, %2%, %3%), value=%4%\n")
-          % i % j % k % m_image.value(i, j, k) % number_of_connected_components;
+                                   "at voxel (%1%, %2%, %3%), value=%4%, volume id=%6%\n")
+          % i % j % k
+          % m_image.value(i, j, k) 
+          % number_of_connected_components
+          % (int)current_label;
 
         int nb_voxels = 0;
 
@@ -224,9 +225,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it)
               ++nb_neighbors; // fake neighbor
               continue;
             }
-            if(m_image.value(i_n, j_n, k_n) <= m_isovalue)
-              visited[i_n][j_n][k_n] = outside_mark;
-            else 
+            if(transform(m_image.value(i_n, j_n, k_n)) == current_label)
             {
               ++nb_neighbors;
               if(!visited[i_n][j_n][k_n]) {
@@ -258,33 +257,5 @@ void Volume::search_for_connected_components(PointsOutputIterator it)
           % boost::get<0>(bbox_max) % boost::get<1>(bbox_max) % boost::get<2>(bbox_max);
       } // end for i,j,k
 } // end function Volume::search_for_connected_components()
-
-template <typename Iterator>
-void Volume::gl_draw_surface(Iterator begin, Iterator end)
-{
-  ::glBegin(GL_TRIANGLES);
-  unsigned int counter = 0;
-  for(Iterator it = begin; it != end; ++it)
-  {
-    const Facet& f = *it;
-
-    const Vector& n = f.second;
-
-    if(m_inverse_normals)
-      ::glNormal3d(-n.x(),-n.y(),-n.z());
-    else
-      ::glNormal3d(n.x(),n.y(),n.z());
-
-    const Triangle_3& t = f.first;
-    const Point& a = t[0];
-    const Point& b = t[1];
-    const Point& c = t[2];
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glVertex3d(c.x(),c.y(),c.z());
-    ++counter;
-  }
-  ::glEnd();
-}
 
 #endif // _VOLUME_H

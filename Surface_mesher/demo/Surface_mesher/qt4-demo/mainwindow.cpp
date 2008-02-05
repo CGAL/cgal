@@ -16,6 +16,7 @@
 #include <QGLViewer/vec.h>
 
 #include "ui_meshing_bar.h"
+#include "ui_mainwindow.h"
 
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt
@@ -28,12 +29,11 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   sharp_edges_angle_lower_bound(60.),
   sharp_edges_angle_upper_bound(180.)
 {
-  setupUi(this);
+  Ui::MainWindow().setupUi(this);
   setAcceptDrops(true);
 
   viewer_ptr = qFindChild<QGLViewer*>(this, "viewer");
-
-  viewer_ptr->restoreStateFromFile();
+  Q_ASSERT_X(viewer_ptr, "MainWindow constructor", "cannot find widget \"viewer\"");
 
   if(other_window != 0)
   {
@@ -55,31 +55,6 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
                              meshing_bar);
     tb_meshing->insertSeparator(action_mc);
   }
-//     tb_meshing->insertWidget(action_mc, 
-//                              new QLabel(tr("Iso-value:")));
-//     spinbox_isovalue = new QDoubleSpinBox(this);
-//     spinbox_isovalue->setObjectName("spinbox_isovalue");
-//     tb_meshing->insertWidget(action_mc, 
-//                              spinbox_isovalue);
-  
-//     tb_meshing->insertWidget(action_mc, 
-//                              new QLabel(tr("Sizing bound:")));
-//     spinbox_radius_bound = new QDoubleSpinBox(this);
-//     spinbox_radius_bound->setObjectName("spinbox_radius_bound");
-//     tb_meshing->insertWidget(action_mc, 
-//                              spinbox_radius_bound);
-  
-//     tb_meshing->insertWidget(action_mc, 
-//                              new QLabel(tr("Distance bound:")));
-
-//     spinbox_distance_bound = new QDoubleSpinBox(this);
-//     spinbox_distance_bound->setObjectName("spinbox_isovalue");
-//     tb_meshing->insertWidget(action_mc, 
-//                              spinbox_distance_bound);
-
-//   surface = get_polyhedral_surface(this,
-// 				   sharp_edges_angle_lower_bound,
-// 				   sharp_edges_angle_upper_bound);
 
   surface = new Volume(this);
   

@@ -2,12 +2,20 @@
 #include "surface.h"
 #include <QAction>
 
+Viewer::Viewer(QWidget* parent)
+  : QGLViewer(parent), surface(0)
+{
+  // Do not store state in a file
+  setStateFileName("");
+}
+
 void Viewer::init()
 {
   setBackgroundColor(Qt::white);
   glLineStipple(5, 0xaaaa);
   glDisable(GL_LINE_STIPPLE);
 }
+
 QString Viewer::helpString() const
 {
   return ""
@@ -18,9 +26,8 @@ QString Viewer::helpString() const
 void Viewer::interpolateToFitBoundingBox(double xmin, double ymin, double zmin,
                                          double xmax, double ymax, double zmax)
 {
-  QAction* auto_resize = parent()->parent()->findChild<QAction*>("actionAuto_resize");
-  if(!auto_resize)
-    exit(1);
+  QAction* auto_resize = parent()->parent()->parent()->findChild<QAction*>("actionAuto_resize");
+  Q_ASSERT_X(auto_resize, "Viewer::interpolateToFitBoundingBox", "cannot find action \"actionAuto_resize\"");
   if(auto_resize && auto_resize->isChecked())
   {
     qglviewer::Camera new_camera = *(camera ());

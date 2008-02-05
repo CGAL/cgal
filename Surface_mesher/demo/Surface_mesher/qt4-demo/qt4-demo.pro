@@ -24,6 +24,8 @@ HEADERS += get_polyhedral_surface.h \
            surface.h \
            viewer.h \
            mainwindow.h \
+           isovalues_list.h \
+           colorlisteditor.h \
            ../../../include/CGAL/Complex_2_in_triangulation_3.h \
            ../../../include/CGAL/Complex_2_in_triangulation_cell_base_3.h \
            ../../../include/CGAL/Complex_2_in_triangulation_vertex_base_3.h \
@@ -78,12 +80,14 @@ HEADERS += get_polyhedral_surface.h \
            ../../../include/CGAL/Surface_mesher/Verbose_flag.h \
            ../../../include/CGAL/Surface_mesher/Vertices_on_the_same_surface_criterion.h \
            /home/lrineau/CGAL/Packages/Data_structure_for_queries_3/include/CGAL/Octree/Octree_helping_traits_3.h
-INTERFACES += ui/mainwindow.ui ui/optionsdialog.ui ui/meshing_bar.ui
+INTERFACES += ui/mainwindow.ui ui/optionsdialog.ui ui/meshing_bar.ui ui/isovalues_list.ui
 SOURCES += surface_mesher.cpp \
            viewer.cpp \
            mainwindow.cpp \
            polyhedral_surface.cpp \
            volume.cpp \
+           isovalues_list.cpp \
+           colorlisteditor.cpp \
            ../../../../Marching_cube/src/mc/MarchingCubes.cpp \
            ../../../../Marching_cube/src/mc/ply.c
-RESOURCES += surface_mesher.qrc
+RESOURCES += surface_mesher.qrc isovalues_list.qrc

@@ -1,5 +1,5 @@
 <RCC>
-    <qresource>
+    <qresource prefix="/" >
         <file>icons/bbox-red.png</file>
         <file>icons/bbox.png</file>
         <file>icons/cgal_logo.xpm</file>

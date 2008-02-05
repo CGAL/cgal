@@ -1,4 +1,5 @@
-// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2008       GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -58,7 +59,10 @@ public:
 
     q = (is_bad ? Quality(0) : Quality(1));
     if(is_bad)
-      CGAL_MESHES_OUTPUT_STREAM << "f";
+      CGAL_MESHES_OUTPUT_STREAM << "f("
+                                << v1->point().element_index() << ","
+                                << v2->point().element_index() << ","
+                                << v3->point().element_index() << ")";
     return is_bad;
   }
 }; // end Vertices_on_the_same_psc_element_criterion

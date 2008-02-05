@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>27</height>
+    <width>336</width>
+    <height>31</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,7 +14,7 @@
   </property>
   <layout class="QHBoxLayout" >
    <property name="spacing" >
-    <number>-1</number>
+    <number>6</number>
    </property>
    <property name="leftMargin" >
     <number>0</number>
@@ -28,23 +28,6 @@
    <property name="bottomMargin" >
     <number>0</number>
    </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>&amp;Iso-value:</string>
-       </property>
-       <property name="buddy" >
-        <cstring>spinBox_isovalue</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDoubleSpinBox" name="spinBox_isovalue" />
-     </item>
-    </layout>
-   </item>
    <item>
     <layout class="QHBoxLayout" >
      <item>

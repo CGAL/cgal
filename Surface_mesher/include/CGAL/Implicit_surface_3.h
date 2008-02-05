@@ -76,6 +76,16 @@ namespace CGAL {
       return gt.compute_squared_radius_3_object()(sphere);
     }
 
+    template <typename Vertex_handle>
+    bool vertices_not_on_same_surface_patch(const Vertex_handle& v1,
+                                            const Vertex_handle& v2,
+                                            const Vertex_handle& v3) const
+    {
+      return
+        v1->point().element_index() != v2->point().element_index() ||
+        v1->point().element_index() != v3->point().element_index();
+    }
+
   private:
     Function func;
     Sphere_3 sphere;
