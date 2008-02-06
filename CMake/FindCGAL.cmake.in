@@ -22,12 +22,15 @@ if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_P
 
   find_path(CGAL_INCLUDE_DIR 
             NAMES CGAL/basic.h
-            PATHS ${CMAKE_SOURCE_DIR}/include ${CGAL_ROOT}/include  
+            PATHS @CGAL_SOURCE_DIR@/include 
+                  ${CGAL_ROOT}/include  
         	  DOC "The directories containing include files for CGAL"
            )
            
   find_path(CGAL_CMAKE_MODULE_PATH CGALcommon.cmake
-            PATHS ${CMAKE_BINARY_DIR}/cmake/modules ${CGAL_ROOT}/cmake/modules ${CMAKE_MODULE_PATH}
+            PATHS @CGAL_SOURCE_DIR@/cmake/modules 
+                  ${CGAL_ROOT}/cmake/modules 
+                  ${CMAKE_MODULE_PATH}
         	  DOC "The directories containing CGAL CMake stuff"
            )
 

@@ -43,6 +43,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES_DIR} "@CGAL_LIBRARIES_DIR@")
   set(CGAL_LIBRARIES     ${CGAL_LIBRARIES}     "@CGAL_LIBRARIES@")
   
+  include_directories (${CGAL_BINARY_DIR}/include) # Plaform-specific include folder: where compiler_config is located
   include_directories (${CGAL_INCLUDE_DIR}) # Comes from FindCGAL
   
   include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})

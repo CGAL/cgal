@@ -95,14 +95,14 @@ if( CGAL_USE_QT )
       set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "cgal-qt${TOOLSET}-mt-o" ) 
       set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "cgal-qt${TOOLSET}-mt-g" ) 
       
-      set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
-                                             RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 
-                                             MINSIZEREL_OUTPUT_NAME     "${CGAL_QT_MINSIZEREL_MANGLED_NAME}" 
-                                             RELWITHDEBINFO_OUTPUT_NAME "${CGAL_QT_RELWITHDEBINFO_MANGLED_NAME}" 
+      set_target_properties( CGAL_QT PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
+                                                RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 
+                                                MINSIZEREL_OUTPUT_NAME     "${CGAL_QT_MINSIZEREL_MANGLED_NAME}" 
+                                                RELWITHDEBINFO_OUTPUT_NAME "${CGAL_QT_RELWITHDEBINFO_MANGLED_NAME}" 
                            )
       
-      add_custom_command(TARGET CGAL POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
-      add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
+      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
+      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
       
     endif()
 
