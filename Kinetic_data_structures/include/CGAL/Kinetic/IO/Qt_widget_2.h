@@ -89,10 +89,9 @@ public:
   //! construct things
   Qt_widget_2(int argc, char *argv[],
 	      typename  Simulator::Handle sh,
-	      double xmin=-10,double xmax=10, double ymin=-10, double ymax=10): 
-    app_(new QApplication(argc, argv)),
-    base_(new Graphical_base(sh)),
-    window_l_(base_){
+	      double xmin=-10,double xmax=10, double ymin=-10, double ymax=10): app_(new QApplication(argc, argv)),
+										base_(new Graphical_base(sh)),
+										window_l_(base_){
 
     app_->setMainWidget(new Qt_window(static_cast<int>(std::floor(xmin)),
 				      static_cast<int>(std::ceil(xmax)),

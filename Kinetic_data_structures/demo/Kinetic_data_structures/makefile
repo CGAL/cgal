@@ -29,11 +29,11 @@ LIBPATH = \
 
 LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) -lboost_thread-mt
+          $(CGAL_LDFLAGS) 
 
 QT_LDFLAGS =  \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) 
+          $(CGAL_LDFLAGS)
 
 CXXFLAGS_3D= $(CXXFLAGS)
 

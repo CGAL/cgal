@@ -110,7 +110,8 @@ public:
   */
   virtual void new_notification(typename Interface::Notification_type nt)=0;
 
-  struct Handle: public boost::noncopyable {
+  class Handle: public boost::noncopyable {
+  public:
     Handle(): p_(NULL){}
     Handle(LB_this *p):p_(p){}
     LB_this &operator*(){return *p_;}
@@ -249,7 +250,7 @@ private:						\
 
 #define CGAL_KINETIC_LISTEN1(Notifier, NOTIF, function)\
   private:								\
-  struct Notifier##_listener: public Notifier::Listener {		\
+  class Notifier##_listener: public Notifier::Listener {		\
     CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
   public:								\
     virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
@@ -263,7 +264,7 @@ private:						\
 
 #define CGAL_KINETIC_LISTEN2(Notifier, NOTIF, function, NOTIF2, function2) \
   private:								\
-  struct Notifier##_listener: public Notifier::Listener {			\
+  class Notifier##_listener: public Notifier::Listener {                \
     CGAL_KINETIC_LISTENER_BASICS(Notifier##_listener, This);		\
   public:								\
     virtual void new_notification(typename Notifier::Listener::Notification_type t) { \
