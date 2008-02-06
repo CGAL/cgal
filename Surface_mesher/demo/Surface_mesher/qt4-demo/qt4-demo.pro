@@ -25,6 +25,7 @@ HEADERS += get_polyhedral_surface.h \
            viewer.h \
            mainwindow.h \
            isovalues_list.h \
+           isovalues_list.cpp \
            colorlisteditor.h \
            ../../../include/CGAL/Complex_2_in_triangulation_3.h \
            ../../../include/CGAL/Complex_2_in_triangulation_cell_base_3.h \

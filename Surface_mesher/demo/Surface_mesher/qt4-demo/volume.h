@@ -117,11 +117,11 @@ public slots:
   void display_surface_mesher_result();
   void set_radius_bound(double);
   void set_distance_bound(double);
+  void changed_parameters();
 private:
   void status_message(QString);
   void busy() const;
   void not_busy() const;
-  void changed_parameters();
 };
 
 template <typename PointsOutputIterator, typename TransformOperator>

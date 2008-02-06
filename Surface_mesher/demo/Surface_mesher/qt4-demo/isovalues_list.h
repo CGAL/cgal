@@ -4,9 +4,32 @@
 #include <QWidget>
 #include <QString>
 #include <QList>
+#include <QModelIndex>
+#include <QItemDelegate>
 
 class QTreeWidget;
 class QTreeWidgetItem;
+
+class Isovalues_delegate : public QItemDelegate
+{
+  Q_OBJECT
+public:
+  Isovalues_delegate(QWidget* parent);
+
+signals:
+  void new_color(const QModelIndex&) const;
+  void new_isovalue(const QModelIndex&) const;
+
+protected:
+  void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+  QWidget *createEditor(QWidget *parent,
+                        const QStyleOptionViewItem & option,
+                        const QModelIndex & index) const;
+  void setEditorData(QWidget *editor,
+                     const QModelIndex &index) const;
+  void setModelData(QWidget *editor, QAbstractItemModel *model,
+                    const QModelIndex &index) const;
+};
 
 class Isovalues_list : public QWidget
 {
@@ -31,7 +54,7 @@ public slots:
   void on_minusButton_clicked();
 
 signals:
-  void color_changed(int);
+  void colors_changed();
   void isovalues_changed();
 private:
   QTreeWidget* treeWidget;

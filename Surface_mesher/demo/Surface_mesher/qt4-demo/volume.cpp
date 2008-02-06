@@ -241,6 +241,10 @@ Volume::Volume(QObject* parent) :
             viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
   else
     CGAL_error_msg("Cannot find the viewer!");
+  connect(isovalues_list, SIGNAL(colors_changed()),
+          viewer, SLOT(updateGL()));
+  connect(isovalues_list, SIGNAL(isovalues_changed()),
+          this, SLOT(changed_parameters()));
 }
 
 void Volume::set_inverse_normals(const bool b) {

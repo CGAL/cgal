@@ -17,61 +17,82 @@
 #include <QVariant>
 #include <QSettings>
 #include <QUrl>
+#include <QLineEdit>
+#include <QDoubleValidator>
 
-class Isovalues_delegate : public QItemDelegate
+Isovalues_delegate::Isovalues_delegate(QWidget* parent) : QItemDelegate(parent) {}
+void Isovalues_delegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-public:
-  Isovalues_delegate(QWidget* parent) : QItemDelegate(parent) {}
-
-protected:
-  void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+  switch(index.column())
   {
-    switch(index.column())
-    {
-    case Isovalues_list::Color: {
-      painter->fillRect(option.rect, index.data().value<QColor>());
-      drawFocus(painter, option, option.rect);
-      break;
-    }
-    default:
-      QItemDelegate::paint(painter, option, index);
-    }
+  case Isovalues_list::Color: {
+    painter->fillRect(option.rect, index.data().value<QColor>());
+    drawFocus(painter, option, option.rect);
+    break;
   }
+  default:
+    QItemDelegate::paint(painter, option, index);
+  }
+}
 
-  QWidget *createEditor(QWidget *parent,
-                        const QStyleOptionViewItem & option,
-                        const QModelIndex & index) const
+QWidget *Isovalues_delegate::createEditor(QWidget *parent,
+                                          const QStyleOptionViewItem & option,
+                                          const QModelIndex & index) const
+{
+  if(index.column() == Isovalues_list::Color)
   {
-    if(index.column() == Isovalues_list::Color)
-    {
-      return new ColorListEditor(parent);
-    }
-    else return QItemDelegate::createEditor(parent, option, index);
+    return new ColorListEditor(parent);
   }
+  else if(index.column() == Isovalues_list::Isovalue)
+  {
+    QLineEdit* lineedit = new QLineEdit(parent);
+    lineedit->setAutoFillBackground(true);
+    lineedit->setValidator(new QDoubleValidator(lineedit));
+    return lineedit;
+  }
+  else return QItemDelegate::createEditor(parent, option, index);
+}
   
-  void setEditorData(QWidget *editor,
-                     const QModelIndex &index) const
+void Isovalues_delegate::setEditorData(QWidget *editor,
+                                       const QModelIndex &index) const
+{
+  if(index.column() == Isovalues_list::Color)
   {
-    if(index.column() == Isovalues_list::Color)
-    {
-      ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
-      if(coloreditor)
-        coloreditor->setColor(index.data().value<QColor>());
-    }
-    else QItemDelegate::setEditorData(editor, index);
+    ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
+    if(coloreditor)
+      coloreditor->setColor(index.data().value<QColor>());
   }
-  void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const
+  else if(index.column() == Isovalues_list::Isovalue)
   {
-    if(index.column() == Isovalues_list::Color)
-    {
-      ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
-      if(coloreditor)
-        model->setData(index, coloreditor->color());
-    }
-    else QItemDelegate::setModelData(editor, model, index);
+    QLineEdit* lineedit = qobject_cast<QLineEdit*>(editor);
+    if(lineedit)
+      lineedit->setText(index.data().toString());
   }
-};
+  else QItemDelegate::setEditorData(editor, index);
+}
+void Isovalues_delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                      const QModelIndex &index) const
+{
+  if(index.column() == Isovalues_list::Color)
+  {
+    ColorListEditor* coloreditor = qobject_cast<ColorListEditor*>(editor);
+    if(coloreditor)
+    {
+      model->setData(index, coloreditor->color());
+      emit new_color(index);
+    }
+  }
+  else if(index.column() == Isovalues_list::Isovalue)
+  {
+    QLineEdit* lineedit = qobject_cast<QLineEdit*>(editor);
+    if(lineedit)
+    {
+      model->setData(index, lineedit->text().toDouble());
+      emit new_isovalue(index);
+    }
+  }
+  else QItemDelegate::setModelData(editor, model, index);
+}
 
 const double Isovalues_list::default_isovalue = 0.0;
 
@@ -89,6 +110,10 @@ Isovalues_list::Isovalues_list(QWidget* parent):
   Isovalues_delegate* isovalues_delegate = new Isovalues_delegate(parent);
 
   treeWidget->setItemDelegate(isovalues_delegate);
+  connect(isovalues_delegate, SIGNAL(new_isovalue(const QModelIndex&)),
+          this, SIGNAL(isovalues_changed()));
+  connect(isovalues_delegate, SIGNAL(new_color(const QModelIndex&)),
+          this, SIGNAL(colors_changed()));
 }
 
 QColor Isovalues_list::color(const int i) const
