@@ -64,7 +64,6 @@ set(CGAL_CMAKE_INSTALL_DIR     	cmake/modules)
 #
 #--------------------------------------------------------------------------------------------------
 
-# Settings to compile an another project with CGAL
 set(CGAL_3RD_PARTY_DEFINITIONS)
 set(CGAL_3RD_PARTY_INCLUDE_DIRS)
 set(CGAL_3RD_PARTY_LIBRARIES)
@@ -76,6 +75,7 @@ set(CGAL_3RD_PARTY_LIBRARIES_DIR)
 # Each dependency can be selected or unselected via the option WITH_*
 include(FindCGALDependencies)
 
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Generation of compiler_config.h =-
@@ -83,7 +83,6 @@ include(FindCGALDependencies)
 #--------------------------------------------------------------------------------------------------
 
 # The variables set are the #defines expected by compiler_config.h
-# For each .cpp configuration test
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
 
@@ -147,9 +146,9 @@ set(CGAL_LIBRARIES_DIR ${CGAL_BINARY_DIR}/lib)
 
 set(CGAL_LIBRARIES CACHE STRING "Selected CGAL Libraries")
 
-set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} )
+set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} CACHE STRING "Compiler definitions used for building CGAL.")
 
-set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}")
+set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}" CACHE STRING "Linked flags used for building CGAL.")
 
 include_directories (${CGAL_INCLUDE_DIR})
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
@@ -192,11 +191,8 @@ install(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
 #
 #--------------------------------------------------------------------------------------------------
 
-# FinCGAL is paltform independet
+# FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
 configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake @ONLY IMMEDIATE)
-
-
-# UseCGAL OTOH contains platform depedent definitions
 configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
 
 
@@ -204,16 +200,27 @@ install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR
          DESTINATION ${CMAKE_ROOT}/Modules
        )  
 
-#-----------------------------------------------------------------------------
-# TODO: Configure Dart testing support
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= APPLICATIONS =-
+#
+#--------------------------------------------------------------------------------------------------
 
-set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 
+# This script does not configure demos and examples by default, but its does if requested.
 optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
 optional_add_subdirectory( examples OFF EXCLUDE_FROM_ALL )
 
+
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= TESTSUITE =-
+#
+#--------------------------------------------------------------------------------------------------
+
 # INCLUDE(Dart)
 # MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
+set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 if(BUILD_TESTING)
 
   add_subdirectory(test ON EXCLUDE_FROM_ALL )
