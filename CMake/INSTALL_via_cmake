@@ -1,0 +1,140 @@
+ 
+INSTALL
+-------------------------------------------------------------------------------
+This file describes how to install CGAL.
+
+The documentation of CGAL is available in various formats (HTML,
+PostScript, PDF). It is not bundled with the software but can be
+downloaded separately at <http://www.cgal.org/Manual>.
+
+For more information about CGAL, see the <http://www.cgal.org/>.
+
+
+To install CGAL, you should:
+
+ --------------------------- 
+ - setup the pre-requisites:
+ ---------------------------
+  
+   * install CMake 2.4.7 or later (www.cmake.org)
+     CMake is the build system used by CGAL.
+     
+   * install the Boost libraries (www.boost.org)
+     Boost is required to build CGAL.
+     
+   * install optional additional libraries:
+        
+       - qt3 (trolltech.com/products/qt)
+       
+           Used by most Demos
+           
+       - gmp   (gmplib.org)
+       - mpfr  (www.mpfr.org)
+       - leda  (www.algorithmic-solutions.com/leda/index.htm)
+       
+           Used for exact arithmetic
+       
+     
+ --------------------------------------------------------------------------------- 
+ - download the compressed archive file from the CGAL web site http://www.cgal.org
+ ---------------------------------------------------------------------------------- 
+ 
+ ------------------
+ - unpack the file
+ -----------------
+
+ ------------------------------ 
+ - configure the CGAL libraries
+ ------------------------------ 
+ 
+    for a single configuration you can run the following command 
+    from the root folder:
+    
+       cmake . (notice the "current directory" argument)
+     
+    for a multi-configuration (different compilers, or release/debug, etc) you need to:
+     
+      create a folder for each configuration and from within that folder
+      run the following command:
+      
+        cmake <path-to-cgal-root>
+        
+    if you see any errors during configuration, run cmake again with the same arguments.
+    (CMake uses a cache system that might require a second pass through it)
+    
+    CMake will try to locate the libraries used and required
+    by CGAL. These libraries are detailed in the CGAL install notes at
+    <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
+        
+  -------------------------------------- 
+  - build and install the CGAL libraries 
+  -------------------------------------- 
+  
+    run the following commands from the configuration folder 
+    (or the root folder if a single configuration was used)
+  
+        make
+        make install
+        
+  --------------------------------------------- 
+  - configure and build applications using CGAL
+  - (such as demos, examples, etc)        
+  ---------------------------------------------
+  
+    set CGALROOT to a given configuration folder.
+    
+    for example, if you built a debug version by running
+    
+       cmake ../../..
+    
+    under folder
+    
+      CGAL-3.4/cmake/platforms/debug
+      
+    type
+      
+      export CGALROOT=CGAL-3.4/cmake/platforms/debug
+       
+    Or, if you built cgal for a single configuration
+    running "cmake ." directly from CGAL-3.4,
+    type:
+    
+      export CGALROOT=CGAL-3.4
+      
+    cd into the folder containing the CGAL application.
+    for example:
+      
+      cd CGAL-3-4/demo/Alpha_shapes_2
+       
+    run cmake "in-source" (passing the current folder as argument)
+       
+      cmake .
+      
+    build the application
+      
+      make
+      
+
+
+
+NOTE ON CMAKE: CMake is a paltform independent makefile generator.
+Type "cmake" (without arguments) to see a list of options.
+There are a number of choices for building CGAL that can be configured 
+running "CMakeSetup", a GUI-based configuration editor.
+When the editor is launched, all available choices are displayed along
+with their current values.
+You can use that editor, for instance, to override or define the path
+to a third party library such as gmp, or to enable/disable a
+library such as CGAL_IMAGE_IO.
+
+
+NOTE ON REPEATED INSTALLS: CMake maintains a file named
+CMakeCache.txt in "configuration folder" (where cmake is run)
+which records which external libraries were found as
+well as the relevant environment variables and choices. 
+The cached values are used on subsequent runs of cmake on the same 
+configuration. Delete the file CMakeCache.txt directly if the environment
+has changed (for example, boost or GMP was installed) and you
+want cmake to pick up these changes.
+
+-------------------------------------------------------------------------------

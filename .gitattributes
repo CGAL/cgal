@@ -1571,6 +1571,7 @@ Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#ap
 CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 CMake/FindCGAL.cmake.in -text
+CMake/INSTALL_via_cmake -text
 CMake/UseCGAL.cmake.in -text
 CMake/cmake/modules/AddSubdirectories.cmake -text
 CMake/cmake/modules/CGALcommon.cmake -text
