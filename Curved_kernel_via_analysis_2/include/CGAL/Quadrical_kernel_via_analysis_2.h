@@ -1071,7 +1071,7 @@ public:
                  it != tmp.end(); it++) {
                 
                 typedef typename Curved_kernel_via_analysis_2l::
-                    Projected_kernel_2 Projected_kernel_2;
+                    Curved_kernel_via_analysis_2 Projected_kernel_2;
                 
                 typedef typename Projected_kernel_2::Point_2 P_point_2;
                 typedef typename Projected_kernel_2::Arc_2 P_arc_2;
@@ -1594,7 +1594,6 @@ public:
             *oi++ = CGAL::make_object(*ait);
         }
 
-
         return oi;
     }
 }; // Make_x_monotone_2
@@ -1606,21 +1605,29 @@ public:
 } // namespace CGALi
 
 //! basic kernel to maintain points and arcs on a quadric
-template < class CurveKernel_2, class SurfacePair_3 >
+template < class CurvedKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadrical_kernel_via_analysis_2 :
   public CGALi::Curved_kernel_via_analysis_2_base < 
-      Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >, 
-      CurveKernel_2 
+      Quadrical_kernel_via_analysis_2< 
+          CurvedKernelViaAnalysis_2, SurfacePair_3 
+      >, 
+      typename CurvedKernelViaAnalysis_2::Curve_kernel_2
   >,
   public CGALi::Curved_kernel_via_analysis_2_functors < 
-    Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
-     typename CurveKernel_2::Curve_analysis_2,
+    Quadrical_kernel_via_analysis_2< 
+        CurvedKernelViaAnalysis_2, SurfacePair_3
+     >,
+     typename CurvedKernelViaAnalysis_2::Curve_kernel_2::Curve_analysis_2,
     CGALi::Quadric_point_2< 
-      Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
+      Quadrical_kernel_via_analysis_2<
+          CurvedKernelViaAnalysis_2, SurfacePair_3
+      >,
       SurfacePair_3
     >,
     CGALi::Quadric_arc_2< 
-      Quadrical_kernel_via_analysis_2< CurveKernel_2, SurfacePair_3 >,
+      Quadrical_kernel_via_analysis_2<
+          CurvedKernelViaAnalysis_2, SurfacePair_3
+      >,
       SurfacePair_3
     >
   > 
@@ -1630,21 +1637,26 @@ public:
     //!@{
     
     //! this instance's first template argument
-    typedef CurveKernel_2 Curve_kernel_2;
-
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+    
     //! this instance's second template parameter
     typedef SurfacePair_3 Surface_pair_3;
      
     //! myself
-    typedef Quadrical_kernel_via_analysis_2< Curve_kernel_2, Surface_pair_3 > 
+    typedef Quadrical_kernel_via_analysis_2< 
+        Curved_kernel_via_analysis_2, Surface_pair_3 
+    > 
     Self;
-    
+
+    //! type of curve kernel
+    typedef typename 
+    Curved_kernel_via_analysis_2::Curve_kernel_2 Curve_kernel_2;
+
+    //! type of curve analysis
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
+
     //!@}
 
-    //! type of projected kernel
-    typedef Curved_kernel_via_analysis_2< Curve_kernel_2 > Projected_kernel_2;
-
-    
     //!\name embedded types  for \c Arrangement_2 package
     //!@{
 
@@ -1685,7 +1697,7 @@ public:
     
     //! type of Construct_projected_point_2 functor
     typedef 
-    typename Projected_kernel_2::Construct_point_2 
+    typename Curved_kernel_via_analysis_2::Construct_point_2 
     Construct_projected_point_2;
     
     //! returns an instance of Construct_projected_point_2 functor
@@ -1706,7 +1718,7 @@ public:
 
     //! type of Construct_projected_arc_2 functor
     typedef 
-    typename Projected_kernel_2::Construct_arc_2 
+    typename Curved_kernel_via_analysis_2::Construct_arc_2 
     Construct_projected_arc_2;
     //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
@@ -1776,12 +1788,12 @@ protected:
     //!@{
     
     //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, CurveKernel_2 >
+    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, Curve_kernel_2 >
     Base_kernel;
 
     //! class collecting basic types
     typedef CGALi::Curved_kernel_via_analysis_2_functors < 
-            Self, Curve_2, Point_2, Arc_2
+            Self, Curve_analysis_2, Point_2, Arc_2
     >  
     Base_functors;
     
@@ -1794,14 +1806,14 @@ public:
     //! default constructor
     Quadrical_kernel_via_analysis_2() :
         Base_kernel() {
-        _m_projected_kernel = Projected_kernel_2((this->kernel()));
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //! standard constructor
     Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
         Base_kernel(),
         _m_reference(reference) {
-        _m_projected_kernel = Projected_kernel_2((this->kernel()));
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
@@ -1809,7 +1821,7 @@ public:
                                     const Surface_3& reference) :
         Base_kernel(kernel),
         _m_reference(reference) {
-        _m_projected_kernel = Projected_kernel_2((this->kernel()));
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //!@}
@@ -1819,7 +1831,7 @@ public:
 
     // returns instance of projected kernel
     inline
-    const Projected_kernel_2& projected_kernel() const {
+    const Curved_kernel_via_analysis_2& projected_kernel() const {
         return _m_projected_kernel;
     }
 
@@ -1832,9 +1844,12 @@ public:
  
 protected:
     //!\name Data members
+    
+    //! the reference surface
     Surface_3 _m_reference;
 
-    Projected_kernel_2 _m_projected_kernel;
+    //! instance of the used projected kernel
+    Curved_kernel_via_analysis_2 _m_projected_kernel;
 
 }; // class Quadrical_kernel_via_analysis_2
 
