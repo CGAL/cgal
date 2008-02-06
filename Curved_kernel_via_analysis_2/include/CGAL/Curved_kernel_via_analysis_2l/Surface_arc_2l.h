@@ -479,13 +479,13 @@ public:
 
     //!\name Friends
     //!@{
-#if 0
+   
     //! for replace endpoints
-    friend class typename Projected_arc_2::template rebind < Curved_kernel_via_analysis_2l, Rep_ >;
+    friend class Self::Rebind;
     
     //! for rebind
-    friend class typename Projected_arc_2::template rebind< Curved_kernel_via_analysis_2l, Rep_ >::Other;
-#endif
+    friend class Self::Rebind::Other;
+    
     //!@}
 };    
 

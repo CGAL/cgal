@@ -240,9 +240,9 @@ public:
 
     //!\name Friends
     //!@{
-#if 0
+#if 1
     //! for rebind
-    friend class Projected_point_2::template rebind< Curved_kernel_via_analysis_2l, Rep  >;
+    friend class Self::Rebind;
 #endif
     //!@}
 
