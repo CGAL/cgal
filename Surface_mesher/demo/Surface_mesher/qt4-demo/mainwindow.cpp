@@ -117,3 +117,5 @@ void MainWindow::on_action_Clone_triggered()
   MainWindow* other = new MainWindow(this);
   other->show();
 }
+
+#include "mainwindow.moc"

@@ -482,3 +482,5 @@ Surface* get_polyhedral_surface(QObject* parent,
 				sharp_edges_angle_lower_bound,
 				sharp_edges_angle_upper_bound);
 }
+
+#include "polyhedral_surface.moc"

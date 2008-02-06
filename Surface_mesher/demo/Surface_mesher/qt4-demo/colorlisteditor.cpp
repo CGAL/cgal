@@ -64,3 +64,5 @@ void ColorListEditor::populateList()
         setItemData(i, color, Qt::DecorationRole);
     }
 }
+
+#include "colorlisteditor.moc"

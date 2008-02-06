@@ -730,3 +730,5 @@ void Volume::gl_draw_marchingcube()
   }
   ::glEnd();
 }
+
+#include "volume.moc"

@@ -228,3 +228,5 @@ void Isovalues_list::on_plusButton_clicked()
   newItem->setData(Color, Qt::DisplayRole, color);
   newItem->setData(Name, Qt::DisplayRole, "");
 }
+
+#include "isovalues_list.moc"
