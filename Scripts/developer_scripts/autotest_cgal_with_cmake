@@ -368,7 +368,7 @@ copy_old_stuff()
         
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
-          log ${ACTUAL_LOGFILE} "Copyingr old ${platform}/CMakeCache.txt into ${CGAL_DIR}/cmake/platforms/${platform}/"
+          log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_DIR}/cmake/platforms/${platform}/"
           cp "${platform}/CMakeCache.txt" "${CGAL_DIR}/cmake/platforms/${platform}" >> ${ACTUAL_LOGFILE} 
         fi
         

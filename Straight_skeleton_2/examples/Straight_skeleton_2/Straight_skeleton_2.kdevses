@@ -1,11 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:///home/fcacciola/work/CGAL/SVN/trunk/Straight_skeleton_2/examples/Straight_skeleton_2/makefile" >
-   <View0 line="62" Type="Source" />
-  </Doc0>
- </DocsAndViews>
+ <DocsAndViews NumberOfDocuments="0" />
  <pluginList>
   <kdevdebugger>
    <breakpointList/>
