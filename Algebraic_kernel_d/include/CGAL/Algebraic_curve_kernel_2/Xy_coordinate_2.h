@@ -332,8 +332,11 @@ public:
                 }
             }
             CGAL_assertion(!candidates.empty());
+
             while (candidates.size() > 1) {
                 refine_y();
+                y_iv = get_approximation_y();
+
                 for (typename std::list< Iterator >::iterator dit, cit =
                          candidates.begin(); cit != candidates.end(); ) {
                     bool remove = false;
@@ -342,7 +345,7 @@ public:
                     if (!boost::numeric::overlap(cit_interval, y_iv)) {
                         dit = cit;
                         remove = true;
-                    } 
+                    }
                     cit++;
                     if (remove) {
                         candidates.erase(dit);
