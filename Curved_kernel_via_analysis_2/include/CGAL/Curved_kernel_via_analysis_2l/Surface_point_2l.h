@@ -55,13 +55,13 @@ public:
     typedef Point_2_rep< Curved_kernel_via_analysis_2l > Base;
     
     //! type of projected kernel
-    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2
     Projected_kernel_2;
     
     //! type of projected point
     typedef typename Projected_kernel_2::Point_2 Projected_point_2;
-
-
+    
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
     
@@ -97,10 +97,9 @@ template <
   class Rep_ = 
     CGALi::Surface_point_2l_rep< CurvedKernelViaAnalysis_2l, SurfacePair_3 >
  >
-class Surface_point_2l : 
-        public 
-        CurvedKernelViaAnalysis_2l::Projected_kernel_2::Point_2::
-        template rebind< CurvedKernelViaAnalysis_2l, Rep_  >::Other
+class Surface_point_2l : public 
+    CurvedKernelViaAnalysis_2l::Curved_kernel_via_analysis_2::Point_2::
+    template rebind< CurvedKernelViaAnalysis_2l, Rep_  >::Other
 {
 public:
 
@@ -122,7 +121,8 @@ public:
     Self;
     
     //! type of projected kernel
-    typedef typename Curved_kernel_via_analysis_2l::Projected_kernel_2
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2
     Projected_kernel_2;
     
     //! type of projected point
@@ -237,7 +237,15 @@ public:
     }
 
     //!@}
-    
+
+    //!\name Friends
+    //!@{
+#if 0
+    //! for rebind
+    friend class Projected_point_2::template rebind< Curved_kernel_via_analysis_2l, Rep  >;
+#endif
+    //!@}
+
 }; // Surface_point_2l
 
 
