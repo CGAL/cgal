@@ -25,6 +25,9 @@
 #include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
 
+#include <CGAL/linear_least_squares_fitting_points_3.h>
+#include <CGAL/linear_least_squares_fitting_segments_3.h>
+
 #include <iterator>
 
 CGAL_BEGIN_NAMESPACE

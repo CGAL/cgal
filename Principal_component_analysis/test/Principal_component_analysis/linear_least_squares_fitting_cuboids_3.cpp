@@ -1,5 +1,4 @@
 // Example program for the linear_least_square_fitting function on set of cuboids in 3D
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
@@ -13,8 +12,7 @@ typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 
 int main()
 {
-  std::cout << "Test 3D linear least squares fitting of cuboids"  << std::endl;
-
+  std::cout << "Test linear least squares fitting of 3D cuboids"  << std::endl;
   std::list<Iso_cuboid> cuboids;
 	Point a(0.0,0.0,0.0);
 	Point b(1.0,2.0,3.0);

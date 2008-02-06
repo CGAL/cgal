@@ -183,13 +183,13 @@ assemble_covariance_matrix_3(InputIterator first,
   // 0
   // 1 2 
   // 3 4 5
-  //Final combined covariance matrix for all cuboids and their combined mass
-  FT mass = 0.0;
+  // final combined covariance matrix for all cuboids and their combined mass
+  FT mass = (FT)0.0;
 
   // assemble 2nd order moment about the origin.  
-  FT temp[9] = {1.0/3.0, 1.0/4.0, 1.0/4.0,
-                1.0/4.0, 1.0/3.0, 1.0/4.0,
-                1.0/4.0, 1.0/4.0, 1.0/3.0};
+  FT temp[9] = {(FT)(1.0/3.0), (FT)(1.0/4.0), (FT)(1.0/4.0),
+								(FT)(1.0/4.0), (FT)(1.0/3.0), (FT)(1.0/4.0),
+                (FT)(1.0/4.0), (FT)(1.0/4.0), (FT)(1.0/3.0)};
   Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
@@ -210,7 +210,7 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation = init_matrix<K>(3,delta);
     FT volume = t.volume();
-    CGAL_assertion(volume != 0.0);
+    CGAL_assertion(volume != (FT)0.0);
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
     
@@ -235,13 +235,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
-  covariance[4] += mass * (-1.0 * c.z() * c.y());
-  covariance[5] += mass * (-1.0 * c.z() * c.z());
-
+  covariance[0] += mass * (- c.x() * c.x());
+  covariance[1] += mass * (- c.x() * c.y());
+  covariance[2] += mass * (- c.y() * c.y());
+  covariance[3] += mass * (- c.z() * c.x());
+  covariance[4] += mass * (- c.z() * c.y());
+  covariance[5] += mass * (- c.z() * c.z());
 }
 
 // assemble covariance matrix from a cuboid set 
@@ -269,12 +268,12 @@ assemble_covariance_matrix_3(InputIterator first,
   // 1 2 
   // 3 4 5
   //Final combined covariance matrix for all cuboids and their combined mass
-  FT mass = 0.0;
+  FT mass = (FT)0.0;
 
   // assemble 2nd order moment about the origin.  
-  FT temp[9] = {7.0/3.0, 1.5, 1.5,
-                1.5, 7.0/3.0, 1.5,
-                1.5, 1.5, 7.0/3.0};
+  FT temp[9] = {(FT)(7.0/3.0), (FT)1.5,       (FT)1.5,
+                (FT)1.5,       (FT)(7.0/3.0), (FT)1.5,
+                (FT)1.5,       (FT)1.5,       (FT)(7.0/3.0)};
   Matrix moment = init_matrix<K>(3,temp);
 
   for(InputIterator it = first;
@@ -286,7 +285,6 @@ assemble_covariance_matrix_3(InputIterator first,
     const Iso_cuboid& t = *it;
 
     // defined for convenience.
-    // FT example = CGAL::to_double(t[0].x());
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();

@@ -25,11 +25,11 @@
 #include <CGAL/IO/io.h>
 
 #include <CGAL/linear_least_squares_fitting_points_3.h>
-#include <CGAL/linear_least_squares_fitting_spheres_3.h>
-#include <CGAL/linear_least_squares_fitting_cuboids_3.h>
 #include <CGAL/linear_least_squares_fitting_segments_3.h>
 #include <CGAL/linear_least_squares_fitting_triangles_3.h>
+#include <CGAL/linear_least_squares_fitting_cuboids_3.h>
 #include <CGAL/linear_least_squares_fitting_tetrahedra_3.h>
+#include <CGAL/linear_least_squares_fitting_spheres_3.h>
 
 #include <CGAL/PCA_tags.h>
 
