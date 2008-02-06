@@ -94,14 +94,11 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
 
     //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
-    //!
-    //! \pre r1.arcno() != r2.arcno() 
-    //! \pre r1.x() == r2.x() and r1.curve() == r2.curve()
     struct Boundary_between 
             : public Binary_function< Type, Type, Boundary > {
         
         Boundary operator()(const Type& r1, const Type& r2) const {
-            
+
             CGAL_precondition(r1.y() != r2.y());
 
             Boundary res;
@@ -133,8 +130,9 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
                 vline1.refine(r1.arcno());
                 vline2.refine(r2.arcno());
             }
-            
+
             CGAL::simplify(res);
+
             CGAL_postcondition_code(
                     CGAL::Comparison_result exp = CGAL::SMALLER
             );
@@ -145,6 +143,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             );
             CGAL_postcondition(r1.y().compare(res) == exp);
             CGAL_postcondition(r2.y().compare(res) == -exp);
+
             return res;
         }
     };
