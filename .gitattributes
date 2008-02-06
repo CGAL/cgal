@@ -4376,7 +4376,6 @@ Voronoi_diagram_2/examples/Voronoi_diagram_2/CMakeLists.txt -text
 Voronoi_diagram_2/test/Voronoi_diagram_2/CMakeLists.txt -text
 Width_3/examples/Width_3/CMakeLists.txt -text
 Width_3/test/Width_3/CMakeLists.txt -text
-/create_cmake_scripts -text
 iostream/test/iostream/CMakeLists.txt -text
 iostream/test/iostream/data/io.cin -text
 kdtree/examples/kdtrees/CMakeLists.txt -text
