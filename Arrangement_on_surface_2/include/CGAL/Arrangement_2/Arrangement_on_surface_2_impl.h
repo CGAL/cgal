@@ -4140,8 +4140,7 @@ _remove_edge (DHalfedge *e, bool remove_source, bool remove_target)
         // represent the outer boundary of the new hole that is formed),
         // We represent the outer boundary of f1 by prev1, which definately
         // stays on the outer boundary.
-        if (oc1->halfedge()->is_on_inner_ccb())
-          oc1->set_halfedge (prev1);
+        oc1->set_halfedge (prev1);
 
         // Notify the observers that a new hole has been formed.
         Ccb_halfedge_circulator   hccb = (Halfedge_handle(he1->next()))->ccb();
