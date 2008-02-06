@@ -94,7 +94,7 @@ public:
 private:
 
   FT  _alpha, _beta, _gamma;
-  unsigned char _rational;
+  bool _rational;
 
 public:
 
@@ -104,25 +104,25 @@ public:
 #endif
 
   Root_of_2()
-    : _alpha(0), _rational(1)
+    : _alpha(0), _rational(true)
   {
     CGAL_assertion(is_valid());
   }
 
   Root_of_2(const RT& c0)
-    : _alpha(c0), _rational(1)
+    : _alpha(c0), _rational(true)
   {
     CGAL_assertion(is_valid());
   }
 
   Root_of_2(const typename First_if_different<int, RT>::Type & c0)
-    : _alpha(RT(c0)), _rational(1)
+    : _alpha(RT(c0)), _rational(true)
   {
     CGAL_assertion(is_valid());
   }
 
   Root_of_2(const typename First_if_different<FT, RT>::Type & c0)
-    : _alpha(c0), _rational(1)
+    : _alpha(c0), _rational(true)
   {
     CGAL_assertion(is_valid());
   }
@@ -130,7 +130,7 @@ public:
   Root_of_2(const RT& a, const RT& b) {
     CGAL_assertion( b != 0 );
     _alpha = FT(a,b);
-    _rational = 1;
+    _rational = true;
     CGAL_assertion(is_valid());
   }
 
@@ -140,15 +140,15 @@ public:
       _alpha = FT(-b,2*a);
       _gamma = CGAL_NTS square(alpha()) - FT(c,a);
       if(CGAL_NTS is_zero(gamma())) {
-	_rational = 1;
+	_rational = true;
       } else {
 	_beta = (s ? -1 : 1);
-	_rational = 0;
+	_rational = false;
       }
     }
     else {
       CGAL_assertion( b != 0 );
-      _rational = 1;
+      _rational = true;
       _alpha = FT(-c,b);
       _beta = 0;
       _gamma = 0;
@@ -162,7 +162,7 @@ public:
   {
     if(CGAL_NTS is_zero(c1) || CGAL_NTS is_zero(c2)) {
       _alpha = c0;
-      _rational = 1;
+      _rational = true;
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
       int n_a = c0.tam();
@@ -174,7 +174,7 @@ public:
       _alpha = c0;
       _beta = c1;
       _gamma = c2;
-      _rational = 0;
+      _rational = false;
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
       int n_a = c0.tam();
