@@ -50,7 +50,7 @@
 #include <CGAL/IO/Geomview_stream.h>
 #endif // GEOMVIEW
 
-#define CGAL_RFS_CONFORM //if no access to mesh_2
+//#define CGAL_RFS_CONFORM //if no access to mesh_2
 
 CGAL_BEGIN_NAMESPACE
 
@@ -178,9 +178,33 @@ class Triangulation_from_slices_3 : public Triangulation_3<Gt,Tds>
   
     // copy constructor duplicates vertices and cells
     Triangulation_from_slices_3(const Triangulation_from_slices_3 & tr)
-    : Tr_Base(tr), represented_slices_number(represented_slices_number)
+      : Tr_Base(tr), represented_slices_number(tr.represented_slices_number), slices(tr.slices)
     { 
-      CGAL_triangulation_postcondition( is_valid() );
+      //CGAL_triangulation_postcondition( is_valid() );
+
+      // We have to update the next pointers in the vertices
+      std::map<Point,Vertex_handle> pvmap;
+      for(Finite_vertices_iterator it = this->finite_vertices_begin();
+	  it != this->finite_vertices_end();
+	  ++it){
+	pvmap.insert(std::pair<Point,Vertex_handle>(it->point(),it));
+      }
+      
+      for(Finite_vertices_iterator it = tr.finite_vertices_begin();
+	  it != tr.finite_vertices_end();
+	  ++it){
+	Vertex_handle source = pvmap[it->point()];
+	Vertex_handle target = pvmap[it->next()->point()];
+	source->set_next(target);
+      }
+
+      // We have to modify slices
+      for(int i = 0; i < slices.size(); i++){
+	slices[i].set_triangulation(this);
+	Vertex_handle vh = tr.slices[i].get_vertex_start();
+	slices[i].set_start(pvmap[vh->point()]);
+      }
+
     }
 
     template < typename InputIterator >
@@ -776,6 +800,7 @@ insert(const Point & p, int slice, Cell_handle start)
 							   &&(slices.size()>represented_slices_number)
 							   &&(slices[represented_slices_number-1].has_full_dimension())
 							   ))));
+
   Locate_type lt;
   int li, lj;
   if(dimension()>2)
