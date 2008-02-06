@@ -58,8 +58,6 @@ template <class GeomTraits, class Dcel>
 void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 assign(const Self & other)
 {
-  CGAL_error_msg( "Not implemented!");
-
   // Clear the current DCEL and duplicate the other DCEL.
   m_dcel.delete_all();
   m_dcel.assign(other.m_dcel);
