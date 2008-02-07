@@ -18,6 +18,7 @@
 #include <QMessageBox>
 #include <QTreeWidgetItem>
 
+#include <GL/glu.h>
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
@@ -154,7 +155,9 @@ Volume::Volume(MainWindow* mw) :
   m_view_mc(false),
   mw(mw),
   m_inverse_normals(false),
-  two_sides(false)
+  two_sides(false),
+  list_draw_marching_cube(0),
+  list_draw_marching_cube_is_valid(false)
 {
   spinBox_radius_bound = mw->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
   spinBox_distance_bound = mw->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
@@ -209,6 +212,11 @@ Volume::Volume(MainWindow* mw) :
 
 void Volume::set_inverse_normals(const bool b) {
   m_inverse_normals = b;
+
+  list_draw_marching_cube = 0; // Invalidate the display list for the
+                               // marching cube. See gl_draw_marchingcube()
+                               // for an explanation.
+
   emit changed();
 }
 
@@ -697,23 +705,41 @@ void Volume::gl_draw_one_marching_cube_vertex(int i)
 
 void Volume::gl_draw_marchingcube()
 {
-  ::glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), mc.vertices());
-  ::glNormalPointer(GL_DOUBLE, sizeof(Vertex), &(mc.vertices()->nx));
-  ::glEnableClientState(GL_VERTEX_ARRAY);
-
-  if(!m_inverse_normals)
-    ::glEnableClientState(GL_NORMAL_ARRAY);
-  const int size = mc.ntrigs();
-
-  ::glBegin(GL_TRIANGLES);
-  for(int i = 0; i < size; ++i)
+  if(list_draw_marching_cube_is_valid)
+    ::glCallList(list_draw_marching_cube);
+  else
   {
-    const MC_Triangle* const trig = mc.trig(i);
-    gl_draw_one_marching_cube_vertex(trig->v1);
-    gl_draw_one_marching_cube_vertex(trig->v2);
-    gl_draw_one_marching_cube_vertex(trig->v3);
+    if(!list_draw_marching_cube)
+      list_draw_marching_cube = ::glGenLists(1);
+    std::cerr << boost::format("(Re-)Generating list #%1% for gl_draw_marchingcube()\n")
+      % list_draw_marching_cube;
+    ::glNewList(list_draw_marching_cube, GL_COMPILE_AND_EXECUTE);
+
+    ::glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), mc.vertices());
+    ::glNormalPointer(GL_DOUBLE, sizeof(Vertex), &(mc.vertices()->nx));
+    ::glEnableClientState(GL_VERTEX_ARRAY);
+
+    // because of that conditionnal, the display list has to be
+    // reconstructed each time m_inverse_normals is toggled.
+    if(!m_inverse_normals)
+      ::glEnableClientState(GL_NORMAL_ARRAY);
+    const int size = mc.ntrigs();
+
+    ::glBegin(GL_TRIANGLES);
+    for(int i = 0; i < size; ++i)
+    {
+      const MC_Triangle* const trig = mc.trig(i);
+      gl_draw_one_marching_cube_vertex(trig->v1);
+      gl_draw_one_marching_cube_vertex(trig->v2);
+      gl_draw_one_marching_cube_vertex(trig->v3);
+    }
+    ::glEnd();
+    ::glEndList();
+    list_draw_marching_cube_is_valid = (::glGetError() == GL_NO_ERROR);
+    if(!list_draw_marching_cube_is_valid)
+      std::cerr << boost::format("OpenGL error: %1%\n") 
+        % ::gluErrorString(::glGetError());
   }
-  ::glEnd();
 }
 
 #include "volume.moc"

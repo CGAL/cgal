@@ -103,6 +103,9 @@ private:
   Isovalues_list* isovalues_list;
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
+
+  GLuint list_draw_marching_cube;
+  bool list_draw_marching_cube_is_valid;
 private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end);
