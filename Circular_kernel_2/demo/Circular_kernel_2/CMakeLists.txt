@@ -14,24 +14,24 @@ if ( CGAL_FOUND AND QT_FOUND )
   include(UseCGAL)
   include(Qt3Macros)
 
-  QT3_AUTOMOC(  demo_circle.cpp demo.cpp demo_elias.cpp demo_Lazy_line_circle.cpp demo_line.cpp demo_viewer.cpp Qt_widget_get_arc.cpp Qt_widget_get_segment.cpp )
+  QT3_AUTOMOC( demo.cpp Qt_widget_get_arc.cpp Qt_widget_get_segment.cpp )
 
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
 
-  add_executable  (demo_viewer  demo_circle.cpp demo.cpp demo_elias.cpp demo_Lazy_line_circle.cpp demo_line.cpp demo_viewer.cpp Qt_widget_get_arc.cpp Qt_widget_get_segment.cpp)
-  add_dependencies(demo_viewer CGAL CGAL_QT)
+  add_executable  ( demo demo.cpp Qt_widget_get_arc.cpp Qt_widget_get_segment.cpp)
+  add_dependencies( demo CGAL CGAL_QT)
 
   if ( CGAL_USE_CGAL_CORE )
-    add_dependencies(demo_viewer CGAL_CORE)
+    add_dependencies(demo CGAL_CORE)
   endif()
 
   # Link the executable to CGAL and third-party libraries
   if ( AUTO_LINK_ENABLED )
-    target_link_libraries(demo_viewer ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )
+    target_link_libraries(demo ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )
   else()
-    target_link_libraries(demo_viewer ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})
+    target_link_libraries(demo ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})
   endif()
 
 endif()

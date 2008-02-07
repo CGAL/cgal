@@ -14,6 +14,5 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( mesh_a_3d_gray_image.cpp )
   create_single_source_cgal_program( mesh_an_implicit_function.cpp )
-  create_single_source_cgal_program( polyhedron_remesher.cpp )
 
 endif()

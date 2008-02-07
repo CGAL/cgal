@@ -14,14 +14,14 @@ if ( CGAL_FOUND AND QT_FOUND )
   include(UseCGAL)
   include(Qt3Macros)
 
-  QT3_AUTOMOC(  Nef_polyhedron_S2-demo2.cpp Nef_polyhedron_S2-demo.cpp SM_overlayer-demo.cpp SM_triangulator-demo.cpp Sphere_geometry-demo.cpp visualization.cpp )
+  QT3_AUTOMOC( visualization.cpp )
 
   # Make sure the compiler can find generated .moc files
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
   include_directories( ${QT_INCLUDE_DIR} )
   include_directories (BEFORE include)
 
-  add_executable  (visualization  Nef_polyhedron_S2-demo2.cpp Nef_polyhedron_S2-demo.cpp SM_overlayer-demo.cpp SM_triangulator-demo.cpp Sphere_geometry-demo.cpp visualization.cpp)
+  add_executable  (visualization visualization.cpp)
   add_dependencies(visualization CGAL CGAL_QT)
 
   if ( CGAL_USE_CGAL_CORE )

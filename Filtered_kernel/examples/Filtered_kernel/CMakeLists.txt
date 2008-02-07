@@ -13,6 +13,5 @@ if ( CGAL_FOUND )
   include(CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program( Filtered_predicate.cpp )
-  create_single_source_cgal_program( lazykernel.cpp )
 
 endif()

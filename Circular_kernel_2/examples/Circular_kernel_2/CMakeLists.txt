@@ -18,8 +18,5 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( Circular_kernel_arrangement_Line_arc.cpp )
   create_single_source_cgal_program( Circular_kernel_arrangement_Line_Circular.cpp )
   create_single_source_cgal_program( Exact_circular_kernel.cpp )
-  create_single_source_cgal_program( Lazy_Circular_kernel_arrangement.cpp )
-  create_single_source_cgal_program( Lazy_Circular_kernel_arrangement_Line_arc.cpp )
-  create_single_source_cgal_program( Lazy_Circular_kernel_arrangement_Line_Circular.cpp )
 
 endif()
