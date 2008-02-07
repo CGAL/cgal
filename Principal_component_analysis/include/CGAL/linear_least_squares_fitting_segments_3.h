@@ -51,7 +51,7 @@ linear_least_squares_fitting_3(InputIterator first,
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
@@ -115,7 +115,7 @@ linear_least_squares_fitting_3(InputIterator first,
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};

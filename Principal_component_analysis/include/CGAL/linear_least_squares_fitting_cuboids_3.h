@@ -46,14 +46,14 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_3_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
+  typedef typename K::FT FT;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
@@ -77,14 +77,14 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_2_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
+  typedef typename K::FT FT;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
@@ -108,9 +108,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_1_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
-  typedef typename K::Segment_3  Segment;
+  typedef typename K::FT FT;
+  typedef typename K::Segment_3 Segment;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -152,9 +152,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_0_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
-  typedef typename K::Point_3  Point;
+  typedef typename K::FT FT;
+  typedef typename K::Point_3 Point;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -192,14 +192,14 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_3_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
+  typedef typename K::FT FT;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
@@ -222,14 +222,14 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_2_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
+  typedef typename K::FT FT;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
   // compute centroid
-  c = centroid(first,beyond,K(),tag);
+  c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
   FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
@@ -253,9 +253,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_1_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
-  typedef typename K::Segment_3  Segment;
+  typedef typename K::FT FT;
+  typedef typename K::Segment_3 Segment;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
@@ -297,9 +297,9 @@ linear_least_squares_fitting_3(InputIterator first,
                                const K& k,                   // kernel
 			                         const CGAL::PCA_dimension_0_tag& tag)
 {
-  typedef typename K::FT          FT;
-  typedef typename K::Iso_cuboid_3    Iso_cuboid;
-  typedef typename K::Point_3  Point;
+  typedef typename K::FT FT;
+  typedef typename K::Point_3 Point;
+  typedef typename K::Iso_cuboid_3 Iso_cuboid;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
