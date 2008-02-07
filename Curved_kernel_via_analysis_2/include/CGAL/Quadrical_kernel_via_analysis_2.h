@@ -1614,30 +1614,24 @@ public:
 //! basic kernel to maintain points and arcs on a quadric
 template < class CurvedKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadrical_kernel_via_analysis_2 :
-  public CGALi::Curved_kernel_via_analysis_2_base < 
-      Quadrical_kernel_via_analysis_2< 
-          CurvedKernelViaAnalysis_2, SurfacePair_3 
-      >, 
-      typename CurvedKernelViaAnalysis_2::Curve_kernel_2
-  >,
-  public CGALi::Curved_kernel_via_analysis_2_functors < 
+  public CurvedKernelViaAnalysis_2::
+  template rebind<
     Quadrical_kernel_via_analysis_2< 
-        CurvedKernelViaAnalysis_2, SurfacePair_3
-     >,
-     typename CurvedKernelViaAnalysis_2::Curve_kernel_2::Curve_analysis_2,
+      CurvedKernelViaAnalysis_2, SurfacePair_3 
+    >,
     CGALi::Quadric_point_2< 
       Quadrical_kernel_via_analysis_2<
-          CurvedKernelViaAnalysis_2, SurfacePair_3
+        CurvedKernelViaAnalysis_2, SurfacePair_3
       >,
       SurfacePair_3
     >,
     CGALi::Quadric_arc_2< 
       Quadrical_kernel_via_analysis_2<
-          CurvedKernelViaAnalysis_2, SurfacePair_3
+        CurvedKernelViaAnalysis_2, SurfacePair_3
       >,
       SurfacePair_3
     >
-  > 
+  >::Other
 {
 public:
     //! \name public typedefs
@@ -1687,6 +1681,59 @@ public:
 
     //!@}
     
+public:
+    //! base type
+    //!@{
+
+    //! the base type
+    typedef typename Curved_kernel_via_analysis_2::
+    template rebind< Self, Point_2, Arc_2 >::Other Base;
+    
+    //!@}
+
+public:
+    //! \name Constructors
+    //!@{
+
+    //! default constructor
+    Quadrical_kernel_via_analysis_2() :
+        Base() {
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
+    }
+    
+    //! standard constructor
+    Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
+        Base(),
+        _m_reference(reference) {
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
+    }
+    
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel,
+                                    const Surface_3& reference) :
+        Base(kernel),
+        _m_reference(reference) {
+        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
+    }
+    
+    //!@}
+
+    //!\name Access members
+    //!@{
+
+    // returns instance of projected kernel
+    inline
+    const Curved_kernel_via_analysis_2& projected_kernel() const {
+        return _m_projected_kernel;
+    }
+
+    //! returns the reference surface
+    inline
+    const Surface_3& reference() {
+        return _m_reference;
+    }
+    //!@}
+
 public:
     //!\name embedded constructions and predicates 
     //!@{
@@ -1789,66 +1836,7 @@ public:
     
 #undef CGAL_QKvA_2_functor_pred
 #undef CGAL_QKvA_2_functor_cons
-   
-protected:
-    //!\name Protected internal types
-    //!@{
-    
-    //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, Curve_kernel_2 >
-    Base_kernel;
 
-    //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_functors < 
-            Self, Curve_analysis_2, Point_2, Arc_2
-    >  
-    Base_functors;
-    
-    //!@}
-
-public:
-    //! \name Constructors
-    //!@{
-
-    //! default constructor
-    Quadrical_kernel_via_analysis_2() :
-        Base_kernel() {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
-    }
-    
-    //! standard constructor
-    Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
-        Base_kernel(),
-        _m_reference(reference) {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
-    }
-    
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel,
-                                    const Surface_3& reference) :
-        Base_kernel(kernel),
-        _m_reference(reference) {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
-    }
-    
-    //!@}
-
-    //!\name Access members
-    //!@{
-
-    // returns instance of projected kernel
-    inline
-    const Curved_kernel_via_analysis_2& projected_kernel() const {
-        return _m_projected_kernel;
-    }
-
-    //! returns the reference surface
-    inline
-    const Surface_3& reference() {
-        return _m_reference;
-    }
-    //!@}
- 
 protected:
     //!\name Data members
     
