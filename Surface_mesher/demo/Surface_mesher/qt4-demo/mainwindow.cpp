@@ -16,7 +16,6 @@
 #include <QGLViewer/vec.h>
 
 #include "ui_meshing_bar.h"
-#include "ui_mainwindow.h"
 
 #include <algorithm> // std::max
 #include <cmath> // std::sqrt
@@ -29,7 +28,7 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   sharp_edges_angle_lower_bound(60.),
   sharp_edges_angle_upper_bound(180.)
 {
-  Ui::MainWindow().setupUi(this);
+  setupUi(this);
   setAcceptDrops(true);
 
   viewer_ptr = qFindChild<QGLViewer*>(this, "viewer");
@@ -91,10 +90,10 @@ void MainWindow::fix_one_menu_visibility(QMenu* menu)
     bool is_non_empty = false;
     Q_FOREACH(QAction* action, menu->actions()) {
       is_non_empty = is_non_empty || action->isVisible();
-      if(action->isVisible())
-        QTextStream(stderr) << action->text() << "\n";
+//       if(action->isVisible())
+//         QTextStream(stderr) << action->text() << "\n";
     }
-    menu->setEnabled(is_non_empty);
+    menu->setVisible(is_non_empty);
   }
 }
 

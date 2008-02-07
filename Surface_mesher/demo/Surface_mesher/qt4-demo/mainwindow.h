@@ -2,6 +2,7 @@
 #define _MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ui_mainwindow.h"
 
 class QDragEnterEvent;
 class QDropEvent;
@@ -9,7 +10,7 @@ class Surface;
 class QGLViewer;
 class QDoubleSpinBox;
 
-class MainWindow : public  QMainWindow
+class MainWindow : public  QMainWindow, public Ui::MainWindow
 {
   Q_OBJECT
 public:
