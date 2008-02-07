@@ -63,7 +63,7 @@ public:
     typedef 
     Surface_point_2l_rep< Quadrical_kernel_via_analysis_2, Surface_pair_3 >
     Base;
-
+    
     //! type of curve
     typedef typename Base::Xy_coordinate_2 Xy_coordinate_2;
 
@@ -1522,8 +1522,15 @@ public:
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2
+    Curved_kernel_via_analysis_2;
+    
 
-    typedef QdX::Quadric_3_z_at_xy_isolator_traits< Curve_2 > Z_at_xy_traits;
+    typedef QdX::Quadric_3_z_at_xy_isolator_traits< 
+        Curved_kernel_via_analysis_2, Curve_2 // Remark: Curve_2 == Surface_3
+    > Z_at_xy_traits;
     typedef QdX::Quadric_pair_3< Z_at_xy_traits > Surface_pair_3;
     
     //! the result type 
