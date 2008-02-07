@@ -245,7 +245,7 @@ struct Poly_hasher {
         NT res(0);
         int i;
         // take at most 3 trailing coeffs
-        for(cit = v.begin(); i < 3 && cit != v.end(); i++) {
+        for (cit = v.begin(); i < 3 && cit != v.end(); cit++, i++) {
             res += *cit;
         }
         if(res == NT(0))
