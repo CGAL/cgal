@@ -44,6 +44,23 @@ typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 
 typedef CBinary_image_3<FT,Point> Binary_image;
 
+// surface mesher
+#define CGAL_MESHES_NO_OUTPUT
+#include <CGAL/Surface_mesh_vertex_base_3.h>
+#include <CGAL/Surface_mesh_cell_base_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
+#include <CGAL/Surface_mesh_default_criteria_3.h>
+#include <CGAL/make_surface_mesh.h>
+#include <CGAL/Implicit_surface_3.h>
+#include <CGAL/Surface_mesh_traits_generator_3.h>
+typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
+typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
+typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
+typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
+
 #include <mc/MarchingCubes.h>
 
 class QMainWindow;
@@ -70,20 +87,21 @@ private:
   // visualization
   bool m_view_surface;
   bool m_view_mc;
-
-  std::vector<Facet> m_surface;
-  std::vector<Facet> m_surface_mc;
-  MarchingCubes mc ;
-
-  QMainWindow* parent;
-  Viewer* viewer;
-  QFileInfo fileinfo;
-  Isovalues_list* isovalues_list;
+  bool m_draw_triangulation;
   bool m_inverse_normals;
   bool two_sides;
   bool draw_triangles_edges;
   bool use_gouraud;
 
+  std::vector<Facet> m_surface;
+  std::vector<Facet> m_surface_mc;
+  MarchingCubes mc ;
+  Tr del;            // 3D-Delaunay triangulation
+
+  QMainWindow* parent;
+  Viewer* viewer;
+  QFileInfo fileinfo;
+  Isovalues_list* isovalues_list;
   QDoubleSpinBox* spinBox_radius_bound;
   QDoubleSpinBox* spinBox_distance_bound;
 private:
@@ -107,6 +125,7 @@ public slots:
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);
   void set_draw_triangles_edges(const bool);
+  void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
   void open(const QString& filename);
   void draw();

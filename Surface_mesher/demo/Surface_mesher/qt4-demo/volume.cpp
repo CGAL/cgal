@@ -18,22 +18,6 @@
 #include <QMessageBox>
 #include <QTreeWidgetItem>
 
-// surface mesher
-#define CGAL_MESHES_NO_OUTPUT
-#include <CGAL/Surface_mesh_vertex_base_3.h>
-#include <CGAL/Surface_mesh_cell_base_3.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
-#include <CGAL/Surface_mesh_default_criteria_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/Surface_mesh_traits_generator_3.h>
-typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
@@ -235,6 +219,17 @@ Volume::Volume(QObject* parent) :
   else
     CGAL_error_msg("Cannot find action actionUse_Gouraud_shading!");
 
+  QAction* draw_triangulation_action = parent->findChild<QAction*>("actionShow_triangulation");
+  if(draw_triangulation_action)
+  {
+    draw_triangulation_action->setVisible(true);
+    connect(draw_triangulation_action, SIGNAL(toggled(bool)),
+            this, SLOT(set_draw_triangulation(bool)));
+    m_draw_triangulation = draw_triangulation_action->isChecked();
+  }
+  else
+    CGAL_error_msg("Cannot find action actionShow_triangulation!");
+
   viewer = parent->findChild<Viewer*>("viewer");
   if(viewer)
     connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
@@ -259,6 +254,11 @@ void Volume::set_two_sides(const bool b) {
 
 void Volume::set_draw_triangles_edges(const bool b) {
   draw_triangles_edges = b;
+  emit changed();
+}
+
+void Volume::set_draw_triangulation(const bool b) {
+  m_draw_triangulation = b;
   emit changed();
 }
 
@@ -434,9 +434,8 @@ void Volume::display_surface_mesher_result()
 
     timer.start();
 
-    Tr tr;            // 3D-Delaunay triangulation
-    C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
-
+    del.clear();
+    C2t3 c2t3(del);   // 2D-complex in 3D-Delaunay triangulation
     Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
     // definition of the surface
@@ -465,7 +464,7 @@ void Volume::display_surface_mesher_result()
         const Point test = *it + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
         CGAL::Object o = intersect(surface, Segment_3(*it, test));
         if (const Point* intersection = CGAL::object_cast<Point>(&o))
-          tr.insert(*intersection);
+          del.insert(*intersection);
         else 
         {
           std::cerr << 
@@ -476,7 +475,7 @@ void Volume::display_surface_mesher_result()
       }
     }
 
-    std::cerr << boost::format("Number of initial points: %1%\n") % tr.number_of_vertices();
+    std::cerr << boost::format("Number of initial points: %1%\n") % del.number_of_vertices();
 
     // defining meshing criteria
     typedef CGAL::Surface_mesher::Refine_criterion<Tr> Criterion;
@@ -512,14 +511,14 @@ void Volume::display_surface_mesher_result()
       const Tr::Cell_handle& cell = fit->first;
       const int index = fit->second;
       const Triangle_3 t = 
-        Triangle_3(cell->vertex(tr.vertex_triple_index(index, 0))->point(),
-                   cell->vertex(tr.vertex_triple_index(index, 1))->point(),
-                   cell->vertex(tr.vertex_triple_index(index, 2))->point());
+        Triangle_3(cell->vertex(del.vertex_triple_index(index, 0))->point(),
+                   cell->vertex(del.vertex_triple_index(index, 1))->point(),
+                   cell->vertex(del.vertex_triple_index(index, 2))->point());
       const Vector u = t[1] - t[0];
       const Vector v = t[2] - t[0];
       Vector n = CGAL::cross_product(u,v);
       n = n / std::sqrt(n*n);
-      m_surface.push_back(Facet(t,n,cell->vertex(tr.vertex_triple_index(index, 0))->point().element_index()));
+      m_surface.push_back(Facet(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
     }
 
     const unsigned int nbt = m_surface.size();
@@ -630,6 +629,26 @@ void Volume::draw()
 
   ::glDisable(GL_LIGHTING);
   m_image.gl_draw_bbox(3.0f,0,0,0);
+
+
+  if(!m_view_mc && m_draw_triangulation)
+  {
+    // draw the triangualtion
+    ::glColor3f(0.0,1.0,0.0);
+    ::glLineWidth(1.0);
+    ::glBegin(GL_LINES);
+    for(Tr::Finite_edges_iterator 
+          eit = del.finite_edges_begin(), 
+          end = del.finite_edges_end();
+        eit != end; ++eit) 
+    {
+      const Point p1 = eit->first->vertex(eit->second)->point();
+      const Point p2 = eit->first->vertex(eit->third)->point();
+      ::glVertex3d(p1.x(),p1.y(),p1.z());
+      ::glVertex3d(p2.x(),p2.y(),p2.z());
+    }
+    ::glEnd();
+  }
 }
 
 void Volume::set_radius_bound(double d)

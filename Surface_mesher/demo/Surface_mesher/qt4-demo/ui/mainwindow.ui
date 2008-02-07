@@ -66,6 +66,7 @@
     <addaction name="actionDisplay_front_and_back" />
     <addaction name="actionDraw_triangles_edges" />
     <addaction name="actionUse_Gouraud_shading" />
+    <addaction name="actionShow_triangulation" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -371,6 +372,17 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionShow_triangulation" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Show the whole triangulation (surface mesher only)</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
