@@ -8,11 +8,11 @@
 
 #include "volume.h"
 #include "viewer.h"
+#include "mainwindow.h"
 #include "isovalues_list.h"
 
 #include <QApplication>
 #include <QAction>
-#include <QMainWindow>
 #include <QStatusBar>
 #include <QDoubleSpinBox>
 #include <QMessageBox>
@@ -144,100 +144,65 @@ public:
 //       return 0;
 //   }
 // };
-Volume::Volume(QObject* parent) : 
-  Surface(parent),
+Volume::Volume(MainWindow* mw) : 
+  Surface(mw),
   m_sm_angle(30),
   m_sm_radius(0),
   m_sm_distance(0),
   m_relative_precision(0.0001),
   m_view_surface(false),
   m_view_mc(false),
-  parent(qobject_cast<QMainWindow*>(parent)),
+  mw(mw),
   m_inverse_normals(false),
   two_sides(false)
 {
-  QAction* marching_cube_action = parent->findChild<QAction*>("actionMarching_cubes");
-  QAction* surface_mesher_action = parent->findChild<QAction*>("actionSurface_mesher");
-  spinBox_radius_bound = parent->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
-  spinBox_distance_bound = parent->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
+  spinBox_radius_bound = mw->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
+  spinBox_distance_bound = mw->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
+  Q_ASSERT_X(spinBox_radius_bound && spinBox_distance_bound,
+             "Volume::Volume()", "Cannot find spinboxes!");
 
-  isovalues_list = parent->findChild<Isovalues_list*>("isovalues");
-  Q_ASSERT_X(isovalues_list, "surface meshing", "cannot find widget \"isovalues\"");
+  isovalues_list = mw->isovalues;
 
- if(spinBox_distance_bound && spinBox_radius_bound)
-  {
-    connect(spinBox_radius_bound, SIGNAL(valueChanged(double)),
-            this, SLOT(set_radius_bound(double)));
-    connect(spinBox_distance_bound, SIGNAL(valueChanged(double)),
-            this, SLOT(set_distance_bound(double)));
-  }
-  else
-    CGAL_error_msg("Cannot find spinboxes");
+  connect(spinBox_radius_bound, SIGNAL(valueChanged(double)),
+          this, SLOT(set_radius_bound(double)));
+  connect(spinBox_distance_bound, SIGNAL(valueChanged(double)),
+          this, SLOT(set_distance_bound(double)));
 
-  connect(marching_cube_action, SIGNAL(triggered()),
+  connect(mw->actionMarching_cubes, SIGNAL(triggered()),
           this, SLOT(display_marchin_cube()));
-  connect(surface_mesher_action, SIGNAL(triggered()),
+  connect(mw->actionSurface_mesher, SIGNAL(triggered()),
           this, SLOT(display_surface_mesher_result()));
 
-  QAction* inverse_normals = parent->findChild<QAction*>("actionInverse_normals");
-  if(inverse_normals) {
-    inverse_normals->setVisible(true);
-    connect(inverse_normals, SIGNAL(toggled(bool)),
-            this, SLOT(set_inverse_normals(bool)));
-    m_inverse_normals = inverse_normals->isChecked();
-  }
-  else
-    CGAL_error_msg("Cannot find action actionInverse_normals!");
+  mw->actionInverse_normals->setVisible(true);
+  connect(mw->actionInverse_normals, SIGNAL(toggled(bool)),
+          this, SLOT(set_inverse_normals(bool)));
+  m_inverse_normals = mw->actionInverse_normals->isChecked();
 
-  QAction* two_sides_action = parent->findChild<QAction*>("actionDisplay_front_and_back");
-  if(two_sides_action) {
-    two_sides_action->setVisible(true);
-    connect(two_sides_action, SIGNAL(toggled(bool)),
-            this, SLOT(set_two_sides(bool)));
-    two_sides = two_sides_action->isChecked();
-  }
-  else
-    CGAL_error_msg("Cannot find action actionDisplay_front_and_back!");
+  mw->actionDisplay_front_and_back->setVisible(true);
+  connect(mw->actionDisplay_front_and_back, SIGNAL(toggled(bool)),
+          this, SLOT(set_two_sides(bool)));
+  two_sides = mw->actionDisplay_front_and_back->isChecked();
 
-  QAction* draw_triangles_edges_action = parent->findChild<QAction*>("actionDraw_triangles_edges");
-  if(draw_triangles_edges_action) {
-    draw_triangles_edges_action->setVisible(true);
-    connect(draw_triangles_edges_action, SIGNAL(toggled(bool)),
-            this, SLOT(set_draw_triangles_edges(bool)));
-    draw_triangles_edges = draw_triangles_edges_action->isChecked();
-  }
-  else
-    CGAL_error_msg("Cannot find action actionDraw_triangles_edges!");
+  mw->actionDraw_triangles_edges->setVisible(true);
+  connect(mw->actionDraw_triangles_edges, SIGNAL(toggled(bool)),
+          this, SLOT(set_draw_triangles_edges(bool)));
+  draw_triangles_edges = mw->actionDraw_triangles_edges->isChecked();
 
-  QAction* use_gouraud_action = parent->findChild<QAction*>("actionUse_Gouraud_shading");
-  if(use_gouraud_action) {
-    use_gouraud_action->setVisible(true);
-    connect(use_gouraud_action, SIGNAL(toggled(bool)),
-            this, SLOT(set_use_gouraud(bool)));
-    use_gouraud = use_gouraud_action->isChecked();
-  }
-  else
-    CGAL_error_msg("Cannot find action actionUse_Gouraud_shading!");
+  mw->actionUse_Gouraud_shading->setVisible(true);
+  connect(mw->actionUse_Gouraud_shading, SIGNAL(toggled(bool)),
+          this, SLOT(set_use_gouraud(bool)));
+  use_gouraud = mw->actionUse_Gouraud_shading->isChecked();
 
-  QAction* draw_triangulation_action = parent->findChild<QAction*>("actionShow_triangulation");
-  if(draw_triangulation_action)
-  {
-    draw_triangulation_action->setVisible(true);
-    connect(draw_triangulation_action, SIGNAL(toggled(bool)),
-            this, SLOT(set_draw_triangulation(bool)));
-    m_draw_triangulation = draw_triangulation_action->isChecked();
-  }
-  else
-    CGAL_error_msg("Cannot find action actionShow_triangulation!");
+  mw->actionShow_triangulation->setVisible(true);
+  connect(mw->actionShow_triangulation, SIGNAL(toggled(bool)),
+          this, SLOT(set_draw_triangulation(bool)));
+  m_draw_triangulation = mw->actionShow_triangulation->isChecked();
 
-  viewer = parent->findChild<Viewer*>("viewer");
-  if(viewer)
-    connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
-            viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
-  else
-    CGAL_error_msg("Cannot find the viewer!");
+  connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
+          mw->viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
+
   connect(isovalues_list, SIGNAL(colors_changed()),
-          viewer, SLOT(updateGL()));
+          mw->viewer, SLOT(updateGL()));
   connect(isovalues_list, SIGNAL(isovalues_changed()),
           this, SLOT(changed_parameters()));
 }
@@ -272,7 +237,7 @@ void Volume::open(const QString& filename)
   fileinfo.setFile(filename);
   if(!fileinfo.isReadable())
   {
-    QMessageBox::warning(parent, parent->windowTitle(),
+    QMessageBox::warning(mw, mw->windowTitle(),
                          QString(tr("Cannot read file <tt>%1</tt>!")).arg(filename));
     status_message(QString("Opening of file %1 failed!").arg(filename));
   }
@@ -280,19 +245,19 @@ void Volume::open(const QString& filename)
   {
     if(!m_image.read(filename.toStdString().c_str()))
     {
-      QMessageBox::warning(parent, parent->windowTitle(),
+      QMessageBox::warning(mw, mw->windowTitle(),
                            QString(tr("Error with file <tt>%1</tt>:\nunknown file format!")).arg(filename));
       status_message(QString("Opening of file %1 failed!").arg(filename));
     }
     else
     {
       status_message(QString("File %1 successfully opened.").arg(filename));
-      viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
-                                            qglviewer::Vec(m_image.xmax(),
-                                                           m_image.ymax(),
-                                                           m_image.zmax()));
+      mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
+                                                qglviewer::Vec(m_image.xmax(),
+                                                               m_image.ymax(),
+                                                               m_image.zmax()));
 
-      viewer->showEntireScene();
+      mw->viewer->showEntireScene();
       isovalues_list->load_values(fileinfo.absoluteFilePath());
       emit changed();
     }
@@ -302,7 +267,7 @@ void Volume::open(const QString& filename)
 void Volume::status_message(QString string)
 {
   std::cerr << qPrintable(string) << std::endl;
-  parent->statusBar()->showMessage(string, 20000);
+  mw->statusBar()->showMessage(string, 20000);
 }
 
 void Volume::busy() const 
@@ -701,7 +666,7 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end)
     const Point& b = t[1];
     const Point& c = t[2];
 
-    viewer->qglColor(isovalues_list->color(f.third));
+    mw->viewer->qglColor(isovalues_list->color(f.third));
 
     ::glVertex3d(a.x(),a.y(),a.z());
     ::glVertex3d(b.x(),b.y(),b.z());

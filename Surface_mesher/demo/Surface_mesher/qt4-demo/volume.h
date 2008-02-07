@@ -63,7 +63,7 @@ typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
 
 #include <mc/MarchingCubes.h>
 
-class QMainWindow;
+class MainWindow;
 class QDoubleSpinBox;
 class Viewer;
 class Isovalues_list;
@@ -72,7 +72,7 @@ class Volume : public Surface
 {
   Q_OBJECT
 public:
-  Volume(QObject* parent);
+  Volume(MainWindow* mw);
   ~Volume() {}
 
 private:
@@ -98,8 +98,7 @@ private:
   MarchingCubes mc ;
   Tr del;            // 3D-Delaunay triangulation
 
-  QMainWindow* parent;
-  Viewer* viewer;
+  MainWindow* mw;
   QFileInfo fileinfo;
   Isovalues_list* isovalues_list;
   QDoubleSpinBox* spinBox_radius_bound;
