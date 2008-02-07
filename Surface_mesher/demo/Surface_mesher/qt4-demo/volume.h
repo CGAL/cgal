@@ -95,7 +95,7 @@ private:
 
   std::vector<Facet> m_surface;
   std::vector<Facet> m_surface_mc;
-  MarchingCubes mc ;
+  MarchingCubes<unsigned char> mc ;
   Tr del;            // 3D-Delaunay triangulation
 
   MainWindow* mw;

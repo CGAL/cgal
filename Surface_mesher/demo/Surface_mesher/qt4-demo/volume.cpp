@@ -313,19 +313,21 @@ void Volume::display_marchin_cube()
       mc.init_all();
 
       // set data
-      for(unsigned int i=0;i<nx;i++)
-        for(unsigned int j=0;j<ny;j++)
-          for(unsigned int k=0;k<nz;k++)
-          {
-            const float& value = m_image.value(i,j,k);
-            mc.set_data(value,i,j,k);
-          }
+//       for(unsigned int i=0;i<nx;i++)
+//         for(unsigned int j=0;j<ny;j++)
+//           for(unsigned int k=0;k<nz;k++)
+//           {
+//             const float& value = m_image.value(i,j,k);
+//             mc.set_data(value,i,j,k);
+//           }
+      mc.set_ext_data(static_cast<unsigned char*>(m_image.image()->data));
       // compute scaling ratio
       const double xr = m_image.xmax() / nx;
       const double yr = m_image.ymax() / ny;
       const double zr = m_image.zmax() / nz;
 
       mc.run(isovalues_list->isovalue(isovalue_id), xr, yr, zr);
+      mc.clean_temps();
 
       std::vector<double> facets;
       mc.get_facets(facets);
@@ -349,7 +351,6 @@ void Volume::display_marchin_cube()
     timer.stop();
     not_busy();
 
-    mc.clean_temps();
     status_message(QString("Marching cubes...done (%2 facets in %1 s)").arg(timer.time()).arg(m_surface_mc.size()));
   }
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);

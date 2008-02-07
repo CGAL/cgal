@@ -40,7 +40,7 @@ if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
   
   include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-  set( sources colorlisteditor.cpp isovalues_list.cpp mainwindow.cpp polyhedral_surface.cpp surface_mesher.cpp viewer.cpp volume.cpp ../../../../Marching_cube/src/mc/MarchingCubes.cpp ../../../../Marching_cube/src/mc/ply.c)
+  set( sources colorlisteditor.cpp isovalues_list.cpp mainwindow.cpp polyhedral_surface.cpp surface_mesher.cpp viewer.cpp volume.cpp ../../../../Marching_cube/src/mc/ply.c)
   
   qt4_automoc( ${sources} )
 
