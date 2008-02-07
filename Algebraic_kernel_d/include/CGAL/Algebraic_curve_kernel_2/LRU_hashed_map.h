@@ -234,33 +234,34 @@ struct Poly_hasher {
     template <class Poly_2>
     std::size_t operator()(const Poly_2& p) const {
 
-//         std::cerr << "poly: " << p << "; hash: " <<
-//             static_cast<std::size_t>(ceil_log2_abs(
-//             typename NiX::Polynomial_traits<Poly_2>::Innermost_lcoeff()(p)
-//             * (NiX::total_degree(p)))) << "\n";
+        if(p.is_zero())
+            return 0xDeadBeef;
+
+        typedef typename Poly_2::NT Poly_1;
+        typedef typename Poly_1::NT NT;
         
-        return static_cast<std::size_t>(ceil_log2_abs(
-            typename NiX::Polynomial_traits<Poly_2>::Innermost_lcoeff()(p)
-            * (NiX::total_degree(p) + 1)));
+        const Poly_1& v = p[0];
+        typename Poly_1::const_iterator cit;
+        NT res(0);
+        int i;
+        // take at most 3 trailing coeffs
+        for(cit = v.begin(); i < 3 && cit != v.end(); i++) {
+            res += *cit;
+        }
+        if(res == NT(0))
+            return 0xDeadBeef;
+        // randomization of the result
+        return static_cast<std::size_t>(ceil_log2_abs(res * NT(0x12341234)));
 
     }
 };
     
-//! \brief a simple curve pair hasher
-//!
-//! computes hashes of two curves and then combines them
-template <class Curve_analysis_2> 
-struct Curve_pair_hasher_2 
-{
-    typedef std::pair<Curve_analysis_2, Curve_analysis_2> Pair_of_curves_2;
-    typedef Pair_of_curves_2 argument_type;
+struct Pair_id_hasher {
     typedef size_t result_type;
-        
-    size_t operator()(const Pair_of_curves_2& p) const {
-        // uses code from boost::hash_combine
-        // TODO use this again? Poly_hasher hasher;
-        // answer: no need to, since curve analyses are cached and therefore
-        // can be uniquely enumerated by ids
+
+    template <class T1, class T2>
+    size_t operator()(const std::pair<T1, T2>& p) const {
+    
         std::size_t seed = p.first.id() + 0x9e3779b9;
         seed ^= p.second.id() + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;
