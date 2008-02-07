@@ -34,30 +34,24 @@ CGAL_BEGIN_NAMESPACE
 //! basic kernel to maintain points and arcs on a surface
 template < class CurvedKernelViaAnalysis_2, class SurfacePair_3 >
 class Curved_kernel_via_analysis_2l :
-  public CGALi::Curved_kernel_via_analysis_2_base <
-      Curved_kernel_via_analysis_2l< 
+    public CurvedKernelViaAnalysis_2::
+      template rebind<
+        Curved_kernel_via_analysis_2l< 
           CurvedKernelViaAnalysis_2, SurfacePair_3
-      >,
-      typename CurvedKernelViaAnalysis_2::Curve_kernel_2 
-   >,
-  public CGALi::Curved_kernel_via_analysis_2_functors < 
-    Curved_kernel_via_analysis_2l< 
-         typename CurvedKernelViaAnalysis_2::Curve_kernel_2, SurfacePair_3 
-    >,
-    typename CurvedKernelViaAnalysis_2::Curve_kernel_2::Curve_analysis_2,
-    CGALi::Surface_point_2l < 
-      Curved_kernel_via_analysis_2l< 
-           CurvedKernelViaAnalysis_2, SurfacePair_3 
-      >,
-      SurfacePair_3
-    >,
-    CGALi::Surface_arc_2l < 
-      Curved_kernel_via_analysis_2l< 
-          CurvedKernelViaAnalysis_2, SurfacePair_3 
-      >,
-      SurfacePair_3
-    >
-  > 
+        >, 
+        CGALi::Surface_point_2l < 
+          Curved_kernel_via_analysis_2l< 
+            CurvedKernelViaAnalysis_2, SurfacePair_3 
+          >,
+          SurfacePair_3
+        >,
+        CGALi::Surface_arc_2l < 
+          Curved_kernel_via_analysis_2l< 
+            CurvedKernelViaAnalysis_2, SurfacePair_3 
+          >,
+          SurfacePair_3
+        >
+      >::Other
 {
 public:
     //! \name public typedefs
@@ -104,19 +98,13 @@ public:
 
     //!@}
     
-protected:
-    //!\name Protected internal types
-
+public:
+    //! base type
     //!@{
-    //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, Curve_kernel_2 >
-    Base_kernel;
 
-    //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_functors < 
-            Self, Curve_analysis_2, Point_2, Arc_2
-    >  
-    Base_functors;
+    //! the base type
+    typedef typename Curved_kernel_via_analysis_2::
+    template rebind< Self, Point_2, Arc_2 >::Other Base;
     
     //!@}
 
@@ -126,12 +114,12 @@ public:
 
     //! default constructor
     Curved_kernel_via_analysis_2l() :
-        Base_kernel() {
+        Base() {
     }
     
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
     Curved_kernel_via_analysis_2l(const Curve_kernel_2& kernel) :
-        Base_kernel(kernel) {
+        Base(kernel) {
     }
     
     //!@}
