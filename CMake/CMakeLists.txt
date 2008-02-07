@@ -18,28 +18,6 @@ include(CGALcommon)
 include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
 include(OptionalAddSubdirectory)
-include(AddSubdirectories)
-
-if ( WIN32 )
-  set(BUILD_SHARED_LIBS OFF)
-else()
-  set(BUILD_SHARED_LIBS ON)
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING
-      "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
-      FORCE
-     )
-else()
-  set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING
-      "The types of build for multiple-configuration generators"
-      FORCE
-     )
-endif()
-
-
-
 
 # CGAL version number
 # TODO: This should be parsed from the VERSION file
@@ -150,6 +128,7 @@ set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} CACHE STRING "Compiler definitions us
 
 set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}" CACHE STRING "Linked flags used for building CGAL.")
 
+include_directories (${CGAL_BINARY_DIR}/include)
 include_directories (${CGAL_INCLUDE_DIR})
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
@@ -207,6 +186,9 @@ install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR
 #--------------------------------------------------------------------------------------------------
 
 
+# This allows the application scripts to locate FindCGAL and UseCGAL
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_BINARY_DIR}/cmake/modules)
+
 # This script does not configure demos and examples by default, but its does if requested.
 optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
 optional_add_subdirectory( examples OFF EXCLUDE_FROM_ALL )
@@ -223,7 +205,7 @@ optional_add_subdirectory( examples OFF EXCLUDE_FROM_ALL )
 set(BUILD_TESTING OFF CACHE BOOL "Turn testing on/off")
 if(BUILD_TESTING)
 
-  add_subdirectory(test ON EXCLUDE_FROM_ALL )
+  add_subdirectory(test EXCLUDE_FROM_ALL )
   
   ENABLE_TESTING()
 #     configure_file(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
