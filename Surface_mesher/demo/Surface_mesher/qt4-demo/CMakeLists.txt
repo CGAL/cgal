@@ -50,15 +50,15 @@ if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
   
   qt4_wrap_ui( uis ui/isovalues_list.ui ui/mainwindow.ui ui/meshing_bar.ui ui/optionsdialog.ui )
     
-  qt4_add_resources( isovalues_list.qrc surface_mesher.qrc  ) 
+  qt4_add_resources( qrc_sources isovalues_list.qrc surface_mesher.qrc  ) 
 
-  add_executable  ( ${prj}  ${sources} ${uis} )
+  add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
   
   add_dependencies( ${prj} CGAL CGAL_IMAGEIO)
     
   # Link the executable to CGAL and third-party libraries
   if ( NOT AUTO_LINK_ENABLED )    
-    target_link_libraries( ${prj} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+    target_link_libraries( ${prj} cgal cgal-image-io ${CGAL_3RD_PARTY_LIBRARIES})
   endif()
   
   target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} )
