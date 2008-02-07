@@ -885,6 +885,22 @@ public:
     template rebind< Self, Point_2, Arc_2 >::Other Base;
     
     //!@}
+
+public:
+    //! \name Constructors
+    //!@{
+
+    //! default constructor
+    Filtered_curved_kernel_via_analysis_2() :
+        Base() {
+    }
+    
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    Filtered_curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
+        Base(kernel) {
+    }
+    
+    //!@}
     
     //!\name Additional functors
     //!{
@@ -945,22 +961,6 @@ public:
 
     //!@}
     
-public:
-    //! \name Constructors
-    //!@{
-
-    //! default constructor
-    Filtered_curved_kernel_via_analysis_2() :
-        Base() {
-    }
-    
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Filtered_curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
-        Base(kernel) {
-    }
-    
-    //!@}
-
 }; // class Curved_kernel_via_analysis_2
 
 CGAL_END_NAMESPACE
