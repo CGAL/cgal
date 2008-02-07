@@ -108,8 +108,7 @@ public:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_near_boundary_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Compare_y_near_boundary_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Compare_y_near_boundary_2 {
     
 public:
     //! this instance template parameter
@@ -129,9 +128,8 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Compare_y_near_boundary_2< 
-    Curved_kernel_via_analysis_2 > Base;
+    typedef typename CurvedKernelViaAnalysis_2::Base::Compare_y_near_boundary_2
+    Base;
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -217,11 +215,11 @@ public:
         if (filter_res != CGAL::EQUAL) {
             CGAL_assertion_code(
             {
-                    Base base_compare_y_near_boundary(this->_ckva());
-                    
-                    CGAL::Comparison_result check_res = 
-                        base_compare_y_near_boundary(cv1, cv2, ce);
-                    CGAL_assertion(check_res == filter_res);
+                Base base_compare_y_near_boundary(this->_ckva());
+                
+                CGAL::Comparison_result check_res = 
+                    base_compare_y_near_boundary(cv1, cv2, ce);
+                CGAL_assertion(check_res == filter_res);
             }
             );
             return filter_res;
@@ -238,8 +236,7 @@ public:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Compare_y_at_x_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_2 {
     
 public:
     //! this instance template parameter
@@ -259,9 +256,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_2< 
-    Curved_kernel_via_analysis_2 > Base;
+    typedef typename CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_2 Base;
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -283,7 +278,8 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-        CKvA_CERR("\nfilteredcompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
+        CKvA_CERR("\nfilteredcompare_y_at_x; p: " << p 
+                  << ";\n cv:" << cv << "\n");
         
         Base base_compare_y_at_x(this->_ckva());
 
@@ -296,8 +292,7 @@ public:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_left_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Compare_y_at_x_left_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_left_2 {
     
 public:
     //! this instance template parameter
@@ -318,8 +313,7 @@ public:
 
     //! the bae type
     typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_left_2< 
-    Curved_kernel_via_analysis_2 > Base;
+    CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_left_2 Base;
 
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -361,8 +355,7 @@ public:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_right_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Compare_y_at_x_right_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_right_2 {
     
 public:
     //! this instance template parameter
@@ -383,9 +376,8 @@ public:
 
     //! the bae type
     typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Compare_y_at_x_right_2< 
-    Curved_kernel_via_analysis_2 > Base;
-
+    CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_right_2 Base;
+    
     //! the result type
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
@@ -694,8 +686,7 @@ private:
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernelViaAnalysis_2 >
 class Intersect_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Intersect_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Intersect_2 {
     
 public:
     //! this instance template parameter
@@ -715,9 +706,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Intersect_2< 
-    Curved_kernel_via_analysis_2 > Base;
+    typedef typename CurvedKernelViaAnalysis_2::Base::Intersect_2 Base;
 
     //! standard constructor
     Intersect_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -774,8 +763,7 @@ public:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Is_on_2 : 
-        public Curved_kernel_via_analysis_2_Functors::
-            Is_on_2< CurvedKernelViaAnalysis_2 > {
+        public CurvedKernelViaAnalysis_2::Base::Is_on_2 {
     
 public:
     //! this instance template parameter
@@ -795,10 +783,8 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    Curved_kernel_via_analysis_2_Functors::Is_on_2< 
-    Curved_kernel_via_analysis_2 > Base;
-
+    typedef typename CurvedKernelViaAnalysis_2::Base::Is_on_2 Base;
+    
     //! the result type
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
