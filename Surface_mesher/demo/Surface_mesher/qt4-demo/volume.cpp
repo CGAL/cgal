@@ -309,16 +309,21 @@ void Volume::display_marchin_cube()
     timer.start();
     m_surface_mc.clear();
 
+    if(mc.ntrigs()!=0)
+      mc.clean_all();
+    mc.set_resolution(nx,ny,nz);
+    mc.init_all();
+    mc.set_ext_data(static_cast<unsigned char*>(m_image.image()->data));
+
+    const double xr = m_image.xmax() / nx;
+    const double yr = m_image.ymax() / ny;
+    const double zr = m_image.zmax() / nz;
+
     for(int isovalue_id = 0; 
         isovalue_id < isovalues_list->numberOfIsoValues();
         ++isovalue_id)
     {
       status_message(QString("Marching cubes, isovalue #%1...").arg(isovalue_id));
-
-      if(mc.ntrigs()!=0)
-        mc.clean_all();
-      mc.set_resolution(nx,ny,nz);
-      mc.init_all();
 
       // set data
 //       for(unsigned int i=0;i<nx;i++)
@@ -328,12 +333,9 @@ void Volume::display_marchin_cube()
 //             const float& value = m_image.value(i,j,k);
 //             mc.set_data(value,i,j,k);
 //           }
-      mc.set_ext_data(static_cast<unsigned char*>(m_image.image()->data));
       // compute scaling ratio
-      const double xr = m_image.xmax() / nx;
-      const double yr = m_image.ymax() / ny;
-      const double zr = m_image.zmax() / nz;
-
+      if(isovalue_id > 0)
+        mc.init_temps();
       mc.run(isovalues_list->isovalue(isovalue_id), xr, yr, zr);
       mc.clean_temps();
 
