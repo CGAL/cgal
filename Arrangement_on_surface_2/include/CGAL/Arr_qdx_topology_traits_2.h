@@ -303,7 +303,10 @@ private:
             }
         }
 #else
-        typedef QdX::Quadric_3_z_at_xy_isolator_traits< Quadric_3 > Traits;
+        typedef QdX::Quadric_3_z_at_xy_isolator_traits< 
+            typename Geometry_traits_2::Curved_kernel_via_analysis_2, 
+            Quadric_3 
+        > Traits;
         typedef SoX::Create_restricted_cad_3< Traits > Creator;
         typename Creator::Restricted_cad_3 cad = Creator()(base);
         
