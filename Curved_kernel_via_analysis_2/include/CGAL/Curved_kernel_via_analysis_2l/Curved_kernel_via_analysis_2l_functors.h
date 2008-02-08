@@ -277,6 +277,61 @@ public:
 
 //!\brief Tests whether a point lies on a supporting curve
 template < class CurvedKernelViaAnalysis_2l >
+class Compare_xyz_3 : public Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+    
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Compare_xyz_3(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     *\brief Compares two points xyz-lexicographically
+     * \param p1 The first point
+     * \param p2 The second point
+     * \return CGAL::SMALLER if p1 is lexicographically smaller than p2,
+     *         CGAL::EQUAL if p1 is equal to p2, and
+     *         CGAL::LARGER if p1 is lexicographically larger than p2,
+     */
+    result_type operator()(const Point_2& p1, const Point_2& p2,
+                           bool equal_xy = false) const {
+        result_type res = CGAL::EQUAL;
+
+        if (!p1.is_identical(p2)) {
+            res = (equal_xy ? 
+                   CGAL::EQUAL : 
+                   Curved_kernel_via_analysis_2l::instance().
+                   compare_xy_2_object()(p1, p2)
+            );
+            if (res == CGAL::EQUAL) {
+                // TOOD ask stack (eriC)
+                //res = with sheet numbers
+            }
+        }
+
+        return res;
+    }
+};
+
+
+//!\brief Tests whether a point lies on a supporting curve
+template < class CurvedKernelViaAnalysis_2l >
 class Is_on_2: public Curved_kernel_via_analysis_2_Functors::
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
 
