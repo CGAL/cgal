@@ -27,6 +27,8 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 
+#include <SoX/GAPS/Restricted_cad_3_accessor.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -221,14 +223,40 @@ public:
         );
         
         this->ptr()->_m_surface = surface;
+
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                Accessor;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
+        
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
+        CGAL_precondition_code(
+                Projected_point_2 pt = Accessor::point_in_interior(arc);
+                number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
+        );
+        CGAL_precondition(sheet < number_of_sheets);
+
+
         this->ptr()->_m_sheet = sheet;
 
         CGAL_precondition(sheet_p >= 0);
+        CGAL_precondition_code(
+                number_of_sheets = 
+                cad.z_stack_at(p.projected_point()).number_of_z_cells();
+        );
+        CGAL_precondition(sheet_p < number_of_sheets);
+        
         CGAL_precondition(sheet_q >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over min); (eriC)
-        // TODO add precond CGAL_precondition(sheet < #sheets over max); (eriC)
+        CGAL_precondition_code(
+                number_of_sheets = 
+                cad.z_stack_at(q.projected_point()).number_of_z_cells();
+        );
+        CGAL_precondition(sheet_q < number_of_sheets);
         CGAL_precondition_code(
                 // TODO add sanity checks for sheet_at_min/max wrt sheet (eriC
                 // use "adjacency information" 
@@ -280,14 +308,32 @@ public:
                 }
         );
         
-        //this->ptr()->_projected_segment = seg;
         this->ptr()->_m_surface = surface;
+
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                Accessor;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
+        
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
+        CGAL_precondition_code(
+                Projected_point_2 pt = Accessor::point_in_interior(arc);
+                number_of_sheets = 
+                cad.z_stack_at(pt).number_of_z_cells();
+        );
         this->ptr()->_m_sheet = sheet;
 
         CGAL_precondition(sheet_p >= 0);
-        // TODO precond CGAL_precondition(sheet_p < #sheets over p.pp); (eriC)
+        CGAL_precondition_code(
+                number_of_sheets = 
+                cad.z_stack_at(p.projected_point()).number_of_z_cells();
+        );
+        
         CGAL_precondition_code(
                 // TODO add sanity checks for sheet_at_min/max wrt sheet (eriC)
                 // use "adjacency information"
@@ -322,12 +368,25 @@ public:
         bool max_finite = arc.is_finite(CGAL::ARR_MAX_END);
         CGAL_precondition(!min_finite && !max_finite);
         
-        //this->ptr()->_projected_segment = seg;
         this->ptr()->_m_surface = surface;
+
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                typedef SoX::Restricted_cad_3_accessor< Restricted_cad_3 > 
+                Accessor;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
         CGAL_precondition(sheet >= 0);
-        // TODO add precond CGAL_precondition(sheet < #sheets over arc); (eriC)
-        
+        CGAL_precondition_code(
+                Projected_point_2 pt = Accessor::point_in_interior(arc);
+                number_of_sheets = 
+                cad.z_stack_at(pt).number_of_z_cells();
+        );
         this->ptr()->_m_sheet = sheet;
+        
         this->ptr()->_m_sheet_min = sheet;
         this->ptr()->_m_sheet_max = sheet;
     }
@@ -356,11 +415,19 @@ public:
         
         this->copy_on_write();
         
-        this->ptr()->_m_projected_point = p.projected_point();
-        
         CGAL_precondition(p.projected_point().
                           compare_xy(q.projected_point()) == CGAL::EQUAL);
-        // TODO check that surface has a vertical line through p and q (eriC)
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
+        CGAL_precondition(cad.supports_vertical_line_at(p.projected_point()));
+
+        this->ptr()->_m_projected_point = p.projected_point();
+        
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
     }
@@ -373,9 +440,17 @@ public:
         
         this->copy_on_write();
         
-        this->ptr()->_m_projected_point = p.projected_point();
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
+        CGAL_precondition(cad.supports_vertical_line_at(p.projected_point()));
 
-        // TODO check that surface has a vertical line through p (eriC)
+        this->ptr()->_m_projected_point = p.projected_point();
+        
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
         // TODO make use of inf_end using private constructors of  (eriC)
@@ -389,9 +464,17 @@ public:
         
         this->copy_on_write();
         
+        CGAL_precondition_code(
+                int number_of_sheets = -1;
+                typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+                Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(surface);
+        );
+        CGAL_precondition(cad.supports_vertical_line_at(p));
+        
         this->ptr()->_m_projected_point = p;
 
-        // TODO check that surface has a vertical line through p (eriC)
         this->ptr()->_m_is_z_vertical = true;
         this->ptr()->_m_surface = surface;
         // TODO set curve-ends to -oo and +oo using private constructors (eriC)
