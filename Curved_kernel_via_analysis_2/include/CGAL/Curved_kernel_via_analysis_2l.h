@@ -176,7 +176,7 @@ public:
     
 public:
 
-    CGAL_QKvA_2_functor_pred(Compare_xyz_3, compare_xyz_3_object);
+    CGAL_CKvA_2l_functor_pred(Compare_xyz_3, compare_xyz_3_object);
 
     CGAL_CKvA_2l_functor_pred(Is_on_2, is_on_2_object);
 
