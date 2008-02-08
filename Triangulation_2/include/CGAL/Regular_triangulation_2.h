@@ -74,7 +74,6 @@ public:
   using Base::dimension;
   using Base::geom_traits;
   using Base::infinite_vertex;
-  using Base::finite_vertex;
   using Base::create_face;
   using Base::number_of_faces;
   using Base::all_faces_begin;
@@ -279,6 +278,7 @@ public:
 
   Finite_vertices_iterator finite_vertices_begin () const;
   Finite_vertices_iterator finite_vertices_end () const;
+  Vertex_handle finite_vertex() const;
 
   Hidden_vertices_iterator hidden_vertices_begin () const;
   Hidden_vertices_iterator hidden_vertices_end () const;
@@ -330,14 +330,14 @@ public:
   {
       int n = number_of_vertices();
 
-      std::vector<Weighted_point> points (first, last);
+      std::vector<Weighted_point> points CGAL_make_vector(first, last);
+
       std::random_shuffle (points.begin(), points.end());
       spatial_sort (points.begin(), points.end(), geom_traits());
 
       Face_handle hint;
-      for (typename std::vector<Weighted_point>::const_iterator p = points.begin(),
-		      end = points.end();
-              p != end; ++p)
+      for (typename std::vector<Weighted_point>::const_iterator p = points.begin();
+              p != points.end(); ++p)
           hint = insert (*p, hint)->face();
 
       return number_of_vertices() - n;
@@ -1992,6 +1992,17 @@ finite_vertices_begin () const
 			 Hidden_tester(),
 			 Base::finite_vertices_begin());
 }
+
+template < class Gt, class Tds >
+typename Regular_triangulation_2<Gt,Tds>::Vertex_handle 
+Regular_triangulation_2<Gt,Tds>::
+finite_vertex () const
+{
+  CGAL_triangulation_precondition (number_of_vertices() >= 1);
+  return (finite_vertices_begin());
+}
+
+
 
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator 
