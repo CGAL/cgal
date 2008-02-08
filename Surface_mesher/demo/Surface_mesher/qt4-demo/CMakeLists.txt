@@ -54,7 +54,7 @@ if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
 
   add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
   
-  add_dependencies( ${prj} CGAL CGAL_IMAGEIO)
+#  add_dependencies( ${prj} CGAL CGAL_IMAGEIO)
     
   # Link the executable to CGAL and third-party libraries
   if ( NOT AUTO_LINK_ENABLED )    

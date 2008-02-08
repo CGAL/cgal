@@ -136,7 +136,7 @@ public:
 
   FT radius()
   {
-    return std::max(std::max(max_x,max_y),max_z);
+    return (std::max)((std::max)(max_x,max_y),max_z);
   }
 
   unsigned int xdim() { return image_ptr->xdim; }

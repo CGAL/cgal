@@ -157,7 +157,7 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
 
   static const Marker outside_mark 
     = ( std::numeric_limits<Marker>::is_bounded ? 
-        std::numeric_limits<Marker>::max() :
+        (std::numeric_limits<Marker>::max)() :
         std::numeric_limits<Marker>::infinity() );
 
   boost::multi_array<Marker, 3> visited(boost::extents[nx][ny][nz]);
@@ -215,12 +215,12 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
           visited[i][j][k] = number_of_connected_components;
           ++nb_voxels;
 
-          boost::get<0>(bbox_min) = std::min(i, boost::get<0>(bbox_min));
-          boost::get<0>(bbox_max) = std::max(i, boost::get<0>(bbox_max));
-          boost::get<1>(bbox_min) = std::min(j, boost::get<1>(bbox_min));
-          boost::get<1>(bbox_max) = std::max(j, boost::get<1>(bbox_max));
-          boost::get<2>(bbox_min) = std::min(k, boost::get<2>(bbox_min));
-          boost::get<2>(bbox_max) = std::max(k, boost::get<2>(bbox_max));
+          boost::get<0>(bbox_min) = (std::min)(i, boost::get<0>(bbox_min));
+          boost::get<0>(bbox_max) = (std::max)(i, boost::get<0>(bbox_max));
+          boost::get<1>(bbox_min) = (std::min)(j, boost::get<1>(bbox_min));
+          boost::get<1>(bbox_max) = (std::max)(j, boost::get<1>(bbox_max));
+          boost::get<2>(bbox_min) = (std::min)(k, boost::get<2>(bbox_min));
+          boost::get<2>(bbox_max) = (std::max)(k, boost::get<2>(bbox_max));
 
           int nb_neighbors = 0;
 

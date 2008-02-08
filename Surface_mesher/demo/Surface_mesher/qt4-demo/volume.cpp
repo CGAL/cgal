@@ -97,7 +97,7 @@ public:
   result_type operator()(const Classify_from_isovalue_list::result_type& a,
                          const Classify_from_isovalue_list::result_type& b)
   {
-    return list->item(std::min(a, b));
+    return list->item((std::min)(a, b));
   }
 };
 
