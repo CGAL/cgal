@@ -169,24 +169,6 @@ protected:
     }
     //!@}
     
-public:
-    //!\name IO
-    //!@{
-    
-    //! write represenation to \c os
-    void write(std::ostream& os) const {
-        os << Base(*this);
-        // TODO output surface/sheet even if point is not finite
-        if (this->is_finite()) {
-            os << " " 
-               << "Surface(" << this->surface() << ", " 
-               << this->sheet() 
-               << ")";
-        }
-    }
-    
-    //!@}
-
     //!\name Approximation
     //!@{
 
@@ -210,23 +192,6 @@ public:
     //! for rebind
     friend class Base::Rebind;
 };
-
-/*!\relates Quadric_point_2
- * \brief 
- * output operator
- */
-template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
-std::ostream& operator<< (
-        std::ostream& os,
-        const 
-        Quadric_point_2<QuadricalKernelViaAnalysis_2, SurfacePair_3 >& 
-        pt) {
-    
-    pt.write(os);
-    
-    return os;
-}
-
 
 // pre-declaration
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
@@ -448,8 +413,6 @@ public:
 
     //!@}
 
-    // TODO write for arc
-
     // friends
     //! for constructors
     friend class Quadrical_kernel_via_analysis_2::Construct_arc_2;
@@ -462,9 +425,9 @@ public:
 };   
 
 #define CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES \
-    typedef typename Base::Curve_2 Curve_2; \
-    typedef typename Base::Point_2 Point_2; \
-    typedef typename Base::Arc_2 Arc_2; \
+    typedef typename Curved_kernel_via_analysis_2l::Curve_2 Curve_2; \
+    typedef typename Curved_kernel_via_analysis_2l::Point_2 Point_2; \
+    typedef typename Curved_kernel_via_analysis_2l::Arc_2 Arc_2; \
     typedef typename Base::X_coordinate_1 X_coordinate_1; \
 
 
@@ -667,18 +630,16 @@ public:
 }; // Compare_y_near_boundary_2
 
 template < class CurvedKernelViaAnalysis_2l >
-class Compare_y_at_x_2 : public 
-Curved_kernel_via_analysis_2_Functors::
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+class Compare_y_at_x_2 : 
+        public CurvedKernelViaAnalysis_2l::Base::Compare_y_at_x_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef Curved_kernel_via_analysis_2_Functors::
-    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
-    Base;
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -706,24 +667,20 @@ public:
         CGAL::Comparison_result res = CGAL::EQUAL;
         
         // FUTURE TODO p can lie on boundary
-
         int sp = p.sheet();
         int sa = cv.sheet();
         if (cv.is_finite(CGAL::ARR_MIN_END) && 
             p == cv.curve_end(CGAL::ARR_MIN_END)) {
             sa = cv.sheet(CGAL::ARR_MIN_END);
         } else if (cv.is_finite(CGAL::ARR_MAX_END) && 
-            p == cv.curve_end(CGAL::ARR_MAX_END)) {
+                   p == cv.curve_end(CGAL::ARR_MAX_END)) {
             sa = cv.sheet(CGAL::ARR_MAX_END);
-        }
-        
+        }  
         if (sa != sp) {
             res = CGAL::compare(sp, sa);
         } else {
-            res = Curved_kernel_via_analysis_2l::instance().
-                projected_kernel().compare_y_at_x_2_object()(
-                    p.projected_point(), cv.projected_arc()
-            );
+            Base base_compare_y_at_x(this->_ckva());
+            res = base_compare_y_at_x(p, cv);
             if (sa == 1) {
                 CGAL_assertion(sp == 1);
                 res = -res;
@@ -1266,10 +1223,9 @@ public:
     
         CERR("trim\n");
         CGAL_precondition(
-                Curved_kernel_via_analysis_2l::instance().
-                kernel().compare_xy_2_object()(
-                        p.xy(), q.xy()) !=
-                CGAL::EQUAL);
+                !Curved_kernel_via_analysis_2l::instance().
+                equal_2_object()(p, q)
+        );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
         Arc_2 arc = cv._replace_endpoints(
@@ -1782,7 +1738,7 @@ public:
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_CKvA_2l_functor_pred(Y, Z) \
-    typedef CGALi::Curved_kernel_via_analysis_2l_Functors::Y<Self> Y; \
+    typedef CGALi::Curved_kernel_via_analysis_2l_Functors::Y< Self > Y; \
     Y Z() const { return Y(&Self::instance()); }
     
 #define CGAL_CKvA_2l_functor_cons(Y, Z) CGAL_CKvA_2l_functor_pred(Y, Z)
@@ -1792,13 +1748,16 @@ public:
     CGAL_CKvA_2l_functor_cons(Construct_point_on_arc_2,
                               construct_point_on_arc_2_object);
     
+    CGAL_CKvA_2l_functor_pred(Compare_xyz_3, compare_xyz_3_object);
+    
+    
 #undef CGAL_CKvA_2l_functor_pred
 #undef CGAL_CKvA_2l_functor_cons
     
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_QKvA_2_functor_pred(Y, Z) \
-    typedef CGALi::Quadrical_kernel_via_analysis_2_Functors::Y<Self> Y; \
+    typedef CGALi::Quadrical_kernel_via_analysis_2_Functors::Y< Self > Y; \
     Y Z() const { return Y(&Self::instance()); }
 
 #define CGAL_QKvA_2_functor_cons(Y, Z) CGAL_QKvA_2_functor_pred(Y, Z)
@@ -1830,7 +1789,7 @@ public:
 
     CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
 
-    // TODO implement Is_on_2 (eriC)
+    // TODO implement Is_on_2 (Pavel)
     
     //!@}
     
