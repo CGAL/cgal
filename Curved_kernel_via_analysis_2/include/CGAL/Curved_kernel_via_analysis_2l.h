@@ -141,7 +141,9 @@ public:
     Construct_projected_point_2;
     //! returns an instance of Construct_projected_point_2 functor
     Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return this->_ckva().construct_point_2_object();
+        return 
+            Curved_kernel_via_analysis_2(this->kernel()).
+            construct_point_2_object();
     }
     
     //! type of Construct_arc_2 functor
@@ -158,7 +160,9 @@ public:
     Construct_projected_arc_2;
     //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return this->_ckva().construct_arc_2_object();
+        return 
+            Curved_kernel_via_analysis_2(this->kernel()).
+            construct_arc_2_object();
     }
     
     // declares curved kernel functors, 
@@ -180,25 +184,6 @@ public:
 #undef CGAL_CKvA_2l_functor_cons
 
     //!@}
-
-protected:
-    //!\name Base ckva
-    //!{
-
-    //!\brief returns instance to use of CKvA_2
-    const Curved_kernel_via_analysis_2 _ckva() {
-        if (!_m_ckva) {
-            _m_ckva = Curved_kernel_via_analysis_2(this->kernel());
-        }
-        return *_m_ckva;
-    }
-    
-    //!@}
-
-
-protected:
-    //! stores possible CKvA_2
-    boost::optional< Curved_kernel_via_analysis_2 > _m_ckva;
 
 }; // class Curved_kernel_via_analysis_2l
 
