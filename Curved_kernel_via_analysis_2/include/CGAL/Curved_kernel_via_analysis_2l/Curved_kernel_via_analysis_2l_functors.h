@@ -119,13 +119,16 @@ public:
         typename Point_2::Projected_point_2 p_pt = 
             construct_projected_point(x, c, arcno);
         int sheet = arc.sheet();
+        bool same_projection = false;
         if (arc.is_finite(CGAL::ARR_MIN_END)) {
             if (p_pt.compare_xy(
                         arc.curve_end(CGAL::ARR_MIN_END).projected_point()
                 ) == CGAL::EQUAL) {
+                same_projection = true;
                 sheet = arc.sheet(CGAL::ARR_MIN_END);
             }
-        } else if (arc.is_finite(CGAL::ARR_MAX_END)) {
+        }
+        if (!same_projection && arc.is_finite(CGAL::ARR_MAX_END)) {
             if (p_pt.compare_xy(
                         arc.curve_end(CGAL::ARR_MAX_END).projected_point()
                 ) == CGAL::EQUAL) {
