@@ -483,15 +483,28 @@ public:
     //! write represenation to \c os
     void write(std::ostream& os) const { 
         os << "Arc_2l(";
+        // TODO output also infinite points!
         if (this->is_z_vertical()) {
             os << "Point_2(" << this->projected_point() << "), ";
-            os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) << "), ";
-            os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) << "), ";
+            if (this->is_finite(CGAL::ARR_MIN_END)) {
+                os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) 
+                   << "), ";
+            }
+            if (this->is_finite(CGAL::ARR_MAX_END)) {
+                os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) 
+                   << "), ";
+            }
             os << "Surface(" << this->surface() << ")";
         } else {
             os << "Arc_2(" << this->projected_arc() << "), ";
-            os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) << "), ";
-            os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) << "), ";
+            if (this->is_finite(CGAL::ARR_MIN_END)) {
+                os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) 
+                   << "), ";
+            }
+            if (this->is_finite(CGAL::ARR_MAX_END)) {
+                os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) 
+                   << "), ";
+            }
             os << "Surface(" << this->surface() << ", " 
                << this->sheet() << ", " << this->sheet(CGAL::ARR_MIN_END)
                << ", " << this->sheet(CGAL::ARR_MAX_END)
