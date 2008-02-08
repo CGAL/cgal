@@ -1341,6 +1341,7 @@ protected:
                q.location() == CGAL::ARR_INTERIOR) {
 
                 Kernel_arc_2 left_arc, right_arc;
+                // TODO really use instance?
                 Curved_kernel_via_analysis_2::instance().
                     split_2_object()(*this,q,left_arc,right_arc);
                 return left_arc;
@@ -1349,6 +1350,7 @@ protected:
                q.location() != CGAL::ARR_INTERIOR) {
 
                 Kernel_arc_2 left_arc, right_arc;
+                // TODO really use instance?
                 Curved_kernel_via_analysis_2::instance().
                     split_2_object()(*this,p,left_arc,right_arc);
                 return right_arc;
@@ -1381,7 +1383,9 @@ public:
         
         typename Curved_kernel_via_analysis_2_Functors
             ::Construct_point_on_arc_2<Curved_kernel_via_analysis_2>
-            construct_point_on_arc(&Curved_kernel_via_analysis_2::instance());
+            construct_point_on_arc =
+            Curved_kernel_via_analysis_2::instance().
+            construct_point_on_arc_2_object();
         
         Point_2 left1, left2;
         
@@ -1780,8 +1784,8 @@ protected:
                 return res;
             }
             // compare only y-values; 
-            res = Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(p, q, true);
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(p.xy(), q.xy(), true);
             //std::cout << "res6: " << res << std::endl;
             return res;
         }
