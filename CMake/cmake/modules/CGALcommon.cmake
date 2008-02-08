@@ -15,6 +15,26 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   # FindQt3 is buggy in CMake 2.4.4.
   CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
+  if ( NOT BUILD_SHARED_LIBS )
+    if ( WIN32 )
+      set(BUILD_SHARED_LIBS OFF)
+    else()
+      set(BUILD_SHARED_LIBS ON)
+    endif()
+  endif()
+  
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING
+        "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+        FORCE
+      )
+  else()
+    set(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING
+        "The types of build for multiple-configuration generators"
+        FORCE
+      )
+  endif()
+
   # Just for fun
   set(CMAKE_COLORMAKEFILE ON)
 

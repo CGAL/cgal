@@ -49,3 +49,4 @@ else()
   endif()  
 endif()
 
+mark_as_advanced( CGAL_CMAKE_MODULE_PATH )
