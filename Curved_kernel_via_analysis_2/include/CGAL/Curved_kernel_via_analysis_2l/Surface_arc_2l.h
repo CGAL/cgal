@@ -477,6 +477,31 @@ public:
     
     //!@}
 
+    //!\name IO
+    //!@{
+    
+    //! write represenation to \c os
+    void write(std::ostream& os) const { 
+        os << "Arc_2l(";
+        if (this->is_z_vertical()) {
+            os << "Point_2(" << this->projected_point() << "), ";
+            os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) << "), ";
+            os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) << "), ";
+            os << "Surface(" << this->surface() << ")";
+        } else {
+            os << "Arc_2(" << this->projected_arc() << "), ";
+            os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) << "), ";
+            os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) << "), ";
+            os << "Surface(" << this->surface() << ", " 
+               << this->sheet() << ", " << this->sheet(CGAL::ARR_MIN_END)
+               << ", " << this->sheet(CGAL::ARR_MAX_END)
+               << ")";
+        }
+        os << std::flush;
+    }
+
+    //!@}
+
     //!\name Friends
     //!@{
    
@@ -489,11 +514,23 @@ public:
     //!@}
 };    
 
+/*!\relates Quadric_arc_2
+ * \brief 
+ * output operator
+ */
+template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
+std::ostream& operator<< (
+        std::ostream& os,
+        const 
+        Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >& arc) {
+    
+    arc.write(os);
+    
+    return os;
+}
+
 // FUTURE TODO a surface can have a vertical plane here over the arc_2
 // -> Surface_patch_2l{};
-
-// TODO operator<< (Pavel)
-
 
 } // namespace CGALi
 
