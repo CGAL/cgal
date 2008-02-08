@@ -234,7 +234,7 @@ public:
     //!
     //!\pre compared points have finite x/y-coordinates
     inline
-    CGAL::Comparison_result compare_xy(const Kernel_point& q, 
+    CGAL::Comparison_result compare_xyz(const Kernel_point& q, 
                                        bool equal_xy = false) const {
         CGAL_precondition(this->is_finite());
         CGAL_precondition(q.is_finite());

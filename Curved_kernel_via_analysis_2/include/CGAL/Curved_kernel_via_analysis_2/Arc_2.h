@@ -1784,7 +1784,7 @@ protected:
                 return res;
             }
             // compare only y-values; 
-            res = Curved_kernel_via_analysis_2::instance()
+            res = Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q, true);
             //std::cout << "res6: " << res << std::endl;
             return res;
