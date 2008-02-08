@@ -100,7 +100,7 @@ void MainWindow::on_action_Open_triggered()
 {
   QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                   "",
-                                                  tr("OFF Files (*.off)"));
+                                                  tr("all Files (*.*)"));
   if(!filename.isNull())
     surface_open(filename);
 }
