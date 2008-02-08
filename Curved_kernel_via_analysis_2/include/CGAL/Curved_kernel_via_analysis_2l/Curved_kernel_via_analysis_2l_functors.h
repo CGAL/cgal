@@ -320,8 +320,48 @@ public:
                    compare_xy_2_object()(p1, p2)
             );
             if (res == CGAL::EQUAL) {
-                // TOOD ask stack (eriC)
-                //res = with sheet numbers
+
+                typedef typename Curved_kernel_via_analysis_2l::Surface_pair_3
+                    Surface_pair_3;
+                typedef typename Surface_pair_3::Surface_3 Surface_3;
+                const Surface_3& s1 = p1.surface();
+                const Surface_3& s2 = p2.surface();
+                int sheet1 = p1.sheet();
+                int sheet2 = p2.sheet();
+                
+                // if same surface compare arc numbers, 
+                if (s1.is_identical(s2)) {
+                    return NiX::sign(sheet1 - sheet2);
+                }
+
+#if QdX_USE_AcX // TODO other flag
+                
+                // otherwise use "z-stacke of surface pair 
+                // (point location in 2d-map gives z-stacke 
+                // 2d map consists of silhouettes-curves plus cut curve
+                // slice will store sequence and also whether 
+                // surfaces are vertical surface_info???
+                
+                Surface_pair_3 pair = 
+                    Surface_pair_3::surface_pair_cache()(
+                            std::make_pair(s1, s2)
+                    );
+                
+                typedef typename 
+                    Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
+                
+                Z_stack z_stack = pair.z_stack_at(
+                        p1.projected_point()
+                );
+                
+                int level1 = z_stack.z_level_of_sheet(s1, sheet1);
+                int level2 = z_stack.z_level_of_sheet(s2, sheet2);
+                
+                return NiX::sign(level1 - level2);
+#else
+                CGAL_error_msg("Compare_xyz_3 not working without AcX");
+                return CGAL::EQUAL;
+#endif
             }
         }
 
