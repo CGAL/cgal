@@ -22,7 +22,7 @@
 
 #ifndef CGAL_NO_AUTOLINK_CGALQT
 
-#define CGAL_LIB_NAME CGALQt
+#define CGAL_LIB_NAME cgal-qt
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_CGALQT
