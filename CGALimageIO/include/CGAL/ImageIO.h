@@ -23,6 +23,8 @@
 
 #include <CGAL/compiler_config.h>
 
+#include <CGAL/auto_link/ImageIO.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 
