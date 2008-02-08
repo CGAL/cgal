@@ -12,7 +12,6 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 
-#include "get_polyhedral_surface.h"
 #include <QGLViewer/vec.h>
 
 #include "ui_meshing_bar.h"
