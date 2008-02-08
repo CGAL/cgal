@@ -3,7 +3,7 @@
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGALROOT}/cmake/modules"  )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
 
 find_package(CGAL)
 

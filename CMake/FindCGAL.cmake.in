@@ -14,22 +14,16 @@ set(CGAL_QT_LIBRARIES)
 
 if ( NOT CGAL_INCLUDE_DIRS OR NOT CGAL_LIBRARIES_DIRS OR NOT CGAL_CMAKE_MODULE_PATH )
 
-  set(CGAL_ROOT $ENV{CGALROOT})
-
-  if(CGAL_ROOT)
-    file(TO_CMAKE_PATH ${CGAL_ROOT} CGAL_ROOT)
-  endif()
-
   find_path(CGAL_INCLUDE_DIR 
             NAMES CGAL/basic.h
             PATHS @CGAL_SOURCE_DIR@/include 
-                  ${CGAL_ROOT}/include  
+                  $ENV{CGAL_DIR}/include  
         	  DOC "The directories containing include files for CGAL"
            )
            
   find_path(CGAL_CMAKE_MODULE_PATH CGALcommon.cmake
             PATHS @CGAL_SOURCE_DIR@/cmake/modules 
-                  ${CGAL_ROOT}/cmake/modules 
+                  $ENV{CGAL_DIR}/cmake/modules 
                   ${CMAKE_MODULE_PATH}
         	  DOC "The directories containing CGAL CMake stuff"
            )
