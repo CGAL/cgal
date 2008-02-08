@@ -937,116 +937,9 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-#if 0
-
         CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
-        CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
-            loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
-        
-        /*CGAL::Boundary_type bndp_x = p.boundary_in_x(), 
-            bndp_y = p.boundary_in_y(), 
-            bnd1_x = boundary_in_x(CGAL::ARR_MIN_END), 
-            bnd2_x = boundary_in_x(CGAL::ARR_MAX_END), 
-            bnd1_y = boundary_in_y(CGAL::ARR_MIN_END),
-            bnd2_y = boundary_in_y(CGAL::ARR_MAX_END);*/
-        
-        //CGAL_precondition(!(is_infinite(bndp_x) || is_infinite(bndp_y)));
-        // handle special case when a curve end coincides with p at singularity
-        /*if((bndp_x == CGAL::AFTER_SINGULARITY && bnd1_x == bndp_x) ||
-            (bndp_x == CGAL::BEFORE_SINGULARITY && bnd2_x == bndp_x) ||
-           (bndp_y == CGAL::AFTER_SINGULARITY && bnd1_y == bndp_y) ||
-            (bndp_y == CGAL::BEFORE_SINGULARITY && bnd2_y == bndp_y))
-            return CGAL::EQUAL;
-        CGAL_precondition_msg(!is_singular(bndp_x), "Target point is not "
-            "within the arc's x-range"); 
-                
-        if(is_singular(bndp_y)) {// singularity in y is always in x-range 
-             if(bndp_y < CGAL::NO_BOUNDARY)
-                 return CGAL::SMALLER;
-             return CGAL::LARGER; // bndp_y > 0
-        }*/
-        bool eq_min = false, eq_max = false, in_x_range = true;
-        /*if(is_on_disc(bndp_x)) {
-            eq_min = (bndp_x < CGAL::NO_BOUNDARY && bnd1_x == bndp_x);
-            eq_max = (bndp_x > CGAL::NO_BOUNDARY && bnd2_x == bndp_x);
-            // report x-range assert violation if the point lies on disc in
-            // x but neither of arc's ends do
-            if(!(eq_min || eq_max))
-                CGAL_error_msg("Target point is not within the arc's x-range");
-        } else // we should be able to access x-coord when point is on disc */
-            in_x_range = cv.is_in_x_range(p.x(), &eq_min, &eq_max);
 
-        CGAL_precondition(in_x_range); // check x-range
-        /*if(is_on_disc(bndp_y)) {
-            if((eq_min && bndp_y < CGAL::NO_BOUNDARY && bnd1_y == bndp_y) ||
-               (eq_max && bndp_y > CGAL::NO_BOUNDARY && bnd2_y == bndp_y))
-               return CGAL::EQUAL;
-             // otherwise handle by the boundary type
-             if(bndp_y < CGAL::NO_BOUNDARY) 
-                 return CGAL::SMALLER;
-             return CGAL::LARGER; // bndp_y > 0
-        }*/
-        
-        if (cv.is_vertical()) {
-            if (cv.is_interior(loc1)) {
-                // for vertical arcs we can ask for .xy() member
-                if (Curved_kernel_via_analysis_2::instance().
-                    compare_xy_2_object()(
-                            p, cv._minpoint(), true
-                    ) == CGAL::SMALLER) {
-                    return CGAL::SMALLER;
-                }
-            }
-            if (cv.is_interior(loc2)) {
-                if (Curved_kernel_via_analysis_2::instance().
-                    compare_xy_2_object()(
-                            p, cv._maxpoint(), true
-                    ) == CGAL::LARGER) {
-                    return CGAL::LARGER;
-                }
-            }
-            return CGAL::EQUAL; // p lies on a vertical arc
-        }
-        if (eq_min && loc1 != CGAL::ARR_INTERIOR) {
-            return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? 
-                    CGAL::LARGER : CGAL::SMALLER);
-        }
-        if (eq_max && loc2 != CGAL::ARR_INTERIOR) {
-            return (loc2 == CGAL::ARR_BOTTOM_BOUNDARY ? 
-                    CGAL::LARGER : CGAL::SMALLER);
-        }
-        // what remains to be handled ?    
-        /*if(is_on_disc(bndp_x)) { 
-            // the point and a respective curve end lie on disc in x => need
-            // comparison at x-infinity; 
-            // since we compare point agains the arc: reverse the result
-            return (- _compare_arc_numbers(p.xy(), bnd1_x));
-        }*/
-        // otherwise return reversed y-order of this arc and point p
-        CGAL::Comparison_result res;
-        if (eq_min) {
-            res = Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(
-                    p, cv._minpoint(), true
-            );
-        } else if (eq_max) {
-            res = Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(
-                    p, cv._maxpoint(), true
-            );
-        } else {
-            res = -cv._compare_arc_numbers(p.xy(), CGAL::ARR_INTERIOR, p.x());
-        }
-        CERR("cmp result: " << res << "\n");
-        return res;
-
-#else
-
-        CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
-        CGAL::Arr_parameter_space loc1 = cv.location(CGAL::ARR_MIN_END),
-            loc2 = cv.location(CGAL::ARR_MAX_END);/*, locp = p.location();*/
         bool eq_min, eq_max;
-
         CGAL_assertion_code (
            bool in_x_range =
         )
@@ -1054,19 +947,19 @@ public:
         CGAL_assertion(in_x_range);
 
         if (cv.is_vertical()) {
-            if (cv.is_interior(loc1)) {
+            if (cv.is_finite(CGAL::ARR_MIN_END)) {
                 // for vertical arcs we can ask for .xy() member
-                if (Curved_kernel_via_analysis_2::instance().
+                if (Curved_kernel_via_analysis_2::instance().kernel().
                     compare_xy_2_object()(
-                            p, cv._minpoint(), true
+                            p.xy(), cv._minpoint().xy(), true
                     ) == CGAL::SMALLER) {
                     return CGAL::SMALLER;
                 }
             }
-            if (cv.is_interior(loc2)) {
-                if (Curved_kernel_via_analysis_2::instance().
+            if (cv.is_finite(CGAL::ARR_MAX_END)) {
+                if (Curved_kernel_via_analysis_2::instance().kernel().
                     compare_xy_2_object()(
-                            p, cv._maxpoint(), true
+                            p.xy(), cv._maxpoint().xy(), true
                     ) == CGAL::LARGER) {
                     return CGAL::LARGER;
                 }
@@ -1074,17 +967,16 @@ public:
             return CGAL::EQUAL; // p lies on a vertical arc
         }
         CGAL::Comparison_result res;
-        if(eq_min) {
-            res = Curved_kernel_via_analysis_2::instance().
+        if (eq_min) {
+            res = Curved_kernel_via_analysis_2::instance().kernel().
                 compare_xy_2_object()(
-                        p, cv._minpoint(), true
+                        p.xy(), cv._minpoint().xy(), true
                 );
-        } else if(eq_max) {
-            res = Curved_kernel_via_analysis_2::instance().
+        } else if (eq_max) {
+            res = Curved_kernel_via_analysis_2::instance().kernel().
                 compare_xy_2_object()(
-                        p, cv._maxpoint(), true
+                        p.xy(), cv._maxpoint().xy(), true
                 );
-            
         } else {
             Point_2 point_on_s
                 = Curved_kernel_via_analysis_2::instance().
@@ -1093,14 +985,11 @@ public:
                   cv.curve(), 
                   cv.arcno(),
                   cv );
-            res = Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(p, point_on_s, true);
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(p.xy(), point_on_s.xy(), true);
         }
         CERR("cmp result: " << res << "\n");
         return res;
-
-#endif
-
     }
 };
 
@@ -1632,8 +1521,8 @@ public:
         CGAL_precondition(q.location()==CGAL::ARR_INTERIOR);
         
         CGAL_precondition(
-                Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(p, q) != CGAL::EQUAL
+                !Curved_kernel_via_analysis_2::instance().
+                equal_2_object()(p, q)
         );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
