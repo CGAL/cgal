@@ -16,6 +16,7 @@ set( QT_USE_QTMAIN   TRUE )
 find_package(CGAL      REQUIRED )
 find_package(Qt4       REQUIRED )
 find_package(QGLViewer REQUIRED )
+find_package(OpenGL    REQUIRED )
 
 if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
 
@@ -61,6 +62,6 @@ if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
     target_link_libraries( ${prj} cgal cgal-image-io ${CGAL_3RD_PARTY_LIBRARIES})
   endif()
   
-  target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} )
+  target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} )
   
 endif()
