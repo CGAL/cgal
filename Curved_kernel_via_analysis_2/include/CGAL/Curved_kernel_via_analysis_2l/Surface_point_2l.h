@@ -137,6 +137,9 @@ public:
 
     //! the base type
     typedef typename Rebind::Other Base;
+
+    //! type of kernel point
+    typedef typename Curved_kernel_via_analysis_2l::Point_2 Kernel_point;
     
     //!@}
 
@@ -217,23 +220,52 @@ public:
     
     //!@}
     
+    // TOOD rewrite is_finite / or introduce is-z-finite?
+    
+#define CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
+    typename Curved_kernel_via_analysis_2l::X Y = \
+         Curved_kernel_via_analysis_2l::instance().Z(); \
+
+
     //!\name Comparisons
     //!@{
     
-    // FUTURE TODO compare_xyz (eriC)
-    
+    //!\brief compares two points xyz-lexicographically
+    //!
+    //!\pre compared points have finite x/y-coordinates
+    inline
+    CGAL::Comparison_result compare_xy(const Kernel_point& q, 
+                                       bool equal_xy = false) const {
+        CGAL_precondition(this->is_finite());
+        CGAL_precondition(q.is_finite());
+        
+        CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xyz_3, 
+                                               compare_xyz_3,
+                                               compare_xyz_3_object);
+        CGAL_precondition(dynamic_cast< const Kernel_point* >(this));
+        return compare_xyz_3(
+                *dynamic_cast< const Kernel_point* >(this), q, equal_xy
+        );
+    }
+
     //!@}
 
-
+#undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
+    
     //!\name IO
     //!@{
     
     //! write represenation to \c os
     void write(std::ostream& os) const {
-        os << Base(*this) << " " 
-           << "Surface(" << surface() << ", " 
-           << sheet() 
-           << ")";
+        // TODO output surface/sheet even if point is not finite
+        os << "Point_2l(Point2(" << this->projected_point() << ")";
+        if (this->is_finite()) {
+            os << ", "
+               << "Surface(" << this->surface() << ", " 
+               << this->sheet() 
+               << ")";
+        }
+        os << ")" << std::flush;
     }
 
     //!@}
