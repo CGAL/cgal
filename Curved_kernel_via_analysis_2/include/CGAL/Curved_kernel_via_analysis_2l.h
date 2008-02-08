@@ -136,15 +136,13 @@ public:
         return Construct_point_2(&Self::instance());
     }
 
-#if 0 // TODO readd Construct_projected_point_2
-    typedef 
-    typename Curved_kernel_via_analysis_2::Construct_point_2 
+    //! type of Construct_projected_point_2 functor
+    typedef typename Curved_kernel_via_analysis_2::Construct_point_2 
     Construct_projected_point_2;
-
+    //! returns an instance of Construct_projected_point_2 functor
     Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return _m_projected_kernel.construct_point_2_object();
+        return this->_ckva().construct_point_2_object();
     }
-#endif
     
     //! type of Construct_arc_2 functor
     typedef 
@@ -154,16 +152,14 @@ public:
     Construct_arc_2 construct_arc_2_object() const { 
         return Construct_arc_2(&Self::instance());
     }
-
-#if 0 // TODO readd Construct_projected_arc_2
-    typedef 
-    typename Curved_kernel_via_analysis_2::Construct_arc_2 
+    
+    //! type of Construct_projected_arc_2 functor
+    typedef typename Curved_kernel_via_analysis_2::Construct_arc_2 
     Construct_projected_arc_2;
-
+    //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return _m_projected_kernel.construct_arc_2_object();
+        return this->_ckva().construct_arc_2_object();
     }
-#endif
     
     // declares curved kernel functors, 
     // for each functor defines a member function
@@ -185,6 +181,24 @@ public:
 
     //!@}
 
+protected:
+    //!\name Base ckva
+    //!{
+
+    //!\brief returns instance to use of CKvA_2
+    const Curved_kernel_via_analysis_2 _ckva() {
+        if (!_m_ckva) {
+            _m_ckva = Curved_kernel_via_analysis_2(this->kernel());
+        }
+        return *_m_ckva;
+    }
+    
+    //!@}
+
+
+protected:
+    //! stores possible CKvA_2
+    boost::optional< Curved_kernel_via_analysis_2 > _m_ckva;
 
 }; // class Curved_kernel_via_analysis_2l
 
