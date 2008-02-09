@@ -21,8 +21,10 @@
  */
 
 #include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
 
 #include <iostream>
+#include <boost/optional.hpp>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
@@ -64,6 +66,12 @@ public:
     
     //! type of surface
     typedef typename Surface_pair_3::Surface_3 Surface_3;
+
+    //! type of cgal's inexact kernel
+    typedef CGAL::Cartesian< double > Kernel;
+
+    //! type of double approximation
+    typedef CGAL::Point_3< Kernel > Approximation_3;
     
     //!\name Constructors
     //!@{
@@ -84,6 +92,9 @@ public:
     //! sheet number of point
     mutable int _m_sheet;
     
+    //! approximation
+    mutable boost::optional< Approximation_3 > _m_approximation;
+
     // befriending the handle
     friend class 
     Surface_point_2l< Curved_kernel_via_analysis_2l, Surface_pair_3, Self >;
@@ -138,9 +149,16 @@ public:
     //! the base type
     typedef typename Rebind::Other Base;
 
+    //! type of Curve_analysis
+    typedef typename Curved_kernel_via_analysis_2l::Curve_analysis_2
+    Curve_analysis_2;
+
     //! type of kernel point
     typedef typename Curved_kernel_via_analysis_2l::Point_2 Kernel_point;
     
+    //! type of Approximation
+    typedef typename Rep::Approximation_3 Approximation_3;
+
     //!@}
 
 public:
@@ -264,6 +282,75 @@ public:
 
 #undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
     
+    //!\name Approximation
+    //!@{
+    
+    // returns an non-robust approximation of the point
+    Approximation_3 to_double() const {
+        
+        if (!this->ptr()->_m_approximation) {
+
+            typedef typename Curve_analysis_2::Algebraic_curve_kernel_2::
+                Boundary Rational;
+            
+            double x, y, z;
+            
+            // X
+            {
+                x = CGAL::to_double(this->x()); 
+            }
+
+            Rational bound(2e-20); // TODO correct threshold?
+            // Y
+            {
+                typename Curve_analysis_2::Algebraic_curve_kernel_2::
+                    Xy_coordinate_2 xy = 
+                    this->curve().status_line_at_exact_x(this->x()).
+                    algebraic_real_2(this->arcno());
+                
+                typename Curve_analysis_2::Algebraic_curve_kernel_2::
+                    Lower_boundary_y_2 lower_boundary_y;
+                typename Curve_analysis_2::Algebraic_curve_kernel_2::
+                    Upper_boundary_y_2 upper_boundary_y;
+                typename Curve_analysis_2::Algebraic_curve_kernel_2::
+                    Refine_y_2 refine_y;
+                
+                while (upper_boundary_y(xy) - lower_boundary_y(xy) > bound) {
+                    refine_y(xy);
+                }
+                
+                y = NiX::to_double(lower_boundary_y(xy));
+            }
+            // TODO replace xy by planar approximation (renderer, Pavel)
+            // Z
+            {
+                typedef typename Surface_pair_3::Restricted_cad_3
+                    Restricted_cad_3;
+                typedef typename Surface_pair_3::Z_at_xy_isolator
+                    Z_at_xy_isolator;
+                Restricted_cad_3 cad =
+                    Restricted_cad_3::cad_cache()(surface);
+                boost::optional< Z_at_xy_isolator > isolator =
+                    cad.isolator_at(this->projected_point(),
+                                    this->surface());
+                CGAL_assertion(isolator);
+                
+                while (isolator->length(this->sheet()) > bound) {
+                    isolator->refine_interval(this->sheet());
+                }
+                
+                z = NiX::to_double(isolator->left_boundary(this->sheet()));
+            }
+            
+            this->ptr()->_m_approximation = Approximation_3(x,y,z);
+        }
+        
+        CGAL_postcondition(this->ptr()->_m_approximation);
+        return *this->ptr()->_m_approximation;
+    }
+
+    //!@}
+
 public:
     //!\name IO
     //!@{
