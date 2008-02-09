@@ -236,7 +236,7 @@ public:
     
     //!@}
 
-private:
+protected:
     // FUTURE TODO allow to construct without curve, 
     // i.e, isolated points on toric identifications -> do it also for arcs
     // FUTURE TODO parameter space in x/y (full set of tasks)
