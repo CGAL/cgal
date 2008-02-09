@@ -8,7 +8,8 @@
 // 
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
-//                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
+//                 Pavel Emeliyanenko <asm@mpi-inf.mpg.de>
+//                 Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
 
