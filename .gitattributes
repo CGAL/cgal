@@ -1672,6 +1672,7 @@ Core/examples/Core/CMakeLists.txt -text
 Core/src/CGALCore/Core_71.vcproj -text
 Core/src/CGALCore/Core_80.vcproj -text
 Core/src/CGALCore/all_files.cpp -text
+Curved_kernel_via_analysis_2/include/CGAL/Arr_surfaces_intersecting_dupin_cyclide_traits_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.h -text
