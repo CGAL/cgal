@@ -961,7 +961,6 @@ public:
     bool is_in_x_range(const X_coordinate_1& x, 
                        bool *eq_min = NULL, bool *eq_max = NULL) const {
         
-        CGAL::Comparison_result res;
         if (eq_min != NULL && eq_max != NULL) {
             *eq_min = *eq_max = false;
         }
@@ -972,7 +971,7 @@ public:
             resmin = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _minpoint().x());
             if (eq_min != NULL) {
-                eq_min = (resmin == CGAL::EQUAL);
+                *eq_min = (resmin == CGAL::EQUAL);
             }
         }
         
@@ -981,7 +980,7 @@ public:
             resmax = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _maxpoint().x());
             if (eq_max != NULL) {
-                eq_max = (resmax == CGAL::EQUAL);
+                *eq_max = (resmax == CGAL::EQUAL);
             }
         }
         
