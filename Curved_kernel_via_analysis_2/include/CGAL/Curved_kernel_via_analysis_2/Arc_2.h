@@ -1861,7 +1861,6 @@ protected:
         if (is_in_x_range_interior(X_coordinate_1(b_interval))) {
             res = b_interval;
         } else {
-             
             CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
             bool min_has_x = 
                 (is_finite(CGAL::ARR_MIN_END) || 
@@ -1883,6 +1882,7 @@ protected:
                     res = upper_boundary(min_x) + Boundary(1);
                 }
             } else {
+	        if (max_has_x) { 
                     X_coordinate_1 max_x = _maxpoint().x();
                     res = lower_boundary(max_x) - Boundary(1);
                 } else {
