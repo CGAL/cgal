@@ -238,6 +238,7 @@ public:
          Curved_kernel_via_analysis_2l::instance().Z(); \
 
 
+public:
     //!\name Comparisons
     //!@{
     
@@ -263,6 +264,7 @@ public:
 
 #undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
     
+public:
     //!\name IO
     //!@{
     
@@ -283,10 +285,10 @@ public:
 
     //!\name Friends
     //!@{
-#if 1
+
     //! for rebind
     friend class Self::Rebind;
-#endif
+
     //!@}
 
 }; // Surface_point_2l
@@ -296,11 +298,11 @@ public:
  * \brief 
  * output operator
  */
-template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3, class Rep_ >
+template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
 std::ostream& operator<< (
         std::ostream& os,
         const 
-        Surface_point_2l<CurvedKernelViaAnalysis_2l, SurfacePair_3, Rep >& 
+        Surface_point_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >& 
         pt) {
     
     pt.write(os);
@@ -311,6 +313,7 @@ std::ostream& operator<< (
 } // namespace CGALi
 
 CGAL_END_NAMESPACE
+
 
 #endif // CGAL_SURFACE_POINT_2L_H
 // EOF

@@ -193,6 +193,23 @@ protected:
     friend class Base::Rebind;
 };
 
+/*!\relates Quadric_point_2
+ * \brief 
+ * output operator
+ */
+template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
+std::ostream& operator<< (
+        std::ostream& os,
+        const 
+        Quadric_point_2< QuadricalKernelViaAnalysis_2, SurfacePair_3 >& 
+        pt) {
+    
+    pt.write(os);
+    
+    return os;
+}
+
+
 // pre-declaration
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
 class Quadric_arc_2;
@@ -229,7 +246,6 @@ protected:
     friend class 
     Quadric_arc_2< Quadrical_kernel_via_analysis_2, Surface_pair_3 >;
 };
-
 
 //! represents xy-monotone arc on a quadric
 template < class QuadricalKernelViaAnalysis_2, class SurfacePair_3 >
