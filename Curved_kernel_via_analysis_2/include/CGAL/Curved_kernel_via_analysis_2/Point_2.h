@@ -282,7 +282,6 @@ public:
     //! returns whether the point is valid
     inline 
     bool is_finite() const {
-        // FUTURE TODO on torus all points are finite
         return this->ptr()->_m_xy;
     }
 
