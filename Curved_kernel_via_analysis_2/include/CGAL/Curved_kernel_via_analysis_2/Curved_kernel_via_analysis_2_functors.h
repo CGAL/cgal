@@ -1828,7 +1828,6 @@ public:
      * The returned objects are all wrappers X_monotone_curve_2 objects.
      * \return The past-the-end iterator.
      */
-    // FUTURE TODO: move this to separate file Arr_kernel_traits_2.h ?
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
