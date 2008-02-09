@@ -239,8 +239,6 @@ protected:
     Base;
     
 protected:
-    // TODO add gfx data (eriC)
-    //! gfx approx
 
     // befriending the handle
     friend class 
@@ -668,6 +666,7 @@ public:
         CGAL::Comparison_result res = CGAL::EQUAL;
         
         // FUTURE TODO p can lie on boundary
+
         int sp = p.sheet();
         int sa = cv.sheet();
         if (cv.is_finite(CGAL::ARR_MIN_END) && 
