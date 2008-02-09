@@ -25,6 +25,8 @@
 #include <CGAL/Handle_with_policy.h>
 
 #include <iostream>
+#include <boost/optional.hpp>
+#include <boost/none.hpp>
 
 #include <CGAL/Arr_enums.h>
 
@@ -974,7 +976,7 @@ public:
                 *eq_min = (resmin == CGAL::EQUAL);
             }
         }
-        
+
         CGAL::Comparison_result resmax = CGAL::SMALLER;
         if (is_finite(CGAL::ARR_MAX_END)) {
             resmax = Curved_kernel_via_analysis_2::instance().
@@ -983,7 +985,7 @@ public:
                 *eq_max = (resmax == CGAL::EQUAL);
             }
         }
-        
+	
         // actual computation:
         if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY) {
             // compare x-coordinates    
@@ -1001,7 +1003,9 @@ public:
         if (resmax == CGAL::LARGER) {
             return false;
         }
-        return true;
+        bool res = 
+	    (resmin != CGAL::SMALLER && resmax != CGAL::LARGER);
+	return res;
     } 
     
     //! checks whether x-coordinate \c x belongs to this arc's interior
@@ -1857,7 +1861,7 @@ protected:
         if (is_in_x_range_interior(X_coordinate_1(b_interval))) {
             res = b_interval;
         } else {
-            
+             
             CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
             bool min_has_x = 
                 (is_finite(CGAL::ARR_MIN_END) || 
@@ -1879,7 +1883,6 @@ protected:
                     res = upper_boundary(min_x) + Boundary(1);
                 }
             } else {
-                if (max_has_x) {
                     X_coordinate_1 max_x = _maxpoint().x();
                     res = lower_boundary(max_x) - Boundary(1);
                 } else {
@@ -1919,8 +1922,10 @@ protected:
             std::swap(rep._m_min, rep._m_max);
             std::swap(rep._m_arcno_min, rep._m_arcno_max);
         }
-        /* no need to recompute boundaries since they are set during 
+        /* no need to recompute location since they are set during 
         construction of respective curve ends */
+	rep._m_interval_id = boost::none;
+	rep._m_boundary_in_interval = boost::none;
         return Kernel_arc_2(rep);
     }
    
