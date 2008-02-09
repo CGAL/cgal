@@ -965,32 +965,42 @@ public:
         if (eq_min != NULL && eq_max != NULL) {
             *eq_min = *eq_max = false;
         }
-
-        if (_minpoint().location() != CGAL::ARR_LEFT_BOUNDARY) {
-            // compare x-coordinates    
-            res = Curved_kernel_via_analysis_2::instance().
+        
+        // precomputations:
+        CGAL::Comparison_result resmin = CGAL::LARGER;
+        if (is_finite(CGAL::ARR_MIN_END)) {
+            resmin = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _minpoint().x());
-            if (res == CGAL::SMALLER) {
+            if (eq_min != NULL) {
+                eq_min = (resmin == CGAL::EQUAL);
+            }
+        }
+        
+        CGAL::Comparison_result resmax = CGAL::SMALLER;
+        if (is_finite(CGAL::ARR_MAX_END)) {
+            resmax = Curved_kernel_via_analysis_2::instance().
+                kernel().compare_x_2_object()(x, _maxpoint().x());
+            if (eq_max != NULL) {
+                eq_max = (resmax == CGAL::EQUAL);
+            }
+        }
+        
+        // actual computation:
+        if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY) {
+            // compare x-coordinates    
+            if (resmin == CGAL::SMALLER) {
                 return false;
             }
-            if (res == CGAL::EQUAL) {
-                if(eq_min != NULL) {
-                    *eq_min = true; 
-                } 
+            if (resmin == CGAL::EQUAL) {
                 return true;
             }
         }
         // here x > ARR_MIN_END
-        if (_maxpoint().location() == CGAL::ARR_RIGHT_BOUNDARY) {
+        if (location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY) {
             return true; // this is unbounded arc (branch)
         }
-        res = Curved_kernel_via_analysis_2::instance().
-            kernel().compare_x_2_object()(x, _maxpoint().x());
-        if (res == CGAL::LARGER) {
+        if (resmax == CGAL::LARGER) {
             return false;
-        }
-        if (res == CGAL::EQUAL && eq_max != NULL) {
-            *eq_max = true;
         }
         return true;
     } 
@@ -1321,8 +1331,8 @@ protected:
 
     Kernel_arc_2 _trim(const Point_2& p, const Point_2& q) const {
         
-        if(p.location()==CGAL::ARR_INTERIOR && 
-           q.location()==CGAL::ARR_INTERIOR) {
+        if (p.location()==CGAL::ARR_INTERIOR && 
+            q.location()==CGAL::ARR_INTERIOR) {
             
             Kernel_arc_2 new_arc= this->_replace_endpoints(
                     p, q, 
@@ -1333,33 +1343,31 @@ protected:
             return new_arc;
         } else {
             
-            if(p.location() != CGAL::ARR_INTERIOR &&
-               q.location() != CGAL::ARR_INTERIOR) {
+            if (p.location() != CGAL::ARR_INTERIOR &&
+                q.location() != CGAL::ARR_INTERIOR) {
                 return *this;
             }
-            if(p.location() != CGAL::ARR_INTERIOR &&
-               q.location() == CGAL::ARR_INTERIOR) {
-
+            if (p.location() != CGAL::ARR_INTERIOR &&
+                q.location() == CGAL::ARR_INTERIOR) {
+                
                 Kernel_arc_2 left_arc, right_arc;
                 // TODO really use instance?
                 Curved_kernel_via_analysis_2::instance().
                     split_2_object()(*this,q,left_arc,right_arc);
                 return left_arc;
             }
-            if(p.location() == CGAL::ARR_INTERIOR &&
-               q.location() != CGAL::ARR_INTERIOR) {
-
+            if (p.location() == CGAL::ARR_INTERIOR &&
+                q.location() != CGAL::ARR_INTERIOR) {
+                
                 Kernel_arc_2 left_arc, right_arc;
                 // TODO really use instance?
                 Curved_kernel_via_analysis_2::instance().
                     split_2_object()(*this,p,left_arc,right_arc);
                 return right_arc;
-
+                
             }
-            
         }
-        // Never reached
-        CGAL_error();
+        CGAL_error_msg("Never reached");
         return *this;
     }
 
@@ -1375,7 +1383,7 @@ public:
         
         bool joint = cv1._joint_x_range(cv2, common_left, common_right);
         
-        if(! joint) {
+        if (!joint) {
             return false;
         }
         
@@ -1389,20 +1397,19 @@ public:
         
         Point_2 left1, left2;
         
-        if(common_left.location() != CGAL::ARR_LEFT_BOUNDARY) {
-            if( (cv1.location(CGAL::ARR_MIN_END) != 
+        if (common_left.location() != CGAL::ARR_LEFT_BOUNDARY) {
+            if ((cv1.location(CGAL::ARR_MIN_END) != 
                  CGAL::ARR_LEFT_BOUNDARY)  &&
                 (compare_x(cv1.curve_end_x(CGAL::ARR_MIN_END),
                            common_left.x()) == CGAL::EQUAL) ) {
                 left1 = cv1._minpoint();
             } else {
-                
                 left1 = construct_point_on_arc(common_left.x(),
                                                cv1.curve(),
                                                cv1.arcno(),
                                                cv1);
             }
-            if( (cv2.location(CGAL::ARR_MIN_END) != 
+            if ((cv2.location(CGAL::ARR_MIN_END) != 
                  CGAL::ARR_LEFT_BOUNDARY)  &&
                 (compare_x(cv2.curve_end_x(CGAL::ARR_MIN_END),
                            common_left.x()) == CGAL::EQUAL) ) {
@@ -1421,21 +1428,20 @@ public:
         
         Point_2 right1, right2;
         
-        if(common_right.location() != CGAL::ARR_RIGHT_BOUNDARY) {
+        if (common_right.location() != CGAL::ARR_RIGHT_BOUNDARY) {
             
-            if( (cv1.location(CGAL::ARR_MAX_END) != 
+            if ((cv1.location(CGAL::ARR_MAX_END) != 
                  CGAL::ARR_RIGHT_BOUNDARY)  &&
                 (compare_x(cv1.curve_end_x(CGAL::ARR_MAX_END),
                            common_right.x()) == CGAL::EQUAL) ) {
                 right1 = cv1._maxpoint();
             } else {
-                
                 right1 = construct_point_on_arc(common_right.x(),
                                                 cv1.curve(),
                                                 cv1.arcno(),
                                                 cv1);
             }
-            if( (cv2.location(CGAL::ARR_MAX_END) != 
+            if ((cv2.location(CGAL::ARR_MAX_END) != 
                  CGAL::ARR_RIGHT_BOUNDARY)  &&
                 (compare_x(cv2.curve_end_x(CGAL::ARR_MAX_END),
                            common_right.x()) == CGAL::EQUAL) ) {
@@ -1451,7 +1457,6 @@ public:
             right1 = cv1._maxpoint();
             right2 = cv2._maxpoint();
         }
-        
         
         trimmed1 = cv1._trim(left1, right1);
         trimmed2 = cv2._trim(left2, right2);   
@@ -1818,11 +1823,11 @@ protected:
     //! computes this arc's interval index
     int _compute_interval_id() const {
         CGAL_precondition(!is_vertical());
-        // a curve end at negative boundary => 0th interval
-        if (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY) {
+        // we are interested in interval "to the right"
+        if (!is_finite(CGAL::ARR_MIN_END)) {
             return 0;
         }
-        // we are interested in interval "to the right"
+        // else
         typename Curve_analysis_2::Status_line_1 cv_line = 
             curve().status_line_for_x(_minpoint().x(), CGAL::POSITIVE);
         return cv_line.index();
@@ -1968,6 +1973,7 @@ protected:
         // preserve original supporting curve
         Curve_analysis_2 orig_curve(curve());
         
+        // TODO do we mean location of is_finite?
         bool inf1_x = (_minpoint().location() == CGAL::ARR_LEFT_BOUNDARY);
         int curve_idx;  
         if(!inf1_x) {
@@ -1998,6 +2004,7 @@ protected:
         // search for source arcno
         /////////////// ATTENTION: this only holds for 2D plane topology !!
         ///////////////////////////////////////////////////////////////////
+        // TODO do we mean location of is_finite?
         if(_minpoint().location() == CGAL::ARR_INTERIOR)  {
             
             cpv_line = cpa_2.status_line_for_x(x0);
@@ -2019,6 +2026,7 @@ protected:
         // search for new target arcno
         /////////////// ATTENTION: this only holds for 2D plane topology !!
         ///////////////////////////////////////////////////////////////////
+        // TODO do we mean location of is_finite?
         if(_maxpoint().location() == CGAL::ARR_INTERIOR) {
             
             x0 = _maxpoint().x(); 
@@ -2260,6 +2268,7 @@ protected:
             bnd2_x = cv2.boundary_in_x(CGAL::ARR_MAX_END),
             bnd2_y = cv2.boundary_in_y(CGAL::ARR_MAX_END);*/
                 
+        // TODO do we mean location of is_finite?
         bool f2_min = (cv2._minpoint().location() == CGAL::ARR_INTERIOR),
              f2_max = (cv2._maxpoint().location() == CGAL::ARR_INTERIOR);
         if(!(f2_min || f2_max)) // neither of curve ends is finite => 
