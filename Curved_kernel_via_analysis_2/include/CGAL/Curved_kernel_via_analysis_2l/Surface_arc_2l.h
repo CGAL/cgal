@@ -610,7 +610,7 @@ public:
     //!@}
 };    
 
-/*!\relates Quadric_arc_2
+/*!\relates Surface_arc_2l
  * \brief 
  * output operator
  */
@@ -624,9 +624,6 @@ std::ostream& operator<< (
     
     return os;
 }
-
-// FUTURE TODO a surface can have a vertical plane here over the arc_2
-// -> Surface_patch_2l{};
 
 } // namespace CGALi
 
