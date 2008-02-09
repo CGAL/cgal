@@ -29,8 +29,6 @@
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
-#include <QdX/gfx_utils.h>
-
 #include <QdX/Quadric_pair_3.h>
 #include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
 
@@ -84,9 +82,6 @@ public:
 
 protected:
 
-    //! double approxximation
-    boost::optional< QdX::Gfx_point_3 > _m_gfx_point;
-    
     // befriending the handle
     friend class 
     Quadric_point_2< Quadrical_kernel_via_analysis_2, Surface_pair_3 >;
@@ -169,23 +164,6 @@ protected:
     }
     //!@}
     
-    //!\name Approximation
-    //!@{
-
-    QdX::Gfx_point_3 to_double() const {
-        if (!this->ptr()->_m_gfx_point) {
-
-            QdX::Gfx_point_3::level(this->sheet());
-            QdX::Gfx_point_3::polynomial(NiX::to_double(this->surface().f()));
-            QdX::Gfx_point_3 pt = QdX::approximate(this->projected_point());
-            
-            this->ptr()->_m_gfx_point = pt;
-        }
-        return *this->ptr()->_m_gfx_point;
-    }
-
-    //!@}
-
     //! for constructint points
     friend class Quadrical_kernel_via_analysis_2::Construct_point_2;
 
