@@ -983,8 +983,18 @@ public:
             // call projected intersection
             std::list< CGAL::Object > tmp;
             
+#if 0
             Base base_intersect(this->_ckva());
             base_intersect(cv1, cv2, std::back_inserter(tmp));
+#else
+            // TODO remove projected kernel
+            Curved_kernel_via_analysis_2l::instance().
+                projected_kernel().
+                intersect_2_object()(
+                        cv1.projected_arc(), cv2.projected_arc(),
+                        std::back_inserter(tmp)
+                );
+#endif
             
             for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
                  it != tmp.end(); it++) {
@@ -1040,29 +1050,24 @@ public:
                     // TODO unbounded arcs (eriC)
                     
                 } else {
-                    std::pair< Point_2, unsigned int > p_pt;
+                    std::pair< P_point_2, unsigned int > p_pt;
                     CGAL_assertion_code(bool check =)
                         CGAL::assign(p_pt, *it);
                     CGAL_assertion(check);
                     
-                    int sp = s1;
-#if 0 // TODO remove
-                    // remove intersections on boundary
-                    if (on_boundary(cv1, cv2, p_pt.first.projected_point())) {
-                        continue;
-                    }
-#endif
-
-                    std::cout << "sf: " << this->_ckva()->reference()
-                              << std::endl;
-
-                    Point_2 pt = 
+                    typename 
+                        Curved_kernel_via_analysis_2l::Construct_point_on_arc_2
+                        construct_point_on_arc = 
                         Curved_kernel_via_analysis_2l::instance().
-                        construct_point_2_object()(
-                                p_pt.first.projected_point(), 
-                                Curved_kernel_via_analysis_2l::instance().
-                                reference(),
-                                sp // TODO compute sp (eriC)
+                        construct_point_on_arc_2_object();
+                    
+                    Point_2 pt = 
+                        construct_point_on_arc(
+                                p_pt.first.x(), 
+                                p_pt.first.curve(), 
+                                p_pt.first.arcno(),
+                                (p_pt.first.curve().id() == cv1.curve().id() ?
+                                 cv1 : cv2)
                         );
                     
                     *oi++ = CGAL::make_object(std::make_pair(pt, p_pt.second));
@@ -1071,90 +1076,6 @@ public:
         }
         return oi;
     }
-
-#if 0 // TODO remove
-
-private:
-    bool on_boundary(const Arc_2& cv1, const Arc_2& cv2, 
-                     const typename Point_2::Projected_point_2& pt) const {
-        
-        // TODO continue only if unbounded!
-
-        typename Curved_kernel_via_analysis_2l::Base::Compare_xy_2
-            base_compare_xy(this->_ckva());
-        // TODO use base_compare_xy + remove projected
-
-        if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MIN_END)) {
-            if (cv1.is_finite(CGAL::ARR_MIN_END)) {
-                if (Curved_kernel_via_analysis_2l::instance().
-                    projected_kernel().
-                    compare_xy_2_object()(
-                            pt, 
-                            cv1._minpoint().projected_point()
-                    ) == CGAL::EQUAL
-                ) {
-                    if (cv1.location(CGAL::ARR_MIN_END) !=
-                        CGAL::ARR_INTERIOR) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        if (cv1.sheet() == 1 && 0 == cv1.sheet(CGAL::ARR_MAX_END)) {
-            if (cv1.is_finite(CGAL::ARR_MAX_END)) {
-                if (Curved_kernel_via_analysis_2l::instance().
-                    projected_kernel().
-                    compare_xy_2_object()(
-                            pt, 
-                            cv1._maxpoint().projected_point()
-                    ) == CGAL::EQUAL
-                ) {
-                    if (cv1.location(CGAL::ARR_MAX_END) !=
-                        CGAL::ARR_INTERIOR) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MIN_END)) {
-            if (cv2.is_finite(CGAL::ARR_MIN_END)) {
-                if (Curved_kernel_via_analysis_2l::instance().
-                    projected_kernel().
-                    compare_xy_2_object()(
-                            pt, 
-                            cv2._minpoint().projected_point()
-                    ) == CGAL::EQUAL
-                ) {
-                    if (cv2.location(CGAL::ARR_MIN_END) !=
-                        CGAL::ARR_INTERIOR) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        if (cv2.sheet() == 1 && 0 == cv2.sheet(CGAL::ARR_MAX_END)) {
-            if (cv2.is_finite(CGAL::ARR_MAX_END)) {
-                if (Curved_kernel_via_analysis_2l::instance().
-                    projected_kernel().
-                    compare_xy_2_object()(
-                            pt, 
-                            cv2._maxpoint().projected_point()
-                    ) == CGAL::EQUAL
-                ) {
-                    if (cv2.location(CGAL::ARR_MAX_END) !=
-                        CGAL::ARR_INTERIOR) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-#endif
 
 }; // Intersect_2;
 
@@ -1323,7 +1244,8 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
-        CERR("\nquadricsare_mergeable\n");
+        CERR("\nquadricsare_mergeable cv1: " << cv1 
+             << "; cv2: " << cv2 << "\n");
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
