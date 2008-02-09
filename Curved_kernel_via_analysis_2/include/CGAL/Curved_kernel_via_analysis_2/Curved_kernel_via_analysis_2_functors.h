@@ -755,10 +755,11 @@ public:
             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
             bnd2 = cv2.boundary(ce2);*/
-        CGAL::Arr_parameter_space loc1 = cv1.location(ce1), 
+        CGAL::Arr_parameter_space 
+            loc1 = cv1.location(ce1), 
             loc2 = cv2.location(ce2);
-        CGAL_precondition(cv1.is_on_bottom_top(loc1) && 
-                          cv1.is_on_bottom_top(loc2));
+        CGAL_precondition(cv1.is_on_bottom_top(loc1));
+        CGAL_precondition(cv1.is_on_bottom_top(loc2));
         
         if (cv1.is_singular() != cv1.is_singular()) {
             // only one curve end lies at singularity (another at +/-oo)
@@ -887,8 +888,8 @@ public:
              cv2 << "; end: " << ce << "\n");
 
         CGAL::Arr_parameter_space loc1 = cv1.location(ce);
-        CGAL_precondition(cv1.is_on_left_right(loc1) &&
-                          loc1 == cv2.location(ce));
+        CGAL_precondition(cv1.is_on_left_right(loc1));
+        CGAL_precondition(loc1 == cv2.location(ce));
         // comparing ids is the same as calling is_identical() ??
         if (cv1.id() == cv2.id()) {
             return CGAL::EQUAL;
@@ -1037,14 +1038,10 @@ public:
         CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
-        CGAL_precondition_code(
-        CGAL::Arr_parameter_space locp = p.location();
-        // ensure that p lies on both arcs and doesn't lie on the negative 
-        // boundary
-        CGAL_precondition(locp != CGAL::ARR_LEFT_BOUNDARY && 
-                          cv1.compare_y_at_x(p) == CGAL::EQUAL && 
-                          cv2.compare_y_at_x(p) == CGAL::EQUAL);
-        );
+        // ensure that p lies on both arcs 
+        CGAL_precondition(cv1.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(cv2.compare_y_at_x(p) == CGAL::EQUAL);
+        
         // check whether both arcs indeed lie to the left of p
         CGAL_precondition(
                 (cv1.is_vertical() && 
@@ -1139,12 +1136,8 @@ public:
         CERR("\ncompare_y_at_x_right; cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
         
-        CGAL_precondition_code(
-                CGAL::Arr_parameter_space locp = p.location();
-        );
         // ensure that p lies on both arcs and doesn't lie on the positive
         // boundary
-        CGAL_precondition(locp != CGAL::ARR_RIGHT_BOUNDARY);
         CGAL_precondition(cv1.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv2.compare_y_at_x(p) == CGAL::EQUAL);
         
@@ -1473,7 +1466,6 @@ public:
         typename Point_vector::const_iterator it;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
 
-        //std::cout << "results\n";
         for (it = vec.begin(); it != vec.end(); it++) {
             *oi++ = CGAL::make_object(*it);
         }
@@ -1517,8 +1509,8 @@ public:
     
         CERR("trim\n");
 
-        CGAL_precondition(p.location()==CGAL::ARR_INTERIOR);
-        CGAL_precondition(q.location()==CGAL::ARR_INTERIOR);
+        CGAL_precondition(p.location() == CGAL::ARR_INTERIOR);
+        CGAL_precondition(q.location() == CGAL::ARR_INTERIOR);
         
         CGAL_precondition(
                 !Curved_kernel_via_analysis_2::instance().
