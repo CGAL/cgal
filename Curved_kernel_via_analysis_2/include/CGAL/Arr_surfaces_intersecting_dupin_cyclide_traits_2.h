@@ -654,9 +654,8 @@ protected:
 };
 
 template < class CurvedKernelViaAnalysis_2 >
-class Make_x_monotone_2 : public Curved_kernel_via_analysis_2_Functors::
-// not using the one from CKvA_2
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+class Make_x_monotone_2 : 
+        public CurvedKernelViaAnalysis_2::Base::Make_x_monotone_2 {
 
 public:
     //! this instance' first template parameter
@@ -664,9 +663,7 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2_Functors::
-    Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 >
-    Base;
+    Curved_kernel_via_analysis_2::Base::Make_x_monotone_2 Base;
     
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
 
@@ -827,10 +824,7 @@ public:
             construct_curve_2_object()(p);
         
         // create segments // may contain degenerate segments
-        typedef typename 
-            Curved_kernel_via_analysis_2::Curved_kernel_via_analysis_2
-            CKvA_2;
-        CGAL::CGALi::Make_x_monotone_2< CKvA_2 >
+        CGAL::CGALi::Make_x_monotone_2< Curved_kernel_via_analysis_2 >
             make_x_monotone(this->_ckva());
         make_x_monotone(curr_curve, oi);
         
@@ -852,7 +846,23 @@ public:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Arr_surfaces_intersecting_dupin_cyclide_traits_2 :
-        public CurvedKernelViaAnalysis_2 {
+    public CurvedKernelViaAnalysis_2::template 
+rebind< 
+Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
+  CurvedKernelViaAnalysis_2 
+>,
+CGALi::Point_2< 
+  Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
+    CurvedKernelViaAnalysis_2 
+  >
+>,
+CGALi::Arc_2<
+  Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
+    CurvedKernelViaAnalysis_2 
+  >
+>
+>::Other
+{
 public:
     
     //! this instance's template parameter
@@ -863,10 +873,6 @@ public:
       < Curved_kernel_via_analysis_2 > 
     Self;
     
-    //! type of Base
-    typedef Curved_kernel_via_analysis_2 Base;
-
-
     //! type of curve kernel
     typedef typename 
     Curved_kernel_via_analysis_2::Curve_kernel_2 Curve_kernel_2;
@@ -887,10 +893,17 @@ public:
     typedef Surface_3 Curve_2;
 
     //! type of point
-    typedef typename Base::Point_2 Point_2;
+    typedef CGALi::Point_2< Self > Point_2;
+
+    //! type of arc
+    typedef CGALi::Arc_2< Self > Arc_2;
     
     //! type of x-monotone curve
-    typedef typename Base::X_monotone_curve_2 X_monotone_curve_2;
+    typedef Arc_2 X_monotone_curve_2;
+
+    //! type of Base
+    typedef typename Curved_kernel_via_analysis_2::template
+    rebind< Self, Point_2, Arc_2 >::Other Base;
     
     //! Tag to tell that the boundary functors are implemented
     typedef CGAL::Arr_bounded_boundary_tag Boundary_category;
@@ -933,12 +946,22 @@ public:
     //!\name Predicates and Constructions
     //!@{
     
+#if 0 
+    // TODO add special construct_point_2 and construct_arc_2 functors
+    // -> points/curves on identifications
+    CGAL_CKvA_2_functor_cons(Construct_point_2, 
+                             construct_point_2_object);
+
+    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
+                             construct_arc_2_object);
+#endif    
+
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_DC_CKvA_2_functor_pred(Y, Z) \
     typedef CGAL::CGALi::Dupin_cyclide_via_analysis_2_Functors::Y< Self > Y; \
     Y Z() const { \
-        return Y((Arr_surfaces_intersecting_dupin_cyclide_traits_2 *)this); \
+        return Y(&Self::instance()); \
     } \
     
 #define CGAL_DC_CKvA_2_functor_cons(Y, Z) \
