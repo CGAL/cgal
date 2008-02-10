@@ -19,6 +19,7 @@
  *  \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
+#include <CGAL/basic.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -55,6 +56,13 @@ public:
 
     //! the arc type
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+    Curve_kernel_2;
+
+    //! type of curve analaysis
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! the x-coordinate type
     typedef typename Point_2::X_coordinate_1 X_coordinate_1;
@@ -98,6 +106,7 @@ protected:
     typedef typename Base::Curve_2 Curve_2; \
     typedef typename Base::Point_2 Point_2; \
     typedef typename Base::Arc_2 Arc_2; \
+    typedef typename Base::Curve_analysis_2 Curve_analysis_2; \
     typedef typename Base::X_coordinate_1 X_coordinate_1; \
 
 // end define
@@ -131,7 +140,9 @@ public:
     //! \c x on curve \c c with arc number \c arcno
     //!
     //! implies no boundary conditions in x/y
-    Point_2 operator()(const X_coordinate_1& x, const Curve_2& c, int arcno) {
+    Point_2 operator()(const X_coordinate_1& x, 
+                       const Curve_analysis_2& c, 
+                       int arcno) {
         Point_2 pt(x, c, arcno);
         return pt;
     }
@@ -168,7 +179,7 @@ public:
     //! constructs points at x 
     Point_2 operator()(
             const X_coordinate_1& x,
-            const Curve_2& c, int arcno,
+            const Curve_analysis_2& c, int arcno,
             const Arc_2& arc) {
         CGAL_assertion(c.id() == arc.curve().id());
         CGAL_assertion(arcno == arc.arcno(x));
@@ -219,7 +230,8 @@ public:
     //! the curve \c c
     //!
     //! \pre p.x() != q.x()
-    Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c,
+    Arc_2 operator()(const Point_2& p, const Point_2& q, 
+                     const Curve_analysis_2& c,
                      int arcno, int arcno_p, int arcno_q) {
         Arc_2 arc(p, q, c, arcno, arcno_p, arcno_q);
         return arc;
@@ -233,7 +245,7 @@ public:
      * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
-                     const Curve_2& c, int arcno, int arcno_o) {
+                     const Curve_analysis_2& c, int arcno, int arcno_o) {
         Arc_2 arc(origin, inf_end, c, arcno, arcno_o);
         return arc;
     }
@@ -248,7 +260,8 @@ public:
      * \pre origin.x() != asympt_x
      */
     Arc_2 operator()(const Point_2& origin, const X_coordinate_1& asympt_x, 
-                     CGAL::Arr_curve_end inf_end, const Curve_2& c, int arcno, 
+                     CGAL::Arr_curve_end inf_end, 
+                     const Curve_analysis_2& c, int arcno, 
                      int arcno_o) {
         Arc_2 arc(origin, asympt_x, inf_end, c, arcno, arcno_o);
         return arc;
@@ -258,7 +271,7 @@ public:
      * constructs an arc with two x-infinite ends supported by curve \c c
      * with \c arcno (branch I)
      */
-    Arc_2 operator()(const Curve_2& c, int arcno) {
+    Arc_2 operator()(const Curve_analysis_2& c, int arcno) {
         Arc_2 arc(c, arcno);
         return arc;
     }
@@ -275,7 +288,7 @@ public:
                      const X_coordinate_1& asympt_x2, 
                      CGAL::Arr_curve_end inf_end1, 
                      CGAL::Arr_curve_end inf_end2,
-                     const Curve_2& c, int arcno) {
+                     const Curve_analysis_2& c, int arcno) {
         Arc_2 arc(asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
         return arc;
     }
@@ -291,7 +304,7 @@ public:
     Arc_2 operator()(CGAL::Arr_curve_end inf_endx, 
                      const X_coordinate_1& asympt_x,
                      CGAL::Arr_curve_end inf_endy, 
-                     const Curve_2& c, int arcno) {
+                     const Curve_analysis_2& c, int arcno) {
         Arc_2 arc(inf_endx, asympt_x, inf_endy, c, arcno);
         return arc;
     }
@@ -307,7 +320,8 @@ public:
     //! 
     //! \pre p != q && p.x() == q.x()
     //! \pre c must have a vertical component at this x
-    Arc_2 operator()(const Point_2& p, const Point_2& q, const Curve_2& c) {
+    Arc_2 operator()(const Point_2& p, const Point_2& q, 
+                     const Curve_analysis_2& c) {
         Arc_2 arc(p,q,c);
         return arc;
     }
@@ -320,7 +334,7 @@ public:
      * \pre c must have a vertical line component at this x
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
-                     const Curve_2& c) {
+                     const Curve_analysis_2& c) {
         
         Arc_2 arc(origin, inf_end, c);
         return arc;
@@ -332,7 +346,7 @@ public:
      * 
      * \pre c must have a vertical line component at this x
      */
-    Arc_2 operator()(const X_coordinate_1& x, const Curve_2& c) {
+    Arc_2 operator()(const X_coordinate_1& x, const Curve_analysis_2& c) {
         Arc_2 arc(x, c);
         return arc;
     }
@@ -1768,7 +1782,7 @@ public:
      * \param p2 The curve
      * \return (true) if the \c p lies on \c c
      */
-    result_type operator()(const Point_2& p, const Curve_2& c) const {
+    result_type operator()(const Point_2& p, const Curve_analysis_2& c) const {
         result_type res = 
             (Curved_kernel_via_analysis_2::instance().
              kernel().sign_at_2_object()(c, p.xy())
@@ -1831,7 +1845,7 @@ public:
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
     
-        CGAL::CGALi::Make_x_monotone_2<Curved_kernel_via_analysis_2>
+        CGAL::CGALi::Make_x_monotone_2< Curved_kernel_via_analysis_2 >
             make_x_monotone(&Curved_kernel_via_analysis_2::instance());
         return make_x_monotone(cv, oi);
     }
