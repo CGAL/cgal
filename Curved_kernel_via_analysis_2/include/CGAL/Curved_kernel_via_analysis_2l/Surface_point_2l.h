@@ -221,13 +221,15 @@ protected:
     //! of \c surface above \c point
     //!\pre sheet >= 0
     Surface_point_2l(const Projected_point_2& pt, 
-                     CGAL::Arr_curve_end inf_end,
-                     const Surface_3& surface) :
+                     const Surface_3& surface,
+                     CGAL::Arr_curve_end inf_end) :
         Base(Rebind()(pt)) {
 
         this->copy_on_write();
         
         // TODO add preconditions?
+        // surface has a vertical line, or surface has asymptotes
+        
         this->ptr()->_m_projected_point = pt;
 
         this->ptr()->_m_surface = surface;
@@ -237,6 +239,7 @@ protected:
     
     //!@}
     
+protected:
     //!\name Constructor for rebind
     //!@{
     
@@ -400,14 +403,19 @@ public:
     
     //! write represenation to \c os
     void write(std::ostream& os) const {
-        // TODO output surface/sheet even if point is not finite
-        os << "Point_2l(Point2(" << this->projected_point() << ")";
-        if (this->is_finite()) {
-            os << ", "
-               << "Surface(" << this->surface() << ", " 
-               << this->sheet() 
-               << ")";
+        os << "Point_2l(";
+        os << "Point2(" << this->projected_point() << "), ";
+        os << "Surface(" << this->surface() << ", ";
+        if (this->is_z_at_infinity()) {
+            if (this->z_infinity() == CGAL::ARR_MIN_END) {
+                os << "@-oo";
+            } else {
+                os << "@+oo";
+            }
+        } else {
+            os << this->sheet();
         }
+        os << ")";
         os << ")" << std::flush;
     }
 
