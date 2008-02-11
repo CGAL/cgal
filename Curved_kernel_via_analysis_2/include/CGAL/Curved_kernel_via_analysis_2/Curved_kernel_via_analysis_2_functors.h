@@ -285,11 +285,11 @@ public:
      * \pre asympt_x1 != asympt_x2
      */
     Arc_2 operator()(const X_coordinate_1& asympt_x1, 
+                     CGAL::Arr_curve_end inf_end1,
                      const X_coordinate_1& asympt_x2, 
-                     CGAL::Arr_curve_end inf_end1, 
                      CGAL::Arr_curve_end inf_end2,
                      const Curve_analysis_2& c, int arcno) {
-        Arc_2 arc(asympt_x1, asympt_x2, inf_end1, inf_end2, c, arcno);
+        Arc_2 arc(asympt_x1, inf_end1, asympt_x2, inf_end2, c, arcno);
         return arc;
     }
     
