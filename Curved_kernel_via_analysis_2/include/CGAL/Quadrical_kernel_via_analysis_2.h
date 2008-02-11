@@ -1110,6 +1110,8 @@ public:
         );
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(cv.compare_y_at_x(q) == CGAL::EQUAL);  
+        CGAL_precondition(p.is_finite());
+        CGAL_precondition(q.is_finite());
         Arc_2 arc = cv._replace_endpoints(
                 p, q, 
                 (cv.is_vertical() ? -1 : cv.arcno(p.x())),
@@ -1169,6 +1171,7 @@ public:
                     Arc_2& c1, Arc_2& c2) const {
         
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
+        CGAL_precondition(p.is_finite());
         // check that p is not an end-point of the arc
         CGAL_precondition_code(
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
