@@ -242,61 +242,16 @@ public:
             
             return Rebound_arc_2(newrep);
         }
-#if 0
-        /*!\brief
-         * constructs supporting ray of type \c Rebound_arc_2 
-         * from the ray \c arc 
-         * of type \c Self and replaces the origin by the given instance.
-         *
-         * All known items of the base class rep will be copied.
-         */
-        Rebound_arc_2 operator()(const Self& arc,
-                                 const Surface_point_2& origin) {
-            New_rep newrep;
-            
-            typename Self::Point_2::template 
-                rebind< New_curved_kernel_via_analysis_2, 
-                typename Rebound_arc_2::Point_2::Rep > rebind;
-            
-            if (arc.is_finite(CGAL::ARR_MIN_END)) {
-                newrep._m_min = origin;
-                newrep._m_max = rebind(arc._maxpoint());
-            } else {
-                newrep._m_min = rebind(arc._minpoint());
-                newrep._m_max = origin;
+
+        //! special: returns min or max endpoint of \c arc
+        Point_2 operator()(const Self& arc, CGAL::Arr_curve_end ce) {
+            if (ce == CGAL::ARR_MIN_END) {
+                return arc._minpoint();
             }
-            
-            copy_members(arc, newrep);
-            
-            Rebound_arc_2 newarc(newrep);
-            
-            return newarc;
+            // else
+            return arc._maxpoint();
         }
         
-        /*!\brief
-         * constructs supporting branch of type \c Rebound_arc_2
-         * from the branch \c arc of type \c Self.
-         *
-         * All known items of the base class rep will be copied.
-         */
-        Rebound_arc_2 operator()(const Self& arc) {
-            New_rep newrep;
-            
-            copy_members(arc, newrep);
-            
-            typename Self::Point_2::template 
-                rebind< New_curved_kernel_via_analysis_2, 
-                typename Rebound_arc_2::Point_2::Rep > rebind;
-            
-            newrep._m_min = rebind(arc._minpoint());
-            newrep._m_max = rebind(arc._maxpoint());
-
-            Rebound_arc_2 newarc(newrep);
-            
-            return newarc;
-        }
-#endif
-
     protected:
         //! collect common assignments
         void copy_members(const Self& arc, New_rep& newrep) {
