@@ -185,7 +185,7 @@ public:
         Base(kernel) {
     }
     
-    //!\name Constructing non-vertical arcs
+    //!\name Constructors based on bounded planar arcs
     //!@{
     
     /*!\brief
@@ -194,18 +194,57 @@ public:
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre arc.curve_end(MIN) = p
-     * \pre arc.curve_end(MAX) = q
+     * \pre arc.curve_end(MIN) = p.projected_point()
+     * \pre arc.curve_end(MAX) = q.projected_point()
      */
     Surface_arc_2l operator()(const Projected_arc_2& arc, 
                               const Surface_point_2l& p,
                               const Surface_point_2l& q,
                               const Surface_3& surface,
                               int sheet, int sheet_p, int sheet_q) {
-        Surface_arc_2l surface_arc(arc, p, q, surface, 
-                                   sheet, sheet_p, sheet_q);
+        Surface_arc_2l surface_arc(arc, p, q, surface, sheet, sheet_p, sheet_q);
         return surface_arc;
     }
+    
+    /*!\brief
+     * Standard constructor for an ray on a xy-monotone part
+     * of the surface with a z-asymptotic behavior on one side.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p.projected_point() || 
+     *      arc.curve_end(MAX) = p.projected_point()
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                              const Surface_point_2l& p,
+                              CGAL::Arr_curve_end z_inf_end_other,
+                              const Surface_3& surface,
+                              int sheet, int sheet_p) {
+        Surface_arc_2l surface_arc(arc, p, z_inf_end_other, 
+                                   surface, sheet, sheet_p);
+        return surface_arc;
+    }
+    
+    /*!\brief
+     * Standard constructor for an unbounded arc on xy-monotone part
+     * of the surface with z-asympotic behavior at both ends.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                              CGAL::Arr_curve_end z_inf_end_p,
+                              CGAL::Arr_curve_end z_inf_end_q,
+                              const Surface_3& surface,
+                              int sheet) {
+        Surface_arc_2l surface_arc(arc, z_inf_end_p, z_inf_end_q, 
+                                   surface, sheet);
+        return surface_arc;
+    }
+    
+    //!}
+    
+    //!\name Constructors based on planar rays
+    //!@{
     
     /*!\brief
      * Standard constructor for a ray on xy-monotone part
@@ -213,45 +252,59 @@ public:
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre arc.curve_end(MIN) = p && !arc.is_finite(MAX) ||
-     *      arc.is_finite(MIN) && arc.curve_end(MAX) = p
+     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
     Surface_arc_2l operator()(const Projected_arc_2& arc, 
                               const Surface_point_2l& p,
                               const Surface_3& surface,
                               int sheet, int sheet_p) {
-        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END) && 
-                          arc.projected_arc().curve_end(CGAL::ARR_MAX_END) ==
-                          p.projected_point() ||
-                          !arc.is_finite(CGAL::ARR_MAX_END) &&
-                          arc.projected_arc().curve_end(CGAL::ARR_MIN_END) ==
-                          p.projected_point());
         Surface_arc_2l surface_arc(arc, p, surface, sheet, sheet_p);
+        return surface_arc;    
+    }
+    
+    /*!\brief
+     * Standard constructor for a branch on a xy-monotone part
+     * of the surface with a z-vertical asymptotic behaviour at the projected
+     * finite end.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface
+     */
+    Surface_arc_2l operator()(const Projected_arc_2& arc, 
+                              CGAL::Arr_curve_end z_inf_end,
+                              const Surface_3& surface,
+                              int sheet) {
+        Surface_arc_2l surface_arc(arc, z_inf_end, surface, sheet);
         return surface_arc;
     }
     
-
+    //!@}
+    
+    //!\name Constructors based on planar branches
+    //!@{
+    
     /*!\brief
      * Standard constructor for a branch on xy-monotone part
      * of the surface.
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
-     *
-     * \pre !arc.is_finite(MIN) && !arc.is_finite(MAX)
      */
     Surface_arc_2l operator()(const Projected_arc_2& arc, 
-                   const Surface_3& surface,
-                   int sheet) {
-        CGAL_precondition(!arc.is_finite(CGAL::ARR_MIN_END));
-        CGAL_precondition(!arc.is_finite(CGAL::ARR_MAX_END));
+                              const Surface_3& surface,
+                              int sheet) {
         Surface_arc_2l surface_arc(arc, surface, sheet);
         return surface_arc;
     }
     
     //!@}
 
-    //!\name Constructing vertical arcs
+    //!\name Constructors for vertical arcs 
     //!@{
+    
+    // Remark for vertical arcs:
+    // Their base is not an arc, i.e., the projection of the arc is a 
+    // single point, so we have to deal with it throughout 
+    // the whole class, i.e., 
+    // This point must be used, as the default constructed Base is useless.
     
     //! represents a bounded vertical arc
     Surface_arc_2l operator()(const Surface_point_2l& p,
@@ -260,12 +313,12 @@ public:
         Surface_arc_2l surface_arc(p, q, surface);
         return surface_arc;
     }
-
+    
     //! represents a vertical ray
-    Surface_arc_2l operator()(const Surface_point_2l p,
-                              CGAL::Arr_curve_end inf_end,
+    Surface_arc_2l operator()(const Surface_point_2l& p,
+                              CGAL::Arr_curve_end z_inf_end,
                               const Surface_3& surface) {
-        Surface_arc_2l surface_arc(p, inf_end, surface);
+        Surface_arc_2l surface_arc(p, z_inf_end, surface);
         return surface_arc;
     }
 
@@ -275,6 +328,8 @@ public:
         Surface_arc_2l surface_arc(p, surface);
         return surface_arc;
     }
+    
+    //!@}
 };
 
 
