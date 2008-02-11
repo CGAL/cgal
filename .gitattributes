@@ -1602,6 +1602,7 @@ CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
 CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
+CMake/src/CGALimageIO/CMakeLists.txt -text
 CMake/src/CMakeLists.txt -text
 CMake/test/CMakeLists.txt -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
