@@ -183,7 +183,7 @@ struct Make_x_monotone_2 :
                     inf1_end = (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
                         CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
                     if (info2.second != CGAL::ARR_INTERIOR) {
-                        arc = construct_arc_2(min_x, max_x, inf1_end, inf2_end,
+                        arc = construct_arc_2(min_x, inf1_end, max_x, inf2_end,
                                               curve, k);
                     } else {
                         arc = construct_arc_2(max_pts[info2.first], min_x, 
