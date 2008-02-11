@@ -90,18 +90,20 @@ public:
 
     // standard constructor
     Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, 
-                   int arcno = -1, int arcno_p = -1, int arcno_q = -1,
-                   bool is_vertical = false) : 
+              int arcno = -1, int arcno_p = -1, int arcno_q = -1,
+              bool is_vertical = false) : 
         _m_min(p), _m_max(q),
         _m_support(c),
         _m_arcno(arcno), _m_arcno_min(arcno_p), _m_arcno_max(arcno_q),
         _m_is_vertical(is_vertical) {
 
         // set end-point arcnos from segment's interior
-        if(_m_arcno_min == -1)
+        if (_m_arcno_min == -1) {
             _m_arcno_min = _m_arcno;
-        if(_m_arcno_max == -1)
+        }
+        if (_m_arcno_max == -1) {
             _m_arcno_max = _m_arcno;
+        }
     }
 
     // source and target end-points of a segment
