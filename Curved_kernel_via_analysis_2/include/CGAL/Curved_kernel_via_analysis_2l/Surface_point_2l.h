@@ -84,13 +84,16 @@ public:
     //!@}
 public:
     //! projected point
-    mutable Projected_point_2 _m_projected_point;
+    mutable boost::optional< Projected_point_2 > _m_projected_point;
     
     //! supporting surface
     mutable Surface_3 _m_surface;
     
     //! sheet number of point
     mutable int _m_sheet;
+
+    //! if not z-finite, this members stores whether at -oo or +oo
+    mutable boost::optional< CGAL::Arr_curve_end > _m_z_inf_end;
     
     //! approximation
     mutable boost::optional< Approximation_3 > _m_approximation;
@@ -184,9 +187,13 @@ public:
                      const Surface_3& surface, 
                      int sheet) :
         Base(Rebind()(pt)) {
+
         this->copy_on_write();
         
         this->ptr()->_m_projected_point = pt;
+        
+        this->ptr()->_m_surface = surface;
+
         CGAL_precondition(sheet >= 0);
         CGAL_precondition_code(
                 typedef typename Surface_pair_3::Restricted_cad_3
@@ -199,7 +206,7 @@ public:
                 int number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
-        this->ptr()->_m_surface = surface;
+
         this->ptr()->_m_sheet = sheet;
     }
 
@@ -207,6 +214,29 @@ public:
 
 protected:
 
+    //!\name Constructors for special cases
+    //!@{
+
+    //!\brief Constructs point at z=+oo/-oo depending on  \c inf_end 
+    //! of \c surface above \c point
+    //!\pre sheet >= 0
+    Surface_point_2l(const Projected_point_2& pt, 
+                     CGAL::Arr_curve_end inf_end,
+                     const Surface_3& surface) :
+        Base(Rebind()(pt)) {
+
+        this->copy_on_write();
+        
+        // TODO add preconditions?
+        this->ptr()->_m_projected_point = pt;
+
+        this->ptr()->_m_surface = surface;
+        
+        this->ptr()->_m_z_inf_end = inf_end;
+    }
+    
+    //!@}
+    
     //!\name Constructor for rebind
     //!@{
     
@@ -228,7 +258,8 @@ public:
      */
     inline
     const Projected_point_2& projected_point() const {
-        return this->ptr()->_m_projected_point;
+        CGAL_precondition(this->ptr()->_m_projected_point);
+        return *this->ptr()->_m_projected_point;
     }
 
     /*\brief
@@ -247,9 +278,21 @@ public:
         return this->ptr()->_m_sheet;
     }
     
-    //!@}
+    /*!\brief
+     * returns whether point's z-coordinate is infinite
+     */
+    inline bool is_z_at_infinity() const {
+        return this->ptr()->_m_z_inf_end;
+    }
+
+    /*!\brief
+     * returns whether point's z-coordinate is infinite
+     */
+    inline CGAL::Arr_curve_end z_infinity() const {
+        return *this->ptr()->_m_z_inf_end;
+    }
     
-    // TOOD rewrite is_finite / or introduce is-z-finite?
+    //!@}
     
 #define CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
     typename Curved_kernel_via_analysis_2l::X Y = \
@@ -372,6 +415,9 @@ public:
 
     //!\name Friends
     //!@{
+
+    //! for special arc constructors
+    friend class Curved_kernel_via_analysis_2l::Arc_2;
 
     //! for rebind
     friend class Self::Rebind;
