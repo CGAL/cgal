@@ -242,7 +242,7 @@ public:
             
             return Rebound_arc_2(newrep);
         }
-
+#if 0
         /*!\brief
          * constructs supporting ray of type \c Rebound_arc_2 
          * from the ray \c arc 
@@ -295,6 +295,7 @@ public:
             
             return newarc;
         }
+#endif
 
     protected:
         //! collect common assignments
@@ -426,9 +427,8 @@ public:
      * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
      * \pre asympt_x1 != asympt_x2
      */
-    Arc_2(const X_coordinate_1& asympt_x1, 
-          const X_coordinate_1& asympt_x2, 
-          CGAL::Arr_curve_end inf_end1, CGAL::Arr_curve_end inf_end2,
+    Arc_2(const X_coordinate_1& asympt_x1, CGAL::Arr_curve_end inf_end1, 
+          const X_coordinate_1& asympt_x2, CGAL::Arr_curve_end inf_end2,
           const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(asympt_x1, c, inf_end1), 
                  Point_2(asympt_x2, c, inf_end2),
@@ -2563,8 +2563,13 @@ public:
     
     //!@}    
 
-    // befriending the functors
+    // befriending the kernel point
+    friend class Curved_kernel_via_analysis_2::Point_2;
     
+    // befriending the kernel arc
+    friend class Curved_kernel_via_analysis_2::Arc_2;
+
+    // befriending the functors
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
     friend class Curved_kernel_via_analysis_2::Z; \
     friend class Curved_kernel_via_analysis_2_Functors:: \
