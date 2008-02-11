@@ -1600,7 +1600,6 @@ CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
-CMake/src/CGALImageIO/CMakeLists.txt -text
 CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
 CMake/src/CMakeLists.txt -text
