@@ -153,6 +153,21 @@ public:
     //!@}
     
 protected:
+    //!\name special constructor for point with z=+-oo
+    //!@{
+    
+    //!\brief Constructs point with z = -oo or z = +oo depending on 
+    //! \c z_inf_end of \c surface above \c point
+    //!\pre sheet >= 0
+    Quadric_point_2(const Projected_point_2& pt, 
+                    const Surface_3& surface,
+                    CGAL::Arr_curve_end z_inf_end) :
+        Base(pt, surface, z_inf_end) {
+    }
+    
+    //!@}
+
+protected: 
     //!\name Constructors for rebind
     //!@{
     
@@ -169,6 +184,16 @@ protected:
 
     //! for rebind
     friend class Base::Rebind;
+
+    //! for arc
+    friend class Quadrical_kernel_via_analysis_2::Arc_2;
+
+    //! for point constructors in arc constructors
+    friend class CGALi::Surface_arc_2l< Quadrical_kernel_via_analysis_2, 
+        Surface_pair_3,
+        CGALi::Surface_arc_2l_rep< Quadrical_kernel_via_analysis_2, 
+        Surface_pair_3 > >;
+
 };
 
 /*!\relates Quadric_point_2
@@ -281,14 +306,18 @@ public:
     //!@}
     
 public:
-    //!\name Constructors for non-z-vertical arcs
+
+    //!\name Constructors based on bounded planar arcs
     //!@{
     
     /*!\brief
-     * constructs an arc on \c sheet of surface \c surface, 
-     * whose projection is \c arc with given \c source and \c target.
+     * Standard constructor for an bounded arc on xy-monotone part
+     * of the surface.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
      *
-     * \pre levels must be valid
+     * \pre arc.curve_end(MIN) = p.projected_point()
+     * \pre arc.curve_end(MAX) = q.projected_point()
      */
     Quadric_arc_2(const Projected_arc_2& arc, 
                   const Quadric_point_2& p,
@@ -299,8 +328,47 @@ public:
         CGAL_precondition(sheet < 2);
         CGAL_precondition(sheet_p < 2);
         CGAL_precondition(sheet_q < 2);
-    }    
+    }
 
+    /*!\brief
+     * Standard constructor for an ray on a xy-monotone part
+     * of the surface with a z-asymptotic behavior on one side.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     *
+     * \pre arc.curve_end(MIN) = p.projected_point() || 
+     *      arc.curve_end(MAX) = p.projected_point()
+     */
+    Quadric_arc_2(const Projected_arc_2& arc, 
+                  const Quadric_point_2& p,
+                  CGAL::Arr_curve_end z_inf_end_other,
+                  const Surface_3& surface,
+                  int sheet, int sheet_p) :
+        Base(arc, p, z_inf_end_other, surface, sheet, sheet_p) {
+        CGAL_precondition(sheet < 2);
+        CGAL_precondition(sheet_p < 2);
+    }
+    
+    /*!\brief
+     * Standard constructor for an unbounded arc on xy-monotone part
+     * of the surface with z-asympotic behavior at both ends.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface.
+     */
+    Quadric_arc_2(const Projected_arc_2& arc, 
+                  CGAL::Arr_curve_end z_inf_end_p,
+                  CGAL::Arr_curve_end z_inf_end_q,
+                  const Surface_3& surface,
+                  int sheet) :
+        Base(arc, z_inf_end_p, z_inf_end_q, surface, sheet) {
+        CGAL_precondition(sheet < 2);
+    }
+    
+    //!}
+
+    //!\name Constructors based on planar rays
+    //!@{
+    
     /*!\brief
      * Standard constructor for a ray on xy-monotone part
      * of the surface.
@@ -314,18 +382,35 @@ public:
                   const Surface_3& surface,
                   int sheet, int sheet_p) :
         Base(arc, p, surface, sheet, sheet_p) {
-        
         CGAL_precondition(sheet < 2);
         CGAL_precondition(sheet_p < 2);
     }
+
+    /*!\brief
+     * Standard constructor for a branch on a xy-monotone part
+     * of the surface with a z-vertical asymptotic behaviour at the projected
+     * finite end.
+     * It represents the arc on \c surface covertical to \c arc which
+     * lies on \c sheet of the xy-monotone subsurface
+     */
+    Quadric_arc_2(const Projected_arc_2& arc, 
+                  CGAL::Arr_curve_end z_inf_end,
+                  const Surface_3& surface,
+                  int sheet) :
+        Base(arc, z_inf_end, surface, sheet) {
+        CGAL_precondition(sheet < 2);
+    }
+    
+    //!@}
+    
+    //!\name Constructors based on planar branches
+    //!@{
     
     /*!\brief
      * Standard constructor for a branch on xy-monotone part
      * of the surface.
      * It represents the arc on \c surface covertical to \c arc which
      * lies on \c sheet of the xy-monotone subsurface.
-     *
-     * \pre arc.curve_end(MIN) = p || arc.curve_end(MAX) == p
      */
     Quadric_arc_2(const Projected_arc_2& arc, 
                   const Surface_3& surface,
@@ -336,35 +421,36 @@ public:
     
     //!@}
 
-public:
-    //!\name Constructors for vertical arcs
+    //!\name Constructors for vertical arcs 
     //!@{
-
-    //! Constructs a bounded vertical arc
+    
+    // Remark for vertical arcs:
+    // Their base is not an arc, i.e., the projection of the arc is a 
+    // single point, so we have to deal with it throughout 
+    // the whole class, i.e., 
+    // This point must be used, as the default constructed Base is useless.
+    
+    //! represents a bounded vertical arc
     Quadric_arc_2(const Quadric_point_2& p,
                   const Quadric_point_2& q,
                   const Surface_3& surface) :
         Base(p, q, surface) {
-
     }
-
-    //! Constructs a vertical ray
-    Quadric_arc_2(const Quadric_point_2 p,
-                  CGAL::Arr_curve_end inf_end,
+    
+    //! represents a vertical ray
+    Quadric_arc_2(const Quadric_point_2& p,
+                  CGAL::Arr_curve_end z_inf_end,
                   const Surface_3& surface) :
-        Base(p. inf_end, surface) {
-        
+        Base(p, z_inf_end, surface) {
     }
 
-    //! Constructs a vertical branch
+    //! represents a vertical branch
     Quadric_arc_2(const Projected_point_2& p,
                   const Surface_3& surface) :
         Base(p, surface) {
     }
     
     //!@}
-
-    // TODO add missing ctors (eriC)
 
 protected:
     //!\name Constructors for rebind/replace_endpoints
