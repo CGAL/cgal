@@ -1870,7 +1870,7 @@ public:
                     const X_monotone_curve_2 & xc2) const
     {
       //! \todo temporary:
-      // return false;
+      return false;
       
       if (xc1.is_empty() || xc2.is_empty()) return true;
       if (xc1.is_full() && xc2.is_full()) return false;
