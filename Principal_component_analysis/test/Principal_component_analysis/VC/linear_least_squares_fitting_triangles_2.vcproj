@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="linear_least_squares_fitting_triangles_2"
 	ProjectGUID="{00000000-0000-0000-0000-000000009659}"
+	RootNamespace="linear_least_squares_fitting_triangles_2"
 	Keyword="ManagedCProj"
 	>
 	<Platforms>
@@ -127,7 +128,7 @@
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
-				WarningLevel="2"
+				WarningLevel="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

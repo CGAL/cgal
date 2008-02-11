@@ -127,7 +127,7 @@
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
-				WarningLevel="2"
+				WarningLevel="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

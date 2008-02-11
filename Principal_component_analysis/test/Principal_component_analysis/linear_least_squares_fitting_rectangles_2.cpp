@@ -117,7 +117,6 @@ void test_3()
   Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,15.2),Point_2(11.6,17.2)));
   Iso_rectangles1.push_back(Iso_rectangle_2(Point_2(1.6,17.2),Point_2(11.6,19.2)));
   std::cout << "fit 2D line to two small rectangles...";
-  Kernel k1;
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
