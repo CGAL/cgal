@@ -234,6 +234,11 @@ public:
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > 
     {
+
+        Compare_xy_2(Algebraic_curve_kernel_2 *kernel) :
+            _m_kernel(kernel) {
+        }
+        
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2, 
                                      bool equal_x = false) const {
@@ -247,10 +252,18 @@ public:
             if(approx_compare!=CGAL::EQUAL) {
                 return approx_compare;
             }
-            return typename Base::Compare_xy_2()(xy1,xy2,true);
+            return typename Base::Compare_xy_2(_m_kernel)(xy1,xy2,true);
         }
+
+    private:
+        Algebraic_curve_kernel_2 *_m_kernel;    
+
     };
-    CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
+    //CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
+
+    Compare_xy_2 compare_xy_2_object() const {
+        return Compare_xy_2((Algebraic_curve_kernel_2 *)this);
+    }
 
 
     //! \brief checks whether curve has only finitely many self-intersection
