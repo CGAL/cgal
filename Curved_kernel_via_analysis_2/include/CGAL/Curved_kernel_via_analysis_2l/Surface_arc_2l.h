@@ -317,16 +317,14 @@ public:
                       ) == CGAL::EQUAL ?
                        p : 
                        Surface_point_2l(Rebind()(arc, CGAL::ARR_MIN_END), 
-                                        surface, 
-                                        z_inf_end_other)
+                                        surface, z_inf_end_other)
                       ),
                       (arc.curve_end(CGAL::ARR_MAX_END).compare_xy(
                               p.projected_point()
                       ) == CGAL::EQUAL ?
                        p : 
                        Surface_point_2l(Rebind()(arc, CGAL::ARR_MAX_END), 
-                                        surface,
-                                        z_inf_end_other)
+                                        surface, z_inf_end_other)
                       )
              )
         ) {
@@ -540,12 +538,12 @@ public:
         Base(Rebind()(arc, 
                       (arc.is_finite(CGAL::ARR_MIN_END) ? 
                        Surface_point_2l(arc.curve_end(CGAL::ARR_MIN_END), 
-                                        z_inf_end, surface) :
+                                        surface, z_inf_end) :
                        Surface_point_2l(Rebind()(arc, CGAL::ARR_MIN_END),
                                         surface, sheet)),
                       (arc.is_finite(CGAL::ARR_MAX_END) ? 
                        Surface_point_2l(arc.curve_end(CGAL::ARR_MAX_END), 
-                                        z_inf_end, surface) :
+                                        surface, z_inf_end) :
                        Surface_point_2l(Rebind()(arc, CGAL::ARR_MAX_END), 
                                         surface, sheet)))
         ) {
@@ -725,8 +723,6 @@ public:
     
     //!@}
 
-    // TODO put all ordinary functors into Construct_arc_2l-functor (eriC)
-    
 protected:
     //!\name Constructors for rebind/replace_endpoints
     //!@{
@@ -822,22 +818,13 @@ public:
         os << "Arc_2l(";
         if (this->is_z_vertical()) {
             os << "Point_2(" << this->projected_point() << "), ";
-            os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) 
-               << "), ";
-            os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) 
-               << "), ";
-            os << "Surface(" << this->surface() << ")";
+            os << "MinPoint(" << this->ptr()->_m_min << "), ";
+            os << "MaxPoint(" << this->ptr()->_m_max << "), ";
+            os << "Surface(" << this->surface() << ", Z-VERT)";
         } else {
             os << "Arc_2(" << this->projected_arc() << "), ";
-            // TODO output also infinite points!
-            if (this->is_finite(CGAL::ARR_MIN_END)) {
-                os << "MinPoint(" << this->curve_end(CGAL::ARR_MIN_END) 
-                   << "), ";
-            }
-            if (this->is_finite(CGAL::ARR_MAX_END)) {
-                os << "MaxPoint(" << this->curve_end(CGAL::ARR_MAX_END) 
-                   << "), ";
-            }
+            os << "MinPoint(" << this->ptr()->_m_min << "), ";
+            os << "MaxPoint(" << this->ptr()->_m_max << "), ";
             os << "Surface(" << this->surface() << ", " 
                << this->sheet() << ", " << this->sheet(CGAL::ARR_MIN_END)
                << ", " << this->sheet(CGAL::ARR_MAX_END)
