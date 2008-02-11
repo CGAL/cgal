@@ -323,7 +323,32 @@ public:
                    compare_xy_2_object()(p1, p2)
             );
             if (res == CGAL::EQUAL) {
-
+                
+                if (p1.is_z_at_infinity()) {
+                    if (p2.is_z_at_infinity()) {
+                        CGAL::Arr_curve_end z1 = p1.z_infinity();
+                        CGAL::Arr_curve_end z2 = p2.z_infinity();
+                        if (z1 == z2) {
+                            return EQUAL;
+                        } else {
+                            return (z1 == CGAL::ARR_MIN_END ?
+                                    CGAL::SMALLER : CGAL::LARGER);
+                        }
+                    } else {
+                        CGAL::Arr_curve_end z1 = p1.z_infinity();
+                        return (z1 == CGAL::ARR_MIN_END ?
+                                CGAL::SMALLER : CGAL::LARGER);
+                    }
+                } else {
+                    if (p2.is_z_at_infinity()) {
+                        CGAL::Arr_curve_end z2 = p2.z_infinity();
+                        return (z2 == CGAL::ARR_MIN_END ?
+                                CGAL::LARGER : CGAL::SMALLER);
+                    }
+                }
+                
+                // else both finite!
+                
                 typedef typename Curved_kernel_via_analysis_2l::Surface_pair_3
                     Surface_pair_3;
                 typedef typename Surface_pair_3::Surface_3 Surface_3;
