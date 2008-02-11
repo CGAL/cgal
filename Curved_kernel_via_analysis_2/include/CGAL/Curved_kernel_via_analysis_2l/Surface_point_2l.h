@@ -195,17 +195,24 @@ public:
         this->ptr()->_m_surface = surface;
 
         CGAL_precondition(sheet >= 0);
-        CGAL_precondition_code(
-                typedef typename Surface_pair_3::Restricted_cad_3
-                Restricted_cad_3;
-                Restricted_cad_3 cad =
-                Restricted_cad_3::cad_cache()(surface);
-                
-                typedef typename 
-                    Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
-                int number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
+        CGAL_precondition_code((
+            {
+                if (pt.is_finite()) {
+                    typedef typename Surface_pair_3::Restricted_cad_3
+                        Restricted_cad_3;
+                    Restricted_cad_3 cad =
+                        Restricted_cad_3::cad_cache()(surface);
+                    
+                    typedef typename 
+                        Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
+                    int number_of_sheets = 
+                        cad.z_stack_at(pt).number_of_z_cells();
+                    CGAL_precondition(sheet < number_of_sheets);
+                } else {
+                    // TODO add test for number of sheets in designated face
+                }
+            })
         );
-        CGAL_precondition(sheet < number_of_sheets);
 
         this->ptr()->_m_sheet = sheet;
     }
