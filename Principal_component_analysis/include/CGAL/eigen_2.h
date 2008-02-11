@@ -89,8 +89,8 @@ namespace CGALi {
         // definite matrix must be real and positive
         // we saturate the values if this is not the 
         // case for floating point computations.
-        l1 = (l1 < 0.0) ? 0.0 : l1;
-        l2 = (l2 < 0.0) ? 0.0 : l2;
+        l1 = (l1 < (FT)0.0) ? (FT)0.0 : l1;
+        l2 = (l2 < (FT)0.0) ? (FT)0.0 : l2;
 
         // sort eigen values and vectors in descendent order.
         if(l1 >= l2)

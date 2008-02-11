@@ -1,6 +1,4 @@
 // test for the linear_least_square_fitting() functions.
-
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
@@ -11,18 +9,18 @@
 #include <cstdlib>
 
 // types
-typedef CGAL::Cartesian<double> Kernel;
-typedef Kernel::FT FT;
-
-typedef Kernel::Line_2 Line_2;
-typedef Kernel::Point_2 Point_2;
-typedef Kernel::Triangle_2 Triangle_2;
-typedef Kernel::Vector_2 Vector_2;
 
 // case with only one point in container
 // the fitting line must be horizontal by default
+template <typename Kernel>
 void test_2D()
 {
+	typedef Kernel::FT FT;
+	typedef Kernel::Line_2 Line_2;
+	typedef Kernel::Point_2 Point_2;
+	typedef Kernel::Triangle_2 Triangle_2;
+	typedef Kernel::Vector_2 Vector_2;
+
   std::vector<Point_2> points;
   points.push_back(Point_2(0.0,0.0));
 
@@ -48,8 +46,15 @@ void test_2D()
 
 // case with a point set on a horizontal segment
 // the fitting line must be horizontal
+template <typename Kernel>
 void test_2D_point_set(const unsigned int nb_points)
 {
+	typedef Kernel::FT FT;
+	typedef Kernel::Line_2 Line_2;
+	typedef Kernel::Point_2 Point_2;
+	typedef Kernel::Triangle_2 Triangle_2;
+	typedef Kernel::Vector_2 Vector_2;
+
   // create points on a horizontal segment
   Point_2 p(0.0,0.5);
   Point_2 q(1.0,0.5);
@@ -85,7 +90,14 @@ void test_2D_point_set(const unsigned int nb_points)
 int main()
 {
   std::cout << "Test 2D linear least squares fitting of points"  << std::endl;
-  test_2D();
-  test_2D_point_set(100);
+
+	typedef CGAL::Cartesian<double> Kernel_double;
+  test_2D<Kernel_double>();
+  test_2D_point_set<Kernel_double>(100);
+
+	typedef CGAL::Cartesian<float> Kernel_float;
+  test_2D<Kernel_float>();
+  test_2D_point_set<Kernel_float>(100);
+
   return 0; // success
 }
