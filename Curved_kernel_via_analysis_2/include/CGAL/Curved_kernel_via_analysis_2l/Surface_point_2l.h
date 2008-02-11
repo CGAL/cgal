@@ -297,7 +297,7 @@ public:
             
             // X
             {
-                x = CGAL::to_double(this->x()); 
+                x = NiX::to_double(this->x()); // TODO replace by CGAL::
             }
 
             Rational bound(2e-20); // TODO correct threshold?
@@ -329,7 +329,7 @@ public:
                 typedef typename Surface_pair_3::Z_at_xy_isolator
                     Z_at_xy_isolator;
                 Restricted_cad_3 cad =
-                    Restricted_cad_3::cad_cache()(surface);
+                    Restricted_cad_3::cad_cache()(this->surface());
                 boost::optional< Z_at_xy_isolator > isolator =
                     cad.isolator_at(this->projected_point(),
                                     this->surface());
