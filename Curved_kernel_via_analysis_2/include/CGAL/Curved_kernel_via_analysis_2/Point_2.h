@@ -199,6 +199,25 @@ public:
             newrep._m_location = pt.ptr()->_m_location;
             return Rebound_point_2(newrep);
         }
+
+        // TODO move to SfP_2l
+        /*!\brief
+         * reverse rebind, i.e., extracts original point type from a 
+         * rebound instance
+         */
+        Self operator()(const Rebound_point_2& pt) {
+            Rep rep;
+            rep._m_xy = pt.ptr()->_m_xy;
+            rep._m_x = pt.ptr()->_m_x;
+            rep._m_curve = pt.ptr()->_m_curve;
+            rep._m_arcno = pt.ptr()->_m_arcno;
+            if (pt.is_finite()) {
+                rep._m_location = CGAL::ARR_INTERIOR;
+            } else {
+                rep._m_location = pt.ptr()->_m_location;
+            }
+            return Self(rep);
+        }
     };
     
 public:

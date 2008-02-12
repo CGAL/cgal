@@ -762,7 +762,13 @@ public:
      */
     Projected_arc_2 projected_arc() const {
         CGAL_precondition(!this->is_z_vertical());
-        CGAL_precondition(this->ptr()->_m_projected_arc);
+        if (!this->ptr()->_m_projected_arc) {
+            CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
+            this->ptr()->_m_projected_arc = 
+                typename Kernel_arc_2::Rebind()(
+                        *dynamic_cast< const Kernel_arc_2* >(this)
+                );
+        }
         return *(this->ptr()->_m_projected_arc);
     }
 
@@ -885,6 +891,8 @@ protected:
         if (sheet2 >= 0) {
             replaced.first.ptr()->_m_sheet_max = sheet2;
         }
+        
+        replaced.first.ptr()->_m_projected_arc = boost::none;
         
         return replaced;
     }

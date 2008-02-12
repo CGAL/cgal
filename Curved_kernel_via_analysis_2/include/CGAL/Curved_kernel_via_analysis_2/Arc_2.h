@@ -254,6 +254,33 @@ public:
             return arc._maxpoint();
         }
         
+        // TODO move to SfA_2l
+        /*!\brief
+         * reverse rebind, i.e., extracts original arc type from a 
+         * rebound instance
+         */
+        Self operator()(const Rebound_arc_2& arc) {
+            Rep rep;
+            
+            rep._m_min = typename New_point_2::Rebind()(arc._minpoint());
+            rep._m_max = typename New_point_2::Rebind()(arc._maxpoint());
+            
+            rep._m_support = arc.ptr()->_m_support;
+            
+            rep._m_arcno = arc.ptr()->_m_arcno;
+            rep._m_arcno_min = arc.ptr()->_m_arcno_min;
+            rep._m_arcno_max = arc.ptr()->_m_arcno_max;
+
+            rep._m_is_vertical = arc.ptr()->_m_is_vertical;
+
+            rep._m_interval_id = arc.ptr()->_m_interval_id;
+
+            rep._m_boundary_in_interval = 
+                arc.ptr()->_m_boundary_in_interval;
+            
+            return Self(rep);
+        }
+
     protected:
         //! collect common assignments
         void copy_members(const Self& arc, New_rep& newrep) {

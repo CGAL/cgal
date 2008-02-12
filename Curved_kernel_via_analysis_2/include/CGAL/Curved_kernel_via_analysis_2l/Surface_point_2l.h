@@ -161,7 +161,7 @@ public:
     Curve_analysis_2;
 
     //! type of kernel point
-    typedef typename Curved_kernel_via_analysis_2l::Point_2 Kernel_point;
+    typedef typename Curved_kernel_via_analysis_2l::Point_2 Kernel_point_2;
     
     //! type of Approximation
     typedef typename Rep::Approximation_3 Approximation_3;
@@ -191,7 +191,7 @@ public:
                      const Surface_3& surface, 
                      int sheet) :
         Base(Rebind()(pt)) {
-
+        
         this->copy_on_write();
         
         this->ptr()->_m_projected_point = pt;
@@ -271,8 +271,14 @@ public:
      * returns projected point
      */
     inline
-    const Projected_point_2& projected_point() const {
-        CGAL_precondition(this->ptr()->_m_projected_point);
+    Projected_point_2 projected_point() const {
+        if (!this->ptr()->_m_projected_point) {
+            CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+            this->ptr()->_m_projected_point = 
+                typename Kernel_point_2::Rebind()(
+                        *dynamic_cast< const Kernel_point_2* >(this)
+                );
+        }
         return *this->ptr()->_m_projected_point;
     }
 
@@ -321,17 +327,17 @@ public:
     //!
     //!\pre compared points have finite x/y-coordinates
     inline
-    CGAL::Comparison_result compare_xyz(const Kernel_point& q, 
-                                       bool equal_xy = false) const {
+    CGAL::Comparison_result compare_xyz(const Kernel_point_2& q, 
+                                        bool equal_xy = false) const {
         CGAL_precondition(this->is_finite());
         CGAL_precondition(q.is_finite());
         
         CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xyz_3, 
                                                compare_xyz_3,
                                                compare_xyz_3_object);
-        CGAL_precondition(dynamic_cast< const Kernel_point* >(this));
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
         return compare_xyz_3(
-                *dynamic_cast< const Kernel_point* >(this), q, equal_xy
+                *dynamic_cast< const Kernel_point_2* >(this), q, equal_xy
         );
     }
 
