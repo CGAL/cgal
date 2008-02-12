@@ -29,7 +29,8 @@ if (NOT AUTO_LINK_ENABLED )
   set_target_properties( CGAL_CORE PROPERTIES OUTPUT_NAME ${CGAL_CORE_BASENAME} )
   target_link_libraries( CGAL_CORE ${GMP_LIBRARIES})
   
-  set(CGAL_CORE_LIBRARY ${CGAL_CORE_BASENAME} CACHE STRING "The cgal-core Library" )
+  set(CGAL_CORE_LIBRARY ${CGAL_CORE_BASENAME} CACHE STRING "The CGAL-core++ library" )
+  mark_as_advanced(CGAL_CORE_LIBRARY)
   
 else()
 

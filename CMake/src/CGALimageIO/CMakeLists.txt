@@ -25,37 +25,40 @@ if(ZLIB_FOUND)
 
   include_directories( ${ZLIB_INCLUDE_DIR} )
   
-  add_library(CGAL_IMAGE_IO "all_files.cpp")
+  add_library(CGAL_IMAGEIO "all_files.cpp")
 
-  target_link_libraries( CGAL_IMAGE_IO ${ZLIB_LIBRARY})
+  target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY})
+  
+  set( CGAL_IMAGEIO_BASENAME CGAL-ImageIO )
   
   if (NOT AUTO_LINK_ENABLED )
   
-    set_target_properties( CGAL_IMAGE_IO PROPERTIES OUTPUT_NAME "cgal-image-io" )
+    set_target_properties( CGAL_IMAGEIO PROPERTIES OUTPUT_NAME "${CGAL_IMAGEIO_BASENAME}" )
     
-    set(CGAL_IMAGE_IO_LIBRARY "cgal-image-io" CACHE STRING "The cgal-image_io library")
-    
+    set(CGAL_IMAGEIO_LIBRARY "${CGAL_IMAGEIO_BASENAME}" CACHE STRING "The CGAL-ImageIO library")
+    mark_as_advanced(CGAL_IMAGEIO_LIBRARY)
+
   else()
   
-    set(CGAL_IMAGE_IO_LIBRARY)
+    set(CGAL_IMAGEIO_LIBRARY)
     
-    set(CGAL_IMAGE_IO_RELEASE_MANGLED_NAME        "cgal-image-io${TOOLSET}-mt" ) 
-    set(CGAL_IMAGE_IO_DEBUG_MANGLED_NAME          "cgal-image-io${TOOLSET}-mt-gd" ) 
-    set(CGAL_IMAGE_IO_MINSIZEREL_MANGLED_NAME     "cgal-image-io${TOOLSET}-mt-o" ) 
-    set(CGAL_IMAGE_IO_RELWITHDEBINFO_MANGLED_NAME "cgal-image-io${TOOLSET}-mt-g" ) 
+    set(CGAL_IMAGEIO_RELEASE_MANGLED_NAME        "${CGAL_IMAGEIO_BASENAME}${TOOLSET}-mt" ) 
+    set(CGAL_IMAGEIO_DEBUG_MANGLED_NAME          "${CGAL_IMAGEIO_BASENAME}${TOOLSET}-mt-gd" ) 
+    set(CGAL_IMAGEIO_MINSIZEREL_MANGLED_NAME     "${CGAL_IMAGEIO_BASENAME}${TOOLSET}-mt-o" ) 
+    set(CGAL_IMAGEIO_RELWITHDEBINFO_MANGLED_NAME "${CGAL_IMAGEIO_BASENAME}${TOOLSET}-mt-g" ) 
     
-    set_target_properties( CGAL_IMAGE_IO PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_IMAGE_IO_DEBUG_MANGLED_NAME}" 
-                                                    RELEASE_OUTPUT_NAME        "${CGAL_IMAGE_IO_RELEASE_MANGLED_NAME}" 
-                                                    MINSIZEREL_OUTPUT_NAME     "${CGAL_IMAGE_IO_MINSIZEREL_MANGLED_NAME}" 
-                                                    RELWITHDEBINFO_OUTPUT_NAME "${CGAL_IMAGE_IO_RELWITHDEBINFO_MANGLED_NAME}" 
+    set_target_properties( CGAL_IMAGEIO PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_IMAGEIO_DEBUG_MANGLED_NAME}" 
+                                                   RELEASE_OUTPUT_NAME        "${CGAL_IMAGEIO_RELEASE_MANGLED_NAME}" 
+                                                   MINSIZEREL_OUTPUT_NAME     "${CGAL_IMAGEIO_MINSIZEREL_MANGLED_NAME}" 
+                                                   RELWITHDEBINFO_OUTPUT_NAME "${CGAL_IMAGEIO_RELWITHDEBINFO_MANGLED_NAME}" 
                         )
     
-    add_custom_command(TARGET CGAL_IMAGE_IO POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
-    add_custom_command(TARGET CGAL_IMAGE_IO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
+    add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
+    add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
   endif()
 
   # WARNING: Use only relative paths; full paths break CPack!
-  install(TARGETS CGAL_IMAGE_IO DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+  install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_LIB_INSTALL_DIR} )
 else()
-  message( WARNING "cgal-image-io needs ZLib, cannot be configured.")
+  message( WARNING "cgal-imageio needs ZLib, cannot be configured.")
 endif()  

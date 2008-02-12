@@ -24,7 +24,7 @@ if(GMP_FOUND)
 
   if ( CGAL_CORE_INCLUDE_DIR )
   
-    set( CGAL_CORE_BASENAME cgal-core++ )
+    set( CGAL_CORE_BASENAME CGAL-core++ )
     
     if ( AUTO_LINK_ENABLED )
     

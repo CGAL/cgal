@@ -123,6 +123,7 @@ set(CGAL_INCLUDE_DIR ${CGAL_SOURCE_DIR}/include)
 set(CGAL_LIBRARIES_DIR ${CGAL_BINARY_DIR}/lib)
 
 set(CGAL_LIBRARIES CACHE STRING "Selected CGAL Libraries")
+mark_as_advanced(CGAL_LIBRARIES)
 
 set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} CACHE STRING "Compiler definitions used for building CGAL.")
 
@@ -190,8 +191,8 @@ install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_BINARY_DIR}/cmake/modules)
 
 # This script does not configure demos and examples by default, but its does if requested.
-optional_add_subdirectory( demo     OFF EXCLUDE_FROM_ALL )
-optional_add_subdirectory( examples OFF EXCLUDE_FROM_ALL )
+optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
+optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 
 
 #--------------------------------------------------------------------------------------------------

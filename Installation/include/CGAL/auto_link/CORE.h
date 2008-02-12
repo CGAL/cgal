@@ -22,7 +22,7 @@
 
 #ifndef CGAL_NO_AUTOLINK_CORE
 
-#define CGAL_LIB_NAME cgal-core++
+#define CGAL_LIB_NAME CGAL-core++
 #include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_NO_AUTOLINK_CORE

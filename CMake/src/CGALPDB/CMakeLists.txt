@@ -22,20 +22,23 @@ assert(CGAL_LIB_INSTALL_DIR)
 
 add_library(CGAL_PDB "all_files.cpp")
 
+set( CGAL_PDB_BASENAME CGAL-PDB )
+
 if (NOT AUTO_LINK_ENABLED )
 
-  set_target_properties( CGAL_PDB PROPERTIES OUTPUT_NAME "cgal-pdb" )
+  set_target_properties( CGAL_PDB PROPERTIES OUTPUT_NAME "${CGAL_PDB_BASENAME}" )
   
-  set(CGAL_PDB_LIBRARY "cgal-pdb" CACHE STRING "The cgal-pdb library")
+  set(CGAL_PDB_LIBRARY "${CGAL_PDB_BASENAME}" CACHE STRING "The CGAL-PDB library")
+  mark_as_advanced(CGAL_PDB_LIBRARY)
   
 else()
 
   set(CGAL_PDB_LIBRARY)
   
-  set(CGAL_PDB_RELEASE_MANGLED_NAME        "cgal-pdb${TOOLSET}-mt" ) 
-  set(CGAL_PDB_DEBUG_MANGLED_NAME          "cgal-pdb${TOOLSET}-mt-gd" ) 
-  set(CGAL_PDB_MINSIZEREL_MANGLED_NAME     "cgal-pdb${TOOLSET}-mt-o" ) 
-  set(CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME "cgal-pdb${TOOLSET}-mt-g" ) 
+  set(CGAL_PDB_RELEASE_MANGLED_NAME        "${CGAL_PDB_BASENAME}${TOOLSET}-mt" ) 
+  set(CGAL_PDB_DEBUG_MANGLED_NAME          "${CGAL_PDB_BASENAME}${TOOLSET}-mt-gd" ) 
+  set(CGAL_PDB_MINSIZEREL_MANGLED_NAME     "${CGAL_PDB_BASENAME}${TOOLSET}-mt-o" ) 
+  set(CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME "${CGAL_PDB_BASENAME}${TOOLSET}-mt-g" ) 
   
   set_target_properties( CGAL_PDB PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_PDB_DEBUG_MANGLED_NAME}" 
                                               RELEASE_OUTPUT_NAME        "${CGAL_PDB_RELEASE_MANGLED_NAME}" 

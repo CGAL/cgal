@@ -28,22 +28,25 @@ if (CGAL_USE_CGAL_CORE)
   add_dependencies(CGAL CGAL_CORE)
 endif()
 
+set( CGAL_BASENAME CGAL )
+
 #set_target_properties(CGAL PROPERTIES VERSION "${CGAL_VERSION}" SOVERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
 
 if (NOT AUTO_LINK_ENABLED )
 
-  set_target_properties( CGAL PROPERTIES OUTPUT_NAME "cgal" )
+  set_target_properties( CGAL PROPERTIES OUTPUT_NAME "${CGAL_BASENAME}" )
   
-  set(CGAL_LIBRARY "cgal" CACHE STRING "The cgal Library" )
+  set(CGAL_LIBRARY "${CGAL_BASENAME}" CACHE STRING "The CGAL library" )
+  mark_as_advanced(CGAL_LIBRARY)
   
 else()
 
   set(CGAL_LIBRARY)
   
-  set(CGAL_RELEASE_MANGLED_NAME        "cgal${TOOLSET}-mt" ) 
-  set(CGAL_DEBUG_MANGLED_NAME          "cgal${TOOLSET}-mt-gd" ) 
-  set(CGAL_MINSIZEREL_MANGLED_NAME     "cgal${TOOLSET}-mt-o" ) 
-  set(CGAL_RELWITHDEBINFO_MANGLED_NAME "cgal${TOOLSET}-mt-g" ) 
+  set(CGAL_RELEASE_MANGLED_NAME        "${CGAL_BASENAME}${TOOLSET}-mt" ) 
+  set(CGAL_DEBUG_MANGLED_NAME          "${CGAL_BASENAME}${TOOLSET}-mt-gd" ) 
+  set(CGAL_MINSIZEREL_MANGLED_NAME     "${CGAL_BASENAME}${TOOLSET}-mt-o" ) 
+  set(CGAL_RELWITHDEBINFO_MANGLED_NAME "${CGAL_BASENAME}${TOOLSET}-mt-g" ) 
   
   set_target_properties( CGAL PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_DEBUG_MANGLED_NAME}" 
                                          RELEASE_OUTPUT_NAME        "${CGAL_RELEASE_MANGLED_NAME}" 

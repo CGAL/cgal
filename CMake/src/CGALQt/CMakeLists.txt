@@ -80,20 +80,23 @@ if( CGAL_USE_QT )
     
     add_definitions ( ${QT_DEFINITIONS} )
     
+    set( CGAL_QT_BASENAME CGAL-Qt )
+    
     if (NOT AUTO_LINK_ENABLED )
 
-      set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "cgal-qt" )
+      set_target_properties( CGAL_QT PROPERTIES OUTPUT_NAME "${CGAL_QT_BASENAME}" )
       
-      set(CGAL_QT_LIBRARY "cgal-qt" CACHE STRING "The cgal-qt library")
+      set(CGAL_QT_LIBRARY "${CGAL_QT_BASENAME}" CACHE STRING "The CGAL-Qt library")
+      mark_as_advanced(CGAL_QT_LIBRARY)
       
     else()
 
       set(CGAL_QT_LIBRARY)
       
-      set(CGAL_QT_RELEASE_MANGLED_NAME        "cgal-qt${TOOLSET}-mt" ) 
-      set(CGAL_QT_DEBUG_MANGLED_NAME          "cgal-qt${TOOLSET}-mt-gd" ) 
-      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "cgal-qt${TOOLSET}-mt-o" ) 
-      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "cgal-qt${TOOLSET}-mt-g" ) 
+      set(CGAL_QT_RELEASE_MANGLED_NAME        "${CGAL_QT_BASENAME}${TOOLSET}-mt" ) 
+      set(CGAL_QT_DEBUG_MANGLED_NAME          "${CGAL_QT_BASENAME}${TOOLSET}-mt-gd" ) 
+      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "${CGAL_QT_BASENAME}${TOOLSET}-mt-o" ) 
+      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "${CGAL_QT_BASENAME}${TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL_QT PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
                                                 RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 
