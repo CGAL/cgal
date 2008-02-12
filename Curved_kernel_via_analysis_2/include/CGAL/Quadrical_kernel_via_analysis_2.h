@@ -1098,7 +1098,7 @@ public:
 
                 if (CGAL::assign(p_arc, *it)) {
 
-                    // lift overlapping arcs (eriC)
+                    // lift overlapping arcs
                     int sheet_min = sheet1;
                     int sheet_max = sheet1;
                     Point_2 pt_min;
@@ -1236,13 +1236,6 @@ public:
                 (cv.is_z_vertical() ? -1 : cv.sheet(q.projected_point()))
         ).first;
 
-        // TODO remove projected_kernel
-        arc.ptr()->_m_projected_arc = 
-            Curved_kernel_via_analysis_2l::instance().projected_kernel().
-            trim_2_object()(cv.projected_arc(), 
-                            p.projected_point(),
-                            q.projected_point());
-        
         CERR("result: " << arc << "\n");
         return arc;
     }
@@ -1302,17 +1295,6 @@ public:
                 (cv.is_z_vertical() ? -1 : cv.sheet()), -1
         ).first;
         
-        // TODO remove projected_kernel
-        typename Arc_2::Projected_arc_2 p_arc1, p_arc2;
-        
-        Curved_kernel_via_analysis_2l::instance().
-            projected_kernel().split_2_object()(
-                cv.projected_arc(), p.projected_point(), p_arc1, p_arc2
-        );
-        
-        c1.ptr()->_m_projected_arc = p_arc1;
-        c2.ptr()->_m_projected_arc = p_arc2;
-
         CERR("result:\nc1: " << c1 << ";\nc2: " << c2 << "\n");
     }
 };
@@ -1435,20 +1417,6 @@ public:
         Arc_2 arc = cv1._replace_endpoints(src, tgt, 
                                            arcno_s, arcno_t,
                                            sheet_s, sheet_t).first;
-        
-        if (!cv1.is_z_vertical()) {
-            
-            // TODO removed projected_kernel
-            typename Arc_2::Projected_arc_2 p_arc;
-            
-            Curved_kernel_via_analysis_2l::instance().
-                projected_kernel().merge_2_object()(
-                    cv1.projected_arc(), cv2.projected_arc(), p_arc
-            );
-            
-            arc.ptr()->_m_projected_arc = p_arc;
-        }
-        
         c = arc;
 
         CERR("result: " << c << "\n");
