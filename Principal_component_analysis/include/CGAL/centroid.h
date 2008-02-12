@@ -142,7 +142,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Triangle_2*,
-         const CGAL::PCA_dimension_0_tag&)
+         const CGAL::PCA_dimension_0_tag& tag)
 {
   typedef typename K::Triangle_2 Triangle;
   typedef typename K::Point_2 Point;
@@ -796,7 +796,7 @@ centroid(InputIterator begin,
 // takes an iterator range over kernel objects
 template < typename InputIterator, 
            typename K, 
-           typename tag  >
+           typename Tag  >
 inline
 typename Point<Dimension<typename std::iterator_traits<InputIterator>::value_type, K>::value,
                K
@@ -804,7 +804,7 @@ typename Point<Dimension<typename std::iterator_traits<InputIterator>::value_typ
 centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
-         const tag& tag)
+         const Tag& tag)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return CGALi::centroid(begin, end, k,(Value_type*) NULL, tag);
@@ -812,13 +812,13 @@ centroid(InputIterator begin,
 
 // this one takes an iterator range over kernel objects
 // and uses Kernel_traits<> to find out its kernel.
-template < typename InputIterator, typename tag >
+template < typename InputIterator, typename Tag >
 inline
 typename Point<Dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::value,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type
-centroid(InputIterator begin, InputIterator end, const tag& tag)
+centroid(InputIterator begin, InputIterator end, const Tag& tag)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                     K;
