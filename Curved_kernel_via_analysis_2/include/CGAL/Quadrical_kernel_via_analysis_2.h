@@ -644,7 +644,7 @@ public:
                            CGAL::Arr_curve_end ce) const {
         
         CERR("\nqkva_compare_y_near_boundary;\ncv1: " << cv1 << ";\ncv2: " <<
-             cv2 << ";\nend: " << ce << "\n");
+             cv2 << ";\nce: " << ce << "\n");
         
         CGAL::Comparison_result res = CGAL::EQUAL;
         
@@ -728,7 +728,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-        CERR("\nqkva_compare_y_at_x;\np: " << p << ";\ncv:" << cv << "\n"); 
+        CERR("\nqkva_compare_y_at_x;\np: " << p << ";\ncv: " << cv << "\n"); 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
         // FUTURE TODO p can lie on boundary
@@ -919,7 +919,7 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
-        CERR("\nqkva_do_overlap:\ncv1" << cv1 << ";\ncv2: " << cv2 << "\n");
+        CERR("\nqkva_do_overlap:\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
@@ -1044,7 +1044,7 @@ public:
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
-        CERR("\nqkva_intersect;\ncv1: " << cv1 << ";\ncv2:" << cv2);
+        CERR("\nqkva_intersect;\ncv1: " << cv1 << ";\ncv2: " << cv2);
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
@@ -1264,7 +1264,7 @@ public:
     void operator()(const Arc_2& cv, const Point_2 & p,
                     Arc_2& c1, Arc_2& c2) const {
         
-        CERR("\nqkva_split:\ncv: " << cv << ";\np" << p << "\n");
+        CERR("\nqkva_split:\ncv: " << cv << ";\np: " << p << "\n");
         
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(p.is_finite());
@@ -1332,7 +1332,7 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
-        CERR("\nqkva_are_mergeable:\ncv1:" << cv1 
+        CERR("\nqkva_are_mergeable:\ncv1: " << cv1 
              << ";\ncv2: " << cv2 << "\n");
         
         int s1 = cv1.sheet();
