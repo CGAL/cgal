@@ -220,7 +220,7 @@ public:
         typedef Arc_2< New_curved_kernel_via_analysis_2, NewRep > Other;
 
         //! surface point type
-        typedef typename Other::Point_2 Surface_point_2;
+        typedef typename Other::Point_2 New_point_2;
         
         //! type of rebound arc
         typedef typename New_curved_kernel_via_analysis_2::Arc_2 Rebound_arc_2;
@@ -234,8 +234,8 @@ public:
          * All known items of the base class rep will be copied.
          */
         Rebound_arc_2 operator()(const Self& arc, 
-                                 const Surface_point_2& min,
-                                 const Surface_point_2& max) {
+                                 const New_point_2& min,
+                                 const New_point_2& max) {
             New_rep newrep;
             newrep._m_min = min;
             newrep._m_max = max;
@@ -1298,7 +1298,7 @@ protected:
                     p, q, 
                     (this->is_vertical() ? -1 : this->arcno(p.x())),
                     (this->is_vertical() ? -1 : this->arcno(q.x()))
-            );
+            ).first;
            
             return new_arc;
         } else {
@@ -1852,38 +1852,41 @@ protected:
     }
 
     /*!\brief 
-     * replaces this arc's end-points by \c src and \c tgt with arcnos
-     * \c arcno_min and \c arcno_max.
+     * replaces this arc's end-points by \c p1 and \c p2 with arcnos
+     * \c arcno1 and \c arcno2.
      * 
      * new curve ends are sorted lexicographical in case of need; 
      * all preconditions must be checked by the caller
      */
-    Kernel_arc_2 _replace_endpoints(
-            const Point_2& src, const Point_2& tgt,
-            int arcno_min = -1, int arcno_max = -1) const {
+    std::pair< Kernel_arc_2, CGAL::Comparison_result > 
+    _replace_endpoints(
+            const Point_2& p1, const Point_2& p2, 
+            int arcno1 = -1, int arcno2 = -1) const {
         
         CERR("\n_replace_endpoints\n");    
-
+        
         Rep rep(*(this->ptr()));
-        rep._m_min = src;
-        rep._m_max = tgt;
+        rep._m_min = p1;
+        rep._m_max = p2;
         if (!is_vertical()) {
-            if (arcno_min >= 0) {
-                rep._m_arcno_min = arcno_min;
+            if (arcno1 >= 0) {
+                rep._m_arcno_min = arcno1;
             }
-            if (arcno_max >= 0) {
-                rep._m_arcno_max = arcno_max;
+            if (arcno2 >= 0) {
+                rep._m_arcno_max = arcno2;
             }
         }
-        if (_same_arc_compare_xy(src,tgt) == CGAL::LARGER) {
+        
+        CGAL::Comparison_result cmp = _same_arc_compare_xy(p1,p2);
+        if (cmp == CGAL::LARGER) {
             std::swap(rep._m_min, rep._m_max);
             std::swap(rep._m_arcno_min, rep._m_arcno_max);
         }
         /* no need to recompute location since they are set during 
-        construction of respective curve ends */
+           construction of respective curve ends */
 	rep._m_interval_id = boost::none;
 	rep._m_boundary_in_interval = boost::none;
-        return Kernel_arc_2(rep);
+        return std::make_pair(Kernel_arc_2(rep), cmp);
     }
    
     /*!\brief
@@ -2056,7 +2059,7 @@ protected:
             if(_same_arc_compare_xy(src, tgt, true) != CGAL::SMALLER)
                 return false;
             // construct a common part
-            *oi++ = (_replace_endpoints(src, tgt, -1, -1));
+            *oi++ = (_replace_endpoints(src, tgt, -1, -1).first);
             return true;
         }
         // ask for joint x-range of two arcs 
@@ -2072,7 +2075,7 @@ protected:
             int a_min = (src.is_on_left_right() ? -1 : arcno(src.x())),
                 a_max = (tgt.is_on_left_right() ? -1 : arcno(tgt.x()));
             // construct a common  part
-            *oi++ = _replace_endpoints(src, tgt, a_min, a_max);
+            *oi++ = _replace_endpoints(src, tgt, a_min, a_max).first;
             return true;
         }
         
