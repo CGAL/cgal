@@ -29,6 +29,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+inline
 unsigned int fact(unsigned int n){
   unsigned int i, p=1;
   for(i=2; i<=n; i++) p *= i;
@@ -199,6 +200,7 @@ public:
 // Implementation nested Monge_form //////////////////////////////
 //template <class DataKernel>
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+  inline
   void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
   Monge_form::
   set_up(int degree) {
@@ -208,6 +210,7 @@ template < class DataKernel, class LocalKernel, class SvdTraits>
 
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form::
 comply_wrt_given_normal(const Vector_3 given_normal)
 {
@@ -230,6 +233,7 @@ comply_wrt_given_normal(const Vector_3 given_normal)
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form::
 dump_verbose(std::ostream& out_stream) const
 {
@@ -255,6 +259,7 @@ dump_verbose(std::ostream& out_stream) const
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form::
 dump_4ogl(std::ostream& out_stream, const FT scale)
 {
@@ -270,6 +275,7 @@ dump_4ogl(std::ostream& out_stream, const FT scale)
 // Implementation main Monge_via_jet_fiting
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+  inline
   Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
   Monge_via_jet_fitting()
 {
@@ -278,7 +284,8 @@ template < class DataKernel, class LocalKernel, class SvdTraits>
 
 template < class DataKernel, class LocalKernel, class SvdTraits> 
 template <class InputIterator>
- typename  Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form
+  inline
+  typename  Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form
   Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
   operator()(InputIterator begin, InputIterator end, 
 	     size_t d, size_t dprime)
@@ -310,6 +317,7 @@ template <class InputIterator>
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
 template <class InputIterator>
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 compute_PCA(InputIterator begin, InputIterator end)
 {
@@ -383,6 +391,7 @@ compute_PCA(InputIterator begin, InputIterator end)
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
 template <class InputIterator>
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 fill_matrix(InputIterator begin, InputIterator end,
 	    int d, LAMatrix &M, LAVector& Z)
@@ -429,6 +438,7 @@ fill_matrix(InputIterator begin, InputIterator end,
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 solve_linear_system(LAMatrix &M, LAVector& Z)
 {
@@ -439,6 +449,7 @@ solve_linear_system(LAMatrix &M, LAVector& Z)
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>   
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 compute_Monge_basis(const FT* A, Monge_form& monge_form)
 {
@@ -531,6 +542,7 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 compute_Monge_coefficients(FT* A, int dprime, 
 			   Monge_form& monge_form)
@@ -731,6 +743,7 @@ compute_Monge_coefficients(FT* A, int dprime,
 }
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
+inline
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
@@ -743,6 +756,7 @@ switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 
 
 // template < class DataKernel, class LocalKernel, class SvdTraits>  
+// inline
 // std::ostream&
 // operator<<(std::ostream& out_stream, 
 // 	  const typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form& monge)

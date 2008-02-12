@@ -118,7 +118,8 @@ public:
     FT solve(Matrix& M, Vector& B);
 };
 
- Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
+inline
+Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
 {
   int m = M.number_of_rows(),
     n = M.number_of_columns(),
