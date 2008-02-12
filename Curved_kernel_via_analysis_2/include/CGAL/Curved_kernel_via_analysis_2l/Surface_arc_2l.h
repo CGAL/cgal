@@ -59,7 +59,7 @@ public:
     //! the base type
     typedef Arc_2_rep< Curved_kernel_via_analysis_2l > Base;
     
-    //! typedef of Point_2
+    //! typedef of Point_2 (Kernel_point_2)
     typedef typename Curved_kernel_via_analysis_2l::Point_2 Point_2;
 
     //! type of projected kernel
@@ -188,6 +188,9 @@ public:
     //! type of planar point
     typedef typename Curved_kernel_via_analysis_2l::Point_2 Surface_point_2l;
 
+    //! typedef of Kernel_arc_2
+    typedef typename Curved_kernel_via_analysis_2l::Arc_2 Kernel_arc_2;
+    
     //! type of rebinding
     typedef typename Projected_arc_2::
     template rebind < Curved_kernel_via_analysis_2l, Rep > Rebind;
@@ -790,6 +793,28 @@ public:
         return (end == CGAL::ARR_MIN_END ? this->ptr()->_m_sheet_min :
                 this->ptr()->_m_sheet_max);
     }
+
+    /*!\brief
+     * returns the sheet of the 3d-segment at a given projected point \c pt
+     *
+     * \pre !is_z_vertical()
+     */
+    int sheet(const Projected_point_2& pt) const {
+        CGAL_precondition(!is_z_vertical());
+        CGAL_precondition(
+                this->projected_arc().compare_y_at_x(pt) == CGAL::EQUAL
+        );
+        if (this->sheet() != this->sheet(CGAL::ARR_MIN_END) && 
+            this->projected_arc().is_finite(CGAL::ARR_MIN_END) && 
+            this->projected_arc().curve_end(CGAL::ARR_MIN_END) == pt) {
+            return this->ptr()->_m_sheet_min;
+        } else if (this->sheet() != this->sheet(CGAL::ARR_MAX_END) && 
+                   this->projected_arc().is_finite(CGAL::ARR_MAX_END) && 
+                   this->projected_arc().curve_end(CGAL::ARR_MAX_END) == pt) {
+            return this->ptr()->_m_sheet_max;
+        }
+        return this->ptr()->_m_sheet;
+    }
     
     /*!\brief
      * return whether arc is z-vertical
@@ -811,6 +836,62 @@ public:
     
     //!@}
 
+
+protected:
+    //!\name Proteced members
+    //!@{
+
+    /*!\brief 
+     * replaces this arc's end-points by \c src and \c tgt with arcnos
+     * \c arcno_min and \c arcno_max.
+     * 
+     * new curve ends are sorted lexicographical in case of need; 
+     * all preconditions must be checked by the caller
+     */
+    std::pair< Kernel_arc_2, CGAL::Comparison_result > 
+    _replace_endpoints(
+            const Surface_point_2l& p1, const Surface_point_2l& p2,
+            int arcno1, int arcno2,
+            int sheet1, int sheet2) const {
+        
+        CERR("\n_sa_2l_replace_endpoints\n");    
+
+        if (is_z_vertical()) {
+            Rep rep(*this->ptr());
+            CGAL::Comparison_result cmp = p1.compare_xyz(p2);
+            if (cmp == CGAL::LARGER) {
+                rep._m_min = p2;
+                rep._m_max = p1;
+            } else {
+                rep._m_min = p1;
+                rep._m_max = p2;
+            }
+            return std::make_pair(Kernel_arc_2(rep), cmp);
+        } 
+        
+        // else
+        std::pair< Kernel_arc_2, CGAL::Comparison_result >
+            replaced = Base::_replace_endpoints(
+                    p1, p2, arcno2, arcno2
+            );
+        // TODO copy surface?
+        if (replaced.second == CGAL::LARGER) {
+            std::swap(sheet1, sheet2);
+        }
+        
+        if (sheet1 >= 0) {
+            replaced.first.ptr()->_m_sheet_min = sheet1;
+        }
+        if (sheet2 >= 0) {
+            replaced.first.ptr()->_m_sheet_max = sheet2;
+        }
+        
+        return replaced;
+    }
+
+    //!@}
+
+public:
     //!\name IO
     //!@{
     
@@ -838,6 +919,11 @@ public:
 
     //!\name Friends
     //!@{
+
+    //! for _replace_points
+    friend class Curved_kernel_via_analysis_2l::Trim_2;
+    friend class Curved_kernel_via_analysis_2l::Split_2;
+    friend class Curved_kernel_via_analysis_2l::Merge_2;
    
     //! for replace endpoints
     friend class Self::Rebind;
@@ -852,11 +938,12 @@ public:
  * \brief 
  * output operator
  */
-template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3 >
+template < class CurvedKernelViaAnalysis_2l, class SurfacePair_3, class Rep_ >
 std::ostream& operator<< (
         std::ostream& os,
         const 
-        Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3 >& arc) {
+        Surface_arc_2l< CurvedKernelViaAnalysis_2l, SurfacePair_3, Rep_ >& 
+        arc) {
     
     arc.write(os);
     
