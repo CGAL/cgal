@@ -27,6 +27,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 
+#include <SoX/GAPS/Restricted_cad_3.h>
 #include <SoX/GAPS/Restricted_cad_3_accessor.h>
 
 CGAL_BEGIN_NAMESPACE
