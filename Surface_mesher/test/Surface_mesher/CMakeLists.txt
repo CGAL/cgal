@@ -14,7 +14,9 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( combined_spheres.cpp )
   create_single_source_cgal_program( implicit_surface_mesher_test.cpp )
-  create_single_source_cgal_program( internal-test-surface-mesher.cpp )
+  if(EXISTS internal-test-surface-mesher.cpp)
+    create_single_source_cgal_program( internal-test-surface-mesher.cpp )
+  endif()
   create_single_source_cgal_program( test_c2t3_iterators.cpp )
   create_single_source_cgal_program( test_robust_circumcenter.cpp )
 
