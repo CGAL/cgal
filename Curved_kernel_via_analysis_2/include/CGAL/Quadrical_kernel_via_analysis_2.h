@@ -1072,18 +1072,8 @@ public:
             // call projected intersection
             std::list< CGAL::Object > tmp;
             
-#if 0
             Base base_intersect(this->_ckva());
             base_intersect(cv1, cv2, std::back_inserter(tmp));
-#else
-            // TODO remove projected kernel
-            Curved_kernel_via_analysis_2l::instance().
-                projected_kernel().
-                intersect_2_object()(
-                        cv1.projected_arc(), cv2.projected_arc(),
-                        std::back_inserter(tmp)
-                );
-#endif
             
             for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
                  it != tmp.end(); it++) {
@@ -1094,10 +1084,15 @@ public:
                 typedef typename Projected_kernel_2::Point_2 P_point_2;
                 typedef typename Projected_kernel_2::Arc_2 P_arc_2;
 
-                P_arc_2 p_arc;
+                typedef typename Base::Point_2 Base_point_2;
+                typedef typename Base::Arc_2 Base_arc_2;
 
-                if (CGAL::assign(p_arc, *it)) {
+                Base_arc_2 base_arc;
 
+                if (CGAL::assign(base_arc, *it)) {
+                    
+                    P_arc_2 p_arc = typename Base::Arc_2::Rebind()(base_arc);
+                    
                     // lift overlapping arcs
                     int sheet_min = sheet1;
                     int sheet_max = sheet1;
@@ -1158,10 +1153,14 @@ public:
                     }
                     
                 } else {
-                    std::pair< P_point_2, unsigned int > p_pt;
+                    
+                    std::pair< Base_point_2, unsigned int > b_pt;
                     CGAL_assertion_code(bool check =)
-                        CGAL::assign(p_pt, *it);
+                        CGAL::assign(b_pt, *it);
                     CGAL_assertion(check);
+                    
+                    P_point_2 p_pt = 
+                        typename Base::Point_2::Rebind()(b_pt.first);
                     
                     typename 
                         Curved_kernel_via_analysis_2l::Construct_point_on_arc_2
@@ -1171,14 +1170,14 @@ public:
                     
                     Point_2 pt = 
                         construct_point_on_arc(
-                                p_pt.first.x(), 
-                                p_pt.first.curve(), 
-                                p_pt.first.arcno(),
-                                (p_pt.first.curve().id() == cv1.curve().id() ?
+                                p_pt.x(), 
+                                p_pt.curve(), 
+                                p_pt.arcno(),
+                                (p_pt.curve().id() == cv1.curve().id() ?
                                  cv1 : cv2)
                         );
                     
-                    *oi++ = CGAL::make_object(std::make_pair(pt, p_pt.second));
+                    *oi++ = CGAL::make_object(std::make_pair(pt, b_pt.second));
                 }
             }
         }
@@ -1613,14 +1612,12 @@ public:
     //! default constructor
     Quadrical_kernel_via_analysis_2() :
         Base() {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //! standard constructor
     Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
         Base(),
         _m_reference(reference) {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
@@ -1628,19 +1625,12 @@ public:
                                     const Surface_3& reference) :
         Base(kernel),
         _m_reference(reference) {
-        _m_projected_kernel = Curved_kernel_via_analysis_2((this->kernel()));
     }
     
     //!@}
 
     //!\name Access members
     //!@{
-
-    // returns instance of projected kernel
-    inline
-    const Curved_kernel_via_analysis_2& projected_kernel() const {
-        return _m_projected_kernel;
-    }
 
     //! returns the reference surface
     inline
@@ -1659,9 +1649,7 @@ public:
     Construct_point_2;
     //! returns an instance of Construct_point_2 functor
     Construct_point_2 construct_point_2_object() const { 
-        return Construct_point_2(
-                (Quadrical_kernel_via_analysis_2 *)this
-        ); 
+        return Construct_point_2(&Self::instance());
     }
     
     //! type of Construct_projected_point_2 functor
@@ -1671,7 +1659,9 @@ public:
     
     //! returns an instance of Construct_projected_point_2 functor
     Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return _m_projected_kernel.construct_point_2_object();
+        return 
+            Curved_kernel_via_analysis_2(this->kernel()).
+            construct_point_2_object();
     }
 
     //! type of Construct_arc_2 functor
@@ -1680,9 +1670,7 @@ public:
     Construct_arc_2;
     //! returns an instance of Construct_arc_2 functor
     Construct_arc_2 construct_arc_2_object() const { 
-        return Construct_arc_2(
-                (Quadrical_kernel_via_analysis_2 *)this
-        ); 
+        return Construct_arc_2(&Self::instance());
     }
 
     //! type of Construct_projected_arc_2 functor
@@ -1691,9 +1679,11 @@ public:
     Construct_projected_arc_2;
     //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return _m_projected_kernel.construct_arc_2_object();
+        return
+            Curved_kernel_via_analysis_2(this->kernel()).
+            construct_arc_2_object();
     }
-
+    
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_CKvA_2l_functor_pred(Y, Z) \
@@ -1760,10 +1750,6 @@ protected:
     
     //! the reference surface
     Surface_3 _m_reference;
-
-    //! instance of the used projected kernel
-    // TODO remove
-    Curved_kernel_via_analysis_2 _m_projected_kernel;
 
 }; // class Quadrical_kernel_via_analysis_2
 
