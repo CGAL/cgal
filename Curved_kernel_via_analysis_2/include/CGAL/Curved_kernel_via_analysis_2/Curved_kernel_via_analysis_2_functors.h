@@ -1581,10 +1581,10 @@ public:
         CERR("\nsplit\n");
         c1 = cv._replace_endpoints(
                 cv._minpoint(), p, -1, (cv.is_vertical() ? -1 : cv.arcno())
-        );
+        ).first;
         c2 = cv._replace_endpoints(
                 p, cv._maxpoint(), (cv.is_vertical() ? -1 : cv.arcno()), -1
-        );
+        ).first;
     }
 };
 
@@ -1742,7 +1742,7 @@ public:
             arcno_t = (replace_src ? cv1.arcno(CGAL::ARR_MAX_END) :
                        cv2.arcno(CGAL::ARR_MAX_END));
         }
-        Arc_2 arc = cv1._replace_endpoints(src, tgt, arcno_s, arcno_t);
+        Arc_2 arc = cv1._replace_endpoints(src, tgt, arcno_s, arcno_t).first;
         // arc.set_boundaries_after_merge(*this, s); - no need to, since
         // boundaries are stored in Point_2 type and will be copied implicitly
         
