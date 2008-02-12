@@ -500,6 +500,8 @@ public:
 
     //! for rebind
     friend class Base::Rebind;
+
+    friend class Quadrical_kernel_via_analysis_2::Arc_2::Base;
 };   
 
 #define CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES \
@@ -641,8 +643,8 @@ public:
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
         
-        CERR("\nquadric_compare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
-             cv2 << "; end: " << ce << "\n");
+        CERR("\nqkva_compare_y_near_boundary;\ncv1: " << cv1 << ";\ncv2: " <<
+             cv2 << ";\nend: " << ce << "\n");
         
         CGAL::Comparison_result res = CGAL::EQUAL;
         
@@ -726,7 +728,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-        CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n"); 
+        CERR("\nqkva_compare_y_at_x;\np: " << p << ";\ncv:" << cv << "\n"); 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
         // FUTURE TODO p can lie on boundary
@@ -796,9 +798,9 @@ public:
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
 
-        CERR("\nquadriccompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
-            cv2 << "; p: " << p << "\n");
-
+        CERR("\nqkva_compare_y_at_x_left(cv2);\ncv1: " << cv1 << ";\ncv2: " <<
+             cv2 << ";\np: " << p << "\n");
+        
         CGAL::Comparison_result res = CGAL::EQUAL;
 
         int s1 = cv1.sheet();
@@ -861,8 +863,8 @@ public:
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
 
-        CERR("\nquadriccompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
-            cv2 << "; p: " << p << "\n");
+        CERR("\nqkva_compare_y_at_x_right(cv2);\ncv1: " << cv1 
+             << ";\ncv2: " << cv2 << ";\np: " << p << "\n");
 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
@@ -917,7 +919,7 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
-        CERR("\ndo_overlap\n");
+        CERR("\nqkva_do_overlap:\ncv1" << cv1 << ";\ncv2: " << cv2 << "\n");
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
@@ -965,9 +967,15 @@ public:
      * \return (true) if the two point are the same; (false) otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
-        return (Curved_kernel_via_analysis_2l::instance().
-                compare_xy_2_object()(p1, p2) == 
-                CGAL::EQUAL);
+
+        CERR("\nqkva_equal;\np1: " << p1 << ";\np2: " << p2 << "\n");
+
+        bool res = (Curved_kernel_via_analysis_2l::instance().
+                    compare_xy_2_object()(p1, p2) == 
+                    CGAL::EQUAL);
+
+        CERR("result: " << res << "\n");
+        return res;
     }
      
     /*!
@@ -979,7 +987,9 @@ public:
      * \return (true) if the two curves are the same; (false) otherwise.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
-
+        
+        CERR("\nqkva_equal;\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
+        
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
         
@@ -1034,8 +1044,7 @@ public:
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
 
-        CERR("\nquadric_2_intersect; cv1: " << cv1 
-             << ";\n cv2:" << cv2 << "");
+        CERR("\nqkva_intersect;\ncv1: " << cv1 << ";\ncv2:" << cv2);
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
@@ -1188,8 +1197,9 @@ public:
      * \return (true) if the curves overlap; (false) otherwise.
      */
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
-    
-        CERR("trim\n");
+        
+        CERR("\nqkva_trim:\ncv: " << cv << ";\np: " << p 
+             << ";\nq: "<< q << "\n");
         CGAL_precondition(
                 !Curved_kernel_via_analysis_2l::instance().
                 equal_2_object()(p, q)
@@ -1201,12 +1211,12 @@ public:
         Arc_2 arc = cv._replace_endpoints(
                 p, q, 
                 (cv.is_vertical() ? -1 : cv.arcno(p.x())),
-                (cv.is_vertical() ? -1 : cv.arcno(q.x()))
-        );
+                (cv.is_vertical() ? -1 : cv.arcno(q.x())),
+                (cv.is_z_vertical() ? -1 : cv.sheet(p.projected_point())),
+                (cv.is_z_vertical() ? -1 : cv.sheet(q.projected_point()))
+        ).first;
 
-        if (!cv.is_z_vertical()) {
-            // TODO set sheet (eriC)
-        }
+        // TODO unbounded arcs (eriC)
         
         arc.ptr()->_m_projected_arc = 
             // TODO removed projected_kernel
@@ -1215,11 +1225,9 @@ public:
                             p.projected_point(),
                             q.projected_point());
         
-        // TODO unbounded arcs (eriC)
-
+        CERR("result: " << arc << "\n");
         return arc;
     }
-    
 };
 
 
@@ -1256,6 +1264,8 @@ public:
     void operator()(const Arc_2& cv, const Point_2 & p,
                     Arc_2& c1, Arc_2& c2) const {
         
+        CERR("\nqkva_split:\ncv: " << cv << ";\np" << p << "\n");
+        
         CGAL_precondition(cv.compare_y_at_x(p) == CGAL::EQUAL);
         CGAL_precondition(p.is_finite());
         // check that p is not an end-point of the arc
@@ -1263,23 +1273,21 @@ public:
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
-        CERR("\nsplit\n");
+        // TODO unbounded arcs (eriC)
         c1 = cv._replace_endpoints(
-                cv._minpoint(), p, -1, (cv.is_vertical() ? -1 : cv.arcno())
-        );
-        if (!cv.is_z_vertical()) {
-            c1.ptr()->_m_sheet_max = cv.sheet();
-        }
+                cv._minpoint(), p, 
+                -1, (cv.is_vertical() ? -1 : cv.arcno()),
+                -1, (cv.is_z_vertical() ? -1 : cv.sheet())
+        ).first;
         c2 = cv._replace_endpoints(
-                p, cv._maxpoint(), (cv.is_vertical() ? -1 : cv.arcno()), -1
-        );
-        if (!cv.is_z_vertical()) {
-            c2.ptr()->_m_sheet_min = cv.sheet();
-        }
+                p, cv._maxpoint(), 
+                (cv.is_vertical() ? -1 : cv.arcno()), -1,
+                (cv.is_z_vertical() ? -1 : cv.sheet()), -1
+        ).first;
         
-        typename Arc_2::Projected_arc_2 p_arc1, p_arc2;
-
         // TODO remove projected_kernel
+        typename Arc_2::Projected_arc_2 p_arc1, p_arc2;
+        
         Curved_kernel_via_analysis_2l::instance().
             projected_kernel().split_2_object()(
                 cv.projected_arc(), p.projected_point(), p_arc1, p_arc2
@@ -1288,9 +1296,7 @@ public:
         c1.ptr()->_m_projected_arc = p_arc1;
         c2.ptr()->_m_projected_arc = p_arc2;
 
-        // TODO set sheets (eriC)
-
-        // TODO unbounded arcs (eriC)
+        CERR("result:\nc1: " << c1 << ";\nc2: " << c2 << "\n");
     }
 };
 
@@ -1326,8 +1332,8 @@ public:
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
-        CERR("\nquadricsare_mergeable cv1: " << cv1 
-             << "; cv2: " << cv2 << "\n");
+        CERR("\nqkva_are_mergeable:\ncv1:" << cv1 
+             << ";\ncv2: " << cv2 << "\n");
         
         int s1 = cv1.sheet();
         int s2 = cv2.sheet();
@@ -1383,7 +1389,7 @@ public:
      */  
     void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
     
-        CERR("merge\n");
+        CERR("\nqkva_merge:\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
         CGAL_precondition(cv1.are_mergeable(cv2));
         Arc_2::simplify(cv1, cv2);
         
@@ -1402,20 +1408,22 @@ public:
             arcno_t = (replace_src ? cv1.arcno(CGAL::ARR_MAX_END) :
                        cv2.arcno(CGAL::ARR_MAX_END));
         }
-        Arc_2 arc = cv1._replace_endpoints(src, tgt, arcno_s, arcno_t);
-        
         if (!cv1.is_z_vertical()) {
             sheet_s = (replace_src ? cv2.sheet(CGAL::ARR_MIN_END) :
                        cv1.sheet(CGAL::ARR_MIN_END));
             sheet_t = (replace_src ? cv1.sheet(CGAL::ARR_MAX_END) :
                        cv2.sheet(CGAL::ARR_MAX_END));
-            
-            arc.ptr()->_m_sheet_min = sheet_s;
-            arc.ptr()->_m_sheet_max = sheet_t;
-
-            typename Arc_2::Projected_arc_2 p_arc;
+        }
+        // TODO unbounded arcs (eriC)
+        Arc_2 arc = cv1._replace_endpoints(src, tgt, 
+                                           arcno_s, arcno_t,
+                                           sheet_s, sheet_t).first;
+        
+        if (!cv1.is_z_vertical()) {
             
             // TODO removed projected_kernel
+            typename Arc_2::Projected_arc_2 p_arc;
+            
             Curved_kernel_via_analysis_2l::instance().
                 projected_kernel().merge_2_object()(
                     cv1.projected_arc(), cv2.projected_arc(), p_arc
@@ -1424,9 +1432,9 @@ public:
             arc.ptr()->_m_projected_arc = p_arc;
         }
         
-        // TODO unbounded arcs (eriC)
-        
         c = arc;
+
+        CERR("result: " << c << "\n");
     }
 };
 
@@ -1492,6 +1500,8 @@ public:
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
         
+        CERR("\nqkva_make_x_monotone:\ncv: " << cv << "\n");
+        
         // construct surface pair 
         Surface_pair_3 pair = Surface_pair_3::surface_pair_cache()(
                 std::make_pair(
@@ -1499,7 +1509,7 @@ public:
                         cv
                 )
         );
-                
+        
         // compute lifted points and arcs
         std::list< Point_2 > points;
         std::list< Arc_2 > arcs;
