@@ -657,8 +657,8 @@ public:
                 cv2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
         );
 
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
 
         Base base_compare_y_near_boundary(this->_ckva());
         typename Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_right_2
@@ -666,13 +666,13 @@ public:
         typename Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_left_2
             base_compare_y_at_x_left(this->_ckva());
         
-        if (s1 != s2) {
-            res = CGAL::compare(s1, s2);
+        if (sheet1 != sheet2) {
+            res = CGAL::compare(sheet1, sheet2);
         } else {
             if (!cv1.is_finite(ce)) {
                 res = base_compare_y_near_boundary(cv1, cv2, ce);
-                if (s1 == 1) {
-                    CGAL_assertion(s2 == 1);
+                if (sheet1 == 1) {
+                    CGAL_assertion(sheet2 == 1);
                     res = -res;
                 }
             } else {
@@ -685,7 +685,7 @@ public:
                             cv1, cv2, cv1.curve_end(CGAL::ARR_MAX_END)
                     );
                 }
-                // already reversed the case s1 == s2 == 1
+                // already reversed the case sheet1 == sheet2 == 1
             }
         }
         
@@ -803,16 +803,16 @@ public:
         
         CGAL::Comparison_result res = CGAL::EQUAL;
 
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
         
-        if (s1 != s2) {
-            res = CGAL::compare(s1, s2);
+        if (sheet1 != sheet2) {
+            res = CGAL::compare(sheet1, sheet2);
         } else {
             Base base_compare_y_at_x_left(this->_ckva());
             res = base_compare_y_at_x_left(cv1, cv2, p);
-            if (s1 == 1) {
-                CGAL_assertion(s2 == 1);
+            if (sheet1 == 1) {
+                CGAL_assertion(sheet2 == 1);
                 res = -res;
             }
         }
@@ -868,16 +868,16 @@ public:
 
         CGAL::Comparison_result res = CGAL::EQUAL;
         
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
         
-        if (s1 != s2) {
-            res = CGAL::compare(s1, s2);
+        if (sheet1 != sheet2) {
+            res = CGAL::compare(sheet1, sheet2);
         } else {
             Base base_compare_y_at_x_right(this->_ckva());
             res = base_compare_y_at_x_right(cv1, cv2, p);
-            if (s1 == 1) {
-                CGAL_assertion(s2 == 1);
+            if (sheet1 == 1) {
+                CGAL_assertion(sheet2 == 1);
                 res = -res;
             }
         }
@@ -921,10 +921,10 @@ public:
     
         CERR("\nqkva_do_overlap:\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
         
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
 
-        bool res = (s1 == s2);
+        bool res = (sheet1 == sheet2);
         
         if (res) {
             Base base_do_overlap(this->_ckva());
@@ -990,10 +990,10 @@ public:
         
         CERR("\nqkva_equal;\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
         
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
         
-        bool res = (s1 == s2);
+        bool res = (sheet1 == sheet2);
         
         if (res) {
             Base base_equal(this->_ckva());
@@ -1045,12 +1045,13 @@ public:
                               OutputIterator oi) const {
 
         CERR("\nqkva_intersect;\ncv1: " << cv1 << ";\ncv2: " << cv2);
-        
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+
+        CGAL_precondition(cv1.surface() == cv2.surface());
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
 
         // handle special case of two segments on same curve and at endpoints
-        if ((s1 == s2 && cv1.curve().id() == cv2.curve().id() &&
+        if ((sheet1 == sheet2 && cv1.curve().id() == cv2.curve().id() &&
              !cv1.do_overlap(cv2)) || 
             Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
             
@@ -1066,7 +1067,7 @@ public:
                 *oi++ = CGAL::make_object(*it);
             }
 
-        } else if (s1 == s2) {
+        } else if (sheet1 == sheet2) {
             
             // call projected intersection
             std::list< CGAL::Object > tmp;
@@ -1098,44 +1099,63 @@ public:
                 if (CGAL::assign(p_arc, *it)) {
 
                     // lift overlapping arcs (eriC)
-                    int smin = s1;
-                    int smax = s1;
+                    int sheet_min = sheet1;
+                    int sheet_max = sheet1;
                     Point_2 pt_min;
                     Point_2 pt_max;
                     
-                    if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
-                        cv1.projected_arc().curve_end(CGAL::ARR_MIN_END)){
-                        pt_min = cv1.curve_end(CGAL::ARR_MIN_END);
-                        smin = cv1.sheet(CGAL::ARR_MIN_END);
-                    } else if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
-                               cv2.projected_arc().
-                               curve_end(CGAL::ARR_MIN_END)){
-                        pt_min = cv2.curve_end(CGAL::ARR_MIN_END);
-                        smin = cv2.sheet(CGAL::ARR_MIN_END);
+                    bool min_finite = p_arc.is_finite(CGAL::ARR_MIN_END);
+                    bool max_finite = p_arc.is_finite(CGAL::ARR_MAX_END);
+                    
+                    if (min_finite) {
+                        if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                            cv1.projected_arc().curve_end(CGAL::ARR_MIN_END)){
+                            pt_min = cv1.curve_end(CGAL::ARR_MIN_END);
+                            sheet_min = cv1.sheet(CGAL::ARR_MIN_END);
+                        } else if (p_arc.curve_end(CGAL::ARR_MIN_END) ==
+                                   cv2.projected_arc().
+                                   curve_end(CGAL::ARR_MIN_END)){
+                            pt_min = cv2.curve_end(CGAL::ARR_MIN_END);
+                            sheet_min = cv2.sheet(CGAL::ARR_MIN_END);
+                        }
                     }
-                    if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
-                        cv1.projected_arc().
-                        curve_end(CGAL::ARR_MAX_END)){
-                        pt_max = cv1.curve_end(CGAL::ARR_MAX_END);
-                        smax = cv1.sheet(CGAL::ARR_MAX_END);
-                    } else if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
-                               cv2.projected_arc().
-                               curve_end(CGAL::ARR_MAX_END)){
-                        pt_max = cv2.curve_end(CGAL::ARR_MAX_END);
-                        smax = cv2.sheet(CGAL::ARR_MAX_END);
+                    if (max_finite) {
+                        if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                            cv1.projected_arc().
+                            curve_end(CGAL::ARR_MAX_END)){
+                            pt_max = cv1.curve_end(CGAL::ARR_MAX_END);
+                            sheet_max = cv1.sheet(CGAL::ARR_MAX_END);
+                        } else if (p_arc.curve_end(CGAL::ARR_MAX_END) ==
+                                   cv2.projected_arc().
+                                   curve_end(CGAL::ARR_MAX_END)){
+                            pt_max = cv2.curve_end(CGAL::ARR_MAX_END);
+                            sheet_max = cv2.sheet(CGAL::ARR_MAX_END);
+                        }
                     }
                     
-                    Arc_2 arc = 
-                        Curved_kernel_via_analysis_2l::instance().
-                        construct_arc_2_object()(
+                    // Remark: Current ellipsoidal implemenation does not
+                    //         allow z-asymptotes. So no need to handle them
+                    //         currently. Only the "usual" cases for 
+                    //         surface_arcs remain.
+                    Arc_2 arc;
+
+                    if (min_finite && max_finite) {
+                        arc = Arc_2(
                                 p_arc, 
                                 pt_min, pt_max,
-                                Curved_kernel_via_analysis_2l::instance().
-                                reference(),
-                                s1,
-                                smin, smax
+                                cv1.surface(),
+                                sheet1,
+                                sheet_min, sheet_max
                         );
-                    // TODO unbounded arcs (eriC)
+                    } else if (!min_finite && !max_finite) {
+                        arc = Arc_2(p_arc, cv1.surface(), sheet1);
+                    } else {
+                        arc = Arc_2(p_arc, 
+                                    (min_finite ? pt_min : pt_max),
+                                    cv1.surface(), 
+                                    sheet1,
+                                    (min_finite ? sheet_min : sheet_max));
+                    }
                     
                 } else {
                     std::pair< P_point_2, unsigned int > p_pt;
@@ -1216,10 +1236,8 @@ public:
                 (cv.is_z_vertical() ? -1 : cv.sheet(q.projected_point()))
         ).first;
 
-        // TODO unbounded arcs (eriC)
-        
+        // TODO remove projected_kernel
         arc.ptr()->_m_projected_arc = 
-            // TODO removed projected_kernel
             Curved_kernel_via_analysis_2l::instance().projected_kernel().
             trim_2_object()(cv.projected_arc(), 
                             p.projected_point(),
@@ -1273,7 +1291,6 @@ public:
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
-        // TODO unbounded arcs (eriC)
         c1 = cv._replace_endpoints(
                 cv._minpoint(), p, 
                 -1, (cv.is_vertical() ? -1 : cv.arcno()),
@@ -1335,12 +1352,12 @@ public:
         CERR("\nqkva_are_mergeable:\ncv1: " << cv1 
              << ";\ncv2: " << cv2 << "\n");
         
-        int s1 = cv1.sheet();
-        int s2 = cv2.sheet();
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
 
         bool res = true;
         
-        if (s1 != s2 && cv1.curve().id() == cv2.curve().id()) {
+        if (sheet1 != sheet2 && cv1.curve().id() == cv2.curve().id()) {
             res = false;
         } else if (Arc_2::can_intersect_only_at_curve_ends(cv1, cv2)) {
             res = false;
@@ -1414,7 +1431,7 @@ public:
             sheet_t = (replace_src ? cv1.sheet(CGAL::ARR_MAX_END) :
                        cv2.sheet(CGAL::ARR_MAX_END));
         }
-        // TODO unbounded arcs (eriC)
+
         Arc_2 arc = cv1._replace_endpoints(src, tgt, 
                                            arcno_s, arcno_t,
                                            sheet_s, sheet_t).first;
