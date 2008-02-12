@@ -874,7 +874,7 @@ protected:
             replaced = Base::_replace_endpoints(
                     p1, p2, arcno2, arcno2
             );
-        // TODO copy surface?
+
         if (replaced.second == CGAL::LARGER) {
             std::swap(sheet1, sheet2);
         }
