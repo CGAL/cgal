@@ -27,6 +27,8 @@ a large number of changes to the underlying points to be made at one
 time without recomputing the certificates each time a single point
 changes.
 
+Note that the Delaunay triangulation is fully dynamic as it tracks points added to and removed from the \ccc{Kinetic::ActiveObjectsTable}.
+
 The class \ccc{Kinetic::Qt_triangulation_3<Traits>}, included as part
 of the demo code, displays a kinetic Delaunay triangulation in three
 dimensions using the Coin library.

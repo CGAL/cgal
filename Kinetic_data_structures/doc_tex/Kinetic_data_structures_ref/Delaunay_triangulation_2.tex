@@ -23,6 +23,8 @@ points contained in a \ccc{Kinetic::ActiveObjectsTable}. It has one
 main method of interest, \ccc{triangulation()}, which returns the
 triangulation it is maintaining.
 
+Note that the Delaunay triangulation is fully dynamic as it tracks points added to and removed from the \ccc{Kinetic::ActiveObjectsTable}.
+
 The class \ccc{Kinetic::Qt_triangulation_2<KineticTriangulation_2,
   QtWidget_2, QtMovingPoints_2>} displays a kinetic Delaunay
 triangulation using the Qt widget.

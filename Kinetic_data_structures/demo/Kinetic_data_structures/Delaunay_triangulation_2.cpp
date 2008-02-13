@@ -17,7 +17,7 @@
 
 template <class Traits>
 int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
-  //typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
+  // typedefs to set everything up
   typedef CGAL::Triangulation_data_structure_2<
   CGAL::Kinetic::Delaunay_triangulation_vertex_base_2<typename Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
@@ -42,6 +42,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 
 
   if (file.empty()) {
+    // Generate some random points
     typename CGAL::Random rand= CGAL::Random(seed);
     typename Traits::Active_points_2_table::Key lk;
     std::vector<typename Traits::Kinetic_kernel::Point_2> pts;
@@ -66,6 +67,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
     }
     tr.active_points_2_table_handle()->erase(lk);
   } else {
+    // read from a file
     std::ifstream in(file.c_str());
     if (!in) {
       std::cerr << "Error opening input file: " << file << std::endl;
@@ -119,6 +121,10 @@ int main(int argc, char *argv[])
     std::cout << desc << "\n";
     return EXIT_FAILURE;
   }
+#else
+  std::cerr << "Warning, this demo is not very functional without "
+            << "boost program options. You probably need to modify "
+            << "the code directly.\n"
 #endif
 
   if (true) {

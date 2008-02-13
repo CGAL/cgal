@@ -22,6 +22,9 @@ The class \ccRefName\ maintains a triangulation of set of moving
 weighted points. Its interface is the same as
 \ccc{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}.
 
+Note that the regular triangulation tracks as points are added to the \ccc{Kinetic::ActiveObjectsTable}, but not removed from it.
+
+
 The optional \ccc{Triangulation} template argument must be a model of
 \ccc{CGAL::RegularTriangulation_3} which has
 \ccc{Kinetic::Regular_triangulation_cell_base_3<Traits, Base>} as a
