@@ -2917,6 +2917,7 @@ Nef_S2/test/Nef_S2/CMakeLists.txt -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Number_types/include/CGAL/Float_traits.h -text
 Number_types/include/CGAL/Number_types/core_interval_support.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
@@ -2927,6 +2928,9 @@ Number_types/include/CGAL/Sqrt_extension/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Scalar_factor_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
+Number_types/include/CGAL/core_interval_support.h -text
+Number_types/include/CGAL/interval_support.h -text
+Number_types/include/CGAL/leda_interval_support.h -text
 Number_types/test/Number_types/CMakeLists.txt -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
