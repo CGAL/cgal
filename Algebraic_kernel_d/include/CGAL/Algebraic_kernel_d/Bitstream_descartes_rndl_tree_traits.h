@@ -25,7 +25,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Sqrt_extension.h>
-#include <CGAL/Algebraic_kernel_d/interval_support.h>
+// #include <CGAL/Algebraic_kernel_d/interval_support.h>
+#include <CGAL/interval_support.h>
 
 #include <CGAL/Algebraic_kernel_d/Integer_iterator.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>

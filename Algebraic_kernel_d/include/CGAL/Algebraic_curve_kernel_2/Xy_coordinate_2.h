@@ -596,18 +596,18 @@ public:
             }
             long final_prec = set_precision(BF(),get_precision(BF())+4);
             
-            BFI bfi = CGALi::hull(convert_to_bfi(lower(*this)), 
+            BFI bfi = CGAL::hull(convert_to_bfi(lower(*this)), 
                                   convert_to_bfi(upper(*this)));
             
             while( !singleton(bfi) &&  
                    get_significant_bits(bfi) < final_prec  ){
                 refine(*this);
-                bfi = CGALi::hull(
+                bfi = CGAL::hull(
                         convert_to_bfi(lower(*this)), 
                         convert_to_bfi(upper(*this)));
             }
             double_y 
-                = CGAL::to_double((CGALi::lower(bfi)+ CGALi::upper(bfi)) / 2);
+                = CGAL::to_double((CGAL::lower(bfi)+ CGAL::upper(bfi)) / 2);
         }
         set_precision(BF(),old_prec);
         return std::make_pair(double_x, double_y); 

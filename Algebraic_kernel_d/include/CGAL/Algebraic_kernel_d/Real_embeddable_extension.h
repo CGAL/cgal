@@ -22,13 +22,15 @@
 #ifdef CGAL_USE_LEDA
 
 #include <LEDA/numbers/digit.h>
-#include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
+// #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
+#include <CGAL/leda_interval_support.h>
 
 #endif
 
 #ifdef CGAL_USE_CORE
 
-#include <CGAL/Number_types/core_interval_support.h>
+// #include <CGAL/Number_types/core_interval_support.h>
+#include <CGAL/core_interval_support.h>
 
 #endif
 
@@ -210,7 +212,7 @@ namespace CGALi {
         struct Floor_log2_abs
             : public Unary_function< CORE::BigFloat, long > {
             long operator()( CORE::BigFloat x ) const {
-                CGAL_precondition(!CGALi::in_zero(x));
+                CGAL_precondition(!CGAL::in_zero(x));
                 x = CGAL::abs(x);
                 return CORE::floorLg(x.m()-x.err())+x.exp()*14;
             }            

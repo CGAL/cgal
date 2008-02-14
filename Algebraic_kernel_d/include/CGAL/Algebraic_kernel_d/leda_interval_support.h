@@ -20,6 +20,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_LEDA_INTERVAL_SUPPORT_H
 #define CGAL_ALGEBRAIC_KERNEL_D_LEDA_INTERVAL_SUPPORT_H
 
+#if 0
+
 #include <CGAL/basic.h>
 #include <CGAL/leda_bigfloat.h>
 #include <boost/numeric/interval.hpp>
@@ -115,7 +117,7 @@ namespace interval_lib{
     };
 
 }//namespace interval_lib
-
+/*
 inline
 std::ostream& operator << 
 (std::ostream& os, const boost::numeric::interval<leda::bigfloat>& x)
@@ -126,7 +128,7 @@ std::ostream& operator <<
        << x.upper().get_significant() << "*2^" << x.upper().get_exponent()
        << "]";
     return os;
-}
+}*/
 
 }//namespace numeric
 }//namespace boost
@@ -296,5 +298,6 @@ std::pair<double, double> to_interval( const CGALi::leda_bigfloat_interval& x ) 
 
 CGAL_END_NAMESPACE
 
+#endif
 
 #endif // CGAL_ALGEBRAIC_KERNEL_D_LEDA_INTERVAL_SUPPORT_H

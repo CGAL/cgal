@@ -22,6 +22,8 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_INTERVAL_SUPPORT_H
 #define CGAL_ALGEBRAIC_KERNEL_D_INTERVAL_SUPPORT_H
 
+#if 0
+
 // TODO: Remove #define (also from Arithmetic_kernel.h) if Algebraic_kernel_d is 
 //       part of the release
 #ifndef CGAL_INTERN_USE_BFI
@@ -34,11 +36,13 @@
 #include <CGAL/Arithmetic_kernel.h>
 
 #ifdef CGAL_USE_LEDA
-#include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
+// #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
+#include <CGAL/leda_interval_support.h>
 #endif //  LiS_HAVE_LEDA
 
 #ifdef CGAL_USE_CORE
-#include <CGAL/Number_types/core_interval_support.h>
+// #include <CGAL/Number_types/core_interval_support.h>
+#include <CGAL/core_interval_support.h>
 #endif //  LiS_HAVE_LEDA
 
 
@@ -94,5 +98,7 @@ convert_to_bfi(const Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >& x){
 } // namespace CGALi
 
 CGAL_END_NAMESPACE
+
+#endif
 
 #endif // NiX_INTERVAL_SUPPORT_H
