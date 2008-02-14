@@ -32,7 +32,7 @@ set(CGAL_INSTALL_DIR		        .)
 set(CGAL_LIB_INSTALL_DIR	      lib)
 set(CGAL_INCLUDE_INSTALL_DIR	  include)
 set(CGAL_AUXILIARY_INSTALL_DIR	auxiliary)
-set(CGAL_CMAKE_INSTALL_DIR     	cmake/modules)
+set(CGAL_CMAKE_INSTALL_DIR     	cmake)
 
 
 
@@ -154,16 +154,16 @@ message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
 
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32
+install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt
 	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
 	            README "VERSION"  
 	      DESTINATION ${CGAL_INSTALL_DIR}
        )
        
 
-install(DIRECTORY "include/CGAL" DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
-install(DIRECTORY "auxiliary"    DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-install(DIRECTORY "cmake"        DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
+install(DIRECTORY "include/CGAL"  DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
+install(DIRECTORY "auxiliary"     DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
+install(DIRECTORY "cmake/modules" DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
 
 #--------------------------------------------------------------------------------------------------
 #
