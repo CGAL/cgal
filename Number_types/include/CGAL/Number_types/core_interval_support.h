@@ -23,6 +23,8 @@
 #ifndef CGAL_NUMBER_TYPES_CORE_INTERVAL_SUPPORT_H
 #define CGAL_NUMBER_TYPES_CORE_INTERVAL_SUPPORT_H
 
+#if 0
+
 #include <CGAL/basic.h>
 
 #ifndef CGAL_USE_CORE
@@ -312,4 +314,7 @@ convert_to_bfi(const ::CORE::BigRat& x){
 CGAL_END_NAMESPACE
 
 #endif // CGAL_USE_CORE
+
+#endif
+
 #endif // CGAL_NUMBER_TYPES_CORE_INTERVAL_SUPPORT_H
