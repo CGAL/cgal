@@ -15,11 +15,11 @@
 template <typename Kernel>
 void test_2D()
 {
-	typedef Kernel::FT FT;
-	typedef Kernel::Line_2 Line_2;
-	typedef Kernel::Point_2 Point_2;
-	typedef Kernel::Triangle_2 Triangle_2;
-	typedef Kernel::Vector_2 Vector_2;
+	typedef typename Kernel::FT FT;
+	typedef typename Kernel::Line_2 Line_2;
+	typedef typename Kernel::Point_2 Point_2;
+	typedef typename Kernel::Vector_2 Vector_2;
+	typedef typename Kernel::Triangle_2 Triangle_2;
 
   std::vector<Point_2> points;
   points.push_back(Point_2(0.0,0.0));
@@ -49,11 +49,11 @@ void test_2D()
 template <typename Kernel>
 void test_2D_point_set(const unsigned int nb_points)
 {
-	typedef Kernel::FT FT;
-	typedef Kernel::Line_2 Line_2;
-	typedef Kernel::Point_2 Point_2;
-	typedef Kernel::Triangle_2 Triangle_2;
-	typedef Kernel::Vector_2 Vector_2;
+	typedef typename Kernel::FT FT;
+	typedef typename Kernel::Line_2 Line_2;
+	typedef typename Kernel::Point_2 Point_2;
+	typedef typename Kernel::Vector_2 Vector_2;
+	typedef typename Kernel::Triangle_2 Triangle_2;
 
   // create points on a horizontal segment
   Point_2 p(0.0,0.5);
