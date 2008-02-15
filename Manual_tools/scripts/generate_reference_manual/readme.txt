@@ -19,19 +19,17 @@ Usage:
 
 generate_reference_manual [options] /path/to/package/root
     -h, --help      Print this help
-    -f, --force     Insert missing %START-AUTO..%END-AUTO sections
+    -d, --debug     Turn on debug traces
 
 Typical scenario:
 
-1) Create the package's Reference Manual as described in CGAL Developer Manual.
-2) Run generate_reference_manual --force to create the %START-AUTO..%END-AUTO sections.
+1) Create the package's Reference Manual as described in CGAL Developer Manual (using cc_ref_wizard).
+2) Run generate_reference_manual.
 3) Run cgal_manual.
 4) Look at the generated documentation in the Reference Manual .tex files and in the PS/PDF/HTML final Reference manual. In order to complete it, you may:
-    a) Comment the C++ source code using Doxygen conventions.
+    a) Comment the C++ source code using Doxygen conventions and run generate_reference_manual again.
     b) Write extra documentation in .tex files outside of automatic sections.
-    c) Modify automatic sections (make sure to delete the %START-AUTO and %END-AUTO tags).
-5) Run generate_reference_manual. Do not use the --force option anymore if you modified automatic sections.
-6) Goto point 3) until the Reference Manual is complete.
+5) Goto point 3) until the Reference Manual is complete.
 
 Tips:
 

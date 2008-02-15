@@ -19,19 +19,17 @@ Usage:
 
 generate_reference_manual [options] /path/to/package/root
     -h, --help      Print this help
-    -f, --force     Insert missing %START-AUTO..%END-AUTO sections
+    -d, --debug     Turn on debug traces
 
 Typical scenario:
 
-1) Create the package's Reference Manual as described in CGAL Developer Manual.
-2) Run generate_reference_manual --force to create the %START-AUTO..%END-AUTO sections.
+1) Create the package's Reference Manual as described in CGAL Developer Manual (using cc_ref_wizard).
+2) Run generate_reference_manual.
 3) Run cgal_manual.
 4) Look at the generated documentation in the Reference Manual .tex files and in the PS/PDF/HTML final Reference manual. In order to complete it, you may:
-    a) Comment the C++ source code using Doxygen conventions.
+    a) Comment the C++ source code using Doxygen conventions and run generate_reference_manual again.
     b) Write extra documentation in .tex files outside of automatic sections.
-    c) Modify automatic sections (make sure to delete the %START-AUTO and %END-AUTO tags).
-5) Run generate_reference_manual. Do not use the --force option anymore if you modified automatic sections.
-6) Goto point 3) until the Reference Manual is complete.
+5) Goto point 3) until the Reference Manual is complete.
 
 Tips:
 
@@ -61,32 +59,34 @@ exit 1
 #######
 
 # Version
-echo "generate_reference_manual version 0.8.";
+echo "generate_reference_manual version 0.9.";
 
 # Global variables
-ROOT_FOLDER="" 				    # Package's root folder
-COPY_DOXYGEN_LATEX_DOC_ARGS="" 		    # Parameters for copy_doxygen_latex_doc
-PACKAGE="" 	                            # Package name (without path)
-DOXYFILE="" 				    # doxygen configuration file
+ROOT_FOLDER="" # Package's root folder
+PACKAGE=""  # Package name (without path)
+DOXYFILE="" # doxygen configuration file
+DEBUG=0 # Debug mode?
 
 # Decode parameters
-if [ ! "$1" ]				    # If no argument
+if [ ! "$1" ] # If no argument
 then
     usage
 fi
 while [ "$1" ]
 do
     case "$1" in
-    -h|--help) 	                            # If usage
+    -h|--help) # If usage
         usage
         ;;
-    -f|--force)                             # If --force
-        COPY_DOXYGEN_LATEX_DOC_ARGS="$COPY_DOXYGEN_LATEX_DOC_ARGS $1"
+    -f|--force) # Ignore obsolete option --force
         ;;
-    -*) 		                    # If unknown parameter
+    -d|--debug) # If --debug
+        DEBUG=1
+        ;;
+    -*) # If unknown parameter
         usage
         ;;
-    * )                                     # Package's root folder
+    * ) # Package's root folder
         ROOT_FOLDER="$1"
         ;;
     esac
@@ -135,7 +135,7 @@ mkdir doc_doxygen
 # Run doxygen
 echo ""
 echo "Run doxygen..."
-doxygen "${DOXYFILE}" 2>&1 | grep -v "Warning:"
+doxygen "${DOXYFILE}" >/dev/null 2>&1
 
 # Turn traces on
 #set -x
@@ -179,9 +179,12 @@ do
             # Insert the doxygen-generated documentation into ${manual_file}
             if [[ -f "${doxygen_output_file}" ]];
             then
-                echo "* ${item} (in ${manual_file})"
-                #echo copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "`pwd`/${doxygen_output_file}" "`pwd`/${manual_file}"
-                copy_doxygen_latex_doc $COPY_DOXYGEN_LATEX_DOC_ARGS "${item}" "${doxygen_output_file}" "${manual_file}"
+                if [[ $DEBUG == 0 ]]; then
+                    echo "* ${item} (in ${manual_file})"
+                else
+                    echo copy_doxygen_latex_doc "${item}" "`pwd`/${doxygen_output_file}" "`pwd`/${manual_file}"
+                fi
+                copy_doxygen_latex_doc "${item}" "${doxygen_output_file}" "${manual_file}"
             else
                 echo "ERROR: cannot find doxygen documentation for ${item} (in ${manual_file})"
             fi
