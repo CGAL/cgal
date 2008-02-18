@@ -67,6 +67,7 @@
     <addaction name="actionDraw_triangles_edges" />
     <addaction name="actionUse_Gouraud_shading" />
     <addaction name="actionShow_triangulation" />
+    <addaction name="actionTriangulation_edges_color" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
@@ -319,7 +320,7 @@
     <bool>true</bool>
    </property>
    <property name="checked" >
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon" >
     <iconset resource="../surface_mesher.qrc" >:/icons/resize.png</iconset>
@@ -383,6 +384,11 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionTriangulation_edges_color" >
+   <property name="text" >
+    <string>Choose the triangulation edges color...</string>
    </property>
   </action>
  </widget>

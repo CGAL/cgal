@@ -54,6 +54,7 @@ public slots:
   void on_minusButton_clicked();
 
 signals:
+  void changed();
   void colors_changed();
   void isovalues_changed();
 private:

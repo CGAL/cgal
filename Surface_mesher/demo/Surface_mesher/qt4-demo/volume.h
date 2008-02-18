@@ -88,6 +88,7 @@ private:
   bool m_view_surface;
   bool m_view_mc;
   bool m_draw_triangulation;
+  QColor m_triangulation_color;
   bool m_inverse_normals;
   bool two_sides;
   bool draw_triangles_edges;
@@ -96,6 +97,7 @@ private:
   std::vector<Facet> m_surface;
   std::vector<Facet> m_surface_mc;
   MarchingCubes<unsigned char> mc ;
+  std::vector<int> nbs_of_mc_triangles;
   Tr del;            // 3D-Delaunay triangulation
 
   MainWindow* mw;
@@ -106,9 +108,13 @@ private:
 
   GLuint list_draw_marching_cube;
   bool list_draw_marching_cube_is_valid;
+  std::vector<GLuint> lists_draw_surface;
+  bool lists_draw_surface_is_valid;
+  std::vector<GLuint> lists_draw_surface_mc;
+  bool lists_draw_surface_mc_is_valid;
 private:
   template <typename Iterator>
-  void gl_draw_surface(Iterator begin, Iterator end);
+  void gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* = 0);
 
   template <typename PointsOutputIterator, typename TransformOperator>
   void search_for_connected_components(PointsOutputIterator, TransformOperator);
@@ -127,6 +133,7 @@ public slots:
   void set_inverse_normals(const bool);
   void set_two_sides(const bool);
   void set_draw_triangles_edges(const bool);
+  void set_triangulation_edges_color();
   void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
   void open(const QString& filename);

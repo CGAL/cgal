@@ -114,6 +114,9 @@ Isovalues_list::Isovalues_list(QWidget* parent):
           this, SIGNAL(isovalues_changed()));
   connect(isovalues_delegate, SIGNAL(new_color(const QModelIndex&)),
           this, SIGNAL(colors_changed()));
+  connect(this->treeWidget->model(),
+          SIGNAL(dataChanged (const QModelIndex &, const QModelIndex &)),
+          this, SIGNAL(changed()));
 }
 
 QColor Isovalues_list::color(const int i) const

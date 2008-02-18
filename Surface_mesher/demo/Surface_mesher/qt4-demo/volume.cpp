@@ -17,6 +17,9 @@
 #include <QDoubleSpinBox>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
+#include <QTime>
+#include <QColor>
+#include <QColorDialog>
 
 #include <GL/glu.h>
 
@@ -153,10 +156,14 @@ Volume::Volume(MainWindow* mw) :
   m_relative_precision(0.0001),
   m_view_surface(false),
   m_view_mc(false),
+  m_triangulation_color(QColor(Qt::green)),
   mw(mw),
   m_inverse_normals(false),
   two_sides(false),
   list_draw_marching_cube(0),
+  lists_draw_surface(),
+  lists_draw_surface_is_valid(false),
+  lists_draw_surface_mc(),
   list_draw_marching_cube_is_valid(false)
 {
   spinBox_radius_bound = mw->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
@@ -201,13 +208,17 @@ Volume::Volume(MainWindow* mw) :
           this, SLOT(set_draw_triangulation(bool)));
   m_draw_triangulation = mw->actionShow_triangulation->isChecked();
 
+  mw->actionTriangulation_edges_color->setVisible(true);
+  connect(mw->actionTriangulation_edges_color, SIGNAL(triggered()),
+          this, SLOT(set_triangulation_edges_color()));
+
   connect(this, SIGNAL(new_bounding_box(double, double, double, double, double, double)),
           mw->viewer, SLOT(interpolateToFitBoundingBox(double, double, double, double, double, double)));
 
-  connect(isovalues_list, SIGNAL(colors_changed()),
-          mw->viewer, SLOT(updateGL()));
   connect(isovalues_list, SIGNAL(isovalues_changed()),
           this, SLOT(changed_parameters()));
+  connect(isovalues_list, SIGNAL(changed()),
+          mw->viewer, SLOT(updateGL()));
 }
 
 void Volume::set_inverse_normals(const bool b) {
@@ -233,6 +244,14 @@ void Volume::set_draw_triangles_edges(const bool b) {
 void Volume::set_draw_triangulation(const bool b) {
   m_draw_triangulation = b;
   emit changed();
+}
+
+void Volume::set_triangulation_edges_color() {
+  const QColor color = QColorDialog::getColor(m_triangulation_color, mw);
+  if (color.isValid()) {
+    m_triangulation_color = color;
+    emit changed();
+  }
 }
 
 void Volume::set_use_gouraud(const bool b) {
@@ -267,6 +286,7 @@ void Volume::open(const QString& filename)
 
       mw->viewer->showEntireScene();
       isovalues_list->load_values(fileinfo.absoluteFilePath());
+      changed_parameters();
       emit changed();
     }
   }
@@ -292,7 +312,11 @@ void Volume::display_marchin_cube()
 {
   if(m_surface_mc.empty())
   {
+    QTime total_time;
+    total_time.start();
+
     isovalues_list->save_values(fileinfo.absoluteFilePath());
+
     unsigned int nx = m_image.xdim();
     unsigned int ny = m_image.ydim();
     unsigned int nz = m_image.zdim();
@@ -319,6 +343,8 @@ void Volume::display_marchin_cube()
     const double yr = m_image.ymax() / ny;
     const double zr = m_image.zmax() / nz;
 
+    nbs_of_mc_triangles.resize(isovalues_list->numberOfIsoValues());
+
     for(int isovalue_id = 0; 
         isovalue_id < isovalues_list->numberOfIsoValues();
         ++isovalue_id)
@@ -343,8 +369,9 @@ void Volume::display_marchin_cube()
       mc.get_facets(facets);
 
       timer.stop();
+      const unsigned int begin = isovalue_id == 0 ? 0 : nbs_of_mc_triangles[isovalue_id-1];
       const unsigned int nbt = facets.size() / 9;
-      for(unsigned int i=0;i<nbt;i++)
+      for(unsigned int i=begin;i<nbt;i++)
       {
         const Point a(facets[9*i],   facets[9*i+1], facets[9*i+2]);
         const Point b(facets[9*i+3], facets[9*i+4], facets[9*i+5]);
@@ -356,12 +383,20 @@ void Volume::display_marchin_cube()
         n = n / std::sqrt(n*n);
         m_surface_mc.push_back(Facet(t,n,isovalues_list->item(isovalue_id)));
       }
+      nbs_of_mc_triangles[isovalue_id]=m_surface_mc.size();
       timer.start();
     }
     timer.stop();
     not_busy();
 
-    status_message(QString("Marching cubes...done (%2 facets in %1 s)").arg(timer.time()).arg(m_surface_mc.size()));
+    status_message(QString("Marching cubes...done. %2 facets in %1s (CPU time), total time is %3s.")
+                   .arg(timer.time())
+                   .arg(m_surface_mc.size())
+                   .arg(total_time.elapsed()/1000.));
+
+    // invalidate the display list
+    lists_draw_surface_mc_is_valid = false;
+    list_draw_marching_cube_is_valid = false;
   }
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
   for(std::vector<Facet>::const_iterator
@@ -391,6 +426,9 @@ void Volume::display_surface_mesher_result()
      m_view_surface) // Or it is computed and displayed, and one want
                      // to recompute it.
   {
+    QTime total_time;
+    total_time.start();
+
     isovalues_list->save_values(fileinfo.absoluteFilePath());
 
     unsigned int nx = m_image.xdim();
@@ -498,7 +536,13 @@ void Volume::display_surface_mesher_result()
     }
 
     const unsigned int nbt = m_surface.size();
-    status_message(QString("Surface meshing...done (%1 triangles, %2 s)").arg(nbt).arg(timer.time()));
+    status_message(QString("Surface meshing...done. %1 facets in %2s (CPU time), total time is %3s.)")
+                   .arg(nbt)
+                   .arg(timer.time())
+                   .arg(total_time.elapsed()/1000.));
+
+    // invalidate the display list
+    lists_draw_surface_is_valid = false;
   }
 
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
@@ -512,7 +556,6 @@ void Volume::display_surface_mesher_result()
   // toggle visualization
   m_view_mc = false;
   m_view_surface = true;
-
   emit changed();
   if(!m_surface.empty())
   {
@@ -610,7 +653,7 @@ void Volume::draw()
   if(!m_view_mc && m_draw_triangulation)
   {
     // draw the triangualtion
-    ::glColor3f(0.0,1.0,0.0);
+    mw->viewer->qglColor(m_triangulation_color);
     ::glLineWidth(1.0);
     ::glBegin(GL_LINES);
     for(Tr::Finite_edges_iterator 
@@ -639,31 +682,121 @@ void Volume::set_distance_bound(double d)
   changed_parameters();
 }
 
-void Volume::gl_draw_surface()
-{
-  gl_draw_surface(m_surface.begin(),
-                  m_surface.end());
-}
-
 void Volume::gl_draw_surface_mc()
 {
   if(use_gouraud)
+  {
     gl_draw_marchingcube();
+    return;
+  }
+  
+  if(lists_draw_surface_mc_is_valid)
+  {
+    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    {
+      if(isovalues_list->enabled(i))
+      {
+        mw->viewer->qglColor(isovalues_list->color(i));
+        ::glCallList(lists_draw_surface_mc[i]);
+      }
+    }
+  }
   else
-    gl_draw_surface(m_surface_mc.begin(),
-                    m_surface_mc.end());
+  {
+    lists_draw_surface_mc.resize(isovalues_list->numberOfIsoValues(), 0);
+    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    {
+      if(!lists_draw_surface_mc[i])
+      {
+        lists_draw_surface_mc[i] = ::glGenLists(1);
+      }
+
+      std::cerr << boost::format("(Re-)Generating list #%1% for marching cube surface #%2%"
+                                 " in gl_draw_surface(), ()\n")
+        % lists_draw_surface_mc[i]
+        % i;
+
+      mw->viewer->qglColor(isovalues_list->color(i));
+
+      if(lists_draw_surface_mc[i])             // If
+        ::glNewList(lists_draw_surface_mc[i],  // lists_draw_surface[i]==0 then something
+                    isovalues_list->enabled(i) // got wrong in the list generation.
+                    ? GL_COMPILE_AND_EXECUTE
+                    : GL_COMPILE);
+
+
+      gl_draw_surface(m_surface_mc.begin(),
+                      m_surface_mc.end(),
+                      isovalues_list->item(i));
+        
+      if(lists_draw_surface_mc[i]) // If lists_draw_surface[i]==0 then
+      {                            // something got wrong in the list
+        ::glEndList();             // generation.
+      }
+    }
+    lists_draw_surface_mc_is_valid = (::glGetError() == GL_NO_ERROR);
+  }
+}
+
+void Volume::gl_draw_surface()
+{
+  if(lists_draw_surface_is_valid)
+  {
+    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    {
+      if(isovalues_list->enabled(i))
+      {
+        mw->viewer->qglColor(isovalues_list->color(i));
+        ::glCallList(lists_draw_surface[i]);
+      }
+    }
+  }
+  else
+  {
+    lists_draw_surface.resize(isovalues_list->numberOfIsoValues(), 0);
+    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i )
+    {
+      if(!lists_draw_surface[i])
+      {
+        lists_draw_surface[i] = ::glGenLists(1);
+      }
+
+      std::cerr << boost::format("(Re-)Generating list #%1% for surface #%2%"
+                                 " in gl_draw_surface(), ()\n")
+        % lists_draw_surface[i]
+        % i;
+        
+      mw->viewer->qglColor(isovalues_list->color(i));
+
+      if(lists_draw_surface[i])                 // If
+        ::glNewList(lists_draw_surface[i],      // lists_draw_surface[i]==0
+                    isovalues_list->enabled(i)  // then something got wrong
+                    ? GL_COMPILE_AND_EXECUTE    // in the list generation.
+                    : GL_COMPILE);
+
+      gl_draw_surface(m_surface.begin(),
+                      m_surface.end(),
+                      isovalues_list->item(i));
+        
+      if(lists_draw_surface[i]) // If lists_draw_surface[i]==0 then
+      {                         // something got wrong in the list
+        ::glEndList();          // generation.
+      }
+    }
+    lists_draw_surface_is_valid = (::glGetError() == GL_NO_ERROR);
+  }
 }
 
 template <typename Iterator>
-void Volume::gl_draw_surface(Iterator begin, Iterator end)
+void Volume::gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* i)
 {
   ::glBegin(GL_TRIANGLES);
   unsigned int counter = 0;
   for(Iterator it = begin; it != end; ++it)
   {
     const Facet& f = *it;
-    if(!isovalues_list->enabled(f.third))
-      continue;
+
+    if(f.third != i) continue;
 
     const Vector& n = f.second;
 
@@ -677,14 +810,14 @@ void Volume::gl_draw_surface(Iterator begin, Iterator end)
     const Point& b = t[1];
     const Point& c = t[2];
 
-    mw->viewer->qglColor(isovalues_list->color(f.third));
-
     ::glVertex3d(a.x(),a.y(),a.z());
     ::glVertex3d(b.x(),b.y(),b.z());
     ::glVertex3d(c.x(),c.y(),c.z());
     ++counter;
   }
   ::glEnd();
+  std::cerr << boost::format("number of facets: %1%\n")
+    % counter;
 }
 
 void Volume::changed_parameters()
@@ -713,9 +846,13 @@ void Volume::gl_draw_marchingcube()
   {
     if(!list_draw_marching_cube)
       list_draw_marching_cube = ::glGenLists(1);
-    std::cerr << boost::format("(Re-)Generating list #%1% for gl_draw_marchingcube()\n")
+    std::cerr << boost::format("(Re-)Generating list #%1% for"
+                               " gl_draw_marchingcube()\n")
       % list_draw_marching_cube;
-    ::glNewList(list_draw_marching_cube, GL_COMPILE_AND_EXECUTE);
+
+    if(list_draw_marching_cube)          // If list_draw_marching_cube==0 then
+    ::glNewList(list_draw_marching_cube, // something got wrong in the list
+                GL_COMPILE_AND_EXECUTE); // generation.
 
     ::glVertexPointer(3, GL_DOUBLE, sizeof(Vertex), mc.vertices());
     ::glNormalPointer(GL_DOUBLE, sizeof(Vertex), &(mc.vertices()->nx));
@@ -727,17 +864,26 @@ void Volume::gl_draw_marchingcube()
       ::glEnableClientState(GL_NORMAL_ARRAY);
     const int size = mc.ntrigs();
 
-    ::glBegin(GL_TRIANGLES);
-    for(int i = 0; i < size; ++i)
+    for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i)
     {
-      const MC_Triangle* const trig = mc.trig(i);
-      gl_draw_one_marching_cube_vertex(trig->v1);
-      gl_draw_one_marching_cube_vertex(trig->v2);
-      gl_draw_one_marching_cube_vertex(trig->v3);
+      const int begin = i == 0 ? 0 : nbs_of_mc_triangles[i-1];
+      const int end = nbs_of_mc_triangles[i];
+      mw->viewer->qglColor(isovalues_list->color(i));
+      ::glBegin(GL_TRIANGLES);
+      for(int i = begin; i < end; ++i)
+      {
+        const MC_Triangle* const trig = mc.trig(i);
+        gl_draw_one_marching_cube_vertex(trig->v1);
+        gl_draw_one_marching_cube_vertex(trig->v2);
+        gl_draw_one_marching_cube_vertex(trig->v3);
+      }
+      ::glEnd();
     }
-    ::glEnd();
-    ::glEndList();
-    list_draw_marching_cube_is_valid = (::glGetError() == GL_NO_ERROR);
+    if(list_draw_marching_cube > 0) // If list_draw_marching_cube==0 then
+    {                               // something got wrong in the list
+      ::glEndList();                // generation.
+      list_draw_marching_cube_is_valid = (::glGetError() == GL_NO_ERROR);
+    }
     if(!list_draw_marching_cube_is_valid)
       std::cerr << boost::format("OpenGL error: %1%\n") 
         % ::gluErrorString(::glGetError());
