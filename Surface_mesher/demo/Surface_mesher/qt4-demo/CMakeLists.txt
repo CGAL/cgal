@@ -58,7 +58,7 @@ if ( CGAL_FOUND AND QT_FOUND AND QGLVIEWER_FOUND )
     
   # Link the executable to CGAL and third-party libraries
   if ( NOT AUTO_LINK_ENABLED )    
-    target_link_libraries( ${prj} cgal cgal-image-io ${CGAL_3RD_PARTY_LIBRARIES})
+    target_link_libraries( ${prj} CGAL CGAL-ImageIO ${CGAL_3RD_PARTY_LIBRARIES})
   endif()
   
   target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
