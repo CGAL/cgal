@@ -243,7 +243,7 @@ struct Poly_hasher {
         const Poly_1& v = p[0];
         typename Poly_1::const_iterator cit;
         NT res(0);
-        int i;
+        int i=0;
         // take at most 3 trailing coeffs
         for (cit = v.begin(); i < 3 && cit != v.end(); cit++, i++) {
             res += *cit;
