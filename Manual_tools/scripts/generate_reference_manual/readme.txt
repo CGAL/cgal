@@ -2,9 +2,7 @@ generate_reference_manual
 *************************
 
 generate_reference_manual automatically generates (most of) the Reference Manual of a CGAL package. It runs Doxygen to generate a Latex documentation from C++ source code, then converts it to CGAL Manual format.
-If the C++ source code is commented, this tool generates the whole Reference Manual of the package (except the introduction page). If not, it generates a raw latex documentation that you have to complete manually.
-
-Note that this tool adds or updates automatic documentation and does *not* remove the documentation manually written. Tags %START-AUTO and %END-AUTO clearly deliminate the automatic documentation.
+If the C++ source code is commented, this tool generates the whole Reference Manual of the package (except the introduction page). If not, it generates a skeleton of the latex documentation that you have to complete manually.
 
 Installation:
 
@@ -19,7 +17,14 @@ Usage:
 
 generate_reference_manual [options] /path/to/package/root
     -h, --help      Print this help
-    -d, --debug     Turn on debug traces
+    -d, --debug     Debug mode
+
+Most of the Reference Manual is simply extracted from the code and from the comments, thus usage is pretty straightforward.
+generate_reference_manual also looks for CGAL Manual keywords in the comments and convert them to separate paragraphs:
+* A paragraph starting by 'Is Model for the Concepts:' is converted to \ccIsModel section
+* A paragraph starting by 'Refines:' is converted to \ccRefines section
+* A paragraph starting by 'Has Models:' is converted to \ccHasModels section
+* A paragraph starting by 'Parameters:' is converted \ccParameters section
 
 Typical scenario:
 
@@ -31,17 +36,20 @@ Typical scenario:
     b) Write extra documentation in .tex files outside of automatic sections.
 5) Goto point 3) until the Reference Manual is complete.
 
+Doxygen:
+
+As this tool uses Doxygen as preprocessor, you must use Doxygen conventions to document your code.
+Basically, this means using ///, //!, /**...*/ or /*!...*/ to delimit the comments that Doxygen will extract.
+You may also document parameters using @param (Javadoc style) or \param (Qt style).
+See http://www.stack.nl/~dimitri/doxygen/docblocks.html for details.
+
 Tips:
 
+* This tool adds or updates automatic documentation and *never* removes the documentation manually written. Tags %START-AUTO and %END-AUTO clearly deliminate the automatic documentation.
 * To generate a concept's documentation, you may create a fake C++ class named after the concept anywhere in the package's folders tree (use the dont_submit file to ignore it in CGAL releases).
-* generate_reference_manual generates a documentation for public and protected items only.
-* "Words surrounded by double quotes" are emphasized. Words containing an underscore are automatically emphasized.
-* A comment starting by 'Concept:' is converted to a \ccIsModel paragraph.
-* A comment starting by 'Sub-concept:' is converted to a \ccRefines paragraph.
-* A comment starting by 'Models:' is converted to a \ccHasModels paragraph.
-* A comment starting by 'Design pattern:' is converted to a \ccHeading{Design Pattern} paragraph.
-* A comment starting by 'Template parameters:' is converted to \ccParameters paragraph.
-* 2 comments '@cond SKIP_IN_MANUAL' and '@endcond' delimit a section ignored by generate_reference_manual.
+* Words containing an underscore or :: are automatically emphasized using \ccc. You may force \ccc macro by surrounding words by simple quotes.
+* Words surrounded by double quotes are emphasized using \em.
+* generate_reference_manual automatically skip private items. You may force it to skip a section of a file using @cond SKIP_IN_MANUAL...@endcond.
 
 Known bugs:
 

@@ -30,7 +30,7 @@ my %macro_names = (
   "(Concept|Is Model for the Concepts):" => '\ccIsModel',
   "(Sub[- ][Cc]oncept( of)?|Refines):" => '\ccRefines',
   "Design [Pp]attern:" => '\ccHeading{Design Pattern}',
-#   'Parameters:' => '\ccParameters',
+#   "(Parameters|Template [Pp]arameters):" => '\ccParameters',
 );
 
 # Warning sentence before automatically generated sections
@@ -61,7 +61,8 @@ sub get_any_section_title_pattern
 }
 
 
-# Unmangle characters mangled for Latex to get regular C++ code
+# Unmangle characters mangled for Latex to get regular C++ code.
+# See latex_mangle() above.
 # Param: the buffer to format
 # Return value: the formatted buffer
 sub latex_unmangle
@@ -69,7 +70,7 @@ sub latex_unmangle
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Avoid consecutive spaces/tabs
+    # Avoid consecutive spaces/tabs to ease parsing in the rest of this script
     $buf =~ s/( |\t)+/ /g;
 
     # Unmangle _, ~, <, >, *, &, [] characters mangled for Latex
@@ -82,7 +83,7 @@ sub latex_unmangle
     $buf =~ s/\\&/&/g;                          # \& -> &
     $buf =~ s/\[\$\\,\$\]/\[\]/g;               # [$\,$] -> []
 
-    # Modify Latex expressions that cgal_manual does not understand in macros:
+    # Remove Latex expressions that cgal_manual does not understand in macros:
     # \-, \char`\"{}, \par, \hspace, \tt, \pageref, \rm, \bf, \em, \label, \index,
     # \setlength
     $buf =~ s/\\-//g;                           # remove \-
@@ -138,6 +139,82 @@ sub doxygen_latex_to_latex
     # "CompactItemize" is a doxygen style based on "itemize"
     $buf =~ s/\{Desc\}/\{description\}/g;
     $buf =~ s/\{CompactItemize\}/\{itemize\}/g;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Mangle C++ code for latex.
+# Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
+# Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
+# See latex_unmangle() above.
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub latex_mangle
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Local variables when parsing buffer line by lines
+    my ($line, @lines);
+
+    # Wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
+    # We add carriage returns around \ccc{} for next line by line substitutions.
+    $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\n\\ccc{$1\}\n/g;
+
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # first curly braces pair must contain plain C++ code.
+    # For the other lines, we wrap C++ types by \ccc{}.
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {
+        # if NOT first curly braces pair of a cgal_manual macro
+        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
+             || $line =~ /\\ccc/)
+        {
+            # Wrap C++ types, including template params, by \ccc{}.
+            # We add carriage returns around \ccc{} for next line by line substitution.
+            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\n\\ccc{$1\}\n/g;
+        }
+        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    }
+
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # first curly braces pair and \ccc expressions must contain plain C++ code.
+    # The other lines must contain regular latex text => we mangle back
+    # _, ~, <, >, *, &, [] characters (see latex_unmangle() above).
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {
+        # if first curly braces pair of a cgal_manual macro or \ccc: plain C++ code
+        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
+         || $line =~ /\\ccc/)
+        {
+            # Remove extra spaces to please cgal_manual
+            $line =~ s/< (.*?) >/<$1>/g;
+            $line =~ s/ & /& /g;
+            $line =~ s/ \(/\(/g;
+        }
+        # else: wrap C++ code for latex
+        else
+        {
+            # Mangle back special latex characters
+            $line =~ s/~/\$\\sim\$/g;           # ~ -> $\sim$
+            $line =~ s/</\$<\$/g;               # < -> $<$
+            $line =~ s/>/\$>\$/g;               # > -> $>$
+            $line =~ s/\*/\$\\ast\$/g;          # * -> $\ast$
+            $line =~ s/&/\\&/g;                 # & -> \&
+            $line =~ s/\[\]/\[\$\\,\$\]/g;      # [] -> [$\,$]
+        }
+        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    }
+
+    # Remove extra carriage returns around \ccc{} expressions
+    $buf =~ s/\n(\\ccc{.*?\})\n/$1/smg;
+
+    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
+    $buf =~ s/"(.*?)"/\{\\em $1\}/smg;
 
     # Return the formatted string
     return $buf;
@@ -237,68 +314,75 @@ sub extended_formatting
 }
 
 
-# Wrap C++ names (types/functions/variables) by \ccc{}.
-# Mangle C++ code for latex.
-# Param: the buffer to format
+# Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable and \ccFunction expressions.
+# Params:
+# - concept/struct/class/... to document (without namespace)
+# - type of the item to document: "class/struct" or "function"
+# - buffer containing a doxygen-generated latex file
 # Return value: the formatted buffer
-sub latex_mangle
+sub format_curly_brace_pairs_expressions
 {
-    # Get parameter: buffer containing a doxygen-generated latex file
+    # Get parameters:
+    # - concept/struct/class/... to document (without namespace)
+    my $item_to_document = shift;
+    # - type of the item to document: "class/struct" or "function"
+    my $item_type = shift;
+    # - buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Local variables when parsing buffer line by lines
-    my ($line, @lines);
-
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
-    # first curly braces pair must contain plain C++ code.
-    # For the other lines, we wrap C++ types by \ccc{}.
-    @lines = split(/\n/, $buf);
-    $buf = "";
-    foreach $line (@lines) {
-        # if NOT first curly braces pair of a cgal_manual macro
-        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/) {
-            # Wrap C++ types, including template params, by \ccc{}
-            # We add carriage returns around \ccc{} for next line by line substitution
-            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\n\\ccc{$1\}\n/g;
-        }
-        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable and \ccFunction expressions
+    # and open a curly brace for the expression's comment
+    # - if class/struct...
+    if ($item_type =~ m/class\/struct/)
+    {
+        $buf =~ s/\\paragraph\{typedef.* (\w+)\}/\\ccNestedType\{$1\}\n\{/g;
+        $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
+        $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
+        $buf =~ s/\\paragraph\{\Q$item_to_document\E\s+\((.*)\}/\\ccConstructor\{$item_to_document \($1;\}\n\{/g;
+        $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
+        $buf =~ s/\\paragraph\{(.*\(.*\).*)\}/\\ccMethod\{$1;\}\n\{/g;
+    }
+    # - ...or if function
+    else
+    {
+        $buf =~ s/\\paragraph\{(.*)\}/\\ccFunction\{$1;\}\n\{/g;
     }
 
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
-    # first curly braces pair and \ccc expressions must contain plain C++ code.
-    # The other lines must contain regular latex text => we mangle back
-    # _, ~, <, >, *, &, [] characters (see begining of script).
-    @lines = split(/\n/, $buf);
-    $buf = "";
-    foreach $line (@lines) {
-        # if first curly braces pair of a cgal_manual macro or \ccc: plain C++ code
-        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
-         || $line =~ /\\ccc/)
-        {
-            # Remove extra spaces to please cgal_manual
-            $line =~ s/< (.*?) >/<$1>/g;
-            $line =~ s/ & /& /g;
-            $line =~ s/ \(/\(/g;
-        }
-        # else: wrap C++ code for latex
-        else
-        {
-            # Mangle back special latex characters
-            $line =~ s/~/\$\\sim\$/g;           # ~ -> $\sim$
-            $line =~ s/</\$<\$/g;               # < -> $<$
-            $line =~ s/>/\$>\$/g;               # > -> $>$
-            $line =~ s/\*/\$\\ast\$/g;          # * -> $\ast$
-            $line =~ s/&/\\&/g;                 # & -> \&
-            $line =~ s/\[\]/\[\$\\,\$\]/g;      # [] -> [$\,$]
-        }
-        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment
+    $buf =~ s/(\[.*?\]);\}\n\{/;\}\n\{\n$1 \\\\/g;
+
+    # Remove brackets in curly braces pairs (restored below):
+    # - replace \begin{xxx}...\end{xxx} by \begin((xxx))...\end((xxx))
+    $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
+    $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
+    # - replace \{ and \} by &#123; and &#125;
+    $buf =~ s/\\\{/&\#123\;/g;
+    $buf =~ s/\\\}/&\#125\;/g;
+
+    # Close curly braces pairs
+    # Note: cgal_manual does not understand lists inside the second curly braces pair
+    # of \ccXXX expressions => we put them after
+    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
+
+    # Restore brackets:
+    # - replace \begin((xxx))...\end((xxx)) by \begin{xxx}...\end{xxx}
+    $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
+    $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
+    # - replace back \{ and \}
+    $buf =~ s/&\#123\;/\\\{/g;
+    $buf =~ s/&\#125\;/\\\}/g;
+
+    # \ccMethod does not support destructors and there is no \ccDestructor
+    # macro => remove destructors
+    if ($item_type =~ m/class\/struct/)
+    {
+        $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
     }
 
-    # Remove extra carriage returns around \ccc{} expressions
-    $buf =~ s/\n(\\ccc{.*?\})\n/$1/smg;
-
-    # Replace double quotes by \em macro
-    $buf =~ s/"(.*?)"/\{\\em $1\}/smg;
+    # Security: remove blank lines in curly braces pairs
+    $buf =~ s/\{(\n)+/\{\n/g;
+    $buf =~ s/(\n)+\}/\n\}/g;
 
     # Return the formatted string
     return $buf;
@@ -348,7 +432,6 @@ sub format_doxygen_class_struct_doc
     {
         # extract template params from \subsubsection* line
         my $parameters = $1;
-# print "$parameters\n"; die;
 
         # Split template declaration(s) on several lines
         $parameters =~ s/(template<|, |> )(class|struct|typename)/$1\n$2/g; # add \n before each param
@@ -404,49 +487,15 @@ sub format_doxygen_class_struct_doc
     $buf =~ s/\\subsubsection\{Member Function Documentation\}/\n\n\\ccOperations\n/;
 
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
-    # and open a curly brace for the expression's comment
-    $buf =~ s/\\paragraph\{typedef.* (\w+)\}/\\ccNestedType\{$1\}\n\{/g;
-    $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
-    $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
-    $buf =~ s/\\paragraph\{\Q$className\E\s+\((.*)\}/\\ccConstructor\{$className \($1;\}\n\{/g;
-    $buf =~ s/\\paragraph\{([^\(\)]*?)\}/\\ccVariable\{$1;\}\n\{/g;
-    $buf =~ s/\\paragraph\{(.*\(.*\).*)\}/\\ccMethod\{$1;\}\n\{/g;
-    #
-    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment
-    $buf =~ s/(\[.*?\]);\}\n\{/;\}\n\{\n$1 \\\\/g;
-    #
-    # Remove list brackets: replace \begin{xxx}...\end{xxx} by
-    # \begin((xxx))...\end((xxx)) (restored below)
-    $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
-    $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
-    #
-    # Close curly braces pairs
-    # Note: cgal_manual does not understand lists inside the second curly braces pair
-    # of \ccXXX expressions => we put them after
-    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
-    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
-    #
-    # Restore list brackets: replace \begin((xxx))...\end((xxx))
-    # by \begin{xxx}...\end{xxx}
-    $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
-    $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
-    #
-    # \ccMethod does not support destructors and there is no \ccDestructor
-    # macro => remove destructors
-    $buf =~ s/\\ccMethod\{.*?~\Q$className\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
-    #
-    # Security: remove blank lines in curly braces pairs
-    $buf =~ s/\{(\n)+/\{\n/g;
-    $buf =~ s/(\n)+\}/\n\}/g;
+    $buf = format_curly_brace_pairs_expressions($className, "class/struct", $buf);
 
-    # Wrap C++ names (types/functions/variables) by \ccc{}.
-    # Mangle C++ code for latex .
+    # Mangle C++ code for latex.
+    # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
+    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
     $buf = latex_mangle($buf);
 
-    # Construct a pattern that matches any section title
-    my $all_titles_pattern = get_any_section_title_pattern();
-
     # Remove brief documentation
+    my $all_titles_pattern = get_any_section_title_pattern();
     $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
 
     # Return the formatted string
@@ -520,37 +569,15 @@ sub format_doxygen_function_doc
     $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
 
     # Rename \ccFunction expressions
-    # and open a curly brace for the expression's comment
-    $buf =~ s/\\paragraph\{(.*)\}/\\ccFunction\{$1;\}\n\{/g;
-    #
-    # Remove list brackets: replace \begin{xxx}...\end{xxx} by
-    # \begin((xxx))...\end((xxx)) (restored below)
-    $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
-    $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
-    #
-    # Close curly braces pairs
-    # Note: cgal_manual does not understand lists inside the second curly braces pair
-    # of \ccXXX expressions => we put them after
-    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
-    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
-    #
-    # Restore list brackets: replace \begin((xxx))...\end((xxx))
-    # by \begin{xxx}...\end{xxx}
-    $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
-    $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
-    #
-    # Security: remove blank lines in curly braces pairs
-    $buf =~ s/\{(\n)+/\{\n/g;
-    $buf =~ s/(\n)+\}/\n\}/g;
+    $buf = format_curly_brace_pairs_expressions($functionName, "function", $buf);
 
-    # Wrap C++ names (types/functions/variables) by \ccc{}.
     # Mangle C++ code for latex.
+    # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
+    # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
     $buf = latex_mangle($buf);
 
-    # Construct a pattern that matches any section title
-    my $all_titles_pattern = get_any_section_title_pattern();
-
     # Remove brief documentation
+    my $all_titles_pattern = get_any_section_title_pattern();
     $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
 
     # Remove declaration of other functions
@@ -694,6 +721,7 @@ copy_doxygen_latex_doc extracts a documentation from a doxygen-generated latex f
 Usage:
 copy_doxygen_latex_doc [options] item_to_document doxygen_generated_documentation.tex template_manual.tex
     -h, --help      Print this help
+    -d, --debug     Debug mode
 
 See generate_reference_manual usage for details.
 END_USAGE
@@ -710,6 +738,7 @@ exit;
 my $item_to_document = undef;                   # Concept/struct/class/... to document
 my $doxygen_generated_file = undef;             # Input file
 my $cgal_manual_file = undef;                   # Output file
+my $debug = 0;                                  # Debug mode?
 
 # Decode parameters
 if ($#ARGV == -1) {                             # If no parameter
@@ -720,6 +749,8 @@ foreach my $arg_num (0 .. $#ARGV)
     my $arg = $ARGV[$arg_num];
     if ($arg =~ /^(-h|--help)$/) {
         usage();
+    } elsif ($arg =~ /^(-d|--debug)$/) {
+        $debug = 1;
     } elsif ($arg =~ /^-/) {                    # If unknown option
         usage();
     } else {                                    # Item to document or input file or output file
@@ -755,19 +786,25 @@ if (($doxygen_generated_file =~ /.*\/class/) or ($doxygen_generated_file =~ /.*\
                                                            $doxygen_generated_buffer);
 }
 
-# # Debug stuff: write formated doxygen output to .doxy file
-# my $formated_doxygen_file = "$cgal_manual_file.doxy";
-# open(FORMATED_DOXYGEN_DOC, "> $formated_doxygen_file")
-#     or die "Can\'t open $formated_doxygen_file: $!";
-# (print FORMATED_DOXYGEN_DOC $formated_doxygen_buffer)
-#     or die "Can\'t write to $formated_doxygen_file: $!";
-# close(FORMATED_DOXYGEN_DOC)
-#     or die "Can\'t close $formated_doxygen_file: $!";
+# Debug stuff: write formated doxygen output to .doxy file
+if ($debug)
+{
+    my $formated_doxygen_file = "$cgal_manual_file.doxy";
+    open(FORMATED_DOXYGEN_DOC, "> $formated_doxygen_file")
+        or die "Can\'t open $formated_doxygen_file: $!";
+    (print FORMATED_DOXYGEN_DOC $formated_doxygen_buffer)
+        or die "Can\'t write to $formated_doxygen_file: $!";
+    close(FORMATED_DOXYGEN_DOC)
+        or die "Can\'t close $formated_doxygen_file: $!";
+}
 
-# Backup output file to .bak file
-my $backup = "$cgal_manual_file.bak";
-copy($cgal_manual_file, $backup)
-    or die "Can\'t copy $cgal_manual_file to $backup: $!";
+# Debug stuff: backup output file to .bak file
+if ($debug)
+{
+    my $backup = "$cgal_manual_file.bak";
+    copy($cgal_manual_file, $backup)
+        or die "Can\'t copy $cgal_manual_file to $backup: $!";
+}
 
 # Read CGAL template Reference Manual
 open(CGAL_MANUAL, "< $cgal_manual_file")
