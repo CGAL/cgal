@@ -206,23 +206,22 @@ void test_6()
   segments.push_back(Segment(Point(3.0,3.0,3.0),Point(1.0,1.0,1.0)));
 
   // call all versions of the function
-  std::cout<<"Test 6"<<std::endl;
+  std::cout << "Test 6" << std::endl;
   Plane plane;
   Line line;
   Point centroid;
-  FT quality;
 
 	// fit plane
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
 
 	// fit line
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_0_tag());
 }
 
 int main()
