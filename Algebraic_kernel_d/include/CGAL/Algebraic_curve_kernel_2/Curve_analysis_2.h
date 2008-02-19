@@ -21,6 +21,9 @@
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 
+// TODO remove Exacus-include
+#include <NiX/Compactified.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class AlgebraicCurveKernel_2, class Rep_ > 
