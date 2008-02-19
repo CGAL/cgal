@@ -732,25 +732,22 @@ template < class CurvedKernelViaAnalysis_2 >
 class Sweep_curves_adapter_2 {
       //: public Curved_kernel_via_analysis_2<CurveKernel_2> {
 
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-
-    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
-    Curve_kernel_2;
-    
-// declares functors, for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_Sweep_curves_pred(Y, Z) \
-    typedef Sweep_curves_functors::Y<Self> Y; \
-    Y Z() const { return Y((Sweep_curves_adapter_2 *)this); }
-#define CGAL_Sweep_curves_cons(Y, Z) CGAL_Sweep_curves_pred(Y, Z)
 public:
     //! \name public typedefs
     //!@{
 
+    //! this instance's template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
+    Curve_kernel_2;
+    
     //! myself
     typedef Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > Self;
     
     //!@}
+
 public:
     //! \name Constructors
     //!@{
@@ -763,8 +760,9 @@ public:
     Sweep_curves_adapter_2(const Curved_kernel_via_analysis_2& kernel) :
         _m_kernel(kernel) {
     }
-
+    
     //!@}
+    
     //!\name embedded types and predicates for \c CurveSweepTraits
     //!@{
 
@@ -779,9 +777,18 @@ public:
     //! generic arc (supports isolated points)
     typedef CGALi::Generic_arc_2<Self> Generic_arc_2;
 
-    //! typedefs for \c CurveSweepTraits_2 
+    //! type of point in model of  \c CurveSweepTraits_2 
     typedef Generic_point_2 Point_2;
+
+    //! type of segment in model of  \c CurveSweepTraits_2 
     typedef Generic_arc_2 Segment_2;
+
+// declares functors, for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_Sweep_curves_pred(Y, Z) \
+    typedef Sweep_curves_functors::Y<Self> Y; \
+    Y Z() const { return Y((Sweep_curves_adapter_2 *)this); }
+#define CGAL_Sweep_curves_cons(Y, Z) CGAL_Sweep_curves_pred(Y, Z)
     
     CGAL_Sweep_curves_pred(Compare_xy_2, compare_xy_2_object)
     CGAL_Sweep_curves_pred(Less_xy_2, less_xy_2_object)
@@ -818,7 +825,8 @@ public:
     }
 
     //!@}
-private:
+
+protected:
     //!\name private members
     //!@{
 
