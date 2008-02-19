@@ -30,7 +30,7 @@
 
 #include <CGAL/Arr_enums.h>
 
-#include <CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adaptor.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h>
 
 #define CGAL_CKvA_USE_CACHES
 
@@ -2590,32 +2590,32 @@ public:
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
 
     // type of CurveSweepTraits model
-    typedef CGAL::Sweep_curves_adaptor_2< Curved_kernel_via_analysis_2 > SCA_2;
+    typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
     // befriend segment for Self::_intersection_points
     friend class SCA_2::Segment_2;
     
     // befriend all functors
-#define CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Z) \
+#define CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Z) \
     friend class CGAL::Sweep_curves_functors::Z< SCA_2 >; \
 
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Compare_xy_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Less_xy_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Compare_y_at_x_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Equal_y_at_x_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Multiplicity_of_intersection_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Compare_y_right_of_point_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Source_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Target_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Construct_segment_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Is_degenerate_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Do_overlap_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(New_endpoints_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(New_endpoints_opposite_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Intersect_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Intersect_right_of_point_2);
-    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR(Make_x_monotone_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Compare_xy_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Less_xy_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Compare_y_at_x_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Equal_y_at_x_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Multiplicity_of_intersection_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Compare_y_right_of_point_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Source_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Target_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Construct_segment_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Is_degenerate_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Do_overlap_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(New_endpoints_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(New_endpoints_opposite_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Intersect_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Intersect_right_of_point_2);
+    CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR(Make_x_monotone_2);
 
-#undef CGAL_BEFRIEND_SWEEP_CURVES_ADAPTOR_2_FUNCTOR
+#undef CGAL_BEFRIEND_SWEEP_CURVES_ADAPTER_2_FUNCTOR
 
 }; // class Arc_2
 
