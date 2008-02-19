@@ -12,8 +12,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_SWEEP_CURVES_ADAPTOR_H
-#define CGAL_SWEEP_CURVES_ADAPTOR_H
+#ifndef CGAL_SWEEP_CURVES_ADAPTOR_2_H
+#define CGAL_SWEEP_CURVES_ADAPTOR_2_H 1
 
 /*! \file Curved_kernel_via_analysis_2/Sweep_curves_adaptor.h
  *  \brief defines class \c Sweep_curves_adaptor
@@ -24,7 +24,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
-#include <CGAL/Curved_kernel_via_analysis_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Generic_point_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Generic_arc_2.h>
@@ -729,10 +728,15 @@ private:
 } // Sweep_curves_functors
 
 //! \brief a wrapper class for \c Curved_kernel_via_analysis_2
-template <class CurvedKernel_2>
+template < class CurvedKernelViaAnalysis_2 >
 class Sweep_curves_adaptor_2 {
-      //: public Curved_kernel_via_analysis_2<CurvedKernel_2> {
+      //: public Curved_kernel_via_analysis_2<CurveKernel_2> {
 
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
+    Curve_kernel_2;
+    
 // declares functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_Sweep_curves_pred(Y, Z) \
@@ -743,12 +747,9 @@ public:
     //! \name public typedefs
     //!@{
 
-    //! \c Curved_kernel_via_analysis_2 instance
-    typedef Curved_kernel_via_analysis_2<CurvedKernel_2>  CKvA_2;
-
     //! myself
-    typedef Sweep_curves_adaptor_2<CurvedKernel_2> Self;
-
+    typedef Sweep_curves_adaptor_2< Curved_kernel_via_analysis_2 > Self;
+    
     //!@}
 public:
     //! \name Constructors
@@ -759,7 +760,7 @@ public:
     }
     
     //! construct using specific \c CKvA_2 instance (for controlling)
-    Sweep_curves_adaptor_2(const CKvA_2& kernel) :
+    Sweep_curves_adaptor_2(const Curved_kernel_via_analysis_2& kernel) :
         _m_kernel(kernel) {
     }
 
@@ -767,10 +768,10 @@ public:
     //!\name embedded types and predicates for \c CurveSweepTraits
     //!@{
 
-    //! native CKvA_2 objects
-    typedef typename CKvA_2::Curve_2 Curve_2;
-    typedef typename CKvA_2::Point_2 Native_point_2;
-    typedef typename CKvA_2::Arc_2 Native_arc_2;
+    //! native Curved_kernel_via_analysis_2 objects
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Native_point_2;
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Native_arc_2;
 
     //! generic point (supports infinity)
     typedef CGALi::Generic_point_2<Self> Generic_point_2;
@@ -812,7 +813,7 @@ public:
 #undef CGAL_Sweep_curves_pred
 #undef CGAL_Sweep_curves_cons
 
-    const CKvA_2& kernel() const {
+    const Curved_kernel_via_analysis_2& kernel() const {
         return _m_kernel;
     }
 
@@ -821,12 +822,12 @@ private:
     //!\name private members
     //!@{
 
-    //! reference to CKvA_2 object
-    CKvA_2 _m_kernel;
+    //! reference to Curved_kernel_via_analysis_2 object
+    Curved_kernel_via_analysis_2 _m_kernel;
      
     //!@}
 }; // class Sweep_curves_adaptor
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SWEEP_CURVES_ADAPTOR_H
+#endif // CGAL_SWEEP_CURVES_ADAPTOR_2_H
