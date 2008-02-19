@@ -25,12 +25,12 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
-#if !CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
+#if !CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
 #include <AcX/Algebraic_curve_pair_2.h>
 #endif
 
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
-    typedef typename Algebraic_curve_pair_2::Algebraic_curve_2 Curve_2; \
+    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; \
     typedef Algebraic_real_2 Type; \
     typedef typename Curve_2::Boundary Boundary; \
     typedef typename Curve_2::Coefficient Coefficient;
@@ -46,7 +46,7 @@ struct Algebraic_real_traits_for_y {
     //! this instance's first template argument
     typedef AlgebraicReal_2 Algebraic_real_2;
     //! this instance's second template argument
-    typedef AlgebraicCurvePair_2 Algebraic_curve_pair_2;
+    typedef AlgebraicCurvePair_2 Curve_pair_2;
     
     CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
     
@@ -63,34 +63,32 @@ struct Algebraic_real_traits {
     //! this instance's first template argument
     typedef AlgebraicReal Algebraic_real;
     
-    //CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
-    
     typedef Null_functor Boundary_between;
     typedef Null_functor Lower_boundary;
     typedef Null_functor Upper_boundary;
     typedef Null_functor Refine;
 };
 
-#if !CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
-
-template <class AlgebraicCurveKernel_2, class Curve_>
+template <class AlgebraicCurveKernel_2, class CurvePair_2>
 struct Algebraic_real_traits_for_y<Xy_coordinate_2<
-    AlgebraicCurveKernel_2>, AcX::Algebraic_curve_pair_2<Curve_> > {
+    AlgebraicCurveKernel_2>, CurvePair_2 > {
     
      //! this instance's first template argument
     typedef Xy_coordinate_2<AlgebraicCurveKernel_2> Algebraic_real_2;
     
     //! this instance's second template argument
-    typedef AcX::Algebraic_curve_pair_2<Curve_> Algebraic_curve_pair_2; 
+    typedef CurvePair_2 Curve_pair_2; 
 
     CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS
 
     //! myself
-    typedef Algebraic_real_traits_for_y<Algebraic_real_2,
-        Algebraic_curve_pair_2> Self;
+    typedef Algebraic_real_traits_for_y< Algebraic_real_2, Curve_pair_2 > Self;
     
+
+#if !CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
     //! type of curve vertical line
     typedef typename Curve_2::Status_line Event_line;
+#endif
 
     //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
@@ -101,21 +99,32 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
 
             CGAL_precondition(r1.y() != r2.y());
 
-            Boundary res;
+            Boundary res(0);
+#if !CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
             Event_line vline1 =
                 r1.curve()._internal_curve().event_info_at_x(r1.x());
 
             Event_line vline2 =
                 r2.curve()._internal_curve().event_info_at_x(r2.x());
+#endif            
+
             
             Boundary low1, low2, high1, high2;
             
             while (true) {
-                low1 = vline1.lower_boundary(r1.arcno());
-                low2 = vline2.lower_boundary(r2.arcno());
+#if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+                low1 = r1.y().low();
+                high1 = r1.y().high();
 
+                low2 = r2.y().low();
+                high2 = r2.y().high();
+#else
+                low1 = vline1.lower_boundary(r1.arcno());
                 high1 = vline1.upper_boundary(r1.arcno());
+                
+                low2 = vline2.lower_boundary(r2.arcno());
                 high2 = vline2.upper_boundary(r2.arcno());
+#endif
                 
                 if (low1 > high2) {
                     res = ((low1 + high2)/Boundary(2));
@@ -127,8 +136,13 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
                 }
                 
                 // else
+#if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+                r1.y().refine();
+                r2.y().refine();
+#else
                 vline1.refine(r1.arcno());
                 vline2.refine(r2.arcno());
+#endif
             }
 
             CGAL::simplify(res);
@@ -154,9 +168,13 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             : public Unary_function<Type, Boundary> {
         
         Boundary operator()(const Type& r) const {
+#if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+            return r.y().low();
+#else
             Event_line vline = r.curve()._internal_curve().
                 event_info_at_x(r.x());
             return vline.lower_boundary(r.arcno());
+#endif
         }
     };
 
@@ -166,9 +184,13 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             : public Unary_function<Type, Boundary> {
          
         Boundary operator()(const Type& r) const {
+#if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+            return r.y().high();
+#else
             Event_line vline = r.curve()._internal_curve().
                 event_info_at_x(r.x());
             return vline.upper_boundary(r.arcno());
+#endif
         }
     };
                 
@@ -180,9 +202,12 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         //!
         //! note that an interval may also degenerate to a single point
         void operator()(const Type& r) const {
-        
+#if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+            return r.y().refine();
+#else
             r.curve()._internal_curve().event_info_at_x
                 (r.x()).refine(r.arcno());
+#endif
         }
         
         //! \brief refines isolating interval of an y-coorinate of algebraic 
@@ -191,37 +216,36 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
         //! resulting interval is:
         //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
         void operator()(const Type& r, int rel_prec) const {
+            Boundary low = Lower_boundary()(r);
+            Boundary high = Upper_boundary()(r);
             
-            Event_line vline =
-                r.curve()._internal_curve().event_info_at_x(r.x());
-            int arcno = r.arcno();
-            Boundary prec = (vline.interval_length(arcno)) /
+            Boundary prec = (high - low) /
                 CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
-
+            
             /////////// attention!! need to test for exact zero !!
                
             // Refine until both boundaries have the same sign
-            while(CGAL::sign(vline.lower_boundary(arcno)) !=
-                    CGAL::sign(vline.upper_boundary(arcno))) {
-                vline.refine(arcno);
+            while (CGAL::sign(low) != CGAL::sign(high)) {
+                Refine()(r);
+                low = Lower_boundary()(r);
+                high = Upper_boundary()(r);
             }
             
             CGAL_assertion(
-                CGAL::sign(vline.lower_boundary(arcno)) != CGAL::ZERO &&
-                CGAL::sign(vline.upper_boundary(arcno)) != CGAL::ZERO);
-
+                    CGAL::sign(low) != CGAL::ZERO &&
+                    CGAL::sign(high) != CGAL::ZERO);
+            
             // Refine until precision is reached
-            while((vline.upper_boundary(arcno) - vline.lower_boundary(arcno)) /
-                   CGAL::max(CGAL::abs(vline.upper_boundary(arcno)),
-                        CGAL::abs(vline.lower_boundary(arcno))) > prec ) {
-                vline.refine(arcno);
+            while (((high - low) / CGAL::max(CGAL::abs(high), CGAL::abs(low)))
+                   > prec ) {
+                Refine()(r);
+                low = Lower_boundary()(r);
+                high = Upper_boundary()(r);
             }
         }
     };
 };
 
-#endif // CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
-    
 template <class Kernel_2>
 struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
     public Algebraic_real_traits_for_y< Xy_coordinate_2<Kernel_2>,
