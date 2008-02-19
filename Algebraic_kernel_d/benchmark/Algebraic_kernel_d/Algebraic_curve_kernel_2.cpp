@@ -1,4 +1,4 @@
- // TODO: Add licence
+// TODO: Add licence
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -18,21 +18,21 @@
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
-#ifndef NiX_USE_QUADRATIC_REFINEMENT
-#define NiX_USE_QUADRATIC_REFINEMENT 1
+#ifndef NiX_USE_QUADRATIC_REFINEMENT_BFI
+#define NiX_USE_QUADRATIC_REFINEMENT_BFI 1
 #endif
 
 #ifndef NiX_USE_INTERNAL_MODULAR_GCD
 #define NiX_USE_INTERNAL_MODULAR_GCD 1
 #endif
 
-#ifndef CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
-#define CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE 0
-#endif
+// #ifndef CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
+// #define CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE 0
+// #endif
 
-#ifndef AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 1
-#endif
+// #ifndef AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+// #define AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 1
+// #endif
 
 #include <NiX/Arithmetic_traits.h>
 #include <NiX/NT_traits.h>
@@ -42,6 +42,7 @@
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
+#include <CGAL/Filtered_algebraic_curve_kernel_2.h>
 
 #define BENCH_DEBUG_OUT 0
 #if BENCH_DEBUG_OUT
@@ -380,8 +381,11 @@ int main( int argc, char** argv ) {
         typedef CGAL::Algebraic_kernel_1<Coefficient> Kernel_1;
         typedef CGAL::Algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
             Kernel_2;
+        typedef CGAL::Filtered_algebraic_curve_kernel_2<Kernel_2>
+            Filtered_kernel_2;
+        
                 
-        std::cerr << do_benchmark<Kernel_2>(argv[1], n_samples);
+        std::cerr << do_benchmark<Filtered_kernel_2>(argv[1], n_samples);
     
     } else {
         std::cerr << "No parameters found" << std::endl;    
