@@ -227,12 +227,14 @@ public:
         Arc_2 a;
         if(!is_degenerate()) {
             if(!cv2.is_degenerate()) {
-                typedef std::vector<std::pair<Point_2, int> > Point_container;
+                typedef std::vector<std::pair<Point_2, unsigned int> > 
+                    Point_container;
                 Point_container tmp;
-                arc().intersect(cv2.arc(), back_inserter(tmp));
+                Arc_2::_intersection_points(arc(), cv2.arc(), 
+                                            std::back_inserter(tmp));
                 // leave only intersection point (without multiplicity)
                 for(typename Point_container::const_iterator it = tmp.begin();
-                        it != tmp.end(); it++) 
+                    it != tmp.end(); it++) 
                     *oi++ = Generic_point_2(it->first);
                 return oi;
             }
