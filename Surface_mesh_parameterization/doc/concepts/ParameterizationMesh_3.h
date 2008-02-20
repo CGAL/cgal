@@ -43,7 +43,8 @@
 /// as parameterization methods deal only with topological disks, ParameterizationMesh_3
 /// defines an interface oriented towards topological disks.
 ///
-/// Models:
+/// Has Models:
+/// We provide 2 models of this concept:
 /// - Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
 /// - Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
 ///
@@ -106,7 +107,7 @@ public:
     // Construction and destruction are undefined.
 
     // MESH INTERFACE
-    
+
     /// Indicate if the mesh matches the ParameterizationMesh_3 concept.
     bool is_valid() const;
 

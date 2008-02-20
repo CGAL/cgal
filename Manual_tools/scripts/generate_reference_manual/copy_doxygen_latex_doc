@@ -307,11 +307,9 @@ sub extended_formatting
     # Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern} sections
     foreach my $key (keys %macro_names)
     {
-      # Extract macro content. 2 cases may occur:
-      # - content is a list
-      # - or content lies on 1 line.
+      # Extract macro content. It lies on a unique line, except lists.
       my $macros = "";
-      while ($buf =~ s/(\n$key\s*\\begin\{itemize\}.*?\\end\{itemize\})\s*//sm) { # if list
+      while ($buf =~ s/(\n$key[^\n]*?\\begin\{itemize\}.*?\\end\{itemize\}.*?)\n//sm) { # if list
         my $line = "$1\n";
         $line =~ s/\n$key\s*//sm;
         $macros .= $line;
@@ -327,7 +325,7 @@ sub extended_formatting
 
     # If the \ccHasModels section is a list, flatten it
     # (for compatibility with the rest of CGAL manual).
-    if ($buf =~ s/(.*?)\\ccHasModels\s+\\begin\{itemize\}\n(.*?)\\end\{itemize\}(.*)//sm)
+    if ($buf =~ s/(.*?\\ccHasModels\n+[^\n]*?)\\begin\{itemize\}\n(.*?)\\end\{itemize\}(.*)//sm)
     {
         # Extract models from \ccHasModels section
         my $start  = $1;
@@ -340,7 +338,7 @@ sub extended_formatting
         $models =~ s/^ *\\\\\n//smg;
 
         # Insert back $models in the buffer
-        $buf = $start . "\\ccHasModels\n\n$models" . $end;
+        $buf = $start . "\n\n" . $models . $end;
     }
 
     # Return the formatted string
