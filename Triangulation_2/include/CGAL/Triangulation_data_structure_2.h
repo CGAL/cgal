@@ -311,6 +311,7 @@ public:
   void remove_second(Vertex_handle v);
   void remove_first(Vertex_handle v);
   void remove_dim_down(Vertex_handle v);
+  void dim_2D_1D(Face_handle f, int i);
 
   Vertex_handle star_hole(List_edges& hole);
   void    star_hole(Vertex_handle v, List_edges& hole);
@@ -400,6 +401,7 @@ private:
 		      int ih, 
 		      std::map< Vh_pair, Edge>& edge_map);
   void reorient_faces();
+  bool dim_2D_1D_precondition(Face_handle f, int i);
 
 public:
   void clear();
@@ -1035,7 +1037,77 @@ remove_degree_3(Vertex_handle v, Face_handle f)
   delete_vertex(v);
 } 
 
+template <class Vb, class Fb>
+bool
+Triangulation_data_structure_2<Vb,Fb>::
+dim_2D_1D_precondition(Face_handle f, int i) {
+  if(!is_valid()) return false;
+  if(dimension() != 2) return false;
+  Vertex_handle v = f->vertex(i);
+  std::map< Vertex_handle, unsigned > hash_v;
+  int n_faces = 0;
+  Face_iterator ib = face_iterator_base_begin();
+  for( ; ib != face_iterator_base_end(); ++ib ) {
+    hash_v[ib->vertex(0)]++;
+    hash_v[ib->vertex(1)]++;
+    hash_v[ib->vertex(2)]++; ++n_faces;
+  }
+  int n = 0;
+  Vertex_handle vres[2];
+  Vertex_iterator iv = vertices_begin();
+  for( ; iv != vertices_end(); ++iv ) {
+    if(hash_v[iv] == ((number_of_faces()/2) + 1)) {
+      if(n == 0) vres[n++] = iv;
+      else if((n == 1) && ((iv == v) || (vres[0] == v))) vres[n++] = iv;
+    }
+  }
+  if(n != 2) return false;
+  if(!((vres[0] == v) || (vres[1] == v))) return false;
+  return true;
+}
 
+template <class Vb, class Fb>
+void
+Triangulation_data_structure_2<Vb,Fb>::
+dim_2D_1D(Face_handle f, int i)
+{
+  CGAL_triangulation_precondition(dim_2D_1D_precondition(f, i));
+
+  Vertex_handle v = f->vertex(i);
+  std::list<Face_handle > to_delete;
+  std::list<Face_handle> to_downgrade;
+  Face_iterator ib = face_iterator_base_begin();
+  for( ; ib != face_iterator_base_end(); ++ib ){
+    if ( ! ib->has_vertex(v) ) { to_delete.push_back(ib);}
+    else { to_downgrade.push_back(ib);}
+  }
+
+  typename std::list<Face_handle>::iterator lfit = to_downgrade.begin();
+  int j;
+  for( ; lfit !=  to_downgrade.end() ; ++lfit) {
+    Face_handle fs = *lfit; j = fs->index(v);
+    if (j == 0) fs->cw_permute();
+    else if(j == 1) fs->ccw_permute();
+    fs->set_vertex(2, Vertex_handle());
+    fs->set_neighbor(2, Face_handle());
+    fs->vertex(0)->set_face(fs);
+  }
+  lfit = to_delete.begin();
+  for( ; lfit !=  to_delete.end() ; ++lfit) {
+    delete_face(*lfit);
+  }
+  set_dimension(dimension() -1);
+  Face_handle n0 = f->neighbor(0);
+  Face_handle n1 = f->neighbor(1);
+  Vertex_handle v0 = f->vertex(0);
+  Vertex_handle v1 = f->vertex(1);
+  f->set_vertex(1, v);
+  Face_handle fl = create_face(v, v1, Vertex_handle(),
+	                       n0, f, Face_handle());
+  f->set_neighbor(0, fl);
+  n0->set_neighbor(1, fl);
+  v->set_face(f);
+}
   
 template <class Vb, class Fb>
 void
