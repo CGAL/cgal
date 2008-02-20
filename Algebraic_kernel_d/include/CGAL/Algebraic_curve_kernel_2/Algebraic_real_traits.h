@@ -25,6 +25,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#ifndef CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
+#define CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION 0
+#endif
+
 #if !CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
 #include <AcX/Algebraic_curve_pair_2.h>
 #endif
