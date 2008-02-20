@@ -187,6 +187,20 @@ Clockwise circulator over the vertices incident to a vertex. Model of the Bidire
 %END-AUTO(\ccTypes)
 
 
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccVariable{Adaptor& m_mesh_adaptor;}
+{
+The decorated mesh.
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+
 \ccCreation
 \ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
 
@@ -215,8 +229,10 @@ non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle
 
 \ccMethod{Adaptor& get_decorated_mesh();}
 {
-Get the decorated mesh.
 }
+\ccGlue
+\begin{description}
+\item[Returns:]the decorated mesh. \end{description}
 \ccGlue
 \ccMethod{const Adaptor& get_decorated_mesh() const;}
 {
@@ -275,8 +291,15 @@ Get iterator over past-the-end vertex of mesh's main border (aka {\em seam}).
 \ccGlue
 \ccMethod{std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);}
 {
-Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
 }
+\ccGlue
+\begin{description}
+\item[Returns:]the border containing \ccc{seed_vertex} (or an empty list if not found). \end{description}
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{seed_vertex}]a border vertex. \end{description}
+\end{description}
 \ccGlue
 \ccMethod{Facet_iterator mesh_facets_begin();}
 {

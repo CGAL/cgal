@@ -264,7 +264,7 @@ public:
 #endif
     }
 
-    /// Get the decorated mesh.
+    /// @return the decorated mesh.
     Adaptor&       get_decorated_mesh()       { return *m_mesh_adaptor; }
     const Adaptor& get_decorated_mesh() const { return *m_mesh_adaptor; }
 
@@ -345,8 +345,8 @@ public:
         return mesh_vertices_end();
     }
 
-    /// Return the border containing seed_vertex.
-    /// Return an empty list if not found.
+    /// @return the border containing seed_vertex (or an empty list if not found).
+    /// @param seed_vertex a border vertex.
     std::list<Vertex_handle> get_border(Vertex_handle seed_vertex)
     {
         std::list<Vertex_handle> border;    // returned list
@@ -1028,11 +1028,14 @@ private:
         }
     }
 
-// Fields
-private:
+// Public fields
+public:
 
     /// The decorated mesh.
     Adaptor& m_mesh_adaptor;
+
+// Private fields
+private:
 
     /// List of all exported vertices.
     /// Order is: inner vertices, then seam/main border ones.
