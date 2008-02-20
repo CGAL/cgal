@@ -32,7 +32,7 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CKvA_CERR
-//#define CKvA_DEBUG_PRINT_CERR
+//#define CKvA_DEBUG_PRINT_CERR 1
 #if CKvA_DEBUG_PRINT_CERR
 #define CKvA_CERR(x) std::cout << x
 #else
@@ -554,6 +554,7 @@ private:
                 min = CGAL::to_interval(x_low(asym_info)).first;
                 max = CGAL::to_interval(x_high(asym_info)).second;
             }
+            break;
         }
         case(CGAL::ARR_TOP_BOUNDARY): {
             min = max = numeric_limits<double>::infinity();
@@ -585,7 +586,6 @@ private:
         if(y_iv.second > y_max) {
             y_max = y_iv.second;
         }
-
     }
 
 
@@ -633,9 +633,12 @@ public:
         y_min = numeric_limits<double>::infinity();
         y_max = -numeric_limits<double>::infinity();
 
+
+
         update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MIN_END));
         update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MAX_END));
-        
+
+
         if(!arc.is_vertical()) {
         
             typename Curve_analysis_2::Internal_curve_2 curve =
@@ -810,7 +813,7 @@ public:
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
         
-        CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
+        //CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
         
         Base base_is_on(this->_ckva());
         
