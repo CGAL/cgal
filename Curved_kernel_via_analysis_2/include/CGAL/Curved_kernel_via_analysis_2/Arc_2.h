@@ -952,10 +952,15 @@ public:
         if (eq_min != NULL && eq_max != NULL) {
             *eq_min = *eq_max = false;
         }
-        
+
         // precomputations:
         CGAL::Comparison_result resmin = CGAL::LARGER;
-        if (is_finite(CGAL::ARR_MIN_END)) {
+        CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
+        bool min_has_x = 
+            (is_finite(CGAL::ARR_MIN_END) || 
+             min_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+             min_loc == CGAL::ARR_TOP_BOUNDARY);
+        if (min_has_x) {
             resmin = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _minpoint().x());
             if (eq_min != NULL) {
@@ -964,31 +969,20 @@ public:
         }
 
         CGAL::Comparison_result resmax = CGAL::SMALLER;
-        if (is_finite(CGAL::ARR_MAX_END)) {
+        CGAL::Arr_parameter_space max_loc = location(CGAL::ARR_MAX_END);
+        bool max_has_x = 
+            (is_finite(CGAL::ARR_MAX_END) || 
+             max_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+             max_loc == CGAL::ARR_TOP_BOUNDARY);
+        
+        if (max_has_x) {
             resmax = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _maxpoint().x());
             if (eq_max != NULL) {
                 *eq_max = (resmax == CGAL::EQUAL);
             }
         }
-	
-        // actual computation:
-        if (location(CGAL::ARR_MIN_END) == CGAL::ARR_LEFT_BOUNDARY) {
-            // compare x-coordinates    
-            if (resmin == CGAL::SMALLER) {
-                return false;
-            }
-            if (resmin == CGAL::EQUAL) {
-                return true;
-            }
-        }
-        // here x > ARR_MIN_END
-        if (location(CGAL::ARR_MAX_END) == CGAL::ARR_RIGHT_BOUNDARY) {
-            return true; // this is unbounded arc (branch)
-        }
-        if (resmax == CGAL::LARGER) {
-            return false;
-        }
+
         bool res = 
 	    (resmin != CGAL::SMALLER && resmax != CGAL::LARGER);
 	return res;
@@ -1813,7 +1807,13 @@ protected:
     int _compute_interval_id() const {
         CGAL_precondition(!is_vertical());
         // we are interested in interval "to the right"
-        if (!is_finite(CGAL::ARR_MIN_END)) {
+        CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
+        bool min_has_x = 
+            (is_finite(CGAL::ARR_MIN_END) || 
+             min_loc == CGAL::ARR_BOTTOM_BOUNDARY ||
+             min_loc == CGAL::ARR_TOP_BOUNDARY);
+        
+        if (!min_has_x) {
             return 0;
         }
         // else
@@ -2040,6 +2040,10 @@ protected:
             }
         } else // for infinite curve end arcno equals to interior arcno
             this->ptr()->_m_arcno_max = arcno();
+
+        // invalidate curve-specific data
+        this->ptr()->_m_interval_id = boost::none;
+        this->ptr()->_m_boundary_in_interval = boost::none;
     }
     //!@}
 
