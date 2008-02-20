@@ -12,7 +12,7 @@
 // release_date  :
 // 
 // source        : $URL$
-// file          : include/CGAL/_test_cls_delaunay_triangulation_2.h
+// file          : include/CGAL/_test_cls_delaunay_triangulation_2.C
 // revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Herve Bronnimann,Mariette Yvinec
@@ -23,7 +23,6 @@
 #include <iostream>
 #include <iterator>
 //#include <vector>
-
 #include <CGAL/_test_cls_triangulation_short_2.h>
 
 template <class Del>
@@ -143,6 +142,84 @@ _test_cls_delaunay_triangulation_2( const Del & )
    _test_delaunay_duality(T1);
    _test_delaunay_duality(T2);
    _test_delaunay_duality(T3);
+
+  /**********************/
+  /******* MOVE *********/
+  std::cout << "    moves" << std::endl;
+
+  std::cout << "    degenerate cases: " << std::endl;
+  
+  Del TM_0, TM_1;
+  Vertex_handle tmv1 = TM_0.insert(Point(0,0));
+  Vertex_handle tmv2 = TM_0.insert(Point(1,0));
+  Vertex_handle tmv3 = TM_0.insert(Point(2,0));
+  Vertex_handle tmv4 = TM_0.insert(Point(1,1));
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv4, Point(2, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv4, Point(3, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv3, Point(1, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv3, Point(-1, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv2, Point(-1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv2, Point(-1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv2, Point(-1, 0, 4));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv2, Point(-1, 0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 1);
+  TM_0.move(tmv2, Point(-1, 1, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv1, Point(0, 2));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv1, Point(0, 1));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  TM_0.move(tmv1, Point(0, 0));
+  assert(TM_0.tds().is_valid());
+  assert(TM_0.is_valid());
+  assert(TM_0.dimension() == 2);
+  assert(!TM_0.move(tmv1, Point(3, 0)));
+
+  std::cout << "    non-degenerate cases: " << std::endl;
+  // non-degenerate cases
+  std::list<Point> points;
+  for(int count=0; count<50; count++) points.push_back(Point(rand()%30000, rand()%30000));
+  TM_1.insert(points.begin(), points.end());
+  for(int i=0; i<50; i++) {
+    for(typename Del::Finite_vertices_iterator 
+         fvi = TM_1.finite_vertices_begin();
+         fvi != TM_1.finite_vertices_end(); fvi++) {
+      Point p = Point(rand()%30000, rand()%30000);
+      TM_1.move(fvi, p);
+      assert(TM_1.tds().is_valid());
+      assert(TM_1.is_valid());
+    }
+  }
 }
 
 
