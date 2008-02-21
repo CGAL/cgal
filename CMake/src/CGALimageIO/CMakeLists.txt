@@ -18,7 +18,6 @@
 # CGAL_MINOR_VERSION
    
 assert(CGAL_BINARY_DIR)
-assert(CGAL_LIB_INSTALL_DIR)
 
 find_package(ZLIB)
 if(ZLIB_FOUND)
@@ -58,7 +57,7 @@ if(ZLIB_FOUND)
   endif()
 
   # WARNING: Use only relative paths; full paths break CPack!
-  install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+  install(TARGETS CGAL_IMAGEIO DESTINATION lib )
 else()
-  message( WARNING "cgal-imageio needs ZLib, cannot be configured.")
+  message( STATUS "CGAL-ImageIO needs ZLib, cannot be configured.")
 endif()  

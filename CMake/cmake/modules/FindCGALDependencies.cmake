@@ -33,6 +33,8 @@ endif()
 
 find_optional_cgal_dependency(GMP)
 find_optional_cgal_dependency(MPFR)
+find_optional_cgal_dependency(ZLIB)
+find_optional_cgal_dependency(TAUCS)
 
 if ( NOT WIN32 )
   find_optional_cgal_dependency(GMPXX)
@@ -41,7 +43,6 @@ endif()
 
 macro_optional_find_package(CGAL_CORE)
 if(WITH_CGAL_CORE AND CGAL_CORE_FOUND )
-  set(CGAL_LIBRARIES  ${CGAL_LIBRARIES} ${CGAL_CORE_LIBRARIES} )
   set(CGAL_USE_CGAL_CORE 1)
 endif()
 

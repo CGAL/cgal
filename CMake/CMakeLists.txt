@@ -11,8 +11,11 @@ project(CGAL)
 #
 #--------------------------------------------------------------------------------------------------
 
+
 # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_SOURCE_DIR}/cmake/modules)
+set(CGAL_CMAKE_MODULE_PATH ${CGAL_SOURCE_DIR}/cmake/modules)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
 
 include(CGALcommon)
 include(GeneratorSpecificSettings)
@@ -24,15 +27,6 @@ include(OptionalAddSubdirectory)
 set(CGAL_MAJOR_VERSION 3)
 set(CGAL_MINOR_VERSION 4)
 set(CGAL_BUILD_VERSION 1)
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
-
-
-# WARNING: Use only relative paths; full paths break CPack!
-set(CGAL_INSTALL_DIR		        .)
-set(CGAL_LIB_INSTALL_DIR	      lib)
-set(CGAL_INCLUDE_INSTALL_DIR	  include)
-set(CGAL_AUXILIARY_INSTALL_DIR	auxiliary)
-set(CGAL_CMAKE_INSTALL_DIR     	cmake)
 
 
 
@@ -110,15 +104,12 @@ if(QT_FOUND)
   add_config_flag( CGAL_USE_QT )
 endif()
 
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Build =-
 #
 #--------------------------------------------------------------------------------------------------
-
-
-
-set(CGAL_INCLUDE_DIR ${CGAL_SOURCE_DIR}/include)
 
 set(CGAL_LIBRARIES_DIR ${CGAL_BINARY_DIR}/lib)
 
@@ -129,8 +120,9 @@ set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} CACHE STRING "Compiler definitions us
 
 set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}" CACHE STRING "Linked flags used for building CGAL.")
 
-include_directories (${CGAL_BINARY_DIR}/include)
-include_directories (${CGAL_INCLUDE_DIR})
+set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include ${CGAL_SOURCE_DIR}/include)
+
+include_directories (${CGAL_INCLUDE_DIRS})
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
 add_definitions(${CGAL_DEFINITIONS})
@@ -138,6 +130,7 @@ add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
 set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
+set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} ${CGAL_LIB_STATIC_LINKER_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
 
 add_subdirectory(src)
@@ -148,37 +141,40 @@ message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
 
 #--------------------------------------------------------------------------------------------------
 #
-#                                    -= INSTALLATION =-
-#
-#--------------------------------------------------------------------------------------------------
-
-# DESTINATION option is mandatory; skipping it breaks CPack!
-
-install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt
-	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
-	            README "VERSION"  
-	      DESTINATION ${CGAL_INSTALL_DIR}
-       )
-       
-
-install(DIRECTORY "include/CGAL"  DESTINATION ${CGAL_INCLUDE_INSTALL_DIR} )
-install(DIRECTORY "auxiliary"     DESTINATION ${CGAL_AUXILIARY_INSTALL_DIR} )
-install(DIRECTORY "cmake/modules" DESTINATION ${CGAL_CMAKE_INSTALL_DIR} )
-
-#--------------------------------------------------------------------------------------------------
-#
 #                                    -= USER SIDE SETTINGS =-
 #
 #--------------------------------------------------------------------------------------------------
 
 # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
-configure_file(${CGAL_SOURCE_DIR}/FindCGAL.cmake.in ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake @ONLY IMMEDIATE)
-configure_file(${CGAL_SOURCE_DIR}/UseCGAL.cmake.in  ${CGAL_BINARY_DIR}/cmake/modules/UseCGAL.cmake  @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CGAL_BINARY_DIR}/CGALConfig.cmake         @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}/CGALConfig.install.cmake @ONLY IMMEDIATE)
 
 
-install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake
-         DESTINATION ${CMAKE_ROOT}/Modules
-       )  
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= INSTALLATION =-
+#
+#--------------------------------------------------------------------------------------------------
+
+# WARNING: Use only relative paths; full paths break CPack!
+# DESTINATION option is mandatory; skipping it breaks CPack!
+
+install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt
+	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
+	            README "VERSION"  
+	      DESTINATION .
+       )
+
+install(FILES "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h"  DESTINATION ./include/CGAL )
+install(FILES cmake/modules/UseCGAL.cmake DESTINATION ./cmake/modules  )
+
+install(DIRECTORY include/CGAL  DESTINATION include )
+install(DIRECTORY auxiliary     DESTINATION .       )
+install(DIRECTORY cmake/modules DESTINATION cmake   )
+
+install(FILES ${CGAL_BINARY_DIR}/CGALConfig.install.cmake DESTINATION . )
+
+
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -187,8 +183,8 @@ install( FILES ${CGAL_BINARY_DIR}/cmake/modules/FindCGAL.cmake ${CGAL_BINARY_DIR
 #--------------------------------------------------------------------------------------------------
 
 
-# This allows the application scripts to locate FindCGAL and UseCGAL
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_BINARY_DIR}/cmake/modules)
+# This allows programs to locate CGALConfig.cmake
+set(CGAL_DIR ${CGAL_BINARY_DIR} )
 
 # This script does not configure demos and examples by default, but its does if requested.
 optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )

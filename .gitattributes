@@ -1570,9 +1570,9 @@ Box_intersection_d/test/Box_intersection_d/CMakeLists.txt -text
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
 CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
-CMake/FindCGAL.cmake.in -text
+CMake/CGALConfig_binary.cmake.in -text
+CMake/CGALConfig_install.cmake.in -text
 CMake/INSTALL_via_cmake -text
-CMake/UseCGAL.cmake.in -text
 CMake/cmake/modules/AddSubdirectories.cmake -text
 CMake/cmake/modules/CGALcommon.cmake -text
 CMake/cmake/modules/CheckCXXFileRuns.cmake -text
@@ -1599,6 +1599,7 @@ CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
+CMake/cmake/modules/UseCGAL.cmake -text
 CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
 CMake/src/CGALimageIO/CMakeLists.txt -text

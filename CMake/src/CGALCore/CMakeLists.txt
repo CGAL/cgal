@@ -18,7 +18,6 @@
 # CGAL_MINOR_VERSION
    
 assert(CGAL_BINARY_DIR)
-assert(CGAL_LIB_INSTALL_DIR)
 
 add_library(CGAL_CORE "all_files.cpp")
 
@@ -52,4 +51,4 @@ else()
 endif()
 
 # WARNING: Use only relative paths; full paths break CPack!
-install(TARGETS CGAL_CORE DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+install(TARGETS CGAL_CORE DESTINATION lib )

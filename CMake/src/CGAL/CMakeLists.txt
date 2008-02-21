@@ -18,7 +18,6 @@
 
    
 assert(CGAL_BINARY_DIR)
-assert(CGAL_LIB_INSTALL_DIR)
 
 add_library (CGAL "all_files.cpp" )
 
@@ -59,5 +58,5 @@ else()
   
 endif()
 
-install(TARGETS CGAL DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+install(TARGETS CGAL DESTINATION lib )
 

@@ -17,7 +17,6 @@
 # CGAL_MINOR_VERSION
 
 assert(CGAL_BINARY_DIR)
-assert(CGAL_LIB_INSTALL_DIR)
 
 if( CGAL_USE_QT )
 
@@ -109,9 +108,9 @@ if( CGAL_USE_QT )
       
     endif()
 
-    install(TARGETS CGAL_QT DESTINATION ${CGAL_LIB_INSTALL_DIR} )
+    install(TARGETS CGAL_QT DESTINATION lib )
 else()
-  message( WARNING "CGALQt needs Qt3, cannot be configured.")
+  message( STATUS "CGALQt needs Qt3, cannot be configured.")
 endif()
 
    
