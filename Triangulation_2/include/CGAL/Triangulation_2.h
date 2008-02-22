@@ -464,9 +464,9 @@ bool move(InputIterator first, InputIterator last)
     std::pair<Vertex_handle, Point> pp = to_move.front();
     to_move.pop_front();
     if(!move(pp.first, pp.second)) {
-      if(blocked[pp.first] == 3) break;
-      else if(blocked[pp.first] == 2) blocked = true;
-      blocked[pp.first]++;
+      if(hash[pp.first] == 3) break;
+      else if(hash[pp.first] == 2) blocked = true;
+      hash[pp.first]++;
       to_move.push_back(pp);
     }
   }
