@@ -44,14 +44,14 @@ CGAL_BEGIN_NAMESPACE
 /// - implements compute_w_ij() to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Discrete Conformal Map method.
 ///
-/// Concept: Model of the ParameterizerTraits_3 concept.
+/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
 ///
-/// Design Pattern:
-/// Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, ...> class is a
+/// @heading Design Pattern:
+/// Discrete_conformal_map_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
 ///
-/// Template parameters:
+/// @heading Parameters:
 /// @param ParameterizationMesh_3       3D surface mesh.
 /// @param BorderParameterizer_3        Strategy to parameterize the surface border.
 /// @param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.

@@ -36,10 +36,10 @@ CGAL_BEGIN_NAMESPACE
 /// - Parameterizer_traits_3 defines the Error_code list of errors detected by this package
 /// - Parameterizer_traits_3 declares a pure virtual method parameterize()
 ///
-/// Concept:
+/// @heading Is Model for the Concepts:
 /// Model of the ParameterizerTraits_3 concept (although you cannot instantiate this class).
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
 /// a strategy of surface parameterization for models of ParameterizationMesh_3.
 

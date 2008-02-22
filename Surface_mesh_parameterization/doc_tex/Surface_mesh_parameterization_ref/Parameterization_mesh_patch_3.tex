@@ -63,6 +63,12 @@ template$<$  \\
 class \ccc{ParameterizationPatchableMesh_3}$>$   \\
 class \ccc{Parameterization_mesh_patch_3};
 
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{ParameterizationPatchableMesh_3}]3D surface mesh. \end{description}
+\end{description}
+
 %END-AUTO(\ccParameters)
 
 
@@ -85,6 +91,9 @@ well.
 Export template parameter.
 }
 \ccGlue
+
+\subsubsection{Types implementing the ParameterizationMesh\_3 interface}
+
 \ccNestedType{NT}
 {
 Number type to represent coordinates.
@@ -238,6 +247,9 @@ non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle
 {
 }
 \ccGlue
+
+\subsubsection{Methods implementing the ParameterizationMesh\_3 interface}
+
 \ccMethod{bool is_valid() const;}
 {
 Indicate if the mesh matches the \ccc{ParameterizationMesh_3} concept.

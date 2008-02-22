@@ -44,14 +44,17 @@ CGAL_BEGIN_NAMESPACE
 /// describes the border of a topological disc. This border may be an actual
 /// border of the mesh or a virtual border.
 ///
-/// Concept:
+/// @heading Is Model for the Concepts:
 /// Model of ParameterizationMesh_3 concept, whose purpose is to allow
 /// the Surface_mesh_parameterization package to access meshes in a uniform manner.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// Parameterization_mesh_patch_3 is a Decorator [GHJV95]: it changes the behavior
 /// of a ParameterizationPatchableMesh_3 3D surface while keeping its
 /// ParameterizationMesh_3 interface.
+///
+/// @heading Parameters:
+/// @param ParameterizationPatchableMesh_3       3D surface mesh.
 
 template<class ParameterizationPatchableMesh_3>
 class Parameterization_mesh_patch_3
@@ -67,20 +70,14 @@ private:
 
 public:
 
-    //*******************************************************************
-    /// @name INTERFACE SPECIFIC TO Parameterization_mesh_patch_3
-    //*******************************************************************
-    //@{
-
     /// Export template parameter.
     typedef ParameterizationPatchableMesh_3 Adaptor;
 
-    //@} // end of INTERFACE SPECIFIC TO Parameterization_mesh_patch_3
 
-    //*******************************************************************
-    /// @name ParameterizationMesh_3 INTERFACE
-    //*******************************************************************
-    //@{
+    ////////////////////////////////////////////////////////////////////
+    /// @subheading Types implementing the ParameterizationMesh_3 interface
+    ////////////////////////////////////////////////////////////////////
+    /// @{
 
     /// Number type to represent coordinates.
     typedef typename Adaptor::NT            NT;
@@ -151,15 +148,10 @@ public:
                                                 typename Adaptor::Vertex_const_handle>
                                             Vertex_around_vertex_const_circulator;
 
-    //@} // end of ParameterizationMesh_3 INTERFACE
+    /// @} // end of Types implementing the ParameterizationMesh_3 interface
 
 // Public operations
 public:
-
-    ///******************************************************************
-    /// @name INTERFACE SPECIFIC TO Parameterization_mesh_patch_3
-    ///******************************************************************
-    //@{
 
     /// Create a Decorator for an existing ParameterizationPatchableMesh_3 mesh.
     /// The input mesh can be of any genus, but it has to come with a "seam" that
@@ -268,12 +260,10 @@ public:
     Adaptor&       get_decorated_mesh()       { return *m_mesh_adaptor; }
     const Adaptor& get_decorated_mesh() const { return *m_mesh_adaptor; }
 
-    //@} // end of INTERFACE SPECIFIC TO Parameterization_mesh_patch_3
-
-    //*******************************************************************
-    /// @name ParameterizationMesh_3 INTERFACE
-    //*******************************************************************
-    //@{
+    ////////////////////////////////////////////////////////////////////
+    /// @subheading Methods implementing the ParameterizationMesh_3 interface
+    ////////////////////////////////////////////////////////////////////
+    /// @{
 
     // MESH INTERFACE
 
@@ -600,7 +590,7 @@ public:
         return Vertex_around_vertex_const_circulator(*this, vertex, start_position);
     }
 
-    //@} // end of ParameterizationMesh_3 INTERFACE
+    /// @} // end of Methods implementing the ParameterizationMesh_3 interface
 
 
 // Private operations

@@ -47,10 +47,10 @@ CGAL_BEGIN_NAMESPACE
 /// onto a convex polygon (only two pinned vertices are needed to ensure a
 /// unique solution), but one-to-one mapping is NOT guaranteed.
 ///
-/// Concept: Model of the ParameterizerTraits_3 concept.
+/// @heading Is Model for the Concepts: Model of the ParameterizerTraits_3 concept.
 ///
-/// Design Pattern:
-/// LSCM_parameterizer_3<ParameterizationMesh_3, ...> class is a
+/// @heading Design Pattern:
+/// LSCM_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
 

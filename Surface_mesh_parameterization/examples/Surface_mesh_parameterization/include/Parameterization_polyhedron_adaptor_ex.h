@@ -42,7 +42,7 @@
 // It can have have any number of borders. Its "main border"
 // will be the mesh's longest border (if there is at least one border).
 //
-// Design Pattern:
+// @heading Design Pattern:
 // Parameterization_polyhedron_adaptor_ex is an Adaptor [GHJV95]: it changes the
 // Polyhedron_ex interface to match the ParameterizationPatchableMesh_3 concept
 

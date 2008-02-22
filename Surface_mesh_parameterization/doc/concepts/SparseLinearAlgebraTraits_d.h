@@ -21,7 +21,7 @@
 /// The concept SparseLinearAlgebraTraits_d
 /// is used to solve sparse linear systems "A*X = B".
 ///
-/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d.
+/// @heading Refines: This is a sub-concept of LinearAlgebraTraits_d.
 
 class SparseLinearAlgebraTraits_d
 {

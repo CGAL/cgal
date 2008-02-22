@@ -21,9 +21,9 @@
 /// SparseLinearAlgebraTraits_d::Matrix
 /// is a concept of a sparse matrix class.
 ///
-/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
+/// @heading Refines: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
 ///
-/// Models:
+/// @heading Has Models:
 /// - Taucs_matrix<T>
 /// - Taucs_symmetric_matrix<T>
 /// - OpenNL::SparseMatrix<T> in OpenNL package

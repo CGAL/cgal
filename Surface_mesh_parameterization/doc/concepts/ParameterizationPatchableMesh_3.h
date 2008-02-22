@@ -33,13 +33,13 @@
 /// The main purpose of this feature is to allow the Surface_mesh_parameterization package
 /// to parameterize any 3D surface by decomposing it as a list of topological disks.
 ///
-/// Sub-concept: ParameterizationPatchableMesh_3 inherits from concept ParameterizationMesh_3.
+/// @heading Refines: ParameterizationPatchableMesh_3 inherits from concept ParameterizationMesh_3.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// ParameterizationPatchableMesh_3 is an Adaptor [GHJV95]: it changes the
 /// interface of a 3D mesh to match the interface expected by class Parameterization_mesh_patch_3.
 ///
-/// Models:
+/// @heading Has Models:
 /// Adaptator for Polyhedron_3 is provided.
 
 class ParameterizationPatchableMesh_3 : public ParameterizationMesh_3

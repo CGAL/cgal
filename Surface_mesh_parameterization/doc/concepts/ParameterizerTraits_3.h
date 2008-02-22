@@ -22,7 +22,7 @@
 /// for a given type of mesh, 'Adaptor', which is a model of the
 /// ParameterizationMesh_3 concept.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// ParameterizerTraits_3 models are Strategies [GHJV95]: they implement
 /// a strategy of surface parameterization for models of ParameterizationMesh_3.
 

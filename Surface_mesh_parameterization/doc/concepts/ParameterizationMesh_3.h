@@ -43,12 +43,12 @@
 /// as parameterization methods deal only with topological disks, ParameterizationMesh_3
 /// defines an interface oriented towards topological disks.
 ///
-/// Has Models:
+/// @heading Has Models:
 /// We provide 2 models of this concept:
 /// - Parameterization_polyhedron_adaptor_3<Polyhedron_3_>
 /// - Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// ParameterizationMesh_3 is an Adaptor [GHJV95]: it changes the
 /// interface of a 3D mesh to match the interface expected by the parameterization methods.
 

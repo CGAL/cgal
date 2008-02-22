@@ -151,7 +151,7 @@ private:
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as Param_mesh_patch_vertex* pointer type.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// Param_mesh_patch_vertex_handle is a Bridge [GHJV95].
 ///
 /// Implementation note:
@@ -295,7 +295,7 @@ private:
 /// Param_mesh_patch_vertex object, thus has the same behavior
 /// as const Param_mesh_patch_vertex* pointer type.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// Param_mesh_patch_vertex_const_handle is a Bridge [GHJV95].
 ///
 /// Implementation note:

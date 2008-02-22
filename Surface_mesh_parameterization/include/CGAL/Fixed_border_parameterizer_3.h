@@ -57,11 +57,11 @@ CGAL_BEGIN_NAMESPACE
 /// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// Concept:
+/// @heading Is Model for the Concepts:
 /// Model of the ParameterizerTraits_3 concept (although you cannot instantiate this class).
 ///
-/// Design Pattern:
-/// Fixed_border_parameterizer_3<ParameterizationMesh_3, ...> class is a
+/// @heading Design Pattern:
+/// Fixed_border_parameterizer_3 class is a
 /// Strategy [GHJV95]: it implements (part of) a strategy of surface parameterization
 /// for models of ParameterizationMesh_3.
 

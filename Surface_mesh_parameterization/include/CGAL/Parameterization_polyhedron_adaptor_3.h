@@ -58,11 +58,11 @@ CGAL_BEGIN_NAMESPACE
 /// "Patches" are a subset of a 3D mesh. "Virtual seams" are the ability
 /// to behave exactly as if the surface was cut following a certain path.
 ///
-/// Concept:
+/// @heading Is Model for the Concepts:
 /// Model of ParameterizationPatchableMesh_3 concept, whose purpose is to allow
 /// the Surface_mesh_parameterization package to access meshes in a uniform manner.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// Parameterization_polyhedron_adaptor_3 is an Adaptor [GHJV95]: it changes the
 /// Polyhedron interface to match the ParameterizationPatchableMesh_3 concept.
 

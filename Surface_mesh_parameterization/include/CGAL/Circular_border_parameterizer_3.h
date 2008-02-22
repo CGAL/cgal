@@ -43,9 +43,10 @@ CGAL_BEGIN_NAMESPACE
 /// ParameterizationMesh_3 class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// Concept: Model of the BorderParameterizer_3 concept (although you cannot instantiate this class).
+/// @heading Is Model for the Concepts:
+/// Model of the BorderParameterizer_3 concept (although you cannot instantiate this class).
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
 /// a strategy of border parameterization for models of ParameterizationMesh_3.
 
@@ -209,9 +210,9 @@ Circular_border_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// Concept: Model of the BorderParameterizer_3 concept.
+/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
 /// a strategy of border parameterization for models of ParameterizationMesh_3
 
@@ -289,9 +290,9 @@ protected:
 /// algorithm. This class implements only compute_edge_length() to compute a
 /// segment's length.
 ///
-/// Concept: Model of the BorderParameterizer_3 concept.
+/// @heading Is Model for the Concepts: Model of the BorderParameterizer_3 concept.
 ///
-/// Design Pattern:
+/// @heading Design Pattern:
 /// BorderParameterizer_3 models are Strategies [GHJV95]: they implement
 /// a strategy of border parameterization for models of ParameterizationMesh_3
 

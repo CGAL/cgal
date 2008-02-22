@@ -21,9 +21,9 @@
 /// SparseLinearAlgebraTraits_d::Vector
 /// is a concept of a vector that can be multiplied by a sparse matrix.
 ///
-/// Sub-concept: This is a sub-concept of LinearAlgebraTraits_d::Vector.
+/// @heading Refines: This is a sub-concept of LinearAlgebraTraits_d::Vector.
 ///
-/// Models:
+/// @heading Has Models:
 /// - CGAL::Taucs_vector<T>
 /// - OpenNL::FullVector<T> in OpenNL package
 

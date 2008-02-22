@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
-/// Concept: Model of the SparseLinearAlgebraTraits_d concept.
+/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
@@ -131,7 +131,7 @@ private:
 /// is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems
 /// using TAUCS out-of-core LU factorization.
 ///
-/// Concept: Model of the SparseLinearAlgebraTraits_d concept.
+/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
 
 template<class T>       // Tested with T = taucs_single or taucs_double
                         // May also work with T = taucs_dcomplex and taucs_scomplex
