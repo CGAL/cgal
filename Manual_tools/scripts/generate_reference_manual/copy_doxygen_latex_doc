@@ -20,7 +20,7 @@ use File::Copy;
 
 # List of sections in a CGAL Reference Manual latex file.
 # The list order defines the default position when a section is inserted.
-my @section_titles = ('\ccDefinition', '\ccParameters', '\ccInheritsFrom', '\ccRefines',
+my @known_section_titles = ('\ccDefinition', '\ccParameters', '\ccInheritsFrom', '\ccRefines',
 '\ccGeneralizes', '\ccIsModel', '\ccHeading{Design Pattern}', '\ccTypes', '\ccConstants',
 '\ccHeading{Variables}', '\ccCreation', '\ccOperations', '\ccHasModels', '\ccImplementation',
 '\ccExample', '\ccSeeAlso');
@@ -40,13 +40,21 @@ my @placeholders = (
     '[Ss]ome(\\\\_\w+)+[,\.]',
 );
 
-# Conversion table from clear text to macro names [L. Saboret extension]
+# Conversion table from clear text to macro names
 my %macro_names = (
-    "(Model|Models|Has Models):" => '\ccHasModels',
-    "(Concept|Is Model for the Concepts):" => '\ccIsModel',
-    "(Sub[- ][Cc]oncept( of)?|Refines):" => '\ccRefines',
-    "Design [Pp]attern:" => '\ccHeading{Design Pattern}',
-#   "(Parameters|Template [Pp]arameters?):" => '\ccParameters',
+    '\ccHeading{Has Models}' => '\ccHasModels',
+    '\ccHeading{Is Model for the Concepts}' => '\ccIsModel',
+    '\ccHeading{Refines}' => '\ccRefines',
+    '\ccHeading{Design Pattern}' => '\ccHeading{Design Pattern}',
+#   '\ccHeading{Parameters}' => '\ccParameters',
+    '\ccHeading{Inherits From}' => '\ccInheritsFrom',
+    '\ccHeading{Generalizes}' => '\ccGeneralizes',
+    '\ccHeading{Requirements}' => '\ccRequirements',
+    '\ccHeading{Access Functions}' => '\ccAccessFunctions',
+    '\ccHeading{Query Functions}' => '\ccQueryFunctions',
+    '\ccHeading{Predicates}' => '\ccPredicates',
+    '\ccHeading{Modifiers}' => '\ccModifiers',
+    '\ccHeading{Implementation}' => '\ccImplementation',
 );
 
 # Warning sentence before automatically generated sections
@@ -84,8 +92,8 @@ sub get_any_section_title_pattern
     # Match \ccHeading{...}
     my $pattern = "(\\\\ccHeading\\\{.*?}";
 
-    # Match any title in @section_titles
-    foreach my $t (@section_titles) {
+    # Match any title in @known_section_titles
+    foreach my $t (@known_section_titles) {
         $pattern = $pattern . "|\Q$t\E";
     }
 
@@ -193,19 +201,31 @@ sub latex_mangle
     # Local variables when parsing buffer line by lines
     my ($line, @lines);
 
+    # There is no \ccSubHeading macro yet
+    $buf =~ s/\\ccSubHeading\{/\\subsubsection\{/g;
+
     # Wrap words surrounded by simple quotes by \ccc{} [L. Saboret's extension].
     # We add carriage returns around \ccc{} for next line by line substitutions.
     $buf =~ s/\'(((::|\w)+(<.*?>)?)+)\'/\n\\ccc{$1\}\n/g;
 
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair must contain plain C++ code.
+    # \subsubsection must protect _ as \_.
     # For the other lines, we wrap C++ types by \ccc{}.
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
-        # if NOT first curly braces pair of a cgal_manual macro
-        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
+        # if first curly braces pair of a cgal_manual macro
+        if ($line =~ /\\(ccHeading|ccSubHeading|ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
              || $line =~ /\\ccc/)
+        {
+            # nothing to do
+        }
+        elsif ($line =~ /\\subsubsection/)
+        {
+            $line =~ s/_/\\_/g; #  _ -> \_
+        }
+        else
         {
             # Wrap C++ types, including template params, by \ccc{}.
             # We add carriage returns around \ccc{} for next line by line substitution.
@@ -214,15 +234,15 @@ sub latex_mangle
         $buf = $buf . $line . "\n";             # concat lines back to $buf
     }
 
-    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
+    # \ccHeading, \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable & \ccFunction
     # first curly braces pair and \ccc expressions must contain plain C++ code.
     # The other lines must contain regular latex text => we mangle back
-    # _, ~, <, >, *, &, [] characters (see latex_unmangle() above).
+    # ~, <, >, *, &, [] characters (see latex_unmangle() above).
     @lines = split(/\n/, $buf);
     $buf = "";
     foreach $line (@lines) {
-        # if first curly braces pair of a cgal_manual macro or \ccc: plain C++ code
-        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
+        # if first curly braces pair of a cgal_manual macro: plain C++ code
+        if ($line =~ /\\(ccHeading|ccSubHeading|ccNestedType|ccEnum|ccConstructor|ccMethod|ccVariable|ccFunction)/
          || $line =~ /\\ccc/)
         {
             # Remove extra spaces to please cgal_manual
@@ -295,32 +315,66 @@ sub keep_only_if_match
 }
 
 
+# Convert clear text to macro name
+# Param: heading name in doxygen latex doc, of the form "Heading ...:" or "Subheading ..."
+# Return value: the formatted macro name
+sub convert_heading_name
+{
+    my $heading = shift;
+
+    # Convert to \ccHeading or \subsubsection
+    $heading =~ s/^Heading (.*?):?$/\\ccHeading\{$1\}/;
+    $heading =~ s/^Subheading (.*?):?$/\\ccSubHeading\{$1\}/;
+
+    # Use CGAL Manual shortcut if available
+    if (defined($macro_names{$heading})) {
+        $heading = $macro_names{$heading};
+    }
+
+    return $heading;
+}
+
+
 # L. Saboret's formatting extensions:
-# Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern} sections.
+# Extract @headings sections from \Definition section.
 # Param: the buffer to format
 # Return value: the formatted buffer
-sub extended_formatting
+sub extented_format_headings
 {
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern} sections
-    foreach my $key (keys %macro_names)
+    # Extract @headings sections from from detailed section.
+    # @heading is in fact an alias to "Heading".
+    # - the macro name starts at "Heading" and ends with ":".
+    # - the macro content lies on a unique line, except lists.
+    #   Doxygen may concat lines, thus we also stop at the first dot.
+    #
+    # case of macros with list
+    while ($buf =~ s/([^\}])\b(Heading [^\n]*?:)\s*([^\n\.]*?\\begin\{itemize\}.*?\\end\{itemize\}.*?)([\n\.])/$1/sm)
     {
-      # Extract macro content. It lies on a unique line, except lists.
-      my $macros = "";
-      while ($buf =~ s/(\n$key[^\n]*?\\begin\{itemize\}.*?\\end\{itemize\}.*?)\n//sm) { # if list
-        my $line = "$1\n";
-        $line =~ s/\n$key\s*//sm;
-        $macros .= $line;
-      }
-      while ($buf =~ s/(\n$key.*?)\n//sm) { # if 1 line
-        my $line = "$1\n";
-        $line =~ s/\n$key\s*//sm;
-        $macros .= $line;
-      }
-      $macros = "$macro_names{$key}\n\n" . $macros;
-      $buf =~ s/\\ccSeeAlso/$macros\n\n\n\\ccSeeAlso/sm;
+        my $macro_name = convert_heading_name($2);
+        my $macro_content = "$3$4";
+        unless ($4 =~ /\n/) {
+            $macro_content .= "\n";
+        }
+        unless ($buf =~ /\Q$macro_name\E/) { # if needed, add $macro_name section before \ccSeeAlso
+            $buf =~ s/\\ccSeeAlso/$macro_name\n\n\n\n\\ccSeeAlso/sm;
+        }
+        $buf =~ s/\n\n\\ccSeeAlso/$macro_content\n\n\\ccSeeAlso/sm;
+    }
+    # case of macros on 1 line
+    while ($buf =~ s/([^\}])\b(Heading [^\n]*?:)\s*(.*?)([\n\.])/$1/sm)
+    {
+        my $macro_name = convert_heading_name($2);
+        my $macro_content = "$3$4";
+        unless ($4 =~ /\n/) {
+            $macro_content .= "\n";
+        }
+        unless ($buf =~ /\Q$macro_name\E/) { # if needed, add $macro_name section before \ccSeeAlso
+            $buf =~ s/\\ccSeeAlso/$macro_name\n\n\n\n\\ccSeeAlso/sm;
+        }
+        $buf =~ s/\n\n\\ccSeeAlso/$macro_content\n\n\\ccSeeAlso/sm;
     }
 
     # If the \ccHasModels section is a list, flatten it
@@ -452,9 +506,9 @@ sub format_doxygen_class_struct_doc
     # Remove extra stuff and insert \ccSeeAlso title at the end of the document
     $buf =~ s/The documentation for this.*/\n\n\\ccSeeAlso\n\n\n/sm;
 
-    # Change "Template parameter(s):" comment in \ccDefinition section to \ccParameters title [L. Saboret extension]
-    # or insert it before \ccSeeAlso
-    unless ($buf =~ s/\n(Parameters|Template [Pp]arameters?):\s*/\n\n\\ccParameters\n\n/sm) {
+    # Rename "Heading Parameters:" comment in \ccDefinition section as \ccParameters [L. Saboret extension]
+    # or insert a new section before \ccSeeAlso
+    unless ($buf =~ s/\bHeading Parameters:\s*/\n\\ccParameters\n\n/sm) {
         $buf =~ s/\\ccSeeAlso/\\ccParameters\n\n\n\\ccSeeAlso/sm;
     }
 
@@ -477,8 +531,19 @@ sub format_doxygen_class_struct_doc
     }
 
     # L. Saboret's formatting extensions:
-    # Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern} sections.
-    $buf = extended_formatting($buf);
+    # Extract @headings sections from \Definition section.
+    $buf = extented_format_headings($buf);
+
+    # L. Saboret's formatting extensions:
+    # Move subheadings from brief to detailed section
+    while ($buf =~ s/\\begin\{Indent\}(Subheading .*?)\n\\begin\{itemize\}\n\\item\n(.*?)$/\\item\n$2/sm)
+    {
+        my $subheading_name = $1;
+        my $next_documented_item = $2;
+        $next_documented_item =~ s/ & /& /g;
+        $buf =~ s/(\\paragraph\{\Q$next_documented_item\E\})/
+                 "\n" . convert_heading_name($subheading_name) . "\n\n$1\n"/e;
+    }
 
     # Copy enumerations values from brief to detailed section
     @lines = split(/\n/, $buf);
@@ -568,8 +633,8 @@ sub format_doxygen_function_doc
     # Insert \ccSeeAlso title at the end of the document
     $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
 
-    # Format "Template parameter(s):" comment [L. Saboret extension]
-    $buf =~ s/\n(Parameters|Template [Pp]arameters?):\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/\n$2\[$1:\]/sm;
+    # Format "Heading Parameters:" comment [L. Saboret extension]
+    $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/sm;
 
     # Insert \ccParameters section before \ccSeeAlso
     # (from brief section)
@@ -596,8 +661,8 @@ sub format_doxygen_function_doc
     }
 
     # L. Saboret's formatting extensions:
-    # Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern} sections.
-    $buf = extended_formatting($buf);
+    # Extract @headings sections from \Definition section.
+    $buf = extented_format_headings($buf);
 
     # Rename \ccDefinition title
     $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
@@ -672,9 +737,9 @@ sub insert_manual_section
                 $success = 1;
             } else {
                 # Else, insert title + %START-AUTO..%END-AUTO section before
-                # the first section that appears after $title in @section_titles.
-                my $after_title = 0;        # indicate if we passed $title in @section_titles
-                foreach my $t (@section_titles) {
+                # the first section that appears after $title in @known_section_titles.
+                my $after_title = 0;        # indicate if we passed $title in @known_section_titles
+                foreach my $t (@known_section_titles) {
                     if ($after_title) {
                         if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$title$title_extra\n\n$section$1$2/sm) {
                             $success = 1;
@@ -725,10 +790,6 @@ sub merge_manuals
     # - buffer containing a doxygen-generated latex file reformated for CGAL
     my $doxy_buf = shift;
 
-    # Remove the placeholder text generated by cc_ref_wizard
-    # before inserting the generated documentation.
-    $cgal_buf = remove_cc_ref_wizard_placeholders($cgal_buf);
-
     # Extract from $cgal_buf the part about $item_to_document
     if ($cgal_buf =~ s/(.*)(^\s*\\begin\{ccRef.*?\s*\{$item_to_document[\s<\}].*?\\end\{ccRef.*?\})(.*)//sm)
     {
@@ -736,8 +797,22 @@ sub merge_manuals
         my $part_to_document = $2;
         my $end              = $3;
 
+        # Remove the placeholder text generated by cc_ref_wizard
+        # before inserting the generated documentation.
+        $part_to_document = remove_cc_ref_wizard_placeholders($part_to_document);
+
+        # Get list of sections present in either file
+        my %actual_section_titles;
+        my $all_titles_pattern = get_any_section_title_pattern();
+        while ($part_to_document =~ m/($all_titles_pattern)/g) {
+            $actual_section_titles{$1} = "true";
+        }
+        while ($doxy_buf =~ m/($all_titles_pattern)/g) {
+            $actual_section_titles{$1} = "true";
+        }
+
         # Copy each section's documentation
-        foreach my $title (@section_titles) {
+        foreach my $title (keys %actual_section_titles) {
             $part_to_document = insert_manual_section($part_to_document, $doxy_buf, $title);
         }
 
