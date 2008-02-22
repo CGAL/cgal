@@ -58,5 +58,5 @@ else()
   
 endif()
 
-install(TARGETS CGAL DESTINATION lib )
+install(TARGETS CGAL DESTINATION ${CGAL_INSTALL_ROOT}/lib )
 

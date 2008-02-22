@@ -50,4 +50,4 @@ else()
 endif()
 
 # WARNING: Use only relative paths; full paths break CPack!
-install(TARGETS CGAL_PDB DESTINATION lib)
+install(TARGETS CGAL_PDB DESTINATION ${CGAL_INSTALL_ROOT}/lib)

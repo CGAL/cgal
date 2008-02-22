@@ -22,13 +22,28 @@ include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
 include(OptionalAddSubdirectory)
 
-# CGAL version number
-# TODO: This should be parsed from the VERSION file
-set(CGAL_MAJOR_VERSION 3)
-set(CGAL_MINOR_VERSION 4)
-set(CGAL_BUILD_VERSION 1)
+# 
+# Read and parse CGAL version number from VERSION file
+#
+file( READ "VERSION" CGAL_VERSION )
+string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION} )
+list( LENGTH CGAL_VERSION_TOKENS CGAL_VERSION_TOKENS_LEN )
+list( GET CGAL_VERSION_TOKENS 0 CGAL_MAJOR_VERSION )
 
+set(CGAL_MINOR_VERSION)
+set(CGAL_BUILD_VERSION)
 
+if ( CGAL_VERSION_TOKENS_LEN GREATER 1 )
+  list( GET CGAL_VERSION_TOKENS 1 CGAL_MINOR_VERSION )
+endif()
+
+if ( CGAL_VERSION_TOKENS_LEN GREATER 2 )
+  list( GET CGAL_VERSION_TOKENS 2 CGAL_BUILD_VERSION )
+endif()
+
+message( STATUS "CGAL_MAJOR_VERSION=${CGAL_MAJOR_VERSION}" )
+message( STATUS "CGAL_MINOR_VERSION=${CGAL_MINOR_VERSION}" )
+message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -146,8 +161,8 @@ message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
 #--------------------------------------------------------------------------------------------------
 
 # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
-configure_file(${CGAL_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CGAL_BINARY_DIR}/CGALConfig.cmake         @ONLY IMMEDIATE)
-configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}/CGALConfig.install.cmake @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CGAL_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
+configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -159,20 +174,24 @@ configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}
 # WARNING: Use only relative paths; full paths break CPack!
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
+set ( CGAL_INSTALL_ROOT "CGAL-${CGAL_VERSION}" CACHE STRING "The root folder where CGAL is installed relative to CMAKE_INSTALL_PREFIX" )
+
 install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt
 	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
 	            README "VERSION"  
-	      DESTINATION .
+	      DESTINATION ${CGAL_INSTALL_ROOT}
        )
 
-install(FILES "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h"  DESTINATION ./include/CGAL )
-install(FILES cmake/modules/UseCGAL.cmake DESTINATION ./cmake/modules  )
+install(FILES "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h"  DESTINATION ${CGAL_INSTALL_ROOT}/include/CGAL )
+install(FILES cmake/modules/UseCGAL.cmake DESTINATION ${CGAL_INSTALL_ROOT}/cmake/modules  )
 
-install(DIRECTORY include/CGAL  DESTINATION include )
-install(DIRECTORY auxiliary     DESTINATION .       )
-install(DIRECTORY cmake/modules DESTINATION cmake   )
+install(DIRECTORY include/CGAL  DESTINATION ${CGAL_INSTALL_ROOT}/include )
+install(DIRECTORY auxiliary     DESTINATION ${CGAL_INSTALL_ROOT}         )
+install(DIRECTORY cmake/modules DESTINATION ${CGAL_INSTALL_ROOT}/cmake   )
+install(DIRECTORY src           DESTINATION ${CGAL_INSTALL_ROOT}         )
+install(DIRECTORY scripts       DESTINATION ${CGAL_INSTALL_ROOT}         )
 
-install(FILES ${CGAL_BINARY_DIR}/CGALConfig.install.cmake DESTINATION . )
+install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT} )
 
 
 
@@ -190,6 +209,13 @@ set(CGAL_DIR ${CGAL_BINARY_DIR} )
 optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
 optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 
+if ( WITH_demo )
+  install(DIRECTORY demo DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT demo )
+endif()
+
+if ( WITH_examples )
+  install(DIRECTORY examples DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT examples )
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #

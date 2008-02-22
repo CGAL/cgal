@@ -108,7 +108,7 @@ if( CGAL_USE_QT )
       
     endif()
 
-    install(TARGETS CGAL_QT DESTINATION lib )
+    install(TARGETS CGAL_QT DESTINATION ${CGAL_INSTALL_ROOT}/lib )
 else()
   message( STATUS "CGALQt needs Qt3, cannot be configured.")
 endif()
