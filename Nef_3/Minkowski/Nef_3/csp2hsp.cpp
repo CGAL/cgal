@@ -73,8 +73,10 @@ public:
   plane_iterator planes_end() const { return planes.end(); }
 
   void visit(Halffacet_const_handle f) {
-    Plane_3 p = f->plane();
-      planes.push_back(p);
+    if(!f->incident_volume()->mark() || 
+       !f->twin()->incident_volume()->mark()) return;
+    Plane_3 p = f->twin()->plane();
+    planes.push_back(p);
   }
 
   void visit(SFace_const_handle s) {}
@@ -308,9 +310,36 @@ Volume_const_handle find(Volume_const_handle c, Hash_map& hash) {
   return hash[c];
 }
 
+Nef_polyhedron_3 get_convex_union(const Nef_polyhedron_3& N0,
+				  const Nef_polyhedron_3& N1) {
+
+  std::list<Point_3> points;
+  Vertex_const_iterator vi;
+  CGAL_forall_vertices(vi, N0)
+    points.push_back(vi->point());
+  CGAL_forall_vertices(vi, N1)
+    points.push_back(vi->point());
+  
+  Polyhedron_3 cv;
+  convex_hull_3(points.begin(), 
+		points.end(), cv);
+  return Nef_polyhedron_3(cv);
+}
+
+struct union_data {
+  Volume_const_handle c0;
+  Volume_const_handle c1;
+  int timeStamp;
+
+  union_data(Volume_const_handle c0_,
+	     Volume_const_handle c1_,
+	     int timeStamp_) 
+    : c0(c0_), c1(c1_), timeStamp(timeStamp_) {}
+};
+
 void simplify_and_output(const Nef_polyhedron_3& DIFF,
 			 const Nef_polyhedron_3& NCV,
-			 int simplify, double factor, int simplifyBy, double minsize) {
+			 int simplify, double factor, int simplifyBy) {
   
   typedef CGAL::PolyhedralVolumeCalculator<Nef_polyhedron_3> PVC;
   typedef CGAL::Union_find<Volume_const_handle> UF;
@@ -336,11 +365,93 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
     c2N[ci] = cfsp.get_polyhedron();
     real_volume[ci] = pvc.get_volume_of_closed_volume(ci);
   }
+  
+#ifdef CGAL_CSP2HSP_USE_PQ
+
+  CGAL::Unique_hash_map<Volume_const_handle, int> timeStamp(0);
+  typedef std::multimap<double, union_data> PQ;
+  typedef PQ::iterator PQ_iterator;
+  PQ pq;
+
+  Halffacet_const_iterator fi;
+  CGAL_forall_halffacets(fi, DIFF) {
+    if(fi->is_twin()) continue;
+    Volume_const_handle c0 = fi->incident_volume();
+    Volume_const_handle c1 = fi->twin()->incident_volume();
+    if(!c0->mark() || !c1->mark()) continue;
+    c0 = find(c0, c2c);
+    c1 = find(c1, c2c);
+    if(c0 == c1) continue;
+    
+    Nef_polyhedron_3 ncv = get_convex_union(c2N[c0], c2N[c1]);
+
+    PVC pvct(ncv);
+    double s0 = real_volume[c0];
+    double s1 = real_volume[c1];
+    double s01 = pvct.get_volume_of_polyhedron();
+    CGAL_assertion(s0+s1 <= s01);
+    if(simplify < 1 || simplify > 3) continue;
+    if(((simplify & 1) == 0 || (s0+s1)*factor < s01) &&
+       ((simplify & 2) == 0 || s0+s1+simplifyBy < s01)) continue;
+    
+    pq.insert(std::make_pair(s01, union_data(c0, c1, 0)));
+  }
+
+  std::cerr << "pq.size()= " << pq.size() << std::endl;
+
+  int currentTime = 0;
+  while(pq.size() > 0) {
+    Volume_const_handle c0 = pq.begin()->second.c0;
+    Volume_const_handle c1 = pq.begin()->second.c1;
+    c0 = find(c0, c2c);
+    c1 = find(c1, c2c);
+    int timeOfUnion = pq.begin()->second.timeStamp;
+    pq.erase(pq.begin());
+    if(timeStamp[c0] > timeOfUnion) continue;
+    if(timeStamp[c1] > timeOfUnion) continue;
+    
+    Nef_polyhedron_3 ncv = get_convex_union(c2N[c0], c2N[c1]);
+
+    c2c[c1] = c0;
+    c2N[c0] = ncv;
+    real_volume[c0] = real_volume[c0] + real_volume[c1];
+    --volumes;
+    ++currentTime;
+    timeStamp[c0] = currentTime;
+    timeStamp[c1] = currentTime;
+
+    CGAL_forall_halffacets(fi, DIFF) {
+      if(fi->is_twin()) continue;
+      Volume_const_handle cn0 = fi->incident_volume();
+      Volume_const_handle cn1 = fi->twin()->incident_volume();
+      if(!cn0->mark() || !cn1->mark()) continue;
+      cn0 = find(cn0, c2c);
+      cn1 = find(cn1, c2c);
+      if(cn0 == cn1) continue;
+      if(cn0 != c0 && cn1 != c0) continue;
+      
+      Nef_polyhedron_3 ncv2 = get_convex_union(c2N[cn0], c2N[cn1]);
+      
+      PVC pvct2(ncv2);
+      double s0 = real_volume[cn0];
+      double s1 = real_volume[cn1];
+      double s01 = pvct2.get_volume_of_polyhedron();
+      CGAL_assertion(s0+s1 <= s01);
+      if(simplify < 1 || simplify > 3) continue;
+      if(((simplify & 1) == 0 || (s0+s1)*factor < s01) &&
+	 ((simplify & 2) == 0 || s0+s1+simplifyBy < s01)) continue;
+      pq.insert(std::make_pair(s01, union_data(cn0, cn1, currentTime)));
+    }
+
+    std::cerr << "pq.size()= " << pq.size() << std::endl;
+    std::cerr << "volumes  = " << volumes << std::endl;
+  }
+
+#else
 
   bool simplified;
   do{
     simplified = false;
-    std::cerr << "next run " << std::endl;
 
     Halffacet_const_iterator fi;
     CGAL_forall_halffacets(fi, DIFF) {
@@ -385,6 +496,7 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 
     std::cerr << "obstacles left " << volumes << std::endl;
   } while(simplified);
+#endif
 
   Nary_union nu2;
   CGAL_forall_volumes(ci, DIFF) {
@@ -399,15 +511,6 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 	    << pvct2.get_volume_of_polyhedron() << std::endl;
   CGAL_assertion((recv2-NCV).is_empty());
 
-  if(minsize > 0.0) {
-    std::cerr << "kickout obstacles smaller than " << minsize << "cmm" << std::endl;
-    CGAL_forall_volumes(ci, DIFF) {
-      if(find(ci, c2c) != ci) continue;
-      if(minsize<=0 || real_volume[ci] < minsize) --volumes; 
-    }
-    std::cerr << "obstacles left " << volumes << std::endl;
-  }
-
   std::cout << volumes+1 << std::endl;
 
   Volume_output vout_ncv;
@@ -416,19 +519,20 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 
   CGAL_forall_volumes(ci, DIFF) {
     if(find(ci, c2c) != ci) continue;
-    if(minsize>0 && real_volume[ci] < minsize) continue; 
     Nef_polyhedron_3 ncv = c2N[ci];
     Volume_output vout;
     ncv.visit_shell_objects(ncv.volumes_begin()->shells_begin(), vout);
+    /*
+    Plane_visitor pv;
     Volume_const_iterator c2;
     CGAL_forall_volumes(c2, DIFF) {
       if(find(c2, c2c) != ci) continue;
-      Plane_visitor pv;
       NCV.visit_shell_objects(c2->shells_begin(), pv);
-      Plane_visitor::plane_iterator pi;
-      for(pi = pv.planes_begin(); pi != pv.planes_end(); ++pi)
-	vout.erase_plane(*pi);
-    }      
+    }
+    Plane_visitor::plane_iterator pi;
+    for(pi = pv.planes_begin(); pi != pv.planes_end(); ++pi)
+      vout.erase_plane(*pi);
+    */
     vout.dump();
   }
 
@@ -439,7 +543,6 @@ int main(int argc, char* argv[]) {
   int simplify = argc > 1 ? std::atoi(argv[1]) : 0;
   int prozent = argc > 2 ? std::atoi(argv[2]) : 20;
   int simplifyBy = argc > 3 ? std::atoi(argv[3]) : 30000;
-  double minsize = argc > 4 ? std::atof(argv[4]) : 0.0;
     
   double factor = (100.0+double(prozent))/100.0;
 
@@ -515,7 +618,7 @@ int main(int argc, char* argv[]) {
   outDiff << DIFF;
 
   if(simplify > 0)
-    simplify_and_output(DIFF, NCV, simplify, factor, simplifyBy, minsize);
+    simplify_and_output(DIFF, NCV, simplify, factor, simplifyBy);
   else
     output_hsp(DIFF, NCV);
 }
