@@ -43,6 +43,21 @@ void PDB::load(std::istream &in, bool print_errors){
     CGAL_PDB_INTERNAL_NS::Line_type lt= CGAL_PDB_INTERNAL_NS::line_type(line);
     if (lt== CGAL_PDB_INTERNAL_NS::HEADER) {
       header_.push_back(std::string(line));
+    } if (lt == CGAL_PDB_INTERNAL_NS::CONECT) {
+      // do something
+      std::istringstream iss(line+6);
+      int base;
+      iss >> base;
+      if (!iss) {
+        CGAL_LOG(Log::SOME, "Error parsing CONECT record: " << line << std::endl);
+        continue;
+      }
+      do {
+        int o;
+        iss >> o;
+        if (!iss) break;
+        connections_.push_back(std::make_pair(base, o));
+      } while (true);
     } else if (lt == CGAL_PDB_INTERNAL_NS::COMPND) {
       header_.push_back(std::string(line));
       int ti;
@@ -94,7 +109,9 @@ void PDB::load(std::istream &in, bool print_errors){
       }
     }
   }
-    
+  
+  build_heterogens();
+  
   CGAL_PDB_INTERNAL_NS::error_logger.dump();
 }
 
@@ -102,8 +119,34 @@ void PDB::load(std::istream &in, bool print_errors){
 void PDB::swap_with(PDB &o) {
   swap(header_, o.header_);
   swap(models_, o.models_);
+  swap(connections_, o.connections_);
 }
 
+
+void PDB::build_heterogens() {
+  CGAL_LOG(Log::SOME, "Building connections for " << connections_.size()
+           << " connections" << std::endl);
+  for (unsigned int i=0; i< connections_.size(); ++i) {
+    int a= connections_[i].first;
+    int b= connections_[i].second;
+    for (unsigned int i=0; i< models_.size(); ++i) {
+      bool found=false;
+      for (Model::Heterogen_iterator hit 
+             = models_[Model_key(i)].heterogens_begin();
+           hit != models_[Model_key(i)].heterogens_end(); ++hit) {
+        if (hit->heterogen().connect(Atom::Index(a), Atom::Index(b))) {
+          found=true;
+          break;
+        }
+      }
+      if (!found) {
+        CGAL_LOG(Log::SOME, "Could not connect atoms " << a << " and " << b 
+                << std::endl);
+      }
+    }
+  }
+  connections_.clear();
+}
 
 std::ostream& PDB::write(std::ostream &out) const {
   for (unsigned int i=0; i< header_.size(); ++i){

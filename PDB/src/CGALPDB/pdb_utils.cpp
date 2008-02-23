@@ -37,7 +37,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
   const char atom_line_oformat_[]=
   "ATOM  %5d %4s%1c%3s %1c%4d%1c   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s";
   const char hetatom_line_oformat_[]=
-  "HETATM%5d %4s%1c%3s %1c%4d%1c   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s";
+  "HETATM%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s";
 
   Line_type line_type (const char* line) {
     if (line[0]=='\0') return OTHER;
@@ -51,6 +51,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
     else if (word== "MASTER") return MASTER;
     else if (word== "ENDMDL") return ENDMDL;
     else if (word== "COMPND") return COMPND;
+    else if (word== "CONECT") return CONECT;
     else if (word== "END   " || word== "END  " || word== "END " || word== "END") return END;
     else if (word == "HEADER" || word == "TITLE " || word == "HETSYN" || word == "SOURCE"
 	     || word == "KEYWDS" || word == "EXPDTA" || word == "AUTHOR" || word == "REVDAT"
@@ -58,7 +59,7 @@ CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 	     || word == "SITE  " || word == "CRYST1" || word == "ORIGX1" || word == "ORIGX2"
 	     || word == "ORIGX3" || word == "SCALE1" || word == "SCALE2" || word == "SCALE3"
 	     || word == "SEQADV" || word == "TURN  " || word == "FORMUL" || word == "HETNAM"
-	     || word == "SSBOND" || word == "MODRES" || word == "CONECT" || word == "HET   "
+	     || word == "SSBOND" || word == "MODRES" || word == "HET   "
 	     || word == "CISPEP" || word == "LINK  " ) return HEADER;
     else if (word== "TER   " || word == "TER") return TER;
     else if (word== "MODEL ") return MODEL;

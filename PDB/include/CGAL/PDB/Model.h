@@ -21,6 +21,7 @@
 #ifndef DSR_MODEL_H_
 #define DSR_MODEL_H_
 #include <CGAL/PDB/Chain.h>
+#include <CGAL/PDB/Heterogen.h>
 #include <vector>
 #include <string>
 #include <boost/tuple/tuple.hpp>
@@ -28,6 +29,22 @@
 CGAL_PDB_BEGIN_NAMESPACE
 
 class PDB;
+
+class Heterogen_key {
+  typedef Heterogen_key This;
+  std::string name_;
+  int num_;
+public:
+  Heterogen_key(std::string name,
+                int num): name_(name), num_(num) {
+  }
+  Heterogen_key(): num_(-1){}
+  CGAL_COMPARISONS2(name_, num_);
+  const std::string &name() const {
+    return name_;
+  }
+  int number() const {return num_;}
+};
 
 //! A class representing a single model from a PDB file.
 /*!
@@ -38,13 +55,16 @@ class Model {
   friend class PDB;
 
   CGAL_SMALL_MAP_VALUE_TYPE(Model_vt, CGAL::Label<Model>, Chain, chain); 
+  CGAL_SMALL_MAP_VALUE_TYPE(Heterogen_vt, CGAL::PDB::Heterogen_key,
+                            Heterogen, heterogen); 
 
   typedef small_map<Model_vt> Chains; 
+  typedef small_map<Heterogen_vt> Heterogens; 
 public:
   //! Construct an empty model
   Model();
 
-  
+  typedef CGAL::PDB::Heterogen_key Heterogen_key;
   typedef CGAL::Label<Model> Chain_key;
 
   void swap_with(Model &o);
@@ -61,11 +81,11 @@ public:
 
   //! Iterator through the chains
   CGAL_ITERATOR(Chain, chain, Chains::iterator, 
-		    return chains_.begin(), return chains_.end());
+                return chains_.begin(), return chains_.end());
 
  //! Iterator through the chains
   CGAL_CONST_ITERATOR(Chain, chain, Chains::const_iterator, 
-			  return chains_.begin(), return chains_.end());
+                      return chains_.begin(), return chains_.end());
 
 
   //! get the chain identified by c
@@ -75,55 +95,25 @@ public:
 
   CGAL_SIZE(chains, return chains_.size());
 
-  //! \cond
-  class Hetatom_data {
-    typedef Hetatom_data This;
-  public:
-    Hetatom_data(const char *rnm, 
-		 const char *anm, int rn, char ch): resname_(rnm),
-						    atomname_(anm),
-						    rnum_(rn), chain_(ch){
-    }
-    Hetatom_data(){}
-    CGAL_GETNR( const char*, molecule_name, return resname_.c_str());
-    
-    CGAL_GETNR( const char*, atom_name, return atomname_.c_str());
-    
-    CGAL_GETNR(int, molecule_number, return rnum_);
-    
-    CGAL_GETNR(Chain_key, chain, return chain_);
-    
-    CGAL_COMPARISONS2(rnum_, chain_);
-
-  protected:
-    std::string resname_;
-    std::string atomname_;
-    int rnum_;
-    Chain_key chain_;
-      
-  };
-  //! \endcond
-
-
-  CGAL_SMALL_MAP_VALUE_TYPE(Hetatom_vt, Hetatom_data, Atom, atom);
-  //! \cond
-  typedef std::vector<Hetatom_vt > Hetatoms;
-  //! \endcond
 
   //! An iterator through CGAL::PDB::Atom values for the HETATM records.
-  CGAL_CONST_ITERATOR(Hetatom, hetatom, 
-			  Hetatoms::const_iterator,
-			  return hetatoms_.begin(),
-			  return hetatoms_.end());
+  CGAL_CONST_ITERATOR(Heterogen, heterogen, 
+                      Heterogens::const_iterator,
+                      return heterogens_.begin(),
+                      return heterogens_.end());
+  
+  //! An iterator through CGAL::PDB::Atom values for the HETATM records.
+  CGAL_ITERATOR(Heterogen, heterogen, 
+                Heterogens::iterator,
+                return heterogens_.begin(),
+                return heterogens_.end());
 
+  //! get the chain identified by c
+  CGAL_FIND(Heterogen, return heterogens_.find(k));
 
-  //! The number of hetatoms
-  CGAL_SIZE(hetatoms, return hetatoms_.size());
+  CGAL_INSERT(Heterogen, return heterogens_.insert(Heterogens::value_type(k, m)););
 
-
-
-
-
+  CGAL_SIZE(heterogen, return heterogens_.size());
 
   //! A unique identified of an atom in the Model
   struct Atom_key: public boost::tuple<Chain_key, Chain::Monomer_key, 
@@ -326,7 +316,7 @@ private:
 
   std::vector<std::string> extra_;
   Chains chains_;
-  Hetatoms hetatoms_;
+  Heterogens heterogens_;
 };
 
 CGAL_SWAP(Model);

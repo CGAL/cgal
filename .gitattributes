@@ -2962,6 +2962,7 @@ PDB/examples/PDB/data/simple.pdb -text
 PDB/examples/PDB/extracting_geometry.cpp -text
 PDB/include/CGAL/PDB/Atom.h -text
 PDB/include/CGAL/PDB/Chain.h -text
+PDB/include/CGAL/PDB/Heterogen.h -text
 PDB/include/CGAL/PDB/Matrix.h -text
 PDB/include/CGAL/PDB/Model.h -text
 PDB/include/CGAL/PDB/Monomer.h -text
@@ -3001,6 +3002,7 @@ PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
 PDB/src/CGALPDB/Chain.cpp -text
 PDB/src/CGALPDB/Chain_pdb.cpp -text
 PDB/src/CGALPDB/Error_logger.cpp -text
+PDB/src/CGALPDB/Heterogen.cpp -text
 PDB/src/CGALPDB/Model.cpp -text
 PDB/src/CGALPDB/Monomer.cpp -text
 PDB/src/CGALPDB/Monomer_data.cpp -text

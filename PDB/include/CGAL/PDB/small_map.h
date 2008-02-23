@@ -159,7 +159,8 @@ public:
   template <class K>
   iterator find(const K k) {
     CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
-    std::pair<iterator,iterator> ret= std::equal_range(begin(), end(), k/*, Compare()*/);
+    std::pair<iterator,iterator> ret= std::equal_range(begin(), end(), 
+                                                       Storage(k));
     CGAL_assertion(ret.first == end() || ret.first ==ret.second || ret.first->key() == k);
     if (ret.first==ret.second) return end();
     else return ret.first;
@@ -167,8 +168,11 @@ public:
   template <class K>
   const_iterator find(const K k) const {
     CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
-    std::pair<const_iterator,const_iterator> ret= std::equal_range(begin(), end(), k/*, Compare()*/);
-    CGAL_assertion(ret.first == end() || ret.first ==ret.second || ret.first->key() == k);
+    std::pair<const_iterator,const_iterator> ret= std::equal_range(begin(), 
+                                                                   end(),
+                                                                   Storage(k));
+    CGAL_assertion(ret.first == end() || ret.first ==ret.second 
+                   || ret.first->key() == k);
     if (ret.first==ret.second) return end();
     else return ret.first;
   }

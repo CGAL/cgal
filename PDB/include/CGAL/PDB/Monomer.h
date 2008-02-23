@@ -116,7 +116,7 @@ public:
   class Atom_iterator_value_type: public small_map_value_type<Atom_key, Atom> {
     typedef small_map_value_type<Atom_key, Atom> P;
   public:
-    Atom_iterator_value_type(Atom_key k, const Atom &a): P(k,a){}
+    Atom_iterator_value_type(Atom_key k, const Atom &a=Atom()): P(k,a){}
     Atom_iterator_value_type(){}
     const Atom &atom() const {return P::data();}
     Atom &atom() {return P::data();}

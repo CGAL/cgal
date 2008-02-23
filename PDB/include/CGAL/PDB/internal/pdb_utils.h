@@ -24,7 +24,7 @@ MA 02110-1301, USA. */
 
 CGAL_PDB_BEGIN_INTERNAL_NAMESPACE
 typedef enum Line_type {HEADER, DBREF, COMPND, SEQRES, ATOM, HETATM, MASTER,
-			ENDMDL, OTHER, TER, MODEL, END} Line_type;
+			ENDMDL, OTHER, TER, MODEL, CONECT, END} Line_type;
   
   Line_type line_type (const char* line);
   extern const char atom_line_iformat_[];

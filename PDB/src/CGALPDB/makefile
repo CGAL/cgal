@@ -30,6 +30,7 @@ Monomer_data$(OBJ_EXT)\
 Chain$(OBJ_EXT)\
 Model$(OBJ_EXT)\
 PDB$(OBJ_EXT)\
+Heterogen$(OBJ_EXT)\
 Chain_pdb$(OBJ_EXT)\
 Monomer$(OBJ_EXT)\
 Quaternion$(OBJ_EXT)\

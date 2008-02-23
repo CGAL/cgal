@@ -28,7 +28,7 @@ Model::Model(){}
 void Model::swap_with(Model &o) {
   std::swap(extra_, o.extra_);
   std::swap(chains_, o.chains_);
-  std::swap(hetatoms_, o.hetatoms_);
+  std::swap(heterogens_, o.heterogens_);
 }
   
 
@@ -80,12 +80,17 @@ void Model::process_line(const char *line) {
     }
     a.set_segment_id(segID);
     a.set_element(element);
-    a.set_charge(charge);
+    //a.set_charge(charge);
     a.set_type(Atom::string_to_type(name));
-      
-    hetatoms_.push_back(Hetatom_vt(Hetatom_data(resname, name, resnum, 
-						chain), a));
-	
+    
+    std::string rname(resname);
+    Heterogen_key hk(resname, resnum);
+    if (heterogens_[hk].find(name) != heterogens_[hk].atoms_end()) {
+      CGAL_LOG(Log::LOTS, "Duplicate atom in heterogen " << name << std::endl);
+    } else {
+      heterogens_[hk].insert(name, a);
+    }
+    heterogens_[hk].set_chain(chain);
     //residue(resnum-1)->set_coords (al, Point(x,y,z));
     //residue(resnum-1)->set_index(al, snum);
     //++cur_atom_index;
@@ -104,27 +109,13 @@ void Model::write(int model_index, std::ostream &out) const {
   for (Chain_const_iterator it= chains_.begin(); it != chains_.end(); ++it){
     index= it->chain().write(it->key().index(), index, out);
   }
-  for (Hetatoms::const_iterator it = hetatoms_.begin();
-       it != hetatoms_.end(); ++it){
-    //Point pt= res->cartesian_coords(al);
-    const Atom &a= it->atom();
-    Point pt = a.point();
-    char alt=' ';
-    char insertion_residue_code=' ';
-    sprintf(line, CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_,
-	    index++, 
-	    it->key().atom_name(), alt,
-	    it->key().molecule_name(), 
-	    it->key().chain().index(), 
-	    static_cast<unsigned int>(it->key().molecule_number()), 
-	    insertion_residue_code,
-	    pt.x(), pt.y(), pt.z(), 
-	    a.occupancy(), a.temperature_factor(), a.segment_id().c_str(),
-	    a.element().c_str(), a.charge().c_str());
-    out << line << std::endl;
-  }
   for (unsigned int i=0; i< extra_.size(); ++i){
     out << extra_[i] << std::endl;
+  }
+  for (Heterogen_const_iterator it= heterogens_begin(); it != heterogens_end();
+       ++it){
+    index= it->heterogen().write(it->key().name(), it->key().number(),
+                                 index, out);
   }
   out << "ENDMDL                       " << std::endl;
 }

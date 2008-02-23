@@ -182,9 +182,11 @@ public:
 
 private:
   void load(std::istream &in, bool print_errors);
+  void build_heterogens();
 
   std::vector<std::string> header_;
   Models models_;
+  std::vector<std::pair<int, int> > connections_;
 };
 
 

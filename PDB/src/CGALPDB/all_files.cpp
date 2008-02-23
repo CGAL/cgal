@@ -4,7 +4,7 @@
 #include "Chain.cpp"
 #include "Model.cpp"
 #include "PDB.cpp"
-//#include "align.cpp"
+#include "Heterogen.cpp"
 #include "Chain_pdb.cpp"
 #include "Monomer.cpp"
 #include "Quaternion.cpp"

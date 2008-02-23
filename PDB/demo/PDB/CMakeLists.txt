@@ -1,41 +1,21 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (PDB_Demo)
-
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGALROOT}/cmake/modules"  )
 
 find_package(CGAL)
 
-find_package(Qt3)
-
-if ( CGAL_FOUND AND QT_FOUND )
+if ( CGAL_FOUND )
 
   include(UseCGAL)
-  include(Qt3Macros)
+  include(CreateSingleSourceCGALProgram)
 
-  QT3_AUTOMOC(  pdb_split.cpp pdb_tree.cpp )
-
-  # Make sure the compiler can find generated .moc files
-  include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-  include_directories( ${QT_INCLUDE_DIR} )
-
-  add_executable  (pdb_tree  pdb_split.cpp pdb_tree.cpp)
-  add_dependencies(pdb_tree CGAL CGAL_QT)
-
-  if ( CGAL_USE_CGAL_CORE )
-    add_dependencies(pdb_tree CGAL_CORE)
-  endif()
-
-  # Link the executable to CGAL and third-party libraries
-  if ( AUTO_LINK_ENABLED )
-    target_link_libraries(pdb_tree ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )
-  else()
-    target_link_libraries(pdb_tree ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})
-  endif()
+  create_single_source_cgal_program( pdb_cat.cpp )
+  create_single_source_cgal_program( pdb_echo.cpp )
+  create_single_source_cgal_program( pdb_split.cpp )
+  create_single_source_cgal_program( pdb_transform.cpp )
+  create_single_source_cgal_program( pdb_tree.cpp )
 
 endif()
