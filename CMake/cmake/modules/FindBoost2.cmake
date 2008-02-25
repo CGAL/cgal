@@ -53,6 +53,8 @@
 
 SET(BOOST_INCLUDE_PATH_DESCRIPTION "directory containing the boost include files. E.g /usr/local/include/boost_1_34_1 or c:\\Program Files\\boost\\boost_1_34_1")
 
+SET(BOOST_LIB_PATH_DESCRIPTION "directory containing the boost library files. E.g /usr/local/lib/boost_1_34_1 or c:\\Program Files\\boost\\boost_1_34_1\\lib")
+
 SET(BOOST_DIR_MESSAGE "Set the Boost_INCLUDE_DIR cmake cache entry to the directory containing the boost include files.")
 
 SET(BOOST_DIR_SEARCH $ENV{BOOST_ROOT})
@@ -72,29 +74,35 @@ ENDIF()
 IF(WIN32)
   SET(BOOST_DIR_SEARCH
     ${BOOST_DIR_SEARCH}
-    "C:/Program Files/boost/boost_1_35_1"
-    "C:/Program Files/boost/boost_1_35_0"
-    "C:/Program Files/boost/boost_1_34_1"
-    "C:/Program Files/boost/boost_1_34_0"
-    "C:/Program Files/boost/boost_1_33_1"
-    "C:/Program Files/boost/boost_1_33_0"
+    
+    "$ENV{ProgramFiles}/boost/boost_1_35_1"
+    "$ENV{ProgramFiles}/boost/boost_1_35_0"
+    "$ENV{ProgramFiles}/boost/boost_1_34_1"
+    "$ENV{ProgramFiles}/boost/boost_1_34_0"
+    "$ENV{ProgramFiles}/boost/boost_1_33_1"
+    "$ENV{ProgramFiles}/boost/boost_1_33_0"
+    
+    "$ENV{ProgramFiles}/boost_1_35_1"
+    "$ENV{ProgramFiles}/boost_1_35_0"
+    "$ENV{ProgramFiles}/boost_1_34_1"
+    "$ENV{ProgramFiles}/boost_1_34_0"
+    "$ENV{ProgramFiles}/boost_1_33_1"
+    "$ENV{ProgramFiles}/boost_1_33_0"
   )
 ENDIF()
 
 #
 # Look for an installation.
 #
-FIND_PATH(Boost_INCLUDE_DIR NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH} DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}" )
+FIND_PATH(Boost_INCLUDE_DIRS NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH} DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}" )
 
 # Now try to get the include and library path.
-IF(Boost_INCLUDE_DIR)
-
-  SET(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+IF(Boost_INCLUDE_DIRS)
   
   # Compose the boost library path.
   # Note that the user may not have installed any libraries
   # so it is quite possible the Boost_LIBRARY_PATH may not exist.
-  SET(Boost_LIBRARY_DIR ${Boost_INCLUDE_DIR})
+  SET(Boost_LIBRARY_DIR ${Boost_INCLUDE_DIRS} )
 
   # !! ON WHAT PLATFORM CAN THIS WORK !!
   #IF("${Boost_LIBRARY_DIR}" MATCHES "boost-[0-9]+")
@@ -117,7 +125,7 @@ IF(Boost_INCLUDE_DIR)
   ENDIF()
 
   IF(Boost_LIBRARY_DIR AND EXISTS "${Boost_LIBRARY_DIR}")
-    SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
+    SET(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR} CACHE PATH "The ${BOOST_LIB_PATH_DESCRIPTION}" )
   ENDIF()
 ENDIF()
 
@@ -125,5 +133,5 @@ INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Boost "Boost was not found. ${BOOST_DIR_MESSAGE}" Boost_INCLUDE_DIRS )
 SET(Boost_FOUND ${BOOST_FOUND})
 
-MARK_AS_ADVANCED(Boost_INCLUDE_DIR)
-MARK_AS_ADVANCED(Boost_LIBRARY_DIR)
+MARK_AS_ADVANCED(Boost_INCLUDE_DIRS)
+MARK_AS_ADVANCED(Boost_LIBRARY_DIRS)
