@@ -50,3 +50,5 @@ if(GMP_FOUND)
   find_package_handle_standard_args(CGAL_CORE "DEFAULT_MSG" CGAL_CORE_INCLUDE_DIR )
 
 endif()
+
+mark_as_advanced(CGAL_CORE_INCLUDE_DIR)

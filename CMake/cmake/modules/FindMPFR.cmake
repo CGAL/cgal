@@ -3,7 +3,7 @@
 # MPFR_INCLUDE_DIR - the MPFR include directory
 # MPFR_LIBRARIES_DIR - Directory where the MPFR libraries are located
 # MPFR_LIBRARIES - the MPFR libraries
-# MPFR_IN_AUXILIARY - TRUE if the MPFR found is the one distributed with CGAL in the auxiliary folder
+# MPFR_IN_CGAL_AUXILIARY - TRUE if the MPFR found is the one distributed with CGAL in the auxiliary folder
 
 # TODO: support MacOSX
 
@@ -11,7 +11,7 @@ include(FindPackageHandleStandardArgs)
 include(GeneratorSpecificSettings)
 
 # Is it already configured?
-if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES ) 
+if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES_DIR ) 
    
   set(MPFR_FOUND TRUE)
   
@@ -25,39 +25,42 @@ else()
   	        DOC "The directory containing the MPFR header files"
            )
 
-  if ( MPFR_INCLUDE_DIR ) 
-
-     if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/gmp/include" )
-       set( MPFR_IN_CGAL_AUXILIARY TRUE )
-       set( MPFR_LIB_SEARCH_PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib )
-     endif()
-     
-    if ( AUTO_LINK_ENABLED )
-      set( MPFR_NAMES "mpfr${TOOLSET}-mt" "mpfr${TOOLSET}-mt-gd" "mpfr${TOOLSET}-mt-o" "mpfr${TOOLSET}-mt-g" )
-    else()
-      set( MPFR_NAMES "mpfr" )
-    endif()  
+  if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/gmp/include" )
+    set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE BOOL "Indicates whether the MPFR detected is the one that is distributed with CGAL" )
+  endif()
+  
+  if ( AUTO_LINK_ENABLED )
+  
+    find_path(MPFR_LIBRARIES_DIR 
+              NAMES "mpfr${TOOLSET}-mt.lib" "mpfr${TOOLSET}-mt-gd.lib" "mpfr${TOOLSET}-mt-o.lib" "mpfr${TOOLSET}-mt-g.lib"
+              PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
+                    ENV MPFR_LIB_DIR
+              DOC "Directory containing the MPFR library"
+             ) 
     
-    find_library(MPFR_LIBRARIES 
-                 NAMES ${MPFR_NAMES} 
-                 PATHS ${MPFR_LIB_SEARCH_PATHS}
-                       ENV MPFR_LIB_DIR
+  else()
+  
+    find_library(MPFR_LIBRARIES NAMES mpfr 
+                 PATHS ENV MPFR_LIB_DIR
                  DOC "Path to the MPFR library"
                 )
-     
+                
     if ( MPFR_LIBRARIES ) 
-      get_filename_component(MPFR_LIBRARIES_DIR ${MPFR_LIBRARIES} PATH)
+      get_filename_component(MPFR_LIBRARIES_DIR ${MPFR_LIBRARIES} PATH CACHE )
     endif()
     
   endif()  
   
   # Attempt to load a user-defined configuration for MPFR if couldn't be found
-  if ( NOT MPFR_INCLUDE_DIR OR NOT MPFR_LIBRARIES )
+  if ( NOT MPFR_INCLUDE_DIR OR NOT MPFR_LIBRARIES_DIR )
     include( MPFRConfig OPTIONAL )
   endif()
   
-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES)
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES_DIR)
   
 endif()
 
-
+mark_as_advanced(MPFR_INCLUDE_DIR)
+mark_as_advanced(MPFR_LIBRARIES)
+mark_as_advanced(MPFR_LIBRARIES_DIR)
+mark_as_advanced(MPFR_IN_CGAL_AUXILIARY)

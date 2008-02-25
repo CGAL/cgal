@@ -1,9 +1,8 @@
 # Try to find the ZLIB libraries
 # ZLIB_FOUND - system has ZLIB lib
 # ZLIB_INCLUDE_DIR - the ZLIB include directory
-# ZLIB_LIBRARIES_DIR - Directory where the ZLIB libraries are located
 # ZLIB_LIBRARIES - the ZLIB libraries
-# ZLIB_IN_AUXILIARY - TRUE if the ZLIB found is the one distributed with CGAL in the auxiliary folder
+# ZLIB_IN_CGAL_AUXILIARY - TRUE if the ZLIB found is the one distributed with CGAL in the auxiliary folder
 
 # TODO: support MacOSX
 
@@ -25,27 +24,20 @@ else()
   	        DOC "The directory containing the ZLIB header files"
            )
 
-  if ( ZLIB_INCLUDE_DIR ) 
-
-     if ( ZLIB_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/zlib/include" )
-       set( ZLIB_IN_CGAL_AUXILIARY TRUE )
-       set( ZLIB_LIB_SEARCH_PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib )
-     endif()
-     
-    set( ZLIB_NAMES zlib z zdll )
-    
-    find_library(ZLIB_LIBRARIES 
-                 NAMES ${ZLIB_NAMES} 
-                 PATHS ${ZLIB_LIB_SEARCH_PATHS}
-                       ENV ZLIB_LIB_DIR
-                 DOC "Path to the ZLIB library"
-                )
-     
-    if ( ZLIB_LIBRARIES ) 
-      get_filename_component(ZLIB_LIBRARIES_DIR ${ZLIB_LIBRARIES} PATH)
-    endif()
-    
-  endif()  
+  if ( ZLIB_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/zlib/include" )
+    set( ZLIB_IN_CGAL_AUXILIARY TRUE CACHE BOOL "Indicates whether the ZLib detected is the one that is distributed with CGAL" )
+  endif()
+  
+  find_library(ZLIB_LIBRARIES 
+               NAMES zlib z zdll
+               PATHS ${CGAL_SOURCE_DIR}/auxiliary/zlib/lib
+                     ENV ZLIB_LIB_DIR
+               DOC "Path to the ZLIB library"
+              )
+   
+  if ( ZLIB_LIBRARIES ) 
+    get_filename_component(ZLIB_LIBRARIES_DIR ${ZLIB_LIBRARIES} PATH CACHE)
+  endif()
   
   # Attempt to load a user-defined configuration for ZLIB if couldn't be found
   if ( NOT ZLIB_INCLUDE_DIR OR NOT ZLIB_LIBRARIES )
@@ -56,4 +48,6 @@ else()
   
 endif()
 
-
+mark_as_advanced(ZLIB_INCLUDE_DIR)
+mark_as_advanced(ZLIB_LIBRARIES)
+mark_as_advanced(ZLIB_IN_CGAL_AUXILIARY)
