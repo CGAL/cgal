@@ -15,11 +15,13 @@ if(Boost_FOUND AND Boost_LIBRARY_DIRS)
   endif()
 
   if ( AUTO_LINK_ENABLED )
-    set(BOOST_PROGRAM_OPTIONS_LIBRARIES "")
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_PROGRAM_OPTIONS "boost_program_options not found." Boost_LIBRARY_DIRS )
+    file ( GLOB BOOST_PROGRAM_OPTIONS_LIBRARIES "${Boost_LIBRARY_DIRS}/boost_program_options*" )
   else()
     find_library(BOOST_PROGRAM_OPTIONS_LIBRARIES NAMES boost_program_options boost_program_options-mt PATHS ${Boost_LIBRARY_DIRS})
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_PROGRAM_OPTIONS "boost_program_options not found." BOOST_PROGRAM_OPTIONS_LIBRARIES )
   endif()                                                
+  
+  mark_as_advanced(BOOST_PROGRAM_OPTIONS_LIBRARIES)
+  
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_PROGRAM_OPTIONS "boost_program_options not found." BOOST_PROGRAM_OPTIONS_LIBRARIES )
 endif()
 

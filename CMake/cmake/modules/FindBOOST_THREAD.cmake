@@ -14,12 +14,15 @@ if(Boost_FOUND AND Boost_LIBRARY_DIRS)
       set(BOOST_THREAD_FIND_QUIETLY TRUE)
   endif()
 
+
   if ( AUTO_LINK_ENABLED )
-    set(BOOST_THREAD_LIBRARIES "")
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_THREAD "boost_thread not found." Boost_LIBRARY_DIRS )
+    file ( GLOB BOOST_THREAD_LIBRARIES "${Boost_LIBRARY_DIRS}/boost_thread*" )
   else()
-    find_library(BOOST_THREAD_LIBRARIES NAMES boost_thread boost_thread-mt PATHS ${Boost_LIBRARY_DIRS})
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_THREAD "boost_thread not found." BOOST_THREAD_LIBRARIES )
+    find_library(BOOST_THREAD_LIBRARIES NAMES "boost_thread" "boost_thread-mt" PATHS ${Boost_LIBRARY_DIRS})
   endif()
+  
+  mark_as_advanced(BOOST_THREAD_LIBRARIES)
+  
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_THREAD "boost_thread not found." BOOST_THREAD_LIBRARIES )
 endif()
 
