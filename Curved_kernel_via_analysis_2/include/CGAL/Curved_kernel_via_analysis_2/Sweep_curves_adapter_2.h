@@ -289,9 +289,9 @@ public:
     /*!
      * returns true if \c p lies on curve \c cv
      */
-    result_type operator()(const Point_2& p, const Arc_2& cv) const
+    result_type operator()(const Arc_2& cv, const Point_2& p) const
     {
-        return (_m_adapter->compare_y_at_x_2_object()(p, cv) == CGAL::EQUAL);
+        return (_m_adapter->compare_y_at_x_2_object()(cv, p) == CGAL::EQUAL);
     }
     
 private:
@@ -796,7 +796,7 @@ public:
     
     CGAL_Sweep_curves_pred(Do_overlap_2, do_overlap_2_object)
     CGAL_Sweep_curves_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
-    CGAL_Sweep_curves_pred(Equal_y_at_x_2, equal_2_object)
+    CGAL_Sweep_curves_pred(Equal_y_at_x_2, equal_y_at_x_2_object)
     
     CGAL_Sweep_curves_pred(Multiplicity_of_intersection_2,
             multiplicity_of_intersection_2_object)
