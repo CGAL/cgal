@@ -12,10 +12,7 @@ if ( CGAL_FOUND )
   include(UseCGAL)
   include(CreateSingleSourceCGALProgram)
 
-  create_single_source_cgal_program( pdb_cat.cpp )
-  create_single_source_cgal_program( pdb_echo.cpp )
   create_single_source_cgal_program( pdb_split.cpp )
-  create_single_source_cgal_program( pdb_transform.cpp )
   create_single_source_cgal_program( pdb_tree.cpp )
 
 endif()
