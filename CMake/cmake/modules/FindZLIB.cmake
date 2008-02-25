@@ -25,7 +25,7 @@ else()
            )
 
   if ( ZLIB_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/zlib/include" )
-    set( ZLIB_IN_CGAL_AUXILIARY TRUE CACHE BOOL "Indicates whether the ZLib detected is the one that is distributed with CGAL" )
+    set( ZLIB_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
   find_library(ZLIB_LIBRARIES 
@@ -50,4 +50,3 @@ endif()
 
 mark_as_advanced(ZLIB_INCLUDE_DIR)
 mark_as_advanced(ZLIB_LIBRARIES)
-mark_as_advanced(ZLIB_IN_CGAL_AUXILIARY)

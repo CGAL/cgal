@@ -26,7 +26,7 @@ else()
            )
 
   if ( TAUCS_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/taucs/include" )
-    set( TAUCS_IN_CGAL_AUXILIARY TRUE CACHE BOOL "Indicates whether the TAUCS detected is the one that is distributed with CGAL" )
+    set( TAUCS_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
   if ( AUTO_LINK_ENABLED )
@@ -63,4 +63,3 @@ endif()
 mark_as_advanced(TAUCS_INCLUDE_DIR)
 mark_as_advanced(TAUCS_LIBRARIES)
 mark_as_advanced(TAUCS_LIBRARIES_DIR)
-mark_as_advanced(TAUCS_IN_CGAL_AUXILIARY)

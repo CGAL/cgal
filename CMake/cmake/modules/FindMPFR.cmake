@@ -26,7 +26,7 @@ else()
            )
 
   if ( MPFR_INCLUDE_DIR STREQUAL "${CGAL_SOURCE_DIR}/auxiliary/gmp/include" )
-    set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE BOOL "Indicates whether the MPFR detected is the one that is distributed with CGAL" )
+    set( MPFR_IN_CGAL_AUXILIARY TRUE CACHE INTERNAL "" )
   endif()
   
   if ( AUTO_LINK_ENABLED )
@@ -63,4 +63,3 @@ endif()
 mark_as_advanced(MPFR_INCLUDE_DIR)
 mark_as_advanced(MPFR_LIBRARIES)
 mark_as_advanced(MPFR_LIBRARIES_DIR)
-mark_as_advanced(MPFR_IN_CGAL_AUXILIARY)
