@@ -61,7 +61,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 //// this should be eliminated in the final version once Intenal_curve_2 is
 //// replaced by Curve_analysis_2
+#ifdef CGAL_USE_CnX_KERNEL
+		_m_curve = Internal_curve_2(f);
+#else
         _m_curve = Internal_curve_2::get_curve_cache()(f);
+#endif
 //////////////////////////////////////////////////////////////////////////////
     }
 
@@ -75,7 +79,7 @@ public:
     
 //! \brief The class is meant to provide tools to analyse a single curve. 
 //! 
-//! Analysis describes the curve’s interesting points and how they are 
+//! Analysis describes the curves interesting points and how they are 
 //! connected. The analysis searches for events. Events only occur at a finite 
 //! number of x-coordinates. Each such coordinate defines a 
 //! \c StatusLine_1 of an event. These coordinates also define open
