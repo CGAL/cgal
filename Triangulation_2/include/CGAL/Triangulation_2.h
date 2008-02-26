@@ -458,8 +458,7 @@ bool move(InputIterator first, InputIterator last)
 {
   bool blocked = false;
   std::map<Vertex_handle, int> hash;
-  std::list< std::pair<Vertex_handle, Point> > to_move;
-  while(first != last) to_move.push_back(first++);
+  std::list< std::pair<Vertex_handle, Point> > to_move(first, last);
   while(!to_move.empty()) {
     std::pair<Vertex_handle, Point> pp = to_move.front();
     to_move.pop_front();
