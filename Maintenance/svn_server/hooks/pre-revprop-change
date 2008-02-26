@@ -53,9 +53,11 @@ USER="$3"
 PROPNAME="$4"
 ACTION="$5"     # empty on 06/15/2006
 
-if [ "$PROPNAME" = "svn:log" ]; then
-    exit 0;
-else
-    echo "Changing revision properties other than svn:log is prohibited" >&2
-    exit 1
-fi
+case "$PROPNAME" in
+    svn:log|CGAL:*)
+        exit 0;                
+        ;;
+    *)
+        echo "Changing revision properties other than svn:log is prohibited" >&2
+        exit 1
+esac
