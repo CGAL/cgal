@@ -23,6 +23,7 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
+#include <CGAL/Float_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
