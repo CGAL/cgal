@@ -26,7 +26,8 @@ include(OptionalAddSubdirectory)
 # Read and parse CGAL version number from VERSION file
 #
 file( READ "VERSION" CGAL_VERSION )
-string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION} )
+string( REPLACE "." ";" CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
+string( REPLACE "-" ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
 list( LENGTH CGAL_VERSION_TOKENS CGAL_VERSION_TOKENS_LEN )
 list( GET CGAL_VERSION_TOKENS 0 CGAL_MAJOR_VERSION )
 
@@ -37,7 +38,9 @@ if ( CGAL_VERSION_TOKENS_LEN GREATER 1 )
   list( GET CGAL_VERSION_TOKENS 1 CGAL_MINOR_VERSION )
 endif()
 
-if ( CGAL_VERSION_TOKENS_LEN GREATER 2 )
+if ( CGAL_VERSION_TOKENS_LEN GREATER 3 )
+  list( GET CGAL_VERSION_TOKENS 3 CGAL_BUILD_VERSION )
+elseif( CGAL_VERSION_TOKENS_LEN GREATER 2 )
   list( GET CGAL_VERSION_TOKENS 2 CGAL_BUILD_VERSION )
 endif()
 
@@ -119,6 +122,43 @@ if(QT_FOUND)
   add_config_flag( CGAL_USE_QT )
 endif()
 
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= Installation Setup =-
+#
+#--------------------------------------------------------------------------------------------------
+
+set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+
+if ( WIN32 )
+
+  set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
+  
+  set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
+        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_ROOT_DIR "."  
+        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
+else()
+
+  set ( CGAL_INSTALL_BIN_DIR    "bin"                     
+        CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
+        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+      
+  set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
+        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+      )
+
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -167,31 +207,47 @@ configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}
 
 #--------------------------------------------------------------------------------------------------
 #
-#                                    -= INSTALLATION =-
+#                                    -= Installation Commands =-
 #
 #--------------------------------------------------------------------------------------------------
 
 # WARNING: Use only relative paths; full paths break CPack!
 # DESTINATION option is mandatory; skipping it breaks CPack!
 
-set ( CGAL_INSTALL_ROOT "CGAL-${CGAL_VERSION}" CACHE STRING "The root folder where CGAL is installed relative to CMAKE_INSTALL_PREFIX" )
-
-install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt
-	            LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL
-	            README "VERSION"  
-	      DESTINATION ${CGAL_INSTALL_ROOT}
+install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
+        DESTINATION ${CGAL_INSTALL_DOC_DIR}
        )
 
-install(FILES "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h"  DESTINATION ${CGAL_INSTALL_ROOT}/include/CGAL )
-install(FILES cmake/modules/UseCGAL.cmake DESTINATION ${CGAL_INSTALL_ROOT}/cmake/modules  )
 
-install(DIRECTORY include/CGAL  DESTINATION ${CGAL_INSTALL_ROOT}/include )
-install(DIRECTORY auxiliary     DESTINATION ${CGAL_INSTALL_ROOT}         )
-install(DIRECTORY cmake/modules DESTINATION ${CGAL_INSTALL_ROOT}/cmake   )
-install(DIRECTORY src           DESTINATION ${CGAL_INSTALL_ROOT}         )
-install(DIRECTORY scripts       DESTINATION ${CGAL_INSTALL_ROOT}         )
+install(DIRECTORY include/CGAL                      DESTINATION ${CGAL_INSTALL_INC_DIR}    )
+install(DIRECTORY "${CGAL_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR}    )
 
-install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT} )
+install(DIRECTORY scripts/                          DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
+
+install(DIRECTORY cmake/modules/                        DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES cmake/modules/UseCGAL.cmake               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+
+if ( GMP_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
+
+if ( TAUCS_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
+
+if ( ZLIB_IN_AUXILIARY )
+  install(DIRECTORY auxiliary/zlib/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+  install(DIRECTORY auxiliary/zlib/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
+
+
+if ( WIN32 )
+  install(DIRECTORY auxiliary DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(DIRECTORY src       DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+endif()
 
 
 
@@ -209,13 +265,13 @@ set(CGAL_DIR ${CGAL_BINARY_DIR} )
 optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
 optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 
-if ( WITH_demo )
-  install(DIRECTORY demo DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT demo )
-endif()
+#if ( WITH_demo )
+#  install(DIRECTORY demo DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT demo )
+#endif()
 
-if ( WITH_examples )
-  install(DIRECTORY examples DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT examples )
-endif()
+#if ( WITH_examples )
+#  install(DIRECTORY examples DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT examples )
+#endif()
 
 #--------------------------------------------------------------------------------------------------
 #

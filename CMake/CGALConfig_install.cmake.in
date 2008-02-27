@@ -6,46 +6,29 @@
 # This file correspond to a CGAL installation with "make install", thus the actual location
 # must be given by the cmake or enviroment variable CGAL_DIR. 
 
-  if ( NOT CGAL_DIR )
-    set(CGAL_DIR $ENV(CGAL_DIR) )
-  endif( NOT CGAL_DIR )
-
-  set(GMP_IN_CGAL_AUXILIARY    "@GMP_IN_CGAL_AUXILIARY@" )
-  set(MPFR_IN_CGAL_AUXILIARY   "@MPFR_IN_CGAL_AUXILIARY@" )
-  set(TAUCS_IN_CGAL_AUXILIARY  "@TAUCS_IN_CGAL_AUXILIARY@" )
-  set(ZLIB_IN_CGAL_AUXILIARY   "@ZLIB_IN_CGAL_AUXILIARY@" )
-  set(CGAL_MAJOR_VERSION       "@CGAL_MAJOR_VERSION@" )
-  set(CGAL_MINOR_VERSION       "@CGAL_MINOR_VERSION@" )
-  set(CGAL_BUILD_VERSION       "@CGAL_BUILD_VERSION@" )
-  set(CGAL_DEFINITIONS         "@CGAL_DEFINITIONS@" )
-  set(CGAL_LIBRARIES           "@CGAL_LIBRARIES@" )
+  # CGAL_DIR is the directory where this CGALConfig.cmake is installed
+  set(CGAL_INSTALL_PREFIX "${CGAL_DIR}")
   
-  set(CGAL_INCLUDE_DIRS      "${CGAL_DIR}/include" )
-  set(CGAL_CMAKE_MODULE_PATH "${CGAL_DIR}/cmake/modules" )
-  set(CGAL_LIBRARIES_DIR     "${CGAL_DIR}/lib" )
-
-  if   ( GMP_IN_AUXILIARY )
-    set(CGAL_INCLUDE_DIRS  ${CGAL_INCLUDE_DIRS}  "${CGAL_DIR}/include/auxiliary/gmp/include" )
-    set(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES_DIR} "${CGAL_DIR}/include/auxiliary/gmp/lib"     )
-  endif( GMP_IN_AUXILIARY )
+  # Get the install prefix (this assumes CGALConfig is installed two levels down
+  get_filename_component(CGAL_INSTALL_PREFIX "${CGAL_INSTALL_PREFIX}" PATH)
+  get_filename_component(CGAL_INSTALL_PREFIX "${CGAL_INSTALL_PREFIX}" PATH)
   
-  if   ( TAUCS_IN_AUXILIARY )
-    set(CGAL_INCLUDE_DIRS  ${CGAL_INCLUDE_DIRS}  "${CGAL_DIR}/include/auxiliary/taucs/include" )
-    set(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES_DIR} "${CGAL_DIR}/include/auxiliary/taucs/lib"     )
-  endif( TAUCS_IN_AUXILIARY )
+  set(CGAL_MAJOR_VERSION "@CGAL_MAJOR_VERSION@" )
+  set(CGAL_MINOR_VERSION "@CGAL_MINOR_VERSION@" )
+  set(CGAL_BUILD_VERSION "@CGAL_BUILD_VERSION@" )
+  set(CGAL_DEFINITIONS   "@CGAL_DEFINITIONS@" )
+  set(CGAL_LIBRARIES     "@CGAL_LIBRARIES@" )
   
-  if   ( ZLIB_IN_AUXILIARY )
-    set(CGAL_INCLUDE_DIRS  ${CGAL_INCLUDE_DIRS}  "${CGAL_DIR}/include/auxiliary/zlib/include" )
-    set(CGAL_LIBRARIES_DIR ${CGAL_LIBRARIES_DIR} "${CGAL_DIR}/include/auxiliary/zlib/lib"     )
-  endif( ZLIB_IN_AUXILIARY )
-  
+  set(CGAL_INCLUDE_DIRS      "$(CGAL_INSTALL_PREFIX)/@CGAL_INSTALL_INC_DIR@" )
+  set(CGAL_CMAKE_MODULE_PATH "$(CGAL_INSTALL_PREFIX)/@CGAL_INSTALL_CMAKE_DIR@" )
+  set(CGAL_LIBRARIES_DIR     "$(CGAL_INSTALL_PREFIX)/@CGAL_INSTALL_LIB_DIR@" )
   
   set(CGAL_3RD_PARTY_INCLUDE_DIRS   "@CGAL_3RD_PARTY_INCLUDE_DIRS@" )
   set(CGAL_3RD_PARTY_DEFINITIONS    "@CGAL_3RD_PARTY_DEFINITIONS@" )
   set(CGAL_3RD_PARTY_LIBRARIES_DIRS "@CGAL_3RD_PARTY_LIBRARIES_DIRS@" )
   set(CGAL_3RD_PARTY_LIBRARIES      "@CGAL_3RD_PARTY_LIBRARIES@" )
 
-  set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
+  set(CGAL_VERSION "@CGAL_VERSION@")
   
-  set(CGAL_USE_FILE "${CGAL_DIR}/cmake/modules/UseCGAL.cmake" )
+  set(CGAL_USE_FILE "${CGAL_CMAKE_MODULE_PATH}/UseCGAL.cmake" )
   

@@ -51,4 +51,4 @@ else()
 endif()
 
 # WARNING: Use only relative paths; full paths break CPack!
-install(TARGETS CGAL_CORE DESTINATION ${CGAL_INSTALL_ROOT}/lib )
+install(TARGETS CGAL_CORE DESTINATION ${CGAL_INSTALL_LIB_DIR} )

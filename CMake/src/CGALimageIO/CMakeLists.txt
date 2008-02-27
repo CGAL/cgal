@@ -57,7 +57,7 @@ if(ZLIB_FOUND)
   endif()
 
   # WARNING: Use only relative paths; full paths break CPack!
-  install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_ROOT}/lib )
+  install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
 else()
   message( STATUS "CGAL-ImageIO needs ZLib, cannot be configured.")
 endif()  
