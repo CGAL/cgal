@@ -41,7 +41,11 @@
 #include <boost/static_assert.hpp>
 
 #ifdef CGAL_USE_LEDA
+#if CGAL_LEDA_VERSION >= 500
+#include <LEDA/core/array.h>
+#else
 #include <LEDA/array.h>
+#endif
 #endif // CGAL_USE_LEDA
 
 #include <CGAL/Polynomial/Polynomial_type.h>
