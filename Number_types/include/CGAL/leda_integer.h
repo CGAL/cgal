@@ -87,11 +87,13 @@ template <> class Algebraic_structure_traits< leda_integer >
           // Fix wrong leda result
           if( x < 0 && m != 0 )
             m -= y;
-#else
+#elif CGAL_LEDA_VERSION < 600
           // Fix another wrong leda result
-          // TODO: be careful for future improvements of LEDA
           if( x < 0 && y > 0 && m != 0 )
             m -= y;
+#else
+          // Do nothing, it seems to work now!
+          // TODO: be careful for future improvements of LEDA
 #endif
           return m;
         }
