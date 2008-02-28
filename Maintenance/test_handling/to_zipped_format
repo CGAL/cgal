@@ -39,13 +39,17 @@ sub reformat_results($)
     }
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$GMPXX,$CORE,$QT) = ("-","-","-","-","-","-","-","-","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-");
+    my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
 	}
-	if (/^LEDA\s+version\s+([\w\.-]+)/) {
-	    $LEDA_VERSION = $1;
+	if (/LEDA_VERSION = '([^']+)'/) {
+	    $LEDA_VERSION="$1";
+	}
+	if (/LEDAWIN_VERSION = '([^']+)'/) {
+	    $LEDA_VERSION="$LEDA_VERSION+win";
 	}
 	if (/^TESTER\s+([\w\.-]+)/) {
 	    $TESTER = $1;
@@ -56,20 +60,50 @@ sub reformat_results($)
 	if (/^TESTER_ADDRESS\s+(.*)$/) {
 	    $TESTER_ADDRESS = $1;
 	}
-	if (/GMP_SUPPORT\s*=\s*\'_GMP\'/) {
-	    $GMP="+";
+	if (/MPFR_VERSION = '([^']+)'/) {
+	    $MPFR="$1";
 	}
-	if (/GMPXX_SUPPORT\s*=\s*\'_GMPXX\'/) {
-	    $GMPXX="+";
+	if (/ZLIB_VERSION = '([^']+)'/) {
+	    $ZLIB="$1";
 	}
-	if (/CORE_SUPPORT\s*=\s*\'_CORE\'/) {
-	    $CORE="+";
+	if (/BLAS_VERSION = '([^']+)'/) {
+	    $BLAS="+";
 	}
-	if (/QT_SUPPORT\s*=\s*\'_QT\'/) {
-	    $QT="+";
+	if (/LAPACK_VERSION = '([^']+)'/) {
+	    $LAPACK="+";
 	}
-	if (/LEDA_SUPPORT\s*=\s*\'_LEDA\'/ && $LEDA_VERSION eq "-") {
-	    $LEDA_VERSION="+";
+	if (/OPENGL_VERSION = '([^']+)'/) {
+	    $OPENGL="$1";
+	}
+	if (/TAUCS_VERSION = '([^']+)'/) {
+	    $TAUCS="$1";
+	}
+	if (/GMP_VERSION = '([^']+)'/) {
+	    $GMP="$1";
+	}
+	if (/GMPXX_VERSION = '([^']+)'/) {
+	    $GMP="$GMP+gmpxx";
+	}
+	if (/QT_VERSION = '([^']+)'/) {
+	    $QT="$1";
+	}
+	if (/BOOST_VERSION = '([^']+)'/) {
+	    $BOOST="$1";
+	}
+	if (/BOOST_THREAD_VERSION = '([^']+)'/) {
+	    $BOOST="$BOOST+thread";
+	}
+	if (/BOOST_PROGRAM_OPTIONS_VERSION = '([^']+)'/) {
+	    $BOOST="$BOOST+program_options";
+	}
+	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
+	    $BOOST="$BOOST+bimap";
+	}
+	if (/CUSTOM_CXXFLAGS = '([^']*)'/) {
+	    $CXXFLAGS="$1";
+	}
+	if (/CUSTOM_LDFLAGS = '([^']*)'/) {
+	    $LDFLAGS="$1";
 	}
 	$_= <PLATFORM_RESULTS>;
     }
@@ -82,11 +116,17 @@ $CGAL_VERSION
 $TESTER
 $TESTER_NAME
 $TESTER_ADDRESS
-$LEDA_VERSION
+$BOOST
+$MPFR
 $GMP
-$GMPXX
-$CORE
 $QT
+$OPENGL
+$BLAS
+$LAPACK
+$TAUCS
+$LEDA_VERSION
+$CXXFLAGS
+$LDFLAGS
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);

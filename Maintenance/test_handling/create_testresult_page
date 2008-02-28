@@ -33,7 +33,7 @@ sub write_select()
 {
   my($filename, @result);
   print OUTPUTV "<table><tr><td>You can browse the test results of a different version :\n";
-  print OUTPUTV '<td><select name="sel" onchange="top.location.href=this.form.sel.options[this.form.sel.selectedIndex].value">'."\n";
+  print OUTPUTV '<td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
 
   foreach $_ (sort { $a =~ /results-([^I]*)(|-I-(.*))\.shtml/;
                      my ($maj_a, $min_a) = ($1, $2 ? $3 : "9999");
@@ -129,22 +129,18 @@ sub print_result_table()
     my $platform_count = scalar(@platforms_to_do);
 
     print OUTPUT <<"EOF";
-<TABLE CLASS="result" BORDER=1 CELLSPACING=2 CELLPADDING=5>
-<TR ALIGN=CENTER>
-<TH ROWSPAN=2>Package</TH>
-<!-- <TH ROWSPAN=2>Version</TH> -->
-<TH COLSPAN=$platform_count>Test Platform</TH>
-</TR>
-<TR ALIGN=CENTER>
+<table class="result" border="1" cellspacing="2" cellpadding="5">
+<tr align="CENTER">
+<th rowspan="2">Package</th>
+<!-- <th rowspan="2">Version</th> -->
+<th colspan="$platform_count">Test Platform</th>
+</tr>
+<tr align="center">
 EOF
 
-    my ($platform_num,$platform)=(0,"");
-    foreach $platform (@platforms_to_do) {
-	++$platform_num;
-	print OUTPUT "<TD><B>$platform_num</B>\n";
-    }
+    print_platforms_numbers();
 
-    print OUTPUT "</TR>\n";
+    print OUTPUT "</tr>\n";
     my $test_directory;
     my $test_num = 0;
     foreach $test_directory (sort keys %test_directories) {
@@ -152,15 +148,11 @@ EOF
 	    $test_num++;
 	    if ($test_num == 15) {
 	    	$test_num = 0;
-	    	print OUTPUT "\n<TR>  <TD ALIGN=center>\n";
-	    	print OUTPUT '<A HREF="#platforms">Platform Description</A>';
+	    	print OUTPUT "\n<tr>  <td align=\"center\">\n";
+	    	print OUTPUT '<a href="#platforms">Platform Description</a>';
 	    	print OUTPUT "\n";
-    	    	$platform_num=0;
-	    	while ($platform_num < $platform_count) {
-		    ++$platform_num;
-		    print OUTPUT "<TD ALIGN=center><B>$platform_num</B>\n";
-	    	}
-	    	print OUTPUT "\n</TR>\n";
+		print_platforms_numbers();
+	    	print OUTPUT "\n</tr>\n";
 	    }
 	}
 	# my $version;
@@ -179,6 +171,7 @@ EOF
 	# } else {
 	#     print OUTPUT "<TD ALIGN=CENTER>?.?</TD>\n";
 	# }
+	my ($platform_num,$platform)=(0,"");
 	$platform_num=0;
 	foreach $platform (@platforms_to_do) {
 	    my ($result,$resulttext);
@@ -188,52 +181,54 @@ EOF
 	    }
 	    print OUTPUT '<td align=center';
 	    if ($resulttext eq 'y') {
-		print OUTPUT ' class=ok';
+		print OUTPUT ' class="ok"';
 	    } elsif ($resulttext eq 'w') {
-		print OUTPUT ' class=warning';
+		print OUTPUT ' class="warning"';
 	    } elsif ($resulttext eq 'n') {
-		print OUTPUT ' class=error';
+		print OUTPUT ' class="error"';
 	    } 
+	    else {
+		print OUTPUT ' class="na"';
+	    }
 	    print OUTPUT '> <a href="',
 	    "$release_name/$test_directory/TestReport_$platform.gz\"";
 	    print OUTPUT '>', "$resulttext</a></td>\n";
 	    ++$platform_num;
 
 	}
-	print OUTPUT "</TR>\n";
+	print OUTPUT "</tr>\n";
     }
-    print OUTPUT "</TABLE>\n";
+    print OUTPUT "</table>\n";
 }
 
 sub print_resultpage()
 {
     my $platform_count = scalar(@platforms_to_do);
 
-    print OUTPUT '<H2><A NAME="testresults">Test Results</A></H2>'."\n";
+    print OUTPUT '<h2><a name="testresults">Test Results</a></h2>'."\n";
     if ($PLATFORMS_BESIDE_RESULTS) {
     	print OUTPUT <<"EOF";
-<TABLE BORDER=0 CELLSPACING=5 CELLPADDING=0>
-<TR ALIGN=CENTER>
-<TD>
+<table border="0" cellspacing="5" cellpadding="0">
+<tr align="center">
+<td>
 EOF
     }
 
     print_result_table();
 
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT "<TD>\n<TABLE BORDER=0 CELLSPACING=2 CELLPADDING=0>\n";
+    	print OUTPUT "<td>\n<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
     	if ($platform_count > 0) {
     	    my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
 	    while ($repeat_count >= 1) {
 	    	$repeat_count--;
-	    	print OUTPUT "<TR><TD>\n";
+	    	print OUTPUT "<tr><td>\n";
                 print_platforms();
-                print OUTPUT "</TR>\n";
+                print OUTPUT "</tr>\n";
 	    }
 	}
-	print OUTPUT "</TABLE>\n</TR>\n</TABLE>\n";
+	print OUTPUT "</table>\n</tr>\n</table>\n";
     }
-    print OUTPUT "</BODY>\n</HTML>\n";
 }
 
 sub parse_platform($)
@@ -311,28 +306,35 @@ sub print_platform_descriptions()
 {
     my ($i,$pf_no,$pf) = (0,1);
     print OUTPUT <<'EOF';
-<H2><A NAME="platforms">Platform Description and Summary</A></H2>
-<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >
-<TR ALIGN=CENTER>
-<TH COLSPAN=2>OS and compiler</TH>
-<TH>Tester</TH>
-<TH>LEDA</TH>
-<TH>GMP</TH>
-<TH>GMPXX</TH>
-<TH>CORE</TH>
-<TH>QT</TH>
-<TH class=ok>y</TH>
-<TH class=warning>w</TH>
-<TH class=error>n</TH>
-</TR>
+<h2><a name="platforms">Platform Description and Summary</a></h2>
+<table border="1" cellspacing="2" cellpadding="5" class="summary">
+<tr align="center">
+<th colspan="2">OS and compiler</th>
+<th>Tester</th>
+<th class=ok>y</th>
+<th class=warning>w</th>
+<th class=error>n</th>
+<th>BOOST</th>
+<th>MPFR</th>
+<th>GMP</th>
+<th>QT</th>
+<th>OPENGL</th>
+<th>BLAS</th>
+<th>LAPACK</th>
+<th>TAUCS</th>
+<th>LEDA</th>
+<th>CUSTOM CXXFLAGS</th>
+<th>CUSTOM LDFLAGS</th>
+</tr>
 EOF
     my ($platform_num)=(0);
     foreach $pf (@platforms_to_do) {
-	print OUTPUT "<TR>\n<TD>$pf_no\n";
+	print OUTPUT "<tr>\n<td><a name=\"platform$platform_num\">$pf_no</a>\n";
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	my $pf_short = $pf;
-	print OUTPUT "<TD NOWRAP>$pf_short\n";
+	print OUTPUT "<td>$pf_short\n";
+
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>;
 	    $_ = <PLATFORM_INFO>;
@@ -342,43 +344,55 @@ EOF
 	    $_ = <PLATFORM_INFO>;
 	    chomp;
 	    my $tester_address = $_;
-	    print OUTPUT "<TD NOWRAP><A HREF=\"mailto:$tester_address\">$tester_name</A>\n";
-	    my $index = 5;
+	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a>\n";
+
+	    my $count;
+	    $count = $testresults[$platform_num]->{"y"};
+	    print OUTPUT "<td>$count\n"; 
+	    $count = $testresults[$platform_num]->{"w"};
+	    print OUTPUT "<td>$count\n"; 
+	    $count = $testresults[$platform_num]->{"n"};
+	    print OUTPUT "<td>$count\n"; 
+
+	    my $index = 11;
 	    while ($index) {
 	        $index--;
 		$_ = <PLATFORM_INFO>;
 		chomp;
-		print OUTPUT "<TD ALIGN=CENTER NOWRAP>$_\n";
+		print OUTPUT "<td align=\"center\">$_\n";
 	    }
 	} else {
-	    print OUTPUT "<TD NOWRAP>?\n";
-	    print OUTPUT "<TD NOWRAP>?\n";
-	    print OUTPUT "<TD NOWRAP>?\n";
-	    print OUTPUT "<TD NOWRAP>?\n";
+	    print OUTPUT "<td>?\n";
+	    print OUTPUT "<td>?\n";
+	    print OUTPUT "<td>?\n";
+	    print OUTPUT "<td>?\n";
 	}
-	my $count;
-	$count = $testresults[$platform_num]->{"y"};
-	print OUTPUT "<TD>$count\n"; 
-	$count = $testresults[$platform_num]->{"w"};
-	print OUTPUT "<TD>$count\n"; 
-	$count = $testresults[$platform_num]->{"n"};
-	print OUTPUT "<TD>$count\n"; 
 	++$platform_num;
     }
-    print OUTPUT "</TABLE>\n<P>\n";
+    print OUTPUT "</table>\n<p>\n";
+}
+
+sub print_platforms_numbers()
+{
+    my ($platform_num,$platform)=(0,"");
+    foreach $platform (@platforms_to_do) {
+	++$platform_num;
+	my $pf_short = short_pfname($platform);
+	print OUTPUT "<td><a href=\"#platform$platform_num\" title=\"$pf_short\"><b>$platform_num</b></a>\n";
+    }
 }
 
 sub print_platforms()
 {
     my ($pf_no,$pf) = (1,"");
-    print OUTPUT "<TABLE BORDER=1 CELLSPACING=2 CELLPADDING=5 >\n";
+    print OUTPUT '<table border="1" cellspacing="2" cellpadding="5" >',"\n";
     foreach $pf (@platforms_to_do) {
-	print OUTPUT "<TR>\n<TD>$pf_no\n";
+	print OUTPUT "<tr>\n<td>$pf_no\n";
 	$pf_no++;
 	my $pf_short = short_pfname($pf);
-	print OUTPUT "<TD NOWRAP>$platform_short_names{$pf_short}\n</TR>\n";
+	print OUTPUT "<td>$platform_short_names{$pf_short}\n</tr>\n";
     }
-    print OUTPUT "</TABLE>\n";
+    print OUTPUT "</table>\n";
 }
 
 sub result_filename($)
@@ -390,7 +404,8 @@ sub result_filename($)
 
 sub print_little_header(){
     print OUTPUT<<"EOF";
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -402,12 +417,12 @@ sub print_little_header(){
 <body>
 <h2>Test Results of ${release_name}</h2>
 <!--#include virtual="versions.inc"-->
-The results of the tests are presented in a table
+<p>The results of the tests are presented in a table
 ('y' = success, 'w' = warning, 'n' = failure),
 and the error + compiler output from each test can be retrieved by clicking
-on it.
-<b>N.B. The detection of warnings is not exact.
-Look at the output to be sure!</b>
+on it.</p>
+<p><b>N.B. The detection of warnings is not exact.
+Look at the output to be sure!</b></p>
 <ol>
 <li><a href="http://cgal.inria.fr/CGAL/Members/Releases/">
 Downloading internal releases</a></li>
@@ -423,6 +438,9 @@ EOF
     }
 
     print OUTPUT "</ol>\n";
+    print OUTPUT '<p>The description of all platforms is <a href="#platforms">at the end of the page</a>. ';
+    print OUTPUT 'In the table below, each column is numeroted, and correspond to a platform. ';
+    print OUTPUT 'Each column number is a link to the platform description table.</p> ', "\n";
 }
 
 
@@ -458,8 +476,18 @@ sub main()
     chdir $release_name or die;
     collect_results();
     print_little_header();
-    print_platform_descriptions();
     print_resultpage();
+    print_platform_descriptions();
+
+    print OUTPUT << 'EOF';
+ <p>
+    <a href="http://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
+        src="http://www.w3.org/Icons/valid-html401-blue"
+        alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+ </p>
+EOF
+    print OUTPUT "</body>\n</html>\n";
+
     close OUTPUT;
     chdir "..";
 
