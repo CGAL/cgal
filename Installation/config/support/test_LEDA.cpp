@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-#ifdef HAVE_LEDA5X
+#ifndef HAVE_LEDA4X
   #include <LEDA/system/basic.h>
   #include <LEDA/numbers/integer.h>
 #else
@@ -43,7 +43,7 @@
 using namespace leda;
 #endif
 
-#ifdef HAVE_LEDA5X
+#ifndef HAVE_LEDA4X
  #include <LEDA/internal/REDEFINE_NAMES.h>
  typedef integer I;
  #include <LEDA/internal/UNDEFINE_NAMES.h>
