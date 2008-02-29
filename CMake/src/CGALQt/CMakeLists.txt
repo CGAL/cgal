@@ -103,8 +103,8 @@ if( CGAL_USE_QT )
                                                 RELWITHDEBINFO_OUTPUT_NAME "${CGAL_QT_RELWITHDEBINFO_MANGLED_NAME}" 
                            )
       
-      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND move /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
-      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." move /Y $(TargetDir)$(TargetName).pdb ../../lib)
+      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
+      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
       
     endif()
 

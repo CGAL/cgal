@@ -25,9 +25,10 @@ include(OptionalAddSubdirectory)
 # 
 # Read and parse CGAL version number from VERSION file
 #
+
 file( READ "VERSION" CGAL_VERSION )
-string( REPLACE "." ";" CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
-string( REPLACE "-" ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
+string( REPLACE "-" "." CGAL_VERSION_TOKENS1 ${CGAL_VERSION} )
+string( REPLACE "." ";" CGAL_VERSION_TOKENS ${CGAL_VERSION_TOKENS1} )
 list( LENGTH CGAL_VERSION_TOKENS CGAL_VERSION_TOKENS_LEN )
 list( GET CGAL_VERSION_TOKENS 0 CGAL_MAJOR_VERSION )
 
@@ -131,7 +132,13 @@ endif()
 set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
 set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
-if ( WIN32 )
+if ( WIN32 AND NOT UNIX )
+  set ( SOURCE_INSTALL TRUE )
+else()
+  set ( SOURCE_INSTALL FALSE )
+endif()  
+
+if ( SOURCE_INSTALL )
 
   set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
   
@@ -144,6 +151,7 @@ if ( WIN32 )
       )
       
   set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
+  
 else()
 
   set ( CGAL_INSTALL_BIN_DIR    "bin"                     
@@ -202,7 +210,14 @@ message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
 
 # FindCGAL and UseCGAL are platform specific so they are generated and stored in the binary folder.
 configure_file(${CGAL_SOURCE_DIR}/CGALConfig_binary.cmake.in  ${CGAL_BINARY_DIR}/CGALConfig.cmake       @ONLY IMMEDIATE)
-configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.in ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+
+
+
+if ( SOURCE_INSTALL )
+  configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.source.in ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+else()
+  configure_file(${CGAL_SOURCE_DIR}/CGALConfig_install.cmake.fhs.in    ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake @ONLY IMMEDIATE)
+endif()
 
 
 #--------------------------------------------------------------------------------------------------
@@ -226,7 +241,6 @@ install(DIRECTORY scripts/                          DESTINATION ${CGAL_INSTALL_B
 
 install(DIRECTORY cmake/modules/                        DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES cmake/modules/UseCGAL.cmake               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
@@ -244,9 +258,13 @@ if ( ZLIB_IN_AUXILIARY )
 endif()
 
 
-if ( WIN32 )
-  install(DIRECTORY auxiliary DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(DIRECTORY src       DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+if ( SOURCE_INSTALL )
+  install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(FILES     CMakeLists.txt                        DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(DIRECTORY auxiliary                             DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  install(DIRECTORY src                                   DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+else()
+  install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 endif()
 
 
@@ -298,48 +316,54 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
-    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CGAL - Computational Geometry Algorithms Library")
-    SET(CPACK_PACKAGE_VENDOR "CGAL Open Source Project")
-    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
-    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-    SET(CPACK_PACKAGE_VERSION_MAJOR "${CGAL_MAJOR_VERSION}")
-    SET(CPACK_PACKAGE_VERSION_MINOR "${CGAL_MINOR_VERSION}")
-    SET(CPACK_PACKAGE_VERSION_PATCH "${CGAL_BUILD_VERSION}")
-    SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CGAL ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
-    SET(CPACK_SOURCE_PACKAGE_FILE_NAME "CGAL-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-    IF(NOT DEFINED CPACK_SYSTEM_NAME)
-    SET(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
-    ENDIF(NOT DEFINED CPACK_SYSTEM_NAME)
-    IF(${CPACK_SYSTEM_NAME} MATCHES Windows)
-    IF(CMAKE_CL_64)
-      SET(CPACK_SYSTEM_NAME win64-${CMAKE_SYSTEM_PROCESSOR})
-    ELSE(CMAKE_CL_64)
-      SET(CPACK_SYSTEM_NAME win32-${CMAKE_SYSTEM_PROCESSOR})
-    ENDIF(CMAKE_CL_64)
-    ENDIF(${CPACK_SYSTEM_NAME} MATCHES Windows)
-    IF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
-      SET(CPACK_PACKAGE_FILE_NAME "${CPACK_SOURCE_PACKAGE_FILE_NAME}-${CPACK_SYSTEM_NAME}")
-    ENDIF(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
-    #SET(CPACK_PACKAGE_EXECUTABLES "CGAL" "CGAL")
+if( EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
 
-    IF(WIN32 AND NOT UNIX)
-        SET(CPACK_GENERATOR "NSIS")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CGAL - Computational Geometry Algorithms Library")
+    set(CPACK_PACKAGE_VENDOR "CGAL Open Source Project")
+    set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+    set(CPACK_PACKAGE_VERSION_MAJOR "${CGAL_MAJOR_VERSION}")
+    set(CPACK_PACKAGE_VERSION_MINOR "${CGAL_MINOR_VERSION}")
+    set(CPACK_PACKAGE_VERSION_PATCH "${CGAL_BUILD_VERSION}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "CGAL ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}")
+    set(CPACK_SOURCE_PACKAGE_FILE_NAME "CGAL-${CGAL_VERSION}")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+    
+    if(NOT DEFINED CPACK_SYSTEM_NAME)
+      set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
+    endif()
+    
+    if(${CPACK_SYSTEM_NAME} MATCHES Windows)
+      if(CMAKE_CL_64)
+        set(CPACK_SYSTEM_NAME win64-${CMAKE_SYSTEM_PROCESSOR})
+      else()
+        set(CPACK_SYSTEM_NAME win32-${CMAKE_SYSTEM_PROCESSOR})
+      endif()
+    endif()
+    
+    if(NOT DEFINED CPACK_PACKAGE_FILE_NAME)
+      set(CPACK_PACKAGE_FILE_NAME "${CPACK_SOURCE_PACKAGE_FILE_NAME}-${CPACK_SYSTEM_NAME}")
+    endif()
+    
+    set(CPACK_PACKAGE_EXECUTABLES "CGAL" "CGAL")
+
+    if(WIN32 AND NOT UNIX)
+        set(CPACK_GENERATOR "NSIS")
         # There is a bug in NSI that does not handle full unix paths properly. Make
         # sure there is at least one set of four (4) backlasshes.
-        SET(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\cgal_install.gif")
-        #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\CGAL.exe")
-        SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} Computational Geometry Algorithms Library")
-        SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.cgal.org")
-        SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.cgal.com")
-        SET(CPACK_NSIS_CONTACT "info@cgal.org")
-        SET(CPACK_NSIS_MODIFY_PATH ON)
-    ELSE(WIN32 AND NOT UNIX)
-        SET(CPACK_STRIP_FILES "")
-        SET(CPACK_SOURCE_STRIP_FILES "")
-    ENDIF(WIN32 AND NOT UNIX)
+        #set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\cgal_install.gif")
+        #set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\CGAL.exe")
+        set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} Computational Geometry Algorithms Library")
+        set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.cgal.org")
+        set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.cgal.com")
+        set(CPACK_NSIS_CONTACT "info@cgal.org")
+        set(CPACK_NSIS_MODifY_PATH ON)
+    else()
+        set(CPACK_STRIP_FILES "")
+        set(CPACK_SOURCE_STRIP_FILES "")
+    endif()
 
     INCLUDE(CPack)
-ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
+    
+endif()
 
