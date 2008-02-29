@@ -96,6 +96,15 @@ public:
 
   Volume_output(bool twin_ = true) : twin(twin_){}
 
+  template<typename Nef_3>
+  void check(const Nef_3& N)
+  {
+    typename Nef_3::Vertex_const_iterator vi;
+    for(MI pi = planes.begin(); pi != planes.end(); ++pi)
+      CGAL_forall_vertices(vi, N) 
+	CGAL_assertion(pi->oriented_side(vi->point()) != CGAL::ON_POSITIVE_SIDE);
+  }
+
   bool is_in(const Plane_3 p) {
     for(CI ci = planes.begin(); ci != planes.end(); ++ci)
       if(*ci == p)
@@ -449,6 +458,10 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 
 #else
 
+    std::cerr << "obstacles " << volumes << std::endl;
+
+  CGAL::Unique_hash_map<Volume_const_handle, bool> blocked(false);
+
   bool simplified;
   do{
     simplified = false;
@@ -461,6 +474,8 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
       if(!c0->mark() || !c1->mark()) continue;
       c0 = find(c0, c2c);
       c1 = find(c1, c2c);
+      CGAL_assertion(!blocked[c0]);
+      CGAL_assertion(!blocked[c1]);
       if(c0 == c1) continue;
       
       Nef_polyhedron_3 N0 = c2N[c0];
@@ -478,17 +493,31 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
 		    points.end(), cv);
       Nef_polyhedron_3 ncv(cv);
       
+      Nef_polyhedron_3 tescht(ncv);
+      Nef_polyhedron_3 m0(N0-tescht);
+      Nef_polyhedron_3 m1(N1-tescht);
+      CGAL_assertion(m0.is_empty());
+      CGAL_assertion(m1.is_empty());
+
       PVC pvct(ncv);
       double s0 = real_volume[c0];
       double s1 = real_volume[c1];
       double s01 = pvct.get_volume_of_polyhedron();
-      CGAL_assertion(s0+s1 <= s01);
+      if(s0+s1 > s01)
+	std::cerr << s0 << " " << s1 << " " << s01 << std::endl;
+      //      CGAL_assertion(s0+s1 <= s01);
       if(simplify < 1 || simplify > 3) continue;
       if(((simplify & 1) == 0 || (s0+s1)*factor < s01) &&
 	 ((simplify & 2) == 0 || s0+s1+simplifyBy < s01)) continue;
       
+      CGAL_assertion(c2c[fi->twin()->incident_volume()] == c1);
       c2c[c1] = c0;
       c2N[c0] = ncv;
+      CGAL_assertion(find(c1, c2c) == c0);
+      CGAL_assertion(find(c0, c2c) == c0);
+      CGAL_assertion(find(fi->incident_volume(), c2c) == c0);
+      CGAL_assertion(find(fi->twin()->incident_volume(), c2c) == c0);
+      blocked[c1] = true;
       real_volume[c0] = s0+s1;
       --volumes;
       simplified = true;
@@ -522,6 +551,7 @@ void simplify_and_output(const Nef_polyhedron_3& DIFF,
     Nef_polyhedron_3 ncv = c2N[ci];
     Volume_output vout;
     ncv.visit_shell_objects(ncv.volumes_begin()->shells_begin(), vout);
+    vout.check(ncv);
     /*
     Plane_visitor pv;
     Volume_const_iterator c2;
