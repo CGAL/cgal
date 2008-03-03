@@ -94,6 +94,7 @@ public:
   CGAL_INSERT(Chain, return chains_.insert(Chains::value_type(k, m)););
 
   CGAL_SIZE(chains, return chains_.size());
+  CGAL_SIZE(heterogens, return heterogens_.size());
 
 
   //! An iterator through CGAL::PDB::Atom values for the HETATM records.
@@ -313,6 +314,14 @@ public:
 
 private:
   void process_line(const char *c);
+  void process_atom(const char *c);
+  void process_hetatom(const char *c);
+  void add_hetatom(int numscan, int snum, char name[], char alt, 
+                   char resname[], char chain, int resnum,
+                   char insertion_residue_code, 
+                   float x, float y, float z,
+                   float occupancy, float tempFactor,
+                   char segID[], char element[], char charge[]);
 
   std::vector<std::string> extra_;
   Chains chains_;

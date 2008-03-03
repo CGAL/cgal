@@ -31,8 +31,7 @@ Chain$(OBJ_EXT)\
 Model$(OBJ_EXT)\
 PDB$(OBJ_EXT)\
 Heterogen$(OBJ_EXT)\
-Chain_pdb$(OBJ_EXT)\
-Monomer$(OBJ_EXT)\
+bMonomer$(OBJ_EXT)\
 Quaternion$(OBJ_EXT)\
 pdb_utils$(OBJ_EXT)
 

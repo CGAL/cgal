@@ -37,9 +37,8 @@ int main(int, char *[]) {
 
   for (unsigned int i=0; i< 100; ++i) {
     int cur= 700-i;
-    sm.lazy_insert(SM::value_type(Key(cur), Data(cur)));
+    sm.insert(SM::value_type(Key(cur), Data(cur)));
   }
-  sm.sort();
  {
     std::set<unsigned int> vals;
     for (SM::const_iterator it= sm.begin(); it != sm.end(); ++it) {

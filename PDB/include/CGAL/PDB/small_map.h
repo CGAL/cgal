@@ -27,12 +27,6 @@
 
 CGAL_PDB_BEGIN_NAMESPACE
 
-#ifndef NDEBUG
-#define CGAL_SMALL_STATIC_MAP_CHECK_LOCK(x) x
-#else 
-#define CGAL_SMALL_STATIC_MAP_CHECK_LOCK(x)
-#endif
-
 template <class K, class D>
 class small_map_value_type {
   typedef small_map_value_type<K, D> This;
@@ -147,54 +141,42 @@ public:
 
 
   small_map(std::size_t sz=0){
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(sorted_=true);
     c_.reserve(sz);
   }
 
   void swap_with(This &o) {
     std::swap(c_, o.c_);
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(std::swap(sorted_, o.sorted_));
   }
 
-  template <class K>
-  iterator find(const K k) {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
-    std::pair<iterator,iterator> ret= std::equal_range(begin(), end(), 
-                                                       Storage(k));
-    CGAL_assertion(ret.first == end() || ret.first ==ret.second || ret.first->key() == k);
-    if (ret.first==ret.second) return end();
-    else return ret.first;
+  template <class Key>
+  iterator find(const Key k) {
+    for (iterator i= begin(); i != end(); ++i) {
+      if (i->key() == k) return i;
+    }
+    return end();
   }
-  template <class K>
-  const_iterator find(const K k) const {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
-    std::pair<const_iterator,const_iterator> ret= std::equal_range(begin(), 
-                                                                   end(),
-                                                                   Storage(k));
-    CGAL_assertion(ret.first == end() || ret.first ==ret.second 
-                   || ret.first->key() == k);
-    if (ret.first==ret.second) return end();
-    else return ret.first;
+  template <class Key>
+  const_iterator find(const Key k) const {
+    for (const_iterator i= begin(); i != end(); ++i) {
+      if (i->key() == k) return i;
+    }
+    return end();
   }
 
   iterator begin() {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     return c_.begin();
   }
 
   iterator end() {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     return c_.end();
   }
 
 
   reverse_iterator rbegin() {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     return c_.rbegin();
   }
 
   reverse_iterator rend() {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     return c_.rend();
   }
 
@@ -221,7 +203,6 @@ public:
 
   template <class K>
   typename Storage::Data& operator[](K k){
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     iterator it= find(k);
     if (it == end()) {
       it= insert(value_type(k));
@@ -231,7 +212,6 @@ public:
   }
 
   iterator insert(const value_type &v) {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(CGAL_precondition(sorted_));
     if (c_.empty() || v > c_.back()) {
       c_.insert(end(), v);
       return c_.end()-1;
@@ -240,10 +220,6 @@ public:
       CGAL_assertion(it== end() || *it != v);
       return c_.insert(it, v);
     }
-  }
-  void lazy_insert(const value_type &v) {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(sorted_=false);
-    c_.push_back(v);
   }
 
   std::size_t size() const {
@@ -264,18 +240,15 @@ public:
     return locked_;
     }*/
   void sort() {
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(sorted_=true);
     std::sort(begin(), end()/*, Compare()*/);
   }
 
   void clear() {
     c_.clear();
-    CGAL_SMALL_STATIC_MAP_CHECK_LOCK(sorted_=true);
   }
 
 protected:
   container c_;
-  CGAL_SMALL_STATIC_MAP_CHECK_LOCK(bool sorted_;)
 };
 
 template <class C>

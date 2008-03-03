@@ -5,7 +5,6 @@
 #include "Model.cpp"
 #include "PDB.cpp"
 #include "Heterogen.cpp"
-#include "Chain_pdb.cpp"
 #include "Monomer.cpp"
 #include "Quaternion.cpp"
 #include "pdb_utils.cpp"

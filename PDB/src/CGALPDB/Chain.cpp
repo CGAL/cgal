@@ -20,6 +20,7 @@
 
 #include <CGAL/PDB/Chain.h>
 #include <CGAL/PDB/internal/Error_logger.h>
+#include <CGAL/PDB/internal/pdb_utils.h>
 #include <sstream>
 
 CGAL_PDB_BEGIN_NAMESPACE
@@ -27,6 +28,55 @@ CGAL_PDB_BEGIN_NAMESPACE
 //Atom dummy_atom;
 
 Chain::Chain(){}
+ 
+void Chain::write_pdb(std::ostream &out) const {
+  assert(!residues_.empty());
+  for (unsigned int i=0; i< header_.size(); ++i){
+    out << header_[i] << std::endl;
+  }
+
+  char line[81];
+  
+  sprintf(line, "MODEL %8d         ", 1);
+  out << line << std::endl;
+  
+  //    int anum=1;
+  write(' ' , 1, out);
+  
+  out << "ENDMDL                       " << std::endl;
+}
+
+int Chain::write(char chain, int start_index, std::ostream &out) const {
+  char line[81];
+  //    int anum=1;
+  Monomer_key last_resindex;
+  Monomer::Type last_type= Monomer::INV;
+  for (Monomer_const_iterator it = monomers_begin(); it != monomers_end(); ++it) {
+    const Monomer &res= it->monomer();
+    //Residue::Label rl =  res.label();
+    //residues_[i]->atoms();
+    start_index= res.write(chain, it->key().index(), ' ', start_index, out);
+    
+    IR_Map::const_iterator irit= insert_residues_.find(it->key());
+    if (irit!= insert_residues_.end()) {
+      for (unsigned int i=0; i< irit->data().size(); ++i){
+	start_index= 
+	  irit->data().find(IR_key(i))->data().write(chain, it->key().index(),
+						     irit->data().find(IR_key(i))->key().index(), start_index, out);
+      }
+    }
+    last_resindex= it->key();
+    last_type= it->data().type();
+  }
+  const char *terformat="TER   %5d      %3s %c %3d%c";
+  if (!residues_.empty()) {
+    sprintf(line, terformat, start_index, 
+	    Monomer::type_string(last_type).c_str(), chain, 
+	    last_resindex.index(),' ');
+    out << line << std::endl;
+  }
+  return start_index+1;
+}
 
 
 std::vector<Monomer::Type> Chain::sequence() const{

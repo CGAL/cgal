@@ -2954,9 +2954,6 @@ PDB/demo/PDB/CMakeLists.txt -text
 PDB/demo/PDB/makefile -text
 PDB/demo/PDB/pdb_split.cpp -text
 PDB/demo/PDB/pdb_tree.cpp -text
-PDB/doc_doxygen/Doxyfile -text
-PDB/doc_doxygen/doc_footer -text
-PDB/doc_doxygen/main_doc -text
 PDB/dont_submit -text
 PDB/examples/PDB/CMakeLists.txt -text
 PDB/examples/PDB/data/simple.pdb -text
@@ -3001,7 +2998,6 @@ PDB/src/CGALPDB/Atom.cpp -text
 PDB/src/CGALPDB/CGALPDB_71.vcproj eol=crlf
 PDB/src/CGALPDB/CGALPDB_80.vcproj eol=crlf
 PDB/src/CGALPDB/Chain.cpp -text
-PDB/src/CGALPDB/Chain_pdb.cpp -text
 PDB/src/CGALPDB/Error_logger.cpp -text
 PDB/src/CGALPDB/Heterogen.cpp -text
 PDB/src/CGALPDB/Model.cpp -text
@@ -3014,11 +3010,12 @@ PDB/src/CGALPDB/all_files.cpp -text
 PDB/src/CGALPDB/makefile -text
 PDB/src/CGALPDB/pdb_utils.cpp -text
 PDB/test/PDB/CMakeLists.txt -text
+PDB/test/PDB/check_atom_hetatom.cpp -text
 PDB/test/PDB/check_hetatom.cpp -text
 PDB/test/PDB/check_iterators.cpp -text
 PDB/test/PDB/check_pdb.cpp -text
-PDB/test/PDB/check_protein.cpp -text
 PDB/test/PDB/check_small_map.cpp -text
+PDB/test/PDB/data/check_atom_hetatom.pdb -text
 PDB/test/PDB/data/check_bonds.pdb -text
 PDB/test/PDB/data/check_hetatom.check_out.pdb -text
 PDB/test/PDB/data/check_hetatom.pdb -text

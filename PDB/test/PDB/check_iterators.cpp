@@ -19,6 +19,7 @@ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA. */
 
 #include <CGAL/PDB/Chain.h>
+#include <CGAL/PDB/PDB.h>
 #include <CGAL/PDB/iterator.h>
 #include <fstream>
 
@@ -30,8 +31,12 @@ int main() {
   typedef Atom::Index Index;
   typedef std::pair<Index,Index> Bond;
   {
-    std::ifstream in("data/check_protein.pdb");
-    CGAL_PDB_NS::Chain p(in);
+    std::ifstream in("data/check_pdb.pdb");
+    PDB pdb(in);
+    CGAL_assertion(pdb.number_of_models() != 0);
+    Model &model= pdb.models_begin()->model();
+    CGAL_assertion(model.number_of_chains() != 0);
+    const Chain &p= model.chains_begin()->chain();
     unsigned int na= p.number_of_atoms();
     //p.write(std::cout);
     std::cout << "There are " << p.number_of_monomers() << " residues." 

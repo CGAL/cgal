@@ -72,15 +72,6 @@ public:
 
   typedef small_map<Monomer_iterator_value_type> Container;
   
-  /*! Build a protein from a pdb file.
-    See check_protein.cpp for an example of using this to read a
-    pdb file.
-
-    The optional bool controls whether errors (such as unparsable
-    PDB lines). Set it to false to disable printing errors.
-  */
-  Chain(std::istream &in, bool print_errors=false);
-
   //! Default
   Chain();
 
@@ -358,9 +349,8 @@ public:
   //! Set whether the protein has bonds or not.
   void set_has_bonds(bool tf);
 
-  CGAL_FIELDRW(std::string, name, name_);
+  CGAL_GETSET(std::string, name, name_);
 private:
-  void process_line(const char *line);
     
   //unsigned int residue_offset_of_atom_key(Atom::Index i) const;
 

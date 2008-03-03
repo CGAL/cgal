@@ -40,7 +40,7 @@ public:
  
   //inline Atom_label label() const;
   //! Cartesian coordinates (x,y,z) for the atom.
-  CGAL_FIELDRW(Point, point, coordinates_);
+  CGAL_GETSET(Point, point, coordinates_);
 
   /*inline Point &cartesian_coords() {
     return coordinates_;
@@ -50,22 +50,22 @@ public:
   inline bool operator==(const Atom& al) const;
   inline bool operator!=(const Atom& al) const;
   //! The PDB occupancy field.
-  CGAL_FIELDRW(float, occupancy, occupancy_);
+  CGAL_GETSET(float, occupancy, occupancy_);
 
   //! The PDB temperature factor field.
-  CGAL_FIELDRW(float, temperature_factor, temp_factor_);
+  CGAL_GETSET(float, temperature_factor, temp_factor_);
 
   //! The PDB segment ID char
-  CGAL_FIELDRW(std::string, segment_id, segID_);
+  CGAL_GETSET(std::string, segment_id, segID_);
 
   //! The PDB element field
-  CGAL_FIELDRW(std::string, element, element_);
+  CGAL_GETSET(std::string, element, element_);
 
   //! The PDB charge field.
-  CGAL_FIELDRW(std::string, charge, charge_);
+  CGAL_GETSET(std::string, charge, charge_);
 
   //! The type of the atoms (basically what element).
-  CGAL_FIELDRW(Type, type, type_);
+  CGAL_GETSET(Type, type, type_);
 
   //! Returns the van der Waals radius of the atom.
   /*!  Values take from the wikipedia so beware.
@@ -95,7 +95,7 @@ public:
     CGAL_ISWAP(charge_);
     CGAL_ISWAP(index_);
   }
-protected:
+private:
   Type type_;
   Point coordinates_;
   float occupancy_, temp_factor_;
