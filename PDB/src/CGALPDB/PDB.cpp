@@ -38,6 +38,7 @@ void PDB::load(std::istream &in, bool print_errors){
   std::map<char, std::string> names;
   std::string last_name;
   Model_key cur_model(0);
+  bool done_with_model=false;
   while (in.getline (line, 600)) {
       
     CGAL_PDB_INTERNAL_NS::Line_type lt= CGAL_PDB_INTERNAL_NS::line_type(line);
@@ -92,9 +93,16 @@ void PDB::load(std::istream &in, bool print_errors){
       //new_model(Model_key(mnum), Model());
       cur_model= Model_key(mnum);
     } else if (  lt== CGAL_PDB_INTERNAL_NS::HETATM 
-		 || lt== CGAL_PDB_INTERNAL_NS::ATOM 
-		 || lt== CGAL_PDB_INTERNAL_NS::TER 
-		 || lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
+		 || lt== CGAL_PDB_INTERNAL_NS::ATOM ) {
+      if (done_with_model) {
+        // charlie carter hack
+        cur_model= Model_key(cur_model.index()+1);
+        done_with_model=false;
+      }
+      models_[cur_model].process_line(line);
+    } else if (lt== CGAL_PDB_INTERNAL_NS::TER 
+               || lt== CGAL_PDB_INTERNAL_NS::ENDMDL){
+      done_with_model=true;
       models_[cur_model].process_line(line);
     } else if (lt== CGAL_PDB_INTERNAL_NS::MASTER){
     } else if (lt == CGAL_PDB_INTERNAL_NS::END){

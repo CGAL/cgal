@@ -194,12 +194,18 @@ int main(int argc, char *argv[]){
 	    fname= make_fname(output_template, -1, cit->heterogen().chain(),
                               name);
 	  }
-          if (outputs[fname].find(it->key()) == outputs[fname].models_end()) {
+          PDB::Model_key mk;
+          if (split_models) {
+            mk= PDB::Model_key(0);
+          } else {
+            mk= it->key();
+          }
+          if (outputs[fname].find(mk) == outputs[fname].models_end()) {
             Model model;
             model.insert(cit->key(), cit->heterogen());
-            outputs[fname].insert(it->key(), model);
+            outputs[fname].insert(mk, model);
           } else {
-            outputs[fname].find(it->key())->model().insert(cit->key(), cit->heterogen());
+            outputs[fname].find(mk)->model().insert(cit->key(), cit->heterogen());
           }
         }
       }
@@ -216,6 +222,7 @@ int main(int argc, char *argv[]){
       std::cerr << "Error opening file " << it->first << std::endl;
       continue;
     }
+    std::cout << "Writing file " << it->first << std::endl;
     it->second.set_header(pdb.headers_begin(), pdb.headers_end());
     it->second.write(out);
   }
