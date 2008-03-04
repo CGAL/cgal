@@ -48,7 +48,7 @@ private:
   
 public:
   /*! Constructor */
-  Arr_polyhedral_sgm_arr_halfedge() {}
+  Arr_polyhedral_sgm_arr_halfedge() : m_arr_mask(0x0) {}
 
   /*! Add a arrangement to the mask of the original arrangements in the
    * minkowski sum.
