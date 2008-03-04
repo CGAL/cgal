@@ -37,18 +37,44 @@
 
 std::string make_fname(std::string format, int model, char chain, std::string name) {
   std::ostringstream oss;
-  if (model ==-1) {
-    oss << boost::format(format.c_str()) % '-' % chain %name;
-  } else {
-    oss << boost::format(format.c_str()) % model % chain %name;
+  std::size_t t= format.find("%c%");
+  if (t != std::string::npos) {
+    std::ostringstream oss;
+    if (chain != ' ') {
+      oss << chain;
+    } else {
+      oss << "-";
+    }
+    format.replace(t, 3, oss.str(), 0, oss.str().size());
   }
-  std::cout << "Returning " << oss.str() << " for " << model << " " << chain << " " << name << std::endl;
-  return oss.str();
+  t= format.find("%m%");
+  if (t != std::string::npos) {
+    std::ostringstream oss;
+    if (model != -1) {
+      oss << model;
+    } else {
+      oss << "-";
+    }
+    format.replace(t, 3, oss.str(),0,  oss.str().size());
+  }
+  t= format.find("%n%");
+  if (t != std::string::npos) {
+    if (!name.empty()) {
+      format.replace(t, 3, name, 0, name.size());
+    } else {
+      std::string nn("noname");
+      format.replace(t, 3, nn, 0, nn.size());
+    }
+  }
+  /*std::cout << "Returning " << format << " for " << model << " " << chain 
+    << " " << name << std::endl;*/
+  return format;
 }
 
 int main(int argc, char *argv[]){
   bool split_chains=false;
   bool split_models=false;
+  bool split_heterogens=false;
   std::string input_file, output_template;
   bool print_help=false;
   bool verbose=false;
@@ -61,13 +87,16 @@ int main(int argc, char *argv[]){
      "print out verbose messages about reading and writing pdb files")
     ("split-chains,c", boost::program_options::bool_switch(&split_chains),
      "Split all chains into separate files.")
+    ("split-heterogens,h", boost::program_options::bool_switch(&split_heterogens),
+     "Split all heterogens into separate files.")
     ("split-models,m", boost::program_options::bool_switch(&split_models),
      "Split all models into separate files.");
   po.add_options()
     ("input-pdb", boost::program_options::value< std::string>(&input_file),
      "input file")
     ("output-pdb-template", boost::program_options::value< std::string>(&output_template),
-     "A boost::format style string that will be used to generate the names for the output files. %1% is the model, %2% is the chain, %3% is the chain name (if any).");
+     "The file names are generated from this template. The substring %c% is replaced by "
+     "the chain identifier, %m% by the model number, %n% by the name of the molecule.");
 
   ao.add(o).add(po);
 
@@ -89,12 +118,28 @@ int main(int argc, char *argv[]){
       || output_template.empty()
         || print_help) {
     std::cout << "This program splits a pdb file with multiple models or chains into separate files "
-	      << " [-c -m] input-pdb template%1%%2%%3%.pdb\n" << std::endl;
-    std::cout << "The second argument is a boost::format style string that will be used to generate the names for the output files.\n\n";
+	      << " [-c -m] input-pdb template%m%%c%%n%.pdb\n" << std::endl;
+    std::cout << "The second argument is a string that will be used to generate the names for the output files.\n\n";
     std::cout << o << "\n";
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
   }
 
+  if (split_chains && output_template.find("%c%") == std::string::npos) {
+    std::cerr << "Output template string must contain %c% if the input is split based on chains"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (split_models && output_template.find("%m%") == std::string::npos) {
+    std::cerr << "Output template string must contain %m% if the input is split based on models"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (split_heterogens && output_template.find("%n%") == std::string::npos) {
+    std::cerr << "Output template string must contain %n% if the input is split based on heterogens"
+              << std::endl;
+    return EXIT_FAILURE;
+  }
+  
   std::ifstream in(input_file.c_str());
   if (!in) {
     std::cerr << "Error opening input file " << input_file << std::endl;
@@ -129,6 +174,34 @@ int main(int argc, char *argv[]){
 	  model.insert(cit->key(), cit->chain());
 	  outputs[name].insert(it->key(), model);
 	}
+
+	for (Model::Heterogen_const_iterator cit= it->model().heterogens_begin();
+	     cit != it->model().heterogens_end(); ++cit) {
+          std::string fname;
+          std::string name;
+          if (split_heterogens) {
+            name= cit->key().name();
+          } else {
+            char c= cit->heterogen().chain();
+            if (it->model().find(CGAL::PDB::Model::Chain_key(c)) != it->model().chains_end()) {
+              name = it->model().find(CGAL::PDB::Model::Chain_key(c))->chain().name();
+            }
+          }
+	  if (split_models) {
+	    fname= make_fname(output_template, it->key().index(), cit->heterogen().chain(),
+                              name);
+	  } else {
+	    fname= make_fname(output_template, -1, cit->heterogen().chain(),
+                              name);
+	  }
+          if (outputs[fname].find(it->key()) == outputs[fname].models_end()) {
+            Model model;
+            model.insert(cit->key(), cit->heterogen());
+            outputs[fname].insert(it->key(), model);
+          } else {
+            outputs[fname].find(it->key())->model().insert(cit->key(), cit->heterogen());
+          }
+        }
       }
     }
   } else {
