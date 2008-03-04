@@ -2952,7 +2952,10 @@ Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.gif -text svneol=unset#ima
 Optimisation_doc/doc_tex/Inscribed_areas/max_triangle.pdf -text svneol=unset#application/pdf
 PDB/demo/PDB/CMakeLists.txt -text
 PDB/demo/PDB/makefile -text
+PDB/demo/PDB/pdb_cat.cpp -text
+PDB/demo/PDB/pdb_echo.cpp -text
 PDB/demo/PDB/pdb_split.cpp -text
+PDB/demo/PDB/pdb_transform.cpp -text
 PDB/demo/PDB/pdb_tree.cpp -text
 PDB/dont_submit -text
 PDB/examples/PDB/CMakeLists.txt -text
