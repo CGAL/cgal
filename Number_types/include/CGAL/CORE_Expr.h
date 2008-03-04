@@ -162,9 +162,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
       : public Unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
-          // this call is required to get reasonable values for the double
-          // approximation
-          x.approx( 53, 1 );
+          x.approx(53,1024);
           return x.doubleValue();
         }
     };
@@ -174,7 +172,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             std::pair<double,double> result;
-            x.approx(52,1);
+            x.approx(53,1024);
             x.doubleInterval(result.first, result.second);
             CGAL_expensive_assertion(result.first  <= x);
             CGAL_expensive_assertion(result.second >= x);
