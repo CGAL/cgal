@@ -1,4 +1,5 @@
 Algebraic_foundations
+Algebraic_kernel_d
 Algebraic_kernel_for_circles
 Algebraic_kernel_for_spheres
 Alpha_shapes_2
@@ -21,6 +22,7 @@ Convex_hull_2
 Convex_hull_3
 Convex_hull_d
 Core
+Curved_kernel_via_analysis_2
 Developers_manual
 Distance_2
 Distance_3
