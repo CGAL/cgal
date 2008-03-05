@@ -34,7 +34,7 @@ my @placeholders = (
     'ThisConcept \\\\\\\\',
     'ThatConcept',
     '\\\\ccNestedType\{TYPE\}\{some nested types\}',
-#     '\\\\ccConstructor\{\w+\(\);\}\{default constructor\.\}',
+    '\\\\ccConstructor\{\w+\(\);\}\{default constructor\.\}',
     '\\\\ccMethod\{void foo\(\);\}\{some member functions\}',
     '\\\\ccc\{[Ss]ome_\w+\}[,\.]',
     '[Ss]ome(\\\\_\w+)+[,\.]',
@@ -165,8 +165,8 @@ sub doxygen_latex_to_latex
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Remove CGAL_BEGIN_NAMESPACE keyword that doxygen doesn't parse properly
-    $buf =~ s/CGAL_BEGIN_NAMESPACE\s*//g;
+    # Remove CGAL_*_NAMESPACE keywords that doxygen doesn't parse properly
+    $buf =~ s/CGAL_\w*_NAMESPACE\s*//g;
 
     # Remove doxygen comments that are not interesting
     $buf =~ s/Implements \S*(\.| \.)?//g;       # Remove from "Implements" to end of sentence

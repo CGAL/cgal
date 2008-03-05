@@ -198,15 +198,15 @@ mkdir doc_doxygen
 # Run doxygen
 echo ""
 echo "Run doxygen..."
-doxygen "${DOXYFILE}" >/dev/null 2>&1
+doxygen "${DOXYFILE}" 2>&1 | egrep -v 'BoundingBox not found|are not documented|^  parameter'
 
 # Turn traces on
-#set -x
+# set -x
 
 # Update the Reference Manual
 echo ""
 echo "Update the Reference Manual..."
-for manual_file in doc_tex/${PACKAGE}_ref/*.tex
+for manual_file in doc_tex/*_ref/*.tex
 do
     # Skip main.tex and intro.tex
     if [[ (`basename "${manual_file}"` != "main.tex") && \
@@ -257,12 +257,12 @@ done
 
 # Update citations (hard-coded).
 # TODO: add here citations for all packages using generate_reference_manual.
-perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' doc_tex/${PACKAGE}_ref/*.tex
-perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' doc_tex/${PACKAGE}_ref/*.tex
+perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' doc_tex/*_ref/*.tex
+perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' doc_tex/*_ref/*.tex
 
 exit 0
