@@ -633,8 +633,8 @@ sub format_doxygen_function_doc
     # Insert \ccSeeAlso title at the end of the document
     $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
 
-    # Format "Heading Parameters:" comment [L. Saboret extension]
-    $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/sm;
+    # Format "Heading Parameters:" comments [L. Saboret extension]
+    $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/smg;
 
     # Insert \ccParameters section before \ccSeeAlso
     # (from brief section)
