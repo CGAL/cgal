@@ -33,10 +33,7 @@
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
 
-// #ifdef CGAL_INTERN_USE_BFI
-// #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
 #include <CGAL/leda_interval_support.h>
-// #endif //CGAL_INTERN_USE_BFI
 
 #endif // CGAL_USE_LEDA
 
@@ -77,12 +74,9 @@ public:
     //! exact root expressions, constructible from integers and rationals
     typedef leda_real Field_with_sqrt;
 
-// #ifdef CGAL_INTERN_USE_BFI
     // undocumented
     typedef leda_bigfloat          Bigfloat;
-//     typedef CGALi::leda_bigfloat_interval Bigfloat_interval;
     typedef leda_bigfloat_interval Bigfloat_interval;
-// #endif //CGAL_INTERN_USE_BFI
 
 };
 #endif // CGAL_USE_LEDA
@@ -101,11 +95,9 @@ public:
     typedef CORE::BigRat Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CORE::Expr Field_with_sqrt;
-// #ifdef CGAL_INTERN_USE_BFI
     // undocumented
     typedef CORE::BigFloat          Bigfloat;
     typedef CORE::BigFloat          Bigfloat_interval;
-// #endif //CGAL_INTERN_USE_BFI
 
 };
 #endif // CGAL_USE_CORE
@@ -164,42 +156,10 @@ typedef LEDA_arithmetic_kernel Arithmetic_kernel;
   typedef typename AT::Integer Integer; \
   typedef typename AT::Rational Rational; \
   typedef typename AT::Field_with_sqrt Field_with_sqrt; 
-//   typedef typename AT::Poly_int1 Poly_int1; 
-//   typedef typename AT::Poly_int2 Poly_int2; 
-//   typedef typename AT::Poly_int3 Poly_int3;
-//   typedef typename AT::Poly_rat1 Poly_rat1; 
-//   typedef typename AT::Poly_rat2 Poly_rat2; 
-//   typedef typename AT::Poly_rat3 Poly_rat3;
 
 // end #define
 
-template <class NT>
-class Lazy_exact_nt;
 
-
-namespace INTERN_AK{
-template <class NT>
-struct Lazy_exact_type{
-    typedef CGAL::Lazy_exact_nt<NT> type;
-};
-template <>
-struct Lazy_exact_type<CGAL::Null_tag>{
-    typedef CGAL::Null_tag type;
-};
-} // namespace INTERN_AK
-
-template <class AT>
-struct Lazy_exact_arithmetic_kernel{
-    typedef typename INTERN_AK::Lazy_exact_type<typename AT::Integer>::type Integer;
-    typedef typename INTERN_AK::Lazy_exact_type<typename AT::Exact_float_number>::type Exact_float_number;
-    typedef typename INTERN_AK::Lazy_exact_type<typename AT::Rational>::type Rational;
-    typedef typename INTERN_AK::Lazy_exact_type<typename AT::Field_with_sqrt>::type Field_with_sqrt;
-};
-
-
-// #ifdef CGAL_INTERN_USE_BFI
-
-namespace CGALi {
 template< class NT > struct Get_arithmetic_kernel;
 
 #ifdef CGAL_USE_LEDA
@@ -214,6 +174,14 @@ template< class NT > struct Get_arithmetic_kernel;
     };
     template <>
     struct Get_arithmetic_kernel<leda::real>{
+        typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<leda::bigfloat>{
+        typedef LEDA_arithmetic_kernel Arithmetic_kernel;
+    };
+    template <>
+    struct Get_arithmetic_kernel<CGAL::leda_bigfloat_interval>{
         typedef LEDA_arithmetic_kernel Arithmetic_kernel;
     };
 #endif //CGAL_USE_LEDA
@@ -233,6 +201,10 @@ template< class NT > struct Get_arithmetic_kernel;
     struct Get_arithmetic_kernel<CORE::Expr>{
         typedef CORE_arithmetic_kernel Arithmetic_kernel;
     };
+    template <>
+    struct Get_arithmetic_kernel<CORE::BigFloat>{
+        typedef CORE_arithmetic_kernel Arithmetic_kernel;
+    };
 #endif //CGAL_USE_CORE
     
     template <class COEFF, class ROOT>
@@ -241,10 +213,6 @@ template< class NT > struct Get_arithmetic_kernel;
         typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
     };
     
-    
-} // namespace CGALi
-// #endif //CGAL_INTERN_USE_BFI
-
 
 CGAL_END_NAMESPACE
 
