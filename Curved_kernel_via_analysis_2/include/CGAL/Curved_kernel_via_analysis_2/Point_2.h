@@ -551,6 +551,7 @@ public:
                     break;
                 case CGAL::ARR_LEFT_BOUNDARY:
                 case CGAL::ARR_RIGHT_BOUNDARY: {
+                    // TODO concept!
                     CGAL::Object obj = 
                         this->curve().asymptotic_value_of_arc(
                                 this->location(), this->arcno()
