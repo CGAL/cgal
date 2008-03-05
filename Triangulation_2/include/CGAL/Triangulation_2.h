@@ -1563,13 +1563,6 @@ move(Vertex_handle v, const Point &p) {
     return true;
   }
 
-  if(lt == FACE) {
-    if(loc->has_vertex(v)) {
-      v->point() = p;
-      return true;
-    }
-  }
-
   if((loc != NULL) && test_dim_down(v)) {
     v->point() = p;
     int i = loc->index(v);
