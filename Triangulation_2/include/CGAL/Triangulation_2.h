@@ -1564,7 +1564,7 @@ move(Vertex_handle v, const Point &p) {
   }
 
   if(lt == FACE) {
-    if(loc->has_vertex(v->point())) {
+    if(loc->has_vertex(v)) {
       v->point() = p;
       return true;
     }
