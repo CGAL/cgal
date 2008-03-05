@@ -293,25 +293,6 @@ optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 
 #--------------------------------------------------------------------------------------------------
 #
-#                                    -= TESTSUITE =-
-#
-#--------------------------------------------------------------------------------------------------
-
-# INCLUDE(Dart)
-# MARK_AS_ADVANCED(DART_ROOT TCL_TCLSH)
-set(TESTING_ENABLED OFF CACHE BOOL "Turn testing on/off")
-if(TESTING_ENABLED)
-
-  ENABLE_TESTING()
-  
-  add_subdirectory(test EXCLUDE_FROM_ALL )
-  
-#     configure_file(${CGAL_SOURCE_DIR}/CMake/CTestCustom.ctest.in ${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest @ONLY)
-#     FILE(WRITE ${CGAL_BINARY_DIR}/CTestCustom.cmake "INCLUDE(\"${CGAL_BINARY_DIR}/CMake/CTestCustom.ctest\")\n")
-endif()
-
-#--------------------------------------------------------------------------------------------------
-#
 #                                            -= CPack =-
 #
 #--------------------------------------------------------------------------------------------------

@@ -22,10 +22,13 @@
 #sets the umask to 022 & 0777
 umask 022
 
+
+SCP="scp"
 WGET="wget"
+WGET_OPTS="--no-check-certificate"
 CURL="curl"
-CURL_OPTS="--remote-name --silent --location-trusted"
-CGAL_URL="http://cgal.inria.fr/CGAL/Members/Releases"
+CURL_OPTS="-k --remote-name --silent --location-trusted"
+CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 TAR="tar"
 GZIP="gzip"
@@ -40,6 +43,7 @@ CGAL_ROOT=`pwd`
 FTP_SERVER="ftp-sop.inria.fr"
 FTP_STORE_DIR="geometrica/Incoming"
 FTP_OPTS="-p -v -n"
+UPLOAD_RESULT_DESTINATION="cgaltest@cgal.geometryfactory.com:incoming"
 BUILD_HOSTS="must_be_set_in_.autocgalrc"
 MAIL_ADDRESS="must_be_set_in_.autocgalrc"
 MYSHELL="must_be_set_in_.autocgalrc"
@@ -55,6 +59,11 @@ do
   if [ "$arg" = "-c" ]; then
     echo "Using latest unzipped release instead of getting a new one from the server"
     USE_LATEST_UNZIPPED="y"
+  fi
+  
+  if [ "$arg" = "-l" ]; then
+    echo "Not uploading results to dashboard"
+    DO_NOT_UPLOAD="y"
   fi
 done
 
@@ -120,18 +129,9 @@ datestr()
 # $2 = target filename (basename only)
 put_on_web()
 {
-    if [ -n "${USE_CURL}" ]; then
-        $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
-              ftp://${FTP_SERVER}/${FTP_STORE_DIR}/${2} >> ${ACTUAL_LOGFILE} 2>&1
-    else
-	$FTP $FTP_OPTS $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
-quote USER anonymous
-quote PASS ${MAIL_ADDRESS}
-binary
-put ${1} ${FTP_STORE_DIR}/${2}
-quit
-EOF
-    fi
+  echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
+  
+  #"$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
 }
 
 error()
@@ -191,7 +191,7 @@ build_cgal_libs()
     LOCAL_BUILD_ON="`value_of BUILD_ON_${1}`"
 
     if [ -z "${LOCAL_BUILD_ON}" ]; then
-        eval "${LOCAL_BUILD_ON}=\"`value_of COMPILERS_${1}`\""
+      LOCAL_BUILD_ON=`value_of COMPILERS_${1}`
     fi
     
     if [ "${LOCAL_BUILD_ON}" = "all" ]; then
@@ -206,10 +206,20 @@ build_cgal_libs()
     fi
     
     for i in ${LOCAL_BUILD_ON}; do
-      remote_command ${1} "cd ${CGAL_DIR}; cmake ${CGAL_DIR}/cmake/platforms/${i}; ${CGAL_DIR}/cmake/platforms/${i}/make" >> ${ACTUAL_LOGFILE} 2>&1
+      
+      CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${i}
+      
+      log ${ACTUAL_LOGFILE} "   under ${CGAL_BINARY_DIR}"
+      
+      remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
+                           cmake -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
+                           make -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
+                           
+      cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
+      cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
+      
     done
       
-    #cp ${CGAL_DIR}/install.log* ${CGAL_TEST_DIR}/
 }
 
 #-----------------------------------------------
@@ -234,43 +244,41 @@ run_testsuite()
 # processors to use
 # ---------------------------------------------------
 # $1 = HOST
-# $2 = COMPILER
+# $2 = PLATFORM
 test_script()
 {
 	NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
-	cd ${CGAL_TEST_DIR}
-	TEST_DIR_ROOT=${TEST_DIR_ROOT:-${CGAL_DIR}}
-	LOCAL_TEST_DIR=${TEST_DIR_ROOT}/test_${2}
+        CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${2}
+	cd ${CGAL_BINARY_DIR}
 	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
         if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
 	  MAKE_OPTS=""
         else
 	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-        cat > ${CGAL_TEST_DIR}/localtestscript.${1} <<EOF
-CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
-CGAL_TESTER=${CGAL_TESTER};
+        cat > ${CGAL_BINARY_DIR}/localtestscript.${1} <<EOF
+CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
-export CGAL_MAKEFILE;
-export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
-rm -rf ${LOCAL_TEST_DIR};
-cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
-cd ${LOCAL_TEST_DIR};
+CGAL_DIR='${CGAL_BINARY_DIR}';
+CGAL_TEST_PLATFORM='${2}';
+export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS CGAL_DIR CGAL_TEST_PLATFORM;
+rm -rf ${CGAL_BINARY_DIR}/test;
+cp -r ${CGAL_TEST_DIR} ${CGAL_BINARY_DIR}/test;
+cd ${CGAL_BINARY_DIR}/test;
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
-nice ${NICE_OPTIONS} make ${MAKE_OPTS};
+nice ${NICE_OPTIONS} make ${MAKE_OPTS} -fmakefile2;
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults;
 echo 'COPYING RESULTS';
 cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
 echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
-rm -rf ${LOCAL_TEST_DIR}
+rm -rf ${CGAL_BINARY_DIR}/test
 EOF
-        chmod ugo+x ${CGAL_TEST_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_TEST_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
+        chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
-    #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
 	#
 	# collect results and put them on the web
 	#
@@ -284,15 +292,18 @@ EOF
 	${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
 	mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
 
-	put_on_web \
-	    test_results-${1}.tar.gz \
-	    ${FILENAME}
+        echo "Test results: ${CGAL_TEST_DIR}/test_results-${1}.tar.gz"
+        
+        if [ -z "${DO_NOT_UPLOAD}" ]; then
+	  put_on_web test_results-${1}.tar.gz ${FILENAME}
+        fi       
 
     #
     # notify the CGAL world
     #
     if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
       for i in ${MAIL_ADDRESS}; do
+        echo "Notifying ${i} about autotest finished." 
         printf "result collection::\n${FILENAME}\n" | ${SENDMAIL} -s "autohandle" ${i}
       done
     fi
@@ -311,7 +322,7 @@ get_cgal()
     if [ -n "${USE_CURL}" ]; then
         ${CURL} ${CURL_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
     else
-        ${WGET} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+        ${WGET} ${WGET_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
     fi
     if [ ${?} != 0 ]; then
 	error "Could not get CGAL"
@@ -350,26 +361,26 @@ unzip_cgal()
 
 copy_old_stuff()
 {
-    # copy config build configuration files
-    
+  # copy config build configuration files
+  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
 
     # Each build platform is given by a folder under cmake/build 
-    cd ${OLD_CGAL_DIR}/cmake/platforms
+    cd ${OLD_CGAL_BINARY_DIR_BASE}
     for platform in * 
     do
 
       if [ -d "${platform}" ]; then
 
         # if the platform folder doesn't exist in the tested release it is created now.
-        if [ ! -d "${CGAL_DIR}/cmake/platforms/${platform}" ]; then
-          log ${ACTUAL_LOGFILE} "Creating platform folder ${platform} in ${CGAL_DIR}/cmake/platforms/"
-          mkdir "${CGAL_DIR}/cmake/platforms/${platform}"
+        if [ ! -d "${CGAL_BINARY_DIR_BASE}/${platform}" ]; then
+          log ${ACTUAL_LOGFILE} "Creating platform folder ${platform} in ${CGAL_BINARY_DIR_BASE}/"
+          mkdir "${CGAL_BINARY_DIR_BASE}/${platform}"
         fi
         
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
-          log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_DIR}/cmake/platforms/${platform}/"
-          cp "${platform}/CMakeCache.txt" "${CGAL_DIR}/cmake/platforms/${platform}" >> ${ACTUAL_LOGFILE} 
+          log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
+          cp "${platform}/CMakeCache.txt" "${CGAL_BINARY_DIR_BASE}/${platform}" >> ${ACTUAL_LOGFILE} 
         fi
         
       fi
@@ -377,6 +388,8 @@ copy_old_stuff()
     done
     
     log_done ${ACTUAL_LOGFILE}
+    
+  fi  
 }
 
 
@@ -407,8 +420,26 @@ run_test()
     if [ -n "${CONSOLE_OUTPUT}" ]; then
 	printf "\n-------------------------------------------------------\n"
     fi
+    
     for i in ${BUILD_HOSTS}; do
-	run_testsuite ${i} "`value_of COMPILERS_${i}`" &
+    
+      LOCAL_TEST_ON=`value_of COMPILERS_${i}`
+      
+      if [ "${LOCAL_TEST_ON}" = "all" ]; then
+        LOCAL_TEST_ON=""
+        cd ${CGAL_BINARY_DIR_BASE}
+        for platform in * 
+        do
+          if [ -d "${platform}" ]; then
+            LOCAL_TEST_ON="${LOCAL_TEST_ON} ${platform}"
+          fi
+        done    
+      fi
+      
+      for j in ${LOCAL_TEST_ON}; do
+	run_testsuite ${i} ${j} #&
+      done
+              
     done
 }
 
@@ -448,7 +479,7 @@ setup_dirs_for_latest_in_server()
     if [ -n "${USE_CURL}" ]; then
       ${CURL} ${CURL_OPTS} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
     else
-      ${WGET} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+      ${WGET} ${WGET_OPTS} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
     fi
   if [ ! -f "LATEST" ]; then
     error "COULD NOT DOWNLOAD LATEST!"
@@ -488,16 +519,10 @@ setup_dirs_for_latest_in_server()
   OLD_CGAL_DIR=${CGAL_ROOT}/CGAL-I
   CURRENT_CGAL_DIR=${CGAL_ROOT}/${CGAL_CURRENT_RELEASE_ID}
   
-  # you will guess it :)
-  CGAL_INCL_DIR=${CGAL_DIR}/include
-  OLD_CGAL_INCL_DIR=${OLD_CGAL_DIR}/include
-  CGAL_LIB_DIR=${CGAL_DIR}/lib
-  OLD_CGAL_LIB_DIR=${OLD_CGAL_DIR}/lib
-  CGAL_MAKE_DIR=${CGAL_DIR}/make
   CGAL_TEST_DIR=${CGAL_DIR}/test
-  CGAL_RUN_TEST=${CGAL_TEST_DIR}/run_testsuite
-  CGAL_COLLECT_TEST=${CGAL_TEST_DIR}/collect_cgal_testresults
 
+  OLD_CGAL_BINARY_DIR_BASE=${OLD_CGAL_DIR}/cmake/platforms
+  CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
 }
 
 setup_dirs_for_latest_unzipped()
@@ -522,16 +547,10 @@ setup_dirs_for_latest_unzipped()
   
   CURRENT_CGAL_DIR=${CGAL_ROOT}/${CGAL_CURRENT_RELEASE_ID}
   
-  
-  # you will guess it :)
-  CGAL_INCL_DIR=${CGAL_DIR}/include
-  OLD_CGAL_INCL_DIR=${OLD_CGAL_DIR}/include
-  CGAL_LIB_DIR=${CGAL_DIR}/lib
-  OLD_CGAL_LIB_DIR=${OLD_CGAL_DIR}/lib
-  CGAL_MAKE_DIR=${CGAL_DIR}/make
   CGAL_TEST_DIR=${CGAL_DIR}/test
-  CGAL_RUN_TEST=${CGAL_TEST_DIR}/run_testsuite
-  CGAL_COLLECT_TEST=${CGAL_TEST_DIR}/collect_cgal_testresults
+  
+  OLD_CGAL_BINARY_DIR_BASE=${OLD_CGAL_DIR}/cmake/platforms
+  CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
 }
 
 
@@ -567,8 +586,11 @@ update_symlinks()
 {
   rm ${OLD_CGAL_DIR}
   ln -s `basename ${CGAL_DIR}` ${OLD_CGAL_DIR}
-  rm ${CURRENT_CGAL_DIR}
-  ln -s `basename ${CGAL_DIR}` ${CURRENT_CGAL_DIR}
+  
+  if [ ! ${OLD_CGAL_DIR} -ef ${CURRENT_CGAL_DIR} ]; then
+    rm ${CURRENT_CGAL_DIR}
+    ln -s `basename ${CGAL_DIR}` ${CURRENT_CGAL_DIR}
+  fi
 }
 
 # ----------------------------------------------------
@@ -580,6 +602,7 @@ rm -f ${ACTUAL_LOGFILE}
 
 if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
   for i in ${MAIL_ADDRESS}; do
+    echo "Notifying ${i} about autotest started."
     printf "subject says it all\n" | \
         ${SENDMAIL} -s "Started autotest" ${i}
   done
@@ -615,9 +638,15 @@ main_procedure()
     unzip_cgal
   fi
    
-  #copy_old_stuff
-  build_cgal
-  #update_symlinks
+  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+    copy_old_stuff
+  fi
+    
+  #build_cgal
+  
+  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+    update_symlinks
+  fi
   
   if [ "${BUILD_HOSTS}" = "localhost" ]; then
     TEXT="`value_of COMPILERS_localhost`"
@@ -627,6 +656,7 @@ main_procedure()
     fi
   fi
         
+#SKIP_TEST="y"
         
   if [ -z "${SKIP_TEST}" ]; then
     run_test

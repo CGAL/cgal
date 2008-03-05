@@ -1606,7 +1606,6 @@ CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
 CMake/src/CGALimageIO/CMakeLists.txt -text
 CMake/src/CMakeLists.txt -text
-CMake/test/CMakeLists.txt -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
@@ -4098,7 +4097,9 @@ Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/CMakeLists.txt -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
+Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite eol=lf
+Testsuite/test/run_testsuite_with_cmake -text
 Timer/examples/Timer/CMakeLists.txt -text
 Timer/test/Timer/CMakeLists.txt -text
 Triangulation_2/demo/Triangulation_2/CMakeLists.txt -text

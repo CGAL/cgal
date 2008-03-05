@@ -21,8 +21,11 @@ macro(create_single_source_cgal_qt3_program first )
     add_dependencies(${exe_name} CGAL CGAL_QT)
     
     if ( CGAL_USE_CGAL_CORE )
-      add_dependencies(${exe_name} CGAL_CORE)
+      add_dependencies(${exe_name} CGAL_CORE) 
     endif()
+    
+    set_target_properties( ${exe_name} PROPERTIES COMPILE_FLAGS "$(EXTRA_FLAGS) $(TESTSUITE_CXXFLAGS)" )
+    set_target_properties( ${exe_name} PROPERTIES LINK_FLAGS    "$(TESTSUITE_LDFLAGS)" )
     
     # Link the executable to CGAL and third-party libraries
     if ( AUTO_LINK_ENABLED )    
@@ -30,6 +33,7 @@ macro(create_single_source_cgal_qt3_program first )
     else()
       target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})
     endif()
+    
   endif(EXISTS ${first})
   
 endmacro()

@@ -18,14 +18,16 @@ macro(create_single_source_cgal_qt4_program first )
     add_executable  (${exe_name} ${all})
     add_dependencies(${exe_name} CGAL CGAL_CORE)
     
+    set_target_properties( ${exe_name} PROPERTIES COMPILE_FLAGS "$(EXTRA_FLAGS) $(TESTSUITE_CXXFLAGS)" )
+    set_target_properties( ${exe_name} PROPERTIES LINK_FLAGS    "$(TESTSUITE_LDFLAGS)" )
+    
     # Link the executable to CGAL and third-party libraries
-    if ( NOT AUTO_LINK_ENABLED )    
-      target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+    if ( AUTO_LINK_ENABLED )    
+      target_link_libraries(${exe_name} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES} )
+    else()
+      target_link_libraries(${exe_name} ${CGAL_LIBRARIES} ${CGAL_QT_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${QT_LIBRARIES})
     endif()
 
-    # Add " make test" rule for executable
-    # TODO: get test parameters from ${exe_name}.cmd
-    # add_test(${exe_name} ${exe_name})
   endif(EXISTS ${first})
   
 endmacro()
