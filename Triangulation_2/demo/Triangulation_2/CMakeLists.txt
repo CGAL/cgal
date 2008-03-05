@@ -5,17 +5,13 @@ project (Triangulation_2_Demo)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
-
 find_package(CGAL)
 
 find_package(Qt3)
 
 if ( CGAL_FOUND AND QT_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(Qt3Macros)
 
   QT3_AUTOMOC(  constrained.cpp constrained_delaunay_triangulation_2.cpp constrained_delaunay_triangulation_2_toolbar.cpp constrained_delaunay_triangulation_2_toolbar_layers.cpp delaunay_triangulation_2.cpp delaunay_triangulation_2_toolbar.cpp delaunay_triangulation_2_toolbar_layers.cpp regular_triangulation_2.cpp regular_triangulation_2_toolbar.cpp regular_triangulation_2_toolbar_layers.cpp triangulation_2_edit_vertex.cpp )

@@ -5,17 +5,13 @@ project (Circular_kernel_2_Demo)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
-
 find_package(CGAL)
 
 find_package(Qt3)
 
 if ( CGAL_FOUND AND QT_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(Qt3Macros)
 
   QT3_AUTOMOC( demo.cpp Qt_widget_get_arc.cpp Qt_widget_get_segment.cpp )

@@ -5,17 +5,13 @@ project (Kinetic_data_structures_Demo)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
-
 find_package(CGAL)
 
 find_package(Qt3)
 
 if ( CGAL_FOUND AND QT_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(Qt3Macros)
 
   QT3_AUTOMOC(  Delaunay_triangulation_2.cpp Delaunay_triangulation_3.cpp Delaunay_triangulation_stable_subset_2.cpp generate_data.cpp gui_2.cpp gui_3.cpp regular_triangulation_3.cpp SoQt_examiner_viewer.cpp )

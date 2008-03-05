@@ -437,7 +437,7 @@ run_test()
       fi
       
       for j in ${LOCAL_TEST_ON}; do
-	run_testsuite ${i} ${j} #&
+	run_testsuite ${i} ${j} &
       done
               
     done
@@ -642,7 +642,7 @@ main_procedure()
     copy_old_stuff
   fi
     
-  #build_cgal
+  build_cgal
   
   if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
     update_symlinks
@@ -655,8 +655,6 @@ main_procedure()
       SKIP_TEST="y"
     fi
   fi
-        
-#SKIP_TEST="y"
         
   if [ -z "${SKIP_TEST}" ]; then
     run_test

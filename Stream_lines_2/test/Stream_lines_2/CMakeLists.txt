@@ -5,15 +5,11 @@ project (Stream_lines_2_Test)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
-
 find_package(CGAL)
 
 if ( CGAL_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program( Stream_line.cpp )

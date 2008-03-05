@@ -5,17 +5,13 @@ project (Arrangement_of_spheres_3_Demo)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-if ( $ENV{CGAL_DIR} )
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGAL_DIR}/cmake/modules"  )
-endif()
-
 find_package(CGAL)
 
 find_package(Qt3)
 
 if ( CGAL_FOUND AND QT_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(Qt3Macros)
 
   QT3_AUTOMOC(  interactive_point_insertion.cpp interactive_point_location.cpp interactive_ray_shooting.cpp show_2d.cpp show_cross_section.cpp show_slice.cpp )

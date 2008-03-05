@@ -9,7 +9,7 @@ find_package(CGAL)
 
 if ( CGAL_FOUND )
 
-  include(UseCGAL)
+  include(${CGAL_USE_FILE})
   include(CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program( pdb_split.cpp )
