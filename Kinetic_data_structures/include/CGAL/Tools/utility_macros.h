@@ -30,7 +30,7 @@
 
 // 
 #define CGAL_GET(type, name, expr) const type & name() const{expr;} 
-#define CGAL_GETOBJECT(UC, lc, expr) const UC & lc##_object() const {expr;} 
+#define CGAL_GETOBJECT(UC, lc, expr) const UC& lc##_object() const {expr;} 
 #define CGAL_GETNR(type, name, expr) type name() const{expr;} 
 //#define CGAL_GET(type, name, expr) typename boost::call_traits<type>::param_type name() const {expr;}
 
@@ -39,22 +39,9 @@
 
 #define CGAL_SET(type, name, expr) void set_##name(const type &k) {expr;} 
 
-template <class T>
-struct Utility_macros_param_type {
-  typedef const T& P;
-  typedef const T& R;
-};
-
-template <class T>
-struct Utility_macros_param_type<T*> {
-  typedef T* P;
-  typedef T* R;
-};
-
-#define CGAL_FIELDRW(type, name, var)		\
-  Utility_macros_param_type<type>::R  name() const {return var;}	\
-  void set_##name( Utility_macros_param_type<type>::P k) {var=k;} 
-
+#define CGAL_GETSET(type, name, var)		\
+  CGAL_GET(type, name, return var)              \
+  CGAL_SET(type, name, var = k)
 
 #define CGAL_OUTPUT(type)						\
   inline std::ostream& operator<<(std::ostream&out, const type &t){	\
