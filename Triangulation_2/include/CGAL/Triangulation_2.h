@@ -472,6 +472,23 @@ bool move(InputIterator first, InputIterator last)
   return !blocked;
 }
 
+bool well_oriented(Vertex_handle v)
+{
+  typedef typename Geom_traits::Orientation_2   Orientation_2; 
+  Orientation_2 orientation_2 = this->geom_traits().orientation_2_object();
+  Face_circulator fc = this->incident_faces(v), done(fc);
+  do {
+    if(!is_infinite(fc)) {
+      Vertex_handle v0 = fc->vertex(0);
+      Vertex_handle v1 = fc->vertex(1);
+      Vertex_handle v2 = fc->vertex(2);
+      if(orientation_2(v0->point(),v1->point(),v2->point()) 
+        != COUNTERCLOCKWISE) return false;
+    }
+  } while(++fc != done);
+  return true;
+}
+
 public:
   template<class EdgeIt>
   Vertex_handle star_hole( const Point& p, 
