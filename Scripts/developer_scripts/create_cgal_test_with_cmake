@@ -1,0 +1,155 @@
+#! /bin/sh
+#
+# =============================================================================
+# $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/developer_scripts/create_cgal_test $
+# $Id: create_cgal_test 36975 2007-03-09 22:52:40Z spion $
+#
+# author(s)     : Wieger Wesselink, Geert-Jan Giezeman
+#
+# coordinator   : Utrecht University
+# =============================================================================
+#
+# This script creates a cgal_test_with_cmake script with entries for all .C and .cpp 
+# files in the current test directory.
+
+VERSION=1.1
+
+DO_RUN="y"
+
+while [ $1 ]; do
+    case "$1" in
+        -h|-help|--h|--help)
+            echo 'Usage : create_cgal_test_with_cmake [--no-run]'
+            echo
+            echo '    --help    : prints this usage help'
+            echo '    --no-run  : produces a cgal_test_with_cmake script that only does compilation, no execution'
+            exit
+        ;;
+        --no-run)
+            DO_RUN=""
+            shift; continue
+        ;;
+    esac
+done
+
+
+header()
+{
+  echo "#---------------------------------------------------------------------#"
+  echo "#                    $1"
+  echo "#---------------------------------------------------------------------#"
+}
+
+create_script()
+{
+  echo "#! /bin/sh"
+  echo
+  echo "# This is a script for the CGAL test suite. Such a script must obey"
+  echo "# the following rules:"
+  echo "#"
+  echo "# - the name of the script is cgal_test_with_cmake"
+  echo "# - for every target two one line messages are written to the file 'error.txt'"
+  echo "#     the first one indicates if the compilation was successful"
+  echo "#     the second one indicates if the execution was successful"
+  echo "#   if one of the two was not successful, the line should start with 'ERROR:'"
+  echo "# - running the script should not require any user interaction"
+  echo "# - the script should clean up object files and executables"
+  echo
+  echo "ERRORFILE=error.txt"
+  echo "DO_RUN=${DO_RUN}"
+  echo
+  header "configure"
+  echo
+cat << EOF
+configure()
+{
+  echo "Configuring... "
+  CONFIGURED="y"
+  
+  if eval 'cmake -DCGAL_DIR="\$CGAL_DIR" .' ; then
+    echo "   succesful configuration" >> \$ERRORFILE
+  else
+    echo "   ERROR:    configuration" >> \$ERRORFILE
+    CONFIGURED=""
+  fi
+}
+
+EOF
+  header "compile_and_run <target>"
+  echo
+cat << EOF
+compile_and_run()
+{
+  echo "Compiling \$1 ... "
+  SUCCES="y"
+  
+  if eval 'make TESTSUITE_CXXFLAGS="\$TESTSUITE_CXXFLAGS" \\
+                TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" -fMakefile \$1' ; then
+    echo "   succesful compilation of \$1" >> \$ERRORFILE
+  else
+    echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "\$DO_RUN" ] ; then
+    if [ -n "\${SUCCES}" ] ; then
+      OUTPUTFILE=ProgramOutput.\$1.\$PLATFORM
+      rm -f \$OUTPUTFILE
+      COMMAND="./\$1"
+      if [ -f \$1.cmd ] ; then
+        COMMAND="\$COMMAND \`cat \$1.cmd\`"
+      fi
+      if [ -f \$1.cin ] ; then
+        COMMAND="cat \$1.cin | \$COMMAND"
+      fi
+      echo "Executing \$1 ... "
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval \$COMMAND > \$OUTPUTFILE 2>&1 ; then
+        echo "   succesful execution   of \$1" >> \$ERRORFILE
+      else
+        echo "   ERROR:    execution   of \$1" >> \$ERRORFILE
+      fi
+    else
+      echo   "   ERROR:    not executed   \$1" >> \$ERRORFILE
+    fi
+  fi
+
+  eval "make CGAL_MAKEFILE=\$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+}
+
+EOF
+  header "remove the previous error file"
+  echo
+  echo "rm -f \$ERRORFILE"
+  echo "touch \$ERRORFILE"
+  echo
+  header "configure, compile and run the tests"
+  echo
+  echo "configure"
+  echo
+cat << EOF
+if [ \$# -ne 0 ] ; then
+  for file in \$* ; do
+    compile_and_run \$file
+  done
+else
+EOF
+  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+    if [ -n "`grep '\<main\>' $file`" ] ; then
+      tmp=`basename $file .C`
+      tmp=`basename $tmp .cpp`
+      echo "  compile_and_run $tmp"
+    fi
+  done
+  echo "fi"
+}
+
+echo "create_cgal_test_with_cmake version $VERSION"
+if [ -f cgal_test_with_cmake ] ; then
+  echo "moving cgal_test_with_cmake to cgal_test_with_cmake.bak ..."
+  mv -f cgal_test_with_cmake cgal_test_with_cmake.bak
+fi
+create_script > cgal_test_with_cmake
+chmod 755 cgal_test_with_cmake
+echo "created cgal_test_with_cmake ..."

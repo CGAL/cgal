@@ -269,7 +269,7 @@ cd ${CGAL_BINARY_DIR}/test;
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -fmakefile2;
 echo 'COLLECTING RESULTS';
-./collect_cgal_testresults;
+./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
 cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
 echo 'REMOVING LOCAL_TEST_DIR';
@@ -513,6 +513,11 @@ setup_dirs_for_latest_in_server()
   # dir for the actual release
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
   
+  # check, if CGAL_DIR exists
+  if [ !-d ${CGAL_DIR} ]; then
+    error "directory ${CGAL_DIR} does not exist"
+  fi
+  
   # dir of the previous release
   # HAS TO exist !
   # (used to copy config/install files and evt. gmp stuff)
@@ -539,6 +544,11 @@ setup_dirs_for_latest_unzipped()
   
   # dir for the actual release
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
+  
+  # check, if CGAL_DIR exists
+  if [ !-d ${CGAL_DIR} ]; then
+    error "directory ${CGAL_DIR} does not exist"
+  fi
   
   # dir of the previous release
   # HAS TO exist !
@@ -580,6 +590,7 @@ setup_dirs()
   if [ ! -r ${LOGS_DIR} ]; then
     mkdir $LOGS_DIR
   fi
+  
 }
 
 update_symlinks()

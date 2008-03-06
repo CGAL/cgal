@@ -48,9 +48,6 @@ create_cmake_script()
   echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
   echo
 
-  echo 'set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{CGALROOT}/cmake/modules"  )'
-  echo
-  
   echo 'find_package(CGAL)'
   echo
   
@@ -60,7 +57,7 @@ create_cmake_script()
     echo
     echo 'if ( CGAL_FOUND AND QT_FOUND )'
     echo
-    echo '  include(UseCGAL)'
+    echo '  include( ${CGAL_USE_FILE} )'
     echo '  include(Qt3Macros)'
     echo
     
@@ -108,7 +105,7 @@ create_cmake_script()
   
     echo 'if ( CGAL_FOUND )'
     echo
-    echo '  include(UseCGAL)'
+    echo '  include( ${CGAL_USE_FILE} )'
     echo '  include(CreateSingleSourceCGALProgram)'
     echo
   

@@ -339,6 +339,15 @@ sub make_testscripts()
                     system("$DEVELSCRIPTSDIR/create_cgal_test") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test failed";
                 }
 	    }
+            if ( ! -f 'cgal_test_with_cmake' ) {
+                $_ = $DIR;
+                # chomp;
+                if (/_Demo$/) {
+                    system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", "--no-run") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake --no-run failed";
+                } else {
+                    system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake failed";
+                }
+            }
 	    chdir '..';
 	}
     }
