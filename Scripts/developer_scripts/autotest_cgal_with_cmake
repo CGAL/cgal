@@ -213,7 +213,7 @@ build_cgal_libs()
       
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
                            cmake -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
-                           make -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
+                           make -fMakefile" | tee -a ${ACTUAL_LOGFILE} 2>&1
                            
       cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
       cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
@@ -277,7 +277,7 @@ cd ..;
 rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" | tee -a ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
 	#
 	# collect results and put them on the web
@@ -287,7 +287,7 @@ EOF
 	log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
 	${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
 	${COMPRESSOR} -9f test_results-${1}.tar
-	FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${2}.tar.gz
+	FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${2}-cmake.tar.gz
 	LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
 	${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
 	mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
