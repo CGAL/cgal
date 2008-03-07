@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = foo
+PROJECT_NAME           = CGAL_PACKAGE
 PROJECT_NUMBER         = 1.0
 OUTPUT_DIRECTORY       = ./doc_doxygen/
 CREATE_SUBDIRS         = NO
@@ -59,7 +59,7 @@ INLINE_INFO            = NO
 SORT_MEMBER_DOCS       = NO
 SORT_BRIEF_DOCS        = NO
 SORT_BY_SCOPE_NAME     = NO
-GENERATE_TODOLIST      = YES
+GENERATE_TODOLIST      = NO
 GENERATE_TESTLIST      = NO
 GENERATE_BUGLIST       = NO
 GENERATE_DEPRECATEDLIST= NO
@@ -73,7 +73,7 @@ FILE_VERSION_FILTER    =
 #---------------------------------------------------------------------------
 QUIET                  = YES
 WARNINGS               = YES
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text"
@@ -82,51 +82,28 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = .
-FILE_PATTERNS          = *.c \
-                         *.cc \
-                         *.cxx \
-                         *.cpp \
-                         *.c++ \
-                         *.d \
-                         *.java \
-                         *.ii \
-                         *.ixx \
-                         *.ipp \
-                         *.i++ \
-                         *.inl \
+FILE_PATTERNS          = *.inl \
                          *.h \
                          *.hh \
                          *.hxx \
                          *.hpp \
                          *.h++ \
-                         *.idl \
-                         *.odl \
-                         *.cs \
-                         *.php \
-                         *.php3 \
-                         *.inc \
-                         *.m \
-                         *.mm \
-                         *.dox \
-                         *.C \
-                         *.CC \
-                         *.C++ \
-                         *.II \
                          *.I++ \
                          *.H \
                          *.HH \
-                         *.H++ \
-                         *.CS \
-                         *.PHP \
-                         *.PHP3 \
-                         *.M \
-                         *.MM
+                         *.H++
 RECURSIVE              = YES
 EXCLUDE                = ./test \
                          ./demo \
                          ./examples
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = */internal/* \
+                         */CGALi/*
+EXCLUDE_SYMBOLS        = CGAL::CGALi \
+                         CGAL::internal \
+                         CGAL::*::internal \
+                         CGAL::*::CGALi \
+                         __pad*__
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
@@ -223,13 +200,27 @@ PERLMOD_MAKEVAR_PREFIX =
 #---------------------------------------------------------------------------
 # Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
-ENABLE_PREPROCESSING   = NO
-MACRO_EXPANSION        = NO
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = /proj/geometrica/home/CGAL/CGAL-I/include
+INCLUDE_PATH           = CGAL_INCLUDE_PATH
 INCLUDE_FILE_PATTERNS  =
-PREDEFINED             =
+PREDEFINED             = CGAL_USE_TAUCS \
+                         CGAL_USE_CORE \
+                         CGAL_USE_F2C \
+                         CGAL_USE_BOOST_BIMAP \
+                         CGAL_USE_GEOMVIEW \
+                         CGAL_USE_GMP \
+                         CGAL_USE_GMPXX \
+                         CGAL_USE_GSL \
+                         CGAL_USE_LEDA \
+                         CGAL_USE_QT \
+                         CGAL_TRIANGULATION_SHORT_NAMES_3_H \
+                         CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H \
+                         CGAL_SEGMENT_DELAUNAY_GRAPH_2_SHORT_NAMES_2_H \
+                         CGAL_TRIANGULATION_SHORT_NAMES_2_H \
+                         CGAL_VORONOI_DIAGRAM_2_SHORT_NAMES_2_H
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------

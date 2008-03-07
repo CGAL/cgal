@@ -166,6 +166,7 @@ sub doxygen_latex_to_latex
     my $buf = shift;
 
     # Remove CGAL_*_NAMESPACE keywords that doxygen doesn't parse properly
+    # when the preprocessor is turned off.
     $buf =~ s/CGAL_\w*_NAMESPACE\s*//g;
 
     # Remove doxygen comments that are not interesting
@@ -173,6 +174,7 @@ sub doxygen_latex_to_latex
     $buf =~ s/Reimplemented from \S*(\.| \.)?//g; # Same thing with "Reimplemented from"
     $buf =~ s/Implemented in .*//g;             # Same thing with "Implemented in"
     $buf =~ s/Reimplemented in .*//g;           # Same thing with "Reimplemented in"
+    $buf =~ s/\[package\]//g;
 
     # Add a \n before (parameters) descriptions to ease parsing
     $buf =~ s/\n?\\begin\{Desc\}/\n\\begin\{Desc\}/smg;
@@ -434,7 +436,7 @@ sub format_curly_brace_pairs_expressions
         $buf =~ s/\\paragraph\{(.*)\}/\\ccFunction\{$1;\}\n\{/g;
     }
 
-    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment
+    # Move [static], [virtual], [protected] comments at the beginning of the expression's comment.
     $buf =~ s/(\[.*?\])(;?)\}\n\{/$2\}\n\{\n$1 \\\\/g;
 
     # Remove brackets in curly braces pairs (restored below):
@@ -588,6 +590,9 @@ sub format_doxygen_class_struct_doc
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
     $buf = format_curly_brace_pairs_expressions($className, "class/struct", $buf);
 
+    # Remove CGAL:: prefix (implicit)
+    $buf =~ s/CGAL::(\w+)/$1/g;
+
     # Mangle C++ code for latex.
     # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
     # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
@@ -633,6 +638,12 @@ sub format_doxygen_function_doc
     # Insert \ccSeeAlso title at the end of the document
     $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
 
+    # Remove declaration of other functions
+    # (loop to remove consecutive functions)
+    for my $i (1..5) {
+        $buf =~ s/(\\paragraph\{.*?)(\\paragraph\{|\\ccSeeAlso)/keep_only_if_match($1, $functionName) . "$2"/smge;
+    }
+
     # Format "Heading Parameters:" comments [L. Saboret extension]
     $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/smg;
 
@@ -670,6 +681,9 @@ sub format_doxygen_function_doc
     # Rename \ccFunction expressions
     $buf = format_curly_brace_pairs_expressions($functionName, "function", $buf);
 
+    # Remove CGAL:: prefix (implicit)
+    $buf =~ s/CGAL::(\w+)/$1/g;
+
     # Mangle C++ code for latex.
     # Wrap words surrounded by simple quotes and C++ names (types/functions/variables) by \ccc{}.
     # Emphasize words surrounded by double quotes using \em [L. Saboret's extension].
@@ -678,9 +692,6 @@ sub format_doxygen_function_doc
     # Remove brief documentation
     my $all_titles_pattern = get_any_section_title_pattern();
     $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
-
-    # Remove declaration of other functions
-    $buf =~ s/(\\ccFunction{.*?\\ccGlue\n)/keep_only_if_match($1, $functionName)/smge;
 
     # Return the formatted string
     return $buf;

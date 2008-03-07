@@ -1,6 +1,3 @@
-generate_reference_manual
-*************************
-
 generate_reference_manual automatically generates the Reference Manual of a CGAL package. The documentation is extracted directly from the sources, which makes it much easier to keep the documentation consistent with the source code.
 If the code is commented, this tool generates the whole Reference Manual of the package (except the introduction page). If not, it generates a raw documentation that you have to complete manually.
 Note that this tool adds or updates an automatic documentation and *never* removes the documentation manually written. Tags %START-AUTO and %END-AUTO clearly delimitate the automatic documentation.
@@ -18,7 +15,7 @@ generate_reference_manual requires Perl (any recent version) and Doxygen >= 1.4.
 Usage:
 -----
 
-generate_reference_manual [options] /path/to/package
+generate_reference_manual [options] -I /path/to/CGAL/include /path/to/package
     -h, --help      Print this help
 
 The typical usage is:
@@ -40,6 +37,7 @@ You must use Doxygen conventions to document your code. Doxygen understands both
 * You must use ///, //!, /**...*/ or /*!...*/ to delimit the comments that Doxygen will extract (///< for a comment located after the item it refers to).
 * You may document parameters using @param or \param.
 * You may insert latex in C++ comments by surrounding it with \f$...\f$.
+
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html for details.
 
 Extensions to Doxygen:
@@ -100,4 +98,3 @@ Contact:
 -------
 
 Please contact Laurent Saboret <Laurent.Saboret@sophia.inria.fr> if you discover a bug or wish to request for an enhancement.
-
