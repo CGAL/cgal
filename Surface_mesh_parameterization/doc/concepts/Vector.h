@@ -17,6 +17,8 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
+namespace SparseLinearAlgebraTraits_d {
+
 
 /// SparseLinearAlgebraTraits_d::Vector
 /// is a concept of a vector that can be multiplied by a sparse matrix.
@@ -56,3 +58,5 @@ public:
     NT&  operator[] (int row);
 };
 
+
+} // namespace SparseLinearAlgebraTraits_d

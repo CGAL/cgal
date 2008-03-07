@@ -30,10 +30,6 @@ One-to-one mapping is guaranteed if surface's border is mapped onto a convex pol
 This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
 \item They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
 
-
-\begin{description}
-\item[Todo]\ccc{Fixed_border_parameterizer_3} should remove border vertices from the linear systems in order to have a symmetric positive definite matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.\end{description}
-
 %END-AUTO(\ccDefinition)
 
 \ccInclude{CGAL/Fixed_border_parameterizer_3.h}

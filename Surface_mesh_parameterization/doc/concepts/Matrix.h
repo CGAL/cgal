@@ -17,6 +17,8 @@
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
+namespace SparseLinearAlgebraTraits_d {
+
 
 /// SparseLinearAlgebraTraits_d::Matrix
 /// is a concept of a sparse matrix class.
@@ -70,3 +72,5 @@ public:
     void  set_coef (int row, int column, NT value);
 };
 
+
+} // namespace SparseLinearAlgebraTraits_d
