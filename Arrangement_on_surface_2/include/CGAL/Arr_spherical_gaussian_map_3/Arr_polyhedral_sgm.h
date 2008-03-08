@@ -366,6 +366,14 @@ private:
     
     // For each vertex, traverse incident faces:
     Polyhedron_halfedge_around_vertex_circulator hec = src->vertex_begin();
+
+    // If the vertex is not a real vertex of the polyhedron, advance to the
+    // next one:
+    if (circulator_size(hec) == 0) {
+      process_vertex(++src, first_time);
+      return;
+    }
+    
     CGAL_assertion(circulator_size(hec) >= 3);
     Polyhedron_halfedge_around_vertex_circulator begin_hec = hec;
     Polyhedron_halfedge_around_vertex_circulator next_hec = hec;
