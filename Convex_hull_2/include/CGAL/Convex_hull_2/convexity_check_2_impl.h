@@ -17,15 +17,15 @@
 //
 // Author(s)     : Stefan Schirra
 
-
 #ifndef CGAL_CONVEXITY_CHECK_2_C
 #define CGAL_CONVEXITY_CHECK_2_C
 
 #include <CGAL/algorithm.h>
-#include <CGAL/functional.h>
 #include <algorithm>
+#include <boost/bind.hpp>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class ForwardIterator, class Traits>
 bool
 is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
@@ -144,6 +144,8 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
                             ForwardIterator2 first2, ForwardIterator2 last2,
                             const Traits&  ch_traits)
 {
+  using namespace boost;
+
   typedef    typename Traits::Left_turn_2    Left_of_line;
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
@@ -168,12 +170,12 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
   while (iter22 != last2)
   {
       iter11 = std::find_if( first1, last1, 
-                             bind_1(bind_1(left_turn,*iter22++), *iter21++) );
+                             bind(left_turn, *iter22++, *iter21++, _1) );
       if (iter11 != last1 ) return false;
   }
 
   iter11 = std::find_if( first1, last1, 
-                         bind_1(bind_1(left_turn, *first2), *iter21) );
+                         bind(left_turn, *first2, *iter21, _1) );
   if (iter11 != last1 ) return false;
   return true;
 }
@@ -186,6 +188,8 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
                                   ForwardIterator2 last2,
                                   const Traits& ch_traits )
 {
+  using namespace boost;
+
   typedef  typename Traits::Left_turn_2     Left_turn_2;  
   
   ForwardIterator1 iter11;
@@ -204,13 +208,12 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
   while (iter22 != last2)
   {
       iter11 = std::find_if( first1, last1, 
-                             bind_1(bind_1(left_turn, *iter22++), *iter21++) );
+                             bind(left_turn, *iter22++, *iter21++, _1) );
       if (iter11 != last1 ) return false;
   }
 
   return true;
 }
-
 
 CGAL_END_NAMESPACE
 

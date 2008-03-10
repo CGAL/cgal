@@ -17,7 +17,6 @@
 //
 // Author(s)     : Stefan Schirra
 
-
 #ifndef CGAL_CH_AKL_TOUSSAINT_C
 #define CGAL_CH_AKL_TOUSSAINT_C
 
@@ -29,16 +28,19 @@
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/functional.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
+#include <boost/bind.hpp>>
 
 CGAL_BEGIN_NAMESPACE
+
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
 ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
                  OutputIterator  result,
                  const Traits&   ch_traits)
 {
+  using namespace boost;
+
   typedef  typename Traits::Point_2                    Point_2;    
   typedef  typename Traits::Left_turn_2                Left_of_line;
   // added 
@@ -96,9 +98,9 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   std::sort( successor(region2.begin() ), region2.end(), 
              ch_traits.less_xy_2_object() );
   std::sort( successor(region3.begin() ), region3.end(),
-             swap_1(ch_traits.less_xy_2_object()) );
+             bind(ch_traits.less_xy_2_object(), _2, _1) );
   std::sort( successor(region4.begin() ), region4.end(), 
-             swap_1(ch_traits.less_xy_2_object()) );
+             bind(ch_traits.less_xy_2_object(), _2, _1) );
 
   if (! equal_points(*w,*s) )
   {
@@ -142,11 +144,8 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   #else
   return res.to_output_iterator();
   #endif // no postconditions ...
-
 }
 
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CH_AKL_TOUSSAINT_C
-
-
