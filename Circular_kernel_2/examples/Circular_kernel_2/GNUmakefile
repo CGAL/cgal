@@ -43,6 +43,7 @@ all:            \
         Circular_kernel_arrangement$(EXE_EXT) \
         Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
         Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
+        intersecting_arcs$(EXE_EXT) \
         Lazy_Circular_kernel_arrangement$(EXE_EXT) \
         Lazy_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
         Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) 
@@ -65,6 +66,9 @@ Circular_kernel_arrangement_Line_arc$(EXE_EXT): Circular_kernel_arrangement_Line
 Circular_kernel_arrangement_Line_Circular$(EXE_EXT): Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Circular_kernel_arrangement_Line_Circular Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
+intersecting_arcs$(EXE_EXT): intersecting_arcs$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)intersecting_arcs intersecting_arcs$(OBJ_EXT) $(LDFLAGS)
+
 Lazy_Circular_kernel_arrangement$(EXE_EXT): Lazy_Circular_kernel_arrangement$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_Circular_kernel_arrangement Lazy_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
 
@@ -81,6 +85,7 @@ clean: \
         Circular_kernel_arrangement.clean \
         Circular_kernel_arrangement_Line_arc.clean \
         Circular_kernel_arrangement_Line_Circular.clean \
+        intersecting_arcs.clean \
         Lazy_Circular_kernel_arrangement.clean \
         Lazy_Circular_kernel_arrangement_Line_arc.clean \
         Lazy_Circular_kernel_arrangement_Line_Circular.clean 
