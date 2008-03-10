@@ -4099,7 +4099,6 @@ Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/CMakeLists.txt -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
-Testsuite/test/CMake_based_testsuite.txt -text
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite eol=lf
