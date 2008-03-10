@@ -116,7 +116,7 @@ compile_and_run()
     fi
   fi
 
-  eval "make CGAL_MAKEFILE=\$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+  eval "make clean > /dev/null 2>&1 "
 }
 
 EOF
