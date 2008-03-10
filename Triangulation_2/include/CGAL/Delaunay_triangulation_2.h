@@ -245,24 +245,56 @@ public:
   }
 
 private:
- template <class OutputItFaces, class OutputItBoundaryEdges> 
- std::pair<OutputItFaces,OutputItBoundaryEdges>
- propagate_conflicts (const Point  &p,
-		      Face_handle fh, 
-		      int i,
-		      std::pair<OutputItFaces,OutputItBoundaryEdges>
-		      pit)  const {
-   Face_handle fn = fh->neighbor(i);
-   if (! test_conflict(p,fn)) {
-     *(pit.second)++ = Edge(fn, fn->index(fh));
-   } else {
-     *(pit.first)++ = fn;
-     int j = fn->index(fh);
-     pit = propagate_conflicts(p,fn,ccw(j),pit);
-     pit = propagate_conflicts(p,fn,cw(j), pit);
-   }
-   return pit;
- }
+  template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  propagate_conflicts (const Point  &p,
+		       Face_handle fh, 
+		       int i,
+		       std::pair<OutputItFaces,OutputItBoundaryEdges>
+		       pit)  const {
+    Face_handle fn = fh->neighbor(i);
+    if (! test_conflict(p,fn)) {
+      *(pit.second)++ = Edge(fn, fn->index(fh));
+    } else {
+      *(pit.first)++ = fn;
+      int j = fn->index(fh);
+      pit = propagate_conflicts(p,fn,ccw(j),pit);
+      pit = propagate_conflicts(p,fn,cw(j), pit);
+    }
+    return pit;
+  }
+
+protected:
+  void restore_edges(Vertex_handle v)
+  {
+    std::list<Edge> edges;
+    Face_circulator fc = this->incident_faces(v), done(fc);
+    do {
+      int i = fc->index(v);
+      edges.push_back(Edge(fc, i));
+      edges.push_back(Edge(fc, this->cw(i)));
+    } while(++fc != done);
+    while(!edges.empty()) {
+      const Edge &e = edges.front();
+      Face_handle f = e.first;
+      int i = e.second;
+      edges.pop_front();
+      if(this->is_infinite(f->vertex(i))) continue;
+      Face_handle fi = f->neighbor(i);
+      int mi = this->_tds.mirror_index(f, i);
+      Vertex_handle vm = this->_tds.mirror_vertex(f, i);
+      if(this->is_infinite(vm)) continue;
+      if(this->side_of_oriented_circle(f, vm->point()) == ON_POSITIVE_SIDE) {
+        this->_tds.flip(f, i);
+        edges.push_back(Edge(f, i));
+        edges.push_back(Edge(f, this->cw(i)));
+        edges.push_back(Edge(fi, this->cw(mi)));
+        edges.push_back(Edge(fi, mi));
+      }
+    }
+  }
+
+
 };
 
 template < class Gt, class Tds >
@@ -584,7 +616,18 @@ move(Vertex_handle v, const Point &p) {
   CGAL_triangulation_precondition(!is_infinite(v));
   const int dim = this->dimension();
 
-  // insert the vertex and take the adjacency
+  if(dim == 2) {
+    Point ant = v->point();
+    v->set_point(p);
+    if(well_oriented(v)) {
+      if(!from_convex_hull(v)) {
+        restore_edges(v);
+        return true;
+      }
+    }
+    v->set_point(ant);
+  }
+
   Locate_type lt;
   int li;
   Vertex_handle inserted;
