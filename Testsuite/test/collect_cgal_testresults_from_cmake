@@ -47,7 +47,7 @@ do_platform()
   TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
   TEST_REPORT="TestReport_${TESTER}_${PLATFORM}"
   RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${PLATFORM}.txt
-  CGAL_DIR=..
+  CGAL_DIR=../../../..
   rm -f $RESULT_FILE
   touch $RESULT_FILE
   sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
