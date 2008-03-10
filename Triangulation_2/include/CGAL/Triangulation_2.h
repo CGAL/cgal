@@ -475,8 +475,8 @@ bool move(InputIterator first, InputIterator last)
 bool well_oriented(Vertex_handle v)
 {
   typedef typename Geom_traits::Orientation_2   Orientation_2; 
-  Orientation_2 orientation_2 = this->geom_traits().orientation_2_object();
-  Face_circulator fc = this->incident_faces(v), done(fc);
+  Orientation_2 orientation_2 = geom_traits().orientation_2_object();
+  Face_circulator fc = incident_faces(v), done(fc);
   do {
     if(!is_infinite(fc)) {
       Vertex_handle v0 = fc->vertex(0);
@@ -487,6 +487,12 @@ bool well_oriented(Vertex_handle v)
     }
   } while(++fc != done);
   return true;
+}
+
+bool from_convex_hull(Vertex_handle v) {
+  Vertex_circulator vc = incident_vertices(v), done(vc);
+  do { if(is_infinite(vc)) return true; } while(++vc != done);
+  return false;
 }
 
 public:
@@ -1537,7 +1543,17 @@ move(Vertex_handle v, const Point &p) {
   CGAL_triangulation_precondition(!is_infinite(v));
   const int dim = dimension();
 
-  // insert the vertex and take the adjacency
+  if(dim == 2) {
+    Point ant = v->point();
+    v->set_point(p);
+    if(well_oriented(v)) {
+      if(!from_convex_hull(v)) {
+        return true;
+      }
+    }
+    v->set_point(ant);
+  }
+
   Locate_type lt;
   int li;
   Vertex_handle inserted;
@@ -1563,7 +1579,7 @@ move(Vertex_handle v, const Point &p) {
       CGAL_triangulation_assertion(f->index(v) == 1);
       Face_handle g= f->neighbor(0);
       f->set_vertex(1, g->vertex(1));
-      f->set_neighbor(0,g->neighbor(0));
+      f->set_neighbor(0, g->neighbor(0));
       g->neighbor(0)->set_neighbor(1,f);
       g->vertex(1)->set_face(f);
       delete_face(g);
