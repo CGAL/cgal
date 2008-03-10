@@ -131,7 +131,7 @@ put_on_web()
 {
   echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
   
-  #"$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 | tee -a ${ACTUAL_LOGFILE} 2>&1
 }
 
 error()
@@ -211,12 +211,21 @@ build_cgal_libs()
       
       log ${ACTUAL_LOGFILE} "   under ${CGAL_BINARY_DIR}"
       
+      if [ ! -d ${CGAL_BINARY_DIR} ]; then
+        mkdir ${CGAL_BINARY_DIR}
+      fi
+      
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
                            cmake -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
                            make -fMakefile" | tee -a ${ACTUAL_LOGFILE} 2>&1
                            
-      cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
-      cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
+      if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
+        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
+      fi
+      
+      if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log" ]; then                           
+        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
+      fi
       
     done
       
@@ -351,6 +360,12 @@ unzip_cgal()
     if [ ${?} != 0 ]; then
       error "Could not untar CGAL"
     fi
+    
+    # check, if CGAL_DIR exists
+    if [ ! -d ${CGAL_DIR} ]; then
+      error "directory ${CGAL_DIR} does not exist"
+    fi
+  
     log_done ${ACTUAL_LOGFILE}
 }
 
@@ -380,7 +395,7 @@ copy_old_stuff()
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
           log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
-          cp "${platform}/CMakeCache.txt" "${CGAL_BINARY_DIR_BASE}/${platform}" >> ${ACTUAL_LOGFILE} 
+          sed "s/${OLD_CGAL_RELEASE_ID}/${CGAL_RELEASE_ID}/g" "${platform}/CMakeCache.txt" >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
         fi
         
       fi
@@ -487,6 +502,7 @@ setup_dirs_for_latest_in_server()
   if [ -r "RELEASE_NR" ]; then
     cmp LATEST RELEASE_NR > ${ACTUAL_LOGFILE}
     if [ ! ${?} != 0 ]; then
+      log ${ACTUAL_LOGFILE} "This release has already been tested."
       rm -f $LOCK_FILE;
       exit 1;
     fi
@@ -498,6 +514,8 @@ setup_dirs_for_latest_in_server()
     CGAL_ZIPFILE="${i}";
   done
     
+  OLD_CGAL_RELEASE_ID=`cat "RELEASE_NR" | sed "s/.tar.gz//" | sed "s/.tar.bz2//" `
+  
   CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
   if [ ! "${CGAL_RELEASE_ID}" = "${CGAL_ZIPFILE}" ]; then
     USE_TARGZ="y"
@@ -512,11 +530,6 @@ setup_dirs_for_latest_in_server()
   
   # dir for the actual release
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
-  
-  # check, if CGAL_DIR exists
-  if [ !-d ${CGAL_DIR} ]; then
-    error "directory ${CGAL_DIR} does not exist"
-  fi
   
   # dir of the previous release
   # HAS TO exist !
@@ -546,7 +559,7 @@ setup_dirs_for_latest_unzipped()
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
   
   # check, if CGAL_DIR exists
-  if [ !-d ${CGAL_DIR} ]; then
+  if [ ! -d ${CGAL_DIR} ]; then
     error "directory ${CGAL_DIR} does not exist"
   fi
   
@@ -576,6 +589,7 @@ setup_dirs()
   log ${ACTUAL_LOGFILE} "CGAL_RELEASE_ID         = ${CGAL_RELEASE_ID}"
   log ${ACTUAL_LOGFILE} "CGAL_CURRENT_RELEASE_ID = ${CGAL_CURRENT_RELEASE_ID}"
   log ${ACTUAL_LOGFILE} "CGAL_DIR                = ${CGAL_DIR}"
+  log ${ACTUAL_LOGFILE} "OLD_CGAL_RELEASE_ID     = ${OLD_CGAL_RELEASE_ID}"
   log ${ACTUAL_LOGFILE} "OLD_CGAL_DIR            = ${OLD_CGAL_DIR}"
   log ${ACTUAL_LOGFILE} "CURRENT_CGAL_DIR        = ${CURRENT_CGAL_DIR}"
   
