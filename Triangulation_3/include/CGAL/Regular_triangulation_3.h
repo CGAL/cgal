@@ -31,6 +31,8 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Unique_hash_map.h>
 
+#include <boost/bind.hpp>
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4355) // complaint about using 'this' to
@@ -884,6 +886,8 @@ side_of_oriented_power_sphere(const Weighted_point &p0,
 {
     CGAL_triangulation_precondition( orientation(p0, p1, p2, p3) == POSITIVE );
 
+    using namespace boost;
+
     Oriented_side os = power_test(p0, p1, p2, p3, p);
 
     if (os != ON_ORIENTED_BOUNDARY || !perturb)
@@ -894,9 +898,9 @@ side_of_oriented_power_sphere(const Weighted_point &p0,
     // We sort the points lexicographically.
     const Weighted_point * points[5] = {&p0, &p1, &p2, &p3, &p};
     std::sort(points, points + 5,
-              compare_to_less(compose(geom_traits().compare_xyz_3_object(),
-				      Dereference<Weighted_point>(),
-				      Dereference<Weighted_point>())));
+              bind(geom_traits().compare_xyz_3_object(),
+                   bind(Dereference<Weighted_point>(), _1),
+                   bind(Dereference<Weighted_point>(), _2)) == SMALLER);
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.
@@ -992,6 +996,8 @@ side_of_oriented_power_circle(const Weighted_point &p0,
 {
     CGAL_triangulation_precondition( coplanar_orientation(p0, p1, p2) == POSITIVE );
 
+    using namespace boost;
+
     Oriented_side os = power_test(p0, p1, p2, p);
 
     if (os != ON_ORIENTED_BOUNDARY || !perturb)
@@ -1002,9 +1008,9 @@ side_of_oriented_power_circle(const Weighted_point &p0,
     // We sort the points lexicographically.
     const Weighted_point * points[4] = {&p0, &p1, &p2, &p};
     std::sort(points, points + 4,
-              compare_to_less(compose(geom_traits().compare_xyz_3_object(),
-				      Dereference<Weighted_point>(),
-				      Dereference<Weighted_point>())));
+              bind(geom_traits().compare_xyz_3_object(),
+                   bind(Dereference<Weighted_point>(), _1),
+                   bind(Dereference<Weighted_point>(), _2)) == SMALLER);
 
     // We successively look whether the leading monomial, then 2nd monomial
     // of the determinant has non null coefficient.

@@ -41,9 +41,10 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
-#include <CGAL/functional.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Random.h>
+
+#include <boost/bind.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2953,14 +2954,11 @@ operator==(const Triangulation_3<GT, Tds1> &t1,
     if (dim == 1) {
         // It's enough to test that the points are the same,
         // since the triangulation is uniquely defined in this case.
+        using namespace boost;
         std::vector<Point> V1 (t1.points_begin(), t1.points_end());
         std::vector<Point> V2 (t2.points_begin(), t2.points_end());
-        std::sort(V1.begin(), V1.end(),
-                compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
-                        cmp1));
-        std::sort(V2.begin(), V2.end(),
-                compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
-                        cmp2));
+        std::sort(V1.begin(), V1.end(), bind(cmp1, _1, _2) == NEGATIVE);
+        std::sort(V2.begin(), V2.end(), bind(cmp2, _1, _2) == NEGATIVE);
         return V1 == V2;
     }
 
