@@ -19,6 +19,8 @@
 #include <CGAL/Boolean_set_operations_2.h>
 #include "read_polygon.h"
 #include <list>
+#include <cstring> // for std::strchr
+#include <cstdio> // for std::sscanf
 
 
 // instead of
@@ -67,7 +69,7 @@ int main (int argc, char **argv)
   // Read the offset radius.
   int         numer, denom;
 
-  if (sscanf (argv[2], "%d/%d", &numer, &denom) != 2)
+  if (std::sscanf (argv[2], "%d/%d", &numer, &denom) != 2)
   {
     std::cerr << "Invalid radius: " << argv[2] << std::endl;
     return (1);
@@ -84,10 +86,10 @@ int main (int argc, char **argv)
 
   if (argc > 3)
   {
-    use_ssab = (strchr (argv[3], 's') != NULL);
-    use_opt = (strchr (argv[3], 'o') != NULL);
-    use_hm = (strchr (argv[3], 'h') != NULL);
-    use_greene = (strchr (argv[3], 'g') != NULL);
+    use_ssab = (std::strchr (argv[3], 's') != NULL);
+    use_opt = (std::strchr (argv[3], 'o') != NULL);
+    use_hm = (std::strchr (argv[3], 'h') != NULL);
+    use_greene = (std::strchr (argv[3], 'g') != NULL);
   }
 
   // Compute the Minkowski sum using the convolution method.
