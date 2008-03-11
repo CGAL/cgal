@@ -11,14 +11,16 @@
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
 
+#include <cstring> // for std::strcpy, and std::strcat
+
 //========================================================================
 
 template<class NT>
 char* get_fname(const NT&, const char* ifname) {
   char* fname = new char[50];
-  strcpy(fname, "data/");
-  strcat(fname, ifname);
-  strcat(fname, ".cin");
+  std::strcpy(fname, "data/");
+  std::strcat(fname, ifname);
+  std::strcat(fname, ".cin");
   return fname;
 }
 
@@ -28,9 +30,9 @@ char* get_fname(const NT&, const char* ifname) {
 template<>
 char* get_fname(const CGAL::Gmpq&, const char* ifname) {
   char* fname = new char[50];
-  strcpy(fname, "data/");
-  strcat(fname, ifname);
-  strcat(fname, ".Gmpq.cin");
+  std::strcpy(fname, "data/");
+  std::strcat(fname, ifname);
+  std::strcat(fname, ".Gmpq.cin");
   return fname;
 }
 #endif
