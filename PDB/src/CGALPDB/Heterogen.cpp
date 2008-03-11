@@ -22,7 +22,9 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <iostream>
 #include <limits>
+
 #include <sstream>
+#include <stdio.h>
 CGAL_PDB_BEGIN_NAMESPACE
 
 
