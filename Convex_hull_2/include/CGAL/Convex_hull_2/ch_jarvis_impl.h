@@ -68,7 +68,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
       Point previous_point = start_p; ) 
 
   ForwardIterator it = std::min_element( first, last, 
-                                         bind(rotation_predicate, cref(start_p), _1, _2) );
+                                         bind(rotation_predicate, boost::cref(start_p), _1, _2) );
   while (! equal_points(*it, stop_p) )
   {
       CGAL_ch_exactness_assertion( \

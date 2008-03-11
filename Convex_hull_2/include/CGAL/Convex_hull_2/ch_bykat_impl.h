@@ -83,18 +83,18 @@ ch_bykat(InputIterator first, InputIterator last,
   H.push_back( a );
   L.push_back( P.begin() );
   R.push_back( l = std::partition(P.begin(), P.end(),
-                                  bind(left_turn, cref(a), cref(b), _1)));
-  r = std::partition( l, P.end(), bind(left_turn, cref(b), cref(a), _1));
+                                  bind(left_turn, boost::cref(a), boost::cref(b), _1)));
+  r = std::partition( l, P.end(), bind(left_turn, boost::cref(b), boost::cref(a), _1));
   
   for (;;)
   {
       if ( l != r)
       {
-          Point_2 c = *std::min_element( l, r, bind(less_dist, cref(a), cref(b), _1, _2));
+          Point_2 c = *std::min_element( l, r, bind(less_dist, boost::cref(a), boost::cref(b), _1, _2));
           H.push_back( b );
           L.push_back( l );
-          R.push_back( l = std::partition(l, r, bind(left_turn, cref(b), cref(c), _1)));
-          r = std::partition(l, r, bind(left_turn, cref(c), cref(a), _1));
+          R.push_back( l = std::partition(l, r, bind(left_turn, boost::cref(b), boost::cref(c), _1)));
+          r = std::partition(l, r, bind(left_turn, boost::cref(c), boost::cref(a), _1));
           b = c; 
       }
       else
@@ -179,8 +179,8 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   H.push_back( a );
   L.push_back( Pbegin );
   Left_turn_2 left_turn = ch_traits.left_turn_2_object();
-  R.push_back( l = std::partition( Pbegin, Pend,  bind(left_turn, cref(a), cref(b), _1)));
-  r = std::partition( l, Pend, bind(left_turn, cref(b), cref(a), _1));
+  R.push_back( l = std::partition( Pbegin, Pend,  bind(left_turn, boost::cref(a), boost::cref(b), _1)));
+  r = std::partition( l, Pend, bind(left_turn, boost::cref(b), boost::cref(a), _1));
   
   Less_dist less_dist = ch_traits.less_signed_distance_to_line_2_object();
   for (;;)
@@ -189,11 +189,11 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
       {
           if ( r-l > CGAL_ch_THRESHOLD )
           {
-              Point_2 c = *std::min_element( l, r, bind(less_dist, cref(a), cref(b), _1, _2));
+              Point_2 c = *std::min_element( l, r, bind(less_dist, boost::cref(a), boost::cref(b), _1, _2));
               H.push_back( b );
               L.push_back( l );
-              R.push_back( l = std::partition(l, r, bind(left_turn, cref(b), cref(c), _1)));
-              r = std::partition(l, r, bind(left_turn, cref(c), cref(a), _1));
+              R.push_back( l = std::partition(l, r, bind(left_turn, boost::cref(b), boost::cref(c), _1)));
+              r = std::partition(l, r, bind(left_turn, boost::cref(c), boost::cref(a), _1));
               b = c; 
           }
           else
