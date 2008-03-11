@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <cstring> // for std::strcmp
 
 int return_code__=EXIT_SUCCESS;
 
@@ -26,7 +27,7 @@ void check_equal(std::istream &a, std::istream &b) {
 			std::cerr << "Target missing: " << bufa << std::endl;
 			return_code__=EXIT_FAILURE;		
 		} else {
-			if (strcmp(bufa, bufb) != 0) {
+			if (std::strcmp(bufa, bufb) != 0) {
 				std::cerr << "Lines are not equal. They are \n";
 				std::cerr << bufa << std::endl;
 				std::cerr << bufb << std::endl;
