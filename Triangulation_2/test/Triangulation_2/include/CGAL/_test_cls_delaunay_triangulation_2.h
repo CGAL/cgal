@@ -25,6 +25,9 @@
 //#include <vector>
 #include <CGAL/_test_cls_triangulation_short_2.h>
 
+#include <cstdlib>
+using std::rand;
+
 template <class Del>
 void
 _test_cls_delaunay_triangulation_2( const Del & , bool test_move = true)
