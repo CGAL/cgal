@@ -6,6 +6,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <cstdlib>
 
 typedef CGAL::Cartesian<Number_type>                  Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>             Traits_2;
@@ -88,7 +89,7 @@ int main (int argc, char **argv)
   // Pick two points from the input set, compute their midpoint and insert
   // its dual line into the arrangement.
   Kernel             ker;
-  const int          k1 = rand() % n, k2 = (k1 + 1) % n;
+  const int          k1 = std::rand() % n, k2 = (k1 + 1) % n;
   Point_2            p_mid = ker.construct_midpoint_2_object() (points[k1],
                                                                 points[k2]);
   X_monotone_curve_2 dual_p_mid = Line_2 (Number_type(p_mid.x()),
