@@ -49,6 +49,6 @@ int main()
     << std::endl;
   std::cout << "three random counterclockwise-oriented points on" << std::endl;
   std::cout << "an unity square intersect?" << std::endl;
-  std::cout << "The probability is: " << prob_2<Circle_2>() << std::endl << std::endl;
+  std::cout << "The probability is: " << prob_2<Circle_2>() << std::endl;
   return 0;
 };
