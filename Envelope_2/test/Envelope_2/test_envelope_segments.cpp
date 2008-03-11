@@ -18,6 +18,8 @@
 
 #include <list>
 #include <iostream>
+#include <cstring>
+using std::strcmp;
 
 typedef CGAL::Gmpq                                      NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
