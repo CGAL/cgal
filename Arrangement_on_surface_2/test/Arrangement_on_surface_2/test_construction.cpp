@@ -25,6 +25,7 @@
 #include <functional>
 #include <algorithm>
 #include <cstdlib>
+#include <cstring> // for std::strncmp
 
 #include "utils.h"
 
@@ -452,7 +453,7 @@ int main(int argc, char **argv)
 
   bool  verbose = false;
   
-  if (argc > 2 && strncmp(argv[2], "-v", 2) == 0)
+  if (argc > 2 && std::strncmp(argv[2], "-v", 2) == 0)
     verbose = true;
 
   int success = 0;
