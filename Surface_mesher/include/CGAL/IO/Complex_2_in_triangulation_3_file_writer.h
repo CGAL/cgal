@@ -17,6 +17,7 @@
 //
 // Author(s)     : Steve Oudot, Laurent Rineau
 
+#define CGAL_C2T3_USE_FILE_WRITER_OFF
 
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
@@ -31,19 +32,11 @@
 #endif
 
 #include <iomanip>
+#include <stack>
 
 namespace Surface_mesher_io {
 
-template < class Tr>
-typename Tr::size_type number_of_facets_on_surface(const Tr& T) {
-  typename Tr::size_type result=0;
-  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin();
-       fit != T.finite_facets_end(); ++fit)
-    if (fit->first->is_facet_on_surface (fit->second))
-      ++result;
-  return result;
-}
-
+// using namespace ::CGAL::Surface_mesher;
 
 template <class C2t3>
 void
