@@ -16,7 +16,7 @@ To install CGAL, you should:
  - setup the pre-requisites:
  ---------------------------
   
-   * install CMake 2.4.7 or later (www.cmake.org)
+   * install CMake 2.4-patch-5 or later (www.cmake.org)
      CMake is the build system used by CGAL.
      
    * install the Boost libraries (www.boost.org)
@@ -81,7 +81,7 @@ To install CGAL, you should:
   - (such as demos, examples, etc)        
   ---------------------------------------------
   
-    set CGALROOT to a given configuration folder.
+    define the enviroment variable CGAL_DIR to a given configuration folder.
     
     for example, if you built a debug version by running
     
@@ -93,13 +93,13 @@ To install CGAL, you should:
       
     type
       
-      export CGALROOT=CGAL-3.4/cmake/platforms/debug
+      export CGAL_DIR=CGAL-3.4/cmake/platforms/debug
        
     Or, if you built cgal for a single configuration
     running "cmake ." directly from CGAL-3.4,
     type:
     
-      export CGALROOT=CGAL-3.4
+      export CGAL_DIR=CGAL-3.4
       
     cd into the folder containing the CGAL application.
     for example:
@@ -115,26 +115,60 @@ To install CGAL, you should:
       make
       
 
+  ---------------------------
+  - Configuration Variables
+  ---------------------------
+
+    There are a number of choices for building CGAL which are
+    controlled by configuration variables.
+    See the installation manual for a detailed list of them:
+    <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
+
+    You can define any such variable in the call to cmake:
+    
+       cmake -DVARIABLE=VALUE <path-to-sources>
+       
+    Alternatively, you can run cmake in "wizard mode" via the "-i" 
+    command-line option, in which case cmake will ask you to
+    confirm or override the default value of each variable.
+      
+    Also, you can run cmake in GUI mode in which case you can
+    see and edit in a dialog all configuration variables before 
+    proceeding with the configuration.
+    To do that run the GUI configuration editor "CMakeSetup" 
+    When the editor is launched press "configure" for the first time:
+    all available configuration variables and their default values
+    will be displayed on a red background.
+    That red background tells you that the variable has been "seen"
+    for the first time and you may wish to change its value.
+    You can then override the default value of any variable
+    (for example to fix the path to a NOTFOUND third party library,
+    such as gmp, or to enable/disable a library such as CGAL_IMAGE_IO).
+    When you are finished and all the displayed variables have the correct
+    values press "configure" again. All the previously displayed variables
+    will show up now in a normal background, meaning that you have
+    "accepted" their values. There can be still variables with the "wrong"
+    value (since the red doesn't mean it's right or wrong, only that
+    it's new) so check again all variables.
+    If any variable shows up just now (for the first time, in red),
+    it means some previously accepted variable caused this one to 
+    become active; edit it, if neccesary, or accept its default
+    value by pressing "configure" once again.
+    Once pressing configure doesn't result in new variables being displayed,
+    and all variables have their correct value, press OK to proceed with
+    the configuration.
 
 
 NOTE ON CMAKE: CMake is a paltform independent makefile generator.
 Type "cmake" (without arguments) to see a list of options.
-There are a number of choices for building CGAL that can be configured 
-running "CMakeSetup", a GUI-based configuration editor.
-When the editor is launched, all available choices are displayed along
-with their current values.
-You can use that editor, for instance, to override or define the path
-to a third party library such as gmp, or to enable/disable a
-library such as CGAL_IMAGE_IO.
-
 
 NOTE ON REPEATED INSTALLS: CMake maintains a file named
 CMakeCache.txt in "configuration folder" (where cmake is run)
-which records which external libraries were found as
-well as the relevant environment variables and choices. 
+which records all configuration variables. 
 The cached values are used on subsequent runs of cmake on the same 
-configuration. Delete the file CMakeCache.txt directly if the environment
-has changed (for example, boost or GMP was installed) and you
-want cmake to pick up these changes.
+configuration. 
+If the environment has changed (for example, boost or GMP was just installed),
+you must manually delete the file CMakeCache.txt to allow cmake pick up these 
+changes.
 
 -------------------------------------------------------------------------------
