@@ -84,7 +84,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
       std::cerr << "Explanation:" << msg << std::endl;
       
   if ( sAbortOnError )    
-    exit(1);     
+    std::exit(1);     
 }
 
 #include <CGAL/test_sls_types.h>
