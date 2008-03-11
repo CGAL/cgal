@@ -39,7 +39,7 @@ void test_2D()
   if(!line.is_horizontal())
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -82,7 +82,7 @@ void test_2D_point_set(const unsigned int nb_points)
   if(!line.is_horizontal())
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 

@@ -3,6 +3,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
+#include <cstdlib> // for std::rand
 
 typedef double               FT;
 typedef CGAL::Cartesian<FT>  K;
@@ -13,7 +14,7 @@ typedef K::Triangle_3        Triangle;
 
 FT random_value()
 {
-	return (FT)rand() / (FT)RAND_MAX;
+	return (FT)std::rand() / (FT)RAND_MAX;
 }
 
 Point random_point()

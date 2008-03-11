@@ -42,7 +42,7 @@ void test_1()
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -69,7 +69,7 @@ void test_2()
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -98,7 +98,7 @@ void test_3()
   if(!(std::abs(-1.0*line.a()/line.b() - 1) <= THRESHOLD && std::abs(line.c()/line.b()) <= THRESHOLD && 1 - quality <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -140,7 +140,7 @@ void test_4()
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -189,7 +189,7 @@ void test_5(const unsigned int nb_points)
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 
 }

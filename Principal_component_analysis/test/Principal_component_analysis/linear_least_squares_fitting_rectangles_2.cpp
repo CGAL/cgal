@@ -45,7 +45,7 @@ void test_1()
   if(!(line.is_horizontal() && std::abs(line.c()/line.b()- -2) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -87,7 +87,7 @@ void test_2()
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
@@ -128,7 +128,7 @@ void test_3()
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 

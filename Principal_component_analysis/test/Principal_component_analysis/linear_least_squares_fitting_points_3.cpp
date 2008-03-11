@@ -71,14 +71,14 @@ void test_one_point()
   if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
 Point random_point_xy()
 {
-  FT x = (FT)((double)rand() / (double)RAND_MAX);
-  FT y = (FT)((double)rand() / (double)RAND_MAX);
+  FT x = (FT)((double)std::rand() / (double)RAND_MAX);
+  FT y = (FT)((double)std::rand() / (double)RAND_MAX);
   return Point(x,y,0);
 }
 
@@ -102,7 +102,7 @@ void test_point_set(const unsigned int nb_points)
   if(!parallel(horizontal_plane,plane))
   {
     std::cout << "failure" << std::endl;
-    exit(1); // failure
+    std::exit(1); // failure
   }
 }
 
