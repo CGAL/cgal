@@ -52,7 +52,7 @@ int main (int argc, char * argv[])
 {
   // Read the number of circles from the command line.
   unsigned int n_circles = 8;
-  if (argc > 1) n_circles = atoi(argv[1]);
+  if (argc > 1) n_circles = std::atoi(argv[1]);
 
   // Create the circles, equally spaced of the circle x^2 + y^2 = 1.
   const double pi = std::atan(1.0) * 4;
