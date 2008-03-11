@@ -22,6 +22,7 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <CGAL/PDB/internal/pdb_utils.h>
 #include <sstream>
+#include <stdio.h>
 
 CGAL_PDB_BEGIN_NAMESPACE
 //Residue dummy_residue;
