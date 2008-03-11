@@ -29,7 +29,7 @@
 #include <CGAL/ch_graham_andrew.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
-#include <boost/bind.hpp>>
+#include <boost/bind.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
