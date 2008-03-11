@@ -131,7 +131,7 @@ put_on_web()
 {
   echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
   
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 | tee -a ${ACTUAL_LOGFILE} 2>&1
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
 }
 
 error()
@@ -217,7 +217,7 @@ build_cgal_libs()
       
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
                            cmake -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
-                           make -fMakefile" | tee -a ${ACTUAL_LOGFILE} 2>&1
+                           make -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
         cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
@@ -286,7 +286,7 @@ cd ..;
 rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" | tee -a ${ACTUAL_LOGFILE}.${1} 2>&1
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
 	#
 	# collect results and put them on the web

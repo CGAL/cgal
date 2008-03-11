@@ -29,7 +29,6 @@
 # Usage: cgal_create_cmake_script [-options]
 #
 # -d   create a default CGAL cmake script
-# -t   create a CGAL cmake script for the test suite
 # -q   create a CGAL cmake script with Qt support
 
 
@@ -136,7 +135,6 @@ usage()
      echo "Usage: cgal_create_cmake_script [-options]"
      echo
      echo "-d   create a default CGAL CMake script"
-     echo "-t   create a CGAL CMake script for the test suite"
      echo "-q   create a CGAL CMake script with Qt support"
 }
 
@@ -150,7 +148,6 @@ esac
 for i do
   case $i in
     -d) ;;
-    -t) TESTSUITE='y';;
     -q) QT='y';;
     -*) usage
         exit 1;;
