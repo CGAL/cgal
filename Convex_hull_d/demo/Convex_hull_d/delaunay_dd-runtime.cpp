@@ -29,6 +29,9 @@
 #include <iostream>
 #include <string>
 
+#include <cstdlib>
+
+using std::atoi;
 
 typedef CGAL::Gmpz RT;
 typedef CGAL::Homogeneous_d<RT> Kernel;
