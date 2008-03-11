@@ -24,7 +24,7 @@
 #include <limits>
 
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 CGAL_PDB_BEGIN_NAMESPACE
 
 
@@ -94,11 +94,11 @@ int Heterogen::write(std::string name, int num,
     //char chain=' ';
 
     //"HETATM%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s";
-    sprintf(line, CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_,
-	    start_index++, al.c_str(),
-	    name.c_str(), num,
-	    pt.x(), pt.y(), pt.z(), a.occupancy(), a.temperature_factor(),
-	    a.element().c_str(), "  ");
+    std::sprintf(line, CGAL_PDB_INTERNAL_NS::hetatom_line_oformat_,
+                 start_index++, al.c_str(),
+                 name.c_str(), num,
+                 pt.x(), pt.y(), pt.z(), a.occupancy(), a.temperature_factor(),
+                 a.element().c_str(), "  ");
     out << line << std::endl;
     //++anum;
   }

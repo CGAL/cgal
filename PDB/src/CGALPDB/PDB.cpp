@@ -23,6 +23,8 @@
 #include <cassert>
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <cctype>
+#include <cstdio>
+
 CGAL_PDB_BEGIN_NAMESPACE
 
 PDB::PDB(std::istream &in, bool print_errors) {
@@ -63,9 +65,9 @@ void PDB::load(std::istream &in, bool print_errors){
       header_.push_back(std::string(line));
       int ti;
       char chain;
-      if (sscanf(line, "COMPND %d CHAIN: %c", &ti, &chain) == 2) {
+      if (std::sscanf(line, "COMPND %d CHAIN: %c", &ti, &chain) == 2) {
 	names[chain]=last_name;
-      } else if (sscanf(line, "COMPND %d MOLECULE:", &ti) ==1) {
+      } else if (std::sscanf(line, "COMPND %d MOLECULE:", &ti) ==1) {
 	int len= std::strlen(line);
 	CGAL_assertion(line[len]=='\0');
 	--len;
@@ -89,7 +91,7 @@ void PDB::load(std::istream &in, bool print_errors){
     } else if (lt== CGAL_PDB_INTERNAL_NS::MODEL) {
       int mnum=0;
       char buf[81];
-      sscanf(line, "%s %d", buf, &mnum);
+      std::sscanf(line, "%s %d", buf, &mnum);
       //new_model(Model_key(mnum), Model());
       cur_model= Model_key(mnum);
     } else if (  lt== CGAL_PDB_INTERNAL_NS::HETATM 

@@ -22,7 +22,7 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <CGAL/PDB/internal/pdb_utils.h>
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 
 CGAL_PDB_BEGIN_NAMESPACE
 //Residue dummy_residue;
@@ -38,7 +38,7 @@ void Chain::write_pdb(std::ostream &out) const {
 
   char line[81];
   
-  sprintf(line, "MODEL %8d         ", 1);
+  std::sprintf(line, "MODEL %8d         ", 1);
   out << line << std::endl;
   
   //    int anum=1;
@@ -71,7 +71,7 @@ int Chain::write(char chain, int start_index, std::ostream &out) const {
   }
   const char *terformat="TER   %5d      %3s %c %3d%c";
   if (!residues_.empty()) {
-    sprintf(line, terformat, start_index, 
+    std::sprintf(line, terformat, start_index, 
 	    Monomer::type_string(last_type).c_str(), chain, 
 	    last_resindex.index(),' ');
     out << line << std::endl;
