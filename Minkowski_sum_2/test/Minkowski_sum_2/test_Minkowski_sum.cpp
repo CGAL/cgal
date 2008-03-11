@@ -17,6 +17,7 @@
 #include <CGAL/Polygon_convex_decomposition_2.h>
 #include <CGAL/Boolean_set_operations_2.h>
 #include "read_polygon.h"
+#include <cstring>
 
 #include <list>
 
@@ -77,10 +78,10 @@ int main (int argc, char **argv)
 
   if (argc > 3)
   {
-    use_ssab = (strchr (argv[3], 's') != NULL);
-    use_opt = (strchr (argv[3], 'o') != NULL);
-    use_hm = (strchr (argv[3], 'h') != NULL);
-    use_greene = (strchr (argv[3], 'g') != NULL);
+    use_ssab = (std::strchr (argv[3], 's') != NULL);
+    use_opt = (std::strchr (argv[3], 'o') != NULL);
+    use_hm = (std::strchr (argv[3], 'h') != NULL);
+    use_greene = (std::strchr (argv[3], 'g') != NULL);
   }
 
   // Compute the Minkowski sum using the convolution method.
