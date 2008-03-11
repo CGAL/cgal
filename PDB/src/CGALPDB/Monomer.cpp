@@ -25,6 +25,9 @@
 #include <CGAL/PDB/internal/Error_logger.h>
 #include <limits>
 #include <sstream>
+#include <cstdio>
+using std::sprintf;
+using std::sscanf;
 CGAL_PDB_BEGIN_NAMESPACE
 
 void Monomer::set_has_bonds(bool tf) {

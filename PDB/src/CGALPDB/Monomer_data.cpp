@@ -21,6 +21,7 @@
 #include <CGAL/PDB/Monomer.h>
 #include <CGAL/PDB/internal/Monomer_data.h>
 #include <cassert>
+#include <cstdio>
 CGAL_PDB_BEGIN_NAMESPACE
 
 namespace Monomer_data {
@@ -759,7 +760,7 @@ namespace Monomer_data {
     for (; atom_name_data_[i].l != Monomer::AL_INVALID; ++i){
       clean_atom_name_data_[i].l= atom_name_data_[i].l;
       clean_atom_name_data_[i].t= atom_name_data_[i].t;
-      sscanf(atom_name_data_[i].s, "%4s", clean_atom_name_data_[i].s);
+      std::sscanf(atom_name_data_[i].s, "%4s", clean_atom_name_data_[i].s);
     }
     clean_atom_name_data_[i].l= Monomer::AL_INVALID;
 
