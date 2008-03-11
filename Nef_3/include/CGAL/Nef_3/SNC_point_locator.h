@@ -32,6 +32,7 @@
 #include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Timer.h>
+#include <cstring> // for std::strcpy
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
@@ -308,7 +309,7 @@ public:
     candidate_provider = new SNC_candidate_provider(W);
 #else // CGAL_NEF_LIST_OF_TRIANGLES
     CGAL_NEF_TIMER(ct_t.start());
-    strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
+    std::strcpy( this->version_, "Point Locator by Spatial Subdivision (tm)");
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
     CGAL_NEF_CLOG(version()<<" (with triangulated facets)");
 #else
@@ -1250,7 +1251,7 @@ public:
   SNC_point_locator_naive() : initialized(false) {}
   virtual void initialize(SNC_structure* W) { 
     CGAL_NEF_TIMER(ct_t.start());
-    strcpy(this->version_, "Naive Point Locator (tm)");
+    std::strcpy(this->version_, "Naive Point Locator (tm)");
     CGAL_NEF_CLOG(version());
     CGAL_assertion( W != NULL);
     Base::initialize(W); 
