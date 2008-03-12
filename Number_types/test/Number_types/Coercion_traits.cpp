@@ -426,12 +426,5 @@ int main(){
   AT_coercion_test_at_rat<CGAL::GMP_arithmetic_kernel>();
 #endif // CGAL_USE_GMP
 
-#ifdef CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
-  AT_coercion_test_at_fws<
-      CGAL::Lazy_exact_arithmetic_kernel<CGAL::Arithmetic_kernel> >();
-#endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
-
-
-
   return EXIT_SUCCESS;
 }
