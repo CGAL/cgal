@@ -73,33 +73,65 @@ template <> class Algebraic_structure_traits< leda_integer >
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
-    typedef INTERN_AST::Div_per_operator< Type > Div;
+    // Unfortunately the behaviour of leda has changed here several times
+    // The following Div_mod is invariant under these changes
+    // However, the Div and Mod defined below might be more efficient 
+    // TODO: recover Div Mod implementation for all leda versions
+    class Div_mod {
+    public: 
+        typedef Type first_argument_type;
+        typedef Type second_argument_type; 
+        typedef Type& third_argument_type; 
+        typedef Type& fourth_argument_type; 
+        typedef void result_type;
+        
+        void operator()(const Type& x, const Type& y, Type& q, Type& r){
+            
+            q = x / y;             
+            r = x - q*y;
+            CGAL_postcondition(x == y*q + r);  
+            
+            if (r == 0) return;   
+             
+            // round q towards zero 
+            if ( r.sign() != x.sign() ){
+                q -= x.sign();
+                r -= x.sign()*y;
+            }
 
-    class Mod
-      : public Binary_function< Type, Type,
-                                Type > {
-      public:
-        Type operator()( const Type& x,
-                                        const Type& y ) const {
-          Type m = x % y;
-
-#if CGAL_LEDA_VERSION < 520
-          // Fix wrong leda result
-          if( x < 0 && m != 0 )
-            m -= y;
-#elif CGAL_LEDA_VERSION < 600
-          // Fix another wrong leda result
-          if( x < 0 && y > 0 && m != 0 )
-            m -= y;
-#else
-          // Do nothing, it seems to work now!
-          // TODO: be careful for future improvements of LEDA
-#endif
-          return m;
-        }
-
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
+            CGAL_postcondition(x == y*q + r);            
+            CGAL_postcondition(r.sign() == x.sign());
+        }  
     };
+    // Div defined via base using Div_mod
+    // Mod defined via base using Div_mod
+
+    // This code results in an inconsisten div/mod for some leda versions 
+    // TODO: reactivate this code 
+
+//     typedef INTERN_AST::Div_per_operator< Type > Div;
+//     class Mod
+//       : public Binary_function< Type, Type,
+//                                 Type > {
+//       public:
+//         Type operator()( const Type& x, const Type& y ) const {
+//           Type m = x % y;
+// #if CGAL_LEDA_VERSION < 520
+//           // Fix wrong leda result
+//           if( x < 0 && m != 0 )
+//             m -= y;
+// #elif CGAL_LEDA_VERSION < 600
+//           // Fix another wrong leda result
+//           if( x < 0 && y > 0 && m != 0 )
+//             m -= y;
+// #else
+//           // Do nothing, it seems to work now!
+//           // TODO: be careful for future improvements of LEDA
+// #endif
+//           return m;
+//         }
+//         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
+//     };
 
     class Sqrt
       : public Unary_function< Type, Type > {
