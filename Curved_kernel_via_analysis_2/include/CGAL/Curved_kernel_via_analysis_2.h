@@ -126,12 +126,18 @@ public:
     //!\name underlying curve kernel + caching
     //!@{
     
-    //! access to static Curve_interval_arcno_cache
+    /*!\brief
+     * access to static Curve_interval_arcno_cache
+     */
     const Curve_interval_arcno_cache& interval_arcno_cache() const {
         return this->_m_interval_arcno_cache;
     }
             
-    //! returns internal Curve_kernel_2 instance
+    /*!\brief
+     * instance of internal Curve_kernel_2 instance
+     *
+     * \return 
+     */
     const Curve_kernel_2& kernel() const {
         return _m_kernel;
     }
@@ -139,8 +145,8 @@ public:
     //!@}
 
 protected:
-    //!@{
     //!\name private members
+    //!@{
     
     //! an instance of \c Curve_kernel_2
     Curve_kernel_2 _m_kernel;
@@ -154,12 +160,21 @@ public:
     //!\name Static Member to provide CKvA instance
     //!@{
 
-    //! returns static instance of \c Curved_kernel_via_analysis_2
+    /*!\brief
+     * a default instance of \c Curved_kernel_via_analysis_2
+     *
+     * \return static instance of \c Curved_kernel_via_analysis_2
+     */
     static Curved_kernel_via_analysis_2& instance() {
         return set_instance(_set_instance());
     }
     
-    //! sets static instance of \c Curved_kernel_via_analysis_2 to \c ckva
+    /*!\brief
+     * sets static instance of \c Curved_kernel_via_analysis_2 to \c ckva
+     *
+     * \param ckva The instance that should be stored
+     * \return the stored instance
+     */
     static Curved_kernel_via_analysis_2& set_instance(
             const Curved_kernel_via_analysis_2& ckva
     ) {
@@ -176,24 +191,29 @@ public:
         
     }
     
-    //! resets static instance to original one
+    /*!\brief
+     * resets static instance to original one
+     */ 
     static void reset_instance() {
         set_instance(_reset_instance());
     }
     
 private:
-    //! sets instance to default
+    /*!\brief 
+     * sets instance to default for internal purposes
+     */
     static Curved_kernel_via_analysis_2& _set_instance() {
         static Curved_kernel_via_analysis_2 instance;
         return instance;
         
     }
     
-    //! reset instance to default
+    /*!\brief 
+     * sets instance to default for internal purposes
+     */
     static Curved_kernel_via_analysis_2& _reset_instance() {
         static Curved_kernel_via_analysis_2 instance;
         return instance;
-        
     }
     
     //!@}
@@ -264,8 +284,8 @@ public:
 
 protected:
     //!\name Protected types for internal use
-    
     //!@{ 
+    
     //! this instance's second template parameter
     typedef CKvA_ CKvA;
     
@@ -279,6 +299,7 @@ protected:
     typedef Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA, Point, Arc > 
     Self;
     
+    //! type of CKvA_2 used internally
     typedef typename boost::mpl::if_< 
               boost::mpl::bool_< boost::is_void< CKvA >::value >, 
               Curved_kernel_via_analysis_2< CurveKernel_2 >,
@@ -313,14 +334,14 @@ public:
     //! type of curve_2
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
         
-    //! type of a point on generic curve
+    //! type of a point on a curve that can be analyzed
     typedef typename boost::mpl::if_< 
               typename boost::mpl::bool_< boost::is_void< Point >::value >,
               CGALi::Point_2< CKvA_2 >,
               Point >::type
     Point_2;
     
-    //! type of an arc on generic curve
+    //! type of an arc on a curve that can be analyzed
     typedef typename boost::mpl::if_< 
               typename boost::mpl::bool_< boost::is_void< Arc >::value >,
               CGALi::Arc_2< CKvA_2 >,
@@ -334,13 +355,13 @@ public:
 
 protected:
     //!\name Protected base types
-
     //!@{
+    
     //! class collecting basic types
     typedef CGALi::Curved_kernel_via_analysis_2_base < CKvA_2, CurveKernel_2 >
     Base_kernel;
 
-    //! class collecting basic types
+    //! class collecting basic functors
     typedef CGALi::Curved_kernel_via_analysis_2_functors < 
             CKvA_2, Curve_2, Point_2, Arc_2
     >  
@@ -352,12 +373,18 @@ public:
     //! \name Constructors
     //!@{
 
-    //! default constructor
+    /*!\brief
+     * default constructor
+     */
     Curved_kernel_via_analysis_2() :
         Base_kernel() {
     }
     
-    //! construct from \c kernel
+    /*!\brief
+     * construct from \c kernel
+     *
+     * \param kernel Kernel to use internally
+     */
     Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
         Base_kernel(kernel) {
     }
@@ -396,3 +423,4 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_H
+// EOF
