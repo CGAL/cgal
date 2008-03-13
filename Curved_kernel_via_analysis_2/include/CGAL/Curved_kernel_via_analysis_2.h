@@ -18,7 +18,7 @@
 /*! \file Curved_kernel_via_analysis_2.h
  *  \brief defines class \c Curved_kernel_via_analysis_2
  *  
- *  Defines points and arcs supported by curves that can be analyzed
+ * Defines points and arcs supported by curves that can be analyzed.
  */
 
 #include <CGAL/basic.h>
@@ -38,13 +38,17 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-
-
 // todo mode to another file
+/*!\brief
+ * Provides basic types for Curved_kernel_via_analysis_2
+ */
 template < class CurvedKernelViaAnalysis_2, class CurveKernel_2 >
 class Curved_kernel_via_analysis_2_base {
 public:
 
+    //!\name Global types
+    //!@{
+    
     //! this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -58,10 +62,13 @@ public:
     > 
     Self;
 
-    //!\name Global types
+    //!@}
+
+public:
+
+    //!\name Tags
     //!@{
     
-public:
     //! tag specifies that "to the left of" comparisons supported
     typedef CGAL::Tag_true Has_left_category;
 
@@ -109,7 +116,7 @@ public:
         _m_kernel(Curve_kernel_2()), _m_interval_arcno_cache(this) {
     }
 
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    //! construct using specific Curve_kernel_2 instance \c kernel
     Curved_kernel_via_analysis_2_base(const Curve_kernel_2& kernel) :
         _m_kernel(kernel), _m_interval_arcno_cache(this) {
     }
@@ -119,12 +126,12 @@ public:
     //!\name underlying curve kernel + caching
     //!@{
     
-    //! access to \c Curve_interval_arcno_cache
+    //! access to static Curve_interval_arcno_cache
     const Curve_interval_arcno_cache& interval_arcno_cache() const {
         return this->_m_interval_arcno_cache;
     }
             
-    //! returns internal \c Curve_kernel_2 instance
+    //! returns internal Curve_kernel_2 instance
     const Curve_kernel_2& kernel() const {
         return _m_kernel;
     }
@@ -147,12 +154,12 @@ public:
     //!\name Static Member to provide CKvA instance
     //!@{
 
-    //! returns static instance
+    //! returns static instance of \c Curved_kernel_via_analysis_2
     static Curved_kernel_via_analysis_2& instance() {
         return set_instance(_set_instance());
     }
     
-    //! sets static instance to \c ckva
+    //! sets static instance of \c Curved_kernel_via_analysis_2 to \c ckva
     static Curved_kernel_via_analysis_2& set_instance(
             const Curved_kernel_via_analysis_2& ckva
     ) {
@@ -175,12 +182,14 @@ public:
     }
     
 private:
+    //! sets instance to default
     static Curved_kernel_via_analysis_2& _set_instance() {
         static Curved_kernel_via_analysis_2 instance;
         return instance;
         
     }
     
+    //! reset instance to default
     static Curved_kernel_via_analysis_2& _reset_instance() {
         static Curved_kernel_via_analysis_2 instance;
         return instance;
@@ -188,13 +197,20 @@ private:
     }
     
     //!@}
-
 };    
     
 } // namespace CGALi
 
 
-//!\brief kernel for unbounded planar curves, and points and arcs of them
+/*!\brief 
+ * Kernel for unbounded planar curves, and points and arcs of them
+ * 
+ * It expects a CurveKernel_2 type that fulfills the CurveKernel_2 concept.
+ * The other template parameters can be left default. They are used during
+ * rebind to exchange certain point and arc type.
+ *
+ * Is a model of CGAL's ArrangementTraits_2 concept.
+ */
 template < class CurveKernel_2, 
            class CKvA_ = void, class Point_ = void, class Arc_ = void >
 class Curved_kernel_via_analysis_2 :
@@ -238,13 +254,18 @@ class Curved_kernel_via_analysis_2 :
        > 
 {
 public:
-    //! \name public typedefs
+    //!\name Public types
     //!@{
     
     //! this instance's template argument
     typedef CurveKernel_2 Curve_kernel_2;
 
+    //!@}
+
 protected:
+    //!\name Protected types for internal use
+    
+    //!@{ 
     //! this instance's second template parameter
     typedef CKvA_ CKvA;
     
@@ -271,7 +292,7 @@ public:
     //!\name Rebind 
     //!@{
 
-    //! allows to rebind CKvA wrt to new CKvA, new point and new arc
+    //! allows to rebind CKvA_2 wrt to NewCKvA, NewPoint_2 and NewArc_2
     template < class NewCKvA_2, class NewPoint_2, class NewArc_2 >
     struct rebind {
         
@@ -286,7 +307,7 @@ public:
     //!@}
     
 public:
-    //!\name embedded types  for \c Arrangement_2 package
+    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
     //!@{
 
     //! type of curve_2
@@ -298,9 +319,9 @@ public:
               CGALi::Point_2< CKvA_2 >,
               Point >::type
     Point_2;
-
+    
     //! type of an arc on generic curve
-     typedef typename boost::mpl::if_< 
+    typedef typename boost::mpl::if_< 
               typename boost::mpl::bool_< boost::is_void< Arc >::value >,
               CGALi::Arc_2< CKvA_2 >,
               Arc >::type
@@ -312,7 +333,7 @@ public:
     //!@}
 
 protected:
-    //!\name Protected internal types
+    //!\name Protected base types
 
     //!@{
     //! class collecting basic types
@@ -336,7 +357,7 @@ public:
         Base_kernel() {
     }
     
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    //! construct from \c kernel
     Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
         Base_kernel(kernel) {
     }
