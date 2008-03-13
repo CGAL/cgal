@@ -26,7 +26,7 @@
 // except that NDEBUG and other macros do not affect it.
 
 #define CGAL_test_assert(EX) \
-   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
+    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 
 #define CGAL_test_assert_msg(EX,MSG) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
