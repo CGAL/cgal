@@ -1,15 +1,17 @@
-BODY {background-image:url(http://www-sop.inria.fr/geometrica/CGAL/images/cgal-bg2.gif);
-color:black}
+body  {color: black; background-color: #C0C0D0}
 
 P {
 width: 80ex
 }
 
-TABLE.result {background-color: white}
+TABLE.result { font-weight: bold; background-color: white; padding: 1em; }
+
+TABLE.summary TD { white-space: nowrap }
 
 TD.ok {background-color: rgb(50%,100%,50%)}
 TD.warning {background-color: rgb(100%,100%,50%)}
 TD.error {background-color: rgb(100%,50%,50%)}
+TD.na {background-color: white;}
 
 TH.ok {background-color: rgb(50%,100%,50%)}
 TH.warning {background-color: rgb(100%,100%,50%)}

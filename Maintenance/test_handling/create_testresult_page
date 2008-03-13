@@ -329,7 +329,8 @@ sub print_platform_descriptions()
 EOF
     my ($platform_num)=(0);
     foreach $pf (@platforms_to_do) {
-	print OUTPUT "<tr>\n<td><a name=\"platform$platform_num\">$pf_no</a>\n";
+	my $pf_num_plus_one = $platform_num + 1;
+	print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
 	my $pf_short = $pf;
@@ -424,7 +425,7 @@ on it.</p>
 <p><b>N.B. The detection of warnings is not exact.
 Look at the output to be sure!</b></p>
 <ol>
-<li><a href="http://cgal.inria.fr/CGAL/Members/Releases/">
+<li><a href="../Releases/">
 Downloading internal releases</a></li>
 <li><a href="http://www.cgal.org/Members/Manual_test/${release_name}/" style="color: red">
 The documentation of this release</a>

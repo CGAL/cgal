@@ -17,7 +17,7 @@ my $lockfile="cgal_testannounce.lock";
 my $announcements_dir="/u/termite/0/user/spion/CGAL/testannouncements";
 my $lock_cmd= "/usr/local/bin/lockfile";
 my $currentdir;
-my $ftp_results_dir="/net/servers/ftp-sop/geometrica/Incoming";
+my $ftp_results_dir="/var/CGAL/cgaltest-chroot/home/cgaltest/incoming/";
 my $check_file="processed_test_results";
  
 my ($cgal_version,$tarname,@results);
@@ -154,6 +154,7 @@ while( $i=readdir($dir_h)){
       $res = system "gunzip -t $i";
       system "rm -rf $i";
       if ( $res == 0 ){
+        append_to_file($i);
         $tarname=`basename $i .gz`;
         chomp $tarname;
         make_unpackdir();
@@ -162,7 +163,6 @@ while( $i=readdir($dir_h)){
         chdir($unpack_dir_base);
         system('rm','-rf',$unpack_dir);
         system "./create_testresult_page $cgal_version";
-        append_to_file($i);
       }
     }
   }    
