@@ -22,12 +22,12 @@
 #include <CGAL/Handle_with_policy.h>
 
 CGAL_BEGIN_NAMESPACE
-/*blah*/
+
 namespace CGALi {
 
 /*!\brief 
- * given an arc number over an interval \c i this functor computes a
- * corresponding event arcno (and asymptotic tendency) over certain vertical
+ * Given an arc number over an interval \c i this functor computes a
+ * corresponding event arcno (and asymptotic tendency) over a certain vertical
  * line which lies on the given side w.r.t. the interval \c i. 
  *
  * For caching issues for each accessed \c Curve_2 object we store
@@ -38,7 +38,7 @@ namespace CGALi {
 template <class CurvedKernelViaAnalysis_2>
 struct Curve_interval_arcno_cache {
 
-    //!\name public typedefs            
+    //!\name Public types
     //!@{
 
     //! this instance's first template parameter
@@ -47,8 +47,8 @@ struct Curve_interval_arcno_cache {
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
     Curve_kernel_2;
-
-    //! type of 1-curve analysis
+    
+    //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! type of x-coordinate
@@ -69,7 +69,8 @@ struct Curve_interval_arcno_cache {
     typedef Arity_tag<3> Arity;   
     
     //!@}
-    //!\name standard constuctor functor invokation
+    
+    //!\name Constructors
     //!@{
 
     //! standard constructor
@@ -79,11 +80,16 @@ struct Curve_interval_arcno_cache {
         CGAL_assertion(kernel != NULL);
     }
     
+    //!@}
+
+    //!\name Functor invokation
+    //!@{
+
     //!\brief given arcno over an interval, this computes a corresponding event
     //! arcno on status line \c cv_line lying on the given \c side w.r.t. the
     //! interval
     //!
-    //! \c side = 0: left side; \c side = 1: right side
+    //! \c side = \c true: left side; \c side = \c false: right side
     result_type operator()(const Status_line_1& cv_line, bool side, 
         int interval_arcno) const {
         
@@ -179,7 +185,8 @@ struct Curve_interval_arcno_cache {
 
     //!@}
 private: 
-    //!\name private members
+    
+    //!\name Private members
     //!@{
 
     //! pointer to \c Curved_kernel_via_analysis_2 
@@ -214,3 +221,4 @@ private:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_CURVE_INTERVAL_ARCNO_CACHE_H
+// EOF

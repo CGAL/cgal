@@ -17,7 +17,7 @@
 #define CGAL_CURVED_KERNEL_MAKE_X_MONOTONE_H
 
 /*! \file Curved_kernel_via_analysis_2/Make_x_monotone_2.h
- *  defines \c Make_x_monotone_2 functor
+ *  Defines \c Make_x_monotone_2 functor
  */
 
 #include <CGAL/basic.h>
@@ -28,23 +28,16 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 /*!\brief 
- * splits a complete curve into x-monotone sweepable arcs
+ * Splits a complete curve into x-monotone sweepable arcs and isolated points.
  *
- * The given curve is split into sweepable arcs by cutting it into
- * connected, either x-monotone pieces of constant interior arc number 
- * at every event x-coordinate or vertical
+ * The given curve is split into sweepable arcs 
+ * by cutting it into connected, either x-monotone pieces of constant interior 
+ * arc number at every event x-coordinate or vertical
  * (\c CurvedKernelViaAnalysis_2::Arc_2 objects). Isolated
  * points are stored as \c CurvedKernelViaAnalysis_2::Point_2 objects.
  * 
  * The resulting arcs and points are written to the output iterator as
- * polymorph \c CGAL::Object. Past-the-end value of the iterator is returned.
- *
- * Arcs extending to infinity get an endpoint with x-coordinate
- * plus/minus infinity, as appropriate. Note that infinity here is
- * understood in an "infimaximal" sense: smaller/larger than any
- * event, modelling the behaviour for all sufficiently small/large
- * x-coordinates. The same for arcs running up/down a vertical asymtote
- * of the curve.
+ * polymorphic \c CGAL::Object. Past-the-end value of the iterator is returned.
  */
 template < class CurvedKernelViaAnalysis_2, 
            class ConstructArc_2 = 
@@ -54,9 +47,9 @@ struct Make_x_monotone_2 :
             std::iterator<std::output_iterator_tag, CGAL::Object>,
             std::iterator<std::output_iterator_tag, CGAL::Object> > {
             
-    //!\name public typedefs            
+    //!\name Public types
     //!@{
-
+    
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
@@ -67,14 +60,13 @@ struct Make_x_monotone_2 :
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
     Curve_kernel_2;
     
-
     //! type of x-coordinate
     typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
     //! type of a finite point on curve
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
-    //! type of 1-curve analysis
+    //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //! type of vertical line
@@ -87,7 +79,8 @@ struct Make_x_monotone_2 :
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
     
     //!@}
-    //!\name standard constuctor functor invokation
+
+    //!\name Constructors
     //!@{
 
     //! standard constructor
@@ -95,8 +88,14 @@ struct Make_x_monotone_2 :
         _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
     }
+
+    //!@}
+
+    //!\name Functor invokation
+    //!@{
     
-    //! function-call operator
+    //! Splits \c curve into x-monotone arcs and isolated points, copies
+    //! them through \c oi, and returns the past-the-end iterator for \c oi.
     template <class OutputIterator>
     OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi) {
 
@@ -232,10 +231,12 @@ struct Make_x_monotone_2 :
     }
     
     //!@}
-private:        
-    //!\name private members
+
+private:
+    //!\name Private members
     //!@{
     
+    //! extracted code for vertical arcs and isolated points "at an event"
     template <class OutputIterator>
     OutputIterator _handle_vertical_and_isolated(
             Status_line_1 cv_line,
@@ -277,6 +278,11 @@ private:
         }
         return oi;
     }
+
+    //!@}
+
+    //!\name Private data
+    //!@{
             
     //! pointer to \c Curved_kernel_via_analysis_2 
     Curved_kernel_via_analysis_2 *_m_curved_kernel;
@@ -292,3 +298,4 @@ private:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_MAKE_X_MONOTONE_H
+//EOF
