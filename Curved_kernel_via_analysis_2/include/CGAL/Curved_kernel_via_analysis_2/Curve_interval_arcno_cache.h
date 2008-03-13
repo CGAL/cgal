@@ -73,7 +73,11 @@ struct Curve_interval_arcno_cache {
     //!\name Constructors
     //!@{
 
-    //! standard constructor
+    /*!\brief
+     * Standard constructor
+     *
+     * \param kernel The kernel that is used internally
+     */
     Curve_interval_arcno_cache(Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel_2(kernel), _m_last_curve_id(-1) {
         
@@ -85,11 +89,16 @@ struct Curve_interval_arcno_cache {
     //!\name Functor invokation
     //!@{
 
-    //!\brief given arcno over an interval, this computes a corresponding event
-    //! arcno on status line \c cv_line lying on the given \c side w.r.t. the
-    //! interval
-    //!
-    //! \c side = \c true: left side; \c side = \c false: right side
+    /*!\brief 
+     * Given arcno over an interval, this computes a corresponding event
+     * arcno on status line \c cv_line lying on the given \c side w.r.t. the
+     * interval
+     *
+     * \param cv_line Status line
+     * \param side side = \c true: left side; \c side = \c false: right side
+     * \param interval_arcno Arcnumber of interval
+     * \return Arcnumber information at event line
+     */
     result_type operator()(const Status_line_1& cv_line, bool side, 
         int interval_arcno) const {
         
@@ -214,6 +223,7 @@ private:
     mutable Interval_arcno_map _m_last_interval_map;
     
     //!@}
+
 };  // struct Curve_interval_arcno_cache
 
 } // namespace CGALi
