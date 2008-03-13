@@ -18,6 +18,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
 #include <CGAL/Algebraic_kernel_d/Descartes.h>
 #include <CGAL/Algebraic_kernel_d/Real_roots.h>
@@ -215,7 +216,7 @@ namespace CGALi {
 
 
 template< class Coefficient,
-          class Boundary = typename CGALi::Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Rational,
+          class Boundary = typename CGAL::Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Rational,
           class RepClass = CGALi::Algebraic_real_rep< Coefficient, Boundary >,
           class Isolator = CGALi::Descartes< typename CGAL::Polynomial< Coefficient >, Boundary > >
 class Algebraic_kernel_1    
