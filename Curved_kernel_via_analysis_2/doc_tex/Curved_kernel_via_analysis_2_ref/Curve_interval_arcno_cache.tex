@@ -1,0 +1,145 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Curve_interval_arcno_cache.tex
+% +------------------------------------------------------------------------+
+% | 13.03.2008   Author
+% | Package: Package
+% |
+\RCSdef{\RCSCurveintervalarcnocacheRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSCurveintervalarcnocacheDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Curve_interval_arcno_cache}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The function object class \ccRefName\ does this and that.
+
+\ccInclude{Curve_interval_arcno_cache.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Given an arc number over an interval i this functor computes a corresponding event arcno (and asymptotic tendency) over a certain vertical line which lies on the given side w.r.t. the interval i.
+
+For caching issues for each accessed \ccc{Curve_2} object we store \ccc{Interval_arcno_map} structure. In its turn, \ccc{Interval_arcno_map} for each \ccc{Status_line_1} object stores the precomputed mapping from interval arcnos (on left and right sides) to event arcnos
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{CurvedKernelViaAnalysis_2}$>$   \\
+struct \ccc{Curve_interval_arcno_cache};
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+this instance's first template parameter
+}
+\ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+type of curve kernel
+}
+\ccGlue
+\ccNestedType{Curve_analysis_2}
+{
+type of curve analysis
+}
+\ccGlue
+\ccNestedType{X_coordinate_1}
+{
+type of x-coordinate
+}
+\ccGlue
+\ccNestedType{Status_line_1}
+{
+type of status line
+}
+\ccGlue
+\ccNestedType{Arcno_desc}
+{
+event arc number descriptor: stores an arc number along with curve's end type (+/-oo or \ccc{ARR_INTERIOR} )
+}
+\ccGlue
+\ccNestedType{first_argument_type}
+{
+}
+\ccGlue
+\ccNestedType{second_argument_type}
+{
+}
+\ccGlue
+\ccNestedType{thirg_argument_type}
+{
+}
+\ccGlue
+\ccNestedType{result_type}
+{
+}
+\ccGlue
+\ccNestedType{Arity}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccMethod{result_type operator()(const Status_line_1& cv_line, bool side, int interval_arcno) const;}
+{
+given arcno over an interval, this computes a corresponding event arcno on status line \ccc{cv_line} lying on the given side w.r.t. the interval
+side = true: left side; side = false: right side
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Curve_interval_arcno_cache();}{default constructor.}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Curve_interval_arcno_cache(Curved_kernel_via_analysis_2 * kernel);}
+{
+standard constructor
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

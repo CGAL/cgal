@@ -1,0 +1,268 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Point_2.tex
+% +------------------------------------------------------------------------+
+% | 13.03.2008   Author
+% | Package: Package
+% |
+\RCSdef{\RCSPointRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSPointDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Point_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+\ccInclude{Point_2.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+class defines a point on a curve that can be analyzed
+
+only points with finite x/y-coordinates can be constructed explicitly (by the user). Points at infinity use special private constructors and required to represent infinite ends of curve arcs.
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{CurvedKernelViaAnalysis_2},   \\
+class \ccc{Rep_} = \ccc{CGALi::Point_2_rep<CurvedKernelViaAnalysis_2>}$>$   \\
+class \ccc{Point_2};
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+this instance's first template parameter
+}
+\ccGlue
+\ccNestedType{Rep}
+{
+this instance's second template parameter
+}
+\ccGlue
+\ccNestedType{Self}
+{
+this instance itself
+}
+\ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+type of underlying curve kernel
+}
+\ccGlue
+\ccNestedType{X_coordinate_1}
+{
+type of x-coordinate
+}
+\ccGlue
+\ccNestedType{Xy_coordinate_2}
+{
+type of a finite point on curve
+}
+\ccGlue
+\ccNestedType{Curve_analysis_2}
+{
+type that analyzes a curve
+}
+\ccGlue
+\ccNestedType{Base}
+{
+the handle superclass
+}
+\ccGlue
+\ccNestedType{Kernel_point_2}
+{
+type of kernel point
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccMethod{const Xy_coordinate_2& xy() const;}
+{
+access to underlying \ccc{Xy_coordinate_2} object
+}
+\ccGlue
+\begin{description}
+\item[Precondition:]finite x/y coordinates must be set by construction \end{description}
+\ccGlue
+\ccMethod{const X_coordinate_1& x() const;}
+{
+access to the point's x-coordinate (y-coordinate can be undefined)
+}
+\ccGlue
+\begin{description}
+\item[Precondition:]the point's x must be finite (set by construction) \end{description}
+\ccGlue
+\ccMethod{Curve_analysis_2 curve() const;}
+{
+returns the supporting curve of underlying \ccc{Xy_coordinate_2} object
+}
+\ccGlue
+\ccMethod{int arcno() const;}
+{
+returns an arc number of underlying \ccc{Xy_coordinate_2} object
+}
+\ccGlue
+\ccMethod{void set_location(CGAL::Arr_parameter_space loc) const;}
+{
+sets location of a point in parameter space to loc
+}
+\ccGlue
+\ccMethod{CGAL::Arr_parameter_space location() const;}
+{
+returns location of a point in parameter space
+}
+\ccGlue
+\ccMethod{bool is_on_left_right() const;}
+{
+checks if the point lies on left/right boundary inaccessible)
+}
+\ccGlue
+\ccMethod{bool is_on_bottom_top() const;}
+{
+checks if the point lies on top/bottom boundary
+}
+\ccGlue
+\ccMethod{bool is_finite() const;}
+{
+returns whether the point is finite
+}
+\ccGlue
+\ccMethod{CGAL::Comparison_result compare_x(const Kernel_point_2& q) const;}
+{
+compares x-coordinates of two points
+}
+\ccGlue
+\begin{description}
+\item[Precondition:]compared points are in the interior of parameter space \end{description}
+\ccGlue
+\ccMethod{CGAL::Comparison_result compare_xy(const Kernel_point_2& q, bool equal_x = false) const;}
+{
+compares two points lexicographical
+}
+\ccGlue
+\begin{description}
+\item[Precondition:]compared points are in the interior of parameter space \end{description}
+\ccGlue
+\ccMethod{bool is_on(const typename Curved_kernel_via_analysis_2::Curve_2& curve) const;}
+{
+checks if the point lies on curve
+}
+\ccGlue
+\ccMethod{bool operator==(const Kernel_point_2& q) const;}
+{
+equality
+}
+\ccGlue
+\ccMethod{bool operator!=(const Kernel_point_2& q) const;}
+{
+inequality
+}
+\ccGlue
+\ccMethod{bool operator<(const Kernel_point_2& q) const;}
+{
+less than in (x,y) lexicographic order
+}
+\ccGlue
+\ccMethod{bool operator<=(const Kernel_point_2& q) const;}
+{
+less-equal in (x,y) lexicographic order
+}
+\ccGlue
+\ccMethod{bool operator>(const Kernel_point_2& q) const;}
+{
+greater than in (x,y) lexicographic order
+}
+\ccGlue
+\ccMethod{bool operator>=(const Kernel_point_2& q) const;}
+{
+greater-equal in (x,y) lexicographic order
+}
+\ccGlue
+\ccMethod{void write(std::ostream& os) const;}
+{
+writes point to os
+}
+\ccGlue
+\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);}
+{
+}
+\ccGlue
+\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);}
+{
+}
+\ccGlue
+\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);}
+{
+\subsubsection{Friends And Related Function Documentation}
+\ccMethod{std::ostream& operator<<(std::ostream& os, const Point_2< CurvedKernelViaAnalysis_2, Rep_>& pt);}
+{
+[related] \\
+writes pt to os
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Point_2();}{default constructor.}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Point_2();}
+{
+Default constructor.
+}
+\ccGlue
+\ccConstructor{Point_2(const Self& p);}
+{
+copy constructor
+}
+\ccGlue
+\ccConstructor{Point_2(const X_coordinate_1& x, const Curve_analysis_2& c, int arcno);}
+{
+Constructs a finite point with x-coordinate x on curve c with arc number arcno.
+implies no boundary conditions in x/y
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+%% \ccIncludeExampleCode{Package/Point_2.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

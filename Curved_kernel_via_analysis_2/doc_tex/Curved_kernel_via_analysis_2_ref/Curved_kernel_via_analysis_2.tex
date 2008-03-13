@@ -1,0 +1,135 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Curved_kernel_via_analysis_2.tex
+% +------------------------------------------------------------------------+
+% | 13.03.2008   Author
+% | Package: Package
+% |
+\RCSdef{\RCSCurvedkernelviaanalysisRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSCurvedkernelviaanalysisDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Curved_kernel_via_analysis_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+\ccInclude{Curved_kernel_via_analysis_2.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Kernel for unbounded planar curves, and points and arcs of them.
+
+It expects a \ccc{CurveKernel_2} type that fulfills the \ccc{CurveKernel_2} concept. The other template parameters can be left default. They are used during rebind to exchange certain point and arc type.
+
+Is a model of CGAL's \ccc{ArrangementTraits_2} concept.
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{CurveKernel_2},   \\
+class \ccc{CKvA_} = void,   \\
+class \ccc{Point_} = void,   \\
+class \ccc{Arc_} = void$>$   \\
+class \ccc{Curved_kernel_via_analysis_2};
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Curve_kernel_2}
+{
+this instance's template argument
+}
+\ccGlue
+\ccNestedType{Curve_2}
+{
+type of \ccc{curve_2}
+}
+\ccGlue
+\ccNestedType{Point_2}
+{
+type of a point on generic curve
+}
+\ccGlue
+\ccNestedType{Arc_2}
+{
+type of an arc on generic curve
+}
+\ccGlue
+\ccNestedType{X_monotone_curve_2}
+{
+type of weakly x-monotone arc for \ccc{ArrangementTraits_2}
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccMethod{CGAL_CKvA_2_functor_cons(Construct_point_2, construct_point_2_object);}
+{
+}
+\ccGlue
+\ccMethod{CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, construct_point_on_arc_2_object);}
+{
+}
+\ccGlue
+\ccMethod{CGAL_CKvA_2_functor_cons(Construct_arc_2, construct_arc_2_object);}
+{
+\subsubsection{Member Data Documentation}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Curved_kernel_via_analysis_2();}{default constructor.}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Curved_kernel_via_analysis_2();}
+{
+default constructor
+}
+\ccGlue
+\ccConstructor{Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel);}
+{
+construct from kernel
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+%% \ccIncludeExampleCode{Package/Curved_kernel_via_analysis_2.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
