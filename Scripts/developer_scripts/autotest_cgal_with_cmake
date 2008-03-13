@@ -35,9 +35,9 @@ GZIP="gzip"
 GUNZIP="gunzip"
 COMPRESSOR="${GZIP}"
 SENDMAIL="mail"
-CGAL_TESTER=`whoami`
-CGAL_TESTER_NAME="${CGAL_TESTER}"
-CGAL_TESTER_ADDRESS="${CGAL_TESTER}"
+CGAL_TESTER="fcacciola"
+CGAL_TESTER_NAME="Fernando Cacciola"
+CGAL_TESTER_ADDRESS="fernando.cacciola@geometryfactory.com"
 CONSOLE_OUTPUT="y"
 CGAL_ROOT=`pwd`
 FTP_SERVER="ftp-sop.inria.fr"
@@ -53,6 +53,7 @@ LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal.lock"
 NICE_OPTIONS="-19"
+CMAKE_GENERATOR=""
 
 for arg in "$@"
 do
@@ -74,6 +75,16 @@ else
   echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
 fi
 
+uname | grep "CYGWIN" > /dev/null
+
+if [ $? -eq 0 ]; then
+  echo "Cygwin detected, using nmake"
+  CMAKE_GENERATOR='-GNMake Makefiles'
+  MAKE_CMD='nmake'
+else
+  echo "Non-cygwin linux detected, using system make."
+  MAKE_CMD='make'
+fi
 
 
 #
@@ -86,29 +97,29 @@ log()
     LOGFILE=${1}
     shift
     if [ -n "${CONSOLE_OUTPUT}" ]; then
-	printf "${*} ...\n"
+        printf "${*} ...\n"
     fi
     printf "\n-------------------------------------------------------\n" \
-	>> ${LOGFILE}
+        >> ${LOGFILE}
     printf "  ${*} ...\n" \
-	>> ${LOGFILE}
+        >> ${LOGFILE}
     printf "\n-------------------------------------------------------\n" \
-	>> ${LOGFILE}
+        >> ${LOGFILE}
 }
 
 # $1 = logfile
 log_done()
 {
     if [ -n "${CONSOLE_OUTPUT}" ]; then
-	printf \
-	" done\n-------------------------------------------------------\n"
+        printf \
+        " done\n-------------------------------------------------------\n"
     fi
     printf "\n-------------------------------------------------------\n" \
-	>> ${1}
+        >> ${1}
     printf "  **DONE**\n" \
-	>> ${1}
+        >> ${1}
     printf "\n-------------------------------------------------------\n" \
-	>> ${1}
+        >> ${1}
 }
 
 #
@@ -131,13 +142,13 @@ put_on_web()
 {
   echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
   
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
+#  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
 }
 
 error()
 {
     if [ -n "${CONSOLE_OUTPUT}" ]; then
-	printf "\nERROR: ${*}, exiting.\n"
+        printf "\nERROR: ${*}, exiting.\n"
     fi
     printf "\nERROR: ${*}, exiting.\n" >> ${ACTUAL_LOGFILE}
     ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}
@@ -174,7 +185,7 @@ value_of()
 remote_command()
 {
     if [ "${1}" = "localhost" ]; then
-	eval $2
+        eval $2
     else
       printf "** Logging into host ${1} **\n"
       ${RSH} ${1} ${MYSHELL} \"${2}\"
@@ -216,8 +227,8 @@ build_cgal_libs()
       fi
       
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
-                           cmake -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
-                           make -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
+                           cmake ${CMAKE_GENERATOR} -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
+                           ${MAKE_CMD} -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
         cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
@@ -239,7 +250,7 @@ build_cgal_libs()
 run_testsuite()
 {
     for i in ${2}; do
-	test_script ${1} ${i}
+        test_script ${1} ${i}
     done
 }
 
@@ -256,14 +267,14 @@ run_testsuite()
 # $2 = PLATFORM
 test_script()
 {
-	NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
+        NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
         CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${2}
-	cd ${CGAL_BINARY_DIR}
-	log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
+        cd ${CGAL_BINARY_DIR}
+        log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
         if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
-	  MAKE_OPTS=""
+          MAKE_OPTS=""
         else
-	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
+          MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
         cat > ${CGAL_BINARY_DIR}/localtestscript.${1} <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
@@ -271,7 +282,13 @@ CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
 CGAL_DIR='${CGAL_BINARY_DIR}';
 CGAL_TEST_PLATFORM='${2}';
-export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS CGAL_DIR CGAL_TEST_PLATFORM;
+CMAKE_GENERATOR='${CMAKE_GENERATOR}'
+MAKE_CMD='${MAKE_CMD}'
+export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
+export CGAL_DIR;
+export CGAL_TEST_PLATFORM;
+export CMAKE_GENERATOR;
+export MAKE_CMD;
 rm -rf ${CGAL_BINARY_DIR}/test;
 cp -r ${CGAL_TEST_DIR} ${CGAL_BINARY_DIR}/test;
 cd ${CGAL_BINARY_DIR}/test;
@@ -286,25 +303,25 @@ cd ..;
 rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
-	log_done ${ACTUAL_LOGFILE}.${1}
-	#
-	# collect results and put them on the web
-	#
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" | tee -a ${ACTUAL_LOGFILE}.${1} 2>&1
+        log_done ${ACTUAL_LOGFILE}.${1}
+        #
+        # collect results and put them on the web
+        #
         cd ${CGAL_TEST_DIR}
-	log ${ACTUAL_LOGFILE}.${1} "PUTTING RESULTS ON THE WEB"
-	log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
-	${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
-	${COMPRESSOR} -9f test_results-${1}.tar
-	FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${2}-cmake.tar.gz
-	LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
-	${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
-	mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
+        log ${ACTUAL_LOGFILE}.${1} "PUTTING RESULTS ON THE WEB"
+        log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
+        ${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
+        ${COMPRESSOR} -9f test_results-${1}.tar
+        FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${2}-cmake.tar.gz
+        LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
+        ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
+        mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
 
         echo "Test results: ${CGAL_TEST_DIR}/test_results-${1}.tar.gz"
         
         if [ -z "${DO_NOT_UPLOAD}" ]; then
-	  put_on_web test_results-${1}.tar.gz ${FILENAME}
+          put_on_web test_results-${1}.tar.gz ${FILENAME}
         fi       
 
     #
@@ -334,7 +351,7 @@ get_cgal()
         ${WGET} ${WGET_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
     fi
     if [ ${?} != 0 ]; then
-	error "Could not get CGAL"
+        error "Could not get CGAL"
     fi
     log_done ${ACTUAL_LOGFILE}
 }
@@ -416,12 +433,12 @@ build_cgal()
 {
     log ${ACTUAL_LOGFILE} "building cgal libs"
     for i in ${BUILD_HOSTS}; do
-	build_cgal_libs ${i}
+        build_cgal_libs ${i}
     done
     log_done ${ACTUAL_LOGFILE}
     ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}
     mv ${ACTUAL_LOGFILE}.gz \
-	${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz
+        ${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz
 }
 
 
@@ -433,7 +450,7 @@ run_test()
 {
     log ${ACTUAL_LOGFILE} "running the testsuites"
     if [ -n "${CONSOLE_OUTPUT}" ]; then
-	printf "\n-------------------------------------------------------\n"
+        printf "\n-------------------------------------------------------\n"
     fi
     
     for i in ${BUILD_HOSTS}; do
@@ -452,7 +469,7 @@ run_test()
       fi
       
       for j in ${LOCAL_TEST_ON}; do
-	run_testsuite ${i} ${j} &
+        run_testsuite ${i} ${j} &
       done
               
     done
@@ -669,10 +686,6 @@ main_procedure()
     
   build_cgal
   
-  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
-    update_symlinks
-  fi
-  
   if [ "${BUILD_HOSTS}" = "localhost" ]; then
     TEXT="`value_of COMPILERS_localhost`"
     if [ -z "${TEXT}" ]; then
@@ -683,6 +696,10 @@ main_procedure()
         
   if [ -z "${SKIP_TEST}" ]; then
     run_test
+  fi
+  
+  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+    update_symlinks
   fi
   
   # restore settings:

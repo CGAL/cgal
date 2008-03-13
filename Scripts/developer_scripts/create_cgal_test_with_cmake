@@ -64,13 +64,11 @@ cat << EOF
 configure()
 {
   echo "Configuring... "
-  CONFIGURED="y"
   
-  if eval 'cmake -DCGAL_DIR="\$CGAL_DIR" .' ; then
+  if eval 'cmake "\$CMAKE_GENERATOR" .' ; then
     echo "   succesful configuration" >> \$ERRORFILE
   else
     echo "   ERROR:    configuration" >> \$ERRORFILE
-    CONFIGURED=""
   fi
 }
 
@@ -83,9 +81,9 @@ compile_and_run()
   echo "Compiling \$1 ... "
   SUCCES="y"
   
-  if eval 'make TESTSUITE_CXXFLAGS="\$TESTSUITE_CXXFLAGS" \\
-                TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" \\
-                VERBOSE=1 -fMakefile \$1' ; then
+  if eval '\${MAKE_CMD} TESTSUITE_CXXFLAGS="\$TESTSUITE_CXXFLAGS" \\
+                        TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" \\
+                        VERBOSE=1 -fMakefile \$1' ; then
     echo "   succesful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
