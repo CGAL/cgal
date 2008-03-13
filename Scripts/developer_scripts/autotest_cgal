@@ -3,7 +3,6 @@
 # ----------------------------------------------------
 # autotest_cgal: a script to automagically install and
 #   test internal CGAL releases
-# $Id$
 # ----------------------------------------------------
 # You will need
 #  * GNU wget and ftp
@@ -18,6 +17,9 @@
 # the testsuite.
 # ----------------------------------------------------
 # ----------------------------------------------------
+#
+# $URL $
+# $Id $
 
 #sets the umask to 022 & 0777
 umask 022
@@ -52,6 +54,24 @@ LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
 LOCK_FILE="${CGAL_ROOT}/autotest_cgal.lock"
 NICE_OPTIONS="-19"
+
+for arg in "$@"
+do
+  if [ "$arg" = "-c" ]; then
+    echo "Using latest unzipped release instead of getting a new one from the server"
+    USE_LATEST_UNZIPPED="y"
+  fi
+  
+  if [ "$arg" = "-l" ]; then
+    echo "Not uploading results to dashboard"
+    DO_NOT_UPLOAD="y"
+  fi
+
+  if [ "$arg" = "-n" ]; then
+    echo "Not testsuite will be launched. Compilation only."
+    DO_NOT_TEST="y"
+  fi
+done
 
 # Now loading autocgalrc.
 if [ -f $HOME/.autocgalrc ]; then
@@ -276,9 +296,11 @@ EOF
 	${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
 	mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
 
-	put_on_web \
-	    test_results-${1}.tar.gz \
-	    ${FILENAME}
+        if [ -z "${DO_NOT_UPLOAD}" ]; then
+	    put_on_web \
+	        test_results-${1}.tar.gz \
+	        ${FILENAME}
+        fi
 
     #
     # notify the CGAL world
@@ -342,10 +364,34 @@ unzip_cgal()
 
 copy_old_stuff()
 {
-    # copy config install files
+  # copy config install files
+  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
 
     cd ${CGAL_DIR}
     ./install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
+
+    ## copy CMake cache files, if there exists any.
+    cd ${OLD_CGAL_BINARY_DIR_BASE}
+    for platform in * 
+    do
+
+      if [ -d "${platform}" ]; then
+
+        # if the platform folder doesn't exist in the tested release it is created now.
+        if [ ! -d "${CGAL_BINARY_DIR_BASE}/${platform}" ]; then
+          log ${ACTUAL_LOGFILE} "Creating platform folder ${platform} in ${CGAL_BINARY_DIR_BASE}/"
+          mkdir "${CGAL_BINARY_DIR_BASE}/${platform}"
+        fi
+        
+        # If there is any configuration cached in the old release, copy it
+        if [ -f "${platform}/CMakeCache.txt" ]; then
+          log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
+          cp "${platform}/CMakeCache.txt" "${CGAL_BINARY_DIR_BASE}/${platform}" >> ${ACTUAL_LOGFILE} 
+        fi
+        
+      fi
+    
+    done
 
     # update symbolic links
     rm ${OLD_CGAL_DIR}
@@ -354,6 +400,7 @@ copy_old_stuff()
     ln -s `basename ${CGAL_DIR}` ${CURRENT_CGAL_DIR}
 
     log_done ${ACTUAL_LOGFILE}
+  fi
 }
 
 
@@ -473,6 +520,9 @@ fi
   CGAL_RUN_TEST=${CGAL_TEST_DIR}/run_testsuite
   CGAL_COLLECT_TEST=${CGAL_TEST_DIR}/collect_cgal_testresults
 
+  # variables used to copy cmake stuffs
+  OLD_CGAL_BINARY_DIR_BASE=${OLD_CGAL_DIR}/cmake/platforms
+  CGAL_BINARY_DIR_BASE=${CGAL_DIR}/cmake/platforms
 
 
   # ----------------------------------------------------
@@ -529,7 +579,9 @@ main_procedure()
   unzip_cgal
   copy_old_stuff
   build_cgal
-  run_test
+  if [ -z "${DO_NOT_TEST}" ]; then
+    run_test
+  fi
 }
 
 
