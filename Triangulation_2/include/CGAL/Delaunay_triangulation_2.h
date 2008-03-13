@@ -269,11 +269,18 @@ protected:
   {
     std::list<Edge> edges;
     Face_circulator fc = this->incident_faces(v), done(fc);
-    do {
-      int i = fc->index(v);
-      edges.push_back(Edge(fc, i));
-      edges.push_back(Edge(fc, this->cw(i)));
-    } while(++fc != done);
+    if(v->degree() == 3) {
+      do {
+        int i = fc->index(v);
+        edges.push_back(Edge(fc, i));
+      } while(++fc != done);
+    } else {
+      do {
+        int i = fc->index(v);
+        edges.push_back(Edge(fc, i));
+        edges.push_back(Edge(fc, this->cw(i)));
+      } while(++fc != done);
+    }
     while(!edges.empty()) {
       const Edge &e = edges.front();
       Face_handle f = e.first;
