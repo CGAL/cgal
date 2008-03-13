@@ -13,11 +13,12 @@
 #   [new] : create_internal_release should not know about internal/public mode.
 # - Merge [some parts] into ./create_internal_release ?
 
-DO_RPM=""           # Also build RPMs (no RPMs by default)
-DO_PUBLIC=""        # Also build the public versions
-DO_IT=""            # Real mode (svn tag, mail, copy to HTTP server), versus local testing
-SOURCES_DIR="trunk" # SVN working copy directory, default is "trunk"
-VERBOSE=""          # Verbose mode (displays log to standard err)
+DO_RPM=""                # Also build RPMs (no RPMs by default)
+DO_PUBLIC=""             # Also build the public versions
+DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus local testing
+DO_NOT_TAG=""            # If set, do not call svn tag
+SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
+VERBOSE=""               # Verbose mode (displays log to standard err)
 
 # Parsing command-line
 while [ $1 ]; do
@@ -25,12 +26,13 @@ while [ $1 ]; do
         -h|-help|--h|--help)
             echo 'Usage : create_new_release [--help] [--rpm] [--public] [--do-it] <packages directory>'
             echo
-            echo '    --help    : prints this usage help'
-            echo '    --rpm     : also build the corresponding SRPMs'
-            echo '    --public  : also build the corresponding public versions'
-            echo '    --do-it   : the real thing (NOT for local tests!  Only for the release master!),'
-            echo '                does write operations (updating the version_number, svn tag,'
-            echo '                sending mail, copying on the web server...)'
+            echo '  --help       : prints this usage help'
+            echo '  --rpm        : also build the corresponding SRPMs'
+            echo '  --public     : also build the corresponding public versions'
+            echo '  --do-it      : the real thing (NOT for local tests!  Only for the release'
+            echo '                 master! Does write operations (updating the version_number,'
+            echo '                 svn tag, copying on the web server...)'
+            echo '  --do-not-tag : when used with --do-it, the tag is not created.'
 	    echo '    --verbose : print log to standard output, instead of the log file'
             echo '    <packages directory> : the directory containing the packages [default is trunk]'
             exit
@@ -45,6 +47,10 @@ while [ $1 ]; do
         ;;
         --do-it)
             DO_IT="y"
+            shift; continue
+        ;;
+        --do-not-tag)
+            DO_NOT_TAG="y"
             shift; continue
         ;;
         --verbose)
@@ -69,7 +75,6 @@ VERSION_FILE="version_number"
 # Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
-MAILTO="cgal-develop@lists-sop.inria.fr"
 
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
@@ -78,6 +83,10 @@ PATH=$PATH:/usr/local/bin:/usr/bin/gnu
 
 # Working dir
 TMPDIR="`pwd`"
+
+if [ -f $HOME/.cgal_create_new_release_rc ]; then
+  . $HOME/.cgal_create_new_release_rc
+fi
 
 [ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
 [ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
@@ -108,22 +117,25 @@ MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
 MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
 BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
 
+# Do not show the bugfix number if it is 0.
+if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
+    BUGFIX_STRING=".$BUGFIX_NUMBER"
+else
+    BUGFIX_STRING=""
+fi
+
 # Compute the internal release number.
 if [ -r $VERSION_FILE ]; then
   INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
   [ "$DO_IT" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
 else
-  INTERNAL_NUMBER=0
+  INTERNAL_NUMBER=$(("`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1`" + 1 ))
+fi
+if [ -z "$INTERNAL_NUMBER" ]; then
+  INTERNAL_NUMBER=1
 fi
 INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
 internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
-
-# Do not show the bugfix number if it is 0.
-if [ $BUGFIX_NUMBER != "0" ]; then 
-    BUGFIX_STRING=".$BUGFIX_NUMBER"
-else
-    BUGFIX_STRING=""
-fi
 release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
 echo "${release_name}"
 major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
@@ -133,7 +145,7 @@ release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
 echo "Release number is ${release_number}"
 
 # Create the release
-${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${TMPDIR}/${SOURCES_DIR} -r ${release_name} -n ${release_number}
+${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number}
 # Add the SVN revision to version.h
 cd "${release_name}"
 sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
@@ -144,8 +156,8 @@ gzip "${release_name}.tar"
 cp "${release_name}.tar.gz" "${HTML_DIR}"
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 
-# Send mail and tag
-if [ "$DO_IT" ]; then
+# Tag
+if [ "$DO_IT" -a -z "$DO_NOT_TAG" ]; then
 #    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
 #
 #You can fetch it at :
