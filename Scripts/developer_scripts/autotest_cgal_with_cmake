@@ -35,9 +35,9 @@ GZIP="gzip"
 GUNZIP="gunzip"
 COMPRESSOR="${GZIP}"
 SENDMAIL="mail"
-CGAL_TESTER="fcacciola"
-CGAL_TESTER_NAME="Fernando Cacciola"
-CGAL_TESTER_ADDRESS="fernando.cacciola@geometryfactory.com"
+CGAL_TESTER=`whoami`
+CGAL_TESTER_NAME="${CGAL_TESTER}"
+CGAL_TESTER_ADDRESS="${CGAL_TESTER}"
 CONSOLE_OUTPUT="y"
 CGAL_ROOT=`pwd`
 FTP_SERVER="ftp-sop.inria.fr"
@@ -75,9 +75,7 @@ else
   echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
 fi
 
-uname | grep "CYGWIN" > /dev/null
-
-if [ $? -eq 0 ]; then
+if uname | grep -q "CYGWIN"; then
   echo "Cygwin detected, using nmake"
   CMAKE_GENERATOR='-GNMake Makefiles'
   MAKE_CMD='nmake'
@@ -142,7 +140,7 @@ put_on_web()
 {
   echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
   
-#  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
 }
 
 error()
@@ -303,7 +301,7 @@ cd ..;
 rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" | tee -a ${ACTUAL_LOGFILE}.${1} 2>&1
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
         log_done ${ACTUAL_LOGFILE}.${1}
         #
         # collect results and put them on the web
