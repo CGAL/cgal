@@ -5,6 +5,10 @@ use Cwd;
 use File::Find;
 use Getopt::Std;
 use File::Spec;
+use Archive::Tar;
+use Archive::Tar::File;
+use File::Copy;
+use File::Copy::Recursive qw(dircopy);
 
 sub usage() {
     print STDERR<<"EOF";
@@ -56,7 +60,8 @@ my (
     $SCRIPTSDIR,
     $DEVELSCRIPTSDIR,
     $LOCKCMD,
-    $packages_file
+    $packages_file,
+    %files
 );
 
 
@@ -113,27 +118,44 @@ sub install_packages() {
     $exclude_command="--exclude-from=$dont_submit";
     chdir "$ALLPACKAGESDIR" or die;
     if(-f $dont_submit){
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', "$exclude_command", '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=dont_submit', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
     } else {
-      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "$package_name");
+      system('tar', '-cf', "$RELEASEDIR/temppack.tar", '--exclude=.svn', '--exclude=dont_submit', '--exclude=TODO', '--exclude=todo', '--exclude=todo.txt', '--exclude=TODO.txt', '--exclude=TO_DO', '--exclude=*.dxy', '--exclude=Doxyfile', "-C", "$package_name", ".");
     }
-    system('mv', "$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
+    move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
     
 
     chdir "$RELEASEDIR/$VERSION" or die;
-    system('tar', '-xf', "temppack.tar");
-    $tmp_package_name = "temp_${package_name}";
-    system("mv", "$package_name", "$tmp_package_name");
-    opendir packagename, "$tmp_package_name";
-    @fichiers = readdir packagename;
-    closedir packagename;
-    #shift @fichiers; shift @fichiers;
-    foreach $fichier (@fichiers){
-      if ($fichier ne '.' && $fichier ne '..'){
-      system('cp', '-r', "$tmp_package_name/$fichier", "$RELEASEDIR/$VERSION");
+    my $tar = Archive::Tar->new("temppack.tar") or die;
+    for( $tar->get_files() )
+    {
+      if( ! $_->is_dir() )
+      {
+	if(exists($files{$_->name}))
+        {
+	    print "File ", $_->name(), " from package ", $package_name;
+	    print " conflicts with one from package ", $files{$_->name()}. "\n";
+	}
+	else
+	{
+	    $files{$_->name} = $package_name;
+	}
       }
     }
-    system('rm', '-rf', "$tmp_package_name");
+    $size = scalar keys %files;
+    system('tar', '-xf', "temppack.tar");
+#    $tmp_package_name = "temp_${package_name}";
+#    system("mv", "$package_name", "$tmp_package_name");
+#    opendir packagename, "$tmp_package_name";
+#    @fichiers = readdir packagename;
+#    closedir packagename;
+#    #shift @fichiers; shift @fichiers;
+#    foreach $fichier (@fichiers){
+#      if ($fichier ne '.' && $fichier ne '..'){
+#      system('cp', '-r', "$tmp_package_name/$fichier", "$RELEASEDIR/$VERSION");
+#      }
+#    }
+#    system('rm', '-rf', "$tmp_package_name");
   }
   closedir ALLPACKAGESDIR;
   unlink 'temppack.tar';
@@ -159,7 +181,7 @@ sub create_version_file()
     open(TEMPFILE, ">tempfile") or die;
     print TEMPFILE "$newver";
     close TEMPFILE || die "Error closing temporary file: $!\n";
-    system('mv', "tempfile", 'VERSION');
+    move("tempfile", 'VERSION');
 
     # Create include/CGAL/version.h file
     chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
@@ -199,7 +221,7 @@ EOF
     print TEMPFILE "#define CGAL_SVN_REVISION 0\n\n#endif\n";
 
     close TEMPFILE || die "Error closing temporary file: $!\n";
-    system('mv', "tempfile", 'version.h');
+    move("tempfile", 'version.h');
     chdir '../..' or die;
 }
 
@@ -243,7 +265,7 @@ EOF
     print TEMPFILE "\\gdef\\cgalversiondate{$mday $months[$mon] ", 1900 + $year, "}\n";
 
     close TEMPFILE || die "Error closing temporary file: $!\n";
-    system('mv', "tempfile", 'version.tex');
+    move("tempfile", 'version.tex');
     chdir '../..' or die;
 }
 
@@ -260,7 +282,7 @@ sub CreateExampleTestDirs()
     chdir 'examples' or return;
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
-	    system('cp', '-r', "$DIR", "../test/${DIR}_Examples");
+	    dircopy("$DIR", "../test/${DIR}_Examples");
 	}
     }
     chdir '..';
@@ -279,7 +301,7 @@ sub CreateDemoTestDirs()
     chdir 'demo' or return;
     foreach $DIR (glob("*")) {
 	if ( -d $DIR ) {
-	    system('cp', '-r', "$DIR", "../test/${DIR}_Demo");
+	    dircopy("$DIR", "../test/${DIR}_Demo");
 	}
     }
     chdir '..';
