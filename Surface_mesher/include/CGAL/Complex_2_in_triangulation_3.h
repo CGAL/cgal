@@ -32,6 +32,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/format.hpp>
 
 namespace CGAL {
 
@@ -136,6 +137,20 @@ namespace CGAL {
     
   } // end nested-namespace details (in CGAL::)
 
+namespace Surface_mesher {
+
+template < class Tr>
+typename Tr::size_type number_of_facets_on_surface(const Tr& T) {
+  typename Tr::size_type result=0;
+  for (typename Tr::Finite_facets_iterator fit = T.finite_facets_begin();
+       fit != T.finite_facets_end(); ++fit)
+    if (fit->first->is_facet_on_surface (fit->second))
+      ++result;
+  return result;
+}
+
+} // end nested-namespace Surface_mesher (in CGAL)
+
 template < class Tr, typename Edge_info_ = void >
 class Complex_2_in_triangulation_3 :
     public details::C2t3_mark_edges_helper_class<Tr, Edge_info_>
@@ -163,7 +178,25 @@ public:
   typedef std::map <Pair_of_vertices,
 		    std::pair<int, Facets > >
                                                   Edge_facet_counter;
-  enum Face_status{ NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR, SINGULAR};
+  enum Face_status{ NOT_IN_COMPLEX = 0,
+                    ISOLATED = 1, // - An ISOLATED edge is a marked edge,
+                                  //   without any incident facets.
+                    BOUNDARY,     // - An edge is on BOUNDARY if it has only
+                                  //   one incident facet.
+                                  // - A vertex is on BOUNDARY if all its
+                                  //   incident edges are REGULAR or on
+                                  //   BOUNDARY, at least one is on
+                                  //   BOUNDARY, and the incident facets
+                                  //   form only one connected component.
+                    REGULAR,      // - A facet that is in the complex is
+                                  //   REGULAR.
+                                  // - An edge is REGULAR if it has
+                                  //   exactly two incident facets.
+                                  // - A vertex is REGULAR if all it
+                                  //   incident edges are REGULAR, and the
+                                  //   incident facets form only one
+                                  //   connected component.
+                    SINGULAR};    // - SINGULAR is for all other cases.
 
   class Iterator_not_in_complex {
     Self* self;
@@ -356,12 +389,12 @@ public:
 
     // from now on incident edges (in complex) are REGULAR or BOUNDARY
 
-    int i,j;
-    union_find_of_incident_facets(v,i,j);
+    int nb_incident_facets, nb_components;
+    union_find_of_incident_facets(v, nb_incident_facets, nb_components);
 
-    if ( i == 0 ) 
+    if ( nb_incident_facets == 0 ) 
       return NOT_IN_COMPLEX;
-    else if ( j > 1 ) 
+    else if ( nb_components > 1 ) 
       return SINGULAR;
     else // REGULAR OR BOUNDARY
     {
@@ -699,6 +732,38 @@ public:
   Boundary_edges_iterator boundary_edges_end() {
     return CGAL::filter_iterator(tr.finite_edges_end(),
                                  Iterator_not_on_boundary(this)); 
+  }
+
+  bool is_valid(bool verbose = false)
+  {
+    const typename Tr::size_type nb = number_of_facets_on_surface(tr);
+    if(number_of_facets() != nb)
+    {
+      if(verbose) {
+        std::cerr << boost::format("C2t3: Invalid number of facet: %1% (should be %2%)!\n")
+          % number_of_facets() % nb;
+      }
+      return false;
+    }
+    for(Facet_iterator it = facets_begin(),
+          end = facets_end();
+        it != end; ++it)
+    {
+      CGAL_assertion(it->first->is_facet_on_surface(it->second));
+      const Facet& f = tr.mirror_facet(*it);
+      if(!f.first->is_facet_on_surface(f.second))
+      {
+        if(verbose) {
+          std::cerr << 
+            boost::format("C2t3: facet (%1%, %2%) is marked on surface"
+                          "will its mirror facet (%3, %4) is not!\n")
+            % &*it->first % it->second
+            % &*f.first % f.second;
+        }
+        return false;
+      }
+    }
+    return true;
   }
 
 #ifdef CGAL_MESH_3_IO_H
