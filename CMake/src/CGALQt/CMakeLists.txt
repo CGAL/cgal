@@ -102,9 +102,11 @@ if( CGAL_USE_QT )
                                                 MINSIZEREL_OUTPUT_NAME     "${CGAL_QT_MINSIZEREL_MANGLED_NAME}" 
                                                 RELWITHDEBINFO_OUTPUT_NAME "${CGAL_QT_RELWITHDEBINFO_MANGLED_NAME}" 
                            )
-      
-      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
-      add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+
+      if ( HAS_CFG_INTDIR )                      
+        add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
+        add_custom_command(TARGET CGAL_QT POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+      endif()
       
     endif()
 

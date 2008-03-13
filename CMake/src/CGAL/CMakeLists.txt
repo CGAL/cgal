@@ -53,8 +53,10 @@ else()
                                          RELWITHDEBINFO_OUTPUT_NAME "${CGAL_RELWITHDEBINFO_MANGLED_NAME}" 
                        )
   
-  add_custom_command(TARGET CGAL POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
-  add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+  if ( HAS_CFG_INTDIR )                      
+    add_custom_command(TARGET CGAL POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
+    add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+  endif()
   
 endif()
 

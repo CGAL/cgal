@@ -45,8 +45,11 @@ else()
                                               RELWITHDEBINFO_OUTPUT_NAME "${CGAL_PDB_RELWITHDEBINFO_MANGLED_NAME}" 
                        )
   
-  add_custom_command(TARGET CGAL_PDB POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
-  add_custom_command(TARGET CGAL_PDB POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+  if ( HAS_CFG_INTDIR )                      
+    add_custom_command(TARGET CGAL_PDB POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
+    add_custom_command(TARGET CGAL_PDB POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+  endif()
+  
 endif()
 
 # WARNING: Use only relative paths; full paths break CPack!
