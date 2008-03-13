@@ -83,7 +83,11 @@ struct Make_x_monotone_2 :
     //!\name Constructors
     //!@{
 
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel instance to use
+     */
     Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
         CGAL_assertion(kernel != NULL);
@@ -94,8 +98,14 @@ struct Make_x_monotone_2 :
     //!\name Functor invokation
     //!@{
     
-    //! Splits \c curve into x-monotone arcs and isolated points, copies
-    //! them through \c oi, and returns the past-the-end iterator for \c oi.
+    /*!\brief
+     * Splits a curve into x-monotone arcs and isolated points
+     *
+     * \param curve The input curve
+     * \param oi Output iterator that stores CGAL::Object, which either
+     *           encapsulates Point_2 or Arc_2
+     * \return Past-the-end iterator of \c oi
+     */
     template <class OutputIterator>
     OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi) {
 
@@ -236,7 +246,16 @@ private:
     //!\name Private members
     //!@{
     
-    //! extracted code for vertical arcs and isolated points "at an event"
+    /*!\brief
+     * Constructs vertical arcs and isolated points at event line
+     *
+     * \param cv_line The event line in focus
+     * \param x x-coordinate of event
+     * \param pts Points at event line
+     * \param oi Output iterator that stores CGAL::Object, which either
+     *           encapsulates Point_2 or Arc_2
+     * \return Past-the-end iterator of \c oi
+     */
     template <class OutputIterator>
     OutputIterator _handle_vertical_and_isolated(
             Status_line_1 cv_line,
