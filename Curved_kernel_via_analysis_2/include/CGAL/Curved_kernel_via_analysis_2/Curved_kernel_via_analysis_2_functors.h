@@ -35,16 +35,21 @@ namespace CGALi {
 #endif
 #endif
 
+/*!\brief
+ * Collects main functors for Curved_kernel_via_analysis_2
+ */
 namespace Curved_kernel_via_analysis_2_Functors {
 
-//! base functor class
+/*!\brief
+ * Base functor class for inheritance
+ */
 template < class CurvedKernelViaAnalysis_2 > 
 class Curved_kernel_via_analysis_2_functor_base {
 
 public:
     //!\name Public types
-
     //!@{
+    
     //! this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
@@ -69,9 +74,15 @@ public:
 
     //!@}
 
+public:
     //!\name Constructors
     //!@{
-
+    
+    /*!\brief
+     * Constructs base functor
+     *
+     * \param kernel The kernel instance
+     */
     Curved_kernel_via_analysis_2_functor_base(
             Curved_kernel_via_analysis_2 *kernel) :
         _m_curved_kernel(kernel) {
@@ -84,7 +95,10 @@ protected:
     //!\name Access members
     //!@{
     
-    //! return pointer to curved kernel
+    /*!\brief 
+     * Return pointer to curved kernel
+     * \return Pointer to stored kernel
+     */
     Curved_kernel_via_analysis_2* _ckva() const {
         return _m_curved_kernel;
     }
@@ -95,7 +109,7 @@ protected:
     //!\name Data members
     //!@{
     
-    //! pointer to \c Curved_kernel_via_analysis_2 ?
+    //! stores pointer to \c Curved_kernel_via_analysis_2
     Curved_kernel_via_analysis_2 *_m_curved_kernel;
     
     //!@}
@@ -112,7 +126,9 @@ protected:
 // end define
 
 
-
+/*!\brief 
+ * Functor to construct a point on a curve
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Construct_point_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -131,15 +147,23 @@ public:
     //! the result type
     typedef Point_2 result_type;
 
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Construct_point_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    //!\brief constructs a finite point with x-coordinate
-    //! \c x on curve \c c with arc number \c arcno
-    //!
-    //! implies no boundary conditions in x/y
+    /*!\brief
+     * Constructs a interior point 
+     * 
+     * \param x x-coordinate
+     * \param c The supporting curve
+     * \param arcno Arcnumber on curve
+     * \return The constructed point
+     */
     Point_2 operator()(const X_coordinate_1& x, 
                        const Curve_analysis_2& c, 
                        int arcno) {
@@ -149,10 +173,9 @@ public:
 };
 
 
-//!\brief Functor to construct point on an arc
-//! \c x on curve \c c with arc number \c arcno
-//!
-//! implies no boundary conditions in x/y
+/*!\brief
+ * Functor to construct point on an arc
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Construct_point_on_arc_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -171,12 +194,24 @@ public:
     //! the result type
     typedef Point_2 result_type;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Construct_point_on_arc_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    //! constructs points at x 
+    /*!\brief
+     * Constructs point on an arc
+     * 
+     * \param x x-coordinate of point
+     * \param c The supporting curve
+     * \param arcno Arcnumber on curve
+     * \param arc Can be used to query meta data
+     * \return The constructed point
+     */
     Point_2 operator()(
             const X_coordinate_1& x,
             const Curve_analysis_2& c, int arcno,
@@ -195,7 +230,10 @@ public:
     }
 };
 
- 
+
+/*!\brief
+ * Functor to construct an x-monotone arc 
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Construct_arc_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -214,22 +252,32 @@ public:
     //! the result type
     typedef Arc_2 result_type;
 
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Construct_arc_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    //! constructing non-vertical arcs
+    //! Constructing non-vertical arcs
     //!@{
     
-    //! \brief 
-    //! constructs an arc with two finite end-points, supported by curve \c c
-    //! with \c arcno (segment)  
-    //! 
-    //! \c arcno_p and \c arcno_q define arcnos of \c p and \c q w.r.t. 
-    //! the curve \c c
-    //!
-    //! \pre p.x() != q.x()
+    /*!\brief 
+     * Constructs a non-vertical arc with two interior end-points (segment).
+     * 
+     * \param p first endpoint
+     * \param q second endpoint
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_p The arcnumber wrt \c c of the arc at \c p
+     * \param arcno_q The arcnumber wrt \c c of the arc at \c q
+     * \returns The constructed segment
+     * 
+     * \pre p.x() != q.x()
+     *
+     */
     Arc_2 operator()(const Point_2& p, const Point_2& q, 
                      const Curve_analysis_2& c,
                      int arcno, int arcno_p, int arcno_q) {
@@ -238,11 +286,17 @@ public:
     }
     
     /*!\brief
-     * constructs an arc with one finite end-point \c origin and one
-     * x-infinite end, supported by curve \c c with \c arcno (ray I)
+     * Constructs a non-vertical arc with one interior end-point and whose
+     * other end approaches the left or right boundary of the parameter space 
+     * (ray I)
      *
-     * \c inf_end defines whether the ray emanates from +/- x-infinity, 
-     * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
+     * \param origin The interior end-point of the ray
+     * \param inf_end Defining whether the arc emanates from the left or right
+     *        boundary
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_o The arcnumber wrt \c c of the arc at \c origin 
+     * \return The constructed ray
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
                      const Curve_analysis_2& c, int arcno, int arcno_o) {
@@ -251,12 +305,17 @@ public:
     }
 
     /*!\brief
-     * constructs an arc with one finite end-point \c origin and one asymtpotic
-     * (y-infinite) end given by x-coordinate \c asympt_x (ray II)
+     * Constructs a non-vertical arc with one interior end-point and whose 
+     * other end approaches a vertical asymptote (ray II)
      *
-     * \c inf_end specifies +/-oo an asymptotic end is approaching, \c arcno_o
-     * defines an arcno of point \c origin (arcno of asymptotic end is the
-     * same as \c arcno )
+     * \param origin The interior end-point
+     * \param asympt_x The x-coordinate of the vertical asymptote
+     * \param inf_end Arc is approaching the bottom or top boundary
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_o The arcnumber wrt \c c of the arc at \c origin 
+     * \return The constructed ray
+     *
      * \pre origin.x() != asympt_x
      */
     Arc_2 operator()(const Point_2& origin, const X_coordinate_1& asympt_x, 
@@ -268,8 +327,12 @@ public:
     }
 
     /*!\brief
-     * constructs an arc with two x-infinite ends supported by curve \c c
-     * with \c arcno (branch I)
+     * Constructs a non-vertical arc with two non-interior ends at 
+     * the left and right boundary (branch I)
+     *
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt to \c c in the interior of the arc
+     * \return The constructed branch
      */
     Arc_2 operator()(const Curve_analysis_2& c, int arcno) {
         Arc_2 arc(c, arcno);
@@ -277,11 +340,17 @@ public:
     }
     
     /*!\brief
-     * constructs an arc with two asymptotic ends defined by \c asympt_x1 and
-     * \c asympt_x2 respectively, supported by curve \c c with \c arcno
-     * (branch II)
+     * Constructs a non-vertical arc with two ends approaching vertical
+     * asymptotes (branch II).
      *
-     * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
+     * \param asympt_x1 The x-coordinate of the first asymptote
+     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     *                 \c asympt_x1
+     * \param asympt_x2 The x-coordinate of the second asymptote
+     * \param inf_end2 Arc is approaching the bottom or top boundary at 
+     *                 \c asympt_x2
+     * \return The constructed branch
+     *
      * \pre asympt_x1 != asympt_x2
      */
     Arc_2 operator()(const X_coordinate_1& asympt_x1, 
@@ -294,12 +363,15 @@ public:
     }
     
     /*!\brief
-     * constructs an arc with one x-infinite end and one asymptotic end 
-     * defined by x-coordinate \c asympt_x supported by curve \c c with 
-     * \c arcno (branch III)
+     * Construct a non-vertical arc with one left- or right-boundary end 
+     * and one end that approaches a vertical asymptote (branch III)
      *
-     * \c inf_endx specifies whether the branch goes to +/- x-infinity,
-     * \c inf_endy specifies +/-oo the asymptotic end approaches
+     * \param inf_endx Defining whether the arc emanates from the left or right
+     *        boundary
+     * \param asympt_x The x-coordinate of the asymptote
+     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     *                 asympt_x
+     * \return The constructed branch
      */
     Arc_2 operator()(CGAL::Arr_curve_end inf_endx, 
                      const X_coordinate_1& asympt_x,
@@ -311,15 +383,20 @@ public:
     
     //!@}
     
-    //!\name constructing vertical arcs
+    //!\name Constructing vertical arcs
     //!@{
     
-    //! \brief 
-    //! constructs a vertcial arc with two finite end-points \c p and \c q ,
-    //! supported by curve \c c (vertical segment)
-    //! 
-    //! \pre p != q && p.x() == q.x()
-    //! \pre c must have a vertical component at this x
+    /*!\brief 
+     * Constructs a vertical arc with two interior end-points 
+     * (vertical segment)
+     *
+     * \param p The first end-point
+     * \param q The second end-point
+     * \param c The supporting curve
+     * 
+     * \pre p != q && p.x() == q.x()
+     * \pre c must have a vertical component at this x
+     */
     Arc_2 operator()(const Point_2& p, const Point_2& q, 
                      const Curve_analysis_2& c) {
         Arc_2 arc(p,q,c);
@@ -327,10 +404,12 @@ public:
     }
     
     /*!\brief
-     * constructs a vertical arc with one finite end-point \c origin and one
-     * y-infinite end, supported by curve \c c (vertical ray)
+     * Constructs a vertical arc with one interior end-point and 
+     * one that reaches the bottom or top boundary (vertical ray)
      *
-     * \c inf_end defines whether the ray emanates from +/- y-infninty, 
+     * \param origin The interior end-point
+     * \param inf_end Ray emanates from bottom or top boundary
+     *
      * \pre c must have a vertical line component at this x
      */
     Arc_2 operator()(const Point_2& origin, CGAL::Arr_curve_end inf_end,
@@ -341,8 +420,10 @@ public:
     }
     
     /*!\brief
-     * constructs a vertical arc with two y-infinite ends, at x-coordinate 
-     * \c x , supported by curve \c c (vertical branch)
+     * Constructs a vertical arc that connects bottom with top boundary
+     * (vertical branch)
+     *
+     * \param x The x-coordinate of the arc
      * 
      * \pre c must have a vertical line component at this x
      */
@@ -352,7 +433,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that checks whether a given arc is vertical
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Is_vertical_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -372,23 +455,29 @@ public:
     typedef bool result_type;
     typedef Arity_tag<1> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Is_vertical_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!
-     * Check whether the given x-monotone curve is a vertical segment.
+    /*!\brief
+     * Check whether the given x-monotone arc \c cv is a vertical segment.
+     *
      * \param cv The curve.
-     * \return (true) if the curve is a vertical segment; 
-     * (false) otherwise.
+     * \return \c true if the curve is a vertical segment, \c false otherwise.
      */
     result_type operator()(const Arc_2& cv) const {
         return cv.is_vertical();
     }
 };
 
-
+/*!\brief
+ * Functor that checks whether a given arc end is interior
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Is_bounded_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -412,10 +501,11 @@ public:
         Base(kernel) {
     }
     
-    /*! Is the end of an x-monotone curve bounded?
-     * \param xcv The x-monotone curve.
-     * \param ce The end of xcv identifier.
-     * \return true is the curve end is bounded, and false otherwise
+    /*! Is the end of an arc interior.
+     *
+     * \param cv The arc
+     * \param ce The end of cv identifier.
+     * \return \c true is the arc end is interior, and \c false otherwise
      */
     result_type operator()(const Arc_2& cv, Arr_curve_end ce) const {
         return (cv.is_finite(ce));
@@ -423,6 +513,9 @@ public:
 };
 
 
+/*!\brief
+ * Functor computing parameter space in x for arc
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Parameter_space_in_x_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -442,34 +535,39 @@ public:
     typedef CGAL::Arr_parameter_space result_type;
     typedef Arity_tag<2> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Parameter_space_in_x_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*! Obtains the parameter space at the end of a line along the x-axis.
-     * \param xcv the line
-     * \param ce the line end indicator:
-     *     ARR_MIN_END - the minimal end of xc or
-     *     ARR_MAX_END - the maximal end of xc
-     * \return the parameter space at the ce end of the line xcv.
-     *   ARR_LEFT_BOUNDARY  - the line approaches the identification arc from
-     *                        the right at the line left end.
-     *   ARR_INTERIOR       - the line does not approache the 
-     *                        identification arc.
-     *   ARR_RIGHT_BOUNDARY - the line approaches the identification arc from
-     *                        the left at the line right end.
+    /*! Obtains the parameter space in x at the end of an arc.
+     *
+     * \param cv The arc
+     * \param ce the arc end indicator:
+     *     ARR_MIN_END - the minimal end of cv
+     *     ARR_MAX_END - the maximal end of cv
+     * \return the parameter space at the \c ce end of \c cv
+     *   ARR_LEFT_BOUNDARY  - the arc approaches the left boundary of the 
+     *                        parameter space
+     *   ARR_INTERIOR       - the arc does not approach a boundary of the
+     *                        parameter space
+     *   ARR_RIGHT_BOUNDARY - the arc approaches the right boundary of the
+     *                        parameter space
      */
-    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end end) const {
+    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end ce) const {
 
-        CGAL::Arr_parameter_space loc = cv.location(end);
+        CGAL::Arr_parameter_space loc = cv.location(ce);
         if(loc == CGAL::ARR_LEFT_BOUNDARY || loc == CGAL::ARR_RIGHT_BOUNDARY)
             return loc;
         return CGAL::ARR_INTERIOR;
     }
 };
 
-
+// Functor computing parameter space in y for arc
 template < class CurvedKernelViaAnalysis_2 >
 class Parameter_space_in_y_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -489,38 +587,41 @@ public:
     typedef CGAL::Arr_parameter_space result_type;
     typedef Arity_tag<2> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Parameter_space_in_y_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*! Obtains the parameter space at the end of a line along the y-axis .
-     * Note that if the line end coincides with a pole, then unless the line
-     * coincides with the identification arc, the line end is considered to
-     * be approaching the boundary, but not on the boundary.
-     * If the line coincides with the identification arc, it is assumed to
-     * be smaller than any other object.
-     * \param xcv the line
-     * \param ce the line end indicator:
-     *     ARR_MIN_END - the minimal end of xc or
-     *     ARR_MAX_END - the maximal end of xc
-     * \return the parameter space at the ce end of the line xcv.
-     *   ARR_BOTTOM_BOUNDARY  - the line approaches the south pole at the line
-     *                          left end.
-     *   ARR_INTERIOR         - the line does not approach boundary
-     *   ARR_TOP_BOUNDARY     - the line approaches the north pole at the line
-     *                          right end.
+    /*! Obtains the parameter space in y at the end of an arc.
+     * 
+     * \param cv The arc
+     * \param ce the arc end indicator:
+     *     ARR_MIN_END - the minimal end of cv
+     *     ARR_MAX_END - the maximal end of cv
+     * \return the parameter space at the \c ce end of \c cv
+     *   ARR_BOTTOM_BOUNDARY- the arc approaches the bottom boundary of the 
+     *                        parameter space
+     *   ARR_INTERIOR       - the arc does not approach a boundary of the
+     *                        parameter space
+     *   ARR_TOP_BOUNDARY   - the arc approaches the top boundary of the
+     *                        parameter space
      */
-    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end end) const {
+    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end ce) const {
             
-        CGAL::Arr_parameter_space loc = cv.location(end);
+        CGAL::Arr_parameter_space loc = cv.location(ce);
         if(loc == CGAL::ARR_BOTTOM_BOUNDARY || loc == CGAL::ARR_TOP_BOUNDARY)
             return loc;
         return CGAL::ARR_INTERIOR;
     }
 };
 
-
+/*!\brief
+ * Functor constructing minimum point of an arc (if interior)
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Construct_min_vertex_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -540,16 +641,22 @@ public:
     typedef Point_2 result_type;
     typedef Arity_tag<1> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Construct_min_vertex_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!
-     * Get the left end-point of the x-monotone curve
-     * \param cv The curve.
-     * \pre corresponding end-point must not lie at infinity
-     * \return The left endpoint.
+    /*!\brief
+     * Get the minimum end-point of the arc
+     *
+     * \param cv The arc.
+     * \return The minimum end-point.
+     *
+     * \pre minimum end-point is interior
      */
     result_type operator()(const Arc_2& cv) const {
     
@@ -557,7 +664,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor constructing maximum point of an arc (if interior)
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Construct_max_vertex_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -577,16 +686,22 @@ public:
     typedef Point_2 result_type;
     typedef Arity_tag<1> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Construct_max_vertex_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!
-     * Get the right endpoint of the x-monotone curve (segment).
-     * \param cv The curve.
-     * \pre corresponding end-point must not lie at infinity
-     * \return The right endpoint.
+    /*!\brief
+     * Get the maximum end-point of the arc.
+     *
+     * \param cv The arc.
+     * \return The maximum end-point.
+     *
+     * \pre maximum end-point is interior
      */
     result_type operator()(const Arc_2& cv) const {
         
@@ -594,7 +709,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that compares x-coordinates of two interior points
+ */
 template <class CurvedKernelViaAnalysis_2>
 class Compare_x_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -614,18 +731,23 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_x_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
+    /*!\brief
      * Compare the x-coordinates of two points.
+     *
      * \param p1 The first point.
      * \param p2 The second point.
-     * \return LARGER if x(p1) > x(p2);
-     *         SMALLER if x(p1) \< x(p2);
-     *         EQUAL if x(p1) = x(p2).
+     * \return CGAL::LARGER if x(p1) > x(p2);
+     *         CGAL::SMALLER if x(p1) \< x(p2);
+     *         CGAL::EQUAL if x(p1) = x(p2).
      */
     result_type operator()(const Point_2 &p1, const Point_2 &p2) const {
         return Curved_kernel_via_analysis_2::instance().
@@ -634,7 +756,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that compares coordinates of two interior points lexicographically
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_xy_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -654,19 +778,24 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_xy_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!
+    /*!\brief 
      * Compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
      * \param p2 The second point.
-     * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
-     *         SMALLER if x(p1) \< x(p2), or if x(p1) = x(p2) and 
-     *                   y(p1) \< y(p2);
-     *         EQUAL if the two points are equal.
+     * \return CGAL::LARGER if x(p1) > x(p2), 
+     *                      or if x(p1) = x(p2) and y(p1) > y(p2);
+     *         CGAL::SMALLER if x(p1) \< x(p2), 
+     *                       or if x(p1) = x(p2) and y(p1) \< y(p2);
+     *         CGAL::EQUAL if the two points are equal.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
@@ -680,6 +809,9 @@ public:
 };
 
 
+/*!\brief
+ * Functor that compares x-coordinates near the top or bottom boundary
+ */
 template <class CurvedKernelViaAnalysis_2>
 class Compare_x_near_boundary_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -703,19 +835,21 @@ public:
         Base(kernel) {
     }
 
-    /*! Compare the x-coordinate of a point with the x-coordinate of
-     * a line end near the boundary at y = +/- oo.
+    /*!\brief Compare the x-coordinate of a point with the x-coordinate of
+     * an arcend near the boundary at bottom or top boundary
+     * 
      * \param p the point direction.
-     * \param xcv the line, the endpoint of which is compared.
-     * \param ce the line-end indicator -
-     *            ARR_MIN_END - the minimal end of xc or
-     *            ARR_MAX_END - the maximal end of xc.
+     * \param cv the arc, the endpoint of which is compared.
+     * \param ce the arc-end indicator -
+     *            ARR_MIN_END - the minimal end of cv or
+     *            ARR_MAX_END - the maximal end of cv.
      * \return the comparison result:
-     *         SMALLER - x(p) \< x(xc, ce);
-     *         EQUAL   - x(p) = x(xc, ce);
-     *         LARGER  - x(p) > x(xc, ce).     
+     *         SMALLER - x(p) \< x(cv, ce);
+     *         EQUAL   - x(p) = x(cv, ce);
+     *         LARGER  - x(p) > x(cv, ce).
+     *
      * \pre p lies in the interior of the parameter space.
-     * \pre the ce end of the line xcv lies on a boundary.
+     * \pre the ce end of the line cv lies on a boundary.
      */
     result_type operator()(const Point_2& p, const Arc_2& cv,
                            CGAL::Arr_curve_end ce) const {
@@ -745,22 +879,23 @@ public:
         return res;
     }
 
-    /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
-     * parameter space at y = +/- oo.
-     * \param xcv1 the first arc.
+    /*! Compare the x-coordinates of 2 arcs ends near the top or bottom 
+     * boundary of the parameter space
+     * \param cv1 the first arc.
      * \param ce1 the first arc end indicator -
-     *            ARR_MIN_END - the minimal end of xcv1 or
-     *            ARR_MAX_END - the maximal end of xcv1.
-     * \param xcv2 the second arc.
+     *            ARR_MIN_END - the minimal end of cv1 or
+     *            ARR_MAX_END - the maximal end of cv1.
+     * \param cv2 the second arc.
      * \param ce2 the second arc end indicator -
-     *            ARR_MIN_END - the minimal end of xcv2 or
-     *            ARR_MAX_END - the maximal end of xcv2.
+     *            ARR_MIN_END - the minimal end of cv2 or
+     *            ARR_MAX_END - the maximal end of cv2.
      * \return the second comparison result:
-     *         SMALLER - x(xcv1, ce1) \< x(xcv2, ce2);
-     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
-     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-     * \pre the ce1 end of the line xcv1 lies on a boundary.
-     * \pre the ce2 end of the line xcv2 lies on a boundary.
+     *         SMALLER - x(cv1, ce1) \< x(cv2, ce2);
+     *         EQUAL   - x(cv1, ce1) = x(cv2, ce2);
+     *         LARGER  - x(cv1, ce1) > x(cv2, ce2).
+     *
+     * \pre the ce1 end of the arc cv1 lies on a boundary.
+     * \pre the ce2 end of the arc cv2 lies on a boundary.
      */
     result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
@@ -862,6 +997,9 @@ public:
 };
 
 
+/*!\brief
+ * Functor that compares ends of arcs near left or right boundary
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_near_boundary_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -881,26 +1019,36 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_y_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*! Compare the y-coordinates of 2 lines at their ends near the boundary
-     * of the parameter space at x = +/- oo.
-     * \param xcv1 the first arc.
-     * \param xcv2 the second arc.
-     * \param ce the line end indicator.
-     * \return the second comparison result.
-     * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
+    /*!\brief
+     * Compare the y-coordinates of 2 arcs at their ends near the left
+     * or right boundary of the parameter space
+     * 
+     * \param cv1 the first arc.
+     * \param cv2 the second arc.
+     * \param ce the arc end indicator.
+     * \return CGAL::SMALLER is y(cv1,ce) < y(cv2,ce2) near left/right boundary
+     *         CGAL::EQUAL is y(cv1,ce) = y(cv2,ce2) near left/right boundary,
+     *         i.e., they overlap
+     * \return CGAL::LARGER is y(cv1,ce) > y(cv2,ce2) near left/right boundary
+     *
+     * \pre the ce ends of the arcs cv1 and cv2 lie either on the left
      * boundary or on the right boundary of the parameter space.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
-                           CGAL::Arr_curve_end ce) const {\
-
+                           CGAL::Arr_curve_end ce) const {
+        
         CERR("\ncompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
              cv2 << "; end: " << ce << "\n");
-
+        
         CGAL::Arr_parameter_space loc1 = cv1.location(ce);
         CGAL_precondition(cv1.is_on_left_right(loc1));
         CGAL_precondition(loc1 == cv2.location(ce));
@@ -917,6 +1065,10 @@ public:
 };
 
 
+/*!\brief
+ * Functor that computes relative vertical alignment of an interior point and 
+ * an arc
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -936,22 +1088,31 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<2>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_y_at_x_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!
-     * Return the location of the given point with respect to the input curve.
-     * \param cv The curve.
-     * \param p The point.
+    /*!\brief
+     * Return the relative vertical alignment of a point with an arc
+     * 
+     * \param p The point
+     * \param cv The arc
+     * \return CGAL::SMALLER if y(p) \< cv(x(p)), i.e., 
+     *                       the point is below the arc;
+     *         CGAL::LARGER if y(p) > cv(x(p)), i.e.,
+     *                      the point is above the arc;
+     *         CGAL::EQUAL if p lies on the arc
+     *
      * \pre p is in the x-range of cv.
-     * \return SMALLER if y(p) \< cv(x(p)), i.e. the point is below the curve;
-     *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
-     *         EQUAL if p lies on the curve.
+     *
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
-     
+        
         CERR("\ncompare_y_at_x; p: " << p << ";\n cv:" << cv << "\n");
 
         bool eq_min, eq_max;
@@ -1008,7 +1169,10 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that computes the relative vertical aligment of two arcs left
+ * of a point
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_left_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1028,23 +1192,31 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_y_at_x_left_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the left
-     * of their intersection point. If one of the curves is vertical
-     * (emanating downward from p), it's always considered to be below the
-     * other curve.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
+    /*!\brief
+     * Compares the relative vertical alignment of two arcs 
+     * immediately to the left of one of their intersection points. 
+     * 
+     * If one of the arcs is vertical (emanating downward from p), it is 
+     * always considered to be below the other curve.
+     *
+     * \param cv1 The first arc
+     * \param cv2 The second arc
      * \param p The intersection point.
+     * \return The relative vertical alignment of cv1 with respect to cv2 
+     *         immdiately to the left of p: CGAL::SMALLER, CGAL::LARGER or 
+               CGAL::EQUAL.
+     *
      * \pre The point p lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
      */
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
@@ -1107,6 +1279,10 @@ public:
 };
 
 
+/*!\brief
+ * Functor that computes the relative vertical aligment of two arcs right
+ * of a point
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_right_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1126,23 +1302,31 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef Arity_tag<3>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Compare_y_at_x_right_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-     /*!
-     * Compares the y value of two x-monotone curves immediately 
-     * to the right of their intersection point. If one of the curves is
-     * vertical (emanating upward from p), it's always considered to be above
-     * the other curve.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
+    /*!\brief
+     * Compares the relative vertical alignment of two arcs 
+     * immediately to the right of one of their intersection points. 
+     * 
+     * If one of the arcs is vertical (emanating downward from p), it is 
+     * always considered to be below the other curve.
+     *
+     * \param cv1 The first arc
+     * \param cv2 The second arc
      * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be 
-     * also be defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to 
-     * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
+     * \return The relative vertical alignment of cv1 with respect to cv2 
+     *         immdiately to the right of p: CGAL::SMALLER, CGAL::LARGER or 
+               CGAL::EQUAL.
+     *
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographically) to its right.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            const Point_2& p) const {
@@ -1205,7 +1389,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that checks whether a point is in the x-range of an arc
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Is_in_x_range_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1225,24 +1411,30 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2>            Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Is_in_x_range_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
     /*!\brief
      * Check whether a given point lies within the curve's x-range
-     * \param cv The curve.
+     * 
+     * \param cv The arc
      * \param p the point
-     * \return (true) if p lies in arc's x-range; (false) otherwise.
+     * \return \c true if p lies in arc's x-range; \c false otherwise.
      */
     bool operator()(const Arc_2& cv, const Point_2& p) const {
         return cv.is_in_x_range(p);
     }
 };
 
-
-//!\brief Tests two objects, whether they are equal
+/*!\brief
+ * Tests two objects, whether they are equal
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Equal_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1262,16 +1454,21 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Equal_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
-     * Check if the two points are the same.
+    /*!\brief
+     * Check if the two points are the same
+     *
      * \param p1 The first point.
      * \param p2 The second point.
-     * \return (true) if the two point are the same; (false) otherwise.
+     * \return \c true if the two point are the same; \c false otherwise.
      */
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
         return (Curved_kernel_via_analysis_2::instance().
@@ -1279,13 +1476,12 @@ public:
                 CGAL::EQUAL);
     }
      
-    /*!
-     * Check if the two x-monotone curves are the same (have the same graph).
-     * \param cv1 The first 
-     *        curve(this->_ckva()->kernel().compare_xy_2_object()
-             (p1.xy(), p2.xy()));.
-     * \param cv2 The second curve.
-     * \return (true) if the two curves are the same; (false) otherwise.
+    /*!\brief 
+     * Check if the two arcs are the same 
+     * 
+     * \param cv1 The first arc
+     * \param cv2 The second arc
+     * \return \c true if the two curves are the same; \c false otherwise.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
 
@@ -1319,6 +1515,9 @@ public:
 };
 
 
+/*!\brief
+ * Functor that checks whether two arcs overlap
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Do_overlap_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1338,17 +1537,22 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Do_overlap_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
     /*!\brief
-     * Check whether two given curves overlap, i.e., they have infinitely
+     * Check whether two given arcs overlap, i.e., they have infinitely
      * many intersection points
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the curves overlap; (false) otherwise.
+     *
+     * \param cv1 The first arc
+     * \param cv2 The second arc
+     * \return \c true if the curves overlap; \c false otherwise
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
@@ -1421,6 +1625,9 @@ public:
 };
 
 
+/*!\brief
+ * Functor that computes the intersections of two arcs
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Intersect_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1440,19 +1647,26 @@ public:
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
     typedef Arity_tag<3> Arity;    
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Intersect_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
-     * Find all intersections of the two given curves and insert them to the 
-     * output iterator. If two arcs intersect only once, only a single will be
-     * placed to the iterator. Type of output iterator is \c CGAL::Object 
-     * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
-     * with multiplicity (point-wise intersections)
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
+    /*!\brief
+     * Find all intersections of the two given arcs and insert them to the 
+     * output iterator. 
+     *
+     * Type of output iterator is \c CGAL::Object 
+     * containing either an \c Arc_2 object (overlap) or a \c 
+     * std::pair< Point_2, unsigned int >, where the unsigned int denotes
+     * the multiplicity of the intersection (if known).
+     *
+     * \param cv1 The first arc
+     * \param cv2 The second arc
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
@@ -1489,6 +1703,9 @@ public:
 };
 
 
+/*!\brief
+ * Functors that trims an arc
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Trim_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1508,16 +1725,24 @@ public:
     typedef Arc_2 result_type;
     typedef Arity_tag<3> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Trim_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
     /*!\brief
-     * Returns a 
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the curves overlap; (false) otherwise.
+     * Returns a trimmed version of an arc
+     * 
+     * \param cv The arc
+     * \param p the new first endpoint
+     * \param q the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre both points must be interior and must lie on \c cv
      */
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
     
@@ -1537,6 +1762,10 @@ public:
     }
 };
 
+
+/*!\brief
+ * Functor that splits an arcs at an interior point
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Split_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1556,17 +1785,23 @@ public:
     typedef void result_type;
     typedef Arity_tag<4> Arity;    
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Split_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
-     * Split a given x-monotone curve at a given point into two sub-curves.
-     * \param cv The curve to split
-     * \param p The split point.
+    /*!\brief
+     * Split a given arc at a given point into two sub-arc
+     * 
+     * \param cv The arc to split
+     * \param p The split point
      * \param c1 Output: The left resulting subcurve (p is its right endpoint)
      * \param c2 Output: The right resulting subcurve (p is its left endpoint)
+     * 
      * \pre p lies on cv but is not one of its end-points.
      */
     void operator()(const Arc_2& cv, const Point_2 & p,
@@ -1588,7 +1823,9 @@ public:
     }
 };
 
-
+/*!\brief
+ * Functor that computes whether two arcs are mergeable
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Are_mergeable_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1608,17 +1845,22 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;    
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Are_mergeable_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
     /*!\brief
-     * Check whether two given curves (arcs) are mergeable
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \return (true) if the two arcs are mergeable, i.e., they are supported
-     * by the same curve and share a common endpoint; (false) otherwise.
+     * Check whether two given arcs are mergeable
+     *
+     * \param cv1 The first curve
+     * \param cv2 The second curve
+     * \return \c true if the two arcs are mergeable, i.e., they are supported
+     * by the same curve and share a common endpoint; \c false otherwise.
      */
     bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
     
@@ -1688,6 +1930,9 @@ public:
     }
 };
 
+/*!\brief
+ * Functor that merges two arcs
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Merge_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1707,17 +1952,23 @@ public:
     typedef void result_type;
     typedef Arity_tag<2> Arity;    
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Merge_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
     /*!\brief
-     * Merge two given x-monotone curves into a single one
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param c Output: The resulting curve.
-     * \pre The two curves are mergeable, that is they are supported by the
+     * Merges two given arcs into a single one
+     *
+     * \param cv1 The first arc
+     * \param cv2 The second arc
+     * \param c Output: The resulting arc
+     * 
+     * \pre The two arc are mergeable, that is they are supported by the
      *      same curve and share a common endpoint.
      */  
     void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
@@ -1751,7 +2002,9 @@ public:
 };
 
 
-//!\brief Tests whether a point lies on a supporting curve
+/*!\brief
+ * Functor that computes whether a point lies on a supporting curve
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Is_on_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1771,16 +2024,21 @@ public:
     typedef bool result_type;
     typedef Arity_tag<2> Arity;
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Is_on_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
     
-    /*!
+    /*!\brief
      * Checks whether \c p lies on \c c 
-     * \param p1 The point to test
-     * \param p2 The curve
-     * \return (true) if the \c p lies on \c c
+     * 
+     * \param p The point to test
+     * \param c The curve
+     * \return \c true if the \c p lies on \c c, \c false otherwise
      */
     result_type operator()(const Point_2& p, const Curve_analysis_2& c) const {
         result_type res = 
@@ -1792,7 +2050,9 @@ public:
 };
 
 
-
+/*!\brief 
+ * Functor that decomposes curve into x-monotone arcs and isolated points
+ */
 template < class CurvedKernelViaAnalysis_2>
 class Make_x_monotone_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
@@ -1812,20 +2072,25 @@ public:
     typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
     typedef Arity_tag<2> Arity;   
     
-    //! standard constructor
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
     Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     } 
 
-    /*!
-     * decompose a given arc into list of x-monotone pieces 
+    /*!\brief
+     * Decomposes a given arc into list of x-monotone arcs 
      * (subcurves) and insert them to the output iterator. Since \c Arc_2 
      * is by definition x-monotone, an input arc is passed to the 
      * output iterator directly. 
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. 
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     *
+     * \param cv The arc
+     * \param oi The output iterator, whose value-type is Object
+     * The returned objects are all wrappers Arc_2 objects
+     * \return The past-the-end iterator
      */
     template < class OutputIterator >
     OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
@@ -1834,13 +2099,14 @@ public:
         return oi;
     }
     
-    /*!
-     * decompose a given curve into list of x-monotone pieces 
-     * (subcurves) and insert them to the output iterator. 
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. 
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+    /*!\brief 
+     * Decomposes a given curve into list of x-monotone arcs
+     * (subcurves) and isolated points and insert them to the output iterator. 
+     * 
+     * \param cv The curve
+     * \param oi The output iterator, whose value-type is Object.
+     * The returned objects either wrapper Arc_2 or Point_2 objects
+     * \return The past-the-end iterator
      */
     template < class OutputIterator >
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
@@ -1855,7 +2121,9 @@ public:
 
 } // namespace Curved_kernel_via_analysis_2_Functors
 
-//! collects main set of functors of a curved kernel
+/*!\brief
+ * Collects main set of functors of a curved kernel
+ */
 template < 
     class CurvedKernelViaAnalysis_2, 
     class Curve_2_, 
@@ -1863,7 +2131,11 @@ template <
     class Arc_2_
 >
 class Curved_kernel_via_analysis_2_functors {
+
 public:
+    //!\name Public types
+    //!@{
+    
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -1920,8 +2192,7 @@ public:
 
     CGAL_CKvA_2_functor_pred(Is_on_2, is_on_2_object); 
     CGAL_CKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
-
-
+    
 #undef CGAL_CKvA_2_functor_pred
 #undef CGAL_CKvA_2_functor_cons
 
@@ -1929,7 +2200,7 @@ public:
 
 } // namespace CGALi
 
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
+// EOF
