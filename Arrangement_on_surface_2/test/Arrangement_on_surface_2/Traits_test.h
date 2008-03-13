@@ -2,6 +2,7 @@
 #define CGAL_TRAITS_TEST_H
 
 #include "Test_exceptions.h"
+#include <cstdlib>
 
 template <class T_Traits>
 class Traits_test {
@@ -716,7 +717,7 @@ Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
       (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_INTERIOR));
   }
   return std::pair<enum Enum_type,unsigned int>
-    (NUMBER,static_cast<unsigned int>(atoi(str_value.c_str())));
+    (NUMBER,static_cast<unsigned int>(std::atoi(str_value.c_str())));
 }
 
 /*!
