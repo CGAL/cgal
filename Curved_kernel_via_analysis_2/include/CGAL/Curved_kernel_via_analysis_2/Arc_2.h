@@ -15,10 +15,10 @@
 #ifndef CGAL_CURVED_KERNEL_ARC_2_H
 #define CGAL_CURVED_KERNEL_ARC_2_H
 
-/*! \file Curved_kernel_via_analysis_2/Arc_2.h
- *  \brief defines class \c Arc_2
- *  
- *  arc of a generic curve
+/*!\file Curved_kernel_via_analysis_2/Arc_2.h
+ * \brief 
+ * Defines class \c Arc_2 that represents an arc on a curve that
+ * can be analyzed.
  */
 
 #include <CGAL/basic.h>
@@ -50,36 +50,48 @@ namespace CGALi {
 #endif
 #endif
 
+/*!\brief
+ * Default representation class for Arc_2
+ */
 template < class CurvedKernelViaAnalysis_2 >
 class Arc_2_rep { 
-public:
 
-    // this instance's first template parameter
+public:
+    //!\name Public types
+    //!@{
+
+    //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
     
-    // myself
+    //! myself
     typedef Arc_2_rep< Curved_kernel_via_analysis_2 > Self;
 
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
     Curve_kernel_2;
     
-    // type of generic curve
+    //! type of curve that can be analzed
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
-    // type of a point on generic curve
+    //! type of a point on a point that can be analyzed
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
     
-    // type of boundary value in x-range
+    //! type of boundary value in x-range of an arc
     typedef typename Curve_kernel_2::Boundary Boundary;
 
-public:    
-    // default constructor
+    //!@}
+
+public:
+    //!\name Constructors
+    //!@{
+    
+    //! default constructor
     Arc_2_rep() : 
         _m_arcno(-1), _m_arcno_min(-1), _m_arcno_max(-1), 
         _m_is_vertical(false) {
     }
-    // copy constructor
+    
+    //! copy constructor
     Arc_2_rep(const Self& s):
         _m_min(s._m_min), _m_max(s._m_max),
         _m_support(s._m_support),
@@ -89,8 +101,7 @@ public:
         _m_is_vertical(s._m_is_vertical) {
     }
     
-
-    // standard constructor
+    //! standard constructor
     Arc_2_rep(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, 
               int arcno = -1, int arcno_p = -1, int arcno_q = -1,
               bool is_vertical = false) : 
@@ -108,24 +119,37 @@ public:
         }
     }
 
-    // source and target end-points of a segment
-    mutable Point_2 _m_min, _m_max;
+    //!@}
 
-    // supporting curve
+public:
+    //!\name Data members
+    //!@{
+    
+    //! minimal end-points of an arc
+    mutable Point_2 _m_min;
+
+    //! maximal end-points of an arc
+    mutable Point_2 _m_max;
+    
+    //! supporting curve
     mutable Curve_analysis_2 _m_support;
 
-    // interior arcno, source and target arcno
+    //! interior arcno
     mutable int _m_arcno;
+
+    //! arcno at min
     mutable int _m_arcno_min;
+
+    //! arcno at max
     mutable int _m_arcno_max;
     
-    // indicates whether arc is vertical
+    //! indicates whether arc is vertical
     bool _m_is_vertical;
     
-    // stores the index of an interval this arc belongs to
+    //! stores the index of an interval this arc belongs to
     mutable boost::optional<int> _m_interval_id;
 
-    // stores boundary value in x-range of non-vertical interval
+    //! stores boundary value in x-range of non-vertical interval
     mutable boost::optional< Boundary > _m_boundary_in_interval;
 
     // caches
@@ -139,17 +163,33 @@ public:
     
     mutable Int_map _m_cmp_y_at_x;
 #endif
+
+    //!@}
 };
 
 
-//! \brief class defines a point on a generic curve
+/*!\brief 
+ * Class defines an arc on a curve that can be analyzed
+ * 
+ * An arc is either non-vertical or vertical. If it is non-vertical,
+ * we can assign a constant arc number to its interior and we may can assign
+ * (non-identical) arc numbers to its end-points. It depends on whether
+ * the arc toches the bondary of the parameter space or not.
+ * If it is vertical, no arc number is available.
+ *
+ * We distinguish between interior arcs, rays, and branches. An interior arc
+ * lies completely in the parameter space, while a ray has one end that lies
+ * on the boundary of the parameter space, and both ends of a branch lie on
+ * the boundary.
+ * 
+ */
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 class Arc_2 :
         public CGAL::Handle_with_policy< Rep_ > {
     
 public:
+    //!\name Public types
     //!@{
-    //!\name publuic typedefs
     
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
@@ -180,9 +220,12 @@ public:
     typedef typename Curve_kernel_2::Curve_pair_analysis_2
     Curve_pair_analysis_2;
     
-    //! type of a point on generic curve
+    //! type of a kernel point
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
     // Remark: Point_2 is already Kernel_point_2 -> no need to introduce it
+
+    //! type of kernel arc
+    typedef typename Curved_kernel_via_analysis_2::Arc_2 Kernel_arc_2;
     
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -198,15 +241,15 @@ public:
     typedef typename Rep::Int_pair_map Int_pair_map;
 #endif
     
-    //! type of kernel arc
-    typedef typename Curved_kernel_via_analysis_2::Arc_2 Kernel_arc_2;
-    
     //!@}
 
 public:
-    // Rebind
+    //!\name Rebind
+    //!{
+    
     /*!\brief
-     * An auxiliary structure for rebinding the arc with a new rep
+     * An auxiliary structure for rebinding the arc with a NewCKvA_2 and a 
+     * NewRep
      */
     template < typename NewCKvA_2, typename NewRep >
     class rebind
@@ -228,12 +271,17 @@ public:
         typedef typename New_curved_kernel_via_analysis_2::Arc_2 Rebound_arc_2;
 
         /*!\brief
-         * constructs supporing arc of type \c Rebound_arc_2 from the 
+         * Constructs supporting arc of type \c Rebound_arc_2 from the 
          * (possible unbounded) \c arc
          * of type \c Self and replaces \c min and \c max point by the 
          * given instances.
          *
          * All known items of the base class rep will be copied.
+         *
+         * \param arc Input arc
+         * \param min New endpoint at min
+         * \param max New endpoint at max
+         * \return An arc of type \c Rebound_arc_2
          */
         Rebound_arc_2 operator()(const Self& arc, 
                                  const New_point_2& min,
@@ -247,7 +295,14 @@ public:
             return Rebound_arc_2(newrep);
         }
 
-        //! special: returns min or max endpoint of \c arc
+        /*!\brief
+         * Gives direct access to minimal or maximal endpoint of an arc,
+         * even if it is not interior!
+         *
+         * \param arc Input arc
+         * \param ce Specifies which end is queried
+         * \return min or max point (might be not interior!)
+         */
         Point_2 operator()(const Self& arc, CGAL::Arr_curve_end ce) {
             if (ce == CGAL::ARR_MIN_END) {
                 return arc._minpoint();
@@ -258,8 +313,11 @@ public:
         
         // TODO move to SfA_2l
         /*!\brief
-         * reverse rebind, i.e., extracts original arc type from a 
+         * Reverse rebind, that is extracts original arc type from a 
          * rebound instance
+         *
+         * \param arc A rebound arc
+         * \return An arc of type \c Self extracted from \c arc
          */
         Self operator()(const Rebound_arc_2& arc) {
             Rep rep;
@@ -284,7 +342,12 @@ public:
         }
 
     protected:
-        //! collect common assignments
+        /*!\brief
+         * copies main members to a rep
+         * 
+         * \param arc Source arc
+         * \param newrep Destination representation
+         */
         void copy_members(const Self& arc, New_rep& newrep) {
             
             newrep._m_support = arc.ptr()->_m_support;
@@ -302,6 +365,8 @@ public:
         }
     };
 
+    //!}
+    
 public:
     //!\name basic constructors
     //!@{
@@ -323,17 +388,23 @@ public:
     //!@}
     
 public:
-    //!\name standard constructors for non-vertical arcs
+    //!\name Constructors for non-vertical arcs
     //!@{
     
-    //! \brief 
-    //! constructs an arc with two finite end-points, supported by curve \c c
-    //! with \c arcno (segment)  
-    //! 
-    //! \c arcno_p and \c arcno_q define arcnos of \c p and \c q w.r.t. 
-    //! the curve \c c
-    //!
-    //! \pre p.x() != q.x()
+    /*!\brief 
+     * Constructs an arc with two interior end-points (segment).
+     * 
+     * \param p first endpoint
+     * \param q second endpoint
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_p The arcnumber wrt \c c of the arc at \c p
+     * \param arcno_q The arcnumber wrt \c c of the arc at \c q
+     * \returns The constructed segment
+     * 
+     * \pre p.x() != q.x()
+     *
+     */
     Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c,
           int arcno, int arcno_p, int arcno_q) : 
         Base(Rep(p, q, c, arcno, arcno_p, arcno_q)) { 
@@ -350,12 +421,17 @@ public:
         _fix_curve_ends_order(); // lexicographical order of curve ends
     }
       
-    /*!\brief
-     * constructs an arc with one finite end-point \c origin and one
-     * x-infinite end, supported by curve \c c with \c arcno (ray I)
+   /*!\brief
+     * Constructs an arc with one interior end-point and another end
+     * at the left or right boundary of the parameter space (ray I).
      *
-     * \c inf_end defines whether the ray emanates from +/- x-infinity, 
-     * \c arcno_o defines an arcno of point \c origin w.r.t. curve \c c
+     * \param origin The interior end-point of the ray
+     * \param inf_end Defining whether the arcs emanates from the left or right
+     *        boundary
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_o The arcnumber wrt \c c of the arc at \c origin 
+     * \return The constructed ray
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, 
           const Curve_analysis_2& c, int arcno, int arcno_o) :
@@ -369,13 +445,19 @@ public:
         _fix_curve_ends_order(); // lexicographical order of curve ends
     }
     
+    
     /*!\brief
-     * constructs an arc with one finite end-point \c origin and one asymtpotic
-     * (y-infinite) end given by x-coordinate \c asympt_x (ray II)
+     * Constructs a non-vertical arc with one interior end-point and whose 
+     * other end approaches a vertical asymptote (ray II)
      *
-     * \c inf_end specifies +/-oo an asymptotic end is approaching, \c arcno_o
-     * defines an arcno of point \c origin (arcno of asymptotic end is the
-     * same as \c arcno )
+     * \param origin The interior end-point
+     * \param asympt_x The x-coordinate of the vertical asymptote
+     * \param inf_end Arc is approaching the bottom or top boundary
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt \c c in the interior of the arc
+     * \param arcno_o The arcnumber wrt \c c of the arc at \c origin 
+     * \return The constructed ray
+     *
      * \pre origin.x() != asympt_x
      */
     Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, 
@@ -394,8 +476,12 @@ public:
     }
 
     /*!\brief
-     * constructs an arc with two x-infinite ends supported by curve \c c
-     * with \c arcno (branch I)
+     * Constructs a non-vertical arc with two non-interior ends at the
+     * left and right boundary (branch I)
+     *
+     * \param c The supporting curve
+     * \param arcno The arcnumber wrt to \c c in the interior of the arc
+     * \return The constructed branch
      */
     Arc_2(const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(CGAL::ARR_MIN_END, c, arcno),
@@ -406,11 +492,17 @@ public:
     }
     
     /*!\brief
-     * constructs an arc with two asymptotic ends defined by \c asympt_x1 and
-     * \c asympt_x2 respectively, supported by curve \c c with \c arcno
-     * (branch II)
+     * Constructs a non-vertical arc with two ends approaching vertical
+     * asymptotes (branch II).
      *
-     * \c inf_end1/2 define +/-oo the repspective asymptotic end is approaching
+     * \param asympt_x1 The x-coordinate of the first asymptote
+     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     *                 \c asympt_x1
+     * \param asympt_x2 The x-coordinate of the second asymptote
+     * \param inf_end2 Arc is approaching the bottom or top boundary at 
+     *                 \c asympt_x2
+     * \return The constructed branch
+     *
      * \pre asympt_x1 != asympt_x2
      */
     Arc_2(const X_coordinate_1& asympt_x1, CGAL::Arr_curve_end inf_end1, 
@@ -429,13 +521,16 @@ public:
     }
     
     /*!\brief
-     * constructs an arc with one x-infinite end and one asymptotic end 
-     * defined by x-coordinate \c asympt_x supported by curve \c c with 
-     * \c arcno (branch III)
+     * Construct a non-vertical arc with one left- or right-boundary end 
+     * and one end that approaches a vertical asymptote (branch III)
      *
-     * \c inf_endx specifies whether the branch goes to +/- x-infinity,
-     * \c inf_endy specifies +/-oo the asymptotic end approaches
-     */
+     * \param inf_endx Defining whether the arc emanates from the left or right
+     *        boundary
+     * \param asympt_x The x-coordinate of the asymptote
+     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     *                 asympt_x
+     * \return The constructed branch
+     */ 
     Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x,
           CGAL::Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno) :
         Base(Rep(Point_2(inf_endx, c, arcno), 
@@ -446,17 +541,23 @@ public:
     }
     
     //!@}
-
+    
 public:
-    //!\name standard constructors for vertical arcs
+    //!\name Constructors for vertical arcs
     //!@{
     
-    //! \brief 
-    //! constructs a vertcial arc with two finite end-points \c p and \c q ,
-    //! supported by curve \c c (vertical segment)
-    //! 
-    //! \pre p != q && p.x() == q.x()
-    //! \pre c must have a vertical component at this x
+    /*!\brief 
+     * Constructs a vertical arc with two interior end-points 
+     * (vertical segment)
+     *
+     * \param p The first end-point
+     * \param q The second end-point
+     * \param c The supporting curve
+     * \return The constructed arc
+     * 
+     * \pre p != q && p.x() == q.x()
+     * \pre c must have a vertical component at this x
+     */
     Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c) : 
         Base(Rep(p, q, c, -1, -1, -1, true)) {  
         
@@ -470,10 +571,13 @@ public:
     }
     
     /*!\brief
-     * constructs a vertical arc with one finite end-point \c origin and one
-     * y-infinite end, supported by curve \c c (vertical ray)
+     * Constructs a vertical arc with one interior end-point and 
+     * one that reaches the bottom or top boundary (vertical ray)
      *
-     * \c inf_end defines whether the ray emanates from +/- y-infninty, 
+     * \param origin The interior end-point
+     * \param inf_end Ray emanates from bottom or top boundary
+     * \return The constructed ray
+     *
      * \pre c must have a vertical line component at this x
      */
     Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end,
@@ -487,8 +591,11 @@ public:
     }
     
     /*!\brief
-     * constructs a vertical arc with two y-infinite ends, at x-coordinate 
-     * \c x , supported by curve \c c (vertical branch)
+     * Constructs a vertical arc that connects bottom with top boundary
+     * (vertical branch)
+     *
+     * \param x The x-coordinate of the arc
+     * \return The constructed branch
      * 
      * \pre c must have a vertical line component at this x
      */
@@ -506,7 +613,10 @@ protected:
     //!@{
     
     /*!\brief
-     * constructs an arc from a given represenation
+     * Constructs an arc from a given representation used in rebind
+     *
+     * \param rep Input representation
+     * \return The constructed arc
      */
     Arc_2(Rep rep) : 
         Base(rep) { 
@@ -518,7 +628,9 @@ public:
     //!\name Destructors
     //!@{
 
-    //! standard destructor
+    /*!\brief
+     * Standard destructor
+     */
     virtual ~Arc_2() {
     }
     
@@ -532,44 +644,63 @@ public:
 public:
     //!\name Parameter space
     //!@{
-
-    //! returns location of arc's \c end in parameter space
-    CGAL::Arr_parameter_space location(CGAL::Arr_curve_end end) const {
-        if (end == CGAL::ARR_MIN_END) {
+    
+    /*!\brief
+     * location of arc's end
+     *
+     * \param ce The intended end
+     * \return The location of arc's \c ce in parameterspace
+     */
+    CGAL::Arr_parameter_space location(CGAL::Arr_curve_end ce) const {
+        if (ce == CGAL::ARR_MIN_END) {
             return _minpoint().location();
         }
         return _maxpoint().location();
     }
     
-    /*! \brief
-     *  sets boundary type for curve end \c end
+    /*!\brief
+     *  Sets boundary type for an end of an arc
      *
-     * it's supposed that the user thoroughly understands malicious
-     * consequences that may result from the misuse of boundary conditions
+     * It's supposed that the user thoroughly understands malicious
+     * consequences that may result from the misuse of the location
+     *
+     * \param ce The intended end
+     * \param loc The location to store
      */
-    void set_location(CGAL::Arr_curve_end end, 
+    void set_location(CGAL::Arr_curve_end ce, 
                       CGAL::Arr_parameter_space loc) const {
-        (end == CGAL::ARR_MIN_END ? 
+        (ce == CGAL::ARR_MIN_END ? 
          _minpoint().set_location(loc) : _maxpoint().set_location(loc));
     }
-
+    
     //!@}
 
     //!\name Access functions
-
-    //! returns whether curve-end can be accessed
-    bool is_finite(CGAL::Arr_curve_end end) const {
+    //!@{
+    
+    /*!\brief
+     * Is a curve-end finite?
+     *
+     * \param ce The intended end
+     * \return \c true, if finite, \c false, otherwise
+     */
+    bool is_finite(CGAL::Arr_curve_end ce) const {
         const Point_2& pt = 
-            (end == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
+            (ce == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
         return pt.is_finite();
     }
 
-    //!\brief returns arc's finite curve end \c end
-    //!
-    //! \pre accessed curve end has finite x/y-coordinates
-    Point_2 curve_end(CGAL::Arr_curve_end end) const {
+    /*!\brief 
+     * returns arc's interior curve end
+     * 
+     * \param ce The intended end
+     * \return The minimal point of the arc, or the maximal point of the arc
+     *
+     *  \pre accessed curve end has finite coordinates
+     */
+    Point_2 curve_end(CGAL::Arr_curve_end ce) const {
         const Point_2& pt = 
-            (end == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
+            (ce == CGAL::ARR_MIN_END ? _minpoint() : _maxpoint());
 #if !CGAL_ARRANGEMENT_ON_DUPIN_CYCLIDE
         CGAL_precondition(pt.location() == CGAL::ARR_INTERIOR ||
                           pt.is_finite());
@@ -577,41 +708,57 @@ public:
         return pt;
     }
 
-    //!\brief returns arc's curve end \c end x-coordinate 
-    //!
-    //! \pre accessed curve end has finite x-coordinate
+    /*!\brief 
+     * returns x-coordinate of arc's curve end
+     * 
+     * \param ce The intended end
+     * \return x-coordinate of arc's end at \c ce
+     *
+     * \pre accessed curve end has finite x-coordinate
+     */
     inline
-    X_coordinate_1 curve_end_x(CGAL::Arr_curve_end end) const {
+    X_coordinate_1 curve_end_x(CGAL::Arr_curve_end ce) const {
         CGAL_precondition(
-                !(end == CGAL::ARR_MIN_END ? _minpoint().is_on_left_right() :
+                !(ce == CGAL::ARR_MIN_END ? _minpoint().is_on_left_right() :
                   _maxpoint().is_on_left_right()));
-        return (end == CGAL::ARR_MIN_END ? _minpoint().x() : _maxpoint().x());
+        return (ce == CGAL::ARR_MIN_END ? _minpoint().x() : _maxpoint().x());
     }
 
-
-    //! returns supporting curve of the arc
+    /*!\brief
+     * supporting curve of the arc
+     * 
+     * \return supporting curve of the arc
+     */
     inline
     const Curve_analysis_2& curve() const {
         return this->ptr()->_m_support; 
     }
   
-    //! returns arc number
-    //!
-    //! \pre !is_vertical()
+    /*!\brief arc number in interior
+     * 
+     * \return arc number 
+     * 
+     * \pre !is_vertical()
+     */
     inline
     int arcno() const { 
         CGAL_precondition(!is_vertical());
         return this->ptr()->_m_arcno; 
     }
     
-    //! returns this arc's end arc number
-    //!
-    //! !is_vertical()
+    /*!\brief
+     * arc number of end of arc, which may be different from arc number in its 
+     * interior
+     *
+     * \param ce The intended end
+     * \return Arc number of intended end
+     * \pre !is_vertical()
+     */
     inline
-    int arcno(CGAL::Arr_curve_end end) const {
+    int arcno(CGAL::Arr_curve_end ce) const {
         CGAL_precondition(!is_vertical());
-        return (end == CGAL::ARR_MIN_END ? this->ptr()->_m_arcno_min :
-            this->ptr()->_m_arcno_max);
+        return (ce == CGAL::ARR_MIN_END ? this->ptr()->_m_arcno_min :
+                this->ptr()->_m_arcno_max);
     }
     
     /*!\brief 
@@ -621,6 +768,8 @@ public:
      * then the arc number of that point is returned.
      * Otherwise the arc number of the interior is returned.
      *
+     * \param x0 queried x-coordinate
+     * \returns arcnumber at \c x0
      * \pre !is_vertical()
      * \pre \c x0 must be within arcs's x-range.
      */
@@ -646,7 +795,11 @@ public:
         return this->ptr()->_m_arcno;
     }
 
-    //! checks if the arc is vertical 
+    /*!\brief
+     * checks if the arc is vertical 
+     *
+     * \return \c true, if vertical, \c false, otherwise
+     */
     inline
     bool is_vertical() const {
         return this->ptr()->_m_is_vertical;
@@ -655,6 +808,7 @@ public:
     /*!\brief
      * returns x-coordinate of vertical arc
      *
+     * \return x-coordinate line that contains vertical arc
      * \pre is_vertical
      */
     inline
@@ -672,6 +826,7 @@ public:
      * returns the index of an open interval between two events *this arc 
      * belongs to
      *
+     * \return interval id of supporting curve for this arc
      * \pre !is_vertical()
      */
     inline
@@ -686,6 +841,9 @@ public:
     /*!\brief
      * returns boundary value in interior of x-range of non-vertical
      * interval
+     * 
+     * \return a rational x-coordinate in the interior of the arc's x-range 
+     * \pre !is_vertical()
      */
     Boundary boundary_in_x_range_interior() const {
         CGAL_precondition(!is_vertical());
@@ -750,18 +908,20 @@ public:
     //!@{
     
     /*!
-     * Compare the relative positions of a vertical curve and unbounded 
-     * this arc's end
+     * Compare the relative x-positions of an interior point
+     * this arc's end on a bottom or top boundary
+     * 
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param end ARR_MIN_END if we refer to cv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
-     * \pre curve's relevant end is defined at y = +/- oo.
-     * \return SMALLER if p lies to the left of cv;
-     *         LARGER  if p lies to the right of cv;
-     *         EQUAL   in case of an overlap.
+     * \return CGAL::SMALLER if p lies to the left of cv;
+     *         CGAL::LARGER  if p lies to the right of cv;
+     *         CGAL::EQUAL   in case of an overlap.
+     *
+     * \pre curve's relevant end is on bottom or top boundary
      */
     CGAL::Comparison_result compare_x_near_boundary(
-            CGAL::Arr_curve_end end,
+            CGAL::Arr_curve_end ce,
             const Point_2& p
     ) const {
 
@@ -770,37 +930,37 @@ public:
                                             compare_x_near_boundary_2_object);
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         return compare_x_near_boundary_2(
-                p, *dynamic_cast< const Kernel_arc_2* >(this), end
+                p, *dynamic_cast< const Kernel_arc_2* >(this), ce
         );
     }
     
-    /*!
-     * Compare the relative positions of the unbounded curve ends of \c this
+    /*!\brief
+     * Compare the relative x-positions of the curve ends of \c *this
      * and \c cv2
-     * \param end1 ARR_MIN_END if we refer to this' minimal end,
+     * \param ce1 ARR_MIN_END if we refer to this' minimal end,
      *             ARR_MAX_END if we refer to this' maximal end.
      * \param cv2 The second curve.
-     * \param end2 ARR_MIN_END if we refer to its minimal end,
+     * \param ce2 ARR_MIN_END if we refer to its minimal end,
      *             ARR_MAX_END if we refer to its maximal end.
-     * \pre the curve ends have a bounded x-coord and unbounded y-coord,
-          namely each of \c this and \c cv2 is vertical or asymptotic
-     * \return SMALLER if \c this lies to the left of cv2;
-     *         LARGER  if \c this lies to the right of cv2;
-     *         EQUAL   in case of an overlap.
+     * \return CGAL::SMALLER if \c this lies to the left of cv2;
+     *         CGAL::LARGER  if \c this lies to the right of cv2;
+     *         CGAL::EQUAL   in case of an overlap.
+     *
+     * \pre the curve end lies on the bottom or top boundary
      */
 #if 0 // TODO activate cache again (in functor?) (Pavel)
     CGAL::Comparison_result compare_x_near_boundary(
-            CGAL::Arr_curve_end end1,
-            const Kernel_arc_2& cv2, CGAL::Arr_curve_end end2
+            CGAL::Arr_curve_end ce1,
+            const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2
     ) const {
 
         if (this->id() > cv2.id()) {
             return (- cv2.compare_x_near_boundary(
-                            end2, *dynamic_cast< const Kernel_arc_2*>(this), 
-                            end1)
+                            ce2, *dynamic_cast< const Kernel_arc_2*>(this), 
+                            ce1)
             );
         }
-        Int_pair pair(cv2.id(), ((end1 << 16)|end2) );
+        Int_pair pair(cv2.id(), ((ce1 << 16)|ce2) );
 
         std::pair<typename Int_pair_map::Hashed_iterator, bool> r =
             this->ptr()->_m_cmp_ends_at_x.find(pair);
@@ -812,38 +972,41 @@ public:
 
         //std::cerr << "compare_x_near_boundary\n";
         CGAL::Comparison_result res = 
-            compare_x_near_boundary(end1, cv2, end2, true);
+            compare_x_near_boundary(ce1, cv2, ce2, true);
         this->ptr()->_m_cmp_ends_at_x.insert(std::make_pair(pair, res));
         return res;     
     }
 #else
     CGAL::Comparison_result compare_x_near_boundary(
-            CGAL::Arr_curve_end end1,
-            const Kernel_arc_2& cv2, CGAL::Arr_curve_end end2) const {
+            CGAL::Arr_curve_end ce1,
+            const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const {
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_x_near_boundary_2,
                                             compare_x_near_boundary_2,
                                             compare_x_near_boundary_2_object);
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         return compare_x_near_boundary_2(
-                *dynamic_cast< const Kernel_arc_2* >(this), end1, cv2, end2
+                *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
         );
     }   
 #endif    
   
-    /*!
-     * Compare the relative y-positions of two arcs at x = +/- oo.
-     * \param cv2 The second curve 
-     * \param end ARR_MIN_END if we compare at x = -oo;
-     *            ARR_MAX_END if we compare at x = +oo.
-     * \pre The curves are defined at x = +/- oo.
-     * \return SMALLER if this arc lies below cv2;
-     *         LARGER if this arc lies above cv2;
-     *         EQUAL in case of an overlap.
+    /*!\brief
+     * Compare the relative y-positions of two arcs whose ends approach
+     * the left or right boundary from the same side
+     *
+     * \param cv2 The second arc
+     * \param ce2 ARR_MIN_END if we compare near left boundary
+     *            ARR_MAX_END if we compare near right boundary
+     * \return CGAL::SMALLER if this arc lies below cv2;
+     *         CGAL::LARGER if this arc lies above cv2;
+     *         CGAL::EQUAL in case of an overlap.
+     *
+     * \pre The ends are defined on left or right boundary
      */
     CGAL::Comparison_result compare_y_near_boundary(
             const Kernel_arc_2& cv2, 
-            CGAL::Arr_curve_end end
+            CGAL::Arr_curve_end ce
     ) const {
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_near_boundary_2,
@@ -851,18 +1014,20 @@ public:
                                             compare_y_near_boundary_2_object);
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         return compare_y_near_boundary_2(
-                *dynamic_cast< const Kernel_arc_2* >(this), cv2, end
+                *dynamic_cast< const Kernel_arc_2* >(this), cv2, ce
         );
     }
 
-    /*!
-     * Return the location of the given point with respect to this arc
+    /*!\brief
+     * Compares the relative vertical alignment of a point with this arc
+     *
      * \param p The point.
-     * \pre p is in the x-range of the arc.
      * \return 
-     * SMALLER if y(p) \< arc(x(p)), i.e. the point is below the arc;
-     * LARGER if y(p) > arc(x(p)), i.e. the point is above the arc;
-     * EQUAL if p lies on the arc.
+     * CGAL::SMALLER if y(p) \< arc(x(p)), i.e. the point is below the arc;
+     * CGAL::LARGER if y(p) > arc(x(p)), i.e. the point is above the arc;
+     * CGAL::EQUAL if p lies on the arc.
+     *
+     * \pre p is in the x-range of the arc.
      */
 #if 0 // TODO activate cache again (in functor?) (Pavel)
     CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
@@ -889,17 +1054,21 @@ public:
     }
 #endif    
 
-    /*!
-     * Compares the y value of two x-monotone curves immediately to the left
-     * of their intersection point. If one of the curves is vertical
-     * (emanating downward from p), it's always considered to be below the
-     * other curve.
-     * \param cv2 The second curve.
-     * \param p The intersection point.
+    /*!\brief
+     * Compares the relative aligment of this arc with a second 
+     * immediately to the left of one of their intersection points. 
+     * 
+     * If one of the curves is vertical (emanating downward from p), 
+     * it's always considered to be below the other curve.
+     * 
+     * \param cv2 The second arc
+     * \param p The intersection point
+     * 
+     * \return The relative vertical alignment this arc with respect to cv2
+     *         immediately to the left of p: SMALLER, LARGER or EQUAL.
+     *
      * \pre The point p lies on both curves, and both of them must be also be
      *      defined (lexicographical) to its left.
-     * \return The relative position of this arc with respect to cv2
-            immdiately to the left of p: SMALLER, LARGER or EQUAL.
      */
     CGAL::Comparison_result compare_y_at_x_left(const Kernel_arc_2& cv2, 
                                                 const Point_2 &p) const {
@@ -913,18 +1082,21 @@ public:
         );
     }
     
-    /*!
-     * Compares the y value of two x-monotone curves immediately 
-     * to the right of their intersection point. If one of the curves is
-     * vertical (emanating upward from p), it's always considered to be above
-     * the other curve.
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
-     * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be 
-     * also be defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to 
-     * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
+    /*!\brief
+     * Compares the relative aligment of this arc with a second 
+     * immediately to the right of one of their intersection points. 
+     * 
+     * If one of the curves is vertical (emanating downward from p), 
+     * it's always considered to be below the other curve.
+     * 
+     * \param cv2 The second arc
+     * \param p The intersection point
+     * 
+     * \return The relative vertical alignment this arc with respect to cv2
+     *         immediately to the right of p: SMALLER, LARGER or EQUAL.
+     *
+     * \pre The point p lies on both curves, and both of them must be also be
+     *      defined (lexicographical) to its right.
      */
     CGAL::Comparison_result compare_y_at_x_right(const Kernel_arc_2& cv2, 
                                                  const Point_2 &p) const {
@@ -938,13 +1110,15 @@ public:
         );
     }
         
-    /*!
+    /*!\brief
      * Check if the given x-value is in the x-range of the arc inclusive.
+     * 
      * \param x The x-value.
      * \param *eq_min Output: Is this value equal to the x-coordinate of the
      *                       ARR_MIN_END point.
      * \param *eq_max Output: Is this value equal to the x-coordinate of the
      *                       ARR_MAX_END point.
+     * \return \c true, if p.x() is in x-range of arc, \c false otherwise
      */
     bool is_in_x_range(const X_coordinate_1& x, 
                        bool *eq_min = NULL, bool *eq_max = NULL) const {
@@ -988,8 +1162,15 @@ public:
 	return res;
     } 
     
-    //! checks whether x-coordinate \c x belongs to this arc's interior
-    // do we need this special method ?
+    /*!\brief
+     * Checks whether an x-coordinate lies in the interiors of this arc's 
+     * x-range
+     * 
+     * \param x The query coordinate
+     * \return \c true, if \c x lies in the interior of this arc's x-range,
+     * \c false otherwise
+     */
+    // TODO do we need this special method ?
     bool is_in_x_range_interior(const X_coordinate_1& x) const
     {
         bool eq_min, eq_max;
@@ -999,7 +1180,12 @@ public:
         return true;
     }
     
-    //!\brief returns \c true iff this arc is equal to \c cv
+    /*!\brief 
+     * Checks whether a given arcs is equal to this one
+     *
+     * \param cv2 The query arc
+     * \return \c true iff this arc is equal to \c cv, \c false otherwise
+     */
     bool is_equal(const Kernel_arc_2& cv2) const {
         
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Equal_2, 
@@ -1011,11 +1197,14 @@ public:
     }
 
     /*!\brief
-     * checks whether two curve arcs have infinitely many intersection points,
-     * i.e., they overlap
+     * checks whether this arcs overlaps with another
+     * 
+     * \param cv2 The query arc
+     * \return \c true, if both arcs have infinitely many intersection points,
+     *         \c false otherwise
      */
     bool do_overlap(const Kernel_arc_2& cv2) const {
-    
+        
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Do_overlap_2, 
                                             do_overlap_2,
                                             do_overlap_2_object);
@@ -1029,6 +1218,8 @@ public:
      * The intersection multiplicity of \c *this and \c cv2 at point \c p is
      * returned.
      *
+     * \param cv2 The second arc
+     * \param p The intersection point
      * \pre \c p must be an intersection point.
      */
     int multiplicity_of_intersection(
@@ -1079,14 +1270,17 @@ public:
     //!@{
 
     /*!\brief
-     * Find all intersections of the two given curves and insert them to the 
-     * output iterator. If two arcs intersect only once, only a single will be
-     * placed to the iterator. Type of output iterator is \c CGAL::Object 
-     * containing either an \c Arc_2 object (overlap) or a \c Point_2 object
-     * with multiplicity (point-wise intersections)
-     * are inserted to the output iterator \c oi as objects of type 
-     * \<tt>std::pair\<Point_2, unsigned int></tt> (intersection point +
-     * multiplicity)
+     * Find all intersections of this arc with another one and 
+     * insert them to the output iterator. 
+     * 
+     * Type of output iterator is \c CGAL::Object. It either contains 
+     * an \c Arc_2 object (overlap) or a 
+     * <tt>std::pair\<Point_2, unsigned int></tt> (intersection point +
+     * multiplicity). A past-the-end iterator is returned.
+     *
+     * \param cv2 The second arc
+     * \param oi The outputiterator
+     * \return A past-the-end iterator of \c oi
      */
     template < class OutputIterator >
     OutputIterator intersections(const Kernel_arc_2& cv2, 
@@ -1103,7 +1297,7 @@ public:
     }
     
     /*!\brief
-     * computes the next intersection of \c *this and \c cv2 right of \c p  
+     * Computes the next intersection of \c *this and \c cv2 right of \c p  
      * in lexicographical order and returns it through \c intersection
      * argument
      *
@@ -1111,10 +1305,22 @@ public:
      * intersection dictionary and without validation of internal structures 
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
+     *
+     * \param The second arc
+     * \param The minimal bound point
+     * \param The next intersection
+     * \return \c true, if there is a next intersection and 
+     *         \c intersection has been set properly, \c false otherwise
+     * \pre The arcs are not allowed to overlap
      */
     bool intersect_right_of_point(const Kernel_arc_2& cv2, const Point_2& p, 
                                   Point_2& intersection) const {
         
+        CGAL_precondition(!this->do_overlap(cv2));
+
+        // TODO rewrite intersect_right_of_point (Pavel)
+        // use static member for Intersect, Left & Right
+        // with parameters for direction and where to stop
         typedef std::vector<std::pair<Point_2, int> > Point_container;
         Point_container tmp;
         _intersection_points(
@@ -1132,7 +1338,7 @@ public:
     }
     
     /*!\brief
-     * computes the next intersection of \c *this and \c cv2 left of \c p  
+     * Computes the next intersection of \c *this and \c cv2 left of \c p  
      * in lexicographical order and returns it through \c intersection
      * argument
      *
@@ -1140,9 +1346,18 @@ public:
      * intersection dictionary and without validation of internal structures 
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
+     *
+     * \param The second arc
+     * \param The maximal bound point
+     * \param The next intersection
+     * \return \c true, if there is a next intersection 
+     *         and \c intersection has been set properly, \c false otherwise
+     * \pre The arcs are not allowed to overlap
      */
     bool intersect_left_of_point(const Kernel_arc_2& cv2, const Point_2& p, 
                                  Point_2& intersection) const {
+
+        CGAL_precondition(!this->do_overlap(cv2));
         
         // TODO rewrite intersect_left_of_point (Pavel)
         // use static member for Intersect, Left & Right
@@ -1164,11 +1379,14 @@ public:
     }
 
     /*!\brief
-     * returns a trimmed version of this arc with new end-points \c p and \c q;
-     * lexicographical order of the end-points is ensured in case of need.
+     * Returns a trimmed version of an arc
+     * 
+     * \param p the new first endpoint
+     * \param q the new second endpoint
+     * \return The trimmed arc
      *
      * \pre p != q
-     * \pre \c p and \c q lie on *this arc
+     * \pre both points must be interior and must lie on \c cv
      */
     // do we need this method separetely ??
     Kernel_arc_2 trim(const Point_2& p, const Point_2& q) const {
@@ -1178,12 +1396,14 @@ public:
         return trim_2(*dynamic_cast< const Kernel_arc_2* >(this), p, q);
     }
 
-    /*!
-     * Splits a given x-monotone curve at a given point into two sub-curves.
-     * \param p The split point.
+    /*!\brief
+     * Split a arc at a given point into two sub-arc
+     * 
+     * \param p The split point
      * \param c1 Output: The left resulting subcurve (p is its right endpoint)
      * \param c2 Output: The right resulting subcurve (p is its left endpoint)
-     * \pre p lies on this arc but is not one of its curve ends
+     * 
+     * \pre p lies on cv but is not one of its end-points.
      */
     void split(const Point_2& p, Kernel_arc_2& s1, Kernel_arc_2& s2) const {
         
@@ -1193,12 +1413,13 @@ public:
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         split_2(*dynamic_cast< const Kernel_arc_2* >(this), p, s1, s2);
     }
-    
+
     /*!\brief
-     * Check whether two given curves (arcs) are mergeable
-     * \param cv The second curve.
-     * \return (true) if the two arcs are mergeable, i.e., they are supported
-     * by the same curve and share a common endpoint; (false) otherwise.
+     * Check whether this arc can be merged with a second
+     *
+     * \param cv2 The second arc
+     * \return \c true if the two arcs are mergeable, i.e., they are supported
+     * by the same curve and share a common endpoint; \c false otherwise.
      */
     bool are_mergeable(const Kernel_arc_2& cv2) const {
     
@@ -1211,12 +1432,14 @@ public:
         );
     }
 
-    /*!\brief
-     * Merge two given x-monotone curves into a single one
-     * \param cv2 The second curve.
-     * \param c Output: The resulting curve.
-     * \pre Two curves are mergeable,if they are supported by the same curve 
-     * and share a common end-point.
+  /*!\brief
+     * Merges this arc with a second
+     *
+     * \param cv2 The second arc
+     * \return The resulting arc
+     * 
+     * \pre The two arcs are mergeable, that is they are supported by the
+     *      same curve and share a common endpoint.
      */  
     Kernel_arc_2 merge(const Kernel_arc_2& cv2) const {
         
@@ -1238,7 +1461,7 @@ public:
      *  simplifies representation of \c cv and/or \c p in case they have
      *  non-coprime supporting curves. 
      *
-     *  returns true if simplification took place
+     *  \return \c true if simplification took place, \c false otherwise
      */
     static bool simplify(const Kernel_arc_2& cv, const Xy_coordinate_2& p) {
         
@@ -1273,11 +1496,11 @@ public:
         return false;
     }  
     
-    /*! \brief
-     *  simplifies representation of \c cv1 and/or \c cv2 in case they have
-     *  non-coprime supporting curves. 
+    /*!\brief
+     * simplifies representation of \c cv1 and/or \c cv2 in case they have
+     * non-coprime supporting curves. 
      *
-     *  returns true if simplification took place
+     *  \return \c true if simplification took place, \c false otherwise
      */
     static bool simplify(const Kernel_arc_2& cv1, const Kernel_arc_2& cv2) {
     
@@ -1311,11 +1534,25 @@ public:
     }  
 
 protected:
-
+    //!\name Trimming
+    //!@{
+    
+    /*!\brief
+     * Returns a trimmed version of an arc (internal version that does not use
+     * functor)
+     * 
+     * \param p the new first endpoint
+     * \param q the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre p != q
+     * \pre both points must be interior and must lie on \c cv
+     */
+    // TODO implement in functor?
     Kernel_arc_2 _trim(const Point_2& p, const Point_2& q) const {
         
-        if (p.location()==CGAL::ARR_INTERIOR && 
-            q.location()==CGAL::ARR_INTERIOR) {
+        if (p.location() == CGAL::ARR_INTERIOR && 
+            q.location() == CGAL::ARR_INTERIOR) {
             
             Kernel_arc_2 new_arc= this->_replace_endpoints(
                     p, q, 
@@ -1353,10 +1590,20 @@ protected:
         CGAL_error_msg("Never reached");
         return *this;
     }
-
-public:
-
     
+public:
+    
+    /*!\brief
+     * Trims this arc and \c cv2 to the common x-range, if it is non-trivial
+     * 
+     * \param cv2 the second arc
+     * \param trimmed1 Output: trimmed version of \c *this to joint x-range of
+     *                 \c *this and \c cv2
+     * \param trimmed1 Output: trimmed version of \c cv2 to joint x-range of
+     *                 \c *this and \c cv2
+     * \return \c true, if \c *this and \c cv2 share a non-trivial 
+     *         common x-range, \c false otherwise
+     */
     bool trim_by_arc(const Kernel_arc_2& cv2, Kernel_arc_2& trimmed1,
                      Kernel_arc_2& trimmed2) const {
 
@@ -1445,18 +1692,19 @@ public:
         trimmed2 = cv2._trim(left2, right2);   
 
         return joint;
-
-    }
+}
    
     //!@}
 
 protected:
-    //!\name protected methods 
+    //!\name Protected helper methods
     //!@{
     
-    //! helper function to ensure lexicographical order of the curve ends
-    //!
-    //! must be called once from constructor
+    /*!\brief 
+     * function to ensure lexicographical order of the curve ends
+     *
+     * must be called once from constructor
+     */
     void _fix_curve_ends_order() {
         CGAL::Comparison_result res = 
             _same_arc_compare_xy(_minpoint(), _maxpoint());
@@ -1472,11 +1720,17 @@ protected:
         _check_arc_interior(); 
     }
     
-     // p.curve() <-> p.arcno()
+    // p.curve() <-> p.arcno()
     // c <-> arcno_on_c
-    //! establishes preconditions that point \c pt lies on the curve 
-    //! \c c with arc number \c arcno_on_c, also checks that point's supporting
-    //! curve and \c c are coprime
+    /*!\brief
+     * establishes preconditions that point \c pt lies on the curve 
+     * \c c with arc number \c arcno_on_c, also checks that point's supporting
+     * curve and \c c are coprime
+     *
+     * \param pt Given point
+     * \param arcno_on_c Arcno on curve
+     * \param c Supporting curve
+     */
     void _check_pt_arcno_and_coprimality(const Point_2& pt, int arcno_on_c, 
                                          const Curve_analysis_2& c) const {
         
@@ -1510,12 +1764,14 @@ protected:
         );
     }
     
-    //! \brief establishes preconditions to ensure that there are no event 
-    //! points in the arc's interior (only at source and target) and its arc 
-    //! number is constant
-    //!
-    //! before calling this method source and target must be sorted 
-    //! using \c _fix_curve_ends_order()
+    /*!\brief 
+     * establishes preconditions to ensure that there are no event 
+     * points in the arc's interior (only at source and target) and its arc 
+     * number is constant
+     * 
+     * \pre before calling this method source and target must be sorted 
+     * using \c _fix_curve_ends_order()
+     */
     void _check_arc_interior() const {
     
 #if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
@@ -1624,14 +1880,22 @@ protected:
 #endif    
     }
     
-    //! \brief compares y-coordinates of two arcs over an open (or closed) 
-    //! interval or at exact x-coordinate
-    //!
-    //! \c where specifies whether to compare at negative/positive boundary or
-    //! at finite point. if \c where = ARR_INTERIOR \c perturb defines to
-    //! compare slightly to the left, on, or to the right of \c x0
-    //!
-    //! \pre !is_on_bottom_top(where)
+    /*!\brief 
+     * compares y-coordinates of two arcs over an open (or closed) 
+     * interval or at exact x-coordinate
+     *
+     * \c where specifies whether to compare at negative/positive boundary or
+     * at finite point. if \c where = ARR_INTERIOR \c perturb defines to
+     * compare slightly to the left, on, or to the right of \c x0
+     *
+     * \param cv2 the second arc
+     * \param where the location in parameter space
+     * \param x0 The x-coordinate
+     * \param perturb determines whether to pertub slightly to the left/right
+     * \return the relative vertical alignment
+     *
+     * \pre !is_on_bottom_top(where)
+     */
     CGAL::Comparison_result _compare_arc_numbers(
             const Kernel_arc_2& cv2, 
             CGAL::Arr_parameter_space where, 
@@ -1646,28 +1910,17 @@ protected:
         return _compare_coprime(cv2, where, x0, perturb);
     }
 
-    //! \brief analogous to previous method but compares this arc against
-    //! a finite point
-    //!
-    //! \pre !is_on_bottom_top(where)
-//     CGAL::Comparison_result _compare_arc_numbers(
-//             const Xy_coordinate_2& p, 
-//             CGAL::Arr_parameter_space where, 
-//             X_coordinate_1 x0 = X_coordinate_1(), 
-//             CGAL::Sign perturb = CGAL::ZERO) const {
-// 
-//         CGAL_precondition(!is_on_bottom_top(where));
-//         Kernel_arc_2::simplify(*dynamic_cast< const Kernel_arc_2*>(this), p);
-//         CERR("\n_compare_arc_numbers: " << p << "; and: " 
-//              << *dynamic_cast< const Kernel_arc_2*>(this) << "\n");
-//         if(curve().is_identical(p.curve())) 
-//             return CGAL::sign(arcno() - p.arcno());
-//         return _compare_coprime(p.curve(), p.arcno(), where, x0, perturb);
-//     }
-        
-    //! computes vertical ordering of two objects having coprime supporting
-    //! curves
-    CGAL::Comparison_result _compare_coprime(
+    /*!\brief
+     * computes vertical ordering of \c *this and \c cv2 
+     * having coprime supporting curves
+     *
+     * \param cv2 the second arc
+     * \param where the location in parameter space
+     * \param x0 The x-coordinate
+     * \param perturb determines whether to pertub slightly to the left/right
+     * \return the relative vertical alignment
+     */
+     CGAL::Comparison_result _compare_coprime(
             const Kernel_arc_2& cv2,
             CGAL::Arr_parameter_space where, 
             X_coordinate_1 x0, 
@@ -1704,12 +1957,19 @@ protected:
         CERR("result: " << res << "\n");
         return res;
     }
-        
-    //!\brief internal comparison of two curve ends "lying" on the same arc
-    //!
-    //! since points are supposed to lie on the same arc, converging to the
-    //! same (+ or -) infinity implies equality, \c equal_x specifies to 
-    //! compare only ys, \c only_x - compare only xs
+    
+    /*\brief 
+     * internal comparison of two curve ends "lying" on the same arc
+     * 
+     * since points are supposed to lie on the same arc, converging to the
+     * boundary implies equality
+     *
+     * \param p first endpoint
+     * \param q second endpint
+     * \param equal_x \c true indicates to skip the comparison by x
+     * \param only_x \c true indicates to report only the comparison by x
+     * \returns the result of the queried comparison
+     */
     CGAL::Comparison_result _same_arc_compare_xy(
             const Point_2& p,
             const Point_2& q, 
@@ -1791,19 +2051,31 @@ protected:
         return res;
     }
     
-    //! returns min end-point of this arc (provided for code readability)
+    /*!\brief
+     * min end-point of this arc (provided for code readability)
+     *
+     * \return min endpoint of arc (may lie on a boundary!)
+     */
     inline
     const Point_2& _minpoint() const { 
         return this->ptr()->_m_min; 
     }
     
-    //! returns max end-point of this arc (provided for code readability)
+    /*!\brief
+     * max end-point of this arc (provided for code readability)
+     *
+     * \return max endpoint of arc (may lie on a boundary!)
+     */
     inline
     const Point_2& _maxpoint() const { 
         return this->ptr()->_m_max; 
     }
     
-    //! computes this arc's interval index
+    /*!\brief
+     * computes this arc's interval index
+     *
+     * \pre !is_vertical()
+     */
     int _compute_interval_id() const {
         CGAL_precondition(!is_vertical());
         // we are interested in interval "to the right"
@@ -1822,7 +2094,11 @@ protected:
         return cv_line.index();
     }
 
-    //! computes this arc's interval index
+    /*!\brief
+     * computes this rational value in the interiors of the arc's x-range
+     * 
+     * \pre !is_vertical()
+     */
     Boundary _compute_boundary_in_interval() const {
         CGAL_precondition(!is_vertical());
         // a curve end at negative boundary => 0th interval
@@ -1881,11 +2157,18 @@ protected:
     }
 
     /*!\brief 
-     * replaces this arc's end-points by \c p1 and \c p2 with arcnos
+     * Replaces this arc's end-points by \c p1 and \c p2 with arcnos
      * \c arcno1 and \c arcno2.
      * 
      * new curve ends are sorted lexicographical in case of need; 
      * all preconditions must be checked by the caller
+     *
+     * \param p1 new first endpoint
+     * \param p2 new second endpoint
+     * \param arcno1 new first arcno (at \c p1)
+     * \param arcno1 new second arcno (at \c p2)
+     * \return pair whose first entry represent the refined arc, and whose
+     *         second entry reports the lexicographic comparison of p1 and p2
      */
     std::pair< Kernel_arc_2, CGAL::Comparison_result > 
     _replace_endpoints(
@@ -1925,6 +2208,7 @@ protected:
      * curves \c cpa_2, we search for a curve this arc lies on and reset arc's
      * supporting curve and arcnos appropriately.
      *
+     * \param cpa_2 analysis o curve pair that should be used in simplification
      * \pre \c cpa_2 must correspond to a decomposition of this arc's 
      * supporting curve
      */
@@ -2051,10 +2335,16 @@ protected:
     //!\name Protected intersection methods
     //!@{
 
-    //! \brief returns \c true if the two arcs \c *this and \c cv2 overlap, 
-    //! overlapping part(s) are inserted to the output iterator \c oi
-    //! (of type \c Kernel_arc_2 ); if no overlapping parts found - 
-    //! returns \c false
+    /*!\brief 
+     * returns \c true if the two arcs \c *this and \c cv2 overlap, 
+     * overlapping part(s) are inserted to the output iterator \c oi
+     * (of type \c Kernel_arc_2 ); if no overlapping parts found - 
+     * returns \c false
+     * 
+     * \param cv2 The second arc
+     * \param oi Report overlapping parts to this output iterator
+     * \return \c true, if there was an overlap, \c false otherwise
+     */
     template < class OutputIterator >
     bool _trim_if_overlapped(const Kernel_arc_2& cv2, OutputIterator oi) const
     {
@@ -2219,10 +2509,18 @@ protected:
     }
     
     /*!\brief
-     * computes intersection of \c *this arc with \c cv2. Intersection points 
+     * computes zero-dimensional intersections of \c cv1 with \c cv2. 
+     * 
+     * Intersection points 
      * are inserted to the output iterator \c oi as objects of type 
      * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
      * multiplicity)
+     * 
+     * \param cv1 the first arc
+     * \param cv2 the second arc
+     * \param oi reporting zero-dimensional intersection through this output
+     *        iterator
+     * \pre !cv1.do_overlap()
      */
     template < class OutputIterator >
     static OutputIterator _intersection_points(
@@ -2244,8 +2542,15 @@ protected:
 
     /*!\brief
      * computes intersection of two arcs meeting only at their curve ends.
-     * Intersection point is returned in the output interator \c oi as object
+     * 
+     * Intersection points are returned in the output interator \c oi as object
      * of type std::pair<Point_2, int> (intersection + multiplicity)
+     * 
+     * \param cv1 the first arc
+     * \param cv2 the second arc
+     * \param oi reporting zero-dimensional intersection through this output
+     *        iterator
+     * 
      */
     template < class OutputIterator >
     static OutputIterator _intersect_at_endpoints(const Kernel_arc_2& cv1,
@@ -2334,10 +2639,19 @@ protected:
         return oi;
     }
     
-    //! \brief computes a joint x-range of two arcs and returns \c true 
-    //! if arcs' x-ranges overlap; otherwise returns \c false
-    //!
-    //! \pre both arcs are not vertical
+    /*!\brief 
+     * computes a joint x-range of two arcs and returns \c true 
+     * if arcs' x-ranges overlap; otherwise returns \c false
+     *
+     * \param cv2 The second arc
+     * \param pt_low Output: Point indicating the lower bound of the the joint
+     *        x-range
+     * \param pt_high Output: Point indicating the upper bound of the the joint
+     *        x-range
+     * \return \c true, if arcs overlap, \c false otherwise
+     *
+     * \pre both arcs are not vertical
+     */
     bool _joint_x_range(const Kernel_arc_2& cv2, Point_2& pt_low, 
                         Point_2& pt_high) const {
         
@@ -2382,10 +2696,17 @@ protected:
     }
     
     /*!\brief
-     * computes intersection of two arcs having coprime supporting curves;
+     * computes zero-dimensional 
+     * intersection of two arcs having coprime supporting curves
+     * 
      * intersection points are inserted to the output iterator \c oi as objects
      * of type <tt>std::pair<Point_2, unsigned int></tt> (intersection point + 
      * multiplicity)
+     *
+     * \param cv1 the first arc
+     * \param cv2 the second arc
+     * \param oi reporting zero-dimensional intersection through this output
+     *        iterator
      */
     template <class OutputIterator>
     static OutputIterator _intersect_coprime_support(const Kernel_arc_2& cv1, 
@@ -2521,9 +2842,16 @@ protected:
         return oi;
     }
     
+    //!@}
+
 public:
+    //!\name IO
+    //!@{
+    
     /*!\brief 
      * output operator
+     *
+     * write arc to \c os
      */
     void write(std::ostream& os) const {
         
@@ -2626,6 +2954,8 @@ public:
 /*!\relates Arc_2
  * \brief 
  * output operator
+ *
+ * writes \c arc to \c os
  */
 template < class CurvedKernelViaAnalysis_2, class Rep_>
 inline
@@ -2641,3 +2971,4 @@ std::ostream& operator<<(std::ostream& os,
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_ARC_2_H
+// EOF
