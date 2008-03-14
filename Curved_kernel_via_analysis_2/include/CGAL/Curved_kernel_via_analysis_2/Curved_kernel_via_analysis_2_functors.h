@@ -393,6 +393,7 @@ public:
      * \param p The first end-point
      * \param q The second end-point
      * \param c The supporting curve
+     * \return The constructed arc
      * 
      * \pre p != q && p.x() == q.x()
      * \pre c must have a vertical component at this x
@@ -409,6 +410,7 @@ public:
      *
      * \param origin The interior end-point
      * \param inf_end Ray emanates from bottom or top boundary
+     * \return The constructed ray
      *
      * \pre c must have a vertical line component at this x
      */
@@ -423,7 +425,8 @@ public:
      * Constructs a vertical arc that connects bottom with top boundary
      * (vertical branch)
      *
-     * \param x The x-coordinate of the arc
+     * \param x The x-coordinate of the branch
+     * \return The constructed branch
      * 
      * \pre c must have a vertical line component at this x
      */
@@ -1742,6 +1745,7 @@ public:
      * \param q the new second endpoint
      * \return The trimmed arc
      *
+     * \pre p != q
      * \pre both points must be interior and must lie on \c cv
      */
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
@@ -1857,8 +1861,8 @@ public:
     /*!\brief
      * Check whether two given arcs are mergeable
      *
-     * \param cv1 The first curve
-     * \param cv2 The second curve
+     * \param cv1 The first arc
+     * \param cv2 The second arc
      * \return \c true if the two arcs are mergeable, i.e., they are supported
      * by the same curve and share a common endpoint; \c false otherwise.
      */
@@ -1968,7 +1972,7 @@ public:
      * \param cv2 The second arc
      * \param c Output: The resulting arc
      * 
-     * \pre The two arc are mergeable, that is they are supported by the
+     * \pre The two arcs are mergeable, that is they are supported by the
      *      same curve and share a common endpoint.
      */  
     void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
