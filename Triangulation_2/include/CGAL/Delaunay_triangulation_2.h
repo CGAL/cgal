@@ -53,6 +53,7 @@ public:
   typedef typename Triangulation::Edge                  Edge;
   typedef typename Triangulation::Edge_circulator       Edge_circulator;
   typedef typename Triangulation::Face_circulator       Face_circulator;
+  typedef typename Triangulation::Vertex_circulator     Vertex_circulator;
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
   typedef typename Triangulation::Finite_vertices_iterator 
@@ -265,11 +266,24 @@ private:
   }
 
 protected:
-  void restore_edges(Vertex_handle v)
+  int _degree;
+
+  bool from_convex_hull(Vertex_handle v) {
+    Vertex_circulator vc = this->incident_vertices(v), done(vc);
+    _degree = 0;
+    do {
+      _degree++;
+      if(this->is_infinite(vc)) return true;
+    } while(++vc != done);
+    return false;
+  }
+
+  void restore_edges(Vertex_handle v, int degree = -1)
   {
     std::list<Edge> edges;
     Face_circulator fc = this->incident_faces(v), done(fc);
-    if(v->degree() == 3) {
+    if(degree == -1) degree = v->degree();
+    if(degree == 3) {
       do {
         int i = fc->index(v);
         edges.push_back(Edge(fc, i));
@@ -628,7 +642,7 @@ move(Vertex_handle v, const Point &p) {
     v->set_point(p);
     if(well_oriented(v)) {
       if(!from_convex_hull(v)) {
-        restore_edges(v);
+        restore_edges(v, _degree);
         return true;
       }
     }
