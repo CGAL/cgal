@@ -225,7 +225,7 @@ build_cgal_libs()
       fi
       
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
-                           cmake ${CMAKE_GENERATOR} -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
+                           cmake \"${CMAKE_GENERATOR}\" -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
                            ${MAKE_CMD} -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
@@ -410,7 +410,10 @@ copy_old_stuff()
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
           log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
-          sed "s/${OLD_CGAL_RELEASE_ID}/${CGAL_RELEASE_ID}/g" "${platform}/CMakeCache.txt" >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
+          sed -e "s,${OLD_CGAL_RELEASE_ID}/cmake/platform,${CGAL_RELEASE_ID}/cmake/platform,g" \
+              -e "s,${OLD_CGAL_RELEASE_ID}$,${CGAL_RELEASE_ID},g" \
+              "${platform}/CMakeCache.txt"  \
+              >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
         fi
         
       fi
