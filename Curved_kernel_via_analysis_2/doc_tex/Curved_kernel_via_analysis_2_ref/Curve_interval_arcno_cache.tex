@@ -110,9 +110,16 @@ event arc number descriptor: stores an arc number along with curve's end type (+
 
 \ccMethod{result_type operator()(const Status_line_1& cv_line, bool side, int interval_arcno) const;}
 {
-given arcno over an interval, this computes a corresponding event arcno on status line \ccc{cv_line} lying on the given side w.r.t. the interval
-side = true: left side; side = false: right side
+Given arcno over an interval, this computes a corresponding event arcno on status line \ccc{cv_line} lying on the given side w.r.t. the interval.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{cv_line}]Status line \item[side]side = true: left side; side = false: right side \item[\ccc{interval_arcno}]Arcnumber of interval \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]Arcnumber information at event line \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
@@ -127,13 +134,17 @@ side = true: left side; side = false: right side
 
 \ccConstructor{Curve_interval_arcno_cache(Curved_kernel_via_analysis_2 * kernel);}
 {
-standard constructor
+Standard constructor.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]The kernel that is used internally \end{description}
+\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
-
-\ccOperations
 
 \end{ccRefFunctionObjectClass}
 

@@ -24,9 +24,9 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-class defines a point on a curve that can be analyzed
+Class defines a point on a curve that can be analyzed.
 
-only points with finite x/y-coordinates can be constructed explicitly (by the user). Points at infinity use special private constructors and required to represent infinite ends of curve arcs.
+Only points with interior can be constructed explicitly (by the user). Points on the boundary use special private constructors and required to represent ends of curve arcs on the boundary.
 
 %END-AUTO(\ccDefinition)
 
@@ -102,31 +102,43 @@ type of kernel point
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{const Xy_coordinate_2& xy() const;}
+\ccMethod{const X_coordinate_1& x() const;}
 {
-access to underlying \ccc{Xy_coordinate_2} object
+Access to the point's x-coordinate (y-coordinate can be undefined).
 }
 \ccGlue
 \begin{description}
-\item[Precondition:]finite x/y coordinates must be set by construction \end{description}
-\ccGlue
-\ccMethod{const X_coordinate_1& x() const;}
-{
-access to the point's x-coordinate (y-coordinate can be undefined)
-}
-\ccGlue
+\item[Returns:]The stored x-coordinate \end{description}
 \begin{description}
 \item[Precondition:]the point's x must be finite (set by construction) \end{description}
 \ccGlue
+\ccMethod{const Xy_coordinate_2& xy() const;}
+{
+Access to underlying \ccc{Xy_coordinate_2} object.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]The stored xy-coordinate \end{description}
+\begin{description}
+\item[Precondition:]finite x/y coordinates must be set by construction, i.e., interior point \end{description}
+\ccGlue
 \ccMethod{Curve_analysis_2 curve() const;}
 {
-returns the supporting curve of underlying \ccc{Xy_coordinate_2} object
+supporting curve of point
 }
+\ccGlue
+\begin{description}
+\item[Returns:]supporting curve of point \end{description}
 \ccGlue
 \ccMethod{int arcno() const;}
 {
-returns an arc number of underlying \ccc{Xy_coordinate_2} object
+Arc number of point.
 }
+\ccGlue
+\begin{description}
+\item[Returns:]arcno of point \end{description}
+\begin{description}
+\item[Precondition:]Is not endpoint of a vertical ray or branch \end{description}
 \ccGlue
 \ccMethod{void set_location(CGAL::Arr_parameter_space loc) const;}
 {
@@ -135,44 +147,78 @@ sets location of a point in parameter space to loc
 \ccGlue
 \ccMethod{CGAL::Arr_parameter_space location() const;}
 {
-returns location of a point in parameter space
+location of a point in parameter space
 }
+\ccGlue
+\begin{description}
+\item[Returns:]location in parameter space \end{description}
 \ccGlue
 \ccMethod{bool is_on_left_right() const;}
 {
-checks if the point lies on left/right boundary inaccessible)
+checks if the point lies on left/right boundary
 }
+\ccGlue
+\begin{description}
+\item[Returns:]true if it lies on left/right boundary, false otherwise \end{description}
 \ccGlue
 \ccMethod{bool is_on_bottom_top() const;}
 {
-checks if the point lies on top/bottom boundary
+checks if the point lies on bottom/top boundary
 }
+\ccGlue
+\begin{description}
+\item[Returns:]true if it lies on bottom/top boundary, false otherwise \end{description}
 \ccGlue
 \ccMethod{bool is_finite() const;}
 {
-returns whether the point is finite
+checks whether the point is finite
 }
+\ccGlue
+\begin{description}
+\item[Returns:]true, if point is finite, false otherwise \end{description}
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_x(const Kernel_point_2& q) const;}
 {
-compares x-coordinates of two points
+Compares x-coordinates of this point with another.
 }
 \ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[q]The other point \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]\ccc{CGAL::LARGER} if x($\ast$this) $>$ x(q); \ccc{CGAL::SMALLER} if x($\ast$this) $<$ x(q); \ccc{CGAL::EQUAL} if x($\ast$this) = x(q). \end{description}
 \begin{description}
 \item[Precondition:]compared points are in the interior of parameter space \end{description}
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_xy(const Kernel_point_2& q, bool equal_x = false) const;}
 {
-compares two points lexicographical
+Compares this point with another point lexicographically.
 }
 \ccGlue
 \begin{description}
-\item[Precondition:]compared points are in the interior of parameter space \end{description}
+\item[Parameters:]
+\begin{description}
+\item[q]The other point \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]\ccc{CGAL::LARGER} if x($\ast$this) $>$ x(q), or if x(8this) = x(q) and y($\ast$this) $>$ y(q); \ccc{CGAL::SMALLER} if x($\ast$this) $<$ x(q), or if x($\ast$this) = x(q) and y($\ast$this) $<$ y(q); \ccc{CGAL::EQUAL} if the two points are equal. \end{description}
+\begin{description}
+\item[Precondition:]Compared points are in the interior of parameter space \end{description}
 \ccGlue
 \ccMethod{bool is_on(const typename Curved_kernel_via_analysis_2::Curve_2& curve) const;}
 {
-checks if the point lies on curve
+Checks if a point lies on on a curve.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[curve]The curve to check \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]true, if $\ast$this lies on curve, false otherwise \end{description}
 \ccGlue
 \ccMethod{bool operator==(const Kernel_point_2& q) const;}
 {
@@ -207,18 +253,6 @@ greater-equal in (x,y) lexicographic order
 \ccMethod{void write(std::ostream& os) const;}
 {
 writes point to os
-}
-\ccGlue
-\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);}
-{
-}
-\ccGlue
-\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);}
-{
-}
-\ccGlue
-\ccMethod{CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);}
-{
 \subsubsection{Friends And Related Function Documentation}
 \ccMethod{std::ostream& operator<<(std::ostream& os, const Point_2< CurvedKernelViaAnalysis_2, Rep_>& pt);}
 {
@@ -249,14 +283,55 @@ copy constructor
 \ccGlue
 \ccConstructor{Point_2(const X_coordinate_1& x, const Curve_analysis_2& c, int arcno);}
 {
-Constructs a finite point with x-coordinate x on curve c with arc number arcno.
-implies no boundary conditions in x/y
 }
+\ccGlue
+\ccConstructor{Point_2(CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno);}
+{
+[protected] \\
+Constructs a point with x-coordinate at the left/right boundary.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{inf_end}]Determines whether point is on left or right boundary \item[c]The supporting curve \item[arcno]Arcno of point on on left/right boundary \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed point \end{description}
+\ccGlue
+\ccConstructor{Point_2(const X_coordinate_1& x, const Curve_analysis_2& c, CGAL::Arr_curve_end inf_end);}
+{
+[protected] \\
+Constructs a point on bottom or top boundary.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[x]The x-coordinate of point \item[c]The supporting curve \item[\ccc{inf_end}]Defines whether point is on bottom or top boundary \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed point \end{description}
+\ccGlue
+\ccConstructor{Point_2(Rep rep);}
+{
+[protected] \\
+constructs from a given represenation
+Constructor for for rebind
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[rep]The representation \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed point \end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
 
-%% \ccIncludeExampleCode{Package/Point_2.C}
+% \ccIncludeExampleCode{Package/Point_2.C}
 
 \end{ccRefClass}
 

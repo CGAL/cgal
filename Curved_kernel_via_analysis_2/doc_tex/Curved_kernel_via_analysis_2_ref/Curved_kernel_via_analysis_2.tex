@@ -56,6 +56,37 @@ class \ccc{Curved_kernel_via_analysis_2};
 \ccNestedType{Curve_kernel_2}
 {
 this instance's template argument
+
+}
+\ccGlue
+\ccNestedType{CKvA}
+{
+[protected] \\
+this instance's second template parameter
+}
+\ccGlue
+\ccNestedType{Point}
+{
+[protected] \\
+this instance's third template parameter
+}
+\ccGlue
+\ccNestedType{Arc}
+{
+[protected] \\
+this instance's fourth template parameter
+}
+\ccGlue
+\ccNestedType{Self}
+{
+[protected] \\
+myself
+}
+\ccGlue
+\ccNestedType{CKvA_2}
+{
+[protected] \\
+type of \ccc{CKvA_2} used internally
 }
 \ccGlue
 \ccNestedType{Curve_2}
@@ -65,17 +96,41 @@ type of \ccc{curve_2}
 \ccGlue
 \ccNestedType{Point_2}
 {
-type of a point on generic curve
+type of a point on a curve that can be analyzed
 }
 \ccGlue
 \ccNestedType{Arc_2}
 {
-type of an arc on generic curve
+type of an arc on a curve that can be analyzed
 }
 \ccGlue
 \ccNestedType{X_monotone_curve_2}
 {
 type of weakly x-monotone arc for \ccc{ArrangementTraits_2}
+}
+\ccGlue
+\ccNestedType{Base_kernel}
+{
+[protected] \\
+class collecting basic types
+}
+\ccGlue
+\ccNestedType{Base_functors}
+{
+[protected] \\
+class collecting basic functors
+}
+\ccGlue
+\ccNestedType{Construct_point_2}
+{
+}
+\ccGlue
+\ccNestedType{Construct_point_on_arc_2}
+{
+}
+\ccGlue
+\ccNestedType{Construct_arc_2}
+{
 }
 \ccGlue
 
@@ -86,17 +141,17 @@ type of weakly x-monotone arc for \ccc{ArrangementTraits_2}
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{CGAL_CKvA_2_functor_cons(Construct_point_2, construct_point_2_object);}
+\ccMethod{Construct_point_2 construct_point_2_object() const;}
 {
 }
 \ccGlue
-\ccMethod{CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, construct_point_on_arc_2_object);}
+\ccMethod{Construct_point_on_arc_2 construct_point_on_arc_2_object() const;}
 {
 }
 \ccGlue
-\ccMethod{CGAL_CKvA_2_functor_cons(Construct_arc_2, construct_arc_2_object);}
+\ccMethod{Construct_arc_2 construct_arc_2_object() const;}
 {
-\subsubsection{Member Data Documentation}
+}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
@@ -119,11 +174,14 @@ default constructor
 construct from kernel
 }
 \ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]Kernel to use internally \end{description}
+\end{description}
+\ccGlue
 
 %END-AUTO(\ccCreation)
-
-
-%% \ccIncludeExampleCode{Package/Curved_kernel_via_analysis_2.C}
 
 \end{ccRefClass}
 

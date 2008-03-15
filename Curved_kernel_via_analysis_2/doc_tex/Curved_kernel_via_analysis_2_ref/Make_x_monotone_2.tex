@@ -108,8 +108,16 @@ type of curve arc
 
 \ccMethod{OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi);}
 {
-Splits curve into x-monotone arcs and isolated points, copies them through oi, and returns the past-the-end iterator for oi.
+Splits a curve into x-monotone arcs and isolated points.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[curve]The input curve \item[oi]Output iterator that stores \ccc{CGAL::Object}, which either encapsulates \ccc{Point_2} or \ccc{Arc_2} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]Past-the-end iterator of oi \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
@@ -124,8 +132,14 @@ Splits curve into x-monotone arcs and isolated points, copies them through oi, a
 
 \ccConstructor{Make_x_monotone_2(Curved_kernel_via_analysis_2 * kernel);}
 {
-standard constructor
+Standard constructor.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]The kernel instance to use \end{description}
+\end{description}
 \ccGlue
 
 %END-AUTO(\ccCreation)
