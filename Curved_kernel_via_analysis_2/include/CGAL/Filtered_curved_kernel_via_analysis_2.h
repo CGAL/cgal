@@ -143,8 +143,8 @@ public:
 
     /*! Compare the y-coordinates of 2 lines at their ends near the boundary
      * of the parameter space at x = +/- oo.
-     * \param xcv1 the first arc.
-     * \param xcv2 the second arc.
+     * \param cv1 the first arc.
+     * \param cv2 the second arc.
      * \param ce the line end indicator.
      * \return the second comparison result.
      * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
@@ -807,8 +807,8 @@ public:
     
     /*!
      * Checks whether \c p lies on \c c 
-     * \param p1 The point to test
-     * \param p2 The curve
+     * \param p The point to test
+     * \param c The curve
      * \return (true) if the \c p lies on \c c
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {

@@ -15,7 +15,7 @@
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 
-/*! \file Curved_kernel_via_analysis_2/curved_kernel_via_analysis_2_functors.h
+/*! \file Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h
  *  \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
@@ -261,7 +261,7 @@ public:
         Base(kernel) {
     }
 
-    //! Constructing non-vertical arcs
+    //!\name Constructing non-vertical arcs
     //!@{
     
     /*!\brief 
@@ -369,7 +369,7 @@ public:
      * \param inf_endx Defining whether the arc emanates from the left or right
      *        boundary
      * \param asympt_x The x-coordinate of the asymptote
-     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     * \param inf_endy Arc is approaching the bottom or top boundary at
      *                 asympt_x
      * \return The constructed branch
      */
@@ -382,7 +382,6 @@ public:
     }
     
     //!@}
-    
     //!\name Constructing vertical arcs
     //!@{
     

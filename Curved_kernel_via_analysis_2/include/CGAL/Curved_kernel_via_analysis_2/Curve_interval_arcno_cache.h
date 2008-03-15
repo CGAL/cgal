@@ -127,6 +127,7 @@ struct Curve_interval_arcno_cache {
         }
         // cache status lines by id(); shall we use x-coordinate instead of
         // id to ensure uniqueness ?
+        // TODO: shall we use cv_line.index() ?
         typename Interval_arcno_map::const_iterator it = 
             _m_last_interval_map.find(cv_line.x().id());
         if(it != _m_last_interval_map.end()) {

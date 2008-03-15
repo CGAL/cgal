@@ -665,8 +665,10 @@ public:
   
     // friends ////////////////////////////////////////////////////////////////
 
-    //! befriending the arc base
+    //! befriending arc classes
     friend class Arc_2< Curved_kernel_via_analysis_2 >;
+
+    //friend class Non_x_monotone_arc_2< Curved_kernel_via_analysis_2 >;
 
     // befriending the functors
     

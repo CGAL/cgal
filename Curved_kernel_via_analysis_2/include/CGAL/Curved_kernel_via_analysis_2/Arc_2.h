@@ -527,7 +527,7 @@ public:
      * \param inf_endx Defining whether the arc emanates from the left or right
      *        boundary
      * \param asympt_x The x-coordinate of the asymptote
-     * \param inf_end1 Arc is approaching the bottom or top boundary at 
+     * \param inf_endy Arc is approaching the bottom or top boundary at
      *                 asympt_x
      * \return The constructed branch
      */ 
@@ -745,7 +745,7 @@ public:
         CGAL_precondition(!is_vertical());
         return this->ptr()->_m_arcno; 
     }
-    
+
     /*!\brief
      * arc number of end of arc, which may be different from arc number in its 
      * interior
@@ -912,7 +912,7 @@ public:
      * this arc's end on a bottom or top boundary
      * 
      * \param p A reference point; we refer to a vertical line incident to p.
-     * \param end ARR_MIN_END if we refer to cv's minimal end,
+     * \param ce ARR_MIN_END if we refer to cv's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
      * \return CGAL::SMALLER if p lies to the left of cv;
      *         CGAL::LARGER  if p lies to the right of cv;
@@ -996,7 +996,7 @@ public:
      * the left or right boundary from the same side
      *
      * \param cv2 The second arc
-     * \param ce2 ARR_MIN_END if we compare near left boundary
+     * \param ce ARR_MIN_END if we compare near left boundary
      *            ARR_MAX_END if we compare near right boundary
      * \return CGAL::SMALLER if this arc lies below cv2;
      *         CGAL::LARGER if this arc lies above cv2;
@@ -1306,9 +1306,9 @@ public:
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
      *
-     * \param The second arc
-     * \param The minimal bound point
-     * \param The next intersection
+     * \param cv2 The second arc
+     * \param p The minimal bound point
+     * \param intersection The next intersection
      * \return \c true, if there is a next intersection and 
      *         \c intersection has been set properly, \c false otherwise
      * \pre The arcs are not allowed to overlap
@@ -1347,9 +1347,9 @@ public:
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
      *
-     * \param The second arc
-     * \param The maximal bound point
-     * \param The next intersection
+     * \param cv2 The second arc
+     * \param p The maximal bound point
+     * \param intersection The next intersection
      * \return \c true, if there is a next intersection 
      *         and \c intersection has been set properly, \c false otherwise
      * \pre The arcs are not allowed to overlap
@@ -1400,8 +1400,8 @@ public:
      * Split a arc at a given point into two sub-arc
      * 
      * \param p The split point
-     * \param c1 Output: The left resulting subcurve (p is its right endpoint)
-     * \param c2 Output: The right resulting subcurve (p is its left endpoint)
+     * \param s1 Output: The left resulting subcurve (p is its right endpoint)
+     * \param s2 Output: The right resulting subcurve (p is its left endpoint)
      * 
      * \pre p lies on cv but is not one of its end-points.
      */
@@ -2513,7 +2513,7 @@ protected:
      * 
      * Intersection points 
      * are inserted to the output iterator \c oi as objects of type 
-     * \<tt>std::pair<Point_2, unsigned int></tt> (intersection point +
+     * <tt>std::pair<Point_2, unsigned int></tt> (intersection point +
      * multiplicity)
      * 
      * \param cv1 the first arc

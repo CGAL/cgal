@@ -103,9 +103,9 @@ template <class SweepCurvesAdaptor_2,
 class Generic_arc_2
       : public CGAL::Handle_with_policy< Rep_ > {
 public:
-    //!@{
     //!\name publuic typedefs
-
+    //!@{
+    
     //! this instance's first template parameter
     typedef SweepCurvesAdaptor_2 Sweep_curves_adaptor_2;
 
