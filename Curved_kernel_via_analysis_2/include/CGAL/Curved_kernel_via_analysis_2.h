@@ -55,7 +55,7 @@ public:
     //! type of curve kernel
     typedef CurveKernel_2 Curve_kernel_2;
 
-    //! self
+    //! this instance itself
     typedef 
     Curved_kernel_via_analysis_2_base< 
         Curved_kernel_via_analysis_2, CurveKernel_2 
@@ -295,7 +295,7 @@ protected:
     //! this instance's fourth template parameter
     typedef Arc_ Arc;
 
-    //! myself
+    //! this instance itself
     typedef Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA, Point, Arc > 
     Self;
     
