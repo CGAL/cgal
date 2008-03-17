@@ -99,7 +99,7 @@ public:
     //!@}
     
 public:
-    //! base type
+    //!\name base type
     //!@{
 
     //! the base type

@@ -888,7 +888,7 @@ public:
     //!@}
 
 public:
-    //! base type
+    //!\name base type
     //!@{
 
     //! the base type
@@ -914,7 +914,7 @@ public:
     //!@}
     
     //!\name Additional functors
-    //!{
+    //!@{
     
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor

@@ -633,8 +633,8 @@ public:
 
     /*! Compare the y-coordinates of 2 lines at their ends near the boundary
      * of the parameter space at x = +/- oo.
-     * \param xcv1 the first arc.
-     * \param xcv2 the second arc.
+     * \param cv1 the first arc.
+     * \param cv2 the second arc.
      * \param ce the line end indicator.
      * \return the second comparison result.
      * \pre the ce ends of the lines xcv1 and xcv2 lie either on the left
@@ -1211,8 +1211,9 @@ public:
     
     /*!\brief
      * Returns a 
-     * \param cv1 The first curve.
-     * \param cv2 The second curve.
+     * \param cv curve ??
+     * \param p ??
+     * \param q ??
      * \return (true) if the curves overlap; (false) otherwise.
      */
     Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q) {
@@ -1596,7 +1597,7 @@ public:
     //!@}
     
 public:
-    //! base type
+    //!\name base type
     //!@{
 
     //! the base type

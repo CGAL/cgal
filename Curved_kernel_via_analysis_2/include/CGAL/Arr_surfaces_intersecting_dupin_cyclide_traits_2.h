@@ -14,7 +14,7 @@
 //
 // ============================================================================
 
-/*! \file include/QdX/Surface_intersections_with_traits_2
+/*! \file Arr_surfaces_intersecting_dupin_cyclide_traits_2.h
  * \brief Provides traits class to compute arrangement on a Dupin cyclide
  * induced by other intersection curves with other surfaces
  */
@@ -220,7 +220,7 @@ public:
     }
     
     /*! Is the end of an x-monotone curve bounded?
-     * \param xcv The x-monotone curve.
+     * \param cv The x-monotone curve.
      * \param ce The end of xcv identifier.
      * \return true is the curve end is bounded, and false otherwise
      */

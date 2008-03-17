@@ -481,8 +481,8 @@ public:
     
     /*!
      * Checks whether \c p lies on \c c 
-     * \param p1 The point to test
-     * \param p2 The curve
+     * \param p The point to test
+     * \param c The curve
      * \return (true) if the \c p lies on \c c
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {

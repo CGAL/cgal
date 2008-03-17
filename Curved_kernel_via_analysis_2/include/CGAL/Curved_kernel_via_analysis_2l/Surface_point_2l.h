@@ -182,7 +182,7 @@ public:
 
     //!@}
 
-    //!name Usual constructors
+    //!\name Usual constructors
     //!@{
 
     //!\brief Constructs point on \c sheet of \c surface above \c point
