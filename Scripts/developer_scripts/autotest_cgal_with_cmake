@@ -225,7 +225,12 @@ build_cgal_libs()
       fi
       
       remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
-                           cmake \"${CMAKE_GENERATOR}\" -DWITH_demo=FALSE -DWITH_examples=FALSE -DWITH_CGALPDB=FALSE ../../..; \
+                           cmake \"${CMAKE_GENERATOR}\" \
+                           -DWITH_demo=FALSE \
+                           -DWITH_examples=FALSE \ 
+                           -DWITH_CGALPDB=FALSE \
+                           -DRUNNING_CGAL_AUTO_TEST=TRUE \
+                           ../../..; \
                            ${MAKE_CMD} -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           

@@ -123,6 +123,10 @@ if(QT_FOUND)
   add_config_flag( CGAL_USE_QT )
 endif()
 
+if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
+  file( APPEND "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>")
+endif()
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Installation Setup =-
