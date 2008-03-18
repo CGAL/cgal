@@ -79,6 +79,7 @@ if uname | grep -q "CYGWIN"; then
   echo "Cygwin detected, using nmake"
   CMAKE_GENERATOR='-GNMake Makefiles'
   MAKE_CMD='nmake'
+  IS_CYGWIN='y'
 else
   echo "Non-cygwin linux detected, using system make."
   MAKE_CMD='make'
@@ -303,7 +304,11 @@ test_script()
 CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
-CGAL_DIR='${CGAL_BINARY_DIR}';
+if [ ! -z "${IS_CYGWIN}" ]; then
+  CGAL_DIR="$( cygpath -w "${CGAL_BINARY_DIR}" )";
+else
+  CGAL_DIR='${CGAL_BINARY_DIR}';
+fi
 CGAL_TEST_PLATFORM='${2}';
 CMAKE_GENERATOR='${CMAKE_GENERATOR}'
 MAKE_CMD='${MAKE_CMD}'
@@ -323,7 +328,7 @@ echo 'COPYING RESULTS';
 cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
 echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
-rm -rf ${CGAL_BINARY_DIR}/test
+#rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
         remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
