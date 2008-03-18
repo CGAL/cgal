@@ -69,8 +69,8 @@ do
 done
 
 # Now loading autocgalrc.
-if [ -f $HOME/.autocgalrc ]; then
-  . $HOME/.autocgalrc
+if [ -f "$HOME"/.autocgalrc ]; then
+  . "$HOME"/.autocgalrc
 else
   echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
 fi
@@ -223,15 +223,27 @@ build_cgal_libs()
       if [ ! -d ${CGAL_BINARY_DIR} ]; then
         mkdir ${CGAL_BINARY_DIR}
       fi
+
+      if [ -f ${CGAL_BINARY_DIR}/setup ]; then
+        cp ${CGAL_BINARY_DIR}/setup ${CGAL_BINARY_DIR}/localbuildscript.${1}
+      else
+        rm -f ${CGAL_BINARY_DIR}/localbuildscript.${1}
+      fi
       
-      remote_command ${1} "cd ${CGAL_BINARY_DIR}; \
-                           cmake \"${CMAKE_GENERATOR}\" \
-                           -DWITH_demo=FALSE \
-                           -DWITH_examples=FALSE \ 
-                           -DWITH_CGALPDB=FALSE \
-                           -DRUNNING_CGAL_AUTO_TEST=TRUE \
-                           ../../..; \
-                           ${MAKE_CMD} -fMakefile" >> ${ACTUAL_LOGFILE} 2>&1
+      cat >> ${CGAL_BINARY_DIR}/localbuildscript.${1} <<EOF
+CGAL_BINARY_DIR='${CGAL_BINARY_DIR}';
+CMAKE_GENERATOR='${CMAKE_GENERATOR}';
+MAKE_CMD='${MAKE_CMD}';
+export CMAKE_GENERATOR;
+export MAKE_CMD;
+export CGAL_BINARY_DIR;
+cd ${CGAL_BINARY_DIR};
+cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE -DWITH_examples=FALSE -DRUNNING_CGAL_AUTO_TEST=TRUE ../../..; 
+${MAKE_CMD} -fMakefile;
+cd ..;
+EOF
+        chmod ugo+x ${CGAL_BINARY_DIR}/localbuildscript.${1}
+        remote_command ${1} "${CGAL_BINARY_DIR}/localbuildscript.${1}" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
         cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
@@ -240,6 +252,8 @@ build_cgal_libs()
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log" ]; then                           
         cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
       fi
+      
+      cp ${ACTUAL_LOGFILE} ${ACTUAL_LOGFILE}.${1}.build
       
     done
       
@@ -279,7 +293,13 @@ test_script()
         else
           MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-        cat > ${CGAL_BINARY_DIR}/localtestscript.${1} <<EOF
+        if [ -f ${CGAL_BINARY_DIR}/setup ]; then
+          cp ${CGAL_BINARY_DIR}/setup ${CGAL_BINARY_DIR}/localtestscript.${1}
+        else
+          rm -f ${CGAL_BINARY_DIR}/localtestscript.${1}
+        fi
+      
+        cat >> ${CGAL_BINARY_DIR}/localtestscript.${1} <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
@@ -421,6 +441,11 @@ copy_old_stuff()
               >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
         fi
         
+        # if the platform folder contains a setup script, copy it
+        if [ -f "${platform}/setup" ]; then
+          log ${ACTUAL_LOGFILE} "Copying platform setup script in ${CGAL_BINARY_DIR_BASE}/${platform}"
+          cp "${platform}/setup" "${CGAL_BINARY_DIR_BASE}/${platform}"
+        fi
       fi
     
     done
@@ -691,7 +716,7 @@ main_procedure()
   fi
     
   build_cgal
-  
+
   if [ "${BUILD_HOSTS}" = "localhost" ]; then
     TEXT="`value_of COMPILERS_localhost`"
     if [ -z "${TEXT}" ]; then
