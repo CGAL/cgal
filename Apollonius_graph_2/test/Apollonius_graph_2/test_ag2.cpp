@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #define DONT_USE_FILTERED_EXACT
 
@@ -40,13 +40,13 @@ int main()
   {
     std::ifstream ifs_algo("./data/algo.dat");
 
-    CGAL_test_assert( ifs_algo );
+    assert( ifs_algo );
 
     std::cout << "testing the Apollonius graph class..." << std::flush;
     bool algo_ok =
       CGAL::test_algo<Kernel,Method_tag,std::ifstream>(ifs_algo);
 
-    CGAL_test_assert( algo_ok );
+    assert( algo_ok );
     std::cout << " done!" << std::endl;
 
     ifs_algo.close();
@@ -59,7 +59,7 @@ int main()
   {
     std::ifstream ifs_algo("./data/algo.dat");
 
-    CGAL_test_assert( ifs_algo );
+    assert( ifs_algo );
 
     std::cout << "testing the Apollonius graph class"
 	      << " with filtered traits..." << std::flush;
@@ -67,7 +67,7 @@ int main()
       CGAL::test_filtered_traits_algo<CK,Method_tag,EK,Method_tag,
       std::ifstream>(ifs_algo);
 
-    CGAL_test_assert( algo_ok );
+    assert( algo_ok );
     std::cout << " done!" << std::endl;
 
     ifs_algo.close();

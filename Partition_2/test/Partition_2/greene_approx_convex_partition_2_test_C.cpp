@@ -30,7 +30,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 typedef CGAL::Cartesian<double>       K;
 typedef K::Point_2                    Point_2;

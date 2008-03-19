@@ -15,7 +15,7 @@
 #undef NDEBUG
 #endif
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 typedef CGAL::Point_2< TestR > point_t;
@@ -52,19 +52,19 @@ void treat_intersection(const segment_t &seg1, const segment_t &seg2)
     CGAL::Object result = CGAL::intersection(seg1, seg2);
     if (!CGAL::assign(iseg, result) && !CGAL::assign(pt1, result)) {
 	std::cout << "No intersection.\n";
-        CGAL_test_assert(!is);
+        assert(!is);
     }
     if (CGAL::assign(pt1, result)) {
 	std::cout << "Point intersection.\n";
 	print(pt1);
 	std::cout<<'\n';
-        CGAL_test_assert(is);
+        assert(is);
     }
     if (CGAL::assign(iseg, result)) {
 	std::cout << "Segment intersection.\n";
 	print(iseg);
 	std::cout<<'\n';
-        CGAL_test_assert(is);
+        assert(is);
     }
 }
 

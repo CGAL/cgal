@@ -22,7 +22,7 @@
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_io.h"

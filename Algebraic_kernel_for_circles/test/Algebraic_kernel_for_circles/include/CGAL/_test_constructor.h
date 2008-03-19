@@ -1,5 +1,5 @@
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class AK>
 void _test_constuctor(AK ak)
@@ -25,12 +25,12 @@ void _test_constuctor(AK ak)
   
     typename AK::Polynomial_for_circles_2_2 p_2_2 = theConstruct_2_2(x, y, r_sq);
     typename AK::Polynomial_1_2 p_1_2 = theConstruct_1_2(a, b, c);
-    CGAL_test_assert(p_2_2.a() == x);
-    CGAL_test_assert(p_2_2.b() == y);
-    CGAL_test_assert(p_2_2.r_sq() == r_sq);
-    CGAL_test_assert(p_1_2.a() == a);
-    CGAL_test_assert(p_1_2.b() == b);
-    CGAL_test_assert(p_1_2.c() == c);
+    assert(p_2_2.a() == x);
+    assert(p_2_2.b() == y);
+    assert(p_2_2.r_sq() == r_sq);
+    assert(p_1_2.a() == a);
+    assert(p_1_2.b() == b);
+    assert(p_1_2.c() == c);
   }
   
 }

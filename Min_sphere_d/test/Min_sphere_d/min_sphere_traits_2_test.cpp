@@ -34,7 +34,7 @@
 #include <CGAL/basic.h>
 
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include<CGAL/Random.h>
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
@@ -120,8 +120,8 @@ int main ()
         PH[i] = Point_2<H>(coordH[0], coordH[1], coordH[2]);
     }
 
-    Min_sphereC     msC (PC, PC+n, tC); CGAL_test_assert(msC.is_valid(verbose));
-    Min_sphereH     msH (PH, PH+n, tH); CGAL_test_assert(msH.is_valid(verbose));
+    Min_sphereC     msC (PC, PC+n, tC); assert(msC.is_valid(verbose));
+    Min_sphereH     msH (PH, PH+n, tH); assert(msH.is_valid(verbose));
 
     PointC                  centerC (msC.center());
     PointH                  centerH (msH.center());
@@ -129,17 +129,17 @@ int main ()
     FT                      radiusC (msC.squared_radius());
     Quotient<RT>    radiusH (msH.squared_radius());
 
-    CGAL_test_assert(equals (centerC, centerH));
-    CGAL_test_assert(equals (radiusC, radiusH));
+    assert(equals (centerC, centerH));
+    assert(equals (radiusC, radiusH));
 
     // test for equality with Min_circle, no randomization
     Min_circleC     mcC (PC, PC+n, false);
     Min_circleH     mcH (PH, PH+n, false);
 
-    CGAL_test_assert(centerC == mcC.circle().center());
-    CGAL_test_assert(centerH == mcH.circle().center());
-    CGAL_test_assert(radiusC == mcC.circle().squared_radius());
-    CGAL_test_assert(radiusH == mcH.circle().squared_radius());
+    assert(centerC == mcC.circle().center());
+    assert(centerH == mcH.circle().center());
+    assert(radiusC == mcC.circle().squared_radius());
+    assert(radiusH == mcH.circle().squared_radius());
 
     return 0;
 }

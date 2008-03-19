@@ -51,41 +51,41 @@ _test_further_fct_point_line_2(const R& )
 
  std::cout << '.';
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l12, p3,p9) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l12, p3,p8) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l21, p3,p8) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l18, p9,p8) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l18, p9,p9) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l18, p5,p4) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l18, p4,p5) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l18.opposite(),p4,p5) == 
+ assert( CGAL::compare_signed_distance_to_line(l12, p3,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l12, p3,p8) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l21, p3,p8) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l18, p9,p8) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l18, p9,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l18, p5,p4) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l18, p4,p5) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l18.opposite(),p4,p5) == 
                                                               CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l64, p1,p2) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l64, p1,p9) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l68, p7,p9) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l68, p2,p9) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l68, p2,p3) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l61, p1,p6) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l61, p6,p1) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l61, p4,p1) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l61, p5,p6) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l46, p8,p6) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_line(l64, p8,p6) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l64, p1,p2) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l64, p1,p9) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l68, p7,p9) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l68, p2,p9) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l68, p2,p3) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l61, p1,p6) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l61, p6,p1) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_line(l61, p4,p1) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_line(l61, p5,p6) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l46, p8,p6) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_line(l64, p8,p6) == CGAL::SMALLER );
 
  std::cout << '.';
 
- CGAL_test_assert( CGAL::has_larger_signed_distance_to_line(l12, p3,p8) );
- CGAL_test_assert( CGAL::has_larger_signed_distance_to_line(l18, p9,p8) );
- CGAL_test_assert( CGAL::has_larger_signed_distance_to_line(l61, p1,p4) );
- CGAL_test_assert( CGAL::has_larger_signed_distance_to_line(l64, p6,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(l12, p3,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(l18, p9,p8) );
+ assert( CGAL::has_larger_signed_distance_to_line(l61, p1,p4) );
+ assert( CGAL::has_larger_signed_distance_to_line(l64, p6,p8) );
 
  std::cout << '.';
 
- CGAL_test_assert( CGAL::has_smaller_signed_distance_to_line(l18, p5,p4) );
- CGAL_test_assert( CGAL::has_smaller_signed_distance_to_line(l21, p3,p8) );
- CGAL_test_assert( CGAL::has_smaller_signed_distance_to_line(l61, p6,p5) );
- CGAL_test_assert( CGAL::has_smaller_signed_distance_to_line(l68, p2,p9) );
- CGAL_test_assert( CGAL::has_smaller_signed_distance_to_line(l64, p8,p6) );
+ assert( CGAL::has_smaller_signed_distance_to_line(l18, p5,p4) );
+ assert( CGAL::has_smaller_signed_distance_to_line(l21, p3,p8) );
+ assert( CGAL::has_smaller_signed_distance_to_line(l61, p6,p5) );
+ assert( CGAL::has_smaller_signed_distance_to_line(l68, p2,p9) );
+ assert( CGAL::has_smaller_signed_distance_to_line(l64, p8,p6) );
 
  std::cout << "done" << std::endl;
  return true;

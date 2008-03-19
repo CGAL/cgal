@@ -24,7 +24,7 @@
 #define CGAL__TEST_FCT_POINT_CONVERSION_H
 
 #include <CGAL/Homogeneous.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Cartesian.h>
 #include <CGAL/cartesian_homogeneous_conversion.h>
 
@@ -67,16 +67,16 @@ _test_fct_point_conversion(const NT&, CGAL::Field_tag)
 
   std::cout << '.';
 
-  CGAL_test_assert( CGAL::homogeneous_to_cartesian(ph2) == pc2 );
-  CGAL_test_assert( CGAL::cartesian_to_homogeneous(pc2) == ph2 );
-  CGAL_test_assert( CGAL::homogeneous_to_quotient_cartesian(ph2) == pq2);
-  CGAL_test_assert( CGAL::quotient_cartesian_to_homogeneous(pq2) == ph2);
+  assert( CGAL::homogeneous_to_cartesian(ph2) == pc2 );
+  assert( CGAL::cartesian_to_homogeneous(pc2) == ph2 );
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph2) == pq2);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq2) == ph2);
   std::cout << '.';
 
-  CGAL_test_assert( CGAL::homogeneous_to_cartesian(ph3) == pc3 );
-  CGAL_test_assert( CGAL::cartesian_to_homogeneous(pc3) == ph3 );
-  CGAL_test_assert( CGAL::homogeneous_to_quotient_cartesian(ph3) == pq3);
-  CGAL_test_assert( CGAL::quotient_cartesian_to_homogeneous(pq3) == ph3);
+  assert( CGAL::homogeneous_to_cartesian(ph3) == pc3 );
+  assert( CGAL::cartesian_to_homogeneous(pc3) == ph3 );
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph3) == pq3);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq3) == ph3);
 
   std::cout << "done" << std::endl;
   return true;
@@ -114,12 +114,12 @@ _test_fct_point_conversion(const NT&, CGAL::Integral_domain_without_division_tag
 
   std::cout << '.';
 
-  CGAL_test_assert( CGAL::homogeneous_to_quotient_cartesian(ph2) == pq2);
-  CGAL_test_assert( CGAL::quotient_cartesian_to_homogeneous(pq2) == ph2);
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph2) == pq2);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq2) == ph2);
   std::cout << '.';
 
-  CGAL_test_assert( CGAL::homogeneous_to_quotient_cartesian(ph3) == pq3);
-  CGAL_test_assert( CGAL::quotient_cartesian_to_homogeneous(pq3) == ph3);
+  assert( CGAL::homogeneous_to_quotient_cartesian(ph3) == pq3);
+  assert( CGAL::quotient_cartesian_to_homogeneous(pq3) == ph3);
 
   std::cout << "done" << std::endl;
   return true;

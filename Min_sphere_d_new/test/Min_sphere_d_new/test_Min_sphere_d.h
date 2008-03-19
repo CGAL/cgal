@@ -30,7 +30,7 @@
 
 // includes
 #  include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,20 +60,20 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
     // constructors
     COVER( "default constructor",
         Min_sphere  ms( traits);
-        CGAL_test_assert( ms.is_valid( is_valid_verbose));
-        CGAL_test_assert( ms.is_empty());
+        assert( ms.is_valid( is_valid_verbose));
+        assert( ms.is_empty());
     )
 
     COVER( "point set constructor",
         Min_sphere  ms( first, last, traits);
         verrX << endl;
-        CGAL_test_assert( ms.is_valid( is_valid_verbose));
+        assert( ms.is_valid( is_valid_verbose));
     )
 
     Min_sphere  min_sphere( first, last);
     COVER( "ambient dimension",
         Min_sphere  ms;
-        CGAL_test_assert( ms.ambient_dimension() == -1);
+        assert( ms.ambient_dimension() == -1);
         verrX << min_sphere.ambient_dimension() << endl;
     )
 
@@ -84,7 +84,7 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
         for ( ; point_it != min_sphere.points_end(); ++point_it) {
             verrX << *point_it << endl;
         }
-        CGAL_test_assert( ( min_sphere.points_end() - min_sphere.points_begin())
+        assert( ( min_sphere.points_end() - min_sphere.points_begin())
                 == min_sphere.number_of_points());
     )
 
@@ -95,7 +95,7 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
         for ( ; point_it != min_sphere.support_points_end(); ++point_it) {
             verrX << *point_it << endl;
         }
-        CGAL_test_assert( ( min_sphere.support_points_end()
+        assert( ( min_sphere.support_points_end()
                   - min_sphere.support_points_begin())
                 == min_sphere.number_of_support_points());
     )
@@ -134,9 +134,9 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
                   << has_on_bounded_side   << ' '
                   << has_on_boundary       << ' '
                   << has_on_unbounded_side << endl;
-            CGAL_test_assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
-            CGAL_test_assert( has_on_bounded_side || has_on_boundary);
-            CGAL_test_assert( ! has_on_unbounded_side);
+            assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
+            assert( has_on_bounded_side || has_on_boundary);
+            assert( ! has_on_unbounded_side);
         }
     )
 
@@ -144,18 +144,18 @@ test_Min_sphere_d( ForwardIterator first, ForwardIterator last,
         min_sphere.clear();
         verrX << "min_sphere is" << ( min_sphere.is_empty() ? "" : " not")
               << " empty." << endl;
-        CGAL_test_assert( min_sphere.is_empty());
+        assert( min_sphere.is_empty());
     )
 
     COVER( "insert (single point)",
         min_sphere.insert( *first);
-        CGAL_test_assert( min_sphere.is_valid( is_valid_verbose));
-        CGAL_test_assert( min_sphere.is_degenerate());
+        assert( min_sphere.is_valid( is_valid_verbose));
+        assert( min_sphere.is_degenerate());
     )
 
     COVER( "insert (point set)",
         min_sphere.insert( first, last);
-        CGAL_test_assert( min_sphere.is_valid( is_valid_verbose));
+        assert( min_sphere.is_valid( is_valid_verbose));
     )
 
     COVER( "traits class access",

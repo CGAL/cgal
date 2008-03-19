@@ -13,7 +13,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Cache.h>
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/function_objects.h>
@@ -73,20 +73,20 @@ int main(){
             typedef CGAL::Cache<int,double> Cache;
             double d;
             Cache cache;
-            CGAL_test_assert(cache.is_empty());
-            CGAL_test_assert(cache.size()==0);
+            assert(cache.is_empty());
+            assert(cache.size()==0);
             d=cache(3);
-            CGAL_test_assert(d==double(3));
-            CGAL_test_assert(cache.size()==1);
+            assert(d==double(3));
+            assert(cache.size()==1);
             d=cache(4);
-            CGAL_test_assert(d==double(4));
-            CGAL_test_assert(cache.size()==2);
+            assert(d==double(4));
+            assert(cache.size()==2);
             d=cache(3);
-            CGAL_test_assert(d==double(3));
-            CGAL_test_assert(cache.size()==2);
+            assert(d==double(3));
+            assert(cache.size()==2);
             d=cache(2);
-            CGAL_test_assert(d==double(2));
-            CGAL_test_assert(cache.size()==3);
+            assert(d==double(2));
+            assert(cache.size()==3);
 
             typedef Cache::Iterator Iterator;
             typedef Cache::Const_iterator Const_iterator;
@@ -97,27 +97,27 @@ int main(){
             Iterator it;
             d=0;
             for(it=cache.begin();it!=cache.end();it++){
-                CGAL_test_assert(d<(*it).second);
+                assert(d<(*it).second);
                 d=(*it).second;
             }
             cache.clear();
-            CGAL_test_assert(cache.size()==0);
+            assert(cache.size()==0);
         }
         {
             typedef Int_t< CGAL::Handle_policy_no_union > Int;
             typedef CGAL::Cache<int,Int> Cache;
             Int hi,hi2;
             Cache cache;
-            CGAL_test_assert(cache.is_empty());
-            CGAL_test_assert(cache.size()==0);
+            assert(cache.is_empty());
+            assert(cache.size()==0);
             hi=cache(3);
-            CGAL_test_assert(hi==Int(3));
-            CGAL_test_assert(cache.size()==1);
+            assert(hi==Int(3));
+            assert(cache.size()==1);
             hi2=cache(4);
-            CGAL_test_assert(hi2==Int(4));
-            CGAL_test_assert(cache.size()==2);
+            assert(hi2==Int(4));
+            assert(cache.size()==2);
             hi2=cache(3);
-            CGAL_test_assert(hi.id()==hi2.id());
+            assert(hi.id()==hi2.id());
         }
     }
 

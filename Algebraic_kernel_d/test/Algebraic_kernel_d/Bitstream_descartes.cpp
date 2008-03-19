@@ -20,7 +20,7 @@
 */
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 // include these traits here by 'hand', since not in release 3.3
 #include <CGAL/Algebraic_extension_traits.h>
@@ -62,16 +62,16 @@ void test_descartes(){
     Polynomial P;
     is >> P ;
     Isolator isolator(P);
-    CGAL_test_assert(isolator.number_of_real_roots() == 2 );
+    assert(isolator.number_of_real_roots() == 2 );
     
     typedef CGAL::CGALi::Algebraic_real_pure<EXT,Rational> Alg_real;
     Alg_real r0(P,isolator.left_boundary(0),isolator.right_boundary(0));
     Alg_real r1(P,isolator.left_boundary(1),isolator.right_boundary(1));
-    CGAL_test_assert(r0 < r1);
-    CGAL_test_assert(r0 > isolator.left_boundary(0));
-    CGAL_test_assert(r0 < isolator.right_boundary(0));
-    CGAL_test_assert(r1 > isolator.left_boundary(1));
-    CGAL_test_assert(r1 < isolator.right_boundary(1));
+    assert(r0 < r1);
+    assert(r0 > isolator.left_boundary(0));
+    assert(r0 < isolator.right_boundary(0));
+    assert(r1 > isolator.left_boundary(1));
+    assert(r1 < isolator.right_boundary(1));
     
     }
 

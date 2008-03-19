@@ -22,7 +22,7 @@
 #ifndef _TEST_FCT_CH_I_2_H
 #define _TEST_FCT_CH_I_2_H
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/ch__test.h>
 
 CGAL_BEGIN_NAMESPACE

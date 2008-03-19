@@ -13,7 +13,7 @@
 // within this file FT ^= Fraction_traits<T>
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/to_rational.h>
 
 #ifndef CGAL_TEST_RATIONAL_TRAITS_H
@@ -29,14 +29,14 @@ void test_rational_traits(){
     typedef typename Rational_traits::RT RT;
     BOOST_STATIC_ASSERT((::boost::is_same<RT,RT>::value));
      
-    CGAL_test_assert( Rational_traits().numerator(x) == RT(7));
-    CGAL_test_assert( Rational_traits().denominator(x) == RT(2));
-    CGAL_test_assert( Rational_traits().make_rational(RT(7),RT(2)) == x);
-    CGAL_test_assert( Rational_traits().make_rational(x,x) == Rational(1));
+    assert( Rational_traits().numerator(x) == RT(7));
+    assert( Rational_traits().denominator(x) == RT(2));
+    assert( Rational_traits().make_rational(RT(7),RT(2)) == x);
+    assert( Rational_traits().make_rational(x,x) == Rational(1));
 
     // gloabal function to_rational 
     x = CGAL::to_rational<Rational>(3.5);
-    CGAL_test_assert( x == Rational(7)/Rational(2));
+    assert( x == Rational(7)/Rational(2));
 }
 
 CGAL_END_NAMESPACE

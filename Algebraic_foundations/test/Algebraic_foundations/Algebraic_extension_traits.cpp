@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_extension_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 int main(){
     typedef CGAL::Algebraic_extension_traits<int> AET;
@@ -18,7 +18,7 @@ int main(){
         typedef Normalization_factor::result_type result_type;
         BOOST_STATIC_ASSERT((::boost::is_same<result_type,int>::value));
         Normalization_factor nfac;
-        CGAL_test_assert(nfac(3)==1);
+        assert(nfac(3)==1);
     }
     typedef AET::Denominator_for_algebraic_integers DFAI; 
     {
@@ -27,6 +27,6 @@ int main(){
         typedef DFAI::result_type result_type;
         BOOST_STATIC_ASSERT((::boost::is_same<result_type,int>::value));
         DFAI dfai;
-        CGAL_test_assert(dfai(3)==1);
+        assert(dfai(3)==1);
     }
 }

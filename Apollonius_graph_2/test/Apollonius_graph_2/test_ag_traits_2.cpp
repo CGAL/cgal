@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #define DONT_USE_FILTERED_EXACT
 
@@ -40,7 +40,7 @@ int main()
   {
     std::ifstream ifs_traits("./data/traits.dat");
 
-    CGAL_test_assert( ifs_traits );
+    assert( ifs_traits );
 
     //  bool is_ok =
     //    CGAL::test_traits<Kernel,CGAL::Integral_domain_without_division_tag,std::ifstream>(ifs_traits);
@@ -50,7 +50,7 @@ int main()
     CGAL::Traits_tester<Kernel,Method_tag> test_traits;
     bool traits_ok = test_traits();
 
-    CGAL_test_assert( traits_ok );
+    assert( traits_ok );
     std::cout << " done!" << std::endl;
 
     ifs_traits.close();
@@ -63,14 +63,14 @@ int main()
   {
     std::ifstream ifs_traits("./data/traits.dat");
 
-    CGAL_test_assert( ifs_traits );
+    assert( ifs_traits );
 
     std::cout << "testing the filtered traits class..." << std::flush;
 
     CGAL::Filtered_traits_tester<CK,Method_tag,EK,Method_tag> test_traits;
     bool traits_ok = test_traits();
 
-    CGAL_test_assert( traits_ok );
+    assert( traits_ok );
     std::cout << " done!" << std::endl;
 
     ifs_traits.close();

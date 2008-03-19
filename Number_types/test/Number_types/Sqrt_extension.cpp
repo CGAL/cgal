@@ -1,6 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
@@ -30,36 +30,36 @@ void test_io(const NT& x){
     os << x;
     std::istringstream is(os.str()); 
     is >> tmp;
-    CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+    assert( x == tmp );
 }
 
 template <class EXT> 
 void constructor_test(){
     typedef typename EXT::NT NT;
     typedef typename EXT::ROOT ROOT;
-    CGAL_test_assert(EXT()==EXT((NT)0));
-    CGAL_test_assert(EXT()==EXT((NT)0,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT().is_extended()==false);
+    assert(EXT()==EXT((NT)0));
+    assert(EXT()==EXT((NT)0,(NT)0,(ROOT)7));
+    assert(EXT().is_extended()==false);
     // from int
-    CGAL_test_assert(EXT( 1)==EXT((NT) 1,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT(-1)==EXT((NT)-1,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT( 7)==EXT((NT) 7,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT(-7)==EXT((NT)-7,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT( 1)+EXT(-1)==EXT());
-    CGAL_test_assert(EXT(1).is_extended()==false);
+    assert(EXT( 1)==EXT((NT) 1,(NT)0,(ROOT)7));
+    assert(EXT(-1)==EXT((NT)-1,(NT)0,(ROOT)7));
+    assert(EXT( 7)==EXT((NT) 7,(NT)0,(ROOT)7));
+    assert(EXT(-7)==EXT((NT)-7,(NT)0,(ROOT)7));
+    assert(EXT( 1)+EXT(-1)==EXT());
+    assert(EXT(1).is_extended()==false);
     // from NT
-    CGAL_test_assert(EXT((NT) 1)==EXT((NT) 1,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT((NT)-1)==EXT((NT)-1,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT((NT) 7)==EXT((NT) 7,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT((NT)-7)==EXT((NT)-7,(NT)0,(ROOT)7));
-    CGAL_test_assert(EXT((NT) 1)+EXT((NT)-1)==EXT());
-    CGAL_test_assert(EXT((NT)1).is_extended()==false);
+    assert(EXT((NT) 1)==EXT((NT) 1,(NT)0,(ROOT)7));
+    assert(EXT((NT)-1)==EXT((NT)-1,(NT)0,(ROOT)7));
+    assert(EXT((NT) 7)==EXT((NT) 7,(NT)0,(ROOT)7));
+    assert(EXT((NT)-7)==EXT((NT)-7,(NT)0,(ROOT)7));
+    assert(EXT((NT) 1)+EXT((NT)-1)==EXT());
+    assert(EXT((NT)1).is_extended()==false);
     // general constructor 
     const EXT x(NT(3),NT(4),ROOT(17));
-    CGAL_test_assert(x.a0()==NT(3));
-    CGAL_test_assert(x.a1()==NT(4));
-    CGAL_test_assert(x.root()==ROOT(17));
-    CGAL_test_assert(x.is_extended()==true);
+    assert(x.a0()==NT(3));
+    assert(x.a1()==NT(4));
+    assert(x.root()==ROOT(17));
+    assert(x.is_extended()==true);
 }
 
 template <class EXT> 
@@ -68,46 +68,46 @@ void other_functions_test(){
     typedef typename EXT::ROOT ROOT;
 
     // is_zero
-    CGAL_test_assert( EXT(NT( 0),NT( 0),ROOT(17)).is_zero());
-    CGAL_test_assert(!EXT(NT( 3),NT( 0),ROOT(17)).is_zero());
-    CGAL_test_assert(!EXT(NT(-3),NT( 0),ROOT(17)).is_zero());
-    CGAL_test_assert(!EXT(NT( 0),NT( 3),ROOT(17)).is_zero());
-    CGAL_test_assert(!EXT(NT( 0),NT(-3),ROOT(17)).is_zero());
-    CGAL_test_assert(!EXT(NT(-3),NT(-3),ROOT(17)).is_zero());
-    CGAL_test_assert( EXT(NT( 0)).is_zero());
-    CGAL_test_assert(!EXT(NT(-5)).is_zero());
-    CGAL_test_assert(!EXT(NT( 5)).is_zero());
-    CGAL_test_assert( EXT(NT( 0),NT( 0),ROOT(4)).is_zero());
-    CGAL_test_assert(!EXT(NT( 6),NT( 3),ROOT(4)).is_zero());
-    CGAL_test_assert( EXT(NT( 6),NT(-3),ROOT(4)).is_zero());
+    assert( EXT(NT( 0),NT( 0),ROOT(17)).is_zero());
+    assert(!EXT(NT( 3),NT( 0),ROOT(17)).is_zero());
+    assert(!EXT(NT(-3),NT( 0),ROOT(17)).is_zero());
+    assert(!EXT(NT( 0),NT( 3),ROOT(17)).is_zero());
+    assert(!EXT(NT( 0),NT(-3),ROOT(17)).is_zero());
+    assert(!EXT(NT(-3),NT(-3),ROOT(17)).is_zero());
+    assert( EXT(NT( 0)).is_zero());
+    assert(!EXT(NT(-5)).is_zero());
+    assert(!EXT(NT( 5)).is_zero());
+    assert( EXT(NT( 0),NT( 0),ROOT(4)).is_zero());
+    assert(!EXT(NT( 6),NT( 3),ROOT(4)).is_zero());
+    assert( EXT(NT( 6),NT(-3),ROOT(4)).is_zero());
   
     // abs 
     {
         EXT x  = EXT(NT(-3),NT(-3),ROOT(17));
         EXT ax = EXT(NT( 3),NT( 3),ROOT(17));
-        CGAL_test_assert(x.abs() == ax);    
+        assert(x.abs() == ax);    
     }{
         EXT x  = EXT(NT( 3),NT(-3),ROOT(17));
         EXT ax = EXT(NT(-3),NT( 3),ROOT(17));
-        CGAL_test_assert(x.abs() == ax);        
+        assert(x.abs() == ax);        
     }{
         EXT x  = EXT(NT(-3),NT( 3),ROOT(17));
         EXT ax = EXT(NT(-3),NT( 3),ROOT(17));
-        CGAL_test_assert(x.abs() == ax);        
+        assert(x.abs() == ax);        
     }{
         EXT x  = EXT(NT( 3),NT( 3),ROOT(17));
         EXT ax = EXT(NT( 3),NT( 3),ROOT(17));
-        CGAL_test_assert(x.abs() == ax);        
+        assert(x.abs() == ax);        
     }
     // division / integral division in case root is a square
     {
         EXT x(4,6,4);
         EXT y(2,1,4);
-        CGAL_test_assert(x/y ==EXT(4));
+        assert(x/y ==EXT(4));
     }{
         EXT x(4);
         EXT y(2,1,4);
-        CGAL_test_assert(x/y ==EXT(1));
+        assert(x/y ==EXT(1));
     }
 }
 
@@ -124,13 +124,13 @@ void modular_traits_test(){
     {
         EXT a1(13,-10,4);
         EXT_MOD a1_mod= modular_image(a1);
-        CGAL_test_assert(a1_mod==EXT_MOD(6,4,4));    
-        CGAL_test_assert(a1_mod.is_zero()); 
+        assert(a1_mod==EXT_MOD(6,4,4));    
+        assert(a1_mod.is_zero()); 
     }{
         EXT a1(13);
         EXT_MOD a1_mod= modular_image(a1);
-        CGAL_test_assert(a1_mod==EXT_MOD(6));    
-        CGAL_test_assert(!a1_mod.is_extended());  
+        assert(a1_mod==EXT_MOD(6));    
+        assert(!a1_mod.is_extended());  
     }
 }*/
 
@@ -159,26 +159,26 @@ void is_exact_test(){
     {
         typedef CGAL::Sqrt_extension<int,int> NT;
             
-        CGAL_test_assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
+        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
                   CGAL::Tag_true >::value));
             
     }
     {
         typedef CGAL::Sqrt_extension<int,double > NT;
             
-        CGAL_test_assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
+        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
                   CGAL::Tag_false >::value));
     }
     {
         typedef CGAL::Sqrt_extension<double,int > NT;
             
-        CGAL_test_assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
+        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
                   CGAL::Tag_false >::value));
     }
     {
         typedef CGAL::Sqrt_extension<double,double> NT;
             
-        CGAL_test_assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
+        assert((boost::is_same< CGAL::Algebraic_structure_traits< NT >::Is_exact, 
                   CGAL::Tag_false >::value));
     }
 }
@@ -192,13 +192,13 @@ void convert_to_real(){
         REAL real= REAL(3)+REAL(5)*CGAL_NTS sqrt(REAL(17));
         REAL tmp;
         CGAL::convert_to(ext,tmp);
-        CGAL_test_assert(tmp==real);
+        assert(tmp==real);
     }{
         EXT1 ext((NT)3);
         REAL real= REAL(3);
         REAL tmp;
         CGAL::convert_to(ext,tmp);
-        CGAL_test_assert(tmp==real);
+        assert(tmp==real);
     }
     
 }
@@ -212,7 +212,7 @@ void convert_to_polynomial(){
     POLY p(ext);
     POLY tmp;
     CGAL::convert_to(ext,tmp);
-    CGAL_test_assert(tmp==p);
+    assert(tmp==p);
 }*/
 
 template < class AT> 
@@ -225,94 +225,94 @@ void sqrt_ext_pretty_output_test(){
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(-1,0,2);
-        CGAL_test_assert( ss.str()=="-1"); 
+        assert( ss.str()=="-1"); 
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(0,0,2);
-        CGAL_test_assert( ss.str() == "0");
+        assert( ss.str() == "0");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(1,0,2);
-        CGAL_test_assert( ss.str() == "1");
+        assert( ss.str() == "1");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(1,2,2);
-        CGAL_test_assert( ss.str() == "1+2*sqrt(2)");
+        assert( ss.str() == "1+2*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(1,-2,2);
-        CGAL_test_assert( ss.str() == "1+(-2)*sqrt(2)");
+        assert( ss.str() == "1+(-2)*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(-1,2,2);
-        CGAL_test_assert( ss.str() == "-1+2*sqrt(2)");
+        assert( ss.str() == "-1+2*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(-1,-2,2);
-        CGAL_test_assert( ss.str() == "-1+(-2)*sqrt(2)");
+        assert( ss.str() == "-1+(-2)*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(0,2,2);
-        CGAL_test_assert( ss.str()=="2*sqrt(2)");
+        assert( ss.str()=="2*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << EXT1(0,-2,2);
-        CGAL_test_assert( ss.str()=="(-2)*sqrt(2)");
+        assert( ss.str()=="(-2)*sqrt(2)");
     }
 // TEST with Parens_as_product_tag
     {
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(-1,0,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str()=="(-1)"); 
+        assert( ss.str()=="(-1)"); 
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(0,0,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "0");
+        assert( ss.str() == "0");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(1,0,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "1");
+        assert( ss.str() == "1");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(1,2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "(1+2*sqrt(2))");
+        assert( ss.str() == "(1+2*sqrt(2))");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(1,-2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "(1+(-2)*sqrt(2))");
+        assert( ss.str() == "(1+(-2)*sqrt(2))");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(-1,2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "(-1+2*sqrt(2))");
+        assert( ss.str() == "(-1+2*sqrt(2))");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(-1,-2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str() == "(-1+(-2)*sqrt(2))");
+        assert( ss.str() == "(-1+(-2)*sqrt(2))");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(0,2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str()=="2*sqrt(2)");
+        assert( ss.str()=="2*sqrt(2)");
     }{
         std::stringstream ss;
         CGAL::set_pretty_mode(ss);
         ss << oformat(EXT1(0,-2,2),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( ss.str()=="(-2)*sqrt(2)");
+        assert( ss.str()=="(-2)*sqrt(2)");
     }
 }
 
@@ -332,16 +332,16 @@ void to_double_test(){
     ROOT root(4);
     EXT ext(a0,a1,root);
 
-    CGAL_test_assert(to_double(ext)==5.0);
-    CGAL_test_assert(to_interval(ext)==CGAL_NTS to_interval(5.0) );
+    assert(to_double(ext)==5.0);
+    assert(to_interval(ext)==CGAL_NTS to_interval(5.0) );
     }{
     NT a0(1);
     NT a1(-2);
     ROOT root(4);
     EXT ext(a0,a1,root);
 
-    CGAL_test_assert(to_double(ext)==-3.0);
-    CGAL_test_assert(to_interval(ext)==CGAL_NTS to_interval(-3.0) );
+    assert(to_double(ext)==-3.0);
+    assert(to_interval(ext)==CGAL_NTS to_interval(-3.0) );
     }
 }
 template <class NT, class ROOT, class Algebraic_type>
@@ -413,43 +413,43 @@ void fraction_traits_test(){
     typedef CGAL::Fraction_traits<INT3_EXT> INT_FT3;
         
     // RAT_FTs decomposable
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Is_fraction, 
+    assert((boost::is_same< typename RAT_FT1::Is_fraction, 
               CGAL::Tag_true>::value)); 
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Is_fraction, 
+    assert((boost::is_same< typename RAT_FT2::Is_fraction, 
               CGAL::Tag_true>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Is_fraction, 
+    assert((boost::is_same< typename RAT_FT3::Is_fraction, 
               CGAL::Tag_true>::value));  
     // RAT_FTi Numerator_type == INTi_EXT
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Numerator_type, 
+    assert((boost::is_same< typename RAT_FT1::Numerator_type, 
               INT1_EXT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Numerator_type, 
+    assert((boost::is_same< typename RAT_FT2::Numerator_type, 
               INT2_EXT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Numerator_type, 
+    assert((boost::is_same< typename RAT_FT3::Numerator_type, 
                INT3_EXT>::value));
     // RAT_FTi Denomiantor == INT
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Denominator_type, 
+    assert((boost::is_same< typename RAT_FT1::Denominator_type, 
               INT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Denominator_type, 
+    assert((boost::is_same< typename RAT_FT2::Denominator_type, 
               INT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Denominator_type, 
+    assert((boost::is_same< typename RAT_FT3::Denominator_type, 
               INT>::value));
  
     // INT_FTs not decomposable 
-    CGAL_test_assert((boost::is_same< typename INT_FT1::Is_fraction, 
+    assert((boost::is_same< typename INT_FT1::Is_fraction, 
               CGAL::Tag_false>::value));  
-    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_fraction, 
+    assert((boost::is_same< typename INT_FT2::Is_fraction, 
               CGAL::Tag_false>::value));    
-    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_fraction, 
+    assert((boost::is_same< typename INT_FT2::Is_fraction, 
               CGAL::Tag_false>::value)); 
     {
         typedef CGAL::Sqrt_extension<RAT,RAT>   RAT_RAT_EXT;
         typedef CGAL::Fraction_traits<RAT_RAT_EXT> RAT_RAT_FT;
-        CGAL_test_assert((boost::is_same< typename RAT_RAT_FT::Is_fraction, 
+        assert((boost::is_same< typename RAT_RAT_FT::Is_fraction, 
                   CGAL::Tag_false>::value));  
     }{
         typedef CGAL::Sqrt_extension<INT1_EXT,INT1_EXT> INT_nEXT; 
         typedef CGAL::Fraction_traits<INT_nEXT> INT_nEXT_FT;
-        CGAL_test_assert((boost::is_same< typename INT_nEXT_FT::Is_fraction, 
+        assert((boost::is_same< typename INT_nEXT_FT::Is_fraction, 
                   CGAL::Tag_false>::value));     
     } 
   
@@ -460,16 +460,16 @@ void fraction_traits_test(){
         typename RAT_FT1::Numerator_type  num;
         typename RAT_FT1::Denominator_type den;
         decompose(a,num,den);
-        CGAL_test_assert(num==typename RAT_FT1::Numerator_type(INT(9),INT(8),INT(5)));
-        CGAL_test_assert(den==typename RAT_FT1::Denominator_type(INT(30)));
+        assert(num==typename RAT_FT1::Numerator_type(INT(9),INT(8),INT(5)));
+        assert(den==typename RAT_FT1::Denominator_type(INT(30)));
         typename RAT_FT1::Compose compose;
-        CGAL_test_assert(a==compose(num,den));
+        assert(a==compose(num,den));
         {
             RAT1_EXT a(RAT(3)/RAT(10));
             decompose(a,num,den);
-            CGAL_test_assert(num==typename RAT_FT1::Numerator_type(INT(3)));
-            CGAL_test_assert(den==typename RAT_FT1::Denominator_type(INT(10)));
-            CGAL_test_assert(!num.is_extended());
+            assert(num==typename RAT_FT1::Numerator_type(INT(3)));
+            assert(den==typename RAT_FT1::Denominator_type(INT(10)));
+            assert(!num.is_extended());
         }
     }
     {
@@ -481,12 +481,12 @@ void fraction_traits_test(){
         typename RAT_FT2::Numerator_type   num;
         typename RAT_FT2::Denominator_type den;
         decompose(a,num,den);
-        CGAL_test_assert(num==INT2_EXT(INT1_EXT(INT(63),INT(56),INT(5)),
+        assert(num==INT2_EXT(INT1_EXT(INT(63),INT(56),INT(5)),
                                INT1_EXT(INT(490),INT(150),INT(5)),
                                INT(7)));
-        CGAL_test_assert(den==typename RAT_FT2::Denominator_type(INT(210)));
+        assert(den==typename RAT_FT2::Denominator_type(INT(210)));
         typename RAT_FT2::Compose compose;
-        CGAL_test_assert(a==compose(num,den));
+        assert(a==compose(num,den));
     }    
     
 
@@ -509,16 +509,16 @@ void scalar_factor_traits_test(){
             typename SFT::Scalar_factor sfac;            
             typename SFT::Scalar_div    sdiv;
 
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (boost::is_same<Scalar, Integer>::value) );
             
-            CGAL_test_assert((sfac(EXT1(0)))==Integer(0));
-            CGAL_test_assert((sfac(EXT1(3)))==Integer(3));
-            CGAL_test_assert((sfac(EXT1(0,3,2)))==Integer(3));
-            CGAL_test_assert((sfac(EXT1(6,9,2)))==Integer(3));
+            assert((sfac(EXT1(0)))==Integer(0));
+            assert((sfac(EXT1(3)))==Integer(3));
+            assert((sfac(EXT1(0,3,2)))==Integer(3));
+            assert((sfac(EXT1(6,9,2)))==Integer(3));
             EXT1 tmp;
-            tmp = EXT1(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(1));
-            tmp = EXT1(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(0,1,2));
-            tmp = EXT1(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT1(2,3,2));
+            tmp = EXT1(3); sdiv(tmp,sfac(tmp));  assert(tmp==EXT1(1));
+            tmp = EXT1(0,3,2); sdiv(tmp,sfac(tmp));  assert(tmp==EXT1(0,1,2));
+            tmp = EXT1(6,9,2); sdiv(tmp,sfac(tmp));  assert(tmp==EXT1(2,3,2));
         }
         {
             typedef CGAL::Scalar_factor_traits<EXT2> SFT;
@@ -526,28 +526,28 @@ void scalar_factor_traits_test(){
             typename SFT::Scalar_factor sfac;            
             typename SFT::Scalar_div    sdiv;
 
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (boost::is_same<Scalar, Integer>::value) );
             
-            CGAL_test_assert((sfac(EXT2(0)))==Integer(0));
-            CGAL_test_assert((sfac(EXT2(3)))==Integer(3));
-            CGAL_test_assert((sfac(EXT2(EXT1(0),EXT1(3),2)))==Integer(3));
-            CGAL_test_assert((sfac(EXT2(EXT1(6),EXT1(9),2)))==Integer(3));
+            assert((sfac(EXT2(0)))==Integer(0));
+            assert((sfac(EXT2(3)))==Integer(3));
+            assert((sfac(EXT2(EXT1(0),EXT1(3),2)))==Integer(3));
+            assert((sfac(EXT2(EXT1(6),EXT1(9),2)))==Integer(3));
             EXT2 tmp;
-            tmp = EXT2(3); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(1));
-            tmp = EXT2(0,3,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(0,1,2));
-            tmp = EXT2(6,9,2); sdiv(tmp,sfac(tmp));  CGAL_test_assert(tmp==EXT2(2,3,2));    
+            tmp = EXT2(3); sdiv(tmp,sfac(tmp));  assert(tmp==EXT2(1));
+            tmp = EXT2(0,3,2); sdiv(tmp,sfac(tmp));  assert(tmp==EXT2(0,1,2));
+            tmp = EXT2(6,9,2); sdiv(tmp,sfac(tmp));  assert(tmp==EXT2(2,3,2));    
         }
         {
             typedef CGAL::Scalar_factor_traits<EXT1> SFT;
             typedef typename SFT::Scalar Scalar;
             typename SFT::Scalar_factor sfac;      
   
-            CGAL_test_assert( (boost::is_same<Scalar, Integer>::value) );
+            assert( (boost::is_same<Scalar, Integer>::value) );
   
-            CGAL_test_assert((sfac(EXT1(0)))                 ==Integer(0));
-            CGAL_test_assert((sfac(EXT1(9),Integer(15)))     ==Integer(3));
-            CGAL_test_assert((sfac(EXT1(0,9,2),Integer(15))) ==Integer(3));
-            CGAL_test_assert((sfac(EXT1(18,9,2),Integer(15)))==Integer(3));
+            assert((sfac(EXT1(0)))                 ==Integer(0));
+            assert((sfac(EXT1(9),Integer(15)))     ==Integer(3));
+            assert((sfac(EXT1(0,9,2),Integer(15))) ==Integer(3));
+            assert((sfac(EXT1(18,9,2),Integer(15)))==Integer(3));
         }
     }
 }
@@ -572,15 +572,15 @@ void test_algebraic_extension_traits(){
         INT1_EXT a(INT(3),INT(5),INT(7));
         typename INT1_EXT_ANT::Normalization_factor normalization_factor;
         INT1_EXT r=normalization_factor(a);
-        CGAL_test_assert(r.a0()    ==INT( 3));
-        CGAL_test_assert(r.a1()    ==INT(-5));
-        CGAL_test_assert(r.root()  ==INT( 7));
-        CGAL_test_assert((r*a).a1()==INT( 0));
+        assert(r.a0()    ==INT( 3));
+        assert(r.a1()    ==INT(-5));
+        assert(r.root()  ==INT( 7));
+        assert((r*a).a1()==INT( 0));
     }{
         RAT1_EXT a(RAT(3)/RAT(5),RAT(5)/RAT(11),INT(7));
         typename RAT1_EXT_ANT::Normalization_factor normalization_factor;
         RAT1_EXT r=normalization_factor(a);
-        CGAL_test_assert((r*a).a1()==RAT( 0));
+        assert((r*a).a1()==RAT( 0));
     }{
         INT1_EXT a0(4,3,7);
         INT1_EXT a1(8,9,7);
@@ -589,8 +589,8 @@ void test_algebraic_extension_traits(){
         typename INT2_EXT_ANT::Normalization_factor normalization_factor;
         INT2_EXT r=normalization_factor(a);
         
-        CGAL_test_assert((r*a).a1()==INT1_EXT(0));
-        CGAL_test_assert((r*a).a0().a1()==INT(0));
+        assert((r*a).a1()==INT1_EXT(0));
+        assert((r*a).a0().a1()==INT(0));
     }{
         RAT1_EXT a0(4,3,7);
         RAT1_EXT a1(8,9,7);
@@ -598,16 +598,16 @@ void test_algebraic_extension_traits(){
         RAT2_EXT a(a0,a1,root);
         typename RAT2_EXT_ANT::Normalization_factor normalization_factor;
         RAT2_EXT r=normalization_factor(a);
-        CGAL_test_assert((r*a).a1()==   RAT1_EXT(0));
-        CGAL_test_assert((r*a).a0().a1()==RAT(0));
+        assert((r*a).a1()==   RAT1_EXT(0));
+        assert((r*a).a0().a1()==RAT(0));
     }{
        INT1_EXT a(INT(3));
        typename INT1_EXT_ANT::Normalization_factor normalization_factor;
        INT1_EXT r=normalization_factor(a);
-       CGAL_test_assert(r.a0()    ==INT(1));
-       CGAL_test_assert(r.a1()    ==INT(0));
-       CGAL_test_assert(r.root()  ==INT(0));
-       CGAL_test_assert(!(r*a).is_extended()); 
+       assert(r.a0()    ==INT(1));
+       assert(r.a1()    ==INT(0));
+       assert(r.root()  ==INT(0));
+       assert(!(r*a).is_extended()); 
     }
 
     // denomiantor for algebraic integers
@@ -617,7 +617,7 @@ void test_algebraic_extension_traits(){
         typedef CGAL::Algebraic_extension_traits<Extn_1> ANT;
         typename ANT::Denominator_for_algebraic_integers dfai;
         Extn_1 ext(1,2,5);
-        CGAL_test_assert(dfai(ext)==Extn_1(20));
+        assert(dfai(ext)==Extn_1(20));
     }{
         typedef typename AT::Integer  Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer> Extn_1;
@@ -629,14 +629,14 @@ void test_algebraic_extension_traits(){
             Extn_1 a1(2);
             Integer root(5);
             Extn_2 ext(a0,a1,root);
-            CGAL_test_assert(dfai(ext)==Extn_2(20));
+            assert(dfai(ext)==Extn_2(20));
             
         }{
             Extn_1 a0(1,2,5);
             Extn_1 a1(2,3,5);
             Integer root(7);
             Extn_2 ext(a0,a1,root);
-            CGAL_test_assert(dfai(ext)==Extn_2(20 *28));
+            assert(dfai(ext)==Extn_2(20 *28));
         }
     }{
         typedef typename AT::Integer  Integer;
@@ -649,31 +649,31 @@ void test_algebraic_extension_traits(){
             Extn_1 a1(2);
             Extn_1 root(5);
             Extn_2 ext(a0,a1,root);
-            CGAL_test_assert(dfai(ext)==Extn_2(20));
+            assert(dfai(ext)==Extn_2(20));
             
         }{
             Extn_1 a0(1,2,5);
             Extn_1 a1(2,3,5);
             Extn_1 root(7);
             Extn_2 ext(a0,a1,root);
-            CGAL_test_assert(dfai(ext)==Extn_2(20 *28));
+            assert(dfai(ext)==Extn_2(20 *28));
         }{
             Extn_1 a0(1,2,5);
             Extn_1 a1(2,3,5);
             Extn_1 root(4,5,5);
             Extn_2 ext(a0,a1,root);
-            CGAL_test_assert(dfai(ext)==Extn_2(20)*Extn_2(4)*Extn_2(Extn_1(4,5,5)));
+            assert(dfai(ext)==Extn_2(20)*Extn_2(4)*Extn_2(Extn_1(4,5,5)));
         }
         {
             
             std::vector<Extn_2> vec;
             Extn_1 root(Extn_1(2,3,5));
             vec.push_back(Extn_2(0));
-            CGAL_test_assert(dfai(vec.begin(),vec.end())== Extn_2(1));
+            assert(dfai(vec.begin(),vec.end())== Extn_2(1));
             vec.push_back(Extn_2(root));
-            CGAL_test_assert(dfai(vec.begin(),vec.end())== Extn_2(20));
+            assert(dfai(vec.begin(),vec.end())== Extn_2(20));
             vec.push_back(Extn_2(Extn_1(1),Extn_1(3),root));
-            CGAL_test_assert(dfai(vec.begin(),vec.end())== Extn_2(20)*Extn_2(root)*Extn_2(4));
+            assert(dfai(vec.begin(),vec.end())== Extn_2(20)*Extn_2(root)*Extn_2(4));
         }
         
     }

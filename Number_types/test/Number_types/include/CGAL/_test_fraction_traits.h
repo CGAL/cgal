@@ -13,7 +13,7 @@
 // within this file FT ^= Fraction_traits<T>
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/to_rational.h>
 
 #ifndef CGAL_TEST_FRACTION_TRAITS_H
@@ -45,20 +45,20 @@ void test_fraction_traits(){
     Num num; 
     Den den;
     Decompose()(frac,num,den);
-    CGAL_test_assert(num == Num(7));
-    CGAL_test_assert(den == Num(5));
-    CGAL_test_assert(frac == Compose()(num,den));
+    assert(num == Num(7));
+    assert(den == Num(5));
+    assert(frac == Compose()(num,den));
     
     // almost the same as gcd 
     Common_factor common_factor;
-    CGAL_test_assert(common_factor(Den(0),Den(0)) == Den(0));
-    CGAL_test_assert(common_factor(Den(1),Den(0)) == Den(1));
-    CGAL_test_assert(common_factor(Den(-2),Den(0)) == Den(2));
-    CGAL_test_assert(common_factor(Den(0),Den(-2)) == Den(2));
-    CGAL_test_assert(common_factor(Den(12),Den(15)) == Den(3));
-    CGAL_test_assert(common_factor(Den(-12),Den(15)) == Den(3));
-    CGAL_test_assert(common_factor(Den(12),Den(-15)) == Den(3));
-    CGAL_test_assert(common_factor(Den(-12),Den(-15)) == Den(3));    
+    assert(common_factor(Den(0),Den(0)) == Den(0));
+    assert(common_factor(Den(1),Den(0)) == Den(1));
+    assert(common_factor(Den(-2),Den(0)) == Den(2));
+    assert(common_factor(Den(0),Den(-2)) == Den(2));
+    assert(common_factor(Den(12),Den(15)) == Den(3));
+    assert(common_factor(Den(-12),Den(15)) == Den(3));
+    assert(common_factor(Den(12),Den(-15)) == Den(3));
+    assert(common_factor(Den(-12),Den(-15)) == Den(3));    
 }
 
 CGAL_END_NAMESPACE

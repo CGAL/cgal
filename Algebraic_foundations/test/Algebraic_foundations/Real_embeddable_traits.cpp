@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 #define CGAL_IS_RET_NULL_FUNCTOR(NAME)                                  \

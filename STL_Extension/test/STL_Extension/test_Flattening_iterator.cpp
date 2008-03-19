@@ -10,7 +10,7 @@
 // author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
 
 #include <CGAL/Flattening_iterator.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <vector>
 #include <functional>
 
@@ -44,27 +44,27 @@ void test_const_flattening() {
     fi10 = CGAL::recursive_const_flattener<0>( a1.end(),a1.begin() );
     fi10_beyond = CGAL::recursive_const_flattener<0>( a1.end(),a1.end() );
     for (i = 1; i <= 4; ++i, ++fi10) {
-        CGAL_test_assert(*fi10 == i);
+        assert(*fi10 == i);
     }
-    CGAL_test_assert(fi10 == fi10_beyond);
+    assert(fi10 == fi10_beyond);
 
     CGAL::Recursive_const_flattening<1, V2::const_iterator>
         ::Recursive_flattening_iterator fi21, fi21_beyond;
     fi21= CGAL::recursive_const_flattener<1>(const_cast<const V2&>(b1).end(), const_cast<const V2&>(b1).begin());
     fi21_beyond = CGAL::const_flattener(const_cast<const V2&>(b1).end(), const_cast<const V2&>(b1).end());
     for (i = 1; i <= 7; ++i, ++fi21) {
-        CGAL_test_assert(*fi21 == i);
+        assert(*fi21 == i);
     }
-    CGAL_test_assert(fi21 == fi21_beyond);
+    assert(fi21 == fi21_beyond);
 
     CGAL::Recursive_const_flattening<2, V3::iterator>
         ::Recursive_flattening_iterator fi32, fi32_beyond;
     fi32 = CGAL::recursive_const_flattener<2>(c.end(),c.begin());
     fi32_beyond = CGAL::recursive_const_flattener<2>(c.end(),c.end());
     for (i = 1; i <= 17; ++i, ++fi32) {
-        CGAL_test_assert(*fi32 == i);
+        assert(*fi32 == i);
     }
-    CGAL_test_assert(fi32 == fi32_beyond);
+    assert(fi32 == fi32_beyond);
 }
 
 int main() {

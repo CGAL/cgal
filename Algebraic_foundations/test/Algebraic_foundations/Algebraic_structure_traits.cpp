@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 #define CGAL_IS_AST_NULL_FUNCTOR(NAME)                                  \

@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 typedef CGAL::Homogeneous_d<CGAL::MP_Float>  Kernel;
 typedef Kernel::Point_d                      Point;
@@ -70,14 +70,14 @@ int main() {
 
   Construct_iso_box_d construct_iso_box_d = Kernel().construct_iso_box_d_object();
   Box b6 = construct_iso_box_d(pp5, qq5);
-  CGAL_test_assert(b5 == b6);
+  assert(b5 == b6);
 
-  CGAL_test_assert(b1==b3);
-  CGAL_test_assert(b1!=b4);
-  CGAL_test_assert(b3!=b4);
-  CGAL_test_assert( !(b1.is_degenerate()));
-  CGAL_test_assert( b5.is_degenerate());
-  CGAL_test_assert(b1.dimension()==4);
+  assert(b1==b3);
+  assert(b1!=b4);
+  assert(b3!=b4);
+  assert( !(b1.is_degenerate()));
+  assert( b5.is_degenerate());
+  assert(b1.dimension()==4);
   std::cout << "b1.min_coord(0)=" << b1.min_coord(0) << std::endl;
   std::cout << "b1.max_coord(0)=" << b1.max_coord(0) << std::endl;
   std::cout << "b1.min_coord(1)=" << b1.min_coord(1) << std::endl;
@@ -86,14 +86,14 @@ int main() {
   std::cout << "b1.max_coord(2)=" << b1.max_coord(2) << std::endl;
   std::cout << "b1.min_coord(3)=" << b1.min_coord(3) << std::endl;
   std::cout << "b1.max_coord(3)=" << b1.max_coord(3) << std::endl;
-  CGAL_test_assert(b1.has_on_boundary(pp1));
-  CGAL_test_assert(b1.has_on_boundary(qq1));
-  CGAL_test_assert(b1.has_on_unbounded_side(qq4));
-  CGAL_test_assert(b1.has_on_bounded_side(mm1));
-  CGAL_test_assert(b1.bounded_side(pp1)==CGAL::ON_BOUNDARY);
-  CGAL_test_assert(b1.bounded_side(qq1)==CGAL::ON_BOUNDARY);
-  CGAL_test_assert(b1.bounded_side(qq4)==CGAL::ON_UNBOUNDED_SIDE);
-  CGAL_test_assert(b1.bounded_side(mm1)==CGAL::ON_BOUNDED_SIDE);
+  assert(b1.has_on_boundary(pp1));
+  assert(b1.has_on_boundary(qq1));
+  assert(b1.has_on_unbounded_side(qq4));
+  assert(b1.has_on_bounded_side(mm1));
+  assert(b1.bounded_side(pp1)==CGAL::ON_BOUNDARY);
+  assert(b1.bounded_side(qq1)==CGAL::ON_BOUNDARY);
+  assert(b1.bounded_side(qq4)==CGAL::ON_UNBOUNDED_SIDE);
+  assert(b1.bounded_side(mm1)==CGAL::ON_BOUNDED_SIDE);
   // std::cout << "b1.min()=" << b1.min() << std::endl;
   // std::cout << "b1.max()=" << b1.max() << std::endl;
   std::cout << "volume of b1=" << b1.volume() << std::endl;

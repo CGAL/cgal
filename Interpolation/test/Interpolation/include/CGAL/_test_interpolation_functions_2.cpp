@@ -18,7 +18,7 @@
 // Author(s)     : Julia Floetotto
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <utility>
 
 #include <CGAL/double.h>
@@ -144,38 +144,38 @@ bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
 			::value_type::second_type& tolerance)
 {
   typedef typename Functor::result_type::first_type Value_type;
-  CGAL_test_assert(f(p).second);
+  assert(f(p).second);
   Value_type exact_value = f(p).first;
 
   if(i==0){
     Value_type val =  CGAL::linear_interpolation(first, beyond, norm,f);
-    CGAL_test_assert(CGAL_NTS abs(val-exact_value)<= tolerance);
+    assert(CGAL_NTS abs(val-exact_value)<= tolerance);
   }
 
   typename Functor::result_type
     res =  CGAL::quadratic_interpolation(first, beyond, norm,p,f,
 					 grad_f, geom_traits);
-  CGAL_test_assert(res.second && (CGAL_NTS abs(res.first-exact_value)<=tolerance));
+  assert(res.second && (CGAL_NTS abs(res.first-exact_value)<=tolerance));
 
   if(i<2){
     //without sqrt:
     res =  CGAL::sibson_c1_interpolation_square(first, beyond,
 						norm,p,f,
 						grad_f, geom_traits);
-    CGAL_test_assert(res.second && (CGAL_NTS abs(res.first-exact_value)<= tolerance));
+    assert(res.second && (CGAL_NTS abs(res.first-exact_value)<= tolerance));
 
     //with sqrt:
     typedef CGAL::Algebraic_structure_traits<Value_type> AST;
     
-    CGAL_test_assert(_test_sibson_c1_interpolation_sqrt(
+    assert(_test_sibson_c1_interpolation_sqrt(
                    first, beyond, norm,p,f, grad_f, 
                    geom_traits, tolerance, exact_value,
                    typename AST::Algebraic_category()));
   }
   res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f,
 				      geom_traits);
-  CGAL_test_assert(res.second);
-  CGAL_test_assert(CGAL_NTS abs(res.first-exact_value)<= tolerance);
+  assert(res.second);
+  assert(CGAL_NTS abs(res.first-exact_value)<= tolerance);
   return true;
 }
 
@@ -281,16 +281,16 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
       Coord_type, bool> coordinate_result =
       CGAL::natural_neighbor_coordinates_2(T, points[j],
 					   std::back_inserter(coords));
-    CGAL_test_assert(coordinate_result.third);
+    assert(coordinate_result.third);
     norm = coordinate_result.second;
 
-    CGAL_test_assert(norm>0);
-    CGAL_test_assert(test_norm( coords.begin(), coords.end(),norm));
-    CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm,
+    assert(norm>0);
+    assert(test_norm( coords.begin(), coords.end(),norm));
+    assert(test_barycenter( coords.begin(), coords.end(),norm,
 			    points[j], tolerance));
 
     for(int i=0; i<3; i++)
-      CGAL_test_assert(test_interpolation(coords.begin(), coords.end(),norm,points[j],
+      assert(test_interpolation(coords.begin(), coords.end(),norm,points[j],
        				CGAL::Data_access< Point_value_map >
 				(values[i]),
        				CGAL::Data_access< Point_vector_map >
@@ -319,20 +319,20 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
     if(res.second){
 
       //if it is the exact computation kernel: test the equality:
-      CGAL_test_assert(tolerance > Coord_type(0) || res.first ==
+      assert(tolerance > Coord_type(0) || res.first ==
 	     CGAL::Data_access<Point_vector_map>(gradients[0])
 	     (points[j]).first);
       res =
 	CGAL::Data_access<Point_vector_map>(approx_gradients[1])(points[j]);
       //if one exists->the other must also exist
-      CGAL_test_assert(res.second);
+      assert(res.second);
 
 
-      CGAL_test_assert(tolerance > Coord_type(0) || res.first ==
+      assert(tolerance > Coord_type(0) || res.first ==
 	     CGAL::Data_access<Point_vector_map>(gradients[1])
 	     (points[j]).first);
     }else
-      CGAL_test_assert(!CGAL::Data_access<Point_vector_map>(approx_gradients[1])
+      assert(!CGAL::Data_access<Point_vector_map>(approx_gradients[1])
 	     (points[j]).second);
   }
 
@@ -343,17 +343,17 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
     Coord_type, bool> coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T,points[n/2],std::back_inserter
 					 (coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
   typename std::vector< std::pair< Point, Coord_type > >::iterator
     ci= coords.begin();
-  CGAL_test_assert(ci->first == points[n/2]);
-  CGAL_test_assert(ci->second == Coord_type(1));
+  assert(ci->first == points[n/2]);
+  assert(ci->second == Coord_type(1));
   ci++;
-  CGAL_test_assert(ci==coords.end());
+  assert(ci==coords.end());
   for(int j=0; j<3; j++) {
-    CGAL_test_assert(test_interpolation(coords.begin(), coords.end(),norm,points[n/2],
+    assert(test_interpolation(coords.begin(), coords.end(),norm,points[n/2],
 			      CGAL::Data_access< Point_value_map >(values[j]),
 			      CGAL::Data_access< Point_vector_map >
 			      (gradients[j]),
@@ -367,17 +367,17 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   int i =0;
   if(T.is_infinite(fh->neighbor(i)))
     i++;
-  CGAL_test_assert(!T.is_infinite(fh->neighbor(i)));
+  assert(!T.is_infinite(fh->neighbor(i)));
   Point p = fh->vertex(T.ccw(i))->point() + Coord_type(0.5)*
     (fh->vertex(T.cw(i))->point()-fh->vertex(T.ccw(i))->point());
 
   coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T, p,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm =  coordinate_result.second;
-  CGAL_test_assert(test_norm( coords.begin(), coords.end(),norm));
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm,p, tolerance));
+  assert(test_norm( coords.begin(), coords.end(),norm));
+  assert(test_barycenter( coords.begin(), coords.end(),norm,p, tolerance));
   coords.clear();
   //END OF TEST WITH EDGE
 
@@ -407,13 +407,13 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,Point(0,0),
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
   ci= coords.begin();
   for(; ci!= coords.end(); ci++)
-    CGAL_test_assert(ci->second == Coord_type(0.25));
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm,
+    assert(ci->second == Coord_type(0.25));
+  assert(test_barycenter( coords.begin(), coords.end(),norm,
 			  Point(0,0), tolerance));
   coords.clear();
 
@@ -424,14 +424,14 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,p34,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
   ci= coords.begin();
-  CGAL_test_assert(ci->first == p34);
-  CGAL_test_assert(ci->second == Coord_type(1));
+  assert(ci->first == p34);
+  assert(ci->second == Coord_type(1));
   ci++;
-  CGAL_test_assert(ci==coords.end());
+  assert(ci==coords.end());
   coords.clear();
 
   //point on an edge:
@@ -439,9 +439,9 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,p,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, p, tolerance));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, p, tolerance));
   coords.clear();
 
   //Point outside convex hull:
@@ -449,11 +449,11 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
   coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,p,
 					 std::back_inserter(coords));
-  CGAL_test_assert(!coordinate_result.third);
+  assert(!coordinate_result.third);
   //Point on a convex hull edge:
   p= Point(2,1);
    coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,p,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
 }

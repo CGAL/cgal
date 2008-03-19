@@ -15,7 +15,7 @@
 //         they may be wrong now.
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <CGAL/Polynomial/ipower.h>
 /*#include <NiX/basic.h>
@@ -42,14 +42,14 @@ int check_intervals_real_root_isolator(
        Boundary right = Isol.right_boundary(i);
 
        if(!Isol.is_exact_root(i)) {
-           CGAL_test_assert(left < right);
+           assert(left < right);
 	       //std::cout << " left = " << left << std::endl;
 	       //std::cout << " right = " << right << std::endl;
 	       //std::cout << " P = " << P << std::endl;
-           CGAL_test_assert(P.sign_at(left) * P.sign_at(right) == CGAL::NEGATIVE);
+           assert(P.sign_at(left) * P.sign_at(right) == CGAL::NEGATIVE);
        }else{
-           CGAL_test_assert(left == right);
-           CGAL_test_assert(P.sign_at(left) == CGAL::ZERO);
+           assert(left == right);
+           assert(P.sign_at(left) == CGAL::ZERO);
        }
     }
     return n;
@@ -70,12 +70,12 @@ int check_intervals_real_root_isolator(
   Boundary left = Isol.left_boundary(i);
   Boundary right = Isol.right_boundary(i);
   
-  CGAL_test_assert( left < right || Isol.is_exact_root(i));
+  assert( left < right || Isol.is_exact_root(i));
   if(!Isol.is_exact_root(i)) {
   //std::cout << " left = " << left << std::endl;
   //std::cout << " right = " << right << std::endl;
   //std::cout << " P = " << P << std::endl;
-  CGAL_test_assert(P.evaluate(left) * P.evaluate(right) < 0);
+  assert(P.evaluate(left) * P.evaluate(right) < 0);
   }
   }
   return n;
@@ -113,49 +113,49 @@ void test_real_root_isolator() {
         // default constructor: 
         // as from zero Polynomial
         Isolator isolator;
-        CGAL_test_assert(isolator.number_of_real_roots() == -1);
-        CGAL_test_assert(isolator.polynomial() == Polynomial(0)); 
+        assert(isolator.number_of_real_roots() == -1);
+        assert(isolator.polynomial() == Polynomial(0)); 
     }{
         // from zero polynomial
         Isolator isolator(P_00);
-        CGAL_test_assert(isolator.number_of_real_roots() == -1);
-        CGAL_test_assert(isolator.polynomial() == P_00); 
+        assert(isolator.number_of_real_roots() == -1);
+        assert(isolator.polynomial() == P_00); 
     }{
         // from constant polynomial = 1 
         Polynomial poly(P_01);
         Isolator isolator(poly);
-        CGAL_test_assert(isolator.number_of_real_roots() == 0);
-        CGAL_test_assert(isolator.polynomial() == P_01); 
+        assert(isolator.number_of_real_roots() == 0);
+        assert(isolator.polynomial() == P_01); 
     }{
         // copy constructor
         Isolator isolator_1(P_123);
         Isolator isolator_2(isolator_1);
-        CGAL_test_assert(isolator_1.number_of_real_roots() == 
+        assert(isolator_1.number_of_real_roots() == 
                 isolator_2.number_of_real_roots());
-        CGAL_test_assert(isolator_1.polynomial() == isolator_2.polynomial()); 
+        assert(isolator_1.polynomial() == isolator_2.polynomial()); 
     }{
         // assign
         Isolator isolator_1(P_123);
         Isolator isolator_2 = isolator_1;
-        CGAL_test_assert(isolator_1.number_of_real_roots() == 
+        assert(isolator_1.number_of_real_roots() == 
                 isolator_2.number_of_real_roots());
-        CGAL_test_assert(isolator_1.polynomial() == isolator_2.polynomial()); 
+        assert(isolator_1.polynomial() == isolator_2.polynomial()); 
     }
     {  
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P_123);
-        CGAL_test_assert( n == 3);
+        assert( n == 3);
        
     }{  
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P_1);
-        CGAL_test_assert( n == 1);
+        assert( n == 1);
        
     }{  
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P_123);
-        CGAL_test_assert( n == 3);
+        assert( n == 3);
        
     }{  
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P_s2510);
-        CGAL_test_assert( n == 6);
+        assert( n == 6);
        
     }{  // (x^2-2)*(x^2-3)
         std::vector<NT> VP(5);
@@ -166,7 +166,7 @@ void test_real_root_isolator() {
         VP[4] = NT(1);  
         Polynomial P(VP.begin(), VP.end()); 
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert( n == 4);
+        assert( n == 4);
        
     }
     {  // (x^2-2)*(x^2+2)*(x-1)
@@ -179,7 +179,7 @@ void test_real_root_isolator() {
         VP[5] = NT(1);  
         Polynomial P(VP.begin(), VP.end());
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert( n == 3);
+        assert( n == 3);
     }{       
         // std::cout << "Wilkinson Polynomial\n";
         int number_of_roots = 20;
@@ -189,7 +189,7 @@ void test_real_root_isolator() {
         }
         Isolator isolator(P);
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert( n == number_of_roots);             
+        assert( n == number_of_roots);             
     }{
         //std::cout << "Kameny 3\n";
         // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
@@ -205,7 +205,7 @@ void test_real_root_isolator() {
         P = P+Q;
         
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert(n == 3);
+        assert(n == 3);
     }{
         //std::cout << "Kameny 4\n";
         // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
@@ -222,7 +222,7 @@ void test_real_root_isolator() {
     
         Isolator isol(P);
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert( n == 4);
+        assert( n == 4);
     }{
         //std::cout << "Polynomial with large and small clustered roots\n";
         // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
@@ -239,7 +239,7 @@ void test_real_root_isolator() {
         P = P-R; // x^{12} - (ax-1)^4
         
         int n = CGALi::check_intervals_real_root_isolator<Isolator>(P);
-        CGAL_test_assert( n == 4);  
+        assert( n == 4);  
     }
 };
 

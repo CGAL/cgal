@@ -29,7 +29,7 @@
 // ============================================================================
 
 #include <CGAL/vector.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iostream>
 #include <algorithm>
 #include <list>
@@ -85,36 +85,36 @@ int main() {
     vector V;
     std::cout << V.capacity() << ", " << V.size()<< std::endl;
     V.reserve(10);
-    CGAL_test_assert(V.empty());
+    assert(V.empty());
 
     V.push_back(X(0));
 
-    CGAL_test_assert(! V.empty());
+    assert(! V.empty());
 
     V.push_back(X(1));
     V.push_back(X(2));
 
     X x0(0);
     X x2(2);
-    CGAL_test_assert( V.front() == x0);
-    CGAL_test_assert( V.back() == x2);
+    assert( V.front() == x0);
+    assert( V.back() == x2);
     iterator it = V.begin();
-    CGAL_test_assert( *it == X(0));
+    assert( *it == X(0));
     it = V.end();
     it--;
-    CGAL_test_assert(*it == X(2));
+    assert(*it == X(2));
 
     const_iterator cit = V.begin();
-    CGAL_test_assert( *cit == X(0));
+    assert( *cit == X(0));
     cit = V.end();
     cit--;
-    CGAL_test_assert(*cit == X(2));
+    assert(*cit == X(2));
 
     reverse_iterator rit = V.rbegin();
-    CGAL_test_assert( *rit == X(2));
+    assert( *rit == X(2));
     rit = V.rend();
     rit--;
-    CGAL_test_assert(*rit == X(0));
+    assert(*rit == X(0));
 
     std::copy( V.begin(), V.end(), std::ostream_iterator<X>( std::cout, ", "));
 
@@ -122,77 +122,77 @@ int main() {
     vector V3 = V;
     
   
-    CGAL_test_assert( V3[0] == X(0));
-    CGAL_test_assert( V3[1] == X(1));
-    CGAL_test_assert( V3[2] == X(2));
+    assert( V3[0] == X(0));
+    assert( V3[1] == X(1));
+    assert( V3[2] == X(2));
 
-    CGAL_test_assert( V == V2);
-    CGAL_test_assert( V == V3);
+    assert( V == V2);
+    assert( V == V3);
 
     V3[0] = X();
-    CGAL_test_assert( ! (V == V3));
+    assert( ! (V == V3));
 
     V.pop_back();
     V.pop_back();
     V.pop_back();
-    CGAL_test_assert( V.empty());
+    assert( V.empty());
   
     V2.clear();
-    CGAL_test_assert( V2.empty());
+    assert( V2.empty());
 
     V3.insert( V3.begin(), X(5));
-    CGAL_test_assert( V3.size() == 4);
+    assert( V3.size() == 4);
     V3.erase( V3.begin());
-    CGAL_test_assert( V3.size() == 3);
+    assert( V3.size() == 3);
     V3.insert( V3.begin());
-    CGAL_test_assert( V3[0] == X());
+    assert( V3[0] == X());
     V3.erase( V3.begin());
     V3.erase( V3.begin());
-    CGAL_test_assert( V3[0] == X(1));
+    assert( V3[0] == X(1));
     V3.erase( V3.begin());
-    CGAL_test_assert( V3[0] == X(2));
+    assert( V3[0] == X(2));
     V3.erase( V3.begin());
-    CGAL_test_assert( V3.empty());
+    assert( V3.empty());
 
     vector V5(3);
-    CGAL_test_assert( V5.size() == 3);
+    assert( V5.size() == 3);
     unsigned int i = 0;
     for( ; i < V5.size(); i++) {
-        CGAL_test_assert( V5[i] == X());
+        assert( V5[i] == X());
     }
     vector V6(3, X(7812));
-    CGAL_test_assert(V6.size() == 3);
+    assert(V6.size() == 3);
     for( i = 0; i < V6.size(); i++) {
-        CGAL_test_assert( V6[i] == X(7812));
+        assert( V6[i] == X(7812));
     }
     list L;
     L.push_back( X(0));
     L.push_back( X(1));
   
     vector V4(L.begin(), L.end());
-    CGAL_test_assert( V4.size() == 2);
+    assert( V4.size() == 2);
 
     vector V7(7, X(7));
     vector V8(7, X(8));
     V7.swap(V8);
     for( i = 0; i< V7.size(); i++) {
-        CGAL_test_assert( V7[i] == X(8));
+        assert( V7[i] == X(8));
     }
     for( i = 0; i< V8.size(); i++) {
-        CGAL_test_assert( V8[i] == X(7));
+        assert( V8[i] == X(7));
     }
-    CGAL_test_assert( V7.size() == 7);
+    assert( V7.size() == 7);
     it = V7.begin();
     it++;
     V7.insert( it, V8.begin(), V8.end());
-    CGAL_test_assert( V7.size() == 14);
+    assert( V7.size() == 14);
     V7.insert( V7.begin(), vector::size_type(2), X(9));
-    CGAL_test_assert( V7.size() == 16);
+    assert( V7.size() == 16);
     std::cout << V7[0] << " " << V7[1] << " " << V7[2] << " " << V7[3]
               << std::endl;
-    CGAL_test_assert( V7[0] == X(9));
-    CGAL_test_assert( V7[1] == X(9));
-    CGAL_test_assert( V7.size() == 16);
+    assert( V7[0] == X(9));
+    assert( V7[1] == X(9));
+    assert( V7.size() == 16);
     std::cout << "done" << std::endl;
   
     return 0;

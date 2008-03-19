@@ -9,11 +9,11 @@ int main()
 
   print_separator();
   b = test_info_hierarchy(sdg, "data/sitesx.cin");
-  CGAL_test_assert( b );
+  assert( b );
 
   print_separator();
   b = test_info_hierarchy(sdg, "data/sitesxx.cin");
-  CGAL_test_assert( b );
+  assert( b );
 
   print_separator();
 

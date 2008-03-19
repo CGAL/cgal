@@ -5,7 +5,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/point_generators_3.h>
 #include <vector>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_rational.h>
 typedef leda_rational                   Precise_rational;
@@ -48,7 +48,7 @@ void test_tetrahedron_convexity()
         CGAL::compute_plane_equation(f);
     }
 
-    CGAL_test_assert( CGAL::is_strongly_convex_3(P) );
+    assert( CGAL::is_strongly_convex_3(P) );
 }
 
 void test_triangle_convexity()
@@ -65,7 +65,7 @@ void test_triangle_convexity()
         CGAL::compute_plane_equation(f);
     }
 
-    CGAL_test_assert( CGAL::is_strongly_convex_3(P) );
+    assert( CGAL::is_strongly_convex_3(P) );
 }
 
 
@@ -82,12 +82,12 @@ void test_small_hull()
 
   Polyhedron_3 polyhedron1;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron1, Traits());
-  CGAL_test_assert( polyhedron1.size_of_vertices() == 5 && 
+  assert( polyhedron1.size_of_vertices() == 5 && 
            polyhedron1.size_of_facets() == 6 );
   Polyhedron_3 polyhedron2;
   CGAL::convex_hull_3(points.begin(), points.end(), polyhedron2);
-  CGAL_test_assert(CGAL::is_strongly_convex_3(polyhedron2)); // test default traits class
-  CGAL_test_assert( polyhedron2.size_of_vertices() == 5 && 
+  assert(CGAL::is_strongly_convex_3(polyhedron2)); // test default traits class
+  assert( polyhedron2.size_of_vertices() == 5 && 
           polyhedron2.size_of_facets() == 6 );
 }
 
@@ -106,7 +106,7 @@ int main()
   Generator g(500);
   CGAL::copy_n( g, num, std::back_inserter(points));
 
-  CGAL_test_assert(points.size() == num);
+  assert(points.size() == num);
 
   CGAL::Object ch_object;
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
@@ -116,7 +116,7 @@ int main()
 
   Polyhedron_3 polyhedron;
 
-  CGAL_test_assert( CGAL::assign(segment, ch_object) || 
+  assert( CGAL::assign(segment, ch_object) || 
           CGAL::assign(polyhedron, ch_object) );
   return 0;
 }

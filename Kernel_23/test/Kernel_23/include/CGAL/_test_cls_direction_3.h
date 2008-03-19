@@ -56,31 +56,31 @@ _test_cls_direction_3(const R& )
  CGAL::Direction_3<R> d7( r1);
  CGAL::Direction_3<R> d8( s1);
 
- CGAL_test_assert( d3 == d3 );
- CGAL_test_assert( d3 == d4 );
- CGAL_test_assert( d5 == d3 );
- CGAL_test_assert( d2 != d3 );
- CGAL_test_assert( d3 != d2 );
- CGAL_test_assert( d6 == d8 );
- CGAL_test_assert( d6 != d7 );
- CGAL_test_assert( d7 != d8 );
+ assert( d3 == d3 );
+ assert( d3 == d4 );
+ assert( d5 == d3 );
+ assert( d2 != d3 );
+ assert( d3 != d2 );
+ assert( d6 == d8 );
+ assert( d6 != d7 );
+ assert( d7 != d8 );
 
  std::cout << '.';
  CGAL::Vector_3<R> vv = d2.vector();
- CGAL_test_assert( v == vv );
+ assert( v == vv );
 
  d0 = -d3;
 
- CGAL_test_assert( d0 != d3 );
- CGAL_test_assert( d3 == -d0);
+ assert( d0 != d3 );
+ assert( d3 == -d0);
 
  std::cout << '.';
- CGAL_test_assert( d3.delta(0) == n0 );
- CGAL_test_assert( d3.delta(1) == n1 );
- CGAL_test_assert( d3.delta(2) == n2 );
- CGAL_test_assert( d3.delta(0) == d3.dx() );
- CGAL_test_assert( d3.delta(1) == d3.dy() );
- CGAL_test_assert( d3.delta(2) == d3.dz() );
+ assert( d3.delta(0) == n0 );
+ assert( d3.delta(1) == n1 );
+ assert( d3.delta(2) == n2 );
+ assert( d3.delta(0) == d3.dx() );
+ assert( d3.delta(1) == d3.dy() );
+ assert( d3.delta(2) == d3.dz() );
 
  std::cout << "done" << std::endl;
  return true;

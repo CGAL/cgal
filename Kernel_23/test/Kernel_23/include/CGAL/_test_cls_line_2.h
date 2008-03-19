@@ -68,110 +68,110 @@ _test_cls_line_2(const R& )
  CGAL::Line_2<R>  ld12v(p1, v12);
  CGAL::Line_2<R>  ld21v(p2, v21);
 
- CGAL_test_assert(ld12 == ld12v);
- CGAL_test_assert(ld21 == ld21v);
+ assert(ld12 == ld12v);
+ assert(ld21 == ld21v);
 
  std::cout << '.';
 
- CGAL_test_assert( l12 == l12 );
- CGAL_test_assert( l0  == l12 );
- CGAL_test_assert( l12 == lc  );
- CGAL_test_assert( l21 == lr21 );
- CGAL_test_assert( l12 == ls12 );
- CGAL_test_assert( l12 == ld12 );
- CGAL_test_assert( l12 != l21 );
- CGAL_test_assert( l12 != ld21 );
- CGAL_test_assert( lr21 != ls12 );
- CGAL_test_assert( l34 != l43 );
- CGAL_test_assert( l12 != l43 );
+ assert( l12 == l12 );
+ assert( l0  == l12 );
+ assert( l12 == lc  );
+ assert( l21 == lr21 );
+ assert( l12 == ls12 );
+ assert( l12 == ld12 );
+ assert( l12 != l21 );
+ assert( l12 != ld21 );
+ assert( lr21 != ls12 );
+ assert( l34 != l43 );
+ assert( l12 != l43 );
 
- CGAL_test_assert( l34.opposite() == l43);
- CGAL_test_assert( l43.opposite() == l34);
- CGAL_test_assert( l43.opposite().opposite() == l43);
- CGAL_test_assert( ld12 == ld21.opposite() );
+ assert( l34.opposite() == l43);
+ assert( l43.opposite() == l34);
+ assert( l43.opposite().opposite() == l43);
+ assert( ld12 == ld21.opposite() );
 
  CGAL::Line_2<R> labc( n2, n1, n4);
- CGAL_test_assert( labc.a() == n2 );
- CGAL_test_assert( labc.b() == n1 );
- CGAL_test_assert( labc.c() == n4 );
+ assert( labc.a() == n2 );
+ assert( labc.b() == n1 );
+ assert( labc.c() == n4 );
 
- CGAL_test_assert( l12.direction() == d12 );
- CGAL_test_assert( l21.direction() == d21 );
- CGAL_test_assert( ld21.direction() == d21 );
- CGAL_test_assert( ld21.direction() ==  - ld12.direction() );
- CGAL_test_assert( labc.direction() == CGAL::Direction_2<R>(labc.b(), - labc.a() ) );
+ assert( l12.direction() == d12 );
+ assert( l21.direction() == d21 );
+ assert( ld21.direction() == d21 );
+ assert( ld21.direction() ==  - ld12.direction() );
+ assert( labc.direction() == CGAL::Direction_2<R>(labc.b(), - labc.a() ) );
 
- CGAL_test_assert( ld12v.to_vector().direction() == v12.direction() );
- CGAL_test_assert( ld21v.to_vector().direction() == v21.direction() );
+ assert( ld12v.to_vector().direction() == v12.direction() );
+ assert( ld21v.to_vector().direction() == v21.direction() );
 
  std::cout << '.';
 
- CGAL_test_assert( l43.has_on( l43.point(0) ) );
- CGAL_test_assert( lr21.has_on( lr21.point(1) ) );
- CGAL_test_assert( ld21.has_on( ld21.point(-2) ) );
- CGAL_test_assert( lr21.has_on( r21.source() ) );
- CGAL_test_assert( labc.has_on( labc.point(0) ) );
+ assert( l43.has_on( l43.point(0) ) );
+ assert( lr21.has_on( lr21.point(1) ) );
+ assert( ld21.has_on( ld21.point(-2) ) );
+ assert( lr21.has_on( r21.source() ) );
+ assert( labc.has_on( labc.point(0) ) );
 
- CGAL_test_assert( l43.is_horizontal() );
- CGAL_test_assert( ! l34.is_vertical() );
- CGAL_test_assert( CGAL::Line_2<R>( n1, n0, n3 ).is_vertical() );
- CGAL_test_assert( CGAL::Line_2<R>( n0, n2, n3 ).is_horizontal() );
- CGAL_test_assert( ! lr21.is_horizontal() );
+ assert( l43.is_horizontal() );
+ assert( ! l34.is_vertical() );
+ assert( CGAL::Line_2<R>( n1, n0, n3 ).is_vertical() );
+ assert( CGAL::Line_2<R>( n0, n2, n3 ).is_horizontal() );
+ assert( ! lr21.is_horizontal() );
 
- CGAL_test_assert( ld12.y_at_x( gnuFT(3) ) == gnuFT( 4) );
- CGAL_test_assert( lr21.y_at_x( gnuFT(3) ) == gnuFT( 4) );
- CGAL_test_assert( ld12.y_at_x( gnuFT(1) ) == gnuFT( 2) );
- CGAL_test_assert( l12.y_at_x( gnuFT(5) ) == gnuFT( 6) );
- CGAL_test_assert( l34.y_at_x( gnuFT(8) ) == gnuFT( 2) );
+ assert( ld12.y_at_x( gnuFT(3) ) == gnuFT( 4) );
+ assert( lr21.y_at_x( gnuFT(3) ) == gnuFT( 4) );
+ assert( ld12.y_at_x( gnuFT(1) ) == gnuFT( 2) );
+ assert( l12.y_at_x( gnuFT(5) ) == gnuFT( 6) );
+ assert( l34.y_at_x( gnuFT(8) ) == gnuFT( 2) );
 
- CGAL_test_assert( l12.x_at_y( gnuFT(0) ) == gnuFT( -1 ) );
- CGAL_test_assert( ls12.x_at_y( gnuFT(4) ) == gnuFT( 3 ) );
- CGAL_test_assert( l21.x_at_y( gnuFT(6) ) == gnuFT( 5 ) );
- CGAL_test_assert( ld21.x_at_y( gnuFT(2) ) == gnuFT( 1 ) );
+ assert( l12.x_at_y( gnuFT(0) ) == gnuFT( -1 ) );
+ assert( ls12.x_at_y( gnuFT(4) ) == gnuFT( 3 ) );
+ assert( l21.x_at_y( gnuFT(6) ) == gnuFT( 5 ) );
+ assert( ld21.x_at_y( gnuFT(2) ) == gnuFT( 1 ) );
 
  CGAL::Direction_2<R> up( n0, n1 );
  CGAL::Aff_transformation_2<R> rot90(CGAL::ROTATION, up, n1, RT(100) );
  CGAL::Line_2<R> l12perp1( l12.perpendicular( p1 ) );
  CGAL::Line_2<R> l21perp1( l21.perpendicular( p1 ) );
  CGAL::Line_2<R> labcperp( labc.perpendicular( labc.point(1) ) );
- CGAL_test_assert( l12perp1.opposite() == l21perp1 );
- CGAL_test_assert( labcperp.direction() == CGAL::Direction_2<R>( labc.a(), labc.b()) );
- CGAL_test_assert( l12perp1.has_on( p1 ) );
- CGAL_test_assert( l21perp1.has_on( p1 ) );
+ assert( l12perp1.opposite() == l21perp1 );
+ assert( labcperp.direction() == CGAL::Direction_2<R>( labc.a(), labc.b()) );
+ assert( l12perp1.has_on( p1 ) );
+ assert( l21perp1.has_on( p1 ) );
  CGAL::Line_2<R> l12perp4( l12.perpendicular( p4 ) );
- CGAL_test_assert( l12perp4.has_on( p4 ) );
- CGAL_test_assert( l12.direction().transform( rot90 ) == l12perp4.direction() );
+ assert( l12perp4.has_on( p4 ) );
+ assert( l12.direction().transform( rot90 ) == l12perp4.direction() );
 
- CGAL_test_assert( CGAL::Line_2<R>( n0, n0, n6 ).is_degenerate() );
- CGAL_test_assert( CGAL::Line_2<R>( p1, p1 ).is_degenerate() );
- CGAL_test_assert( ! CGAL::Line_2<R>( p1, p3 ).is_degenerate() );
- CGAL_test_assert( ! l34.is_degenerate() );
+ assert( CGAL::Line_2<R>( n0, n0, n6 ).is_degenerate() );
+ assert( CGAL::Line_2<R>( p1, p1 ).is_degenerate() );
+ assert( ! CGAL::Line_2<R>( p1, p3 ).is_degenerate() );
+ assert( ! l34.is_degenerate() );
 
  std::cout << '.';
 
  CGAL::Point_2<R> p5( n5, n6 );
- CGAL_test_assert( l12.oriented_side(p3) == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( l12.oriented_side(p4) == CGAL::ON_NEGATIVE_SIDE );
- CGAL_test_assert( l12.oriented_side(p2) == CGAL::ON_ORIENTED_BOUNDARY );
- CGAL_test_assert( l12.oriented_side(p5) == CGAL::ON_ORIENTED_BOUNDARY );
- CGAL_test_assert( l21.oriented_side(p3) == CGAL::ON_NEGATIVE_SIDE );
- CGAL_test_assert( l21.oriented_side(p5) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( l12.oriented_side(p3) == CGAL::ON_POSITIVE_SIDE );
+ assert( l12.oriented_side(p4) == CGAL::ON_NEGATIVE_SIDE );
+ assert( l12.oriented_side(p2) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( l12.oriented_side(p5) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( l21.oriented_side(p3) == CGAL::ON_NEGATIVE_SIDE );
+ assert( l21.oriented_side(p5) == CGAL::ON_ORIENTED_BOUNDARY );
 
- CGAL_test_assert( l21.has_on_negative_side( p3 ) );
- CGAL_test_assert( l12.has_on_positive_side( p3 ) );
- CGAL_test_assert( l34.has_on_positive_side( p2 ) );
- CGAL_test_assert( l43.has_on( CGAL::Point_2<R>( n8, n2 )) );
- CGAL_test_assert( l43.has_on_boundary( CGAL::Point_2<R>( n8, n2 )) );
- CGAL_test_assert( lr21.has_on( CGAL::Point_2<R>( -n1, n0 )) );
+ assert( l21.has_on_negative_side( p3 ) );
+ assert( l12.has_on_positive_side( p3 ) );
+ assert( l34.has_on_positive_side( p2 ) );
+ assert( l43.has_on( CGAL::Point_2<R>( n8, n2 )) );
+ assert( l43.has_on_boundary( CGAL::Point_2<R>( n8, n2 )) );
+ assert( lr21.has_on( CGAL::Point_2<R>( -n1, n0 )) );
 
  std::cout << '.';
 
- CGAL_test_assert( l21.has_on( l21.projection( p3 )) );
- CGAL_test_assert( l21.has_on( l21.projection( p4 )) );
- CGAL_test_assert( l21.has_on( l21.projection( p5 )) );
- CGAL_test_assert( l34.has_on( l34.projection( p3 )) );
- CGAL_test_assert( l34.has_on( l34.projection( p4 )) );
- CGAL_test_assert( l34.has_on( l34.projection( p5 )) );
+ assert( l21.has_on( l21.projection( p3 )) );
+ assert( l21.has_on( l21.projection( p4 )) );
+ assert( l21.has_on( l21.projection( p5 )) );
+ assert( l34.has_on( l34.projection( p3 )) );
+ assert( l34.has_on( l34.projection( p4 )) );
+ assert( l34.has_on( l34.projection( p5 )) );
 
 
  std::cout << "done" << std::endl;

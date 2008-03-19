@@ -1,5 +1,5 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #ifndef CGAL_USE_LAPACK
 int main()
 {
@@ -68,10 +68,10 @@ int main()
  
   monge_form.dump_4ogl( std::cout, 1 );
   double precision = 0.01;
-  CGAL_test_assert(monge_form.coefficients()[0] >= -0.2 - precision);
-  CGAL_test_assert(monge_form.coefficients()[0] <= -0.2 + precision);
-  CGAL_test_assert(monge_form.coefficients()[1] >= -0.4 - precision);
-  CGAL_test_assert(monge_form.coefficients()[1] <= -0.4 + precision);
+  assert(monge_form.coefficients()[0] >= -0.2 - precision);
+  assert(monge_form.coefficients()[0] <= -0.2 + precision);
+  assert(monge_form.coefficients()[1] >= -0.4 - precision);
+  assert(monge_form.coefficients()[1] <= -0.4 + precision);
   std::cout << "success\n";
  return 0;
 }

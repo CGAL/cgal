@@ -10,7 +10,7 @@
 #endif
 
 #include <CGAL/Interval_nt.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <sstream>
 #include <vector>
@@ -29,10 +29,10 @@ void test_overflow_to_interval(const NT&)
     val = val*val;
     CGAL::Interval_nt<> inter = CGAL_NTS to_interval(val);
     CGAL::Interval_nt<> minter = CGAL_NTS to_interval(-val);
-    CGAL_test_assert(CGAL::is_valid(inter));
-    CGAL_test_assert(CGAL_NTS is_finite(inter.inf()));
-    CGAL_test_assert(CGAL::is_valid(minter));
-    CGAL_test_assert(CGAL_NTS is_finite(minter.sup()));
+    assert(CGAL::is_valid(inter));
+    assert(CGAL_NTS is_finite(inter.inf()));
+    assert(CGAL::is_valid(minter));
+    assert(CGAL_NTS is_finite(minter.sup()));
   }
 }
 
@@ -47,7 +47,7 @@ void test_overflow_to_double()
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  CGAL_test_assert(CGAL_NTS to_double(val) == 0.5);
+  assert(CGAL_NTS to_double(val) == 0.5);
 }
 
 typedef std::pair<std::string, Gmpq> Test_pair; 
@@ -114,12 +114,12 @@ void test_input_from_float()
       std::stringstream is(derived[j].first);
       Gmpq should_be (derived[j].second);
       Gmpq q; is >> q;
-      CGAL_test_assert(!is.fail());
-      if (!is.eof()) CGAL_test_assert(is.peek()=='f');
+      assert(!is.fail());
+      if (!is.eof()) assert(is.peek()=='f');
       if (q != should_be)
 	std::cout << " Error: " << derived[j].first + "  read as " 
 		  << q << std::endl;
-      CGAL_test_assert(q == should_be);
+      assert(q == should_be);
     }
   }
 }
@@ -136,27 +136,27 @@ int main() {
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
-    CGAL_test_assert(!iss.fail());
+    assert(!iss.fail());
     std::cout << z << "== 12345678" << std::endl;
-    CGAL_test_assert(z== Gmpz(12345678));
+    assert(z== Gmpz(12345678));
   }
   {
     const char *buf="-65758345";
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
-    CGAL_test_assert(!iss.fail());
+    assert(!iss.fail());
     std::cout << z << "== -65758345" << std::endl;
-    CGAL_test_assert(z== Gmpz(-65758345));
+    assert(z== Gmpz(-65758345));
   }
   {
     const char *buf="  -  65758345";
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
-    CGAL_test_assert(!iss.fail());
+    assert(!iss.fail());
     std::cout << z << " == -65758345" << std::endl;
-    CGAL_test_assert(z== Gmpz(-65758345));
+    assert(z== Gmpz(-65758345));
   }
   {
     const char *buf="12345678a";
@@ -164,10 +164,10 @@ int main() {
     std::istringstream iss(buf);
     char c;
     iss >> z >> c;
-    CGAL_test_assert(!iss.fail());
+    assert(!iss.fail());
     std::cout << z << " == 12345678" << std::endl;
-    CGAL_test_assert(z== Gmpz(12345678));
-    CGAL_test_assert(c=='a');
+    assert(z== Gmpz(12345678));
+    assert(c=='a');
   }
 
   {
@@ -176,8 +176,8 @@ int main() {
     std::istringstream iss(buf);
     iss >> z;
     std::cout << z << " fails with 12" << std::endl;
-    CGAL_test_assert(iss.fail());
-    CGAL_test_assert(z== Gmpz(12));
+    assert(iss.fail());
+    assert(z== Gmpz(12));
   }
 
   {
@@ -186,8 +186,8 @@ int main() {
     std::istringstream iss(buf);
     iss >> z;
     std::cout << z << " fails with 12" << std::endl;
-    CGAL_test_assert(iss.fail());
-    CGAL_test_assert(z== Gmpz(12));
+    assert(iss.fail());
+    assert(z== Gmpz(12));
   }
   {
     const char *buf="";
@@ -195,8 +195,8 @@ int main() {
     std::istringstream iss(buf);
     iss >> z;
     std::cout << z << " fails with 12" << std::endl;
-    CGAL_test_assert(iss.fail());
-    CGAL_test_assert(z== Gmpz(12));
+    assert(iss.fail());
+    assert(z== Gmpz(12));
   }
   {
     const char *buf="100/1";
@@ -204,8 +204,8 @@ int main() {
     std::istringstream iss(buf);
     iss >> iot;
     std::cout << iot << "== 100 " << std::endl;
-    CGAL_test_assert(!iss.fail());
-    CGAL_test_assert(iot== Gmpq(100.0));
+    assert(!iss.fail());
+    assert(iot== Gmpq(100.0));
   }
 
   Gmpq q;
@@ -214,26 +214,26 @@ int main() {
   Gmpz z1(1), z2(2);
   Gmpq q3(z1);
   Gmpq q4(z1, z2);
-  CGAL_test_assert(q4.numerator() == Gmpz(1));
-  CGAL_test_assert(q4.denominator() == Gmpz(2));
+  assert(q4.numerator() == Gmpz(1));
+  assert(q4.denominator() == Gmpz(2));
   Gmpq q5(q4);
 
   Gmpq qi1(0,1); // int int
   Gmpq qi2(3, -3);
-  CGAL_test_assert(qi2.numerator() == Gmpz(-1)); // because Gmpq is canonicalized
+  assert(qi2.numerator() == Gmpz(-1)); // because Gmpq is canonicalized
   Gmpq qi3(-3, 3);
-  CGAL_test_assert(qi2 == qi3);
+  assert(qi2 == qi3);
 
   Gmpq q6((signed long)1, (unsigned long)2);
   Gmpq q7((unsigned long)1, (unsigned long)2);
 
   Gmpq qs("-100/-111", 2);
-  CGAL_test_assert(qs.numerator() == Gmpz(4));
-  CGAL_test_assert(qs.denominator() == Gmpz(7));
+  assert(qs.numerator() == Gmpz(4));
+  assert(qs.denominator() == Gmpz(7));
 
   Gmpq qs2("100/1");
-  CGAL_test_assert(qs2.numerator() == Gmpz(100));
-  CGAL_test_assert(qs2.denominator() == Gmpz(1));
+  assert(qs2.numerator() == Gmpz(100));
+  assert(qs2.denominator() == Gmpz(1));
 
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());

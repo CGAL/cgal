@@ -25,7 +25,7 @@
 #include <CGAL/Timer.h>
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include "vda_print_report.h"
 #include "vda_test_vda.h"
 #include "vda_test_concept.h"
@@ -40,7 +40,7 @@ class VDA_Tester
   template<class OutputIt>
   OutputIt read_from_file(const char* fname, OutputIt it) const {
     std::ifstream ifs(fname);
-    CGAL_test_assert( fname );
+    assert( fname );
 
     typename Projector::Site_2  s;
 
@@ -166,7 +166,7 @@ class VDA_Tester
 
     loc_timer_.start();
     std::ifstream qfs(qfname);
-    CGAL_test_assert( qfname );
+    assert( qfname );
     test_locate(vd, project_, qfs, std::cout, print_sites);
     loc_timer_.stop();
     print_separators();

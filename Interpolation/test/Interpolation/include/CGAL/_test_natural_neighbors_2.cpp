@@ -18,7 +18,7 @@
 // Author(s)     : Naceur MESKINI.
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <utility>
 
 #include <CGAL/copy_n.h>
@@ -105,39 +105,39 @@ _test_natural_neighbors_2( const Triangul & )
   Point_2 p = Point_2(p34);
   CGAL::Triple<std::back_insert_iterator<Point_coordinate_vector>,Coord_type, bool> coordinate_result  = CGAL::natural_neighbor_coordinates_2(T,p,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   Coord_type norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
    typename std::vector< std::pair< Point_2, Coord_type >
     >::const_iterator ci= coords.begin();
-  CGAL_test_assert(ci->first == p);
-  CGAL_test_assert(ci->second == Coord_type(1));
+  assert(ci->first == p);
+  assert(ci->second == Coord_type(1));
   ci++;
-  CGAL_test_assert(ci==coords.end());
+  assert(ci==coords.end());
   coords.clear();
 
   //point on an edge:
   p = Point_2(0,0.5);
   coordinate_result = CGAL::natural_neighbor_coordinates_2
     (T,p,std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, p));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, p));
   coords.clear();
   
   //outside convex hull:
   p= Point_2(3,0.5);
   coordinate_result = CGAL::natural_neighbor_coordinates_2
     (T,p,std::back_inserter(coords));
-  CGAL_test_assert(!coordinate_result.third);
+  assert(!coordinate_result.third);
 
   //on a convex hull edge:
   coords.clear();
   p= Point_2(2,1);
   coordinate_result = CGAL::natural_neighbor_coordinates_2
     (T,p,std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, p));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, p));
 
 }

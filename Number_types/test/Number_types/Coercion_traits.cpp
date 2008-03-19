@@ -13,7 +13,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
 
 #include <CGAL/Coercion_traits.h>
@@ -235,26 +235,26 @@ void AT_coercion_test_for_cgal_types_fws(){
     {
         typedef NiX::Coercion_traits<Compactified_int,Compactified_int> CT;
         CT::Cast cast;
-        CGAL_test_assert(cast(one) == Compactified_int(1));
-        CGAL_test_assert(cast(p_infty) == Compactified_int(NiX::PLUS_INFTY));
-        CGAL_test_assert(cast(m_infty) == Compactified_int(NiX::MINUS_INFTY));
-        CGAL_test_assert(cast(zero) == Compactified_int(0));
+        assert(cast(one) == Compactified_int(1));
+        assert(cast(p_infty) == Compactified_int(NiX::PLUS_INFTY));
+        assert(cast(m_infty) == Compactified_int(NiX::MINUS_INFTY));
+        assert(cast(zero) == Compactified_int(0));
     }{
         typedef NiX::Coercion_traits<Compactified_int,Compactified_long> CT;
         CT::Cast cast;
-        CGAL_test_assert(cast(Compactified_long(1)) == Compactified_long(1));
-        CGAL_test_assert(cast(one) == Compactified_long(1));
-        CGAL_test_assert(cast(p_infty) == Compactified_long(NiX::PLUS_INFTY));
-        CGAL_test_assert(cast(m_infty) == Compactified_long(NiX::MINUS_INFTY));
-        CGAL_test_assert(cast(zero) == Compactified_long(0));
+        assert(cast(Compactified_long(1)) == Compactified_long(1));
+        assert(cast(one) == Compactified_long(1));
+        assert(cast(p_infty) == Compactified_long(NiX::PLUS_INFTY));
+        assert(cast(m_infty) == Compactified_long(NiX::MINUS_INFTY));
+        assert(cast(zero) == Compactified_long(0));
     }{
         typedef NiX::Coercion_traits<Compactified_long,Compactified_int> CT;
         CT::Cast cast;
-        CGAL_test_assert(cast(Compactified_long(1)) == Compactified_long(1));
-        CGAL_test_assert(cast(one) == Compactified_long(1));
-        CGAL_test_assert(cast(p_infty) == Compactified_long(NiX::PLUS_INFTY));
-        CGAL_test_assert(cast(m_infty) == Compactified_long(NiX::MINUS_INFTY));
-        CGAL_test_assert(cast(zero) == Compactified_long(0));
+        assert(cast(Compactified_long(1)) == Compactified_long(1));
+        assert(cast(one) == Compactified_long(1));
+        assert(cast(p_infty) == Compactified_long(NiX::PLUS_INFTY));
+        assert(cast(m_infty) == Compactified_long(NiX::MINUS_INFTY));
+        assert(cast(zero) == Compactified_long(0));
     }
 }
 
@@ -273,37 +273,37 @@ void test_tendency(){
     {
         typedef NiX::Coercion_traits<Tendency_int,Tendency_int> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(zero) == Tendency_int(0));
-        CGAL_test_assert(cast(one) == Tendency_int(1));
-        CGAL_test_assert(cast(one_me)  == Tendency_int(1,Tendency_int::MINUS_EPSILON));
-        CGAL_test_assert(cast(one_mee) ==Tendency_int(1,Tendency_int::MINUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one)     ==Tendency_int(1,Tendency_int::NONE));
-        CGAL_test_assert(cast(one_pee) ==Tendency_int(1,Tendency_int::PLUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one_pe)  ==Tendency_int(1,Tendency_int::PLUS_EPSILON));
+        assert(cast(zero) == Tendency_int(0));
+        assert(cast(one) == Tendency_int(1));
+        assert(cast(one_me)  == Tendency_int(1,Tendency_int::MINUS_EPSILON));
+        assert(cast(one_mee) ==Tendency_int(1,Tendency_int::MINUS_SQUARED_EPSILON));
+        assert(cast(one)     ==Tendency_int(1,Tendency_int::NONE));
+        assert(cast(one_pee) ==Tendency_int(1,Tendency_int::PLUS_SQUARED_EPSILON));
+        assert(cast(one_pe)  ==Tendency_int(1,Tendency_int::PLUS_EPSILON));
        
     }{
         typedef NiX::Coercion_traits<Tendency_int,Tendency_long> CT;        
         CT::Cast cast;
-        CGAL_test_assert(cast(Tendency_long(0))    == Tendency_long(0));
-        CGAL_test_assert(cast(zero) == Tendency_long(0));
-        CGAL_test_assert(cast(one) == Tendency_long(1));
-        CGAL_test_assert(cast(one_me)  == Tendency_long(1,Tendency_long::MINUS_EPSILON));
-        CGAL_test_assert(cast(one_mee) ==Tendency_long(1,Tendency_long::MINUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one)     ==Tendency_long(1,Tendency_long::NONE));
-        CGAL_test_assert(cast(one_pee) ==Tendency_long(1,Tendency_long::PLUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one_pe)  ==Tendency_long(1,Tendency_long::PLUS_EPSILON));
+        assert(cast(Tendency_long(0))    == Tendency_long(0));
+        assert(cast(zero) == Tendency_long(0));
+        assert(cast(one) == Tendency_long(1));
+        assert(cast(one_me)  == Tendency_long(1,Tendency_long::MINUS_EPSILON));
+        assert(cast(one_mee) ==Tendency_long(1,Tendency_long::MINUS_SQUARED_EPSILON));
+        assert(cast(one)     ==Tendency_long(1,Tendency_long::NONE));
+        assert(cast(one_pee) ==Tendency_long(1,Tendency_long::PLUS_SQUARED_EPSILON));
+        assert(cast(one_pe)  ==Tendency_long(1,Tendency_long::PLUS_EPSILON));
        
     }{
         typedef NiX::Coercion_traits<Tendency_long,Tendency_int> CT;        
         CT::Cast cast;
-        CGAL_test_assert(cast(Tendency_long(0))    == Tendency_long(0));
-        CGAL_test_assert(cast(zero)    == Tendency_long(0));
-        CGAL_test_assert(cast(one)     == Tendency_long(1));
-        CGAL_test_assert(cast(one_me)  ==Tendency_long(1,Tendency_long::MINUS_EPSILON));
-        CGAL_test_assert(cast(one_mee) ==Tendency_long(1,Tendency_long::MINUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one)     ==Tendency_long(1,Tendency_long::NONE));
-        CGAL_test_assert(cast(one_pee) ==Tendency_long(1,Tendency_long::PLUS_SQUARED_EPSILON));
-        CGAL_test_assert(cast(one_pe)  ==Tendency_long(1,Tendency_long::PLUS_EPSILON));
+        assert(cast(Tendency_long(0))    == Tendency_long(0));
+        assert(cast(zero)    == Tendency_long(0));
+        assert(cast(one)     == Tendency_long(1));
+        assert(cast(one_me)  ==Tendency_long(1,Tendency_long::MINUS_EPSILON));
+        assert(cast(one_mee) ==Tendency_long(1,Tendency_long::MINUS_SQUARED_EPSILON));
+        assert(cast(one)     ==Tendency_long(1,Tendency_long::NONE));
+        assert(cast(one_pee) ==Tendency_long(1,Tendency_long::PLUS_SQUARED_EPSILON));
+        assert(cast(one_pe)  ==Tendency_long(1,Tendency_long::PLUS_EPSILON));
     }
 }
 
@@ -322,17 +322,17 @@ void test_matrix_d(){
     {
         typedef NiX::Coercion_traits<M_int,M_int> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(m_int) == m_int);
+        assert(cast(m_int) == m_int);
     }{
         typedef NiX::Coercion_traits<M_long,M_int> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(m_int) == m_long);
-        CGAL_test_assert(cast(m_long) == m_long);
+        assert(cast(m_int) == m_long);
+        assert(cast(m_long) == m_long);
     }{
         typedef NiX::Coercion_traits<M_int,M_long> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(m_int) == m_long);
-        CGAL_test_assert(cast(m_long) == m_long);
+        assert(cast(m_int) == m_long);
+        assert(cast(m_long) == m_long);
     }    
 }
 
@@ -348,17 +348,17 @@ void test_vector_d(){
     {
         typedef NiX::Coercion_traits<V_int,V_int> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(v_int) == v_int);
+        assert(cast(v_int) == v_int);
     }{
         typedef NiX::Coercion_traits<V_long,V_int> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(v_int) == v_long);
-        CGAL_test_assert(cast(v_long) == v_long);
+        assert(cast(v_int) == v_long);
+        assert(cast(v_long) == v_long);
     }{
         typedef NiX::Coercion_traits<V_int,V_long> CT; 
         CT::Cast cast;
-        CGAL_test_assert(cast(v_int) == v_long);
-        CGAL_test_assert(cast(v_long) == v_long);
+        assert(cast(v_int) == v_long);
+        assert(cast(v_long) == v_long);
     }    
 }*/
 

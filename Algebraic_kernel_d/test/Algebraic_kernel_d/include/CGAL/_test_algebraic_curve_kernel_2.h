@@ -12,7 +12,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 //#include <CGAL/Algebraic_kernel_1.h>
 
@@ -108,26 +108,26 @@ void test_algebraic_curve_kernel_2() {
     {    
         Curve_analysis_2 c7_c6 =
             kernel_2.construct_curve_2_object()(polys[7]*polys[6]);
-        CGAL_test_assert(c7_c6.number_of_status_lines_with_event() > 0);
+        assert(c7_c6.number_of_status_lines_with_event() > 0);
         Status_line_1 line = c7_c6.status_line_at_event(0);
-        CGAL_test_assert(line.number_of_events() > 0);
+        assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
 
         std::cerr << "done..1.5\n";
-        CGAL_test_assert(kernel_2.sign_at_2_object()(c7_c6, xy) == CGAL::ZERO);
+        assert(kernel_2.sign_at_2_object()(c7_c6, xy) == CGAL::ZERO);
     }
     {    
         Curve_analysis_2 c7_c6 =
                    kernel_2.construct_curve_2_object()(polys[7]*polys[6]),
            c8_c6 = kernel_2.construct_curve_2_object()(polys[8]*polys[6]);
         
-        CGAL_test_assert(c7_c6.number_of_status_lines_with_event() > 0);
+        assert(c7_c6.number_of_status_lines_with_event() > 0);
         Status_line_1 line = c7_c6.status_line_at_event(0);
-        CGAL_test_assert(line.number_of_events() > 0);
+        assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
 
         std::cerr << "done..1.6\n";
-        CGAL_test_assert(kernel_2.sign_at_2_object()(c8_c6, xy) == CGAL::ZERO);
+        assert(kernel_2.sign_at_2_object()(c8_c6, xy) == CGAL::ZERO);
     }
 
     std::cerr << "done..2\n";
@@ -140,12 +140,12 @@ void test_algebraic_curve_kernel_2() {
     xy2 = line2.algebraic_real_2(2);
     xy3 = line2.algebraic_real_2(1);
 
-    CGAL_test_assert(kernel_2.compare_x_2_object()(xy1, xy2) == CGAL::SMALLER);
-    CGAL_test_assert(kernel_2.compare_x_2_object()(xy2, xy3) == CGAL::EQUAL);
+    assert(kernel_2.compare_x_2_object()(xy1, xy2) == CGAL::SMALLER);
+    assert(kernel_2.compare_x_2_object()(xy2, xy3) == CGAL::EQUAL);
 
-    CGAL_test_assert(kernel_2.compare_xy_2_object()(xy1, xy2) ==
+    assert(kernel_2.compare_xy_2_object()(xy1, xy2) ==
         CGAL::SMALLER);
-    CGAL_test_assert(kernel_2.compare_xy_2_object()(xy2, xy3) ==
+    assert(kernel_2.compare_xy_2_object()(xy2, xy3) ==
         CGAL::LARGER);
 
     xy1 = c2.status_line_at_event(0).algebraic_real_2(0);
@@ -155,13 +155,13 @@ void test_algebraic_curve_kernel_2() {
     xy4 = line2.algebraic_real_2(4);
 
     std::cerr << "y_comp 1" << std::flush;
-    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy2) == CGAL::LARGER);
+    assert(kernel_2.compare_y_2_object()(xy1, xy2) == CGAL::LARGER);
     std::cerr << " 2" << std::flush;
-    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy3) == CGAL::SMALLER);
+    assert(kernel_2.compare_y_2_object()(xy1, xy3) == CGAL::SMALLER);
     std::cerr << " 3" << std::flush;
-    CGAL_test_assert(kernel_2.compare_y_2_object()(xy1, xy4) == CGAL::SMALLER);
+    assert(kernel_2.compare_y_2_object()(xy1, xy4) == CGAL::SMALLER);
     std::cerr << " 4" << std::flush;
-    CGAL_test_assert(kernel_2.compare_y_2_object()(xy2, xy3) == CGAL::SMALLER);
+    assert(kernel_2.compare_y_2_object()(xy2, xy3) == CGAL::SMALLER);
     std::cerr << " done" << std::endl;
 
     /////// testing squarefreeness and coprimality /////////
@@ -169,31 +169,31 @@ void test_algebraic_curve_kernel_2() {
     typename AK_2::NiX2CGAL_converter cvt;
     typename AK_2::CGAL2NiX_converter cvt_back;
      
-    /*CGAL_test_assert(
+    /*assert(
         kernel_2.has_finite_number_of_self_intersections_2_object()
             (polys[0]));
-    CGAL_test_assert(
+    assert(
         !kernel_2.has_finite_number_of_self_intersections_2_object()
             (polys[4])); // non-squarefree*/
     
-    CGAL_test_assert(
+    assert(
         kernel_2.has_finite_number_of_intersections_2_object()
             (cvt(c2.polynomial_2()), cvt(c3.polynomial_2()))); // coprime
             
-    CGAL_test_assert(
+    assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
             (cvt(c1.polynomial_2()), cvt(c2.polynomial_2()))); // non-coprime
             
-    CGAL_test_assert(
+    assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
             (cvt(c5.polynomial_2()), cvt(c6.polynomial_2()))); // non-coprime
 
     //////// testing decompose ///////////
             
-   CGAL_test_assert((kernel_2.decompose_2_object()(polys[4])) !=
+   assert((kernel_2.decompose_2_object()(polys[4])) !=
         polys[4]); // non-squarefree
 
-   CGAL_test_assert((kernel_2.decompose_2_object()(polys[3])) ==
+   assert((kernel_2.decompose_2_object()(polys[3])) ==
         polys[3]);
 
     typedef std::vector<Curve_analysis_2> Curves_2;
@@ -224,13 +224,13 @@ void test_algebraic_curve_kernel_2() {
 
     Curves_2 fgs, fs, gs;
 
-    CGAL_test_assert(kernel_2.decompose_2_object()(c5, c6,
+    assert(kernel_2.decompose_2_object()(c5, c6,
         std::back_inserter(fs), std::back_inserter(gs),
             std::back_inserter(fgs))); // must have a common part
 
-    CGAL_test_assert(fgs.size() == 1);
-    CGAL_test_assert(fs.size() == 0);
-    CGAL_test_assert(gs.size() == 1);
+    assert(fgs.size() == 1);
+    assert(fs.size() == 0);
+    assert(gs.size() == 1);
     
     /*std::cerr << "common: " << fgs.size() << "; " <<
         fs.size() << "; " << gs.size() << "\n";*/
@@ -238,13 +238,13 @@ void test_algebraic_curve_kernel_2() {
     fgs.clear();
     fs.clear();
     gs.clear();
-    CGAL_test_assert(!kernel_2.decompose_2_object()(c2, c3,
+    assert(!kernel_2.decompose_2_object()(c2, c3,
         std::back_inserter(fs), std::back_inserter(gs),
             std::back_inserter(fgs))); // must be coprime
 
-    CGAL_test_assert(fgs.size() == 0);
-    CGAL_test_assert(fs.size() == 1);
-    CGAL_test_assert(gs.size() == 1);
+    assert(fgs.size() == 0);
+    assert(fs.size() == 1);
+    assert(gs.size() == 1);
             
     /*std::cerr << "coprime: " << fgs.size() << "; " <<
         fs.size() << "; " << gs.size() << "\n";*/
@@ -263,13 +263,13 @@ void test_algebraic_curve_kernel_2() {
     typename Xy_coords::const_iterator xyit;
     kernel_2.x_critical_points_2_object()(c0, std::back_inserter(points));
 
-    CGAL_test_assert(points.size() == 10);
+    assert(points.size() == 10);
     //std::cerr << "testing x-critical points: " << points.size() << "\n";
 
     points.clear();
     kernel_2.y_critical_points_2_object()(c0, std::back_inserter(points));
 
-    CGAL_test_assert(points.size() == 10);
+    assert(points.size() == 10);
 
     ///////// testing sign_2 //////////////
 

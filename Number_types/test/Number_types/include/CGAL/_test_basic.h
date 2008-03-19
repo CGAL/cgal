@@ -13,7 +13,7 @@
 #ifndef CGAL_TEST_BASIC_H
 #define CGAL_TEST_BASIC_H
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/functional_base.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -22,7 +22,7 @@ template< class Functor >
 class Test_functor_arity {
   public:
     void operator()( int arity ) {
-      CGAL_test_assert( CGAL::Arity_traits< Functor >::Arity::arity == arity );      
+      assert( CGAL::Arity_traits< Functor >::Arity::arity == arity );      
     }
 };
 

@@ -51,45 +51,45 @@ _test_cls_vector_3(const R& )
 
  std::cout << '.';
 
- CGAL_test_assert( v3 == CGAL::Vector_3<R>(FT(n1), FT(n2), FT(n3)) );
- CGAL_test_assert( v3 == CGAL::Vector_3<R>(12, -4, 6) );
+ assert( v3 == CGAL::Vector_3<R>(FT(n1), FT(n2), FT(n3)) );
+ assert( v3 == CGAL::Vector_3<R>(12, -4, 6) );
 
- CGAL_test_assert( v4 == v5 );
- CGAL_test_assert( v5 == v6 );
- CGAL_test_assert( v4 == v6 );
- CGAL_test_assert( v1 == v6 );
- CGAL_test_assert( v0 == CGAL::NULL_VECTOR);
- CGAL_test_assert( v5 == v7 );
+ assert( v4 == v5 );
+ assert( v5 == v6 );
+ assert( v4 == v6 );
+ assert( v1 == v6 );
+ assert( v0 == CGAL::NULL_VECTOR);
+ assert( v5 == v7 );
 
- CGAL_test_assert( v3 != v4 );
- CGAL_test_assert( v0 != v1 );
- CGAL_test_assert( v1 != CGAL::NULL_VECTOR);
+ assert( v3 != v4 );
+ assert( v0 != v1 );
+ assert( v1 != CGAL::NULL_VECTOR);
 
- CGAL_test_assert( v3.hx() == n1 );   // don't replace v3
- CGAL_test_assert( v3.hy() == n2 );
- CGAL_test_assert( v3.hz() == n3 );
+ assert( v3.hx() == n1 );   // don't replace v3
+ assert( v3.hy() == n2 );
+ assert( v3.hz() == n3 );
 
- CGAL_test_assert( FT( v5.hx()) / FT(v5.hw()) == FT( n1) / FT( n4) );
- CGAL_test_assert( FT( v5.hy()) / FT(v5.hw()) == FT( n2) / FT( n4) );
- CGAL_test_assert( FT( v5.hz()) / FT(v5.hw()) == FT( n3) / FT( n4) );
+ assert( FT( v5.hx()) / FT(v5.hw()) == FT( n1) / FT( n4) );
+ assert( FT( v5.hy()) / FT(v5.hw()) == FT( n2) / FT( n4) );
+ assert( FT( v5.hz()) / FT(v5.hw()) == FT( n3) / FT( n4) );
 
- CGAL_test_assert( v5.x() == FT( n1) / FT( n4) );
- CGAL_test_assert( v5.y() == FT( n2) / FT( n4) );
- CGAL_test_assert( v5.z() == FT( n3) / FT( n4) );
-
- std::cout << '.';
-
- CGAL_test_assert( v3.homogeneous(0) == v3.hx() );  // don't replace v3
- CGAL_test_assert( v3.homogeneous(1) == v3.hy() );
- CGAL_test_assert( v3.homogeneous(2) == v3.hz() );
- CGAL_test_assert( v3.homogeneous(3) == v3.hw() );
- CGAL_test_assert( v6.cartesian(0) == v6.x() );
- CGAL_test_assert( v6.cartesian(1) == v6.y() );
- CGAL_test_assert( v6.cartesian(2) == v6.z() );
+ assert( v5.x() == FT( n1) / FT( n4) );
+ assert( v5.y() == FT( n2) / FT( n4) );
+ assert( v5.z() == FT( n3) / FT( n4) );
 
  std::cout << '.';
 
- CGAL_test_assert( v0.dimension() == 3 );
+ assert( v3.homogeneous(0) == v3.hx() );  // don't replace v3
+ assert( v3.homogeneous(1) == v3.hy() );
+ assert( v3.homogeneous(2) == v3.hz() );
+ assert( v3.homogeneous(3) == v3.hw() );
+ assert( v6.cartesian(0) == v6.x() );
+ assert( v6.cartesian(1) == v6.y() );
+ assert( v6.cartesian(2) == v6.z() );
+
+ std::cout << '.';
+
+ assert( v0.dimension() == 3 );
 
  std::cout << "done" << std::endl;
  return true;

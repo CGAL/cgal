@@ -23,7 +23,7 @@
 #define CGAL__TEST_CLS_CIRCLE_2_H
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class R>
 bool
@@ -76,53 +76,53 @@ _test_cls_circle_2(const R& )
  CGAL::Circle_2<R> cn( p3 - vx6, p3 + vx6, CGAL::NEGATIVE);
  c0 = c3;
 
- CGAL_test_assert( c1 == c1 );
- CGAL_test_assert( c1 != c2 );
- CGAL_test_assert( c3 == c0 );
- CGAL_test_assert( c0 == c3 );
- CGAL_test_assert( c3 == c6 );
- CGAL_test_assert( c7 != c8 );
- CGAL_test_assert( c4 == c7 );
- CGAL_test_assert( cc == cp );
- CGAL_test_assert( cn != cp );
- CGAL_test_assert( cc != c8 );
- CGAL_test_assert( cc == c7 );
+ assert( c1 == c1 );
+ assert( c1 != c2 );
+ assert( c3 == c0 );
+ assert( c0 == c3 );
+ assert( c3 == c6 );
+ assert( c7 != c8 );
+ assert( c4 == c7 );
+ assert( cc == cp );
+ assert( cn != cp );
+ assert( cc != c8 );
+ assert( cc == c7 );
 
- CGAL_test_assert( c5.center() == p3 );
- CGAL_test_assert( cc.center() == p3 );
- CGAL_test_assert( c5.squared_radius() == FT( n9 ) );
- CGAL_test_assert( c4.squared_radius() == cc.squared_radius() );
- CGAL_test_assert( c4 == c5 );
- CGAL_test_assert( c4 == c7 );
- CGAL_test_assert( c4 != c8 );
- CGAL_test_assert( cn == cp.opposite() );
- CGAL_test_assert( c7.opposite() == c8 );
- CGAL_test_assert( c8.opposite() == c7 );
- CGAL_test_assert( c1.opposite() == c3 );
- CGAL_test_assert( c3.opposite() == c1 );
- CGAL_test_assert( c7.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( c8.orientation() == CGAL::NEGATIVE );
- CGAL_test_assert( c5.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( cc.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( cp.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( cn.orientation() == CGAL::NEGATIVE );
+ assert( c5.center() == p3 );
+ assert( cc.center() == p3 );
+ assert( c5.squared_radius() == FT( n9 ) );
+ assert( c4.squared_radius() == cc.squared_radius() );
+ assert( c4 == c5 );
+ assert( c4 == c7 );
+ assert( c4 != c8 );
+ assert( cn == cp.opposite() );
+ assert( c7.opposite() == c8 );
+ assert( c8.opposite() == c7 );
+ assert( c1.opposite() == c3 );
+ assert( c3.opposite() == c1 );
+ assert( c7.orientation() == CGAL::POSITIVE );
+ assert( c8.orientation() == CGAL::NEGATIVE );
+ assert( c5.orientation() == CGAL::POSITIVE );
+ assert( cc.orientation() == CGAL::POSITIVE );
+ assert( cp.orientation() == CGAL::POSITIVE );
+ assert( cn.orientation() == CGAL::NEGATIVE );
 
  std::cout << '.';
 
- CGAL_test_assert( c4.center() == p3 );
- CGAL_test_assert( c5.center() == p3 );
- CGAL_test_assert( c4.squared_radius() == FT( n9 ) );
- CGAL_test_assert( c5.squared_radius() == FT( n9 ) );
- CGAL_test_assert( c8.squared_radius() == FT( n9 ) );
+ assert( c4.center() == p3 );
+ assert( c5.center() == p3 );
+ assert( c4.squared_radius() == FT( n9 ) );
+ assert( c5.squared_radius() == FT( n9 ) );
+ assert( c8.squared_radius() == FT( n9 ) );
 
- CGAL_test_assert( c7.bounded_side( p3 + vx*n2 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( c7.bounded_side( p3 + vy*n11 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( c7.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( c8.bounded_side( p3 + vx*n2 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( c8.bounded_side( p3 + vy*n11 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( cc.has_on_boundary( p3 + vy6) );
- CGAL_test_assert( cc.has_on_boundary( p3 - vx6) );
+ assert( c7.bounded_side( p3 + vx*n2 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( c7.bounded_side( p3 + vy*n11 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( c7.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
+ assert( c8.bounded_side( p3 + vx*n2 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( c8.bounded_side( p3 + vy*n11 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( c8.bounded_side( p3 - vy6 ) == CGAL::ON_BOUNDARY );
+ assert( cc.has_on_boundary( p3 + vy6) );
+ assert( cc.has_on_boundary( p3 - vx6) );
 
  std::cout << '.';
 
@@ -140,48 +140,48 @@ _test_cls_circle_2(const R& )
  p8 = p8 + v1;
  p9 = p9 + v1;
  CGAL::Circle_2<R> c10 (p6, p8, p7);
- CGAL_test_assert( c10.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( c10.opposite().orientation() == CGAL::NEGATIVE );
+ assert( c10.orientation() == CGAL::POSITIVE );
+ assert( c10.opposite().orientation() == CGAL::NEGATIVE );
 
- CGAL_test_assert( c10.oriented_side(c10.center() ) == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx/n2 ) \
+ assert( c10.oriented_side(c10.center() ) == CGAL::ON_POSITIVE_SIDE );
+ assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx/n2 ) \
          == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx*n2 ) \
+ assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx*n2 ) \
          == CGAL::ON_NEGATIVE_SIDE );
- CGAL_test_assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
- CGAL_test_assert( c10.has_on_boundary(p9) );
- CGAL_test_assert( c10.has_on_boundary(p4 + v1) );
+ assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( c10.has_on_boundary(p9) );
+ assert( c10.has_on_boundary(p4 + v1) );
  CGAL::Point_2<R> p11( n4, n4, n3) ; // (2.5, 2.5)
  CGAL::Point_2<R> p12( n5, n5, n3) ; // ( 5 ,  5 )
- CGAL_test_assert( c10.has_on_bounded_side( p11 ) );
- CGAL_test_assert( ! c10.has_on_bounded_side( p12 ) );
- CGAL_test_assert( c10.has_on_unbounded_side( p12 ) );
- CGAL_test_assert( c10.has_on_positive_side( p11 ) );
- CGAL_test_assert( c10.has_on_negative_side( p12 ) );
- CGAL_test_assert( c10.opposite().has_on_negative_side( p11 ) );
- CGAL_test_assert( c10.opposite().has_on_positive_side( p12 ) );
- CGAL_test_assert( c10.has_on_boundary( p6 ) );
- CGAL_test_assert( c10.has_on_boundary( p8 ) );
+ assert( c10.has_on_bounded_side( p11 ) );
+ assert( ! c10.has_on_bounded_side( p12 ) );
+ assert( c10.has_on_unbounded_side( p12 ) );
+ assert( c10.has_on_positive_side( p11 ) );
+ assert( c10.has_on_negative_side( p12 ) );
+ assert( c10.opposite().has_on_negative_side( p11 ) );
+ assert( c10.opposite().has_on_positive_side( p12 ) );
+ assert( c10.has_on_boundary( p6 ) );
+ assert( c10.has_on_boundary( p8 ) );
 
  std::cout << '.';
 
  CGAL::Circle_2<R> c11( p0 );
  CGAL::Circle_2<R> c12( p0, CGAL::POSITIVE );
  CGAL::Circle_2<R> c13( p0, CGAL::NEGATIVE );
- CGAL_test_assert( c11.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( c12.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( c13.orientation() == CGAL::NEGATIVE );
- CGAL_test_assert( c11.is_degenerate() );
- CGAL_test_assert( c12.is_degenerate() );
- CGAL_test_assert( c13.is_degenerate() );
+ assert( c11.orientation() == CGAL::POSITIVE );
+ assert( c12.orientation() == CGAL::POSITIVE );
+ assert( c13.orientation() == CGAL::NEGATIVE );
+ assert( c11.is_degenerate() );
+ assert( c12.is_degenerate() );
+ assert( c13.is_degenerate() );
 
  std::cout << '.';
 
  CGAL::Bbox_2 bb = c4.bbox();
- CGAL_test_assert(bb.xmin() <= -4.0);
- CGAL_test_assert(bb.xmax() >= 8.0);
- CGAL_test_assert(bb.ymin() <= -4.0);
- CGAL_test_assert(bb.ymax() >= 8.0);
+ assert(bb.xmin() <= -4.0);
+ assert(bb.xmax() >= 8.0);
+ assert(bb.ymin() <= -4.0);
+ assert(bb.ymax() >= 8.0);
 
  std::cout << "done" << std::endl;
  return true;

@@ -12,7 +12,7 @@
 #include <CGAL/Env_sphere_traits_3.h>
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <list>
 #include <set>
 #include <vector>

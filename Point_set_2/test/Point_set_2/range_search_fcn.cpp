@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/range_search_delaunay_2.h>
 #include <CGAL/point_generators_2.h> 
 #include <CGAL/algorithm.h> 
@@ -58,7 +58,7 @@ int main()
            std::count_if(points.begin(), 
 			 points.end(), 
 			 Has_not_on_unbounded_side<Circle_2>(circle));
-  CGAL_test_assert((std::size_t) m == LV.size());
+  assert((std::size_t) m == LV.size());
 
  
   std::cout << "range search for triangle" << std::endl;    
@@ -69,7 +69,7 @@ int main()
   m =  std::count_if(points.begin(), 
 		     points.end(), 
 		     Has_not_on_unbounded_side<Triangle_2>(Triangle_2(p,q,r)));
-  CGAL_test_assert((std::size_t) m == LV.size());
+  assert((std::size_t) m == LV.size());
  
   std::cout << "range search for iso rectangle" << std::endl;
   LV.clear();
@@ -78,6 +78,6 @@ int main()
   m =  std::count_if(points.begin(), 
 		     points.end(), 
 		     Has_not_on_unbounded_side<Iso_rectangle_2>(Iso_rectangle_2(p,r)));
-  CGAL_test_assert((std::size_t) m == LV.size());
+  assert((std::size_t) m == LV.size());
   return 0;
 }

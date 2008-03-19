@@ -13,7 +13,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/algorithm.h>
 #include <cstdlib>
 #include <sstream>
@@ -32,14 +32,14 @@ CGAL::Comparison_result compare( int i, int j) {
 }
 
 void test_lex_compare() {
-    CGAL_test_assert( CGAL::EQUAL   == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+3, compare));
-    CGAL_test_assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+4, compare));
-    CGAL_test_assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+5, compare));
-    CGAL_test_assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( A, A+4, A, A+3, compare));
-    CGAL_test_assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( A, A+5, A, A+3, compare));
+    assert( CGAL::EQUAL   == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+3, compare));
+    assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+4, compare));
+    assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( A, A+3, A, A+5, compare));
+    assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( A, A+4, A, A+3, compare));
+    assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( A, A+5, A, A+3, compare));
 
-    CGAL_test_assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( B1, B1+3, B2, B2+3, compare));
-    CGAL_test_assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( B2, B2+3, B1, B1+3, compare));
+    assert( CGAL::SMALLER    == CGAL::lexicographical_compare_three_valued( B1, B1+3, B2, B2+3, compare));
+    assert( CGAL::LARGER == CGAL::lexicographical_compare_three_valued( B2, B2+3, B1, B1+3, compare));
 }
 
 void test_output_range() {
@@ -47,26 +47,26 @@ void test_output_range() {
     std::ostream* sp;
     CGAL::set_ascii_mode(os);
 
-    CGAL_test_assert(os.str() == "");
+    assert(os.str() == "");
 
     sp = &(CGAL::output_range(os, A, A, ":", "(", ")"));
-    CGAL_test_assert(os.str() == "");
-    CGAL_test_assert(sp == &os);
+    assert(os.str() == "");
+    assert(sp == &os);
     os.str("");
 
     sp = &(CGAL::output_range(os, A, A+1, ":", "(", ")"));
-    CGAL_test_assert(os.str() == "(1)");
-    CGAL_test_assert(sp == &os);
+    assert(os.str() == "(1)");
+    assert(sp == &os);
     os.str("");
 
     sp = &(CGAL::output_range(os, A, A+3, ":", "(", ")"));
-    CGAL_test_assert(os.str() == "(1):(2):(3)");
-    CGAL_test_assert(sp == &os);
+    assert(os.str() == "(1):(2):(3)");
+    assert(sp == &os);
     os.str("");
 
     sp = &(CGAL::output_range(os, A, A+3));
-    CGAL_test_assert(os.str() == "1, 2, 3");
-    CGAL_test_assert(sp == &os);
+    assert(os.str() == "1, 2, 3");
+    assert(sp == &os);
 }
 
 

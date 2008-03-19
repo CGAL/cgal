@@ -1,6 +1,6 @@
 #include <iostream>
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
@@ -45,45 +45,45 @@ void datastru() {
 
     // uninitialized construction
     POLY p;
-    CGAL_test_assert( p.degree() == 0 );
+    assert( p.degree() == 0 );
 
     // construction from iterator range, assignment
     NT array[] = { NT(3), NT(1), NT(4), NT(1), NT(5), NT(9) };
     NT* const array_end = array + sizeof array / sizeof *array;
     POLY q(array, array_end);
     p = q;
-    CGAL_test_assert( array_end - array == p.degree() + 1 );
-    CGAL_test_assert( std::equal(p.begin(), p.end(), array) );
+    assert( array_end - array == p.degree() + 1 );
+    assert( std::equal(p.begin(), p.end(), array) );
 
     // immediate construction, reduce(), copy construction, (in)equality
     POLY r(NT(3), NT(1), NT(4), NT(1), NT(5), NT(9), NT(0), NT(0));
-    CGAL_test_assert( q.degree() == r.degree() );
-    CGAL_test_assert( q == r );
-    CGAL_test_assert( r == r );
+    assert( q.degree() == r.degree() );
+    assert( q == r );
+    assert( r == r );
     q = POLY(NT(2), NT(7), NT(1), NT(8), NT(1));
-    CGAL_test_assert( q != r );
+    assert( q != r );
     POLY s(p);
-    CGAL_test_assert( r == s );
+    assert( r == s );
 
     // selection of coefficients
     for (i = 0; i <= p.degree(); i++) {
-        CGAL_test_assert( p[i] == array[i] );
+        assert( p[i] == array[i] );
     }
-    CGAL_test_assert( i == array_end - array );
-    CGAL_test_assert( p.lcoeff() == array_end[-1] );
+    assert( i == array_end - array );
+    assert( p.lcoeff() == array_end[-1] );
 
     // reversal()
-    CGAL_test_assert( reversal(q) == POLY(NT(1), NT(8), NT(1), NT(7), NT(2)) );
+    assert( reversal(q) == POLY(NT(1), NT(8), NT(1), NT(7), NT(2)) );
 
     // divide_by_x()
     r.divide_by_x();
-    CGAL_test_assert( r.degree() == 4 );
-    CGAL_test_assert( r == POLY(NT(1), NT(4), NT(1), NT(5), NT(9)) );
+    assert( r.degree() == 4 );
+    assert( r == POLY(NT(1), NT(4), NT(1), NT(5), NT(9)) );
 
     // zero test
-    CGAL_test_assert( !p.is_zero() );
+    assert( !p.is_zero() );
     q = POLY(NT(0));
-    CGAL_test_assert( q.is_zero() );
+    assert( q.is_zero() );
 }
 
 template <class NT> void signs(::CGAL::Tag_false);
@@ -96,71 +96,71 @@ void arithmetic() {
     typedef CGAL::Polynomial<NT> POLY;
     // evaluation
     POLY p(NT(6), NT(-5), NT(1));
-    CGAL_test_assert( p.evaluate(NT(1)) == NT(2) );
-    CGAL_test_assert( p.evaluate(NT(2)) == NT(0) );
-    CGAL_test_assert( p.evaluate(NT(3)) == NT(0) );
+    assert( p.evaluate(NT(1)) == NT(2) );
+    assert( p.evaluate(NT(2)) == NT(0) );
+    assert( p.evaluate(NT(3)) == NT(0) );
     // TODO: No evaluate_absolute available for all NTs.
-    //CGAL_test_assert( p.evaluate_absolute(NT(1)) == NT(12) );
+    //assert( p.evaluate_absolute(NT(1)) == NT(12) );
 
     // diff
     POLY q(NT(3), NT(2), NT(-2));
     POLY z(NT(0));
-    CGAL_test_assert( diff(z) == z );
-    CGAL_test_assert( p.degree() == 2 );
-    CGAL_test_assert( diff(p) == POLY(NT(-5), NT(2)) );
-    CGAL_test_assert( p.degree() == 2 );
-    CGAL_test_assert( q.degree() == 2 );
+    assert( diff(z) == z );
+    assert( p.degree() == 2 );
+    assert( diff(p) == POLY(NT(-5), NT(2)) );
+    assert( p.degree() == 2 );
+    assert( q.degree() == 2 );
     q.diff();
-    CGAL_test_assert( q == POLY(NT(2), NT(-4)) );
+    assert( q == POLY(NT(2), NT(-4)) );
 
     // scale and translate
     p.scale_up(NT(4));
-    CGAL_test_assert( p == POLY(NT(6), NT(-20), NT(16)) );
-    CGAL_test_assert( scale_down(p, NT(2)) == POLY(NT(24), NT(-40), NT(16)) );
-    CGAL_test_assert( p == POLY(NT(6), NT(-20), NT(16)) );
-    CGAL_test_assert( translate_by_one(p) == translate(p, NT(1)) );
+    assert( p == POLY(NT(6), NT(-20), NT(16)) );
+    assert( scale_down(p, NT(2)) == POLY(NT(24), NT(-40), NT(16)) );
+    assert( p == POLY(NT(6), NT(-20), NT(16)) );
+    assert( translate_by_one(p) == translate(p, NT(1)) );
     p = POLY(NT(3), NT(2), NT(1));
     p.translate(NT(-2));
-    CGAL_test_assert( p == POLY(NT(3), NT(-2), NT(1)) );
+    assert( p == POLY(NT(3), NT(-2), NT(1)) );
 
     // addition
     POLY r;
     p = POLY(NT(3), NT(2), NT(1), NT(1));
     q = POLY(NT(1), NT(2), NT(-1), NT(-1));
     r = p + q;
-    CGAL_test_assert( r.degree() == 1 );
-    CGAL_test_assert( r[0] == NT(4) );
-    CGAL_test_assert( r[1] == NT(4) );
+    assert( r.degree() == 1 );
+    assert( r[0] == NT(4) );
+    assert( r[1] == NT(4) );
     q += p;
-    CGAL_test_assert( q == r );
+    assert( q == r );
     q += NT(1);
-    CGAL_test_assert( q == POLY(NT(5), NT(4)) );
-    CGAL_test_assert( q == r + NT(1) );
-    CGAL_test_assert( q == NT(1) + r );
+    assert( q == POLY(NT(5), NT(4)) );
+    assert( q == r + NT(1) );
+    assert( q == NT(1) + r );
 
     // subtraction
     p = POLY(NT(3), NT(2), NT(1), NT(1));
     q = POLY(NT(1), NT(2), NT(-1), NT(1));
     r = p - q;
-    CGAL_test_assert( r.degree() == 2 );
-    CGAL_test_assert( r == POLY(NT(2), NT(0), NT(2)) );
+    assert( r.degree() == 2 );
+    assert( r == POLY(NT(2), NT(0), NT(2)) );
     r -= -q;
-    CGAL_test_assert( r == p );
+    assert( r == p );
     r -= NT(2);
-    CGAL_test_assert(  r == p - NT(2) );
-    CGAL_test_assert( -r == NT(2) - p );
+    assert(  r == p - NT(2) );
+    assert( -r == NT(2) - p );
 
     // multiplication
     p = POLY(NT(1), NT(2), NT(3));
     q = POLY(NT(-2), NT(5), NT(2));
     r = p * q;
-    CGAL_test_assert( r == POLY(NT(-2), NT(1), NT(6), NT(19), NT(6)) );
+    assert( r == POLY(NT(-2), NT(1), NT(6), NT(19), NT(6)) );
     q *= p;
-    CGAL_test_assert( q == r );
+    assert( q == r );
     q *= NT(2);
-    CGAL_test_assert( q == POLY(NT(-4), NT(2), NT(12), NT(38), NT(12)) );
-    CGAL_test_assert( q == r * NT(2) );
-    CGAL_test_assert( q == NT(2) * r );
+    assert( q == POLY(NT(-4), NT(2), NT(12), NT(38), NT(12)) );
+    assert( q == r * NT(2) );
+    assert( q == NT(2) * r );
 
     // sign etc., if applicable
     // TODO: Replaced Is_real_comparable with RET::Is_real_embeddable, OK?
@@ -179,23 +179,23 @@ template <class NT> void signs(::CGAL::Tag_false) {
 template <class POLY>
 void test_greater(POLY a, POLY b) {
     // check .compare()
-    CGAL_test_assert( a.compare(b) == CGAL::LARGER );
-    CGAL_test_assert( a.compare(a) == CGAL::EQUAL );
-    CGAL_test_assert( b.compare(a) == CGAL::SMALLER );
+    assert( a.compare(b) == CGAL::LARGER );
+    assert( a.compare(a) == CGAL::EQUAL );
+    assert( b.compare(a) == CGAL::SMALLER );
 
     // check that all comparison operators reflect a > b
-    CGAL_test_assert(   a >  b  );
-    CGAL_test_assert( !(b >  a) );
-    CGAL_test_assert( !(a >  a) );
-    CGAL_test_assert(   b <  a  );
-    CGAL_test_assert( !(a <  b) );
-    CGAL_test_assert( !(a <  a) );
-    CGAL_test_assert(   a >= b  );
-    CGAL_test_assert( !(b >= a) );
-    CGAL_test_assert(   a >= a  );
-    CGAL_test_assert(   b <= a  );
-    CGAL_test_assert( !(a <= b) );
-    CGAL_test_assert(   a <= a  );
+    assert(   a >  b  );
+    assert( !(b >  a) );
+    assert( !(a >  a) );
+    assert(   b <  a  );
+    assert( !(a <  b) );
+    assert( !(a <  a) );
+    assert(   a >= b  );
+    assert( !(b >= a) );
+    assert(   a >= a  );
+    assert(   b <= a  );
+    assert( !(a <= b) );
+    assert(   a <= a  );
 }
 
 template <class NT>
@@ -208,11 +208,11 @@ void signs(::CGAL::Tag_true) {
     POLY z(NT(0));
 
     // sign, abs
-    CGAL_test_assert( z.sign() == CGAL::ZERO );
-    CGAL_test_assert( p.sign() == CGAL::POSITIVE );
-    CGAL_test_assert( p.abs() == p );
-    CGAL_test_assert( q.sign() == CGAL::NEGATIVE );
-    CGAL_test_assert( q.abs() == POLY(NT(-3), NT(-2), NT(2)) );
+    assert( z.sign() == CGAL::ZERO );
+    assert( p.sign() == CGAL::POSITIVE );
+    assert( p.abs() == p );
+    assert( q.sign() == CGAL::NEGATIVE );
+    assert( q.abs() == POLY(NT(-3), NT(-2), NT(2)) );
 
     // comparison operators
     test_greater(p + NT(1), p);
@@ -220,13 +220,13 @@ void signs(::CGAL::Tag_true) {
     
     // sign_at 
     q=POLY(NT(3),NT(2),NT(-1));
-    CGAL_test_assert(q.sign_at(-2)==CGAL::NEGATIVE);
-    CGAL_test_assert(q.sign_at(-1)==CGAL::ZERO);
-    CGAL_test_assert(q.sign_at( 0)==CGAL::POSITIVE);
-    CGAL_test_assert(q.sign_at( 3)==CGAL::ZERO);
-    CGAL_test_assert(q.sign_at( 4)==CGAL::NEGATIVE);
+    assert(q.sign_at(-2)==CGAL::NEGATIVE);
+    assert(q.sign_at(-1)==CGAL::ZERO);
+    assert(q.sign_at( 0)==CGAL::POSITIVE);
+    assert(q.sign_at( 3)==CGAL::ZERO);
+    assert(q.sign_at( 4)==CGAL::NEGATIVE);
 
-    CGAL_test_assert(z.sign_at( 3)==CGAL::ZERO);
+    assert(z.sign_at( 3)==CGAL::ZERO);
 }
 
 template <class NT>
@@ -241,12 +241,12 @@ void division(CGAL::Integral_domain_tag) {
     // integral division (remainder zero)
     POLY p(NT(2), NT(4), NT(6)), q(NT(-2), NT(5), NT(2));
     POLY r(NT(-4), NT(2), NT(12), NT(38), NT(12)), s;
-    CGAL_test_assert( q == r / p );
+    assert( q == r / p );
     r /= q;
-    CGAL_test_assert( r == p );
+    assert( r == p );
     r /= NT(2);
-    CGAL_test_assert( r == POLY(NT(1), NT(2), NT(3)) );
-    CGAL_test_assert( NT(6) / POLY(NT(3)) == POLY(NT(2)) );
+    assert( r == POLY(NT(1), NT(2), NT(3)) );
+    assert( NT(6) / POLY(NT(3)) == POLY(NT(2)) );
 
     // division with remainder
     p = POLY(NT(2), NT(-3), NT(1));    //  (x-1)(x-2)
@@ -256,24 +256,24 @@ void division(CGAL::Integral_domain_tag) {
 
     POLY Q, R;
     POLY::euclidean_division(s, p, Q, R);  // works, since p.lcoeff() == 1
-    CGAL_test_assert( Q == q );
-    CGAL_test_assert( R == r );
+    assert( Q == q );
+    assert( R == r );
 
     NT D;
     POLY::pseudo_division(s, q, Q, R, D);
-    CGAL_test_assert( Q == D*p );
-    CGAL_test_assert( R == D*r );
+    assert( Q == D*p );
+    assert( R == D*r );
 
     // codecover 
     p = POLY(NT(2),NT(3));
     s = POLY(NT(2),NT(3),NT(4));
     POLY::euclidean_division(p, s, Q, R);  // works, since p.lcoeff() == 1
-    CGAL_test_assert( Q == POLY(NT(0)) );
-    CGAL_test_assert( R == p );
+    assert( Q == POLY(NT(0)) );
+    assert( R == p );
 
     POLY::pseudo_division(p, s, Q, R, D);  // works, since p.lcoeff() == 1
-    CGAL_test_assert( Q == POLY(NT(0)) );
-    CGAL_test_assert( R == D*p );
+    assert( Q == POLY(NT(0)) );
+    assert( R == D*p );
         
 }
 
@@ -288,40 +288,40 @@ void io() {
         os << p;
         std::istringstream is(os.str());
         is >> q;
-        CGAL_test_assert( p == q );
+        assert( p == q );
     }{       
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(3)));
         //std::cout <<os.str()<<std::endl;
-        CGAL_test_assert( os.str() == "3" );
+        assert( os.str() == "3" );
     }{       
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3)));
-        CGAL_test_assert( os.str() == "(-3)" );
+        assert( os.str() == "(-3)" );
     }{       
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3)),CGAL::Parens_as_product_tag());
-        CGAL_test_assert( os.str() == "(-3)" );
+        assert( os.str() == "(-3)" );
     }{       
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3),NT(4)));
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
-            CGAL_test_assert( os.str() == "4*x + (-3)" );
+            assert( os.str() == "4*x + (-3)" );
         else
-            CGAL_test_assert( os.str() == "4*y + (-3)" );
+            assert( os.str() == "4*y + (-3)" );
     }{       
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
         
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
-            CGAL_test_assert( os.str() == "(4*x + (-3))" );
+            assert( os.str() == "(4*x + (-3))" );
         else
-            CGAL_test_assert( os.str() == "(4*y + (-3))" ); 
+            assert( os.str() == "(4*y + (-3))" ); 
         
     }
     
@@ -338,11 +338,11 @@ void canon(CGAL::Unique_factorization_domain_tag) {
     typedef CGAL::Polynomial<UNPOLY> BIPOLY;
 
     BIPOLY p(0), c;
-    CGAL_test_assert(canonicalize_polynomial(p) == BIPOLY(0));
+    assert(canonicalize_polynomial(p) == BIPOLY(0));
 
     p = BIPOLY(UNPOLY(NT(15)), UNPOLY(NT(-12), NT( 9)), UNPOLY(NT(0), NT(-6)));
     c = BIPOLY(UNPOLY(NT(-5)), UNPOLY(NT(  4), NT(-3)), UNPOLY(NT(0), NT( 2)));
-    CGAL_test_assert(canonicalize_polynomial(p) == c);
+    assert(canonicalize_polynomial(p) == c);
 }
 
 template <class NT>
@@ -351,12 +351,12 @@ void canon(CGAL::Field_tag) {
     typedef CGAL::Polynomial<UNPOLY> BIPOLY;
 
     BIPOLY p(0), c;
-    CGAL_test_assert(canonicalize_polynomial(p) == BIPOLY(0));
+    assert(canonicalize_polynomial(p) == BIPOLY(0));
 
     p = BIPOLY(UNPOLY(NT(15)), UNPOLY(NT(-12), NT( 9)), UNPOLY(NT(0), NT(-6)));
     c = BIPOLY(UNPOLY(NT(-5)/NT(2)), UNPOLY(NT(2), NT(-3)/NT(2)),
             UNPOLY(NT(0), NT(1)));
-    CGAL_test_assert(canonicalize_polynomial(p) == c);
+    assert(canonicalize_polynomial(p) == c);
 }
 
 #ifdef NiX_POLY_USE_NT_TESTS
@@ -391,18 +391,18 @@ void unigcdres(CGAL::Field_tag) {
     POLY d;
 
     d = gcd(f, g);
-    CGAL_test_assert( d == POLY(NT(1)) );
-    CGAL_test_assert( prs_resultant(f, g) == NT(230664271L)/NT(759375L) ); // Maple
+    assert( d == POLY(NT(1)) );
+    assert( prs_resultant(f, g) == NT(230664271L)/NT(759375L) ); // Maple
 
     POLY fh(f*h), gh(g*h);
     d = gcd(fh, gh);
-    CGAL_test_assert( d == h );
-    CGAL_test_assert( prs_resultant(fh, gh) == NT(0) );
+    assert( d == h );
+    assert( prs_resultant(fh, gh) == NT(0) );
 
     POLY a, b;
     d = gcdex(fh, gh, a, b);
-    CGAL_test_assert( d == h );
-    CGAL_test_assert( d == a*fh + b*gh );
+    assert( d == h );
+    assert( d == a*fh + b*gh );
 }
 
 template <class NT>
@@ -417,18 +417,18 @@ void unigcdres(CGAL::Integral_domain_tag) {
     NT c(42);
 
     d = gcd((-c)*f, c*g);
-    CGAL_test_assert( d == POLY(c) );
-    CGAL_test_assert( prs_resultant(f, g) == NT(230664271L) ); // as computed by Maple
+    assert( d == POLY(c) );
+    assert( prs_resultant(f, g) == NT(230664271L) ); // as computed by Maple
 
     POLY fh(f*h), gh(g*h);
     d = gcd((-c)*fh, c*gh);
-    CGAL_test_assert( d == c*h );
-    CGAL_test_assert( prs_resultant(fh, gh) == NT(0) );
+    assert( d == c*h );
+    assert( prs_resultant(fh, gh) == NT(0) );
 
     POLY a, b; NT v;
     d = pseudo_gcdex((-c)*fh, c*gh, a, b, v);
-    CGAL_test_assert( d == c*h );
-    CGAL_test_assert( v*d == (-c)*a*fh + c*b*gh );
+    assert( d == c*h );
+    assert( v*d == (-c)*a*fh + c*b*gh );
 
     // Michael Kerber's example for the hgdelta_update() bug:
     // These polynomials cretate a situation where h does not divide g,
@@ -443,7 +443,7 @@ void unigcdres(CGAL::Integral_domain_tag) {
     POLY p(LiS::mapper(cp, int2nt), LiS::mapper(cp+np, int2nt)),
          q(LiS::mapper(cq, int2nt), LiS::mapper(cq+nq, int2nt));
     d = gcd(p,q);
-    CGAL_test_assert ( d == POLY(1) );*/
+    assert ( d == POLY(1) );*/
 }
 
 template <class NT>
@@ -464,15 +464,15 @@ void bigcdres(CGAL::Field_tag) {
     POLY2 d;
 
     d = gcd(f, g);
-    CGAL_test_assert( d == POLY2(1) );
+    assert( d == POLY2(1) );
     POLY1 r(NT(1444), NT(-1726), NT(3295), NT(-2501), NT(560));
     r /= NT(225);
-    CGAL_test_assert( prs_resultant(f, g) == r ); // says Maple
+    assert( prs_resultant(f, g) == r ); // says Maple
 
     POLY2 fh(f*h), gh(g*h);
     d = gcd(fh, gh);
-    CGAL_test_assert( d == h );
-    CGAL_test_assert( prs_resultant(fh, gh) == POLY1(0) );
+    assert( d == h );
+    assert( prs_resultant(fh, gh) == POLY1(0) );
 }
 
 template <class NT>
@@ -490,14 +490,14 @@ void bigcdres(CGAL::Integral_domain_tag) {
     POLY2 c(42), d;
 
     d = gcd(-c*f, c*g);
-    CGAL_test_assert( d == c );
+    assert( d == c );
     POLY1 r(NT(1444), NT(-1726), NT(3295), NT(-2501), NT(560));
-    CGAL_test_assert( prs_resultant(f, g) == r ); // says Maple
+    assert( prs_resultant(f, g) == r ); // says Maple
 
     POLY2 fh(f*h), gh(g*h);
     d = gcd(-c*fh, c*gh);
-    CGAL_test_assert( d == c*h );
-    CGAL_test_assert( prs_resultant(fh, gh) == POLY1(0) );
+    assert( d == c*h );
+    assert( prs_resultant(fh, gh) == POLY1(0) );
 }
 
 template <class AT>
@@ -521,12 +521,12 @@ void psqff(){
        int n;
        n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
 
-       CGAL_test_assert(n == 3);
-       CGAL_test_assert((int) mul.size() == n);
-       CGAL_test_assert((int) fac.size() == n);
-       CGAL_test_assert(mul[0] == 1 && fac[0] == p1);
-       CGAL_test_assert(mul[1] == 3 && fac[1] == p3);
-       CGAL_test_assert(mul[2] == 4 && fac[2] == p4);
+       assert(n == 3);
+       assert((int) mul.size() == n);
+       assert((int) fac.size() == n);
+       assert(mul[0] == 1 && fac[0] == p1);
+       assert(mul[1] == 3 && fac[1] == p3);
+       assert(mul[2] == 4 && fac[2] == p4);
    }{
        typedef typename AT::Integer Integer; //UFD domain
        typedef CGAL::Sqrt_extension<Integer,Integer> NT;
@@ -546,12 +546,12 @@ void psqff(){
        int n;
        n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
 
-       CGAL_test_assert(n == 3);
-       CGAL_test_assert((int) mul.size() == n);
-       CGAL_test_assert((int) fac.size() == n);
-       CGAL_test_assert(mul[0] == 1 && fac[0] == p1);
-       CGAL_test_assert(mul[1] == 3 && fac[1] == p3);
-       CGAL_test_assert(mul[2] == 4 && fac[2] == p4);
+       assert(n == 3);
+       assert((int) mul.size() == n);
+       assert((int) fac.size() == n);
+       assert(mul[0] == 1 && fac[0] == p1);
+       assert(mul[1] == 3 && fac[1] == p3);
+       assert(mul[2] == 4 && fac[2] == p4);
     }{
        typedef typename AT::Integer Integer; //UFD domain
        typedef CGAL::Sqrt_extension<Integer,Integer> NT;
@@ -572,12 +572,12 @@ void psqff(){
        int n;
        n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
 
-       CGAL_test_assert(n == 3);
-       CGAL_test_assert((int) mul.size() == n);
-       CGAL_test_assert((int) fac.size() == n);
-       CGAL_test_assert(mul[0] == 1 && fac[0] == p1);
-       CGAL_test_assert(mul[1] == 3 && fac[1] == p3);
-       CGAL_test_assert(mul[2] == 4 && fac[2] == p4);
+       assert(n == 3);
+       assert((int) mul.size() == n);
+       assert((int) fac.size() == n);
+       assert(mul[0] == 1 && fac[0] == p1);
+       assert(mul[1] == 3 && fac[1] == p3);
+       assert(mul[2] == 4 && fac[2] == p4);
    }
 }
 template <class NT>
@@ -600,13 +600,13 @@ void sqff() {
     NT alpha;
     n = CGAL::filtered_square_free_factorization(p, fac_bi, mul_bi );
 
-//    CGAL_test_assert(alpha == 3);
-    CGAL_test_assert(n == 3);
-    CGAL_test_assert(mul.size() == n);
-    CGAL_test_assert(fac.size() == n);
-    CGAL_test_assert(mul[0] == 1 && fac[0] == p1);
-    CGAL_test_assert(mul[1] == 3 && fac[1] == p3);
-    CGAL_test_assert(mul[2] == 4 && fac[2] == p4);
+//    assert(alpha == 3);
+    assert(n == 3);
+    assert(mul.size() == n);
+    assert(fac.size() == n);
+    assert(mul[0] == 1 && fac[0] == p1);
+    assert(mul[1] == 3 && fac[1] == p3);
+    assert(mul[2] == 4 && fac[2] == p4);
     
     /*p = POLY( NT(1), NT(-2), NT(1) );
     std::cerr << p << std::endl;
@@ -645,9 +645,9 @@ void integr() {
     FPOLY fp(FNT(1)/FNT(2), FNT(2)/FNT(3), FNT(3)/FNT(5));
     IPOLY ip; DENOM d;
     ip = integralize_polynomial(fp, d);
-    CGAL_test_assert( d == DENOM(30) );
-    CGAL_test_assert( ip == IPOLY(INT(15), INT(20), INT(18)) );
-    CGAL_test_assert( fp == CGAL::fractionalize_polynomial<FPOLY>(ip, d) );
+    assert( d == DENOM(30) );
+    assert( ip == IPOLY(INT(15), INT(20), INT(18)) );
+    assert( fp == CGAL::fractionalize_polynomial<FPOLY>(ip, d) );
 }
 
 template <class NT>
@@ -695,7 +695,7 @@ void test_coefficients_to() {
                                 Rational(-9),Rational(0),Rational(2));
         Poly_rat1 tmp;
         CGAL::convert_to(p,tmp); 
-        CGAL_test_assert(tmp == r);                
+        assert(tmp == r);                
     }
     
     // bivariate
@@ -710,7 +710,7 @@ void test_coefficients_to() {
         
         Poly_rat2 tmp;
         CGAL::convert_to(p,tmp); 
-        CGAL_test_assert(tmp == r);     
+        assert(tmp == r);     
     }
 
     // trivariate
@@ -737,7 +737,7 @@ void test_coefficients_to() {
         
         Poly_rat3 tmp;
         CGAL::convert_to(p,tmp); 
-        CGAL_test_assert(tmp == r);
+        assert(tmp == r);
     }
 }
 
@@ -747,30 +747,30 @@ void test_evaluate(){
     { 
         Poly_int1 P(3,0,2);
         Integer x(2);        
-        CGAL_test_assert(P.evaluate(x)==Integer(11));
+        assert(P.evaluate(x)==Integer(11));
     }{    
         Poly_rat1 P(3,0,2);
         Integer x(2);
-        CGAL_test_assert(P.evaluate(x)==Rational(11));
+        assert(P.evaluate(x)==Rational(11));
     }{    
         Poly_int1 P(3,0,2);
         Rational x(2);
-        CGAL_test_assert(P.evaluate(x)==Rational(11));
+        assert(P.evaluate(x)==Rational(11));
     }{ 
         Poly_int1 P(3,0,2);
         CGAL::Interval_nt<true> x(2);    
-        CGAL_test_assert(P.evaluate(x).inf()<=11);
-        CGAL_test_assert(P.evaluate(x).sup()>=11);
+        assert(P.evaluate(x).inf()<=11);
+        assert(P.evaluate(x).sup()>=11);
     }{
         CGAL::Polynomial< CGAL::Interval_nt<true> > P(3,0,2);
         CGAL::Interval_nt<true> x(2);
-        CGAL_test_assert(P.evaluate(x).inf()<=11);
-        CGAL_test_assert(P.evaluate(x).sup()>=11);
+        assert(P.evaluate(x).inf()<=11);
+        assert(P.evaluate(x).sup()>=11);
     }{
         CGAL::Polynomial< CGAL::Interval_nt<true> > P(3,0,2);
         Integer x(2);
-        CGAL_test_assert(P.evaluate(x).inf()<=11);
-        CGAL_test_assert(P.evaluate(x).sup()>=11);
+        assert(P.evaluate(x).inf()<=11);
+        assert(P.evaluate(x).sup()>=11);
         }
 }
 
@@ -781,13 +781,13 @@ void test_evaluate_homogeneous(){
         Poly_int1 P(3,0,2);
         Integer u(2);
         Integer v(1);
-        CGAL_test_assert(P.evaluate_homogeneous(u,v)==Integer(11));
+        assert(P.evaluate_homogeneous(u,v)==Integer(11));
     }{ 
         Poly_rat1 P(2,-1,3);
         Rational u(3);
         Rational v(5);
-        CGAL_test_assert(P.evaluate_homogeneous(u,v)==Rational(62));
-        CGAL_test_assert(P.evaluate(u/v)==Rational(62)/Rational(25));
+        assert(P.evaluate_homogeneous(u,v)==Rational(62));
+        assert(P.evaluate(u/v)==Rational(62)/Rational(25));
     }
 }
 
@@ -831,39 +831,39 @@ void flat_iterator_tests() {
     typename PT3::Innermost_coefficient_end   end3;
 
     for (i = 1, it1 = begin1(p1); i <= 3; ++i, ++it1)
-        CGAL_test_assert(*it1 == i);
-    CGAL_test_assert(it1 == end1(p1));
+        assert(*it1 == i);
+    assert(it1 == end1(p1));
     for (i = 1, it2 = begin2(q1); i <= 9; ++i, ++it2)
-        CGAL_test_assert(*it2 == i);
-    CGAL_test_assert(it2 == end2(q1));
+        assert(*it2 == i);
+    assert(it2 == end2(q1));
     for (i = 1, it3 = begin3(r); i <= 27; ++i, ++it3)
-        CGAL_test_assert(*it3 == i);
-    CGAL_test_assert(it3 == end3(r));
+        assert(*it3 == i);
+    assert(it3 == end3(r));
 }
 
 void test_total_degree(){
     typedef CGAL::Polynomial<int>    Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
     
-    CGAL_test_assert(CGAL::total_degree(5) == 0);
+    assert(CGAL::total_degree(5) == 0);
     
-    CGAL_test_assert(CGAL::total_degree(Poly_1(0))      == Poly_1(0).degree());
-    CGAL_test_assert(CGAL::total_degree(Poly_1(1))      == Poly_1(1).degree());      
-    CGAL_test_assert(CGAL::total_degree(Poly_1(1,1))    == Poly_1(1,1).degree());
-    CGAL_test_assert(CGAL::total_degree(Poly_1(0,0,0,1))== Poly_1(0,0,0,1).degree());
+    assert(CGAL::total_degree(Poly_1(0))      == Poly_1(0).degree());
+    assert(CGAL::total_degree(Poly_1(1))      == Poly_1(1).degree());      
+    assert(CGAL::total_degree(Poly_1(1,1))    == Poly_1(1,1).degree());
+    assert(CGAL::total_degree(Poly_1(0,0,0,1))== Poly_1(0,0,0,1).degree());
     
-    CGAL_test_assert(CGAL::total_degree(Poly_2(0))      ==  0);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(1))      ==  0);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1))) ==  1);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(0,0,0,1))==  3);
+    assert(CGAL::total_degree(Poly_2(0))      ==  0);
+    assert(CGAL::total_degree(Poly_2(1))      ==  0);
+    assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1))) ==  1);
+    assert(CGAL::total_degree(Poly_2(0,0,0,1))==  3);
     
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(1,1),Poly_1(1)))  == 1);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(0,0,1))==  2);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1)))== 2);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1,1)))== 3);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(0),Poly_1(1,1)))== 3);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1),Poly_1(1,1)))== 3);
-    CGAL_test_assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1,1,1,1),Poly_1(1,1)))== 4);
+    assert(CGAL::total_degree(Poly_2(Poly_1(1,1),Poly_1(1)))  == 1);
+    assert(CGAL::total_degree(Poly_2(0,0,1))==  2);
+    assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1)))== 2);
+    assert(CGAL::total_degree(Poly_2(Poly_1(0),Poly_1(0),Poly_1(1,1)))== 3);
+    assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(0),Poly_1(1,1)))== 3);
+    assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1),Poly_1(1,1)))== 3);
+    assert(CGAL::total_degree(Poly_2(Poly_1(1),Poly_1(1,1,1,1),Poly_1(1,1)))== 4);
 }
 
 template<class AT>
@@ -879,20 +879,20 @@ void test_scalar_factor_traits(){
         
         typename SFT::Scalar_factor sfac;
         
-        CGAL_test_assert(sfac(Polynomial(0))==Scalar(0));
-        CGAL_test_assert(sfac(Polynomial(9))==Scalar(9));
-        CGAL_test_assert(sfac(Polynomial(9,15,30))==Scalar(3));
+        assert(sfac(Polynomial(0))==Scalar(0));
+        assert(sfac(Polynomial(9))==Scalar(9));
+        assert(sfac(Polynomial(9,15,30))==Scalar(3));
         
-        CGAL_test_assert(sfac(Polynomial(0), Integer(0))==Scalar(0));
-        CGAL_test_assert(sfac(Polynomial(0), Integer(1))==Scalar(1));
-        CGAL_test_assert(sfac(Polynomial(0), Integer(2))==Scalar(2));
+        assert(sfac(Polynomial(0), Integer(0))==Scalar(0));
+        assert(sfac(Polynomial(0), Integer(1))==Scalar(1));
+        assert(sfac(Polynomial(0), Integer(2))==Scalar(2));
         
-        CGAL_test_assert(sfac(Polynomial(9), Integer(0))==Scalar(9));
-        CGAL_test_assert(sfac(Polynomial(9), Integer(6))==Scalar(3));
+        assert(sfac(Polynomial(9), Integer(0))==Scalar(9));
+        assert(sfac(Polynomial(9), Integer(6))==Scalar(3));
         
-        CGAL_test_assert(sfac(Polynomial(15,0 ,30) , Integer(9))==Scalar(3));
-        CGAL_test_assert(sfac(Polynomial(0 ,15,30) , Integer(9))==Scalar(3));
-        CGAL_test_assert(sfac(Polynomial(18,15,30) , Integer(0))==Scalar(3));
+        assert(sfac(Polynomial(15,0 ,30) , Integer(9))==Scalar(3));
+        assert(sfac(Polynomial(0 ,15,30) , Integer(9))==Scalar(3));
+        assert(sfac(Polynomial(18,15,30) , Integer(0))==Scalar(3));
     }{
         typedef typename AT::Integer Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer> EXT_1;
@@ -905,15 +905,15 @@ void test_scalar_factor_traits(){
             
         typename SFT::Scalar_factor sfac;
 
-        CGAL_test_assert(sfac(Poly_2_ext_1( ))==Integer(0));
-        CGAL_test_assert(sfac(Poly_2_ext_1(1))==Integer(1));
-        CGAL_test_assert(sfac(Poly_2_ext_1(2))==Integer(2));
+        assert(sfac(Poly_2_ext_1( ))==Integer(0));
+        assert(sfac(Poly_2_ext_1(1))==Integer(1));
+        assert(sfac(Poly_2_ext_1(2))==Integer(2));
         
         EXT_1 a(18,27,456); 
         EXT_1 b( 0,15,456);
         Poly_2_ext_1 p(Poly_1_ext_1(a,b),Poly_1_ext_1(b,a));
         
-        CGAL_test_assert(sfac(p)==Integer(3));
+        assert(sfac(p)==Integer(3));
   }
 }
 
@@ -969,22 +969,22 @@ int main() {
         MOD_traits::Modular_image MOD_image;
     
         //definition of MOD::NT
-        CGAL_test_assert((::boost::is_same<TESTT,
+        assert((::boost::is_same<TESTT,
                   MOD_traits::NT>::value));
         // Is_modularizable
-        CGAL_test_assert( 
+        assert( 
             (::boost::is_same<::CGAL::Tag_true,
              MOD_traits::Is_modularizable>::value)
             );
 
-        CGAL_test_assert(MOD_image(TESTT(21)) == MOD_NT(0));   
-        CGAL_test_assert(MOD_image(TESTT(22)) == MOD_NT(1));
-        CGAL_test_assert(MOD_image(TESTT(777777722)) == MOD_NT(1));
+        assert(MOD_image(TESTT(21)) == MOD_NT(0));   
+        assert(MOD_image(TESTT(22)) == MOD_NT(1));
+        assert(MOD_image(TESTT(777777722)) == MOD_NT(1));
         
         TESTT p(12,2,4,21),q(5,2,4);
-        CGAL_test_assert(MOD_image(p)==MOD_image(q));
+        assert(MOD_image(p)==MOD_image(q));
         p=TESTT(7,21,14,-28);
-        CGAL_test_assert(MOD_image(p)==MOD_NT(0));
+        assert(MOD_image(p)==MOD_NT(0));
     }*/
 
     // NT_Traits<POLY>::to_Interval
@@ -999,11 +999,11 @@ int main() {
         BOOST_STATIC_ASSERT((::boost::is_same<IPOLY,RESULTTYPE>::value));
         POLY p(NT(6), NT(-5), NT(1));
         IPOLY ip=to_Interval(p);
-        CGAL_test_assert(CGAL::in(12.0, ip.evaluate(Interval(-1))));
-        CGAL_test_assert(CGAL::in(6.0 , ip.evaluate(Interval(0))));
-        CGAL_test_assert(CGAL::in(2.0 , ip.evaluate(Interval(1))));
-        CGAL_test_assert(CGAL::in(0.0 , ip.evaluate(Interval(2))));
-        CGAL_test_assert(CGAL::in(0.0 , ip.evaluate(Interval(3))));
+        assert(CGAL::in(12.0, ip.evaluate(Interval(-1))));
+        assert(CGAL::in(6.0 , ip.evaluate(Interval(0))));
+        assert(CGAL::in(2.0 , ip.evaluate(Interval(1))));
+        assert(CGAL::in(0.0 , ip.evaluate(Interval(2))));
+        assert(CGAL::in(0.0 , ip.evaluate(Interval(3))));
     }
     {   //POLY.evaluate(Interval)
         typedef leda::integer NT;
@@ -1011,14 +1011,14 @@ int main() {
         typedef CGAL::Interval Interval;
        
         POLY p(NT(6), NT(-5), NT(1));
-        CGAL_test_assert(CGAL::in(12.0, p.evaluate(Interval(-1))));
-        CGAL_test_assert(CGAL::in(6.0 , p.evaluate(Interval(0))));
-        CGAL_test_assert(CGAL::in(2.0 , p.evaluate(Interval(1))));
-        CGAL_test_assert(CGAL::in(0.0 , p.evaluate(Interval(2))));
-        CGAL_test_assert(CGAL::in(0.0 , p.evaluate(Interval(3))));
-        CGAL_test_assert(CGAL::in(12.0, p.evaluate_absolute(Interval(1))));
-        CGAL_test_assert(CGAL::in(12.0, p.evaluate_absolute(Interval(-1))));
-        CGAL_test_assert(CGAL::in(6.0 , p.evaluate_absolute(Interval(0))));        
+        assert(CGAL::in(12.0, p.evaluate(Interval(-1))));
+        assert(CGAL::in(6.0 , p.evaluate(Interval(0))));
+        assert(CGAL::in(2.0 , p.evaluate(Interval(1))));
+        assert(CGAL::in(0.0 , p.evaluate(Interval(2))));
+        assert(CGAL::in(0.0 , p.evaluate(Interval(3))));
+        assert(CGAL::in(12.0, p.evaluate_absolute(Interval(1))));
+        assert(CGAL::in(12.0, p.evaluate_absolute(Interval(-1))));
+        assert(CGAL::in(6.0 , p.evaluate_absolute(Interval(0))));        
     }*/
     // coefficients_to
 //    test_coefficients_to<leda::rational>();

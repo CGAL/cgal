@@ -25,7 +25,7 @@
 //             Pedro Machado    <tashimir@gmail.com>
 
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class AK>
 void _test_constuctor(AK ak)
@@ -61,20 +61,20 @@ void _test_constuctor(AK ak)
     typename AK::Polynomial_for_spheres_2_3 p_2_3 = theConstruct_2_3(x, y, z, r_sq);
     typename AK::Polynomial_1_3 p_1_3 = theConstruct_1_3(a, b, c, d);
     typename AK::Polynomials_for_line_3 p_line_3 = theConstruct_line_3(a1, b1, a2, b2, a3, b3);
-    CGAL_test_assert(p_2_3.a() == x);
-    CGAL_test_assert(p_2_3.b() == y);
-    CGAL_test_assert(p_2_3.c() == z);
-    CGAL_test_assert(p_2_3.r_sq() == r_sq);
-    CGAL_test_assert(p_1_3.a() == a);
-    CGAL_test_assert(p_1_3.b() == b);
-    CGAL_test_assert(p_1_3.c() == c);
-    CGAL_test_assert(p_1_3.d() == d);
-    CGAL_test_assert(p_line_3.a1() == a1);
-    CGAL_test_assert(p_line_3.b1() == b1);
-    CGAL_test_assert(p_line_3.a2() == a2);
-    CGAL_test_assert(p_line_3.b2() == b2);
-    CGAL_test_assert(p_line_3.a3() == a3);
-    CGAL_test_assert(p_line_3.b3() == b3);
+    assert(p_2_3.a() == x);
+    assert(p_2_3.b() == y);
+    assert(p_2_3.c() == z);
+    assert(p_2_3.r_sq() == r_sq);
+    assert(p_1_3.a() == a);
+    assert(p_1_3.b() == b);
+    assert(p_1_3.c() == c);
+    assert(p_1_3.d() == d);
+    assert(p_line_3.a1() == a1);
+    assert(p_line_3.b1() == b1);
+    assert(p_line_3.a2() == a2);
+    assert(p_line_3.b2() == b2);
+    assert(p_line_3.a3() == a3);
+    assert(p_line_3.b3() == b3);
   }
   
 }

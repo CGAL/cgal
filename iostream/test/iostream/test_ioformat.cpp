@@ -27,7 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -41,19 +41,19 @@ void test_io(const NT& x){
         os << x;
         std::istringstream is(os.str());
         is >> tmp;
-        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+        assert( x == tmp );
     }{
         std::ostringstream os;
         os << ::CGAL::oformat(x);
         std::istringstream is(os.str());
         is >> ::CGAL::iformat(tmp);
-        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+        assert( x == tmp );
     }{
         std::ostringstream os;
         ::CGAL::write(os,x);
         std::istringstream is(os.str());
         ::CGAL::read(is,tmp);
-        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+        assert( x == tmp );
     }
 }
 

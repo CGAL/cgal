@@ -76,77 +76,77 @@ _test_cls_iso_rectangle_new_2(const R& )
 
  r0 = r1;
 
- CGAL_test_assert( r1 == r1 );
- CGAL_test_assert( r0 == r1 );
- CGAL_test_assert( r1 == r2 );
- CGAL_test_assert( r1 == r3 );
- CGAL_test_assert( r1 == r4 );
- CGAL_test_assert( r2 == r6 );
- CGAL_test_assert( r2 != r5 );
- CGAL_test_assert( r7 == r1 );
- CGAL_test_assert( r8 == r9 );
- CGAL_test_assert( r9 == r10 );
+ assert( r1 == r1 );
+ assert( r0 == r1 );
+ assert( r1 == r2 );
+ assert( r1 == r3 );
+ assert( r1 == r4 );
+ assert( r2 == r6 );
+ assert( r2 != r5 );
+ assert( r7 == r1 );
+ assert( r8 == r9 );
+ assert( r9 == r10 );
 
  std::cout << '.';
 
- CGAL_test_assert( r1.vertex(0) == p1 );
- CGAL_test_assert( r1.vertex(1) == p5 );
- CGAL_test_assert( r1.vertex(2) == p3 );
- CGAL_test_assert( r1.vertex(3) == p2 );
- CGAL_test_assert( r1.vertex(4) == p1 );
- CGAL_test_assert( r3.vertex(0) == p1 );
- CGAL_test_assert( r3.vertex(1) == p5 );
- CGAL_test_assert( r3.vertex(2) == p3 );
- CGAL_test_assert( r3.vertex(3) == p2 );
- CGAL_test_assert( r3.vertex(4) == p1 );
- CGAL_test_assert( r2[0] == r2.vertex(0) );
- CGAL_test_assert( r2[1] == r2.vertex(1) );
- CGAL_test_assert( r2[3] == r2.vertex(3) );
- CGAL_test_assert( r2[4] == r2.vertex(0) );
+ assert( r1.vertex(0) == p1 );
+ assert( r1.vertex(1) == p5 );
+ assert( r1.vertex(2) == p3 );
+ assert( r1.vertex(3) == p2 );
+ assert( r1.vertex(4) == p1 );
+ assert( r3.vertex(0) == p1 );
+ assert( r3.vertex(1) == p5 );
+ assert( r3.vertex(2) == p3 );
+ assert( r3.vertex(3) == p2 );
+ assert( r3.vertex(4) == p1 );
+ assert( r2[0] == r2.vertex(0) );
+ assert( r2[1] == r2.vertex(1) );
+ assert( r2[3] == r2.vertex(3) );
+ assert( r2[4] == r2.vertex(0) );
 
  std::cout << '.';
 
- CGAL_test_assert( (r4.min)() == p1 );
- CGAL_test_assert( (r1.min)() == p1 );
- CGAL_test_assert( (r5.min)() != p9 );
- CGAL_test_assert( (r2.max)() == p3 );
+ assert( (r4.min)() == p1 );
+ assert( (r1.min)() == p1 );
+ assert( (r5.min)() != p9 );
+ assert( (r2.max)() == p3 );
 
  std::cout << '.';
  
- CGAL_test_assert( r1.min_coord(0) == r1.xmin() );
- CGAL_test_assert( r1.min_coord(1) == r1.ymin() );
- CGAL_test_assert( r2.max_coord(0) == r2.xmax() );
- CGAL_test_assert( r2.max_coord(1) == r2.ymax() );
+ assert( r1.min_coord(0) == r1.xmin() );
+ assert( r1.min_coord(1) == r1.ymin() );
+ assert( r2.max_coord(0) == r2.xmax() );
+ assert( r2.max_coord(1) == r2.ymax() );
 
  std::cout << '.';
 
- CGAL_test_assert( r1.bounded_side( p8 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( r2.bounded_side( p7 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( r3.bounded_side( p9 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( r1.bounded_side( p4 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( r4.bounded_side( p6 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( r4.bounded_side( p1 ) == CGAL::ON_BOUNDARY );
+ assert( r1.bounded_side( p8 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( r2.bounded_side( p7 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( r3.bounded_side( p9 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( r1.bounded_side( p4 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( r4.bounded_side( p6 ) == CGAL::ON_BOUNDARY );
+ assert( r4.bounded_side( p1 ) == CGAL::ON_BOUNDARY );
 
- CGAL_test_assert( r5.has_on_boundary( p2 ) );
- CGAL_test_assert( r4.has_on_boundary( p2 ) );
- CGAL_test_assert( r2.has_on_bounded_side( p7 ) );
- CGAL_test_assert( r4.has_on_unbounded_side( p9 ) );
-
- std::cout << '.';
-
- CGAL_test_assert( Iso_rectangle_2( p1, p1 ).is_degenerate() );
- CGAL_test_assert( Iso_rectangle_2( p1, p2 ).is_degenerate() );
- CGAL_test_assert( Iso_rectangle_2( p3, p4 ).is_degenerate() );
+ assert( r5.has_on_boundary( p2 ) );
+ assert( r4.has_on_boundary( p2 ) );
+ assert( r2.has_on_bounded_side( p7 ) );
+ assert( r4.has_on_unbounded_side( p9 ) );
 
  std::cout << '.';
 
- CGAL_test_assert( Iso_rectangle_2( p1, p1 ).area() == FT(0) );
- CGAL_test_assert( Iso_rectangle_2( p1, p2 ).area() == FT(0) );
- CGAL_test_assert( Iso_rectangle_2( p3, p4 ).area() == FT(0) );
- CGAL_test_assert( Iso_rectangle_2( p1, p3 ).area() == FT(9) );
- CGAL_test_assert( Iso_rectangle_2( p3, p1 ).area() == FT(9) );
- CGAL_test_assert( Iso_rectangle_2( p1, p7 ).area() == FT(1) );
- CGAL_test_assert( Iso_rectangle_2( p9, p3 ).area() == FT(21) );
+ assert( Iso_rectangle_2( p1, p1 ).is_degenerate() );
+ assert( Iso_rectangle_2( p1, p2 ).is_degenerate() );
+ assert( Iso_rectangle_2( p3, p4 ).is_degenerate() );
+
+ std::cout << '.';
+
+ assert( Iso_rectangle_2( p1, p1 ).area() == FT(0) );
+ assert( Iso_rectangle_2( p1, p2 ).area() == FT(0) );
+ assert( Iso_rectangle_2( p3, p4 ).area() == FT(0) );
+ assert( Iso_rectangle_2( p1, p3 ).area() == FT(9) );
+ assert( Iso_rectangle_2( p3, p1 ).area() == FT(9) );
+ assert( Iso_rectangle_2( p1, p7 ).area() == FT(1) );
+ assert( Iso_rectangle_2( p9, p3 ).area() == FT(21) );
 
  std::cout << "done" << std::endl;
  return true;

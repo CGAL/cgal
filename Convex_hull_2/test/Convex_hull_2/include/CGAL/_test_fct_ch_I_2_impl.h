@@ -23,7 +23,7 @@
 #define _TEST_FCT_CH_I_2_IMPL_H
 
 #include <CGAL/_test_fct_ch_I_2.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,32 +45,32 @@ ch__batch_test( const Traits& chI )
   Cocircular_points.push_back( Point_2( -32, 255, 257 ));
   Cocircular_points.push_back( Point_2( 45, -28, 53 ));
   Cocircular_points.push_back( Point_2( -12, -35, 37 ));
-  CGAL_test_assert( ! ch_brute_force_check_2( \
+  assert( ! ch_brute_force_check_2( \
               Cocircular_points.begin(), Cocircular_points.end(), \
               Cocircular_points.begin(), Cocircular_points.end(), chI ));
-  CGAL_test_assert( ch_brute_force_check_2( \
+  assert( ch_brute_force_check_2( \
               Cocircular_points.begin(), Cocircular_points.begin(), \
               Cocircular_points.begin(), Cocircular_points.end(), chI ));
-  CGAL_test_assert( ch__test( Cocircular_points.begin(), \
+  assert( ch__test( Cocircular_points.begin(), \
                          Cocircular_points.end(), \
                          chI, ch_ALL, ch_CHECK_CONVEXITY ));
   std::vector< Point_2 > extreme_points;
   convex_hull_2(Cocircular_points.begin(), Cocircular_points.end(),
                 std::back_inserter(extreme_points), chI );
-  CGAL_test_assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
+  assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                          extreme_points.begin(), \
                                          chI ));
-  CGAL_test_assert( is_cw_strongly_convex_2( extreme_points.rend(), 
+  assert( is_cw_strongly_convex_2( extreme_points.rend(), 
                                         extreme_points.rend(), \
                                         chI ));
-  CGAL_test_assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
+  assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                 extreme_points.begin() + 1,  chI ));
-  CGAL_test_assert( is_cw_strongly_convex_2( extreme_points.begin(), \
+  assert( is_cw_strongly_convex_2( extreme_points.begin(), \
                                 extreme_points.begin() + 1,  chI ));
-  CGAL_test_assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
+  assert( is_ccw_strongly_convex_2( extreme_points.begin(), \
                                          extreme_points.end(), \
                                          chI ));
-  CGAL_test_assert( is_cw_strongly_convex_2( extreme_points.rbegin(), 
+  assert( is_cw_strongly_convex_2( extreme_points.rbegin(), 
                                         extreme_points.rend(), \
                                         chI ));
 
@@ -82,7 +82,7 @@ ch__batch_test( const Traits& chI )
   Collinear_points.push_back( Point_2( 106, 80, 1 ));
   Collinear_points.push_back( Point_2( -14, 0 , 1));
   Collinear_points.push_back( Point_2( 136, 100, 1 ));
-  CGAL_test_assert( ch__test( Collinear_points.begin(), \
+  assert( ch__test( Collinear_points.begin(), \
                          Collinear_points.end(), chI ));
 
   std::cout << '.';
@@ -91,14 +91,14 @@ ch__batch_test( const Traits& chI )
   Multiple_points.push_back( Point_2( 17, 80, 1 ));
   Multiple_points.push_back( Point_2( 17, 80, 1 ));
   Multiple_points.push_back( Point_2( 17, 80, 1 ));
-  CGAL_test_assert( ch_brute_force_check_2( \
+  assert( ch_brute_force_check_2( \
                Multiple_points.begin(), Multiple_points.end(),\
                Multiple_points.begin(), Multiple_points.begin() + 1, chI ));
-  CGAL_test_assert( is_ccw_strongly_convex_2(Multiple_points.begin(), \
+  assert( is_ccw_strongly_convex_2(Multiple_points.begin(), \
                                         Multiple_points.begin(), chI ));
-  CGAL_test_assert( ch__test( Multiple_points.begin(), \
+  assert( ch__test( Multiple_points.begin(), \
                          Multiple_points.end(), chI ));
-  CGAL_test_assert( ch__test( Multiple_points.begin() + 2, \
+  assert( ch__test( Multiple_points.begin() + 2, \
                          Multiple_points.begin() + 3, chI ));
 
   std::cout << '.';
@@ -119,13 +119,13 @@ ch__batch_test( const Traits& chI )
   Iso_rectangle_points.push_back( Point_2( 150, 57, 1));
   Iso_rectangle_points.push_back( Point_2( 150, 58, 1));
   Iso_rectangle_points.push_back( Point_2( 150, 58, 1));
-  CGAL_test_assert( ch__test( Iso_rectangle_points.begin(), \
+  assert( ch__test( Iso_rectangle_points.begin(), \
                          Iso_rectangle_points.end(), chI ));
-  CGAL_test_assert( ch__test( Iso_rectangle_points.begin(), \
+  assert( ch__test( Iso_rectangle_points.begin(), \
                          Iso_rectangle_points.begin()+3, chI ));
-  CGAL_test_assert( ch__test( Iso_rectangle_points.begin()+4, \
+  assert( ch__test( Iso_rectangle_points.begin()+4, \
                          Iso_rectangle_points.begin()+7, chI ));
-  CGAL_test_assert( ch__test( Iso_rectangle_points.begin()+5, \
+  assert( ch__test( Iso_rectangle_points.begin()+5, \
                          Iso_rectangle_points.begin()+5, chI ));
 
   std::cout << "done" << std::endl;

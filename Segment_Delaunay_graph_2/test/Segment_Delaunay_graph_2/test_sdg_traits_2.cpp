@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <vector>
 
 #include <CGAL/Interval_arithmetic.h>

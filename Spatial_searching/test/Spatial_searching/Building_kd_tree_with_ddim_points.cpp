@@ -10,7 +10,7 @@
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/point_generators_d.h>
 #include <vector>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iostream>
 
 //typedef CGAL::Cartesian_d<double> K;
@@ -53,12 +53,12 @@ int main() {
     if(CGAL::to_double(it->second) > dist) dist = CGAL::to_double(it->second);
   }
 
-  CGAL_test_assert(result.size() == K);
+  assert(result.size() == K);
   for(std::vector<Point>::iterator it = points.begin();
       it != points.end();
       it++){
     if( std::find(result.begin(), result.end(), *it) == result.end()){
-      CGAL_test_assert(CGAL::squared_distance(query, *it) >= dist);
+      assert(CGAL::squared_distance(query, *it) >= dist);
     }
   }
 
@@ -71,12 +71,12 @@ int main() {
     if(CGAL::to_double(it->second) > dist) dist = CGAL::to_double(it->second);
   }
 
-  CGAL_test_assert(result.size() == K);
+  assert(result.size() == K);
   for(std::vector<Point>::iterator it = points.begin();
       it != points.end();
       it++){
     if( std::find(result.begin(), result.end(), *it) == result.end()){
-      CGAL_test_assert(CGAL::squared_distance(query, *it) >= dist);
+      assert(CGAL::squared_distance(query, *it) >= dist);
     }
   }
   std::cout << "done" << std::endl;

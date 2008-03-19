@@ -18,7 +18,7 @@ typedef CGAL::Polygon_2<K, vector<Point> > VectorPolygon;
 
 #include <fstream>
 #include <algorithm>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 //-----------------------------------------------------------------------//
 //                          test_default_methods
@@ -45,7 +45,7 @@ void test_default_methods(      vector<Point>& pvec0,
     CGAL::Polygon_2<K, vector<Point> > p4_copy(p4);
 
     x=p0;
-    CGAL_test_assert(x == p0);
+    assert(x == p0);
   }
 
   {
@@ -64,7 +64,7 @@ void test_default_methods(      vector<Point>& pvec0,
     CGAL::Polygon_2<K, vector<Point> > p4_copy(p4);
 
     x=p0;
-    CGAL_test_assert(x == p0);
+    assert(x == p0);
   }
 }
 
@@ -169,7 +169,7 @@ void test_stream_operators(ListPolygon& p)
     CGAL::set_ascii_mode(from);
     from >> p_copy;
 
-    CGAL_test_assert(p == p_copy);
+    assert(p == p_copy);
   }
   {
     std::ofstream to("polytest.pretty");
@@ -202,7 +202,7 @@ void test_access_functions(VectorPolygon& p)
   typedef CGAL::Polygon_2<K, vector<Point> >::Edge_const_iterator EI;
   EI edges_begin = p.edges_begin();
   EI edges_end   = p.edges_end();
-  CGAL_test_assert(edges_begin < edges_end);
+  assert(edges_begin < edges_end);
 }
 
 //-----------------------------------------------------------------------//
@@ -262,8 +262,8 @@ void test_update_operations(const ListPolygon& p,
   q.reverse_orientation();
   cout << "p after reversing orientation: " << q << endl;
 
-  CGAL_test_assert(p==p);
-  CGAL_test_assert(!(p==q));
+  assert(p==p);
+  assert(!(p==q));
 
   typedef ListPolygon::Vertex_iterator VI;
   typedef ListPolygon::Vertex_circulator VC;

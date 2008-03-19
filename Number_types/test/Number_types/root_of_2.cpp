@@ -14,7 +14,7 @@
 // Test program for the Root_of_2 class (not other models of the concept yet).
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <CGAL/Random.h>
 
@@ -194,49 +194,49 @@ test_root_of_g()
   Root zero2=CGAL::make_root_of_2((RT)1,(RT)0,(RT)0, false);
   Root zero3(0);
 
-  if (is_RO2_class(zero1)) CGAL_test_assert(conjugate(zero1) == zero2);
-  if (is_RO2_class(zero2)) CGAL_test_assert(conjugate(zero2) == zero1);
-  if (is_RO2_class(zero3)) CGAL_test_assert(conjugate(zero3) == zero3);
-  CGAL_test_assert(is_valid(zero1));
-  CGAL_test_assert(is_valid(zero2));
-  CGAL_test_assert(is_valid(zero3));
-  CGAL_test_assert(CGAL_NTS to_double(zero1) == 0.0);
-  CGAL_test_assert(CGAL_NTS to_double(zero2) == 0.0);
-  CGAL_test_assert(CGAL_NTS to_double(zero3) == 0.0);
-  CGAL_test_assert(test_to_interval<RT>(zero1));
-  CGAL_test_assert(test_to_interval<RT>(zero2));
-  CGAL_test_assert(test_to_interval<RT>(zero3));
-  CGAL_test_assert(CGAL_NTS sign(zero1) == 0);
-  CGAL_test_assert(CGAL_NTS sign(zero2) == 0);
-  CGAL_test_assert(CGAL_NTS sign(zero3) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero1, zero1) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero2, zero2) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero1, zero2) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero2, zero1) == 0);
-  CGAL_test_assert(zero2 == zero1);
-  CGAL_test_assert(zero2 == zero3);
-  CGAL_test_assert(zero1 == zero3);
-  CGAL_test_assert(zero2 <= zero1);
-  CGAL_test_assert(zero2 <= zero3);
-  CGAL_test_assert(zero1 <= zero3);
-  CGAL_test_assert(zero2 >= zero1);
-  CGAL_test_assert(zero2 >= zero3);
-  CGAL_test_assert(zero1 >= zero3);
-  CGAL_test_assert(!(zero2 != zero1));
-  CGAL_test_assert(!(zero2 != zero3));
-  CGAL_test_assert(!(zero1 != zero3));
-  CGAL_test_assert(!(zero2 < zero1));
-  CGAL_test_assert(!(zero2 < zero3));
-  CGAL_test_assert(!(zero1 < zero3));
-  CGAL_test_assert(!(zero2 > zero1));
-  CGAL_test_assert(!(zero2 > zero3));
-  CGAL_test_assert(!(zero1 > zero3));
+  if (is_RO2_class(zero1)) assert(conjugate(zero1) == zero2);
+  if (is_RO2_class(zero2)) assert(conjugate(zero2) == zero1);
+  if (is_RO2_class(zero3)) assert(conjugate(zero3) == zero3);
+  assert(is_valid(zero1));
+  assert(is_valid(zero2));
+  assert(is_valid(zero3));
+  assert(CGAL_NTS to_double(zero1) == 0.0);
+  assert(CGAL_NTS to_double(zero2) == 0.0);
+  assert(CGAL_NTS to_double(zero3) == 0.0);
+  assert(test_to_interval<RT>(zero1));
+  assert(test_to_interval<RT>(zero2));
+  assert(test_to_interval<RT>(zero3));
+  assert(CGAL_NTS sign(zero1) == 0);
+  assert(CGAL_NTS sign(zero2) == 0);
+  assert(CGAL_NTS sign(zero3) == 0);
+  assert(CGAL_NTS compare(zero1, zero1) == 0);
+  assert(CGAL_NTS compare(zero2, zero2) == 0);
+  assert(CGAL_NTS compare(zero1, zero2) == 0);
+  assert(CGAL_NTS compare(zero2, zero1) == 0);
+  assert(zero2 == zero1);
+  assert(zero2 == zero3);
+  assert(zero1 == zero3);
+  assert(zero2 <= zero1);
+  assert(zero2 <= zero3);
+  assert(zero1 <= zero3);
+  assert(zero2 >= zero1);
+  assert(zero2 >= zero3);
+  assert(zero1 >= zero3);
+  assert(!(zero2 != zero1));
+  assert(!(zero2 != zero3));
+  assert(!(zero1 != zero3));
+  assert(!(zero2 < zero1));
+  assert(!(zero2 < zero3));
+  assert(!(zero1 < zero3));
+  assert(!(zero2 > zero1));
+  assert(!(zero2 > zero3));
+  assert(!(zero1 > zero3));
 
-  CGAL_test_assert(CGAL_NTS compare(zero2, -zero1) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero1, -zero2) == 0);
+  assert(CGAL_NTS compare(zero2, -zero1) == 0);
+  assert(CGAL_NTS compare(zero1, -zero2) == 0);
 
-  CGAL_test_assert(CGAL_NTS compare(zero1, zero3) == 0);
-  CGAL_test_assert(CGAL_NTS compare(zero2, zero3) == 0);
+  assert(CGAL_NTS compare(zero1, zero3) == 0);
+  assert(CGAL_NTS compare(zero2, zero3) == 0);
 
   std::cout << "  Testing ones" << std::endl;
   Root one1=CGAL::make_root_of_2 ((RT)-1,(RT) 0,(RT) 1, false);
@@ -246,52 +246,52 @@ test_root_of_g()
   Root one3  = create_root<Root>((RT) 1,(RT) 1);
   Root mone3 = create_root<Root>(-1, 1);
   
-  if (is_RO2_class(one1)) CGAL_test_assert(conjugate(one1) == mone1);
+  if (is_RO2_class(one1)) assert(conjugate(one1) == mone1);
     
   //It is not true that those must hold
-  //CGAL_test_assert(one2.conjugate() == mone2);
-  //CGAL_test_assert(one3.conjugate() == mone3);
-  CGAL_test_assert(is_valid(one1));
-  CGAL_test_assert(is_valid(mone1));
-  CGAL_test_assert(is_valid(one2));
-  CGAL_test_assert(is_valid(mone2));
-  CGAL_test_assert(CGAL_NTS to_double(one1)  ==  1.0);
-  CGAL_test_assert(CGAL_NTS to_double(mone1) == -1.0);
-  CGAL_test_assert(CGAL_NTS to_double(one2)  ==  1.0);
-  CGAL_test_assert(CGAL_NTS to_double(mone2) == -1.0);
-  CGAL_test_assert(test_to_interval<RT>(one1));
-  CGAL_test_assert(test_to_interval<RT>(mone1));
-  CGAL_test_assert(test_to_interval<RT>(one2));
-  CGAL_test_assert(test_to_interval<RT>(mone2));
-  CGAL_test_assert(test_to_interval<RT>(one3));
-  CGAL_test_assert(test_to_interval<RT>(mone3));
+  //assert(one2.conjugate() == mone2);
+  //assert(one3.conjugate() == mone3);
+  assert(is_valid(one1));
+  assert(is_valid(mone1));
+  assert(is_valid(one2));
+  assert(is_valid(mone2));
+  assert(CGAL_NTS to_double(one1)  ==  1.0);
+  assert(CGAL_NTS to_double(mone1) == -1.0);
+  assert(CGAL_NTS to_double(one2)  ==  1.0);
+  assert(CGAL_NTS to_double(mone2) == -1.0);
+  assert(test_to_interval<RT>(one1));
+  assert(test_to_interval<RT>(mone1));
+  assert(test_to_interval<RT>(one2));
+  assert(test_to_interval<RT>(mone2));
+  assert(test_to_interval<RT>(one3));
+  assert(test_to_interval<RT>(mone3));
 
-  CGAL_test_assert(CGAL_NTS sign( one1) > 0);
-  CGAL_test_assert(CGAL_NTS sign( one2) > 0);
-  CGAL_test_assert(CGAL_NTS sign(mone1) < 0);
-  CGAL_test_assert(CGAL_NTS sign(mone2) < 0);
-  CGAL_test_assert(CGAL_NTS compare( one1,  one1) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone1, mone1) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone1,  one1) < 0);
-  CGAL_test_assert(CGAL_NTS compare( one1, mone1) > 0);
+  assert(CGAL_NTS sign( one1) > 0);
+  assert(CGAL_NTS sign( one2) > 0);
+  assert(CGAL_NTS sign(mone1) < 0);
+  assert(CGAL_NTS sign(mone2) < 0);
+  assert(CGAL_NTS compare( one1,  one1) == 0);
+  assert(CGAL_NTS compare(mone1, mone1) == 0);
+  assert(CGAL_NTS compare(mone1,  one1) < 0);
+  assert(CGAL_NTS compare( one1, mone1) > 0);
 
-  CGAL_test_assert(CGAL_NTS compare( one2,  one2) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone2, mone2) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone2,  one2) < 0);
-  CGAL_test_assert(CGAL_NTS compare( one2, mone2) > 0);
+  assert(CGAL_NTS compare( one2,  one2) == 0);
+  assert(CGAL_NTS compare(mone2, mone2) == 0);
+  assert(CGAL_NTS compare(mone2,  one2) < 0);
+  assert(CGAL_NTS compare( one2, mone2) > 0);
 
-  CGAL_test_assert(CGAL_NTS compare( one1, -mone1) == 0);
-  CGAL_test_assert(CGAL_NTS compare(-one1,  mone1) == 0);
+  assert(CGAL_NTS compare( one1, -mone1) == 0);
+  assert(CGAL_NTS compare(-one1,  mone1) == 0);
 
-  CGAL_test_assert(CGAL_NTS compare( one1,  one2) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone1, mone2) == 0);
-  CGAL_test_assert(CGAL_NTS compare( one1,  one3) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone1, mone3) == 0);
-  CGAL_test_assert(CGAL_NTS compare( one2,  one3) == 0);
-  CGAL_test_assert(CGAL_NTS compare(mone2, mone3) == 0);
+  assert(CGAL_NTS compare( one1,  one2) == 0);
+  assert(CGAL_NTS compare(mone1, mone2) == 0);
+  assert(CGAL_NTS compare( one1,  one3) == 0);
+  assert(CGAL_NTS compare(mone1, mone3) == 0);
+  assert(CGAL_NTS compare( one2,  one3) == 0);
+  assert(CGAL_NTS compare(mone2, mone3) == 0);
 
-  CGAL_test_assert(CGAL_NTS compare( one1, zero1) > 0);
-  CGAL_test_assert(CGAL_NTS compare(mone1, zero2) < 0);
+  assert(CGAL_NTS compare( one1, zero1) > 0);
+  assert(CGAL_NTS compare(mone1, zero2) < 0);
 
   std::cout << "  Testing output" << std::endl;
   std::cout << "  zero = ";
@@ -311,44 +311,44 @@ test_root_of_g()
   std::cout << " approx =  " << mone1 << std::endl;
 
   std::cout << "  Testing degree 1" << std::endl;
-  CGAL_test_assert(CGAL_NTS compare( Root(0),  Root(0)) == 0);
-  CGAL_test_assert(CGAL_NTS compare( Root(1),  Root(1)) == 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(-1), Root(-1)) == 0);
-  CGAL_test_assert(CGAL_NTS compare( Root(0),  Root(1)) < 0);
-  CGAL_test_assert(CGAL_NTS compare( Root(1), Root(-1)) > 0);
+  assert(CGAL_NTS compare( Root(0),  Root(0)) == 0);
+  assert(CGAL_NTS compare( Root(1),  Root(1)) == 0);
+  assert(CGAL_NTS compare(Root(-1), Root(-1)) == 0);
+  assert(CGAL_NTS compare( Root(0),  Root(1)) < 0);
+  assert(CGAL_NTS compare( Root(1), Root(-1)) > 0);
 
-  CGAL_test_assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-2)) == 0);
-  CGAL_test_assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-1)) < 0);
-  CGAL_test_assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-3)) > 0);
+  assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-2)) == 0);
+  assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-1)) < 0);
+  assert(CGAL_NTS compare( create_root<Root>(-4, 2), Root(-3)) > 0);
 
   std::cout << "  Testing degree 1 and 2" << std::endl;
   Root rone=CGAL::make_root_of_2((RT)1, (RT)0, (RT)-1, false);
   Root rmone=CGAL::make_root_of_2((RT)1, (RT)0,(RT) -1, true);
-  if (is_RO2_class(rone)) CGAL_test_assert(conjugate(rone) == rmone);
-  CGAL_test_assert(test_to_interval<RT>(rone));
-  CGAL_test_assert(test_to_interval<RT>(rmone));
+  if (is_RO2_class(rone)) assert(conjugate(rone) == rmone);
+  assert(test_to_interval<RT>(rone));
+  assert(test_to_interval<RT>(rmone));
   // Compare the two roots of the above polynomial (-1 and 1),
   // succesively with -2, -1, 0, 1, 2.
-  CGAL_test_assert(CGAL_NTS compare(Root(-2), rmone) < 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(-2), rone)  < 0);
-  CGAL_test_assert(CGAL_NTS compare(rmone, Root(-2)) > 0);
-  CGAL_test_assert(CGAL_NTS compare(rone, Root(-2))  > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(-1), rmone) == 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(-1), rone)  < 0);
-  CGAL_test_assert(CGAL_NTS compare(rmone, Root(-1)) == 0);
-  CGAL_test_assert(CGAL_NTS compare(rone, Root(-1))  > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(0), rmone)  > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(0), rone)   < 0);
-  CGAL_test_assert(CGAL_NTS compare(rmone, Root(0))  < 0);
-  CGAL_test_assert(CGAL_NTS compare(rone, Root(0))   > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(1), rmone)  > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(1), rone)   == 0);
-  CGAL_test_assert(CGAL_NTS compare(rmone, Root(1))  < 0);
-  CGAL_test_assert(CGAL_NTS compare(rone, Root(1))   == 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(2), rmone)  > 0);
-  CGAL_test_assert(CGAL_NTS compare(Root(2), rone)   > 0);
-  CGAL_test_assert(CGAL_NTS compare(rmone, Root(2))  < 0);
-  CGAL_test_assert(CGAL_NTS compare(rone, Root(2))   < 0);
+  assert(CGAL_NTS compare(Root(-2), rmone) < 0);
+  assert(CGAL_NTS compare(Root(-2), rone)  < 0);
+  assert(CGAL_NTS compare(rmone, Root(-2)) > 0);
+  assert(CGAL_NTS compare(rone, Root(-2))  > 0);
+  assert(CGAL_NTS compare(Root(-1), rmone) == 0);
+  assert(CGAL_NTS compare(Root(-1), rone)  < 0);
+  assert(CGAL_NTS compare(rmone, Root(-1)) == 0);
+  assert(CGAL_NTS compare(rone, Root(-1))  > 0);
+  assert(CGAL_NTS compare(Root(0), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(0), rone)   < 0);
+  assert(CGAL_NTS compare(rmone, Root(0))  < 0);
+  assert(CGAL_NTS compare(rone, Root(0))   > 0);
+  assert(CGAL_NTS compare(Root(1), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(1), rone)   == 0);
+  assert(CGAL_NTS compare(rmone, Root(1))  < 0);
+  assert(CGAL_NTS compare(rone, Root(1))   == 0);
+  assert(CGAL_NTS compare(Root(2), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(2), rone)   > 0);
+  assert(CGAL_NTS compare(rmone, Root(2))  < 0);
+  assert(CGAL_NTS compare(rone, Root(2))   < 0);
 
 // All compare tests are wrong since the double
 // cannot handle all of them
@@ -357,44 +357,44 @@ test_root_of_g()
   for (int i = 0; i < test_loops; ++i) {
     Root r1 = Root(my_rand<RT>());
     Root r2 = Root(my_rand<RT>());
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(test_to_interval<RT>(r2));
-//    CGAL_test_assert(test_compare(r1, r2));
+    assert(r1 == r1);
+    assert(test_to_interval<RT>(r1));
+    assert(r2 == r2);
+    assert(test_to_interval<RT>(r2));
+//    assert(test_compare(r1, r2));
   }
 
   std::cout << "  Testing random roots of degree 1" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     Root r1 = my_rand_root_1<Root,RT>();
     Root r2 = my_rand_root_1<Root,RT>();
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(test_to_interval<RT>(r2));
-//    CGAL_test_assert(test_compare(r1, r2));
+    assert(r1 == r1);
+    assert(test_to_interval<RT>(r1));
+    assert(r2 == r2);
+    assert(test_to_interval<RT>(r2));
+//    assert(test_compare(r1, r2));
   }
 
   std::cout << "  Testing random roots of degree 2" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     Root r1 = my_rand_root<Root,RT>();
     Root r2 = my_rand_root<Root,RT>();
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(test_to_interval<RT>(r2));
-//    CGAL_test_assert(test_compare(r1, r2));
+    assert(r1 == r1);
+    assert(test_to_interval<RT>(r1));
+    assert(r2 == r2);
+    assert(test_to_interval<RT>(r2));
+//    assert(test_compare(r1, r2));
   }
 
   std::cout << "  Testing random roots of degree 1 and 2" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     Root r1 = my_rand_root_1<Root,RT>();
     Root r2 = my_rand_root<Root,RT>();
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(test_to_interval<RT>(r2));
-//    CGAL_test_assert(test_compare(r1, r2));
+    assert(r1 == r1);
+    assert(test_to_interval<RT>(r1));
+    assert(r2 == r2);
+    assert(test_to_interval<RT>(r2));
+//    assert(test_compare(r1, r2));
   }
 
   std::cout << "  Testing squares of random roots of degree 2" << std::endl;
@@ -403,13 +403,13 @@ test_root_of_g()
     Root r2 = my_rand_root<Root,RT>();
     Root r1_sqr = CGAL_NTS square(r1);
     Root r2_sqr = CGAL_NTS square(r2);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(test_to_interval<RT>(r2));
-    CGAL_test_assert(test_to_interval<RT>(r1_sqr));
-    CGAL_test_assert(test_to_interval<RT>(r2_sqr));
+    assert(test_to_interval<RT>(r1));
+    assert(test_to_interval<RT>(r2));
+    assert(test_to_interval<RT>(r1_sqr));
+    assert(test_to_interval<RT>(r2_sqr));
 //   double dr1 = to_double(r1);
 //   double dr2 = to_double(r2);
-//    CGAL_test_assert(CGAL_NTS compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
+//    assert(CGAL_NTS compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
   }
 
   std::cout << "  Testing addition/subtraction of Root_of_2<NT> with NT"
@@ -421,24 +421,24 @@ test_root_of_g()
     Root r3 = r1 + r;
     Root r4 = r - r1;
     Root r5 = r + r1;
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(r3 == r3);
-    CGAL_test_assert(r4 == r4);
-    CGAL_test_assert(r5 == r5);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(test_to_interval<RT>(r2));
-    CGAL_test_assert(test_to_interval<RT>(r3));
-    CGAL_test_assert(test_to_interval<RT>(r4));
-    CGAL_test_assert(test_to_interval<RT>(r5));
-  //  CGAL_test_assert(test_compare(r1, r2));
-  //  CGAL_test_assert(test_compare(r1, r3));
-  //  CGAL_test_assert(test_compare(r1, r4));
-  //  CGAL_test_assert(test_compare(r1, r5));
-  //  CGAL_test_assert(CGAL_NTS compare(r1, r2) ==   (int) CGAL_NTS sign(r));
-  //  CGAL_test_assert(CGAL_NTS compare(r1, r3) == - (int) CGAL_NTS sign(r));
-  //  CGAL_test_assert(CGAL_NTS compare(r1, r5) == - (int) CGAL_NTS sign(r));
-  //  CGAL_test_assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
+    assert(r1 == r1);
+    assert(r2 == r2);
+    assert(r3 == r3);
+    assert(r4 == r4);
+    assert(r5 == r5);
+    assert(test_to_interval<RT>(r1));
+    assert(test_to_interval<RT>(r2));
+    assert(test_to_interval<RT>(r3));
+    assert(test_to_interval<RT>(r4));
+    assert(test_to_interval<RT>(r5));
+  //  assert(test_compare(r1, r2));
+  //  assert(test_compare(r1, r3));
+  //  assert(test_compare(r1, r4));
+  //  assert(test_compare(r1, r5));
+  //  assert(CGAL_NTS compare(r1, r2) ==   (int) CGAL_NTS sign(r));
+  //  assert(CGAL_NTS compare(r1, r3) == - (int) CGAL_NTS sign(r));
+  //  assert(CGAL_NTS compare(r1, r5) == - (int) CGAL_NTS sign(r));
+  //  assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
   }
 
   std::cout << "  Testing multiplication of Root_of_2<NT> with NT" << std::endl;
@@ -451,37 +451,37 @@ test_root_of_g()
     FT rn(n);
     if (r != 0){
       Root r4 = r2 / r;
-      CGAL_test_assert(r4 == r4);
-      CGAL_test_assert(test_to_interval<RT>(r4));
-      CGAL_test_assert(r4 == r1);
+      assert(r4 == r4);
+      assert(test_to_interval<RT>(r4));
+      assert(r4 == r1);
     }
     if (n != 0){
       Root r5 = my_rand_root<Root,RT>();
       Root r6 = r5 * rn;
       Root r4 = r6 / rn;
-      CGAL_test_assert(r4 == r4);
-      CGAL_test_assert(test_to_interval<RT>(r4));
-      CGAL_test_assert(r4 == r5);
+      assert(r4 == r4);
+      assert(test_to_interval<RT>(r4));
+      assert(r4 == r5);
     }
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(r3 == r3);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(test_to_interval<RT>(r2));
-    CGAL_test_assert(test_to_interval<RT>(r3));
-//    CGAL_test_assert(test_compare(r1, r2));
-//    CGAL_test_assert(test_compare(r1, r3));
-//    CGAL_test_assert(test_compare(r2, r3));
-    CGAL_test_assert(r2 == r3);
+    assert(r1 == r1);
+    assert(r2 == r2);
+    assert(r3 == r3);
+    assert(test_to_interval<RT>(r1));
+    assert(test_to_interval<RT>(r2));
+    assert(test_to_interval<RT>(r3));
+//    assert(test_compare(r1, r2));
+//    assert(test_compare(r1, r3));
+//    assert(test_compare(r2, r3));
+    assert(r2 == r3);
     if (r > 0) {
-//      CGAL_test_assert(CGAL_NTS compare(r1, r2) == compare(1, r) * sign(r1));
-//      CGAL_test_assert(CGAL_NTS compare(r1, r3) == compare(1, r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, r2) == compare(1, r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, r3) == compare(1, r) * sign(r1));
     } else if (r < 0) {
-//      CGAL_test_assert(CGAL_NTS compare(r1, -r2) == compare(1, -r) * sign(r1));
-//      CGAL_test_assert(CGAL_NTS compare(r1, -r3) == compare(1, -r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, -r2) == compare(1, -r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, -r3) == compare(1, -r) * sign(r1));
     } else {
-      CGAL_test_assert(r2 == Root(0));
-      CGAL_test_assert(r3 == Root(0));
+      assert(r2 == Root(0));
+      assert(r3 == Root(0));
     }
   }
 
@@ -493,13 +493,13 @@ test_root_of_g()
     while(r2 == 0) r2 = my_rand_root<Root,RT>();
     Root r1_inv = inverse_helper(r1);
     Root r2_inv = inverse_helper(r2);
-    CGAL_test_assert(test_to_interval<RT>(r1));
-    CGAL_test_assert(test_to_interval<RT>(r2));
-    CGAL_test_assert(test_to_interval<RT>(r1_inv));
-    CGAL_test_assert(test_to_interval<RT>(r2_inv));
+    assert(test_to_interval<RT>(r1));
+    assert(test_to_interval<RT>(r2));
+    assert(test_to_interval<RT>(r1_inv));
+    assert(test_to_interval<RT>(r2_inv));
 //    double dr1 = to_double(r1);
 //    double dr2 = to_double(r2);
-//    CGAL_test_assert(CGAL_NTS compare(r1_inv, r2_inv) == compare(1.0/dr1, 1.0/dr2));
+//    assert(CGAL_NTS compare(r1_inv, r2_inv) == compare(1.0/dr1, 1.0/dr2));
   }
 
   std::cout << "  Testing make_sqrt(RT)" << std::endl;
@@ -510,11 +510,11 @@ test_root_of_g()
     while(r2 < 0) r2 = my_rand<RT>();
     Root sqr_r1 = CGAL::make_sqrt(r1);
     Root sqr_r2 = CGAL::make_sqrt(r2);
-    CGAL_test_assert(test_to_interval<RT>(sqr_r1));
-    CGAL_test_assert(test_to_interval<RT>(sqr_r2));
+    assert(test_to_interval<RT>(sqr_r1));
+    assert(test_to_interval<RT>(sqr_r2));
 //    double dr1 = to_double(r1);
 //    double dr2 = to_double(r2);
-//    CGAL_test_assert(CGAL_NTS compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
+//    assert(CGAL_NTS compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
   }
 
   std::cout << "  Testing Root_of_2<FT>" << std::endl;
@@ -525,12 +525,12 @@ test_root_of_g()
     Root r1(r);
     Root r2(n);
     Root r3=create_root<Root>(Rat_traits().numerator(r), Rat_traits().denominator(r));
-    CGAL_test_assert(r1 == r1);
-    CGAL_test_assert(r2 == r2);
-    CGAL_test_assert(r3 == r3);
-    CGAL_test_assert(r1 == r2);
-    CGAL_test_assert(r2 == r3);
-    CGAL_test_assert(r1 == r3);
+    assert(r1 == r1);
+    assert(r2 == r2);
+    assert(r3 == r3);
+    assert(r1 == r2);
+    assert(r2 == r3);
+    assert(r1 == r3);
   }
   return true;
 }

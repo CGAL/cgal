@@ -1,7 +1,7 @@
 // Run-time check that our endianness macro is correctly defined.
 
 #include <CGAL/config.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #if !defined CGAL_LITTLE_ENDIAN && !defined CGAL_BIG_ENDIAN
 #  error no endian macro defined
@@ -19,13 +19,13 @@ int main()
 #ifdef CGAL_LITTLE_ENDIAN
         return 0;
 #else
-        CGAL_test_assert(false);
+        assert(false);
 #endif
     } else {
 #ifdef CGAL_BIG_ENDIAN
         return 0;
 #else
-        CGAL_test_assert(false);
+        assert(false);
 #endif
     }
     return 0;

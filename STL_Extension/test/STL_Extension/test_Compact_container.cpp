@@ -29,7 +29,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <cstddef>
 #include <list>
 #include <vector>
@@ -109,28 +109,28 @@ void test(const Cont &)
   Cont c8;
   c8.insert(c0.rbegin(), c0.rend());
 
-  CGAL_test_assert(c0 == c1);
-  CGAL_test_assert(! (c0 < c1));
+  assert(c0 == c1);
+  assert(! (c0 < c1));
 
-  CGAL_test_assert(check_empty(c0));
-  CGAL_test_assert(check_empty(c1));
-  CGAL_test_assert(check_empty(c2));
-  CGAL_test_assert(check_empty(c3));
-  CGAL_test_assert(check_empty(c4));
-  CGAL_test_assert(check_empty(c5));
-  CGAL_test_assert(check_empty(c6));
-  CGAL_test_assert(check_empty(c7));
-  CGAL_test_assert(check_empty(c8));
+  assert(check_empty(c0));
+  assert(check_empty(c1));
+  assert(check_empty(c2));
+  assert(check_empty(c3));
+  assert(check_empty(c4));
+  assert(check_empty(c5));
+  assert(check_empty(c6));
+  assert(check_empty(c7));
+  assert(check_empty(c8));
 
   c1.swap(c0);
 
-  CGAL_test_assert(check_empty(c0));
-  CGAL_test_assert(check_empty(c1));
+  assert(check_empty(c0));
+  assert(check_empty(c1));
 
   c1.merge(c0);
 
-  CGAL_test_assert(check_empty(c0));
-  CGAL_test_assert(check_empty(c1));
+  assert(check_empty(c0));
+  assert(check_empty(c1));
 
   typename Cont::allocator_type  t20 = c0.get_allocator();
 
@@ -139,74 +139,74 @@ void test(const Cont &)
   Vect v1(10000);
   Cont c9(v1.begin(), v1.end());
 
-  CGAL_test_assert(c9.size() == v1.size());
-  CGAL_test_assert(c9.max_size() >= v1.size());
-  CGAL_test_assert(c9.capacity() >= c9.size());
+  assert(c9.size() == v1.size());
+  assert(c9.max_size() >= v1.size());
+  assert(c9.capacity() >= c9.size());
 
   Cont c10 = c9;
 
-  CGAL_test_assert(c10 == c9);
-  CGAL_test_assert(c10.size() == v1.size());
-  CGAL_test_assert(c10.max_size() >= v1.size());
-  CGAL_test_assert(c10.capacity() >= c10.size());
+  assert(c10 == c9);
+  assert(c10.size() == v1.size());
+  assert(c10.max_size() >= v1.size());
+  assert(c10.capacity() >= c10.size());
 
   c9.clear();
 
-  CGAL_test_assert(check_empty(c9));
-  CGAL_test_assert(c9.capacity() >= c9.size());
-  CGAL_test_assert(c0 == c9);
+  assert(check_empty(c9));
+  assert(c9.capacity() >= c9.size());
+  assert(c0 == c9);
 
   c9.merge(c10);
   c10.swap(c9);
 
-  CGAL_test_assert(check_empty(c9));
-  CGAL_test_assert(c9.capacity() >= c9.size());
+  assert(check_empty(c9));
+  assert(c9.capacity() >= c9.size());
 
-  CGAL_test_assert(c10.size() == v1.size());
-  CGAL_test_assert(c10.max_size() >= v1.size());
-  CGAL_test_assert(c10.capacity() >= c10.size());
+  assert(c10.size() == v1.size());
+  assert(c10.max_size() >= v1.size());
+  assert(c10.capacity() >= c10.size());
 
   std::cout << "Testing insertion methods" << std::endl;
 
   c9.assign(c10.begin(), c10.end());
 
-  CGAL_test_assert(c9 == c10);
+  assert(c9 == c10);
 
   c10.assign(c9.begin(), c9.end());
 
-  CGAL_test_assert(c9 == c10);
+  assert(c9 == c10);
 
   c9.insert(c10.begin(), c10.end());
 
-  CGAL_test_assert(c9.size() == 2*v1.size());
+  assert(c9.size() == 2*v1.size());
 
   c9.clear();
 
-  CGAL_test_assert(c9 != c10);
+  assert(c9 != c10);
 
   c9.insert(c10.begin(), c10.end());
 
-  CGAL_test_assert(c9.size() == v1.size());
-  CGAL_test_assert(c9 == c10);
+  assert(c9.size() == v1.size());
+  assert(c9 == c10);
 
   c10 = Cont();
 
-  CGAL_test_assert(check_empty(c10));
+  assert(check_empty(c10));
 
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c10.insert(*it);
 
-  CGAL_test_assert(c10.size() == v1.size());
-  CGAL_test_assert(c9 == c10);
+  assert(c10.size() == v1.size());
+  assert(c9 == c10);
 
   c9.erase(c9.begin());
   c9.erase(c9.begin());
 
-  CGAL_test_assert(c9.size() == v1.size() - 2);
+  assert(c9.size() == v1.size() - 2);
 
   c9.erase(c9.begin(), c9.end());
 
-  CGAL_test_assert(check_empty(c9));
+  assert(check_empty(c9));
 }
 
 

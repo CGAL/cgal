@@ -1,5 +1,5 @@
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class CK>
 void _test_circle_bbox(CK ck)
@@ -53,11 +53,11 @@ void _test_circle_bbox(CK ck)
 			     std::back_inserter(vector_for_intersection_1));
     if(vector_for_intersection_1.size() > 0){
       std::cout << " intersection " << std::endl;
-      CGAL_test_assert(box_overlap);
+      assert(box_overlap);
     }
     if(!box_overlap){
       std::cout << " box_overlap " << std::endl;
-      CGAL_test_assert(vector_for_intersection_1.size() == 0);
+      assert(vector_for_intersection_1.size() == 0);
     }
   }
 }
@@ -117,15 +117,15 @@ void _test_circle_bbox(CK ck)
 
       CGAL::Bbox_2 box1 = arc_random.bbox();
       
-      CGAL_test_assert(typename CK::FT(box1.xmin()) <= arc_random.source().x());
-      CGAL_test_assert(typename CK::FT(box1.xmin()) <= arc_random.target().x());
-      CGAL_test_assert(typename CK::FT(box1.xmax()) >= arc_random.source().x());
-      CGAL_test_assert(typename CK::FT(box1.xmax()) >= arc_random.target().x());
-      CGAL_test_assert(typename CK::FT(box1.ymin()) <= arc_random.source().y());
-      CGAL_test_assert(typename CK::FT(box1.ymin()) <= arc_random.target().y());
-      CGAL_test_assert(typename CK::FT(box1.ymax()) >= arc_random.source().y());
-      CGAL_test_assert(typename CK::FT(box1.ymax()) >= arc_random.target().y());
-//      CGAL_test_assert(((typename CK::FT(box1.xmin()) - arc_random.center().x())
+      assert(typename CK::FT(box1.xmin()) <= arc_random.source().x());
+      assert(typename CK::FT(box1.xmin()) <= arc_random.target().x());
+      assert(typename CK::FT(box1.xmax()) >= arc_random.source().x());
+      assert(typename CK::FT(box1.xmax()) >= arc_random.target().x());
+      assert(typename CK::FT(box1.ymin()) <= arc_random.source().y());
+      assert(typename CK::FT(box1.ymin()) <= arc_random.target().y());
+      assert(typename CK::FT(box1.ymax()) >= arc_random.source().y());
+      assert(typename CK::FT(box1.ymax()) >= arc_random.target().y());
+//      assert(((typename CK::FT(box1.xmin()) - arc_random.center().x())
 //	     *(typename CK::FT(box1.xmin()) - arc_random.center().x()))
 //	     <= arc_random.supporting_circle().squared_radius());
       
@@ -170,19 +170,19 @@ template <class CK>
     Circular_arc_2 arc_down;
     assign(arc_top,outputIterator1[1]);
     assign(arc_down, outputIterator1[0]);
-    CGAL_test_assert(!ck.has_on_2_object()(arc_top,
+    assert(!ck.has_on_2_object()(arc_top,
 				line_vertical.source()));
-    CGAL_test_assert(ck.has_on_2_object()(arc_top,
+    assert(ck.has_on_2_object()(arc_top,
 				arc_top.source()));
-    CGAL_test_assert(ck.has_on_2_object()(arc_top,
+    assert(ck.has_on_2_object()(arc_top,
 				arc_top.target()));
-    CGAL_test_assert(ck.has_on_2_object()(arc_top,
+    assert(ck.has_on_2_object()(arc_top,
 				point_top));
-    CGAL_test_assert(!ck.has_on_2_object()(arc_top,
+    assert(!ck.has_on_2_object()(arc_top,
 				point_down));
-    CGAL_test_assert(ck.has_on_2_object()(arc_down,
+    assert(ck.has_on_2_object()(arc_down,
 				point_down));
-    CGAL_test_assert(!ck.has_on_2_object()(arc_down,
+    assert(!ck.has_on_2_object()(arc_down,
 				point_top));
   }
 
@@ -220,17 +220,17 @@ template <class CK>
       std::pair< Circular_arc_point_2, unsigned int> aux;
       assign(aux, vector_for_intersection_1[0]);
       CGAL::Bbox_2 box1 = aux.first.bbox(); 
-      CGAL_test_assert(typename CK::FT(box1.xmin()) <= aux.first.x());
-      CGAL_test_assert(typename CK::FT(box1.xmax()) >= aux.first.x());
-      CGAL_test_assert(typename CK::FT(box1.ymin()) <= aux.first.y());
-      CGAL_test_assert(typename CK::FT(box1.ymax()) >= aux.first.y());
+      assert(typename CK::FT(box1.xmin()) <= aux.first.x());
+      assert(typename CK::FT(box1.xmax()) >= aux.first.x());
+      assert(typename CK::FT(box1.ymin()) <= aux.first.y());
+      assert(typename CK::FT(box1.ymax()) >= aux.first.y());
       std::cout << "Ok" << std::endl;
       assign(aux, vector_for_intersection_1[1]);
       CGAL::Bbox_2 box2 = aux.first.bbox(); 
-      CGAL_test_assert(typename CK::FT(box2.xmin()) <= aux.first.x());
-      CGAL_test_assert(typename CK::FT(box2.xmax()) >= aux.first.x());
-      CGAL_test_assert(typename CK::FT(box2.ymin()) <= aux.first.y());
-      CGAL_test_assert(typename CK::FT(box2.ymax()) >= aux.first.y());
+      assert(typename CK::FT(box2.xmin()) <= aux.first.x());
+      assert(typename CK::FT(box2.xmax()) >= aux.first.x());
+      assert(typename CK::FT(box2.ymin()) <= aux.first.y());
+      assert(typename CK::FT(box2.ymax()) >= aux.first.y());
       std::cout << "Ok" << std::endl;
     }
   }

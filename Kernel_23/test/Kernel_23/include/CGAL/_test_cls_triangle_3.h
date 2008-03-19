@@ -23,7 +23,7 @@
 #define CGAL__TEST_CLS_TRIANGLE_3_H
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class R>
 bool
@@ -66,63 +66,63 @@ _test_cls_triangle_3(const R& )
  CGAL::Triangle_3<R> t5( t1 );
  t0 = t1;
 
- CGAL_test_assert( t0 == t0 );
- CGAL_test_assert( t0 == t1 );
- CGAL_test_assert( t5 == t1 );
- CGAL_test_assert( t2 != t4 );
- CGAL_test_assert( t3 != t4 );
+ assert( t0 == t0 );
+ assert( t0 == t1 );
+ assert( t5 == t1 );
+ assert( t2 != t4 );
+ assert( t3 != t4 );
 
  std::cout <<'.';
 
  CGAL::Plane_3<R> pl1( p1,p2,p3);
  CGAL::Plane_3<R> pl2( p4,p2,p3);
- CGAL_test_assert( t1.supporting_plane() == pl1 );
- CGAL_test_assert( t2.supporting_plane() == pl2 );
- CGAL_test_assert( t3.supporting_plane() == t4.supporting_plane().opposite() );
+ assert( t1.supporting_plane() == pl1 );
+ assert( t2.supporting_plane() == pl2 );
+ assert( t3.supporting_plane() == t4.supporting_plane().opposite() );
 
  std::cout <<'.';
 
- CGAL_test_assert( t1.has_on(p3) );
- CGAL_test_assert( t1.has_on(p2) );
- CGAL_test_assert( t2.has_on(p4) );
- CGAL_test_assert( ! t1.has_on(p4) );
+ assert( t1.has_on(p3) );
+ assert( t1.has_on(p2) );
+ assert( t2.has_on(p4) );
+ assert( ! t1.has_on(p4) );
  CGAL::Point_3<R> pt( n7, n7, n7, n7);
- CGAL_test_assert( t3.has_on( pt ) );
- CGAL_test_assert( t4.has_on( pt ) );
+ assert( t3.has_on( pt ) );
+ assert( t4.has_on( pt ) );
 
- CGAL_test_assert( t1.vertex(0) == p1 );
- CGAL_test_assert( t1.vertex(1) == p2 );
- CGAL_test_assert( t1.vertex(2) == p3 );
- CGAL_test_assert( t4[0] == ps2 );
- CGAL_test_assert( t4[1] == ps1 );
- CGAL_test_assert( t4[2] == ps3 );
+ assert( t1.vertex(0) == p1 );
+ assert( t1.vertex(1) == p2 );
+ assert( t1.vertex(2) == p3 );
+ assert( t4[0] == ps2 );
+ assert( t4[1] == ps1 );
+ assert( t4[2] == ps3 );
 
  std::cout <<'.';
 
  CGAL::Triangle_3<R> tdeg1( p3,p3,p1);
  CGAL::Triangle_3<R> tdeg2( p3,p3,p3);
- CGAL_test_assert( tdeg1.is_degenerate() );
- CGAL_test_assert( tdeg2.is_degenerate() );
+ assert( tdeg1.is_degenerate() );
+ assert( tdeg2.is_degenerate() );
 
  std::cout <<'.';
 
- CGAL_test_assert( tdeg1.squared_area() == FT(0) );
- CGAL_test_assert( tdeg2.squared_area() == FT(0) );
- CGAL_test_assert( t5.squared_area() == t1.squared_area() );
- CGAL_test_assert( t3.squared_area() == t4.squared_area() );
+ assert( tdeg1.squared_area() == FT(0) );
+ assert( tdeg2.squared_area() == FT(0) );
+ assert( t5.squared_area() == t1.squared_area() );
+ assert( t3.squared_area() == t4.squared_area() );
  CGAL::Triangle_3<R> t6(ps3,p5,p6);
- CGAL_test_assert( t6.squared_area() == FT(25) );
- CGAL_test_assert( t6.squared_area() == CGAL::squared_area(ps3,p5,p6) );
+ assert( t6.squared_area() == FT(25) );
+ assert( t6.squared_area() == CGAL::squared_area(ps3,p5,p6) );
 
  std::cout << '.';
 
  CGAL::Bbox_3 bb = t1.bbox();
- CGAL_test_assert(bb.xmin() <= 1.0);
- CGAL_test_assert(bb.xmax() >= 6.0);
- CGAL_test_assert(bb.ymin() <= 2.0);
- CGAL_test_assert(bb.ymax() >= 10.0);
- CGAL_test_assert(bb.zmin() <= -2.0);
- CGAL_test_assert(bb.zmax() >= 4.0);
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 6.0);
+ assert(bb.ymin() <= 2.0);
+ assert(bb.ymax() >= 10.0);
+ assert(bb.zmin() <= -2.0);
+ assert(bb.zmax() >= 4.0);
 
  std::cout << "done" << std::endl;
  return true;

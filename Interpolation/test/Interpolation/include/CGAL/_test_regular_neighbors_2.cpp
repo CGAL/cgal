@@ -18,7 +18,7 @@
 // Author(s)     : Julia Floetotto
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <utility>
 
 #include <CGAL/point_generators_2.h>
@@ -104,11 +104,11 @@ _test_regular_neighbors_2( const Triangul & )
       std::back_insert_iterator<Point_coordinate_vector>,
       Coord_type, bool> coordinate_result =
       CGAL::regular_neighbor_coordinates_2(T,wp,std::back_inserter(coords));
-    CGAL_test_assert(coordinate_result.third);
+    assert(coordinate_result.third);
     Coord_type norm = coordinate_result.second;
 
-    CGAL_test_assert(norm>0);
-    CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, points[i]));
+    assert(norm>0);
+    assert(test_barycenter( coords.begin(), coords.end(),norm, points[i]));
     coords.clear();
   }
 
@@ -150,15 +150,15 @@ _test_regular_neighbors_2( const Triangul & )
     Coord_type, bool> coordinate_result =
     CGAL::regular_neighbor_coordinates_2(T2,wp,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   Coord_type norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
   typename std::vector< std::pair< Weighted_point, Coord_type >
     >::const_iterator
     ci= coords.begin();
   for(; ci!= coords.end(); ci++)
-    CGAL_test_assert(ci->second == Coord_type(0.25));
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
+    assert(ci->second == Coord_type(0.25));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
   coords.clear();
 
   //test with hidden_vertices:
@@ -166,9 +166,9 @@ _test_regular_neighbors_2( const Triangul & )
   coordinate_result =
     CGAL::regular_neighbor_coordinates_2(T2,wp,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm,wp));
+  assert(test_barycenter( coords.begin(), coords.end(),norm,wp));
   coords.clear();
 
   //add the middle point of the grid
@@ -179,14 +179,14 @@ _test_regular_neighbors_2( const Triangul & )
   coordinate_result  =
     CGAL::regular_neighbor_coordinates_2(T2,wp,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(norm == Coord_type(1));
+  assert(norm == Coord_type(1));
   ci= coords.begin();
-  CGAL_test_assert(ci->first == wp);
-  CGAL_test_assert(ci->second == Coord_type(1));
+  assert(ci->first == wp);
+  assert(ci->second == Coord_type(1));
   ci++;
-  CGAL_test_assert(ci==coords.end());
+  assert(ci==coords.end());
   coords.clear();
 
   //point on the vertex but creating a hole:
@@ -194,38 +194,38 @@ _test_regular_neighbors_2( const Triangul & )
   coordinate_result =
     CGAL::regular_neighbor_coordinates_2(T2,wp,
 					 std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
   coords.clear();
 
   //point on an edge:
   wp= Weighted_point(Bare_point(0,0.5), 3);
   coordinate_result = CGAL::regular_neighbor_coordinates_2
     (T2,wp,std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
+  assert(test_barycenter( coords.begin(), coords.end(),norm, wp));
   coords.clear();
 
   //a vertex v in Reg(P\v->point()):
   typename Triangul::Vertex_iterator vit = T2.finite_vertices_end();
   coordinate_result = CGAL::regular_neighbor_coordinates_2
     (T2, --vit, std::back_inserter(coords));
-  CGAL_test_assert(coordinate_result.third);
+  assert(coordinate_result.third);
   norm = coordinate_result.second;
-  CGAL_test_assert(test_barycenter( coords.begin(), coords.end(),norm,vit->point()));
+  assert(test_barycenter( coords.begin(), coords.end(),norm,vit->point()));
   coords.clear();
 
   //outside convex hull:
   wp= Weighted_point(Bare_point(3,0.5), 3);
   coordinate_result = CGAL::regular_neighbor_coordinates_2
     (T2,wp,std::back_inserter(coords));
-  CGAL_test_assert(!coordinate_result.third);
+  assert(!coordinate_result.third);
 
   //on a convex hull edge:
   wp= Weighted_point(Bare_point(2,1), 3);
   coordinate_result = CGAL::regular_neighbor_coordinates_2
     (T2,wp,std::back_inserter(coords));
-  CGAL_test_assert(!coordinate_result.third);
+  assert(!coordinate_result.third);
 }

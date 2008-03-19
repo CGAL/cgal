@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/_test_algebraic_structure.h>
@@ -85,9 +85,9 @@ void test_lazy_exact_nt() {
         LI  i(4);
         LR  r(4);
         typename CT::Cast cast;
-        CGAL_test_assert( cast ( (i*i+i) / i-i ) == LR(1));
-        CGAL_test_assert( cast ( (i*i+r) / i-i ) == LR(1));
-        CGAL_test_assert( cast ( (i*r+r) / i-i ) == LI(1));
+        assert( cast ( (i*i+i) / i-i ) == LR(1));
+        assert( cast ( (i*i+r) / i-i ) == LR(1));
+        assert( cast ( (i*r+r) / i-i ) == LI(1));
     }{  // see also  Coercion_traits_test.C
 #ifdef CGAL_USE_LEDA
 #ifdef CGAL_USE_CORE

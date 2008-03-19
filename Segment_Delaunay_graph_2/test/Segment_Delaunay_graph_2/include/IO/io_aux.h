@@ -3,12 +3,12 @@
 
 
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <string>
 
 bool assert_no_warning(bool b)
 {
-  CGAL_test_assert(b);
+  assert(b);
   return b;
 }
 

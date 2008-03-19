@@ -1,45 +1,45 @@
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/double.h>
 
 void test_is_integer()
 {
   std::cout << "Testing is_integer(double)" << std::endl;
-  CGAL_test_assert(! CGAL::is_integer(0.5));
-  CGAL_test_assert(! CGAL::is_integer(0.25));
-  CGAL_test_assert(! CGAL::is_integer(0.1));
-  CGAL_test_assert(! CGAL::is_integer(1e-100));
-  CGAL_test_assert(! CGAL::is_integer(1.5));
-  CGAL_test_assert(! CGAL::is_integer(15.1));
-  CGAL_test_assert(! CGAL::is_integer(0.5));
-  CGAL_test_assert(! CGAL::is_integer(0.25));
-  CGAL_test_assert(! CGAL::is_integer(0.1));
-  CGAL_test_assert(! CGAL::is_integer(1e-100));
-  CGAL_test_assert(! CGAL::is_integer(1.5));
-  CGAL_test_assert(! CGAL::is_integer(15.1));
+  assert(! CGAL::is_integer(0.5));
+  assert(! CGAL::is_integer(0.25));
+  assert(! CGAL::is_integer(0.1));
+  assert(! CGAL::is_integer(1e-100));
+  assert(! CGAL::is_integer(1.5));
+  assert(! CGAL::is_integer(15.1));
+  assert(! CGAL::is_integer(0.5));
+  assert(! CGAL::is_integer(0.25));
+  assert(! CGAL::is_integer(0.1));
+  assert(! CGAL::is_integer(1e-100));
+  assert(! CGAL::is_integer(1.5));
+  assert(! CGAL::is_integer(15.1));
 
-  CGAL_test_assert(CGAL::is_integer(0));
-  CGAL_test_assert(CGAL::is_integer(1));
-  CGAL_test_assert(CGAL::is_integer(2));
-  CGAL_test_assert(CGAL::is_integer(1e100));
-  CGAL_test_assert(CGAL::is_integer(0));
-  CGAL_test_assert(CGAL::is_integer(1));
-  CGAL_test_assert(CGAL::is_integer(2));
-  CGAL_test_assert(CGAL::is_integer(1e100));
+  assert(CGAL::is_integer(0));
+  assert(CGAL::is_integer(1));
+  assert(CGAL::is_integer(2));
+  assert(CGAL::is_integer(1e100));
+  assert(CGAL::is_integer(0));
+  assert(CGAL::is_integer(1));
+  assert(CGAL::is_integer(2));
+  assert(CGAL::is_integer(1e100));
 }
 
 void test_split_num_den()
 {
   std::cout << "Testing split_numerator_denominator(double)" << std::endl;
-  CGAL_test_assert( CGAL::split_numerator_denominator(1.0) == std::make_pair(1.0, 1.0) );
-  CGAL_test_assert( CGAL::split_numerator_denominator(2.0) == std::make_pair(2.0, 1.0) );
-  CGAL_test_assert( CGAL::split_numerator_denominator(0.5) == std::make_pair(1.0, 2.0) );
-  CGAL_test_assert( CGAL::split_numerator_denominator(0.0) == std::make_pair(0.0, 1.0) );
-  CGAL_test_assert( CGAL::split_numerator_denominator(1e100) == std::make_pair(1e100, 1.0) );
-  CGAL_test_assert( CGAL::split_numerator_denominator(-1.0) == std::make_pair(-1.0, 1.0));
-  CGAL_test_assert( CGAL::split_numerator_denominator(-2.0) == std::make_pair(-2.0, 1.0));
-  CGAL_test_assert( CGAL::split_numerator_denominator(-0.5) == std::make_pair(-1.0, 2.0));
-  CGAL_test_assert( CGAL::split_numerator_denominator(-0.0) == std::make_pair(0.0, 1.0));
+  assert( CGAL::split_numerator_denominator(1.0) == std::make_pair(1.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(2.0) == std::make_pair(2.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(0.5) == std::make_pair(1.0, 2.0) );
+  assert( CGAL::split_numerator_denominator(0.0) == std::make_pair(0.0, 1.0) );
+  assert( CGAL::split_numerator_denominator(1e100) == std::make_pair(1e100, 1.0) );
+  assert( CGAL::split_numerator_denominator(-1.0) == std::make_pair(-1.0, 1.0));
+  assert( CGAL::split_numerator_denominator(-2.0) == std::make_pair(-2.0, 1.0));
+  assert( CGAL::split_numerator_denominator(-0.5) == std::make_pair(-1.0, 2.0));
+  assert( CGAL::split_numerator_denominator(-0.0) == std::make_pair(0.0, 1.0));
 }
 
 int main()

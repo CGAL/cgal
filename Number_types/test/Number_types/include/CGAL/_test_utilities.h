@@ -22,7 +22,7 @@
 #define CGAL_TEST_UTILITIES_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iostream>
 #include <sstream> 
 #include <cassert>

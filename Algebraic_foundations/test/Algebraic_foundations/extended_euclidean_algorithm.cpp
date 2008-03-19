@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 //
 // Author(s)     : Michael Hemmer, Dominik Hülse
 //
@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/extended_euclidean_algorithm.h>
 
 //#define WITH_OUTPUT 1
@@ -39,28 +39,28 @@ void test_extended_euclidean_algorithm() {
     a = Integer(17);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
-    CGAL_test_assert(Integer(1) == e);
-    CGAL_test_assert(e == a*u + b*v);
+    assert(Integer(1) == e);
+    assert(e == a*u + b*v);
  
     // one number is 0 
     a = Integer(0);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
-    CGAL_test_assert(b == e);
-    CGAL_test_assert(e == a*u + b*v);
+    assert(b == e);
+    assert(e == a*u + b*v);
 
     a = Integer(24);
     b = Integer(0);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
-    CGAL_test_assert(a == e);
-    CGAL_test_assert(e == a*u + b*v);
+    assert(a == e);
+    assert(e == a*u + b*v);
 
     // both numbers are 0
     a = Integer(0);
     b = Integer(0);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
-    CGAL_test_assert(b == e);
-    CGAL_test_assert(e == a*u + b*v);
+    assert(b == e);
+    assert(e == a*u + b*v);
 }
 
 int main(){

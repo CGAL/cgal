@@ -23,7 +23,7 @@
 #define CGAL__TEST_CLS_TRIANGLE_2_H
 
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class R>
 bool
@@ -69,87 +69,87 @@ _test_cls_triangle_2(const R& )
 
  std::cout << '.';
 
- CGAL_test_assert( t1 == t1 );
- CGAL_test_assert( t4 == t1 );
- CGAL_test_assert( t1 == t5 );
- CGAL_test_assert( t0 == t3 );
- CGAL_test_assert( t1 != t2 );
- CGAL_test_assert( t3 != t2 );
+ assert( t1 == t1 );
+ assert( t4 == t1 );
+ assert( t1 == t5 );
+ assert( t0 == t3 );
+ assert( t1 != t2 );
+ assert( t3 != t2 );
 
- CGAL_test_assert( t3.vertex(0) == p7 );
- CGAL_test_assert( t3.vertex(1) == p8 );
- CGAL_test_assert( t3.vertex(2) == p9 );
- CGAL_test_assert( t3.vertex(3) == p7 );
- CGAL_test_assert( t3.vertex(4) == p8 );
- CGAL_test_assert( t3.vertex(5) == p9 );
- CGAL_test_assert( t2[5] == t2.vertex(5) );
- CGAL_test_assert( t2[6] == t2.vertex(6) );
+ assert( t3.vertex(0) == p7 );
+ assert( t3.vertex(1) == p8 );
+ assert( t3.vertex(2) == p9 );
+ assert( t3.vertex(3) == p7 );
+ assert( t3.vertex(4) == p8 );
+ assert( t3.vertex(5) == p9 );
+ assert( t2[5] == t2.vertex(5) );
+ assert( t2[6] == t2.vertex(6) );
 
- CGAL_test_assert( t1.orientation() == CGAL::NEGATIVE );
- CGAL_test_assert( t2.orientation() == CGAL::POSITIVE );
- CGAL_test_assert( t0.orientation() == CGAL::POSITIVE );
-
- std::cout << '.';
-
- CGAL_test_assert( t1.oriented_side( p9 ) == CGAL::ON_NEGATIVE_SIDE );
- CGAL_test_assert( t1.oriented_side( p7 ) == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( t1.oriented_side( p8 ) == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( t1.oriented_side( p6 ) == CGAL::ON_ORIENTED_BOUNDARY );
- CGAL_test_assert( t2.oriented_side( p8 ) == CGAL::ON_NEGATIVE_SIDE );
- CGAL_test_assert( t2.oriented_side( p9 ) == CGAL::ON_POSITIVE_SIDE );
- CGAL_test_assert( t2.oriented_side( p6 ) == CGAL::ON_ORIENTED_BOUNDARY );
- CGAL_test_assert( t2.oriented_side( p3 ) == CGAL::ON_ORIENTED_BOUNDARY );
-
- CGAL_test_assert( t1.bounded_side( p9 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( t1.bounded_side( p7 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( t1.bounded_side( p2 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( t2.bounded_side( p9 ) == CGAL::ON_BOUNDED_SIDE );
- CGAL_test_assert( t2.bounded_side( p7 ) == CGAL::ON_UNBOUNDED_SIDE );
- CGAL_test_assert( t2.bounded_side( p2 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( t2.bounded_side( p1 ) == CGAL::ON_BOUNDARY );
- CGAL_test_assert( t2.bounded_side( p5 ) == CGAL::ON_BOUNDARY );
-
- CGAL_test_assert( t1.opposite().has_on_positive_side( p9 ) );
- CGAL_test_assert( t1.has_on_positive_side( p8 ) );
- CGAL_test_assert( t3.has_on_negative_side( p2 ) );
- CGAL_test_assert( t2.has_on_boundary( p1 ) );
- CGAL_test_assert( t2.has_on_boundary( p2 ) );
- CGAL_test_assert( t2.has_on_boundary( p3 ) );
- CGAL_test_assert( t2.has_on_boundary( p4 ) );
- CGAL_test_assert( t2.has_on_boundary( p5 ) );
- CGAL_test_assert( t2.has_on_boundary( p6 ) );
- CGAL_test_assert( t1.has_on_bounded_side( CGAL::Point_2<R>( n6, n8, n2)) );
- CGAL_test_assert( t1.has_on_unbounded_side( CGAL::Point_2<R>( -n4, n8, n6)) );
+ assert( t1.orientation() == CGAL::NEGATIVE );
+ assert( t2.orientation() == CGAL::POSITIVE );
+ assert( t0.orientation() == CGAL::POSITIVE );
 
  std::cout << '.';
 
- CGAL_test_assert( t1.opposite() == t2 );
- CGAL_test_assert( t3 == t3.opposite().opposite() );
+ assert( t1.oriented_side( p9 ) == CGAL::ON_NEGATIVE_SIDE );
+ assert( t1.oriented_side( p7 ) == CGAL::ON_POSITIVE_SIDE );
+ assert( t1.oriented_side( p8 ) == CGAL::ON_POSITIVE_SIDE );
+ assert( t1.oriented_side( p6 ) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( t2.oriented_side( p8 ) == CGAL::ON_NEGATIVE_SIDE );
+ assert( t2.oriented_side( p9 ) == CGAL::ON_POSITIVE_SIDE );
+ assert( t2.oriented_side( p6 ) == CGAL::ON_ORIENTED_BOUNDARY );
+ assert( t2.oriented_side( p3 ) == CGAL::ON_ORIENTED_BOUNDARY );
+
+ assert( t1.bounded_side( p9 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( t1.bounded_side( p7 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( t1.bounded_side( p2 ) == CGAL::ON_BOUNDARY );
+ assert( t2.bounded_side( p9 ) == CGAL::ON_BOUNDED_SIDE );
+ assert( t2.bounded_side( p7 ) == CGAL::ON_UNBOUNDED_SIDE );
+ assert( t2.bounded_side( p2 ) == CGAL::ON_BOUNDARY );
+ assert( t2.bounded_side( p1 ) == CGAL::ON_BOUNDARY );
+ assert( t2.bounded_side( p5 ) == CGAL::ON_BOUNDARY );
+
+ assert( t1.opposite().has_on_positive_side( p9 ) );
+ assert( t1.has_on_positive_side( p8 ) );
+ assert( t3.has_on_negative_side( p2 ) );
+ assert( t2.has_on_boundary( p1 ) );
+ assert( t2.has_on_boundary( p2 ) );
+ assert( t2.has_on_boundary( p3 ) );
+ assert( t2.has_on_boundary( p4 ) );
+ assert( t2.has_on_boundary( p5 ) );
+ assert( t2.has_on_boundary( p6 ) );
+ assert( t1.has_on_bounded_side( CGAL::Point_2<R>( n6, n8, n2)) );
+ assert( t1.has_on_unbounded_side( CGAL::Point_2<R>( -n4, n8, n6)) );
+
+ std::cout << '.';
+
+ assert( t1.opposite() == t2 );
+ assert( t3 == t3.opposite().opposite() );
 
  CGAL::Triangle_2<R> tdeg1( p1, p7, p7);
  CGAL::Triangle_2<R> tdeg2( p6, p6, p6);
- CGAL_test_assert( tdeg1.orientation() == CGAL::ZERO );
- CGAL_test_assert( tdeg2.orientation() == CGAL::ZERO );
- CGAL_test_assert( tdeg1.is_degenerate() );
- CGAL_test_assert( tdeg2.is_degenerate() );
+ assert( tdeg1.orientation() == CGAL::ZERO );
+ assert( tdeg2.orientation() == CGAL::ZERO );
+ assert( tdeg1.is_degenerate() );
+ assert( tdeg2.is_degenerate() );
 
  std::cout << '.';
 
- CGAL_test_assert( tdeg1.area() == FT(0) );
- CGAL_test_assert( tdeg2.area() == FT(0) );
- CGAL_test_assert( t1.area() == FT(-10) );
- CGAL_test_assert( t1.area() == -t2.area() );
- CGAL_test_assert( t1.area() == t4.area() );
- CGAL_test_assert( t2.area() == -t5.area() );
- CGAL_test_assert( t3.area() == FT(5) );
+ assert( tdeg1.area() == FT(0) );
+ assert( tdeg2.area() == FT(0) );
+ assert( t1.area() == FT(-10) );
+ assert( t1.area() == -t2.area() );
+ assert( t1.area() == t4.area() );
+ assert( t2.area() == -t5.area() );
+ assert( t3.area() == FT(5) );
 
  std::cout << '.';
 
  CGAL::Bbox_2 bb = t1.bbox();
- CGAL_test_assert(bb.xmin() <= 1.0);
- CGAL_test_assert(bb.xmax() >= 7.0);
- CGAL_test_assert(bb.ymin() <= 1.0);
- CGAL_test_assert(bb.ymax() >= 5.0);
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 7.0);
+ assert(bb.ymin() <= 1.0);
+ assert(bb.ymax() >= 5.0);
 
  std::cout << "done" << std::endl;
  return true;

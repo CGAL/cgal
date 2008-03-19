@@ -4,7 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/exceptions.h>
 #include <iostream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <cstdlib>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Random.h>
@@ -30,31 +30,31 @@ double non_zero_double(){
 void test_is_integer()
 {
   std::cout << "Testing is_integer()" << std::endl;
-  CGAL_test_assert(! is_integer(MPF(0.5)));
-  CGAL_test_assert(! is_integer(MPF(0.25)));
-  CGAL_test_assert(! is_integer(MPF(0.1)));
-  CGAL_test_assert(! is_integer(MPF(1e-100)));
-  CGAL_test_assert(! is_integer(MPF(1.5)));
-  CGAL_test_assert(! is_integer(MPF(15.1)));
-  CGAL_test_assert(! is_integer(MPF(1e100)+0.5));
-  CGAL_test_assert(! is_integer(MPF(-0.5)));
-  CGAL_test_assert(! is_integer(MPF(-0.25)));
-  CGAL_test_assert(! is_integer(MPF(-0.1)));
-  CGAL_test_assert(! is_integer(MPF(-1e-100)));
-  CGAL_test_assert(! is_integer(MPF(-1.5)));
-  CGAL_test_assert(! is_integer(MPF(-15.1)));
-  CGAL_test_assert(! is_integer(MPF(-1e100)+0.5));
+  assert(! is_integer(MPF(0.5)));
+  assert(! is_integer(MPF(0.25)));
+  assert(! is_integer(MPF(0.1)));
+  assert(! is_integer(MPF(1e-100)));
+  assert(! is_integer(MPF(1.5)));
+  assert(! is_integer(MPF(15.1)));
+  assert(! is_integer(MPF(1e100)+0.5));
+  assert(! is_integer(MPF(-0.5)));
+  assert(! is_integer(MPF(-0.25)));
+  assert(! is_integer(MPF(-0.1)));
+  assert(! is_integer(MPF(-1e-100)));
+  assert(! is_integer(MPF(-1.5)));
+  assert(! is_integer(MPF(-15.1)));
+  assert(! is_integer(MPF(-1e100)+0.5));
 
-  CGAL_test_assert(is_integer(MPF(0)));
-  CGAL_test_assert(is_integer(MPF(1)));
-  CGAL_test_assert(is_integer(MPF(2)));
-  CGAL_test_assert(is_integer(MPF(1e100)));
-  CGAL_test_assert(is_integer(MPF(1e100)+1));
-  CGAL_test_assert(is_integer(MPF(-0)));
-  CGAL_test_assert(is_integer(MPF(-1)));
-  CGAL_test_assert(is_integer(MPF(-2)));
-  CGAL_test_assert(is_integer(MPF(-1e100)));
-  CGAL_test_assert(is_integer(MPF(-1e100)+1));
+  assert(is_integer(MPF(0)));
+  assert(is_integer(MPF(1)));
+  assert(is_integer(MPF(2)));
+  assert(is_integer(MPF(1e100)));
+  assert(is_integer(MPF(1e100)+1));
+  assert(is_integer(MPF(-0)));
+  assert(is_integer(MPF(-1)));
+  assert(is_integer(MPF(-2)));
+  assert(is_integer(MPF(-1e100)));
+  assert(is_integer(MPF(-1e100)+1));
 }
 
 void test_integral_division()
@@ -89,28 +89,28 @@ void test_integral_division()
     n.rescale(102 * ((i%33) - 16));
 
     MPF nd = d * n;
-    CGAL_test_assert(nd == n * d);
+    assert(nd == n * d);
     //std::cout << "d = " << d << std::endl;
     //std::cout << "n = " << n << std::endl;
-    CGAL_test_assert( integral_division(nd, n) == d);
-    CGAL_test_assert( integral_division(nd, d) == n);
-    CGAL_test_assert( CGAL::divides(nd, n) );
-    CGAL_test_assert( CGAL::divides(nd, d) );
+    assert( integral_division(nd, n) == d);
+    assert( integral_division(nd, d) == n);
+    assert( CGAL::divides(nd, n) );
+    assert( CGAL::divides(nd, d) );
   }
   
-  CGAL_test_assert( ! CGAL::divides(MPF(1), MPF(3)) );
-  CGAL_test_assert( ! CGAL::divides(MPF(2), MPF(7)) );
+  assert( ! CGAL::divides(MPF(1), MPF(3)) );
+  assert( ! CGAL::divides(MPF(2), MPF(7)) );
   // test if we're lucky :)
-  CGAL_test_assert( ! CGAL::divides(MPF(non_zero_double()), MPF(non_zero_double())) );
+  assert( ! CGAL::divides(MPF(non_zero_double()), MPF(non_zero_double())) );
 }
 
 void test_equality(int i)
 {
-  CGAL_test_assert(MPF(i) == MPF(i));
-  CGAL_test_assert(MPF(i) <= MPF(i));
-  CGAL_test_assert(MPF(i) >= MPF(i));
-  CGAL_test_assert(! (MPF(i) < MPF(i)));
-  CGAL_test_assert(! (MPF(i) > MPF(i)));
+  assert(MPF(i) == MPF(i));
+  assert(MPF(i) <= MPF(i));
+  assert(MPF(i) >= MPF(i));
+  assert(! (MPF(i) < MPF(i)));
+  assert(! (MPF(i) > MPF(i)));
 }
 
 void bench(int loops)
@@ -139,7 +139,7 @@ void square_test()
   CGAL::MP_Float f = 32767.5;
   CGAL::MP_Float g = 32767.5;
   CGAL::MP_Float sqr = CGAL_NTS square(f);
-  CGAL_test_assert(sqr == f*g);
+  assert(sqr == f*g);
 
   // Another test case.
   CGAL::MP_Float M_16 = 1.0/(1<<16);
@@ -150,7 +150,7 @@ void square_test()
   // square(m) is wrongly computed.
   // For now, I disable square(MP_Float).
   CGAL::MP_Float s = CGAL_NTS square(m);
-  CGAL_test_assert(s*4 == CGAL_NTS square(2*m));
+  assert(s*4 == CGAL_NTS square(2*m));
 }
 
 MPF factoriel (short i)
@@ -183,7 +183,7 @@ void test_overflow_to_double()
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  CGAL_test_assert(CGAL_NTS to_double(val) == 0.5);
+  assert(CGAL_NTS to_double(val) == 0.5);
 }
 
 void test_overflow_to_interval()
@@ -198,7 +198,7 @@ void test_overflow_to_interval()
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  CGAL_test_assert(CGAL_NTS to_interval(val) == std::make_pair(0.5, 0.5));
+  assert(CGAL_NTS to_interval(val) == std::make_pair(0.5, 0.5));
 
   // Reported by Pedro to_interval(10^400) returns [+inf;+inf] :
   MPF m = 10;
@@ -206,8 +206,8 @@ void test_overflow_to_interval()
     m = 10 * m;
   CGAL::Interval_nt<> inter = CGAL_NTS to_interval(m);
   std::cout << inter << std::endl;
-  CGAL_test_assert(CGAL_NTS is_finite(inter.inf()));
-  CGAL_test_assert(!CGAL_NTS is_finite(inter.sup()));
+  assert(CGAL_NTS is_finite(inter.inf()));
+  assert(!CGAL_NTS is_finite(inter.sup()));
 
   // Testing for underflow as well.
   MPF mm = 0.1;
@@ -215,8 +215,8 @@ void test_overflow_to_interval()
     mm = mm * 0.125;
   CGAL::Interval_nt<> inter2 = CGAL_NTS to_interval(mm);
   std::cout << inter2 << std::endl;
-  CGAL_test_assert(inter2.inf() == 0);
-  CGAL_test_assert(inter2.sup() != 0);
+  assert(inter2.inf() == 0);
+  assert(inter2.sup() != 0);
 }
 
 void test_overflow_exponent()
@@ -228,7 +228,7 @@ void test_overflow_exponent()
   while (loops < 200) // This should be able to loop forever.
   {
     a = a*a;
-    CGAL_test_assert((a+1)-1 == a);
+    assert((a+1)-1 == a);
     loops += 1;
     // std::cout << "loops = " << loops << std::endl;
   };
@@ -262,10 +262,10 @@ int main(int argc, char **argv)
   std::cout << "sizeof(short) = " << sizeof(short) << std::endl;
   std::cout << "sizeof(char) = " << sizeof(char) << std::endl;
   MPF z = int(65536);
-  CGAL_test_assert(z != 0);
+  assert(z != 0);
 
   QMPF q1(1), q2(2);
-  CGAL_test_assert(q1+q1 == q2);
+  assert(q1+q1 == q2);
 
   int loops = argc > 1 ? std::atoi(argv[1]) : 100;
   bench(loops);
@@ -323,19 +323,19 @@ int main(int argc, char **argv)
   // Test-cases for specific bugs found :
   {
     double d = 0.4999974472643795;
-    CGAL_test_assert( d == CGAL_NTS to_double(MPF(d)) );
+    assert( d == CGAL_NTS to_double(MPF(d)) );
   }
   {
     double d = 7.3074228557478900057e+47;
-    CGAL_test_assert( d == CGAL_NTS to_double(MPF(d)) );
+    assert( d == CGAL_NTS to_double(MPF(d)) );
   }
   {
     double d = 1.9696110926449043849e+124;
-    CGAL_test_assert( d == CGAL_NTS to_double(MPF(d)) );
+    assert( d == CGAL_NTS to_double(MPF(d)) );
   }
   {
     double d = 7.34766e-140; // Crashed on PC...
-    CGAL_test_assert( d == CGAL_NTS to_double(MPF(d)) );
+    assert( d == CGAL_NTS to_double(MPF(d)) );
   }
 
   MPF a(0);
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
 #endif
     a = a + MPF(i);
     j += i;
-    CGAL_test_assert(i == MPF(i));
+    assert(i == MPF(i));
 #if 0
     std::cout << " array = "; print(std::cout, a); std::cout << std::endl;
     std::cout << i << std::endl;
@@ -413,7 +413,7 @@ int main(int argc, char **argv)
   double dt = -135.9682;
   MPF mdt = dt;
   CGAL::Gmpq q = mdt.to_rational<CGAL::Gmpq>();
-  CGAL_test_assert(q == CGAL::Gmpq(dt));
+  assert(q == CGAL::Gmpq(dt));
 #endif // CGAL_USE_GMP
 
   test_integral_division();

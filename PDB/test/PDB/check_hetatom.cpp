@@ -19,7 +19,7 @@ the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 MA 02110-1301, USA. */
 #include <CGAL/PDB/PDB.h>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include "include/check_equal.h"
 
@@ -27,7 +27,7 @@ MA 02110-1301, USA. */
 int main(int , char *[]){
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
-  //CGAL_test_assert(argc==3);
+  //assert(argc==3);
   std::ifstream in("data/check_hetatom.pdb");
   CGAL_PDB_NS::PDB p(in);
   p.write(std::cout);

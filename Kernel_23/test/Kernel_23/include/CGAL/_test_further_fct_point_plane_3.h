@@ -48,27 +48,27 @@ _test_further_fct_point_plane_3(const R& )
 
  std::cout << '.';
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxyz, px, py) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(px, py, pz, px, py) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(hxyz, px, py) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(px, py, pz, px, py) == CGAL::EQUAL );
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxzy, px,py) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(px, pz, py, px, py) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(hxzy, px,py) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(px, pz, py, px, py) == CGAL::EQUAL );
 
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxzy, q1,q2) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(px, pz, py, q1, q2) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_plane(hxzy, q1,q2) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_plane(px, pz, py, q1, q2) == CGAL::SMALLER );
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxzy, q1,q2) == CGAL::SMALLER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(px, pz, py, q1, q2) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_plane(hxzy, q1,q2) == CGAL::SMALLER );
+ assert( CGAL::compare_signed_distance_to_plane(px, pz, py, q1, q2) == CGAL::SMALLER );
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxyz, q1,q2) == CGAL::LARGER );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(px, py, pz, q1, q2) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_plane(hxyz, q1,q2) == CGAL::LARGER );
+ assert( CGAL::compare_signed_distance_to_plane(px, py, pz, q1, q2) == CGAL::LARGER );
  
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hxy, q2, q3) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(p0, px, py, q2, q3) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(hxy, q2, q3) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(p0, px, py, q2, q3) == CGAL::EQUAL );
 
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(hyx, q2, q3) == CGAL::EQUAL );
- CGAL_test_assert( CGAL::compare_signed_distance_to_plane(p0, py, px, q2, q3) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(hyx, q2, q3) == CGAL::EQUAL );
+ assert( CGAL::compare_signed_distance_to_plane(p0, py, px, q2, q3) == CGAL::EQUAL );
 
  std::cout << "done" << std::endl;
  return true;

@@ -39,7 +39,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
         if (genus == 0)
         {
             // no border, we need to cut the mesh
-            CGAL_test_assert(nb_borders == 0);
+            assert(nb_borders == 0);
             cutter.cut(seamingBackbone);   // simple cut
         }
         else // genus > 0 -> cut the mesh

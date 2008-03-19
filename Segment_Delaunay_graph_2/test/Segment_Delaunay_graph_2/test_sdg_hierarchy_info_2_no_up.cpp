@@ -4,7 +4,7 @@
 // standard includes
 #include <iostream>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>

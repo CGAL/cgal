@@ -34,7 +34,7 @@
 #endif
 
 #include <CGAL/Number_type_checker.h>
-
+#include <cassert>
 #include <CGAL/_test_utilities.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
@@ -48,7 +48,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
         os << ::CGAL::oformat(tmp1);                                    \
         std::istringstream is(os.str());                                \
         is >> ::CGAL::iformat(tmp2);                                    \
-        CGAL_test_assert_msg( tmp1 == tmp2, "IO_TEST failed");          \
+        assert( tmp1 == tmp2 );                                         \
     }
     
 

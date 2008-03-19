@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
@@ -13,7 +13,7 @@ int main(int, char *[]){
   /*{
     CORE::Polynomial<CORE::BigFloat> p("-2+20t-50t^2+1t^50", 't');
     for (int i=0; i< p.getDegree()+1; ++i){
-      CGAL_test_assert(p.getCoeffi(i).isExact());
+      assert(p.getCoeffi(i).isExact());
     }
     CORE::Sturm<CORE::BigFloat> s(p, true);
     std::cout << p << std::endl;
@@ -75,7 +75,7 @@ int main(int, char *[]){
     cs[8]=CORE::BigFloat(1.0);
     
     for (unsigned int i=0; i< 9; ++i){
-      CGAL_test_assert(cs[i].isExact());
+      assert(cs[i].isExact());
     }
     
     CORE::Polynomial<CORE::BigFloat> p(8, cs);

@@ -5,7 +5,7 @@
 */
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Sqrt_extension.h>
 
@@ -33,18 +33,18 @@ void test_modular_traits(){
         typedef typename MT::Is_modularizable Is_modularizable;
         typedef typename MT::NT NT;
         
-        CGAL_test_assert(
+        assert(
                 !(::boost::is_same<CGAL::Null_functor,Modular_image>::value));
-        CGAL_test_assert(
+        assert(
                 (::boost::is_same<CGAL::Tag_true,Is_modularizable>::value));
-        CGAL_test_assert(
+        assert(
                 (::boost::is_same<TESTT,NT>::value));
         
         Modular::set_current_prime(7);
         Modular_image modular_image;
-        CGAL_test_assert(modular_image(TESTT(21)) == Modular_NT(0));   
-        CGAL_test_assert(modular_image(TESTT(22)) == Modular_NT(1));
-        CGAL_test_assert(modular_image(TESTT(777777722)) == Modular_NT(1));
+        assert(modular_image(TESTT(21)) == Modular_NT(0));   
+        assert(modular_image(TESTT(22)) == Modular_NT(1));
+        assert(modular_image(TESTT(777777722)) == Modular_NT(1));
 }
 
 int main()

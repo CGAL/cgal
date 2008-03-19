@@ -21,7 +21,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_io.h"

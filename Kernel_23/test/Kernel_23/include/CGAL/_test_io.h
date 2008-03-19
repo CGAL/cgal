@@ -22,7 +22,7 @@
 #define CGAL__TEST_IO_H
 
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class T>
 void
@@ -37,7 +37,7 @@ _test_io_for(const T& t)
     T u;
     iFile >> u;
 
-    CGAL_test_assert(u == t);
+    assert(u == t);
 }
 
 template <class R>

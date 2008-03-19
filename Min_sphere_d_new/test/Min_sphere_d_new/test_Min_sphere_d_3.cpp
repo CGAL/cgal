@@ -28,7 +28,7 @@
 // includes
 // --------
 #include <CGAL/QP_solver/gmp_double.h> // temporarily, can be removed
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
                                        // once gmp_double is in CGAL
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>
@@ -162,11 +162,11 @@ main( int argc, char* argv[])
         Min_sphere_d  ms( points_1.begin(), points_1.end(),
                           Traits_1());
         verrX << endl << ms << endl;
-        CGAL_test_assert( ms.is_valid( verbose > 0));
+        assert( ms.is_valid( verbose > 0));
         
         O_Min_sphere_d  o_ms( points_3.begin(), points_3.end(), Traits_3());
         verrX << endl << o_ms << endl;
-        CGAL_test_assert( o_ms.is_valid( verbose > 0));
+        assert( o_ms.is_valid( verbose > 0));
         verrX << endl;
     
         // check center and squared radius
@@ -180,7 +180,7 @@ main( int argc, char* argv[])
             leda_integer  den   = ms.center_coordinates_begin()[ d];
             leda_integer  o_den = o_ms_center.homogeneous( d);
             for ( int j = 0; j < d; ++j) {
-                CGAL_test_assert( ms.center_coordinates_begin()[ j]*o_den
+                assert( ms.center_coordinates_begin()[ j]*o_den
                         == o_ms_center.homogeneous( j)*den);
             }
             verrX << "centers are equal." << endl;
@@ -190,7 +190,7 @@ main( int argc, char* argv[])
             verrX << "squared radius: " << ms.squared_radius()
                   << "  [NOTE: value is truncated!]" << endl;
         
-            CGAL_test_assert( CGAL::Quotient<leda_integer>(
+            assert( CGAL::Quotient<leda_integer>(
                         ms.squared_radius_numerator(),
                         ms.squared_radius_denominator())
                     == o_ms.squared_radius());

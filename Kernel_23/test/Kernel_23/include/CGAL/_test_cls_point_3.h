@@ -23,7 +23,7 @@
 #define CGAL__TEST_CLS_POINT_3_H
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 template <class R>
 bool
@@ -54,61 +54,61 @@ _test_cls_point_3(const R& )
 
  std::cout << '.';
 
- CGAL_test_assert( p3 == CGAL::Point_3<R>(FT(n1), FT(n2), FT(n3)) );
- CGAL_test_assert( p3 == CGAL::Point_3<R>(-35, 50, -20) );
+ assert( p3 == CGAL::Point_3<R>(FT(n1), FT(n2), FT(n3)) );
+ assert( p3 == CGAL::Point_3<R>(-35, 50, -20) );
 
- CGAL_test_assert( p4 == p5 );
- CGAL_test_assert( p5 == p6 );
- CGAL_test_assert( p4 == p6 );
- CGAL_test_assert( p1 == p6 );
+ assert( p4 == p5 );
+ assert( p5 == p6 );
+ assert( p4 == p6 );
+ assert( p1 == p6 );
 
- CGAL_test_assert( p4 <= p5 );
- CGAL_test_assert( p4 >= p5 );
- CGAL_test_assert( ! (p4 < p5) );
- CGAL_test_assert( ! (p4 > p5) );
+ assert( p4 <= p5 );
+ assert( p4 >= p5 );
+ assert( ! (p4 < p5) );
+ assert( ! (p4 > p5) );
 
- CGAL_test_assert( p3 != p4 );
- CGAL_test_assert( p0 != p1 );
+ assert( p3 != p4 );
+ assert( p0 != p1 );
 
- CGAL_test_assert( p3 < p4);
- CGAL_test_assert( p4 > p3);
+ assert( p3 < p4);
+ assert( p4 > p3);
 
- CGAL_test_assert( p0 == CGAL::ORIGIN);
- CGAL_test_assert( p1 != CGAL::ORIGIN);
+ assert( p0 == CGAL::ORIGIN);
+ assert( p1 != CGAL::ORIGIN);
  // Doesn't work; Point_2::operator== can't be used :(
 #ifdef ENHANCED
- CGAL_test_assert( CGAL::ORIGIN == p0 );
- CGAL_test_assert( CGAL::ORIGIN != p1 );
+ assert( CGAL::ORIGIN == p0 );
+ assert( CGAL::ORIGIN != p1 );
 #endif // ENHANCED
 
- CGAL_test_assert( p3.hx() == n1 );   // don't replace p3
- CGAL_test_assert( p3.hy() == n2 );
- CGAL_test_assert( p3.hz() == n3 );
+ assert( p3.hx() == n1 );   // don't replace p3
+ assert( p3.hy() == n2 );
+ assert( p3.hz() == n3 );
 
- CGAL_test_assert( FT(p5.hx()) / FT(p5.hw()) == FT( n1) / FT( n4) );
- CGAL_test_assert( FT(p5.hy()) / FT(p5.hw()) == FT( n2) / FT( n4) );
- CGAL_test_assert( FT(p5.hz()) / FT(p5.hw()) == FT( n3) / FT( n4) );
+ assert( FT(p5.hx()) / FT(p5.hw()) == FT( n1) / FT( n4) );
+ assert( FT(p5.hy()) / FT(p5.hw()) == FT( n2) / FT( n4) );
+ assert( FT(p5.hz()) / FT(p5.hw()) == FT( n3) / FT( n4) );
 
- CGAL_test_assert( p5.x() == FT( n1) / FT( n4 ) );
- CGAL_test_assert( p5.y() == FT( n2) / FT( n4 ) );
- CGAL_test_assert( p5.z() == FT( n3) / FT( n4 ) );
-
- std::cout << '.';
-
- CGAL_test_assert( p3.homogeneous(0) == p3.hx() );  // don't replace p3
- CGAL_test_assert( p3.homogeneous(1) == p3.hy() );
- CGAL_test_assert( p3.homogeneous(2) == p3.hz() );
- CGAL_test_assert( p3.homogeneous(3) == p3.hw() );
- CGAL_test_assert( p6.cartesian(0) == p6.x() );
- CGAL_test_assert( p6.cartesian(1) == p6.y() );
- CGAL_test_assert( p6.cartesian(2) == p6.z() );
- CGAL_test_assert( p6[0] == p6.x() );
- CGAL_test_assert( p6[1] == p6.y() );
- CGAL_test_assert( p6[2] == p6.z() );
+ assert( p5.x() == FT( n1) / FT( n4 ) );
+ assert( p5.y() == FT( n2) / FT( n4 ) );
+ assert( p5.z() == FT( n3) / FT( n4 ) );
 
  std::cout << '.';
 
- CGAL_test_assert( p0.dimension() == 3 );
+ assert( p3.homogeneous(0) == p3.hx() );  // don't replace p3
+ assert( p3.homogeneous(1) == p3.hy() );
+ assert( p3.homogeneous(2) == p3.hz() );
+ assert( p3.homogeneous(3) == p3.hw() );
+ assert( p6.cartesian(0) == p6.x() );
+ assert( p6.cartesian(1) == p6.y() );
+ assert( p6.cartesian(2) == p6.z() );
+ assert( p6[0] == p6.x() );
+ assert( p6[1] == p6.y() );
+ assert( p6[2] == p6.z() );
+
+ std::cout << '.';
+
+ assert( p0.dimension() == 3 );
 
  // now we test the Coordinate iterator
   const CGAL::Point_3<R> p(1, 2, 3);
@@ -121,67 +121,67 @@ _test_cls_point_3(const R& )
   // Copy constructor
   CCI itc(it);
 
-  CGAL_test_assert(itc == it);
+  assert(itc == it);
 
   // Assignment
   itt = it;
 
   // Equality
-  CGAL_test_assert(itt == it);
+  assert(itt == it);
 
-  CGAL_test_assert(itt - it == 0);
+  assert(itt - it == 0);
 
   // Increment
   itt++;
 
   // Inequality
-  CGAL_test_assert(itt != it);
+  assert(itt != it);
 
-  CGAL_test_assert(it < itt);
-  CGAL_test_assert(itt - it == 1);
+  assert(it < itt);
+  assert(itt - it == 1);
 
   itt++;
-  CGAL_test_assert(itt - it == 2);
+  assert(itt - it == 2);
 
   // dereference
-  CGAL_test_assert(*it == FT(1));
+  assert(*it == FT(1));
 
   it++;
-  CGAL_test_assert(*it == FT(2));
+  assert(*it == FT(2));
   it++;
-  CGAL_test_assert(*it == FT(3));
+  assert(*it == FT(3));
 
   it++;
   CCI it2 = p.cartesian_end();
 
-  CGAL_test_assert(it == it2);
+  assert(it == it2);
   it--;
   it--;
   it--;
-  CGAL_test_assert(*it == FT(1));
+  assert(*it == FT(1));
   it += 1;
-  CGAL_test_assert(*it == FT(2));
+  assert(*it == FT(2));
   it -= 1;
-  CGAL_test_assert(*it == FT(1));
+  assert(*it == FT(1));
 
   it2 = it + 1;
   it2--;
-  CGAL_test_assert(it == it2);
+  assert(it == it2);
   it++;
   it2 = it - 1;
   it2++;
-  CGAL_test_assert(it == it2);
+  assert(it == it2);
 
 
  std::cout << '.';
 
  CGAL::Bbox_3 bb = p3.bbox();
- CGAL_test_assert(bb.xmin() <= -35.0);
- CGAL_test_assert(bb.xmax() >= -35.0);
- CGAL_test_assert(bb.ymin() <= 50.0);
- CGAL_test_assert(bb.ymax() >= 50.0);
- CGAL_test_assert(bb.zmin() <= -20.0);
- CGAL_test_assert(bb.zmax() >= -20.0);
+ assert(bb.xmin() <= -35.0);
+ assert(bb.xmax() >= -35.0);
+ assert(bb.ymin() <= 50.0);
+ assert(bb.ymax() >= 50.0);
+ assert(bb.zmin() <= -20.0);
+ assert(bb.zmax() >= -20.0);
 
  std::cout << "done" << std::endl;
  return true;

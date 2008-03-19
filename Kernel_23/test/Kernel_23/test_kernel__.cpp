@@ -23,7 +23,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #include <CGAL/_test_cls_object.h>
 #include <CGAL/_test_cls_quotient.h>

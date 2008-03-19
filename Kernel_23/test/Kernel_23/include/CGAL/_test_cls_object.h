@@ -23,7 +23,7 @@
 #define CGAL__TEST_CLS_OBJECT_H
 
 #include <CGAL/use.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 using CGAL::use;
 
@@ -54,11 +54,11 @@ _test_cls_object(const R&)
   std::cout << "testing class object" ;
 
   CGAL::Object o1;
-  CGAL_test_assert( o1.is_empty() );
+  assert( o1.is_empty() );
   CGAL::Object o2;
-  CGAL_test_assert( o2.is_empty() );
+  assert( o2.is_empty() );
   CGAL::Object o3;
-  CGAL_test_assert( o3.is_empty() );
+  assert( o3.is_empty() );
   CGAL::Point_2<R>   p21( RT(1), RT(1) );
   CGAL::Point_2<R>   p22;
   CGAL::Point_2<R>   p23;
@@ -74,31 +74,31 @@ _test_cls_object(const R&)
 
   o1 = o2;
   o2 = CGAL::make_object(p21);
-  CGAL_test_assert( o1.is_empty() );
+  assert( o1.is_empty() );
   o1 = CGAL::make_object(p31);
-  CGAL_test_assert(   CGAL::assign( p22, o2 ) );
-  CGAL_test_assert( p22 == p21 );
-  CGAL_test_assert( ! CGAL::assign( p32, o2 ) );
-  CGAL_test_assert( ! CGAL::assign( l22, o2 ) );
+  assert(   CGAL::assign( p22, o2 ) );
+  assert( p22 == p21 );
+  assert( ! CGAL::assign( p32, o2 ) );
+  assert( ! CGAL::assign( l22, o2 ) );
   o3 = o2;
-  CGAL_test_assert(   CGAL::assign( p23, o3 ) );
-  CGAL_test_assert( p23 == p21 );
-  CGAL_test_assert( ! CGAL::assign( p32, o2 ) );
-  CGAL_test_assert( ! CGAL::assign( l32, o2 ) );
-  CGAL_test_assert(   CGAL::assign( p32, o1 ) );
-  CGAL_test_assert( ! CGAL::assign( p21, o1 ) );
-  CGAL_test_assert( p21 == p23 );
+  assert(   CGAL::assign( p23, o3 ) );
+  assert( p23 == p21 );
+  assert( ! CGAL::assign( p32, o2 ) );
+  assert( ! CGAL::assign( l32, o2 ) );
+  assert(   CGAL::assign( p32, o1 ) );
+  assert( ! CGAL::assign( p21, o1 ) );
+  assert( p21 == p23 );
 
   std::cout << '.';
 
   o2 = CGAL::make_object(l21);
-  CGAL_test_assert(   CGAL::assign( l22, o2 ) );
-  CGAL_test_assert( l22 == l21 );
-  CGAL_test_assert( ! CGAL::assign( l32, o2 ) );
-  CGAL_test_assert( ! CGAL::assign( p22, o2 ) );
+  assert(   CGAL::assign( l22, o2 ) );
+  assert( l22 == l21 );
+  assert( ! CGAL::assign( l32, o2 ) );
+  assert( ! CGAL::assign( p22, o2 ) );
   o3 = CGAL::make_object(l31);
-  CGAL_test_assert(   CGAL::assign( l32, o3 ) );
-  CGAL_test_assert( ! CGAL::assign( p32, o3 ) );
+  assert(   CGAL::assign( l32, o3 ) );
+  assert( ! CGAL::assign( p32, o3 ) );
 
   // Test that deriving from Object works.
   Object_handle o4;
@@ -107,25 +107,25 @@ _test_cls_object(const R&)
   // Test .type().
   CGAL::Object o5;
   std::cout << o5.type().name() << std::endl;
-  CGAL_test_assert( o5.type() == typeid(void) );
+  assert( o5.type() == typeid(void) );
 
   CGAL::Object o6 = CGAL::make_object(2);
   std::cout << o6.type().name() << std::endl;
-  CGAL_test_assert( o6.type() == typeid(int) );
+  assert( o6.type() == typeid(int) );
 
   // Test object_cast<>().
   const int *i = CGAL::object_cast<int>(&o6);
-  CGAL_test_assert( i != NULL );
+  assert( i != NULL );
   int j = CGAL::object_cast<int>(o6);
   use(j);
 
   const double *d = CGAL::object_cast<double>(&o6);
-  CGAL_test_assert( d == NULL );
+  assert( d == NULL );
   try {
     // This case must throw.
     double k = CGAL::object_cast<double>(o6);
     use(k);
-    CGAL_test_assert(false);
+    assert(false);
   }
   catch (CGAL::Bad_object_cast) {}
 

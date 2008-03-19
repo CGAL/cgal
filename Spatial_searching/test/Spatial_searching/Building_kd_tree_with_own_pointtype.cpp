@@ -4,7 +4,7 @@
 #include <CGAL/Search_traits.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include "Point.h"
 #include "Distance.h"
 
@@ -41,13 +41,13 @@ int main() {
     if(CGAL::to_double(it->second) > dist) dist = CGAL::to_double(it->second);
   }
 
-  CGAL_test_assert(result.size() == K);
+  assert(result.size() == K);
   for(std::vector<Point>::iterator it = points.begin();
       it != points.end();
       it++){
     if( std::find(result.begin(), result.end(), *it) == result.end()){
       Distance d;
-      CGAL_test_assert(d.transformed_distance(query, *it) >= dist);
+      assert(d.transformed_distance(query, *it) >= dist);
     }
   }
   std::cout << "done" << std::endl;

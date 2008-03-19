@@ -1,6 +1,6 @@
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/point_generators_d.h>
@@ -73,22 +73,22 @@ struct Splitter_test {
     if(CGAL::squared_distance(query,pd.first) != pd.second){
       std::cout << CGAL::squared_distance(query,pd.first) << " != " << pd.second << std::endl;
     }
-    CGAL_test_assert(CGAL::squared_distance(query,pd.first) == pd.second);
+    assert(CGAL::squared_distance(query,pd.first) == pd.second);
     it++;
     for(; it != oins.end();it++){
       Point_with_transformed_distance qd = *it;
-      CGAL_test_assert(pd.second <= qd.second);
+      assert(pd.second <= qd.second);
       pd = qd;
       points2.push_back(pd.first);
       if(CGAL::squared_distance(query,pd.first) != pd.second){
 	std::cout << CGAL::squared_distance(query,pd.first) << " != " << pd.second << std::endl;
       }
-      CGAL_test_assert(CGAL::squared_distance(query,pd.first) == pd.second);
+      assert(CGAL::squared_distance(query,pd.first) == pd.second);
     }
     std::sort(points.begin(),points.end());
     std::sort(points2.begin(),points2.end());
-    CGAL_test_assert(points.size() == points2.size());
-    CGAL_test_assert(points == points2);
+    assert(points.size() == points2.size());
+    assert(points == points2);
     return true;
   }
 };  

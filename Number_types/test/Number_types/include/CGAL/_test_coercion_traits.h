@@ -15,7 +15,7 @@
     \brief test functions for class NiX::Coercion_traits
 */
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 // These are test functions for the Coercion_traits
 CGAL_BEGIN_NAMESPACE
@@ -32,7 +32,7 @@ class Test_compare {
       typename CGAL::Coercion_traits< A, B >::Cast cast;
       Type a_ret = cast(a);
       Type b_ret = cast(b);
-      CGAL_test_assert( compare( a, b ) == CGAL_NTS compare( a_ret, b_ret ) );
+      assert( compare( a, b ) == CGAL_NTS compare( a_ret, b_ret ) );
     }
 };
 
@@ -46,7 +46,7 @@ class Test_integral_division {
       typename CGAL::Coercion_traits< A, B >::Cast cast;
       Type a_ret = cast(a);
       Type b_ret = cast(b);
-      CGAL_test_assert( integral_division( a, b ) == 
+      assert( integral_division( a, b ) == 
                         CGAL_NTS integral_division( a_ret, b_ret ) );
     }
 };
@@ -68,7 +68,7 @@ class Test_gcd {
       typename CGAL::Coercion_traits< A, B >::Cast cast;
       Type a_ret = cast(a);
       Type b_ret = cast(b);
-      CGAL_test_assert( gcd( a, b ) == 
+      assert( gcd( a, b ) == 
                         CGAL_NTS gcd( a_ret, b_ret ) );
     }
 };
@@ -96,8 +96,8 @@ class Test_div_mod {
       Type r_to_compare;
       div_mod( a, b, q, r );
       CGAL_NTS div_mod( a_ret, b_ret, q_to_compare, r_to_compare );
-      CGAL_test_assert( q == q_to_compare );
-      CGAL_test_assert( r == r_to_compare );
+      assert( q == q_to_compare );
+      assert( r == r_to_compare );
     }
 };
 
@@ -118,7 +118,7 @@ class Test_div {
       typename CGAL::Coercion_traits< A, B >::Cast cast;
       Type a_ret = cast(a);
       Type b_ret = cast(b);
-      CGAL_test_assert( div( a, b ) == 
+      assert( div( a, b ) == 
                         CGAL_NTS div( a_ret, b_ret ) );
     }
 };
@@ -140,7 +140,7 @@ class Test_mod {
       typename CGAL::Coercion_traits< A, B >::Cast cast;
       Type a_ret = cast(a);
       Type b_ret = cast(b);
-      CGAL_test_assert( mod( a, b ) == 
+      assert( mod( a, b ) == 
                         CGAL_NTS mod( a_ret, b_ret ) );
     }
 };
@@ -184,10 +184,10 @@ template< class A, class B, class Type >
 void interoperability_test_one_way() {
   typedef CGAL::Coercion_traits< A, B > CT;
 
-  CGAL_test_assert((::boost::is_same< typename CT::Are_implicit_interoperable,
+  assert((::boost::is_same< typename CT::Are_implicit_interoperable,
                                       CGAL::Tag_true 
                                     >::value));                                    
-  CGAL_test_assert((::boost::is_same< typename CT::Type, Type >::value));
+  assert((::boost::is_same< typename CT::Type, Type >::value));
   
   // Implicit_interoperability_test
   Implicit_interoperability_test< A, B, Type, 
@@ -227,16 +227,16 @@ void coercion_traits_test_one_way(){
     {
         typedef typename CT::Type Type;
         typename CT::Cast cast;
-        CGAL_test_assert((::boost::is_same< 
+        assert((::boost::is_same< 
                                       typename CT::Are_explicit_interoperable,
                                       CGAL::Tag_true 
                                           >::value));
-        CGAL_test_assert((::boost::is_same<Type,RT>::value));
+        assert((::boost::is_same<Type,RT>::value));
         A a(3);
         B b(3);
         RT  rt(3);
-        CGAL_test_assert(rt==cast(a));
-        CGAL_test_assert(rt==cast(b)); 
+        assert(rt==cast(a));
+        assert(rt==cast(b)); 
     }
 }
 

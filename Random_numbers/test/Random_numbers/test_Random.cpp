@@ -26,7 +26,7 @@
 // ============================================================================
 
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iterator>
 
 int
@@ -35,7 +35,7 @@ main()
     // test get_bool
     {
         bool b = CGAL::default_random.get_bool();
-        CGAL_test_assert( ! b || b);
+        assert( ! b || b);
     }
     
     // test get_int
@@ -43,7 +43,7 @@ main()
         int  l = CGAL::default_random.get_int( -100, 0);
         int  u = CGAL::default_random.get_int( 0, 1000);
         int  i = CGAL::default_random.get_int( l, u);
-        CGAL_test_assert( ( l <= i) && ( i < u));
+        assert( ( l <= i) && ( i < u));
     }
     
     // test get_double
@@ -51,7 +51,7 @@ main()
         double  l = CGAL::default_random.get_double( -123.45, -0.99);
         double  u = CGAL::default_random.get_double( 22.0/7.0, 33.3);
         double  d = CGAL::default_random.get_double( l, u);
-        CGAL_test_assert( ( l <= d) && ( d < u));
+        assert( ( l <= d) && ( d < u));
     }
 
     // test get_bits
@@ -65,10 +65,10 @@ main()
           unsigned int l2 = CGAL::default_random.get_bits<2>();
           unsigned int l3 = CGAL::default_random.get_bits<3>();
           unsigned int l4 = CGAL::default_random.get_bits<4>();
-	  CGAL_test_assert(l1 < 2);
-	  CGAL_test_assert(l2 < 4);
-	  CGAL_test_assert(l3 < 8);
-	  CGAL_test_assert(l4 < 16);
+	  assert(l1 < 2);
+	  assert(l2 < 4);
+	  assert(l3 < 8);
+	  assert(l4 < 16);
 	  // std::cout << l1 << " " << l2 << " "
 	  //           << l3 << " " << l4 << std::endl;
 	  ++(p1[l1]);
@@ -90,7 +90,7 @@ main()
     // test operator()
     {
         int  i = CGAL::default_random( 5555);
-        CGAL_test_assert( ( 0 <= i) && ( i < 5555));
+        assert( ( 0 <= i) && ( i < 5555));
     }
 
     return( 0);

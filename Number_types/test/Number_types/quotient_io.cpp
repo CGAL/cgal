@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <fstream>
 #include <vector>
 #include <algorithm>
@@ -13,7 +13,7 @@ main()
   std::ofstream T;
   std::ifstream U;
   S.open("quotient_in");
-  CGAL_test_assert( S );
+  assert( S );
 
   std::vector<CGAL::Quotient<double> >   V1;
   std::vector<CGAL::Quotient<double> >   V2;
@@ -23,14 +23,14 @@ main()
   S.close();
 
   T.open("quotient_out");
-  CGAL_test_assert( T );
+  assert( T );
   std::copy( V1.begin(), 
              V1.end(), 
              std::ostream_iterator<CGAL::Quotient<double> >(T,"\n") );
   T.close();
 
   U.open("quotient_out");
-  CGAL_test_assert( T );
+  assert( T );
   std::copy( std::istream_iterator<CGAL::Quotient<double> >(U),
              std::istream_iterator<CGAL::Quotient<double> >(),
              std::back_inserter(V2) );
@@ -45,7 +45,7 @@ main()
     std::copy( V2.begin(), V2.end(), std::ostream_iterator<CGAL::Quotient<double> >(std::cout,"\n") );
   }
 
-  CGAL_test_assert( V1 == V2 );
+  assert( V1 == V2 );
  
   return 0;
 }

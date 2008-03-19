@@ -52,75 +52,75 @@ _test_cls_line_3(const R& )
  CGAL::Line_3<R> l2(p1,p2);
  CGAL::Line_3<R> l3(l2);
 
- CGAL_test_assert( l2 == l2);
- CGAL_test_assert( l2 == l3);
- CGAL_test_assert( CGAL::parallel(l2, l3) );
+ assert( l2 == l2);
+ assert( l2 == l3);
+ assert( CGAL::parallel(l2, l3) );
 
  CGAL::Direction_3<R> dir( n9, n3, n1);
  CGAL::Line_3<R> l4(p3, dir);
- CGAL_test_assert( l2 != l4);
- CGAL_test_assert( ! CGAL::parallel(l2, l4) );
+ assert( l2 != l4);
+ assert( ! CGAL::parallel(l2, l4) );
 
  CGAL::Vector_3<R> vec( n9, n3, n1);
  CGAL::Line_3<R> l4v(p3, vec);
- CGAL_test_assert( l4 == l4v);
- CGAL_test_assert( l4.to_vector() == vec);
+ assert( l4 == l4v);
+ assert( l4.to_vector() == vec);
 
  CGAL::Segment_3<R> seg(p1,p2);
  CGAL::Ray_3<R>     ray(p2,p1);
  CGAL::Line_3<R>    l5(seg);
  CGAL::Line_3<R>    l6(ray);
- CGAL_test_assert( l2 == l5);
+ assert( l2 == l5);
 
  std::cout <<'.';
 
- CGAL_test_assert( l2 == l5 );
- CGAL_test_assert( l2.direction() == l5.direction() );
- CGAL_test_assert( l5.direction() ==  - l6.direction() );
- CGAL_test_assert( l5.has_on( p1 ) );
- CGAL_test_assert( l5.has_on( p2 ) );
- CGAL_test_assert( l5.has_on( l5.point() ));
- CGAL_test_assert( l6.has_on( p1 ) );
- CGAL_test_assert( l6.has_on( p2 ) );
- CGAL_test_assert( l6.has_on( l5.point() ));
- CGAL_test_assert( l5.opposite() == l6 );
- CGAL_test_assert( l2.opposite() == l6 );
- CGAL_test_assert( l5 != l6 );
+ assert( l2 == l5 );
+ assert( l2.direction() == l5.direction() );
+ assert( l5.direction() ==  - l6.direction() );
+ assert( l5.has_on( p1 ) );
+ assert( l5.has_on( p2 ) );
+ assert( l5.has_on( l5.point() ));
+ assert( l6.has_on( p1 ) );
+ assert( l6.has_on( p2 ) );
+ assert( l6.has_on( l5.point() ));
+ assert( l5.opposite() == l6 );
+ assert( l2.opposite() == l6 );
+ assert( l5 != l6 );
 
  CGAL::Plane_3<R> pl = l6.perpendicular_plane( l6.point() );
  CGAL::Plane_3<R> plstrich(l6.point(), l6.direction() );
- CGAL_test_assert( pl == plstrich );
- CGAL_test_assert( pl.orthogonal_direction() == l6.direction() );
+ assert( pl == plstrich );
+ assert( pl.orthogonal_direction() == l6.direction() );
  CGAL::Plane_3<R> plzweistrich(l6.point(), l5.direction() );
- CGAL_test_assert( plzweistrich.opposite() == pl );
+ assert( plzweistrich.opposite() == pl );
 
  std::cout << '.';
 
- CGAL_test_assert( l4.point(2) - l4.point(1) == l4.point(1) - l4.point(0) );
+ assert( l4.point(2) - l4.point(1) == l4.point(1) - l4.point(0) );
  CGAL::Point_3<R> p1l4proj = l4.projection(p1);
- CGAL_test_assert( l4.has_on( p1l4proj ) );
- CGAL_test_assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) );
- CGAL_test_assert( l4.perpendicular_plane( p1l4proj ).has_on( p1 ) );
+ assert( l4.has_on( p1l4proj ) );
+ assert( l4.perpendicular_plane( p1l4proj ).has_on( p1l4proj ) );
+ assert( l4.perpendicular_plane( p1l4proj ).has_on( p1 ) );
  CGAL::Point_3<R> p4 = l4.projection(p2);
  CGAL::Point_3<R> p5 = l4.projection(p3);
- CGAL_test_assert(  ( l4.direction() == ( p5 - p4 ).direction() )\
+ assert(  ( l4.direction() == ( p5 - p4 ).direction() )\
         ||( l4.direction() == ( p4 - p5 ).direction() )  );
- CGAL_test_assert( l5.direction() == - l6.direction() );
+ assert( l5.direction() == - l6.direction() );
 
  std::cout <<'.';
 
- CGAL_test_assert( l2.has_on(p1) );
- CGAL_test_assert( l2.has_on(p2) );
- CGAL_test_assert( l4.has_on(p4) );
- CGAL_test_assert( l4.has_on(p5) );
- CGAL_test_assert( CGAL::Line_3<R>(p1,p1).is_degenerate() );
+ assert( l2.has_on(p1) );
+ assert( l2.has_on(p2) );
+ assert( l4.has_on(p4) );
+ assert( l4.has_on(p5) );
+ assert( CGAL::Line_3<R>(p1,p1).is_degenerate() );
 
  {
   CGAL::Point_3<R> p(0, 0, 0);
   CGAL::Point_3<R> q(2, 0, 0);
   CGAL::Point_3<R> r(0, 2, 0);
   CGAL::Line_3<R> l(CGAL::Point_3<R>(1, 1, 0), CGAL::Vector_3<R>(0, 0, 1));
-  CGAL_test_assert( l == CGAL::equidistant_line(p, q, r) );
+  assert( l == CGAL::equidistant_line(p, q, r) );
  }
 
  std::cout << "done" << std::endl;

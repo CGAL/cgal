@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
@@ -117,7 +117,7 @@ int main() {
       D2[0] = rd.get_int(-D1[0], D1[0]);
     else
       D2[0] = rd.get_int(-D2[1], D2[1]);
-    CGAL_test_assert(D1[0] * D2[1] >= D2[0] * D2[0]);  
+    assert(D1[0] * D2[1] >= D2[0] * D2[0]);  
     int*  D[] = {D1, D2};                      
     int   c[] = {random_signed(), random_signed()};
     int  c0   = random_signed();                     
@@ -130,22 +130,22 @@ int main() {
     std::stringstream inout;
     CGAL::print_quadratic_program (inout, qp);
     CGAL::Quadratic_program_from_mps<int> qp2 (inout);
-    CGAL_test_assert(CGAL::QP_functions_detail::are_equal_qp (qp, qp2));
+    assert(CGAL::QP_functions_detail::are_equal_qp (qp, qp2));
   
     // solve it
     Solution s = CGAL::solve_quadratic_program (qp, ET(), options);
-    CGAL_test_assert(s.is_valid());
+    assert(s.is_valid());
     statistics (s, qp_optimal, qp_infeasible, qp_unbounded);
 
     // also solve it as nqp, lp, nlp
     s = CGAL::solve_nonnegative_quadratic_program (qp, ET(), options); 
-    CGAL_test_assert(s.is_valid());
+    assert(s.is_valid());
     statistics (s, nqp_optimal, nqp_infeasible, nqp_unbounded);
     s = CGAL::solve_linear_program (qp, ET(), options);    
-    CGAL_test_assert(s.is_valid()); 
+    assert(s.is_valid()); 
     statistics (s, lp_optimal, lp_infeasible, lp_unbounded);
     s = CGAL::solve_nonnegative_linear_program (qp, ET(), options);   
-    CGAL_test_assert(s.is_valid());  
+    assert(s.is_valid());  
     statistics (s, nlp_optimal, nlp_infeasible, nlp_unbounded);
   }
   

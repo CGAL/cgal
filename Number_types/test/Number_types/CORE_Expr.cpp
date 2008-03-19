@@ -38,7 +38,7 @@ void test_io(const NT& x){
     os << x;
     std::istringstream is(os.str()); 
     is >> tmp;
-    CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+    assert( x == tmp );
 }
 
 /*

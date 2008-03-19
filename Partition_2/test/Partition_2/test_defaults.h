@@ -36,16 +36,16 @@ void test_defaults()
                                          partition_polys.begin(),
                                          partition_polys.end());
    // check y-monotone with traits supplied
-   CGAL_test_assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
+   assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
                                 (*partition_polys.begin()).vertices_end(),
                                 Traits()));
    // check y-monotone with default traits 
-   CGAL_test_assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
+   assert(CGAL::is_y_monotone_2((*partition_polys.begin()).vertices_begin(),
                                 (*partition_polys.begin()).vertices_end()));
 
 
    // checks for overlapping polygons using default traits
-   CGAL_test_assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
+   assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end()));
@@ -54,7 +54,7 @@ void test_defaults()
    CGAL::Partition_is_valid_traits_2<Traits, Is_y_monotone_2>  validity_traits;
 
    // checks for overlapping polygons using supplied traits
-   CGAL_test_assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
+   assert(CGAL::partition_is_valid_2(polygon.vertices_begin(),
                                      polygon.vertices_end(),
                                      partition_polys.begin(),
                                      partition_polys.end(),

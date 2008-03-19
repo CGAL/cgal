@@ -1,4 +1,4 @@
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Union_find.h>
 #include <CGAL/test_macros.h>
 

@@ -21,7 +21,7 @@
 #define CGAL_VDA_TEST_CONCEPT_H 1
 
 #include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include "helper_functions.h"
 #include <list>
 #include <boost/variant.hpp>
@@ -212,7 +212,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
   }
 
   // testing validity
-  CGAL_test_assert( dg.is_valid() );
+  assert( dg.is_valid() );
 }
 
 //============================================================================

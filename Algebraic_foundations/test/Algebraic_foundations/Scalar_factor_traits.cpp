@@ -1,6 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Scalar_factor_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 int main(){
@@ -31,8 +31,8 @@ int main(){
     }
 
     int i; 
-    i = 0 ;  CGAL::remove_scalar_factor(i); CGAL_test_assert( 0 == i);
-    i = 1 ;  CGAL::remove_scalar_factor(i); CGAL_test_assert( 1 == i);
-    i = 2 ;  CGAL::remove_scalar_factor(i); CGAL_test_assert( 1 == i);
-    i =-2 ;  CGAL::remove_scalar_factor(i); CGAL_test_assert(-1 == i);
+    i = 0 ;  CGAL::remove_scalar_factor(i); assert( 0 == i);
+    i = 1 ;  CGAL::remove_scalar_factor(i); assert( 1 == i);
+    i = 2 ;  CGAL::remove_scalar_factor(i); assert( 1 == i);
+    i =-2 ;  CGAL::remove_scalar_factor(i); assert(-1 == i);
 }

@@ -1,7 +1,7 @@
 // file: test/Spatial_searching/K_neighbor_search_manhattan_distance_isobox_point.C
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
@@ -41,7 +41,7 @@ int  main() {
   Neighbor_search N1(tree, query, K); // eps=10.0, nearest=false
   
   for (Neighbor_search::iterator it = N1.begin();it != N1.end();it++) { 
-    CGAL_test_assert( it->first == points.front());
+    assert( it->first == points.front());
     points.pop_front();
   } 
   std::cout << "done" << std::endl;

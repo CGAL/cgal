@@ -1,4 +1,4 @@
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 
 #include <CGAL/basic.h>
@@ -175,8 +175,8 @@ main()
 	 Line l(p,p+k*(pts[i]-p));
 	
 	 for ( int j = 0 ; j < 6 ; j++) {
-	   CGAL_test_assert(CGAL::do_intersect(l,tris[j]) == (i<12 ? false : true));
-	   CGAL_test_assert(CGAL::do_intersect(l.opposite(),tris[j])
+	   assert(CGAL::do_intersect(l,tris[j]) == (i<12 ? false : true));
+	   assert(CGAL::do_intersect(l.opposite(),tris[j])
 		  == (i<12 ? false : true));
 	 }
        }
@@ -195,8 +195,8 @@ main()
 
       for ( int j = 0 ; j < 6 ; j++) {
 	if (! l.is_degenerate() ) {
-	  CGAL_test_assert(CGAL::do_intersect(l,tris[j]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(l.opposite(),tris[j]) == answer);
+	  assert(CGAL::do_intersect(l,tris[j]) ==  answer);
+	  assert(CGAL::do_intersect(l.opposite(),tris[j]) == answer);
 	}
       }
     }
@@ -216,32 +216,32 @@ main()
 
   std::cout <<"Three dimensional case " <<std::endl;
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == false);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == false);
+    assert(CGAL::do_intersect(h,tris[j]) == false);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == false);
   }
 
   h = Plane(0,1,0,4);
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == true);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
+    assert(CGAL::do_intersect(h,tris[j]) == true);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
   }
 
   h = Plane(0,1,0,2);
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == true);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
+    assert(CGAL::do_intersect(h,tris[j]) == true);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
   }
 
   h = Plane(0,1,0,0);
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == true);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
+    assert(CGAL::do_intersect(h,tris[j]) == true);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
   }
 
   h = Plane(1,0,0,-4);
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == true);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
+    assert(CGAL::do_intersect(h,tris[j]) == true);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
   }
 
 
@@ -250,8 +250,8 @@ main()
 
   h = Plane(0,0,1,-2);
   for (int j = 0 ; j < 6 ; j++ ) {
-    CGAL_test_assert(CGAL::do_intersect(h,tris[j]) == true);
-    CGAL_test_assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
+    assert(CGAL::do_intersect(h,tris[j]) == true);
+    assert(CGAL::do_intersect(h.opposite(),tris[j]) == true);
   }
 
    /////////////////////////////////////////////////////////////////////
@@ -270,9 +270,9 @@ main()
       Segment s(p,p+k*(pts[i]-p));
       	
       for ( int j = 0 ; j < 6 ; j++) {
-	CGAL_test_assert(CGAL::do_intersect(s,tris[j]) ==
+	assert(CGAL::do_intersect(s,tris[j]) ==
 	       (( i < 12 || k < 2 ) ? false : true));
-	CGAL_test_assert(CGAL::do_intersect(s.opposite(),tris[j])
+	assert(CGAL::do_intersect(s.opposite(),tris[j])
 	       == ((( i < 12 ) || ( k < 2 ) ) ? false : true));
       }
     }
@@ -290,8 +290,8 @@ main()
 
       for ( int j = 0 ; j < 6 ; j++) {
 	if (! s.is_degenerate() ) {
-	  CGAL_test_assert(CGAL::do_intersect(s,tris[j]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(s.opposite(),tris[j]) == answer);
+	  assert(CGAL::do_intersect(s,tris[j]) ==  answer);
+	  assert(CGAL::do_intersect(s.opposite(),tris[j]) == answer);
 	}
       }
     }
@@ -312,9 +312,9 @@ main()
       Ray r(p,p+k*(pts[i]-p));
       	
       for ( int j = 0 ; j < 6 ; j++) {
-	CGAL_test_assert(CGAL::do_intersect(r,tris[j]) ==
+	assert(CGAL::do_intersect(r,tris[j]) ==
 	       (( i < 12 || k < 0 ) ? false : true));
-	CGAL_test_assert(CGAL::do_intersect(r.opposite(),tris[j])
+	assert(CGAL::do_intersect(r.opposite(),tris[j])
 	       == ((( i < 12 ) || ( k > 0)) ? false : true));
       }
     }
@@ -332,8 +332,8 @@ main()
 
       for ( int j = 0 ; j < 6 ; j++) {
 	if (! r.is_degenerate() ) {
-	  CGAL_test_assert(CGAL::do_intersect(r,tris[j]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(r.opposite(),tris[j])
+	  assert(CGAL::do_intersect(r,tris[j]) ==  answer);
+	  assert(CGAL::do_intersect(r.opposite(),tris[j])
 		 == answer_opposite);
 	}
       }
@@ -342,7 +342,7 @@ main()
 
   // parallel case
   Ray r(Point(-1,0,1),Point(4,0,1));
-  CGAL_test_assert(CGAL::do_intersect(r,tris[0]) ==  false);
+  assert(CGAL::do_intersect(r,tris[0]) ==  false);
 
   /////////////////////////////////////////////////////////////////////
   //
@@ -374,19 +374,19 @@ main()
 		Point(0.53749717115046513615794765428290702402591705322266,
 		      1.4500343543104132759680169328930787742137908935547,
 		      -1.4988251058616692823477478668792173266410827636719));
-    CGAL_test_assert(CGAL::do_intersect(tet,tr) == true);
+    assert(CGAL::do_intersect(tet,tr) == true);
 
     tet = Tetrahedron(Point(0,0,0), Point(1,0,0), Point(0,1,0), Point(0,0,1));
 
-    CGAL_test_assert(CGAL::do_intersect(tet,
+    assert(CGAL::do_intersect(tet,
 		 Triangle(Point(-1,-1,.5), Point(-1,2,.5), Point(2,-1,.5))) == true);
-    CGAL_test_assert(CGAL::do_intersect(tet,
+    assert(CGAL::do_intersect(tet,
 		 Triangle(Point(0,0,.5), Point(.5,0,.5), Point(0,.5,.5))) == true);
-    CGAL_test_assert(CGAL::do_intersect(tet,
+    assert(CGAL::do_intersect(tet,
 		 Triangle(Point(1,1,.5), Point(.5,0,.5), Point(0,.5,.5))) == true);
-    CGAL_test_assert(CGAL::do_intersect(tet,
+    assert(CGAL::do_intersect(tet,
 		 Triangle(Point(.2,.3,.5), Point(1,1,1), Point(2,1,1))) == true);
-    CGAL_test_assert(CGAL::do_intersect(tet,
+    assert(CGAL::do_intersect(tet,
 		 Triangle(Point(-1,0,1), Point(-1,1,0), Point(1,0,-1))) == true);
   }
 
@@ -471,164 +471,164 @@ main()
 	
 	input2 = Triangle(v2a,v2b,v2c);
 
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);
 	
 	input2 = Triangle(v2a,v2c,v2b);
 
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);		
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);
 	
 	input2 = Triangle(v2b,v2a,v2c);
 	
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);		
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);
 	
 	input2 = Triangle(v2b,v2c,v2a);
 	
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);	
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);	
 	
 	input2 = Triangle(v2c,v2a,v2b);
 	
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);		
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);
 	
 	input2 = Triangle(v2c,v2b,v2a);
 	
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1b,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1b,v1c))
 	       == answer);		
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1a,v1c,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1a,v1c,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1a,v1c),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1a,v1c))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1b,v1c,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1b,v1c,v1a))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1a,v1b),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1a,v1b))
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
+	assert(CGAL::do_intersect(Triangle(v1c,v1b,v1a),input2)
 	       == answer);
-	CGAL_test_assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
+	assert(CGAL::do_intersect(input2,Triangle(v1c,v1b,v1a))
 	       == answer);		
       }
     }
@@ -694,30 +694,30 @@ main()
 	
 	if (!t1.is_degenerate()) {
 	  for (int l = 0 ; l < 6 ; l++) {
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t1) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[1]),project(t1)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t1,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) == true);
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t2) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t2,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) == true);
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t3) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t3,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) == true);
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t4) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t4,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) == true);
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t5) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t5,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) == true);
-	    CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t6) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) == true);
-	    CGAL_test_assert(CGAL::do_intersect(t6,tris1tt[l]) == true);
-	    CGAL_test_assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t1) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[1]),project(t1)) == true);
+	    assert(CGAL::do_intersect(t1,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t2) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) == true);
+	    assert(CGAL::do_intersect(t2,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t3) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) == true);
+	    assert(CGAL::do_intersect(t3,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t4) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) == true);
+	    assert(CGAL::do_intersect(t4,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t5) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) == true);
+	    assert(CGAL::do_intersect(t5,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) == true);
+	    assert(CGAL::do_intersect(tris1tt[l],t6) == true);
+	    assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) == true);
+	    assert(CGAL::do_intersect(t6,tris1tt[l]) == true);
+	    assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) == true);
 	  }
 	}
       }
@@ -742,30 +742,30 @@ main()
       if (!t1.is_degenerate()) {
 	for (int l = 0 ; l < 6 ; l++) {
 
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t1) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[1]),project(t1)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t1,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t2) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t2,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t3) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t3,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t4) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t4,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t5) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t5,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t6) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(t6,tris1tt[l]) ==  (k >= 25));
-	  CGAL_test_assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t1) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[1]),project(t1)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t1,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t2) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t2,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t3) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t3,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t4) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t4,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t5) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t5,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  (k >= 25));
+	  assert(CGAL::do_intersect(tris1tt[l],t6) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  (k >= 25));
+	  assert(CGAL::do_intersect(t6,tris1tt[l]) ==  (k >= 25));
+	  assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  (k >= 25));
 	
 	}
       }
@@ -792,30 +792,30 @@ main()
 
       if (!t1.is_degenerate()) {
 	for (int l = 0 ; l < 6 ; l++) {
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t1) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[1]),project(t1))== answer);
-	  CGAL_test_assert(CGAL::do_intersect(t1,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t2) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t2,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t3) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t3,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t4) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t4,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t5) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t5,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t6) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t6,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t1) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[1]),project(t1))== answer);
+	  assert(CGAL::do_intersect(t1,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t2) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  answer);
+	  assert(CGAL::do_intersect(t2,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t3) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  answer);
+	  assert(CGAL::do_intersect(t3,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t4) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  answer);
+	  assert(CGAL::do_intersect(t4,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t5) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  answer);
+	  assert(CGAL::do_intersect(t5,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t6) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  answer);
+	  assert(CGAL::do_intersect(t6,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  answer);
 
 	}
       }
@@ -843,30 +843,30 @@ main()
 
        if (!t1.is_degenerate()) {
 	for (int l = 0 ; l < 6 ; l++) {
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t1) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[1]),project(t1))== answer);
-	  CGAL_test_assert(CGAL::do_intersect(t1,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t2) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t2,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t3) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t3,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t4) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t4,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t5) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t5,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(tris1tt[l],t6) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(t6,tris1tt[l]) ==  answer);
-	  CGAL_test_assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t1) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[1]),project(t1))== answer);
+	  assert(CGAL::do_intersect(t1,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t1),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t2) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t2)) ==  answer);
+	  assert(CGAL::do_intersect(t2,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t2),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t3) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t3)) ==  answer);
+	  assert(CGAL::do_intersect(t3,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t3),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t4) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t4)) ==  answer);
+	  assert(CGAL::do_intersect(t4,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t4),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t5) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t5)) ==  answer);
+	  assert(CGAL::do_intersect(t5,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t5),project(tris1tt[l])) ==  answer);
+	  assert(CGAL::do_intersect(tris1tt[l],t6) ==  answer);
+	  assert(CGAL::do_intersect(project(tris1tt[l]),project(t6)) ==  answer);
+	  assert(CGAL::do_intersect(t6,tris1tt[l]) ==  answer);
+	  assert(CGAL::do_intersect(project(t6),project(tris1tt[l])) ==  answer);
 
 	}
       }

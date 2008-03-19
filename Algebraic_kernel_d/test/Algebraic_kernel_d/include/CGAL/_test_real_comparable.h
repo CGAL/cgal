@@ -23,7 +23,7 @@
 #define CGAL_TEST_REAL_COMPARABLE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/tags.h>
 /*#include <NiX/basic.h>
 #include <NiX/NT_traits.h>
@@ -45,7 +45,7 @@ namespace CGALi {
             typedef typename ToDouble::result_type   Result_type;
             BOOST_STATIC_ASSERT((::boost::is_same<NT, Argument_type>::value));
             BOOST_STATIC_ASSERT((::boost::is_same<double, Result_type>::value));
-            CGAL_test_assert(42.0 == to_double(NT(42)));
+            assert(42.0 == to_double(NT(42)));
         }
     };
 
@@ -67,9 +67,9 @@ namespace CGALi {
             BOOST_STATIC_ASSERT((::boost::is_same< typename Argument_type::Interval, Result_type>::value));
 
             // TODO: NiX::in not available!?
-            //CGAL_test_assert(NiX::in(42.0,to_Interval(NT(42))));
-            CGAL_test_assert(to_Interval(NT(42)).lower() > 41.99);
-            CGAL_test_assert(to_Interval(NT(42)).upper() < 42.01);
+            //assert(NiX::in(42.0,to_Interval(NT(42))));
+            assert(to_Interval(NT(42)).lower() > 41.99);
+            assert(to_Interval(NT(42)).upper() < 42.01);
 
 	    /*
 	    NT notdouble = ipower(2,60);
@@ -81,7 +81,7 @@ namespace CGALi {
             upper *= ipower(2.0,7);
 	    std::cout << lower << "," << upper << std::endl;
 	    std::cout << test.lower() << "," << test.upper() << std::endl;
-            CGAL_test_assert( (in(lower,test) == true) && (in(upper,test) == true) );
+            assert( (in(lower,test) == true) && (in(upper,test) == true) );
             */
         }
     };
@@ -111,37 +111,37 @@ void test_real_comparable() {
     NT a(-2);
     NT b(1);
     NT c(0);
-    CGAL_test_assert( a <  b);
-    CGAL_test_assert( b >  a);
-    CGAL_test_assert( a <= b);
-    CGAL_test_assert( b >= a);
-    CGAL_test_assert( a <= a);
-    CGAL_test_assert( a >= a);
-    CGAL_test_assert( compare(a,b) == CGAL::SMALLER);
-    CGAL_test_assert( compare(b,a) == CGAL::LARGER);
-    CGAL_test_assert( compare(a,a) == CGAL::EQUAL);
-    CGAL_test_assert( sign(a) == CGAL::NEGATIVE);
-    CGAL_test_assert( sign(b) == CGAL::POSITIVE);
-    CGAL_test_assert( sign(c) == CGAL::ZERO);
-    CGAL_test_assert( sign(a) <  sign(b));
-    CGAL_test_assert( sign(b) >  sign(a));
-    CGAL_test_assert( sign(a) <= sign(b));
-    CGAL_test_assert( sign(b) >= sign(a));
-    CGAL_test_assert( sign(a) <= sign(a));
-    CGAL_test_assert( sign(a) >= sign(a));
-    CGAL_test_assert( sign(c) <  sign(b));
-    CGAL_test_assert( sign(b) >  sign(c));
-    CGAL_test_assert( sign(c) <= sign(b));
-    CGAL_test_assert( sign(b) >= sign(c)); 
-    CGAL_test_assert( sign(c) <= sign(c));
-    CGAL_test_assert( sign(c) >= sign(c));
-    CGAL_test_assert( sign(a) <  sign(c));
-    CGAL_test_assert( sign(c) >  sign(a));
-    CGAL_test_assert( sign(a) <= sign(c));
-    CGAL_test_assert( sign(c) >= sign(a));
-    CGAL_test_assert( abs(a) == NT(2));
-    CGAL_test_assert( abs(b) == NT(1));
-    CGAL_test_assert( abs(c) == NT(0));   
+    assert( a <  b);
+    assert( b >  a);
+    assert( a <= b);
+    assert( b >= a);
+    assert( a <= a);
+    assert( a >= a);
+    assert( compare(a,b) == CGAL::SMALLER);
+    assert( compare(b,a) == CGAL::LARGER);
+    assert( compare(a,a) == CGAL::EQUAL);
+    assert( sign(a) == CGAL::NEGATIVE);
+    assert( sign(b) == CGAL::POSITIVE);
+    assert( sign(c) == CGAL::ZERO);
+    assert( sign(a) <  sign(b));
+    assert( sign(b) >  sign(a));
+    assert( sign(a) <= sign(b));
+    assert( sign(b) >= sign(a));
+    assert( sign(a) <= sign(a));
+    assert( sign(a) >= sign(a));
+    assert( sign(c) <  sign(b));
+    assert( sign(b) >  sign(c));
+    assert( sign(c) <= sign(b));
+    assert( sign(b) >= sign(c)); 
+    assert( sign(c) <= sign(c));
+    assert( sign(c) >= sign(c));
+    assert( sign(a) <  sign(c));
+    assert( sign(c) >  sign(a));
+    assert( sign(a) <= sign(c));
+    assert( sign(c) >= sign(a));
+    assert( abs(a) == NT(2));
+    assert( abs(b) == NT(1));
+    assert( abs(c) == NT(0));   
     
     // To_double --------------------------------------------------------------
     typename Traits::To_double  to_double;
@@ -156,11 +156,11 @@ void test_real_comparable() {
     tti(to_Interval);
     
     // additional functions     
-    CGAL_test_assert(CGAL::sign(NT(-5))==CGAL::NEGATIVE);
-    CGAL_test_assert(CGAL::abs(NT(-5))==NT(5));
+    assert(CGAL::sign(NT(-5))==CGAL::NEGATIVE);
+    assert(CGAL::abs(NT(-5))==NT(5));
     // TODO: NiX::in not available!?
-    //CGAL_test_assert(NiX::in(5.0,NiX::to_Interval(NT(5))));
-    CGAL_test_assert(CGAL::compare(NT(-5),NT(6))==CGAL::SMALLER);
+    //assert(NiX::in(5.0,NiX::to_Interval(NT(5))));
+    assert(CGAL::compare(NT(-5),NT(6))==CGAL::SMALLER);
 
 }
 
@@ -187,18 +187,18 @@ void test_rounded_log2_abs(NT zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
     typedef ::CGAL::Null_functor Null_functor;
     BOOST_STATIC_ASSERT((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
 
-    CGAL_test_assert( fl_log(NT( 7)) == 2 );
-    CGAL_test_assert( cl_log(NT( 7)) == 3 );
-    CGAL_test_assert( fl_log(NT( 8)) == 3 );
-    CGAL_test_assert( cl_log(NT( 8)) == 3 );
-    CGAL_test_assert( fl_log(NT(-9)) == 3 );
-    CGAL_test_assert( cl_log(NT(-9)) == 4 );
+    assert( fl_log(NT( 7)) == 2 );
+    assert( cl_log(NT( 7)) == 3 );
+    assert( fl_log(NT( 8)) == 3 );
+    assert( cl_log(NT( 8)) == 3 );
+    assert( fl_log(NT(-9)) == 3 );
+    assert( cl_log(NT(-9)) == 4 );
 
     // TODO: floor_log2_abs etc. not available yet!?
-    /*CGAL_test_assert( NiX::floor_log2_abs(NT(  64)) == 6 );
-    CGAL_test_assert( NiX::ceil_log2_abs( NT(  64)) == 6 );
-    CGAL_test_assert( NiX::floor_log2_abs(NT(-126)) == 6 );
-    CGAL_test_assert( NiX::ceil_log2_abs( NT(-126)) == 7 );*/
+    /*assert( NiX::floor_log2_abs(NT(  64)) == 6 );
+    assert( NiX::ceil_log2_abs( NT(  64)) == 6 );
+    assert( NiX::floor_log2_abs(NT(-126)) == 6 );
+    assert( NiX::ceil_log2_abs( NT(-126)) == 7 );*/
 }
 
 

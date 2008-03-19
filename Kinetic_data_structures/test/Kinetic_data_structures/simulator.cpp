@@ -2,7 +2,7 @@
 #define CGAL_CHECK_EXPENSIVE
 
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
 #include <CGAL/Kinetic/Event_base.h>
@@ -105,7 +105,7 @@ struct Test
       typename FK::Function f= cf(CGAL::abs(coef()), coef(), coef(), coef(), coef());
       if (fk.sign_at_object()(f, sim->current_time()) == CGAL::NEGATIVE) {
 	f=-f;
-	CGAL_test_assert(fk.sign_at_object()(f, sim->current_time()) != CGAL::NEGATIVE);
+	assert(fk.sign_at_object()(f, sim->current_time()) != CGAL::NEGATIVE);
       }
 
       typename FK::Root_stack s= fk.root_stack_object(f, 
@@ -117,12 +117,12 @@ struct Test
 	if (time_map.find(s.top()) == time_map.end()) {
 	  Ev ev(s.top(), this);
 	  Key k=sim->new_event(s.top(), ev);
-	  CGAL_test_assert(sim->template event<Ev>(k) == ev);
+	  assert(sim->template event<Ev>(k) == ev);
 	  if (s.top() >= sim->end_time()) {
-	    CGAL_test_assert(k==sim->null_event());
+	    assert(k==sim->null_event());
 	  }
 	  if (k==sim->null_event()) {
-	    CGAL_test_assert(s.top() > sim->end_time());
+	    assert(s.top() > sim->end_time());
 	  }
 	  else {
 	    event_map[k]= s.top();
@@ -221,9 +221,9 @@ struct Test
 
     std::cout << "Done checking simulator.\n" << std::endl;
 
-    CGAL_test_assert(time_map.size()==0);
-    CGAL_test_assert(event_map.size()==0);
-    CGAL_test_assert(inf_events_.size()==0);
+    assert(time_map.size()==0);
+    assert(event_map.size()==0);
+    assert(inf_events_.size()==0);
   }
 };
 
@@ -249,7 +249,7 @@ int main(int, char *[])
     timer.stop();
     //std::cout << "List time " << timer.time() << std::endl;
 
-    //CGAL_test_assert(two_list_remaining==0);
+    //assert(two_list_remaining==0);
   }
 
   {

@@ -10,7 +10,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/_test_real_embeddable.h>
 #include <CGAL/Arithmetic_kernel.h>
 
@@ -38,11 +38,11 @@ void test_root_of_traits(){
     Root_of_2 r = CGAL::make_root_of_2(T(0),T(-1),T(2)); //-sqrt(2)
     Root_of_2 rl = CGAL::make_root_of_2(T(1),T(0),T(-2),true); //-sqrt(2);
     Root_of_2 rr = CGAL::make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
-    CGAL_test_assert(r == rl);
-    CGAL_test_assert(rl != rr);
+    assert(r == rl);
+    assert(rl != rr);
     
-    CGAL_test_assert( r * Root_of_1(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
-    CGAL_test_assert( r * T(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
+    assert( r * Root_of_1(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
+    assert( r * T(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
 }
 
 int main(){

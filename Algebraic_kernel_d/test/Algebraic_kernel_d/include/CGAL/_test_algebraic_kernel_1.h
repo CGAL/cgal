@@ -13,7 +13,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/Algebraic_kernel_1.h>
 
 #include <CGAL/_test_basic.h>
@@ -59,25 +59,25 @@ void test_algebraic_kernel_1() {
     std::vector< int > mults_vec;
     
     solve_1( poly1, std::back_inserter( roots_vec ) );        
-    CGAL_test_assert( roots_vec.size() == 2 );
-    CGAL_test_assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(2) ) );
+    assert( roots_vec.size() == 2 );
+    assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(2) ) );
     roots_vec.clear();
     
     solve_1( poly1, std::back_inserter( roots_vec ), std::back_inserter( mults_vec ) );
-    CGAL_test_assert( roots_vec.size() == 2 );
-    CGAL_test_assert( mults_vec.size() == 2 );
-    CGAL_test_assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(2) ) );
-    CGAL_test_assert( CGAL::abs( roots_vec[1] ) == CGAL::abs( Algebraic_real_1(2) ) );
-    CGAL_test_assert( mults_vec[0] == 1 );
-    CGAL_test_assert( mults_vec[1] == 1 );
+    assert( roots_vec.size() == 2 );
+    assert( mults_vec.size() == 2 );
+    assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(2) ) );
+    assert( CGAL::abs( roots_vec[1] ) == CGAL::abs( Algebraic_real_1(2) ) );
+    assert( mults_vec[0] == 1 );
+    assert( mults_vec[1] == 1 );
     roots_vec.clear();
     mults_vec.clear();
 
     solve_1( poly2, std::back_inserter( roots_vec ), std::back_inserter( mults_vec ) );
-    CGAL_test_assert( roots_vec.size() == 1 );
-    CGAL_test_assert( mults_vec.size() == 1 );
-    CGAL_test_assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(0) ) );
-    CGAL_test_assert( mults_vec[0] == 2 );        
+    assert( roots_vec.size() == 1 );
+    assert( mults_vec.size() == 1 );
+    assert( CGAL::abs( roots_vec[0] ) == CGAL::abs( Algebraic_real_1(0) ) );
+    assert( mults_vec[0] == 2 );        
     roots_vec.clear();
     mults_vec.clear();
     
@@ -86,21 +86,21 @@ void test_algebraic_kernel_1() {
     typename AK::Polynomial_1 poly4( -2,0,1 );
     solve_1( poly4, std::back_inserter( roots_vec ) );
     typename AK::Polynomial_1 poly3( 0,0,0,1 ); 
-    CGAL_test_assert( sign_at_1( poly3, roots_vec[0] ) == CGAL::sign( roots_vec[0] ) );
-    CGAL_test_assert( sign_at_1( poly3, roots_vec[1] ) == CGAL::sign( roots_vec[1] ) );
-    CGAL_test_assert( sign_at_1( poly3, Algebraic_real_1(0) ) == CGAL::ZERO );  
+    assert( sign_at_1( poly3, roots_vec[0] ) == CGAL::sign( roots_vec[0] ) );
+    assert( sign_at_1( poly3, roots_vec[1] ) == CGAL::sign( roots_vec[1] ) );
+    assert( sign_at_1( poly3, Algebraic_real_1(0) ) == CGAL::ZERO );  
     roots_vec.clear();
     
     solve_1( poly1, std::back_inserter( roots_vec ) );
-    CGAL_test_assert( sign_at_1( poly3, roots_vec[0] ) == CGAL::sign( roots_vec[0] ) );
-    CGAL_test_assert( sign_at_1( poly3, roots_vec[1] ) == CGAL::sign( roots_vec[1] ) );
-    CGAL_test_assert( sign_at_1( poly3, Algebraic_real_1(0) ) == CGAL::ZERO );  
+    assert( sign_at_1( poly3, roots_vec[0] ) == CGAL::sign( roots_vec[0] ) );
+    assert( sign_at_1( poly3, roots_vec[1] ) == CGAL::sign( roots_vec[1] ) );
+    assert( sign_at_1( poly3, Algebraic_real_1(0) ) == CGAL::ZERO );  
     roots_vec.clear();
     
     typename AK::Polynomial_1 poly5( 0,0,-1,0,1 );
     typename AK::Algebraic_real_1 algreal1( poly1, Boundary(-3), Boundary(1) );
     typename AK::Algebraic_real_1 algreal2( poly1, Boundary(-1), Boundary(3) );
-    CGAL_test_assert( sign_at_1( poly5, algreal2 ) == CGAL::POSITIVE );
+    assert( sign_at_1( poly5, algreal2 ) == CGAL::POSITIVE );
     
     
     // Just syntax tests... (TODO)
@@ -149,18 +149,18 @@ void test_algebraic_kernel_1() {
     
     // Test ART::Boundary_between...
     typename ART::Boundary_between boundary_between;
-    CGAL_test_assert( typename ART::Boundary( -2 ) < boundary_between( roots_vec2[0], roots_vec2[1] ) );
-    CGAL_test_assert( typename ART::Boundary(  2 ) > boundary_between( roots_vec2[0], roots_vec2[1] ) );
+    assert( typename ART::Boundary( -2 ) < boundary_between( roots_vec2[0], roots_vec2[1] ) );
+    assert( typename ART::Boundary(  2 ) > boundary_between( roots_vec2[0], roots_vec2[1] ) );
     
     // Test ART::Lower_boundary
     typename ART::Lower_boundary lower_boundary;
-    CGAL_test_assert( lower_boundary( roots_vec2[0] ) < typename ART::Boundary(-1) );
-    CGAL_test_assert( lower_boundary( roots_vec2[1] ) < typename ART::Boundary( 2) );
+    assert( lower_boundary( roots_vec2[0] ) < typename ART::Boundary(-1) );
+    assert( lower_boundary( roots_vec2[1] ) < typename ART::Boundary( 2) );
 
     // Test ART::Upper_boundary
     typename ART::Upper_boundary upper_boundary;
-    CGAL_test_assert( upper_boundary( roots_vec2[0] ) > typename ART::Boundary(-1) );
-    CGAL_test_assert( upper_boundary( roots_vec2[1] ) > typename ART::Boundary( 1) );
+    assert( upper_boundary( roots_vec2[0] ) > typename ART::Boundary(-1) );
+    assert( upper_boundary( roots_vec2[1] ) > typename ART::Boundary( 1) );
     
     // Test ART::Refine
     typename ART::Refine refine;
@@ -170,14 +170,14 @@ void test_algebraic_kernel_1() {
 
     refine( ar );
     
-    CGAL_test_assert( old_lower_boundary <= lower_boundary( ar ) );
-    CGAL_test_assert( old_upper_boundary >= upper_boundary( ar ) );
+    assert( old_lower_boundary <= lower_boundary( ar ) );
+    assert( old_upper_boundary >= upper_boundary( ar ) );
     typename ART::Boundary interval_size_old = CGAL::abs( old_upper_boundary - old_lower_boundary );
     typename ART::Boundary interval_size_new = CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) );
-    CGAL_test_assert( interval_size_new * typename ART::Boundary(2) <= interval_size_old );
+    assert( interval_size_new * typename ART::Boundary(2) <= interval_size_old );
 
     refine( ar, 100 );
-    CGAL_test_assert( CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) ) < 
+    assert( CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) ) < 
         (typename ART::Boundary(1) / POLYNOMIAL::ipower(typename ART::Boundary(2), 99 )) );
 
 }

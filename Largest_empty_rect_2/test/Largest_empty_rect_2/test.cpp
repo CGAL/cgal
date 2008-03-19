@@ -4,7 +4,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 #include <fstream>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #define MIN_X 0
 #define MIN_Y 0
@@ -64,7 +64,7 @@ int main(int argc,char *argv[])
 
   Iso_rectangle_2 b(Point(x1, y1), Point(x2, y2));
   Largest_empty_rect empty_rectangle1(b);
-  CGAL_test_assert(b == empty_rectangle1.get_largest_empty_iso_rectangle());
+  assert(b == empty_rectangle1.get_largest_empty_iso_rectangle());
 
   // get points from an input file 
   int number_of_points;
@@ -161,7 +161,7 @@ int main(int argc,char *argv[])
 
   // test clear
   empty_rectangle1.clear();
-  CGAL_test_assert(empty_rectangle1.begin() == empty_rectangle1.end());
+  assert(empty_rectangle1.begin() == empty_rectangle1.end());
   bool bo = empty_rectangle1.insert(p);
   std::cout << "test successful insertion " << bo << std::endl;
 

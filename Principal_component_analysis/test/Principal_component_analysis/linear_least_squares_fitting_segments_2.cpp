@@ -7,7 +7,7 @@
 #include <CGAL/point_generators_2.h>
 
 #include <vector>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <cstdlib>
 #define THRESHOLD 0.001
 // types

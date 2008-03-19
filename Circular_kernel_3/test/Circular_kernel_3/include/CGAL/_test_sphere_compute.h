@@ -116,8 +116,8 @@ void _test_spherical_kernel_compute(SK sk)
       circle[j] = theConstruct_circle_3(p,sqr,plane);
       const FT ardp = theCompute_area_divided_by_pi_3(circle[j]);
       const FT sldps = theCompute_squared_length_divided_by_pi_square_3(circle[j]);
-      CGAL_test_assert(ardp == r*r);
-      CGAL_test_assert(sldps == 4*r*r);
+      assert(ardp == r*r);
+      assert(sldps == 4*r*r);
     }
     const double ar1 = theCompute_approximate_area_3(circle[0]);
     const FT ardp1 = theCompute_area_divided_by_pi_3(circle[0]);
@@ -128,14 +128,14 @@ void _test_spherical_kernel_compute(SK sk)
     const double asl2 = theCompute_approximate_squared_length_3(circle[1]);
     const FT sldps2 = theCompute_squared_length_divided_by_pi_square_3(circle[1]);
     if(circle[0].squared_radius() > circle[1].squared_radius()) {
-      CGAL_test_assert(ar1 > ar2); CGAL_test_assert(ardp1 > ardp2);
-      CGAL_test_assert(asl1 > asl2); CGAL_test_assert(sldps1 > sldps2);
+      assert(ar1 > ar2); assert(ardp1 > ardp2);
+      assert(asl1 > asl2); assert(sldps1 > sldps2);
     } else if(circle[0].squared_radius() == circle[1].squared_radius()) {
-      CGAL_test_assert(ar1 == ar2); CGAL_test_assert(ardp1 == ardp2);
-      CGAL_test_assert(asl1 == asl2); CGAL_test_assert(sldps1 == sldps2);
+      assert(ar1 == ar2); assert(ardp1 == ardp2);
+      assert(asl1 == asl2); assert(sldps1 == sldps2);
     } else {
-      CGAL_test_assert(ar1 < ar2); CGAL_test_assert(ardp1 < ardp2);
-      CGAL_test_assert(asl1 < asl2); CGAL_test_assert(sldps1 < sldps2);
+      assert(ar1 < ar2); assert(ardp1 < ardp2);
+      assert(asl1 < asl2); assert(sldps1 < sldps2);
     } 
   }
 
@@ -178,8 +178,8 @@ void _test_spherical_kernel_compute(SK sk)
       const double diff1 = ((v1 > 0) ? (v1) : (-v1));
       const double diff2 = ((v2 > 0) ? (v2) : (-v2));
       // we suppose at least a precision of 10e-8, but it is not necessarily true
-      CGAL_test_assert(diff1 < 10e-8);
-      CGAL_test_assert(diff2 < 10e-8);
+      assert(diff1 < 10e-8);
+      assert(diff2 < 10e-8);
 
       const double sql1 = ang1 * ang1;
       const double sql2 = ang2 * ang2;

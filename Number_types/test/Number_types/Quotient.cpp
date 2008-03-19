@@ -3,7 +3,7 @@
 // Sylvain Pion
 
 #include <CGAL/Quotient.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <CGAL/MP_Float.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
@@ -23,9 +23,9 @@ void test_double_ctor()
   double d2 = 0.5;
   Qt q1 = d1;
   Qt q2 = d2;
-  CGAL_test_assert(q1.numerator() == T(d1));
-  CGAL_test_assert(q2.numerator() == 1);
-  CGAL_test_assert(q2.denominator() == 2);
+  assert(q1.numerator() == T(d1));
+  assert(q2.numerator() == 1);
+  assert(q2.denominator() == 2);
 }
 
 void test_comparison_operators()

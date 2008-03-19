@@ -2,7 +2,7 @@
 // similar to examples/Box_intersection_d/box_grid.C but stricter in checking
 // and more extensive in what is tested.
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <vector>
 #include <algorithm>
 #include <iterator>
@@ -38,7 +38,7 @@ void check_result( const char* text, std::vector<std::size_t>& result,
     std::copy( check, check+size,
                std::ostream_iterator<std::size_t>( std::cout, ","));
     std::cout << '\n' << std::endl;
-    CGAL_test_assert( result.size() == size 
+    assert( result.size() == size 
             && std::equal( check, check+size, result.begin()));
 }
 

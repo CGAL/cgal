@@ -32,7 +32,7 @@
 #include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterC2.h>
 #include <CGAL/Min_ellipse_2/Min_ellipse_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <cstring>
 #include <fstream>
 
@@ -103,8 +103,8 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
       P.push_back(Point(2,0));
       P.push_back(Point(1,sqrt_3));
       Min_ellipse me(P.begin(), P.end(), true);
-      CGAL_test_assert(me.number_of_support_points()==3);
-      CGAL_test_assert(me.ellipse().is_circle());
+      assert(me.number_of_support_points()==3);
+      assert(me.ellipse().is_circle());
     }
 
     verr << endl << "   4-point case, unit square...";
@@ -115,8 +115,8 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
       P.push_back(Point(0,1));
       P.push_back(Point(1,1));
       Min_ellipse me(P.begin(), P.end(), true);
-      CGAL_test_assert(me.number_of_support_points()==4);
-      CGAL_test_assert(me.ellipse().is_circle());
+      assert(me.number_of_support_points()==4);
+      assert(me.ellipse().is_circle());
     }
 
     verr << endl << "   4 points on circle, but ellipse is no circle...";
@@ -127,8 +127,8 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
       P.push_back(Point(-4,3));
       P.push_back(Point(-4,-3));
       Min_ellipse me(P.begin(), P.end(), true);
-      CGAL_test_assert(me.number_of_support_points()==4);
-      CGAL_test_assert(!me.ellipse().is_circle());
+      assert(me.number_of_support_points()==4);
+      assert(!me.ellipse().is_circle());
     }
 
     verr << endl << "   5 points on a circle, ellipse is circle";
@@ -140,8 +140,8 @@ core_test_Min_ellipse_2( bool verbose, const Traits&)
       P.push_back(Point(-3,4));
       P.push_back(Point(-3,-4));
       Min_ellipse me(P.begin(), P.end(), true); 
-      CGAL_test_assert(me.number_of_support_points()==5);
-      CGAL_test_assert(me.ellipse().is_circle());
+      assert(me.number_of_support_points()==5);
+      assert(me.ellipse().is_circle());
     }
 }
 #endif
@@ -168,15 +168,15 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 	P.push_back(Point(1,1));
         P.push_back(Point(0,0));
 	Min_ellipse me(P.begin(), P.end(), true);
-	CGAL_test_assert(me.number_of_support_points()==4);
-	CGAL_test_assert(me.ellipse().is_circle());
+	assert(me.number_of_support_points()==4);
+	assert(me.ellipse().is_circle());
 	Conic dc;
 	me.ellipse().double_conic(dc);
-	CGAL_test_assert(eps_equal(dc.center(), Point(0.5, 0.5)));
+	assert(eps_equal(dc.center(), Point(0.5, 0.5)));
 	// check whether double_coefficients does the same
 	double r,s,t,u,v,w;
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	CGAL_test_assert(dc == Conic(r,s,t,u,v,w));
+	assert(dc == Conic(r,s,t,u,v,w));
     }
     verr << endl << "   4-point case, parallelogram...";
     {
@@ -186,15 +186,15 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 	P.push_back(Point(0,2));
         P.push_back(Point(2,0));
 	Min_ellipse me(P.begin(), P.end(), true);
-	CGAL_test_assert(me.number_of_support_points()==4);	
-        CGAL_test_assert(!me.ellipse().is_circle());
+	assert(me.number_of_support_points()==4);	
+        assert(!me.ellipse().is_circle());
 	Conic dc;
 	me.ellipse().double_conic(dc);
-	CGAL_test_assert(eps_equal(dc.center(), Point(1.0, 1.0)));
+	assert(eps_equal(dc.center(), Point(1.0, 1.0)));
         // check whether double_coefficients does the same
 	double r,s,t,u,v,w;
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	CGAL_test_assert(dc == Conic(r,s,t,u,v,w));
+	assert(dc == Conic(r,s,t,u,v,w));
     }
     verr << endl << "   4-point case, paper example...";
     {
@@ -204,15 +204,15 @@ double_test_Min_ellipse_2( bool verbose, const Traits&, const Conic&)
 	P.push_back(Point(0.5,1));
         P.push_back(Point(0,1));
 	Min_ellipse me(P.begin(), P.end(), true);
-	CGAL_test_assert(me.number_of_support_points()==4);	
-        CGAL_test_assert(!me.ellipse().is_circle());
+	assert(me.number_of_support_points()==4);	
+        assert(!me.ellipse().is_circle());
 	Conic dc;
 	me.ellipse().double_conic(dc);
-	CGAL_test_assert(eps_equal(dc.center(), Point(0.406, 0.377)));
+	assert(eps_equal(dc.center(), Point(0.406, 0.377)));
         // check whether double_coefficients does the same
 	double r,s,t,u,v,w;
 	me.ellipse().double_coefficients(r,s,t,u,v,w);
-	CGAL_test_assert(dc == Conic(r,s,t,u,v,w));
+	assert(dc == Conic(r,s,t,u,v,w));
     }
 }
 
@@ -248,8 +248,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Min_ellipse  me;
         bool  is_valid = me.is_valid( verbose);
         bool  is_empty = me.is_empty();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_empty);
+        assert( is_valid);
+        assert( is_empty);
     }
 
     verr << endl << "one point constructor...";
@@ -257,8 +257,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Min_ellipse  me( random_points[ 0]);
         bool  is_valid      = me.is_valid( verbose);
         bool  is_degenerate = me.is_degenerate();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_degenerate);
+        assert( is_valid);
+        assert( is_degenerate);
     }
 
     verr << endl << "two points constructor...";
@@ -267,8 +267,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 2]);
         bool  is_valid      = me.is_valid( verbose);
         bool  is_degenerate = me.is_degenerate();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_degenerate);
+        assert( is_valid);
+        assert( is_degenerate);
     }
 
     verr << endl << "three points constructor...";
@@ -278,8 +278,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 5]);
         bool  is_valid = me.is_valid( verbose);
         int   num_pts  = me.number_of_points();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( num_pts == 3);
+        assert( is_valid);
+        assert( num_pts == 3);
     }
 
     verr << endl << "four points constructor...";
@@ -290,8 +290,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 9]);
         bool  is_valid = me.is_valid( verbose);
         int   num_pts  = me.number_of_points();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( num_pts == 4);
+        assert( is_valid);
+        assert( num_pts == 4);
     }
 
     verr << endl << "five points constructor...";
@@ -303,8 +303,8 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
                          random_points[ 14]);
         bool  is_valid = me.is_valid( verbose);
         int   num_pts  = me.number_of_points();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( num_pts == 5);
+        assert( is_valid);
+        assert( num_pts == 5);
     }
 
     verr << endl << "Point* constructor...";
@@ -313,11 +313,11 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Min_ellipse  me2( random_points, random_points+9, true);
         bool  is_valid  = me .is_valid( verbose);
         bool  is_valid2 = me2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_valid2);
-        CGAL_test_assert( me .number_of_points() == 9);
-        CGAL_test_assert( me2.number_of_points() == 9);
-        CGAL_test_assert( me.ellipse() == me2.ellipse());
+        assert( is_valid);
+        assert( is_valid2);
+        assert( me .number_of_points() == 9);
+        assert( me2.number_of_points() == 9);
+        assert( me.ellipse() == me2.ellipse());
     }
 
     verr << endl << "list<Point>::const_iterator constructor...";
@@ -326,12 +326,12 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Min_ellipse  me2( me.points_begin(), me.points_end(), true);
         bool  is_valid1 = me1.is_valid( verbose);
         bool  is_valid2 = me2.is_valid( verbose);
-        CGAL_test_assert( is_valid1);
-        CGAL_test_assert( is_valid2);
-        CGAL_test_assert( me1.number_of_points() == 9);
-        CGAL_test_assert( me2.number_of_points() == 9);
-        CGAL_test_assert( me.ellipse() == me1.ellipse());
-        CGAL_test_assert( me.ellipse() == me2.ellipse());
+        assert( is_valid1);
+        assert( is_valid2);
+        assert( me1.number_of_points() == 9);
+        assert( me2.number_of_points() == 9);
+        assert( me.ellipse() == me1.ellipse());
+        assert( me.ellipse() == me2.ellipse());
     }
 
     verr << endl << "#points already called above.";
@@ -346,9 +346,9 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Support_point_iterator  iter( me.support_points_begin());
         for ( i = 0; i < me.number_of_support_points(); ++i, ++iter) {
             support_point = me.support_point( i);
-            CGAL_test_assert( support_point == *iter); }
+            assert( support_point == *iter); }
         Support_point_iterator  end_iter( me.support_points_end());
-        CGAL_test_assert( iter == end_iter);
+        assert( iter == end_iter);
     }
 
     verr << endl << "ellipse access already called above...";
@@ -366,9 +366,9 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
             has_on_bounded_side   = me.has_on_bounded_side( p);
             has_on_boundary       = me.has_on_boundary( p);
             has_on_unbounded_side = me.has_on_unbounded_side( p);
-        CGAL_test_assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
-        CGAL_test_assert( has_on_bounded_side || has_on_boundary);
-        CGAL_test_assert( ! has_on_unbounded_side); }
+        assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
+        assert( has_on_bounded_side || has_on_boundary);
+        assert( ! has_on_unbounded_side); }
     }
 
     verr << endl << "is_... predicates already called above.";
@@ -377,16 +377,16 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
     me.insert( random_points[ 9]);
     {
         bool  is_valid = me.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( me.number_of_points() == 10);
+        assert( is_valid);
+        assert( me.number_of_points() == 10);
     }
 
     verr << endl << "Point* insert...";
     me.insert( random_points+10, random_points+n);
     {
         bool  is_valid = me.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( me.number_of_points() == n);
+        assert( is_valid);
+        assert( me.number_of_points() == n);
     }
 
     verr << endl << "list<Point>::const_iterator insert...";
@@ -394,15 +394,15 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         Min_ellipse  me2;
         me2.insert( me.points_begin(), me.points_end());
         bool  is_valid = me2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( me2.number_of_points() == n);
+        assert( is_valid);
+        assert( me2.number_of_points() == n);
 
         verr << endl << "clear...";
         me2.clear();
               is_valid = me2.is_valid( verbose);
         bool  is_empty = me2.is_empty();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_empty);
+        assert( is_valid);
+        assert( is_empty);
     }
 
     verr << endl << "validity check already called several times.";
@@ -438,9 +438,9 @@ cover_Min_ellipse_2( bool verbose, const Traits&, const RT&)
         CGAL::set_ascii_mode( is);
         is >> me_in;
         bool    is_valid = me_in.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( me_in.number_of_points() == n);
-        CGAL_test_assert( me_in.ellipse() == me.ellipse());
+        assert( is_valid);
+        assert( me_in.number_of_points() == n);
+        assert( me_in.ellipse() == me.ellipse());
     }
     verr << endl;
     
@@ -659,16 +659,16 @@ main( int argc, char* argv[])
         int               n, x, y;
         std::ifstream     in( argv[ 1]);
         in >> n;
-        CGAL_test_assert( in);
+        assert( in);
         for ( int i = 0; i < n; ++i) {
             in >> x >> y;
-            CGAL_test_assert( in);
+            assert( in);
             points.push_back( Point( x, y)); }
     
         // compute and check min_ellipse
         Min_ellipse  me2( points.begin(), points.end(), false);
         bool  is_valid = me2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
+        assert( is_valid);
     
         // next file
         --argc;

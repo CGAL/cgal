@@ -3,7 +3,7 @@
 
 #include <CGAL/constant.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 // Just to have a look at the assembly code if the compiler
 // can propagate constants through it.
@@ -24,7 +24,7 @@ check_address()
 {
   const T * ptr1 = & CGAL::constant<T, 1>();
   const T * ptr2 = & CGAL::constant<T, 1>();
-  CGAL_test_assert( ptr1 == ptr2 );
+  assert( ptr1 == ptr2 );
 }
 
 int main()
@@ -32,8 +32,8 @@ int main()
   const double & d = CGAL::constant<double, 2>();
   const CGAL::MP_Float & m = CGAL::constant<CGAL::MP_Float, -3>();
 
-  CGAL_test_assert( d == 2 );
-  CGAL_test_assert( m == -3 );
+  assert( d == 2 );
+  assert( m == -3 );
 
   check_address<double>();
   check_address<CGAL::MP_Float>();

@@ -6,7 +6,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #ifndef LOOPS
 #  define LOOPS 1000
@@ -33,7 +33,7 @@ void bench()
   if (b.is_point())
   {
     std::cout << "error due to constant propagation" << std::endl;
-    CGAL_test_assert(false);
+    assert(false);
   }
   std::cout << c << std::endl;
   std::cout << loops << " loops.\n";
@@ -48,7 +48,7 @@ void bench()
   for (i=0; i<loops; i++) { op1; } \
   t.stop(); \
   std::cout << c << "\t" << op2 << "\t" << t.time()-dt << std::endl; \
-  CGAL_test_assert( ! c.is_point()); \
+  assert( ! c.is_point()); \
 }
 
 #define EMPTY do {} while(0)

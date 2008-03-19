@@ -55,41 +55,41 @@ _test_fct_constructions_3(const R&)
   Point p4   = p + Vector( RT0, RT1, RT0 );
 
   // midpoint
-  CGAL_test_assert( CGAL::midpoint( p111, p000) == p);
-  CGAL_test_assert( CGAL::midpoint( p110, p001) == p);
-  CGAL_test_assert( CGAL::midpoint( p010, p101) == p);
-  CGAL_test_assert( CGAL::midpoint( p100, p011) == p);
+  assert( CGAL::midpoint( p111, p000) == p);
+  assert( CGAL::midpoint( p110, p001) == p);
+  assert( CGAL::midpoint( p010, p101) == p);
+  assert( CGAL::midpoint( p100, p011) == p);
 
   // circumcenter
-  CGAL_test_assert( CGAL::circumcenter( p111, p001, p010, p000) == p);
-  CGAL_test_assert( CGAL::circumcenter( p101, p001, p010, p100) == p);
-  CGAL_test_assert( CGAL::circumcenter( p001, p000, p110, p100) == p);
-  CGAL_test_assert( CGAL::circumcenter( Tetrahedron(p111, p001, p010, p000) ) == p);
-  CGAL_test_assert( CGAL::circumcenter( Tetrahedron(p101, p001, p010, p100) ) == p);
-  CGAL_test_assert( CGAL::circumcenter( Tetrahedron(p001, p000, p110, p100) ) == p);
+  assert( CGAL::circumcenter( p111, p001, p010, p000) == p);
+  assert( CGAL::circumcenter( p101, p001, p010, p100) == p);
+  assert( CGAL::circumcenter( p001, p000, p110, p100) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p111, p001, p010, p000) ) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p101, p001, p010, p100) ) == p);
+  assert( CGAL::circumcenter( Tetrahedron(p001, p000, p110, p100) ) == p);
 
-  CGAL_test_assert( CGAL::circumcenter( p2, p2 ) == p2);
-  CGAL_test_assert( CGAL::circumcenter( p2, p3 ) == CGAL::midpoint(p2, p3) );
-  CGAL_test_assert( CGAL::circumcenter( p2, p3, p4 ) == p);
-  CGAL_test_assert( CGAL::circumcenter( Triangle(p2, p3, p4) ) == p);
+  assert( CGAL::circumcenter( p2, p2 ) == p2);
+  assert( CGAL::circumcenter( p2, p3 ) == CGAL::midpoint(p2, p3) );
+  assert( CGAL::circumcenter( p2, p3, p4 ) == p);
+  assert( CGAL::circumcenter( Triangle(p2, p3, p4) ) == p);
 
   // centroid
   Point p_11 = p + Vector(RT0, RT1, RT1);
-  CGAL_test_assert( CGAL::centroid( p111, p010, p101, p000) == p);
-  CGAL_test_assert( CGAL::centroid( p111, p_11, p011 ) == p_11);
-  CGAL_test_assert( CGAL::centroid( Tetrahedron(p111, p010, p101, p000)) == p);
-  CGAL_test_assert( CGAL::centroid( Triangle(p111, p_11, p011) ) == p_11);
+  assert( CGAL::centroid( p111, p010, p101, p000) == p);
+  assert( CGAL::centroid( p111, p_11, p011 ) == p_11);
+  assert( CGAL::centroid( Tetrahedron(p111, p010, p101, p000)) == p);
+  assert( CGAL::centroid( Triangle(p111, p_11, p011) ) == p_11);
 
   // orthogonal_vector
   Point p0(RT0, RT0, RT0), px1(RT1, RT0, RT0), py1(RT0, RT1, RT0);
   Vector vz1(RT0, RT0, RT1);
   Vector orth = orthogonal_vector(p0, px1, py1);
-  CGAL_test_assert( (vz1 * orth) > 0 );
-  CGAL_test_assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
+  assert( (vz1 * orth) > 0 );
+  assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
 
   orth = orthogonal_vector(Plane(p0, px1, py1));
-  CGAL_test_assert( (vz1 * orth) > 0 );
-  CGAL_test_assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
+  assert( (vz1 * orth) > 0 );
+  assert( parallel(Segment(p0, p0+orth), Segment(p0, p0+vz1)) );
 
   // projection onto a plane
 

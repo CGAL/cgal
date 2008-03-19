@@ -7,7 +7,7 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Object.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 #ifdef CGAL_USE_LEDA
 #  include <CGAL/leda_rational.h>
@@ -50,7 +50,7 @@ void test_coplanar_xy()
    CGAL::Object ch_object;
    CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   CGAL_test_assert( CGAL::assign(P, ch_object) );
+   assert( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_xz()
@@ -67,7 +67,7 @@ void test_coplanar_xz()
    CGAL::Object ch_object;
    CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   CGAL_test_assert( CGAL::assign(P, ch_object) );
+   assert( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_yz()
@@ -84,7 +84,7 @@ void test_coplanar_yz()
    CGAL::Object ch_object;
    CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
-   CGAL_test_assert( CGAL::assign(P, ch_object) );
+   assert( CGAL::assign(P, ch_object) );
 }
 
 void test_coplanar_arbitrary()
@@ -118,7 +118,7 @@ void test_coplanar_arbitrary()
    CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
    Polyhedron_3 P;
    Segment_3 seg;
-   CGAL_test_assert( CGAL::assign(P, ch_object) || CGAL::assign(seg, ch_object));
+   assert( CGAL::assign(P, ch_object) || CGAL::assign(seg, ch_object));
 }
 
 void test_collinear()
@@ -142,9 +142,9 @@ void test_collinear()
   CGAL::convex_hull_3(point_3_list.begin(), point_3_list.end(), ch_object,
                       Traits());
   Segment_3 ch_seg;
-  CGAL_test_assert(CGAL::assign(ch_seg, ch_object));
+  assert(CGAL::assign(ch_seg, ch_object));
   Segment_3 orig_seg(Point_3(0,0,0), Point_3(1,0,0));
-  CGAL_test_assert(ch_seg == orig_seg || ch_seg == orig_seg.opposite() );
+  assert(ch_seg == orig_seg || ch_seg == orig_seg.opposite() );
 
 }
 
@@ -157,7 +157,7 @@ int main()
   std::cout << "Testing hull of no points " << std::endl;
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, 
                       ch_traits);
-  CGAL_test_assert(ch_object.is_empty());
+  assert(ch_object.is_empty());
 
   Point_3 p1(0, 0, 0);
   points.push_back(p1);
@@ -165,21 +165,21 @@ int main()
   std::cout << "Testing hull of one point " << std::endl;
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Point_3 ch_point;
-  CGAL_test_assert(CGAL::assign(ch_point, ch_object));
+  assert(CGAL::assign(ch_point, ch_object));
 
   std::cout << "Testing hull of two points " << std::endl;
   Point_3 p2(1, 0, 0);
   points.push_back(p2);
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Segment_3 ch_segment;
-  CGAL_test_assert(CGAL::assign(ch_segment, ch_object));
+  assert(CGAL::assign(ch_segment, ch_object));
 
   std::cout << "Testing hull of three points " << std::endl;
   Point_3 p3(1, 1, 0);
   points.push_back(p3);
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
   Triangle_3 ch_triangle;
-  CGAL_test_assert(CGAL::assign(ch_triangle, ch_object));
+  assert(CGAL::assign(ch_triangle, ch_object));
 
   std::cout << "Testing hull of collinear points " << std::endl;
   test_collinear();

@@ -32,7 +32,7 @@
 #include <CGAL/Min_circle_2/Min_circle_2_adapterC2.h>
 #include <CGAL/Min_circle_2/Min_circle_2_adapterH2.h>
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 #include <cstring>
 #include <fstream>
 
@@ -83,8 +83,8 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc;
         bool  is_valid = mc.is_valid( verbose);
         bool  is_empty = mc.is_empty();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_empty);
+        assert( is_valid);
+        assert( is_empty);
     }
 
     verr << endl << "one point constructor...";
@@ -92,8 +92,8 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc( random_points[ 0]);
         bool  is_valid      = mc.is_valid( verbose);
         bool  is_degenerate = mc.is_degenerate();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_degenerate);
+        assert( is_valid);
+        assert( is_degenerate);
     }
 
     verr << endl << "two points constructor...";
@@ -101,8 +101,8 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc( random_points[ 1],
                         random_points[ 2]);
         bool  is_valid = mc.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc.number_of_points() == 2);
+        assert( is_valid);
+        assert( mc.number_of_points() == 2);
     }
 
     verr << endl << "three points constructor...";
@@ -111,8 +111,8 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
                         random_points[ 4],
                         random_points[ 5]);
         bool  is_valid = mc.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc.number_of_points() == 3);
+        assert( is_valid);
+        assert( mc.number_of_points() == 3);
     }
 
     verr << endl << "Point* constructor...";
@@ -121,11 +121,11 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc2( random_points, random_points+9, true);
         bool  is_valid  = mc .is_valid( verbose);
         bool  is_valid2 = mc2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_valid2);
-        CGAL_test_assert( mc .number_of_points() == 9);
-        CGAL_test_assert( mc2.number_of_points() == 9);
-        CGAL_test_assert( mc.circle() == mc2.circle());
+        assert( is_valid);
+        assert( is_valid2);
+        assert( mc .number_of_points() == 9);
+        assert( mc2.number_of_points() == 9);
+        assert( mc.circle() == mc2.circle());
     }
 
     verr << endl << "list<Point>::const_iterator constructor...";
@@ -134,12 +134,12 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc2( mc.points_begin(), mc.points_end(), true);
         bool  is_valid1 = mc1.is_valid( verbose);
         bool  is_valid2 = mc2.is_valid( verbose);
-        CGAL_test_assert( is_valid1);
-        CGAL_test_assert( is_valid2);
-        CGAL_test_assert( mc1.number_of_points() == 9);
-        CGAL_test_assert( mc2.number_of_points() == 9);
-        CGAL_test_assert( mc.circle() == mc1.circle());
-        CGAL_test_assert( mc.circle() == mc2.circle());
+        assert( is_valid1);
+        assert( is_valid2);
+        assert( mc1.number_of_points() == 9);
+        assert( mc2.number_of_points() == 9);
+        assert( mc.circle() == mc1.circle());
+        assert( mc.circle() == mc2.circle());
     }
 
     verr << endl << "#points already called above.";
@@ -154,9 +154,9 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Support_point_iterator  iter( mc.support_points_begin());
         for ( i = 0; i < mc.number_of_support_points(); ++i, ++iter) {
             support_point = mc.support_point( i);
-            CGAL_test_assert( support_point == *iter); }
+            assert( support_point == *iter); }
         Support_point_iterator  end_iter( mc.support_points_end());
-        CGAL_test_assert( iter == end_iter);
+        assert( iter == end_iter);
     }
 
     verr << endl << "circle access already called above...";
@@ -174,9 +174,9 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
             has_on_bounded_side   = mc.has_on_bounded_side( p);
             has_on_boundary       = mc.has_on_boundary( p);
             has_on_unbounded_side = mc.has_on_unbounded_side( p);
-        CGAL_test_assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
-        CGAL_test_assert( has_on_bounded_side || has_on_boundary);
-        CGAL_test_assert( ! has_on_unbounded_side); }
+        assert( bounded_side != CGAL::ON_UNBOUNDED_SIDE);
+        assert( has_on_bounded_side || has_on_boundary);
+        assert( ! has_on_unbounded_side); }
     }
 
     verr << endl << "is_... predicates already called above.";
@@ -185,16 +185,16 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
     mc.insert( random_points[ 9]);
     {
         bool  is_valid = mc.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc.number_of_points() == 10);
+        assert( is_valid);
+        assert( mc.number_of_points() == 10);
     }
 
     verr << endl << "Point* insert...";
     mc.insert( random_points+10, random_points+n);
     {
         bool  is_valid = mc.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc.number_of_points() == n);
+        assert( is_valid);
+        assert( mc.number_of_points() == n);
     }
 
     verr << endl << "list<Point>::const_iterator insert...";
@@ -202,15 +202,15 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         Min_circle  mc2;
         mc2.insert( mc.points_begin(), mc.points_end());
         bool  is_valid = mc2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc2.number_of_points() == n);
+        assert( is_valid);
+        assert( mc2.number_of_points() == n);
 
         verr << endl << "clear...";
         mc2.clear();
               is_valid = mc2.is_valid( verbose);
         bool  is_empty = mc2.is_empty();
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( is_empty);
+        assert( is_valid);
+        assert( is_empty);
     }
 
     verr << endl << "validity check already called several times.";
@@ -246,9 +246,9 @@ cover_Min_circle_2( bool verbose, const Traits&, const RT&)
         CGAL::set_ascii_mode( is);
         is >> mc_in;
         bool    is_valid = mc_in.is_valid( verbose);
-        CGAL_test_assert( is_valid);
-        CGAL_test_assert( mc_in.number_of_points() == n);
-        CGAL_test_assert( mc_in.circle() == mc.circle());
+        assert( is_valid);
+        assert( mc_in.number_of_points() == n);
+        assert( mc_in.circle() == mc.circle());
     }
     verr << endl;
 }
@@ -452,16 +452,16 @@ main( int argc, char* argv[])
         int               n, x, y;
         std::ifstream     in( argv[ 1]);
         in >> n;
-        CGAL_test_assert( in);
+        assert( in);
         for ( int i = 0; i < n; ++i) {
             in >> x >> y;
-            CGAL_test_assert( in);
+            assert( in);
             points.push_back( Point( x, y)); }
     
         // compute and check min_circle
         Min_circle  mc2( points.begin(), points.end(), false);
         bool  is_valid = mc2.is_valid( verbose);
-        CGAL_test_assert( is_valid);
+        assert( is_valid);
     
         // next file
         --argc;
