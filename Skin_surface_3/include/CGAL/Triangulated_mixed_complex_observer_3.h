@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -35,16 +35,16 @@ struct SS_Dereference_type<T *> {
 };
 
 template <class TriangulatedMixedComplex_3,
-          class SkinSurface_3>
+class SkinSurface_3>
 class Triangulated_mixed_complex_observer_3 {
 public:
   typedef typename SkinSurface_3::Regular            Regular;
   typedef typename Regular::Geom_traits              Regular_traits;
   typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
   typedef typename Triangulated_mixed_complex::Geom_traits
-                                  Triangulated_mixed_complex_traits;
+  Triangulated_mixed_complex_traits;
   typedef typename Triangulated_mixed_complex::Triangulation_data_structure
-                                                     TMC_TDS;
+  TMC_TDS;
   typedef typename SkinSurface_3::Quadratic_surface  Quadratic_surface;
 
   typedef typename Regular_traits::FT                FT;
@@ -62,7 +62,7 @@ public:
 
   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
-  
+
 
   typedef typename Quadratic_surface::K               Surface_traits;
   typedef typename Surface_traits::RT                 Surface_RT;
@@ -71,95 +71,89 @@ public:
   typedef typename Quadratic_surface::Vector              Surface_vector;
   typedef Weighted_point<Surface_point,Surface_RT>   Surface_weighted_point;
 
-  typedef Weighted_converter_3< 
-    Cartesian_converter < typename Regular_traits::Bare_point::R, 
-			  typename Quadratic_surface::K > >            R2S_converter;
-  Triangulated_mixed_complex_observer_3(FT shrink) : 
-    shrink(shrink) {
-  }
+  typedef Weighted_converter_3<
+  Cartesian_converter < typename Regular_traits::Bare_point::R,
+  typename Quadratic_surface::K > >            R2S_converter;
+  Triangulated_mixed_complex_observer_3(FT shrink) :
+  shrink(shrink) {}
 
-  void after_vertex_insertion(Rt_Simplex const &sDel, 
-                              Rt_Simplex const &sVor, 
-                              TMC_Vertex_handle &vh) 
-  {
+  void after_vertex_insertion(Rt_Simplex const &sDel,
+                              Rt_Simplex const &sVor,
+                              TMC_Vertex_handle &vh) {
     vh->info() = typename SkinSurface_3::Vertex_info(sDel, sVor);
   }
 
-  void after_cell_insertion(Rt_Simplex const &s, TMC_Cell_handle &ch)  
-  {
+  void after_cell_insertion(Rt_Simplex const &s, TMC_Cell_handle &ch) {
     if (!(s == prev_s)) {
       prev_s = s;
       Rt_Vertex_handle vh;
       Rt_Edge          e;
       Rt_Facet         f;
       Rt_Cell_handle   ch;
-      
+
       switch (s.dimension()) {
-        case 0:
-      	{
-      	  vh = s;
+        case 0: {
+          vh = s;
           Surface_weighted_point wp = r2s_converter(vh->point());
-      	  create_sphere(wp.point(), -wp.weight(), shrink, 1);
-      	  break;
-      	}
-        case 1:
-      	{
-      	  e = s;
-      	  Surface_weighted_point p0 = 
-      	    r2s_converter(e.first->vertex(e.second)->point());
-      	  Surface_weighted_point p1 = 
-      	    r2s_converter(e.first->vertex(e.third)->point());
-      	  
-      	  create_hyperboloid
-      	    (typename Surface_regular_traits::
-      	     Construct_weighted_circumcenter_3()(p0,p1),
-      	     typename Surface_regular_traits::
-      	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
-      	     p0 - p1,
-      	     shrink,
-      	     1);
-      	  break;
-      	}
-        case 2:
-      	{
-      	  f = s;
-      	  Surface_weighted_point p0 = 
-      	    r2s_converter(f.first->vertex((f.second+1)&3)->point());
-      	  Surface_weighted_point p1 = 
-      	    r2s_converter(f.first->vertex((f.second+2)&3)->point());
-      	  Surface_weighted_point p2 = 
-      	    r2s_converter(f.first->vertex((f.second+3)&3)->point());
-      	  
-      	  create_hyperboloid
-      	    (typename Surface_regular_traits::
-      	     Construct_weighted_circumcenter_3()(p0,p1,p2),
-      	     typename Surface_regular_traits::
-      	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
-      	     typename Surface_regular_traits::
-      	     Construct_orthogonal_vector_3()(p0,p1,p2),
-      	     1-shrink,
-      	     -1);
-      	  break;
-      	}
-        case 3:
-      	{
-      	  ch = s;
-          const Surface_weighted_point pts[4] = 
-            { r2s_converter(ch->vertex(0)->point()),
-              r2s_converter(ch->vertex(1)->point()),
-              r2s_converter(ch->vertex(2)->point()),
-              r2s_converter(ch->vertex(3)->point()) };
-          
-      	  create_sphere
-      	    (typename Surface_regular_traits::
-      	       Construct_weighted_circumcenter_3()
-                 (pts[0],pts[1],pts[2],pts[3]),
-      	     typename Surface_regular_traits::
-      	       Compute_squared_radius_smallest_orthogonal_sphere_3()
-                 (pts[0],pts[1],pts[2],pts[3]),
-      	     1-shrink,
-      	     -1);
-      	}
+          create_sphere(wp.point(), -wp.weight(), shrink, 1);
+          break;
+        }
+        case 1: {
+          e = s;
+          Surface_weighted_point p0 =
+            r2s_converter(e.first->vertex(e.second)->point());
+          Surface_weighted_point p1 =
+            r2s_converter(e.first->vertex(e.third)->point());
+
+          create_hyperboloid
+          (typename Surface_regular_traits::
+           Construct_weighted_circumcenter_3()(p0,p1),
+           typename Surface_regular_traits::
+           Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
+           p0 - p1,
+           shrink,
+           1);
+          break;
+        }
+        case 2: {
+          f = s;
+          Surface_weighted_point p0 =
+            r2s_converter(f.first->vertex((f.second+1)&3)->point());
+          Surface_weighted_point p1 =
+            r2s_converter(f.first->vertex((f.second+2)&3)->point());
+          Surface_weighted_point p2 =
+            r2s_converter(f.first->vertex((f.second+3)&3)->point());
+
+          create_hyperboloid
+          (typename Surface_regular_traits::
+           Construct_weighted_circumcenter_3()(p0,p1,p2),
+           typename Surface_regular_traits::
+           Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
+           typename Surface_regular_traits::
+           Construct_orthogonal_vector_3()(p0,p1,p2),
+           1-shrink,
+           -1);
+          break;
+        }
+        case 3: {
+          ch = s;
+          const Surface_weighted_point pts[4] = {
+                                                  r2s_converter(ch->vertex(0)->point()),
+                                                  r2s_converter(ch->vertex(1)->point()),
+                                                  r2s_converter(ch->vertex(2)->point()),
+                                                  r2s_converter(ch->vertex(3)->point())
+                                                };
+
+          create_sphere
+          (typename Surface_regular_traits::
+           Construct_weighted_circumcenter_3()
+           (pts[0],pts[1],pts[2],pts[3]),
+           typename Surface_regular_traits::
+           Compute_squared_radius_smallest_orthogonal_sphere_3()
+           (pts[0],pts[1],pts[2],pts[3]),
+           1-shrink,
+           -1);
+        }
       }
     }
     ch->info() = typename SkinSurface_3::Cell_info(s,surf);
@@ -174,31 +168,41 @@ public:
   // s is the shrink factor
   // orient is the orientation of the sphere
   void create_sphere(const Surface_point &c,
-		     const Surface_RT &w,
-		     const Surface_RT &s,
-		     const int orient) {
-    Q[1] = Q[3] = Q[4] = 0;
-    Q[0] = Q[2] = Q[5] = orient*(1-s);
-    
-    surf = new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 0 : 3));
+                     const Surface_RT &w,
+                     const Surface_RT &s,
+                     const int orient) {
+    if (s == 1) {
+      // Dont multiply by (1-s) as this will zero the equation
+      Q[1] = Q[3] = Q[4] = 0;
+      Q[0] = Q[2] = Q[5] = orient;
+
+      surf = new Quadratic_surface(Q, c, s*w, (orient==1? 0 : 3));
+    } else {
+      // Multiply with 1-s to make the function defining the 
+      // skin surface implicitly continuous
+      Q[1] = Q[3] = Q[4] = 0;
+      Q[0] = Q[2] = Q[5] = orient*(1-s);
+
+      surf = new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 0 : 3));
+    }
   }
 
   void create_hyperboloid(const Surface_point &c,
-			  const Surface_RT &w,
-			  const Surface_vector &t,
-			  const Surface_RT &s,
-			  const int orient) {
+                          const Surface_RT &w,
+                          const Surface_vector &t,
+                          const Surface_RT &s,
+                          const int orient) {
     Surface_RT den = t*t;
-    
+
     Q[0] = orient*(-  t.x()*t.x()/den + (1-s));
-    
+
     Q[1] = orient*(-2*t.y()*t.x()/den);
     Q[2] = orient*(-  t.y()*t.y()/den + (1-s));
-    
+
     Q[3] = orient*(-2*t.z()*t.x()/den);
     Q[4] = orient*(-2*t.z()*t.y()/den);
     Q[5] = orient*(-  t.z()*t.z()/den + (1-s));
-    
+
     surf = new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 1 : 2));
   }
 
