@@ -328,7 +328,7 @@ echo 'COPYING RESULTS';
 cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
 echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
-#rm -rf ${CGAL_BINARY_DIR}/test
+rm -rf ${CGAL_BINARY_DIR}/test
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
         remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
