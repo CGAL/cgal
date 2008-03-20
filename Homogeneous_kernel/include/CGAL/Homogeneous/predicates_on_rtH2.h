@@ -36,10 +36,9 @@ orientationH2( const RT& phx, const RT& phy, const RT& phw,
                const RT& qhx, const RT& qhy, const RT& qhw,
                const RT& rhx, const RT& rhy, const RT& rhw )
 {
-  return enum_cast<Orientation>(
-      sign_of_determinant3x3(phx,phy,phw,
-                             qhx,qhy,qhw,
-                             rhx,rhy,rhw));
+  return sign_of_determinant3x3(phx,phy,phw,
+                                qhx,qhy,qhw,
+                                rhx,rhy,rhw);
 }
 
 CGAL_END_NAMESPACE

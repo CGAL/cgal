@@ -576,7 +576,7 @@ namespace HomogeneousKernelFunctors {
 
       if ( 0 < y_sign1 * y_sign2 )
 	{
-	  return enum_cast<Comparison_result>(orientation(origin, p2, p1));
+	  return orientation(origin, p2, p1);
 
 	  // Precondition on the enums:
 	  // COUNTERCLOCKWISE == LARGER   ( ==  1 )
@@ -647,7 +647,7 @@ namespace HomogeneousKernelFunctors {
 			      - 2 * rhw * ( phx*rhx + phy*rhy )
 			      );
 
-      return enum_cast<Comparison_result>(CGAL_NTS sign(dosd));
+      return CGAL_NTS sign(dosd);
     }
   };
 
@@ -702,7 +702,7 @@ namespace HomogeneousKernelFunctors {
 			      - 2 * rhw * ( phx*rhx + phy*rhy + phz*rhz )
 			      );
 
-      return enum_cast<Comparison_result>(CGAL_NTS sign(dosd));
+      return CGAL_NTS sign(dosd);
     }
   };
 
@@ -737,10 +737,10 @@ namespace HomogeneousKernelFunctors {
       typedef typename K::RT RT;
       if (l1.is_horizontal())
 	return l2.is_vertical() ?
-	  SMALLER : enum_cast<Comparison_result>(CGAL_NTS sign(l2.a() * l2.b()));
+	  SMALLER : CGAL_NTS sign(l2.a()) * CGAL_NTS sign(l2.b());
       if (l2.is_horizontal())
 	return l1.is_vertical() ?
-	  LARGER : enum_cast<Comparison_result>(- CGAL_NTS sign(l1.a() * l1.b()));
+	  LARGER : - CGAL_NTS sign(l1.a()) * CGAL_NTS sign(l1.b());
       if (l1.is_vertical()) return l2.is_vertical() ? EQUAL : LARGER;
       if (l2.is_vertical()) return SMALLER;
       int l1_sign = CGAL_NTS sign(-l1.a() * l1.b());
@@ -770,9 +770,8 @@ namespace HomogeneousKernelFunctors {
 	  if (cmp_x2 == EQUAL) return SMALLER;
 	  FT s_hw = s2.source().hw();
 	  FT t_hw = s2.target().hw();
-	  return enum_cast<Comparison_result>(
-	    - CGAL_NTS sign((s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
-			    (s2.source().hx()*t_hw - s2.target().hx()*s_hw)) );
+	  return - CGAL_NTS sign(s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
+		   CGAL_NTS sign(s2.source().hx()*t_hw - s2.target().hx()*s_hw);
 	}
 
       typename K::Comparison_result cmp_y2 = compare_y(s2.source(), s2.target());
@@ -783,9 +782,8 @@ namespace HomogeneousKernelFunctors {
 	  if (cmp_x1 == EQUAL) return LARGER;
 	  FT s_hw = s1.source().hw();
 	  FT t_hw = s1.target().hw();
-	  return enum_cast<Comparison_result>(
-	    CGAL_NTS sign((s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
-			  (s1.source().hx()*t_hw - s1.target().hx()*s_hw)) );
+	  return CGAL_NTS sign(s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
+		 CGAL_NTS sign(s1.source().hx()*t_hw - s1.target().hx()*s_hw);
 	}
 
       typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
@@ -810,13 +808,11 @@ namespace HomogeneousKernelFunctors {
       if (s1_sign > s2_sign) return LARGER;
 
       if (s1_sign > 0)
-	return enum_cast<Comparison_result>(
-	 CGAL_NTS sign ( CGAL_NTS abs(s1_ydiff * s2_xdiff) -
-			 CGAL_NTS abs(s2_ydiff * s1_xdiff)) );
+	return CGAL_NTS sign(CGAL_NTS abs(s1_ydiff * s2_xdiff) -
+			     CGAL_NTS abs(s2_ydiff * s1_xdiff));
 
-      return enum_cast<Comparison_result>(
-       CGAL_NTS sign ( CGAL_NTS abs(s2_ydiff * s1_xdiff) -
-		       CGAL_NTS abs(s1_ydiff * s2_xdiff)) );
+      return CGAL_NTS sign(CGAL_NTS abs(s2_ydiff * s1_xdiff) -
+		           CGAL_NTS abs(s1_ydiff * s2_xdiff));
     }
   };
 
@@ -836,7 +832,7 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition( ! h.is_horizontal() );
       typename K::Oriented_side ors = h.oriented_side( p );
       if ( h.a() < RT(0) )
-	  ors = opposite( ors );
+	  ors = -ors;
       if ( ors == ON_POSITIVE_SIDE )
 	  return LARGER;
       return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
@@ -1058,8 +1054,8 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition( ! h.is_vertical() );
       typename K::Oriented_side ors = h.oriented_side( p );
       if ( h.b() < 0 )
-	  ors = opposite( ors );
-      return enum_cast<Comparison_result>(ors);
+	  ors = -ors;
+      return ors;
     } // FIXME
 
     result_type
@@ -1137,12 +1133,11 @@ namespace HomogeneousKernelFunctors {
 	FT s1stx = s1sx-s1tx;
 	FT s2stx = s2sx-s2tx;
 
-	return enum_cast<Comparison_result>(
-	 CGAL_NTS compare(s1sx, s1tx) *
-	 CGAL_NTS compare(s2sx, s2tx) *
-	 CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
-			  (s2sy-s1sy)*s2stx*s1stx
-			  -(s2sx-px)*(s2sy-s2ty)*s1stx ));
+	return CGAL_NTS compare(s1sx, s1tx) *
+	       CGAL_NTS compare(s2sx, s2tx) *
+	       CGAL_NTS compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
+			        (s2sy-s1sy)*s2stx*s1stx
+			        -(s2sx-px)*(s2sy-s2ty)*s1stx);
       }
       else {
 	if (s1sx == s1tx) { // s1 is vertical
@@ -1158,7 +1153,7 @@ namespace HomogeneousKernelFunctors {
 	c3 = compare_y_at_x(s2.source(), s1);
 	c4 = compare_y_at_x(s2.target(), s1);
 	if (c3 == c4)
-	  return opposite(c3);
+	  return -c3;
 	return EQUAL;
       }
     } // FIXME
@@ -4292,14 +4287,14 @@ namespace HomogeneousKernelFunctors {
       RT  C = qhx*rhw - qhw*rhx;
       RT  D = qhy*rhw - qhw*rhy;
 
-      return enum_cast<Orientation>(CGAL_NTS compare(A*D, B*C));
+      return CGAL_NTS compare(A*D, B*C);
     }
 
     result_type
     operator()(const Vector_2& u, const Vector_2& v) const
     {
-      return enum_cast<Orientation>(sign_of_determinant2x2(u.hx(), u.hy(),
-                                                           v.hx(), v.hy()));
+      return sign_of_determinant2x2(u.hx(), u.hy(),
+                                    v.hx(), v.hy());
     }
 
     result_type
@@ -4325,20 +4320,18 @@ namespace HomogeneousKernelFunctors {
 	        const Point_3& r, const Point_3& s) const
     {
       // Two rows are switched, because of the homogeneous column.
-      return enum_cast<Orientation>(
-	sign_of_determinant4x4( p.hx(), p.hy(), p.hz(), p.hw(),
-				r.hx(), r.hy(), r.hz(), r.hw(),
-				q.hx(), q.hy(), q.hz(), q.hw(),
-				s.hx(), s.hy(), s.hz(), s.hw()));
+      return sign_of_determinant4x4( p.hx(), p.hy(), p.hz(), p.hw(),
+				     r.hx(), r.hy(), r.hz(), r.hw(),
+				     q.hx(), q.hy(), q.hz(), q.hw(),
+				     s.hx(), s.hy(), s.hz(), s.hw());
     }
 
     result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
-      return enum_cast<Orientation>(
-	sign_of_determinant3x3( u.hx(), u.hy(), u.hz(),
-				v.hx(), v.hy(), v.hz(),
-				w.hx(), w.hy(), w.hz()));
+      return sign_of_determinant3x3( u.hx(), u.hy(), u.hz(),
+				     v.hx(), v.hy(), v.hz(),
+				     w.hx(), w.hy(), w.hz());
     }
 
     result_type
@@ -4376,7 +4369,7 @@ namespace HomogeneousKernelFunctors {
     {
       CGAL_kernel_precondition( ! l.is_degenerate() );
       RT v = l.a()*p.hx() + l.b()*p.hy() + l.c()*p.hw();
-      return enum_cast<Oriented_side>(CGAL_NTS sign(v));
+      return CGAL_NTS sign(v);
     }
 
     result_type
@@ -4624,7 +4617,7 @@ namespace HomogeneousKernelFunctors {
 	+ i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
 	- m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
 
-      return enum_cast<Oriented_side>(CGAL_NTS sign(det));
+      return CGAL_NTS sign(det);
     }
   };
 
@@ -4678,7 +4671,7 @@ namespace HomogeneousKernelFunctors {
 	   rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,
 	   shx*shw, shy*shw, shz*shw, shx*shx + shy*shy + shz*shz, shw2,
 	   thx*thw, thy*thw, thz*thw, thx*thx + thy*thy + thz*thz, thw2);
-      return enum_cast<Oriented_side>(- CGAL_NTS sign(det));
+      return - CGAL_NTS sign(det);
     }
   };
 
