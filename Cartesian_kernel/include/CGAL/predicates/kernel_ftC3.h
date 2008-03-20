@@ -122,9 +122,9 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
               const FT &rx, const FT &ry, const FT &rz,
               const FT &sx, const FT &sy, const FT &sz)
 {
-  return enum_cast<Orientation>(sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
-                                                           qy-py,ry-py,sy-py,
-                                                           qz-pz,rz-pz,sz-pz));
+  return sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
+                                    qy-py,ry-py,sy-py,
+                                    qz-pz,rz-pz,sz-pz);
 }
 
 template < class FT >
@@ -134,9 +134,9 @@ orientationC3(const FT &ux, const FT &uy, const FT &uz,
               const FT &vx, const FT &vy, const FT &vz,
               const FT &wx, const FT &wy, const FT &wz)
 {
-  return enum_cast<Orientation>(sign_of_determinant3x3(ux, vx, wx,
-                                                       uy, vy, wy,
-                                                       uz, vz, wz));
+  return sign_of_determinant3x3(ux, vx, wx,
+                                uy, vy, wy,
+                                uz, vz, wz);
 }
 
 template < class FT >
@@ -162,15 +162,15 @@ coplanar_orientationC3(const FT &px, const FT &py, const FT &pz,
   typedef typename Same_uncertainty_nt<Orientation, FT>::type  Ori;
   Ori oxy_pqr = orientationC2(px,py,qx,qy,rx,ry);
   if (oxy_pqr != COLLINEAR)
-      return enum_cast<Orientation>( oxy_pqr * orientationC2(px,py,qx,qy,sx,sy));
+      return oxy_pqr * orientationC2(px,py,qx,qy,sx,sy);
 
   Ori oyz_pqr = orientationC2(py,pz,qy,qz,ry,rz);
   if (oyz_pqr != COLLINEAR)
-      return enum_cast<Orientation>( oyz_pqr * orientationC2(py,pz,qy,qz,sy,sz));
+      return oyz_pqr * orientationC2(py,pz,qy,qz,sy,sz);
 
   Ori oxz_pqr = orientationC2(px,pz,qx,qz,rx,rz);
   CGAL_kernel_assertion(oxz_pqr != COLLINEAR);
-  return enum_cast<Orientation>( oxz_pqr * orientationC2(px,pz,qx,qz,sx,sz));
+  return oxz_pqr * orientationC2(px,pz,qx,qz,sx,sz);
 }
 
 template < class FT >
@@ -309,7 +309,7 @@ typename Same_uncertainty_nt<Oriented_side, FT>::type
 side_of_oriented_planeC3(const FT &a,  const FT &b,  const FT &c, const FT &d,
                          const FT &px, const FT &py, const FT &pz)
 {
-  return enum_cast<Oriented_side>(CGAL_NTS sign(a*px + b*py + c*pz +d));
+  return CGAL_NTS sign(a*px + b*py + c*pz + d);
 }
 
 template <class FT >
@@ -337,10 +337,10 @@ side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT sty = sy - ty;
   FT stz = sz - tz;
   FT st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
-  return enum_cast<Oriented_side>(sign_of_determinant4x4(ptx,pty,ptz,pt2,
-                                                         rtx,rty,rtz,rt2,
-                                                         qtx,qty,qtz,qt2,
-                                                         stx,sty,stz,st2));
+  return sign_of_determinant4x4(ptx,pty,ptz,pt2,
+                                rtx,rty,rtz,rt2,
+                                qtx,qty,qtz,qt2,
+                                stx,sty,stz,st2);
 }
 
 template <class FT >
@@ -498,10 +498,9 @@ cmp_signed_dist_to_planeC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return enum_cast<Comparison_result>(sign_of_determinant3x3<FT>(
-	                                   pqx-ppx, pqy-ppy, pqz-ppz,
-	                                   prx-ppx, pry-ppy, prz-ppz,
-	                                   px-qx,   py-qy,   pz-qz));
+  return sign_of_determinant3x3<FT>( pqx-ppx, pqy-ppy, pqz-ppz,
+	                             prx-ppx, pry-ppy, prz-ppz,
+	                             px-qx,   py-qy,   pz-qz);
 }
 
 template < class FT >

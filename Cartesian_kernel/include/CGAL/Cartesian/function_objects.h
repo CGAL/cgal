@@ -3703,7 +3703,7 @@ namespace CartesianKernelFunctors {
 	          ot = orientation(t.vertex(0), t.vertex(1), t.vertex(2));
 
       if (o1 == ot && o2 == ot && o3 == ot) // ot cannot be COLLINEAR
-	return enum_cast<Oriented_side>(ot);
+	return ot;
       return
 	(o1 == COLLINEAR
 	 && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
@@ -3712,7 +3712,8 @@ namespace CartesianKernelFunctors {
 	(o3 == COLLINEAR
 	 && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
 	? result_type(ON_ORIENTED_BOUNDARY)
-	: enum_cast<Oriented_side>(opposite(ot)); }
+	: opposite(ot);
+    }
   };
 
   template <typename K>
