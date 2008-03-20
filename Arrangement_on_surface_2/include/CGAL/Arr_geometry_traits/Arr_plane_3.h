@@ -194,7 +194,7 @@ public:
    */
   Oriented_side oriented_side(const Point_3 & p) const
   {
-    return enum_cast<Oriented_side>(CGAL_NTS sign(m_a*p.x() + m_b*p.y() + m_c*p.z()));
+    return CGAL_NTS sign(m_a*p.x() + m_b*p.y() + m_c*p.z());
   }
 };
 

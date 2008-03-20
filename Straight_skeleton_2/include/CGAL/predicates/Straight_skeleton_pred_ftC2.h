@@ -400,7 +400,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
                                    , a, b, c
                                    );
       
-      rResult = enum_cast<Oriented_side>(certified_side_of_oriented_lineC2(a,b,c,p.x(),p.y()));
+      rResult = certified_side_of_oriented_lineC2(a,b,c,p.x(),p.y());
       
       CGAL_STSKEL_TRAITS_TRACE("Point is at " << rResult << " side of degenerate bisector through v01 " << p2str(v01)) ;
     }

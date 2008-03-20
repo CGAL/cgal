@@ -58,7 +58,7 @@ compare_21_11(const FT& A2, const FT& B2, const FT& C2,
 
   FT p2 = B1 * (A1*B2 - A2*B1) - C2 * CGAL_NTS square(A1);
 
-  return enum_cast<Comparison_result>(CGAL_NTS sign(p2));
+  return CGAL_NTS sign(p2);
 }
 
 /*2 2*/template <class FT>
@@ -97,7 +97,7 @@ compare_22_21( const FT& A1p, const FT& B1p, const FT& C1p,
 
     FT P4 = calcP4(J,Jp,A1,C1,A2,C2);
 
-    return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
+    return - CGAL_NTS sign(P4);
     // if ( P4< FT(0) ) return LARGER;   // r1 > l2
     // if ( P4> FT(0) ) return SMALLER;  // r1 < l2
     // return EQUAL;
@@ -111,7 +111,7 @@ compare_22_12( const FT& A1, const FT& B1, const FT& C1,
     // _22_12 boils down to _22_21 by :
     // - swapping the two polynomials
     // - changing the sign of the result
-    return opposite(compare_22_21(A2, B2, C2, A1, B1, C1));
+    return - compare_22_21(A2, B2, C2, A1, B1, C1);
 }
 
 /*2 2*/template <class FT>
@@ -155,7 +155,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 
     FT P4 = calcP4(I1,I2,K);
 
-    return enum_cast<Comparison_result>(CGAL_NTS sign(P4));
+    return CGAL_NTS sign(P4);
   }
 
   // J <= 0
@@ -173,7 +173,7 @@ compare_22_11( const FT& A1p, const FT& B1p, const FT& C1p,
 
   FT P4 = calcP4(I1,I2,K);
 
-  return enum_cast<Comparison_result>(- CGAL_NTS sign(P4));
+  return - CGAL_NTS sign(P4);
 }
 
 /*2 2*/template <class FT> inline

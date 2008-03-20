@@ -136,7 +136,7 @@ inline Uncertain<Sign> certified_sign_of_determinant2x2( const NT& a00
                                                        , const NT& a11
                                                        )
 {
-  return enum_cast<Sign>(certified_compare(a00*a11, a10*a01)) ;
+  return certified_compare(a00*a11, a10*a01) ;
 }
 
 CGAL_END_NAMESPACE

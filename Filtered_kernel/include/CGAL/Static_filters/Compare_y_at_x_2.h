@@ -51,9 +51,9 @@ public:
 		                  (less_x(s.source(), p) && less_x(s.target(), p)) ) );
     
     if( less_x( s.source(), s.target() ) )
-      return enum_cast<Comparison_result>(orientation(p, s.source(), s.target() ));
+      return orientation(p, s.source(), s.target());
     else if ( less_x( s.target(), s.source() ) )
-      return enum_cast<Comparison_result>(orientation(p, s.target(), s.source() ));
+      return orientation(p, s.target(), s.source());
     else {
       if( less_y(p, s.source()) && less_y(p, s.target()) )
         return SMALLER;

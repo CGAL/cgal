@@ -59,9 +59,9 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
     FT dry = ry - ty;
     FT drz = CGAL_NTS square(drx) + CGAL_NTS square(dry) - rwt + twt;
 
-    return enum_cast<Oriented_side>(sign_of_determinant3x3(dpx, dpy, dpz,
-                                                           dqx, dqy, dqz,
-                                                           drx, dry, drz));
+    return sign_of_determinant3x3(dpx, dpy, dpz,
+                                  dqx, dqy, dqz,
+                                  drx, dry, drz);
 }
 
 
@@ -82,11 +82,11 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
     // We do an orthogonal projection on the (x) axis, if possible.
     Comparison_result cmpx = CGAL_NTS compare(px, qx);
     if (cmpx != EQUAL)
-	return Oriented_side(cmpx * sign_of_determinant2x2(dpx, dpz, dqx, dqz));
+	return cmpx * sign_of_determinant2x2(dpx, dpz, dqx, dqz);
 
     // If not possible, then on the (y) axis.
     Comparison_result cmpy = CGAL_NTS compare(py, qy);
-    return Oriented_side(cmpy * sign_of_determinant2x2(dpy, dpz, dqy, dqz));
+    return cmpy * sign_of_determinant2x2(dpy, dpz, dqy, dqz);
 }
 
 CGAL_END_NAMESPACE

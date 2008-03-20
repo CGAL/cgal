@@ -89,7 +89,7 @@ namespace CircularFunctors {
     const Root_of_2 a01 = qy-py;
     const Root_of_2 a10 = rx-px;
     const Root_of_2 a11 = ry-py;
-    return enum_cast<Orientation>(CGAL_NTS compare(a00*a11, a10*a01));
+    return CGAL_NTS compare(a00*a11, a10*a01);
   }
 
 //   template < class CK >
