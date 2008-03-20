@@ -29,7 +29,6 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/utility.h>
-#include <CGAL/functions_on_enums.h> 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <vector>

@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
-#include <CGAL/functions_on_enums.h>
+#include <CGAL/enum.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/number_utils.h> 

@@ -25,58 +25,8 @@
 #ifndef CGAL_FUNCTIONS_ON_ENUMS_H
 #define CGAL_FUNCTIONS_ON_ENUMS_H
 
+// Only kept for backward compatibility.
+
 #include <CGAL/enum.h>
-#include <CGAL/Kernel/Same_uncertainty.h>
-
-CGAL_BEGIN_NAMESPACE
-
-template <class T>
-inline
-T
-opposite(const T& t)
-{ return -t; }
-
-inline
-Sign
-operator-(Sign o)
-{ return static_cast<Sign>( - static_cast<int>(o)); }
-
-inline
-Bounded_side
-opposite(Bounded_side bs)
-{ return static_cast<Bounded_side>( - static_cast<int>(bs)); }
-
-inline
-Angle
-opposite(Angle a)
-{ return static_cast<Angle>( - static_cast<int>(a)); }
-
-inline Sign operator* (Sign s1, Sign s2)
-{
-    return static_cast<Sign> (static_cast<int> (s1) * static_cast<int> (s2));
-}
-
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-T enum_cast_bug(const U& u, const T*)
-{ return static_cast<T>(u); }
-
-template < typename T, typename U >
-inline
-typename Same_uncertainty<T,U>::type enum_cast(const U& u)
-{ return enum_cast_bug(u, (const T*)0); }
-
-#else
-
-template < typename T, typename U >
-inline
-T enum_cast(const U& u)
-{ return static_cast<T>(u); }
-
-#endif
-
-CGAL_END_NAMESPACE
 
 #endif // CGAL_FUNCTIONS_ON_ENUMS_H

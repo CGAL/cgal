@@ -25,6 +25,7 @@
 #define CGAL_ENUM_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 // If you add/change one type here, please update Is_a_predicate.h as well.
 
@@ -66,8 +67,54 @@ enum  Angle
 	  ACUTE
       };
 
-CGAL_END_NAMESPACE
 
-#include <CGAL/functions_on_enums.h>
+template <class T>
+inline
+T
+opposite(const T& t)
+{ return -t; }
+
+inline
+Sign
+operator-(Sign o)
+{ return static_cast<Sign>( - static_cast<int>(o)); }
+
+inline
+Bounded_side
+opposite(Bounded_side bs)
+{ return static_cast<Bounded_side>( - static_cast<int>(bs)); }
+
+inline
+Angle
+opposite(Angle a)
+{ return static_cast<Angle>( - static_cast<int>(a)); }
+
+inline Sign operator* (Sign s1, Sign s2)
+{
+    return static_cast<Sign> (static_cast<int> (s1) * static_cast<int> (s2));
+}
+
+#ifdef CGAL_CFG_MATCHING_BUG_5
+
+template < typename T, typename U >
+inline
+T enum_cast_bug(const U& u, const T*)
+{ return static_cast<T>(u); }
+
+template < typename T, typename U >
+inline
+typename Same_uncertainty<T,U>::type enum_cast(const U& u)
+{ return enum_cast_bug(u, (const T*)0); }
+
+#else
+
+template < typename T, typename U >
+inline
+T enum_cast(const U& u)
+{ return static_cast<T>(u); }
+
+#endif
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_ENUM_H
