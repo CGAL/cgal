@@ -27,6 +27,7 @@
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/predicates/sign_of_determinant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -3648,21 +3649,21 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      Orientation oxy_pqr = orientationH2(p.hx(), p.hy(), p.hw(),
-					  q.hx(), q.hy(), q.hw(),
-					  r.hx(), r.hy(), r.hw());
+      Orientation oxy_pqr = sign_of_determinant3x3(p.hx(), p.hy(), p.hw(),
+					           q.hx(), q.hy(), q.hw(),
+					           r.hx(), r.hy(), r.hw());
       if (oxy_pqr != COLLINEAR)
 	return oxy_pqr;
 
-      Orientation oyz_pqr = orientationH2(p.hy(), p.hz(), p.hw(),
-					  q.hy(), q.hz(), q.hw(),
-					  r.hy(), r.hz(), r.hw());
+      Orientation oyz_pqr = sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+					           q.hy(), q.hz(), q.hw(),
+					           r.hy(), r.hz(), r.hw());
       if (oyz_pqr != COLLINEAR)
 	return oyz_pqr;
 
-      return orientationH2(p.hx(), p.hz(), p.hw(),
-			   q.hx(), q.hz(), q.hw(),
-			   r.hx(), r.hz(), r.hw());
+      return sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+			            q.hx(), q.hz(), q.hw(),
+			            r.hx(), r.hz(), r.hw());
     }
 
     result_type
@@ -3681,35 +3682,26 @@ namespace HomogeneousKernelFunctors {
 
       // compute orientation of p,q,s in this plane P:
       Orientation save;
-      if ( (save = orientationH2( p.hy(), p.hz(), p.hw(),
-				  q.hy(), q.hz(), q.hw(),
-				  r.hy(), r.hz(), r.hw())) != COLLINEAR)
-	{ return
-	    static_cast<Orientation>(
-	     static_cast<int>( save)
-	     * static_cast<int>( orientationH2( p.hy(), p.hz(), p.hw(),
-						q.hy(), q.hz(), q.hw(),
-						s.hy(), s.hz(), s.hw())) );
+      if ( (save = sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+				          q.hy(), q.hz(), q.hw(),
+				          r.hy(), r.hz(), r.hw())) != COLLINEAR)
+	{ return save * sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+					       q.hy(), q.hz(), q.hw(),
+					       s.hy(), s.hz(), s.hw());
 	}
-      if ( (save = orientationH2( p.hx(), p.hz(), p.hw(),
-				  q.hx(), q.hz(), q.hw(),
-				  r.hx(), r.hz(), r.hw())) != COLLINEAR)
-	{ return
-	    static_cast<Orientation>(
-	     static_cast<int>( save)
-	     * static_cast<int>( orientationH2( p.hx(), p.hz(), p.hw(),
-						q.hx(), q.hz(), q.hw(),
-						s.hx(), s.hz(), s.hw())) );
+      if ( (save = sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+				          q.hx(), q.hz(), q.hw(),
+				          r.hx(), r.hz(), r.hw())) != COLLINEAR)
+	{ return save * sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+					       q.hx(), q.hz(), q.hw(),
+					       s.hx(), s.hz(), s.hw());
 	}
-      if ( (save = orientationH2( p.hx(), p.hy(), p.hw(),
-				  q.hx(), q.hy(), q.hw(),
-				  r.hx(), r.hy(), r.hw())) != COLLINEAR)
-	{ return
-	    static_cast<Orientation>(
-	     static_cast<int>( save)
-	     * static_cast<int>( orientationH2( p.hx(), p.hy(), p.hw(),
+      if ( (save = sign_of_determinant3x3(p.hx(), p.hy(), p.hw(),
+				          q.hx(), q.hy(), q.hw(),
+				          r.hx(), r.hy(), r.hw())) != COLLINEAR)
+	{ return save * sign_of_determinant3x3( p.hx(), p.hy(), p.hw(),
 						q.hx(), q.hy(), q.hw(),
-						s.hx(), s.hy(), s.hw())) );
+						s.hx(), s.hy(), s.hw());
 	}
       CGAL_kernel_assertion( false);
       return COLLINEAR;
