@@ -185,7 +185,7 @@ public:
                 throw std::runtime_error("Ordering Failed");
 
             // Create multi-file for out-of-core swapping.
-            // Note: g++ complains that tempnam() is deprecated. Jus ignore the warning.
+            // Note: g++ complains that tempnam() is deprecated. You may safely ignore the warning.
             boost::shared_ptr<char> matrixfile(tempnam(NULL, "taucs.L"), free);
             if (matrixfile == NULL)
                 throw std::runtime_error("Cannot Create Multifile");
