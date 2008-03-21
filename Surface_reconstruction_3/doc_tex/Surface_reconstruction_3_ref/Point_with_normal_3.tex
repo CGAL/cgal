@@ -1,0 +1,142 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Point_with_normal_3.tex
+% +------------------------------------------------------------------------+
+% | 19.02.2008   Laurent Saboret, Pierre Alliez
+% | Package: Package
+% |
+\RCSdef{\RCSPointwithnormalRev}{$Id$}
+\RCSdefDate{\RCSPointwithnormalDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Point_with_normal_3<Geom_traits>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The \ccc{Point_with_normal_3} class represents a 3D point with:\begin{itemize}
+\item a position,\item a normal (oriented or not). The normal vector is allocated only when needed.\end{itemize}
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Point_with_normal_3.h}
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class Gt$>$   \\
+class \ccc{Point_with_normal_3};
+
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[Gt]Kernel's geometric traits. \end{description}
+\end{description}
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{PointWithNormal_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+Kernel's \ccc{Point_3} class.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{OrientedNormal_3} concept.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pwn}  %% variable name for \ccMethod calls below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Point_with_normal_3(const Origin& o = ORIGIN);}
+{
+Point is (0,0,0) by default. Normal is (0,0,0) by default. Normal is oriented by default.
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(FT x, FT y, FT z);}
+{
+}
+\ccGlue
+\ccConstructor{Point_with_normal_3(const Point& point, const Normal& normal = NULL_VECTOR);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool operator==(const Point_with_normal_3<Gt>& that);}
+{
+Compare positions.
+}
+\ccGlue
+\ccMethod{bool operator!=(const Point_with_normal_3<Gt>& that);}
+{
+}
+\ccGlue
+\ccMethod{const Normal& normal() const;}
+{
+Get/set normal (vector + orientation).
+}
+\ccGlue
+\ccMethod{Normal& normal();}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

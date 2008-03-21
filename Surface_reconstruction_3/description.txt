@@ -1,0 +1,13 @@
+Surface Reconstruction
+
+[TODO: replace next paragraph by actual description]
+
+We propose to elaborate upon a CGAL Package which
+implements some of the state-of-the-art surface reconstruction
+methods. Priority will be given to methods
+which take as input unorganized point sets and which
+compute an implicit function, although we leave the room
+to Delaunay-based techniques as all building blocks are
+available in CGAL. A common implicit function is an
+approximate distance function to the input points or to an
+estimate tangent plane, or an indicator function.

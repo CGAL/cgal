@@ -1,0 +1,124 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: OrientedNormal_3.tex
+% +------------------------------------------------------------------------+
+% | 05.03.2008   Laurent Saboret, Pierre Alliez
+% | Package: Package
+% |
+\RCSdef{\RCSOrientedNormalRev}{$Id$}
+\RCSdefDate{\RCSOrientedNormalDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{OrientedNormal_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The \ccc{OrientedNormal_3} concept represents a normal vector (oriented or not).
+
+%END-AUTO(\ccDefinition)
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+DefaultConstructible, CopyConstructible, Assignable.
+
+%END-AUTO(\ccRefines)
+
+\ccGeneralizes
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Vector}
+{
+Model of \ccc{Kernel::Vector_3} concept.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{n}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{OrientedNormal_3(Null_vector = NULL_VECTOR);}
+{
+Normal vector is (0,0,0) by default. Normal is oriented by default.
+}
+\ccGlue
+\ccConstructor{OrientedNormal_3(const Vector& vector, bool oriented = true);}
+{
+}
+\ccGlue
+\ccConstructor{OrientedNormal_3(const OrientedNormal_3& that);}
+{
+Copy constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{OrientedNormal_3& operator=(const OrientedNormal_3& that);}
+{
+Operator =().
+}
+\ccGlue
+\ccMethod{Vector get_vector() const;}
+{
+Get normal vector.
+}
+\ccGlue
+\ccMethod{bool is_normal_oriented() const;}
+{
+Get normal orientation.
+}
+\ccGlue
+\ccMethod{void set(const Vector& vector, bool oriented = true);}
+{
+Set normal (vector + orientation).
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Oriented_normal_3<Geom_traits>}
+
+%END-AUTO(\ccHasModels)
+
+\ccSeeAlso
+
+\ccc{PointWithNormal_3<Geom_traits>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

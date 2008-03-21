@@ -1,0 +1,34 @@
+Delaunay_refinement(s) to be turned into global functions - and to discuss with Mariette if a Mesher_level would be sufficient.
+The current priority queue is not modifiable, testing if a 
+tet is still in the triangulation is extremely costly and the
+queue is populated with too many instances.
+
+(unoriented) Normal estimation:
+- one will reuse Voronoi-based PCA (pCA component on a container of tets)
+- one will use a pole-approach (discuss with Frederic)
+
+Normal orientation:
+- ask Frederic if he wants to contribute his pole-based approach.
+
+Careful: one has to ensure that the Delaunay triangulation
+built for normal estimation and orientation is reused 
+by the Poisson solver - could be simply passed to Poisson!.
+
+
+// ultimate example
+std::list<Point> points; // read points from file
+Poisson_triangulation_3 dt(points.begin(),points.end());
+estimate_normals(dt);
+orient_normals(dt);
+Poisson_implicit_function implicit_function(dt);
+implicit_function.compute();
+Polyhedron p = contour(implicit_function);
+
+
+
+
+
+
+
+
+

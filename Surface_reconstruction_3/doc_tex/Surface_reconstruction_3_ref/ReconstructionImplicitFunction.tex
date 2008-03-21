@@ -1,0 +1,172 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ReconstructionImplicitFunction.tex
+% +------------------------------------------------------------------------+
+% | 07.09.2007   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSReconstructionImplicitFunctionRev}{$Id$}
+\RCSdefDate{\RCSReconstructionImplicitFunctionDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ReconstructionImplicitFunction}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+ReconstructionImplicitFunction is the concept of implicit function representing a 3D surface used by the \ccc{Surface_reconstruction_3} package.
+
+%END-AUTO(\ccDefinition)
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{Surface_mesher}'s ImplicitFunction concept.
+
+%END-AUTO(\ccRefines)
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+A model of ReconstructionImplicitFunction is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface mesh reconstruction.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+}
+\ccGlue
+\ccNestedType{Iso_cuboid_3}
+{
+}
+\ccGlue
+\ccNestedType{Sphere}
+{
+}
+\ccGlue
+\ccNestedType{Point_with_normal}
+{
+Model of \ccc{PointWithNormal_3}.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{OrientedNormal_3} concept.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pif}  %% variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{ReconstructionImplicitFunction();}
+{
+Create an empty implicit function.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Iso_cuboid_3 bounding_box() const;}
+{
+Get the bounding box.
+}
+\ccGlue
+\ccMethod{Sphere bounding_sphere() const;}
+{
+Get bounding sphere.
+}
+\ccGlue
+\ccMethod{Sphere region_of_interest() const;}
+{
+Get the region of interest, ignoring the outliers. This method is used to define the OpenGL arcball sphere.
+}
+\ccGlue
+\ccMethod{bool compute_implicit_function();}
+{
+You should call \ccc{compute_implicit_function}() once when points insertion is over. Return false on error. TODO: add parameters to \ccc{compute_implicit_function}()?
+}
+\ccGlue
+\ccMethod{FT set_contouring_value(FT contouring_value);}
+{
+Shift and orient the implicit function such that:\begin{itemize}
+\item the implicit function = 0 for points / f() = \ccc{contouring_value},\item the implicit function $<$ 0 inside the surface.\end{itemize}
+Return the minimum value of the implicit function.
+}
+\ccGlue
+\ccMethod{FT operator()(Point p);}
+{
+[ImplicitFunction interface]
+Evaluate implicit function for any 3D point.
+}
+\ccGlue
+\ccMethod{const Point& sink() const;}
+{
+Get point / the implicit function is minimum.
+}
+\ccGlue
+\ccMethod{FT average_value_at_input_vertices() const;}
+{
+Get average value of the implicit function over input vertices.
+}
+\ccGlue
+\ccMethod{FT median_value_at_input_vertices() const;}
+{
+Get median value of the implicit function over input vertices.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Poisson_implicit_function<PoissonDelaunayTriangulation_3>}
+
+%END-AUTO(\ccHasModels)
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

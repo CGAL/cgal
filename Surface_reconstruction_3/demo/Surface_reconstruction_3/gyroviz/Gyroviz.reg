@@ -1,0 +1,13 @@
+REGEDIT
+; This .REG file may be used by your SETUP program.
+;   If a SETUP program is not available, the entries below will be
+;   registered in your InitInstance automatically with a call to
+;   CWinApp::RegisterShellFileTypes and COleObjectFactory::UpdateRegistryAll.
+
+HKEY_CLASSES_ROOT\.pwn = Gyroviz.Document
+HKEY_CLASSES_ROOT\Gyroviz.Document\shell\open\command = Gyroviz.EXE %1
+HKEY_CLASSES_ROOT\Gyroviz.Document\shell\open\ddeexec = [open("%1")]
+HKEY_CLASSES_ROOT\Gyroviz.Document\shell\open\ddeexec\application = Gyroviz
+    ; note: the application is optional
+    ;  (it defaults to the app name in "command")
+HKEY_CLASSES_ROOT\Gyroviz.Document = Gyroviz.Document

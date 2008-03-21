@@ -1,0 +1,260 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Poisson_implicit_function.tex
+% +------------------------------------------------------------------------+
+% | 07.09.2007   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSPoissonimplicitfunctionRev}{$Id$}
+\RCSdefDate{\RCSPoissonimplicitfunctionDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Poisson_implicit_function<ImplicitFctDelaunayTriangulation_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{Poisson_implicit_function} computes an indicator function f() piecewise-linear over the tetrahedra. We solve the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Poisson_implicit_function.h}
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class Gt,   \\
+class \ccc{ImplicitFctDelaunayTriangulation_3}$>$   \\
+class \ccc{Poisson_implicit_function};
+
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{ImplicitFctDelaunayTriangulation_3}]3D Delaunay triangulation, model of \ccc{ImplicitFctDelaunayTriangulation_3} concept. \end{description}
+\end{description}
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{Reconstruction_implicit_function} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{Poisson_implicit_function} is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface mesh reconstruction.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Triangulation}
+{
+}
+\ccGlue
+\ccNestedType{Geom_traits}
+{
+Kernel's geometric traits.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+}
+\ccGlue
+\ccNestedType{Iso_cuboid_3}
+{
+}
+\ccGlue
+\ccNestedType{Sphere}
+{
+}
+\ccGlue
+\ccNestedType{Point_with_normal}
+{
+Model of \ccc{PointWithNormal_3}.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{OrientedNormal_3} concept.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pif}  %% choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Poisson_implicit_function(Triangulation& pdt);}
+{
+Create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[pdt]\ccc{ImplicitFctDelaunayTriangulation_3} base of the Poisson indicator function. \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Triangulation& triangulation();}
+{
+Get embedded triangulation.
+}
+\ccGlue
+\ccMethod{const Triangulation& triangulation() const;}
+{
+}
+\ccGlue
+\ccMethod{Iso_cuboid_3 bounding_box() const;}
+{
+Get the bounding box.
+}
+\ccGlue
+\ccMethod{Sphere bounding_sphere() const;}
+{
+Get bounding sphere.
+}
+\ccGlue
+\ccMethod{Sphere region_of_interest() const;}
+{
+Get the region of interest, ignoring the outliers. This method is used to define the OpenGL arcball sphere.
+}
+\ccGlue
+\ccMethod{bool compute_implicit_function();}
+{
+You should call \ccc{compute_implicit_function}() once when points insertion is over. It computes the Poisson indicator function f() at each vertex of the triangulation by:\begin{itemize}
+\item applying a Delaunay refinement to define the function inside and outside the surface.\item solving the Poisson equation Laplacian(f) = divergent(normals field) at each vertex of the triangulation via the TAUCS sparse linear solver. One vertex must be constrained.\item shifting and orienting f() such that f() = 0 on the input points, and f() $<$ 0 inside the surface.\end{itemize}
+Return false on error. TODO: add parameters to \ccc{compute_implicit_function}()?
+}
+\ccGlue
+\ccMethod{void estimate_normals_pca(unsigned int k);}
+{
+Estimate normal directions using linear least squares fitting of a plane on the k nearest neighbors.
+}
+\ccGlue
+\ccMethod{void estimate_normals_jet_fitting(unsigned int k);}
+{
+Estimate normal directions using jet fitting on the k nearest neighbors.
+}
+\ccGlue
+\ccMethod{unsigned int delaunay_refinement(const FT threshold, const unsigned int maximum, const FT enlarge_ratio, const unsigned int restart_each);}
+{
+Delaunay refinement (break bad tetrahedra, where bad means badly shaped or too big). The normal of Steiner points is set to zero. Return the number of vertices inserted.
+}
+\ccGlue
+\ccMethod{unsigned int delaunay_refinement_shell(FT size_shell, FT sizing, const unsigned int maximum);}
+{
+}
+\ccGlue
+\ccMethod{void extrapolate_normals();}
+{
+Extrapolate the normals field: compute null normals by averaging neighbour normals.
+}
+\ccGlue
+\ccMethod{bool solve_poisson(double * duration_assembly, double * duration_factorization, double * duration_solve);}
+{
+Poisson reconstruction. Return false on error.
+}
+\ccGlue
+\ccMethod{FT set_contouring_value(FT contouring_value);}
+{
+Shift and orient the implicit function such that:\begin{itemize}
+\item the implicit function = 0 for points / f() = \ccc{contouring_value},\item the implicit function $<$ 0 inside the surface.\end{itemize}
+Return the minimum value of the implicit function.
+}
+\ccGlue
+\ccMethod{FT f(const Point& p);}
+{
+Evaluate implicit function for any 3D point.
+}
+\ccGlue
+\ccMethod{FT operator()(Point p);}
+{
+[ImplicitFunction interface]
+Evaluate implicit function for any 3D point.
+}
+\ccGlue
+\ccMethod{const Point& sink() const;}
+{
+Get point / the implicit function is minimum.
+}
+\ccGlue
+\ccMethod{FT average_value_at_input_vertices() const;}
+{
+Get average value of the implicit function over input vertices.
+}
+\ccGlue
+\ccMethod{FT median_value_at_input_vertices() const;}
+{
+Get median value of the implicit function over input vertices.
+}
+\ccGlue
+\ccMethod{FT min_value_at_input_vertices() const;}
+{
+Get min value of the implicit function over input vertices.
+}
+\ccGlue
+\ccMethod{FT max_value_at_input_vertices() const;}
+{
+Get max value of the implicit function over input vertices.
+}
+\ccGlue
+\ccMethod{FT median_value_at_convex_hull() const;}
+{
+Get median value of the implicit function over convex hull vertices.
+}
+\ccGlue
+\ccMethod{FT average_value_at_convex_hull() const;}
+{
+Get average value of the implicit function over convex hull vertices.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

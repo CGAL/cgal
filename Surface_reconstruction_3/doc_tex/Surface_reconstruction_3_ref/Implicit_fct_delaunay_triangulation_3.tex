@@ -1,0 +1,210 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Implicit_fct_delaunay_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 06.09.2007   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSImplicitfctdelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSImplicitfctdelaunaytriangulationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Implicit_fct_delaunay_triangulation_3<Geom_traits, TriangulationDataStructure_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The \ccc{Implicit_fct_delaunay_triangulation_3} class is the default implementation of the \ccc{ImplicitFctDelaunayTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_implicit_function} class.
+
+TODO: Test speed if using \ccc{Triangulation_hierarchy_3}
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{CGAL/Implicit_fct_delaunay_triangulation_3.h}
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class Gt,   \\
+class Gt2 = \ccc{Implicit_fct_delaunay_triangulation_default_geom_traits_3<Gt>},   \\
+class Tds = \ccc{Triangulation_data_structure_3<Implicit_fct_delaunay_triangulation_vertex_base_3<Gt2>}, \ccc{Implicit_fct_delaunay_triangulation_cell_base_3<Gt2>} $>$$>$   \\
+class \ccc{Implicit_fct_delaunay_triangulation_3};
+
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[Gt]Kernel's geometric traits. \item[Gt2]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell base class must be a model of \ccc{ImplicitFctDelaunayTriangulationCellBase_3} and the vertex base class must be a model of \ccc{ImplicitFctDelaunayTriangulationVertexBase_3}. \end{description}
+\end{description}
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{ImplicitFctDelaunayTriangulation_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{FT}
+{
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
+\ccNestedType{Iso_cuboid_3}
+{
+}
+\ccGlue
+\ccNestedType{Sphere}
+{
+}
+\ccGlue
+\ccNestedType{Point}
+{
+The geometric traits class's \ccc{Point_3} type is a model of \ccc{PointWithNormal_3}.
+Model of \ccc{PointWithNormal_3}
+}
+\ccGlue
+\ccNestedType{Point_with_normal}
+{
+Model of \ccc{PointWithNormal_3}.
+}
+\ccGlue
+\ccNestedType{Normal}
+{
+Model of \ccc{OrientedNormal_3} concept.
+}
+\ccGlue
+\ccNestedType{Normal_iterator}
+{
+Iterator over normals.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccVariable{const unsigned char INPUT = 0;}
+{
+[static] \\
+Point type.
+}
+\ccGlue
+\ccVariable{const unsigned char STEINER = 1;}
+{
+[static] \\
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{pdt}  %% variable name for \ccMethod calls below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Implicit_fct_delaunay_triangulation_3();}
+{
+Default constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Normal_iterator normals_begin();}
+{
+Get first iterator over finite vertices normals.
+}
+\ccGlue
+\ccMethod{Normal_iterator normals_end();}
+{
+Get past-the-end iterator over finite vertices normals.
+}
+\ccGlue
+\ccMethod{Iso_cuboid_3 bounding_box() const;}
+{
+Get the bounding box.
+}
+\ccGlue
+\ccMethod{Sphere bounding_sphere() const;}
+{
+Get bounding sphere.
+}
+\ccGlue
+\ccMethod{Point barycenter() const;}
+{
+Get points barycenter.
+}
+\ccGlue
+\ccMethod{FT standard_deviation() const;}
+{
+Get the standard deviation of the distance to barycenter.
+}
+\ccGlue
+\ccMethod{void invalidate_bounding_box();}
+{
+Update barycenter, bounding box, bounding sphere and standard deviation. Owner is responsible to call this function after modifying the triangulation.
+}
+\ccGlue
+\ccMethod{Vertex_handle insert(const Point& p, unsigned char type, Cell_handle start = Cell_handle());}
+{
+Insert point to the triangulation.
+}
+\ccGlue
+\ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type);}
+{
+Insert points to the triangulation using a spatial sort.
+Precondition: the value type of InputIterator must \ccc{Point}.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[first]First point to add to pdt. \item[beyond]Past-the-end point to add to pdt. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]the number of inserted points. \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

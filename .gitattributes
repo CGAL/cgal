@@ -4111,6 +4111,65 @@ Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/CMakeLists.txt -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/ChildFrm.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/ChildFrm.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/DialogOptions_3.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/DialogOptions_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.rc -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.reg -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_3.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.sln -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.vcproj -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.sln -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.vcproj -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/arcball.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/director.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/director.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/eigen_t.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/res/Gyroviz.ico -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/res/Gyroviz.manifest -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/res/Gyroviz.rc2 -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/res/GyrovizDoc.ico -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/res/Toolbar.bmp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/resource.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/stdafx.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/stdafx.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/PoissonDoc.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.sln eol=crlf
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.vcproj eol=crlf
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.sln eol=crlf
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.vcproj eol=crlf
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/oni.pwn -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/polygirl.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/sphere966.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/include/Gyroviz_point_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/res/Poisson.ico -text svneol=unset#image/x-icon
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/res/PoissonDoc.ico -text svneol=unset#image/x-icon
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/res/Toolbar.bmp -text svneol=unset#image/bmp
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstruction.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstructionDetail.png -text svneol=unset#image/png
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.eps -text svneol=unset#application/postscript
+Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/include/CGAL/Oriented_normal_3.h -text
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/normal_estimation_test_vc71.vcproj eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc71.vcproj eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere966.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
+Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
+Surface_reconstruction_3/test/Surface_reconstruction_3/poisson_reconstruction_test.cmd eol=lf
+Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc71.sln eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc80.sln eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/test_all.bat eol=crlf
+Surface_reconstruction_3/test/Surface_reconstruction_3/test_all.sh eol=lf
 Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite eol=lf

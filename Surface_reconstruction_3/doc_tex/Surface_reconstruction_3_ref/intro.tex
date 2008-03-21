@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_reconstruction_3/intro.tex
+% +------------------------------------------------------------------------+
+% | 08.22.2005   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+% |
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference Pages for Surface Reconstruction}
+\ccRefChapter{Surface Reconstruction
+\label{chap:surface_reconstruction_3_ref}}
+
+\ccChapterAuthor{Laurent Saboret \and Pierre Alliez}
+
+
+[TODO: replace next paragraph by actual introduction]
+
+We propose to elaborate upon a CGAL Package which implements some
+of the state-of-the-art surface reconstruction methods. Priority will
+be given to methods which take as input unorganized point sets and
+which compute an implicit function, although we leave the room to
+Delaunay-based techniques as all building blocks are available in
+CGAL. A common implicit function is an approximate distance function
+to the input points or to an estimate tangent plane, or an indicator
+function.
+
+
+\section{Classified Reference Pages}
+
+[TODO: put here the actual concepts and classes list]
+
+
+\ccHeading{Concepts}
+
+\ccRefIdfierPage{PointWithNormal_3}  \\
+\ccRefIdfierPage{ReconstructionImplicitFunction}  \\
+
+
+\ccHeading{Surface Reconstruction Methods}
+
+This \cgal\ package implements some of
+the state-of-the-art reconstruction methods:
+
+\begin{itemize}
+
+\item Delaunay-based Poisson reconstruction algorithm
+
+\end{itemize}
+
+\ccRefIdfierPage{Poisson_implicit_function<Kernel>}  \\
+
+
+\ccHeading{Output}
+
+[TODO: put here the output capabilities of the package]
+
+
+\ccHeading{Assertions}
+
+The assertion flags for the package
+use \ccc{SURFACE_RECONSTRUCTION} in their names (\textit{e.g.},
+\ccc{CGAL_SURFACE_RECONSTRUCTION_NO_ASSERTIONS}).
+
+[TODO: replace next paragraph by actual pre and post-conditions]
+
+\begin{itemize}
+\item Preconditions:
+    \begin{itemize}
+    \item ...
+    \end{itemize}
+\item Postconditions:
+    \begin{itemize}
+    \item ...
+    \end{itemize}
+\end{itemize}
+
+Expensive checking is off by default. It can be enabled by
+defining \ccc{CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE}.
+
+
