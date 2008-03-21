@@ -112,11 +112,12 @@ sub latex_unmangle
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Avoid consecutive spaces/tabs to ease parsing in the rest of this script
+    # Avoid tabs and consecutive spaces to ease parsing in the rest of this script
     $buf =~ s/( |\t)+/ /g;
 
-    # Unmangle _, ~, <, >, *, &, [] characters mangled for Latex
+    # Unmangle comma (,), _, ~, <, >, *, &, [] characters mangled for Latex
     # to get regular C++ code (mangled back at end of script)
+    $buf =~ s/, \\\//,/g;                       # , \/ -> ,
     $buf =~ s/\\_\\-/_/g;                       # \_\- -> _
     $buf =~ s/\$\\sim\$/~/g;                    # $\sim$ -> ~
     $buf =~ s/\$<\$/</g;                        # $<$ -> <
