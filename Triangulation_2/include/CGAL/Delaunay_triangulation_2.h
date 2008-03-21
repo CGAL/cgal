@@ -266,23 +266,17 @@ private:
   }
 
 protected:
-  int _degree;
 
-  bool from_convex_hull(Vertex_handle v) {
-    Vertex_circulator vc = this->incident_vertices(v), done(vc);
-    _degree = 0;
-    do {
-      _degree++;
-      if(this->is_infinite(vc)) return true;
-    } while(++vc != done);
-    return false;
-  }
-
-  void restore_edges(Vertex_handle v, int degree = -1)
+  void restore_edges(Vertex_handle v)
   {
     std::list<Edge> edges;
     Face_circulator fc = this->incident_faces(v), done(fc);
-    if(degree == -1) degree = v->degree();
+    int degree = 0;
+    do {
+      if((++degree) > 3) break;
+    } while(++fc != done);
+    fc = this->incident_faces(v);
+    done = fc;
     if(degree == 3) {
       do {
         int i = fc->index(v);
@@ -641,10 +635,8 @@ move(Vertex_handle v, const Point &p) {
     Point ant = v->point();
     v->set_point(p);
     if(well_oriented(v)) {
-      if(!from_convex_hull(v)) {
-        restore_edges(v, _degree);
-        return true;
-      }
+      restore_edges(v);
+      return true;
     }
     v->set_point(ant);
   }
