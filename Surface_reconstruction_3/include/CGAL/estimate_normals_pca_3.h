@@ -30,7 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 /// Estimate normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
 ///
@@ -46,7 +45,7 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
 								      Tree& tree, ///< KD-tree
 								      const unsigned int K)
 {
-  // Basic geometric types
+  // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
   typedef typename Kernel::Vector_3 Vector;
@@ -102,7 +101,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
 											 const Kernel& kernel)
 {
   // Hard-code the Normal type as back_insert_iterator value_type is wrong (VC++ 2003)
-	//typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
+	// typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
   typedef CGAL::Oriented_normal_3<Kernel> Normal;
 
 	// types for K-nearest neighbor search structure

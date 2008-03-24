@@ -30,7 +30,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 /// Estimate normal direction using linear least
 /// squares fitting of a plane on the K nearest neighbors.
 ///
@@ -47,7 +46,7 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
 								              const unsigned int K,
                               const unsigned int degre_fitting = 2)
 {
-  // Basic geometric types
+  // basic geometric types
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef OrientedNormal_3 Oriented_normal;
@@ -109,7 +108,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 															 const unsigned int degre_fitting = 2)
 {
   // Hard-code the Normal type as back_insert_iterator value_type is wrong (VC++ 2003)
-	//typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
+	// typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
   typedef CGAL::Oriented_normal_3<Kernel> Normal;
 
 	// types for K-nearest neighbor search structure
@@ -157,7 +156,6 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
 	estimate_normals_jet_fitting_3(first,beyond,normals,K,Kernel(),degre_fitting);
 }
-
 
 CGAL_END_NAMESPACE
 

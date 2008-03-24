@@ -31,6 +31,9 @@ CGAL_BEGIN_NAMESPACE
 // triangulation, use the parameter otherwise (careful, 8 vertices
 // are added in order to bound all Voronoi cells. The last parameter
 // specifies if these points should be removed.
+
+// Pierre: I would suggest not to use pointers - simply the user
+// can call the function without any reference to a DT.
 template < typename InputIterator, 
            typename OutputIterator,
            typename Kernel, 

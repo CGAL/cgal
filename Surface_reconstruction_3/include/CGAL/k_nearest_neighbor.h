@@ -89,7 +89,7 @@ struct Construct_coord_iterator {
 // We have put the glue layer in this file as well, that is a class that
 // allows to iterate over the Cartesian coordinates of the KVertex, and a
 // class to construct such an iterator for a KVertex.
-//We next need a distance class
+// We next need a distance class
 
 template <class Vertex_handle>
 struct Distance {
