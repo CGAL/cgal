@@ -145,8 +145,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 ///
 /// Precondition: K >= 2.
 template < typename InputIterator, ///< InputIterator value_type is Point_3
-           typename OutputIterator, ///< OutputIterator value_type is a model of OrientedNormal_3
->
+           typename OutputIterator> ///< OutputIterator value_type is a model of OrientedNormal_3
 void
 estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                InputIterator beyond,
