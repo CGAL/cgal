@@ -21,17 +21,17 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
-				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS;_WIN32_WINNT= 0x0500"
+				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				TreatWChar_tAsBuiltInType="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				BrowseInformation="1"
 				WarningLevel="2"
-				Detect64BitPortabilityProblems="FALSE"
+				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4267;4311;4800;4503"/>
 			<Tool
@@ -84,16 +84,16 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
-				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS;_WIN32_WINNT= 0x0500"
+				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				TreatWChar_tAsBuiltInType="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				WarningLevel="2"
-				Detect64BitPortabilityProblems="FALSE"
+				Detect64BitPortabilityProblems="TRUE"
 				DebugInformationFormat="0"
 				DisableSpecificWarnings="4267;4311;4800;4503"/>
 			<Tool
@@ -148,31 +148,22 @@
 				RelativePath=".\ChildFrm.cpp">
 			</File>
 			<File
-				RelativePath=".\DialogOptions_2.cpp">
-			</File>
-			<File
 				RelativePath=".\DialogOptions_3.cpp">
 			</File>
 			<File
 				RelativePath=".\include\Director.cpp">
 			</File>
 			<File
-				RelativePath=".\Gyroviz.cpp">
+				RelativePath=".\MainFrm.cpp">
 			</File>
 			<File
-				RelativePath=".\GyrovizDoc_2.cpp">
+				RelativePath=".\Gyroviz.cpp">
 			</File>
 			<File
 				RelativePath=".\GyrovizDoc_3.cpp">
 			</File>
 			<File
-				RelativePath=".\GyrovizView_2.cpp">
-			</File>
-			<File
 				RelativePath=".\GyrovizView_3.cpp">
-			</File>
-			<File
-				RelativePath=".\MainFrm.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -201,9 +192,6 @@
 				RelativePath=".\ChildFrm.h">
 			</File>
 			<File
-				RelativePath=".\DialogOptions_2.h">
-			</File>
-			<File
 				RelativePath=".\DialogOptions_3.h">
 			</File>
 			<File
@@ -213,46 +201,25 @@
 				RelativePath=".\include\eigen_t.h">
 			</File>
 			<File
-				RelativePath=".\Gyroviz.h">
+				RelativePath=".\include\enriched_polyhedron.h">
 			</File>
 			<File
-				RelativePath=".\Gyroviz_cdt2.h">
+				RelativePath=".\MainFrm.h">
+			</File>
+			<File
+				RelativePath=".\include\oracle.h">
+			</File>
+			<File
+				RelativePath=".\Gyroviz.h">
 			</File>
 			<File
 				RelativePath=".\include\Gyroviz_dt2.h">
 			</File>
 			<File
-				RelativePath=".\Gyroviz_dt3.h">
-			</File>
-			<File
-				RelativePath=".\Gyroviz_info_for_cdt2.h">
-			</File>
-			<File
-				RelativePath=".\Gyroviz_info_for_dt2.h">
-			</File>
-			<File
-				RelativePath=".\Gyroviz_info_for_dt3.h">
-			</File>
-			<File
-				RelativePath=".\Gyroviz_segmentation2.h">
-			</File>
-			<File
-				RelativePath=".\GyrovizDoc_2.h">
-			</File>
-			<File
 				RelativePath=".\GyrovizDoc_3.h">
 			</File>
 			<File
-				RelativePath=".\GyrovizKernel.h">
-			</File>
-			<File
-				RelativePath=".\GyrovizView_2.h">
-			</File>
-			<File
 				RelativePath=".\GyrovizView_3.h">
-			</File>
-			<File
-				RelativePath=".\MainFrm.h">
 			</File>
 			<File
 				RelativePath=".\Resource.h">
@@ -306,7 +273,7 @@
 				RelativePath="..\..\..\include\CGAL\Point_with_normal_spatial_sort_traits.h">
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\Implicit_fct_delaunay_triangulation_3.h">
+				RelativePath="..\..\..\include\CGAL\Poisson_delaunay_triangulation_3.h">
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h">
@@ -319,6 +286,25 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\taucs_solver.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Concepts"
+			Filter="">
+			<File
+				RelativePath="..\..\..\doc\concepts\PointWithNormal_3.h">
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\GyrovizDelaunayTriangulation_3.h">
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\GyrovizDelaunayTriangulationCellBase_3.h">
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\GyrovizDelaunayTriangulationVertexBase_3.h">
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\ReconstructionImplicitFunction.h">
 			</File>
 		</Filter>
 		<File

@@ -303,7 +303,7 @@ void CGyrovizView_3::OnPaint()
         pDoc->get_dt2().gl_draw_soup_vertices(0,0,0, pDoc->get_point_size());
       }
       else
-        pDoc->get_dt3().gl_draw_3D_vertices(0,0,255,pDoc->get_point_size());
+        pDoc->get_dt3().gl_draw_3D_vertices(0,255,0,pDoc->get_point_size());
     }
     
 		// draw Delaunay edges
@@ -333,11 +333,22 @@ void CGyrovizView_3::OnPaint()
 
     if(m_view_coff_inside)
     {
-      static GLfloat grey[4] = {0.9f, 0.9f, 0.9f, 0.0f };
-      ::glEnable(GL_LIGHTING);
-      ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-      ::glColor3ub(255,255,255);
-      pDoc->get_dt3().gl_draw_3D_inside_tetrahedrons(138,43,226);
+			//::glEnable(GL_LIGHTING);
+			::glDisable(GL_LIGHTING);
+			::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+			//::glColor3ub(100,100,255);
+			::glEnable(GL_POLYGON_OFFSET_FILL);
+			::glPolygonOffset(3.0f,-3.0f);
+      pDoc->get_dt3().gl_draw_3D_inside_tetrahedrons(138,43,226); /* purple */
+
+			::glDisable(GL_LIGHTING);
+			::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+			//::glColor3ub(0,0,0);
+			::glDisable(GL_POLYGON_OFFSET_FILL);
+      pDoc->get_dt3().gl_draw_3D_inside_tetrahedrons(255,255,0 /* yellow */);
+
+      //::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+      //pDoc->get_dt3().gl_draw_3D_inside_tetrahedrons(138,43,226);
     }  
       
 	glPopMatrix();

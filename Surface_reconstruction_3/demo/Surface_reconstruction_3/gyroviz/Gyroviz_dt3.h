@@ -8,9 +8,6 @@
 // 3 columns corresponding to the 3D coordinates of a track followed by the
 // list of the images in which he has been "seen".
 
-// Kernel
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 // Delaunay triangulation 3 && Intersections
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -80,8 +77,8 @@ public:
 
   // tetrahedron type
   static const unsigned char UNKNOWN  = -1;
-  static const unsigned char OUTSIDE  =  0;
-  static const unsigned char INSIDE   =  1;
+  static const unsigned char VIDE  =  0;
+  static const unsigned char PLEIN   =  1;
 
   // Data members
 private:
@@ -200,6 +197,10 @@ public:
       // Read 3D points + camera indices on next lines
       else {
 
+        //// TEMPORARY: skip part of file
+        //if (lineNumber % 4 != 0)
+        //  continue;
+        
         std::istringstream iss(pLine);
         Point_3 position;
 
@@ -231,8 +232,8 @@ public:
             //Cell_handle cell;
             //cell = vh->cell();
 
-            //if(!is_infinite(cell)){cell->info() = INSIDE;}
-            //else cell->info() = OUTSIDE;
+            //if(!is_infinite(cell)){cell->info() = PLEIN;}
+            //else cell->info() = VIDE;
             gpts.push_back(Gyroviz_point_dt3(position,list_of_cameras.begin(),
               list_of_cameras.end()));
           }
@@ -472,13 +473,19 @@ public:
   void inside_outside()
   {
     
-    // lets initialize all the cells to INSIDE
-    for (Cell_iterator cell = cells_begin(); cell != cells_end(); cell++)
+    // lets initialize all the cells to PLEIN
+    for (Cell_iterator cell = this->cells_begin(); cell != this->cells_end(); cell++)
     {
       // TEST Each cell corresponding to the current vertex is flagged as "UNKNOWN"
-      if(!is_infinite(cell)){cell->info() = INSIDE;}
-      else cell->info() = OUTSIDE;
       
+      //(1)   //cell->info() = PLEIN;
+      //(2)   //if(!is_infinite(cell)){cell->info() = PLEIN;}
+      //(3)   //if(!is_infinite(cell)){cell->info() = UNKNOWN;}
+      //(2,3) //else cell->info() = VIDE;
+      //(4)   //cell->info() = UNKNOWN;
+      //(5)   //if(!is_infinite(cell)){cell->info() = PLEIN;}
+      //(5)   //else cell->info() = UNKNOWN;
+      cell->info() = PLEIN;
     }
 
     // TEST 
@@ -507,18 +514,16 @@ public:
         int in_i = -1, in_j = -1;
         /////////////////////////////////
 
-        // TODO : Opposite tetra must be labbelled as INSIDE!
-
         std::list<Cell_handle> incident_c;
-        incident_cells(static_cast<Vertex_handle>(fv),back_inserter(incident_c));
+        incident_cells(fv, back_inserter(incident_c));
 
         // create an iterator for these cells
         typename std::list<Cell_handle>::iterator cell_it = incident_c.begin();
 
 
         //// TEST
-        //Cell_handle INSIDE_cell, OUTSIDE_cell;
-        //
+        Cell_handle INSIDE_cell, OUTSIDE_cell;
+        
         //for( ; cell_it != incident_c.end(); ++cell_it) 
         //{
         //  if(is_infinite(*cell_it)) continue;
@@ -528,14 +533,18 @@ public:
         //  {
         //    // opposite facet to the input vertex(index)
         //    Triangle_3 opposite_cell_facet = this->triangle(*cell_it,index_in_cell_it);
-
-        //    if(do_intersect(opposite_cell_facet,segment.opposite()))
+        //    
+        //    // reverse segment
+        //    Point_3 reverse_extremity(fv->point() - Vector_3(fv->point(),list_of_cams[j]));
+        //    Segment_3  reverse_segment (fv->point(), reverse_extremity);
+        //    
+        //    if(do_intersect(opposite_cell_facet,reverse_segment) && (*cell_it)->info() != VIDE )
         //    {
-        //     
-        //      (*cell_it)->info() = INSIDE;
+        //      //assert((*cell_it)->info() != VIDE);
+        //      (*cell_it)->info() = PLEIN;
         //      
         //      // TEST
-        //      TRACE("INSIDE Cell : %x\n",&*cell_it);
+        //      TRACE("PLEIN Cell : %x\n",&**cell_it);
         //      INSIDE_cell = *cell_it;
         //      
         //      break;
@@ -543,11 +552,9 @@ public:
         //  }
         //}
 
-        cell_it = incident_c.begin();
-
-        // lets find the first Cell
-
-        for( ; cell_it != incident_c.end(); ++cell_it) 
+        // is the segment outside of the triangulation?
+        bool segment_outside_T3 = true;
+        for(cell_it = incident_c.begin() ; cell_it != incident_c.end(); ++cell_it) 
         {
           int index_in_cell_it;
           if((*cell_it)->has_vertex(fv,index_in_cell_it))
@@ -556,13 +563,51 @@ public:
 
             if(in_type != NOTHING)
             {
-              in_Tetra = (*cell_it);
-
-              ////TEST
-              //TRACE("OUTSIDE Cell : %x\n",&in_Tetra);
-              //OUTSIDE_cell = in_Tetra;
-
+              segment_outside_T3 = false;
               break;
+            }
+          }
+        }
+        TRACE("segment_outside_T3: %s\n",segment_outside_T3 ? "true" : "false");
+
+        // lets find the first Cell
+        if (segment_outside_T3)
+        {
+          // mark infinite cells as empty
+          for(cell_it = incident_c.begin() ; cell_it != incident_c.end(); ++cell_it) 
+          {
+            int index_in_cell_it;
+            if((*cell_it)->has_vertex(fv,index_in_cell_it))
+            {
+              if(is_infinite(*cell_it))
+              {
+                TRACE("VIDE infinite cell : %x\n",&**cell_it);
+                (*cell_it)->info() = VIDE;
+              }
+            }
+          }
+          
+          // skip next loop
+          in_type = NOTHING;
+        }
+        else
+        {
+          // find tet crossed by segment
+          for(cell_it = incident_c.begin() ; cell_it != incident_c.end(); ++cell_it) 
+          {
+            int index_in_cell_it;
+            if((*cell_it)->has_vertex(fv,index_in_cell_it))
+            {
+              do_intersect_from_vertex(*cell_it, index_in_cell_it, segment, in_type, in_i, in_j);
+
+              if(in_type != NOTHING)
+              {
+                in_Tetra = (*cell_it);
+                in_type = VERTEX;
+                in_i = index_in_cell_it;
+                TRACE("first Cell : %x\n",&*in_Tetra);
+                break;
+              }
             }
           }
         }
@@ -612,8 +657,12 @@ public:
           //        the camera center of one of these views should be labbelled as outside.
           //        Exception : segment is tangent to the tetrahedra
 
-          //TRACE("OUTSIDE\n");
-          in_Tetra->info() = OUTSIDE;
+          //assert(in_Tetra->info() != PLEIN);
+          //if (in_Tetra->info() != PLEIN)
+          //{
+            TRACE("VIDE Cell : %x\n",&*in_Tetra);
+            in_Tetra->info() = VIDE;
+          //}
 
           // compute the next (in_Tetra, in_type, in_i, in_j) variables
           in_type = out_type;
@@ -840,20 +889,30 @@ public:
   {
 
     // Draw 3D delaunay triangulation
-    ::glColor3ub(r,g,b);
     ::glBegin(GL_TRIANGLES);
 
-    Facet_iterator ff = this->facets_begin();
-    for(; ff != this->facets_end(); ++ff)
+    Finite_facets_iterator ff = this->finite_facets_begin();
+    for(; ff != this->finite_facets_end(); ++ff)
     {
       Cell_handle c  = ff->first;
       int index_in_c = ff->second;
 
       Cell_handle neighbor_c = c->neighbor(index_in_c);
 
-      if(!is_infinite(c)&& !is_infinite(neighbor_c) && c->info() == INSIDE && neighbor_c->info() == OUTSIDE
-        || !is_infinite(c) && !is_infinite(neighbor_c) && c->info() == OUTSIDE && neighbor_c->info() == INSIDE)
+      if(/*!is_infinite(c)&& !is_infinite(neighbor_c) &&*/  c->info() == PLEIN && neighbor_c->info() == VIDE
+      || /*!is_infinite(c) && !is_infinite(neighbor_c) &&*/ c->info() == VIDE && neighbor_c->info() == PLEIN 
+         /*!is_infinite(c)&& !is_infinite(neighbor_c) && (c->info() == VIDE || neighbor_c->info() == VIDE)*/)
       {
+        //assert(!is_infinite(*ff));
+        if (is_infinite(*ff))
+          TRACE("BUG! Infinite facet (%x, %d)\n", &*ff->first, (int)ff->second);
+        
+        // TEMPORARY: paint facets on convex hull in blue
+        if (is_infinite(c) || is_infinite(neighbor_c))
+          ::glColor3ub(0,0,255);
+        else
+          ::glColor3ub(r,g,b);
+
         int k = ff->second;
         Point_3 p1 = c->vertex( (k+1)&3 )->point();
         Point_3 p2 = c->vertex( (k+2)&3 )->point();

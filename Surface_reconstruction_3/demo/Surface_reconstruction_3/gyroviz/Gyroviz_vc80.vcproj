@@ -436,7 +436,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\Implicit_fct_delaunay_triangulation_3.h"
+				RelativePath="..\..\..\include\CGAL\Poisson_delaunay_triangulation_3.h"
 				>
 			</File>
 			<File
