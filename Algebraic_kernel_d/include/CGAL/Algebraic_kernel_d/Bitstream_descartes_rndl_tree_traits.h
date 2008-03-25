@@ -52,7 +52,7 @@ template <class NT>
 class Bitstream_descartes_rndl_tree_traits{
 
 // typedefs
-    typedef typename CGALi::Get_arithmetic_kernel<NT>::Arithmetic_kernel AT;
+    typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel AT;
     typedef typename AT::Bigfloat          BF;
     typedef typename AT::Bigfloat_interval BFI;
     typedef typename AT::Field_with_sqrt   FWS;
@@ -81,7 +81,7 @@ convert_coeffs(
         if(poly[i].is_extended()){
             //typename Coercion_traits<FWS,ROOT >::Cast cast_root;  
             //root = convert_to_bfi(NiX::sqrt(cast_root(poly[i].root())));
-            root = CGALi::sqrt(convert_to_bfi(poly[i].root()));
+            root = CGAL::sqrt(convert_to_bfi(poly[i].root()));
             break;  
         }
     }
@@ -112,12 +112,12 @@ private:
         CGAL_precondition(current_prec > 1);
         current_prec *= 2;
         // std::cout <<"ALGREAL: refine approx: "<<  current_prec<<std::endl;
-        long old_prec = set_precision(BF(),current_prec);
+        long old_prec = set_precision(BFI(),current_prec);
         polynomial_approx.clear();
         convert_coeffs(
                 polynomial,
                 std::back_inserter(polynomial_approx));
-        set_precision(BF(),old_prec);
+        set_precision(BFI(),old_prec);
     };
     
 public:
@@ -127,9 +127,9 @@ public:
 
     Bitstream_descartes_rndl_tree_traits(const POLY& p):polynomial(p){
         current_prec = 60; 
-        long old_prec = set_precision(BF(), current_prec); 
+        long old_prec = set_precision(BFI(), current_prec); 
         convert_coeffs(polynomial,std::back_inserter(polynomial_approx));
-        set_precision(BF(),old_prec);
+        set_precision(BFI(),old_prec);
     };
     
     struct Boundary_creator
@@ -154,7 +154,7 @@ public:
       Lower_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
       result_type operator() (int i) {             
         CGAL_precondition(ptr->polynomial[i] != NT(0));
-        while(CGALi::in_zero(ptr->polynomial_approx[i])){
+        while(CGAL::in_zero(ptr->polynomial_approx[i])){
           ptr->refine_approximation();
         }             
         typename CGALi::Real_embeddable_extension<BFI>::Floor_log2_abs floor_log2_abs;
@@ -197,20 +197,20 @@ public:
             
             BFI approx  = ptr->polynomial_approx[i];
             // if coeff = 0 -> fast return 
-            if (CGALi::singleton(approx) && approx == BFI(0) ) {
+            if (CGAL::singleton(approx) && approx == BFI(0) ) {
               //std::cout << " Approximator end  " << std::endl;
               return Integer(0);
             }
             //get position of first wrong bit
-            long wbit   = ceil_log2_abs(approx) - CGALi::get_significant_bits(approx)+p;
+            long wbit   = ceil_log2_abs(approx) - CGAL::get_significant_bits(approx)+p;
              // approx until pos of first wrong bit is negative
-            while( wbit >= -5 && ! CGALi::singleton(approx) ){
+            while( wbit >= -5 && ! CGAL::singleton(approx) ){
 
                 ptr->refine_approximation();
                 approx = ptr->polynomial_approx[i]; 
-                wbit   = ceil_log2_abs(approx) - CGALi::get_significant_bits(approx) + p;
+                wbit   = ceil_log2_abs(approx) - CGAL::get_significant_bits(approx) + p;
             }  
-            BF lower = CGALi::lower(approx); // could take upper also 
+            BF lower = CGAL::lower(approx); // could take upper also 
             long shift = - (p + get_exp(lower)); 
             Integer m(get_m(lower)); 
             if( shift > 0 ){
@@ -221,7 +221,7 @@ public:
               m = (m >> shift);
             }else{
                 // add 0 bits 
-                CGAL_precondition(CGALi::singleton(approx));
+                CGAL_precondition(CGAL::singleton(approx));
                 m = (m << -shift);   
             }     
             // std::cout << " Approximator end  " << std::endl;

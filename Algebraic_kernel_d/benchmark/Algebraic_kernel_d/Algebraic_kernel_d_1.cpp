@@ -342,7 +342,7 @@ void single_benchmark( std::string filename, std::string isolator, int samples =
 template< class Coeff_ >
 void single_benchmark( std::string filename, std::string rep_class, std::string isolator, int samples = 5 ) {
     typedef Coeff_ Coeff;
-    typedef typename CGAL::CGALi::Get_arithmetic_kernel< Coeff >::Arithmetic_kernel::Rational Boundary;
+    typedef typename CGAL::Get_arithmetic_kernel< Coeff >::Arithmetic_kernel::Rational Boundary;
 
     // Select rep class    
     if( rep_class == "Algebraic_real_rep" )

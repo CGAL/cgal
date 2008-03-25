@@ -45,41 +45,46 @@ void test_algebraic_kernel_intern() {
 template< class ArithmeticKernel >
 void test_algebraic_kernel() {
     typedef ArithmeticKernel AK;
-    
+    typedef typename AK::Integer Integer;
+    typedef typename AK::Rational Rational; 
+    typedef CGAL::Sqrt_extension< Integer, Integer> EXT;
+
     // Test with integer
-    test_algebraic_kernel_intern< typename AK::Integer,
-                                  typename AK::Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< typename AK::Integer,
-                                                                   typename AK::Rational > >();
+    test_algebraic_kernel_intern< Integer,
+                                  Rational,
+                                  CGAL::CGALi::Algebraic_real_rep< Integer,
+                                                                   Rational > >();
    // Test with integer and bfi
-    test_algebraic_kernel_intern< typename AK::Integer,
-                                  typename AK::Rational,
-                                  CGAL::CGALi::Algebraic_real_rep_bfi< typename AK::Integer,
-                                                                       typename AK::Rational > >();
+    test_algebraic_kernel_intern< Integer,
+                                  Rational,
+                                  CGAL::CGALi::Algebraic_real_rep_bfi< Integer,
+                                                                       Rational > >();
                                                                        
     // Test with rational
-    test_algebraic_kernel_intern< typename AK::Rational,
-                                  typename AK::Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< typename AK::Rational,
-                                                                   typename AK::Rational > >();
+    test_algebraic_kernel_intern< Rational,
+                                  Rational,
+                                  CGAL::CGALi::Algebraic_real_rep< Rational,
+                                                                   Rational > >();
 
     // Test with rational and bfi
-    test_algebraic_kernel_intern< typename AK::Rational,
-                                  typename AK::Rational,
-                                  CGAL::CGALi::Algebraic_real_rep_bfi< typename AK::Rational,
-                                                                       typename AK::Rational > >();
+    test_algebraic_kernel_intern< Rational,
+                                  Rational,
+                                  CGAL::CGALi::Algebraic_real_rep_bfi< Rational,
+                                                                       Rational > >();
                                                                        
     // Test with Sqrt_extension
-    test_algebraic_kernel_intern< CGAL::Sqrt_extension< typename AK::Integer, typename AK::Integer>,
-                                  typename AK::Rational,
-                                  CGAL::CGALi::Algebraic_real_rep< CGAL::Sqrt_extension< typename AK::Integer, typename AK::Integer >,
-                                                                   typename AK::Rational > >();
+    test_algebraic_kernel_intern< EXT,
+                                  Rational,
+                                  CGAL::CGALi::Algebraic_real_rep< EXT, Rational > >();
 
 }
 
 int main() {
 #ifdef CGAL_USE_LEDA
     test_algebraic_kernel< CGAL::LEDA_arithmetic_kernel >();
+#endif
+#ifdef CGAL_USE_CORE
+    test_algebraic_kernel< CGAL::CORE_arithmetic_kernel >();
 #endif
     
     return 0;

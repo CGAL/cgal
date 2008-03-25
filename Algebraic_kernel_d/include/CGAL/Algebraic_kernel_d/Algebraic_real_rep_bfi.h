@@ -24,21 +24,16 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_BFI_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
-
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
-/*#include <NiX/NT_traits.h>
-#include <NiX/univariate_polynomial_utils.h>
-#include <NiX/Algebraic_real_rep.h>
-#include <NiX/Arithmetic_traits.h>
-#include <NiX/interval_support.h>*/
 
 
-CGAL_BEGIN_NAMESPACE
-;
-namespace CGALi {
+CGAL_BEGIN_NAMESPACE;
 
 template <class NT> class Get_arithmetic_kernel;
+
+namespace CGALi {
 
 // definition of the Algebraic_real_rep_bfi x:
     
@@ -62,7 +57,7 @@ class Algebraic_real_rep_bfi
     typedef Coefficient_                            Coefficient;
     typedef Field_                                  Field;
     
-    typedef typename CGALi::Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel AT;
+    typedef typename CGAL::Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel AT;
     typedef typename AT::Bigfloat          BF;
     typedef typename AT::Bigfloat_interval BFI;
     typedef typename AT::Field_with_sqrt   FWS; 
@@ -96,7 +91,7 @@ private:
             if(poly[i].is_extended()){
 //                typename Coercion_traits<FWS,ROOT >::Cast cast_root;  
 //                root = convert_to_bfi(NiX::sqrt(cast_root(poly[i].root())));
-                root = CGALi::sqrt(convert_to_bfi(poly[i].root()));
+                root = CGAL::sqrt(convert_to_bfi(poly[i].root()));
                 break;  
             }
         }
@@ -309,7 +304,7 @@ public:
         CGAL_precondition(current_prec > 1);
         current_prec *= 2;
         // std::cout <<"ALGREAL: refine approx: "<<  current_prec<<std::endl;
-        set_precision(BF(),current_prec);
+        set_precision(BFI(),current_prec);
         polynomial_approx.clear();
         convert_coeffs(
                 this->polynomial(),
@@ -325,12 +320,12 @@ public:
     };
     
     void update_poly_approximation() const {
-        long old_prec = set_precision( BF(), current_prec );
+        long old_prec = set_precision( BFI(), current_prec );
         
         polynomial_approx.clear();
         convert_coeffs( this->polynomial(), std::back_inserter( polynomial_approx ) );
                     
-        set_precision( BF(), old_prec );
+        set_precision( BFI(), old_prec );
         
         // TODO: Problems if the next block gets executed
 //        Self const *next = static_cast<const Self *>(this->next);
@@ -359,7 +354,7 @@ public:
 protected:
     virtual CGAL::Sign sign_of_polynomial_at( const Field& f ) const {
         //return polynomial().sign_at( f );
-        long old_prec = set_precision(BF(),current_prec);
+        long old_prec = set_precision(BFI(),current_prec);
 
         Field m = f;
         CGAL::simplify(m);
@@ -374,10 +369,10 @@ protected:
         
         BFI eval = evaluate_polynomial_approx(convert_to_bfi(m));
                 
-        CGAL::Sign s = CGAL::sign(CGALi::lower(eval));
+        CGAL::Sign s = CGAL::sign(CGAL::lower(eval));
               
         // correct sign if needed
-        if( s*CGAL::sign(CGALi::upper(eval) ) != CGAL::POSITIVE ){
+        if( s*CGAL::sign(CGAL::upper(eval) ) != CGAL::POSITIVE ){
             
             //std::cout << "APPROX FAILED-------------------------------"<<std::endl;
             s = this->polynomial().sign_at(m);
@@ -395,7 +390,7 @@ protected:
             else                            this->high_ = m; 
         }
 
-        set_precision(BF(),old_prec);
+        set_precision(BFI(),old_prec);
         
         return s;
     }    

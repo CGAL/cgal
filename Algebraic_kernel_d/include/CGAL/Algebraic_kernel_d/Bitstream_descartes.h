@@ -33,11 +33,6 @@
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
-/*#include <NiX/NT_traits.h>
-#include <NiX/Polynomial.h> 
-#include <NiX/Bitstream_descartes_rndl_tree.h>
-#include <NiX/Bitstream_descartes_rndl_tree_traits.h>
-#include <NiX/Get_arithmetic_traits.h>*/
 
 // TODO: Support this...
 /*#ifdef NiX_ISOLATION_TIMER
@@ -65,7 +60,7 @@ public:
 private:
     typedef typename Polynomial::NT Coefficient; 
  
-    typedef typename CGALi::Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel AT;
+    typedef typename Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel AT;
     
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;

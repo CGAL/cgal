@@ -24,41 +24,25 @@
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Interval_nt.h>
 
-
-
-
-/* *#include <NiX/basic.h>
-#include <NiX/enums.h>
-#include <NiX/Polynomial.h>
-#include <NiX/NT_traits.h>
-#include <NiX/Descartes.h>
-#include <NiX/Real_roots.h>
-#include <NiX/univariate_polynomial_utils.h>
-#include <NiX/Algebraic_real_rep.h>
-#include <NiX/number_type_utils.h>  // convert_to*/
-
 #include <iterator>
 #include <list>
 #include <vector>
 #include <queue>
 
-#ifndef NiX_REFINEMENTS_BEFORE_GCD
-#define NiX_REFINEMENTS_BEFORE_GCD 0
-#endif
-
 CGAL_BEGIN_NAMESPACE 
-; 
-
 namespace CGALi {
+template <class Coefficient_,  class Rational_, 
+          class HandlePolicy , class RepClass  >
+class Algebraic_real_pure;
+}
 
+template <class COEFF, class RAT, class POLICY, class REPCLASS >
+typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel::Bigfloat_interval
+inline
+convert_to_bfi(
+const CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >& x);
 
-// TODO: Replace DEBUG implementation of overlap
-/*bool overlap( const std::pair<double, double>& a, 
-              const std::pair<double, double>& b ) {
-    return( (a.first <= b.second && a.second >= b.first) ||
-            (b.first <= a.second && b.second >= a.first) );
-}*/
-
+namespace CGALi { 
 /*! \ingroup NiX_Algebraic_real
   \brief  An Algebraic_real_pure \a x is represented by a polynomial and an 
   isolating interval. It is guaranteed that the polynomial is square free. 
@@ -80,7 +64,7 @@ namespace CGALi {
 template <class Coefficient_, 
           class Rational_,            
           class HandlePolicy = ::CGAL::Handle_policy_no_union,
-          class RepClass = Algebraic_real_rep< Coefficient_, Rational_ > >
+          class RepClass = CGALi::Algebraic_real_rep< Coefficient_, Rational_ > >
 class Algebraic_real_pure :
         public
 ::CGAL::Handle_with_policy< RepClass, HandlePolicy > {    
@@ -97,10 +81,8 @@ public :
     typedef Algebraic_real_pure<Coefficient,Rational, HandlePolicy, RepClass> Self;
 private:
     typedef CGAL::Fraction_traits<Rational> FT_rational;
-//    typedef CGALi::Descartes<Polynomial,Rational> Isolator;
     typedef typename FT_rational::Numerator_type Integer;
 public:
-//    typedef CGALi::Real_roots<Self,Isolator>   Real_roots;
  
     //! creates the algebraic real as \c Rational from \a i.
     explicit Algebraic_real_pure(int i = 0 ) : Base(i) { }
@@ -163,14 +145,12 @@ public:
         if( this->ptr()->interval_option ) {
             return *(this->ptr()->interval_option);
         } else {
-            typedef typename Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Bigfloat BF;
-            //typedef typename LEDA_arithmetic_kernel::Bigfloat BF;
-            long old_precision = get_precision( BF() );
-            set_precision( BF(), 53 );
-            this->ptr()->interval_option = 
-            typename Algebraic_real_rep<Coefficient,Rational>::Interval_option( CGAL::to_interval( convert_to_bfi( (*this) ) ) );
-            //CGALi::to_interval( convert_to_bfi( (*this) ) );
-            set_precision( BF(), old_precision );
+            typedef typename Get_arithmetic_kernel< Coefficient >::Arithmetic_kernel::Bigfloat_interval BFI;
+            long old_precision = get_precision( BFI() );
+            set_precision( BFI(), 53 );
+            std::pair<double, double> interval = CGAL::to_interval( convert_to_bfi( (*this)));
+            this->ptr()->interval_option = boost::optional< std::pair<double, double> >(interval);
+            set_precision( BFI(), old_precision );
             return *(this->ptr()->interval_option);            
         }
     }
@@ -342,7 +322,8 @@ public:
 
 }; // class Algebraic_real_pure 
 
-} // namespace CGALi
+} // namespace CGALi 
+
 
 //----------------------------------------------------------
 
@@ -360,7 +341,7 @@ public:
 
   public:
     
-    typedef typename CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > Type;
+    typedef CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > Type;
         
     class Compare
         : public Binary_function< Type, Type, CGAL::Comparison_result > {
@@ -395,14 +376,13 @@ public:
     };        
 };
   
-
 /*! \relates NiX::Algebraic_real_pure
  *  \brief outputs \c x to \c os 
  */
 /*template<class Coefficient, class Rational, class HandlePolicy>
 std::ostream& 
 operator << (std::ostream& os, 
-             const CGALi::Algebraic_real_pure<Coefficient,Rational,HandlePolicy>& x){
+             const Algebraic_real_pure<Coefficient,Rational,HandlePolicy>& x){
     os << 2 << " " << x.polynomial() << " ";
     os << "[ " << oformat(x.low()) << " , " << oformat(x.high()) << " ]";
     return os;
@@ -413,9 +393,9 @@ operator << (std::ostream& os,
 /*template<class Coefficient, class Rational, class HandlePolicy>
 std::istream& 
 operator >> (std::istream& is, 
-             CGALi::Algebraic_real_pure<Coefficient, Rational,HandlePolicy>& x){  
+             Algebraic_real_pure<Coefficient, Rational,HandlePolicy>& x){  
     
-    typedef CGALi::Algebraic_real_pure<Coefficient,Rational,HandlePolicy> ALGNUM;    
+    typedef Algebraic_real_pure<Coefficient,Rational,HandlePolicy> ALGNUM;    
     int i;    
     is >> i;
     
@@ -446,6 +426,34 @@ operator >> (std::istream& is,
     return is;
 }*/
 
+template <class COEFF, class RAT, class POLICY, class REPCLASS >
+typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel::Bigfloat_interval
+inline
+convert_to_bfi(const CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >& x){
+    typedef typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel AT;
+    typedef typename AT::Bigfloat BF;
+    typedef typename AT::Bigfloat_interval BFI; 
+    typedef CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS > ALG;
+
+    if (x.is_rational()) return convert_to_bfi(x.rational());
+    
+    if(CGAL::sign(x) == CGAL::ZERO) return (BF(0));
+    
+    CGAL_postcondition(CGAL::sign(x.low()) == CGAL::sign(x.high()));
+    long final_prec = set_precision( BFI(),get_precision( BFI())+4);
+  
+    BFI bfi = CGAL::hull(convert_to_bfi(x.low()), convert_to_bfi(x.high()));
+    
+    while( !singleton(bfi) &&  get_significant_bits(bfi) < final_prec  ){
+        x.refine();
+        bfi = CGAL::hull(
+                convert_to_bfi(x.low()), 
+                convert_to_bfi(x.high()));
+    }
+
+    set_precision(BFI(),final_prec);
+    return bfi; 
+}
 
 CGAL_END_NAMESPACE
 

@@ -21,11 +21,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/may_have_common_factor.h>
-// #include <CGAL/Algebraic_kernel_d/interval_support.h>
 #include <CGAL/interval_support.h>
-//#include <NiX/NT_traits.h>
-//#include <NiX/univariate_polynomial_utils.h>
-
 #include <boost/optional.hpp>
 
 CGAL_BEGIN_NAMESPACE
@@ -364,22 +360,7 @@ public:
         // type of both x and y still IS_GENERAL
         if ( high()   <= y.low() ) return CGAL::SMALLER;
         if ( y.high() <=   low() ) return CGAL::LARGER;
-        
-        // filter 1 (optional): determine distinctness by refining intervals
-#if NiX_REFINEMENTS_BEFORE_GCD > 0
-        if (!are_distinct) {
-            // we may want to refine a bit and hope for the best
-            // because computing the gcd is expensive
-            for (int ntries=0; ntries < NiX_REFINEMENTS_BEFORE_GCD; ntries++) {
-                y.refine();
-                refine();
-                if (y.is_rational()) return    compare(y.rational());
-                if (  is_rational()) return -y.compare(  rational());
-                if (  high() <= y.low()) return CGAL::SMALLER;
-                if (y.high() <=   low()) return CGAL::LARGER;
-            }
-        }
-#endif
+       
         // filter 2: probabilistically check coprimality
         if (!are_distinct) {
             are_distinct = !(may_have_common_factor(polynomial(),

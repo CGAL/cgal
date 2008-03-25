@@ -16,7 +16,6 @@
 #include <cassert>
 #include <CGAL/Algebraic_kernel_1.h>
 
-#include <CGAL/_test_basic.h>
 
 // Test for the Algebraic_kernel syntax
 #ifndef CGAL_TEST_ALGEBRAIC_KERNEL_1_H
