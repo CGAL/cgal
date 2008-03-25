@@ -76,6 +76,9 @@ int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIt
     typedef Polynomial<NT> POLY;
     typedef typename Fraction_traits<POLY>::Numerator_type INTPOLY;
     typedef typename Fraction_traits<POLY>::Denominator_type DENOM;
+    typename Fraction_traits<POLY>::Decompose decompose;
+    typename Fraction_traits<POLY>::Compose compose;
+    
     typedef typename INTPOLY::NT INTNT;
     typedef std::vector<INTPOLY> PVEC;
     typedef typename PVEC::iterator Iterator;
@@ -86,10 +89,11 @@ int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIt
     std::back_insert_iterator<PVEC> fac_bi(fac);
 
     a.simplify_coefficients();
-    INTPOLY p = integralize_polynomial(a, dummy);
+    INTPOLY p;
+    decompose(a,p, dummy);
     int d = square_free_factorization_utcf_(p, fac_bi, multiplicities, Algebraic_category());
     for (Iterator it = fac.begin(); it != fac.end(); ++it) {
-        POLY q = fractionalize_polynomial<POLY>(*it, DENOM(1));
+        POLY q = compose(*it, DENOM(1));
         q /= q.lcoeff();
         q.simplify_coefficients();
         *factors++ = q;

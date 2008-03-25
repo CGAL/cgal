@@ -639,15 +639,17 @@ void integr() {
     typedef CGAL::Polynomial<FNT> FPOLY;
     typedef typename CGAL::Fraction_traits<FPOLY>::Numerator_type IPOLY;
     typedef typename CGAL::Fraction_traits<FPOLY>::Denominator_type DENOM;
+    typename CGAL::Fraction_traits<FPOLY>::Decompose decompose;
+    typename CGAL::Fraction_traits<FPOLY>::Compose compose;
     typedef typename IPOLY::NT INT;
 
     // making polynomials integral and fractional
     FPOLY fp(FNT(1)/FNT(2), FNT(2)/FNT(3), FNT(3)/FNT(5));
     IPOLY ip; DENOM d;
-    ip = integralize_polynomial(fp, d);
+    decompose(fp, ip,d);
     assert( d == DENOM(30) );
     assert( ip == IPOLY(INT(15), INT(20), INT(18)) );
-    assert( fp == CGAL::fractionalize_polynomial<FPOLY>(ip, d) );
+    assert( fp == compose(ip, d) );
 }
 
 template <class NT>

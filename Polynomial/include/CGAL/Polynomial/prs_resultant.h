@@ -136,13 +136,14 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
     typedef Polynomial<NT> POLY;
     typedef typename Fraction_traits<POLY>::Numerator_type INTPOLY;
     typedef typename Fraction_traits<POLY>::Denominator_type DENOM;
+    typename Fraction_traits<POLY>::Decompose decompose;
     typedef typename INTPOLY::NT RES;
     
     DENOM a, b;
     A.simplify_coefficients();
     B.simplify_coefficients();
-    INTPOLY A0 = integralize_polynomial(A, a);
-    INTPOLY B0 = integralize_polynomial(B, b);
+    INTPOLY A0; decompose(A,A0,a);
+    INTPOLY B0; decompose(B,B0,b);
     DENOM c = POLYNOMIAL::ipower(a, B.degree()) * POLYNOMIAL::ipower(b, A.degree());
     typedef typename Algebraic_structure_traits<RES>::Algebraic_category Algebraic_category;
     RES res0 = INTERN_PRS_RESULTANT::prs_resultant_(A0, B0, Algebraic_category());

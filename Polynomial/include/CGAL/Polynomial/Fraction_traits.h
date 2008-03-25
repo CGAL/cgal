@@ -29,19 +29,6 @@ CGAL_BEGIN_NAMESPACE
 template <class POLY, class TAG>
 class Poly_Ftr_base;
 
-template <class POLY>
-POLY fractionalize_polynomial(
-    const typename Fraction_traits<POLY>::Numerator_type& p,
-    const typename Fraction_traits<POLY>::Denominator_type& c
-);
-
-template <class POLY>
-typename Fraction_traits<POLY>::Numerator_type
-integralize_polynomial(
-    const POLY& p,
-    typename Fraction_traits<POLY>::Denominator_type& c
-);
-
 // Use this if the coefficients cannot be decomposed
 // into numerator and denominator
 template <class NT_>
@@ -155,34 +142,6 @@ class Fraction_traits< Polynomial<NT_> >
 {
     // nothing new
 };
-
-/*! \ingroup NiX_Polynomial
-    \relates NiX::Polynomial
- *  \brief implement \c NiX::Fraction_traits::Decompose
- */
-template <class POLY>
-typename Fraction_traits<POLY>::Numerator_type
-integralize_polynomial(
-    const POLY& p,
-    typename Fraction_traits<POLY>::Denominator_type& c
-) {
-    typename Fraction_traits<POLY>::Numerator_type n;
-    typename Fraction_traits<POLY>::Decompose()(p,n,c);
-    return n;
-}
-
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
- *  \brief implement \c NiX::Fraction_traits::Compose
- */
-template <class POLY>
-inline
-POLY fractionalize_polynomial(
-    const typename Fraction_traits<POLY>::Numerator_type& p,
-    const typename Fraction_traits<POLY>::Denominator_type& c
-) {
-    return typename Fraction_traits<POLY>::Compose()(p,c);
-}
 
 CGAL_END_NAMESPACE
 #endif // CGAL_POLYNOMIAL_FRACTION_TRAITS_H

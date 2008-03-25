@@ -383,17 +383,19 @@ Polynomial<NT> gcd_utcf_(
     typedef Polynomial<NT> POLY;
     typedef typename Fraction_traits<POLY>::Numerator_type INTPOLY;
     typedef typename Fraction_traits<POLY>::Denominator_type DENOM;
+    typename Fraction_traits<POLY>::Decompose decompose;
+    typename Fraction_traits<POLY>::Compose compose;
     typedef typename INTPOLY::NT INTNT;
 
     DENOM dummy;
     p1.simplify_coefficients();
     p2.simplify_coefficients();
-    INTPOLY p1i = integralize_polynomial(p1, dummy);
-    INTPOLY p2i = integralize_polynomial(p2, dummy);
+    INTPOLY p1i; decompose(p1,p1i, dummy);
+    INTPOLY p2i; decompose(p2,p2i, dummy);
 
     typedef typename Algebraic_structure_traits<INTNT>::Algebraic_category Algebraic_category;
     INTPOLY d0 = gcd_utcf_(p1i, p2i, Algebraic_category());
-    POLY d = fractionalize_polynomial<POLY>(d0, DENOM(1));
+    POLY d = compose(d0, DENOM(1));
     d /= d.unit_part();
     d.simplify_coefficients();
     return d;
@@ -644,14 +646,16 @@ Polynomial<NT> gcdex_(
     typedef Polynomial<NT> POLY;
     typedef typename Fraction_traits<POLY>::Numerator_type INTPOLY;
     typedef typename Fraction_traits<POLY>::Denominator_type DENOM;
+    typename Fraction_traits<POLY>::Decompose decompose;
+    typename Fraction_traits<POLY>::Compose compose;
     typedef typename INTPOLY::NT INTNT;
 
     // rewrite  x as xi/xd  and  y as yi/yd  with integral polynomials xi, yi
     DENOM xd, yd;
     x.simplify_coefficients();
     y.simplify_coefficients();
-    INTPOLY xi = integralize_polynomial(x, xd);
-    INTPOLY yi = integralize_polynomial(y, yd);
+    INTPOLY xi;decompose(x,xi, xd);
+    INTPOLY yi;decompose(y,yi, yd);
 
     // compute the integral gcd with cofactors:
     // vi = gcd(xi, yi);  vfi*vi == xfi*xi + yfi*yi
@@ -659,14 +663,14 @@ Polynomial<NT> gcdex_(
     INTPOLY vi = pseudo_gcdex(xi, yi, xfi, yfi, vfi);
 
     // proceed to vfi*v == xfi*x + yfi*y  with v = gcd(x,y) (unit-normal)
-    POLY v = fractionalize_polynomial<POLY>(vi, vi.lcoeff());
+    POLY v = compose(vi, vi.lcoeff());
     v.simplify_coefficients();
     CGAL_assertion(v.unit_part() == NT(1));
     vfi *= vi.lcoeff(); xfi *= xd; yfi *= yd;
 
     // compute xf, yf such that gcd(x,y) == v == xf*x + yf*y
-    xf = fractionalize_polynomial<POLY>(xfi, vfi);
-    yf = fractionalize_polynomial<POLY>(yfi, vfi);
+    xf = compose(xfi, vfi);
+    yf = compose(yfi, vfi);
     xf.simplify_coefficients();
     yf.simplify_coefficients();
     return v;

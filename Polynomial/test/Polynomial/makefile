@@ -15,7 +15,8 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -I../Number_types/include \
+           -I../../../Number_types/test/Number_types/include \
+           -I../../../Algebraic_foundations/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
