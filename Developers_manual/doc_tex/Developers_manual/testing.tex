@@ -47,10 +47,9 @@ It is strongly recommended for a test suite of a package to
       that they are usable with different kernels. In such cases more than one
       kernel should be used for testing.
 \item Use pre- and postcondition checkers wherever it is possible in the
-      main code.  In the test-suite code itself, the macro \ccc{CGAL_test_assert}
-      (defined in \ccc{<CGAL/Testsuite/assert.h>}) should be used in place of
-      \ccc{assert} to check all conditions, since the former is not disabled by
-      \ccc{NDEBUG}. 
+      main code.  In the test-suite code itself, the macro \ccc{assert}
+      should be used in place of \ccc{CGAL_assertion} to check 
+      all conditions, since \ccc{assert} is not disabled by \ccc{CGAL_NDEBUG}. 
 \end {itemize}
 
 \section{Using the code coverage tool \texttt{gcov}}
