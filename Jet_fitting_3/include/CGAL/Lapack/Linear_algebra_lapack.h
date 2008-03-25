@@ -18,6 +18,7 @@
 #ifndef CGAL_LAPACK_H
 #define CGAL_LAPACK_H
 
+#include <cstdlib>
 #include <CGAL/auto_link/LAPACK.h>
 
 extern "C" {
@@ -62,7 +63,7 @@ class Lapack_vector{
   //contructor
   // initializes all the elements of the vector to zero.
   Lapack_vector(size_t n) { 
-    m_vector = (FT*) calloc (n, sizeof(FT)); 
+    m_vector = (FT*) std::calloc (n, sizeof(FT)); 
     nb_elts = n;
   }
   
@@ -90,7 +91,7 @@ public:
   //contructor
   // initializes all the elements of the matrix to zero.
   Lapack_matrix(size_t n1, size_t n2) { 
-    m_matrix = (FT*) calloc (n1*n2, sizeof(FT)); 
+    m_matrix = (FT*) std::calloc (n1*n2, sizeof(FT)); 
     nb_rows = n1;
     nb_columns = n2;
   }
@@ -130,8 +131,8 @@ Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
     lwork = 5*m,
     info;
   //c style
-  FT* sing_values = (FT*) malloc(n*sizeof(FT));
-  FT* work = (FT*) malloc(lwork*sizeof(FT));
+  FT* sing_values = (FT*) std::malloc(n*sizeof(FT));
+  FT* work = (FT*) std::malloc(lwork*sizeof(FT));
 
   FT rcond = -1;
 
