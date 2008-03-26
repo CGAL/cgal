@@ -223,7 +223,7 @@ private:
 
 
 /*!\brief 
- * Kernel for unbounded planar curves, and points and arcs of them
+ * Kernel for curves in a two-dimensional space, and points and arcs of them.
  * 
  * It expects a CurveKernel_2 type that fulfills the CurveKernel_2 concept.
  * The other template parameters can be left default. They are used during
@@ -296,16 +296,20 @@ protected:
     typedef Arc_ Arc;
 
     //! this instance itself
-    typedef Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA, Point, Arc > 
-    Self;
+    typedef 
+    Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA, Point, Arc > Self;
     
-    //! type of CKvA_2 used internally
+private: 
+    
     typedef typename boost::mpl::if_< 
               boost::mpl::bool_< boost::is_void< CKvA >::value >, 
               Curved_kernel_via_analysis_2< CurveKernel_2 >,
               CKvA
-            >::type
-    CKvA_2;
+            >::type CKvA_2_;
+    
+protected:
+    //! type of CKvA_2 used internally
+    typedef CKvA_2_ CKvA_2;
 
     //!@}
 
@@ -331,7 +335,7 @@ public:
     //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
     //!@{
 
-    //! type of curve_2
+    //! type of curve that can be analyzed
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
         
     //! type of a point on a curve that can be analyzed
@@ -391,13 +395,15 @@ public:
     
     //!@}
 
-    //!\name Additinonal functors
-    //!{
+    //!\name Additional functors
+    //!@{
 
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_CKvA_2_functor_pred(Y, Z) \
+    /*!\brief functor */ \
     typedef CGALi::Curved_kernel_via_analysis_2_Functors::Y< CKvA_2 > Y; \
+    /*! returns instance of functor */ \
     Y Z() const { return Y(&CKvA_2::instance()); }
 
 #define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)

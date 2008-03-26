@@ -121,9 +121,9 @@ public:
 /*!\brief 
  * Class defines a point on a curve that can be analyzed
  * 
- * Only points with interior can be constructed explicitly 
- * (by the user). Points on the boundary use special private constructors and
- * required to represent ends of curve arcs on the boundary.
+ * Only points with finite coordinates can be constructed explicitly 
+ * (by the user). Points on the boundary use special private constructors to
+ * to represent ends of curve arcs on the boundary.
  */
 template <class CurvedKernelViaAnalysis_2, 
           class Rep_ = CGALi::Point_2_rep<CurvedKernelViaAnalysis_2> >
@@ -146,10 +146,10 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
     
-    //! type of x-coordinate
+    //! type of an x-coordinate
     typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
-    //! type of a finite point on curve
+    //! type of an xy-coordinate
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! type that analyzes a curve
@@ -336,7 +336,7 @@ public:
      * Access to the point's x-coordinate (y-coordinate can be undefined)
      * 
      * \return The stored x-coordinate
-     * \pre the point's x must be finite (set by construction)
+     * \pre the point's x must be finite
      */
     inline 
     const X_coordinate_1& x() const {
@@ -352,8 +352,7 @@ public:
      * Access to underlying \c Xy_coordinate_2 object
      *
      * \return The stored xy-coordinate
-     * \pre finite x/y coordinates must be set by construction, i.e., interior
-     * point
+     * \pre The xy-coordinates must be finite
      */
     inline 
     const Xy_coordinate_2& xy() const {
@@ -377,7 +376,7 @@ public:
     }
     
     /*!\brief
-     * Arc number of point
+     * Arc number of point on a curve
      *
      * \return arcno of point
      * \pre Is not endpoint of a vertical ray or branch 
@@ -398,6 +397,9 @@ public:
     
     /*!\brief
      * sets location of a point in parameter space to \c loc
+     *
+     * It is supposed that the user thoroughly understands malicious
+     * consequences that may result from the misuse of the location
      */
     inline
     void set_location(CGAL::Arr_parameter_space loc) const {
@@ -453,7 +455,7 @@ public:
          Curved_kernel_via_analysis_2::instance().Z(); \
 
     /*!\brief
-     * Compares x-coordinates of this point with another
+     * Compares x-coordinates of this point with \c q
      * 
      * \param q The other point
      * \return CGAL::LARGER if x(*this) > x(q);
@@ -474,11 +476,11 @@ public:
     }
 
     /*!\brief 
-     * Compares this point with another point  lexicographically
+     * Compares this point with \c q lexicographically
      * 
      * \param q The other point
      * \return CGAL::LARGER if x(*this) > x(q), 
-     *                      or if x(8this) = x(q) and y(*this) > y(q);
+     *                      or if x(*this) = x(q) and y(*this) > y(q);
      *         CGAL::SMALLER if x(*this) \< x(q), 
      *                       or if x(*this) = x(q) and y(*this) \< y(q);
      *         CGAL::EQUAL if the two points are equal.

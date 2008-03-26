@@ -174,13 +174,13 @@ public:
  * An arc is either non-vertical or vertical. If it is non-vertical,
  * we can assign a constant arc number to its interior and we may can assign
  * (non-identical) arc numbers to its end-points. It depends on whether
- * the arc toches the bondary of the parameter space or not.
+ * the arc touches the boundary of the parameter space or not.
  * If it is vertical, no arc number is available.
  *
  * We distinguish between interior arcs, rays, and branches. An interior arc
- * lies completely in the parameter space, while a ray has one end that lies
- * on the boundary of the parameter space, and both ends of a branch lie on
- * the boundary.
+ * lies completely in the interior of the parameter space, 
+ * while a ray has one end that lies on the boundary of the parameter space, 
+ * and a branch has two end that lie on the boundary.
  * 
  */
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
@@ -207,10 +207,10 @@ public:
     //! type of an x-coordinate
     typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
 
-    //! type of a finite point on curve
+    //! type of an xy-coordinate
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
-    // type of boundary value in x-range
+    //! type of "rational" value in x-range
     typedef typename Curve_kernel_2::Boundary Boundary;
     
     //! type of analysis of a pair of curves
@@ -661,7 +661,7 @@ public:
     /*!\brief
      *  Sets boundary type for an end of an arc
      *
-     * It's supposed that the user thoroughly understands malicious
+     * It is supposed that the user thoroughly understands malicious
      * consequences that may result from the misuse of the location
      *
      * \param ce The intended end
@@ -764,7 +764,7 @@ public:
     /*!\brief 
      * arc number at given x-coordinate
      *
-     * If \c x0 equals to source's or target's x-coordinate,
+     * If \c x0 is equal to source's or target's x-coordinate,
      * then the arc number of that point is returned.
      * Otherwise the arc number of the interior is returned.
      *
@@ -808,7 +808,7 @@ public:
     /*!\brief
      * returns x-coordinate of vertical arc
      *
-     * \return x-coordinate line that contains vertical arc
+     * \return x-coordinate of line that contains vertical arc
      * \pre is_vertical
      */
     inline
@@ -823,8 +823,8 @@ public:
     //!@{
 
     /*!\brief
-     * returns the index of an open interval between two events *this arc 
-     * belongs to
+     * returns the index of an open interval between two events of the 
+     * curve the arc belongs to
      *
      * \return interval id of supporting curve for this arc
      * \pre !is_vertical()
@@ -909,16 +909,16 @@ public:
     
     /*!
      * Compare the relative x-positions of an interior point
-     * this arc's end on a bottom or top boundary
+     * and the arc's end on a bottom or top boundary
      * 
      * \param p A reference point; we refer to a vertical line incident to p.
-     * \param ce ARR_MIN_END if we refer to cv's minimal end,
+     * \param ce ARR_MIN_END if we refer to the arc's minimal end,
      *            ARR_MAX_END if we refer to its maximal end.
-     * \return CGAL::SMALLER if p lies to the left of cv;
-     *         CGAL::LARGER  if p lies to the right of cv;
+     * \return CGAL::SMALLER if p lies to the left of the arc;
+     *         CGAL::LARGER  if p lies to the right of the arc;
      *         CGAL::EQUAL   in case of an overlap.
      *
-     * \pre curve's relevant end is on bottom or top boundary
+     * \pre the arc's relevant end is on bottom or top boundary
      */
     CGAL::Comparison_result compare_x_near_boundary(
             CGAL::Arr_curve_end ce,
@@ -935,7 +935,7 @@ public:
     }
     
     /*!\brief
-     * Compare the relative x-positions of the curve ends of \c *this
+     * Compare the relative x-positions of the curve end of \c *this
      * and \c cv2
      * \param ce1 ARR_MIN_END if we refer to this' minimal end,
      *             ARR_MAX_END if we refer to this' maximal end.
@@ -946,7 +946,7 @@ public:
      *         CGAL::LARGER  if \c this lies to the right of cv2;
      *         CGAL::EQUAL   in case of an overlap.
      *
-     * \pre the curve end lies on the bottom or top boundary
+     * \pre the curve ends lie on the bottom or top boundary
      */
 #if 0 // TODO activate cache again (in functor?) (Pavel)
     CGAL::Comparison_result compare_x_near_boundary(
@@ -1055,11 +1055,11 @@ public:
 #endif    
 
     /*!\brief
-     * Compares the relative aligment of this arc with a second 
+     * Compares the relative vertical aligment of this arc with a second 
      * immediately to the left of one of their intersection points. 
      * 
      * If one of the curves is vertical (emanating downward from p), 
-     * it's always considered to be below the other curve.
+     * it is always considered to be below the other curve.
      * 
      * \param cv2 The second arc
      * \param p The intersection point
@@ -1068,7 +1068,7 @@ public:
      *         immediately to the left of p: SMALLER, LARGER or EQUAL.
      *
      * \pre The point p lies on both curves, and both of them must be also be
-     *      defined (lexicographical) to its left.
+     *      defined (lexicographical) to their left.
      */
     CGAL::Comparison_result compare_y_at_x_left(const Kernel_arc_2& cv2, 
                                                 const Point_2 &p) const {
@@ -1083,11 +1083,11 @@ public:
     }
     
     /*!\brief
-     * Compares the relative aligment of this arc with a second 
+     * Compares the relative vertical aligment of this arc with a second 
      * immediately to the right of one of their intersection points. 
      * 
      * If one of the curves is vertical (emanating downward from p), 
-     * it's always considered to be below the other curve.
+     * it is always considered to be below the other curve.
      * 
      * \param cv2 The second arc
      * \param p The intersection point
@@ -1096,7 +1096,7 @@ public:
      *         immediately to the right of p: SMALLER, LARGER or EQUAL.
      *
      * \pre The point p lies on both curves, and both of them must be also be
-     *      defined (lexicographical) to its right.
+     *      defined (lexicographical) to their right.
      */
     CGAL::Comparison_result compare_y_at_x_right(const Kernel_arc_2& cv2, 
                                                  const Point_2 &p) const {
@@ -1181,7 +1181,7 @@ public:
     }
     
     /*!\brief 
-     * Checks whether a given arcs is equal to this one
+     * Checks whether a given arc is equal to this one
      *
      * \param cv2 The query arc
      * \return \c true iff this arc is equal to \c cv, \c false otherwise
@@ -1220,6 +1220,7 @@ public:
      *
      * \param cv2 The second arc
      * \param p The intersection point
+     * \return The multiplicity of the intersection at \c p
      * \pre \c p must be an intersection point.
      */
     int multiplicity_of_intersection(
@@ -1397,11 +1398,11 @@ public:
     }
 
     /*!\brief
-     * Split a arc at a given point into two sub-arc
+     * Split an arc at a given point into two sub-arcs
      * 
      * \param p The split point
-     * \param s1 Output: The left resulting subcurve (p is its right endpoint)
-     * \param s2 Output: The right resulting subcurve (p is its left endpoint)
+     * \param s1 Output: The left resulting sub-arc (p is its right endpoint)
+     * \param s2 Output: The right resulting sub-arc (p is its left endpoint)
      * 
      * \pre p lies on cv but is not one of its end-points.
      */
@@ -2208,7 +2209,8 @@ protected:
      * curves \c cpa_2, we search for a curve this arc lies on and reset arc's
      * supporting curve and arcnos appropriately.
      *
-     * \param cpa_2 analysis o curve pair that should be used in simplification
+     * \param cpa_2 analysis of curve pair that should be used 
+     *              in simplification
      * \pre \c cpa_2 must correspond to a decomposition of this arc's 
      * supporting curve
      */
@@ -2518,7 +2520,7 @@ protected:
      * 
      * \param cv1 the first arc
      * \param cv2 the second arc
-     * \param oi reporting zero-dimensional intersection through this output
+     * \param oi reporting zero-dimensional intersections through this output
      *        iterator
      * \pre !cv1.do_overlap()
      */
@@ -2548,7 +2550,7 @@ protected:
      * 
      * \param cv1 the first arc
      * \param cv2 the second arc
-     * \param oi reporting zero-dimensional intersection through this output
+     * \param oi reporting zero-dimensional intersections through this output
      *        iterator
      * 
      */
@@ -2697,7 +2699,7 @@ protected:
     
     /*!\brief
      * computes zero-dimensional 
-     * intersection of two arcs having coprime supporting curves
+     * intersections of two arcs having coprime supporting curves
      * 
      * intersection points are inserted to the output iterator \c oi as objects
      * of type <tt>std::pair<Point_2, unsigned int></tt> (intersection point + 
@@ -2705,7 +2707,7 @@ protected:
      *
      * \param cv1 the first arc
      * \param cv2 the second arc
-     * \param oi reporting zero-dimensional intersection through this output
+     * \param oi reporting zero-dimensional intersections through this output
      *        iterator
      */
     template <class OutputIterator>
@@ -2920,6 +2922,8 @@ public:
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Is_on_2);
 
 #undef CGAL_BEFRIEND_CKvA_2_FUNCTOR
+
+private:
 
     // type of CurveSweepTraits model
     typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
