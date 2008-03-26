@@ -68,12 +68,6 @@ typedef CGAL::Surface_mesh_default_triangulation_3 Str;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Str> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
 
-
-// ----------------------------------------------------------------------------
-// Private functions
-// ----------------------------------------------------------------------------
-
-
 // ----------------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------------
@@ -241,5 +235,4 @@ int main()
 }
 
 #endif // CGAL_USE_TAUCS
-
 

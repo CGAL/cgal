@@ -1,4 +1,22 @@
+// normal_estimation_test.cpp
+
+
+// ----------------------------------------------------------------------------
+// USAGE EXAMPLES
+// ----------------------------------------------------------------------------
+
+//----------------------------------------------------------
+// Test the normal estimation methods
+// No output
+// Input files are .xyz
+//----------------------------------------------------------
+// normal_estimation_test mesh1.xyz mesh2.xyz...
+
+
 #include <CGAL/basic.h> // include basic.h before testing #defines
+
+#ifdef CGAL_USE_LAPACK
+
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
@@ -16,12 +34,21 @@
 #include <cassert>
 #include <iterator>
 
-// types
+// ----------------------------------------------------------------------------
+// Private types
+// ----------------------------------------------------------------------------
+
+// kernel
 typedef CGAL::Simple_cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 typedef CGAL::Oriented_normal_3<Kernel> Normal;
+
+// ----------------------------------------------------------------------------
+// Private functions
+// ----------------------------------------------------------------------------
+
 
 // read point set from .xyz file
 bool read_point_set(char *input_filename,
@@ -65,11 +92,14 @@ void test_jet_fitting(std::list<Point>& points,
 	std::cerr << "ok" << std::endl;
 }
 
-// main function
-int main(int argc, 
-				 char * argv[])
+// ----------------------------------------------------------------------------
+// main()
+// ----------------------------------------------------------------------------
+
+int main(int argc, char * argv[])
 {
   std::cerr << "Normal estimation test" << std::endl;
+  std::cerr << "No output" << std::endl;
 
   if(argc < 2)
   {
@@ -92,6 +122,23 @@ int main(int argc,
 	}
 	return EXIT_SUCCESS;
 }
+ 
+
+#else // CGAL_USE_LAPACK
 
 
+#include <iostream>
+#include <cstdlib>
+
+// ----------------------------------------------------------------------------
+// Empty main() if LAPACK is not installed
+// ----------------------------------------------------------------------------
+
+int main()
+{
+    std::cerr << "Skip test as LAPACK is not installed" << std::endl;
+    return EXIT_SUCCESS;
+}
+
+#endif // CGAL_USE_LAPACK
 
