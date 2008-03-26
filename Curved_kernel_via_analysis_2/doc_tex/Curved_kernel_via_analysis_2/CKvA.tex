@@ -42,8 +42,19 @@ Section~\ref{cgal:ckva2-ref}
 
 \paragraph{Current Work}
 
-The is also a filtered version. We currently work ob better geometric filters.
-We also extend the kernel to use it on two-dimensionals parametric surfaces. 
+The is also a filtered version, called 
+\ccc{Filtered_curved_kernel_via_analysis_2}. It derives from the the
+usual kernel, that is, it has the same interface. We applied
+an initial set of geometric filters in the derived functors. 
+In order to obtain best filtering, we encourage to instantiate the
+\ccc{Filtered_curved_kernel_via_analysis_2} also with a
+\ccc{Filtered_curve_kernel_2}. We currently work to improve the efficiency
+of the filtered kernels.
+
+Both kernels can also be used to compute arrangements on two-dimensional
+parametric surfaces. We work on kernel-derivations that support 
+points and arcs on curves embedded on parametric surfaces of 
+general interest, like quadrics or torus.
 
 \section{Design and Implementation History}
 
