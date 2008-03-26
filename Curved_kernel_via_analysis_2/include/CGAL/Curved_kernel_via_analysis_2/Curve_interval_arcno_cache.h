@@ -61,11 +61,19 @@ struct Curve_interval_arcno_cache {
     //! end type (+/-oo or \c ARR_INTERIOR )
     typedef std::pair<int, CGAL::Arr_parameter_space> Arcno_desc;
     
+    //! type of first argument
     typedef Status_line_1         first_argument_type;
+
+    //! type of second argument
     typedef bool                  second_argument_type;
-    typedef int                   thirg_argument_type;
+
+    //! type of third arguent
+    typedef int                   third_argument_type;
     
+    //! the result type
     typedef Arcno_desc            result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3> Arity;   
     
     //!@}

@@ -455,6 +455,8 @@ public:
 
     //! the result type
     typedef bool result_type;
+    
+    //! the arity of the functor
     typedef Arity_tag<1> Arity;
     
     /*!\brief 
@@ -497,6 +499,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+    
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
 
     Is_bounded_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -535,6 +539,8 @@ public:
     
     //! the result type
     typedef CGAL::Arr_parameter_space result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
     
     /*!\brief 
@@ -587,6 +593,8 @@ public:
     
     //! the result type
     typedef CGAL::Arr_parameter_space result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
     
     /*!\brief 
@@ -641,6 +649,8 @@ public:
     
     //! the result type
     typedef Point_2 result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<1> Arity;
     
     /*!\brief 
@@ -686,6 +696,8 @@ public:
     
     //! the result type
     typedef Point_2 result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<1> Arity;
     
     /*!\brief 
@@ -731,6 +743,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2>            Arity;
     
     /*!\brief 
@@ -778,6 +792,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2>            Arity;
     
     /*!\brief 
@@ -831,6 +847,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<4>            Arity;
 
     Compare_x_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -1019,6 +1037,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3>            Arity;
     
     /*!\brief 
@@ -1088,6 +1108,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2>            Arity;
     
     /*!\brief 
@@ -1192,6 +1214,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3>            Arity;
     
     /*!\brief 
@@ -1214,7 +1238,7 @@ public:
      * \param cv2 The second arc
      * \param p The intersection point.
      * \return The relative vertical alignment of cv1 with respect to cv2 
-     *         immdiately to the left of p: CGAL::SMALLER, CGAL::LARGER or 
+     *         immediately to the left of p: CGAL::SMALLER, CGAL::LARGER or 
                CGAL::EQUAL.
      *
      * \pre The point p lies on both curves, and both of them must be also be
@@ -1302,6 +1326,8 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3>            Arity;
     
     /*!\brief 
@@ -1324,7 +1350,7 @@ public:
      * \param cv2 The second arc
      * \param p The intersection point.
      * \return The relative vertical alignment of cv1 with respect to cv2 
-     *         immdiately to the right of p: CGAL::SMALLER, CGAL::LARGER or 
+     *         immediately to the right of p: CGAL::SMALLER, CGAL::LARGER or 
                CGAL::EQUAL.
      *
      * \pre The point p lies on both curves, and both of them must be also be
@@ -1411,6 +1437,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2>            Arity;
     
     /*!\brief 
@@ -1454,6 +1482,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
     
     /*!\brief 
@@ -1537,6 +1567,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
     
     /*!\brief 
@@ -1647,6 +1679,8 @@ public:
     
     //! the result type
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3> Arity;    
     
     /*!\brief 
@@ -1665,7 +1699,7 @@ public:
      * Type of output iterator is \c CGAL::Object 
      * containing either an \c Arc_2 object (overlap) or a \c 
      * std::pair< Point_2, unsigned int >, where the unsigned int denotes
-     * the multiplicity of the intersection (if known).
+     * the multiplicity of the zero-dimensional intersection (0 if unknown)
      *
      * \param cv1 The first arc
      * \param cv2 The second arc
@@ -1725,6 +1759,8 @@ public:
     
     //! the result type
     typedef Arc_2 result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<3> Arity;
     
     /*!\brief 
@@ -1767,7 +1803,7 @@ public:
 
 
 /*!\brief
- * Functor that splits an arcs at an interior point
+ * Functor that splits a arc at an interior point
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Split_2 : public 
@@ -1786,6 +1822,8 @@ public:
     
     //! the result type
     typedef void result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<4> Arity;    
     
     /*!\brief 
@@ -1798,7 +1836,7 @@ public:
     }
     
     /*!\brief
-     * Split a given arc at a given point into two sub-arc
+     * Split a given arc at a given point into two sub-arcs
      * 
      * \param cv The arc to split
      * \param p The split point
@@ -1846,6 +1884,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;    
     
     /*!\brief 
@@ -1953,6 +1993,8 @@ public:
     
     //! the result type
     typedef void result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;    
     
     /*!\brief 
@@ -2025,6 +2067,8 @@ public:
     
     //! the result type
     typedef bool result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;
     
     /*!\brief 
@@ -2073,6 +2117,8 @@ public:
     
     //! the result type
     typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+
+    //! the arity of the functor
     typedef Arity_tag<2> Arity;   
     
     /*!\brief 

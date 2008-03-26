@@ -28,13 +28,13 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 /*!\brief 
- * Splits a complete curve into x-monotone sweepable arcs and isolated points.
+ * Splits a curve that can be analyzed 
+ * into connected x-monotone sweepable arcs and isolated points.
  *
- * The given curve is split into sweepable arcs 
- * by cutting it into connected, either x-monotone pieces of constant interior 
- * arc number at every event x-coordinate or vertical
- * (\c CurvedKernelViaAnalysis_2::Arc_2 objects). Isolated
- * points are stored as \c CurvedKernelViaAnalysis_2::Point_2 objects.
+ * Arcs are stored as CurvedKernelViaAnalysis_2::Arc_2 objects, and
+ * each is either vertical or consists of an x-monotone piece 
+ * of constant arc number wrt to the curve at every interior x-coordinate.
+ * Isolated points are stored as \c CurvedKernelViaAnalysis_2::Point_2 objects.
  * 
  * The resulting arcs and points are written to the output iterator as
  * polymorphic \c CGAL::Object. Past-the-end value of the iterator is returned.
@@ -63,7 +63,7 @@ struct Make_x_monotone_2 :
     //! type of x-coordinate
     typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
     
-    //! type of a finite point on curve
+    //! type of xy-coordinate
     typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! type of curve analysis
