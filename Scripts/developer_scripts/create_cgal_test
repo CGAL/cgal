@@ -9,7 +9,7 @@
 # coordinator   : Utrecht University
 # =============================================================================
 #
-# This script creates a cgal_test script with entries for all .C and .cpp 
+# This script creates a cgal_test script with entries for all .C and .cpp
 # files in the current test directory.
 
 VERSION=1.1
@@ -115,6 +115,7 @@ if [ \$# -ne 0 ] ; then
     compile_and_run \$file
   done
 else
+  echo "Run all tests."
 EOF
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
