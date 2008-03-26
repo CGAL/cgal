@@ -32,7 +32,7 @@ else()
   if ( AUTO_LINK_ENABLED )
   
     find_path(TAUCS_LIBRARIES_DIR 
-              NAMES "libtaucs${TOOLSET}-mt" "libtaucs${TOOLSET}-mt-gd" "libtaucs${TOOLSET}-mt-o" "libtaucs${TOOLSET}-mt-g"
+              NAMES "libtaucs-vc71-mt.lib" "libtaucs-vc71-mt-gd.lib" "libtaucs-vc71-mt-o.lib" "libtaucs-vc71-mt-g.lib"
               PATHS ${CGAL_SOURCE_DIR}/auxiliary/taucs/lib
                     ENV TAUCS_LIB_DIR
               DOC "Directory containing the TAUCS library"
