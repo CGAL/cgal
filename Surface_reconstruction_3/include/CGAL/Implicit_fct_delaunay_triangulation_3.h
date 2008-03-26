@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 /// cell class of the Implicit_fct_delaunay_triangulation_3 class.
 /// It provides the interface requested by the Poisson_implicit_function class.
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the ImplicitFctDelaunayTriangulationCellBase_3 concept.
 ///
 /// @heading Parameters:
@@ -93,7 +93,7 @@ private:
 /// vertex class of the Implicit_fct_delaunay_triangulation_3 class.
 /// It provides the interface requested by the Poisson_implicit_function class.
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the ImplicitFctDelaunayTriangulationVertexBase_3 concept.
 ///
 /// @heading Parameters:
@@ -219,7 +219,7 @@ struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public Gt
 ///
 /// TODO: Test speed if using Triangulation_hierarchy_3
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the ImplicitFctDelaunayTriangulation_3 concept.
 ///
 /// @heading Parameters:
@@ -427,7 +427,7 @@ public:
     int n = number_of_vertices();
 
 		// spatial sorting
-    std::vector<Point> points CGAL_make_vector(first, beyond);
+    std::vector<Point> points (first, beyond);
     std::random_shuffle (points.begin(), points.end());
 		spatial_sort (points.begin(), points.end(), geom_traits());
 
