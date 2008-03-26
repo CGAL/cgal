@@ -48,6 +48,11 @@ class \ccc{Point_2};
 
 \ccTypes
 
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Point_2.C}
+
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccTypes)
 
@@ -100,11 +105,6 @@ type of kernel point
 %END-AUTO(\ccTypes)
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
-
-%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Point_2.C}
-
-\ccCreation
 \ccCreationVariable{a}  %% choose variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
@@ -122,7 +122,16 @@ copy constructor
 \ccGlue
 \ccConstructor{Point_2(const X_coordinate_1& x, const Curve_analysis_2& c, int arcno);}
 {
+Constructs an interior point.
 }
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[x]The x-coordinate \item[c]The supporting curve \item[arcno]Arcno of point on c \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed point \end{description}
 \ccGlue
 \ccConstructor{Point_2(Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno);}
 {
@@ -327,8 +336,6 @@ greater-equal in (x,y) lexicographic order
 \ccMethod{void write(std::ostream& os) const;}
 {
 writes point to os
-}
-\ccGlue
 \subsubsection{Friends And Related Function Documentation}
 \ccMethod{std::ostream& operator<<(std::ostream& os, const Point_2< CurvedKernelViaAnalysis_2, Rep_>& pt);}
 {
