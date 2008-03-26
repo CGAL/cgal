@@ -49,7 +49,7 @@ public:
     //!\name Global types
     //!@{
     
-    //! this instance's template parameter
+    //! the Curved_kernel_via_analysis_2
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! type of curve kernel
@@ -338,19 +338,31 @@ public:
     //! type of curve that can be analyzed
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
         
-    //! type of a point on a curve that can be analyzed
+private:
+    
     typedef typename boost::mpl::if_< 
               typename boost::mpl::bool_< boost::is_void< Point >::value >,
               CGALi::Point_2< CKvA_2 >,
               Point >::type
-    Point_2;
+    Point_2_;
     
-    //! type of an arc on a curve that can be analyzed
+public:
+    //! type of a point on a curve that can be analyzed
+    typedef Point_2_ Point_2;
+
+
+private:
+    
     typedef typename boost::mpl::if_< 
               typename boost::mpl::bool_< boost::is_void< Arc >::value >,
               CGALi::Arc_2< CKvA_2 >,
               Arc >::type
-    Arc_2;
+    Arc_2_;
+    
+public:
+
+    //! type of an arc on a curve that can be analyzed
+    typedef Arc_2_ Arc_2;
 
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
