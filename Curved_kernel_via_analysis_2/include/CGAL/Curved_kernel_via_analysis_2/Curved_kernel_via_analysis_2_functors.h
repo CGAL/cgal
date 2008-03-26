@@ -1692,6 +1692,8 @@ public:
         Base(kernel) {
     }
     
+    // TODO add operators for non-x-monotone arcs + curves (i.e., all combis)
+    
     /*!\brief
      * Find all intersections of the two given arcs and insert them to the 
      * output iterator. 

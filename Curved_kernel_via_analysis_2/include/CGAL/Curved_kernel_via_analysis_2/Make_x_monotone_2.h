@@ -97,6 +97,8 @@ struct Make_x_monotone_2 :
 
     //!\name Functor invokation
     //!@{
+
+    // TODO add operator for non-x-monotone arc
     
     /*!\brief
      * Splits a curve into x-monotone arcs and isolated points
