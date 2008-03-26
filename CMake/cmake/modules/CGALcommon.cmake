@@ -23,6 +23,16 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
   endif()
   
+  if ( NOT CYGWIN )
+    find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
+    if(CMAKE_UNAME)
+      exec_program(uname ARGS -s OUTPUT_VARIABLE CMAKE_SYSTEM_NAME2)
+      if ( CMAKE_SYSTEM_NAME2 MATCHES "CYGWIN" )
+        message( STATUS "This is the Windows CMake running within the cygwin platform." )
+        set( CYGWIN_ON_WIN TRUE CACHE INTERNAL "This is the cygwin platform." )
+      endif()
+    endif()
+  endif()
 
   # Just for fun
   set(CMAKE_COLORMAKEFILE ON)
