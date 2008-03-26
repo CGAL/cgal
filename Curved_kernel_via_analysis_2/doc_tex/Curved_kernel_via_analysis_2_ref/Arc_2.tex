@@ -116,12 +116,180 @@ the handle superclass
 
 %END-AUTO(\ccTypes)
 
-\ccHeading{Variables}
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Arc_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading{Variables})
+%START-AUTO(\ccCreation)
 
-\ccMethod{CGAL::Arr_parameter_space location(CGAL::Arr_curve_end ce) const;}
+\ccConstructor{Arc_2();}
+{
+Default constructor.
+}
+\ccGlue
+\ccConstructor{Arc_2(const Self& a);}
+{
+copy constructor
+}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, int arcno, int arcno_p, int arcno_q);}
+{
+Constructs an arc with two interior end-points (segment).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[p]first endpoint \item[q]second endpoint \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_p}]The arcnumber wrt c of the arc at p \item[\ccc{arcno_q}]The arcnumber wrt c of the arc at q \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed segment\end{description}
+\begin{description}
+\item[Precondition:]p.x() != q.x() \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
+{
+Constructs an arc with one interior end-point and another end at the left or right boundary of the parameter space (ray I).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point of the ray \item[\ccc{inf_end}]Defining whether the arcs emanates from the left or right boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
+{
+Constructs a non-vertical arc with one interior end-point and whose other end approaches a vertical asymptote (ray II).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point \item[\ccc{asympt_x}]The x-coordinate of the vertical asymptote \item[\ccc{inf_end}]Arc is approaching the bottom or top boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray\end{description}
+\begin{description}
+\item[Precondition:]origin.x() != \ccc{asympt_x} \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Curve_analysis_2& c, int arcno);}
+{
+Constructs a non-vertical arc with two non-interior ends at the left and right boundary (branch I).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[c]The supporting curve \item[arcno]The arcnumber wrt to c in the interior of the arc \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const X_coordinate_1& asympt_x1, Arr_curve_end inf_end1, const X_coordinate_1& asympt_x2, Arr_curve_end inf_end2, const Curve_analysis_2& c, int arcno);}
+{
+Constructs a non-vertical arc with two ends approaching vertical asymptotes (branch II).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{asympt_x1}]The x-coordinate of the first asymptote \item[\ccc{inf_end1}]Arc is approaching the bottom or top boundary at \ccc{asympt_x1} \item[\ccc{asympt_x2}]The x-coordinate of the second asymptote \item[\ccc{inf_end2}]Arc is approaching the bottom or top boundary at \ccc{asympt_x2} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch\end{description}
+\begin{description}
+\item[Precondition:]\ccc{asympt_x1} != \ccc{asympt_x2} \end{description}
+\ccGlue
+\ccConstructor{Arc_2(Arr_curve_end inf_endx, const X_coordinate_1& asympt_x, Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno);}
+{
+Construct a non-vertical arc with one left- or right-boundary end and one end that approaches a vertical asymptote (branch III).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{inf_endx}]Defining whether the arc emanates from the left or right boundary \item[\ccc{asympt_x}]The x-coordinate of the asymptote \item[\ccc{inf_endy}]Arc is approaching the bottom or top boundary at \ccc{asympt_x} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc with two interior end-points (vertical segment).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[p]The first end-point \item[q]The second end-point \item[c]The supporting curve \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed arc\end{description}
+\begin{description}
+\item[Precondition:]p != q \&\& p.x() == q.x()
+c must have a vertical component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, Arr_curve_end inf_end, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc with one interior end-point and one that reaches the bottom or top boundary (vertical ray).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point \item[\ccc{inf_end}]Ray emanates from bottom or top boundary \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray\end{description}
+\begin{description}
+\item[Precondition:]c must have a vertical line component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const X_coordinate_1& x, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc that connects bottom with top boundary (vertical branch).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[x]The x-coordinate of the arc \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch\end{description}
+\begin{description}
+\item[Precondition:]c must have a vertical line component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(Rep rep);}
+{
+[protected] \\
+Constructs an arc from a given representation used in rebind.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[rep]Input representation \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed arc \end{description}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Arr_parameter_space location(Arr_curve_end ce) const;}
 {
 location of arc's end
 }
@@ -134,7 +302,7 @@ location of arc's end
 \begin{description}
 \item[Returns:]The location of arc's ce in parameterspace \end{description}
 \ccGlue
-\ccMethod{void set_location(CGAL::Arr_curve_end ce, CGAL::Arr_parameter_space loc) const;}
+\ccMethod{void set_location(Arr_curve_end ce, Arr_parameter_space loc) const;}
 {
 Sets boundary type for an end of an arc.
 It is supposed that the user thoroughly understands malicious consequences that may result from the misuse of the location
@@ -146,7 +314,7 @@ It is supposed that the user thoroughly understands malicious consequences that 
 \item[ce]The intended end \item[loc]The location to store \end{description}
 \end{description}
 \ccGlue
-\ccMethod{bool is_finite(CGAL::Arr_curve_end ce) const;}
+\ccMethod{bool is_finite(Arr_curve_end ce) const;}
 {
 Is a curve-end finite?
 }
@@ -159,7 +327,7 @@ Is a curve-end finite?
 \begin{description}
 \item[Returns:]true, if finite, false, otherwise \end{description}
 \ccGlue
-\ccMethod{Point_2 curve_end(CGAL::Arr_curve_end ce) const;}
+\ccMethod{Point_2 curve_end(Arr_curve_end ce) const;}
 {
 returns arc's interior curve end
 }
@@ -174,7 +342,7 @@ returns arc's interior curve end
 \begin{description}
 \item[Precondition:]accessed curve end has finite coordinates \end{description}
 \ccGlue
-\ccMethod{X_coordinate_1 curve_end_x(CGAL::Arr_curve_end ce) const;}
+\ccMethod{X_coordinate_1 curve_end_x(Arr_curve_end ce) const;}
 {
 returns x-coordinate of arc's curve end
 }
@@ -207,7 +375,7 @@ arc number in interior
 \begin{description}
 \item[Precondition:]!\ccc{is_vertical}() \end{description}
 \ccGlue
-\ccMethod{int arcno(CGAL::Arr_curve_end ce) const;}
+\ccMethod{int arcno(Arr_curve_end ce) const;}
 {
 arc number of end of arc, which may be different from arc number in its interior
 }
@@ -277,7 +445,7 @@ returns boundary value in interior of x-range of non-vertical interval
 \begin{description}
 \item[Precondition:]!\ccc{is_vertical}() \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_x_near_boundary(CGAL::Arr_curve_end ce, const Point_2& p) const;}
+\ccMethod{Comparison_result compare_x_near_boundary(Arr_curve_end ce, const Point_2& p) const;}
 {
 Compare the relative x-positions of an interior point and the arc's end on a bottom or top boundary
 }
@@ -288,11 +456,11 @@ Compare the relative x-positions of an interior point and the arc's end on a bot
 \item[p]A reference point; we refer to a vertical line incident to p. \item[ce]\ccc{ARR_MIN_END} if we refer to the arc's minimal end, \ccc{ARR_MAX_END} if we refer to its maximal end. \end{description}
 \end{description}
 \begin{description}
-\item[Returns:]\ccc{CGAL::SMALLER} if p lies to the left of the arc; \ccc{CGAL::LARGER} if p lies to the right of the arc; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
+\item[Returns:]SMALLER if p lies to the left of the arc; LARGER if p lies to the right of the arc; EQUAL in case of an overlap.\end{description}
 \begin{description}
 \item[Precondition:]the arc's relevant end is on bottom or top boundary \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_x_near_boundary(CGAL::Arr_curve_end ce1, const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const;}
+\ccMethod{Comparison_result compare_x_near_boundary(Arr_curve_end ce1, const Kernel_arc_2& cv2, Arr_curve_end ce2) const;}
 {
 Compare the relative x-positions of the curve end of $\ast$this and cv2.
 }
@@ -303,11 +471,11 @@ Compare the relative x-positions of the curve end of $\ast$this and cv2.
 \item[ce1]\ccc{ARR_MIN_END} if we refer to this' minimal end, \ccc{ARR_MAX_END} if we refer to this' maximal end. \item[cv2]The second curve. \item[ce2]\ccc{ARR_MIN_END} if we refer to its minimal end, \ccc{ARR_MAX_END} if we refer to its maximal end. \end{description}
 \end{description}
 \begin{description}
-\item[Returns:]\ccc{CGAL::SMALLER} if this lies to the left of cv2; \ccc{CGAL::LARGER} if this lies to the right of cv2; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
+\item[Returns:]SMALLER if this lies to the left of cv2; LARGER if this lies to the right of cv2; EQUAL in case of an overlap.\end{description}
 \begin{description}
 \item[Precondition:]the curve ends lie on the bottom or top boundary \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_y_near_boundary(const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce) const;}
+\ccMethod{Comparison_result compare_y_near_boundary(const Kernel_arc_2& cv2, Arr_curve_end ce) const;}
 {
 Compare the relative y-positions of two arcs whose ends approach the left or right boundary from the same side.
 }
@@ -318,11 +486,11 @@ Compare the relative y-positions of two arcs whose ends approach the left or rig
 \item[cv2]The second arc \item[ce]\ccc{ARR_MIN_END} if we compare near left boundary \ccc{ARR_MAX_END} if we compare near right boundary \end{description}
 \end{description}
 \begin{description}
-\item[Returns:]\ccc{CGAL::SMALLER} if this arc lies below cv2; \ccc{CGAL::LARGER} if this arc lies above cv2; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
+\item[Returns:]SMALLER if this arc lies below cv2; LARGER if this arc lies above cv2; EQUAL in case of an overlap.\end{description}
 \begin{description}
 \item[Precondition:]The ends are defined on left or right boundary \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_y_at_x(const Point_2& p) const;}
+\ccMethod{Comparison_result compare_y_at_x(const Point_2& p) const;}
 {
 Compares the relative vertical alignment of a point with this arc.
 }
@@ -333,11 +501,11 @@ Compares the relative vertical alignment of a point with this arc.
 \item[p]The point. \end{description}
 \end{description}
 \begin{description}
-\item[Returns:]\ccc{CGAL::SMALLER} if y(p) $<$ arc(x(p)), i.e. the point is below the arc; \ccc{CGAL::LARGER} if y(p) $>$ arc(x(p)), i.e. the point is above the arc; \ccc{CGAL::EQUAL} if p lies on the arc.\end{description}
+\item[Returns:]SMALLER if y(p) $<$ arc(x(p)), i.e. the point is below the arc; LARGER if y(p) $>$ arc(x(p)), i.e. the point is above the arc; EQUAL if p lies on the arc.\end{description}
 \begin{description}
 \item[Precondition:]p is in the x-range of the arc. \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_y_at_x_left(const Kernel_arc_2& cv2, const Point_2& p) const;}
+\ccMethod{Comparison_result compare_y_at_x_left(const Kernel_arc_2& cv2, const Point_2& p) const;}
 {
 Compares the relative vertical aligment of this arc with a second immediately to the left of one of their intersection points.
 If one of the curves is vertical (emanating downward from p), it is always considered to be below the other curve.
@@ -353,7 +521,7 @@ If one of the curves is vertical (emanating downward from p), it is always consi
 \begin{description}
 \item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographical) to their left. \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result compare_y_at_x_right(const Kernel_arc_2& cv2, const Point_2& p) const;}
+\ccMethod{Comparison_result compare_y_at_x_right(const Kernel_arc_2& cv2, const Point_2& p) const;}
 {
 Compares the relative vertical aligment of this arc with a second immediately to the right of one of their intersection points.
 If one of the curves is vertical (emanating downward from p), it is always considered to be below the other curve.
@@ -440,7 +608,7 @@ The intersection multiplicity of $\ast$this and cv2 at point p is returned.
 \ccMethod{OutputIterator intersections(const Kernel_arc_2& cv2, OutputIterator oi) const;}
 {
 Find all intersections of this arc with another one and insert them to the output iterator.
-Type of output iterator is \ccc{CGAL::Object}. It either contains an \ccc{Arc_2} object (overlap) or a \ccc{std::pair<Point_2, unsigned int>} (intersection point + multiplicity). A past-the-end iterator is returned.
+Type of output iterator is Object. It either contains an \ccc{Arc_2} object (overlap) or a \ccc{std::pair<Point_2, unsigned int>} (intersection point + multiplicity). A past-the-end iterator is returned.
 }
 \ccGlue
 \begin{description}
@@ -616,7 +784,7 @@ establishes preconditions to ensure that there are no event points in the arc's 
 \begin{description}
 \item[Precondition:]before calling this method source and target must be sorted using \ccc{_fix_curve_ends_order}() \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result _compare_arc_numbers(const Kernel_arc_2& cv2, CGAL::Arr_parameter_space where, X_coordinate_1 x0 = X_coordinate_1(), CGAL::Sign perturb = CGAL::ZERO) const;}
+\ccMethod{Comparison_result _compare_arc_numbers(const Kernel_arc_2& cv2, Arr_parameter_space where, X_coordinate_1 x0 = X_coordinate_1(), Sign perturb = ZERO) const;}
 {
 [protected] \\
 compares y-coordinates of two arcs over an open (or closed) interval or at exact x-coordinate
@@ -633,7 +801,7 @@ where specifies whether to compare at negative/positive boundary or at finite po
 \begin{description}
 \item[Precondition:]!\ccc{is_on_bottom_top}(where) \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result _compare_coprime(const Kernel_arc_2& cv2, CGAL::Arr_parameter_space where, X_coordinate_1 x0, CGAL::Sign perturb) const;}
+\ccMethod{Comparison_result _compare_coprime(const Kernel_arc_2& cv2, Arr_parameter_space where, X_coordinate_1 x0, Sign perturb) const;}
 {
 [protected] \\
 computes vertical ordering of $\ast$this and cv2 having coprime supporting curves
@@ -647,7 +815,7 @@ computes vertical ordering of $\ast$this and cv2 having coprime supporting curve
 \begin{description}
 \item[Returns:]the relative vertical alignment \end{description}
 \ccGlue
-\ccMethod{CGAL::Comparison_result _same_arc_compare_xy(const Point_2& p, const Point_2& q, bool equal_x = false, bool only_x = false) const;}
+\ccMethod{Comparison_result _same_arc_compare_xy(const Point_2& p, const Point_2& q, bool equal_x = false, bool only_x = false) const;}
 {
 [protected] \\
 }
@@ -688,7 +856,7 @@ computes this rational value in the interiors of the arc's x-range
 \begin{description}
 \item[Precondition:]!\ccc{is_vertical}() \end{description}
 \ccGlue
-\ccMethod{std::pair<Kernel_arc_2, CGAL::Comparison_result> _replace_endpoints(const Point_2& p1, const Point_2& p2, int arcno1 = -1, int arcno2 = -1) const;}
+\ccMethod{std::pair<Kernel_arc_2, Comparison_result> _replace_endpoints(const Point_2& p1, const Point_2& p2, int arcno1 = -1, int arcno2 = -1) const;}
 {
 [protected] \\
 Replaces this arc's end-points by p1 and p2 with arcnos arcno1 and arcno2.
@@ -793,6 +961,8 @@ intersection points are inserted to the output iterator oi as objects of type \c
 {
 output operator
 write arc to os
+}
+\ccGlue
 \subsubsection{Friends And Related Function Documentation}
 \ccMethod{std::ostream& operator<<(std::ostream& os, const Arc_2< CurvedKernelViaAnalysis_2, Rep_>& arc);}
 {
@@ -802,178 +972,7 @@ writes arc to os
 }
 \ccGlue
 
-%END-AUTO(\ccHeading{Variables})
-
-\ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Arc_2();}{default constructor.}
-
-
-%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Arc_2.C}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name for \ccMethod below
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccCreation)
-
-\ccConstructor{Arc_2();}
-{
-Default constructor.
-}
-\ccGlue
-\ccConstructor{Arc_2(const Self& a);}
-{
-copy constructor
-}
-\ccGlue
-\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, int arcno, int arcno_p, int arcno_q);}
-{
-Constructs an arc with two interior end-points (segment).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[p]first endpoint \item[q]second endpoint \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_p}]The arcnumber wrt c of the arc at p \item[\ccc{arcno_q}]The arcnumber wrt c of the arc at q \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed segment\end{description}
-\begin{description}
-\item[Precondition:]p.x() != q.x() \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
-{
-Constructs an arc with one interior end-point and another end at the left or right boundary of the parameter space (ray I).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[origin]The interior end-point of the ray \item[\ccc{inf_end}]Defining whether the arcs emanates from the left or right boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed ray \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
-{
-Constructs a non-vertical arc with one interior end-point and whose other end approaches a vertical asymptote (ray II).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[origin]The interior end-point \item[\ccc{asympt_x}]The x-coordinate of the vertical asymptote \item[\ccc{inf_end}]Arc is approaching the bottom or top boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed ray\end{description}
-\begin{description}
-\item[Precondition:]origin.x() != \ccc{asympt_x} \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const Curve_analysis_2& c, int arcno);}
-{
-Constructs a non-vertical arc with two non-interior ends at the left and right boundary (branch I).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[c]The supporting curve \item[arcno]The arcnumber wrt to c in the interior of the arc \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed branch \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const X_coordinate_1& asympt_x1, CGAL::Arr_curve_end inf_end1, const X_coordinate_1& asympt_x2, CGAL::Arr_curve_end inf_end2, const Curve_analysis_2& c, int arcno);}
-{
-Constructs a non-vertical arc with two ends approaching vertical asymptotes (branch II).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[\ccc{asympt_x1}]The x-coordinate of the first asymptote \item[\ccc{inf_end1}]Arc is approaching the bottom or top boundary at \ccc{asympt_x1} \item[\ccc{asympt_x2}]The x-coordinate of the second asymptote \item[\ccc{inf_end2}]Arc is approaching the bottom or top boundary at \ccc{asympt_x2} \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed branch\end{description}
-\begin{description}
-\item[Precondition:]\ccc{asympt_x1} != \ccc{asympt_x2} \end{description}
-\ccGlue
-\ccConstructor{Arc_2(CGAL::Arr_curve_end inf_endx, const X_coordinate_1& asympt_x, CGAL::Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno);}
-{
-Construct a non-vertical arc with one left- or right-boundary end and one end that approaches a vertical asymptote (branch III).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[\ccc{inf_endx}]Defining whether the arc emanates from the left or right boundary \item[\ccc{asympt_x}]The x-coordinate of the asymptote \item[\ccc{inf_endy}]Arc is approaching the bottom or top boundary at \ccc{asympt_x} \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed branch \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c);}
-{
-Constructs a vertical arc with two interior end-points (vertical segment).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[p]The first end-point \item[q]The second end-point \item[c]The supporting curve \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed arc\end{description}
-\begin{description}
-\item[Precondition:]p != q \&\& p.x() == q.x()
-c must have a vertical component at this x \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const Point_2& origin, CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c);}
-{
-Constructs a vertical arc with one interior end-point and one that reaches the bottom or top boundary (vertical ray).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[origin]The interior end-point \item[\ccc{inf_end}]Ray emanates from bottom or top boundary \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed ray\end{description}
-\begin{description}
-\item[Precondition:]c must have a vertical line component at this x \end{description}
-\ccGlue
-\ccConstructor{Arc_2(const X_coordinate_1& x, const Curve_analysis_2& c);}
-{
-Constructs a vertical arc that connects bottom with top boundary (vertical branch).
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[x]The x-coordinate of the arc \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed branch\end{description}
-\begin{description}
-\item[Precondition:]c must have a vertical line component at this x \end{description}
-\ccGlue
-\ccConstructor{Arc_2(Rep rep);}
-{
-[protected] \\
-Constructs an arc from a given representation used in rebind.
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[rep]Input representation \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The constructed arc \end{description}
-\ccGlue
-
-%END-AUTO(\ccCreation)
+%END-AUTO(\ccOperations)
 
 \end{ccRefClass}
 

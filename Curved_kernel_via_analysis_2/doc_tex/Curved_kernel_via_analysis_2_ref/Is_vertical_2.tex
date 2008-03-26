@@ -93,6 +93,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -101,26 +107,17 @@ the arity of the functor
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{result_type operator()(const Arc_2& cv) const;}
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
 {
-Check whether the given x-monotone arc cv is a vertical segment.
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[cv]The curve. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]true if the curve is a vertical segment, false otherwise. \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Is_vertical_2();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Is_vertical_2.C}
 
@@ -143,6 +140,36 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{result_type operator()(const Arc_2& cv) const;}
+{
+Check whether the given x-monotone arc cv is a vertical segment.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[cv]The curve. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]true if the curve is a vertical segment, false otherwise. \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

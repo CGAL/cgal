@@ -108,31 +108,8 @@ the arity of the functor
 
 %END-AUTO(\ccTypes)
 
-\ccHeading{Variables}
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading{Variables})
-
-\ccMethod{result_type operator()(const Status_line_1& cv_line, bool side, int interval_arcno) const;}
-{
-Given arcno over an interval, this computes a corresponding event arcno on status line \ccc{cv_line} lying on the given side w.r.t. the interval.
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[\ccc{cv_line}]Status line \item[side]side = true: left side; side = false: right side \item[\ccc{interval_arcno}]Arcnumber of interval \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]Arcnumber information at event line \end{description}
-\ccGlue
-
-%END-AUTO(\ccHeading{Variables})
-
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Curve_interval_arcno_cache();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.C}
 
@@ -155,6 +132,27 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{result_type operator()(const Status_line_1& cv_line, bool side, int interval_arcno) const;}
+{
+Given arcno over an interval, this computes a corresponding event arcno on status line \ccc{cv_line} lying on the given side w.r.t. the interval.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{cv_line}]Status line \item[side]side = true: left side; side = false: right side \item[\ccc{interval_arcno}]Arcnumber of interval \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]Arcnumber information at event line \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

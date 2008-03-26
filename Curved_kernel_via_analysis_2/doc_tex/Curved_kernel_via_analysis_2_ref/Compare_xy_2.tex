@@ -93,6 +93,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -101,26 +107,17 @@ the arity of the functor
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{result_type operator()(const Point_2& p1, const Point_2& p2, bool equal_x = false) const;}
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
 {
-Compares two points lexigoraphically: by x, then by y.
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[p1]The first point. \item[p2]The second point. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]\ccc{CGAL::LARGER} if x(p1) $>$ x(p2), or if x(p1) = x(p2) and y(p1) $>$ y(p2); \ccc{CGAL::SMALLER} if x(p1) $<$ x(p2), or if x(p1) = x(p2) and y(p1) $<$ y(p2); \ccc{CGAL::EQUAL} if the two points are equal. \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Compare_xy_2();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Compare_xy_2.C}
 
@@ -143,6 +140,36 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{result_type operator()(const Point_2& p1, const Point_2& p2, bool equal_x = false) const;}
+{
+Compares two points lexigoraphically: by x, then by y.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[p1]The first point. \item[p2]The second point. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]LARGER if x(p1) $>$ x(p2), or if x(p1) = x(p2) and y(p1) $>$ y(p2); SMALLER if x(p1) $<$ x(p2), or if x(p1) = x(p2) and y(p1) $<$ y(p2); EQUAL if the two points are equal. \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

@@ -93,6 +93,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -101,29 +107,17 @@ the arity of the functor
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q);}
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
 {
-Returns a trimmed version of an arc.
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[cv]The arc \item[p]the new first endpoint \item[q]the new second endpoint \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The trimmed arc\end{description}
-\begin{description}
-\item[Precondition:]p != q
-both points must be interior and must lie on cv \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Trim_2();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Trim_2.C}
 
@@ -146,6 +140,39 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Arc_2 operator()(const Arc_2& cv, const Point_2& p, const Point_2& q);}
+{
+Returns a trimmed version of an arc.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[cv]The arc \item[p]the new first endpoint \item[q]the new second endpoint \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The trimmed arc\end{description}
+\begin{description}
+\item[Precondition:]p != q
+both points must be interior and must lie on cv \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

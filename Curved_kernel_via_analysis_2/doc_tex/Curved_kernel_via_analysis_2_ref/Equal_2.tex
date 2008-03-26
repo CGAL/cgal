@@ -93,6 +93,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -100,6 +106,45 @@ the arity of the functor
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
+
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
+{
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Equal_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Equal_2(Curved_kernel_via_analysis_2 * kernel);}
+{
+Standard constructor.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]The kernel \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
 
 \ccMethod{result_type operator()(const Point_2& p1, const Point_2& p2) const;}
 {
@@ -127,35 +172,17 @@ Check if the two arcs are the same.
 \begin{description}
 \item[Returns:]true if the two curves are the same; false otherwise. \end{description}
 \ccGlue
-
-%END-AUTO(\ccHeading{Variables})
-
-\ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Equal_2();}{default constructor.}
-
-%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Equal_2.C}
-
-\ccCreation
-\ccCreationVariable{a}  %% choose variable name for \ccMethod below
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccCreation)
-
-\ccConstructor{Equal_2(Curved_kernel_via_analysis_2 * kernel);}
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
 {
-Standard constructor.
+[protected, inherited] \\
+Return pointer to curved kernel.
 }
 \ccGlue
 \begin{description}
-\item[Parameters:]
-\begin{description}
-\item[kernel]The kernel \end{description}
-\end{description}
+\item[Returns:]Pointer to stored kernel \end{description}
 \ccGlue
 
-%END-AUTO(\ccCreation)
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

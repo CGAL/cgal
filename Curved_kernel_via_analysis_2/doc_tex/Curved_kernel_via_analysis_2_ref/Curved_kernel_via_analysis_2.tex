@@ -147,6 +147,198 @@ functor
 functor
 }
 \ccGlue
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+[inherited] \\
+this instance's template parameter
+}
+\ccGlue
+\ccNestedType{Has_left_category}
+{
+[inherited] \\
+tag specifies that {\em to the left of} comparisons supported
+}
+\ccGlue
+\ccNestedType{Has_merge_category}
+{
+[inherited] \\
+tag specifies that merge and split functors supported
+}
+\ccGlue
+\ccNestedType{Has_boundary_category}
+{
+[inherited] \\
+tag specifies that unbounded arcs supported
+}
+\ccGlue
+\ccNestedType{Boundary_category}
+{
+[inherited] \\
+tag specifies which boundary functors are implemented
+}
+\ccGlue
+\ccNestedType{Curve_interval_arcno_cache}
+{
+[inherited] \\
+type of inverval arcno cache
+}
+\ccGlue
+\ccNestedType{Curve_analysis_2}
+{
+[protected, inherited] \\
+provides analysis of a single curve
+}
+\ccGlue
+\ccNestedType{Curve_pair_analysis_2}
+{
+[protected, inherited] \\
+provides analysis of a pair of curves
+}
+\ccGlue
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+[inherited] \\
+this instance's first template parameter
+}
+\ccGlue
+\ccNestedType{Compare_x_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_xy_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Is_vertical_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Is_bounded_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Parameter_space_in_x_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Parameter_space_in_y_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Construct_min_vertex_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Construct_max_vertex_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_x_near_boundary_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_y_near_boundary_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_y_at_x_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_y_at_x_left_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Compare_y_at_x_right_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Equal_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Is_in_x_range_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Do_overlap_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Intersect_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Trim_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Split_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Are_mergeable_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Merge_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Is_on_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
+\ccNestedType{Make_x_monotone_2}
+{
+[inherited] \\
+functor
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -155,29 +347,23 @@ functor
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{Construct_point_2 construct_point_2_object() const;}
+\ccVariable{Curve_kernel_2 _m_kernel;}
 {
-returns instance of functor
+[protected, inherited] \\
+an instance of \ccc{Curve_kernel_2}
 }
 \ccGlue
-\ccMethod{Construct_point_on_arc_2 construct_point_on_arc_2_object() const;}
+\ccVariable{Curve_interval_arcno_cache _m_interval_arcno_cache;}
 {
-returns instance of functor
-}
-\ccGlue
-\ccMethod{Construct_arc_2 construct_arc_2_object() const;}
-{
-returns instance of functor
+[mutable, protected, inherited] \\
+an instance of \ccc{Curve_interval_arcno_cache}
 }
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Curved_kernel_via_analysis_2();}{default constructor.}
-
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2.C}
 
@@ -205,6 +391,223 @@ construct from kernel
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Construct_point_2 construct_point_2_object() const;}
+{
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Construct_point_on_arc_2 construct_point_on_arc_2_object() const;}
+{
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Construct_arc_2 construct_arc_2_object() const;}
+{
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2_base();}
+{
+[inherited] \\
+default constructor
+}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2_base(const Curve_kernel_2& kernel);}
+{
+[inherited] \\
+construct using specific \ccc{Curve_kernel_2} instance kernel
+}
+\ccGlue
+\ccMethod{const Curve_interval_arcno_cache& interval_arcno_cache() const;}
+{
+[inherited] \\
+access to static \ccc{Curve_interval_arcno_cache}
+}
+\ccGlue
+\ccMethod{const Curve_kernel_2& kernel() const;}
+{
+[inherited] \\
+instance of internal \ccc{Curve_kernel_2} instance
+}
+\ccGlue
+\begin{description}
+\item[Returns:]\end{description}
+\ccGlue
+\ccMethod{static Curved_kernel_via_analysis_2& instance();}
+{
+[static, inherited] \\
+a default instance of \ccc{Curved_kernel_via_analysis_2}
+}
+\ccGlue
+\begin{description}
+\item[Returns:]static instance of \ccc{Curved_kernel_via_analysis_2} \end{description}
+\ccGlue
+\ccMethod{static Curved_kernel_via_analysis_2& set_instance(const Curved_kernel_via_analysis_2& ckva);}
+{
+[static, inherited] \\
+sets static instance of \ccc{Curved_kernel_via_analysis_2} to ckva
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[ckva]The instance that should be stored \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]the stored instance \end{description}
+\ccGlue
+\ccMethod{static void reset_instance();}
+{
+[static, inherited] \\
+resets static instance to original one
+}
+\ccGlue
+\ccMethod{Compare_x_2 compare_x_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_xy_2 compare_xy_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Is_vertical_2 is_vertical_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Is_bounded_2 is_bounded_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Parameter_space_in_x_2 parameter_space_in_x_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Parameter_space_in_y_2 parameter_space_in_y_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Construct_min_vertex_2 construct_min_vertex_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Construct_max_vertex_2 construct_max_vertex_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_y_at_x_2 compare_y_at_x_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Equal_2 equal_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Is_in_x_range_2 is_in_x_range_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Do_overlap_2 do_overlap_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Intersect_2 intersect_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Trim_2 trim_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Split_2 split_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Merge_2 merge_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Is_on_2 is_on_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+\ccMethod{Make_x_monotone_2 make_x_monotone_2_object() const;}
+{
+[inherited] \\
+returns instance of functor
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefClass}
 

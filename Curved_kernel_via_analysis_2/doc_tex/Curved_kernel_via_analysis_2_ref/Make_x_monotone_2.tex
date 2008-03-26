@@ -30,7 +30,7 @@ Splits a curve that can be analyzed into connected x-monotone sweepable arcs and
 
 Arcs are stored as \ccc{CurvedKernelViaAnalysis_2::Arc_2} objects, and each is either vertical or consists of an x-monotone piece of constant arc number wrt to the curve at every interior x-coordinate. Isolated points are stored as \ccc{CurvedKernelViaAnalysis_2::Point_2} objects.
 
-The resulting arcs and points are written to the output iterator as polymorphic \ccc{CGAL::Object}. Past-the-end value of the iterator is returned.
+The resulting arcs and points are written to the output iterator as polymorphic Object. Past-the-end value of the iterator is returned.
 
 %END-AUTO(\ccDefinition)
 
@@ -101,31 +101,8 @@ type of curve arc
 
 %END-AUTO(\ccTypes)
 
-\ccHeading{Variables}
-
-% The section below is automatically generated. Do not edit!
-%START-AUTO(\ccHeading{Variables})
-
-\ccMethod{OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi);}
-{
-Splits a curve into x-monotone arcs and isolated points.
-}
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[curve]The input curve \item[oi]Output iterator that stores \ccc{CGAL::Object}, which either encapsulates \ccc{Point_2} or \ccc{Arc_2} \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]Past-the-end iterator of oi \end{description}
-\ccGlue
-
-%END-AUTO(\ccHeading{Variables})
-
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Make_x_monotone_2();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Make_x_monotone_2.C}
 
@@ -148,6 +125,27 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi);}
+{
+Splits a curve into x-monotone arcs and isolated points.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[curve]The input curve \item[oi]Output iterator that stores Object, which either encapsulates \ccc{Point_2} or \ccc{Arc_2} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]Past-the-end iterator of oi \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 

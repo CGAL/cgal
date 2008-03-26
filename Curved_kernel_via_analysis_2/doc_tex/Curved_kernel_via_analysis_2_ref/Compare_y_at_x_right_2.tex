@@ -93,6 +93,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -101,29 +107,17 @@ the arity of the functor
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
 
-\ccMethod{result_type operator()(const Arc_2& cv1, const Arc_2& cv2, const Point_2& p) const;}
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
 {
-Compares the relative vertical alignment of two arcs immediately to the right of one of their intersection points.
-If one of the arcs is vertical (emanating downward from p), it is always considered to be below the other curve.
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
 }
-\ccGlue
-\begin{description}
-\item[Parameters:]
-\begin{description}
-\item[cv1]The first arc \item[cv2]The second arc \item[p]The intersection point. \end{description}
-\end{description}
-\begin{description}
-\item[Returns:]The relative vertical alignment of cv1 with respect to cv2 immediately to the right of p: \ccc{CGAL::SMALLER}, \ccc{CGAL::LARGER} or \ccc{CGAL::EQUAL}.\end{description}
-\begin{description}
-\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographically) to its right. \end{description}
 \ccGlue
 
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{foo}  %% choose variable name
-
-\ccConstructor{Compare_y_at_x_right_2();}{default constructor.}
+\ccCreationVariable{a}  %% choose variable name
 
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Compare_y_at_x_right_2.C}
 
@@ -146,6 +140,39 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{result_type operator()(const Arc_2& cv1, const Arc_2& cv2, const Point_2& p) const;}
+{
+Compares the relative vertical alignment of two arcs immediately to the right of one of their intersection points.
+If one of the arcs is vertical (emanating downward from p), it is always considered to be below the other curve.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[cv1]The first arc \item[cv2]The second arc \item[p]The intersection point. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The relative vertical alignment of cv1 with respect to cv2 immediately to the right of p: SMALLER, LARGER or EQUAL.\end{description}
+\begin{description}
+\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographically) to its right. \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
+\ccGlue
+
+%END-AUTO(\ccOperations)
 
 \end{ccRefFunctionObjectClass}
 
