@@ -630,9 +630,18 @@ public:
     //! coprime
     struct Has_finite_number_of_intersections_2 :
         public Binary_function< Polynomial_2_CGAL, Polynomial_2_CGAL, bool > {
-               
+         
+        bool operator()(const Internal_polynomial_2& f,
+                        const Internal_polynomial_2& g) const {
+            // if curve ids are the same - non-decomposable
+            if(f.id() == g.id())
+                return true;
+            NiX2CGAL_converter cvt;
+            return (*this)(cvt(f), cvt(g));
+        }
+     
         bool operator()(const Polynomial_2_CGAL& f,
-                const Polynomial_2_CGAL& g) const {
+                        const Polynomial_2_CGAL& g) const {
             // if curve ids are the same - non-decomposable
             if(f.id() == g.id())
                 return true;

@@ -323,7 +323,7 @@ public:
      *
      * \pre \c x is finite
      */
-    Status_line_1& status_line_at_exact_x(X_coordinate_1 x) const {
+    Status_line_1 status_line_at_exact_x(X_coordinate_1 x) const {
         // CGAL_precondition(x is finite ??);
         return status_line_for_x(x);
     }
