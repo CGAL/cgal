@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Arc_2.tex
 % +------------------------------------------------------------------------+
-% | 13.03.2008   Author
-% | Package: Package
+% | 26.03.2008   Author
+% | Package: Curved_kernel_via_analysis_2
 % |
 \RCSdef{\RCSArcRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
 \RCSdefDate{\RCSArcDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
@@ -12,13 +12,15 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Arc_2}  %% add template arg's if necessary
+\begin{ccRefClass}[CGALi::]{Arc_2}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
+%The class \ccRefName\ does this and that.
+
 \ccInclude{Arc_2.h}
 
 % The section below is automatically generated. Do not edit!
@@ -26,9 +28,9 @@
 
 Class defines an arc on a curve that can be analyzed.
 
-An arc is either non-vertical or vertical. If it is non-vertical, we can assign a constant arc number to its interior and we may can assign (non-identical) arc numbers to its end-points. It depends on whether the arc toches the bondary of the parameter space or not. If it is vertical, no arc number is available.
+An arc is either non-vertical or vertical. If it is non-vertical, we can assign a constant arc number to its interior and we may can assign (non-identical) arc numbers to its end-points. It depends on whether the arc touches the boundary of the parameter space or not. If it is vertical, no arc number is available.
 
-We distinguish between interior arcs, rays, and branches. An interior arc lies completely in the parameter space, while a ray has one end that lies on the boundary of the parameter space, and both ends of a branch lie on the boundary.
+We distinguish between interior arcs, rays, and branches. An interior arc lies completely in the interior of the parameter space, while a ray has one end that lies on the boundary of the parameter space, and a branch has two end that lie on the boundary.
 
 %END-AUTO(\ccDefinition)
 
@@ -78,11 +80,12 @@ type of an x-coordinate
 \ccGlue
 \ccNestedType{Xy_coordinate_2}
 {
-type of a finite point on curve
+type of an xy-coordinate
 }
 \ccGlue
 \ccNestedType{Boundary}
 {
+type of {\em rational} value in x-range
 }
 \ccGlue
 \ccNestedType{Curve_analysis_2}
@@ -110,10 +113,6 @@ type of kernel arc
 the handle superclass
 }
 \ccGlue
-\ccNestedType{SCA_2}
-{
-}
-\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -138,7 +137,7 @@ location of arc's end
 \ccMethod{void set_location(CGAL::Arr_curve_end ce, CGAL::Arr_parameter_space loc) const;}
 {
 Sets boundary type for an end of an arc.
-It's supposed that the user thoroughly understands malicious consequences that may result from the misuse of the location
+It is supposed that the user thoroughly understands malicious consequences that may result from the misuse of the location
 }
 \ccGlue
 \begin{description}
@@ -226,7 +225,7 @@ arc number of end of arc, which may be different from arc number in its interior
 \ccMethod{int arcno(const X_coordinate_1& x0) const;}
 {
 arc number at given x-coordinate
-If x0 equals to source's or target's x-coordinate, then the arc number of that point is returned. Otherwise the arc number of the interior is returned.
+If x0 is equal to source's or target's x-coordinate, then the arc number of that point is returned. Otherwise the arc number of the interior is returned.
 }
 \ccGlue
 \begin{description}
@@ -254,13 +253,13 @@ returns x-coordinate of vertical arc
 }
 \ccGlue
 \begin{description}
-\item[Returns:]x-coordinate line that contains vertical arc \end{description}
+\item[Returns:]x-coordinate of line that contains vertical arc \end{description}
 \begin{description}
 \item[Precondition:]\ccc{is_vertical} \end{description}
 \ccGlue
 \ccMethod{int interval_id() const;}
 {
-returns the index of an open interval between two events $\ast$this arc belongs to
+returns the index of an open interval between two events of the curve the arc belongs to
 }
 \ccGlue
 \begin{description}
@@ -280,22 +279,22 @@ returns boundary value in interior of x-range of non-vertical interval
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_x_near_boundary(CGAL::Arr_curve_end ce, const Point_2& p) const;}
 {
-Compare the relative x-positions of an interior point this arc's end on a bottom or top boundary
+Compare the relative x-positions of an interior point and the arc's end on a bottom or top boundary
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[p]A reference point; we refer to a vertical line incident to p. \item[ce]\ccc{ARR_MIN_END} if we refer to cv's minimal end, \ccc{ARR_MAX_END} if we refer to its maximal end. \end{description}
+\item[p]A reference point; we refer to a vertical line incident to p. \item[ce]\ccc{ARR_MIN_END} if we refer to the arc's minimal end, \ccc{ARR_MAX_END} if we refer to its maximal end. \end{description}
 \end{description}
 \begin{description}
-\item[Returns:]\ccc{CGAL::SMALLER} if p lies to the left of cv; \ccc{CGAL::LARGER} if p lies to the right of cv; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
+\item[Returns:]\ccc{CGAL::SMALLER} if p lies to the left of the arc; \ccc{CGAL::LARGER} if p lies to the right of the arc; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
 \begin{description}
-\item[Precondition:]curve's relevant end is on bottom or top boundary \end{description}
+\item[Precondition:]the arc's relevant end is on bottom or top boundary \end{description}
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_x_near_boundary(CGAL::Arr_curve_end ce1, const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const;}
 {
-Compare the relative x-positions of the curve ends of $\ast$this and cv2.
+Compare the relative x-positions of the curve end of $\ast$this and cv2.
 }
 \ccGlue
 \begin{description}
@@ -306,7 +305,7 @@ Compare the relative x-positions of the curve ends of $\ast$this and cv2.
 \begin{description}
 \item[Returns:]\ccc{CGAL::SMALLER} if this lies to the left of cv2; \ccc{CGAL::LARGER} if this lies to the right of cv2; \ccc{CGAL::EQUAL} in case of an overlap.\end{description}
 \begin{description}
-\item[Precondition:]the curve end lies on the bottom or top boundary \end{description}
+\item[Precondition:]the curve ends lie on the bottom or top boundary \end{description}
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_y_near_boundary(const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce) const;}
 {
@@ -340,8 +339,8 @@ Compares the relative vertical alignment of a point with this arc.
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_y_at_x_left(const Kernel_arc_2& cv2, const Point_2& p) const;}
 {
-Compares the relative aligment of this arc with a second immediately to the left of one of their intersection points.
-If one of the curves is vertical (emanating downward from p), it's always considered to be below the other curve.
+Compares the relative vertical aligment of this arc with a second immediately to the left of one of their intersection points.
+If one of the curves is vertical (emanating downward from p), it is always considered to be below the other curve.
 }
 \ccGlue
 \begin{description}
@@ -352,12 +351,12 @@ If one of the curves is vertical (emanating downward from p), it's always consid
 \begin{description}
 \item[Returns:]The relative vertical alignment this arc with respect to cv2 immediately to the left of p: SMALLER, LARGER or EQUAL.\end{description}
 \begin{description}
-\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographical) to its left. \end{description}
+\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographical) to their left. \end{description}
 \ccGlue
 \ccMethod{CGAL::Comparison_result compare_y_at_x_right(const Kernel_arc_2& cv2, const Point_2& p) const;}
 {
-Compares the relative aligment of this arc with a second immediately to the right of one of their intersection points.
-If one of the curves is vertical (emanating downward from p), it's always considered to be below the other curve.
+Compares the relative vertical aligment of this arc with a second immediately to the right of one of their intersection points.
+If one of the curves is vertical (emanating downward from p), it is always considered to be below the other curve.
 }
 \ccGlue
 \begin{description}
@@ -368,7 +367,7 @@ If one of the curves is vertical (emanating downward from p), it's always consid
 \begin{description}
 \item[Returns:]The relative vertical alignment this arc with respect to cv2 immediately to the right of p: SMALLER, LARGER or EQUAL.\end{description}
 \begin{description}
-\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographical) to its right. \end{description}
+\item[Precondition:]The point p lies on both curves, and both of them must be also be defined (lexicographical) to their right. \end{description}
 \ccGlue
 \ccMethod{bool is_in_x_range(const X_coordinate_1& x, bool * eq_min = NULL, bool * eq_max = NULL) const;}
 {
@@ -398,7 +397,7 @@ Checks whether an x-coordinate lies in the interiors of this arc's x-range.
 \ccGlue
 \ccMethod{bool is_equal(const Kernel_arc_2& cv2) const;}
 {
-Checks whether a given arcs is equal to this one.
+Checks whether a given arc is equal to this one.
 }
 \ccGlue
 \begin{description}
@@ -433,6 +432,8 @@ The intersection multiplicity of $\ast$this and cv2 at point p is returned.
 \begin{description}
 \item[cv2]The second arc \item[p]The intersection point \end{description}
 \end{description}
+\begin{description}
+\item[Returns:]The multiplicity of the intersection at p \end{description}
 \begin{description}
 \item[Precondition:]p must be an intersection point. \end{description}
 \ccGlue
@@ -500,13 +501,13 @@ both points must be interior and must lie on cv \end{description}
 \ccGlue
 \ccMethod{void split(const Point_2& p, Kernel_arc_2& s1, Kernel_arc_2& s2) const;}
 {
-Split a arc at a given point into two sub-arc.
+Split an arc at a given point into two sub-arcs.
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[p]The split point \item[s1]Output: The left resulting subcurve (p is its right endpoint) \item[s2]Output: The right resulting subcurve (p is its left endpoint)\end{description}
+\item[p]The split point \item[s1]Output: The left resulting sub-arc (p is its right endpoint) \item[s2]Output: The right resulting sub-arc (p is its left endpoint)\end{description}
 \end{description}
 \begin{description}
 \item[Precondition:]p lies on cv but is not one of its end-points. \end{description}
@@ -712,7 +713,7 @@ Given a decomposition of the arcs's supporting curve into a pair of two curves \
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[\ccc{cpa_2}]analysis o curve pair that should be used in simplification \end{description}
+\item[\ccc{cpa_2}]analysis of curve pair that should be used in simplification \end{description}
 \end{description}
 \begin{description}
 \item[Precondition:]\ccc{cpa_2} must correspond to a decomposition of this arc's supporting curve \end{description}
@@ -741,7 +742,7 @@ Intersection points are inserted to the output iterator oi as objects of type \c
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersection through this output iterator \end{description}
+\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersections through this output iterator \end{description}
 \end{description}
 \begin{description}
 \item[Precondition:]!cv1.\ccc{do_overlap}() \end{description}
@@ -756,7 +757,7 @@ Intersection points are returned in the output interator oi as object of type \c
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersection through this output iterator \end{description}
+\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersections through this output iterator \end{description}
 \end{description}
 \ccGlue
 \ccMethod{bool _joint_x_range(const Kernel_arc_2& cv2, Point_2& pt_low, Point_2& pt_high) const;}
@@ -778,14 +779,14 @@ computes a joint x-range of two arcs and returns true if arcs' x-ranges overlap;
 \ccMethod{static OutputIterator _intersect_coprime_support(const Kernel_arc_2& cv1, const Kernel_arc_2& cv2, OutputIterator oi);}
 {
 [static, protected] \\
-computes zero-dimensional intersection of two arcs having coprime supporting curves
+computes zero-dimensional intersections of two arcs having coprime supporting curves
 intersection points are inserted to the output iterator oi as objects of type \ccc{std::pair<Point_2, unsigned int>} (intersection point + multiplicity)
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersection through this output iterator \end{description}
+\item[cv1]the first arc \item[cv2]the second arc \item[oi]reporting zero-dimensional intersections through this output iterator \end{description}
 \end{description}
 \ccGlue
 \ccMethod{void write(std::ostream& os) const;}
@@ -804,9 +805,15 @@ writes arc to os
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{foo}  %% choose variable name
 
 \ccConstructor{Arc_2();}{default constructor.}
+
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Arc_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -967,8 +974,6 @@ Constructs an arc from a given representation used in rebind.
 \ccGlue
 
 %END-AUTO(\ccCreation)
-
-%% \ccIncludeExampleCode{Package/Arc_2.C}
 
 \end{ccRefClass}
 

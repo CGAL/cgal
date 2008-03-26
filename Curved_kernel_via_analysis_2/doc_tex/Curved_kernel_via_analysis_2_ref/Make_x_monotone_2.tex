@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Make_x_monotone_2.tex
 % +------------------------------------------------------------------------+
-% | 13.03.2008   Author
-% | Package: Package
+% | 26.03.2008   Author
+% | Package: Curved_kernel_via_analysis_2
 % |
 \RCSdef{\RCSMakexmonotoneRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
 \RCSdefDate{\RCSMakexmonotoneDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
@@ -12,23 +12,23 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Make_x_monotone_2}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}[CGALi::]{Make_x_monotone_2}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The function object class \ccRefName\ does this and that.
+%The function object class \ccRefName\ does this and that.
 
 \ccInclude{Make_x_monotone_2.h}
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-Splits a complete curve into x-monotone sweepable arcs and isolated points.
+Splits a curve that can be analyzed into connected x-monotone sweepable arcs and isolated points.
 
-The given curve is split into sweepable arcs by cutting it into connected, either x-monotone pieces of constant interior arc number at every event x-coordinate or vertical (\ccc{CurvedKernelViaAnalysis_2::Arc_2} objects). Isolated points are stored as \ccc{CurvedKernelViaAnalysis_2::Point_2} objects.
+Arcs are stored as \ccc{CurvedKernelViaAnalysis_2::Arc_2} objects, and each is either vertical or consists of an x-monotone piece of constant arc number wrt to the curve at every interior x-coordinate. Isolated points are stored as \ccc{CurvedKernelViaAnalysis_2::Point_2} objects.
 
 The resulting arcs and points are written to the output iterator as polymorphic \ccc{CGAL::Object}. Past-the-end value of the iterator is returned.
 
@@ -75,7 +75,7 @@ type of x-coordinate
 \ccGlue
 \ccNestedType{Xy_coordinate_2}
 {
-type of a finite point on curve
+type of xy-coordinate
 }
 \ccGlue
 \ccNestedType{Curve_analysis_2}
@@ -123,9 +123,14 @@ Splits a curve into x-monotone arcs and isolated points.
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{foo}  %% choose variable name
 
 \ccConstructor{Make_x_monotone_2();}{default constructor.}
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Make_x_monotone_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
@@ -143,26 +148,6 @@ Standard constructor.
 \ccGlue
 
 %END-AUTO(\ccCreation)
-
-\ccOperations
-
-\ccSeeAlso
-
-\ccExample
-
-A short example program.
-Instead of a short program fragment, a full running program can be
-included using the 
-\verb|\ccIncludeExampleCode{Package/Make_x_monotone_2.C}| 
-macro. The program example would be part of the source code distribution and
-also part of the automatic test suite.
-
-\begin{ccExampleCode}
-void your_example_code() {
-}
-\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Package/Make_x_monotone_2.C}
 
 \end{ccRefFunctionObjectClass}
 

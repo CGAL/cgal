@@ -1,8 +1,8 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Curve_interval_arcno_cache.tex
 % +------------------------------------------------------------------------+
-% | 13.03.2008   Author
-% | Package: Package
+% | 26.03.2008   Author
+% | Package: Curved_kernel_via_analysis_2
 % |
 \RCSdef{\RCSCurveintervalarcnocacheRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
 \RCSdefDate{\RCSCurveintervalarcnocacheDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
@@ -12,14 +12,14 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefFunctionObjectClass}{Curve_interval_arcno_cache}  %% add template arg's if necessary
+\begin{ccRefFunctionObjectClass}[CGALi::]{Curve_interval_arcno_cache}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
   
-The function object class \ccRefName\ does this and that.
+%The function object class \ccRefName\ does this and that.
 
 \ccInclude{Curve_interval_arcno_cache.h}
 
@@ -82,22 +82,27 @@ event arc number descriptor: stores an arc number along with curve's end type (+
 \ccGlue
 \ccNestedType{first_argument_type}
 {
+type of first argument
 }
 \ccGlue
 \ccNestedType{second_argument_type}
 {
+type of second argument
 }
 \ccGlue
-\ccNestedType{thirg_argument_type}
+\ccNestedType{third_argument_type}
 {
+type of third arguent
 }
 \ccGlue
 \ccNestedType{result_type}
 {
+the result type
 }
 \ccGlue
 \ccNestedType{Arity}
 {
+the arity of the functor
 }
 \ccGlue
 
@@ -125,9 +130,14 @@ Given arcno over an interval, this computes a corresponding event arcno on statu
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
-\ccCreationVariable{a}  %% choose variable name
+\ccCreationVariable{foo}  %% choose variable name
 
 \ccConstructor{Curve_interval_arcno_cache();}{default constructor.}
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)

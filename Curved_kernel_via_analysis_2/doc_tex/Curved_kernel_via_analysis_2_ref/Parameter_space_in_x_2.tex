@@ -1,0 +1,154 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Parameter_space_in_x_2.tex
+% +------------------------------------------------------------------------+
+% | 26.03.2008   Author
+% | Package: Curved_kernel_via_analysis_2
+% |
+\RCSdef{\RCSParameterspaceinxRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSParameterspaceinxDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}[CGALi::Curved_kernel_via_analysis_2_Functors::]{Parameter_space_in_x_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+%The function object class \ccRefName\ does this and that.
+
+\ccInclude{Parameter_space_in_x_2.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Functor computing parameter space in x for arc.
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{CurvedKernelViaAnalysis_2}$>$   \\
+class \ccc{Parameter_space_in_x_2};
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+this instance' first template parameter
+}
+\ccGlue
+\ccNestedType{Base}
+{
+the base type
+}
+\ccGlue
+\ccNestedType{Curve_2}
+{
+the curve type
+}
+\ccGlue
+\ccNestedType{Point_2}
+{
+the point type
+}
+\ccGlue
+\ccNestedType{Arc_2}
+{
+the arc type
+}
+\ccGlue
+\ccNestedType{Curve_analysis_2}
+{
+type of curve analaysis
+}
+\ccGlue
+\ccNestedType{X_coordinate_1}
+{
+the x-coordinate type
+}
+\ccGlue
+\ccNestedType{result_type}
+{
+the result type
+}
+\ccGlue
+\ccNestedType{Arity}
+{
+the arity of the functor
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccMethod{result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end ce) const;}
+{
+Obtains the parameter space in x at the end of an arc.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[cv]The arc \item[ce]the arc end indicator: \ccc{ARR_MIN_END} - the minimal end of cv \ccc{ARR_MAX_END} - the maximal end of cv \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]the parameter space at the ce end of cv \ccc{ARR_LEFT_BOUNDARY} - the arc approaches the left boundary of the parameter space \ccc{ARR_INTERIOR} - the arc does not approach a boundary of the parameter space \ccc{ARR_RIGHT_BOUNDARY} - the arc approaches the right boundary of the parameter space \end{description}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{foo}  %% choose variable name
+
+\ccConstructor{Parameter_space_in_x_2();}{default constructor.}
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Parameter_space_in_x_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Parameter_space_in_x_2(Curved_kernel_via_analysis_2 * kernel);}
+{
+Standard constructor.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]The kernel \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

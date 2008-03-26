@@ -1,0 +1,155 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Intersect_2.tex
+% +------------------------------------------------------------------------+
+% | 26.03.2008   Author
+% | Package: Curved_kernel_via_analysis_2
+% |
+\RCSdef{\RCSIntersectRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSIntersectDate}{$Date: 2007-09-07 17:29:10 +0200 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}[CGALi::Curved_kernel_via_analysis_2_Functors::]{Intersect_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+%The function object class \ccRefName\ does this and that.
+
+\ccInclude{Intersect_2.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Functor that computes the intersections of two arcs.
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class \ccc{CurvedKernelViaAnalysis_2}$>$   \\
+class \ccc{Intersect_2};
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Curved_kernel_via_analysis_2}
+{
+this instance' first template parameter
+}
+\ccGlue
+\ccNestedType{Base}
+{
+the base type
+}
+\ccGlue
+\ccNestedType{Curve_2}
+{
+the curve type
+}
+\ccGlue
+\ccNestedType{Point_2}
+{
+the point type
+}
+\ccGlue
+\ccNestedType{Arc_2}
+{
+the arc type
+}
+\ccGlue
+\ccNestedType{Curve_analysis_2}
+{
+type of curve analaysis
+}
+\ccGlue
+\ccNestedType{X_coordinate_1}
+{
+the x-coordinate type
+}
+\ccGlue
+\ccNestedType{result_type}
+{
+the result type
+}
+\ccGlue
+\ccNestedType{Arity}
+{
+the arity of the functor
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccMethod{OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2, OutputIterator oi) const;}
+{
+Find all intersections of the two given arcs and insert them to the output iterator.
+Type of output iterator is \ccc{CGAL::Object} containing either an \ccc{Arc_2} object (overlap) or a \ccc{std::pair<Point_2, unsigned int>}, where the unsigned int denotes the multiplicity of the zero-dimensional intersection (0 if unknown)
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[cv1]The first arc \item[cv2]The second arc \item[oi]The output iterator. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The past-the-end iterator. \end{description}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+\ccCreation
+\ccCreationVariable{foo}  %% choose variable name
+
+\ccConstructor{Intersect_2();}{default constructor.}
+
+%% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Intersect_2.C}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Intersect_2(Curved_kernel_via_analysis_2 * kernel);}
+{
+Standard constructor.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[kernel]The kernel \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
