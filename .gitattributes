@@ -1714,6 +1714,7 @@ Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Curved_ke
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Generic_arc_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Generic_point_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h -text
+Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Point_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h -text
 Curved_kernel_via_analysis_2/package_info/Curved_kernel_via_analysis_2/maintainer -text
