@@ -247,7 +247,7 @@ public:
     //!\name Usual constructors
     //!@{
     
-    /*\brief 
+    /*!\brief 
      * Constructs an interior point
      *
      * \param x The x-coordinate 
