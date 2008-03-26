@@ -104,7 +104,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                InputIterator beyond,
 											         OutputIterator normals, ///< output normals
 											         const unsigned int K,   ///< number of neighbors
-									      	  	 const Kernel& kernel,
+									      	  	 const Kernel& /*kernel*/,
 															 const unsigned int degre_fitting = 2)
 {
   // Hard-code the Normal type as back_insert_iterator value_type is wrong (VC++ 2003)
@@ -144,7 +144,8 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 ///
 /// Precondition: K >= 2.
 template < typename InputIterator, ///< InputIterator value_type is Point_3
-           typename OutputIterator> ///< OutputIterator value_type is a model of OrientedNormal_3
+           typename OutputIterator ///< OutputIterator value_type is a model of OrientedNormal_3
+>
 void
 estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                InputIterator beyond,
@@ -156,6 +157,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
 	estimate_normals_jet_fitting_3(first,beyond,normals,K,Kernel(),degre_fitting);
 }
+
 
 CGAL_END_NAMESPACE
 

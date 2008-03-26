@@ -24,7 +24,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{void estimate_normals_pca_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel& kernel);}
+\ccFunction{void estimate_normals_pca_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel &);}
 {
 Estimate normals direction using linear least squares fitting of a plane on the K nearest neighbors. This variant requires the kernel.
 Precondition: K $>$= 2.
@@ -63,7 +63,7 @@ typename InputIterator,   \\
 typename OutputIterator,   \\
 typename Kernel$>$  \\
 void  \\
-\ccc{estimate_normals_pca_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel \&kernel);  \\
+\ccc{estimate_normals_pca_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel \&);  \\
   \\
 template$<$  \\
 typename InputIterator,   \\
