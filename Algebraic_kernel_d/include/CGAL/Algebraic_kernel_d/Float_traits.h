@@ -30,6 +30,8 @@ namespace CGALi {
         
         typedef Null_functor    Get_mantissa;
         typedef Null_functor    Get_exponent;  
+        typedef Null_functor    Mul_by_pow_of_2;
+
     };
     
 #ifdef CGAL_USE_LEDA
@@ -50,6 +52,15 @@ namespace CGALi {
             : public Unary_function< leda_bigfloat, long > {
             long operator()( const leda_bigfloat& x ) const {
                 return x.get_exponent().to_long();                
+            }
+        };
+
+        struct Mul_by_pow_of_2
+            : public Binary_function< leda_bigfloat, leda_integer, 
+                                      leda_bigfloat> {
+            leda_bigfloat operator()( const leda_bigfloat& a, 
+                                      const leda_integer&  e ) const {
+                return leda_bigfloat(a.get_significant(), a.get_exponent()+e);
             }
         };
     };
@@ -76,6 +87,16 @@ namespace CGALi {
                 return 14*x.exp(); // The basis is 8092                 
             }
         };
+
+        struct Mul_by_pow_of_2
+            : public Binary_function< CORE::BigFloat, CORE::BigInt, 
+                                      CORE::BigFloat> {
+            CORE::BigFloat operator()( const CORE::BigFloat& a, 
+                                       const CORE::BigInt&   e ) const {
+                return a*CORE::BigFloat::exp2(e.intValue());
+            }
+        };
+
     };
 
 #endif    
