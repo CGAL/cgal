@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page
 % +------------------------------------------------------------------------+
-% | March 2005  Pierre Alliez and Sylvain Pion
+% | March 2005  Pierre Alliez and Sylvain Pion and Ankit Gupta
 % | Package: Principal Component Analysis
 % | 
 % |
@@ -11,11 +11,9 @@
 
 \ccChapterAuthor{Pierre Alliez, Sylvain Pion and Ankit Gupta}
 
+This \cgal\ package provides functions to compute global information on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, and barycenters of weighted point sets. The set of kernel primitive elements are assumed to be stored into an iterator range of a container.\\
 
-
-This \cgal\ package provides functions to compute global information
-on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, barycenters of weighted point sets and centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and in addition to these, cuboids, spheres and tetrahedrons in 3D. It also provides the computation of centroids and linear least squares fitting for all $n-1$ manifolds of these $n$ dimensional geometries ($n = 2$ or $3$). It assumes the set of kernel primitive elements to be stored into an iterator range of a container.
-
+In addition, it computes centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and in points, segments, triangles, cuboids, spheres and tetrahedra in 3D. For each object type in 2D and 3D, it allows the user to specify the dimension of the object fitted. For example, it is possible to fit a set of balls by providing an iterator range of spheres and specifying dimension 3. It is also possible to fit only the edges of a set of tetrahedra by specifying dimension 1, etc.
 
 \section{Classified Reference Pages}
 
