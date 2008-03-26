@@ -46,17 +46,31 @@ namespace CGALi {
       public:
         typedef Null_functor Ceil_log2_abs;
         typedef Null_functor Floor_log2_abs;
+        typedef Null_functor Floor;
+        typedef Null_functor Ceil;
     };
     
     // Functor adapting functions
     template< class NT >
-    long floor_log2_abs( NT x ) {
+    long floor_log2_abs( const NT& x ) {
         return typename Real_embeddable_extension< NT >::Floor_log2_abs()( x );
     }
     
     template< class NT >
-    long ceil_log2_abs( NT x ) {
+    long ceil_log2_abs( const NT& x ) {
         return typename Real_embeddable_extension< NT >::Ceil_log2_abs()( x );
+    }
+
+    template< class NT >
+    typename Real_embeddable_extension<NT>::Floor::result_type
+    floor (const NT& x) {
+        return typename Real_embeddable_extension<NT>::Floor() (x);
+    }
+
+    template< class NT >
+    typename Real_embeddable_extension<NT>::Ceil::result_type
+    ceil (const NT& x) {
+        return typename Real_embeddable_extension<NT>::Ceil() (x);
     }
 
     // Specialization for long
@@ -108,6 +122,15 @@ namespace CGALi {
                 return l + int(floor_log2_4bit[x]);
             }
         };
+
+        struct Floor
+            : public Unary_function< long, long > {
+            long operator() (long x) { return x;}
+        };
+        struct Ceil
+            : public Unary_function< long, long > {
+            long operator() (long x) { return x;}
+        };
     };
 
 
@@ -119,7 +142,7 @@ namespace CGALi {
       public:
         struct Ceil_log2_abs
             : public Unary_function< leda_integer, long > {
-                long operator()( leda_integer x ) const {
+                long operator()( const leda_integer& x ) const {
                     CGAL_precondition(x != leda_integer(0));
                     ::leda::digit_sz ldgzeros = ::leda::digLeadingZeros(x.highword());
                     result_type l =
@@ -135,7 +158,16 @@ namespace CGALi {
                     }
                     return l;                    
                 }
-         };                
+         };
+
+        struct Floor
+            : public Unary_function< leda_integer, leda_integer > {
+            leda_integer operator() (const leda_integer& x) const { return x;}
+        };
+        struct Ceil
+            : public Unary_function< leda_integer, leda_integer > {
+            leda_integer operator() (const leda_integer& x) const { return x;}
+        };
     };
     
     template<>
@@ -143,7 +175,7 @@ namespace CGALi {
       public:
         struct Floor_log2_abs
             : public Unary_function< leda_bigfloat, long > {
-            long operator()( leda_bigfloat x ) const {
+            long operator()( const leda_bigfloat& x ) const {
                 CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
                 ::leda::integer abs_sign = abs(x.get_significant());
                 return (x.get_exponent() + ::leda::log(abs_sign)).to_long();
@@ -153,33 +185,64 @@ namespace CGALi {
         
         struct Ceil_log2_abs
             : public Unary_function< leda_bigfloat, long > {
-            long operator()( leda_bigfloat x ) const {
+            long operator()( const leda_bigfloat& x ) const {
                 CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
                 return ::leda::ilog2(x).to_long();                
             }
         };
+
+        struct Floor
+            : public Unary_function< leda_bigfloat, leda_integer > {
+            leda_integer operator() ( const leda_bigfloat& x ) const { 
+                return leda::to_integer( x, leda::TO_N_INF );
+            }
+        };
+        
+        struct Ceil
+            : public Unary_function< leda_bigfloat, leda_integer > {
+            leda_integer operator() ( const leda_bigfloat& x ) const { 
+                return leda::to_integer( x, leda::TO_P_INF );
+            }
+        };
+
     };
     
     template<>
     class Real_embeddable_extension< leda_bigfloat_interval > {
         public:
-            struct Floor_log2_abs
-                : public Unary_function< leda_bigfloat_interval, long > {
-                  
-                  result_type operator() (argument_type x) const {
-                    CGAL_precondition(! ::boost::numeric::in_zero(x));
-                    return CGALi::floor_log2_abs(::boost::numeric::abs(x).lower());
-                  }                    
-             };
-             
-            struct Ceil_log2_abs
-                : public Unary_function< leda_bigfloat_interval, long > {
-                long operator()( leda_bigfloat_interval x ) const {
-                    CGAL_precondition(!(::boost::numeric::in_zero(x) && 
-                                        ::boost::numeric::singleton(x)));
-                    return CGALi::ceil_log2_abs(::boost::numeric::abs(x).upper());                    
-                }
-            };
+          struct Floor_log2_abs
+              : public Unary_function< leda_bigfloat_interval, long > {
+              
+              result_type operator() (const argument_type& x) const {
+                  CGAL_precondition(! ::boost::numeric::in_zero(x));
+                  return CGALi::floor_log2_abs(::boost::numeric::abs(x).lower());
+              }                    
+          };
+        
+          struct Ceil_log2_abs
+              : public Unary_function< leda_bigfloat_interval, long > {
+              long operator()( const leda_bigfloat_interval& x ) const {
+                  CGAL_precondition(!(::boost::numeric::in_zero(x) && 
+                                      ::boost::numeric::singleton(x)));
+                  return CGALi::ceil_log2_abs(::boost::numeric::abs(x).upper());                    
+              }
+          };
+
+          struct Floor
+              : public Unary_function< leda_bigfloat_interval, leda_integer > {
+              leda_integer operator() ( const leda_bigfloat_interval& x ) 
+                  const { 
+                  return CGALi::floor( x.lower() );
+              }
+          };
+        
+          struct Ceil
+              : public Unary_function< leda_bigfloat_interval, leda_integer > {
+              leda_integer operator() ( const leda_bigfloat_interval& x ) 
+                  const { 
+                  return CGALi::ceil( x.upper() );
+              }
+          };
     };
                   
 #endif
@@ -192,15 +255,28 @@ namespace CGALi {
       public:
         struct Floor_log2_abs
             : public Unary_function< CORE::BigInt, long > {
-            long operator()( CORE::BigInt x ) const {
+            long operator()( const CORE::BigInt& x ) const {
                 return CORE::floorLg(x);
             }            
         };
         
         struct Ceil_log2_abs
             : public Unary_function< CORE::BigInt, long > {
-            long operator()( CORE::BigInt x ) const {
+            long operator()( const CORE::BigInt& x ) const {
                 return CORE::ceilLg(x);
+            }
+        };
+
+        struct Floor
+            : public Unary_function< CORE::BigInt, CORE::BigInt > {
+            CORE::BigInt operator() (const CORE::BigInt& x) const { 
+                return x;
+            }
+        };
+        struct Ceil
+            : public Unary_function< CORE::BigInt, CORE::BigInt > {
+            CORE::BigInt operator() (const CORE::BigInt& x) const { 
+                return x;
             }
         };
     };
@@ -227,6 +303,29 @@ namespace CGALi {
                 return CORE::ceilLg(x.m()+x.err())+x.exp()*14;
             }
         };
+
+        struct Floor
+            : public Unary_function< CORE::BigFloat, CORE::BigInt > {
+            CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
+                CORE::BigInt xi = x.BigIntValue();
+                if(x.sign() < 0 && x.cmp(xi)!=0) {
+                    xi--;
+                }
+                return xi;
+            }
+        };
+        
+        struct Ceil
+            : public Unary_function< CORE::BigFloat, CORE::BigInt > {
+            CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
+                CORE::BigInt xi = x.BigIntValue();
+                if(x.sign() >0 && x.cmp(xi)!=0) {
+                    xi++;
+                }
+                return xi;
+            }
+        };
+
     };
 
 #endif
