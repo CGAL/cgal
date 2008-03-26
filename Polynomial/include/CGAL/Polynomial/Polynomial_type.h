@@ -1397,11 +1397,11 @@ void Polynomial<NT>::output_maple(std::ostream& os) const {
     }
     
     int i = p.degree();
-    print_maple_monomial(os, p[i], varname, i);
+    CGAL::print_maple_monomial(os, p[i], varname, i);
     while (--i >= 0) {
         if (p[i] != NT(0)) {
             os << " + ";
-            print_maple_monomial(os, p[i], varname, i);
+            CGAL::print_maple_monomial(os, p[i], varname, i);
         }
     }
 }
