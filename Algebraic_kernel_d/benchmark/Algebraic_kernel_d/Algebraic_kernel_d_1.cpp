@@ -363,7 +363,7 @@ void single_benchmark( std::string filename, std::string rep_class, std::string 
 
 int main( int argc, char** argv ) {
 
-    typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
+    typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
     typedef Arithmetic_kernel::Integer Integer;
 
     if( argc > 1 ) {
