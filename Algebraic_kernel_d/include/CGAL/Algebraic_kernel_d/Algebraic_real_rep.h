@@ -271,7 +271,8 @@ private:
         return true;
     }    
 public:
-    void refine() const{      
+    virtual void refine() const{      
+        
         if(is_rational()) return;
         
         Field m = (low()+high())/Field(2);
@@ -287,6 +288,7 @@ public:
 public:
     template <class NTX>
     void strong_refine(const NTX& m) const{
+        
         if(is_rational()) return;
 
         if( NTX(low()) <= m && m <= NTX(high()) ){
