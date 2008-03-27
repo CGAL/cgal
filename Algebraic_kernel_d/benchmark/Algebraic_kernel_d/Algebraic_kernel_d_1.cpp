@@ -21,8 +21,11 @@
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
+#include <CGAL/Arithmetic_kernel.h>
+
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 
@@ -351,25 +354,30 @@ void single_benchmark( std::string filename, std::string rep_class, std::string 
     else if( rep_class == "Algebraic_real_rep_bfi" )
         single_benchmark< Coeff, Boundary,
              CGAL::CGALi::Algebraic_real_rep_bfi< Coeff, Boundary > >( filename, isolator, samples );
+    else if( rep_class == "Algebraic_real_quadratic_refinement_rep_bfi" )
+        single_benchmark< Coeff, Boundary,
+             CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi< Coeff, Boundary > >( filename, isolator, samples );
     else
          CGAL_error_msg( "Unknown rep class" );
 }
 
 int main( int argc, char** argv ) {
+
+    typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
+    typedef Arithmetic_kernel::Integer Integer;
+
     if( argc > 1 ) {
     
         CGAL_assertion( argc >= 5 );
         int samples = (argc == 6 ) ? std::atoi( argv[5] ) : 5;
-            
         if( std::string( argv[1] ) == "INT" )
-//            single_benchmark< leda_integer >( argv[4], argv[2], argv[3], samples );
-            single_benchmark< CORE::BigInt >( argv[4], argv[2], argv[3], samples );
+            single_benchmark< Integer >( argv[4], argv[2], argv[3], samples );
         else if( std::string( argv[1] ) == "EXT" ) 
-//            single_benchmark< CGAL::Sqrt_extension< leda_integer, leda_integer > >( argv[4], argv[2], argv[3], samples );
-            single_benchmark< CGAL::Sqrt_extension< CORE::BigInt, CORE::BigInt > >( argv[4], argv[2], argv[3], samples );
+            single_benchmark< CGAL::Sqrt_extension< Integer, Integer > >
+                ( argv[4], argv[2], argv[3], samples );
         else
             CGAL_error_msg( "Unknown coefficient type" );
-    
+        
     } else {
         std::cerr << "No parameters found" << std::endl;    
     }
