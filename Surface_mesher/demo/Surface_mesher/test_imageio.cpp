@@ -1,4 +1,4 @@
-#include "../../../CGALimageIO/src/CGALimageIO/imageio/ImageIO.h"
+#include <CGAL/ImageIO.h>
 #include <iostream>
 
 #define SHOW(attribut) "\n  "#attribut": " << image->attribut
