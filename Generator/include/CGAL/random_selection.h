@@ -38,10 +38,10 @@ OutputIterator random_selection( RandomAccessIterator first,
                                  OutputIterator result,
                                  Random& rnd)
     // choose a random item from the range [`first',`last') and write it
-    // to `first2', each item from the range with equal probability.
-    // Repeat this n times, thus writing n items to `first2'. A single
+    // to `result', each item from the range with equal probability.
+    // Repeat this n times, thus writing n items to `result'. A single
     // random number is needed from `rnd' for each item. Returns the
-    // value of `first2' after inserting the n items.
+    // value of `result' after inserting the n items.
 {
     int m = int(last - first);
     for ( Size i = 0; i < n; i++) {

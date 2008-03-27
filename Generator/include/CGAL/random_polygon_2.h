@@ -17,9 +17,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
+
 #ifndef CGAL_RANDOM_POLYGON_2_H
 #define CGAL_RANDOM_POLYGON_2_H
 
@@ -60,14 +60,9 @@ OutputIterator random_polygon_2(int n,  OutputIterator result,
    if (orientation_2(vertices.begin(), vertices.end()) == CLOCKWISE)
       std::reverse(vertices.begin(), vertices.end());
 
-
    CGAL_assertion(is_simple_2(vertices.begin(), vertices.end()));
-   for (Iterator it = vertices.begin(); it != vertices.end(); it++)
-   {
-      *result = *it;
-      result++;
-   }
-   return result;
+
+   return std::copy(vertices.begin(), vertices.end(), result);
 }
 
 template <class PointGenerator, class OutputIterator>
@@ -87,8 +82,7 @@ bool duplicate_points(ForwardIterator first, ForwardIterator beyond,
    typedef typename Traits::Point_2      Point_2;
    typedef typename Traits::Less_xy_2    Less_xy_2;
    std::set<Point_2,Less_xy_2>  point_set;
-   int i = 0;
-   for (; first != beyond; first++, i++)
+   for (; first != beyond; first++)
       if (!(point_set.insert(*first)).second) return true;
    return false;
 }
@@ -114,8 +108,7 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
    typedef typename Traits::Less_xy_2  Less_xy_2;
 
    std::set<Point_2, Less_xy_2>    sorted_point_set;
-   int i;
-   for (i = 0; i < n; i++)
+   for (int i = 0; i < n; i++)
    {
       if (sorted_point_set.insert(*first).second)
       {
@@ -136,7 +129,6 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
    typedef typename Kernel_traits<Point_2>::Kernel  K;
    return copy_n_unique(first, n, result, K());
 }
-
 
 } // namespace CGAL
 
