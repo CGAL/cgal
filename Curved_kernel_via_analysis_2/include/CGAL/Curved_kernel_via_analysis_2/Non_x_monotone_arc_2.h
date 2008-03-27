@@ -91,7 +91,7 @@ class Non_x_monotone_arc_2 :
     public CGAL::Handle_with_policy< Rep_ > {
     
 public:
-    //!\name publuic typedefs
+    //!\name public typedefs
     //!@{
     
     //! this instance's first template parameter
@@ -208,6 +208,7 @@ public:
         return this->ptr()->_m_x_monotone_arcs.end();
     }
 
+#if 0 // not needed
     /*!\brief
      * returns a distinct \c ith x-monotone piece of the arc
      */
@@ -216,6 +217,7 @@ public:
             static_cast<int>(this->ptr()->_m_x_monotone_arcs));
         return this->ptr()->_m_x_monotone_arcs[i];
     }
+#endif	
 
     /*!\brief
      * returns the supporting curve
@@ -232,13 +234,6 @@ public:
         CGAL_precondition(number_of_x_monotone_arcs() > 0);
         return this->ptr()->_m_x_monotone_arcs[0].is_vertical();
     } 
-    
-    /*!\brief
-     * arc is sweepable by construction
-     */
-    bool is_sweepable() const {
-        return true;
-    }
     
     //!@}
 }; // Non_x_monotone_arc_2
