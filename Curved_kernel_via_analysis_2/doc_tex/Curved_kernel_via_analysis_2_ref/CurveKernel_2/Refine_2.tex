@@ -22,16 +22,16 @@ Refines the first coordinate of a given
 A model \ccVar\ of this type must provide:
 
 \ccMethod{
-result_type operator()(const argument_type &ar2);}{ 
+result_type operator()(const argument_type &xy2);}{ 
   This operator at least half's the current interval of the first
-  coordinate of $ar2$. \\
+  coordinate of $xy2$. \\
   Note that an interval may also be degenerated to a single point.
 } 
 
 \ccMethod{
-result_type operator()(const argument_type & ar2, int rel_prec);}{ 
+result_type operator()(const argument_type & xy2, int rel_prec);}{ 
   This operator refines the current interval of the first coordinate $x$
-  of $ar2$ with respect to the given relative precision. \\ 
+  of $xy2$ with respect to the given relative precision. \\ 
   That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$, where $lower$
   and $upper$ are lower and upper bounds for $x$, respectively.\\
   In case $x$ equals zero the interval degenerates to the zero interval. 
@@ -66,16 +66,16 @@ Refines the second coordinate of a given
 A model \ccVar\ of this type must provide:
 
 \ccMethod{
-result_type operator()(const argument_type &ar2);}{ 
+result_type operator()(const argument_type &xy2);}{ 
   This operator at least half's the current interval of the second
-  coordinate of $ar2$. \\ 
+  coordinate of $xy2$. \\ 
   Note that an interval may also be degenerated to a single point.
 } 
 
 \ccMethod{
-result_type operator()(const argument_type & ar2, int rel_prec);}{ 
+result_type operator()(const argument_type & xy2, int rel_prec);}{ 
   This operator refines the current interval of the second coordinate $y$
-  of $ar2$ with respect to the given relative precision.\\
+  of $xy2$ with respect to the given relative precision.\\
   That is: $|lower - upper| / |y| \leq 2^{-rel\_prec}$, where $lower$
   and $upper$ are lower and upper bounds for $y$, respectively.\\\\
   In case $y$ equals zero the interval degenerates to the zero interval. 
