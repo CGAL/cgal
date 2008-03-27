@@ -2207,7 +2207,7 @@ public:
     typedef \
     Curved_kernel_via_analysis_2_Functors::Y< Curved_kernel_via_analysis_2 > \
     Y; \
-    /*! returns instance of functor */ \
+    /*!\brief returns instance of functor */ \
     Y Z() const { return Y(&Curved_kernel_via_analysis_2::instance()); }
 
 #define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)

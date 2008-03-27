@@ -525,7 +525,7 @@ public:
     //!@}
 
     //!\name Comparison operators for points in the interior of parameter space
-    //!{
+    //!@{
 
     //! equality
     inline
@@ -566,11 +566,10 @@ public:
     //!@}
     
 public:
-    
     //!\name IO
     //!@{
     
-    /*!\brief 
+    /*!\brief
      * writes point to \c os
      */
     void write(std::ostream& os) const {

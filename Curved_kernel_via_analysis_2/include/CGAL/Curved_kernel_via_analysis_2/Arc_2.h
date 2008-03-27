@@ -2850,31 +2850,28 @@ public:
     //!\name IO
     //!@{
     
-    /*!\brief 
+    /*!\brief
      * output operator
      *
      * write arc to \c os
      */
     void write(std::ostream& os) const {
-        
+
         switch (::CGAL::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "arc@" << this->id() << "[(sup@" << this->curve().id();
             if (this->is_vertical()) {
-                os << ", VERTICAL"; 
+                os << ", VERTICAL";
             } else {
-                os << ", ARCNO=" << this->arcno(CGAL::ARR_MIN_END) 
-                   << "," << this->arcno() 
+                os << ", ARCNO=" << this->arcno(CGAL::ARR_MIN_END)
+                   << "," << this->arcno()
                    << "," << this->arcno(CGAL::ARR_MAX_END);
             }
             os << "); ";
-            os <<"min: " << this->_minpoint() << "; "; 
+            os <<"min: " << this->_minpoint() << "; ";
             os<< "max: " << this->_maxpoint() << "]";
             break;
-            /*case LiS::IO::BENCHMARK:
-              std::cerr << "BENCHMARK format not yet implemented" << std::endl;
-              break;
-            */
+
         case ::CGAL::IO::BINARY:
         std::cerr << "BINARY format not yet implemented" << std::endl;
         break;
@@ -2884,7 +2881,7 @@ public:
         }
     }
     
-    //!@}    
+    //!@}
 
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
