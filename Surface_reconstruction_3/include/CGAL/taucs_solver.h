@@ -107,7 +107,7 @@ public:
 		finalize_matrix();
 
 		// bandlimitation
-		taucs_ccs_order(&A, &perm, &invperm, "metis");
+		taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
 		PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
 		if (!PAP)
 		{
@@ -135,7 +135,7 @@ public:
 		finalize_matrix();
 
 		// bandlimitation
-		taucs_ccs_order(&A, &perm, &invperm, "metis");
+		taucs_ccs_order(&A, &perm, &invperm, (char*)"metis");
 		PAP = taucs_ccs_permute_symmetrically(&A, perm, invperm);
 		if (!PAP)
 		{
@@ -144,9 +144,9 @@ public:
 		}
 
 		// out-of-core Cholesky factorization.
-        // LS 03/2008: ooc file opening will fail if 2 instances of the application 
+        // LS 03/2008: ooc file opening will fail if 2 instances of the application
         //             run at the same time. Better use tempnam().
-		m_io_handle = taucs_io_create_multifile("taucs-ooc");
+		m_io_handle = taucs_io_create_multifile((char*)"taucs-ooc");
 		if(m_io_handle == NULL)
 		{
 			//CGAL_surface_reconstruction_assertion(false);
