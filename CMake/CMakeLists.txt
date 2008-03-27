@@ -137,17 +137,19 @@ set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header 
 set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 if ( NOT DEFINED SOURCE_INSTALL )
-  if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT CYGWIN_ON_WIN )
+  if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT WIN32_CMAKE_ON_CYGWIN )
     set ( SOURCE_INSTALL TRUE )
   else()
     set ( SOURCE_INSTALL FALSE )
   endif()  
 endif()
 
-if ( CYGWIN_ON_WIN AND CMAKE_INSTALL_PREFIX MATCHES ":" )
-  message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} is not a valid cygpath, using /usr/local instead." )
-  set ( CMAKE_INSTALL_PREFIX "/usr/local" )
+if ( WIN32_CMAKE_ON_CYGWIN )
+  exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
+  file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
 endif()
+
+message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
 
 if ( SOURCE_INSTALL )
 
