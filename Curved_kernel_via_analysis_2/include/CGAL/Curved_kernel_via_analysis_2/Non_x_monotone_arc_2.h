@@ -79,9 +79,8 @@ public:
 /*! \brief
  * Class representing a (not necessary x-monotone) curve arc
  *
- * This class represents either a full curve or a not necessarily x-monotone
- * arc. In the latter case, one needs to specify a list of connected x-monotone
- * pieces this arc is composed of.
+ * This class represents a not necessarily x-monotone curve arc. The arc is
+ * given as a list of connected x-monotone pieces.
  *
  * By constructing a new arc, its validity is checked to ensure that its
  * x-monotone pieces form a single chain
@@ -219,7 +218,7 @@ public:
     }
 
     /*!\brief
-     * returns a supporting curve
+     * returns the supporting curve
      */
     Curve_2 curve() const {
         CGAL_precondition(number_of_x_monotone_arcs() > 0);
