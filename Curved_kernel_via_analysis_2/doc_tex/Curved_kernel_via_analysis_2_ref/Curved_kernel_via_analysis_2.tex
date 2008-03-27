@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Curved_kernel_via_analysis_2.tex
 % +------------------------------------------------------------------------+
-% | 26.03.2008   Author
+% | 27.03.2008   Author
 % | Package: Curved_kernel_via_analysis_2
 % |
 \RCSdef{\RCSCurvedkernelviaanalysisRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
@@ -13,6 +13,7 @@
 
 
 \begin{ccRefClass}{Curved_kernel_via_analysis_2}  %% add template arg's if necessary
+\ccRefLabel{Curved_kernel_via_analysis_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -34,6 +35,7 @@ Is a model of CGAL's \ccc{ArrangementTraits_2} concept.
 
 %END-AUTO(\ccDefinition)
 
+
 \ccParameters
 
 % The section below is automatically generated. Do not edit!
@@ -47,6 +49,7 @@ class \ccc{Arc_} = void$>$   \\
 class \ccc{Curved_kernel_via_analysis_2};
 
 %END-AUTO(\ccParameters)
+
 
 \ccIsModel
 
@@ -63,7 +66,6 @@ class \ccc{Curved_kernel_via_analysis_2};
 \ccNestedType{Curve_kernel_2}
 {
 this instance's template argument
- \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type}, \ccc{CurveKernel_2} $>$ .
 }
 \ccGlue
 \ccNestedType{CKvA}
@@ -88,7 +90,6 @@ this instance's fourth template parameter
 {
 [protected] \\
 this instance itself
- \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type}, \ccc{CurveKernel_2} $>$ .
 }
 \ccGlue
 \ccNestedType{CKvA_2}
@@ -100,29 +101,21 @@ type of \ccc{CKvA_2} used internally
 \ccNestedType{Curve_2}
 {
 type of curve that can be analyzed
-%  \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type}, \ccc{CurveKernel_2::Curve_analysis_2}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Point_>::value} $>$, \ccc{CGALi::Point_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Point_} $>$\ccc{::type}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Arc_>::value} $>$, \ccc{CGALi::Arc_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Arc_} $>$\ccc{::type} $>$ .
 }
 \ccGlue
 \ccNestedType{Point_2}
 {
 type of a point on a curve that can be analyzed
-%  \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type}, \ccc{CurveKernel_2::Curve_analysis_2}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Point_>::value} $>$, \ccc{CGALi::Point_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Point_} $>$\ccc{::type}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Arc_>::value} $>$, \ccc{CGALi::Arc_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Arc_} $>$\ccc{::type} $>$ .
 }
 \ccGlue
 \ccNestedType{Arc_2}
 {
 type of an arc on a curve that can be analyzed
-%  \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type}, \ccc{CurveKernel_2::Curve_analysis_2}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Point_>::value} $>$, \ccc{CGALi::Point_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Point_} $>$\ccc{::type}, \ccc{boost::mpl::if_<boost::mpl::bool_< boost::is_void< Arc_>::value} $>$, \ccc{CGALi::Arc_2<boost::mpl::if_< boost::mpl::bool_< boost::is_void< CKvA_>::value} $>$, \ccc{Curved_kernel_via_analysis_2<CurveKernel_2>}, \ccc{CKvA_} $>$\ccc{::type} $>$, \ccc{Arc_} $>$\ccc{::type} $>$ .
 }
 \ccGlue
 \ccNestedType{X_monotone_curve_2}
 {
 type of weakly x-monotone arc for \ccc{ArrangementTraits_2}
-}
-\ccGlue
-\ccNestedType{Non_x_monotone_arc_2}
-{
-type of non x-monotone arc on a curve that can be analyzed
 }
 \ccGlue
 \ccNestedType{Base_kernel}

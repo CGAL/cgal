@@ -1,7 +1,7 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Non_x_monotone_arc_2.tex
 % +------------------------------------------------------------------------+
-% | 26.03.2008   Author
+% | 27.03.2008   Author
 % | Package: Curved_kernel_via_analysis_2
 % |
 \RCSdef{\RCSNonxmonotonearcRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
@@ -13,6 +13,7 @@
 
 
 \begin{ccRefClass}[CGALi::]{Non_x_monotone_arc_2}  %% add template arg's if necessary
+\ccRefLabel{Non_x_monotone_arc_2}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -34,6 +35,7 @@ By constructing a new arc, its validity is checked to ensure that its x-monotone
 
 %END-AUTO(\ccDefinition)
 
+
 \ccParameters
 
 % The section below is automatically generated. Do not edit!
@@ -45,6 +47,7 @@ class \ccc{Rep_} = \ccc{Non_x_monotone_arc_2_rep<CurvedKernelViaAnalysis_2>}$>$ 
 class \ccc{Non_x_monotone_arc_2};
 
 %END-AUTO(\ccParameters)
+
 
 \ccIsModel
 
@@ -160,11 +163,6 @@ returns iterator pointing to the first x-monotone arc in the list
 returns iterator pointing to beyond the last x-monotone arc in the list
 }
 \ccGlue
-\ccMethod{const Arc_2& x_monotone_arc(int i) const;}
-{
-returns a distinct ith x-monotone piece of the arc
-}
-\ccGlue
 \ccMethod{Curve_2 curve() const;}
 {
 returns the supporting curve
@@ -173,11 +171,6 @@ returns the supporting curve
 \ccMethod{bool is_vertical() const;}
 {
 returns true if this arc consists of vertical segments
-}
-\ccGlue
-\ccMethod{bool is_sweepable() const;}
-{
-arc is sweepable by construction
 \subsubsection{Friends And Related Function Documentation}
 \ccMethod{std::ostream& operator<<(std::ostream& os, const Non_x_monotone_arc_2< CurvedKernelViaAnalysis_2, Rep_>& arc);}
 {
