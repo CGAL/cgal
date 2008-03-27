@@ -1,3 +1,6 @@
+CGALimageIO/examples/CGALimageIO/*.exe
+CGALimageIO/examples/CGALimageIO/makefile
+CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
 Maintenance/rpm/BUILD/*
 Maintenance/rpm/RPMS/*
