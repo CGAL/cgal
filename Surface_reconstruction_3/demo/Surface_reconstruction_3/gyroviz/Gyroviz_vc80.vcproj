@@ -342,6 +342,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Gyroviz_segmented_dt3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GyrovizDoc_2.h"
 				>
 			</File>
