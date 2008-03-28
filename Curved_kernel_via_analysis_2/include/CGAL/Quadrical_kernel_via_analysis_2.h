@@ -585,7 +585,7 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
-        
+        // TODO check locations first
         CGAL::Comparison_result res = 
             (equal_x ? CGAL::EQUAL : 
              Curved_kernel_via_analysis_2l::instance().
@@ -656,6 +656,7 @@ public:
                 cv2.location(ce) == CGAL::ARR_LEFT_BOUNDARY ||
                 cv2.location(ce) == CGAL::ARR_RIGHT_BOUNDARY
         );
+        CGAL_precondition(cv1.location(ce) == cv2.location(ce));
 
         int sheet1 = cv1.sheet();
         int sheet2 = cv2.sheet();
