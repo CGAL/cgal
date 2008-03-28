@@ -4196,6 +4196,7 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.sln 
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.vcproj eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.sln eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.vcproj eol=crlf
+Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/camel.pwn -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/oni.pwn -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/polygirl.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/sphere966.off -text svneol=unset#application/octet-stream
