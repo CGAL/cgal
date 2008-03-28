@@ -46,73 +46,172 @@ To install CGAL, you should:
  ------------------------------ 
  - configure the CGAL libraries
  ------------------------------ 
- 
-    for a single configuration you can run the following command 
-    from the root folder:
+
+    CMake is a "makefile generator". It does not build the library but generates the
+    makefiles (or solution files) needed to build it, a process called "configuration".
+    
+    CMake configures the library by detecting your development enviroment, the location
+    and requirements of the third-party libraries used by CGAL (such as BOOST), and
+    a the variations you can choose, such as building release or debug versions.
+    
+    In most cases, cmake can do all that unattended. If you get any errors when
+    running cmake OR when building the library, always run cmake again for
+    a second time (sometimes the configuration needs for than one pass). If that doesn't
+    help, try deleting the file CMakeCache.txt (in the directory where cmake is run)
+    and try again once more. If that still doesn't work, you need to tell cmake something 
+    about your system, such as the location of a third-party library. In that case, please
+    refer to the section "Configuration Variables" later on.
+        
+    The thid-party libraries needed by CGAL are detailed in the install notes at
+    <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
+    
+    After cmake has been installed, it is useful to define the enviroment variable CMAKE_ROOT
+    indicating the installation folder for cmake. Theoretically, when this variable is not 
+    already defined, cmake will try to define it automatically based on the
+    path of the executing cmake.exe, but this has been reported to fail in some cases.
+
+    ------ in source configuration ------
+    
+    In the simplest typical case just cd into the CGAL root folder 
+    and run the following command 
     
        cmake . (notice the "current directory" argument)
-     
-    for a multi-configuration (different compilers, or release/debug, etc) you need to:
-     
-      create a folder for each configuration and from within that folder
-      run the following command:
-      
-        cmake <path-to-cgal-root>
-        
-    if you see any errors during configuration, run cmake again with the same arguments.
-    (CMake uses a cache system that might require a second pass through it)
     
-    CMake will try to locate the libraries used and required
-    by CGAL. These libraries are detailed in the CGAL install notes at
-    <http://www.cgal.org/Manual/doc_html/installation_manual/contents.html>.
+    That will generate the makefiles/solution-files and a lot of intermediate stuff right
+    there in the source tree.
+    
+    ------ out of source configuration ------
+    
+    CMake does not directly support multiple configurations such as different compilers,
+    release/debug, etc.
+    OTOH, cmake generates the makefiles/solution-files and any intermediate stuff in the
+    directory where cmake is invoked, but it can refer to sources in a diferent folder.
+    Therefore, to build different configurations of CGAL you need to:
+     
+      create a folder for each configuration, say
+      
+        mkdir release
+        
+     and from within that folder run cmake:
+        
+        cd release
+        cmake <path-to-cgal-root>
         
   -------------------------------------- 
   - build and install the CGAL libraries 
   -------------------------------------- 
-  
-    run the following commands from the configuration folder 
-    (or the root folder if a single configuration was used)
-  
-        make
-        make install
-        
+
+    ------ Mac/Unix/Linux ------
+    
+    To build the libraries just run 'make' from the configuration folder 
+   (which would be the CGAL root folder if in source configuration was used)
+      
+    If you wish to install the libraries in your system, just run 'make install'.
+    The installation directory must have been defined at configuration time by
+    running cmake with -DCMAKE_INSTALL_PREFIX=<dir>. By default it is /usr/local.
+    
+    You can define the variable DESTDIR to prepend CMAKE_INSTALL_PREFIX if needed.
+    For instance, given the default install prefix, the command:
+    
+      make install DESTDIR=~/testing
+      
+    will install under ~/testing/usr/local
+    
+    ------ Windows and Visual C++ ------
+    
+    Under Windows cmake will generate a CGAL.sln solution file which you can
+    load and build via the VS IDE, or by running the following command in a DOS prompt:
+    
+      devenv CGAL.sln /Build Debug
+     
+    The "Debug" argument is needed because cmake creates solution files with 
+    all four configurations and you need to explicitely choose one when building
+    (the other choices are Release, RelWithDebInfo and MinSizeRel).
+    
+    ------ Cygwin and gcc ------
+    
+    You can use cygwin to build with gcc. To do that you need the cygwin
+    version of cmake (run cmake without arguments and check that UNIX Makefiles
+    are supported to confirm this is the cygwin version of cmake).
+    In this case it all works as in any other POSIX enviroment, so just type
+    'make' to build the libraries and 'make install' to install it.
+    
+    ------ Cygwin and Visual C++ ------
+    
+    You can also use cmake to build with Visual C++ but under cygwin. To do that, you
+    need the windows version of cmake and the enviroment properly setup for the
+    command line version of VC.
+    
+    From within cygwin, run cmake without arguments and check that NMake Makefiles
+    are supported to confirm this is NOT the cygwin version of cmake (and if neccesary, 
+    arrange the order directories in the $PATH to make sure the right one is used).
+    
+    Edit the cygwin.bat launcher and add a call to the vsvars32.bat that corresponds 
+    to the choosen VC version before 'bash' is invoked. This ensures the enviroment 
+    is properly setup for command line VC.   
+    NOTE: DO NOT just call vsvars32.bat from the bash shell within cygwin since none of the
+    enviroment variables defined there will be visible outside the .bat and when cmake 
+    is called from cygwin but without the VC command line enviorment properly set, cl.exe
+    might be found nevertheless but it will not be correctly configured for building CGAL.
+    Make sure the enviroment is properly and the "link.exe" from VC is found instead of
+    the link.exe from cygwin's g++ (arrange the $PATH properly).
+    
+    If all is setup correctly: cmake is the windows version and supports NMake Makefiles,
+    cl, nmake and link are set in the path, and link is not cygwin's link.
+    
+    To build the librarties in this context you need to pass the option
+    -G'NMake Makefiles' to cmake at configuration time (otherwise solution files
+    will be created since this is the windows version of cmake), then just run
+    'nmake' (instead of 'make').
+    
+    You can also run 'nmake install' to install the library. In this case however
+    you may want to install it under the Windows tree (outside cygwin), or within
+    the cygwin FSH tree. Since the windows version of cmake is used here,
+    the default CMAKE_INSTALL_PREFIX will be "C:\Program Files\CGAL". If you are
+    running Windows Vista, 'Program Files' might not be accesible from cygwin so
+    you might need to specify another Windows-style path.
+    Alternatively, you can specify a Unix-style path such as -DCMAKE_INSTALL_PREFIX=/usr/local.
+    The cmake script will turn that into the right windows path (i.e.'C:\cygwin\usr\local')
+    
+    
   --------------------------------------------- 
   - configure and build applications using CGAL
   - (such as demos, examples, etc)        
   ---------------------------------------------
   
-    define the enviroment variable CGAL_DIR to a given configuration folder.
+    * Define the enviroment variable CGAL_DIR to a given configuration folder.
     
-    for example, if you built a debug version by running
-    
-       cmake ../../..
-    
-    under folder
-    
-      CGAL-3.4/cmake/platforms/debug
-      
-    type
-      
-      export CGAL_DIR=CGAL-3.4/cmake/platforms/debug
+          for example, if you built a debug version by running
+          
+             cmake ../../..
+          
+          under folder
+          
+            /<absolute-path-to-CGAL>/cmake/platforms/debug
+            
+          type
+            
+            export CGAL_DIR=/<absolute-path-to-CGAL>/cmake/platforms/debug
+            
+            (or use the appropiate dialog in Windows)
        
-    Or, if you built cgal for a single configuration
-    running "cmake ." directly from CGAL-3.4,
-    type:
+      
+    * cd into the folder containing the CGAL application.
     
-      export CGAL_DIR=CGAL-3.4
-      
-    cd into the folder containing the CGAL application.
-    for example:
-      
-      cd CGAL-3-4/demo/Alpha_shapes_2
+          for example:
+          
+          cd /<absolute-path-to-CGAL>/demo/Alpha_shapes_2
        
-    run cmake "in-source" (passing the current folder as argument)
-       
-      cmake .
+    * run cmake "in-source" (passing the current folder as argument)
+          
+          cmake .  (pass -G'NMake Makefiles' if using cygwin+VC as explained before)
       
-    build the application
+    * build the application
       
-      make
+       Mac/UNIX/Linux/Cygwin+gcc: make
+       Cygwin+VC                : nmake
+       Windows via VS IDE       : Load and build Alpha_shapes_2_demo.sln 
+       Windows via a DOS prompt : devenv Alpha_shapes_2_demo.sln /Build <configuration>
       
 
   ---------------------------
@@ -159,16 +258,13 @@ To install CGAL, you should:
     the configuration.
 
 
-NOTE ON CMAKE: CMake is a paltform independent makefile generator.
-Type "cmake" (without arguments) to see a list of options.
 
 NOTE ON REPEATED INSTALLS: CMake maintains a file named
-CMakeCache.txt in "configuration folder" (where cmake is run)
-which records all configuration variables. 
-The cached values are used on subsequent runs of cmake on the same 
-configuration. 
-If the environment has changed (for example, boost or GMP was just installed),
-you must manually delete the file CMakeCache.txt to allow cmake pick up these 
-changes.
+CMakeCache.txt in the "configuration folder" (where cmake is run).
+That file records all configuration variables, and the cached values are used on subsequent 
+runs of cmake on the same configuration. 
+If the environment has changed (for example, boost or GMP was installed after a previous
+configuration), you must manually delete the file CMakeCache.txt to allow cmake to
+pick up the changes.
 
 -------------------------------------------------------------------------------
