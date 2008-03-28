@@ -292,16 +292,16 @@ assemble_covariance_matrix_3(InputIterator first,
                    t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation = init_matrix<K>(3,delta);
-    FT area = pow(delta[0]*delta[0] + delta[3]*delta[3] +
-                  delta[6]*delta[6],1/3.0)*pow(delta[1]*delta[1] +
+    FT area = std::pow(delta[0]*delta[0] + delta[3]*delta[3] +
+                  delta[6]*delta[6],1/3.0)*std::pow(delta[1]*delta[1] +
                   delta[4]*delta[4] + delta[7]*delta[7],1/3.0)*2 +
-                  pow(delta[0]*delta[0] + delta[3]*delta[3] +
-                  delta[6]*delta[6],1/3.0)*pow(delta[2]*delta[2] +
+                  std::pow(delta[0]*delta[0] + delta[3]*delta[3] +
+                  delta[6]*delta[6],1/3.0)*std::pow(delta[2]*delta[2] +
                   delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2 +
-                  pow(delta[1]*delta[1] + delta[4]*delta[4] +
-                  delta[7]*delta[7],1/3.0)*pow(delta[2]*delta[2] +
+                  std::pow(delta[1]*delta[1] + delta[4]*delta[4] +
+                  delta[7]*delta[7],1/3.0)*std::pow(delta[2]*delta[2] +
                   delta[5]*delta[5] + delta[8]*delta[8],1/3.0)*2;
-    CGAL_assertion(area != 0.0);
+    CGAL_assertion(area != (FT)0.0);
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
     
