@@ -38,8 +38,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Uncertain.h>
 #include <iostream>
-#include <boost/numeric/interval.hpp> // for some non-documented global functions...
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -473,109 +471,6 @@ class Is_valid< Interval_nt<Protected> >
              x.inf() <= x.sup();
     }
 };
-
-// Non-documented
-template< class NT, bool Protected >
-bool in( const NT& v, const CGAL::Interval_nt< Protected >& interval) {
-	return (interval.inf() <= v ) && (interval.sup() >= v);
-}
-
-// Non-documented
-template< bool Protected >
-CGAL::Interval_nt< Protected > pow( const CGAL::Interval_nt< Protected >& interval,
-		unsigned power ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval( interval.inf(), interval.sup() );
-    Boost_interval result = boost::numeric::pow( boost_interval, power );
-    
-    return CGAL::Interval_nt< Protected >( result.lower(), result.upper() );
-}
-
-// Non-documented
-template< bool Protected >
-bool equal( const CGAL::Interval_nt< Protected >& interval_a,
-		    const CGAL::Interval_nt< Protected >& interval_b ) {
-	return interval_a.is_same( interval_b );
-}
-
-// Non-documented
-template< bool Protected >
-bool subset ( const CGAL::Interval_nt< Protected >& interval_a,
-		      const CGAL::Interval_nt< Protected >& interval_b ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval_a( interval_a.inf(), interval_a.sup() );
-    Boost_interval boost_interval_b( interval_b.inf(), interval_b.sup() );
-	
-    return boost::numeric::subset( boost_interval_a, boost_interval_b );
-}
-
-// Non-documented
-template< bool Protected >
-bool proper_subset ( const CGAL::Interval_nt< Protected >& interval_a,
-		             const CGAL::Interval_nt< Protected >& interval_b ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval_a( interval_a.inf(), interval_a.sup() );
-    Boost_interval boost_interval_b( interval_b.inf(), interval_b.sup() );
-	
-    return boost::numeric::proper_subset( boost_interval_a, boost_interval_b );
-}
-
-// Non-documented
-template< bool Protected >
-bool overlap( const CGAL::Interval_nt< Protected >& interval_a,
-		    const CGAL::Interval_nt< Protected >& interval_b ) {
-	return interval_a.do_overlap( interval_b );
-}
-
-// Non-documented
-template< bool Protected >
-bool in_zero( const CGAL::Interval_nt< Protected >& interval ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval( interval.inf(), interval.sup() );
-    
-    return boost::numeric::in_zero( boost_interval );
-}
-
-// Non-documented
-template< bool Protected >
-double median( const CGAL::Interval_nt< Protected >& interval ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval( interval.inf(), interval.sup() );
-    
-    return boost::numeric::median( boost_interval );
-}
-
-// Non-documented
-template< bool Protected >
-CGAL::Interval_nt< Protected > intersect( const CGAL::Interval_nt< Protected >& interval_a,
-		const CGAL::Interval_nt< Protected >& interval_b ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval_a( interval_a.inf(), interval_a.sup() );
-    Boost_interval boost_interval_b( interval_b.inf(), interval_b.sup() );
-    Boost_interval result = boost::numeric::intersect( boost_interval_a, boost_interval_b );
-    
-    return CGAL::Interval_nt< Protected >( result.lower(), result.upper() );
-}
-
-// Non-documented
-template< bool Protected >
-CGAL::Interval_nt< Protected > hull( const CGAL::Interval_nt< Protected >& interval_a,
-		const CGAL::Interval_nt< Protected >& interval_b ) {
-    typedef boost::numeric::interval<double> Boost_interval; 
-
-    Boost_interval boost_interval_a( interval_a.inf(), interval_a.sup() );
-    Boost_interval boost_interval_b( interval_b.inf(), interval_b.sup() );
-    Boost_interval result = boost::numeric::hull( boost_interval_a, boost_interval_b );
-    
-    return CGAL::Interval_nt< Protected >( result.lower(), result.upper() );
-}
-
 
 template <bool Protected>
 std::ostream & operator<< (std::ostream &os, const Interval_nt<Protected> & I )
