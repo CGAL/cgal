@@ -779,14 +779,14 @@ public:
         CGAL_precondition(is_in_x_range(x0));
 
         if (this->ptr()->_m_arcno_min != this->ptr()->_m_arcno && 
-            !_minpoint().is_on_left_right() &&
+            is_finite(CGAL::ARR_MIN_END) &&
             Curved_kernel_via_analysis_2::instance().
             kernel().compare_x_2_object()(x0, _minpoint().x()) == 
             CGAL::EQUAL) {
             return this->ptr()->_m_arcno_min;
         }
         if (this->ptr()->_m_arcno_max != this->ptr()->_m_arcno && 
-            !_maxpoint().is_on_left_right() &&
+            is_finite(CGAL::ARR_MAX_END) &&
             Curved_kernel_via_analysis_2::instance().
             kernel().compare_x_2_object()(x0, _maxpoint().x()) == 
             CGAL::EQUAL) {
@@ -1137,7 +1137,7 @@ public:
         if (min_has_x) {
             resmin = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _minpoint().x());
-            if (eq_min != NULL) {
+            if (eq_min != NULL) { // TODO asymptotic end in x-range?
                 *eq_min = (resmin == CGAL::EQUAL);
             }
         }
@@ -1152,7 +1152,7 @@ public:
         if (max_has_x) {
             resmax = Curved_kernel_via_analysis_2::instance().
                 kernel().compare_x_2_object()(x, _maxpoint().x());
-            if (eq_max != NULL) {
+            if (eq_max != NULL) { // TODO asymptotic end in x-range?
                 *eq_max = (resmax == CGAL::EQUAL);
             }
         }
@@ -1465,7 +1465,7 @@ public:
      *  \return \c true if simplification took place, \c false otherwise
      */
     static bool simplify(const Kernel_arc_2& cv, const Xy_coordinate_2& p) {
-        
+
         if (cv.curve().is_identical(p.curve())) {
             return false;
         }
@@ -1504,7 +1504,7 @@ public:
      *  \return \c true if simplification took place, \c false otherwise
      */
     static bool simplify(const Kernel_arc_2& cv1, const Kernel_arc_2& cv2) {
-    
+
         if (cv1.curve().is_identical(cv2.curve())) {
             return false;
         }
@@ -2215,7 +2215,6 @@ protected:
      * supporting curve
      */
     void _simplify_by(const Curve_pair_analysis_2& cpa_2) const { 
-
         typename Curve_analysis_2::Polynomial_2 f = curve().polynomial_2();
         CGAL_precondition_code(
              typename Curve_analysis_2::Polynomial_2 mult =
@@ -2816,14 +2815,16 @@ protected:
                 arcno2 = cv2.arcno();
                 mult = -1; // need to compute
             }
-
+            
             int pos = tmp.event_of_curve(arcno1, 0);
-            if(pos != tmp.event_of_curve(arcno2, 1))
+            if (pos != tmp.event_of_curve(arcno2, 1)) {
                 continue;
-            if(mult == -1)
+            }
+            if (mult == -1) {
                 mult = tmp.multiplicity_of_intersection(pos);
+            }
+            
             // pick up the curve with lower degree   
-
             typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
                 construct_point_on_arc = 
                 Curved_kernel_via_analysis_2::instance().
