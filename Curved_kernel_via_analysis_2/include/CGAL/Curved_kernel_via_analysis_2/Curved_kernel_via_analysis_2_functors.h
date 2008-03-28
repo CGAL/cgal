@@ -817,7 +817,9 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_x = false) const {
-
+        // TODO add CGAL_precondition(p1.location() == CGAL::ARR_INTERIOR);
+        // TODO add CGAL_precondition(p2.location() == CGAL::ARR_INTERIOR);
+        
         result_type res =
             (Curved_kernel_via_analysis_2::instance().
              kernel().compare_xy_2_object()
@@ -893,8 +895,16 @@ public:
             CERR("result: " << res << "\n");
             return res;
         }
-        // look at the side from which the vertical asymptote is approached 
-        res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
+
+        if (p.location() != CGAL::ARR_INTERIOR) {
+            CGAL_precondition(p.location() == CGAL::ARR_BOTTOM_BOUNDARY ||
+                              p.location() == CGAL::ARR_TOP_BOUNDARY);
+            res = CGAL::EQUAL;
+        } else {
+            // look at the side from which the 
+            // vertical asymptote is approached 
+            res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
+        }
         CERR("result: " << res << "\n");
         return res;
     }
@@ -1000,7 +1010,7 @@ public:
                 }
                 CERR("result: " << res << "\n");
                 return res;
-            }
+            } 
             // else: order can be determined without y-comparison
             //(loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::SMALLER :
             res = CGAL::EQUAL;
@@ -1167,26 +1177,32 @@ public:
             return CGAL::EQUAL; // p lies on a vertical arc
         }
         CGAL::Comparison_result res;
-        if (eq_min) {
-            res = Curved_kernel_via_analysis_2::instance().kernel().
-                compare_xy_2_object()(
-                        p.xy(), cv._minpoint().xy(), true
-                );
-        } else if (eq_max) {
-            res = Curved_kernel_via_analysis_2::instance().kernel().
-                compare_xy_2_object()(
-                        p.xy(), cv._maxpoint().xy(), true
-                );
+        if (p.location() == CGAL::ARR_TOP_BOUNDARY) {
+            res = CGAL::LARGER;
+        } else if (p.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
+            res = CGAL::SMALLER;
         } else {
-            Point_2 point_on_s
-                = Curved_kernel_via_analysis_2::instance().
-                construct_point_on_arc_2_object()
-                ( p.x(), 
-                  cv.curve(), 
-                  cv.arcno(),
-                  cv );
-            res = Curved_kernel_via_analysis_2::instance().kernel().
-                compare_xy_2_object()(p.xy(), point_on_s.xy(), true);
+            if (eq_min) {
+                res = Curved_kernel_via_analysis_2::instance().kernel().
+                    compare_xy_2_object()(
+                            p.xy(), cv._minpoint().xy(), true
+                    );
+            } else if (eq_max) {
+                res = Curved_kernel_via_analysis_2::instance().kernel().
+                    compare_xy_2_object()(
+                            p.xy(), cv._maxpoint().xy(), true
+                    );
+            } else {
+                Point_2 point_on_s
+                    = Curved_kernel_via_analysis_2::instance().
+                    construct_point_on_arc_2_object()
+                    ( p.x(), 
+                      cv.curve(), 
+                      cv.arcno(),
+                      cv );
+                res = Curved_kernel_via_analysis_2::instance().kernel().
+                    compare_xy_2_object()(p.xy(), point_on_s.xy(), true);
+            }
         }
         CERR("cmp result: " << res << "\n");
         return res;
