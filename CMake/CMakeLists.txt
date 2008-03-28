@@ -116,6 +116,8 @@ add_config_flag( CGAL_USE_MPFR )
 add_config_flag( CGAL_USE_GMPXX )
 add_config_flag( CGAL_USE_CGAL_CORE )
 add_config_flag( CGAL_USE_OPENGL )
+add_config_flag( CGAL_USE_ZLIB )
+add_config_flag( CGAL_USE_TAUCS )
 
 find_package(Qt3)
 if(QT_FOUND)
