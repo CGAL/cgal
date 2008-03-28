@@ -1732,6 +1732,8 @@ Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2_ref/Trim_2.tex
 Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2_ref/intro.tex -text
 Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2_ref/main.tex -text
 Curved_kernel_via_analysis_2/doc_tex/Curved_kernel_via_analysis_2_ref/open.tex -text
+Curved_kernel_via_analysis_2/doc_tex/Generate/create_skeleton_doc -text
+Curved_kernel_via_analysis_2/doc_tex/Generate/light_setup -text
 Curved_kernel_via_analysis_2/include/CGAL/Arr_surfaces_intersecting_dupin_cyclide_traits_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h -text
