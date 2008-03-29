@@ -994,6 +994,98 @@ public:
     }
 }; // Compare_y_at_x_2_right
 
+//!\brief Constructs min vertex of arc
+template < class CurvedKernelViaAnalysis_2l >
+class Construct_min_vertex_2 :
+        public CurvedKernelViaAnalysis_2l::Base::Construct_min_vertex_2 {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Base::Construct_min_vertex_2 Base;
+    
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef Point_2 result_type;
+
+    //! the arity of the functor
+    typedef Arity_tag<1> Arity;
+    
+
+    //! standard constructor
+    Construct_min_vertex_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Get the minimum end-point of the arc
+     *
+     * \param cv The arc.
+     * \return The minimum end-point.
+     *
+     * \pre minimum end-point is interior
+     */
+    result_type operator()(const Arc_2& cv) const {
+        
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            return cv.curve_end(CGAL::ARR_MAX_END);
+        }
+        // else 
+        return cv.curve_end(CGAL::ARR_MIN_END);
+    }
+    
+}; // Construct_min_vertex_2
+
+//!\brief Constructs max vertex of arc
+template < class CurvedKernelViaAnalysis_2l >
+class Construct_max_vertex_2 :
+        public CurvedKernelViaAnalysis_2l::Base::Construct_max_vertex_2 {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+    
+    //! the base type
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Base::Construct_max_vertex_2 Base;
+    
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef Point_2 result_type;
+
+    //! the arity of the functor
+    typedef Arity_tag<1> Arity;
+    
+
+    //! standard constructor
+    Construct_max_vertex_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!\brief
+     * Get the minimum end-point of the arc
+     *
+     * \param cv The arc.
+     * \return The minimum end-point.
+     *
+     * \pre minimum end-point is interior
+     */
+    result_type operator()(const Arc_2& cv) const {
+        
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            return cv.curve_end(CGAL::ARR_MIN_END);
+        }
+        // else 
+        return cv.curve_end(CGAL::ARR_MAX_END);
+    }
+}; // Construct_max_vertex_2
+
+
 
 template < class CurvedKernelViaAnalysis_2l >
 class Do_overlap_2 :
@@ -1834,6 +1926,11 @@ public:
                              compare_y_at_x_left_2_object);
     CGAL_QKvA_2_functor_pred(Compare_y_at_x_right_2, 
                              compare_y_at_x_right_2_object);
+
+    CGAL_QKvA_2_functor_pred(Construct_min_vertex_2, 
+                             construct_min_vertex_2_object);
+    CGAL_QKvA_2_functor_pred(Construct_max_vertex_2, 
+                             construct_max_vertex_2_object);
     
     CGAL_QKvA_2_functor_pred(Equal_2, equal_2_object);
 
