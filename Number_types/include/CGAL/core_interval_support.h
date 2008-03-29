@@ -215,7 +215,7 @@ public:
             if(::CORE::bitLength(err.m()) >= digits_long){ 
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ; 
                 //std::cout << "shift " << shift<< std::endl;
-                long new_err = (err.m()+err.err() >> shift).longValue()+1; 
+                long new_err = ((err.m()+err.err()) >> shift).longValue()+1; 
                 err = CORE::BigFloat(0,new_err,0) * CORE::BigFloat::exp2(err.exp()*14+shift);
             }else{
                 err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
