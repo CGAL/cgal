@@ -878,7 +878,7 @@ protected:
         // else
         std::pair< Kernel_arc_2, CGAL::Comparison_result >
             replaced = Base::_replace_endpoints(
-                    p1, p2, arcno2, arcno2
+                    p1, p2, arcno1, arcno2
             );
 
         if (replaced.second == CGAL::LARGER) {
