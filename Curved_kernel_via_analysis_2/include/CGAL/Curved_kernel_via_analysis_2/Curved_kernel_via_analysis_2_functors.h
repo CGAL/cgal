@@ -896,15 +896,9 @@ public:
             return res;
         }
 
-        if (p.location() != CGAL::ARR_INTERIOR) {
-            CGAL_precondition(p.location() == CGAL::ARR_BOTTOM_BOUNDARY ||
-                              p.location() == CGAL::ARR_TOP_BOUNDARY);
-            res = CGAL::EQUAL;
-        } else {
-            // look at the side from which the 
-            // vertical asymptote is approached 
-            res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
-        }
+        // look at the side from which the 
+        // vertical asymptote is approached 
+        res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
         CERR("result: " << res << "\n");
         return res;
     }
@@ -1177,32 +1171,26 @@ public:
             return CGAL::EQUAL; // p lies on a vertical arc
         }
         CGAL::Comparison_result res;
-        if (p.location() == CGAL::ARR_TOP_BOUNDARY) {
-            res = CGAL::LARGER;
-        } else if (p.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
-            res = CGAL::SMALLER;
+        if (eq_min) {
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(
+                        p.xy(), cv._minpoint().xy(), true
+                );
+        } else if (eq_max) {
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(
+                        p.xy(), cv._maxpoint().xy(), true
+                );
         } else {
-            if (eq_min) {
-                res = Curved_kernel_via_analysis_2::instance().kernel().
-                    compare_xy_2_object()(
-                            p.xy(), cv._minpoint().xy(), true
-                    );
-            } else if (eq_max) {
-                res = Curved_kernel_via_analysis_2::instance().kernel().
-                    compare_xy_2_object()(
-                            p.xy(), cv._maxpoint().xy(), true
-                    );
-            } else {
-                Point_2 point_on_s
-                    = Curved_kernel_via_analysis_2::instance().
-                    construct_point_on_arc_2_object()
-                    ( p.x(), 
-                      cv.curve(), 
-                      cv.arcno(),
-                      cv );
-                res = Curved_kernel_via_analysis_2::instance().kernel().
-                    compare_xy_2_object()(p.xy(), point_on_s.xy(), true);
-            }
+            Point_2 point_on_s
+                = Curved_kernel_via_analysis_2::instance().
+                construct_point_on_arc_2_object()
+                ( p.x(), 
+                  cv.curve(), 
+                  cv.arcno(),
+                  cv );
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(p.xy(), point_on_s.xy(), true);
         }
         CERR("cmp result: " << res << "\n");
         return res;
