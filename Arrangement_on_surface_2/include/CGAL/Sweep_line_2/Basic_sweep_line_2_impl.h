@@ -213,7 +213,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_sweep ()
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 {
-  CGAL_assertion (m_queue->empty() && (m_statusLine.size() == 0));
+  CGAL_assertion(m_queue->empty());
+  CGAL_assertion((m_statusLine.size() == 0));
    
   // Allocate all of the Subcurve objects as one block.
   m_subCurves = m_subCurveAlloc.allocate(m_num_of_subCurves);
@@ -226,7 +227,8 @@ void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 template <class Tr, class Vis, class Subcv, class Evnt, typename Alloc>
 void Basic_sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep ()
 {
-  CGAL_assertion (m_queue->empty() && (m_statusLine.size() == 0));
+  CGAL_assertion(m_queue->empty());
+  CGAL_assertion((m_statusLine.size() == 0));
   
   // Free all subcurve objects.
   unsigned int  i;
