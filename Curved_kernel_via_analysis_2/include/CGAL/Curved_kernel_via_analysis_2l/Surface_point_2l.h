@@ -421,7 +421,8 @@ public:
     //! write represenation to \c os
     void write(std::ostream& os) const {
         os << "Point_2l(";
-        os << "Point2(" << this->projected_point() << "), ";
+        os << "Point2(" << this->projected_point() << ", loc=" 
+           << this->location() << "), ";
         os << "Surface(" << this->surface() << ", ";
         if (this->is_z_at_infinity()) {
             if (this->z_infinity() == CGAL::ARR_MIN_END) {
