@@ -916,7 +916,8 @@ public:
             os << "MinPoint(" << this->ptr()->_m_min << "), ";
             os << "MaxPoint(" << this->ptr()->_m_max << "), ";
             os << "Surface(" << this->surface() << ", " 
-               << this->sheet() << ", " << this->sheet(CGAL::ARR_MIN_END)
+               << this->sheet(CGAL::ARR_MIN_END)
+               << ", " << this->sheet() 
                << ", " << this->sheet(CGAL::ARR_MAX_END)
                << ")";
         }
