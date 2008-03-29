@@ -363,7 +363,7 @@ public:
                 x = NiX::to_double(this->x()); // TODO replace by CGAL::
             }
 
-            Rational bound(2e-20); // TODO correct threshold?
+            Rational bound(2e-10); // TODO correct threshold?
             // Y
             {
                 typename Curve_analysis_2::Algebraic_curve_kernel_2::
