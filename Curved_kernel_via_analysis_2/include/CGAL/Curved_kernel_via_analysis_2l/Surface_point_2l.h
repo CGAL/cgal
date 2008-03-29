@@ -210,7 +210,7 @@ public:
                     typedef typename 
                         Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
                     int number_of_sheets = 
-                        cad.z_stack_at(pt).number_of_z_cells();
+                        cad.z_stack_for(pt).number_of_z_cells();
                     CGAL_precondition(sheet < number_of_sheets);
                 } else {
                     // TODO add test for number of sheets in designated face

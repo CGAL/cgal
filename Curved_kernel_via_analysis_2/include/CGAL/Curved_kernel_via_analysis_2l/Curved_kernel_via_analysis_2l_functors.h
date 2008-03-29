@@ -433,7 +433,7 @@ public:
                 typedef typename 
                     Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
                 
-                Z_stack z_stack = pair.z_stack_at(
+                Z_stack z_stack = pair.z_stack_for(
                         p1.projected_point()
                 );
                 

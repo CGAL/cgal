@@ -266,7 +266,7 @@ public:
         CGAL_precondition(sheet >= 0);
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
-                number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
+                number_of_sheets = cad.z_stack_for(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
 
@@ -275,7 +275,7 @@ public:
         CGAL_precondition(sheet_p >= 0);
         CGAL_precondition_code(
                 number_of_sheets = 
-                cad.z_stack_at(p.projected_point()).number_of_z_cells();
+                cad.z_stack_for(p.projected_point()).number_of_z_cells();
         );
         CGAL_precondition(sheet_p < number_of_sheets);
         CGAL_precondition_code(
@@ -288,7 +288,7 @@ public:
         CGAL_precondition(sheet_q >= 0);
         CGAL_precondition_code(
                 number_of_sheets = 
-                cad.z_stack_at(q.projected_point()).number_of_z_cells();
+                cad.z_stack_for(q.projected_point()).number_of_z_cells();
         );
         CGAL_precondition(sheet_q < number_of_sheets);
         CGAL_precondition_code(
@@ -360,7 +360,7 @@ public:
         CGAL_precondition(sheet >= 0);
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
-                number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
+                number_of_sheets = cad.z_stack_for(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
 
@@ -369,7 +369,7 @@ public:
         CGAL_precondition(sheet_p >= 0);
         CGAL_precondition_code(
                 number_of_sheets = 
-                cad.z_stack_at(p.projected_point()).number_of_z_cells();
+                cad.z_stack_for(p.projected_point()).number_of_z_cells();
         );
         CGAL_precondition(sheet_p < number_of_sheets);
         
@@ -429,7 +429,7 @@ public:
         CGAL_precondition(sheet >= 0);
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
-                number_of_sheets = cad.z_stack_at(pt).number_of_z_cells();
+                number_of_sheets = cad.z_stack_for(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
 
@@ -499,7 +499,7 @@ public:
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
                 number_of_sheets = 
-                cad.z_stack_at(pt).number_of_z_cells();
+                cad.z_stack_for(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
         
@@ -508,7 +508,7 @@ public:
         CGAL_precondition(sheet_p >= 0);
         CGAL_precondition_code(
                 number_of_sheets = 
-                cad.z_stack_at(p.projected_point()).number_of_z_cells();
+                cad.z_stack_for(p.projected_point()).number_of_z_cells();
         );
         CGAL_precondition(sheet_p < number_of_sheets);
         
@@ -579,7 +579,7 @@ public:
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
                 number_of_sheets = 
-                cad.z_stack_at(pt).number_of_z_cells();
+                cad.z_stack_for(pt).number_of_z_cells();
         );
         CGAL_precondition(sheet < number_of_sheets);
 
@@ -639,7 +639,7 @@ public:
         CGAL_precondition_code(
                 Projected_point_2 pt = Accessor::point_in_interior(arc);
                 number_of_sheets = 
-                cad.z_stack_at(pt).number_of_z_cells();
+                cad.z_stack_for(pt).number_of_z_cells();
         );
         
         this->ptr()->_m_sheet = sheet;
