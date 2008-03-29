@@ -167,8 +167,8 @@ int main(int argc,char ** argv) {
     std::ostringstream n;
     n<<(i-disks.begin());
     CGAL::Bbox_2 box=bbox(*i);
-    Point_2 p(static_cast<int>(round((box.xmin()+box.xmax())/2)),
-              static_cast<int>(round((box.ymin()+box.ymax())/2)));
+    Point_2 p(static_cast<int>((box.xmin()+box.xmax())/2),
+              static_cast<int>((box.ymin()+box.ymax())/2));
     w->get_painter().drawText(w->x_pixel(p.x()-10),
                               w->y_pixel(p.y()),
                               n.str());

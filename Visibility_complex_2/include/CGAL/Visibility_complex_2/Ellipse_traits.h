@@ -167,8 +167,7 @@ public:
     } else {
       tp(*source_object(),&x,&y,slp,source_position());
     }
-    return Point_2(static_cast<int>(round(x)),
-                   static_cast<int>(round(y)));
+    return Point_2(static_cast<int>(x), static_cast<int>(y));
   }
   Point_2 target() {
     double x,y;
@@ -184,8 +183,7 @@ public:
     } else {
       tp(*target_object(),&x,&y,slp,target_position());
     }
-    return Point_2(static_cast<int>(round(x)),
-                   static_cast<int>(round(y)));
+    return Point_2(static_cast<int>(x), static_cast<int>(y));
   }
 
   operator Segment_2() {
