@@ -788,6 +788,10 @@ public:
                             cv1, cv2, cv1.curve_end(CGAL::ARR_MAX_END)
                     );
                 }
+                if (sheet1 == 1) {
+                    CGAL_assertion(sheet2 == 1);
+                    res = -res;
+                }
                 // already reversed the case sheet1 == sheet2 == 1
             }
         }
