@@ -608,6 +608,108 @@ public:
 }; // Compare_xy_2
 
 template < class CurvedKernelViaAnalysis_2l >
+class Compare_x_near_boundary_2 : 
+        public CurvedKernelViaAnalysis_2l::Base::Compare_x_near_boundary_2 {
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Base::Compare_x_near_boundary_2
+    Base;
+
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+    typedef Arity_tag<3>            Arity;
+    
+
+    //! standard constructor
+    Compare_x_near_boundary_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+
+    /*!\brief Compare the x-coordinate of a point with the x-coordinate of
+     * an arcend near the boundary at bottom or top boundary
+     * 
+     * \param p the point direction.
+     * \param cv the arc, the endpoint of which is compared.
+     * \param ce the arc-end indicator -
+     *            ARR_MIN_END - the minimal end of cv or
+     *            ARR_MAX_END - the maximal end of cv.
+     * \return the comparison result:
+     *         SMALLER - x(p) \< x(cv, ce);
+     *         EQUAL   - x(p) = x(cv, ce);
+     *         LARGER  - x(p) > x(cv, ce).
+     *
+     * \pre p lies in the interior of the parameter space.
+     * \pre the ce end of the line cv lies on a boundary.
+     */
+    result_type operator()(const Point_2& p, const Arc_2& cv,
+                           CGAL::Arr_curve_end ce) const {
+        
+        CERR("\nqkva_compare_x_near_boundary: p: " << p << "\n cv: " <<
+             cv << "; curve_end: " << ce << "\n");
+        
+        // this curve end has boundary only in y
+        CGAL_precondition(cv.is_on_bottom_top(cv.location(ce)));
+        
+        CGAL::Comparison_result res = 
+            Curved_kernel_via_analysis_2l::instance().
+            kernel().compare_x_2_object()(
+                    p.x(), cv.curve_end_x(ce)
+            );
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+
+    /*! Compare the x-coordinates of 2 arcs ends near the top or bottom 
+     * boundary of the parameter space
+     * \param cv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of cv1 or
+     *            ARR_MAX_END - the maximal end of cv1.
+     * \param cv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of cv2 or
+     *            ARR_MAX_END - the maximal end of cv2.
+     * \return the second comparison result:
+     *         SMALLER - x(cv1, ce1) \< x(cv2, ce2);
+     *         EQUAL   - x(cv1, ce1) = x(cv2, ce2);
+     *         LARGER  - x(cv1, ce1) > x(cv2, ce2).
+     *
+     * \pre the ce1 end of the arc cv1 lies on a boundary.
+     * \pre the ce2 end of the arc cv2 lies on a boundary.
+     */
+    result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
+                           const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
+
+        CERR("\nqkva_compare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
+             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
+
+        CGAL::Arr_parameter_space 
+            loc1 = cv1.location(ce1), 
+            loc2 = cv2.location(ce2);
+        CGAL_precondition(cv1.is_on_bottom_top(loc1));
+        CGAL_precondition(cv1.is_on_bottom_top(loc2));
+        
+        CGAL::Comparison_result res;
+        res = Curved_kernel_via_analysis_2l::instance().
+            kernel().compare_x_2_object()(
+                    cv1.curve_end_x(ce1),
+                    cv2.curve_end_x(ce2)
+            );
+        
+        CERR("result: " << res << "\n");
+        return res;
+    }
+    
+}; // Compare_x_near_boundary_2
+
+template < class CurvedKernelViaAnalysis_2l >
 class Compare_y_near_boundary_2 : 
         public CurvedKernelViaAnalysis_2l::Base::Compare_y_near_boundary_2 {
 public:
@@ -1718,6 +1820,9 @@ public:
     
     CGAL_QKvA_2_functor_pred(Compare_xy_2, compare_xy_2_object);
     
+    CGAL_QKvA_2_functor_pred(Compare_x_near_boundary_2, 
+                             compare_x_near_boundary_2_object);
+
     CGAL_QKvA_2_functor_pred(Compare_y_near_boundary_2, 
                              compare_y_near_boundary_2_object);
     CGAL_QKvA_2_functor_pred(Compare_y_at_x_2, compare_y_at_x_2_object);
