@@ -653,6 +653,11 @@ public:
         CERR("\nqkva_compare_x_near_boundary: p: " << p << "\n cv: " <<
              cv << "; curve_end: " << ce << "\n");
         
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            ce = (ce == CGAL::ARR_MAX_END ? 
+                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+        }
+
         // this curve end has boundary only in y
         CGAL_precondition(cv.is_on_bottom_top(cv.location(ce)));
         
@@ -689,6 +694,15 @@ public:
 
         CERR("\nqkva_compare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
              cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
+
+        if (cv1.is_vertical() && cv1.sheet() == 1) {
+            ce1 = (ce1 == CGAL::ARR_MAX_END ? 
+                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+        }
+        if (cv2.is_vertical() && cv2.sheet() == 1) {
+            ce2 = (ce2 == CGAL::ARR_MAX_END ? 
+                   CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+        }
 
         CGAL::Arr_parameter_space 
             loc1 = cv1.location(ce1), 
@@ -994,6 +1008,61 @@ public:
     }
 }; // Compare_y_at_x_2_right
 
+//!\brief returns Parameter_space_in_y_2
+template < class CurvedKernelViaAnalysis_2l >
+class Parameter_space_in_y_2 :
+        public CurvedKernelViaAnalysis_2l::Base::Parameter_space_in_y_2 {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef typename 
+    Curved_kernel_via_analysis_2l::Base::Parameter_space_in_y_2 Base;
+    
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef CGAL::Arr_parameter_space result_type;
+
+    //! the arity of the functor
+    typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Parameter_space_in_y_2(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*! Obtains the parameter space in y at the end of an arc.
+     * 
+     * \param cv The arc
+     * \param ce the arc end indicator:
+     *     ARR_MIN_END - the minimal end of cv
+     *     ARR_MAX_END - the maximal end of cv
+     * \return the parameter space at the \c ce end of \c cv
+     *   ARR_BOTTOM_BOUNDARY- the arc approaches the bottom boundary of the 
+     *                        parameter space
+     *   ARR_INTERIOR       - the arc does not approach a boundary of the
+     *                        parameter space
+     *   ARR_TOP_BOUNDARY   - the arc approaches the top boundary of the
+     *                        parameter space
+     */
+    result_type operator()(const Arc_2& cv, CGAL::Arr_curve_end ce) const {
+
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            ce = (ce == CGAL::ARR_MAX_END ? 
+                  CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+        }
+
+        CGAL::Arr_parameter_space loc = cv.location(ce);
+        if(loc == CGAL::ARR_BOTTOM_BOUNDARY || loc == CGAL::ARR_TOP_BOUNDARY)
+            return loc;
+        return CGAL::ARR_INTERIOR;
+    }
+    
+}; // Parameter_space_in_y
+
 //!\brief Constructs min vertex of arc
 template < class CurvedKernelViaAnalysis_2l >
 class Construct_min_vertex_2 :
@@ -1030,7 +1099,7 @@ public:
      * \pre minimum end-point is interior
      */
     result_type operator()(const Arc_2& cv) const {
-        
+
         if (cv.is_vertical() && cv.sheet() == 1) {
             return cv.curve_end(CGAL::ARR_MAX_END);
         }
@@ -1076,7 +1145,7 @@ public:
      * \pre minimum end-point is interior
      */
     result_type operator()(const Arc_2& cv) const {
-        
+
         if (cv.is_vertical() && cv.sheet() == 1) {
             return cv.curve_end(CGAL::ARR_MIN_END);
         }
@@ -1926,6 +1995,9 @@ public:
                              compare_y_at_x_left_2_object);
     CGAL_QKvA_2_functor_pred(Compare_y_at_x_right_2, 
                              compare_y_at_x_right_2_object);
+
+    CGAL_QKvA_2_functor_pred(Parameter_space_in_y_2, 
+                             parameter_space_in_y_2_object);
 
     CGAL_QKvA_2_functor_pred(Construct_min_vertex_2, 
                              construct_min_vertex_2_object);
