@@ -1977,13 +1977,20 @@ protected:
             bool equal_x = false, 
             bool only_x = false) const {
 
-        //std::cout << "p: " << p << std::endl;
-        //std::cout << "q: " << q << std::endl;
+        CERR("\n_same_arc_compare_xy; this: " 
+             << *dynamic_cast< const Kernel_arc_2*>(this) 
+             << "; p: " << p
+             << "; q: " << q
+             << "; equal_x: " << equal_x
+             << "; only_x: " << only_x
+             << "\n"
+        );
         
         CGAL::Comparison_result res;
         
         if (p.is_identical(q)) {
             res = CGAL::EQUAL;
+            CERR("result1: " << res << "\n");
             return res;
         }
         
@@ -1995,7 +2002,7 @@ protected:
                 res = Curved_kernel_via_analysis_2::instance().
                     compare_x_2_object()(p, q);
                 if (res != CGAL::EQUAL) {
-                    //std::cout << "res1: " << res << std::endl;
+                    CERR("result2: " << res << "\n");
                     return res;
                 }
             } else if(locp != locq) {
@@ -2004,51 +2011,51 @@ protected:
                 // boundaries
                 if (locp == CGAL::ARR_LEFT_BOUNDARY) {
                     res = CGAL::SMALLER;
-                    //std::cout << "res2a: " << res << std::endl;
+                    CERR("result3: " << res << "\n");
                     return res;
                 } else if (locp == CGAL::ARR_RIGHT_BOUNDARY) {
                     res = CGAL::LARGER;
-                    //std::cout << "res2b: " << res << std::endl;
+                    CERR("result4: " << res << "\n");
                     return res;
                 } else if (locq == CGAL::ARR_LEFT_BOUNDARY) {
                     res = CGAL::LARGER;
-                    //std::cout << "res2c: " << res << std::endl;
+                    CERR("result5: " << res << "\n");
                     return res;
                 } else if (locq == CGAL::ARR_RIGHT_BOUNDARY) {
                     res = CGAL::SMALLER;
-                    //std::cout << "res2d: " << res << std::endl;
+                    CERR("result6: " << res << "\n");
                     return res;
                 }
             } // else: proceed to y-comparison
         }
         if (only_x) {
             res = CGAL::EQUAL;
-            //std::cout << "res4: " << res << std::endl;
+            CERR("result7: " << res << "\n");
             return res;
         }
         if (locp == locq) {
             if(locp != CGAL::ARR_INTERIOR) {
                 res = CGAL::EQUAL; // both points are at the same inf in y
-                //std::cout << "res5: " << res << std::endl;
+                CERR("result8: " << res << "\n");
                 return res;
             }
             // compare only y-values; 
-            res = Curved_kernel_via_analysis_2::instance().
-                compare_xy_2_object()(p, q, true);
-            //std::cout << "res6: " << res << std::endl;
+            res = Curved_kernel_via_analysis_2::instance().kernel().
+                compare_xy_2_object()(p.xy(), q.xy(), true);
+            CERR("result9: " << res << "\n");
             return res;
         }
         // here: locp != locq && one of them is at inf y
         if (locp == CGAL::ARR_INTERIOR) {
             res = (locq == CGAL::ARR_BOTTOM_BOUNDARY ? 
                    CGAL::LARGER : CGAL::SMALLER);
-            //std::cout << "res7: " << res << std::endl;
+            CERR("result10: " << res << "\n");
             return res;
         }
         // here: locp != locq && locp is at infty
         res = (locp == CGAL::ARR_BOTTOM_BOUNDARY ? 
                CGAL::SMALLER : CGAL::LARGER);
-        //std::cout << "res8: " << res << std::endl;
+        CERR("result11: " << res << "\n");
         return res;
     }
     
