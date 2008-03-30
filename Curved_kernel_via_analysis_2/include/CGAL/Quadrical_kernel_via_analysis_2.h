@@ -921,6 +921,22 @@ public:
 
         CERR("\nqkva_compare_y_at_x_left(cv2);\ncv1: " << cv1 << ";\ncv2: " <<
              cv2 << ";\np: " << p << "\n");
+
+        if (cv1.is_vertical()) {
+            // if both are vertical (they overlap), we return EQUAL
+            if(cv2.is_vertical()) {
+                return CGAL::EQUAL;
+            }
+            // a vertical arc is always smaller than the arc extending to the
+            // left
+            return CGAL::SMALLER;
+        } 
+        // a vertical arc is always smaller than the arc extending to the left;
+        // due to the order, we have to return the opposite
+        if (cv2.is_vertical()) {
+            return CGAL::LARGER;
+        }
+            
         
         CGAL::Comparison_result res = CGAL::EQUAL;
 
@@ -987,6 +1003,21 @@ public:
         CERR("\nqkva_compare_y_at_x_right(cv2);\ncv1: " << cv1 
              << ";\ncv2: " << cv2 << ";\np: " << p << "\n");
 
+        if (cv1.is_vertical()) {
+            // if both are vertical (they overlap), we return EQUAL
+            if (cv2.is_vertical()) {
+                return CGAL::EQUAL;
+            }
+            // a vertical arc is always LARGER than arc extending to the
+            // right
+            return CGAL::LARGER;
+        } 
+        // a vertical arc is always LARGER than arc extending to the right; 
+        // due to the order, we have to return the opposite
+        if (cv2.is_vertical()) {
+            return CGAL::SMALLER;
+        }
+        
         CGAL::Comparison_result res = CGAL::EQUAL;
         
         int sheet1 = cv1.sheet();
@@ -1552,6 +1583,14 @@ public:
                 cv._same_arc_compare_xy(cv._minpoint(), p) != CGAL::EQUAL &&
                 cv._same_arc_compare_xy(cv._maxpoint(), p) != CGAL::EQUAL);
         
+        bool min_at_top = false;
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            min_at_top = 
+                (cv.location(CGAL::ARR_MIN_END) == CGAL::ARR_TOP_BOUNDARY);
+            if (min_at_top) {
+                cv.set_location(CGAL::ARR_MIN_END, CGAL::ARR_INTERIOR);
+            }
+        }
         c1 = cv._replace_endpoints(
                 cv._minpoint(), p, 
                 -1, (cv.is_vertical() ? -1 : cv.arcno()),
@@ -1562,6 +1601,13 @@ public:
                 (cv.is_vertical() ? -1 : cv.arcno()), -1,
                 (cv.is_z_vertical() ? -1 : cv.sheet()), -1
         ).first;
+        if (cv.is_vertical() && cv.sheet() == 1) {
+            std::swap(c1, c2);
+            if (min_at_top) {
+                c2.set_location(CGAL::ARR_MIN_END, CGAL::ARR_TOP_BOUNDARY);
+                cv.set_location(CGAL::ARR_MIN_END, CGAL::ARR_TOP_BOUNDARY);
+            }
+        }
         
         CERR("result:\nc1: " << c1 << ";\nc2: " << c2 << "\n");
     }
