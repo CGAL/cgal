@@ -25,46 +25,45 @@
 #include <sstream>
 
 #include <CGAL/basic.h>
+#include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
-// #################### INPUT
 
 template<class NT, class ROOT>
 void
 input_ascii(std::istream& is , Sqrt_extension<NT,ROOT>& result){
 
-// expected input format: EXT[ext.a0(),ext.a1(),root()]
-typedef Sqrt_extension<NT,ROOT> EXT;
+    typedef Sqrt_extension<NT,ROOT> EXT; 
 
-char c;
-NT a0;
-NT a1;
-ROOT root;
+    char c;
+    NT a0;
+    NT a1;
+    ROOT root;
 
-swallow(is, 'E');
-swallow(is, 'X');
-swallow(is, 'T');
-swallow(is, '[');
-is >> iformat(a0);
-do c = is.get(); while (isspace(c));
-if (c != ',') CGAL_error_msg( "input error: , expected" );
+    swallow(is, 'E');
+    swallow(is, 'X');
+    swallow(is, 'T');
+    swallow(is, '[');
+    is >> iformat(a0);
+    do c = is.get(); while (isspace(c));
+    if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-is >> iformat(a1);
-do c = is.get(); while (isspace(c));
-if (c != ',') CGAL_error_msg( "input error: , expected" );
+    is >> iformat(a1);
+    do c = is.get(); while (isspace(c));
+    if (c != ',') CGAL_error_msg( "input error: , expected" );
 
-is >> iformat(root);
-do c = is.get(); while (isspace(c));
-if (c != ']') CGAL_error_msg( "input error: ] expected" );
+    is >> iformat(root);
+    do c = is.get(); while (isspace(c));
+    if (c != ']') CGAL_error_msg( "input error: ] expected" );
 
-if ( root  < ROOT(0)) CGAL_error_msg("input error: non-negative root expected");
+    if ( root  < ROOT(0)) CGAL_error_msg("input error: non-negative root expected");
 
-if ( root == ROOT(0)) 
-    result =  EXT(a0);
-else
-    result = EXT(a0,a1,root);
+    if ( root == ROOT(0)) 
+        result =  EXT(a0);
+    else
+        result = EXT(a0,a1,root);
 }
 
 template<class NT, class ROOT>
@@ -98,7 +97,7 @@ template< class NT, class ROOT >
 void
 output_benchmark( std::ostream& os, const Sqrt_extension<NT,ROOT>& x ) {
     os << "Sqrt_extension( " << bmformat( x.a0() ) << ", " << bmformat( x.a1() )
-        << ", " << bmformat( x.root()) << " )";
+       << ", " << bmformat( x.root()) << " )";
 }
 
 // Benchmark_rep specialization 
@@ -110,14 +109,14 @@ public:
     Benchmark_rep( const CGAL::Sqrt_extension< NT, ROOT >& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const { 
-            output_benchmark( out, t );
-            return out;
+        output_benchmark( out, t );
+        return out;
     }
     
     static std::string get_benchmark_name() {
         std::stringstream ss;
         ss << "Sqrt_extension< " << Benchmark_rep< NT >::get_benchmark_name() 
-            << ", " << Benchmark_rep< ROOT >::get_benchmark_name() << " >";
+           << ", " << Benchmark_rep< ROOT >::get_benchmark_name() << " >";
         return ss.str();
     }
 };
@@ -141,7 +140,7 @@ public:
 
 template <class NT,class ROOT>
 std::ostream& operator << (std::ostream& os,
-                           const Sqrt_extension<NT,ROOT>& ext){
+        const Sqrt_extension<NT,ROOT>& ext){
     switch(CGAL::get_mode(os)) {
     case CGAL::IO::PRETTY:
         output_maple(os,ext); break; 

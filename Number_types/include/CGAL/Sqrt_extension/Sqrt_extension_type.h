@@ -35,7 +35,6 @@
 #define CGAL_SQRT_EXTENSION_TYPE_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Sqrt_extension/io.h>
 
 //#define SQRT_EXT_USE_FILTER 1
 #ifdef SQRT_EXT_USE_FILTER
@@ -46,6 +45,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class NT_,class ROOT_> class Sqrt_extension;
+template<class NT, class ROOT>
+void output_maple(std::ostream&, const Sqrt_extension<NT,ROOT>&);
 
 /*! \ingroup CGAL_Sqrt_extension
 \brief represents an extension of a number type by one square root.
