@@ -316,7 +316,7 @@ private:
     bool not_zero_in_interval(const CGAL::Polynomial<Coeff__>& P)
     {
         if(P.degree() == 0) return true;
-        if(POLYNOMIAL::sign_variations(variation_transformation(P)) != 0)
+        if(CGALi::sign_variations(variation_transformation(P)) != 0)
             return false;
         return (P[0] != Coeff__(0) && P.evaluate(Coeff__(1)) != Coeff__(0));
     }

@@ -194,7 +194,7 @@ void test_real_root_isolator() {
         //std::cout << "Kameny 3\n";
         // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
  
-        NT c = CGAL::POLYNOMIAL::ipower(NT(10),12);
+        NT c = CGAL::ipower(NT(10),12);
         Polynomial P(NT(-3),NT(0),c);
         P = P*P;   // (c^2x^2-3)^2
         Polynomial Q (NT(0),NT(1));
@@ -211,9 +211,9 @@ void test_real_root_isolator() {
         // from http://www-sop.inria.fr/saga/POL/BASE/1.unipol
     
         NT z(0);
-        NT a = CGAL::POLYNOMIAL::ipower(NT(10),24); // a = 10^{24}
+        NT a = CGAL::ipower(NT(10),24); // a = 10^{24}
        
-        Polynomial P(z,NT(4),CGAL::POLYNOMIAL::ipower(a,2),z,z,2*a,z,z,NT(1)); 
+        Polynomial P(z,NT(4),CGAL::ipower(a,2),z,z,2*a,z,z,NT(1)); 
         // x^8+2*10^{24}*x^5+10^{48}*x^2+4*x  
         P = P * Polynomial(z,z,z,z,z,z,NT(1));
         // x^{14}+2*10^{24}*x^{11}+10^{48}*x^8+4*x^7
@@ -229,7 +229,7 @@ void test_real_root_isolator() {
         // there seems to be some error or misunderstanding
         
         NT z(0);
-        NT a = CGAL::POLYNOMIAL::ipower(NT(10),20); // a = 10^{20}
+        NT a = CGAL::ipower(NT(10),20); // a = 10^{20}
         
         Polynomial P(z,z,z,z,z,z,z,z,NT(1)); //x^8
         P = P*Polynomial(z,z,z,z,NT(1)); // x^{12}

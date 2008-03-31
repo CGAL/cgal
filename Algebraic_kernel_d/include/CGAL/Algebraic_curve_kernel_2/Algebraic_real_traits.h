@@ -224,7 +224,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
             Boundary high = Upper_boundary()(r);
             
             Boundary prec = (high - low) /
-                CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
+                CGAL::ipower(Boundary(2), rel_prec);
             
             /////////// attention!! need to test for exact zero !!
                
@@ -321,7 +321,7 @@ struct Algebraic_real_traits<NiX::Algebraic_real<Coefficient_, FieldWithSqrt,
                 return;
             } 
             Boundary len = t.high() - t.low(), prec = len /
-                CGAL::POLYNOMIAL::ipower(Boundary(2), rel_prec);
+                CGAL::ipower(Boundary(2), rel_prec);
             while(len > prec) {
                 t.refine();
                 len = t.high() - t.low();

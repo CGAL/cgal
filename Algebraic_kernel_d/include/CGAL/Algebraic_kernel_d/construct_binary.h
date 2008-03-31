@@ -40,7 +40,7 @@ inline void construct_binary( const Integer& e, Integer& x ) {
     x = Integer(1);
     
     const Integer max_ipower = (exponent > Integer(std::numeric_limits<int>::max())) ?
-                POLYNOMIAL::ipower( Integer(2), std::numeric_limits<int>::max() ) : 
+                CGAL::ipower( Integer(2), std::numeric_limits<int>::max() ) : 
                 Integer(0);
     
     while( exponent > Integer(std::numeric_limits<int>::max()) ) {
@@ -48,7 +48,7 @@ inline void construct_binary( const Integer& e, Integer& x ) {
         exponent -= Integer(std::numeric_limits<int>::max());    
     }
     
-    x *= POLYNOMIAL::ipower( Integer(2), (int)CGAL::to_double(exponent) );    
+    x *= CGAL::ipower( Integer(2), (int)CGAL::to_double(exponent) );    
 }
 
 template< class Integer, class Rational >

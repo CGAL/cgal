@@ -88,7 +88,7 @@ namespace CGALi {
                             
                             // Calculate the needed precision
                             Boundary prec = Boundary(1) / 
-                                            POLYNOMIAL::ipower( Boundary(2), rel_prec );
+                                            CGAL::ipower( Boundary(2), rel_prec );
                             
                             // Refine until precision is reached
                             while( CGAL::abs( t.high() - t.low() ) /

@@ -333,7 +333,7 @@ private:
                         
         }
         CGAL_postcondition(i>=0 && 
-                           i <= CGAL::POLYNOMIAL::ipower(Integer(2),N));
+                           i <= CGAL::ipower(Integer(2),N));
         
         return i;
     }
@@ -360,7 +360,7 @@ private:
     }
 
     bool refine_by_factor_greater_4(Integer i) const {
-        Integer intervals = CGAL::POLYNOMIAL::ipower(Integer(2),N);
+        Integer intervals = CGAL::ipower(Integer(2),N);
         Field step = (this->high_-this->low_)/Field(intervals);
         CGAL::simplify(step);
         Field m
