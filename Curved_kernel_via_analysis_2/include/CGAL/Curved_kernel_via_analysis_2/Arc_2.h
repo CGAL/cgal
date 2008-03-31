@@ -1127,6 +1127,20 @@ public:
             *eq_min = *eq_max = false;
         }
 
+        if (is_vertical()) {
+            if (x == this->x()) {
+                if (eq_min != NULL) {
+                    *eq_min = true;
+                }
+                if (eq_max != NULL) {
+                    *eq_max = true;
+                }
+                return true;
+            }
+            // else
+            return false;
+        }
+
         // precomputations:
         CGAL::Comparison_result resmin = CGAL::LARGER;
         CGAL::Arr_parameter_space min_loc = location(CGAL::ARR_MIN_END);
