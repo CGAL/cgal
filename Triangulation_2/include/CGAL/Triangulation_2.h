@@ -490,6 +490,7 @@ bool well_oriented(Vertex_handle v)
 }
 
 bool from_convex_hull(Vertex_handle v) {
+  CGAL_triangulation_precondition(!is_infinite(v));
   Vertex_circulator vc = incident_vertices(v), done(vc);
   do { if(is_infinite(vc)) return true; } while(++vc != done);
   return false;
@@ -2806,3 +2807,4 @@ CGAL_END_NAMESPACE
     
 
 #endif //CGAL_TRIANGULATION_2_H
+
