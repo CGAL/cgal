@@ -23,3 +23,4 @@
 #include "Real_timer.cpp"
 #include "Timer.cpp"
 #include "Turkowski_numeric_solver.cpp"
+#include "primes.cpp"
