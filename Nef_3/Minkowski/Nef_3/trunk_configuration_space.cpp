@@ -13,12 +13,12 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-
+#include <CGAL/Nef_3/Bounding_box_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Nef_3/convex_decomposition_3.h> 
 #include <CGAL/convexity_check_3.h>
 
-#ifdef CGAL_TCSP_BRUTE_FORCE
+#ifndef CGAL_TCSP_NO_BRUTE_FORCE
 #include <CGAL/Nef_3/trunk_offset_brute_force.h>
 #else
 #include <CGAL/Nef_3/trunk_offset.h>
@@ -195,13 +195,46 @@ int main(int argc, char* argv[]) {
 
   CGAL_assertion(is_strongly_convex_3(P));
 
+#ifdef CGAL_TCSP_CENTER_SUITCASE
+
+  CGAL::Bounding_box_3<CGAL::Tag_true, Kernel>  bbp;
+  Polyhedron_3::Vertex_const_iterator pvi;
+  for(pvi = P.vertices_begin();
+      pvi != P.vertices_end(); ++pvi) {
+    bbp.extend(pvi->point());
+  }
+
+  std::cerr << "bbp " << bbp.min_coord(0)
+	    << ", " << bbp.min_coord(1)
+	    << ", " << bbp.min_coord(2)
+	    << " - " << bbp.max_coord(0)
+	    << ", " << bbp.max_coord(1) 
+	    << ", " << bbp.max_coord(2) << std::endl;
+
+  Kernel::Vector_3 vec(bbp.max_coord(0)-bbp.min_coord(0), 
+		       bbp.max_coord(1)-bbp.min_coord(1),
+		       bbp.max_coord(2)-bbp.min_coord(2));
+  vec = vec / Kernel::RT(2);
+  std::cerr << "translate " << vec << std::endl;
+  Kernel::Vector_3 pvec(-bbp.max_coord(0),
+			-bbp.max_coord(1),
+			-bbp.max_coord(2));
+  vec = vec + pvec;
+  std::cerr << "translate " << vec << std::endl;
+  Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, vec);
+  Nef_polyhedron_3 N(P);
+  N.transform(trans);
+  P.clear();
+  N.convert_to_Polyhedron(P);
+#endif
+
   CGAL::Timer t;
   t.start();
   std::vector<Point_3>::const_iterator 
     pbegin(points.begin()), pend(points.end());
   std::list<std::pair<int*, int*> >::const_iterator
     fbegin(facets.begin()), fend(facets.end());
-#ifdef CGAL_TCSP_BRUTE_FORCE
+#ifndef CGAL_TCSP_NO_BRUTE_FORCE
   TO to;
 #else
   TO to(mod, step, mp);
@@ -216,58 +249,8 @@ int main(int argc, char* argv[]) {
 
   t.stop();
   std::cerr << "Runtime CSP: " << t.time() << std::endl;
-  std::ofstream outCSP("csp.nef3");
-  outCSP << CSP;
-  t.start();
+  std::cout << CSP;
 
-  points.clear();
-  Vertex_const_iterator v;
-  for(v = CSP.vertices_begin(); v != CSP.vertices_end(); ++v)
-    points.push_back(v->point());
-
-  Polyhedron_3 CV;
-  convex_hull_3( points.begin(), points.end(), CV);
-
-  Nef_polyhedron_3 NCV(CV);
-  Nef_polyhedron_3 DIFF = NCV-CSP;
-
-  t.stop();
-  std::cerr << "Runtime CSP,CV,(CV-CSP): " << t.time() << std::endl;
-  std::ofstream outNCV("ncv.nef3");
-  std::ofstream outDIFF("diff.nef3");
-  outNCV << NCV;
-  outDIFF << DIFF;
-  t.start();
-  
-  convex_decomposition_3<Nef_polyhedron_3>(DIFF);
-
-  t.stop();
-  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition: " 
-	    << t.time() << std::endl;
-  t.start();
-
-
-  int nov = 1;
-  Volume_const_iterator c;
-  for(c=++(DIFF.volumes_begin()); c!=DIFF.volumes_end(); ++c)
-    if(c->mark()) ++nov;
-  std::cout << nov << std::endl;
-
-  Volume_output vout_ncv;
-  NCV.visit_shell_objects(NCV.volumes_begin()->shells_begin(), vout_ncv);
-  vout_ncv.dump();
-
-  for(c=++(DIFF.volumes_begin()); c!=DIFF.volumes_end(); ++c) {
-    if(c->mark()) {
-      Volume_output vout(true);
-      DIFF.visit_shell_objects(c->shells_begin(), vout);
-      vout.dump();
-    }
-  }
-
-  t.stop();
-  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition,Output: " 
-	    << t.time() << std::endl;    
 
   /*
   QApplication a(argc, argv);
