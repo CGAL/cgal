@@ -16,13 +16,16 @@
 
 #include <CGAL/basic.h>
 
+#include <CGAL/Polynomial/fwd.h>
+#include <CGAL/Polynomial/misc.h>
+#include <CGAL/Polynomial/Polynomial_type.h>
 #include <CGAL/Polynomial/polynomial_utils.h>
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
-
+#include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
 
-#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
+#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                               \
     typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;       \
     typedef Polynomial_traits_d< Coefficient_ > PTC;                    \
                                                                         \
@@ -30,9 +33,9 @@
     typedef Polynomial<Coefficient_>                  Polynomial_d;     \
     typedef Coefficient_                              Coefficient;      \
                                                                         \
-    typedef typename Innermost_coefficient<Polynomial_d>::Type          \
+    typedef typename Innermost_coefficient<Polynomial_d>::Type \
     Innermost_coefficient;                                              \
-    static const int d = Dimension<Polynomial_d>::value;                \
+    static const int d = Dimension<Polynomial_d>::value; \
                                                                         \
                                                                         \
     private:                                                            \
@@ -53,32 +56,15 @@
 
 CGAL_BEGIN_NAMESPACE;
 
-namespace POLYNOMIAL {
-
-
-// template meta function Innermost_coefficient
-// returns the tpye of the innermost coefficient 
-template <class T> struct Innermost_coefficient{ typedef T Type; };
-template <class Coefficient> 
-struct Innermost_coefficient<Polynomial<Coefficient> >{
-    typedef typename Innermost_coefficient<Coefficient>::Type Type; 
-};
-
-// template meta function Dimension
-// returns the number of variables 
-template <class T> struct Dimension{ static const int value = 0;};
-template <class Coefficient> 
-struct Dimension<Polynomial<Coefficient> > {
-    static const int value = Dimension<Coefficient>::value + 1 ; 
-};
+namespace CGALi {
 
 // Base class for functors depending on the algebraic category of the
 // innermost coefficient
 template< class Coefficient_, class ICoeffAlgebraicCategory >
 class Polynomial_traits_d_base_icoeff_algebraic_category {    
-    public:    
-        typedef Null_functor    Multivariate_content;
-        typedef Null_functor    Interpolate;
+public:    
+    typedef Null_functor    Multivariate_content;
+    typedef Null_functor    Interpolate;
 };
 
 // Specializations
@@ -101,7 +87,7 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
     CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
     
-    public:    
+public:    
     
     //       Multivariate_content;
     struct Multivariate_content
@@ -135,7 +121,7 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
     CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
-    public:
+public:
     
     //       Multivariate_content;
     struct Multivariate_content
@@ -209,7 +195,7 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
     : public Polynomial_traits_d_base_icoeff_algebraic_category< 
                 Polynomial< Coefficient_ >, Field_with_sqrt_tag > {}; 
  
- template< class Coefficient_ >
+template< class Coefficient_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
             Polynomial< Coefficient_ >, Field_with_root_of_tag >
     : public Polynomial_traits_d_base_icoeff_algebraic_category< 
@@ -219,9 +205,9 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
 // Polynomial type
 template< class Coefficient_, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base_polynomial_algebraic_category {        
-    public:
-        typedef Null_functor    Univariate_content;
-        typedef Null_functor    Square_free_factorization;
+public:
+    typedef Null_functor    Univariate_content;
+    typedef Null_functor    Square_free_factorization;
 };
 
 // Specializations
@@ -244,7 +230,7 @@ class Polynomial_traits_d_base_polynomial_algebraic_category<
                 Polynomial< Coefficient_ >, Integral_domain_tag > {
     CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
 
-    public:
+public:
     
     //       Univariate_content
     struct Univariate_content
@@ -271,7 +257,7 @@ class Polynomial_traits_d_base_polynomial_algebraic_category<
         
         template< class OutputIterator1, class OutputIterator2 >
         int operator()( const Polynomial_d& p, OutputIterator1 fit,
-                        OutputIterator2 mit, Innermost_coefficient& a ) {
+                OutputIterator2 mit, Innermost_coefficient& a ) {
             if( p == Polynomial_d(0) ) {
                 a = Innermost_coefficient(0);
                 return 0;
@@ -301,7 +287,7 @@ template< class InnermostCoefficient,
           class ICoeffAlgebraicCategory, class PolynomialAlgebraicCategory >
 class Polynomial_traits_d_base {
     typedef InnermostCoefficient ICoeff;
-  public:
+public:
     static const int d = 0;
     
     typedef ICoeff Polynomial_d;
@@ -376,6 +362,7 @@ class Polynomial_traits_d_base {
         :public Unary_function <ICoeff, ICoeff>{
         ICoeff operator()(const ICoeff& x){return x;}
     };
+    
     struct Degree_vector{
         typedef Exponent_vector         result_type;
         typedef Coefficient             argument_type;
@@ -408,59 +395,59 @@ class Polynomial_traits_d_base {
 
 // Evaluate_homogeneous_func for recursive homogeneous evaluation of a
 //  polynomial, used by Polynomial_traits_d_base for polynomials.
-    template< class Polynomial, int d = CGAL::Polynomial_traits_d< Polynomial>::d >
-    struct Evaluate_homogeneous_func;
+template< class Polynomial, int d = CGAL::Polynomial_traits_d< Polynomial>::d >
+struct Evaluate_homogeneous_func;
 
-    template< class Polynomial >
-    struct Evaluate_homogeneous_func< Polynomial, 1 > {
-        typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
-        typedef typename PT::Coefficient Coefficient;
-        typedef typename PT::Innermost_coefficient ICoeff;
-        typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
+template< class Polynomial >
+struct Evaluate_homogeneous_func< Polynomial, 1 > {
+    typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
+    typedef typename PT::Coefficient Coefficient;
+    typedef typename PT::Innermost_coefficient ICoeff;
+    typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
         
-        template< class Input_iterator >
-        ICoeff operator()( const Polynomial& p,
-                           Input_iterator begin,
-                           Input_iterator end,
-                           int total_degree,
-                           const ICoeff& v ) const {
-            --end;
-            CGAL_precondition( begin == end );
+    template< class Input_iterator >
+    ICoeff operator()( const Polynomial& p,
+            Input_iterator begin,
+            Input_iterator end,
+            int total_degree,
+            const ICoeff& v ) const {
+        --end;
+        CGAL_precondition( begin == end );
 /*            std::cerr << (*end) << ", " << v << ", " << total_degree << std::endl;
-            std::cerr << p << std::endl;*/
-            return p.evaluate_homogeneous( (*end), v, total_degree );
-        }
+              std::cerr << p << std::endl;*/
+        return p.evaluate_homogeneous( (*end), v, total_degree );
+    }
         
-    }; 
+}; 
 
-    template< class Polynomial, int d >
-    struct Evaluate_homogeneous_func {
-        typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
-        typedef typename PT::Coefficient Coefficient;
-        typedef typename PT::Innermost_coefficient ICoeff;
-        typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
+template< class Polynomial, int d >
+struct Evaluate_homogeneous_func {
+    typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
+    typedef typename PT::Coefficient Coefficient;
+    typedef typename PT::Innermost_coefficient ICoeff;
+    typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
         
-        template< class Input_iterator >
-        ICoeff operator()( const Polynomial& p,
-                           Input_iterator begin,
-                           Input_iterator end,
-                           int total_degree,
-                           const ICoeff& v ) const {
-            CGAL_precondition( begin != end );
-            //typename PT::Evaluate evaluate;
-            typename PT::Degree degree;            
-            Evaluate_homogeneous_func< Coefficient > eval_hom;
-            --end;
+    template< class Input_iterator >
+    ICoeff operator()( const Polynomial& p,
+            Input_iterator begin,
+            Input_iterator end,
+            int total_degree,
+            const ICoeff& v ) const {
+        CGAL_precondition( begin != end );
+        //typename PT::Evaluate evaluate;
+        typename PT::Degree degree;            
+        Evaluate_homogeneous_func< Coefficient > eval_hom;
+        --end;
             
-            std::vector< ICoeff > cv;
+        std::vector< ICoeff > cv;
             
-            for( int i = 0; i <= degree(p); ++i ) {
-                cv.push_back( eval_hom( p[i], begin, end, total_degree - i, v ) );                     
-            }
-             
-            return (CGAL::Polynomial< ICoeff >( cv.begin(), cv.end() )).evaluate((*end));
+        for( int i = 0; i <= degree(p); ++i ) {
+            cv.push_back( eval_hom( p[i], begin, end, total_degree - i, v ) );                     
         }
-    };
+             
+        return (CGAL::Polynomial< ICoeff >( cv.begin(), cv.end() )).evaluate((*end));
+    }
+};
 
 // Now the version for the polynomials with all functors provided by all polynomials
 template< class Coefficient_,
@@ -658,7 +645,7 @@ public:
                         it++;
                     }                    
                     coefficients.push_back(
-                                construct(monoms.begin(), monoms.end()));
+                            construct(monoms.begin(), monoms.end()));
                 }
                 //std::cout << " ------\n "  << std::endl;
                 return Polynomial_d(coefficients.begin(),coefficients.end());
@@ -704,7 +691,7 @@ public:
         typedef int                 third_argument_type;
         typedef Arity_tag< 3 >         Arity;
              
-      public:
+    public:
         
         Polynomial_d operator()(const Polynomial_d& p, int i, int j ) const {
             //std::cout << i <<" " << j << " : " ; 
@@ -819,13 +806,13 @@ public:
         : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
         operator()( const Polynomial_d& p ) const {
-            return CGAL::POLYNOMIAL::canonicalize_polynomial(p);
+            return CGAL::CGALi::canonicalize_polynomial(p);
         }  
-     };
+    };
 
     //       Derivative;
-     struct Derivative 
-         : public Unary_function<Polynomial_d, Polynomial_d>{
+    struct Derivative 
+        : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
         operator()(Polynomial_d p, int i = (d-1)) const {
             if (i == (d-1) ){
@@ -837,7 +824,7 @@ public:
                 p = swap(p,i,d-1);
             }
             return p;
-         }
+        }
     };
 
     //       Evaluate;
@@ -886,8 +873,8 @@ public:
         
         template< class Input_iterator >
         Innermost_coefficient operator()( const Polynomial_d & p,
-                                          Input_iterator begin,
-                                          Input_iterator end ) const {
+                Input_iterator begin,
+                Input_iterator end ) const {
             typename PT::Total_degree total_degree;
             typename PT::Evaluate_homogeneous eval_hom;
             return eval_hom( p, begin, end, total_degree(p) );
@@ -895,9 +882,9 @@ public:
         
         template< class Input_iterator >
         Innermost_coefficient operator()( const Polynomial_d& p,
-                                          Input_iterator begin,
-                                          Input_iterator end,
-                                          int total_degree ) const {
+                Input_iterator begin,
+                Input_iterator end,
+                int total_degree ) const {
             --end;
             Evaluate_homogeneous_func< Polynomial_d > eval_hom;
             return eval_hom( p, begin, end, total_degree, (*end) );
@@ -981,7 +968,7 @@ public:
     };                                                                             
                                                                                    
     struct Innermost_coefficient_end                                               
-      : public Unary_function< Polynomial_d, Innermost_coefficient_iterator > {    
+        : public Unary_function< Polynomial_d, Innermost_coefficient_iterator > {    
         Innermost_coefficient_iterator                                             
         operator () (const Polynomial_d& p) {                                      
             return typename Coefficient_flattening::Flatten()(p.end(),p.end());    
@@ -992,7 +979,7 @@ public:
     struct Is_square_free 
         : public Unary_function< Polynomial_d, bool >{
         bool operator()( const Polynomial_d& p ) const {
-            if( !POLYNOMIAL::may_have_multiple_factor( p ) )
+            if( !CGALi::may_have_multiple_factor( p ) )
                 return true;
             
             Univariate_content_up_to_constant_factor ucontent_utcf;
@@ -1081,7 +1068,7 @@ public:
         operator()(const Polynomial_d& p, const Polynomial_d& q) const {
             if (CGAL::is_zero(p) && CGAL::is_zero(q)) 
                 return Polynomial_d(0);
-            return gcd_utcf(p,q);
+            return CGALi::gcd_utcf(p,q);
         }
     };
     
@@ -1177,9 +1164,9 @@ public:
             p = idiv_utcf( p , Polynomial_d(c));
             int n = square_free_factorization_utcf(p,fit,mit);
             if (Total_degree()(c) > 0) 
-                    return rsqff_utcf(c,fit,mit)+n;
-                else 
-                    return n;
+                return rsqff_utcf(c,fit,mit)+n;
+            else 
+                return n;
         }
     };
 
@@ -1278,7 +1265,7 @@ public:
                 p = swap(p,i,d-1);
             }
             return p;
-         }
+        }
     };
 
     //       Scale;
@@ -1286,7 +1273,7 @@ public:
         : public Binary_function< Polynomial_d, Innermost_coefficient, Polynomial_d > {
         
         Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient& c,
-                                 int i = (PT::d-1) ) {
+                int i = (PT::d-1) ) {
             typename PT::Scale_homogeneous scale_homogeneous;
             
             return scale_homogeneous( p, c, Innermost_coefficient(1), i );
@@ -1322,7 +1309,7 @@ public:
             if (i == (d-1) ) p = Swap()(p,i,d-1);
           
             return p;
-         }
+        }
     };
 
     //       Resultant;
@@ -1339,7 +1326,7 @@ public:
             else
                 return resultant(Move()(p,i),Move()(q,i));
         }  
-     };
+    };
     
     //
     // Functors not mentioned in the reference manual
@@ -1356,7 +1343,7 @@ public:
             create_monom_representation( p, oit , Is_univariat());
         }
       
-      private:
+    private:
         
         template <class OutputIterator>
         void
@@ -1403,10 +1390,10 @@ public:
             result.insert(result.begin(),polynomial.degree());
             return result;
         }
-    };        
+    };
 };
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 // Definition of Polynomial_traits_d
 //
@@ -1415,27 +1402,26 @@ public:
 
 template< class Polynomial >
 class Polynomial_traits_d
-    : public POLYNOMIAL::Polynomial_traits_d_base< Polynomial,  
+    : public CGALi::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
-        typename POLYNOMIAL::Innermost_coefficient<Polynomial>::Type >::Algebraic_category,
+        typename CGALi::Innermost_coefficient<Polynomial>::Type >::Algebraic_category,
     typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {
 
 //------------ Rebind ----------- 
 private:
-template <class T, int d>
-struct Gen_polynomial_type{
-    typedef CGAL::Polynomial<typename Gen_polynomial_type<T,d-1>::Type> Type;
-};
-template <class T>
-struct Gen_polynomial_type<T,0>{ typedef T Type; };
+    template <class T, int d>
+    struct Gen_polynomial_type{
+        typedef CGAL::Polynomial<typename Gen_polynomial_type<T,d-1>::Type> Type;
+    };
+    template <class T>
+    struct Gen_polynomial_type<T,0>{ typedef T Type; };
 
 public:
-template <class T, int d>
-struct Rebind{
-    typedef Polynomial_traits_d<typename Gen_polynomial_type<T,d>::Type> Other;
-};
+    template <class T, int d>
+    struct Rebind{
+        typedef Polynomial_traits_d<typename Gen_polynomial_type<T,d>::Type> Other;
+    };
 //------------ Rebind ----------- 
-
 };
 
 

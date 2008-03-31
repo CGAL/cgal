@@ -24,12 +24,12 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// see <NiX/Scalar_factor_traits.h>
-/*! \ingroup NiX_Polynomial
- *  \ingroup NiX_Scalar_factor_traits_spec
-    \brief \c NiX::Scalar_factor_traits < \c NiX::Polynomial<NT> >
+// see <CGAL/Scalar_factor_traits.h>
+/*! \ingroup CGAL_Polynomial
+ *  \ingroup CGAL_Scalar_factor_traits_spec
+    \brief \c CGAL::Scalar_factor_traits < \c CGAL::Polynomial<NT> >
  *
- *  The \c NiX::Scalar_factor_traits::Scalar_factor of a polynomial,
+ *  The \c CGAL::Scalar_factor_traits::Scalar_factor of a polynomial,
  *  even of a nested polynomial, is essentially the gcd of its scalar
  *  coefficients. (This differs from the \c content() in that the content
  *  is the gcd of the coefficient sequence, which is again a polynomial,

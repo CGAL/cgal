@@ -14,7 +14,7 @@
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
 
-/*! \file NiX/prs_resultant.h
+/*! \file CGAL/prs_resultant.h
  *  \brief Resultant computation via polynomial remainder sequences (PRS)
  *
  */
@@ -46,7 +46,7 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
     }
 
     NT a = A.content(), b = B.content();
-    NT g(1), h(1), t = POLYNOMIAL::ipower(a, B.degree()) * POLYNOMIAL::ipower(b, A.degree());
+    NT g(1), h(1), t = CGAL::ipower(a, B.degree()) * CGAL::ipower(b, A.degree());
     Polynomial<NT> Q, R; NT d;
     int delta;
 
@@ -57,17 +57,17 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
         delta = A.degree() - B.degree();
         CGAL_expensive_assertion( 
            typename CGAL::Algebraic_structure_traits<NT>::Is_exact == CGAL_Tag_false  
-          || d == POLYNOMIAL::ipower(B.lcoeff(), delta + 1) );
+          || d == CGAL::ipower(B.lcoeff(), delta + 1) );
         A = B;
-        B = R / (g * POLYNOMIAL::ipower(h, delta));
+        B = R / (g * CGAL::ipower(h, delta));
         g = A.lcoeff();
         // h = h^(1-delta) * g^delta
-        POLYNOMIAL::hgdelta_update(h, g, delta);
+        CGALi::hgdelta_update(h, g, delta);
     } while (B.degree() > 0);
     // h = h^(1-deg(A)) * lcoeff(B)^deg(A)
     delta = A.degree();
     g = B.lcoeff();
-    POLYNOMIAL::hgdelta_update(h, g, delta);
+    CGALi::hgdelta_update(h, g, delta);
     h = signflip ? -(t*h) : t*h;
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(h);
@@ -94,11 +94,11 @@ NT prs_resultant_field(Polynomial<NT> A, Polynomial<NT> B) {
     while (B.degree() > 0) {
         signflip ^= (A.degree() & B.degree() & 1);
         Polynomial<NT>::euclidean_division(A, B, Q, R);
-        res *= POLYNOMIAL::ipower(B.lcoeff(), A.degree() - R.degree());
+        res *= CGAL::ipower(B.lcoeff(), A.degree() - R.degree());
         A = B;
         B = R;
     }
-    res = POLYNOMIAL::ipower(B.lcoeff(), A.degree()) * (signflip ? -res : res);
+    res = CGAL::ipower(B.lcoeff(), A.degree()) * (signflip ? -res : res);
     typename Algebraic_structure_traits<NT>::Simplify simplify;
     simplify(res);
     return res;
@@ -129,7 +129,7 @@ namespace INTERN_PRS_RESULTANT {
     NT prs_resultant_(Polynomial<NT> A, Polynomial<NT> B, Unique_factorization_domain_tag) {
         return prs_resultant_ufd(A, B);
     }
-} // namespace Intern
+} // namespace CGALi
 
 template <class NT> inline
 NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
@@ -144,7 +144,7 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
     B.simplify_coefficients();
     INTPOLY A0; decompose(A,A0,a);
     INTPOLY B0; decompose(B,B0,b);
-    DENOM c = POLYNOMIAL::ipower(a, B.degree()) * POLYNOMIAL::ipower(b, A.degree());
+    DENOM c = CGAL::ipower(a, B.degree()) * CGAL::ipower(b, A.degree());
     typedef typename Algebraic_structure_traits<RES>::Algebraic_category Algebraic_category;
     RES res0 = INTERN_PRS_RESULTANT::prs_resultant_(A0, B0, Algebraic_category());
     typename Fraction_traits<NT>::Compose comp_frac;
@@ -155,8 +155,8 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
 }
 
 
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
+/*! \ingroup CGAL_Polynomial
+ *  \relates CGAL::Polynomial
  *  \brief compute the resultant of polynomials \c A and \c B
  *
  *  The resultant of two polynomials is computed from their
@@ -164,14 +164,14 @@ NT prs_resultant_decompose(Polynomial<NT> A, Polynomial<NT> B){
  *  subresultant version. This depends on the coefficient type:
  *  If \c NT is a \c UFDomain , the subresultant PRS is formed.
  *  If \c NT is a \c Field that is not decomposable (see
- *  \c NiX::Fraction_traits ), then a Euclidean PRS is formed.
+ *  \c CGAL::Fraction_traits ), then a Euclidean PRS is formed.
  *  If \c NT is a \c Field that is decomposable, then the
  *  \c Numerator must be a \c UFDomain, and the subresultant
  *  PRS is formed for the decomposed polynomials.
  *
- *  Using \c NiX::hybrid_bezout_subresultant() may be faster in some cases
+ *  Using \c CGAL::hybrid_bezout_subresultant() may be faster in some cases
  *  and works for non-UFDomains, too.
- *  Using \c NiX::resultant() from \c NiX/resultant.h
+ *  Using \c CGAL::resultant() from \c CGAL/resultant.h
  *  chooses automatically among these alternative methods of resultant
  *  computation for you.
  *

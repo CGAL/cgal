@@ -16,14 +16,14 @@
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
 
-/*! \file NiX/Polynomial.h
- *  \brief Defines class NiX::Polynomial.
+/*! \file CGAL/Polynomial.h
+ *  \brief Defines class CGAL::Polynomial.
  *  
  *  Polynomials in one variable (or more, by recursion)
  */
 
-#ifndef CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
-#define CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
+#ifndef CGAL_POLYNOMIAL_CGALi_TYPE_H
+#define CGAL_POLYNOMIAL_CGALi_TYPE_H
 
 #include <CGAL/Polynomial/ipower.h>
 
@@ -50,18 +50,18 @@ template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2);
 
-namespace POLYNOMIAL {
+namespace CGALi {
 
 template <class NT> class Polynomial_rep;
 
-// \brief tag type to distinguish a certain constructor of \c NiX::Polynomial
+// \brief tag type to distinguish a certain constructor of \c CGAL::Polynomial
 class Creation_tag {};
 
 //
 // The internal representation class Polynomial_rep<NT>
 //
 
-// \brief  internal representation class for \c NiX::Polynomial
+// \brief  internal representation class for \c CGAL::Polynomial
 template <class NT_> class Polynomial_rep 
 { 
     typedef NT_ NT;
@@ -117,23 +117,23 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
     va_end(ap);
 }
 
-}// namespace POLYNOMIAL
+}// namespace CGALi
 
 //
 // The actual class Polynomial<NT>
 //
 
-/*! \ingroup NiX_Polynomial
+/*! \ingroup CGAL_Polynomial
     \brief polynomials in one variable (or more, by recursion)
 
-An instance of the data type \c NiX::Polynomial represents a
+An instance of the data type \c CGAL::Polynomial represents a
 polynomial <I>p = a<SUB>0</SUB> + a<SUB>1</SUB>*x + ...
 + a<SUB>d</SUB>*x<SUP>d</SUP></I> from the ring
 NT[x]. The data type offers standard ring operations, comparison
 operations (e.g. for symbolic computation with an infimaximal \e x ),
 and various algebraic operations (gcd, resultant).
 
-\c NiX:Polynomial offers a full set of algebraic operators, i.e.
+\c CGAL:Polynomial offers a full set of algebraic operators, i.e.
 binary +, -, *, / as well as +=, -=, *=, /=; not only for polynomials
 but also for a polynomial and a number of the coefficient type.
 (The / operator must only be used for integral divisions, i.e.
@@ -152,7 +152,7 @@ those of lower powers.
 For all operations naturally involving division, a \c IntegralDomain
 is required. If more than a \c IntegralDomain is required, this is documented.
 
-\c NT can itself be an instance of \c NiX::Polynomial, yielding a
+\c NT can itself be an instance of \c CGAL::Polynomial, yielding a
 crude form of multivariate polynomials. They behave correctly from an
 algebraic point of view (in particular w.r.t. gcd and resultant
 computation), but not always as a user would expect. For example, the
@@ -180,9 +180,9 @@ the coefficient sequence does not contain leading zero coefficients
 the zero polynomial is represented by a single zero coefficient.
 An empty coefficient sequence denotes an undefined value.
 
-Many functions modifying a \c NiX::Polynomial appear both as a member
+Many functions modifying a \c CGAL::Polynomial appear both as a member
 function (returning \c void ) which modifies the present object
-and as a non-member function returning a new \c NiX::Polynomial
+and as a non-member function returning a new \c CGAL::Polynomial
 while leaving their argument unchanged. The former is more efficient
 when the old value is no longer referenced elsewhere whereas the
 latter is more convenient.
@@ -191,7 +191,7 @@ latter is more convenient.
 from Michael Seel's PhD thesis.  */ 
 template <class NT_>
 class Polynomial 
-  : public Handle_with_policy< POLYNOMIAL::Polynomial_rep<NT_> >
+  : public Handle_with_policy< CGALi::Polynomial_rep<NT_> >
 {
 public: 
     //! \name Typedefs 
@@ -199,7 +199,7 @@ public:
     //! coefficient type of this instance 
     typedef NT_ NT; 
     //! representation pointed to by this handle 
-    typedef POLYNOMIAL::Polynomial_rep<NT> Rep;
+    typedef CGALi::Polynomial_rep<NT> Rep;
     //! base class  
     typedef Handle_with_policy< Rep > Base;
     //! container used to store coefficient sequence
@@ -220,8 +220,8 @@ protected:
     //! const access to the internal coefficient sequence
     const Vector& coeffs() const { return this->ptr()->coeff; }
     //! create an empty polynomial with s coefficients (degree up to s-1)
-    Polynomial(POLYNOMIAL::Creation_tag f, size_type s)
-        : Base(POLYNOMIAL::Polynomial_rep<NT>(f,s) )
+    Polynomial(CGALi::Creation_tag f, size_type s)
+        : Base(CGALi::Polynomial_rep<NT>(f,s) )
     {}
     //! non-const access to coefficient \c i
     /*! The polynomial's representation must not be shared between
@@ -256,7 +256,7 @@ public:
     //@{
 
     //! default constructor: a new polynomial of undefined value.
-    Polynomial() : Base( Rep(POLYNOMIAL::Creation_tag(), 1) ) 
+    Polynomial() : Base( Rep(CGALi::Creation_tag(), 1) ) 
     { coeff(0) = NT(0); }
     
 
@@ -266,7 +266,7 @@ public:
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>
     explicit Polynomial(const T& a0)
-        : Base(Rep(POLYNOMIAL::Creation_tag(), 1))
+        : Base(Rep(CGALi::Creation_tag(), 1))
     { coeff(0) = NT(a0); reduce(); simplify_coefficients(); }
    
     //! construct the constant polynomial a0
@@ -393,7 +393,7 @@ public:
     /*! \brief evaluate the polynomial at \c x
      *
      *  \c x can have another type \c NTX than the coefficient type \c NT.
-     *  The result type is defined by NiX::Coercion_traits<>
+     *  The result type is defined by CGAL::Coercion_traits<>
      */
 
     template <class NTX>
@@ -424,7 +424,7 @@ private:
 public:
     /*! \brief evaluate the polynomial at \c x
      *
-     *  This is a specialization for \c x is of type NiX::Interval.
+     *  This is a specialization for \c x is of type CGAL::Interval.
      */
 
     // TODO: This is a specialization for "evaluate" which handles the special
@@ -467,7 +467,7 @@ public:
         Type monom;
         Type y(0);
         for(int i = 0; i <= hom_degree; i++){
-            monom = POLYNOMIAL::ipower(v,hom_degree-i)*POLYNOMIAL::ipower(u,i);
+            monom = CGAL::ipower(v,hom_degree-i)*CGAL::ipower(u,i);
             if(i <= degree())
                 y += monom * cast(this->ptr()->coeff[i]);  
         }
@@ -526,7 +526,7 @@ public:
      *  That is, the function computes <I>|a<SUB>0</SUB>| +
      *  |a<SUB>1</SUB>|*x + ... + |a<SUB>d</SUB>|*x<SUP>d</SUP></I>.
      *  As with \c evaluate(), \c x can be of a type other than \c NT.
-     *  \pre Requires \c NiX::NT_traits::Abs for NT.
+     *  \pre Requires \c CGAL::Algebraic_structure_traits::Abs for NT.
      */
    
     template <class NTX> 
@@ -545,13 +545,13 @@ public:
     /*! \brief evaluate the polynomial with all coefficients replaced by
      *  their absolute values
      *
-     *  This is a specialization for \c x is of type NiX::Interval.
+     *  This is a specialization for \c x is of type CGAL::Interval.
      */
     // TODO: Interval isn't available either!!
 /*    Interval evaluate_absolute(const Interval& x) const {
         CGAL_precondition( degree() >= 0 );
-        typename NT_traits<Interval>::Abs abs;
-        typename NT_traits<NT>::To_Interval to_Interval;
+        typename Algebraic_structure_traits<Interval>::Abs abs;
+        typename Algebraic_structure_traits<NT>::To_Interval to_Interval;
         int d = 0;
         Interval y(to_Interval(this->ptr()->coeff[d]));
         while (++d <= degree()) 
@@ -778,14 +778,14 @@ public:
         coeffs().pop_back();
     }
 
-    //! invoke \c NiX::NT_traits::Simplify on all coefficients
+    //! invoke \c CGAL::Algebraic_structure_traits::Simplify on all coefficients
     void simplify_coefficients() { this->ptr()->simplify_coefficients(); }
 
     //! write polynomial to \c os in \c LiS::IO::PRETTY format
     /*! The output is intended to be Maple-readable; see module
-     *  \link NiX_io NiX I/O Support \endlink.
+     *  \link CGAL_io CGAL I/O Support \endlink.
      *
-     * Example: A \c NiX::Polynomial<int> with a value of
+     * Example: A \c CGAL::Polynomial<int> with a value of
      * 4<I>x</I><SUP>2</SUP> - 1 will be written as
      * <TT> 4*x^2 + (-1) </TT> by this function.
      */
@@ -795,7 +795,7 @@ public:
      //! write polynomial to \c os in \c LiS::IO::BENCHMARK format
     void output_benchmark(std::ostream& os) const;
 
-    //! implement \c NiX::Scalar_factor_traits::Scalar_div for polynomials
+    //! implement \c CGAL::Scalar_factor_traits::Scalar_div for polynomials
     void scalar_div(const typename
                     Scalar_factor_traits< Polynomial<NT> >::Scalar& b) {
         typename Scalar_factor_traits<NT>::Scalar_div sdiv;
@@ -867,7 +867,7 @@ public:
      * The format of the coefficients must be understandable for
      * <TT> is >> iformat(ai) </TT>.
      *
-     * Example: A \c NiX::Polynomial<int> with a value of
+     * Example: A \c CGAL::Polynomial<int> with a value of
      * 4<I>x</I><SUP>2</SUP> - 1 has to be written as
      * \c P[2(2,4)(0,-1)] or \c P[2(2,4)(1,0)(0,-1)]
      * or similarly with permuted coefficients.
@@ -974,7 +974,7 @@ Polynomial<NT> operator + (const Polynomial<NT>& p1,
     int min,max,i;
     if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
     else                 { max = p1.degree(); min = p2.degree(); }
-    POLYNOMIAL::Creation_tag TAG;
+    CGALi::Creation_tag TAG;
     Polynomial<NT> p(TAG, size_type(max + 1));
     for (i = 0; i <= min; ++i ) p.coeff(i) = p1[i]+p2[i];
     if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)=p2[i];
@@ -993,7 +993,7 @@ Polynomial<NT> operator - (const Polynomial<NT>& p1,
     int min,max,i;
     if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
     else                 { max = p1.degree(); min = p2.degree(); }
-    POLYNOMIAL::Creation_tag TAG;
+    CGALi::Creation_tag TAG;
     Polynomial<NT> p(TAG, size_type(max + 1));
     for (i = 0; i <= min; ++i ) p.coeff(i)=p1[i]-p2[i];
     if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)= -p2[i];
@@ -1008,7 +1008,7 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
 {
     typedef typename Polynomial<NT>::size_type size_type;
     CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
-    POLYNOMIAL::Creation_tag TAG;
+    CGALi::Creation_tag TAG;
     Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
     // initialized with zeros
     for (int i=0; i <= p1.degree(); ++i)
@@ -1018,7 +1018,7 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
     return p;
 }
 
-#ifndef NiX_POLY_USE_SLOW_DIVISION
+#ifndef CGAL_POLY_USE_SLOW_DIVISION
 
 template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
@@ -1045,8 +1045,8 @@ template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2)
 {
-    typedef typename Algebraic_structure_traits<NT>::Algebric_structure_tag Algebra_type;
-    return division(p1, p2, Algebra_type());
+    typedef typename Algebraic_structure_traits<NT>::Algebric_structure_tag Algebraic_category;
+    return division(p1, p2, Algebraic_category());
 }
 
 template <class NT> inline
@@ -1059,12 +1059,11 @@ Polynomial<NT> division(const Polynomial<NT>& p1,
     if (p1.is_zero()) return p1;
     Polynomial<NT> q,r;
     Polynomial<NT>::euclidean_division(p1,p2,q,r);
-
     CGAL_postcondition( !AST::Is_exact::value  || p2 * q == p1);
     return q;
 }
 
-#endif // NiX_POLY_USE_SLOW_DIVISION
+#endif // CGAL_POLY_USE_SLOW_DIVISION
 
 //
 // Arithmetic Operators, Part IV:
@@ -1200,7 +1199,7 @@ void Polynomial<NT>::euclidean_division(
     // now we know fd >= gd 
     int qd = fd-gd, delta = qd+1, rd = fd;
 
-    POLYNOMIAL::Creation_tag TAG;    
+    CGALi::Creation_tag TAG;    
     q = Polynomial<NT>(TAG, delta ); 
     r = f; r.copy_on_write();
     while ( qd >= 0 ) {
@@ -1217,7 +1216,7 @@ void Polynomial<NT>::euclidean_division(
     CGAL_postcondition( !AST::Is_exact::value || f == q*g + r);
 }
 
-#ifndef NiX_POLY_USE_OLD_PSEUDODIV
+#ifndef CGAL_POLY_USE_OLD_PSEUDODIV
 
 template <class NT>
 void Polynomial<NT>::pseudo_division(
@@ -1239,8 +1238,8 @@ void Polynomial<NT>::pseudo_division(
     }
     const NT d = B.lcoeff();
     int e = delta + 1;
-    D = POLYNOMIAL::ipower(d, e);
-    POLYNOMIAL::Creation_tag TAG;
+    D = CGAL::ipower(d, e);
+    CGALi::Creation_tag TAG;
     Q = Polynomial<NT>(TAG, e);
     R = A; R.copy_on_write(); R.simplify_coefficients();
 
@@ -1257,7 +1256,7 @@ void Polynomial<NT>::pseudo_division(
     } while (delta > 0 || (delta == 0 && !R.is_zero()));
     // funny termination condition because deg(0) = 0, not -\infty
 
-    NT q = POLYNOMIAL::ipower(d, e);
+    NT q = CGAL::ipower(d, e);
     Q *= q; Q.simplify_coefficients();
     R *= q; R.simplify_coefficients();
 
@@ -1284,10 +1283,10 @@ void Polynomial<NT>::pseudo_division(
     }
     // now we know rd >= gd 
     int qd = fd-gd, delta = qd+1, rd = fd;
-    POLYNOMIAL::Creation_tag TAG;
+    CGALi::Creation_tag TAG;
     q = Polynomial<NT>(TAG, delta );
     NT G = g[gd]; // highest order coeff of g
-    D = POLYNOMIAL::ipower(G, delta);
+    D = CGAL::ipower(G, delta);
     Polynomial<NT> res = D*f;
     res.simplify_coefficients();
     while ( qd >= 0 ) {
@@ -1322,14 +1321,14 @@ Polynomial<NT> division(const Polynomial<NT>& p1,
     return q;
 }
 
-#endif // NiX_POLY_USE_OLD_PSEUDODIV
+#endif // CGAL_POLY_USE_OLD_PSEUDODIV
 
 //
 // I/O Operations
 //
 
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
+/*! \ingroup CGAL_Polynomial
+ *  \relates CGAL::Polynomial
  *  \brief output \c p to \c os
  *
  *  Output \c p in a format as specified by
@@ -1348,8 +1347,8 @@ std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p) {
     return os;
 }
 
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
+/*! \ingroup CGAL_Polynomial
+ *  \relates CGAL::Polynomial
  *  \brief try to read a polynomial from \c is into \c p
  *
  *  \c is must be in a mode that supports input of polynomials
@@ -1473,27 +1472,27 @@ public:
 
 // Moved to internal namespace because of name clashes
 // TODO: Is this OK?
-namespace POLYNOMIAL {
+namespace CGALi {
 
   inline static void swallow(std::istream &is, char d) {
       char c;
       do c = is.get(); while (isspace(c));
       if (c != d) CGAL_error_msg( "input error: unexpected character in polynomial");
   }
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 template <class NT>
 Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
     char c;
     int degr = -1, i;
 
-    POLYNOMIAL::swallow(is, 'P');
-    POLYNOMIAL::swallow(is, '[');
+    CGALi::swallow(is, 'P');
+    CGALi::swallow(is, '[');
     is >> CGAL::iformat(degr);
     if (degr < 0) {
         CGAL_error_msg( "input error: negative degree of polynomial specified");
     }
-    POLYNOMIAL::Creation_tag TAG;
+    CGALi::Creation_tag TAG;
     Polynomial<NT> p(TAG, degr+1);
 
     do c = is.get(); while (isspace(c));
@@ -1503,9 +1502,9 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
         if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
             CGAL_error_msg( "input error: invalid exponent in polynomial");
         };
-        POLYNOMIAL::swallow(is, ',');
+        CGALi::swallow(is, ',');
         is >> CGAL::iformat(p.coeff(i));
-        POLYNOMIAL::swallow(is, ')');
+        CGALi::swallow(is, ')');
         do c = is.get(); while (isspace(c));
     } while (c != ']');
 
@@ -1524,4 +1523,4 @@ struct Needs_parens_as_product<Polynomial<COEFF> >{
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
+#endif // CGAL_POLYNOMIAL_CGALi_TYPE_H

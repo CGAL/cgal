@@ -14,18 +14,18 @@
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
 
-#ifndef CGAL_POLYNOMIAL_UNIVARIATE_POLYNOMIAL_UTILS_H
-#define CGAL_POLYNOMIAL_UNIVARIATE_POLYNOMIAL_UTILS_H
+#ifndef CGAL_POLYNOMIAL_UNIVARIATE_CGALi_UTILS_H
+#define CGAL_POLYNOMIAL_UNIVARIATE_CGALi_UTILS_H
 
 #include <CGAL/Polynomial.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace POLYNOMIAL {
+namespace CGALi {
     //! return an upper bound on the absolute value of all real roots of \c P.
     /*! The upper bound is a power of two. Only works for univariate polynomials.
      *  \pre \c NT must be \c RealComparable.
-     *  \relates NiX::Polynomial
+     *  \relates CGAL::Polynomial
      */
     template <class NT>
     NT weak_upper_root_bound(const Polynomial<NT>& P) { 
@@ -51,7 +51,7 @@ namespace POLYNOMIAL {
      *  coefficient sequence of the polynomial, ignoring zeroes.
      *  Only meaningful for univariate polynomials.
      *  \pre \c NT must be \c RealComparable.
-     *  \relates NiX::Polynomial
+     *  \relates CGAL::Polynomial
      */
     template <class NT>
     int sign_variations(const Polynomial<NT>& P) { 
@@ -70,7 +70,7 @@ namespace POLYNOMIAL {
         return variations;
     }
 
-    /*! \ingroup NiX_polynomial_utils
+    /*! \ingroup CGAL_polynomial_utils
      *  \brief checks whether a univariate polynomial is square-free
      */    
     
@@ -91,9 +91,9 @@ namespace POLYNOMIAL {
         return true;
     } */   
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_POLYNOMIAL_UNIVARIATE_POLYNOMIAL_UTILS_H
+#endif // CGAL_POLYNOMIAL_UNIVARIATE_CGALi_UTILS_H

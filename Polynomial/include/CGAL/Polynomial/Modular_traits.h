@@ -26,11 +26,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/*! \ingroup NiX_Polynomial
- *  \ingroup NiX_Modular_traits_spec
- *  \brief Specialization of Modular_traits for NiX::Polynomial.
+/*! \ingroup CGAL_Polynomial
+ *  \ingroup CGAL_Modular_traits_spec
+ *  \brief Specialization of Modular_traits for CGAL::Polynomial.
  * 
- *  NiX::Modular_traits::Modular_image maps the coefficients of a polynomial
+ *  CGAL::Modular_traits::Modular_image maps the coefficients of a polynomial
  *  to their Modular_image and returns the resulting polynomial.  
  */
 template< class COEFF >

@@ -5,7 +5,6 @@
 //
 // $URL:$
 // $Id: $
-// 
 //
 // Author(s)     :  
 //
@@ -14,12 +13,12 @@
 #define CGAL_POLYNOMIAL_SQUARE_FREE_FACTORIZATION_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial/fwd.h>
+#include <CGAL/Polynomial/misc.h>
+#include <CGAL/Polynomial/Polynomial.h>
 
 CGAL_BEGIN_NAMESPACE
-;
-
-namespace POLYNOMIAL {
+namespace CGALi {
 
 // square-free factorization
 // 
@@ -45,212 +44,118 @@ namespace POLYNOMIAL {
 //                     V
 //               Yun's algo (utcf)
 
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_for_regular_polynomial_( Polynomial<NT> a, OutputIterator1 factors,
-        OutputIterator2 multiplicities, Field_tag ) {
-    
-    typedef typename Fraction_traits< Polynomial<NT> >::Is_fraction
-        Is_fraction;
-
-    return square_free_factorization_for_regular_polynomial_(a, factors, multiplicities, Is_fraction());
+template <class IC,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization(const IC&, OutputIterator1, OutputIterator2){
+    return 0;
 }
-
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIterator1 factors,
-        OutputIterator2 multiplicities, Unique_factorization_domain_tag ) {
-            
-    return square_free_factorization_for_regular_polynomial_(a, factors, multiplicities);
-}
-
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIterator1 factors,
-        OutputIterator2 multiplicities, ::CGAL::Tag_false ) {
-    
-    return square_free_factorization_for_regular_polynomial_(a, factors, multiplicities);
-}
-
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIterator1 factors,
-        OutputIterator2 multiplicities, ::CGAL::Tag_true ) {
-            
-    typedef Polynomial<NT> POLY;
-    typedef typename Fraction_traits<POLY>::Numerator_type INTPOLY;
-    typedef typename Fraction_traits<POLY>::Denominator_type DENOM;
-    typename Fraction_traits<POLY>::Decompose decompose;
-    typename Fraction_traits<POLY>::Compose compose;
-    
-    typedef typename INTPOLY::NT INTNT;
-    typedef std::vector<INTPOLY> PVEC;
-    typedef typename PVEC::iterator Iterator;
-    typedef typename Algebraic_structure_traits<INTNT>::Algebraic_category Algebraic_category;
-
-    DENOM dummy;
-    PVEC fac;
-    std::back_insert_iterator<PVEC> fac_bi(fac);
-
-    a.simplify_coefficients();
-    INTPOLY p;
-    decompose(a,p, dummy);
-    int d = square_free_factorization_utcf_(p, fac_bi, multiplicities, Algebraic_category());
-    for (Iterator it = fac.begin(); it != fac.end(); ++it) {
-        POLY q = compose(*it, DENOM(1));
-        q /= q.lcoeff();
-        q.simplify_coefficients();
-        *factors++ = q;
-    }
-    return d;
-}
-
-template <class NT,  class OutputIterator1, class OutputIterator2>
-int square_free_factorization_for_regular_polynomial_(Polynomial<NT> a, OutputIterator1 factors,
-        OutputIterator2 multiplicities ) {
-    // Yun's Square-Free Factorization
-    // see [Geddes et al, 1992], Algorithm 8.2
-
-    /* 
-       @inproceedings{y-osfda-76,
-       author = {David Y.Y. Yun},
-       title = {On square-free decomposition algorithms},
-       booktitle = {SYMSAC '76: Proceedings of the third ACM symposium on Symbolic 
-                    and algebraic computation},
-       year = {1976},
-       pages = {26--35},
-       location = {Yorktown Heights, New York, United States},
-       doi = {http://doi.acm.org/10.1145/800205.806320},
-       publisher = {ACM Press},
-       address = {New York, NY, USA},
-       }
-    */
-    
-    typedef Polynomial<NT> POLY;
-    if (a.degree() == 0) return 0;
-    POLY b = diff(a);  
-    POLY c = gcd(a, b);
-   
-    if (c == NT(1)) {
-        *factors = a;
-        *multiplicities = 1;
-        return 1;
-    }
-
-    int i = 1, n = 0;
-    POLY w = a/c, y = b/c, z = y - diff(w), g;
-    while (!z.is_zero()) {
-        g = gcd(w, z);
-        if (g.degree() > 0) {
-            *factors++ = g;
-            *multiplicities++ = i;
-            n++;
-        }
-        i++;
-        w /= g;
-        y = z/g;
-        z = y - diff(w);
-    }
-    *factors = w;
-    *multiplicities++ = i;
-    n++;
-
-    return n;
-}
-
-
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
- *  \brief factor the univariate polynomial \c p by multiplicities.
- *
- *  That means: factor it into square-free and pairwise coprime non-constant
- *  factors <I>g<SUB>i</SUB></I> with multiplicities <I>m<SUB>i</SUB></I>
- *  such that <I>p = alpha * g<SUB>1</SUB><SUP>m<SUB>1</SUB></SUP> *
- *  ... * g<SUB>n</SUB><SUP>m<SUB>n</SUB></SUP> </I>.
- *  This is known as square-free factorization in the literature.
- *  The number \e n is returned. The factors \e gi and multiplicities
- *  \e mi are written through the respective output iterators.
- *
- *  \pre The coefficient domain \c NT must be a \c field or \c UFDomain
- *  of characteristic 0.
- *  \c OutputIterator1 must allow the value type \c Polynomial<NT>.
- *  \c OutputIterator2 must allow the value type \c int.
- *
- *  Use this function if you are sure, that the polynomial has multiple 
- *  factors, otherwise use NiX::filtered_square_free_factorization.
- */
-
-template< class ICoeff, class OutputIterator1, class OutputIterator2 > 
-int square_free_factorization( ICoeff, OutputIterator1, OutputIterator2 ) {
+template <class IC,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial(const IC&, OutputIterator1, OutputIterator2){
     return 0;
 }
 
-template< class Coeff, class OutputIterator1, class OutputIterator2 > 
-int square_free_factorization( Polynomial<Coeff> polynomial, 
-                               OutputIterator1 factors,
-                               OutputIterator2 multiplicities ) {
-    typedef typename Polynomial_traits_d< Polynomial< Coeff > >::Univariate_content Univariate_content;
-    typedef typename Algebraic_structure_traits<Coeff>::Algebraic_category Algebraic_category;
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2, CGAL::Tag_true);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2, CGAL::Tag_false);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2, Integral_domain_tag);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_(const Polynomial<Coeff>&, OutputIterator1, OutputIterator2, Unique_factorization_domain_tag);
+
+
+
+
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization
+(const Polynomial<Coeff>&  poly, OutputIterator1 factors, OutputIterator2 multiplicities)
+{
+    typedef Polynomial<Coeff> POLY;
+    typedef Polynomial_traits_d< POLY > PT;
+    typedef typename PT::Univariate_content_up_to_constant_factor Ucont_utcf;
+    typedef typename PT::Integral_division_up_to_constant_factor  Idiv_utcf;
     
-    Coeff univariate_content = Univariate_content()( polynomial );    
+    if (typename PT::Total_degree()(poly) == 0){return 0;}
+   
+    Coeff ucont_utcf = Ucont_utcf()(poly); 
+    POLY  regular_poly = Idiv_utcf()(poly,ucont_utcf);
+        
+    int result = square_free_factorization_for_regular_polynomial( 
+            regular_poly, factors, multiplicities);
 
-    if( typename Polynomial_traits_d< Coeff >::Total_degree()(univariate_content) > 0 ) {
-        Polynomial< Coeff > regular_polynomial = polynomial / univariate_content;        
-        int multiplicity = square_free_factorization_for_regular_polynomial_( polynomial / univariate_content,
-                                                          factors, multiplicities, Algebraic_category() );
-
+    if (typename PT::Total_degree()(ucont_utcf) > 0){
         typedef std::vector< Coeff > Factors_uc;
         typedef std::vector< int > Multiplicities_uc;
         Factors_uc factors_uc;
         Multiplicities_uc multiplicities_uc;
-        multiplicity += square_free_factorization( univariate_content, 
-                                        std::back_inserter(factors_uc),
-                                        std::back_inserter(multiplicities_uc) );
+        result += square_free_factorization( ucont_utcf,
+                std::back_inserter(factors_uc),
+                std::back_inserter(multiplicities_uc) );
         
-        for( typename Factors_uc::iterator it = factors_uc.begin(); it != factors_uc.end(); ++it )
-            *factors++ = Polynomial<Coeff>((*it) / CGAL::unit_part((*it)) );
-         
+        for( typename Factors_uc::iterator it = factors_uc.begin(); 
+             it != factors_uc.end(); ++it ){
+            *factors++ = POLY(*it);
+        }
         for( Multiplicities_uc::iterator it = multiplicities_uc.begin();
-             it != multiplicities_uc.end(); ++it )
+             it != multiplicities_uc.end(); ++it ){
             *multiplicities++ = (*it);
-        
-        return multiplicity; 
-    } else {
-        return square_free_factorization_for_regular_polynomial_( polynomial,
-                                 factors, multiplicities, Algebraic_category() );    
-    }                                 
-} 
-
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_utcf_(
-                                    Polynomial<NT> a,
-                                    OutputIterator1 factors,
-                                    OutputIterator2 multiplicities,
-                                    Field_tag)
-{
-    typedef typename Fraction_traits< Polynomial<NT> >::Is_fraction
-        Is_fraction;
-
-    return square_free_factorization_for_regular_polynomial_(a, factors, multiplicities, Is_fraction());
+        }
+    }
+    return result;                                
 }
 
-template <class NT, class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_utcf_(
-                                    Polynomial<NT> a,
-                                    OutputIterator1 factors,
-                                    OutputIterator2 multiplicities,
-                                    Unique_factorization_domain_tag)
-{
-    return square_free_factorization_for_regular_polynomial_(a, factors, multiplicities);
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial
+(const Polynomial<Coeff>&  p, OutputIterator1 factors, OutputIterator2 multiplicities){
+    typedef Polynomial<Coeff> POLY;
+    typedef typename CGAL::Fraction_traits<POLY>::Is_fraction Is_fraction;
+    return square_free_factorization_for_regular_polynomial_(p,factors,multiplicities,Is_fraction());
 }
 
-template <class NT,  class OutputIterator1, class OutputIterator2>
-int square_free_factorization_utcf_(
-                                Polynomial<NT> a, 
-                                OutputIterator1 factors,
-                                OutputIterator2 multiplicities,
-                                Integral_domain_tag)
-{
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_
+(const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, CGAL::Tag_true){
+    
+    typedef Polynomial<Coeff> POLY;
+    typedef Polynomial_traits_d< POLY > PT;
+    typedef Fraction_traits<POLY> FT; 
+    
+    typename FT::Numerator_type num; 
+    typename FT::Denominator_type denom; 
+    typename FT::Decompose()(p,num,denom);
+    
+    std::vector<typename FT::Numerator_type> ifacs;
+    int result =  square_free_factorization_for_regular_polynomial(num,std::back_inserter(ifacs),multiplicities);
+    
+    typedef typename std::vector<typename FT::Numerator_type>::iterator Iterator;
+    denom = typename FT::Denominator_type(1);
+    for ( Iterator it = ifacs.begin(); it != ifacs.end(); ++it) {
+        POLY q = typename FT::Compose()(*it, denom);
+        *factors++ = typename PT::Canonicalize()(q);
+    }
+    
+    return result; 
+}
+
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_
+(const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, CGAL::Tag_false){
+    typedef Polynomial<Coeff> POLY;
+    typedef typename Algebraic_structure_traits<POLY>::Algebraic_category Algebraic_category;
+    return square_free_factorization_for_regular_polynomial_(p,factors,multiplicities,Algebraic_category());
+}
+
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_
+(const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, Integral_domain_tag){
     // Yun's Square-Free Factorization
     // see [Geddes et al, 1992], Algorithm 8.2
 
-    typedef Polynomial<NT> POLY;
+    typedef Polynomial<Coeff> POLY;
+    typedef Polynomial_traits_d<POLY> PT;
     typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
     typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
     //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
@@ -262,13 +167,14 @@ int square_free_factorization_utcf_(
     typename Scalar_factor_traits<POLY>::Scalar_div sdiv;
     typedef typename Scalar_factor_traits<POLY>::Scalar Scalar;
 
-    if (a.degree() == 0) return 0;
+    
+    if (typename PT::Total_degree()(p) == 0) return 0;
 
-    a = canonicalize_polynomial(a);
+    POLY a = canonicalize_polynomial(p);
     POLY b = diff(a);
     POLY c = gcd_utcf(a, b);
 
-    if (c == NT(1)) {
+    if (c == Coeff(1)) {
         *factors = a;
         *multiplicities = 1;
         return 1;
@@ -320,35 +226,124 @@ int square_free_factorization_utcf_(
     return n;
 }
 
-/*! \ingroup NiX_Polynomial
- *  \relates NiX::Polynomial
- *  \brief factor the univariate polynomial \c p by multiplicities with respect
- *  to constant factors
- *
- *  Same functionality as square_free_factorization, but
- *    a) no prefactor \c alpha is returned due to the respect to constant factors,
- *    b) the coefficient domain \c NT may also be \c IntegralDomain now.
- *
- */
-template <class NT,  class OutputIterator1, class OutputIterator2> inline
-int square_free_factorization_utcf(
-                                   const Polynomial<NT>& p, 
-                                   OutputIterator1 factors,
-                                   OutputIterator2 multiplicities)
-{
-    typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebraic_category;
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_for_regular_polynomial_
+(const Polynomial<Coeff>& p, OutputIterator1 factors, OutputIterator2 multiplicities, Unique_factorization_domain_tag){
+    // Yun's Square-Free Factorization
+    // see [Geddes et al, 1992], Algorithm 8.2
+    /* 
+       @inproceedings{y-osfda-76,
+       author = {David Y.Y. Yun},
+       title = {On square-free decomposition algorithms},
+       booktitle = {SYMSAC '76: Proceedings of the third ACM symposium on Symbolic 
+                    and algebraic computation},
+       year = {1976},
+       pages = {26--35},
+       location = {Yorktown Heights, New York, United States},
+       doi = {http://doi.acm.org/10.1145/800205.806320},
+       publisher = {ACM Press},
+       address = {New York, NY, USA},
+       }
+    */
+    
+    typedef Polynomial<Coeff> POLY;
+    typedef Polynomial_traits_d<POLY> PT;
 
-    NT alpha = typename Polynomial_traits_d< Polynomial< NT > >::Univariate_content_up_to_constant_factor()(p);
-    return square_free_factorization_utcf_
-        (p/alpha, factors, multiplicities, Algebraic_category());
+    if (typename PT::Total_degree()(p) == 0) return 0;
+    POLY a = canonicalize_polynomial(p);
+
+    POLY b = diff(a);  
+    POLY c = gcd(a, b);
+   
+    if (c == Coeff(1)) {
+        *factors = a;
+        *multiplicities = 1;
+        return 1;
+    }
+
+    int i = 1, n = 0;
+    POLY w = a/c, y = b/c, z = y - diff(w), g;
+    while (!z.is_zero()) {
+        g = gcd(w, z);
+        if (g.degree() > 0) {
+            *factors++ = g;
+            *multiplicities++ = i;
+            n++;
+        }
+        i++;
+        w /= g;
+        y = z/g;
+        z = y - diff(w);
+    }
+    *factors = w;
+    *multiplicities++ = i;
+    n++;
+
+    return n;
 }
 
 
 
 
+// square-free factorization utcf 
 
-} // namespace POLYNOMIAL
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_utcf
+(const Polynomial<Coeff>&  p, OutputIterator1 factors, OutputIterator2 multiplicities)
+{
+    return square_free_factorization(p,factors,multiplicities);
+}
 
+template <class Coeff,  class OutputIterator1, class OutputIterator2>
+inline int square_free_factorization_utcf_for_regular_polynomial
+(const Polynomial<Coeff>&  p, OutputIterator1 factors, OutputIterator2 multiplicities)
+{
+    return square_free_factorization_for_regular_polynomial(p,factors,multiplicities);
+}
+
+
+
+
+// filtered square-free factorization
+
+// ### filtered versions #### 
+
+/*! \brief As NiX::square_free_factorization, but filtered by  
+ *  NiX::may_have_multiple_root 
+ *  
+ *  Use this function if the polynomial might be square free. 
+ */  
+template <class Coeff, class OutputIterator1, class OutputIterator2> 
+inline
+int filtered_square_free_factorization(
+                                       Polynomial<Coeff> p,
+                                       OutputIterator1 factors,
+                                       OutputIterator2 multiplicities)
+{
+  if(CGAL::CGALi::may_have_multiple_factor(p)){
+      return CGALi::square_free_factorization(p, factors, multiplicities);
+  }else{
+      *factors++        = canonicalize_polynomial(p);
+      *multiplicities++ = 1;
+      return 1;
+  }
+}
+
+/*! \brief As NiX::square_free_factorization_utcf, but filtered by  
+ *  NiX::may_have_multiple_root 
+ *  
+ *  Use this function if the polynomial might be square free. 
+ */  
+template <class Coeff,  class OutputIterator1, class OutputIterator2> 
+inline
+int filtered_square_free_factorization_utcf( const Polynomial<Coeff>& p, 
+                                         OutputIterator1 factors,
+                                         OutputIterator2 multiplicities)
+{
+    return filtered_square_free_factorization(p,factors,multiplicities);
+}
+
+} // namespace CGALi
 CGAL_END_NAMESPACE
 
 #endif // CGAL_POLYNOMIAL_SQUARE_FREE_FACTORIZATION_H

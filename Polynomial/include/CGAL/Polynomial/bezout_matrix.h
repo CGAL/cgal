@@ -27,15 +27,15 @@
 //#include <CGAL/Linear_algebraHd.h>
 
 
-//#include <NiX/Linear_algebra.h>
-//#include <NiX/number_type_utils.h>
+//#include <CGAL/Linear_algebra.h>
+//#include <CGAL/number_type_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
 
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  *  \brief construct hybrid Bezout matrix of two polynomials
  *
  *  If \c sub=0 ,  this function returns the hybrid Bezout matrix 
@@ -55,7 +55,7 @@ CGAL_BEGIN_NAMESPACE
  *
  *  If specified, \c sub must be less than the degrees of both \e f and \e g.
  *
- *  See also \c NiX::hybrid_bezout_subresultant() and \c NiX::sylvester_matrix() .
+ *  See also \c CGAL::hybrid_bezout_subresultant() and \c CGAL::sylvester_matrix() .
  *
  *  A formal definition of the hybrid Bezout matrix and a proof for the
  *  subresultant property can be found in:
@@ -65,14 +65,14 @@ CGAL_BEGIN_NAMESPACE
  *
  */
 template <class NT>
-typename POLYNOMIAL::Simple_matrix< NT >
+typename CGALi::Simple_matrix< NT >
 hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
 {
     /* NOTE TO PROGRAMMERS:
      * Please look at bezout_matrix.mpl before touching this!
      */
 
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
 
     int n = f.degree();
     int m = g.degree();
@@ -120,7 +120,7 @@ hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
     return B; // g++ 3.1+ has NRVO, so this should not be too expensive
 }
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  *  \brief construct the symmetric Bezout matrix of two polynomials
  *
  *  This function returns the (symmetric) Bezout matrix of \c f and \c g.
@@ -132,14 +132,14 @@ hybrid_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0)
  *
  */
 template <class NT>
-typename POLYNOMIAL::Simple_matrix<NT>
+typename CGALi::Simple_matrix<NT>
 symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
 {
 
   // Note: The algorithm is taken from:
   // Chionh, Zhang, Goldman: Fast Computation of the Bezout and Dixon Resultant
   // Matrices. J.Symbolic Computation 33, 13-29 (2002)
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
 
     int n = f.degree();
     int m = g.degree();
@@ -202,7 +202,7 @@ symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
     
 
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  *  \brief compute (sub)resultant as Bezout matrix determinant
  *
  *  This function returns the determinant of the matrix returned
@@ -213,15 +213,15 @@ symmetric_bezout_matrix(CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,int sub=0)
  *
  *  If specified, \c sub must be less than the degrees of both \e f and \e g.
  *
- *  This function might be faster than \c NiX::Polynomial<..>::resultant() ,
+ *  This function might be faster than \c CGAL::Polynomial<..>::resultant() ,
  *  which computes the resultant from a subresultant remainder sequence.
- *  See also \c NiX::sylvester_subresultant().
+ *  See also \c CGAL::sylvester_subresultant().
  */
 template <class NT>
 NT hybrid_bezout_subresultant(
         CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g, int sub = 0
 ) { 
-    typedef POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef CGALi::Simple_matrix<NT> Matrix;
 //    typedef typename LA::Det Det;
 
     CGAL_precondition((f.degree() >= 0));
@@ -234,7 +234,7 @@ NT hybrid_bezout_subresultant(
     if (S.row_dimension() == 0) {
         return NT(1);
     } else {
-        return POLYNOMIAL::determinant(S);
+        return CGALi::determinant(S);
     }
 }
 
@@ -263,7 +263,7 @@ void symmetric_minors_to_subresultants(InputIterator in,
 }
 
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  * \brief compute the principal subresultant coefficients as minors 
  * of the symmetric Bezout matrix.
  *
@@ -272,14 +272,14 @@ void symmetric_minors_to_subresultants(InputIterator in,
  *
  * The function uses an extension of the Berkowitz method to compute the
  * determinant
- * See also \c NiX::minors_berkowitz
+ * See also \c CGAL::minors_berkowitz
  */
 template<class NT,class OutputIterator>
 OutputIterator symmetric_bezout_subresultants(
 	   CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,OutputIterator sres)
 {
    
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
     
     int n = f.degree();
     int m = g.degree();
@@ -312,11 +312,11 @@ OutputIterator symmetric_bezout_subresultants(
  * from the last k rows and columns give the subresultants
  */
 template<class NT>
-typename POLYNOMIAL::Simple_matrix<NT> modified_hybrid_bezout_matrix(
+typename CGALi::Simple_matrix<NT> modified_hybrid_bezout_matrix(
 					   CGAL::Polynomial<NT> f,
 					   CGAL::Polynomial<NT> g)
 {
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
     
     int n = f.degree();
     int m = g.degree();
@@ -352,7 +352,7 @@ typename POLYNOMIAL::Simple_matrix<NT> modified_hybrid_bezout_matrix(
     return B;
 }
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  * \brief compute the principal subresultant coefficients as minors 
  * of the hybrid Bezout matrix.
  *
@@ -361,13 +361,13 @@ typename POLYNOMIAL::Simple_matrix<NT> modified_hybrid_bezout_matrix(
  *
  * The function uses an extension of the Berkowitz method to compute the
  * determinant
- * See also \c NiX::minors_berkowitz
+ * See also \c CGAL::minors_berkowitz
  */
 template<class NT,class OutputIterator>
 OutputIterator hybrid_bezout_subresultants(
 	   CGAL::Polynomial<NT>f, CGAL::Polynomial<NT> g,OutputIterator sres) 
   {
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
     
     int n = f.degree();
     int m = g.degree();
@@ -382,11 +382,11 @@ OutputIterator hybrid_bezout_subresultants(
   }
 
 
-namespace POLYNOMIAL {
+namespace CGALi {
 
   // Swap entry A_ij with A_(n-i)(n-j) for square matrix A of dimension n
   template<class NT>
-    void swap_entries(typename POLYNOMIAL::Simple_matrix<NT> & A) {
+    void swap_entries(typename CGALi::Simple_matrix<NT> & A) {
     CGAL_precondition(A.row_dimension()==A.column_dimension());
     int n = A.row_dimension();
     int i=0;
@@ -399,11 +399,11 @@ namespace POLYNOMIAL {
   
   // Produce S-matrix with the given matrix and integers.
   template<class NT,class InputIterator>
-    typename POLYNOMIAL::Simple_matrix<NT> s_matrix(
-	      const typename POLYNOMIAL::Simple_matrix<NT>& B,
+    typename CGALi::Simple_matrix<NT> s_matrix(
+	      const typename CGALi::Simple_matrix<NT>& B,
 	      InputIterator num,int size)
     {
-      typename POLYNOMIAL::Simple_matrix<NT>::Matrix S(size);
+      typename CGALi::Simple_matrix<NT>::Matrix S(size);
       int n = B.row_dimension();
       CGAL_precondition(n==(int)B.column_dimension());
       int curr_num;
@@ -452,10 +452,10 @@ namespace POLYNOMIAL {
     }
     return it;
   }
-}// namespace POLYNOMIAL
+}// namespace CGALi
 
 
-/*! \ingroup NiX_resultant_matrix
+/*! \ingroup CGAL_resultant_matrix
  * \brief computes the coefficients of the polynomial subresultant sequence 
  *
  * Returns an upper triangular matrix <I>A</I> such that A<sub>i,j</sub> is
@@ -469,10 +469,10 @@ namespace POLYNOMIAL {
  * (except the different output format). 
  *
  * These coefficients are computed as special minors of the hybrid Bezout matrix.
- * See also \c NiX::minors_berkowitz
+ * See also \c CGAL::minors_berkowitz
  */
 template<class NT>
-typename POLYNOMIAL::Simple_matrix< NT> polynomial_subresultants(
+typename CGALi::Simple_matrix< NT> polynomial_subresultants(
                                                CGAL::Polynomial<NT> f,
 					       CGAL::Polynomial<NT> g,
 					       int d=0) {
@@ -480,7 +480,7 @@ typename POLYNOMIAL::Simple_matrix< NT> polynomial_subresultants(
     CGAL_precondition(g.degree()>=0);
     CGAL_precondition(d>=0);
 
-    typedef typename POLYNOMIAL::Simple_matrix<NT> Matrix;
+    typedef typename CGALi::Simple_matrix<NT> Matrix;
    
     int n = f.degree();
     int m = g.degree();
@@ -501,22 +501,22 @@ typename POLYNOMIAL::Simple_matrix< NT> polynomial_subresultants(
     Matrix B = CGAL::symmetric_bezout_matrix(f,g);
 
     // For easier notation, we swap all entries:
-    POLYNOMIAL::swap_entries<NT>(B);
+    CGALi::swap_entries<NT>(B);
     
     // Compute the S-matrices and collect the minors
     std::vector<Matrix> s_mat(m);
     std::vector<std::vector<NT> > coeffs(d);
     for(int i = 1; i<=d;i++) {
       std::vector<int> intseq;
-      POLYNOMIAL::s_matrix_integer_sequence(std::back_inserter(intseq),i,d,n);
+      CGALi::s_matrix_integer_sequence(std::back_inserter(intseq),i,d,n);
 
-      Matrix S = POLYNOMIAL::s_matrix<NT>(B,intseq.begin(),(int)intseq.size());
-      POLYNOMIAL::swap_entries<NT>(S);
+      Matrix S = CGALi::s_matrix<NT>(B,intseq.begin(),(int)intseq.size());
+      CGALi::swap_entries<NT>(S);
       //std::cout << S << std::endl;
       int Sdim = S.row_dimension();
       int number_of_minors=(Sdim < m) ? Sdim : Sdim; 
       
-      POLYNOMIAL::minors_berkowitz(S,std::back_inserter(coeffs[i-1]),
+      CGALi::minors_berkowitz(S,std::back_inserter(coeffs[i-1]),
 			    Sdim,number_of_minors);
 
     }

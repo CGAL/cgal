@@ -1,18 +1,20 @@
-#include <iostream>
+
 #include <CGAL/basic.h>
+
+#include <CGAL/_test_algebraic_structure.h>
+#include <CGAL/_test_real_embeddable.h>
+
+#include <iostream>
 #include <cassert>
+
+#include <CGAL/Polynomial_traits_d.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Interval_nt.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
-
-#include <CGAL/leda_coercion_traits.h>
-#include <CGAL/CORE_coercion_traits.h>
-
 #include <CGAL/Coercion_traits.h>
+
 
 #define CGAL_DEFINE_TYPES_FROM_AK(AK)                           \
     typedef typename AK::Integer Integer;                       \
@@ -500,85 +502,137 @@ void bigcdres(CGAL::Integral_domain_tag) {
     assert( prs_resultant(fh, gh) == POLY1(0) );
 }
 
+template <class POLY>
+void test_sqff_utcf_(const POLY& poly){
+    typedef CGAL::Polynomial_traits_d<POLY> PT;
+
+    std::vector<POLY> fac;
+    std::vector<int>  mul;
+    std::back_insert_iterator<std::vector<POLY> > fac_bi(fac);
+    std::back_insert_iterator<std::vector<int>  > mul_bi(mul);
+    
+    int n;
+    n = CGAL::CGALi::square_free_factorization_utcf(poly, fac_bi, mul_bi);
+
+    assert((int) mul.size() == n);
+    assert((int) fac.size() == n);
+    if (typename PT::Total_degree()(poly) == 0 ){
+        assert(n == 0); 
+    }else{
+        POLY check(1);
+        for(int i = 0; i < n ; i++){
+            assert(typename PT::Total_degree()(fac[i]) > 0);
+            //std::cout << fac[i] << std::endl;
+            //std::cout << typename PT::Canonicalize()(fac[i]) << std::endl;
+            //std::cout << std::endl;
+            assert(fac[i] == typename PT::Canonicalize()(fac[i]));
+            check *= CGAL::ipower(fac[i],mul[i]);
+        }
+        assert(check == typename PT::Canonicalize()(poly));
+    }
+}
+
+template <class POLY_1>
+void test_sqff_utcf(const POLY_1& a1,const POLY_1& b1,const POLY_1& c1){
+    typedef CGAL::Polynomial<POLY_1>  POLY_2; 
+ 
+    test_sqff_utcf_(POLY_1(0));
+    test_sqff_utcf_(POLY_1(1));
+    test_sqff_utcf_(POLY_1(2));
+    test_sqff_utcf_(a1);
+    test_sqff_utcf_(a1*a1);
+    test_sqff_utcf_(a1*a1*b1*b1*b1);
+    test_sqff_utcf_(a1*POLY_1(5));
+    test_sqff_utcf_(a1*a1*POLY_1(5));
+    test_sqff_utcf_(a1*a1*b1*b1*POLY_1(5));
+
+
+    POLY_2 a2(a1,b1,c1);
+    POLY_2 b2(a1,c1);
+    POLY_2 c2(b1,a1,b1);
+ 
+    test_sqff_utcf_(POLY_2(0));
+    test_sqff_utcf_(POLY_2(1));
+    test_sqff_utcf_(POLY_2(2));
+
+    test_sqff_utcf_(a2);
+    test_sqff_utcf_(a2*a2);
+    test_sqff_utcf_(a2*a2*b2*b2*b2);
+    test_sqff_utcf_(a2*POLY_2(5));
+    test_sqff_utcf_(a2*a2*POLY_2(5));
+    test_sqff_utcf_(a2*a2*b2*b2*POLY_2(5));
+    
+
+    // non regular polynomials
+    test_sqff_utcf_(a1*a2);
+    test_sqff_utcf_(a1*a2*a2);
+    test_sqff_utcf_(a1*a2*a2*b2*b2*b2);
+    test_sqff_utcf_(a1*a2*POLY_2(5));
+    test_sqff_utcf_(a1*a2*a2*POLY_2(5));
+    test_sqff_utcf_(a1*a2*a2*b2*b2*POLY_2(5));
+    test_sqff_utcf_(a1*a1*a2);
+    test_sqff_utcf_(a1*a1*a2*a2);
+    test_sqff_utcf_(a1*b1*b1*a2*a2);
+    test_sqff_utcf_(a1*a1*b1*b1*a2*a2);
+
+}
+
+
+
 template <class AT>
 void psqff(){
-// pseudo-square-free factorization (i.e. factorization by multiplicities)
     {
-       typedef typename AT::Integer NT; //UFD domain
+       typedef typename AT::Integer Integer;
+       typedef typename AT::Rational Rational;
+       typedef CGAL::Sqrt_extension<Rational,Rational> NT;
        typedef CGAL::Polynomial<NT> POLY;
        // square-free factorization (i.e. factorization by multiplicities)
-       POLY p1(NT(3), NT(4), NT(1)), p3(NT(9), NT(5), NT(1));
-       POLY p4(NT(2), NT(6), NT(1));
-       POLY p = NT(5) * p1 * p3*p3*p3 * p4*p4*p4*p4;
-
-       typedef std::vector<POLY> PVEC;
-       typedef std::vector<int>  IVEC;
-       PVEC fac;
-       IVEC mul;
-       std::back_insert_iterator<PVEC> fac_bi(fac);
-       std::back_insert_iterator<IVEC> mul_bi(mul);
-
-       int n;
-       n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
-
-       assert(n == 3);
-       assert((int) mul.size() == n);
-       assert((int) fac.size() == n);
-       assert(mul[0] == 1 && fac[0] == p1);
-       assert(mul[1] == 3 && fac[1] == p3);
-       assert(mul[2] == 4 && fac[2] == p4);
-   }{
+       POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
+       POLY b1(NT(9,2,7), NT(5,11,7), NT(2));
+       POLY c1(NT(2,8,7), NT(6,3,7), NT(5));
+       test_sqff_utcf(a1,b1,c1);
+    }
+    {
+        typedef typename AT::Integer NT;
+        typedef CGAL::Polynomial<NT> POLY_1; 
+        
+        // monic factors 
+        POLY_1 a1(NT("4352435"), NT("4325245"));
+        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
+        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+ 
+        test_sqff_utcf(a1,b1,c1);
+    }{
+        typedef typename AT::Rational NT;
+        typedef CGAL::Polynomial<NT> POLY_1; 
+        
+        // monic factors 
+        POLY_1 a1(NT("4352435"), NT("4325245"));
+        POLY_1 b1(NT("123"), NT("432235"),NT("43324252"));
+        POLY_1 c1(NT("12324"), NT("25332235"),NT("24657252"));
+ 
+        test_sqff_utcf(a1,b1,c1);
+    }
+    {
        typedef typename AT::Integer Integer; //UFD domain
        typedef CGAL::Sqrt_extension<Integer,Integer> NT;
        typedef CGAL::Polynomial<NT> POLY;
        // square-free factorization (i.e. factorization by multiplicities)
-       POLY p1(NT(3), NT(4), NT(1)), p3(NT(9), NT(5), NT(1));
-       POLY p4(NT(2), NT(6), NT(1));
-       POLY p = NT(5) * p1 * p3*p3*p3 * p4*p4*p4*p4;
-
-       typedef std::vector<POLY> PVEC;
-       typedef std::vector<int>  IVEC;
-       PVEC fac;
-       IVEC mul;
-       std::back_insert_iterator<PVEC> fac_bi(fac);
-       std::back_insert_iterator<IVEC> mul_bi(mul);
-
-       int n;
-       n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
-
-       assert(n == 3);
-       assert((int) mul.size() == n);
-       assert((int) fac.size() == n);
-       assert(mul[0] == 1 && fac[0] == p1);
-       assert(mul[1] == 3 && fac[1] == p3);
-       assert(mul[2] == 4 && fac[2] == p4);
+       POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
+       POLY b1(NT(9,2,7), NT(5,11,7), NT(2));
+       POLY c1(NT(2,8,7), NT(6,3,7), NT(5));
+       test_sqff_utcf(a1,b1,c1);
     }{
        typedef typename AT::Integer Integer; //UFD domain
-       typedef CGAL::Sqrt_extension<Integer,Integer> NT;
+       typedef typename AT::Rational Rational; //UFD domain
+       typedef CGAL::Sqrt_extension<Rational,Integer> NT;
        typedef CGAL::Polynomial<NT> POLY;
        // square-free factorization (i.e. factorization by multiplicities)
-       POLY p1(NT(3,4,7), NT(2,3,7), NT(3));
-       POLY p3(NT(9,2,7), NT(5,11,7), NT(2));
-       POLY p4(NT(2,8,7), NT(6,3,7), NT(5));
-       POLY p = NT(5,3,7)*p1 * p3*p3*p3 * p4*p4*p4*p4;
-
-       typedef std::vector<POLY> PVEC;
-       typedef std::vector<int>  IVEC;
-       PVEC fac;
-       IVEC mul;
-       std::back_insert_iterator<PVEC> fac_bi(fac);
-       std::back_insert_iterator<IVEC> mul_bi(mul);
-
-       int n;
-       n = CGAL::filtered_square_free_factorization_utcf(p, fac_bi, mul_bi);
-
-       assert(n == 3);
-       assert((int) mul.size() == n);
-       assert((int) fac.size() == n);
-       assert(mul[0] == 1 && fac[0] == p1);
-       assert(mul[1] == 3 && fac[1] == p3);
-       assert(mul[2] == 4 && fac[2] == p4);
-   }
+       POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
+       POLY b1(NT(9,2,7), NT(5,11,7), NT(2));
+       POLY c1(NT(2,8,7), NT(6,3,7), NT(5));
+       test_sqff_utcf(a1,b1,c1);
+    }
 }
 template <class NT>
 void sqff() {
@@ -598,7 +652,7 @@ void sqff() {
     std::back_insert_iterator<IVEC> mul_bi(mul);
     unsigned n;
     NT alpha;
-    n = CGAL::filtered_square_free_factorization(p, fac_bi, mul_bi );
+    n = CGAL::CGALi::square_free_factorization(p, fac_bi, mul_bi );
 
 //    assert(alpha == 3);
     assert(n == 3);
@@ -614,7 +668,7 @@ void sqff() {
     mul.clear();
     fac_bi = std::back_insert_iterator<PVEC>(fac);
     mul_bi = std::back_insert_iterator<IVEC>(mul);
-    std::cerr << CGAL::filtered_square_free_factorization( p, fac_bi, mul_bi ) << std::endl;
+    std::cerr << CGAL::CGALi::square_free_factorization( p, fac_bi, mul_bi ) << std::endl;
     std::cerr << fac[0] << std::endl;*/
     //std::cerr << fac[1] << std::endl;
     
@@ -958,7 +1012,7 @@ void test_AT(){
 
 int main() {
   
-  
+    CGAL::set_pretty_mode(std::cout);
 // The MODULAR_TRAITS specializations for Polynomial
 // =========================================================================
 #ifdef CGAL_USE_LEDA    

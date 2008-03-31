@@ -17,7 +17,7 @@
 
 static CGAL::Random my_rnd(346); // some seed 
 
-#define CGAL_SNAP_POLYNOMIAL_TRAITS_D(T)                        \
+#define CGAL_SNAP_CGALi_TRAITS_D(T)                        \
     typedef T PT;                                               \
     typedef typename PT::Polynomial_d          Polynomial_d;    \
     typedef typename PT::Coefficient           Coeff;           \
@@ -55,7 +55,7 @@ template <class Polynomial_d_>
 Polynomial_d_
 generate_sparse_random_polynomial(int max_degree = 10){
     typedef CGAL::Polynomial_traits_d<Polynomial_d_> PT;
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(PT);
+    CGAL_SNAP_CGALi_TRAITS_D(PT);
     typename PT::Construct_polynomial construct; 
 
 
@@ -88,7 +88,7 @@ template <class Polynomial_traits_d>
 void test_construct_polynomial(){
     std::cerr << "start test_construct_polynomial "; 
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     const int d = PT::d;
     { // Construct_polynomial
@@ -157,7 +157,7 @@ template< class Polynomial_traits_d >
 void test_get_coefficient() {
     std::cerr << "start test_get_coefficient ";
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Construct_polynomial construct;
     typename PT::Get_coefficient get_coeff;
@@ -175,7 +175,7 @@ template< class Polynomial_traits_d >
 void test_get_innermost_coefficient() {
     std::cerr << "start test_get_innermost_coefficient ";
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Construct_polynomial construct;
     typename PT::Get_innermost_coefficient get_innermost_coeff;
@@ -210,7 +210,7 @@ template <class Polynomial_traits_d>
 void test_get_monom_representation(){
     std::cerr << "start test_get_monom_representation "; 
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Construct_polynomial construct;
     typename PT::Get_monom_representation gmr;
@@ -235,7 +235,7 @@ void test_get_monom_representation(){
 template <class Polynomial_traits_d>
 void test_swap(){
     std::cerr << "start test_swap "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     int d = PT::d;
     typename Polynomial_traits_d::Swap swap;
     
@@ -282,7 +282,7 @@ void test_swap(){
 template <class Polynomial_traits_d>
 void test_move(){
     std::cerr << "start test_move "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename Polynomial_traits_d::Move move;
     typename Polynomial_traits_d::Swap swap;
     
@@ -311,7 +311,7 @@ void test_move(){
 template <class Polynomial_traits_d>
 void test_degree(){
     std::cerr << "start test_degree "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
 
     typename PT::Construct_polynomial construct;
     typename PT::Degree degree;
@@ -342,7 +342,7 @@ template <class Polynomial_traits_d>
 void test_total_degree(){
 
     std::cerr << "start test_total_degree "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Total_degree total_degree;
     for(int i = 0; i < 5; i++){
         Polynomial_d p =generate_sparse_random_polynomial<Polynomial_d>();
@@ -358,7 +358,7 @@ template <class Polynomial_traits_d>
 void test_leading_coefficient(){
     
     std::cerr << "start test_leading_coefficient "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Leading_coefficient lcoeff;
     for(int i = 0; i < 5; i++){
         Polynomial_d p =generate_sparse_random_polynomial<Polynomial_d>();
@@ -373,7 +373,7 @@ void test_leading_coefficient(){
 template< class Polynomial_traits_d >
 void test_innermost_leading_coefficient() {
     std::cerr << "start test_innermost_leading_coefficient "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Innermost_leading_coefficient ilcoeff;
     Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
@@ -388,7 +388,7 @@ template <class Polynomial_traits_d>
 void test_univariate_content(){
     
     std::cerr << "start test_univariate_content "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Univariate_content univariate_content;
     
     assert(univariate_content(Polynomial_d(0)) == Coeff(0));
@@ -420,7 +420,7 @@ template <class Polynomial_traits_d>
 void test_multivariate_content(){
     std::cerr << "start test_multivariate_content ";
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Multivariate_content mcontent;
     
     assert(mcontent(Polynomial_d(0)) == 
@@ -502,7 +502,7 @@ template <class Polynomial_traits_d>
 void test_shift(){
     
     std::cerr << "start test_shift "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Shift shift; 
     typename PT::Construct_polynomial construct;
     for(int i = 0; i < 5; i++){ 
@@ -516,7 +516,7 @@ void test_shift(){
 template <class Polynomial_traits_d>
 void test_negate(){
     std::cerr << "start test_negate "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Construct_polynomial construct;
     typename PT::Negate negate;
     typename PT::Swap swap;
@@ -540,7 +540,7 @@ void test_negate(){
 template <class Polynomial_traits_d>
 void test_invert(){
     std::cerr << "start test_invert "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Invert invert; 
     typename PT::Swap swap; 
     for(int i = 0 ; i < 5 ; i++){
@@ -563,7 +563,7 @@ void test_invert(){
 template <class Polynomial_traits_d>
 void test_translate(){
     std::cerr << "start test_translate "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Translate translate;
     typename PT::Evaluate evaluate;
     typename PT::Move move;
@@ -581,7 +581,7 @@ void test_translate(){
 template <class Polynomial_traits_d>
 void test_translate_homongenous(){
     std::cerr << "start test_translate_homongenous "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Translate_homogeneous transh;
     typename PT::Canonicalize canonicalize;
     typename PT::Evaluate_homogeneous evh;
@@ -612,7 +612,7 @@ template< class Polynomial_traits_d>
 void test_scale() {
     (std::cerr << "start test_scale ").flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Scale scale;
     Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
@@ -627,7 +627,7 @@ void test_scale() {
 template <class Polynomial_traits_d>
 void test_scale_homogeneous(){
     std::cerr << "start test_scale_homogeneous "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Scale_homogeneous scaleh;
     typename PT::Canonicalize canonicalize;
     //typename PT::Move move;
@@ -654,7 +654,7 @@ void test_scale_homogeneous(){
 template <class Polynomial_traits_d>
 void test_derivative(){
     std::cerr << "start test_derivative "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Derivative diff;
     typename PT::Swap swap;
@@ -677,7 +677,7 @@ void test_derivative(){
 template <class Polynomial_traits_d>
 void test_make_square_free(){
     std::cerr << "start test_make_square_free "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Make_square_free make_square_free;
     typename PT::Leading_coefficient lcoeff;
     typename PT::Univariate_content_up_to_constant_factor ucontent_utcf;
@@ -711,7 +711,7 @@ void test_make_square_free(){
 template <class Polynomial_traits_d>
 void test_square_free_factorization(){
     std::cerr << "start test_square_free_factorization "; std::cerr.flush(); 
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typedef CGAL::Algebraic_structure_traits<Polynomial_d> AST;
     typename AST::Integral_division idiv;
     typename PT::Square_free_factorization sqff;
@@ -759,7 +759,7 @@ void test_square_free_factorization(){
         //std::cerr << "faktor= " << (*it) << ", ";
         //std::cerr << "mult= " << (*mults_it) << std::endl; 
         assert(mults_it != mults.end());
-        rec_p *= CGAL::POLYNOMIAL::ipower((*it),(*mults_it++));
+        rec_p *= CGAL::ipower((*it),(*mults_it++));
     }
     
     rec_p *= Polynomial_d(alpha);
@@ -775,7 +775,7 @@ void test_square_free_factorization(){
 template <class Polynomial_traits_d>
 void test_pseudo_division(){
     std::cerr << "start test_pseudo_division "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Pseudo_division pdiv;
     for(int i = 0; i < 10; i++){
         Polynomial_d f = generate_sparse_random_polynomial<Polynomial_d>(3);
@@ -792,7 +792,7 @@ void test_pseudo_division(){
 template <class Polynomial_traits_d>
 void test_pseudo_division_remainder(){
     std::cerr << "start test_pseudo_division_remainder "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Pseudo_division pdiv;
     typename PT::Pseudo_division_remainder pdiv_r;
     for(int i = 0; i < 10; i++){
@@ -810,7 +810,7 @@ void test_pseudo_division_remainder(){
 template <class Polynomial_traits_d>
 void test_pseudo_division_quotient(){
     std::cerr << "start test_pseudo_division_quotient "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Pseudo_division pdiv;
     typename PT::Pseudo_division_quotient pdiv_q;
     for(int i = 0; i < 10; i++){
@@ -828,7 +828,7 @@ void test_pseudo_division_quotient(){
 template <class Polynomial_traits_d>
 void test_gcd_up_to_constant_factor(){
     std::cerr << "start test_gcd_up_to_constant_factor "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Gcd_up_to_constant_factor gcd_utcf;
     
     assert(
@@ -852,7 +852,7 @@ template <class Polynomial_traits_d>
 void test_integral_division_up_to_constant_factor(){
     std::cerr << "start test_integral_division_up_to_constant_factor "; 
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     typename PT::Canonicalize canonicalize;
     assert(
@@ -876,8 +876,8 @@ template <class Polynomial_traits_d>
 void test_univariate_content_up_to_constant_factor(){
     std::cerr << "start test_univariate_content_up_to_constant_factor "; 
     std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Univariate_content_up_to_constant_factor ucontent_utcf;
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     typename PT::Leading_coefficient lcoeff;
@@ -909,7 +909,7 @@ template <class Polynomial_traits_d>
 void test_square_free_factorization_up_to_constant_factor(){
     std::cerr << "start test_square_free_factorization_up_to_constant_factor "; 
     std::cerr.flush(); 
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     typename PT::Square_free_factorization_up_to_constant_factor sqff_utcf;
     typename PT::Canonicalize canonicalize;
@@ -943,7 +943,7 @@ void test_square_free_factorization_up_to_constant_factor(){
 template <class Polynomial_traits_d>
 void test_evaluate(){
     std::cerr << "start test_evaluate "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Evaluate evaluate;
     typename PT::Move move;
     assert(evaluate(Polynomial_d(0),ICoeff(0)) == Coeff(0));
@@ -984,7 +984,7 @@ void test_evaluate(){
 template <class Polynomial_traits_d>
 void test_evaluate_homogeneous(){
     std::cerr << "start test_evaluate_homogeneous "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Evaluate_homogeneous evh;
   
     assert(evh(Polynomial_d(0),ICoeff(0),ICoeff(1)) == Coeff(0));
@@ -1027,7 +1027,7 @@ void test_is_zero_at() {
     std::cerr << "start test_is_zero_at "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Is_zero_at is_zero_at;
     
@@ -1056,7 +1056,7 @@ void test_is_zero_at_homogeneous() {
     std::cerr << "start test_is_zero_at_homogeneous "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Is_zero_at_homogeneous is_zero_at_homogeneous;
     
@@ -1095,7 +1095,7 @@ void test_sign_at() {
     std::cerr << "start test_sign_at "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Sign_at sign_at;
     
@@ -1128,7 +1128,7 @@ void test_sign_at_homogeneous() {
     std::cerr << "start test_sign_at_homogeneous "; 
     std::cerr.flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Sign_at_homogeneous sign_at_homogeneous;
     
@@ -1176,7 +1176,7 @@ template< class Polynomial_traits_d>
 void test_compare() {
     (std::cerr << "start test compare ").flush();
     
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
     typename PT::Compare compare;
     
@@ -1210,7 +1210,7 @@ void test_compare() {
 template <class Polynomial_traits_d>
 void test_resultant(){
     std::cerr << "start test_resultant "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename  PT::Resultant resultant;
     typename  PT::Move move;
     {
@@ -1247,7 +1247,7 @@ void test_resultant(){
 template <class Polynomial_traits_d>
 void test_canonicalize(){
     std::cerr << "start test_canonicalize "; std::cerr.flush();
-    CGAL_SNAP_POLYNOMIAL_TRAITS_D(Polynomial_traits_d);
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     typename PT::Canonicalize canonicalize;
 
     assert(Polynomial_d(0) == canonicalize(Polynomial_d(0)));

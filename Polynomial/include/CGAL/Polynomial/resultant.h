@@ -27,15 +27,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace POLYNOMIAL {
+namespace CGALi {
 
     template <class NT> inline
     NT resultant_(Polynomial<NT> A, Polynomial<NT> B) {
-        typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebra_type;
-        return resultant_(A,B,Algebra_type());     
+        typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebraic_category;
+        return resultant_(A,B,Algebraic_category());     
     }
     
-    // the general function for NiX::Integral_domain_without_div_tag
+    // the general function for CGAL::Integral_domain_without_div_tag
     template < class NT> inline 
     NT resultant_(Polynomial<NT> A, 
                   Polynomial<NT> B,
@@ -43,7 +43,7 @@ namespace POLYNOMIAL {
         return hybrid_bezout_subresultant(A,B,0);
     }
     
-    // the specialization for NiX::UFDomain_tag
+    // the specialization for CGAL::Unique_factorization_domain_tag
     template < class NT> inline
     NT resultant_(Polynomial<NT> A, 
                   Polynomial<NT> B,
@@ -60,7 +60,7 @@ namespace POLYNOMIAL {
         return prs_resultant_decompose(A,B);       
     } 
     
-    // the specialization for NiX::Field_tag
+    // the specialization for CGAL::Field_tag
     template < class NT> inline
     NT resultant_(Polynomial<NT> A, Polynomial<NT> B, Field_tag){
         // prs_resultant_decompose can only be used if 
@@ -83,26 +83,26 @@ namespace POLYNOMIAL {
                                  ::CGAL::Tag_false >::type() );
     }    
 
-    /*! \ingroup NiX_Polynomial
-     *  \relates NiX::Polynomial
+    /*! \ingroup CGAL_Polynomial
+     *  \relates CGAL::Polynomial
      *  \brief compute the resultant of the polynomials \c A and \c B
      *
-     *  The way the resultant is computed depends on the Algebra_type. 
+     *  The way the resultant is computed depends on the Algebraic_category. 
      *  In general the resultant will be computed by the function
-     *  NiX::hybrid_bezout_subresultant, but if possible the function
-     *  NiX::prs_resultant_ufd or NiX::prs_resultant_field are used. 
+     *  CGAL::hybrid_bezout_subresultant, but if possible the function
+     *  CGAL::prs_resultant_ufd or CGAL::prs_resultant_field are used. 
      *  
      *  Up to now it is not clear, that the functions based on the polynomial
      *  remainder sequence are faster than the one based on the bezoutian. 
-     *  Thus you can use NiX::hybrid_bezout_subresultant instead, which will 
-     *  work for any Algebra_type
+     *  Thus you can use CGAL::hybrid_bezout_subresultant instead, which will 
+     *  work for any Algebraic_category
      */
     template <class NT> inline
     NT resultant(Polynomial<NT> A, Polynomial<NT> B) {
-        return POLYNOMIAL::resultant_(A, B);
+        return CGALi::resultant_(A, B);
     }   
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
 

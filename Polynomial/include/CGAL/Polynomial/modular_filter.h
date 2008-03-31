@@ -28,7 +28,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace POLYNOMIAL {
+namespace CGALi {
     template <class NT> inline
     bool
     may_have_common_factor_(
@@ -80,7 +80,7 @@ namespace POLYNOMIAL {
                                  const Polynomial<NT>& p2,
                                  ::CGAL::Tag_false) {return true;}
     
-/*! \ingroup NiX_polynomial_utils
+/*! \ingroup CGAL_polynomial_utils
  *  \brief Test whether \c P and \c Q may have a common factor. 
  *
  *  This function is based on a fast modular arithmetic and serves as a
@@ -96,7 +96,7 @@ template <class NT> inline
 bool may_have_common_factor(const Polynomial<NT>& P,
                             const Polynomial<NT>& Q){
 // TODO: Should this compiler switch be renamed?
-#ifdef NiX_MODULAR_FILTER_OFF
+#ifdef CGAL_MODULAR_FILTER_OFF
     return true;
 #endif
 
@@ -104,10 +104,10 @@ bool may_have_common_factor(const Polynomial<NT>& P,
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;
-    return POLYNOMIAL::may_have_common_factor_(P,Q,is_modularizable);   
+    return CGALi::may_have_common_factor_(P,Q,is_modularizable);   
 }
 
-/*! \ingroup NiX_polynomial_utils
+/*! \ingroup CGAL_polynomial_utils
  *  \brief Test whether the polynomial \c P may has a multiple root.
  *
  *  This function is based on a fast modular arithmetic and serves as a
@@ -163,10 +163,10 @@ bool may_have_multiple_factor( const Polynomial<NT>& P ) {
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;
-    return POLYNOMIAL::may_have_multiple_factor_(P, is_modularizable);       
+    return CGALi::may_have_multiple_factor_(P, is_modularizable);       
 }
 
-} //namespace POLYNOMIAL
+} //namespace CGALi
 CGAL_END_NAMESPACE
 
 #endif //CGAL_MODULAR_FILTER_H

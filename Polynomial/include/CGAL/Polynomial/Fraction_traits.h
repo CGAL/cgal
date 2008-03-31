@@ -123,13 +123,13 @@ public:
 
 
 // Select the right alternative as Fraction_traits
-/*! \ingroup NiX_Polynomial
-    \brief \c NiX::Fraction_traits < \c NiX::Polynomial<NT> >
+/*! \ingroup CGAL_Polynomial
+    \brief \c CGAL::Fraction_traits < \c CGAL::Polynomial<NT> >
  *
- *  Polynomials provide suitable specializations of \c NiX::Fraction_traits.
+ *  Polynomials provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
  *  The denominator \e d of a polynomial \e p is a low common multiple
- *  (see \c NiX::Fraction_traits::Common_factor for details) of the
+ *  (see \c CGAL::Fraction_traits::Common_factor for details) of the
  *  denominators of its coefficients.  The numerator is the polynomial
  *  \e d*p with a fraction-free coefficient type.
  *

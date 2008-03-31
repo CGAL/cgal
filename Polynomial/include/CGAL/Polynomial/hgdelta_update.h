@@ -20,7 +20,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // This subroutine has been retained here for use in both new files.
-namespace POLYNOMIAL {
+namespace CGALi {
     template <class NT> inline
     void hgdelta_update(NT& h, const NT& g, int delta) {
         typename Algebraic_structure_traits<NT>::Integral_division idiv;
@@ -38,7 +38,7 @@ namespace POLYNOMIAL {
             break;
         }
     }
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
 

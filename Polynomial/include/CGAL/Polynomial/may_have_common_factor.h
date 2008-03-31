@@ -23,10 +23,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace POLYNOMIAL {
+namespace CGALi {
      
     
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
 

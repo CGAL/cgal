@@ -21,7 +21,7 @@ CGAL_BEGIN_NAMESPACE ;
 
 #include <CGAL/basic.h>
 
-namespace POLYNOMIAL {
+namespace CGALi {
     
     // TODO: Own simple matrix and vector to avoid importing the whole matrix stuff 
     // from EXACUS.
@@ -114,19 +114,19 @@ namespace POLYNOMIAL {
         return det_berkowitz(matrix, n);
     }
 
-    /*! \ingroup NiX_determinant
+    /*! \ingroup CGAL_determinant
      *  \brief Will determine and execute a suitable determinant routine and
      *  return the determinant of \a A.
-     *  (specialisation for NiX::Matrix_d)
+     *  (specialisation for CGAL::Matrix_d)
      */
     template <class NT > inline 
-    NT determinant(const POLYNOMIAL::Simple_matrix<NT>& A)
+    NT determinant(const CGALi::Simple_matrix<NT>& A)
     {
         CGAL_assertion(A.row_dimension()==A.column_dimension());
         return determinant(A,A.column_dimension());
     }
     
-    /*! \ingroup NiX_determinant
+    /*! \ingroup CGAL_determinant
      *  \brief Will determine and execute a suitable determinant routine and
      *  return the determinant of \a A. Needs the dimension \a n of \a A as
      *  its second argument.
@@ -136,10 +136,10 @@ namespace POLYNOMIAL {
                                int n)
     {
         typedef typename M::NT NT;
-        typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebra_type;
+        typedef typename Algebraic_structure_traits<NT>::Algebraic_category Algebraic_category;
         typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
     
-        return POLYNOMIAL::determinant (matrix, n, Algebra_type(), Is_exact());
+        return CGALi::determinant (matrix, n, Algebraic_category(), Is_exact());
     }
 
 
@@ -154,12 +154,12 @@ namespace POLYNOMIAL {
     
         int i, j, l;
     
-        typename POLYNOMIAL::Simple_vector<NT> r(k-1);
-        typename POLYNOMIAL::Simple_vector<NT> s(k-1);
-        typename POLYNOMIAL::Simple_vector<NT> t(k-1);
+        typename CGALi::Simple_vector<NT> r(k-1);
+        typename CGALi::Simple_vector<NT> s(k-1);
+        typename CGALi::Simple_vector<NT> t(k-1);
         std::vector<NT> rMks(k);
     
-        typename POLYNOMIAL::Simple_matrix<NT> MM(k-1);
+        typename CGALi::Simple_matrix<NT> MM(k-1);
     
         for (i=n-k+2;i<=n;++i)
             for (j=n-k+2;j<=n;++j)
@@ -194,15 +194,15 @@ namespace POLYNOMIAL {
         return rMks;
     }
 
-    /*! \ingroup NiX_determinant
+    /*! \ingroup CGAL_determinant
      *  \brief Computes the determinant of \a A according to the method proposed
      *  by Berkowitz.
-     *  (specialisation for NiX::Matrix_d)
+     *  (specialisation for CGAL::Matrix_d)
      *
      *  Note that this routine is completely free of divisions!
      */
     template <class NT > inline 
-    NT det_berkowitz(const POLYNOMIAL::Simple_matrix<NT>& A)
+    NT det_berkowitz(const CGALi::Simple_matrix<NT>& A)
     {
         CGAL_assertion(A.row_dimension()==A.column_dimension());
         return det_berkowitz(A,A.column_dimension());
@@ -226,10 +226,10 @@ namespace POLYNOMIAL {
         std::vector<NT> rMks;
         NT a;
     
-        typename POLYNOMIAL::Simple_matrix<NT> B(n+1);  // not square in original
+        typename CGALi::Simple_matrix<NT> B(n+1);  // not square in original
     
-        typename POLYNOMIAL::Simple_vector<NT> p(n+1);
-        typename POLYNOMIAL::Simple_vector<NT> q(n+1);
+        typename CGALi::Simple_vector<NT> p(n+1);
+        typename CGALi::Simple_vector<NT> q(n+1);
     
         for (k=1;k<=n;++k)
         {
@@ -252,7 +252,7 @@ namespace POLYNOMIAL {
         }
             else if (k == n)
         {
-                rMks = POLYNOMIAL::clow_lengths<M>(A,k,n);
+                rMks = CGALi::clow_lengths<M>(A,k,n);
                 // Setup for last row of matrix B
                 i = n+1;
                 B[i-1][n-1] = NT(-1);
@@ -267,7 +267,7 @@ namespace POLYNOMIAL {
         }
             else
             {
-                rMks = POLYNOMIAL::clow_lengths<M>(A,k,n);
+                rMks = CGALi::clow_lengths<M>(A,k,n);
     
                 // Setup for matrix B (diagonal after diagonal)
     
@@ -309,7 +309,7 @@ namespace POLYNOMIAL {
         return minors;
     }
     
-    /*! \ingroup NiX_determinant
+    /*! \ingroup CGAL_determinant
      *  \brief Computes the determinant of \a A according to the method proposed
      *  by Berkowitz. Needs the dimension \a n of \a A as its second argument. 
      *
@@ -330,7 +330,7 @@ namespace POLYNOMIAL {
 
     
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 
 

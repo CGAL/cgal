@@ -2,8 +2,8 @@
 #include <CGAL/basic.h>
 
 
-#ifndef CGAL_POLYNOMIAL_POLYNOMIAL_UTILS_H
-#define CGAL_POLYNOMIAL_POLYNOMIAL_UTILS_H
+#ifndef CGAL_POLYNOMIAL_CGALi_UTILS_H
+#define CGAL_POLYNOMIAL_CGALi_UTILS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,8 +58,7 @@ Polynomial<NT> reversal(const Polynomial<NT>& p)
 // Canonicalize_polynomial functions ///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
-namespace POLYNOMIAL {
+namespace CGALi {
 
     template <class NT>
     Polynomial<NT> canonicalize_polynomial_(Polynomial<NT> p, CGAL::Tag_true)
@@ -91,8 +90,8 @@ namespace POLYNOMIAL {
     };
 
 
-    /*! \ingroup NiX_Polynomial
-     *  \relates NiX::Polynomial
+    /*! \ingroup CGAL_Polynomial
+     *  \relates CGAL::Polynomial
      *  
      *  \brief divide a polynomial \c p by its Scalar_factor and Unit_part
      *  
@@ -103,7 +102,7 @@ namespace POLYNOMIAL {
      *    b) dividing \c p by the gcd of all coefficients in UFDomains
      *    c) extending the leading coefficient in Sqrt_extensions, so it
      *        becomes integral, and dividing \c p by the gcd of all scalars
-     *        \see NiX/Sqrt_extension.h
+     *        \see CGAL/Sqrt_extension.h
      *  The result is uniquely determined by setting the leading coefficient
      *  to the minimal integral rational.
      */
@@ -118,97 +117,12 @@ namespace POLYNOMIAL {
         return canonicalize_polynomial_(p, Is_extended());
     };
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 // div_utfc functions //////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-namespace POLYNOMIAL {
-
-    // Polynomial<NT> / Polynomial<NT>  -  coefficient type is extended
-    template <class NT>
-    Polynomial<NT> div_utcf_(
-        Polynomial<NT> f, const Polynomial<NT>& g, bool, CGAL::Tag_true)
-    {
-        typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-        typename Polynomial_traits_d<POLY>::Innermost_coefficient_begin begin;
-        typename Polynomial_traits_d<POLY>::Innermost_coefficient_end end;
-        typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
-    
-        IC tmp = ilcoeff(g);
-        tmp *= dfai(begin(g), end(g));
-        f *= POLY(tmp);
-        return canonicalize_polynomial(f / g);
-    }
-    
-    // Polynomial<NT> / Polynomial<NT>  -  coefficient type is NOT extended
-    template <class NT>
-    Polynomial<NT> div_utcf_(
-        Polynomial<NT> f, const Polynomial<NT>& g, bool is_canonicalized, CGAL::Tag_false)
-    {
-        typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-    
-        if (!is_canonicalized) {
-            IC lcoeff = ilcoeff(g);
-            f *= POLY(lcoeff);
-        }
-        return canonicalize_polynomial(f / g);
-    }
-    
-    // Polynomial<NT> / NT  -  NT is already the coefficient type and is extended
-    template <class NT>
-    Polynomial<NT> div_utcf_NT_is_IC(
-        Polynomial<NT> f, const NT&, CGAL::Tag_false)
-    {
-        return canonicalize_polynomial(f);
-    }
-    
-    // Polynomial<NT> / NT  -  NT is again a polynomial  -   coefficient type is extended
-    template <class NT, class Is_nested>
-    Polynomial<NT> div_utcf_NT_is_IC(
-        Polynomial<NT> f, const NT& g, Is_nested)
-    {
-        typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-        typename Polynomial_traits_d<NT>::Innermost_coefficient_begin begin;
-        typename Polynomial_traits_d<NT>::Innermost_coefficient_end end;
-        typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
-    
-        IC tmp = ilcoeff(g);
-        tmp *= dfai(begin(g), end(g));
-        f *= POLY(tmp);
-        return canonicalize_polynomial(f / g);
-    }
-    
-    // Polynomial<NT> / NT  -  coefficient type is extended
-    template <class NT> inline
-    Polynomial<NT> div_utcf_(
-        const Polynomial<NT>& f, const NT& g, bool, CGAL::Tag_true)
-    {
-        typedef CGAL::Boolean_tag< (Polynomial_traits_d<NT>::d >= 2) > Is_nested;
-        return div_utcf_NT_is_IC(f, g, Is_nested() );
-    }
-    
-    // Polynomial<NT> / NT  -  coefficient type is NOT extended
-    template <class NT>
-    Polynomial<NT> div_utcf_(
-        Polynomial<NT> f, const NT& g, bool is_canonicalized, CGAL::Tag_false)
-    {
-        typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
-       
-        if (!is_canonicalized) {
-            IC lcoeff = ilcoeff(g);
-            f *= POLY(lcoeff);
-        }
-        return canonicalize_polynomial(f / g);
-    }
+namespace CGALi {
 
     //! divide \c f by \c g with respect to constant factors
     /*! This function provides a division of two polynomials, which takes
@@ -223,10 +137,9 @@ namespace POLYNOMIAL {
         const Polynomial<NT>& f, const Polynomial<NT>& g, bool is_canonicalized = false)
     {
         typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typedef typename Algebraic_extension_traits<IC>::Is_extended Is_extended;
-    
-        return div_utcf_(f, g, is_canonicalized, Is_extended());
+        typedef Polynomial_traits_d<POLY> PT;
+        typename PT::Integral_division_up_to_constant_factor idiv_utcf; 
+        return idiv_utcf(f, g);
     }
     
     //! overloaded version for divisors with a by one lower nesting level
@@ -234,14 +147,10 @@ namespace POLYNOMIAL {
     Polynomial<NT> div_utcf(
         const Polynomial<NT>& f, const NT& g, bool is_canonicalized = false)
     {
-        typedef Polynomial<NT> POLY;
-        typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
-        typedef typename Algebraic_extension_traits<IC>::Is_extended Is_extended;
-    
-        return div_utcf_(f, g, is_canonicalized, Is_extended());
+        return CGALi::div_utcf(f,Polynomial<NT>(g));
     }
 
-} // namespace POLYNOMIAL
+} // namespace CGALi
 
 CGAL_END_NAMESPACE
-#endif // CGAL_POLYNOMIAL_POLYNOMIAL_UTILS_H
+#endif // CGAL_POLYNOMIAL_CGALi_UTILS_H
