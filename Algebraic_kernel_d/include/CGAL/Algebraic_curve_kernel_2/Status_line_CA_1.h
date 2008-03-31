@@ -63,7 +63,7 @@ public:
     // constructs status line over interval
     Status_line_CA_1_rep(X_coordinate_1 x, size_type i,
             const Curve_analysis_2& ca, size_type n_arcs) :
-            _m_x(x), _m_index(i), _m_ca(ca),_m_num_arcs(n_arcs, n_arcs),
+            _m_x(x), _m_index(i), _m_ca(ca),/*_m_num_arcs(n_arcs, n_arcs),*/
             _m_total_arcs(n_arcs), _m_vertical_line(false), _m_event(false),
             _m_num_arcs_minus_inf(0, 0), _m_num_arcs_plus_inf(0, 0),
                 _m_xy_coords(n_arcs)  {
@@ -74,7 +74,7 @@ public:
         const Curve_analysis_2& ca, size_type n_arcs_left,
         size_type n_arcs_right) :
              _m_x(x), _m_index(i), _m_ca(ca),
-             _m_num_arcs(n_arcs_left, n_arcs_right), _m_total_arcs(0),
+             /*_m_num_arcs(n_arcs_left, n_arcs_right),*/ _m_total_arcs(0),
              _m_vertical_line(false), _m_event(true),
              _m_num_arcs_minus_inf(0, 0), _m_num_arcs_plus_inf(0, 0) {
     }
@@ -90,7 +90,7 @@ public:
     Curve_analysis_2 _m_ca; 
     
     //! number of incident arcs to the left and to the right
-    Arc_pair _m_num_arcs;
+    //Arc_pair _m_num_arcs;
 
     //! sequence of arcs crossing this status line (valid only event lines)
     mutable boost::optional<Arc_container> _m_arcs;
@@ -105,10 +105,10 @@ public:
     mutable bool _m_event;
 
     //! number of arcs running down the pole
-    mutable Arc_pair _m_num_arcs_minus_inf;
+    Arc_pair _m_num_arcs_minus_inf;
     
     //! number of arcs running up the pole
-    mutable Arc_pair _m_num_arcs_plus_inf;
+    Arc_pair _m_num_arcs_plus_inf;
 
     /*// matchings valid?
     mutable bool matching_valid_;
@@ -382,7 +382,7 @@ public:
      * approaching y=-oo from left and right. A vertical line being component
      * of the curve is ignored.
      */
-    Arc_pair number_of_branches_approaching_minus_infinity() const {
+    const Arc_pair& number_of_branches_approaching_minus_infinity() const {
         return this->ptr()->_m_num_arcs_minus_inf;
     }
 
@@ -391,7 +391,7 @@ public:
      *  approaching y=+oo from left and right. A vertical line being component
      *  of the curve is ignored.
      */
-    Arc_pair number_of_branches_approaching_plus_infinity() const {
+    const Arc_pair& number_of_branches_approaching_plus_infinity() const {
         return this->ptr()->_m_num_arcs_plus_inf;
     }
 
@@ -404,7 +404,7 @@ public:
      * asymptote
      */
     void _set_number_of_branches_approaching_infinity(
-            const Arc_pair& minus_inf, const Arc_pair& plus_inf) const {
+            const Arc_pair& minus_inf, const Arc_pair& plus_inf) {
 
         CGAL_precondition(minus_inf.first >= 0 && minus_inf.second >= 0);
         CGAL_precondition(plus_inf.first >= 0 && plus_inf.second >= 0);
@@ -428,6 +428,42 @@ public:
         CGAL_precondition(is_event());
         this->ptr()->_m_vertical_line = true;
     }
+
+    //!@}
+    //!\name IO
+    //!@{
+
+    void write(std::ostream& os) const {
+
+        os << "status_line [CA@" << this->ptr()->_m_ca.id();
+        os << "; x = " << x() << "; #events: " << number_of_events() << "; ";
+
+        if(is_event()) {
+            os << "incident branches: {";
+            typename Arc_container::const_iterator ait =
+                (*this->ptr()->_m_arcs).begin();
+            for(; ait != (*this->ptr()->_m_arcs).end(); ait++) {
+
+                if(ait != (*this->ptr()->_m_arcs).begin())
+                    os << ", ";
+                os << "(" << ait->first << ", " << ait->second << ")";
+            }
+            os << "}";
+            Arc_pair p = number_of_branches_approaching_minus_infinity();
+            if(p.first + p.second > 0)
+                os << "; approaching -oo: (" << p.first << "; " <<
+                    p.second << ")";
+            p = number_of_branches_approaching_plus_infinity();
+            if(p.first + p.second > 0)
+                os << "; approaching +oo: (" << p.first << "; " <<
+                    p.second << ")";
+            if(covers_line())
+                os << "; covers line";
+        } else 
+            os << "interval line";
+
+        os << ']';
+    }
     
     //!@}
 
@@ -439,9 +475,9 @@ public:
 template <class CurveAnalysis_2, class Rep>
 std::ostream& operator<< (
         std::ostream& os, 
-        const CGALi::Status_line_CA_1<CurveAnalysis_2, Rep>& cp_line) {
+        const CGALi::Status_line_CA_1<CurveAnalysis_2, Rep>& line) {
         
-    os << "Status_line_CA_1: no output yet provided\n";
+    line.write(os);
     return os;
 }
 

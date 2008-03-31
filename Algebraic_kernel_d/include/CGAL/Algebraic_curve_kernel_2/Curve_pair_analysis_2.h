@@ -198,7 +198,7 @@ public:
      */
     size_type event_of_curve_analysis(size_type i, bool c) const
     {
-        CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
+        CGAL_precondition(i >= 0 && i < number_of_status_lines_with_event());
         SoX::Index_triple triple = 
             this->ptr()->_m_curve_pair.event_indices(i);
         if(this->ptr()->_m_swapped)
@@ -213,7 +213,7 @@ public:
      */
     Status_line_1 status_line_at_event(size_type i) const {
     
-        CGAL_precondition(i >= 0&&i < number_of_status_lines_with_event());
+        CGAL_precondition(i >= 0 && i < number_of_status_lines_with_event());
 
 #ifdef CGAL_ACK_2_USE_STATUS_LINES
         return this->ptr()->_m_curve_pair.status_line_at_event(*this, i);
@@ -241,7 +241,7 @@ public:
                             typo = 1 - typo;
                         }
                     }
-                    /*std::cout << "[" << pair.first << "; " << pair.second << "] and "  <<
+               /*std::cout << "[" << pair.first << "; " << pair.second << "] and "  <<
                       (int)(slice.arc_at_event(j).first) << "\n";*/
                     CGAL_precondition(typo == slice.arc_at_event(j).first);
                 }    
@@ -258,7 +258,7 @@ public:
      */
     Status_line_1 status_line_of_interval(size_type i) const {
     
-        CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
+        CGAL_precondition(i >= 0 && i <= number_of_status_lines_with_event());
 
 #ifdef CGAL_ACK_2_USE_STATUS_LINES
 
@@ -310,8 +310,11 @@ public:
         bool is_evt;
         this->ptr()->_m_curve_pair.x_to_index(x, i, is_evt);
         if(is_evt) {
-            if(perturb == CGAL::ZERO)
-                return status_line_at_event(i);
+            if(perturb == CGAL::ZERO) {
+                Status_line_1 sline = status_line_at_event(i);
+                sline._set_x(x);
+                return sline;
+            }    
             if(perturb == CGAL::POSITIVE)
                 i++;
         }
@@ -325,7 +328,17 @@ public:
      */
     Status_line_1 status_line_at_exact_x(X_coordinate_1 x) const {
         // CGAL_precondition(x is finite ??);
-        return status_line_for_x(x);
+        size_type i;
+        bool is_evt;
+        this->ptr()->_m_curve_pair.x_to_index(x, i, is_evt);
+
+        Status_line_1 sline;
+        if(is_evt)
+            sline = status_line_at_event(i);
+        else
+            sline = status_line_of_interval(i);
+        sline._set_x(x);
+        return sline;
     }
 
     // only set during initialization by ACK_2::Construct_curve_pair_2

@@ -63,18 +63,9 @@ public:
     Status_line_CPA_1_rep()  
     {   }
 
-    // constructs status line at event
+    // constructs an empty status line object
     Status_line_CPA_1_rep(size_type i, Curve_pair_analysis_2 cpa) :
         _m_index(i), _m_cpa(cpa), _m_event(false), _m_intersection(false) {
-    }
-
-    // constructs status line over interval
-    Status_line_CPA_1_rep(size_type i, const Int_container& arcs,
-            Curve_pair_analysis_2 cpa) :
-        _m_index(i), _m_arcs(arcs.size()), _m_cpa(cpa), _m_event(false),
-        _m_intersection(false) {
-
-
     }
 
     // stores this status line interval or event index of a curve pair
@@ -210,7 +201,8 @@ public:
         Base(Rep(i, cpa)) {
         _set_interval_arcs(arcs);
     }
-        
+
+protected:            
     /*!\brief
      * constructs from a given represenation
      */
@@ -227,7 +219,7 @@ public:
      * returns the x-coordinate of the vertical line (always a finite value).
      */
     X_coordinate_1 x() const {
-        
+        // unless x-coordiate was explicitly set with _set_x: compute its value
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
                 this->ptr()->_m_cpa._internal_curve_pair().event_x(index()) :
@@ -326,6 +318,13 @@ public:
     //!@{
 
     /*!\brief
+     * sets x-coordinate of a status line
+     */
+    void _set_x(X_coordinate_1 x) const {
+        this->ptr()->_m_x = x;
+    }
+
+    /*!\brief
      * sets arcs at event (use at your own risk!)
      */
     void _set_event_arcs(const Arc_container& arcs) const {
@@ -387,21 +386,47 @@ public:
                 CGAL_error_msg("Bogus curve index..");
         }
     }
+
+    //!@}
+public:
+    //!\name IO
+    //!@{
+
+    void write(std::ostream& os) const {
     
-    // temporary access function (for testing)
-    /*Event2_slice get_slice() const
-    {
-        return this->ptr()->_m_event_slice;
-    }*/
-    
+        os << "status_line [CPA@" << this->ptr()->_m_cpa.id();
+        os << "; x = " << x() << "; #events: " << number_of_events() << "; ";
+        
+        typename Arc_container::const_iterator ait =
+                this->ptr()->_m_arcs.begin();
+        if(is_event()) 
+            os << "arcs at event: {";
+        else
+            os << "arcs of interval: {";
+        
+        for(; ait != this->ptr()->_m_arcs.end(); ait++) {
+            if(ait != this->ptr()->_m_arcs.begin())
+                os << ", ";
+            os << "(" << ait->first << "; " << ait->second << ")";
+        }
+        os << "}, arcno2pos: (";
+        
+        CGAL::output_range(os, this->ptr()->_m_arcno_to_pos[0].begin(),
+                this->ptr()->_m_arcno_to_pos[0].end(), ",");
+        os << "), (";
+        CGAL::output_range(os, this->ptr()->_m_arcno_to_pos[1].begin(),
+                this->ptr()->_m_arcno_to_pos[1].end(), ",");
+        os << ")]";
+    }
+
     //!@}
 }; // class Status_line_CPA_1
 
 template <class CurvePairAnalysis_2, class Rep>
 std::ostream& operator<< (std::ostream& os,
-        const CGALi::Status_line_CPA_1<CurvePairAnalysis_2, Rep>& cpv_line) {
+        const CGALi::Status_line_CPA_1<CurvePairAnalysis_2, Rep>& sline) {
         
-    os << "Status_line_CPA_1: no ouput yet provided\n";
+    sline.write(os);
     return os;
 }
 
