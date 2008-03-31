@@ -45,6 +45,15 @@ public:
     typedef ::CGAL::Null_functor Modular_image_inv;    
 };
 
+template <class NT>
+inline
+typename CGAL::Modular_traits<NT>::Modular_NT 
+modular_image(const NT& x){
+    typename CGAL::Modular_traits<NT>::Modular_image modular_image;
+    return modular_image(x);
+}
+
+
 // The MODULAR_TRAITS specializations for some builtin types
 // =========================================================================
 
