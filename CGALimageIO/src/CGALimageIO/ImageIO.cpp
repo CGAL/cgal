@@ -135,9 +135,8 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
 size_t ImageIO_read(const _image *im, void *buf, size_t len) 
 {
   size_t to_be_read = len;
-  size_t l;
+  int l = -1;
   char *b = (char*)buf;
-  
 
   switch(im->openMode) {
   default :
@@ -161,6 +160,11 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
       to_be_read -= l;
       b += l;
+    }
+    if(l<0)
+    {
+      int errnum;
+      fprintf(stderr, "zlib error: %s\n", gzerror(im->fd, &errnum));
     }
     return ( len - to_be_read );
 #else
@@ -563,6 +567,7 @@ _image* _readImage_raw(const char *name,
   im->xdim = rx;
   im->ydim = ry;
   im->zdim = rz;
+  im->vdim = 1;
   im->vx = im->vy = im->vz = 0.1;
 
   // image center
@@ -593,12 +598,12 @@ _image* _readImage_raw(const char *name,
   im->imageFormat = NULL;
 
   // read file
-  FILE *pFile = fopen(name,"rb");
-  if(pFile == NULL)
+  ::_openReadImage(im, name);
+  if(!im->fd) {
+    fprintf(stderr, "_readImage_raw: error: unable to open file \'%s\'\n", name);
+    _freeImage(im);
     return NULL;
-
-  im->openMode = OM_FILE;
-  im->fd = pFile;
+  }
 
   // allocate memory
   im->data = (void *)new unsigned char[rx*ry*rz];
@@ -608,6 +613,7 @@ _image* _readImage_raw(const char *name,
   // read
   ImageIO_read(im, im->data, rx*ry*rz);
 
+  ImageIO_close(im);
   /*
     unsigned int i,j,k;
     unsigned char *data = (unsigned char *)im->data;
@@ -621,8 +627,6 @@ _image* _readImage_raw(const char *name,
     data[k * dimxy + j * rx + i] = voxel;
     }
   */
-
-  fclose(pFile);
 
   return im;
 }

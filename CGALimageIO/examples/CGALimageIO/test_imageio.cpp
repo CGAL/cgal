@@ -57,7 +57,7 @@ int main(int argc, char** argv)
       ::_freeImage(image);
     }
     else
-      std::cerr << "\'" << argv[1] << "\"is not a supported file\n.";
+      std::cerr << "\"" << argv[1] << "\" is not a supported file.\n";
   }
   else
     ::printSupportedFileFormat();

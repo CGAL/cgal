@@ -1,4 +1,5 @@
 CGALimageIO/examples/CGALimageIO/*.exe
+CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
