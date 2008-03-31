@@ -138,6 +138,25 @@ void remove_scalar_factor(NT& x){
         sdiv(x,scalar);
 }
 
+template <class NT>
+inline
+typename CGAL::Scalar_factor_traits<NT>::Scalar
+scalar_factor(const NT& x){
+    typename CGAL::Scalar_factor_traits<NT>::Scalar_factor scalar_factor;
+	return scalar_factor(x);
+}
+
+template <class NT>
+inline
+typename CGAL::Scalar_factor_traits<NT>::Scalar 
+scalar_factor(const NT& x,
+        const typename CGAL::Scalar_factor_traits<NT>::Scalar& d)
+{
+    typename CGAL::Scalar_factor_traits<NT>::Scalar_factor scalar_factor;
+    return scalar_factor(x,d);
+}
+
+
 CGAL_END_NAMESPACE
 
 #endif // NiX_SCALAR_FACTOR_TRAITS_H
