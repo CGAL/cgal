@@ -7,14 +7,13 @@
 
 // CGAL
 #include <CGAL/basic.h>
-//#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Simple_cartesian.h>
 
 
 // kernel
-//struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
-struct K : CGAL::Simple_cartesian<double> {};
+struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+//struct K : CGAL::Simple_cartesian<double> {};
 typedef K::FT FT;
 typedef K::Point_2 Point_2;
 typedef K::Point_3 Point_3;

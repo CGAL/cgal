@@ -425,7 +425,7 @@ void CGyrovizView_2::OnPaint()
  if(m_view_border_2D_vertices)
   {
     ::glColor3ub(255,0,0);
-    pDoc->get_dt2().gl_draw_on_border_2D_vertices(255,0,0,9,pDoc->m_cimg_seg_image);
+    pDoc->get_dt2().gl_draw_on_border_2D_vertices(255,0,0,4,pDoc->m_cimg_seg_image);
   }
 
   if(m_view_2D_delaunay_triangulation)
