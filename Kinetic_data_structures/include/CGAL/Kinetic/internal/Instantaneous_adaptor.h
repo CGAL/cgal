@@ -34,6 +34,9 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 template <class Static_predicate, class Kinetic_predicate, class Rep, class Argument>
 class Instantaneous_adaptor
 {
+  typedef typename Rep::Time Time;
+
+  BOOST_STATIC_ASSERT((boost::is_convertible<Time, typename Kinetic_predicate::Time>::value));
 public:
   Instantaneous_adaptor(typename Rep::Handle rep,
 			Static_predicate pred,
@@ -57,9 +60,10 @@ public:
     if (rep_->time_is_nt() && !rep_->time_after()) {
       ret= pred_(rep_->static_object(arg0));
       //check= kpred_(rep_->kinetic_object(arg0), rep_->time());
+    } else if (rep_->time_after()) {
+      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
     } else {
-      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time(),
-					     rep_->time_after()));
+      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
     }
     return ret;
   }
@@ -74,9 +78,14 @@ public:
       //result_type check= kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
       //CGAL_assertion(ret==check || ret== CGAL::ZERO);
       return ret;
+    } else if (rep_->time_after()) {
+      return static_cast<result_type>(kpred_.sign_after(rep_->kinetic_object(arg0),
+                                                        rep_->kinetic_object(arg1),
+                                                        rep_->time()));
     } else {
-      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time()),
-					     rep_->time_after());
+      return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
+                                                     rep_->kinetic_object(arg1),
+                                                     rep_->time()));
     }
   }
 
@@ -84,13 +93,19 @@ public:
 			 const second_argument_type &arg1,
 			 const third_argument_type &arg2) const
   {
-  if (rep_->time_is_nt() && !rep_->time_after()) {
-    return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
-		 rep_->static_object(arg2));
-  } else {
-      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1),
-					     rep_->kinetic_object(arg2), rep_->time(),
-					     rep_->time_after()));
+    if (rep_->time_is_nt() && !rep_->time_after()) {
+      return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
+                   rep_->static_object(arg2));
+    } else if (rep_->time_after()) {
+      return static_cast<result_type>(kpred_.sign_after(rep_->kinetic_object(arg0),
+                                                        rep_->kinetic_object(arg1),
+                                                        rep_->kinetic_object(arg2),
+                                                        rep_->time()));
+    } else {
+      return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
+                                                     rep_->kinetic_object(arg1),
+                                                     rep_->kinetic_object(arg2),
+                                                     rep_->time()));
     }
   }
 
@@ -102,10 +117,18 @@ public:
     if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3));
+    } else if (rep_->time_after()){
+      return static_cast<result_type>(kpred_.sign_after(rep_->kinetic_object(arg0),
+                                                        rep_->kinetic_object(arg1),
+                                                        rep_->kinetic_object(arg2),
+                                                        rep_->kinetic_object(arg3),
+                                                        rep_->time()));
     } else {
-      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
-					     rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time(),
-					     rep_->time_after()));
+      return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
+                                                     rep_->kinetic_object(arg1),
+                                                     rep_->kinetic_object(arg2),
+                                                     rep_->kinetic_object(arg3),
+                                                     Time(rep_->time())));
     }
   }
 
@@ -119,11 +142,20 @@ public:
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3),
 		   rep_->static_object(arg4));
+    } else if (rep_->time_after()) {
+      return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
+                                                     rep_->kinetic_object(arg1),
+                                                     rep_->kinetic_object(arg2),
+                                                     rep_->kinetic_object(arg3),
+                                                     rep_->kinetic_object(arg4),
+                                                     rep_->time()));
     } else {
-      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
-					     rep_->kinetic_object(arg2), rep_->kinetic_object(arg3),
-					     rep_->kinetic_object(arg4), rep_->time(),
-					     rep_->time_after()));
+      return static_cast<result_type>(kpred_.sign_at(rep_->kinetic_object(arg0),
+                                                     rep_->kinetic_object(arg1),
+                                                     rep_->kinetic_object(arg2),
+                                                     rep_->kinetic_object(arg3),
+                                                     rep_->kinetic_object(arg4),
+                                                     rep_->time()));
     }
   }
 
