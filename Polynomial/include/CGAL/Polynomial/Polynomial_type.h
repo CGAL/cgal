@@ -26,6 +26,7 @@
 #define CGAL_POLYNOMIAL_CGALi_TYPE_H
 
 #include <CGAL/Polynomial/ipower.h>
+#include <sstream>
 
 CGAL_BEGIN_NAMESPACE
 
