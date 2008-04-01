@@ -642,7 +642,8 @@ sub format_doxygen_function_doc
     # Remove declaration of other functions
     # (loop to remove consecutive functions)
     for my $i (1..5) {
-        $buf =~ s/(\\paragraph\{.*?)(\\paragraph\{|\\ccSeeAlso)/keep_only_if_match($1, $functionName) . "$2"/smge;
+        $buf =~ s/(\\paragraph\{.*?)(\\paragraph\{|\\subsubsection\{|\\ccSeeAlso)/
+                  keep_only_if_match($1, $functionName) . "$2"/smge;
     }
 
     # Format "Heading Parameters:" comments [L. Saboret extension]
