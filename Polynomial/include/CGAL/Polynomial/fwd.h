@@ -22,7 +22,6 @@ namespace CGAL{
 template <class NT> class Polynomial; 
 
 namespace CGALi{
-template <class NT> inline NT gcd(const NT&, const NT&);
 template <class NT> inline Polynomial<NT> gcd (const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Field_tag);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Unique_factorization_domain_tag);
