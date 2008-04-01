@@ -979,6 +979,13 @@ public:
       return _tds.incident_vertices(v, vertices);
   }
 
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges(Vertex_handle v, OutputIterator edges) const
+  {
+      return _tds.incident_edges(v, edges);
+  }
+
   size_type degree(Vertex_handle v) const
   {
       return _tds.degree(v);
