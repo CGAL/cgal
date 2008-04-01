@@ -157,6 +157,22 @@ _test_cls_tds_3( const Tds &)
       }
     }
   }
+
+  for (typename std::vector<Cell_handle>::const_iterator ccit = Cell_v.begin();
+       ccit != Cell_v.end(); ++ccit) {
+    for ( i=0; i<4; i++ ) {
+      std::vector< Vertex_handle > vector_of_vertices;
+      std::vector< Edge > vector_of_edges;
+
+      tds6.incident_vertices( (*ccit)->vertex(i), std::back_inserter(vector_of_vertices));
+
+      tds6.incident_edges( (*ccit)->vertex(i), std::back_inserter(vector_of_edges));
+
+	  assert(vector_of_edges.size() == vector_of_vertices.size());
+    }
+  }
+
+
   std::cout << nbflips << " flips 2-3" << std::endl;
   assert(tds6.number_of_vertices()==8);
 //  std::cout << tds6.number_of_cells()<< " cells" << std::endl;
