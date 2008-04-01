@@ -233,7 +233,6 @@ struct HDS_graph_traits
 public :
   
   struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
-					//                                        public virtual boost::adjacency_graph_tag,
                                         public virtual boost::vertex_list_graph_tag,
                                         public virtual boost::edge_list_graph_tag
   {};
