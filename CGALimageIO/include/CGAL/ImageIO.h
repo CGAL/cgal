@@ -6,7 +6,8 @@
 // The files in this directory are part of the ImageIO Library.
 // You can redistribute them and/or  modify them under the terms of the
 // GNU Lesser General Public License as published by the Free Software Foundation;
-// version 2.1 of the License. See the file /usr/share/common-licenses/LGPL-2.1.
+// version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
