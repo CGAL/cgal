@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 
-#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/ipower.h>
 #include <CGAL/Polynomial/hgdelta_update.h>
 
 #ifndef CGAL_POLYNOMIAL_PRS_RESULTANT_H

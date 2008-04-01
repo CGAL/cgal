@@ -15,6 +15,7 @@ Algebraic_foundations/examples/Algebraic_foundations/fraction_traits.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/integralize.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
+Algebraic_foundations/include/CGAL/ipower.h -text
 Algebraic_foundations/package_info/Algebraic_foundations/maintainer -text
 Algebraic_foundations/test/Algebraic_foundations/CMakeLists.txt -text
 Algebraic_kernel_d/benchmark/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp -text
@@ -3206,7 +3207,6 @@ Polynomial/include/CGAL/Polynomial/Coercion_traits.h -text
 Polynomial/include/CGAL/Polynomial/bezout_matrix.h -text
 Polynomial/include/CGAL/Polynomial/determinant.h -text
 Polynomial/include/CGAL/Polynomial/hgdelta_update.h -text
-Polynomial/include/CGAL/Polynomial/ipower.h -text
 Polynomial/include/CGAL/Polynomial/may_have_common_factor.h -text
 Polynomial/include/CGAL/Polynomial/modular_filter.h -text
 Polynomial/include/CGAL/Polynomial/resultant.h -text

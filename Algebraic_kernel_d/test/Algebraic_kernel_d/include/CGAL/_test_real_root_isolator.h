@@ -17,7 +17,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 
-#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/ipower.h>
 /*#include <NiX/basic.h>
 #include <NiX/number_type_utils.h>*/
 

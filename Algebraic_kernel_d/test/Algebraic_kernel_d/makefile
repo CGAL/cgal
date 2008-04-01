@@ -16,10 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
-           -I../../../Algebraic_foundations/include \
-           -I../../../Number_types/include \
-           -I../../../Modular_arithmetic/include \
-           -I../../../Polynomial/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 

@@ -23,7 +23,7 @@
 #include <CGAL/Algebraic_kernel_d/Descartes.h>
 #include <CGAL/Algebraic_kernel_d/Real_roots.h>
 #include <CGAL/Algebraic_kernel_d/refine_zero_against.h>
-#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/ipower.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -15,7 +15,7 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_CONSTRUCT_BINARY_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/ipower.h>
 
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
