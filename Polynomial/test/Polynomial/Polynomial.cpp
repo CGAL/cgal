@@ -1,8 +1,8 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 
 #include <iostream>
 #include <cassert>

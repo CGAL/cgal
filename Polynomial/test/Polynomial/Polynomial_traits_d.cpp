@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include <CGAL/_test_basic.h>
+#include <CGAL/Test/_test_basic.h>
 
 #include <CGAL/Random.h>
 

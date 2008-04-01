@@ -16,7 +16,7 @@
 //    number types.
 
 #include <CGAL/basic.h>
-#include <CGAL/_test_basic.h>
+#include <CGAL/Test/_test_basic.h>
 
 #include <cstddef>
 #include <boost/static_assert.hpp>

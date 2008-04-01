@@ -8,7 +8,7 @@
 #include <cassert>
 #include <CGAL/Modular.h>
 
-#include <CGAL/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
 
 int main()
 {   
