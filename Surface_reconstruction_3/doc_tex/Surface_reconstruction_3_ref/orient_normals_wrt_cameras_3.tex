@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: orient_normals_wrt_cameras_3.tex
+% +------------------------------------------------------------------------+
+% | 01.04.2008   Laurent Saboret, Pierre Alliez
+% | Package: Package
+% |
+\RCSdef{\RCSorientnormalswrtcamerasRev}{$Id$}
+\RCSdefDate{\RCSorientnormalswrtcamerasDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{orient_normals_wrt_cameras_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+\ccInclude{CGAL/orient_normals_wrt_cameras_3.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{void orient_normals_wrt_cameras_3(VertexIterator first, VertexIterator beyond, PointMap const& vertex_point, NormalMap& vertex_normal, CamerasMap const& vertex_cameras);}
+{
+Orient the normals of the [first, beyond) range of vertices w.r.t. the position of cameras that reconstructed the points by photogrammetry.
+Preconditions:\begin{itemize}
+\item VertexIterator is a model of ForwardIterator.\item PointMap is a model of \ccc{boost::readable_property_map_tag}.\item NormalMap is a model of \ccc{boost::lvalue_property_map_tag}.\item CamerasMap is a model of \ccc{boost::readable_property_map_tag}. \end{itemize}
+}
+\ccGlue
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]range of vertices \item[beyond]range of vertices \item[\ccc{vertex_point}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal}]property map VertexIterator -$>$ Normal (in and out) \item[\ccc{vertex_cameras}]property map VertexIterator -$>$ pair of camera iterators \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class VertexIterator,   \\
+class PointMap,   \\
+class NormalMap,   \\
+class CamerasMap$>$  \\
+void  \\
+\ccc{orient_normals_wrt_cameras_3} (VertexIterator first, VertexIterator beyond, PointMap const \&\ccc{vertex_point}, NormalMap \&\ccc{vertex_normal}, CamerasMap const \&\ccc{vertex_cameras});  \\
+
+%END-AUTO(\ccParameters)
+
+\ccSeeAlso
+
+\ccExample
+
+TODO: add short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Package/orient_normals_wrt_cameras_3.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/orient_normals_wrt_cameras_3.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

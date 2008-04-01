@@ -30,13 +30,14 @@ CGAL_BEGIN_NAMESPACE
 /// Orient a 3D point's normal w.r.t. the position of cameras
 /// that reconstructed the point by photogrammetry.
 template < class Gt, ///< Geometric traits class.
-           class OrientedNormal_3, 
-           class InputIterator 
+           class OrientedNormal_3,
+           class InputIterator
 >
 void
-orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point position (in)
+orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point position
 			                      OrientedNormal_3& normal, ///< 3D point normal (in and out)
-										        InputIterator first_camera, InputIterator beyond_camera) ///< 3D point cameras (in)
+										        InputIterator first_camera,  ///< 3D point cameras
+                            InputIterator beyond_camera) ///< 3D point cameras
 {
     typedef typename Gt::FT       FT;
     typedef typename Gt::Point_3  Point;
@@ -112,9 +113,10 @@ orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point positio
 
 template < class VertexIterator, class PointMap, class NormalMap, class CamerasMap >
 void
-orient_normals_wrt_cameras_3(VertexIterator first, VertexIterator beyond, ///< range of vertices
+orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices
+                             VertexIterator beyond, ///< range of vertices
                              PointMap const& vertex_point, ///< property map VertexIterator -> Point_3
-                             NormalMap& vertex_normal, ///< property map VertexIterator -> Normal
+                             NormalMap& vertex_normal, ///< property map VertexIterator -> Normal (in and out)
                              CamerasMap const& vertex_cameras) ///< property map VertexIterator -> pair of camera iterators
 {
 	typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
@@ -123,8 +125,8 @@ orient_normals_wrt_cameras_3(VertexIterator first, VertexIterator beyond, ///< r
 	// iterate over input points and orient normals
 	for (VertexIterator it = first; it != beyond; it++)
   {
-      orient_normal_wrt_cameras_3<Gt>(get(vertex_point,it), 
-                                      vertex_normal[it], 
+      orient_normal_wrt_cameras_3<Gt>(get(vertex_point,it),
+                                      vertex_normal[it],
                                       get(vertex_cameras,it).first, get(vertex_cameras,it).second);
   }
 }
