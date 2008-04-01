@@ -73,10 +73,6 @@ Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
-#update_Delaunay_triangulation_2$(EXE_EXT): update_Delaunay_triangulation_2$(OBJ_EXT)
-#	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)update_Delaunay_triangulation_2 update_Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
-
-
 
 Delaunay_triangulation_stable_subset_2$(EXE_EXT): Delaunay_triangulation_stable_subset_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_stable_subset_2 Delaunay_triangulation_stable_subset_2$(OBJ_EXT) $(QT_LDFLAGS)
