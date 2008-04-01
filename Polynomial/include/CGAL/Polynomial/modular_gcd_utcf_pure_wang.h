@@ -46,10 +46,7 @@
 #include <CGAL/Polynomial/modular_gcd_utils.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Cache.h>
-
-
-#include <CGAL/wang.h>
-#include <CGAL/Wang_traits.h>
+#include <CGAL/Polynomial/Wang_traits.h>
 #include <CGAL/Algebraic_structure_traits_extended.h>
 
 
@@ -126,7 +123,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
 
     typedef Polynomial<NT> Poly;
     typedef Polynomial_traits_d<Poly> PT;
-    typedef CGAL::Wang_traits<Poly> WT_POLY;
+    typedef CGAL::CGALi::Wang_traits<Poly> WT_POLY;
     
     typename WT_POLY::Wang wang; 
     
