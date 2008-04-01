@@ -142,7 +142,7 @@ MACRO(QT3_AUTOMOC)
                               NAMES ${_basename}.h
                               PATHS ${_current_abs_PATH} ${CMAKE_CURRENT_SOURCE_DIR} ${_inc_DIRS}
                               NO_DEFAULT_PATH)
-                    MARK_AS_ADVANCED(${_header})
+                    set ( ${_header} ${${_header}} CACHE INTERNAL "hide this" FORCE )
 
                     if (NOT ${_header})
                       set( moc_source "${_current_abs_FILE}" )
