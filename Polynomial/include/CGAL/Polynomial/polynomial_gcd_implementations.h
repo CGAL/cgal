@@ -94,35 +94,6 @@ Polynomial<NT> gcd_Euclidean_ring(
     return p1;
 }
 
-
-template <class NT>
-inline
-Polynomial<NT> gcd_for_decomposible_fields(
-        Polynomial<NT> p1, Polynomial<NT> p2
-) {
-    // std::cout<<" gcd_decompos_field"<<std::endl;
-    typedef Polynomial<NT> POLY;
-    typedef typename CGAL::Fraction_traits<POLY>::Numerator_type INTPOLY;
-    typedef typename CGAL::Fraction_traits<POLY>::Denominator_type DENOM;
-    typedef typename INTPOLY::NT INTNT;
-    typename CGAL::Fraction_traits<POLY>::Decompose decompose;
-    typename CGAL::Fraction_traits<POLY>::Compose   compose;
-    
-    DENOM dummy;
-    p1.simplify_coefficients();
-    p2.simplify_coefficients();
-    INTPOLY p1i, p2i; 
-    decompose(p1,p1i, dummy);
-    decompose(p2,p2i, dummy);
-
-    INTPOLY d0 = CGALi::gcd_utcf(p1i, p2i);
-    POLY d = compose(d0, DENOM(1));
-    d /= d.unit_part();
-    d.simplify_coefficients();
-    return d;
-}
-
-
 template <class NT>
 inline
 NT content_utcf_(const Polynomial<NT>& p)

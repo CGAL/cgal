@@ -25,8 +25,6 @@ namespace CGALi{
 template <class NT> inline Polynomial<NT> gcd (const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Field_tag);
 template <class NT> inline Polynomial<NT> gcd_(const Polynomial<NT>&, const Polynomial<NT>&, Unique_factorization_domain_tag);
-template <class NT> inline Polynomial<NT> gcd_Field(Polynomial<NT>, Polynomial<NT>); 
-template <class NT> inline Polynomial<NT> gcd_for_decomposible_fields(Polynomial<NT>, Polynomial<NT>);
 
 
 template <class NT> inline NT gcd_utcf_(const NT& a, const NT& b){return NT(1);}
@@ -35,10 +33,10 @@ template <class NT> inline Polynomial<NT> gcd_utcf(const Polynomial<NT>&, const 
 template <class NT> inline Polynomial<NT> gcd_utcf_(const Polynomial<NT>&, const Polynomial<NT>&);
 template <class NT> inline Polynomial<NT> gcd_utcf_UFD( Polynomial<NT> , Polynomial<NT>) ;
 template <class NT> inline Polynomial<NT> gcd_utcf_Integral_domain(Polynomial<NT>, Polynomial<NT>);
+template <class NT> inline Polynomial<NT> gcd_Euclidean_ring(Polynomial<NT>, Polynomial<NT>); 
 
-template <class NT> inline Polynomial<NT> modular_gcd_utcf(const Polynomial<NT>&,const Polynomial<NT>&, Integral_domain_tag);
+template <class NT> inline Polynomial<NT> modular_gcd_utcf(const Polynomial<NT>&, const Polynomial<NT>&, Integral_domain_tag);
 template <class NT> inline Polynomial<NT> modular_gcd_utcf(const Polynomial<NT>&, const Polynomial<NT>&, Unique_factorization_domain_tag);
-template <class NT> inline Polynomial<NT> gcd_utcf_(const Polynomial<NT>&, const Polynomial<NT>&);
 
 // is fraction ? 
 template <class NT> inline Polynomial<NT> gcd_utcf_is_fraction_( const Polynomial<NT>&, const Polynomial<NT>&, ::CGAL::Tag_true); 

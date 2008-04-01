@@ -79,34 +79,34 @@ namespace CGALi {
 
 template <class NT> 
 inline
-Polynomial<NT> gcd_(const Polynomial<NT>& p1, 
-        const Polynomial<NT>& p2, Field_tag)
+Polynomial<NT> gcd_(
+        const Polynomial<NT>& p1, 
+        const Polynomial<NT>& p2, 
+        Field_tag)
 { 
     return CGAL::CGALi::gcd_utcf(p1,p2);
 }
 
 template <class NT> 
 inline
-Polynomial<NT> gcd_(const Polynomial<NT>& p1, 
-        const Polynomial<NT>& p2, Unique_factorization_domain_tag)
+Polynomial<NT> gcd_(
+        const Polynomial<NT>& p1, 
+        const Polynomial<NT>& p2, 
+        Unique_factorization_domain_tag)
 { 
-    // TODO for CGAL: use multivariate content 
-    typedef CGAL::Scalar_factor_traits<Polynomial<NT> > SFT; 
-    typedef typename SFT::Scalar Scalar;
-    typename SFT::Scalar_factor sfac; 
-    Scalar scontent1(sfac(p1));
-    Scalar scontent2(sfac(p2));
+    typedef Polynomial<NT> POLY;
+    typedef Polynomial_traits_d<POLY> PT;  
+    typedef typename PT::Innermost_coefficient IC; 
     
+    typename PT::Multivariate_content mcont; 
+    IC mcont_p1 = mcont(p1);
+    IC mcont_p2 = mcont(p2);
     
-        // TODO: can we rm  CGAL::CGALi::canonicalize_polynomial ? 
-    //      Polynomial<NT> result =  
-//        CGAL::CGALi::gcd_utcf(p1,p2)
-//           * Polynomial<NT>(CGAL::gcd(scontent1,scontent2));
-    Polynomial<NT> result; 
-    result = CGAL::CGALi::gcd_utcf(p1,p2)
-        * Polynomial<NT>(CGAL::gcd(scontent1,scontent2));
-        
-    return result; 
+    typename CGAL::Coercion_traits<POLY,IC>::Cast ictp; 
+    POLY p1_ = CGAL::integral_division(p1,ictp(mcont_p1));
+    POLY p2_ = CGAL::integral_division(p2,ictp(mcont_p2));
+            
+    return CGAL::CGALi::gcd_utcf(p1_, p2_) * ictp(CGAL::gcd(mcont_p1, mcont_p2)); 
 }
 
 
@@ -116,24 +116,7 @@ Polynomial<NT> gcd_(const Polynomial<NT>& p1,
  *  \relates CGAL::Polynomial
  *  \brief return the greatest common divisor of \c p1 and \c p2
  *
- *  \pre Requires \c NT to be a \c Field or a \c UFDomain.
- *
- *  CGALially, computation is performed ``denominator-free'' if
- *  supported by the coefficient type via \c CGAL::Fraction_traits.
- *  The gcd is computed from a polynomial remainder sequence (euclidean
- *  or subresultant.) By defining \c CGAL_POLY_USE_PRIMITIVE_GCD,
- *  the subresultant PRS can be replaced globally by the primitive PRS.
- *
- *  Mathematically, a gcd in NT[x] is defined only up to multiplication
- *  with a unit (invertible element) of the coefficient ring NT. This
- *  function returns a unit-normal gcd <I>d</I>, i.e.
- *  <I>d</I><TT>.unit_part() == NT(1)</TT>.
- *  If \c NT is a \c Field , all non-zero scalars are units and
- *  unit-normality means that \e d is normalized to have
- *  <I>d</I><TT>.lcoeff() == NT(1)</TT>.
- *  If \c NT is a \c UFDomain, then non-invertible scalar factors 
- *  <B>do</B> matter, and unit-normality typically means something
- *  like <I>d</I><TT>.lcoeff()</TT> being positive.
+ *  \pre Requires \c Innermost_coefficient to be a \c Field or a \c UFDomain.
  */
 template <class NT> 
 inline
@@ -200,8 +183,20 @@ gcd_utcf_is_fraction_(
         const Polynomial<NT>& p2, 
         ::CGAL::Tag_true)
 {
-    return CGALi::gcd_for_decomposible_fields(p1, p2);
+    typedef Polynomial<NT> POLY;
+    typedef Polynomial_traits_d<POLY> PT;
+    typedef Fraction_traits<POLY> FT;
+
+    typename FT::Denominator_type dummy;
+    typename FT::Numerator_type p1i, p2i; 
+    
+    typename FT::Decompose()(p1,p1i, dummy);
+    typename FT::Decompose()(p2,p2i, dummy);
+
+    typename Coercion_traits<POLY,typename FT::Numerator_type>::Cast cast;
+    return typename PT::Canonicalize()(cast(CGALi::gcd_utcf(p1i, p2i)));
 }
+
 template <class NT> Polynomial<NT> inline
 gcd_utcf_is_fraction_( 
         const Polynomial<NT>& p1, 
