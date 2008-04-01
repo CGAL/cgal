@@ -107,7 +107,7 @@ public:
 
 
   unsigned int number_visible(NT xmin, NT xmax, NT ymin, NT ymax) const {
-    typename Traits::Simulator::NT ntt(CGAL_KINETIC_NOTIFIER(GUI)->current_time());
+    typename Traits::Instantaneous_kernel::NT ntt(CGAL_KINETIC_NOTIFIER(GUI)->current_time());
     ik_.set_time(ntt);
     unsigned int ret=0;
     for (typename Traits::Active_points_2_table::Key_iterator
