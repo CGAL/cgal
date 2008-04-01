@@ -214,7 +214,9 @@ BOOL CGyrovizDoc_2::OnOpenDocument(LPCTSTR lpszPathName)
 			  AfxMessageBox("Unable to open file");
 			  return FALSE;
 		  }
-		  status_message("Delaunay triangulation (%lf s)",duration(init));
+		  m_gyroviz_dt.nw_add_constraints(m_cimg_seg_image, 1);
+		  status_message("Constrained Delaunay triangulation (%lf s)",duration(init));
+	  
 	  }
     else
 	  {

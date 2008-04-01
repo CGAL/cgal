@@ -29,7 +29,7 @@
 using namespace cimg_library;
 
 // Tds vertex class must inherit from Triangulation_vertex_base_with_info_2<CGAL::Point_3,K>
-template < class Gt, class Tds >
+template < class Gt, class Tds, class Itag >
 class Gyroviz_cdt2 : public CGAL::Constrained_Delaunay_triangulation_2<Gt, Tds, Itag>
 {
 	// Private types
@@ -49,6 +49,8 @@ public:
 	typedef typename Geom_traits::Point_3              Point_3;
 	typedef typename Geom_traits::Vector_2             Vector_2;
 	typedef typename Geom_traits::Vector_3             Vector_3;
+	typedef typename Geom_traits::Segment_2            Segment_2;
+	typedef typename Geom_traits::Segment_3            Segment_3;
 	typedef typename Geom_traits::Sphere_3             Sphere;
 	typedef typename Geom_traits::Iso_cuboid_3         Iso_cuboid_3;
 	typedef typename Base::Face_handle                 Face_handle;
@@ -78,6 +80,12 @@ public:
 
 	bool read_pnt(char *pFilename)
 	{
+		std::string temp ( pFilename );
+		std::string filename_without_path = temp.substr(temp.size()-15);
+		std::string extract_number = filename_without_path.substr(7,filename_without_path.size()-4);
+
+		int image_number = atoi(extract_number.c_str());
+
 		FILE *pFile = fopen(pFilename,"r");
 		if(pFile == NULL)
 			return false;
@@ -104,7 +112,7 @@ public:
 					Point_3 point_3(x,y,z);
 
 					Vertex_handle vh = this->insert(point_2);
-					vh->info() = Gyroviz_info_for_cdt2(point_3,false);
+					vh->info() = Gyroviz_info_for_cdt2(point_3,image_number,false);
 				}
 			}
 		}
@@ -115,13 +123,14 @@ public:
 
 
 	// flag the vertices positionned on the border and return a vector of these
-	std::vector<Point_2> add_on_border_2D_vertices(CImg <unsigned char> image)
+	std::vector<Point_2> set_on_border_2D_vertices(const CImg <unsigned char> & image)
 	{
 		std::vector<Point_2> vector_of_border_points;
 		Finite_vertices_iterator fv = this->finite_vertices_begin();
 		for(; fv != this->finite_vertices_end(); ++fv)
 		{
-			// if pixel any of 9x9 surrounding pixels is on border keep vertex(white color is used in frei-chen gradient operator)
+			// if pixel any of 3x3 surrounding pixels is on border 
+			// keep vertex(white color is used in frei-chen gradient operator)
 
 
 			if (image((unsigned int)fv->point().x(),(unsigned int)fv->point().y(),0,0)==255)
@@ -248,7 +257,7 @@ public:
 
 
 	// (DEPRECATED) this function will flag on the input image the vertices on the border 
-	CImg <unsigned char> image_with_vertex_on_border(CImg <unsigned char> image) 
+	CImg <unsigned char> image_with_vertex_on_border(const CImg <unsigned char>& image) 
 	{
 		CImg <unsigned char> result = image;
 
@@ -274,7 +283,7 @@ public:
 			for(int j =i+1; j<vector_of_border_points.size(); ++j)
 			{
 				Segment_2 s(vector_of_border_points[i],vector_of_border_points[j]);
-				vector_of_segments.pushback(s);
+				vector_of_segments.push_back(s);
 			}
 		}
 
@@ -283,7 +292,7 @@ public:
 
 
 	// routine to "navigate" in the segment
-	Point_2 point_on_segment(Vector_2 v, Point_2 source, int u)
+	Point_2 point_on_segment(Vector_2 v, Point_2 source, double u)
 	{
 		return source + u*v;
 	}
@@ -293,13 +302,13 @@ public:
 	// adaptation of the Needleman-Wunsch algorithm for global alignement
 	// paper reference:
 	// "A general method applicable to the search for similarities in the amino acid sequence of two proteins"
-	std::vector<Segment_2> nw_add_constraints(CImg <unsigned char> image)
+	std::vector<Segment_2> nw_add_constraints(const CImg <unsigned char>& image, int gap_score)
 	{
-		
-		std::vector<Point_2> vector_of_border_points = add_on_border_2D_vertices(image);
-		std::vector<Segment_2> vector_of_segments    = link_points_on_border(vector_of_border_points);
-		
-		Point_2 origin_vertex;
+
+		std::vector<Point_2>   vector_of_border_points = set_on_border_2D_vertices(image);
+		std::vector<Segment_2> vector_of_segments      = link_points_on_border(vector_of_border_points);
+
+		Point_2 source_vertex;
 		Point_2 end_vertex;
 		Vector_2 v;
 		std::vector<Segment_2> vector_of_constraints;
@@ -309,7 +318,7 @@ public:
 
 		// the similarity matrix i will use is 
 		// S(Border/Segment) = +1
-		// S(Gap/Segment) = -2
+		// S(Gap/Segment) = gap_score (default : -2)
 
 		for(int i = 0; i<vector_of_segments.size(); ++i)
 		{
@@ -317,20 +326,31 @@ public:
 			source_vertex = s.source();
 			end_vertex = s.target();
 			v = end_vertex - source_vertex;
-			length_curr_segment = (int)ceil(s.squared_length()));
-			
+			length_curr_segment = (int)ceil(sqrt(s.squared_length()));
+			int current_gap_score = gap_score;
+
 			for(int j = 0; j<length_curr_segment; ++j)
 			{
-				if(image((unsigned int)point_on_segment(v, source_vertex, j).x(), (unsigned int)point_on_segment(v, source_vertex, j).y(), 0, 0) == 255)
-					++global_score;
+				if(image((unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).x(),
+					(unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).y(), 0, 0) == 255)
+				{
+					global_score = global_score + 3;
+					current_gap_score = gap_score;
+				}
 				else
-					global_score = global_score - 2;
+				{
+					global_score = global_score - current_gap_score;
+					current_gap_score++;
+				}
 			}
 			if(global_score >= 0)
 			{
-				this->insert_constraint(origin_vertex,end_vertex);
-				vector_of_constraints.pushback(s);
+				this->insert_constraint(source_vertex,end_vertex);
+				vector_of_constraints.push_back(s);
+				global_score = 0;
 			}
+			else
+				global_score = 0;
 		}
 		return vector_of_constraints;
 	}
@@ -342,8 +362,8 @@ public:
 	// "Identification of common molecular subsequences"
 	void sw_add_constraints()
 	{
-			Point_2 origin_vertex;
-			Point_2 end_vertex;
+		Point_2 origin_vertex;
+		Point_2 end_vertex;
 	}
 
 
@@ -373,7 +393,7 @@ public:
 		Finite_vertices_iterator fv = this->finite_vertices_begin();
 		for(; fv != this->finite_vertices_end(); ++fv)
 		{
-			const Point_3& p = fv->info();
+			const Point_3& p = fv->info().get_point3();
 
 			// update bbox
 			xmin = (std::min)(p.x(),xmin);
@@ -400,13 +420,12 @@ public:
 		/*Finite_vertices_iterator*/ fv = this->finite_vertices_begin();
 		for(; fv != this->finite_vertices_end(); ++fv)
 		{
-			const Point_3& p = fv->info();
+			const Point_3& p = fv->info().get_point3();
 			sq_radius += sqd(p, m_barycenter);
 		}
 		sq_radius /= number_of_vertices();
 		m_standard_deviation = CGAL::sqrt(sq_radius);
 	}
-
 
 
 	// draw 2D cdt vertices
@@ -428,24 +447,14 @@ public:
 
 	// draw 2D only points near detected borders 
 	void gl_draw_on_border_2D_vertices(const unsigned char r, const unsigned char g,
-		const unsigned char b, float size, CImg <unsigned char> image)
+		const unsigned char b, float size, const CImg <unsigned char>& image)
 	{
 		::glPointSize(size);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_POINTS);
 
-
-		//Finite_vertices_iterator fv = this->finite_vertices_begin();
-		//for(; fv != this->finite_vertices_end(); ++fv)
-		//{
-		// if pixel any of 3x3 surrounding pixels is on border keep vertex(white color is used in frei-chen gradient operator)
-		//	if (fv->info().get_flag())
-		//	{
-		//		::glVertex2d(fv->point().x(),fv->point().y());
-		//	}
-
-		std::vector<Point_2> vector_of_border_points = add_on_border_2D_vertices(image);
-		for(int i=0; i<vector_of_border_points.size(), ++i)
+		std::vector<Point_2> vector_of_border_points = set_on_border_2D_vertices(image);
+		for(int i=0; i<vector_of_border_points.size(); ++i)
 		{
 			::glVertex2d(vector_of_border_points[i].x(),vector_of_border_points[i].y());
 		}
@@ -454,52 +463,69 @@ public:
 
 
 	// draw 2D cdt constrained edges
-	void gl_draw_2D_constrained_edges(unsigned char r, unsigned char g,
-		unsigned char b, float line_width, CImg <unsigned char> image)
+	void gl_draw_2D_constrained_edges(const unsigned char r, const unsigned char g,
+		const unsigned char b, float line_width/*, const CImg <unsigned char>& image, int gap_score*/)
 	{
 		::glColor3ub(r,g,b);
 		::glLineWidth(line_width);
 		::glBegin(GL_LINES);
-		
-		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image);
-		for(int i=0; i<vector_of_constraints.size(), ++i)
+
+		//std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image, gap_score);
+		Finite_edges_iterator fe = this->finite_edges_begin();
+		for(; fe != this->finite_edges_end(); ++fe)
 		{
-			::glVertex2d(vector_of_constraints[i].source().x(),vector_of_constraints[i].source().y());
-			::glVertex2d(vector_of_constraints[i].target().x(),vector_of_constraints[i].target().y());
+			if(fe->first->is_constrained(fe->second))
+			{
+				Point_2 p1 = fe->first->vertex(ccw(fe->second))->point();
+				Point_2 p2 = fe->first->vertex(cw(fe->second))->point();
+				::glVertex2d(p1.x(), p1.y());
+				::glVertex2d(p2.x(), p2.y());
+			}
+
 		}
-		::glEnd();
-		//Finite_edges_iterator fe = this->finite_edges_begin();
-		//for(; fe != this->finite_edges_end(); ++fe)
+		//for(int i=0; i<vector_of_constraints.size(); ++i)
 		//{
-		//	if(fe->first->is_constrained(fe->second))
-		//	{
-		//		Point p1 = fe->first->vertex(ccw(fe->second))->point();
-		//		Point p2 = fe->first->vertex(cw(fe->second))->point();
-		//		::glVertex2d(p1.x(),p1.y());
-		//		::glVertex2d(p2.x(),p2.y());
-		//	}
+		//	::glVertex2d(vector_of_constraints[i].source().x(),vector_of_constraints[i].source().y());
+		//	::glVertex2d(vector_of_constraints[i].target().x(),vector_of_constraints[i].target().y());
 		//}
+		::glEnd();
+
 	}
 
 
 	// draw 2D cdt constrained delaunay triangles
 	void gl_draw_2D_constrained_delaunay_triangles(const unsigned char r, const unsigned char g,
-		const unsigned char b)
+		const unsigned char b, float line_width /*, CImg <unsigned char> image, int gap_score*/)
 	{
+		//::glColor3ub(r,g,b);
+		//::glBegin(GL_TRIANGLES);
+		//Finite_faces_iterator ff = this->finite_faces_begin();
+		//for(; ff != this->finite_faces_end(); ++ff)
+		//{
+		//	Vertex_handle v1 = ff->vertex(0);
+		//	Vertex_handle v2 = ff->vertex(1);
+		//	Vertex_handle v3 = ff->vertex(2);
+		//	::glVertex2d(v1->point().x(), v1->point().y());
+		//	::glVertex2d(v2->point().x(), v2->point().y());
+		//	::glVertex2d(v3->point().x(), v3->point().y());
+		//} 
+		//::glEnd();
 
-		::glColor3ub(r,g,b);
-		::glBegin(GL_TRIANGLES);
-
-		Finite_faces_iterator ff = this->finite_faces_begin();
-		for(; ff != this->finite_faces_end(); ++ff)
+		::glLineWidth(line_width);
+		::glBegin(GL_LINES);
+		Finite_edges_iterator fe = this->finite_edges_begin();
+		for(; fe != this->finite_edges_end(); ++fe)
 		{
-			Vertex_handle v1 = ff->vertex(0);
-			Vertex_handle v2 = ff->vertex(1);
-			Vertex_handle v3 = ff->vertex(2);
-			::glVertex2d(v1->point().x(), v1->point().y());
-			::glVertex2d(v2->point().x(), v2->point().y());
-			::glVertex2d(v3->point().x(), v3->point().y());
-		} 
+			if(fe->first->is_constrained(fe->second))
+				::glColor3ub(255,0,0);
+			else
+				::glColor3ub(r,g,b);
+
+			Point_2 p1 = fe->first->vertex(ccw(fe->second))->point();
+			Point_2 p2 = fe->first->vertex(cw(fe->second))->point();
+			::glVertex2d(p1.x(), p1.y());
+			::glVertex2d(p2.x(), p2.y());
+		}
 		::glEnd();
 	} 
 
@@ -522,15 +548,14 @@ public:
 		::glEnd();
 	}
 
+
 	// 3D projection of the tracked 2D constrained edges
 	void gl_draw_soup_constrained_edges(const unsigned char r, const unsigned char g,
-		const unsigned char b, const float width, CImg <unsigned char> image)
+		const unsigned char b, const float width, const CImg <unsigned char>& image)
 	{
-
 		::glLineWidth(width);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_LINES);
-
 
 		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image);
 		for(int i=0; i<vector_of_constraints.size(), ++i)
@@ -543,18 +568,7 @@ public:
 				vector_of_constraints[i].target()->info().get_point3().z());
 		}
 		::glEnd();
-		//Finite_edges_iterator fe = this->finite_edges_begin();
-		//for(; fe != this->finite_edges_end(); ++fe)
-		//{
-		//	if(fe->first->is_constrained(fe->second))
-		//	{
-		//		Point_3 p1 = fe->first->vertex(ccw(fe->second))->info().get_point3();
-		//		Point_3 p2 = fe->first->vertex(cw(fe->second))->info().get_point3();
-		//		::glVertex3d(p1.x(), p1.y(), p1.z());
-		//		::glVertex3d(p2.x(), p2.y(), p2.z());
-		//	}
 
-		//}
 	}
 
 	// 3D projection of the tracked 2D constrained triangulation
@@ -582,4 +596,4 @@ public:
 
 };
 
-#endif // _Gyroviz_dt2_
+#endif // _Gyroviz_cdt2_

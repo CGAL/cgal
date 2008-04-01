@@ -37,8 +37,6 @@ public:
   bool m_has_moved;
   bool m_add_constraint;
 
-  bool m_spray;
-
   Point_2 m_query;
   double m_xmin,m_xmax;
   double m_ymin,m_ymax;
@@ -52,9 +50,11 @@ public:
   // options
   bool m_view_all_2D_vertices;
   bool m_view_border_2D_vertices;
+  bool m_view_constraints;
   bool m_view_2D_delaunay_triangulation;
   bool m_view_delaunay_edges;
   bool m_view_constrained_edges;
+
   bool m_view_all_cdt_edges;
 
   bool m_view_original;
@@ -142,6 +142,8 @@ public:
   afx_msg void OnUpdateRenderTriangles(CCmdUI *pCmdUI);
   afx_msg void OnRenderBordervertices();
   afx_msg void OnUpdateRenderBordervertices(CCmdUI *pCmdUI);
+  afx_msg void OnRenderConstraints();
+  afx_msg void OnUpdateRenderConstraints(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in GyrovizView_2.cpp

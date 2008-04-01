@@ -19,12 +19,12 @@ protected:
 
 public:
   Gyroviz_info_for_cdt2(){}
-	Gyroviz_info_for_cdt2(Point_3 p, int cam_num, bool f):point(p),camera_number(cam_num),flag(f){}
+  Gyroviz_info_for_cdt2(Point_3 p, int cam_num, bool f):point(p),camera_number(cam_num),flag(f){}
 
   // accessors
   const	Point_3	    get_point3() const { return	point; }
   const int         get_camera_number() const { return camera_number; }
-  const	bool	      get_flag() const { return	flag;	}
+  const	bool	    get_flag() const { return	flag;	}
   
   // modificators
   void	set_point3(Point_3 point3) { point = point3; }

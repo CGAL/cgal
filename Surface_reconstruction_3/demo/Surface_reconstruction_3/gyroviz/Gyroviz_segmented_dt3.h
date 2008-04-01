@@ -84,7 +84,7 @@ private:
   
   
   // points near detected borders 
-  bool on_border_2D_vertices(Point_2 p2, CImg <unsigned char> image)
+  bool on_border_2D_vertices(Point_2 p2, const CImg <unsigned char>& image)
   {
 
     // if pixel any of 9x9 surrounding pixels is on border 
@@ -204,7 +204,7 @@ private:
 
 
 
- bool read_pnt_and_image(char *pFilename, CImg <unsigned char> image, int image_number)
+ bool read_pnt_and_image(char *pFilename, const CImg <unsigned char>& image, int image_number)
   {
     //extract from pFilename the image number  
     std::string temp ( pFilename );
@@ -256,7 +256,7 @@ private:
   }
 
 
-bool read_set_of_pnt(char *pFilename, CImg <unsigned char> image, int image_number)
+bool read_set_of_pnt(char *pFilename, const CImg <unsigned char>& image, int image_number)
   {
 
 

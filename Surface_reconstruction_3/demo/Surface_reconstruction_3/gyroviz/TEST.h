@@ -798,3 +798,229 @@ void inside_outside()
 
 //  }
 //}
+
+// draw only points near detected borders 
+	void add_constraints(const CImg <unsigned char>& image)
+	{
+		Point_2 origin_vertex;
+		Point_2 end_vertex;
+
+		Finite_vertices_iterator fv = this->finite_vertices_begin();
+		for(; fv != this->finite_vertices_end(); ++fv)
+		{
+			if (fv->info().get_flag()) // returns if on edge or not
+			{
+				origin_vertex = fv->point();
+				while (image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()-1,0,0)== 255 ||
+					image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y(),0,0)  == 255 ||
+					image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()+1,0,0)== 255 ||
+					image((unsigned int)origin_vertex.x(),  (unsigned int)origin_vertex.y()+1,0,0)== 255 ||
+					image((unsigned int)origin_vertex.x(),  (unsigned int)origin_vertex.y()-1,0,0)== 255 ||
+					image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y()-1,0,0)== 255 ||
+					image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y(),0,0)  == 255 ||
+					image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y()+1,0,0)== 255)
+				{
+					if (image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()-1,0,0)== 255)
+					{//upper left
+						if(image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()-1,0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()-1); 
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()--;
+							origin_vertex.y()--; 
+						}
+					}
+					else if(image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y(),0,0)  == 255)
+					{//middle left
+						if(image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y(),0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()); 
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()--; 
+						}
+					}
+					else if(image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()+1,0,0)== 255)
+					{//lower left
+						if(image((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()+1,0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x()-1,(unsigned int)origin_vertex.y()+1);
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()--;
+							origin_vertex.y()++; 
+						}
+					}
+
+					else if(image((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()+1,0,0)== 255)
+					{//lower middle
+						if(image((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()+1,0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()+1);
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.y()++; 
+						}
+					}
+					else if(image((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()-1,0,0)== 255)
+					{//upper middle
+						if(image((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()-1,0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x(),(unsigned int)origin_vertex.y()-1);
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.y()--; 
+						}
+					}
+
+					else if(image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y()-1,0,0)== 255)
+					{//upper right
+						if(image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y()-1,0,3)==255)
+						{
+							end_vertex((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y()-1);
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()++;
+							origin_vertex.y()--; 
+						}
+					}
+
+					else if(image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y(),0,0)  == 255)
+					{//middle right
+						if(image((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y(),0,3)==255)
+						{ 
+							end_vertex((unsigned int)origin_vertex.x()+1,(unsigned int)origin_vertex.y());
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()++;
+						}
+					}
+
+					else
+					{//lower right
+						if(image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()+1,0,3)==255)
+						{ 
+							end_vertex((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()+1);
+							this->insert_constraint(origin_vertex,end_vertex);
+							break;
+						}
+						else
+						{
+							origin_vertex.x()++;
+							origin_vertex.y()++; 
+						}
+					}
+				}
+			}
+		}
+	}          
+
+
+	// draw 2D cdt constrained edges
+	void gl_draw_2D_constrained_edges(const unsigned char r, const unsigned char g,
+		const unsigned char b, float line_width, const CImg <unsigned char>& image, int gap_score)
+	{
+		::glColor3ub(r,g,b);
+		::glLineWidth(line_width);
+		::glBegin(GL_LINES);
+
+		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image, gap_score);
+		for(int i=0; i<vector_of_constraints.size(); ++i)
+		{
+			::glVertex2d(vector_of_constraints[i].source().x(),vector_of_constraints[i].source().y());
+			::glVertex2d(vector_of_constraints[i].target().x(),vector_of_constraints[i].target().y());
+		}
+		::glEnd();
+		//Finite_edges_iterator fe = this->finite_edges_begin();
+		//for(; fe != this->finite_edges_end(); ++fe)
+		//{
+		//	if(fe->first->is_constrained(fe->second))
+		//	{
+		//		Point p1 = fe->first->vertex(ccw(fe->second))->point();
+		//		Point p2 = fe->first->vertex(cw(fe->second))->point();
+		//		::glVertex2d(p1.x(),p1.y());
+		//		::glVertex2d(p2.x(),p2.y());
+		//	}
+		//}
+	}
+
+
+	// draw 2D cdt constrained delaunay triangles
+	void gl_draw_2D_constrained_delaunay_triangles(const unsigned char r, const unsigned char g,
+		const unsigned char b, const CImg <unsigned char>& image, int gap_score)
+	{
+
+		::glColor3ub(r,g,b);
+		::glBegin(GL_TRIANGLES);
+
+		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image, gap_score);
+
+		Finite_faces_iterator ff = this->finite_faces_begin();
+		for(; ff != this->finite_faces_end(); ++ff)
+		{
+			Vertex_handle v1 = ff->vertex(0);
+			Vertex_handle v2 = ff->vertex(1);
+			Vertex_handle v3 = ff->vertex(2);
+			::glVertex2d(v1->point().x(), v1->point().y());
+			::glVertex2d(v2->point().x(), v2->point().y());
+			::glVertex2d(v3->point().x(), v3->point().y());
+		} 
+		::glEnd();
+	} 
+
+	// 3D projection of the tracked 2D constrained edges
+	void gl_draw_soup_constrained_edges(const unsigned char r, const unsigned char g,
+		const unsigned char b, const float width, const CImg <unsigned char>& image)
+	{
+
+		::glLineWidth(width);
+		::glColor3ub(r,g,b);
+		::glBegin(GL_LINES);
+
+
+		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image);
+		for(int i=0; i<vector_of_constraints.size(), ++i)
+		{
+			::glVertex3d(vector_of_constraints[i].source()->info().get_point3().x(),
+				vector_of_constraints[i].source()->info().get_point3().y(),
+				vector_of_constraints[i].source()->info().get_point3().z());
+			::glVertex3d(vector_of_constraints[i].target()->info().get_point3().x(),
+				vector_of_constraints[i].target()->info().get_point3().y(),
+				vector_of_constraints[i].target()->info().get_point3().z());
+		}
+		::glEnd();
+		//Finite_edges_iterator fe = this->finite_edges_begin();
+		//for(; fe != this->finite_edges_end(); ++fe)
+		//{
+		//	if(fe->first->is_constrained(fe->second))
+		//	{
+		//		Point_3 p1 = fe->first->vertex(ccw(fe->second))->info().get_point3();
+		//		Point_3 p2 = fe->first->vertex(cw(fe->second))->info().get_point3();
+		//		::glVertex3d(p1.x(), p1.y(), p1.z());
+		//		::glVertex3d(p2.x(), p2.y(), p2.z());
+		//	}
+
+		//}
+	}

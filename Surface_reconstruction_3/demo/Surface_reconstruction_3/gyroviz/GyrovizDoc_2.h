@@ -14,18 +14,24 @@
 using namespace cimg_library;
 
 // This demo 
-#include "Gyroviz_dt2.h"
-
+//#include "Gyroviz_dt2.h"
+#include "Gyroviz_cdt2.h"
 
 // Gyroviz's Delaunay triangulation 2-3
-typedef CGAL::Triangulation_vertex_base_with_info_2<Gyroviz_info_for_dt2,K> Vb;
-typedef CGAL::Triangulation_face_base_2<K> Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
-typedef Gyroviz_dt2<K,Tds>         Dt2;
-typedef Dt2::Face_handle Face_handle;
-typedef Dt2::Finite_faces_iterator Finite_faces_iterator;
-typedef Dt2::Finite_edges_iterator Finite_edges_iterator;
-typedef Dt2::Finite_vertices_iterator Finite_vertices_iterator;
+//typedef CGAL::Triangulation_vertex_base_with_info_2<Gyroviz_info_for_dt2,K> Vb;
+//typedef CGAL::Triangulation_face_base_2<K> Fb;
+//typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
+//typedef Gyroviz_dt2<K,Tds>         Dt2;
+//typedef Dt2::Face_handle Face_handle;
+//typedef Dt2::Finite_faces_iterator Finite_faces_iterator;
+//typedef Dt2::Finite_edges_iterator Finite_edges_iterator;
+//typedef Dt2::Finite_vertices_iterator Finite_vertices_iterator;
+typedef CGAL::Triangulation_vertex_base_with_info_2<Gyroviz_info_for_cdt2,K> CVb;
+typedef CGAL::Constrained_triangulation_face_base_2<K> CFb;
+typedef CGAL::Triangulation_data_structure_2<CVb,CFb> CTds;
+typedef CGAL::Exact_predicates_tag                  Itag;
+typedef Gyroviz_cdt2<K,CTds, Itag>					CDt2;
+
 
 
 
@@ -38,7 +44,7 @@ protected: // create from serialization only
   // Attributes
 public:
 
-  CImg<unsigned char> m_cimg_interm_image;
+  CImg <unsigned char> m_cimg_interm_image;
   CImg<unsigned char> m_cimg_gray_image;
   CImg<unsigned char> m_cimg_filt_image;
   CImg<unsigned char> m_cimg_seg_image;
@@ -50,17 +56,27 @@ public:
 
 
   // Triangulation
-  Dt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
+  //Dt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
+  CDt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
 
 // Public methods
 public:
 
   // Get triangulation.
-  Dt2& get_dt2()
+  //Dt2& get_dt2()
+  //{
+  //  return m_gyroviz_dt;
+  //}
+  //const Dt2& get_dt2() const
+  //{
+  //  return m_gyroviz_dt;
+  //}
+
+  CDt2& get_cdt2()
   {
     return m_gyroviz_dt;
   }
-  const Dt2& get_dt2() const
+  const CDt2& get_cdt2() const
   {
     return m_gyroviz_dt;
   }
@@ -96,7 +112,7 @@ public:
   virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 
 
-  //unsigned char* cimg_image_multiplexer_char(CImg<unsigned char> image)
+  //unsigned char* cimg_image_multiplexer_char(const CImg <unsigned char>& image)
   //{
   //  int ix,iy,i=0;
 
@@ -113,7 +129,7 @@ public:
   //  }
   //  return result;
   //}
-  unsigned char* cimg_image_multiplexer_char(CImg<unsigned char> image)
+  unsigned char* cimg_image_multiplexer_char(const CImg <unsigned char>& image)
   {
     int ix,iy,i=0;
 

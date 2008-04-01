@@ -150,7 +150,7 @@ BEGIN
         MENUITEM "Save input point set &as...\tCtrl+S", ID_FILE_SAVE_AS
         MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
         MENUITEM SEPARATOR
-        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
@@ -173,6 +173,7 @@ BEGIN
         MENUITEM "Segmented\tS",                ID_RENDER_SEGMENTED
         MENUITEM "All Vertices\tA",             ID_RENDER_POINTS
         MENUITEM "Border Vertices\tB",          ID_RENDER_BORDERVERTICES
+        MENUITEM "Constraints\tC",              ID_RENDER_CONSTRAINTS
         MENUITEM "Triangles\tT",                ID_RENDER_TRIANGLES
         MENUITEM SEPARATOR
         MENUITEM "Zoom in window",              ID_RENDER_ZOOM
@@ -228,6 +229,7 @@ BEGIN
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     "P",            ID_RECONSTRUCTION_GYROVIZ, VIRTKEY, NOINVERT
     "M",            ID_RECONSTRUCTION_SURFACEMESHING, VIRTKEY, NOINVERT
+    "A",            ID_RENDER_ARCBALL,      VIRTKEY, CONTROL, NOINVERT
     "B",            ID_RENDER_BORDERVERTICES, VIRTKEY, NOINVERT
     "C",            ID_RENDER_CONTOUR,      VIRTKEY, NOINVERT
     "D",            ID_RENDER_DELAUNAYEDGES, VIRTKEY, NOINVERT
@@ -242,9 +244,9 @@ BEGIN
     "1",            ID_RENDER_ZOOM1,        VIRTKEY, NOINVERT
     VK_OEM_PLUS,    ID_RENDER_ZOOMIN,       VIRTKEY, SHIFT, NOINVERT
     VK_OEM_MINUS,   ID_RENDER_ZOOMOUT,      VIRTKEY, NOINVERT
-    "R",            ID_RENDERCOFF_RAYS,     VIRTKEY, NOINVERT
     "I",            ID_RENDERCOFF_INSIDE,   VIRTKEY, NOINVERT
-    "A",            ID_RENDER_ARCBALL,      VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_RENDERCOFF_RAYS,     VIRTKEY, NOINVERT
+    "C",            ID_RENDER_CONSTRAINTS,  VIRTKEY, ALT, NOINVERT
 END
 
 

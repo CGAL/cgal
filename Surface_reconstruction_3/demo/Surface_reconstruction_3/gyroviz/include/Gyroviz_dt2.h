@@ -231,7 +231,7 @@ public:
 
   // draw only points near detected borders 
   void gl_draw_on_border_2D_vertices(const unsigned char r, const unsigned char g,
-    const unsigned char b, float size, CImg <unsigned char> image)
+    const unsigned char b, float size, const CImg <unsigned char>& image)
   {
     ::glPointSize(size);
     ::glColor3ub(r,g,b);
