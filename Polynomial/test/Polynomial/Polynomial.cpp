@@ -503,7 +503,7 @@ void bigcdres(CGAL::Integral_domain_tag) {
 }
 
 template <class POLY>
-void test_sqff_utcf_(const POLY& poly){
+void test_sqff_utcf_(const POLY& poly, int n){
     typedef CGAL::Polynomial_traits_d<POLY> PT;
 
     std::vector<POLY> fac;
@@ -511,8 +511,8 @@ void test_sqff_utcf_(const POLY& poly){
     std::back_insert_iterator<std::vector<POLY> > fac_bi(fac);
     std::back_insert_iterator<std::vector<int>  > mul_bi(mul);
     
-    int n;
-    n = CGAL::CGALi::square_free_factorization_utcf(poly, fac_bi, mul_bi);
+    assert(n == 
+            CGAL::CGALi::square_free_factorization_utcf(poly, fac_bi, mul_bi));
 
     assert((int) mul.size() == n);
     assert((int) fac.size() == n);
@@ -536,44 +536,38 @@ template <class POLY_1>
 void test_sqff_utcf(const POLY_1& a1,const POLY_1& b1,const POLY_1& c1){
     typedef CGAL::Polynomial<POLY_1>  POLY_2; 
  
-    test_sqff_utcf_(POLY_1(0));
-    test_sqff_utcf_(POLY_1(1));
-    test_sqff_utcf_(POLY_1(2));
-    test_sqff_utcf_(a1);
-    test_sqff_utcf_(a1*a1);
-    test_sqff_utcf_(a1*a1*b1*b1*b1);
-    test_sqff_utcf_(a1*POLY_1(5));
-    test_sqff_utcf_(a1*a1*POLY_1(5));
-    test_sqff_utcf_(a1*a1*b1*b1*POLY_1(5));
-
+    test_sqff_utcf_(POLY_1(0), 0);
+    test_sqff_utcf_(POLY_1(1), 0);
+    test_sqff_utcf_(POLY_1(2), 0);
+    test_sqff_utcf_(a1, 1);
+    test_sqff_utcf_(a1*a1, 1);
+    test_sqff_utcf_(a1*a1*b1,2);
+    test_sqff_utcf_(a1*POLY_1(5),1);
 
     POLY_2 a2(a1,b1,c1);
     POLY_2 b2(a1,c1);
     POLY_2 c2(b1,a1,b1);
  
-    test_sqff_utcf_(POLY_2(0));
-    test_sqff_utcf_(POLY_2(1));
-    test_sqff_utcf_(POLY_2(2));
+    test_sqff_utcf_(POLY_2(0), 0);
+    test_sqff_utcf_(POLY_2(1), 0);
+    test_sqff_utcf_(POLY_2(2), 0);
 
-    test_sqff_utcf_(a2);
-    test_sqff_utcf_(a2*a2);
-    test_sqff_utcf_(a2*a2*b2*b2*b2);
-    test_sqff_utcf_(a2*POLY_2(5));
-    test_sqff_utcf_(a2*a2*POLY_2(5));
-    test_sqff_utcf_(a2*a2*b2*b2*POLY_2(5));
+    test_sqff_utcf_(a2,1);
+    test_sqff_utcf_(a2*a2,1);
+    test_sqff_utcf_(a2*a2*b2,2);
+    test_sqff_utcf_(a2*POLY_2(5),1);
+    test_sqff_utcf_(a2*a2*POLY_2(5),1);
     
-
     // non regular polynomials
-    test_sqff_utcf_(a1*a2);
-    test_sqff_utcf_(a1*a2*a2);
-    test_sqff_utcf_(a1*a2*a2*b2*b2*b2);
-    test_sqff_utcf_(a1*a2*POLY_2(5));
-    test_sqff_utcf_(a1*a2*a2*POLY_2(5));
-    test_sqff_utcf_(a1*a2*a2*b2*b2*POLY_2(5));
-    test_sqff_utcf_(a1*a1*a2);
-    test_sqff_utcf_(a1*a1*a2*a2);
-    test_sqff_utcf_(a1*b1*b1*a2*a2);
-    test_sqff_utcf_(a1*a1*b1*b1*a2*a2);
+    test_sqff_utcf_(a1*a2,2);
+    test_sqff_utcf_(a1*a2*a2,2);
+    test_sqff_utcf_(a1*a2*b2*b2,3);
+    test_sqff_utcf_(a1*a2*POLY_2(5),2);
+    test_sqff_utcf_(a1*a2*a2*POLY_2(5),2);
+    test_sqff_utcf_(a1*a2*a2*b2*POLY_2(5),3);
+    test_sqff_utcf_(a1*a1*a2,2);
+    test_sqff_utcf_(a1*a1*a2*a2,2);
+    test_sqff_utcf_(a1*b1*b1*a2*a2,3);
 
 }
 
@@ -581,17 +575,6 @@ void test_sqff_utcf(const POLY_1& a1,const POLY_1& b1,const POLY_1& c1){
 
 template <class AT>
 void psqff(){
-    {
-       typedef typename AT::Integer Integer;
-       typedef typename AT::Rational Rational;
-       typedef CGAL::Sqrt_extension<Rational,Rational> NT;
-       typedef CGAL::Polynomial<NT> POLY;
-       // square-free factorization (i.e. factorization by multiplicities)
-       POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
-       POLY b1(NT(9,2,7), NT(5,11,7), NT(2));
-       POLY c1(NT(2,8,7), NT(6,3,7), NT(5));
-       test_sqff_utcf(a1,b1,c1);
-    }
     {
         typedef typename AT::Integer NT;
         typedef CGAL::Polynomial<NT> POLY_1; 
@@ -626,6 +609,17 @@ void psqff(){
        typedef typename AT::Integer Integer; //UFD domain
        typedef typename AT::Rational Rational; //UFD domain
        typedef CGAL::Sqrt_extension<Rational,Integer> NT;
+       typedef CGAL::Polynomial<NT> POLY;
+       // square-free factorization (i.e. factorization by multiplicities)
+       POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
+       POLY b1(NT(9,2,7), NT(5,11,7), NT(2));
+       POLY c1(NT(2,8,7), NT(6,3,7), NT(5));
+       test_sqff_utcf(a1,b1,c1);
+    }
+    {
+       typedef typename AT::Integer Integer;
+       typedef typename AT::Rational Rational;
+       typedef CGAL::Sqrt_extension<Rational,Rational> NT;
        typedef CGAL::Polynomial<NT> POLY;
        // square-free factorization (i.e. factorization by multiplicities)
        POLY a1(NT(3,4,7), NT(2,3,7), NT(3));
