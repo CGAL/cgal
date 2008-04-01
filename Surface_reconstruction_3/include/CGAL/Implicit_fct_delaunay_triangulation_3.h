@@ -21,9 +21,11 @@
 #ifndef CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 #define CGAL_IMPLICIT_FCT_DELAUNAY_TRIANGULATION_H
 
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/surface_reconstruction_assertions.h>
+
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/boost/graph/properties.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,7 +50,7 @@ public:
 
   // Repeat Triangulation_cell_base_3 public types
   /// @cond SKIP_IN_MANUAL
-  typedef Gt Geom_traits; ///< Kernel's geometric traits
+  typedef Gt Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
   typedef typename Cb::Cell_handle Cell_handle;
   typedef typename Cb::Vertex_handle Vertex_handle;
   template < typename TDS2 >
@@ -109,7 +111,7 @@ public:
 
   // Repeat Triangulation_vertex_base_3 public types
   /// @cond SKIP_IN_MANUAL
-  typedef Gt Geom_traits; ///< Kernel's geometric traits
+  typedef Gt Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
   typedef typename Vb::Cell_handle Cell_handle;
   template < typename TDS2 >
   struct Rebind_TDS {
@@ -205,11 +207,11 @@ private:
 /// changes in a geometric traits class the Point_3 type to Point_with_normal_3.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
-template <class Gt>
-struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public Gt
+/// @param BaseGt   Kernel's regular geometric traits.
+template <class BaseGt>
+struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public BaseGt
 {
-  typedef Point_with_normal_3<Gt> Point_3;
+  typedef Point_with_normal_3<BaseGt> Point_3;
 };
 
 
@@ -223,22 +225,22 @@ struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public Gt
 /// Model of the ImplicitFctDelaunayTriangulation_3 concept.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
-/// @param Gt2  Geometric traits class / Point_3 is a model of PointWithNormal_3.
-/// @param Tds  Model of TriangulationDataStructure_3. The cell base class must be
+/// @param BaseGt   Kernel's regular geometric traits.
+/// @param Gt       Geometric traits class / Point_3 is a model of PointWithNormal_3.
+/// @param Tds      Model of TriangulationDataStructure_3. The cell base class must be
 /// a model of ImplicitFctDelaunayTriangulationCellBase_3 and the vertex base class
 /// must be a model of ImplicitFctDelaunayTriangulationVertexBase_3.
 
-template <class Gt,
-          class Gt2 = Implicit_fct_delaunay_triangulation_default_geom_traits_3<Gt>,
-          class Tds = Triangulation_data_structure_3<Implicit_fct_delaunay_triangulation_vertex_base_3<Gt2>,
-                                                     Implicit_fct_delaunay_triangulation_cell_base_3<Gt2> > >
-class Implicit_fct_delaunay_triangulation_3 : public Delaunay_triangulation_3<Gt2, Tds>
+template <class BaseGt,
+          class Gt = Implicit_fct_delaunay_triangulation_default_geom_traits_3<BaseGt>,
+          class Tds = Triangulation_data_structure_3<Implicit_fct_delaunay_triangulation_vertex_base_3<Gt>,
+                                                     Implicit_fct_delaunay_triangulation_cell_base_3<Gt> > >
+class Implicit_fct_delaunay_triangulation_3 : public Delaunay_triangulation_3<Gt,Tds>
 {
 // Private types
 private:
 
-  typedef Delaunay_triangulation_3<Gt2, Tds>  Base;
+  typedef Delaunay_triangulation_3<Gt,Tds>  Base;
 
   // Auxiliary class to build a normals iterator
   template <class Node>
@@ -257,7 +259,7 @@ public:
   // Repeat Delaunay_triangulation_3 public types
   /// @cond SKIP_IN_MANUAL
   typedef Tds Triangulation_data_structure;
-  typedef Gt2  Geom_traits;
+  typedef Gt  Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
   typedef typename Base::Segment      Segment;
   typedef typename Base::Triangle     Triangle;
   typedef typename Base::Tetrahedron  Tetrahedron;
@@ -495,6 +497,83 @@ private:
 	}
 
 }; // end of Implicit_fct_delaunay_triangulation_3
+
+
+/// Helper class: type of the "vertex_point" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+class Implicit_fct_delaunay_triangulation_vertex_point_const_map 
+{
+public:
+    typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
+    typedef typename Gt::Point_3 Point_3;  
+
+    // Property maps required types
+    typedef boost::readable_property_map_tag        category;
+    typedef Point_3                                 value_type;
+    typedef value_type                              reference;
+    typedef typename Triangulation::Vertex_iterator key_type;
+
+    Implicit_fct_delaunay_triangulation_vertex_point_const_map(Triangulation const&) {}
+
+    /// Free function to access the map elements.
+    friend inline 
+    reference 
+    get(Implicit_fct_delaunay_triangulation_vertex_point_const_map const&, key_type const& v)
+    {
+      return v->point();
+    }
+};
+
+/// Free function to get the "vertex_point" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+inline
+Implicit_fct_delaunay_triangulation_vertex_point_const_map<BaseGt,Gt,Tds> 
+get(vertex_point_t, Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> const& tr) 
+{
+  Implicit_fct_delaunay_triangulation_vertex_point_const_map<BaseGt,Gt,Tds> aMap(tr);
+  return aMap;
+}
+
+
+/// Helper type to get the "vertex_normal" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+enum vertex_normal_t { vertex_normal } ;
+
+/// Helper class: type of the "vertex_normal" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+class Implicit_fct_delaunay_triangulation_vertex_normal_map 
+    : public boost::put_get_helper< typename Gt::Point_3::Normal&, 
+                                    Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> >
+{
+public:
+    typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
+    typedef typename Gt::Point_3::Normal Normal;  
+
+    // Property maps required types
+    typedef boost::lvalue_property_map_tag          category;
+    typedef Normal                                  value_type;
+    typedef Normal&                                 reference;
+    typedef typename Triangulation::Vertex_iterator key_type;
+
+    Implicit_fct_delaunay_triangulation_vertex_normal_map(Triangulation&) {}
+
+    /// Access the map elements.
+    reference operator[](key_type const& v) const { return v->normal(); }
+};
+
+/// Free function to get the "vertex_normal" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+inline
+Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> 
+get(vertex_normal_t, Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>& tr) 
+{
+  Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> aMap(tr);
+  return aMap;
+}
 
 
 CGAL_END_NAMESPACE

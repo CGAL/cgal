@@ -38,15 +38,15 @@ The full template declaration is:
 %START-AUTO(\ccParameters)
 
 template$<$  \\
-class Gt,   \\
-class Gt2 = \ccc{Implicit_fct_delaunay_triangulation_default_geom_traits_3<Gt>},   \\
-class Tds = \ccc{Triangulation_data_structure_3<Implicit_fct_delaunay_triangulation_vertex_base_3<Gt2>}, \ccc{Implicit_fct_delaunay_triangulation_cell_base_3<Gt2>} $>$$>$   \\
+class BaseGt,   \\
+class Gt = \ccc{Implicit_fct_delaunay_triangulation_default_geom_traits_3<BaseGt>},   \\
+class Tds = \ccc{Triangulation_data_structure_3<Implicit_fct_delaunay_triangulation_vertex_base_3<Gt>}, \ccc{Implicit_fct_delaunay_triangulation_cell_base_3<Gt>} $>$$>$   \\
 class \ccc{Implicit_fct_delaunay_triangulation_3};
 
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[Gt]Kernel's geometric traits. \item[Gt2]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell base class must be a model of \ccc{ImplicitFctDelaunayTriangulationCellBase_3} and the vertex base class must be a model of \ccc{ImplicitFctDelaunayTriangulationVertexBase_3}. \end{description}
+\item[BaseGt]Kernel's geometric traits. \item[Gt]Geometric traits class / \ccc{Point_3} is a model of \ccc{PointWithNormal_3}. \item[Tds]Model of \ccc{TriangulationDataStructure_3}. The cell base class must be a model of \ccc{ImplicitFctDelaunayTriangulationCellBase_3} and the vertex base class must be a model of \ccc{ImplicitFctDelaunayTriangulationVertexBase_3}. \end{description}
 \end{description}
 
 %END-AUTO(\ccParameters)

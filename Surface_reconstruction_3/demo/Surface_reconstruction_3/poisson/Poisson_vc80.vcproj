@@ -134,7 +134,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900"
+				AdditionalOptions="/Zm900  /D &quot;NDEBUG&quot;"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
@@ -296,10 +296,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\orient_normals_wrt_cameras_3.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Poisson.h"
 				>
 			</File>
@@ -375,6 +371,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\k_nearest_neighbor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\orient_normals_wrt_cameras_3.h"
 				>
 			</File>
 			<File

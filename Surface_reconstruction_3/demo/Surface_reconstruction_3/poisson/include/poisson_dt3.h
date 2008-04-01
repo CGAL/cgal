@@ -6,19 +6,63 @@
 
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <Gyroviz_point_3.h>
-#include <orient_normals_wrt_cameras_3.h>
+#include <CGAL/orient_normals_wrt_cameras_3.h>
+
+// Forward reference
+template <class BaseGt, class Gt, class Tds> class Poisson_dt3;
 
 
 /// Helper class: Poisson_dt3_default_geom_traits 
 /// changes in a geometric traits class the Point_3 type to Gyroviz_point_3.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
-template <class Gt>
-struct Poisson_dt3_default_geom_traits : public Gt 
+/// @param BaseGt   Kernel's regular geometric traits.
+template <class BaseGt>
+struct Poisson_dt3_default_geom_traits : public BaseGt 
 { 
-  typedef Gyroviz_point_3<Gt> Point_3;
+  typedef Gyroviz_point_3<BaseGt> Point_3;
 };
+
+
+/// Helper type to get the "vertex_cameras" property map
+/// of a Poisson_dt3 object.
+enum vertex_cameras_t { vertex_cameras } ;
+
+/// Helper class: type of the "vertex_cameras" property map
+/// of a Poisson_dt3 object.
+template <class BaseGt, class Gt, class Tds>
+class Poisson_dt_vertex_cameras_const_map 
+{
+public:
+    typedef Poisson_dt3<BaseGt,Gt,Tds> Triangulation;
+    typedef typename Gt::Point_3::Camera_const_iterator Camera_const_iterator;  
+
+    // Property maps required types
+    typedef boost::readable_property_map_tag                        category;
+    typedef std::pair<Camera_const_iterator,Camera_const_iterator>  value_type;
+    typedef value_type                                              reference;
+    typedef typename Triangulation::Vertex_iterator                 key_type;
+
+    Poisson_dt_vertex_cameras_const_map(Triangulation const&) {}
+
+    /// Free function to access the map elements.
+    friend inline
+    reference get(Poisson_dt_vertex_cameras_const_map const&, key_type const& v)
+    {
+      return std::make_pair(v->point().cameras_begin(), v->point().cameras_end());
+    }
+};
+
+/// Free function to get the "vertex_cameras" property map
+/// of a Poisson_dt3 object.
+template <class BaseGt, class Gt, class Tds>
+inline
+::Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> 
+get(::vertex_cameras_t, ::Poisson_dt3<BaseGt,Gt,Tds> const& tr) 
+{
+    ::Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> aMap(tr);
+    return aMap;
+}
 
 
 /// The Poisson_dt3 class is a 3D triangulation class that provides:
@@ -30,22 +74,22 @@ struct Poisson_dt3_default_geom_traits : public Gt
 /// Model of the ImplicitFctDelaunayTriangulation_3 concept.
 ///
 /// @heading Parameters:
-/// @param Gt   Kernel's geometric traits.
-/// @param Gt2  Geometric traits class / Point_3 is Gyroviz_point_3.
-/// @param Tds  Model of TriangulationDataStructure_3. The cell base class must be
+/// @param BaseGt   Kernel's regular geometric traits.
+/// @param Gt       Geometric traits class / Point_3 is Gyroviz_point_3.
+/// @param Tds      Model of TriangulationDataStructure_3. The cell base class must be
 /// a model of ImplicitFctDelaunayTriangulationCellBase_3 and the vertex base class
 /// must be a model of ImplicitFctDelaunayTriangulationVertexBase_3.
 
-template <class Gt,
-          class Gt2 = Poisson_dt3_default_geom_traits<Gt>,
-          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Implicit_fct_delaunay_triangulation_vertex_base_3<Gt2>,
-                                                           CGAL::Implicit_fct_delaunay_triangulation_cell_base_3<Gt2> > >
-class Poisson_dt3 : public CGAL::Implicit_fct_delaunay_triangulation_3<Gt, Gt2, Tds>
+template <class BaseGt,
+          class Gt = Poisson_dt3_default_geom_traits<BaseGt>,
+          class Tds = CGAL::Triangulation_data_structure_3<CGAL::Implicit_fct_delaunay_triangulation_vertex_base_3<Gt>,
+                                                           CGAL::Implicit_fct_delaunay_triangulation_cell_base_3<Gt> > >
+class Poisson_dt3 : public CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>
 {
 // Private types
 private:
 
-  typedef CGAL::Implicit_fct_delaunay_triangulation_3<Gt, Gt2, Tds>  Base;
+  typedef CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Base;
 
 // Public types
 public:
@@ -53,7 +97,7 @@ public:
   // Repeat Implicit_fct_delaunay_triangulation_3 public types
   /// @cond SKIP_IN_MANUAL
   typedef Tds Triangulation_data_structure;
-  typedef Gt2  Geom_traits;
+  typedef Gt  Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
   typedef typename Base::Segment      Segment;
   typedef typename Base::Triangle     Triangle;
   typedef typename Base::Tetrahedron  Tetrahedron;
@@ -693,9 +737,13 @@ public:
   /// that reconstructed the points by photogrammetry.
 	void orient_normals_wrt_cameras()
 	{
-	  orient_normals_wrt_cameras_3(points_begin(), points_end());
+    CGAL::orient_normals_wrt_cameras_3(vertices_begin(), vertices_end(),
+                                       get(CGAL::vertex_point, *this),
+                                       get(CGAL::vertex_normal, *this),
+                                       get(vertex_cameras, *this));
 	}
 
 }; // end of class Poisson_dt3
+
 
 #endif // POISSON_DT3_H
