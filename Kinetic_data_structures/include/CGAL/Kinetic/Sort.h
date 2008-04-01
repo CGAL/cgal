@@ -288,7 +288,9 @@ public:
 	  }
 	}
       }
-      if (compare_(  aot_->at(it->object()), aot_->at(next(it)->object()), simulator_->current_time()) == CGAL::LARGER) {
+      if (compare_.sign_at(  aot_->at(it->object()), 
+                             aot_->at(next(it)->object()),
+                             simulator_->current_time()) == CGAL::LARGER) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
 	std::cerr << "ERROR: kinetic objects " << it->object() << " and "
 		  << next(it)->object() << " are out of order.\n";
