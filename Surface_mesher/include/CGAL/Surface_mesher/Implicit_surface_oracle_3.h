@@ -243,8 +243,8 @@ namespace CGAL {
       }; // end operator()(Surface_3, Line_3)
 
       // debug function
-      static std::string debug_point(const Surface_3& surface,
-                                     const Point& p) 
+      std::string debug_point(const Surface_3& surface,
+                              const Point& p) 
       {
         std::stringstream s;
         s << p << " (distance=" 
@@ -301,7 +301,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
-            mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
+//             mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
             visitor.new_point(mid);
             return make_object(mid);
           }
@@ -341,6 +341,7 @@ namespace CGAL {
         const FT squared_radius = 
           GT().compute_squared_radius_3_object()(sphere);
         const FT radius = CGAL::sqrt(squared_radius);
+        typename Self::Intersect_3 intersect = oracle.intersect_3_object();
 
         typename CGAL::Random_points_on_sphere_3<Point,
           Point_creator> random_point_on_sphere(CGAL::to_double(radius));
@@ -361,18 +362,17 @@ namespace CGAL {
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
           std::cerr << "test " 
-                    << Self::Intersect_3::debug_point(surface, center)
-                    << ", " << Self::Intersect_3::debug_point(surface, p);
+                    << intersect.debug_point(surface, center)
+                    << ", " << intersect.debug_point(surface, p);
 #endif
 
-          Object o = oracle.intersect_3_object()(surface,
-                                                 segment_3(center, p));
+          Object o = intersect(surface, segment_3(center, p));
           if (const Point* intersection = object_cast<Point>(&o)) {
             *out++= *intersection;
             --n;
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
             std::cerr << " = "
-                      << Self::Intersect_3::debug_point(surface, *intersection)
+                      << intersect.debug_point(surface, *intersection)
                       << "\n";
 #endif
           }
