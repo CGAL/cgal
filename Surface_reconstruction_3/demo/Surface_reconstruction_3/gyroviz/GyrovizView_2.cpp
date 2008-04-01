@@ -345,8 +345,8 @@ void CGyrovizView_2::OnPaint()
 		glPolygonMode(GL_BACK,GL_FILL);
 		::glColor3ub(255,255,255);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pDoc->m_cimg_interm_image.dimx(), pDoc->m_cimg_interm_image.dimy(), 0, GL_RGB, GL_UNSIGNED_BYTE, pDoc->m_original_image);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST /*GL_LINEAR*/);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST /*GL_LINEAR*/);
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -367,8 +367,8 @@ void CGyrovizView_2::OnPaint()
 		glPolygonMode(GL_BACK,GL_FILL);
 		::glColor3ub(255,255,255);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pDoc->m_cimg_gray_image.dimx(), pDoc->m_cimg_gray_image.dimy(), 0, GL_RGB, GL_UNSIGNED_BYTE, pDoc->m_grayscaled_image);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST /*GL_LINEAR*/);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST /*GL_LINEAR*/);
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -389,8 +389,8 @@ void CGyrovizView_2::OnPaint()
 		glPolygonMode(GL_BACK,GL_FILL);
 		::glColor3ub(255,255,255);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pDoc->m_cimg_filt_image.dimx(), pDoc->m_cimg_filt_image.dimy(), 0, GL_RGB, GL_UNSIGNED_BYTE, pDoc->m_filtered_image);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST /*GL_LINEAR*/);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST /*GL_LINEAR*/);
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -411,8 +411,8 @@ void CGyrovizView_2::OnPaint()
 		glPolygonMode(GL_BACK,GL_FILL);
 		::glColor3ub(255,255,255);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pDoc->m_cimg_seg_image.dimx(), pDoc->m_cimg_seg_image.dimy(), 0, GL_RGB, GL_UNSIGNED_BYTE, pDoc->m_segmented_image);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST /*GL_LINEAR*/);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST /*GL_LINEAR*/);
 		glEnable(GL_TEXTURE_2D);
 
 		glBegin(GL_QUADS);
@@ -429,7 +429,7 @@ void CGyrovizView_2::OnPaint()
 	{
 		//::glColor3ub(0,0,255);
 		/*pDoc->get_dt2().gl_draw_2D_vertices(0,0,255,4);*/
-		pDoc->get_cdt2().gl_draw_2D_vertices(0,0,255,4);
+		pDoc->get_cdt2().gl_draw_2D_vertices(0,0,255,2);
 	}
 
 
@@ -437,7 +437,7 @@ void CGyrovizView_2::OnPaint()
 	{
 		//::glColor3ub(255,0,0);
 		/*pDoc->get_dt2().gl_draw_on_border_2D_vertices(255,0,0,4,pDoc->m_cimg_seg_image);*/
-		pDoc->get_cdt2().gl_draw_on_border_2D_vertices(255,0,255,6,pDoc->m_cimg_seg_image);
+		pDoc->get_cdt2().gl_draw_on_border_2D_vertices(255,0,255,4,pDoc->m_cimg_seg_image);
 	}
 
 	if(m_view_constraints)
