@@ -4,8 +4,8 @@
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 
 #include <cstdlib>
 #include <sstream>

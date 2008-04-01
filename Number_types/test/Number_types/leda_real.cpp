@@ -3,8 +3,8 @@
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 
 int main() {
     typedef leda_real NT;

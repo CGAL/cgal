@@ -11,7 +11,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

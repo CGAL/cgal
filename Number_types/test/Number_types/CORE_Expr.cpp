@@ -2,8 +2,8 @@
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
 
 int main() {
     typedef CORE::Expr NT;

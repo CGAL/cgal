@@ -28,7 +28,7 @@
 //#include <CGAL/Vector_d.h> // TODO: Is this available in CGAL? CGAL/Vector_d?
 //#include <NiX/Matrix_d.h>
 
-#include <CGAL/_test_coercion_traits.h>
+#include <CGAL/Test/_test_coercion_traits.h>
 
 typedef CGAL::Interval_nt<false> Interval;  
 

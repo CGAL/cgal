@@ -7,10 +7,10 @@
 
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/Needs_parens_as_product.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
-#include <CGAL/_test_fraction_traits.h>
-#include <CGAL/_test_rational_traits.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
+#include <CGAL/Test/_test_fraction_traits.h>
+#include <CGAL/Test/_test_rational_traits.h>
 
 void test_io(){
     typedef CORE::BigRat NT;

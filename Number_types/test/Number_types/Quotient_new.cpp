@@ -2,10 +2,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/_test_algebraic_structure.h>
-#include <CGAL/_test_real_embeddable.h>
-#include <CGAL/_test_fraction_traits.h>
-#include <CGAL/_test_rational_traits.h>
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
+#include <CGAL/Test/_test_fraction_traits.h>
+#include <CGAL/Test/_test_rational_traits.h>
 
 template< class AT >
 void test_quotient() {
