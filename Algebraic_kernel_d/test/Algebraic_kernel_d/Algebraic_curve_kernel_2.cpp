@@ -20,7 +20,7 @@
 #define CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE 0
 #endif
 
-#define NiX_USE_QUADRATIC_REFINEMENT 1
+#define NiX_USE_QUADRATIC_REFINEMENT_BFI 1
 #define NiX_USE_INTERNAL_MODULAR_GCD 1
 
 #include <CGAL/Benchmark/Benchmark.hpp>
@@ -62,7 +62,7 @@ void test_algebraic_curve_kernel_2() {
 
 
     std::cout << "Filtered kernel..." << std::endl;
-    typedef CGAL::Filtered_algebraic_curve_kernel_2<Kernel_2>
+    typedef CGAL::Filtered_algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
            Filtered_kernel_2;
 
     CGAL::CGALi::test_algebraic_curve_kernel_2<Filtered_kernel_2>();
