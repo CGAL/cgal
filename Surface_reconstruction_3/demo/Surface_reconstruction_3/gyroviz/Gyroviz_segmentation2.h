@@ -18,15 +18,17 @@ using namespace cimg_library;
 inline
 CImg <unsigned char> to_grayscale(const CImg <unsigned char>& image)
 {
-  CImg <unsigned char> grayscale_img(image.width, image.height,1,3,0);
-  //3 channels (for instance RGB)
-  cimg_forXY(image,i,j) 
-  { 
-    grayscale_img(i,j,0,0) = (image(i,j,0,0) + image(i,j,0,2) + image(i,j,0,1))/3;
-    grayscale_img(i,j,0,1) =  grayscale_img(i,j,0,0);
-    grayscale_img(i,j,0,2) =  grayscale_img(i,j,0,0); 
-  }
-  return grayscale_img;
+	CImg <unsigned char> grayscale_img(image.width, image.height,1,3,0);
+	//3 channels (for instance RGB)
+	cimg_forXY(image,i,j) 
+	{ 
+		// The effective luminance of a pixel is calculated with the following formula:
+		// Y=0.3RED+0.59GREEN+0.11BLUE
+		grayscale_img(i,j,0,0) =  (char)(image(i,j,0,0)*0.3 + image(i,j,0,2)*0.59 + image(i,j,0,1)*0.11);
+		grayscale_img(i,j,0,1) =  grayscale_img(i,j,0,0);
+		grayscale_img(i,j,0,2) =  grayscale_img(i,j,0,0); 
+	}
+	return grayscale_img;
 } 
 
 

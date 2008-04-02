@@ -429,7 +429,7 @@ void CGyrovizView_2::OnPaint()
 	{
 		//::glColor3ub(0,0,255);
 		/*pDoc->get_dt2().gl_draw_2D_vertices(0,0,255,4);*/
-		pDoc->get_cdt2().gl_draw_2D_vertices(0,0,255,2);
+		pDoc->get_cdt2().gl_draw_2D_vertices(255,255,0,4);
 	}
 
 
