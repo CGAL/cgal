@@ -276,6 +276,26 @@ public:
     }
 };
 
+template < >
+class Benchmark_rep< leda_rational > {
+    const leda_rational& t;
+public:
+    //! initialize with a const reference to \a t.
+    Benchmark_rep( const leda_rational& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const { 
+            return 
+                out << "Rational(" << t.numerator() << "," 
+                    << t.denominator() << ")";
+    }
+
+    static std::string get_benchmark_name() {
+        return "Rational";
+    }
+
+};
+
+
 CGAL_END_NAMESPACE
 
 // Unary + is missing for leda::rational
