@@ -48,11 +48,11 @@
 #include <NTL/ZZX.h>
 
 #ifdef CGAL_USE_LEDA
-#include<CGAL/LEDA/integer.h>
+#include<CGAL/leda_integer.h>
 #endif
 
 #ifdef LiS_HAVE_CORE
-#include<CGAL/CORE/BigInt.h>
+#include<CGAL/CORE_BigInt.h>
 #endif
 
 namespace CGAL{
@@ -69,7 +69,7 @@ namespace CGALi {
 
 // Forward
 template <class NT> 
-Polynomial<NT> gcd_utcf_(
+Polynomial<NT> gcd_utcf(
         const Polynomial<NT>& FF1 ,
         const Polynomial<NT>& FF2 );
  
@@ -125,7 +125,7 @@ modular_NTL_gcd_for_univariate_integer_polynomials
     return g;
 }
 
- } // namespace CGALi
+
 
 //#if CGAL_USE_INTERNAL_MODULAR_GCD 
 
@@ -168,6 +168,8 @@ gcd(const Polynomial<CORE::BigInt>& p1,
 
 //#endif //CGAL_USE_INTERNAL_MODULAR_GCD 
 
+
+  } // namespace CGALi
 
 } // namespace CGAL
 
