@@ -278,6 +278,105 @@ Uncertain<bool> operator!=(const T & a, Uncertain<T> const& b)
 }
 
 
+// Comparison operators (useful for enums only, I guess (?) ).
+
+template < typename T >
+inline
+Uncertain<bool> operator<(Uncertain<T> a, Uncertain<T> b)
+{
+  if (a.sup() < b.inf())
+    return true;
+  if (a.inf() >= b.sup())
+    return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator<(Uncertain<T> a, T b)
+{
+  if (a.sup() < b)
+    return true;
+  if (a.inf() >= b)
+    return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator<(T a, Uncertain<T> b)
+{
+  if (a < b.inf())
+    return true;
+  if (a >= b.sup())
+    return false;
+  return Uncertain<bool>::indeterminate();
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>(Uncertain<T> a, Uncertain<T> b)
+{
+  return b < a;
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>(Uncertain<T> a, T b)
+{
+  return b < a;
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>(T a, Uncertain<T> b)
+{
+  return b < a;
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator<=(Uncertain<T> a, Uncertain<T> b)
+{
+  return !(b < a);
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator<=(Uncertain<T> a, T b)
+{
+  return !(b < a);
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator<=(T a, Uncertain<T> b)
+{
+  return !(b < a);
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>=(Uncertain<T> a, Uncertain<T> b)
+{
+  return !(a < b);
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>=(Uncertain<T> a, T b)
+{
+  return !(a < b);
+}
+
+template < typename T >
+inline
+Uncertain<bool> operator>=(T a, Uncertain<T> b)
+{
+  return !(a < b);
+}
+
+
 // Maker function (a la std::make_pair).
 
 template < typename T >
@@ -296,13 +395,61 @@ const Uncertain<T> & make_uncertain(const Uncertain<T> &t)
 
 
 // opposite
-template < typename T >
+template < typename T > // should be constrained only for enums.
 inline
-Uncertain<T> opposite(const Uncertain<T> &u)
+Uncertain<T> operator-(const Uncertain<T> &u)
 {
-  return Uncertain<T>(opposite(u.sup()), opposite(u.inf()));
+  return Uncertain<T>(-u.sup(), -u.inf());
 }
 
+// "sign" multiplication.
+// Should be constrained only for "sign" enums, useless for bool.
+// Well, Uncertain<> should probably be split into Uncertain_bool (std::bool_set) and Uncertain_enum<>.
+template < typename T >
+Uncertain<T> operator*(Uncertain<T> a, Uncertain<T> b)
+{
+  if (a.inf() >= 0)                                   // e>=0
+  {
+    // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
+    // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
+    // b~=0     [a.sup()*b.inf(); a.sup()*b.sup()]
+    T aa = a.inf(), bb = a.sup();
+    if (b.inf() < 0)
+    {
+        aa = bb;
+        if (b.sup() < 0)
+            bb = a.inf();
+    }
+    return Uncertain<T>(aa * b.inf(), bb * b.sup());
+  }
+  else if (a.sup()<=0)                                // e<=0
+  {
+    // b>=0     [a.inf()*b.sup(); a.sup()*b.inf()]
+    // b<=0     [a.sup()*b.sup(); a.inf()*b.inf()]
+    // b~=0     [a.inf()*b.sup(); a.inf()*b.inf()]
+    T aa = a.sup(), bb = a.inf();
+    if (b.inf() < 0)
+    {
+        aa=bb;
+        if (b.sup() < 0)
+            bb=a.sup();
+    }
+    return Uncertain<T>(bb * b.sup(), aa * b.inf());
+  }
+  else                                          // 0 \in [inf();sup()]
+  {
+    if (b.inf()>=0)                           // d>=0
+      return Uncertain<T>(a.inf() * b.sup(), a.sup() * b.sup());
+    if (b.sup()<=0)                           // d<=0
+      return Uncertain<T>(a.sup() * b.inf(), a.inf() * b.inf());
+                                                // 0 \in d
+    T tmp1 = a.inf() * b.sup();
+    T tmp2 = a.sup() * b.inf();
+    T tmp3 = a.inf() * b.inf();
+    T tmp4 = a.sup() * b.sup();
+    return Uncertain<T>((std::min)(tmp1, tmp2), (std::max)(tmp3, tmp4));
+  }
+}
 
 // enum_cast overload
 

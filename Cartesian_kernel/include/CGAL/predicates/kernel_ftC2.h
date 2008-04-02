@@ -295,16 +295,18 @@ CGAL_KERNEL_MEDIUM_INLINE
 typename Compare<FT>::result_type
 compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b) 
 {
+   typedef typename Compare<FT>::result_type result_type;
+
    if (CGAL_NTS is_zero(l1a))  // l1 is horizontal
-    return CGAL_NTS is_zero(l2b) ? SMALLER
+    return CGAL_NTS is_zero(l2b) ? result_type(SMALLER)
 	                         : CGAL_NTS sign(l2a) * CGAL_NTS sign(l2b);
    if (CGAL_NTS is_zero(l2a)) // l2 is horizontal
-    return CGAL_NTS is_zero(l1b) ? LARGER
+    return CGAL_NTS is_zero(l1b) ? result_type(LARGER)
 	                         : - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
    if (CGAL_NTS is_zero(l1b)) return CGAL_NTS is_zero(l2b) ? EQUAL : LARGER;
    if (CGAL_NTS is_zero(l2b)) return SMALLER;
-   int l1_sign = - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
-   int l2_sign = - CGAL_NTS sign(l2a) * CGAL_NTS sign(l2b);
+   result_type l1_sign = - CGAL_NTS sign(l1a) * CGAL_NTS sign(l1b);
+   result_type l2_sign = - CGAL_NTS sign(l2a) * CGAL_NTS sign(l2b);
 
    if (l1_sign < l2_sign) return SMALLER;
    if (l1_sign > l2_sign) return LARGER;
