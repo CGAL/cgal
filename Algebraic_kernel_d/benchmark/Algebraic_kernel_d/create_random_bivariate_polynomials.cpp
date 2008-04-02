@@ -17,9 +17,8 @@
 #include <CGAL/Benchmark/Option_parser.hpp>
 
 
-#include <NiX/Arithmetic_traits.h>
-#include <NiX/NT_traits.h>
-#include <NiX/Polynomial.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Polynomial.h>
 
 template<class NT>
 std::vector<NT> randvector(int degree,long bitsize) {
@@ -51,10 +50,10 @@ int main( int argc, char** argv ) {
     int cs  = std::atoi(argv[2]);
     int no  = std::atoi(argv[3]);
 
-    typedef NiX::CORE_arithmetic_traits AT;
-    typedef AT::Integer Integer;
-    typedef AT::Poly_int1 Poly_int1;
-    typedef AT::Poly_int2 Poly_int2;
+    typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
+    typedef Arithmetic_kernel::Integer Integer;
+    typedef CGAL::Polynomial<Integer> Poly_int1;
+    typedef CGAL::Polynomial<Poly_int1> Poly_int2;
 
     srand48(time(NULL));
     // Create random polynomial of given degree

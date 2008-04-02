@@ -17,10 +17,9 @@
 #include <CGAL/Benchmark/Option_parser.hpp>
 
 
-#include <NiX/Arithmetic_traits.h>
-#include <NiX/NT_traits.h>
-#include <NiX/Polynomial.h>
-#include <NiX/resultant.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial/resultant.h>
 
 template<class NT>
 std::vector<NT> randvector(int degree,long bitsize) {
@@ -52,11 +51,11 @@ int main( int argc, char** argv ) {
     int cs  = std::atoi(argv[2]);
     int no  = std::atoi(argv[3]);
 
-    typedef NiX::CORE_arithmetic_traits AT;
-    typedef AT::Integer Integer;
-    typedef AT::Poly_int1 Poly_int1;
-    typedef AT::Poly_int2 Poly_int2;
-    typedef NiX::Polynomial<Poly_int2> Poly_int3;
+    typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
+    typedef Arithmetic_kernel::Integer Integer;
+    typedef CGAL::Polynomial<Integer> Poly_int1;
+    typedef CGAL::Polynomial<Poly_int1> Poly_int2;
+    typedef CGAL::Polynomial<Poly_int2> Poly_int3;
 
     srand48(time(NULL));
     // Create random polynomial of given degree
@@ -87,11 +86,18 @@ int main( int argc, char** argv ) {
 
     CGAL::set_ascii_mode(std::cout);
 
-    std::cout << (no*(no-1)/2) << std::endl;
+    std::cout << no + (no*(no-1)/2) << std::endl;
+
+    for(int i = 0 ; i < no; i++) {
+        std::cout << CGAL::CGALi::resultant(surfaces[i],
+                                            CGAL::diff(surfaces[i])) 
+                  << std::endl;
+    }
 
     for(int i = 0 ; i < no; i++) {
         for(int j = i+1; j < no; j++) {
-            std::cout << NiX::resultant(surfaces[i],surfaces[j]) << std::endl;
+            std::cout << CGAL::CGALi::resultant(surfaces[i],surfaces[j]) 
+                      << std::endl;
         }
     }
             
