@@ -48,6 +48,10 @@ _test_circulator( const Triangulation &T )
   eit=T.edges_begin();
   {
     cc0=cc=T.incident_cells(*eit);
+
+    Cell_circulator i = cc0;
+    CGAL_For_all(i, cc0) { *i; }
+
     Cell_handle ch = cc0; // Test the conversion.
     (void) ch;
     do {
