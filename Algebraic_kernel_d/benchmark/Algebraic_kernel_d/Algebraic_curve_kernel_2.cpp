@@ -379,9 +379,8 @@ int main( int argc, char** argv ) {
         typedef AcX::Algebraic_curve_pair_2<Curve_2> Curve_pair_2;
             
         typedef CGAL::Algebraic_kernel_1<Coefficient> Kernel_1;
-        typedef CGAL::Algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
-            Kernel_2;
-        typedef CGAL::Filtered_algebraic_curve_kernel_2<Kernel_2>
+        
+        typedef CGAL::Filtered_algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
             Filtered_kernel_2;
         
                 
