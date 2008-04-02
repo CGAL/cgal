@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "GyrovizDoc_2.h"
 #include "MainFrm.h"
-#include "DialogOptions_3.h"
+#include "DialogOptions_2.h"
 
 using namespace cimg_library;
 
