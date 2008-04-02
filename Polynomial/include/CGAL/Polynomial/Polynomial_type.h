@@ -534,12 +534,13 @@ public:
     typename Coercion_traits<NTX,NT>::Type 
     evaluate_absolute(const NTX& x) const {
         typedef typename Coercion_traits<NTX,NT>::Type Type;
-        Type xx(x);
+        typedef typename Coercion_traits<NTX,NT>::Cast Cast;
+        Type xx(Cast()(x));
         CGAL_precondition( degree() >= 0 );
         typename Real_embeddable_traits<Type>::Abs abs;
         int d = degree();
-        Type y(abs(Type(this->ptr()->coeff[d])));
-        while (--d >= 0) y = y*xx + abs(Type(this->ptr()->coeff[d]));
+        Type y(abs(Cast()(this->ptr()->coeff[d])));
+        while (--d >= 0) y = y*xx + abs(Cast()(this->ptr()->coeff[d]));
         return y;
     } 
 

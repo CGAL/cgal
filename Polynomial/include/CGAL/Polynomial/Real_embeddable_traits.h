@@ -77,7 +77,7 @@ template< class NT > class Real_embeddable_traits< Polynomial<NT> >
         result_type operator()( const Polynomial<NT>& x ) const {
             CGAL_precondition(x.degree() >= 0);
             NT_to_double to_double;
-            return RET(::boost::make_transform_iterator(x.begin(),to_double),
+            return result_type(::boost::make_transform_iterator(x.begin(),to_double),
                        ::boost::make_transform_iterator(x.end()  ,to_double));
         }
     };
@@ -90,7 +90,7 @@ template< class NT > class Real_embeddable_traits< Polynomial<NT> >
         result_type operator()( const Polynomial<NT>& x ) const {
             CGAL_precondition( x.degree() >= 0 );
             NT_to_interval to_interval;  
-            return RET(::boost::make_transform_iterator(x.begin(),to_interval),
+            return result_type(::boost::make_transform_iterator(x.begin(),to_interval),
                        ::boost::make_transform_iterator(x.end()  ,to_interval));
         }
     };
