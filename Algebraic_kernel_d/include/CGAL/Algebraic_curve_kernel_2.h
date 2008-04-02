@@ -537,18 +537,29 @@ public:
         public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
+        Compare_y_2(Algebraic_curve_kernel_2 *kernel) :
+             _m_kernel(kernel) {
+         }
+
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
             
             // It is easier if the x coordinates are equal!
             if(Compare_x_2()(xy1.x(),xy2.x()) == CGAL::EQUAL) {
-                return Compare_xy_2()(xy1,xy2);
+                return Compare_xy_2(_m_kernel)(xy1,xy2);
             }
 
             return (Compare_x_2()(xy1.y(), xy2.y()));
         }
+
+    private:
+        Algebraic_curve_kernel_2 *_m_kernel;   
+
     };
-    CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
+    //CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
+    Compare_y_2 compare_y_2_object() const {
+        return Compare_y_2((Algebraic_curve_kernel_2 *)this);
+    }
     
     //! lexicographical comparison of two objects of type \c Xy_coordinate_2
     //!
