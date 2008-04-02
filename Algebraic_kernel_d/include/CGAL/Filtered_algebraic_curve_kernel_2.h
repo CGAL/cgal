@@ -25,9 +25,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class AlgebraicCurveKernel_2 >
+template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
 class Filtered_algebraic_curve_kernel_2 
-    : public AlgebraicCurveKernel_2 {
+    : public CGAL::Algebraic_curve_kernel_2
+          < AlgebraicCurvePair_2, AlgebraicKernel_1 > {
 
 // for each predicate functor defines a member function returning an instance
 // of this predicate
@@ -37,9 +38,13 @@ class Filtered_algebraic_curve_kernel_2
 // the same for construction functors
 #define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
 
-private:
+public:
 
-    typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
+    typedef AlgebraicCurvePair_2 Algebraic_curve_pair_2;
+    typedef AlgebraicKernel_1 Algebraic_kernel_1;
+    typedef CGAL::Algebraic_curve_kernel_2
+        < Algebraic_curve_pair_2, Algebraic_kernel_1 > 
+        Algebraic_curve_kernel_2;
     typedef Algebraic_curve_kernel_2 Base;
 
 protected:
@@ -54,11 +59,9 @@ public:
     //! \name types and functors for \c GPA_2< >
     //!@{
     
-    //! type of 1D algebraic kernel 
-    typedef typename Base::Algebraic_kernel_1 Algebraic_kernel_1;
-
     //! myself
-    typedef Filtered_algebraic_curve_kernel_2< Base > Self;
+    typedef Filtered_algebraic_curve_kernel_2
+        < Algebraic_curve_pair_2, Algebraic_kernel_1 > Self;
     
     //! type of coefficient
     typedef typename Base::Coefficient Coefficient;
@@ -215,6 +218,10 @@ public:
         public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
+        Compare_y_2(Algebraic_curve_kernel_2 *kernel) :
+            _m_kernel(kernel) {
+        }
+
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                      const Xy_coordinate_2& xy2) const {
             CGAL::Comparison_result approx_compare
@@ -222,11 +229,18 @@ public:
             if(approx_compare!=CGAL::EQUAL) {
                 return approx_compare;
             }
-            return typename Base::Compare_y_2()(xy1, xy2);
+            return typename Base::Compare_y_2(_m_kernel)(xy1, xy2);
         }
+        
+    private:
+        Algebraic_curve_kernel_2 *_m_kernel; 
     };
-    CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
+    //CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
     
+    Compare_y_2 compare_y_2_object() const {
+        return Compare_y_2((Algebraic_curve_kernel_2 *)this);
+    }
+
     //! lexicographical comparison of two objects of type \c Xy_coordinate_2
     //!
     //! \c equal_x specifies that only y-coordinates need to be compared
@@ -295,7 +309,7 @@ public:
     
     //!@}
 public:
-    //! \name types and functors for \c GPA_2<Algebraic_kernel_2>
+    //! \name types and functors for \c GPA_2<Algebraic_curve_kernel_2>
     //!@{
     
     typedef typename Base::Algebraic_real_1 Algebraic_real_1;
