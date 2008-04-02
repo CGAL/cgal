@@ -938,6 +938,19 @@ public:
         : Base(static_cast<const Base&>(p))
     { }
 
+    //! Internal function called by constructor. Avoids code duplication
+    void init_tree() {
+        Node_iterator n = this->ptr()->node_list_.begin();
+        if (this->ptr()->degree_ > 0) {
+            initial_guess_sep(n);
+            while (!reinit_from_sep(n)) next_guess_sep(n);
+            if (n->min_var_ == 0) this->ptr()->node_list_.erase(n);
+        } else {
+            this->ptr()->node_list_.erase(n);
+        }
+    }
+        
+
     /*! \brief construct from initial interval and coefficients
      *
      *  The initial interval is
@@ -960,14 +973,27 @@ public:
                     first, beyond, tag, traits))
     {
         CGAL_precondition(lower_num < upper_num);
-        Node_iterator n = this->ptr()->node_list_.begin();
-        if (this->ptr()->degree_ > 0) {
-            initial_guess_sep(n);
-            while (!reinit_from_sep(n)) next_guess_sep(n);
-            if (n->min_var_ == 0) this->ptr()->node_list_.erase(n);
-        } else {
-            this->ptr()->node_list_.erase(n);
-        }
+        init_tree();
+        
+    }
+
+    /*! 
+     * This is needed for compatibility with other tree implementations
+     * The initial interval is
+     *  [-1, 1] / 2^(\c -log_bdry_den ).
+     * Be aware that log_bdry_den is negated here!
+     */
+    template <class InputIterator>
+    Bitstream_descartes_rndl_tree(
+            long log_bdry_den,
+            InputIterator first, InputIterator beyond, Monomial_basis_tag tag,
+            const BitstreamDescartesRndlTreeTraits& traits
+                                        = BitstreamDescartesRndlTreeTraits()
+    )
+        : Base(Rep(Integer(-1), Integer(1), -log_bdry_den, 
+                   first, beyond, tag, traits))
+    {
+        init_tree();
     }
 
     //! return degree of polynomial

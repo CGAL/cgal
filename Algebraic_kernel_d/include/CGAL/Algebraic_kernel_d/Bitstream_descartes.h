@@ -43,7 +43,13 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-template <class Polynomial_ , class Rational_ > 
+template < class Polynomial_ , 
+           class Rational_, 
+           class Tree_ = Bitstream_descartes_rndl_tree
+               < Bitstream_descartes_rndl_tree_traits
+                   < typename Polynomial_::NT > 
+               >
+         > 
 class Bitstream_descartes{
 
 /*#ifdef NiX_ISOLATION_TIMER
@@ -57,6 +63,7 @@ public:
 public:
     typedef Polynomial_ Polynomial;
     typedef Rational_   Boundary;
+    typedef Tree_       Tree;
 private:
     typedef typename Polynomial::NT Coefficient; 
  
@@ -81,17 +88,13 @@ public:
         if(polynomial_ == Polynomial(0)) return; 
         
 
-        typedef Bitstream_descartes_rndl_tree_traits<Coefficient> Traits;  
+        typedef typename Tree::TRAITS Traits;  
         Traits traits(poly);
         typename Traits::Lower_bound_log2_abs lbd = traits.lower_bound_log2_abs_object();
         typename Traits::Upper_bound_log2_abs ubd = traits.upper_bound_log2_abs_object();
     
-        typedef Bitstream_descartes_rndl_tree<Traits> Tree; 
-        
         Tree tree(
-                Integer(-1),
-                Integer(1) , 
-                -(Fujiwara_root_bound_log(traits.begin(),traits.end(),lbd,ubd)+1),
+                Fujiwara_root_bound_log(traits.begin(),traits.end(),lbd,ubd)+1,
                 traits.begin(), traits.end(),
                 typename Tree::Monomial_basis_tag(),
                 traits);
