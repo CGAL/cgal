@@ -75,13 +75,8 @@ public:
       // Or should I use is_valid() ? or is_valid_or_nan() ?
     CGAL_assertion_msg(!(i>s),
 	      " Variable used before being initialized (or CGAL bug)");
+    CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
   }
-
-  // This copy ctor, normally equivalent to the one created by the compiler,
-  // appears to fix a code generation problem with GCC 3.0.4...
-  // (see test/IA/gcc_3.0.bug.C).
-  Interval_nt(const Interval_nt & i)
-    : _inf(i._inf), _sup(i._sup) {}
 
   Interval_nt(const Pair & p)
     : _inf(p.first), _sup(p.second) {}
@@ -140,7 +135,28 @@ public:
 private:
   // Pair inf_sup;
   double _inf, _sup;
+
+  struct Test_runtime_rounding_modes {
+    Test_runtime_rounding_modes()
+    {
+      // We test whether GCC's -frounding-math option has been forgotten.
+      // The macros CGAL_IA_MUL and CGAL_IA_DIV stop constant propagation only
+      // on the second argument, so if -fno-rounding-math, the compiler optimizes
+      // the 2 negations and we get wrong rounding.
+      typename Interval_nt<>::Internal_protector P;
+      CGAL_assertion_msg(-CGAL_IA_MUL(-1.1, 10.1) != CGAL_IA_MUL(1.1, 10.1),
+                         "Wrong rounding: did you forget the -frounding-math option if you use GCC?");
+      CGAL_assertion_msg(-CGAL_IA_DIV(-1, 10) != CGAL_IA_DIV(1, 10),
+                         "Wrong rounding: did you forget the -frounding-math option if you use GCC?");
+    }
+  };
+
+  static Test_runtime_rounding_modes tester;
 };
+
+template <bool Protected>
+typename Interval_nt<Protected>::Test_runtime_rounding_modes
+Interval_nt<Protected>::tester;
 
 template <bool Protected>
 inline
@@ -642,16 +658,16 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
   else						// 0 \in [inf();sup()]
   {
     if (b.inf()>=0.0)				// d>=0
-      return IA(-CGAL_IA_MUL(-a.inf(), b.sup()),
+      return IA(-CGAL_IA_MUL(a.inf(), -b.sup()),
                  CGAL_IA_MUL(a.sup(), b.sup()));
     if (b.sup()<=0.0)				// d<=0
       return IA(-CGAL_IA_MUL(a.sup(), -b.inf()),
                  CGAL_IA_MUL(a.inf(), b.inf()));
         					// 0 \in d
-    double tmp1 = CGAL_IA_MUL(-a.inf(),  b.sup());
-    double tmp2 = CGAL_IA_MUL( a.sup(), -b.inf());
-    double tmp3 = CGAL_IA_MUL( a.inf(),  b.inf());
-    double tmp4 = CGAL_IA_MUL( a.sup(),  b.sup());
+    double tmp1 = CGAL_IA_MUL(a.inf(), -b.sup());
+    double tmp2 = CGAL_IA_MUL(a.sup(), -b.inf());
+    double tmp3 = CGAL_IA_MUL(a.inf(),  b.inf());
+    double tmp4 = CGAL_IA_MUL(a.sup(),  b.sup());
     return IA(-(std::max)(tmp1,tmp2), (std::max)(tmp3,tmp4));
   }
 }
@@ -706,8 +722,8 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 	aa = bb;
 	if (a.sup() < 0.0)
 	    bb = b.sup();
-    };
-    return IA(-CGAL_IA_DIV(-a.inf(), aa), CGAL_IA_DIV(a.sup(), bb));
+    }
+    return IA(-CGAL_IA_DIV(a.inf(), -aa), CGAL_IA_DIV(a.sup(), bb));
   }
   else if (b.sup()<0.0)			// b<0
   {
@@ -720,8 +736,8 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 	bb = aa;
 	if (a.sup() < 0.0)
 	    aa = b.inf();
-    };
-    return IA(-CGAL_IA_DIV(-a.sup(), aa), CGAL_IA_DIV(a.inf(), bb));
+    }
+    return IA(-CGAL_IA_DIV(a.sup(), -aa), CGAL_IA_DIV(a.inf(), bb));
   }
   else					// b~0
     return IA::largest();
