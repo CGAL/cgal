@@ -82,7 +82,7 @@ inline int square_free_factorization
    
     Coeff ucont_utcf = Ucont_utcf()(poly); 
     POLY  regular_poly = Idiv_utcf()(poly,ucont_utcf);
-        
+
     int result = square_free_factorization_for_regular_polynomial( 
             regular_poly, factors, multiplicities);
 
@@ -219,6 +219,7 @@ inline int square_free_factorization_for_regular_polynomial_
        
         z = y - diff(w);
     }
+
     *factors = w;
     *multiplicities++ = i;
     n++;
@@ -253,7 +254,7 @@ inline int square_free_factorization_for_regular_polynomial_
     POLY a = canonicalize_polynomial(p);
 
     POLY b = diff(a);  
-    POLY c = gcd(a, b);
+    POLY c = CGAL::gcd(a, b);
    
     if (c == Coeff(1)) {
         *factors = a;
@@ -264,7 +265,7 @@ inline int square_free_factorization_for_regular_polynomial_
     int i = 1, n = 0;
     POLY w = a/c, y = b/c, z = y - diff(w), g;
     while (!z.is_zero()) {
-        g = gcd(w, z);
+        g = CGAL::gcd(w, z);
         if (g.degree() > 0) {
             *factors++ = g;
             *multiplicities++ = i;
