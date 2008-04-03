@@ -678,8 +678,8 @@ protected:
     typedef typename AT::Integer Integer;
     typedef typename AT::Poly_int1 Polynomial_1;
     typedef typename AT::Poly_int2 Polynomial_2;
-    typedef NiX::Polynomial<Polynomial_2> Polynomial_3;
-    typedef NiX::Polynomial<Polynomial_3> Polynomial_4;
+    typedef CGAL::Polynomial<Polynomial_2> Polynomial_3;
+    typedef CGAL::Polynomial<Polynomial_3> Polynomial_4;
     typedef typename Curved_kernel_via_analysis_2::Dupin_cyclide_3 
     Dupin_cyclide_3;
     

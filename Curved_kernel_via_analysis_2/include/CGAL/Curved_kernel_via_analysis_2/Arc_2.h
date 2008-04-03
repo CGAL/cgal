@@ -2246,7 +2246,7 @@ protected:
              typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
         );
         // common parts and full parts
-        CGAL_precondition(NiX::resultant(mult, f).is_zero());
+        CGAL_precondition(CGAL::CGALi::resultant(mult, f).is_zero());
         CGAL_precondition(mult.degree() == f.degree());
         CGAL_precondition(deg(cvt(mult)) == deg(cvt(f)));
         

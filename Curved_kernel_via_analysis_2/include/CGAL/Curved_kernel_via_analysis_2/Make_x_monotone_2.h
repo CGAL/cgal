@@ -114,7 +114,7 @@ struct Make_x_monotone_2 :
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
         // use CGAL::Total_degree ?
-        if (NiX::total_degree(curve.polynomial_2()) < 1) {
+        if (CGAL::total_degree(curve.polynomial_2()) < 1) {
             return oi;
         }
         
