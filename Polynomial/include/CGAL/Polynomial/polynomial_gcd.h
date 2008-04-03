@@ -94,10 +94,10 @@ Polynomial<NT> gcd_(
         const Polynomial<NT>& p2, 
         Unique_factorization_domain_tag)
 { 
-    typedef Polynomial<NT> POLY;
+	typedef Polynomial<NT> POLY;
     typedef Polynomial_traits_d<POLY> PT;  
     typedef typename PT::Innermost_coefficient IC; 
-    
+        
     typename PT::Multivariate_content mcont; 
     IC mcont_p1 = mcont(p1);
     IC mcont_p2 = mcont(p2);
@@ -124,6 +124,12 @@ Polynomial<NT> gcd(const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { 
     typedef typename CGALi::Innermost_coefficient<Polynomial<NT> >::Type IC;
     typedef typename Algebraic_structure_traits<IC>::Algebraic_category Algebraic_category;
+
+    // Filter for zero-polynomials
+    if( p1 == Polynomial<NT>(0) )
+    	return p2;
+    if( p2 == Polynomial<NT>(0) )
+    	return p1;
     return CGALi::gcd_(p1,p2,Algebraic_category());
 }
 
