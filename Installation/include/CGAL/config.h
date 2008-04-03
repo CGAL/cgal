@@ -215,6 +215,8 @@ using std::max;
 #include <cstddef>
 
 #ifndef CGAL_NULL_TYPE
+// Why is this GCC specific?  Let's try to remove this.
+#if 0
 #  if defined( __GNUG__ )
 #    define CGAL_NULL_TYPE const void*
 #    define CGAL_NULL 0
@@ -222,6 +224,10 @@ using std::max;
 #    define CGAL_NULL_TYPE int
 #    define CGAL_NULL NULL
 #  endif // __GNUG__ //
-#endif // CGAL_NULL_TYPE //
+#else
+#  define CGAL_NULL_TYPE const void *
+#  define CGAL_NULL NULL
+#endif
+#endif // CGAL_NULL_TYPE
 
 #endif // CGAL_CONFIG_H
