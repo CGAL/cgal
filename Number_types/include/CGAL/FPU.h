@@ -143,10 +143,8 @@ inline double IA_force_to_double(double x)
 // because operations are done with a wrong rounding mode at compile time.
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
 #  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_force_to_double(x)
-#  define CGAL_IA_STOP_CPROP2(x,y) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
-#  define CGAL_IA_STOP_CPROP2(x,y) (x)
 #endif
 
 // std::sqrt(double) on VC++ and CygWin is buggy when not optimizing.
@@ -184,10 +182,10 @@ inline double IA_bug_sqrt(double d)
 // With GCC, we can do slightly better : test with __builtin_constant_p()
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
-#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)-CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP2(b,a))
-#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP2(b,a))
+#define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)-CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_SQUARE(a) CGAL_IA_MUL(a,a)
 #define CGAL_IA_SQRT(a) \
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
