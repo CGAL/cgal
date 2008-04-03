@@ -236,11 +236,7 @@ public:
 	    Cell_circulator ccir = _tds->incident_cells(edge);
 	    do {
 	      ++ccir;
-#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
 	    } while ( pos < ccir );
-#else
-      } while ( Cell_handle(pos) < Cell_handle(ccir) );
-#endif
 	    // loop terminates since it stops at least when ccir = pos
 	    if ( Cell_handle(ccir) == Cell_handle(pos) )
 		// pos is the cell with minimal pointer

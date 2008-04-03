@@ -36,10 +36,6 @@
 
 #include <CGAL/utility.h>
 
-//#if (!defined _MSC_VER || defined __INTEL_COMPILER)
-#  define CGAL_T3_USE_ITERATOR_AS_HANDLE
-//#endif
-
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -96,87 +92,10 @@ public:
 
 //private: // In 2D only :
   typedef Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
-#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
-  typedef Vertex_iterator Vertex_handle;
-  typedef Cell_iterator Cell_handle;
-#else
-  // Defining nested classes for the handles instead of typedefs
-  // considerably shortens the symbol names (and compile times).
-  // It makes error messages more readable as well.
-  class Vertex_handle {
-    Vertex_iterator _v;
-  public:
-    typedef Vertex                                 value_type;
-    typedef value_type *                           pointer;
-    typedef value_type &                           reference;
-    typedef std::size_t                            size_type;
-    typedef std::ptrdiff_t                         difference_type;
-    typedef void                                   iterator_category;
 
-    Vertex_handle() : _v() {}
-    Vertex_handle(Vertex_iterator v) : _v(v) {}
-#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
-    Vertex_handle(void * CGAL_triangulation_precondition_code(n)) : _v()
-    { CGAL_triangulation_precondition(n == NULL); }
-#endif
+  typedef Vertex_iterator                          Vertex_handle;
+  typedef Cell_iterator                            Cell_handle;
 
-    Vertex* operator->() const { return &*_v; }
-    Vertex& operator*()  const { return *_v; }
-
-    bool operator==(Vertex_handle v) const { return _v == v._v; }
-    bool operator!=(Vertex_handle v) const { return _v != v._v; }
-
-#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
-    // For std::set and co.
-    bool operator<(Vertex_handle v) const { return &*_v < &*v._v; }
-#endif
-
-    // Should be private to the TDS :
-    const Vertex_iterator & base() const { return _v; }
-    Vertex_iterator & base() { return _v; }
-
-    void * for_compact_container() const { return _v.for_compact_container(); }
-    void * & for_compact_container()     { return _v.for_compact_container(); }
-   };
-  
-  class Cell_handle {
-    Cell_iterator _c;
-  public:
-    typedef Cell                                   value_type;
-    typedef value_type *                           pointer;
-    typedef value_type &                           reference;
-    typedef std::size_t                            size_type;
-    typedef std::ptrdiff_t                         difference_type;
-    typedef void                                   iterator_category;
-
-    Cell_handle() : _c() {}
-    Cell_handle(Cell_iterator c) : _c(c) {}
-    Cell_handle(const Cell_circulator &c) : _c(c.base()._c) {}
-    Cell_handle(const Face_circulator &c) : _c(c.base()._c) {}
-#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
-    Cell_handle(void * CGAL_triangulation_precondition_code(n)) : _c()
-    { CGAL_triangulation_precondition(n == NULL); }
-#endif
-
-    Cell* operator->() const { return &*_c; }
-    Cell& operator*()  const { return *_c; }
-
-    bool operator==(Cell_handle c) const { return _c == c._c; }
-    bool operator!=(Cell_handle c) const { return _c != c._c; }
-
-#ifndef CGAL_NO_DEPRECATED_CODE // must be kept
-    // For std::set and co.
-    bool operator<(Cell_handle c) const { return &*_c < &*c._c; }
-#endif
-
-    // These should be private to the TDS :
-    const Cell_iterator & base() const { return _c; }
-    Cell_iterator & base() { return _c; }
-
-    void * for_compact_container() const { return _c.for_compact_container(); }
-    void * & for_compact_container()     { return _c.for_compact_container(); }
-   };
-#endif
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
 
@@ -335,11 +254,7 @@ public:
   void delete_vertex( const Vertex_handle& v )
   {
       CGAL_triangulation_expensive_precondition( is_vertex(v) );
-#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
       vertex_container().erase(v);
-#else
-      vertex_container().erase(v.base());
-#endif
   }
 
   void delete_cell( const Cell_handle& c )
@@ -352,11 +267,7 @@ public:
                                                  is_edge(c,0,1) );
       CGAL_triangulation_expensive_precondition( dimension() != 0 ||
                                                  is_vertex(c->vertex(0)) );
-#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
       cell_container().erase(c);
-#else
-      cell_container().erase(c.base());
-#endif
   }
 
   template <class InputIterator>

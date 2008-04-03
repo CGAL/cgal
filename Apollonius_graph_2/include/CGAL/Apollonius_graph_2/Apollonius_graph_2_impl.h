@@ -396,22 +396,14 @@ void
 Apollonius_graph_2<Gt,Agds,LTag>::
 remove_degree_3(Vertex_handle v)
 {
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   remove_degree_3(v, Face_handle());
-#else
-  remove_degree_3(v, NULL);
-#endif
 }
 
 
 template<class Gt, class Agds, class LTag>
 void
 Apollonius_graph_2<Gt,Agds,LTag>::
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
-remove_degree_3(Vertex_handle v, Face_handle f) // af:was Face*
-#else
-remove_degree_3(Vertex_handle v, Face* f)
-#endif
+remove_degree_3(Vertex_handle v, Face_handle f)
 {
   CGAL_triangulation_precondition( degree(v) == 3 );
   this->_tds.remove_degree_3(v, f);
@@ -1834,11 +1826,7 @@ remove_degree_d_vertex(Vertex_handle v)
   }
   CGAL_triangulation_precondition( degree(v) == 3 );
 
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   this->_tds.remove_degree_3( v, Face_handle() );
-#else
-  this->_tds.remove_degree_3( v, NULL );
-#endif
 
   for (unsigned int i = 0; i < num_fe; i++) {
     delete[] flipped_edges[i];

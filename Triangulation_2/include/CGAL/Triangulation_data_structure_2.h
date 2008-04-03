@@ -30,10 +30,6 @@
 #include <algorithm>
 #include <boost/tuple/tuple.hpp>
 
-//#if (!defined _MSC_VER || defined __INTEL_COMPILER)
-#  define CGAL_T2_USE_ITERATOR_AS_HANDLE
-//#endif
-
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -86,80 +82,9 @@ public:
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
   typedef Triangulation_ds_edge_circulator_2<Tds>    Edge_circulator;
 
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE 
-  typedef Vertex_iterator Vertex_handle;
-  typedef Face_iterator Face_handle;
-#else
-  // Defining nested classes for the handles instead of typedefs
-  // considerably shortens the symbol names (and compile times).
-  // It makes error messages more readable as well.
-  class Vertex_handle {
-    Vertex_iterator _v;
-  public:
-    typedef Vertex                                 value_type;
-    typedef value_type *                           pointer;
-    typedef value_type &                           reference;
-    typedef std::size_t                            size_type;
-    typedef std::ptrdiff_t                         difference_type;
-    typedef void                                   iterator_category;
+  typedef Vertex_iterator                            Vertex_handle;
+  typedef Face_iterator                              Face_handle;
 
-    Vertex_handle() : _v() {}
-    Vertex_handle(const Vertex_iterator& v) : _v(v) {}
-    Vertex_handle(const Vertex_circulator& v) : _v(v.base()._v) {}
-    Vertex_handle(void * CGAL_triangulation_precondition_code(n)) : _v()
-    { CGAL_triangulation_precondition(n == NULL); }
-
-    Vertex* operator->() const { return &*_v; }
-    Vertex& operator*()  const { return *_v; }
-
-    bool operator==(Vertex_handle v) const { return _v == v._v; }
-    bool operator!=(Vertex_handle v) const { return _v != v._v; }
-
-    // For std::set and co.
-    bool operator<(Vertex_handle v) const { return &*_v < &*v._v; }
-
-    // Should be private to the TDS :
-    const Vertex_iterator & base() const { return _v; }
-    Vertex_iterator & base() { return _v; }
-
-    void * for_compact_container() const { return _v.for_compact_container(); }
-    void * & for_compact_container()     { return _v.for_compact_container(); }
-   };
-  
-  class Face_handle {
-    Face_iterator _f;
-  public:
-    typedef Face                                   value_type;
-    typedef value_type *                           pointer;
-    typedef value_type &                           reference;
-    typedef std::size_t                            size_type;
-    typedef std::ptrdiff_t                         difference_type;
-    typedef void                                   iterator_category;
-
-    Face_handle() : _f() {}
-    Face_handle(const Face_iterator& f) : _f(f) {}
-    Face_handle(const Face_circulator& f) : _f(f.base()._f) {}
-    //Face_handle(Face_circulator f) : _f(f.base()._f) {}
-    Face_handle(void * CGAL_triangulation_precondition_code(n)) : _f()
-    { CGAL_triangulation_precondition(n == NULL); }
-
-    Face* operator->() const { return &*_f; }
-    Face& operator*()  const { return *_f; }
-
-    bool operator==(Face_handle f) const { return _f == f._f; }
-    bool operator!=(Face_handle f) const { return _f != f._f; }
-
-    // For std::set and co.
-    bool operator<(Face_handle f) const { return &*_f < &*f._f; }
-
-    // These should be private to the TDS :
-    const Face_iterator & base() const { return _f; }
-    Face_iterator & base() { return _f; }
-
-    void * for_compact_container() const { return _f.for_compact_container(); }
-    void * & for_compact_container()     { return _f.for_compact_container(); }
-   };
-#endif
   typedef std::pair<Face_handle, int>                Edge;
   typedef std::list<Edge> List_edges;
 
@@ -1397,14 +1322,8 @@ delete_face(Face_handle f)
   CGAL_triangulation_expensive_precondition( dimension() != 1 || is_edge(f,2));
   CGAL_triangulation_expensive_precondition( dimension() != 0 ||
 					     is_vertex(f->vertex(0)) );
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   face_container().erase(f);
-#else
-  face_container().erase(f.base());
-#endif
 }
-
-
 
 template <class Vb, class Fb>
 inline void
@@ -1412,11 +1331,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 delete_vertex(Vertex_handle v)
 {
   CGAL_triangulation_expensive_precondition( is_vertex(v) );
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
   vertex_container().erase(v);
-#else
-  vertex_container().erase(v.base());
-#endif
 }
 
 // split and join operations

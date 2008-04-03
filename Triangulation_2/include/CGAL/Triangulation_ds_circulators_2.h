@@ -74,10 +74,9 @@ public:
 
   bool operator==(const Face_circulator &fc) const;
   bool operator!=(const Face_circulator &fc) const;
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
+
   bool operator==(const Face_handle &fh) const { return pos == fh; }
   bool operator!=(const Face_handle &fh) const { return pos != fh; }
-#endif
 
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
@@ -100,12 +99,9 @@ public:
   }
   
   Face_handle base()  const {return pos;}
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE   
   operator Face_handle()  const {return pos;}
-#endif
 };
 
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
 template < class Tds_ >
 bool
 operator==(typename Tds_::Face_handle fh,
@@ -121,7 +117,7 @@ operator!=(typename Tds_::Face_handle fh,
 {
   return (fc!=fh);
 }
-#endif
+
 
 template < class Tds >
 class Triangulation_ds_vertex_circulator_2 :
@@ -157,12 +153,12 @@ public:
  
   bool operator==(const Vertex_circulator &vc) const;
   bool operator!=(const Vertex_circulator &vc) const;
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE 
+
   bool operator==(const Vertex_handle &vh) const
   { return pos->vertex(_ri) == vh; }
   bool operator!=(const Vertex_handle &vh) const
   { return pos->vertex(_ri) != vh; }
-#endif
+
   bool is_empty() const;
   bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
   bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const;
@@ -184,12 +180,9 @@ public:
   }
 
    Vertex_handle base() const {return pos->vertex(_ri);}
-#if defined CGAL_T2_USE_ITERATOR_AS_HANDLE
    operator Vertex_handle() const {return pos->vertex(_ri);}
-#endif
 };
 
-#ifdef CGAL_T2_USE_ITERATOR_AS_HANDLE
 template < class Tds_ >
 inline
 bool
@@ -207,7 +200,7 @@ operator!=(typename Tds_::Vertex_handle vh,
 {
   return !(vc==vh);
 }
-#endif
+
 
 template < class Tds >
 class Triangulation_ds_edge_circulator_2 :
