@@ -16,6 +16,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
+#include <CGAL/algorithm.h>
 
 CGAL_BEGIN_NAMESPACE
 

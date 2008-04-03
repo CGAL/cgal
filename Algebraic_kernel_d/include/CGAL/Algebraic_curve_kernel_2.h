@@ -65,7 +65,7 @@ public:
     //! type of internal polynomial
     typedef typename Internal_curve_2::Poly_d Internal_polynomial_2;
     
-    typedef typename NiX::Polynomial_traits<Internal_polynomial_2>::
+    typedef typename CGAL::Polynomial_traits_d<Internal_polynomial_2>::
         Innermost_coefficient Innermost_coefficient;
    
     //! type of 1D algebraic kernel
@@ -181,7 +181,7 @@ protected:
             
         Poly operator()(const Poly_pair& p) const
         {
-            return NiX::gcd(p.first, p.second);
+            return CGAL::gcd(p.first, p.second);
         }
     };     
 
@@ -231,7 +231,7 @@ protected:
     template<typename T> struct Gcd {
     
         T operator() (std::pair<T,T> pair) {
-            return NiX::gcd(pair.first,pair.second);
+            return CGAL::gcd(pair.first,pair.second);
         }
     } ;     
 
@@ -1001,11 +1001,11 @@ public:
                (std::make_pair(ca_2.polynomial_2(), r.curve().polynomial_2()));
 
             Curve_analysis_2 gcd_curve = cc_2(gcd);
-            if(NiX::total_degree(gcd)>0) {
+            if(CGAL::total_degree(gcd)>0) {
                 
                 Construct_curve_pair_2 ccp_2;
                 Curve_analysis_2 r_curve_remainder =
-                    cc_2(NiX::div_utcf(r.curve().polynomial_2(), gcd));
+                    cc_2(CGAL::CGALi::div_utcf(r.curve().polynomial_2(), gcd));
                     
                 r.simplify_by(ccp_2(gcd_curve, r_curve_remainder));
                 if(r.curve().polynomial_2() == gcd) 

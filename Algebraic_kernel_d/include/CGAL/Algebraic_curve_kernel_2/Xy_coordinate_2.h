@@ -286,11 +286,11 @@ public:
                     if (ipair.first != 1 || ipair.second != 1) {
                         point_is_certainly_critical = true;
                         y_pol = 
-                            NiX::make_square_free(
-                                    NiX::resultant
+                            CGAL::Polynomial_traits_d< Polynomial_2 >::Make_square_free()(
+                                    CGAL::CGALi::resultant
                                     (transpose_bivariate_polynomial(f),
                                      transpose_bivariate_polynomial(
-                                             NiX::diff(f)
+                                             CGAL::diff(f)
                                      )
                                     )
                             );
@@ -301,8 +301,8 @@ public:
                     
                     Polynomial_2 r(x().polynomial());
                     
-                    y_pol = NiX::make_square_free(
-                            NiX::resultant(transpose_bivariate_polynomial(f),
+                    y_pol = CGAL::Polynomial_traits_d< Polynomial_2 >::Make_square_free()(
+                            CGAL::CGALi::resultant(transpose_bivariate_polynomial(f),
                                            transpose_bivariate_polynomial(r))
                     );
                 }
@@ -501,7 +501,7 @@ public:
                     cpa_2.curve_analysis(1).polynomial_2();
         );
         // common parts
-        CGAL_precondition(NiX::resultant(mult,
+        CGAL_precondition(CGAL::CGALi::resultant(mult,
             curve().polynomial_2()).is_zero());
         // full parts
         CGAL_precondition(mult.degree() == curve().polynomial_2().degree());
