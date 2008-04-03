@@ -25,6 +25,10 @@
 
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
+#if CGAL_USE_QT
+#include <CGAL/IO/Qt_widget.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -166,7 +170,7 @@ public:
             InputIterator oi = start;
             InputIterator next = ++oi;
             bool vertical = oi->is_vertical();
-            Curve_2 curve = oi->curve();
+            Curve_analysis_2 curve = oi->curve();
             for(; next != end; next++) {
                 // ensure that supporting curves are identical for all arcs
                 CGAL_precondition(next->curve().is_identical(curve));
@@ -208,13 +212,12 @@ public:
         return this->ptr()->_m_x_monotone_arcs.end();
     }
 
-#if 0 // not needed
+#if 1 // not needed
     /*!\brief
      * returns a distinct \c ith x-monotone piece of the arc
      */
     const Arc_2& x_monotone_arc(int i) const {
-        CGAL_precondition(i >= 0 && i <
-            static_cast<int>(this->ptr()->_m_x_monotone_arcs));
+        CGAL_precondition(i >= 0 && i < number_of_x_monotone_arcs());
         return this->ptr()->_m_x_monotone_arcs[i];
     }
 #endif	
@@ -222,7 +225,7 @@ public:
     /*!\brief
      * returns the supporting curve
      */
-    Curve_2 curve() const {
+    Curve_analysis_2 curve() const {
         CGAL_precondition(number_of_x_monotone_arcs() > 0);
         return this->ptr()->_m_x_monotone_arcs[0].curve();
     }
@@ -243,22 +246,21 @@ public:
  * output operator
  */
 template < class CurvedKernelViaAnalysis_2, class Rep_>
-std::ostream& operator<<(std::ostream& os,
+std::ostream& operator <<(std::ostream& os,
     const Non_x_monotone_arc_2<CurvedKernelViaAnalysis_2, Rep_>& arc) {
 
-    os << "List of x-monotone arcs: [\n"
+    os << "List of x-monotone arcs: [\n";
     int i = 0;
-    for(typename Arc_vector::const_iterator ait = x_monotone_arcs().begin();
-            ait != x_monotone_arcs().end(); ait++, i++) 
-        os << i << ": " << *ait << std::endl;
 
-    os << "]\n\n"
+    typename Non_x_monotone_arc_2<CurvedKernelViaAnalysis_2, Rep_>::
+        Arc_const_iterator ait;
+    for(ait = arc.begin(); ait != arc.end(); ait++, i++)
+        os << i << ": " << *ait << std::endl;
+    os << "]\n\n";
     return os;
 }
 
 #if (CGAL_USE_QT) || DOXYGEN_RUNNING
-
-#include <CGAL/IO/Qt_widget.h>
 
 /*!\relates Non_x_monotone_arc_2
  * \brief
@@ -277,12 +279,14 @@ CGAL::Qt_widget& operator <<(CGAL::Qt_widget& ws,
     if(n_arcs > 1)
         ppnt->setBrush(Qt::NoBrush);
 
-    for(Arc_const_iterator ait = arc.begin(); ait != arc.end(); ait++)
+    typename Non_x_monotone_arc_2<CurvedKernelViaAnalysis_2, Rep_>::
+        Arc_const_iterator ait;
+    for(ait = arc.begin(); ait != arc.end(); ait++)
         ws << *ait;
 
     if(n_arcs > 1) {
         ppnt->setBrush(defbrush);
-    
+
         typeof(arc.x_monotone_arc(0)) const *xarc = &arc.x_monotone_arc(0);
         if(xarc->location(CGAL::ARR_MIN_END) == CGAL::ARR_INTERIOR)
             ws << xarc->curve_end(CGAL::ARR_MIN_END);
