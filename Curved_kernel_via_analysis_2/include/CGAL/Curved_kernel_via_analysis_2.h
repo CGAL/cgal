@@ -31,6 +31,8 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
+#include <CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h>
+
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_interval_arcno_cache.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
 
@@ -234,7 +236,7 @@ private:
 template < class CurveKernel_2, 
            class CKvA_ = void, class Point_ = void, class Arc_ = void >
 class Curved_kernel_via_analysis_2 :
-     public CGALi::Curved_kernel_via_analysis_2_base < 
+     public CGALi::Curved_kernel_via_analysis_2_base <
             typename boost::mpl::if_< 
               boost::mpl::bool_< boost::is_void< CKvA_ >::value >, 
               Curved_kernel_via_analysis_2< CurveKernel_2 >,
@@ -271,7 +273,7 @@ class Curved_kernel_via_analysis_2 :
               >,
               Arc_
             >::type
-       > 
+       >
 {
 public:
     //!\name Public types
@@ -340,7 +342,7 @@ public:
         
 private:
     
-    typedef typename boost::mpl::if_< 
+    typedef typename boost::mpl::if_<
               typename boost::mpl::bool_< boost::is_void< Point >::value >,
               CGALi::Point_2< CKvA_2 >,
               Point >::type
@@ -367,8 +369,10 @@ public:
     //! type of weakly x-monotone arc for \c ArrangementTraits_2
     typedef Arc_2 X_monotone_curve_2;
 
-    //!@}
+    //! type of non x-monotone arc on a curve that can be analyzed
+    typedef CGALi::Non_x_monotone_arc_2<Self> Non_x_monotone_arc_2;
 
+    //!@}
 protected:
     //!\name Protected base types
     //!@{
