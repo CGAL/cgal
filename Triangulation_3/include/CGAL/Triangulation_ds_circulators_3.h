@@ -43,30 +43,6 @@ class Triangulation_ds_cell_circulator_3
   typedef Triangulation_ds_cell_circulator_3<Tds> Cell_circulator;
 
 public:
-#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
-  bool operator==(Cell_handle ch) const
-  {
-    return ch == pos;
-  }
-
-  bool operator!=(Cell_handle ch) const
-  {
-    return ch != pos;
-  }
-
-
-  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return pos == Cell_handle();
-  }
-
-  bool operator!=(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
-  {
-    CGAL_triangulation_assertion( n == NULL);
-    return pos != Cell_handle();
-  }
-#endif
 
   Triangulation_ds_cell_circulator_3()
     : _s(), _t(), pos()
@@ -160,6 +136,29 @@ public:
     return ! (*this == ccir);
   }
 
+#ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
+  bool operator==(Cell_handle ch) const
+  {
+    return ch == pos;
+  }
+
+  bool operator!=(Cell_handle ch) const
+  {
+    return ch != pos;
+  }
+#endif
+
+  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
+  {
+    CGAL_triangulation_assertion( n == NULL);
+    return pos == Cell_handle();
+  }
+
+  bool operator!=(CGAL_NULL_TYPE n) const
+  {
+    return ! (*this == n);
+  }
+
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
 #ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
@@ -178,6 +177,7 @@ private:
 
 #ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
 template < class Tds_ >
+inline
 bool
 operator==(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
 {
@@ -185,6 +185,7 @@ operator==(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds
 }
 
 template < class Tds_ >
+inline
 bool
 operator!=(typename Tds_::Cell_handle ch, Triangulation_ds_cell_circulator_3<Tds_> cc)
 {
@@ -369,7 +370,7 @@ public:
     return ! (*this == ccir);
   }
 
-  bool operator==(CGAL_NULL_TYPE c) const
+  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(c)) const
   {
     CGAL_triangulation_assertion(c == CGAL_NULL);
     return pos == Cell_handle();
@@ -469,10 +470,21 @@ public:
     return ! (*this == ccir);
   }
 
+  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(c)) const
+  {
+    CGAL_triangulation_assertion(c == CGAL_NULL);
+    return pos == Cell_handle();
+  }
+
+  bool operator!=(CGAL_NULL_TYPE c) const
+  {
+    return ! (*this == c);
+  }
+
   // For TDS's private use only.
   Cell_handle base() const { return pos; }
 #ifdef CGAL_T3_USE_ITERATOR_AS_HANDLE
-  operator Cell_handle()const { return pos; }
+  operator Cell_handle() const { return pos; }
 #endif
 
 private:
