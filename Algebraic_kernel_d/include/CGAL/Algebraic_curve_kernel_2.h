@@ -311,11 +311,11 @@ public:
                 (const Internal_polynomial_2& f) const {
             return Self::curve_cache()(f);
         }
-        Curve_analysis_2 operator()
-                (const Polynomial_2_CGAL& f) const {
-            CGAL2NiX_converter cvt;
-            return Self::curve_cache()(cvt(f));
-        }
+//        Curve_analysis_2 operator()
+//                (const Polynomial_2_CGAL& f) const {
+//            CGAL2NiX_converter cvt;
+//            return Self::curve_cache()(cvt(f));
+//        }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
 
@@ -683,11 +683,11 @@ public:
         }
         
         //! temporary version for \c NiX::Polynomial
-        Internal_polynomial_2 operator()(const Internal_polynomial_2& p) {
-            NiX2CGAL_converter cvt;
-            CGAL2NiX_converter cvt_back;
-            return cvt_back((*this)(cvt(p)));
-        }
+//        Internal_polynomial_2 operator()(const Internal_polynomial_2& p) {
+//            NiX2CGAL_converter cvt;
+//            CGAL2NiX_converter cvt_back;
+//            return cvt_back((*this)(cvt(p)));
+//        }
         
         //! \brief computes a square-free factorization of a curve \c c, 
         //! returns the number of pairwise coprime square-free factors
