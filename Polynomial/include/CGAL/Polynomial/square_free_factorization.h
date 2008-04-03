@@ -172,7 +172,7 @@ inline int square_free_factorization_for_regular_polynomial_
 
     POLY a = canonicalize_polynomial(p);
     POLY b = diff(a);
-    POLY c = gcd_utcf(a, b);
+    POLY c = CGAL::CGALi::gcd_utcf(a, b);
 
     if (c == Coeff(1)) {
         *factors = a;
@@ -201,7 +201,7 @@ inline int square_free_factorization_for_regular_polynomial_
     POLY g;
 
     while (!z.is_zero()) {
-        g = gcd_utcf(w, z);
+        g = CGAL::CGALi::gcd_utcf(w, z);
         if (g.degree() > 0) {
             *factors++ = g;
             *multiplicities++ = i;
