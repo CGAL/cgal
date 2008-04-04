@@ -36,7 +36,7 @@ Polynomial<NT> gcd_utcf_UFD(
 
     // compute gcd of content
     NT p1c = p1.content(), p2c = p2.content();
-    NT gcdcont = CGALi::gcd(p1c,p2c);
+    NT gcdcont = CGAL::gcd(p1c,p2c);
 
     // compute gcd of primitive parts
     p1 /= p1c; p2 /= p2c;
@@ -142,9 +142,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     NT p1c = CGALi::content_utcf_(p1);
     NT p2c = CGALi::content_utcf_(p2);
     
-    
-    
-    
+   
     // compute gcd of content
     NT gcdcont = CGALi::gcd_utcf_(p1c, p2c);
 
