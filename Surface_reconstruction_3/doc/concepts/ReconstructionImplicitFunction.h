@@ -22,15 +22,13 @@
 /// implicit function representing a 3D surface
 /// used by the Surface_reconstruction_3 package.
 ///
-/// @heading Refines: Surface_mesher's ImplicitFunction concept.
-///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
 ///
 /// @heading Has Models: Poisson_implicit_function<PoissonDelaunayTriangulation_3>
 
-class ReconstructionImplicitFunction
+class ReconstructionImplicitFunction : public Surface_mesher::ImplicitFunction
 {
 // Public types
 public:

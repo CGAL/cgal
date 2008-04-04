@@ -20,12 +20,10 @@
 
 /// The OrientedNormal_3 concept represents a normal vector (oriented or not).
 ///
-/// @heading Refines: DefaultConstructible, CopyConstructible, Assignable.
-///
 /// @heading Has Models:
 /// - Oriented_normal_3<Geom_traits>
 
-class OrientedNormal_3
+class OrientedNormal_3 : public DefaultConstructible, public CopyConstructible, public Assignable
 {
 // Public types
 public:

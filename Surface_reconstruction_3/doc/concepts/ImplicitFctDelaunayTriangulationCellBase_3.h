@@ -22,13 +22,11 @@
 /// of the cell class of the ImplicitFctDelaunayTriangulation_3 concept.
 /// It provides the interface requested by the Poisson_implicit_function class.
 ///
-/// @heading Refines: DelaunayTriangulationCellBase_3,
-///                   DefaultConstructible.
-///
-/// @heading Has Models: 
+/// @heading Has Models:
 /// Implicit_fct_delaunay_triangulation_cell_base_3<Geom_traits, TriangulationCellBase_3>
 
-class ImplicitFctDelaunayTriangulationCellBase_3 : public DelaunayTriangulationCellBase_3
+class ImplicitFctDelaunayTriangulationCellBase_3 : public DelaunayTriangulationCellBase_3,
+                                                   public DefaultConstructible
 {
 // Public methods
 public:

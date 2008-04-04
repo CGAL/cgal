@@ -22,13 +22,12 @@
 /// - a position
 /// - a normal (oriented or not).
 ///
-/// @heading Refines: Kernel::Point_3, DefaultConstructible, CopyConstructible, Assignable.
-///
-/// @heading Has Models: 
+/// @heading Has Models:
 /// - Point_with_normal_3<Geom_traits>
 /// - Gyroviz_point_3<Geom_traits>
 
-class PointWithNormal_3 : public Kernel::Point_3
+class PointWithNormal_3 : public Kernel::Point_3,
+                          public DefaultConstructible, public CopyConstructible, public Assignable
 {
 // Public types
 public:
@@ -53,7 +52,7 @@ public:
     bool operator==(const PointWithNormal_3& that);
     bool operator!=(const PointWithNormal_3& that);
 
-    /// Get/set normal (vector + orientation). 
+    /// Get/set normal (vector + orientation).
 	  const Normal& normal() const;
 	  Normal&       normal();
 };

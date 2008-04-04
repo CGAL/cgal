@@ -25,13 +25,11 @@
 /// ImplicitFctDelaunayTriangulationCellBase_3 and the vertex base class
 /// must be a model of ImplicitFctDelaunayTriangulationVertexBase_3.
 ///
-/// @heading Refines: DelaunayTriangulation_3,
-///                   DefaultConstructible, CopyConstructible, Assignable.
-///
-/// @heading Has Models: 
+/// @heading Has Models:
 /// Implicit_fct_delaunay_triangulation_3<GeomTraits, TriangulationDataStructure_3>
 
-class ImplicitFctDelaunayTriangulation_3 : public DelaunayTriangulation_3
+class ImplicitFctDelaunayTriangulation_3 : public DelaunayTriangulation_3,
+                                           public DefaultConstructible, public CopyConstructible, public Assignable
 {
 // Public types
 public:
@@ -41,7 +39,7 @@ public:
 	typedef Geom_traits::Vector_3 Vector;
 	typedef Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
 	typedef Geom_traits::Sphere_3 Sphere;
-	
+
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
 	typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
 	typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
@@ -79,8 +77,8 @@ public:
 	void invalidate_bounding_box();
 
   /// Insert point to the triangulation.
-  Vertex_handle insert(const Point& p, 
-                       unsigned char type /* INPUT or STEINER */, 
+  Vertex_handle insert(const Point& p,
+                       unsigned char type /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle());
 
   /// Insert points to the triangulation using a spatial sort.

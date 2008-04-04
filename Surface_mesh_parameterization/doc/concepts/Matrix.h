@@ -23,14 +23,12 @@ namespace SparseLinearAlgebraTraits_d {
 /// SparseLinearAlgebraTraits_d::Matrix
 /// is a concept of a sparse matrix class.
 ///
-/// @heading Refines: This is a sub-concept of LinearAlgebraTraits_d::Matrix.
-///
 /// @heading Has Models:
 /// - Taucs_matrix<T>
 /// - Taucs_symmetric_matrix<T>
 /// - OpenNL::SparseMatrix<T> in OpenNL package
 
-class Matrix
+class Matrix : public LinearAlgebraTraits_d::Matrix
 {
 // Public types
 public:

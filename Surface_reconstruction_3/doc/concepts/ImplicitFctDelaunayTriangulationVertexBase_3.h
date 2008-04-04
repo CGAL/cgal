@@ -22,16 +22,14 @@
 /// of the vertex class of the ImplicitFctDelaunayTriangulation_3 concept.
 /// It provides the interface requested by the Poisson_implicit_function class.
 ///
-/// @heading Refines: DelaunayTriangulationVertexBase_3,
-///                   DefaultConstructible.
-///
-/// @heading Has Models: 
+/// @heading Has Models:
 /// Implicit_fct_delaunay_triangulation_vertex_base_3<Geom_traits, TriangulationVertexBase_3>
 ///
 /// Precondition:
 /// The geometric traits class 's Point_3 type must be a model of PointWithNormal_3.
 
-class ImplicitFctDelaunayTriangulationVertexBase_3 : public DelaunayTriangulationVertexBase_3
+class ImplicitFctDelaunayTriangulationVertexBase_3 : public DelaunayTriangulationVertexBase_3,
+                                                     public DefaultConstructible
 {
 // Public types
 public:
@@ -65,7 +63,7 @@ public:
 	unsigned int  index() const;
 	unsigned int& index();
 
-  /// Get/set normal (vector + orientation). 
+  /// Get/set normal (vector + orientation).
 	const Normal& normal() const;
 	Normal&       normal();
 };
