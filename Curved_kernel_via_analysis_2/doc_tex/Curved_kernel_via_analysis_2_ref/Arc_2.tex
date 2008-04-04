@@ -55,7 +55,7 @@ class \ccc{Arc_2};
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccInheritsFrom)
 
-\ccc{Handle_with_policy<Rep_>}
+\ccc{Handle_with_policy}
 
 %END-AUTO(\ccInheritsFrom)
 
@@ -135,6 +135,160 @@ the handle superclass
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
+\ccConstructor{Arc_2();}
+{
+Default constructor.
+}
+\ccGlue
+\ccConstructor{Arc_2(const Self& a);}
+{
+copy constructor
+}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c, int arcno, int arcno_p, int arcno_q);}
+{
+Constructs an arc with two interior end-points (segment).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[p]first endpoint \item[q]second endpoint \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_p}]The arcnumber wrt c of the arc at p \item[\ccc{arcno_q}]The arcnumber wrt c of the arc at q \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed segment\end{description}
+\begin{description}
+\item[Precondition:]p.x() != q.x() \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
+{
+Constructs an arc with one interior end-point and another end at the left or right boundary of the parameter space (ray I).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point of the ray \item[\ccc{inf_end}]Defining whether the arcs emanates from the left or right boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, const X_coordinate_1& asympt_x, Arr_curve_end inf_end, const Curve_analysis_2& c, int arcno, int arcno_o);}
+{
+Constructs a non-vertical arc with one interior end-point and whose other end approaches a vertical asymptote (ray II).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point \item[\ccc{asympt_x}]The x-coordinate of the vertical asymptote \item[\ccc{inf_end}]Arc is approaching the bottom or top boundary \item[c]The supporting curve \item[arcno]The arcnumber wrt c in the interior of the arc \item[\ccc{arcno_o}]The arcnumber wrt c of the arc at origin \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray\end{description}
+\begin{description}
+\item[Precondition:]origin.x() != \ccc{asympt_x} \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Curve_analysis_2& c, int arcno);}
+{
+Constructs a non-vertical arc with two non-interior ends at the left and right boundary (branch I).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[c]The supporting curve \item[arcno]The arcnumber wrt to c in the interior of the arc \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const X_coordinate_1& asympt_x1, Arr_curve_end inf_end1, const X_coordinate_1& asympt_x2, Arr_curve_end inf_end2, const Curve_analysis_2& c, int arcno);}
+{
+Constructs a non-vertical arc with two ends approaching vertical asymptotes (branch II).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{asympt_x1}]The x-coordinate of the first asymptote \item[\ccc{inf_end1}]Arc is approaching the bottom or top boundary at \ccc{asympt_x1} \item[\ccc{asympt_x2}]The x-coordinate of the second asymptote \item[\ccc{inf_end2}]Arc is approaching the bottom or top boundary at \ccc{asympt_x2} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch\end{description}
+\begin{description}
+\item[Precondition:]\ccc{asympt_x1} != \ccc{asympt_x2} \end{description}
+\ccGlue
+\ccConstructor{Arc_2(Arr_curve_end inf_endx, const X_coordinate_1& asympt_x, Arr_curve_end inf_endy, const Curve_analysis_2& c, int arcno);}
+{
+Construct a non-vertical arc with one left- or right-boundary end and one end that approaches a vertical asymptote (branch III).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[\ccc{inf_endx}]Defining whether the arc emanates from the left or right boundary \item[\ccc{asympt_x}]The x-coordinate of the asymptote \item[\ccc{inf_endy}]Arc is approaching the bottom or top boundary at \ccc{asympt_x} \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& p, const Point_2& q, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc with two interior end-points (vertical segment).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[p]The first end-point \item[q]The second end-point \item[c]The supporting curve \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed arc\end{description}
+\begin{description}
+\item[Precondition:]p != q \&\& p.x() == q.x()
+c must have a vertical component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const Point_2& origin, Arr_curve_end inf_end, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc with one interior end-point and one that reaches the bottom or top boundary (vertical ray).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[origin]The interior end-point \item[\ccc{inf_end}]Ray emanates from bottom or top boundary \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed ray\end{description}
+\begin{description}
+\item[Precondition:]c must have a vertical line component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(const X_coordinate_1& x, const Curve_analysis_2& c);}
+{
+Constructs a vertical arc that connects bottom with top boundary (vertical branch).
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[x]The x-coordinate of the arc \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed branch\end{description}
+\begin{description}
+\item[Precondition:]c must have a vertical line component at this x \end{description}
+\ccGlue
+\ccConstructor{Arc_2(Rep rep);}
+{
+[protected] \\
+Constructs an arc from a given representation used in rebind.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[rep]Input representation \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]The constructed arc \end{description}
+\ccGlue
 \ccConstructor{Arc_2();}
 {
 Default constructor.

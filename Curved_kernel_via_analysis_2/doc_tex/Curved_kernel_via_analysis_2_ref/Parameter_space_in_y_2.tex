@@ -104,6 +104,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)\ccCreation
 %\ccCreationVariable{a}  %% choose variable name
@@ -111,6 +117,18 @@ the arity of the functor
 %% \ccIncludeExampleCode{Curved_kernel_via_analysis_2/Parameter_space_in_y_2.C}
 
 \ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
+{
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
 
 \ccCreation
 \ccCreationVariable{a}  %% choose variable name for \ccMethod below
@@ -149,6 +167,15 @@ Obtains the parameter space in y at the end of an arc.
 \end{description}
 \begin{description}
 \item[Returns:]the parameter space at the ce end of cv \ccc{ARR_BOTTOM_BOUNDARY}- the arc approaches the bottom boundary of the parameter space \ccc{ARR_INTERIOR} - the arc does not approach a boundary of the parameter space \ccc{ARR_TOP_BOUNDARY} - the arc approaches the top boundary of the parameter space \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
 \ccGlue
 
 %END-AUTO(\ccOperations)

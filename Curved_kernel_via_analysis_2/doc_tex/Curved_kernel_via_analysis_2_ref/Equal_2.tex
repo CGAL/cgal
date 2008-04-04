@@ -116,6 +116,12 @@ the result type
 the arity of the functor
 }
 \ccGlue
+\ccNestedType{Curve_kernel_2}
+{
+[inherited] \\
+type of curve kernel
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
@@ -123,6 +129,14 @@ the arity of the functor
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Variables})
+
+\ccVariable{Curved_kernel_via_analysis_2* _m_curved_kernel;}
+{
+[protected, inherited] \\
+stores pointer to \ccc{Curved_kernel_via_analysis_2}
+}
+\ccGlue
+
 %END-AUTO(\ccHeading{Variables})
 
 \ccCreation
@@ -175,6 +189,15 @@ Check if the two arcs are the same.
 \end{description}
 \begin{description}
 \item[Returns:]true if the two curves are the same; false otherwise. \end{description}
+\ccGlue
+\ccMethod{Curved_kernel_via_analysis_2* _ckva() const;}
+{
+[protected, inherited] \\
+Return pointer to curved kernel.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]Pointer to stored kernel \end{description}
 \ccGlue
 
 %END-AUTO(\ccOperations)

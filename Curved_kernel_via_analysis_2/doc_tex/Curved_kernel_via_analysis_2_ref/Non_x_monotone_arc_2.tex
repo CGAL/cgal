@@ -59,7 +59,7 @@ class \ccc{Non_x_monotone_arc_2};
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccInheritsFrom)
 
-\ccc{Handle_with_policy<Rep_>}
+\ccc{Handle_with_policy}
 
 %END-AUTO(\ccInheritsFrom)
 
@@ -130,6 +130,31 @@ the handle superclass
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
+\ccConstructor{Non_x_monotone_arc_2();}
+{
+Default constructor.
+}
+\ccGlue
+\ccConstructor{Non_x_monotone_arc_2(const Self& a);}
+{
+copy constructor
+}
+\ccGlue
+\ccConstructor{Non_x_monotone_arc_2(const Arc_2& arc);}
+{
+constructs an arc from one x-monotone piece
+}
+\ccGlue
+\ccConstructor{Non_x_monotone_arc_2(InputIterator start, InputIterator end);}
+{
+constructs an arc from a list x-monotone pieces specified by iterator range [start; end)
+template argument type of InputIterator is \ccc{Arc_2}
+}
+\ccGlue
+\begin{description}
+\item[Precondition:]the x-monotone arcs must be connected into a single chain
+either all x-monotone arcs must be vertical or non-vertical \end{description}
+\ccGlue
 \ccConstructor{Non_x_monotone_arc_2();}
 {
 Default constructor.
