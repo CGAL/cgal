@@ -17,6 +17,8 @@ Usage:
 
 generate_reference_manual [options] -I /path/to/CGAL/include /path/to/package
     -h, --help      Print this help
+    -v, --verbose   Verbose mode
+    -d, --debug     Debug mode
 
 The typical usage is:
 1) Comment your code using Doxygen conventions (see below).

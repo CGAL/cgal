@@ -29,7 +29,7 @@ usage ()
 # set -x
 
 # Version
-echo "generate_reference_manual version 1.0.1."
+echo "generate_reference_manual version 1.0.2."
 
 # Global variables
 PACKAGE_ROOT_FOLDER="" # Package's root folder
@@ -38,6 +38,7 @@ INCLUDE_PATH="" # Path to CGAL include folder
 PACKAGE=""  # Package name (without path)
 DOXYFILE="" # doxygen configuration file
 DEBUG=0 # Debug mode?
+VERBOSE=0 # Verbose mode?
 
 # Decode parameters
 while [ "${1}" ]
@@ -50,6 +51,10 @@ do
         ;;
     -d|--debug) # If --debug
         DEBUG=1
+        COPY_DOXYGEN_LATEX_DOC_ARGS="${COPY_DOXYGEN_LATEX_DOC_ARGS} ${1}"
+        ;;
+    -v|--verbose) # If --verbose
+        VERBOSE=1
         COPY_DOXYGEN_LATEX_DOC_ARGS="${COPY_DOXYGEN_LATEX_DOC_ARGS} ${1}"
         ;;
     -I|--include) # If -I
@@ -113,9 +118,19 @@ mkdir doc_doxygen
 # Run doxygen. m4 is used to search and replace in template Doxyfile.
 echo ""
 echo "Run doxygen..."
-m4 -DCGAL_PACKAGE="${PACKAGE}" -DCGAL_INCLUDE_PATH="${INCLUDE_PATH}" "${DOXYFILE}" | \
-    doxygen - 2>&1 | \
-    egrep -v 'BoundingBox not found|are not documented|^  parameter'
+if [[ $VERBOSE == 0 ]]; then
+    WARN_IF_DOC_ERROR="NO"
+else
+    WARN_IF_DOC_ERROR="YES"
+fi
+m4 -DCGAL_PACKAGE="${PACKAGE}" \
+   -DCGAL_WARN_IF_DOC_ERROR="${WARN_IF_DOC_ERROR}" \
+   -DCGAL_INCLUDE_PATH="${INCLUDE_PATH}" \
+   "${DOXYFILE}" > generate_reference_manual_Doxyfile
+doxygen generate_reference_manual_Doxyfile 2>&1 | egrep -v 'BoundingBox not found'
+if [[ $DEBUG == 0 ]]; then
+    rm -f generate_reference_manual_Doxyfile
+fi
 
 # Update the Reference Manual
 echo ""
