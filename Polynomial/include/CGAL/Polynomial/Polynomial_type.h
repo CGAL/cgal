@@ -519,7 +519,8 @@ public:
     
     // for the benefit of mem_fun1 & friends who don't like const ref args
     template <class NTX>
-    NTX evaluate_arg_by_value(NTX x) const { return evaluate(x); } 
+    typename CGAL::Coercion_traits<NT,NTX>::Type 
+    evaluate_arg_by_value(NTX x) const { return evaluate(x); } 
 
     /*!  \brief evaluate the polynomial with all coefficients replaced by
      *  their absolute values
