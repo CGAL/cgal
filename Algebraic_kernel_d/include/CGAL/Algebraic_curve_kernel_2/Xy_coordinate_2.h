@@ -286,10 +286,10 @@ public:
                     if (ipair.first != 1 || ipair.second != 1) {
                         point_is_certainly_critical = true;
                         y_pol = 
-                            CGAL::Polynomial_traits_d< Polynomial_2 >::Make_square_free()(
+                            typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
                                     CGAL::CGALi::resultant
-                                    (transpose_bivariate_polynomial(f),
-                                     transpose_bivariate_polynomial(
+                                    (NiX::transpose_bivariate_polynomial(f),
+                                     NiX::transpose_bivariate_polynomial(
                                              CGAL::diff(f)
                                      )
                                     )
@@ -301,9 +301,9 @@ public:
                     
                     Polynomial_2 r(x().polynomial());
                     
-                    y_pol = CGAL::Polynomial_traits_d< Polynomial_2 >::Make_square_free()(
-                            CGAL::CGALi::resultant(transpose_bivariate_polynomial(f),
-                                           transpose_bivariate_polynomial(r))
+                    y_pol = typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
+                            CGAL::CGALi::resultant(NiX::transpose_bivariate_polynomial(f),
+                                           NiX::transpose_bivariate_polynomial(r))
                     );
                 }
                 typename NiX::Real_roots<X_coordinate_1,
