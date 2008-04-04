@@ -19,10 +19,15 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 
 \ccDefinition
-  
+
 %The class \ccRefName\ does this and that.
 
-\ccInclude{Point_2.h}
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Curved_kernel_via_analysis_2/Point_2.h}
+
+%END-AUTO(\ccInclude)
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
@@ -45,6 +50,16 @@ class \ccc{Rep_} = \ccc{CGALi::Point_2_rep<CurvedKernelViaAnalysis_2>}$>$   \\
 class \ccc{Point_2};
 
 %END-AUTO(\ccParameters)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Handle_with_policy<Rep_>}
+
+%END-AUTO(\ccInheritsFrom)
 
 
 \ccIsModel
@@ -336,14 +351,26 @@ greater than in (x,y) lexicographic order
 greater-equal in (x,y) lexicographic order
 }
 \ccGlue
-%\ccMethod{std::ostream& operator<<(std::ostream& os, const Point_2< CurvedKernelViaAnalysis_2, Rep_>& pt);}
-%{
-%[related] \\
-%writes pt to os
-%}
-%\ccGlue
+\ccMethod{void write(std::ostream& os) const;}
+{
+writes point to os
+}
+\ccGlue
 
 %END-AUTO(\ccOperations)
+
+\ccHeading{Friends And Related Functions}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Friends And Related Functions})
+
+\ccFunction{std::ostream& operator<<(std::ostream& os, const Point_2< CurvedKernelViaAnalysis_2, Rep_>& pt);}
+{
+writes pt to os
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Friends And Related Functions})
 
 \end{ccRefClass}
 
