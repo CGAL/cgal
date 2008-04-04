@@ -13,7 +13,6 @@
 #include <boost/format.hpp>
 
 #include <queue>
-#include <set>
 #include <vector>
 #include <iterator> // std::back_inserter
 
@@ -45,7 +44,8 @@ typedef CGAL::Triple<Triangle_3,Vector,const QTreeWidgetItem*> Facet;
 typedef CBinary_image_3<FT,Point> Binary_image;
 
 // surface mesher
-#define CGAL_MESHES_NO_OUTPUT
+// #define CGAL_MESHES_NO_OUTPUT
+#define CGAL_SURFACE_MESHER_VERBOSE
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -162,27 +162,21 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
   typedef unsigned char Marker;
   typedef typename TransformOperator::result_type Label;
 
-  static const Marker outside_mark 
-    = ( std::numeric_limits<Marker>::is_bounded ? 
-        (std::numeric_limits<Marker>::max)() :
-        std::numeric_limits<Marker>::infinity() );
-
   boost::multi_array<Marker, 3> visited(boost::extents[nx][ny][nz]);
   typedef boost::tuple<int, int, int> Indices;
-  typedef std::set<Indices> Zone;
   typedef std::queue<Indices> Indices_queue;
+  typedef std::vector<Indices> Border_vector;
 
   int number_of_connected_components = 0;
   for(unsigned int i=0;i<nx;i++)
     for(unsigned int j=0;j<ny;j++)
       for(unsigned int k=0;k<nz;k++)
       {
-//         Zone zone;
         if(visited[i][j][k]>0)
           continue;
         const Label current_label = transform(m_image.value(i, j, k));
         if(current_label == Label()) {
-          visited[i][j][k] = outside_mark;
+          visited[i][j][k] = 3;
           continue;
         }
 
@@ -200,9 +194,16 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
         Indices_queue queue;
         Indices indices(i, j ,k);
         queue.push(indices);
-//         zone.insert(indices);
 
-        bool seed_found = false;
+        Border_vector border;
+
+        /*
+         * First pass is a BFS to retrieve all the connected component, and
+         * its border.
+         * Second pass is a BFS initialized with all voxel of the border.
+         * The last voxel of that BFS is used as the seed.
+         */
+        int pass = 1; // pass will be equal to 2 in second pass
 
         Indices bbox_min = indices;
         Indices bbox_max = indices;
@@ -212,80 +213,91 @@ void Volume::search_for_connected_components(PointsOutputIterator it, TransformO
           Indices indices = queue.front();
           queue.pop();
 
-          // warning: local indices i, j and k.
+          // warning: those indices i, j and k are local to the while loop
           const int i = boost::get<0>(indices);
           const int j = boost::get<1>(indices);
           const int k = boost::get<2>(indices);
 
-          if(visited[i][j][k]>0)
-            continue;
-          visited[i][j][k] = number_of_connected_components;
-          ++nb_voxels;
-
-          boost::get<0>(bbox_min) = (std::min)(i, boost::get<0>(bbox_min));
-          boost::get<0>(bbox_max) = (std::max)(i, boost::get<0>(bbox_max));
-          boost::get<1>(bbox_min) = (std::min)(j, boost::get<1>(bbox_min));
-          boost::get<1>(bbox_max) = (std::max)(j, boost::get<1>(bbox_max));
-          boost::get<2>(bbox_min) = (std::min)(k, boost::get<2>(bbox_min));
-          boost::get<2>(bbox_max) = (std::max)(k, boost::get<2>(bbox_max));
-
-          int nb_neighbors = 0;
-
-          static const int neighbors_offset[6][3] = { { +1,  0,  0 },
-                                                      { -1,  0,  0 },
-                                                      {  0, +1,  0 },
-                                                      {  0, -1,  0 },
-                                                      {  0,  0, +1 },
-                                                      {  0,  0, -1 } };
-          // Visit neighbors.
-          // (i_n, j_n, k_n) are indices of neighbors.
-          for(int n = 0; n < 6; ++n)
+          if(visited[i][j][k] < pass)
           {
-            const int i_n = i + neighbors_offset[n][0];
-            const int j_n = j + neighbors_offset[n][1];
-            const int k_n = k + neighbors_offset[n][2];
-            if(i_n < 0 || i_n >= static_cast<int>(nx)) {
-              ++nb_neighbors; // fake neighbor
-              continue;
-            }
-            if(j_n < 0 || j_n >= static_cast<int>(ny)) {
-              ++nb_neighbors; // fake neighbor
-              continue;
-            }
-            if(k_n < 0 || k_n >= static_cast<int>(nz)) {
-              ++nb_neighbors; // fake neighbor
-              continue;
-            }
-            if(transform(m_image.value(i_n, j_n, k_n)) == current_label)
+            visited[i][j][k] = pass;
+            if(pass == 1 )
             {
-              ++nb_neighbors;
-              if(!visited[i_n][j_n][k_n]) {
-                Indices indices(i_n, j_n, k_n);
-                queue.push(indices);
-              }
+              ++nb_voxels;
+              boost::get<0>(bbox_min) = (std::min)(i, boost::get<0>(bbox_min));
+              boost::get<0>(bbox_max) = (std::max)(i, boost::get<0>(bbox_max));
+              boost::get<1>(bbox_min) = (std::min)(j, boost::get<1>(bbox_min));
+              boost::get<1>(bbox_max) = (std::max)(j, boost::get<1>(bbox_max));
+              boost::get<2>(bbox_min) = (std::min)(k, boost::get<2>(bbox_min));
+              boost::get<2>(bbox_max) = (std::max)(k, boost::get<2>(bbox_max));
             }
-          } // end for neighbors
 
-          if(!seed_found && nb_neighbors == 6)
-          {
-            *it++ = m_image.point(i, j, k);
-            std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
-              % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
-            seed_found = true;
-          }
+            static const int neighbors_offset[6][3] = { { +1,  0,  0 },
+                                                        { -1,  0,  0 },
+                                                        {  0, +1,  0 },
+                                                        {  0, -1,  0 },
+                                                        {  0,  0, +1 },
+                                                        {  0,  0, -1 } };
+            bool voxel_is_on_border = false;
+
+            // Visit neighbors.
+            // (i_n, j_n, k_n) are indices of neighbors.
+            for(int n = 0; n < 6; ++n)
+            {
+              const int i_n = i + neighbors_offset[n][0];
+              const int j_n = j + neighbors_offset[n][1];
+              const int k_n = k + neighbors_offset[n][2];
+              if(i_n < 0 || i_n >= static_cast<int>(nx) ||
+                 j_n < 0 || j_n >= static_cast<int>(ny) ||
+                 k_n < 0 || k_n >= static_cast<int>(nz))
+              {
+                voxel_is_on_border = true;
+                continue;
+              }
+              else
+              {
+                if(transform(m_image.value(i_n, j_n, k_n)) == current_label)
+                {
+                  if(visited[i_n][j_n][k_n] < pass) {
+                    Indices indices(i_n, j_n, k_n);
+                    queue.push(indices);
+                  }
+                }
+                else
+                  voxel_is_on_border = true;
+              }
+            } // end for neighbors
+
+            if(pass == 1 && voxel_is_on_border)
+              border.push_back(indices);
+          } // end if voxel not already visited
+
+          if(queue.empty()) {
+            if(pass == 1)
+            { // End of first pass. Begin second pass with the voxels of
+              // the border.
+              for(typename Border_vector::const_iterator
+                    border_it = border.begin(), border_end = border.end();
+                  border_it != border_end; ++border_it)
+                queue.push(*border_it);
+              pass = 2;
+            }
+            else // end of second pass, return the last visited voxel
+            {
+              *it++ = m_image.point(i, j, k);
+              std::cerr << boost::format("Found seed %5%, which is voxel (%1%, %2%, %3%), value=%4%\n")
+                % i % j % k %  m_image.value(i, j, k) % m_image.point(i, j, k);
+            }
+          } // end if queue.empty()
         } // end while !queue.empty() (with local indices i, j, k)
 
-        // if no seed has been found, take the first voxel of the connected
-        // component
-        if(!seed_found) {
-          *it++ = m_image.point(i, j, k);
-          std::cerr << boost::format("No seed found. Choose %1%\n") %  m_image.point(i, j, k);
-        }
-        std::cerr << boost::format("There was %1% voxels in that component.\n"
-                                   "The bounding box is (%2% %3% %4%, %5% %6% %7%).\n")
+        std::cerr << boost::format("There was %1% voxel(s) in that component.\n"
+                                   "The bounding box is (%2% %3% %4%, %5% %6% %7%).\n"
+                                   "%8% voxel(s) on border\n")
           % nb_voxels
           % boost::get<0>(bbox_min) % boost::get<1>(bbox_min) % boost::get<2>(bbox_min)
-          % boost::get<0>(bbox_max) % boost::get<1>(bbox_max) % boost::get<2>(bbox_max);
+          % boost::get<0>(bbox_max) % boost::get<1>(bbox_max) % boost::get<2>(bbox_max)
+          % border.size();
       } // end for i,j,k
 } // end function Volume::search_for_connected_components()
 
