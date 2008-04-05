@@ -7,7 +7,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 
-#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/ipower.h>
 
 #include <cassert>
 
@@ -26,30 +26,6 @@ static CGAL::Random my_rnd(346); // some seed
     typedef CGAL::Exponent_vector Exponent_vector;              \
     typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;  \
     typedef std::vector< Monom > Monom_rep;      
-
-template <typename T>
-inline
-T my_ipower(const T& base, int expn) {
-    // compute base^expn using square-and-multiply
-    CGAL_precondition(expn >= 0);
-
-    // handle trivial cases efficiently
-    if (expn == 0) return T(1);
-    if (expn == 1) return base;
-
-    // find the most significant non-zero bit of expn
-    int e = expn, msb = 0;
-    while (e >>= 1) msb++;
-
-    // computing base^expn by square-and-multiply
-    T res = base;
-    int b = 1<<msb;
-    while (b >>= 1) { // is there another bit right of what we saw so far?
-        res *= res;
-        if (expn & b) res *= base;
-    }
-    return res;
-}
 
 template <class Polynomial_d_>
 Polynomial_d_
@@ -507,7 +483,7 @@ void test_shift(){
     typename PT::Construct_polynomial construct;
     for(int i = 0; i < 5; i++){ 
         Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
-        Polynomial_d q = p*my_ipower(construct(Coeff(0),Coeff(1)),5);
+        Polynomial_d q = p*CGAL::ipower(construct(Coeff(0),Coeff(1)),5);
         assert(shift(p,5) == q);   
     }
     std::cerr << " ok "<< std::endl; 
