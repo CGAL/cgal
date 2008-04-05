@@ -16,6 +16,7 @@
 
 #include <CGAL/basic.h>
 #include <cassert>
+#include <vector>
 
 #include <CGAL/ipower.h>
 /*#include <NiX/basic.h>
