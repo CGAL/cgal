@@ -1352,9 +1352,9 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
     str_stream >> type;
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
-    unsigned int monotonicity;
+    unsigned int multiplicity;
     if (type == 0) {
-      str_stream >> monotonicity;
+      str_stream >> multiplicity;
     }
     unsigned int exp_type = 1;
     const X_monotone_curve_2 * xcv_ptr;
@@ -1394,7 +1394,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
       print_result(false);
       return false;
     }
-    if (!compare(monotonicity, (*pt_pair_ptr).second, "monotonicity")) {
+    if (!compare(multiplicity, (*pt_pair_ptr).second, "multiplicity")) {
       print_result(false);
       return false;
     }

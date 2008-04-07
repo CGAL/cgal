@@ -1187,13 +1187,13 @@ public:
       // Note that in this case we do not define the multiplicity of the
       // intersection points we report.
       unsigned int  mult = 0;
-      if (left().equals (cv.left()))
+      if (left().equals (cv.left()) || left().equals(cv.right()))
       {
         *oi = CGAL::make_object (std::make_pair (left(), mult));
         ++oi;
       }
 
-      if (right().equals (cv.right()))
+      if (right().equals (cv.right()) || right().equals(cv.left()))
       {
         *oi = CGAL::make_object (std::make_pair (right(), mult));
         ++oi;
