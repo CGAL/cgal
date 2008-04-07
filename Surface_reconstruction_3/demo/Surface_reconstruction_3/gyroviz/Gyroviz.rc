@@ -205,6 +205,62 @@ BEGIN
     END
 END
 
+IDR_GyrovizTYPE_4 MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "Save input point set &as...\tCtrl+S", ID_FILE_SAVE_AS
+        MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "Options...\tO",               ID_EDIT_OPTIONS
+    END
+    MENUITEM "&Algorithms",                 ID_ALGORITHMS
+    POPUP "&Render"
+    BEGIN
+        MENUITEM "Vertices\tG",                 ID_RENDER_POINTS
+        MENUITEM "Border Vertices\tB",          ID_RENDER_BORDERVERTICES32845
+        MENUITEM "Edges\tD",                    ID_RENDER_DELAUNAYEDGES
+        MENUITEM "Triangles\tT",                ID_RENDER_TRIANGLES
+        MENUITEM "Rays\tR",                     ID_RENDERCOFF_RAYS
+        MENUITEM "Inside Tetrahedrons\tI",      ID_RENDERCOFF_INSIDE
+        MENUITEM SEPARATOR
+        POPUP "Arcball"
+        BEGIN
+            MENUITEM "Reset",                       ID_ARCBALL_RESET
+            MENUITEM "View sphere",                 ID_RENDER_ARCBALL
+        END
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Gyroviz...",           ID_APP_ABOUT
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -217,7 +273,7 @@ BEGIN
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
     "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_EDIT_OPTIONS,        VIRTKEY, NOINVERT
+    "O",            ID_EDIT_OPTIONS,        VIRTKEY, ALT, NOINVERT
     "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
@@ -231,6 +287,7 @@ BEGIN
     "M",            ID_RECONSTRUCTION_SURFACEMESHING, VIRTKEY, NOINVERT
     "A",            ID_RENDER_ARCBALL,      VIRTKEY, CONTROL, NOINVERT
     "B",            ID_RENDER_BORDERVERTICES, VIRTKEY, NOINVERT
+    "C",            ID_RENDER_CONSTRAINTS,  VIRTKEY, ALT, NOINVERT
     "C",            ID_RENDER_CONTOUR,      VIRTKEY, NOINVERT
     "D",            ID_RENDER_DELAUNAYEDGES, VIRTKEY, NOINVERT
     "F",            ID_RENDER_FILTERED,     VIRTKEY, NOINVERT
@@ -246,7 +303,7 @@ BEGIN
     VK_OEM_MINUS,   ID_RENDER_ZOOMOUT,      VIRTKEY, NOINVERT
     "I",            ID_RENDERCOFF_INSIDE,   VIRTKEY, NOINVERT
     "R",            ID_RENDERCOFF_RAYS,     VIRTKEY, NOINVERT
-    "C",            ID_RENDER_CONSTRAINTS,  VIRTKEY, ALT, NOINVERT
+    "O",            ID_RENDER_ORIGINALIMAGE, VIRTKEY, NOINVERT
 END
 
 
@@ -339,6 +396,7 @@ BEGIN
     IDS_MESSAGE2            "------------------------"
     IDS_MESSAGE3            "---------------------"
     IDR_GyrovizTYPE_2       "\nGyroviz\nGyroviz\nImage Files (*.ppm)\n.ppm\nGyroviz.Document\nGyroviz.Document"
+    IDR_GyrovizTYPE_4       "\nGyroviz\nGyroviz\nImage Sequences (*.bmp)\n.bmp\nGyroviz.Document\nGyroviz.Document"
 END
 
 STRINGTABLE 
@@ -496,6 +554,17 @@ BEGIN
     EDITTEXT        IDC_EDIT_POINT_SIZE,96,28,30,12,ES_AUTOHSCROLL
 END
 
+IDD_DIALOG_OPTIONS_4 DIALOGEX 0, 0, 242, 110
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Options"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,171,77,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,117,77,50,14
+    LTEXT           "OpenGL Point Size",IDC_STATIC,24,29,52,8
+    EDITTEXT        IDC_EDIT_POINT_SIZE,96,28,30,12,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -514,6 +583,14 @@ BEGIN
     END
 
     IDD_DIALOG_OPTIONS2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 235
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 103
+    END
+
+    IDD_DIALOG_OPTIONS_4, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 235

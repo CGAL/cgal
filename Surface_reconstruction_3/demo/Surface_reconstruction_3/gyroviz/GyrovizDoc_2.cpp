@@ -168,7 +168,7 @@ BOOL CGyrovizDoc_2::OnOpenDocument(LPCTSTR lpszPathName)
     m_cimg_filt_image = gauss3(m_cimg_gray_image);
     m_filtered_image = cimg_image_multiplexer_char(m_cimg_filt_image);
 
-    m_cimg_seg_image = grad_freiChen(m_cimg_filt_image,30); // Edge detection on filtered image 
+    m_cimg_seg_image = grad_freiChen(m_cimg_filt_image,15); // Edge detection on filtered image def : 30
     m_segmented_image = cimg_image_multiplexer_char(m_cimg_seg_image);
   }
   else
@@ -214,7 +214,7 @@ BOOL CGyrovizDoc_2::OnOpenDocument(LPCTSTR lpszPathName)
 			  AfxMessageBox("Unable to open file");
 			  return FALSE;
 		  }
-		  m_gyroviz_dt.nw_add_constraints(m_cimg_seg_image, 1);
+		  m_gyroviz_dt.nw_add_constraints(m_cimg_seg_image, 5);
 		  status_message("Constrained Delaunay triangulation (%lf s)",duration(init));
 	  
 	  }

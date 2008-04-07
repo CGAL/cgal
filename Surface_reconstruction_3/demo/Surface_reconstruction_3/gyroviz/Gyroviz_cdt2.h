@@ -19,6 +19,8 @@
 #include <CGAL/origin.h>
 
 #include "Gyroviz_info_for_cdt2.h"
+#include "Gyroviz_vertex_segment_2.h"
+#include "Gyroviz_border_points_dt2.h"
 
 #include <list>
 #include <vector>
@@ -60,6 +62,7 @@ public:
 	typedef typename Base::Finite_edges_iterator       Finite_edges_iterator;
 	typedef typename Base::Finite_faces_iterator       Finite_faces_iterator;
 	typedef typename Base::Finite_vertices_iterator    Finite_vertices_iterator;
+	typedef typename Gyroviz_vertex_segment_2<Gyroviz_cdt2> Gyroviz_vertex_segment_2;
 
 	// Data members
 private:
@@ -80,6 +83,11 @@ public:
 
 	bool read_pnt(char *pFilename)
 	{
+		
+		//DEBUG
+		int number_of_vertices_pnt = 0;
+
+		//extract from pFilename the image number
 		std::string temp ( pFilename );
 		std::string filename_without_path = temp.substr(temp.size()-15);
 		std::string extract_number = filename_without_path.substr(7,filename_without_path.size()-4);
@@ -113,6 +121,7 @@ public:
 
 					Vertex_handle vh = this->insert(point_2);
 					vh->info() = Gyroviz_info_for_cdt2(point_3,image_number,false);
+					number_of_vertices_pnt++;
 				}
 			}
 		}
@@ -122,21 +131,25 @@ public:
 	}
 
 
-	// flag the vertices positionned on the border and return a vector of these
-	std::vector<Point_2> set_on_border_2D_vertices(const CImg <unsigned char> & image)
+	// set flag to true for the vertices positionned on the border and return a vector of these
+	std::vector<Vertex_handle> set_on_border_2D_vertices(const CImg <unsigned char> & image)
 	{
-		std::vector<Point_2> vector_of_border_points;
+		
+		//DEBUG
+		int number_of_border_vertices = 0;
+		
+		std::vector<Vertex_handle> vector_of_border_points;
+
 		Finite_vertices_iterator fv = this->finite_vertices_begin();
 		for(; fv != this->finite_vertices_end(); ++fv)
 		{
 			// if pixel any of 3x3 surrounding pixels is on border 
 			// keep vertex(white color is used in frei-chen gradient operator)
 
-
 			if (image((unsigned int)fv->point().x(),(unsigned int)fv->point().y(),0,0)==255)
 			{
 				fv->info().set_flag(true);
-				vector_of_border_points.push_back(fv->point());
+				vector_of_border_points.push_back(fv);
 			}
 
 			else if((unsigned int)fv->point().x() == 0 && (unsigned int)fv->point().y() == 0) //upper left pixel
@@ -146,7 +159,7 @@ public:
 					image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()+1,0,0)== 255)
 				{  
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 
 			}
@@ -157,7 +170,7 @@ public:
 					image((unsigned int)fv->point().x()-1,(unsigned int)fv->point().y()+1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 
@@ -168,7 +181,7 @@ public:
 					image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()-1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 
 			}
@@ -180,7 +193,7 @@ public:
 					image((unsigned int)fv->point().x()-1,(unsigned int)fv->point().y()-1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 
@@ -193,7 +206,7 @@ public:
 					image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()+1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}      
 			}
 
@@ -206,7 +219,7 @@ public:
 					image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y(),0,0)  == 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 
@@ -219,7 +232,7 @@ public:
 					image((unsigned int)fv->point().x(),  (unsigned int)fv->point().y()+1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 
@@ -232,7 +245,7 @@ public:
 					image((unsigned int)fv->point().x(),  (unsigned int)fv->point().y()+1,0,0)== 255) 
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 
@@ -248,10 +261,13 @@ public:
 					image((unsigned int)fv->point().x()+1,(unsigned int)fv->point().y()+1,0,0)== 255)
 				{
 					fv->info().set_flag(true);
-					vector_of_border_points.push_back(fv->point());
+					vector_of_border_points.push_back(fv);
 				}
 			}
 		}
+
+		number_of_border_vertices = vector_of_border_points.size();
+
 		return vector_of_border_points;
 	}
 
@@ -273,21 +289,26 @@ public:
 	}
 
 
-	// this function will draw segments between all border points
-	std::vector<Segment_2> link_points_on_border(std::vector<Point_2> vector_of_border_points)
+	// (DEPRECATED)this function will draw segments between all border points
+	std::vector<Gyroviz_vertex_segment_2> link_points_on_border(const std::vector<Vertex_handle>& vector_of_border_points)
 	{
-		std::vector<Segment_2> vector_of_segments;
+		//DEBUG
+		int number_of_segments = 0;
+		
+		std::vector<Gyroviz_vertex_segment_2> vector_of_vertex_segments;
 
-		for(int i = 0; i<vector_of_border_points.size()-1; ++i)
+		for(int i=0; i<vector_of_border_points.size()-1; ++i)
 		{
-			for(int j =i+1; j<vector_of_border_points.size(); ++j)
+			for(int j=i+1; j<vector_of_border_points.size(); ++j)
 			{
-				Segment_2 s(vector_of_border_points[i],vector_of_border_points[j]);
-				vector_of_segments.push_back(s);
+				Gyroviz_vertex_segment_2 vertex_segment(vector_of_border_points[i],vector_of_border_points[j]);			
+				vector_of_vertex_segments.push_back(vertex_segment);
 			}
 		}
 
-		return vector_of_segments;
+		number_of_segments = vector_of_vertex_segments.size();
+
+		return vector_of_vertex_segments;
 	}
 
 
@@ -305,8 +326,26 @@ public:
 	std::vector<Segment_2> nw_add_constraints(const CImg <unsigned char>& image, int gap_score)
 	{
 
-		std::vector<Point_2>   vector_of_border_points = set_on_border_2D_vertices(image);
-		std::vector<Segment_2> vector_of_segments      = link_points_on_border(vector_of_border_points);
+		std::vector<Vertex_handle>   vector_of_border_points = set_on_border_2D_vertices(image);
+		
+		Gyroviz_border_points_dt2<Gt, Tds> border_dt2(vector_of_border_points);
+
+		std::vector<Segment_2> vector_of_segments = border_dt2.segments_out_of_dt2();
+		
+		//std::vector<Gyroviz_vertex_segment_2> vector_of_vertex_segments      = link_points_on_border(vector_of_border_points);
+
+		//DEBUG
+		int vector_of_border_points_size = vector_of_border_points.size();
+		int vector_of_segments_size = vector_of_segments.size(); 
+
+		int BEFORE_constraints_number_of_vertices=0;
+
+		
+		for(Finite_vertices_iterator fv = this->finite_vertices_begin(); fv != this->finite_vertices_end(); ++fv)
+		{
+			BEFORE_constraints_number_of_vertices++;
+		}
+
 
 		Point_2 source_vertex;
 		Point_2 end_vertex;
@@ -314,44 +353,67 @@ public:
 		std::vector<Segment_2> vector_of_constraints;
 
 		double length_curr_segment = 0;
-		int global_score = 0;// no constraint
+		int global_score = -1;// no constraint
 
 		// the similarity matrix i will use is 
 		// S(Border/Segment) = +1
 		// S(Gap/Segment) = gap_score (default : -2)
 
-		for(int i = 0; i<vector_of_segments.size(); ++i)
+		for(int i = 0; i</*vector_of_vertex_segments*/vector_of_segments.size(); ++i)
 		{
+			//source_vertex = vector_of_vertex_segments[i].get_source()->point();
+			//end_vertex    = vector_of_vertex_segments[i].get_target()->point();
+			//Segment_2 s (source_vertex, end_vertex);
+
+			source_vertex =  vector_of_segments[i].source();
+			end_vertex =  vector_of_segments[i].target();
 			Segment_2 s = vector_of_segments[i];
-			source_vertex = s.source();
-			end_vertex = s.target();
 			v = end_vertex - source_vertex;
+
 			length_curr_segment = (int)ceil(sqrt(s.squared_length()));
 			int current_gap_score = gap_score;
 
 			for(int j = 0; j<length_curr_segment; ++j)
-			{
+			{ //TO OPTIMIZE
 				if(image((unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).x(),
-					(unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).y(), 0, 0) == 255)
+					(unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).y(), 0, 0) == 255 &&
+					image((unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).x(),
+					(unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).y(), 0, 1) == 255 &&
+					image((unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).x(),
+					(unsigned int)point_on_segment(v, source_vertex, j/length_curr_segment).y(), 0, 2) == 255)
 				{
-					global_score = global_score + 3;
+					global_score = global_score + current_gap_score;
 					current_gap_score = gap_score;
 				}
 				else
 				{
-					global_score = global_score - current_gap_score;
 					current_gap_score++;
+					global_score = global_score - current_gap_score/*/gap_score*/; //TEST
+					
 				}
 			}
+			
 			if(global_score >= 0)
 			{
-				this->insert_constraint(source_vertex,end_vertex);
+
+				this->insert_constraint(source_vertex,end_vertex/*vector_of_vertex_segments[i].get_source(),vector_of_vertex_segments[i].get_target()*/);
 				vector_of_constraints.push_back(s);
 				global_score = 0;
 			}
 			else
 				global_score = 0;
 		}
+
+
+		// DEBUG
+		int AFTER_constraints_number_of_vertices=0;
+
+		
+		for(Finite_vertices_iterator fv = this->finite_vertices_begin(); fv != this->finite_vertices_end(); ++fv)
+		{
+			AFTER_constraints_number_of_vertices++;
+		}
+
 		return vector_of_constraints;
 	}
 
@@ -432,6 +494,9 @@ public:
 	void gl_draw_2D_vertices(const unsigned char r, const unsigned char g,
 		const unsigned char b, float size)
 	{
+		//DEBUG
+		int number_of_vertices_2v = 0;
+
 		::glPointSize(size);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_POINTS);
@@ -440,15 +505,22 @@ public:
 		for(; fv != this->finite_vertices_end(); ++fv)
 		{
 			::glVertex2d(fv->point().x(),fv->point().y());
+
+
+			number_of_vertices_2v++;
 		}
+
 		::glEnd();
 	}
 
 
 	// draw 2D only points near detected borders 
 	void gl_draw_on_border_2D_vertices(const unsigned char r, const unsigned char g,
-		const unsigned char b, float size, const CImg <unsigned char>& image)
+		const unsigned char b, float size/* TEST, const CImg <unsigned char>& image*/)
 	{
+		/*
+		TEST 
+
 		::glPointSize(size);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_POINTS);
@@ -456,9 +528,30 @@ public:
 		std::vector<Point_2> vector_of_border_points = set_on_border_2D_vertices(image);
 		for(int i=0; i<vector_of_border_points.size(); ++i)
 		{
-			::glVertex2d(vector_of_border_points[i].x(),vector_of_border_points[i].y());
+		::glVertex2d(vector_of_border_points[i].x(),vector_of_border_points[i].y());
 		}
+		::glEnd();*/
+
+		//DEBUG
+		int number_of_vertices_b = 0;
+
+		::glPointSize(size);
+		::glColor3ub(r,g,b);
+		::glBegin(GL_POINTS);
+
+		Finite_vertices_iterator fv  = this->finite_vertices_begin();
+		for(; fv != this->finite_vertices_end(); ++fv)
+		{
+			if(fv->info().get_flag()){
+				::glVertex2d(fv->point().x(),fv->point().y());
+
+				number_of_vertices_b++;
+
+			}		
+		}
+
 		::glEnd();
+
 	}
 
 
@@ -513,6 +606,7 @@ public:
 
 		::glLineWidth(line_width);
 		::glBegin(GL_LINES);
+		
 		Finite_edges_iterator fe = this->finite_edges_begin();
 		for(; fe != this->finite_edges_end(); ++fe)
 		{
@@ -534,6 +628,9 @@ public:
 	void gl_draw_soup_vertices(const unsigned char r, const unsigned char g,
 		const unsigned char b, float size)
 	{
+		//DEBUG
+		int number_of_vertices_sv = 0;
+
 		::glPointSize(size);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_POINTS);
@@ -543,33 +640,66 @@ public:
 		{
 			const Point_3& p = fv->info().get_point3();
 			::glVertex3d(p.x(),p.y(),p.z());
-		}
+			
+			number_of_vertices_sv++;
 
+		}
 		::glEnd();
 	}
 
 
+	// draw 2D only points near detected borders 
+	void gl_draw_on_border_3D_vertices(const unsigned char r, const unsigned char g,
+		const unsigned char b, float size)
+	{
+		//DEBUG
+		int number_of_vertices_bv = 0;
+		
+		::glPointSize(size);
+		::glColor3ub(r,g,b);
+		::glBegin(GL_POINTS);
+
+		Finite_vertices_iterator fv  = this->finite_vertices_begin();
+		for(; fv != this->finite_vertices_end(); ++fv)
+		{
+			if(fv->info().get_flag())
+			{
+				::glVertex3d(fv->info().get_point3().x(),fv->info().get_point3().y(),fv->info().get_point3().z());
+			
+				number_of_vertices_bv++;
+			
+			}		
+		}
+		::glEnd();
+	}
+
+
+
 	// 3D projection of the tracked 2D constrained edges
 	void gl_draw_soup_constrained_edges(const unsigned char r, const unsigned char g,
-		const unsigned char b, const float width, const CImg <unsigned char>& image)
+		const unsigned char b, const float width/*, const CImg <unsigned char>& image*/)
 	{
 		::glLineWidth(width);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_LINES);
 
-		std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image);
-		for(int i=0; i<vector_of_constraints.size(), ++i)
+		/*std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image);*/
+		Finite_edges_iterator fe = this->finite_edges_begin();
+		for(; fe != this->finite_edges_end(); ++fe)
 		{
-			::glVertex3d(vector_of_constraints[i].source()->info().get_point3().x(),
-				vector_of_constraints[i].source()->info().get_point3().y(),
-				vector_of_constraints[i].source()->info().get_point3().z());
-			::glVertex3d(vector_of_constraints[i].target()->info().get_point3().x(),
-				vector_of_constraints[i].target()->info().get_point3().y(),
-				vector_of_constraints[i].target()->info().get_point3().z());
-		}
-		::glEnd();
+			if(fe->first->is_constrained(fe->second))
+			{
+				Point_3 p1 = fe->first->vertex(ccw(fe->second))->info().get_point3();
+				Point_3 p2 = fe->first->vertex(cw(fe->second))->info().get_point3();
+				::glVertex3d(p1.x(), p1.y(),  p1.z());
+				::glVertex3d(p2.x(), p2.y(),  p2.z());
+			}
 
+		}
+
+		::glEnd();
 	}
+
 
 	// 3D projection of the tracked 2D constrained triangulation
 	void gl_draw_soup_constrained_triangles(const unsigned char r, const unsigned char g,

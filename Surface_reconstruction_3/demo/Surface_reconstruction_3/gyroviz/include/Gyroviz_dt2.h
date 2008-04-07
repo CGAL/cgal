@@ -119,8 +119,7 @@ public:
           Point_3 point_3(x,y,z);
 
           Vertex_handle vh = this->insert(point_2);
-          
-          vh->info() = Gyroviz_info_for_dt2(point_3,image_number);
+		  vh->info() = Gyroviz_info_for_dt2(point_3,image_number);
         }
       }
     }

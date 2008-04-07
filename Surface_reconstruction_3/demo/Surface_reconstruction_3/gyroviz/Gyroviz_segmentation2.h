@@ -11,6 +11,9 @@
 #include <stdio.h>
 using namespace std;
 
+
+
+//#define cimg_convert_path "C:\Users\nsalman\Documents\ImageMagick\ImageMagick-6.4.0\VisualMagick\bin\convert"
 #include <CImg.h>
 using namespace cimg_library;
 

@@ -12,6 +12,8 @@
 #define IDD_DIALOG_OPTIONS_3            134
 #define IDR_GyrovizTYPE_2               135
 #define IDD_DIALOG_OPTIONS2             136
+#define IDR_GyrovizTYPE_4               137
+#define IDD_DIALOG_OPTIONS_4            138
 #define IDC_EDIT_SM_ANGLE               1000
 #define IDC_EDIT_SM_RADIUS              1001
 #define IDC_EDIT_SM_DISTANCE            1002
@@ -60,13 +62,14 @@
 #define ID_RENDERCOFF_INSIDE            32840
 #define ID_RENDERCOFF_CAMERAS           32841
 #define ID_RENDER_CONSTRAINTS           32842
+#define ID_RENDER_BORDERVERTICES32845   32845
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        137
-#define _APS_NEXT_COMMAND_VALUE         32843
+#define _APS_NEXT_RESOURCE_VALUE        139
+#define _APS_NEXT_COMMAND_VALUE         32847
 #define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -6,6 +6,8 @@
 #include "MainFrm.h"
 
 #include "ChildFrm.h"
+#include "GyrovizDoc_4.h"
+#include "GyrovizView_4.h"
 #include "GyrovizDoc_3.h"
 #include "GyrovizView_3.h"
 #include "GyrovizDoc_2.h"
@@ -64,15 +66,15 @@ BOOL CGyrovizApp::InitInstance()
 	
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
-	CMultiDocTemplate* pDocTemplate;
-	pDocTemplate = new CMultiDocTemplate(IDR_GyrovizTYPE_3,
+	CMultiDocTemplate* pDocTemplate3;
+	pDocTemplate3 = new CMultiDocTemplate(IDR_GyrovizTYPE_3,
 		RUNTIME_CLASS(CGyrovizDoc_3),
 		RUNTIME_CLASS(CChildFrame), // custom MDI child frame
 		RUNTIME_CLASS(CGyrovizView_3));
-	if (!pDocTemplate)
+	if (!pDocTemplate3)
 		return FALSE;
-	AddDocTemplate(pDocTemplate);
-  //
+	AddDocTemplate(pDocTemplate3);
+	//	
 	CMultiDocTemplate* pDocTemplate2;
 	pDocTemplate2 = new CMultiDocTemplate(IDR_GyrovizTYPE_2,
 		RUNTIME_CLASS(CGyrovizDoc_2),
@@ -81,6 +83,15 @@ BOOL CGyrovizApp::InitInstance()
 	if (!pDocTemplate2)
 		return FALSE;
 	AddDocTemplate(pDocTemplate2);
+	//
+	CMultiDocTemplate* pDocTemplate4;
+	pDocTemplate4 = new CMultiDocTemplate(IDR_GyrovizTYPE_4,
+		RUNTIME_CLASS(CGyrovizDoc_4),
+		RUNTIME_CLASS(CChildFrame), // custom MDI child frame
+		RUNTIME_CLASS(CGyrovizView_4));
+	if (!pDocTemplate4)
+		return FALSE;
+	AddDocTemplate(pDocTemplate4);
 	
 	// create main MDI Frame window
 	CMainFrame* pMainFrame = new CMainFrame;

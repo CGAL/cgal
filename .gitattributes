@@ -4170,12 +4170,16 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.rc -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz.reg -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_3.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_4.cpp -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_4.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.h -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_border_points_dt2.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.sln -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.vcproj -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.sln -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.vcproj -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vertex_segment_2.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/data/Isidor_50.pwc -text

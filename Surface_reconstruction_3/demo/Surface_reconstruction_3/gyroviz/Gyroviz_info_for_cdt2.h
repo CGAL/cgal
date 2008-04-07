@@ -10,12 +10,12 @@ protected:
 	
 	// 3D Point
 	Point_3 point;
-	
+
 	// Camera number
 	int camera_number;
-  
-  // Flag := on border or not 
-  bool flag;
+
+	// Flag := on border or not 
+	bool flag;
 
 public:
   Gyroviz_info_for_cdt2(){}

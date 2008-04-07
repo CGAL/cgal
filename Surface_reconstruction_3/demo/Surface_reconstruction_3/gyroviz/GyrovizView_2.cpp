@@ -437,7 +437,7 @@ void CGyrovizView_2::OnPaint()
 	{
 		//::glColor3ub(255,0,0);
 		/*pDoc->get_dt2().gl_draw_on_border_2D_vertices(255,0,0,4,pDoc->m_cimg_seg_image);*/
-		pDoc->get_cdt2().gl_draw_on_border_2D_vertices(255,0,255,4,pDoc->m_cimg_seg_image);
+		pDoc->get_cdt2().gl_draw_on_border_2D_vertices(255,0,255,6/*TEST,pDoc->m_cimg_seg_image*/);
 	}
 
 	if(m_view_constraints)
