@@ -1,2 +1,2 @@
-benchmark/Algebraic_kernel_d/data
-benchmark/Algebraic_kernel_d/Curve_kernel_2_data
+benchmark
+test/Algebraic_kernel_d/Algebraic_curve_kernel_2.cpp
