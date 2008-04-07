@@ -715,7 +715,7 @@ private:
     }
     
     Polynomial_4 homogenize_trivariate_polynomial(Polynomial_3 p) {
-        int n = NiX::total_degree(p);
+        int n = CGAL::total_degree(p);
         std::vector<Polynomial_3> hat_p_coeffs(n+1);
         for (int i = 0; i <= n; i++) {
             hat_p_coeffs[i] = Polynomial_3(Polynomial_2(Polynomial_1(0)));
@@ -790,16 +790,16 @@ public:
             substitute_xyzw(hom_f, x, y, z, w);
         
         // Make it square free
-        p = NiX::make_square_free(p);
+        p = CGAL::CGALi::make_square_free(p);
         // Also, make content square free:
         Polynomial_1 content = p.content();
-        Polynomial_1 sf_content = NiX::make_square_free(content);
+        Polynomial_1 sf_content = CGAL::CGALi::make_square_free(content);
         if (sf_content != content) {
             p = p/content;
             p = p*sf_content;
         }          
         
-        p = NiX::canonicalize_polynomial(p);
+        p = CGAL::CGALi::canonicalize_polynomial(p);
         
 #if QdX_PRINTOUT_INTERSECTION_CURVES
         CGAL::set_ascii_mode(std::cout);
