@@ -49,8 +49,7 @@ inline CORE::BigFloat MP_Float_to_BigFloat( MP_Float const& b )
     d += d_exp * CORE::BigFloat(b.of_exp(i));
   }
 
-  // The cast is necessary for SunPro.
-  return d * CORE::BigFloat::exp2(static_cast<int>(exp * log_limb));
+  return d * CORE::BigFloat::exp2(exp * log_limb);
 }
 #endif
 
