@@ -2,6 +2,7 @@
 
 #include  <algorithm> // std::sort
 #include <boost/shared_ptr.hpp>
+#include <fstream>
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Timer.h>
@@ -12,6 +13,7 @@
 #include "isovalues_list.h"
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QAction>
 #include <QStatusBar>
 #include <QDoubleSpinBox>
@@ -25,6 +27,7 @@
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 
 struct Threshold : public std::unary_function<FT, unsigned char> {
@@ -157,14 +160,16 @@ Volume::Volume(MainWindow* mw) :
   m_view_surface(false),
   m_view_mc(false),
   m_triangulation_color(QColor(Qt::green)),
-  mw(mw),
   m_inverse_normals(false),
   two_sides(false),
+  del(),
+  c2t3(del),
+  mw(mw),
   list_draw_marching_cube(0),
+  list_draw_marching_cube_is_valid(false),
   lists_draw_surface(),
   lists_draw_surface_is_valid(false),
-  lists_draw_surface_mc(),
-  list_draw_marching_cube_is_valid(false)
+  lists_draw_surface_mc()
 {
   spinBox_radius_bound = mw->findChild<QDoubleSpinBox*>("spinBox_radius_bound");
   spinBox_distance_bound = mw->findChild<QDoubleSpinBox*>("spinBox_distance_bound");
@@ -219,6 +224,13 @@ Volume::Volume(MainWindow* mw) :
           this, SLOT(changed_parameters()));
   connect(isovalues_list, SIGNAL(changed()),
           mw->viewer, SLOT(updateGL()));
+  connect(this, SIGNAL(changed()),
+          this, SLOT(check_can_export_off()));
+
+  mw->actionExport_surface_mesh_to_OFF->setVisible(true);
+  mw->actionExport_surface_mesh_to_OFF->setEnabled(false);
+  connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
+          this, SLOT(export_off()));
 }
 
 void Volume::set_inverse_normals(const bool b) {
@@ -290,6 +302,40 @@ void Volume::open(const QString& filename)
       emit changed();
     }
   }
+}
+
+void Volume::export_off()
+{
+  QFileDialog filedialog(mw, tr("Open File"));
+  filedialog.setFileMode(QFileDialog::AnyFile);
+  filedialog.setFilter(tr("OFF files (*.off);;"
+                          "All files (*)"));
+  filedialog.setAcceptMode(QFileDialog::AcceptSave);
+  filedialog.setDefaultSuffix("off");
+  if(filedialog.exec())
+  {
+    const QString filename = filedialog.selectedFiles().front();
+    std::cerr << "Saving to file \"" << filename.toLocal8Bit().data() << "\"...";
+    std::ofstream out(filename.toUtf8());
+    CGAL::output_surface_facets_to_off(out, c2t3);
+    if(!out)
+    {
+      QMessageBox::warning(mw, mw->windowTitle(),
+                           QString(tr("Export to the OFF file <tt>%1</tt>!")).arg(filename));
+      status_message(QString("Export to the OFF file %1 failed!").arg(filename));
+      std::cerr << " failed!\n";
+    }
+    else
+    {
+      std::cerr << " done.\n";
+      status_message(QString("Successfull export to the OFF file %1.").arg(filename));
+    }
+  }
+}
+
+void Volume::check_can_export_off()
+{
+  mw->actionExport_surface_mesh_to_OFF->setEnabled(m_view_surface);// || m_view_mc);
 }
 
 void Volume::status_message(QString string)
@@ -448,8 +494,8 @@ void Volume::display_surface_mesher_result()
 
     timer.start();
 
+    c2t3.clear();
     del.clear();
-    C2t3 c2t3(del);   // 2D-complex in 3D-Delaunay triangulation
     Sphere bounding_sphere(m_image.center(),m_image.radius()*m_image.radius());
 
     // definition of the surface
@@ -824,6 +870,10 @@ void Volume::changed_parameters()
 {
   m_surface.clear();
   m_surface_mc.clear();
+  c2t3.clear();
+  del.clear();
+  m_view_mc = m_view_surface = false;
+  emit changed();
 }
 
 void Volume::gl_draw_one_marching_cube_vertex(int i)
@@ -862,7 +912,6 @@ void Volume::gl_draw_marchingcube()
     // reconstructed each time m_inverse_normals is toggled.
     if(!m_inverse_normals)
       ::glEnableClientState(GL_NORMAL_ARRAY);
-    const int size = mc.ntrigs();
 
     for(int i = 0, nbs = isovalues_list->numberOfIsoValues(); i < nbs; ++i)
     {
