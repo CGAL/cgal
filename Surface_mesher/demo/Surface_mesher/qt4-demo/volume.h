@@ -99,6 +99,7 @@ private:
   MarchingCubes<unsigned char> mc ;
   std::vector<int> nbs_of_mc_triangles;
   Tr del;            // 3D-Delaunay triangulation
+  C2t3 c2t3;         // 2D complex in 3D triangulation
 
   MainWindow* mw;
   QFileInfo fileinfo;
@@ -137,6 +138,8 @@ public slots:
   void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
   void open(const QString& filename);
+  void export_off();
+  void check_can_export_off();
   void draw();
   void get_bbox(float& /*xmin*/, float& /*ymin*/, float& /*zmin*/,
 		float& /*xmax*/, float& /*ymax*/, float& /*zmax*/) {}
