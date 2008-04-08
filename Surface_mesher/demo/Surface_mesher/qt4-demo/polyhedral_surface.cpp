@@ -256,9 +256,9 @@ void Polyhedral_surface::open(const QString& filename)
 {
   clear();
 
-  std::cerr << "Opening file \"" << filename.toLatin1().data() << "\"...";
+  std::cerr << "Opening file \"" << filename.toLocal8Bit() << "\"...";
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-  std::ifstream in(filename.toLatin1().data());
+  std::ifstream in(filename.toUtf8());
   if(!in) return;
 
   if(surface_ptr)
