@@ -4113,6 +4113,7 @@ Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox-red.svg -text svneol=unse
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox.png -text svneol=unset#image/png
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/bbox.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/fileopen.png -text svneol=unset#image/png
+Surface_mesher/demo/Surface_mesher/qt4-demo/icons/filesave.png -text svneol=unset#image/png
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/flip.png -text svneol=unset#image/png
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/flip.svg -text svneol=unset#image/svg%2Bxml
 Surface_mesher/demo/Surface_mesher/qt4-demo/icons/minus.png -text svneol=unset#image/png
