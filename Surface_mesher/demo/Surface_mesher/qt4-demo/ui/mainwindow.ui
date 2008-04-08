@@ -49,6 +49,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Open" />
+    <addaction name="actionExport_surface_mesh_to_OFF" />
     <addaction name="separator" />
     <addaction name="action_Quit" />
    </widget>
@@ -94,6 +95,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Open" />
+   <addaction name="actionExport_surface_mesh_to_OFF" />
    <addaction name="action_Clone" />
    <addaction name="separator" />
    <addaction name="actionAuto_resize" />
@@ -389,6 +391,17 @@
   <action name="actionTriangulation_edges_color" >
    <property name="text" >
     <string>Choose the triangulation edges color...</string>
+   </property>
+  </action>
+  <action name="actionExport_surface_mesh_to_OFF" >
+   <property name="icon" >
+    <iconset resource="../surface_mesher.qrc" >:/icons/filesave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Export surface mesh to OFF...</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
  </widget>
