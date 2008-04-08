@@ -92,10 +92,10 @@ if( CGAL_USE_QT )
 
       set(CGAL_QT_LIBRARY)
       
-      set(CGAL_QT_RELEASE_MANGLED_NAME        "${CGAL_QT_BASENAME}${TOOLSET}-mt" ) 
-      set(CGAL_QT_DEBUG_MANGLED_NAME          "${CGAL_QT_BASENAME}${TOOLSET}-mt-gd" ) 
-      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "${CGAL_QT_BASENAME}${TOOLSET}-mt-o" ) 
-      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "${CGAL_QT_BASENAME}${TOOLSET}-mt-g" ) 
+      set(CGAL_QT_RELEASE_MANGLED_NAME        "${CGAL_QT_BASENAME}-${TOOLSET}-mt" ) 
+      set(CGAL_QT_DEBUG_MANGLED_NAME          "${CGAL_QT_BASENAME}-${TOOLSET}-mt-gd" ) 
+      set(CGAL_QT_MINSIZEREL_MANGLED_NAME     "${CGAL_QT_BASENAME}-${TOOLSET}-mt-o" ) 
+      set(CGAL_QT_RELWITHDEBINFO_MANGLED_NAME "${CGAL_QT_BASENAME}-${TOOLSET}-mt-g" ) 
       
       set_target_properties( CGAL_QT PROPERTIES DEBUG_OUTPUT_NAME          "${CGAL_QT_DEBUG_MANGLED_NAME}" 
                                                 RELEASE_OUTPUT_NAME        "${CGAL_QT_RELEASE_MANGLED_NAME}" 

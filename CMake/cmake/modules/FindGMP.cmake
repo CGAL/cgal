@@ -32,7 +32,7 @@ else()
   if ( AUTO_LINK_ENABLED )
   
     find_path(GMP_LIBRARIES_DIR 
-              NAMES "gmp${TOOLSET}-mt.lib" "gmp${TOOLSET}-mt-gd.lib" "gmp${TOOLSET}-mt-o.lib" "gmp${TOOLSET}-mt-g.lib"
+              NAMES "gmp-${TOOLSET}-mt.lib" "gmp-${TOOLSET}-mt-gd.lib"
               PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV GMP_LIB_DIR
               DOC "Directory containing the GMP library"

@@ -32,7 +32,7 @@ else()
   if ( AUTO_LINK_ENABLED )
   
     find_path(MPFR_LIBRARIES_DIR 
-              NAMES "mpfr${TOOLSET}-mt.lib" "mpfr${TOOLSET}-mt-gd.lib" "mpfr${TOOLSET}-mt-o.lib" "mpfr${TOOLSET}-mt-g.lib"
+              NAMES "mpfr-${TOOLSET}-mt.lib" "mpfr-${TOOLSET}-mt-gd.lib"
               PATHS ${CGAL_SOURCE_DIR}/auxiliary/gmp/lib
                     ENV MPFR_LIB_DIR
               DOC "Directory containing the MPFR library"
