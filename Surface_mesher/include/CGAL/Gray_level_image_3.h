@@ -29,58 +29,33 @@
 #include <boost/format.hpp>
 #endif
 
-#include <CGAL/ImageIO.h>
+#include <CGAL/Image_3.h>
 
 namespace CGAL {
 
-  template <typename FT, typename Point>
-class Gray_level_image_3
+template <typename FT, typename Point>
+class Gray_level_image_3 : public Image_3<FT, Point>
 {
-  struct Image_deleter {
-    void operator()(_image* image)
-    {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
-      std::cerr << ::boost::format("Deletion of image %1%.\n") % image;
-#endif
-      ::_freeImage(image);
-    }
-  };
-  typedef boost::shared_ptr<_image> Image_shared_ptr;
-  Image_shared_ptr image_ptr;
-
+  typedef Image_3<FT, Point> Image;
   float isovalue;
-  float min_x, min_y, min_z;
-  float max_x, max_y, max_z;
-  bool is_valid;
   bool positive_inside;
 public:
   Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true)
-    : isovalue(isoval),
-      min_x(0.f),
-      min_y(0.f),
-      min_z(0.f),
-      max_x(0.f),
-      max_y(0.f),
-      max_z(0.f),
-      is_valid(false),
+    : Image(),
+      isovalue(isoval),
       positive_inside(positive_inside_)
   {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
     std::cerr << 
       ::boost::format("Constructing a Gray_level_image_3(\"%1%\")... ") % file;
 #endif
-    image_ptr = Image_shared_ptr(::_readImage(file), Image_deleter());
+    Image::read(file);
+#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
     if( image_ptr.get() != 0 )
     {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
       std::cerr << ::boost::format(" = %1%\n") % image_ptr.get();
-#endif
-      is_valid = true;
-      isovalue=isoval;
-      ::_get_image_bounding_box(image_ptr.get(),
-				&min_x, &min_y, &min_z,
-				&max_x, &max_y, &max_z);
     }
+#endif
   }
 
   ~Gray_level_image_3()
@@ -97,8 +72,8 @@ public:
 
   bool inside(const float X, const float Y, const float Z) const
   {
-    return ( X>=min_x && Y>=min_y && Z>=min_z && 
-             X<=max_x && Y<=max_y && Z<=max_z );
+    return ( X>=0 && Y>=0 && Z>=0 && 
+             X<=this->max_x && Y<=this->max_y && Z<=this->max_z );
   }
 
   FT operator()(Point p) const
@@ -109,8 +84,8 @@ public:
 
     if (!inside(X,Y,Z))
       return FT(1);
-    else{
-      float value = ::triLinInterp(image_ptr.get(), X, Y, Z); 
+    else {
+      float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z); 
       if (positive_inside)
       {
          if (value > isovalue) // inside
