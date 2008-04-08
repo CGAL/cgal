@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 Fernando Luis Cacciola Carballal. All rights reserved.
+// Copyright (c) 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -42,6 +42,12 @@ inline typename Polygon_2<K>::Vertex_const_iterator vertices_begin ( Polygon_2<K
 template<class K>
 inline typename Polygon_2<K>::Vertex_const_iterator vertices_end( Polygon_2<K> const& aPoly ) 
 { return aPoly.vertices_end() ; }
+
+template<class Poly>
+inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->begin() ; }
+
+template<class Poly>
+inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly ) { return aPoly->end() ; }
 
 }
 

@@ -1,11 +1,5 @@
-#ifndef  STRAIGHT_SKELETON_H
+#ifndef STRAIGHT_SKELETON_H
 #define STRAIGHT_SKELETON_H
-
-#ifdef STRAIGHTSKELETONDLL_EXPORTS
-#  define STRAIGHT_SKELETON_API __declspec (dllexport) 
-#else
-#  define STRAIGHT_SKELETON_API __declspec (dllimport) 
-#endif
 
 /*! \file StraightSkeleton.h
     \brief Functions for computing the straight skeleton of a simple polygon with holes.
@@ -46,18 +40,18 @@ typedef void (__stdcall *ProgressCallback) ( int aCurr, int aTotal ) ;
 extern "C" 
 {
 
-int STRAIGHT_SKELETON_API StraightSkeleton( int np 
-                                          , int* np_i
-                                          , double* xp
-                                          , double* yp
-                                          , int& numFaces
-                                          , int& numVertices
-                                          , int*& numFace_i
-                                          , double*& xf
-                                          , double*& yf
-                                          , int dumpEPS
-                                          , ProgressCallback progress
-                                          );
+int __declspec (dllexport) StraightSkeleton( int np 
+                                           , int* np_i
+                                           , double* xp
+                                           , double* yp
+                                           , int& numFaces
+                                           , int& numVertices
+                                           , int*& numFace_i
+                                           , double*& xf
+                                           , double*& yf
+                                           , int dumpEPS
+                                           , ProgressCallback progress
+                                           );
 
 
 /**
@@ -67,7 +61,7 @@ int STRAIGHT_SKELETON_API StraightSkeleton( int np
        * @param yf is a reference parameter. After the call it holds NULL.
        */	
 
-void STRAIGHT_SKELETON_API StraightSkeletonFree(int* numFace_i, double* xf, double* yf );
+void __declspec (dllexport) StraightSkeletonFree(int* numFace_i, double* xf, double* yf );
 
 } // extern "C"
 

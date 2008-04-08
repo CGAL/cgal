@@ -38,43 +38,43 @@ struct Visitor
   {
     ++ mCurr ;
     if ( Progress )
-      Progress(mCurr,mTotal);
+    Progress(mCurr,mTotal);
   }
 
   void on_edge_event_created( Vertex_const_handle const& lnode
-                            , Vertex_const_handle const& rnode
-                            )  const {}
+  , Vertex_const_handle const& rnode
+  )  const {}
 
   void on_split_event_created( Vertex_const_handle const& node )  const {}
 
   void on_pseudo_split_event_created( Vertex_const_handle const& lnode
-                                    , Vertex_const_handle const& rnode
-                                    )  const {}
+  , Vertex_const_handle const& rnode
+  )  const {}
 
   void on_initialization_finished() const {}
   
   void on_propagation_started() const {}
 
   void on_anihiliation_event_processed ( Vertex_const_handle const& node0
-                                       , Vertex_const_handle const& node1
-                                       )  const {}
+  , Vertex_const_handle const& node1
+  )  const {}
 
 
   void on_edge_event_processed( Vertex_const_handle const& lseed
-                              , Vertex_const_handle const& rseed
-                              , Vertex_const_handle const&  node
-                              )  const {} 
+  , Vertex_const_handle const& rseed
+  , Vertex_const_handle const&  node
+  )  const {} 
 
   void on_split_event_processed( Vertex_const_handle const& seed
-                               , Vertex_const_handle const& node0
-                               , Vertex_const_handle const& node1
-                               )  const {}
+  , Vertex_const_handle const& node0
+  , Vertex_const_handle const& node1
+  )  const {}
 
   void on_pseudo_split_event_processed( Vertex_const_handle const& lseed
-                                      , Vertex_const_handle const& rseed
-                                      , Vertex_const_handle const& node0
-                                      , Vertex_const_handle const& node1
-                                      )  const {}
+  , Vertex_const_handle const& rseed
+  , Vertex_const_handle const& node0
+  , Vertex_const_handle const& node1
+  )  const {}
 
   void on_vertex_processed( Vertex_const_handle const& node ) const 
   {
@@ -82,7 +82,7 @@ struct Visitor
     {
       ++ mCurr ;
       if ( Progress )
-        Progress(mCurr,mTotal);
+      Progress(mCurr,mTotal);
     }
   }
 
@@ -119,79 +119,80 @@ typedef CGAL::Bbox_2 Bbox_2;
 extern "C"
 {
 
-void STRAIGHT_SKELETON_API StraightSkeletonFree(int* numFace_i, double* xf, double* yf)
-{
-  delete [] xf;
-  delete [] yf;
-  delete [] numFace_i;
-}
-
-int STRAIGHT_SKELETON_API StraightSkeleton( int np
-                                          , int* np_i
-                                          , double* xp
-                                          , double* yp
-                                          , int& numFaces
-                                          , int& numVertices
-                                          , int*& numFace_i
-                                          , double*& xf
-                                          , double*& yf
-                                          , int dumpEPS
-                                          , ProgressCallback progress
-                                          )
-{
-  int result = 0 ;
-
-  numFace_i = NULL ;
-  xf = yf = NULL ;
-
-  try
+  void __declspec (dllexport) StraightSkeletonFree(int* numFace_i, double* xf, double* yf)
   {
-    double scale = 1.0;
+    delete [] xf;
+    delete [] yf;
+    delete [] numFace_i;
+  }
 
-    SsBuilderTraits traits ;
-    Visitor         visitor(progress) ; 
-    SsBuilder ssb(traits,visitor) ;  
+  int __declspec (dllexport) StraightSkeleton( int np
+                                             , int* np_i
+                                             , double* xp
+                                             , double* yp
+                                             , int& numFaces
+                                             , int& numVertices
+                                             , int*& numFace_i
+                                             , double*& xf
+                                             , double*& yf
+                                             , int dumpEPS
+                                             , ProgressCallback progress
+                                             )
+  {
+    int result = 0 ;
 
-    Bbox_2 bbox;
-    
-    int currentPoint = 0;
-    for(int i = 0; i < np; i++)
+    numFace_i = NULL ;
+    xf = yf = NULL ;
+
+    try
     {
-      std::vector<Point_2> points(np_i[i]);
-      for(int j=0; j < np_i[i]; j++)
+      double scale = 1.0;
+
+      SsBuilderTraits traits ;
+      Visitor         visitor(progress) ; 
+      SsBuilder ssb(traits,visitor) ;  
+
+      Bbox_2 bbox;
+      
+      int currentPoint = 0;
+      for(int i = 0; i < np; i++)
       {
-        Point_2 p(xp[currentPoint], yp[currentPoint]);
-        if(currentPoint == 0)
-       	     bbox = p.bbox() ;
-        else bbox = bbox + p.bbox();
+        int s = np_i[i];
+        std::vector<Point_2> points(s);
+        for(int j=0; j < s; j++)
+        {
+          Point_2 p(xp[currentPoint], yp[currentPoint]);
+          if(currentPoint == 0)
+          bbox = p.bbox() ;
+          else bbox = bbox + p.bbox();
 
-        points[j] = p;
-        ++currentPoint;
-      }
+          points[j] = p;
+          ++currentPoint;
+        }
 
-      if( ! CGAL::is_simple_2(points.begin(),points.end()))
-      {
-        std::cerr << "Polygon " << i << "  is not simple" << std::endl;
-        return 0;
-      }
+        if( ! CGAL::is_simple_2(points.begin(),points.end()))
+        {
+          std::cerr << "Polygon " << i << "  is not simple" << std::endl;
+          return 0;
+        }
 
-      if(  CGAL::orientation_2(points.begin(),points.end()) != ( i == 0 ? CGAL::COUNTERCLOCKWISE 
-                                                                        : CGAL::CLOCKWISE 
-                                                               ) 
-        )
-           ssb.enter_contour(points.rbegin(),points.rend());
-      else ssb.enter_contour(points.begin(),points.end());
-    }  
+        if(  CGAL::orientation_2(points.begin(),points.end()) != ( i == 0 ? CGAL::COUNTERCLOCKWISE 
+                                                                          : CGAL::CLOCKWISE 
+                                                                 ) 
+            )
+             ssb.enter_contour(points.rbegin(),points.rend());
+        else ssb.enter_contour(points.begin(),points.end());
+      }  
       
 
-    visitor.set_total(currentPoint*2);
+      visitor.set_total(currentPoint*2);
 
-    // Construct the skeleton
-    boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
+      // Construct the skeleton
+      boost::shared_ptr<Ss> ss = ssb.construct_skeleton();
       
-    // Proceed only if the skeleton was correctly constructed.
-    if ( ss )
-    {
+      // Proceed only if the skeleton was correctly constructed.
+      if ( ss )
+      {
         // We first count the points
         numFaces= (int)ss->size_of_faces();
         numFace_i = new int[numFaces];
@@ -200,21 +201,21 @@ int STRAIGHT_SKELETON_API StraightSkeleton( int np
         int currentFace = 0;
         for(Face_iterator fit = ss->faces_begin(); fit != ss->faces_end(); ++fit)
         {
-	         int count = 0;
+          int count = 0;
           Halfedge_handle h = fit->halfedge();
-	         Halfedge_handle done;
-	         done = h;
-	         do
+          Halfedge_handle done;
+          done = h;
+          do
           {
-	           count++;
+            count++;
             h = h->next();
-	         } while(h != done);
-       	  numVertices += count;
+          } while(h != done);
+          numVertices += count;
 
-	         numFace_i[currentFace] = count;
-	         ++currentFace;
+          numFace_i[currentFace] = count;
+          ++currentFace;
         }
-          
+        
         // Allocate the x and y array and traverse the faces again
         xf = new double[numVertices];
         yf = new double[numVertices];
@@ -223,97 +224,75 @@ int STRAIGHT_SKELETON_API StraightSkeleton( int np
 
         for(Face_iterator fit = ss->faces_begin(); fit != ss->faces_end(); ++fit)
         {
-	         Halfedge_handle h = fit->halfedge();
-	         Halfedge_handle done;
-	         done = h;
-	         do
+          Halfedge_handle h = fit->halfedge();
+          Halfedge_handle done;
+          done = h;
+          do
           {
-       	    xf[currentVertex] =  h->vertex()->point().x();
-	           yf[currentVertex] =  h->vertex()->point().y();
+            xf[currentVertex] =  h->vertex()->point().x();
+            yf[currentVertex] =  h->vertex()->point().y();
             ++currentVertex;
             h = h->next();
-	         }
+          }
           while(h != done);
         }
 
-int vi = 0 ;
-for ( int fi = 0 ; fi < numFaces ; ++ fi )
-{
-  double firstx = xf[vi] ;
-  double firsty = yf[vi];
-
-  double lastx ;
-  double lasty ;
-
-  for ( int fvi = 0 ; fvi < numFace_i[fi] ; ++ fvi )
-  {
-     lastx = xf[vi];
-     lasty = yf[vi];
-     ++ vi ;
-  }
-
-  std::cout << "face " << fi << " edge: (" << firstx << "," << firsty << ")->(" << lastx << "," << lasty << ")\n" ;
-
-  //Face_handle fh = *(ss->faces_begin()+fi);
-
-}
         if(dumpEPS)
         {
           scale = 1000 / (bbox.xmax() - bbox.xmin()) ;
 
-	         std::ofstream dump("dump.eps");
-      	   dump << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" << scale* bbox.xmin()-1 << " " << scale* bbox.ymin()-1 << " " << scale*bbox.xmax()+1 << " "  << scale*bbox.ymax()+1 << std::endl;
-      	   dump << "%%EndComments\n"
-	                 "gsave\n"
-	                 "1.0 setlinewidth\n"
-	                 "/cont { 0 0 0 setrgbcolor } bind def\n"
-	                 "/cont_w { 0.1 setlinewidth } bind def\n"
-	                 "/skel { 1 0 0 setrgbcolor } bind def\n"
-	                 "/skel_w { 1.0 setlinewidth } bind def\n"
-	                 "% stroke - x1 y1 x2 y2 E\n"
-	                 "/E {newpath moveto lineto stroke} bind def\n" << std::endl;
+          std::ofstream dump("dump.eps");
+          dump << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" << scale* bbox.xmin()-1 << " " << scale* bbox.ymin()-1 << " " << scale*bbox.xmax()+1 << " "  << scale*bbox.ymax()+1 << std::endl;
+          dump << "%%EndComments\n"
+                  "gsave\n"
+                  "1.0 setlinewidth\n"
+                  "/cont { 0 0 0 setrgbcolor } bind def\n"
+                  "/cont_w { 0.1 setlinewidth } bind def\n"
+                  "/skel { 1 0 0 setrgbcolor } bind def\n"
+                  "/skel_w { 1.0 setlinewidth } bind def\n"
+                  "% stroke - x1 y1 x2 y2 E\n"
+                  "/E {newpath moveto lineto stroke} bind def\n" << std::endl;
 
-	         for(Face_iterator fit = ss->faces_begin(); fit != ss->faces_end(); ++fit)
+          for(Face_iterator fit = ss->faces_begin(); fit != ss->faces_end(); ++fit)
           {
-	           Halfedge_handle h = fit->halfedge();
-	           Halfedge_handle done;
-	           done = h;
-	           do
+            Halfedge_handle h = fit->halfedge();
+            Halfedge_handle done;
+            done = h;
+            do
             {
-	             if(h->is_bisector())
-	                  dump << "skel\n";
-	             else dump << "cont\n";
-       	      
-	             dump << scale* h->vertex()->point().x() << " " << scale*h->vertex()->point().y() << " "
-       		          << scale*h->opposite()->vertex()->point().x() << " " 
+              if(h->is_bisector())
+                   dump << "skel\n";
+              else dump << "cont\n";
+              
+              dump << scale* h->vertex()->point().x() << " " << scale*h->vertex()->point().y() << " "
+                   << scale*h->opposite()->vertex()->point().x() << " " 
                    << scale*h->opposite()->vertex()->point().y() << " E\n";
-	             h = h->next();
-	           } 
+              h = h->next();
+            } 
             while(h != done);
-	         }
+          }
 
-       	  dump << "grestore\nshowpage" << std::endl;
+          dump << "grestore\nshowpage" << std::endl;
 
-	         dump.close();
+          dump.close();
         }
 
-
         result = 1 ;
+      }
     }
-  }
-  catch ( std::exception const& e ) 
-  {
-    std::cerr << "Exception thrown: " << e.what() << std::endl ;
-    StraightSkeletonFree(numFace_i,xf,yf);  
-  }
-  catch ( ... ) 
-  {
-    std::cerr << "Unknown exception thrown." << std::endl ;
-    StraightSkeletonFree(numFace_i,xf,yf);  
-  }
+    catch ( std::exception const& e ) 
+    {
+      std::cerr << "Exception thrown: " << e.what() << std::endl ;
+      StraightSkeletonFree(numFace_i,xf,yf);  
+    }
+    catch ( ... ) 
+    {
+      std::cerr << "Unknown exception thrown." << std::endl ;
+      StraightSkeletonFree(numFace_i,xf,yf);  
+    }
 
-  return result ;
-}
+    return result ;
+  }
 
 } // extern "C"
 

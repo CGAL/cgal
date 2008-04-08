@@ -25,6 +25,7 @@
 #define CGAL_IO_DXF_WRITER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/algorithm.h>
 #include <iostream>
 #include <string>
 #include <list>
@@ -121,7 +122,7 @@ public:
         
         while ( lCurrVertex != aVerticesEnd )
         {
-          XY_Iterator lNextVertex = ( lCurrVertex == lLastVertex ? lFirstVertex : successor(lCurrVertex) ) ;
+          XY_Iterator lNextVertex = ( lCurrVertex == lLastVertex ? lFirstVertex : CGAL::successor(lCurrVertex) ) ;
           
           add_segment_2 ( *lCurrVertex, *lNextVertex, aLayer, aColor ) ;
           

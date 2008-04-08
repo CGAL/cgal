@@ -49,7 +49,8 @@ inline CORE::BigFloat MP_Float_to_BigFloat( MP_Float const& b )
     d += d_exp * CORE::BigFloat(b.of_exp(i));
   }
 
-  return d * CORE::BigFloat::exp2(exp * log_limb);
+  // The cast is necessary for SunPro.
+  return d * CORE::BigFloat::exp2(static_cast<int>(exp * log_limb));
 }
 #endif
 
@@ -63,7 +64,7 @@ inline MP_Float inexact_sqrt( MP_Float const& n )
 {
   CGAL_precondition(n > 0);
   
-#ifdef CGAL_USE_CORE  
+#ifdef CGAL_USE_CORE
 
   CORE::BigFloat nn = MP_Float_to_BigFloat(n);
   CORE::BigFloat s  = CORE::sqrt(nn);
@@ -89,13 +90,15 @@ inline Quotient<MP_Float> inexact_sqrt( Quotient<MP_Float> const& q )
   return Quotient<MP_Float>(CGAL_SS_i::inexact_sqrt(q.numerator()*q.denominator()), q.denominator() );
 }
 
-inline Lazy_exact_nt<Gmpq> inexact_sqrt( Lazy_exact_nt<Gmpq> const& n )
+template<class NT> 
+inline Lazy_exact_nt<NT> inexact_sqrt( Lazy_exact_nt<NT> const& n )
 {
-#ifdef CGAL_USE_CORE  
+
+#ifdef CGAL_USE_CORE
 
   CORE::BigFloat nn = CGAL::to_double(n) ;
   CORE::BigFloat s  = CORE::sqrt(nn);
-  return Lazy_exact_nt<Gmpq>(s.doubleValue());
+  return Lazy_exact_nt<NT>(s.doubleValue());
   
 #else
 
@@ -108,11 +111,10 @@ inline Lazy_exact_nt<Gmpq> inexact_sqrt( Lazy_exact_nt<Gmpq> const& n )
   
   double s = CGAL_NTS sqrt(nn);
   
-  return Lazy_exact_nt<Gmpq>(s);
+  return Lazy_exact_nt<NT>(s);
+  
 #endif
 }
-
-
 
 // Given an oriented 2D straight line segment 'e', computes the normalized coefficients (a,b,c) of the
 // supporting line.
