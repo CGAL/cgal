@@ -557,7 +557,10 @@ _image* _readImage(const char *name) {
 _image* _readImage_raw(const char *name,
                        const unsigned int rx,
                        const unsigned int ry,
-                       const unsigned int rz)
+                       const unsigned int rz,
+                       const double vx,
+                       const double vy,
+                       const double vz)
 {
   _image *im = NULL;
   im = (_image *) ImageIO_alloc(sizeof(_image));
@@ -568,7 +571,9 @@ _image* _readImage_raw(const char *name,
   im->ydim = ry;
   im->zdim = rz;
   im->vdim = 1;
-  im->vx = im->vy = im->vz = 0.1;
+  im->vx = vx;
+  im->vy = vy;
+  im->vz = vz;
 
   // image center
   im->cx = im->cy = im->cz = 0;

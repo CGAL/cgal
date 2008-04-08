@@ -376,8 +376,13 @@ _image* _readNonInterlacedImage(const char *name);
 
 /** Read an image from a file. The word type is supposed to be unsigned
     char, and the dimensions are (rx, ry, rz). */
-_image* _readImage_raw(const char *name,const unsigned int rx,
-                       const unsigned int ry,const unsigned int rz);
+_image* _readImage_raw(const char *name,
+                       const unsigned int rx,
+                       const unsigned int ry,
+                       const unsigned int rz,
+                       const double vx = 1.,
+                       const double vy = 1.,
+                       const double vz = 1.);
 
 
 /** Writes given image in file 'name'.<br>
