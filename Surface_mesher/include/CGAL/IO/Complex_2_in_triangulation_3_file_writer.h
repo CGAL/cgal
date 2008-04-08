@@ -55,6 +55,7 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
   const Tr& tr = c2t3.triangulation();
   const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
 
+  off.header().set_no_comments(true);
   off.write_header(os,
 		   tr.number_of_vertices(),
 		   0, // fake number of halfedges, not used.
