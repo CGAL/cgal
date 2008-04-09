@@ -10,20 +10,22 @@ the status line respectively.
 With the help of the concept's methods one is able
 to compute the local topology of the curve 
 at the given vertical line $x = x_0$ for some finite $x_0$.
-A status line an $x_0$ smaller than any $x$-coordinate of a curve's 
-status lines captures the topology of the curve when approaching $x = -\infty$.
-An analogue arguments holds for $x_0$ larger than any $x$-coordinate
+A status line at any $x_0$ smaller than any $x$-coordinate of a curve's 
+$x$-critical points captures the topology of the curve when 
+approaching $x = -\infty$.
+An analogue argument holds for $x_0$ larger than any $x$-coordinate
 of a curve's status lines and $x = +\infty$.
 %at the given vertical line.
 %Note that vertical lines at $x = \pm\infty$ are not allowed, since different 
 %events (curve ends going to infinity with different non-horizontal asymptotes)
 %would have equal $y$-coordinate ($\pm\infty$), which confuses more than it
 %helps. 
-Note in addition that curve ends approaching the vertical asymptote 
-introduce an event (depending on whether approaching $+\infty$ or $-\infty$ -
-but the event with coordinates $(x,-\infty)$, resp. $(x,+\infty)$, occur
-only once, if they occur, and they imply not to be associated with
-an instance of \ccc{Algebraic_real_2}.
+
+%Note in addition that curve ends approaching the vertical asymptote 
+%introduce an event (depending on whether approaching $+\infty$ or $-\infty$ -
+%but the event with coordinates $(x,-\infty)$, resp. $(x,+\infty)$, occur
+%only once, if they occur, and they imply not to be associated with
+%an instance of \ccc{Algebraic_real_2}.
 
 \ccTypes
 
@@ -35,7 +37,7 @@ an instance of \ccc{Algebraic_real_2}.
 \ccNestedType{Algebraic_real_2}{A model of the concept
   \ccc{AlgebraicKernel_d_2::Algebraic_real_2}.}
 
-\ccCreationVariable{fo}
+\ccCreationVariable{sl}
 \ccAccessFunctions
 
 \ccMethod{Algebraic_real_1 x();}{
@@ -81,12 +83,12 @@ an instance of \ccc{Algebraic_real_2}.
   from left and right. A vertical line being component of the curve is ignored.
 }
 
-\ccMethod{bool has_f_fy_intersection();}{
+\ccMethod{bool has_x_critical_point();}{
   returns \ccc{true} if the curve $f$ has an intersection with $f_y$ at $x$
 }
 
 \ccMethod{bool is_event();}{
-  returns \ccc{true} if one of \ccc{has_f_fy_intersection()} or 
+  returns \ccc{true} if one of \ccc{has_x_critical_point()} or 
   \ccc{covers_line()} evaluates to \ccc{true}.
 }
 
@@ -100,7 +102,7 @@ of events must be finite.}
 \ccDefinition
 
 The \ccc{AlgebraicKernel_d_2::CurveAnalysis_2} 
-concept is meant to provide tools to analyse a single
+concept is meant to provide tools to analyze a single
 curve. An analysis is meant to describe the curve's interesting points and how 
 they are connected. The analysis searches for {\it events}. Events only
 occur at a finite number of $x$-coordinates. Each such coordinate defines
@@ -108,8 +110,11 @@ a \ccc{StatusLine_1} of an event. These coordinates also define open
 {\it intervals} on the $x$-axis. Different 
 \ccc{StatusLine_1} at values within one 
 such interval only differ in the values of the \ccc{Algebraic_real_2} entries. 
-Topological information are equal for all $x$-coordinate inside such an
-open interval. 
+Topological information is equal for all $x$-coordinate inside such an
+open interval. If there a $n$ $x$-coordinate that have an event point, we 
+see at most $2n+1$ topologically different status lines, that is, $n$ for 
+the the events, and $n+1$ for the intervals between events (and before the 
+first, and after the last event).
 
 \ccRefines{
   \ccc{DefaultConstructible, CopyConstructible, Assignable}
@@ -132,7 +137,7 @@ open interval.
 \ccc{CurveAnalysis_2::StatusLine_1}.}
 
 \ccCreation
-\ccCreationVariable{fo}
+\ccCreationVariable{ca}
         
 \ccConstructor{CurveAnalysis_2(Polynomial_2 p);}
     {constructs an analysis for the curve defined by p. 
@@ -166,11 +171,13 @@ open interval.
 
 \ccMethod{Status_line_1 status_line_at_event(size_type i);}{
   returns an instance of \ccc{StatusLine_1} at the $i$-th event
+ \ccPrecond{$0 \leq i < $ \ccc{number_of_status_lines_with_event()}}
 }
 
 \ccMethod{Status_line_1 status_line_of_interval(size_type i);}{
   returns an instance of \ccc{StatusLine_1} of the $i$-th interval
   between $x$-events.
+ \ccPrecond{$0 \leq i \leq $ \ccc{number_of_status_lines_with_event()}}
 }
 
 \ccMethod{Status_line_1 status_line_for_x(Algebraic_real_1 x, 
@@ -216,7 +223,7 @@ i.e., also to access $y$-coordinates at given $x$.
 }
 
 In our $y$-per-$x$-view we imagine the parameter space to be slightly 
-``heigher'' than ``width'' and so we distinguish three aympototic behaviours
+``heigher'' than ``width'' and so we distinguish three aymptotic behaviors
 of arcs. Horizontal, vertical, and none of them. This member covers 
 all non-vertical asymptotic values. We do not introduce a special one
 for vertical asympototes as the respective $x$-coordinates are already defined

@@ -25,7 +25,7 @@ not allowed.
 \ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.}
   
 
-\ccCreationVariable{fo}
+\ccCreationVariable{sl}
 \ccAccessFunctions
 
 \ccMethod{Algebraic_real_1 x();}{
@@ -42,8 +42,9 @@ not allowed.
   returns the $y$-position of the $k$-th event of the $c$-th
   (0 or 1) curve in the sequence of events. Note that each event
   is formed by the first, the second, or both curves. 
-  \ccPrecond{$0 \leq k < \mbox{number of arcs defined for the curve at x()}$}
-  The precondition can be checked by queried first the corresponding status
+  \ccPrecond{
+    $0 \leq k < $ \ccc{number_of_events()}}
+  The precondition can be checked by quering first the corresponding status
   line of the curve's analysis.
 }
 
@@ -51,33 +52,36 @@ not allowed.
   returns the multiplicity of intersection defined at event with position $j$.
   May return $0$ in case multiplicity is unknown.
   \ccPrecond{There is an intersection of both curves at $j$-th event.}
-  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
+  \ccPrecond{$0 \leq j < $\ccc{number_of_events()}}
 }
 
 \ccMethod{std::pair< size_type, size_type > curves_at_event(size_type j);}{
   returns a pair of \ccc{size_type} indicating whether event $j$ is formed by 
   which arc numbers of the first and the second curve, or $-1$, if the 
   corresponding curve is not involved. 
-  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
+  \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
 }
 
-Note that this interface mainly rewrites $\{f,g,x\}^n$ in a different way - 
-using \ccc{size_type}. Actually the CPVL has to compute this sequence, but for
-the interface it is nicer to have it already here to avoid conversion objects
-(introducing additional constructor calls, cache-misses, lookup and so on) in
-the next layer on top (CK). Obviously, the \ccc{size_type}s
-can be computed in a generic
-way from a sequence, so that it makes sense to offer a default implementation
-providing such conversion. There is no need to document this fact on the 
-conceptual view.
+%Note that this interface mainly rewrites $\{f,g,x\}^n$ in a different way - 
+%using \ccc{size_type}. Actually the CPVL has to compute this sequence, but for
+%the interface it is nicer to have it already here to avoid conversion objects
+%(introducing additional constructor calls, cache-misses, lookup and so on) in
+%the next layer on top (CK). Obviously, the \ccc{size_type}s
+%can be computed in a generic
+%way from a sequence, so that it makes sense to offer a default implementation
+%providing such conversion. There is no need to document this fact on the 
+%conceptual view.
 
 \ccMethod{bool is_event();}{
-  returns \ccc{true} if a curve has an event or in case there is an 
-  intersection of both curves.
+  returns \ccc{true} if the status line contains an event point. Namely, if
+   one of the curves has an event, or if the two curves intersect, at a point 
+   whose $x$-coordinate is sl.x().
 }
 
 \ccMethod{bool is_intersection();}{
-  returns \ccc{true} if there is an intersection of both curves.
+  returns \ccc{true} if the status line contains an intersection point. 
+  Namely, if the two curves intersect at a point whose $x$-coordinate 
+  is sl.x().
 }
 
 \end{ccRefConcept}
@@ -98,7 +102,7 @@ These coordinates also define open {\it intervals}
 on the $x$-axis. \ccc{StatusLine_1} 
 at values in between one such interval
 differ only in the values of the \ccc{Algebraic_real_2} entries. Topological 
-information are equal. 
+information is equal. 
 
 \ccRefines{
   \ccc{DefaultConstructible, CopyConstructible, Assignable}
@@ -121,7 +125,7 @@ information are equal.
 \ccc{CurvePairAnalysis::CurveAnalysis_2}.}
 
 \ccCreation
-\ccCreationVariable{fo}
+\ccCreationVariable{cpa}
 
 \ccConstructor{CurvePairAnalysis_2(Curve_analysis_2 ca1, Curve_analysis_2 ca2);}
 {constructs an analysis for the curve-pair defined by analysis given by 
@@ -154,25 +158,26 @@ coprime.}
 }
 
 \ccMethod{size_type number_of_status_lines_with_event();}{
-  returns number of status lines that encode an event
+  returns number of status lines that contain an event point.
 }
 
 
 \ccMethod{size_type event_of_curve_analysis(size_type i, bool c);}{
   Given the $i$-th event of the curve pair 
   this method returns the id of the event of the corresponding curve
-  analysis $c$ (0 or 1), or $-1$, if the curve has no event at this coordinate.
+  analysis $c$ (0 or 1), or $-1$, if the curve has no event 
+  at this coordinate.
 }
 
 \ccMethod{Status_line status_line_at_event(size_type i);}{
   returns an instance of \ccc{StatusLine_1} at the $i$-th event
-  \ccPrecond{$0 \leq i < \mbox{num\_status\_lines\_with\_event()}$}
+  \ccPrecond{$0 \leq i < $\ccc{num\_status\_lines\_with\_event()}}
 }
 
 \ccMethod{Status_line status_line_of_interval(size_type i);}{
   returns an instance of \ccc{StatusLine_1} of the $i$-th interval
   between $x$-events.
-  \ccPrecond{$0 \leq i leq \mbox{num\_status\_lines\_with\_event()}$}
+  \ccPrecond{$0 \leq i \leq $\ccc{num\_status\_lines\_with\_event()}}
 }
 
 \ccMethod{Status_line status_line_for_x(Algebraic_real_1 x,
@@ -180,7 +185,7 @@ coprime.}
   returns status\_line\_at\_event(i), if $x$ hits $i$-th event, otherwise
   returns status\_line\_of\_interval(i), where $i$ is the id of the interval
   $x$ lies in. 
-  If $pertub$ is CGAL::NEGATIVE (CGAL::POSITIVE) and $x$ states
+  If $perturb$ is CGAL::NEGATIVE (CGAL::POSITIVE) and $x$ states
   an event, then status\_line\_of\_interval(i) 
   (status\_line\_of\_interval(i+1)) is returned.
   \ccPrecond{$x$ is finite}
