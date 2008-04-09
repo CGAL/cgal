@@ -24,7 +24,6 @@
 #include <CGAL/Handle.h>
 #include <CGAL/Arr_point_location/Td_ninetuple.h>
 #endif
-#include <CGAL/Twotuple.h>
 
 #ifndef CGAL_TD_DAG_H
 #include <CGAL/Arr_point_location/Td_dag.h>
