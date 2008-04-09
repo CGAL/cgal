@@ -83,9 +83,6 @@ public:
   { self tmp=*this; return tmp -= i; }
 
   difference_type operator-(self x) const { return _it-x._it; }
-  // Bernd Gaertner: the following is no good, since non-const;
-  // replaced by appropriate const-version 
-  // reference operator[](difference_type i) { return *(*this + i); }
   value_type operator[](difference_type i) const { return *(*this + i); }
 
   bool operator==(const self& x) const { return _it==x._it; }
@@ -124,9 +121,6 @@ public:
   { self tmp=*this; return tmp -= i; }
 
   difference_type operator-(self x) const { return _it-x._it; }
-  // Bernd Gaertner: the following is no good, since non-const;
-  // replaced by appropriate const-version 
-  // reference operator[](difference_type i) { return *(*this + i); }
   value_type operator[](difference_type i) const { return *(*this + i); }
 
   bool operator==(const self& x) const { return _it==x._it; }
