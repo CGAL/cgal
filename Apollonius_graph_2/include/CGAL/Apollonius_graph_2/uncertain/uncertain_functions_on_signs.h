@@ -69,8 +69,7 @@ uncertain_sign_a_plus_b_x_sqrt_c(const RT &a, const RT &b, const RT &c)
     return Uncertain<Sign>::indeterminate();
   }
 
-  // these casts are ugly; they should go away
-  return Sign(Sign(sa) * Comparison_result(cr));
+  return sa * cr;
 }
 
 #if 0
