@@ -28,8 +28,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/intersection_2.h>

@@ -29,7 +29,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
 
 // see kernel functors for original version
 // all deprecated stuff was removed ...

@@ -1,8 +1,5 @@
-// Copyright (c) 2003  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,10 +16,10 @@
 // $Id$
 //
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Andreas Fabri, Sylvain Pion
 
-#ifndef CGAL_CARTESIAN_COORDINATE_ITERATOR_2_H
-#define CGAL_CARTESIAN_COORDINATE_ITERATOR_2_H
+#ifndef CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H
+#define CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H
 
 #include <cstddef>
 #include <iterator>
@@ -32,19 +29,17 @@ CGAL_BEGIN_NAMESPACE
 
 // This class should go away.
 // It is now only used by the Filtered_kernel.
-// It allows to iterate over the coordinates of both a Point_2 and a Vector_2,
+// It allows to iterate over the coordinates of both a Point_3 and a Vector_3,
 // using a boost::variant, as the iterator types are the same at the kernel level.
 
 template <class K>
-class Cartesian_coordinate_iterator_2
+class Cartesian_coordinate_iterator_3
 {
-
-protected:
-  typedef typename K::Point_2 P;
-  typedef typename K::Vector_2 V;
+  typedef typename K::Point_3 P;
+  typedef typename K::Vector_3 V;
   boost::variant<const P*, const V*> var;
   int index;
-  typedef Cartesian_coordinate_iterator_2<K> Self;
+  typedef Cartesian_coordinate_iterator_3<K> Self;
 
 public:
 
@@ -56,15 +51,14 @@ public:
   typedef const value_type&               reference;
   typedef const value_type*               pointer;
 
-  Cartesian_coordinate_iterator_2()
+  Cartesian_coordinate_iterator_3()
     : var((const P*) NULL), index(0) {}
 
-  Cartesian_coordinate_iterator_2(const P * const p, int _index = 0)
+  Cartesian_coordinate_iterator_3(const P *const p, int _index = 0)
     : var(p), index(_index) {}
 
-  Cartesian_coordinate_iterator_2(const V * const v, int _index = 0)
+  Cartesian_coordinate_iterator_3(const V *const v, int _index = 0)
     : var(v), index(_index) {}
-
 
   const FT
   operator*() const {
@@ -136,7 +130,7 @@ public:
   }
 
   bool operator==(const Self& x) const {
-    return (var == x.var) && (index == x.index);
+    return (var == x.var) && (index == x.index) ;
   }
 
   bool operator!=(const Self& x) const {
@@ -152,4 +146,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CARTESIAN_COORDINATE_ITERATOR_2_H
+#endif // CGAL_CARTESIAN_COORDINATE_ITERATOR_3_H

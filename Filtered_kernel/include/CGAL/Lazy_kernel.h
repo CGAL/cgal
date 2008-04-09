@@ -28,6 +28,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
+#include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
+#include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
 #include <boost/mpl/if.hpp>
 
