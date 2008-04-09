@@ -38,7 +38,7 @@ class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT> > {
     public:
         typedef Type_ argument_type;
         typedef Type_ result_type;
-    Type_ operator () (const Type_& a) const {
+    Type_ operator () (const Type_&) const {
             return Type_(1);
         }
     };
