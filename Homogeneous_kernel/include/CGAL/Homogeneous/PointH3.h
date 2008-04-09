@@ -26,8 +26,9 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/array.h>
-#include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
+#include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <boost/utility/enable_if.hpp>
+#include <boost/utility.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -52,7 +53,7 @@ class PointH3
 
 public:
 
-   typedef Cartesian_coordinate_iterator_3<R_> Cartesian_const_iterator;
+   typedef Cartesian_const_iterator_d<const RT*> Cartesian_const_iterator;
    typedef R_                 R;
 
   PointH3() {}
@@ -99,12 +100,13 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return Cartesian_const_iterator(static_cast<const Point_3*>(this), 0);
+    return make_cartesian_const_iterator_begin(get(base).begin(),
+		                               boost::prior(get(base).end()));
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return Cartesian_const_iterator(static_cast<const Point_3*>(this), 3);
+    return make_cartesian_const_iterator_end(boost::prior(get(base).end()));
   }
 
   int   dimension() const;

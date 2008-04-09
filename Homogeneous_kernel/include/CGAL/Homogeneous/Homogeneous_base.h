@@ -70,12 +70,15 @@
 #include <CGAL/representation_tags.h>
 #include <CGAL/Homogeneous/function_objects.h>
 
+#include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename RT_, typename FT_, typename K_ >
 struct Homogeneous_base
 {
     typedef K_                                      Kernel;
+    typedef RT_                                     RT;
     typedef FT_                                     FT;
 
     typedef Homogeneous_tag                         Rep_tag;
@@ -129,13 +132,11 @@ struct Homogeneous_base
     typedef SphereH3<Kernel>                        Sphere_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
 
-    typedef Cartesian_coordinate_iterator_2<Kernel>
-                                 Cartesian_const_iterator_2;
-    typedef Cartesian_coordinate_iterator_3<Kernel>
-                                 Cartesian_const_iterator_3;
+    typedef Cartesian_const_iterator_d<const RT *>  Cartesian_const_iterator_2;
+    typedef Cartesian_const_iterator_d<const RT *>  Cartesian_const_iterator_3;
 
-    typedef FT_                    Cartesian_coordinate_type;
-    typedef const RT_&             Homogeneous_coordinate_type;
+    typedef FT_                                     Cartesian_coordinate_type;
+    typedef const RT_&                              Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
     typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2; 
