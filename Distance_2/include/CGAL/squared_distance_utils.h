@@ -110,7 +110,7 @@ wcross_tag(const typename K::Point_2 &p,
 	   const K&,
 	   const Homogeneous_tag&)
 {
-    return determinant(
+    return CGAL::determinant(
         p.hx(), q.hx(), r.hx(),
         p.hy(), q.hy(), r.hy(),
         p.hw(), q.hw(), r.hw());
