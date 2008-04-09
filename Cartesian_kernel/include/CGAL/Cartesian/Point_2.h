@@ -26,7 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/constant.h>
 
@@ -40,41 +40,41 @@ class PointC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Point_2              Point_2;
 
-  typedef Twotuple<FT>	                           Rep;
+  typedef boost::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
 
-  typedef const FT* Cartesian_const_iterator;
+  typedef typename Rep::const_iterator      Cartesian_const_iterator;
   
-  typedef R_                                     R;
+  typedef R_                                R;
 
   PointC2() {}
 
   PointC2(const Origin &)
-    : base(FT(0), FT(0)) {}
+    : base(CGALi::make_array(FT(0), FT(0))) {}
 
   PointC2(const FT &x, const FT &y)
-    : base(x, y) {}
+    : base(CGALi::make_array(x, y)) {}
 
   PointC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      base = Rep(hx/hw, hy/hw);
+      base = CGALi::make_array(hx/hw, hy/hw);
     else
-      base = Rep(hx, hy);
+      base = CGALi::make_array(hx, hy);
   }
 
   const FT& x() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   
   const FT& y() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 
   const FT& hx() const
@@ -93,14 +93,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return & get(base).e0; 
+    return get(base).begin(); 
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    const FT* ptr = & get(base).e1;
-    ptr++;
-    return ptr;
+    return get(base).end();
   }
 
   bool operator==(const PointC2 &p) const

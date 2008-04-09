@@ -24,7 +24,7 @@
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_2_H
 #define CGAL_HOMOGENEOUS_DIRECTION_2_H
 
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,12 +40,13 @@ class DirectionH2
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef Threetuple<RT>                           Rep;
+  typedef boost::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                    R;
 
   typedef const RT& Homogeneous_coordinate_type;
@@ -59,17 +60,13 @@ public:
    DirectionH2() {}
 
    DirectionH2(const RT& x, const RT& y)
-      : base (x, y, RT(1)) {}
+      : base(CGALi::make_array(x, y, RT(1))) {}
 
-   // TODO Not documented : should not exist , not used.
-   // we should also change Threetuple<RT> -> Twotuple<RT>
+   // TODO Not documented : should not exist, not used.
+   // we should also change array<RT, 3> -> array<RT, 2>
    DirectionH2(const RT& x, const RT& y, const RT& w )
-   {
-     if (w > RT(0)   )
-       base = Rep(x, y, w);
-     else
-       base = Rep(-x, -y, -w);
-   }
+     : base( w > RT(0) ? CGALi::make_array(x, y, w)
+                       : CGALi::make_array<RT>(-x, -y, -w) ) {}
 
     bool    operator==( const DirectionH2<R>& d) const;
     bool    operator!=( const DirectionH2<R>& d) const;
@@ -77,12 +74,12 @@ public:
 
     Vector_2       to_vector() const;
 
-    const RT & x() const { return get(base).e0; };
-    const RT & y() const { return get(base).e1; };
+    const RT & x() const { return get(base)[0]; }
+    const RT & y() const { return get(base)[1]; }
 
     const RT & delta(int i) const;
-    const RT & dx() const { return get(base).e0; };
-    const RT & dy() const { return get(base).e1; };
+    const RT & dx() const { return get(base)[0]; }
+    const RT & dy() const { return get(base)[1]; }
 
 };
 

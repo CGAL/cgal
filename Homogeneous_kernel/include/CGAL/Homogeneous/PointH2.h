@@ -26,12 +26,13 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class R_ >
@@ -43,7 +44,7 @@ class PointH2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef Threetuple<RT>                           Rep;
+  typedef boost::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>  Rat_traits;
@@ -51,6 +52,7 @@ class PointH2
   Base base;
 
 public:
+
   typedef FT Cartesian_coordinate_type;
   typedef const RT& Homogeneous_coordinate_type;
   typedef Cartesian_coordinate_iterator_2<R_> Cartesian_const_iterator;
@@ -59,39 +61,36 @@ public:
     PointH2() {}
 
     PointH2(const Origin &)
-       : base (RT(0), RT(0), RT(1)) {}
+       : base(CGALi::make_array(RT(0), RT(0), RT(1))) {}
 
     template < typename Tx, typename Ty >
     PointH2(const Tx & x, const Ty & y,
             typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
                                                         boost::is_convertible<Ty, RT> > >::type* = 0)
-      : base(x, y, RT(1)) {}
+      : base(CGALi::make_array<RT>(x, y, RT(1))) {}
 
     PointH2(const FT& x, const FT& y)
-      : base(Rat_traits().numerator(x) * Rat_traits().denominator(y),
+      : base(CGALi::make_array<RT>(
+             Rat_traits().numerator(x) * Rat_traits().denominator(y),
              Rat_traits().numerator(y) * Rat_traits().denominator(x),
-             Rat_traits().denominator(x) * Rat_traits().denominator(y))
+             Rat_traits().denominator(x) * Rat_traits().denominator(y)))
     {
       CGAL_kernel_assertion(hw() > 0);
     }
 
     PointH2(const RT& hx, const RT& hy, const RT& hw)
-    {
-      if ( hw >= RT(0)   )
-        base = Rep( hx, hy, hw);
-      else
-        base = Rep(-hx,-hy,-hw);
-    }
+      : base( hw >= RT(0) ? CGALi::make_array(hx, hy, hw)
+                          : CGALi::make_array<RT>(-hx, -hy, -hw) ) {}
 
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
 
-    const RT & hx() const { return get(base).e0; };
-    const RT & hy() const { return get(base).e1; };
-    const RT & hw() const { return get(base).e2; };
+    const RT & hx() const { return get(base)[0]; }
+    const RT & hy() const { return get(base)[1]; }
+    const RT & hw() const { return get(base)[2]; }
 
-    FT      x()  const { return FT(hx()) / FT(hw()); };
-    FT      y()  const { return FT(hy()) / FT(hw()); };
+    FT      x()  const { return FT(hx()) / FT(hw()); }
+    FT      y()  const { return FT(hy()) / FT(hw()); }
 
     FT      cartesian(int i)   const;
     FT      operator[](int i)  const;
@@ -144,11 +143,7 @@ const typename PointH2<R>::RT &
 PointH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  if (i==0)
-      return hx();
-  if (i==1)
-      return hy();
-  return hw();
+  return get(base)[i];
 }
 
 template < class R >

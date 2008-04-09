@@ -24,7 +24,7 @@
 #ifndef CGAL_PLANEH3_H
 #define CGAL_PLANEH3_H
 
-#include <CGAL/Fourtuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,12 +43,13 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef Fourtuple<RT>                            Rep;
+   typedef boost::array<RT, 4>               Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    Base base;
 
 public:
+
    typedef R_                 R;
 
     PlaneH3() {}
@@ -79,10 +80,8 @@ public:
     Point_3 projection(const Point_3& ) const;
 
     Point_3 point() const;     // same point on the plane
-    Direction_3
-                   orthogonal_direction() const;
-    Vector_3
-                   orthogonal_vector() const;
+    Direction_3    orthogonal_direction() const;
+    Vector_3       orthogonal_vector() const;
 
     Oriented_side  oriented_side(const Point_3 &p) const;
     bool           has_on(const Point_3 &p) const;
@@ -97,7 +96,6 @@ public:
     Point_3   to_3d(const Point_2& )  const;
     Vector_3  base1() const;
     Vector_3  base2() const;
-
 
 protected:
     Point_3   point1() const;   // same point different from point()
@@ -120,7 +118,7 @@ protected:
 //      |  q.hx()   q.hy()  q.hz()  q.hw()  |
 //      |  r.hx()   r.hy()  r.hz()  r.hw()  |
 //
-//  Fourtuple<RT> ( a(), b(), c(), d() )
+//  boost::array<RT, 4> ( a(), b(), c(), d() )
 
 template < class R >
 inline
@@ -144,7 +142,7 @@ PlaneH3<R>::new_rep(const typename PlaneH3<R>::Point_3 &p,
   RT rhz = r.hz();
   RT rhw = r.hw();
 
-  base = Rep (
+  base = CGALi::make_array<RT>(
               phy*( qhz*rhw - qhw*rhz )
             - qhy*( phz*rhw - phw*rhz )     // * X
             + rhy*( phz*qhw - phw*qhz ),
@@ -159,14 +157,14 @@ PlaneH3<R>::new_rep(const typename PlaneH3<R>::Point_3 &p,
 
             - phx*( qhy*rhz - qhz*rhy )
             + qhx*( phy*rhz - phz*rhy )     // * W
-            - rhx*( phy*qhz - phz*qhy )          );
+            - rhx*( phy*qhz - phz*qhy ));
 }
 
 template < class R >
 inline
 void
 PlaneH3<R>::new_rep(const RT &a, const RT &b, const RT &c, const RT &d)
-{ base = Rep(a, b, c, d); }
+{ base = CGALi::make_array(a, b, c, d); }
 
 template < class R >
 inline
@@ -259,25 +257,25 @@ template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::a() const
-{ return get(base).e0; }
+{ return get(base)[0]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::b() const
-{ return get(base).e1; }
+{ return get(base)[1]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::c() const
-{ return get(base).e2; }
+{ return get(base)[2]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::d() const
-{ return get(base).e3; }
+{ return get(base)[3]; }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -428,16 +426,7 @@ template < class R >
 Oriented_side
 PlaneH3<R>::oriented_side( const typename PlaneH3<R>::Point_3& p) const
 {
- RT value = a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() ;
- if (value > RT(0) )
- {
-    return ON_POSITIVE_SIDE;
- }
- else
- {
-    return
-    (value < RT(0) ) ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
- }
+ return CGAL_NTS sign( a()*p.hx() + b()*p.hy() + c()*p.hz() + d()*p.hw() );
 }
 
 

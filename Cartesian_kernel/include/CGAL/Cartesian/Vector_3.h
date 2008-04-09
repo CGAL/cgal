@@ -25,7 +25,7 @@
 #define CGAL_CARTESIAN_VECTOR_3_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,12 +40,13 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef Threetuple<FT>                           Rep;
+  typedef boost::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                     R;
 
   VectorC3() {}
@@ -66,27 +67,27 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorC3(const FT &x, const FT &y, const FT &z)
-    : base(x, y, z) {}
+    : base(CGALi::make_array(x, y, z)) {}
 
   VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      base = Rep(x/w, y/w, z/w);
+      base = CGALi::make_array(x/w, y/w, z/w);
     else
-      base = Rep(x, y, z);
+      base = CGALi::make_array(x, y, z);
   }
 
   const FT & x() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const FT & y() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
   const FT & z() const
   {
-      return get(base).e2;
+      return get(base)[2];
   }
 
   const FT & hx() const

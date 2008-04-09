@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_POINT_3_H
 #define CGAL_CARTESIAN_POINT_3_H
 
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Origin.h>
 #include <CGAL/constant.h>
@@ -39,29 +39,29 @@ class PointC3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-  typedef Threetuple<FT>                           Rep;
+  typedef boost::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
-  typedef const FT* Cartesian_const_iterator;
+  typedef typename Rep::const_iterator      Cartesian_const_iterator;
   typedef R_                                R;
 
   PointC3() {}
 
   PointC3(const Origin &)
-    : base(FT(0), FT(0), FT(0)) {}
+    : base(CGALi::make_array(FT(0), FT(0), FT(0))) {}
 
   PointC3(const FT &x, const FT &y, const FT &z)
-    : base(x, y, z) {}
+    : base(CGALi::make_array(x, y, z)) {}
 
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
   {
     if (w != FT(1))
-      base = Rep(x/w, y/w, z/w);
+      base = CGALi::make_array(x/w, y/w, z/w);
     else
-      base = Rep(x, y, z);
+      base = CGALi::make_array(x, y, z);
   }
 
 /*
@@ -79,15 +79,15 @@ public:
 
   const FT & x() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const FT & y() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
   const FT & z() const
   {
-      return get(base).e2;
+      return get(base)[2];
   }
 
   const FT & hx() const
@@ -113,14 +113,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return & get(base).e0; 
+    return get(base).begin(); 
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    const FT* ptr = & get(base).e2;
-    ptr++;
-    return ptr;
+    return get(base).end();
   }
 
   int dimension() const
@@ -140,7 +138,7 @@ const typename PointC3<R>::FT &
 PointC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  return *(&(get(base).e0)+i);
+  return get(base)[i];
 }
 
 template < class R >

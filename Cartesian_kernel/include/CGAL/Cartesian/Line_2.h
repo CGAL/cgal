@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_LINE_2_H
 #define CGAL_CARTESIAN_LINE_2_H
 
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/predicates/kernel_ftC2.h>
 
@@ -41,37 +41,35 @@ class LineC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Line_2               Line_2;
 
-
-  typedef Threetuple<FT>	                   Rep;
+  typedef boost::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                     R;
 
   LineC2() {}
 
   LineC2(const FT &a, const FT &b, const FT &c)
-    : base(a, b, c) {}
+    : base(CGALi::make_array(a, b, c)) {}
   
   bool            operator==(const LineC2 &l) const;
   bool            operator!=(const LineC2 &l) const;
 
   const FT & a() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const FT & b() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
   const FT & c() const
   {
-      return get(base).e2;
+      return get(base)[2];
   }
-
-
 
 };
 
@@ -92,7 +90,6 @@ LineC2<R>::operator!=(const LineC2<R> &l) const
 {
   return ! (*this == l);
 }
-
 
 CGAL_END_NAMESPACE
 

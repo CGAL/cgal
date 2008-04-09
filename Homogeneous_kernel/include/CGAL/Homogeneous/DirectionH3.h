@@ -24,7 +24,7 @@
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_3_H
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
-#include <CGAL/Fourtuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,12 +39,13 @@ class DirectionH3
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Ray_3                Ray_3;
 
-    typedef Fourtuple<RT>                            Rep;
+    typedef boost::array<RT, 4>              Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
  
     Base base;
 
 public:
+
     typedef R_                 R;
 
   DirectionH3() {}
@@ -67,12 +68,8 @@ public:
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
               const RT& z, const RT& w = RT(1) )
-  {
-    if ( w >= RT(0) )
-      base = Rep(x,y,z,w);
-    else
-      base = Rep(-x,-y,-z,-w);
-  }
+    : base( w >= RT(0) ? CGALi::make_array(x, y, z, w)
+                       : CGALi::make_array<RT>(-x, -y, -z, -w) ) {}
 
   bool  is_degenerate() const;
 
@@ -82,15 +79,15 @@ public:
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
 
-  const RT & dx() const { return get(base).e0; }
-  const RT & dy() const { return get(base).e1; }
-  const RT & dz() const { return get(base).e2; }
-  const RT & x()  const { return get(base).e0; }
-  const RT & y()  const { return get(base).e1; }
-  const RT & z()  const { return get(base).e2; }
-  const RT & hx() const { return get(base).e0; }
-  const RT & hy() const { return get(base).e1; }
-  const RT & hz() const { return get(base).e2; }
+  const RT & dx() const { return get(base)[0]; }
+  const RT & dy() const { return get(base)[1]; }
+  const RT & dz() const { return get(base)[2]; }
+  const RT & x()  const { return get(base)[0]; }
+  const RT & y()  const { return get(base)[1]; }
+  const RT & z()  const { return get(base)[2]; }
+  const RT & hx() const { return get(base)[0]; }
+  const RT & hy() const { return get(base)[1]; }
+  const RT & hz() const { return get(base)[2]; }
 };
 
 template <class R >

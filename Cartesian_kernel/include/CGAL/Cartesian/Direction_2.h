@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_DIRECTION_2_H
 #define CGAL_CARTESIAN_DIRECTION_2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -42,18 +42,19 @@ class DirectionC2
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef Twotuple<FT>	                           Rep;
+  typedef boost::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                     R;
 
   DirectionC2() {}
  
   DirectionC2(const FT &x, const FT &y)
-    : base(x, y) {}
+    : base(CGALi::make_array(x, y)) {}
 
   bool operator==(const DirectionC2 &d) const;
   bool operator!=(const DirectionC2 &d) const;
@@ -62,11 +63,11 @@ public:
 
   const RT & dx() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const RT & dy() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 };
 

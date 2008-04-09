@@ -25,7 +25,7 @@
 #define CGAL_HOMOGENEOUS_VECTOR_3_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/Fourtuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,7 +41,7 @@ class VectorH3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef Fourtuple<RT>                            Rep;
+  typedef boost::array<RT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;
@@ -49,6 +49,7 @@ class VectorH3
   Base base;
 
 public:
+
   typedef R_                 R;
 
   VectorH3() {}
@@ -66,36 +67,39 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorH3(const Null_vector&)
-    : base(RT(0), RT(0), RT(0), RT(1)) {}
+    : base(CGALi::make_array(RT(0), RT(0), RT(0), RT(1))) {}
 
   VectorH3(int x, int y, int z)
-    : base(x, y, z, RT(1)) {}
+    : base(CGALi::make_array<RT>(x, y, z, RT(1))) {}
 
   VectorH3(const RT& x, const RT& y, const RT& z)
-    : base(x, y, z, RT(1)) {}
+    : base(CGALi::make_array(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)
-    : base(Rat_traits().numerator(x) * Rat_traits().denominator(y)
+    : base(CGALi::make_array<RT>(
+           Rat_traits().numerator(x) * Rat_traits().denominator(y)
                                      * Rat_traits().denominator(z),
            Rat_traits().numerator(y) * Rat_traits().denominator(x)
                                      * Rat_traits().denominator(z),
            Rat_traits().numerator(z) * Rat_traits().denominator(x)
                                      * Rat_traits().denominator(y),
            Rat_traits().denominator(x) * Rat_traits().denominator(y)
-                                       * Rat_traits().denominator(z))
+                                       * Rat_traits().denominator(z)))
   {
     CGAL_kernel_assertion(hw() > 0);
   }
 
-  VectorH3(const RT& w, const RT& x, const RT& y, const RT& z);
+  VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
+    : base( w >= RT(0) ? CGALi::make_array(x, y, z, w)
+                       : CGALi::make_array<RT>(-x, -y, -z, -w) ) {}
 
-  const RT & hx() const { return get(base).e0 ; }
-  const RT & hy() const { return get(base).e1 ; }
-  const RT & hz() const { return get(base).e2 ; }
-  const RT & hw() const { return get(base).e3 ; }
-  FT    x()  const { return FT(hx())/FT(hw()) ; }
-  FT    y()  const { return FT(hy())/FT(hw()) ; }
-  FT    z()  const { return FT(hz())/FT(hw()) ; }
+  const RT & hx() const { return get(base)[0]; }
+  const RT & hy() const { return get(base)[1]; }
+  const RT & hz() const { return get(base)[2]; }
+  const RT & hw() const { return get(base)[3]; }
+  FT    x()  const { return FT(hx())/FT(hw()); }
+  FT    y()  const { return FT(hy())/FT(hw()); }
+  FT    z()  const { return FT(hz())/FT(hw()); }
   const RT & homogeneous(int i) const;
   FT    cartesian(int i) const;
   FT    operator[](int i) const;
@@ -115,16 +119,6 @@ public:
   Vector_3 operator/( const RT &f) const;
   Vector_3 operator/( const FT &f) const;
 };
-
-template < class R >
-CGAL_KERNEL_INLINE
-VectorH3<R>::VectorH3(const RT& x, const RT& y, const RT& z, const RT& w)
-{
-  if ( w >= RT(0) )
-    base = Rep(x, y, z, w);
-  else
-    base = Rep(-x,-y,-z,-w);
-}
 
 
 template < class R >
@@ -147,13 +141,7 @@ const typename VectorH3<R>::RT &
 VectorH3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
-  switch (i)
-  {
-      case 0:   return hx();
-      case 1:   return hy();
-      case 2:   return hz();
-  }
-  return hw() ;
+  return get(base)[i];
 }
 
 template < class R >

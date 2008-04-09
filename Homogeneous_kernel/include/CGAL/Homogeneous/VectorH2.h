@@ -26,7 +26,7 @@
 #define CGAL_HOMOGENEOUS_VECTOR_2_h
 
 #include <CGAL/Origin.h>
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,7 +43,7 @@ class VectorH2
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
 
-  typedef Threetuple<RT>                           Rep;
+  typedef boost::array<RT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   typedef Rational_traits<FT>               Rat_traits;
@@ -51,6 +51,7 @@ class VectorH2
   Base base;
 
 public:
+
   typedef const FT Cartesian_coordinate_type;
   typedef const RT& Homogeneous_coordinate_type;
   typedef R_                                    R;
@@ -58,26 +59,23 @@ public:
    VectorH2() {}
 
    VectorH2(int x, int y)
-      : base(x, y, RT(1)) {}
+      : base(CGALi::make_array<RT>(x, y, RT(1))) {}
   
    VectorH2(const RT& x, const RT& y)
-      : base (x, y, RT(1)) {}
+      : base(CGALi::make_array(x, y, RT(1))) {}
 
    VectorH2(const FT& x, const FT& y)
-      : base(Rat_traits().numerator(x) * Rat_traits().denominator(y),
+      : base(CGALi::make_array<RT>(
+             Rat_traits().numerator(x) * Rat_traits().denominator(y),
              Rat_traits().numerator(y) * Rat_traits().denominator(x),
-             Rat_traits().denominator(x) * Rat_traits().denominator(y))
+             Rat_traits().denominator(x) * Rat_traits().denominator(y)))
    {
      CGAL_kernel_assertion(hw() > 0);
    }
 
    VectorH2(const RT& x, const RT& y, const RT& w )
-   {
-     if ( w >= RT(0)   )
-       base = Rep( x,  y,  w);
-     else
-       base = Rep(-x, -y, -w);
-   }
+     : base( w >= RT(0) ? CGALi::make_array( x,  y,  w)
+                        : CGALi::make_array<RT>(-x, -y, -w) ) {}
 
   const Self&
   rep() const
@@ -90,9 +88,9 @@ public:
    bool    operator==( const Null_vector&) const;
    bool    operator!=( const Null_vector& v) const;
 
-   const RT & hx() const { return get(base).e0; };
-   const RT & hy() const { return get(base).e1; };
-   const RT & hw() const { return get(base).e2; };
+   const RT & hx() const { return get(base)[0]; };
+   const RT & hy() const { return get(base)[1]; };
+   const RT & hw() const { return get(base)[2]; };
 
    FT      x()  const { return FT(hx()) / FT(hw()); };
    FT      y()  const { return FT(hy()) / FT(hw()); };
@@ -165,11 +163,7 @@ const typename VectorH2<R>::RT &
 VectorH2<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition( (i>=0) && (i<=2) );
-  if (i==0)
-      return hx();
-  if (i==1)
-      return hy();
-  return hw();
+  return get(base)[i];
 }
 
 template < class R >

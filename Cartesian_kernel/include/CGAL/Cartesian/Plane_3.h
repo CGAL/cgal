@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_PLANE_3_H
 #define CGAL_CARTESIAN_PLANE_3_H
 
-#include <CGAL/Fourtuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,12 +44,13 @@ class PlaneC3
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef Fourtuple<FT>	                           Rep;
+  typedef boost::array<FT, 4>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                     R;
 
   PlaneC3() {}
@@ -64,7 +65,7 @@ public:
   { *this = plane_from_point_direction(p, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : base(a, b, c, d) {}
+    : base(CGALi::make_array(a, b, c, d)) {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
   { *this = plane_from_points(l.point(),
@@ -82,19 +83,19 @@ public:
 
   const FT & a() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const FT & b() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
   const FT & c() const
   {
-      return get(base).e2;
+      return get(base)[2];
   }
   const FT & d() const
   {
-      return get(base).e3;
+      return get(base)[3];
   }
 
   Line_3       perpendicular_line(const Point_3 &p) const;

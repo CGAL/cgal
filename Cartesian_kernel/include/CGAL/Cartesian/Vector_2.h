@@ -25,7 +25,7 @@
 #define CGAL_CARTESIAN_VECTOR_2_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 #include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -41,44 +41,48 @@ class VectorC2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
 
-  typedef Twotuple<FT>	                           Rep;
+  typedef boost::array<FT, 2>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
+
   typedef R_                                     R;
 
   VectorC2() {}
  
   VectorC2(const FT &x, const FT &y)
-    : base(x, y) {}
+    : base(CGALi::make_array(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
   {
     if (hw != FT(1))
-      base = Rep(hx/hw, hy/hw);
+      base = CGALi::make_array(hx/hw, hy/hw);
     else
-      base = Rep(hx, hy);
+      base = CGALi::make_array(hx, hy);
   }
 
   const FT & x() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
+
   const FT & y() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 
   const FT & hx() const
   {
       return x();
   }
+
   const FT & hy() const
   {
       return y();
   }
+
   const FT& hw() const
   {
     return constant<FT, 1>();

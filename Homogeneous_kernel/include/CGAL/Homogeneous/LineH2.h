@@ -20,12 +20,11 @@
 // 
 //
 // Author(s)     : Stefan Schirra
- 
 
 #ifndef CGAL_LINEH2_H
 #define CGAL_LINEH2_H
 
-#include <CGAL/Threetuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,32 +40,27 @@ class LineH2
     typedef typename R_::Ray_2                Ray_2;
     typedef typename R_::Line_2               Line_2;
 
-    typedef Threetuple<RT>                           Rep;
+    typedef boost::array<RT, 3>               Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
 
     Base base;
 
 public:
+
     typedef R_                                    R;
 
     LineH2() {}
     LineH2(const RT& a, const RT& b, const RT& c)
-      : base(a,b,c)
-  {}
+      : base(CGALi::make_array(a, b, c)) {}
 
-    bool           operator==(const LineH2<R>& l) const ;
-    bool           operator!=(const LineH2<R>& l) const ;
+    bool           operator==(const LineH2<R>& l) const;
+    bool           operator!=(const LineH2<R>& l) const;
 
-    const RT &     a() const { return get(base).e0; }
-    const RT &     b() const { return get(base).e1; }
-    const RT &     c() const { return get(base).e2; }
+    const RT &     a() const { return get(base)[0]; }
+    const RT &     b() const { return get(base)[1]; }
+    const RT &     c() const { return get(base)[2]; }
 
 };
-
-
-
-
-
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
