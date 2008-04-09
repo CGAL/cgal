@@ -130,7 +130,7 @@ friend class Scaling_repC2<R>;
 
   bool is_even() const
   {
-    return sign_of_determinant2x2(t11, t12, t21, t22) == POSITIVE;
+    return sign_of_determinant(t11, t12, t21, t22) == POSITIVE;
   }
 
   FT cartesian(int i, int j) const

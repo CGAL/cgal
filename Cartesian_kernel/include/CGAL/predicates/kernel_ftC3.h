@@ -36,9 +36,9 @@ typename Equal_to<FT>::result_type
 parallelC3(const FT &v1x, const FT &v1y, const FT &v1z,
            const FT &v2x, const FT &v2y, const FT &v2z)
 {
-  return sign_of_determinant2x2(v1x, v2x, v1y, v2y) == ZERO
-      && sign_of_determinant2x2(v1x, v2x, v1z, v2z) == ZERO
-      && sign_of_determinant2x2(v1y, v2y, v1z, v2z) == ZERO;
+  return sign_of_determinant(v1x, v2x, v1y, v2y) == ZERO
+      && sign_of_determinant(v1x, v2x, v1z, v2z) == ZERO
+      && sign_of_determinant(v1y, v2y, v1z, v2z) == ZERO;
 }
 
 template < class FT >
@@ -106,12 +106,12 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
   FT dqx = qx-rx;
   FT dpy = py-ry;
   FT dqy = qy-ry;
-  if (sign_of_determinant2x2(dpx, dqx, dpy, dqy) != ZERO)
+  if (sign_of_determinant(dpx, dqx, dpy, dqy) != ZERO)
       return false;
   FT dpz = pz-rz;
   FT dqz = qz-rz;
-  return sign_of_determinant2x2(dpx, dqx, dpz, dqz) == ZERO
-      && sign_of_determinant2x2(dpy, dqy, dpz, dqz) == ZERO;
+  return sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO
+      && sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO;
 }
 
 template < class FT >
@@ -122,7 +122,7 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
               const FT &rx, const FT &ry, const FT &rz,
               const FT &sx, const FT &sy, const FT &sz)
 {
-  return sign_of_determinant3x3<FT>(qx-px,rx-px,sx-px,
+  return sign_of_determinant<FT>(qx-px,rx-px,sx-px,
                                     qy-py,ry-py,sy-py,
                                     qz-pz,rz-pz,sz-pz);
 }
@@ -134,7 +134,7 @@ orientationC3(const FT &ux, const FT &uy, const FT &uz,
               const FT &vx, const FT &vy, const FT &vz,
               const FT &wx, const FT &wy, const FT &wz)
 {
-  return sign_of_determinant3x3(ux, vx, wx,
+  return sign_of_determinant(ux, vx, wx,
                                 uy, vy, wy,
                                 uz, vz, wz);
 }
@@ -226,7 +226,7 @@ coplanar_side_of_bounded_circleC3(const FT &px, const FT &py, const FT &pz,
   FT vy = pqz*prx - pqx*prz;
   FT vz = pqx*pry - pqy*prx;
   FT v2 = CGAL_NTS square(vx) + CGAL_NTS square(vy) + CGAL_NTS square(vz);
-  return enum_cast<Bounded_side>(sign_of_determinant4x4(ptx,pty,ptz,pt2,
+  return enum_cast<Bounded_side>(sign_of_determinant(ptx,pty,ptz,pt2,
                                                         rtx,rty,rtz,rt2,
                                                         qtx,qty,qtz,qt2,
                                                         vx,vy,vz,v2));
@@ -272,9 +272,9 @@ typename Equal_to<FT>::result_type
 equal_directionC3(const FT &dx1, const FT &dy1, const FT &dz1,
                   const FT &dx2, const FT &dy2, const FT &dz2)
 {
-  return sign_of_determinant2x2(dx1, dy1, dx2, dy2) == ZERO
-      && sign_of_determinant2x2(dx1, dz1, dx2, dz2) == ZERO
-      && sign_of_determinant2x2(dy1, dz1, dy2, dz2) == ZERO
+  return sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO
+      && sign_of_determinant(dx1, dz1, dx2, dz2) == ZERO
+      && sign_of_determinant(dy1, dz1, dy2, dz2) == ZERO
       && CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
       && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
       && CGAL_NTS sign(dz1) == CGAL_NTS sign(dz2);
@@ -294,13 +294,13 @@ equal_planeC3(const FT &ha, const FT &hb, const FT &hc, const FT &hd,
     Sg s1a = CGAL_NTS sign(ha);
     if (s1a != ZERO)
         return s1a == CGAL_NTS sign(pa)
-            && sign_of_determinant2x2(pa, pd, ha, hd) == ZERO;
+            && sign_of_determinant(pa, pd, ha, hd) == ZERO;
     Sg s1b = CGAL_NTS sign(hb);
     if (s1b != ZERO)
         return s1b == CGAL_NTS sign(pb)
-            && sign_of_determinant2x2(pb, pd, hb, hd) == ZERO;
+            && sign_of_determinant(pb, pd, hb, hd) == ZERO;
     return CGAL_NTS sign(pc) == CGAL_NTS sign(hc)
-        && sign_of_determinant2x2(pc, pd, hc, hd) == ZERO;
+        && sign_of_determinant(pc, pd, hc, hd) == ZERO;
 }
 
 template <class FT >
@@ -337,7 +337,7 @@ side_of_oriented_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT sty = sy - ty;
   FT stz = sz - tz;
   FT st2 = CGAL_NTS square(stx) + CGAL_NTS square(sty) + CGAL_NTS square(stz);
-  return sign_of_determinant4x4(ptx,pty,ptz,pt2,
+  return sign_of_determinant(ptx,pty,ptz,pt2,
                                 rtx,rty,rtz,rt2,
                                 qtx,qty,qtz,qt2,
                                 stx,sty,stz,st2);
@@ -498,7 +498,7 @@ cmp_signed_dist_to_planeC3(
      const FT &px, const FT &py, const FT &pz,
      const FT &qx, const FT &qy, const FT &qz)
 {
-  return sign_of_determinant3x3<FT>( pqx-ppx, pqy-ppy, pqz-ppz,
+  return sign_of_determinant<FT>( pqx-ppx, pqy-ppy, pqz-ppz,
 	                             prx-ppx, pry-ppy, prz-ppz,
 	                             px-qx,   py-qy,   pz-qz);
 }

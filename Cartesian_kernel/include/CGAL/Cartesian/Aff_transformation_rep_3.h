@@ -145,7 +145,7 @@ public:
      
   virtual bool is_even() const
   {
-    return sign_of_determinant3x3(t11, t12, t13,
+    return sign_of_determinant(t11, t12, t13,
                                   t21, t22, t23,
                                   t31, t32, t33) == POSITIVE;
   }

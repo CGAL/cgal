@@ -37,7 +37,7 @@ typename Equal_to<FT>::result_type
 parallelC2(const FT &l1a, const FT &l1b,
            const FT &l2a, const FT &l2b)
 {
-    return sign_of_determinant2x2(l1a, l1b, l2a, l2b) == ZERO;
+    return sign_of_determinant(l1a, l1b, l2a, l2b) == ZERO;
 }
 
 template < class FT >
@@ -47,7 +47,7 @@ parallelC2(const FT &s1sx, const FT &s1sy,
            const FT &s2sx, const FT &s2sy,
            const FT &s2tx, const FT &s2ty)
 {
-    return sign_of_determinant2x2(s1tx - s1sx, s1ty - s1sy,
+    return sign_of_determinant(s1tx - s1sx, s1ty - s1sy,
                                   s2tx - s2sx, s2ty - s2sy) == ZERO;
 }
 
@@ -57,14 +57,14 @@ typename Equal_to<FT>::result_type
 equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
              const FT &l2a, const FT &l2b, const FT &l2c)
 {
-    if (sign_of_determinant2x2(l1a, l1b, l2a, l2b) != ZERO)
+    if (sign_of_determinant(l1a, l1b, l2a, l2b) != ZERO)
         return false; // Not parallel.
     typename Sgn<FT>::result_type s1a = CGAL_NTS sign(l1a);
     if (s1a != ZERO)
         return s1a == CGAL_NTS sign(l2a)
-	    && sign_of_determinant2x2(l1a, l1c, l2a, l2c) == ZERO;
+	    && sign_of_determinant(l1a, l1c, l2a, l2c) == ZERO;
     return CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b)
-	&& sign_of_determinant2x2(l1b, l1c, l2b, l2c) == ZERO;
+	&& sign_of_determinant(l1b, l1c, l2b, l2c) == ZERO;
 }
 
 template < class FT >
@@ -96,7 +96,7 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
   FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
   Sign s = Sign (CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result( s * sign_of_determinant2x2(num1, 
+  return Comparison_result( s * sign_of_determinant(num1, 
                                                        num2, den1, den2));
   */
   FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
@@ -125,7 +125,7 @@ compare_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
   FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
   typename Sgn<FT>::result_type s = CGAL_NTS sign(den1) * CGAL_NTS sign(den2);
   CGAL_kernel_assertion( s != ZERO );
-  return s * sign_of_determinant2x2(num1, num2, den1, den2);
+  return s * sign_of_determinant(num1, num2, den1, den2);
 }
 
 template < class FT >
@@ -148,7 +148,7 @@ compare_y_at_xC2(const FT &px,
 {
   typename Sgn<FT>::result_type s = CGAL_NTS sign(l1b) * CGAL_NTS sign(l2b);
   CGAL_kernel_assertion( s != ZERO );
-  return s * sign_of_determinant2x2<FT>(l2a*px+l2c, l2b,
+  return s * sign_of_determinant<FT>(l2a*px+l2c, l2b,
                                         l1a*px+l1c, l1b);
 }
 
@@ -160,9 +160,9 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
                  const FT &ha,  const FT &hb,  const FT &hc)
 {
   typename Sgn<FT>::result_type s = CGAL_NTS sign(hb) *
-                                    sign_of_determinant2x2(l1a, l1b, l2a, l2b);
+                                    sign_of_determinant(l1a, l1b, l2a, l2b);
   CGAL_kernel_assertion( s != ZERO );
-  return s * sign_of_determinant3x3(l1a, l1b, l1c,
+  return s * sign_of_determinant(l1a, l1b, l1c,
                                     l2a, l2b, l2c,
                                     ha,  hb,  hc);
 }
@@ -182,7 +182,7 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
                                     CGAL_NTS sign(h2b) *
                                     CGAL_NTS sign(den);
   CGAL_kernel_assertion( s != ZERO );
-  return s * sign_of_determinant2x2<FT>(h2a*num+h2c*den, h2b,
+  return s * sign_of_determinant<FT>(h2a*num+h2c*den, h2b,
                                         h1a*num+h1c*den, h1b);
 }
 
@@ -266,7 +266,7 @@ equal_directionC2(const FT &dx1, const FT &dy1,
 {
   return CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
       && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
-      && sign_of_determinant2x2(dx1, dy1, dx2, dy2) == ZERO;
+      && sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO;
 }
 
 template < class FT >
@@ -287,7 +287,7 @@ compare_angle_with_x_axisC2(const FT &dx1, const FT &dy1,
     return LARGER;
   else if (quadrant_1 < quadrant_2)
     return SMALLER;
-  return -sign_of_determinant2x2(dx1,dy1,dx2,dy2);
+  return -sign_of_determinant(dx1,dy1,dx2,dy2);
 }
 
 template < class FT >
@@ -401,7 +401,7 @@ orientationC2(const FT &px, const FT &py,
               const FT &qx, const FT &qy,
               const FT &rx, const FT &ry)
 {
-  return sign_of_determinant2x2(qx-px, qy-py, rx-px, ry-py);
+  return sign_of_determinant(qx-px, qy-py, rx-px, ry-py);
 }
 
 template < class FT >
@@ -409,7 +409,7 @@ inline
 typename Same_uncertainty_nt<Orientation, FT>::type
 orientationC2(const FT &ux, const FT &uy, const FT &vx, const FT &vy)
 {
-  return sign_of_determinant2x2(ux, uy, vx, vy);
+  return sign_of_determinant(ux, uy, vx, vy);
 }
 
 template < class FT >
@@ -459,7 +459,7 @@ side_of_oriented_circleC2(const FT &px, const FT &py,
                           const FT &tx, const FT &ty)
 {
   // Oriented_side(
-  //  sign_of_determinant4x4(px, py, px*px + py*py, 1,
+  //  sign_of_determinant(px, py, px*px + py*py, 1,
   //                         qx, qy, qx*qx + qy*qy, 1,
   //                         rx, ry, rx*rx + ry*ry, 1,
   //                         tx, ty, tx*tx + ty*ty, 1));
@@ -471,10 +471,10 @@ side_of_oriented_circleC2(const FT &px, const FT &py,
   FT tpx = tx-px;
   FT tpy = ty-py;
 // The usual 3x3 formula can be simplified a little bit to a 2x2.
-//         - sign_of_determinant3x3(qpx, qpy, square(qpx) + square(qpy),
+//         - sign_of_determinant(qpx, qpy, square(qpx) + square(qpy),
 //                                  rpx, rpy, square(rpx) + square(rpy),
 //                                  tpx, tpy, square(tpx) + square(tpy)));
-  return sign_of_determinant2x2<FT>( qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
+  return sign_of_determinant<FT>( qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
                                      qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy));
 }
 

@@ -736,7 +736,7 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
 {
-  CGAL::Sign orientation = CGAL::sign_of_determinant3x3(v1[0], v2[0], v3[0],
+  CGAL::Sign orientation = CGAL::sign_of_determinant(v1[0], v2[0], v3[0],
 							v1[1], v2[1], v3[1],
 							v1[2], v2[2], v3[2]);
   if (orientation == CGAL::NEGATIVE) v1 = -v1;

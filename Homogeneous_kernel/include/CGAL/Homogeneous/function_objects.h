@@ -3649,19 +3649,19 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      Orientation oxy_pqr = sign_of_determinant3x3(p.hx(), p.hy(), p.hw(),
+      Orientation oxy_pqr = sign_of_determinant(p.hx(), p.hy(), p.hw(),
 					           q.hx(), q.hy(), q.hw(),
 					           r.hx(), r.hy(), r.hw());
       if (oxy_pqr != COLLINEAR)
 	return oxy_pqr;
 
-      Orientation oyz_pqr = sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+      Orientation oyz_pqr = sign_of_determinant(p.hy(), p.hz(), p.hw(),
 					           q.hy(), q.hz(), q.hw(),
 					           r.hy(), r.hz(), r.hw());
       if (oyz_pqr != COLLINEAR)
 	return oyz_pqr;
 
-      return sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+      return sign_of_determinant(p.hx(), p.hz(), p.hw(),
 			            q.hx(), q.hz(), q.hw(),
 			            r.hx(), r.hz(), r.hw());
     }
@@ -3682,24 +3682,24 @@ namespace HomogeneousKernelFunctors {
 
       // compute orientation of p,q,s in this plane P:
       Orientation save;
-      if ( (save = sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+      if ( (save = sign_of_determinant(p.hy(), p.hz(), p.hw(),
 				          q.hy(), q.hz(), q.hw(),
 				          r.hy(), r.hz(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant3x3(p.hy(), p.hz(), p.hw(),
+	{ return save * sign_of_determinant(p.hy(), p.hz(), p.hw(),
 					       q.hy(), q.hz(), q.hw(),
 					       s.hy(), s.hz(), s.hw());
 	}
-      if ( (save = sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+      if ( (save = sign_of_determinant(p.hx(), p.hz(), p.hw(),
 				          q.hx(), q.hz(), q.hw(),
 				          r.hx(), r.hz(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant3x3(p.hx(), p.hz(), p.hw(),
+	{ return save * sign_of_determinant(p.hx(), p.hz(), p.hw(),
 					       q.hx(), q.hz(), q.hw(),
 					       s.hx(), s.hz(), s.hw());
 	}
-      if ( (save = sign_of_determinant3x3(p.hx(), p.hy(), p.hw(),
+      if ( (save = sign_of_determinant(p.hx(), p.hy(), p.hw(),
 				          q.hx(), q.hy(), q.hw(),
 				          r.hx(), r.hy(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant3x3( p.hx(), p.hy(), p.hw(),
+	{ return save * sign_of_determinant( p.hx(), p.hy(), p.hw(),
 						q.hx(), q.hy(), q.hw(),
 						s.hx(), s.hy(), s.hw());
 	}
@@ -4285,7 +4285,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Vector_2& u, const Vector_2& v) const
     {
-      return sign_of_determinant2x2(u.hx(), u.hy(),
+      return sign_of_determinant(u.hx(), u.hy(),
                                     v.hx(), v.hy());
     }
 
@@ -4312,7 +4312,7 @@ namespace HomogeneousKernelFunctors {
 	        const Point_3& r, const Point_3& s) const
     {
       // Two rows are switched, because of the homogeneous column.
-      return sign_of_determinant4x4( p.hx(), p.hy(), p.hz(), p.hw(),
+      return sign_of_determinant( p.hx(), p.hy(), p.hz(), p.hw(),
 				     r.hx(), r.hy(), r.hz(), r.hw(),
 				     q.hx(), q.hy(), q.hz(), q.hw(),
 				     s.hx(), s.hy(), s.hz(), s.hw());
@@ -4321,7 +4321,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
-      return sign_of_determinant3x3( u.hx(), u.hy(), u.hz(),
+      return sign_of_determinant( u.hx(), u.hy(), u.hz(),
 				     v.hx(), v.hy(), v.hz(),
 				     w.hx(), w.hy(), w.hz());
     }

@@ -128,7 +128,7 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
   // if p is on the positive side of the plane
   //(<=> (p-a)*n >0 <=> na < 0) then orientation (pq p1 p2) is ccw
   // if not: permutation of p1 and p2
-  if((sign_of_determinant3x3(qx,qy,qz, x1,y1,RT(0),x2 ,y2,RT(1))
+  if((sign_of_determinant(qx,qy,qz, x1,y1,RT(0),x2 ,y2,RT(1))
       * CGAL_NTS sign (-na)) > 0 )
     {
       RT x3(x1),y3(y1);

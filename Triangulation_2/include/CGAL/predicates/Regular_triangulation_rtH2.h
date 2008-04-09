@@ -76,7 +76,7 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
     RT dthw = CGAL_NTS square(thw);
     RT dtz = CGAL_NTS square(thx) + CGAL_NTS square(thy) - twt*dthw;
 
-    return Oriented_side(sign_of_determinant4x4(dphx, dphy, dpz, dphw,
+    return Oriented_side(sign_of_determinant(dphx, dphy, dpz, dphw,
 	                                        dqhx, dqhy, dqz, dqhw,
 	                                        drhx, drhy, drz, drhw,
 	                                        dthx, dthy, dtz, dthw));
@@ -116,7 +116,7 @@ power_testH2( const RT &phx, const RT &phy, const RT &phw, const RT &pwt,
     RT dtz = CGAL_NTS square(thx) + CGAL_NTS square(thy) - twt*dthw;
 
     return Oriented_side(CGAL_NTS compare(pa, qa) *
-	                 sign_of_determinant3x3(pa, dpz, dphw,
+	                 sign_of_determinant(pa, dpz, dphw,
 				                qa, dqz, dqhw,
 				                ta, dtz, dthw));
 }

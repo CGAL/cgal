@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 template <class RT>
 inline
 typename Sgn<RT>::result_type
-sign_of_determinant2x2( const RT& a00,  const RT& a01,
+sign_of_determinant( const RT& a00,  const RT& a01,
                         const RT& a10,  const RT& a11)
 {
   return enum_cast<Sign>(CGAL_NTS compare( a00*a11, a10*a01));
@@ -41,7 +41,7 @@ sign_of_determinant2x2( const RT& a00,  const RT& a01,
 template <class RT>
 inline
 typename Sgn<RT>::result_type
-sign_of_determinant3x3( const RT& a00,  const RT& a01,  const RT& a02,
+sign_of_determinant( const RT& a00,  const RT& a01,  const RT& a02,
                         const RT& a10,  const RT& a11,  const RT& a12,
                         const RT& a20,  const RT& a21,  const RT& a22)
 {
@@ -53,7 +53,7 @@ sign_of_determinant3x3( const RT& a00,  const RT& a01,  const RT& a02,
 template <class RT>
 inline
 typename Sgn<RT>::result_type
-sign_of_determinant4x4(
+sign_of_determinant(
  const RT& a00,  const RT& a01,  const RT& a02,  const RT& a03,
  const RT& a10,  const RT& a11,  const RT& a12,  const RT& a13,
  const RT& a20,  const RT& a21,  const RT& a22,  const RT& a23,
@@ -68,7 +68,7 @@ sign_of_determinant4x4(
 template <class RT>
 CGAL_KERNEL_LARGE_INLINE
 typename Sgn<RT>::result_type
-sign_of_determinant5x5(
+sign_of_determinant(
  const RT& a00,  const RT& a01,  const RT& a02,  const RT& a03,  const RT& a04,
  const RT& a10,  const RT& a11,  const RT& a12,  const RT& a13,  const RT& a14,
  const RT& a20,  const RT& a21,  const RT& a22,  const RT& a23,  const RT& a24,
@@ -85,7 +85,7 @@ sign_of_determinant5x5(
 template <class RT>
 CGAL_KERNEL_LARGE_INLINE
 typename Sgn<RT>::result_type
-sign_of_determinant6x6(
+sign_of_determinant(
  const RT& a00, const RT& a01, const RT& a02, const RT& a03, const RT& a04,
  const RT& a05,
  const RT& a10, const RT& a11, const RT& a12, const RT& a13, const RT& a14,

@@ -72,7 +72,7 @@ public:
       RT dtqx = q.point().x() - t.point().x();
       RT minus_dtqy = -q.point().y() + t.point().y();
 
-      Sign sgn1 = sign_of_determinant2x2(dtsx, dtsy, minus_dtqy, dtqx);
+      Sign sgn1 = sign_of_determinant(dtsx, dtsy, minus_dtqy, dtqx);
 
       CGAL_assertion( sgn1 != ZERO );
 
@@ -96,7 +96,7 @@ public:
       RT dtqx = q.point().x() - t.point().x();
       RT minus_dtqy = -q.point().y() + t.point().y();
 
-      Sign sgn1 = sign_of_determinant2x2(dtssx, dtssy, minus_dtqy, dtqx);
+      Sign sgn1 = sign_of_determinant(dtssx, dtssy, minus_dtqy, dtqx);
 
       CGAL_assertion( sgn1 != ZERO );
 

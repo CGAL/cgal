@@ -64,23 +64,23 @@ public:
 
 
       Orientation o = chi2(l1, l2, tag);
-                   //sign_of_determinant2x2(a1, b1, a2, b2);
+                   //sign_of_determinant(a1, b1, a2, b2);
 
 
       if ( o == COLLINEAR ) {
 	Bitangent_line l2_rot = l2.get_rot90();
 	Sign dot = chi2(l1, l2_rot, tag);
-                              //sign_of_determinant2x2(a1, b1, -b2, a2);
+                              //sign_of_determinant(a1, b1, -b2, a2);
 
 	CGAL_assertion( dot != ZERO );
 	Orientation o1 = chi2(l1, l3, tag);
-                          //sign_of_determinant2x2(a1, b1, a3, b3);
+                          //sign_of_determinant(a1, b1, a3, b3);
 
 	if ( dot == POSITIVE ) {
 	  if ( o1 != COLLINEAR ) { return ON_UNBOUNDED_SIDE; }
 	  Bitangent_line l3_rot = l3.get_rot90();
 	  Sign dot1 = chi2(l1, l3_rot, tag);
-                       //sign_of_determinant2x2(a1, b1, -b3, a3);
+                       //sign_of_determinant(a1, b1, -b3, a3);
 
 	  CGAL_assertion( dot1 != ZERO );
 	  return ( dot1 == POSITIVE ) ? ON_BOUNDARY : ON_UNBOUNDED_SIDE;
@@ -90,9 +90,9 @@ public:
 	return ( o1 == COLLINEAR ) ? ON_BOUNDARY : ON_UNBOUNDED_SIDE;
       } else if ( o == LEFT_TURN ) {
 	Orientation o1 = chi2(l1, l3, tag);
-	                //sign_of_determinant2x2(a1, b1, a3, b3);
+	                //sign_of_determinant(a1, b1, a3, b3);
 	Orientation o2 = chi2(l2, l3, tag);
-                        //sign_of_determinant2x2(a2, b2, a3, b3);
+                        //sign_of_determinant(a2, b2, a3, b3);
 
 	//	std::cout << "orientation(l1, l3): " << int(o1) << std::endl;
 	//	std::cout << "orientation(l2, l3): " << int(o2) << std::endl;
@@ -107,9 +107,9 @@ public:
 	return ON_UNBOUNDED_SIDE;
       }
       Orientation o1 = chi2(l1, l3, tag);
-                        //sign_of_determinant2x2(a1, b1, a3, b3);
+                        //sign_of_determinant(a1, b1, a3, b3);
       Orientation o2 = chi2(l2, l3, tag);
-                        //sign_of_determinant2x2(a2, b2, a3, b3);
+                        //sign_of_determinant(a2, b2, a3, b3);
 
       //      std::cout << "orientation(l1, l3): " << int(o1) << std::endl;
       //      std::cout << "orientation(l2, l3): " << int(o2) << std::endl;

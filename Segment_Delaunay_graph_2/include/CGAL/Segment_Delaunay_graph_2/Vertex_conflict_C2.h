@@ -127,7 +127,7 @@ private:
     RT dtqx = qp.x() - tp.x();
     RT minus_dtqy = -qp.y() + tp.y();
     
-    Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
+    Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
 
     CGAL_assertion( s != ZERO );
 
@@ -210,7 +210,7 @@ private:
     RT dtqx = qp.x() - tp.x();
     RT minus_dtqy = -qp.y() + tp.y();
     
-    Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
+    Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
     
     CGAL_assertion( s != ZERO );
 
@@ -302,7 +302,7 @@ private:
       RT dtqx = qp.x() - tp.x();
       RT minus_dtqy = -qp.y() + tp.y();
       
-      Sign s = sign_of_determinant2x2(dtpx, dtpy, minus_dtqy, dtqx);
+      Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
 
       CGAL_assertion( s != ZERO );
 

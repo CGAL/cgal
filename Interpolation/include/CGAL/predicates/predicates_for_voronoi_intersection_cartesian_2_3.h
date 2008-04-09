@@ -37,13 +37,13 @@ side_of_plane_centered_sphere_translateC3(
   RT na =nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
-  Sign num = sign_of_determinant4x4(rx, ry, rz, r2,
+  Sign num = sign_of_determinant(rx, ry, rz, r2,
 				    qx, qy, qz, q2,
 				    nx, ny, nz, na,
 				    tx, ty, tz, t2);
 
   //denumerator:
-  Sign  den = sign_of_determinant3x3(nx,ny,nz,
+  Sign  den = sign_of_determinant(nx,ny,nz,
 				     qx,qy,qz,
 				     rx,ry,rz);
   CGAL_assertion(den != ZERO);
@@ -93,23 +93,23 @@ side_of_plane_centered_sphere_translateC3(
   RT na =nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
-  Sign num = sign_of_determinant4x4(qx, qy, qz, q2,
+  Sign num = sign_of_determinant(qx, qy, qz, q2,
 				    ny, -nx, RT(0), RT(0),
 				    nx, ny, nz, na,
 				    rx, ry, rz, r2);
   //denumerator:
-  Sign  den = sign_of_determinant3x3(nx,ny,nz,
+  Sign  den = sign_of_determinant(nx,ny,nz,
 				     ny,-nx, RT(0),
 				     qx,qy,qz);
   if (den==ZERO) {
     // bad choice: (ny,-nx,0) is coplanar with n,q.
     // by precondition: q and n may not be collinear
     // => the cross product q*n is orthogonal to q, n and not coplanar
-    num = sign_of_determinant4x4(qx, qy, qz, q2,
+    num = sign_of_determinant(qx, qy, qz, q2,
 				 ny*qz-nz*qy, nz*qx-nx*qz,nx*qy-ny*qx, RT(0),
 				 nx, ny, nz, na,
 				 rx, ry, rz, r2);
-    den = sign_of_determinant3x3(nx,ny,nz,
+    den = sign_of_determinant(nx,ny,nz,
 				 ny*qz-nz*qy, nz*qx - nx*qz,nx*qy-ny*qx,
 				 qx,qy,qz);
   }

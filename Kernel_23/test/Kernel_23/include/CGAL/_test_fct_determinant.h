@@ -88,34 +88,34 @@ _test_fct_determinant(const NT&)
 
   // sign_of_determinantDxD
 
-  assert( CGAL::sign_of_determinant2x2<NT>( zero, one, \
+  assert( CGAL::sign_of_determinant<NT>( zero, one, \
                                         one,  zero) == CGAL::NEGATIVE );
 
-  assert( CGAL::sign_of_determinant2x2<NT>( one,  one, \
+  assert( CGAL::sign_of_determinant<NT>( one,  one, \
                                         zero, -one) == CGAL::NEGATIVE );
 
-  assert( CGAL::sign_of_determinant2x2<NT>( one,  one, \
+  assert( CGAL::sign_of_determinant<NT>( one,  one, \
                                         zero, one) == CGAL::POSITIVE );
 
-  assert( CGAL::sign_of_determinant2x2<NT>( zero, -one, \
+  assert( CGAL::sign_of_determinant<NT>( zero, -one, \
                                         zero, one) == CGAL::ZERO );
 
 
-  assert( CGAL::sign_of_determinant4x4<NT>( one,  zero, one, -one, \
+  assert( CGAL::sign_of_determinant<NT>( one,  zero, one, -one, \
                                         zero, one,  one, -one, \
                                         zero, two,  zero, one, \
                                         zero, -one, zero, zero ) == \
-          CGAL::sign_of_determinant3x3<NT>( one,  one, -one, \
+          CGAL::sign_of_determinant<NT>( one,  one, -one, \
                                         two,  zero, one, \
                                         -one, zero, zero ) );
 
-  assert( CGAL::sign_of_determinant6x6<NT>( one, zero, zero, zero, zero, zero, \
+  assert( CGAL::sign_of_determinant<NT>( one, zero, zero, zero, zero, zero, \
                                         zero, one,  zero, one,  -one, zero, \
                                         zero, zero, one,  one, -one, zero, \
                                         zero, one,  two,  zero, one, two, \
                                         zero, one, one,  zero, -one, zero, \
                                         zero, -one,  -one, zero, zero, one )==\
-          CGAL::sign_of_determinant5x5<NT>( one,  zero, one, -one, zero, \
+          CGAL::sign_of_determinant<NT>( one,  zero, one, -one, zero, \
                                         zero, one,  one, -one, zero, \
                                         one,  two,  zero, one, two, \
                                         one, one,  zero, -one, zero, \

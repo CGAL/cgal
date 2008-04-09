@@ -688,7 +688,7 @@ public:
       RT dtqx = q.point().x() - t.point().x();
       RT dtqy = q.point().y() - t.point().y();
 
-      Sign s1 = sign_of_determinant2x2(dtpx, minus_dtpy, dtqy, dtqx);
+      Sign s1 = sign_of_determinant(dtpx, minus_dtpy, dtqy, dtqx);
 
       CGAL_assertion( s1 != ZERO );
       return ( s1 == NEGATIVE );

@@ -48,7 +48,7 @@ protected:
                      const Inverted_weighted_point &p2,
                      const Inverted_weighted_point &p3) const
     {
-        return sign_of_determinant3x3( p1.p(), p2.p(), p3.p(),
+        return sign_of_determinant( p1.p(), p2.p(), p3.p(),
 				       p1.x(), p2.x(), p3.x(),
 				       p1.y(), p2.y(), p3.y() );
     }
@@ -119,15 +119,15 @@ protected:
         CGAL_assertion(i == -1 || i == 1 || i == 2 || i == 3);
         Sign s;
 
-	Sign s_xTest = sign_of_determinant2x2(p2.p(), p2.x(), p1.p(), p1.x());
+	Sign s_xTest = sign_of_determinant(p2.p(), p2.x(), p1.p(), p1.x());
 	if ( s_xTest != ZERO ) {
 	  s = s_xTest *
-	    sign_of_determinant3x3( p1.p(), p1.x(), p1.weight(),
+	    sign_of_determinant( p1.p(), p1.x(), p1.weight(),
 				    p2.p(), p2.x(), p2.weight(),
 				    p3.p(), p3.x(), p3.weight() );
 	} else {
             s = sign_determinant2x2( p2.p(), p2.y(), p1.p(), p1.y() ) *
-	      sign_of_determinant3x3( p1.p(), p1.y(), p1.weight(),
+	      sign_of_determinant( p1.p(), p1.y(), p1.weight(),
 				      p2.p(), p2.y(), p2.weight(),
 				      p3.p(), p3.y(), p3.weight() );
 	}
@@ -165,9 +165,9 @@ protected:
     Sign ordered_on_line_test(const Inverted_weighted_point &p1,
                               const Inverted_weighted_point &p2) const
     {
-      Sign s_det = sign_of_determinant2x2( p1.p(), p1.x(), p2.p(), p2.x() );
+      Sign s_det = sign_of_determinant( p1.p(), p1.x(), p2.p(), p2.x() );
       if ( s_det != ZERO ) { return s_det; }
-      return sign_of_determinant2x2( p1.p(), p1.y(), p2.p(), p2.y() );
+      return sign_of_determinant( p1.p(), p1.y(), p2.p(), p2.y() );
     }
 
     bool ordered_on_line(const Inverted_weighted_point &p1,
