@@ -441,58 +441,58 @@ Aff_transformation_repH3<R>::inverse() const
   typedef typename R::RT RT;
   const RT  RT0(0);
   return Aff_transformation_3(
-                           det3x3_by_formula( t11, t12, t13,
+                           determinant( t11, t12, t13,
                                                    t21, t22, t23,     // i 00
                                                    RT0, RT0, t33 ),
 
-                        -  det3x3_by_formula( t01, t02, t03,
+                        -  determinant( t01, t02, t03,
                                                    t21, t22, t23,     // i 01
                                                    RT0, RT0, t33 ),
 
-                           det3x3_by_formula( t01, t02, t03,
+                           determinant( t01, t02, t03,
                                                    t11, t12, t13,     // i 02
                                                    RT0, RT0, t33 ),
 
-                        -  det3x3_by_formula( t01, t02, t03,
+                        -  determinant( t01, t02, t03,
                                                    t11, t12, t13,     // i 03
                                                    t21, t22, t23 ),
 
 
-                        -  det3x3_by_formula( t10, t12, t13,
+                        -  determinant( t10, t12, t13,
                                                    t20, t22, t23,     // i 10
                                                    RT0, RT0, t33 ),
 
-                           det3x3_by_formula( t00, t02, t03,
+                           determinant( t00, t02, t03,
                                                    t20, t22, t23,     // i 11
                                                    RT0, RT0, t33 ),
 
-                        -  det3x3_by_formula( t00, t02, t03,
+                        -  determinant( t00, t02, t03,
                                                    t10, t12, t13,     // i 12
                                                    RT0, RT0, t33 ),
 
-                           det3x3_by_formula( t00, t02, t03,
+                           determinant( t00, t02, t03,
                                                    t10, t12, t13,     // i 13
                                                    t20, t22, t23 ),
 
 
-                           det3x3_by_formula( t10, t11, t13,
+                           determinant( t10, t11, t13,
                                                    t20, t21, t23,     // i 20
                                                    RT0, RT0, t33 ),
 
-                        -  det3x3_by_formula( t00, t01, t03,
+                        -  determinant( t00, t01, t03,
                                                    t20, t21, t23,     // i 21
                                                    RT0, RT0, t33 ),
 
-                           det3x3_by_formula( t00, t01, t03,
+                           determinant( t00, t01, t03,
                                                    t10, t11, t13,     // i 22
                                                    RT0, RT0, t33 ),
 
-                        -  det3x3_by_formula( t00, t01, t03,
+                        -  determinant( t00, t01, t03,
                                                    t10, t11, t13,     // i 23
                                                    t20, t21, t23 ),
 
 
-                           det3x3_by_formula( t00, t01, t02,
+                           determinant( t00, t01, t02,
                                                    t10, t11, t12,     // i 33
                                                    t20, t21, t22 )
                                                        ) ;
@@ -523,7 +523,7 @@ bool
 Aff_transformation_repH3<R>::is_even() const
 {
   return (CGAL_NTS sign<RT>( t33 *
-	                    det3x3_by_formula(t00, t01, t02,
+	                    determinant(t00, t01, t02,
                                               t10, t11, t12,
                                               t20, t21, t22 ) ) == POSITIVE );
 }

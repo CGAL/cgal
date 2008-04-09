@@ -145,7 +145,7 @@ CNT  incircle(CNT ax, CNT ay, CNT bx, CNT by,
   CNT rpy = cy - ay;
   CNT tpx = dx - ax;
   CNT tpy = dy - ay;
-  CNT det=CGAL::det2x2_by_formula(qpx*tpy - qpy*tpx, tpx*(dx - bx) 
+  CNT det=CGAL::determinant(qpx*tpy - qpy*tpx, tpx*(dx - bx) 
 				  + tpy*(dy - by),
 				  qpx*rpy - qpy*rpx, rpx*(cx - bx) 
 				  + rpy*(cy - by));

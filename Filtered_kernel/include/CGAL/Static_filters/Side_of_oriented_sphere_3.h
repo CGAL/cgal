@@ -104,7 +104,7 @@ public:
           double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
                      * (maxz * maxz);
 
-          double det = det4x4_by_formula(ptx,pty,ptz,pt2,
+          double det = determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
                                          stx,sty,stz,st2);
@@ -131,7 +131,7 @@ public:
     typedef CGAL::Static_filter_error F;
     F t1 = F(1,F::ulp()/2);         // First translation
     F sq = t1*t1+t1*t1+t1*t1; // squares
-    F det = det4x4_by_formula(t1, t1, t1, sq,
+    F det = determinant(t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq,
                               t1, t1, t1, sq); // Full det

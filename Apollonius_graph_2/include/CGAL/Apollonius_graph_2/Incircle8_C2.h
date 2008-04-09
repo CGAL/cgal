@@ -101,13 +101,13 @@ public:
     FT pk = CGAL::square(xk) + CGAL::square(yk) - CGAL::square(rk);
     FT pl = CGAL::square(xl) + CGAL::square(yl) - CGAL::square(rl);
 
-    FT Exp = det2x2_by_formula(xj, pj, xk, pk);
-    FT Eyp = det2x2_by_formula(yj, pj, yk, pk);
-    FT Erp = det2x2_by_formula(rj, pj, rk, pk);
+    FT Exp = determinant(xj, pj, xk, pk);
+    FT Eyp = determinant(yj, pj, yk, pk);
+    FT Erp = determinant(rj, pj, rk, pk);
 
-    FT Exy = det2x2_by_formula(xj, yj, xk, yk);
-    FT Exr = det2x2_by_formula(xj, rj, xk, rk);
-    FT Eyr = det2x2_by_formula(yj, rj, yk, rk);
+    FT Exy = determinant(xj, yj, xk, yk);
+    FT Exr = determinant(xj, rj, xk, rk);
+    FT Eyr = determinant(yj, rj, yk, rk);
 
     FT Exyp = xl * Eyp - yl * Exp + pl * Exy;
     FT Exrp = xl * Erp - rl * Exp + pl * Exr;

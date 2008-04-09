@@ -118,15 +118,15 @@ public:
     FT pj = CGAL::square(xj) + CGAL::square(yj) - CGAL::square(rj);
     FT pk = CGAL::square(xk) + CGAL::square(yk) - CGAL::square(rk);
 
-    FT Exp = det2x2_by_formula(xj, pj, xk, pk);
-    FT Eyp = det2x2_by_formula(yj, pj, yk, pk);
-    FT Erp = det2x2_by_formula(rj, pj, rk, pk);
+    FT Exp = determinant(xj, pj, xk, pk);
+    FT Eyp = determinant(yj, pj, yk, pk);
+    FT Erp = determinant(rj, pj, rk, pk);
 
-    FT Exy = det2x2_by_formula(xj, yj, xk, yk);
-    FT Exr = det2x2_by_formula(xj, rj, xk, rk);
-    FT Eyr = det2x2_by_formula(yj, rj, yk, rk);
+    FT Exy = determinant(xj, yj, xk, yk);
+    FT Exr = determinant(xj, rj, xk, rk);
+    FT Eyr = determinant(yj, rj, yk, rk);
 
-    FT Exy2 = 2 * det2x2_by_formula(xl, yl, xm, ym);
+    FT Exy2 = 2 * determinant(xl, yl, xm, ym);
 
     FT A = (Exp * Exr + Eyp * Eyr) * Exy2 + (Eyp * dx - Exp * dy) * Erp;
     FT B = Exy * Exy2 - Exp * dx - Eyp * dy;
@@ -194,13 +194,13 @@ public:
     pj = nj - CGAL::square(rj);
     pk = nk - CGAL::square(rk);
 
-    Exp = det2x2_by_formula(xj, pj, xk, pk);
-    Eyp = det2x2_by_formula(yj, pj, yk, pk);
-    Erp = det2x2_by_formula(rj, pj, rk, pk);
+    Exp = determinant(xj, pj, xk, pk);
+    Eyp = determinant(yj, pj, yk, pk);
+    Erp = determinant(rj, pj, rk, pk);
 
-    Exy = det2x2_by_formula(xj, yj, xk, yk);
-    Exr = det2x2_by_formula(xj, rj, xk, rk);
-    Eyr = det2x2_by_formula(yj, rj, yk, rk);
+    Exy = determinant(xj, yj, xk, yk);
+    Exr = determinant(xj, rj, xk, rk);
+    Eyr = determinant(yj, rj, yk, rk);
 
     A1 = Exp * Exr + Eyp * Eyr;
 
@@ -284,7 +284,7 @@ private:
     FT dx = xl - xm;
     FT dy = yl - ym;
 
-    FT Exy2 = 2 * det2x2_by_formula(xl, yl, xm, ym);
+    FT Exy2 = 2 * determinant(xl, yl, xm, ym);
 
     FT A = A1 * Exy2 + (Eyp * dx - Exp * dy) * Erp;
     FT B = Exy * Exy2 - Exp * dx - Eyp * dy;

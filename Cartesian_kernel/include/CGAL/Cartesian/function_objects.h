@@ -769,7 +769,7 @@ namespace CartesianKernelFunctors {
       FT v1y = q.y() - p.y();
       FT v2x = r.x() - p.x();
       FT v2y = r.y() - p.y();
-      return det2x2_by_formula(v1x, v1y, v2x, v2y)/2;
+      return determinant(v1x, v1y, v2x, v2y)/2;
     }
 
     result_type
@@ -793,7 +793,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
     {
-	return det2x2_by_formula(v.x(), v.y(), w.x(), w.y());
+	return determinant(v.x(), v.y(), w.x(), w.y());
     }
   };
 
@@ -809,7 +809,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
     {
-	return det3x3_by_formula(v.x(), v.y(), v.z(),
+	return determinant(v.x(), v.y(), v.z(),
                                  w.x(), w.y(), w.z(),
                                  t.x(), t.y(), t.z());
     }
@@ -984,7 +984,7 @@ namespace CartesianKernelFunctors {
     operator()(const Point_3& p0, const Point_3& p1,
 	       const Point_3& p2, const Point_3& p3) const
     {
-      return det3x3_by_formula<FT>(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
+      return determinant<FT>(p1.x()-p0.x(), p1.y()-p0.y(), p1.z()-p0.z(),
                                    p2.x()-p0.x(), p2.y()-p0.y(), p2.z()-p0.z(),
                                    p3.x()-p0.x(), p3.y()-p0.y(), p3.z()-p0.z())/6;
     }
@@ -1846,24 +1846,24 @@ namespace CartesianKernelFunctors {
 
       // The following determinants can be developped and simplified.
       //
-      // FT num_x = det3x3_by_formula(psy,psz,ps2,
+      // FT num_x = determinant(psy,psz,ps2,
       //                              qsy,qsz,qs2,
       //                              rsy,rsz,0);
-      // FT num_y = det3x3_by_formula(psx,psz,ps2,
+      // FT num_y = determinant(psx,psz,ps2,
       //                              qsx,qsz,qs2,
       //                              rsx,rsz,0);
-      // FT num_z = det3x3_by_formula(psx,psy,ps2,
+      // FT num_z = determinant(psx,psy,ps2,
       //                              qsx,qsy,qs2,
       //                              rsx,rsy,0);
 
-      FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
-	       - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
-      FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
-	       - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
-      FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
-	       - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+      FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
+	       - qs2 * determinant(psy,psz,rsy,rsz);
+      FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
+	       - qs2 * determinant(psx,psz,rsx,rsz);
+      FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
+	       - qs2 * determinant(psx,psy,rsx,rsy);
 
-      FT den   = det3x3_by_formula(psx,psy,psz,
+      FT den   = determinant(psx,psy,psz,
                                    qsx,qsy,qsz,
                                    rsx,rsy,rsz);
 
@@ -1901,16 +1901,16 @@ namespace CartesianKernelFunctors {
       FT spz = s.z()-p.z();
       FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
 
-      FT num_x = det3x3_by_formula(qpy,qpz,qp2,
+      FT num_x = determinant(qpy,qpz,qp2,
                                    rpy,rpz,rp2,
                                    spy,spz,sp2);
-      FT num_y = det3x3_by_formula(qpx,qpz,qp2,
+      FT num_y = determinant(qpx,qpz,qp2,
                                    rpx,rpz,rp2,
                                    spx,spz,sp2);
-      FT num_z = det3x3_by_formula(qpx,qpy,qp2,
+      FT num_z = determinant(qpx,qpy,qp2,
                                    rpx,rpy,rp2,
                                    spx,spy,sp2);
-      FT den   = det3x3_by_formula(qpx,qpy,qpz,
+      FT den   = determinant(qpx,qpy,qpz,
                                    rpx,rpy,rpz,
                                    spx,spy,spz);
       CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
@@ -2149,24 +2149,24 @@ namespace CartesianKernelFunctors {
 
       // The following determinants can be developped and simplified.
       //
-      // FT num_x = det3x3_by_formula(psy,psz,ps2,
+      // FT num_x = determinant(psy,psz,ps2,
       //                              qsy,qsz,qs2,
       //                              rsy,rsz,0);
-      // FT num_y = det3x3_by_formula(psx,psz,ps2,
+      // FT num_y = determinant(psx,psz,ps2,
       //                              qsx,qsz,qs2,
       //                              rsx,rsz,0);
-      // FT num_z = det3x3_by_formula(psx,psy,ps2,
+      // FT num_z = determinant(psx,psy,ps2,
       //                              qsx,qsy,qs2,
       //                              rsx,rsy,0);
 
-      FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
-	       - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
-      FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
-	       - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
-      FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
-	       - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+      FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
+	       - qs2 * determinant(psy,psz,rsy,rsz);
+      FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
+	       - qs2 * determinant(psx,psz,rsx,rsz);
+      FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
+	       - qs2 * determinant(psx,psy,rsx,rsy);
 
-      FT den   = det3x3_by_formula(psx,psy,psz,
+      FT den   = determinant(psx,psy,psz,
                                    qsx,qsy,qsz,
                                    rsx,rsy,rsz);
 

@@ -60,16 +60,16 @@ gp_linear_intersection(const PlaneH3<R> &f,
 {
   typedef typename R::RT RT;
   return typename R::Point_3(
-                  det3x3_by_formula<RT>(-f.d(), f.b(), f.c(),
+                  determinant<RT>(-f.d(), f.b(), f.c(),
                                         -g.d(), g.b(), g.c(),
                                         -h.d(), h.b(), h.c()),
-                  det3x3_by_formula<RT>( f.a(),-f.d(), f.c(),
+                  determinant<RT>( f.a(),-f.d(), f.c(),
                                          g.a(),-g.d(), g.c(),
                                          h.a(),-h.d(), h.c()),
-                  det3x3_by_formula<RT>( f.a(), f.b(),-f.d(),
+                  determinant<RT>( f.a(), f.b(),-f.d(),
                                          g.a(), g.b(),-g.d(),
                                          h.a(), h.b(),-h.d()),
-                  det3x3_by_formula<RT>( f.a(), f.b(), f.c(),
+                  determinant<RT>( f.a(), f.b(), f.c(),
                                          g.a(), g.b(), g.c(),
                                          h.a(), h.b(), h.c()));
 }

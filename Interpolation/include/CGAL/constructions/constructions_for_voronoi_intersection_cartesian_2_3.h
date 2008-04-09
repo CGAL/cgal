@@ -34,7 +34,7 @@ plane_centered_circumcenter_translateC3(const RT &ax, const RT &ay,
 					const RT &rz,
 					RT &x, RT &y, RT &z)
 {
-  RT den = RT(2) * det3x3_by_formula(nx,qx,rx,
+  RT den = RT(2) * determinant(nx,qx,rx,
 				     ny,qy,ry,
 				     nz,qz,rz);
   // The 3 points aren't collinear.
@@ -48,15 +48,15 @@ plane_centered_circumcenter_translateC3(const RT &ax, const RT &ay,
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
-  x =   det3x3_by_formula(ny,nz,na,
+  x =   determinant(ny,nz,na,
 			  qy,qz,q2,
 			  ry,rz,r2)/ den ;
 
-  y = - det3x3_by_formula(nx,nz,na,
+  y = - determinant(nx,nz,na,
 			  qx,qz,q2,
 			  rx,rz,r2)/ den ;
 
-  z =   det3x3_by_formula(nx,ny,na,
+  z =   determinant(nx,ny,na,
 			  qx,qy,q2,
 			  rx,ry,r2)/ den ;
 }
@@ -106,18 +106,18 @@ bisector_plane_intersection_translateC3(const RT &ax, const RT &ay,
   // the line is defined by p1 and p2 with
   //=> p1: z1 =0, p2: z2=1
   // precondition: (nx!=0 || ny!=0) && (qx!=0 && qy!=0) && den!=0
-  // where RT den = RT(2.0) * det2x2_by_formula(qx,qy,nx, ny);
+  // where RT den = RT(2.0) * determinant(qx,qy,nx, ny);
 
   RT q2 = CGAL_NTS square(qx) + CGAL_NTS square(qy)
     + CGAL_NTS square(qz);
   RT na = nx*ax + ny*ay + nz*az;
   na *= RT(2.0);
 
-  x1 = det2x2_by_formula(ny, na, qy, q2);
-  y1 = - det2x2_by_formula(nx, na, qx, q2);
+  x1 = determinant(ny, na, qy, q2);
+  y1 = - determinant(nx, na, qx, q2);
 
-  x2 = x1 +  RT(2.0) * det2x2_by_formula(qy,qz,ny, nz);
-  y2 = y1 -  RT(2.0) * det2x2_by_formula(qx,qz,nx, nz);
+  x2 = x1 +  RT(2.0) * determinant(qy,qz,ny, nz);
+  y2 = y1 -  RT(2.0) * determinant(qx,qz,nx, nz);
 
   x1 /= den;
   x2 /= den;
@@ -199,7 +199,7 @@ bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
   //    2) the projection of n and (p-q) onto the plane is not
   //    identical
   //    computation for (z=0) with adequate permutations
-  RT den = RT(2.0) * det2x2_by_formula(qx-px,qy-py,nx, ny);
+  RT den = RT(2.0) * determinant(qx-px,qy-py,nx, ny);
   if ((nx!=0 ||  ny!=0) && (qx!=px || qy!=py) && den!=RT(0))
     //den==0 <=> projections of (qx,qy) and (nx,ny) are identical
     //intersection with z=0/z=1
@@ -207,14 +207,14 @@ bisector_plane_intersectionC3(const RT &ax, const RT &ay, const RT &az,
 					  qx,qy,qz,den,
 					  x1,y1,z1,x2,y2,z2);
   else{
-    den = RT(2.0) * det2x2_by_formula(qy-py,qz-pz,ny,nz);
+    den = RT(2.0) * determinant(qy-py,qz-pz,ny,nz);
     if ((ny!=0 ||  nz!=0) && (qy!=py || qz!=pz) && den!=RT(0))
       //intersection with x=0/x=1 => permutations
       bisector_plane_intersection_permuteC3(ay,az,ax,ny,nz,nx,py,pz,px,
 					    qy,qz,qx,den,
 					    y1,z1,x1,y2,z2,x2);
     else{
-      den = RT(2.0) * det2x2_by_formula(qz-pz,qx-px,nz,nx);
+      den = RT(2.0) * determinant(qz-pz,qx-px,nz,nx);
       CGAL_assertion((nx!=0 ||  nz!=0) && (qx!=px || qz!=pz) && den!=RT(0));
       //intersection with y=0/y=1 => permutations
       bisector_plane_intersection_permuteC3(az,ax,ay,nz,nx,ny,pz,px,py,

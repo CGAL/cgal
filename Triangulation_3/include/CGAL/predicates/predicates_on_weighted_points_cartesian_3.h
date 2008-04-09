@@ -72,11 +72,11 @@ in_smallest_orthogonal_sphereC3(
   FT qpw = qq - qw + pw ;
   FT rpw = rr - rw + pw ;
   
-  FT den = det2x2_by_formula(qq,qr,
+  FT den = determinant(qq,qr,
 			     qr,rr);
-  FT detq = det2x2_by_formula(qpw,qr,
+  FT detq = determinant(qpw,qr,
 			      rpw,rr);
-  FT detr = det2x2_by_formula(qq,qpw,
+  FT detr = determinant(qq,qpw,
 			      qr,rpw);
 
   // Smallest  smallest orthogonal sphere center
@@ -159,16 +159,16 @@ does_simplex_intersect_weighted_dual_supportC3(
   FT rpw = rr - rw + pw ;
   FT spw = ss - sw + pw ;
  
-  FT den = det3x3_by_formula(qq,qr,qs,
+  FT den = determinant(qq,qr,qs,
 			     qr,rr,rs,
 			     qs,rs,ss);
-  FT detq = det3x3_by_formula(qpw,qr,qs,
+  FT detq = determinant(qpw,qr,qs,
 			      rpw,rr,rs,
 			      spw,rs,ss);
-  FT detr = det3x3_by_formula(qq,qpw,qs,
+  FT detr = determinant(qq,qpw,qs,
 			      qr,rpw,rs,
 			      qs,spw,ss);
-  FT dets = det3x3_by_formula(qq,qr,qpw,
+  FT dets = determinant(qq,qr,qpw,
 			      qr,rr,rpw,
 			      qs,rs,spw);
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
@@ -222,11 +222,11 @@ does_simplex_intersect_weighted_dual_supportC3(
   FT qpw = qq - qw + pw ;
   FT rpw = rr - rw + pw ;
   
-  FT den = det2x2_by_formula(qq,qr,
+  FT den = determinant(qq,qr,
 			     qr,rr);
-  FT detq = det2x2_by_formula(qpw,qr,
+  FT detq = determinant(qpw,qr,
 			      rpw,rr);
-  FT detr = det2x2_by_formula(qq,qpw,
+  FT detr = determinant(qq,qpw,
 			      qr,rpw);
 
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );

@@ -417,14 +417,14 @@ side_of_bounded_sphereC3(const FT &px, const FT &py, const FT &pz,
   FT tsy = ty-sy;
   FT tsz = tz-sz;
 
-  FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
-	   - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
-  FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
-	   - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
-  FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
-	   - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+  FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
+	   - qs2 * determinant(psy,psz,rsy,rsz);
+  FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
+	   - qs2 * determinant(psx,psz,rsx,rsz);
+  FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
+	   - qs2 * determinant(psx,psy,rsx,rsy);
 
-  FT den2  = 2 * det3x3_by_formula(psx,psy,psz,
+  FT den2  = 2 * determinant(psx,psy,psz,
                                    qsx,qsy,qsz,
                                    rsx,rsy,rsz);
 

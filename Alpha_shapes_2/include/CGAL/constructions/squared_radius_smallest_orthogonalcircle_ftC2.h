@@ -44,11 +44,11 @@ squared_radius_orthogonalcircleC2(
   FT dpp = CGAL_NTS square(dpx)+CGAL_NTS square(dpy)-pw+rw;
   FT dqq = CGAL_NTS square(dqx)+CGAL_NTS square(dqy)-qw+rw;
 
-  FT det0 = det2x2_by_formula(dpx, dpy, dqx, dqy);
+  FT det0 = determinant(dpx, dpy, dqx, dqy);
   
-  FT det1 = det2x2_by_formula(dpp, dpy, dqq, dqy);
+  FT det1 = determinant(dpp, dpy, dqq, dqy);
 
-  FT det2 = det2x2_by_formula(dpx, dpp, dqx, dqq);
+  FT det2 = determinant(dpx, dpp, dqx, dqq);
 
   return 
     (CGAL_NTS square(det1)+CGAL_NTS square(det2))/

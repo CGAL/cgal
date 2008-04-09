@@ -110,7 +110,7 @@ wcross_tag(const typename K::Point_2 &p,
 	   const K&,
 	   const Homogeneous_tag&)
 {
-    return det3x3_by_formula(
+    return determinant(
         p.hx(), q.hx(), r.hx(),
         p.hy(), q.hy(), r.hy(),
         p.hw(), q.hw(), r.hw());

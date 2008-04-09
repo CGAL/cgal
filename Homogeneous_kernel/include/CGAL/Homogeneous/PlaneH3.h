@@ -495,7 +495,7 @@ PlaneH3<R>::transform_to_2d() const
   RT t32 =  -( e1phx*e2phz - e1phz*e2phx );
   RT t33 =   ( e1phx*e2phy - e1phy*e2phx );
 
-  RT scale = det3x3_by_formula( orthohx, orthohy, orthohz,
+  RT scale = determinant( orthohx, orthohy, orthohz,
                                      e1phx,   e1phy,   e1phz,
                                      e2phx,   e2phy,   e2phz );
 

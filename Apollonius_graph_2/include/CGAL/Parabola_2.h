@@ -191,7 +191,7 @@ protected:
   bool right(const Point_2& p) const
   {
     return
-      CGAL::is_positive( det3x3_by_formula<FT>(c.x(), c.y(), FT(1),
+      CGAL::is_positive( determinant<FT>(c.x(), c.y(), FT(1),
 					       o.x(), o.y(), FT(1),
 					       p.x(), p.y(), FT(1)) );
   }

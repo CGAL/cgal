@@ -222,7 +222,7 @@ public:
       RT RT0(0);
       RT RT1(1);
 
-      RT det = CGAL::det4x4_by_formula(px, py, px*px + py*py, RT1,
+      RT det = CGAL::determinant(px, py, px*px + py*py, RT1,
 				       qx, qy, qx*qx + qy*qy, RT1,
 				       rx, ry, rx*rx + ry*ry, RT1,
 				       tx, ty, tx*tx + ty*ty, RT1);

@@ -76,7 +76,7 @@ public:
           double prx = rx - px;
           double pry = ry - py;
 
-          double det = det2x2_by_formula(pqx, pqy,
+          double det = determinant(pqx, pqy,
                                          prx, pry);
 
           // Then semi-static filter.
@@ -111,7 +111,7 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1, F::ulp()/2);         // First translation
-    F det = det2x2_by_formula(t1, t1,
+    F det = determinant(t1, t1,
                               t1, t1); // Full det
     double err = det.error();
     err += err * 2 * F::ulp(); // Correction due to "epsilon * maxx * maxy".

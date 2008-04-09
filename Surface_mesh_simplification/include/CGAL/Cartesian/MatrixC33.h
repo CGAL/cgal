@@ -145,7 +145,7 @@ public:
  
   RT determinant() const
   {
-    return det3x3_by_formula(r0().x(),r0().y(),r0().z()
+    return determinant(r0().x(),r0().y(),r0().z()
                             ,r1().x(),r1().y(),r1().z()
                             ,r2().x(),r2().y(),r2().z()
                             );
@@ -189,17 +189,17 @@ MatrixC33<R> cofactors_matrix ( MatrixC33<R> const& m )
 {
   typedef typename R::RT RT ;
   
-  RT c00 =  det2x2_by_formula(m.r1().y(),m.r1().z(),m.r2().y(),m.r2().z());
-  RT c01 = -det2x2_by_formula(m.r1().x(),m.r1().z(),m.r2().x(),m.r2().z());
-  RT c02 =  det2x2_by_formula(m.r1().x(),m.r1().y(),m.r2().x(),m.r2().y());
+  RT c00 =  determinant(m.r1().y(),m.r1().z(),m.r2().y(),m.r2().z());
+  RT c01 = -determinant(m.r1().x(),m.r1().z(),m.r2().x(),m.r2().z());
+  RT c02 =  determinant(m.r1().x(),m.r1().y(),m.r2().x(),m.r2().y());
   
-  RT c10 = -det2x2_by_formula(m.r0().y(),m.r0().z(),m.r2().y(),m.r2().z());
-  RT c11 =  det2x2_by_formula(m.r0().x(),m.r0().z(),m.r2().x(),m.r2().z());
-  RT c12 = -det2x2_by_formula(m.r0().x(),m.r0().y(),m.r2().x(),m.r2().y());
+  RT c10 = -determinant(m.r0().y(),m.r0().z(),m.r2().y(),m.r2().z());
+  RT c11 =  determinant(m.r0().x(),m.r0().z(),m.r2().x(),m.r2().z());
+  RT c12 = -determinant(m.r0().x(),m.r0().y(),m.r2().x(),m.r2().y());
   
-  RT c20 =  det2x2_by_formula(m.r0().y(),m.r0().z(),m.r1().y(),m.r1().z());
-  RT c21 = -det2x2_by_formula(m.r0().x(),m.r0().z(),m.r1().x(),m.r1().z());
-  RT c22 =  det2x2_by_formula(m.r0().x(),m.r0().y(),m.r1().x(),m.r1().y());
+  RT c20 =  determinant(m.r0().y(),m.r0().z(),m.r1().y(),m.r1().z());
+  RT c21 = -determinant(m.r0().x(),m.r0().z(),m.r1().x(),m.r1().z());
+  RT c22 =  determinant(m.r0().x(),m.r0().y(),m.r1().x(),m.r1().y());
   
   return MatrixC33<R>(c00,c01,c02
                      ,c10,c11,c12

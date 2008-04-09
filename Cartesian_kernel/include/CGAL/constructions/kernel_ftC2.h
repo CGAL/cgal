@@ -53,7 +53,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   // What we do is intersect the bisectors.
   FT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry);
   FT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy);
-  FT den = 2 * det2x2_by_formula(dqx, dqy, drx, dry);
+  FT den = 2 * determinant(dqx, dqy, drx, dry);
 
   // The 3 points aren't collinear.
   // Hopefully, this is already checked at the upper level.
@@ -61,8 +61,8 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
 
   // One possible optimization here is to precompute 1/den, to avoid one
   // division.  However, we loose precision, and it's maybe not worth it (?).
-  dcx =   det2x2_by_formula (dry, dqy, r2, q2) / den;
-  dcy = - det2x2_by_formula (drx, dqx, r2, q2) / den;
+  dcx =   determinant (dry, dqy, r2, q2) / den;
+  dcy = - determinant (drx, dqx, r2, q2) / den;
 }
 
 template < class FT >
@@ -338,7 +338,7 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
                            const FT &qx, const FT &qy,
                            const FT &rx, const FT &ry)
 {
-  return det2x2_by_formula<FT>(px-rx, py-ry, qx-rx, qy-ry);
+  return determinant<FT>(px-rx, py-ry, qx-rx, qy-ry);
 }
 
 CGAL_END_NAMESPACE

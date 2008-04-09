@@ -159,7 +159,7 @@ protected:
   bool right(const Point_2& p) const
   {
     return
-      CGAL::is_negative( det3x3_by_formula<FT>(f1.x(), f1.y(), 1,
+      CGAL::is_negative( determinant<FT>(f1.x(), f1.y(), 1,
 					       f2.x(), f2.y(), 1,
 					       p.x(),   p.y(), 1) );
   }

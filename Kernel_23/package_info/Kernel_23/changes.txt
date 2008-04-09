@@ -2086,7 +2086,7 @@ Version 1.106 (09 February 2004) [rursu]
 - authors for determinant.h updated
 
 1.2.8 -> 1.2.9
-- det4x4_by_formula improved as suggested by Sylvain and Olivier
+- determinant improved as suggested by Sylvain and Olivier
 
 1.2.7 -> 1.2.8
 - #define CGAL_KERNEL_INLINE inline   added again

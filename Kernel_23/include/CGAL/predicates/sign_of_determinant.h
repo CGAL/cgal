@@ -45,7 +45,7 @@ sign_of_determinant( const RT& a00,  const RT& a01,  const RT& a02,
                         const RT& a10,  const RT& a11,  const RT& a12,
                         const RT& a20,  const RT& a21,  const RT& a22)
 {
-  return CGAL_NTS sign(det3x3_by_formula(a00, a01, a02,
+  return CGAL_NTS sign(determinant(a00, a01, a02,
                                          a10, a11, a12,
                                          a20, a21, a22));
 }
@@ -59,7 +59,7 @@ sign_of_determinant(
  const RT& a20,  const RT& a21,  const RT& a22,  const RT& a23,
  const RT& a30,  const RT& a31,  const RT& a32,  const RT& a33)
 {
-  return CGAL_NTS sign(det4x4_by_formula(a00, a01, a02, a03,
+  return CGAL_NTS sign(determinant(a00, a01, a02, a03,
                                          a10, a11, a12, a13,
                                          a20, a21, a22, a23,
                                          a30, a31, a32, a33));
@@ -75,7 +75,7 @@ sign_of_determinant(
  const RT& a30,  const RT& a31,  const RT& a32,  const RT& a33,  const RT& a34,
  const RT& a40,  const RT& a41,  const RT& a42,  const RT& a43,  const RT& a44)
 {
-  return CGAL_NTS sign(det5x5_by_formula(a00, a01, a02, a03, a04,
+  return CGAL_NTS sign(determinant(a00, a01, a02, a03, a04,
                                          a10, a11, a12, a13, a14,
                                          a20, a21, a22, a23, a24,
                                          a30, a31, a32, a33, a34,
@@ -99,7 +99,7 @@ sign_of_determinant(
  const RT& a50, const RT& a51, const RT& a52, const RT& a53, const RT& a54,
  const RT& a55)
 {
-  return CGAL_NTS sign(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
+  return CGAL_NTS sign(determinant(a00, a01, a02, a03, a04, a05,
                                          a10, a11, a12, a13, a14, a15,
                                          a20, a21, a22, a23, a24, a25,
                                          a30, a31, a32, a33, a34, a35,

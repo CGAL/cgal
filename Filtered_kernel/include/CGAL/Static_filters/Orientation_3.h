@@ -97,7 +97,7 @@ public:
           if (maxz < fabs(prz)) maxz = fabs(prz);
           if (maxz < fabs(psz)) maxz = fabs(psz);
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
-          double det = det3x3_by_formula(pqx, pqy, pqz,
+          double det = determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
@@ -131,7 +131,7 @@ public:
   {
     typedef Static_filter_error F;
     F t1 = F(1, F::ulp()/2);         // First translation
-    F det = det3x3_by_formula(t1, t1, t1,
+    F det = determinant(t1, t1, t1,
                               t1, t1, t1,
                               t1, t1, t1); // Full det
     double err = det.error();

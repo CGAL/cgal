@@ -58,15 +58,15 @@ protected:
                               const Inverted_weighted_point &p3, int i) const
     {
         Sign s =  CGAL::sign(
-		CGAL::square(det3x3_by_formula<RT>(
+		CGAL::square(determinant<RT>(
                         p1.p(), p1.weight(), p1.y(),
                         p2.p(), p2.weight(), p2.y(),
                         p3.p(), p3.weight(), p3.y()))
-                + CGAL::square(det3x3_by_formula<RT>(
+                + CGAL::square(determinant<RT>(
                         p1.p(), p1.x(), p1.weight(),
                         p2.p(), p2.x(), p2.weight(),
                         p3.p(), p3.x(), p3.weight()))
-                - CGAL::square(det3x3_by_formula<RT>(
+                - CGAL::square(determinant<RT>(
                         p1.p(), p1.x(), p1.y(),
                         p2.p(), p2.x(), p2.y(),
                         p3.p(), p3.x(), p3.y())));
@@ -91,17 +91,17 @@ protected:
         CGAL_assertion(i == -1 || i == 1 || i == 2 || i == 3);
 
         Sign s =  -CGAL::sign(
-                  det2x2_by_formula<RT>(
+                  determinant<RT>(
                       p1.p(), p1.x(), 
                       p2.p(), p2.x()) 
-                  * det3x3_by_formula<RT>(
+                  * determinant<RT>(
                       p1.p(), p1.weight(), p1.x(),
                       p2.p(), p2.weight(), p2.x(),
                       p3.p(), p3.weight(), p3.x())
-                  + det2x2_by_formula<RT>(
+                  + determinant<RT>(
                       p1.p(), p1.y(),
                       p2.p(), p2.y())
-                  * det3x3_by_formula<RT>(
+                  * determinant<RT>(
                       p1.p(), p1.weight(), p1.y(),
                       p2.p(), p2.weight(), p2.y(),
                       p3.p(), p3.weight(), p3.y()));

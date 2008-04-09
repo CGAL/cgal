@@ -87,16 +87,16 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT spz = sz-pz;
   FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) + CGAL_NTS square(spz);
 
-  FT num_x = det3x3_by_formula(qpy,qpz,qp2,
+  FT num_x = determinant(qpy,qpz,qp2,
                                rpy,rpz,rp2,
                                spy,spz,sp2);
-  FT num_y = det3x3_by_formula(qpx,qpz,qp2,
+  FT num_y = determinant(qpx,qpz,qp2,
                                rpx,rpz,rp2,
                                spx,spz,sp2);
-  FT num_z = det3x3_by_formula(qpx,qpy,qp2,
+  FT num_z = determinant(qpx,qpy,qp2,
                                rpx,rpy,rp2,
                                spx,spy,sp2);
-  FT den   = det3x3_by_formula(qpx,qpy,qpz,
+  FT den   = determinant(qpx,qpy,qpz,
                                rpx,rpy,rpz,
                                spx,spy,spz);
   CGAL_kernel_assertion( ! CGAL_NTS is_zero(den) );
@@ -125,14 +125,14 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT rsy = psz*qsx-psx*qsz;
   FT rsz = psx*qsy-psy*qsx;
 
-  FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
-	   - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
-  FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
-	   - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
-  FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
-	   - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+  FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
+	   - qs2 * determinant(psy,psz,rsy,rsz);
+  FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
+	   - qs2 * determinant(psx,psz,rsx,rsz);
+  FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
+	   - qs2 * determinant(psx,psy,rsx,rsy);
 
-  FT den   = det3x3_by_formula(psx,psy,psz,
+  FT den   = determinant(psx,psy,psz,
                                qsx,qsy,qsz,
                                rsx,rsy,rsz);
 
@@ -254,7 +254,7 @@ scaled_distance_to_planeC3(
      const FT &prx, const FT &pry, const FT &prz,
      const FT &px,  const FT &py,  const FT &pz)
 {
-  return det3x3_by_formula(ppx-px,ppy-py,ppz-pz,
+  return determinant(ppx-px,ppy-py,ppz-pz,
                            pqx-px,pqy-py,pqz-pz,
                            prx-px,pry-py,prz-pz);
 }

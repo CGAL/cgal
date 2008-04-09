@@ -178,16 +178,16 @@ namespace HomogeneousKernelFunctors {
       const RT & vpy = vp.hy();
       const RT & vpz = vp.hz();
 
-      RT alpha = det3x3_by_formula( vpx, v2x, v3x,
+      RT alpha = determinant( vpx, v2x, v3x,
                                     vpy, v2y, v3y,
                                     vpz, v2z, v3z );
-      RT beta  = det3x3_by_formula( v1x, vpx, v3x,
+      RT beta  = determinant( v1x, vpx, v3x,
                                     v1y, vpy, v3y,
                                     v1z, vpz, v3z );
-      RT gamma = det3x3_by_formula( v1x, v2x, vpx,
+      RT gamma = determinant( v1x, v2x, vpx,
                                     v1y, v2y, vpy,
                                     v1z, v2z, vpz );
-      RT det = det3x3_by_formula( v1x, v2x, v3x,
+      RT det = determinant( v1x, v2x, v3x,
                                   v1y, v2y, v3y,
                                   v1z, v2z, v3z );
 
@@ -1277,7 +1277,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
     {
-	return det2x2_by_formula(v.hx(), v.hy(),
+	return determinant(v.hx(), v.hy(),
                                  w.hx(), w.hy()) / FT(v.hw() * w.hw());
     }
   };
@@ -1294,7 +1294,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
     {
-	return det3x3_by_formula(v.hx(), v.hy(), v.hz(),
+	return determinant(v.hx(), v.hy(), v.hz(),
                                  w.hx(), w.hy(), w.hz(),
                                  t.hx(), t.hy(), t.hz())
                               / FT(v.hw() * w.hw() * t.hw());
@@ -2385,19 +2385,19 @@ namespace HomogeneousKernelFunctors {
       shz *= shw;
       shw *= shw;
 
-      RT chx =  det4x4_by_formula(phy, phz, pssq, phw,
+      RT chx =  determinant(phy, phz, pssq, phw,
 				  qhy, qhz, qssq, qhw,
 				  rhy, rhz, rssq, rhw,
 				  shy, shz, sssq, shw );
-      RT chy =  det4x4_by_formula(phx, phz, pssq, phw,
+      RT chy =  determinant(phx, phz, pssq, phw,
 				  qhx, qhz, qssq, qhw,
 				  rhx, rhz, rssq, rhw,
 				  shx, shz, sssq, shw );
-      RT chz =  det4x4_by_formula(phx, phy, pssq, phw,
+      RT chz =  determinant(phx, phy, pssq, phw,
 				  qhx, qhy, qssq, qhw,
 				  rhx, rhy, rssq, rhw,
 				  shx, shy, sssq, shw );
-      RT chw =  det4x4_by_formula(phx, phy, phz, phw,
+      RT chw =  determinant(phx, phy, phz, phw,
 				  qhx, qhy, qhz, qhw,
 				  rhx, rhy, rhz, rhw,
 				  shx, shy, shz, shw );
@@ -4657,7 +4657,7 @@ namespace HomogeneousKernelFunctors {
       const RT & thw = t.hw();
       const RT thw2 = thw*thw;
 
-      const RT det = det5x5_by_formula<RT>(
+      const RT det = determinant<RT>(
 	   phx*phw, phy*phw, phz*phw, phx*phx + phy*phy + phz*phz, phw2,
 	   qhx*qhw, qhy*qhw, qhz*qhw, qhx*qhx + qhy*qhy + qhz*qhz, qhw2,
 	   rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,

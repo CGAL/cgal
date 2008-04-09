@@ -62,7 +62,7 @@ private:
     FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
     FT det1 = a * (p2.y() - p1.y()) - b * (p2.x() - p1.x());
     FT c = vc.c1() + vc.c2() * CGAL::sqrt(vc.delta());
-    FT det2 = det2x2_by_formula(p1.x() - sp1.x(), p1.y() - sp1.y(),
+    FT det2 = determinant(p1.x() - sp1.x(), p1.y() - sp1.y(),
 				p2.x() - sp1.x(), p2.y() - sp1.y());
     return CGAL::sign(det1 + FT(2) * c * det2);
   }
@@ -73,7 +73,7 @@ private:
   {
     FT dx = p2.x() - p1.x();
     FT dy = p2.y() - p1.y();
-    FT det1 = det2x2_by_formula(p1.x() - sp1.x(), p1.y() - sp1.y(),
+    FT det1 = determinant(p1.x() - sp1.x(), p1.y() - sp1.y(),
 				p2.x() - sp1.x(), p2.y() - sp1.y());
     FT A = vc.a1() * dy - vc.b1() * dx + FT(2) * vc.c1() * det1;
     FT B = vc.a2() * dy - vc.b2() * dx + FT(2) * vc.c2() * det1;

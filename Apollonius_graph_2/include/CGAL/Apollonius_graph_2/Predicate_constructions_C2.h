@@ -100,12 +100,12 @@ public:
   Voronoi_radius_2(const Inverted_weighted_point& u1,
 		   const Inverted_weighted_point& u2)
     {
-      FT dxp = det2x2_by_formula(u1.x(), u1.p(), u2.x(), u2.p());
-      FT dyp = det2x2_by_formula(u1.y(), u1.p(), u2.y(), u2.p());
-      FT dwp = det2x2_by_formula(u1.weight(), u1.p(), u2.weight(), u2.p());
-      FT dxy = det2x2_by_formula(u1.x(), u1.y(), u2.x(), u2.y());
-      FT dxw = det2x2_by_formula(u1.x(), u1.weight(), u2.x(), u2.weight());
-      FT dyw = det2x2_by_formula(u1.y(), u1.weight(), u2.y(), u2.weight());
+      FT dxp = determinant(u1.x(), u1.p(), u2.x(), u2.p());
+      FT dyp = determinant(u1.y(), u1.p(), u2.y(), u2.p());
+      FT dwp = determinant(u1.weight(), u1.p(), u2.weight(), u2.p());
+      FT dxy = determinant(u1.x(), u1.y(), u2.x(), u2.y());
+      FT dxw = determinant(u1.x(), u1.weight(), u2.x(), u2.weight());
+      FT dyw = determinant(u1.y(), u1.weight(), u2.y(), u2.weight());
 
       _a = CGAL::square(dxp) + CGAL::square(dyp);
       _b = dxp * dxw + dyp * dyw;
@@ -193,9 +193,9 @@ public:
       FT dx = p1.x() - p2.x();
       FT dy = p1.y() - p2.y();
       FT dw = p1.weight() - p2.weight();
-      FT dxy = det2x2_by_formula(p1.x(), p1.y(), p2.x(), p2.y());
-      FT dxw = det2x2_by_formula(p1.x(), p1.weight(), p2.x(), p2.weight());
-      FT dyw = det2x2_by_formula(p1.y(), p1.weight(), p2.y(), p2.weight());
+      FT dxy = determinant(p1.x(), p1.y(), p2.x(), p2.y());
+      FT dxw = determinant(p1.x(), p1.weight(), p2.x(), p2.weight());
+      FT dyw = determinant(p1.y(), p1.weight(), p2.y(), p2.weight());
 
       store(dx, dy, dw, dxy, dxw, dyw);
     }
@@ -204,12 +204,12 @@ public:
   Bitangent_line_2(const Inverted_weighted_point& u1,
 		   const Inverted_weighted_point& u2)
     {
-      FT dxp = det2x2_by_formula(u1.x(), u1.p(), u2.x(), u2.p());
-      FT dyp = det2x2_by_formula(u1.y(), u1.p(), u2.y(), u2.p());
-      FT dwp = det2x2_by_formula(u1.weight(), u1.p(), u2.weight(), u2.p());
-      FT dxy = det2x2_by_formula(u1.x(), u1.y(), u2.x(), u2.y());
-      FT dxw = det2x2_by_formula(u1.x(), u1.weight(), u2.x(), u2.weight());
-      FT dyw = det2x2_by_formula(u1.y(), u1.weight(), u2.y(), u2.weight());
+      FT dxp = determinant(u1.x(), u1.p(), u2.x(), u2.p());
+      FT dyp = determinant(u1.y(), u1.p(), u2.y(), u2.p());
+      FT dwp = determinant(u1.weight(), u1.p(), u2.weight(), u2.p());
+      FT dxy = determinant(u1.x(), u1.y(), u2.x(), u2.y());
+      FT dxw = determinant(u1.x(), u1.weight(), u2.x(), u2.weight());
+      FT dyw = determinant(u1.y(), u1.weight(), u2.y(), u2.weight());
 
       store(dxp, dyp, dwp, dxy, dxw, dyw);
     }
@@ -315,13 +315,13 @@ public:
 		const Inverted_weighted_point& u2,
 		const Inverted_weighted_point& u3) const
     {
-      FT dx1 = det2x2_by_formula(u2.x(), u2.p(), u1.x(), u1.p());
-      FT dy1 = det2x2_by_formula(u2.y(), u2.p(), u1.y(), u1.p());
-      FT dw1 = det2x2_by_formula(u2.weight(), u2.p(), u1.weight(), u1.p());
+      FT dx1 = determinant(u2.x(), u2.p(), u1.x(), u1.p());
+      FT dy1 = determinant(u2.y(), u2.p(), u1.y(), u1.p());
+      FT dw1 = determinant(u2.weight(), u2.p(), u1.weight(), u1.p());
 
-      FT dx3 = det2x2_by_formula(u3.x(), u3.p(), u2.x(), u2.p());
-      FT dy3 = det2x2_by_formula(u3.y(), u3.p(), u2.y(), u2.p());
-      FT dw3 = det2x2_by_formula(u3.weight(), u3.p(), u2.weight(), u2.p());
+      FT dx3 = determinant(u3.x(), u3.p(), u2.x(), u2.p());
+      FT dy3 = determinant(u3.y(), u3.p(), u2.y(), u2.p());
+      FT dw3 = determinant(u3.weight(), u3.p(), u2.weight(), u2.p());
 
       FT u2Pv2 = CGAL::square(u2.x()) + CGAL::square(u2.y());
       FT u2Mv2 = CGAL::square(u2.x()) - CGAL::square(u2.y());

@@ -206,22 +206,22 @@ typename Aff_transformation_repC3<R>::Aff_transformation_3
 Aff_transformation_repC3<R>::inverse() const // FIXME : construction
 {
   return Aff_transformation_3(
-      det2x2_by_formula( t22, t23, t32, t33),         // i 11
-     -det2x2_by_formula( t12, t13, t32, t33),         // i 12
-      det2x2_by_formula( t12, t13, t22, t23),         // i 13
-     -det3x3_by_formula( t12, t13, t14, t22, t23, t24, t32, t33, t34 ),
+      determinant( t22, t23, t32, t33),         // i 11
+     -determinant( t12, t13, t32, t33),         // i 12
+      determinant( t12, t13, t22, t23),         // i 13
+     -determinant( t12, t13, t14, t22, t23, t24, t32, t33, t34 ),
 
-     -det2x2_by_formula( t21, t23, t31, t33),         // i 21 
-      det2x2_by_formula( t11, t13, t31, t33),         // i 22
-     -det2x2_by_formula( t11, t13, t21, t23),         // i 23
-      det3x3_by_formula( t11, t13, t14, t21, t23, t24, t31, t33, t34 ),
+     -determinant( t21, t23, t31, t33),         // i 21 
+      determinant( t11, t13, t31, t33),         // i 22
+     -determinant( t11, t13, t21, t23),         // i 23
+      determinant( t11, t13, t14, t21, t23, t24, t31, t33, t34 ),
 
-      det2x2_by_formula( t21, t22, t31, t32),         // i 31
-     -det2x2_by_formula( t11, t12, t31, t32),         // i 32
-      det2x2_by_formula( t11, t12, t21, t22),         // i 33
-     -det3x3_by_formula( t11, t12, t14, t21, t22, t24, t31, t32, t34 ),
+      determinant( t21, t22, t31, t32),         // i 31
+     -determinant( t11, t12, t31, t32),         // i 32
+      determinant( t11, t12, t21, t22),         // i 33
+     -determinant( t11, t12, t14, t21, t22, t24, t31, t32, t34 ),
 
-      det3x3_by_formula( t11, t12, t13, t21, t22, t23, t31, t32, t33 ));
+      determinant( t11, t12, t13, t21, t22, t23, t31, t32, t33 ));
 }
 
 template < class R >

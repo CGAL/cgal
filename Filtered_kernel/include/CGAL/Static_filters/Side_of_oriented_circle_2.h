@@ -64,7 +64,7 @@ public:
 	  double rqx = rx-qx;
 	  double rqy = ry-qy;
 
-          double det = det2x2_by_formula(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
+          double det = determinant(qpx*tpy - qpy*tpx, tpx*tqx + tpy*tqy,
                                          qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
           // We compute the semi-static bound.
@@ -106,7 +106,7 @@ public:
     F t1 = F(1, F::ulp()/2);         // First translation
     F a = t1*t1 - t1*t1;
     F b = t1*t1 + t1*t1;
-    F det = det2x2_by_formula(a, b, a, b);
+    F det = determinant(a, b, a, b);
     double err = det.error();
     err += err * 3 * F::ulp(); // Correction due to "eps * maxx * maxy...".
 

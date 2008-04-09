@@ -143,7 +143,7 @@ private:
     double prx = rx-px;
     double pry = ry-py;
 
-    double det = det2x2_by_formula(pqx, pqy,
+    double det = determinant(pqx, pqy,
                                    prx, pry);
 
     // Then semi-static filter.

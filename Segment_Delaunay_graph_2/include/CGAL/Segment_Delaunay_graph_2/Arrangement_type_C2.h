@@ -79,7 +79,7 @@ private:
 			      const RT& x3, const RT& y3,
 			      const RT& x4, const RT& y4) const
   {
-    RT delta = -det2x2_by_formula(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
+    RT delta = -determinant(x2 - x1, x4 - x3, y2 - y1, y4 - y3);
 
     Sign s = CGAL::sign( delta );
     if ( s != CGAL::ZERO ) {
@@ -94,8 +94,8 @@ private:
 		  const RT& x3, const RT& y3, const RT& x4, const RT& y4,
 		  const RT& D) const
   {
-    RT Dt = -det2x2_by_formula(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
-    RT Ds = det2x2_by_formula(x2 - x1, x3 - x1, y2 - y1, y3 - y1);
+    RT Dt = -determinant(x3 - x1, x4 - x3, y3 - y1, y4 - y3);
+    RT Ds = determinant(x2 - x1, x3 - x1, y2 - y1, y3 - y1);
 
     Sign s_D = CGAL::sign( D );
     Sign s_Dt = CGAL::sign( Dt );
@@ -164,7 +164,7 @@ private:
   parallel_C2(const RT& x1, const RT& y1, const RT& x2, const RT& y2,
 	      const RT& x3, const RT& y3, const RT& x4, const RT& y4) const
   {
-    RT D1 = det2x2_by_formula(x2 - x1, x3 - x1,	y2 - y1, y3 - y1);
+    RT D1 = determinant(x2 - x1, x3 - x1,	y2 - y1, y3 - y1);
 
     if ( CGAL::sign( D1 ) != CGAL::ZERO ) {
       return Enum::DISJOINT;

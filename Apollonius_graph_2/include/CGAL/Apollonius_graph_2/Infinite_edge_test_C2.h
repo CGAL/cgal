@@ -155,7 +155,7 @@ public:
 	    const FT& D, const FT& P) const
     {
       FT sigma = a * A + b * B;
-      FT delta = det2x2_by_formula(a, b, A, B);
+      FT delta = determinant(a, b, A, B);
 
       Sign sign_sigma = CGAL::sign(sigma);
       Sign sign_delta = CGAL::sign(delta);

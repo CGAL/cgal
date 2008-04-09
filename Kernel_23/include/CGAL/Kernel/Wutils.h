@@ -156,7 +156,7 @@ struct wcross_tag_2<Homogeneous_tag>
                                      const Point_2 &q,
                                      const Point_2 &r) const
   {
-    return det3x3_by_formula(p.hx(), q.hx(), r.hx(),
+    return determinant(p.hx(), q.hx(), r.hx(),
                              p.hy(), q.hy(), r.hy(),
                              p.hw(), q.hw(), r.hw());
   }

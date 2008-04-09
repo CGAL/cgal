@@ -75,8 +75,8 @@ compare_xC2(const FT &px,
             const FT &ha, const FT &hb, const FT &hc)
 {
   // The abscissa of the intersection point is num/den.
-  FT num = det2x2_by_formula( lb, lc, hb, hc);
-  FT den = det2x2_by_formula( la, lb, ha, hb);
+  FT num = determinant( lb, lc, hb, hc);
+  FT den = determinant( la, lb, ha, hb);
   typename Sgn<FT>::result_type s = CGAL_NTS sign(den);
   CGAL_kernel_assertion( s != ZERO );
   return s * CGAL_NTS compare(px * den, num);
@@ -90,20 +90,20 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
             const FT &h2a, const FT &h2b, const FT &h2c)
 {
   /*
-  FT num1 = det2x2_by_formula( lb, lc, h1b, h1c);
-  FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
-  FT num2 = det2x2_by_formula( lb, lc, h2b, h2c);
-  FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
+  FT num1 = determinant( lb, lc, h1b, h1c);
+  FT den1 = determinant( la, lb, h1a, h1b);
+  FT num2 = determinant( lb, lc, h2b, h2c);
+  FT den2 = determinant( la, lb, h2a, h2b);
   Sign s = Sign (CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
   CGAL_kernel_assertion( s != ZERO );
   return s * sign_of_determinant(num1, num2, den1, den2);
   */
-  FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
-  FT num2 = det2x2_by_formula( la, lc, h2a, h2c);
-  FT num  = det2x2_by_formula(h1a,h1c,h2a,h2c)*lb
-            + det2x2_by_formula(num1,num2,h1b,h2b);
-  FT den1 = det2x2_by_formula( la, lb, h1a, h1b);
-  FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
+  FT num1 = determinant( la, lc, h1a, h1c);
+  FT num2 = determinant( la, lc, h2a, h2c);
+  FT num  = determinant(h1a,h1c,h2a,h2c)*lb
+            + determinant(num1,num2,h1b,h2b);
+  FT den1 = determinant( la, lb, h1a, h1b);
+  FT den2 = determinant( la, lb, h2a, h2b);
   return CGAL_NTS sign(lb) *
          CGAL_NTS sign(num) *
          CGAL_NTS sign(den1) *
@@ -118,10 +118,10 @@ compare_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
             const FT &l2a, const FT &l2b, const FT &l2c,
             const FT &h2a, const FT &h2b, const FT &h2c)
 {
-  FT num1 = det2x2_by_formula( l1b, l1c, h1b, h1c);
-  FT den1 = det2x2_by_formula( l1a, l1b, h1a, h1b);
-  FT num2 = det2x2_by_formula( l2b, l2c, h2b, h2c);
-  FT den2 = det2x2_by_formula( l2a, l2b, h2a, h2b);
+  FT num1 = determinant( l1b, l1c, h1b, h1c);
+  FT den1 = determinant( l1a, l1b, h1a, h1b);
+  FT num2 = determinant( l2b, l2c, h2b, h2c);
+  FT den2 = determinant( l2a, l2b, h2a, h2b);
   typename Sgn<FT>::result_type s = CGAL_NTS sign(den1) * CGAL_NTS sign(den2);
   CGAL_kernel_assertion( s != ZERO );
   return s * sign_of_determinant(num1, num2, den1, den2);
@@ -175,8 +175,8 @@ compare_y_at_xC2(const FT &l1a, const FT &l1b, const FT &l1c,
                  const FT &h2a, const FT &h2b, const FT &h2c)
 {
   // The abscissa of the intersection point is num/den.
-  FT num = det2x2_by_formula( l1b, l1c, l2b, l2c);
-  FT den = det2x2_by_formula( l1a, l1b, l2a, l2b);
+  FT num = determinant( l1b, l1c, l2b, l2c);
+  FT den = determinant( l1a, l1b, l2a, l2b);
   typename Sgn<FT>::result_type s = CGAL_NTS sign(h1b) *
                                     CGAL_NTS sign(h2b) *
                                     CGAL_NTS sign(den);

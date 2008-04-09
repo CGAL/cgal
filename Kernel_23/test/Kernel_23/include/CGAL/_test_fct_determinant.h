@@ -33,54 +33,54 @@ _test_fct_determinant(const NT&)
   NT one = NT(1);
   NT two = NT(2);
 
-  // detDxD_by_formula
+  // determinant()
 
-  assert( CGAL::det2x2_by_formula<NT>( zero, one, \
+  assert( CGAL::determinant<NT>( zero, one, \
                                    one,  zero) == - one );
 
-  assert( CGAL::det2x2_by_formula<NT>( one,  one, \
+  assert( CGAL::determinant<NT>( one,  one, \
                                    zero, -one) == - one );
 
-  assert( CGAL::det3x3_by_formula<NT>( one,  zero, one, \
+  assert( CGAL::determinant<NT>( one,  zero, one, \
                                    zero, one,  one, \
                                   -one,  -one, zero ) == \
-          one * CGAL::det2x2_by_formula<NT>( one, one, \
+          one * CGAL::determinant<NT>( one, one, \
                                         -one, zero ) \
-        - one * CGAL::det2x2_by_formula<NT>( zero, one, \
+        - one * CGAL::determinant<NT>( zero, one, \
                                          one, one ) );
 
-  assert( CGAL::det4x4_by_formula<NT>( one,  zero, one, -one, \
+  assert( CGAL::determinant<NT>( one,  zero, one, -one, \
                                    zero, one,  one, -one, \
                                    one,  two,  zero, one, \
                                   -one,  -one, zero, zero ) == \
-          one * CGAL::det3x3_by_formula<NT>( zero, one, -one, \
+          one * CGAL::determinant<NT>( zero, one, -one, \
                                          one, one, -one, \
                                          two, zero, one ) \
-        - one * CGAL::det3x3_by_formula<NT>( one, one, -one, \
+        - one * CGAL::determinant<NT>( one, one, -one, \
                                          zero, one, -one, \
                                          one, zero, one ) );
 
-  assert( CGAL::det5x5_by_formula<NT>( one,  zero, one, -one, zero, \
+  assert( CGAL::determinant<NT>( one,  zero, one, -one, zero, \
                                    zero, one,  one, -one, zero, \
                                    one,  two,  zero, one, two, \
                                    one, one,  zero, -one, zero, \
                                   -one,  -one, zero, zero, one ) == \
-          two * CGAL::det4x4_by_formula<NT>( one,  zero, one,  -one, \
+          two * CGAL::determinant<NT>( one,  zero, one,  -one, \
                                          zero, one,  one,  -one, \
                                          one,  one,  zero, -one, \
                                         -one, -one,  zero, zero) \
-        + one * CGAL::det4x4_by_formula<NT>( one,  zero, one,  -one, \
+        + one * CGAL::determinant<NT>( one,  zero, one,  -one, \
                                          zero, one,  one,  -one, \
                                          one,  two,  zero,  one, \
                                          one,  one,  zero, -one) );
 
-  assert( CGAL::det6x6_by_formula<NT>( one,  zero, zero, zero, zero, zero, \
+  assert( CGAL::determinant<NT>( one,  zero, zero, zero, zero, zero, \
                                    zero, one,  zero, one,  -one, zero, \
                                    zero, zero, one,  one, -one, zero, \
                                    zero, one,  two,  zero, one, two, \
                                    zero, one, one,  zero, -one, zero, \
                                    zero, -one,  -one, zero, zero, one ) == \
-          CGAL::det5x5_by_formula<NT>( one,  zero, one, -one, zero, \
+          CGAL::determinant<NT>( one,  zero, one, -one, zero, \
                                    zero, one,  one, -one, zero, \
                                    one,  two,  zero, one, two, \
                                    one, one,  zero, -one, zero, \
