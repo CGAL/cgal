@@ -513,7 +513,7 @@ public:
 	flip(Edge(f, 1));
       } else {
 	CGAL::Comparison_result cx02= traits_.compare(f->vertex(0)->point(), f->vertex(2)->point(), 0);
-	if (cx02 == CGAL::Comparison_result(-cx12)) {
+	if (cx02 == -cx12) {
 	  flip(Edge(f,2));
 	} else {
 	  flip(Edge(f,0));

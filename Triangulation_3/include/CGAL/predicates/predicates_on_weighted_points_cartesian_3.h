@@ -24,9 +24,7 @@
 #include <CGAL/determinant.h>
 #include <CGAL/enum.h>
 
-//-------------------------------------------------------------------
 CGAL_BEGIN_NAMESPACE
-//-------------------------------------------------------------------
 
 template < class FT >
 Comparison_result
@@ -35,15 +33,14 @@ compare_power_distanceC3(
 		  const FT &qx, const FT &qy, const FT &qz, const FT &qw,
 		  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
 {
- FT dqx = qx - px;
- FT dqy = qy - py;
- FT dqz = qz - pz;
- FT drx = rx - px;
- FT dry = ry - py;
- FT drz = rz - pz;
-   return Comparison_result((Sign) CGAL_NTS sign (
-      (dqx*dqx + dqy*dqy + dqz*dqz - qw )
-    - (drx*drx + dry*dry + drz*drz - rw ) ));
+   FT dqx = qx - px;
+   FT dqy = qy - py;
+   FT dqz = qz - pz;
+   FT drx = rx - px;
+   FT dry = ry - py;
+   FT drz = rz - pz;
+   return CGAL_NTS compare(dqx*dqx + dqy*dqy + dqz*dqz - qw,
+                           drx*drx + dry*dry + drz*drz - rw);
 }
 
 

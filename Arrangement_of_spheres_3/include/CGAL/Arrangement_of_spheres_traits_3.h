@@ -265,7 +265,7 @@ struct Arrangement_of_spheres_traits_3 {
 				  sphere0,
 				  pt,
 				  return CGAL::EQUAL,
-				  return Comparison_result(-cr),
+				  return -cr,
 				  return cr,
 				  return cr,
 				  return cr);
@@ -295,7 +295,7 @@ struct Arrangement_of_spheres_traits_3 {
 				  sphere,
 				  pt,
 				  return CGAL::EQUAL,
-				  return Comparison_result(-crrs),
+				  return -crrs,
 				  return crrs,
 				  return crrs,
 				  return crrs);
@@ -391,7 +391,7 @@ struct Arrangement_of_spheres_traits_3 {
       if (compare_c(sp, p.x(),CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == EQUAL) return EQUAL;
       if (p.x()>0 && compare_c(sp, p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == LARGER
 	  || p.x()<0 && compare_c(sp, p.x(), CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) == SMALLER ){
-	return Comparison_result(-c0);
+	return -c0;
       } else return c0;
     } else {
       return c0;
@@ -436,7 +436,7 @@ struct Arrangement_of_spheres_traits_3 {
 				    const Sphere_point_3& b,
 				    Coordinate_index C) const {
     if (C != CGAL_AOS3_INTERNAL_NS::sweep_coordinate()) {
-      return Comparison_result(-compare_to_rule_c(b,a.key(),C));
+      return -compare_to_rule_c(b,a.key(),C);
     } else {
       return a.coord().compare_c(b, C);
     }

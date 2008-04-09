@@ -257,7 +257,7 @@ public:
       CGAL::Comparison_result c= compare(pt,Coordinate_index(i));
       if (c != CGAL::EQUAL) {
 	if (line().to_vector()[i] >0) return c;
-	else return CGAL::Comparison_result(-c);
+	else return -c;
       }
     }
     return CGAL::EQUAL;

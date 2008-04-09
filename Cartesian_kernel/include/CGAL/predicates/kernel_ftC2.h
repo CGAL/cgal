@@ -96,8 +96,7 @@ compare_xC2(const FT &la, const FT &lb, const FT &lc,
   FT den2 = det2x2_by_formula( la, lb, h2a, h2b);
   Sign s = Sign (CGAL_NTS sign(den1) * CGAL_NTS sign(den2));
   CGAL_kernel_assertion( s != ZERO );
-  return Comparison_result( s * sign_of_determinant(num1, 
-                                                       num2, den1, den2));
+  return s * sign_of_determinant(num1, num2, den1, den2);
   */
   FT num1 = det2x2_by_formula( la, lc, h1a, h1c);
   FT num2 = det2x2_by_formula( la, lc, h2a, h2c);

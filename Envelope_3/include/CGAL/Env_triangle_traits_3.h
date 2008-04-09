@@ -842,7 +842,7 @@ public:
       FT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
-      return (Comparison_result(s1 * s2));
+      return s1 * s2;
     }  
   };
 

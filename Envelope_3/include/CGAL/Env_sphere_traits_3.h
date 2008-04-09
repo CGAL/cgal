@@ -773,9 +773,9 @@ public:
 
       Sign res = CGAL_NTS sign(z1 - z2);
       if (parent.m_is_lower)
-        return Comparison_result(res);
+        return res;
       else
-        return Comparison_result(-res);
+        return -res;
     }
 
     // second method of compare in point
@@ -825,7 +825,7 @@ public:
                                                            Algebraic(1),
                                                            A1,
                                                            A2);
-      return Comparison_result(res);    
+      return res;    
     }  
   };
    
@@ -1034,7 +1034,7 @@ public:
       Sign sign3 = (compare_on_right ? (CGAL_NTS sign(1)) :
                                        (CGAL_NTS sign(-1)));
 
-      return Comparison_result(sign1 * sign2 * sign3);
+      return sign1 * sign2 * sign3;
 
     }
     else if (C1 != 0 && C2 == 0)
