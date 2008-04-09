@@ -57,12 +57,8 @@ public:
     : base(CGALi::make_array(x, y, z)) {}
 
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
-  {
-    if (w != FT(1))
-      base = CGALi::make_array(x/w, y/w, z/w);
-    else
-      base = CGALi::make_array(x, y, z);
-  }
+    : base( w != FT(1) ? CGALi::make_array(x/w, y/w, z/w)
+                       : CGALi::make_array(x, y, z) ) {}
 
 /*
   bool operator==(const PointC3 &p) const

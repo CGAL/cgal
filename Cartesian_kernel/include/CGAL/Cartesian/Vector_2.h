@@ -56,12 +56,8 @@ public:
     : base(CGALi::make_array(x, y)) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
-  {
-    if (hw != FT(1))
-      base = CGALi::make_array(hx/hw, hy/hw);
-    else
-      base = CGALi::make_array(hx, hy);
-  }
+    : base( hw != FT(1) ? CGALi::make_array(hx/hw, hy/hw)
+                        : CGALi::make_array(hx, hy) ) {}
 
   const FT & x() const
   {
