@@ -239,7 +239,7 @@ Oriented_side operator()(ForwardIterator first, ForwardIterator last,
     Sum += hj*hj; 
   }
   M(d,d) = Sum; 
-  return Oriented_side( - LA::sign_of_determinant(M) );
+  return - LA::sign_of_determinant(M);
 }
 };
 

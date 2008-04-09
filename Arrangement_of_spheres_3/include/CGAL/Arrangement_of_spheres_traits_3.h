@@ -615,7 +615,7 @@ protected:
 	if (csp== EQUAL) continue;
 	Comparison_result csl= compare_c(s, pt[i], Coordinate_index(i));
 	if (csl== CGAL::EQUAL) return ON_ORIENTED_BOUNDARY;
-	else if (csl != csp) return Oriented_side(-os);
+	else if (csl != csp) return -os;
 	else return os;
       }
       CGAL_error();

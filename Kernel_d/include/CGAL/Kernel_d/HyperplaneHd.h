@@ -180,7 +180,7 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
 template <class ForwardIterator>
 HyperplaneHd(ForwardIterator first, ForwardIterator last, 
              const PointHd<RT,LA>& o, 
-             Oriented_side side = Oriented_side(0)) 
+             Oriented_side side = ON_ORIENTED_BOUNDARY) 
 /*{\Mcreate constructs some hyperplane that passes through the points
 in |set [first,last)|. If |side| is |ON_POSITIVE_SIDE| or
 |ON_NEGATIVE_SIDE| then |o| is on that side of the constructed
@@ -279,7 +279,7 @@ Oriented_side  oriented_side(const PointHd<RT,LA>& p) const
 { 
   CGAL_assertion_msg((dimension()==p.dimension()), 
   "HyperplaneHd::oriented_side: dimensions do not agree."); 
-  return Oriented_side(CGAL_NTS sign(value_at(p)));
+  return CGAL_NTS sign(value_at(p));
 }
 
 bool has_on(const PointHd<RT,LA>& p) const 

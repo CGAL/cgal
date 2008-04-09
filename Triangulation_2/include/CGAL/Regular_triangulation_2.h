@@ -636,7 +636,7 @@ power_test(const Face_handle &f, const Weighted_point &p) const
     return power_test(f->vertex(ccw(i))->point(),
 		      f->vertex( cw(i))->point(),p);
 
-  return Oriented_side(o);
+  return o;
 }
 
 template < class Gt, class Tds >

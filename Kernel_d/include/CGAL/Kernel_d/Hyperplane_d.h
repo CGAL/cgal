@@ -20,6 +20,7 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_HYPERPLANE_D_H
 #define CGAL_HYPERPLANE_D_H
 
@@ -27,7 +28,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <class pR>
 class Hyperplane_d : public pR::Hyperplane_d_base
-{ public:
+{
+public:
   typedef typename pR::Hyperplane_d_base Base;
   typedef Hyperplane_d<pR>               Self;
   typedef pR R;
@@ -60,8 +62,8 @@ class Hyperplane_d : public pR::Hyperplane_d_base
 
   template <class ForwardIterator>
   Hyperplane_d(ForwardIterator first, ForwardIterator last, 
-               const Point_d<R>& o, Oriented_side side = Oriented_side(0)) :
-    Base(first,last,o,side) {}
+               const Point_d<R>& o, Oriented_side side = ON_ORIENTED_BOUNDARY)
+    : Base(first,last,o,side) {}
 
   Vector_d<R> orthogonal_vector() const 
   { return Base::orthogonal_vector(); }
@@ -75,4 +77,5 @@ class Hyperplane_d : public pR::Hyperplane_d_base
 };
 
 CGAL_END_NAMESPACE
+
 #endif //CGAL_HYPERPLANE_D_H

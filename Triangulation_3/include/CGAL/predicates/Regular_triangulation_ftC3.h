@@ -57,10 +57,10 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     FT dst = CGAL_NTS square(dsx) + CGAL_NTS square(dsy) + 
              CGAL_NTS square(dsz) - swt + twt;
 
-    return Oriented_side( - sign_of_determinant(dpx, dpy, dpz, dpt,
-						   dqx, dqy, dqz, dqt,
-						   drx, dry, drz, drt,
-						   dsx, dsy, dsz, dst));
+    return - sign_of_determinant(dpx, dpy, dpz, dpt,
+				 dqx, dqy, dqz, dqt,
+				 drx, dry, drz, drt,
+				 dsx, dsy, dsz, dst);
 }
 
 
@@ -94,23 +94,23 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
 		                 dqx, dqy, dqt,
 				 drx, dry, drt);
     if (cmp != ZERO)
-	return Oriented_side(cmp * sign_of_determinant(px-rx, py-ry,
-		                                          qx-rx, qy-ry));
+	return cmp * sign_of_determinant(px-rx, py-ry,
+		                         qx-rx, qy-ry);
 
     // Projection on the (xz) plane.
     cmp = sign_of_determinant(dpx, dpz, dpt,
 		                 dqx, dqz, dqt,
 				 drx, drz, drt);
     if (cmp != ZERO)
-	return Oriented_side(cmp * sign_of_determinant(px-rx, pz-rz,
-		                                          qx-rx, qz-rz));
+	return cmp * sign_of_determinant(px-rx, pz-rz,
+		                         qx-rx, qz-rz);
 
     // Projection on the (yz) plane.
     cmp = sign_of_determinant(dpy, dpz, dpt,
 		                 dqy, dqz, dqt,
 				 dry, drz, drt);
-    return Oriented_side(cmp * sign_of_determinant(py-ry, pz-rz,
-		                                      qy-ry, qz-rz));
+    return cmp * sign_of_determinant(py-ry, pz-rz,
+		                     qy-ry, qz-rz);
 }
 
 
@@ -136,25 +136,24 @@ power_testC3( const FT &px, const FT &py, const FT &pz, const FT &pwt,
     // We do an orthogonal projection on the (x) axis, if possible.
     cmp = CGAL_NTS compare(px, qx);
     if (cmp != EQUAL)
-        return Oriented_side(cmp * sign_of_determinant(dpx, dpt, dqx, dqt));
+        return cmp * sign_of_determinant(dpx, dpt, dqx, dqt);
 
     // We do an orthogonal projection on the (y) axis, if possible.
     cmp = CGAL_NTS compare(py, qy);
     if (cmp != EQUAL)
-        return Oriented_side(cmp * sign_of_determinant(dpy, dpt, dqy, dqt));
+        return cmp * sign_of_determinant(dpy, dpt, dqy, dqt);
 
     // We do an orthogonal projection on the (z) axis.
     cmp = CGAL_NTS compare(pz, qz);
-    return Oriented_side(cmp * sign_of_determinant(dpz, dpt, dqz, dqt));
+    return cmp * sign_of_determinant(dpz, dpt, dqz, dqt);
 }
 
 template <class FT>
 Oriented_side
 power_testC3(const FT &pwt, const FT &qwt)
 {
-    return Oriented_side((Comparison_result) CGAL_NTS compare(qwt, pwt));
+    return CGAL_NTS compare(qwt, pwt);
 }
-
 
 CGAL_END_NAMESPACE
 

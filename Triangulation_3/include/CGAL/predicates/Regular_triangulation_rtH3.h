@@ -71,11 +71,11 @@ power_testH3(
     RT dtz = CGAL_NTS square(thx) + CGAL_NTS square(thy) + 
              CGAL_NTS square(thz) - twt*dthw;
 
-    return Oriented_side(- sign_of_determinant(dphx, dphy, dphz, dpz, dphw,
-	                                        dqhx, dqhy, dqhz, dqz, dqhw,
-	                                        drhx, drhy, drhz, drz, drhw,
-	                                        dshx, dshy, dshz, dsz, dshw,
-	                                        dthx, dthy, dthz, dtz, dthw));
+    return - sign_of_determinant(dphx, dphy, dphz, dpz, dphw,
+	                         dqhx, dqhy, dqhz, dqz, dqhw,
+	                         drhx, drhy, drhz, drz, drhw,
+	                         dshx, dshy, dshz, dsz, dshw,
+	                         dthx, dthy, dthz, dtz, dthw);
 }
 
 // The 2 degenerate are not speed critical, and they are quite boring and error

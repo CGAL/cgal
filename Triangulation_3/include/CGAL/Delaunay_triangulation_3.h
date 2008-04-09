@@ -1056,13 +1056,13 @@ side_of_oriented_sphere(const Point &p0, const Point &p1, const Point &p2,
 	                             // and positively oriented
         Orientation o;
         if (points[i] == &p3 && (o = orientation(p0,p1,p2,p)) != COPLANAR )
-            return Oriented_side(o);
+            return o;
         if (points[i] == &p2 && (o = orientation(p0,p1,p,p3)) != COPLANAR )
-            return Oriented_side(o);
+            return o;
         if (points[i] == &p1 && (o = orientation(p0,p,p2,p3)) != COPLANAR )
-            return Oriented_side(o);
+            return o;
         if (points[i] == &p0 && (o = orientation(p,p1,p2,p3)) != COPLANAR )
-            return Oriented_side(o);
+            return o;
     }
 
     CGAL_triangulation_assertion(false);

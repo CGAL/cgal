@@ -60,7 +60,7 @@ other.
 
 \ccConstructor{template <class ForwardIterator>
   Hyperplane_d<Kernel>(ForwardIterator first, ForwardIterator last,
-  Point_d<Kernel> o, Oriented_side side = Oriented_side(0))}{constructs
+  Point_d<Kernel> o, Oriented_side side = ON_ORIENTED_BOUNDARY)}{constructs
   some hyperplane that passes through the points in \ccc{set
     [first,last)}. If \ccc{side} is \ccc{ON_POSITIVE_SIDE} or
   \ccc{ON_NEGATIVE_SIDE} then \ccc{o} is on that side of the

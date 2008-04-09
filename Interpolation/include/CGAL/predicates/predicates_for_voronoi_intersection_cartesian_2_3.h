@@ -48,7 +48,7 @@ side_of_plane_centered_sphere_translateC3(
 				     rx,ry,rz);
   CGAL_assertion(den != ZERO);
 
-  return Oriented_side(den * num);
+  return den * num;
 }
 
 template < class RT>
@@ -114,7 +114,7 @@ side_of_plane_centered_sphere_translateC3(
 				 qx,qy,qz);
   }
   CGAL_assertion(den != ZERO);
-  return Oriented_side(den * num);
+  return den * num;
 }
 
 template < class RT>

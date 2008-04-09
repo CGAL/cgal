@@ -458,11 +458,10 @@ side_of_oriented_circleC2(const FT &px, const FT &py,
                           const FT &rx, const FT &ry,
                           const FT &tx, const FT &ty)
 {
-  // Oriented_side(
   //  sign_of_determinant(px, py, px*px + py*py, 1,
   //                         qx, qy, qx*qx + qy*qy, 1,
   //                         rx, ry, rx*rx + ry*ry, 1,
-  //                         tx, ty, tx*tx + ty*ty, 1));
+  //                         tx, ty, tx*tx + ty*ty, 1);
   // We first translate so that p is the new origin.
   FT qpx = qx-px;
   FT qpy = qy-py;
@@ -475,7 +474,7 @@ side_of_oriented_circleC2(const FT &px, const FT &py,
 //                                  rpx, rpy, square(rpx) + square(rpy),
 //                                  tpx, tpy, square(tpx) + square(tpy)));
   return sign_of_determinant<FT>( qpx*tpy - qpy*tpx, tpx*(tx-qx) + tpy*(ty-qy),
-                                     qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy));
+                                  qpx*rpy - qpy*rpx, rpx*(rx-qx) + rpy*(ry-qy));
 }
 
 template < class FT >
