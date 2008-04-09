@@ -91,9 +91,8 @@ sign_a_x_sqrt_c_plus_b_x_sqrt_d(const RT &a, const RT &b,
   if ( sa == sb )  return sa;
   if ( sa == ZERO )  return sb;
 
-  return Sign( sa * CGAL::compare( CGAL::square(a) * c,
-				   CGAL::square(b) * d )
-	       );
+  return sa * CGAL::compare( CGAL::square(a) * c,
+			     CGAL::square(b) * d );
 }
 
 template < class RT >

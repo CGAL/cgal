@@ -241,7 +241,7 @@ private:
                 if (power_test != ZERO) { return -power_test; }
 
                 // this result is consistant with the perturb on off idea
-                //if (power_test != ZERO || ! perturb) return Sign(- power_test);
+                //if (power_test != ZERO || ! perturb) return -power_test;
                 o1q = CGAL::sign(xq);
                 o2q = CGAL::sign(q.x() - p2.x());
             } else {
@@ -252,7 +252,7 @@ private:
                 if (power_test != ZERO) { return -power_test; }
 
                 // this result is consistant with the perturb on off idea
-                //if (power_test != ZERO || ! perturb) return Sign(- power_test);
+                //if (power_test != ZERO || ! perturb) return -power_test;
                 o1q = CGAL::sign(yq);
                 o2q = CGAL::sign(q.y() - p2.y());
             }

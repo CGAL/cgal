@@ -104,19 +104,11 @@ private:
     Sign s_tdiff = CGAL::sign(Dt - D);
     Sign s_sdiff = CGAL::sign(Ds - D);
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    Sign s_t = CGAL::Sign(s_Dt * s_D);
-    Sign s_s = CGAL::Sign(s_Ds * s_D);
-
-    Sign s_t_minus_1 = CGAL::Sign(s_tdiff * s_D);
-    Sign s_s_minus_1 = CGAL::Sign(s_sdiff * s_D);
-#else
     Sign s_t = s_Dt * s_D;
     Sign s_s = s_Ds * s_D;
 
     Sign s_t_minus_1 = s_tdiff * s_D;
     Sign s_s_minus_1 = s_sdiff * s_D;
-#endif
 
     if ( s_t == CGAL::NEGATIVE || s_t_minus_1 == CGAL::POSITIVE ||
 	 s_s == CGAL::NEGATIVE || s_s_minus_1 == CGAL::POSITIVE ) {
@@ -193,24 +185,14 @@ private:
     Sign s_Dt3 = CGAL::sign( Dt3 );
     Sign s_Dt4 = CGAL::sign( Dt4 );
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    Sign s_t3 = CGAL::Sign(s_Dt3 * s_Dt);
-    Sign s_t4 = CGAL::Sign(s_Dt4 * s_Dt);
-#else
     Sign s_t3 = s_Dt3 * s_Dt;
     Sign s_t4 = s_Dt4 * s_Dt;
-#endif
 
     Sign s_t3diff = CGAL::sign( Dt3 - Dt );
     Sign s_t4diff = CGAL::sign( Dt4 - Dt );
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    Sign s_t3_minus_1 = CGAL::Sign(s_t3diff * s_Dt);
-    Sign s_t4_minus_1 = CGAL::Sign(s_t4diff * s_Dt);
-#else
     Sign s_t3_minus_1 = s_t3diff * s_Dt;
     Sign s_t4_minus_1 = s_t4diff * s_Dt;
-#endif
 
     int it3(0), it4(0);
     if ( s_t3 == CGAL::ZERO ) { // t3 == 0

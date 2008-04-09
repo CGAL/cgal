@@ -247,7 +247,7 @@ private:
       s_sigma = s1;
     } else {
       RT e = CGAL::square(b1) * n2 - CGAL::square(b2) * n1;
-      s_sigma = Sign(s1 * CGAL::sign(e));
+      s_sigma = s1 * CGAL::sign(e);
     }
 
     Sqrt_1 sigma = Zero;
@@ -269,7 +269,7 @@ private:
       s_rho = s1;
     } else {
       RT e = CGAL::square(a1) * n2 - CGAL::square(a2) * n1;
-      s_rho = Sign(s1 * CGAL::sign(e));
+      s_rho = s1 * CGAL::sign(e);
     }
 
     
@@ -589,7 +589,7 @@ private:
 
     Sign s_vw = CGAL::sign(vw);
 
-    Sign sgn_dist = Sign(s_vw * CGAL::sign(dist));
+    Sign sgn_dist = s_vw * CGAL::sign(dist);
 
     CGAL_assertion( sgn_dist != ZERO );
 
@@ -689,10 +689,7 @@ private:
     Sign s_l =
       CGAL::sign(l.a() * ux_ppp + l.b() * uy_ppp + l.c() * uz_ppp);
 
-    Sign s = Sign(s_uz * s_l);
-
-    if ( s == ZERO ) { return COLLINEAR; }
-    return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;
+    return s_uz * s_l;
   }
 
   
@@ -702,13 +699,9 @@ private:
   orientation(const Line_2& l, PPS_Type) const
   {
     Sign s_uz = CGAL::sign(uz_pps);
-    Sign s_l =
-      CGAL::sign(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
+    Sign s_l = CGAL::sign(l.a() * ux_pps + l.b() * uy_pps + l.c() * uz_pps);
 
-    Sign s = Sign(s_uz * s_l);
-
-    if ( s == ZERO ) { return COLLINEAR; }
-    return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;
+    return s_uz * s_l;
   }
 
 
@@ -728,10 +721,7 @@ private:
     Sign s_uz = CGAL::sign(uz);
     Sign s_l = CGAL::sign(a * ux + b * uy + c * uz);
 
-    Sign s = Sign(s_uz * s_l);
-
-    if ( s == ZERO ) { return COLLINEAR; }
-    return ( s == POSITIVE ) ? LEFT_TURN : RIGHT_TURN;
+    return s_uz * s_l;
   }
     
 
@@ -811,11 +801,7 @@ private:
 
     Point_2 t = st.point();
 
-    Oriented_side os =
-      side_of_oriented_circle(p_.point(), q_.point(), r_.point(), t);
-    if ( os == ON_POSITIVE_SIDE ) { return NEGATIVE; }
-    if ( os == ON_NEGATIVE_SIDE ) { return POSITIVE; }
-    return ZERO;
+    return - side_of_oriented_circle(p_.point(), q_.point(), r_.point(), t);
   }
 
   //--------------------------------------------------------------------------
@@ -969,11 +955,7 @@ private:
 
     Sign s1 = CGAL::sign(l.b() * px - l.a() * py);
 
-    Sign s = Sign(s_uz * s1);
-
-    if ( s == POSITIVE ) { return ON_POSITIVE_SIDE; }
-    if ( s == NEGATIVE ) { return ON_NEGATIVE_SIDE; }
-    return ON_ORIENTED_BOUNDARY;
+    return s_uz * s1;
   }
 
   Oriented_side
@@ -982,13 +964,7 @@ private:
     Sqrt_1 dx = ux_pps - uz_pps * p.x();
     Sqrt_1 dy = uy_pps - uz_pps * p.y();
 
-    Sign s = Sign(CGAL::sign(uz_pps) *
-		  CGAL::sign(dy * l.a() - dx * l.b())
-		  );
-
-    if ( s == POSITIVE ) { return ON_POSITIVE_SIDE; }
-    if ( s == NEGATIVE ) { return ON_NEGATIVE_SIDE; }
-    return ON_ORIENTED_BOUNDARY;
+    return CGAL::sign(uz_pps) * CGAL::sign(dy * l.a() - dx * l.b());
   }
 
   // the cases PSS and SSS are identical
@@ -1006,14 +982,7 @@ private:
     Sqrt_1 a = l.a() + Zero;
     Sqrt_1 b = l.b() + Zero;
 
-    Sign s = Sign(CGAL::sign(uz) *
-		  CGAL::sign(a * dy - b * dx)
-		  );
-
-
-    if ( s == POSITIVE ) { return ON_POSITIVE_SIDE; }
-    if ( s == NEGATIVE ) { return ON_NEGATIVE_SIDE; }
-    return ON_ORIENTED_BOUNDARY;
+    return CGAL::sign(uz) * CGAL::sign(a * dy - b * dx);
   }
 
   //--------------------------------------------------------------------------

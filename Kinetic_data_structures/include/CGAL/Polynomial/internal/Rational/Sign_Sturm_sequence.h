@@ -62,7 +62,7 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
             if ( this->size_ > 1 ) {
 	      Sign s1 = Sign_at(  )(pder_, x);
 	      Sign s2 = Sign_at( )(q_,  x);
-                signs[1] = Sign(s1 * s2);
+                signs[1] = s1 * s2;
             }
 
             for (unsigned int i = 2; i < this->size_; i++) {

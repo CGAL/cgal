@@ -88,7 +88,7 @@ class Filtered_sign_at_rational
                 return CGAL::ZERO;
             }
             else if ( p.is_constant() == 0 || s_n == CGAL::ZERO ) {
-                return Sign(CGAL::sign( copy[0] ) * s_d);
+                return CGAL::sign( copy[0] ) * s_d;
             }
 
             NT result = copy[copy.degree()];
@@ -100,7 +100,7 @@ class Filtered_sign_at_rational
                 }
             }
 
-            return Sign(CGAL::sign(result) * s_d);
+            return CGAL::sign(result) * s_d;
         }
 #endif
     protected:

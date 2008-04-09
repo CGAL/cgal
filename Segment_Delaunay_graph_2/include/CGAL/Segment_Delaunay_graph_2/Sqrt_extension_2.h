@@ -131,7 +131,7 @@ public:
       return s_x;
     } else {
       Sqrt_1 Q = CGAL::square(x) - CGAL::square(y) * B_;
-      return Sign(s_x * CGAL_NTS sign(Q));
+      return s_x * CGAL_NTS sign(Q);
     }
   }
 

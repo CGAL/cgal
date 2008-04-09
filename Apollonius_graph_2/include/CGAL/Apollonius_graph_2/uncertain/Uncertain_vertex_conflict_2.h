@@ -226,7 +226,7 @@ private:
 
 	CGAL_assertion (radSideQ != ZERO);
 
-	if (! perturb) { return (radSideQ == orient) ? ZERO : Sign(orient); }
+	if (! perturb) { return (radSideQ == orient) ? Uncertain<Sign>(ZERO) : orient; }
 
 	int i = max_radius (p1, p2, p3, q);
 	if ( i == -1 ) { return Uncertain<Sign>::indeterminate(); }
@@ -307,7 +307,7 @@ private:
 	  if (power_test != ZERO) { return -power_test; }
 
 	    // this result is consistant with the perturb on off idea
-	    //if (power_test != ZERO || ! perturb) return Sign(- power_test);
+	    //if (power_test != ZERO || ! perturb) return -power_test;
 
 	  o1q = CGAL::sign(xq);
 	  o2q = CGAL::sign(q.x() - p2.x());
@@ -322,7 +322,7 @@ private:
 	  if (power_test != ZERO) { return -power_test; }
 
 	  // this result is consistant with the perturb on off idea
-	  //if (power_test != ZERO || ! perturb) return Sign(- power_test);
+	  //if (power_test != ZERO || ! perturb) return -power_test;
 
 	  o1q = CGAL::sign(yq);
 	  o2q = CGAL::sign(q.y() - p2.y());

@@ -530,11 +530,7 @@ private:
       a[(i_no+1)%3] * vx + b[(i_no+1)%3] * vy + c[(i_no+1)%3] * vw;
     
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    Sign sgn_dist = CGAL::Sign(s_vw * CGAL::sign(dist));
-#else
     Sign sgn_dist = s_vw * CGAL::sign(dist);
-#endif
 
     CGAL_assertion( sgn_dist != ZERO );
 
@@ -715,11 +711,7 @@ private:
     FT d2 = CGAL::square(x() - t.x()) +
       CGAL::square(y() - t.y());
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    return CGAL::Sign( (CGAL::Comparison_result) CGAL::compare(d2, r2) );
-#else
     return CGAL::compare(d2, r2);
-#endif
   }
 
   //--------------------------------------------------------------------------
@@ -796,11 +788,7 @@ private:
 
     FT d2 = CGAL::square(l.a() * x() + l.b() * y() + l.c());
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    return CGAL::Sign( (CGAL::Comparison_result) CGAL::compare(d2, r2 * n2) );
-#else
     return CGAL::compare(d2, r2 * n2);
-#endif
   }
 
 

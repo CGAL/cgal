@@ -320,9 +320,7 @@ public:
   Oriented_side
   oriented_side_of_line(const Line_2& l, const Point_2& p)
   {
-    Sign s = CGAL::sign(l.a() * p.x() + l.b() * p.y() + l.c());
-    if ( s == ZERO ) { return ON_ORIENTED_BOUNDARY; }
-    return ( s == POSITIVE ) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+    return CGAL::sign(l.a() * p.x() + l.b() * p.y() + l.c());
   }
 
   static
@@ -333,14 +331,7 @@ public:
       CGAL::sign(l.a() * p.hx() + l.b() * p.hy() + l.c() * p.hw());
     Sign s_hw = CGAL::sign(p.hw());
 
-#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
-    Sign s = CGAL::Sign(s1 * s_hw);
-#else
-    Sign s = s1 * s_hw;
-#endif
-
-    if ( s == ZERO ) { return ON_ORIENTED_BOUNDARY; }
-    return ( s == POSITIVE ) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
+    return s1 * s_hw;
   }
 
 

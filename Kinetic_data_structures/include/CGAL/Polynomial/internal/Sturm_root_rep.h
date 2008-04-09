@@ -67,12 +67,11 @@ public:
     template<class T>
     result_type operator()(const T& x) const
     {
-
       Sign s1 = outer->sseq.sign_at(x, 0);
       Sign s2 = outer->sseq.sign_at_gcd(x);
 
       CGAL_assertion( s1 == CGAL::ZERO || s2 != CGAL::ZERO );
-      return Sign(s1 * s2);
+      return s1 * s2;
     }
 
   private:

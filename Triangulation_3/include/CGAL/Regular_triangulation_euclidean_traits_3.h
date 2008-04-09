@@ -123,7 +123,7 @@ public:
     CGAL_triangulation_assertion( o != COPLANAR);
     // the minus sign below is due to the fact that power_test_3
     // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
-    return Sign( (-1) * o * os);
+    return - o * os;
   }
   
   Sign operator() ( const Weighted_point_3 & p,

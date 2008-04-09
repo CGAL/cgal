@@ -81,9 +81,8 @@ public:
     if ( sx == sy )  { return sx; }
     if ( sx == ZERO )  { return sy; }
 
-    return Sign( sx * CGAL::compare( CGAL::square(x),
-				     r * CGAL::square(y) )
-		 );
+    return sx * CGAL::compare( CGAL::square(x),
+			       r * CGAL::square(y) );
   }
 
   const Self& operator+() const

@@ -429,7 +429,7 @@ protected:
 
     ii_= std::make_pair(plist[plist.size()-2], plist[plist.size()-1]);
     CGAL_postcondition(sign_at(plist[plist.size()-2]) == ps);
-    CGAL_postcondition(sign_at(plist[plist.size()-1]) == CGAL::Sign(-ps));
+    CGAL_postcondition(sign_at(plist[plist.size()-1]) == -ps);
     audit();
   }
 
