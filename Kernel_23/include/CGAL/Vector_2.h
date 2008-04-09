@@ -52,6 +52,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
 public:
 
   typedef RVector_2 Rep;
+  typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
   const Rep& rep() const
   {
@@ -121,6 +122,16 @@ public:
   operator[](int i) const
   {
       return cartesian(i);
+  }
+
+  Cartesian_const_iterator cartesian_begin() const
+  {
+    return typename R::Construct_cartesian_const_iterator_2()(*this);
+  }
+
+  Cartesian_const_iterator cartesian_end() const
+  {
+    return typename R::Construct_cartesian_const_iterator_2()(*this,2);
   }
 
   typename Qualified_result_of<typename R::Compute_hx_2,Vector_2>::type

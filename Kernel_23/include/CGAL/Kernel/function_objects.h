@@ -1741,6 +1741,7 @@ namespace CommonKernelFunctors {
   class Construct_cartesian_const_iterator_2
   {
     typedef typename K::Point_2          Point_2;
+    typedef typename K::Vector_2         Vector_2;
     typedef typename K::Cartesian_const_iterator_2
     Cartesian_const_iterator_2;
 
@@ -1750,14 +1751,26 @@ namespace CommonKernelFunctors {
 
     Cartesian_const_iterator_2
     operator()( const Point_2& p) const
-      {
-	return p.rep().cartesian_begin();
-      }
+    {
+      return p.rep().cartesian_begin();
+    }
 
     Cartesian_const_iterator_2
     operator()( const Point_2& p, int) const
     {
       return p.rep().cartesian_end();
+    }
+
+    Cartesian_const_iterator_2
+    operator()( const Vector_2& v) const
+    {
+      return v.rep().cartesian_begin();
+    }
+
+    Cartesian_const_iterator_2
+    operator()( const Vector_2& v, int) const
+    {
+      return v.rep().cartesian_end();
     }
   };
 
@@ -1765,6 +1778,7 @@ namespace CommonKernelFunctors {
   class Construct_cartesian_const_iterator_3
   {
     typedef typename K::Point_3          Point_3;
+    typedef typename K::Vector_3         Vector_3;
     typedef typename K::Cartesian_const_iterator_3
     Cartesian_const_iterator_3;
 
@@ -1774,14 +1788,26 @@ namespace CommonKernelFunctors {
 
     Cartesian_const_iterator_3
     operator()( const Point_3& p) const
-      {
-	return p.rep().cartesian_begin();
-      }
+    {
+      return p.rep().cartesian_begin();
+    }
 
     Cartesian_const_iterator_3
     operator()( const Point_3& p, int) const
     {
       return p.rep().cartesian_end();
+    }
+
+    Cartesian_const_iterator_3
+    operator()( const Vector_3& v) const
+    {
+      return v.rep().cartesian_begin();
+    }
+
+    Cartesian_const_iterator_3
+    operator()( const Vector_3& v, int) const
+    {
+      return v.rep().cartesian_end();
     }
   };
 

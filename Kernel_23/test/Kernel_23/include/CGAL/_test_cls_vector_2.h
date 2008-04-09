@@ -32,6 +32,8 @@ _test_cls_vector_2(const R& )
  typedef typename  R::FT    FT;
 
  typename R::Vector_2       iv;
+ typedef typename R::Vector_2::Cartesian_const_iterator CCI;
+
  CGAL::Vector_2<R>  v1;
  CGAL::Vector_2<R>  v2(iv);
  CGAL::Vector_2<R>  v0(CGAL::NULL_VECTOR);
@@ -99,6 +101,63 @@ _test_cls_vector_2(const R& )
  assert( v8 == v9 );
  assert( v10.direction() == v8.direction() );
  assert( v11.direction() == v8.direction() );
+
+
+  // now we test the Coordinate iterator
+  const CGAL::Vector_2<R> v(1, 2);
+
+  CCI it = v.cartesian_begin();
+
+  // Default constructor
+  CCI itt;
+
+  // Copy constructor
+  CCI itc(it);
+
+  assert(itc == it);
+
+  // Assignment
+  itt = it;
+
+  // Equality
+  assert(itt == it);
+
+  assert(itt - it == 0);
+
+  // Increment
+  itt++;
+
+  // Inequality
+  assert(itt != it);
+
+  assert(it < itt);
+  assert(itt - it == 1);
+
+  // dereference
+  assert(*it == FT(1));
+
+  it++;
+  assert(*it == FT(2));
+  it++;
+
+  CCI it2 = v.cartesian_end();
+
+  assert(it == it2);
+  it--;
+  it--;
+  assert(*it == FT(1));
+  it += 1;
+  assert(*it == FT(2));
+  it -= 1;
+  assert(*it == FT(1));
+
+  it2 = it + 1;
+  it2--;
+  assert(it == it2);
+  it++;
+  it2 = it - 1;
+  it2++;
+  assert(it == it2);
 
  std::cout << "done" << std::endl;
  return true;

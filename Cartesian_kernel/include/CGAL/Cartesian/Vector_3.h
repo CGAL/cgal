@@ -47,7 +47,9 @@ class VectorC3
 
 public:
 
-  typedef R_                                     R;
+  typedef typename Rep::const_iterator      Cartesian_const_iterator;
+
+  typedef R_                                R;
 
   VectorC3() {}
 
@@ -101,6 +103,16 @@ public:
   const FT & hw() const
   {
       return constant<FT, 1>();
+  }
+
+  Cartesian_const_iterator cartesian_begin() const
+  {
+    return get(base).begin();
+  }
+
+  Cartesian_const_iterator cartesian_end() const
+  {
+    return get(base).end();
   }
 
   const FT & cartesian(int i) const;

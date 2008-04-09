@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -26,24 +26,29 @@
 
 #include <cstddef>
 #include <iterator>
+#include <boost/variant.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
+// This class should go away.
+// It is now only used by the Filtered_kernel.
+// It allows to iterate over the coordinates of both a Point_2 and a Vector_2,
+// using a boost::variant, as the iterator types are the same at the kernel level.
 
 template <class K>
-class Cartesian_coordinate_iterator_2 
+class Cartesian_coordinate_iterator_2
 {
 
 protected:
   typedef typename K::Point_2 P;
-  const P* point;
+  typedef typename K::Vector_2 V;
+  boost::variant<const P*, const V*> var;
   int index;
   typedef Cartesian_coordinate_iterator_2<K> Self;
 
-public: 
+public:
 
   typedef typename K::FT FT;
-  typedef P Point;
 
   typedef std::random_access_iterator_tag iterator_category;
   typedef FT                              value_type;
@@ -51,33 +56,43 @@ public:
   typedef const value_type&               reference;
   typedef const value_type*               pointer;
 
-  Cartesian_coordinate_iterator_2(const Point *const p = NULL, 
-				  int _index = 0) 
-    : point(p), index(_index) 
-  {}
+  Cartesian_coordinate_iterator_2()
+    : var((const P*) NULL), index(0) {}
+
+  Cartesian_coordinate_iterator_2(const P * const p, int _index = 0)
+    : var(p), index(_index) {}
+
+  Cartesian_coordinate_iterator_2(const V * const v, int _index = 0)
+    : var(v), index(_index) {}
 
 
-  const FT 
+  const FT
   operator*() const {
-    return point->cartesian(index); 
+    if (const P* const* p = boost::get<const P*>(&var))
+      return (*p)->cartesian(index);
+    if (const V* const* v = boost::get<const V*>(&var))
+      return (*v)->cartesian(index);
+    // std::cerr << "type of var = " << var.type().name() << std::endl;
+    CGAL_error();
+    std::abort(); // to kill warning
   }
-  
+
   Self&  operator++() {
-    index++; 
+    index++;
     return *this;
   }
 
-  Self&  
+  Self&
   operator--() {
-    index--; 
+    index--;
     return *this;
   }
 
-  Self 
-  operator++(int) { 
+  Self
+  operator++(int) {
     Self tmp(*this);
-    ++(*this); 
-    return tmp; 
+    ++(*this);
+    return tmp;
   }
 
   Self
@@ -86,55 +101,55 @@ public:
     --(*this);
     return tmp;
   }
-  
-  Self& 
-  operator+=(difference_type i) { 
+
+  Self&
+  operator+=(difference_type i) {
     index+=i;
-    return *this; 
+    return *this;
   }
 
-  Self& 
-  operator-=(difference_type i) { 
-    index -= i; 
-    return *this; 
+  Self&
+  operator-=(difference_type i) {
+    index -= i;
+    return *this;
   }
 
-  Self 
+  Self
   operator+(difference_type i) const {
-    Self tmp=*this; 
-    return tmp += i; 
+    Self tmp=*this;
+    return tmp += i;
   }
 
   Self operator-(difference_type i) const {
-    Self tmp=*this; 
-    return tmp -= i; 
+    Self tmp=*this;
+    return tmp -= i;
   }
 
-  difference_type 
+  difference_type
   operator-(const Self& x) const {
-    CGAL_kernel_assertion(point == x.point);
-    return index - x.index; 
+    CGAL_kernel_assertion(var == x.var);
+    return index - x.index;
   }
 
-  reference operator[](difference_type i) const { 
-    return *(*this + i); 
+  reference operator[](difference_type i) const {
+    return *(*this + i);
   }
 
   bool operator==(const Self& x) const {
-    return (point == x.point)&& (index == x.index) ; 
-  }
-  
-  bool operator!=(const Self& x) const { 
-    return ! (*this==x); 
+    return (var == x.var) && (index == x.index);
   }
 
-  bool operator<(const Self& x) const 
-  { 
-    return (x - *this) > 0; }
+  bool operator!=(const Self& x) const {
+    return ! (*this==x);
+  }
+
+  bool operator<(const Self& x) const
+  {
+    return (x - *this) > 0;
+  }
 
 };
 
-
-
 CGAL_END_NAMESPACE
+
 #endif // CGAL_CARTESIAN_COORDINATE_ITERATOR_2_H

@@ -32,6 +32,7 @@ _test_cls_vector_3(const R& )
  typedef typename  R::FT    FT;
 
  typename R::Vector_3       iv;
+ typedef typename R::Vector_3::Cartesian_const_iterator CCI;
 
  CGAL::Vector_3<R>  v1;
  CGAL::Vector_3<R>  v2(iv);
@@ -90,6 +91,69 @@ _test_cls_vector_3(const R& )
  std::cout << '.';
 
  assert( v0.dimension() == 3 );
+
+
+ // now we test the Coordinate iterator
+  const CGAL::Vector_3<R> v(1, 2, 3);
+
+  CCI it = v.cartesian_begin();
+
+  // Default constructor
+  CCI itt;
+
+  // Copy constructor
+  CCI itc(it);
+
+  assert(itc == it);
+
+  // Assignment
+  itt = it;
+
+  // Equality
+  assert(itt == it);
+
+  assert(itt - it == 0);
+
+  // Increment
+  itt++;
+
+  // Inequality
+  assert(itt != it);
+
+  assert(it < itt);
+  assert(itt - it == 1);
+
+  itt++;
+  assert(itt - it == 2);
+
+  // dereference
+  assert(*it == FT(1));
+
+  it++;
+  assert(*it == FT(2));
+  it++;
+  assert(*it == FT(3));
+
+  it++;
+  CCI it2 = v.cartesian_end();
+
+  assert(it == it2);
+  it--;
+  it--;
+  it--;
+  assert(*it == FT(1));
+  it += 1;
+  assert(*it == FT(2));
+  it -= 1;
+  assert(*it == FT(1));
+
+  it2 = it + 1;
+  it2--;
+  assert(it == it2);
+  it++;
+  it2 = it - 1;
+  it2++;
+  assert(it == it2);
 
  std::cout << "done" << std::endl;
  return true;

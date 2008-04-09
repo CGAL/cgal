@@ -27,6 +27,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/array.h>
+#include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,6 +55,8 @@ public:
 
   typedef const FT Cartesian_coordinate_type;
   typedef const RT& Homogeneous_coordinate_type;
+  typedef Cartesian_const_iterator_d<const RT*> Cartesian_const_iterator;
+
   typedef R_                                    R;
 
    VectorH2() {}
@@ -98,6 +101,17 @@ public:
    FT      cartesian(int i)   const;
    const RT & homogeneous(int i) const;
    FT      operator[](int i)  const;
+
+   Cartesian_const_iterator cartesian_begin() const
+   {
+     return make_cartesian_const_iterator_begin(get(base).begin(),
+                                                boost::prior(get(base).end()));
+   }
+
+   Cartesian_const_iterator cartesian_end() const
+   {
+     return make_cartesian_const_iterator_end(boost::prior(get(base).end()));
+   }
 
    int     dimension() const;
    Direction_2 direction() const;

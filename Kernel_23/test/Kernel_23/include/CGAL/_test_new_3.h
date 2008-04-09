@@ -299,6 +299,8 @@ test_new_3(const R& rep)
 
   cccit = construct_cartesian_const_iterator_3(p1);
   cccit = construct_cartesian_const_iterator_3(p1,0);
+  cccit = construct_cartesian_const_iterator_3(v5);
+  cccit = construct_cartesian_const_iterator_3(v5,0);
 
 #ifndef CGAL_NO_DEPRECATED_CODE
   typename R::Construct_supporting_line_3 construct_supporting_line
