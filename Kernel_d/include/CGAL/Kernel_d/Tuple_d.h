@@ -27,6 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <sstream>
 #endif
 
@@ -56,42 +57,7 @@ class Tuple_d  {
 public:
   typedef typename Vector::const_iterator const_iterator;
 
-  struct Cartesian_const_iterator {
-    typedef Cartesian_const_iterator self;
-    typedef std::random_access_iterator_tag iterator_category;
-    typedef CGAL::Quotient<NT>              value_type;
-    typedef std::ptrdiff_t                  difference_type;
-    typedef const value_type*               pointer;
-    typedef const value_type&               reference;
-
-  Cartesian_const_iterator() : _it(0), _w(0) {}
-  Cartesian_const_iterator(const_iterator it, const_iterator w = 0) 
-    : _it(it), _w(w) {}
-    
-  value_type operator*() const { return value_type(*_it,*_w); }
-
-  self& operator++() { ++_it; return *this; }
-  self  operator++(int) { self tmp = *this; ++_it; return tmp; }
-  self& operator--() { --_it; return *this; }
-  self  operator--(int) { self tmp = *this; --_it; return tmp; }
-
-  self& operator+=(difference_type i) { _it+=i; return *this; }
-  self& operator-=(difference_type i) { _it-=i; return *this; }
-  self operator+(difference_type i) const 
-  { self tmp=*this; return tmp += i; }
-  self operator-(difference_type i) const 
-  { self tmp=*this; return tmp -= i; }
-
-  difference_type operator-(self x) const { return _it-x._it; }
-  value_type operator[](difference_type i) const { return *(*this + i); }
-
-  bool operator==(const self& x) const { return _it==x._it; }
-  bool operator!=(const self& x) const { return ! (*this==x); }
-  bool operator<(const self& x) const { return (x - *this) > 0; }
-
-  private:
-    const_iterator _it, _w;  
-  }; // Cartesian_const_iterator
+  typedef Cartesian_const_iterator_d<const_iterator> Cartesian_const_iterator;
 
   struct Homogeneous_const_iterator {
     typedef Homogeneous_const_iterator self;
