@@ -62,7 +62,7 @@ public:
   typedef typename Kernel::Line_2                Line_2;
   typedef typename Kernel::Triangle_2            Triangle_2;
   typedef typename Kernel::Iso_rectangle_2       Iso_rectangle_2;
-  typedef Polygon_2<Kernel>                      Polygon_2;
+  typedef CGAL::Polygon_2<Kernel>                Polygon_2;
   typedef typename Kernel::Circle_2              Circle_2;
 
 protected:
