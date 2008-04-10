@@ -14,9 +14,6 @@
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
-#ifdef CGAL_USE_LAPACK
-
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -42,7 +39,6 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
-
 
 // read point set from .xyz file
 bool read_point_set(char *input_filename,
@@ -74,8 +70,7 @@ void test_average_spacing(std::list<Point>& points,
 	std::cerr << "  Average spacing using KNN: ";
 	std::list<Point> output;
 	typedef std::list<Point>::iterator Iterator;
-	FT spacing = CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
-	std::cerr << spacing; 
+	std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
 	std::cerr << " ok" << std::endl;
 }
 
@@ -108,22 +103,4 @@ int main(int argc, char * argv[])
 	return EXIT_SUCCESS;
 }
  
-
-#else // CGAL_USE_LAPACK
-
-
-#include <iostream>
-#include <cstdlib>
-
-// ----------------------------------------------------------------------------
-// Empty main() if LAPACK is not installed
-// ----------------------------------------------------------------------------
-
-int main()
-{
-    std::cerr << "Skip smoothing test as LAPACK is not installed" << std::endl;
-    return EXIT_SUCCESS;
-}
-
-#endif // CGAL_USE_LAPACK
 
