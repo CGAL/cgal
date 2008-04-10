@@ -3632,7 +3632,6 @@ Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
 Spatial_sorting/examples/Spatial_sorting/CMakeLists.txt -text
 Spatial_sorting/test/Spatial_sorting/CMakeLists.txt -text
 Straight_skeleton_2/demo/Straight_skeleton_2/CMakeLists.txt -text
-Straight_skeleton_2/demo/Straight_skeleton_2/CMakeLists.txt.bak -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
