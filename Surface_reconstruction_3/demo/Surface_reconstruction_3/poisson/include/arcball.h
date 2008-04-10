@@ -22,7 +22,6 @@ class Arcball
     Director* b = new Director();
     b->radius() = 1.0f/max_size;
     b->setOffset(cx, cy, cz);
-		TRACE("center: %lf %lf %lf\n",cx,cy,cz);
     return b;
   }
   
