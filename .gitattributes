@@ -4216,11 +4216,14 @@ Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstructionDeta
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.jpg -text svneol=unset#image/jpeg
 Surface_reconstruction_3/include/CGAL/Oriented_normal_3.h -text
+Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/normal_estimation_test_vc71.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc71.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj -text
+Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere966.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
