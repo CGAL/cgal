@@ -1,7 +1,7 @@
 Analysis
-- bounding box + len diag, etc.
+- len diag of bbox, etc., see  bounding_box(begin,beyond) in PCA component
 - average spacing (KNN)
-- std statistical measures: average, std dev, etc.
+- std statistical measures: centroid(begin,beyond), std dev, etc.
 - lfs estimate (pole approach + arbitrary query points using KNN)
 
 Processing
