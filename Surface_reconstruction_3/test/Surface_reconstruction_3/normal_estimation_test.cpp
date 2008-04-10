@@ -10,8 +10,7 @@
 // No output
 // Input files are .xyz
 //----------------------------------------------------------
-// normal_estimation_test mesh1.xyz mesh2.xyz...
-
+// normal_estimation_test points1.xyz points2.xyz...
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 

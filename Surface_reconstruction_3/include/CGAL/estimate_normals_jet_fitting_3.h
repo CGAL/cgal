@@ -30,8 +30,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/// Estimate normal direction using linear least
-/// squares fitting of a plane on the K nearest neighbors.
+/// Estimate normal direction using jet fitting 
+/// on the K nearest neighbors.
 ///
 /// Precondition: K >= 2.
 ///
