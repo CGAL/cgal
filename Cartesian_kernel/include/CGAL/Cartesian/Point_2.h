@@ -25,8 +25,6 @@
 #define CGAL_CARTESIAN_POINT_2_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/constant.h>
 
@@ -40,37 +38,38 @@ class PointC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Point_2              Point_2;
 
-  typedef boost::array<FT, 2>               Rep;
+// TODO : we now have 2 layers of reference counting.
+// => maybe simply suppress the one at this level?
+  typedef Vector_2                          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
 
 public:
 
-  typedef typename Rep::const_iterator      Cartesian_const_iterator;
+  typedef typename Rep::Cartesian_const_iterator Cartesian_const_iterator;
   
   typedef R_                                R;
 
   PointC2() {}
 
   PointC2(const Origin &)
-    : base(CGALi::make_array(FT(0), FT(0))) {}
+    : base(NULL_VECTOR) {}
 
   PointC2(const FT &x, const FT &y)
-    : base(CGALi::make_array(x, y)) {}
+    : base(x, y) {}
 
   PointC2(const FT &hx, const FT &hy, const FT &hw)
-    : base( hw != FT(1) ? CGALi::make_array(hx/hw, hy/hw)
-                        : CGALi::make_array(hx, hy) ) {}
+    : base(hx, hy, hw) {}
 
   const FT& x() const
   {
-      return get(base)[0];
+      return get(base).x();
   }
   
   const FT& y() const
   {
-      return get(base)[1];
+      return get(base).y();
   }
 
   const FT& hx() const
@@ -86,22 +85,19 @@ public:
       return constant<FT, 1>();
   }
 
-
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return get(base).begin(); 
+    return get(base).cartesian_begin(); 
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    return get(base).end();
+    return get(base).cartesian_end(); 
   }
 
   bool operator==(const PointC2 &p) const
   {
-      if (CGAL::identical(base, p.base))
-	  return true;
-      return equal_xy(*this, p);
+      return get(base) == get(p.base);
   }
   bool operator!=(const PointC2 &p) const
   {

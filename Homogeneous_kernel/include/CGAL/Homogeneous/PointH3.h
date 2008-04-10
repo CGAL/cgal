@@ -25,8 +25,6 @@
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/array.h>
-#include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <boost/utility/enable_if.hpp>
 #include <boost/utility.hpp>
 #include <boost/mpl/and.hpp>
@@ -44,7 +42,7 @@ class PointH3
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef boost::array<RT, 4>               Rep;
+   typedef Vector_3                          Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    typedef Rational_traits<FT>  Rat_traits;
@@ -53,38 +51,26 @@ class PointH3
 
 public:
 
-   typedef Cartesian_const_iterator_d<const RT*> Cartesian_const_iterator;
+   typedef typename Rep::Cartesian_const_iterator Cartesian_const_iterator;
    typedef R_                 R;
 
   PointH3() {}
 
   PointH3(const Origin &)
-    : base(CGALi::make_array(RT(0), RT(0), RT(0), RT(1))) {}
+    : base(NULL_VECTOR) {}
 
   template < typename Tx, typename Ty, typename Tz >
   PointH3(const Tx & x, const Ty & y, const Tz & z,
           typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
                                                                          boost::is_convertible<Ty, RT> >,
                                                        boost::is_convertible<Tz, RT> > >::type* = 0)
-    : base(CGALi::make_array<RT>(x, y, z, RT(1))) {}
+    : base(x, y, z) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)
-    : base(CGALi::make_array<RT>(
-           Rat_traits().numerator(x) * Rat_traits().denominator(y)
-                                     * Rat_traits().denominator(z),
-           Rat_traits().numerator(y) * Rat_traits().denominator(x)
-                                     * Rat_traits().denominator(z),
-           Rat_traits().numerator(z) * Rat_traits().denominator(x)
-                                     * Rat_traits().denominator(y),
-           Rat_traits().denominator(x) * Rat_traits().denominator(y)
-                                       * Rat_traits().denominator(z)))
-  {
-    CGAL_kernel_assertion(hw() > 0);
-  }
+    : base(x, y, z) {}
 
   PointH3(const RT& x, const RT& y, const RT& z, const RT& w)
-    : base( w < RT(0) ? CGALi::make_array<RT>(-x, -y, -z, -w)
-                      : CGALi::make_array(x, y, z, w)) {}
+    : base(x, y, z, w) {}
 
   FT    x()  const;
   FT    y()  const;
@@ -100,13 +86,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return make_cartesian_const_iterator_begin(get(base).begin(),
-		                               boost::prior(get(base).end()));
+    return get(base).cartesian_begin();
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return make_cartesian_const_iterator_end(boost::prior(get(base).end()));
+    return get(base).cartesian_end();
   }
 
   int   dimension() const;
@@ -123,25 +108,25 @@ template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hx() const
-{ return get(base)[0]; }
+{ return get(base).hx(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hy() const
-{ return get(base)[1]; }
+{ return get(base).hy(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hz() const
-{ return get(base)[2]; }
+{ return get(base).hz(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hw() const
-{ return get(base)[3]; }
+{ return get(base).hw(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -165,15 +150,14 @@ template < class R >
 inline
 int
 PointH3<R>::dimension() const
-{ return 3; }
+{ return get(base).dimension(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
 typename PointH3<R>::FT
 PointH3<R>::cartesian(int i) const
 {
-  CGAL_kernel_precondition(i == 0 || i == 1 || i == 2);
-  return FT(get(base)[i]) / FT(hw());
+  return get(base).cartesian(i);
 }
 
 template < class R >
@@ -181,15 +165,16 @@ CGAL_KERNEL_INLINE
 const typename PointH3<R>::RT &
 PointH3<R>::homogeneous(int i) const
 {
-  CGAL_kernel_precondition(i == 0 || i == 1 || i == 2 || i == 3);
-  return get(base)[i];
+  return get(base).homogeneous(i);
 }
 
 template < class R >
 inline
 typename PointH3<R>::FT
 PointH3<R>::operator[](int i) const
-{ return cartesian(i); }
+{
+  return get(base)[i];
+}
 
 template < class R >
 inline
@@ -202,9 +187,7 @@ CGAL_KERNEL_INLINE
 bool
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
-  return ( (hx() * p.hw() == p.hx() * hw() )
-         &&(hy() * p.hw() == p.hy() * hw() )
-         &&(hz() * p.hw() == p.hz() * hw() ) );
+  return get(base) == get(p.base);
 }
 
 template < class R >
