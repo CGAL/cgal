@@ -8,10 +8,11 @@
 #include <stdlib.h>
 #include <vector>
 
+//#include "Gyroviz_vertex_segment_2.h"
 #include <CGAL/Delaunay_triangulation_2.h>
 
 template < class Gt, class Tds >
-class Gyroviz_border_points_dt2 : public CGAL::Delaunay_triangulation_2<Gt, Tds>
+class Gyroviz_border_points_dt2 :  public CGAL::Delaunay_triangulation_2<Gt, Tds>
 {
 	// Private types
 private:
@@ -25,15 +26,16 @@ public:
 	typedef Tds Triangulation_data_structure;
 	typedef Gt  Geom_traits;
 	typedef typename Geom_traits::FT FT;
-	typedef typename Geom_traits::Point_2        Point_2;
-	typedef typename Geom_traits::Segment_2      Segment_2;
-	typedef typename Base::Face_handle           Face_handle;
-	typedef typename Base::Vertex_handle         Vertex_handle;
-	typedef typename Base::Edge                  Edge;
-	typedef typename Base::Finite_edges_iterator Finite_edges_iterator;
-	typedef typename Base::Finite_faces_iterator Finite_faces_iterator;
-	typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
-
+	typedef typename Geom_traits::Point_2			   Point_2;
+	typedef typename Geom_traits::Segment_2			   Segment_2;
+	typedef typename Base::Face_handle				   Face_handle;
+	typedef typename Base::Vertex_handle			   Vertex_handle;
+	typedef typename Base::Edge						   Edge;
+	typedef typename Base::Finite_edges_iterator	   Finite_edges_iterator;
+	typedef typename Base::Finite_faces_iterator       Finite_faces_iterator;
+	typedef typename Base::Finite_vertices_iterator    Finite_vertices_iterator;
+	//typedef typename Gyroviz_vertex_segment_2<Base> Gyroviz_vertex_segment_2;
+	
 	// Data members
 private:
 	std::vector<Vertex_handle> input;
@@ -64,8 +66,12 @@ public:
 		Finite_edges_iterator fe = this->finite_edges_begin();
 		for(; fe != this->finite_edges_end(); ++fe)
 		{
+			//Vertex_handle first_vertex(fe->first->vertex(ccw(fe->second)));
+			//result.push_back(first_vertex);
+			//Vertex_handle second_vertex(fe->first->vertex(cw(fe->second)));
+			//result.push_back(second_vertex);
 			Segment_2 curr_segment(fe->first->vertex(ccw(fe->second))->point(),
-								   fe->first->vertex(cw(fe->second))->point());
+				fe->first->vertex(cw(fe->second))->point());
 			result.push_back(curr_segment);
 		}
 

@@ -334,6 +334,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Gyroviz_constrained_triangle_soup.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\Gyroviz_dt2.h"
 				>
 			</File>
@@ -363,6 +367,10 @@
 			</File>
 			<File
 				RelativePath=".\Gyroviz_segmented_dt3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Gyroviz_triangle_with_cam.h"
 				>
 			</File>
 			<File

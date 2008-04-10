@@ -8,6 +8,9 @@
 //                 va and vb as a constrained edge e. The triangles intersected
 //			       by s are removed and new ones are created.
 
+#ifndef _Gyroviz_vertex_segment_2_
+#define _Gyroviz_vertex_segment_2_
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 template < class Triangulation >
@@ -35,3 +38,5 @@ public:
 	void	set_source(Vertex_handle va) { source=va; }
 	void	set_target(Vertex_handle vb) { target=vb; }
 };
+
+#endif // _Gyroviz_vertex_segment_2_

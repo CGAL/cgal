@@ -8,6 +8,7 @@
 // CGAL
 #include "GyrovizKernel.h"
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include "Gyroviz_constrained_triangle_soup.h"
 
 // CImg
 #include <CImg.h>
@@ -28,11 +29,11 @@ using namespace cimg_library;
 //typedef Dt2::Finite_vertices_iterator Finite_vertices_iterator;
 typedef CGAL::Triangulation_vertex_base_with_info_2<Gyroviz_info_for_cdt2,K> CVb;
 typedef CGAL::Constrained_triangulation_face_base_2<K> CFb;
-typedef CGAL::Triangulation_data_structure_2<CVb,CFb> CTds;
-typedef CGAL::Exact_predicates_tag                  Itag;
-typedef Gyroviz_cdt2<K,CTds, Itag>					CDt2;
-
-
+typedef CGAL::Triangulation_data_structure_2<CVb,CFb>  CTds;
+typedef CGAL::Exact_predicates_tag                     Itag;
+typedef Gyroviz_cdt2<K,CTds, Itag>					   CDt2;
+typedef Gyroviz_triangle_with_cam<CDt2>                Triangle_with_cam;
+typedef Gyroviz_constrained_triangle_soup<CDt2>        Gyroviz_const_triangle_soup;
 
 
 class CGyrovizDoc_4 : public CDocument
@@ -44,45 +45,40 @@ protected: // create from serialization only
   // Attributes
 public:
 
-  CImg <unsigned char> m_cimg_interm_image;
-  CImg<unsigned char> m_cimg_gray_image;
-  CImg<unsigned char> m_cimg_filt_image;
-  CImg<unsigned char> m_cimg_seg_image;
-
-  unsigned char*  m_original_image;  
-  unsigned char* m_grayscaled_image;
-  unsigned char* m_filtered_image;
-  unsigned char* m_segmented_image;
-
-
   // Triangulation
-  //Dt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
-  CDt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
+  //CDt2 m_gyroviz_dt; // The Gyroviz equation is solved on the vertices of m_gyroviz_dt
+  std::list<CDt2> m_list_cdt2;
+  Gyroviz_const_triangle_soup m_vector_triangle3_wc;
 
 // Public methods
 public:
 
-  // Get triangulation.
-  //Dt2& get_dt2()
+  //// Get triangulation.
+  //CDt2& get_cdt2()
   //{
   //  return m_gyroviz_dt;
   //}
-  //const Dt2& get_dt2() const
+  //const CDt2& get_cdt2() const
   //{
   //  return m_gyroviz_dt;
   //}
 
-  CDt2& get_cdt2()
-  {
-    return m_gyroviz_dt;
-  }
-  const CDt2& get_cdt2() const
-  {
-    return m_gyroviz_dt;
-  }
+	// Get m_vector_triangle...
+	Gyroviz_const_triangle_soup& get_cts()
+	{
+		return m_vector_triangle3_wc;
+	}
+	const Gyroviz_const_triangle_soup& get_cts() const
+	{
+		return m_vector_triangle3_wc;
+	}
+
 
   // Private methods
 private:
+
+  bool read_sequence(const std::string& first_image, 
+  					 const std::string& first_feature_file);
 
   // misc status stuff
   void update_status();

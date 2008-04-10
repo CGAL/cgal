@@ -19,8 +19,10 @@
 #include <CGAL/origin.h>
 
 #include "Gyroviz_info_for_cdt2.h"
-#include "Gyroviz_vertex_segment_2.h"
+//#include "Gyroviz_vertex_segment_2.h"
 #include "Gyroviz_border_points_dt2.h"
+#include "Gyroviz_triangle_with_cam.h"
+#include "Gyroviz_constrained_triangle_soup.h"
 
 #include <list>
 #include <vector>
@@ -53,6 +55,8 @@ public:
 	typedef typename Geom_traits::Vector_3             Vector_3;
 	typedef typename Geom_traits::Segment_2            Segment_2;
 	typedef typename Geom_traits::Segment_3            Segment_3;
+	typedef typename Geom_traits::Triangle_2		   Triangle_2;
+	typedef typename Geom_traits::Triangle_3		   Triangle_3;
 	typedef typename Geom_traits::Sphere_3             Sphere;
 	typedef typename Geom_traits::Iso_cuboid_3         Iso_cuboid_3;
 	typedef typename Base::Face_handle                 Face_handle;
@@ -62,7 +66,9 @@ public:
 	typedef typename Base::Finite_edges_iterator       Finite_edges_iterator;
 	typedef typename Base::Finite_faces_iterator       Finite_faces_iterator;
 	typedef typename Base::Finite_vertices_iterator    Finite_vertices_iterator;
-	typedef typename Gyroviz_vertex_segment_2<Gyroviz_cdt2> Gyroviz_vertex_segment_2;
+	//typedef typename Gyroviz_vertex_segment_2<Gyroviz_cdt2>    Gyroviz_vertex_segment_2;
+	typedef typename Gyroviz_triangle_with_cam<Gyroviz_cdt2>   Gyroviz_triangle_with_cam;
+	typedef typename Gyroviz_constrained_triangle_soup<Gyroviz_cdt2>   Gyroviz_constrained_triangle_soup;
 
 	// Data members
 private:
@@ -81,9 +87,9 @@ public:
 		// TODO
 	}
 
-	bool read_pnt(char *pFilename)
+	bool read_pnt(const char *pFilename)
 	{
-		
+
 		//DEBUG
 		int number_of_vertices_pnt = 0;
 
@@ -134,10 +140,10 @@ public:
 	// set flag to true for the vertices positionned on the border and return a vector of these
 	std::vector<Vertex_handle> set_on_border_2D_vertices(const CImg <unsigned char> & image)
 	{
-		
+
 		//DEBUG
 		int number_of_border_vertices = 0;
-		
+
 		std::vector<Vertex_handle> vector_of_border_points;
 
 		Finite_vertices_iterator fv = this->finite_vertices_begin();
@@ -290,25 +296,23 @@ public:
 
 
 	// (DEPRECATED)this function will draw segments between all border points
-	std::vector<Gyroviz_vertex_segment_2> link_points_on_border(const std::vector<Vertex_handle>& vector_of_border_points)
+	std::vector<Segment_2> link_points_on_border(const std::vector<Vertex_handle>& vector_of_border_points)
 	{
-		//DEBUG
-		int number_of_segments = 0;
-		
-		std::vector<Gyroviz_vertex_segment_2> vector_of_vertex_segments;
+
+
+		std::vector<Segment_2> vector_of_segments;
 
 		for(int i=0; i<vector_of_border_points.size()-1; ++i)
 		{
 			for(int j=i+1; j<vector_of_border_points.size(); ++j)
 			{
-				Gyroviz_vertex_segment_2 vertex_segment(vector_of_border_points[i],vector_of_border_points[j]);			
-				vector_of_vertex_segments.push_back(vertex_segment);
+				Segment_2 segment(vector_of_border_points[i]->point(),vector_of_border_points[j]->point());			
+				vector_of_segments.push_back(segment);
 			}
 		}
 
-		number_of_segments = vector_of_vertex_segments.size();
 
-		return vector_of_vertex_segments;
+		return vector_of_segments;
 	}
 
 
@@ -327,28 +331,16 @@ public:
 	{
 
 		std::vector<Vertex_handle>   vector_of_border_points = set_on_border_2D_vertices(image);
-		
+
 		Gyroviz_border_points_dt2<Gt, Tds> border_dt2(vector_of_border_points);
 
-		std::vector<Segment_2> vector_of_segments = border_dt2.segments_out_of_dt2();
-		
-		//std::vector<Gyroviz_vertex_segment_2> vector_of_vertex_segments      = link_points_on_border(vector_of_border_points);
-
-		//DEBUG
-		int vector_of_border_points_size = vector_of_border_points.size();
-		int vector_of_segments_size = vector_of_segments.size(); 
-
-		int BEFORE_constraints_number_of_vertices=0;
-
-		
-		for(Finite_vertices_iterator fv = this->finite_vertices_begin(); fv != this->finite_vertices_end(); ++fv)
-		{
-			BEFORE_constraints_number_of_vertices++;
-		}
-
+		std::vector<Segment_2/*Vertex_handle*/> vector_of_vertex_segments = border_dt2.segments_out_of_dt2();
 
 		Point_2 source_vertex;
 		Point_2 end_vertex;
+
+		Vertex_handle source_handle;
+		Vertex_handle end_handle;
 		Vector_2 v;
 		std::vector<Segment_2> vector_of_constraints;
 
@@ -359,15 +351,18 @@ public:
 		// S(Border/Segment) = +1
 		// S(Gap/Segment) = gap_score (default : -2)
 
-		for(int i = 0; i</*vector_of_vertex_segments*/vector_of_segments.size(); ++i)
+		for(int i = 0; i</*vector_of_vertex_segments*/vector_of_vertex_segments.size()/*-1*/; ++i)
 		{
-			//source_vertex = vector_of_vertex_segments[i].get_source()->point();
-			//end_vertex    = vector_of_vertex_segments[i].get_target()->point();
-			//Segment_2 s (source_vertex, end_vertex);
 
-			source_vertex =  vector_of_segments[i].source();
-			end_vertex =  vector_of_segments[i].target();
-			Segment_2 s = vector_of_segments[i];
+			//source_handle = vector_of_vertex_segments[i];
+			//end_handle = vector_of_vertex_segments[++i];
+			//source_vertex = source_handle->point();
+			//end_vertex    = end_handle->point();
+			//Segment_2 s = (source_vertex, end_vertex);
+
+			source_vertex =  vector_of_vertex_segments[i].source();
+			end_vertex =  vector_of_vertex_segments[i].target();
+			Segment_2 s = vector_of_vertex_segments[i];
 			v = end_vertex - source_vertex;
 
 			length_curr_segment = (int)ceil(sqrt(s.squared_length()));
@@ -389,29 +384,18 @@ public:
 				{
 					current_gap_score++;
 					global_score = global_score - current_gap_score/*/gap_score*/; //TEST
-					
+
 				}
 			}
-			
+
 			if(global_score >= 0)
 			{
-
-				this->insert_constraint(source_vertex,end_vertex/*vector_of_vertex_segments[i].get_source(),vector_of_vertex_segments[i].get_target()*/);
+				this->insert_constraint(source_vertex,end_vertex/*source_handle,end_handle*/);
 				vector_of_constraints.push_back(s);
 				global_score = 0;
 			}
 			else
 				global_score = 0;
-		}
-
-
-		// DEBUG
-		int AFTER_constraints_number_of_vertices=0;
-
-		
-		for(Finite_vertices_iterator fv = this->finite_vertices_begin(); fv != this->finite_vertices_end(); ++fv)
-		{
-			AFTER_constraints_number_of_vertices++;
 		}
 
 		return vector_of_constraints;
@@ -426,6 +410,39 @@ public:
 	{
 		Point_2 origin_vertex;
 		Point_2 end_vertex;
+	}
+
+
+
+	static Gyroviz_constrained_triangle_soup list_cdt2_to_vector_twc(const std::list<Gyroviz_cdt2>& list_cdt2)
+	{
+		Gyroviz_constrained_triangle_soup result;
+		
+		int counter = 0; // cam index starts at one
+
+
+		for (std::list<Gyroviz_cdt2>::const_iterator cdt2_it = list_cdt2.begin(); 
+			cdt2_it != list_cdt2.end(); ++cdt2_it)
+		{
+			Finite_faces_iterator ff = cdt2_it->finite_faces_begin();
+			for(; ff != cdt2_it->finite_faces_end(); ++ff)
+			{
+				counter++;
+				
+				Vertex_handle v1 = ff->vertex(0);
+				Vertex_handle v2 = ff->vertex(1);
+				Vertex_handle v3 = ff->vertex(2);
+				Point_3 p1 = v1->info().get_point3();
+				Point_3 p2 = v2->info().get_point3();
+				Point_3 p3 = v3->info().get_point3();
+				Triangle_3 t(p1,p2,p3);
+
+				Gyroviz_triangle_with_cam triangle_wc(t,counter);
+				
+				result.push_back(triangle_wc);
+			}
+		}
+		return result;
 	}
 
 
@@ -563,12 +580,18 @@ public:
 		::glLineWidth(line_width);
 		::glBegin(GL_LINES);
 
+		// DEBUG 
+		int counter_constraints=0;
+
 		//std::vector<Segment_2> vector_of_constraints = nw_add_constraints(image, gap_score);
 		Finite_edges_iterator fe = this->finite_edges_begin();
 		for(; fe != this->finite_edges_end(); ++fe)
 		{
 			if(fe->first->is_constrained(fe->second))
 			{
+
+				counter_constraints++;
+
 				Point_2 p1 = fe->first->vertex(ccw(fe->second))->point();
 				Point_2 p2 = fe->first->vertex(cw(fe->second))->point();
 				::glVertex2d(p1.x(), p1.y());
@@ -606,7 +629,7 @@ public:
 
 		::glLineWidth(line_width);
 		::glBegin(GL_LINES);
-		
+
 		Finite_edges_iterator fe = this->finite_edges_begin();
 		for(; fe != this->finite_edges_end(); ++fe)
 		{
@@ -640,7 +663,7 @@ public:
 		{
 			const Point_3& p = fv->info().get_point3();
 			::glVertex3d(p.x(),p.y(),p.z());
-			
+
 			number_of_vertices_sv++;
 
 		}
@@ -654,7 +677,7 @@ public:
 	{
 		//DEBUG
 		int number_of_vertices_bv = 0;
-		
+
 		::glPointSize(size);
 		::glColor3ub(r,g,b);
 		::glBegin(GL_POINTS);
@@ -665,9 +688,9 @@ public:
 			if(fv->info().get_flag())
 			{
 				::glVertex3d(fv->info().get_point3().x(),fv->info().get_point3().y(),fv->info().get_point3().z());
-			
+
 				number_of_vertices_bv++;
-			
+
 			}		
 		}
 		::glEnd();
@@ -723,6 +746,8 @@ public:
 			} 
 			::glEnd();
 	} 
+
+
 
 };
 
