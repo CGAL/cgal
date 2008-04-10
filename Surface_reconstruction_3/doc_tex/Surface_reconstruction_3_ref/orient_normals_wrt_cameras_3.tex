@@ -24,17 +24,17 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{void orient_normals_wrt_cameras_3(VertexIterator first, VertexIterator beyond, PointMap const& vertex_point, NormalMap& vertex_normal, CamerasMap const& vertex_cameras);}
+\ccFunction{void orient_normals_wrt_cameras_3(VertexIterator first, const VertexIterator beyond, VertexPointMap& vertex_point, VertexNormalMap& boost::vertex_normal, VertexCamerasMap const& vertex_cameras);}
 {
 Orient the normals of the [first, beyond) range of vertices w.r.t. the position of cameras that reconstructed the points by photogrammetry.
 Preconditions:\begin{itemize}
-\item VertexIterator is a model of ForwardIterator.\item PointMap is a model of \ccc{boost::readable_property_map_tag}.\item NormalMap is a model of \ccc{boost::lvalue_property_map_tag}.\item CamerasMap is a model of \ccc{boost::readable_property_map_tag}. \end{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map_tag}.\item VertexCamerasMap is a model of \ccc{boost::readable_property_map}. \end{itemize}
 }
 \ccGlue
 \begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[first]range of vertices \item[beyond]range of vertices \item[\ccc{vertex_point}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal}]property map VertexIterator -$>$ Normal (in and out) \item[\ccc{vertex_cameras}]property map VertexIterator -$>$ pair of camera iterators \end{description}
+\item[first]range of vertices \item[beyond]range of vertices \item[\ccc{vertex_point}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{boost::vertex_normal}]property map VertexIterator -$>$ Normal (in and out) \item[\ccc{vertex_cameras}]property map VertexIterator -$>$ pair of camera iterators \end{description}
 \end{description}
 \ccGlue
 
@@ -47,11 +47,11 @@ Preconditions:\begin{itemize}
 
 template$<$  \\
 class VertexIterator,   \\
-class PointMap,   \\
-class NormalMap,   \\
-class CamerasMap$>$  \\
+class VertexPointMap,   \\
+class VertexNormalMap,   \\
+class VertexCamerasMap$>$  \\
 void  \\
-\ccc{orient_normals_wrt_cameras_3} (VertexIterator first, VertexIterator beyond, PointMap const \&\ccc{vertex_point}, NormalMap \&\ccc{vertex_normal}, CamerasMap const \&\ccc{vertex_cameras});  \\
+\ccc{orient_normals_wrt_cameras_3} (VertexIterator first, VertexIterator beyond, VertexPointMap const \&\ccc{vertex_point}, VertexNormalMap \&\ccc{boost::vertex_normal}, VertexCamerasMap const \&\ccc{vertex_cameras});  \\
 
 %END-AUTO(\ccParameters)
 

@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 #include "Poisson.h"
+
+#include "RedirectIOToConsole.h"
+
 #include "MainFrm.h"
 
 #include "ChildFrm.h"
@@ -59,6 +62,7 @@ BOOL CPoissonApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 	LoadStdProfileSettings(16);  // Load standard INI file options (including MRU)
+	
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
 	CMultiDocTemplate* pDocTemplate;
@@ -69,11 +73,13 @@ BOOL CPoissonApp::InitInstance()
 	if (!pDocTemplate)
 		return FALSE;
 	AddDocTemplate(pDocTemplate);
+	
 	// create main MDI Frame window
 	CMainFrame* pMainFrame = new CMainFrame;
 	if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))
 		return FALSE;
 	m_pMainWnd = pMainFrame;
+	
 	// call DragAcceptFiles only if there's a suffix
 	//  In an MDI app, this should occur immediately after setting m_pMainWnd
 	// Enable drag/drop open
@@ -91,6 +97,12 @@ BOOL CPoissonApp::InitInstance()
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
+
+  // Create console window
+  RedirectIOToConsole();
+  std::cerr << "Console" << std::endl;
+  fprintf(stderr, "(closing this window will stop the application)\n\n");
+
 	// The main window has been initialized, so show and update it
 	pMainFrame->ShowWindow(m_nCmdShow);
 	pMainFrame->UpdateWindow();

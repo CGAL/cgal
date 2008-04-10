@@ -76,7 +76,7 @@ estimate_normal_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D poi
 		points.push_back(search_iterator->first);
 		search_iterator++;
 	}
-	CGAL_precondition(points.size() >= 1);
+	CGAL_surface_reconstruction_precondition(points.size() >= 1);
 
 	// performs jet fitting
 	Monge_jet_fitting monge_fit;
@@ -120,10 +120,10 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
 	// but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_surface_reconstruction_precondition(first != beyond);
 
 	// precondition: at least 2 nearest neighbors
-  CGAL_precondition(K >= 2);
+  CGAL_surface_reconstruction_precondition(K >= 2);
 
 	// instanciate a KD-tree search
   Tree tree(first,beyond);

@@ -7,6 +7,9 @@
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <Gyroviz_point_3.h>
 #include <CGAL/orient_normals_wrt_cameras_3.h>
+#include <CGAL/orient_normals_minimum_spanning_tree_3.h>
+
+#include <boost/graph/properties.hpp>
 
 // Forward reference
 template <class BaseGt, class Gt, class Tds> class Poisson_dt3;
@@ -24,9 +27,14 @@ struct Poisson_dt3_default_geom_traits : public BaseGt
 };
 
 
-/// Helper type to get the "vertex_cameras" property map
-/// of a Poisson_dt3 object.
+namespace boost {
+
+/// Helper type and constant to get a "vertex_cameras" property map.
 enum vertex_cameras_t { vertex_cameras } ;
+BOOST_INSTALL_PROPERTY(vertex, cameras);
+
+} // namespace boost
+
 
 /// Helper class: type of the "vertex_cameras" property map
 /// of a Poisson_dt3 object.
@@ -41,13 +49,13 @@ public:
     typedef boost::readable_property_map_tag                        category;
     typedef std::pair<Camera_const_iterator,Camera_const_iterator>  value_type;
     typedef value_type                                              reference;
-    typedef typename Triangulation::Vertex_iterator                 key_type;
+    typedef typename Triangulation::Finite_vertices_iterator        key_type;
 
-    Poisson_dt_vertex_cameras_const_map(Triangulation const&) {}
+    Poisson_dt_vertex_cameras_const_map(const Triangulation&) {}
 
     /// Free function to access the map elements.
     friend inline
-    reference get(Poisson_dt_vertex_cameras_const_map const&, key_type const& v)
+    reference get(const Poisson_dt_vertex_cameras_const_map&, key_type v)
     {
       return std::make_pair(v->point().cameras_begin(), v->point().cameras_end());
     }
@@ -57,10 +65,10 @@ public:
 /// of a Poisson_dt3 object.
 template <class BaseGt, class Gt, class Tds>
 inline
-::Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> 
-get(::vertex_cameras_t, ::Poisson_dt3<BaseGt,Gt,Tds> const& tr) 
+Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> 
+get(boost::vertex_cameras_t, const Poisson_dt3<BaseGt,Gt,Tds>& tr) 
 {
-    ::Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> aMap(tr);
+    Poisson_dt_vertex_cameras_const_map<BaseGt,Gt,Tds> aMap(tr);
     return aMap;
 }
 
@@ -733,14 +741,27 @@ public:
 		::glEnd();
 	}
 
+  /// Orient the normals using a minimum spanning tree.
+	void orient_normals_minimum_spanning_tree(unsigned int k)
+	{
+	  // index (finite) vertices before using the "index_vertex" property map
+	  index_vertices();
+	  
+    CGAL::orient_normals_minimum_spanning_tree_3(finite_vertices_begin(), finite_vertices_end(),
+                                                 get(boost::vertex_index, *this),
+                                                 get(CGAL::vertex_point, *this),
+                                                 get(boost::vertex_normal, *this),
+                                                 k);
+	}
+
   /// Specific to Gyroviz: orient the normals w.r.t. the position of cameras
   /// that reconstructed the points by photogrammetry.
 	void orient_normals_wrt_cameras()
 	{
-    CGAL::orient_normals_wrt_cameras_3(vertices_begin(), vertices_end(),
+    CGAL::orient_normals_wrt_cameras_3(finite_vertices_begin(), finite_vertices_end(),
                                        get(CGAL::vertex_point, *this),
-                                       get(CGAL::vertex_normal, *this),
-                                       get(vertex_cameras, *this));
+                                       get(boost::vertex_normal, *this),
+                                       get(boost::vertex_cameras, *this));
 	}
 
 }; // end of class Poisson_dt3

@@ -107,17 +107,17 @@ orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point positio
 ///
 /// Preconditions:
 /// - VertexIterator is a model of ForwardIterator.
-/// - PointMap is a model of boost::readable_property_map_tag.
-/// - NormalMap is a model of boost::lvalue_property_map_tag.
-/// - CamerasMap is a model of boost::readable_property_map_tag.
+/// - VertexPointMap is a model of boost::readable_property_map.
+/// - VertexNormalMap is a model of boost::lvalue_property_map.
+/// - VertexCamerasMap is a model of boost::readable_property_map.
 
-template < class VertexIterator, class PointMap, class NormalMap, class CamerasMap >
+template < class VertexIterator, class VertexPointMap, class VertexNormalMap, class VertexCamerasMap >
 void
 orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices
                              VertexIterator beyond, ///< range of vertices
-                             PointMap const& vertex_point, ///< property map VertexIterator -> Point_3
-                             NormalMap& vertex_normal, ///< property map VertexIterator -> Normal (in and out)
-                             CamerasMap const& vertex_cameras) ///< property map VertexIterator -> pair of camera iterators
+                             VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
+                             VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
+                             VertexCamerasMap vertex_cameras_map) ///< property map VertexIterator -> pair of camera iterators
 {
 	typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
   typedef typename Vertex_type::Geom_traits Gt;
@@ -125,9 +125,9 @@ orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices
 	// iterate over input points and orient normals
 	for (VertexIterator it = first; it != beyond; it++)
   {
-      orient_normal_wrt_cameras_3<Gt>(get(vertex_point,it),
-                                      vertex_normal[it],
-                                      get(vertex_cameras,it).first, get(vertex_cameras,it).second);
+      orient_normal_wrt_cameras_3<Gt>(get(vertex_point_map,it),
+                                      vertex_normal_map[it],
+                                      get(vertex_cameras_map,it).first, get(vertex_cameras_map,it).second);
   }
 }
 

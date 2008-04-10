@@ -51,7 +51,8 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
   ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_POISSONSTATISTICS, OnUpdateAlgorithmsPoissonstatistics)
   ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnAlgorithmsEstimateNormalsByPCA)
   ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
-  ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSW, OnAlgorithmsOrientNormalsWrtCameras)
+  ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
+  ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSMST, &CPoissonDoc::OnAlgorithmsOrientNormalsWithMST)
 END_MESSAGE_MAP()
 
 
@@ -468,17 +469,32 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
 	EndWaitCursor();
 }
 
+/// Orient the normals using a minimum spanning tree.
+void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
+{
+	BeginWaitCursor();
+	status_message("Orient Normals with MST...");
+	double init = clock();
+
+	m_poisson_dt.orient_normals_minimum_spanning_tree(m_number_of_neighbours);
+
+	status_message("Orient Normals with MST...done (%lf s)",duration(init));
+  update_status();
+	UpdateAllViews(NULL);
+	EndWaitCursor();
+}
+
 /// Specific to Gyroviz: orient the normals w.r.t. the position of cameras
 /// that reconstructed the points by photogrammetry.
 void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 {
 	BeginWaitCursor();
-	status_message("Orient Normals...");
+	status_message("Orient Normals wrt Cameras...");
 	double init = clock();
 
 	m_poisson_dt.orient_normals_wrt_cameras();
 
-	status_message("Orient Normals...done (%lf s)",duration(init));
+	status_message("Orient Normals wrt Cameras...done (%lf s)",duration(init));
   update_status();
 	UpdateAllViews(NULL);
 	EndWaitCursor();

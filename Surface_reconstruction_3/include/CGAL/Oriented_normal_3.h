@@ -23,6 +23,8 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 
+#include <boost/graph/properties.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -120,6 +122,16 @@ private:
 
 
 CGAL_END_NAMESPACE
+
+
+namespace boost {
+
+/// Helper type and constant to get a "vertex_normal" property map.
+enum vertex_normal_t { vertex_normal } ;
+BOOST_INSTALL_PROPERTY(vertex, normal);
+
+} // namespace boost
+
 
 #endif //CGAL_ORIENTED_NORMAL_3_H
 

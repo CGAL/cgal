@@ -7,7 +7,6 @@
 
 // CGAL
 #include <CGAL/basic.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
@@ -127,6 +126,7 @@ public:
   afx_msg void OnAlgorithmsEstimateNormalsByPCA();
   afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
   afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
+  afx_msg void OnAlgorithmsOrientNormalsWithMST();
 };
 
 

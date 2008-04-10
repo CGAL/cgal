@@ -309,11 +309,11 @@ public:
 // Data members
 private:
 
-  // Indicate if m_barycenter, m_bounding_box and m_standard_deviation below are valid
+  // Indicate if m_barycenter, m_bounding_box and m_diameter_standard_deviation below are valid
   mutable bool m_bounding_box_is_valid;
 	mutable Iso_cuboid_3 m_bounding_box; // Triangulation's bounding box
 	mutable Point m_barycenter; // Triangulation's barycenter
-	mutable FT m_standard_deviation; // Triangulation's standard deviation
+	mutable FT m_diameter_standard_deviation; // Triangulation's standard deviation
 
 // Public methods
 public:
@@ -387,12 +387,12 @@ public:
 	}
 
 	/// Get the standard deviation of the distance to barycenter.
-	FT standard_deviation() const
+	FT diameter_standard_deviation() const
 	{
 	  if (!m_bounding_box_is_valid)
 	    update_bounding_box();
 
-    return m_standard_deviation;
+    return m_diameter_standard_deviation;
 	}
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
@@ -446,6 +446,35 @@ public:
     return number_of_vertices() - n;
 	}
 
+  /// Index all (finite) vertices following the order of Finite_vertices_iterator.
+  /// @return the number (finite) of vertices.
+	unsigned int index_vertices()
+	{
+		unsigned int index = 0;
+		for (Finite_vertices_iterator v = finite_vertices_begin();
+				 v != finite_vertices_end();
+			   v++)
+		{
+			v->index() = index++;
+		}
+		return index;
+	}
+
+  /// Index unconstraint vertices following the order of Finite_vertices_iterator.
+  /// @return the number of unconstraint vertices.
+	unsigned int index_unconstrained_vertices()
+	{
+		unsigned int index = 0;
+		for (Finite_vertices_iterator v = finite_vertices_begin();
+				 v != finite_vertices_end();
+			   v++)
+		{
+			if(!v->constrained())
+				v->index() = index++;
+		}
+		return index;
+	}
+
 // Private methods:
 private:
 
@@ -483,7 +512,7 @@ private:
     //
     m_barycenter = ORIGIN + v / norm;
 
-	  /// Compute standard deviation
+	  /// Compute standard deviation of the distance to barycenter
 	  typename Geom_traits::Compute_squared_distance_3 sqd;
 	  FT sq_radius = 0;
 	  for (Point_iterator it = points_begin(); it != points_end(); it++)
@@ -491,7 +520,7 @@ private:
         sq_radius += sqd(*it, m_barycenter);
     }
     sq_radius /= number_of_vertices();
-    m_standard_deviation = CGAL::sqrt(sq_radius);
+    m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
 	  m_bounding_box_is_valid = true;
 	}
@@ -509,17 +538,17 @@ public:
     typedef typename Gt::Point_3 Point_3;  
 
     // Property maps required types
-    typedef boost::readable_property_map_tag        category;
-    typedef Point_3                                 value_type;
-    typedef value_type                              reference;
-    typedef typename Triangulation::Vertex_iterator key_type;
+    typedef boost::readable_property_map_tag                    category;
+    typedef Point_3                                             value_type;
+    typedef value_type                                          reference;
+    typedef typename Triangulation::Finite_vertices_iterator    key_type;
 
-    Implicit_fct_delaunay_triangulation_vertex_point_const_map(Triangulation const&) {}
+    Implicit_fct_delaunay_triangulation_vertex_point_const_map(const Triangulation&) {}
 
     /// Free function to access the map elements.
     friend inline 
     reference 
-    get(Implicit_fct_delaunay_triangulation_vertex_point_const_map const&, key_type const& v)
+    get(const Implicit_fct_delaunay_triangulation_vertex_point_const_map&, key_type v)
     {
       return v->point();
     }
@@ -530,38 +559,34 @@ public:
 template <class BaseGt, class Gt, class Tds>
 inline
 Implicit_fct_delaunay_triangulation_vertex_point_const_map<BaseGt,Gt,Tds> 
-get(vertex_point_t, Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> const& tr) 
+get(vertex_point_t, const Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>& tr) 
 {
   Implicit_fct_delaunay_triangulation_vertex_point_const_map<BaseGt,Gt,Tds> aMap(tr);
   return aMap;
 }
 
 
-/// Helper type to get the "vertex_normal" property map
-/// of an Implicit_fct_delaunay_triangulation_3 object.
-enum vertex_normal_t { vertex_normal } ;
-
 /// Helper class: type of the "vertex_normal" property map
 /// of an Implicit_fct_delaunay_triangulation_3 object.
 template <class BaseGt, class Gt, class Tds>
 class Implicit_fct_delaunay_triangulation_vertex_normal_map 
-    : public boost::put_get_helper< typename Gt::Point_3::Normal&, 
-                                    Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> >
+  : public boost::put_get_helper< typename Gt::Point_3::Normal&, 
+                                  Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> >
 {
 public:
     typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
     typedef typename Gt::Point_3::Normal Normal;  
 
     // Property maps required types
-    typedef boost::lvalue_property_map_tag          category;
-    typedef Normal                                  value_type;
-    typedef Normal&                                 reference;
-    typedef typename Triangulation::Vertex_iterator key_type;
+    typedef boost::lvalue_property_map_tag                      category;
+    typedef Normal                                              value_type;
+    typedef Normal&                                             reference;
+    typedef typename Triangulation::Finite_vertices_iterator    key_type;
 
-    Implicit_fct_delaunay_triangulation_vertex_normal_map(Triangulation&) {}
+    Implicit_fct_delaunay_triangulation_vertex_normal_map(const Triangulation&) {}
 
     /// Access the map elements.
-    reference operator[](key_type const& v) const { return v->normal(); }
+    reference operator[](key_type v) const { return v->normal(); }
 };
 
 /// Free function to get the "vertex_normal" property map
@@ -569,9 +594,43 @@ public:
 template <class BaseGt, class Gt, class Tds>
 inline
 Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> 
-get(vertex_normal_t, Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>& tr) 
+get(boost::vertex_normal_t, const Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>& tr) 
 {
   Implicit_fct_delaunay_triangulation_vertex_normal_map<BaseGt,Gt,Tds> aMap(tr);
+  return aMap;
+}
+
+
+/// Helper class: type of the "vertex_index" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+class Implicit_fct_delaunay_triangulation_vertex_index_map 
+  : public boost::put_get_helper< unsigned int&, 
+                                  Implicit_fct_delaunay_triangulation_vertex_index_map<BaseGt,Gt,Tds> >
+{
+public:
+    typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
+
+    // Property maps required types
+    typedef boost::lvalue_property_map_tag                      category;
+    typedef unsigned int                                        value_type;
+    typedef unsigned int&                                       reference;
+    typedef typename Triangulation::Finite_vertices_iterator    key_type;
+
+    Implicit_fct_delaunay_triangulation_vertex_index_map(const Triangulation&) {}
+
+    /// Access the map elements.
+    reference operator[](key_type v) const { return v->index(); }
+};
+
+/// Free function to get the "vertex_index" property map
+/// of an Implicit_fct_delaunay_triangulation_3 object.
+template <class BaseGt, class Gt, class Tds>
+inline
+Implicit_fct_delaunay_triangulation_vertex_index_map<BaseGt,Gt,Tds> 
+get(boost::vertex_index_t, const Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds>& tr) 
+{
+  Implicit_fct_delaunay_triangulation_vertex_index_map<BaseGt,Gt,Tds> aMap(tr);
   return aMap;
 }
 

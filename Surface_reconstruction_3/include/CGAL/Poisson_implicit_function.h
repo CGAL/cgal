@@ -168,7 +168,7 @@ private:
 
 	// neighbor search
 	typedef typename CGAL::K_nearest_neighbor<Geom_traits,Vertex_handle> K_nearest_neighbor;
-	typedef typename CGAL::KVertex<Vertex_handle> KVertex;
+	typedef typename CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
 	K_nearest_neighbor m_nn_search;
 
 	// delaunay refinement
@@ -253,7 +253,7 @@ public:
     // - center point is barycenter
     // - Radius is 2 * standard deviation
     Point barycenter = m_dt.barycenter();
-		float radius = 2.f * (float)m_dt.standard_deviation();
+		float radius = 2.f * (float)m_dt.diameter_standard_deviation();
 
     return Sphere(barycenter, radius*radius);
 	}
@@ -465,7 +465,8 @@ public:
 				}
 			}
 		}
-		m_nn_search.clear();
+		//m_nn_search.clear();
+		m_nn_search = K_nearest_neighbor();
 		return nb;
 	}
 
@@ -531,13 +532,13 @@ public:
 	  *duration_solve = 0.0;
 
 		// get #variables
-		unsigned int nb_variables = set_index_unconstrained_vertices();
+		unsigned int nb_variables = m_dt.index_unconstrained_vertices();
 
 		// at least one vertex must be constrained
 		if(nb_variables == m_dt.number_of_vertices())
 		{
 			constrain_one_vertex_on_convex_hull();
-			nb_variables = set_index_unconstrained_vertices();
+			nb_variables = m_dt.index_unconstrained_vertices();
 		}
 
 		// Assemble linear system
@@ -1143,20 +1144,6 @@ private:
 		solver.end_row();
 	}
 
-	unsigned int set_index_unconstrained_vertices()
-	{
-		unsigned int index = 0;
-		Finite_vertices_iterator v;
-		for(v = m_dt.finite_vertices_begin();
-				v != m_dt.finite_vertices_end();
-			  v++)
-		{
-			if(!v->constrained())
-				v->index() = index++;
-		}
-		return index;
-	}
-
 	Edge sorted_edge(Vertex_handle vi,
 		               Vertex_handle vj)
 	{
@@ -1239,18 +1226,22 @@ private:
 
 	void init_nn_search_shell()
 	{
-		std::list<KVertex> kvertices;
+		//std::list<Point_vertex_handle_3> kvertices;
+		std::list<Vertex_handle> kvertices;
 		for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
         v++)
 		{
 			if(v->type() != Triangulation::INPUT)
 				continue;
-			const Point& p = v->point();
-			KVertex kv(p.x(),p.y(),p.z(),v);
-			kvertices.push_back(kv);
+			////const Point& p = v->point();
+			////Point_vertex_handle_3 kv(p.x(),p.y(),p.z(),v);
+			////kvertices.push_back(kv);
+			//kvertices.push_back(Point_vertex_handle_3(v));
+			kvertices.push_back(v);
 		}
-		m_nn_search.init(kvertices);
+		//m_nn_search.init(kvertices);
+		m_nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
 	}
 
 	bool is_refinable(Cell_handle cell,
@@ -1273,40 +1264,21 @@ private:
 
 	FT distance_to_input_points(const Point& p)
 	{
-		std::list<KVertex> nearest_kvertices;
-		KVertex query(p.x(),p.y(),p.z(),NULL);
-		m_nn_search.k_nearest_neighbors(query,1,nearest_kvertices);
+		//std::list<Point_vertex_handle_3> nearest_kvertices;
+		std::list<Vertex_handle> nearest_kvertices;
+		//Point_vertex_handle_3 query(p.x(),p.y(),p.z(),NULL);
+		Point_vertex_handle_3 query(p.x(),p.y(),p.z());
+		m_nn_search.get_k_nearest_neighbors(query,1,nearest_kvertices);
 
-		typename std::list<KVertex>::iterator it = nearest_kvertices.begin();
-		KVertex& kv = *it;
-		Vertex_handle nv = kv.vertex_handle();
+		//typename std::list<Point_vertex_handle_3>::iterator it = nearest_kvertices.begin();
+		//Point_vertex_handle_3& kv = *it;
+		////Vertex_handle nv = kv.vertex_handle();
+		//Vertex_handle nv = kv;
+		typename std::list<Vertex_handle>::iterator it = nearest_kvertices.begin();
+		Vertex_handle nv = *it;
 		if(nv != NULL)
 			return distance(nv->point(),p);
 		return 0.0; // default
-	}
-
-	void k_nearest_neighbors(Vertex_handle v,
-		                       const unsigned int k,
-													 std::list<Point>& points)
-	{
-		const Point& p = v->point();
-		std::list<KVertex> nearest_kvertices;
-		KVertex query(p.x(),p.y(),p.z(),NULL);
-		m_nn_search.k_nearest_neighbors(query,k,nearest_kvertices);
-
-		unsigned int index = 1;
-		typename std::list<KVertex>::iterator it;
-		for(it = nearest_kvertices.begin();
-			  it != nearest_kvertices.end();
-				it++,index++)
-		{
-			if (index > k)
-				return;
-
-			KVertex& kv = *it;
-			Vertex_handle nv = kv.vertex_handle();
-			points.push_back(nv->point());
-		}
 	}
 
 	FT distance(const Point& a, const Point& b)

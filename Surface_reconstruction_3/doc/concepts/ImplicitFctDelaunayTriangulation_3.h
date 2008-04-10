@@ -35,10 +35,10 @@ class ImplicitFctDelaunayTriangulation_3 : public DelaunayTriangulation_3,
 public:
 
   // Geometric types
-	typedef Geom_traits::FT FT;
-	typedef Geom_traits::Vector_3 Vector;
-	typedef Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
-	typedef Geom_traits::Sphere_3 Sphere;
+	typedef typename Geom_traits::FT FT;
+	typedef typename Geom_traits::Vector_3 Vector;
+	typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+	typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
 	typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
@@ -70,7 +70,7 @@ public:
 	Point barycenter() const;
 
 	/// Get the standard deviation of the distance to barycenter.
-	FT standard_deviation() const;
+	FT diameter_standard_deviation() const;
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
   /// Owner is responsible to call this function after modifying the triangulation.
@@ -92,5 +92,12 @@ public:
   int insert(InputIterator first, InputIterator beyond,
              unsigned char type /* INPUT or STEINER */);
 
+  /// Index all (finite) vertices following the order of Finite_vertices_iterator.
+  /// @return the number of (finite) vertices.
+	unsigned int index_vertices();
+
+  /// Index unconstraint vertices following the order of Finite_vertices_iterator.
+  /// @return the number of unconstraint vertices.
+	unsigned int index_unconstrained_vertices();
 };
 

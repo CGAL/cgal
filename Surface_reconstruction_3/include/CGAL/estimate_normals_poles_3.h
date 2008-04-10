@@ -54,7 +54,7 @@ estimate_normals_poles_3(InputIterator first,      // input points
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
 	// but this is costly to check
-  CGAL_precondition(first != beyond);
+  CGAL_surface_reconstruction_precondition(first != beyond);
 }
 
 CGAL_END_NAMESPACE

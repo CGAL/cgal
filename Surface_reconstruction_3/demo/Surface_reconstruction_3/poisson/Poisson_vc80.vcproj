@@ -48,7 +48,7 @@
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="0"
+				RuntimeLibrary="1"
 				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -134,7 +134,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm900  /D &quot;NDEBUG&quot;"
+				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
@@ -312,6 +312,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RedirectIOToConsole.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -374,6 +378,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\orient_normals_minimum_spanning_tree_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\orient_normals_wrt_cameras_3.h"
 				>
 			</File>
@@ -387,6 +395,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
 				>
 			</File>
 			<File

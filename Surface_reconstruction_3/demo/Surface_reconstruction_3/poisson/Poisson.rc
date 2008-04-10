@@ -111,31 +111,22 @@ BEGIN
     END
     POPUP "&Algorithms"
     BEGIN
-        MENUITEM "Estimate Normals Direction by PCA", 
-                                                ID_ALGORITHMS_ESTIMATENORMALSBYPCA
-
-        MENUITEM "Estimate Normals Direction by Jet Fitting", 
-                                                ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING
-
+        MENUITEM "Estimate Normals Direction by PCA", ID_ALGORITHMS_ESTIMATENORMALSBYPCA
+        MENUITEM "Estimate Normals Direction by Jet Fitting", ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING
         MENUITEM SEPARATOR
-        MENUITEM "Orient Normals w.r.t. Cameras (Gyroviz)", 
-                                                ID_ALGORITHMS_ORIENTNORMALSW
+        MENUITEM "Orient Normals with Minimum Spanning Tree", ID_ALGORITHMS_ORIENTNORMALSMST
+        MENUITEM "Orient Normals w.r.t. Cameras (Gyroviz)", ID_ALGORITHMS_ORIENTNORMALSCAMERAS
         MENUITEM SEPARATOR
         MENUITEM "Delaunay refinement\tR",      ID_RECONSTRUCTION_DELAUNAYREFINEMENT
-
         MENUITEM "Delaunay refinement in shell", ID_ALGORITHMS_REFINEINSHELL
         MENUITEM SEPARATOR
         MENUITEM "Extrapolate normals\tX",      ID_ALGORITHMS_EXTRAPOLATENORMALS
-
         MENUITEM SEPARATOR
         MENUITEM "Solve Poisson Equation\tP",   ID_RECONSTRUCTION_POISSON
         MENUITEM SEPARATOR
         MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
-
         MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_SURFACEMESHING
-
         MENUITEM "Marching Tet Contouring\tT",  ID_ALGORITHMS_MARCHINGTETCONTOURING
-
     END
     POPUP "&Render"
     BEGIN
@@ -210,8 +201,7 @@ END
 //
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Poisson"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
@@ -429,8 +419,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
 //
 
 IDD_DIALOG_OPTIONS DIALOGEX 0, 0, 272, 191
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Options"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
