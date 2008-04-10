@@ -4,6 +4,23 @@ project ( ${prj} )
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
+set(PACKAGE_ROOT ../../../)
+
+
+# Add several CGAL packages to the include and link paths,
+# if they lie in ${PACKAGE_ROOT}/.
+foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include ${PACKAGE_ROOT}/../Marching_cube/include ${PACKAGE_ROOT}/../CGALimageIO/include)
+  if (EXISTS ${INC_DIR})
+    include_directories (BEFORE ${INC_DIR})
+  endif()
+endforeach()
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
+  if (EXISTS ${LIB_DIR})
+    link_directories (${LIB_DIR})
+  endif()
+endforeach()
+
+
 # QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
@@ -31,12 +48,6 @@ if ( CGAL_FOUND )
       include_directories (BEFORE include)
     endif()
 
-    foreach(INC_DIR ../../../include ../../../../Data_structure_for_queries_3/include ../../../../Marching_cube/include ../../../../CGALimageIO/include)
-      if (EXISTS ${INC_DIR})
-        include_directories (BEFORE ${INC_DIR})
-      endif()
-    endforeach()
-    
     include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
     include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
     include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
@@ -44,7 +55,7 @@ if ( CGAL_FOUND )
     
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
-    set( sources colorlisteditor.cpp isovalues_list.cpp mainwindow.cpp surface_mesher.cpp viewer.cpp volume.cpp ../../../../Marching_cube/src/mc/ply.c)
+    set( sources colorlisteditor.cpp isovalues_list.cpp mainwindow.cpp surface_mesher.cpp viewer.cpp volume.cpp ${PACKAGE_ROOT}/../Marching_cube/src/mc/ply.c)
     
     qt4_automoc( ${sources} )
 
