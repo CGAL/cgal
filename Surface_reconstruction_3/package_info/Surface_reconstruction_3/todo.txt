@@ -1,32 +1,33 @@
-Delaunay_refinement(s) to be turned into global functions - and to discuss with Mariette if a Mesher_level would be sufficient.
-The current priority queue is not modifiable, testing if a 
-tet is still in the triangulation is extremely costly and the
-queue is populated with too many instances.
+Analysis
+- bounding box + len diag, etc.
+- average spacing (KNN)
+- std statistical measures: average, std dev, etc.
+- lfs estimate (pole approach + arbitrary query points using KNN)
 
-(unoriented) Normal estimation:
-- one will reuse Voronoi-based PCA (pCA component on a container of tets)
-- one will use a pole-approach (discuss with Frederic)
+Processing
+- smoothing (via jet-fitting + reprojection)
+- outlier removal (to check which one is easy with CGAL components)
 
-Normal orientation:
-- ask Frederic if he wants to contribute his pole-based approach.
+Normal estimation
+- KNN + point-based PCA
+- KNN + jet fitting
+- Voronoi + pole (pierre)
+- Voronoi + tet-based PCA (pierre)
 
-Careful: one has to ensure that the Delaunay triangulation
-built for normal estimation and orientation is reused 
-by the Poisson solver - could be simply passed to Poisson!.
+Normal orientation
+- MST (laurent)
+- pole-based (frederic?)
+
+Implicit function
+- Poisson
+- Algebraic point set surfaces
+
+Contouring
+- Delaunay refinement & filtering 
+- Marching Cubes ? 
 
 
-// ultimate example
-std::list<Point> points; // read points from file
-Poisson_triangulation_3 dt(points.begin(),points.end());
-estimate_normals(dt);
-orient_normals(dt);
-Poisson_implicit_function implicit_function(dt);
-implicit_function.compute();
-Polyhedron p = contour(implicit_function);
-
-
-
-
+In addition: Integration of "Da - Cohen-Steiner"
 
 
 
