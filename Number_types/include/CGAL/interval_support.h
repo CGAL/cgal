@@ -16,6 +16,29 @@
   This is experimental 
 */
 
+
+/* bounds-related Interval functions */
+// template<class Interval>  T lower(const Interval& x);
+// template<class Interval>  T upper(const Interval& x);
+// template<class Interval>  T width(const Interval& x);
+// template<class Interval>  T median(const Interval& x);
+// template<class Interval>  T norm(const Interval& x);
+
+/* bounds-related Interval functions */
+//// template<class Interval>  bool empty(const Interval& b); 
+// template<class Interval>  bool singleton(const Interval& x);
+// template<class Interval>  bool zero_in(const Interval& b);
+// template<class Interval>  bool in(const T& r, const Interval& b);
+// template<class Interval>  bool equal(const Interval& x, const Interval& y);
+// template<class Interval>  bool overlap(const Interval& x, const Interval& y);
+// template<class Interval>  bool subset(const Interval& a, const Interval& b);
+// template<class Interval>  bool proper_subset(const Interval& a, const Interval& b);
+
+/* set manipulation interval functions */
+// template<class Interval>  Interval intersection(const Interval& x, const Interval& y);
+// template<class Interval>  Interval hull(const Interval& x, const Interval& y);
+
+
 #ifndef CGAL_INTERVAL_SUPPORT_H
 #define CGAL_INTERVAL_SUPPORT_H
 
@@ -23,61 +46,146 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template<typename Interval> class Interval_traits;
+class Exception_intersection_is_empty{}; 
+
+// function returning type Boundary 
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Boundary 
+lower(const Interval& interval) {
+    typename Interval_traits<Interval>::Lower lower;
+    return lower(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Boundary 
+upper(const Interval& interval) {
+    typename Interval_traits<Interval>::Upper upper;
+    return upper(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Boundary
+width(Interval interval) {
+    typename Interval_traits<Interval>::Width width;
+    return width(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Boundary
+median(Interval interval) {
+    typename Interval_traits<Interval>::Median median;
+    return median(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Boundary
+norm(Interval interval) {
+    typename Interval_traits<Interval>::Norm norm;
+    return norm(interval);
+}
+
+
+// functions returning bool 
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Empty::result_type 
+empty(Interval interval) {
+    typename Interval_traits<Interval>::Empty empty;
+    return empty(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Singleton::result_type  
+singleton(Interval interval) {
+    typename Interval_traits<Interval>::Singleton singleton;
+    return singleton(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::In::result_type  
+in(typename Interval_traits<Interval>::Boundary x, Interval interval) {
+    typename Interval_traits<Interval>::In in;
+    return in(x,interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Zero_in::result_type
+zero_in(Interval interval) {
+    typename Interval_traits<Interval>::Zero_in zero_in;
+    return zero_in(interval);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Equal::result_type
+equal(Interval interval1,Interval interval2) {
+    typename Interval_traits<Interval>::Equal equal;
+    return equal(interval1,interval2);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Overlap::result_type
+overlap(Interval interval1, Interval interval2) {
+    typename Interval_traits<Interval>::Overlap overlap;
+    return overlap(interval1, interval2);
+}
+
+template<typename Interval> inline
+typename Interval_traits<Interval>::Subset::result_type 
+subset(Interval interval1, Interval interval2) {
+    typename Interval_traits<Interval>::Subset subset;
+    return subset(interval1, interval2);
+}
+
+template<typename Interval> inline
+typename Interval_traits<Interval>::Proper_subset::result_type 
+proper_subset(Interval interval1, Interval interval2) {
+    typename Interval_traits<Interval>::Proper_Subset proper_subset;
+    return proper_subset(interval1, interval2);
+}
+
+
+// Set operations, functions returing Interval
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Intersection::result_type
+intersection(Interval interval1, Interval interval2) {
+    typename Interval_traits<Interval>::Intersection intersection;
+    return intersection(interval1, interval2);
+}
+
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Hull::result_type
+hull(Interval interval1, Interval interval2) {
+    typename Interval_traits<Interval>::Hull hull;
+    return hull(interval1, interval2);
+}
+
+
+
+
+// This will go intro bigfloat_interval_support.h
+////////////////////////////////   BFI Traits
+
+
 template<typename BigfloatInterval> class Bigfloat_interval_traits;
 
-template<typename BFI> long get_significant_bits(BFI bfi) {
+
+template<typename BFI> inline long get_significant_bits(BFI bfi) {
     typename Bigfloat_interval_traits<BFI>::Get_significant_bits 
         get_significant_bits;
     return get_significant_bits(bfi);
 }
 
-template<typename BFI> long set_precision(BFI bfi,long prec) {
+template<typename BFI> inline long set_precision(BFI bfi,long prec) {
     typename Bigfloat_interval_traits<BFI>::Set_precision set_precision;
     return set_precision(prec);
 }
 
-template<typename BFI> long get_precision(BFI bfi) {
+template<typename BFI> inline long get_precision(BFI bfi) {
     typename Bigfloat_interval_traits<BFI>::Get_precision get_precision;
     return get_precision();
 }
 
-template<typename BFI> 
-  typename Bigfloat_interval_traits<BFI>::BF upper(const BFI& bfi) {
-    typename Bigfloat_interval_traits<BFI>::Upper upper;
-    return upper(bfi);
-}
-
-template<typename BFI> 
-  typename Bigfloat_interval_traits<BFI>::BF lower(const BFI& bfi) {
-    typename Bigfloat_interval_traits<BFI>::Lower lower;
-    return lower(bfi);
-}
-
-template<typename BFI> BFI hull(BFI bfi1, BFI bfi2) {
-   typename Bigfloat_interval_traits<BFI>::Hull hull;
-   return hull(bfi1, bfi2);
-}
-
-template<typename BFI> bool in_zero(BFI bfi) {
-   typename Bigfloat_interval_traits<BFI>::In_zero in_zero;
-   return in_zero(bfi);
-}
-
-template<typename BFI> bool overlap(BFI bfi1, BFI bfi2) {
-   typename Bigfloat_interval_traits<BFI>::Overlap overlap;
-   return overlap(bfi1, bfi2);
-}
-
-template<typename BFI> typename Bigfloat_interval_traits<BFI>::BF
-   width(BFI bfi) {
-   typename Bigfloat_interval_traits<BFI>::Width width;
-   return width(bfi);
-}
-
-template<typename BFI> bool singleton(BFI bfi) {
-   typename Bigfloat_interval_traits<BFI>::Singleton singleton;
-   return singleton(bfi);
-}
 
 template <class NTX> class Get_arithmetic_kernel;
 
@@ -106,6 +214,9 @@ convert_to_bfi(const CGAL::Sqrt_extension<NT,ROOT>& x) {
         return convert_to_bfi(x.a0());
     }
 }
+
+
+
 
 CGAL_END_NAMESPACE
 

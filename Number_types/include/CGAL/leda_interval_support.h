@@ -28,19 +28,126 @@
 CGAL_BEGIN_NAMESPACE
 
 template<>
-class Bigfloat_interval_traits<leda_bigfloat_interval>
+class Interval_traits<leda_bigfloat_interval>
 {
-public:
-    typedef leda_bigfloat_interval NT;
+public: 
+    typedef Interval_traits<leda_bigfloat_interval> Self; 
+    typedef leda_bigfloat_interval Interval; 
+    typedef leda::bigfloat Boundary; 
 
+
+    struct Construct :public Binary_function<Boundary,Boundary,Interval>{
+        Interval operator()( const Boundary& l,const Boundary& r) const {
+            CGAL_precondition( l < r ); 
+            return Interval(l,r);
+        }
+    };
+
+    struct Lower :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return a.lower();
+        }
+    };
+
+    struct Upper :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return a.upper();
+        }
+    };
+
+    struct Width :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::width(a);
+        }
+    };
+
+    struct Median :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::median(a);
+        }
+    };
+    
+    struct Norm :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::norm(a);
+        }
+    };
+
+    struct Empty :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::empty(a);
+        }
+    };
+
+    struct Singleton :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::singleton(a);
+        }
+    };
+
+    struct Zero_in :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::in_zero(a);
+        }
+    };
+
+    struct In :public Binary_function<Boundary,Interval,bool>{
+        bool operator()( Boundary x, const Interval& a ) const {
+            return ::boost::numeric::in(x,a);
+        }
+    };
+
+    struct Equal :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::equal(a,b);
+        }
+    };
+    
+    struct Overlap :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::overlap(a,b);
+        }
+    };
+    
+    struct Subset :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::subset(a,b);
+        }
+    };
+    
+    struct Proper_subset :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::proper_subset(a,b);
+        }
+    };
+    
+    struct Hull :public Binary_function<Interval,Interval,Interval>{
+        Interval operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::hull(a,b);
+        }
+    };
+    
+    struct Intersection :public Binary_function<Interval,Interval,Interval>{
+        Interval operator()( const Interval& a, const Interval& b ) const {
+            Interval r = ::boost::numeric::intersect(a,b);
+            if (::boost::numeric::empty(r)) 
+                throw Exception_intersection_is_empty();        
+            return r;
+        }
+    };
+};
+
+template<>
+class Bigfloat_interval_traits<leda_bigfloat_interval>
+    :public Interval_traits<leda_bigfloat_interval> 
+{
+    
+public:
+    typedef Bigfloat_interval_traits<leda_bigfloat_interval> Self;
+    typedef leda_bigfloat_interval NT;
     typedef leda::bigfloat BF;
 
-    class Get_significant_bits {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef long  result_type;
+    struct Get_significant_bits : public Unary_function<NT,long>{
 
         long operator()( NT x) const {
             leda::bigfloat lower = x.lower();
@@ -64,124 +171,26 @@ public:
              
         }
     };
-     
-    class Upper {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef BF  result_type;
-         
-        BF operator() ( NT a ) const {
-            return a.upper();
-        }
-    };
-
-    class Lower {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef BF  result_type;
-         
-        BF operator() ( NT a ) const {
-            return a.lower();
-        }
-    };
-
-    class Set_precision {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef long  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef long  result_type;  
-     
-        long operator() ( long prec ) const {
+  
+    struct Set_precision : public Unary_function<long,long> {
+        long operator()( long prec ) const {
             return BF::set_precision(prec); 
         }
     };
      
-    class Get_precision {
-    public:
+    struct Get_precision {
         // type for the \c AdaptableGenerator concept.
         typedef long  result_type;  
-     
-        long operator() () const {
+        long operator()() const {
             return BF::get_precision(); 
         }
     };
 
-    class In_zero {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef bool  result_type;
-         
-        bool operator() ( NT x ) const {
-            return ::boost::numeric::in_zero(x);
-        }
-    };
-
-    class Overlap {
-    public:
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef NT  first_argument_type;
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef NT  second_argument_type;
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef bool  result_type;
-    
-        bool operator() ( NT x, NT y ) const {
-            return ::boost::numeric::overlap(x,y);
-        }
-    };
-   
-    class Hull {
-    public:
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef NT  first_argument_type;
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef NT  second_argument_type;
-        // type for the \c AdaptableBinaryFunction concept.
-        typedef NT  result_type;
-    
-        NT operator() ( NT x, NT y ) const {
-            return ::boost::numeric::hull(x,y);
-        }
-    };
-
-    class Singleton {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef bool  result_type;
-         
-        bool operator() ( NT a ) const {
-            return ::boost::numeric::singleton(a); 
-        }
-    };
-
-    class Width {
-    public:
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef NT  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef BF  result_type;
-         
-        BF operator() ( NT a ) const {
-            return ::boost::numeric::width(a); 
-        }
-
-    };
-
-    class Convert_to_bfi {
-    public:
+    struct Convert_to_bfi {
 
         typedef NT result_type;
 
-        NT operator() ( const leda::real& x ) {
+        NT operator()( const leda::real& x ) {
             long current_prec = ::leda::bigfloat::get_precision();
             //x.improve_approximation_to(current_prec);
             x.guarantee_relative_error(current_prec);
@@ -206,7 +215,7 @@ public:
         }
 
 
-        NT operator() (const ::leda::integer& x) {
+        NT operator()(const ::leda::integer& x) {
             long current_prec = ::leda::bigfloat::get_precision();
             leda_bigfloat_interval bfi;
             long length = x.length();
@@ -235,7 +244,7 @@ public:
         }
 
 
-        NT operator() (const ::leda::rational& x) {
+        NT operator()(const ::leda::rational& x) {
             long old_prec = ::leda::bigfloat::get_precision();
             ::leda::bigfloat::set_precision(old_prec*2);
             Bigfloat_interval_traits<NT>::Convert_to_bfi convert_to_bfi;
@@ -251,10 +260,6 @@ public:
     };
 };
 
-// left overs? 
-::leda::bigfloat inline median(const leda_bigfloat_interval& x){
-    return ::boost::numeric::median(x);
-}
 
 ::leda::bigfloat inline relative_error(const leda_bigfloat_interval& x){
     if(in_zero(x)){
