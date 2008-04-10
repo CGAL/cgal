@@ -42,19 +42,16 @@ class PointH2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
 
-// TODO : we have 2 levels of ref-counting here.
-  typedef Vector_2                          Rep;
-  typedef typename R_::template Handle<Rep>::type  Base;
-
   typedef Rational_traits<FT>  Rat_traits;
 
-  Base base;
+  // Reference-counting is handled in Vector_2.
+  Vector_2 base;
 
 public:
 
   typedef FT Cartesian_coordinate_type;
   typedef const RT& Homogeneous_coordinate_type;
-  typedef typename Rep::Cartesian_const_iterator Cartesian_const_iterator;
+  typedef typename Vector_2::Cartesian_const_iterator Cartesian_const_iterator;
   typedef R_                                    R;
 
     PointH2() {}
@@ -77,9 +74,9 @@ public:
     bool    operator==( const PointH2<R>& p) const;
     bool    operator!=( const PointH2<R>& p) const;
 
-    const RT & hx() const { return get(base).hx(); }
-    const RT & hy() const { return get(base).hy(); }
-    const RT & hw() const { return get(base).hw(); }
+    const RT & hx() const { return base.hx(); }
+    const RT & hy() const { return base.hy(); }
+    const RT & hw() const { return base.hw(); }
 
     FT      x()  const { return FT(hx()) / FT(hw()); }
     FT      y()  const { return FT(hy()) / FT(hw()); }
@@ -90,12 +87,12 @@ public:
 
     Cartesian_const_iterator cartesian_begin() const
     {
-      return get(base).cartesian_begin();
+      return base.cartesian_begin();
     }
 
     Cartesian_const_iterator cartesian_end() const
     {
-      return get(base).cartesian_end();
+      return base.cartesian_end();
     }
 
     int     dimension() const;
@@ -104,11 +101,11 @@ public:
 };
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 bool
 PointH2<R>::operator==( const PointH2<R>& p) const
 {
-  return get(base) == get(p.base);
+  return base == p.base;
 }
 
 template < class R >
@@ -118,36 +115,36 @@ PointH2<R>::operator!=( const PointH2<R>& p) const
 { return !(*this == p); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH2<R>::FT
 PointH2<R>::cartesian(int i) const
 {
-  return get(base).cartesian(i);
+  return base.cartesian(i);
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 const typename PointH2<R>::RT &
 PointH2<R>::homogeneous(int i) const
 {
-  return get(base).homogeneous(i);
+  return base.homogeneous(i);
 }
 
 template < class R >
 inline
 typename PointH2<R>::FT
 PointH2<R>::operator[](int i) const
-{ return get(base)[i]; }
+{ return base[i]; }
 
 
 template < class R >
 inline
 int
 PointH2<R>::dimension() const
-{ return get(base).dimension(); }
+{ return base.dimension(); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
 { return typename PointH2<R>::Direction_2(*this); }

@@ -26,6 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/array.h>
+#include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
 

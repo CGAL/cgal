@@ -24,9 +24,7 @@
 #ifndef CGAL_CARTESIAN_POINT_3_H
 #define CGAL_CARTESIAN_POINT_3_H
 
-#include <CGAL/Handle_for.h>
 #include <CGAL/Origin.h>
-#include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,14 +36,11 @@ class PointC3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-// TODO : we have 2 levels of ref-counting here.
-  typedef Vector_3                          Rep;
-  typedef typename R_::template Handle<Rep>::type  Base;
-
-  Base base;
+  // We do not use reference counting here as it is done at the Vector_3 level.
+  Vector_3 base;
 
 public:
-  typedef typename Rep::Cartesian_const_iterator Cartesian_const_iterator;
+  typedef typename Vector_3::Cartesian_const_iterator Cartesian_const_iterator;
   typedef R_                                R;
 
   PointC3() {}
@@ -61,32 +56,32 @@ public:
 
   const FT & x() const
   {
-      return get(base).x();
+      return base.x();
   }
   const FT & y() const
   {
-      return get(base).y();
+      return base.y();
   }
   const FT & z() const
   {
-      return get(base).z();
+      return base.z();
   }
 
   const FT & hx() const
   {
-      return x();
+      return base.hx();
   }
   const FT & hy() const
   {
-      return y();
+      return base.hy();
   }
   const FT & hz() const
   {
-      return z();
+      return base.hz();
   }
   const FT & hw() const
   {
-      return constant<FT, 1>();
+      return base.hw();
   }
 
   const FT & cartesian(int i) const;
@@ -95,17 +90,17 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const 
   {
-    return get(base).cartesian_begin(); 
+    return base.cartesian_begin(); 
   }
 
   Cartesian_const_iterator cartesian_end() const 
   {
-    return get(base).cartesian_end();
+    return base.cartesian_end();
   }
 
   int dimension() const
   {
-      return get(base).dimension();
+      return base.dimension();
   }
 
   Point_3 transform(const Aff_transformation_3 &t) const
@@ -119,7 +114,7 @@ inline
 const typename PointC3<R>::FT &
 PointC3<R>::cartesian(int i) const
 {
-  return get(base).cartesian(i);
+  return base.cartesian(i);
 }
 
 template < class R >
@@ -127,7 +122,7 @@ inline
 const typename PointC3<R>::FT &
 PointC3<R>::operator[](int i) const
 {
-  return get(base)[i];
+  return base[i];
 }
 
 template < class R >
@@ -135,7 +130,7 @@ inline
 const typename PointC3<R>::FT &
 PointC3<R>::homogeneous(int i) const
 {
-  return get(base).homogeneous(i);
+  return base.homogeneous(i);
 }
 
 CGAL_END_NAMESPACE

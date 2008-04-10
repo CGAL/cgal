@@ -42,16 +42,14 @@ class PointH3
    typedef typename R_::Direction_3          Direction_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef Vector_3                          Rep;
-   typedef typename R_::template Handle<Rep>::type  Base;
-
    typedef Rational_traits<FT>  Rat_traits;
 
-   Base base;
+   // Reference-counting is handled in Vector_3.
+   Vector_3 base;
 
 public:
 
-   typedef typename Rep::Cartesian_const_iterator Cartesian_const_iterator;
+   typedef typename Vector_3::Cartesian_const_iterator Cartesian_const_iterator;
    typedef R_                 R;
 
   PointH3() {}
@@ -86,12 +84,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return get(base).cartesian_begin();
+    return base.cartesian_begin();
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return get(base).cartesian_end();
+    return base.cartesian_end();
   }
 
   int   dimension() const;
@@ -108,64 +106,64 @@ template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hx() const
-{ return get(base).hx(); }
+{ return base.hx(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hy() const
-{ return get(base).hy(); }
+{ return base.hy(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hz() const
-{ return get(base).hz(); }
+{ return base.hz(); }
 
 template < class R >
 inline
 const typename PointH3<R>::RT &
 PointH3<R>::hw() const
-{ return get(base).hw(); }
+{ return base.hw(); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH3<R>::FT
 PointH3<R>::x()  const
-{ return FT(hx()) / FT(hw()); }
+{ return base.x(); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH3<R>::FT
 PointH3<R>::y()  const
-{ return FT(hy()) / FT(hw()); }
+{ return base.y(); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH3<R>::FT
 PointH3<R>::z()  const
-{ return FT(hz()) / FT(hw()); }
+{ return base.z(); }
 
 template < class R >
 inline
 int
 PointH3<R>::dimension() const
-{ return get(base).dimension(); }
+{ return base.dimension(); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 typename PointH3<R>::FT
 PointH3<R>::cartesian(int i) const
 {
-  return get(base).cartesian(i);
+  return base.cartesian(i);
 }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 const typename PointH3<R>::RT &
 PointH3<R>::homogeneous(int i) const
 {
-  return get(base).homogeneous(i);
+  return base.homogeneous(i);
 }
 
 template < class R >
@@ -173,7 +171,7 @@ inline
 typename PointH3<R>::FT
 PointH3<R>::operator[](int i) const
 {
-  return get(base)[i];
+  return base[i];
 }
 
 template < class R >
@@ -183,11 +181,11 @@ PointH3<R>::direction() const
 { return Direction_3(*this); }
 
 template < class R >
-CGAL_KERNEL_INLINE
+inline
 bool
 PointH3<R>::operator==( const PointH3<R> & p) const
 {
-  return get(base) == get(p.base);
+  return base == p.base;
 }
 
 template < class R >
