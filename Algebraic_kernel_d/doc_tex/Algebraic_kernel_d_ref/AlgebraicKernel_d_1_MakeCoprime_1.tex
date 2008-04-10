@@ -2,7 +2,15 @@
 
 \ccDefinition
 Computes for a given pair of univariate polynomials $p_1$, $p_2$ their
-common part $g$ and coprime parts $q_1$, $q_2$ respectively.
+common part $g$ up to a constant factor and coprime parts $q_1$, $q_2$ 
+respectively. 
+
+That is, it computes $g, q_1, q_2$ such that:\\
+\hspace{1cm} $c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$ and\\
+\hspace{1cm} $c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.\\
+
+
+It returns true if $p_1$ and $p_2$ are already coprime.
 
 \ccRefines 
 \ccc{AdaptableFunctor} with five arguments 
@@ -22,9 +30,7 @@ A model \ccVar\ of this type must provide:
                AlgebraicKernel_d_1::Polynomial_1 & g,  
                AlgebraicKernel_d_1::Polynomial_1 & q1,     
                AlgebraicKernel_d_1::Polynomial_1 & q2);}
-{ Computes $g, q_1, q_2$ such that\\
-$c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$ and\\
-$c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.\\
+{ Computes $g, q_1, q_2$ as described above.\\
 Returns true if $p_1$ and $p_2$ are already coprime. 
 }
 

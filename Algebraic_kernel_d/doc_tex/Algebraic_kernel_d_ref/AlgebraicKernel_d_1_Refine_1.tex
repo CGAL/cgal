@@ -1,7 +1,9 @@
 \begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::Refine_1}
 
 \ccDefinition
-Refines a given \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.
+An \ccc{AlgebraicKernel_d_1::AlgebraicReal_1} $x$ is bounded by some interval 
+$I = [upper, lower]$, where $x \in I$. 
+This functor refines (at least halves) the bounding interval of x.
 
 \ccRefines 
 \ccc{AdaptableUnaryFunction} 
@@ -21,7 +23,7 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{
 result_type operator()(const argument_type & x);}{ 
-  This operator at least half's the current interval of $x$. \\
+  Refines (at least halves) the bounding interval of x. \\
   Note that an interval may also be degenerated to a single point.
 } 
 
@@ -36,5 +38,7 @@ result_type operator()(const argument_type & x, int rel_prec);}{
 
 \ccSeeAlso
 \ccRefIdfierPage{AlgebraicKernel_d_1::AlgebraicReal_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::UpperBoundary_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::LowerBoundary_1}\\
   
 \end{ccRefFunctionObjectConcept}

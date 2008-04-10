@@ -20,16 +20,16 @@ A model of this type must provide:
     OutputIterator
     operator()(const argument_type &p,
 	     OutputIterator res, bool known_to_be_square_free=false);}
-{Copies in the output iterator the roots of \ccc{p} as objects of type 
+{Copies in the output iterator the real roots of \ccc{p} as objects of type 
 \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. The boolean indicates 
 whether \ccc{p} is known to be square free or if this information is 
-not known.} 
+not known. Each root, though it might be a multiple root, is reported only once.} 
 
 \ccMethod{template < class OutputIterator >
 	OutputIterator
         operator()(const argument_type &p,
 	     OutputIterator res);}
-{Copies in the output iterator the roots of \ccc{p} with their 
+{Copies in the output iterator the real roots of \ccc{p} with their 
 multiplicity, as objects of type 
 \ccc{std::pair<AlgebraicKernel_d_1::Algebraic_real_1, unsigned int>}.}
 
