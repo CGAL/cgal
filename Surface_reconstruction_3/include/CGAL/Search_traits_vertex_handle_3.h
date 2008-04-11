@@ -18,8 +18,6 @@ private:
 	
 public:
 
-  //typedef typename Vertex_handle::value_type Vertex;
-
   Point_vertex_handle_3()
   {
     m_coord[0] =
@@ -28,14 +26,6 @@ public:
     m_vertex_handle = NULL;
   }
 
-  //Point_vertex_handle_3(Vertex& vertex)
-  //{
-  //  m_coord[0] = vertex.point().x();
-  //  m_coord[1] = vertex.point().y();
-  //  m_coord[2] = vertex.point().z();
-  //  m_vertex_handle = Vertex_handle(&vertex);
-  //}
-  
   Point_vertex_handle_3(Vertex_handle vertex_handle)
   {
     m_coord[0] = vertex_handle->point().x();
@@ -54,8 +44,6 @@ public:
   
   /// Default copy constructor, operator =() and destructor are fine.
 
-	//Vertex_handle& vertex_handle() { return m_vertex_handle; }
-	//const Vertex_handle& vertex_handle() const { return m_vertex_handle; }
 	operator Vertex_handle() const { return m_vertex_handle; }
 
   const double x() const { return m_coord[0]; }

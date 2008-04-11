@@ -465,7 +465,6 @@ public:
 				}
 			}
 		}
-		//m_nn_search.clear();
 		m_nn_search = K_nearest_neighbor();
 		return nb;
 	}
@@ -1226,7 +1225,6 @@ private:
 
 	void init_nn_search_shell()
 	{
-		//std::list<Point_vertex_handle_3> kvertices;
 		std::list<Vertex_handle> kvertices;
 		for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
@@ -1234,13 +1232,8 @@ private:
 		{
 			if(v->type() != Triangulation::INPUT)
 				continue;
-			////const Point& p = v->point();
-			////Point_vertex_handle_3 kv(p.x(),p.y(),p.z(),v);
-			////kvertices.push_back(kv);
-			//kvertices.push_back(Point_vertex_handle_3(v));
 			kvertices.push_back(v);
 		}
-		//m_nn_search.init(kvertices);
 		m_nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
 	}
 
@@ -1264,16 +1257,10 @@ private:
 
 	FT distance_to_input_points(const Point& p)
 	{
-		//std::list<Point_vertex_handle_3> nearest_kvertices;
 		std::list<Vertex_handle> nearest_kvertices;
-		//Point_vertex_handle_3 query(p.x(),p.y(),p.z(),NULL);
 		Point_vertex_handle_3 query(p.x(),p.y(),p.z());
 		m_nn_search.get_k_nearest_neighbors(query,1,nearest_kvertices);
 
-		//typename std::list<Point_vertex_handle_3>::iterator it = nearest_kvertices.begin();
-		//Point_vertex_handle_3& kv = *it;
-		////Vertex_handle nv = kv.vertex_handle();
-		//Vertex_handle nv = kv;
 		typename std::list<Vertex_handle>::iterator it = nearest_kvertices.begin();
 		Vertex_handle nv = *it;
 		if(nv != NULL)

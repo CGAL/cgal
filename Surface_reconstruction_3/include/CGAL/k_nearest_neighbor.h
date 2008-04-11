@@ -30,11 +30,6 @@ private:
 public:
   K_nearest_neighbor() {}
   
-  ////K_nearest_neighbor(const std::list<Point_vertex_handle_3>& vertices)
-  ////{
-  ////  m_tree = Tree(vertices.begin(),vertices.end());
-  ////}
-  //template <class InputIterator> ///< InputIterator value_type is Point_vertex_handle_3.
   template <class InputIterator> ///< InputIterator value_type is Vertex_handle.
   K_nearest_neighbor(InputIterator first, InputIterator beyond)
   {
@@ -45,7 +40,6 @@ public:
 
   bool get_k_nearest_neighbors(const Point_vertex_handle_3& query,
 		                           const unsigned int nb,
-													     //std::list<Point_vertex_handle_3>& kvertices)
 													     std::list<Vertex_handle>& kvertices)
   {
     Neighbor_search search(m_tree,query,nb); // only nb nearest neighbors
