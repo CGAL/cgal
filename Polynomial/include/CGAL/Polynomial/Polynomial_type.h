@@ -396,7 +396,9 @@ public:
      *  \c x can have another type \c NTX than the coefficient type \c NT.
      *  The result type is defined by CGAL::Coercion_traits<>
      */
-
+     // Note that there is no need to provide a special version for intervals.
+     // This was shown by some benchmarks of George Tzoumas, for the 
+     // Interval Newton method used in the Voronoi Diagram of Ellipses
     template <class NTX>
     typename Coercion_traits<NTX,NT>::Type 
     evaluate(const NTX& x) const {
@@ -411,42 +413,6 @@ public:
             y = y*cast(x) + cast(this->ptr()->coeff[d]);
         return y; 
     }
-private:
-    
-    template <class ToInterval, class ANY >
-    struct Interval_evaluation_traits{
-        typedef typename ToInterval::result_type RET;
-    };
-    template <class ANY >
-    struct Interval_evaluation_traits<CGAL::Null_functor,ANY>{
-        typedef CGAL::Null_functor RET;
-    }; 
-    
-public:
-    /*! \brief evaluate the polynomial at \c x
-     *
-     *  This is a specialization for \c x is of type CGAL::Interval.
-     */
-
-    // TODO: This is a specialization for "evaluate" which handles the special
-    //       case where the coefficients are Intervals better. The class also works
-    //       without this specialization, but maybe slower in some cases.
-    //       But since it would be better to have a general case for all interval
-    //       types and not only for the CGAL::Interval_nt it should be replaced
-    //       by an evaluate function with an additional hint-parameter.
-/*    typename Interval_evaluation_traits<
-        typename Real_embeddable_traits<NT>::To_Interval,int>::RET
-    evaluate(const Interval& x) const {        
-        typedef typename Real_embeddable_traits<NT>::To_Interval To_Interval; 
-        To_Interval to_Interval;
-        typedef typename Interval_evaluation_traits<To_Interval,int>::RET RET;
-        CGAL_precondition( degree() >= 0 );
-        int d = 0;
-        RET y=to_Interval(this->ptr()->coeff[d]);
-        while (++d <= degree()) 
-            y += pow(x,d)*to_Interval(this->ptr()->coeff[d]);
-        return y;
-    }*/
 public:
     //! evaluates the polynomial as a homogeneous polynomial
     //! in fact returns evaluate(u/v)*v^degree()
