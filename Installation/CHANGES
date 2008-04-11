@@ -7,6 +7,8 @@ The following functionality has been added or changed:
 Additional supported platforms:
  - GNU g++ 4.3 supported
 
+ - Boost version 1.33 at least is required.
+
 2 Installation
 
 CMake now replaces install_cgal...
