@@ -109,7 +109,6 @@ inline Three_valued_estimate operator- ( Three_valued_estimate sign ) {
  */
 
 namespace INTERN_RNDL_TREE {
-
 // compute g(x) = 2^p f((ax+b)/c) for c = 2^log_c with absolute error <= 1
 template <class Integer, class RandomAccessIterator, class OutputIterator,
 class Approximator, class CeilLog2AbsInteger, class CeilLog2AbsLong>
@@ -1088,6 +1087,26 @@ public:
     void erase(Node_iterator n) {
         this->ptr()->node_list_.erase(n);
     }
+
+    /*! \brief Replace traits class
+     */
+    void set_traits(TRAITS& traits) {
+
+      this->ptr()->approximator_ 
+        = traits.approximator_object();
+      this->ptr()->lower_bound_log2_abs_ 
+        = traits.lower_bound_log2_abs_object();
+
+    }
+
+    /*! \brief Returns a copy of this with its own representation
+     */
+    Self make_unique() const {
+      Self tmp = *this;
+      tmp.copy_on_write();
+      return tmp;
+    }
+
 
 protected:
     int subdivide_at_midpoint(
