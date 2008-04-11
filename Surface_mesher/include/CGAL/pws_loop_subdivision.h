@@ -131,8 +131,7 @@ public:
       {
         const Point& p1 = he->vertex()->point();
         const Point& p2 = he->opposite()->vertex()->point();
-        Point point = CGAL::ORIGIN + 0.5 * ((p1 - CGAL::ORIGIN) + 
-                                            (p2 - CGAL::ORIGIN));
+        Point point = CGAL::midpoint(p1, p2);
         builder.add_vertex(point);
       }
       else
