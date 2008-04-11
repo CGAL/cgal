@@ -2,32 +2,47 @@ Analysis
 - len diag of bbox, etc., see  bounding_box(begin,beyond) in PCA component
 - average spacing (KNN)
 - std statistical measures: centroid(begin,beyond), std dev, etc.
-- lfs estimate (pole approach + arbitrary query points using KNN)
+- lfs estimate (pole approach + arbitrary query points using KNN) (pierre)
 
 Processing
-- smoothing (via jet-fitting + reprojection)
-- outlier removal (to check which one is easy with CGAL components)
+- smoothing (via jet-fitting + reprojection) (pierre)
+- outlier removal (to check which one is easy with CGAL components) (laurent)
+- decimate point sets (laurent)
 
 Normal estimation
-- KNN + point-based PCA
-- KNN + jet fitting
-- Voronoi + pole (pierre)
+- KNN + point-based PCA (done)
+- KNN + jet fitting (done)
+- Voronoi + poles (pierre)
 - Voronoi + tet-based PCA (pierre)
 
 Normal orientation
-- MST (laurent)
+- MST (done)
 - pole-based (frederic?)
 
 Implicit function
-- Poisson
-- Algebraic point set surfaces
+- Poisson (done)
+- Algebraic point set surfaces (laurent)
 
-Contouring
-- Delaunay refinement & filtering 
-- Marching Cubes ? 
+Implicit function contouring
+- Delaunay refinement & filtering (Surface_mesher) (done)
+- Integration of Marching Cubes? (laurent)
+
+Delaunay-based contouring
+- Integration of "Da - Cohen-Steiner" (laurent)
 
 
-In addition: Integration of "Da - Cohen-Steiner"
+In addition:
+
+Concepts
+- ReconstructionImplicitFunction concept (to be refined) (laurent)
+- Algorithms are independent global functions (no concepts)
+- Output formats concept to be defined (laurent?)
+
+Demos, examples and tests
+- Command line tests (pierre + laurent)
+- MFC demo (to be removed?) (laurent)
+- Qt demo (laurent)
+
 
 
 
