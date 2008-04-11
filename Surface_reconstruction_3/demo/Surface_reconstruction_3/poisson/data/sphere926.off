@@ -1,23 +1,5 @@
-# Output of a CGAL tool
-#CBP
-# polyhedral_surface 0
-# halfedges 0
-# triangulated 0
-# non_empty_facets 0
-# terrain 0
-# normalized_to_sphere 0
-# radius 0
-# rounded 0
-# rounded_bits 0
-# ENDCBP
-
 OFF
 926 1848 0
-
-# 926 vertices
-# ------------------------------------------
-
-
 2.78865 0.400948 -9.59493
 4.11187 0.591198 -9.09632
 2.81733 0 -9.59493
@@ -944,10 +926,6 @@ OFF
 5.40641 0 8.41254
 6.28334 -1.84495 7.5575
 6.28334 1.84495 7.5575
-
-# 1848 facets
-# ------------------------------------------
-
 3  0 1 2
 3  3 1 0
 3  1 3 4
