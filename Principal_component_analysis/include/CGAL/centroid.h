@@ -71,7 +71,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 2D segment set
 // takes an iterator range over K::Segment_2
 
-// centriod for 2D segment set with 0D tag
+// centroid for 2D segment set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -96,9 +96,9 @@ centroid(InputIterator begin,
     points.push_back(s[1]);
   } 
   return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
-}// end centriod for 2D segment set with 0D tag
+}// end centroid for 2D segment set with 0D tag
 
-// centriod for 2D segment set with 1D tag
+// centroid for 2D segment set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -134,7 +134,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 2D triangle set
 // takes an iterator range over K::Triangle_2
 
-// centriod for 2D triangle set with 0D tag
+// centroid for 2D triangle set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -163,7 +163,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 2D triangle set with 0D tag
 
-// centriod for 2D triangle set with 1D tag
+// centroid for 2D triangle set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -192,7 +192,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 2D triangle set with 1D tag
 
-// centriod for 2D triangle set with 2D tag
+// centroid for 2D triangle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -228,7 +228,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 2D circle set
 // takes an iterator range over K::Circle_2
 
-// centriod for 2D circle set with 1D tag
+// centroid for 2D circle set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -261,7 +261,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_lengths;
 } // end centroid of a 2D circle set with 1D tag
 
-// centriod for 2D circle set with 2D tag
+// centroid for 2D circle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -297,7 +297,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 2D rectangle set
 // takes an iterator range over K::Iso_Rectangle_2
 
-// centriod for 2D rectangle set with 0D tag
+// centroid for 2D rectangle set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -327,7 +327,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 2D rectangle set with 0D tag
 
-// centriod for 2D rectangle set with 1D tag
+// centroid for 2D rectangle set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -357,7 +357,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 2D rectangle set with 1D tag
 
-// centriod for 2D rectangle set with 2D tag
+// centroid for 2D rectangle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_2
@@ -393,7 +393,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 3D point set
 // takes an iterator range over K::Point_3
 
-// centriod for 3D point set with 0D tag
+// centroid for 3D point set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -418,7 +418,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / (FT)nb_pts;
 }// end centroid of a 3D point set with 0D tag
 
-// centriod for 3D segment set with 1D tag
+// centroid for 3D segment set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -456,7 +456,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 3D triangle set
 // takes an iterator range over K::Triangle_3
 
-// centriod for 3D triangle set with 0D tag
+// centroid for 3D triangle set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -485,7 +485,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 3D triangle set with 0D tag
 
-// centriod for 3D triangle set with 1D tag
+// centroid for 3D triangle set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -514,7 +514,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 3D triangle set with 1D tag
 
-// centriod for 3D triangle set with 2D tag
+// centroid for 3D triangle set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -550,7 +550,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 3D sphere set
 // takes an iterator range over K::Sphere_3
 
-// centriod for 3D sphere set with 2D tag
+// centroid for 3D sphere set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -583,7 +583,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_areas;
 } // end centroid of a 3D sphere set with 2D tag
 
-// centriod for 3D sphere set with 3D tag
+// centroid for 3D sphere set with 3D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -619,7 +619,7 @@ centroid(InputIterator begin,
 // computes the centroid of a 3D cuboid set
 // takes an iterator range over K::Iso_cuboid_3
 
-// centriod for 3D cuboid set with 0D tag
+// centroid for 3D cuboid set with 0D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -653,7 +653,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 3D cuboid set with 0D tag
 
-// centriod for 3D cuboid set with 1D tag
+// centroid for 3D cuboid set with 1D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -691,7 +691,7 @@ centroid(InputIterator begin,
 
 } // end centroid of a 3D cuboid set with 1D tag
 
-// centriod for 3D cuboid set with 2D tag
+// centroid for 3D cuboid set with 2D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -724,7 +724,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_areas;
 } // end centroid of a 3D cuboid set with 2D tag
 
-// centriod for 3D cuboid set with 3D tag
+// centroid for 3D cuboid set with 3D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
@@ -757,7 +757,7 @@ centroid(InputIterator begin,
   return ORIGIN + v / sum_volumes;
 } // end centroid of a 3D cuboid set with 3D tag
 
-// centriod for 3D Tetrahedron set with 3D tag
+// centroid for 3D Tetrahedron set with 3D tag
 template < typename InputIterator, 
            typename K >
 typename K::Point_3
