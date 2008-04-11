@@ -278,8 +278,6 @@ Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/Integer_iterator.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/Real_embeddable_extension.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/Real_roots.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/construct_binary.h -text
-Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/interval_support.h -text
-Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/leda_interval_support.h -text
 Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/refine_zero_against.h -text
 Algebraic_kernel_d/include/CGAL/Filtered_algebraic_curve_kernel_2.h -text
 Algebraic_kernel_d/package_info/Algebraic_kernel_d/maintainer -text
