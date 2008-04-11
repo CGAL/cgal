@@ -271,7 +271,8 @@ private:
         return true;
     }    
 public:
-    virtual void refine() const{      
+
+    void bisect() const {
         
         if(is_rational()) return;
         
@@ -282,7 +283,11 @@ public:
         if ( s == CGAL::ZERO ) learn_from(m);
         else 
             if ( s == sign_at_low() ) low_  = m;
-            else                      high_ = m; 
+            else                      high_ = m;  
+    }
+
+    virtual void refine() const{      
+        bisect();
     }
 
 public:

@@ -155,8 +155,11 @@ public:
         }
     }
         
-    /*! \brief Refines by bisecting the isolating interval. */ 
+    /*! \brief Refines the isolating interval. */ 
     void refine() const{ this->ptr()->refine(); }  
+
+    /*! \brief Bisects the isolating interval. */ 
+    void bisect() const{ this->ptr()->bisect(); }  
   
     /*! \brief Refines the isolating interval until \a m is outside 
      *  the \c closed interval        
