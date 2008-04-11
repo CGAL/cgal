@@ -20,12 +20,14 @@
 #include<string>
 #include<vector>
 #include<set>
+#include<map>
 #include<iostream>
 #include<fstream>
 #include<sstream>
 #include<iomanip>
 
 #include<boost/tokenizer.hpp>
+
 
 bool sTestInner            = true  ;
 bool sTestOuter            = true  ;
@@ -60,6 +62,8 @@ double sScale = 1.0 ;
 //#define CGAL_STRAIGHT_SKELETON_ENABLE_VALIDITY_TRACE 
 //#define CGAL_POLYGON_OFFSET_ENABLE_TRACE 3
 
+//#define CGAL_STRAIGHT_SKELETON_PROFILING_ENABLED
+
 bool lAppToLog = false ;
 void Straight_skeleton_external_trace ( std::string m )
 {
@@ -86,6 +90,25 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   if ( sAbortOnError )    
     std::exit(1);     
 }
+
+typedef std::vector<std::string>                     FP_filter_failure_list ;
+typedef std::map<std::string,FP_filter_failure_list> FP_filter_failure_map ;
+typedef std::map<std::string,int>                    FP_filter_success_map ;
+
+FP_filter_failure_map sPredFailureMap ;
+FP_filter_failure_map sConsFailureMap ;
+FP_filter_success_map sPredSuccessMap ;
+FP_filter_success_map sConsSuccessMap ;
+
+int sTotalPredFailures = 0 ;
+int sTotalConsFailures = 0 ;
+int sTotalPredSuccess  = 0 ;
+int sTotalConsSuccess  = 0 ;
+
+void register_predicate_failure    ( std::string pred, std::string failure ) { sPredFailureMap[pred].push_back(failure); ++ sTotalPredFailures ; }
+void register_construction_failure ( std::string cons, std::string failure ) { sConsFailureMap[cons].push_back(failure); ++ sTotalConsFailures ; }
+void register_predicate_success    ( std::string pred) { ++ sPredSuccessMap[pred] ; ++ sTotalPredSuccess ; }
+void register_construction_success ( std::string cons) { ++ sConsSuccessMap[cons] ; ++ sTotalConsSuccess ; }
 
 #include <CGAL/test_sls_types.h>
 
@@ -1160,6 +1183,44 @@ int main( int argc, char const* argv[] )
     
     cout << "OK     cases: " << lOK_cases     << endl ;
     cout << "Failed cases: " << lFailed_cases << endl ;
+    cout << endl ;
+
+    if ( Uncertain<bool>::number_of_failures() > 0 )
+    {    
+      cout << "!! " << Uncertain<bool>::number_of_failures() << " uncertain conversion failures. " << endl ;
+      cout << endl ;
+    }
+
+    int lTotalPred = sTotalPredFailures + sTotalPredSuccess ;  
+    int lTotalCons = sTotalConsFailures + sTotalConsSuccess ;  
+
+    if ( lTotalPred > 0 && lTotalCons > 0 )
+    {
+      cout << "Floating-point filter statistics:" << endl << endl ;
+      
+      cout << "  " << sTotalPredFailures << " predicate    failures  (" << ( sTotalPredFailures / lTotalPred * 100.0 ) << "%)" << endl ;
+      cout << "  " << sTotalPredSuccess  << " predicate    successes " << endl ;
+      cout << "  " << sTotalConsFailures << " construction failures  (" << ( sTotalConsFailures / lTotalCons * 100.0 ) << "%)" << endl ;
+      cout << "  " << sTotalConsSuccess  << " construction successes " << endl ;
+      
+      cout << "  " << (sTotalPredFailures + sTotalConsFailures ) << " total failures  ("
+           << ( (sTotalPredFailures + sTotalConsFailures ) / (lTotalPred + lTotalCons) * 100.0 ) << "%)" << endl ;
+      
+      cout << "  Details..." << endl ;
+      
+      for ( FP_filter_failure_map::iterator it = sPredFailureMap.begin(); it != sPredFailureMap.end() ; ++ it )
+        cout << "    " << it->first << " : " << it->second.size() << " failures." << endl ; 
+        
+      for ( FP_filter_success_map::iterator it = sPredSuccessMap.begin(); it != sPredSuccessMap.end() ; ++ it )
+        cout << "    " << it->first << " : " << it->second << " successes." << endl ; 
+        
+      for ( FP_filter_failure_map::iterator it = sConsFailureMap.begin(); it != sConsFailureMap.end() ; ++ it )
+        cout << "    " << it->first << " : " << it->second.size() << " failures." << endl ; 
+        
+      for ( FP_filter_success_map::iterator it = sConsSuccessMap.begin(); it != sConsSuccessMap.end() ; ++ it )
+        cout << "    " << it->first << " : " << it->second << " successes." << endl ; 
+        
+    }    
   }
   
   if ( lPrintUsage )
@@ -1199,6 +1260,7 @@ int main( int argc, char const* argv[] )
          
   }
 
+  
   return lExitCode ;
 }
 
