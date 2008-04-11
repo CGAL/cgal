@@ -44,6 +44,8 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 
 public:
 
+  static const int static_dimension = 2;
+
   typedef typename R_::Kernel_base::Iso_rectangle_2  Rep;
 
   const Rep& rep() const

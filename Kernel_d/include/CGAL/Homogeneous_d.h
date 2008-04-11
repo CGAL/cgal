@@ -47,6 +47,8 @@
 #include <CGAL/Kernel_d/Interface_classes.h>
 #include <CGAL/Kernel_d/simple_objects.h>
 
+#include <CGAL/Dimension.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class pRT, class pLA = Linear_algebraHd<pRT> >
@@ -73,6 +75,11 @@ public:
   typedef CGAL::Aff_transformation_d<Self> Aff_transformation_d;
 
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
+
+  template <typename>
+  struct Dimension {
+    static const int value = Dynamic_dimension;
+  };
 
   template <typename K>
   class Construct_cartesian_const_iterator

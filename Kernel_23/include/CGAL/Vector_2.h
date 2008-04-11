@@ -51,6 +51,8 @@ class Vector_2 : public R_::Kernel_base::Vector_2
 
 public:
 
+  static const int static_dimension = 2;
+
   typedef RVector_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 

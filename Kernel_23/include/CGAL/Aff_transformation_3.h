@@ -33,6 +33,9 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
   typedef typename R_::Vector_3      Vector_3;
   typedef typename R_::Kernel_base::Aff_transformation_3 RAff_transformation_3;
 public:
+
+  static const int static_dimension = 3;
+
   typedef R_                        R;
 
   Aff_transformation_3() {}

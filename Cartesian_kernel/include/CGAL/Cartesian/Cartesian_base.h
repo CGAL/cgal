@@ -101,6 +101,11 @@ struct Cartesian_base
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
                                                         Angle;
 
+    template <typename T>
+    struct Dimension {
+      static const int value = T::static_dimension;
+    };
+
     typedef PointC2<Kernel>                             Point_2;
     typedef VectorC2<Kernel>                            Vector_2;
     typedef DirectionC2<Kernel>                         Direction_2;

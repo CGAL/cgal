@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Kernel/Dimension.h>
+#include <CGAL/Dimension.h>
 #include <CGAL/Kernel/Dimension_utils.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -148,7 +148,7 @@ struct bbox<3>
 };
 
 template <>
-struct bbox<0>
+struct bbox<Dynamic_dimension>
 {
   template < class ForwardIterator, class Traits >
   typename Traits::Iso_box_d

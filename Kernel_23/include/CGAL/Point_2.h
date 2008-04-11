@@ -46,6 +46,9 @@ class Point_2 : public R_::Kernel_base::Point_2
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Point_2>::value));
 
 public:
+
+  static const int static_dimension = 2;
+
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 

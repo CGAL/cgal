@@ -44,6 +44,8 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
 
 public:
 
+  static const int static_dimension = 3;
+
   typedef typename R_::Kernel_base::Sphere_3  Rep;
 
   const Rep& rep() const

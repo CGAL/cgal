@@ -1,11 +1,15 @@
 // Test program for Dimension<>.
 // Sylvain Pion, 2005.
 
-#include <CGAL/Cartesian.h>
 #include <cassert>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous.h>
+#include <CGAL/Homogeneous_d.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Kernel/Dimension.h>
+#include <CGAL/Dimension.h>
 #include <CGAL/Dimension_tag.h>
 
 template < typename K >
@@ -42,25 +46,35 @@ void test(CGAL::Dimension_tag<3>)
 }
 
 template < typename K >
-void test(CGAL::Dimension_tag<0>)
+void test(CGAL::Dimension_tag<CGAL::Dynamic_dimension>)
 {
-  assert( 0 == CGAL::Dimension<typename K::Point_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Hyperplane_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Vector_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Direction_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Line_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Ray_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Segment_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Iso_box_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Sphere_d>::value );
-  assert( 0 == CGAL::Dimension<typename K::Aff_transformation_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Point_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Hyperplane_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Vector_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Direction_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Line_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Ray_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Segment_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Iso_box_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Sphere_d>::value );
+  assert( CGAL::Dynamic_dimension == CGAL::Dimension<typename K::Aff_transformation_d>::value );
 }
 
 int main()
 {
   test<CGAL::Cartesian<int> >(CGAL::Dimension_tag<2>());
   test<CGAL::Cartesian<int> >(CGAL::Dimension_tag<3>());
-  test<CGAL::Cartesian_d<int> >(CGAL::Dimension_tag<0>());
+  test<CGAL::Cartesian_d<int> >(CGAL::Dimension_tag<CGAL::Dynamic_dimension>());
+
+  test<CGAL::Homogeneous<int> >(CGAL::Dimension_tag<2>());
+  test<CGAL::Homogeneous<int> >(CGAL::Dimension_tag<3>());
+  test<CGAL::Homogeneous_d<int> >(CGAL::Dimension_tag<CGAL::Dynamic_dimension>());
   
+  test<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::Dimension_tag<2>());
+  test<CGAL::Exact_predicates_inexact_constructions_kernel>(CGAL::Dimension_tag<3>());
+
+  test<CGAL::Exact_predicates_exact_constructions_kernel>(CGAL::Dimension_tag<2>());
+  test<CGAL::Exact_predicates_exact_constructions_kernel>(CGAL::Dimension_tag<3>());
+
   return 0;
 }

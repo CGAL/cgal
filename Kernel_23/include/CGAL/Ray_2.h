@@ -49,6 +49,8 @@ class Ray_2 : public R_::Kernel_base::Ray_2
 
 public:
 
+  static const int static_dimension = 2;
+
   typedef RRay_2 Rep;
 
   const Rep& rep() const

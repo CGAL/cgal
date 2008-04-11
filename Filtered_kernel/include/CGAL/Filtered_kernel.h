@@ -67,6 +67,11 @@ struct Filtered_kernel_base
         typedef Filtered_kernel_base<CK2>  Type;
     };
 
+    template < typename T >
+    struct Dimension {
+        static const int value = T::static_dimension; // maybe not the right way...
+    };
+
     // We change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \

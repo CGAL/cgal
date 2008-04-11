@@ -59,6 +59,11 @@ public:
   template < typename Kernel2 >
   struct Base { typedef Lazy_kernel_generic_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
+  template < typename T >
+  struct Dimension {
+    static const int value = T::static_dimension;
+  };
+
   // What to do with the tag ?
   // Probably this should not exist, should it ?
   // struct filter_tag{};

@@ -50,6 +50,8 @@ class Vector_3 : public R_::Kernel_base::Vector_3
 
 public:
 
+  static const int static_dimension = 3;
+
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
   typedef typename R_::Kernel_base::Vector_3      Rep;
 

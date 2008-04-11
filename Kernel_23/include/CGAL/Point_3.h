@@ -47,6 +47,8 @@ class Point_3 : public R_::Kernel_base::Point_3
 
 public:
 
+  static const int static_dimension = 3;
+
   typedef typename R_::Kernel_base::Point_3  Rep;
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
 

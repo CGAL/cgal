@@ -108,6 +108,11 @@ struct Homogeneous_base
     typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
                                                     Angle;
 
+    template <typename T>
+    struct Dimension {
+      static const int value = T::static_dimension;
+    };
+
     typedef PointH2<Kernel>                         Point_2;
     typedef VectorH2<Kernel>                        Vector_2;
     typedef DirectionH2<Kernel>                     Direction_2;

@@ -35,6 +35,9 @@ class Bbox_3
   Sixtuple<double>   rep;
 
 public:
+
+  static const int static_dimension = 3;
+
         Bbox_3() {}
 
         Bbox_3(double x_min, double y_min, double z_min,

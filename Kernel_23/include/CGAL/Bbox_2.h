@@ -38,6 +38,9 @@ class Bbox_2
   BBox_rep_2 rep;
 
 public:
+
+  static const int static_dimension = 2;
+
              Bbox_2() {}
 
              Bbox_2(double x_min, double y_min,

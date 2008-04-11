@@ -41,6 +41,8 @@ class Aff_transformation_2 : public R_::Kernel_base::Aff_transformation_2
 public:
   typedef  R_                               R;
 
+  static const int static_dimension = 2;
+
   Aff_transformation_2() {}
 
   Aff_transformation_2(const RAff_transformation_2& t)

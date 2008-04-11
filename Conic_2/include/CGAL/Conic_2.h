@@ -32,17 +32,14 @@ CGAL_BEGIN_NAMESPACE
 template < class R_ >
 class Optimisation_ellipse_2;
 
-CGAL_END_NAMESPACE
-
-
-CGAL_BEGIN_NAMESPACE
-
 template < class R_>
 class Conic_2 : public R_::Kernel_base::Conic_2 {
 
     friend  class Optimisation_ellipse_2<R_>;
 
   public:
+
+    static const int static_dimension = 2;
 
     // types
     typedef  R_                    R;

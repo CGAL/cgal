@@ -48,6 +48,8 @@ class Segment_2 : public R_::Kernel_base::Segment_2
 
 public:
 
+  static const int static_dimension = 2;
+
   typedef RSegment_2 Rep;
 
   const Rep& rep() const
