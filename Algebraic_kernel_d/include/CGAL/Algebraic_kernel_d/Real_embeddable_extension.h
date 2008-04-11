@@ -160,6 +160,18 @@ namespace CGALi {
                 }
          };
 
+        struct Floor_log2_abs
+            : public Unary_function< leda_integer, long > {
+                long operator()( const leda_integer& x ) const {
+                    CGAL_precondition(x != leda_integer(0));
+                    ::leda::digit_sz ldgzeros 
+                          = ::leda::digLeadingZeros(x.highword());
+                    result_type l =
+                        x.used_words() * ::leda::DIGIT_LENGTH - 1 - ldgzeros;
+                    return l;
+                }
+        };
+
         struct Floor
             : public Unary_function< leda_integer, leda_integer > {
             leda_integer operator() (const leda_integer& x) const { return x;}
