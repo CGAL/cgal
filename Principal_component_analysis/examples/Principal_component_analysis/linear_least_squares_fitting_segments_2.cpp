@@ -20,7 +20,7 @@ int main()
 
 	// fit a line
   Line line;
-  linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_2(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
 
   return 0;
 }

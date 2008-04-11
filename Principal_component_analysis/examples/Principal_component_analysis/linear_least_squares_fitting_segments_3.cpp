@@ -23,12 +23,12 @@ int main()
   Plane plane;
 
 	// fit a line and a plane to segments
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
 
 	// fit a line and a plane to segment end points
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line, CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<0>());
 
   return 0;
 }

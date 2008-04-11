@@ -25,7 +25,7 @@
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/Dimension_utils.h>
-#include <CGAL/PCA_tags.h>
+#include <CGAL/Dimension_tag.h>
 
 #include <list>
 // Functions to compute the centroid of N points.
@@ -51,7 +51,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K&,
          const typename K::Point_2*,
-         const CGAL::PCA_dimension_0_tag&)
+         const CGAL::Dimension_tag<0>&)
 {
   typedef typename K::Vector_2 Vector;
   typedef typename K::FT FT;
@@ -79,7 +79,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Segment_2*,
-         const CGAL::PCA_dimension_0_tag& tag)
+         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Point_2  Point;
   typedef typename K::Segment_2 Segment;
@@ -106,7 +106,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Segment_2*,
-         const CGAL::PCA_dimension_1_tag&)
+         const CGAL::Dimension_tag<1>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -142,7 +142,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Triangle_2*,
-         const CGAL::PCA_dimension_0_tag& tag)
+         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Triangle_2 Triangle;
   typedef typename K::Point_2 Point;
@@ -171,7 +171,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Triangle_2*,
-         const CGAL::PCA_dimension_1_tag& tag)
+         const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::Triangle_2 Triangle;
   typedef typename K::Segment_2 Segment;
@@ -200,7 +200,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Triangle_2*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -236,7 +236,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Circle_2*,
-         const CGAL::PCA_dimension_1_tag&)
+         const CGAL::Dimension_tag<1>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -269,7 +269,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Circle_2*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -305,7 +305,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Iso_rectangle_2*,
-   const CGAL::PCA_dimension_0_tag& tag)
+   const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Point_2 Point;
@@ -335,7 +335,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Iso_rectangle_2*,
-         const CGAL::PCA_dimension_1_tag& tag)
+         const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Segment_2 Segment;
@@ -365,7 +365,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Iso_rectangle_2*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_2 Vector;
@@ -401,7 +401,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K&,
          const typename K::Point_3*,
-         const CGAL::PCA_dimension_0_tag&)
+         const CGAL::Dimension_tag<0>&)
 {
   typedef typename K::Vector_3 Vector;
   typedef typename K::FT FT;
@@ -426,7 +426,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Segment_3*,
-         const CGAL::PCA_dimension_1_tag&)
+         const CGAL::Dimension_tag<1>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -464,7 +464,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Triangle_3*,
-         const CGAL::PCA_dimension_0_tag& tag)
+         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Point_3 Point;
@@ -493,7 +493,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Triangle_3*,
-         const CGAL::PCA_dimension_1_tag& tag)
+         const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Segment_3 Segment;
@@ -522,7 +522,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Triangle_3*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -558,7 +558,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Sphere_3*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -591,7 +591,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Sphere_3*,
-         const CGAL::PCA_dimension_3_tag&)
+         const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -627,7 +627,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& k,
          const typename K::Iso_cuboid_3*,
-         const CGAL::PCA_dimension_0_tag& tag)
+         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
   typedef typename K::Point_3 Point;
@@ -661,7 +661,7 @@ centroid(InputIterator begin,
          InputIterator end, 
           const K& k,
          const typename K::Iso_cuboid_3*,
-   const CGAL::PCA_dimension_1_tag& tag)
+   const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
   typedef typename K::Segment_3 Segment;
@@ -699,7 +699,7 @@ centroid(InputIterator begin,
          InputIterator end, 
           const K& ,
          const typename K::Iso_cuboid_3*,
-         const CGAL::PCA_dimension_2_tag&)
+         const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -732,7 +732,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Iso_cuboid_3*,
-         const CGAL::PCA_dimension_3_tag&)
+         const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;
@@ -765,7 +765,7 @@ centroid(InputIterator begin,
          InputIterator end, 
          const K& ,
          const typename K::Tetrahedron_3*,
-         const CGAL::PCA_dimension_3_tag&)
+         const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Vector_3 Vector;

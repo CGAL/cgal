@@ -31,7 +31,7 @@
 #include <CGAL/linear_least_squares_fitting_tetrahedra_3.h>
 #include <CGAL/linear_least_squares_fitting_spheres_3.h>
 
-#include <CGAL/PCA_tags.h>
+#include <CGAL/Dimension_tag.h>
 
 #include <iterator>
 #include <list>

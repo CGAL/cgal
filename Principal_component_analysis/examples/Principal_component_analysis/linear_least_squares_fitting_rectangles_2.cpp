@@ -20,7 +20,7 @@ int main()
   Line_2 line;
   Point_2 c;
 
-  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_2(Iso_rectangles.begin(),Iso_rectangles.end(),line,c,CGAL::Dimension_tag<2>());
 
   return 0;
 }

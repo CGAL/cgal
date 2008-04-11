@@ -97,7 +97,7 @@ public:
       linear_least_squares_fitting_2(list_of_points.begin(),
 				     list_of_points.end(),
 				     line,
-				     CGAL::PCA_dimension_0_tag());
+				     CGAL::Dimension_tag<0>());
       
       *widget << line;
     }

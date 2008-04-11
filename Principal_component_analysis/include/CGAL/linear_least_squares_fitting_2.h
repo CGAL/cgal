@@ -28,7 +28,7 @@
 #include <CGAL/linear_least_squares_fitting_triangles_2.h>
 #include <CGAL/linear_least_squares_fitting_circles_2.h>
 #include <CGAL/linear_least_squares_fitting_rectangles_2.h>
-#include <CGAL/PCA_tags.h>
+#include <CGAL/Dimension_tag.h>
 
 #include <iterator>
 

@@ -41,15 +41,15 @@ void fit_point_set(std::list<Point>& points,
   Point centroid;
 
   std::cout << "fit 3D line...";
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::PCA_dimension_0_tag(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   std::cout << "fit 3D plane...";
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::PCA_dimension_0_tag(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::Dimension_tag<0>());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>());
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel);
   std::cout << "done (quality: " << quality << ")" << std::endl;
 }
 

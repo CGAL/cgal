@@ -33,8 +33,8 @@ void test_1()
   Line_2 line;
   Point_2 centroid;
   FT quality;
-  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,CGAL::Dimension_tag<2>());
+  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,centroid,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
   std::list<Triangle_2> triangles1;
@@ -47,8 +47,8 @@ void test_1()
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
-  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,CGAL::Dimension_tag<2>());
+  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
   
   if(!(std::abs(-1.0*line.a()/line.b() - -1.0*line1.a()/line1.b()) <= THRESHOLD && std::abs(line.c()/line.b() - line1.c()/line1.b()) <= THRESHOLD && std::abs(quality1 - quality) <= THRESHOLD))
@@ -72,8 +72,8 @@ void test_2()
   Line_2 line;
   Point_2 centroid;
   FT quality;
-  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,CGAL::PCA_dimension_2_tag());
-  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
+  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,CGAL::Dimension_tag<2>());
+  quality = linear_least_squares_fitting_2(iso_rectangles.begin(),iso_rectangles.end(),line,centroid,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality << ") Line: " << line<<" centroid: "<<centroid<<std::endl;
 
   std::list<Triangle_2> triangles1;
@@ -88,8 +88,8 @@ void test_2()
   Line_2 line1;
   Point_2 centroid1;
   FT quality1;
-  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,CGAL::PCA_dimension_2_tag());
-  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::PCA_dimension_2_tag());
+  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,CGAL::Dimension_tag<2>());
+  quality1 = linear_least_squares_fitting_2(triangles1.begin(),triangles1.end(),line1,centroid1,CGAL::Dimension_tag<2>());
   std::cout << "done (quality: " << quality1 << ") Line: " << line1<<" centroid: "<<centroid1<<std::endl;
 
   

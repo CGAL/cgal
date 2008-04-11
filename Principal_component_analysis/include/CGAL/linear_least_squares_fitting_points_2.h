@@ -45,7 +45,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Point_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::Dimension_tag<0>& tag)
 {
   // types
   typedef typename K::FT       FT;

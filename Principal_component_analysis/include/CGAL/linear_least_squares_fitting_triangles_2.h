@@ -50,7 +50,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename Kernel::Point_2& c,     // centroid
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
-			                         const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::Dimension_tag<2>& tag)
 {
   // types
   typedef typename Kernel::FT       FT;
@@ -160,7 +160,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename Kernel::Point_2& c,     // centroid
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
-			                         const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::Dimension_tag<1>& tag)
 {
   // types
   typedef typename Kernel::Triangle_2 Triangle;
@@ -193,7 +193,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename Kernel::Point_2& c,     // centroid
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
-			                         const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::Dimension_tag<0>& tag)
 {
   // types
 

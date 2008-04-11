@@ -23,11 +23,11 @@ int main()
   Line line;
   Point centroid;
 
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::Dimension_tag<1>());
 
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,centroid,CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,centroid,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,centroid,CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,centroid,CGAL::Dimension_tag<1>());
 
   return 0;
 }

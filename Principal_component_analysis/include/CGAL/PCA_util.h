@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 #include <CGAL/Linear_algebraCd.h>
-#include <CGAL/PCA_tags.h>
+#include <CGAL/Dimension_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,7 +56,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Point_3*,   // used for indirection
-                             const CGAL::PCA_dimension_0_tag&)
+                             const CGAL::Dimension_tag<0>&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -93,7 +93,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K&,                    // kernel
                              const typename K::Triangle_3*,// used for indirection
-                             const CGAL::PCA_dimension_2_tag&)
+                             const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -169,7 +169,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::PCA_dimension_3_tag&)
+                             const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -253,7 +253,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::PCA_dimension_2_tag&)
+                             const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point;
@@ -345,7 +345,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::PCA_dimension_3_tag&)
+                             const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -426,7 +426,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::PCA_dimension_2_tag&)
+                             const CGAL::Dimension_tag<2>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -509,7 +509,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Tetrahedron_3*,// used for indirection
-                             const CGAL::PCA_dimension_3_tag&)
+                             const CGAL::Dimension_tag<3>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;
@@ -594,7 +594,7 @@ assemble_covariance_matrix_3(InputIterator first,
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Segment_3*,// used for indirection
-                             const CGAL::PCA_dimension_1_tag&)
+                             const CGAL::Dimension_tag<1>&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point;

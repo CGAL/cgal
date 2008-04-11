@@ -23,20 +23,20 @@ int main()
   Plane plane;
 
 	// fit volume
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<3>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<3>());
   
   // fit faces
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<2>());
 
 	// fit edges
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<1>());
 
 	// fit vertices
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),line, CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(cuboids.begin(),cuboids.end(),plane,CGAL::Dimension_tag<0>());
 
   return 0;
 }

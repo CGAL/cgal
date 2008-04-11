@@ -41,20 +41,20 @@ int main(void)
   Plane plane;
 
 	// fit a line and a plane to tetrahedra
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<3>());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<3>());
 
 	// fit a line and a plane to tetrahedron faces
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<2>());
     
 	// fit a line and a plane to tetrahedron edges
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<1>());
 
 	// fit a line and a plane to tetrahedron vertices
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),line, CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(tetrahedra.begin(),tetrahedra.end(),plane,CGAL::Dimension_tag<0>());
 
 	return 0;
 }

@@ -38,16 +38,16 @@ int main(void)
   Plane plane;
 
 	// fit a line and a plane to triangles
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
   
 	// fit a line and a plane to triangle edges
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
   
 	// fit a line and a plane to triangle vertices
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line, CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<0>());
   
   return 0;
 }

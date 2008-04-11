@@ -20,12 +20,12 @@ int main()
   Plane plane;
 
   // fit a line and a plane to balls (dimension 3)
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::PCA_dimension_3_tag());
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_3_tag());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::Dimension_tag<3>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
 
   // fit a line and a plane to spheres (dimension 2)
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::PCA_dimension_2_tag());
-  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line, CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<2>());
 
   return 0;
 }

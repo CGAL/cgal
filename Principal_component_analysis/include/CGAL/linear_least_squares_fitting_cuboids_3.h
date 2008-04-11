@@ -44,7 +44,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::Dimension_tag<3>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -75,7 +75,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::Dimension_tag<2>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -106,7 +106,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Segment_3 Segment;
@@ -150,7 +150,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point;
@@ -190,7 +190,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_3_tag& tag)
+			                         const CGAL::Dimension_tag<3>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -220,7 +220,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_2_tag& tag)
+			                         const CGAL::Dimension_tag<2>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -251,7 +251,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_1_tag& tag)
+			                         const CGAL::Dimension_tag<1>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Segment_3 Segment;
@@ -295,7 +295,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::PCA_dimension_0_tag& tag)
+			                         const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::FT FT;
   typedef typename K::Point_3 Point;

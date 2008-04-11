@@ -32,13 +32,13 @@ FT fit_set(std::list<Segment>& segments,
   FT quality;
   Point centroid;
 
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag(),kernel);
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel);
 
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
-  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag(),kernel);
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
+  quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel);
 
 	return quality;
 }
@@ -159,8 +159,8 @@ void test_4()
   Line line1;
   Point centroid1;
   FT quality1;
-  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,CGAL::PCA_dimension_0_tag());
-  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,CGAL::PCA_dimension_0_tag());
+  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,CGAL::Dimension_tag<0>());
+  quality1 = linear_least_squares_fitting_3(points.begin(),points.end(),line1,centroid1,CGAL::Dimension_tag<0>());
   std::cout << "done, quality: " << quality1 << std::endl;
 
   if(!(line.has_on(line1.point(0)) && (double)line.to_vector().y()/line.to_vector().x() -
@@ -190,7 +190,7 @@ void test_5()
 	Line line;
 	Plane plane;
   Point centroid;
-  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
+  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!plane.has_on(segments[0].supporting_line()))
@@ -212,16 +212,16 @@ void test_6()
   Point centroid;
 
 	// fit plane
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<0>());
 
 	// fit line
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::PCA_dimension_0_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_1_tag());
-  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<0>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
+  linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<0>());
 }
 
 int main()

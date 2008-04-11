@@ -17,7 +17,7 @@ int main()
 
 	// fit a line 
   Line line;
-  linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::PCA_dimension_0_tag());
+  linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
 
   return 0;
 }

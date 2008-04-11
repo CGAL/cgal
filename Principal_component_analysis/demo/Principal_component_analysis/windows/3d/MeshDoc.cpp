@@ -246,22 +246,22 @@ void CMeshDoc::OnFitFitpointset()
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_line,
-																 CGAL::PCA_dimension_0_tag());
+																 CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_line,
                                  m_centroid,
-																 CGAL::PCA_dimension_0_tag());
+																 CGAL::Dimension_tag<0>());
 
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_plane,
-																 CGAL::PCA_dimension_0_tag());
+																 CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(m_points.begin(),
                                  m_points.end(),
                                  m_fitting_plane,
                                  m_centroid,
-																 CGAL::PCA_dimension_0_tag());
+																 CGAL::Dimension_tag<0>());
   UpdateAllViews(NULL);
 }
 
@@ -270,21 +270,21 @@ void CMeshDoc::OnFitTriangleset32899()
   linear_least_squares_fitting_3(m_triangles.begin(),
                                  m_triangles.end(),
                                  m_fitting_line,
-																 CGAL::PCA_dimension_2_tag());
+																 CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(m_triangles.begin(),
                                  m_triangles.end(),
                                  m_fitting_line,
                                  m_centroid,
-																 CGAL::PCA_dimension_2_tag());
+																 CGAL::Dimension_tag<2>());
 
   linear_least_squares_fitting_3(m_triangles.begin(),
                                  m_triangles.end(),
                                  m_fitting_plane,
-																 CGAL::PCA_dimension_2_tag());
+																 CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(m_triangles.begin(),
                                  m_triangles.end(),
                                  m_fitting_plane,
                                  m_centroid,
-																 CGAL::PCA_dimension_2_tag());
+																 CGAL::Dimension_tag<2>());
   UpdateAllViews(NULL);
 }

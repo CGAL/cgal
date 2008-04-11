@@ -11,18 +11,11 @@
 
 \ccChapterAuthor{Pierre Alliez, Sylvain Pion and Ankit Gupta}
 
-This \cgal\ package provides functions to compute global information on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, and barycenters of weighted point sets. The set of kernel primitive elements are assumed to be stored into an iterator range of a container.\\
+This \cgal\ package provides functions to compute global information on the shape of a set of 2D or 3D objects such as points. It provides the computation of axis-aligned bounding boxes for point sets, and barycenters of weighted point sets. The set of kernel primitive elements are accessed through an iterator range.\\
 
-In addition, it computes centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and in points, segments, triangles, cuboids, spheres and tetrahedra in 3D. For each object type in 2D and 3D, it allows the user to specify the dimension of the object fitted. For example, it is possible to fit a set of balls by providing an iterator range of spheres and specifying dimension 3. It is also possible to fit only the edges of a set of tetrahedra by specifying dimension 1, etc.
+In addition, it computes centroids as well as linear least squares fitting for sets of points, circles, rectangles, segments and triangles in 2D and of points, segments, triangles, cuboids, spheres and tetrahedra in 3D. For each object type in 2D and 3D, it allows the user to specify the dimension of the object fitted. For example, it is possible to fit a set of balls by providing an iterator range of spheres and specifying dimension 3. It is also possible to fit only the edges of a set of tetrahedra by specifying dimension 1, etc.
 
 \section{Classified Reference Pages}
-
-\ccHeading{Tags}
-
-\ccRefIdfierPage{CGAL::PCA_dimension_0_tag}\\
-\ccRefIdfierPage{CGAL::PCA_dimension_1_tag}\\
-\ccRefIdfierPage{CGAL::PCA_dimension_2_tag}\\
-\ccRefIdfierPage{CGAL::PCA_dimension_3_tag}\\
 
 \ccHeading{Functions}
 

@@ -18,10 +18,10 @@ int main()
 
 	// fit line to circles
   Line line;
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_1_tag());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::Dimension_tag<1>());
 
 	// fit line to disks
-  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::PCA_dimension_2_tag());
+  linear_least_squares_fitting_2(circles.begin(),circles.end(),line,CGAL::Dimension_tag<2>());
 
   return 0;
 }
