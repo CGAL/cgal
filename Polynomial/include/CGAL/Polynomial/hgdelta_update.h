@@ -34,7 +34,7 @@ namespace CGALi {
             h = g;
             break;
         default:
-            h = idiv(ipower(g, delta), ipower(h, delta-1));
+            h = idiv(CGAL::ipower(g, delta), CGAL::ipower(h, delta-1));
             break;
         }
     }
