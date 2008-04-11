@@ -6,9 +6,10 @@
 #include <CGAL/Cartesian_d.h>
 
 #include <CGAL/Kernel/Dimension.h>
+#include <CGAL/Dimension_tag.h>
 
 template < typename K >
-void test_2()
+void test(CGAL::Dimension_tag<2>)
 {
   assert( 2 == CGAL::Dimension<typename K::Point_2>::value );
   assert( 2 == CGAL::Dimension<typename K::Vector_2>::value );
@@ -24,7 +25,7 @@ void test_2()
 }
 
 template < typename K >
-void test_3()
+void test(CGAL::Dimension_tag<3>)
 {
   assert( 3 == CGAL::Dimension<typename K::Point_3>::value );
   assert( 3 == CGAL::Dimension<typename K::Plane_3>::value );
@@ -41,7 +42,7 @@ void test_3()
 }
 
 template < typename K >
-void test_d()
+void test(CGAL::Dimension_tag<0>)
 {
   assert( 0 == CGAL::Dimension<typename K::Point_d>::value );
   assert( 0 == CGAL::Dimension<typename K::Hyperplane_d>::value );
@@ -57,9 +58,9 @@ void test_d()
 
 int main()
 {
-  test_2<CGAL::Cartesian<int> >();
-  test_3<CGAL::Cartesian<int> >();
-  test_d<CGAL::Cartesian_d<int> >();
-
+  test<CGAL::Cartesian<int> >(CGAL::Dimension_tag<2>());
+  test<CGAL::Cartesian<int> >(CGAL::Dimension_tag<3>());
+  test<CGAL::Cartesian_d<int> >(CGAL::Dimension_tag<0>());
+  
   return 0;
 }
