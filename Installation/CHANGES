@@ -1,4 +1,17 @@
 CHANGES
+----------------------------- Release 3.4 ----------------------------------
+The following functionality has been added or changed:
+
+1  General
+
+Additional supported platforms:
+ - GNU g++ 4.3 supported
+
+2 Installation
+
+CMake now replaces install_cgal...
+
+
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
 
