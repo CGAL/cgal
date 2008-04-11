@@ -13,6 +13,10 @@ Additional supported platforms:
 
 CMake now replaces install_cgal...
 
+3 Kernels
+
+The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
+
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:

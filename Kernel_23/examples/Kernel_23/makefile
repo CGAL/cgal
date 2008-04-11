@@ -27,8 +27,6 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-test_delaunay_2 \
-test_polyhedron_prog_incr_builder \
 MyKernel
 
 
@@ -36,16 +34,8 @@ MyKernel
 MyKernel$(EXE_EXT): MyKernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MyKernel MyKernel$(OBJ_EXT) $(LDFLAGS)
 
-test_delaunay_2$(EXE_EXT): test_delaunay_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_delaunay_2 test_delaunay_2$(OBJ_EXT) $(LDFLAGS)
-
-test_polyhedron_prog_incr_builder$(EXE_EXT): test_polyhedron_prog_incr_builder$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_polyhedron_prog_incr_builder test_polyhedron_prog_incr_builder$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
-MyKernel.clean \
-test_delaunay_2.clean \
-test_polyhedron_prog_incr_builder.clean 
+MyKernel.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

@@ -18,6 +18,5 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( ch_test_SC.cpp )
   create_single_source_cgal_program( ch_test_SH.cpp )
   create_single_source_cgal_program( ch_test_SS.cpp )
-  create_single_source_cgal_program( ka_test_convex_hull_2.cpp )
 
 endif()

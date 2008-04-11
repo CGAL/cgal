@@ -23,8 +23,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( Lazy_kernel.cpp )
   create_single_source_cgal_program( Simple_cartesian.cpp )
   create_single_source_cgal_program( Simple_homogeneous.cpp )
-  create_single_source_cgal_program( test_kernel_archetype_2.cpp )
-  create_single_source_cgal_program( test_kernel_archetype_3.cpp )
   create_single_source_cgal_program( test_kernel__.cpp )
 
 endif()

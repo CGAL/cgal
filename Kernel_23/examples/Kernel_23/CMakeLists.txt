@@ -13,8 +13,5 @@ if ( CGAL_FOUND )
   include(CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program( MyKernel.cpp )
-  create_single_source_cgal_program( test_delaunay_2.cpp )
-  create_single_source_cgal_program( test_polyhedron_prog_incr_builder.cpp )
-  create_single_source_cgal_program( test_polyhedron_prog_incr_builder_own_archetype.cpp )
 
 endif()
