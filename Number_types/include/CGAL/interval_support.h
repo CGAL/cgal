@@ -116,6 +116,14 @@ zero_in(Interval interval) {
     return zero_in(interval);
 }
 
+// This ones should be removed, since even boost_1_35_0 has changed to zero_in
+template<typename Interval> inline 
+typename Interval_traits<Interval>::Zero_in::result_type
+in_zero(Interval interval) {
+    typename Interval_traits<Interval>::Zero_in zero_in;
+    return zero_in(interval);
+}
+
 template<typename Interval> inline 
 typename Interval_traits<Interval>::Equal::result_type
 equal(Interval interval1,Interval interval2) {

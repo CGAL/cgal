@@ -62,6 +62,15 @@ void generic_test_interval(){
     assert(!zero_in(a));
     assert( zero_in(b));
     assert(!zero_in(c));
+
+//########
+    // to be remove again
+    assert(!CGAL::in_zero(Interval(1)));
+    assert( CGAL::in_zero(Interval(0)));
+    assert(!CGAL::in_zero(a));
+    assert( CGAL::in_zero(b));
+    assert(!CGAL::in_zero(c));
+//#########
     
     assert(!in(Boundary( 3),a));
     assert( in(Boundary(-7),a));
