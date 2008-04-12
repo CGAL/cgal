@@ -18,6 +18,7 @@
 #ifndef CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
+#include <climits> // Neeeded by the following Boost header for CHAR_BIT.
 #include <CGAL/boost_relaxed_heap.hpp>
 
 CGAL_BEGIN_NAMESPACE
