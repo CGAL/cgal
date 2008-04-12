@@ -64,9 +64,9 @@ iff \cgal\ is configured with \leda\ or GMP support, respectively.
 \section{Using Boost\label{sec:boost_support}}
 \cgal\ code can rely on Boost libraries to some extent.
 
-Boost was installed with \cgal\ Release 3.1, and is no longer
-installed, as it is already distributed with Linux and cygwin.  
-
+Boost was shipped with \cgal\ Release 3.1, and is no longer
+shipped within \cgal, as it is mainstream, and already distributed
+with Linux and Cygwin.  
 
 Since portability and backward compatibility are a concern in \cgal,
 we have decided that the list of Boost libraries usable in \cgal\ will be
@@ -81,36 +81,6 @@ Finally, the policy is that if a better alternative exists in Boost and is
 allowed, then \cgal\ code must use it instead of a \cgal\ version (which
 probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
-
-Here follows a list of Boost libraries allowed for use in \cgal\ (those
-with question marks are not decided yet) :
-\begin{itemize}
-\item Operators --- Templates ease arithmetic classes and iterators
-\item ? Any --- Safe, generic container for single values of different value
-      types (what's the relation with \texttt{variant})
-\item Concept check --- Tools for generic programming
-\item ? Bind \texttt{[TR1]} and  mem\_fn --- Generalized binders for
-      function/object/pointers and member functions (overlaps with STL
-      Extensions)
-\item ? Graph --- Generic graph components and algorithms
-\item ? Interval --- Extends the usual arithmetic functions to mathematical intervals (overlaps with CGAL::Interval\_nt)
-\item Iterators --- Iterator construction framework, adaptors, concepts, and more
-\item MPL --- Template metaprogramming framework of compile-time algorithms, sequences and metafunction classes
-\item Optional --- Discriminated-union wrapper for optional values
-\item Property map --- Concepts defining interfaces which map key objects to value objects
-\item ? Random \texttt{[TR1]} --- A complete system for random number generation
-      (overlaps with support library)
-\item ? Rational --- A rational number class (overlaps with CGAL::Quotient)
-\item ? Ref \texttt{[TR1]} --- A utility library for passing references to generic functions
-%\item ? Result\_of \texttt{[TR1]}
-\item ? Smart Pointers \texttt{[TR1]} --- Five smart pointer class templates
-\item ? Static assertions --- Static assertions (compile time assertions)
-\item Tuple \texttt{[TR1]} --- Ease definition of functions returning multiple values, and more
-\item ? Type traits \texttt{[TR1]} --- Templates for fundamental properties of types
-\item ? Variant --- Safe, generic, stack-based discriminated union container
-      (how does it relate to \texttt{any} ?)
-\end{itemize}
-
 
 
 \section{Using the version-number and configuration macros and flags\label{sec:using_version_macros}}
