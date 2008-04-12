@@ -34,16 +34,16 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @return Computed normal, model of OrientedNormal_3.
 template < typename Kernel, ///< Geometric traits class.
-           typename Tree 
->
+           typename Tree >
 typename Kernel::FT
 average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
 								  Tree& tree, ///< KD-tree
 								  const unsigned int K)
 {
   // basic geometric types
-  typedef typename Kernel::Point_3  Point;
-  typedef typename Kernel::Plane_3  Plane;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Plane_3 Plane;
   typedef typename Kernel::Vector_3 Vector;
 
 	// types for K nearest neighbor search
@@ -88,6 +88,7 @@ average_spacing_3(InputIterator first,    ///< input points
 								  const Kernel& /*kernel*/)
 {
 	// types for K-nearest neighbor search structure
+	typedef typename Kernel::FT FT;
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;

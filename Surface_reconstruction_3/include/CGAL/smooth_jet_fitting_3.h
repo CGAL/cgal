@@ -47,7 +47,6 @@ smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to pro
 										 const unsigned int degree_monge)
 {
   // basic geometric types
-  typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;
 
 	// types for K nearest neighbor search
