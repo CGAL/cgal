@@ -802,6 +802,25 @@ namespace CGALi {
     void * & for_compact_container()       { return (m_ptr.vp); }
   };
 
+  // Comparisons with NULL are part of CGAL's Handle concept...
+  template < class DSC, bool Const >
+  inline
+  bool operator==(const CC_iterator<DSC, Const> &rhs,
+                  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs == NULL;
+  }
+
+  template < class DSC, bool Const >
+  inline
+  bool operator!=(const CC_iterator<DSC, Const> &rhs,
+		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+  {
+    CGAL_assertion( n == NULL);
+    return &*rhs != NULL;
+  }
+
 } // namespace CGALi
 
 CGAL_END_NAMESPACE
