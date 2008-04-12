@@ -77,6 +77,11 @@ void test_jet_fitting(std::list<Point>& points,
 	std::list<Point> output;
 	CGAL::smooth_jet_fitting_3(points.begin(),points.end(),std::back_inserter(output),k);
 	std::cerr << "ok" << std::endl;
+
+	// mutating version of the same function
+	std::cerr << "  Smooth using KNN and jet fitting...";
+	CGAL::smooth_jet_fitting_3(points.begin(),points.end(),k);
+	std::cerr << "ok" << std::endl;
 }
 
 // ----------------------------------------------------------------------------

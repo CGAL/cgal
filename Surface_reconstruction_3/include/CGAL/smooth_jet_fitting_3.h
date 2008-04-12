@@ -85,7 +85,7 @@ smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to pro
 	return monge_form.origin();
 }
 
-/// Smooth one point position using jet fitting on the K
+/// Smooth a point set using jet fitting on the K
 /// nearest neighbors and reprojection onto the jet.
 /// This variant requires the kernel.
 ///
@@ -131,7 +131,48 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 	return output;
 }
 
-/// Smooth one point position using jet fitting on the K
+/// Smooth a point set using jet fitting on the K
+/// nearest neighbors and reprojection onto the jet.
+/// This variant requires the kernel.
+///
+/// Precondition: K >= 2.
+template < typename InputIterator, ///< InputIterator value_type is Point_3.
+           typename Kernel ///< Geometric traits class.
+>
+void
+smooth_jet_fitting_3(InputIterator first,    ///< input points
+                     InputIterator beyond,
+						         const unsigned int K,   ///< number of neighbors
+				      	  	 const Kernel& /*kernel*/,
+										 const unsigned int degre_fitting = 2,
+										 const unsigned int degree_monge = 2)
+{
+	// types for K-nearest neighbor search structure
+	typedef typename Kernel::Point_3 Point;
+  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
+  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+  typedef typename Neighbor_search::Tree Tree;
+  typedef typename Neighbor_search::iterator Search_iterator;
+
+  // precondition: at least one element in the container.
+  // to fix: should have at least three distinct points
+	// but this is costly to check
+  CGAL_precondition(first != beyond);
+
+	// precondition: at least 2 nearest neighbors
+  CGAL_precondition(K >= 2);
+
+	// instanciate a KD-tree search
+  Tree tree(first,beyond);
+
+	// iterate over input points and mutate them
+	InputIterator it;
+	for(it = first; it != beyond; it++)
+		*it = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,K,degre_fitting,degree_monge);
+}
+
+
+/// Smooth a point set using jet fitting on the K
 /// nearest neighbors and reprojection onto the jet.
 /// This variant deduces the kernel from iterator types.
 ///
@@ -151,6 +192,28 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
 	return smooth_jet_fitting_3(first,beyond,output,K,Kernel(),degre_fitting,degree_monge);
 }
+
+/// Smooth a point set using jet fitting on the K
+/// nearest neighbors and reprojection onto the jet.
+/// This function is mutating the input point set.
+/// This variant deduces the kernel from iterator types.
+///
+/// Precondition: K >= 2.
+template < typename InputIterator ///< InputIterator value_type is Point_3
+>
+void 
+smooth_jet_fitting_3(InputIterator first,    ///< input points
+                     InputIterator beyond,
+										 const unsigned int K,   ///< number of neighbors
+										 const unsigned int degre_fitting = 2,
+										 const unsigned int degree_monge = 2)
+{
+	typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
+	smooth_jet_fitting_3(first,beyond,K,Kernel(),degre_fitting,degree_monge);
+}
+
+
 
 CGAL_END_NAMESPACE
 
