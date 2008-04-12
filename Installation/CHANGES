@@ -5,9 +5,9 @@ The following functionality has been added or changed:
 1  General
 
 Additional supported platforms:
- - GNU g++ 4.3 supported
+ - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
 
- - Boost version 1.33 at least is required.
+ - Boost version 1.33 at least is now required.
 
 2 Installation
 
