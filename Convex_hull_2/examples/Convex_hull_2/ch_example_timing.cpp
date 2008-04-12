@@ -2,9 +2,6 @@
 #include <CGAL/convex_hull_traits_2.h>
 
 #include <fstream>
-
-#include <deque>
-#include <list>
 #include <vector>
 
 #include <CGAL/ch_akl_toussaint.h>
