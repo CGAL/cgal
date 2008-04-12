@@ -72,11 +72,12 @@ public:
   VectorH3(const Null_vector&)
     : base(CGALi::make_array(RT(0), RT(0), RT(0), RT(1))) {}
 
-  VectorH3(int x, int y, int z)
+  template < typename Tx, typename Ty, typename Tz >
+  VectorH3(const Tx & x, const Ty & y, const Tz & z,
+           typename boost::enable_if< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
+                                                                          boost::is_convertible<Ty, RT> >,
+                                                        boost::is_convertible<Tz, RT> > >::type* = 0)
     : base(CGALi::make_array<RT>(x, y, z, RT(1))) {}
-
-  VectorH3(const RT& x, const RT& y, const RT& z)
-    : base(CGALi::make_array(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)
     : base(CGALi::make_array<RT>(

@@ -3379,16 +3379,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, Null_vector) const
     { return Rep(RT(0), RT(0), RT(1)); }
 
+    template < typename Tx, typename Ty >
     Rep // Vector_2
-    operator()(Return_base_tag, int x, int y) const
-    { return Rep(x, y); }
-
-    Rep // Vector_2
-    operator()(Return_base_tag, const RT& x, const RT& y) const
-    { return Rep(x, y); }
-
-    Rep // Vector_2
-    operator()(Return_base_tag, const FT& x, const FT& y) const
+    operator()(Return_base_tag, const Tx & x, const Ty & y) const
     { return Rep(x, y); }
 
     Rep // Vector_2
@@ -3428,16 +3421,9 @@ namespace HomogeneousKernelFunctors {
     operator()( Null_vector n) const
     { return this->operator()(Return_base_tag(), n); }
 
+    template < typename Tx, typename Ty >
     Vector_2
-    operator()( int x, int y) const
-    { return this->operator()(Return_base_tag(), x, y); }
-
-    Vector_2
-    operator()( const RT& x, const RT& y) const
-    { return this->operator()(Return_base_tag(), x, y); }
-
-    Vector_2
-    operator()( const FT& x, const FT& y) const
+    operator()(const Tx & x, const Ty & y) const
     { return this->operator()(Return_base_tag(), x, y); }
 
     Vector_2
@@ -3503,16 +3489,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const Null_vector&) const
     { return Rep(RT(0), RT(0), RT(0), RT(1)); }
 
+    template < typename Tx, typename Ty, typename Tz >
     Rep // Vector_3
-    operator()(Return_base_tag, int x, int y, int z) const
-    { return Rep(x, y, z); }
-
-    Rep // Vector_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-
-    Rep // Vector_3
-    operator()(Return_base_tag, const FT& x, const FT& y, const FT& z) const
+    operator()(Return_base_tag, const Tx & x, const Ty & y, const Tz & z) const
     { return Rep(x, y, z); }
 
     Rep // Vector_3
@@ -3552,16 +3531,9 @@ namespace HomogeneousKernelFunctors {
     operator()( const Null_vector& n) const
     { return this->operator()(Return_base_tag(), n); }
 
+    template < typename Tx, typename Ty, typename Tz >
     Vector_3
-    operator()( int x, int y, int z) const
-    { return this->operator()(Return_base_tag(), x, y, z); }
-
-    Vector_3
-    operator()( const RT& x, const RT& y, const RT& z) const
-    { return this->operator()(Return_base_tag(), x, y, z); }
-
-    Vector_3
-    operator()( const FT& x, const FT& y, const FT& z) const
+    operator()(const Tx & x, const Ty & y, const Tz & z) const
     { return this->operator()(Return_base_tag(), x, y, z); }
 
     Vector_3

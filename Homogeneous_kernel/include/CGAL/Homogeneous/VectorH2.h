@@ -61,11 +61,11 @@ public:
 
    VectorH2() {}
 
-   VectorH2(int x, int y)
+   template < typename Tx, typename Ty >
+   VectorH2(const Tx & x, const Ty & y,
+            typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, RT>,
+                                                        boost::is_convertible<Ty, RT> > >::type* = 0)
       : base(CGALi::make_array<RT>(x, y, RT(1))) {}
-  
-   VectorH2(const RT& x, const RT& y)
-      : base(CGALi::make_array(x, y, RT(1))) {}
 
    VectorH2(const FT& x, const FT& y)
       : base(CGALi::make_array<RT>(
