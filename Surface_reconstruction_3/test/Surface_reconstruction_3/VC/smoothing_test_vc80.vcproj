@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="smoothing_test"
 	ProjectGUID="{B8686928-F7AD-4C82-9191-8EFD074BB8AC}"
 	RootNamespace="smoothing_test"
@@ -115,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;..\..\..\..\..\trunk\Principal_component_analysis\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;..\..\..\..\..\trunk\Kernel_23/include;..\..\..\..\..\trunk\Cartesian_kernel/include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;CGAL_USE_LAPACK"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

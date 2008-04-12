@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// Precondition: K >= 2.
 ///
-/// @return Computed normal, model of OrientedNormal_3.
+/// @return average spacing (scalar)
 template < typename Kernel, ///< Geometric traits class.
            typename Tree >
 typename Kernel::FT
@@ -50,7 +50,6 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
-
 
 	// performs K + 1 queries (if unique the query point is
 	// output first). search may be aborted when K is greater
@@ -70,7 +69,7 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
 	}
 
 	// output average spacing
-	return sum_distances / (FT)K;
+	return sum_distances / (FT)i; 
 }
 
 
@@ -78,6 +77,7 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
 /// This variant requires the kernel.
 ///
 /// Precondition: K >= 2.
+/// @return average spacing (scalar)
 template < typename InputIterator, ///< InputIterator value_type is Point_3.
            typename Kernel ///< Geometric traits class.
 >
@@ -123,6 +123,7 @@ average_spacing_3(InputIterator first,    ///< input points
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: K >= 2.
+/// @return average spacing (scalar)
 template < typename InputIterator, ///< InputIterator value_type is Point_3
            typename FT ///< number type
 >

@@ -27,23 +27,20 @@
 CGAL_BEGIN_NAMESPACE
 
 // Estimate normal directions using poles of a 3D Voronoi diagram
-// if parameter pDT is NULL, allocates a new temporary 3D Delaunay
-// triangulation, use the parameter otherwise (careful, 8 vertices
-// are added in order to bound all Voronoi cells. The last parameter
-// specifies if these points should be removed.
-
-// Pierre: I would suggest not to use pointers - simply the user
-// can call the function without any reference to a DT.
+// 8 vertices of a loose bounding box are added in order to bound
+// all Voronoi cells. The last parameter specifies if these points
+// should be removed.
+// return past-the-end iterator of output
 template < typename InputIterator, 
            typename OutputIterator,
            typename Kernel, 
            typename DT> // Delaunay triangulation
-void
+OutputIterator
 estimate_normals_poles_3(InputIterator first,      // input points
                          InputIterator beyond,   
 											   OutputIterator normals,   // output normals
-												 DT* pDT = NULL,           // Delaunay triangulation
-												 const Kernel::FT = 100.0, // inflating factor of bounding box
+												 DT& dt,                   // Delaunay triangulation
+												 const Kernel::FT,         // inflating factor of bounding box
 												 const bool remove_bounding_points)
 {
 	// basic kernel object types
@@ -52,8 +49,6 @@ estimate_normals_poles_3(InputIterator first,      // input points
   typedef typename Kernel::Vector_3 Vector;
 
   // precondition: at least one element in the container.
-  // to fix: should have at least three distinct points
-	// but this is costly to check
   CGAL_surface_reconstruction_precondition(first != beyond);
 }
 
