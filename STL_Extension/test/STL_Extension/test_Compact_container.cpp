@@ -109,6 +109,10 @@ void test(const Cont &)
   Cont c8;
   c8.insert(c0.rbegin(), c0.rend());
 
+  // test conversion iterator-> const_iterator.
+  typename Cont::const_iterator t16 = c5.begin();  use(t16);
+  assert(t16 == c5.begin());
+
   assert(c0 == c1);
   assert(! (c0 < c1));
 
