@@ -25,7 +25,6 @@
 
 #include <fstream>
 
-#include <deque>
 #include <list>
 #include <vector>
 
