@@ -4,6 +4,7 @@
 #include <CGAL/PDB/Monomer.h>
 #include <CGAL/Gmpq.h>
 #include <set>
+#include <cassert>
 
 typedef CGAL::Gmpq Data;
 typedef CGAL::Label<int> Key;
@@ -28,8 +29,8 @@ int main(int, char *[]) {
   {
     std::set<unsigned int> vals;
     for (SM::const_iterator it= sm.begin(); it != sm.end(); ++it) {
-      CGAL_assertion(Data(it->key().index(), 1) == it->data());
-      CGAL_assertion(vals.find(it->key().index()) == vals.end());
+      assert(Data(it->key().index(), 1) == it->data());
+      assert(vals.find(it->key().index()) == vals.end());
       vals.insert(it->key().index());
     }
     std::cout << "size is " << sm.size() << std::endl;
@@ -42,8 +43,8 @@ int main(int, char *[]) {
  {
     std::set<unsigned int> vals;
     for (SM::const_iterator it= sm.begin(); it != sm.end(); ++it) {
-      CGAL_assertion(Data(it->key().index(),1) == it->data());
-      CGAL_assertion(vals.find(it->key().index()) == vals.end());
+      assert(Data(it->key().index(),1) == it->data());
+      assert(vals.find(it->key().index()) == vals.end());
       vals.insert(it->key().index());
     }
     std::cout << "size is " << sm.size() << std::endl;

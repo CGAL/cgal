@@ -22,6 +22,7 @@ MA 02110-1301, USA. */
 #include <CGAL/PDB/PDB.h>
 #include <CGAL/PDB/iterator.h>
 #include <fstream>
+#include <cassert>
 
 int main() {
 
@@ -33,9 +34,9 @@ int main() {
   {
     std::ifstream in("data/check_pdb.pdb");
     PDB pdb(in);
-    CGAL_assertion(pdb.number_of_models() != 0);
+    assert(pdb.number_of_models() != 0);
     Model &model= pdb.models_begin()->model();
-    CGAL_assertion(model.number_of_chains() != 0);
+    assert(model.number_of_chains() != 0);
     const Chain &p= model.chains_begin()->chain();
     unsigned int na= p.number_of_atoms();
     //p.write(std::cout);
@@ -44,7 +45,7 @@ int main() {
   
     std::vector<Atom> atoms (make_atom_iterator(p.atoms_begin()),
 			    make_atom_iterator(p.atoms_end()));
-    CGAL_assertion(na==atoms.size());
+    assert(na==atoms.size());
     std::vector<Point> points (make_point_iterator(make_atom_iterator(p.atoms_begin())),
 			      make_point_iterator(make_atom_iterator(p.atoms_end())));
  
@@ -52,14 +53,14 @@ int main() {
 		make_backbone_iterator(p.atoms_end(), p.atoms_end()));
     std::vector<Index> bbi (make_index_iterator(make_atom_iterator(make_backbone_iterator(p.atoms_begin(), p.atoms_end()))),
 			   make_index_iterator(make_atom_iterator(make_backbone_iterator(p.atoms_end(), p.atoms_end()))));
-    CGAL_assertion(bbi.size() < atoms.size());
+    assert(bbi.size() < atoms.size());
     std::cout << bbi.size() << std::endl;
     std::vector<Bond> bbs (make_bond_indices_iterator(make_ok_bond_iterator(Is_backbone(), p.bonds_begin(), p.bonds_end())),
 			  make_bond_indices_iterator(make_ok_bond_iterator(Is_backbone(), p.bonds_end(), p.bonds_end())));
     std::cout << bbs.size() << std::endl;
     for (unsigned int i=0; i< bbs.size(); ++i) {
-      CGAL_assertion(bbs[i].first < Index(bbi.size()));
-      CGAL_assertion(bbs[i].second < Index(bbi.size()));
+      assert(bbs[i].first < Index(bbi.size()));
+      assert(bbs[i].second < Index(bbi.size()));
     }
   }
   
