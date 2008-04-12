@@ -93,7 +93,7 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3.
            typename OutputIterator, ///< OutputIterator value_type is a model of OrientedNormal_3.
            typename Kernel ///< Geometric traits class.
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
 											 OutputIterator normals, ///< output normals
@@ -128,6 +128,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
 		*normals = estimate_normal_pca_3<Kernel,Tree,Normal>(*it,tree,K);
 		normals++;
 	}
+	return normals;
 }
 
 /// Estimate normals direction using linear least
@@ -138,7 +139,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
 template < typename InputIterator, ///< InputIterator value_type is Point_3
            typename OutputIterator ///< OutputIterator value_type is a model of OrientedNormal_3
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
 											 OutputIterator normals, ///< output normals
@@ -146,7 +147,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
 {
 	typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-	estimate_normals_pca_3(first,beyond,normals,K,Kernel());
+	return estimate_normals_pca_3(first,beyond,normals,K,Kernel());
 }
 
 

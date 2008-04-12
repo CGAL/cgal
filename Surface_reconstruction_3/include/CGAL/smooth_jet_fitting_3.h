@@ -94,7 +94,7 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3.
            typename OutputIterator, ///< OutputIterator value_type is Point_3.
            typename Kernel ///< Geometric traits class.
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 smooth_jet_fitting_3(InputIterator first,    ///< input points
                      InputIterator beyond,
 						         OutputIterator output, ///< output points
@@ -128,6 +128,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 		*output = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,K,degre_fitting,degree_monge);
 		output++;
 	}
+	return output;
 }
 
 /// Smooth one point position using jet fitting on the K
@@ -138,7 +139,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 template < typename InputIterator, ///< InputIterator value_type is Point_3
            typename OutputIterator ///< OutputIterator value_type is Point_3
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 smooth_jet_fitting_3(InputIterator first,    ///< input points
                      InputIterator beyond,
 										 OutputIterator output, ///< output points
@@ -148,7 +149,7 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
 {
 	typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-	smooth_jet_fitting_3(first,beyond,output,K,Kernel(),degre_fitting,degree_monge);
+	return smooth_jet_fitting_3(first,beyond,output,K,Kernel(),degre_fitting,degree_monge);
 }
 
 CGAL_END_NAMESPACE

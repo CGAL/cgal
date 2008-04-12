@@ -99,7 +99,7 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3.
            typename OutputIterator, ///< OutputIterator value_type is a model of OrientedNormal_3.
            typename Kernel ///< Geometric traits class.
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                InputIterator beyond,
 											         OutputIterator normals, ///< output normals
@@ -136,6 +136,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 		*normals = estimate_normal_jet_fitting_3<Kernel,Tree,Normal>(*it,tree,K,degre_fitting);
 		normals++;
 	}
+	return normals;
 }
 
 /// Estimate normal directions using jet fitting on the K nearest
@@ -146,7 +147,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 template < typename InputIterator, ///< InputIterator value_type is Point_3
            typename OutputIterator ///< OutputIterator value_type is a model of OrientedNormal_3
 >
-void
+OutputIterator ///< return past-the-end iterator of output
 estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
                                InputIterator beyond,
 											         OutputIterator normals, ///< output normals
@@ -155,7 +156,7 @@ estimate_normals_jet_fitting_3(InputIterator first,    ///< input points
 {
 	typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-	estimate_normals_jet_fitting_3(first,beyond,normals,K,Kernel(),degre_fitting);
+	return estimate_normals_jet_fitting_3(first,beyond,normals,K,Kernel(),degre_fitting);
 }
 
 
