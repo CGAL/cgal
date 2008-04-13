@@ -22,7 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
 #include <CGAL/Linear_algebraCd.h>
-#include <CGAL/Dimension_tag.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -25,7 +25,7 @@
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/Dimension_utils.h>
-#include <CGAL/Dimension_tag.h>
+#include <CGAL/Dimension.h>
 
 #include <list>
 // Functions to compute the centroid of N points.

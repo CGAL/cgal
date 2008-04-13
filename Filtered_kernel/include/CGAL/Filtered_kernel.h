@@ -68,8 +68,13 @@ struct Filtered_kernel_base
     };
 
     template < typename T >
-    struct Dimension {
-        static const int value = T::static_dimension; // maybe not the right way...
+    struct Ambiant_dimension {
+        typedef typename T::Ambiant_dimension type; // maybe not the right way...
+    };
+
+    template < typename T >
+    struct Feature_dimension {
+        typedef typename T::Feature_dimension type; // maybe not the right way...
     };
 
     // We change the predicates.

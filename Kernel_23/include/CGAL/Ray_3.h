@@ -28,6 +28,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,7 +47,8 @@ class Ray_3 : public R_::Kernel_base::Ray_3
 
 public:
 
-  static const int static_dimension = 3;
+  typedef Dimension_tag<3>  Ambiant_dimension;
+  typedef Dimension_tag<1>  Feature_dimension;
 
   typedef typename R_::Kernel_base::Ray_3    Rep;
 

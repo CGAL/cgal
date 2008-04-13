@@ -28,6 +28,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,7 +48,8 @@ class Direction_2 : public R_::Kernel_base::Direction_2
 
 public:
 
-  static const int static_dimension = 2;
+  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<0>  Feature_dimension;
 
   typedef RDirection_2 Rep;
 

@@ -30,6 +30,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,7 +51,8 @@ class Vector_3 : public R_::Kernel_base::Vector_3
 
 public:
 
-  static const int static_dimension = 3;
+  typedef Dimension_tag<3>  Ambiant_dimension;
+  typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
   typedef typename R_::Kernel_base::Vector_3      Rep;

@@ -1,0 +1,39 @@
+\begin{ccRefClass} {Ambiant_dimension<T, K = Kernel_traits<T>::Kernel>}
+
+\ccDefinition
+The class \ccRefName\ allows to retrieve the dimension of the ambiant space of
+a type.
+
+\ccInclude{CGAL/Dimension.h}
+
+\ccConstants
+
+\ccVariable{static const int value;}{The dimension value as a compile-time
+integral constant. It is implemented as \ccc{K::Dimension<T>::type::value}.
+It exists only when the dimension is a compile-time constant.}
+
+\ccTypes
+
+\ccTypedef{type;}{Either \ccc{Dimension_tag<dim>} if the dimension is a
+compile-time constant of value \ccc{dim}, or \ccc{Dynamic_dimension_tag}
+otherwise.  It is implemented as \ccc{K::Ambiant_dimension<T>::type}. }
+
+\ccCreation
+\ccCreationVariable{d}
+
+\ccExample
+
+The following retrieves the dimension of a point type.
+
+\begin{cprog}
+  typedef K::Point_2 Point;
+  int dimension = Ambiant_dimension<Point, K>::value;
+  assert(dimension == 2);
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefConceptPage{Dimension_tag}
+\ccRefConceptPage{Dynamic_dimension_tag}
+\ccRefConceptPage{Feature_dimension}
+
+\end{ccRefClass} 

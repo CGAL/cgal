@@ -1,8 +1,5 @@
-// Copyright (c) 2005  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2008  INRIA Sophia-Antipolis (France).
+// Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -17,7 +14,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Sylvain Pion
 
@@ -30,16 +26,48 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// This is a tool to obtain the static dimension of a kernel object.
-// That is, the dimension of the ambiant space.
+// These tag classes help dispatching functions based on a geometric dimension.
 
-template < typename T, typename K = typename Kernel_traits<T>::Kernel >
-struct Dimension
+template < int dim >
+struct Dimension_tag
 {
-  static const int value = K::template Dimension<T>::value;
+  static const int value = dim;
 };
 
-static const int Dynamic_dimension = INT_MAX;
+struct Dynamic_dimension_tag {};
+
+
+namespace CGALi {
+
+  template < typename D >
+  struct Dim_value {
+    static const int value = D::value;
+  };
+
+  template <>
+  struct Dim_value <Dynamic_dimension_tag> {};
+
+} // namespace CGALi
+
+
+// Ambiant_dimension gives access to the dimension of the ambiant space of an object.
+
+template < typename T, typename K = typename Kernel_traits<T>::Kernel >
+struct Ambiant_dimension
+  : public CGALi::Dim_value< typename K::template Ambiant_dimension<T>::type >
+{
+  typedef typename K::template Ambiant_dimension<T>::type type;
+};
+
+
+// Feature_dimension gives access to the dimension of an object.
+
+template < typename T, typename K = typename Kernel_traits<T>::Kernel >
+struct Feature_dimension
+  : public CGALi::Dim_value< typename K::template Feature_dimension<T>::type >
+{
+  typedef typename K::template Feature_dimension<T>::type type;
+};
 
 CGAL_END_NAMESPACE
 

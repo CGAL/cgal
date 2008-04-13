@@ -20,12 +20,14 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_SEGMENT_D_H
 #define CGAL_SEGMENT_D_H 
 
 #include <CGAL/Kernel_d/Pair_d.h> 
 #include <CGAL/Kernel_d/Line_d.h> 
 #include <CGAL/Kernel_d/Ray_d.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,6 +55,10 @@ $p$ and $q$. $p$ is called the source point and $q$ is called
 the target point of $s$, both points are called endpoints of $s$. A
 segment whose endpoints are equal is called \emph{degenerate}.}*/
 public: 
+
+  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dimension_tag<1>      Feature_dimension;
+
 /*{\Mtypes 5}*/
 typedef p_R R;
 /*{\Mtypemember the representation type.}*/

@@ -20,14 +20,21 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_DIRECTION_D_H
 #define CGAL_DIRECTION_D_H
+
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class pR>
 class Direction_d : public pR::Direction_d_base
 { public:
+
+  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dimension_tag<0>      Feature_dimension;
+
   typedef typename pR::Direction_d_base Base;
   typedef Direction_d<pR>               Self;
   typedef pR R;

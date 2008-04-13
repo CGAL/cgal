@@ -17,12 +17,13 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
 #ifndef CGAL_AFF_TRANSFORMATION_3_H
 #define CGAL_AFF_TRANSFORMATION_3_H
+
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -34,7 +35,7 @@ class Aff_transformation_3 : public R_::Kernel_base::Aff_transformation_3
   typedef typename R_::Kernel_base::Aff_transformation_3 RAff_transformation_3;
 public:
 
-  static const int static_dimension = 3;
+  typedef CGAL::Dimension_tag<3>    Ambiant_dimension;
 
   typedef R_                        R;
 

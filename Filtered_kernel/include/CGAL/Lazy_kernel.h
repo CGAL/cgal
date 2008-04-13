@@ -60,8 +60,13 @@ public:
   struct Base { typedef Lazy_kernel_generic_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
   template < typename T >
-  struct Dimension {
-    static const int value = T::static_dimension;
+  struct Ambiant_dimension {
+    typedef typename T::Ambiant_dimension type;
+  };
+
+  template < typename T >
+  struct Feature_dimension {
+    typedef typename T::Feature_dimension type;
   };
 
   // What to do with the tag ?

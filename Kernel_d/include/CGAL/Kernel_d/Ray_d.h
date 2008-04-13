@@ -20,12 +20,14 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_RAY_D_H
 #define CGAL_RAY_D_H
 
 #include <CGAL/Kernel_d/Pair_d.h>
 #include <CGAL/Kernel_d/Segment_d.h> 
 #include <CGAL/Kernel_d/Line_d.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -51,6 +53,10 @@ Euclidian space. It starts in a point called the source of |\Mvar| and
 it goes to infinity.}*/
 
 public: 
+
+  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dimension_tag<1>      Feature_dimension;
+
 /*{\Mtypes 4}*/
 typedef p_R R;
 /*{\Mtypemember the representation type.}*/

@@ -109,8 +109,13 @@ struct Homogeneous_base
                                                     Angle;
 
     template <typename T>
-    struct Dimension {
-      static const int value = T::static_dimension;
+    struct Ambiant_dimension {
+      typedef typename T::Ambiant_dimension type;
+    };
+
+    template <typename T>
+    struct Feature_dimension {
+      typedef typename T::Feature_dimension type;
     };
 
     typedef PointH2<Kernel>                         Point_2;

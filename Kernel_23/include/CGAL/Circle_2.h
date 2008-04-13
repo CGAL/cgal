@@ -29,6 +29,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -45,7 +46,8 @@ class Circle_2 : public R_::Kernel_base::Circle_2
 
 public:
 
-  static const int static_dimension = 2;
+  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<1>  Feature_dimension;
 
   typedef RCircle_2 Rep;
 

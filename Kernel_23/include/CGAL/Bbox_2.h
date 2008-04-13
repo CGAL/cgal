@@ -18,7 +18,6 @@
 // $URL$
 // $Id$
 //
-//
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_BBOX_2_H
@@ -28,8 +27,12 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Fourtuple.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
+
+template < typename T >
+struct Simple_cartesian;
 
 class Bbox_2
 {
@@ -39,7 +42,10 @@ class Bbox_2
 
 public:
 
-  static const int static_dimension = 2;
+  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<2>  Feature_dimension;
+
+  typedef Simple_cartesian<double>  R;
 
              Bbox_2() {}
 

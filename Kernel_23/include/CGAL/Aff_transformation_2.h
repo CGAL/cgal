@@ -18,14 +18,13 @@
 // $URL$
 // $Id$
 // 
-//
-// Author(s)     : Andreas Fabri
-//                 Stefan Schirra
+// Author(s)     : Andreas Fabri, Stefan Schirra
 
 #ifndef CGAL_AFF_TRANSFORMATION_2_H
 #define CGAL_AFF_TRANSFORMATION_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,9 +38,10 @@ class Aff_transformation_2 : public R_::Kernel_base::Aff_transformation_2
   typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Kernel_base::Aff_transformation_2 RAff_transformation_2;
 public:
-  typedef  R_                               R;
 
-  static const int static_dimension = 2;
+  typedef CGAL::Dimension_tag<2>            Ambiant_dimension;
+
+  typedef  R_                               R;
 
   Aff_transformation_2() {}
 

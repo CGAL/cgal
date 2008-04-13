@@ -27,6 +27,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/representation_tags.h> 
+#include <CGAL/Dimension.h>
 #include <functional>
 #include <algorithm>
 #include <numeric>
@@ -310,6 +311,9 @@ namespace CGAL {
     }
     
 public:
+
+    typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+    typedef CGAL::Dynamic_dimension_tag Feature_dimension;
 
     Iso_box_d() {}
     

@@ -20,11 +20,13 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_SPHERE_D_H
 #define CGAL_SPHERE_D_H
 
 #include <CGAL/basic.h>
 #include <vector>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -77,6 +79,9 @@ set of defining points to be legal.  The orientation of $S$ is equal
 to the orientation of the defining points, i.e., |orientation(A)|. }*/
 
 public: 
+  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Feature_dimension;
+
 /*{\Mtypes 4}*/
 
 typedef Sphere_d_rep<R_>  Rep;

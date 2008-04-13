@@ -27,6 +27,7 @@
 #include <CGAL/Kernel_d/Pair_d.h> 
 #include <CGAL/Kernel_d/Segment_d.h> 
 #include <CGAL/Kernel_d/Ray_d.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,6 +51,10 @@ An instance of data type |Line_d| is an oriented line in
 $d$-dimensional Euclidian space.}*/
 
 public: 
+
+  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dimension_tag<1>      Feature_dimension;
+
 /*{\Mtypes 5}*/
 typedef p_R R;
 /*{\Mtypemember the representation type.}*/

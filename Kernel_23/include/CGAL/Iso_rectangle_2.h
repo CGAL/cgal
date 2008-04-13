@@ -28,6 +28,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,7 +45,8 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
 
 public:
 
-  static const int static_dimension = 2;
+  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<2>  Feature_dimension;
 
   typedef typename R_::Kernel_base::Iso_rectangle_2  Rep;
 

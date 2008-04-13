@@ -26,6 +26,7 @@
 #define CGAL_CONIC_2_H
 
 #include <CGAL/Conic_misc.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +40,8 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
 
   public:
 
-    static const int static_dimension = 2;
+    typedef Dimension_tag<2>  Ambiant_dimension;
+    typedef Dimension_tag<1>  Feature_dimension;
 
     // types
     typedef  R_                    R;
