@@ -19,7 +19,6 @@
 #include <CGAL/origin.h>
 
 #include "Gyroviz_info_for_cdt2.h"
-//#include "Gyroviz_vertex_segment_2.h"
 #include "Gyroviz_border_points_dt2.h"
 #include "Gyroviz_triangle_with_cam.h"
 #include "Gyroviz_constrained_triangle_soup.h"
@@ -66,7 +65,7 @@ public:
 	typedef typename Base::Finite_edges_iterator       Finite_edges_iterator;
 	typedef typename Base::Finite_faces_iterator       Finite_faces_iterator;
 	typedef typename Base::Finite_vertices_iterator    Finite_vertices_iterator;
-	//typedef typename Gyroviz_vertex_segment_2<Gyroviz_cdt2>    Gyroviz_vertex_segment_2;
+	typedef typename Gyroviz_vertex_segment_2<Vertex_handle>     Gyroviz_vertex_segment_2;
 	typedef typename Gyroviz_triangle_with_cam<Gyroviz_cdt2>   Gyroviz_triangle_with_cam;
 	typedef typename Gyroviz_constrained_triangle_soup<Gyroviz_cdt2>   Gyroviz_constrained_triangle_soup;
 
@@ -127,6 +126,8 @@ public:
 
 					Vertex_handle vh = this->insert(point_2);
 					vh->info() = Gyroviz_info_for_cdt2(point_3,image_number,false);
+					//vh->info().set_point3(point_3);
+					//vh->info().set_camera_number(image_number);
 					number_of_vertices_pnt++;
 				}
 			}
@@ -332,9 +333,12 @@ public:
 
 		std::vector<Vertex_handle>   vector_of_border_points = set_on_border_2D_vertices(image);
 
-		Gyroviz_border_points_dt2<Gt, Tds> border_dt2(vector_of_border_points);
+		typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_handle,Gt> Gyroviz_border_points_Vb;
+		typedef CGAL::Constrained_triangulation_face_base_2<Gt> Gyroviz_border_points_Fb;
+		typedef CGAL::Triangulation_data_structure_2<Gyroviz_border_points_Vb,Gyroviz_border_points_Fb> Gyroviz_border_points_Tds;
+		Gyroviz_border_points_dt2<Gt, Gyroviz_border_points_Tds,Vertex_handle> border_dt2(vector_of_border_points);
 
-		std::vector<Segment_2/*Vertex_handle*/> vector_of_vertex_segments = border_dt2.segments_out_of_dt2();
+		std::vector<Gyroviz_vertex_segment_2> vector_of_vertex_segments = border_dt2.segments_out_of_dt2();
 
 		Point_2 source_vertex;
 		Point_2 end_vertex;
@@ -351,18 +355,19 @@ public:
 		// S(Border/Segment) = +1
 		// S(Gap/Segment) = gap_score (default : -2)
 
-		for(int i = 0; i</*vector_of_vertex_segments*/vector_of_vertex_segments.size()/*-1*/; ++i)
+		for(int i = 0; i</*vector_of_vertex_segments*/vector_of_vertex_segments.size(); ++i)
 		{
 
-			//source_handle = vector_of_vertex_segments[i];
-			//end_handle = vector_of_vertex_segments[++i];
-			//source_vertex = source_handle->point();
-			//end_vertex    = end_handle->point();
-			//Segment_2 s = (source_vertex, end_vertex);
+			source_handle = vector_of_vertex_segments[i].get_source();
+			end_handle = vector_of_vertex_segments[i].get_target();
+			
+			source_vertex = source_handle->point();
+			end_vertex    = end_handle->point();
+			Segment_2 s (source_vertex, end_vertex);
 
-			source_vertex =  vector_of_vertex_segments[i].source();
+			/*source_vertex =  vector_of_vertex_segments[i].source();
 			end_vertex =  vector_of_vertex_segments[i].target();
-			Segment_2 s = vector_of_vertex_segments[i];
+			Segment_2 s = vector_of_vertex_segments[i];*/
 			v = end_vertex - source_vertex;
 
 			length_curr_segment = (int)ceil(sqrt(s.squared_length()));
@@ -390,7 +395,7 @@ public:
 
 			if(global_score >= 0)
 			{
-				this->insert_constraint(source_vertex,end_vertex/*source_handle,end_handle*/);
+				this->insert_constraint(/*source_vertex,end_vertex*/source_handle,end_handle);
 				vector_of_constraints.push_back(s);
 				global_score = 0;
 			}

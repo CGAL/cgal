@@ -11,15 +11,15 @@
 #ifndef _Gyroviz_vertex_segment_2_
 #define _Gyroviz_vertex_segment_2_
 
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-
-template < class Triangulation >
+template < class Cdt2VertexHandle >
 class	Gyroviz_vertex_segment_2
 {
 
-protected:
+public:
 
-	typedef typename Triangulation::Vertex_handle      Vertex_handle;
+	typedef Cdt2VertexHandle      Vertex_handle;
+
+protected:
 
 	// Vertex_handles
 	Vertex_handle source;

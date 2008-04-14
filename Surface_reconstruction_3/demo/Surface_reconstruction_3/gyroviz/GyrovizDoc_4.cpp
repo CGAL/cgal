@@ -13,6 +13,8 @@ using namespace cimg_library;
 
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -265,7 +267,7 @@ bool CGyrovizDoc_4::read_sequence(const std::string& first_image,
 
 		int image_index = atoi(image_name.substr(image_base_length, image_number_of_digits).c_str());
 		std::ostringstream out;
-		out << setfill('0') << std::setw(feature_file_number_of_digits) << image_index;
+		out << std::setfill('0') << std::setw(feature_file_number_of_digits) << image_index;
 		std::string feature_index = out.str();
 		std::string feature_file_name = feature_file_base + feature_index + feature_file_extension;
 
