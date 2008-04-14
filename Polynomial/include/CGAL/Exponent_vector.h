@@ -55,9 +55,6 @@ public:
         return false;
     }
     
-  
-    
-   
     void output_benchmark( std::ostream& os ) const {
         os << "( ";
         for( unsigned i = 0; i < size(); ++i ) {
@@ -77,6 +74,23 @@ inline bool is_valid(const Exponent_vector& ev) {
     }
     return true; 
 }
+
+std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
+    Exponent_vector::const_iterator it;
+    os << "(" ;
+    for(it = ev.begin(); it != ev.end();it++){
+        if (it == ev.begin()) {
+            os << *it ;
+        }
+        else{
+            os <<"," << *it ;
+        }
+    }
+    os << ")" ;
+    return os;
+}
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_EXPONENT_VECTOR_H
