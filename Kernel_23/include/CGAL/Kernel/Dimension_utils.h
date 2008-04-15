@@ -43,139 +43,139 @@ CGAL_BEGIN_NAMESPACE
 //   Then, based on Dimension<>, it's possibly to automatically use it.
 //   cf Dimension_mapper<> at the end of the file.
 
-template < int dim, typename K >  struct Point;
-template < int dim, typename K >  struct Vector;
-template < int dim, typename K >  struct Iso_box;
-template < int dim, typename K >  struct Direction;
-template < int dim, typename K >  struct Line;
-template < int dim, typename K >  struct Ray;
-template < int dim, typename K >  struct Segment;
-template < int dim, typename K >  struct Triangle;
-template < int dim, typename K >  struct Hypersphere;
-template < int dim, typename K >  struct Hyperplane;
-template < int dim, typename K >  struct Aff_transformation;
+template < typename Dim_tag, typename K >  struct Point;
+template < typename Dim_tag, typename K >  struct Vector;
+template < typename Dim_tag, typename K >  struct Iso_box;
+template < typename Dim_tag, typename K >  struct Direction;
+template < typename Dim_tag, typename K >  struct Line;
+template < typename Dim_tag, typename K >  struct Ray;
+template < typename Dim_tag, typename K >  struct Segment;
+template < typename Dim_tag, typename K >  struct Triangle;
+template < typename Dim_tag, typename K >  struct Hypersphere;
+template < typename Dim_tag, typename K >  struct Hyperplane;
+template < typename Dim_tag, typename K >  struct Aff_transformation;
 
 // Not-so generalizable stuff : Conic_2, Tetrahedron_3.
-template < int dim, typename K >  struct Tetrahedron;
+template < typename Dim_tag, typename K >  struct Tetrahedron;
 
 
 template < typename K >
-struct Point <2, K> { typedef typename K::Point_2 type; };
+struct Point <Dimension_tag<2>, K> { typedef typename K::Point_2 type; };
 
 template < typename K >
-struct Point <3, K> { typedef typename K::Point_3 type; };
+struct Point <Dimension_tag<3>, K> { typedef typename K::Point_3 type; };
 
 template < typename K >
-struct Point <Dynamic_dimension, K> { typedef typename K::Point_d type; };
-
-
-template < typename K >
-struct Vector <2, K> { typedef typename K::Vector_2 type; };
-
-template < typename K >
-struct Vector <3, K> { typedef typename K::Vector_3 type; };
-
-template < typename K >
-struct Vector <Dynamic_dimension, K> { typedef typename K::Vector_d type; };
+struct Point <Dynamic_dimension_tag, K> { typedef typename K::Point_d type; };
 
 
 template < typename K >
-struct Iso_box <2, K> { typedef typename K::Iso_rectangle_2 type; };
+struct Vector <Dimension_tag<2>, K> { typedef typename K::Vector_2 type; };
 
 template < typename K >
-struct Iso_box <3, K> { typedef typename K::Iso_cuboid_3 type; };
+struct Vector <Dimension_tag<3>, K> { typedef typename K::Vector_3 type; };
 
 template < typename K >
-struct Iso_box <Dynamic_dimension, K> { typedef typename K::Iso_box_d type; };
-
-
-template < typename K >
-struct Direction <2, K> { typedef typename K::Direction_2 type; };
-
-template < typename K >
-struct Direction <3, K> { typedef typename K::Direction_3 type; };
-
-template < typename K >
-struct Direction <Dynamic_dimension, K> { typedef typename K::Direction_d type; };
+struct Vector <Dynamic_dimension_tag, K> { typedef typename K::Vector_d type; };
 
 
 template < typename K >
-struct Line <2, K> { typedef typename K::Line_2 type; };
+struct Iso_box <Dimension_tag<2>, K> { typedef typename K::Iso_rectangle_2 type; };
 
 template < typename K >
-struct Line <3, K> { typedef typename K::Line_3 type; };
+struct Iso_box <Dimension_tag<3>, K> { typedef typename K::Iso_cuboid_3 type; };
 
 template < typename K >
-struct Line <Dynamic_dimension, K> { typedef typename K::Line_d type; };
-
-
-template < typename K >
-struct Ray <2, K> { typedef typename K::Ray_2 type; };
-
-template < typename K >
-struct Ray <3, K> { typedef typename K::Ray_3 type; };
-
-template < typename K >
-struct Ray <Dynamic_dimension, K> { typedef typename K::Ray_d type; };
+struct Iso_box <Dynamic_dimension_tag, K> { typedef typename K::Iso_box_d type; };
 
 
 template < typename K >
-struct Segment <2, K> { typedef typename K::Segment_2 type; };
+struct Direction <Dimension_tag<2>, K> { typedef typename K::Direction_2 type; };
 
 template < typename K >
-struct Segment <3, K> { typedef typename K::Segment_3 type; };
+struct Direction <Dimension_tag<3>, K> { typedef typename K::Direction_3 type; };
 
 template < typename K >
-struct Segment <Dynamic_dimension, K> { typedef typename K::Segment_d type; };
-
-
-template < typename K >
-struct Triangle <2, K> { typedef typename K::Triangle_2 type; };
-
-template < typename K >
-struct Triangle <3, K> { typedef typename K::Triangle_3 type; };
-
-template < typename K >
-struct Triangle <Dynamic_dimension, K> { typedef typename K::Triangle_d type; };
+struct Direction <Dynamic_dimension_tag, K> { typedef typename K::Direction_d type; };
 
 
 template < typename K >
-struct Tetrahedron <3, K> { typedef typename K::Tetrahedron_3 type; };
+struct Line <Dimension_tag<2>, K> { typedef typename K::Line_2 type; };
 
 template < typename K >
-struct Tetrahedron <Dynamic_dimension, K> { typedef typename K::Tetrahedron_d type; };
-
-
-template < typename K >
-struct Hypersphere <2, K> { typedef typename K::Circle_2 type; };
+struct Line <Dimension_tag<3>, K> { typedef typename K::Line_3 type; };
 
 template < typename K >
-struct Hypersphere <3, K> { typedef typename K::Sphere_3 type; };
-
-template < typename K >
-struct Hypersphere <Dynamic_dimension, K> { typedef typename K::Sphere_d type; };
+struct Line <Dynamic_dimension_tag, K> { typedef typename K::Line_d type; };
 
 
 template < typename K >
-struct Hyperplane <2, K> { typedef typename K::Line_2 type; };
+struct Ray <Dimension_tag<2>, K> { typedef typename K::Ray_2 type; };
 
 template < typename K >
-struct Hyperplane <3, K> { typedef typename K::Plane_3 type; };
+struct Ray <Dimension_tag<3>, K> { typedef typename K::Ray_3 type; };
 
 template < typename K >
-struct Hyperplane <Dynamic_dimension, K> { typedef typename K::Hyperplane_d type; };
+struct Ray <Dynamic_dimension_tag, K> { typedef typename K::Ray_d type; };
 
 
 template < typename K >
-struct Aff_transformation <2, K>
+struct Segment <Dimension_tag<2>, K> { typedef typename K::Segment_2 type; };
+
+template < typename K >
+struct Segment <Dimension_tag<3>, K> { typedef typename K::Segment_3 type; };
+
+template < typename K >
+struct Segment <Dynamic_dimension_tag, K> { typedef typename K::Segment_d type; };
+
+
+template < typename K >
+struct Triangle <Dimension_tag<2>, K> { typedef typename K::Triangle_2 type; };
+
+template < typename K >
+struct Triangle <Dimension_tag<3>, K> { typedef typename K::Triangle_3 type; };
+
+template < typename K >
+struct Triangle <Dynamic_dimension_tag, K> { typedef typename K::Triangle_d type; };
+
+
+template < typename K >
+struct Tetrahedron <Dimension_tag<3>, K> { typedef typename K::Tetrahedron_3 type; };
+
+template < typename K >
+struct Tetrahedron <Dynamic_dimension_tag, K> { typedef typename K::Tetrahedron_d type; };
+
+
+template < typename K >
+struct Hypersphere <Dimension_tag<2>, K> { typedef typename K::Circle_2 type; };
+
+template < typename K >
+struct Hypersphere <Dimension_tag<3>, K> { typedef typename K::Sphere_3 type; };
+
+template < typename K >
+struct Hypersphere <Dynamic_dimension_tag, K> { typedef typename K::Sphere_d type; };
+
+
+template < typename K >
+struct Hyperplane <Dimension_tag<2>, K> { typedef typename K::Line_2 type; };
+
+template < typename K >
+struct Hyperplane <Dimension_tag<3>, K> { typedef typename K::Plane_3 type; };
+
+template < typename K >
+struct Hyperplane <Dynamic_dimension_tag, K> { typedef typename K::Hyperplane_d type; };
+
+
+template < typename K >
+struct Aff_transformation <Dimension_tag<2>, K>
 { typedef typename K::Aff_transformation_2 type; };
 
 template < typename K >
-struct Aff_transformation <3, K>
+struct Aff_transformation <Dimension_tag<3>, K>
 { typedef typename K::Aff_transformation_3 type; };
 
 template < typename K >
-struct Aff_transformation <Dynamic_dimension, K>
+struct Aff_transformation <Dynamic_dimension_tag, K>
 { typedef typename K::Aff_transformation_d type; };
 
 
@@ -190,7 +190,7 @@ struct Aff_transformation <Dynamic_dimension, K>
 // Should this be part of a grand scheme for better handling of d-dim in CGAL ?
 template < typename T,
            typename K = typename Kernel_traits<T>::Kernel,
-           int dim = Dimension_of<T, K>::value >
+           typename Dim_tag = Dimension_of<T, K>::value >
 class Dimension_mapper;
 
 template < typename T, typename K >
@@ -224,7 +224,7 @@ struct Dimension_mapper <T, K, 3>
 };
 
 template < typename T, typename K >
-struct Dimension_mapper <T, K, Dynamic_dimension>
+struct Dimension_mapper <T, K, Dynamic_dimension_tag>
   : public K
 {
   Dimension_mapper() {}
