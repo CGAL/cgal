@@ -22,12 +22,15 @@
 #define CGAL_CENTROID_H
 
 #include <CGAL/basic.h>
-#include <iterator>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/Dimension_utils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Kernel/global_functions.h>
 
+#include <iterator>
 #include <list>
+
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
 
@@ -443,7 +446,7 @@ centroid(InputIterator begin,
   {
     const Segment& s = *it;
     FT length = std::sqrt(s.squared_length());
-		Point c = CGAL::midpoint(s.source(),s.target());
+    Point c = CGAL::midpoint(s.source(),s.target());
     // Point c = K().construct_midpoint_3_object()(s[0],s[1]);
     //Point c = Point((s[0][0] + s[1][0])/2.0, (s[0][1] + s[1][1])/2.0, (s[0][2] + s[1][2])/2.0);
     v = v + length * (c - ORIGIN);
