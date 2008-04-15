@@ -121,9 +121,8 @@ dump_4ogl(std::ostream& out_stream) const
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
     Point_3 p = iter->first->opposite()->vertex()->point(),
-      q = iter->first->vertex()->point();
-    Vector_3 r = (p-CGAL::ORIGIN)*iter->second +
-      (q-CGAL::ORIGIN)*(1-iter->second); 
+            q = iter->first->vertex()->point();
+    Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << " " << r ;	
   }
   out_stream  << std::endl;  
@@ -145,9 +144,8 @@ dump_verbose(std::ostream& out_stream) const
   for (;iter!=ite;iter++){
     //he: p->q, r is the crossing point
     Point_3 p = iter->first->opposite()->vertex()->point(),
-      q = iter->first->vertex()->point();
-    Vector_3 r = (p-CGAL::ORIGIN)*iter->second +
-      (q-CGAL::ORIGIN)*(1-iter->second); 
+            q = iter->first->vertex()->point();
+    Point_3 r = CGAL::barycenter(p, iter->second, q);
     out_stream << r << std::endl;	
   }
 }
@@ -616,10 +614,8 @@ bool Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex
     }
 
   if ( tag_order == Ridge_order_3 ) {
-    Vector_3 r1 = (v_p1->point()-ORIGIN)*coord1 +
-      (v_q1->point()-ORIGIN)*(1-coord1), 
-      r2 = (v_p2->point()-ORIGIN)*coord2 +
-      (v_q2->point()-ORIGIN)*(1-coord2); 
+    Vector_3 r1 = CGAL::barycenter(v_p1->point(), coord1, v_q1->point()) - ORIGIN,
+             r2 = CGAL::barycenter(v_p2->point(), coord2, v_q2->point()) - ORIGIN; 
     //identify the 3 different vertices v_p1, v_q1 and v3 = v_p2 or v_q2
     Vertex_const_handle v3;
     if (v_p2 == v_p1 || v_p2 == v_q1) v3 = v_q2;
@@ -714,8 +710,8 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
   FT coord = bary_coord(he,r_type);
   Vertex_const_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
     v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
-  Vector_3 segment = (v_p->point()-ORIGIN)*coord + (v_q->point()-ORIGIN)*(1-coord) - 
-    ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
+  Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
+                     CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0; // abs value of the second derivative of the curvature
@@ -757,8 +753,8 @@ addfront(Ridge_line* ridge_line,
   FT coord = bary_coord(he,r_type);
   Vertex_const_handle v_p = he->opposite()->vertex(), v_q = he->vertex(),
     v_p_cur = he_cur->opposite()->vertex(), v_q_cur = he->vertex(); // he: p->q
-  Vector_3 segment = (v_p->point()-ORIGIN)*coord + (v_q->point()-ORIGIN)*(1-coord) - 
-    ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
+  Vector_3 segment = CGAL::barycenter(v_p->point(), coord, v_q->point()) -
+                     CGAL::barycenter(v_p_cur->point(), coord_cur, v_q_cur->point());
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
   FT k_second = 0.; // abs value of the second derivative of the curvature
