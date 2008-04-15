@@ -792,6 +792,17 @@ centroid(InputIterator begin,
 
 } // namespace CGALi
 
+
+// We have 4 documented overloads of centroid():
+// centroid(begin, end)
+// centroid(begin, end, dim_tag)
+// centroid(begin, end, kernel)
+// centroid(begin, end, kernel, dim_tag)
+
+// One issue is that it is difficult to separate the 2 overloads with 3 arguments.
+// So we have to resort to an internal CGALi dispatcher hack.
+// ( Note : Dynamic_dimension_tag is not yet supported, but shouldn't be too hard. )
+
 // computes the centroid of a set of kernel objects
 // takes an iterator range over kernel objects
 template < typename InputIterator, 
@@ -810,19 +821,87 @@ centroid(InputIterator begin,
   return CGALi::centroid(begin, end, k,(Value_type*) NULL, tag);
 }
 
-// this one takes an iterator range over kernel objects
+namespace CGALi {
+
+// computes the centroid of a set of kernel objects
+// takes an iterator range over kernel objects, and a feature dimension tag.
+template < typename InputIterator, typename Kernel_or_Dim >
+struct Dispatch_centroid
+{
+  typedef Kernel_or_Dim K;
+  typedef typename Point<typename Ambiant_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type,
+               K
+              >::type result_type;
+
+  result_type operator()(InputIterator begin, InputIterator end, const K& k) const
+  {
+    typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+    return CGAL::centroid(begin, end, k, typename Feature_dimension<Value_type, K>::type());
+  }
+};
+
+// this one takes an iterator range over kernel objects, and a dimension tag,
 // and uses Kernel_traits<> to find out its kernel.
-template < typename InputIterator, typename Dim_tag >
+template < typename InputIterator, int dim >
+struct Dispatch_centroid < InputIterator, Dimension_tag<dim> >
+{
+  typedef typename Point<typename Ambiant_dimension<
+               typename std::iterator_traits<InputIterator>::value_type,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type result_type;
+
+  result_type operator()(InputIterator begin, InputIterator end, Dimension_tag<dim> tag) const
+  {
+    typedef typename std::iterator_traits<InputIterator>::value_type  Point;
+    typedef typename Kernel_traits<Point>::Kernel                     K;
+    return CGAL::centroid(begin, end, K(), tag);
+  }
+};
+
+// Same as above for dynamic dimension
+template < typename InputIterator >
+struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
+{
+  typedef typename Point<typename Ambiant_dimension<
+               typename std::iterator_traits<InputIterator>::value_type,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
+               typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type result_type;
+
+  result_type operator()(InputIterator begin, InputIterator end, Dynamic_dimension_tag tag) const
+  {
+    typedef typename std::iterator_traits<InputIterator>::value_type  Point;
+    typedef typename Kernel_traits<Point>::Kernel                     K;
+    return CGAL::centroid(begin, end, K(), tag);
+  }
+};
+
+} // namespace CGALi
+
+
+// The 3 argument overload calls the internal dispatcher.
+template < typename InputIterator, typename Kernel_or_dim >
+inline
+typename CGALi::Dispatch_centroid<InputIterator, Kernel_or_dim>::result_type
+centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
+{
+  CGALi::Dispatch_centroid<InputIterator, Kernel_or_dim> dispatch_centroid;
+  return dispatch_centroid(begin, end, k_or_d);
+}
+
+
+// this one takes an iterator range over kernel objects
+// and uses Kernel_traits<> to find out its kernel, and Feature_dimension for the dimension tag.
+template < typename InputIterator >
 inline
 typename Point<typename Ambiant_dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type
-centroid(InputIterator begin, InputIterator end, Dim_tag tag)
+centroid(InputIterator begin, InputIterator end)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                     K;
-  return CGAL::centroid(begin, end, K(), tag);
+  return CGAL::centroid(begin, end, K());
 }
 
 CGAL_END_NAMESPACE
