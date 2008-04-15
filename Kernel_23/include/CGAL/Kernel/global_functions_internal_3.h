@@ -62,6 +62,66 @@ are_strictly_ordered_along_line(const typename K::Point_3 &p,
   return k.are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const K& k)
+{
+  return k.construct_barycenter_3_object()(p1, w1, p2);
+}
+  
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const typename K::FT& w2, const K& k)
+{
+  return k.construct_barycenter_3_object()(p1, w1, p2, w2);
+}
+  
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const typename K::FT& w2,
+           const typename K::Point_3 &p3, const K& k)
+{        
+  return k.construct_barycenter_3_object()(p1, w1, p2, w2, p3);
+}
+  
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const typename K::FT& w2,
+           const typename K::Point_3 &p3, const typename K::FT& w3, const K& k)
+{        
+  return k.construct_barycenter_3_object()(p1, w1, p2, w2, p3, w3);
+}        
+
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const typename K::FT& w2,
+           const typename K::Point_3 &p3, const typename K::FT& w3,
+           const typename K::Point_3 &p4, const K& k)
+{
+  return k.construct_barycenter_3_object()(p1, w1, p2, w2, p3, w3, p4);
+}
+
+template < class K >
+inline
+typename K::Point_3
+barycenter(const typename K::Point_3 &p1, const typename K::FT& w1,
+           const typename K::Point_3 &p2, const typename K::FT& w2,
+           const typename K::Point_3 &p3, const typename K::FT& w3,
+           const typename K::Point_3 &p4, const typename K::FT& w4, const K& k)
+{
+  return k.construct_barycenter_3_object()(p1, w1, p2, w2, p3, w3, p4, w4);
+}
+
 template <typename K>
 inline
 typename K::Plane_3

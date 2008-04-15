@@ -79,6 +79,81 @@ circumcenterC2( const FT &px, const FT &py,
 }
 
 template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y,
+             FT &x, FT &y)
+{
+   FT w2 = 1 - w1;
+   x = w1 * p1x + w2 * p2x;
+   y = w1 * p1y + w2 * p2y;
+}
+
+template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y, const FT &w2,
+             FT &x, FT &y)
+{
+   FT sum = w1 + w2;
+   CGAL_kernel_assertion(sum != 0);
+   x = (w1 * p1x + w2 * p2x) / sum;
+   y = (w1 * p1y + w2 * p2y) / sum;
+}
+
+template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y, const FT &w2,
+             const FT &p3x, const FT &p3y,
+             FT &x, FT &y)
+{
+   FT w3 = 1 - w1 - w2;
+   x = w1 * p1x + w2 * p2x + w3 * p3x;
+   y = w1 * p1y + w2 * p2y + w3 * p3y;
+}
+
+template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y, const FT &w2,
+             const FT &p3x, const FT &p3y, const FT &w3,
+             FT &x, FT &y)
+{
+   FT sum = w1 + w2 + w3;
+   CGAL_kernel_assertion(sum != 0);
+   x = (w1 * p1x + w2 * p2x + w3 * p3x) / sum;
+   y = (w1 * p1y + w2 * p2y + w3 * p3y) / sum;
+}
+
+template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y, const FT &w2,
+             const FT &p3x, const FT &p3y, const FT &w3,
+             const FT &p4x, const FT &p4y,
+             FT &x, FT &y)
+{
+   FT w4 = 1 - w1 - w2 - w3;
+   x = w1 * p1x + w2 * p2x + w3 * p3x + w4 * p4x;
+   y = w1 * p1y + w2 * p2y + w3 * p3y + w4 * p4y;
+}
+
+template < class FT >
+void
+barycenterC2(const FT &p1x, const FT &p1y, const FT &w1,
+             const FT &p2x, const FT &p2y, const FT &w2,
+             const FT &p3x, const FT &p3y, const FT &w3,
+             const FT &p4x, const FT &p4y, const FT &w4,
+             FT &x, FT &y)
+{
+   FT sum = w1 + w2 + w3 + w4;
+   CGAL_kernel_assertion(sum != 0);
+   x = (w1 * p1x + w2 * p2x + w3 * p3x + w4 * p4x) / sum;
+   y = (w1 * p1y + w2 * p2y + w3 * p3y + w4 * p4y) / sum;
+}
+
+template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 void
 centroidC2( const FT &px, const FT &py,

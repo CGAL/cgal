@@ -1450,6 +1450,148 @@ namespace CartesianKernelFunctors {
 
 
   template <typename K>
+  class Construct_barycenter_2
+  {
+    typedef typename K::FT          FT;
+    typedef typename K::Point_2     Point_2;
+  public:
+    typedef Point_2                 result_type;
+    typedef Arity_tag< 3 >          Arity;
+
+    result_type
+    operator()(const Point_2& p1, const FT&w1, const Point_2& p2) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), x, y);
+      return construct_point_2(x, y);
+    }
+
+    result_type
+    operator()(const Point_2& p1, const FT& w1, const Point_2& p2, const FT& w2) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), w2, x, y);
+      return construct_point_2(x, y);
+    }
+
+    result_type
+    operator()(const Point_2& p1, const FT& w1, const Point_2& p2, const FT& w2,
+               const Point_2& p3) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), w2, p3.x(), p3.y(), x, y);
+      return construct_point_2(x, y);
+    }
+
+    result_type
+    operator()(const Point_2& p1, const FT& w1, const Point_2& p2, const FT& w2,
+               const Point_2& p3, const FT& w3) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), w2, p3.x(), p3.y(), w3, x, y);
+      return construct_point_2(x, y);
+    }
+
+    result_type
+    operator()(const Point_2& p1, const FT& w1, const Point_2& p2, const FT& w2,
+               const Point_2& p3, const FT& w3, const Point_2& p4) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), w2, p3.x(), p3.y(), w3, p4.x(), p4.y(), x, y);
+      return construct_point_2(x, y);
+    }
+
+    result_type
+    operator()(const Point_2& p1, const FT& w1, const Point_2& p2, const FT& w2,
+               const Point_2& p3, const FT& w3, const Point_2& p4, const FT& w4) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      barycenterC2(p1.x(), p1.y(), w1, p2.x(), p2.y(), w2, p3.x(), p3.y(), w3, p4.x(), p4.y(), w4, x, y);
+      return construct_point_2(x, y);
+    }
+
+  };
+
+  template <typename K>
+  class Construct_barycenter_3
+  {
+    typedef typename K::FT          FT;
+    typedef typename K::Point_3     Point_3;
+  public:
+    typedef Point_3                 result_type;
+    typedef Arity_tag< 3 >          Arity;
+    
+    result_type
+    operator()(const Point_3& p1, const FT&w1, const Point_3& p2) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    result_type
+    operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2, x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    result_type
+    operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
+               const Point_3& p3) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2, p3.x(), p3.y(), p3.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+    
+    result_type
+    operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
+               const Point_3& p3, const FT& w3) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2,
+                   p3.x(), p3.y(), p3.z(), w3, x, y, z);
+      return construct_point_3(x, y, z);
+    }
+    
+    result_type
+    operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
+               const Point_3& p3, const FT& w3, const Point_3& p4) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2,
+                   p3.x(), p3.y(), p3.z(), w3, p4.x(), p4.y(), p4.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    result_type
+    operator()(const Point_3& p1, const FT& w1, const Point_3& p2, const FT& w2,
+               const Point_3& p3, const FT& w3, const Point_3& p4, const FT& w4) const
+    {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      barycenterC3(p1.x(), p1.y(), p1.z(), w1, p2.x(), p2.y(), p2.z(), w2,
+                   p3.x(), p3.y(), p3.z(), w3, p4.x(), p4.y(), p4.z(), w4, x, y, z);
+      return construct_point_3(x, y, z);
+    }
+    
+  };
+
+
+  template <typename K>
   class Construct_base_vector_3
   {
     typedef typename K::Vector_3   Vector_3;

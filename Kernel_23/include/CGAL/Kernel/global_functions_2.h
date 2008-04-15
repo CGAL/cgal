@@ -87,6 +87,66 @@ area(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
   return CGALi::area(p, q, r, K());
 }
 
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2)
+{
+  return CGALi::barycenter(p1, w1, p2, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2, const typename K::FT& w2)
+{
+  return CGALi::barycenter(p1, w1, p2, w2, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2, const typename K::FT& w2,
+           const Point_2<K> &p3)
+{
+  return CGALi::barycenter(p1, w1, p2, w2, p3, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2, const typename K::FT& w2,
+           const Point_2<K> &p3, const typename K::FT& w3)
+{
+  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2, const typename K::FT& w2,
+           const Point_2<K> &p3, const typename K::FT& w3,
+           const Point_2<K> &p4)
+{
+  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const Point_2<K> &p1, const typename K::FT& w1,
+           const Point_2<K> &p2, const typename K::FT& w2,
+           const Point_2<K> &p3, const typename K::FT& w3,
+           const Point_2<K> &p4, const typename K::FT& w4)
+{
+  return CGALi::barycenter(p1, w1, p2, w2, p3, w3, p4, w4, K());
+}
+
 template <typename K>
 inline
 typename K::Line_2

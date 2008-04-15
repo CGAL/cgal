@@ -61,6 +61,20 @@ _test_fct_constructions_2(const R&)
   assert( CGAL::centroid( pne, psw, pse, pnw) == p);
   assert( CGAL::centroid( Triangle(pne, pse, pe)) == pe);
 
+  // barycenter
+  assert( CGAL::barycenter( pne, 1, pe ) == pne );
+  assert( CGAL::barycenter( pne, 0, pe ) == pe );
+  assert( CGAL::barycenter( pne, 1, pe, 1 ) == CGAL::midpoint(pne, pe) );
+  assert( CGAL::barycenter( pne, 1, pse, 0, pe) == pne);
+  assert( CGAL::barycenter( pne, 0, pse, 1, pe) == pse);
+  assert( CGAL::barycenter( pne, 0, pse, 0, pe) == pe);
+  assert( CGAL::barycenter( pne, 1, pse, 1, pe, 1) == pe);
+  assert( CGAL::barycenter( pne, 1, psw, 0, pse, 0, pnw) == pne);
+  assert( CGAL::barycenter( pne, 0, psw, 1, pse, 0, pnw) == psw);
+  assert( CGAL::barycenter( pne, 0, psw, 0, pse, 1, pnw) == pse);
+  assert( CGAL::barycenter( pne, 0, psw, 0, pse, 0, pnw) == pnw);
+  assert( CGAL::barycenter( pne, 1, psw, 1, pse, 1, pnw, 1) == p);
+
   // general position intersection point
 
   return true;

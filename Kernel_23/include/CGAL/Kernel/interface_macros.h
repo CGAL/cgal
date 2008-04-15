@@ -237,6 +237,10 @@ CGAL_Kernel_cons(Compute_zmin_3,
 		 compute_zmin_3_object)
 CGAL_Kernel_cons(Compute_zmax_3,
 		 compute_zmax_3_object)
+CGAL_Kernel_cons(Construct_barycenter_2,
+		 construct_barycenter_2_object)
+CGAL_Kernel_cons(Construct_barycenter_3,
+		 construct_barycenter_3_object)
 CGAL_Kernel_cons(Construct_base_vector_3,
 		 construct_base_vector_3_object)
 CGAL_Kernel_cons(Construct_bisector_2,

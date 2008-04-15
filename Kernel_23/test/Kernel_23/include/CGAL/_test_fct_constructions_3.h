@@ -80,6 +80,20 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::centroid( Tetrahedron(p111, p010, p101, p000)) == p);
   assert( CGAL::centroid( Triangle(p111, p_11, p011) ) == p_11);
 
+  // barycenter
+  assert( CGAL::barycenter( p111, 1, p011 ) == p111 );
+  assert( CGAL::barycenter( p111, 0, p011 ) == p011 );
+  assert( CGAL::barycenter( p111, 1, p011, 1 ) == CGAL::midpoint(p111, p011) );
+  assert( CGAL::barycenter( p111, 1, p_11, 0, p011) == p111);
+  assert( CGAL::barycenter( p111, 0, p_11, 1, p011) == p_11);
+  assert( CGAL::barycenter( p111, 0, p_11, 0, p011) == p011);
+  assert( CGAL::barycenter( p111, 1, p_11, 1, p011, 1) == CGAL::centroid(p111, p_11, p011) );
+  assert( CGAL::barycenter( p111, 1, p010, 0, p_11, 0, p000) == p111);
+  assert( CGAL::barycenter( p111, 0, p010, 1, p_11, 0, p000) == p010);
+  assert( CGAL::barycenter( p111, 0, p010, 0, p_11, 1, p000) == p_11);
+  assert( CGAL::barycenter( p111, 0, p010, 0, p_11, 0, p000) == p000);
+  assert( CGAL::barycenter( p111, 1, p010, 1, p_11, 1, p000, 1) == CGAL::centroid(p111, p010, p_11, p000) );
+
   // orthogonal_vector
   Point p0(RT0, RT0, RT0), px1(RT1, RT0, RT0), py1(RT0, RT1, RT0);
   Vector vz1(RT0, RT0, RT1);

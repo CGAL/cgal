@@ -77,6 +77,66 @@ area(const typename K::Point_2 &p,
   return k.compute_area_2_object()(p, q, r);
 }
 
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2);
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const typename K::FT& w2, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2, w2);
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const typename K::FT& w2,
+           const typename K::Point_2 &p3, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2, w2, p3);
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const typename K::FT& w2,
+           const typename K::Point_2 &p3, const typename K::FT& w3, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2, w2, p3, w3);
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const typename K::FT& w2,
+           const typename K::Point_2 &p3, const typename K::FT& w3,
+           const typename K::Point_2 &p4, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2, w2, p3, w3, p4);
+}
+
+template < class K >
+inline
+typename K::Point_2
+barycenter(const typename K::Point_2 &p1, const typename K::FT& w1,
+           const typename K::Point_2 &p2, const typename K::FT& w2,
+           const typename K::Point_2 &p3, const typename K::FT& w3,
+           const typename K::Point_2 &p4, const typename K::FT& w4, const K& k)
+{
+  return k.construct_barycenter_2_object()(p1, w1, p2, w2, p3, w3, p4, w4);
+}
+
 template <typename K>
 inline
 typename K::Line_2

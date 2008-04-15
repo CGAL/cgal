@@ -291,6 +291,15 @@ test_new_2(const R& rep)
           tmp13 = construct_centroid(p2,p3,p4,p5);
           tmp13 = construct_centroid(t2);
 
+  typename R::Construct_barycenter_2 construct_barycenter
+        = rep.construct_barycenter_2_object();
+          tmp13 = construct_barycenter(p2, FT(1), p3);
+          tmp13 = construct_barycenter(p2, FT(1), p3, FT(2));
+          tmp13 = construct_barycenter(p2, FT(1), p3, FT(2), p4);
+          tmp13 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3));
+          tmp13 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3), p5);
+          tmp13 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3), p5, FT(4));
+
 
   typename R::Construct_bisector_2 construct_bisector
         = rep.construct_bisector_2_object();

@@ -42,6 +42,8 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Collinear_3;
   using CartesianKernelFunctors::Construct_line_3;
   using CartesianKernelFunctors::Construct_equidistant_line_3;
+  using CartesianKernelFunctors::Construct_barycenter_2;
+  using CartesianKernelFunctors::Construct_barycenter_3;
 
   template <typename K>
   class Angle_2

@@ -355,6 +355,15 @@ test_new_3(const R& rep)
           tmp4 = construct_centroid(t2);
           tmp4 = construct_centroid(th2);
 
+  typename R::Construct_barycenter_3 construct_barycenter
+        = rep.construct_barycenter_3_object();
+          tmp4 = construct_barycenter(p2, FT(1), p3);
+          tmp4 = construct_barycenter(p2, FT(1), p3, FT(2));
+          tmp4 = construct_barycenter(p2, FT(1), p3, FT(2), p4);
+          tmp4 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3));
+          tmp4 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3), p5);
+          tmp4 = construct_barycenter(p2, FT(1), p3, FT(2), p4, FT(3), p5, FT(4));
+
   typename R::Construct_cross_product_vector_3 construct_cross_product
         = rep.construct_cross_product_vector_3_object();
   Vector_3 tmp9 = construct_cross_product(v3,v4);
