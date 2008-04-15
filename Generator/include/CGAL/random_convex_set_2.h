@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <numeric>
 #include <CGAL/Random_convex_set_traits_2.h>
+#include <CGAL/centroid.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -73,10 +74,7 @@ random_convex_set_2( int n,
   CGAL::copy_n( pg, n, back_inserter( points));
 
   // compute centroid of points:
-  Point_2 centroid(
-    scale(
-      accumulate( points.begin(), points.end(), t.origin(), Sum()),
-      FT( 1) / FT( n)));
+  Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );
 
   // translate s.t. centroid == origin:
   transform(
@@ -94,10 +92,7 @@ random_convex_set_2( int n,
     points.begin(), points.end(), points.begin(), Sum());
 
   // and compute its centroid:
-  Point_2 new_centroid(
-    scale(
-      accumulate( points.begin(), points.end(), t.origin(), Sum()),
-      FT( 1) / FT( n)));
+  Point_2 new_centroid = CGAL::centroid( points.begin(), points.end(), t );
 
   // translate s.t. centroids match:
   transform(

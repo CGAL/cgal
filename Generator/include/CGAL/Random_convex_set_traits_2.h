@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Kernel >
-struct Random_convex_set_traits_2 {
+struct Random_convex_set_traits_2 : public Kernel {
 
   typedef typename Kernel::Point_2      Point_2;
   typedef typename Kernel::Direction_2  Direction_2;
