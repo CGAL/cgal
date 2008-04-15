@@ -319,7 +319,7 @@ public:
 			FT a;
 			for (size_t k = 0; k < n; ++k, he = he->next()) {
 				if (k == 0) a = (FT) ((5.0/n) + 1);
-				else a = (FT) (3+2*std::cos(2*k*3.141593/n))/n;
+				else a = (FT) (3+2*std::cos(2*k*CGAL_PI/n))/n;
 				cv = cv + (he->vertex()->point()-CGAL::ORIGIN)*a;
 			}
 			cv = cv/4;
@@ -359,9 +359,8 @@ public:
   void vertex_node(Vertex_handle vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir = vertex->vertex_begin();
     size_t n = circulator_size(vcir);
-    const double pi = 3.1415926;
 
-    FT a = (FT) ((4.0-2.0*std::cos(2.0*pi/n))/9.0);
+    FT a = (FT) ((4.0-2.0*std::cos(2.0*CGAL_PI/n))/9.0);
 
     Vector cv = ((FT)(1.0-a)) * (vertex->point() - CGAL::ORIGIN);
     for (size_t i = 1; i <= n; ++i, --vcir) {
