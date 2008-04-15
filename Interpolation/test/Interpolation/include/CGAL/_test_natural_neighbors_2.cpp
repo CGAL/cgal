@@ -23,7 +23,7 @@
 
 #include <CGAL/copy_n.h>
 #include <CGAL/Random.h>
-#include <CGAL/Origin.h>
+#include <CGAL/barycenter.h>
 
 #include <CGAL/natural_neighbor_coordinates_2.h>
 
@@ -45,12 +45,7 @@ bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 		     typename std::iterator_traits<ForwardIterator>
 		     ::value_type::second_type norm, const Point& p)
 {
-  typedef typename CGAL::Kernel_traits<Point>::Kernel::Point_2  Point_2;
-  Point_2 b = CGAL::ORIGIN;
-  for(; first != beyond; ++first)
-    b = b + (first->second/norm) * (first->first - CGAL::ORIGIN);
-
-  return p==b;
+  return p == CGAL::barycenter(first, beyond);
 }
 
 
