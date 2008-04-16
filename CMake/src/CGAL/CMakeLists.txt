@@ -36,7 +36,7 @@ if (NOT AUTO_LINK_ENABLED )
   set_target_properties( CGAL PROPERTIES OUTPUT_NAME "${CGAL_BASENAME}" )
   
   set(CGAL_LIBRARY "${CGAL_BASENAME}" CACHE STRING "The CGAL library" )
-  mark_as_advanced(CGAL_LIBRARY)
+  hide_variable(CGAL_LIBRARY)
   
 else()
 
@@ -54,11 +54,13 @@ else()
                        )
   
   if ( HAS_CFG_INTDIR )                      
-    add_custom_command(TARGET CGAL POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib)
-    add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+    add_custom_command(TARGET CGAL POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
+    add_custom_command(TARGET CGAL POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
   endif()
   
 endif()
 
-install(TARGETS CGAL DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+if ( CGAL_INSTALL_LIB_DIR )
+  install(TARGETS CGAL DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+endif()
 

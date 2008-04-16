@@ -60,6 +60,6 @@ else()
   
 endif()
 
-mark_as_advanced(MPFR_INCLUDE_DIR)
-mark_as_advanced(MPFR_LIBRARIES)
-mark_as_advanced(MPFR_LIBRARIES_DIR)
+#mark_as_advanced(MPFR_INCLUDE_DIR)
+#mark_as_advanced(MPFR_LIBRARIES)
+#mark_as_advanced(MPFR_LIBRARIES_DIR)

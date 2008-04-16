@@ -60,6 +60,6 @@ else()
   
 endif()
 
-mark_as_advanced(GMP_INCLUDE_DIR)
-mark_as_advanced(GMP_LIBRARIES)
-mark_as_advanced(GMP_LIBRARIES_DIR)
+#mark_as_advanced(GMP_INCLUDE_DIR)
+#mark_as_advanced(GMP_LIBRARIES)
+#mark_as_advanced(GMP_LIBRARIES_DIR)

@@ -1572,10 +1572,10 @@ CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 CMake/CGALConfig_binary.cmake.in -text
 CMake/CGALConfig_install.cmake.fhs.in -text
-CMake/CGALConfig_install.cmake.in -text
 CMake/CGALConfig_install.cmake.source.in -text
 CMake/INSTALL_via_cmake -text
 CMake/cmake/modules/AddSubdirectories.cmake -text
+CMake/cmake/modules/CGAL_SetupFlags.cmake -text
 CMake/cmake/modules/CGALcommon.cmake -text
 CMake/cmake/modules/CheckCXXFileRuns.cmake -text
 CMake/cmake/modules/CheckCXXSourceRuns.cmake -text

@@ -8,7 +8,6 @@
 # CORE needs GMP
 include(FindPackageHandleStandardArgs)
 
-find_package(GMP QUIET)
 if(GMP_FOUND)
   if (CORE_INCLUDE_DIR AND CORE_LIBRARIES)
     # Already in cache, be silent

@@ -60,6 +60,6 @@ else()
   
 endif()
 
-mark_as_advanced(TAUCS_INCLUDE_DIR)
-mark_as_advanced(TAUCS_LIBRARIES)
-mark_as_advanced(TAUCS_LIBRARIES_DIR)
+#mark_as_advanced(TAUCS_INCLUDE_DIR)
+#mark_as_advanced(TAUCS_LIBRARIES)
+#mark_as_advanced(TAUCS_LIBRARIES_DIR)

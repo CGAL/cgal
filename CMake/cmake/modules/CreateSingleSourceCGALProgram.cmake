@@ -1,10 +1,10 @@
 macro(create_single_source_cgal_program first )
 
-  if(EXISTS ${first})
-    set( all ${first} )
+  if(EXISTS ${CMAKE_SOURCE_DIR}/${first})
+    set( all ${CMAKE_SOURCE_DIR}/${first} )
     
     foreach( i ${ARGN} )
-      set( all ${all} ${i} ) 
+      set( all ${all} ${CMAKE_SOURCE_DIR}/${i} ) 
     endforeach()
     
     get_filename_component(exe_name ${first} NAME_WE)

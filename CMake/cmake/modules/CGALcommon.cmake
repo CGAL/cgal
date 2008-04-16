@@ -5,15 +5,22 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   # This allows else(), endif(), etc... (without repeating the expression)
   set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
+  macro(assert _arg )
+    if ( NOT ${_arg} )
+      message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
+    endif()
+  endmacro()
+
+  macro( hide_variable var )
+    set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )  
+  endmacro()
+  
   # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
   if (NOT CMAKE_ROOT)
     message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  # Check that the version of CMake is high enough.
-  # CPack was introduced in cmake 2.4
-  # FindQt3 is buggy in CMake 2.4.4.
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.4.7 FATAL_ERROR)
 
   if ( NOT BUILD_SHARED_LIBS )
     if ( WIN32 )
@@ -32,15 +39,9 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
         set( WIN32_CMAKE_ON_CYGWIN TRUE CACHE INTERNAL "This is the cygwin platform." )
       endif()
     endif()
+    hide_variable(CMAKE_UNAME)
   endif()
 
-  # Just for fun
   set(CMAKE_COLORMAKEFILE ON)
-
-  macro(assert _arg )
-    if ( NOT ${_arg} )
-      message( FATAL_ERROR "Variable ${_arg} must be defined" ) 
-    endif()
-  endmacro()
 
 endif()

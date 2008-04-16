@@ -22,6 +22,8 @@ include(GeneratorSpecificSettings)
 include(CheckCXXFileRuns)
 include(OptionalAddSubdirectory)
 
+mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
+
 # 
 # Read and parse CGAL version number from VERSION file
 #
@@ -135,51 +137,57 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
-set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+option(WITH_INSTALL "Create installation rules")
 
-if ( NOT DEFINED SOURCE_INSTALL )
-  if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT WIN32_CMAKE_ON_CYGWIN )
-    set ( SOURCE_INSTALL TRUE )
+if ( WITH_INSTALL )
+
+  set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+  set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+
+  if ( NOT DEFINED SOURCE_INSTALL )
+    if ( WIN32 AND NOT UNIX AND NOT CYGWIN AND NOT WIN32_CMAKE_ON_CYGWIN )
+      set ( SOURCE_INSTALL TRUE )
+    else()
+      set ( SOURCE_INSTALL FALSE )
+    endif()  
+  endif()
+
+  if ( WIN32_CMAKE_ON_CYGWIN )
+    exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
+    file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
+  endif()
+
+  message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
+
+  if ( SOURCE_INSTALL )
+
+    set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
+    
+    set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
+          CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+        )
+        
+    set ( CGAL_INSTALL_ROOT_DIR "."  
+          CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+        )
+        
+    set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
+    
   else()
-    set ( SOURCE_INSTALL FALSE )
-  endif()  
-endif()
 
-if ( WIN32_CMAKE_ON_CYGWIN )
-  exec_program(cygpath ARGS -w ${CMAKE_INSTALL_PREFIX} OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
-  file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
-endif()
+    set ( CGAL_INSTALL_BIN_DIR    "bin"                     
+          CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+        )
+        
+    set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
+          CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
+        )
+        
+    set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
+          CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+        )
 
-message( STATUS "CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}" )
-
-if ( SOURCE_INSTALL )
-
-  set ( CGAL_INSTALL_BIN_DIR "script"  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" )
-  
-  set ( CGAL_INSTALL_CMAKE_DIR "cmake/modules"  
-        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_ROOT_DIR "."  
-        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_DOC_DIR "${CGAL_INSTALL_ROOT_DIR}" ) 
-  
-else()
-
-  set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-        CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_CMAKE_DIR "lib/CGAL-${CGAL_VERSION}"  
-        CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
-      
-  set ( CGAL_INSTALL_DOC_DIR "share/doc/CGAL-${CGAL_VERSION}"  
-        CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
-      )
+  endif()
 
 endif()
 
@@ -192,30 +200,77 @@ endif()
 set(CGAL_LIBRARIES_DIR ${CGAL_BINARY_DIR}/lib)
 
 set(CGAL_LIBRARIES CACHE STRING "Selected CGAL Libraries")
-mark_as_advanced(CGAL_LIBRARIES)
-
-set(CGAL_DEFINITIONS ${COMMON_DEFINITIONS} CACHE STRING "Compiler definitions used for building CGAL.")
-
-set(CGAL_LIB_SHARED_LINKER_FLAGS "${ADDITIONAL_LDFLAGS} ${CGAL_SHARED_LIB_LDFLAGS}" CACHE STRING "Linked flags used for building CGAL.")
+hide_variable(CGAL_LIBRARIES)
 
 set(CGAL_INCLUDE_DIRS ${CGAL_BINARY_DIR}/include ${CGAL_SOURCE_DIR}/include)
 
 include_directories (${CGAL_INCLUDE_DIRS})
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 
-add_definitions(${CGAL_DEFINITIONS})
 add_definitions(${CGAL_3RD_PARTY_DEFINITIONS})
 
 set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
 
-set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} ${CGAL_LIB_STATIC_LINKER_FLAGS}")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_LIB_SHARED_LINKER_FLAGS}")
+if( MSVC )
+  
+  set( CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS" )
+
+  # _SECURE_SCL=0 is defined because it has been reported that the Secure SCL has an overhead of near one order of magnitude EVEN IN RELEASE BUILDS    
+  set( CGAL_CXX_FLAGS_RELEASE "${CGAL_CXX_FLAGS_RELEASE} -D_SECURE_SCL=0" )
+  
+endif()
+
+set(CMAKE_CXX_FLAGS "${CGAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS} ")  
+message( STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}" )
+
+if ( CGAL_RELEASE )
+  set(CMAKE_CXX_FLAGS_RELEASE "${CGAL_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_RELEASE}")  
+  message( STATUS "Release compiler flags: ${CMAKE_CXX_FLAGS_RELEASE}" )
+endif()
+
+if ( CGAL_DEBUG )
+  set(CMAKE_CXX_FLAGS_DEBUG   "${CGAL_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS_DEBUG}") 
+  message( STATUS "Debug compiler flags: ${CMAKE_CXX_FLAGS_DEBUG}"   )
+endif()
+
+if ( BUILD_SHARED_LIBS )
+
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_SHARED_LINKER_FLAGS}")
+  message( STATUS "Shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS}"   )
+  
+  if ( CGAL_RELEASE )
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} ${CGAL_SHARED_LINKER_FLAGS_RELEASE}")
+    message( STATUS "Release shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}"   )
+  endif()
+  
+  if ( CGAL_DEBUG )
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG   "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} ${CGAL_SHARED_LINKER_FLAGS_DEBUG}")
+    message( STATUS "Debug shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}"   )
+  endif()
+  
+else()
+
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${CGAL_MODULE_LINKER_FLAGS}")
+  message( STATUS "Module linker flags: ${CMAKE_MODULE_LINKER_FLAGS}" )
+  
+  if ( CGAL_RELEASE )
+    set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} ${CGAL_MODULE_LINKER_FLAGS_RELEASE}")
+    message( STATUS "Release module linker flags: ${CMAKE_MODULE_LINKER_FLAGS_RELEASE}"   )
+  endif()
+  
+  if ( CGAL_DEBUG )
+    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG  "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} ${CGAL_MODULE_LINKER_FLAGS_DEBUG}")
+    message( STATUS "Debug module linker flags: ${CMAKE_MODULE_LINKER_FLAGS_DEBUG}" )
+  endif()
+  
+endif()
 
 add_subdirectory(src)
 
 set( CGAL_LIBRARIES ${CGAL_CORE_LIBRARY} ${CGAL_LIBRARY} ${CGAL_IMAGE_IO_LIBRARY} ${CGAL_PDB_LIBRARY} ${CGAL_QT_LIBRARY} )
 
-message( STATUS "CGAL_LIBRARIES=${CGAL_LIBRARIES}" )
+hide_variable(EXECUTABLE_OUTPUT_PATH)
+hide_variable(LIBRARY_OUTPUT_PATH)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -241,47 +296,50 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-# WARNING: Use only relative paths; full paths break CPack!
-# DESTINATION option is mandatory; skipping it breaks CPack!
+if ( WITH_INSTALL )
 
-install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
-        DESTINATION ${CGAL_INSTALL_DOC_DIR}
-       )
+  # WARNING: Use only relative paths; full paths break CPack!
+  # DESTINATION option is mandatory; skipping it breaks CPack!
+
+  install(FILES CHANGES "INSTALL" INSTALL.MacOSX INSTALL.win32.txt LICENSE LICENSE.FREE_USE LICENSE.LGPL LICENSE.QPL README "VERSION"  
+          DESTINATION ${CGAL_INSTALL_DOC_DIR}
+         )
 
 
-install(DIRECTORY include/CGAL                      DESTINATION ${CGAL_INSTALL_INC_DIR}    )
-install(DIRECTORY "${CGAL_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR}    )
+  install(DIRECTORY include/CGAL                      DESTINATION ${CGAL_INSTALL_INC_DIR}    )
+  install(DIRECTORY "${CGAL_BINARY_DIR}/include/CGAL" DESTINATION ${CGAL_INSTALL_INC_DIR}    )
 
-install(DIRECTORY scripts/                          DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
+  install(DIRECTORY scripts/                          DESTINATION ${CGAL_INSTALL_BIN_DIR}    )
 
-install(DIRECTORY cmake/modules/                        DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-install(FILES cmake/modules/UseCGAL.cmake               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  install(DIRECTORY cmake/modules/                        DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  install(FILES cmake/modules/UseCGAL.cmake               DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if ( GMP_IN_AUXILIARY )
-  install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  if ( GMP_IN_AUXILIARY )
+    install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+    install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  endif()
+
+  if ( TAUCS_IN_AUXILIARY )
+    install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+    install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  endif()
+
+  if ( ZLIB_IN_AUXILIARY )
+    install(DIRECTORY auxiliary/zlib/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
+    install(DIRECTORY auxiliary/zlib/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  endif()
+
+
+  if ( SOURCE_INSTALL )
+    install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(FILES     CMakeLists.txt                        DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(DIRECTORY auxiliary                             DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+    install(DIRECTORY src                                   DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
+  else()
+    install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
+  endif()
+  
 endif()
-
-if ( TAUCS_IN_AUXILIARY )
-  install(DIRECTORY auxiliary/taucs/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/tacus/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-endif()
-
-if ( ZLIB_IN_AUXILIARY )
-  install(DIRECTORY auxiliary/zlib/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
-  install(DIRECTORY auxiliary/zlib/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
-endif()
-
-
-if ( SOURCE_INSTALL )
-  install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(FILES     CMakeLists.txt                        DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(DIRECTORY auxiliary                             DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-  install(DIRECTORY src                                   DESTINATION ${CGAL_INSTALL_ROOT_DIR} )
-else()
-  install(FILES ${CGAL_BINARY_DIR}/cmake/CGALConfig.cmake DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-endif()
-
 
 
 #--------------------------------------------------------------------------------------------------
@@ -298,13 +356,6 @@ set(CGAL_DIR ${CGAL_BINARY_DIR} )
 optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
 optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 
-#if ( WITH_demo )
-#  install(DIRECTORY demo DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT demo )
-#endif()
-
-#if ( WITH_examples )
-#  install(DIRECTORY examples DESTINATION ${CGAL_INSTALL_ROOT} COMPONENT examples )
-#endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -312,7 +363,8 @@ optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
 #
 #--------------------------------------------------------------------------------------------------
 
-if( EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
+option( WITH_CPACK "Create package generation rules")
+if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
 
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CGAL - Computational Geometry Algorithms Library")
     set(CPACK_PACKAGE_VENDOR "CGAL Open Source Project")

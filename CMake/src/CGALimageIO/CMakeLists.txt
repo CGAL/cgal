@@ -53,14 +53,15 @@ if(ZLIB_FOUND)
                         )
     
     if ( HAS_CFG_INTDIR )                      
-      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND copy /Y $(TargetDir)$(TargetName)$(TargetExt) ../../lib )
-      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb." copy /Y $(TargetDir)$(TargetName).pdb ../../lib)
+      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
+      add_custom_command(TARGET CGAL_IMAGEIO POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
     endif()
 
   endif()
 
-  # WARNING: Use only relative paths; full paths break CPack!
-  install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  if ( CGAL_INSTALL_LIB_DIR )
+    install(TARGETS CGAL_IMAGEIO DESTINATION ${CGAL_INSTALL_LIB_DIR} )
+  endif()
 else()
   message( STATUS "CGAL-ImageIO needs ZLib, cannot be configured.")
 endif()  

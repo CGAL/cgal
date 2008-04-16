@@ -48,5 +48,5 @@ else()
   
 endif()
 
-mark_as_advanced(ZLIB_INCLUDE_DIR)
-mark_as_advanced(ZLIB_LIBRARIES)
+#mark_as_advanced(ZLIB_INCLUDE_DIR)
+#mark_as_advanced(ZLIB_LIBRARIES)

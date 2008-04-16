@@ -9,7 +9,7 @@
 
 include(FindPackageHandleStandardArgs)
 
-find_package(GMP QUIET)
+
 if(GMP_FOUND)
 
   if (CGAL_CORE_INCLUDE_DIR AND CGAL_CORE_LIBRARIES)
@@ -51,4 +51,4 @@ if(GMP_FOUND)
 
 endif()
 
-mark_as_advanced(CGAL_CORE_INCLUDE_DIR)
+#mark_as_advanced(CGAL_CORE_INCLUDE_DIR)
