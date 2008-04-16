@@ -1424,10 +1424,11 @@ void removeSupportedFileFormat() {
 
 /** trilinear interpolation in an _image float type
  */
-float triLinInterp(_image* image,
+float triLinInterp(const _image* image,
                    float posx, 
                    float posy, 
-                   float posz)
+                   float posz,
+                   float value_outside /*= 0.f */)
 {
   const int dimx = image->xdim;
   const int dimy = image->ydim;
@@ -1435,7 +1436,7 @@ float triLinInterp(_image* image,
   const int dimxy = dimx*dimy;
   
   if(posx < 0.f || posy < 0.f || posz < 0.f )
-    return 0.f;
+    return value_outside;
 
   posx = posx /(image->vx);
   posy = posy /(image->vy);
@@ -1450,7 +1451,7 @@ float triLinInterp(_image* image,
   const int k2 = k1 + 1;
 
   if(i2 >= dimz || j2 >= dimy || k2 >= dimx)
-    return 0.f;
+    return value_outside;
 
   const float KI2 = i2-posz;
   const float KI1 = posz-i1;

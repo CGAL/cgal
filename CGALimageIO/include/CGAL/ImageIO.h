@@ -528,10 +528,11 @@ int ImageIO_close( _image *im );
 /** trilinear interpolation in an _image. The returned type is float (cast
     are made if the image word type is different).
  */
-float triLinInterp(_image* image,float posx, float posy, float posz);
+float triLinInterp(const _image* image, float posx, float posy, float posz,
+                   const float value_outside = 0.);
 
 /** Alias for triLinInterp */
-inline float trilinear_interpolation(_image* image,
+inline float trilinear_interpolation(const _image* image,
                                      float posx, float posy, float posz)
 {
   return triLinInterp(image, posx, posy, posz);
