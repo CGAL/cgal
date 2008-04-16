@@ -34,22 +34,23 @@
 namespace CGAL {
 
 template <typename FT, typename Point>
-class Gray_level_image_3 : public Image_3<FT, Point>
+class Gray_level_image_3 : public Image_3
 {
-  typedef Image_3<FT, Point> Image;
   float isovalue;
   bool positive_inside;
+  float value_outside;
 public:
-  Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true)
-    : Image(),
+  Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
+    : Image_3(),
       isovalue(isoval),
-      positive_inside(positive_inside_)
+      positive_inside(positive_inside_),
+      value_outside(value_outside)
   {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
     std::cerr << 
       ::boost::format("Constructing a Gray_level_image_3(\"%1%\")... ") % file;
 #endif
-    Image::read(file);
+    Image_3::read(file);
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
     if( image_ptr.get() != 0 )
     {
@@ -70,40 +71,30 @@ public:
     ::printSupportedFileFormat();
   }
 
-  bool inside(const float X, const float Y, const float Z) const
-  {
-    return ( X>=0 && Y>=0 && Z>=0 && 
-             X<=this->max_x && Y<=this->max_y && Z<=this->max_z );
-  }
-
   FT operator()(Point p) const
   {
     const float X=static_cast<float>(to_double(p.x()));
     const float Y=static_cast<float>(to_double(p.y()));
     const float Z=static_cast<float>(to_double(p.z()));
 
-    if (!inside(X,Y,Z))
-      return FT(1);
-    else {
-      float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z); 
-      if (positive_inside)
-      {
-         if (value > isovalue) // inside
-	   return FT(-1);
-         else if (value < isovalue) // outside
-	   return FT(1);
-         else
-	   return FT(0);
-      }
+    float value = ::triLinInterp(this->image_ptr.get(), X, Y, Z, value_outside); 
+    if (positive_inside)
+    {
+      if (value > isovalue) // inside
+        return FT(-1);
+      else if (value < isovalue) // outside
+        return FT(1);
       else
-      {      
-         if (value < isovalue) // inside
-	   return FT(-1);
-         else if (value > isovalue) // outside
-          return FT(1);
-         else
-	  return FT(0);
-      }
+        return FT(0);
+    }
+    else
+    {      
+      if (value < isovalue) // inside
+        return FT(-1);
+      else if (value > isovalue) // outside
+        return FT(1);
+      else
+        return FT(0);
     }
   }
 }; // end Gray_level_image_3
