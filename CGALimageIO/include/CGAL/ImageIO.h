@@ -14,7 +14,6 @@
 //
 // These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
 // $URL$
 // $Id$
 //
@@ -28,6 +27,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <boost/cstdint.hpp> // for uint32_t, etc.
 
 #ifdef CGAL_USE_ZLIB
 #include <zlib.h>
@@ -537,6 +537,9 @@ inline float trilinear_interpolation(_image* image,
   return triLinInterp(image, posx, posy, posz);
 }
 
+namespace CGAL {
+namespace IMAGEIO {
+
 //
 // The following definition are for the evaluate function.
 // 
@@ -560,57 +563,135 @@ struct Word_type_generator<WK_FLOAT, sign, 8>
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 1>
 {
+//   typedef boost::int8_t type;
   typedef char type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>
 {
-  typedef unsigned char type;
+  typedef boost::uint8_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 2>
 {
-  typedef short int type;
+  typedef boost::int16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>
 {
-  typedef unsigned short int type;
+  typedef boost::uint16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 4>
 {
-  typedef int type; // warning: assumes sizeof(int)==32
+  typedef boost::int32_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>
 {
-  typedef unsigned int type; // warning: assumes sizeof(int)==32
+  typedef boost::uint32_t type;
 };
 
 template <WORD_KIND wordKind, SIGN sign, unsigned int wdim>
+inline
 typename Word_type_generator<wordKind, sign, wdim>::type
-static_evaluate(_image* image,
-               const unsigned int i,
-               const unsigned int j,
-               const unsigned int k)
+static_evaluate(const _image* image,
+                const unsigned int i,
+                const unsigned int j,
+                const unsigned int k)
 {
   typedef typename Word_type_generator<wordKind, sign, wdim>::type Word;
 
-  const int dimx = image->xdim;
-  const int dimy = image->ydim;
-  const int dimxy = dimx*dimy;
-
-  Word *array = (Word *) image->data;
-  return array[k * dimxy + j * dimx + i];
+  return static_evaluate<Word>(image, i, j, k);
 }
 
-float evaluate(_image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
+template <typename Word>
+inline
+Word
+static_evaluate(const _image* image,
+                const unsigned int i,
+                const unsigned int j,
+                const unsigned int k)
+{
+  return ((Word*)image->data)[(k * image->ydim + j) * image->xdim + i];
+}
+
+} // end namespace IMAGEIO
+} // end namespace CGAL
+
+#define CGAL_IMAGE_IO_CASE(image_ptr,code)                                                 \
+  switch(image_ptr->wordKind)                                                              \
+  {                                                                                        \
+  case WK_FLOAT:                                                                           \
+    switch(image_ptr->wdim)                                                                \
+    {                                                                                      \
+    case 4: {                                                                              \
+      typedef CGAL::IMAGEIO::Word_type_generator<WK_FLOAT, SGN_UNKNOWN, 4>::type Word;     \
+      code;                                                                                \
+      break;                                                                               \
+    }                                                                                      \
+    case 8: {                                                                              \
+      typedef CGAL::IMAGEIO::Word_type_generator<WK_FLOAT, SGN_UNKNOWN, 8>::type Word;     \
+      code;                                                                                \
+      break;                                                                               \
+    }                                                                                      \
+    default:                                                                               \
+      break;                                                                               \
+    }                                                                                      \
+    break;                                                                                 \
+  case WK_FIXED:                                                                           \
+    switch(image_ptr->wdim)                                                                \
+    {                                                                                      \
+    case 2: {                                                                              \
+      if(image_ptr->sign == SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 2>::type Word;    \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+      else {                                                                               \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>::type Word;  \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+    }                                                                                      \
+    case 1: {                                                                              \
+      if(image_ptr->sign == SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 1>::type Word;    \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+      else {                                                                               \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>::type Word;  \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+    }                                                                                      \
+    case 4: {                                                                              \
+      if(image_ptr->sign == SGN_SIGNED) {                                                  \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_SIGNED, 4>::type Word;    \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+      else {                                                                               \
+        typedef CGAL::IMAGEIO::Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>::type Word;  \
+        code;                                                                              \
+        break;                                                                             \
+      }                                                                                    \
+    }                                                                                      \
+    default:                                                                               \
+      break;                                                                               \
+    }                                                                                      \
+    break;                                                                                 \
+  default:                                                                                 \
+    break;                                                                                 \
+  }
+
+float evaluate(const _image* image,const unsigned int  i,const unsigned int  j,const unsigned int  k);
 
 
 /** convert the data of the image to float 
@@ -618,4 +699,4 @@ float evaluate(_image* image,const unsigned int  i,const unsigned int  j,const u
 void convertImageTypeToFloat(_image* image);
 
 
-#endif
+#endif // end IMAGEIO_H

@@ -1429,250 +1429,89 @@ float triLinInterp(_image* image,
                    float posy, 
                    float posz)
 {
-  int dimx = image->xdim;
-  int dimy = image->ydim;
-  int dimz = image->zdim;
-  int dimxy = dimx*dimy;
+  const int dimx = image->xdim;
+  const int dimy = image->ydim;
+  const int dimz = image->zdim;
+  const int dimxy = dimx*dimy;
   
-  if(posx <= 0.0 || posy <= 0.0 || posz <= 0.0 )
-    return 0.0;
+  if(posx < 0.f || posy < 0.f || posz < 0.f )
+    return 0.f;
 
-  if(posx >= ((double)(dimx) - 1.0)*(image->vx) || 
-     posy >= ((double)(dimy) - 1.0)*(image->vy) || 
-     posz >= ((double)(dimz) - 1.0)*(image->vz) )
-    return 0.0;
-  
   posx = posx /(image->vx);
   posy = posy /(image->vy);
   posz = posz /(image->vz);
 
- 
-  static float KI2 = 0.0;
-  static float KI1 = 0.0;
-  static float KJ2 = 0.0;
-  static float KJ1 = 0.0;
+  const int i1 = (int)(posz);
+  const int j1 = (int)(posy);
+  const int k1 = (int)(posx);
 
-  static int i1 = 0, j1 = 0, k1 = 0;
-  static int i2 = 0, j2 = 0, k2 = 0;
-  
-  i1 = (int)(posz);
-  j1 = (int)(posy);
-  k1 = (int)(posx);
+  const int i2 = i1 + 1;
+  const int j2 = j1 + 1;
+  const int k2 = k1 + 1;
 
-  i2 = i1 + 1;
-  j2 = j1 + 1;
-  k2 = k1 + 1;
+  if(i2 >= dimz || j2 >= dimy || k2 >= dimx)
+    return 0.f;
 
-  KI2 = i2-posz;
-  KI1 = posz-i1;
-  KJ2 = j2-posy;
-  KJ1 = posy-j1;
+  const float KI2 = i2-posz;
+  const float KI1 = posz-i1;
+  const float KJ2 = j2-posy;
+  const float KJ1 = posy-j1;
 
-  float r = 0.0f;
-
-  if(image->wordKind == WK_FLOAT && image->wdim == 4)
-  {
-    float *array = (float *) image->data;
-    r = (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
-          (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
-         ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-          (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
-      (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
-        (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
-       ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-        (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
-  }
-  else
-    if(image->wordKind == WK_FIXED && image->sign == SGN_UNSIGNED && image->wdim == 1)
-    {
-      unsigned char *array = (unsigned char *) image->data;
-      r = (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
-            (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
-           ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-            (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
-        (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
-          (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
-         ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-          (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
-    }
-    else
-      if(image->wordKind == WK_FIXED && image->sign == SGN_SIGNED && image->wdim == 1)
-      {
-        char *array = (char *) image->data;
-        r = (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
+  CGAL_IMAGE_IO_CASE
+    (image,
+     Word *array = (Word *) image->data;
+     return (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
               (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
              ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
               (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
-          (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
-            (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
-           ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-            (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
-      }
-      else
-        if(image->wordKind == WK_FIXED && image->sign == SGN_UNSIGNED && image->wdim == 2)
-	{
-          unsigned short *array = (unsigned short *) image->data;
-	  r = (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
-                (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
-               ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-                (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
-            (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
-              (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
-             ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-              (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
-	}
-	else
-          if(image->wordKind == WK_FIXED && image->sign == SGN_SIGNED && image->wdim == 2)
-          {
-            short *array = (short *) image->data;
-            r = (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
-                  (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
-                 ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-                  (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
-              (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
-                (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
-               ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-                (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
-          }
-  return r;
+     (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
+       (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
+      ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
+       (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
+     );
+  return 0.f;
 }
 
 // Gives the value of the image at pixel (i,j,k), converted in float.
-float evaluate(_image* image,
+float evaluate(const _image* image,
                const unsigned int i,
                const unsigned int j,
                const unsigned int k)
 {
-  switch(image->wordKind)
-  {
-  case WK_FLOAT:
-    if(image->wdim == 4)
-      return (float)static_evaluate<WK_FLOAT, SGN_UNKNOWN, 4>(image, i, j, k);
-    else if(image->wdim == 8)
-      return (float)static_evaluate<WK_FLOAT, SGN_UNKNOWN, 8>(image, i, j, k);
-    else
-      return 0.0f;
+  using CGAL::IMAGEIO::static_evaluate;
 
-  case WK_FIXED:
-    if(image->wdim == 2)
-    {
-      if(image->sign == SGN_SIGNED)
-        return (float)static_evaluate<WK_FIXED, SGN_SIGNED, 2>(image, i, j, k);
-      else
-        return (float)static_evaluate<WK_FIXED, SGN_UNSIGNED, 2>(image, i, j, k);
-    }
-    else if(image->wdim == 1)
-    {
-      if(image->sign == SGN_SIGNED)
-        return (float)static_evaluate<WK_FIXED, SGN_SIGNED, 1>(image, i, j, k);
-      else
-        return (float)static_evaluate<WK_FIXED, SGN_UNSIGNED, 1>(image, i, j, k);
-    }
-    else if(image->wdim == 4)
-    {
-      if(image->sign == SGN_SIGNED)
-        return (float)static_evaluate<WK_FIXED, SGN_SIGNED, 4>(image, i, j, k);
-      else
-        return (float)static_evaluate<WK_FIXED, SGN_UNSIGNED, 4>(image, i, j, k);
-    }
-    else
-      return 0.0f;
-  default:
-    return 0.0f;
-  }
+  CGAL_IMAGE_IO_CASE(image, return (float)static_evaluate<Word>(image, i, j, k); );
+
+  return 0.f;
 }
 
 /** convert the data of the image to float 
 */
 void convertImageTypeToFloat(_image* image){ 
-  unsigned int dimx,dimy,dimz;
-  dimx = image->xdim;
-  dimy = image->ydim;
-  dimz = image->zdim;
+  if(image->wordKind == WK_FLOAT && image->wdim == 4)
+    return;
+
+  const unsigned int dimx = image->xdim;
+  const unsigned int dimy = image->ydim;
+  const unsigned int dimz = image->zdim;
   
-  unsigned int i;
-
-  float * array;
-
-  array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
+  float * array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
   if (array == NULL ) {
     fprintf ( stderr, "allocation error\n" );
     return;
   }
 
-  switch(image->wordKind) {
-  case WK_FIXED:
-    switch(image->wdim) {
-        case 1: 
-          {
-            unsigned char * typedArray  = (unsigned char *)(image->data);
-            for(i = 0; i<dimx * dimy * dimz;++i)
-              array[i] = (float)(typedArray[i]);
-          }
-      break; 
-    case 2:
-      if(image->sign == SGN_SIGNED){
-        short int * typedArray = (short int *)(image->data);  
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      else{
-        unsigned short int * typedArray = (unsigned short int *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      break;
-    case 4:
-      if(image->sign == SGN_SIGNED){
-	int * typedArray = (int *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      else{
-	unsigned int * typedArray = (unsigned int *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      break;
-    case 8:
-      if(image->sign == SGN_SIGNED){
-	LONGINT * typedArray = (LONGINT *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      else{
-	unsigned LONGINT * typedArray = (unsigned LONGINT *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      break;
-    }
-    break;
-    
-  case WK_FLOAT:  
-    switch(image->wdim) {
-    case 4:
-      return;
-    case 8:    
-      {
-        double * typedArray = (double *)(image->data);
-        for(i = 0; i<dimx * dimy * dimz;++i)
-          array[i] = (float)(typedArray[i]);
-      }
-      break;
-    }
-    break;
-    
-  default:
-    fprintf(stderr, "Unsupported image type");
-    break;
-  }
+  CGAL_IMAGE_IO_CASE
+    (image, 
+     Word * typedArray  = (Word *)(image->data);
+     for(unsigned int i = 0; i<dimx * dimy * dimz;++i)
+       array[i] = (float)(typedArray[i]);
+     );
 
   ImageIO_free ( image->data );
   image->data = array;
   
   image->wordKind = WK_FLOAT;
   image->wdim = 4;
-  
 }
 
