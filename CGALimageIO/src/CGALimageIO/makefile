@@ -24,6 +24,7 @@
 #---------------------------------------------------------------------#
 
 OBJECTS = \
+  Image_3$(OBJ_EXT) \
   ImageIO$(OBJ_EXT) \
   analyze$(OBJ_EXT) \
   bmp$(OBJ_EXT) \

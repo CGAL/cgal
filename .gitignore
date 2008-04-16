@@ -1,3 +1,6 @@
+CGALimageIO/demo/CGALimageIO/Makefile
+CGALimageIO/demo/CGALimageIO/cmake_install.cmake
+CGALimageIO/demo/CGALimageIO/image_to_vtk_viewer
 CGALimageIO/examples/CGALimageIO/*.exe
 CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
