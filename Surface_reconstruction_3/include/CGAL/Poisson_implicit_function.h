@@ -1061,7 +1061,7 @@ private:
 				if(tet.has_on_unbounded_side(c))
 				{
 				  Point cell_points[4] = {pi,pj,pk,pl};
-					c = CGAL::centroid(cell_points, cell_points+4,PCA_dimension_0_tag());
+					c = CGAL::centroid(cell_points, cell_points+4);
 				}
 
 				Point ck = CGAL::circumcenter(pi,pj,pk);
