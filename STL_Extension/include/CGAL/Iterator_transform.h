@@ -81,6 +81,18 @@ public:
   bool      operator==( const Self& i) const { return ( nt == i.nt); }
   bool      operator!=( const Self& i) const { return !(*this == i); }
   
+  struct Proxy
+  {
+      Proxy(const reference r) : ref(r) {}
+      reference ref;
+      pointer operator->() { return &ref; }
+  };
+
+  Proxy operator->() const
+  {
+      return Proxy(Fct()(*nt));
+  }
+  
   reference operator* () const 
   {
     Fct fct;
