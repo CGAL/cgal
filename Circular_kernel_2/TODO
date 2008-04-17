@@ -1,6 +1,16 @@
 intersect(line_2,*) was forgotten!!!!!
 
-clean examples and arr-traits -> Arrangement package
+memory leaks in Filtered_bbox_circular_kernel_2
+from Andreas: 
+- there are new statements in constructors having no corresponding 
+delete statements.
+This concerns the files in the directory:
+CGAL-3.3.1/include/CGAL/Filtered_bbox_circular_kernel_2/...with_bbox_2.h
+It should be enough to add destructors and add conditional
+deletes.
+Reading the code I think that the IO routines also don't
+do what they should do, namely computing new bboxes. 
+
 improve manual like SK3 (see answer to Efi's review, jan3, 2008)
 
 heriter result_type des foncteurs du Kernel (Bool_type \neq bool...)
@@ -30,6 +40,7 @@ echecs de filtres
 resoudre problemes avec GMP
 pb general Ro2 avec GMP, pb make_root_of_2
 Lazy_CK avec GMP (constructions Gmpz(Gmpq) evidemment non trouvees...) (?)
+resolu par Sebastien ?
 
 voir make_x_monotone pour que ca retourne des arcs 
 (necessite bricolage de la traits car Arr_2 demande des Object)
@@ -52,8 +63,6 @@ These calls look rather dirty to me (MT).
 I tried to remove them but could not: if these calls are replaced 
 by calls of internal functions, then CK::Polynomials must be accessed,
 but they are undefined in Lazy_kernel...
-
-intersect : rajouter cas line_2 qui a ete oublie (?)
 
 construct intersection for *arcs* should use solve or solve in range
 
