@@ -489,8 +489,8 @@ _image *_initImage() {
 
 /* return the bounding box of the image */
 void _get_image_bounding_box(_image* im,
-			     float* x_min, float* y_min, float* z_min,
-			     float* x_max, float* y_max, float* z_max) {
+			     double* x_min, double* y_min, double* z_min,
+			     double* x_max, double* y_max, double* z_max) {
   *x_min = im->tx;
   *y_min = im->ty;
   *z_min = im->tz;
@@ -1438,9 +1438,9 @@ float triLinInterp(const _image* image,
   if(posx < 0.f || posy < 0.f || posz < 0.f )
     return value_outside;
 
-  posx = posx /(image->vx);
-  posy = posy /(image->vy);
-  posz = posz /(image->vz);
+  posx = static_cast<float>(posx /(image->vx));
+  posy = static_cast<float>(posy /(image->vy));
+  posz = static_cast<float>(posz /(image->vz));
 
   const int i1 = (int)(posz);
   const int j1 = (int)(posy);

@@ -187,9 +187,9 @@ Image_3::read_vtk_image_data(vtkImageData* vtk_image)
   image->ydim = dims[1];
   image->zdim = dims[2];
   image->vdim = 1;
-  image->vx = static_cast<float>(spacing[0]);
-  image->vy = static_cast<float>(spacing[1]);
-  image->vz = static_cast<float>(spacing[2]);
+  image->vx = spacing[0];
+  image->vy = spacing[1];
+  image->vz = spacing[2];
   vtk_image->Update();
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();

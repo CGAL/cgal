@@ -14,8 +14,8 @@
 //
 // Author(s)     : Laurent RINEAU, Pierre ALLIEZ
 
-#ifndef CGAL_IMAGE_3
-#define CGAL_IMAGE_3
+#ifndef CGAL_IMAGE_3_H
+#define CGAL_IMAGE_3_H
 
 #include <CGAL/basic.h>
 
@@ -89,9 +89,9 @@ public:
 
   unsigned int size() const { return xdim() * ydim() * zdim(); }
 
-  float vx() const { return image_ptr->vx; }
-  float vy() const { return image_ptr->vy; }
-  float vz() const { return image_ptr->vz; }
+  double vx() const { return image_ptr->vx; }
+  double vy() const { return image_ptr->vy; }
+  double vz() const { return image_ptr->vz; }
 
   float value(const unsigned int i,
               const unsigned int j,
@@ -111,9 +111,9 @@ public:
                 const unsigned int rx,
                 const unsigned int ry,
                 const unsigned int rz,
-                const float vx = 1,
-                const float vy = 1,
-                const float vz = 1)
+                const double vx = 1,
+                const double vy = 1,
+                const double vz = 1)
   {
     return private_read(::_readImage_raw(file,
                                          rx,ry,rz,
@@ -139,4 +139,4 @@ public:
 } // end namespace CGAL
 
  
-#endif // CGAL_IMAGE_3
+#endif // CGAL_IMAGE_3_H

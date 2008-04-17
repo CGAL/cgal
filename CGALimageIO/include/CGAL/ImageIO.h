@@ -458,8 +458,8 @@ void _closeImage(_image *im);
 /** return the bounding box of the image
     @param im opened image descriptor */
 void _get_image_bounding_box(_image* im,
-			     float* x_min, float* y_min, float* z_min,
-			     float* x_max, float* y_max, float* z_max);
+			     double* x_min, double* y_min, double* z_min,
+			     double* x_max, double* y_max, double* z_max);
 
 /** returns the endianness of the hardware architecture */
 ENDIANNESS  _getEndianness(); 
