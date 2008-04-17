@@ -44,6 +44,7 @@
 #include <CGAL/Kernel_d/intersection_objectsCd.h>
 #include <CGAL/Kernel_d/Interface_classes.h>
 #include <CGAL/Kernel_d/simple_objects.h>
+#include <CGAL/Dimension.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -72,6 +73,9 @@ public:
   typedef CGAL::Aff_transformation_d<Self> Aff_transformation_d;
 
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
+
+
+  typedef Dynamic_dimension_tag            Dimension;
 
   template <typename T>
   struct Ambient_dimension {
