@@ -25,6 +25,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace Access {
+
 // Some tools to find the type of a kernel object given its dimension.
 // E.g. : Vector<K, 2>::type  is  K::Vector_2.
 //
@@ -172,6 +174,8 @@ struct Aff_transformation <K, Dimension_tag<3> >
 template < typename K >
 struct Aff_transformation <K, Dynamic_dimension_tag>
 { typedef typename K::Aff_transformation_d type; };
+
+} // namespace Access
 
 CGAL_END_NAMESPACE
 
