@@ -45,8 +45,8 @@ OBJECTS = \
 #                    libCGALimageIO settings
 #---------------------------------------------------------------------#
 
-SOVERSION=2.0.0
-SOMAJOR=2
+SOVERSION=3.0.0
+SOMAJOR=3
 
 LIB_NAME_BASE = CGALimageIO
 
