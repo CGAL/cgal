@@ -125,8 +125,8 @@ bounding_box(ForwardIterator f, ForwardIterator l, const Traits& t, Dynamic_dime
 
 template < class ForwardIterator, class K >
 inline
-typename Iso_box<typename Ambient_dimension<typename std::iterator_traits<ForwardIterator>
-                                              ::value_type, K>::type, K >::type
+typename Access::Iso_box<K, typename Ambient_dimension<typename std::iterator_traits<ForwardIterator>
+                                              ::value_type, K>::type>::type
 bounding_box(ForwardIterator f, ForwardIterator l, const K& k)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
@@ -135,9 +135,9 @@ bounding_box(ForwardIterator f, ForwardIterator l, const K& k)
 
 template < class ForwardIterator >
 inline
-typename Iso_box<typename Ambient_dimension<typename std::iterator_traits<ForwardIterator>::value_type,
-                   typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel>::type,
-                 typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel >::type
+typename Access::Iso_box<typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel,
+                   typename Ambient_dimension<typename std::iterator_traits<ForwardIterator>::value_type,
+                   typename Kernel_traits<typename std::iterator_traits<ForwardIterator>::value_type>::Kernel>::type >::type
 bounding_box(ForwardIterator f, ForwardIterator l)
 {
   typedef typename std::iterator_traits< ForwardIterator >::value_type Pt;
