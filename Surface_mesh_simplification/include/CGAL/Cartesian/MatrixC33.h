@@ -145,7 +145,7 @@ public:
  
   RT determinant() const
   {
-    return determinant(r0().x(),r0().y(),r0().z()
+    return CGAL::determinant(r0().x(),r0().y(),r0().z()
                             ,r1().x(),r1().y(),r1().z()
                             ,r2().x(),r2().y(),r2().z()
                             );
