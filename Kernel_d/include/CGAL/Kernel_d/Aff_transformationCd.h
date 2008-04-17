@@ -17,18 +17,16 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_AFF_TRANSFORMATIONCD_H
 #define CGAL_AFF_TRANSFORMATIONCD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/rational_rotation.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

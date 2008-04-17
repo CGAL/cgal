@@ -18,14 +18,12 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_VECTORCD_H
 #define CGAL_VECTORCD_H 
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
-#endif
 #include <CGAL/Kernel_d/Tuple_d.h> 
 
 CGAL_BEGIN_NAMESPACE

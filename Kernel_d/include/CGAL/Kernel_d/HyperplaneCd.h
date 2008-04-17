@@ -18,14 +18,12 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_HYPERPLANECD_H
 #define CGAL_HYPERPLANECD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 #define PointCd PointCd2

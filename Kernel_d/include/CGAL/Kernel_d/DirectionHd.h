@@ -20,13 +20,12 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_DIRECTIONHD_H
 #define CGAL_DIRECTIONHD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
-#endif
 #include <CGAL/Kernel_d/Tuple_d.h> 
 #include <CGAL/Kernel_d/PointHd.h>
 #include <CGAL/Kernel_d/VectorHd.h>

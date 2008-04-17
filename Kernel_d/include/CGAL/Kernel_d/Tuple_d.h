@@ -17,19 +17,17 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_TUPLE_D_H
 #define CGAL_TUPLE_D_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 #include <sstream>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 #define PointCd PointCd2

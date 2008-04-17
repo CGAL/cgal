@@ -23,10 +23,8 @@
 #ifndef CGAL_POINTCDXXX_H
 #define CGAL_POINTCDXXX_H 
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
-#endif
 #include <CGAL/Kernel_d/Tuple_d.h>
 
 CGAL_BEGIN_NAMESPACE

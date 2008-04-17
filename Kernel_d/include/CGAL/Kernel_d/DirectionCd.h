@@ -20,12 +20,11 @@
 // 
 //
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_DIRECTIONCD_H
 #define CGAL_DIRECTIONCD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
-#endif
 #include <CGAL/Kernel_d/Tuple_d.h> 
 
 CGAL_BEGIN_NAMESPACE

@@ -18,15 +18,14 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Michael Seel
+
 #ifndef CGAL_POINTHDXXX_H
 #define CGAL_POINTHDXXX_H 
-#ifndef NOCGALINCL
+
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Quotient.h>
-#endif
 #include <CGAL/Kernel_d/Tuple_d.h>
 #include <CGAL/Kernel_d/VectorHd.h> 
 #include <CGAL/Kernel_d/Aff_transformationHd.h>

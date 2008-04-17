@@ -24,14 +24,13 @@
 #ifndef CGAL_HOMOGENEOUS_D_H
 #define CGAL_HOMOGENEOUS_D_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel_d/function_objects.h>
 #include <CGAL/Linear_algebraHd.h>
 #include <vector>
-#endif
+
 #include <CGAL/Kernel_d/Kernel_classesHd.h>
 #include <CGAL/Kernel_d/PointHd.h>
 #include <CGAL/Kernel_d/VectorHd.h>

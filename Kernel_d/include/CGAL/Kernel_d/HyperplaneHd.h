@@ -18,16 +18,13 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Michael Seel
 
 #ifndef CGAL_HYPERPLANEHD_H
 #define CGAL_HYPERPLANEHD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/Quotient.h>
-#endif
 #include <CGAL/Kernel_d/PointHd.h> 
 #include <CGAL/Kernel_d/VectorHd.h> 
 #include <CGAL/Kernel_d/Aff_transformationHd.h>

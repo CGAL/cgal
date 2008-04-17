@@ -24,13 +24,12 @@
 #ifndef CGAL_CARTESIAN_D_H
 #define CGAL_CARTESIAN_D_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Kernel_d/function_objects.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <vector>
-#endif
+
 #include <CGAL/Kernel_d/Kernel_classesCd.h>
 #include <CGAL/Kernel_d/PointCd.h>
 #include <CGAL/Kernel_d/VectorCd.h>

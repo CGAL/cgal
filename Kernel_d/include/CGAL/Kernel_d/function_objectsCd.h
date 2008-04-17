@@ -24,10 +24,8 @@
 #ifndef CGAL_FUNCTION_OBJECTSCD_H
 #define CGAL_FUNCTION_OBJECTSCD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
-#endif
 
 #undef CGAL_KD_TRACE
 #undef CGAL_KD_TRACEN

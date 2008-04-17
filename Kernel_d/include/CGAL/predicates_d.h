@@ -24,10 +24,8 @@
 #ifndef CGAL_PREDICATES_D_H
 #define CGAL_PREDICATES_D_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

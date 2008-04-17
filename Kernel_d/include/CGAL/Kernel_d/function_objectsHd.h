@@ -30,10 +30,8 @@
 #ifndef CGAL_FUNCTION_OBJECTSHD_H
 #define CGAL_FUNCTION_OBJECTSHD_H
 
-#ifndef NOCGALINCL
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
