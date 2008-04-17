@@ -75,8 +75,8 @@ public:
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
 
   template <typename T>
-  struct Ambiant_dimension {
-    typedef typename T::Ambiant_dimension type;
+  struct Ambient_dimension {
+    typedef typename T::Ambient_dimension type;
   };
 
   template <typename T>

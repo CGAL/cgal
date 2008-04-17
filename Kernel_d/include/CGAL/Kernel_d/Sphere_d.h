@@ -79,7 +79,7 @@ set of defining points to be legal.  The orientation of $S$ is equal
 to the orientation of the defining points, i.e., |orientation(A)|. }*/
 
 public: 
-  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dynamic_dimension_tag Feature_dimension;
 
 /*{\Mtypes 4}*/

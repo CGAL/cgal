@@ -68,8 +68,8 @@ struct Filtered_kernel_base
     };
 
     template < typename T >
-    struct Ambiant_dimension {
-        typedef typename T::Ambiant_dimension type; // maybe not the right way...
+    struct Ambient_dimension {
+        typedef typename T::Ambient_dimension type; // maybe not the right way...
     };
 
     template < typename T >

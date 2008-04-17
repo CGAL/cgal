@@ -49,7 +49,7 @@ class Segment_2 : public R_::Kernel_base::Segment_2
 
 public:
 
-  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<2>  Ambient_dimension;
   typedef Dimension_tag<1>  Feature_dimension;
 
   typedef RSegment_2 Rep;

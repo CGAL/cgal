@@ -43,7 +43,7 @@ class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 
 public:
 
-  typedef Dimension_tag<3>  Ambiant_dimension;
+  typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<3>  Feature_dimension;
 
   typedef typename R_::Kernel_base::Tetrahedron_3  Rep;

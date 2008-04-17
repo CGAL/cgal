@@ -40,7 +40,7 @@ class Conic_2 : public R_::Kernel_base::Conic_2 {
 
   public:
 
-    typedef Dimension_tag<2>  Ambiant_dimension;
+    typedef Dimension_tag<2>  Ambient_dimension;
     typedef Dimension_tag<1>  Feature_dimension;
 
     // types

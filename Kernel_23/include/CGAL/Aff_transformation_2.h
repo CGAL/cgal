@@ -39,7 +39,7 @@ class Aff_transformation_2 : public R_::Kernel_base::Aff_transformation_2
   typedef typename R_::Kernel_base::Aff_transformation_2 RAff_transformation_2;
 public:
 
-  typedef CGAL::Dimension_tag<2>            Ambiant_dimension;
+  typedef CGAL::Dimension_tag<2>            Ambient_dimension;
 
   typedef  R_                               R;
 

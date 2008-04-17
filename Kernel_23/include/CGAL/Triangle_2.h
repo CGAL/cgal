@@ -44,7 +44,7 @@ class Triangle_2 : public R_::Kernel_base::Triangle_2
 
 public:
 
-  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<2>  Ambient_dimension;
   typedef Dimension_tag<2>  Feature_dimension;
 
   typedef RTriangle_2 Rep;

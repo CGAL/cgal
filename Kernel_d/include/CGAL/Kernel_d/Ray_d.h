@@ -54,7 +54,7 @@ it goes to infinity.}*/
 
 public: 
 
-  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dimension_tag<1>      Feature_dimension;
 
 /*{\Mtypes 4}*/

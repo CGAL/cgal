@@ -812,7 +812,7 @@ template < typename InputIterator,
            typename K, 
            typename Dim_tag  >
 inline
-typename Point<typename Ambiant_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type,
+typename Point<typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type,
                K
               >::type
 centroid(InputIterator begin,
@@ -832,7 +832,7 @@ template < typename InputIterator, typename Kernel_or_Dim >
 struct Dispatch_centroid
 {
   typedef Kernel_or_Dim K;
-  typedef typename Point<typename Ambiant_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type,
+  typedef typename Point<typename Ambient_dimension<typename std::iterator_traits<InputIterator>::value_type, K>::type,
                K
               >::type result_type;
 
@@ -848,7 +848,7 @@ struct Dispatch_centroid
 template < typename InputIterator, int dim >
 struct Dispatch_centroid < InputIterator, Dimension_tag<dim> >
 {
-  typedef typename Point<typename Ambiant_dimension<
+  typedef typename Point<typename Ambient_dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type result_type;
@@ -865,7 +865,7 @@ struct Dispatch_centroid < InputIterator, Dimension_tag<dim> >
 template < typename InputIterator >
 struct Dispatch_centroid <InputIterator, Dynamic_dimension_tag>
 {
-  typedef typename Point<typename Ambiant_dimension<
+  typedef typename Point<typename Ambient_dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type result_type;
@@ -896,7 +896,7 @@ centroid(InputIterator begin, InputIterator end, const Kernel_or_dim& k_or_d)
 // and uses Kernel_traits<> to find out its kernel, and Feature_dimension for the dimension tag.
 template < typename InputIterator >
 inline
-typename Point<typename Ambiant_dimension<
+typename Point<typename Ambient_dimension<
                typename std::iterator_traits<InputIterator>::value_type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type,
                typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel >::type

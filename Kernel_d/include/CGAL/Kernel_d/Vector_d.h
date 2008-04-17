@@ -31,7 +31,7 @@ template <class pR>
 class Vector_d : public pR::Vector_d_base
 { public:
 
-  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dimension_tag<0>      Feature_dimension;
 
   typedef typename pR::Vector_d_base Base;

@@ -32,7 +32,7 @@ template <class pR>
 class Direction_d : public pR::Direction_d_base
 { public:
 
-  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dimension_tag<0>      Feature_dimension;
 
   typedef typename pR::Direction_d_base Base;

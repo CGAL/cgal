@@ -51,7 +51,7 @@ class Vector_3 : public R_::Kernel_base::Vector_3
 
 public:
 
-  typedef Dimension_tag<3>  Ambiant_dimension;
+  typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;

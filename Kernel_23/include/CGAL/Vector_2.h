@@ -52,7 +52,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
 
 public:
 
-  typedef Dimension_tag<2>  Ambiant_dimension;
+  typedef Dimension_tag<2>  Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef RVector_2 Rep;

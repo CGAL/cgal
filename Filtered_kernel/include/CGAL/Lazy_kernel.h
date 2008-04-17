@@ -60,8 +60,8 @@ public:
   struct Base { typedef Lazy_kernel_generic_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
   template < typename T >
-  struct Ambiant_dimension {
-    typedef typename T::Ambiant_dimension type;
+  struct Ambient_dimension {
+    typedef typename T::Ambient_dimension type;
   };
 
   template < typename T >

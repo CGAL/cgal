@@ -39,7 +39,7 @@ class Bbox_3
 
 public:
 
-  typedef Dimension_tag<3>  Ambiant_dimension;
+  typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<3>  Feature_dimension;
 
   typedef Simple_cartesian<double>  R;

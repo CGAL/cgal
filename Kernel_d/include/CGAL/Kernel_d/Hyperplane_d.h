@@ -33,7 +33,7 @@ class Hyperplane_d : public pR::Hyperplane_d_base
 {
 public:
 
-  typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dynamic_dimension_tag Feature_dimension;
 
   typedef typename pR::Hyperplane_d_base Base;

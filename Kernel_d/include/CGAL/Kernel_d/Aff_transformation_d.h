@@ -31,7 +31,7 @@ template <class pR>
 class Aff_transformation_d : public pR::Aff_transformation_d_base
 { public:
 
-  typedef CGAL::Dynamic_dimension_tag            Ambiant_dimension;
+  typedef CGAL::Dynamic_dimension_tag            Ambient_dimension;
 
   typedef typename pR::Aff_transformation_d_base Base;
   typedef Aff_transformation_d<pR>               Self;

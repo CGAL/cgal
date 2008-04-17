@@ -50,13 +50,13 @@ namespace CGALi {
 } // namespace CGALi
 
 
-// Ambiant_dimension gives access to the dimension of the ambiant space of an object.
+// Ambient_dimension gives access to the dimension of the ambient space of an object.
 
 template < typename T, typename K = typename Kernel_traits<T>::Kernel >
-struct Ambiant_dimension
-  : public CGALi::Dim_value< typename K::template Ambiant_dimension<T>::type >
+struct Ambient_dimension
+  : public CGALi::Dim_value< typename K::template Ambient_dimension<T>::type >
 {
-  typedef typename K::template Ambiant_dimension<T>::type type;
+  typedef typename K::template Ambient_dimension<T>::type type;
 };
 
 

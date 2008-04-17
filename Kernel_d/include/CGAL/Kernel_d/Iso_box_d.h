@@ -312,7 +312,7 @@ namespace CGAL {
     
 public:
 
-    typedef CGAL::Dynamic_dimension_tag Ambiant_dimension;
+    typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
     typedef CGAL::Dynamic_dimension_tag Feature_dimension;
 
     Iso_box_d() {}
