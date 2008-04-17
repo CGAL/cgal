@@ -43,8 +43,7 @@ LDFLAGS = \
 
 all:            \
                 implicit_surface_mesher$(EXE_EXT) \
-                polyhedron_remesher$(EXE_EXT) \
-		convert_inr_to_float$(EXE_EXT)
+                polyhedron_remesher$(EXE_EXT)
 
 implicit_surface_mesher$(EXE_EXT): implicit_surface_mesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher implicit_surface_mesher$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) $(LDFLAGS)
@@ -55,16 +54,12 @@ polyhedron_remesher$(EXE_EXT): polyhedron_remesher$(OBJ_EXT) implicit_functions$
 polyhedron_remesher_with_edges$(EXE_EXT): polyhedron_remesher_with_edges$(OBJ_EXT) implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)polyhedron_remesher_with_edges implicit_functions$(OBJ_EXT) parameters$(OBJ_EXT) polyhedron_remesher_with_edges$(OBJ_EXT) $(LDFLAGS)
 
-convert_inr_to_float$(EXE_EXT): convert_inr_to_float$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)convert_inr_to_float convert_inr_to_float$(OBJ_EXT) $(LDFLAGS)
-
 clean: \
                    implicit_functions.clean \
                    implicit_surface_mesher.clean \
                    parameters.clean \
                    polyhedron_remesher.clean \
-                   polyhedron_remesher_with_edges.clean \
-                   convert_inr_to_float.clean
+                   polyhedron_remesher_with_edges.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
