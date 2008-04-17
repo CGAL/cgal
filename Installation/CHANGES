@@ -2,20 +2,23 @@ CHANGES
 ----------------------------- Release 3.4 ----------------------------------
 The following functionality has been added or changed:
 
-1  General
+1- General
 
 Additional supported platforms:
  - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
 
  - Boost version 1.33 at least is now required.
 
-2 Installation
+2- Installation
 
 CMake now replaces install_cgal...
 
-3 Kernels
+3- Kernels
 
-The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
+- The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
+- Ambiant_dimension and Feature_dimenison have been added to retrieve the
+  potentially compile-time dimension of a space or of an object.
+- barycenter() functions have been added.
 
 
 ----------------------------- Release 3.3.1 ----------------------------------
