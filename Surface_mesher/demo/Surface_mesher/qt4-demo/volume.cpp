@@ -156,7 +156,7 @@ Volume::Volume(MainWindow* mw) :
   m_sm_angle(30),
   m_sm_radius(0),
   m_sm_distance(0),
-  m_relative_precision(0.0001),
+  m_relative_precision(0.000001),
   m_view_surface(false),
   m_view_mc(false),
   m_triangulation_color(QColor(Qt::green)),
@@ -188,32 +188,26 @@ Volume::Volume(MainWindow* mw) :
   connect(mw->actionSurface_mesher, SIGNAL(triggered()),
           this, SLOT(display_surface_mesher_result()));
 
-  mw->actionInverse_normals->setVisible(true);
   connect(mw->actionInverse_normals, SIGNAL(toggled(bool)),
           this, SLOT(set_inverse_normals(bool)));
   m_inverse_normals = mw->actionInverse_normals->isChecked();
 
-  mw->actionDisplay_front_and_back->setVisible(true);
   connect(mw->actionDisplay_front_and_back, SIGNAL(toggled(bool)),
           this, SLOT(set_two_sides(bool)));
   two_sides = mw->actionDisplay_front_and_back->isChecked();
 
-  mw->actionDraw_triangles_edges->setVisible(true);
   connect(mw->actionDraw_triangles_edges, SIGNAL(toggled(bool)),
           this, SLOT(set_draw_triangles_edges(bool)));
   draw_triangles_edges = mw->actionDraw_triangles_edges->isChecked();
 
-  mw->actionUse_Gouraud_shading->setVisible(true);
   connect(mw->actionUse_Gouraud_shading, SIGNAL(toggled(bool)),
           this, SLOT(set_use_gouraud(bool)));
   use_gouraud = mw->actionUse_Gouraud_shading->isChecked();
 
-  mw->actionShow_triangulation->setVisible(true);
   connect(mw->actionShow_triangulation, SIGNAL(toggled(bool)),
           this, SLOT(set_draw_triangulation(bool)));
   m_draw_triangulation = mw->actionShow_triangulation->isChecked();
 
-  mw->actionTriangulation_edges_color->setVisible(true);
   connect(mw->actionTriangulation_edges_color, SIGNAL(triggered()),
           this, SLOT(set_triangulation_edges_color()));
 
@@ -227,7 +221,6 @@ Volume::Volume(MainWindow* mw) :
   connect(this, SIGNAL(changed()),
           this, SLOT(check_can_export_off()));
 
-  mw->actionExport_surface_mesh_to_OFF->setVisible(true);
   mw->actionExport_surface_mesh_to_OFF->setEnabled(false);
   connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
           this, SLOT(export_off()));
@@ -271,37 +264,142 @@ void Volume::set_use_gouraud(const bool b) {
   emit changed();
 }
 
-void Volume::open(const QString& filename)
+#ifdef CGAL_USE_VTK
+#include <vtkImageData.h>
+#include <vtkDICOMImageReader.h>
+#include <vtkImageReader.h>
+#include <vtkImageGaussianSmooth.h>
+
+void Volume::opendir(const QString& dirname) 
 {
-  fileinfo.setFile(filename);
   if(!fileinfo.isReadable())
   {
     QMessageBox::warning(mw, mw->windowTitle(),
-                         QString(tr("Cannot read file <tt>%1</tt>!")).arg(filename));
-    status_message(QString("Opening of file %1 failed!").arg(filename));
+                         tr("Cannot read directory <tt>%1</tt>!").arg(dirname));
+    status_message(tr("Opening of directory %1 failed!").arg(dirname));
+  }
+  else
+  {
+    vtkDICOMImageReader* dicom_reader = vtkDICOMImageReader::New();
+    dicom_reader->SetDirectoryName(dirname.toUtf8());
+    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+    smoother->SetStandardDeviations(1., 1., 1.);
+    smoother->SetInputConnection(dicom_reader->GetOutputPort());
+    smoother->Update();
+    vtkImageData* vtk_image = smoother->GetOutput();
+    dicom_reader->SetReleaseDataFlag(false);
+    vtk_image->SetReleaseDataFlag(false);
+    vtk_image->Print(std::cerr);
+    if(!m_image.read_vtk_image_data(vtk_image))
+    {
+      QMessageBox::warning(mw, mw->windowTitle(),
+                           tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
+      status_message(tr("Opening of file %1/ failed!").arg(dirname));
+    }
+    else
+    {
+      status_message(tr("File %1/ successfully opened.").arg(dirname));
+      finish_open();
+    }
+    dicom_reader->Delete();
+    // smoother->Delete();
+  }
+}
+
+void Volume::open_vtk(const QString& filename)
+{
+  mw->show_only("volume");
+
+  fileinfo.setFile(filename);
+
+  if(fileinfo.isDir())
+  {
+    opendir(filename);
+    return;
+  }
+
+  if(!fileinfo.isReadable())
+  {
+    QMessageBox::warning(mw, mw->windowTitle(),
+                         tr("Cannot read file <tt>%1</tt>!").arg(filename));
+    status_message(tr("Opening of file %1 failed!").arg(filename));
+  }
+  else
+  {
+    vtkImageReader* vtk_reader = vtkImageReader::New();
+    vtk_reader->SetFileName(filename.toUtf8());
+    vtk_reader->SetDataScalarTypeToUnsignedChar();
+    vtk_reader->SetDataExtent(0, 249, 0, 249, 0,  124);
+    vtk_reader->SetDataSpacing(1., 1., 1.);
+    vtk_reader->SetFileDimensionality(3);
+    vtk_reader->Update();
+    vtk_reader->Print(std::cerr);
+    vtkImageData* vtk_image = vtk_reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    if(!m_image.read_vtk_image_data(vtk_image))
+    {
+      QMessageBox::warning(mw, mw->windowTitle(),
+                           tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
+      status_message(tr("Opening of file %1 failed!").arg(filename));
+    }
+    else
+    {
+      status_message(tr("File %1 successfully opened.").arg(filename));
+      finish_open();
+    }
+  }
+}
+
+#else // CGAL_USE_VTK
+void Volume::opendir(const QString&) {}
+#endif // CGAL_USE_VTK
+
+void Volume::open(const QString& filename)
+{
+  mw->show_only("volume");
+
+  fileinfo.setFile(filename);
+
+  if(fileinfo.isDir())
+  {
+    opendir(filename);
+    return;
+  }
+
+  if(!fileinfo.isReadable())
+  {
+    QMessageBox::warning(mw, mw->windowTitle(),
+                         tr("Cannot read file <tt>%1</tt>!").arg(filename));
+    status_message(tr("Opening of file %1 failed!").arg(filename));
   }
   else
   {
     if(!m_image.read(filename.toStdString().c_str()))
     {
+      
       QMessageBox::warning(mw, mw->windowTitle(),
-                           QString(tr("Error with file <tt>%1</tt>:\nunknown file format!")).arg(filename));
-      status_message(QString("Opening of file %1 failed!").arg(filename));
+                           tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
+      status_message(tr("Opening of file %1 failed!").arg(filename));
     }
     else
     {
-      status_message(QString("File %1 successfully opened.").arg(filename));
-      mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
-                                                qglviewer::Vec(m_image.xmax(),
-                                                               m_image.ymax(),
-                                                               m_image.zmax()));
-
-      mw->viewer->showEntireScene();
-      isovalues_list->load_values(fileinfo.absoluteFilePath());
-      changed_parameters();
-      emit changed();
+      status_message(tr("File %1 successfully opened.").arg(filename));
+      finish_open();
     }
   }
+}
+
+void Volume::finish_open()
+{
+  mw->viewer->camera()->setSceneBoundingBox(qglviewer::Vec(0, 0, 0),
+                                            qglviewer::Vec(m_image.xmax(),
+                                                           m_image.ymax(),
+                                                           m_image.zmax()));
+
+  mw->viewer->showEntireScene();
+  isovalues_list->load_values(fileinfo.absoluteFilePath());
+  changed_parameters();
+  emit changed();
 }
 
 void Volume::export_off()
@@ -321,14 +419,14 @@ void Volume::export_off()
     if(!out)
     {
       QMessageBox::warning(mw, mw->windowTitle(),
-                           QString(tr("Export to the OFF file <tt>%1</tt>!")).arg(filename));
-      status_message(QString("Export to the OFF file %1 failed!").arg(filename));
+                           tr("Export to the OFF file <tt>%1</tt>!").arg(filename));
+      status_message(tr("Export to the OFF file %1 failed!").arg(filename));
       std::cerr << " failed!\n";
     }
     else
     {
       std::cerr << " done.\n";
-      status_message(QString("Successfull export to the OFF file %1.").arg(filename));
+      status_message(tr("Successfull export to the OFF file %1.").arg(filename));
     }
   }
 }
@@ -385,17 +483,13 @@ void Volume::display_marchin_cube()
     mc.init_all();
     mc.set_ext_data(static_cast<unsigned char*>(m_image.image()->data));
 
-    const double xr = m_image.xmax() / nx;
-    const double yr = m_image.ymax() / ny;
-    const double zr = m_image.zmax() / nz;
-
     nbs_of_mc_triangles.resize(isovalues_list->numberOfIsoValues());
 
     for(int isovalue_id = 0; 
         isovalue_id < isovalues_list->numberOfIsoValues();
         ++isovalue_id)
     {
-      status_message(QString("Marching cubes, isovalue #%1...").arg(isovalue_id));
+      status_message(tr("Marching cubes, isovalue #%1...").arg(isovalue_id));
 
       // set data
 //       for(unsigned int i=0;i<nx;i++)
@@ -408,7 +502,10 @@ void Volume::display_marchin_cube()
       // compute scaling ratio
       if(isovalue_id > 0)
         mc.init_temps();
-      mc.run(isovalues_list->isovalue(isovalue_id), xr, yr, zr);
+      mc.run(isovalues_list->isovalue(isovalue_id),
+             m_image.vx(),
+             m_image.vy(),
+             m_image.vz());
       mc.clean_temps();
 
       std::vector<double> facets;
@@ -435,7 +532,7 @@ void Volume::display_marchin_cube()
     timer.stop();
     not_busy();
 
-    status_message(QString("Marching cubes...done. %2 facets in %1s (CPU time), total time is %3s.")
+    status_message(tr("Marching cubes...done. %2 facets in %1s (CPU time), total time is %3s.")
                    .arg(timer.time())
                    .arg(m_surface_mc.size())
                    .arg(total_time.elapsed()/1000.));
@@ -559,7 +656,7 @@ void Volume::display_surface_mesher_result()
               << ", distance=" << m_sm_distance << "\n";
 
     // meshing surface
-    make_surface_mesh(c2t3, surface, oracle, criteria, CGAL::Manifold_tag(), 0);
+    make_surface_mesh(c2t3, surface, oracle, criteria, CGAL::Non_manifold_tag(), 0);
     timer.stop();
     not_busy();
 
@@ -582,7 +679,7 @@ void Volume::display_surface_mesher_result()
     }
 
     const unsigned int nbt = m_surface.size();
-    status_message(QString("Surface meshing...done. %1 facets in %2s (CPU time), total time is %3s.)")
+    status_message(tr("Surface meshing...done. %1 facets in %2s (CPU time), total time is %3s.)")
                    .arg(nbt)
                    .arg(timer.time())
                    .arg(total_time.elapsed()/1000.));

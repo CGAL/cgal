@@ -138,6 +138,11 @@ public slots:
   void set_draw_triangulation(const bool);
   void set_use_gouraud(const bool);
   void open(const QString& filename);
+#ifdef CGAL_USE_VTK
+  void open_vtk(const QString& filename);
+#endif
+  void opendir(const QString& dirname);
+  void finish_open();
   void export_off();
   void check_can_export_off();
   void draw();

@@ -26,66 +26,25 @@
 
 #include <limits>
 
+#include <CGAL/Image_3.h>
+
 template <typename FT_, typename Point>
-class CBinary_image_3
+class CBinary_image_3 : public CGAL::Image_3
 {
-  struct Image_deleter {
-#ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
-    void operator()(_image* image)
-    {
-      std::cerr << ::boost::format("Deletion of image %1%.\n") % image;
-      ::_freeImage(image);
-    }
-#else
-    void operator()(_image* ) {}
-#endif
-  };
 public:
-  typedef boost::shared_ptr<_image> Image_shared_ptr;
-  Image_shared_ptr image_ptr;
-  float min_x, min_y, min_z;
-  float max_x, max_y, max_z;
   float min_value;
   float max_value;
 
   typedef FT_ FT;
 
-  bool private_read(_image* im)
-  {
-    if(im != 0)
-    {
-      if(image() != 0)
-      {
-        ::_freeImage(image());
-      }
-      image_ptr = Image_shared_ptr(im, Image_deleter());
-
-      std::cerr << 
-        boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")
-        % image_ptr.get() % image_ptr->xdim % image_ptr->ydim % image_ptr->zdim;
-
-      max_x = (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
-      max_y = (float)(((image_ptr->ydim) - 1.0)*(image_ptr->vy));
-      max_z = (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
-    }
-    compute_min_max();
-    return im != 0;
-  }
-
 public:
-  CBinary_image_3()
+  CBinary_image_3() : Image_3()
   {
-    image_ptr = Image_shared_ptr();
-    max_x = max_y = max_z = 0.0f;
   }
 
-  CBinary_image_3(const CBinary_image_3& bi)
+  CBinary_image_3(const CBinary_image_3& bi) : Image_3(bi)
   {
     std::cerr << "CBinary_image_3::copy_constructor\n";
-    image_ptr = bi.image_ptr;
-    max_x = bi.max_x;
-    max_y = bi.max_y;
-    max_z = bi.max_z;
     min_value = bi.min_value;
     max_value = bi.max_value;
   }
@@ -93,20 +52,6 @@ public:
   ~CBinary_image_3()
   {
   }
-
-  const _image* image() const
-  {
-    return image_ptr.get();
-  }
-
-  _image* image()
-  {
-    return image_ptr.get();
-  }
-
-  float xmax() const { return max_x; }
-  float ymax() const { return max_y; }
-  float zmax() const { return max_z; }
 
   void compute_min_max()
   {
@@ -126,28 +71,32 @@ public:
     }
   }
 
+  float xmax() const
+  {
+    return (float)(((image_ptr->xdim) - 1.0)*(image_ptr->vx));
+  }
+
+  float ymax() const
+  {
+    return (float)(((image_ptr->ydim) - 1.0)*(image_ptr->vy));
+  }
+
+  float zmax() const
+  {
+    return (float)(((image_ptr->zdim) - 1.0)*(image_ptr->vz));
+  }
+
   Point center() 
   {
-    FT cx = 0.5 * max_x;
-    FT cy = 0.5 * max_y;
-    FT cz = 0.5 * max_z;
+    FT cx = 0.5 * xmax();
+    FT cy = 0.5 * ymax();
+    FT cz = 0.5 * zmax();
     return Point(cx,cy,cz);
   }
 
   FT radius()
   {
-    return (std::max)((std::max)(max_x,max_y),max_z);
-  }
-
-  unsigned int xdim() { return image_ptr->xdim; }
-  unsigned int ydim() { return image_ptr->ydim; }
-  unsigned int zdim() { return image_ptr->zdim; }
-
-  float value(const unsigned int i,
-              const unsigned int j,
-              const unsigned int k)
-  {
-    return evaluate(image(),i,j,k);
+    return (std::max)((std::max)(xmax(),ymax()),zmax());
   }
 
   Point point(const unsigned int i,
@@ -160,48 +109,6 @@ public:
   }
 
 public:
-
-  bool read(const char* file)
-  {
-    return private_read(::_readImage(file));
-  }
-
-  bool read_raw(const char* file,
-                const unsigned int rx,
-                const unsigned int ry,
-                const unsigned int rz)
-  {
-    return private_read(::_readImage_raw(file,rx,ry,rz));
-  }
-
-  void gl_draw(const float point_size,
-               const unsigned char r,
-               const unsigned char g,
-               const unsigned char b)
-  {
-    if(image_ptr.get() == NULL)
-      return;
-
-    ::glPointSize(point_size);
-    ::glColor3ub(r,g,b);
-    ::glBegin(GL_POINTS);
-    unsigned char *pData = (unsigned char*)image_ptr->data;
-    unsigned int xy = image_ptr->xdim * image_ptr->ydim;
-    for(unsigned int i=0;i<image_ptr->xdim;i+=5)
-      for(unsigned int j=0;j<image_ptr->ydim;j+=5)
-        for(unsigned int k=0;k<image_ptr->zdim;k+=5)
-        {
-          unsigned char value = pData[xy*k + j*image_ptr->xdim + i];
-          if(value > 0)
-          {
-            double x = image_ptr->vx * i;
-            double y = image_ptr->vy * j;
-            double z = image_ptr->vz * k;
-            ::glVertex3d(x,y,z);
-          }
-        }
-    ::glEnd();
-  }
 
   unsigned int threshold(const unsigned char value,
                          const unsigned char equal,
@@ -228,79 +135,21 @@ public:
         }
     return nb;
   }
-
-  void gl_draw_bbox(const float line_width,
-                    const unsigned char red,
-                    const unsigned char green,
-                    const unsigned char blue)
-  {
-    ::glLineWidth(line_width);
-    ::glColor3ub(red,green,blue);
-    ::glBegin(GL_LINES);
-
-    Point a(0.0, 0.0,    0.0);
-    Point b(0.0, ymax(), 0.0);
-    Point c(0.0, ymax(), zmax());
-    Point d(0.0, 0.0,    zmax());
-    Point e(xmax(), 0.0,    0.0);
-    Point f(xmax(), ymax(), 0.0);
-    Point g(xmax(), ymax(), zmax());
-    Point h(xmax(), 0.0,    zmax());
-
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glVertex3d(c.x(),c.y(),c.z());
-
-    ::glVertex3d(c.x(),c.y(),c.z());
-    ::glVertex3d(d.x(),d.y(),d.z());
-
-    ::glVertex3d(d.x(),d.y(),d.z());
-    ::glVertex3d(a.x(),a.y(),a.z());
-
-    ::glVertex3d(e.x(),e.y(),e.z());
-    ::glVertex3d(f.x(),f.y(),f.z());
-
-    ::glVertex3d(f.x(),f.y(),f.z());
-    ::glVertex3d(g.x(),g.y(),g.z());
-
-    ::glVertex3d(g.x(),g.y(),g.z());
-    ::glVertex3d(h.x(),h.y(),h.z());
-
-    ::glVertex3d(h.x(),h.y(),h.z());
-    ::glVertex3d(e.x(),e.y(),e.z());
-
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(e.x(),e.y(),e.z());
-
-    ::glVertex3d(d.x(),d.y(),d.z());
-    ::glVertex3d(h.x(),h.y(),h.z());
-
-    ::glVertex3d(c.x(),c.y(),c.z());
-    ::glVertex3d(g.x(),g.y(),g.z());
-
-    ::glVertex3d(b.x(),b.y(),b.z());
-    ::glVertex3d(f.x(),f.y(),f.z());
-
-    ::glEnd();
-  }
-
   bool inside(const float x,
               const float y, 
               const float z) const
   {
-    return ( x >= 0.0 && 
-             y >= 0.0 && 
-             z >= 0.0 && 
-             x <= max_x &&
-             y <= max_y &&
-             z <= max_z );
+    return ( x >= 0.0f && 
+             y >= 0.0f && 
+             z >= 0.0f && 
+             x <= xmax() &&
+             y <= ymax() &&
+             z <= zmax() );
   }
 
-  float rand_x() { return (float)rand() / (float)RAND_MAX * max_x; }
-  float rand_y() { return (float)rand() / (float)RAND_MAX * max_y; }
-  float rand_z() { return (float)rand() / (float)RAND_MAX * max_z; }
+  float rand_x() { return (float)rand() / (float)RAND_MAX * xmax(); }
+  float rand_y() { return (float)rand() / (float)RAND_MAX * ymax(); }
+  float rand_z() { return (float)rand() / (float)RAND_MAX * zmax(); }
 
   FT operator()(Point p) const
   {

@@ -92,6 +92,8 @@ void MainWindow::show_only(QString tag)
       const bool visible = show_only_in.contains(tag);
       err << (visible ? "(enabled)\n" : "(disabled)\n");
       object->setProperty("visible", QVariant::fromValue<bool>(visible));
+      if(QMenu* menu = qobject_cast<QMenu*>(object))
+        menu->menuAction()->setVisible(visible);
     }
   }
 }

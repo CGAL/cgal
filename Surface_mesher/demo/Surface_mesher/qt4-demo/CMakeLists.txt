@@ -36,6 +36,16 @@ if ( CGAL_FOUND )
   find_package(QGLViewer REQUIRED )
   find_package(OpenGL    REQUIRED )
   find_package(ZLIB      REQUIRED )
+  find_package(VTK)
+
+  if( VTK_FOUND )
+#    if( ${VTK_MAJOR_VERSION} STRGREATER "5")
+      message(STATUS "VTK found.")
+      include( ${VTK_USE_FILE} )
+      add_definitions(-DCGAL_USE_VTK)
+#    endif( ${VTK_MAJOR_VERSION} GREATER 5)
+    SET(PRJ_VTK_LIBS vtkImaging vtkIO)
+  endif( VTK_FOUND )
 
   add_definitions(-DCGAL_USE_ZLIB)
 
@@ -74,7 +84,7 @@ if ( CGAL_FOUND )
       target_link_libraries( ${prj} CGAL CGAL-ImageIO ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
     
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}  ${PRJ_VTK_LIBS})
     
   endif()
-endif()
+endif(CGAL_FOUND)
