@@ -72,6 +72,9 @@ void Image_3::gl_draw_bbox(const float line_width,
                            const unsigned char green,
                            const unsigned char blue)
 {
+  if(!image_ptr)
+    return;
+
   ::glLineWidth(line_width);
   ::glColor3ub(red,green,blue);
   ::glBegin(GL_LINES);
