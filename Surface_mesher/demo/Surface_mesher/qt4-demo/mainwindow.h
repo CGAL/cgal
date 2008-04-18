@@ -18,7 +18,9 @@ public:
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
   void surface_open(const QString& filename);
-  void fix_menus_visibility();
+
+public slots:
+  void show_only(QString);
 
 private slots:
   void on_action_Open_triggered();
@@ -26,10 +28,7 @@ private slots:
   void on_action_Clone_triggered();
   
 private:
-  void fix_one_menu_visibility(QMenu* menu);
-
   Surface* surface;
-  QGLViewer* viewer_ptr;
   double sharp_edges_angle_lower_bound;
   double sharp_edges_angle_upper_bound;
   QDoubleSpinBox* spinbox_isovalue;

@@ -7,6 +7,8 @@
 #include <QtDebug>
 #include <QMenu>
 #include <QAction>
+#include <QVariant>
+#include <QStringList>
 #include <QtGlobal>
 #include <QToolBar>
 #include <QDoubleSpinBox>
@@ -20,6 +22,7 @@
 #include <cmath> // std::sqrt
 #include <boost/format.hpp>
 
+#include "ui_mainwindow.h"
 #include "volume.h"
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
@@ -30,13 +33,9 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   setupUi(this);
   setAcceptDrops(true);
 
-  viewer_ptr = qFindChild<QGLViewer*>(this, "viewer");
-  Q_ASSERT_X(viewer_ptr, "MainWindow constructor", "cannot find widget \"viewer\"");
-
   if(other_window != 0)
   {
-    QGLViewer* other_viewer_ptr = qFindChild<QGLViewer*>(other_window, "viewer");
-    viewer_ptr->setCamera(other_viewer_ptr->camera());
+    viewer->setCamera(other_window->viewer->camera());
     connect(other_window, SIGNAL(destroyed()),
             this, SLOT(close()));
   }
@@ -54,9 +53,8 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
     tb_meshing->insertSeparator(action_mc);
   }
 
+  show_only("");
   surface = new Volume(this);
-  
-  fix_menus_visibility();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -77,22 +75,24 @@ void MainWindow::surface_open(const QString& filename)
   surface->open(filename);
 }
 
-void MainWindow::fix_menus_visibility()
+void MainWindow::show_only(QString tag)
 {
-  fix_one_menu_visibility(findChild<QMenu*>("menuEdit"));
-  fix_one_menu_visibility(findChild<QMenu*>("menuOptions"));
-}
-
-void MainWindow::fix_one_menu_visibility(QMenu* menu)
-{
-  if(menu) {
-    bool is_non_empty = false;
-    Q_FOREACH(QAction* action, menu->actions()) {
-      is_non_empty = is_non_empty || action->isVisible();
-//       if(action->isVisible())
-//         QTextStream(stderr) << action->text() << "\n";
+  QTextStream err(stderr);
+  err << "** Show only in \"" << tag << "\"\n";
+  Q_FOREACH(QObject* object, 
+            this->findChildren<QObject*>())
+  {
+    QStringList show_only_in = object->property("show_only_in").toStringList();
+    if(!show_only_in.isEmpty())
+    {
+      err << object->metaObject()->className()
+          << " \"" << object->objectName() << "\" only in: ";
+      foreach(QString s, show_only_in)
+        err << s << " ";
+      const bool visible = show_only_in.contains(tag);
+      err << (visible ? "(enabled)\n" : "(disabled)\n");
+      object->setProperty("visible", QVariant::fromValue<bool>(visible));
     }
-    menu->setVisible(is_non_empty);
   }
 }
 
