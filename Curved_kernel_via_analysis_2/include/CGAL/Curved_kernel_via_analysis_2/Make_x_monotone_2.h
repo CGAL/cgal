@@ -77,6 +77,10 @@ struct Make_x_monotone_2 :
     
     //! type of curve arc
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
+
+    //! type of not necessarily x-monotone curve arc
+    typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
+        Non_x_monotone_arc_2;
     
     //!@}
 
@@ -241,7 +245,6 @@ struct Make_x_monotone_2 :
         }
         return oi;
     }
-    
     //!@}
 
 private:

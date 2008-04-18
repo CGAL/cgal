@@ -29,7 +29,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Generic_arc_2.h>
 
 #ifndef SCA_CERR
-//#define SCA_DEBUG_PRINT_CERR
+#define SCA_DEBUG_PRINT_CERR
 #ifdef SCA_DEBUG_PRINT_CERR
 #define SCA_CERR(x) std::cerr << x
 #else
@@ -449,7 +449,7 @@ public:
      */
     result_type operator()(const Point_2& p) const {
 
-        SCA_CERR("Construct_segment_2; pt: " << p << std::endl);
+        //SCA_CERR("Construct_segment_2; pt: " << p << std::endl);
         return Arc_2(p);
     }
 };

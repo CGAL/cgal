@@ -2174,7 +2174,35 @@ public:
     
         CGAL::CGALi::Make_x_monotone_2< Curved_kernel_via_analysis_2 >
             make_x_monotone(&Curved_kernel_via_analysis_2::instance());
+
         return make_x_monotone(cv, oi);
+    }
+
+    /*!\brief
+     * Splits an input object \c obj into x-monotone arcs and isolated points
+     *
+     * \param obj the polymorph input object: can represet \c Point_2,
+     * \c Arc_2, \c Non_x_monotone_arc_2 or \c Curve_analysis_2
+     * \param oi Output iterator that stores CGAL::Object, which either
+     *           encapsulates \c Point_2 or \c Arc_2
+     * \return Past-the-end iterator of \c oi
+     */
+    template <class OutputIterator>
+    OutputIterator operator()(CGAL::Object obj, OutputIterator oi) {
+
+        typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
+            Non_x_monotone_arc_2;
+        Curve_analysis_2 curve;
+        Non_x_monotone_arc_2 nxarc;
+
+        if(CGAL::assign(curve, obj)) 
+            oi = (*this)(curve, oi);
+        else if(CGAL::assign(nxarc, obj))
+            oi = std::transform(nxarc.begin(), nxarc.end(), oi,
+                std::ptr_fun(CGAL::make_object<Non_x_monotone_arc_2>));
+        else 
+            *oi++ = obj;
+        return oi;
     }
 };
 
