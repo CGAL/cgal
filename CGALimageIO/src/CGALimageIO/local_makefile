@@ -1,0 +1,5 @@
+OTHER_CXXFLAGS=-I../../../Installation/include
+
+all:
+	$(MAKE) -f makefile -I../../../Installation/src/CGAL/ shared_lib OTHER_CXXFLAGS=$(OTHER_CXXFLAGS)
+

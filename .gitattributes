@@ -1570,6 +1570,7 @@ Box_intersection_d/test/Box_intersection_d/CMakeLists.txt -text
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
 CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
+CGALimageIO/src/CGALimageIO/local_makefile -text
 CMake/CGALConfig_binary.cmake.in -text
 CMake/CGALConfig_install.cmake.fhs.in -text
 CMake/CGALConfig_install.cmake.source.in -text
