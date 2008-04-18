@@ -778,18 +778,18 @@ centroid(InputIterator begin,
   CGAL_precondition(begin != end);
 
   Vector v = NULL_VECTOR;
-  FT sum_volumes = 0.0;
+  FT sum_volumes = (FT)0.0;
   for(InputIterator it = begin;
       it != end;
       it++)
   {
-    const Tetrahedron& Tetrahedron = *it;
-    FT unsigned_volume = Tetrahedron.volume();
-    Point c = K().construct_centroid_3_object()(Tetrahedron[0],Tetrahedron[1],Tetrahedron[2],Tetrahedron[3]);
+    const Tetrahedron& tetrahedron = *it;
+    FT unsigned_volume = tetrahedron.volume();
+    Point c = K().construct_centroid_3_object()(tetrahedron[0],tetrahedron[1],tetrahedron[2],tetrahedron[3]);
     v = v + unsigned_volume * (c - ORIGIN);
     sum_volumes += unsigned_volume;
   }
-  CGAL_assertion(sum_volumes != 0.0);
+  CGAL_assertion(sum_volumes != (FT)0.0);
   return ORIGIN + v / sum_volumes;
 } // end centroid of a 3D Tetrahedron set with 3D tag
 
