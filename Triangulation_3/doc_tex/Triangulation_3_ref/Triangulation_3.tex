@@ -884,14 +884,30 @@ vertices of a given vertex}
           OutputIterator
           incident_cells(Vertex_handle v, OutputIterator cells) const;}
 {Copies the \ccc{Cell_handle}s of all cells incident to \ccc{v} to the output
-iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<3$, then do nothing.
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<2$, then do nothing.
+Returns the resulting output iterator.
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
+          finite_incident_cells(Vertex_handle v, OutputIterator cells) const;}
+{Copies the \ccc{Cell_handle}s of all finite cells incident to \ccc{v} to the output
+iterator \ccc{cells}.  If \ccVar.\ccc{dimension()} $<2$, then do nothing.
 Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
           incident_facets(Vertex_handle v, OutputIterator facets) const;}
-{Copies the \ccc{Facet}s incident to \ccc{v} to the output iterator
+{Copies all \ccc{Facet}s incident to \ccc{v} to the output iterator
+\ccc{facets}.
+Returns the resulting output iterator.
+\ccPrecond{\ccVar.\ccc{dimension()} $=3$, \ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
+          finite_incident_facets(Vertex_handle v, OutputIterator facets) const;}
+{Copies all finite \ccc{Facet}s incident to \ccc{v} to the output iterator
 \ccc{facets}.
 Returns the resulting output iterator.
 \ccPrecond{\ccVar.\ccc{dimension()} $=3$, \ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
@@ -905,8 +921,23 @@ output iterator \ccc{edges}. Returns the resulting output iterator.
 
 \ccMethod{template <class OutputIterator>
           OutputIterator
+          finite_incident_edges(Vertex_handle v, OutputIterator edges) const;}
+{Copies all finite \ccc{Edge}s incident to \ccc{v} to the
+output iterator \ccc{edges}. Returns the resulting output iterator.
+\ccPrecond{\ccVar.\ccc{dimension()} $>0$, \ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
           incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
 {Copies the \ccc{Vertex_handle}s of all vertices incident to \ccc{v} to the
+output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<0$, then do
+nothing.  Returns the resulting output iterator.
+\ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator
+          finite_incident_vertices(Vertex_handle v, OutputIterator vertices) const;}
+{Copies the \ccc{Vertex_handle}s of all finite vertices incident to \ccc{v} to the
 output iterator \ccc{vertices}.  If \ccVar.\ccc{dimension()} $<0$, then do
 nothing.  Returns the resulting output iterator.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}

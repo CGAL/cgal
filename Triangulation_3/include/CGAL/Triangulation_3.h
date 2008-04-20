@@ -958,6 +958,16 @@ public:
   }
 
   // around a vertex
+  class Finite_filter {
+    const Self* t;
+    public:
+    Finite_filter(const Self* _t): t(_t) {}
+    template<class T>
+    bool operator() (const T& e) {
+      return t->is_infinite(e);
+    }
+  };
+
   template <class OutputIterator>
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells) const
@@ -967,16 +977,37 @@ public:
 
   template <class OutputIterator>
   OutputIterator
+  finite_incident_cells(Vertex_handle v, OutputIterator cells) const
+  {
+    return _tds.incident_cells(v, cells, Finite_filter(this));
+  }
+  
+  template <class OutputIterator>
+  OutputIterator
   incident_facets(Vertex_handle v, OutputIterator facets) const
   {
-      return _tds.incident_facets(v, facets);
+    return _tds.incident_facets(v, facets);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  finite_incident_facets(Vertex_handle v, OutputIterator facets) const
+  {
+    return _tds.incident_facets(v, facets, Finite_filter(this));
   }
 
   template <class OutputIterator>
   OutputIterator
   incident_vertices(Vertex_handle v, OutputIterator vertices) const
   {
-      return _tds.incident_vertices(v, vertices);
+    return _tds.incident_vertices(v, vertices);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  finite_incident_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+    return _tds.incident_vertices(v, vertices, Finite_filter(this));
   }
 
   template <class OutputIterator>
@@ -986,10 +1017,19 @@ public:
       return _tds.incident_edges(v, edges);
   }
 
+  template <class OutputIterator>
+  OutputIterator
+  finite_incident_edges(Vertex_handle v, OutputIterator edges) const
+  {
+    return _tds.incident_edges(v, edges, Finite_filter(this));
+  }
+
   size_type degree(Vertex_handle v) const
   {
       return _tds.degree(v);
   }
+
+
 
   // CHECKING
   bool is_valid(bool verbose = false, int level = 0) const;

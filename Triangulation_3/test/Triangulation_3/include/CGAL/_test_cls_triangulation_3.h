@@ -59,7 +59,9 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef std::list<Point>                        list_point;
 
   typedef typename Cls::Finite_vertices_iterator    Finite_vertices_iterator;
-  typedef typename Cls::Finite_cells_iterator      Finite_cells_iterator;
+  typedef typename Cls::Finite_edges_iterator       Finite_edges_iterator;
+  typedef typename Cls::Finite_facets_iterator      Finite_facets_iterator;
+  typedef typename Cls::Finite_cells_iterator       Finite_cells_iterator;
 
 
   // +++ We define now some points for building triangulations +++++//
@@ -740,6 +742,68 @@ _test_cls_triangulation_3(const Triangulation &)
       }
     }
     std::cout << nbflips << " flips 2-3" << std::endl;
+  }
+       // Finite incident_* to vertex test
+  std::cout << "    Testing finite_incident_*   "<< std::endl;
+
+  Cls* T3[6];
+  T3[0] = &T3_0;
+  T3[1] = &T3_1;
+  T3[2] = &T3_2_1;
+  T3[3] = &T3_2_2;
+  T3[4] = &T3_2;
+  T3[5] = &T3_3;
+
+  for(int k = 0; k < 6; ++k) {
+    std::cout << "      with triangulation " << k + 1 << ": ";
+
+    std::vector<Vertex_handle> f_vertices;
+    std::vector<Edge> f_edges;
+    std::vector<Facet> f_facets;
+    std::vector<Cell_handle> f_cells;
+
+    f_vertices.clear();
+    f_edges.clear();
+    f_facets.clear();
+    f_cells.clear();
+    
+    for(Finite_vertices_iterator i = T3[k]->finite_vertices_begin();
+	i != T3[k]->finite_vertices_end(); ++i) {
+      T3[k]->finite_incident_vertices(i, std::back_inserter(f_vertices));
+      T3[k]->finite_incident_edges(i, std::back_inserter(f_edges));
+      T3[k]->finite_incident_facets(i, std::back_inserter(f_facets));
+      T3[k]->finite_incident_cells(i, std::back_inserter(f_cells));
+    }
+    unsigned int nb_f_edges = 0;
+    Finite_edges_iterator feit = T3[k]->finite_edges_begin();
+    while(feit != T3[k]->finite_edges_end()) {
+      ++nb_f_edges;
+      ++feit;
+    }
+    unsigned int nb_f_facets = 0;
+    Finite_facets_iterator ffait = T3[k]->finite_facets_begin();
+    while(ffait != T3[k]->finite_facets_end()) {
+      ++nb_f_facets;
+      ++ffait;
+    }
+    unsigned int nb_f_cells = 0;
+    Finite_cells_iterator fcit = T3[k]->finite_cells_begin();
+    while(fcit != T3[k]->finite_cells_end()) {
+      ++nb_f_cells;
+      ++fcit;
+    }
+    
+    // incidences
+    assert(f_edges.size() == f_vertices.size());
+    assert(2*nb_f_edges == f_edges.size());
+    assert(3*nb_f_facets == f_facets.size());
+    assert(4*nb_f_cells == f_cells.size());
+    
+    int nb_f_vertices = T3[k]->number_of_vertices();
+    
+    // Euler relation
+    assert(nb_f_vertices - nb_f_edges + nb_f_facets - nb_f_cells == 1);
+    std::cout << "ok\n";
   }
        // Iterator and circulator test
 

@@ -16,7 +16,6 @@ TDS
   pick only those whose smallest vertex (adress-wise) is the one in question.
   
 T3
-- incident_edges(vertex)
 - documenter le 2eme tableau de Triangulation_utils
 - degree() devrait-il, au niveau geometrique, ne pas compter le sommet infini ?
 - is_valid devrait verifier l'enveloppe convexe

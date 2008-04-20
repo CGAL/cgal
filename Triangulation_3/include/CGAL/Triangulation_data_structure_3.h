@@ -35,6 +35,7 @@
 #include <vector>
 
 #include <CGAL/utility.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
@@ -606,185 +607,266 @@ private:
 
 public:
 
+  class False_filter {
+    public:
+    False_filter() {}
+    template<class T>
+    bool operator() (T) {
+      return false;
+    }
+  };
+
+	// Visitor for visit_incident_cells:
+	// outputs the facets
+  template <class OutputIterator, class Filter>
+  class Facet_extractor {
+    OutputIterator output;
+    Filter filter;
+    public:
+    Facet_extractor(Vertex_handle, OutputIterator _output, const Tds* _t, Filter _filter):
+    output(_output), filter(_filter){}
+    void operator() (Cell_handle) {}
+    
+    OutputIterator result() {
+      return output;
+    }
+    
+    class Facet_it {
+      OutputIterator& output;
+      Filter& filter;
+      public:
+      Facet_it(OutputIterator& _output, Filter& _filter): output(_output), filter(_filter) {}
+      Facet_it& operator*() {return *this;};
+      Facet_it& operator=(Facet_it& fit) {
+	output = fit.output;
+	filter = fit.filter;
+	return *this;
+      }
+      Facet_it& operator++() {return *this;};
+      Facet_it operator++(int) {return *this;};
+      template<class T>
+      Facet_it& operator=(const T& e) {
+	if(filter(e))
+	  return *this;
+	output = e;
+	return *this;
+      }
+      Facet_it& operator=(const Facet_it& f) {
+	output = f.output;
+	filter = f.filter;
+	return *this;
+      }
+    };
+    Facet_it facet_it() {
+      return Facet_it(output, filter);
+    }
+  };
+
 	// Visitor for visit_incident_cells:
 	// outputs the cells
-	template <class OutputIterator>
-	class Empty_visitor {
-		OutputIterator output;
-	public:
-		Empty_visitor(const Vertex_handle&, OutputIterator _output, const Tds*): 
-		  output(_output) {}
-		  void operator()(const Cell_handle& c) {
-			  *output++ = c;
-		  }
-		  OutputIterator result() {
-			  return output;
-		  }
-	};
+  template <class OutputIterator, class Filter>
+  class Cell_extractor {
+    OutputIterator output;
+    Filter filter;
+    public:
+    Cell_extractor(Vertex_handle, OutputIterator _output, const Tds* _t, Filter _filter): 
+    output(_output), filter(_filter) {}
+
+    void operator()(Cell_handle c) {
+      if(filter(c))
+      	return;
+      *output++ = c;
+    }
+    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
+    OutputIterator result() {
+      return output;
+    }
+  };
 
 	// Visitor for visit_incident_cells:
 	// outputs the result of Treatment applied to the vertices
-	template<class Treatment, class OutputIterator>
-	class Vertex_extractor {
-		Vertex_handle v;
-		std::set<Vertex_handle> tmp_vertices;
-		Treatment treat;
-		const Tds* t;
-	public:
-		Vertex_extractor(const Vertex_handle& _v, OutputIterator _output, const Tds* _t): 
-		  v(_v), treat(_output), t(_t) {}
-		  void operator()(const Cell_handle& c) {
-			  for (int j=0; j<= t->dimension(); ++j) {
-				  Vertex_handle w = c->vertex(j);
-				  if (w != v)
-					  if(tmp_vertices.insert(w).second)
-						  treat(c, v, j);
-			  }
-		  }
-		  OutputIterator result() {
-			  return treat.result();
-		  }
-	};
+  template<class Treatment, class OutputIterator, class Filter>
+  class Vertex_extractor {
+    Vertex_handle v;
+    std::set<Vertex_handle> tmp_vertices;
+    Treatment treat;
+    const Tds* t;
+    Filter filter;
+  public:
+    Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter): 
+    v(_v), treat(_output), t(_t), filter(_filter) {}
+    void operator()(Cell_handle c) {
+      for (int j=0; j<= t->dimension(); ++j) {
+	Vertex_handle w = c->vertex(j);
+	if(filter(w))
+	  continue;
+	if (w != v)
+	  if(tmp_vertices.insert(w).second) {
+	    treat(c, v, j);
+	  }
+      }
+    }
 
-	// Treatment for Vertex_extractor:
-	// outputs the vertices
-	template<class OutputIterator>
-	class Vertex_feeder_treatment {
-		OutputIterator output;
-	public:
-		Vertex_feeder_treatment(OutputIterator _output): output(_output) {};
-		void operator()(const Cell_handle& c, const Vertex_handle&, int index) {
-			*output++ = c->vertex(index);
-		}
-		OutputIterator result() {
-			return output;
-		}
-	};
+    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
+    OutputIterator result() {
+      return treat.result();
+    }
+  };
+  
+  // Treatment for Vertex_extractor:
+  // outputs the vertices
+  template<class OutputIterator>
+  class Vertex_feeder_treatment {
+    OutputIterator output;
+  public:
+    Vertex_feeder_treatment(OutputIterator _output): output(_output) {};
+    void operator()(const Cell_handle& c, const Vertex_handle&, int index) {
+      *output++ = c->vertex(index);
+    }
+    OutputIterator result() {
+      return output;
+    }
+  };
+  
+  // Treatment for Vertex_extractor:
+  // outputs the edges corresponding to the vertices
+  template<class OutputIterator>
+  class Edge_feeder_treatment {
+    OutputIterator output;
+  public:
+    Edge_feeder_treatment(OutputIterator _output): output(_output) {};
+    void operator()(const Cell_handle& c, const Vertex_handle& v, int index) {
+      *output++ = Edge(c, c->index(v), index);
+    }
+    OutputIterator result() {
+      return output;
+    }
+  };
 
-	// Treatment for Vertex_extractor:
-	// outputs the edges corresponding to the vertices
-	template<class OutputIterator>
-	class Edge_feeder_treatment {
-		OutputIterator output;
-	public:
-		Edge_feeder_treatment(OutputIterator _output): output(_output) {};
-		void operator()(const Cell_handle& c, const Vertex_handle& v, int index) {
-			*output++ = Edge(c, c->index(v), index);
-		}
-		OutputIterator result() {
-			return output;
-		}
-	};
-
-	template <class OutputIterator>
-	OutputIterator
-		incident_cells(const Vertex_handle& v, OutputIterator cells) const
-	{
-		return visit_incident_cells<Empty_visitor<OutputIterator>, 
-			OutputIterator>(v, cells);
-	}
-
-	template <class OutputIterator>
-	OutputIterator
-		incident_edges(const Vertex_handle& v, OutputIterator edges) const
-	{
-		CGAL_triangulation_precondition( v != Vertex_handle() );
-		CGAL_triangulation_precondition( dimension() >= 1 );
-		CGAL_triangulation_expensive_precondition( is_vertex(v) );
-		CGAL_triangulation_expensive_precondition( is_valid() );
-
-		if (dimension() == 1) {
-			CGAL_triangulation_assertion( number_of_vertices() >= 3);
-			Cell_handle n0 = v->cell();
-			Cell_handle n1 = n0->neighbor(1-n0->index(v));
-			*edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
-			*edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
-			return edges;
-		}
-		return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>, 
-			OutputIterator>, 
-			OutputIterator>(v, edges);
-	}
-
-	template <class OutputIterator>
-	OutputIterator
-		incident_vertices(const Vertex_handle& v, OutputIterator vertices) const
-	{
-		CGAL_triangulation_precondition( v != Vertex_handle() );
-		CGAL_triangulation_precondition( dimension() >= -1 );
-		CGAL_triangulation_expensive_precondition( is_vertex(v) );
-		CGAL_triangulation_expensive_precondition( is_valid() );
-
-		if (dimension() == -1)
-			return vertices;
-
-		if (dimension() == 0) {
-			*vertices++ = v->cell()->neighbor(0)->vertex(0);
-			return vertices;
-		}
-
-		if (dimension() == 1) {
-			CGAL_triangulation_assertion( number_of_vertices() >= 3);
-			Cell_handle n0 = v->cell();
-			Cell_handle n1 = n0->neighbor(1-n0->index(v));
-			*vertices++ = n0->vertex(1-n0->index(v));
-			*vertices++ = n1->vertex(1-n1->index(v));
-			return vertices;
-		}
-		return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, 
-			OutputIterator>, 
-			OutputIterator>(v, vertices);
-	}
-
-
-	template <class Visitor, class OutputIterator>  
-	OutputIterator
-		visit_incident_cells(const Vertex_handle& v, OutputIterator output) const
-	{
-		CGAL_triangulation_precondition( v != Vertex_handle() );
-		CGAL_triangulation_expensive_precondition( is_vertex(v) );
-
-		if ( dimension() < 2 )
-			return output;
-
-		Visitor visit(v, output, this);
-
-		std::vector<Cell_handle> tmp_cells;
-		tmp_cells.reserve(64);
-		if ( dimension() == 3 )
-			incident_cells_3(v, v->cell(),
-			std::make_pair(std::back_inserter(tmp_cells),
-			CGAL::Emptyset_iterator()));
-		else
-			incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
-
-		for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
-			cit != tmp_cells.end(); ++cit) {
-				(*cit)->set_in_conflict_flag(0);
-				visit(*cit);
-		}
-		return visit.result();
-	}
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_cells(Vertex_handle v, OutputIterator cells, Filter f = Filter()) const
+  {
+    return visit_incident_cells<Cell_extractor<OutputIterator, Filter>, 
+      OutputIterator>(v, cells, f);
+  }
 
   template <class OutputIterator>
   OutputIterator
-  incident_facets(const Vertex_handle& v, OutputIterator facets) const
+  incident_cells(Vertex_handle v, OutputIterator cells) const
   {
-      CGAL_triangulation_precondition( dimension() == 3 );
-      CGAL_triangulation_precondition( v != Vertex_handle() );
-      CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    return incident_cells<False_filter>(v, cells);
+  }
+  
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_facets(Vertex_handle v, OutputIterator facets, Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( dimension() == 3 );
+    return visit_incident_cells<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
+  }
 
-      std::vector<Cell_handle> tmp_cells;
-      tmp_cells.reserve(64);
-      std::pair<std::back_insert_iterator<std::vector<Cell_handle> >,
-                OutputIterator> it (std::back_inserter(tmp_cells), facets);
-      it = incident_cells_3(v, v->cell(), it);
+  template <class OutputIterator>
+  OutputIterator
+  incident_facets(Vertex_handle v, OutputIterator facets) const
+  {
+    return incident_facets<False_filter>(v, facets);
+  }
+    
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_edges(Vertex_handle v, OutputIterator edges, Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition( dimension() >= 1 );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_triangulation_expensive_precondition( is_valid() );
+    
+    if (dimension() == 1) {
+      CGAL_triangulation_assertion( number_of_vertices() >= 3);
+      Cell_handle n0 = v->cell();
+      Cell_handle n1 = n0->neighbor(1-n0->index(v));
+      *edges++ = Edge(n0, n0->index(v), 1-n0->index(v));
+      *edges++ = Edge(n1, n1->index(v), 1-n1->index(v));
+      return edges;
+    }
+    return visit_incident_cells<Vertex_extractor<Edge_feeder_treatment<OutputIterator>, 
+    OutputIterator, Filter>, 
+    OutputIterator>(v, edges, f);
+  }
 
-      for(typename std::vector<Cell_handle>::iterator cit = tmp_cells.begin();
-	      cit != tmp_cells.end(); ++cit) {
-	  (*cit)->set_in_conflict_flag(0);
-      }
-      return it.second;
+  template <class OutputIterator>
+  OutputIterator
+  incident_edges(Vertex_handle v, OutputIterator edges) const
+  {
+    return incident_edges<False_filter>(v, edges);
+  }
+  
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  incident_vertices(Vertex_handle v, OutputIterator vertices, Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_precondition( dimension() >= -1 );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+    CGAL_triangulation_expensive_precondition( is_valid() );
+    
+    if (dimension() == -1)
+    return vertices;
+    
+    if (dimension() == 0) {
+      *vertices++ = v->cell()->neighbor(0)->vertex(0);
+      return vertices;
+    }
+    
+    if (dimension() == 1) {
+      CGAL_triangulation_assertion( number_of_vertices() >= 3);
+      Cell_handle n0 = v->cell();
+      Cell_handle n1 = n0->neighbor(1-n0->index(v));
+      *vertices++ = n0->vertex(1-n0->index(v));
+      *vertices++ = n1->vertex(1-n1->index(v));
+      return vertices;
+    }
+    return visit_incident_cells<Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, 
+    OutputIterator, Filter>, 
+    OutputIterator>(v, vertices, f);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  incident_vertices(Vertex_handle v, OutputIterator vertices) const
+  {
+    return incident_vertices<False_filter>(v, vertices);
+  }
+  
+  template <class Visitor, class OutputIterator, class Filter>  
+  OutputIterator
+  visit_incident_cells(Vertex_handle v, OutputIterator output, Filter f) const
+  {
+    CGAL_triangulation_precondition( v != Vertex_handle() );
+    CGAL_triangulation_expensive_precondition( is_vertex(v) );
+
+    if ( dimension() < 2 )
+    return output;
+    
+    Visitor visit(v, output, this, f);
+    
+    std::vector<Cell_handle> tmp_cells;
+    tmp_cells.reserve(64);
+    if ( dimension() == 3 )
+    incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
+    else
+    incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
+    
+    typename std::vector<Cell_handle>::iterator cit;
+    for(cit = tmp_cells.begin();
+	cit != tmp_cells.end(); 
+	++cit) 
+    {
+      (*cit)->set_in_conflict_flag(0);
+      visit(*cit);
+    }
+    return visit.result();
   }
 
   size_type degree(const Vertex_handle& v) const;
