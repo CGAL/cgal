@@ -231,7 +231,7 @@ protected:
     template<typename T> struct Gcd {
     
         T operator() (std::pair<T,T> pair) {
-            return CGAL::gcd(pair.first,pair.second);
+            return CGAL::CGALi::gcd(pair.first,pair.second);
         }
     } ;     
 
