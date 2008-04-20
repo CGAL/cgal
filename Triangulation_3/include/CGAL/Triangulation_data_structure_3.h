@@ -637,11 +637,6 @@ public:
       public:
       Facet_it(OutputIterator& _output, Filter& _filter): output(_output), filter(_filter) {}
       Facet_it& operator*() {return *this;};
-      Facet_it& operator=(Facet_it& fit) {
-	output = fit.output;
-	filter = fit.filter;
-	return *this;
-      }
       Facet_it& operator++() {return *this;};
       Facet_it operator++(int) {return *this;};
       template<class T>
