@@ -24,7 +24,7 @@ if(ZLIB_FOUND)
 
   include_directories( ${ZLIB_INCLUDE_DIR} )
   
-  add_library(CGAL_IMAGEIO "all_files.cpp")
+  add_library(CGAL_IMAGEIO all_files.cpp Image_3.cpp)
 
   target_link_libraries( CGAL_IMAGEIO ${ZLIB_LIBRARY})
   

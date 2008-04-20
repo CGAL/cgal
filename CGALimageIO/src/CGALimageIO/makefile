@@ -25,21 +25,22 @@
 
 OBJECTS = \
   Image_3$(OBJ_EXT) \
-  ImageIO$(OBJ_EXT) \
-  analyze$(OBJ_EXT) \
-  bmp$(OBJ_EXT) \
-  bmpendian$(OBJ_EXT) \
-  bmpread$(OBJ_EXT) \
-  convert$(OBJ_EXT) \
-  gif$(OBJ_EXT) \
-  gis$(OBJ_EXT) \
-  inr$(OBJ_EXT) \
-  iris$(OBJ_EXT) \
-  pnm$(OBJ_EXT) \
-  recbuffer$(OBJ_EXT) \
-  recline$(OBJ_EXT) \
-  reech4x4$(OBJ_EXT) \
-  fgetns$(OBJ_EXT)
+  all_files$(OBJ_EXT)
+#   ImageIO$(OBJ_EXT) \
+#   analyze$(OBJ_EXT) \
+#   bmp$(OBJ_EXT) \
+#   bmpendian$(OBJ_EXT) \
+#   bmpread$(OBJ_EXT) \
+#   convert$(OBJ_EXT) \
+#   gif$(OBJ_EXT) \
+#   gis$(OBJ_EXT) \
+#   inr$(OBJ_EXT) \
+#   iris$(OBJ_EXT) \
+#   pnm$(OBJ_EXT) \
+#   recbuffer$(OBJ_EXT) \
+#   recline$(OBJ_EXT) \
+#   reech4x4$(OBJ_EXT) \
+#   fgetns$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    libCGALimageIO settings
