@@ -664,7 +664,7 @@ public:
     OutputIterator output;
     Filter filter;
     public:
-    Cell_extractor(Vertex_handle, OutputIterator _output, const Tds* _t, Filter _filter): 
+    Cell_extractor(Vertex_handle, OutputIterator _output, const Tds*, Filter _filter): 
     output(_output), filter(_filter) {}
 
     void operator()(Cell_handle c) {
