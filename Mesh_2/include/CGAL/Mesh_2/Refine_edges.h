@@ -21,8 +21,8 @@
 #define CGAL_MESH_2_REFINE_EDGES_H
 
 #include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_2/Triangulation_mesher_level_traits_2.h>
-#include <CGAL/Mesh_2/Filtered_queue_container.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_2.h>
+#include <CGAL/Meshes/Filtered_queue_container.h>
 
 #include <utility>
 #include <iterator>
@@ -57,22 +57,30 @@ namespace Mesh_2 {
       */
       class Is_a_constrained_edge {
         const Tr& tr;
+        typename Tr::Face_handle fh;
+        int i;
       public:
+        typedef typename Tr::Edge Result_type;
+
         /** \param tr_ points to the triangulation. */
         explicit Is_a_constrained_edge(const Tr& tr_) : tr(tr_) {}
 
-        bool operator()(const Constrained_edge& ce) const
+        bool operator()(const Constrained_edge& ce)
         {
-          typename Tr::Face_handle fh;
-          int i;
           return tr.is_edge(ce.first, ce.second, fh,i) &&
             fh->is_constrained(i);
         }
+
+        Result_type
+        result() const
+        {
+          return typename Tr::Edge(fh, i);
+        }
       };
 
-      typedef ::CGAL::Mesh_2::Filtered_queue_container<Constrained_edge,
-                                               Is_a_constrained_edge>
-                           Default_container;
+      typedef ::CGAL::Meshes::Filtered_queue_container<
+        Constrained_edge,
+        Is_a_constrained_edge> Default_container;
     };
 
   }; // end namespace details
@@ -272,6 +280,7 @@ template <
     typename details::Refine_edges_base_types<Tr>::Default_container
 >
 class Refine_edges_base :
+    public Container,
     public No_private_test_point_conflict,
     public No_after_no_insertion
 {
@@ -304,8 +313,6 @@ protected:
 
   const Is_a_constrained_edge is_a_constrained_edge;
 
-  Container edges_to_be_conformed; /**< Edge queue */
-
   /** The object predicate that defines the locally conform criteria. */
   Is_locally_conform is_locally_conform;
 
@@ -323,18 +330,15 @@ public:
   /** \name CONSTRUCTORS */
 
   Refine_edges_base(Tr& tr_) :
+    Container(Is_a_constrained_edge(tr_)),
     tr(tr_), is_a_constrained_edge(tr_),
-    edges_to_be_conformed(is_a_constrained_edge),
     is_locally_conform(), imperatively(false), converter(tr_)
   {
   }
 
   /** \name HELPING FUNCTIONS */
 
-  void clear()
-  {
-    edges_to_be_conformed.clear();
-  }
+  // void clear() // implemented in the Container base class
 
   void set_imperative_refinement(bool b)
   {
@@ -392,7 +396,7 @@ public:
       encroached. */
   void scan_triangulation_impl()
   {
-    clear();
+    this->clear();
 #ifndef CGAL_IT_IS_A_CONSTRAINED_TRIANGULATION_PLUS
     for(Finite_edges_iterator ei = tr.finite_edges_begin();
         ei != tr.finite_edges_end();
@@ -416,31 +420,14 @@ public:
   } // end scan_triangulation_impl()
 
   /** Tells if the queue of edges to be conformed is empty or not. */
-  bool no_longer_element_to_refine_impl()
-  {
-    return edges_to_be_conformed.empty();
-  }
+  //  bool no_longer_element_to_refine_impl() // implemented in the
+                                              //  Container base class
 
   /** Get the next edge to conform. */
-  Edge get_next_element_impl() 
-  {
-    Constrained_edge edge = edges_to_be_conformed.get_next_element();
-
-    Face_handle fh;
-    int index;
-
-    CGAL_assertion_code( bool should_be_true =)
-    tr.is_edge(edge.first, edge.second, fh, index);
-    CGAL_assertion( should_be_true == true );
-
-    return Edge(fh, index);
-  }
+  // Edge get_next_element_impl() // implemented in the Container base class
 
   /** Pop the first edge of the queue. */
-  void pop_next_element_impl()
-  {
-    edges_to_be_conformed.remove_next_element();
-  }
+  // void pop_next_element_impl() // implemented in the Container base class
 
   /** This version computes the refinement point without handling
       clusters. The refinement point of an edge is just the middle point of
@@ -559,14 +546,16 @@ protected:
   {
     const Vertex_handle& va = e.first->vertex(tr. cw(e.second));
     const Vertex_handle& vb = e.first->vertex(tr.ccw(e.second));
-    edges_to_be_conformed.add_element(std::make_pair(va, vb));
+    this->add_bad_element(std::make_pair(va, vb)); // see the Container
+                                                   // base class
   }
 
   /** Add an edge (\c va,\c  vb) in the queue. */
   void add_constrained_edge_to_be_conformed(const Vertex_handle& va,
                                             const Vertex_handle& vb)
   {
-    edges_to_be_conformed.add_element(std::make_pair(va, vb));
+    this->add_bad_element(std::make_pair(va, vb)); // see the Container
+                                                   // base class
   }
 
 private: /** \name DEBUGGING TYPES AND DATAS */
@@ -604,8 +593,8 @@ public:  /** \name DEBUGGING FUNCTIONS */
   {
     return Edges_const_iterator(
        Aux_edges_filter_iterator(is_a_constrained_edge,
-                                 this->edges_to_be_conformed.begin(),
-                                 this->edges_to_be_conformed.end()),
+                                 Container::begin(),
+                                 Container::end()),
        converter);
   }
 
@@ -613,8 +602,8 @@ public:  /** \name DEBUGGING FUNCTIONS */
   {
     return Edges_const_iterator(
        Aux_edges_filter_iterator(is_a_constrained_edge,
-                                 this->edges_to_be_conformed.end(),
-                                 this->edges_to_be_conformed.end()),
+                                 Container::end(),
+                                 Container::end()),
        converter);
   }
 }; // end class Refine_edges_base

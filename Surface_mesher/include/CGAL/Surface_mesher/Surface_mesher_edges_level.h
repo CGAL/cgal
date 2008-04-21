@@ -23,8 +23,8 @@
 #include <CGAL/Mesh_2/Output_stream.h>
 
 #include <CGAL/Mesher_level.h>
-#include <CGAL/Mesh_2/Triangulation_mesher_level_traits_3.h>
-#include <CGAL/Surface_mesher/Simple_map_container.h>
+#include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
+#include <CGAL/Meshes/Simple_map_container.h>
 #include <CGAL/iterator.h> // for CGAL::inserter
 #include <CGAL/circulator.h> // for CGAL::Circulator_from_container<C>
 #include <sstream>
@@ -350,7 +350,7 @@ namespace Surface_mesher {
       typedef typename Tr::Point Point_3;
       typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
       typedef std::pair<Edge, Point_3> Edge_info;
-      typedef ::CGAL::Mesh_3::Simple_map_container<Pair_of_vertices,
+      typedef ::CGAL::Meshes::Simple_map_container<Pair_of_vertices,
 						   Edge_info> Default_container;
     }; // end struct Surface_mesher_edges_base_types
 
@@ -713,7 +713,7 @@ namespace Surface_mesher {
 	   sq_distance(info.lineic_center,
 		       e.first->vertex(e.second)->point()))
 	{
-	  this->add_element(make_pair_of_vertices(e),
+	  this->add_bad_element(make_pair_of_vertices(e),
 			    std::make_pair(e,
 					   info.lineic_center));
 	  return true;
@@ -757,7 +757,7 @@ namespace Surface_mesher {
 	c2t3.mark(e, info);
 	if(criteria.is_bad(e, center))
 	{
-	  this->add_element(make_pair_of_vertices(e),
+	  this->add_bad_element(make_pair_of_vertices(e),
 			    std::make_pair(e,
 					   center));
 	}
