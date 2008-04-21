@@ -623,7 +623,7 @@ public:
     OutputIterator output;
     Filter filter;
     public:
-    Facet_extractor(Vertex_handle, OutputIterator _output, const Tds* _t, Filter _filter):
+    Facet_extractor(Vertex_handle, OutputIterator _output, const Tds*, Filter _filter):
     output(_output), filter(_filter){}
     void operator() (Cell_handle) {}
     
