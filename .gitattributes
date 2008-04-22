@@ -4180,6 +4180,7 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/MainFrm.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/data/Isidor_50.pwc -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/data/TestCube.pwc -text
+Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/data/sphere926.pwc -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/arcball.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/director.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/include/director.h -text
