@@ -20,10 +20,8 @@
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
 			CharacterSet="2"
-			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -46,19 +44,17 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="0"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
-				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS;_WIN32_WINNT=0x0500;CGAL_PROFILE"
+				AdditionalIncludeDirectories="include;..\..\..\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE;CGAL_USE_LAPACK;_WIN32_WINNT=0x0500;CGAL_PROFILE"
 				MinimalRebuild="true"
-				BasicRuntimeChecks="0"
+				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
 				BrowseInformation="1"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4267;4311;4800;4503"
+				DisableSpecificWarnings="4267;4311;4800;4503;4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -66,7 +62,6 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"
 				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
@@ -74,10 +69,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(CGALROOT)\lib&quot;;&quot;$(CGALROOT)\auxiliary\gmp\lib&quot;;&quot;$(CIMGROOT)&quot;;&quot;$(CGALROOT)\auxiliary\taucs\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				LargeAddressAware="2"
@@ -113,9 +109,9 @@
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="2"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -139,18 +135,15 @@
 				AdditionalOptions="/Zm900"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="include;..\..\..\include;..\..\..\..\..\trunk\Principal_component_analysis\include;..\..\..\..\..\trunk\Jet_fitting_3\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
-				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_USE_TAUCS;_WIN32_WINNT=0x0500;CGAL_PROFILE"
+				AdditionalIncludeDirectories="include;..\..\..\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;;&quot;$(CIMGROOT)&quot;"
+				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE;CGAL_USE_LAPACK;_WIN32_WINNT=0x0500;CGAL_PROFILE"
 				MinimalRebuild="false"
-				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
-				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
-				UsePrecompiledHeader="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4267;4311;4800;4503"
+				DisableSpecificWarnings="4267;4311;4800;4503;4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -158,7 +151,6 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1033"
 				AdditionalIncludeDirectories="$(IntDir)"
 			/>
 			<Tool
@@ -166,6 +158,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
@@ -208,7 +201,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
@@ -450,7 +443,12 @@
 		</Filter>
 		<Filter
 			Name="Surface_reconstruction_3 package"
+			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath="..\..\..\include\CGAL\average_spacing_3.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\estimate_normals_3.h"
 				>
@@ -468,7 +466,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\Implicit_fct_delaunay_triangulation_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\k_nearest_neighbor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\orient_normals_minimum_spanning_tree_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\orient_normals_wrt_cameras_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\Oriented_normal_3.h"
 				>
 			</File>
 			<File
@@ -485,6 +499,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\smooth_jet_fitting_3.h"
 				>
 			</File>
 			<File

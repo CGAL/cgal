@@ -20,7 +20,6 @@
 #define CGAL_ESTIMATE_NORMALS_PCA_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Dimension.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -78,7 +77,7 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
 
 	// performs plane fitting by point-based PCA
 	Plane plane;
-  linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
+  linear_least_squares_fitting_3(points.begin(),points.end(),plane);
 
 	// output normal vector (already normalized by PCA)
 	return OrientedNormal_3(plane.orthogonal_vector(),

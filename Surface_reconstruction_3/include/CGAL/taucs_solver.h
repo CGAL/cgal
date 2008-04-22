@@ -20,6 +20,9 @@
 
 #include <CGAL/surface_reconstruction_assertions.h>
 
+// Uncomment the next line to see TAUCS traces
+//#define DEBUG_TRACE
+
 CGAL_BEGIN_NAMESPACE
 
 
