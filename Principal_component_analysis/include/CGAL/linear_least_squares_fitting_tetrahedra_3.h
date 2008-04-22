@@ -62,8 +62,6 @@ linear_least_squares_fitting_3(InputIterator first,
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k);
-
-
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a plane to a 3D tetrahedron set

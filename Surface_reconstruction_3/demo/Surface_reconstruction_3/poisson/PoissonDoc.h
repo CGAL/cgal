@@ -31,13 +31,12 @@ typedef Kernel::Tetrahedron_3 Tetrahedron;
 typedef Poisson_dt3<Kernel> Dt3;
 typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
 
-// Surface mesher 
+// Surface mesh generator 
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> SVb;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel> SCb;
 typedef CGAL::Triangulation_data_structure_3<SVb, SCb> STds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, STds> STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-
 
 class CPoissonDoc : public CDocument
 {
@@ -47,7 +46,11 @@ protected: // create from serialization only
 
 // Data members
 private:
-  // Poisson implicit
+
+	// input point set
+	std::list<Point> m_points;
+
+	// Poisson implicit
   Poisson_implicit_function m_poisson_function; // Poisson implicit function
   Dt3 m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
   bool m_triangulation_refined; // Is Delaunay refinement applied?
@@ -127,6 +130,8 @@ public:
   afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
   afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
   afx_msg void OnAlgorithmsOrientNormalsWithMST();
+public:
+	afx_msg void OnAlgorithmsSmoothusingjetfitting();
 };
 
 

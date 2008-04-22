@@ -111,6 +111,8 @@ BEGIN
     END
     POPUP "&Algorithms"
     BEGIN
+        MENUITEM "Smooth using jet fitting",    ID_ALGORITHMS_SMOOTHUSINGJETFITTING
+        MENUITEM SEPARATOR
         MENUITEM "Estimate Normals Direction by PCA", ID_ALGORITHMS_ESTIMATENORMALSBYPCA
         MENUITEM "Estimate Normals Direction by Jet Fitting", ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING
         MENUITEM SEPARATOR

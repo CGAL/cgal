@@ -36,7 +36,7 @@
 // ----------------------------------------------------------------------------
 
 // kernel
-typedef CGAL::Simple_cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;

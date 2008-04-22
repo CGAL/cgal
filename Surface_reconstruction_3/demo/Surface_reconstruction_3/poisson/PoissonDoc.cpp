@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
   ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
   ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
   ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSMST, &CPoissonDoc::OnAlgorithmsOrientNormalsWithMST)
+	ON_COMMAND(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, &CPoissonDoc::OnAlgorithmsSmoothusingjetfitting)
 END_MESSAGE_MAP()
 
 
@@ -191,6 +192,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
 			AfxMessageBox("Unable to read file");
 			return FALSE;
 		}
+		// 
 	}
   // if .pnb extension
 	else if(extension.CompareNoCase(".pnb") == 0)
@@ -644,9 +646,9 @@ void CPoissonDoc::OnUpdateReconstructionSurfacemeshing(CCmdUI *pCmdUI)
 // Marching Tet Contouring callback
 void CPoissonDoc::OnAlgorithmsMarchingtetcontouring()
 {
-		int nb = m_poisson_dt.marching_tet(m_contouring_value);
-		status_message("Marching tet contouring...done (%d triangles)",nb);
-	  UpdateAllViews(NULL);
+	int nb = m_poisson_dt.marching_tet(m_contouring_value);
+	status_message("Marching tet contouring...done (%d triangles)",nb);
+  UpdateAllViews(NULL);
 }
 
 // Enable "Marching Tet Contouring" if Poisson equation is solved
@@ -675,4 +677,11 @@ void CPoissonDoc::OnAlgorithmsPoissonStatistics()
 void CPoissonDoc::OnUpdateAlgorithmsPoissonstatistics(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable(m_poisson_solved);
+}
+
+void CPoissonDoc::OnAlgorithmsSmoothusingjetfitting()
+{
+	BeginWaitCursor();
+	EndWaitCursor();
+  UpdateAllViews(NULL);
 }
