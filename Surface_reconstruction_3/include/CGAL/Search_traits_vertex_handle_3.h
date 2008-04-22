@@ -15,7 +15,7 @@ private:
 
   double m_coord[3];
 	Vertex_handle m_vertex_handle;
-	
+
 public:
 
   Point_vertex_handle_3()
@@ -33,7 +33,7 @@ public:
     m_coord[2] = vertex_handle->point().z();
     m_vertex_handle = vertex_handle;
   }
-  
+
   Point_vertex_handle_3(double x, double y, double z)
   {
     m_coord[0] = x;
@@ -41,7 +41,7 @@ public:
     m_coord[2] = z;
     m_vertex_handle = NULL;
   }
-  
+
   /// Default copy constructor, operator =() and destructor are fine.
 
 	operator Vertex_handle() const { return m_vertex_handle; }
@@ -79,12 +79,12 @@ struct Kernel_traits< Point_vertex_handle_3<Vertex_handle> > {
 };
 
 
-/// Functor with two function operators, which return the begin and 
-/// past the end iterator for the Cartesian coordinates. 
+/// Functor with two function operators, which return the begin and
+/// past the end iterator for the Cartesian coordinates.
 template <class Vertex_handle>
-struct Construct_cartesian_const_iterator_vertex_handle_3 
+struct Construct_cartesian_const_iterator_vertex_handle_3
 {
-	typedef typename Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+	typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
 
   const double* operator()(const Point_vertex_handle_3& p) const
   { return static_cast<const double*>(p.m_coord); }
@@ -93,15 +93,15 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
   { return static_cast<const double*>(p.m_coord+3); }
 };
 
-/// The class Euclidean_distance_vertex_handle_3 implements the Euclidean distance 
+/// The class Euclidean_distance_vertex_handle_3 implements the Euclidean distance
 /// for Triangulation_3 Vertex_handles.
 /// To optimize distance computations squared distances are used.
 ///
 /// @heading Is Model for the Concepts: Model of the OrthogonalDistance concept.
 template <class Vertex_handle>
-struct Euclidean_distance_vertex_handle_3 
+struct Euclidean_distance_vertex_handle_3
 {
-	typedef typename Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+	typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
@@ -163,12 +163,12 @@ struct Euclidean_distance_vertex_handle_3
 ///
 /// @heading Is Model for the Concepts: Model of the SearchTraits concept.
 template <class Vertex_handle>
-class Search_traits_vertex_handle_3 
+class Search_traits_vertex_handle_3
   : public Search_traits< double,
                           Point_vertex_handle_3<Vertex_handle>,
                           const double*,
                           Construct_cartesian_const_iterator_vertex_handle_3<Vertex_handle> >
-{}; 
+{};
 
 
 CGAL_END_NAMESPACE

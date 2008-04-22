@@ -49,11 +49,11 @@ CGAL_BEGIN_NAMESPACE
 /// - the adjacency relations of vertices in a K-neighbouring,
 /// - the edge weight = edge weight = 1 - | normal1 * normal2 |
 ///   where normal1 and normal2 are the normal at the edge extremities.
-typedef boost::adjacency_list< boost::vecS, boost::vecS, 
+typedef boost::adjacency_list< boost::vecS, boost::vecS,
                                boost::undirectedS,
                                boost::no_property,
                                boost::property<boost::edge_weight_t, float> >
-    Riemannian_graph;                
+    Riemannian_graph;
 
 
 /// Helper class: MST graph
@@ -66,14 +66,14 @@ struct MST_graph_vertex_properties {
 };
 template <class VertexIterator,     ///< Input vertex iterator
           class VertexNormalMap>    ///< property map VertexIterator -> Normal (in and out)
-class MST_graph 
-  : public boost::adjacency_list< boost::vecS, boost::vecS, 
+class MST_graph
+  : public boost::adjacency_list< boost::vecS, boost::vecS,
                                   boost::directedS,
                                   MST_graph_vertex_properties<VertexIterator> >
 {
 public:
     MST_graph(VertexNormalMap vertex_normal_map) : m_vertex_normal_map(vertex_normal_map) {}
-    
+
 // Public data
     const VertexNormalMap m_vertex_normal_map;
 };
@@ -83,8 +83,8 @@ public:
 /// of a MST graph.
 template <class VertexIterator,     ///< Input vertex iterator
           class VertexNormalMap>    ///< property map VertexIterator -> Normal (in and out)
-class MST_graph_vertex_normal_map 
-  : public boost::put_get_helper< typename boost::property_traits<VertexNormalMap>::value_type&, 
+class MST_graph_vertex_normal_map
+  : public boost::put_get_helper< typename boost::property_traits<VertexNormalMap>::value_type&,
                                   MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> >
 {
 public:
@@ -108,7 +108,7 @@ public:
         Normal& normal = m_graph.m_vertex_normal_map[input_vertex];
         return normal;
     }
-    
+
 private:
     const MST_graph& m_graph;
 };
@@ -117,8 +117,8 @@ private:
 /// of a MST graph.
 template <class VertexIterator, class VertexNormalMap>
 inline
-MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> 
-get(boost::vertex_normal_t, const MST_graph<VertexIterator, VertexNormalMap>& graph) 
+MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap>
+get(boost::vertex_normal_t, const MST_graph<VertexIterator, VertexNormalMap>& graph)
 {
   MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> aMap(graph);
   return aMap;
@@ -132,24 +132,24 @@ get(boost::vertex_normal_t, const MST_graph<VertexIterator, VertexNormalMap>& gr
 /// and following the adjacency relations of vertices in a Minimum Spanning Tree.
 template <class VertexIterator,     ///< Input vertex iterator
           class VertexNormalMap>    ///< property map VertexIterator -> Normal (in and out)
-struct propagate_normal 
-  : public boost::base_visitor< propagate_normal<VertexIterator, VertexNormalMap> > 
+struct propagate_normal
+  : public boost::base_visitor< propagate_normal<VertexIterator, VertexNormalMap> >
 {
     typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef boost::on_examine_edge event_filter;
 
     template <class Edge>
-    void operator()(const Edge& edge, const MST_graph& graph) 
+    void operator()(const Edge& edge, const MST_graph& graph)
     {
         typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
         typedef typename Normal::Vector Vector;
         typedef typename MST_graph::vertex_descriptor vertex_descriptor;
-        
+
         // Get source normal
         vertex_descriptor vtx1 = boost::source(edge, graph);
         Normal& normal1 = get(get(boost::vertex_normal, graph), vtx1);
         Vector vec1 = normal1.get_vector();
-        
+
         // Get target normal
         vertex_descriptor vtx2 = boost::target(edge, graph);
         Normal& normal2 = get(get(boost::vertex_normal, graph), vtx2);
@@ -163,7 +163,7 @@ struct propagate_normal
             vec2 = -vec2;
         }
         normal2 = Normal(vec2, true /* oriented */);
-#else 
+#else
         // TEST: flag only inverted normals as oriented to see the result in 3D rendering
         if (vec1 * vec2 < 0) {
             CGAL_TRACE("    flip %d\n", (int)vtx2);
@@ -175,8 +175,8 @@ struct propagate_normal
 
 
 /// Orient the normals of a point set using the method described in
-/// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle, 
-/// Surface reconstruction from unorganized points, 
+/// "Hoppe, DeRose, Duchamp, McDonald, Stuetzle,
+/// Surface reconstruction from unorganized points,
 /// ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992".
 ///
 /// Preconditions:
@@ -203,10 +203,10 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     typedef typename Normal::Vector Vector;
 
     // Types for K-nearest neighbor search structure
-    typedef typename Point_vertex_handle_3<VertexIterator> Point_vertex_handle_3;
-    typedef typename Search_traits_vertex_handle_3<VertexIterator> Traits;
-    typedef typename Euclidean_distance_vertex_handle_3<VertexIterator> KDistance;
-    typedef typename Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
+    typedef Point_vertex_handle_3<VertexIterator> Point_vertex_handle_3;
+    typedef Search_traits_vertex_handle_3<VertexIterator> Traits;
+    typedef Euclidean_distance_vertex_handle_3<VertexIterator> KDistance;
+    typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
     typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -221,10 +221,10 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
 
     // Precondition: at least 2 nearest neighbors
     CGAL_surface_reconstruction_precondition(K >= 2);
-    
+
     // Number of input vertices
     const int num_input_vertices = std::distance(first, beyond);
-    
+
 #ifdef CGAL_TEST // TEST: flag only inverted normals as oriented to see the result in 3D rendering
     for (VertexIterator it = first; it != beyond; it++)
     {
@@ -233,10 +233,10 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
         normal = Normal(vec, false /* non oriented */);
     }
 #endif // CGAL_TEST
-    
+
     // Orient source normal: the normal of the vertex
     // with maximum Z is oriented towards +Z axis.
-    // 
+    //
     // Find vertex with maximum Z
     double z_max = -1e30;
     VertexIterator source_vertex;
@@ -264,27 +264,27 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Instanciate a KD-tree search.
     // We have to wrap each input vertex by a Point_vertex_handle_3.
     std::vector<Point_vertex_handle_3> kd_tree_points;
-    for (VertexIterator it = first; it != beyond; it++) 
+    for (VertexIterator it = first; it != beyond; it++)
 		    kd_tree_points.push_back(Point_vertex_handle_3(it));
     Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
-    // Iterate over input points and create Riemannian Graph: 
+    // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices are empty.
-    // - we add the edge (i, j) if either vertex i is in the K-neighborhood of vertex j, 
+    // - we add the edge (i, j) if either vertex i is in the K-neighborhood of vertex j,
     //   or vertex j is in the K-neighborhood of vertex i.
 CGAL_TRACE("  Create Riemannian Graph\n");
     Riemannian_graph riemannian_graph(num_input_vertices);
-    Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph); 
+    Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     //
     // add edges
-    for (VertexIterator it = first; it != beyond; it++) 
+    for (VertexIterator it = first; it != beyond; it++)
     {
         unsigned int it_index = get(vertex_index_map,it);
         Vector it_normal_vector = vertex_normal_map[it].get_vector();
-        
+
         // Gather set of (K+1) neighboring points:
-        // Performs K + 1 queries (if unique the p point is output first). 
+        // Performs K + 1 queries (if unique the p point is output first).
         // Search may be aborted when K is greater than number of input points.
         Neighbor_search search(tree,it,K+1);
         Search_iterator search_iterator = search.begin();
@@ -298,13 +298,13 @@ CGAL_TRACE("  Create Riemannian Graph\n");
             if (neighbour_index > it_index) // undirected graph
             {
                 // Add edge
-                boost::graph_traits<Riemannian_graph>::edge_descriptor e; 
+                boost::graph_traits<Riemannian_graph>::edge_descriptor e;
                 bool inserted;
-                boost::tie(e, inserted) = boost::add_edge(boost::vertex(it_index, riemannian_graph), 
-		                                                      boost::vertex(neighbour_index, riemannian_graph), 
+                boost::tie(e, inserted) = boost::add_edge(boost::vertex(it_index, riemannian_graph),
+		                                                      boost::vertex(neighbour_index, riemannian_graph),
 		                                                      riemannian_graph);
                 CGAL_surface_reconstruction_assertion(inserted);
-                
+
                 //                               ->        ->
                 // Compute edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
@@ -314,7 +314,7 @@ CGAL_TRACE("  Create Riemannian Graph\n");
                     weight = 0;
                 riemannian_graph_weight_map[e] = (float)weight;
 		        }
-            
+
             search_iterator++;
         }
     }
@@ -323,11 +323,11 @@ CGAL_TRACE("  Create Riemannian Graph\n");
     typedef std::vector<Riemannian_graph::vertex_descriptor> PredecessorMap;
     PredecessorMap pm(num_input_vertices);
 CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
-    boost::prim_minimum_spanning_tree(riemannian_graph, &pm[0], 
+    boost::prim_minimum_spanning_tree(riemannian_graph, &pm[0],
                                       weight_map( riemannian_graph_weight_map )
-                                     .root_vertex( boost::vertex(source_vertex_index, riemannian_graph) )); 
+                                     .root_vertex( boost::vertex(source_vertex_index, riemannian_graph) ));
 
-    // Convert predecessor map to a MST graph   
+    // Convert predecessor map to a MST graph
     // - vertices are numbered like the input vertices' index.
     // - vertices contain the corresponding input vertex handle.
     // - we add the edge (pm[i], i) for each element of the predecessor map pm.
@@ -335,7 +335,7 @@ CGAL_TRACE("  Create MST Graph\n");
     MST_graph mst_graph(vertex_normal_map);
     //
     // add vertices
-    for (VertexIterator it = first; it != beyond; it++) 
+    for (VertexIterator it = first; it != beyond; it++)
     {
         unsigned int it_index = get(vertex_index_map,it);
         MST_graph::vertex_descriptor v = add_vertex(mst_graph);
@@ -345,21 +345,21 @@ CGAL_TRACE("  Create MST Graph\n");
     // add edges
     for (unsigned int i=0; i < pm.size(); i++) // add edges
     {
-        if (i != pm[i]) 
+        if (i != pm[i])
         {
             // check that bi-directed graph is useless
-            CGAL_surface_reconstruction_assertion(pm[pm[i]] != i); 
-            
-            boost::add_edge(boost::vertex(pm[i], mst_graph), 
-                            boost::vertex(i,     mst_graph), 
+            CGAL_surface_reconstruction_assertion(pm[pm[i]] != i);
+
+            boost::add_edge(boost::vertex(pm[i], mst_graph),
+                            boost::vertex(i,     mst_graph),
                             mst_graph);
         }
     }
-    
+
     // Orient normals
 CGAL_TRACE("  Call boost::breadth_first_search()\n");
-    boost::breadth_first_search(mst_graph, 
-	                              boost::vertex(source_vertex_index, mst_graph), // source 
+    boost::breadth_first_search(mst_graph,
+	                              boost::vertex(source_vertex_index, mst_graph), // source
 	                              visitor(boost::make_bfs_visitor(propagate_normal<VertexIterator, VertexNormalMap>())));
 CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
 }

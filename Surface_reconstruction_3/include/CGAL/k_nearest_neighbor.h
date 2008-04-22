@@ -17,10 +17,10 @@ public:
 
 	typedef typename Geom_traits::FT FT;
 	typedef typename Geom_traits::Point_3 Point;
-	typedef typename Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
-  typedef typename Search_traits_vertex_handle_3<Vertex_handle> Traits;
-	typedef typename Euclidean_distance_vertex_handle_3<Vertex_handle> KDistance;
-  typedef typename Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
+	typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef Search_traits_vertex_handle_3<Vertex_handle> Traits;
+	typedef Euclidean_distance_vertex_handle_3<Vertex_handle> KDistance;
+  typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -29,13 +29,13 @@ private:
 
 public:
   K_nearest_neighbor() {}
-  
+
   template <class InputIterator> ///< InputIterator value_type is Vertex_handle.
   K_nearest_neighbor(InputIterator first, InputIterator beyond)
   {
     m_tree = Tree(first, beyond);
   }
-  
+
   /// Default copy constructor, operator =() and destructor are fine.
 
   bool get_k_nearest_neighbors(const Point_vertex_handle_3& query,
