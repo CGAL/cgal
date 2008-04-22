@@ -4171,8 +4171,6 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizDoc_4.h -t
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/GyrovizView_3.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_border_points_dt2.h -text
-Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.sln -text
-Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc71.vcproj -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.sln -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vc80.vcproj -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/Gyroviz_vertex_segment_2.h -text
@@ -4194,8 +4192,6 @@ Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/resource.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/stdafx.cpp -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/gyroviz/stdafx.h -text
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/PoissonDoc.cpp -text
-Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.sln eol=crlf
-Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc71.vcproj eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.sln eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/Poisson_vc80.vcproj eol=crlf
 Surface_reconstruction_3/demo/Surface_reconstruction_3/poisson/data/camel.pwn -text
@@ -4214,8 +4210,6 @@ Surface_reconstruction_3/include/CGAL/Oriented_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj -text
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/normal_estimation_test_vc71.vcproj eol=crlf
-Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc71.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
@@ -4224,7 +4218,6 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere966.off -text 
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/poisson_reconstruction_test.cmd eol=lf
-Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc71.sln eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc80.sln eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/smoothing_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/test_all.bat eol=crlf
