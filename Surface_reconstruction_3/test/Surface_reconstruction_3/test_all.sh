@@ -1,42 +1,78 @@
 #!/bin/bash
 
-#
-# Test the Poisson Delaunay Reconstruction method with all off models in data folder
-#
+############################################################
+# This application is a cross-platform version of cgal_test.
+# Applications must be already compiled.
+############################################################
+
+ERRORFILE=error.txt
 
 # Find executable name (different on Windows and Unix)
-[ -f ./VC/debug/poisson_reconstruction_test.exe ] && PARAM_APPLICATION="./VC/debug/poisson_reconstruction_test.exe"
-[ -f ./VC/release/poisson_reconstruction_test.exe ] && PARAM_APPLICATION="./VC/release/poisson_reconstruction_test.exe"
-[ -f ./VC/x64/debug/poisson_reconstruction_test.exe ] && PARAM_APPLICATION="./VC/x64/debug/poisson_reconstruction_test.exe"
-[ -f ./VC/x64/release/poisson_reconstruction_test.exe ] && PARAM_APPLICATION="./VC/x64/release/poisson_reconstruction_test.exe"
-[ -x ./poisson_reconstruction_test ] && PARAM_APPLICATION="./poisson_reconstruction_test"
-if [ -z "$PARAM_APPLICATION" ]; then
-    echo "Cannot find poisson_reconstruction_test executable"
-    exit 1
+find_executable()
+{
+    PARAM_APPLICATION=""
+    [ -f ./VC/debug/$1.exe ] && PARAM_APPLICATION="./VC/debug/$1.exe"
+    [ -f ./VC/release/$1.exe ] && PARAM_APPLICATION="./VC/release/$1.exe"
+    [ -f ./VC/x64/debug/$1.exe ] && PARAM_APPLICATION="./VC/x64/debug/$1.exe"
+    [ -f ./VC/x64/release/$1.exe ] && PARAM_APPLICATION="./VC/x64/release/$1.exe"
+    [ -x ./$1 ] && PARAM_APPLICATION="./$1"
+    echo "$PARAM_APPLICATION"
+}
+
+# run 1 test
+run()
+{
+    # Find exe
+    COMMAND="`find_executable $1`"
+    if [ -z "$COMMAND" ]; then
+        echo "Cannot find $1 executable"
+        exit 1
+    fi
+
+    # Add params
+    if [ -f $1.cmd ] ; then
+        COMMAND="$COMMAND `cat $1.cmd`"
+    fi
+    if [ -f $1.cin ] ; then
+        COMMAND="cat $1.cin | $COMMAND"
+    fi
+
+    # Run
+    echo "------------------------------------------------------------------"
+    echo "- Executing $1"
+    echo "------------------------------------------------------------------"
+    echo
+    if eval $COMMAND 2>&1 ; then
+        echo "   succesful execution   of $1" >> $ERRORFILE
+    else
+        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+    fi
+    echo
+}
+
+# remove the previous error file
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+# run the tests
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    run $file
+  done
+else
+  run analysis_test
+  run normal_estimation_test
+  run poisson_reconstruction_test
+  run smoothing_test
 fi
 
-# run test (echo on)
-set -x
-$PARAM_APPLICATION data/*.off 2>&1
-set +x
+# Recap results
+echo "------------------------------------------------------------------"
+echo "- Results"
+echo "------------------------------------------------------------------"
+echo
+cat $ERRORFILE
+echo
+rm -f $ERRORFILE
 
-#
-# Test the Normal Estimation methods with all xyz models in data folder
-#
-
-# Find executable name (different on Windows and Unix)
-[ -f ./VC/debug/normal_estimation_test.exe ] && PARAM_APPLICATION="./VC/debug/normal_estimation_test.exe"
-[ -f ./VC/release/normal_estimation_test.exe ] && PARAM_APPLICATION="./VC/release/normal_estimation_test.exe"
-[ -f ./VC/x64/debug/normal_estimation_test.exe ] && PARAM_APPLICATION="./VC/x64/debug/normal_estimation_test.exe"
-[ -f ./VC/x64/release/normal_estimation_test.exe ] && PARAM_APPLICATION="./VC/x64/release/normal_estimation_test.exe"
-[ -x ./normal_estimation_test ] && PARAM_APPLICATION="./normal_estimation_test"
-if [ -z "$PARAM_APPLICATION" ]; then
-    echo "Cannot find normal_estimation_test executable"
-    exit 1
-fi
-
-# run test (echo on)
-set -x
-$PARAM_APPLICATION data/*.xyz 2>&1
-set +x
 
