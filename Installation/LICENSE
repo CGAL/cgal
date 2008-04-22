@@ -32,3 +32,6 @@ examples and some demos) are licensed under a very permissive license. The
 exact license text can be found in the file LICENSE.FREE_USE. Note that some
 subdirectories have their own copy of LICENSE.FREE_USE. These copies have
 the same license text and differ only in the copyright holder.
+
+Other information on the CGAL license can be found at
+http://www.cgal.org/license.html
