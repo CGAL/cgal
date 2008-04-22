@@ -77,7 +77,11 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
 
 	// performs plane fitting by point-based PCA
 	Plane plane;
+#ifndef CGAL_DIMENSION_H // if CGAL 3.3.1
   linear_least_squares_fitting_3(points.begin(),points.end(),plane);
+#else // if CGAL >= 3.4
+  linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
+#endif
 
 	// output normal vector (already normalized by PCA)
 	return OrientedNormal_3(plane.orthogonal_vector(),
