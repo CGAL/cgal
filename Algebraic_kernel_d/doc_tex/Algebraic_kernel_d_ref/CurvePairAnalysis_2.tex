@@ -148,7 +148,7 @@ coprime.}
 } 
   This constructor has been introduced to enable an upper layer 
 (geometric curved kernel) to use additional knowledge on the problem.
-
+If the signature is not provided by a model, a compile error occurs.
 \end{ccAdvanced}
 
 \ccAccessFunctions
@@ -197,9 +197,18 @@ coprime.}
 }
 
 Note that the access methods to status lines are not redundant! The ones
-using an id-value are efficient for speed-ups (caching, avoids to search some
-$x$, or the unique representative status line for an interval). The others 
-enable a user to compute status lines for given $x$.
+using an id-value are efficient for speed-ups (caching, avoids to search for
+some $x$, or the unique representative status line for an interval),
+while the ones with given $x$ still perform a look-up. There is also a 
+difference between \ccc{ status_line_for_x(x0,CGAL::ZERO)} and 
+\ccc{status_line_at_exact_x(x0)} in the case \ccc{x0} is contained 
+in an interval between events. Namely, the former is allowed to return a
+precomputed representative for the interval, while the later enforces
+a status line exactly at the given \ccc{x0} which implies that the 
+$y$-coordinates are with respect to the given \ccc{x0}. In the first case,
+the accessible $y$-coordinates are with respect to the representative's 
+$x$-coordinate only.
+
 
 %
 %\begin{ccAdvanced}
