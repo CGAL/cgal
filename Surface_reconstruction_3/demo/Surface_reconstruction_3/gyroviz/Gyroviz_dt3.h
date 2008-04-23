@@ -23,6 +23,8 @@
 #include <list>
 #include <vector>
 #include <sstream>
+#include <fstream>
+#include <cmath>
 
 template <class Gt, class Tds>
 class Gyroviz_dt3 : public CGAL::Delaunay_triangulation_3<Gt, Tds>
@@ -119,7 +121,7 @@ public:
     {
       const Gyroviz_point_dt3& pwc = *it;
       Vertex_handle v = insert(pwc,cell);
-      v->info() = Gyroviz_info_for_dt3(pwc.cameras());
+      v->info() = Gyroviz_info_for_dt3(v->point(), pwc.cameras());
       cell = v->cell();
     }
 
@@ -145,15 +147,18 @@ public:
     }
 
     long pointsCount = 0, camCount = 0; // number of vertices and number of cameras in the file
-    int lineNumber = 0; // current line number
+    int lineNumber = 0;					// current line number
 
     char pLine[4096]; // current line buffer
-    //char rest_of_line [512]; // current camera list buffer
-
+    
     std::vector<Point_3> list_of_camera_coordinates; // container of cameras
     std::vector<Gyroviz_point_dt3> gpts; // container of points to be read
     double x,y,z;
     double Cx,Cy,Cz;   
+
+	// TEST // 
+	// std::ofstream fout("../scores.txt");
+	// TEST//
 
 
     while(fgets(pLine,sizeof(pLine),pFile))
@@ -196,51 +201,86 @@ public:
 
       // Read 3D points + camera indices on next lines
       else {
-
-        //// TEMPORARY: skip part of file
-        //if (lineNumber % 4 != 0)
-        //  continue;
         
         std::istringstream iss(pLine);
         Point_3 position;
 
         if (iss >> position)
         {
-          //TRACE("Line number : %d, List_cameras : ", lineNumber);
           int value;
           std::vector<Point_3> list_of_cameras;
+		  double vertex_score = 0;
+
           while (iss >> value)
           {
             Point_3 cam_coord = list_of_camera_coordinates[value-1];
             list_of_cameras.push_back(cam_coord);
-            // TRACE("%d ", value);
           } 
 
-          // TRACE("\n", lineNumber);
 
           // vertex contains a 3D point followed by a vector of 3D
           // points corresponding to the camera positions.
 
 
           // TEMPORARY? Skip 3D points with no cameras.
-          if (list_of_cameras.begin() != list_of_cameras.end())
-          {
-            //Point_3 point_3(x,y,z);
-            //Vertex_handle vh = this->insert(position);
-            //vh->info()       = Gyroviz_info_for_dt3(list_of_cameras);  
-            //// TEST Each cell corresponding to the current vertex is flagged as UNKNOWN
-            //Cell_handle cell;
-            //cell = vh->cell();
+		  if (list_of_cameras.begin() != list_of_cameras.end()/* TEST: OUTLIER ELIMINATION list_of_cameras.size() < 10*/)
+		  {
 
-            //if(!is_infinite(cell)){cell->info() = PLEIN;}
-            //else cell->info() = VIDE;
-            gpts.push_back(Gyroviz_point_dt3(position,list_of_cameras.begin(),
-              list_of_cameras.end()));
-          }
-        }
+			  //// give a score to each vertex: the score will help us to detect 			  
+			  //// the outliers in the point cloud extracted by Voodoo
+			  //
+			  Vector_3 v1, v2;
+			  double v1_v2, n_v1, n_v2;
+			  double intermediate_score;
+			  
+			  for(int i=0; i<list_of_cameras.size()-1; ++i)
+			  {
+				  for(int j=i+1; j<list_of_cameras.size(); ++j)
+				  {
+					  v1 = list_of_cameras[i] - position;
+					  v2 = list_of_cameras[j] - position;
+					  n_v1  = sqrt(v1.squared_length());  // returns the length
+					  n_v2  = sqrt(v2.squared_length()); 
+					  v1_v2 = v1 * v2; // returns the scalar product
+					  intermediate_score = acos(v1_v2/(n_v1*n_v2));
+					  
+					  if(intermediate_score > vertex_score)
+						  vertex_score = intermediate_score;
+				  }
+			  }
+
+
+			  // TEST //
+
+			  //fout << position << '\t' << list_of_cameras.size() << '\t' << vertex_score << std::endl;
+
+			  // TEST //
+
+
+			  // TEST //
+			  if(vertex_score > 0.125
+				    /*( (list_of_cameras.size() >=50  && list_of_cameras.size() <=75  && vertex_score < 0.15)||
+						(list_of_cameras.size() >75  && list_of_cameras.size() <=100  && vertex_score < 0.25)||
+						(list_of_cameras.size() >100  && list_of_cameras.size() <=175 && vertex_score < 0.3)||
+						(list_of_cameras.size() >175  && list_of_cameras.size() <=250 && vertex_score < 0.6)||
+						(list_of_cameras.size() >=250)) */)
+			  {
+				  gpts.push_back(Gyroviz_point_dt3(position,list_of_cameras.begin(),
+					  list_of_cameras.end()));
+			  }
+			  // TEST //
+		  
+		  }
+		}
       }
     }
     fclose(pFile);
+
+
+	// TEST //
+	// fout.close(); 
+	// TEST // 
+
 
     // Insert points
     insert(gpts.begin(), gpts.end());
@@ -248,6 +288,106 @@ public:
 
     this->inside_outside(); // label correctly all the cells.
     return true;
+  }
+
+
+
+
+// Read 3D points of an OFF file.
+  bool analyse_pwc(const char* pFilename)
+  {
+    FILE *pFile = fopen(pFilename,"rt");
+    if(pFile == NULL)
+    {
+      std::cerr << "Error: cannot open " << pFilename;
+      return false;
+    }
+
+    long pointsCount = 0, camCount = 0; // number of vertices and number of cameras in the file
+    int lineNumber = 0; // current line number
+
+    char pLine[4096]; // current line buffer
+
+	// initialize the integer table to 0
+	int histogram[1396];
+	for(int i=0; i<1396; i++)
+		histogram[i] = 0;
+
+
+    std::vector<Point_3> list_of_camera_coordinates; // container of cameras
+    double x,y,z;
+    double Cx,Cy,Cz;   
+
+
+    while(fgets(pLine,sizeof(pLine),pFile))
+    {
+      lineNumber++;
+
+      // Read file signature on first line
+      if (lineNumber == 1)
+      {
+        char signature[512];
+
+        if ( (sscanf(pLine,"%s",signature) != 1) || (strcmp(signature, "CamOFF") != 0) )
+        {
+          // unsupported file format
+          std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
+          return false;
+        }
+      }    
+
+      // Read number of vertices and cameras on 2nd line    
+      else if (lineNumber == 2)
+      {
+        if (sscanf(pLine,"%ld %ld",&camCount,&pointsCount) != 2)
+        {
+          std::cerr << "Error line " << lineNumber << " of " << pFilename;
+          return false;
+        }
+      }       
+
+
+
+      // Read 3D points on next lines
+      else if (list_of_camera_coordinates.size() < camCount)
+      {
+        if(sscanf(pLine,"%lg\t%lg\t%lg",&Cx,&Cy,&Cz) == 3)
+        {
+			Point_3 cam_coord(Cx,Cy,Cz);
+			list_of_camera_coordinates.push_back(cam_coord);
+		}
+		// ...or skip comment line
+	  }
+
+	  // Read 3D points + camera indices on next lines
+	  else {
+		  std::istringstream iss(pLine);
+		  Point_3 position;
+
+		  if (iss >> position)
+		  {
+			  int value;
+			  std::vector<Point_3> list_of_cameras;
+			  while (iss >> value)
+			  {
+				  Point_3 cam_coord = list_of_camera_coordinates[value-1];
+				  list_of_cameras.push_back(cam_coord);
+			  } 
+			  histogram[list_of_cameras.size()]++;
+		  }
+	  }
+	}
+	fclose(pFile);
+
+	std::ofstream fout("../results.txt");
+	for(int i=0; i<1396; ++i)
+	{
+		fout << histogram[i] << std::endl;
+	}
+	fout.close();   
+
+
+	return true;
   }
 
 
@@ -468,8 +608,7 @@ public:
     }
   }
 
-
-
+  
   void inside_outside()
   {
     
@@ -653,7 +792,7 @@ public:
             }
           }
 
-          // TODO : All the tetrahedra intersected by a segment emanating from the vertex to
+          //		All the tetrahedra intersected by a segment emanating from the vertex to
           //        the camera center of one of these views should be labbelled as outside.
           //        Exception : segment is tangent to the tetrahedra
 
@@ -822,13 +961,45 @@ public:
     // Draw input points
     ::glPointSize(size);
     ::glColor3ub(r,g,b);
-    ::glBegin(GL_POINTS);
+	::glBegin(GL_POINTS);
 
-    Finite_vertices_iterator fv = this->finite_vertices_begin();
-    for(; fv != this->finite_vertices_end(); ++fv)
-    {
-      Point_3 p = fv->point();
-      ::glVertex3d(p.x(),p.y(),p.z());
+	Finite_vertices_iterator fv = this->finite_vertices_begin();
+	for(; fv != this->finite_vertices_end(); ++fv)
+	{
+
+		int nb_cameras = fv->info().get_list_of_cameras().size();
+		double greatest_camera_angle = fv->info().get_greatest_camera_angle();
+
+
+		// TEST //
+		//if (nb_cameras <= 7)
+		//	::glcolor3ub(0,255,0);
+		//
+		//else if (nb_cameras <= 10)
+		//	::glcolor3ub(255,215,0);
+
+		//else if (nb_cameras < 100)
+		//	::glcolor3ub(255,140,0);
+
+		//else // >= 100
+		//	::glcolor3ub(138,43,226);
+		
+		if (greatest_camera_angle <= 0.05)
+			::glColor3ub(0,255,0);
+
+		else if (nb_cameras < 15)
+			::glColor3ub(255,0,0);
+
+		else
+			::glColor3ub(138,43,226);
+		
+		
+		
+		// TEST //
+
+		Point_3 p = fv->point();
+		::glVertex3d(p.x(),p.y(),p.z());
+		
     }
 
     ::glEnd();
@@ -924,7 +1095,25 @@ public:
     } 
 
     ::glEnd();
-  }    
+  }
+
+
+
+  //void gl_draw_histogram(int* histogram)
+  //{
+	 // ::glColor3ub(0,0,255);
+
+	 // // Draw Histogram
+	 // ::glBegin(GL_LINES);
+	 // for (int i=0; i<sizeof(histogram); ++i)
+	 // {
+		//  ::glVertex3d(i,0,0);
+		//  ::glVertex3d(i,histogram[i],0);
+	 // }
+
+	 // ::glEnd();
+  //}
+
 
 };
 

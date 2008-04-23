@@ -288,10 +288,10 @@ void CGyrovizView_4::OnPaint()
 		m_pArcball->draw_sphere();
 
 	//// draw Delaunay vertices
-	//if(m_view_delaunay_vertices)
-	//{
-	//	pDoc->get_cdt2().gl_draw_soup_vertices(0,0,0,2);
-	//}
+	if(m_view_delaunay_vertices)
+	{
+		pDoc->get_cts().gl_draw_soup_points(0,0,0);
+	}
 
 	////draw border vertices
 	//if(m_view_border_delaunay_vertices)

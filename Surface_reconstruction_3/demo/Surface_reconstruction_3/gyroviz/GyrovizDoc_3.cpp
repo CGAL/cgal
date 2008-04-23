@@ -90,6 +90,13 @@ BOOL CGyrovizDoc_3::OnOpenDocument(LPCTSTR lpszPathName)
 	// if .pwc extension
 	else if (extension.CompareNoCase(".pwc") == 0)
 	{
+		// FOR MATLAB
+		//if(!m_gyroviz_dt3.analyse_pwc((char *)lpszPathName))
+		//{
+		//	AfxMessageBox("Unable to open file");
+		//	return FALSE;
+		//}
+
 		double init = clock();
 		if(!m_gyroviz_dt3.read_pwc((char *)lpszPathName))
 		{

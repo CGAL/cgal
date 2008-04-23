@@ -34,19 +34,39 @@ public:
 			::glColor3ub(r,g,b);
 			::glBegin(GL_TRIANGLES);
 
-			int test_size = this->size();
-
 			for(int i=0; i<this->size(); ++i)
 			{
 				Point_3 p1 = (*this)[i].get_triangle3()[0];
 				Point_3 p2 = (*this)[i].get_triangle3()[1];
 				Point_3 p3 = (*this)[i].get_triangle3()[2];
+
 				::glVertex3d(p1.x(), p1.y(), p1.z());
 				::glVertex3d(p2.x(), p2.y(), p2.z());
 				::glVertex3d(p3.x(), p3.y(), p3.z());
 			} 
 			::glEnd();
 	} 
+
+
+	// 3D projection of the tracked 2D constrained triangulation as 3D points
+	void gl_draw_soup_points(const unsigned char r, const unsigned char g,
+		const unsigned char b){
+
+			::glColor3ub(r,g,b);
+			::glBegin(GL_POINTS);
+
+			for(int i=0; i<this->size(); ++i)
+			{
+				Point_3 p1 = (*this)[i].get_triangle3()[0];
+				Point_3 p2 = (*this)[i].get_triangle3()[1];
+				Point_3 p3 = (*this)[i].get_triangle3()[2];
+
+				::glVertex3d(p1.x(), p1.y(), p1.z());
+				::glVertex3d(p2.x(), p2.y(), p2.z());
+				::glVertex3d(p3.x(), p3.y(), p3.z());
+			} 
+			::glEnd();
+	}
 };
 
 #endif // _Gyroviz_constrained_triangle_soup_
