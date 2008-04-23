@@ -69,6 +69,12 @@ public:
 		return ! (*this == that); 
 	}
 
+	// Set position
+	void set_position(const Point& point)
+	{
+        Base::operator=(point);
+	}
+
 	// Get/set cameras
 	template < class InputIterator >
 	void set_cameras(InputIterator first_camera, InputIterator beyond_camera)

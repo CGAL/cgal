@@ -16,6 +16,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/smooth_jet_fitting_3.h>
 
 #include "Gyroviz_info_for_dt3.h"
 #include "Gyroviz_point_dt3.h"
@@ -258,7 +259,7 @@ public:
 
 
 			  // TEST //
-			  if(vertex_score > 0.125
+			  if(vertex_score > 0.1
 				    /*( (list_of_cameras.size() >=50  && list_of_cameras.size() <=75  && vertex_score < 0.15)||
 						(list_of_cameras.size() >75  && list_of_cameras.size() <=100  && vertex_score < 0.25)||
 						(list_of_cameras.size() >100  && list_of_cameras.size() <=175 && vertex_score < 0.3)||
@@ -281,6 +282,11 @@ public:
 	// fout.close(); 
 	// TEST // 
 
+	// Smooting
+	std::vector<Point> output;
+	CGAL::smooth_jet_fitting_3(gpts.begin(),gpts.end(),std::back_inserter(output),30);
+    for (int i=0; i < gpts.size(); i++)
+        gpts[i].set_position(output[i]);
 
     // Insert points
     insert(gpts.begin(), gpts.end());

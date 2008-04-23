@@ -8,7 +8,7 @@
 // CGAL
 #include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-//#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 
 
 // kernel
