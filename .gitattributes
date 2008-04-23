@@ -2824,7 +2824,6 @@ Modular_arithmetic/doc_tex/Modular_arithmetic_ref/Modularizable.tex -text
 Modular_arithmetic/doc_tex/Modular_arithmetic_ref/intro.tex -text
 Modular_arithmetic/doc_tex/Modular_arithmetic_ref/main.tex -text
 Modular_arithmetic/examples/Modular_arithmetic/CMakeLists.txt -text
-Modular_arithmetic/examples/Modular_arithmetic/makefile -text
 Modular_arithmetic/examples/Modular_arithmetic/modular_filter.cpp -text
 Modular_arithmetic/include/CGAL/Modular_arithmetic/Modular_type.h -text
 Modular_arithmetic/test/Modular_arithmetic/CMakeLists.txt -text
