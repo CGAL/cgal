@@ -35,7 +35,6 @@
 #include <CGAL/iterator.h>
 
 #include <boost/mpl/if.hpp>
-#include <boost/iterator/iterator_facade.hpp>
 
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
@@ -663,26 +662,18 @@ namespace CGALi {
 
   template < class DSC, bool Const >
   class CC_iterator
-    : public boost::iterator_facade< CC_iterator<DSC, Const>,
-                                     typename boost::mpl::if_c< Const,
-                                         const typename DSC::value_type,
-                                         typename DSC::value_type>::type,
-                                     std::bidirectional_iterator_tag >
   {
-    typedef CC_iterator<DSC, Const>                   Self;
     typedef typename DSC::iterator                    iterator;
-    typedef boost::iterator_facade< Self,
-                                    typename boost::mpl::if_c< Const,
-                                        const typename DSC::value_type,
-                                        typename DSC::value_type>::type,
-                                    std::bidirectional_iterator_tag >
-                                                      Base;
-
+    typedef CC_iterator<DSC, Const>                   Self;
   public:
-
-    typedef typename Base::value_type                 value_type;
-    typedef typename Base::pointer                    pointer;
-    typedef typename Base::reference                  reference;
+    typedef typename DSC::value_type                  value_type;
+    typedef typename DSC::size_type                   size_type;
+    typedef typename DSC::difference_type             difference_type;
+    typedef typename boost::mpl::if_c< Const, const value_type*,
+                                       value_type*>::type pointer;
+    typedef typename boost::mpl::if_c< Const, const value_type&,
+                                       value_type&>::type reference;
+    typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with NULL is required by our Handle concept.
     CC_iterator()
@@ -739,15 +730,6 @@ namespace CGALi {
       m_ptr.p = ptr;
     }
 
-    friend class boost::iterator_core_access;
-
-    bool equal(Self other) const
-    {
-      return m_ptr.p == other.m_ptr.p;
-    }
-
-    reference dereference() const { return *(m_ptr.p); }
-
     // NB : in case empty container, begin == end == NULL.
     void increment()
     {
@@ -791,6 +773,16 @@ namespace CGALi {
 
   public:
 
+    Self & operator++() { increment(); return *this; }
+    Self & operator--() { decrement(); return *this; }
+
+    Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+    Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+    reference operator*() const { return *(m_ptr.p); }
+
+    pointer   operator->() const { return (m_ptr.p); }
+
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
@@ -801,6 +793,22 @@ namespace CGALi {
     void *   for_compact_container() const { return (m_ptr.vp); }
     void * & for_compact_container()       { return (m_ptr.vp); }
   };
+
+  template < class DSC, bool Const1, bool Const2 >
+  inline
+  bool operator==(const CC_iterator<DSC, Const1> &rhs,
+                  const CC_iterator<DSC, Const2> &lhs)
+  {
+    return &*rhs == &*lhs;
+  }
+
+  template < class DSC, bool Const1, bool Const2 >
+  inline
+  bool operator!=(const CC_iterator<DSC, Const1> &rhs,
+                  const CC_iterator<DSC, Const2> &lhs)
+  {
+    return &*rhs != &*lhs;
+  }
 
   // Comparisons with NULL are part of CGAL's Handle concept...
   template < class DSC, bool Const >
