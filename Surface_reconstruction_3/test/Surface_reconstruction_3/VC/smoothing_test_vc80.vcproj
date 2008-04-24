@@ -194,6 +194,10 @@
 			Name="Surface_reconstruction_3 package"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath="..\..\..\include\CGAL\smooth_jet_fitting_3.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

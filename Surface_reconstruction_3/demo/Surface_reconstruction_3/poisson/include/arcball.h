@@ -1,3 +1,4 @@
+#pragma once
 #include "Director.h"
 
 class Arcball 
@@ -15,10 +16,10 @@ class Arcball
  public:
 
   Director* setDirector(float max_size,
-		                    float cx, 
-												float cy, 
-												float cz)
-	{
+                        float cx, 
+                        float cy, 
+                        float cz)
+  {
     Director* b = new Director();
     b->radius() = 1.0f/max_size;
     b->setOffset(cx, cy, cz);
@@ -26,12 +27,12 @@ class Arcball
   }
   
   Arcball(int width,
-		      int height,
-					float max_size, 
-					float cx,
-					float cy,
-					float cz )
-	{
+          int height,
+          float max_size, 
+          float cx,
+          float cy,
+          float cz )
+  {
     size = max_size;
     b = setDirector(max_size, cx, cy, cz);
 
@@ -45,7 +46,7 @@ class Arcball
   }
   
   ~Arcball()
-	{
+  {
     delete b;
   }
 
@@ -74,13 +75,13 @@ class Arcball
    const float* offset = b->getOffset();
    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
-	 glPushMatrix();
+   glPushMatrix();
 
    glDisable(GL_LIGHTING);
 
    glTranslated(-offset[0], -offset[1], -offset[2]);
 
-	 const float scale = 1.2f;
+   const float scale = 1.2f;
    glScaled(size * scale, size * scale, size * scale);
 
    glColor3d(0., 0., 1.);
@@ -101,11 +102,11 @@ class Arcball
  {
    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
-	 glPushMatrix();
+   glPushMatrix();
 
    glDisable(GL_LIGHTING);
 
-	 const float scale = 1.f;
+   const float scale = 1.f;
    glScaled(scale, scale, scale);
 
    glColor3d(0., 0., 1.);
@@ -135,14 +136,14 @@ class Arcball
     const float* offset;
     offset = b->getOffset();
 
-		glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     
     glLoadMatrixf(b->mat());
     glTranslated(offset[0], offset[1], offset[2]);
   }
   
   void setCamera_no_offset_no_scale() {
-		glMatrixMode(GL_MODELVIEW);
+    glMatrixMode(GL_MODELVIEW);
     
     glLoadMatrixf(b->matSansTransZoom());
   }
@@ -156,11 +157,11 @@ class Arcball
     b->recenter(0., 0., 0.);
   }
 
-	void reset()
-	{
+  void reset()
+  {
     b->radius() = 1.0f/size;
-		recenter();
-	}
+    recenter();
+  }
   
   void translate(int xold, int yold, int x, int y) {
       float Xold = ((float) xold - xside)/side;
@@ -174,7 +175,7 @@ class Arcball
   }
   
   void rotate_obj(int xold, int yold, int x, int y) 
-	{
+  {
     float Xold = ((float) xold - xside)/side;
     float Yold = ((float) yold - yside)/side;
     float X = ((float) x - xside)/side;
@@ -187,12 +188,12 @@ class Arcball
     imCenter[2] = -offset[2];
     b->image(imCenter);
 
-		const float scale = 1.2f;
+    const float scale = 1.2f;
 
     b->rotationObj((Xold - imCenter[0])/(b->radius()*size*scale), 
-		    (-Yold - imCenter[1])/(b->radius()*size*scale), 
-		    (X - imCenter[0])/(b->radius()*size*scale), 
-		    (-Y - imCenter[1])/(b->radius()*size*scale));
+        (-Yold - imCenter[1])/(b->radius()*size*scale), 
+        (X - imCenter[0])/(b->radius()*size*scale), 
+        (-Y - imCenter[1])/(b->radius()*size*scale));
   }
   
   void rotate_scene(int xold, int yold, int x, int y) {

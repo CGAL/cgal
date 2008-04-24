@@ -38,12 +38,12 @@ template < typename InputIterator,
 OutputIterator
 estimate_normals_poles_3(InputIterator first,      // input points
                          InputIterator beyond,   
-											   OutputIterator normals,   // output normals
-												 DT& dt,                   // Delaunay triangulation
-												 const Kernel::FT,         // inflating factor of bounding box
-												 const bool remove_bounding_points)
+                         OutputIterator normals,   // output normals
+                         DT& dt,                   // Delaunay triangulation
+                         const Kernel::FT,         // inflating factor of bounding box
+                         const bool remove_bounding_points)
 {
-	// basic kernel object types
+  // basic kernel object types
   typedef typename Kernel::FT       FT;
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Vector_3 Vector;

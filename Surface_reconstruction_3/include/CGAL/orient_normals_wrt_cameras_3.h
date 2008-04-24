@@ -35,8 +35,8 @@ template < class Gt, ///< Geometric traits class.
 >
 void
 orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point position
-			                      OrientedNormal_3& normal, ///< 3D point normal (in and out)
-										        InputIterator first_camera,  ///< 3D point cameras
+                            OrientedNormal_3& normal, ///< 3D point normal (in and out)
+                            InputIterator first_camera,  ///< 3D point cameras
                             InputIterator beyond_camera) ///< 3D point cameras
 {
     typedef typename Gt::FT       FT;
@@ -74,9 +74,9 @@ orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point positio
     // Orient n backwards to cp
     if (max_dot_product > 0)
     {
-    	Vector cp = p - max_camera;
-    	FT dot = (cp * n);
-    	if (dot > 0)
+      Vector cp = p - max_camera;
+      FT dot = (cp * n);
+      if (dot > 0)
          n = -n;
       normal = Normal(n, true /* oriented */);
     }
@@ -119,11 +119,11 @@ orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices
                              VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
                              VertexCamerasMap vertex_cameras_map) ///< property map VertexIterator -> pair of camera iterators
 {
-	typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
+  typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
   typedef typename Vertex_type::Geom_traits Gt;
 
-	// iterate over input points and orient normals
-	for (VertexIterator it = first; it != beyond; it++)
+  // iterate over input points and orient normals
+  for (VertexIterator it = first; it != beyond; it++)
   {
       orient_normal_wrt_cameras_3<Gt>(get(vertex_point_map,it),
                                       vertex_normal_map[it],

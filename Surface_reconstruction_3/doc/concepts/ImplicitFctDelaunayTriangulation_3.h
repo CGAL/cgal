@@ -35,22 +35,22 @@ class ImplicitFctDelaunayTriangulation_3 : public DelaunayTriangulation_3,
 public:
 
   // Geometric types
-	typedef typename Geom_traits::FT FT;
-	typedef typename Geom_traits::Vector_3 Vector;
-	typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
-	typedef typename Geom_traits::Sphere_3 Sphere;
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
-	typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
-	typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
+  typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
+  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
   /// Iterator over normals
   typedef xxx Normal_iterator;
 
-	/// Point type
-	static const unsigned char INPUT = 0;
-	static const unsigned char STEINER = 1;
+  /// Point type
+  static const unsigned char INPUT = 0;
+  static const unsigned char STEINER = 1;
 
 // Public methods
 public:
@@ -61,20 +61,20 @@ public:
   Normal_iterator normals_end();
 
   /// Get the bounding box.
-	Iso_cuboid_3 bounding_box() const;
+  Iso_cuboid_3 bounding_box() const;
 
   /// Get bounding sphere.
-	Sphere bounding_sphere() const;
+  Sphere bounding_sphere() const;
 
-	/// Get points barycenter.
-	Point barycenter() const;
+  /// Get points barycenter.
+  Point barycenter() const;
 
-	/// Get the standard deviation of the distance to barycenter.
-	FT diameter_standard_deviation() const;
+  /// Get the standard deviation of the distance to barycenter.
+  FT diameter_standard_deviation() const;
 
   /// Update barycenter, bounding box, bounding sphere and standard deviation.
   /// Owner is responsible to call this function after modifying the triangulation.
-	void invalidate_bounding_box();
+  void invalidate_bounding_box();
 
   /// Insert point to the triangulation.
   Vertex_handle insert(const Point& p,
@@ -94,10 +94,10 @@ public:
 
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
   /// @return the number of (finite) vertices.
-	unsigned int index_vertices();
+  unsigned int index_vertices();
 
   /// Index unconstraint vertices following the order of Finite_vertices_iterator.
   /// @return the number of unconstraint vertices.
-	unsigned int index_unconstrained_vertices();
+  unsigned int index_unconstrained_vertices();
 };
 

@@ -49,30 +49,30 @@ private:
 public:
 
     typedef Gt Geom_traits; ///< Kernel's geometric traits
-	  typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
     typedef Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
 
 // Public methods
 public:
 
-		/// Point is (0,0,0) by default.
-		/// Normal is (0,0,0) by default.
-		/// Normal is oriented by default.
+    /// Point is (0,0,0) by default.
+    /// Normal is (0,0,0) by default.
+    /// Normal is oriented by default.
     Point_with_normal_3(const Origin& o = ORIGIN)
     : Base(o)
-		{
-		}
+    {
+    }
     Point_with_normal_3(FT x, FT y, FT z)
     : Base(x,y,z)
-		{
-		}
+    {
+    }
     Point_with_normal_3(const Point& point,
-			                  const Normal& normal = NULL_VECTOR)
+                        const Normal& normal = NULL_VECTOR)
     : Base(point)
-		{
-			m_normal = normal;
-		}
+    {
+      m_normal = normal;
+    }
 
     // Default copy constructor and operator =() are fine.
 
@@ -87,13 +87,13 @@ public:
     }
 
     /// Get/set normal (vector + orientation).
-	  const Normal& normal() const { return m_normal; }
-	  Normal&       normal()       { return m_normal; }
+    const Normal& normal() const { return m_normal; }
+    Normal&       normal()       { return m_normal; }
 
 // Data
 private:
 
-	  Normal  m_normal;
+    Normal  m_normal;
     bool    m_oriented_normal;
 };
 

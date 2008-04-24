@@ -352,6 +352,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
+				RelativePath="..\..\..\include\CGAL\average_spacing_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\estimate_normals_3.h"
 				>
 			</File>
@@ -397,6 +401,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\smooth_jet_fitting_3.h"
 				>
 			</File>
 			<File

@@ -92,8 +92,8 @@ class Director {
   // place dans (X,Y,Z) les coordonnées du point sélectionné à la souris
   // en cliquant en (x,y)
   void select(float x, float y, 
-	      float& X, float& Y, float& Z,
-	      float& XX, float& YY, float& ZZ);
+	          float& X, float& Y, float& Z,
+	          float& XX, float& YY, float& ZZ);
   
   // renvoie la hauteur de la souris sur la boule dans la 
   // direction du plan de coupe

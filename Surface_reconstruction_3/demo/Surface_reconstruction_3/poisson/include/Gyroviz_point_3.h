@@ -49,7 +49,7 @@ public:
 
     // Repeat Point_with_normal_3 public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits
-	  typedef typename Geom_traits::FT FT;
+    typedef typename Geom_traits::FT FT;
     typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
     typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
 
@@ -59,27 +59,27 @@ public:
 // Public methods
 public:
 
-		/// Point is (0,0,0) by default.
-		/// Normal is (0,0,0) by default.
-		/// Normal is oriented by default.
-		/// Camera list is empty by default.
+    /// Point is (0,0,0) by default.
+    /// Normal is (0,0,0) by default.
+    /// Normal is oriented by default.
+    /// Camera list is empty by default.
     Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
-		{
-		}
+    {
+    }
     Gyroviz_point_3(FT x, FT y, FT z)
     : Base(x,y,z)
-		{
-		}
+    {
+    }
     Gyroviz_point_3(const Point& point,
                     const Normal& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
-		{
-		}
+    {
+    }
     template < class InputIterator >
     Gyroviz_point_3(const Point& point,
-	                  const Normal& normal,
-										InputIterator first_camera, InputIterator beyond_camera)
+                    const Normal& normal,
+                    InputIterator first_camera, InputIterator beyond_camera)
     : Base(point, normal)
     {
       std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
@@ -104,8 +104,8 @@ public:
       cameras.clear();
       std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
     }
-    Camera_const_iterator cameras_begin() const { return	cameras.begin(); }
-    Camera_const_iterator cameras_end  () const { return	cameras.end(); }
+    Camera_const_iterator cameras_begin() const { return  cameras.begin(); }
+    Camera_const_iterator cameras_end  () const { return  cameras.end(); }
     
 // Data
 private:

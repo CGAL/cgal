@@ -304,8 +304,8 @@ void Director::translation(float dx, float dy, float dz) {
 }
 
 void Director::select(float x, float y, 
-		      float& X, float& Y, float& Z,
-		      float& XX, float& YY, float& ZZ) {
+                      float& X, float& Y, float& Z,
+                      float& XX, float& YY, float& ZZ) {
   float norm = sqrt(x*x + y*y);
   if(norm > .9999f) {
     x = .9999f*x/norm;

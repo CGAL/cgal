@@ -14,7 +14,7 @@ struct Point_vertex_handle_3
 private:
 
   double m_coord[3];
-	Vertex_handle m_vertex_handle;
+  Vertex_handle m_vertex_handle;
 
 public:
 
@@ -44,7 +44,7 @@ public:
 
   /// Default copy constructor, operator =() and destructor are fine.
 
-	operator Vertex_handle() const { return m_vertex_handle; }
+  operator Vertex_handle() const { return m_vertex_handle; }
 
   const double x() const { return m_coord[0]; }
   const double y() const { return m_coord[1]; }
@@ -84,7 +84,7 @@ struct Kernel_traits< Point_vertex_handle_3<Vertex_handle> > {
 template <class Vertex_handle>
 struct Construct_cartesian_const_iterator_vertex_handle_3
 {
-	typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
 
   const double* operator()(const Point_vertex_handle_3& p) const
   { return static_cast<const double*>(p.m_coord); }
@@ -101,7 +101,7 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
-	typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
@@ -109,13 +109,13 @@ struct Euclidean_distance_vertex_handle_3
     double disty = p1.y()-p2.y();
     double distz = p1.z()-p2.z();
     return distx * distx +
-			     disty * disty +
-					 distz * distz;
+           disty * disty +
+           distz * distz;
   }
 
   template <class TreeTraits>
   double min_distance_to_rectangle(const Point_vertex_handle_3& p,
-				   const Kd_tree_rectangle<TreeTraits>& b) const {
+           const Kd_tree_rectangle<TreeTraits>& b) const {
     double distance(0.0), h = p.x();
     if (h < b.min_coord(0)) distance += (b.min_coord(0)-h)*(b.min_coord(0)-h);
     if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
@@ -130,7 +130,7 @@ struct Euclidean_distance_vertex_handle_3
 
   template <class TreeTraits>
   double max_distance_to_rectangle(const Point_vertex_handle_3& p,
-				   const Kd_tree_rectangle<TreeTraits>& b) const {
+           const Kd_tree_rectangle<TreeTraits>& b) const {
     double h = p.x();
 
     double d0 = (h >= (b.min_coord(0)+b.max_coord(0))/2.0) ?
@@ -146,7 +146,7 @@ struct Euclidean_distance_vertex_handle_3
   }
 
   double new_distance(double& dist, double old_off, double new_off,
-		      int cutting_dimension)  const {
+          int cutting_dimension)  const {
     return dist + new_off*new_off - old_off*old_off;
   }
 

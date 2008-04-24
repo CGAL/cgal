@@ -42,36 +42,36 @@ typedef Kernel::Point_3 Point;
 
 // read point set from .xyz file
 bool read_point_set(char *input_filename,
-										std::list<Point>& points)
+                    std::list<Point>& points)
 {
   std::cerr << "  Open " << input_filename << " for reading...";
 
   std::ifstream stream(input_filename);
-	if(!stream.is_open())
-	{
-		std::cerr << "failed" << std::endl;
-		return false;
-	}
+  if(!stream.is_open())
+  {
+    std::cerr << "failed" << std::endl;
+    return false;
+  }
 
-	// read point set
-	Point point;
-	while(!stream.fail())
-	{
-		stream >> point;
-		points.push_back(point);
-	}
-	std::cerr << "ok (" << points.size() << " points)" << std::endl;
-	return true;
+  // read point set
+  Point point;
+  while(!stream.fail())
+  {
+    stream >> point;
+    points.push_back(point);
+  }
+  std::cerr << "ok (" << points.size() << " points)" << std::endl;
+  return true;
 }
 
 void test_average_spacing(std::list<Point>& points,
-							            const unsigned int k)
+                          const unsigned int k)
 {
-	std::cerr << "  Average spacing using KNN: ";
-	std::list<Point> output;
-	typedef std::list<Point>::iterator Iterator;
-	std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
-	std::cerr << " ok" << std::endl;
+  std::cerr << "  Average spacing using KNN: ";
+  std::list<Point> output;
+  typedef std::list<Point>::iterator Iterator;
+  std::cerr << CGAL::average_spacing_3<Iterator,FT>(points.begin(),points.end(),k);
+  std::cerr << " ok" << std::endl;
 }
 
 // ----------------------------------------------------------------------------
@@ -84,23 +84,23 @@ int main(int argc, char * argv[])
 
   if(argc < 2)
   {
-		std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
-		return EXIT_FAILURE;
+    std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
+    return EXIT_FAILURE;
   }
 
   // for each input file
-	const unsigned int k = 8; // # neighbors
+  const unsigned int k = 8; // # neighbors
   for(int i=1; i<argc; i++)
   {
-		std::list<Point> points;
-		if(read_point_set(argv[i],points))
-		{
-			test_average_spacing(points,k);
-		}
-		else
-			std::cerr << "  Unable to open file " << argv[i] << std::endl;
-	}
-	return EXIT_SUCCESS;
+    std::list<Point> points;
+    if(read_point_set(argv[i],points))
+    {
+      test_average_spacing(points,k);
+    }
+    else
+      std::cerr << "  Unable to open file " << argv[i] << std::endl;
+  }
+  return EXIT_SUCCESS;
 }
  
 

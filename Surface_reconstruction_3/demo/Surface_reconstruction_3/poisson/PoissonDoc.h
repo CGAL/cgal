@@ -47,34 +47,34 @@ protected: // create from serialization only
 // Data members
 private:
 
-	// input point set
-	std::list<Point> m_points;
+    // input point set
+    std::list<Point> m_points;
 
-	// Poisson implicit
-  Poisson_implicit_function m_poisson_function; // Poisson implicit function
-  Dt3 m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
-  bool m_triangulation_refined; // Is Delaunay refinement applied?
-  bool m_poisson_solved; // Is the Poisson equation solved?
+    // Poisson implicit
+    Poisson_implicit_function m_poisson_function; // Poisson implicit function
+    Dt3 m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
+    bool m_triangulation_refined; // Is Delaunay refinement applied?
+    bool m_poisson_solved; // Is the Poisson equation solved?
 
-	// Surface mesher 
-  STr m_surface_mesher_dt; // 3D-Delaunay triangulation
-  C2t3 m_surface_mesher_c2t3; // 2D-complex in m_surface_mesher_dt
+    // Surface mesher 
+    STr m_surface_mesher_dt; // 3D-Delaunay triangulation
+    C2t3 m_surface_mesher_c2t3; // 2D-complex in m_surface_mesher_dt
 
-	// Surface mesher options
-	double m_sm_angle;
-	double m_sm_radius;
-	double m_sm_distance;
+    // Surface mesher options
+    double m_sm_angle;
+    double m_sm_radius;
+    double m_sm_distance;
 
-	// Delaunay refinement options
-	double m_dr_sizing;
-	double m_dr_shell_size;
-	unsigned int m_dr_max_vertices;
+    // Delaunay refinement options
+    double m_dr_sizing;
+    double m_dr_shell_size;
+    unsigned int m_dr_max_vertices;
 
-  // Surface mesher and marching tet common options
-	double m_contouring_value;
+    // Surface mesher and marching tet common options
+    double m_contouring_value;
 
-  // Normal estimation options
-	unsigned int m_number_of_neighbours;
+    // Normal estimation options
+    unsigned int m_number_of_neighbours;
 
 // Public methods
 public:
@@ -109,29 +109,28 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	afx_msg void OnReconstructionDelaunayrefinement();
-	afx_msg void OnReconstructionPoisson();
-	afx_msg void OnAlgorithmsRefineinshell();
-	afx_msg void OnReconstructionSurfacemeshing();
-	afx_msg void OnEditOptions();
-  afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
-  afx_msg void OnUpdateReconstructionSurfacemeshing(CCmdUI *pCmdUI);
-  afx_msg void OnAlgorithmsMarchingtetcontouring();
-  afx_msg void OnUpdateAlgorithmsMarchingtetcontouring(CCmdUI *pCmdUI);
-  afx_msg void OnFileSaveSurface();
-  afx_msg void OnUpdateFileSaveSurface(CCmdUI *pCmdUI);
-  afx_msg void OnFileSaveAs();
-  afx_msg void OnUpdateFileSaveAs(CCmdUI *pCmdUI);
-	afx_msg void OnAlgorithmsExtrapolatenormals();
-	afx_msg void OnAlgorithmsPoissonStatistics();
-  afx_msg void OnUpdateAlgorithmsPoissonstatistics(CCmdUI *pCmdUI);
-  afx_msg void OnAlgorithmsEstimateNormalsByPCA();
-  afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
-  afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
-  afx_msg void OnAlgorithmsOrientNormalsWithMST();
-public:
-	afx_msg void OnAlgorithmsSmoothusingjetfitting();
+    virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+    afx_msg void OnReconstructionDelaunayrefinement();
+    afx_msg void OnReconstructionPoisson();
+    afx_msg void OnAlgorithmsRefineinshell();
+    afx_msg void OnReconstructionSurfacemeshing();
+    afx_msg void OnEditOptions();
+    afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionSurfacemeshing(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsMarchingtetcontouring();
+    afx_msg void OnUpdateAlgorithmsMarchingtetcontouring(CCmdUI *pCmdUI);
+    afx_msg void OnFileSaveSurface();
+    afx_msg void OnUpdateFileSaveSurface(CCmdUI *pCmdUI);
+    afx_msg void OnFileSaveAs();
+    afx_msg void OnUpdateFileSaveAs(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsExtrapolatenormals();
+    afx_msg void OnAlgorithmsPoissonStatistics();
+    afx_msg void OnUpdateAlgorithmsPoissonstatistics(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsEstimateNormalsByPCA();
+    afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
+    afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
+    afx_msg void OnAlgorithmsOrientNormalsWithMST();
+    afx_msg void OnAlgorithmsSmoothUsingJetFitting();
 };
 
 

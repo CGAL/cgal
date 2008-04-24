@@ -89,8 +89,8 @@ public:
 	afx_msg void OnRenderSurface();
 	afx_msg void OnUpdateRenderSurface(CCmdUI *pCmdUI);
 	afx_msg void OnArcballReset();
-  afx_msg void OnRenderArcball();
-  afx_msg void OnUpdateRenderArcball(CCmdUI *pCmdUI);
+    afx_msg void OnRenderArcball();
+    afx_msg void OnUpdateRenderArcball(CCmdUI *pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in PoissonView.cpp

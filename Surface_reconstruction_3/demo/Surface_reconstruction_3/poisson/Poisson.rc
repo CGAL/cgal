@@ -89,7 +89,6 @@ IDR_PoissonTYPE MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "&Close",                      ID_FILE_CLOSE
         MENUITEM "Save input point set &as...\tCtrl+S", ID_FILE_SAVE_AS
@@ -141,7 +140,7 @@ BEGIN
         POPUP "Arcball"
         BEGIN
             MENUITEM "Reset",                       ID_ARCBALL_RESET
-            MENUITEM "View sphere\\A",              ID_RENDER_ARCBALL
+            MENUITEM "View sphere\tA",              ID_RENDER_ARCBALL
         END
     END
     POPUP "&View"
@@ -174,7 +173,6 @@ BEGIN
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_RENDER_DELAUNAYEDGES, VIRTKEY, NOINVERT
     "E",            ID_ALGORITHMS_ESTIMATENORMALSBYPCA, VIRTKEY, NOINVERT
-    "V",            ID_RENDER_POINTS,       VIRTKEY, NOINVERT
     "M",            ID_RECONSTRUCTION_SURFACEMESHING, VIRTKEY, NOINVERT
     "N",            ID_RENDER_NORMALS,      VIRTKEY, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
@@ -184,6 +182,7 @@ BEGIN
     "R",            ID_RECONSTRUCTION_DELAUNAYREFINEMENT, VIRTKEY, NOINVERT
     "S",            ID_RENDER_SURFACE,      VIRTKEY, NOINVERT
     "S",            ID_FILE_SAVE_AS,        VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_RENDER_POINTS,       VIRTKEY, NOINVERT
     "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
@@ -236,13 +235,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "TODO: <Company name>"
-            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "CompanyName", "INRIA"
+            VALUE "FileDescription", "Poisson executable"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "Poisson.exe"
-            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
+            VALUE "LegalCopyright", "(c) 2008 INRIA.  All rights reserved."
             VALUE "OriginalFilename", "Poisson.exe"
-            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductName", "Poisson surface reconstruction demo"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -426,7 +425,7 @@ CAPTION "Options"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,197,160,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,143,160,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,143,160,50,14
     GROUPBOX        "Surface Mesher",IDC_STATIC,6,6,114,84
     LTEXT           "Angle",IDC_STATIC,18,30,24,8
     LTEXT           "Radius",IDC_STATIC,18,48,24,8

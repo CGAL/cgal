@@ -35,10 +35,10 @@ public:
 
   typedef xxx Geom_traits; ///< Kernel's geometric traits
 
-	typedef Geom_traits::FT FT;
-	typedef Geom_traits::Point_3 Point;
-	typedef Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
-	typedef Geom_traits::Sphere_3 Sphere;
+  typedef Geom_traits::FT FT;
+  typedef Geom_traits::Point_3 Point;
+  typedef Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Triangulation::Normal Normal; ///< Model of OrientedNormal_3 concept.
@@ -64,40 +64,40 @@ public:
   //int insert(InputIterator first, InputIterator beyond);
 
   /// Get the bounding box.
-	Iso_cuboid_3 bounding_box() const;
+  Iso_cuboid_3 bounding_box() const;
 
   /// Get bounding sphere.
-	Sphere bounding_sphere() const;
+  Sphere bounding_sphere() const;
 
   /// Get the region of interest, ignoring the outliers.
   /// This method is used to define the OpenGL arcball sphere.
-	Sphere region_of_interest() const;
+  Sphere region_of_interest() const;
 
   /// You should call compute_implicit_function() once when points insertion is over.
   /// Return false on error.
   /// TODO: add parameters to compute_implicit_function()?
-	bool compute_implicit_function();
+  bool compute_implicit_function();
 
   /// Shift and orient the implicit function such that:
   /// - the implicit function = 0 for points / f() = contouring_value,
   /// - the implicit function < 0 inside the surface.
   ///
   /// Return the minimum value of the implicit function.
-	FT set_contouring_value(FT contouring_value);
+  FT set_contouring_value(FT contouring_value);
 
   /// [ImplicitFunction interface]
   ///
   /// Evaluate implicit function for any 3D point.
-	FT operator() (Point p);
+  FT operator() (Point p);
 
   /// Get point / the implicit function is minimum
-	const Point& sink() const;
+  const Point& sink() const;
 
   /// Get average value of the implicit function over input vertices
-	FT average_value_at_input_vertices() const;
+  FT average_value_at_input_vertices() const;
 
   /// Get median value of the implicit function over input vertices
-	FT median_value_at_input_vertices() const;
+  FT median_value_at_input_vertices() const;
 
 };
 

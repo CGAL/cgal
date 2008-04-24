@@ -48,75 +48,75 @@ public:
 // Public methods
 public:
 
-		/// Normal vector is (0,0,0) by default.
-		/// Normal is oriented by default.
+    /// Normal vector is (0,0,0) by default.
+    /// Normal is oriented by default.
     Oriented_normal_3(Null_vector = NULL_VECTOR)
-		{
-			m_pNormal = NULL;
-			m_oriented = true;
-		}
+    {
+      m_pNormal = NULL;
+      m_oriented = true;
+    }
     Oriented_normal_3(const Vector& vector, bool oriented = true)
-		{
-			m_pNormal = new Vector(vector);
-			m_oriented = oriented;
-		}
+    {
+      m_pNormal = new Vector(vector);
+      m_oriented = oriented;
+    }
 
     /// Copy constructor
     Oriented_normal_3(const Oriented_normal_3& that)
-		{
-			m_pNormal = (that.m_pNormal == NULL) ? NULL : new Vector(*that.m_pNormal);
-			m_oriented = that.m_oriented;
-		}
+    {
+      m_pNormal = (that.m_pNormal == NULL) ? NULL : new Vector(*that.m_pNormal);
+      m_oriented = that.m_oriented;
+    }
     /// Operator =()
     Oriented_normal_3& operator=(const Oriented_normal_3& that)
-		{
+    {
       if (m_pNormal != NULL && that.m_pNormal != NULL) 
       {
         *m_pNormal = *that.m_pNormal;
       }
       else
       {
-		    delete m_pNormal;
-			  m_pNormal = (that.m_pNormal == NULL) ? NULL : new Vector(*that.m_pNormal);
+        delete m_pNormal;
+        m_pNormal = (that.m_pNormal == NULL) ? NULL : new Vector(*that.m_pNormal);
       }
 
-			m_oriented = that.m_oriented;
-			
-			return *this;
-		}
+      m_oriented = that.m_oriented;
+      
+      return *this;
+    }
 
     /// Destructor
     ~Oriented_normal_3()
-		{
-		  delete m_pNormal;
-		}
+    {
+      delete m_pNormal;
+    }
 
     /// Get normal vector. 
-	  Vector get_vector() const
-	  {
-		  if(m_pNormal != NULL)
-			  return *m_pNormal;
-		  else
-			  return CGAL::NULL_VECTOR;
-	  }
+    Vector get_vector() const
+    {
+      if(m_pNormal != NULL)
+        return *m_pNormal;
+      else
+        return CGAL::NULL_VECTOR;
+    }
 
     /// Get normal orientation. 
     bool is_normal_oriented() const { return m_oriented; }
 
     /// Set normal (vector + orientation). 
-	  void set(const Vector& vector, bool oriented = true)
-	  {
-		  if(m_pNormal == NULL)
-			  m_pNormal = new Vector(vector);
-		  else
-			  *m_pNormal = vector;
+    void set(const Vector& vector, bool oriented = true)
+    {
+      if(m_pNormal == NULL)
+        m_pNormal = new Vector(vector);
+      else
+        *m_pNormal = vector;
       m_oriented = oriented;
-	  }
+    }
 
 // Data
 private:
 
-	  Vector *m_pNormal;    // normal vector (optional)
+    Vector *m_pNormal;    // normal vector (optional)
     bool    m_oriented;
 };
 

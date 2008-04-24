@@ -43,8 +43,8 @@ template < typename Kernel, ///< Geometric traits class.
 >
 OrientedNormal_3
 estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
-								      Tree& tree, ///< KD-tree
-								      const unsigned int K)
+                      Tree& tree, ///< KD-tree
+                      const unsigned int K)
 {
   // basic geometric types
   typedef typename Kernel::Point_3  Point;
@@ -52,39 +52,39 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
   typedef typename Kernel::Vector_3 Vector;
   typedef OrientedNormal_3 Oriented_normal;
 
-	// types for K nearest neighbor search
+  // types for K nearest neighbor search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
-	// gather set of (K+1) neighboring points
-	std::list<Point> points;
+  // gather set of (K+1) neighboring points
+  std::list<Point> points;
 
-	// performs K + 1 queries (if unique the query point is
-	// output first). search may be aborted when K is greater
-	// than number of input points
+  // performs K + 1 queries (if unique the query point is
+  // output first). search may be aborted when K is greater
+  // than number of input points
   Neighbor_search search(tree,query,K+1);
-	Search_iterator search_iterator = search.begin();
-	unsigned int i;
-	for(i=0;i<(K+1);i++)
-	{
-		if(search_iterator == search.end())
-			break; // premature ending
-		points.push_back(search_iterator->first);
-		search_iterator++;
-	}
-	CGAL_surface_reconstruction_precondition(points.size() >= 1);
+  Search_iterator search_iterator = search.begin();
+  unsigned int i;
+  for(i=0;i<(K+1);i++)
+  {
+    if(search_iterator == search.end())
+      break; // premature ending
+    points.push_back(search_iterator->first);
+    search_iterator++;
+  }
+  CGAL_surface_reconstruction_precondition(points.size() >= 1);
 
-	// performs plane fitting by point-based PCA
-	Plane plane;
+  // performs plane fitting by point-based PCA
+  Plane plane;
 #ifndef CGAL_DIMENSION_H // if CGAL 3.3.1
   linear_least_squares_fitting_3(points.begin(),points.end(),plane);
 #else // if CGAL >= 3.4
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
 #endif
 
-	// output normal vector (already normalized by PCA)
-	return OrientedNormal_3(plane.orthogonal_vector(),
+  // output normal vector (already normalized by PCA)
+  return OrientedNormal_3(plane.orthogonal_vector(),
                           false /* not oriented */);
 }
 
@@ -101,39 +101,39 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3.
 OutputIterator ///< return past-the-end iterator of output
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
-											 OutputIterator normals, ///< output normals
-											 const unsigned int K,   ///< number of neighbors
-											 const Kernel& /*kernel*/)
+                       OutputIterator normals, ///< output normals
+                       const unsigned int K,   ///< number of neighbors
+                       const Kernel& /*kernel*/)
 {
   // Hard-code the Normal type as back_insert_iterator value_type is wrong (VC++ 2003)
-	// typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
+  // typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
   typedef CGAL::Oriented_normal_3<Kernel> Normal;
 
-	// types for K-nearest neighbor search structure
+  // types for K-nearest neighbor search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
-	// but this is costly to check
+  // but this is costly to check
   CGAL_surface_reconstruction_precondition(first != beyond);
 
-	// precondition: at least 2 nearest neighbors
+  // precondition: at least 2 nearest neighbors
   CGAL_surface_reconstruction_precondition(K >= 2);
 
-	// instanciate a KD-tree search
+  // instanciate a KD-tree search
   Tree tree(first,beyond);
 
-	// iterate over input points, compute and output normal
-	// vectors (already normalized)
-	InputIterator it;
-	for(it = first; it != beyond; it++)
-	{
-		*normals = estimate_normal_pca_3<Kernel,Tree,Normal>(*it,tree,K);
-		normals++;
-	}
-	return normals;
+  // iterate over input points, compute and output normal
+  // vectors (already normalized)
+  InputIterator it;
+  for(it = first; it != beyond; it++)
+  {
+    *normals = estimate_normal_pca_3<Kernel,Tree,Normal>(*it,tree,K);
+    normals++;
+  }
+  return normals;
 }
 
 /// Estimate normals direction using linear least
@@ -147,12 +147,12 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3
 OutputIterator ///< return past-the-end iterator of output
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
-											 OutputIterator normals, ///< output normals
-											 const unsigned int K)   ///< number of neighbors
+                       OutputIterator normals, ///< output normals
+                       const unsigned int K)   ///< number of neighbors
 {
-	typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
+  typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-	return estimate_normals_pca_3(first,beyond,normals,K,Kernel());
+  return estimate_normals_pca_3(first,beyond,normals,K,Kernel());
 }
 
 

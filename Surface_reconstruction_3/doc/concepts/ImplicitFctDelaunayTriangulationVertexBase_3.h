@@ -34,9 +34,9 @@ class ImplicitFctDelaunayTriangulationVertexBase_3 : public DelaunayTriangulatio
 // Public types
 public:
 
-	typedef typename Geom_traits::FT FT;
-	typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
-	typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point;             ///< Model of PointWithNormal_3
+  typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
 // Public methods
@@ -48,23 +48,23 @@ public:
   ImplicitFctDelaunayTriangulationVertexBase_3(Cell_handle c);
 
   /// is vertex constrained?
-	bool  constrained() const;
-	bool& constrained();
+  bool  constrained() const;
+  bool& constrained();
 
   /// Get/set the value of the Poisson implicit function
-	FT  f() const;
-	FT& f();
+  FT  f() const;
+  FT& f();
 
   /// Get/set the type = INPUT or STEINER vertex
-	unsigned char  type() const;
-	unsigned char& type();
+  unsigned char  type() const;
+  unsigned char& type();
 
   /// Get/set the index in matrix
-	unsigned int  index() const;
-	unsigned int& index();
+  unsigned int  index() const;
+  unsigned int& index();
 
   /// Get/set normal (vector + orientation).
-	const Normal& normal() const;
-	Normal&       normal();
+  const Normal& normal() const;
+  Normal&       normal();
 };
 

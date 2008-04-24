@@ -33,8 +33,8 @@ public:
 // Public methods
 public:
 
-		/// Normal vector is (0,0,0) by default.
-		/// Normal is oriented by default.
+    /// Normal vector is (0,0,0) by default.
+    /// Normal is oriented by default.
     OrientedNormal_3(Null_vector = NULL_VECTOR);
     OrientedNormal_3(const Vector& vector, bool oriented = true);
 
@@ -44,12 +44,12 @@ public:
     OrientedNormal_3& operator =(const OrientedNormal_3& that);
 
     /// Get normal vector.
-	  Vector get_vector() const;
+    Vector get_vector() const;
 
     /// Get normal orientation.
     bool is_normal_oriented() const;
 
     /// Set normal (vector + orientation).
-	  void set(const Vector& vector, bool oriented = true);
+    void set(const Vector& vector, bool oriented = true);
 };
 

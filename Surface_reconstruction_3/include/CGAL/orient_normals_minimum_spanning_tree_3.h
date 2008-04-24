@@ -265,7 +265,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // We have to wrap each input vertex by a Point_vertex_handle_3.
     std::vector<Point_vertex_handle_3> kd_tree_points;
     for (VertexIterator it = first; it != beyond; it++)
-		    kd_tree_points.push_back(Point_vertex_handle_3(it));
+        kd_tree_points.push_back(Point_vertex_handle_3(it));
     Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
     // Iterate over input points and create Riemannian Graph:
@@ -301,8 +301,8 @@ CGAL_TRACE("  Create Riemannian Graph\n");
                 boost::graph_traits<Riemannian_graph>::edge_descriptor e;
                 bool inserted;
                 boost::tie(e, inserted) = boost::add_edge(boost::vertex(it_index, riemannian_graph),
-		                                                      boost::vertex(neighbour_index, riemannian_graph),
-		                                                      riemannian_graph);
+                                                          boost::vertex(neighbour_index, riemannian_graph),
+                                                          riemannian_graph);
                 CGAL_surface_reconstruction_assertion(inserted);
 
                 //                               ->        ->
@@ -313,7 +313,7 @@ CGAL_TRACE("  Create Riemannian Graph\n");
                 if (weight < 0)
                     weight = 0;
                 riemannian_graph_weight_map[e] = (float)weight;
-		        }
+            }
 
             search_iterator++;
         }
@@ -359,8 +359,8 @@ CGAL_TRACE("  Create MST Graph\n");
     // Orient normals
 CGAL_TRACE("  Call boost::breadth_first_search()\n");
     boost::breadth_first_search(mst_graph,
-	                              boost::vertex(source_vertex_index, mst_graph), // source
-	                              visitor(boost::make_bfs_visitor(propagate_normal<VertexIterator, VertexNormalMap>())));
+                                boost::vertex(source_vertex_index, mst_graph), // source
+                                visitor(boost::make_bfs_visitor(propagate_normal<VertexIterator, VertexNormalMap>())));
 CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
 }
 

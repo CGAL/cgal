@@ -122,16 +122,16 @@ int main(int argc, char * argv[])
 
         // Insert vertices in triangulation
         Dt3 dt;
-		    std::vector<Point_with_normal> pwns;
-		    Polyhedron::Vertex_iterator v;
-		    for(v = input_mesh.vertices_begin();
-				    v != input_mesh.vertices_end();
-				    v++)
-		    {
-			    const Point& p = v->point();
-			    const Vector& n = v->normal();
-			    pwns.push_back(Point_with_normal(p,n));
-		    }
+        std::vector<Point_with_normal> pwns;
+        Polyhedron::Vertex_iterator v;
+        for(v = input_mesh.vertices_begin();
+            v != input_mesh.vertices_end();
+            v++)
+        {
+          const Point& p = v->point();
+          const Vector& n = v->normal();
+          pwns.push_back(Point_with_normal(p,n));
+        }
         dt.insert(pwns.begin(), pwns.end(), Dt3::INPUT);
 
         // Print status
@@ -150,7 +150,7 @@ int main(int argc, char * argv[])
 
         /// Computes the Poisson indicator function f()
         /// at each vertex of the triangulation
-	      if ( ! poisson_function.compute_implicit_function() )
+        if ( ! poisson_function.compute_implicit_function() )
         {
             std::cerr << "FATAL ERROR: cannot solve Poisson equation" << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
@@ -173,32 +173,32 @@ int main(int argc, char * argv[])
         C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
         // Get inner point
-	      Point sink = poisson_function.sink();
-	      FT f_sink = poisson_function(sink);
-	      if(f_sink >= 0.0)
-	      {
+        Point sink = poisson_function.sink();
+        FT f_sink = poisson_function(sink);
+        if(f_sink >= 0.0)
+        {
             std::cerr << "FATAL ERROR: unable to seed (" << f_sink << " at sink)" << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
             continue;
-	      }
+        }
 
         // Get implicit surface's size
         Sphere bounding_sphere = poisson_function.bounding_sphere();
-		    FT size = sqrt(bounding_sphere.squared_radius());
+        FT size = sqrt(bounding_sphere.squared_radius());
 
         // defining the surface
-	      Surface_3 surface(poisson_function,
+        Surface_3 surface(poisson_function,
                           Sphere(sink,4*size*size)); // bounding sphere
 
         // defining meshing criteria
-	      FT sm_angle = 20.0; // LR: 30 is OK
-	      FT sm_radius = 0.1; // as suggested by LR (was 0.01)
-	      FT sm_distance = 0.001; // was 0.01
+        FT sm_angle = 20.0; // LR: 30 is OK
+        FT sm_radius = 0.1; // as suggested by LR (was 0.01)
+        FT sm_distance = 0.001; // was 0.01
         CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                             sm_radius*size,  // upper bound of Delaunay balls radii
                                                             sm_distance*size); // upper bound of distance to surface
 
-	      // meshing surface
+        // meshing surface
         make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
         // Print status
