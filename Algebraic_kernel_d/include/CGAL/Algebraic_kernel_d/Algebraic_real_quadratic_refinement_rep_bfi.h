@@ -118,7 +118,7 @@ private:
         m_bfi = CGAL::convert_to_bfi(m);
         f_m_bfi = f_bfi_.get().evaluate(m_bfi);
         
-        if(CGAL::in_zero(f_m_bfi)) {
+        if(CGAL::zero_in(f_m_bfi)) {
             
             // Okay, compute exactly
             return CGAL::sign(this->polynomial().evaluate(m));
@@ -158,7 +158,7 @@ public:
           N(2)
     { 
         _set_prec(16);
-      
+        
     }
 
     //! copy constructor
@@ -183,14 +183,16 @@ public:
 
 public:
 
-    void bisect() const{
+    virtual void bisect() const{
 
         if(this->is_rational()) return;
         
         Field m = (this->low_+this->high_)/Field(2);
+
         CGAL::simplify(m);
         BFI m_bfi, f_m_bfi;
         CGAL::Sign s = _sign_at(m,m_bfi,f_m_bfi);
+
         if (s  == ::CGAL::ZERO ) {
             learn_from(m);
 	}
@@ -207,12 +209,15 @@ public:
                 last_bisect_lower=true;
             }
         }
+
     }
 
 protected:
     virtual void set_implicit_rep(const Poly & P, 
 				  const Field& LOW, 
-				  const Field& HIGH) const {
+				  const Field& HIGH,
+                                  bool dummy_bool=false) const {
+
         bool poly_changed = (P!=this->polynomial());
         if(poly_changed) {
             f_bfi_ = boost::none;
@@ -223,13 +228,21 @@ protected:
         if(poly_changed || HIGH != this->high()) {
             f_high_bfi_ = high_bfi_ = boost::none;
         }
-        Base::set_implicit_rep(P,LOW,HIGH);
+        Base::set_implicit_rep(P,LOW,HIGH,dummy_bool);
+    }
+
+    virtual void set_explicit_rep(const Field& m) const {
+        f_bfi_ = boost::none;
+        f_low_bfi_ = low_bfi_ = boost::none;
+        f_high_bfi_ = high_bfi_ = boost::none;
+        Base::set_explicit_rep(m);
     }
 
      
 public: 
-    void refine_at(const Field& m) const{
+    virtual void refine_at(const Field& m) const{
         Field old_low_=this->low_, old_high_=this->high_;
+        Poly old_pol = this->polynomial();
         Base::refine_at(m);
         if(this->is_rational()) return;
 
@@ -239,6 +252,9 @@ public:
         if(old_high_!=this->high_) {
             f_high_bfi_ = high_bfi_ = boost::none;
         }
+        if(old_pol != this->polynomial()) {
+            f_bfi_ = boost::none;
+        }
     }
     
     // Abbott's refinement method
@@ -247,6 +263,8 @@ public:
         if(this->is_rational()) {
             return;
         }
+
+        CGAL_assertion(this->low() != this->high());
 
         long old_prec = CGAL::get_precision(BFI());
 
@@ -269,6 +287,7 @@ public:
         N*=2;
 
         CGAL::set_precision(BFI(),old_prec);
+
     }
 
 private:
@@ -312,7 +331,7 @@ private:
         Integer i;
         while(true) {
 
-            if(CGAL::in_zero(f_low_bfi_.get() - f_high_bfi_.get())) {
+            if(CGAL::zero_in(f_low_bfi_.get() - f_high_bfi_.get())) {
                 _set_prec(2*prec_);
                 continue;
             }
@@ -332,6 +351,7 @@ private:
             _set_prec(2*prec_);
                         
         }
+
         CGAL_postcondition(i>=0 && 
                            i <= CGAL::ipower(Integer(2),N));
         
@@ -425,8 +445,12 @@ protected:
         Field m = f;
         CGAL::simplify(m);
 
+        if(! f_bfi_) {
+            f_bfi_ = _convert_polynomial_to_bfi(this->polynomial());
+        }
+
         BFI eval = f_bfi_.get().evaluate(convert_to_bfi(m));
-                
+        
         CGAL::Sign s = CGAL::sign(CGAL::lower(eval));
               
         // correct sign if needed
@@ -439,6 +463,7 @@ protected:
             }
         }
         
+
         CGAL_postcondition(s == this->polynomial_.sign_at(m));
 
         if ( s == CGAL::ZERO ) {
@@ -450,6 +475,15 @@ protected:
 
         return s;
     }        
+
+    virtual void simplify() const {
+        Poly f_old = this->polynomial();
+        Base::simplify();
+        if(f_old != this->polynomial()) {
+            f_bfi_ = boost::none;
+        }
+            
+    }
 
     
 };

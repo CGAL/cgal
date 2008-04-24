@@ -100,7 +100,8 @@ protected:
         next=prev=this;
     }
 protected:
-    void set_explicit_rep(const Field& m) const {     
+    virtual void set_explicit_rep(const Field& m) const {     
+
         typename Fraction_traits<Field>::Decompose decomp;
         typename Fraction_traits<Field>::Numerator_type num;
         typename Fraction_traits<Field>::Denominator_type den;
@@ -114,10 +115,11 @@ protected:
         interval_option = Interval_option(CGAL::to_interval(m));
     }
 protected:
-    void set_implicit_rep(const Poly & P, 
+    virtual void set_implicit_rep(const Poly & P, 
                           const Field& LOW, 
                           const Field& HIGH,
                           bool use_expensive_sign = false ) const {
+        
         CGAL_precondition(LOW < HIGH);        
         CGAL_precondition(P.sign_at(LOW)  != CGAL::ZERO);       
         CGAL_precondition(P.sign_at(HIGH) != CGAL::ZERO);     
@@ -272,7 +274,7 @@ private:
     }    
 public:
 
-    void bisect() const {
+    virtual void bisect() const {
         
         if(is_rational()) return;
         
@@ -286,7 +288,7 @@ public:
             else                      high_ = m;  
     }
 
-    virtual void refine() const{      
+    virtual void refine() const{ 
         bisect();
     }
 
@@ -303,7 +305,7 @@ public:
         }
     }
 public: 
-    void refine_at(const Field& m) const{
+    virtual void refine_at(const Field& m) const{
         if(is_rational()) return;
         if( m <= low() || high() <= m ) return;
         
@@ -495,7 +497,7 @@ public:
         return false;      
     }
 public: 
-    void simplify() const{
+    virtual void simplify() const{
         if(is_rational()){
           
         }else{
