@@ -2200,7 +2200,7 @@ public:
         else if(CGAL::assign(nxarc, obj))
             oi = std::transform(nxarc.begin(), nxarc.end(), oi,
                 std::ptr_fun(CGAL::make_object<Non_x_monotone_arc_2>));
-        else 
+        else // allow the remaining objects to pass through
             *oi++ = obj;
         return oi;
     }
