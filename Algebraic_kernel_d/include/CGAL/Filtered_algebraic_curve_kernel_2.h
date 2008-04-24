@@ -74,9 +74,9 @@ public:
         
     //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
     //! avoid type clashes with \c Polynomial_2 type defined later
-    typedef typename Base::Polynomial_1_CGAL Polynomial_1_CGAL;
+    typedef typename Base::Polynomial_1 Polynomial_1;
     //! new CGAL bivariate polynomial type
-    typedef typename  Base::Polynomial_2_CGAL Polynomial_2_CGAL;
+    typedef typename  Base::Polynomial_2 Polynomial_2;
     //! bivariate polynomial traits
     typedef typename Base::Polynomial_traits_2 Polynomial_traits_2;
     

@@ -20,20 +20,20 @@
 #define CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE 0
 #endif
 
-#define NiX_USE_QUADRATIC_REFINEMENT_BFI 1
-#define NiX_USE_INTERNAL_MODULAR_GCD 1
-
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
 // required for Kernel_2::decompose tests
 #define AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY 1
 
-#include <NiX/Arithmetic_traits.h>
-#include <NiX/NT_traits.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <AcX/Algebraic_curve_2.h>
 #include <AcX/Algebraic_curve_pair_2.h>
 
+#include <CGAL/Algebraic_kernel_1.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
 #include <CGAL/Filtered_algebraic_curve_kernel_2.h>
@@ -42,27 +42,35 @@
 
 #include <CGAL/Sqrt_extension.h>
 
-//#include <CGAL/Arithmetic_kernel.h>
-
 template< class ArithmeticTraits >
 void test_algebraic_curve_kernel_2() {
 
     typedef ArithmeticTraits AT;
     typedef typename AT::Integer Coefficient;
-        
-    typedef AcX::Algebraic_curve_2<AT> Curve_2;
+    typedef typename AT::Rational Rational;
+      
+    typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
+        < Coefficient, Rational > Rep_class;
+    typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial< Coefficient >, 
+        Rational > Isolator;
+    
+    typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
+        Algebraic_kernel_1;
+    
+    typedef AcX::Algebraic_curve_2< Algebraic_kernel_1 > Curve_2;
+
     typedef AcX::Algebraic_curve_pair_2<Curve_2> Curve_pair_2;
             
-    typedef CGAL::Algebraic_kernel_1<Coefficient> Kernel_1;
-    typedef CGAL::Algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
-           Kernel_2;
+    typedef CGAL::Algebraic_curve_kernel_2<Curve_pair_2, Algebraic_kernel_1>
+           Algebraic_kernel_2;
     
     std::cout << "Non-filtered kernel..." << std::endl;
-    CGAL::CGALi::test_algebraic_curve_kernel_2<Kernel_2>();
+    CGAL::CGALi::test_algebraic_curve_kernel_2<Algebraic_kernel_2>();
 
 
     std::cout << "Filtered kernel..." << std::endl;
-    typedef CGAL::Filtered_algebraic_curve_kernel_2<Curve_pair_2, Kernel_1>
+    typedef CGAL::Filtered_algebraic_curve_kernel_2<Curve_pair_2, 
+                                                    Algebraic_kernel_1>
            Filtered_kernel_2;
 
     CGAL::CGALi::test_algebraic_curve_kernel_2<Filtered_kernel_2>();
@@ -72,10 +80,10 @@ void test_algebraic_curve_kernel_2() {
 int main() {
 
 #ifdef LiS_HAVE_CORE
-        typedef NiX::CORE_arithmetic_traits AT;
+        typedef CGAL::CORE_arithmetic_kernel AT;
 #else
 #ifdef CGAL_USE_LEDA
-        typedef NiX::LEDA_arithmetic_traits AT;
+        typedef CGAL::LEDA_arithmetic_kernel AT;
 #endif
 #endif
 

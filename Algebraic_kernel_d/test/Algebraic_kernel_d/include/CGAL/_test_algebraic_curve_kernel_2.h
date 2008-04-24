@@ -14,8 +14,6 @@
 #include <CGAL/basic.h>
 #include <cassert>
 
-//#include <CGAL/Algebraic_kernel_1.h>
-
 //#include <CGAL/_test_basic.h>
 
 #ifndef CGAL_TEST_ALGEBRAIC_CURVE_KERNEL_2_H
@@ -71,7 +69,7 @@ void test_algebraic_curve_kernel_2() {
             Polynomial_1,
             typename AK::Polynomial_1 >::value));*/
 
-    typedef typename AK_2::Internal_polynomial_2 Internal_poly_2;
+    typedef typename AK_2::Polynomial_2 Poly_2;
     typedef typename AK_2::Curve_analysis_2 Curve_analysis_2;
     typedef typename Curve_analysis_2::Status_line_1
         Status_line_1;
@@ -79,7 +77,7 @@ void test_algebraic_curve_kernel_2() {
     typedef typename AK_2::X_coordinate_1 X_coordinate_1;
     typedef typename AK_2::Xy_coordinate_2 Xy_coordinate_2;
 
-    Internal_poly_2 polys[ACK_2_n_polys];
+    Poly_2 polys[ACK_2_n_polys];
 
     ::CGAL::set_mode(std::cerr, ::CGAL::IO::PRETTY);
     
@@ -166,9 +164,6 @@ void test_algebraic_curve_kernel_2() {
 
     /////// testing squarefreeness and coprimality /////////
 
-    typename AK_2::NiX2CGAL_converter cvt;
-    typename AK_2::CGAL2NiX_converter cvt_back;
-     
     /*assert(
         kernel_2.has_finite_number_of_self_intersections_2_object()
             (polys[0]));
@@ -178,15 +173,15 @@ void test_algebraic_curve_kernel_2() {
     
     assert(
         kernel_2.has_finite_number_of_intersections_2_object()
-            (cvt(c2.polynomial_2()), cvt(c3.polynomial_2()))); // coprime
+        (c2.polynomial_2(), c3.polynomial_2())); // coprime
             
     assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
-            (cvt(c1.polynomial_2()), cvt(c2.polynomial_2()))); // non-coprime
+            (c1.polynomial_2(), c2.polynomial_2())); // non-coprime
             
     assert(
         !kernel_2.has_finite_number_of_intersections_2_object()
-            (cvt(c5.polynomial_2()), cvt(c6.polynomial_2()))); // non-coprime
+            (c5.polynomial_2(), c6.polynomial_2())); // non-coprime
 
     //////// testing decompose ///////////
             
@@ -251,9 +246,9 @@ void test_algebraic_curve_kernel_2() {
     
     ///////// testing derivation //////////
 
-    cvt_back(kernel_2.derivative_x_2_object()(cvt(polys[0])));
+    kernel_2.derivative_x_2_object()(polys[0]);
         
-    cvt_back(kernel_2.derivative_y_2_object()(cvt(polys[0])));
+    kernel_2.derivative_y_2_object()(polys[0]);
 
     //////// testing x/y-critical points ////////
         

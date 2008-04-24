@@ -256,13 +256,13 @@ struct Algebraic_real_traits<Xy_coordinate_2<Kernel_2> > :
         typename Kernel_2::Internal_curve_pair_2 > {
 };
   
-template <class Coefficient_, class FieldWithSqrt, class Rational_,
+template <class Coefficient_, class Rational_,
           class HandlePolicy, class AlgebraicRealRep >
-struct Algebraic_real_traits<NiX::Algebraic_real<Coefficient_, FieldWithSqrt,
-    Rational_, HandlePolicy, AlgebraicRealRep> > {
+struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
+    < Coefficient_, Rational_, HandlePolicy, AlgebraicRealRep > > {
 
     //! this instances first template argument
-    typedef NiX::Algebraic_real<Coefficient_, FieldWithSqrt, Rational_,
+    typedef CGAL::CGALi::Algebraic_real_pure<Coefficient_, Rational_,
         HandlePolicy, AlgebraicRealRep> Algebraic_real_1;
 
     //! just a Type ?

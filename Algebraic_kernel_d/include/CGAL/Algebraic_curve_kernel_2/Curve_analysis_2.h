@@ -42,7 +42,7 @@ public:
     typedef Curve_analysis_2_rep<Algebraic_curve_kernel_2> Self;
 
     // supporting polynomial type
-    typedef typename Algebraic_curve_kernel_2::Internal_polynomial_2
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2
         Polynomial_2;
 
     // internal curve type (temporary)
@@ -113,7 +113,7 @@ public:
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
     //! supporting polynomial type
-    typedef typename Algebraic_curve_kernel_2::Internal_polynomial_2
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2
         Polynomial_2;
 
     //! myself
@@ -305,18 +305,13 @@ public:
 
          CGAL_precondition(loc == CGAL::ARR_LEFT_BOUNDARY ||
             loc == CGAL::ARR_RIGHT_BOUNDARY);
-
-         typename Internal_curve_2::Asymptote_y asympt =
-            (loc == CGAL::ARR_LEFT_BOUNDARY ?
-              _internal_curve().
-                    horizontal_asymptote_for_arc_to_minus_infinity(arcno) :
-              _internal_curve().
-                    horizontal_asymptote_for_arc_to_plus_infinity(arcno));
+         
+         return (loc == CGAL::ARR_LEFT_BOUNDARY ?
+                 _internal_curve().
+                     horizontal_asymptote_for_arc_to_minus_infinity(arcno) :
+                 _internal_curve().
+                     horizontal_asymptote_for_arc_to_plus_infinity(arcno));
             
-         if(asympt.is_finite())
-            return CGAL::make_object(asympt.finite());        
-         return CGAL::make_object(asympt.infty() == NiX::MINUS_INFTY ?
-            CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
      }
 
     //!@}

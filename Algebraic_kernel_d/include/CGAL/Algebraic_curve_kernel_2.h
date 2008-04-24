@@ -58,16 +58,12 @@ public:
     
     //! type of internal x_coordinate
     typedef typename Internal_curve_2::X_coordinate X_coordinate_1;
+    typedef X_coordinate_1 Y_coordinate_1;
     
     //! type of internal coefficient
     typedef typename Internal_curve_2::Coefficient Coefficient;
 
-    //! type of internal polynomial
-    typedef typename Internal_curve_2::Poly_d Internal_polynomial_2;
     
-    typedef typename CGAL::Polynomial_traits_d<Internal_polynomial_2>::
-        Innermost_coefficient Innermost_coefficient;
-   
     //! type of 1D algebraic kernel
     typedef AlgebraicKernel_1 Algebraic_kernel_1;
 
@@ -78,16 +74,18 @@ public:
     // TODO remove when deriving from AK_1
     typedef typename Algebraic_kernel_1::Boundary Boundary;
         
-    //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
-    //! avoid type clashes with \c Polynomial_2 type defined later
-    typedef ::CGAL::Polynomial<Innermost_coefficient> Polynomial_1_CGAL;
+    //! new CGAL univariate polynomial type 
+    typedef ::CGAL::Polynomial<Coefficient> Polynomial_1;
     
     //! new CGAL bivariate polynomial type
-    typedef ::CGAL::Polynomial<Polynomial_1_CGAL> Polynomial_2_CGAL;
+    typedef ::CGAL::Polynomial<Polynomial_1> Polynomial_2;
     
     //! bivariate polynomial traits
-    typedef ::CGAL::Polynomial_traits_d< Polynomial_2_CGAL >
+    typedef ::CGAL::Polynomial_traits_d< Polynomial_2 >
         Polynomial_traits_2;
+
+    typedef typename Polynomial_traits_2::
+        Innermost_coefficient Innermost_coefficient;
 
     //! type of a curve point
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
@@ -107,31 +105,7 @@ protected:
     //! \name private functors
     //!@{
     
-    //! temporary functor providing conversion from \c Poly_in type to
-    //! \c Poly_out type, required for NumeriX <-> CGAL polynomial type
-    //! conversion
-    template <class Poly_2_from, class Poly_2_to>
-    struct Polynomial_converter 
-    {
-        typedef typename Poly_2_from::NT Poly_1_from;
-        typedef typename Poly_2_to::NT Poly_1_to;
-        // needed for make_transform_iterator
-        typedef Poly_1_to result_type;
-        
-        Poly_2_to operator()(const Poly_2_from& p) const
-        {
-            return Poly_2_to(
-                ::boost::make_transform_iterator(p.begin(), *this),
-                ::boost::make_transform_iterator(p.end(), *this));
-        }
-        Poly_1_to operator()(const Poly_1_from& p) const
-        {
-            return Poly_1_to(p.begin(), p.end());
-        }
-    };
-    
-    //! polynomial canonicalizer: temporarily we use NiX functors since
-    //! \c Poly is NiX-type polynomial
+    //! polynomial canonicalizer
     template <class Poly> 
     struct Poly_canonicalizer : public Unary_function< Poly, Poly >
     {
@@ -205,10 +179,10 @@ protected:
     };
 
     //! type of curve analysis cache
-    typedef CGALi::LRU_hashed_map<Internal_polynomial_2,
+    typedef CGALi::LRU_hashed_map<Polynomial_2,
         Curve_analysis_2, CGALi::Poly_hasher,
-        std::equal_to<Internal_polynomial_2>,
-        Poly_canonicalizer<Internal_polynomial_2> > Curve_cache;
+        std::equal_to<Polynomial_2>,
+        Poly_canonicalizer<Polynomial_2> > Curve_cache;
 
         //CGALi::Curve_pair_hasher_2<Curve_analysis_2>,
     //! type of curve pair analysis cache 
@@ -225,8 +199,8 @@ protected:
         Pair_id_equal_to > Cmp_xy_map;
       
     
-    typedef std::pair<Internal_polynomial_2, Internal_polynomial_2>
-        Pair_of_internal_polynomial_2;
+    typedef std::pair<Polynomial_2, Polynomial_2>
+        Pair_of_polynomial_2;
 
     template<typename T> struct Gcd {
     
@@ -247,15 +221,15 @@ protected:
     };
 
     typedef CGAL::Pair_lexicographical_less_than
-        <Internal_polynomial_2, Internal_polynomial_2,
-            std::less<Internal_polynomial_2>,
-            std::less<Internal_polynomial_2> > Internal_polynomial_2_compare;
+    <Polynomial_2, Polynomial_2,
+            std::less<Polynomial_2>,
+            std::less<Polynomial_2> > Polynomial_2_compare;
     
-    typedef CGAL::Cache<Pair_of_internal_polynomial_2,
-                        Internal_polynomial_2,
-                        Gcd<Internal_polynomial_2>,
-                        Pair_cannonicalize<Internal_polynomial_2>,
-                        Internal_polynomial_2_compare> Gcd_cache_2;
+    typedef CGAL::Cache<Pair_of_polynomial_2,
+                        Polynomial_2,
+                        Gcd<Polynomial_2>,
+                        Pair_cannonicalize<Polynomial_2>,
+                        Polynomial_2_compare> Gcd_cache_2;
 
     //!@}
 protected:
@@ -289,12 +263,6 @@ public:
     //! \name public functors and predicates
     //!@{
        
-    //! NumeriX to CGAL polynomial type conversion
-    typedef Polynomial_converter<Internal_polynomial_2, Polynomial_2_CGAL>
-                NiX2CGAL_converter;
-    //! CGAL to NumeriX polynomial type conversion
-    typedef Polynomial_converter<Polynomial_2_CGAL, Internal_polynomial_2>
-                CGAL2NiX_converter;
                 
     //! \brief default constructor
     Algebraic_curve_kernel_2() //: _m_curve_cache() 
@@ -305,17 +273,13 @@ public:
      * when appropriate
      */
     struct Construct_curve_2 :
-        public Unary_function< Internal_polynomial_2, Curve_analysis_2 > {
+        public Unary_function< Polynomial_2, Curve_analysis_2 > {
             
         Curve_analysis_2 operator()
-                (const Internal_polynomial_2& f) const {
+                (const Polynomial_2& f) const {
             return Self::curve_cache()(f);
         }
-//        Curve_analysis_2 operator()
-//                (const Polynomial_2_CGAL& f) const {
-//            CGAL2NiX_converter cvt;
-//            return Self::curve_cache()(cvt(f));
-//        }
+
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
 
@@ -366,7 +330,7 @@ public:
          Internal_curve_pair_2> Y_real_traits_1;
 
         
- mutable Cmp_xy_map _m_cmp_xy;   
+    mutable Cmp_xy_map _m_cmp_xy;   
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
@@ -519,7 +483,7 @@ public:
                 Comparison_result > {
 
         Comparison_result operator()(const X_coordinate_1& x1, 
-                                         const X_coordinate_1& x2) const {
+                                     const X_coordinate_1& x2) const {
         // not yet implemented in Algebraic_kernel_1 (will it be ?)
         //   Algebraic_kernel_1 ak;
         //   return (ak.compare_x_2_object()(x1, x2));
@@ -617,19 +581,15 @@ public:
     //! for algerbaic curves this means that supporting polynomial is 
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
-            public Unary_function< Polynomial_2_CGAL, bool > {
+            public Unary_function< Polynomial_2, bool > {
 
-        bool operator()(const Polynomial_2_CGAL& p) const {
+        bool operator()(const Polynomial_2& p) const {
 
             //typename Polynomial_traits_2::Is_square_free is_square_free;
             CGAL_error_msg("is_square_free is not yet supported\n");
             return true; //is_square_free(p);
         }
 
-        bool operator()(const Internal_polynomial_2& p) const {
-            NiX2CGAL_converter cvt;
-            return (*this)(cvt(p));
-        }
     };
     CGAL_Algebraic_Kernel_pred(Has_finite_number_of_self_intersections_2, 
             has_finite_number_of_self_intersections_2_object);
@@ -640,27 +600,16 @@ public:
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
-        public Binary_function< Polynomial_2_CGAL, Polynomial_2_CGAL, bool > {
+        public Binary_function< Polynomial_2, Polynomial_2, bool > {
          
-        bool operator()(const Internal_polynomial_2& f,
-                        const Internal_polynomial_2& g) const {
-            // if curve ids are the same - non-decomposable
-            if(f.id() == g.id())
-                return true;
-            NiX2CGAL_converter cvt;
-            return (*this)(cvt(f), cvt(g));
-        }
-     
-        bool operator()(const Polynomial_2_CGAL& f,
-                        const Polynomial_2_CGAL& g) const {
+        bool operator()(const Polynomial_2& f,
+                        const Polynomial_2& g) const {
             // if curve ids are the same - non-decomposable
             if(f.id() == g.id())
                 return true;
             typename Polynomial_traits_2::Gcd_up_to_constant_factor gcd_utcf;
             typename Polynomial_traits_2::Total_degree total_degree;
-            //NiX2CGAL_converter cvt;
-            //Polynomial_2_CGAL p1 = cvt(c1.f()), p2 = cvt(c2.f());
-            return (total_degree(gcd_utcf(f, g)) == 0);
+             return (total_degree(gcd_utcf(f, g)) == 0);
         }
     };
     CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
@@ -677,17 +626,10 @@ public:
         //!
         //! in case of algebraic curves computes square-free part of supporting
         //! polynomial
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) {
+        Polynomial_2 operator()(const Polynomial_2& p) {
             typename Polynomial_traits_2::Make_square_free msf;
             return msf(p);
         }
-        
-        //! temporary version for \c NiX::Polynomial
-//        Internal_polynomial_2 operator()(const Internal_polynomial_2& p) {
-//            NiX2CGAL_converter cvt;
-//            CGAL2NiX_converter cvt_back;
-//            return cvt_back((*this)(cvt(p)));
-//        }
         
         //! \brief computes a square-free factorization of a curve \c c, 
         //! returns the number of pairwise coprime square-free factors
@@ -701,13 +643,12 @@ public:
                         
             typename Polynomial_traits_2::
                 Square_free_factorization_up_to_constant_factor factorize;
-            NiX2CGAL_converter cvt;
-            std::vector<Polynomial_2_CGAL> factors;
+            std::vector<Polynomial_2> factors;
             
-            int n_factors = factorize(cvt(ca.polynomial_2()),
-                 std::back_inserter(factors), mit);
+            int n_factors = factorize(ca.polynomial_2(),
+                                      std::back_inserter(factors), mit);
             Construct_curve_2 cc_2;
-            for(int i = 0; i < (int)factors.size(); i++) 
+            for(int i = 0; i < static_cast<int>(factors.size()); i++) 
                 *fit++ = cc_2(factors[i]);
             
             return n_factors;
@@ -773,9 +714,9 @@ public:
     
     //! \brief computes the derivative w.r.t. the first (innermost) variable
     struct Derivative_x_2 : 
-        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        public Unary_function< Polynomial_2, Polynomial_2 > {
         
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const
+        Polynomial_2 operator()(const Polynomial_2& p) const
         {
             typename Polynomial_traits_2::Derivative derivate;
             return derivate(p, 0);
@@ -785,9 +726,9 @@ public:
 
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
-        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        public Unary_function< Polynomial_2, Polynomial_2 > {
         
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const
+        Polynomial_2 operator()(const Polynomial_2& p) const
         {
             typename Polynomial_traits_2::Derivative derivate;
             return derivate(p, 1);
@@ -812,9 +753,8 @@ public:
             typename Self::Derivative_x_2 der_x;
             Construct_curve_2 cc_2;
             Construct_curve_pair_2 ccp_2;
-            NiX2CGAL_converter cvt;
             // construct curve analysis of a derivative in y
-            Curve_analysis_2 ca_2x = cc_2(der_x(cvt(ca_2.polynomial_2())));
+            Curve_analysis_2 ca_2x = cc_2(der_x(ca_2.polynomial_2()));
             Curve_pair_analysis_2 cpa_2 = ccp_2(ca_2, ca_2x);
             typename Curve_pair_analysis_2::Status_line_1 cpv_line;
             typename Curve_analysis_2::Status_line_1 cv_line;
@@ -895,10 +835,9 @@ public:
                     }
                     if(!cpa_constructed) {
                         typename Self::Derivative_y_2 der_y;
-                        NiX2CGAL_converter cvt;
                         // construct curve analysis of a derivative in x
                         Curve_analysis_2 ca_2y =
-                            cc_2(der_y(cvt(ca_2.polynomial_2())));
+                            cc_2(der_y(ca_2.polynomial_2()));
                         cpa_2 = ccp_2(ca_2, ca_2y);
                         cpa_constructed = true;
                     }
@@ -983,7 +922,7 @@ public:
         bool _test_exact_zero(const Curve_analysis_2& ca_2,
             const Xy_coordinate_2& r) const {
 
-            Internal_polynomial_2 zero_p(Coefficient(0));
+            Polynomial_2 zero_p(Coefficient(0));
             if (ca_2.polynomial_2() == zero_p) {
                 return true;
             }
@@ -997,7 +936,7 @@ public:
                 return true;
 
             // Handle non-coprime polynomial
-            Internal_polynomial_2 gcd = Self::gcd_cache_2()
+            Polynomial_2 gcd = Self::gcd_cache_2()
                (std::make_pair(ca_2.polynomial_2(), r.curve().polynomial_2()));
 
             Curve_analysis_2 gcd_curve = cc_2(gcd);
@@ -1005,7 +944,8 @@ public:
                 
                 Construct_curve_pair_2 ccp_2;
                 Curve_analysis_2 r_curve_remainder =
-                    cc_2(CGAL::CGALi::div_utcf(r.curve().polynomial_2(), gcd));
+                    cc_2(CGAL::CGALi::div_utcf(r.curve().polynomial_2(), 
+                                               gcd));
                     
                 r.simplify_by(ccp_2(gcd_curve, r_curve_remainder));
                 if(r.curve().polynomial_2() == gcd) 
@@ -1021,140 +961,13 @@ public:
                 int idx = cpv_line.event_of_curve(r.arcno(), 1);
                 std::pair<int, int> ipair =
                       cpv_line.curves_at_event(idx);
-                if(ipair.first != -1&&ipair.second != -1)
+                if(ipair.first != -1 && ipair.second != -1)
                     return true;
             }
             return false;
         }
     
     };
-#if 0
-    struct Sign_at_2_buggy :
-        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
-        
-        Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
-        {
-            if(p.id() == r.curve().id()) // point lies on the same curve
-                return CGAL::ZERO;
-           
-            Curve_analysis_2 ca_2(p), ca_2r(r.curve());
-            Curve_pair_analysis_2 cpa_2(ca_2, ca_2r);
-            typename Curve_analysis_2::Status_line_1
-                cv_line = ca_2.status_line_for_x(r.x()),
-                cv_line_r = ca_2r.status_line_for_x(r.x());
-            
-            // fast check for the presence of vertical line at r.x()
-            if(cv_line.covers_line())    
-                return CGAL::ZERO;
-                
-            // in case there is no event at this x-coordinate, status
-            // line at some rational x over an interval is returned
-            typename Curve_pair_analysis_2::Status_line_1
-                cpv_line = cpa_2.status_line_for_x(r.x());
-                        
-            // get an y-position of the point r
-            int idx = cpv_line.event_of_curve(r.arcno(), 1);
-            std::pair<int, int> ipair;
-            X_coordinate_1 boundary_x;
-            
-            if(cpv_line.is_event()) {
-                if(cpv_line.is_intersection()) {
-                    ipair = cpv_line.curves_at_event(idx);
-                    // easy case: there is a 2-curve intersection at this x
-                    if(ipair.first != -1&&ipair.second != -1)
-                        return CGAL::ZERO; // intersection of both curves
-                }
-                // check if there is an event of curve p at r.x()
-                if(cv_line.is_event()) {
-                    if(cv_line_r.is_event())
-                        CGAL_error_msg("you're lucky )) this is not an easy \
-                            case..");
-                    //std::cout << "sign at event of curve p\n";
-                    // this is an event of curve p but not of r.curve() ->
-                    // shift to the left of r.x() otherwise we would find
-                    // arc-numbers of p at event point (r.arcno() is valid
-                    // over curve-pair interval)
-                    cpv_line = cpa_2.status_line_of_interval(
-                        cpv_line.index());
-                    // recompute vertical line of p and y-position of r
-                    // (however y-position of r.arcno() should not change
-                    // since it can only happen at 2-curve event or at event
-                    // of g)
-                    idx = cpv_line.event_of_curve(r.arcno(), 1);
-                    //  need cv-line over interval ?
-                    cv_line = ca_2.status_line_of_interval(
-                        cv_line.index());
-                    boundary_x = cpv_line.x();
-                    
-                } else if(cv_line_r.is_event()) {
-                
-                   // std::cout << "sign at event of curve r: cpv_line x: "
-                     //   << cpv_line.x() << "\n";
-                // this is an event of r.curvve() -> therefore cpv_line.x()
-                // is given as algebraic real (not rational) and r.arcno() is
-                // an event arcno 
-                    // need to recompute boundary_x (but leave cpv_line
-                    // unchanged otherwise r.arcno() is not valid)
-                    boundary_x = cpa_2.status_line_of_interval(
-                        cpv_line.index()).x();
-                }
-            } else {
-            // there is no event at r.x() of curve p hence we're free to
-            // pick up any rational boundary over an interval to compute the
-            // sign at 
-                boundary_x = cpv_line.x();
-               // std::cout << "sign over curve pair interval\n";
-            }
-            // obtain status line at exact rational x
-            cv_line = ca_2.status_line_at_exact_x(
-                X_coordinate_1(boundary_x.low()));
-            
-            int arcno_low = -1, arcno_high = -1, i = idx;
-            typedef typename Self::Algebraic_real_traits Traits;
-            typedef typename Traits::Boundary Boundary;
-            Boundary boundary_y;
-            Xy_coordinate_2 xy1, xy2;
-            
-            // arcno_low and arcno_high are consecutive event indices of
-            // curve p at r.x()
-            while(i-- > 0) {
-                ipair = cpv_line.curves_at_event(i);
-                if(ipair.first != -1) {
-                    arcno_low = ipair.first;
-                    xy1 = cv_line.algebraic_real_2(arcno_low);
-                    break;
-                }
-            }
-            i = idx;
-            while(i++ < cpv_line.number_of_events() - 1) {
-                ipair = cpv_line.curves_at_event(i);
-                if(ipair.first != -1) {
-                    arcno_high = ipair.first;
-                    xy2 = cv_line.algebraic_real_2(arcno_high);
-                    break;
-                }
-            }
-                   
-            if(arcno_low != -1) {
-                boundary_y = (arcno_high != -1 ? 
-                     typename Traits::Boundary_between()(xy1, xy2) :
-                     typename Traits::Upper_boundary()(xy1));
-            } else {
-                // if arcno_high == -1 pick up arbitrary rational since the
-                // curve p does not cross vertical line at r.x()
-                boundary_y = (arcno_high != -1 ? 
-                     typename Traits::Lower_boundary()(xy2) : Boundary(0)); 
-            }
-            if(boundary_x.low() != boundary_x.high())
-                std::cout << "oops very bizarre error occurred..\n";
-              
-            NiX::Polynomial<Boundary> poly = 
-                NiX::substitute_x(p.f(), boundary_x.low());
-                            
-            return poly.sign_at(boundary_y);
-        }
-    };
-#endif
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     /*!\brief
@@ -1201,9 +1014,9 @@ public:
             typename Curve_pair_analysis_2::Status_line_1 cpv_line;
             // do we need to check which supporting curve is simpler ?    
             typename Polynomial_traits_2::Total_degree total_degree;
-            NiX2CGAL_converter cvt;
-            Polynomial_2_CGAL f1 = cvt(ca1.polynomial_2()),
-                f2 = cvt(ca2.polynomial_2());
+
+            Polynomial_2 f1 = ca1.polynomial_2(),
+                f2 = ca2.polynomial_2();
             bool first_curve = (total_degree(f1) < total_degree(f2));
             
             int i, j, n = cpa_2.number_of_status_lines_with_event();

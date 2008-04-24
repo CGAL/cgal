@@ -120,6 +120,7 @@ public:
     
     //! type of X_coordinate
     typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Algebraic_curve_kernel_2::Y_coordinate_1 Y_coordinate_1;
 
     //! type of curve pair analysis
     typedef typename Algebraic_curve_kernel_2::Curve_pair_analysis_2
@@ -245,12 +246,12 @@ public:
      * for the y-coordinate. It is recommended to use it carefully,
      * and using get_approximation_y() instead whenever approximations suffice.
      */
-    X_coordinate_1 y() const {
+    Y_coordinate_1 y() const {
 
-        typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
-        typedef typename Polynomial_2::NT Polynomial_1;
+        typedef typename Algebraic_curve_kernel_2::Polynomial_2 Polynomial_2;
+        typedef typename Algebraic_curve_kernel_2::Polynomial_1 Polynomial_1;
         
-        typedef std::vector< X_coordinate_1 > Roots;
+        typedef std::vector< Y_coordinate_1 > Roots;
         typedef typename Curve_analysis_2::Status_line_1 Key;
         typedef Roots Data;
         typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
@@ -288,12 +289,13 @@ public:
                         y_pol = 
                             typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
                                     CGAL::CGALi::resultant
-                                    (NiX::transpose_bivariate_polynomial(f),
-                                     NiX::transpose_bivariate_polynomial(
-                                             CGAL::diff(f)
-                                     )
-                                    )
+                                    (typename CGAL::Polynomial_traits_d
+                                         <Polynomial_2>::Swap() (f,0,1),
+                                     typename CGAL::Polynomial_traits_d
+                                         <Polynomial_2>::Swap() 
+                                             (CGAL::diff(f),0,1))
                             );
+                              
                     }
                 }
                 
@@ -302,12 +304,14 @@ public:
                     Polynomial_2 r(x().polynomial());
                     
                     y_pol = typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
-                            CGAL::CGALi::resultant(NiX::transpose_bivariate_polynomial(f),
-                                           NiX::transpose_bivariate_polynomial(r))
+                            CGAL::CGALi::resultant
+                                (typename CGAL::Polynomial_traits_d
+                                     <Polynomial_2>::Swap() (f,0,1),
+                                 typename CGAL::Polynomial_traits_d
+                                     <Polynomial_2>::Swap() (r,0,1))
                     );
                 }
-                typename NiX::Real_roots<X_coordinate_1,
-                    NiX::Descartes< Polynomial_1, Boundary > > real_roots;
+                typename Algebraic_kernel_1::Solve_1 real_roots;
                 
                 Roots y_roots_tmp;
                 real_roots(y_pol, std::back_inserter(y_roots_tmp)); 
@@ -320,7 +324,7 @@ public:
             
             Boundary_interval y_iv = get_approximation_y();
             
-            typedef typename std::vector<X_coordinate_1>::const_iterator
+            typedef typename std::vector<Y_coordinate_1>::const_iterator
                 Iterator;
             
             std::list< Iterator > candidates;
@@ -354,7 +358,7 @@ public:
             }
             CGAL_assertion(static_cast< int >(candidates.size()) == 1);
             this->ptr()->_m_y = 
-                X_coordinate_1(
+                Y_coordinate_1(
                         y_pol, 
                         (*candidates.begin())->low(), 
                         (*candidates.begin())->high()
@@ -490,8 +494,7 @@ public:
      */
     void simplify_by(const Curve_pair_analysis_2& cpa_2) const {
     
-        typedef typename Algebraic_curve_kernel_2::Polynomial_2_CGAL Poly_2;
-        typename Algebraic_curve_kernel_2::NiX2CGAL_converter cvt;
+        typedef typename Algebraic_curve_kernel_2::Polynomial_2 Poly_2;
         typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree
             total_degree;
         
@@ -502,11 +505,12 @@ public:
         );
         // common parts
         CGAL_precondition(CGAL::CGALi::resultant(mult,
-            curve().polynomial_2()).is_zero());
+                                                 curve().polynomial_2())
+                          .is_zero());
         // full parts
         CGAL_precondition(mult.degree() == curve().polynomial_2().degree());
-        CGAL_precondition(total_degree(cvt(mult)) ==
-            total_degree(cvt(curve().polynomial_2())));
+        CGAL_precondition(total_degree(mult) ==
+                          total_degree(curve().polynomial_2()));
 
         typename Curve_pair_analysis_2::Status_line_1 cpv_line =
                 cpa_2.status_line_for_x(x());
@@ -527,8 +531,8 @@ public:
             // the point from the composed curved (also including this vertical
             // line). Therefore, the old arc number is also valid in the curve
             // pair.
-            Poly_2 ff = cvt(cpa_2.curve_analysis(0).polynomial_2()),
-                   gg = cvt(cpa_2.curve_analysis(1).polynomial_2());
+            Poly_2 ff = cpa_2.curve_analysis(0).polynomial_2(),
+                   gg = cpa_2.curve_analysis(1).polynomial_2();
             if(total_degree(ff) > total_degree(gg)) 
                 cid = 1;
         } else 
@@ -752,7 +756,7 @@ public:
     template<typename Polynomial_2>
     Boundary_interval interval_evaluate_2(const Polynomial_2& p) const {
         
-        //TODO: This function assumes a NiX::Polynomial type, do it generically
+        //TODO: This function assumes a CGAL::Polynomial type, do it generically
 
         //TODO: Assumes that the Coercion of Polynomial's scalar
         // and boundary is a boundary, repair this
@@ -772,7 +776,7 @@ public:
     template<typename Polynomial_1>
     Boundary_interval interval_evaluate_1(const Polynomial_1& p) const {
         
-        //TODO: This function assumes a NiX::Polynomial type, do it generically
+        //TODO: This function assumes a CGAL::Polynomial type, do it generically
 
         //TODO: Assumes that the Coercion of Polynomial's scalar
         // and boundary is a boundary, repair this
@@ -799,13 +803,12 @@ template < class AlgebraicCurveKernel_2, class Rep>
 std::ostream& operator<< (std::ostream& os, 
     const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt)
 {
-    // TODO replace NiX::to_double with CGAL::to_double
     if(::CGAL::get_mode(os) == ::CGAL::IO::PRETTY) {
-        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
             pt.curve().polynomial_2() << 
             "; arcno: " << pt.arcno() << "]\n";
     } else { // ASCII output
-        os << "[x-coord: " << NiX::to_double(pt.x()) << "; curve: " <<
+        os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
             pt.curve().polynomial_2() << 
             "; arcno: " << pt.arcno() << "]\n";
     }
