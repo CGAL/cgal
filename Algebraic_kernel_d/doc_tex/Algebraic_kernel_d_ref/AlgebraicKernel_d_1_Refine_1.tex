@@ -5,30 +5,25 @@ An \ccc{AlgebraicKernel_d_1::AlgebraicReal_1} $x$ is bounded by some interval
 $I = [upper, lower]$, where $x \in I$. 
 This functor refines (at least halves) the bounding interval of x.
 
-\ccRefines 
-\ccc{AdaptableUnaryFunction} 
-
 \ccTypes
 \ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{argument_type+}{}
-\ccTypedef{typedef void result_type;}{}
 \ccGlue
 \ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1  argument_type;}{}
 
 \ccOperations
 \ccCreationVariable{fo}
-%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
-\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccThree{void++}{fo(first_argument_type,++}{}
 
 A model \ccVar\ of this type must provide:
 
 \ccMethod{
-result_type operator()(const argument_type & x);}{ 
+void operator()(argument_type& x);}{ 
   Refines (at least halves) the bounding interval of x. \\
   Note that an interval may also be degenerated to a single point.
 } 
 
 \ccMethod{
-result_type operator()(const argument_type & x, int rel_prec);}{ 
+void operator()(argument_type& x, int rel_prec);}{ 
   This operator refines the current interval of $x$ with respect to
   the given relative precision. \\
   That is: $|lower - upper| / |x| \leq 2^{-rel\_prec}$, where $lower$
