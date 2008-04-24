@@ -1948,7 +1948,7 @@ protected:
              << "; arcno_on_g: " << cv2.arcno() << "; where: " << where
         );
         if (where == CGAL::ARR_INTERIOR) {
-            CERR("; x = " << NiX::to_double(x0)); // TODO replace by CGAL::
+            CERR("; x = " << CGAL::to_double(x0)); // TODO replace by CGAL::
         }
         CERR("\n");
 #endif
@@ -2241,14 +2241,13 @@ protected:
              typename Curve_analysis_2::Polynomial_2 mult =
                     cpa_2.curve_analysis(0).polynomial_2() *
                     cpa_2.curve_analysis(1).polynomial_2();
-             typedef typename Curve_kernel_2::Polynomial_2_CGAL Poly_2;
-             typename Curve_kernel_2::NiX2CGAL_converter cvt;
+             typedef typename Curve_kernel_2::Polynomial_2 Poly_2;
              typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
         );
         // common parts and full parts
         CGAL_precondition(CGAL::CGALi::resultant(mult, f).is_zero());
         CGAL_precondition(mult.degree() == f.degree());
-        CGAL_precondition(deg(cvt(mult)) == deg(cvt(f)));
+        CGAL_precondition(deg(mult) == deg(f));
         
         X_coordinate_1 x0;
         if(is_vertical()) {
@@ -2814,12 +2813,11 @@ protected:
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
 
-        typedef typename Curve_kernel_2::Polynomial_2_CGAL Poly_2;
-        typename Curve_kernel_2::NiX2CGAL_converter cvt;
+        typedef typename Curve_kernel_2::Polynomial_2 Poly_2;
         typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
         
-        bool which_curve = (deg(cvt(f.polynomial_2())) <
-             deg(cvt(g.polynomial_2())));
+        bool which_curve = (deg(f.polynomial_2()) <
+             deg(g.polynomial_2()));
         for(int i = low_idx; i <= high_idx; i++) {
             typename Curve_pair_analysis_2::Status_line_1 tmp = 
                 cpa_2.status_line_at_event(i);
