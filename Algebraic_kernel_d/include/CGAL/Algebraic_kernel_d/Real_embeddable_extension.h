@@ -300,7 +300,7 @@ namespace CGALi {
         struct Floor_log2_abs
             : public Unary_function< CORE::BigFloat, long > {
             long operator()( CORE::BigFloat x ) const {
-                CGAL_precondition(!CGAL::in_zero(x));
+                CGAL_precondition(!CGAL::zero_in(x));
                 x = CGAL::abs(x);
                 return CORE::floorLg(x.m()-x.err())+x.exp()*14;
             }            

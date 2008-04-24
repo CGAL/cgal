@@ -154,7 +154,7 @@ public:
       Lower_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
       result_type operator() (int i) {             
         CGAL_precondition(ptr->polynomial[i] != NT(0));
-        while(CGAL::in_zero(ptr->polynomial_approx[i])){
+        while(CGAL::zero_in(ptr->polynomial_approx[i])){
           ptr->refine_approximation();
         }             
         typename CGALi::Real_embeddable_extension<BFI>::Floor_log2_abs floor_log2_abs;
