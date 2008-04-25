@@ -269,7 +269,7 @@ public:
             // the resultant of f and f_y with respect to x as polynomial
             bool point_is_certainly_critical = false;
             typename Curve_analysis_2::Status_line_1 line =
-                curve().status_line_for_x(x());
+                curve().status_line_at_exact_x(x());
             
             typename Y_root_map::iterator yit = 
                 y_root_map.find(line);
