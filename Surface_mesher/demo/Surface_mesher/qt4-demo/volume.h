@@ -48,6 +48,7 @@ typedef CBinary_image_3<FT,Point> Binary_image;
 #define CGAL_SURFACE_MESHER_VERBOSE
 #include <CGAL/Surface_mesh_vertex_base_3.h>
 #include <CGAL/Surface_mesh_cell_base_3.h>
+#include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
@@ -56,7 +57,8 @@ typedef CBinary_image_3<FT,Point> Binary_image;
 #include <CGAL/Surface_mesh_traits_generator_3.h>
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
 typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
+typedef CGAL::Triangulation_cell_base_with_circumcenter_3<Kernel, Cb> Cb2;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb2> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Binary_image> Surface_3;
