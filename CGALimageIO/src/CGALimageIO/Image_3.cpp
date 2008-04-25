@@ -45,9 +45,9 @@ void Image_3::gl_draw(const float point_size,
   if(image_ptr.get() == NULL)
     return;
 
-  ::glPointSize(point_size);
-  ::glColor3ub(r,g,b);
-  ::glBegin(GL_POINTS);
+  glPointSize(point_size);
+  glColor3ub(r,g,b);
+  glBegin(GL_POINTS);
   unsigned char *pData = (unsigned char*)image_ptr->data;
   unsigned int xy = image_ptr->xdim * image_ptr->ydim;
   for(unsigned int i=0;i<image_ptr->xdim;i+=5)
@@ -60,10 +60,10 @@ void Image_3::gl_draw(const float point_size,
           double x = image_ptr->vx * i;
           double y = image_ptr->vy * j;
           double z = image_ptr->vz * k;
-          ::glVertex3d(x,y,z);
+          glVertex3d(x,y,z);
         }
       }
-  ::glEnd();
+  glEnd();
 } // end Image_3::gl_draw
 
 
@@ -75,9 +75,9 @@ void Image_3::gl_draw_bbox(const float line_width,
   if(!image_ptr)
     return;
 
-  ::glLineWidth(line_width);
-  ::glColor3ub(red,green,blue);
-  ::glBegin(GL_LINES);
+  glLineWidth(line_width);
+  glColor3ub(red,green,blue);
+  glBegin(GL_LINES);
 
   struct Point {
     double x_;
@@ -103,43 +103,43 @@ void Image_3::gl_draw_bbox(const float line_width,
   Point g(xmax, ymax, zmax);
   Point h(xmax, 0.0,    zmax);
 
-  ::glVertex3d(a.x(),a.y(),a.z());
-  ::glVertex3d(b.x(),b.y(),b.z());
+  glVertex3d(a.x(),a.y(),a.z());
+  glVertex3d(b.x(),b.y(),b.z());
 
-  ::glVertex3d(b.x(),b.y(),b.z());
-  ::glVertex3d(c.x(),c.y(),c.z());
+  glVertex3d(b.x(),b.y(),b.z());
+  glVertex3d(c.x(),c.y(),c.z());
 
-  ::glVertex3d(c.x(),c.y(),c.z());
-  ::glVertex3d(d.x(),d.y(),d.z());
+  glVertex3d(c.x(),c.y(),c.z());
+  glVertex3d(d.x(),d.y(),d.z());
 
-  ::glVertex3d(d.x(),d.y(),d.z());
-  ::glVertex3d(a.x(),a.y(),a.z());
+  glVertex3d(d.x(),d.y(),d.z());
+  glVertex3d(a.x(),a.y(),a.z());
 
-  ::glVertex3d(e.x(),e.y(),e.z());
-  ::glVertex3d(f.x(),f.y(),f.z());
+  glVertex3d(e.x(),e.y(),e.z());
+  glVertex3d(f.x(),f.y(),f.z());
 
-  ::glVertex3d(f.x(),f.y(),f.z());
-  ::glVertex3d(g.x(),g.y(),g.z());
+  glVertex3d(f.x(),f.y(),f.z());
+  glVertex3d(g.x(),g.y(),g.z());
 
-  ::glVertex3d(g.x(),g.y(),g.z());
-  ::glVertex3d(h.x(),h.y(),h.z());
+  glVertex3d(g.x(),g.y(),g.z());
+  glVertex3d(h.x(),h.y(),h.z());
 
-  ::glVertex3d(h.x(),h.y(),h.z());
-  ::glVertex3d(e.x(),e.y(),e.z());
+  glVertex3d(h.x(),h.y(),h.z());
+  glVertex3d(e.x(),e.y(),e.z());
 
-  ::glVertex3d(a.x(),a.y(),a.z());
-  ::glVertex3d(e.x(),e.y(),e.z());
+  glVertex3d(a.x(),a.y(),a.z());
+  glVertex3d(e.x(),e.y(),e.z());
 
-  ::glVertex3d(d.x(),d.y(),d.z());
-  ::glVertex3d(h.x(),h.y(),h.z());
+  glVertex3d(d.x(),d.y(),d.z());
+  glVertex3d(h.x(),h.y(),h.z());
 
-  ::glVertex3d(c.x(),c.y(),c.z());
-  ::glVertex3d(g.x(),g.y(),g.z());
+  glVertex3d(c.x(),c.y(),c.z());
+  glVertex3d(g.x(),g.y(),g.z());
 
-  ::glVertex3d(b.x(),b.y(),b.z());
-  ::glVertex3d(f.x(),f.y(),f.z());
+  glVertex3d(b.x(),b.y(),b.z());
+  glVertex3d(f.x(),f.y(),f.z());
 
-  ::glEnd();
+  glEnd();
 } // end Image_3::gl_draw_bbox
 
 } // end namespace CGAL
