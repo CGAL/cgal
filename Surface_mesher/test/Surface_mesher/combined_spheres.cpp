@@ -103,8 +103,8 @@ int main(int, char**)
 
   const int number_of_initial_points = 20;
   
-  const double facets_uniform_size_bound = 30.; // mm
-  const double facets_aspect_ratio_bound = 0; // degres
+  const double facets_uniform_size_bound = 0.5; // mm
+  const double facets_aspect_ratio_bound = 30; // degres
 
   Sphere_3 sphere1(CGAL::ORIGIN, r1*r1);
   Sphere_3 sphere2(CGAL::ORIGIN, r2*r2);
