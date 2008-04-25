@@ -1,19 +1,24 @@
 #include <CGAL/basic.h>
-#include <CGAL/Mesh_2/Filtered_queue_container.h>
+#include <CGAL/Meshes/Filtered_queue_container.h>
 #include <CGAL/Random.h>
 
 #include <list>
 #include <iostream>
 
 class Is_odd {
+  int cache;
 public:
-  bool operator()(const int i) const
-    {
-      return (i%2)==1;
-    }
+  typedef int Result_type;
+  bool operator()(const int i)
+  {
+    cache = i;
+    return (i%2)==1;
+  }
+
+  Result_type result() { return cache; }
 };
 
-typedef CGAL::Mesh_2::Filtered_queue_container<int, Is_odd> Queue;
+typedef CGAL::Meshes::Filtered_queue_container<int, Is_odd> Queue;
 
 int main(int, char**)
 {
@@ -27,7 +32,7 @@ int main(int, char**)
     {
       int i=CGAL::default_random.get_int(0,1000);
       if((i%2)==1) ++real_number_of_odds;
-      q.add_element(i);
+      q.add_bad_element(i);
     }
 
   while(!q.empty())
