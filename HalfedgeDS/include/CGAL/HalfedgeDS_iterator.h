@@ -56,7 +56,7 @@ public:
 
     // pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( CGAL_NULL_TYPE p) const {
+    bool operator==( CGAL_NULL_TYPE CGAL_assertion_code(p)) const {
         CGAL_assertion( p == 0);
         return It::operator==( It());
     }
@@ -116,7 +116,7 @@ public:
 
     // pointer  ptr() const { return & It::operator*();}
 
-    bool operator==( CGAL_NULL_TYPE p) const {
+    bool operator==( CGAL_NULL_TYPE CGAL_assertion_code(p)) const {
         CGAL_assertion( p == 0);
         return It::operator==( It());
     }
