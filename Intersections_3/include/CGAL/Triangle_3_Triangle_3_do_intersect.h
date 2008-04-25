@@ -79,7 +79,7 @@ bool  _intersection_test_edge(const typename K::Point_3 * p,
 			      const typename K::Point_3 * q, 
 			      const typename K::Point_3 * r,
 			      const typename K::Point_3 * a, 
-			      const typename K::Point_3 * b, 
+			      const typename K::Point_3 * CGAL_kernel_precondition_code(b), 
 			      const typename K::Point_3 * c,
 			      const K & k){
   
