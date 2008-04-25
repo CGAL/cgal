@@ -24,7 +24,7 @@
 #                    specific rules for kds
 #---------------------------------------------------------------------#
 
-vpath %.h ../../include/CGAL/Kinetic/IO/internal
+vpath %.h ../../../Kinetic_data_structures/include/CGAL/Kinetic/IO/internal ../../include/CGAL/Kinetic/IO/internal
 
 #---------------------------------------------------------------------#
 #                    moc rules
