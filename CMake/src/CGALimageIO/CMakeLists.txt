@@ -20,6 +20,7 @@
 assert(CGAL_BINARY_DIR)
 
 find_package(ZLIB)
+find_package(VTK QUIET)
 if(ZLIB_FOUND)
 
   include_directories( ${ZLIB_INCLUDE_DIR} )
@@ -30,6 +31,15 @@ if(ZLIB_FOUND)
   
   set( CGAL_IMAGEIO_BASENAME CGAL-ImageIO )
   
+  if( VTK_FOUND )
+    message(STATUS "VTK-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}.${VTK_BUILD_VERSION} found. Build VTK support in ${CGAL_IMAGEIO_BASENAME}.")
+    include( ${VTK_USE_FILE} )
+    add_definitions(-DCGAL_USE_VTK)
+    target_link_libraries( CGAL_IMAGEIO vtkImaging vtkIO )
+  else( VTK_FOUND)
+    message(STATUS "VTK not found.")
+  endif( VTK_FOUND )
+
   if (NOT AUTO_LINK_ENABLED )
   
     set_target_properties( CGAL_IMAGEIO PROPERTIES OUTPUT_NAME "${CGAL_IMAGEIO_BASENAME}" )
