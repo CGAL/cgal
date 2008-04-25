@@ -217,6 +217,7 @@ void Isovalues_list::on_minusButton_clicked()
     treeWidget->invisibleRootItem()->removeChild(item);
     delete item;
   }
+  emit isovalues_changed();
 }
 
 void Isovalues_list::on_plusButton_clicked()
@@ -230,6 +231,7 @@ void Isovalues_list::on_plusButton_clicked()
   QColor color = QColor(colors[color_index]);
   newItem->setData(Color, Qt::DisplayRole, color);
   newItem->setData(Name, Qt::DisplayRole, "");
+  emit isovalues_changed();
 }
 
 #include "isovalues_list.moc"

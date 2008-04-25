@@ -967,6 +967,8 @@ void Volume::changed_parameters()
 {
   m_surface.clear();
   m_surface_mc.clear();
+  list_draw_marching_cube_is_valid = false;
+  lists_draw_surface_is_valid = false;
   c2t3.clear();
   del.clear();
   m_view_mc = m_view_surface = false;
