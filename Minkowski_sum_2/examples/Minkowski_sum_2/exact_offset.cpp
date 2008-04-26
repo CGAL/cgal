@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_exact_offset.cpp
+//! \file examples/Minkowski_sum_2/exact_offset.cpp
 // Computing the exact offset of a polygon.
 #include <CGAL/basic.h>
 
@@ -22,18 +22,11 @@ typedef CGAL::CORE_algebraic_number_traits     Nt_traits;
 typedef Nt_traits::Rational                    Rational;
 typedef Nt_traits::Algebraic                   Algebraic;
 
-// instead of
-//typedef CGAL::Cartesian<Rational>              Rat_kernel;
-//typedef CGAL::Cartesian<Algebraic>             Alg_kernel;
-//typedef CGAL::Arr_conic_traits_2<Rat_kernel,
-//                                 Alg_kernel,
-//                                 Nt_traits>    Conic_traits_2;
-// workaround for VC++
 struct Rat_kernel : public CGAL::Cartesian<Rational> {};
 struct Alg_kernel : public CGAL::Cartesian<Algebraic> {};
 struct Conic_traits_2 : public CGAL::Arr_conic_traits_2<Rat_kernel,
-                                 Alg_kernel,
-			Nt_traits> {};
+                                                        Alg_kernel,
+                                                        Nt_traits> {};
 
 typedef CGAL::Polygon_2<Rat_kernel>            Polygon_2;
 

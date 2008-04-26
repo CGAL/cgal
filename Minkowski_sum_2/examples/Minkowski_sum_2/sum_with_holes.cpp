@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_sum_with_holes.cpp
+//! \file examples/Minkowski_sum_2/sum_with_holes.cpp
 // Computing the Minkowski sum of two non-convex polygons read from a file.
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -8,9 +8,6 @@
 
 #include "print_utils.h"
 
-// instead of
-//typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-// workaround for VC++
 struct Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
 
 typedef Kernel::Point_2                               Point_2;

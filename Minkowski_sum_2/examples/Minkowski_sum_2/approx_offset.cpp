@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_approx_offset.cpp
+//! \file examples/Minkowski_sum_2/approx_offset.cpp
 // Computing the approximated offset of a polygon.
 
 #include "ms_rational_nt.h"
@@ -11,8 +11,6 @@
 
 typedef CGAL::Lazy_exact_nt<Number_type>           Lazy_exact_nt;
 
-// instead of
-//typedef CGAL::Cartesian<Lazy_exact_nt>             Kernel;
 struct Kernel : public CGAL::Cartesian<Lazy_exact_nt> {};
 typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
 

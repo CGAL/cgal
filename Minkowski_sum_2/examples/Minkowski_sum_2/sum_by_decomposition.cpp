@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_sum_by_decomposition.cpp
+//! \file examples/Minkowski_sum_2/sum_by_decomposition.cpp
 // Computing the Minkowski sum of two non-convex polygons read from a file
 // using the small-side angle-bisector decomposition strategy.
 
@@ -10,9 +10,6 @@
 
 #include "print_utils.h"
 
-// instead of
-//typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-// workaround for VC++
 struct Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
 
 typedef Kernel::Point_2                               Point_2;

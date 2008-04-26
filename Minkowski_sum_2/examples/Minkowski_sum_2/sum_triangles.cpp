@@ -1,4 +1,4 @@
-//! \file examples/Minkowski_sum_2/ex_sum_triangles.cpp
+//! \file examples/Minkowski_sum_2/sum_triangles.cpp
 // Computing the Minkowski sum of two triangles.
 
 #include "ms_rational_nt.h"
