@@ -23,10 +23,24 @@
     \ccc{r} centered at the origin.
     The function actually outputs a set $S$ that contains the Minkowski sum,
     such that the approximation error is bounded by \ccc{eps}.
-    Note that as the input polygon not be convex, its offset may not be a
+    Note that as the input polygon may not be convex, its offset may not be a
     simple polygon. The result is therefore represented as a polygon with
     holes, whose edges are either line segments or circular arcs.
     \ccPrecond{\ccc{P} is a simple polygon.}}
+
+\ccFunction{template<class Kernel, class Container>
+            typename Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2
+            approximated_offset_2 (const Polygon_with_holes_2<Kernel, Container>& wh,
+                                   const typename Kernel::FT& r,
+                                   const double& eps);}
+   {Provides a guaranteed approximation of offset the given polygon with holes
+    \ccc{pwh} by a given radius \ccc{r}, such that the approximation error is bounded
+    by \ccc{eps}. It does so by offsetting outer boundary of \ccc{pwh} and insetting
+    its holes.
+    The result is represented as a generalized polygon with holes, such that the edges
+    of the polygon correspond to line segment and circular arcs.
+    \ccPrecond{\ccc{pwh} is {\em not} unbounded (it has a valid outer boundary).}}
+
 
 \ccFunction{template<class Kernel, class Container,
                      class DecompositionStrategy>

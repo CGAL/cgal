@@ -440,7 +440,7 @@ considerably speeds up the construction of the offset.
 
 As we previously mentioned, it is possible to represent offset polygons
 in an exact manner, if we treat their edges as arcs of conic curves with
-rational coefficients. The function \ccc{offset_polygon_2 (traits, P, r)}
+rational coefficients. The function \ccc{offset_polygon_2 (P, r, traits)}
 computes the offset of the polygon $P$ by a rational radius $r$ in an
 exact manner. The \ccc{traits} parameter should be an instance of an
 arrangement-traits class that is capable of handling conic arcs in an
@@ -471,4 +471,54 @@ that employ the convolution approach, and are only included in the package
 for the sake of completeness.
 \end{ccAdvanced}
 
+\subsection{Computing Inner Offsets\label{mink_ssec:inner_offset}}
+%----------------------------------
 
+An operation closely related to the offset computation, is obtaining the
+{\em inner offset} of a polygon, or {\em insetting} it by a given radius.
+The inset of a polygon $P$ with radius $r$ is the set of points iside $P$
+whose distance from the polygon boundary, denoted $\partial P$ is at least
+$r$, namely: $\{ p \in P \vert {\rm dist}(p, \partial P) \geq r \}$.
+Note that the resulting set may not be connected in case $P$ is a non-convex
+polygon that has some narrow components, and thus is characterized by a
+(possibly empty) set of polygons whose edges are line segments and circular
+arcs of radius $r$.
+
+The offset can be computed using the convolution method if we traverse the
+polygon in a {\em clockwise} orientation (and not in {\em counterclockwise}
+orientation, as done in case of ofsetting a polygon).
+As in case of the offset functions, the Minkowski-sum package contains two
+functions for insetting a simple polygon:
+
+The function \ccc{approximated_inset_2 (P, r, eps, oi)}  accepts a polygon
+$P$, an inset radius $r$ and $\varepsilon > 0$. It constructs an
+approximation for the inset of $P$ by the radius $r$, with the approximation
+error bounded by $\varepsilon$. The function returns its output via the
+output iterator \ccc{oi}, whose value-type must be
+\ccc{Gps_circle_segment_traits_2<Kernel>::Polygon_2} representing
+the polygons that approximates the inset polygon.
+
+\ccIncludeExampleCode{Minkowski_sum_2/approx_inset.cpp}
+
+Similarly, the function \ccc{inset_polygon_2 (P, r, traits, oi)} computes
+the exact inset of $P$ with radius $r$, and returns its output via the given
+output iterator \ccc{oi}. The \ccc{traits} parameter should be an instance of
+an arrangement-traits class that is capable of handling conic arcs in an
+exact manner, whereas \ccc{oi}'s value-type must be
+\ccc{Gps_traits_2<ArrConicTraits>::Polygons_2}.
+
+\ccIncludeExampleCode{Minkowski_sum_2/exact_inset.cpp}
+
+\begin{ccAdvanced}
+Unlike the offset functions, there are no overloaded versions of the inset
+functions that use convex polygon decomposition to compute insets, as this
+method cannot be easily generalized for inset computations.
+\end{ccAdvanced}
+
+In this context let us mention that there exist overloaded versions of the
+functions \ccc{approximated_offset_2 (P, r, eps)} and
+\ccc{offset_polygon_2 (P, r, traits)} that accept a {\em polygon with holes}
+$P$ and computed its offset. This ofset is obtain by taking the outer offset
+of $P$'s outer boundary, and computing the inner offsets of $P$'s holes.
+The former polygon defines the output boundary of $P \oplus B_r$, and the latter
+define the holes within the result.
