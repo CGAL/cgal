@@ -20,6 +20,7 @@
 #define CGAL_APPROXIMATED_OFFSET_BASE_H
 
 #include <CGAL/Polygon_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Minkowski_sum_2/Labels.h>
 #include <CGAL/Minkowski_sum_2/Arr_labeled_traits_2.h>
@@ -43,6 +44,7 @@ protected:
   typedef Kernel                                         Basic_kernel;
   typedef NT                                             Basic_NT;
   typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel, Container_> Polygon_with_holes_2;
 
 private:
   
@@ -93,6 +95,7 @@ protected:
    * Compute curves that constitute the offset of a simple polygon by a given
    * radius, with a given approximation error.
    * \param pgn The polygon.
+   * \param orient The orientation to traverse the vertices.
    * \param r The offset radius.
    * \param cycle_id The index of the cycle.
    * \param oi An output iterator for the offset curves.
@@ -101,12 +104,13 @@ protected:
    */
   template <class OutputIterator>
   OutputIterator _offset_polygon (const Polygon_2& pgn,
+                                  CGAL::Orientation orient,
                                   const Basic_NT& r,
                                   unsigned int cycle_id,
                                   OutputIterator oi) const
   {
     // Prepare circulators over the polygon vertices.
-    const bool            forward = (pgn.orientation() == COUNTERCLOCKWISE);
+    const bool            forward = (pgn.orientation() == orient);
     Vertex_circulator     first, curr, next;
 
     first = pgn.vertices_circulator();
@@ -164,12 +168,11 @@ protected:
 
     do
     {
-      // Get a circulator for the next vertex (in counterclockwise
-      // orientation).
+      // Get a circulator for the next vertex (in the proper orientation).
       if (forward)
-	++next;
+        ++next;
       else
-	--next;
+        --next;
 
       // Compute the vector v = (delta_x, delta_y) of the current edge,
       // and compute the squared edge length.
@@ -359,8 +362,8 @@ protected:
 
       if (curr == first)
       {
-	// This is the first edge we visit -- store op1 for future use.
-	first_op = op1;
+        // This is the first edge we visit -- store op1 for future use.
+        first_op = op1;
       }
       else
       {
@@ -449,7 +452,6 @@ protected:
   }
 
 };
-
 
 CGAL_END_NAMESPACE
 

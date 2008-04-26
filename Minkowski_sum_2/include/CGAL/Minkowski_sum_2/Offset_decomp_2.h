@@ -100,7 +100,9 @@ public:
 
     for (iter = sub_pgns.begin(); iter != sub_pgns.end(); ++iter)
     {
-      _offset_polygon (*iter, r,
+      _offset_polygon (*iter,
+                       CGAL::COUNTERCLOCKWISE,
+                       r,
                        pgn_id,
                        std::back_inserter(boundary_curves));
       pgn_id++;
@@ -116,7 +118,6 @@ public:
   }
 
 };
-
 
 CGAL_END_NAMESPACE
 

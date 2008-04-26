@@ -51,7 +51,7 @@ protected:
   typedef typename Arrangement_2::Edge_iterator          Edge_iterator;
   typedef typename Arrangement_2::Halfedge_iterator      Halfedge_iterator;
   typedef typename Arrangement_2::Face_iterator          Face_iterator;
-  typedef typename Arrangement_2::Inner_ccb_iterator          Hole_iterator;
+  typedef typename Arrangement_2::Inner_ccb_iterator     Inner_ccb_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_circulator
                                              Halfedge_around_vertex_circulator;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
@@ -63,7 +63,7 @@ public:
 
   /*! Default constructor. */
   Union_of_cycles_2 () :
-    UNVISITED (-1)
+    UNVISITED (-1000000)
   {}
 
 protected:
@@ -84,10 +84,10 @@ protected:
     CGAL_precondition (arr.is_empty());
 
     // Construct the arrangement of the curves.
-    insert (arr, begin, end);
+    CGAL::insert (arr, begin, end);
 
     // Go over all faces and mark them as unvisited, by setting their inside
-    // count to (-1).
+    // count to UNVISITED.
     Face_iterator                    fit;
 
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
@@ -95,17 +95,17 @@ protected:
 
     // Mark the inside count of the unbounded face as 0, and start a
     // breadth-first search from this face, going over the inner boundary of
-    // the single hole in the unbounded face.
+    // the single hole (inner CCB) in the unbounded face.
     const Face_handle                uf = arr.unbounded_face();
     Face_handle                      f_next;
     int                              next_count;
-    Hole_iterator                    hole_it = uf->holes_begin();
+    Inner_ccb_iterator               iccb_it = uf->inner_ccbs_begin();
     Ccb_halfedge_circulator          first, circ;
     Halfedge_handle                  he;
     std::list<Face_handle>           queue;
 
     uf->set_data (0);
-    circ = first = *hole_it;
+    circ = first = *iccb_it;
     do
     {
       he = circ;
@@ -126,10 +126,10 @@ protected:
       
     } while (circ != first);
     
-    ++hole_it;
+    ++iccb_it;
 
     // Make sure that there is a single hole in the unbounded face.
-    CGAL_assertion (hole_it == uf->holes_end());
+    CGAL_assertion (iccb_it == uf->inner_ccbs_end());
 
     // The main breadth-first search loop.
     Face_handle                      f_curr;
@@ -164,8 +164,32 @@ protected:
       
       } while (circ != first);
 
-      // Make sure the current face contains no holes.
-      CGAL_assertion (f_curr->holes_begin() == f_curr->holes_end());
+      // Go over the holes (inner CCBs) of the current face.
+      for (iccb_it = f_curr->inner_ccbs_begin();
+           iccb_it != f_curr->inner_ccbs_end();
+           ++iccb_it)
+      {
+        circ = first = *iccb_it;
+        do
+        {
+          he = circ;
+          f_next = he->twin()->face();
+
+          if (f_next->data() == UNVISITED)
+          {
+            next_count = curr_count + _boundary_count (he->twin());
+            f_next->set_data (next_count);
+            queue.push_back (f_next);
+          }
+          else if (f_curr != f_next)
+          {
+            CGAL_assertion (f_next->data() == 
+                            curr_count + _boundary_count (he->twin()));
+          }
+          ++circ;
+
+        } while (circ != first);
+      }
     }
     
     return;
@@ -180,7 +204,7 @@ private:
    */
   int _boundary_count (Halfedge_handle he) const
   {
-    if ((Arr_halfedge_direction)he->direction() == ARR_LEFT_TO_RIGHT)
+    if ((Arr_halfedge_direction) he->direction() == ARR_LEFT_TO_RIGHT)
     {
       // Halfedge is directed from left to right:
       return (he->curve().label().right_count() - 

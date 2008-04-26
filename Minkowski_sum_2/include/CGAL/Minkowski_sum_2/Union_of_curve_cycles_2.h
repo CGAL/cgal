@@ -50,7 +50,7 @@ private:
   typedef typename Base::Edge_iterator            Edge_iterator;
   typedef typename Base::Halfedge_iterator        Halfedge_iterator;
   typedef typename Base::Face_iterator            Face_iterator;
-  typedef typename Base::Hole_iterator            Hole_iterator;
+  typedef typename Base::Inner_ccb_iterator       Inner_ccb_iterator;
   typedef typename Base::Halfedge_around_vertex_circulator
                                              Halfedge_around_vertex_circulator;
   typedef typename Base::Ccb_halfedge_circulator  Ccb_halfedge_circulator;
@@ -181,10 +181,10 @@ public:
     // as the inner boundary of the single hole in the unbounded face. 
     Face_iterator                    fit;
     const Face_handle                uf = arr.unbounded_face();
-    Hole_iterator                    hole_it = uf->holes_begin();
+    Inner_ccb_iterator               iccb_it = uf->inner_ccbs_begin();
     Ccb_halfedge_circulator          circ;
-   
-    circ = *hole_it;
+
+    circ = *iccb_it;
     out_bound = General_polygon_2 (Ccb_curve_iterator (circ),
                                    Ccb_curve_iterator (circ, true));
 
@@ -205,6 +205,45 @@ public:
     }
 
     return (holes);
+  }
+
+
+  /*!
+   * Compute the inverse of the union of the interiors of the curve cycles,
+   * and return the result as a sequence of polygons.
+   * \param begin An iterator for the first curve in the range.
+   * \param end A past-the-end iterator for the curve range.
+   * \param oi Output: An output iterator of the polygons.
+   * \return A past-the-end iterator for the polygons.
+   */
+  template <class InputIterator, class OutputIterator>
+  OutputIterator inverse (InputIterator begin, InputIterator end,
+                          OutputIterator oi) const
+  {
+    // Construct the arrangement of all segments.
+    Arrangement_2                    arr;
+
+    this->_construct_arrangement (begin, end, arr);
+
+    // Go over all arrangement faces, and output each face whose data is
+    // negative.
+    Face_iterator                    fit;
+    Ccb_halfedge_circulator          circ;
+
+    for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
+    {
+      CGAL_assertion (fit->data() != this->UNVISITED);
+
+      if (fit->data() < 0)
+      {
+        circ = fit->outer_ccb();
+        *oi = General_polygon_2 (Ccb_curve_iterator (circ),
+                                 Ccb_curve_iterator (circ, true));
+        ++oi;
+      }
+    }
+
+    return (oi);
   }
 
 };
