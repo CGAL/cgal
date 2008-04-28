@@ -17,6 +17,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_traits_on_vert_line.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -45,6 +48,10 @@ class Status_line_CA_1_rep {
     typedef typename Curve_analysis_2::Xy_coordinate_2
                 Xy_coordinate_2;
 
+    // type of bivariate Polynomial
+    typedef typename Curve_analysis_2::Polynomial_2
+                Polynomial_2;
+
     // an instance of a size type
     typedef typename Curve_analysis_2::size_type size_type;
 
@@ -53,6 +60,15 @@ class Status_line_CA_1_rep {
 
     // container of arcs
     typedef std::vector<Arc_pair> Arc_container;
+
+    // Traits class for local isolator
+    typedef CGAL::CGALi::Bitstream_descartes_traits_on_vert_line
+        <typename Polynomial_traits_d<Polynomial_2>::Coefficient,
+         X_coordinate_1 > Bitstream_traits;
+
+    // Isolator type
+    typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits> 
+        Bitstream_descartes;
 
     // constructors
 public:
@@ -130,6 +146,9 @@ public:
     
     // stores algebraic real over the vertical line
     mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
+
+    // stores the isolator instance
+    mutable boost::optional<Bitstream_descartes> isolator;
     
      // befriending the handle
     friend class Status_line_CA_1<Curve_analysis_2, Self>;
@@ -181,6 +200,9 @@ public:
 
     //! container of arcs
     typedef std::vector<Arc_pair> Arc_container;
+
+    //! Local isolator type
+    typedef typename Rep::Bitstream_descartes Bitstream_descartes;
     
      //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
@@ -464,8 +486,24 @@ public:
 
         os << ']';
     }
-    
+
     //!@}
+
+    //! Sets the isolator instance
+    void set_isolator (const Bitstream_descartes& isolator) const {
+        this->ptr()->isolator = isolator;
+    }
+
+    //! Returns the isolator instance
+    Bitstream_descartes& isolator() const {
+        CGAL_assertion(this->ptr()->isolator);
+        return this->ptr()->isolator->get();
+    }
+
+    //! Returns whether an isolator has been given for that status line
+    bool has_isolator() const {
+        return this->ptr()->isolator;
+    }
 
     //! these are our friends
     //friend class Curve_analysis_2;
