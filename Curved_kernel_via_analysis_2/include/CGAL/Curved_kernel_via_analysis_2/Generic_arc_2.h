@@ -234,8 +234,10 @@ public:
                                             std::back_inserter(tmp));
                 // leave only intersection point (without multiplicity)
                 for(typename Point_container::const_iterator it = tmp.begin();
-                    it != tmp.end(); it++) 
+                    it != tmp.end(); it++) {
                     *oi++ = Generic_point_2(it->first);
+                    std::cerr << "\nintersection: " << it->first << "\n";
+                }
                 return oi;
             }
             if(!cv2.source().is_finite())
