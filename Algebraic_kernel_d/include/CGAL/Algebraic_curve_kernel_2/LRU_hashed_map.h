@@ -23,8 +23,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 
-#include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
-
 using boost::multi_index::multi_index_container;
 using boost::multi_index::get;
 using boost::multi_index::project;
@@ -86,7 +84,7 @@ private:
                     Hash, Pred > > > Hashed_map;
     
     //! hashed map instance
-    Hashed_map _m_hashed_map;
+    mutable Hashed_map _m_hashed_map;
     
     //! maximal size allowed
     unsigned _m_max_size;
@@ -134,7 +132,7 @@ public:
     *  If the object is not in the map, it is constructed using \c Creator
     *  and added to the map
     */
-    Value_type operator()(const Key_type& key_)
+    Value_type operator()(const Key_type& key_) const 
     {
         Canonicalizer canonicalize;
         Key_type key = canonicalize(key_);
@@ -153,7 +151,7 @@ public:
     //!
     //! returns a pair of iterator pointing to \c Data_type and a boolean
     //! indicating whether an element with specified key was found
-    Find_result find(const Key_type& key)
+    Find_result find(const Key_type& key) const 
     {
         typename boost::multi_index::nth_index<Hashed_map,1>::type& 
         idx = _m_hashed_map.get<1>();
@@ -172,7 +170,7 @@ public:
     //! inserted; otherwise \c p.first points to an element that caused
     //! the insertion to be banned. If the map's size exceeds \c max_size
     //! the least recently used entry is dropped
-    std::pair<Sequenced_iterator, bool> insert(const Data_type& data)
+    std::pair<Sequenced_iterator, bool> insert(const Data_type& data) const
     {
         if(_m_hashed_map.size() > _m_max_size)
             _m_hashed_map.pop_back();
@@ -245,13 +243,14 @@ struct Poly_hasher {
         NT res(0);
         int i=0;
         // take at most 3 trailing coeffs
-        for (cit = v.begin(); i < 3 && cit != v.end(); cit++, i++) {
+        for (cit = v.begin(), i = 0; i < 3 && cit != v.end(); cit++, i++) {
             res += *cit;
         }
         if(res == NT(0))
             return 0xDeadBeef;
         // randomization of the result
-        return static_cast<std::size_t>(ceil_log2_abs(res * NT(0x12341234)));
+        return static_cast<std::size_t>(CGAL::to_double(res));
+            //static_cast<std::size_t>(ceil_log2_abs(res * NT(0x12341234)));
 
     }
 };
