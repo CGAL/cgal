@@ -16,6 +16,8 @@
 #ifndef CGAL_APPROXIMATE_ARITHMETIC_CONTROLLER
 #define CGAL_APPROXIMATE_ARITHMETIC_CONTROLLER 1
 
+#include <boost/numeric/interval.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {

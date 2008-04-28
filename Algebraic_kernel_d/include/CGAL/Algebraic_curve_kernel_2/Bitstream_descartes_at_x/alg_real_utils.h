@@ -25,6 +25,7 @@
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+#include <CGAL/Polynomial/polynomial_gcd.h>
 
 #include <CGAL/Coercion_traits.h>
 
