@@ -28,9 +28,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/// Compute average spacing of one query point from K nearest neighbors.
+/// Compute average spacing of one query point from KNN nearest neighbors.
 ///
-/// Precondition: K >= 2.
+/// Precondition: KNN >= 2.
 ///
 /// @return average spacing (scalar)
 template < typename Kernel, ///< Geometric traits class.
@@ -38,7 +38,7 @@ template < typename Kernel, ///< Geometric traits class.
 typename Kernel::FT
 average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
                   Tree& tree, ///< KD-tree
-                  const unsigned int K)
+                  const unsigned int KNN)
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -46,19 +46,19 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
   typedef typename Kernel::Plane_3 Plane;
   typedef typename Kernel::Vector_3 Vector;
 
-  // types for K nearest neighbor search
+  // types for KNN nearest neighbor search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
-  // performs K + 1 queries (if unique the query point is
-  // output first). search may be aborted when K is greater
+  // performs KNN + 1 queries (if unique the query point is
+  // output first). search may be aborted when KNN is greater
   // than number of input points
-  Neighbor_search search(tree,query,K+1);
+  Neighbor_search search(tree,query,KNN+1);
   Search_iterator search_iterator = search.begin();
   FT sum_distances = (FT)0.0;
   unsigned int i;
-  for(i=0;i<(K+1);i++)
+  for(i=0;i<(KNN+1);i++)
   {
     if(search_iterator == search.end())
       break; // premature ending
@@ -73,10 +73,10 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
 }
 
 
-/// Compute average spacing from K nearest neighbors.
+/// Compute average spacing from KNN nearest neighbors.
 /// This variant requires the kernel.
 ///
-/// Precondition: K >= 2.
+/// Precondition: KNN >= 2.
 /// @return average spacing (scalar)
 template < typename InputIterator, ///< InputIterator value_type is Point_3.
            typename Kernel ///< Geometric traits class.
@@ -84,10 +84,10 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3.
 typename Kernel::FT
 average_spacing_3(InputIterator first,    ///< input points
                   InputIterator beyond,
-                  const unsigned int K,   ///< number of neighbors
+                  const unsigned int KNN,   ///< number of neighbors
                   const Kernel& /*kernel*/)
 {
-  // types for K-nearest neighbor search structure
+  // types for KNN-nearest neighbor search structure
   typedef typename Kernel::FT FT;
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
@@ -99,7 +99,7 @@ average_spacing_3(InputIterator first,    ///< input points
   CGAL_precondition(first != beyond);
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(K >= 2);
+  CGAL_precondition(KNN >= 2);
 
   // instanciate a KD-tree search
   Tree tree(first,beyond);
@@ -111,7 +111,7 @@ average_spacing_3(InputIterator first,    ///< input points
   InputIterator it;
   for(it = first; it != beyond; it++)
   {
-    sum_spacings += average_spacing_3<Kernel,Tree>(*it,tree,K);
+    sum_spacings += average_spacing_3<Kernel,Tree>(*it,tree,KNN);
     nb_points++;
   }
 
@@ -119,10 +119,10 @@ average_spacing_3(InputIterator first,    ///< input points
   return sum_spacings / (FT)nb_points;
 }
 
-/// Compute average spacing from K nearest neighbors.
+/// Compute average spacing from KNN nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
-/// Precondition: K >= 2.
+/// Precondition: KNN >= 2.
 /// @return average spacing (scalar)
 template < typename InputIterator, ///< InputIterator value_type is Point_3
            typename FT ///< number type
@@ -130,11 +130,11 @@ template < typename InputIterator, ///< InputIterator value_type is Point_3
 FT
 average_spacing_3(InputIterator first,    ///< input points
                   InputIterator beyond,
-                  const unsigned int K)   ///< number of neighbors
+                  const unsigned int KNN)   ///< number of neighbors
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return average_spacing_3(first,beyond,K,Kernel());
+  return average_spacing_3(first,beyond,KNN,Kernel());
 }
 
 CGAL_END_NAMESPACE

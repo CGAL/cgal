@@ -28,6 +28,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// PA: I would suggest to use Kernel::FT instead of double
+// I am not sure the mutating version is easy to implement
+// without passing the container itself?
 
 /// Compute average squared distance to the K nearest neighbors.
 /// Precondition: K >= 2.

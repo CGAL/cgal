@@ -116,6 +116,7 @@ public:
 // Data
 private:
 
+    // PA: why is normal optional here? to save memory?
     Vector *m_pNormal;    // normal vector (optional)
     bool    m_oriented;
 };
