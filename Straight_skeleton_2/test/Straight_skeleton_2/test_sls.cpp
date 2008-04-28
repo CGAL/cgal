@@ -28,7 +28,6 @@
 
 #include<boost/tokenizer.hpp>
 
-
 bool sTestInner            = true  ;
 bool sTestOuter            = true  ;
 bool sTestOffsets          = true  ;
@@ -50,6 +49,8 @@ double           sOffset        = 0.0 ;
 bool             sOffsetAtNodes = true ; 
 size_t           sOffsetCount   = 2 ;
 std::vector<int> sOffsetAtEntry ;
+
+double sMaxTime = 0.0 ;
 
 double sDX    = 0.0 ;
 double sDY    = 0.0 ;
@@ -233,8 +234,15 @@ IRegionPtr load_region( string file, int aShift, int& rExitCode )
                 std::rotate(lPoly->begin(),lPoly->begin()+aShift,lPoly->end());
                 
               if ( orientation == expected )
-                   rRegion->push_back(lPoly);
-              else rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
+              {
+                cout << "Entering contour with existing orientation" << std::endl ;
+                rRegion->push_back(lPoly);
+              }
+              else 
+              {
+                cout << "Entering contour with reverse orientation" << std::endl ;
+                rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
+              }  
             }
             else
             {
@@ -334,7 +342,7 @@ void dump_skeleton_to_eps( ISls const& aSkeleton, double aScale, ostream& rOut )
   {
     Halfedge_const_handle h = hit ;
 
-    if( h->is_bisector() && is_even(h->id()) )
+    if( h->is_bisector() && is_even(h->id()) && !h->has_infinite_time() && !h->opposite()->has_infinite_time() )
     { 
       rOut << "skel" << endl 
            << aScale * h->vertex()->point().x() 
@@ -447,6 +455,7 @@ void dump_skeleton_to_dxf( ISls const& aSkeleton
                          , Color      aContourBisectorColor
                          , Color      aSkeletonBisectorColor
                          , Color      aPeakBisectorColor
+                         , Color      aInfiniteBisectorColor
                          , string     aLayer
                          , DxfStream& rDXF 
                          )
@@ -462,15 +471,24 @@ void dump_skeleton_to_dxf( ISls const& aSkeleton
        && handle_assigned(h->opposite()->vertex())
        )
     {
-      if( h->is_bisector() && is_even(h->id()) )
+      if( h->is_bisector() && is_even(h->id()) && !h->has_infinite_time() && !h->opposite()->has_infinite_time() )
       {
         if ( h->is_inner_bisector() )
         {
           if ( h->slope() == ZERO )
-               rDXF << aPeakBisectorColor ; 
-          else rDXF << aSkeletonBisectorColor ;
+          {
+            rDXF << aPeakBisectorColor ; 
+          }
+          else 
+          {
+            rDXF << aSkeletonBisectorColor ;
+          }
         }
-        else rDXF << aContourBisectorColor ;
+        else 
+        {
+          rDXF << aContourBisectorColor ;
+        }  
+        
         rDXF << ISegment( h->vertex()->point(), h->opposite()->vertex()->point() ) ;
       }  
     }   
@@ -499,14 +517,14 @@ void dump_to_dxf ( TestCase const& aCase )
     {
       if ( sVerbose )
         cout << "    Dumping inner skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Inner.Skeleton,YELLOW,GREEN,PURPLE,"InnerSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Inner.Skeleton,YELLOW,GREEN,PURPLE,GRAY,"InnerSkeleton",lDxf);
     }
       
     if ( aCase.Outer.Skeleton )
     {
       if ( sVerbose )
         cout << "    Dumping outer skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Outer.Skeleton,YELLOW,GREEN,PURPLE,"OuterSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Outer.Skeleton,YELLOW,GREEN,PURPLE,GRAY,"OuterSkeleton",lDxf);
     }
           
     dump_region_to_dxf(aCase.Inner.Contours,GRAY,"InnerOffset",lDxf);
@@ -590,6 +608,7 @@ bool is_point_inside_region( Region const& aRegion, Point const& aP )
 bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
 {
   bool rValid = aSkeleton.is_valid() ;
+  
   if ( !rValid )
   {
     if ( sVerbose )
@@ -602,7 +621,7 @@ bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
       for(Vertex_const_iterator vit = aSkeleton.vertices_begin(); vit != aSkeleton.vertices_end() && rValid ; ++vit)
       {
         Vertex_const_handle v = vit ;
-        if ( v->is_skeleton() )
+        if ( v->is_skeleton() && ! v->has_infinite_time() )
         {
           if ( !is_point_inside_region(aRegion,v->point()) )
           {
@@ -630,9 +649,11 @@ bool test_zone ( Zone& rZone )
     if ( sVerbose )
       cout << "    Building straight skeleton." << endl ; 
     
-    ISlsBuilder builder ;
+    ISlsBuilder builder( boost::make_optional(sMaxTime > 0, sMaxTime) )  ;
+    
     for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->begin(),(*bit)->end());
+    
     rZone.Skeleton = builder.construct_skeleton(false) ;
   }
   catch ( exception const& x ) 
@@ -658,7 +679,7 @@ bool test_zone ( Zone& rZone )
     {
       set<double> lTimes ;
       
-      double lMaxTime = 0.0 ;
+      double lMaxTime = 999999999 ;
       
       for ( Vertex_const_iterator  vit  = rZone.Skeleton->vertices_begin()
                                   ,evit = rZone.Skeleton->vertices_end  ()
@@ -675,6 +696,9 @@ bool test_zone ( Zone& rZone )
             lMaxTime = lTime ;
         }
       }      
+      
+      if ( sVerbose )
+        cout << "    Max offset time: " << lMaxTime << endl ; 
       
       vector<double> lOffsets ;
       
@@ -726,7 +750,7 @@ bool test_zone ( Zone& rZone )
         for ( vector<double>::const_iterator oit = lOffsets.begin() ; oit != lOffsets.end() ; ++ oit )
         {
           double lOffset = *oit ;
-          if ( lOffset > 0.01 )
+          if ( lOffset > 1e-10 )
           {
             if ( sVerbose )
               cout << "    Building offset contours at " << lOffset << endl ; 
@@ -989,8 +1013,19 @@ int main( int argc, char const* argv[] )
           case 'p' : sAcceptNonSimpleInput = true ; break ;
           case 'c' : lContinueOnErrorAssertionFailed = true; break ;
           case 'n' : sNoOp         = true ; break ;
-          case 't' : sValidateGeometry = true ; break ;
+          case 'g' : sValidateGeometry = true ; break ;
           
+          case 't' : 
+            if ( arg.length() > 2 ) 
+            {
+              sMaxTime = atof(&arg[2]) ; 
+              sOffsetAtNodes = false ;
+              sOffset = sMaxTime ;
+              sOffsetCount = 1 ;
+              cout << "Only creating partial skeleto for offsseting at " << sMaxTime << std::endl ;
+            }
+            break ;
+            
           case 'r' : 
             if ( arg.length() > 2 ) 
               sMaxShift = atoi(&arg[2]) ; 
@@ -1225,7 +1260,7 @@ int main( int argc, char const* argv[] )
   
   if ( lPrintUsage )
   {
-    cout << "USAGE: test_sls <options> file0 file1 ... fileN" << endl
+    cout << "USAGE: test_sls <options> file0 file1 ... fileN @response_file" << endl
          << endl 
          << "  <options>: " << endl
          << endl 
@@ -1237,6 +1272,7 @@ int main( int argc, char const* argv[] )
          << "         DxS 'S' evenly space offsets separated distance 'D'" << endl 
          << "         Dx* Evenly spaced offsets separated distance 'D'" << endl 
          << endl 
+         << "     -tMAX   Create a partial skeleton for offssetting at MAX distance" << endl
          << "     -a      Abort on first error." << endl
          << "     -p      Permissive mode. Accept non-simple input polygons." << endl
          << "     -c      Ignore errors." << endl
@@ -1245,7 +1281,7 @@ int main( int argc, char const* argv[] )
          << "     -v      Verbose log." << endl 
          << "     -l      Dump offset polygons." << endl 
          << "     -n      No-op mode. Doesn't create skeletons." << endl 
-         << "     -g      Validate skeleton edges are disjoint." << endl
+         << "     -g      Validate results geometrically and not just topologically." << endl
          << "     -fPATH  Append PATH to each filename" << endl 
          << "     -rMAX   Rotate input vertex sequence by one vertex up to MAX times" << endl
          << "     -mMAX   Ignore polygons with a vertex count greater than MAX" << endl

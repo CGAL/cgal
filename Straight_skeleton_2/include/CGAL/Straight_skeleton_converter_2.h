@@ -59,6 +59,7 @@ struct Straight_skeleton_items_converter_2: Cartesian_converter< typename Source
                         , this->Base::operator()(aV->point())
                         , this->Base::operator()(aV->time ())
                         , aV->is_split()
+                        , aV->has_infinite_time()
                         ) ;
   }
   

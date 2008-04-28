@@ -412,6 +412,9 @@ struct SS_converter : Converter
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
   
+  typedef boost::optional<Source_FT> Source_opt_FT ;
+  typedef boost::optional<Target_FT> Target_opt_FT ;
+  
   typedef boost::optional<Source_point_2> Source_opt_point_2 ;
   typedef boost::optional<Target_point_2> Target_opt_point_2 ;
   
@@ -425,8 +428,16 @@ struct SS_converter : Converter
   typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr ;
   
   
-  Target_FT        cvt_n(Source_FT const& n) const  { return this->Converter::operator()(n); }
+  Target_FT cvt_n(Source_FT const& n) const  { return this->Converter::operator()(n); }
 
+  Target_opt_FT cvt_n(Source_opt_FT const& n) const
+  { 
+    Target_opt_FT r ; 
+    if ( n ) 
+      r = cvt_n(*n);
+    return r ;  
+  }
+  
   Target_point_2   cvt_p(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
   Target_segment_2 cvt_s( Source_segment_2 const& e) const { return Target_segment_2(cvt_p(e.source()), cvt_p(e.target()) ) ; }
@@ -477,6 +488,8 @@ struct SS_converter : Converter
   
   Target_FT        operator()(Source_FT const& n) const { return cvt_n(n) ; }
 
+  Target_opt_FT    operator()(Source_opt_FT const& n) const { return cvt_n(n) ; }
+  
   Target_point_2   operator()( Source_point_2 const& p) const { return cvt_p(p) ; }
 
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvt_s(s); }

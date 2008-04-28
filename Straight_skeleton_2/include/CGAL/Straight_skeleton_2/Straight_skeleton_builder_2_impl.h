@@ -34,7 +34,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 template<class Gt, class SS, class V>
-Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const& aTraits, Visitor const& aVisitor )
+Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime, Traits const& aTraits, Visitor const& aVisitor )
   :
   mTraits(aTraits)
  ,mVisitor(aVisitor)
@@ -44,6 +44,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::Straight_skeleton_builder_2 ( Traits const
  ,mFaceID(0)
  ,mEventID(0)
  ,mStepID(0)
+ ,mMaxTime(aMaxTime)
  ,mPQ(mEventCompare)
  ,mSSkel( new SSkel() )
 {
@@ -122,7 +123,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
 
 template<class Gt, class SS, class V>
 typename Straight_skeleton_builder_2<Gt,SS,V>::EventPtr 
-Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN, Site const& aSite )
+Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle_pair aOpp, Site const& aSite )
 {
   EventPtr rPseudoSplitEvent ;
   
@@ -134,34 +135,35 @@ Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent
     Trisegment_2_ptr  const& lEventTrisegment = lEvent.trisegment();
     Vertex_handle            lSeedN           = lEvent.seed0();
     
+    Vertex_handle lOppL = aOpp.first ;
+    Vertex_handle lOppR = aOpp.second ;
+    
     if ( aSite == AT_SOURCE )
     {
-      Vertex_handle lOppPrevN = GetPrevInLAV(aOppN) ;
-      
-      Halfedge_handle lOppPrevBorder = GetVertexTriedge(lOppPrevN).e0() ; 
+      Halfedge_handle lOppPrevBorder = GetVertexTriedge(lOppL).e0() ; 
       
       if ( lEventTriedge.e0() != lOppPrevBorder && lEventTriedge.e1() != lOppPrevBorder )
       {
-        rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge,lEventTrisegment,lOppPrevN,lSeedN,true) ) ;
+        rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge,lEventTrisegment,lOppL,lSeedN,true) ) ;
   
-        CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against N" << lOppPrevN->id() ) ;
+        CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against N" << lOppL->id() ) ;
         
-        mVisitor.on_pseudo_split_event_created(lOppPrevN,lSeedN) ;
+        mVisitor.on_pseudo_split_event_created(lOppL,lSeedN) ;
       }
     }
     else // aSite == AT_TARGET 
     {
-      Vertex_handle lOppNextN = GetNextInLAV(aOppN) ;
+      Vertex_handle lOppNextN = GetNextInLAV(lOppR) ;
       
       Halfedge_handle lOppNextBorder = GetVertexTriedge(lOppNextN).e0() ; 
       
       if ( lEventTriedge.e0() != lOppNextBorder && lEventTriedge.e1() != lOppNextBorder )
       {
-        rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge, lEventTrisegment, lSeedN, aOppN,false) ) ;  
+        rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge, lEventTrisegment, lSeedN, lOppR,false) ) ;  
   
-        CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against N" << aOppN->id() ) ;
+        CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against N" << lOppR->id() ) ;
         
-        mVisitor.on_pseudo_split_event_created(lSeedN,aOppN) ;
+        mVisitor.on_pseudo_split_event_created(lSeedN,lOppR) ;
       }
     }
   }
@@ -214,16 +216,6 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvents( Vertex_handle aNo
   Halfedge_handle lLBorder = lTriedge.e0();
   Halfedge_handle lRBorder = lTriedge.e1();
   
-  /*
-  Vertex_handle lPrev = GetPrevInLAV(aNode) ;
-  Vertex_handle lNext = GetNextInLAV(aNode) ;
-
-  Halfedge_handle lLBorderP = lLBorder->opposite()->next()->opposite();
-  Halfedge_handle lLBorderN = lLBorder->opposite()->prev()->opposite();
-  Halfedge_handle lRBorderP = lRBorder->opposite()->next()->opposite();
-  Halfedge_handle lRBorderN = lRBorder->opposite()->prev()->opposite();
-  */
-  
   CGAL_STSKEL_BUILDER_TRACE(3
                       ,"Finding SplitEvent for N" << aNode->id()
                       << " LBorder: E" << lLBorder->id() << " RBorder: E" << lRBorder->id()
@@ -233,14 +225,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvents( Vertex_handle aNo
   {
     Halfedge_handle lOpposite = *i ;
 
-    
-    if (    lOpposite != lLBorder
-         && lOpposite != lRBorder
-//         && lOpposite != lLBorderP
-//         && lOpposite != lLBorderN
-//         && lOpposite != lRBorderP
-//         && lOpposite != lRBorderN
-       )
+    if ( lOpposite != lLBorder && lOpposite != lRBorder )
       CollectSplitEvent(aNode, Triedge(lLBorder, lRBorder, lOpposite) ) ;
   }
 }
@@ -327,6 +312,11 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_h
   Halfedge_handle lIA = lOA->opposite();
   Halfedge_handle lIB = lOB->opposite();
 
+  Vertex_handle lOAV = lOA->vertex() ;
+  Vertex_handle lIAV = lIA->vertex() ;
+  Vertex_handle lOBV = lOB->vertex() ;
+  Vertex_handle lIBV = lIB->vertex() ;
+  
   CGAL_STSKEL_BUILDER_TRACE ( 2
                             ,    "OA: B" << lOA->id() << '\n'
                               << "IA: B" << lIA->id() << '\n'
@@ -354,39 +344,38 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_h
                               << "IB_Next: B" << lIB_Next->id()
                            ) ;
 
-  lOB     ->HBase_base::set_next( lIA_Next );
-  lIA_Next->HBase_base::set_prev( lOB      );
-  lIB     ->HBase_base::set_prev( lOA_Prev );
-  lOA_Prev->HBase_base::set_next( lIB      );
+  CrossLinkFwd(lOB, lIA_Next );
+  CrossLinkFwd(lOA_Prev, lIB );
 
-  lOB->HBase_base::set_vertex  (aA);
+  Link(lOB,aA);
 
   CGAL_STSKEL_BUILDER_TRACE ( 1, "B" << lOA->id() << " and B" << lIA->id() << " erased." ) ;
   mDanglingBisectors.push_back(lOA);
-
+  
   //
   // The code above corrects the links for vertices aA/aB to the erased halfedges lOA and lIA.
   // However, any of these vertices (aA/aB) maybe one of the twin vertices of a split event.
   // If that's the case, the erased halfedge maybe be linked to a 'couple' of those vertices.
   // This situation is corrected below:
 
-  if ( handle_assigned(lOA->vertex()) && lOA->vertex() != aA && lOA->vertex() != aB )
+  
+  if ( !lOAV->has_infinite_time() && lOAV != aA && lOAV != aB )
   {
-    lOA->vertex()->VBase::set_halfedge(lIB);
+    Link(lOAV,lIB);
     
-    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lOA->vertex()->id() << " has B" << lOA->id() 
+    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lOAV->id() << " has B" << lOA->id() 
                               << " as it's halfedge. Replacing it with B" << lIB->id() 
                               ) ;
   }
-  if ( handle_assigned(lIA->vertex()) && lIA->vertex() != aA && lIA->vertex() != aB )
+  if ( lIAV->has_infinite_time() && lIAV != aA && lIAV != aB )
   {
-    lIA->vertex()->VBase::set_halfedge(lOB);
+    Link(lIAV,lOB);
     
-    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lIA->vertex()->id() << " has B" << lIA->id() 
+    CGAL_STSKEL_BUILDER_TRACE ( 1, "N" << lIAV->id() << " has B" << lIA->id() 
                               << " as it's halfedge. Replacing it with B" << lOB->id() 
                               ) ;
   }
-
+  
   CGAL_STSKEL_BUILDER_TRACE ( 2, "N" << aA->id() << " halfedge: B" << aA->halfedge()->id() ) ;
   CGAL_STSKEL_BUILDER_TRACE ( 2, "N" << aB->id() << " halfedge: B" << aB->halfedge()->id() ) ;
 
@@ -394,7 +383,19 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_h
 
   CGAL_assertion( aA->primary_bisector() == lIB ) ;
   
-  CGAL_STSKEL_BUILDER_TRACE ( 1, "WAVEFRONT: E" << lIB->defining_contour_edge()->id() << " and E" << lIB->opposite()->defining_contour_edge()->id() << " anhiliated each other." ) ;
+  CGAL_STSKEL_BUILDER_TRACE ( 1, "Wavefront: E" << lIB->defining_contour_edge()->id() << " and E" << lIB->opposite()->defining_contour_edge()->id() << " anhiliated each other." ) ;
+  
+  if ( lOAV->has_infinite_time() )
+  {
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lOAV->id() << " erased." ) ;
+    EraseNode(lOAV);
+  }
+  
+  if ( lOBV->has_infinite_time() )
+  {
+    CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lOBV->id() << " erased." ) ;
+    EraseNode(lOBV);
+  }
 }
 
 // Returns true if the skeleton edges 'aA' and 'aB' are defined by the same pair of contour edges (but possibly in reverse order)
@@ -439,8 +440,11 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateInitialEvents()
   CGAL_STSKEL_BUILDER_TRACE(0, "Creating initial events...");
   for ( Vertex_iterator v = mSSkel->vertices_begin(); v != mSSkel->vertices_end(); ++ v )
   {
-    UpdatePQ(v);
-    mVisitor.on_initial_events_collected(v,IsReflex(v),IsDegenerate(v)) ;
+    if ( ! v->has_infinite_time() )
+    {
+      UpdatePQ(v);
+      mVisitor.on_initial_events_collected(v,IsReflex(v),IsDegenerate(v)) ;
+    }
   }
 }
 
@@ -486,6 +490,34 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CreateContourBisectors()
                              << " (Out)\n B" << lIBisector->id() << " (In)"
                              ) ;
   }
+  
+  for( Face_iterator fit = mSSkel->SSkel::Base::faces_begin(); fit != mSSkel->SSkel::Base::faces_end(); ++fit)
+  {
+    Halfedge_handle lBorder    = fit->halfedge();
+    Halfedge_handle lLBisector = lBorder->prev();
+    Halfedge_handle lRBisector = lBorder->next();
+    
+    Vertex_handle lInfNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
+    InitVertexData(lInfNode);
+    CGAL_assertion(lInfNode->has_null_point());
+
+    lRBisector->HBase_base::set_next( lLBisector  );
+    lLBisector->HBase_base::set_prev( lRBisector );
+        
+    lRBisector->HBase_base::set_vertex(lInfNode);
+        
+    lInfNode->VBase::set_halfedge(lRBisector);
+        
+    SetBisectorSlope(lRBisector,POSITIVE);
+    SetBisectorSlope(lLBisector,NEGATIVE);
+    
+    CGAL_STSKEL_BUILDER_TRACE(3
+                             ,"Closing face of E" << lBorder->id()
+                             << " with a ficticious vertex. B" << lRBisector->id()
+                             << "->N" << lInfNode->id()
+                             << "->B" << lLBisector->id()
+                             ) ;
+  }
 }
 
 template<class Gt, class SS, class V>
@@ -506,33 +538,19 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructEdgeEventNode( EdgeEvent& aEvent 
   Vertex_handle lLSeed = aEvent.seed0() ;
   Vertex_handle lRSeed = aEvent.seed1() ;
   
-  Vertex_handle lNewNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), false) ) ;
-  mGLAV.push_back(lNewNode);
-  
+  Vertex_handle lNewNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), false, false) ) ;
   InitVertexData(lNewNode);
+
+  mGLAV.push_back(lNewNode);
+ 
   SetTrisegment(lNewNode,aEvent.trisegment());
  
-  Halfedge_handle lLOBisector = lLSeed->primary_bisector();
-  Halfedge_handle lROBisector = lRSeed->primary_bisector();
-  Halfedge_handle lLIBisector = lLOBisector->opposite();
-  Halfedge_handle lRIBisector = lROBisector->opposite();
-
-  lNewNode->VBase::set_halfedge(lLOBisector);
-  lLOBisector->HBase_base::set_vertex(lNewNode);
-  lROBisector->HBase_base::set_vertex(lNewNode);
-
-  lLIBisector->HBase_base::set_prev( lROBisector ) ;
-  lROBisector->HBase_base::set_next( lLIBisector ) ;
-
   CGAL_STSKEL_BUILDER_TRACE
   ( 3
   ,    "LSeed: N" << lLSeed->id() << " processed\n"
     << "RSeed: N" << lRSeed->id() << " processed"
   ) ;
 
-  SetBisectorSlope(lLSeed,lNewNode);
-  SetBisectorSlope(lRSeed,lNewNode);
-  
   SetIsProcessed(lLSeed) ;
   SetIsProcessed(lRSeed) ;
   mGLAV.remove(lLSeed);
@@ -547,24 +565,20 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructEdgeEventNode( EdgeEvent& aEvent 
   SetNextInLAV(lNewNode, lRNext ) ;
   SetPrevInLAV(lRNext  , lNewNode  ) ;
 
-  CGAL_STSKEL_BUILDER_TRACE
-  ( 2
-  ,    "LO: B" << lLOBisector->id() << " LI: B" << lLIBisector->id() << " RO: B" << lROBisector->id() << " RI: B" << lRIBisector->id() << '\n'
-    << "New Node: N" << lNewNode->id() << " at " << lNewNode->point() << '\n'
-    << "New Links: B" << lROBisector->id() << "->B" << lLIBisector->id() << '\n'
-    << 'N' << lLSeed->id() << " removed from LAV\n"
-    << 'N' << lRSeed->id() << " removed from LAV\n"
-  );
+  CGAL_STSKEL_BUILDER_TRACE( 2, "New Node: N" << lNewNode->id() << " at " << lNewNode->point() << '\n'
+                              << 'N' << lLSeed->id() << " removed from LAV\n"
+                              << 'N' << lRSeed->id() << " removed from LAV\n"
+                           );
   
   return lNewNode ;
 }
 
 
 template<class Gt, class SS, class V>
-typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle
+typename Straight_skeleton_builder_2<Gt,SS,V>::Vertex_handle_pair
 Straight_skeleton_builder_2<Gt,SS,V>::LookupOnSLAV ( Halfedge_handle aBorder, EventPtr const& aEvent, Site& rSite )
 {
-  Vertex_handle rResult ;
+  Vertex_handle_pair rResult ;
 
   CGAL_STSKEL_DEBUG_CODE( bool lFound = false ; )
   
@@ -602,7 +616,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
         {
           rSite = ( lLSide == ON_ORIENTED_BOUNDARY ? AT_SOURCE : ( lRSide == ON_ORIENTED_BOUNDARY ?  AT_TARGET : INSIDE ) ) ;
             
-          rResult = v ;
+          rResult = std::make_pair(lPrevN,v) ;
           
           CGAL_STSKEL_BUILDER_TRACE ( 3, "Split point found at the " 
                                     << ( rSite == AT_SOURCE ? "SOURCE vertex" : ( rSite == AT_TARGET ? "TARGET vertex" : "strict inside" ) )
@@ -619,7 +633,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::LookupOnSLAV ( Halfedge_handle aBorder, Ev
   }
   
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
-  if ( !handle_assigned(rResult) )
+  if ( !handle_assigned(rResult.first) )
   {
     if ( !lFound )
     {
@@ -647,30 +661,20 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructSplitEventNodes( SplitEvent& aEve
 
   Vertex_handle lOppL = GetPrevInLAV(aOppR) ;
 
-  Vertex_handle lNewNodeA = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true ) ) ;
-  Vertex_handle lNewNodeB = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true ) ) ;
-
-  mGLAV.push_back(lNewNodeA);
-  mGLAV.push_back(lNewNodeB);
+  Vertex_handle lNewNodeA = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true, false ) ) ;
+  Vertex_handle lNewNodeB = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true, false ) ) ;
   
   InitVertexData(lNewNodeA);
   InitVertexData(lNewNodeB);
   SetTrisegment(lNewNodeA,aEvent.trisegment());
   SetTrisegment(lNewNodeB,aEvent.trisegment());
 
+  mGLAV.push_back(lNewNodeA);
+  mGLAV.push_back(lNewNodeB);
+  
   Vertex_handle lSeed = aEvent.seed0() ;
  
-  Halfedge_handle lXOutBisector = lSeed->primary_bisector() ;
-  Halfedge_handle lXInBisector  = lXOutBisector->opposite();
-
-  lNewNodeA->VBase::set_halfedge(lXOutBisector);
-  // lNodeB halfedge is set outside with the New In Bisector to the Right.
-
-  lXOutBisector->HBase_base::set_vertex(lNewNodeA);
-
   CGAL_STSKEL_BUILDER_TRACE ( 3, "Seed: N" << lSeed->id() << " processed" ) ;
-
-  SetBisectorSlope(lSeed,lNewNodeA);
   
   SetIsProcessed(lSeed) ;
   mGLAV.remove(lSeed);
@@ -712,8 +716,8 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSpli
   Vertex_handle lLSeed = aEvent.seed0() ;
   Vertex_handle lRSeed = aEvent.seed1() ;
 
-  Vertex_handle lNewNodeA = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true ) ) ;
-  Vertex_handle lNewNodeB = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true ) ) ;
+  Vertex_handle lNewNodeA = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true, false ) ) ;
+  Vertex_handle lNewNodeB = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++, aEvent.point(), aEvent.time(), true, false ) ) ;
 
   mGLAV.push_back(lNewNodeA);
   mGLAV.push_back(lNewNodeB);
@@ -723,22 +727,6 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSpli
   SetTrisegment(lNewNodeA,aEvent.trisegment());
   SetTrisegment(lNewNodeB,aEvent.trisegment());
   
-  Halfedge_handle lLOBisector = lLSeed->primary_bisector();
-  Halfedge_handle lROBisector = lRSeed->primary_bisector();
-  Halfedge_handle lLIBisector = lLOBisector->opposite();
-  Halfedge_handle lRIBisector = lROBisector->opposite();
-
-  lNewNodeA->VBase::set_halfedge(lLOBisector);
-  lNewNodeB->VBase::set_halfedge(lROBisector);
-  lLOBisector->HBase_base::set_vertex(lNewNodeA);
-  lROBisector->HBase_base::set_vertex(lNewNodeB);
-
-  lLIBisector->HBase_base::set_prev( lROBisector ) ;
-  lROBisector->HBase_base::set_next( lLIBisector ) ;
-  
-  lLOBisector->HBase_base::set_next( lRIBisector ) ;
-  lRIBisector->HBase_base::set_prev( lLOBisector ) ;
-
   CGAL_STSKEL_BUILDER_TRACE
   (
    3
@@ -746,8 +734,6 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSpli
     << "RSeed: N" << lRSeed->id() << " processed"
   ) ;
 
-  SetBisectorSlope(lLSeed,lNewNodeA);
-  SetBisectorSlope(lRSeed,lNewNodeB);
   
   SetIsProcessed(lLSeed) ;
   SetIsProcessed(lRSeed) ;
@@ -771,16 +757,11 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSpli
   SetNextInLAV(lNewNodeB, lLNext    ) ;
   SetPrevInLAV(lLNext   , lNewNodeB ) ;
 
-  CGAL_STSKEL_BUILDER_TRACE
-  (
-  2
-  ,    "LO: B" << lLOBisector->id() << " LI: B" << lLIBisector->id() << " RO: B" << lROBisector->id() << " RI: B" << lRIBisector->id() << '\n'
-    << "NewNodeA: N" << lNewNodeA->id() << " at " << lNewNodeA->point() << '\n'
-    << "NewNodeB: N" << lNewNodeB->id() << " at " << lNewNodeB->point() << '\n'
-    << "New Links: B" << lROBisector->id() << "->B" << lLIBisector->id() << '\n'
-    << 'N' << lLSeed->id() << " removed from LAV\n"
-    << 'N' << lRSeed->id() << " removed from LAV"
-  );
+  CGAL_STSKEL_BUILDER_TRACE(2,   "NewNodeA: N" << lNewNodeA->id() << " at " << lNewNodeA->point() << '\n'
+                              << "NewNodeB: N" << lNewNodeB->id() << " at " << lNewNodeB->point() << '\n'
+                              << 'N' << lLSeed->id() << " removed from LAV\n"
+                              << 'N' << lRSeed->id() << " removed from LAV"
+                           );
 
   
   rResult = std::make_pair(lNewNodeA,lNewNodeB);
@@ -862,22 +843,32 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleEdgeEvent( EventPtr aEvent )
     Halfedge_handle lLIBisector = lLOBisector->opposite();
     Halfedge_handle lRIBisector = lROBisector->opposite();
   
+    Vertex_handle lRIFicNode = lROBisector->vertex() ;
+    Vertex_handle lLOFicNode = lLOBisector->vertex() ;
+    
+    CrossLink(lLOBisector,lNewNode);
+    
+    Link(lROBisector,lNewNode);
+
+    CrossLinkFwd(lROBisector,lLIBisector) ;
+
     Halfedge_handle lDefiningBorderA = lNewNode->halfedge()->defining_contour_edge();
     Halfedge_handle lDefiningBorderB = lNewNode->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lDefiningBorderC = lNewNode->halfedge()->opposite()->prev()->defining_contour_edge();
   
     lNewNode->VBase::set_event_triedge( lEvent.triedge() ) ;
     
-    SetVertexTriedge( lNewNode, Triedge(lDefiningBorderA,lDefiningBorderB,lDefiningBorderC) ) ;
+    Triedge lTri(lDefiningBorderA,lDefiningBorderB,lDefiningBorderC);
     
-    CGAL_STSKEL_BUILDER_TRACE
-    ( 1
-      , "WAVEFRONT: N" << GetPrevInLAV(lNewNode)->id() << "->N" << lNewNode->id() << "->N" << GetNextInLAV(lNewNode)->id() 
-      << "    E" << lDefiningBorderA->id() << "->E" << lDefiningBorderB->id()
-      << " (E" << lRSeed->halfedge()->defining_contour_edge()->id() << " collapsed).\n"
-    );
+    SetVertexTriedge( lNewNode, lTri ) ;
+    
+    SetBisectorSlope(lLSeed,lNewNode);
+    SetBisectorSlope(lRSeed,lNewNode);
   
-    if ( !handle_assigned(lLOBisector->next()) && !handle_assigned(lRIBisector->prev()) )
+    CGAL_STSKEL_BUILDER_TRACE( 1, "E" << lRSeed->halfedge()->defining_contour_edge()->id() << " collapsed." );
+    CGAL_STSKEL_BUILDER_TRACE( 3, "Ficticious node along collapsed face is N" << lRIFicNode->id() << " between B" << lROBisector->id() << " and B" << lLIBisector->id() ) ;
+    
+    if ( lLOFicNode->has_infinite_time() )
     {
       CGAL_STSKEL_BUILDER_TRACE(3,"Creating new Edge Event's Bisector");
   
@@ -886,48 +877,43 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleEdgeEvent( EventPtr aEvent )
       Halfedge_handle lNIBisector = lNOBisector->opposite();
       mEdgeID += 2 ;
   
-      lRIBisector->HBase_base::set_prev(lNIBisector);
-      lNIBisector->HBase_base::set_next(lRIBisector);
+      CrossLinkFwd(lNOBisector        , lLOBisector->next());
+      CrossLinkFwd(lRIBisector->prev(), lNIBisector        );
+
+      CrossLink(lNOBisector,lLOFicNode);
+      
+      SetBisectorSlope(lNOBisector,POSITIVE);
+      SetBisectorSlope(lNIBisector,NEGATIVE);
+            
+      CrossLinkFwd(lNIBisector, lRIBisector);
+      CrossLinkFwd(lLOBisector, lNOBisector);
   
-      lNOBisector->HBase_base::set_face(lLOBisector->face());
-      lNIBisector->HBase_base::set_face(lRIBisector->face());
-      lNIBisector->HBase_base::set_vertex(lNewNode);
+      Link(lNOBisector,lLOBisector->face());
+      Link(lNIBisector,lRIBisector->face());
+      
+      Link(lNIBisector,lNewNode);
   
-      lLOBisector->HBase_base::set_next(lNOBisector);
-      lNOBisector->HBase_base::set_prev(lLOBisector);
+      CGAL_STSKEL_BUILDER_TRACE( 2, newn2str("",lNewNode,lTri) ) ;
+      CGAL_STSKEL_BUILDER_TRACE( 2, newb2str("O",lNOBisector) ) ;
+      CGAL_STSKEL_BUILDER_TRACE( 2, newb2str("I",lNIBisector) ) ;
   
-      CGAL_STSKEL_BUILDER_TRACE
-        ( 2
-        , "NewNode N" << lNewNode->id() << " at " << lNewNode->point() << " defining borders: E"
-          << lDefiningBorderA->id()
-          << ",E" << lDefiningBorderB->id()
-          << ",E" << lDefiningBorderC->id() << '\n'
-          << "New Bisectors:\nB" << lNOBisector->id() << " [E" << lNOBisector->defining_contour_edge()->id()
-          << ",E" << lNOBisector->opposite()->defining_contour_edge()->id()
-          << "] (Out: Prev: B" << lNOBisector->prev()->id() << ")\nB"
-          << lNIBisector->id() << " [E" << lNIBisector->defining_contour_edge()->id()
-          << ",E" << lNIBisector->opposite()->defining_contour_edge()->id()
-          << "] (In: Next: B" << lNIBisector->next()->id() << ")\n"
-          << "N" << lNewNode->id() << " halfedge: " << lNewNode->halfedge()->id()
-          << " primary bisector: B" << lNewNode->primary_bisector()->id()
-        ) ;
-  
+      CGAL_STSKEL_BUILDER_TRACE ( 2, "Ficticius N" << lRIFicNode->id() << " erased." ) ;
+      EraseNode(lRIFicNode);
+      
       SetupNewNode(lNewNode) ;
       
       UpdatePQ(lNewNode);
-      
+     
       mVisitor.on_edge_event_processed(lLSeed,lRSeed,lNewNode) ;
     }
     else
     {
-      CGAL_STSKEL_BUILDER_TRACE(2
-                          ,  "NewNode N" << lNewNode->id() << " at " << lNewNode->point() << " defining borders:"
-                          << " E" << lDefiningBorderA->id()
-                          << ",E" << lDefiningBorderB->id()
-                          << ",E" << lDefiningBorderC->id() 
-                          << ".\nThis is a multiple node (A node with these defining edges already exist in the LAV)"
-                          );
+      CGAL_STSKEL_BUILDER_TRACE( 2, newn2str("",lNewNode,lTri) 
+                                    << ".\nThis is a multiple node (A node with these defining edges already exist in the LAV)"
+                               );
     }
+    
+    CGAL_STSKEL_BUILDER_TRACE( 1, "Wavefront: " << wavefront2str(lNewNode) );
   }
 }
 
@@ -938,18 +924,40 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::IsValidSplitEvent( SplitEvent const& 
 }
 
 template<class Gt, class SS, class V>
-void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Vertex_handle aOppR  )
+void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Vertex_handle_pair aOpp  )
 {
   SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
 
   if ( IsValidSplitEvent(lEvent) )
   {
     Vertex_handle lSeed = lEvent.seed0();
+   
+    Vertex_handle lOppL = aOpp.first ;
+    Vertex_handle lOppR = aOpp.second ;
     
+    Halfedge_handle lOppIBisector_L = lOppL->primary_bisector()->opposite();
+    Halfedge_handle lOppOBisector_R = lOppR->primary_bisector();
+    
+    Vertex_handle lOppFicNode = lOppOBisector_R->vertex() ;
+    
+    CGAL_assertion(lOppOBisector_R->next() == lOppIBisector_L ) ;
+    CGAL_assertion(lOppIBisector_L->prev() == lOppOBisector_R ) ;
+    CGAL_assertion(lOppFicNode->has_infinite_time());
+    
+    
+    CGAL_STSKEL_BUILDER_TRACE(2,"Splitted face: N" << lOppR->id()
+                                << "->B" << lOppOBisector_R->id()
+                                << "->N" << lOppFicNode->id()
+                                << "->B" << lOppIBisector_L->id()
+                                << "->N" << lOppL->id()
+                             ) ;   
+                             
+    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for right half of opposite edge: N" << lOppFicNode->id() ) ;
+      
     Halfedge_handle lOppBorder = lEvent.triedge().e2() ;
   
     Vertex_handle lNewNode_L, lNewNode_R ;
-    boost::tie(lNewNode_L,lNewNode_R) = ConstructSplitEventNodes(lEvent,aOppR);
+    boost::tie(lNewNode_L,lNewNode_R) = ConstructSplitEventNodes(lEvent,lOppR);
   
     Triedge lTriedge = aEvent->triedge();
         
@@ -961,28 +969,56 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Ve
     Halfedge_handle lNIBisector_L = lNOBisector_L->opposite();
     Halfedge_handle lNIBisector_R = lNOBisector_R->opposite();
   
-    lNewNode_R->VBase::set_halfedge(lNIBisector_L) ;
-  
     Halfedge_handle lXOBisector = lSeed->primary_bisector() ;
     Halfedge_handle lXIBisector = lXOBisector->opposite();
+    
+    Halfedge_handle lXONextBisector = lXOBisector->next();
+    Halfedge_handle lXIPrevBisector = lXIBisector->prev();
   
-    lNOBisector_L->HBase_base::set_face(lXOBisector->face());
-    lNIBisector_L->HBase_base::set_face(lOppBorder ->face());
-    lNOBisector_R->HBase_base::set_face(lOppBorder ->face());
-    lNIBisector_R->HBase_base::set_face(lXIBisector->face());
+    Vertex_handle lXOFicNode = lXOBisector->vertex() ;
+    CGAL_assertion(lXOFicNode->has_infinite_time());
+    
+    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for left reflex face: N" << lXOFicNode->id() ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,"Ficticious node for right reflex face: N" << lXIPrevBisector->vertex()->id() ) ;
+    
+    Link(lNewNode_L,lXOBisector);
+    Link(lNewNode_R,lNIBisector_L) ;
+    
+    Link(lXOBisector,lNewNode_L);
+    
+    Link(lNOBisector_L,lXOBisector->face());
+    Link(lNIBisector_L,lOppBorder ->face());
+    Link(lNOBisector_R,lOppBorder ->face());
+    Link(lNIBisector_R,lXIBisector->face());
   
-    lNIBisector_L->HBase_base::set_vertex(lNewNode_R);
-    lNIBisector_R->HBase_base::set_vertex(lNewNode_R);
+    Link(lNIBisector_L,lNewNode_R);
+    Link(lNIBisector_R,lNewNode_R);
   
-    lXOBisector  ->HBase_base::set_next(lNOBisector_L);
-    lNOBisector_L->HBase_base::set_prev(lXOBisector);
+    Link(lNOBisector_L,lXOFicNode);
+    
+    
+    CrossLinkFwd(lXOBisector    ,lNOBisector_L);
+    CrossLinkFwd(lNOBisector_L  ,lXONextBisector);
+    CrossLinkFwd(lXIPrevBisector,lNIBisector_R);
+    CrossLinkFwd(lNIBisector_R  ,lXIBisector);
+    CrossLinkFwd(lOppOBisector_R,lNIBisector_L);
+    CrossLinkFwd(lNIBisector_L  ,lNOBisector_R);
+    CrossLinkFwd(lNOBisector_R  ,lOppIBisector_L);
+    
+    SetBisectorSlope(lSeed,lNewNode_L);
   
-    lXIBisector  ->HBase_base::set_prev(lNIBisector_R);
-    lNIBisector_R->HBase_base::set_next(lXIBisector);
-  
-    lNIBisector_L->HBase_base::set_next(lNOBisector_R);
-    lNOBisector_R->HBase_base::set_prev(lNIBisector_L);
-  
+    Vertex_handle lNewFicNode = mSSkel->SSkel::Base::vertices_push_back( Vertex( mVertexID++ ) ) ;
+    InitVertexData(lNewFicNode);
+    CGAL_assertion(lNewFicNode->has_null_point());
+    CrossLink(lNOBisector_R,lNewFicNode);
+    
+    SetBisectorSlope(lNOBisector_L,POSITIVE);
+    SetBisectorSlope(lNIBisector_L,NEGATIVE);
+    SetBisectorSlope(lNOBisector_R,POSITIVE);
+    SetBisectorSlope(lNIBisector_R,NEGATIVE);
+    
+    CGAL_STSKEL_BUILDER_TRACE(2,"(New) ficticious node for left half of opposite edge: N" << lNewFicNode->id() ) ;
+    
     Halfedge_handle lNewNode_L_DefiningBorderA = lNewNode_L->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_L_DefiningBorderB = lNewNode_L->halfedge()->opposite()->prev()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_L_DefiningBorderC = lNewNode_L->halfedge()->opposite()->prev()->defining_contour_edge();
@@ -993,50 +1029,21 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitEvent( EventPtr aEvent, Ve
     lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
     lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
     
-    SetVertexTriedge( lNewNode_L, Triedge( lNewNode_L_DefiningBorderA,lNewNode_L_DefiningBorderB,lNewNode_L_DefiningBorderC ) ) ;
-    SetVertexTriedge( lNewNode_R, Triedge( lNewNode_R_DefiningBorderA,lNewNode_R_DefiningBorderB,lNewNode_R_DefiningBorderC ) ) ;
+    Triedge lTriL( lNewNode_L_DefiningBorderA,lNewNode_L_DefiningBorderB,lNewNode_L_DefiningBorderC ) ;
+    Triedge lTriR( lNewNode_R_DefiningBorderA,lNewNode_R_DefiningBorderB,lNewNode_R_DefiningBorderC ) ;
     
-    CGAL_STSKEL_BUILDER_TRACE
-      (
-      2
-      ,    "New Node L: N" << lNewNode_L->id() << " at " << lNewNode_L->point()
-        << " defining borders: E" << lNewNode_L_DefiningBorderA->id()
-        << ",E" << lNewNode_L_DefiningBorderB->id()
-        << ",E" << lNewNode_L_DefiningBorderC->id() << '\n'
-        << "New Node R: N" << lNewNode_R->id() << " at " << lNewNode_R->point()
-        << " defining borders: E" << lNewNode_R_DefiningBorderA->id()
-        << ",E" << lNewNode_R_DefiningBorderB->id() << '\n'
-        << ",E" << lNewNode_R_DefiningBorderC->id() << '\n'
-        << "New Bisector OL:\nB" << lNOBisector_L->id()
-        << "[E"  << lNOBisector_L            ->defining_contour_edge()->id()
-        << ",E" << lNOBisector_L->opposite()->defining_contour_edge()->id() << "]"
-        << " (Out: Prev: B" << lNOBisector_L->prev()->id() << ")\n"
-        << "New Bisector IL:\nB" << lNIBisector_L->id()
-        << "[E" << lNIBisector_L            ->defining_contour_edge()->id()
-        << ",E" << lNIBisector_L->opposite()->defining_contour_edge()->id() << "]"
-        << " (In: Next: B" << lNIBisector_L->next()->id() << ")\n"
-        << "New Bisector OR:\nB" << lNOBisector_R->id()
-        << "[E" << lNOBisector_R            ->defining_contour_edge()->id()
-        << ",E" << lNOBisector_R->opposite()->defining_contour_edge()->id() << "]"
-        << " (Out: Prev: B" << lNOBisector_R->prev()->id() << ")\n"
-        << "New Bisector IR:\nB" << lNIBisector_R->id()
-        << "[E" << lNIBisector_R            ->defining_contour_edge()->id()
-        << ",E" << lNIBisector_R->opposite()->defining_contour_edge()->id()
-        << "] (In: Next: B" << lNIBisector_R->next()->id() << ")\n"
-        << "N" << lNewNode_L->id() << " halfedge: " << lNewNode_L->halfedge()->id()
-        << " primary bisector: B" << lNewNode_L->primary_bisector()->id() << '\n'
-        << "N" << lNewNode_R->id() << " halfedge: " << lNewNode_R->halfedge()->id()
-        << " primary bisector: B" << lNewNode_R->primary_bisector()->id()
-      ) ;
+    SetVertexTriedge( lNewNode_L, lTriL ) ;
+    SetVertexTriedge( lNewNode_R, lTriR ) ;
+    
+    CGAL_STSKEL_BUILDER_TRACE(2,   newn2str("L",lNewNode_L,lTriL) << std::endl
+                                << newn2str("R",lNewNode_R,lTriR) << std::endl
+                                << newb2str("OL",lNOBisector_L)   << std::endl
+                                << newb2str("IL",lNIBisector_L)   << std::endl
+                                << newb2str("OR",lNOBisector_R)   << std::endl
+                                << newb2str("IR",lNIBisector_R)
+                             ) ;
       
-    CGAL_STSKEL_BUILDER_TRACE
-    ( 1
-      , "WAVEFRONT: N" << GetPrevInLAV(lNewNode_L)->id() << "->N" << lNewNode_L->id() << "->N" << GetNextInLAV(lNewNode_L)->id() 
-      << "  N" << GetPrevInLAV(lNewNode_R)->id() << "->N" << lNewNode_R->id() << "->N" << GetNextInLAV(lNewNode_R)->id() << "  "
-      << "  E" << lNewNode_L_DefiningBorderA->id() << "->E" << lNewNode_L_DefiningBorderB->id() 
-      << "  E" << lNewNode_R_DefiningBorderA->id() << "->E" << lNewNode_R_DefiningBorderB->id()
-      << std::endl
-    );
+    CGAL_STSKEL_BUILDER_TRACE( 1, "Wavefronts:\n  " << wavefront2str(lNewNode_L) << "\n  " << wavefront2str(lNewNode_R) );
     
     SetupNewNode(lNewNode_L) ;
     SetupNewNode(lNewNode_R) ;
@@ -1163,29 +1170,55 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEve
     Halfedge_handle lSBisector_RO = lRSeed->primary_bisector() ;
     Halfedge_handle lSBisector_RI = lSBisector_RO->opposite();
   
-    lNBisector_LO->HBase_base::set_face(lSBisector_LO->face());
-    lNBisector_LI->HBase_base::set_face(lSBisector_RI->face());
-    lNBisector_RO->HBase_base::set_face(lSBisector_RO->face());
-    lNBisector_RI->HBase_base::set_face(lSBisector_LI->face());
+    Halfedge_handle lSBisector_LO_Next = lSBisector_LO->next();
+    Halfedge_handle lSBisector_RO_Next = lSBisector_RO->next();
+    Halfedge_handle lSBisector_LI_Prev = lSBisector_LI->prev();
+    Halfedge_handle lSBisector_RI_Prev = lSBisector_RI->prev();
+    
+    Vertex_handle lFicNod_SLO = lSBisector_LO->vertex();
+    Vertex_handle lFicNod_SLI = lSBisector_LI_Prev->vertex();
+    Vertex_handle lFicNod_SRO = lSBisector_RO->vertex();
+    Vertex_handle lFicNod_SRI = lSBisector_RI_Prev->vertex();
+    
+    CGAL_assertion( lFicNod_SLO->has_infinite_time() ) ;
+    CGAL_assertion( lFicNod_SLI->has_infinite_time() ) ;
+    CGAL_assertion( lFicNod_SRO->has_infinite_time() ) ;
+    CGAL_assertion( lFicNod_SRI->has_infinite_time() ) ;
+    
+    Link(lNBisector_LO, lSBisector_LO->face());
+    Link(lNBisector_LI, lSBisector_RI->face());
+    Link(lNBisector_RO, lSBisector_RO->face());
+    Link(lNBisector_RI, lSBisector_LI->face());
+    
+    CrossLink(lSBisector_LO, lNewNode_L );
+    CrossLink(lSBisector_RO, lNewNode_R );
+    
+    CrossLink(lNBisector_LO, lFicNod_SLO );
+    CrossLink(lNBisector_RO, lFicNod_SRO );
+    
+    SetBisectorSlope(lNBisector_LO,POSITIVE);
+    SetBisectorSlope(lNBisector_LI,NEGATIVE);
+    SetBisectorSlope(lNBisector_RO,POSITIVE);
+    SetBisectorSlope(lNBisector_RI,NEGATIVE);
+    
+    Link(lNBisector_LI, lNewNode_L);
+    Link(lNBisector_RI, lNewNode_R);
+
+    Link(lNewNode_L, lSBisector_LO);
+    Link(lNewNode_R, lSBisector_RO);
+    
+    CrossLinkFwd(lSBisector_LO,lNBisector_LO);
+    CrossLinkFwd(lNBisector_LO,lSBisector_LO_Next);
+    CrossLinkFwd(lSBisector_LI_Prev,lNBisector_RI);
+    CrossLinkFwd(lNBisector_RI,lSBisector_LI);
+    CrossLinkFwd(lSBisector_RI_Prev,lNBisector_LI);
+    CrossLinkFwd(lNBisector_LI,lSBisector_RI);
+    CrossLinkFwd(lSBisector_RO,lNBisector_RO);
+    CrossLinkFwd(lNBisector_RO,lSBisector_RO_Next);
   
-    lNBisector_LI->HBase_base::set_vertex(lNewNode_L);
-    lNBisector_RI->HBase_base::set_vertex(lNewNode_R);
-  
-    lSBisector_LO->HBase_base::set_next(lNBisector_LO);
-    lNBisector_LO->HBase_base::set_prev(lSBisector_LO);
-  
-    lSBisector_LI->HBase_base::set_prev(lNBisector_RI);
-    lNBisector_RI->HBase_base::set_next(lSBisector_LI);
-  
-    lSBisector_RI->HBase_base::set_prev(lNBisector_LI);
-    lNBisector_LI->HBase_base::set_next(lSBisector_RI);
-  
-    lSBisector_RO->HBase_base::set_next(lNBisector_RO);
-    lNBisector_RO->HBase_base::set_prev(lSBisector_RO);
-  
-    lNewNode_L->VBase::set_halfedge(lSBisector_LO);
-    lNewNode_R->VBase::set_halfedge(lSBisector_RO);
-  
+    SetBisectorSlope(lLSeed,lNewNode_L);
+    SetBisectorSlope(lRSeed,lNewNode_R);
+    
     Halfedge_handle lNewNode_L_DefiningBorderA = lNewNode_L->halfedge()->defining_contour_edge();
     Halfedge_handle lNewNode_L_DefiningBorderB = lNewNode_L->halfedge()->next()->opposite()->defining_contour_edge();
     Halfedge_handle lNewNode_L_DefiningBorderC = lNewNode_L->halfedge()->opposite()->prev()->defining_contour_edge();
@@ -1196,45 +1229,21 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEve
     lNewNode_L->VBase::set_event_triedge( lEvent.triedge() ) ;
     lNewNode_R->VBase::set_event_triedge( lEvent.triedge() ) ;
     
-    SetVertexTriedge( lNewNode_L, Triedge( lNewNode_L_DefiningBorderA, lNewNode_L_DefiningBorderB, lNewNode_L_DefiningBorderC ) ) ;
-    SetVertexTriedge( lNewNode_R, Triedge( lNewNode_R_DefiningBorderA, lNewNode_R_DefiningBorderB, lNewNode_R_DefiningBorderC ) ) ;
+    Triedge lTriL( lNewNode_L_DefiningBorderA, lNewNode_L_DefiningBorderB, lNewNode_L_DefiningBorderC ) ;
+    Triedge lTriR( lNewNode_R_DefiningBorderA, lNewNode_R_DefiningBorderB, lNewNode_R_DefiningBorderC ) ;
+    
+    SetVertexTriedge( lNewNode_L, lTriL ) ;
+    SetVertexTriedge( lNewNode_R, lTriR ) ;
   
-    CGAL_STSKEL_BUILDER_TRACE
-    (2
-    ,    "New Node L: N" << lNewNode_L->id() << " at " << lNewNode_L->point()
-      << " defining borders: E" << lNewNode_L_DefiningBorderA->id()
-      << ",E" << lNewNode_L_DefiningBorderB->id()
-      << ",E" << lNewNode_L_DefiningBorderC->id() << '\n'
-      << "New Node R: N" << lNewNode_R->id() << " at " << lNewNode_R->point()
-      << " defining borders: E" << lNewNode_R_DefiningBorderA->id()
-      << ",E" << lNewNode_R_DefiningBorderB->id()
-      << ",E" << lNewNode_R_DefiningBorderC->id() << '\n'
-      << "New Bisector LO: B" << lNBisector_LO->id()
-      << "[E"  << lNBisector_LO            ->defining_contour_edge()->id()
-      << ",E" << lNBisector_LO->opposite()->defining_contour_edge()->id() << "]\n"
-      << "New Bisector LI: B" << lNBisector_LI->id()
-      << "[E" << lNBisector_LI            ->defining_contour_edge()->id()
-      << ",E" << lNBisector_LI->opposite()->defining_contour_edge()->id() << "]\n"
-      << "New Bisector RO: B" << lNBisector_RO->id()
-      << "[E" << lNBisector_RO            ->defining_contour_edge()->id()
-      << ",E" << lNBisector_RO->opposite()->defining_contour_edge()->id() << "]\n"
-      << "New Bisector RI: B" << lNBisector_RI->id()
-      << "[E" << lNBisector_RI            ->defining_contour_edge()->id()
-      << ",E" << lNBisector_RI->opposite()->defining_contour_edge()->id() << "]\n"
-      << "N" << lNewNode_L->id() << " halfedge: " << lNewNode_L->halfedge()->id()
-      << " primary bisector: B" << lNewNode_L->primary_bisector()->id() << '\n'
-      << "N" << lNewNode_R->id() << " halfedge: " << lNewNode_R->halfedge()->id()
-      << " primary bisector: B" << lNewNode_R->primary_bisector()->id()
-    ) ;
+    CGAL_STSKEL_BUILDER_TRACE(2,   newn2str("L",lNewNode_L,lTriL) << std::endl
+                                << newn2str("R",lNewNode_R,lTriR) << std::endl
+                                << newb2str("OL",lNBisector_LO)   << std::endl
+                                << newb2str("IL",lNBisector_LI)   << std::endl
+                                << newb2str("OR",lNBisector_RO)   << std::endl
+                                << newb2str("IR",lNBisector_RI)
+                             ) ;
   
-    CGAL_STSKEL_BUILDER_TRACE
-    ( 1
-      , "WAVEFRONT: N" << GetPrevInLAV(lNewNode_L)->id() << "->N" << lNewNode_L->id() << "->N" << GetNextInLAV(lNewNode_L)->id() 
-      << "  N" << GetPrevInLAV(lNewNode_R)->id() << "->N" << lNewNode_R->id() << "->N" << GetNextInLAV(lNewNode_R)->id() << "  " 
-      << "  E" << lNewNode_L_DefiningBorderA->id() << "->E" << lNewNode_L_DefiningBorderB->id()
-      << "  E" << lNewNode_R_DefiningBorderA->id() << "->E" << lNewNode_R_DefiningBorderB->id()
-      << std::endl
-    );
+    CGAL_STSKEL_BUILDER_TRACE( 1, "Wavefronts:\n  " << wavefront2str(lNewNode_L) << "\n  " << wavefront2str(lNewNode_R) );
     
     SetupNewNode(lNewNode_L) ;
     SetupNewNode(lNewNode_R) ;
@@ -1253,14 +1262,14 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSplitOrPseudoSplitEvent( EventP
   
   Site lSite;
   
-  Vertex_handle lOppN = LookupOnSLAV(lOppEdge,aEvent,lSite);
+  Vertex_handle_pair lOpp = LookupOnSLAV(lOppEdge,aEvent,lSite);
   
-  if ( handle_assigned(lOppN) )
+  if ( handle_assigned(lOpp.first) )
   {
-    EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aEvent,lOppN,lSite);
+    EventPtr lPseudoSplitEvent = IsPseudoSplitEvent(aEvent,lOpp,lSite);
     if ( lPseudoSplitEvent )
          HandlePseudoSplitEvent(lPseudoSplitEvent);
-    else HandleSplitEvent(aEvent,lOppN);  
+    else HandleSplitEvent(aEvent,lOpp);  
   }  
 }
 
@@ -1360,17 +1369,15 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeSplitNodes ( Vertex_handle_pair 
                        << "  RIn2 B" << lIBisectorR2->id() << " now linked to N" << lIBisectorR2->vertex()->id()
                        );
 
-  EraseNode(lRNode,lLNode);
+  EraseNode(lRNode);
 }
 
 
 template<class Gt, class SS, class V>
-void Straight_skeleton_builder_2<Gt,SS,V>::EraseNode ( Vertex_handle aNodeToErase, Vertex_handle aReplacementNode )
+void Straight_skeleton_builder_2<Gt,SS,V>::EraseNode ( Vertex_handle aNode )
 {
-  CGAL_STSKEL_BUILDER_TRACE(1, "Erasing N" << aNodeToErase->id() << " being replaced by N" << aReplacementNode->id() ) ;
-  
-  aNodeToErase->VBase::reset_id(-aNodeToErase->id());
-  mSSkel->SSkel::Base::vertices_erase(aNodeToErase);
+  aNode->VBase::reset_id__internal__(-aNode->id());
+  mSSkel->SSkel::Base::vertices_erase(aNode);
 }
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
@@ -1549,23 +1556,23 @@ void Straight_skeleton_builder_2<Gt,SS,V>::PreprocessMultinode( Multinode& aMN )
 // relinking the other bisectors.
 //
 template<class Gt, class SS, class V>
-void Straight_skeleton_builder_2<Gt,SS,V>::ProcessMultinode( Multinode&                 aMN 
-                                                           , Halfedge_handle_vector&    rBisectorsToRemove 
-                                                           , Vertex_handle_pair_vector& rNodesToRemove
+void Straight_skeleton_builder_2<Gt,SS,V>::ProcessMultinode( Multinode&              aMN 
+                                                           , Halfedge_handle_vector& rBisectorsToRemove 
+                                                           , Vertex_handle_vector&   rNodesToRemove
                                                            )
 {
-  bool lSomeNodeAlreadyProcessed = false ;
+  bool lDoNotProcess = false ;
   
   Halfedge_handle h = aMN.begin ;
 
   do
   {
-    if ( IsExcluded(h->vertex()))
-      lSomeNodeAlreadyProcessed = true ;
+    if ( h->vertex()->has_infinite_time() || IsExcluded(h->vertex()))
+      lDoNotProcess = true ;
   }
-  while ( h = h->next(), !lSomeNodeAlreadyProcessed && h != aMN.end ) ;
+  while ( h = h->next(), !lDoNotProcess && h != aMN.end ) ;
   
-  if ( !lSomeNodeAlreadyProcessed )
+  if ( !lDoNotProcess )
   {
     CGAL_STSKEL_DEBUG_CODE( TraceMultinode("Processing multinode: ", aMN.begin,aMN.end) ) ;
     
@@ -1579,7 +1586,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::ProcessMultinode( Multinode&         
     std::copy(aMN.bisectors_to_remove.begin(), aMN.bisectors_to_remove.end(), std::back_inserter(rBisectorsToRemove));
     
     for( Vertex_handle_vector_iterator vi = aMN.nodes_to_remove.begin(), evi = aMN.nodes_to_remove.end() ; vi != evi ; ++ vi )
-      rNodesToRemove.push_back( std::make_pair(*vi,aMN.v) ) ;
+      rNodesToRemove.push_back(*vi) ;
      
     RelinkBisectorsAroundMultinode(aMN.v,aMN.bisectors_to_relink);    
   }
@@ -1663,30 +1670,36 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
     Halfedge_handle h0 = h ;
     Vertex_handle   v0 = validate(h0->vertex()) ;
 
-    CGAL_assertion ( v0->is_skeleton() ) ;
-
-    h = validate(h->next()) ;
-
-    while ( h != last )
+    if ( ! v0->has_infinite_time() )
     {
-      Vertex_handle v = validate(h->vertex());
+      CGAL_assertion ( v0->is_skeleton() ) ;
 
-      CGAL_assertion ( v->is_skeleton() ) ;
-      
-      if ( !AreSkeletonNodesCoincident(v0,v) )
+      h = validate(h->next()) ;
+
+      while ( h != last )
       {
-        if ( h0->next() != h )
-          lMultinodes.push_back( CreateMultinode(h0,h) );
+        Vertex_handle v = validate(h->vertex());
 
-        v0 = v ;
-        h0 = h ;
-      }
+        if ( ! v->has_infinite_time() )
+        {
+          CGAL_assertion ( v->is_skeleton() ) ;
+          
+          if ( !AreSkeletonNodesCoincident(v0,v) )
+          {
+            if ( h0->next() != h )
+              lMultinodes.push_back( CreateMultinode(h0,h) );
 
-      h = validate(h->next());
-    } 
+            v0 = v ;
+            h0 = h ;
+          }
+        }
 
-    if ( h0->next() != h )
-      lMultinodes.push_back( CreateMultinode(h0,h) );
+        h = validate(h->next());
+      } 
+
+      if ( h0->next() != h )
+        lMultinodes.push_back( CreateMultinode(h0,h) );
+    }
   }
 
   //
@@ -1694,8 +1707,8 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
   // But it can't physically erase those from the HDS while looping, so the nodes/bisector to erase 
   // are collected in these sequences are erased after the merging loop.
   // 
-  Halfedge_handle_vector    lBisectorsToRemove ;
-  Vertex_handle_pair_vector lNodesToRemove ;
+  Halfedge_handle_vector lBisectorsToRemove ;
+  Vertex_handle_vector   lNodesToRemove ;
 
   for ( typename MultinodeVector::iterator it = lMultinodes.begin(), eit = lMultinodes.end() ; it != eit ; ++ it )
     PreprocessMultinode(**it);
@@ -1712,15 +1725,9 @@ void Straight_skeleton_builder_2<Gt,SS,V>::MergeCoincidentNodes()
     mSSkel->SSkel::Base::edges_erase(*hi);    
   }
     
-  for( Vertex_handle_pair_vector_iterator vi = lNodesToRemove.begin(), evi = lNodesToRemove.end() ; vi != evi ; ++ vi )
-  {
-    Vertex_handle lNodeE, lNodeK ;
-    boost::tie(lNodeE,lNodeK)=*vi;
-    EraseNode(lNodeE,lNodeK);
-  }  
+  for( Vertex_handle_vector_iterator vi = lNodesToRemove.begin(), evi = lNodesToRemove.end() ; vi != evi ; ++ vi )
+    EraseNode(*vi);
 }
-
-
 
 template<class Gt, class SS, class V>
 bool Straight_skeleton_builder_2<Gt,SS,V>::FinishUp()

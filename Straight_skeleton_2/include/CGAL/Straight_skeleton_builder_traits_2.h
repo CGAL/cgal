@@ -55,14 +55,15 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
+  typedef typename Base::FT               FT ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<1>    Arity ;
+  typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment ) const
+  Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
   {
-    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment) ;
+    Uncertain<bool> rResult = exist_offset_lines_isec2(aTrisegment,aMaxTime) ;
 
     CGAL_STSKEL_ASSERT_PREDICATE_RESULT(rResult,K,"Exist_event",aTrisegment);
 

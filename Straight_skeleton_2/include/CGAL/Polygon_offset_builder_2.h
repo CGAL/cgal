@@ -177,7 +177,10 @@ private:
   
   Comparison_result Compare_offset_against_event_time( FT aT, Vertex_const_handle aNode ) const
   {
-    Comparison_result r = Compare_offset_against_event_time_2(mTraits)(aT,CreateTrisegment(aNode));
+    CGAL_precondition( aNode->is_skeleton() ) ;
+    
+    Comparison_result r = aNode->has_infinite_time() ? SMALLER 
+                                                     : Compare_offset_against_event_time_2(mTraits)(aT,CreateTrisegment(aNode));
     
     return r ;
   }

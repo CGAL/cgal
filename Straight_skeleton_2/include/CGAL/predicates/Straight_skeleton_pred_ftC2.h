@@ -171,13 +171,13 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
 // not given by the collinear edges alone)
 //
-template<class K>
-Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri )
+template<class K, class FT>
+Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > const& tri, optional<FT> const& aMaxTime )
 {
-  typedef typename K::FT FT ;
   
   typedef Rational<FT>       Rational ;
   typedef optional<Rational> Optional_rational ;
+  typedef Quotient<FT>       Quotient ;
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
@@ -193,7 +193,13 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
       {
         if ( !d_is_zero )
         {
-          rResult = CGAL_NTS certified_is_positive(t->to_quotient()) ;
+          Quotient tq = t->to_quotient() ;
+          
+          rResult = CGAL_NTS certified_is_positive(tq) ;
+          
+          if ( aMaxTime && CGAL_NTS certainly(rResult) )
+            rResult = CGAL_NTS certified_is_smaller_or_equal(tq,Quotient(*aMaxTime));
+          
           CGAL_STSKEL_TRAITS_TRACE("\nEvent time: " << *t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
         }
         else
@@ -254,6 +260,7 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( intrusive_ptr< 
   return rResult ;
 
 }
+
 
 // Returns true if the point aP is on the positive side of the line supporting the edge
 //

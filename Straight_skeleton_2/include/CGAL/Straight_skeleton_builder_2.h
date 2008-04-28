@@ -218,9 +218,9 @@ private :
   
 public:
 
-  Straight_skeleton_builder_2 ( Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
-
-  SSkelPtr construct_skeleton( bool aNull_if_failed = true ) ;
+  Straight_skeleton_builder_2 ( boost::optional<FT> aMaxTime = boost::none, Traits const& = Traits(), Visitor const& aVisitor = Visitor() ) ;
+  
+  SSkelPtr construct_skeleton(  bool aNull_if_failed = true ) ;
 
 private :
 
@@ -302,7 +302,7 @@ private :
     return mVertexData[aIdx]->mVertex ;
   }
 
-  // Null if aV is a contour node
+  // Null if aV is a contour or infinite node
   Trisegment_2_ptr const& GetTrisegment ( Vertex_handle aV ) const
   {
     return GetVertexData(aV).mTrisegment ;
@@ -485,7 +485,7 @@ private :
 
   bool ExistEvent ( Trisegment_2_ptr const& aS )
   {
-    return Do_ss_event_exist_2(mTraits)(aS);
+    return Do_ss_event_exist_2(mTraits)(aS,mMaxTime);
   }  
   
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
@@ -532,18 +532,32 @@ private :
   
   bool AreContourNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
+    CGAL_precondition( aX->is_contour() );
+    CGAL_precondition( aY->is_contour() );
+    
     return CGAL::compare_xy(aX->point(),aY->point()) == EQUAL ;
   }
 
   bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
+    CGAL_precondition(  aX->is_skeleton() );
+    CGAL_precondition(  aY->is_skeleton() );
+    CGAL_precondition( !aX->has_infinite_time() );
+    CGAL_precondition( !aY->has_infinite_time() );
+    
     return AreEventsSimultaneous( GetTrisegment(aX),  GetTrisegment(aY) ) ;
   }
   
   Comparison_result CompareEvents( Trisegment_2_ptr const& aTrisegment, Vertex_handle aSeedNode ) const
   {
-    return aSeedNode->is_skeleton() ? CompareEvents( aTrisegment, GetTrisegment(aSeedNode) )
+    return aSeedNode->is_skeleton() ? aSeedNode->has_infinite_time() ? SMALLER
+                                                                     : CompareEvents( aTrisegment, GetTrisegment(aSeedNode) )
                                     : LARGER  ;
+  }
+  
+  void SetBisectorSlope ( Halfedge_handle aBisector, Sign aSlope )
+  {
+    aBisector->HBase_base::set_slope(aSlope);
   }
   
   void SetBisectorSlope ( Vertex_handle aA, Vertex_handle aB )
@@ -555,19 +569,39 @@ private :
         
     if ( aA->is_contour() )
     {
-      lOBisector->HBase_base::set_slope(POSITIVE);
-      lIBisector->HBase_base::set_slope(NEGATIVE);
+      SetBisectorSlope(lOBisector,POSITIVE);
+      SetBisectorSlope(lIBisector,NEGATIVE);
     }
     else if ( aB->is_contour())
     {
-      lOBisector->HBase_base::set_slope(NEGATIVE);
-      lIBisector->HBase_base::set_slope(POSITIVE);
+      SetBisectorSlope(lOBisector,NEGATIVE);
+      SetBisectorSlope(lIBisector,POSITIVE);
     }
     else
     {
-      Sign lSlope = CompareEvents(GetTrisegment(aB),GetTrisegment(aA));
-      lOBisector->HBase_base::set_slope(lSlope);
-      lIBisector->HBase_base::set_slope(opposite(lSlope));
+      if ( aA->has_infinite_time() )
+      {
+        CGAL_precondition( !aB->has_infinite_time());
+        
+        SetBisectorSlope(lOBisector,NEGATIVE);
+        SetBisectorSlope(lIBisector,POSITIVE);
+      }
+      else if ( aB->has_infinite_time())
+      {
+        CGAL_precondition( !aA->has_infinite_time());
+        
+        SetBisectorSlope(lOBisector,NEGATIVE);
+        SetBisectorSlope(lIBisector,POSITIVE);
+      }
+      else
+      {
+        CGAL_precondition( !aA->has_infinite_time());
+        CGAL_precondition( !aB->has_infinite_time());
+        
+        Sign lSlope = CompareEvents(GetTrisegment(aB),GetTrisegment(aA));
+        SetBisectorSlope(lOBisector,lSlope);
+        SetBisectorSlope(lIBisector,opposite(lSlope));
+      }
     }
   }
 
@@ -587,6 +621,7 @@ private :
     aE.SetTimeAndPoint(lTime,lP);
   }
 
+  
   void EraseBisector( Halfedge_handle aB )
   {
     CGAL_STSKEL_BUILDER_TRACE(1,"Dangling B" << aB->id() << " and B" << aB->opposite()->id() << " removed.");
@@ -594,11 +629,51 @@ private :
     mSSkel->SSkel::Base::edges_erase(aB);
   }
 
+#ifdef CGAL_STSKEL_TRACE_ON
+  std::string wavefront2str( Vertex_handle v )
+  {
+    std::ostringstream ss ; 
+    
+    ss << "N" << GetPrevInLAV(v)->id() << "->N" << v->id() << "->N" << GetNextInLAV(v)->id() 
+       << "  E" << GetVertexTriedge(v).e0()->id() << "->E" << GetVertexTriedge(v).e1()->id() ;
+       
+    return ss.str() ;
+    
+  } 
+#endif
+  
+  void Link( Halfedge_handle aH, Face_handle aF )
+  {
+    aH->HBase_base::set_face(aF);
+  }
+  
+  void Link( Halfedge_handle aH, Vertex_handle aV )
+  {
+    aH->HBase_base::set_vertex(aV);
+  }
+  
+  void Link( Vertex_handle aV, Halfedge_handle aH )
+  {
+    aV->VBase::set_halfedge(aH);
+  }
+  
+  void CrossLinkFwd( Halfedge_handle aPrev, Halfedge_handle aNext )
+  {
+    aPrev->HBase_base::set_next(aNext);
+    aNext->HBase_base::set_prev(aPrev);
+  }
+  
+  void CrossLink( Halfedge_handle aH, Vertex_handle aV )
+  {
+    Link(aH,aV);
+    Link(aV,aH);
+  }
+  
   Triedge GetCommonTriedge( Vertex_handle aA, Vertex_handle aB ) ;
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
                                     
-  EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN, Site const& aSite ) ;
+  EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle_pair aOpp, Site const& aSite ) ;
   
   void CollectSplitEvent( Vertex_handle aNode, Triedge const& aTriedge ) ;
 
@@ -616,7 +691,7 @@ private :
 
   void SetupNewNode( Vertex_handle aNode );
 
-  Vertex_handle LookupOnSLAV ( Halfedge_handle aOBorder, EventPtr const& aEvent, Site& rSite ) ;
+  Vertex_handle_pair LookupOnSLAV ( Halfedge_handle aOBorder, EventPtr const& aEvent, Site& rSite ) ;
 
   Vertex_handle      ConstructEdgeEventNode         ( EdgeEvent&   aEvent ) ;
   Vertex_handle_pair ConstructSplitEventNodes       ( SplitEvent&  aEvent, Vertex_handle aOppR ) ;
@@ -627,7 +702,7 @@ private :
   bool IsValidPseudoSplitEvent ( PseudoSplitEvent const& aEvent ) ;
   
   void HandleEdgeEvent               ( EventPtr aEvent ) ;
-  void HandleSplitEvent              ( EventPtr aEvent, Vertex_handle aOppR ) ;
+  void HandleSplitEvent              ( EventPtr aEvent, Vertex_handle_pair aOpp ) ;
   void HandlePseudoSplitEvent        ( EventPtr aEvent ) ;
   void HandleSplitOrPseudoSplitEvent ( EventPtr aEvent ) ;
   
@@ -638,18 +713,15 @@ private :
 
   void Propagate();
   
-  void EraseNode ( Vertex_handle aNodeEreased, Vertex_handle aNodeKept ) ;
-  
+  void EraseNode ( Vertex_handle aNode ) ;
+
   void MergeSplitNodes ( Vertex_handle_pair aSplitNodes ) ;
   
   void RelinkBisectorsAroundMultinode( Vertex_handle const& v0, Halfedge_handle_vector& aLinks ) ;
   
   void PreprocessMultinode( Multinode& aMN ) ;
                           
-  void ProcessMultinode( Multinode&                 aMN 
-                       , Halfedge_handle_vector&    rHalfedgesToRemove 
-                       , Vertex_handle_pair_vector& rVerticesToRemove                                                             
-                       ) ;
+  void ProcessMultinode( Multinode& aMN, Halfedge_handle_vector& rHalfedgesToRemove , Vertex_handle_vector& rNodesToRemove ) ;
 
   MultinodePtr CreateMultinode( Halfedge_handle begin, Halfedge_handle end ) ;
   
@@ -684,6 +756,8 @@ private:
   int mEventID  ;
   int mStepID   ;
 
+  boost::optional<FT> mMaxTime ;
+   
   PQ mPQ ;
 
   //Output

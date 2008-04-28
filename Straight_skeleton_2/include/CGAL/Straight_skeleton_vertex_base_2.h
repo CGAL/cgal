@@ -28,6 +28,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Refs, class P, class N >
 class Straight_skeleton_vertex_base_base_2
 {
+  enum Flags { IsSplitBit = 0x01, HasInfiniteTimeBit = 0x02 } ;
+  
 protected :
 
   class Halfedge_circulator_around_vertex_access_policy
@@ -154,25 +156,35 @@ public:
   
 public:
 
-  Straight_skeleton_vertex_base_base_2() : mID(-1), mTime(0.0), mIsSplit(false) {}
+  Straight_skeleton_vertex_base_base_2() : mID(-1), mTime(0.0), mFlags(0) {}
+  
+  // Infinite vertex
+  Straight_skeleton_vertex_base_base_2 ( int aID )
+    :
+      mID   (aID)
+    , mP    (ORIGIN) 
+    , mTime (std::numeric_limits<double>::max())
+    , mFlags(HasInfiniteTimeBit)
+  {
+  }
   
   // Contour vertex
   Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP )
     :
-      mID     (aID)
-    , mP      (aP)
-    , mTime   (0.0)
-    , mIsSplit(false)
+      mID   (aID)
+    , mP    (aP)
+    , mTime (0.0)
+    , mFlags(0)
   {
   }
 
   // Skeleton vertex, corresponding to a split or edge event.
-  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit )
+  Straight_skeleton_vertex_base_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime )
     :
-      mID     (aID)
-    , mP      (aP)
-    , mTime   (aTime)
-    , mIsSplit(aIsSplit)
+      mID   ( aID )
+    , mP    ( aP )
+    , mTime ( aTime )
+    , mFlags( ( aIsSplit ? IsSplitBit : 0 ) | ( aHasInfiniteTime ? HasInfiniteTimeBit : 0 ) )
  {
  }
 
@@ -182,7 +194,11 @@ public:
 
   FT time() const { return mTime ; }
   
-  bool is_split() const { return mIsSplit ; }
+  bool has_infinite_time() const { return ( mFlags & HasInfiniteTimeBit ) == HasInfiniteTimeBit ; }
+  
+  bool has_null_point() const { return has_infinite_time(); }
+  
+  bool is_split() const { return ( mFlags & IsSplitBit ) == IsSplitBit ; }
 
   Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
 
@@ -225,7 +241,11 @@ public:
   
   void set_event_triedge( Triedge const& aTriedge ) { mEventTriedge = aTriedge ; }
   
-  void reset_id ( int aID ) { mID = aID ; }
+  
+public :
+  
+  void reset_id__internal__    ( int aID ) { mID = aID ; }
+  void reset_point__internal__ ( Point_2 const& aP ) { mP = aP ; }
   
 private:
   
@@ -234,7 +254,7 @@ private:
   Triedge         mEventTriedge ;
   Point_2         mP;
   FT              mTime ;
-  bool            mIsSplit ;
+  unsigned char   mFlags ;
 };
 
 template < class Refs, class P, class N >
@@ -260,9 +280,11 @@ public:
   
   Straight_skeleton_vertex_base_2() {}
   
+  Straight_skeleton_vertex_base_2 ( int aID ) : Base(aID) {}
+  
   Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP ) : Base(aID,aP) {}
 
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit ) : Base(aID,aP,aTime,aIsSplit) {}
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime ) : Base(aID,aP,aTime,aIsSplit,aHasInfiniteTime) {}
   
 private:
     

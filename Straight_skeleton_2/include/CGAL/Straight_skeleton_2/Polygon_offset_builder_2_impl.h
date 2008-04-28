@@ -117,7 +117,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::LocateHook( FT                    
           if ( aBisector->slope() == POSITIVE && lTimeWrtSrcTime == EQUAL )
           {
             Halfedge_const_handle lPrev = aBisector->prev();
-            while ( lPrev->is_bisector() && lPrev->slope() == ZERO )
+            while ( lPrev->is_bisector() && ( lPrev->slope() == ZERO ) )
              lPrev = lPrev->prev();
              
             lLocalPeak = ( lPrev->slope() == NEGATIVE ) ;

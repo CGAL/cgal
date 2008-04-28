@@ -172,6 +172,7 @@ inline std::string s2str( P const& s, P const& t )
   ss << "{" << p2str(s) << "-" << p2str(t) << "}" ;
   return ss.str();
 }
+
 template<class S>
 inline std::string s2str( S const& seg ) { return s2str(seg.source(),seg.target()); }
 
@@ -194,12 +195,49 @@ inline std::string e2str( E const& e )
   ss << " " << s2str(e.opposite()->vertex()->point(),e.vertex()->point()) ;
   return ss.str();
 }
+
 template<class EH>
 inline std::string eh2str( EH const& eh )
 {
   EH null ;
   return eh != null ? e2str(*eh) : "NULL_HALFEDGE_HANDLE" ;
 }
+
+template<class BH>
+inline std::string newb2str( char const* name, BH const& b )
+{
+  std::ostringstream ss ; 
+  
+  ss << "New Bisector " 
+     << name 
+     << " is B" << b->id()
+     << " [E" << b->defining_contour_edge()->id() 
+     << ",E" << b->opposite()->defining_contour_edge()->id()
+     << "] {B" << b->prev()->id() 
+     << "->N"  << b->prev()->vertex()->id() 
+     << "->B" << b->id() 
+     << "->N" << b->vertex()->id() 
+     << "->B" << b->next()->id()
+     << "}" ;
+     
+  return ss.str();
+}
+
+template<class VH, class Triedge>
+inline std::string newn2str( char const* name, VH const& v, Triedge const& aTriedge )
+{
+  std::ostringstream ss ; 
+
+  ss << "New Node " << name <<" is N" << v->id() << " at " << v->point()
+     << " [E" << aTriedge.e0()->id()
+     << ",E" << aTriedge.e1()->id()
+     << ",E" << aTriedge.e2()->id()
+     << "] incident halfedge: B" << v->halfedge()->id()
+     << "  primary bisector: B" << v->primary_bisector()->id() ;
+     
+  return ss.str();
+}
+
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
