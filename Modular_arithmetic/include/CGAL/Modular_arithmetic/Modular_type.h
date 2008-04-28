@@ -27,14 +27,19 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi{
+
+struct Modular_arithmetic_needs_ieee_double_precision{
+    Modular_arithmetic_needs_ieee_double_precision(){
+        CGAL::force_ieee_double_precision();
+    }
+};
+}
+
 class Modular;
     
 Modular operator + (const Modular&);
 Modular operator - (const Modular&);
-Modular operator + (const Modular&, const Modular&);
-Modular operator - (const Modular&, const Modular&);
-Modular operator * (const Modular&, const Modular&);
-Modular operator / (const Modular&, const Modular&);
 
 std::ostream& operator << (std::ostream& os, const Modular& p);
 std::istream& operator >> (std::istream& is, Modular& p);
@@ -50,14 +55,18 @@ std::istream& operator >> (std::istream& is, Modular& p);
  * 
  * \see Modular_traits
  */
-class Modular{
-
+class Modular:
+    boost::ordered_field_operators1< Modular,
+    boost::ordered_field_operators2< Modular, int > >{
+    
 public:
     typedef Modular Self;
     typedef Modular NT;
 
 private:
     static const double  CST_CUT; 
+    static const CGALi::Modular_arithmetic_needs_ieee_double_precision 
+    modular_arithmetic_needs_ieee_double_precision;
 private:
    
     static int prime_int;
@@ -201,28 +210,40 @@ public:
         x() = MOD_add(x(),p2.x()); 
         return (*this); 
     }
-
     Self& operator -= (const Self& p2){ 
         x() = MOD_add(x(),MOD_negate(p2.x())); 
         return (*this); 
     }
-
     Self& operator *= (const Self& p2){ 
         x() = MOD_mul(x(),p2.x()); 
         return (*this); 
     }
-
     Self& operator /= (const Self& p2) { 
         x() = MOD_div(x(),p2.x()); 
         return (*this); 
     }
-      
+    // 
+    Self& operator += (int p2) { 
+        x() = MOD_add(x(),Modular(p2).x()); 
+        return (*this); 
+    }
+    Self& operator -= (int p2){ 
+        x() = MOD_add(x(),Modular(-p2).x()); 
+        return (*this); 
+    }
+
+    Self& operator *= (int p2){ 
+        x() = MOD_mul(x(),Modular(p2).x()); 
+        return (*this); 
+    }
+
+    Self& operator /= (int p2) { 
+        x() = MOD_div(x(),Modular(p2).x()); 
+        return (*this); 
+    }
+  
     friend Self operator + (const Self&);
-    friend Self operator - (const Self&);                       
-    friend Self operator + (const Self&, const Self&);  
-    friend Self operator - (const Self&, const Self&);  
-    friend Self operator * (const Self&, const Self&);    
-    friend Self operator / (const Self& p1, const Self& p2);
+    friend Self operator - (const Self&);                
 };
 
 inline Modular operator + (const Modular& p1)
@@ -235,68 +256,17 @@ inline Modular operator - (const Modular& p1){
     return r; 
 }
 
-inline Modular operator + (const Modular& p1,const Modular& p2) { 
-    typedef Modular MOD; 
-    Modular r; 
-    r.x() = MOD::MOD_add(p1.x(),p2.x()); 
-    return r; 
-} 
-
-inline Modular operator - (const Modular& p1, const Modular& p2) { 
-    return p1+(-p2);  
-}
-
-inline Modular operator * (const Modular& p1, const Modular& p2) { 
-    typedef Modular MOD;
-    Modular r;
-    r.x() = MOD::MOD_mul(p1.x(),p2.x()); 
-    return r;
-}
-
-inline Modular operator / (const Modular& p1, const Modular& p2) { 
-    typedef Modular MOD; 
-    Modular r;
-    r.x() = MOD::MOD_div(p1.x(),p2.x()); 
-    return r;
-}
-
 inline bool operator == (const Modular& p1, const Modular& p2)
 { return ( p1.x()==p2.x() ); }   
+inline bool operator == (const Modular& p1, int p2)
+{ return ( p1 == Modular(p2) ); }   
 
-inline bool operator != (const Modular& p1, const Modular& p2)
-{ return ( p1.x()!=p2.x() ); }
 
-// left hand side
-inline bool operator == (int num, const Modular& p) 
-{ return ( Modular(num) == p );}
-inline bool operator != (int num, const Modular& p) 
-{ return ( Modular(num) != p );}
+inline bool operator < (const Modular& p1, const Modular& p2)
+{ return ( p1.x() < p2.x() ); }   
+inline bool operator < (const Modular& p1, int p2)
+{ return ( p1.x() < Modular(p2).x() ); }   
 
-// right hand side
-inline bool operator == (const Modular& p, int num) 
-{ return ( Modular(num) == p );}
-inline bool operator != (const Modular& p, int num) 
-{ return ( Modular(num) != p );} 
-
-// left hand side
-inline Modular operator + (int num, const Modular& p2)
-{ return (Modular(num) + p2); }
-inline Modular operator - (int num, const Modular& p2)
-{ return (Modular(num) - p2); }
-inline Modular operator * (int num, const Modular& p2)
-{ return (Modular(num) * p2); }
-inline Modular operator / (int num, const Modular& p2)
-{ return (Modular(num)/p2); }
-
-// right hand side
-inline Modular operator + (const Modular& p1, int num)
-{ return (p1 + Modular(num)); }
-inline Modular operator - (const Modular& p1, int num)
-{ return (p1 - Modular(num)); }
-inline Modular operator * (const Modular& p1, int num)
-{ return (p1 * Modular(num)); }
-inline Modular operator / (const Modular& p1, int num)
-{ return (p1 / Modular(num)); }
 
 // I/O 
 inline std::ostream& operator << (std::ostream& os, const Modular& p) {   
@@ -304,7 +274,6 @@ inline std::ostream& operator << (std::ostream& os, const Modular& p) {
     os <<"("<< int(p.x())<<"%"<<MOD::get_current_prime()<<")";
     return os;
 }
-
 
 inline std::istream& operator >> (std::istream& is, Modular& p) {
     typedef Modular MOD;

@@ -9,6 +9,8 @@
 #include <CGAL/Modular.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/number_utils.h>
 
 int main()
 {   
@@ -75,7 +77,40 @@ int main()
     t=x; assert((x/5)==(4/y));
 
     //cout << x << endl;
-        
+
+    assert(7 == NT::set_current_prime(old_prime));
+
+    typedef CGAL::Arithmetic_kernel AK;
+    typedef AK::Integer Integer; 
+    
+    Integer       int_x(7);
+    Integer       prime(NT::get_current_prime());
+    CGAL::Modular mod_x(7);
+    for(int i = 0; i < 10000; i++){
+        assert(mod_x == CGAL::modular_image(int_x));
+        int_x *= int_x; int_x = CGAL::mod(int_x, prime);
+        mod_x *= mod_x; 
+        assert(mod_x == CGAL::modular_image(int_x));
+        int_x += int_x; int_x = CGAL::mod(int_x, prime);
+        mod_x += mod_x; 
+        assert(mod_x == CGAL::modular_image(int_x));
+
+        assert(mod_x == CGAL::modular_image(int_x));
+        int_x *= int_x; int_x = CGAL::mod(int_x, prime);
+        mod_x *= mod_x; 
+
+        assert(mod_x == CGAL::modular_image(int_x));
+        int_x -= int_x; int_x = CGAL::mod(int_x, prime);
+        mod_x -= mod_x; 
+    }
+    //  CGAL::force_ieee_double_precision();
+    {
+        CGAL::Modular::set_current_prime(67111043);
+        CGAL::Modular x(-33546401);
+        CGAL::Modular y(23950928);
+        CGAL::Modular q = CGAL::integral_division(x,y);
+        assert(x == q*y);
+    }
 }
 
 
