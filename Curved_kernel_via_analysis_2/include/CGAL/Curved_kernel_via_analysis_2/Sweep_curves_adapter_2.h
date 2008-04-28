@@ -74,6 +74,9 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2, bool) const
     {
+        if(p1.is_identical(p2))
+            return CGAL::EQUAL;
+    
         typedef typename SweepCurvesAdapter_2::Native_arc_2 Native_arc_2;
         typename SweepCurvesAdapter_2::Native_point_2 pt;
         Native_arc_2 arc;
@@ -83,9 +86,6 @@ public:
 
         SCA_CERR("Compare_xy_2: p1: " << p1 << "\n p2: " << p2 << std::endl);
 
-        if(p1.is_identical(p2))
-            return CGAL::EQUAL;
-            
         if(p1.is_finite()) {
             if(p2.is_finite())
                 return (_m_adapter->kernel().compare_xy_2_object()(p1.point(),
@@ -103,15 +103,16 @@ public:
                 loc2 = p2.arc().location(p2.curve_end());
                 if(Native_arc_2::is_on_left_right(loc1)) {
                     if(loc1 != loc2) // cmp + and -oo in x
-                        return (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::SMALLER :
-                            CGAL::LARGER);
-                    return (_m_adapter->kernel().compare_y_near_boundary_2_object()
-                        (arc, p2.arc(), end));
+                        return (loc1 == CGAL::ARR_LEFT_BOUNDARY ?
+                                 CGAL::SMALLER : CGAL::LARGER);
+                    return (_m_adapter->kernel().
+                       compare_y_near_boundary_2_object()(arc, p2.arc(), end));
                 }
                 // compare curve ends at +/-oo in y
                 if(Native_arc_2::is_on_bottom_top(loc2))
-                    return (_m_adapter->kernel().compare_x_near_boundary_2_object()
-                        (arc, end, p2.arc(), p2.curve_end()));
+                    return (_m_adapter->kernel().
+                        compare_x_near_boundary_2_object()
+                            (arc, end, p2.arc(), p2.curve_end()));
                 return (loc2 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
                     CGAL::SMALLER);
             }
@@ -120,7 +121,8 @@ public:
         }
         CGAL::Comparison_result res;
         if(Native_arc_2::is_on_left_right(loc1)) // p1 (point) against p2 (arc)
-            res = (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER : CGAL::SMALLER);
+            res = (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
+                 CGAL::SMALLER);
         else {
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adapter->kernel().kernel().compare_x_2_object()
@@ -232,8 +234,8 @@ public:
         if(Native_arc_2::is_on_left_right(locp)) {
             CGAL_precondition(locp == cv.arc().location(end));
             // compare two curve ends at +/-oo in x
-            return _m_adapter->kernel().compare_y_near_boundary_2_object()(p.arc(),
-                cv.arc(), end);
+            return _m_adapter->kernel().compare_y_near_boundary_2_object()
+                (p.arc(), cv.arc(), end);
         }
         // p.arc() has vertical asymptote; cases:
         // 1. cv.arc() is vertical => cv.arc().x == p.curve_end_x()
@@ -261,8 +263,10 @@ public:
             return CGAL::EQUAL; // two vertical arcs => coincide
 
         // compare either two asymptotic ends or one vertical arc + asymptote
-        return (_m_adapter->kernel().compare_x_near_boundary_2_object()(p.arc(),
-             end, cv.arc(), end2)); // check whether result need to be reversed
+        // check whether result need to be reversed
+        return (_m_adapter->kernel().compare_x_near_boundary_2_object()
+            (p.arc(), end, cv.arc(), end2));
+            
     }
     
 private:
