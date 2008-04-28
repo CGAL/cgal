@@ -45,7 +45,8 @@ namespace CGALi {
 
 
 // Representation of the Bitstream Descartes traits class
-template<typename Coefficient_,typename AlgebraicReal, typename Integer_>
+template<typename Coefficient_,typename AlgebraicReal, 
+         typename Integer_ >
 class Bitstream_descartes_traits_on_vert_line_rep {
    
 public:
@@ -552,7 +553,11 @@ private:
  * AcX::Bitstream_descartes_bfs, the inner variable \c x is interpreted as
  * the algebraic number \c a.
  */
-template<typename Coefficient_,typename AlgebraicReal,typename Integer_>
+template<typename Coefficient_,
+         typename AlgebraicReal,
+         typename Integer_
+             = typename CGAL::Get_arithmetic_kernel<typename CGAL::Polynomial_traits_d<Coefficient_>::Innermost_coefficient>
+             ::Arithmetic_kernel::Integer>
 class Bitstream_descartes_traits_on_vert_line
     : public ::CGAL::Handle_with_policy
     <CGAL::CGALi::Bitstream_descartes_traits_on_vert_line_rep
