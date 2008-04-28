@@ -28,9 +28,11 @@
 #define CGAL_MODULAR_H 1
 
 #include <CGAL/basic.h>
+#include <CGAL/Coercion_traits.h>
 #include <CGAL/Modular_arithmetic/Modular_type.h>
 
 CGAL_BEGIN_NAMESPACE
+
 
 /*! \brief Specialization of CGAL::NT_traits for \c Modular, which is a model
  * of the \c Field concept. 
@@ -41,6 +43,10 @@ struct Algebraic_structure_traits<Modular>
     : public Algebraic_structure_traits_base< Modular ,Field_tag >{
     typedef CGAL::Tag_true Is_exact; 
 };
+
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,CGAL::Modular)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int  ,CGAL::Modular)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long ,CGAL::Modular)
 
 CGAL_END_NAMESPACE
 
