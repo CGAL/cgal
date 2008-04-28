@@ -135,9 +135,9 @@ struct Coercion_traits_for_level
 
 namespace INTERN_CT{
 // Coercion_traits for Sqrt_extenison to FieldWithSqrt
-template <class A, class B> class CT_ext_to_fwsqrt;
+template <class A, class B> struct CT_ext_to_fwsqrt;
 // Coercion_traits for Sqrt_extenison not with FieldWithSqrt
-template <class A, class B> class CT_ext_not_to_fwsqrt;
+template <class A, class B> struct CT_ext_not_to_fwsqrt;
 } // namespace INTERN_CT
 
 
