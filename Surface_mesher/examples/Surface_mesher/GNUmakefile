@@ -7,6 +7,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
+	   -I../../../CGALimageIO/include \
            $(OTHER_INCLUDES) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -20,6 +21,8 @@ LIBPATH = \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
+          -L../../../CGALimageIO/src/CGALimageIO \
+          -Wl,-rpath,../../../CGALimageIO/src/CGALimageIO \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
