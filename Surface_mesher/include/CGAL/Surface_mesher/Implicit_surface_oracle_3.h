@@ -268,6 +268,7 @@ namespace CGAL {
                                        Point p2,
                                        const FT& squared_distance_bound)
       {
+        CGAL_SURFACE_MESHER_PROFILER("intersect_clipped_segment")
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
         std::cerr << "clipped_segment\n";
 #endif

@@ -37,6 +37,17 @@
 
 #include <CGAL/Surface_mesher/Verbose_flag.h>
 #include <CGAL/Surface_mesher/Types_generators.h>
+#include <CGAL/Profile_counter.h>
+
+#ifdef CGAL_SURFACE_MESHER_PROFILE
+#  define CGAL_SURFACE_MESHER_PROFILER(Y) \
+   { static CGAL::Profile_counter tmp(Y); ++tmp; }
+#  define CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER(Y,Z) \
+   { static CGAL::Profile_histogram_counter tmp(Y); tmp(Z); }
+#else
+#  define CGAL_SURFACE_MESHER_PROFILER(Y)
+#  define CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER(Y,Z)
+#endif
 
 namespace CGAL {
 
@@ -307,7 +318,7 @@ namespace CGAL {
 	      return true;
 	    }
 
-            if(exit)
+//             if(exit)
               return false;
 
             // test Gabriel
@@ -341,12 +352,8 @@ namespace CGAL {
     // Deletes old facets from the restricted Delaunay triangulation
 
     void before_insertion_impl(const Facet&,
-                               const Point& CGAL_assertion_code(s),
+                               const Point&,
                                Zone& zone) {
-
-      CGAL_assertion_code(Vertex_handle v);
-      CGAL_assertion (!tr.is_vertex(s,v));
-
       if (tr.dimension() == 3) {
 	// On s'occupe des facettes de la zone de conflit
 	for (typename Zone::Facets_iterator fit =
@@ -375,6 +382,7 @@ namespace CGAL {
     // Adds new facets from the restricted Delaunay triangulation
 
     void after_insertion_impl(const Vertex_handle& v) {
+      CGAL_SURFACE_MESHER_PROFILER("inserted point")
 #ifdef CGAL_SURFACE_MESHER_DEBUG_AFTER_INSERTION
       std::cerr << "Inserted\n";
 #endif
