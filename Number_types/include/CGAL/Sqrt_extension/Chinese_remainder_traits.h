@@ -8,7 +8,7 @@
 namespace CGAL {
  
 template <class NT, class ROOT> 
-struct Chinese_remainder_traits<CGAL::Sqrt_extension<NT,ROOT> >{
+class Chinese_remainder_traits<CGAL::Sqrt_extension<NT,ROOT> >{
 private:
     typedef CGAL::Sqrt_extension<NT,ROOT> EXT;   
     typedef Chinese_remainder_traits<NT> CRT_NT;
