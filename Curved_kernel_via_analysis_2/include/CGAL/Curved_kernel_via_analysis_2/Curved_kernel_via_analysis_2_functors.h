@@ -27,8 +27,10 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 #ifndef CERR
-#define CKvA_DEBUG_PRINT_CERR
-#ifdef CKvA_DEBUG_PRINT_CERR
+#ifndef CKvA_DEBUG_PRINT_CERR
+#define CKvA_DEBUG_PRINT_CERR 0
+#endif
+#if CKvA_DEBUG_PRINT_CERR
 #define CERR(x) std::cout << x
 #else
 #define CERR(x) static_cast<void>(0)
@@ -2116,7 +2118,9 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
 
-        result_type res = (cv.compare_y_at_x(p) == CGAL::EQUAL);
+        bool dummy1, dummy2;
+        result_type res = (cv.is_in_x_range(p.x(),&dummy1,&dummy2)) &&
+                          (cv.compare_y_at_x(p) == CGAL::EQUAL);
         return res;
     }
 };
