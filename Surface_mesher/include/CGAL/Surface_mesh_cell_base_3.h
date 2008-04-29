@@ -21,7 +21,13 @@
 
 #include <CGAL/Complex_2_in_triangulation_cell_base_3.h>
 
+#ifdef CGAL_MESH_3_IO_H
 #include <string>
+#endif
+
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+#include <bitset>
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
 
 namespace CGAL {
   
@@ -51,22 +57,26 @@ namespace CGAL {
     
     // -- fields added to this class --
     Point tab_surface_center_facets [4];
-    char c_visited; // the lower 4 bits for 'facet_visited', 
-                    // the higher 4 bits for 'visits'
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+    std::bitset<12> bits;
+#else
+    char bits; // the lower 4 bits for 'facet_visited', 
+               // the higher 4 bits for 'visits'
+#endif
     
   public:
     
     // Constructors
 
     Surface_mesh_cell_base_3() 
-      : Base(), c_visited(0) 
+      : Base(), bits()// c_visited(0) 
     {}
     
     Surface_mesh_cell_base_3 (Vertex_handle v0,
 			      Vertex_handle v1,
 			      Vertex_handle v2,
 			      Vertex_handle v3) 
-      : Base (v0, v1, v2, v3), c_visited(0)  
+      : Base (v0, v1, v2, v3), bits()// c_visited(0)  
     {}
     
     Surface_mesh_cell_base_3 (Vertex_handle v0,
@@ -77,7 +87,7 @@ namespace CGAL {
 			      Cell_handle n1,
 			      Cell_handle n2,
 			      Cell_handle n3) 
-      : Base (v0, v1, v2, v3, n0, n1, n2, n3), c_visited(0)  
+      : Base (v0, v1, v2, v3, n0, n1, n2, n3), bits()// c_visited(0)  
     {}
     
     
@@ -88,12 +98,20 @@ namespace CGAL {
     
     bool is_facet_visited (const int facet) const {
       CGAL_assertion (facet>=0 && facet <4);
-      return c_visited & (1 << facet);;
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      return bits[facet];
+#else
+      return bits & (1 << facet);;
+#endif
     }
 
     bool visited (const int facet) const {
       CGAL_assertion (facet>=0 && facet <4);
-      return c_visited & (1 << (facet+4));;
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      return bits[facet+4];
+#else
+      return bits & (1 << (facet+4));;
+#endif
     }
     
     const Point& get_facet_surface_center(const int facet) const {
@@ -107,18 +125,43 @@ namespace CGAL {
     
     void set_facet_visited (const int facet) {
       CGAL_assertion (facet>=0 && facet <4);
-      c_visited |= (1 << facet);
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      bits[facet] = true;
+#else
+      bits |= (1 << facet);
+#endif
     }
     
     void set_visited (const int facet) {
       CGAL_assertion (facet>=0 && facet <4);
-      c_visited |= (1 << (4+facet));
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      bits[facet+4] = true;
+#else
+      bits |= (1 << (4+facet));
+#endif
     }
+
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+    void set_bad(const int facet) {
+      bits[facet+8] = true;
+    }
+    
+    bool is_bad(const int facet) const {
+      return bits[facet+8];
+    }
+#endif
     
     void reset_visited (const int facet) {
       CGAL_assertion (facet>=0 && facet <4);
-      c_visited &= (15 & ~(1 << facet));
-      c_visited &= ((15 | (15<<4)) & ~(1 << (4+facet)));
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      bits &= ~((1 | (1 << 4) | (1 << 8)) << facet);
+//       bits[facet+8] = false;
+//       bits[facet+4] = false;
+//       bits[facet] = false;
+#else
+      bits &= (15 & ~(1 << facet));
+      bits &= ((15 | (15<<4)) & ~(1 << (4+facet)));
+#endif
     }
     
     void set_facet_surface_center(const int facet, 

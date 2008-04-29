@@ -27,6 +27,7 @@
 #endif
 
 #include <CGAL/Triangulation_cell_base_3.h>
+#include <bitset>
 
 #include <string>
 
@@ -56,21 +57,22 @@ namespace CGAL {
     // Champs ajoutes a la classe
 
     // Facets
-    char c_surface_facets;
+    std::bitset<4> bits;
+//     char c_surface_facets;
 
   public:
 
     // Constructors
 
     Complex_2_in_triangulation_cell_base_3()
-      : Cb(), c_surface_facets(0)
+      : Cb(), bits()// c_surface_facets(0)
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
 					    Vertex_handle v1,
 					    Vertex_handle v2,
 					    Vertex_handle v3)
-      : Cb (v0, v1, v2, v3), c_surface_facets(0)
+      : Cb (v0, v1, v2, v3), bits()// , c_surface_facets(0)
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
@@ -81,7 +83,7 @@ namespace CGAL {
 					    Cell_handle n1,
 					    Cell_handle n2,
 					    Cell_handle n3)
-      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), c_surface_facets(0)
+      : Cb (v0, v1, v2, v3, n0, n1, n2, n3), bits()// c_surface_facets(0)
     {}
 
 
@@ -91,7 +93,8 @@ namespace CGAL {
     // Facets
   bool is_facet_on_surface(const int facet) const {
     CGAL_assertion (facet>=0 && facet <4);
-    return c_surface_facets & (1 << facet);
+    return bits[facet];
+//     return c_surface_facets & (1 << facet);
   }
 
   // Setting functions
@@ -99,11 +102,12 @@ namespace CGAL {
   // Facets
   void set_facet_on_surface(const int facet, const bool f) {
     CGAL_assertion (facet>=0 && facet <4);
-    if(f){
-      c_surface_facets |= (1 << facet);
-    }else {
-      c_surface_facets &= (15  & ~(1 << facet));
-    }
+    bits[facet] = f;
+//     if(f){
+//       c_surface_facets |= (1 << facet);
+//     }else {
+//       c_surface_facets &= (15  & ~(1 << facet));
+//     }
   }
 
 #ifdef CGAL_MESH_3_IO_H

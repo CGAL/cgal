@@ -189,6 +189,11 @@ namespace CGAL {
 
             Quality a_r;
 	    if (criteria.is_bad (*fit, a_r)) {
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+              fit->first->set_bad(fit->second);
+              const Facet mirror_facet = tr.mirror_facet(*fit);
+              mirror_facet.first->set_bad(mirror_facet.second);
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
 	      facets_to_refine.insert(*fit,a_r);
 	    }
 	  }
@@ -311,6 +316,10 @@ namespace CGAL {
               Quality q;
               criteria.is_bad(f, q); // to get q (passed as reference)
               Facet other_side = mirror_facet(f);
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+              f.first->set_bad(f.second);
+              other_side.first->set_bad(other_side.second);
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
               if(f.first < other_side.first)
                 facets_to_refine.insert(f, q);
               else
@@ -441,11 +450,13 @@ namespace CGAL {
       if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
 
       // On enleve la facette de la liste des mauvaises facettes
-      if(f.first < other_side.first)
-        facets_to_refine.erase(f);
-      else
-        facets_to_refine.erase(other_side);
-
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      if(f.first->is_bad(f.second))
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
+        if(f.first < other_side.first)
+          facets_to_refine.erase(f);
+        else
+          facets_to_refine.erase(other_side);
       // Le compteur des visites est remis a zero
        reset_visited(f);
        reset_visited(other_side);
@@ -509,6 +520,11 @@ namespace CGAL {
 	// On regarde alors si la facette est bonne
         Quality a_r;
 	if (criteria.is_bad (f, a_r)) {
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+          f.first->set_bad(f.second);
+          other_side.first->set_bad(other_side.second);
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
+
           if(f.first < other_side.first)
             facets_to_refine.insert (f, a_r);
           else
