@@ -127,14 +127,12 @@ namespace CGALi {
     //! divide \c f by \c g with respect to constant factors
     /*! This function provides a division of two polynomials, which takes
      *  no care of constant factors of the innermost scalar type.
-     *  The boolean parameter decides whether the divisor has already been
-     *  canonicalized due to running time optimisation.
      *  The result is made unique by canonicalizing it.
      */
     
     template <class NT> inline
     Polynomial<NT> div_utcf(
-        const Polynomial<NT>& f, const Polynomial<NT>& g, bool is_canonicalized = false)
+        const Polynomial<NT>& f, const Polynomial<NT>& g)
     {
         typedef Polynomial<NT> POLY;
         typedef Polynomial_traits_d<POLY> PT;
@@ -145,7 +143,7 @@ namespace CGALi {
     //! overloaded version for divisors with a by one lower nesting level
     template <class NT> inline
     Polynomial<NT> div_utcf(
-        const Polynomial<NT>& f, const NT& g, bool is_canonicalized = false)
+        const Polynomial<NT>& f, const NT& g)
     {
         return CGALi::div_utcf(f,Polynomial<NT>(g));
     }
