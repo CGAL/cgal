@@ -602,7 +602,7 @@ public:
       else
         --m_number_of_facets;
 
-      Facet f = canonical_facet(c, i);
+      const Facet f = canonical_facet(c, i);
 
       c->set_facet_on_surface(i, in_complex);
 

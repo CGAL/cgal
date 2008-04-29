@@ -443,9 +443,9 @@ namespace CGAL {
     // For before_insertion
 
     // Actions to perform on a facet inside the conflict zone
-    void before_insertion_handle_facet_inside_conflict_zone (Facet f) 
+    void before_insertion_handle_facet_inside_conflict_zone (const Facet& f) 
     {
-      Facet other_side = mirror_facet(f);
+      const Facet other_side = mirror_facet(f);
 
       if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
 
@@ -492,7 +492,7 @@ namespace CGAL {
     template <bool remove_from_complex_if_not_in_restricted_Delaunay>
     void new_facet (const Facet& f) 
     {
-      Facet other_side = mirror_facet(f);
+      const Facet other_side = mirror_facet(f);
 
       if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
 
