@@ -123,7 +123,7 @@ public:
 
 
 template <class COEFF, class ROOT>
-class Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
+struct Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
 public:
     typedef Sqrt_extension<COEFF,ROOT> NT;
     bool operator()(const NT& t){
