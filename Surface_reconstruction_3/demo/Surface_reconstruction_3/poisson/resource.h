@@ -18,6 +18,7 @@
 #define IDC_EDIT_DR_MAXV                1005
 #define IDC_EDIT_CONTOURING_VALUE       1006
 #define IDC_EDIT_NB_OF_NEIGHBOURS       1007
+#define IDC_EDIT_OUTLIER_PERCENTAGE     1008
 #define ID_RENDER_POINTS                32771
 #define ID_RENDER_NORMALS               32772
 #define ID_RENDER_DELAUNAYEDGES         32773
@@ -46,13 +47,16 @@
 #define ID_MODE_POINT_SET               32821
 #define ID_MODE_POISSON                 32822
 #define ID_ANALYSIS                     32825
+#define ID_ANALYSIS_AVERAGESPACING      32826
+#define ID_PROCESSING_REMOVEOUTLIERS    32827
+#define ID_ANALYSIS_AVERAGE_SPACING     32828
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
-#define _APS_NEXT_COMMAND_VALUE         32826
+#define _APS_NEXT_COMMAND_VALUE         32829
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

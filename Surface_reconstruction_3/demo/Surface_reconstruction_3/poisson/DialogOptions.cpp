@@ -19,6 +19,7 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
 	, m_dr_sizing(0)
 	, m_contouring_value(0)
   , m_number_of_neighbours(0)
+  , m_outlier_percentage(0)
 {
 }
 
@@ -29,6 +30,9 @@ CDialogOptions::~CDialogOptions()
 void CDialogOptions::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+
+  // processing
+	DDX_Text(pDX,IDC_EDIT_OUTLIER_PERCENTAGE,m_outlier_percentage);
 
 	DDX_Text(pDX,IDC_EDIT_SM_ANGLE,m_sm_angle);
 	DDX_Text(pDX,IDC_EDIT_SM_RADIUS,m_sm_radius);

@@ -28,4 +28,6 @@ public:
 	double m_dr_sizing;
 	double m_contouring_value;
 	unsigned int m_number_of_neighbours;
+public:
+  double m_outlier_percentage;
 };

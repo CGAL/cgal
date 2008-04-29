@@ -26,9 +26,11 @@
 #include <CGAL/IO/surface_reconstruction_read_xyz.h>
 #include <CGAL/IO/surface_reconstruction_write_xyz.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
+#include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
 #include <CGAL/estimate_normals_jet_fitting_3.h>
-#include <CGAL/estimate_normals_pca_3.h>
 #include <CGAL/smooth_jet_fitting_3.h>
+#include <CGAL/estimate_normals_pca_3.h>
+#include <CGAL/average_spacing_3.h>
 
 // STL
 #include <iostream>
@@ -79,6 +81,9 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, &CPoissonDoc::OnUpdateReconstructionDelaunayrefinement)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, &CPoissonDoc::OnUpdateAlgorithmsRefineinshell)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, &CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals)
+    ON_COMMAND(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnRemoveOutliers)
+    ON_UPDATE_COMMAND_UI(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnUpdateRemoveOutliers)
+    ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, &CPoissonDoc::OnAnalysisAverageSpacing)
 END_MESSAGE_MAP()
 
 
@@ -108,6 +113,9 @@ CPoissonDoc::CPoissonDoc()
 
   // Normal estimation options
   m_number_of_neighbours = 7; // by default
+
+  // Outlier removal
+  m_outlier_percentage = 10.0;
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -458,6 +466,7 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_contouring_value = m_contouring_value;
 
   dlg.m_number_of_neighbours = m_number_of_neighbours;
+  dlg.m_outlier_percentage = m_outlier_percentage;
 
   if(dlg.DoModal() == IDOK)
   {
@@ -472,6 +481,8 @@ void CPoissonDoc::OnEditOptions()
     m_contouring_value = dlg.m_contouring_value;
 
     m_number_of_neighbours = dlg.m_number_of_neighbours;
+
+    m_outlier_percentage = dlg.m_outlier_percentage;
     
     update_status();
     UpdateAllViews(NULL);
@@ -850,5 +861,43 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
 void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 {
   pCmdUI->SetCheck(m_edit_mode == POISSON);
+}
+
+void CPoissonDoc::OnRemoveOutliers()
+{
+  BeginWaitCursor();
+  status_message("Remove outliers (%3.1lf%%)...",m_outlier_percentage);
+  double init = clock();
+
+  // todo: use mutating version when ready
+  Point_set output;
+  CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
+          m_points.begin(), m_points.end(),
+          std::back_inserter(output),
+          m_number_of_neighbours,
+          m_outlier_percentage);
+
+  m_points.clear();
+  std::copy(output.begin(),output.end(),std::back_inserter(m_points));
+
+  status_message("Remove outliers...done (%lf s)",duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+void CPoissonDoc::OnUpdateRemoveOutliers(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
+
+void CPoissonDoc::OnAnalysisAverageSpacing()
+{
+  BeginWaitCursor();
+    double value = CGAL::average_spacing_3(m_points.begin(),
+                                           m_points.end(),
+                                           m_number_of_neighbours,
+                                           Kernel());
+    status_message("Average spacing: %lf...",value);
+  EndWaitCursor();
 }
 

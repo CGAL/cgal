@@ -106,6 +106,9 @@ private:
     // Normal estimation options
     unsigned int m_number_of_neighbours;
 
+    // Outlier removal
+    double m_outlier_percentage;
+
 // Public methods
 public:
 
@@ -178,6 +181,9 @@ public:
     afx_msg void OnUpdateReconstructionDelaunayrefinement(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsRefineinshell(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
+    afx_msg void OnRemoveOutliers();
+    afx_msg void OnUpdateRemoveOutliers(CCmdUI *pCmdUI);
+    afx_msg void OnAnalysisAverageSpacing();
 };
 
 
