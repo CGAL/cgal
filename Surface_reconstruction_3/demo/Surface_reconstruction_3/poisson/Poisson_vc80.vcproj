@@ -408,6 +408,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\include\CGAL\remove_outliers_wrt_avg_knn_sq_distance_3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
 				>
 			</File>

@@ -146,22 +146,22 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-    afx_msg void OnReconstructionDelaunayrefinement();
+    afx_msg void OnReconstructionDelaunayRefinement();
     afx_msg void OnReconstructionPoisson();
-    afx_msg void OnAlgorithmsRefineinshell();
-    afx_msg void OnReconstructionSurfacemeshing();
+    afx_msg void OnAlgorithmsRefineInShell();
+    afx_msg void OnReconstructionSurfaceMeshing();
     afx_msg void OnEditOptions();
     afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionSurfacemeshing(CCmdUI *pCmdUI);
-    afx_msg void OnAlgorithmsMarchingtetcontouring();
-    afx_msg void OnUpdateAlgorithmsMarchingtetcontouring(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsMarchingTetContouring();
+    afx_msg void OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI);
     afx_msg void OnFileSaveSurface();
     afx_msg void OnUpdateFileSaveSurface(CCmdUI *pCmdUI);
     afx_msg void OnFileSaveAs();
     afx_msg void OnUpdateFileSaveAs(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsExtrapolatenormals();
     afx_msg void OnAlgorithmsPoissonStatistics();
-    afx_msg void OnUpdateAlgorithmsPoissonstatistics(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsEstimateNormalsByPCA();
     afx_msg void OnAlgorithmsEstimateNormalsByJetFitting();
     afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
@@ -178,12 +178,15 @@ public:
     afx_msg void OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionDelaunayrefinement(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateAlgorithmsRefineinshell(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
     afx_msg void OnRemoveOutliers();
     afx_msg void OnUpdateRemoveOutliers(CCmdUI *pCmdUI);
     afx_msg void OnAnalysisAverageSpacing();
+    afx_msg void OnOneStepPoissonReconstruction();
+    afx_msg void OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI);
 };
 
 

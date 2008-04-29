@@ -78,7 +78,7 @@ public:
 
   /// Insert point to the triangulation.
   Vertex_handle insert(const Point& p,
-                       unsigned char type /* INPUT or STEINER */,
+                       unsigned char type = INPUT /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle());
 
   /// Insert points to the triangulation using a spatial sort.
@@ -90,7 +90,7 @@ public:
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond,
-             unsigned char type /* INPUT or STEINER */);
+             unsigned char type = INPUT /* INPUT or STEINER */);
 
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
   /// @return the number of (finite) vertices.

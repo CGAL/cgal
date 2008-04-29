@@ -104,7 +104,7 @@ public:
 /// @heading Is Model for the Concepts: Model of the Reconstruction_implicit_function concept.
 ///
 /// @heading Design Pattern:
-/// Poisson_implicit_function is a
+/// A model of ReconstructionImplicitFunction is a
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
 ///
 /// @heading Parameters:
@@ -120,6 +120,7 @@ public:
   typedef ImplicitFctDelaunayTriangulation_3 Triangulation;
 
   typedef Gt Geom_traits; ///< Kernel's geometric traits
+
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
@@ -192,35 +193,42 @@ public:
   {
   }
 
- // /// Insert the first...beyond point set into pdt and
- // /// create a Poisson indicator function f() piecewise-linear
- // /// over the tetrahedra of pdt.
- // ///
- // /// Precondition: the value type of InputIterator must be 'Point' or Point_with_normal.
- // ///
- // /// @param pdt ImplicitFctDelaunayTriangulation_3 base of the Poisson indicator function.
- // /// @param first First point to add.
- // /// @param beyond Past-the-end point to add.
- // template < class InputIterator >
-  //Poisson_implicit_function(Triangulation& pdt,
- //                           InputIterator first, InputIterator beyond)
-  //: m_dt(pdt)
-  //{
- //   insert(first, beyond);
-  //}
+  /// Create an implicit function from a point set.
+  /// Insert the first...beyond point set into pdt and
+  /// create a Poisson indicator function f() piecewise-linear
+  /// over the tetrahedra of pdt.
+  ///
+  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
+  ///
+  /// @param pdt ImplicitFctDelaunayTriangulation_3 base of the Poisson indicator function.
+  /// @param first First point to add.
+  /// @param beyond Past-the-end point to add.
+  template < class InputIterator >
+  Poisson_implicit_function(Triangulation& pdt,
+                            InputIterator first, InputIterator beyond)
+  : m_dt(pdt)
+  {
+    insert(first, beyond);
+  }
 
- // /// Insert points.
- // ///
- // /// Precondition: the value type of InputIterator must be 'Point' or Point_with_normal.
- // ///
- // /// @param first First point to add to pdt.
- // /// @param beyond Past-the-end point to add to pdt.
- // /// @return the number of inserted points.
- // template < class InputIterator >
- // int insert(InputIterator first, InputIterator beyond)
-  //{
- //   return m_dt.insert(first, beyond);
-  //}
+  /// Insert points.
+  ///
+  /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
+  ///
+  /// @param first First point to add.
+  /// @param beyond Past-the-end point to add.
+  /// @return the number of inserted points.
+  template < class InputIterator >
+  int insert(InputIterator first, InputIterator beyond)
+  {
+    return m_dt.insert(first, beyond);
+  }
+
+  /// Remove all points.
+  void clear()
+  {
+    m_dt.clear();
+  }
 
   /// Get embedded triangulation.
   Triangulation& triangulation()

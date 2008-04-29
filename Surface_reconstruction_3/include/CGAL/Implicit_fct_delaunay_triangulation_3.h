@@ -408,7 +408,7 @@ public:
 
   /// Insert point to the triangulation.
   Vertex_handle insert(const Point& p,
-                       unsigned char type /* INPUT or STEINER */,
+                       unsigned char type = INPUT /* INPUT or STEINER */,
                        Cell_handle start = Cell_handle())
   {
     Vertex_handle v = Base::insert(p, start);
@@ -428,7 +428,7 @@ public:
   /// @return the number of inserted points.
   template < class InputIterator >
   int insert(InputIterator first, InputIterator beyond,
-             unsigned char type /* INPUT or STEINER */)
+             unsigned char type = INPUT /* INPUT or STEINER */)
   {
     int n = number_of_vertices();
 
@@ -451,7 +451,7 @@ public:
   }
 
   /// Index all (finite) vertices following the order of Finite_vertices_iterator.
-  /// @return the number (finite) of vertices.
+  /// @return the number of (finite) vertices.
   unsigned int index_vertices()
   {
     unsigned int index = 0;

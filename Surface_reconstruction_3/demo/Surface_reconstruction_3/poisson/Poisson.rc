@@ -45,15 +45,17 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 
 IDR_MAINFRAME TOOLBAR  16, 15
 BEGIN
-    BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
-    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_FILE_SAVE_AS
+    BUTTON      ID_FILE_SAVE_SURFACE
     SEPARATOR
     BUTTON      ID_EDIT_CUT
     BUTTON      ID_EDIT_COPY
     BUTTON      ID_EDIT_PASTE
     SEPARATOR
-    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_MODE_POINT_SET
+    BUTTON      ID_MODE_POISSON
+    SEPARATOR
     BUTTON      ID_APP_ABOUT
 END
 
@@ -130,7 +132,8 @@ BEGIN
     END
     POPUP "&Reconstruction"
     BEGIN
-        POPUP "&Poisson"
+        MENUITEM "1-step Poisson reconstruction\tP", ID_ONE_STEP_POISSON_RECONSTRUCTION
+        POPUP "Step-by-step Poisson reconstruction"
         BEGIN
             MENUITEM "Create Poisson Delaunay Triangulation", ID_CREATE_POISSON_TRIANGULATION
             MENUITEM SEPARATOR
@@ -139,14 +142,13 @@ BEGIN
             MENUITEM SEPARATOR
             MENUITEM "Extrapolate normals\tX",      ID_ALGORITHMS_EXTRAPOLATENORMALS
             MENUITEM SEPARATOR
-            MENUITEM "Solve Poisson Equation\tP",   ID_RECONSTRUCTION_POISSON
+            MENUITEM "Solve Poisson Equation\tE",   ID_RECONSTRUCTION_POISSON
             MENUITEM SEPARATOR
             MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
             MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_SURFACEMESHING
             MENUITEM "Marching Tet Contouring\tT",  ID_ALGORITHMS_MARCHINGTETCONTOURING
-            MENUITEM SEPARATOR
-            MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
         END
+        MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
     END
     POPUP "&Render"
     BEGIN
@@ -197,7 +199,7 @@ BEGIN
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
     "O",            ID_EDIT_OPTIONS,        VIRTKEY, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
-    "P",            ID_RECONSTRUCTION_POISSON, VIRTKEY, NOINVERT
+    "E",            ID_RECONSTRUCTION_POISSON, VIRTKEY, NOINVERT
     "R",            ID_RECONSTRUCTION_DELAUNAYREFINEMENT, VIRTKEY, NOINVERT
     "S",            ID_RENDER_SURFACE,      VIRTKEY, NOINVERT
     "S",            ID_FILE_SAVE_AS,        VIRTKEY, CONTROL, NOINVERT
@@ -212,6 +214,7 @@ BEGIN
     "X",            ID_ALGORITHMS_EXTRAPOLATENORMALS, VIRTKEY, NOINVERT
     "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_ONE_STEP_POISSON_RECONSTRUCTION, VIRTKEY, NOINVERT
 END
 
 
@@ -327,7 +330,7 @@ BEGIN
     ID_FILE_OPEN            "Open an existing document\nOpen"
     ID_FILE_CLOSE           "Close the active document\nClose"
     ID_FILE_SAVE            "Save the active document\nSave"
-    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_SAVE_AS         "Save input point set as...\nSave point set"
     ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
     ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
     ID_FILE_PRINT           "Print the active document\nPrint"
@@ -418,6 +421,17 @@ END
 STRINGTABLE 
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_SAVE_SURFACE    "Save reconstructed surface as...\nSave surface"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_MODE_POINT_SET       "Edit point set\nPoint set mode"
+    ID_MODE_POISSON         "Create Poisson Delaunay triangulation\nPoisson mode"
 END
 
 #endif    // Anglais (États-Unis) resources

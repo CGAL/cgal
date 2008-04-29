@@ -65,9 +65,9 @@ CPoissonView::CPoissonView()
   m_view_vertices = true;
   m_view_delaunay_edges = false;
   m_view_contour = true;
-  m_view_normals = true; // LS 03/05/2008: was false
+  m_view_normals = true; 
   m_view_surface = true;
-  m_view_arcball = true;
+  m_view_arcball = false;
 }
 
 CPoissonView::~CPoissonView()
@@ -302,9 +302,9 @@ void CPoissonView::OnPaint()
     if(m_view_normals)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-        pDoc->points().gl_draw_normals(0,255,0 /* color */, 0.5 /* length */);
+        pDoc->points().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function().triangulation().gl_draw_normals(0,255,0 /* color */, 0.5 /* length */);
+        pDoc->poisson_function().triangulation().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
     }
 
     // draw contour by marching tet

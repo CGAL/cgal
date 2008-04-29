@@ -132,7 +132,7 @@ int main(int argc, char * argv[])
           const Vector& n = v->normal();
           pwns.push_back(Point_with_normal(p,n));
         }
-        dt.insert(pwns.begin(), pwns.end(), Dt3::INPUT);
+        dt.insert(pwns.begin(), pwns.end());
 
         // Print status
         int nb_vertices = input_mesh.size_of_vertices();

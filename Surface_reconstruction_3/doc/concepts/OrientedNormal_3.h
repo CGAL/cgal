@@ -29,6 +29,7 @@ class OrientedNormal_3 : public DefaultConstructible, public CopyConstructible, 
 public:
 
     typedef xxx Vector; ///< Model of Kernel::Vector_3 concept.
+    typedef typename Geom_traits::Vector_3 Vector; 
 
 // Public methods
 public:
@@ -37,11 +38,6 @@ public:
     /// Normal is oriented by default.
     OrientedNormal_3(Null_vector = NULL_VECTOR);
     OrientedNormal_3(const Vector& vector, bool oriented = true);
-
-    /// Copy constructor
-    OrientedNormal_3(const OrientedNormal_3& that);
-    /// Operator =()
-    OrientedNormal_3& operator =(const OrientedNormal_3& that);
 
     /// Get normal vector.
     Vector get_vector() const;

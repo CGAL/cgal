@@ -52,6 +52,9 @@ public:
     bool operator==(const PointWithNormal_3& that);
     bool operator!=(const PointWithNormal_3& that);
 
+    // Set position.
+    void set_position(const Point& point);
+
     /// Get/set normal (vector + orientation).
     const Normal& normal() const;
     Normal&       normal();

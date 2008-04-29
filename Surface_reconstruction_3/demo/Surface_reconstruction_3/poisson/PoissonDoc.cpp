@@ -16,6 +16,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/assertions.h>
 
 // This package
 #include <CGAL/IO/surface_reconstruction_read_off_point_cloud.h>
@@ -46,22 +47,22 @@
 IMPLEMENT_DYNCREATE(CPoissonDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
-    ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayrefinement)
+    ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
-    ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineinshell)
-    ON_COMMAND(ID_RECONSTRUCTION_SURFACEMESHING, OnReconstructionSurfacemeshing)
+    ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
+    ON_COMMAND(ID_RECONSTRUCTION_SURFACEMESHING, OnReconstructionSurfaceMeshing)
     ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON, OnUpdateReconstructionPoisson)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_SURFACEMESHING, OnUpdateReconstructionSurfacemeshing)
-    ON_COMMAND(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnAlgorithmsMarchingtetcontouring)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnUpdateAlgorithmsMarchingtetcontouring)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_SURFACEMESHING, OnUpdateReconstructionSurfaceMeshing)
+    ON_COMMAND(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnAlgorithmsMarchingTetContouring)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnUpdateAlgorithmsMarchingTetContouring)
     ON_COMMAND(ID_FILE_SAVE_SURFACE, OnFileSaveSurface)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SURFACE, OnUpdateFileSaveSurface)
     ON_COMMAND(ID_FILE_SAVE_AS, OnFileSaveAs)
     ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, OnUpdateFileSaveAs)
     ON_COMMAND(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnAlgorithmsExtrapolatenormals)
     ON_COMMAND(ID_ALGORITHMS_POISSONSTATISTICS, OnAlgorithmsPoissonStatistics)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_POISSONSTATISTICS, OnUpdateAlgorithmsPoissonstatistics)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_POISSONSTATISTICS, OnUpdateAlgorithmsPoissonStatistics)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnAlgorithmsEstimateNormalsByPCA)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
@@ -78,12 +79,15 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, &CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSMST, &CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, &CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, &CPoissonDoc::OnUpdateReconstructionDelaunayrefinement)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, &CPoissonDoc::OnUpdateAlgorithmsRefineinshell)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, &CPoissonDoc::OnUpdateReconstructionDelaunayRefinement)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, &CPoissonDoc::OnUpdateAlgorithmsRefineInShell)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, &CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals)
     ON_COMMAND(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnRemoveOutliers)
     ON_UPDATE_COMMAND_UI(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnUpdateRemoveOutliers)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, &CPoissonDoc::OnAnalysisAverageSpacing)
+    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, &CPoissonDoc::OnOneStepPoissonReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, &CPoissonDoc::OnUpdateOneStepPoissonReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, &CPoissonDoc::OnUpdateAnalysisAverageSpacing)
 END_MESSAGE_MAP()
 
 
@@ -337,6 +341,7 @@ void CPoissonDoc::OnFileSaveAs()
 // Save m_points[] only if it is the form visible on screen
 void CPoissonDoc::OnUpdateFileSaveAs(CCmdUI *pCmdUI)
 {
+  CGAL_assertion(m_points.begin() != m_points.end());
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
@@ -561,7 +566,9 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI)
 {
-  pCmdUI->Enable(m_edit_mode == POINT_SET);
+  CGAL_assertion(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals);
 }
 
 // Specific to Gyroviz: orient the normals w.r.t. the position of cameras
@@ -585,11 +592,47 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
 
 void CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI)
 {
-  pCmdUI->Enable(m_edit_mode == POINT_SET);
+  CGAL_assertion(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool points_have_cameras = (m_points.begin()->cameras_begin() != m_points.begin()->cameras_end());
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && points_have_cameras);
+}
+
+// Reconstruction >> Poisson >> Create Poisson Triangulation callback:
+// Create m_poisson_dt from m_points[] and enter in Poisson edit mode.
+// m_points is not editable in this mode.
+void CPoissonDoc::OnCreatePoissonTriangulation()
+{
+  BeginWaitCursor();
+  status_message("Create Poisson Triangulation...");
+  double init = clock();
+
+  // Copy points to m_poisson_dt
+  m_poisson_function.clear();
+  m_poisson_function.insert(m_points.begin(), m_points.end());
+  
+  m_edit_mode = POISSON;
+  m_triangulation_refined = false; // Need to apply Delaunay refinement
+  m_poisson_solved = false; // Need to solve Poisson equation
+
+  status_message("Create Poisson Triangulation...done (%lf s)",duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
+{
+  CGAL_assertion(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && normals_are_oriented);
+
+  pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
 // Uniform Delaunay refinement
-void CPoissonDoc::OnReconstructionDelaunayrefinement()
+void CPoissonDoc::OnReconstructionDelaunayRefinement()
 {
   BeginWaitCursor();
 
@@ -599,7 +642,6 @@ void CPoissonDoc::OnReconstructionDelaunayrefinement()
   const double enlarge_ratio = 1.5;
   double init = clock();
   unsigned int nb_vertices_added = m_poisson_function.delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
-  m_poisson_dt.invalidate_bounding_box();
   m_triangulation_refined = true;
 
   status_message("Delaunay refinement...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
@@ -608,13 +650,13 @@ void CPoissonDoc::OnReconstructionDelaunayrefinement()
   EndWaitCursor();
 }
 
-void CPoissonDoc::OnUpdateReconstructionDelaunayrefinement(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON);
 }
 
 // Delaunay refinement in a surface's shell
-void CPoissonDoc::OnAlgorithmsRefineinshell()
+void CPoissonDoc::OnAlgorithmsRefineInShell()
 {
   BeginWaitCursor();
 
@@ -624,7 +666,6 @@ void CPoissonDoc::OnAlgorithmsRefineinshell()
   const double enlarge_ratio = 1.5;
   double init = clock();
   unsigned int nb_vertices_added = m_poisson_function.delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
-  m_poisson_dt.invalidate_bounding_box();
   m_triangulation_refined = true;
 
   status_message("Delaunay refinement...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
@@ -633,7 +674,7 @@ void CPoissonDoc::OnAlgorithmsRefineinshell()
   EndWaitCursor();
 }
 
-void CPoissonDoc::OnUpdateAlgorithmsRefineinshell(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON);
 }
@@ -650,7 +691,7 @@ void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
 
 void CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI)
 {
-  pCmdUI->Enable(m_edit_mode == POISSON);
+  pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
 }
 
 // Solve Poisson equation callback
@@ -687,7 +728,7 @@ void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
 }
 
 // Surface Meshing callback
-void CPoissonDoc::OnReconstructionSurfacemeshing()
+void CPoissonDoc::OnReconstructionSurfaceMeshing()
 {
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
 
@@ -695,9 +736,8 @@ void CPoissonDoc::OnReconstructionSurfacemeshing()
     m_surface_mesher_dt.clear();
     m_surface_mesher_c2t3.clear();
     
-    // Apply contouring value defined in Options dialog and reset it
+    // Apply contouring value defined in Options dialog
     m_poisson_function.set_contouring_value(m_contouring_value);
-    m_contouring_value = 0.0;
 
     // Get inner point
     Point sink = m_poisson_function.sink();
@@ -735,19 +775,22 @@ void CPoissonDoc::OnReconstructionSurfacemeshing()
     std::list<Triangle> triangles;
     CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
     m_poisson_dt.set_surface(triangles);
+    
+    // Reset contouring value 
+    m_poisson_function.set_contouring_value(0.0);
 
     UpdateAllViews(NULL);
     EndWaitCursor();
 }
 
 // Enable "Surface Meshing" if Poisson equation is solved
-void CPoissonDoc::OnUpdateReconstructionSurfacemeshing(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
 }
 
 // Marching Tet Contouring callback
-void CPoissonDoc::OnAlgorithmsMarchingtetcontouring()
+void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
 {
   int nb = m_poisson_dt.marching_tet(m_contouring_value);
   status_message("Marching tet contouring...done (%d triangles)",nb);
@@ -755,7 +798,7 @@ void CPoissonDoc::OnAlgorithmsMarchingtetcontouring()
 }
 
 // Enable "Marching Tet Contouring" if Poisson equation is solved
-void CPoissonDoc::OnUpdateAlgorithmsMarchingtetcontouring(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
 }
@@ -777,7 +820,7 @@ void CPoissonDoc::OnAlgorithmsPoissonStatistics()
 }
 
 // Enable "Poisson Statistics" if Poisson equation is solved
-void CPoissonDoc::OnUpdateAlgorithmsPoissonstatistics(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
 }
@@ -807,6 +850,7 @@ void CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
+// Edit >> Mode >> Point set callback
 void CPoissonDoc::OnModePointSet()
 {
   // No need to convert Poisson triangulation back to point set (yet)
@@ -819,6 +863,7 @@ void CPoissonDoc::OnModePointSet()
 
 void CPoissonDoc::OnUpdateModePointSet(CCmdUI *pCmdUI)
 {
+  // Edit >> Mode >> Point set is always enabled
   pCmdUI->SetCheck(m_edit_mode == POINT_SET);
 }
 
@@ -831,36 +876,26 @@ void CPoissonDoc::OnModePoisson()
 
 void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
 {
+  OnUpdateCreatePoissonTriangulation(pCmdUI);
   pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
-// Reconstruction >> Poisson >> Create Poisson Triangulation callback:
-// Create m_poisson_dt from m_points[] and enter in Poisson edit mode.
-// m_points is not editable in this mode.
-void CPoissonDoc::OnCreatePoissonTriangulation()
+// Reconstruction >> Poisson reconstruction callback: call in 1 step:
+// - Create Poisson Delaunay Triangulation
+// - Delaunay refinement
+// - Solve Poisson Equation
+// - Surface Meshing
+void CPoissonDoc::OnOneStepPoissonReconstruction()
 {
-  BeginWaitCursor();
-  status_message("Create Poisson Triangulation...");
-  double init = clock();
-
-  // Copy points to m_poisson_dt
-  m_poisson_dt.clear();
-  m_poisson_dt.insert(m_points.begin(), m_points.end(), Dt3::INPUT);
-  m_poisson_dt.invalidate_bounding_box();
-  
-  m_edit_mode = POISSON;
-  m_triangulation_refined = false; // Need to apply Delaunay refinement
-  m_poisson_solved = false; // Need to solve Poisson equation
-
-  status_message("Create Poisson Triangulation...done (%lf s)",duration(init));
-  update_status();
-  UpdateAllViews(NULL);
-  EndWaitCursor();
+  OnCreatePoissonTriangulation();
+  OnReconstructionDelaunayRefinement();
+  OnReconstructionPoisson();
+  OnReconstructionSurfaceMeshing();
 }
 
-void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI)
 {
-  pCmdUI->SetCheck(m_edit_mode == POISSON);
+  OnUpdateCreatePoissonTriangulation(pCmdUI);
 }
 
 void CPoissonDoc::OnRemoveOutliers()
@@ -885,6 +920,7 @@ void CPoissonDoc::OnRemoveOutliers()
   UpdateAllViews(NULL);
   EndWaitCursor();
 }
+
 void CPoissonDoc::OnUpdateRemoveOutliers(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POINT_SET);
@@ -897,7 +933,14 @@ void CPoissonDoc::OnAnalysisAverageSpacing()
                                            m_points.end(),
                                            m_number_of_neighbours,
                                            Kernel());
-    status_message("Average spacing: %lf...",value);
+    //status_message("Average spacing: %lf...", value);
+    char buffer[100];
+    sprintf(buffer, "Average spacing: %lf", value);
+    AfxMessageBox(buffer);
   EndWaitCursor();
 }
 
+void CPoissonDoc::OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
