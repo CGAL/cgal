@@ -32,7 +32,9 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CKvA_CERR
-//#define CKvA_DEBUG_PRINT_CERR 1
+#ifndef CKvA_DEBUG_PRINT_CERR
+#define CKvA_DEBUG_PRINT_CERR 0
+#endif
 #if CKvA_DEBUG_PRINT_CERR
 #define CKvA_CERR(x) std::cout << x
 #else
@@ -657,13 +659,8 @@ public:
                         ::Construct_point_2(_m_curved_kernel)
                             (curr_xy.x(),curr_xy.curve(), curr_xy.arcno());
                 
-                bool dummy1,dummy2;
-
-                if( arc.is_in_x_range(curr_xy.x(),&dummy1,&dummy2) &&
-                    typename Curved_kernel_via_analysis_2
-                    ::Compare_y_at_x_2(_m_curved_kernel) 
-                      (curr_point, arc) == CGAL::EQUAL ) {
-                    
+                if( typename Curved_kernel_via_analysis_2
+                        ::Is_on_2(_m_curved_kernel) (curr_point, arc) ) {
                     CGAL::Bbox_2 point_bbox 
                         = curr_xy.approximation_box_2(threshold());
                     std::pair<double,double> y_iv 
@@ -811,12 +808,22 @@ public:
         //CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
         
         Base base_is_on(this->_ckva());
-        
         result_type res = base_is_on(p, c);
         
         CKvA_CERR("result: " << res << "\n");
         
         return res;
+    }
+
+    result_type operator()(const Point_2& p, const Arc_2& c) const {
+        
+        Base base_is_on(this->_ckva());
+        result_type res = base_is_on(p, c);
+        
+        CKvA_CERR("result: " << res << "\n");
+        
+        return res;
+
     }
 };
 
