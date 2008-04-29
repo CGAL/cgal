@@ -39,7 +39,7 @@ CGAL_BEGIN_NAMESPACE
  * \ingroup CGAL_NT_traits_spec
  */
 template <>
-struct Algebraic_structure_traits<Modular>
+class Algebraic_structure_traits<Modular>
     : public Algebraic_structure_traits_base< Modular ,Field_tag >{
     typedef CGAL::Tag_true Is_exact; 
 };
