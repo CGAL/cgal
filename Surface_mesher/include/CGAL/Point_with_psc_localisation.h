@@ -36,6 +36,8 @@ class Point_with_psc_localisation : public Point
   typedef Point_with_psc_localisation<Point> Self;
 
 public:
+  typedef Tag_true Set_on_surface_tag;
+
   Point_with_psc_localisation() : Point(), index(), dim(-1) {}
 
   Point_with_psc_localisation(const Point& p) : Point(p), index(), dim(-1) {}

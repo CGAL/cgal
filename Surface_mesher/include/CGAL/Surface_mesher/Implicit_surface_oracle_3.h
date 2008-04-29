@@ -26,6 +26,8 @@
 #include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 #include <CGAL/Real_embeddable_traits.h>
 
+#include <boost/mpl/has_xxx.hpp>
+
 #include <queue>
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
@@ -36,6 +38,12 @@
 // NB: this oracle requires that the user provide a function that can
 // compute the value of the potential in any point of space
 namespace CGAL {
+
+#ifdef  BOOST_MPL_CFG_NO_HAS_XXX
+#  error "BOOST_MPL_HAS_XXX_TRAIT_DEF is needed!"
+#else
+   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_set_on_surface, Set_on_surface_tag, true);
+#endif
 
   namespace Surface_mesher {
 
@@ -302,7 +310,9 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
-//             mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
+            if(CGAL::has_set_on_surface<Point>::value)
+              mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
+
             visitor.new_point(mid);
             return make_object(mid);
           }
