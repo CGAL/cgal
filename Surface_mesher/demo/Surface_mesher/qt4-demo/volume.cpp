@@ -92,9 +92,9 @@ public:
 };
 
 class Generate_surface_identifiers :
-  std::binary_function<Classify_from_isovalue_list::result_type,
-                       Classify_from_isovalue_list::result_type,
-                       const QTreeWidgetItem*>
+  public std::binary_function<Classify_from_isovalue_list::result_type,
+                              Classify_from_isovalue_list::result_type,
+                              const QTreeWidgetItem*>
 {
   Isovalues_list* list;
 public:
