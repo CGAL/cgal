@@ -131,7 +131,7 @@ public: // functions
     //! returns the number of real roots
     int number_of_real_roots() const { return number_of_real_roots_; }
 
-    bool is_exact_root(int i) const { return false; } 
+    bool is_exact_root(int) const { return false; } 
   
     void left_boundary(int i, Integer& numerator_, Integer& denominator_) const {
         typedef CGAL::Fraction_traits<Rational> Fraction_traits; 
