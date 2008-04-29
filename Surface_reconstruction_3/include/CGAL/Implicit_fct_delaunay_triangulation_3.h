@@ -218,6 +218,9 @@ struct Implicit_fct_delaunay_triangulation_default_geom_traits_3 : public BaseGt
 /// The Implicit_fct_delaunay_triangulation_3 class is the default implementation
 /// of the ImplicitFctDelaunayTriangulation_3 concept.
 /// It provides the interface requested by the Poisson_implicit_function class.
+/// 
+/// CAUTION: invalidate_bounding_box() must be called 
+/// after modifying the points.
 ///
 /// TODO: Test speed if using Triangulation_hierarchy_3
 ///
@@ -240,6 +243,7 @@ class Implicit_fct_delaunay_triangulation_3 : public Delaunay_triangulation_3<Gt
 // Private types
 private:
 
+  // Base class 
   typedef Delaunay_triangulation_3<Gt,Tds>  Base;
 
   // Auxiliary class to build a normals iterator
@@ -256,7 +260,7 @@ private:
 // Public types
 public:
 
-  // Repeat Delaunay_triangulation_3 public types
+  // Repeat base class' types
   /// @cond SKIP_IN_MANUAL
   typedef Tds Triangulation_data_structure;
   typedef Gt  Geom_traits; ///< Geometric traits class / Point_3 is a model of PointWithNormal_3.
@@ -326,7 +330,7 @@ public:
 
   // Default copy constructor and operator =() are fine.
 
-  // Repeat Delaunay_triangulation_3 public methods used below
+  // Repeat base class' public methods used below
   /// @cond SKIP_IN_MANUAL
   Base::points_begin;
   Base::points_end;

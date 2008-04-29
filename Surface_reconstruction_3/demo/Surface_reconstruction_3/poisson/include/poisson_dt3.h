@@ -1,13 +1,13 @@
 #ifndef POISSON_DT3_H
 #define POISSON_DT3_H
 
-#include <algorithm>
-#include <GL/gl.h>
-
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <Gyroviz_point_3.h>
 #include <CGAL/orient_normals_wrt_cameras_3.h>
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
+
+#include <algorithm>
+#include <GL/gl.h>
 
 #include <boost/graph/properties.hpp>
 
@@ -25,15 +25,6 @@ struct Poisson_dt3_default_geom_traits : public BaseGt
 { 
   typedef Gyroviz_point_3<BaseGt> Point_3;
 };
-
-
-namespace boost {
-
-/// Helper type and constant to get a "vertex_cameras" property map.
-enum vertex_cameras_t { vertex_cameras } ;
-BOOST_INSTALL_PROPERTY(vertex, cameras);
-
-} // namespace boost
 
 
 /// Helper class: type of the "vertex_cameras" property map
@@ -157,10 +148,8 @@ public:
 
   // Default constructor, copy constructor and operator =() are fine
 
-  void gl_draw_delaunay_vertices(const unsigned char r,
-    const unsigned char g,
-    const unsigned char b,
-    const float size)
+  void gl_draw_delaunay_vertices(unsigned char r, unsigned char g, unsigned char b,
+                                 float size) const
   {
     // Draw input points
     ::glPointSize(size);
@@ -214,332 +203,9 @@ public:
     }
   }
 
-  bool save_pwn(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-      return false;
-
-    Finite_vertices_iterator v;
-    for(v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
-    {
-      const Point& p = v->point();
-      const Vector& n = v->normal().get_vector();
-      fprintf(pFile,"%lf %lf %lf %lf %lf %lf\n",
-        p.x(),p.y(),p.z(),
-        n.x(),n.y(),n.z());
-    }
-
-    fclose(pFile);
-    return true;
-  }
-
-  bool read_pwn(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"rt");
-    if(pFile == NULL)
-      return false;
-
-    // scan vertices
-    char pLine[4096];
-    std::vector<Point_with_normal> pwns;
-    while(fgets(pLine,4096,pFile))
-    {
-      double x,y,z;
-      double nx,ny,nz;
-      if(sscanf(pLine,"%lg %lg %lg %lg %lg %lg",&x,&y,&z,&nx,&ny,&nz) == 6)
-      {
-        Point point(x,y,z);
-        Vector normal(nx,ny,nz);
-        pwns.push_back(Point_with_normal(point,normal));
-      }
-    }
-    fclose(pFile);
-    insert(pwns.begin(), pwns.end(), INPUT);
-    return true;
-  }
-
-  bool save_xyz(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-      return false;
-
-    Finite_vertices_iterator v;
-    for(v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
-    {
-      const Point& p = v->point();
-      const Vector& n = v->normal().get_vector();
-      fprintf(pFile,"%lf %lf %lf %lf %lf %lf\n",
-                     p.x(),p.y(),p.z(),
-                     n.x(),n.y(),n.z());
-    }
-
-    fclose(pFile);
-    return true;
-  }
-
-  bool read_xyz(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"rt");
-    if(pFile == NULL)
-    {
-      std::cerr << "Error: cannot open " << pFilename;
-      return false;
-    }
-
-    // scan vertices
-    int lineNumber = 0;
-    char pLine[4096];
-    std::vector<Point_with_normal> pwns;
-    while(fgets(pLine,4096,pFile))
-    {
-      lineNumber++;
-
-      // Read position + normal...
-      double x,y,z;
-      double nx,ny,nz;
-      long pointsCount;
-      if(sscanf(pLine,"%lg %lg %lg %lg %lg %lg",&x,&y,&z,&nx,&ny,&nz) == 6)
-      {
-        Point point(x,y,z);
-        Vector normal(nx,ny,nz);
-        pwns.push_back(Point_with_normal(point,normal));
-      }
-      // ...or read only position...
-      else if(sscanf(pLine,"%lg %lg %lg",&x,&y,&z) == 3)
-      {
-        Point point(x,y,z);
-        pwns.push_back(point);
-      }
-      // ...or skip number of points (optional)
-      else if (lineNumber == 1 && sscanf(pLine,"%ld",&pointsCount) == 1)
-      {
-        continue;
-      }
-      else
-      {
-        std::cerr << "Error line " << lineNumber << " of " << pFilename;
-        return false;
-      }
-    }
-    fclose(pFile);
-    insert(pwns.begin(), pwns.end(), INPUT);
-    return true;
-  }
-
-  // Save triangulation vertices as a 3D point cloud in OFF format.
-  bool save_off_point_cloud(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"wt");
-    if(pFile == NULL)
-      return false;
-      
-    // Write header
-    fprintf(pFile,"NOFF\n");
-    fprintf(pFile,"%d 0 0\n", number_of_vertices());
-
-    // Write positions + normals
-    Finite_vertices_iterator v;
-    for(v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
-    {
-      const Point& p = v->point();
-      const Vector& n = v->normal().get_vector();
-      fprintf(pFile,"%lf %lf %lf %lf %lf %lf\n",
-                     p.x(),p.y(),p.z(),
-                     n.x(),n.y(),n.z());
-    }
-
-    fclose(pFile);
-    return true;
-  }
-
-  // Read 3D points from an OFF file.
-  bool read_off_point_cloud(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"rt");
-    if(pFile == NULL)
-    {
-      std::cerr << "Error: cannot open " << pFilename;
-      return false;
-    }
-
-    long pointsCount = 0, facesCount = 0, edgesCount = 0; // number of items in file
-    int lineNumber = 0; // current line number
-    char pLine[4096]; // current line buffer
-    std::vector<Point_with_normal> pwns; // container of points read
-    while(fgets(pLine,4096,pFile))
-    {
-      lineNumber++;
-
-      // Read file signature on first line
-      if (lineNumber == 1)
-      {
-        char signature[4096];
-        if ( (sscanf(pLine,"%s",signature) != 1)
-          || (strcmp(signature, "OFF") != 0 && strcmp(signature, "NOFF") != 0) )
-        {
-          // if unsupported file format
-          std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
-          return false;
-        }
-      }    
-
-      // Read number of points on 2nd line    
-      else if (lineNumber == 2)
-      {
-        if (sscanf(pLine,"%ld %ld %ld",&pointsCount,&facesCount,&edgesCount) != 3)
-        {
-          std::cerr << "Error line " << lineNumber << " of " << pFilename;
-          return false;
-        }
-      }        
-
-      // Read 3D points on next lines
-      else if (pwns.size() < pointsCount)
-      {
-        // Read position + normal...
-        double x,y,z;
-        double nx,ny,nz;
-        if(sscanf(pLine,"%lg %lg %lg %lg %lg %lg",&x,&y,&z,&nx,&ny,&nz) == 6)
-        {
-          Point point(x,y,z);
-          Vector normal(nx,ny,nz);
-          pwns.push_back(Point_with_normal(point,normal));
-        }
-        // ...or read only position...
-        else if(sscanf(pLine,"%lg %lg %lg",&x,&y,&z) == 3)
-        {
-          Point point(x,y,z);
-          pwns.push_back(point);
-        }
-        // ...or skip comment line
-      }
-      // Skip remaining lines
-    }
-
-    fclose(pFile);
-    insert(pwns.begin(), pwns.end(), INPUT);
-    return true;
-  }
-
-  // Read 3D points + cameras from a Gyroviz .pwc file.
-  bool read_pwc(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"rt");
-    if(pFile == NULL)
-    {
-      std::cerr << "Error: cannot open " << pFilename;
-      return false;
-    }
-
-    long pointsCount = 0, camCount = 0; // number of vertices and number of cameras in the file
-    int lineNumber = 0; // current line number
-    char pLine[4096]; // current line buffer
-    std::vector<Point> list_of_camera_coordinates; // container of cameras read
-    std::vector<Gyroviz_point> gpts; // container of points read
-    while(fgets(pLine,4096,pFile))
-    {
-      lineNumber++;
-
-      // Read file signature on first line
-      if (lineNumber == 1)
-      {
-        char signature[4096];
-        if ( (sscanf(pLine,"%s",signature) != 1) || (strcmp(signature, "CamOFF") != 0) )
-        {
-          // if unsupported file format
-          std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
-          return false;
-        }
-      }    
-
-      // Read number of cameras and vertices on 2nd line    
-      else if (lineNumber == 2)
-      {
-        if (sscanf(pLine,"%ld %ld",&camCount,&pointsCount) != 2)
-        {
-          std::cerr << "Error line " << lineNumber << " of " << pFilename;
-          return false;
-        }
-      }       
-
-      // Read cameras on next lines
-      else if (list_of_camera_coordinates.size() < camCount)
-      {
-        // Read position...
-        double Cx,Cy,Cz;   
-        if(sscanf(pLine,"%lg\t%lg\t%lg",&Cx,&Cy,&Cz) == 3)
-        {
-          Point cam_coord(Cx,Cy,Cz);
-          list_of_camera_coordinates.push_back(cam_coord);
-        }
-        // ...or skip comment line
-      }
-
-      // Read 3D points + camera indices on next lines
-      else // if (gpts.size() < pointsCount)
-      {
-        // Read position + camera indices...
-        std::istringstream iss(pLine);
-        Point position;
-        if (iss >> position)
-        {
-          int value;
-          std::vector<Point> list_of_cameras;
-          while (iss >> value)
-          {
-            Point cam_coord = list_of_camera_coordinates[value-1];
-            list_of_cameras.push_back(cam_coord);
-          } 
-          
-          // TEMPORARY? Skip 3D points with no cameras.
-          if (list_of_cameras.begin() != list_of_cameras.end())
-            gpts.push_back(Gyroviz_point(position, 
-                                         CGAL::NULL_VECTOR,  
-                                         list_of_cameras.begin(), list_of_cameras.end()));
-        }
-        // ...or skip comment line
-      }
-    }
-        
-    fclose(pFile);
-    insert(gpts.begin(), gpts.end(), INPUT);
-    return true;
-  }
-
-  bool read_pnb(const char* pFilename)
-  {
-    FILE *pFile = fopen(pFilename,"rb");
-    if(pFile == NULL)
-      return false;
-
-    // scan vertices
-    double buffer[6];
-    std::vector<Point_with_normal> pwns;
-
-    while(fread(buffer,sizeof(double),6,pFile) == 6)
-    {
-      Point point(buffer[0],buffer[1],buffer[2]);
-      Vector normal(buffer[3],buffer[4],buffer[5]);
-      pwns.push_back(Point_with_normal(point,normal));
-    }
-    fclose(pFile);
-    insert(pwns.begin(), pwns.end(), INPUT);
-    return true;
-  }
-
   // draw Delaunay edges
-  void gl_draw_delaunay_edges(const unsigned char r,
-    const unsigned char g,
-    const unsigned char b,
-    const float width)
+  void gl_draw_delaunay_edges(unsigned char r, unsigned char g, unsigned char b,
+                              float width) const
   {
     ::glLineWidth(width);
     ::glColor3ub(r,g,b);
@@ -646,10 +312,8 @@ public:
   }
 
 
-  void gl_draw_normals(const unsigned char r,
-                       const unsigned char g,
-                       const unsigned char b,
-                       const FT c = 1.0)
+  void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
+                       FT c = 1.0) const
   {
     // Draw *oriented* normals
     ::glColor3ub(r,g,b);
@@ -690,21 +354,21 @@ public:
 
 
 
-  void gl_draw_surface()
+  void gl_draw_surface() const
   {
-    std::list<Facet_with_normal>::iterator it;
+    std::list<Facet_with_normal>::const_iterator it;
 
     ::glBegin(GL_TRIANGLES);
     for(it = m_surface.begin();
         it != m_surface.end();
         it++)
     {
-      Facet_with_normal& f = *it;
+      const Facet_with_normal& f = *it;
 
-      Vector& n = f.second;
+      const Vector& n = f.second;
       ::glNormal3d(n.x(),n.y(),n.z());
 
-      Triangle& t = f.first;
+      const Triangle& t = f.first;
       const Point& a = t[0];
       const Point& b = t[1];
       const Point& c = t[2];
@@ -716,21 +380,21 @@ public:
   }
 
 
-  void gl_draw_contour()
+  void gl_draw_contour() const
   {
-    std::list<Facet_with_normal>::iterator it;
+    std::list<Facet_with_normal>::const_iterator it;
 
     ::glBegin(GL_TRIANGLES);
     for(it = m_contour.begin();
         it != m_contour.end();
         it++)
     {
-      Facet_with_normal& f = *it;
+      const Facet_with_normal& f = *it;
 
-      Vector& n = f.second;
+      const Vector& n = f.second;
       ::glNormal3d(n.x(),n.y(),n.z());
 
-      Triangle& t = f.first;
+      const Triangle& t = f.first;
       const Point& a = t[0];
       const Point& b = t[1];
       const Point& c = t[2];
@@ -739,29 +403,6 @@ public:
       ::glVertex3d(c.x(),c.y(),c.z());
     }
     ::glEnd();
-  }
-
-  /// Orient the normals using a minimum spanning tree.
-  void orient_normals_minimum_spanning_tree(unsigned int k)
-  {
-    // index (finite) vertices before using the "index_vertex" property map
-    index_vertices();
-    
-    CGAL::orient_normals_minimum_spanning_tree_3(finite_vertices_begin(), finite_vertices_end(),
-                                                 get(boost::vertex_index, *this),
-                                                 get(CGAL::vertex_point, *this),
-                                                 get(boost::vertex_normal, *this),
-                                                 k);
-  }
-
-  /// Specific to Gyroviz: orient the normals w.r.t. the position of cameras
-  /// that reconstructed the points by photogrammetry.
-  void orient_normals_wrt_cameras()
-  {
-    CGAL::orient_normals_wrt_cameras_3(finite_vertices_begin(), finite_vertices_end(),
-                                       get(CGAL::vertex_point, *this),
-                                       get(boost::vertex_normal, *this),
-                                       get(boost::vertex_cameras, *this));
   }
 
 }; // end of class Poisson_dt3

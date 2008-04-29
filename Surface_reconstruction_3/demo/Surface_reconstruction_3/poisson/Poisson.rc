@@ -92,7 +92,6 @@ BEGIN
         MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
         MENUITEM "&Close",                      ID_FILE_CLOSE
         MENUITEM "Save input point set &as...\tCtrl+S", ID_FILE_SAVE_AS
-        MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
         MENUITEM SEPARATOR
         MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
         MENUITEM SEPARATOR
@@ -100,6 +99,12 @@ BEGIN
     END
     POPUP "&Edit"
     BEGIN
+        POPUP "Mode"
+        BEGIN
+            MENUITEM "Point Set",                   ID_MODE_POINT_SET
+            MENUITEM "Poisson",                     ID_MODE_POISSON
+        END
+        MENUITEM SEPARATOR
         MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
         MENUITEM SEPARATOR
         MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
@@ -108,7 +113,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Options...\tO",               ID_EDIT_OPTIONS
     END
-    POPUP "&Algorithms"
+    MENUITEM "&Analysis",                   ID_ANALYSIS
+    POPUP "&Processing"
     BEGIN
         MENUITEM "Smooth using jet fitting",    ID_ALGORITHMS_SMOOTHUSINGJETFITTING
         MENUITEM SEPARATOR
@@ -117,17 +123,26 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Orient Normals with Minimum Spanning Tree", ID_ALGORITHMS_ORIENTNORMALSMST
         MENUITEM "Orient Normals w.r.t. Cameras (Gyroviz)", ID_ALGORITHMS_ORIENTNORMALSCAMERAS
-        MENUITEM SEPARATOR
-        MENUITEM "Delaunay refinement\tR",      ID_RECONSTRUCTION_DELAUNAYREFINEMENT
-        MENUITEM "Delaunay refinement in shell", ID_ALGORITHMS_REFINEINSHELL
-        MENUITEM SEPARATOR
-        MENUITEM "Extrapolate normals\tX",      ID_ALGORITHMS_EXTRAPOLATENORMALS
-        MENUITEM SEPARATOR
-        MENUITEM "Solve Poisson Equation\tP",   ID_RECONSTRUCTION_POISSON
-        MENUITEM SEPARATOR
-        MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
-        MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_SURFACEMESHING
-        MENUITEM "Marching Tet Contouring\tT",  ID_ALGORITHMS_MARCHINGTETCONTOURING
+    END
+    POPUP "&Reconstruction"
+    BEGIN
+        POPUP "&Poisson"
+        BEGIN
+            MENUITEM "Create Poisson Delaunay Triangulation", ID_CREATE_POISSON_TRIANGULATION
+            MENUITEM SEPARATOR
+            MENUITEM "Delaunay refinement\tR",      ID_RECONSTRUCTION_DELAUNAYREFINEMENT
+            MENUITEM "Delaunay refinement in shell", ID_ALGORITHMS_REFINEINSHELL
+            MENUITEM SEPARATOR
+            MENUITEM "Extrapolate normals\tX",      ID_ALGORITHMS_EXTRAPOLATENORMALS
+            MENUITEM SEPARATOR
+            MENUITEM "Solve Poisson Equation\tP",   ID_RECONSTRUCTION_POISSON
+            MENUITEM SEPARATOR
+            MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
+            MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_SURFACEMESHING
+            MENUITEM "Marching Tet Contouring\tT",  ID_ALGORITHMS_MARCHINGTETCONTOURING
+            MENUITEM SEPARATOR
+            MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
+        END
     END
     POPUP "&Render"
     BEGIN

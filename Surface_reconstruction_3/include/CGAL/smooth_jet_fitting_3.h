@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: https://scm.gforge.inria.fr/svn/cgal/trunk/Surface_reconstruction_3/include/CGAL/estimate_normals_jet_fitting_3.h $
-// $Id: estimate_normals_jet_fitting_3.h 42587 2008-03-26 15:44:54Z lsaboret $
+// $URL$
+// $Id$
 //
 // Author(s) : Pierre Alliez and Marc Pouget
 
@@ -58,12 +58,11 @@ smooth_jet_fitting_3(const typename Kernel::Point_3& query, ///< 3D point to pro
   typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
-  // gather set of (KNN+1) neighboring points
+  // Gather set of (KNN+1) neighboring points.
+  // Performs KNN + 1 queries (if unique the query point is
+  // output first). Search may be aborted when KNN is greater
+  // than number of input points.
   std::vector<Point> points;
-
-  // performs KNN + 1 queries (if unique the query point is
-  // output first). search may be aborted when KNN is greater
-  // than number of input points
   Neighbor_search search(tree,query,KNN+1);
   Search_iterator search_iterator = search.begin();
   unsigned int i;

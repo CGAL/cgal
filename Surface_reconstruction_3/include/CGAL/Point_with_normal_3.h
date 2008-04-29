@@ -86,6 +86,12 @@ public:
       return ! (*this == that);
     }
 
+	// Set position.
+	void set_position(const Point& point)
+	{
+        Base::operator=(point);
+	}
+
     /// Get/set normal (vector + orientation).
     const Normal& normal() const { return m_normal; }
     Normal&       normal()       { return m_normal; }

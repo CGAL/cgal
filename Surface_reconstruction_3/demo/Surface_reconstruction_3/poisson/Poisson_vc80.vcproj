@@ -293,6 +293,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\Point_set_3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Poisson.h"
 				>
 			</File>
@@ -318,6 +322,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\surface_reconstruction_read_pwc.h"
 				>
 			</File>
 		</Filter>
@@ -412,11 +420,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\surface_reconstruction_output.h"
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_output.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_read_off_point_cloud.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_read_pnb.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_read_pwn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_read_xyz.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_write_off_point_cloud.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_write_pwn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_write_xyz.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\taucs_solver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\value_type_traits.h"
 				>
 			</File>
 		</Filter>

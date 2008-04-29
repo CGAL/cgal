@@ -30,7 +30,8 @@ private:
 public:
   K_nearest_neighbor() {}
 
-  template <class InputIterator> ///< InputIterator value_type is Vertex_handle.
+  /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
+  template <class InputIterator> 
   K_nearest_neighbor(InputIterator first, InputIterator beyond)
   {
     m_tree = Tree(first, beyond);
@@ -38,17 +39,32 @@ public:
 
   /// Default copy constructor, operator =() and destructor are fine.
 
-  bool get_k_nearest_neighbors(const Point_vertex_handle_3& query,
-                               const unsigned int nb,
-                               std::list<Vertex_handle>& kvertices)
+  /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
+  template <class InputIterator> 
+  void insert(InputIterator first, InputIterator beyond)
   {
-    Neighbor_search search(m_tree,query,nb); // only nb nearest neighbors
+    m_tree = Tree(first, beyond);
+  }
+
+  /// Empty KD-tree.
+  void clear()
+  {
+    m_tree = Tree();
+  }
+
+  /// Search 'nb' nearest_neighbors of 'query' point.
+  bool get_k_nearest_neighbors(const Point& query,
+                               const unsigned int nb,
+                               std::list<Vertex_handle>& nearest_neighbors)
+  {
+    Point_vertex_handle_3 point_wrapper(query.x(), query.y(), query.z(), NULL);
+    Neighbor_search search(m_tree, point_wrapper, nb); // only nb nearest neighbors
     Search_iterator it = search.begin();
     for(unsigned int i=0;i<nb;i++,it++)
     {
       if(it == search.end())
         return false;
-      kvertices.push_back((Vertex_handle)it->first);
+      nearest_neighbors.push_back((Vertex_handle)it->first);
     }
     return true;
   }

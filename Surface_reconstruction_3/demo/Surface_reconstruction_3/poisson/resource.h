@@ -41,13 +41,18 @@
 #define ID_ALGORITHMS_ORIENTNORMALSCAMERAS 32814
 #define ID_ALGORITHMS_ORIENTNORMALSMST  32815
 #define ID_ALGORITHMS_SMOOTHUSINGJETFITTING 32816
+#define ID_CREATE_POISSON_TRIANGULATION 32818
+#define ID_EDIT_MODE                    32819
+#define ID_MODE_POINT_SET               32821
+#define ID_MODE_POISSON                 32822
+#define ID_ANALYSIS                     32825
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
-#define _APS_NEXT_COMMAND_VALUE         32817
+#define _APS_NEXT_COMMAND_VALUE         32826
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

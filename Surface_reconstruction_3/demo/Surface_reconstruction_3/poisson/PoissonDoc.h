@@ -14,9 +14,12 @@
 
 // This package
 #include <CGAL/Poisson_implicit_function.h>
+#include <CGAL/Point_with_normal_3.h>
 
 // This demo
 #include "poisson_dt3.h"
+#include "Gyroviz_point_3.h"
+#include "Point_set_3.h"
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -26,6 +29,13 @@ typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Tetrahedron_3 Tetrahedron;
+
+// Point + normal
+typedef Gyroviz_point_3<Kernel> Point_with_normal; // Model of the PointWithNormal_3 concept
+typedef Point_with_normal::Normal Normal; // Model of OrientedNormal_3 concept
+
+// Point set
+typedef Point_set_3<Kernel> Point_set;
 
 // Poisson's Delaunay triangulation 3
 typedef Poisson_dt3<Kernel> Dt3;
@@ -38,19 +48,39 @@ typedef CGAL::Triangulation_data_structure_3<SVb, SCb> STds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, STds> STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 
+
+// MFC document.
+//
+// This class owns the edited points. They exist under 2 forms:
+// - m_points[] array of points + normals.
+// - the m_poisson_dt 3D triangulation used by the m_poisson_function implicit function
+//   (in fact, the points in m_poisson_dt are a non editable copy of m_points[]).
+//
+// Only 1 form is visible on screen and editable at a given time. 
+// This is controlled by m_edit_mode.
+//
 class CPoissonDoc : public CDocument
 {
 protected: // create from serialization only
 	CPoissonDoc();
 	DECLARE_DYNCREATE(CPoissonDoc)
 
+// Public types
+public:
+
+    // Available edit modes
+    enum Edit_mode { NO_EDIT_MODE, POINT_SET, POISSON };
+
 // Data members
 private:
 
-    // input point set
-    std::list<Point> m_points;
+    // Current edit mode
+    Edit_mode m_edit_mode;
 
-    // Poisson implicit
+    // Input point set
+    Point_set m_points;
+
+    // Poisson implicit function
     Poisson_implicit_function m_poisson_function; // Poisson implicit function
     Dt3 m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
     bool m_triangulation_refined; // Is Delaunay refinement applied?
@@ -79,15 +109,18 @@ private:
 // Public methods
 public:
 
-  /// Get Poisson implicit function.
-  Poisson_implicit_function& poisson_function()
-  {
-    return m_poisson_function;
-  }
-  const Poisson_implicit_function& poisson_function() const
-  {
-    return m_poisson_function;
-  }
+    // Get input point set. It is exported as const objects as
+    // the rules to modify it are complex. See comment above.
+    //
+    // - as array of points + normals
+    const Point_set& points() const { return m_points; }
+    //
+    // - as Poisson implicit function
+    const Poisson_implicit_function& poisson_function() const 
+    { return m_poisson_function; }
+    // 
+    // currently edited form
+    Edit_mode edit_mode() const { return m_edit_mode; }
 
 // Private methods
 private:
@@ -131,6 +164,20 @@ public:
     afx_msg void OnAlgorithmsOrientNormalsWrtCameras();
     afx_msg void OnAlgorithmsOrientNormalsWithMST();
     afx_msg void OnAlgorithmsSmoothUsingJetFitting();
+    afx_msg void OnModePointSet();
+    afx_msg void OnUpdateModePointSet(CCmdUI *pCmdUI);
+    afx_msg void OnModePoisson();
+    afx_msg void OnUpdateModePoisson(CCmdUI *pCmdUI);
+    afx_msg void OnCreatePoissonTriangulation();
+    afx_msg void OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsEstimateNormalByJetFitting(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsOrientNormalsWithMST(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsOrientNormalsWrtCameras(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionDelaunayrefinement(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsRefineinshell(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
 };
 
 

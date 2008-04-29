@@ -20,6 +20,7 @@
 #define CGAL_ESTIMATE_NORMALS_PCA_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/value_type_traits.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
@@ -105,9 +106,8 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
                        const unsigned int KNN,   ///< number of neighbors
                        const Kernel& /*kernel*/)
 {
-  // Hard-code the Normal type as back_insert_iterator value_type is wrong (VC++ 2003)
-  // typedef typename std::iterator_traits<OutputIterator>::value_type Normal;
-  typedef CGAL::Oriented_normal_3<Kernel> Normal;
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  typedef typename value_type_traits<OutputIterator>::type Normal;
 
   // types for KNN-nearest neighbor search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;

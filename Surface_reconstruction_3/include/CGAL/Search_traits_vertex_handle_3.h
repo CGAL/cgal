@@ -7,7 +7,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// A Point_vertex_handle_3 objects wraps either
-///  a Triangulation_3 Vertex_handle or a 3D point.
+/// a Vertex_handle or a 3D point.
 template <class Vertex_handle>
 struct Point_vertex_handle_3
 {
@@ -26,20 +26,13 @@ public:
     m_vertex_handle = NULL;
   }
 
-  Point_vertex_handle_3(Vertex_handle vertex_handle)
-  {
-    m_coord[0] = vertex_handle->point().x();
-    m_coord[1] = vertex_handle->point().y();
-    m_coord[2] = vertex_handle->point().z();
-    m_vertex_handle = vertex_handle;
-  }
-
-  Point_vertex_handle_3(double x, double y, double z)
+  Point_vertex_handle_3(double x, double y, double z, 
+                        Vertex_handle vertex_handle) ///< NULL for query points
   {
     m_coord[0] = x;
     m_coord[1] = y;
     m_coord[2] = z;
-    m_vertex_handle = NULL;
+    m_vertex_handle = vertex_handle;
   }
 
   /// Default copy constructor, operator =() and destructor are fine.
@@ -94,7 +87,7 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 };
 
 /// The class Euclidean_distance_vertex_handle_3 implements the Euclidean distance
-/// for Triangulation_3 Vertex_handles.
+/// for Vertex_handles.
 /// To optimize distance computations squared distances are used.
 ///
 /// @heading Is Model for the Concepts: Model of the OrthogonalDistance concept.
@@ -159,7 +152,7 @@ struct Euclidean_distance_vertex_handle_3
 
 
 /// Traits class for the Spatial_searching package
-/// for Triangulation_3 Vertex_handles.
+/// for Vertex_handles.
 ///
 /// @heading Is Model for the Concepts: Model of the SearchTraits concept.
 template <class Vertex_handle>

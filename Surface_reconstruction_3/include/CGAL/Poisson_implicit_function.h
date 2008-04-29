@@ -29,9 +29,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
 #include <CGAL/k_nearest_neighbor.h>
+#include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_assertions.h>
-#include <CGAL/estimate_normals_pca_3.h>
-#include <CGAL/estimate_normals_jet_fitting_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -74,7 +73,7 @@ public:
             Handle v1,
             Handle v2,
             Handle v3,
-            const float score)
+            float score)
   {
     m_v0 = v0;
     m_v1 = v1;
@@ -296,28 +295,14 @@ public:
     return success;
   }
 
-  /// Estimate normal directions using linear least
-  /// squares fitting of a plane on the k nearest neighbors.
-  void estimate_normals_pca(unsigned int k)
-  {
-    CGAL::estimate_normals_pca_3(m_dt.points_begin(), m_dt.points_end(), m_dt.normals_begin(), k);
-  }
-
-  /// Estimate normal directions using jet fitting on the k nearest
-  /// neighbors.
-  void estimate_normals_jet_fitting(unsigned int k)
-  {
-    CGAL::estimate_normals_jet_fitting_3(m_dt.points_begin(), m_dt.points_end(), m_dt.normals_begin(), k);
-  }
-
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
   /// Steiner points is set to zero.
   /// Return the number of vertices inserted.
   unsigned int delaunay_refinement(const FT threshold,
-                                   const unsigned int maximum,
+                                   unsigned int maximum,
                                    const FT enlarge_ratio,
-                                   const unsigned int restart_each)
+                                   unsigned int restart_each)
   {
 
     // create enlarged bounding box
@@ -387,7 +372,7 @@ public:
 
   unsigned int delaunay_refinement_shell(FT size_shell,
                                          FT sizing,
-                                         const unsigned int maximum)
+                                         unsigned int maximum)
   {
     // make parameters relative to size
     Sphere bounding_sphere = m_dt.bounding_sphere();
@@ -465,7 +450,7 @@ public:
         }
       }
     }
-    m_nn_search = K_nearest_neighbor();
+		m_nn_search.clear();
     return nb;
   }
 
@@ -1225,14 +1210,18 @@ private:
 
   void init_nn_search_shell()
   {
-    std::list<Vertex_handle> kvertices;
+    // Instanciate a KD-tree search.
+    // We have to wrap each input vertex by a Point_vertex_handle_3.
+    std::list<Point_vertex_handle_3> kvertices;
     for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
+      v != m_dt.finite_vertices_end();
+      v++)
     {
       if(v->type() != Triangulation::INPUT)
         continue;
-      kvertices.push_back(v);
+      const Point& p = v->point();
+      Point_vertex_handle_3 kv(p.x(),p.y(),p.z(),v);
+      kvertices.push_back(kv);
     }
     m_nn_search = K_nearest_neighbor(kvertices.begin(), kvertices.end());
   }
@@ -1257,15 +1246,14 @@ private:
 
   FT distance_to_input_points(const Point& p)
   {
-    std::list<Vertex_handle> nearest_kvertices;
-    Point_vertex_handle_3 query(p.x(),p.y(),p.z());
-    m_nn_search.get_k_nearest_neighbors(query,1,nearest_kvertices);
-
-    typename std::list<Vertex_handle>::iterator it = nearest_kvertices.begin();
-    Vertex_handle nv = *it;
+    // Get nearest neighbour
+    std::list<Vertex_handle> nearest_vertices;
+    m_nn_search.get_k_nearest_neighbors(p,1,nearest_vertices);
+    Vertex_handle nv = *nearest_vertices.begin();
     if(nv != NULL)
       return distance(nv->point(),p);
-    return 0.0; // default
+    else
+      return 0.0; // default
   }
 
   FT distance(const Point& a, const Point& b)

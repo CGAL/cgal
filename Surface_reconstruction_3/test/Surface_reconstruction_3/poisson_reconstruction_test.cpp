@@ -31,7 +31,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 // This package
-#include <CGAL/surface_reconstruction_output.h>
+#include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/Poisson_implicit_function.h>
 
 // This test

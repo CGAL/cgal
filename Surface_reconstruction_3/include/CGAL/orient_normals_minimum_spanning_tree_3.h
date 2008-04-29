@@ -199,6 +199,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Input mesh's types
     typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
     typedef typename Vertex_type::Geom_traits Gt;
+    typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename Normal::Vector Vector;
 
@@ -248,7 +249,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
             source_vertex = it;
         }
     }
-    unsigned int source_vertex_index = vertex_index_map[source_vertex];
+    unsigned int source_vertex_index = get(vertex_index_map, source_vertex);
     //
     // Orient its normal towards +Z axis
     const Vector Z(0, 0, 1);
@@ -265,7 +266,11 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // We have to wrap each input vertex by a Point_vertex_handle_3.
     std::vector<Point_vertex_handle_3> kd_tree_points;
     for (VertexIterator it = first; it != beyond; it++)
-        kd_tree_points.push_back(Point_vertex_handle_3(it));
+    {
+        Point point = get(vertex_point_map, it);
+        Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
+        kd_tree_points.push_back(point_wrapper);
+    }
     Tree tree(kd_tree_points.begin(), kd_tree_points.end());
 
     // Iterate over input points and create Riemannian Graph:
@@ -286,7 +291,9 @@ CGAL_TRACE("  Create Riemannian Graph\n");
         // Gather set of (K+1) neighboring points:
         // Performs K + 1 queries (if unique the p point is output first).
         // Search may be aborted when K is greater than number of input points.
-        Neighbor_search search(tree,it,K+1);
+        Point point = get(vertex_point_map, it);
+        Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
+        Neighbor_search search(tree, point_wrapper, K+1);
         Search_iterator search_iterator = search.begin();
         for(unsigned int i=0;i<(K+1);i++)
         {

@@ -115,5 +115,14 @@ private:
 };
 
 
+namespace boost {
+
+/// Helper type and constant to get a "vertex_cameras" property map.
+enum vertex_cameras_t { vertex_cameras } ;
+BOOST_INSTALL_PROPERTY(vertex, cameras);
+
+} // namespace boost
+
+
 #endif //GYROVIZ_POINT_3_H
 

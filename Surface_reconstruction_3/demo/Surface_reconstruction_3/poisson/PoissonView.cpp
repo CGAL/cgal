@@ -62,7 +62,7 @@ CPoissonView::CPoissonView()
   first_paint = true;
 
   // options
-  m_view_delaunay_vertices = true;
+  m_view_vertices = true;
   m_view_delaunay_edges = false;
   m_view_contour = true;
   m_view_normals = true; // LS 03/05/2008: was false
@@ -246,7 +246,11 @@ void CPoissonView::OnPaint()
     GetClientRect(&rect);
     int width = rect.Width();
     int height = rect.Height();
-    Sphere arcball_sphere = pDoc->poisson_function().region_of_interest();
+    Sphere arcball_sphere;
+    if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
+      arcball_sphere = pDoc->points().region_of_interest();
+    else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
+      arcball_sphere = pDoc->poisson_function().region_of_interest();
     float size = (float)sqrt(arcball_sphere.squared_radius());
     float cx = (float)arcball_sphere.center().x();
     float cy = (float)arcball_sphere.center().y();
@@ -281,21 +285,30 @@ void CPoissonView::OnPaint()
     if ( m_view_arcball && !(m_KeyboardFlags & MK_SHIFT) )
         m_pArcball->draw_sphere();
 
-    // draw Delaunay vertices
-    if(m_view_delaunay_vertices)
-      pDoc->poisson_function().triangulation().gl_draw_delaunay_vertices(0,0,0,2.0f);
+    // draw vertices
+    if(m_view_vertices)
+    {
+      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
+        pDoc->points().gl_draw_vertices(0,0,0,2.0f);
+      else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
+        pDoc->poisson_function().triangulation().gl_draw_delaunay_vertices(0,0,0,2.0f);
+    }
 
     // draw Delaunay edges
-    if(m_view_delaunay_edges)
-      pDoc->poisson_function().triangulation().gl_draw_delaunay_edges(0,0,0,1.0f);
+    if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
+        pDoc->poisson_function().triangulation().gl_draw_delaunay_edges(0,0,0,1.0f);
 
     // draw normals
     if(m_view_normals)
-      pDoc->poisson_function().triangulation().gl_draw_normals(0,255,0, /* color = green */
-                                                               0.5 /* length */);
+    {
+      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
+        pDoc->points().gl_draw_normals(0,255,0 /* color */, 0.5 /* length */);
+      else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
+        pDoc->poisson_function().triangulation().gl_draw_normals(0,255,0 /* color */, 0.5 /* length */);
+    }
 
     // draw contour by marching tet
-    if(m_view_contour)
+    if(m_view_contour && pDoc->edit_mode() == CPoissonDoc::POISSON)
     {
       static GLfloat grey[4] = {0.9f, 0.9f, 0.9f, 0.0f };
       ::glEnable(GL_LIGHTING);
@@ -305,7 +318,7 @@ void CPoissonView::OnPaint()
       pDoc->poisson_function().triangulation().gl_draw_contour();
     }
 
-    if(m_view_surface)
+    if(m_view_surface && pDoc->edit_mode() == CPoissonDoc::POISSON)
     {
       ::glEnable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -501,12 +514,12 @@ void CPoissonView::OnUpdateRenderContour(CCmdUI *pCmdUI)
 
 void CPoissonView::OnRenderPoints()
 {
-  m_view_delaunay_vertices = !m_view_delaunay_vertices;
+  m_view_vertices = !m_view_vertices;
   InvalidateRect(NULL,FALSE);
 }
 void CPoissonView::OnUpdateRenderPoints(CCmdUI *pCmdUI)
 {
-  pCmdUI->SetCheck(m_view_delaunay_vertices);
+  pCmdUI->SetCheck(m_view_vertices);
 }
 
 void CPoissonView::OnRenderNormals()
