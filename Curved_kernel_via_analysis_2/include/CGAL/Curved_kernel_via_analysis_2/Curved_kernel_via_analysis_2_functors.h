@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 #ifndef CERR
-//#define CKvA_DEBUG_PRINT_CERR
+#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
 #define CERR(x) std::cout << x
 #else
@@ -2104,6 +2104,19 @@ public:
             (Curved_kernel_via_analysis_2::instance().
              kernel().sign_at_2_object()(c, p.xy())
              == CGAL::ZERO);
+        return res;
+    }
+
+    /*!\brief
+     * Checks whether \c p lies on \c cv 
+     * 
+     * \param p The point to test
+     * \param c The curve arc
+     * \return \c true if the \c p lies on \c cv, \c false otherwise
+     */
+    result_type operator()(const Point_2& p, const Arc_2& cv) const {
+
+        result_type res = (cv.compare_y_at_x(p) == CGAL::EQUAL);
         return res;
     }
 };
