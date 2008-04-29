@@ -62,7 +62,7 @@ namespace CGAL {
       
     
       Base base;
-      mutable unsigned char _full;
+      mutable bool _full;
       // It is the sign of the cross product 
       // of the vector (Center -> S) x (Center -> T)
       // it saves execution time for the has_on functor
@@ -89,7 +89,7 @@ namespace CGAL {
       Circular_arc_3(const Circle_3 &c, 
                      const Circular_arc_point_3 &s,
                      const Circular_arc_point_3 &t) 
-      : _full(0)
+      : _full(false)
       {
         // l must pass through s and t, and s != t
         CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
@@ -108,7 +108,7 @@ namespace CGAL {
       Circular_arc_3(const Circle_3 &c, 
                      const Point_3 &s,
                      const Circular_arc_point_3 &t) 
-      : _full(0)
+      : _full(false)
       {
         // l must pass through s and t, and s != t
         CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
@@ -122,7 +122,7 @@ namespace CGAL {
       Circular_arc_3(const Circle_3 &c, 
                      const Circular_arc_point_3 &s,
                      const Point_3 &t) 
-      : _full(0)
+      : _full(false)
       {
         // l must pass through s and t, and s != t
         CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
@@ -136,7 +136,7 @@ namespace CGAL {
       Circular_arc_3(const Circle_3 &c, 
                      const Point_3 &s,
                      const Point_3 &t) 
-      : _full(0)
+      : _full(false)
       {
         // l must pass through s and t, and s != t
         CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
@@ -151,7 +151,7 @@ namespace CGAL {
       // This is the only case we want that s == t
       // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c)
-      : _full(1)
+      : _full(true)
       {
         const Plane_3 &p = c.supporting_plane();
         if(is_zero(p.b()) && is_zero(p.c())) {
