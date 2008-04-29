@@ -109,10 +109,10 @@ public:
  * Arr_spherical_gaussian_map_3 structure. It is parameterized by the SGM to
  * be initialized and by a visitor class.
  */
-template <class Sgm>
+template <typename Sgm, typename T_Kernel = typename Sgm::Kernel>
 class Arr_sgm_initializer {
-protected:
-  typedef typename Sgm::Kernel                            Kernel;
+public:
+  typedef T_Kernel                                        Kernel;
   typedef typename Kernel::Vector_3                       Vector_3;
   typedef typename Kernel::Direction_3                    Direction_3;
 
@@ -124,9 +124,6 @@ protected:
   typedef typename Sgm::Vertex_handle                     Vertex_handle;
   typedef typename Sgm::Halfedge_handle                   Halfedge_handle;
   typedef typename Sgm::Face_handle                       Face_handle;
-
-  /*! The SGM to initialize */
-  Sgm & m_sgm;
 
   /*! Constructor */
   Arr_sgm_initializer(Sgm & sgm) : m_sgm(sgm) { }
@@ -338,6 +335,10 @@ protected:
     *oi++ = m_sgm.insert_at_vertices(*xc2, he->target(), vertex2);
     return oi;
   }
+
+protected:
+  /*! The SGM to initialize */
+  Sgm & m_sgm;
 };
 
 /* Spherical_gaussian_map is a data dtructure that represents a Gaussinal map

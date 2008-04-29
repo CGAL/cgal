@@ -340,9 +340,11 @@ private:
     }
   }
 
-  /*! Process a polyhedron vertex
-   * \param src
-   * \param first_time
+  /*! Process a polyhedron vertex recursively constructing the Gaussian map
+   * of the polyhedron
+   * \param src the polyhedron vertex currently processed
+   * \param first_time true if the invocation to this function is the first
+   * time, and false otherwise
    */
   void process_vertex(Polyhedron_vertex_iterator src, bool first_time)
   {
@@ -379,8 +381,10 @@ private:
     Polyhedron_halfedge_around_vertex_circulator next_hec = hec;
     ++next_hec;
 
-    // If it's not the first time, advance the halfedge iterator until its
-    // source vertex is processed:
+    /* If this is not the first invocation, advance the halfedge iterator
+     * until its source vertex is processed. It is guaranteed to reach such
+     * a halfedge on consecutive invocations.
+     */
     if (!first_time) {
       while (!hec->opposite()->vertex()->processed()) {
         hec = next_hec;
@@ -471,7 +475,9 @@ private:
     } while (hec != begin_hec);
   }
   
-  /*! Compute the spherical gaussian map */
+  /*! Compute the spherical gaussian map of a convex polyhedron
+   * \param polyhedron the input polyhedron
+   */
   void compute_sgm(Polyhedron & polyhedron)
   {
     typedef typename Base::Vertex_handle                Vertex_handle;
