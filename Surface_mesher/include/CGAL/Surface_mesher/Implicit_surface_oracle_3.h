@@ -175,6 +175,27 @@ namespace CGAL {
       Transform_functor transform_functor;
       Surface_identifiers_generator surface_identifiers_generator;
 
+      // The two following template and specialization are used in
+      // intersect_clipped_segment(...).
+      template <typename Point, typename Identifier, bool b>
+      struct Set_on_surface {
+        void operator()(Point &, const Identifier&) const
+        {
+        }
+      };
+
+      template <typename Point, typename Identifier>
+      struct Set_on_surface<Point, Identifier, true> {
+        void operator()(Point & p, const Identifier& id) const
+        {
+          p.set_on_surface(id);
+        }
+      };
+
+      Set_on_surface<Point,
+                     typename Surface_identifiers_generator::result_type,
+                     CGAL::has_set_on_surface<Point>::value> set_on_surface;
+
     public:
       Intersect_3(Visitor visitor, Transform_functor transform_functor,
                   Surface_identifiers_generator surface_identifiers_generator)
@@ -310,8 +331,11 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
             std::cerr << "=" << debug_point(surface, mid) << "\n";
 #endif
-            if(CGAL::has_set_on_surface<Point>::value)
-              mid.set_on_surface(surface_identifiers_generator(value_at_p1,  value_at_p2));
+            // the following function conditionnally call
+            // mid.set_on_surface(...) if mid has such a function.
+            set_on_surface(mid, 
+                           surface_identifiers_generator(value_at_p1,
+                                                         value_at_p2));
 
             visitor.new_point(mid);
             return make_object(mid);
