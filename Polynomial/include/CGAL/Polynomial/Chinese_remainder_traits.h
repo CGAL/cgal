@@ -8,7 +8,8 @@
 namespace CGAL {
 
 template <class NT> 
-struct Chinese_remainder_traits<Polynomial<NT> >{
+class Chinese_remainder_traits<Polynomial<NT> >{
+public:
     typedef Polynomial<NT> Type;
     typedef Chinese_remainder_traits<NT> CRT_NT;
    

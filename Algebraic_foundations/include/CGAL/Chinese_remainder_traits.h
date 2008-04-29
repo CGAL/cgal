@@ -49,7 +49,8 @@ template <class T> class Chinese_remainder_traits
 
 namespace CGALi {
 template <class NT> 
-struct Chinese_remainder_traits_base<NT,Euclidean_ring_tag>{
+class  Chinese_remainder_traits_base<NT,Euclidean_ring_tag>{
+public:
     typedef NT Type;
     typedef NT Scalar_type; 
     
