@@ -641,43 +641,38 @@ public:
 
         if(!arc.is_vertical()) {
         
-            typename Curve_analysis_2::Internal_curve_2 curve =
-                arc.curve()._internal_curve();
-            int arcno = arc.arcno();
+            std::vector<Xy_coordinate_2> x_critical_points;
             
-            int y_crit_begin = 0, 
-                y_crit_end = curve.num_y_critical_coordinates();
+            typename Curve_kernel_2::X_critical_points_2() 
+                (arc.curve(), std::back_inserter(x_critical_points));
+
+            int n = static_cast<int>(x_critical_points.size());
             
-            if(left) {
+            for( int i = 0; i < n; i++ ) {
+
+                Xy_coordinate_2& curr_xy = x_critical_points[i]; 
+
+                Point_2 curr_point 
+                    = typename Curved_kernel_via_analysis_2
+                        ::Construct_point_2(_m_curved_kernel)
+                            (curr_xy.x(),curr_xy.curve(), curr_xy.arcno());
                 
-                while( y_crit_begin < y_crit_end && 
-                       curve.y_critical_coordinate(y_crit_begin) <= left.get()) {
-                    y_crit_begin++;
+                bool dummy1,dummy2;
+
+                if( arc.is_in_x_range(curr_xy.x(),&dummy1,&dummy2) &&
+                    typename Curved_kernel_via_analysis_2
+                    ::Compare_y_at_x_2(_m_curved_kernel) 
+                      (curr_point, arc) == CGAL::EQUAL ) {
+                    
+                    CGAL::Bbox_2 point_bbox 
+                        = curr_xy.approximation_box_2(threshold());
+                    std::pair<double,double> y_iv 
+                        = std::make_pair(point_bbox.ymin(),point_bbox.ymax());
+                    update_y(y_min,y_max,y_iv);
+
                 }
             }
-            
-            if(right) {
-                
-                while( y_crit_end > y_crit_begin &&
-                       curve.y_critical_coordinate(y_crit_end-1) 
-                           >= right.get() ) {
-                    y_crit_end--;
-                }
-            }
-            
-            
-            for(int i = y_crit_begin; i < y_crit_end; i++) {
-                
-                Xy_coordinate_2 curr_xy(curve.y_critical_coordinate(i),
-                                        arc.curve(),
-                                        arcno);
-                CGAL::Bbox_2 point_bbox 
-                    = curr_xy.approximation_box_2(threshold());
-                std::pair<double,double> y_iv 
-                    = std::make_pair(point_bbox.ymin(),point_bbox.ymax());
-                update_y(y_min,y_max,y_iv);
-                
-            }
+
         }
 
         CGAL::Bbox_2 bbox(x_min, y_min, x_max, y_max);
