@@ -22,11 +22,12 @@ Polynomial<NT> gcd_utcf_UFD(
     // implemented using the subresultant algorithm for gcd computation
     // see [Cohen, 1993], algorithm 3.3.1
     // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()) return Polynomial<NT>(NT(1));
         else {
             return CGAL::CGALi::canonicalize_polynomial(p2);
         }
+    }
     if (p2.is_zero()){
         return CGAL::CGALi::canonicalize_polynomial(p1);
     }
@@ -75,9 +76,10 @@ Polynomial<NT> gcd_Euclidean_ring(
 ) {
 //    std::cout<<" gcd_Field"<<std::endl;
     // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()) return Polynomial<NT>(NT(1));
         else return p2 / p2.unit_part();
+    }
     if (p2.is_zero())
         return p1 / p1.unit_part();
     if (p2.degree() > p1.degree()) {
@@ -120,12 +122,13 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     // std::cout<<" gcd_utcf_Integral_domain"<<std::endl;
         
 // handle trivial cases
-    if (p1.is_zero())
+    if (p1.is_zero()){
         if (p2.is_zero()){
             return Polynomial<NT>(NT(1));
         }else{
             return CGAL::CGALi::canonicalize_polynomial(p2);
         }
+    }
     if (p2.is_zero()){
         return CGAL::CGALi::canonicalize_polynomial(p1);
     }
