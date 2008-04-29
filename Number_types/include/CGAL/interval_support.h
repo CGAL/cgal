@@ -195,7 +195,7 @@ template<typename BFI> inline long get_precision(BFI bfi) {
 }
 
 
-template <class NTX> class Get_arithmetic_kernel;
+template <class NTX> struct Get_arithmetic_kernel;
 
 template <class NTX>
 typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel::Bigfloat_interval
