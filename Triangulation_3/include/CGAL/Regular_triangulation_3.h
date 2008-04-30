@@ -413,9 +413,9 @@ public:
                                   end = finite_facets_end(); 
            fit != end; ++fit) {
 	Object o = dual(*fit);
-	if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
-	if (const Segment    *s = object_cast<Segment>(&o))    os << *s; 
-	if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
+	if      (const Segment    *s = object_cast<Segment>(&o))    os << *s; 
+	else if (const Ray        *r = object_cast<Ray>(&o))        os << *r;
+	else if (const Bare_point *p = object_cast<Bare_point>(&o)) os << *p;
       }
       return os;
     }
