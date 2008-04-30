@@ -19,5 +19,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( Create_straight_skeleton_2.cpp )
   create_single_source_cgal_program( Create_straight_skeleton_from_polygon_with_holes_2.cpp )
   create_single_source_cgal_program( Low_level_API.cpp )
+  create_single_source_cgal_program( Show_offset_polygon.cpp )
+  create_single_source_cgal_program( Show_straight_skeleton.cpp )
 
 endif()
