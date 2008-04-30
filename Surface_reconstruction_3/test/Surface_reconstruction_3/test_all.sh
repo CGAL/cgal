@@ -62,6 +62,7 @@ if [ $# -ne 0 ] ; then
 else
   run analysis_test
   run normal_estimation_test
+  run outliers_removal_test
   run poisson_reconstruction_test
   run smoothing_test
 fi

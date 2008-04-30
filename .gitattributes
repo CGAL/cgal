@@ -4182,6 +4182,7 @@ Surface_reconstruction_3/include/CGAL/Oriented_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/analysis_test_vc80.vcproj -text
+Surface_reconstruction_3/test/Surface_reconstruction_3/VC/outliers_removal_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/poisson_reconstruction_test_vc80.vcproj eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vcproj -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
@@ -4190,6 +4191,7 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text s
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere966.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere_20k.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/normal_estimation_test.cmd eol=lf
+Surface_reconstruction_3/test/Surface_reconstruction_3/outliers_removal_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/poisson_reconstruction_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/reconstruction_test_vc80.sln eol=crlf
 Surface_reconstruction_3/test/Surface_reconstruction_3/smoothing_test.cmd eol=lf

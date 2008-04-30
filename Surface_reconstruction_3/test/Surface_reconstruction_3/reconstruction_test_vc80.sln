@@ -8,6 +8,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smoothing_test", "VC\smooth
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "analysis_test", "VC\analysis_test_vc80.vcproj", "{ADDF9574-BBDF-4A31-9A94-7C521F7746CF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "outliers_removal_test", "VC\outliers_removal_test_vc80.vcproj", "{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -30,6 +32,10 @@ Global
 		{ADDF9574-BBDF-4A31-9A94-7C521F7746CF}.Debug|Win32.Build.0 = Debug|Win32
 		{ADDF9574-BBDF-4A31-9A94-7C521F7746CF}.Release|Win32.ActiveCfg = Release|Win32
 		{ADDF9574-BBDF-4A31-9A94-7C521F7746CF}.Release|Win32.Build.0 = Release|Win32
+		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Debug|Win32.Build.0 = Debug|Win32
+		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Release|Win32.ActiveCfg = Release|Win32
+		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

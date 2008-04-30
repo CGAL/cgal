@@ -22,6 +22,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_vertex_handle_3.h>
 #include <CGAL/Oriented_normal_3.h>
 
 #include <iterator>
@@ -38,8 +39,29 @@ CGAL_BEGIN_NAMESPACE
 #undef CGAL_TEST
 
 // Traces?
-#define CGAL_TRACE  printf
-//#define CGAL_TRACE  if (false) printf
+//#define CGAL_TRACE  printf
+#define CGAL_TRACE  if (false) printf
+
+
+/// Helper function: distance_MST().
+///
+/// This function is used internally by orient_normals_minimum_spanning_tree_3()
+/// to compute the distance between 2 integers or 2 iterators.
+template <class T> 
+inline int
+distance_MST(T _First, T _Last)
+{	
+  // return distance between iterators
+  return std::distance(_First, _Last);
+}
+
+template <> 
+inline int
+distance_MST(std::size_t _First, std::size_t _Last)
+{	
+  // return int difference
+  return _Last - _First;
+}
 
 
 /// Helper class: Riemannian graph.
@@ -198,7 +220,6 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
 CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Input mesh's types
     typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
-    typedef typename Vertex_type::Geom_traits Gt;
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename Normal::Vector Vector;
@@ -224,7 +245,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     CGAL_surface_reconstruction_precondition(K >= 2);
 
     // Number of input vertices
-    const int num_input_vertices = std::distance(first, beyond);
+    const int num_input_vertices = distance_MST(first, beyond);
 
 #ifdef CGAL_TEST // TEST: flag only inverted normals as oriented to see the result in 3D rendering
     for (VertexIterator it = first; it != beyond; it++)

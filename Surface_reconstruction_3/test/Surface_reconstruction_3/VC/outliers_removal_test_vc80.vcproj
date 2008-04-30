@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="normal_estimation_test"
-	ProjectGUID="{264B1CCF-DDA3-49F8-B132-B8B6E3703689}"
-	RootNamespace="normal_estimation_test"
+	Name="outliers_removal_test"
+	ProjectGUID="{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}"
+	RootNamespace="outliers_removal_test"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -186,7 +186,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\normal_estimation_test.cpp"
+				RelativePath="..\outliers_removal_test.cpp"
 				>
 			</File>
 		</Filter>
@@ -195,35 +195,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_jet_fitting_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\estimate_normals_pca_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\k_nearest_neighbor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\orient_normals_minimum_spanning_tree_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Oriented_normal_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Search_traits_vertex_handle_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\value_type_traits.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\Vector_index_property_map.h"
+				RelativePath="..\..\..\include\CGAL\remove_outliers_wrt_avg_knn_sq_distance_3.h"
 				>
 			</File>
 		</Filter>

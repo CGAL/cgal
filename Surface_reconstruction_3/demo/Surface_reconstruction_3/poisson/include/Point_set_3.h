@@ -2,8 +2,10 @@
 #define POINT_SET_3_H
 
 #include <CGAL/Point_with_normal_3.h>
-#include <Gyroviz_point_3.h>
+#include <CGAL/Vector_index_property_map.h>
 #include <CGAL/surface_reconstruction_assertions.h>
+
+#include <Gyroviz_point_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 
@@ -357,47 +359,6 @@ Point_set_vertex_normal_map<Gt>
 get(boost::vertex_normal_t, const Point_set_3<Gt>& points) 
 {
   Point_set_vertex_normal_map<Gt> aMap(points);
-  return aMap;
-}
-
-
-/// Helper class: type of the "vertex_index" property map
-/// of an Point_set_3 object.
-template <class Gt>
-class Point_set_vertex_index_const_map 
-{
-public:
-    typedef Point_set_3<Gt> Point_set;
-
-    // Property maps required types
-    typedef boost::readable_property_map_tag          category;
-    typedef unsigned int                              value_type;
-    typedef value_type                                reference;
-    typedef typename Point_set::Point_const_iterator  key_type;
-
-    Point_set_vertex_index_const_map(const Point_set& points) 
-    : m_points(points) 
-    {}
-
-    /// Free function to access the map elements.
-    friend inline
-    reference get(const Point_set_vertex_index_const_map& map, key_type p)
-    {
-      return std::distance(map.m_points.begin(), p);
-    }
-    
-private:
-  const Point_set& m_points;
-};
-
-/// Free function to get the "vertex_index" property map
-/// of an Point_set_3 object.
-template <class Gt>
-inline
-Point_set_vertex_index_const_map<Gt> 
-get(boost::vertex_index_t, const Point_set_3<Gt>& points) 
-{
-  Point_set_vertex_index_const_map<Gt> aMap(points);
   return aMap;
 }
 

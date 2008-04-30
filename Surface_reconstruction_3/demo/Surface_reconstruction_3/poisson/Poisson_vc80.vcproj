@@ -463,6 +463,10 @@
 				RelativePath="..\..\..\include\CGAL\value_type_traits.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\Vector_index_property_map.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Concepts"

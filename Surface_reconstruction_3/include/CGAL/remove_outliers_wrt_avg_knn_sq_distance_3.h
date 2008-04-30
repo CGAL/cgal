@@ -76,7 +76,7 @@ compute_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - remove threshold_percent worst points.
+/// - percentage of points to remove.
 /// This variant requires the kernel.
 ///
 /// Precondition: K >= 2.
@@ -91,7 +91,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      OutputIterator output,     ///< output points
                      unsigned int K,            ///< number of neighbors
                      const Kernel& /*kernel*/,
-                     double threshold_percent)  ///< remove threshold_percent worst points 
+                     double threshold_percent)  ///< percentage of points to remove 
 {
   // types for K-nearest neighbor search structure
   typedef typename Kernel::Point_3 Point;
@@ -136,7 +136,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - remove threshold_percent worst points.
+/// - percentage of points to remove.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
@@ -150,7 +150,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator beyond,
                      unsigned int K,            ///< number of neighbors
                      const Kernel& /*kernel*/,
-                     double threshold_percent)  ///< remove threshold_percent worst points 
+                     double threshold_percent)  ///< percentage of points to remove 
 {
   CGAL_precondition(false); // nyi
 }
@@ -158,7 +158,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - remove threshold_percent worst points.
+/// - percentage of points to remove.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: K >= 2.
@@ -171,7 +171,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator beyond,
                      OutputIterator output,     ///< output points
                      unsigned int K,            ///< number of neighbors
-                     double threshold_percent)  ///< remove threshold_percent worst points 
+                     double threshold_percent)  ///< percentage of points to remove 
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
@@ -180,7 +180,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
-/// - remove threshold_percent worst points.
+/// - percentage of points to remove.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
@@ -192,7 +192,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator first,       ///< input points
                      InputIterator beyond,
                      unsigned int K,            ///< number of neighbors
-                     double threshold_percent)  ///< remove threshold_percent worst points 
+                     double threshold_percent)  ///< percentage of points to remove 
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
