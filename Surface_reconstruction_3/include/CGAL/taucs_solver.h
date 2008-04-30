@@ -1,10 +1,20 @@
-//=============================================================================
+// Copyright (c) 2007-08  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-//  CLASS Taucs_solver:
-//  direct solver for symmetric positive definite sparse systems
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-//=============================================================================
-
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: 
+// $Id: 
+//
+// Author(s) : Pierre Alliez and Mario Botsch
 
 #ifndef CGAL_TAUCS_SOLVER_H
 #define CGAL_TAUCS_SOLVER_H
@@ -26,6 +36,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
+/// CLASS Taucs_solver:
+/// direct solver for symmetric positive definite sparse systems
 class Taucs_solver
 {
 public:

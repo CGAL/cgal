@@ -1,10 +1,20 @@
-//=============================================================================
+// Copyright (c) 2007-08  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-//  Traits class to get the value type of an output iterator.
-//  Based on code posted by Alberto Ganesh Barbati at
-//  http://www.adras.com/Why-no-std-back-insert-iterator-value-type.t2639-153-3.html
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-//=============================================================================
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL: 
+// $Id: 
+//
+// Author(s) : Alberto Ganesh Barbati and Laurent Saboret
 
 #ifndef CGAL_VALUE_TYPE_TRAITS_H
 #define CGAL_VALUE_TYPE_TRAITS_H
@@ -16,11 +26,13 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Traits class to get the value type of any iterator,
-// including an output iterator.
-//
-// Usage is:
-// typedef typename value_type_traits<Iter>::type value_type;
+/// Traits class to get the value type of any iterator,
+/// including an output iterator.
+///  Based on code posted by Alberto Ganesh Barbati at
+///  http://www.adras.com/Why-no-std-back-insert-iterator-value-type.t2639-153-3.html
+///
+/// Usage is:
+/// typedef typename value_type_traits<Iter>::type value_type;
 
 template <class T>
 struct value_type_traits
