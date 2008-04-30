@@ -68,7 +68,7 @@ compute_avg_knn_sq_distance_3(
     // compute squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
     double sq_distance = 0;
-    for(std::vector<Point>::iterator neighbor = points.begin(); neighbor != points.end(); neighbor++)
+    for(typename std::vector<Point>::iterator neighbor = points.begin(); neighbor != points.end(); neighbor++)
         sq_distance += sqd(*neighbor, query);
     sq_distance /= double(K);
     return sq_distance;
@@ -91,7 +91,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      OutputIterator output,     ///< output points
                      unsigned int K,            ///< number of neighbors
                      const Kernel& /*kernel*/,
-                     double threshold_percent)  ///< percentage of points to remove 
+                     double threshold_percent)  ///< percentage of points to remove
 {
   // types for K-nearest neighbor search structure
   typedef typename Kernel::Point_3 Point;
@@ -122,10 +122,10 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
   }
 
   // output (100-threshold_percent) % best points
-  std::multimap<double,InputIterator>::iterator map_it;
+  typename std::multimap<double,InputIterator>::iterator map_it;
   int index;
   int last = map.size() * ((100.0-threshold_percent)/100.0);
-  for(map_it = map.begin(), index=0; index < last; ++map_it, ++index) 
+  for(map_it = map.begin(), index=0; index < last; ++map_it, ++index)
   {
     InputIterator point_it = map_it->second;
     *output = *point_it;
@@ -150,7 +150,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator beyond,
                      unsigned int K,            ///< number of neighbors
                      const Kernel& /*kernel*/,
-                     double threshold_percent)  ///< percentage of points to remove 
+                     double threshold_percent)  ///< percentage of points to remove
 {
   CGAL_precondition(false); // nyi
 }
@@ -171,7 +171,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator beyond,
                      OutputIterator output,     ///< output points
                      unsigned int K,            ///< number of neighbors
-                     double threshold_percent)  ///< percentage of points to remove 
+                     double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
@@ -187,12 +187,12 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// Precondition: K >= 2.
 template < typename InputIterator ///< InputIterator value_type is Point_3
 >
-void 
+void
 remove_outliers_wrt_avg_knn_sq_distance_3(
                      InputIterator first,       ///< input points
                      InputIterator beyond,
                      unsigned int K,            ///< number of neighbors
-                     double threshold_percent)  ///< percentage of points to remove 
+                     double threshold_percent)  ///< percentage of points to remove
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;

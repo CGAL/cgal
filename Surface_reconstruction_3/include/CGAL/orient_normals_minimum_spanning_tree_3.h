@@ -47,18 +47,18 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// This function is used internally by orient_normals_minimum_spanning_tree_3()
 /// to compute the distance between 2 integers or 2 iterators.
-template <class T> 
+template <class T>
 inline int
 distance_MST(T _First, T _Last)
-{	
+{
   // return distance between iterators
   return std::distance(_First, _Last);
 }
 
-template <> 
+template <>
 inline int
 distance_MST(std::size_t _First, std::size_t _Last)
-{	
+{
   // return int difference
   return _Last - _First;
 }
@@ -219,7 +219,6 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
 {
 CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Input mesh's types
-    typedef typename std::iterator_traits<VertexIterator>::value_type Vertex_type;
     typedef typename boost::property_traits<VertexPointMap>::value_type Point;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename Normal::Vector Vector;
@@ -261,7 +260,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     //
     // Find vertex with maximum Z
     double z_max = -1e30;
-    VertexIterator source_vertex;
+    VertexIterator source_vertex = first; // 'first' initial value is just to workaround a gcc warning
     for (VertexIterator it = first; it != beyond; it++)
     {
         double z = get(vertex_point_map,it).z();
@@ -366,7 +365,7 @@ CGAL_TRACE("  Create MST Graph\n");
     for (VertexIterator it = first; it != beyond; it++)
     {
         unsigned int it_index = get(vertex_index_map,it);
-        MST_graph::vertex_descriptor v = add_vertex(mst_graph);
+        typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
         CGAL_surface_reconstruction_assertion(v == it_index);
         mst_graph[v].vertex = it;
     }

@@ -101,9 +101,9 @@ void test_orient_normals_MST(
               unsigned int k) // number of neighbors
 {
   std::cerr << "  Orient normals using a minimum spanning tree...";
-  
+
   // orient_normals_minimum_spanning_tree_3() requires an iterator over points
-  // + property maps to access each point's index, position and normal. 
+  // + property maps to access each point's index, position and normal.
   // We use the points index as iterator.
   boost::identity_property_map index_id; // identity
   CGAL::orient_normals_minimum_spanning_tree_3(
@@ -112,7 +112,7 @@ void test_orient_normals_MST(
          boost::make_iterator_property_map(points.begin(), index_id), // index -> position prop. map
          boost::make_iterator_property_map(normals.begin(), index_id), // index -> normal prop. map
          k);
-         
+
   std::cerr << "ok" << std::endl;
 }
 
@@ -149,7 +149,7 @@ int main(int argc, char * argv[])
   }
   return EXIT_SUCCESS;
 }
- 
+
 
 #else // CGAL_USE_LAPACK
 
