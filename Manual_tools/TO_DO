@@ -14,7 +14,6 @@ Manual_tools/TO_DO
 -- Feature Requests
 -- Projects
 
-
 Bug Fixes
 ============================================================================
 
@@ -110,7 +109,10 @@ UNCLEAR:
 
 OPEN:
 
-
+-- HTML: fix spurious links to concepts in the case when types and 
+   concepts have the same name e.g. in Kernel::CompareX_2
+   Comparison_result fo.operator()( Kernel::Point_2 p, Kernel::Point_2 q)
+   there should not be any link to the Kernel::Point_2 concept
 
 -- HTML: some problem with stepcounter 
    [I don't know what that is about anymore, so, I suggest to write a 
@@ -127,6 +129,13 @@ OPEN:
 
 Feature Requests
 ============================================================================
+
+-- HTML: add links from functor arguments to nested types
+   e.g. in Kernel::CompareX_2
+   Comparison_result fo.operator()( Kernel::Point_2 p, Kernel::Point_2 q) 
+   There should be links from these Kernel::Point_2 words to the typedef:
+   Kernel::Point_2	a model of Kernel::Point_2
+   in the Kernel page
 
 -- DOC: Provide manuals online (done once Manual_tools is in the internal 
    release).
