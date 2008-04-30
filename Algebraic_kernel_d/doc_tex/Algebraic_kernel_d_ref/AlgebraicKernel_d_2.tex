@@ -56,11 +56,15 @@ of two bivariate polynomials of type \ccc{Polynomial_2}.}
 %\ccc{CGAL::Tag_false}, 
 %indicating whether the following two optional types are provided or not:}
 %\ccGlue
-\ccNestedType{X_critical_points_2}{A model of 
-\ccc{AlgebraicKernel_d_2::XCriticalPoints_2}.}
+\ccNestedType{X_critical_points_2}{This is an optional functor. 
+	Hence it is either a model of 
+	\ccc{AlgebraicKernel_d_2::XCriticalPoints_2} 
+	or set to \ccc{CGAL::Null_functor}.}
 \ccGlue
-\ccNestedType{Y_critical_points_2}{A model of 
-\ccc{AlgebraicKernel_d_2::YCriticalPoints_2}.}
+\ccNestedType{Y_critical_points_2}{This is an optional functor. 
+	Hence it is either a model of 
+	\ccc{AlgebraicKernel_d_2::YCriticalPoints_2} 
+	or set to \ccc{CGAL::Null_functor}.}
 
 \ccNestedType{Sign_at_2}{A model of
 \ccc{AlgebraicKernel_d_2::SignAt_2}.}
