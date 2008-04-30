@@ -1142,20 +1142,12 @@ private:
     int i1 = 0;
     int i2 = 0;
     Cell_handle cell = NULL;
+    bool success;
     if(vi->index() > vj->index())
-    {
-      bool success = m_dt.is_edge(vi,vj,cell,i1,i2);
-      CGAL_surface_reconstruction_assertion(success);
-      CGAL_surface_reconstruction_assertion(cell->vertex(i1) == vi);
-      CGAL_surface_reconstruction_assertion(cell->vertex(i2) == vj);
-    }
+      success = m_dt.is_edge(vi,vj,cell,i1,i2);
     else
-    {
-      bool success = m_dt.is_edge(vj,vi,cell,i1,i2);
-      CGAL_surface_reconstruction_assertion(success);
-      CGAL_surface_reconstruction_assertion(cell->vertex(i1) == vj);
-      CGAL_surface_reconstruction_assertion(cell->vertex(i2) == vi);
-    }
+      success = m_dt.is_edge(vj,vi,cell,i1,i2);
+    CGAL_surface_reconstruction_assertion(success);
     return Edge(cell,i1,i2);
   }
 

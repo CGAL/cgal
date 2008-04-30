@@ -31,17 +31,22 @@ int main(void)
 
   Line line;
   Plane plane;
+  Kernel kernel;
   Point centroid;
 
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>(),kernel);
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>(),kernel);
 
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>());
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>(),kernel);
+  linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>(),kernel);
 
   return 0;
 }
