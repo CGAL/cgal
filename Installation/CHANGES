@@ -8,6 +8,8 @@ Additional supported platforms:
  - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
 
  - Boost version 1.33 at least is now required.
+ - CGAL now depends on Boost.Threads, which implies to link against
+   a compiled part of Boost.
 
 2- Installation
 
