@@ -412,8 +412,10 @@ sub make_testscripts()
 # of the current directory if none already exists
 #---------------------------------------------------------------#
 
-sub generate_cmake_scripts()
+sub generate_cmake_scripts
 {
+  my $is_demo = $_[0];
+  
   foreach $DIR (glob("*")) 
   {
     if ( -d $DIR ) 
@@ -423,7 +425,8 @@ sub generate_cmake_scripts()
       if ( ! -f 'CMakeLists.txt' ) 
       {
         $_ = $DIR;
-        my $options = (/_Demo$/) ? '-q' : '' ;
+        
+        my $options = /_Demo$/ || $is_demo ? '-q' : '' ;
         
         if ( -f 'cgal_create_cmake_script_options') 
         {
@@ -450,7 +453,7 @@ sub generate_cmake_scripts()
   }
 }
 
-sub generate_cgal_test_with_cmake()
+sub generate_cgal_test_with_cmake
 {
   foreach $DIR (glob("*")) 
   {
@@ -469,7 +472,7 @@ sub generate_cgal_test_with_cmake()
   }
 }
 
-sub make_testscripts_for_cmake()
+sub make_testscripts_for_cmake
 {
     my ($DIR, $BASEDIR);
     chdir "$RELEASEDIR/$VERSION" or die;
@@ -480,15 +483,21 @@ sub make_testscripts_for_cmake()
     print "Creating test scripts\n";
     generate_cgal_test_with_cmake();
     
-    print "Creating cmake scripts in examples\n";
-    generate_cmake_scripts();
+    print "Creating cmake scripts in test\n";
+    generate_cmake_scripts('');
     
     chdir $BASEDIR;
     chdir 'examples';
     
     print "Creating cmake scripts in examples\n";
-    generate_cmake_scripts();
+    generate_cmake_scripts('');
 
+    chdir $BASEDIR;
+    chdir 'demo';
+    
+    print "Creating cmake scripts in demo\n";
+    generate_cmake_scripts('demo');
+    
     chdir $BASEDIR;
 }
 
@@ -567,3 +576,5 @@ unlock;
 }
 
 main();
+
+

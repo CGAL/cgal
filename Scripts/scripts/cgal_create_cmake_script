@@ -52,11 +52,11 @@ create_cmake_script()
   
   if [ -n "$QT" ] ; then
   
-    echo 'find_package(REQUIRED)'
+    echo 'find_package(Qt3 REQUIRED)'
     echo
     echo
     echo 'include( ${CGAL_USE_FILE} )'
-    echo 'include(Qt3Macros)'
+    echo 'include( Qt3Macros )'
     echo
     
     for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
@@ -97,7 +97,7 @@ create_cmake_script()
   
     echo
     echo 'include( ${CGAL_USE_FILE} )'
-    echo 'include(CreateSingleSourceCGALProgram)'
+    echo 'include( CreateSingleSourceCGALProgram )'
     echo
   
     if [ -d include ] ; then
