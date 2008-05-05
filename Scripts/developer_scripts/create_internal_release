@@ -361,15 +361,6 @@ sub make_testscripts()
                     system("$DEVELSCRIPTSDIR/create_cgal_test") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test failed";
                 }
 	    }
-            if ( ! -f 'cgal_test_with_cmake' ) {
-                $_ = $DIR;
-                # chomp;
-                if (/_Demo$/) {
-                    system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", "--no-run") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake --no-run failed";
-                } else {
-                    system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake failed";
-                }
-            }
 	    chdir '..';
 	}
     }
@@ -412,6 +403,92 @@ sub make_testscripts()
 	    chdir '..';
 	}
     }
+    chdir $BASEDIR;
+}
+
+
+#---------------------------------------------------------------#
+# Generates a CMakeLists.txt in every subdirectory 
+# of the current directory if none already exists
+#---------------------------------------------------------------#
+
+sub generate_cmake_scripts()
+{
+  foreach $DIR (glob("*")) 
+  {
+    if ( -d $DIR ) 
+    {
+      chdir $DIR;
+      
+      if ( ! -f 'CMakeLists.txt' ) 
+      {
+        $_ = $DIR;
+        my $options = (/_Demo$/) ? '-q' : '' ;
+        
+        if ( -f 'cgal_create_cmake_script_options') 
+        {
+          if (open(OPTIONS, "<cgal_create_cmake_script_options")) 
+          {
+            $_ = <OPTIONS>;
+            chomp;
+            if (/^[\w\s-]+$/) 
+            { 
+              $options = $_;
+            }
+            else 
+            {
+              print STDERR "Rejected cgal_create_cmake_script_options in $DIR\n";
+            }
+            close OPTIONS;
+          }
+        }
+        system("$SCRIPTSDIR/cgal_create_cmake_script", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_cmake_script failed";
+      }
+        
+      chdir '..';
+    }
+  }
+}
+
+sub generate_cgal_test_with_cmake()
+{
+  foreach $DIR (glob("*")) 
+  {
+    if ( -d $DIR ) 
+    {
+      chdir $DIR;
+      if ( ! -f 'cgal_test_with_cmake' ) 
+      {
+        $_ = $DIR;
+        my $options = (/_Demo$/) ? '--no-run' : '' ;
+       
+        system("$DEVELSCRIPTSDIR/create_cgal_test_with_cmake", $options) == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test_with_cmake $options failed";
+      }
+      chdir '..';
+    }
+  }
+}
+
+sub make_testscripts_for_cmake()
+{
+    my ($DIR, $BASEDIR);
+    chdir "$RELEASEDIR/$VERSION" or die;
+    $BASEDIR = cwd();
+
+    chdir 'test';
+    
+    print "Creating test scripts\n";
+    generate_cgal_test_with_cmake();
+    
+    print "Creating cmake scripts in examples\n";
+    generate_cmake_scripts();
+    
+    chdir $BASEDIR;
+    chdir 'examples';
+    
+    print "Creating cmake scripts in examples\n";
+    generate_cmake_scripts();
+
     chdir $BASEDIR;
 }
 
@@ -484,6 +561,7 @@ CreateExampleTestDirs();
 create_version_file();
 create_version_tex_file();
 make_testscripts();
+make_testscripts_for_cmake();
 
 unlock;
 }
