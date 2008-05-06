@@ -212,10 +212,12 @@ public:
     void new_endpoints(const Generic_point_2& p,
             const Generic_point_2& q) const {
 
+//         Self cc(*this);
+//         cc.copy_on_write();
         this->ptr()->_m_min = p;
         if(!is_degenerate())
-            this->ptr()->_m_max = q;    
-    } 
+            this->ptr()->_m_max = q;
+    }
 
     /*!\brief
      * computes intersection points of \c *this and \c cv2, writes the result
@@ -236,7 +238,6 @@ public:
                 for(typename Point_container::const_iterator it = tmp.begin();
                     it != tmp.end(); it++) {
                     *oi++ = Generic_point_2(it->first);
-                    std::cerr << "\nintersection: " << it->first << "\n";
                 }
                 return oi;
             }

@@ -29,7 +29,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Generic_arc_2.h>
 
 #ifndef SCA_CERR
-#define SCA_DEBUG_PRINT_CERR
+//#define SCA_DEBUG_PRINT_CERR
 #ifdef SCA_DEBUG_PRINT_CERR
 #define SCA_CERR(x) std::cerr << x
 #else
@@ -98,7 +98,7 @@ public:
             arc = p1.arc();
             end = p1.curve_end();
             loc1 = arc.location(end);
-
+ 
             if(!p2.is_finite()) { // both points lie at infinity
                 loc2 = p2.arc().location(p2.curve_end());
                 if(Native_arc_2::is_on_left_right(loc1)) {
@@ -109,10 +109,17 @@ public:
                        compare_y_near_boundary_2_object()(arc, p2.arc(), end));
                 }
                 // compare curve ends at +/-oo in y
-                if(Native_arc_2::is_on_bottom_top(loc2))
-                    return (_m_adapter->kernel().
+                if(Native_arc_2::is_on_bottom_top(loc2)) {
+                    CGAL::Comparison_result res = (_m_adapter->kernel().
                         compare_x_near_boundary_2_object()
                             (arc, end, p2.arc(), p2.curve_end()));
+                    if(res == CGAL::EQUAL && end == p2.curve_end() &&
+                            loc1 != loc2) {
+                        return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
+                            CGAL::SMALLER : CGAL::LARGER);        
+                    }
+                    return res;
+                }
                 return (loc2 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
                     CGAL::SMALLER);
             }
@@ -124,9 +131,13 @@ public:
             res = (loc1 == CGAL::ARR_LEFT_BOUNDARY ? CGAL::LARGER :
                  CGAL::SMALLER);
         else {
+            // point is p1, arc is p2
+            //res = _m_adapter->kernel().
+              //  compare_x_near_boundary_2_object()(pt, arc, end);
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adapter->kernel().kernel().compare_x_2_object()
                 (pt.x(), arc.curve_end_x(end));
+                
             if(res == CGAL::EQUAL) // in case of equality use boundary types:
                 res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::LARGER :
                     CGAL::SMALLER);
@@ -248,25 +259,42 @@ public:
         end2 = CGAL::ARR_MIN_END; // relevant cv.arc()'s end for comparison
         (void)in_x_range;
         CGAL_precondition(in_x_range);
-        
+
         if(!cv.arc().is_vertical()) {
-            if(eq_max && cv.arc().location(CGAL::ARR_MAX_END) ==
-                    CGAL::ARR_TOP_BOUNDARY)
+            if(eq_max && Native_arc_2::is_on_bottom_top(
+                    cv.arc().location(CGAL::ARR_MAX_END))) {
                 end2 = CGAL::ARR_MAX_END;
-            else if(!eq_min || cv.arc().location(CGAL::ARR_MIN_END) !=
-                    CGAL::ARR_BOTTOM_BOUNDARY) {
+            } else if(!eq_min || !Native_arc_2::is_on_bottom_top(
+                cv.arc().location(CGAL::ARR_MIN_END))) {
               // compare finite point against asymptotic or vertical curve end
                return (locp == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::SMALLER :
                     CGAL::LARGER);
-           }
-        } else if(p.arc().is_vertical())
+            }
+        } else {
+            CGAL_precondition_msg(p.arc().is_vertical(),
+                "p.arc is not within vertical arc x-range!!");
+            // arc is vertical => infinite end coincides
             return CGAL::EQUAL; // two vertical arcs => coincide
+        }
+        
+        CGAL_precondition_msg(end == end2, "Point is not within the arc's "
+            "x-range");
 
+        if(locp != cv.arc().location(end2))
+            return (locp == CGAL::ARR_BOTTOM_BOUNDARY ?
+                     CGAL::SMALLER : CGAL::LARGER);
         // compare either two asymptotic ends or one vertical arc + asymptote
         // check whether result need to be reversed
-        return (_m_adapter->kernel().compare_x_near_boundary_2_object()
-            (p.arc(), end, cv.arc(), end2));
-            
+        CGAL::Comparison_result res =
+             (_m_adapter->kernel().compare_x_near_boundary_2_object()
+                  (p.arc(), end, cv.arc(), end2));
+
+        if(locp == cv.arc().location(end2) &&
+                !p.arc().is_vertical() && !cv.arc().is_vertical())
+        if((end == CGAL::ARR_MAX_END && locp == CGAL::ARR_TOP_BOUNDARY) ||
+           (end == CGAL::ARR_MIN_END && locp == CGAL::ARR_BOTTOM_BOUNDARY)) 
+            res = -res;
+        return res;
     }
     
 private:
@@ -453,8 +481,9 @@ public:
      */
     result_type operator()(const Point_2& p) const {
 
-        //SCA_CERR("Construct_segment_2; pt: " << p << std::endl);
-        return Arc_2(p);
+//         SCA_CERR("Construct_segment_2: arc@" << aa.id() <<
+//             "; point@" << p.id() << std::endl);
+         return Arc_2(p);
     }
 };
 
@@ -534,10 +563,6 @@ public:
           _m_adapter->compare_xy_2_object()(cv.source(), p) == CGAL::EQUAL &&
            _m_adapter->compare_xy_2_object()(cv.target(), q) == CGAL::EQUAL);
             
-        if(cv.is_degenerate())
-            return Arc_2(p);
-        
-        //_m_adapter->_set_arc_endpoints(cv, p, q);
         cv.new_endpoints(p, q);
         return cv;
     }
@@ -646,6 +671,7 @@ public:
             // assume points are sorted lexicographical    
             if(_m_adapter->compare_xy_2_object()(*it, ref) == CGAL::LARGER) {
                 res = *it;
+                SCA_CERR("intersection found: " << res << "\n");
                 return true;
             }
         }

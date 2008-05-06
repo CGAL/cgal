@@ -200,7 +200,7 @@ std::ostream& operator << (std::ostream& os,
     if(pt.is_finite())
         os << pt.point();
     else
-        os << pt.id() << "@inf end: " << pt.curve_end() << "; arc: " <<
+        os << "inf end: " << pt.curve_end() << "; arc: " <<
             pt.arc();
     return os;
 }
