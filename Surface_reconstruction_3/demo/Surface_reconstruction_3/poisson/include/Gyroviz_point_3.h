@@ -50,11 +50,11 @@ public:
     // Repeat Point_with_normal_3 public types
     typedef Gt Geom_traits; ///< Kernel's geometric traits
     typedef typename Geom_traits::FT FT;
-    typedef typename Geom_traits::Point_3  Point;  ///< Kernel's Point_3 class.
+    typedef typename Geom_traits::Point_3  Point_3;  ///< Kernel's Point_3 class.
     typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
 
     /// Iterator over cameras
-    typedef typename std::vector<Point>::const_iterator Camera_const_iterator;
+    typedef typename std::vector<Point_3>::const_iterator Camera_const_iterator;
 
 // Public methods
 public:
@@ -71,18 +71,25 @@ public:
     : Base(x,y,z)
     {
     }
-    Gyroviz_point_3(const Point& point,
+    Gyroviz_point_3(const Point_3& point,
                     const Normal& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
     }
     template < class InputIterator >
-    Gyroviz_point_3(const Point& point,
+    Gyroviz_point_3(const Point_3& point,
+                    InputIterator first_camera, InputIterator beyond_camera)
+    : Base(point, CGAL::NULL_VECTOR)
+    {
+      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
+    }
+    template < class InputIterator >
+    Gyroviz_point_3(const Point_3& point,
                     const Normal& normal,
                     InputIterator first_camera, InputIterator beyond_camera)
     : Base(point, normal)
     {
-      std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
+      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
     }
 
     // Default copy constructor and operator =() are fine
@@ -101,17 +108,17 @@ public:
     template < class InputIterator >
     void set_cameras(InputIterator first_camera, InputIterator beyond_camera)
     {
-      cameras.clear();
-      std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
+      list_of_cameras.clear();
+      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
     }
-    Camera_const_iterator cameras_begin() const { return  cameras.begin(); }
-    Camera_const_iterator cameras_end  () const { return  cameras.end(); }
+    Camera_const_iterator cameras_begin() const { return  list_of_cameras.begin(); }
+    Camera_const_iterator cameras_end  () const { return  list_of_cameras.end(); }
     
 // Data
 private:
 
   // List of cameras
-  std::vector<Point> cameras;
+  std::vector<Point_3> list_of_cameras;
 };
 
 

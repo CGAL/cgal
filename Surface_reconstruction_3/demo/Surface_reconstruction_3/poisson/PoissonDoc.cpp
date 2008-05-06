@@ -178,7 +178,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if (is_mesh)
     {
       // read file in polyhedron 
-      typedef Enriched_polyhedron<Kernel,Enriched_items> Polyhedron;
+      typedef Enriched_polyhedron<Kernel> Polyhedron;
       Polyhedron input_mesh;
       std::ifstream file_stream(lpszPathName);
       CGAL::scan_OFF(file_stream, input_mesh, true /* verbose */); 
@@ -246,8 +246,10 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if Gyroviz .pwc extension
   else if (extension.CompareNoCase(".pwc") == 0)
   {
+    std::vector<Point> cameras; // temporary container of cameras to read
     if( ! surface_reconstruction_read_pwc(lpszPathName, 
-                                          std::back_inserter(m_points)) )
+                                          std::back_inserter(m_points),
+                                          std::back_inserter(cameras)) )
     {
       AfxMessageBox("Unable to read file");
       return FALSE;
