@@ -649,7 +649,11 @@ bool test_zone ( Zone& rZone )
     if ( sVerbose )
       cout << "    Building straight skeleton." << endl ; 
     
-    ISlsBuilder builder( boost::make_optional(sMaxTime > 0, sMaxTime) )  ;
+    boost::optional<double> lMaxTime ;
+    if ( sMaxTime > 0 )
+      lMaxTime = sMaxTime ;
+      
+    ISlsBuilder builder(lMaxTime)  ;
     
     for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->begin(),(*bit)->end());

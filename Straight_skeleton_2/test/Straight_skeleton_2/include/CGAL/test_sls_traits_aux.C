@@ -43,7 +43,8 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
 
 bool exist_event( Traits const&  aTraits, triple const& aTriple )
 {
-  return CGAL::Do_ss_event_exist_2(aTraits)(aTriple.trisegment());
+  boost::optional<FT> lMaxTime ;
+  return CGAL::Do_ss_event_exist_2(aTraits)(aTriple.trisegment(), lMaxTime );
 }
 
 template<class Traits, class triple>

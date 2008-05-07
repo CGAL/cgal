@@ -150,7 +150,7 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
 
 template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 ( FT             aMaxOffset
+create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     , PointIterator  aVerticesBegin
                                     , PointIterator  aVerticesEnd
                                     , K const&       k
@@ -202,7 +202,7 @@ create_exterior_straight_skeleton_2 ( FT             aMaxOffset
 template<class FT, class PointIterator>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
-create_exterior_straight_skeleton_2 ( FT             aMaxOffset
+create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     , PointIterator  aVerticesBegin
                                     , PointIterator  aVerticesEnd
                                     )
@@ -218,7 +218,7 @@ create_exterior_straight_skeleton_2 ( FT             aMaxOffset
 template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_exterior_straight_skeleton_2 ( FT aMaxOffset, Polygon const& aPoly, K const& k )
+create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,CGAL_SS_i::vertices_begin(aPoly)
@@ -230,7 +230,7 @@ create_exterior_straight_skeleton_2 ( FT aMaxOffset, Polygon const& aPoly, K con
 template<class FT, class Polygon>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
-create_exterior_straight_skeleton_2 ( FT aMaxOffset, Polygon const& aPoly )
+create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly )
 {
   return create_exterior_straight_skeleton_2(aMaxOffset
                                             ,aPoly

@@ -86,7 +86,8 @@ struct Construct_offset_point_2 : Functor_base_2<K>
     typename Has_inexact_constructions<K>::type has_inexact_constructions
     CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
     
-    return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
+    //return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
+    return calc(aT, aE0, aE1, aNode, Tag_false() );
   }
   
   result_type calc ( FT               const& aT

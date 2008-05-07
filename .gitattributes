@@ -3530,6 +3530,7 @@ Straight_skeleton_2/examples/Straight_skeleton_2/sample_1.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_2.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_3.dat -text
 Straight_skeleton_2/examples/Straight_skeleton_2/sample_4.dat -text
+Straight_skeleton_2/test/Straight_skeleton_2/all.rsp -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/1_Example_Working.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/2_Example.poly -text
@@ -3701,6 +3702,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wheel_16_spokes_b.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/data/wiggly_03_cgal.poly -text
 Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_sls_types.h -text
+Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cmd -text
 Straight_skeleton_2/test/Straight_skeleton_2/test_sls.cpp -text
 Stream_lines_2/demo/Stream_lines_2/streamlines.vcproj eol=crlf
 Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text svneol=unset#application/postscript
