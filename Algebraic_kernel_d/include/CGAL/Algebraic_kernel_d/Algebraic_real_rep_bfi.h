@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE;
 
-template <class NT> class Get_arithmetic_kernel;
+template <class NT> struct Get_arithmetic_kernel;
 
 namespace CGALi {
 
