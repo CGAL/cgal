@@ -153,11 +153,10 @@ EOF
   
 }
 
-echo "create_cgal_test_with_cmake version $VERSION"
 if [ -f cgal_test_with_cmake ] ; then
   echo "moving cgal_test_with_cmake to cgal_test_with_cmake.bak ..."
   mv -f cgal_test_with_cmake cgal_test_with_cmake.bak
 fi
 create_script > cgal_test_with_cmake
 chmod 755 cgal_test_with_cmake
-echo "created cgal_test_with_cmake ..."
+echo "created cgal_test_with_cmake, version $VERSION, in $PWD ..."

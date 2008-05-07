@@ -150,4 +150,4 @@ if [ -f ${OUTPUTFILE} ] ; then
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
 create_cmake_script > $OUTPUTFILE
-echo "created $OUTPUTFILE ..."
+echo "created $OUTPUTFILE in $PWD ..."
