@@ -367,7 +367,7 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandleSimultaneousEdgeEvent( Vertex_h
                               << " as it's halfedge. Replacing it with B" << lIB->id() 
                               ) ;
   }
-  if ( lIAV->has_infinite_time() && lIAV != aA && lIAV != aB )
+  if ( !lIAV->has_infinite_time() && lIAV != aA && lIAV != aB )
   {
     Link(lIAV,lOB);
     
