@@ -75,7 +75,7 @@ inline bool is_valid(const Exponent_vector& ev) {
     return true; 
 }
 
-std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
+inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
     Exponent_vector::const_iterator it;
     os << "(" ;
     for(it = ev.begin(); it != ev.end();it++){
