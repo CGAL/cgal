@@ -1434,12 +1434,13 @@ Polynomial make_square_free( const Polynomial& p ) {
 		Make_square_free()( p );
 }
 
-template< class Polynomial >
+template< class Polynomial > 
 bool is_square_free( const Polynomial& p ) {
 	return typename CGAL::Polynomial_traits_d< Polynomial>::
 		Is_square_free()( p );
 }
-}
+
+} // namespace CGALi
 
 
 CGAL_END_NAMESPACE
