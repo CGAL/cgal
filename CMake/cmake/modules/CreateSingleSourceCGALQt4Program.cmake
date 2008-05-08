@@ -16,10 +16,6 @@ macro(create_single_source_cgal_qt4_program first )
     include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
     
     add_executable  (${exe_name} ${all})
-    add_dependencies(${exe_name} CGAL CGAL_CORE)
-    
-    set_target_properties( ${exe_name} PROPERTIES COMPILE_FLAGS "$(EXTRA_FLAGS) $(TESTSUITE_CXXFLAGS)" )
-    set_target_properties( ${exe_name} PROPERTIES LINK_FLAGS    "$(TESTSUITE_LDFLAGS)" )
     
     # Link the executable to CGAL and third-party libraries
     if ( AUTO_LINK_ENABLED )    
