@@ -44,7 +44,7 @@ namespace CGALi {
 #ifndef CERR
 //#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
-#define CERR(x) std::cout << x
+#define CERR(x) std::cerr << x
 #else
 #define CERR(x) static_cast<void>(0)
 #endif
@@ -2235,14 +2235,15 @@ protected:
      * \pre \c cpa_2 must correspond to a decomposition of this arc's 
      * supporting curve
      */
-    void _simplify_by(const Curve_pair_analysis_2& cpa_2) const { 
-        typename Curve_analysis_2::Polynomial_2 f = curve().polynomial_2();
+    void _simplify_by(const Curve_pair_analysis_2& cpa_2) const {
+
+        typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
+        Polynomial_2 f = curve().polynomial_2();
         CGAL_precondition_code(
-             typename Curve_analysis_2::Polynomial_2 mult =
-                    cpa_2.curve_analysis(0).polynomial_2() *
+             Polynomial_2 mult = cpa_2.curve_analysis(0).polynomial_2() *
                     cpa_2.curve_analysis(1).polynomial_2();
-             typedef typename Curve_kernel_2::Polynomial_2 Poly_2;
-             typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
+             typename CGAL::Polynomial_traits_d<Polynomial_2>::Total_degree
+                deg;
         );
         // common parts and full parts
         CGAL_precondition(CGAL::CGALi::resultant(mult, f).is_zero());
@@ -2813,11 +2814,10 @@ protected:
         std::pair<int, int> ipair;
         int arcno1, arcno2, mult;
 
-        typedef typename Curve_kernel_2::Polynomial_2 Poly_2;
-        typename CGAL::Polynomial_traits_d<Poly_2>::Total_degree deg;
+        typename CGAL::Polynomial_traits_d<
+            typename Curve_kernel_2::Polynomial_2>::Total_degree deg;
         
-        bool which_curve = (deg(f.polynomial_2()) <
-             deg(g.polynomial_2()));
+        bool which_curve = (deg(f.polynomial_2()) < deg(g.polynomial_2()));
         for(int i = low_idx; i <= high_idx; i++) {
             typename Curve_pair_analysis_2::Status_line_1 tmp = 
                 cpa_2.status_line_at_event(i);
