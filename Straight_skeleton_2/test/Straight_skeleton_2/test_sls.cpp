@@ -28,19 +28,20 @@
 
 #include<boost/tokenizer.hpp>
 
-bool sTestInner            = true  ;
-bool sTestOuter            = true  ;
-bool sTestOffsets          = true  ;
-bool sVerbose              = false ;
-bool sNoOp                 = false ;
-bool sClassifyCases        = false ;
-bool sDumpEPS              = false ;
-bool sDumpDXF              = false ;
-bool sLogFailures          = false ;
-bool sAbortOnError         = false ;
-bool sAcceptNonSimpleInput = false ;
-bool sValidateGeometry     = false ; 
-bool sDumpOffsetPolygons   = false ;
+bool sTestInner             = true  ;
+bool sTestOuter             = true  ;
+bool sTestOffsets           = true  ;
+bool sVerbose               = false ;
+bool sNoOp                  = false ;
+bool sClassifyCases         = false ;
+bool sDumpEPS               = false ;
+bool sDumpDXF               = false ;
+bool sLogFailures           = false ;
+bool sAbortOnError          = false ;
+bool sAcceptNonSimpleInput  = false ;
+bool sReportNonSimpleOffset = false ;
+bool sValidateGeometry      = false ; 
+bool sDumpOffsetPolygons    = false ;
  
 int sMaxShift       = 1 ;
 int sMaxVertexCount = 0 ;
@@ -129,15 +130,19 @@ struct Zone
 {
   Zone()
     :
-     SkeletonTime(0.0)
+     FullSkeletonTime(0.0)
+    ,PartialSkeletonTime(0.0)
     ,ContouringTime(0.0)
   {}
     
   IRegionPtr Input ;
   
+  ISlsPtr FullSkeleton ;
+  ISlsPtr PartialSkeleton ;
   ISlsPtr Skeleton ;
   ORegion Contours ;
-  double  SkeletonTime ;
+  double  FullSkeletonTime ;
+  double  PartialSkeletonTime ;
   double  ContouringTime ;
 } ;
 
@@ -234,15 +239,8 @@ IRegionPtr load_region( string file, int aShift, int& rExitCode )
                 std::rotate(lPoly->begin(),lPoly->begin()+aShift,lPoly->end());
                 
               if ( orientation == expected )
-              {
-                cout << "Entering contour with existing orientation" << std::endl ;
-                rRegion->push_back(lPoly);
-              }
-              else 
-              {
-                cout << "Entering contour with reverse orientation" << std::endl ;
-                rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
-              }  
+                   rRegion->push_back(lPoly);
+              else rRegion->push_back( IPolygonPtr( new IPolygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
             }
             else
             {
@@ -637,28 +635,30 @@ bool is_skeleton_valid( IRegion const& aRegion, ISls const& aSkeleton )
   return rValid ;
 }
 
-bool test_zone ( Zone& rZone )
+
+bool create_skeleton ( Zone& rZone, boost::optional<IFT> const& aMaxTime = boost::optional<IFT>() )
 {
   bool rOK = false ;
   
   Real_timer t ;
   t.start();
   
+  ISlsPtr lSls ;
+  
   try
   {  
     if ( sVerbose )
-      cout << "    Building straight skeleton." << endl ; 
+      cout << "    Building " << ( aMaxTime ? "partial" : "full" ) << " straight skeleton." << endl ; 
     
-    boost::optional<double> lMaxTime ;
-    if ( sMaxTime > 0 )
-      lMaxTime = sMaxTime ;
-      
-    ISlsBuilder builder(lMaxTime)  ;
+    ISlsBuilder builder(aMaxTime)  ;
     
     for( IRegion::const_iterator bit = rZone.Input->begin(), ebit = rZone.Input->end() ; bit != ebit ; ++ bit )
       builder.enter_contour((*bit)->begin(),(*bit)->end());
     
-    rZone.Skeleton = builder.construct_skeleton(false) ;
+    lSls = builder.construct_skeleton(false) ;
+    
+    t.stop();
+      
   }
   catch ( exception const& x ) 
   { 
@@ -670,23 +670,55 @@ bool test_zone ( Zone& rZone )
     if ( sVerbose )
       cout << "    Failed: Unhandled exception." << endl ;
   }
-  
-  t.stop();
-  
-  rZone.SkeletonTime = t.time();
-  
-  if ( rZone.Skeleton )
-  {
-    rOK = is_skeleton_valid(*rZone.Input,*rZone.Skeleton) ;
     
+  rOK = is_skeleton_valid(*rZone.Input,*lSls) ;
+  
+  double lEllapsedTime = t.time();
+  
+  if ( aMaxTime )
+  {
+    rZone.PartialSkeleton     = lSls ;
+    rZone.PartialSkeletonTime = lEllapsedTime ;
+  }
+  else
+  {
+    rZone.FullSkeleton     = lSls ;
+    rZone.FullSkeletonTime = lEllapsedTime ;
+  }  
+  
+  return rOK ; 
+}
+
+bool test_zone ( Zone& rZone )
+{
+  ISlsPtr lFullSls, lPar ;  
+  double  lFullSkeletonTime  ;
+  
+  bool rOK = create_skeleton(rZone);
+  
+  if ( sMaxTime > 0 )
+  {
+    boost::optional<IFT> lMaxTime = static_cast<IFT>(sMaxTime) ;
+    if ( !create_skeleton(rZone,lMaxTime) )
+      rOK = false ;
+  }
+  else
+  {
+    rZone.PartialSkeleton     = rZone.FullSkeleton ;
+    rZone.PartialSkeletonTime = 0 ;
+  }
+    
+  if ( rZone.PartialSkeleton )
+  {
     if ( rOK && sTestOffsets )
     {
       set<double> lTimes ;
       
       double lMaxTime = 999999999 ;
       
-      for ( Vertex_const_iterator  vit  = rZone.Skeleton->vertices_begin()
-                                  ,evit = rZone.Skeleton->vertices_end  ()
+       
+      for ( Vertex_const_iterator  vit  = rZone.PartialSkeleton->vertices_begin()
+                                  ,evit = rZone.PartialSkeleton->vertices_end  ()
             ; vit != evit
             ; ++ vit
           )
@@ -745,7 +777,7 @@ bool test_zone ( Zone& rZone )
         
         SlsConverter CvtSls ;
         
-        OSlsPtr lOSkeleton = CvtSls(*rZone.Skeleton) ;
+        OSlsPtr lOSkeleton = CvtSls(*rZone.PartialSkeleton) ;
         
         CGAL_assertion( lOSkeleton->is_valid() ) ;
              
@@ -761,7 +793,8 @@ bool test_zone ( Zone& rZone )
               
             ORegion lContours ;
             
-            t.start();
+            Real_timer t2 ;
+            t2.start();
             
             try
             {  
@@ -780,7 +813,7 @@ bool test_zone ( Zone& rZone )
                 cout << "      Failed: Unhandled exception." << endl ;
             }
             
-            t.stop();
+            t2.stop();
             
             if ( sVerbose )
             {
@@ -813,22 +846,25 @@ bool test_zone ( Zone& rZone )
               }  
             } 
             
-            for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
+            if ( sReportNonSimpleOffset )
             {
-              if ( !is_simple_2((*bit)->begin(),(*bit)->end(),OK()) )
+              for ( ORegion::const_iterator bit = lContours.begin() ; bit != lContours.end() ; ++ bit )
               {
-                cout << "      Failed: Non-simple offset polygon # "
-                      << ( bit - lContours.begin()) 
-                      << " generated at offset: " 
-                      << lOffset 
-                      << " (#" << ( oit - lOffsets.begin() ) << ")"
-                      << endl ;
+                if ( !is_simple_2((*bit)->begin(),(*bit)->end(),OK()) )
+                {
+                  cout << "      Warning: Non-simple offset polygon # "
+                        << ( bit - lContours.begin()) 
+                        << " generated at offset: " 
+                        << lOffset 
+                        << " (#" << ( oit - lOffsets.begin() ) << ")"
+                        << endl ;
+                }
               }
             }
             
             
             copy(lContours.begin(),lContours.end(),std::back_inserter(rZone.Contours));
-            lAccTime += t.time();
+            lAccTime += t2.time();
             ++ lNumContours ;
           }
         }
@@ -903,9 +939,11 @@ int test( TestCase& rCase, int aShift )
     if ( sVerbose && rR != 0 )
     {
       cout << ( ( rR > 0 ) ? "  OK " : "  !!!!!!!!!!!FAILED!!!!!!!!!!!!! " ) 
-            << " InnerSlsTime=" << rCase.Inner.SkeletonTime 
+            << " FullInnerSlsTime=" << rCase.Inner.FullSkeletonTime 
+            << " PartialInnerSlsTime=" << rCase.Inner.PartialSkeletonTime 
             << " InnerOffTime=" << rCase.Inner.ContouringTime
-            << " OuterSlsTime=" << rCase.Outer.SkeletonTime 
+            << " FullOuterSlsTime=" << rCase.Outer.FullSkeletonTime 
+            << " PartialOuterSlsTime=" << rCase.Outer.PartialSkeletonTime 
             << " OuterOffTime=" << rCase.Outer.ContouringTime 
             << endl ;
     }
@@ -944,7 +982,13 @@ int test( TestCase& rCase, int aShift )
   if ( rR > 0 )
   {
     cerr << " ( "
-          << (rCase.Inner.SkeletonTime + rCase.Inner.ContouringTime + rCase.Outer.SkeletonTime  + rCase.Outer.ContouringTime)
+          << (  rCase.Inner.FullSkeletonTime
+              + rCase.Inner.PartialSkeletonTime
+              + rCase.Inner.ContouringTime 
+              + rCase.Outer.FullSkeletonTime
+              + rCase.Outer.PartialSkeletonTime
+              + rCase.Outer.ContouringTime
+              )
           << " secs) " ; 
   }
   
@@ -1026,7 +1070,7 @@ int main( int argc, char const* argv[] )
               sOffsetAtNodes = false ;
               sOffset = sMaxTime ;
               sOffsetCount = 1 ;
-              cout << "Only creating partial skeleto for offsseting at " << sMaxTime << std::endl ;
+              cout << "Only creating partial skeleton for offsetting at " << sMaxTime << std::endl ;
             }
             break ;
             
@@ -1121,8 +1165,11 @@ int main( int argc, char const* argv[] )
                   {
                     sOffset = atof(sopt.c_str()) ; 
                     sOffsetCount = 1 ;
+                    sMaxTime = sOffset ;
                     cout << "Single Offset set at " << sOffset << endl ;
                   }
+                  sMaxTime = sOffset * sOffsetCount ;
+                  cout << "Creating partial skeleton at max depth: " << sMaxTime << endl ;
                 }
               }
             }
@@ -1272,11 +1319,10 @@ int main( int argc, char const* argv[] )
          << "         !   Disabled" << endl 
          << "         #   At every node." << endl 
          << "         #N  At the offset number N in a set of all node offsets." << endl 
-         << "         D   Just one offset at distance 'D'" << endl 
-         << "         DxS 'S' evenly space offsets separated distance 'D'" << endl 
-         << "         Dx* Evenly spaced offsets separated distance 'D'" << endl 
+         << "         D   Just one offset at distance 'D' via partial skeleton." << endl 
+         << "         DxS 'S' evenly space offsets separated distance 'D' via partial skeleton." << endl 
+         << "         Dx* Evenly spaced offsets separated distance 'D' via partial skeleton." << endl 
          << endl 
-         << "     -tMAX   Create a partial skeleton for offssetting at MAX distance" << endl
          << "     -a      Abort on first error." << endl
          << "     -p      Permissive mode. Accept non-simple input polygons." << endl
          << "     -c      Ignore errors." << endl
@@ -1286,6 +1332,7 @@ int main( int argc, char const* argv[] )
          << "     -l      Dump offset polygons." << endl 
          << "     -n      No-op mode. Doesn't create skeletons." << endl 
          << "     -g      Validate results geometrically and not just topologically." << endl
+         << "     -F      Do not use partial skeletons for offsetting." << endl
          << "     -fPATH  Append PATH to each filename" << endl 
          << "     -rMAX   Rotate input vertex sequence by one vertex up to MAX times" << endl
          << "     -mMAX   Ignore polygons with a vertex count greater than MAX" << endl

@@ -1,2 +1,2 @@
-@all.rsp
+-fdata/ @all.rsp
  
