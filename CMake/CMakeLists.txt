@@ -220,50 +220,7 @@ if( MSVC )
   
 endif()
 
-set(CMAKE_CXX_FLAGS "${CGAL_CXX_FLAGS} ${CMAKE_CXX_FLAGS} ")  
-message( STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}" )
-
-if ( CGAL_RELEASE )
-  set(CMAKE_CXX_FLAGS_RELEASE "${CGAL_CXX_FLAGS_RELEASE} ${CMAKE_CXX_FLAGS_RELEASE}")  
-  message( STATUS "Release compiler flags: ${CMAKE_CXX_FLAGS_RELEASE}" )
-endif()
-
-if ( CGAL_DEBUG )
-  set(CMAKE_CXX_FLAGS_DEBUG   "${CGAL_CXX_FLAGS_DEBUG} ${CMAKE_CXX_FLAGS_DEBUG}") 
-  message( STATUS "Debug compiler flags: ${CMAKE_CXX_FLAGS_DEBUG}"   )
-endif()
-
-if ( BUILD_SHARED_LIBS )
-
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${CGAL_SHARED_LINKER_FLAGS}")
-  message( STATUS "Shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS}"   )
-  
-  if ( CGAL_RELEASE )
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} ${CGAL_SHARED_LINKER_FLAGS_RELEASE}")
-    message( STATUS "Release shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}"   )
-  endif()
-  
-  if ( CGAL_DEBUG )
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG   "${CMAKE_SHARED_LINKER_FLAGS_DEBUG} ${CGAL_SHARED_LINKER_FLAGS_DEBUG}")
-    message( STATUS "Debug shared linker flags: ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}"   )
-  endif()
-  
-else()
-
-  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${CGAL_MODULE_LINKER_FLAGS}")
-  message( STATUS "Module linker flags: ${CMAKE_MODULE_LINKER_FLAGS}" )
-  
-  if ( CGAL_RELEASE )
-    set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} ${CGAL_MODULE_LINKER_FLAGS_RELEASE}")
-    message( STATUS "Release module linker flags: ${CMAKE_MODULE_LINKER_FLAGS_RELEASE}"   )
-  endif()
-  
-  if ( CGAL_DEBUG )
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG  "${CMAKE_MODULE_LINKER_FLAGS_DEBUG} ${CGAL_MODULE_LINKER_FLAGS_DEBUG}")
-    message( STATUS "Debug module linker flags: ${CMAKE_MODULE_LINKER_FLAGS_DEBUG}" )
-  endif()
-  
-endif()
+include(CGAL_SetupFlags)
 
 add_subdirectory(src)
 
