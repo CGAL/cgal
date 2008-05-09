@@ -28,27 +28,28 @@
 
 #include<boost/tokenizer.hpp>
 
-bool sTestInner             = true  ;
-bool sTestOuter             = true  ;
-bool sTestOffsets           = true  ;
-bool sVerbose               = false ;
-bool sNoOp                  = false ;
-bool sClassifyCases         = false ;
-bool sDumpEPS               = false ;
-bool sDumpDXF               = false ;
-bool sLogFailures           = false ;
-bool sAbortOnError          = false ;
-bool sAcceptNonSimpleInput  = false ;
-bool sReportNonSimpleOffset = false ;
-bool sValidateGeometry      = false ; 
-bool sDumpOffsetPolygons    = false ;
+bool sTestInner              = true  ;
+bool sTestOuter              = true  ;
+bool sTestOffsets            = true  ;
+bool sVerbose                = false ;
+bool sNoOp                   = false ;
+bool sClassifyCases          = false ;
+bool sDumpEPS                = false ;
+bool sDumpDXF                = false ;
+bool sLogFailures            = false ;
+bool sAbortOnError           = false ;
+bool sAcceptNonSimpleInput   = false ;
+bool sReportNonSimpleOffset  = false ;
+bool sValidateGeometry       = false ; 
+bool sDumpOffsetPolygons     = false ;
+bool sAlwaysTestFullSkeleton = false ;
  
 int sMaxShift       = 1 ;
 int sMaxVertexCount = 0 ;
 
 double           sOffset        = 0.0 ;
-bool             sOffsetAtNodes = true ; 
-size_t           sOffsetCount   = 2 ;
+bool             sOffsetAtNodes = false ; 
+size_t           sOffsetCount   = 0 ;
 std::vector<int> sOffsetAtEntry ;
 
 double sMaxTime = 0.0 ;
@@ -139,11 +140,13 @@ struct Zone
   
   ISlsPtr FullSkeleton ;
   ISlsPtr PartialSkeleton ;
-  ISlsPtr Skeleton ;
-  ORegion Contours ;
+  
   double  FullSkeletonTime ;
   double  PartialSkeletonTime ;
+  
+  ORegion Contours ;
   double  ContouringTime ;
+  
 } ;
 
 struct TestCase
@@ -413,11 +416,11 @@ void dump_to_eps ( TestCase const& aCase )
       if ( aCase.Outer.Input )
         dump_region_to_eps(*aCase.Inner.Input,"border",lScale,lOut);
         
-      if ( aCase.Inner.Skeleton )
-        dump_skeleton_to_eps(*aCase.Inner.Skeleton,lScale,lOut);
+      if ( aCase.Inner.PartialSkeleton )
+        dump_skeleton_to_eps(*aCase.Inner.PartialSkeleton,lScale,lOut);
         
-      if ( aCase.Outer.Skeleton )
-        dump_skeleton_to_eps(*aCase.Outer.Skeleton,lScale,lOut);
+      if ( aCase.Outer.PartialSkeleton )
+        dump_skeleton_to_eps(*aCase.Outer.PartialSkeleton,lScale,lOut);
             
       dump_region_to_eps(aCase.Inner.Contours,"cont",lScale,lOut);
       dump_region_to_eps(aCase.Outer.Contours,"cont",lScale,lOut);
@@ -511,18 +514,18 @@ void dump_to_dxf ( TestCase const& aCase )
       dump_region_to_dxf(*aCase.Inner.Input,BLUE,"Input",lDxf);
     }
     
-    if ( aCase.Inner.Skeleton )
+    if ( aCase.Inner.PartialSkeleton )
     {
       if ( sVerbose )
         cout << "    Dumping inner skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Inner.Skeleton,YELLOW,GREEN,PURPLE,GRAY,"InnerSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Inner.PartialSkeleton,YELLOW,GREEN,PURPLE,GRAY,"InnerSkeleton",lDxf);
     }
       
-    if ( aCase.Outer.Skeleton )
+    if ( aCase.Outer.PartialSkeleton )
     {
       if ( sVerbose )
         cout << "    Dumping outer skeleton." << endl ;
-      dump_skeleton_to_dxf(*aCase.Outer.Skeleton,YELLOW,GREEN,PURPLE,GRAY,"OuterSkeleton",lDxf);
+      dump_skeleton_to_dxf(*aCase.Outer.PartialSkeleton,YELLOW,GREEN,PURPLE,GRAY,"OuterSkeleton",lDxf);
     }
           
     dump_region_to_dxf(aCase.Inner.Contours,GRAY,"InnerOffset",lDxf);
@@ -694,7 +697,9 @@ bool test_zone ( Zone& rZone )
   ISlsPtr lFullSls, lPar ;  
   double  lFullSkeletonTime  ;
   
-  bool rOK = create_skeleton(rZone);
+  bool lUseFullSkeleton =  sMaxTime == 0 || sAlwaysTestFullSkeleton ;
+  
+  bool rOK = lUseFullSkeleton ? create_skeleton(rZone) : true ;
   
   if ( sMaxTime > 0 )
   {
@@ -1043,6 +1048,8 @@ int main( int argc, char const* argv[] )
     }
   }  
     
+  bool lDoNotUsePartialSkeleton = false ;
+    
   for( vector<string>::const_iterator ait = args.begin() ; ait != args.end() ; ++ ait ) 
   {
     string arg = *ait ;
@@ -1051,6 +1058,13 @@ int main( int argc, char const* argv[] )
     {
       case '-' :
       {
+        if ( arg == "--full_skeleton" )
+        {
+          sAlwaysTestFullSkeleton = true ;
+          cout << "ALways testing full skeleton even if partial skeleton is used when offsetting." << endl ;
+          break ;
+        }  
+        
         switch(arg[1])
         {
           case 'e' : sDumpEPS     = true ; break ;
@@ -1063,17 +1077,6 @@ int main( int argc, char const* argv[] )
           case 'n' : sNoOp         = true ; break ;
           case 'g' : sValidateGeometry = true ; break ;
           
-          case 't' : 
-            if ( arg.length() > 2 ) 
-            {
-              sMaxTime = atof(&arg[2]) ; 
-              sOffsetAtNodes = false ;
-              sOffset = sMaxTime ;
-              sOffsetCount = 1 ;
-              cout << "Only creating partial skeleton for offsetting at " << sMaxTime << std::endl ;
-            }
-            break ;
-            
           case 'r' : 
             if ( arg.length() > 2 ) 
               sMaxShift = atoi(&arg[2]) ; 
@@ -1165,11 +1168,9 @@ int main( int argc, char const* argv[] )
                   {
                     sOffset = atof(sopt.c_str()) ; 
                     sOffsetCount = 1 ;
-                    sMaxTime = sOffset ;
                     cout << "Single Offset set at " << sOffset << endl ;
                   }
                   sMaxTime = sOffset * sOffsetCount ;
-                  cout << "Creating partial skeleton at max depth: " << sMaxTime << endl ;
                 }
               }
             }
@@ -1194,15 +1195,26 @@ int main( int argc, char const* argv[] )
               cout << "Not testing outside the polygon" << endl ;
               sTestOuter = false ; 
               break ;
+           case 'p' : 
+              lDoNotUsePartialSkeleton = true ; 
+              break ;
           }
         }
       }
       break ;
     }
+              
+    
   }
   
   if ( lContinueOnErrorAssertionFailed )
     set_error_behaviour(CONTINUE);
+  
+  if ( lDoNotUsePartialSkeleton )
+   sMaxTime = 0 ;
+   
+  if ( sMaxTime > 0 )  
+    cout << "Creating partial skeleton at max depth: " << sMaxTime << endl ;
     
   if ( sVerbose ) 
     cout << "Verbose mode is ON" << endl ;
@@ -1332,13 +1344,15 @@ int main( int argc, char const* argv[] )
          << "     -l      Dump offset polygons." << endl 
          << "     -n      No-op mode. Doesn't create skeletons." << endl 
          << "     -g      Validate results geometrically and not just topologically." << endl
-         << "     -F      Do not use partial skeletons for offsetting." << endl
          << "     -fPATH  Append PATH to each filename" << endl 
          << "     -rMAX   Rotate input vertex sequence by one vertex up to MAX times" << endl
          << "     -mMAX   Ignore polygons with a vertex count greater than MAX" << endl
          << endl 
+         << "     --full_skeleton  Create, verify and discard full skeleton even if partial skeleton will be used (for offsetting)." << endl
+         << endl
          << "     ~i    Do not test the polygon inside." << endl 
          << "     ~o    Do not test the polygon outside." << endl 
+         << "     ~p    Do not use partial skeletons for offsetting, use full skeleton instead." << endl
          << endl 
          << "     -xDX       Translates the polygons by DX (horiontally)." << endl 
          << "     -yDY       Translates the polygons by DY (vertically)." << endl 
