@@ -1860,6 +1860,20 @@ Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#application/pdf
 Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
+GraphicsView/TODO -text
+GraphicsView/demo/GraphicsView/#README# -text
+GraphicsView/demo/GraphicsView/MainWindow.qrc -text
+GraphicsView/demo/GraphicsView/MainWindow.rcc -text
+GraphicsView/demo/GraphicsView/MainWindow.ui -text
+GraphicsView/demo/GraphicsView/icons/cgal_logo.xpm -text
+GraphicsView/demo/GraphicsView/icons/delaunay.png -text
+GraphicsView/demo/GraphicsView/icons/filenew.png -text
+GraphicsView/demo/GraphicsView/icons/fileopen.png -text
+GraphicsView/demo/GraphicsView/icons/filesave.png -text
+GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
+GraphicsView/demo/GraphicsView/icons/polyline.png -text
+GraphicsView/demo/GraphicsView/icons/voronoi.png -text
+GraphicsView/demo/GraphicsView/makefile -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text svneol=unset#application/postscript
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf

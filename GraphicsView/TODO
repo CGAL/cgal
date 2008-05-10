@@ -1,0 +1,9 @@
+What's to do? Almost everything!
+
+Currently in demo/GraphicsView you can find
+- the files which are the demo files
+- the files that should go somewhere under include/CGAL/IO/...
+- the files that should go in src/CgalQt
+
+
+
