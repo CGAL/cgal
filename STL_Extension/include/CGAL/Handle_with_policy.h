@@ -379,7 +379,7 @@ namespace Intern {
     representation types since they need the pointer in the handle
     for the polymorphy.
 */
-struct Handle_policy_in_place {};
+class Handle_policy_in_place {};
 
 /*!\brief
  * Policy class for \c Handle_with_policy<T> that ignores unifying of
