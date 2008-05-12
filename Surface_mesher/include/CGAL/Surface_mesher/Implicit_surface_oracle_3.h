@@ -103,10 +103,10 @@ namespace CGAL {
   template <
     class GT,
     class Surface,
-    class Transform_functor = 
+    class Transform_functor_ = 
       typename Real_embeddable_traits<typename Surface::FT>::Sign,
-    class Surface_identifiers_generator = 
-      Return_min<typename Transform_functor::result_type>,
+    class Surface_identifiers_generator_ = 
+      Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
     class Visitor = Null_oracle_visitor
@@ -116,13 +116,13 @@ namespace CGAL {
     // private types
     typedef Implicit_surface_oracle_3<GT,
                                       Surface,
-                                      Transform_functor,
-                                      Surface_identifiers_generator,
+                                      Transform_functor_,
+                                      Surface_identifiers_generator_,
                                       Point_creator,
                                       Visitor> Self;
 
     typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
-    
+
     typedef typename GT::Point_3 Point;
 
     typedef typename GT::FT FT;
@@ -137,6 +137,9 @@ namespace CGAL {
     typedef typename GT::Ray_3 Ray_3;
     typedef typename GT::Line_3 Line_3;
 
+    typedef Transform_functor_ Transform_functor;
+    typedef Surface_identifiers_generator_ Surface_identifiers_generator;
+    
     typedef Point_3 Intersection_point;
 
     typedef Surface Surface_3;
@@ -441,7 +444,7 @@ namespace CGAL {
 
     bool is_in_volume(const Surface_3& surface, const Point& p) const
     {
-      return Intersect_3::surf_equation(surface, p)<0.;
+      return surface(p) < 0;
     }
 
   };  // end Implicit_surface_oracle_3
