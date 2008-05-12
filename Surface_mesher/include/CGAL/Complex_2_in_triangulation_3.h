@@ -365,7 +365,7 @@ public:
     }
   } // end face_status(const Vertex_handle&, const Vertex_handle&)
 
-  Face_status face_status (Vertex_handle v)
+  Face_status face_status (const Vertex_handle& v)
   {
     if(v->is_c2t3_cache_valid() && v->cached_number_of_incident_facets() == 0)
       return NOT_IN_COMPLEX;
