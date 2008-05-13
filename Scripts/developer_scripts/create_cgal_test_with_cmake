@@ -55,8 +55,13 @@ create_script()
   echo "# - running the script should not require any user interaction"
   echo "# - the script should clean up object files and executables"
   echo
-  echo "ERRORFILE=error.txt"
-  echo "DO_RUN=${DO_RUN}"
+cat << EOF
+  ERRORFILE=error.txt
+  DO_RUN=${DO_RUN}
+  if [ -z "\${MAKE_CMD}" ]; then
+    MAKE_CMD=make
+  fi
+EOF
   echo
   header "configure"
   echo
