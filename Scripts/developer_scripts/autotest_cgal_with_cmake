@@ -240,21 +240,21 @@ export MAKE_CMD;
 export CGAL_BINARY_DIR;
 cd ${CGAL_BINARY_DIR};
 cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE -DWITH_examples=FALSE -DRUNNING_CGAL_AUTO_TEST=TRUE ../../..; 
-${MAKE_CMD} -fMakefile;
+${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
         chmod ugo+x ${CGAL_BINARY_DIR}/localbuildscript.${1}
         remote_command ${1} "${CGAL_BINARY_DIR}/localbuildscript.${1}" >> ${ACTUAL_LOGFILE} 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
-        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log  ${CGAL_TEST_DIR}/CMakeError_${i}.log
+        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log ${CGAL_BINARY_DIR}/test/CMakeError_${i}.log
       fi
       
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log" ]; then                           
-        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_TEST_DIR}/CMakeOutput_${i}.log
+        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_BINARY_DIR}/test/CMakeOutput_${i}.log
       fi
       
-      cp ${ACTUAL_LOGFILE} ${ACTUAL_LOGFILE}.${1}.build
+      cp ${ACTUAL_LOGFILE} ${CGAL_BINARY_DIR}/test/${ACTUAL_LOGFILE}.${1}.build
       
     done
       
@@ -321,7 +321,7 @@ rm -rf ${CGAL_BINARY_DIR}/test;
 cp -r ${CGAL_TEST_DIR} ${CGAL_BINARY_DIR}/test;
 cd ${CGAL_BINARY_DIR}/test;
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
-nice ${NICE_OPTIONS} make ${MAKE_OPTS} -fmakefile2;
+nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
