@@ -150,8 +150,8 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     NT gcdcont = CGALi::gcd_utcf_(p1c, p2c);
 
     // compute gcd of primitive parts
-    p1 = div_utcf(p1, p1c, true); 
-    p2 = div_utcf(p2, p2c, true); 
+    p1 = div_utcf(p1, p1c/*, true*/); 
+    p2 = div_utcf(p2, p2c/*, true*/); 
 
  
     Polynomial<NT> q, r;
@@ -192,7 +192,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
     }
 #endif
 
-    p2 = CGALi::div_utcf(p2, content_utcf_(p2), true);
+    p2 = CGALi::div_utcf(p2, content_utcf_(p2)/*, true*/);
 
     // combine both parts to proper gcd
     p2 *= gcdcont;
