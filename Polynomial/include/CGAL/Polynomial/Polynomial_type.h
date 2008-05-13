@@ -401,16 +401,19 @@ public:
      // Interval Newton method used in the Voronoi Diagram of Ellipses
     template <class NTX>
     typename Coercion_traits<NTX,NT>::Type 
-    evaluate(const NTX& x) const {
+    evaluate(const NTX& x_) const {
         typedef Coercion_traits<NTX,NT> CT;
         typename CT::Cast cast;
-    
+        
         CGAL_precondition( degree() >= 0 );
         int d = degree();
-    
+        typename CT::Type x = cast(x_);
         typename CT::Type y=cast(this->ptr()->coeff[d]);
-        while (--d >= 0) 
-            y = y*cast(x) + cast(this->ptr()->coeff[d]);
+        while (--d >= 0){
+            //    y = y*x + cast(this->ptr()->coeff[d]);
+            y *= x;
+            y += cast(this->ptr()->coeff[d]);
+        }
         return y; 
     }
 public:
