@@ -23,6 +23,8 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <iterator>
 #include <list>
@@ -434,13 +436,12 @@ typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel::Bigfloat_interval
 inline
 convert_to_bfi(const CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS >& x){
     typedef typename Get_arithmetic_kernel<COEFF>::Arithmetic_kernel AT;
-    typedef typename AT::Bigfloat BF;
     typedef typename AT::Bigfloat_interval BFI; 
     typedef CGALi::Algebraic_real_pure< COEFF, RAT, POLICY, REPCLASS > ALG;
 
     if (x.is_rational()) return convert_to_bfi(x.rational());
     
-    if(CGAL::sign(x) == CGAL::ZERO) return (BF(0));
+    if(CGAL::sign(x) == CGAL::ZERO) return (BFI(0));
     
     CGAL_postcondition(CGAL::sign(x.low()) == CGAL::sign(x.high()));
     long final_prec = set_precision( BFI(),get_precision( BFI())+4);

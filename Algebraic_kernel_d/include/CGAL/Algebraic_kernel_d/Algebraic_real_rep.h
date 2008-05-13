@@ -21,15 +21,11 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/may_have_common_factor.h>
-#include <CGAL/interval_support.h>
 #include <boost/optional.hpp>
 
 CGAL_BEGIN_NAMESPACE
-;
 
 namespace CGALi {
-
-
 
 // definition of the Algebraic_real_rep x:
     

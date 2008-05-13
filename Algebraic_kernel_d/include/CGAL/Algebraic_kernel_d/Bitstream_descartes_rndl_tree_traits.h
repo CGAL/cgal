@@ -25,21 +25,15 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Sqrt_extension.h>
-// #include <CGAL/Algebraic_kernel_d/interval_support.h>
-#include <CGAL/interval_support.h>
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <CGAL/Algebraic_kernel_d/Integer_iterator.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 
 #include <vector>
-
-/*#ifdef LiS_HAVE_CORE
-#include <NiX/CORE/BigInt.h>
-#include <NiX/CORE/BigRat.h>
-#include <NiX/CORE/Expr.h>
-#endif // LiS_HAVE_CORE
-*/
 
 CGAL_BEGIN_NAMESPACE
 
@@ -53,9 +47,9 @@ class Bitstream_descartes_rndl_tree_traits{
 
 // typedefs
     typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel AT;
-    typedef typename AT::Bigfloat          BF;
     typedef typename AT::Bigfloat_interval BFI;
-    typedef typename AT::Field_with_sqrt   FWS;
+    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF; 
+//    typedef typename AT::Bigfloat          BF;
     
     typedef  CGAL::Polynomial<NT> POLY; 
     typedef  Bitstream_descartes_rndl_tree_traits< NT > Self;
@@ -78,9 +72,7 @@ convert_coeffs(
     
     BFI root(0);
     for(int i = 0; i <= poly.degree(); i++){
-        if(poly[i].is_extended()){
-            //typename Coercion_traits<FWS,ROOT >::Cast cast_root;  
-            //root = convert_to_bfi(NiX::sqrt(cast_root(poly[i].root())));
+        if(poly[i].is_extended()){ 
             root = CGAL::sqrt(convert_to_bfi(poly[i].root()));
             break;  
         }
@@ -168,7 +160,8 @@ public:
         Upper_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
         
         bool initial_upper_bound(int i, long& upper_log, bool& is_certainly_zero){
-            if (is_certainly_zero = ( ptr->polynomial[i] == NT(0) )) return true;
+            is_certainly_zero = CGAL::is_zero(ptr->polynomial[i]);
+            if (is_certainly_zero) return true;
  
             typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs ceil_log2_abs;
             upper_log = ceil_log2_abs(ptr->polynomial_approx[i]);
@@ -279,11 +272,6 @@ public:
     typedef typename CGALi::Real_embeddable_extension<Integer>::Ceil_log2_abs Ceil_log2_abs_Integer;
     typedef typename CGALi::Real_embeddable_extension<long>::Ceil_log2_abs Ceil_log2_abs_long;
 };
-
-
-
-
-
 
 } // namespace CGALi
 

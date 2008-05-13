@@ -30,7 +30,10 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_H
 
 #include <CGAL/basic.h>
-#include <CGAL/interval_support.h>
+
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>

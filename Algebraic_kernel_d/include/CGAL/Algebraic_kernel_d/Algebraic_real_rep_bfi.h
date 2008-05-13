@@ -27,6 +27,9 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
+#include <CGAL/convert_to_bfi.h>
 
 
 CGAL_BEGIN_NAMESPACE;

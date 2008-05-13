@@ -22,15 +22,14 @@
 #ifdef CGAL_USE_LEDA
 
 #include <LEDA/numbers/digit.h>
-// #include <CGAL/Algebraic_kernel_d/leda_interval_support.h>
-#include <CGAL/leda_interval_support.h>
+#include <CGAL/leda_bigfloat_interval.h>
 
 #endif
 
 #ifdef CGAL_USE_CORE
 
 // #include <CGAL/Number_types/core_interval_support.h>
-#include <CGAL/core_interval_support.h>
+#include <CGAL/CORE_BigFloat.h>
 
 #endif
 
