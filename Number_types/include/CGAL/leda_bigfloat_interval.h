@@ -17,11 +17,14 @@
 #include <LEDA/numbers/bigfloat.h>
 #endif
 
+#include <boost/numeric/interval.hpp>
+
 #include <CGAL/leda_integer.h>
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_real.h>
 #include <CGAL/leda_bigfloat.h>
-#include <boost/numeric/interval.hpp>
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 namespace CGALi {
@@ -237,9 +240,10 @@ struct Coercion_traits< leda_bigfloat_interval , ::leda::rational >{
         typedef Type result_type;
         Type operator()(const leda_bigfloat_interval& x)  const { return x;}
         Type operator()(const ::leda::rational x) const {
+            long prec = ::leda::bigfloat::get_precision();
             leda_bigfloat_interval result (
-                    leda_bigfloat::from_rational(x, ::leda::bigfloat::get_precision(), leda::TO_N_INF),
-                    leda_bigfloat::from_rational(x, ::leda::bigfloat::get_precision(), leda::TO_P_INF));
+                    leda_bigfloat::from_rational(x,prec,leda::TO_N_INF),
+                    leda_bigfloat::from_rational(x,prec,leda::TO_P_INF));
             CGAL_postcondition( result.lower() <= x );
             CGAL_postcondition( result.upper() >= x );
             return result; 
@@ -260,7 +264,8 @@ struct Coercion_traits< leda_bigfloat_interval , ::leda::real >{
         Type operator()(const ::leda::real x) const {
             long current_prec = ::leda::bigfloat::get_precision();
             x.guarantee_relative_error(current_prec);
-            leda_bigfloat_interval result(x.get_lower_bound(), x.get_upper_bound());
+            leda_bigfloat_interval 
+                result(x.get_lower_bound(), x.get_upper_bound());
             CGAL_postcondition( result.lower() <= x );
             CGAL_postcondition( result.upper() >= x );
             return result;
@@ -278,6 +283,178 @@ template <> struct Coercion_traits< ::leda::real, leda_bigfloat_interval >
     :public Coercion_traits< leda_bigfloat_interval , ::leda::real>{};        
         
 
+
+template<>
+class Interval_traits<leda_bigfloat_interval>
+{
+public: 
+    typedef Interval_traits<leda_bigfloat_interval> Self; 
+    typedef leda_bigfloat_interval Interval; 
+    typedef leda::bigfloat Boundary; 
+    typedef CGAL::Tag_true Is_interval; 
+    typedef CGAL::Tag_true With_empty_interval; 
+
+    struct Construct :public Binary_function<Boundary,Boundary,Interval>{
+        Interval operator()( const Boundary& l,const Boundary& r) const {
+            CGAL_precondition( l < r ); 
+            return Interval(l,r);
+        }
+    };
+
+    struct Lower :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return a.lower();
+        }
+    };
+
+    struct Upper :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return a.upper();
+        }
+    };
+
+    struct Width :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::width(a);
+        }
+    };
+
+    struct Median :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::median(a);
+        }
+    };
+    
+    struct Norm :public Unary_function<Interval,Boundary>{
+        Boundary operator()( const Interval& a ) const {
+            return ::boost::numeric::norm(a);
+        }
+    };
+
+    struct Empty :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::empty(a);
+        }
+    };
+
+    struct Singleton :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::singleton(a);
+        }
+    };
+
+    struct Zero_in :public Unary_function<Interval,bool>{
+        bool operator()( const Interval& a ) const {
+            return ::boost::numeric::in_zero(a);
+        }
+    };
+
+    struct In :public Binary_function<Boundary,Interval,bool>{
+        bool operator()( Boundary x, const Interval& a ) const {
+            return ::boost::numeric::in(x,a);
+        }
+    };
+
+    struct Equal :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::equal(a,b);
+        }
+    };
+    
+    struct Overlap :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::overlap(a,b);
+        }
+    };
+    
+    struct Subset :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::subset(a,b);
+        }
+    };
+    
+    struct Proper_subset :public Binary_function<Interval,Interval,bool>{
+        bool operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::proper_subset(a,b);
+        }
+    };
+    
+    struct Hull :public Binary_function<Interval,Interval,Interval>{
+        Interval operator()( const Interval& a, const Interval& b ) const {
+            return ::boost::numeric::hull(a,b);
+        }
+    };
+    
+    struct Intersection :public Binary_function<Interval,Interval,Interval>{
+        Interval operator()( const Interval& a, const Interval& b ) const {
+            Interval r = ::boost::numeric::intersect(a,b);      
+            return r;
+        }
+    };
+};
+
+template<>
+class Bigfloat_interval_traits<leda_bigfloat_interval>
+    :public Interval_traits<leda_bigfloat_interval> 
+{
+    
+public:
+    typedef Bigfloat_interval_traits<leda_bigfloat_interval> Self;
+    typedef leda_bigfloat_interval NT;
+    typedef leda::bigfloat BF;
+
+    struct Get_significant_bits : public Unary_function<NT,long>{
+
+        long operator()( NT x) const {
+            leda::bigfloat lower = x.lower();
+            leda::bigfloat upper = x.upper();
+
+            leda::integer lower_m = lower.get_significant();
+            leda::integer upper_m = upper.get_significant();
+             
+            leda::integer lower_exp = lower.get_exponent();
+            leda::integer upper_exp = upper.get_exponent();
+             
+            long shift = (upper_exp - lower_exp).to_long();
+            if(shift >= 0 ) upper_m = (upper_m <<  shift);
+            else            lower_m = (lower_m << -shift);
+             
+            //CGAL_postcondition(lower_m.length() == upper_m.length());
+             
+            leda::integer err = lower_m-upper_m; 
+             
+            return std::max(lower_m.length()-err.length(),0);
+             
+        }
+    };
+  
+    struct Set_precision : public Unary_function<long,long> {
+        long operator()( long prec ) const {
+            return BF::set_precision(prec); 
+        }
+    };
+     
+    struct Get_precision {
+        // type for the \c AdaptableGenerator concept.
+        typedef long  result_type;  
+        long operator()() const {
+            return BF::get_precision(); 
+        }
+    };
+};
+
+
+::leda::bigfloat inline relative_error(const leda_bigfloat_interval& x){
+    if(in_zero(x)){
+        return CGAL::abs(x).upper();
+    }else{
+        return (width(x) / CGAL::abs(x)).upper();
+    }
+}
+
+leda_bigfloat_interval inline ipower(const leda_bigfloat_interval& x, int i ){
+    return ::boost::numeric::pow(x,i);
+}
 
 
 CGAL_END_NAMESPACE

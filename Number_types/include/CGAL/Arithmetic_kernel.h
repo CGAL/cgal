@@ -32,8 +32,7 @@
 #include <CGAL/leda_rational.h>
 #include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_real.h>
-
-#include <CGAL/leda_interval_support.h>
+#include <CGAL/leda_bigfloat_interval.h>
 
 #endif // CGAL_USE_LEDA
 
