@@ -43,7 +43,8 @@ create_cmake_script()
   echo '# This is the CMake script for compiling a CGAL application.'
   echo
   
-  
+  echo "project( ${PROJECT} ) "
+  echo
   echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
   echo
 
@@ -144,6 +145,7 @@ for i do
 done
 
 OUTPUTFILE=CMakeLists.txt
+PROJECT=`basename $PWD`
 
 if [ -f ${OUTPUTFILE} ] ; then
   echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
