@@ -59,11 +59,25 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
+class Arithmetic_kernel_base{
+public:
+    typedef CGAL::Null_tag Integer;
+    typedef CGAL::Null_tag Rational;
+    typedef CGAL::Null_tag Field_with_sqrt;
+    typedef CGAL::Null_tag Field_with_kth_root;
+    typedef CGAL::Null_tag Field_with_root_of;
+    typedef CGAL::Null_tag Bigfloat;
+    typedef CGAL::Null_tag Bigfloat_interval;
+};
+
+}
 #ifdef CGAL_USE_LEDA 
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The LEDA set of exact number types
  */
-class LEDA_arithmetic_kernel {
+class LEDA_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef leda_integer Integer;
@@ -85,7 +99,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The CORE set of exact number types
  */
-class CORE_arithmetic_kernel {
+class CORE_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CORE::BigInt Integer;
@@ -96,7 +110,7 @@ public:
     //! exact root expressions, constructible from integers and rationals
     typedef CORE::Expr Field_with_sqrt;
     // undocumented
-    typedef CORE::BigFloat          Bigfloat;
+    //typedef CORE::BigFloat          Bigfloat;
     typedef CORE::BigFloat          Bigfloat_interval;
 
 };
@@ -106,7 +120,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
  */
-class GMP_arithmetic_kernel {
+class GMP_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef CGAL::Gmpz Integer;
@@ -116,6 +130,8 @@ public:
     typedef CGAL::Gmpq Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CGAL::Null_tag  Field_with_sqrt;
+    typedef CGAL::Null_tag  Field_with_kth_root;
+    typedef CGAL::Null_tag  Field_with_root_of;
 };
 #endif // CGAL_USE_GMP
 
@@ -123,7 +139,7 @@ public:
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
  */
-class GMPXX_arithmetic_kernel {
+class GMPXX_arithmetic_kernel : public CGALi::Arithmetic_kernel_base {
 public:
     //! exact integers
     typedef mpz_class Integer;

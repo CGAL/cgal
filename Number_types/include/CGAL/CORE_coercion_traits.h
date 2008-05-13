@@ -38,14 +38,6 @@ CGAL_BEGIN_NAMESPACE
 
 //CORE internal coercions:
 
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::Expr)
-
-    // CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigFloat,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigFloat,::CORE::Expr)
-
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigRat,::CORE::Expr)
 
 // The following definitions reflect the interaction of the CORE number types
 // with the built in types,
@@ -56,27 +48,103 @@ CGAL_BEGIN_NAMESPACE
 
 
 // CORE BigRat:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::BigRat)
-
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigRat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::BigRat)
-
-
-// CORE BigFloat:      :
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::BigFloat)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::BigRat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::BigRat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long          ,::CORE::BigRat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::BigRat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigRat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::BigRat)
 
 // CORE Expr:
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,::CORE::Expr)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::CORE::Expr)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::CORE::Expr)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::CORE::Expr)
-    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long          ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigInt,::CORE::Expr)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::CORE::BigRat,::CORE::Expr)
+
+
+
+// NOTE that CORE::BigFloat counts as an interval ! 
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short         ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int           ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long          ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float         ,::CORE::BigFloat)
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double        ,::CORE::BigFloat);
+
+template <> 
+struct Coercion_traits<CORE::BigFloat , ::CORE::BigInt>{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    typedef CORE::BigFloat Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const CORE::BigFloat& x)  const { return x;}
+        Type operator()(const ::CORE::BigInt x) const {
+            CORE::BigFloat result;
+            result.approx(x,CORE::defRelPrec.toLong(),1024);
+            // Do not use MakeFloorExact as it changes the Bigfloat
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            return result; 
+        }
+    };
+};
+
+template <> 
+struct Coercion_traits<CORE::BigFloat , ::CORE::BigRat>{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    typedef CORE::BigFloat Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const CORE::BigFloat& x)  const { return x;}
+        Type operator()(const ::CORE::BigRat x) const {
+            
+            CORE::BigFloat result(x,CORE::defRelPrec.toLong(),1024);
+            // Do not use MakeFloorExact as it changes the Bigfloat
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            return result; 
+        }
+    };
+};
+
+template <> 
+struct Coercion_traits<CORE::BigFloat , ::CORE::Expr>{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    typedef CORE::BigFloat Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const CORE::BigFloat& x)  const { return x;}
+        Type operator()(const ::CORE::Expr x) const {
+            CORE::BigFloat result(x, CORE::defRelPrec.toLong(),1024);
+            // Do not use MakeFloorExact as it changes the Bigfloat
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()-result.err(),0,result.exp())) <= x );
+            CGAL_postcondition( ::CORE::BigRat(::CORE::BigFloat(result.m()+result.err(),0,result.exp())) >= x );
+            return result; 
+        }
+    };
+};
+
+template <> struct Coercion_traits< ::CORE::BigInt, CORE::BigFloat >
+    :public Coercion_traits< CORE::BigFloat , ::CORE::BigInt >{}; 
+
+template <> struct Coercion_traits< ::CORE::BigRat, CORE::BigFloat >
+    :public Coercion_traits< CORE::BigFloat , ::CORE::BigRat >{}; 
+
+template <> struct Coercion_traits< ::CORE::Expr, CORE::BigFloat >
+    :public Coercion_traits< CORE::BigFloat , ::CORE::Expr>{};        
+        
+
+
+
+
 
 // not provieded by CORE
 // Note that this is not symmetric to LEDA

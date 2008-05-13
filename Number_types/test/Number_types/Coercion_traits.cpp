@@ -32,65 +32,90 @@
 
 typedef CGAL::Interval_nt<false> Interval;  
 
-template <class AT> 
-void AT_coercion_test_at_int(){
-    typedef typename AT::Integer Integer;
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short  ,Integer>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Integer>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Integer>();
-}
+void test_coercion_from_to(CGAL::Null_tag, CGAL::Null_tag){};
+template<class A> void test_coercion_from_to(A, CGAL::Null_tag){};
+template<class B> void test_coercion_from_to(CGAL::Null_tag, B){};
+template<class A, class B> void test_coercion_from_to(A, B){
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<A,B>();
+};
 
 template <class AT> 
-void AT_coercion_test_at_bf(){
-    AT_coercion_test_at_int<AT>();
-
-    typedef typename AT::Integer Integer;
-    typedef typename AT::Exact_float_number Bigfloat;    
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short     ,Bigfloat>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Bigfloat>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float   ,Bigfloat>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Bigfloat>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Bigfloat>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat,Bigfloat>();
-}
-
-
-
-template <class AT> 
-void AT_coercion_test_at_rat(){
-    AT_coercion_test_at_bf<AT>();;
-    typedef typename AT::Integer Integer;
-    typedef typename AT::Exact_float_number Bigfloat;
-    typedef typename AT::Rational Rational;
-
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short   ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float   ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat ,Rational>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational,Rational>();
-}
-
-template <class AT> 
-void AT_coercion_test_at_fws(){
-    AT_coercion_test_at_rat<AT>();
+void check_type_coercion_at(){
+    typedef typename AT::Integer Integer; 
+    typedef typename AT::Rational Rational; 
+    typedef typename AT::Field_with_sqrt Field_with_sqrt; 
+    typedef typename AT::Field_with_kth_root Field_with_kth_root; 
+    typedef typename AT::Field_with_root_of  Field_with_root_of; 
+    typedef typename AT::Bigfloat Bigfloat;
+    typedef typename AT::Bigfloat_interval Bigfloat_interval;
     
-    typedef typename AT::Integer Integer;
-    typedef typename AT::Exact_float_number Bigfloat;
-    typedef typename AT::Rational Rational;
-    typedef typename AT::Field_with_sqrt Real;
-
     
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short       ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float       ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat    ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Real>();
-    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Real        ,Real>();
+    test_coercion_from_to(int(),Integer());
+    test_coercion_from_to(short(),Integer());
+    test_coercion_from_to(Integer(),Integer());
+
+    test_coercion_from_to(int(),Rational());
+    test_coercion_from_to(short(),Rational());
+    test_coercion_from_to(float(),Rational());
+    test_coercion_from_to(double(),Rational());
+    test_coercion_from_to(Integer(),Rational());
+    test_coercion_from_to(Bigfloat(),Rational());
+    test_coercion_from_to(Rational(),Rational());
+
+    test_coercion_from_to(int(),Field_with_sqrt());
+    test_coercion_from_to(short(),Field_with_sqrt());
+    test_coercion_from_to(float(),Field_with_sqrt());
+    test_coercion_from_to(double(),Field_with_sqrt());
+    test_coercion_from_to(Integer(),Field_with_sqrt());
+    test_coercion_from_to(Bigfloat(),Field_with_sqrt());
+    test_coercion_from_to(Rational(),Field_with_sqrt());
+    test_coercion_from_to(Field_with_sqrt(),Field_with_sqrt());
+
+    test_coercion_from_to(int(),Field_with_kth_root());
+    test_coercion_from_to(short(),Field_with_kth_root());
+    test_coercion_from_to(float(),Field_with_kth_root());
+    test_coercion_from_to(double(),Field_with_kth_root());
+    test_coercion_from_to(Integer(),Field_with_kth_root());
+    test_coercion_from_to(Bigfloat(),Field_with_kth_root());
+    test_coercion_from_to(Rational(),Field_with_kth_root());
+    test_coercion_from_to(Field_with_sqrt(),Field_with_kth_root());
+    test_coercion_from_to(Field_with_kth_root(),Field_with_kth_root());
+
+
+    test_coercion_from_to(int(),Field_with_root_of());
+    test_coercion_from_to(short(),Field_with_root_of());
+    test_coercion_from_to(float(),Field_with_root_of());
+    test_coercion_from_to(double(),Field_with_root_of());
+    test_coercion_from_to(Integer(),Field_with_root_of());
+    test_coercion_from_to(Bigfloat(),Field_with_root_of());
+    test_coercion_from_to(Rational(),Field_with_root_of());
+    test_coercion_from_to(Field_with_sqrt(),Field_with_root_of());
+    test_coercion_from_to(Field_with_kth_root(),Field_with_root_of());
+    test_coercion_from_to(Field_with_root_of(),Field_with_root_of());
+
+
+    test_coercion_from_to(int(),Bigfloat());
+    test_coercion_from_to(short(),Bigfloat());
+    test_coercion_from_to(float(),Bigfloat());
+    test_coercion_from_to(double(),Bigfloat());
+    test_coercion_from_to(Integer(),Bigfloat());
+    test_coercion_from_to(Bigfloat(),Bigfloat());
+
+
+    test_coercion_from_to(int(),Bigfloat_interval());
+    test_coercion_from_to(short(),Bigfloat_interval());
+    test_coercion_from_to(float(),Bigfloat_interval());
+    test_coercion_from_to(double(),Bigfloat_interval());
+    test_coercion_from_to(Integer(),Bigfloat_interval());
+    test_coercion_from_to(Bigfloat(),Bigfloat_interval());
+    test_coercion_from_to(Rational(),Bigfloat_interval());
+    test_coercion_from_to(Field_with_sqrt(),Bigfloat_interval());
+    test_coercion_from_to(Field_with_kth_root(),Bigfloat_interval());
+    test_coercion_from_to(Field_with_root_of(),Bigfloat_interval());
+    test_coercion_from_to(Bigfloat_interval(),Bigfloat_interval());
+     
 }
+
 
 template <class AT> 
 void AT_coercion_test_for_cgal_types_int(){
@@ -376,7 +401,6 @@ int main(){
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,float>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,double>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int,long double>();
-
     
    
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<long,long long>();
@@ -415,15 +439,18 @@ int main(){
 #endif // CGAL_HAVE_DEFAULT_ARITHMETIC_KERNEL
 
 #ifdef CGAL_USE_LEDA
-  AT_coercion_test_at_fws<CGAL::LEDA_arithmetic_kernel>();
+  check_type_coercion_at<CGAL::LEDA_arithmetic_kernel>();
+  AT_coercion_test_for_cgal_types_fws<CGAL::LEDA_arithmetic_kernel>();
 #endif // CGAL_USE_LEDA
 
 #ifdef CGAL_USE_CORE
-  AT_coercion_test_at_fws<CGAL::CORE_arithmetic_kernel>();
+  check_type_coercion_at<CGAL::CORE_arithmetic_kernel>();
+  AT_coercion_test_for_cgal_types_fws<CGAL::CORE_arithmetic_kernel>();
 #endif // CGAL_USE_CORE
 
 #ifdef CGAL_USE_GMP
-  AT_coercion_test_at_rat<CGAL::GMP_arithmetic_kernel>();
+  check_type_coercion_at<CGAL::GMP_arithmetic_kernel>();
+  AT_coercion_test_for_cgal_types_rat<CGAL::CORE_arithmetic_kernel>();
 #endif // CGAL_USE_GMP
 
   return EXIT_SUCCESS;

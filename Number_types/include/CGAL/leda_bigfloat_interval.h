@@ -17,6 +17,10 @@
 #include <LEDA/numbers/bigfloat.h>
 #endif
 
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_rational.h>
+#include <CGAL/leda_real.h>
+#include <CGAL/leda_bigfloat.h>
 #include <boost/numeric/interval.hpp>
 
 CGAL_BEGIN_NAMESPACE
@@ -190,6 +194,90 @@ public:
         }
     };
 };
+
+
+// Coercion traits:
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short      ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,leda_bigfloat_interval);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat   ,leda_bigfloat_interval);
+
+template <>
+struct Coercion_traits< leda_bigfloat_interval , ::leda::integer >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    
+    typedef leda_bigfloat_interval Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const leda_bigfloat_interval& x)  const { return x;}
+        Type operator()(const ::leda::integer x) const {
+            leda::bigfloat tmp(x);
+            leda_bigfloat_interval result(
+                    round(tmp,leda::bigfloat::get_precision(),leda::TO_N_INF),
+                    round(tmp,leda::bigfloat::get_precision(),leda::TO_P_INF));
+            CGAL_postcondition( result.lower() <= x );
+            CGAL_postcondition( result.upper() >= x );
+            return result; 
+        }
+    };
+};
+
+template <>
+struct Coercion_traits< leda_bigfloat_interval , ::leda::rational >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    
+    typedef leda_bigfloat_interval Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const leda_bigfloat_interval& x)  const { return x;}
+        Type operator()(const ::leda::rational x) const {
+            leda_bigfloat_interval result (
+                    leda_bigfloat::from_rational(x, ::leda::bigfloat::get_precision(), leda::TO_N_INF),
+                    leda_bigfloat::from_rational(x, ::leda::bigfloat::get_precision(), leda::TO_P_INF));
+            CGAL_postcondition( result.lower() <= x );
+            CGAL_postcondition( result.upper() >= x );
+            return result; 
+        }
+    };
+};
+
+template <>
+struct Coercion_traits< leda_bigfloat_interval , ::leda::real >{
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    
+    typedef leda_bigfloat_interval Type;
+    
+    struct Cast{
+        typedef Type result_type;
+        Type operator()(const leda_bigfloat_interval& x)  const { return x;}
+        Type operator()(const ::leda::real x) const {
+            long current_prec = ::leda::bigfloat::get_precision();
+            x.guarantee_relative_error(current_prec);
+            leda_bigfloat_interval result(x.get_lower_bound(), x.get_upper_bound());
+            CGAL_postcondition( result.lower() <= x );
+            CGAL_postcondition( result.upper() >= x );
+            return result;
+        }
+    };
+};
+
+template <> struct Coercion_traits< ::leda::integer, leda_bigfloat_interval >
+    :public Coercion_traits< leda_bigfloat_interval , ::leda::integer >{}; 
+
+template <> struct Coercion_traits< ::leda::rational, leda_bigfloat_interval >
+    :public Coercion_traits< leda_bigfloat_interval , ::leda::rational >{}; 
+
+template <> struct Coercion_traits< ::leda::real, leda_bigfloat_interval >
+    :public Coercion_traits< leda_bigfloat_interval , ::leda::real>{};        
+        
+
 
 
 CGAL_END_NAMESPACE

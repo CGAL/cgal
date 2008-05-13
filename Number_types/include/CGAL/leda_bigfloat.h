@@ -101,6 +101,9 @@ template <> class Real_embeddable_traits< leda_bigfloat >
                                             const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
+        
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
+                Comparison_result ); 
     };
 
     class To_double

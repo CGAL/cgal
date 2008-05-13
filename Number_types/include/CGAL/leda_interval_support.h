@@ -34,7 +34,8 @@ public:
     typedef Interval_traits<leda_bigfloat_interval> Self; 
     typedef leda_bigfloat_interval Interval; 
     typedef leda::bigfloat Boundary; 
-
+    typedef CGAL::Tag_true Is_interval; 
+    typedef CGAL::Tag_true With_empty_interval; 
 
     struct Construct :public Binary_function<Boundary,Boundary,Interval>{
         Interval operator()( const Boundary& l,const Boundary& r) const {
@@ -129,9 +130,7 @@ public:
     
     struct Intersection :public Binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
-            Interval r = ::boost::numeric::intersect(a,b);
-            if (::boost::numeric::empty(r)) 
-                throw Exception_intersection_is_empty();        
+            Interval r = ::boost::numeric::intersect(a,b);      
             return r;
         }
     };
@@ -186,78 +185,79 @@ public:
         }
     };
 
-    struct Convert_to_bfi {
+/*
+  struct Convert_to_bfi {
+  
+  typedef NT result_type;
 
-        typedef NT result_type;
-
-        NT operator()( const leda::real& x ) {
-            long current_prec = ::leda::bigfloat::get_precision();
-            //x.improve_approximation_to(current_prec);
-            x.guarantee_relative_error(current_prec);
+  NT operator()( const leda::real& x ) {
+  long current_prec = ::leda::bigfloat::get_precision();
+  //x.improve_approximation_to(current_prec);
+  x.guarantee_relative_error(current_prec);
              
-            leda::bigfloat bnum = x.to_bigfloat();  
-            leda::bigfloat berr = x.get_bigfloat_error();
+  leda::bigfloat bnum = x.to_bigfloat();  
+  leda::bigfloat berr = x.get_bigfloat_error();
              
-            leda::bigfloat low 
-                = leda::sub(bnum,berr,current_prec,LEDA::TO_N_INF);
-            leda::bigfloat upp 
-                = leda::add(bnum,berr,current_prec,LEDA::TO_P_INF);
-            leda_bigfloat_interval bfi(low,upp) ;
+  leda::bigfloat low 
+  = leda::sub(bnum,berr,current_prec,LEDA::TO_N_INF);
+  leda::bigfloat upp 
+  = leda::add(bnum,berr,current_prec,LEDA::TO_P_INF);
+  leda_bigfloat_interval bfi(low,upp) ;
              
-            //     std::cout <<"x: "<<  x << std::endl;
-            //     std::cout <<"bfi.lower(): "<<  bfi.lower() << std::endl;
-            //     std::cout <<"bfi.upper(): "<<  bfi.upper() << std::endl;
+  //     std::cout <<"x: "<<  x << std::endl;
+  //     std::cout <<"bfi.lower(): "<<  bfi.lower() << std::endl;
+  //     std::cout <<"bfi.upper(): "<<  bfi.upper() << std::endl;
 
-            CGAL_postcondition( bfi.lower() <= x );
-            CGAL_postcondition( bfi.upper() >= x );
+  CGAL_postcondition( bfi.lower() <= x );
+  CGAL_postcondition( bfi.upper() >= x );
              
-            return bfi; 
-        }
+  return bfi; 
+  }
 
 
-        NT operator()(const ::leda::integer& x) {
-            long current_prec = ::leda::bigfloat::get_precision();
-            leda_bigfloat_interval bfi;
-            long length = x.length();
+  NT operator()(const ::leda::integer& x) {
+  long current_prec = ::leda::bigfloat::get_precision();
+  leda_bigfloat_interval bfi;
+  long length = x.length();
              
-            if(length > current_prec) {
-                ::leda::integer significant 
-                    = CGAL::abs(x) >> (length - current_prec);
-                ::leda::bigfloat lower,upper;
-                if(x > 0){
-                    lower = ::leda::bigfloat(significant,length - current_prec);
-                    upper = ::leda::bigfloat(significant+1,length - current_prec);
-                }else{
-                    lower 
-                        = -::leda::bigfloat(significant+1,length - current_prec);
-                    upper 
-                        = -::leda::bigfloat(significant,length - current_prec);
-                }
-                bfi = leda_bigfloat_interval(lower,upper);
-            }else{
-                ::leda::bigfloat bf(x);
-                bfi = leda_bigfloat_interval(bf,bf);
-            }
-            CGAL_postcondition( bfi.lower() <= x );
-            CGAL_postcondition( bfi.upper() >= x );
-            return bfi; 
-        }
+  if(length > current_prec) {
+  ::leda::integer significant 
+  = CGAL::abs(x) >> (length - current_prec);
+  ::leda::bigfloat lower,upper;
+  if(x > 0){
+  lower = ::leda::bigfloat(significant,length - current_prec);
+  upper = ::leda::bigfloat(significant+1,length - current_prec);
+  }else{
+  lower 
+  = -::leda::bigfloat(significant+1,length - current_prec);
+  upper 
+  = -::leda::bigfloat(significant,length - current_prec);
+  }
+  bfi = leda_bigfloat_interval(lower,upper);
+  }else{
+  ::leda::bigfloat bf(x);
+  bfi = leda_bigfloat_interval(bf,bf);
+  }
+  CGAL_postcondition( bfi.lower() <= x );
+  CGAL_postcondition( bfi.upper() >= x );
+  return bfi; 
+  }
 
 
-        NT operator()(const ::leda::rational& x) {
-            long old_prec = ::leda::bigfloat::get_precision();
-            ::leda::bigfloat::set_precision(old_prec*2);
-            Bigfloat_interval_traits<NT>::Convert_to_bfi convert_to_bfi;
-            leda_bigfloat_interval num = convert_to_bfi(x.numerator());
-            leda_bigfloat_interval den = convert_to_bfi(x.denominator());
-            ::leda::bigfloat::set_precision(old_prec);
-            leda_bigfloat_interval bfi = num/den;
-            CGAL_postcondition( bfi.lower() <= x );
-            CGAL_postcondition( bfi.upper() >= x );
-            return bfi; 
-        }
-         
-    };
+  NT operator()(const ::leda::rational& x) {
+  long old_prec = ::leda::bigfloat::get_precision();
+  ::leda::bigfloat::set_precision(old_prec*2);
+  Bigfloat_interval_traits<NT>::Convert_to_bfi convert_to_bfi;
+  leda_bigfloat_interval num = convert_to_bfi(x.numerator());
+  leda_bigfloat_interval den = convert_to_bfi(x.denominator());
+  ::leda::bigfloat::set_precision(old_prec);
+  leda_bigfloat_interval bfi = num/den;
+  CGAL_postcondition( bfi.lower() <= x );
+  CGAL_postcondition( bfi.upper() >= x );
+  return bfi; 
+  }   
+  };
+*/
 };
 
 

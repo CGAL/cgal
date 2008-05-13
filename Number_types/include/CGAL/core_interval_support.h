@@ -30,11 +30,14 @@
 CGAL_BEGIN_NAMESPACE
 
 template<> 
-class Interval_traits<CORE::BigFloat> {
+class Interval_traits<CORE::BigFloat> 
+    : public CGALi::Interval_traits_base<CORE::BigFloat>{
 public: 
+    
+    typedef Interval_traits<CORE::BigFloat> Self; 
     typedef CORE::BigFloat Interval;
     typedef CORE::BigFloat Boundary;
-    typedef Interval_traits<CORE::BigFloat> Self; 
+    typedef CGAL::Tag_true Is_interval; 
  
     struct Lower :public Unary_function<Interval,Boundary>{
         Boundary operator() ( Interval x ) const {   
@@ -176,12 +179,7 @@ public:
         }
     };
 
-    struct Singleton {
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef Interval  argument_type;
-        // type for the \c AdaptableUnaryFunction concept.
-        typedef bool  result_type;
-         
+    struct Singleton :public Unary_function<Interval,bool> {
         bool operator() ( Interval x ) const {       
             return (x.err() == 0); 
         }
@@ -203,27 +201,36 @@ template<typename BFI> long get_significant_bits(BFI bfi);
 CORE::BigFloat 
 inline 
 round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){CGAL_postcondition(rel_prec >= 0);   
+    
+
+
     // since there is not rel prec defined if Zero_in(x)
     if (x.isZeroIn()) return x; 
     if (CGAL::get_significant_bits(x) <= rel_prec) return x;
    
+// if 1 
+    BigFloat xr;
+    xr.approx(x,rel_prec,1024);
     typedef CORE::BigFloat BF; 
-    typedef CORE::BigFloat BFI; 
-    typedef CORE::BigInt Integer;
-    BF xr;
+// else       
+//     typedef CORE::BigFloat BF; 
+//     typedef CORE::BigFloat BFI; 
+//     typedef CORE::BigInt Integer;
+//     BF xr;
    
-    CORE::BigInt m = x.m();
-    long         err = x.err();
-    long         exp = x.exp(); 
+//     CORE::BigInt m = x.m();
+//     long         err = x.err();
+//     long         exp = x.exp(); 
    
-    long shift = ::CORE::bitLength(m) - rel_prec - 1;
-    if( shift > 0 ){    Integer new_m   = m >> shift ; 
-        if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
-        }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
-        }
-    }else{    // noting to do
-        xr = x; 
-    }
+//     long shift = ::CORE::bitLength(m) - rel_prec - 1;
+//     if( shift > 0 ){    Integer new_m   = m >> shift ; 
+//         if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
+//         }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
+//         }
+//     }else{    // noting to do
+//         xr = x; 
+//     }
+// endif     
 
     CGAL_postcondition(CGAL::abs(CGAL::get_significant_bits(xr) - rel_prec) <= 1);   
     CGAL_postcondition(BF(xr.m()-xr.err(),0,xr.exp()) <= BF(x.m()-x.err(),0,x.exp()));
@@ -232,6 +239,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){CGAL_
 }
 
 template<> class Bigfloat_interval_traits<CORE::BigFloat> 
+:public Interval_traits<CORE::BigFloat>
 {
 public:
     typedef CORE::BigFloat NT;
@@ -280,8 +288,6 @@ public:
     };
 
     struct Convert_to_bfi {
-    
-
         typedef NT result_type;
 
         NT operator() (const ::CORE::Expr& x){

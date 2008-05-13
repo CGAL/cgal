@@ -10,6 +10,8 @@
 #include <CGAL/leda_interval_support.h>
 #endif
 
+#include <CGAL/Test/_test_interval.h>
+
 template<class Interval_>
 void generic_test_interval(){
    
@@ -176,14 +178,12 @@ void generic_test_convert_to_bfi(){
 int main(){
 
 #ifdef CGAL_USE_LEDA
-    generic_test_interval<CGAL::leda_bigfloat_interval>();
+    CGAL::test_interval<CGAL::leda_bigfloat_interval>();
     generic_test_bigfloat_interval<CGAL::leda_bigfloat_interval>();
-
-    
 #endif 
 
 #ifdef CGAL_USE_CORE
-    generic_test_interval<CORE::BigFloat>();
+    CGAL::test_interval<CORE::BigFloat>();
     generic_test_bigfloat_interval<CORE::BigFloat>();
 #endif 
 

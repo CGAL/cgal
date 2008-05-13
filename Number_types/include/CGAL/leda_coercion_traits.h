@@ -43,7 +43,6 @@
 #include <LEDA/numbers/real.h>
 #endif
 
-
 CGAL_BEGIN_NAMESPACE
 
 
@@ -86,6 +85,7 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int        ,::leda::real)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float      ,::leda::real)
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double     ,::leda::real)
+
 
 //not provided by LEDA
 //Note that this is not symmetric to CORE

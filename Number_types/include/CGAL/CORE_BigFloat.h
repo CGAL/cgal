@@ -143,6 +143,8 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
                                             const Type& y ) const {
           return (Comparison_result) sign( (x-y).sign());
         }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
+                Comparison_result );
     };
 
     class To_double
@@ -178,6 +180,8 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
         }
     };
 };
+
+
 
 CGAL_END_NAMESPACE
 
