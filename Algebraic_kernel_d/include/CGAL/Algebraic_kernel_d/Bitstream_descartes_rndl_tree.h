@@ -286,7 +286,7 @@ public:
             long alpha_num = 1, int log_denom = 1
     ) : alpha_num_(alpha_num),
         beta_num_((1L<<log_denom) - alpha_num),
-        half_((log_denom > 0) ? (1L << log_denom-1) : 0),
+        half_((log_denom > 0) ? (1L << (log_denom-1)) : 0),
         log_denom_(log_denom)
     {
         CGAL_precondition(log_denom_ >= 0);
