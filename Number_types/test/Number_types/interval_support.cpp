@@ -1,14 +1,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/interval_support.h>
-
-#ifdef CGAL_USE_CORE
-#include <CGAL/core_interval_support.h>
-#endif
-
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_interval_support.h>
-#endif
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <CGAL/Test/_test_interval.h>
 
@@ -169,24 +162,37 @@ void generic_test_convert_to_bfi(){
     typedef typename AK::Integer Integer; 
     typedef typename AK::Rational Rational; 
     typedef typename AK::Field_with_sqrt FWS;
+    typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
     
     assert(CGAL::convert_to_bfi(Integer(1)) == Interval(1));
     assert(CGAL::convert_to_bfi(Rational(1)) == Interval(1));
     assert(CGAL::convert_to_bfi(FWS(1)) == Interval(1));   
+    assert(CGAL::convert_to_bfi(EXT(1)) == Interval(1));   
+    
+    typedef typename CGAL::Coercion_traits<Integer,Interval>::Type CT_Integer_type;
+    BOOST_STATIC_ASSERT(( ::boost::is_same<CT_Integer_type, Interval>::value));
+    typedef typename CGAL::Coercion_traits<Rational,Interval>::Type CT_Rational_type;
+    BOOST_STATIC_ASSERT(( ::boost::is_same<CT_Rational_type, Interval>::value));
+    typedef typename CGAL::Coercion_traits<FWS,Interval>::Type CT_FWS_type;
+    BOOST_STATIC_ASSERT(( ::boost::is_same<CT_FWS_type, Interval>::value));
+    typedef typename CGAL::Coercion_traits<EXT,Interval>::Type CT_EXT_type;
+    BOOST_STATIC_ASSERT(( ::boost::is_same<CT_EXT_type, Interval>::value));
 }
 
 int main(){
 
 #ifdef CGAL_USE_LEDA
-    CGAL::test_interval<CGAL::leda_bigfloat_interval>();
-    generic_test_bigfloat_interval<CGAL::leda_bigfloat_interval>();
+    typedef CGAL::LEDA_arithmetic_kernel LEDA_AK;
+    CGAL::test_interval<LEDA_AK::Bigfloat_interval>();
+    generic_test_bigfloat_interval<LEDA_AK::Bigfloat_interval>();
+    generic_test_convert_to_bfi<LEDA_AK::Bigfloat_interval>();
 #endif 
 
 #ifdef CGAL_USE_CORE
-    CGAL::test_interval<CORE::BigFloat>();
-    generic_test_bigfloat_interval<CORE::BigFloat>();
+    typedef CGAL::CORE_arithmetic_kernel CORE_AK;
+    CGAL::test_interval<CORE_AK::Bigfloat_interval>();
+    generic_test_bigfloat_interval<CORE_AK::Bigfloat_interval>();
+    generic_test_convert_to_bfi<CORE_AK::Bigfloat_interval>();
 #endif 
-
-
 
 }

@@ -24,7 +24,9 @@
 #include <cassert>
 #include <CGAL/tags.h>
 
-#include <CGAL/interval_support.h>
+#include <CGAL/Interval_traits.h>
+#include <CGAL/Bigfloat_interval_traits.h>
+
         
 
 
