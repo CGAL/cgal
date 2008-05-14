@@ -22,15 +22,14 @@
 #ifndef CGAL_CORE_BIGFLOAT_H
 #define CGAL_CORE_BIGFLOAT_H
 
+#include <CGAL/basic.h>
 #include <CGAL/number_type_basic.h>
+#include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/Interval_traits.h> 
 #include <CGAL/Bigfloat_interval_traits.h> 
 
 CGAL_BEGIN_NAMESPACE
-
-//template<typename BFI> long inline get_significant_bits(BFI);
-//CORE::BigFloat inline round(const CORE::BigFloat&, long);
 
 // ######### Interval_traits 
 
@@ -214,7 +213,7 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     if (CGAL::get_significant_bits(x) <= rel_prec) return x;
    
 // if 1 
-    BigFloat xr;
+    CORE::BigFloat xr;
     xr.approx(x,rel_prec,1024);
     typedef CORE::BigFloat BF; 
 // else       
@@ -410,7 +409,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
           return (Comparison_result) sign( (x-y).sign());
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
-                Comparison_result );
+                Comparison_result )
     };
 
     class To_double
