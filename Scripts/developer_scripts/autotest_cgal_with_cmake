@@ -3,7 +3,6 @@
 # ----------------------------------------------------
 # autotest_cgal: a script to automagically install and
 #   test internal CGAL releases
-# $Id: autotest_cgal 39459 2007-07-23 08:58:48Z spion $
 # ----------------------------------------------------
 # You will need
 #  * GNU wget and ftp
@@ -18,6 +17,9 @@
 # the testsuite.
 # ----------------------------------------------------
 # ----------------------------------------------------
+#
+# URL $
+# $Id $
 
 #sets the umask to 022 & 0777
 umask 022
@@ -51,7 +53,7 @@ ACTUAL_DIR=`pwd`
 FTP="ftp"
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
 RSH="rsh"
-LOCK_FILE="${CGAL_ROOT}/autotest_cgal.lock"
+LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 NICE_OPTIONS="-19"
 CMAKE_GENERATOR=""
 
@@ -66,25 +68,24 @@ do
     echo "Not uploading results to dashboard"
     DO_NOT_UPLOAD="y"
   fi
+
+  if [ "$arg" = "-n" ]; then
+    echo "Not testsuite will be launched. Compilation only."
+    DO_NOT_TEST="y"
+  fi
 done
 
 # Now loading autocgalrc.
-if [ -f "$HOME"/.autocgalrc ]; then
-  . "$HOME"/.autocgalrc
+if [ -f "$HOME/.autocgal_with_cmake_rc" ]; then
+  . "$HOME/.autocgal_with_cmake_rc"
 else
-  echo "CONFIGURATION FILE .autocgalrc NOT FOUND";
+  if [ -f "$HOME/.autocgalrc" ]; then
+    . "$HOME/.autocgalrc"
+  else
+    echo "CONFIGURATION FILE .autocgal_with_cmake_rc or .autocgalrc NOT FOUND";
+    exit 1
+  fi
 fi
-
-if uname | grep -q "CYGWIN"; then
-  echo "Cygwin detected, using nmake"
-  CMAKE_GENERATOR='-GNMake Makefiles'
-  MAKE_CMD='nmake'
-  IS_CYGWIN='y'
-else
-  echo "Non-cygwin linux detected, using system make."
-  MAKE_CMD='make'
-fi
-
 
 #
 # write to logfile
@@ -99,11 +100,11 @@ log()
         printf "${*} ...\n"
     fi
     printf "\n-------------------------------------------------------\n" \
-        >> ${LOGFILE}
+        >> "${LOGFILE}"
     printf "  ${*} ...\n" \
-        >> ${LOGFILE}
+        >> "${LOGFILE}"
     printf "\n-------------------------------------------------------\n" \
-        >> ${LOGFILE}
+        >> "${LOGFILE}"
 }
 
 # $1 = logfile
@@ -114,11 +115,11 @@ log_done()
         " done\n-------------------------------------------------------\n"
     fi
     printf "\n-------------------------------------------------------\n" \
-        >> ${1}
+        >> "${1}"
     printf "  **DONE**\n" \
-        >> ${1}
+        >> "${1}"
     printf "\n-------------------------------------------------------\n" \
-        >> ${1}
+        >> "${1}"
 }
 
 #
@@ -139,9 +140,9 @@ datestr()
 # $2 = target filename (basename only)
 put_on_web()
 {
-  echo "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
+  log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
   
-  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION"/$2 >> ${ACTUAL_LOGFILE} 2>&1
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}" 2>&1
 }
 
 error()
@@ -149,17 +150,17 @@ error()
     if [ -n "${CONSOLE_OUTPUT}" ]; then
         printf "\nERROR: ${*}, exiting.\n"
     fi
-    printf "\nERROR: ${*}, exiting.\n" >> ${ACTUAL_LOGFILE}
-    ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}
+    printf "\nERROR: ${*}, exiting.\n" >> "${ACTUAL_LOGFILE}"
+    ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
     FILENAME="${CGAL_RELEASE_ID}-log`datestr`.gz"
-    mv ${ACTUAL_LOGFILE}.gz ${LOGS_DIR}/${FILENAME}
+    mv "${ACTUAL_LOGFILE}.gz" "${LOGS_DIR}/${FILENAME}"
     if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
       for i in ${MAIL_ADDRESS}; do
         printf "ERROR\n${LOGS_DIR}/${FILENAME}\n" | \
-            ${SENDMAIL} -s "completed autotest" ${i}
+            ${SENDMAIL} -s "completed autotest" "${i}"
       done
     fi
-    rm -rf $LOCK_FILE;
+    rm -rf "$LOCK_FILE";
     exit 1
 }
 
@@ -206,7 +207,7 @@ build_cgal_libs()
     
     if [ "${LOCAL_BUILD_ON}" = "all" ]; then
       LOCAL_BUILD_ON=""
-      cd ${CGAL_DIR}/cmake/platforms
+      cd "${CGAL_DIR}/cmake/platforms"
       for platform in * 
       do
         if [ -d "${platform}" ]; then
@@ -219,42 +220,42 @@ build_cgal_libs()
       
       CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${i}
       
-      log ${ACTUAL_LOGFILE} "   under ${CGAL_BINARY_DIR}"
+      log "${ACTUAL_LOGFILE}" "   under ${CGAL_BINARY_DIR}"
       
-      if [ ! -d ${CGAL_BINARY_DIR} ]; then
-        mkdir ${CGAL_BINARY_DIR}
+      if [ ! -d "${CGAL_BINARY_DIR}" ]; then
+        mkdir "${CGAL_BINARY_DIR}"
       fi
 
-      if [ -f ${CGAL_BINARY_DIR}/setup ]; then
-        cp ${CGAL_BINARY_DIR}/setup ${CGAL_BINARY_DIR}/localbuildscript.${1}
+      if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
+        cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localbuildscript.${1}"
       else
-        rm -f ${CGAL_BINARY_DIR}/localbuildscript.${1}
+        rm -f "${CGAL_BINARY_DIR}/localbuildscript.${1}"
       fi
       
-      cat >> ${CGAL_BINARY_DIR}/localbuildscript.${1} <<EOF
+      cat >> "${CGAL_BINARY_DIR}/localbuildscript.${1}" <<EOF
 CGAL_BINARY_DIR='${CGAL_BINARY_DIR}';
 CMAKE_GENERATOR='${CMAKE_GENERATOR}';
 MAKE_CMD='${MAKE_CMD}';
 export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
-cd ${CGAL_BINARY_DIR};
-cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE -DWITH_examples=FALSE -DRUNNING_CGAL_AUTO_TEST=TRUE ../../..; 
+cd '${CGAL_BINARY_DIR}';
+cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE -DWITH_examples=FALSE -DRUNNING_CGAL_AUTO_TEST=TRUE VERBOSE=1 ../../..; 
 ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
-        chmod ugo+x ${CGAL_BINARY_DIR}/localbuildscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localbuildscript.${1}" >> ${ACTUAL_LOGFILE} 2>&1
+        chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript.${1}"
+        remote_command ${1} "${CGAL_BINARY_DIR}/localbuildscript.${1}" >> "${ACTUAL_LOGFILE}" 2>&1
                            
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" ]; then                           
-        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log ${CGAL_BINARY_DIR}/test/CMakeError_${i}.log
+        cp "${CGAL_BINARY_DIR}/CMakeFiles/CMakeError.log" "${CGAL_BINARY_DIR}/test/CMakeError_${i}.log"
       fi
       
       if [ -f "${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log" ]; then                           
-        cp ${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log ${CGAL_BINARY_DIR}/test/CMakeOutput_${i}.log
+        cp "${CGAL_BINARY_DIR}/CMakeFiles/CMakeOutput.log" "${CGAL_BINARY_DIR}/test/CMakeOutput_${i}.log"
       fi
       
-      cp ${ACTUAL_LOGFILE} ${CGAL_BINARY_DIR}/test/${ACTUAL_LOGFILE}.${1}.build
+      cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR}/test/${ACTUAL_LOGFILE}.${1}.build"
       
     done
       
@@ -268,7 +269,7 @@ EOF
 run_testsuite()
 {
     for i in ${2}; do
-        test_script ${1} ${i}
+        test_script ${1} "${i}"
     done
 }
 
@@ -287,25 +288,25 @@ test_script()
 {
         NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${1}`"
         CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${2}
-        cd ${CGAL_BINARY_DIR}
-        log ${ACTUAL_LOGFILE}.${1} "Testing on ${1} with ${2}"
+        cd "${CGAL_BINARY_DIR}"
+        log "${ACTUAL_LOGFILE}.${1}" "Testing on ${1} with ${2}"
         if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
           MAKE_OPTS=""
         else
           MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-        if [ -f ${CGAL_BINARY_DIR}/setup ]; then
-          cp ${CGAL_BINARY_DIR}/setup ${CGAL_BINARY_DIR}/localtestscript.${1}
+        if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
+          cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localtestscript.${1}"
         else
-          rm -f ${CGAL_BINARY_DIR}/localtestscript.${1}
+          rm -f "${CGAL_BINARY_DIR}/localtestscript.${1}"
         fi
       
-        cat >> ${CGAL_BINARY_DIR}/localtestscript.${1} <<EOF
+        cat >> "${CGAL_BINARY_DIR}/localtestscript.${1}" <<EOF
 CGAL_TESTER='${CGAL_TESTER}';
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
 CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
 if [ ! -z "${IS_CYGWIN}" ]; then
-  CGAL_DIR="$( cygpath -w "${CGAL_BINARY_DIR}" )";
+  CGAL_DIR=\$( cygpath -w "${CGAL_BINARY_DIR}" );
 else
   CGAL_DIR='${CGAL_BINARY_DIR}';
 fi
@@ -317,39 +318,40 @@ export CGAL_DIR;
 export CGAL_TEST_PLATFORM;
 export CMAKE_GENERATOR;
 export MAKE_CMD;
-rm -rf ${CGAL_BINARY_DIR}/test;
-cp -r ${CGAL_TEST_DIR} ${CGAL_BINARY_DIR}/test;
-cd ${CGAL_BINARY_DIR}/test;
+rm -rf '${CGAL_BINARY_DIR}/test';
+cp -r '${CGAL_TEST_DIR}' '${CGAL_BINARY_DIR}/test';
+cd '${CGAL_BINARY_DIR}/test';
 [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
 echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 echo 'COPYING RESULTS';
-cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
+cp 'results_${CGAL_TESTER}_${2}.tar.gz' 'results_${CGAL_TESTER}_${2}.txt' '${CGAL_TEST_DIR}';
 echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
-rm -rf ${CGAL_BINARY_DIR}/test
+rm -rf '${CGAL_BINARY_DIR}/test'
 EOF
-        chmod ugo+x ${CGAL_BINARY_DIR}/localtestscript.${1}
-        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
-        log_done ${ACTUAL_LOGFILE}.${1}
+        chmod ugo+x "${CGAL_BINARY_DIR}/localtestscript.${1}"
+        remote_command ${1} "${CGAL_BINARY_DIR}/localtestscript.${1}" >> "${ACTUAL_LOGFILE}.${1}" 2>&1
+        log_done "${ACTUAL_LOGFILE}.${1}"
         #
         # collect results and put them on the web
         #
-        cd ${CGAL_TEST_DIR}
-        log ${ACTUAL_LOGFILE}.${1} "PUTTING RESULTS ON THE WEB"
-        log ${ACTUAL_LOGFILE}.${1} "RESULTS COLLECTED "${2}"-"${1}
-        ${TAR} cf test_results-${1}.tar "results_"$CGAL_TESTER"_"${2}".tar.gz" "results_"$CGAL_TESTER"_"${2}".txt"
-        ${COMPRESSOR} -9f test_results-${1}.tar
-        FILENAME=${CGAL_RELEASE_ID}-test`datestr`-${2}-cmake.tar.gz
+        cd "${CGAL_TEST_DIR}"
+        log "${ACTUAL_LOGFILE}.${1}" "PUTTING RESULTS ON THE WEB"
+        log "${ACTUAL_LOGFILE}.${1}" "RESULTS COLLECTED ${2}-${1}"
+        ${TAR} cf "test_results-${1}.tar" "results_${CGAL_TESTER}_${2}.tar.gz" "results_${CGAL_TESTER}_${2}.txt"
+        ${COMPRESSOR} -9f "test_results-${1}.tar"
+        COMPILER=`echo -n $2 | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+        FILENAME="${CGAL_RELEASE_ID}-test`datestr`-${COMPILER}-cmake.tar.gz"
         LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${1}.gz"
-        ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}.${1}
-        mv ${ACTUAL_LOGFILE}.${1}.gz ${LOGS_DIR}/${LOGFILENAME}
+        ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.${1}"
+        mv "${ACTUAL_LOGFILE}.${1}.gz" "${LOGS_DIR}/${LOGFILENAME}"
 
-        echo "Test results: ${CGAL_TEST_DIR}/test_results-${1}.tar.gz"
+        log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${1}.tar.gz"
         
         if [ -z "${DO_NOT_UPLOAD}" ]; then
-          put_on_web test_results-${1}.tar.gz ${FILENAME}
+          put_on_web "test_results-${1}.tar.gz" "${FILENAME}"
         fi       
 
     #
@@ -371,17 +373,17 @@ EOF
 
 get_cgal()
 {
-    log ${ACTUAL_LOGFILE} "getting CGAL"
-    rm -f ${CGAL_ZIPFILE}
+    log "${ACTUAL_LOGFILE}" "getting CGAL"
+    rm -f "${CGAL_ZIPFILE}"
     if [ -n "${USE_CURL}" ]; then
-        ${CURL} ${CURL_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+        ${CURL} ${CURL_OPTS} "${CGAL_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     else
-        ${WGET} ${WGET_OPTS} ${CGAL_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+        ${WGET} ${WGET_OPTS} "${CGAL_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     fi
     if [ ${?} != 0 ]; then
         error "Could not get CGAL"
     fi
-    log_done ${ACTUAL_LOGFILE}
+    log_done "${ACTUAL_LOGFILE}"
 }
 
 
@@ -391,27 +393,27 @@ get_cgal()
 
 unzip_cgal()
 {
-    cd ${CGAL_ROOT}
-    log ${ACTUAL_LOGFILE} "unzipping CGAL"
+    cd "${CGAL_ROOT}"
+    log "${ACTUAL_LOGFILE}" "unzipping CGAL"
     if [ "${USE_TARGZ}" = "y" ]; then
       DECOMPRESSOR="${GUNZIP}"
-      log_done ${ACTUAL_LOGFILE}
+      log_done "${ACTUAL_LOGFILE}"
     fi
     if [ "${USE_TARBZ}" = "y" ]; then
       DECOMPRESSOR="bunzip2"
     fi
-    log ${ACTUAL_LOGFILE} "untarring CGAL"
-    ${DECOMPRESSOR} -c ${CGAL_ZIPFILE} | ${TAR} xvf - >> ${ACTUAL_LOGFILE} 2>&1
+    log "${ACTUAL_LOGFILE}" "untarring CGAL"
+    ${DECOMPRESSOR} -c "${CGAL_ZIPFILE}" | ${TAR} xvf - >> "${ACTUAL_LOGFILE}" 2>&1
     if [ ${?} != 0 ]; then
       error "Could not untar CGAL"
     fi
     
     # check, if CGAL_DIR exists
-    if [ ! -d ${CGAL_DIR} ]; then
+    if [ ! -d "${CGAL_DIR}" ]; then
       error "directory ${CGAL_DIR} does not exist"
     fi
   
-    log_done ${ACTUAL_LOGFILE}
+    log_done "${ACTUAL_LOGFILE}"
 }
 
 
@@ -422,10 +424,10 @@ unzip_cgal()
 copy_old_stuff()
 {
   # copy config build configuration files
-  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+  if [ ! "${OLD_CGAL_DIR}" -ef "${CGAL_DIR}" ]; then
 
     # Each build platform is given by a folder under cmake/build 
-    cd ${OLD_CGAL_BINARY_DIR_BASE}
+    cd "${OLD_CGAL_BINARY_DIR_BASE}"
     for platform in * 
     do
 
@@ -433,29 +435,28 @@ copy_old_stuff()
 
         # if the platform folder doesn't exist in the tested release it is created now.
         if [ ! -d "${CGAL_BINARY_DIR_BASE}/${platform}" ]; then
-          log ${ACTUAL_LOGFILE} "Creating platform folder ${platform} in ${CGAL_BINARY_DIR_BASE}/"
+          log "${ACTUAL_LOGFILE}" "Creating platform folder ${platform} in ${CGAL_BINARY_DIR_BASE}/"
           mkdir "${CGAL_BINARY_DIR_BASE}/${platform}"
         fi
         
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
-          log ${ACTUAL_LOGFILE} "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
-          sed -e "s,${OLD_CGAL_RELEASE_ID}/cmake/platform,${CGAL_RELEASE_ID}/cmake/platform,g" \
-              -e "s,${OLD_CGAL_RELEASE_ID}$,${CGAL_RELEASE_ID},g" \
+          log "${ACTUAL_LOGFILE}" "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
+          sed -r -e "s,(CGAL-([0-9][0-9]*\.)*[0-9][0-9]*(-I-[0-9][0-9]*)?|CGAL-I)$,${CGAL_RELEASE_ID},g; s,(CGAL-([0-9][0-9]*\.)*[0-9][0-9]*(-I-[0-9][0-9]*)?|CGAL-I)/,${CGAL_RELEASE_ID}/,g; " \
               "${platform}/CMakeCache.txt"  \
               >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
         fi
         
         # if the platform folder contains a setup script, copy it
         if [ -f "${platform}/setup" ]; then
-          log ${ACTUAL_LOGFILE} "Copying platform setup script in ${CGAL_BINARY_DIR_BASE}/${platform}"
+          log "${ACTUAL_LOGFILE}" "Copying platform setup script in ${CGAL_BINARY_DIR_BASE}/${platform}"
           cp "${platform}/setup" "${CGAL_BINARY_DIR_BASE}/${platform}"
         fi
       fi
     
     done
     
-    log_done ${ACTUAL_LOGFILE}
+    log_done "${ACTUAL_LOGFILE}"
     
   fi  
 }
@@ -467,14 +468,14 @@ copy_old_stuff()
 
 build_cgal()
 {
-    log ${ACTUAL_LOGFILE} "building cgal libs"
+    log "${ACTUAL_LOGFILE}" "building cgal libs"
     for i in ${BUILD_HOSTS}; do
         build_cgal_libs ${i}
     done
-    log_done ${ACTUAL_LOGFILE}
-    ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}
-    mv ${ACTUAL_LOGFILE}.gz \
-        ${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz
+    log_done "${ACTUAL_LOGFILE}"
+    ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
+    mv "${ACTUAL_LOGFILE}.gz" \
+        "${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz"
 }
 
 
@@ -484,7 +485,7 @@ build_cgal()
 
 run_test()
 {
-    log ${ACTUAL_LOGFILE} "running the testsuites"
+    log "${ACTUAL_LOGFILE}" "running the testsuites"
     if [ -n "${CONSOLE_OUTPUT}" ]; then
         printf "\n-------------------------------------------------------\n"
     fi
@@ -495,7 +496,7 @@ run_test()
       
       if [ "${LOCAL_TEST_ON}" = "all" ]; then
         LOCAL_TEST_ON=""
-        cd ${CGAL_BINARY_DIR_BASE}
+        cd "${CGAL_BINARY_DIR_BASE}"
         for platform in * 
         do
           if [ -d "${platform}" ]; then
@@ -505,58 +506,32 @@ run_test()
       fi
       
       for j in ${LOCAL_TEST_ON}; do
-        run_testsuite ${i} ${j} &
+        run_testsuite "${i}" "${j}" &
       done
               
     done
 }
 
 
-# ----------------------------------------------------
-# START OF MAIN BODY
-# ----------------------------------------------------
-
-USE_TARGZ="n"
-USE_TARBZ="n"
-# logfile
-ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
-
-cd $CGAL_ROOT
-
-CRITICAL="n"
-if [ "${MYSHELL}" = "must_be_set_in_.autocgalrc" ]; then
-  log ${ACTUAL_LOGFILE} "MYSHELL must be set in .autocgalrc"
-  CRITICAL="y"
-fi
-if [ "${CRITICAL}" = "y" ]; then
-  error "COULD NOT DETERMINE MYSHELL!"
-fi
-
-lockfile -r 5 $LOCK_FILE;
-if [ ${?} != 0 ]; then
-  echo "COULD NOT AQUIRE LOCK!";
-  exit 1;
-fi
-
 setup_dirs_for_latest_in_server()
 {
   if [ -r "LATEST" ]; then
     rm -rf LATEST
   fi
-    log ${ACTUAL_LOGFILE} "getting LATEST"
+    log "${ACTUAL_LOGFILE}" "getting LATEST"
     if [ -n "${USE_CURL}" ]; then
-      ${CURL} ${CURL_OPTS} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+      ${CURL} ${CURL_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     else
-      ${WGET} ${WGET_OPTS} ${LATEST_LOCATION} >> ${ACTUAL_LOGFILE} 2>&1
+      ${WGET} ${WGET_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     fi
   if [ ! -f "LATEST" ]; then
     error "COULD NOT DOWNLOAD LATEST!"
   fi
   if [ -r "RELEASE_NR" ]; then
-    cmp LATEST RELEASE_NR > ${ACTUAL_LOGFILE}
+    cmp LATEST RELEASE_NR > "${ACTUAL_LOGFILE}"
     if [ ! ${?} != 0 ]; then
-      log ${ACTUAL_LOGFILE} "This release has already been tested."
-      rm -f $LOCK_FILE;
+      log "${ACTUAL_LOGFILE}" "This release has already been tested."
+      rm -f "$LOCK_FILE";
       exit 1;
     fi
   fi
@@ -612,7 +587,7 @@ setup_dirs_for_latest_unzipped()
   CGAL_DIR=${CGAL_ROOT}/${CGAL_RELEASE_ID}
   
   # check, if CGAL_DIR exists
-  if [ ! -d ${CGAL_DIR} ]; then
+  if [ ! -d "${CGAL_DIR}" ]; then
     error "directory ${CGAL_DIR} does not exist"
   fi
   
@@ -638,45 +613,81 @@ setup_dirs()
     setup_dirs_for_latest_in_server
   fi
   
-  log ${ACTUAL_LOGFILE} "CGAL_ZIPFILE            = ${CGAL_ZIPFILE}"
-  log ${ACTUAL_LOGFILE} "CGAL_RELEASE_ID         = ${CGAL_RELEASE_ID}"
-  log ${ACTUAL_LOGFILE} "CGAL_CURRENT_RELEASE_ID = ${CGAL_CURRENT_RELEASE_ID}"
-  log ${ACTUAL_LOGFILE} "CGAL_DIR                = ${CGAL_DIR}"
-  log ${ACTUAL_LOGFILE} "OLD_CGAL_RELEASE_ID     = ${OLD_CGAL_RELEASE_ID}"
-  log ${ACTUAL_LOGFILE} "OLD_CGAL_DIR            = ${OLD_CGAL_DIR}"
-  log ${ACTUAL_LOGFILE} "CURRENT_CGAL_DIR        = ${CURRENT_CGAL_DIR}"
+  log "${ACTUAL_LOGFILE}" "CGAL_ZIPFILE            = ${CGAL_ZIPFILE}"
+  log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID         = ${CGAL_RELEASE_ID}"
+  log "${ACTUAL_LOGFILE}" "CGAL_CURRENT_RELEASE_ID = ${CGAL_CURRENT_RELEASE_ID}"
+  log "${ACTUAL_LOGFILE}" "CGAL_DIR                = ${CGAL_DIR}"
+  log "${ACTUAL_LOGFILE}" "OLD_CGAL_RELEASE_ID     = ${OLD_CGAL_RELEASE_ID}"
+  log "${ACTUAL_LOGFILE}" "OLD_CGAL_DIR            = ${OLD_CGAL_DIR}"
+  log "${ACTUAL_LOGFILE}" "CURRENT_CGAL_DIR        = ${CURRENT_CGAL_DIR}"
   
   # check, if OLD_CGAL_DIR exists and is a symbolic link
-  if [ ! -r ${OLD_CGAL_DIR} -o ! -d ${OLD_CGAL_DIR} ]; then
+  if [ ! -r "${OLD_CGAL_DIR}" -o ! -d "${OLD_CGAL_DIR}" ]; then
     error "directory ${OLD_CGAL_DIR} does not exist"
   fi
-  if [ ! -h ${OLD_CGAL_DIR} ]; then
+  if [ ! -h "${OLD_CGAL_DIR}" ]; then
     error "${OLD_CGAL_DIR} has to be a symbolic link"
   fi
   
-  if [ ! -r ${LOGS_DIR} ]; then
-    mkdir $LOGS_DIR
+  if [ ! -r "${LOGS_DIR}" ]; then
+    mkdir "$LOGS_DIR"
   fi
   
 }
 
 update_symlinks()
 {
-  rm ${OLD_CGAL_DIR}
-  ln -s `basename ${CGAL_DIR}` ${OLD_CGAL_DIR}
+  rm "${OLD_CGAL_DIR}"
+  ln -s `basename ${CGAL_DIR}` "${OLD_CGAL_DIR}"
   
-  if [ ! ${OLD_CGAL_DIR} -ef ${CURRENT_CGAL_DIR} ]; then
-    rm ${CURRENT_CGAL_DIR}
-    ln -s `basename ${CGAL_DIR}` ${CURRENT_CGAL_DIR}
+  if [ ! "${OLD_CGAL_DIR}" -ef "${CURRENT_CGAL_DIR}" ]; then
+    rm "${CURRENT_CGAL_DIR}"
+    ln -s `basename ${CGAL_DIR}` "${CURRENT_CGAL_DIR}"
   fi
 }
+
+# ----------------------------------------------------
+# START OF MAIN BODY
+# ----------------------------------------------------
+
+USE_TARGZ="n"
+USE_TARBZ="n"
+# logfile
+ACTUAL_LOGFILE="${CGAL_ROOT}/`basename ${0}`.log"
+
+if uname | grep -q "CYGWIN"; then
+  log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake" 
+  CMAKE_GENERATOR='-GNMake Makefiles'
+  MAKE_CMD='nmake'
+  IS_CYGWIN='y'
+else
+  log "${ACTUAL_LOGFILE}" "Non-cygwin linux detected, using system make."
+  MAKE_CMD='make'
+fi
+
+cd "$CGAL_ROOT"
+
+CRITICAL="n"
+if [ "${MYSHELL}" = "must_be_set_in_.autocgalrc" ]; then
+  log "${ACTUAL_LOGFILE}" "MYSHELL must be set in .autocgalrc"
+  CRITICAL="y"
+fi
+if [ "${CRITICAL}" = "y" ]; then
+  error "COULD NOT DETERMINE MYSHELL!"
+fi
+
+lockfile -r 5 "$LOCK_FILE";
+if [ ${?} != 0 ]; then
+  echo "COULD NOT AQUIRE LOCK!";
+  exit 1;
+fi
 
 # ----------------------------------------------------
 # some sanity checks
 #
 
 # remove old logfile
-rm -f ${ACTUAL_LOGFILE}
+rm -f "${ACTUAL_LOGFILE}"
 
 if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
   for i in ${MAIL_ADDRESS}; do
@@ -702,7 +713,7 @@ main_procedure()
         TEXT="`value_of PROCESSORS_${i}`"
         TEMPVAR="PROCESSORS_${i}"
         if [ -z "${TEXT}" ]; then
-          log ${ACTUAL_LOGFILE} "\ngiving default 1 values TO PROCESSORS_${i} ...";
+          log "${ACTUAL_LOGFILE}" "\ngiving default 1 values TO PROCESSORS_${i} ...";
           eval $TEMPVAR="1";
         fi
       fi
@@ -716,7 +727,7 @@ main_procedure()
     unzip_cgal
   fi
    
-  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+  if [ ! "${OLD_CGAL_DIR}" -ef "${CGAL_DIR}" ]; then
     copy_old_stuff
   fi
     
@@ -730,11 +741,11 @@ main_procedure()
     fi
   fi
         
-  if [ -z "${SKIP_TEST}" ]; then
+  if [ -z "${SKIP_TEST}" -o -z "${DO_NO_TEST}" ]; then
     run_test
   fi
   
-  if [ ! ${OLD_CGAL_DIR} -ef ${CGAL_DIR} ]; then
+  if [ ! "${OLD_CGAL_DIR}" -ef "${CGAL_DIR}" ]; then
     update_symlinks
   fi
   
