@@ -43,7 +43,6 @@
 #define CGAL_INTERVAL_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -75,7 +74,7 @@ template<typename T> struct Interval_traits_base{
 };
 }
 
-template<typename T> struct Interval_traits;
+template <typename T> struct Interval_traits: public CGALi::Interval_traits_base<T>{};
 class Exception_intersection_is_empty{}; 
 
 // function returning type Boundary 
