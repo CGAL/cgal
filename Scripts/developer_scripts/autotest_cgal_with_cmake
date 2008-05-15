@@ -247,7 +247,7 @@ EOF
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript.${1}"
         remote_command ${1} "${CGAL_BINARY_DIR}/localbuildscript.${1}" >> "${ACTUAL_LOGFILE}" 2>&1
                            
-      cp ${ACTUAL_LOGFILE} ${CGAL_BINARY_DIR}/installation.log.${1}
+      cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR}/installation.log.${1}"
       
     done
       
