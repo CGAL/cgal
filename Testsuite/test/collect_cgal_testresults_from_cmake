@@ -7,15 +7,26 @@
 # to be run in the CGAL/test directory or a local test directory.
 # CGAL_TESTER, CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS are environment variables.
 
-print_platforms()
-{
-  cd Number_types  # Pick a stable directory at random
-  for FILE in `ls CompilerOutput_*` ; do
-    PLATFORM=`echo $FILE | sed 's/CompilerOutput_//'| sed 's/\.gz//'`
-    printf "$PLATFORM "
-  done
-  cd ..
-}
+if [ -z "${CGAL_TEST_HOST}" ]; then
+  CGAL_TEST_HOST='localhost'
+  echo "CGAL_TEST_HOST not in the enviroment, setting it to ${CGAL_TEST_HOST}"
+fi
+
+if [ -z "${CGAL_TEST_PLATFORM}" ]; then
+   
+  CGAL_TEST_PLATFORM=`dirname $PWD` 
+  echo "CGAL_TEST_PLATFORM not in the enviroment, setting it to ${CGAL_TEST_PLATFORM}"
+fi
+
+if [ -z "$1" ] ; then
+  TEST_DIRECTORIES=`ls`
+else
+  TEST_DIRECTORIES="$*"
+fi
+
+BUILD_LOGFILE=''
+TEST_REPORT=''
+RESULT_FILE=''
 
 #print_testresult <platform> <directory>
 print_testresult()
@@ -37,13 +48,10 @@ print_testresult()
   echo "$2 $RESULT"
 }
 
-BUILD_LOGFILE=''
-TEST_REPORT=''
-RESULT_FILE=''
 
 parse_flags_and_third_party_choices()
 {
-  grep "^Cached " ${BUILD_LOGFILE} >> $RESULT_FILE 
+  grep "^USING " ${BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
 
@@ -51,6 +59,10 @@ parse_lib_building_results()
 {
   libname=$1
   target=$2
+  
+echo "parsing result of building: ${libname}"  
+  
+  shared_or_static='static'
   
   mkdir "${libname}_${shared_or_static}"
   
@@ -79,95 +91,86 @@ parse_lib_building_results()
   echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
 }
 
-# do_platform <platform>
-do_platform()
-{
-  PLATFORM=$1
-  CURRENT_DIR=`pwd`
-  TESTER=${CGAL_TESTER:-${USER:-`whoami`}}
-  TESTER_NAME="${CGAL_TESTER_NAME:-${TESTER}}"
-  TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
-  TEST_REPORT="TestReport_${TESTER}_${PLATFORM}"
-  RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${PLATFORM}.txt
-  CGAL_DIR=../../../..
-  BUILD_LOGFILE="${CURRENT_DIR}/autotest_cgal_with_cmake.log.${PLATFORM}.build"
-  rm -f $RESULT_FILE
-  touch $RESULT_FILE
-  sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
-  echo "TESTER ${TESTER}" >> $RESULT_FILE
-  echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
-  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
-  echo "PLATFORM ${PLATFORM}" >> $RESULT_FILE
 
-  if [ -f "${BUILD_LOGFILE}" ] ; then
+echo "---------------------------------------------------------------"
+echo "   Collecting results of platform $CGAL_TEST_PLATFORM"
+echo "---------------------------------------------------------------"
+
+CURRENT_DIR=`pwd`
+TESTER=${CGAL_TESTER:-${USER:-`whoami`}}
+TESTER_NAME="${CGAL_TESTER_NAME:-${TESTER}}"
+TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
+TEST_REPORT="TestReport_${TESTER}_${CGAL_TEST_PLATFORM}"
+RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${CGAL_TEST_PLATFORM}.txt
+CGAL_DIR=../../../..
+BUILD_LOGFILE="../installation.log.${CGAL_TEST_HOST}"
+echo "build log file: ${BUILD_LOGFILE}"  
+rm -f $RESULT_FILE
+touch $RESULT_FILE
+sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
+echo "TESTER ${TESTER}" >> $RESULT_FILE
+echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
+echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
+echo "CGAL_TEST_PLATFORM ${CGAL_TEST_PLATFORM}" >> $RESULT_FILE
+
+if [ -f "${BUILD_LOGFILE}" ] ; then
+
+  parse_flags_and_third_party_choices
   
-    parse_flags_and_third_party_choices
-    
-    parse_lib_building_results "libCGAL-core++" "CGAL_CORE"    
-    parse_lib_building_results "libCGAL"        "CGAL"         
-    parse_lib_building_results "libCGALimageIO" "CGAL_IMAGEIO" 
-    parse_lib_building_results "libCGAL-PDB"    "CGAL_PDB"     
-    parse_lib_building_results "libCGAL-Qt"     "CGAL_QT"      
-    
-  fi
-
-  for DIR in $TEST_DIRECTORIES ; do
-    if [ -d $DIR ] ; then
-      echo "  $DIR ..."
-      cd $DIR
-
-      print_testresult $PLATFORM $DIR >> $RESULT_FILE
-
-      rm -f ${TEST_REPORT}
-      touch $TEST_REPORT
-
-      if [ ! -f ErrorOutput_${PLATFORM} ] ; then
-        echo "Error: file $DIR/ErrorOutput_${PLATFORM} does not exist!"
-      else
-        cat ErrorOutput_${PLATFORM} >> $TEST_REPORT
-      fi
-
-      if [ ! -f CompilerOutput_${PLATFORM} ] ; then
-        echo "Error: file $DIR/CompilerOutput_${PLATFORM} does not exist!"
-      else
-        cat CompilerOutput_${PLATFORM} >> $TEST_REPORT
-      fi
-
-      if 2>&1 eval ls ProgramOutput.*.${PLATFORM} > /dev/null ; then
-        PROGRAM_OUTPUT=`ls ProgramOutput.*$PLATFORM*`
-        for FILE in $PROGRAM_OUTPUT ; do
-          echo >> $TEST_REPORT
-          echo "------------------------------------------------------------------" >> $TEST_REPORT
-          echo "- $FILE" >> $TEST_REPORT
-          echo "------------------------------------------------------------------" >> $TEST_REPORT
-          cat $FILE >> $TEST_REPORT
-        done
-      fi
-
-      cd ..
-    fi
-  done
-
-  OUTPUT_FILE=results_${TESTER}_${PLATFORM}.tar
-  rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
-  tar cf $OUTPUT_FILE results_${TESTER}_${PLATFORM}.txt */$TEST_REPORT
-  echo
-  echo "compressing ..."
-  gzip -9f $OUTPUT_FILE
-  echo "results written to file $OUTPUT_FILE.gz"
-  echo
-}
-
-if [ -z "$1" ] ; then
-  TEST_DIRECTORIES=`ls`
+  parse_lib_building_results "libCGAL-core++" "CGAL_CORE"    
+  parse_lib_building_results "libCGAL"        "CGAL"         
+  parse_lib_building_results "libCGALimageIO" "CGAL_IMAGEIO" 
+  parse_lib_building_results "libCGAL-PDB"    "CGAL_PDB"     
+  parse_lib_building_results "libCGAL-Qt"     "CGAL_QT"      
+  
 else
-  TEST_DIRECTORIES="$*"
+  echo "ERROR: Installation log ${BUILD_LOGFILE} not found!"
 fi
 
-for PLATFORM in `print_platforms` ; do
-  echo "---------------------------------------------------------------"
-  echo "   Collecting results of platform $PLATFORM"
-  echo "---------------------------------------------------------------"
-  do_platform $PLATFORM
+
+for DIR in $TEST_DIRECTORIES ; do
+  if [ -d $DIR ] ; then
+    echo "  $DIR ..."
+    cd $DIR
+
+    print_testresult $CGAL_TEST_PLATFORM $DIR >> $RESULT_FILE
+
+    rm -f ${TEST_REPORT}
+    touch $TEST_REPORT
+
+    if [ ! -f ErrorOutput_${CGAL_TEST_PLATFORM} ] ; then
+      echo "Error: file $DIR/ErrorOutput_${CGAL_TEST_PLATFORM} does not exist!"
+    else
+      cat ErrorOutput_${CGAL_TEST_PLATFORM} >> $TEST_REPORT
+    fi
+
+    if [ ! -f CompilerOutput_${CGAL_TEST_PLATFORM} ] ; then
+      echo "Error: file $DIR/CompilerOutput_${CGAL_TEST_PLATFORM} does not exist!"
+    else
+      cat CompilerOutput_${CGAL_TEST_PLATFORM} >> $TEST_REPORT
+    fi
+
+    if 2>&1 eval ls ProgramOutput.*.${CGAL_TEST_PLATFORM} > /dev/null ; then
+      PROGRAM_OUTPUT=`ls ProgramOutput.*$CGAL_TEST_PLATFORM*`
+      for FILE in $PROGRAM_OUTPUT ; do
+        echo >> $TEST_REPORT
+        echo "------------------------------------------------------------------" >> $TEST_REPORT
+        echo "- $FILE" >> $TEST_REPORT
+        echo "------------------------------------------------------------------" >> $TEST_REPORT
+        cat $FILE >> $TEST_REPORT
+      done
+    fi
+
+    cd ..
+  fi
 done
+
+OUTPUT_FILE=results_${TESTER}_${CGAL_TEST_PLATFORM}.tar
+rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
+tar cf $OUTPUT_FILE results_${TESTER}_${CGAL_TEST_PLATFORM}.txt */$TEST_REPORT
+echo
+echo "compressing ..."
+gzip -9f $OUTPUT_FILE
+echo "results written to file $OUTPUT_FILE.gz"
+echo
 
