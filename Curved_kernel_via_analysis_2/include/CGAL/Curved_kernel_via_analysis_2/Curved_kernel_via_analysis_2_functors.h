@@ -2116,9 +2116,11 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
 
-        bool dummy1, dummy2;
-        result_type res = (cv.is_in_x_range(p.x(),&dummy1,&dummy2)) &&
-                          (cv.compare_y_at_x(p) == CGAL::EQUAL);
+        bool is_left, is_right;
+        result_type res = (cv.is_in_x_range(p.x(),&is_left,&is_right)) &&
+            !(is_left) &&
+            !(is_right) &&
+            (cv.compare_y_at_x(p) == CGAL::EQUAL);
         return res;
     }
 };
@@ -2221,6 +2223,182 @@ public:
     }
 };
 
+/*!\brief 
+ * Functor that computes the x-extreme points of a curve
+ */
+template < class CurvedKernelViaAnalysis_2>
+class X_extreme_points_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef std::iterator<output_iterator_tag, Point_2> result_type;
+
+    //! the arity of the functor
+    typedef Arity_tag<2> Arity;   
+    
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
+    X_extreme_points_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    } 
+
+    /*!\brief
+     */
+    template < class OutputIterator >
+    OutputIterator operator()(const Curve_analysis_2& ca, 
+                              OutputIterator oi) const {
+
+        typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
+
+        int events = ca.number_of_status_lines_with_event();
+
+        for ( int i = 0; i < events; i++ ) {
+            
+            Status_line_1 status_line = ca.status_line_at_event(i);
+            
+            int lifts = status_line.number_of_events();
+
+            for( int j = 0; j < lifts; j++ ) {
+
+                std::pair<int,int> incident_arcs 
+                    = status_line.number_of_incident_branches(j);
+
+                if ( ( incident_arcs.first == 0 ) || 
+                     (incident_arcs.second == 0) ) {
+
+                    typename Point_2::Xy_coordinate_2 xy 
+                        = status_line.algebraic_real_2(j);
+
+                    Point_2 p = Base::_ckva()->construct_point_2_object()
+                        (xy.x(),xy.curve(),xy.arcno());
+                    oi++ = p;
+                }
+
+            }
+            
+        }
+
+        return oi;
+    }
+    
+};
+
+/*!\brief 
+ * Functor that computes the y-extreme points of a curve
+ */
+template < class CurvedKernelViaAnalysis_2>
+class Y_extreme_points_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! the result type
+    typedef std::iterator<output_iterator_tag, Point_2> result_type;
+
+    //! the arity of the functor
+    typedef Arity_tag<2> Arity;   
+    
+    /*!\brief 
+     * Standard constructor
+     *
+     * \param kernel The kernel
+     */
+    Y_extreme_points_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    } 
+
+    /*!\brief
+     */
+    template < class OutputIterator >
+    OutputIterator operator()(const Curve_analysis_2& ca, 
+                              OutputIterator oi) const {
+
+        typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
+
+        std::vector<Point_2> y_critical_points;
+
+        typename Base::Curve_kernel_2 curve_kernel = Base::_ckva()->kernel();
+        
+        Curve_analysis_2 ca_yx 
+            = curve_kernel.swap_x_and_y_2_object() (ca);
+        
+        Base::_ckva()->x_extreme_points_2_object() 
+            ( ca_yx, std::back_inserter(y_critical_points) );
+
+        for( typename std::vector<Point_2>::iterator it 
+                 = y_critical_points.begin();
+             it != y_critical_points.end();
+             it++ ) {
+            
+            X_coordinate_1 curr_x 
+                = curve_kernel.get_y_2_object() ( it->xy() );
+
+            Status_line_1 status_line = ca.status_line_at_exact_x(curr_x);
+            
+            int lifts = status_line.number_of_events();
+            
+            for( int i = 0; i < lifts; i++ ) {
+                typename Point_2::Xy_coordinate_2 lift_xy 
+                    = status_line.algebraic_real_2(i);
+                
+                bool y_coordinate_found;
+
+                while(true) {
+
+                    if( curve_kernel.upper_boundary_y_2_object() (lift_xy) <
+                        curve_kernel.lower_boundary_x_2_object() (it->xy()) ) {
+                        y_coordinate_found = false;
+                        break;
+                    }
+                    if( curve_kernel.upper_boundary_y_2_object() (lift_xy) >=
+                        curve_kernel.upper_boundary_x_2_object() (it->xy()) ) {
+                        y_coordinate_found = true;
+                        break;
+                    }
+                    
+                    curve_kernel.refine_x_2_object() (it->xy());
+                }
+                    
+                if(y_coordinate_found) {
+                    int arcno = i;
+                    *oi++ = Base::_ckva()->construct_point_2_object()
+                        (curr_x, ca, arcno);
+                    break;
+                }    
+                    
+            }
+            
+        }
+
+        return oi;
+    }
+    
+};
+
+
 #undef CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES 
 
 } // namespace Curved_kernel_via_analysis_2_Functors
@@ -2298,6 +2476,8 @@ public:
 
     CGAL_CKvA_2_functor_pred(Is_on_2, is_on_2_object); 
     CGAL_CKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
+    CGAL_CKvA_2_functor_cons(X_extreme_points_2, x_extreme_points_2_object);
+    CGAL_CKvA_2_functor_cons(Y_extreme_points_2, y_extreme_points_2_object);
     
 #undef CGAL_CKvA_2_functor_pred
 #undef CGAL_CKvA_2_functor_cons

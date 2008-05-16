@@ -643,6 +643,10 @@ public:
 
         if(!arc.is_vertical()) {
         
+
+#ifdef USE_X_CRITICAL_POINTS
+#warning Uses X_critical points!
+
             std::vector<Xy_coordinate_2> x_critical_points;
             
             typename Curve_kernel_2::X_critical_points_2() 
@@ -658,11 +662,27 @@ public:
                     = typename Curved_kernel_via_analysis_2
                         ::Construct_point_2(_m_curved_kernel)
                             (curr_xy.x(),curr_xy.curve(), curr_xy.arcno());
+
+#else
+
+            std::vector<Point_2> y_extreme_points;
+                
+            _m_curved_kernel->y_extreme_points_2_object() 
+                (arc.curve(), std::back_inserter(y_extreme_points));
+
+            int n = static_cast<int>(y_extreme_points.size());
+            
+            for( int i = 0; i < n; i++ ) {
+
+                Point_2& curr_point = y_extreme_points[i];
+                    
+
+#endif
                 
                 if( typename Curved_kernel_via_analysis_2
                         ::Is_on_2(_m_curved_kernel) (curr_point, arc) ) {
                     CGAL::Bbox_2 point_bbox 
-                        = curr_xy.approximation_box_2(threshold());
+                        = curr_point.xy().approximation_box_2(threshold());
                     std::pair<double,double> y_iv 
                         = std::make_pair(point_bbox.ymin(),point_bbox.ymax());
                     update_y(y_min,y_max,y_iv);
@@ -936,6 +956,12 @@ public:
     
     CGAL_CKvA_2_functor_cons(Construct_arc_2, 
                              construct_arc_2_object);
+
+    CGAL_CKvA_2_functor_cons(X_extreme_points_2, 
+                             x_extreme_points_2_object);
+
+    CGAL_CKvA_2_functor_cons(Y_extreme_points_2, 
+                             y_extreme_points_2_object);
 
 #undef CGAL_CKvA_2_functor_pred
 #undef CGAL_CKvA_2_functor_cons
