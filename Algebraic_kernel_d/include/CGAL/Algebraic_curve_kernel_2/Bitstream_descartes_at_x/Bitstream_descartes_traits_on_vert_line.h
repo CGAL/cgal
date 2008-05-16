@@ -73,8 +73,7 @@ public:
     Bigfloat_interval BFI;
 
     typedef typename 
-    CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel::
-    Bigfloat BF;
+    CGAL::Bigfloat_interval_traits<BFI>::Boundary BF;
 
     typedef CGAL::CGALi::Best_approximation_cache<Coefficient,Integer> 
     Best_approximation_cache;
