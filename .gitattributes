@@ -1563,6 +1563,7 @@ CMake/cmake/modules/FindCORE.cmake -text
 CMake/cmake/modules/FindGMP.cmake -text
 CMake/cmake/modules/FindGMPXX.cmake -text
 CMake/cmake/modules/FindMPFR.cmake -text
+CMake/cmake/modules/FindMatchingItem.cmake -text
 CMake/cmake/modules/FindPackageHandleStandardArgs.cmake -text
 CMake/cmake/modules/FindQGLViewer.cmake -text
 CMake/cmake/modules/FindTAUCS.cmake -text
@@ -1573,6 +1574,7 @@ CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
+CMake/cmake/modules/ReadLines.cmake -text
 CMake/cmake/modules/UseCGAL.cmake -text
 CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
