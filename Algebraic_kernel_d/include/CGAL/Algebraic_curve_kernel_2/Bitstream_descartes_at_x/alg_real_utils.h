@@ -112,8 +112,9 @@ simple_rational_between(const Algebraic_real& a,
     typename CGAL::Fraction_traits<Rational>::Compose compose;
     typedef typename 
         CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel AK;
-    typedef typename AK::Bigfloat Bigfloat;
     typedef typename AK::Bigfloat_interval Bigfloat_interval;
+    typedef typename CGAL::Bigfloat_interval_traits<Bigfloat_interval>
+        ::Boundary BF;
     typedef typename AK::Integer Integer;
 
     long old_prec = CGAL::get_precision(Bigfloat_interval());

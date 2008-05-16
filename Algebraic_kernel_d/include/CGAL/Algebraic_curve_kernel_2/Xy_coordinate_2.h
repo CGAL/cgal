@@ -581,8 +581,8 @@ public:
     std::pair<double, double> to_double() const {
 
         typedef typename Get_arithmetic_kernel<Boundary>::Arithmetic_kernel AT;
-        typedef typename AT::Bigfloat BF;
         typedef typename AT::Bigfloat_interval BFI; 
+        typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF;
 
         long old_prec = get_precision(BF());
         
