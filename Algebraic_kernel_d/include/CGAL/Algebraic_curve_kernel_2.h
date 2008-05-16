@@ -340,7 +340,7 @@ public:
             return xy.x();
         }
     };
-    CGAL_Algebraic_Kernel_cons(Get_x_2, Get_x_2_object);
+    CGAL_Algebraic_Kernel_cons(Get_x_2, get_x_2_object);
     
     //! returns the second coordinate of \c Xy_coordinate_2
     struct Get_y_2 :
@@ -350,7 +350,7 @@ public:
             return xy.y();
         }
     };
-    CGAL_Algebraic_Kernel_cons(Get_y_2, Get_y_2_object);
+    CGAL_Algebraic_Kernel_cons(Get_y_2, get_y_2_object);
     
     struct Refine_x_2 :
         public Unary_function<Xy_coordinate_2, void> {
@@ -1041,6 +1041,25 @@ public:
         }
     };
     CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
+
+    struct Swap_x_and_y_2 {
+        
+        typedef Polynomial_2 argument_type;
+        typedef Curve_analysis_2 result_type;
+
+        Curve_analysis_2 operator() (const Curve_analysis_2& ca) {
+            return this->operator() (ca.polynomial_2());
+        }
+
+        Curve_analysis_2 operator() (const Polynomial_2& f) {
+            Polynomial_2 f_yx
+                = typename Polynomial_traits_2::Swap() (f,0,1);
+            return Construct_curve_2() (f_yx);
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Swap_x_and_y_2, swap_x_and_y_2_object);
+
+
 
 #undef CGAL_Algebraic_Kernel_pred    
 #undef CGAL_Algebraic_Kernel_cons 
