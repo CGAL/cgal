@@ -295,6 +295,12 @@ public:
                                          <Polynomial_2>::Swap() 
                                              (CGAL::diff(f),0,1))
                             );
+                        // BUGFIX: y_pol might be zero:
+                        if(y_pol.is_zero()) {
+                            // force re-computation with bigger resultant
+                            point_is_certainly_critical=false;
+                        }
+                            
                               
                     }
                 }
