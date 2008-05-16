@@ -54,7 +54,7 @@ bool may_have_common_factor(
 // This function returns true, since the filter is not applicable 
 template< typename Polynomial >
 bool may_have_common_factor(
-        const Polynomial& p1, const Polynomial& p2, CGAL::Tag_false){
+        const Polynomial&, const Polynomial&, CGAL::Tag_false){
     return true; 
 }
 
