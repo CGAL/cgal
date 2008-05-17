@@ -192,6 +192,8 @@ public:
     //! type of a curve point
     typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
 
+    typedef Xy_coordinate_2 Algebraic_real_2;
+
     //! an instance of a size type
     typedef typename Curve_analysis_2::size_type size_type;
 
