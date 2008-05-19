@@ -51,6 +51,12 @@ print_testresult()
 
 parse_flags_and_third_party_choices()
 {
+  if grep "Building shared libraries"  ${BUILD_LOGFILE}; then
+    shared_or_static='shared'  
+  else
+    shared_or_static='static'  
+  fi
+
   grep "^USING " ${BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
@@ -59,10 +65,6 @@ parse_lib_building_results()
 {
   libname=$1
   target=$2
-  
-echo "parsing result of building: ${libname}"  
-  
-  shared_or_static='static'
   
   mkdir "${libname}_${shared_or_static}"
   
@@ -117,11 +119,11 @@ if [ -f "${BUILD_LOGFILE}" ] ; then
 
   parse_flags_and_third_party_choices
   
-  parse_lib_building_results "libCGAL-core++" "CGAL_CORE"    
+  parse_lib_building_results "libCGALCore"    "CGAL_CORE"    
   parse_lib_building_results "libCGAL"        "CGAL"         
   parse_lib_building_results "libCGALimageIO" "CGAL_IMAGEIO" 
-  parse_lib_building_results "libCGAL-PDB"    "CGAL_PDB"     
-  parse_lib_building_results "libCGAL-Qt"     "CGAL_QT"      
+  parse_lib_building_results "libCGALPDB"     "CGAL_PDB"     
+  parse_lib_building_results "libCGALQt"      "CGAL_QT"      
   
 else
   echo "ERROR: Installation log ${BUILD_LOGFILE} not found!"

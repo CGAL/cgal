@@ -9,6 +9,8 @@
 
 include(FindPackageHandleStandardArgs)
 include(GeneratorSpecificSettings)
+include(ReadLines)
+include(FindMatchingItem)
 
 # Is it already configured?
 if (MPFR_INCLUDE_DIR AND MPFR_LIBRARIES_DIR ) 
@@ -56,7 +58,25 @@ else()
     include( MPFRConfig OPTIONAL )
   endif()
   
-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES_DIR)
+  find_package_handle_standard_args(MPFR "DEFAULT_MSG" MPFR_INCLUDE_DIR MPFR_LIBRARIES_DIR)
+  
+  if ( MPFR_FOUND )
+  
+    readlines(${MPFR_INCLUDE_DIR}/mpfr.h MPFR_H_FILE)
+    
+    find_matching_item(MPFR_H_FILE "MPFR_VERSION_STRING" MPFR_VERSION_STRING_LINE )
+    
+    string( REPLACE " " ";" MPFR_VERSION_STRING_LINE_LIST ${MPFR_VERSION_STRING_LINE} )
+    
+    list( GET MPFR_VERSION_STRING_LINE_LIST 2 MPFR_VERSION_STR )
+    
+    string( REPLACE "\"" "" MPFR_VERSION ${MPFR_VERSION_STR} )
+    
+    message( STATUS "USING MPFR_VERSION ${MPFR_VERSION}" )
+    
+  endif()  
+
+#define MPFR_VERSION_STRING "2.2.0"
   
 endif()
 

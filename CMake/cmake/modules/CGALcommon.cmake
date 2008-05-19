@@ -20,7 +20,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.4.7 FATAL_ERROR)
+  CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
 
   if ( NOT BUILD_SHARED_LIBS )
     if ( WIN32 )
@@ -28,6 +28,12 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     else()
       set(BUILD_SHARED_LIBS ON)
     endif()
+  endif()
+  
+  if ( BUILD_SHARED_LIBS )
+    message( STATUS "Building shared libraries" )
+  else()
+    message( STATUS "Building static libraries" )
   endif()
   
   if ( WIN32 )

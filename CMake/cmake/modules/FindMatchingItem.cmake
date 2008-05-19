@@ -2,16 +2,15 @@ macro( find_matching_item list regex output )
 
   set( ${output} "NOTFOUND" )
   
-  foreach( ${list}_lfmi_idx ${${list}} )
+  foreach( ${list}_row__ ${${list}} )
   
-    list( GET ${list}_lfmi_idx ${list} ${list}_lfmi_row )
+    if ( ${list}_row__ MATCHES ${regex} )
     
-    if ( ${list}_lfmi_row MATCHES ${regex} )
-    
-      set( ${output} "${${list}_lfmi_row}" )
+      set( ${output} "${${list}_row__}" )
       
-    endif( ${list}_lfmi_row MATCHES ${regex} )  
+    endif( ${list}_row__ MATCHES ${regex} )
     
-  endforeach( ${list}_lfmi_idx ${${list}} )
+  endforeach( ${list}_row__ ${${list}} )
   
 endmacro( find_matching_item list regex output )
+

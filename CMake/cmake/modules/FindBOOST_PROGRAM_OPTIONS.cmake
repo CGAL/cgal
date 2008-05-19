@@ -21,6 +21,11 @@ if(Boost_FOUND AND Boost_LIBRARY_DIRS)
   
   hide_variable(BOOST_PROGRAM_OPTIONS_LIBRARIES)
   
-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_PROGRAM_OPTIONS "boost_program_options not found." BOOST_PROGRAM_OPTIONS_LIBRARIES )
+  find_package_handle_standard_args(BOOST_PROGRAM_OPTIONS "boost_program_options not found." BOOST_PROGRAM_OPTIONS_LIBRARIES )
+  
+  if ( BOOST_PROGRAM_OPTIONS_FOUND )
+    message( STATUS "USING BOOST_PROGRAM_OPTIONS_VERSION ${BOOST_LIB_VERSION_STR}" )
+  endif()  
+
 endif()
 

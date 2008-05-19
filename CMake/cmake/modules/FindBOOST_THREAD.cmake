@@ -22,6 +22,11 @@ if(Boost_FOUND AND Boost_LIBRARY_DIRS)
   
   hide_variable(BOOST_THREAD_LIBRARIES)
   
-  FIND_PACKAGE_HANDLE_STANDARD_ARGS(BOOST_THREAD "boost_thread not found." BOOST_THREAD_LIBRARIES )
+  find_package_handle_standard_args(BOOST_THREAD "boost_thread not found." BOOST_THREAD_LIBRARIES )
+  
+  if ( BOOST_THREAD_FOUND )
+    message( STATUS "USING BOOST_THREAD_VERSION ${BOOST_LIB_VERSION_STR}" )
+  endif()
+  
 endif()
 
