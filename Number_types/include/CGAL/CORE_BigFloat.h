@@ -138,7 +138,7 @@ public:
             Interval result = CORE::centerize(x,y);
 #else 
 
-            CORE::BigFloat result;
+             CORE::BigFloat result;
              
             // Unfortunately, CORE::centerize(x,y) has bugs. 
             if ((x.m() == y.m()) && (x.err() == y.err()) && (x.exp() == y.exp())) { 
@@ -160,7 +160,7 @@ public:
             
             // shift such that err.m()+err.err() fits into long 
             int digits_long = std::numeric_limits<long>::digits;
-            if(::CORE::bitLength(err.m()) >= digits_long){ 
+            if(::CORE::bitLength(err.m()+err.err()) >= digits_long){ 
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ; 
                 //std::cout << "shift " << shift<< std::endl;
                 long new_err = ((err.m()+err.err()) >> shift).longValue()+1; 
@@ -168,16 +168,26 @@ public:
             }else{           
                 err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
             }
+            if(mid.exp() > err.exp()) {
+                long err_err = err.err();
+                err_err = err_err >> (mid.exp()-err.exp())*14;
+                err_err++;
+                err = CORE::BigFloat(0,err_err,mid.exp());
+            }
+                    
 
             result = mid + err;  
              
 #endif 
+
             CGAL_postcondition( 
                     CGAL::lower(result) 
                     <=  std::min(CGAL::lower(x), CGAL::lower(y)));
             CGAL_postcondition( 
                     CGAL::upper(result) 
                     >= std::max(CGAL::upper(x), CGAL::upper(y)));
+
+            
 
             return result ;
         }
@@ -213,27 +223,27 @@ round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
     if (CGAL::get_significant_bits(x) <= rel_prec) return x;
    
 // if 1 
-    CORE::BigFloat xr;
-    xr.approx(x,rel_prec,1024);
-    typedef CORE::BigFloat BF; 
+//    CORE::BigFloat xr;
+//    xr.approx(x,rel_prec,1024);
+//    typedef CORE::BigFloat BF; 
 // else       
-//     typedef CORE::BigFloat BF; 
-//     typedef CORE::BigFloat BFI; 
-//     typedef CORE::BigInt Integer;
-//     BF xr;
+    typedef CORE::BigFloat BF; 
+    typedef CORE::BigFloat BFI; 
+    typedef CORE::BigInt Integer;
+    BF xr;
    
-//     CORE::BigInt m = x.m();
-//     long         err = x.err();
-//     long         exp = x.exp(); 
+    CORE::BigInt m = x.m();
+    long         err = x.err();
+    long         exp = x.exp(); 
    
-//     long shift = ::CORE::bitLength(m) - rel_prec - 1;
-//     if( shift > 0 ){    Integer new_m   = m >> shift ; 
-//         if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
-//         }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
-//         }
-//     }else{    // noting to do
-//         xr = x; 
-//     }
+    long shift = ::CORE::bitLength(m) - rel_prec - 1;
+    if( shift > 0 ){    Integer new_m   = m >> shift ; 
+        if(err == 0){        xr = BF(new_m,1,0)*BF::exp2(exp*14+shift);
+        }else{        xr = BF(new_m,2,0)*BF::exp2(exp*14+shift);
+        }
+    }else{    // noting to do
+        xr = x; 
+    }
 // endif     
 
     CGAL_postcondition(CGAL::get_significant_bits(xr) - rel_prec >= 0); 
