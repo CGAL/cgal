@@ -227,11 +227,10 @@ public:
     // myself
     typedef Xy_coordinate_2_rep<Algebraic_curve_kernel_2> Self;
 
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
+    Curve_analysis_2; 
     
-    typedef typename Curve_2::X_coordinate X_coordinate_1; 
+    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1; 
 
     // constructors
 public:
@@ -244,7 +243,7 @@ public:
     X_coordinate_1 _m_x;
     
     // supporting curve
-    mutable Curve_2 _m_curve;
+    mutable Curve_analysis_2 _m_curve;
     
     // arc number on curve
     mutable int _m_arcno;
@@ -271,14 +270,12 @@ public:
     //! this instance itself
     typedef Xy_coordinate_2<Algebraic_curve_kernel_2> Self;
         
-    //! type of a curve pair
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
     //! type of an algabraic curve
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
+    Curve_analysis_2; 
 
     //! type of X_coordinate
-    typedef typename Curve_2::X_coordinate X_coordinate_1;
+    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1;
 
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep> Base;
@@ -304,7 +301,7 @@ public:
         Base(static_cast<const Base&>(p)) {  
     }
 
-    Xy_coordinate_2(const X_coordinate_1&, const Curve_2&, int) :
+    Xy_coordinate_2(const X_coordinate_1&, const Curve_analysis_2&, int) :
             Base(Rep()) {
     }
     
@@ -322,7 +319,7 @@ public:
         return this->ptr()->_m_x;
     }
     
-    Curve_2 curve() const {
+    Curve_analysis_2 curve() const {
         return this->ptr()->_m_curve; 
     }
     
@@ -572,10 +569,9 @@ public:
     // myself
     typedef Curve_analysis_2_rep<Algebraic_curve_kernel_2> Self;
 
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2
+    Polynomial_2;
 
-    typedef typename Curve_pair_2::Algebraic_curve_2 Curve_2; 
-    
     // constructors
 public:
     // default constructor ()
@@ -583,10 +579,10 @@ public:
     {  }
     
     // standard constructor
-    Curve_analysis_2_rep(const Curve_2& curve) 
-    {   }
+    Curve_analysis_2_rep(const Polynomial_2& curve) {
+    }
 
-    mutable Curve_2 _m_curve;
+    mutable Polynomial_2 _m_curve;
     
     // befriending the handle
     friend class Curve_analysis_2<Algebraic_curve_kernel_2>;
@@ -613,7 +609,7 @@ public:
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
     //! type of a curve
-    typedef typename Algebraic_curve_kernel_2::Curve_2 Curve_2;
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2 Polynomial_2;
 
     //! myself
     typedef Curve_analysis_2<Algebraic_curve_kernel_2> Self;
@@ -647,7 +643,7 @@ public:
     //! \brief constructs a curve analysis from a given \c Curve_2 object
     //!
     //! for safety purposes implicit conversion from \c Curve_2 is disabled
-    explicit Curve_analysis_2(const Curve_2& c) : 
+    explicit Curve_analysis_2(const Polynomial_2& c) : 
         Base(Rep(c)) {  
     }
            
@@ -664,12 +660,12 @@ public:
     //!@{
 
     //! \brief returns the defining polynomial of the analysis
-    Curve_2 polynomial_2() const {
+    Polynomial_2 polynomial_2() const {
         return this->ptr()->_m_curve;
     }
 
     //! \brief alias for \c polynomial_2()
-    Curve_2 curve_2() const
+    Polynomial_2 curve_2() const
     { 
         return polynomial_2();
     }
@@ -841,9 +837,6 @@ public:
     // myself
     typedef Curve_pair_analysis_2_rep<Algebraic_curve_kernel_2> Self;
 
-    // type of curve pair
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-    
     // type of 1-curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
         Curve_analysis_2;
@@ -880,12 +873,6 @@ public:
 
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
-
-    //! type of a curve pair
-    typedef typename Algebraic_curve_kernel_2::Curve_pair_2 Curve_pair_2;
-
-    //! type of a curve
-    typedef typename Algebraic_curve_kernel_2::Curve_2 Curve_2;
 
     //! type of 1-curve analysis
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
@@ -974,17 +961,18 @@ class Simple_algebraic_kernel_2 {
 
 // the same for construction functors
 #define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
-    
+
 private:
+public:
     //! \name wrapping types
     //!@{
 
-    //! type of an internal curve pair
-    typedef CGALi::Curve_pair_2_model<CGALi::Curve_2_model>
-         Internal_curve_pair_2;
-
     //! type of an internal curve
-    typedef Internal_curve_pair_2::Algebraic_curve_2 Internal_curve_2;
+    typedef CGALi::Curve_2_model Internal_curve_2;
+
+    //! type of an internal curve pair
+    typedef CGALi::Curve_pair_2_model< Internal_curve_2 >
+         Internal_curve_pair_2;
 
     //! type of internal x_coordinate
     typedef Internal_curve_2::X_coordinate Internal_x_coordinate;
@@ -1000,23 +988,28 @@ public:
     //! myself
     typedef Simple_algebraic_kernel_2  Self;
     
-    //! type of curve pair
-    typedef Internal_curve_pair_2 Curve_pair_2;
-
-    //! type of single curve
-    typedef Internal_curve_2 Curve_2;
-
     //! type of x-coordinate
     typedef Internal_x_coordinate X_coordinate_1;
 
     typedef Internal_curve_2::Boundary Boundary;
         
-    //! new CGAL univariate polynomial type (_CGAL postfix is temporary to
-    //! avoid type clashes with \c Polynomial_2 type defined later
-    typedef CGAL::Polynomial<int> Polynomial_1_CGAL;
+    //! univariate polynomial type
+    typedef CGAL::Polynomial<int> Polynomial_1;
 
-    //! new CGAL bivariate polynomial type
-    typedef CGAL::Polynomial<Polynomial_1_CGAL> Polynomial_2_CGAL;
+    //! bivariate polynomial type
+    typedef CGAL::Polynomial<Polynomial_1> Polynomial_2;
+
+public:
+    //! \name types and functors for \c GPA_2< both >
+    //!@{
+   
+    //! type of 1-curve analysis
+    typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
+
+    //! type of 2-curve analysis
+    typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2; 
+    
+    //!@}
 
     //!@}
     //! \name public functors and predicates
@@ -1026,21 +1019,39 @@ public:
     Simple_algebraic_kernel_2() 
     {  }
     
-    //! \brief constructs \c Curve_2 object, uses caching if appropriate
+    //! \brief constructs \c Curve_analysis_2 object, uses caching if appropriate
     struct Construct_curve_2 :
-            public Unary_function< Polynomial_2_CGAL, Curve_2 >
+            public Unary_function< Polynomial_2, Curve_analysis_2 >
     {
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
         //! no default constructor provided
         Construct_curve_2(/*Self *pkernel_2*/) 
         {  }
             
-        Curve_2 operator()(const Polynomial_2_CGAL& f) const
+        Curve_analysis_2 operator()(const Polynomial_2& f) const
         {
-            return Curve_2();
+            return Curve_analysis_2();
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
+    
+    /*! \brief
+     * constructs \c Curve_pair_analysis_2 from pair of 1-curve analysis,
+     * caching is used when appropriate
+     */
+    struct Construct_curve_pair_2 :
+            public Binary_function<Curve_analysis_2, Curve_analysis_2,
+                Curve_pair_analysis_2> {
+           
+        Curve_pair_analysis_2 operator()
+           (const Curve_analysis_2& ca1, const Curve_analysis_2& ca2) const {
+                 
+            Curve_pair_analysis_2 cpa_2(ca1,ca2);
+            return cpa_2;
+        }
+    };
+    CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
+                               construct_curve_pair_2_object);
     
     //! type of a curve point 
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
@@ -1220,9 +1231,9 @@ public:
     //! for algerbaic curves this means that supporting polynomial is 
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
-            public Unary_function< Polynomial_2_CGAL, bool > {
+            public Unary_function< Polynomial_2, bool > {
 
-        bool operator()(const Polynomial_2_CGAL& p) const {
+        bool operator()(const Polynomial_2& p) const {
             return true; //is_square_free(p);
         }
     };
@@ -1235,9 +1246,10 @@ public:
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
-            public Binary_function< Curve_2, Curve_2, bool > { 
+        public Binary_function< Curve_analysis_2, Curve_analysis_2, bool > { 
                
-        bool operator()(const Curve_2& c1, const Curve_2& c2) const {
+        bool operator()(const Curve_analysis_2& c1, 
+                        const Curve_analysis_2& c2) const {
             return true;
         }
     };
@@ -1251,19 +1263,20 @@ public:
         Decompose_2(/*Self *pkernel_2*/)  
         {  }
 
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) {
+        Polynomial_2 operator()(const Polynomial_2& p) {
             return p;
         }
 
         template< class OutputIterator1, class OutputIterator2 >
-        int operator()( const Curve_2& c, OutputIterator1 fit, 
+        int operator()( const Curve_analysis_2& c, OutputIterator1 fit, 
                         OutputIterator2 mit ) const {
                         
             return 0;
         }
         
         template < class OutputIterator >
-        bool operator()(const Curve_2& c1, const Curve_2& c2,
+        bool operator()(const Curve_analysis_2& c1, 
+                        const Curve_analysis_2& c2,
             OutputIterator oi1, OutputIterator oi2, OutputIterator oib) {
            
             return false;
@@ -1279,8 +1292,6 @@ public:
     //! \name types and functors for \c GPA_2<Algebraic_kernel_2>
     //!@{
     
-    typedef Curve_2 Polynomial_2; 
-    
     typedef Construct_curve_2 Construct_polynomial_2_;
 
     typedef X_coordinate_1 Algebraic_real_1;
@@ -1295,9 +1306,9 @@ public:
     
     //! \brief computes the derivative w.r.t. the first (innermost) variable
     struct Derivative_x_2 : 
-        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        public Unary_function< Polynomial_2, Polynomial_2 > {
         
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const {
+        Polynomial_2 operator()(const Polynomial_2& p) const {
             return p;
         }
     };
@@ -1305,9 +1316,9 @@ public:
 
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
-        public Unary_function< Polynomial_2_CGAL, Polynomial_2_CGAL > {
+        public Unary_function< Polynomial_2, Polynomial_2 > {
         
-        Polynomial_2_CGAL operator()(const Polynomial_2_CGAL& p) const  {
+        Polynomial_2 operator()(const Polynomial_2& p) const  {
             return p;
         }
     };
@@ -1377,17 +1388,6 @@ public:
 
 #undef CGAL_Algebraic_Kernel_pred    
 #undef CGAL_Algebraic_Kernel_cons 
-    
-    //!@}
-public:
-    //! \name types and functors for \c GPA_2< both >
-    //!@{
-   
-    //! type of 1-curve analysis
-    typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
-
-    //! type of 2-curve analysis
-    typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2; 
     
     //!@}
       
