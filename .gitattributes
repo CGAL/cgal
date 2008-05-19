@@ -1704,7 +1704,6 @@ Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Non_x_mon
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Point_2.h -text
 Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h -text
 Curved_kernel_via_analysis_2/package_info/Curved_kernel_via_analysis_2/maintainer -text
-Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/include/simple_models.h -text
 Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/makefile -text
 Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/simple_models.C -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif

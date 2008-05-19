@@ -28,7 +28,7 @@ using std::output_iterator_tag; // compiler complains
 // temporarily required while CKvA depends on NumeriX library
 #include <NiX/resultant.h>
 
-#include <simple_models.h>
+#include <CGAL/Curved_kernel_via_analysis/test/simple_models.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 
