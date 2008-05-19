@@ -82,9 +82,9 @@ namespace CGAL{
     }
   };
 
-  bool operator==(const Inter_alg_info& IA1,const Inter_alg_info& IA2){
-    return (IA1.qF==IA2.qF) && (IA1.qS==IA2.qS) && (IA1.F_index==IA2.F_index) && (IA1.S_index==IA2.S_index);
-  }  
+  //bool operator==(const Inter_alg_info& IA1,const Inter_alg_info& IA2){
+  //  return (IA1.qF==IA2.qF) && (IA1.qS==IA2.qS) && (IA1.F_index==IA2.F_index) && (IA1.S_index==IA2.S_index);
+  //}  
   
   
   template <class T>

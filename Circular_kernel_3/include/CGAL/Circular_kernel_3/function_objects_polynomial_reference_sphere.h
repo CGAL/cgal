@@ -661,6 +661,30 @@ namespace SphericalFunctors {
       return sk.compare_z_3_object()(Pt1,Pt2);
     }
 
+    //Compare the z coordinates of the intersection points with the meridian defined by hq and A (A=f(theta) compliant with hq) of two half circles.
+    result_type operator() (const Half_circle_on_reference_sphere_3 & H, const Circular_arc_point_on_reference_sphere_3& Pt1) const {
+      std::vector<CGAL::Object> cont;
+      const typename CGAL::HQ_NT& hq=Pt1.get_hq();
+      const FT& A=Pt1.get_f_of_theta();
+      FT a,b;
+      if (truncf(hq)!=hq){//for hquadrant boundary
+        if (hq==1.5 || hq==5.5){a=1;b=-1;}
+        else if (hq==3.5 || hq==7.5){a=1;b=1;}
+        else if (hq==0.5 || hq==4.5 || hq==8.5){a=0;b=1;}
+        else if (hq==2.5 || hq==6.5){a=1;b=0;}
+      }
+      else
+        if (CGAL::auto_ftype(hq)==CGAL::TAN){a=A;b=-1;}
+        else{a=-1;b=A;}
+      
+      SK sk;
+      typename SK::Plane_3 p=sk.construct_plane_3_object()(typename SK::Algebraic_kernel::Polynomial_1_3(a,b,0,0));
+      typename SK::Circular_arc_point_3 Pt2;
+      sk.intersect_3_object()(H.supporting_circle().reference_sphere(),H.supporting_circle().supporting_sphere(),p,std::back_inserter(cont));
+      select_inter_pt(H.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::THREADED?CGAL::UNDEF:H.get_position(),cont,Pt2,hq);
+      return sk.compare_z_3_object()(Pt2,Pt1);
+    }    
+    
     //compare a normal start point vs a theta-monotonic circle arc.
     result_type operator() (const Circular_arc_point_on_reference_sphere_3& Pt,
                                             const Half_circle_on_reference_sphere_3& H) const{
@@ -761,6 +785,164 @@ namespace SphericalFunctors {
     }
   };  
   
+  //convertion of pole to Circular_arc_point_on_reference_sphere_3
+  #define M_CONVERT(PT)typename SK::Circular_arc_point_on_reference_sphere_3(0,0,PT.x(),PT.y(),PT.z())
+  
+  
+  template <class SK>
+  struct Make_theta_monotonic_3{
+    template<class OutputIterator>
+    OutputIterator operator()(const typename SK::Circular_arc_on_reference_sphere_3& c,OutputIterator oi){
+      SK kernel;
+      typename SK::Has_on_3 has_on_pred=kernel.has_on_3_object();
+      if (c.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::NORMAL){
+        CGAL::Object Pts[2];
+        kernel.theta_extremal_point_3_object(c.supporting_circle(),Pts);
+        std::pair<typename SK::Circular_arc_point_on_reference_sphere_3,unsigned> Pt1,Pt2;
+        CGAL::assign(Pt1,Pts[0]);
+        CGAL::assign(Pt2,Pts[1]);
+        if (c.is_full()){
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Pt1,Pt2));
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Pt2,Pt1));
+          return oi;
+        }
+        if (has_on_pred(c,Pt1)){
+          typename SK::Circular_arc_on_reference_sphere_3 Cn1(c.supporting_circle(),c.source(),Pt1);
+          typename SK::Circular_arc_on_reference_sphere_3 Cn2(c.supporting_circle(),Pt1,c.target());
+          if (has_on_pred(Cn1,Pt2)){
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Cn1.source(),Pt2));
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Pt2,Cn1.target()));
+            *oi++=CGAL::make_object(Cn2);
+          }
+          else{
+            if (has_on_pred(Cn2,Pt2)){
+              *oi++=CGAL::make_object(Cn1);
+              *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Cn2.source(),Pt2));
+              *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Pt2,Cn2.target()));
+            }
+            else{
+              *oi++=CGAL::make_object(Cn1);
+              *oi++=CGAL::make_object(Cn2);
+            }
+          }
+        }
+        else{
+          if (has_on_pred(c,Pt2)){
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),c.source(),Pt2));
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),Pt2,c.target()));
+          }
+          else
+            *oi++=CGAL::make_object(c);
+        }
+        return oi;
+      }
+      if (c.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::THREADED){
+        *oi++=CGAL::make_object(c);
+        return oi;
+      }
+      if (c.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::POLAR){
+        typename SK::Circular_arc_point_3 pole=
+        ( (CGAL::pole_of_polar_circle<SK>(c)==CGAL::NPOLE)?
+        SK::Circular_arc_point_3(c.reference_sphere().x(),
+                                 c.reference_sphere().y(),
+                                 c.reference_sphere().z()+CGAL::make_root_of_2(0,1,c.reference_sphere().squared_radius())):
+        SK::Circular_arc_point_3(c.reference_sphere().x(),
+                                 c.reference_sphere().y(),
+                                 c.reference_sphere().z()+CGAL::make_root_of_2(0,1,-c.reference_sphere().squared_radius())) );
+        if (has_on_pred(c,pole)){
+          typename SK::Circular_arc_point_on_reference_sphere_3 pt=M_CONVERT(pole);
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),c.source(),pt));
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c.supporting_circle(),pt,c.target()));
+        }
+        return oi;
+      }
+      if (c.supporting_circle().type_of_circle_on_reference_sphere()==CGAL::BIPOLAR){
+        typename SK::Circular_arc_point_3 npole(c.reference_sphere().x(),
+                                           c.reference_sphere().y(),
+                                           c.reference_sphere().z()+
+                                           CGAL::make_root_of_2(0,1,c.reference_sphere().squared_radius()));
+        typename SK::Circular_arc_point_3 spole(c.reference_sphere().x(),
+                                           c.reference_sphere().y(),
+                                           c.reference_sphere().z()+
+                                           CGAL::make_root_of_2(0,1,-c.reference_sphere().squared_radius()));
+        if (c.is_full()){
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(npole),M_CONVERT(spole)));
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(spole),M_CONVERT(npole)));
+          return oi;
+        }
+        if (has_on_pred(c,npole)){
+          typename SK::Circular_arc_on_reference_sphere_3 C1(c,c.source(), M_CONVERT(npole));
+          typename SK::Circular_arc_on_reference_sphere_3 C2(c,M_CONVERT(npole),c.target() );
+          if (has_on_pred(C1,spole)){
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,C1.source(), M_CONVERT(spole)));
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(spole), C1.target()))
+            *oi++=CGAL::make_object(C2);
+            return oi;
+          }
+          if (has_on_pred(C2,spole)){
+            *oi++=CGAL::make_object(C1);            
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,C2.source(),M_CONVERT(spole)))
+            *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(spole),C2.target()));
+            return oi;
+          }
+        }
+        if (has_on_pred(c,spole)){
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,c.source(), M_CONVERT(spole)));
+          *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(spole),c.target() ));        
+          return oi;
+        }
+        oi++=CGAL::make_object(c);
+        return oi;
+      }
+    }
+    
+    //~ TODO #warning not finished
+    //~ TODO #warning should add constructor to circular_arc_on_reference_sphere with one circle : have full and avoid rewritting full operator
+    template<class OutputIterator>
+    OutputIterator operator()(const typename SK::Circle_on_reference_sphere_3& c,OutputIterator oi){
+      if (c.type_of_circle_on_reference_sphere()==CGAL::NORMAL){
+        CGAL::Object Pts[2];
+        SK().theta_extremal_point_3_object(c.supporting_circle(),Pts);
+        std::pair<typename SK::Circular_arc_point_on_reference_sphere_3,unsigned> Pt1,Pt2;
+        CGAL::assign(Pt1,Pts[0]);
+        CGAL::assign(Pt2,Pts[1]);
+        *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,Pt1,Pt2));
+        *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,Pt2,Pt1));
+        return oi;
+      }
+      if (c.type_of_circle_on_reference_sphere()==CGAL::BIPOLAR){
+        typename SK::Circular_arc_point_3 npole(c.reference_sphere().x(),
+                                           c.reference_sphere().y(),
+                                           c.reference_sphere().z()+
+                                           CGAL::make_root_of_2(0,1,c.reference_sphere().squared_radius()));
+        typename SK::Circular_arc_point_3 spole(c.reference_sphere().x(),
+                                           c.reference_sphere().y(),
+                                           c.reference_sphere().z()+
+                                           CGAL::make_root_of_2(0,1,-c.reference_sphere().squared_radius()));
+        *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(npole),M_CONVERT(spole)));
+        *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,M_CONVERT(spole),M_CONVERT(npole)));
+        return oi;
+      }
+      if (c.type_of_circle_on_reference_sphere()==CGAL::THREADED){
+        *oi++=CGAL::make_object(c);
+        return oi;
+      }
+      if (c.type_of_circle_on_reference_sphere()==CGAL::POLAR){
+        typename SK::Circular_arc_point_3 pole=
+        ( (CGAL::pole_of_polar_circle<SK>(c)==CGAL::NPOLE)?
+        SK::Circular_arc_point_3(c.reference_sphere().x(),
+                                 c.reference_sphere().y(),
+                                 c.reference_sphere().z()+CGAL::make_root_of_2(0,1,c.reference_sphere().squared_radius())):
+        SK::Circular_arc_point_3(c.reference_sphere().x(),
+                                 c.reference_sphere().y(),
+                                 c.reference_sphere().z()+CGAL::make_root_of_2(0,1,-c.reference_sphere().squared_radius())) );
+        typename SK::Circular_arc_point_on_reference_sphere_3 pt=M_CONVERT(pole);
+        *oi++=CGAL::make_object(typename SK::Circular_arc_on_reference_sphere_3(c,pt,pt));
+        return oi;
+      }
+    }    
+    
+  };
   
 }
 }

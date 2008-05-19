@@ -32,6 +32,7 @@
 
 #include <iostream>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Circular_arc_point_3.h>
 #include <CGAL/Circular_kernel_3/constant.h>
 
@@ -82,6 +83,7 @@ namespace CGAL {
       return ( (atan2 (ay,ax)<0)?(atan2 (ay,ax)+2.*M_PI):(atan2 (ay,ax)) );
     };
     
+    //TODO : must remove this function and put it in to double or something like thing + remove include Cartesian
     CGAL::Cartesian<double>::Point_3 get_point_approx() const {//just for intersection and critical points of normal circles
       return CGAL::Cartesian<double>::Point_3(CGAL::to_double(this->x()),CGAL::to_double(this->y()),CGAL::to_double(this->z()));
     }

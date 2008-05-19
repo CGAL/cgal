@@ -79,8 +79,10 @@ namespace CGAL {
         typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
         typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>    Circular_arc_point_on_reference_sphere_3;
         typedef CGALi::Circle_on_reference_sphere_3<SphericalKernel>                Circle_on_reference_sphere_3;
-        typedef CGALi::Half_circle_on_reference_sphere_3<SphericalKernel>                Half_circle_on_reference_sphere_3;
-        typedef CGALi::Circular_arc_3<SphericalKernel,CGAL::Circle_on_reference_sphere_3<SphericalKernel>,CGAL::Circular_arc_point_on_reference_sphere_3<SphericalKernel> >    Circular_arc_on_reference_sphere_3;
+        typedef CGALi::Half_circle_on_reference_sphere_3<SphericalKernel>           Half_circle_on_reference_sphere_3;
+        typedef CGALi::Circular_arc_3<
+            SphericalKernel,CGAL::Circle_on_reference_sphere_3<SphericalKernel>,
+            CGAL::Circular_arc_point_on_reference_sphere_3<SphericalKernel> >       Circular_arc_on_reference_sphere_3;
         typedef CGALi::Theta_rep<SphericalKernel>                                   Theta_rep;
         typedef CGALi::Sphere_with_radius_3<SphericalKernel>                        Sphere_with_radius_3;
         

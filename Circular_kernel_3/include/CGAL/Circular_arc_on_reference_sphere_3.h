@@ -38,7 +38,7 @@ namespace CGAL {
   template <class SK> 
     class Circular_arc_on_reference_sphere_3
     //~ : public SK::Kernel_base::Circular_arc_on_reference_sphere_3, public CGAL::Circular_arc_3<SK>
-    : public SK::Kernel_base::Circular_arc_on_reference_sphere_3, public CGAL::Circular_arc_3<SK>
+    : public SK::Kernel_base::Circular_arc_on_reference_sphere_3
   {
     
     typedef typename SK::RT                          RT;

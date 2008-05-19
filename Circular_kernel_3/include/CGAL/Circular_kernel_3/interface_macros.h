@@ -92,6 +92,7 @@
   CGAL_Spherical_Kernel_cons(Compute_approximate_area_3, compute_approximate_area_3_object)
   CGAL_Spherical_Kernel_cons(Compute_approximate_squared_length_3, compute_approximate_squared_length_3_object)
   CGAL_Spherical_Kernel_cons(Compute_approximate_angle_3, compute_approximate_angle_3_object)
+  CGAL_Spherical_Kernel_cons(Make_theta_monotonic_3, make_theta_monotonic_3_object)
 
   CGAL_Spherical_Kernel_pred(Compare_x_3, compare_x_3_object)
   CGAL_Spherical_Kernel_pred(Compare_y_3, compare_y_3_object)
