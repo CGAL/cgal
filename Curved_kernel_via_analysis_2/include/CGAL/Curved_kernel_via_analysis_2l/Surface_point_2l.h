@@ -360,7 +360,7 @@ public:
             
             // X
             {
-                x = NiX::to_double(this->x()); // TODO replace by CGAL::
+                x = CGAL::to_double(this->x()); // TODO replace by CGAL::
             }
 
             Rational bound(2e-10); // TODO correct threshold?
@@ -382,7 +382,7 @@ public:
                     refine_y(xy);
                 }
                 
-                y = NiX::to_double(lower_boundary_y(xy));
+                y = CGAL::to_double(lower_boundary_y(xy));
             }
             // TODO replace xy by planar approximation (renderer, Pavel)
             // Z
@@ -402,7 +402,7 @@ public:
                     isolator->refine_interval(this->sheet());
                 }
                 
-                z = NiX::to_double(isolator->left_boundary(this->sheet()));
+                z = CGAL::to_double(isolator->left_boundary(this->sheet()));
             }
             
             this->ptr()->_m_approximation = Approximation_3(x,y,z);

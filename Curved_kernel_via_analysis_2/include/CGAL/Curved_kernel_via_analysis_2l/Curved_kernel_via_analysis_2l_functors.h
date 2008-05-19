@@ -414,7 +414,7 @@ public:
                 
                 // if same surface compare arc numbers, 
                 if (s1.is_identical(s2)) {
-                    return NiX::sign(sheet1 - sheet2);
+                    return CGAL::sign(sheet1 - sheet2);
                 }
 
 #if QdX_USE_AcX // TODO other flag
@@ -440,7 +440,7 @@ public:
                 int level1 = z_stack.z_level_of_sheet(s1, sheet1);
                 int level2 = z_stack.z_level_of_sheet(s2, sheet2);
                 
-                return NiX::sign(level1 - level2);
+                return CGAL::sign(level1 - level2);
 #else
                 CGAL_error_msg("Compare_xyz_3 not working without AcX");
                 return CGAL::EQUAL;
