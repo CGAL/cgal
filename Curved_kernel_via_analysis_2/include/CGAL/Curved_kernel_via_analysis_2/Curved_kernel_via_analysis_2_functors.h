@@ -1688,8 +1688,9 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
     //! the result type
-    typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
-
+    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    result_type;
+    
     //! the arity of the functor
     typedef Arity_tag<3> Arity;    
     
@@ -2145,7 +2146,8 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
     //! the result type
-    typedef std::iterator<output_iterator_tag, CGAL::Object> result_type;
+    typedef std::iterator< std::output_iterator_tag, CGAL::Object > 
+    result_type;
 
     //! the arity of the functor
     typedef Arity_tag<2> Arity;   
@@ -2242,7 +2244,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
     //! the result type
-    typedef std::iterator<output_iterator_tag, Point_2> result_type;
+    typedef std::iterator< std::output_iterator_tag, Point_2 > result_type;
 
     //! the arity of the functor
     typedef Arity_tag<2> Arity;   
@@ -2316,7 +2318,7 @@ public:
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
     //! the result type
-    typedef std::iterator<output_iterator_tag, Point_2> result_type;
+    typedef std::iterator< std::output_iterator_tag, Point_2 > result_type;
 
     //! the arity of the functor
     typedef Arity_tag<2> Arity;   
