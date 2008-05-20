@@ -1,5 +1,8 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
+#include <CGAL/Surface_mesh_default_criteria_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
+#include <fstream>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Gray_level_image_3.h>
 #include <CGAL/Implicit_surface_3.h>
@@ -30,7 +33,7 @@ int main() {
                                    bounding_sphere_squared_radius);
 
   // definition of the surface, with 10^-2 as relative precision
-  Surface_3 surface(image, bounding_sphere, 1e-2);
+  Surface_3 surface(image, bounding_sphere, 1e-5);
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
@@ -39,6 +42,7 @@ int main() {
 
   // meshing surface, with the "manifold without boundary" algorithm
   CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
-
+  std::ofstream out("out.off");
+  CGAL::output_surface_facets_to_off (out, c2t3);
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }
