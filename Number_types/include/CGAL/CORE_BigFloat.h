@@ -181,7 +181,6 @@ public:
             // shift such that err.m()+err.err() fits into long 
             int digits_long = std::numeric_limits<long>::digits;
             if(::CORE::bitLength(err.m()+err.err()) >= digits_long){
-                std::cout << "IF" << std::endl;
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ; 
                 //std::cout << "shift " << shift<< std::endl;
                 long new_err = ((err.m()+err.err()) >> shift).longValue()+1; 
