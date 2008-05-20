@@ -320,7 +320,7 @@ public:
 
 
 public:
-    //!\name Comparisons
+    //!\name Predicates
     //!@{
     
     //!\brief compares two points xyz-lexicographically
@@ -341,7 +341,27 @@ public:
         );
     }
 
+    //!\brief decides if point lies on a surface
+    //!
+    //!\pre compared points have finite x/y-coordinates
+    inline
+    bool is_on(const Surface_3& surface) const {
+        CGAL_precondition_msg(this->is_finite(), 
+                              "Is_on_3: Point at inf not supported");
+        CGAL_precondition_msg(!this->is_z_at_infinity(),
+                              "Is_on_3: Point at with |z|=oo not supported");
+        
+        CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_3, 
+                                               is_on_3,
+                                               is_on_3_object);
+        CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
+        return is_on_3(
+                *dynamic_cast< const Kernel_point_2* >(this), surface
+        );
+    }
+
     //!@}
+
 
 #undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
     

@@ -180,6 +180,8 @@ public:
 
     CGAL_CKvA_2l_functor_pred(Is_on_2, is_on_2_object);
 
+    CGAL_CKvA_2l_functor_pred(Is_on_3, is_on_3_object);
+
 #undef CGAL_CKvA_2l_functor_pred
 #undef CGAL_CKvA_2l_functor_cons
 

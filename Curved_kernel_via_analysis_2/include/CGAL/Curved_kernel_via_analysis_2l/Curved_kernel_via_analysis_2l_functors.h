@@ -453,6 +453,55 @@ public:
 };
 
 
+//!\brief Tests whether a point lies on a surface
+template < class CurvedKernelViaAnalysis_2l >
+class Is_on_3: public Curved_kernel_via_analysis_2_Functors::
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2l > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2l >
+    Base;
+    
+    CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
+    
+    //! type of surface
+    typedef typename Point_2::Surface_3 Surface_3;
+
+    //! the result type
+    typedef bool result_type;
+    typedef Arity_tag<2> Arity;
+    
+    //! standard constructor
+    Is_on_3(Curved_kernel_via_analysis_2l *kernel) :
+        Base(kernel) {
+    }
+    
+    /*!
+     * Checks whether \c p lies on \c surface
+     * \param p The point to test
+     * \param surface The surface
+     * \return (true) if the \c p lies on \c surface
+     */
+    result_type operator()(const Point_2& p, const Surface_3& surface) const {
+        result_type res = false;
+
+        CGAL_precondition_msg(p.is_finite(), 
+                              "Is_on_3: Point at inf not supported");
+        CGAL_precondition_msg(!p.is_z_at_infinity(),
+                              "Is_on_3: Point with |z|=oo not supported");
+        
+        CGAL_error_msg("Is_on_3 not yet implemented (eriC)");
+        
+        return res;
+    }
+};
+
 //!\brief Tests whether a point lies on a supporting curve
 template < class CurvedKernelViaAnalysis_2l >
 class Is_on_2: public Curved_kernel_via_analysis_2_Functors::

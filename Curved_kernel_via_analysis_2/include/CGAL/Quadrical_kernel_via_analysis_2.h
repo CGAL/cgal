@@ -2017,7 +2017,8 @@ public:
                               construct_point_on_arc_2_object);
     
     CGAL_CKvA_2l_functor_pred(Compare_xyz_3, compare_xyz_3_object);
-    
+
+    CGAL_CKvA_2l_functor_pred(Is_on_3, is_on_3_object);
     
 #undef CGAL_CKvA_2l_functor_pred
 #undef CGAL_CKvA_2l_functor_cons
@@ -2069,7 +2070,7 @@ public:
     CGAL_QKvA_2_functor_cons(Make_x_monotone_2, make_x_monotone_2_object);
 
     // TODO implement Is_on_2 (Pavel)
-    
+
     //!@}
     
 #undef CGAL_QKvA_2_functor_pred
