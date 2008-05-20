@@ -21,16 +21,11 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
-#include <CGAL/Algebraic_kernel_1.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-
-#if 0
 
 namespace CGALi {
 
@@ -74,8 +69,6 @@ CGALi::X_coordinate_1_model gcd(CGALi::X_coordinate_1_model x1,
     return CGALi::X_coordinate_1_model();
 }
 
-#endif
-
 namespace CGALi {
 
 struct Curve_2_model_rep {
@@ -100,16 +93,12 @@ struct Curve_2_model :
     typedef Curve_2_model_rep         Rep;
     typedef ::CGAL::Handle_with_policy< Rep > Base;
     
-    typedef CGAL::Algebraic_kernel_1< CGAL::Arithmetic_kernel::Integer > AK_1;
-
-    typedef AK_1::Algebraic_real_1 X_coordinate;
-    typedef AK_1::Algebraic_real_1 Y_coordinate;
+    typedef CGALi::X_coordinate_1_model X_coordinate;
+    typedef CGALi::X_coordinate_1_model Y_coordinate;
     typedef double Boundary;
 
     typedef int Coefficient;
     
-    //typedef SoX::Event1_info< X_coordinate > Event1_info;
-
     typedef CGAL::Polynomial< CGAL::Polynomial < int > > Poly_d;
 
     typedef CGAL::Handle_id_less_than< Curve_2_model > Less_than;
