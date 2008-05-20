@@ -29,6 +29,15 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+#ifndef CERR
+//#define CKvA_DEBUG_PRINT_CERR
+#ifdef CKvA_DEBUG_PRINT_CERR
+#define CERR(x) std::cerr << x
+#else
+#define CERR(x) static_cast<void>(0)
+#endif
+#endif
+
 namespace Curved_kernel_via_analysis_2l_Functors {
 
 #define CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES \
@@ -369,6 +378,9 @@ public:
      */
     result_type operator()(const Point_2& p1, const Point_2& p2,
                            bool equal_xy = false) const {
+
+        CERR("\nqkvacompare_xyz: p1: " << p1 << "\n p2: " << p2 << "\n");
+
         result_type res = CGAL::EQUAL;
 
         if (!p1.is_identical(p2)) {
@@ -447,7 +459,9 @@ public:
 #endif
             }
         }
-
+        
+        CERR("result: " << res << "\n");
+        
         return res;
     }
 };
@@ -489,14 +503,43 @@ public:
      * \return (true) if the \c p lies on \c surface
      */
     result_type operator()(const Point_2& p, const Surface_3& surface) const {
-        result_type res = false;
-
+        
+        CERR("\nqkvais_on_3: p: " << p << "\n surface: " << surface << "\n");
+        
         CGAL_precondition_msg(p.is_finite(), 
                               "Is_on_3: Point at inf not supported");
         CGAL_precondition_msg(!p.is_z_at_infinity(),
                               "Is_on_3: Point with |z|=oo not supported");
         
-        CGAL_error_msg("Is_on_3 not yet implemented (eriC)");
+        result_type res = false;
+        
+        if (surface == p.surface()) {
+            res = true;
+        } else {
+            
+            typedef typename Curved_kernel_via_analysis_2l::Surface_pair_3
+                Surface_pair_3;
+
+            Surface_pair_3 pair = 
+                Surface_pair_3::surface_pair_cache()(
+                        std::make_pair(p.surface(), surface)
+                );
+            
+            typedef typename 
+                Surface_pair_3::Restricted_cad_3::Z_stack Z_stack;
+            
+            Z_stack z_stack = pair.z_stack_for(
+                    p.projected_point()
+            );
+
+            int level = z_stack.z_level_of_sheet(p.surface(), p.sheet());
+            
+            int level_s = z_stack.level_of_surface_in_z_cell(surface, level);
+
+            res = (level_s != -1);
+        }
+        
+        CERR("result: " << res << "\n");
         
         return res;
     }
@@ -535,9 +578,15 @@ public:
      * \return (true) if the \c p lies on \c c
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
-        result_type res = false;
+
+        CERR("\nqkvais_on_2: p: " << p << "\n curve: " << c << "\n");
         // FUTURE TODO implement Is_on_2 with Curve_2 == Surface_3 (eriC)
         CGAL_error_msg("Is_on_2 not implemented for Surfaces");
+        
+        result_type res = false;
+        
+        CERR("result: " << res << "\n");
+        
         return res;
     }
 };
