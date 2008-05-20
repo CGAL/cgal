@@ -69,11 +69,12 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
 		  << " (" << e->point() << ")");
   CGAL_NEF_TRACEN("  marks " << se->incident_sface()->mark());
   
+  if(e->point() == dir || e->point() == CGAL::ORIGIN - dir)
+    return 0;
   if(only_small_to_large && 
      e->source()->point() > e->twin()->source()->point())
     return 0;
-  if(e->point() == dir || e->twin()->point() == dir)
-    return 0;
+
   
   typename SNC_structure::Sphere_circle cp(e->point(), dir);
   typename SNC_structure::SHalfedge_handle se2 = se->sprev()->twin();
