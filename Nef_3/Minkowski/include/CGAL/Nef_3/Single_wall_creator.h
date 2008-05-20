@@ -140,7 +140,6 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 		     << ", " << CGAL::to_double(estart->twin()->source()->point().z()) );
 
     SM_walls SMW(&*estart->source());
-
     Sphere_segment sphere_ray(estart->point(), estart->twin()->point(), c);
     SVertex_handle lateral_svertex = 
       SMW.add_lateral_svertex(sphere_ray);
@@ -162,6 +161,14 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 #else
       SMW.add_sedge_between(estart, lateral_svertex, c);
 #endif
+
+    /* ???
+    CGAL_assertion_code
+      (Sphere_segment test2(estart->point(), 
+			    lateral_svertex->point(), c));
+    CGAL_assertion(test2.has_on(Sphere_point(dir)));
+    CGAL_assertion(test2.has_on(Sphere_point(-dir)));
+    */
 
     Ray_hit rh(sncp, pl, 3);
     Ray_3 r(lateral_svertex->source()->point(), 
@@ -191,11 +198,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       CGAL_NEF_TRACEN( "twins " << lateral_svertex->point() 
 		       << " + " << opp->point() );
 
-      SM_walls smwx(&*v);
       sphere_ray = Sphere_segment(lateral_svertex->point().antipode(), 
 				  lateral_svertex->point(), c);
       lateral_svertex = smw.add_lateral_svertex(sphere_ray);
-      
+
 #ifdef CGAL_NEF_INDEXED_ITEMS
       smw.add_sedge_between(opp, lateral_svertex, index1, index2, c);
 #else
@@ -215,6 +221,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       smw.add_ray_svertex(lateral_svertex->point().antipode());
     opp->twin() = lateral_svertex;
     lateral_svertex->twin() = opp;
+
 #ifdef CGAL_NEF_INDEXED_ITEMS
       opp->set_index();
       lateral_svertex->set_index(opp->get_index());
