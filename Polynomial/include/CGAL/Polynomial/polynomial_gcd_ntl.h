@@ -55,10 +55,9 @@
 #include<CGAL/CORE_BigInt.h>
 #endif
 
+
 namespace CGAL{
-//fwd
-template <class A> class Polynomial;
-template <class A> Polynomial<A> gcd(const Polynomial<A>&,const Polynomial<A>&);
+template <class A> class Polynomial; // fwd 
 } // namespace CGAL
 
 // This part forms the bridge to NTL to use the modular gcd algorithm. If 
@@ -143,7 +142,7 @@ template <>
 inline
 CGAL::Polynomial<leda::integer>
 gcd(const CGAL::Polynomial<leda::integer>& p1,
-            const CGAL::Polynomial<leda::integer>& p2) {
+        const CGAL::Polynomial<leda::integer>& p2) {
     return CGALi::modular_NTL_gcd_for_univariate_integer_polynomials(p1,p2);
 }
 #endif // CGAL_USE_LEDA
