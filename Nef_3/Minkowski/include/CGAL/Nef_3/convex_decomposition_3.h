@@ -2,7 +2,6 @@
 #include <CGAL/Nef_3/Single_wall_creator2.h>
 #include <CGAL/Nef_3/Single_wall_creator3.h>
 #include <CGAL/Nef_3/Reflex_edge_searcher.h>
-#include <CGAL/Nef_3/Reflex_vertex_searcher.h>
 #include <CGAL/Nef_3/YVertical_wall_builder.h>
 #include <CGAL/Nef_3/YVertical_wall_builder2.h>
 #include <CGAL/Nef_3/Ray_hit_generator2.h>
