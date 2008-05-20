@@ -199,9 +199,9 @@ public:
                     SINGULAR};    // - SINGULAR is for all other cases.
 
   class Iterator_not_in_complex {
-    Self* self;
+    const Self* self;
   public:
-    Iterator_not_in_complex(Self* self = 0) : self(self) 
+    Iterator_not_in_complex(const Self* self = 0) : self(self) 
     {
     }
     
@@ -689,13 +689,13 @@ public:
     change_in_complex_status<false, false>(c, i);
   }
 
-  Facet_iterator facets_begin(){
+  Facet_iterator facets_begin() const {
     return CGAL::filter_iterator(tr.finite_facets_end(),
                                  Iterator_not_in_complex(this),
                                  tr.finite_facets_begin());
   }
 
-  Facet_iterator facets_end(){
+  Facet_iterator facets_end() const {
     return CGAL::filter_iterator(tr.finite_facets_end(),
                                  Iterator_not_in_complex(this));
   }
