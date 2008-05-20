@@ -120,7 +120,7 @@ struct Make_x_monotone_2 :
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
         // use CGAL::Total_degree ?
-        if (CGAL::Polynomial_traits_d< 
+        if (typename CGAL::Polynomial_traits_d< 
             typename Curve_analysis_2::Polynomial_2 >::
             Total_degree()(curve.polynomial_2()) < 1) {
             return oi;
