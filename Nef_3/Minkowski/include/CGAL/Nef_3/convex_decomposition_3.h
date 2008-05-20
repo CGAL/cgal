@@ -22,8 +22,10 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
   typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
   typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
+  typedef typename Nef_polyhedron::Point_3            Point_3;
   typedef typename Nef_polyhedron::Vector_3           Vector_3;
   typedef typename Nef_polyhedron::Sphere_point   Sphere_point;
+  typedef typename Nef_polyhedron::FT FT;
 
   typedef typename CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
   typedef typename CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
@@ -38,8 +40,10 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
   typedef typename CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
   typedef typename CGAL::SFace_separator<Nef_polyhedron> SFace_separator;
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, Container> Edge_sorter;
-  typedef typename CGAL::Edge_sorter2<Nef_polyhedron, Container> Edge_sorter2;
+  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<Point_3>, 
+                                     std::less<FT>, Container> Edge_sorter;
+  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<Point_3>,
+                                     std::greater<FT>, Container> Edge_sorter2;
 
   //  CGAL_NEF_SETDTHREAD(47*229*233*239);
   //  CGAL_NEF_SETDTHREAD(223);
@@ -59,8 +63,6 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 			     res.negative_redges_end())
 	    << std::endl;
 
-  //  while(res.negative_redges_begin() != res.negative_redges_end()) {
-    
     Edge_sorter es(res.get_negative_redges());
     N.delegate(es);
 
@@ -116,14 +118,10 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 	      << std::distance(res.negative_redges_begin(), 
 			       res.negative_redges_end())
 	      << std::endl;
-    //  }
-  CGAL_assertion(N.is_valid(0,0));
 
-  //  Reflex_edge_searcher res2(Sphere_point(1,0,0));
-  //  N.delegate(res2,false,false);
-  Reflex_edge_searcher& res2 = res;
+    CGAL_assertion(N.is_valid(0,0));
 
-  //  while(res2.positive_redges_begin() != res2.positive_redges_end()) {
+    Reflex_edge_searcher& res2 = res;
 
     Edge_sorter2 es2(res2.get_positive_redges());
     N.delegate(es2);
@@ -167,7 +165,7 @@ void convex_decomposition_3(Nef_polyhedron& N) {
     N.delegate(esb);    
     CGAL_assertion(N.is_valid(0,0));
     //    N.delegate(res2, false, false);
-    /*
+
     std::cerr << "number of reflex sedges" 
 	      << std::distance(res2.positive_redges_begin(), 
 			       res2.positive_redges_end())
@@ -175,9 +173,7 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 	      << std::distance(res2.negative_redges_begin(), 
 			       res2.negative_redges_end())
 	      << std::endl;
-    */
-    //  } // TODO: get rid of the while loops
-
+   
   typename Nef_polyhedron::Halfedge_const_iterator ei;
   CGAL_forall_halfedges(ei, N) {
     if(ei->out_sedge() == typename Nef_polyhedron::SHalfedge_const_handle())
