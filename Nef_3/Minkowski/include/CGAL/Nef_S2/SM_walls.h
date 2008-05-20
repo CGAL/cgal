@@ -265,8 +265,12 @@ class SM_walls : SM_decorator<SMap> {
     }
     
     SHalfloop_handle sl;
-    if(assign(sl, o))
-      CGAL_error_msg( "not implemented yet");	
+    if(assign(sl, o)) {
+      sv = new_svertex(sp);
+      sv->mark() = sl->mark();
+      insert_new_svertex_into_sloop(sv, sl);
+      return true;
+    }
     
     CGAL_error_msg( "wrong handle");
     return false;
