@@ -636,7 +636,6 @@ public:
                             CGAL::assign(y, obj);
                         CGAL_assertion(check);
                         os << "y=" << CGAL::to_double(y) << "(asym)";
-                        // TODO CGAL::
                     }
                     break;
                 }

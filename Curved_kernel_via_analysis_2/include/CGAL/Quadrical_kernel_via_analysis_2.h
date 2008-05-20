@@ -1704,8 +1704,6 @@ public:
      */  
     void operator()(const Arc_2& cv1, const Arc_2& cv2, Arc_2& c) const {
     
-        // TODO special handling for vertical arc on upper sheet
-
         CERR("\nqkva_merge:\ncv1: " << cv1 << ";\ncv2: " << cv2 << "\n");
         CGAL_precondition(cv1.are_mergeable(cv2));
         Arc_2::simplify(cv1, cv2);
