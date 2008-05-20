@@ -23,51 +23,12 @@
 
 #include <CGAL/Polynomial.h>
 
+#include <CGAL/Algebraic_kernel_1.h>
+#include <CGAL/Arithmetic_kernel.h>
+
 CGAL_BEGIN_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-
-namespace CGALi {
-
-struct X_coordinate_rep {
-
-    int bla_;
-
-    // DefaultConstructible
-    X_coordinate_rep() :
-        bla_(0) {
-    }
-};
-
-struct X_coordinate_1_model :
-     public CGAL::Handle_with_policy< X_coordinate_rep > {
-
-    typedef X_coordinate_rep         Rep;
-    typedef CGAL::Handle_with_policy< Rep > Base;
-    
-    // default constructor
-    X_coordinate_1_model() : Base(Rep()) {
-    }
-
-    bool operator ==(const X_coordinate_1_model&) const
-    { return false; }
-    
-};
-
-std::ostream& operator<< (std::ostream& os, X_coordinate_1_model c) {
-    return os;
-}
-
-} // namespace CGALi
-
-double to_double(CGALi::X_coordinate_1_model x) {
-    return 0.0;
-}
-
-CGALi::X_coordinate_1_model gcd(CGALi::X_coordinate_1_model x1,
-                                CGALi::X_coordinate_1_model x2) {
-    return CGALi::X_coordinate_1_model();
-}
 
 namespace CGALi {
 
@@ -93,8 +54,10 @@ struct Curve_2_model :
     typedef Curve_2_model_rep         Rep;
     typedef ::CGAL::Handle_with_policy< Rep > Base;
     
-    typedef CGALi::X_coordinate_1_model X_coordinate;
-    typedef CGALi::X_coordinate_1_model Y_coordinate;
+    typedef CGAL::Algebraic_kernel_1< CGAL::Arithmetic_kernel::Integer > AK_1;
+
+    typedef AK_1::Algebraic_real_1 X_coordinate;
+    typedef AK_1::Algebraic_real_1 Y_coordinate;
     typedef double Boundary;
 
     typedef int Coefficient;
