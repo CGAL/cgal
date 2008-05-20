@@ -23,6 +23,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
+#include <CGAL/Polynomial_traits_d.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -118,7 +120,9 @@ struct Make_x_monotone_2 :
         Construct_arc_2 construct_arc_2 = 
             _m_curved_kernel->construct_arc_2_object();
         // use CGAL::Total_degree ?
-        if (CGAL::total_degree(curve.polynomial_2()) < 1) {
+        if (CGAL::Polynomial_traits_d< 
+            typename Curve_analysis_2::Polynomial_2 >::
+            Total_degree()(curve.polynomial_2()) < 1) {
             return oi;
         }
         
