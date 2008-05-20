@@ -13,6 +13,8 @@
      PURPOSE.  See the above copyright notice for more information.
 */
 
+#ifdef CGAL_USE_VTK
+
 #include <qapplication.h>
 #include <iostream>
 #include <cstdlib>
@@ -161,4 +163,14 @@ int main(int argc, char** argv)
   return 0;
 }
 
+#else // #ifdef CGAL_USE_VTK
 
+#include <iostream>
+
+int main()
+{
+  std::cerr << "That demo needs VTK support.\n";
+  return 0;
+}
+
+#endif // CGAL_USE_VTK
