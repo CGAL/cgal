@@ -107,6 +107,7 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 #endif
       }
 
+      // TODO: that's too much
       pl->add_edge(svf);
       pl->add_edge(svb);
 
