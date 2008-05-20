@@ -35,7 +35,7 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   typedef typename SNC_structure::Sphere_circle           Sphere_circle;
   typedef typename SNC_structure::Sphere_segment          Sphere_segment;
 
-  typedef typename std::vector<Halfedge_handle>           Edge_list;
+  typedef typename std::deque<Halfedge_handle>           Edge_list;
 
  public:
   typedef typename Edge_list::iterator                    Reflex_sedge_iterator;
