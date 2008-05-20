@@ -132,12 +132,26 @@ public:
     };
    
     struct Hull :public Binary_function<Interval,Interval,Interval>{
+
+/* for debugging
+        void print_bf(CORE::BigFloat bf, std::string s) const {
+
+            std::cout << s << ".m()=" << bf.m() << ","
+                      << s << ".err()=" << bf.err() << ","
+                      << s << ".exp()=" << bf.exp() << ","
+                      << "td=" << bf << std::endl;
+        }
+*/
+
         Interval operator() ( Interval x, Interval y ) const {
 #if 0
             // this is not possible since CORE::centerize has a bug.
             Interval result = CORE::centerize(x,y);
 #else 
 
+            //print_bf(x,"x");
+            //print_bf(y,"y");
+            
              CORE::BigFloat result;
              
             // Unfortunately, CORE::centerize(x,y) has bugs. 
@@ -150,9 +164,15 @@ public:
 
             CORE::BigFloat mid = (lower + upper)/2;
              
+            //print_bf(lower,"lower");
+            //print_bf(upper,"upper");
+            //print_bf(mid,"mid");
+
             // Now we have to compute the error. The problem is that .err() is just a long
             CORE::BigFloat err = (upper - lower)/CORE::BigFloat(2);
                    
+            //print_bf(err,"err");
+
             //std::cout << "lower    " << lower << std::endl;
             //std::cout << "upper    " << upper << std::endl;
             //std::cout << "mid      " << mid << std::endl;
@@ -160,7 +180,8 @@ public:
             
             // shift such that err.m()+err.err() fits into long 
             int digits_long = std::numeric_limits<long>::digits;
-            if(::CORE::bitLength(err.m()+err.err()) >= digits_long){ 
+            if(::CORE::bitLength(err.m()+err.err()) >= digits_long){
+                std::cout << "IF" << std::endl;
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ; 
                 //std::cout << "shift " << shift<< std::endl;
                 long new_err = ((err.m()+err.err()) >> shift).longValue()+1; 
@@ -168,13 +189,21 @@ public:
             }else{           
                 err = CORE::BigFloat(0,err.m().longValue()+err.err(),err.exp());
             }
+            //print_bf(err,"new_err");
+
+            // TODO: This is a workaround for a bug in operator+ 
+            // of CORE::Bigfloat. If the exponent difference is too big,
+            // this might cause problems, since the error is a long
             if(mid.exp() > err.exp()) {
-                long err_err = err.err();
-                err_err = err_err >> (mid.exp()-err.exp())*14;
-                err_err++;
-                err = CORE::BigFloat(0,err_err,mid.exp());
+                long mid_err = mid.err();
+                CORE::BigInt mid_m = mid.m();
+                mid_err = mid_err << (mid.exp()-err.exp())*14;
+                mid_m = mid_m << (mid.exp()-err.exp())*14;
+                mid = CORE::BigFloat(mid_m,mid_err,err.exp());
+                //print_bf(mid,"corr_mid");
             }
-                    
+            
+            //print_bf(result,"result");        
 
             result = mid + err;  
              
