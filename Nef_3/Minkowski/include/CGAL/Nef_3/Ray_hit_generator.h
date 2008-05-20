@@ -110,8 +110,10 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
       pl->add_edge(svf);
       pl->add_edge(svb);
 
-      //      std::cerr << "new edge " << e->source()->point() << "->" << e->twin()->source()->point() << std::endl;
-      //      std::cerr << "new edge " << svf->source()->point() << "->" << svf->twin()->source()->point() << std::endl;
+      CGAL_NEF_TRACEN("new edge " << e->source()->point() << 
+		      "->" << e->twin()->source()->point());
+      CGAL_NEF_TRACEN("new edge " << svf->source()->point() << 
+		      "->" << svf->twin()->source()->point());
 
       return v;
     }
@@ -139,7 +141,6 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Vertex_iterator vi;
     for(vi = sncp->vertices_begin(); vi != sncp->vertices_end(); ++vi) {
-      std::cerr << "Ray hit from " << vi->point() << std::endl;
       SM_walls smw(&*vi);
       SVertex_handle sv1, sv2;
       if(smw.need_to_shoot(Sphere_point(dir),sv1)) {
