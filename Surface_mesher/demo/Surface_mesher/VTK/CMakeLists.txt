@@ -45,6 +45,10 @@ SET (SRCS
   mesh_a_3D_image.cpp
 )
 
+SET (SRCS_VTK
+  mesh_a_VTK_3D_image.cpp
+)
+
 # Use the include path and library for Qt that is used by VTK.
 INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
                      ${QT_QTCORE_INCLUDE_DIR})
@@ -61,5 +65,23 @@ TARGET_LINK_LIBRARIES( mesh_a_3D_image
   CGAL
   CGAL-ImageIO
 )
+
+SET (SRCS_VTK
+  mesh_a_VTK_3D_image.cpp
+)
+
+ADD_EXECUTABLE( mesh_a_VTK_3D_image MACOSX_BUNDLE ${SRCS_VTK})
+
+TARGET_LINK_LIBRARIES( mesh_a_VTK_3D_image
+  QVTK
+  ${QT_LIBRARIES}
+  vtkRendering
+  vtkGraphics
+  vtkIO
+  vtkCommon
+  CGAL
+  CGAL-ImageIO
+)
+
 
 

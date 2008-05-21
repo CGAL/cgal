@@ -293,6 +293,7 @@ Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/VTK/*.exe
 Surface_mesher/demo/Surface_mesher/VTK/Makefile
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_3D_image
+Surface_mesher/demo/Surface_mesher/VTK/mesh_a_VTK_3D_image
 Surface_mesher/demo/Surface_mesher/dump.ff
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/demo/Surface_mesher/my_makefile
