@@ -77,12 +77,7 @@ public:
   {}
 
   template < typename T1, typename T2 >
-#ifdef __INTEL_COMPILER
-     Self
-#else
-  Point_2
-#endif
-         (const T1 &x, const T2 &y)
+  Point_2(const T1 &x, const T2 &y)
     : Rep(typename R::Construct_point_2()(Return_base_tag(), x, y))
   {}
 
