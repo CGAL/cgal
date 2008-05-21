@@ -17,10 +17,12 @@
 //
 // Author(s)     : Steve Oudot, Laurent Rineau
 
-#define CGAL_C2T3_USE_FILE_WRITER_OFF
-
 #ifndef CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
 #define CGAL_IO_COMPLEX_2_IN_TRIANGULATION_3_FILE_WRITER_H
+
+#define CGAL_C2T3_USE_FILE_WRITER_OFF
+
+//#include <CGAL/Complex_2_in_triangulation_3.h>
 
 #ifdef CGAL_C2T3_USE_FILE_WRITER_OFF
 #  include <CGAL/IO/File_writer_OFF.h>
@@ -34,6 +36,12 @@
 #include <iomanip>
 #include <stack>
 
+namespace CGAL { namespace Surface_mesher {
+  template < class Tr>
+  typename Tr::size_type number_of_facets_on_surface(const Tr& T);
+  }
+}
+
 namespace Surface_mesher_io {
 
 // using namespace ::CGAL::Surface_mesher;
@@ -42,6 +50,8 @@ template <class C2t3>
 void
 output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
 {
+  using CGAL::Surface_mesher::number_of_facets_on_surface;
+
   typedef typename C2t3::Triangulation Tr;
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
@@ -272,6 +282,8 @@ output_surface_facets_to_off (std::ostream& os, const C2t3& c2t3)
 template < class Tr>
 void
 output_oriented_surface_facets_to_off (std::ostream& os, const Tr & T) {
+  using CGAL::Surface_mesher::number_of_facets_on_surface;
+
   typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
