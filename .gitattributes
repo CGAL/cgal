@@ -1554,6 +1554,13 @@ CMake/cmake/modules/CheckCXXSourceRuns.cmake -text
 CMake/cmake/modules/CreateSingleSourceCGALProgram.cmake -text
 CMake/cmake/modules/CreateSingleSourceCGALQt3Program.cmake -text
 CMake/cmake/modules/CreateSingleSourceCGALQt4Program.cmake -text
+CMake/cmake/modules/Extract_BOOST_version.cmake -text
+CMake/cmake/modules/Extract_GMP_version.cmake -text
+CMake/cmake/modules/Extract_MPFR_version.cmake -text
+CMake/cmake/modules/Extract_OpenGL_version.cmake -text
+CMake/cmake/modules/Extract_Qt3_version.cmake -text
+CMake/cmake/modules/Extract_TAUCS_version.cmake -text
+CMake/cmake/modules/Extract_ZLIB_version.cmake -text
 CMake/cmake/modules/FindBOOST_PROGRAM_OPTIONS.cmake -text
 CMake/cmake/modules/FindBOOST_THREAD.cmake -text
 CMake/cmake/modules/FindBoost2.cmake -text
@@ -1569,7 +1576,6 @@ CMake/cmake/modules/FindQGLViewer.cmake -text
 CMake/cmake/modules/FindTAUCS.cmake -text
 CMake/cmake/modules/FindZLIB.cmake -text
 CMake/cmake/modules/GeneratorSpecificSettings.cmake -text
-CMake/cmake/modules/LogCMakeVariables.cmake -text
 CMake/cmake/modules/MacroFindOptionalCGALDependency.cmake -text
 CMake/cmake/modules/MacroOptionalFindPackage.cmake -text
 CMake/cmake/modules/OptionalAddSubdirectory.cmake -text

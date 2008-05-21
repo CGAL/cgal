@@ -51,8 +51,6 @@
 #    to use Link Directories.
 
 include(FindPackageHandleStandardArgs)
-include(ReadLines)
-include(FindMatchingItem)
 
 set(BOOST_INCLUDE_PATH_DESCRIPTION "directory containing the boost include files. E.g /usr/local/include/boost_1_34_1 or c:\\Program Files\\boost\\boost_1_34_1")
 
@@ -130,16 +128,6 @@ if(Boost_INCLUDE_DIRS)
   if(Boost_LIBRARY_DIR AND EXISTS "${Boost_LIBRARY_DIR}")
     set(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR} CACHE PATH "The ${BOOST_LIB_PATH_DESCRIPTION}" )
   endif()
-  
-  readlines(${Boost_INCLUDE_DIRS}/boost/version.hpp BOOST_VERSION_FILE)
-  
-  find_matching_item(BOOST_VERSION_FILE "BOOST_LIB_VERSION" BOOST_LIB_VERSION_LINE )
-  
-  string( REGEX MATCH "\".*\"$" BOOST_LIB_VERSION_STR2 ${BOOST_LIB_VERSION_LINE} )
-  string( REPLACE "\"" "" BOOST_LIB_VERSION_STR1 ${BOOST_LIB_VERSION_STR2} )
-  string( REPLACE "_" "." BOOST_LIB_VERSION_STR ${BOOST_LIB_VERSION_STR1} )
-  message( STATUS "USING BOOST_VERSION ${BOOST_LIB_VERSION_STR}" )
-   
   
 endif()
 

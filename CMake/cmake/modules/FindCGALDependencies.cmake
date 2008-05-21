@@ -44,4 +44,13 @@ if(WITH_CGAL_CORE AND CGAL_CORE_FOUND )
   set(CGAL_USE_CGAL_CORE 1)
 endif()
 
+find_package(Qt3)
+
+include(Extract_BOOST_version)
+include(Extract_OpenGL_version)
+include(Extract_GMP_version)
+include(Extract_MPFR_version)
+include(Extract_ZLIB_version)
+include(Extract_TAUCS_version)
+include(Extract_Qt3_version)
 
