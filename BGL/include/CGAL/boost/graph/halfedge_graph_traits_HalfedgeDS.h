@@ -70,19 +70,6 @@ public :
   typedef typename HDS::Vertex::Point Point ;
 };
 
-template <class HDS_>
-struct HDS_halfedge_graph_traits<HDS_ const> 
-{
-public :
-  
-  typedef HDS_ HDS;
-  
-  typedef HDS_all_undirected_edges_const_iterator<HDS> undirected_edge_iterator;
-  
-  typedef typename HDS::Vertex::Point Point ;
-};
-
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_HALFEDGEDS_H

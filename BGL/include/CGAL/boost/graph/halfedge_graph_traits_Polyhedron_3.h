@@ -32,6 +32,18 @@
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
 
+//
+// NOTE: The BGL algorithms are NOT const-correct: i.e., they take a "G const&" 
+// but instantiate "graph_traits<G>" instead of "graph_traits<G const>"
+// This is known Boost bug which will eventually be fixed, but in the meantime we need
+// to coerce both const and non-const specializations.
+// That is, HDS_graph_traits<G const> is really the same as HDS_graph_traits<G>
+// so graph_traits<G> is also the same as graph_traits<G const>.
+// Therefore, while, for instance, "graph_traits<G const>::vertex_descriptor"
+// is conceptually const-correct, it actually corresponds to the non-const handle,
+// hence the const_cast<> used below in the functions implementation.
+//
+
 CGAL_BEGIN_NAMESPACE
 
 //
@@ -39,7 +51,7 @@ CGAL_BEGIN_NAMESPACE
 // 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
-  : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
+  : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > // See NOTE above!
 {
 };
 
@@ -50,7 +62,8 @@ inline std::pair<typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>
 undirected_edges( Polyhedron_3<Gt,I,HDS,A> const& p )
 {
   typedef typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator Iter;
-  return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
+  CGAL::Polyhedron_3<Gt,I,HDS,A>& ncp = const_cast<CGAL::Polyhedron_3<Gt,I,HDS,A>&>(p);
+  return std::make_pair( Iter(ncp.edges_begin()), Iter(ncp.edges_end()) );
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -118,7 +131,8 @@ inline std::pair<typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::und
 undirected_edges( Polyhedron_3<Gt,I,HDS,A>& p )
 {
   typedef typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator Iter;
-  return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
+  CGAL::Polyhedron_3<Gt,I,HDS,A>& ncp = const_cast<CGAL::Polyhedron_3<Gt,I,HDS,A>&>(p);
+  return std::make_pair( Iter(ncp.edges_begin()), Iter(ncp.edges_end()) );
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
