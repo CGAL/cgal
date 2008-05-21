@@ -40,6 +40,14 @@ class Gray_level_image_3 : public Image_3
   bool positive_inside;
   float value_outside;
 public:
+  Gray_level_image_3(const Image_3& image, float isoval) 
+    : Image_3(image),
+      isovalue(isoval),
+      positive_inside(true),
+      value_outside(0.f)
+  {
+  }
+
   Gray_level_image_3(const char* file, float isoval, bool positive_inside_=true, float value_outside = 0.f)
     : Image_3(),
       isovalue(isoval),
