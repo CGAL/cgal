@@ -976,9 +976,9 @@ set_compiler_flags()
 	    ;;
 	*Linux*icc*|*Linux*icpc*)
 	    #### settings for icc on linux
-	    # -mp is required for correct enough floating point operations
-	    # necessary for interval arithmetic.
-	    ADDITIONAL_CXXFLAGS="-mp"
+	    # -fp-mode strict is required for correct enough floating point operations
+	    # necessary for interval arithmetic (used to be -mp for some older versions).
+	    ADDITIONAL_CXXFLAGS="-fp-mode strict"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
 	    PRINT_STACKTRACE_PROGRAM="idb"
 	    ;;
