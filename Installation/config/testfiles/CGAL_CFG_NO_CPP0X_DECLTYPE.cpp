@@ -24,7 +24,7 @@
 // ---------------------------------------------------------------------
 
 //| If a compiler does not support decltype() (from C++0x)
-//| CGAL_CFG_NO_DECLTYPE is set. 
+//| CGAL_CFG_NO_CPP0X_DECLTYPE is set. 
 
 #include <cassert>
 

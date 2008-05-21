@@ -82,7 +82,7 @@ public:
     : ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
   {}
 
-#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename... Args>
   result_type
   operator()(const Args&... args) const;
@@ -145,7 +145,7 @@ public:
 #endif
 };
 
-#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template <class EP, class AP, class C2E, class C2A, bool Protection>
   template <typename... Args>

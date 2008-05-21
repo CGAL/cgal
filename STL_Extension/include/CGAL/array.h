@@ -41,7 +41,7 @@ namespace CGALi {
 // Hopefully C++0x will fix this properly with initializer_lists.
 // So, it's temporary, therefore I do not document it and keep it internal.
 
-#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template< typename T, typename... Args >
 inline
@@ -52,7 +52,7 @@ make_array(const T & t, const Args & ... args)
   return a;
 }
 
-#else // CGAL_CFG_NO_VARIADIC_TEMPLATES
+#else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 template < typename T > inline
 boost::array<T, 1>
@@ -104,7 +104,7 @@ make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
 }
 
 
-#endif // CGAL_CFG_NO_VARIADIC_TEMPLATES
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } // namespace CGALi
 

@@ -23,50 +23,24 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler does not support variadic templates (from C++0x)
-//| CGAL_CFG_NO_VARIADIC_TEMPLATES is set. 
+//| If a compiler does not support delegating constructors (from C++0x)
+//| CGAL_CFG_NO_CPP0X_DELEGATING_CONSTRUCTORS is set. 
 
 #undef NDEBUG
 #include <cassert>
-//#include <iostream> // commented to speed up compilation.
 
-double total = 0.0;
+struct A {
+  A () : A(10) {}
+  A (int ii) : i(ii) {}
 
-// increment
-template < typename T >
-T inc(const T& i)
-{
-  total += i;
-  return i+T(1);
-}
-
-// print all args on std::cout
-void print() {}
-
-template < typename T, typename... Args >
-void print(const T&t, const Args&... args)
-{
-  //std::cout << t << std::endl;
-  (void) t;
-  print(args...);
-}
-
-// A mixture for testing
-void f() {}
-
-template < typename... Args >
-void f(const Args&... args)
-{
-  print(inc(args)...);
-  //std::cout << std::endl;
-}
+  int i;
+};
 
 int main()
 {
-  f();
-  f(1);
-  f(2,3.5);
-  f(2,3.5,1u);
-  assert(total == 13);
+  A a;
+  A b(1);
+  assert(a.i == 10);
+  assert(b.i == 1);
   return 0;
 }

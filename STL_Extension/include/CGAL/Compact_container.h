@@ -203,7 +203,7 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_VARIADIC_TEMPLATES
+#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
   emplace(const Args&... args)
@@ -359,7 +359,7 @@ public:
     ++size_;
     return iterator(ret, 0);
   }
-#endif // CGAL_CFG_NO_VARIADIC_TEMPLATES
+#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
