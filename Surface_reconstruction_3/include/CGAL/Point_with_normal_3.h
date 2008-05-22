@@ -100,7 +100,6 @@ public:
 private:
 
     Normal  m_normal;
-    bool    m_oriented_normal;
 };
 
 
