@@ -1,34 +1,34 @@
 Analysis
-- len diag of bbox, etc., see  bounding_box(begin,beyond) in PCA component
-- average spacing (KNN)
+- len diag of bbox, etc., see  bounding_box(begin,beyond) in PCA component (done)
+- average spacing (KNN) (done)
 - std statistical measures: centroid(begin,beyond), std dev, etc.
 - lfs estimate (pole approach + arbitrary query points using KNN) (pierre)
 
 Processing
-- smoothing (via jet-fitting + reprojection) (pierre)
-- outlier removal (to check which one is easy with CGAL components) (laurent)
+- smoothing (via jet-fitting + reprojection) (done)
+- outlier removal (to check which one is easy with CGAL components) (done)
 - decimate point sets (laurent)
 
 Normal estimation
 - KNN + point-based PCA (done)
 - KNN + jet fitting (done)
-- Voronoi + poles (pierre)
-- Voronoi + tet-based PCA (pierre)
+- Voronoi diagram + poles [Amenta98] (pierre)
+- Voronoi diagram + tetrahedral-based PCA [Alliez07] (pierre)
 
 Normal orientation
-- MST (done)
+- MST [Hope92] (done)
 - pole-based (frederic?)
 
 Implicit function
-- Poisson (done)
-- Algebraic point set surfaces (laurent)
+- Poisson [Kazhdan et al 2005] (done)
+- Algebraic point set surfaces [Guennebaud-Gross 2007] (laurent)
 
 Implicit function contouring
 - Delaunay refinement & filtering (Surface_mesher) (done)
 - Integration of Marching Cubes? (laurent)
 
 Delaunay-based contouring
-- Integration of "Da - Cohen-Steiner" (laurent)
+- Integration of "Da - Cohen-Steiner" [Cohen Steiner-Da 2003] (laurent)
 
 
 In addition:
