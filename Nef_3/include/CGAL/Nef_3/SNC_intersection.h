@@ -271,7 +271,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   bool does_intersect_internally( const Ray_3& ray,
 				  Halffacet_const_handle f,
 				  Point_3& p,
-				  bool checkHasOn = false) const { 
+				  bool checkHasOn = true) const { 
     CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
@@ -364,6 +364,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  Halffacet_const_handle f) const {
+    CGAL_NEF_TRACEN("locate point in halffacet " << p << ", " << f->plane());
     typedef Project_shalfedge_point
       < SHalfedge, const Point_3> Project;
     typedef Circulator_project
