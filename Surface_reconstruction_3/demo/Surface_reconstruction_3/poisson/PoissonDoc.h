@@ -128,10 +128,15 @@ public:
 // Private methods
 private:
 
-	// misc status stuff
-	void update_status();
-	void status_message(char* fmt,...);
-	double duration(const double time_init);
+    // Update the number of vertices and tetrahedra in the status bar
+    // and write them to cerr.
+    void update_status();
+    // Write user message in status bar and cerr	
+    void status_message(char* fmt,...);
+    // Write user message in message box and cerr
+    void prompt_message(char* fmt,...);
+    // Utility: compute elapsed time
+    double duration(const double time_init);
 
 // MFC generated
 public:

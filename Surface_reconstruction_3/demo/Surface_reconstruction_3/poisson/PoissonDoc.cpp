@@ -149,6 +149,8 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   if (!CDocument::OnOpenDocument(lpszPathName))
     return FALSE;
 
+  status_message("Load point set %s...",lpszPathName);
+
   // get extension
   CString file = lpszPathName;
   CString extension = lpszPathName;
@@ -168,7 +170,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     CGAL::File_scanner_OFF header(header_stream, true /* verbose */); 
     if(!header_stream || header.size_of_vertices() == 0)
     {
-      AfxMessageBox("Unable to read file");
+      prompt_message("Unable to read file");
       return FALSE;
     }
     bool is_mesh = (header.size_of_facets() > 0);
@@ -184,7 +186,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       CGAL::scan_OFF(file_stream, input_mesh, true /* verbose */); 
       if(!file_stream || !input_mesh.is_valid() || input_mesh.empty())
       {
-        AfxMessageBox("Unable to read file");
+        prompt_message("Unable to read file");
         return FALSE;
       }
 
@@ -207,7 +209,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       if( ! CGAL::surface_reconstruction_read_off_point_cloud(lpszPathName, 
                                                               std::back_inserter(m_points)) )
       {
-        AfxMessageBox("Unable to read file");
+        prompt_message("Unable to read file");
         return FALSE;
       }
     }
@@ -218,7 +220,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! CGAL::surface_reconstruction_read_pwn(lpszPathName, 
                                                 std::back_inserter(m_points)) )
     {
-      AfxMessageBox("Unable to read file");
+      prompt_message("Unable to read file");
       return FALSE;
     }
   }
@@ -228,7 +230,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! CGAL::surface_reconstruction_read_xyz(lpszPathName, 
                                                 std::back_inserter(m_points)) )
     {
-      AfxMessageBox("Unable to read file");
+      prompt_message("Unable to read file");
       return FALSE;
     }
     // 
@@ -239,7 +241,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! CGAL::surface_reconstruction_read_pnb(lpszPathName, 
                                                 std::back_inserter(m_points)) )
     {
-      AfxMessageBox("Unable to read file");
+      prompt_message("Unable to read file");
       return FALSE;
     }
   }
@@ -251,21 +253,21 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
                                           std::back_inserter(m_points),
                                           std::back_inserter(cameras)) )
     {
-      AfxMessageBox("Unable to read file");
+      prompt_message("Unable to read file");
       return FALSE;
     }
   }
   // if unknown extension
   else
   {
-    AfxMessageBox("File format not supported");
+    prompt_message("File format not supported");
     return FALSE;
   }
 
   m_points.invalidate_bounding_box();
   m_edit_mode = POINT_SET;
 
-  status_message("Load point set (%lf s)",duration(init));
+  status_message("Load point set...done (%lf s)",duration(init));
   update_status();
   UpdateAllViews(NULL);
   return TRUE;
@@ -308,7 +310,7 @@ void CPoissonDoc::OnFileSaveAs()
       if( ! CGAL::surface_reconstruction_write_pwn(dlgExport.m_ofn.lpstrFile,
                                                    m_points.begin(), m_points.end()) )
       {
-        AfxMessageBox("Unable to save file");
+        prompt_message("Unable to save file");
         return;
       }
     }
@@ -318,7 +320,7 @@ void CPoissonDoc::OnFileSaveAs()
       if( ! CGAL::surface_reconstruction_write_xyz(dlgExport.m_ofn.lpstrFile,
                                                    m_points.begin(), m_points.end()) )
       {
-        AfxMessageBox("Unable to save file");
+        prompt_message("Unable to save file");
         return;
       }
     }
@@ -328,13 +330,13 @@ void CPoissonDoc::OnFileSaveAs()
       if( ! CGAL::surface_reconstruction_write_off_point_cloud(dlgExport.m_ofn.lpstrFile,
                                                                m_points.begin(), m_points.end()) )
       {
-        AfxMessageBox("Unable to save file");
+        prompt_message("Unable to save file");
         return;
       }
     }
     else 
     {
-      AfxMessageBox("File format not supported");
+      prompt_message("File format not supported");
       return;
     }
   }
@@ -380,7 +382,7 @@ void CPoissonDoc::OnFileSaveSurface()
       std::ofstream out((char *)dlgExport.m_ofn.lpstrFile);
       if( !out )
       {
-        AfxMessageBox("Unable to save file");
+        prompt_message("Unable to save file");
         return;
       }
         
@@ -388,7 +390,7 @@ void CPoissonDoc::OnFileSaveSurface()
     }
     else
     {
-      AfxMessageBox("File format not supported");
+      prompt_message("File format not supported");
       return;
     }
   }
@@ -401,61 +403,78 @@ void CPoissonDoc::OnUpdateFileSaveSurface(CCmdUI *pCmdUI)
 }
 
 // Update the number of vertices and tetrahedra in the status bar
+// and write them to cerr.
 void CPoissonDoc::update_status()
 {   
-  CWinApp *pApp = AfxGetApp();
-  if(pApp->m_pMainWnd != NULL) 
-  { 
-    CStatusBar* pStatus = 
-      (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
-    if (pStatus != NULL) 
-    {
-      // Update status bar
-      if (m_edit_mode == POINT_SET)
-      {
-        CString points;
-        points.Format("%d points",m_points.size());
-        pStatus->SetPaneText(1,points);
-        pStatus->UpdateWindow(); 
-      }
-      else if (m_edit_mode == POISSON)
-      {
-        CString vertices;
-        vertices.Format("%d vertices",m_poisson_dt.number_of_vertices());
-        CString tets;
-        tets.Format("%d tets",m_poisson_dt.number_of_cells());
-        pStatus->SetPaneText(1,vertices);
-        pStatus->SetPaneText(2,tets);
-        pStatus->UpdateWindow(); 
-      }
-    }
+  CStatusBar* pStatus = 
+    (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
+  ASSERT(pStatus != NULL);
+
+  if (m_edit_mode == POINT_SET)
+  {
+    CString points;
+    points.Format("%d points",m_points.size());
+
+    // write message to cerr
+    std::cerr << "=> " << points << std::endl;
+
+    // Update status bar
+    pStatus->SetPaneText(1,points);
+    pStatus->UpdateWindow(); 
+  }
+  else if (m_edit_mode == POISSON)
+  {
+    CString vertices;
+    vertices.Format("%d vertices",m_poisson_dt.number_of_vertices());
+    CString tets;
+    tets.Format("%d tets",m_poisson_dt.number_of_cells());
+
+    // write message to cerr
+    std::cerr << "=> " << vertices << " and " << tets << std::endl;
+
+    // Update status bar
+    pStatus->SetPaneText(1,vertices);
+    pStatus->SetPaneText(2,tets);
+    pStatus->UpdateWindow(); 
   }
 }
 
-// Set user message in status bar
+// Write user message in status bar and cerr
 void CPoissonDoc::status_message(char* fmt,...)
 {   
-  CWinApp *pApp = AfxGetApp();
-  if(pApp->m_pMainWnd != NULL) 
-  { 
-    char buffer[256];
-    CStatusBar* pStatus = 
-      (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(
-      AFX_IDW_STATUS_BAR);
-    
-    // fill buffer
-    va_list argptr;      
-    va_start(argptr,fmt);
-    vsprintf(buffer,fmt,argptr);
-    va_end(argptr);
-    
-    if(pStatus != NULL) 
-    {
-      pStatus->SetPaneText(0,buffer);
-      pStatus->UpdateWindow(); 
-    }
-  }
-  return;
+  // format message in 'buffer'
+  char buffer[256];
+  va_list argptr;      
+  va_start(argptr,fmt);
+  vsprintf(buffer,fmt,argptr);
+  va_end(argptr);
+
+  // write message to cerr
+  std::cerr << buffer << std::endl;
+
+  // write message in status bar
+  CStatusBar* pStatus = 
+    (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
+  ASSERT(pStatus != NULL);
+  pStatus->SetPaneText(0,buffer);
+  pStatus->UpdateWindow(); 
+}
+
+// Write user message in message box and cerr
+void CPoissonDoc::prompt_message(char* fmt,...)
+{   
+  // format message in 'buffer'
+  char buffer[256];
+  va_list argptr;      
+  va_start(argptr,fmt);
+  vsprintf(buffer,fmt,argptr);
+  va_end(argptr);
+
+  // write message to cerr
+  std::cerr << buffer << std::endl;
+
+  // write message in message box
+  AfxMessageBox(buffer); 
 }
 
 // Display Options dialog
@@ -507,14 +526,14 @@ double CPoissonDoc::duration(double time_init)
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
 {
   BeginWaitCursor();
-  status_message("Estimate Normals Direction...");
+  status_message("Estimate Normals Direction by PCA...");
   double init = clock();
 
   CGAL::estimate_normals_pca_3(m_points.begin(), m_points.end(), 
                                m_points.normals_begin(), 
                                m_number_of_neighbours);
 
-  status_message("Estimate Normals Direction...done (%lf s)",duration(init));
+  status_message("Estimate Normals Direction by PCA...done (%lf s)",duration(init));
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -529,14 +548,14 @@ void CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
 {
   BeginWaitCursor();
-  status_message("Estimate Normals Direction...");
+  status_message("Estimate Normals Direction by Jet Fitting...");
   double init = clock();
 
   CGAL::estimate_normals_jet_fitting_3(m_points.begin(), m_points.end(), 
                                        m_points.normals_begin(), 
                                        m_number_of_neighbours);
 
-  status_message("Estimate Normals Direction...done (%lf s)",duration(init));
+  status_message("Estimate Normals Direction by Jet Fitting...done (%lf s)",duration(init));
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -662,7 +681,7 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
 {
   BeginWaitCursor();
 
-  status_message("Delaunay refinement...");
+  status_message("Delaunay refinement in surface shell...");
   const double quality = 2.5;
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
@@ -670,7 +689,7 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   unsigned int nb_vertices_added = m_poisson_function.delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
   m_triangulation_refined = true;
 
-  status_message("Delaunay refinement...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
+  status_message("Delaunay refinement in surface shell...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
@@ -715,7 +734,7 @@ void CPoissonDoc::OnReconstructionPoisson()
 
   double total_duration = duration(init);
   if (!m_poisson_solved)
-      status_message("Poisson reconstruction...solver failed");
+      status_message("Solve Poisson equation...solver failed");
   else
       status_message("Solve Poisson equation...done (%lf s)", total_duration);
   update_status();
@@ -732,7 +751,9 @@ void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
 // Surface Meshing callback
 void CPoissonDoc::OnReconstructionSurfaceMeshing()
 {
-    typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
+    BeginWaitCursor();
+    status_message("Surface meshing...");
+    double init = clock();
 
     // Clear previous call
     m_surface_mesher_dt.clear();
@@ -750,14 +771,12 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
       return;
     }
 
-    BeginWaitCursor();
-    double init = clock();
-
     // Get implicit surface's size
     Sphere bounding_sphere = m_poisson_function.bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
 
     // defining the surface
+    typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
     Surface_3 surface(m_poisson_function,                    
                       Sphere(sink,4*size*size)); // bounding sphere
 
@@ -767,11 +786,7 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
-    status_message("Surface meshing...");
     make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
-
-    status_message("Surface meshing...done (%d vertices, %lf s)",
-                   m_surface_mesher_dt.number_of_vertices(),duration(init));
 
     // get output surface
     std::list<Triangle> triangles;
@@ -781,6 +796,9 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     // Reset contouring value 
     m_poisson_function.set_contouring_value(0.0);
 
+    status_message("Surface meshing...done (%d vertices, %lf s)",
+                   m_surface_mesher_dt.number_of_vertices(),duration(init));
+    update_status();
     UpdateAllViews(NULL);
     EndWaitCursor();
 }
@@ -794,9 +812,16 @@ void CPoissonDoc::OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI)
 // Marching Tet Contouring callback
 void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
 {
+  BeginWaitCursor();
+  status_message("Marching tet contouring (%3.1lf%%)...",m_outlier_percentage);
+  double init = clock();
+
   int nb = m_poisson_dt.marching_tet(m_contouring_value);
-  status_message("Marching tet contouring...done (%d triangles)",nb);
+
+  status_message("Marching tet contouring...done (%d triangles, %lf s)",nb,duration(init));
+  update_status();
   UpdateAllViews(NULL);
+  EndWaitCursor();
 }
 
 // Enable "Marching Tet Contouring" if Poisson equation is solved
@@ -808,16 +833,18 @@ void CPoissonDoc::OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAlgorithmsPoissonStatistics()
 {
   BeginWaitCursor();
-    char buffer[1000];
-    sprintf(buffer, "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf", 
-                    m_poisson_function.median_value_at_input_vertices(), 
-                    m_poisson_function.average_value_at_input_vertices(), 
-                    m_poisson_function.min_value_at_input_vertices(), 
-                    m_poisson_function.max_value_at_input_vertices(), 
-                    m_poisson_function.median_value_at_convex_hull(), 
-                    m_poisson_function.average_value_at_convex_hull(), 
-                    m_poisson_function(m_poisson_function.sink()));
-    AfxMessageBox(buffer);
+
+  // write message in message box
+  prompt_message( 
+    "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf", 
+    m_poisson_function.median_value_at_input_vertices(), 
+    m_poisson_function.average_value_at_input_vertices(), 
+    m_poisson_function.min_value_at_input_vertices(), 
+    m_poisson_function.max_value_at_input_vertices(), 
+    m_poisson_function.median_value_at_convex_hull(), 
+    m_poisson_function.average_value_at_convex_hull(), 
+    m_poisson_function(m_poisson_function.sink()));
+
   EndWaitCursor();
 }
 
@@ -889,10 +916,19 @@ void CPoissonDoc::OnUpdateModePoisson(CCmdUI *pCmdUI)
 // - Surface Meshing
 void CPoissonDoc::OnOneStepPoissonReconstruction()
 {
+  BeginWaitCursor();
+  status_message("1-step Poisson reconstruction...");
+  double init = clock();
+
   OnCreatePoissonTriangulation();
   OnReconstructionDelaunayRefinement();
   OnReconstructionPoisson();
   OnReconstructionSurfaceMeshing();
+
+  status_message("1-step Poisson reconstruction...done (%lf s)",duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI)
@@ -931,14 +967,14 @@ void CPoissonDoc::OnUpdateRemoveOutliers(CCmdUI *pCmdUI)
 void CPoissonDoc::OnAnalysisAverageSpacing()
 {
   BeginWaitCursor();
-    double value = CGAL::average_spacing_3(m_points.begin(),
-                                           m_points.end(),
-                                           m_number_of_neighbours,
-                                           Kernel());
-    //status_message("Average spacing: %lf...", value);
-    char buffer[100];
-    sprintf(buffer, "Average spacing: %lf", value);
-    AfxMessageBox(buffer);
+
+  double value = CGAL::average_spacing_3(m_points.begin(),
+                                         m_points.end(),
+                                         m_number_of_neighbours,
+                                         Kernel());
+  // write message in message box
+  prompt_message("Average spacing: %lf", value);
+
   EndWaitCursor();
 }
 
