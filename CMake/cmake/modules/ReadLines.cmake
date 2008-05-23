@@ -1,8 +1,16 @@
 macro( readlines file lines )
 
-  file(READ ${file} ${file}_contents )
+  if ( EXISTS ${file} )
   
-  string( REPLACE "\n" ";" ${lines} ${${file}_contents} )
+    file(READ ${file} ${lines}_file_contents )
+    
+    string( REPLACE "\n" ";" "${lines}" "${${lines}_file_contents}" )
+    
+  else()
+  
+    set( ${lines} "NOTFOUND" )
+    
+  endif()
   
 endmacro( readlines file lines )
  

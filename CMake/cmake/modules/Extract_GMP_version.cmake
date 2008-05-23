@@ -5,19 +5,29 @@ if ( GMP_FOUND )
 
   readlines(${GMP_INCLUDE_DIR}/gmp.h GMP_H_FILE)
 
-  find_matching_item(GMP_H_FILE "__GNU_MP_VERSION "            __GNU_MP_VERSION_LINE )
-  find_matching_item(GMP_H_FILE "__GNU_MP_VERSION_MINOR "      __GNU_MP_VERSION_MINOR_LINE )
-  find_matching_item(GMP_H_FILE "__GNU_MP_VERSION_PATCHLEVEL " __GNU_MP_VERSION_PATCHLEVEL_LINE )
+  if ( GMP_H_FILE )
   
-  string( REPLACE " " ";" __GNU_MP_VERSION_LINE_LIST            ${__GNU_MP_VERSION_LINE}            )
-  string( REPLACE " " ";" __GNU_MP_VERSION_MINOR_LINE_LIST      ${__GNU_MP_VERSION_MINOR_LINE}      )
-  string( REPLACE " " ";" __GNU_MP_VERSION_PATCHLEVEL_LINE_LIST ${__GNU_MP_VERSION_PATCHLEVEL_LINE} )
+    find_matching_item(GMP_H_FILE "__GNU_MP_VERSION "            __GNU_MP_VERSION_LINE )
+    find_matching_item(GMP_H_FILE "__GNU_MP_VERSION_MINOR "      __GNU_MP_VERSION_MINOR_LINE )
+    find_matching_item(GMP_H_FILE "__GNU_MP_VERSION_PATCHLEVEL " __GNU_MP_VERSION_PATCHLEVEL_LINE )
+    
+    string( REPLACE " " ";" __GNU_MP_VERSION_LINE_LIST            ${__GNU_MP_VERSION_LINE}            )
+    string( REPLACE " " ";" __GNU_MP_VERSION_MINOR_LINE_LIST      ${__GNU_MP_VERSION_MINOR_LINE}      )
+    string( REPLACE " " ";" __GNU_MP_VERSION_PATCHLEVEL_LINE_LIST ${__GNU_MP_VERSION_PATCHLEVEL_LINE} )
+    
+    list( GET __GNU_MP_VERSION_LINE_LIST            2 __GNU_MP_VERSION )
+    list( GET __GNU_MP_VERSION_MINOR_LINE_LIST      2 __GNU_MP_VERSION_MINOR )
+    list( GET __GNU_MP_VERSION_PATCHLEVEL_LINE_LIST 2 __GNU_MP_VERSION_PATCHLEVEL )
+    
+    set( GMP_VERSION "${__GNU_MP_VERSION}.${__GNU_MP_VERSION_MINOR}.${__GNU_MP_VERSION_PATCHLEVEL}" )
+    
+  else()
   
-  list( GET __GNU_MP_VERSION_LINE_LIST            2 __GNU_MP_VERSION )
-  list( GET __GNU_MP_VERSION_MINOR_LINE_LIST      2 __GNU_MP_VERSION_MINOR )
-  list( GET __GNU_MP_VERSION_PATCHLEVEL_LINE_LIST 2 __GNU_MP_VERSION_PATCHLEVEL )
-  
-  set( GMP_VERSION "${__GNU_MP_VERSION}.${__GNU_MP_VERSION_MINOR}.${__GNU_MP_VERSION_PATCHLEVEL}" )
+    message( STATUS "WARNING: GMP found but could not open ${GMP_INCLUDE_DIR}/gmp.h" )
+
+    set ( GMP_VERSION "unknown" )
+    
+  endif()
   
   message( STATUS "USING GMP_VERSION = '${GMP_VERSION}'" )
   
