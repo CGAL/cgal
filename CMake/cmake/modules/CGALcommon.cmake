@@ -14,6 +14,15 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   macro( hide_variable var )
     set ( ${var} ${${var}} CACHE INTERNAL "Variable hidden from user" FORCE )  
   endmacro()
+
+  macro( at list idx var )
+    list( LENGTH ${list} ${list}_length )
+    if ( ${idx} LESS ${${list}_length} )
+      list( GET ${list} ${idx} ${var} )
+    else()
+      set( ${var} "NOTFOUND" )    
+    endif()
+  endmacro()
   
   # CMAKE_ROOT must be properly configured, but is not by the CMake windows installer, so check here
   if (NOT CMAKE_ROOT)
