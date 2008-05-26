@@ -46,11 +46,11 @@ endif()
 
 find_package(Qt3)
 
-include(Extract_BOOST_version)
-include(Extract_OpenGL_version)
-include(Extract_GMP_version)
-include(Extract_MPFR_version)
-include(Extract_ZLIB_version)
-include(Extract_TAUCS_version)
-include(Extract_Qt3_version)
+get_dependency_version(BOOST Boost )
+get_dependency_version(OPENGL OpenGL)
+get_dependency_version(GMP)
+get_dependency_version(MPFR)
+get_dependency_version(ZLIB)
+get_dependency_version(TAUCS)
+get_dependency_version(QT)
 
