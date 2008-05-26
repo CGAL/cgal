@@ -7,6 +7,8 @@
 
 #include <boost/graph/breadth_first_search.hpp>
 
+#include <fstream>
+
 typedef CGAL::Cartesian<double>                                      Kernel;
 typedef Kernel::Point_3                                              Point;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>  Polyhedron;
@@ -19,8 +21,12 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 int main() {
 
   int i=0;
+  
   Polyhedron P;
-  std::cin >> P;
+  
+  std::ifstream in("cube.off");
+  
+  in >> P ;
   
   // associate indices to the vertices using the "id()" field of the vertex.
   vertex_iterator vb, ve;
