@@ -1582,6 +1582,13 @@ CMake/cmake/modules/OptionalAddSubdirectory.cmake -text
 CMake/cmake/modules/Qt3Macros.cmake -text
 CMake/cmake/modules/ReadLines.cmake -text
 CMake/cmake/modules/UseCGAL.cmake -text
+CMake/config/support/print_BOOST_version.cpp -text
+CMake/config/support/print_GMP_version.cpp -text
+CMake/config/support/print_MPFR_version.cpp -text
+CMake/config/support/print_OPENGL_version.cpp -text
+CMake/config/support/print_QT_version.cpp -text
+CMake/config/support/print_TAUCS_version.cpp -text
+CMake/config/support/print_ZLIB_version.cpp -text
 CMake/src/CGALPDB/CMakeLists.txt -text
 CMake/src/CGALQt/CMakeLists.txt -text
 CMake/src/CGALimageIO/CMakeLists.txt -text
