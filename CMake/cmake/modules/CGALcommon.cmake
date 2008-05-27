@@ -26,14 +26,16 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   
   macro( get_dependency_version LIB )
   
-    if ( ${ARG1} )
-      set( PKG ${ARG1} )
+    if ( ${ARGC} GREATER "1" )
+      set( PKG ${ARGV1} )
     else()
       set( PKG ${LIB} )
     endif()
     
     if ( ${PKG}_FOUND )
     
+      set ( ${LIB}_VERSION "unknown" )
+      
       try_run( ${LIB}_RUN_RES
                ${LIB}_COMPILE_RES 
                ${CMAKE_BINARY_DIR} 
@@ -45,15 +47,22 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
             
       if ( ${LIB}_COMPILE_RES )
       
-        string( REGEX MATCH "version=.*\$" ${LIB}_VERSION_LINE ${${LIB}_OUTPUT}  )
-        string( REPLACE "\n" "" ${LIB}_VERSION_LINE2 ${${LIB}_VERSION_LINE} )
-        string( REPLACE "version=" "" ${LIB}_VERSION ${${LIB}_VERSION_LINE2} )
+        if ( ${LIB}_RUN_RES EQUAL "0" )
+        
+          string( REGEX MATCH "version=.*\$" ${LIB}_VERSION_LINE ${${LIB}_OUTPUT}  )
+          string( REPLACE "\n" "" ${LIB}_VERSION_LINE2 ${${LIB}_VERSION_LINE} )
+          string( REPLACE "\r" "" ${LIB}_VERSION_LINE3 ${${LIB}_VERSION_LINE2} )
+          string( REPLACE "version=" "" ${LIB}_VERSION ${${LIB}_VERSION_LINE3} )
+          
+        else()
+        
+          message( STATUS "WARNING: ${LIB} found but print_${LIB}_version.cpp exited with error condition: ${${LIB}_RUN_RES}\n${${LIB}_OUTPUT}" )
+          
+        endif()
         
       else()
       
-        message( STATUS "WARNING: ${LIB} found but could not execute print_${LIB}__version.cpp" )
-    
-        set ( ${LIB}_VERSION "unknown" )
+        message( STATUS "WARNING: ${LIB} found but could not compile print_${LIB}_version.cpp:\n${${LIB}_OUTPUT}" )
         
       endif() 
       

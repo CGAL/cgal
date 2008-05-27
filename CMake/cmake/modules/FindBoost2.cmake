@@ -95,15 +95,15 @@ endif()
 #
 # Look for an installation.
 #
-find_path(Boost_INCLUDE_DIRS NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH} DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}" )
+find_path(Boost_INCLUDE_DIR NAMES boost/config.hpp PATHS ${BOOST_DIR_SEARCH} DOC "The ${BOOST_INCLUDE_PATH_DESCRIPTION}" )
 
 # Now try to get the include and library path.
-if(Boost_INCLUDE_DIRS)
+if(Boost_INCLUDE_DIR)
   
   # Compose the boost library path.
   # Note that the user may not have installed any libraries
-  # so it is quite possible the Boost_LIBRARY_PATH may not exist.
-  set(Boost_LIBRARY_DIR ${Boost_INCLUDE_DIRS} )
+  # so it is quite possible the Boost_LIBRARY_DIR may not exist.
+  set(Boost_LIBRARY_DIR ${Boost_INCLUDE_DIR}  CACHE PATH "The ${BOOST_LIB_PATH_DESCRIPTION}" )
 
   # !! ON WHAT PLATFORM CAN THIS WORK !!
   #IF("${Boost_LIBRARY_DIR}" MATCHES "boost-[0-9]+")
@@ -125,14 +125,10 @@ if(Boost_INCLUDE_DIRS)
     endif()
   endif()
 
-  if(Boost_LIBRARY_DIR AND EXISTS "${Boost_LIBRARY_DIR}")
-    set(Boost_LIBRARY_DIRS ${Boost_LIBRARY_DIR} CACHE PATH "The ${BOOST_LIB_PATH_DESCRIPTION}" )
-  endif()
-  
 endif()
 
-find_package_handle_standard_args(Boost "Boost was not found. ${BOOST_DIR_MESSAGE}" Boost_INCLUDE_DIRS )
+find_package_handle_standard_args(Boost "Boost was not found. ${BOOST_DIR_MESSAGE}" Boost_INCLUDE_DIR )
 set(Boost_FOUND ${BOOST_FOUND})
 
-#MARK_AS_ADVANCED(Boost_INCLUDE_DIRS)
-#MARK_AS_ADVANCED(Boost_LIBRARY_DIRS)
+#MARK_AS_ADVANCED(Boost_INCLUDE_DIR)
+#MARK_AS_ADVANCED(Boost_LIBRARY_DIR)

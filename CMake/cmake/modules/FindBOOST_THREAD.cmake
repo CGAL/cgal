@@ -7,7 +7,7 @@
 # BOOST_THREAD needs Boost
 INCLUDE(FindPackageHandleStandardArgs)
 
-if(Boost_FOUND AND Boost_LIBRARY_DIRS)
+if(Boost_FOUND AND Boost_LIBRARY_DIR)
   if (BOOST_THREAD_LIBRARIES)
       # Already in cache, be silent
       set(BOOST_THREAD_FIND_QUIETLY TRUE)
@@ -15,9 +15,9 @@ if(Boost_FOUND AND Boost_LIBRARY_DIRS)
 
 
   if ( AUTO_LINK_ENABLED )
-    file ( GLOB BOOST_THREAD_LIBRARIES "${Boost_LIBRARY_DIRS}/libboost_thread*" )
+    file ( GLOB BOOST_THREAD_LIBRARIES "${Boost_LIBRARY_DIR}/libboost_thread*" )
   else()
-    find_library(BOOST_THREAD_LIBRARIES NAMES "boost_thread" "boost_thread-mt" PATHS ${Boost_LIBRARY_DIRS})
+    find_library(BOOST_THREAD_LIBRARIES NAMES "boost_thread" "boost_thread-mt" PATHS ${Boost_LIBRARY_DIR})
   endif()
   
   hide_variable(BOOST_THREAD_LIBRARIES)
