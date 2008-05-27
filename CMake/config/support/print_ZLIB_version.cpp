@@ -28,6 +28,6 @@
 
 int main()
 {
-  std::cout << "version=" << zlibVersion() << std::endl;
+  std::cout << "version=" << ZLIB_VERSION << std::endl;
   return 0;
 }
