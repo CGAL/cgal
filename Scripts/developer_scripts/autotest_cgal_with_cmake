@@ -730,11 +730,11 @@ main_procedure()
     TEXT="`value_of COMPILERS_localhost`"
     if [ -z "${TEXT}" ]; then
       printf "Skipping testing phase.\n" 
-      SKIP_TEST="y"
+      DO_NOT_TEST="y"
     fi
   fi
         
-  if [ -z "${SKIP_TEST}" -o -z "${DO_NO_TEST}" ]; then
+  if [ -z "${DO_NOT_TEST}" ]; then
     run_test
   fi
   
