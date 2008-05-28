@@ -205,7 +205,7 @@ using std::max;
 // If CGAL_HAS_THREADS is not defined, then CGAL code assumes
 // it can do any thread-unsafe things (like using static variables).
 #if !defined CGAL_HAS_THREADS && !defined CGAL_HAS_NO_THREADS
-  #if ( defined CGAL_USE_BOOST_THREAD && defined BOOST_HAS_THREADS ) || defined _OPENMP
+  #if defined BOOST_HAS_THREADS || defined _OPENMP
   #  define CGAL_HAS_THREADS
   #endif
 #endif
