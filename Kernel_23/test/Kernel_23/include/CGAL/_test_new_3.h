@@ -592,6 +592,18 @@ test_new_3(const R& rep)
         = rep.compare_squared_distance_3_object();
                     tmp34ab = compare_sq_dist(p2,p3,FT(1));
 
+  typename R::Compare_squared_radius_3 compare_sq_radius
+        = rep.compare_squared_radius_3_object();
+
+  {
+    FT rad(0);
+    Comparison_result tmp;
+    tmp = compare_sq_radius(p1, p2, p3, p4, rad);
+    tmp = compare_sq_radius(p1, p2, p3, rad);
+    tmp = compare_sq_radius(p1, p2, rad);
+    (void)tmp;
+  }
+
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
   bool tmp29 = collinear(p2,p3,p4);

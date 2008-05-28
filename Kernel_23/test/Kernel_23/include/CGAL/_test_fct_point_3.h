@@ -204,6 +204,14 @@ _test_fct_point_3(const R& )
  assert( CGAL::compare_squared_distance(p0, p3, CGAL::squared_distance(p1,p0)) == CGAL::SMALLER );
  assert( CGAL::compare_squared_distance(p1, p3, CGAL::squared_distance(p5,p1)) == CGAL::SMALLER );
 
+ {
+   CGAL::Point_3<R> p0(-2,0,0), p1(2,0,0), p2(0,2,0), p3(0,0,2);
+   FT four(4);
+   assert( CGAL::compare_squared_radius(p0, p1, four) == CGAL::EQUAL );
+   assert( CGAL::compare_squared_radius(p0, p1, p2, four) == CGAL::EQUAL );
+   assert( CGAL::compare_squared_radius(p0, p1, p2, p3, four) == CGAL::EQUAL );
+ }
+
  // More tests, that require sqrt().
  {
      typedef ::CGAL::Algebraic_structure_traits<FT> AST; 

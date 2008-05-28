@@ -283,6 +283,39 @@ compare_squared_distance(const Point_3<K> &p,
 template < class K >
 inline
 Comparison_result
+compare_squared_radius(const Point_3<K> &p,
+		       const Point_3<K> &q,
+		       const typename K::FT &sr)
+{
+  return CGALi::compare_squared_radius(p, q, sr, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_squared_radius(const Point_3<K> &p,
+		       const Point_3<K> &q,
+		       const Point_3<K> &r,
+		       const typename K::FT &sr)
+{
+  return CGALi::compare_squared_radius(p, q, r, sr, K());
+}
+
+template < class K >
+inline
+Comparison_result
+compare_squared_radius(const Point_3<K> &p,
+		       const Point_3<K> &q,
+		       const Point_3<K> &r,
+		       const Point_3<K> &s,
+		       const typename K::FT &sr)
+{
+  return CGALi::compare_squared_radius(p, q, r, s, sr, K());
+}
+
+template < class K >
+inline
+Comparison_result
 compare_lexicographically_xyz(const Point_3<K> &p,
                               const Point_3<K> &q)
 {

@@ -283,6 +283,42 @@ compare_squared_distance(const typename K::Point_3 &p,
 template < class K >
 inline
 Comparison_result
+compare_squared_radius(const typename K::Point_3 &p,
+		       const typename K::Point_3 &q,
+		       const typename K::FT &sr,
+		       const K& k)
+{
+  return k.compare_squared_radius_3_object()(p, q, sr);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_squared_radius(const typename K::Point_3 &p,
+		       const typename K::Point_3 &q,
+		       const typename K::Point_3 &r,
+		       const typename K::FT &sr,
+		       const K& k)
+{
+  return k.compare_squared_radius_3_object()(p, q, r, sr);
+}
+
+template < class K >
+inline
+Comparison_result
+compare_squared_radius(const typename K::Point_3 &p,
+		       const typename K::Point_3 &q,
+		       const typename K::Point_3 &r,
+		       const typename K::Point_3 &s,
+		       const typename K::FT &sr,
+		       const K& k)
+{
+  return k.compare_squared_radius_3_object()(p, q, r, s, sr);
+}
+
+template < class K >
+inline
+Comparison_result
 compare_lexicographically_xyz(const typename K::Point_3 &p,
                               const typename K::Point_3 &q,
 			      const K& k)
