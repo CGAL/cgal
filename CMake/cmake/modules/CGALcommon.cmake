@@ -41,7 +41,8 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
                ${CMAKE_BINARY_DIR} 
                ${CMAKE_SOURCE_DIR}/config/support/print_${LIB}_version.cpp 
                CMAKE_FLAGS -DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR} 
-                           -DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES} 
+                           -DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES}
+                           -DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARY_DIR}                           
                OUTPUT_VARIABLE ${LIB}_OUTPUT 
             )
             
@@ -56,13 +57,21 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
           
         else()
         
-          message( STATUS "WARNING: ${LIB} found but print_${LIB}_version.cpp exited with error condition: ${${LIB}_RUN_RES}\n${${LIB}_OUTPUT}" )
+          message( STATUS "WARNING: ${LIB} found but print_${LIB}_version.cpp exited with error condition: ${${LIB}_RUN_RES}" )
+          message( STATUS "${PKG}_INCLUDE_DIR=${${PKG}_INCLUDE_DIR}" )
+          message( STATUS "${PKG}_LIBRARIES=${${PKG}_LIBRARIES}" )
+          message( STATUS "${PKG}_LIBRARY_DIR=${${PKG}_LIBRARY_DIR}" )
+          message( STATUS "${${LIB}_OUTPUT}" )
           
         endif()
         
       else()
       
-        message( STATUS "WARNING: ${LIB} found but could not compile print_${LIB}_version.cpp:\n${${LIB}_OUTPUT}" )
+        message( STATUS "WARNING: ${LIB} found but could not compile print_${LIB}_version.cpp:")
+        message( STATUS "${PKG}_INCLUDE_DIR=${${PKG}_INCLUDE_DIR}" )
+        message( STATUS "${PKG}_LIBRARIES=${${PKG}_LIBRARIES}" )
+        message( STATUS "${PKG}_LIBRARY_DIR=${${PKG}_LIBRARY_DIR}" )
+        message( STATUS "${${LIB}_OUTPUT}" )
         
       endif() 
       
