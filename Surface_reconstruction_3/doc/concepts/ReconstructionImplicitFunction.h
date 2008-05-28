@@ -37,7 +37,8 @@ public:
 
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+    typedef typename Geom_traits::Vector_3 Vector;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal; ///< Model of PointWithNormal_3
@@ -72,7 +73,7 @@ public:
   void clear();
 
   /// Get the bounding box.
-  Iso_cuboid_3 bounding_box() const;
+  Iso_cuboid bounding_box() const;
 
   /// Get bounding sphere.
   Sphere bounding_sphere() const;
@@ -98,8 +99,8 @@ public:
   /// Evaluate implicit function for any 3D point.
   FT operator() (Point p);
 
-  /// Get point / the implicit function is minimum
-  const Point& sink() const;
+  /// Get point inside the surface
+  const Point& get_inner_point() const;
 
   /// Get average value of the implicit function over input vertices
   FT average_value_at_input_vertices() const;

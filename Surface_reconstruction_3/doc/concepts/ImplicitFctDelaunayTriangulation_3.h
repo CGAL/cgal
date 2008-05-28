@@ -37,7 +37,7 @@ public:
   // Geometric types
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
@@ -61,7 +61,7 @@ public:
   Normal_iterator normals_end();
 
   /// Get the bounding box.
-  Iso_cuboid_3 bounding_box() const;
+  Iso_cuboid bounding_box() const;
 
   /// Get bounding sphere.
   Sphere bounding_sphere() const;

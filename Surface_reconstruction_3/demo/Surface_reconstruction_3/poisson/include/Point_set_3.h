@@ -61,7 +61,7 @@ public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
   
   typedef Gyroviz_point_3<Gt> Point_with_normal; ///<Model of PointWithNormal_3
@@ -87,7 +87,7 @@ private:
 
     // Indicate if m_barycenter, m_bounding_box and m_diameter_standard_deviation below are valid
     mutable bool m_bounding_box_is_valid;
-    mutable Iso_cuboid_3 m_bounding_box; // m_points's bounding box
+    mutable Iso_cuboid m_bounding_box; // m_points's bounding box
     mutable Point m_barycenter; // m_points's barycenter
     mutable FT m_diameter_standard_deviation; // m_points's standard deviation
 
@@ -116,7 +116,7 @@ public:
   Normal_const_iterator normals_end() const   { return Normal_iterator(end()); }
 
   /// Get the bounding box.
-  Iso_cuboid_3 bounding_box() const
+  Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
       update_bounding_box();
@@ -271,7 +271,7 @@ private:
     //
     Point p(xmin,ymin,zmin);
     Point q(xmax,ymax,zmax);
-    m_bounding_box = Iso_cuboid_3(p,q);
+    m_bounding_box = Iso_cuboid(p,q);
     //
     m_barycenter = CGAL::ORIGIN + v / norm;
 

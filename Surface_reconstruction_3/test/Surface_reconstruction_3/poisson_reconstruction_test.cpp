@@ -20,17 +20,16 @@
 
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Timer.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 // Surface mesher
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
-//#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-
-#include <CGAL/Timer.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 // This package
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
 #include <CGAL/Poisson_implicit_function.h>
 
@@ -52,11 +51,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
-typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
-typedef Kernel::Triangle_3 Triangle;
-typedef Kernel::Tetrahedron_3 Tetrahedron;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+typedef Kernel::Sphere_3 Sphere;
 
 // Poisson's Delaunay triangulation 3 and implicit function
 typedef CGAL::Implicit_fct_delaunay_triangulation_3<Kernel> Dt3;
@@ -117,10 +114,10 @@ int main(int argc, char * argv[])
             continue;
         }
 
-        // Compute vertices normals
+        // Compute vertices' normals from connectivity
         input_mesh.compute_normals();
 
-        // Insert vertices in triangulation
+        // Insert vertices and normals in triangulation
         Dt3 dt;
         std::vector<Point_with_normal> pwns;
         Polyhedron::Vertex_iterator v;
@@ -143,14 +140,14 @@ int main(int argc, char * argv[])
         task_timer.reset();
 
         //***************************************
-        // Solve Poisson equation
+        // Compute implicit function
         //***************************************
 
-        Poisson_implicit_function poisson_function(dt);
+        Poisson_implicit_function implicit_function(dt);
 
         /// Computes the Poisson indicator function f()
         /// at each vertex of the triangulation
-        if ( ! poisson_function.compute_implicit_function() )
+        if ( ! implicit_function.compute_implicit_function() )
         {
             std::cerr << "FATAL ERROR: cannot solve Poisson equation" << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
@@ -158,7 +155,7 @@ int main(int argc, char * argv[])
         }
 
         // Print status
-        int nb_vertices2 = poisson_function.triangulation().number_of_vertices();
+        int nb_vertices2 = implicit_function.triangulation().number_of_vertices();
         std::cerr << "Solve Poisson equation: "
                   << task_timer.time() << " seconds "
                   << "(added " << nb_vertices2-nb_vertices << " vertices)"
@@ -173,27 +170,27 @@ int main(int argc, char * argv[])
         C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
         // Get inner point
-        Point sink = poisson_function.sink();
-        FT f_sink = poisson_function(sink);
-        if(f_sink >= 0.0)
+        Point inner_point = implicit_function.get_inner_point();
+        FT inner_point_value = implicit_function(inner_point);
+        if(inner_point_value >= 0.0)
         {
-            std::cerr << "FATAL ERROR: unable to seed (" << f_sink << " at sink)" << std::endl;
+            std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
             continue;
         }
 
         // Get implicit surface's size
-        Sphere bounding_sphere = poisson_function.bounding_sphere();
+        Sphere bounding_sphere = implicit_function.bounding_sphere();
         FT size = sqrt(bounding_sphere.squared_radius());
 
         // defining the surface
-        Surface_3 surface(poisson_function,
-                          Sphere(sink,4*size*size)); // bounding sphere
+        Surface_3 surface(implicit_function,
+                          Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
         // defining meshing criteria
         FT sm_angle = 20.0; // LR: 30 is OK
-        FT sm_radius = 0.1; // as suggested by LR (was 0.01)
-        FT sm_distance = 0.001; // was 0.01
+        FT sm_radius = 0.1; // as suggested by LR
+        FT sm_distance = 0.002;
         CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                             sm_radius*size,  // upper bound of Delaunay balls radii
                                                             sm_distance*size); // upper bound of distance to surface

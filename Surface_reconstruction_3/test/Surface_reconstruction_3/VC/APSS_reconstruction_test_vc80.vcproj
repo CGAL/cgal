@@ -197,17 +197,37 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\include\enriched_polyhedron.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Surface_reconstruction_3 package"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath="..\..\..\include\CGAL\apss.h"
+				RelativePath="..\..\..\include\CGAL\APSS_implicit_function.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\CGAL\apss_oracle.h"
+				RelativePath="..\..\..\include\CGAL\Point_with_normal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\surface_reconstruction_assertions.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Concepts"
+			>
+			<File
+				RelativePath="..\..\..\doc\concepts\PointWithNormal_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\doc\concepts\ReconstructionImplicitFunction.h"
 				>
 			</File>
 		</Filter>

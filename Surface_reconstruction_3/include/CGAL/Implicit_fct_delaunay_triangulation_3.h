@@ -294,7 +294,7 @@ public:
   // Geometric types
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Vector_3 Vector;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   /// The geometric traits class's Point_3 type is a model of PointWithNormal_3
@@ -315,7 +315,7 @@ private:
 
   // Indicate if m_barycenter, m_bounding_box and m_diameter_standard_deviation below are valid
   mutable bool m_bounding_box_is_valid;
-  mutable Iso_cuboid_3 m_bounding_box; // Triangulation's bounding box
+  mutable Iso_cuboid m_bounding_box; // Triangulation's bounding box
   mutable Point m_barycenter; // Triangulation's barycenter
   mutable FT m_diameter_standard_deviation; // Triangulation's standard deviation
 
@@ -352,7 +352,7 @@ public:
   }
 
   /// Get the bounding box.
-  Iso_cuboid_3 bounding_box() const
+  Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
       update_bounding_box();
@@ -376,7 +376,7 @@ public:
     FT dx = m_bounding_box.xmax() - m_bounding_box.xmin();
     FT dy = m_bounding_box.ymax() - m_bounding_box.ymin();
     FT dz = m_bounding_box.zmax() - m_bounding_box.zmin();
-    FT squared_radius = dx*dx + dy*dy + dz*dz;
+    FT squared_radius = (dx*dx + dy*dy + dz*dz) / FT(4);
 
     return Sphere(center, squared_radius);
   }
@@ -512,7 +512,7 @@ private:
     //
     Point p(xmin,ymin,zmin);
     Point q(xmax,ymax,zmax);
-    m_bounding_box = Iso_cuboid_3(p,q);
+    m_bounding_box = Iso_cuboid(p,q);
     //
     m_barycenter = ORIGIN + v / norm;
 

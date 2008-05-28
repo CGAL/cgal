@@ -93,7 +93,7 @@ Kernel's geometric traits.
 {
 }
 \ccGlue
-\ccNestedType{Iso_cuboid_3}
+\ccNestedType{Iso_cuboid}
 {
 }
 \ccGlue
@@ -148,7 +148,7 @@ Get embedded triangulation.
 {
 }
 \ccGlue
-\ccMethod{Iso_cuboid_3 bounding_box() const;}
+\ccMethod{Iso_cuboid bounding_box() const;}
 {
 Get the bounding box.
 }
@@ -217,9 +217,9 @@ Evaluate implicit function for any 3D point.
 Evaluate implicit function for any 3D point.
 }
 \ccGlue
-\ccMethod{const Point& sink() const;}
+\ccMethod{const Point& get_inner_point() const;}
 {
-Get point / the implicit function is minimum.
+Get point inside the surface.
 }
 \ccGlue
 \ccMethod{FT average_value_at_input_vertices() const;}

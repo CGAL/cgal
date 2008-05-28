@@ -71,7 +71,7 @@ public:
   typedef typename Base::Locate_type Locate_type;
   typedef typename Base::FT FT;
   typedef typename Base::Vector Vector;
-  typedef typename Base::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Base::Iso_cuboid Iso_cuboid;
   typedef typename Base::Sphere Sphere;
   typedef typename Base::Normal_iterator Normal_iterator;
   /// @endcond

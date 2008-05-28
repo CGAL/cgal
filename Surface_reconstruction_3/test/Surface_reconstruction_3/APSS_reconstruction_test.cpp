@@ -26,8 +26,9 @@
 #include <CGAL/Implicit_surface_3.h>
 
 // This package
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/surface_reconstruction_output.h>
-#include <CGAL/apss.h>
+#include <CGAL/APSS_implicit_function.h>
 
 // This test
 #include "enriched_polyhedron.h"
@@ -48,14 +49,18 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
+typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
+
+// APSS implicit function
+typedef std::vector<Point> PointList;
+typedef std::vector<Vector> NormalList;
+typedef CGAL::APSS_implicit_function<Kernel,PointList,NormalList> APSS_implicit_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 Str;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Str> C2t3;
-//typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
-typedef std::vector<Point> PointList;
-typedef CGAL::APSS<Kernel,PointList,PointList> Surface_3;
+typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
 
 
 // ----------------------------------------------------------------------------
@@ -78,7 +83,7 @@ void reshape(PointList& points)
     FT s = 2./(diag.x()>diag.y() ? (diag.x()>diag.z() ? diag.x() : diag.z()) : (diag.y()>diag.z() ? diag.y() : diag.z()));
     for (unsigned int i=0 ; i<points.size() ; ++i)
     {
-        points[i] = Surface_3::mul(s,Surface_3::sub(points[i],mid));
+        points[i] = CGAL::ORIGIN + s * (points[i] - mid);
     }
 }
 
@@ -92,9 +97,9 @@ int main(int argc, char * argv[])
     std::cerr << "Test the APSS reconstruction method" << std::endl;
     std::cerr << "No output" << std::endl;
 
-    //--------------------------------------------------------------------------------
-    // parse arguments
-    //--------------------------------------------------------------------------------
+    //***************************************
+    // decode parameters
+    //***************************************
 
     if (argc-1 == 0)
     {
@@ -102,8 +107,6 @@ int main(int argc, char * argv[])
         return(EXIT_FAILURE);
     }
 
-    FT sm_radius = 0.07;
-    FT sm_distance = 0.02;
     unsigned int nofNeighbors = 10;
 
     // Accumulated errors
@@ -117,9 +120,9 @@ int main(int argc, char * argv[])
         // File name is:
         const char* input_filename  = argv[arg_index];
 
-        //--------------------------------------------------------------------------------
-        // input
-        //--------------------------------------------------------------------------------
+        //***************************************
+        // Load mesh
+        //***************************************
 
         CGAL::Timer task_timer;
         task_timer.start();
@@ -140,7 +143,8 @@ int main(int argc, char * argv[])
         input_mesh.compute_normals();
 
         // Convert vertices and normals to PointList/NormalList
-        PointList points, normals;
+        PointList points;
+        NormalList normals;
         Polyhedron::Vertex_iterator v;
         for(v = input_mesh.vertices_begin();
             v != input_mesh.vertices_end();
@@ -149,7 +153,7 @@ int main(int argc, char * argv[])
           const Point& p = v->point();
           const Vector& n = v->normal();
           points.push_back(p);
-          normals.push_back(CGAL::ORIGIN + n);
+          normals.push_back(n);
         }
 
         // Print status
@@ -160,27 +164,47 @@ int main(int argc, char * argv[])
                   << std::endl;
         task_timer.reset();
 
-        //--------------------------------------------------------------------------------
-        // create the MLS surface
-        //--------------------------------------------------------------------------------
+        //***************************************
+        // Implicit function
+        //***************************************
 
-        reshape(points); // Scale point set to [-1, 1]^3
+        //reshape(points); // Scale point set to [-1,1]^3
 
-        Surface_3 surface(points, normals);
+        APSS_implicit_function implicit_function(points, normals);
+        implicit_function.setNofNeighbors(nofNeighbors);
 
-        surface.setNofNeighbors(nofNeighbors);
+        //***************************************
+        // Surface mesh generation
+        //***************************************
 
-        //--------------------------------------------------------------------------------
-        // Do the polygonization
-        //--------------------------------------------------------------------------------
-
-        Str tr;            // 3D-Delaunay triangulation
+        Str tr;           // 3D-Delaunay triangulation
         C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
+        // Get inner point
+        Point inner_point = implicit_function.get_inner_point();
+        FT inner_point_value = implicit_function(inner_point);
+        if(inner_point_value >= 0.0)
+        {
+            std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
+            accumulated_fatal_err = EXIT_FAILURE;
+            continue;
+        }
+
+        // Get implicit surface's size
+        Sphere bounding_sphere = implicit_function.bounding_sphere();
+        FT size = sqrt(bounding_sphere.squared_radius());
+
+        // defining the surface
+        Surface_3 surface(implicit_function,
+                          Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
+
         // defining meshing criteria
-        CGAL::Surface_mesh_default_criteria_3<Str> criteria( 20.,          // angular bound
-                                                            sm_radius,    // radius upper bound
-                                                            sm_distance); // distance upper bound
+        FT sm_angle = 20.0; // LR: 30 is OK
+        FT sm_radius = 0.1; // as suggested by LR
+        FT sm_distance = 0.002;
+        CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
+                                                            sm_radius*size,  // upper bound of Delaunay balls radii
+                                                            sm_distance*size); // upper bound of distance to surface
 
         // meshing surface
         CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());

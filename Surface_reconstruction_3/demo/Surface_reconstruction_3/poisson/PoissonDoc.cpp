@@ -104,8 +104,8 @@ CPoissonDoc::CPoissonDoc()
 
   // Surface mesher options
   m_sm_angle = 20.0; // LR: 30 is OK
-  m_sm_radius = 0.1; // as suggested by LR (was 0.01)
-  m_sm_distance = 0.001; // was 0.01
+  m_sm_radius = 0.1; // as suggested by LR
+  m_sm_distance = 0.002;
 
   // Delaunay refinement options
   m_dr_shell_size = 0.01;
@@ -763,11 +763,11 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     m_poisson_function.set_contouring_value(m_contouring_value);
 
     // Get inner point
-    Point sink = m_poisson_function.sink();
-    FT f_sink = m_poisson_function(sink);
-    if(f_sink >= 0.0)
+    Point inner_point = m_poisson_function.get_inner_point();
+    FT inner_point_value = m_poisson_function(inner_point);
+    if(inner_point_value >= 0.0)
     {
-      status_message("Unable to seed (%lf at sink)",f_sink);
+      status_message("Unable to seed (%lf at inner_point)",inner_point_value);
       return;
     }
 
@@ -778,7 +778,7 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
     Surface_3 surface(m_poisson_function,                    
-                      Sphere(sink,4*size*size)); // bounding sphere
+                      Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
@@ -843,7 +843,7 @@ void CPoissonDoc::OnAlgorithmsPoissonStatistics()
     m_poisson_function.max_value_at_input_vertices(), 
     m_poisson_function.median_value_at_convex_hull(), 
     m_poisson_function.average_value_at_convex_hull(), 
-    m_poisson_function(m_poisson_function.sink()));
+    m_poisson_function(m_poisson_function.get_inner_point()));
 
   EndWaitCursor();
 }

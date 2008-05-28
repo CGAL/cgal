@@ -123,7 +123,7 @@ public:
 
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
   typedef typename Triangulation::Point_with_normal Point_with_normal; ///< Model of PointWithNormal_3
@@ -241,7 +241,7 @@ public:
   }
 
   /// Get the bounding box.
-  Iso_cuboid_3 bounding_box() const
+  Iso_cuboid bounding_box() const
   {
     return m_dt.bounding_box();
   }
@@ -314,7 +314,7 @@ public:
   {
 
     // create enlarged bounding box
-    Iso_cuboid_3 enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
+    Iso_cuboid enlarged_bbox = enlarged_bounding_box(enlarge_ratio);
 
     // push all cells to the queue
     Refinement_pqueue queue;
@@ -643,8 +643,12 @@ public:
     return f(p);
   }
 
-  /// Get point / the implicit function is minimum.
-  const Point& sink() const { return m_sink; }
+  /// Get point inside the surface.
+  const Point& get_inner_point() const 
+  { 
+    // Get point / the implicit function is minimum  
+    return m_sink; 
+  }
 
   /// Get average value of the implicit function over input vertices.
   FT average_value_at_input_vertices() const
@@ -1152,10 +1156,10 @@ private:
   }
 
   /// Compute enlarged geometric bounding box of the embedded triangulation
-  Iso_cuboid_3 enlarged_bounding_box(FT ratio) const
+  Iso_cuboid enlarged_bounding_box(FT ratio) const
   {
     // Get triangulation's bounding box
-    Iso_cuboid_3 bbox = m_dt.bounding_box();
+    Iso_cuboid bbox = m_dt.bounding_box();
 
     // Its center point is:
     FT mx = 0.5 * (bbox.xmax() + bbox.xmin());
@@ -1169,12 +1173,12 @@ private:
     FT sz = 0.5 * ratio * (bbox.zmax() - bbox.zmin());
     Point p(c.x() - sx, c.y() - sy, c.z() - sz);
     Point q(c.x() + sx, c.y() + sy, c.z() + sz);
-    return Iso_cuboid_3(p,q);
+    return Iso_cuboid(p,q);
   }
 
   void reset_queue(Refinement_pqueue& queue,
                    const FT threshold,
-                   Iso_cuboid_3& enlarged_bbox)
+                   Iso_cuboid& enlarged_bbox)
   {
     // clear queue
     while(!queue.empty())
@@ -1186,7 +1190,7 @@ private:
 
   void init_queue(Refinement_pqueue& queue,
                   const FT threshold,
-                  Iso_cuboid_3& enlarged_bbox)
+                  Iso_cuboid& enlarged_bbox)
   {
     Finite_cells_iterator c;
     for(c = m_dt.finite_cells_begin();
