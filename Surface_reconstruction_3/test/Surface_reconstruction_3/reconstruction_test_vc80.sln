@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "analysis_test", "VC\analysi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "outliers_removal_test", "VC\outliers_removal_test_vc80.vcproj", "{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APSS_reconstruction_test", "VC\APSS_reconstruction_test_vc80.vcproj", "{87C5AB4F-0345-4B41-89DB-F743EC4339D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -36,6 +38,10 @@ Global
 		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Debug|Win32.Build.0 = Debug|Win32
 		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Release|Win32.ActiveCfg = Release|Win32
 		{4D7F1AB0-A4AB-462D-BA3D-B95B354D0B7F}.Release|Win32.Build.0 = Release|Win32
+		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Debug|Win32.Build.0 = Debug|Win32
+		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Release|Win32.ActiveCfg = Release|Win32
+		{87C5AB4F-0345-4B41-89DB-F743EC4339D7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
