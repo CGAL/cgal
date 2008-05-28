@@ -1,0 +1,32 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: convex_decomposition_3.tex
+% +------------------------------------------------------------------------+
+% | 28.05.2008   Peter Hachenberger
+% | Package: Convex_decomposition_3
+% | 
+\RCSdef{\RCSconvex_decomposition_3Rev}{$Id$}
+\RCSdefDate{\RCconvex_decomposition_3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{convex_decomposition_3}
+\label{refconvex_decomposition_3}
+
+\ccDefinition
+
+This function takes a \ccc{Nef_polyhedron_3} $N$ and inserts
+additional facets, such that each marked volume (except for the outer
+volume) is subdivided into convex pieces. At the moment the function
+is restricted to the decomposition of finite point sets. If the input
+polyhedron is infinite, i.e., the outer volume is part of the
+polyhedron, then this volume is ignored during the decomposition
+process.
+
+\ccGlobalFunction{void convex_decomposition_3(Nef_polyhedron_3& N);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+
+\end{ccRefFunction}

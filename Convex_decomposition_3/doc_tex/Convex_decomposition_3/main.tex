@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | CGAL User Manual: 
+% +------------------------------------------------------------------------+
+% |
+% | 28.05.2008   Peter Hachenberger
+% | 
+\RCSdef{\ConvexDecomposition3Rev}{$Id$}
+\RCSdefDate{\ConvexDecomposition3Date}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\ccUserChapter{Convex Decomposition of Polyhedra \label{chapterConvexDecomposition3}}
+\ccChapterRelease{\ConvexDecomposition3Rev. \ \ConvexDecomposition3Date}
+\ccChapterAuthor{Peter Hachenberger}
+
+%\input{Convex_decomposition_3/PkgDescription.tex}
+
+% +------------------------------------------------------------------------+
+\section{Introduction}
+
+For many applications on non-convex polyhedra, there are efficient
+solutions that first decompose the polyhedron into convex pieces. As
+an example, the Minkowski sum of two polyhedra can be computed by
+decomposing both polyhedra into convex pieces, compute pair-wise
+Minkowski sums of the convex pieces, and unite the pair-wise sums.
+
+While it is desirable to have a decomposition into a minimum number of
+pieces, this problem is know to be NP-hard~\cite{cgal:c--}. Our
+implementation decomposes a Nef polyhedron $N$ into $O(r^2)$ convex
+pieces, where $r$ is the number of edges, which have two adjacent
+facets that span an angle of more than 180 degrees with respect to the
+interior of the polyhedron. Those edges are also called reflex edges.
+The bound of $O(r^2)$ convex pieces is worst-case
+optimal~\cite{cgal:c--}.
+
+At the moment our implementation is restricted to the decomposition of
+finite point sets. If the input polyhedron is infinite, i.e., the
+outer volume is part of the polyhedron, then this volume is ignored
+during the decomposition process. An extension to infinite point sets
+is planned.
+
+% +------------------------------------------------------------------------+
+\section{Usage}
+
+The following example illustrates the usage of the function
+\ccc{convex_decomposition_3}. It takes a \ccc{Nef_polyhedron_3}
+$N$ as input parameter. The result is the modified polyhedron $N$.
+After the execution of the function, it contains additional facets,
+such that each marked volume (except for the outer volume) is
+subdivided into convex pieces. The convex pieces can then be used by
+traversing $N$, or by converting them into separate Nef polyhedra, as
+shown in the example code.
+
+\ccIncludeExampleCode{Convex_decomposition_3/.cpp}
