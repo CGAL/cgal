@@ -470,6 +470,46 @@ namespace CartesianKernelFunctors {
     }
   };
 
+
+  template <typename K>
+  class Compare_squared_radius_3
+  {
+    typedef typename K::Point_3            Point_3;
+    typedef typename K::FT                 FT;
+  public:
+    typedef typename K::Comparison_result  result_type;
+    typedef Arity_tag< 4 >                 Arity;
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Point_3& s, const FT& ft) const
+    {
+      return CGAL_NTS compare(squared_radiusC3(p.x(), p.y(), p.z(), 
+					       q.x(), q.y(), q.z(), 
+					       r.x(), r.y(), r.z(), 
+					       s.x(), s.y(), s.z() ),
+			      ft);
+    }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const FT& ft) const
+    {
+      return CGAL_NTS compare(squared_radiusC3(p.x(), p.y(), p.z(), 
+					       q.x(), q.y(), q.z(), 
+					       r.x(), r.y(), r.z()),
+			      ft);
+    }
+
+    result_type
+    operator()(const Point_3& p, const Point_3& q, const FT& ft) const
+    {
+      return CGAL_NTS compare(squared_radiusC3(p.x(), p.y(), p.z(), 
+					       q.x(), q.y(), q.z() ),
+			      ft);
+    }
+  };
+
+
+
   template <typename K>
   class Compare_slope_2
   {
