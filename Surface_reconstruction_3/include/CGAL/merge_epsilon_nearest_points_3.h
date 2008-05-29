@@ -40,9 +40,11 @@ private:
     
 public:
 
-    Less_epsilon_points_3 (double epsilon = 0)
+    Less_epsilon_points_3 (double epsilon)
         : m_epsilon (epsilon)
-    {}
+    {
+        CGAL_precondition(epsilon > 0);
+    }
     
     bool operator() (const Point_3& a, const Point_3& b) const 
     {
@@ -80,9 +82,11 @@ private:
     
 public:
 
-    Epsilon_point_set_3 (double epsilon = 0)
+    Epsilon_point_set_3 (double epsilon)
         : Base( Less_epsilon_points_3<Point_3>(epsilon) )
-    {}
+    {
+        CGAL_precondition(epsilon > 0);
+    }
     
     // default copy constructor, operator =() and destructor are fine.
 };
