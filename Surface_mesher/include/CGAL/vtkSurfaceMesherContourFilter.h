@@ -142,7 +142,7 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
   // definition of the surface, with 10^-2 as relative precision
   Surface_3 surface(gray_level_image, bounding_sphere, 1e-5);
   CGAL::Surface_mesh_default_criteria_3<Tr> criteria(30.,
-                                                     radius/100.,
+                                                     radius/50.,
                                                      radius/500.);
   // meshing surface, with the "manifold without boundary" algorithm
   CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
