@@ -434,10 +434,17 @@ copy_old_stuff()
         
         # If there is any configuration cached in the old release, copy it
         if [ -f "${platform}/CMakeCache.txt" ]; then
-          log "${ACTUAL_LOGFILE}" "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/"
-          sed -r -e "s,(CGAL-([0-9][0-9]*\.)*[0-9][0-9]*(-I-[0-9][0-9]*)?|CGAL-I)$,${CGAL_RELEASE_ID},g; s,(CGAL-([0-9][0-9]*\.)*[0-9][0-9]*(-I-[0-9][0-9]*)?|CGAL-I)/,${CGAL_RELEASE_ID}/,g; " \
+
+          PREV_CGAL_RELEASE_ID=`grep "CGAL_SOURCE_DIR" "${platform}/CMakeCache.txt" | sed 's/\(^.*\)\(CGAL-.*$\)/\2/'`
+
+          log "${ACTUAL_LOGFILE}" "Copying old ${platform}/CMakeCache.txt into ${CGAL_BINARY_DIR_BASE}/${platform}/ substituting ${PREV_CGAL_RELEASE_ID} with ${CGAL_RELEASE_ID}"
+          
+          sed -e "s,${PREV_CGAL_RELEASE_ID}/cmake/platform,${CGAL_RELEASE_ID}/cmake/platform,g" \
+              -e "s,${PREV_CGAL_RELEASE_ID}$,${CGAL_RELEASE_ID},g" \
+              -e "s,${PREV_CGAL_RELEASE_ID}/include/CGAL/CORE,${CGAL_RELEASE_ID}/include/CGAL/CORE,g" \
               "${platform}/CMakeCache.txt"  \
-              >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"
+              >> "${CGAL_BINARY_DIR_BASE}/${platform}/CMakeCache.txt"     
+
         fi
         
         # if the platform folder contains a setup script, copy it
