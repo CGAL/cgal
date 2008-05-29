@@ -99,9 +99,6 @@ int main(int argc, char * argv[])
         // Load mesh
         //***************************************
 
-        CGAL::Timer task_timer;
-        task_timer.start();
-
         // Read the mesh file in a polyhedron
         std::ifstream stream(input_filename);
         typedef Enriched_polyhedron<Kernel,Enriched_items> Polyhedron;
@@ -134,20 +131,21 @@ int main(int argc, char * argv[])
         // Print status
         int nb_vertices = input_mesh.size_of_vertices();
         std::cerr << "Read file " << input_filename << ": "
-                  << task_timer.time() << " seconds, "
                   << nb_vertices << " vertices"
                   << std::endl;
-        task_timer.reset();
 
         //***************************************
         // Compute implicit function
         //***************************************
 
-        Poisson_implicit_function implicit_function(dt);
+        CGAL::Timer task_timer;
+        task_timer.start();
 
-        /// Computes the Poisson indicator function f()
+        Poisson_implicit_function poisson_function(dt);
+
+        /// Compute the Poisson indicator function f()
         /// at each vertex of the triangulation
-        if ( ! implicit_function.compute_implicit_function() )
+        if ( ! poisson_function.compute_implicit_function() )
         {
             std::cerr << "FATAL ERROR: cannot solve Poisson equation" << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
@@ -155,12 +153,10 @@ int main(int argc, char * argv[])
         }
 
         // Print status
-        int nb_vertices2 = implicit_function.triangulation().number_of_vertices();
+        int nb_vertices2 = poisson_function.triangulation().number_of_vertices();
         std::cerr << "Solve Poisson equation: "
-                  << task_timer.time() << " seconds "
                   << "(added " << nb_vertices2-nb_vertices << " vertices)"
                   << std::endl;
-        task_timer.reset();
 
         //***************************************
         // Surface mesh generation
@@ -170,8 +166,8 @@ int main(int argc, char * argv[])
         C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
         // Get inner point
-        Point inner_point = implicit_function.get_inner_point();
-        FT inner_point_value = implicit_function(inner_point);
+        Point inner_point = poisson_function.get_inner_point();
+        FT inner_point_value = poisson_function(inner_point);
         if(inner_point_value >= 0.0)
         {
             std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
@@ -180,17 +176,18 @@ int main(int argc, char * argv[])
         }
 
         // Get implicit surface's size
-        Sphere bounding_sphere = implicit_function.bounding_sphere();
+        Sphere bounding_sphere = poisson_function.bounding_sphere();
         FT size = sqrt(bounding_sphere.squared_radius());
+        size = size / FT(2); // empiric rule to get the bounding sphere ignoring Steiner points
 
         // defining the surface
-        Surface_3 surface(implicit_function,
+        Surface_3 surface(poisson_function,
                           Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
         // defining meshing criteria
         FT sm_angle = 20.0; // LR: 30 is OK
         FT sm_radius = 0.1; // as suggested by LR
-        FT sm_distance = 0.002;
+        FT sm_distance = 0.005;
         CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                             sm_radius*size,  // upper bound of Delaunay balls radii
                                                             sm_distance*size); // upper bound of distance to surface
@@ -199,9 +196,9 @@ int main(int argc, char * argv[])
         make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
         // Print status
-        std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                         << tr.number_of_vertices() << " vertices"
-                                         << std::endl;
+        std::cerr << "Poisson reconstruction: " << task_timer.time() << " seconds, "
+                                                << tr.number_of_vertices() << " vertices"
+                                                << std::endl;
         task_timer.reset();
 
     } // for each input file

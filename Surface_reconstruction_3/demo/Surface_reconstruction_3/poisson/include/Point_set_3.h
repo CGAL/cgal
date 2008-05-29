@@ -3,6 +3,8 @@
 
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Vector_index_property_map.h>
+#include <CGAL/Min_sphere_d.h>
+#include <CGAL/Optimisation_d_traits_3.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
 #include <Gyroviz_point_3.h>
@@ -63,33 +65,36 @@ public:
   typedef typename Geom_traits::Vector_3 Vector;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
-  
+
   typedef Gyroviz_point_3<Gt> Point_with_normal; ///<Model of PointWithNormal_3
   typedef Gyroviz_point_3<Gt> Gyroviz_point;     ///<Model of PointWithNormal_3 + cameras
   typedef typename Point_with_normal::Normal Normal; ///<Model of OrientedNormal_3 concept.
 
   // Iterator over points
   typedef std::vector<Point_with_normal>::iterator 
-                                    Point_iterator;      
+    Point_iterator;      
   typedef std::vector<Point_with_normal>::const_iterator 
-                                    Point_const_iterator;      
+    Point_const_iterator;      
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 
-                                  Project_normal<Point_with_normal> >  
-                                    Normal_iterator;      
+    Project_normal<Point_with_normal> >  
+    Normal_iterator;      
   typedef CGAL::Iterator_project<const_iterator, 
-                                  Project_normal<Point_with_normal> >  
-                                    Normal_const_iterator;      
+    Project_normal<Point_with_normal> >  
+    Normal_const_iterator;      
 
 // Data members
 private:
 
-    // Indicate if m_barycenter, m_bounding_box and m_diameter_standard_deviation below are valid
-    mutable bool m_bounding_box_is_valid;
-    mutable Iso_cuboid m_bounding_box; // m_points's bounding box
-    mutable Point m_barycenter; // m_points's barycenter
-    mutable FT m_diameter_standard_deviation; // m_points's standard deviation
+  // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and 
+  // m_diameter_standard_deviation below are valid.
+  mutable bool m_bounding_box_is_valid;
+  
+  mutable Iso_cuboid m_bounding_box; // point set's bounding box
+  mutable Sphere m_bounding_sphere; // point set's bounding sphere
+  mutable Point m_barycenter; // point set's barycenter
+  mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
 // Public methods
 public:
@@ -130,19 +135,7 @@ public:
     if (!m_bounding_box_is_valid)
       update_bounding_box();
 
-    // Center point
-    FT mx = 0.5 * (m_bounding_box.xmax() + m_bounding_box.xmin());
-    FT my = 0.5 * (m_bounding_box.ymax() + m_bounding_box.ymin());
-    FT mz = 0.5 * (m_bounding_box.zmax() + m_bounding_box.zmin());
-    Point center(mx,my,mz);
-
-    // Squared radius
-    FT dx = m_bounding_box.xmax() - m_bounding_box.xmin();
-    FT dy = m_bounding_box.ymax() - m_bounding_box.ymin();
-    FT dz = m_bounding_box.zmax() - m_bounding_box.zmin();
-    FT squared_radius = dx*dx + dy*dy + dz*dz;
-
-    return Sphere(center, squared_radius);
+    return m_bounding_sphere;
   }
 
   /// Get points barycenter.
@@ -184,9 +177,9 @@ public:
     m_bounding_box_is_valid = false;
   }
 
-  // Draw m_points[] points using OpenGL calls.
+  // Draw points using OpenGL calls.
   void gl_draw_vertices(unsigned char r, unsigned char g, unsigned char b,
-                        float size) const
+    float size) const
   {
     ::glPointSize(size);
     ::glColor3ub(r,g,b);
@@ -199,9 +192,9 @@ public:
     ::glEnd();
   }
 
-  // Draw m_points[] normals using OpenGL calls.
+  // Draw normals using OpenGL calls.
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
-                       FT scale = 1.0) const
+    FT scale = 1.0) const
   {
     // Draw *oriented* normals
     ::glColor3ub(r,g,b);
@@ -239,7 +232,7 @@ public:
 // Private methods:
 private:
 
-  // Recompute barycenter, bounding box, bounding sphere and standard deviation.
+  /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
   void update_bounding_box() const
   {
     if (begin() == end())
@@ -275,12 +268,16 @@ private:
     //
     m_barycenter = CGAL::ORIGIN + v / norm;
 
+    // bounding sphere
+    CGAL::Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(begin(), end());
+    m_bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+
     // Compute standard deviation of the distance to barycenter
     typename Geom_traits::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (Point_const_iterator it = begin(); it != end(); it++)
     {
-      sq_radius += sqd(*it, m_barycenter);
+        sq_radius += sqd(*it, m_barycenter);
     }
     sq_radius /= size();
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
@@ -297,23 +294,23 @@ template <class Gt>
 class Point_set_vertex_point_const_map 
 {
 public:
-    typedef Point_set_3<Gt> Point_set;
-    typedef typename Gt::Point_3 Point_3;  
+  typedef Point_set_3<Gt> Point_set;
+  typedef typename Gt::Point_3 Point_3;  
 
-    // Property maps required types
-    typedef boost::readable_property_map_tag          category;
-    typedef Point_3                                   value_type;
-    typedef value_type                                reference;
-    typedef typename Point_set::Point_const_iterator  key_type;
+  // Property maps required types
+  typedef boost::readable_property_map_tag          category;
+  typedef Point_3                                   value_type;
+  typedef value_type                                reference;
+  typedef typename Point_set::Point_const_iterator  key_type;
 
-    Point_set_vertex_point_const_map(const Point_set&) {}
+  Point_set_vertex_point_const_map(const Point_set&) {}
 
-    /// Free function to access the map elements.
-    friend inline 
-    reference get(const Point_set_vertex_point_const_map&, key_type p)
-    {
-      return *p;
-    }
+  /// Free function to access the map elements.
+  friend inline 
+  reference get(const Point_set_vertex_point_const_map&, key_type p)
+  {
+    return *p;
+  }
 };
 
 /// Free function to get the "vertex_point" property map
@@ -333,22 +330,22 @@ get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
 template <class Gt>
 class Point_set_vertex_normal_map 
   : public boost::put_get_helper<typename Point_set_3<Gt>::Point_with_normal::Normal&, 
-                                  Point_set_vertex_normal_map<Gt> >
+  Point_set_vertex_normal_map<Gt> >
 {
 public:
-    typedef Point_set_3<Gt> Point_set;
-    typedef typename Point_set::Point_with_normal::Normal Normal;  
+  typedef Point_set_3<Gt> Point_set;
+  typedef typename Point_set::Point_with_normal::Normal Normal;  
 
-    // Property maps required types
-    typedef boost::lvalue_property_map_tag            category;
-    typedef Normal                                    value_type;
-    typedef Normal&                                   reference;
-    typedef typename Point_set::Point_iterator        key_type;
+  // Property maps required types
+  typedef boost::lvalue_property_map_tag            category;
+  typedef Normal                                    value_type;
+  typedef Normal&                                   reference;
+  typedef typename Point_set::Point_iterator        key_type;
 
-    Point_set_vertex_normal_map(const Point_set&) {}
+  Point_set_vertex_normal_map(const Point_set&) {}
 
-    /// Access the map elements.
-    reference operator[](key_type p) const { return p->normal(); }
+  /// Access the map elements.
+  reference operator[](key_type p) const { return p->normal(); }
 };
 
 /// Free function to get the "vertex_normal" property map
@@ -369,25 +366,25 @@ template <class Gt>
 class Point_set_vertex_cameras_const_map 
 {
 public:
-    typedef Point_set_3<Gt> Point_set;
-    typedef typename Point_set::Gyroviz_point::Camera_const_iterator 
-                                                      Camera_const_iterator;  
+  typedef Point_set_3<Gt> Point_set;
+  typedef typename Point_set::Gyroviz_point::Camera_const_iterator 
+    Camera_const_iterator;  
 
-    // Property maps required types
-    typedef boost::readable_property_map_tag          category;
-    typedef std::pair<Camera_const_iterator,Camera_const_iterator>  
-                                                      value_type;
-    typedef value_type                                reference;
-    typedef typename Point_set::Point_const_iterator  key_type;
+  // Property maps required types
+  typedef boost::readable_property_map_tag          category;
+  typedef std::pair<Camera_const_iterator,Camera_const_iterator>  
+    value_type;
+  typedef value_type                                reference;
+  typedef typename Point_set::Point_const_iterator  key_type;
 
-    Point_set_vertex_cameras_const_map(const Point_set&) {}
+  Point_set_vertex_cameras_const_map(const Point_set&) {}
 
-    /// Free function to access the map elements.
-    friend inline
+  /// Free function to access the map elements.
+  friend inline
     reference get(const Point_set_vertex_cameras_const_map&, key_type p)
-    {
-      return std::make_pair(p->cameras_begin(), p->cameras_end());
-    }
+  {
+    return std::make_pair(p->cameras_begin(), p->cameras_end());
+  }
 };
 
 /// Free function to get the "vertex_cameras" property map
@@ -397,8 +394,8 @@ inline
 Point_set_vertex_cameras_const_map<Gt> 
 get(boost::vertex_cameras_t, const Point_set_3<Gt>& points) 
 {
-    Point_set_vertex_cameras_const_map<Gt> aMap(points);
-    return aMap;
+  Point_set_vertex_cameras_const_map<Gt> aMap(points);
+  return aMap;
 }
 
 

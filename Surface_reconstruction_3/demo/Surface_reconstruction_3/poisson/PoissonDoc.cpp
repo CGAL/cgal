@@ -50,10 +50,10 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
     ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
-    ON_COMMAND(ID_RECONSTRUCTION_SURFACEMESHING, OnReconstructionSurfaceMeshing)
+    ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
     ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON, OnUpdateReconstructionPoisson)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_SURFACEMESHING, OnUpdateReconstructionSurfaceMeshing)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnUpdateReconstructionPoissonSurfaceMeshing)
     ON_COMMAND(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnAlgorithmsMarchingTetContouring)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnUpdateAlgorithmsMarchingTetContouring)
     ON_COMMAND(ID_FILE_SAVE_SURFACE, OnFileSaveSurface)
@@ -66,35 +66,41 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnAlgorithmsEstimateNormalsByPCA)
     ON_COMMAND(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnAlgorithmsEstimateNormalsByJetFitting)
     ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnAlgorithmsOrientNormalsWrtCameras)
-    ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSMST, &CPoissonDoc::OnAlgorithmsOrientNormalsWithMST)
-	ON_COMMAND(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, &CPoissonDoc::OnAlgorithmsSmoothUsingJetFitting)
-    ON_COMMAND(ID_MODE_POINT_SET, &CPoissonDoc::OnModePointSet)
-    ON_UPDATE_COMMAND_UI(ID_MODE_POINT_SET, &CPoissonDoc::OnUpdateModePointSet)
-    ON_COMMAND(ID_MODE_POISSON, &CPoissonDoc::OnModePoisson)
-    ON_UPDATE_COMMAND_UI(ID_MODE_POISSON, &CPoissonDoc::OnUpdateModePoisson)
-    ON_COMMAND(ID_CREATE_POISSON_TRIANGULATION, &CPoissonDoc::OnCreatePoissonTriangulation)
-    ON_UPDATE_COMMAND_UI(ID_CREATE_POISSON_TRIANGULATION, &CPoissonDoc::OnUpdateCreatePoissonTriangulation)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, &CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, &CPoissonDoc::OnUpdateAlgorithmsEstimateNormalsByPCA)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, &CPoissonDoc::OnUpdateAlgorithmsEstimateNormalByJetFitting)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSMST, &CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWithMST)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, &CPoissonDoc::OnUpdateAlgorithmsOrientNormalsWrtCameras)
-    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, &CPoissonDoc::OnUpdateReconstructionDelaunayRefinement)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, &CPoissonDoc::OnUpdateAlgorithmsRefineInShell)
-    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, &CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals)
-    ON_COMMAND(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnRemoveOutliers)
-    ON_UPDATE_COMMAND_UI(ID_PROCESSING_REMOVEOUTLIERS, &CPoissonDoc::OnUpdateRemoveOutliers)
-    ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, &CPoissonDoc::OnAnalysisAverageSpacing)
-    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, &CPoissonDoc::OnOneStepPoissonReconstruction)
-    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, &CPoissonDoc::OnUpdateOneStepPoissonReconstruction)
-    ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, &CPoissonDoc::OnUpdateAnalysisAverageSpacing)
+    ON_COMMAND(ID_ALGORITHMS_ORIENTNORMALSMST, OnAlgorithmsOrientNormalsWithMST)
+	ON_COMMAND(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, OnAlgorithmsSmoothUsingJetFitting)
+    ON_COMMAND(ID_MODE_POINT_SET, OnModePointSet)
+    ON_UPDATE_COMMAND_UI(ID_MODE_POINT_SET, OnUpdateModePointSet)
+    ON_COMMAND(ID_MODE_POISSON, OnModePoisson)
+    ON_UPDATE_COMMAND_UI(ID_MODE_POISSON, OnUpdateModePoisson)
+    ON_COMMAND(ID_CREATE_POISSON_TRIANGULATION, OnCreatePoissonTriangulation)
+    ON_UPDATE_COMMAND_UI(ID_CREATE_POISSON_TRIANGULATION, OnUpdateCreatePoissonTriangulation)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_SMOOTHUSINGJETFITTING, OnUpdateAlgorithmsSmoothUsingJetFitting)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALSBYPCA, OnUpdateAlgorithmsEstimateNormalsByPCA)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ESTIMATENORMALBYJETFITTING, OnUpdateAlgorithmsEstimateNormalByJetFitting)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSMST, OnUpdateAlgorithmsOrientNormalsWithMST)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_ORIENTNORMALSCAMERAS, OnUpdateAlgorithmsOrientNormalsWrtCameras)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnUpdateReconstructionDelaunayRefinement)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, OnUpdateAlgorithmsRefineInShell)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnUpdateAlgorithmsExtrapolateNormals)
+    ON_COMMAND(ID_PROCESSING_REMOVEOUTLIERS, OnRemoveOutliers)
+    ON_UPDATE_COMMAND_UI(ID_PROCESSING_REMOVEOUTLIERS, OnUpdateRemoveOutliers)
+    ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
+    ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, OnUpdateAnalysisAverageSpacing)
+    ON_COMMAND(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnReconstructionApssReconstruction)
+    ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnUpdateReconstructionApssReconstruction)
+    ON_COMMAND(ID_MODE_APSS, OnModeAPSS)
+    ON_UPDATE_COMMAND_UI(ID_MODE_APSS, OnUpdateModeAPSS)
 END_MESSAGE_MAP()
 
 
 // CPoissonDoc construction/destruction
 
 CPoissonDoc::CPoissonDoc()
-: m_poisson_function(m_poisson_dt), 
+: m_poisson_function(NULL),
+  m_poisson_dt(NULL), 
+  m_apss_function(NULL), 
   m_surface_mesher_c2t3(m_surface_mesher_dt)
 {
   m_edit_mode = NO_EDIT_MODE; // No points yet
@@ -105,7 +111,7 @@ CPoissonDoc::CPoissonDoc()
   // Surface mesher options
   m_sm_angle = 20.0; // LR: 30 is OK
   m_sm_radius = 0.1; // as suggested by LR
-  m_sm_distance = 0.002;
+  m_sm_distance = 0.005;
 
   // Delaunay refinement options
   m_dr_shell_size = 0.01;
@@ -399,7 +405,8 @@ void CPoissonDoc::OnFileSaveSurface()
 // Enable "Save reconstructed surface as..." if surface is computed
 void CPoissonDoc::OnUpdateFileSaveSurface(CCmdUI *pCmdUI)
 {
-  pCmdUI->Enable(m_edit_mode == POISSON && m_surface_mesher_dt.number_of_vertices() > 0);
+  pCmdUI->Enable((m_edit_mode == POISSON || m_edit_mode == APSS) 
+                 && m_surface_mesher_dt.number_of_vertices() > 0);
 }
 
 // Update the number of vertices and tetrahedra in the status bar
@@ -410,7 +417,7 @@ void CPoissonDoc::update_status()
     (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
   ASSERT(pStatus != NULL);
 
-  if (m_edit_mode == POINT_SET)
+  if (m_edit_mode == POINT_SET || m_edit_mode == APSS)
   {
     CString points;
     points.Format("%d points",m_points.size());
@@ -424,10 +431,13 @@ void CPoissonDoc::update_status()
   }
   else if (m_edit_mode == POISSON)
   {
+    CGAL_assertion(m_poisson_dt != NULL);
+    CGAL_assertion(m_poisson_function != NULL);
+
     CString vertices;
-    vertices.Format("%d vertices",m_poisson_dt.number_of_vertices());
+    vertices.Format("%d vertices",m_poisson_dt->number_of_vertices());
     CString tets;
-    tets.Format("%d tets",m_poisson_dt.number_of_cells());
+    tets.Format("%d tets",m_poisson_dt->number_of_cells());
 
     // write message to cerr
     std::cerr << "=> " << vertices << " and " << tets << std::endl;
@@ -510,7 +520,6 @@ void CPoissonDoc::OnEditOptions()
 
     m_outlier_percentage = dlg.m_outlier_percentage;
     
-    update_status();
     UpdateAllViews(NULL);
     EndWaitCursor();
   }
@@ -628,9 +637,14 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
   status_message("Create Poisson Triangulation...");
   double init = clock();
 
+  // Clean up previous mode
+  CloseMode();
+  
   // Copy points to m_poisson_dt
-  m_poisson_function.clear();
-  m_poisson_function.insert(m_points.begin(), m_points.end());
+  CGAL_assertion(m_poisson_dt == NULL);
+  CGAL_assertion(m_poisson_function == NULL);
+  m_poisson_dt = new Dt3;
+  m_poisson_function = new Poisson_implicit_function(*m_poisson_dt, m_points.begin(), m_points.end());
   
   m_edit_mode = POISSON;
   m_triangulation_refined = false; // Need to apply Delaunay refinement
@@ -642,19 +656,21 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
   EndWaitCursor();
 }
 
+// Enable Reconstruction >> Poisson menu items if normals are computed and oriented.
 void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 {
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
   pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && normals_are_oriented);
-
-  pCmdUI->SetCheck(m_edit_mode == POISSON);
 }
 
 // Uniform Delaunay refinement
 void CPoissonDoc::OnReconstructionDelaunayRefinement()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
 
   status_message("Delaunay refinement...");
@@ -662,7 +678,7 @@ void CPoissonDoc::OnReconstructionDelaunayRefinement()
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
   double init = clock();
-  unsigned int nb_vertices_added = m_poisson_function.delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
+  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement(quality,max_vertices,enlarge_ratio,50000);
   m_triangulation_refined = true;
 
   status_message("Delaunay refinement...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
@@ -679,6 +695,9 @@ void CPoissonDoc::OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI)
 // Delaunay refinement in a surface's shell
 void CPoissonDoc::OnAlgorithmsRefineInShell()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
 
   status_message("Delaunay refinement in surface shell...");
@@ -686,7 +705,7 @@ void CPoissonDoc::OnAlgorithmsRefineInShell()
   const unsigned int max_vertices = (unsigned int)1e7; // max 10M vertices
   const double enlarge_ratio = 1.5;
   double init = clock();
-  unsigned int nb_vertices_added = m_poisson_function.delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
+  unsigned int nb_vertices_added = m_poisson_function->delaunay_refinement_shell(m_dr_shell_size,m_dr_sizing,m_dr_max_vertices);
   m_triangulation_refined = true;
 
   status_message("Delaunay refinement in surface shell...done (%lf s, %d vertices inserted)",duration(init),nb_vertices_added);
@@ -704,10 +723,19 @@ void CPoissonDoc::OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI)
 // compute null normals by averaging neighbour normals.
 void CPoissonDoc::OnAlgorithmsExtrapolatenormals()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
-    m_poisson_function.extrapolate_normals();
-  EndWaitCursor();
+  status_message("Extrapolate the normals field...");
+  double init = clock();
+
+  m_poisson_function->extrapolate_normals();
+
+  status_message("Extrapolate the normals field...done (%lf s)", duration(init));
+  update_status();
   UpdateAllViews(NULL);
+  EndWaitCursor();
 }
 
 void CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI)
@@ -718,18 +746,21 @@ void CPoissonDoc::OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI)
 // Solve Poisson equation callback
 void CPoissonDoc::OnReconstructionPoisson()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
   status_message("Solve Poisson equation...");
   double init = clock();
 
   // Solve Poisson equation such that:
-  // - m_poisson_function() = 0 on the input points,
-  // - m_poisson_function() < 0 inside the surface.
+  // - (*m_poisson_function)() = 0 on the input points,
+  // - (*m_poisson_function)() < 0 inside the surface.
   double duration_assembly, duration_factorization, duration_solve;
-  m_poisson_solved = m_poisson_function.solve_poisson(&duration_assembly,
-                                                      &duration_factorization,
-                                                      &duration_solve);
-  m_poisson_function.set_contouring_value(m_poisson_function.median_value_at_input_vertices());
+  m_poisson_solved = m_poisson_function->solve_poisson(&duration_assembly,
+                                                       &duration_factorization,
+                                                       &duration_solve);
+  m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
   m_contouring_value = 0.0;
 
   double total_duration = duration(init);
@@ -748,9 +779,12 @@ void CPoissonDoc::OnUpdateReconstructionPoisson(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POISSON && m_triangulation_refined);
 }
 
-// Surface Meshing callback
-void CPoissonDoc::OnReconstructionSurfaceMeshing()
+// Reconstruction >> Poisson >> Surface Meshing callback
+void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
 {
+    CGAL_assertion(m_poisson_dt != NULL);
+    CGAL_assertion(m_poisson_function != NULL);
+
     BeginWaitCursor();
     status_message("Surface meshing...");
     double init = clock();
@@ -758,13 +792,14 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     // Clear previous call
     m_surface_mesher_dt.clear();
     m_surface_mesher_c2t3.clear();
+    m_surface.clear();
     
     // Apply contouring value defined in Options dialog
-    m_poisson_function.set_contouring_value(m_contouring_value);
+    m_poisson_function->set_contouring_value(m_contouring_value);
 
     // Get inner point
-    Point inner_point = m_poisson_function.get_inner_point();
-    FT inner_point_value = m_poisson_function(inner_point);
+    Point inner_point = m_poisson_function->get_inner_point();
+    FT inner_point_value = (*m_poisson_function)(inner_point);
     if(inner_point_value >= 0.0)
     {
       status_message("Unable to seed (%lf at inner_point)",inner_point_value);
@@ -772,12 +807,13 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     }
 
     // Get implicit surface's size
-    Sphere bounding_sphere = m_poisson_function.bounding_sphere();
+    Sphere bounding_sphere = m_poisson_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
+    size = size / FT(2); // empiric rule to get the bounding sphere ignoring Steiner points
 
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
-    Surface_3 surface(m_poisson_function,                    
+    Surface_3 surface(*m_poisson_function,                    
                       Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
     // defining meshing criteria
@@ -791,10 +827,10 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     // get output surface
     std::list<Triangle> triangles;
     CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
-    m_poisson_dt.set_surface(triangles);
+    m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
     
     // Reset contouring value 
-    m_poisson_function.set_contouring_value(0.0);
+    m_poisson_function->set_contouring_value(0.0);
 
     status_message("Surface meshing...done (%d vertices, %lf s)",
                    m_surface_mesher_dt.number_of_vertices(),duration(init));
@@ -803,8 +839,8 @@ void CPoissonDoc::OnReconstructionSurfaceMeshing()
     EndWaitCursor();
 }
 
-// Enable "Surface Meshing" if Poisson equation is solved
-void CPoissonDoc::OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI)
+// Enable Reconstruction >> Poisson >> Surface Meshing if Poisson equation is solved
+void CPoissonDoc::OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POISSON && m_poisson_solved);
 }
@@ -812,11 +848,18 @@ void CPoissonDoc::OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI)
 // Marching Tet Contouring callback
 void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
   status_message("Marching tet contouring (%3.1lf%%)...",m_outlier_percentage);
   double init = clock();
 
-  int nb = m_poisson_dt.marching_tet(m_contouring_value);
+  m_contour.clear(); // clear previous call
+  
+  std::list<Triangle> triangles;
+  int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
+  m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
 
   status_message("Marching tet contouring...done (%d triangles, %lf s)",nb,duration(init));
   update_status();
@@ -832,18 +875,21 @@ void CPoissonDoc::OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI)
 
 void CPoissonDoc::OnAlgorithmsPoissonStatistics()
 {
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
   BeginWaitCursor();
 
   // write message in message box
   prompt_message( 
     "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf", 
-    m_poisson_function.median_value_at_input_vertices(), 
-    m_poisson_function.average_value_at_input_vertices(), 
-    m_poisson_function.min_value_at_input_vertices(), 
-    m_poisson_function.max_value_at_input_vertices(), 
-    m_poisson_function.median_value_at_convex_hull(), 
-    m_poisson_function.average_value_at_convex_hull(), 
-    m_poisson_function(m_poisson_function.get_inner_point()));
+    m_poisson_function->median_value_at_input_vertices(), 
+    m_poisson_function->average_value_at_input_vertices(), 
+    m_poisson_function->min_value_at_input_vertices(), 
+    m_poisson_function->max_value_at_input_vertices(), 
+    m_poisson_function->median_value_at_convex_hull(), 
+    m_poisson_function->average_value_at_convex_hull(), 
+    (*m_poisson_function)(m_poisson_function->get_inner_point()));
 
   EndWaitCursor();
 }
@@ -879,10 +925,29 @@ void CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI)
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
 
+// Clean up previous mode
+void CPoissonDoc::CloseMode()
+{
+  // Nothing to do if m_edit_mode == POINT_SET
+  
+  // If m_edit_mode == POISSON
+  delete m_poisson_function; m_poisson_function = NULL;
+  delete m_poisson_dt; m_poisson_dt = NULL;
+  
+  // If m_edit_mode == APSS
+  delete m_apss_function; m_apss_function = NULL;
+  
+  m_edit_mode = NO_EDIT_MODE;
+}
+
 // Edit >> Mode >> Point set callback
 void CPoissonDoc::OnModePointSet()
 {
   // No need to convert Poisson triangulation back to point set (yet)
+  
+  // Clean up previous mode
+  CloseMode();
+  
   m_edit_mode = POINT_SET;
 
   update_status();
@@ -896,8 +961,8 @@ void CPoissonDoc::OnUpdateModePointSet(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == POINT_SET);
 }
 
-// Edit >> Mode >> Poisson is an alias to 
-// Reconstruction >> Poisson >> Create Poisson Triangulation.
+// "Edit >> Mode >> Poisson" is an alias to 
+// "Reconstruction >> Poisson >> Create Poisson Triangulation".
 void CPoissonDoc::OnModePoisson()
 {
   OnCreatePoissonTriangulation();
@@ -923,7 +988,7 @@ void CPoissonDoc::OnOneStepPoissonReconstruction()
   OnCreatePoissonTriangulation();
   OnReconstructionDelaunayRefinement();
   OnReconstructionPoisson();
-  OnReconstructionSurfaceMeshing();
+  OnReconstructionPoissonSurfaceMeshing();
 
   status_message("1-step Poisson reconstruction...done (%lf s)",duration(init));
   update_status();
@@ -982,3 +1047,86 @@ void CPoissonDoc::OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }
+
+// "Reconstruction >> APSS reconstruction" callback
+void CPoissonDoc::OnReconstructionApssReconstruction()
+{
+    BeginWaitCursor();
+    status_message("APSS reconstruction...");
+    double init = clock();
+
+    // Clean up previous mode
+    CloseMode();
+  
+    // Clear previous call
+    m_surface_mesher_dt.clear();
+    m_surface_mesher_c2t3.clear();
+    m_surface.clear();
+    
+    unsigned int nofNeighbors = 10;
+
+    // Create implicit function
+    m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end());
+    m_apss_function->setNofNeighbors(nofNeighbors);
+
+    // Get inner point
+    Point inner_point = m_apss_function->get_inner_point();
+    FT inner_point_value = (*m_apss_function)(inner_point);
+    if(inner_point_value >= 0.0)
+    {
+      status_message("Unable to seed (%lf at inner_point)",inner_point_value);
+      return;
+    }
+
+    // Get implicit surface's size
+    Sphere bounding_sphere = m_apss_function->bounding_sphere();
+    FT size = sqrt(bounding_sphere.squared_radius());
+
+    // defining the surface
+    typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
+    Surface_3 surface(*m_apss_function,                    
+                      Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
+
+    // defining meshing criteria
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
+                                                        m_sm_radius*size,  // upper bound of Delaunay balls radii
+                                                        m_sm_distance*size); // upper bound of distance to surface
+
+    // meshing surface
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
+
+    // get output surface
+    std::list<Triangle> triangles;
+    CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
+    m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
+    
+    m_edit_mode = APSS;
+    
+    status_message("APSS reconstruction...done (%d vertices, %lf s)",
+                   m_surface_mesher_dt.number_of_vertices(),duration(init));
+    update_status();
+    UpdateAllViews(NULL);
+    EndWaitCursor();
+}
+
+// Enable "Reconstruction >> APSS reconstruction" if normals are computed and oriented.
+void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
+{
+  CGAL_assertion(m_points.begin() != m_points.end());
+  bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && normals_are_oriented);
+}
+
+// "Edit >> Mode >> APSS" is an alias to "Reconstruction >> APSS reconstruction".
+void CPoissonDoc::OnModeAPSS()
+{
+  OnReconstructionApssReconstruction();
+}
+
+void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
+{
+  OnUpdateReconstructionApssReconstruction(pCmdUI);
+  pCmdUI->SetCheck(m_edit_mode == APSS);
+}
+

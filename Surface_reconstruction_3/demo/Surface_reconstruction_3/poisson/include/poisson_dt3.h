@@ -35,6 +35,7 @@ class Poisson_dt3 : public CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt
 // Private types
 private:
 
+  // Base class
   typedef CGAL::Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Base;
 
 // Public types
@@ -81,14 +82,6 @@ public:
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
-// Data members
-private:
-
-  // contouring and meshing
-  typedef typename std::pair<Triangle,Vector> Facet_with_normal;
-  std::list<Facet_with_normal> m_contour;
-  std::list<Facet_with_normal> m_surface;
-
 // Public methods
 public:
 
@@ -131,24 +124,6 @@ public:
     ::glEnd();
   }
 
-  // Copy 'triangles' to 'm_surface'
-  void set_surface(std::list<Triangle>& triangles)
-  {
-    m_surface.clear();  // clear previous call
-    std::list<Triangle>::iterator it;
-    for(it = triangles.begin();
-        it != triangles.end();
-        it++)
-    {
-      Triangle& t = *it;
-      Vector u = t[1] - t[0];
-      Vector v = t[2] - t[0];
-      Vector n = CGAL::cross_product(u,v);
-      n = n / std::sqrt(n*n);
-      m_surface.push_back(Facet_with_normal(t,n));
-    }
-  }
-
   // draw Delaunay edges
   void gl_draw_delaunay_edges(unsigned char r, unsigned char g, unsigned char b,
                               float width) const
@@ -170,19 +145,27 @@ public:
     ::glEnd();
   }
 
-  // Compute the m_contour surface via a Marching Cubes style algorithm.
-  unsigned int marching_tet(const FT value)
+  // Contour a triangular surface via a Marching Cubes style algorithm.
+  // OutputIterator value_type must be Triangle.
+  template <typename OutputIterator> 
+  unsigned int marching_tet(OutputIterator output, ///< output triangles
+                            const FT value)
   {
-    m_contour.clear(); // clear previous call
     unsigned int nb_tri = 0;
     for(Finite_cells_iterator c = finite_cells_begin();
         c != finite_cells_end();
         c++)
-      nb_tri += contour(c,value);
+      nb_tri += contour(c,output,value);
     return nb_tri;
   }
 
+private:
+
+  // Contour a triangular surface in 'cell' via a Marching Cubes style algorithm.
+  // OutputIterator value_type must be Triangle.
+  template <typename OutputIterator> 
   unsigned int contour(Cell_handle cell,
+                       OutputIterator& output, // notice the '&'
                        const FT value)
   {
     std::list<Point> points;
@@ -203,9 +186,7 @@ public:
       const Point& c = (*it);
 
       Triangle triangle = Triangle(a,b,c);
-      Vector n = CGAL::cross_product((b-a),(c-a));
-      n = n / std::sqrt(n*n);
-      m_contour.push_back(Facet_with_normal(triangle,n));
+      *output++ = triangle;
       return 1;
     }
     else if(points.size() == 4)
@@ -217,14 +198,8 @@ public:
         p[i] = (*it);
         it++;
       }
-      // compute normal
-      Vector u = p[1] - p[0];
-      Vector v = p[2] - p[0];
-      Vector n = CGAL::cross_product(u,v);
-      n = n / std::sqrt(n*n);
-
-      m_contour.push_back(Facet_with_normal(Triangle(p[0],p[1],p[3]),n));
-      m_contour.push_back(Facet_with_normal(Triangle(p[0],p[3],p[2]),n));
+      *output++ = Triangle(p[0],p[1],p[3]);
+      *output++ = Triangle(p[0],p[3],p[2]);
 
       return 2;
     }
@@ -257,6 +232,7 @@ public:
     return false;
   }
 
+public:
 
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
                        FT c = 1.0) const
@@ -294,59 +270,6 @@ public:
         glVertex3d(a.x(),a.y(),a.z());
         glVertex3d(b.x(),b.y(),b.z());
       }
-    }
-    ::glEnd();
-  }
-
-
-
-  void gl_draw_surface() const
-  {
-    std::list<Facet_with_normal>::const_iterator it;
-
-    ::glBegin(GL_TRIANGLES);
-    for(it = m_surface.begin();
-        it != m_surface.end();
-        it++)
-    {
-      const Facet_with_normal& f = *it;
-
-      const Vector& n = f.second;
-      ::glNormal3d(n.x(),n.y(),n.z());
-
-      const Triangle& t = f.first;
-      const Point& a = t[0];
-      const Point& b = t[1];
-      const Point& c = t[2];
-      ::glVertex3d(a.x(),a.y(),a.z());
-      ::glVertex3d(b.x(),b.y(),b.z());
-      ::glVertex3d(c.x(),c.y(),c.z());
-    }
-    ::glEnd();
-  }
-
-
-  void gl_draw_contour() const
-  {
-    std::list<Facet_with_normal>::const_iterator it;
-
-    ::glBegin(GL_TRIANGLES);
-    for(it = m_contour.begin();
-        it != m_contour.end();
-        it++)
-    {
-      const Facet_with_normal& f = *it;
-
-      const Vector& n = f.second;
-      ::glNormal3d(n.x(),n.y(),n.z());
-
-      const Triangle& t = f.first;
-      const Point& a = t[0];
-      const Point& b = t[1];
-      const Point& c = t[2];
-      ::glVertex3d(a.x(),a.y(),a.z());
-      ::glVertex3d(b.x(),b.y(),b.z());
-      ::glVertex3d(c.x(),c.y(),c.z());
     }
     ::glEnd();
   }

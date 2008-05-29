@@ -52,10 +52,10 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 
+typedef std::vector<Point_with_normal> PointList;
+
 // APSS implicit function
-typedef std::vector<Point> PointList;
-typedef std::vector<Vector> NormalList;
-typedef CGAL::APSS_implicit_function<Kernel,PointList,NormalList> APSS_implicit_function;
+typedef CGAL::APSS_implicit_function<Kernel,Point_with_normal> APSS_implicit_function;
 
 // Surface mesher
 typedef CGAL::Surface_mesh_default_triangulation_3 Str;
@@ -67,25 +67,25 @@ typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
 // Private functions
 // ----------------------------------------------------------------------------
 
-// Scale point set to [-1,1]^3
-void reshape(PointList& points)
-{
-    Point cmin = points[0];
-    Point cmax = points[0];
-    for (unsigned int i=1 ; i<points.size() ; ++i)
-    {
-        cmin = CGAL::min(cmin,points[i]);
-        cmax = CGAL::max(cmax,points[i]);
-    }
-
-    Point mid = midpoint(cmax,cmin);
-    Vector diag = cmax-cmin;
-    FT s = 2./(diag.x()>diag.y() ? (diag.x()>diag.z() ? diag.x() : diag.z()) : (diag.y()>diag.z() ? diag.y() : diag.z()));
-    for (unsigned int i=0 ; i<points.size() ; ++i)
-    {
-        points[i] = CGAL::ORIGIN + s * (points[i] - mid);
-    }
-}
+//// Scale point set to [-1,1]^3
+//void reshape(PointList& pwns)
+//{
+//    Point cmin = pwns[0];
+//    Point cmax = pwns[0];
+//    for (unsigned int i=1 ; i<pwns.size() ; ++i)
+//    {
+//        cmin = CGAL::min(cmin,pwns[i]);
+//        cmax = CGAL::max(cmax,pwns[i]);
+//    }
+//
+//    Point mid = midpoint(cmax,cmin);
+//    Vector diag = cmax-cmin;
+//    FT s = 2./(diag.x()>diag.y() ? (diag.x()>diag.z() ? diag.x() : diag.z()) : (diag.y()>diag.z() ? diag.y() : diag.z()));
+//    for (unsigned int i=0 ; i<pwns.size() ; ++i)
+//    {
+//        pwns[i] = CGAL::ORIGIN + s * (pwns[i] - mid);
+//    }
+//}
 
 // ----------------------------------------------------------------------------
 // main()
@@ -124,9 +124,6 @@ int main(int argc, char * argv[])
         // Load mesh
         //***************************************
 
-        CGAL::Timer task_timer;
-        task_timer.start();
-
         // Read the mesh file in a polyhedron
         std::ifstream stream(input_filename);
         typedef Enriched_polyhedron<Kernel,Enriched_items> Polyhedron;
@@ -142,9 +139,8 @@ int main(int argc, char * argv[])
         // Compute vertices' normals from connectivity
         input_mesh.compute_normals();
 
-        // Convert vertices and normals to PointList/NormalList
-        PointList points;
-        NormalList normals;
+        // Convert vertices and normals to PointList
+        PointList pwns;
         Polyhedron::Vertex_iterator v;
         for(v = input_mesh.vertices_begin();
             v != input_mesh.vertices_end();
@@ -152,26 +148,26 @@ int main(int argc, char * argv[])
         {
           const Point& p = v->point();
           const Vector& n = v->normal();
-          points.push_back(p);
-          normals.push_back(n);
+          pwns.push_back(Point_with_normal(p,n));
         }
 
         // Print status
         int nb_vertices = input_mesh.size_of_vertices();
         std::cerr << "Read file " << input_filename << ": "
-                  << task_timer.time() << " seconds, "
                   << nb_vertices << " vertices"
                   << std::endl;
-        task_timer.reset();
 
         //***************************************
-        // Implicit function
+        // Compute implicit function
         //***************************************
 
-        //reshape(points); // Scale point set to [-1,1]^3
+        CGAL::Timer task_timer;
+        task_timer.start();
 
-        APSS_implicit_function implicit_function(points, normals);
-        implicit_function.setNofNeighbors(nofNeighbors);
+        //reshape(pwns); // Scale point set to [-1,1]^3
+
+        APSS_implicit_function apss_function(pwns.begin(), pwns.end());
+        apss_function.setNofNeighbors(nofNeighbors);
 
         //***************************************
         // Surface mesh generation
@@ -181,8 +177,8 @@ int main(int argc, char * argv[])
         C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
         // Get inner point
-        Point inner_point = implicit_function.get_inner_point();
-        FT inner_point_value = implicit_function(inner_point);
+        Point inner_point = apss_function.get_inner_point();
+        FT inner_point_value = apss_function(inner_point);
         if(inner_point_value >= 0.0)
         {
             std::cerr << "FATAL ERROR: unable to seed (" << inner_point_value << " at inner_point)" << std::endl;
@@ -191,17 +187,17 @@ int main(int argc, char * argv[])
         }
 
         // Get implicit surface's size
-        Sphere bounding_sphere = implicit_function.bounding_sphere();
+        Sphere bounding_sphere = apss_function.bounding_sphere();
         FT size = sqrt(bounding_sphere.squared_radius());
 
         // defining the surface
-        Surface_3 surface(implicit_function,
+        Surface_3 surface(apss_function,
                           Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
         // defining meshing criteria
         FT sm_angle = 20.0; // LR: 30 is OK
         FT sm_radius = 0.1; // as suggested by LR
-        FT sm_distance = 0.002;
+        FT sm_distance = 0.005;
         CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                             sm_radius*size,  // upper bound of Delaunay balls radii
                                                             sm_distance*size); // upper bound of distance to surface

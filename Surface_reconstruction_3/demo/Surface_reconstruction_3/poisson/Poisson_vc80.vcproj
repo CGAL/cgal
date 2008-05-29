@@ -328,6 +328,10 @@
 				RelativePath=".\include\surface_reconstruction_read_pwc.h"
 				>
 			</File>
+			<File
+				RelativePath=".\include\Triangular_surface_3.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -360,6 +364,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
+				RelativePath="..\..\..\include\CGAL\APSS_implicit_function.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\include\CGAL\average_spacing_3.h"
 				>
 			</File>
@@ -385,6 +393,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\k_nearest_neighbor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\merge_epsilon_nearest_points_3.h"
 				>
 			</File>
 			<File

@@ -105,6 +105,7 @@ BEGIN
         BEGIN
             MENUITEM "Point Set",                   ID_MODE_POINT_SET
             MENUITEM "Poisson",                     ID_MODE_POISSON
+            MENUITEM "APSS",                        ID_MODE_APSS
         END
         MENUITEM SEPARATOR
         MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
@@ -145,9 +146,12 @@ BEGIN
             MENUITEM "Solve Poisson Equation\tE",   ID_RECONSTRUCTION_POISSON
             MENUITEM SEPARATOR
             MENUITEM "Poisson Statistics",          ID_ALGORITHMS_POISSONSTATISTICS
-            MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_SURFACEMESHING
+            MENUITEM "Surface Meshing\tM",          ID_RECONSTRUCTION_POISSON_SURFACE_MESHING
             MENUITEM "Marching Tet Contouring\tT",  ID_ALGORITHMS_MARCHINGTETCONTOURING
         END
+        MENUITEM SEPARATOR
+        MENUITEM "APSS reconstruction",         ID_RECONSTRUCTION_APSS_RECONSTRUCTION
+        MENUITEM SEPARATOR
         MENUITEM "Save reconstructed surface as...", ID_FILE_SAVE_SURFACE
     END
     POPUP "&Render"
@@ -194,7 +198,7 @@ BEGIN
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_RENDER_DELAUNAYEDGES, VIRTKEY, NOINVERT
     "E",            ID_ALGORITHMS_ESTIMATENORMALSBYPCA, VIRTKEY, NOINVERT
-    "M",            ID_RECONSTRUCTION_SURFACEMESHING, VIRTKEY, NOINVERT
+    "M",            ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, VIRTKEY, NOINVERT
     "N",            ID_RENDER_NORMALS,      VIRTKEY, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
     "O",            ID_EDIT_OPTIONS,        VIRTKEY, NOINVERT

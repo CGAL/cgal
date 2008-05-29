@@ -248,9 +248,11 @@ void CPoissonView::OnPaint()
     int height = rect.Height();
     Sphere arcball_sphere;
     if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-      arcball_sphere = pDoc->points().region_of_interest();
+      arcball_sphere = pDoc->points()->region_of_interest();
     else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-      arcball_sphere = pDoc->poisson_function().region_of_interest();
+      arcball_sphere = pDoc->poisson_function()->region_of_interest();
+    else if (pDoc->edit_mode() == CPoissonDoc::APSS)
+      arcball_sphere = pDoc->apss_function()->region_of_interest();
     float size = (float)sqrt(arcball_sphere.squared_radius());
     float cx = (float)arcball_sphere.center().x();
     float cy = (float)arcball_sphere.center().y();
@@ -288,26 +290,26 @@ void CPoissonView::OnPaint()
     // draw vertices
     if(m_view_vertices)
     {
-      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-        pDoc->points().gl_draw_vertices(0,0,0,2.0f);
+      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
+        pDoc->points()->gl_draw_vertices(0,0,0,2.0f);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function().triangulation().gl_draw_delaunay_vertices(0,0,0,2.0f);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0,2.0f);
     }
 
     // draw Delaunay edges
     if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function().triangulation().gl_draw_delaunay_edges(0,0,0,1.0f);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0,1.0f);
 
     // draw normals
     if(m_view_normals)
     {
-      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-        pDoc->points().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
+      if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
+        pDoc->points()->gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function().triangulation().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
+        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
     }
 
-    // draw contour by marching tet
+    // draw surface reconstructed by marching tet
     if(m_view_contour && pDoc->edit_mode() == CPoissonDoc::POISSON)
     {
       static GLfloat grey[4] = {0.9f, 0.9f, 0.9f, 0.0f };
@@ -315,23 +317,25 @@ void CPoissonView::OnPaint()
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
       ::glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,grey);
       ::glColor3ub(0,0,0);
-      pDoc->poisson_function().triangulation().gl_draw_contour();
+      pDoc->marching_tet_countour()->gl_draw_surface();
     }
 
-    if(m_view_surface && pDoc->edit_mode() == CPoissonDoc::POISSON)
+    // draw surface reconstructed by Surface Mesher
+    if(m_view_surface && 
+       (pDoc->edit_mode() == CPoissonDoc::POISSON || pDoc->edit_mode() == CPoissonDoc::APSS))
     {
       ::glEnable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
       ::glColor3ub(100,100,255);
       ::glEnable(GL_POLYGON_OFFSET_FILL);
       ::glPolygonOffset(3.0f,-3.0f);
-      pDoc->poisson_function().triangulation().gl_draw_surface();
+      pDoc->surface_mesher_surface()->gl_draw_surface();
 
       ::glDisable(GL_LIGHTING);
       ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
       ::glColor3ub(0,0,0);
       ::glDisable(GL_POLYGON_OFFSET_FILL);
-      pDoc->poisson_function().triangulation().gl_draw_surface();
+      pDoc->surface_mesher_surface()->gl_draw_surface();
     }
 
   glPopMatrix();

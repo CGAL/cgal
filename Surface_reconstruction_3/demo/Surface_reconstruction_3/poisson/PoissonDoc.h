@@ -13,13 +13,15 @@
 #include <CGAL/Surface_mesh_complex_2_in_triangulation_3.h>
 
 // This package
-#include <CGAL/Poisson_implicit_function.h>
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/Poisson_implicit_function.h>
+#include <CGAL/APSS_implicit_function.h>
 
 // This demo
 #include "poisson_dt3.h"
 #include "Gyroviz_point_3.h"
 #include "Point_set_3.h"
+#include "Triangular_surface_3.h"
 
 // kernel
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -37,9 +39,12 @@ typedef Point_with_normal::Normal Normal; // Model of OrientedNormal_3 concept
 // Point set
 typedef Point_set_3<Kernel> Point_set;
 
-// Poisson's Delaunay triangulation 3
+// Poisson's Delaunay triangulation 3 and implicit function
 typedef Poisson_dt3<Kernel> Dt3;
 typedef CGAL::Poisson_implicit_function<Kernel, Dt3> Poisson_implicit_function;
+
+// APSS implicit function
+typedef CGAL::APSS_implicit_function<Kernel,Point_with_normal> APSS_implicit_function;
 
 // Surface mesh generator 
 typedef CGAL::Surface_mesh_vertex_base_3<Kernel> SVb;
@@ -47,6 +52,9 @@ typedef CGAL::Surface_mesh_cell_base_3<Kernel> SCb;
 typedef CGAL::Triangulation_data_structure_3<SVb, SCb> STds;
 typedef CGAL::Delaunay_triangulation_3<Kernel, STds> STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
+
+// Reconstructed surface
+typedef Triangular_surface_3<Kernel> Triangular_surface;
 
 
 // MFC document.
@@ -69,7 +77,7 @@ protected: // create from serialization only
 public:
 
     // Available edit modes
-    enum Edit_mode { NO_EDIT_MODE, POINT_SET, POISSON };
+    enum Edit_mode { NO_EDIT_MODE, POINT_SET, POISSON, APSS };
 
 // Data members
 private:
@@ -81,14 +89,21 @@ private:
     Point_set m_points;
 
     // Poisson implicit function
-    Poisson_implicit_function m_poisson_function; // Poisson implicit function
-    Dt3 m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
+    Poisson_implicit_function* m_poisson_function; // Poisson implicit function
+    Dt3* m_poisson_dt; // The Poisson equation is solved on the vertices of m_poisson_dt
     bool m_triangulation_refined; // Is Delaunay refinement applied?
     bool m_poisson_solved; // Is the Poisson equation solved?
+
+    // - APSS implicit function
+    APSS_implicit_function* m_apss_function;
 
     // Surface mesher 
     STr m_surface_mesher_dt; // 3D-Delaunay triangulation
     C2t3 m_surface_mesher_c2t3; // 2D-complex in m_surface_mesher_dt
+    Triangular_surface m_surface; // Surface reconstructed by Surface mesher
+
+    // Surface reconstructed by marching tet contouring
+    Triangular_surface m_contour;
 
     // Surface mesher options
     double m_sm_angle;
@@ -116,14 +131,24 @@ public:
     // the rules to modify it are complex. See comment above.
     //
     // - as array of points + normals
-    const Point_set& points() const { return m_points; }
+    const Point_set* points() const { return &m_points; }
     //
     // - as Poisson implicit function
-    const Poisson_implicit_function& poisson_function() const 
+    const Poisson_implicit_function* poisson_function() const 
     { return m_poisson_function; }
-    // 
-    // currently edited form
+    //
+    // - as APSS implicit function
+    const APSS_implicit_function* apss_function() const 
+    { return m_apss_function; }
+    //
+    // The current edit mode indicates which form is valid.
     Edit_mode edit_mode() const { return m_edit_mode; }
+
+    // Surface reconstructed by Surface mesher
+    const Triangular_surface* surface_mesher_surface() const { return &m_surface; }
+
+    // Surface reconstructed by marching tet contouring
+    const Triangular_surface* marching_tet_countour() const { return &m_contour; }
 
 // Private methods
 private:
@@ -137,6 +162,9 @@ private:
     void prompt_message(char* fmt,...);
     // Utility: compute elapsed time
     double duration(const double time_init);
+
+    // Clean up current edit mode
+    void CloseMode();
 
 // MFC generated
 public:
@@ -154,10 +182,10 @@ public:
     afx_msg void OnReconstructionDelaunayRefinement();
     afx_msg void OnReconstructionPoisson();
     afx_msg void OnAlgorithmsRefineInShell();
-    afx_msg void OnReconstructionSurfaceMeshing();
+    afx_msg void OnReconstructionPoissonSurfaceMeshing();
     afx_msg void OnEditOptions();
     afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateReconstructionSurfaceMeshing(CCmdUI *pCmdUI);
+    afx_msg void OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsMarchingTetContouring();
     afx_msg void OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI);
     afx_msg void OnFileSaveSurface();
@@ -192,6 +220,10 @@ public:
     afx_msg void OnOneStepPoissonReconstruction();
     afx_msg void OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAnalysisAverageSpacing(CCmdUI *pCmdUI);
+    afx_msg void OnReconstructionApssReconstruction();
+    afx_msg void OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI);
+    afx_msg void OnModeAPSS();
+    afx_msg void OnUpdateModeAPSS(CCmdUI *pCmdUI);
 };
 
 

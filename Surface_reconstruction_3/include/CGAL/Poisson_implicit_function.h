@@ -101,13 +101,15 @@ public:
 /// of the triangulation via the TAUCS sparse linear
 /// solver. One vertex must be constrained.
 ///
-/// @heading Is Model for the Concepts: Model of the Reconstruction_implicit_function concept.
+/// @heading Is Model for the Concepts: 
+/// Model of the Reconstruction_implicit_function concept.
 ///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
 ///
 /// @heading Parameters:
+/// @param Gt Geometric traits class 
 /// @param ImplicitFctDelaunayTriangulation_3 3D Delaunay triangulation, 
 ///        model of ImplicitFctDelaunayTriangulation_3 concept.
 
@@ -126,8 +128,10 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef typename Triangulation::Point_with_normal Point_with_normal; ///< Model of PointWithNormal_3
-  typedef typename Triangulation::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Triangulation::Point_with_normal Point_with_normal; 
+                                                     ///< Model of PointWithNormal_3
+  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
+  typedef typename Geom_traits::Vector_3 Vector;
 
 // Private types
 private:
@@ -179,13 +183,14 @@ private:
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of f()
-  Cell_handle m_hint; // last cell found = hint for next search
+  mutable Cell_handle m_hint; // last cell found = hint for next search
 
 // Public methods
 public:
 
   /// Create a Poisson indicator function f() piecewise-linear
   /// over the tetrahedra of pdt.
+  /// If pdt is empty, create an empty implicit function.
   ///
   /// @param pdt ImplicitFctDelaunayTriangulation_3 base of the Poisson indicator function.
   Poisson_implicit_function(Triangulation& pdt)
@@ -617,7 +622,7 @@ public:
   }
 
   /// Evaluate implicit function for any 3D point.
-  FT f(const Point& p)
+  FT f(const Point& p) const
   {
     m_hint = m_dt.locate(p,m_hint);
 
@@ -638,13 +643,13 @@ public:
   /// [ImplicitFunction interface]
   ///
   /// Evaluate implicit function for any 3D point.
-  FT operator() (Point p)
+  FT operator()(const Point& p) const
   {
     return f(p);
   }
 
   /// Get point inside the surface.
-  const Point& get_inner_point() const 
+  Point get_inner_point() const
   { 
     // Get point / the implicit function is minimum  
     return m_sink; 
@@ -808,7 +813,7 @@ private:
                                double& a,
                                double& b,
                                double& c,
-                               double& d)
+                               double& d) const
   {
     const Point& pa = cell->vertex(0)->point();
     const Point& pb = cell->vertex(1)->point();
@@ -829,7 +834,7 @@ private:
   // radius-edge ratio (the ratio of the circumradius to
   // the shortest edge length of tetrahedron)
   // check template type
-  double radius_edge_ratio(Cell_handle c)
+  double radius_edge_ratio(Cell_handle c) const
   {
     double r = circumradius(c);
     double l = len_shortest_edge(c);
@@ -839,7 +844,7 @@ private:
       return 1e38;
   }
 
-  FT len_shortest_edge(Cell_handle c)
+  FT len_shortest_edge(Cell_handle c) const
   {
     FT d1 = distance(c->vertex(0),c->vertex(1));
     FT d2 = distance(c->vertex(0),c->vertex(2));
@@ -851,8 +856,7 @@ private:
                       (std::min)((std::min)(d4,d5),d6));
   }
 
-  FT distance(Vertex_handle v1,
-              Vertex_handle v2)
+  FT distance(Vertex_handle v1, Vertex_handle v2) const
   {
     const Point& a = v1->point();
     const Point& b = v2->point();
@@ -1260,12 +1264,12 @@ private:
       return 0.0; // default
   }
 
-  FT distance(const Point& a, const Point& b)
+  FT distance(const Point& a, const Point& b) const
   {
     return std::sqrt(CGAL::squared_distance(a,b));
   }
 
-  FT max_edge_len(Cell_handle cell)
+  FT max_edge_len(Cell_handle cell) const
   {
     const Point& a = cell->vertex(0)->point();
     const Point& b = cell->vertex(1)->point();
@@ -1282,7 +1286,7 @@ private:
     return std::sqrt(sq_max);
   }
 
-  FT circumradius(Cell_handle c)
+  FT circumradius(Cell_handle c) const
   {
     Point center = m_dt.dual(c);
     const Point& p = c->vertex(0)->point();

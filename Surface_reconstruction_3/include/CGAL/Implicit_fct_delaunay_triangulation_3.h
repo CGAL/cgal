@@ -26,6 +26,8 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/Min_sphere_d.h>
+#include <CGAL/Optimisation_d_traits_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -252,7 +254,7 @@ private:
     typedef Node                  argument_type;
     typedef typename Node::Normal Normal;
     typedef Normal                result_type;
-    typedef Arity_tag<1> Arity;
+    typedef CGAL::Arity_tag<1>    Arity;
     Normal&       operator()(Node& x)       const { return x.normal(); }
     const Normal& operator()(const Node& x) const { return x.normal(); }
   };
@@ -313,9 +315,12 @@ public:
 // Data members
 private:
 
-  // Indicate if m_barycenter, m_bounding_box and m_diameter_standard_deviation below are valid
+  // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and 
+  // m_diameter_standard_deviation below are valid.
   mutable bool m_bounding_box_is_valid;
+  
   mutable Iso_cuboid m_bounding_box; // Triangulation's bounding box
+  mutable Sphere m_bounding_sphere; // Triangulation's bounding sphere
   mutable Point m_barycenter; // Triangulation's barycenter
   mutable FT m_diameter_standard_deviation; // Triangulation's standard deviation
 
@@ -366,19 +371,7 @@ public:
     if (!m_bounding_box_is_valid)
       update_bounding_box();
 
-    // Center point
-    FT mx = 0.5 * (m_bounding_box.xmax() + m_bounding_box.xmin());
-    FT my = 0.5 * (m_bounding_box.ymax() + m_bounding_box.ymin());
-    FT mz = 0.5 * (m_bounding_box.zmax() + m_bounding_box.zmin());
-    Point center(mx,my,mz);
-
-    // Squared radius
-    FT dx = m_bounding_box.xmax() - m_bounding_box.xmin();
-    FT dy = m_bounding_box.ymax() - m_bounding_box.ymin();
-    FT dz = m_bounding_box.zmax() - m_bounding_box.zmin();
-    FT squared_radius = (dx*dx + dy*dy + dz*dz) / FT(4);
-
-    return Sphere(center, squared_radius);
+    return m_bounding_sphere;
   }
 
   /// Get points barycenter.
@@ -485,38 +478,44 @@ private:
   /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
   void update_bounding_box() const
   {
+    if (points_begin() == points_end())
+      return;
+
     // Update bounding box and barycenter.
     // TODO: we should use the functions in PCA component instead.
     FT xmin,xmax,ymin,ymax,zmin,zmax;
     xmin = ymin = zmin =  1e38;
     xmax = ymax = zmax = -1e38;
-    Vector v = NULL_VECTOR;
+    Vector v = CGAL::NULL_VECTOR;
     FT norm = 0;
-    CGAL_surface_reconstruction_assertion(points_begin() != points_end());
     for (Point_iterator it = points_begin(); it != points_end(); it++)
     {
-        const Point& p = *it;
+      const Point& p = *it;
 
-        // update bbox
-        xmin = (std::min)(p.x(),xmin);
-        ymin = (std::min)(p.y(),ymin);
-        zmin = (std::min)(p.z(),zmin);
-        xmax = (std::max)(p.x(),xmax);
-        ymax = (std::max)(p.y(),ymax);
-        zmax = (std::max)(p.z(),zmax);
+      // update bbox
+      xmin = (std::min)(p.x(),xmin);
+      ymin = (std::min)(p.y(),ymin);
+      zmin = (std::min)(p.z(),zmin);
+      xmax = (std::max)(p.x(),xmax);
+      ymax = (std::max)(p.y(),ymax);
+      zmax = (std::max)(p.z(),zmax);
 
-        // update barycenter
-        v = v + (p - ORIGIN);
-        norm += 1;
+      // update barycenter
+      v = v + (p - CGAL::ORIGIN);
+      norm += 1;
     }
     //
     Point p(xmin,ymin,zmin);
     Point q(xmax,ymax,zmax);
     m_bounding_box = Iso_cuboid(p,q);
     //
-    m_barycenter = ORIGIN + v / norm;
+    m_barycenter = CGAL::ORIGIN + v / norm;
 
-    /// Compute standard deviation of the distance to barycenter
+    // bounding sphere
+    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(points_begin(), points_end());
+    m_bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+
+    // Compute standard deviation of the distance to barycenter
     typename Geom_traits::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (Point_iterator it = points_begin(); it != points_end(); it++)
@@ -538,24 +537,24 @@ template <class BaseGt, class Gt, class Tds>
 class Implicit_fct_delaunay_triangulation_vertex_point_const_map 
 {
 public:
-    typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
-    typedef typename Gt::Point_3 Point_3;  
+  typedef Implicit_fct_delaunay_triangulation_3<BaseGt,Gt,Tds> Triangulation;
+  typedef typename Gt::Point_3 Point_3;  
 
-    // Property maps required types
-    typedef boost::readable_property_map_tag                    category;
-    typedef Point_3                                             value_type;
-    typedef value_type                                          reference;
-    typedef typename Triangulation::Finite_vertices_iterator    key_type;
+  // Property maps required types
+  typedef boost::readable_property_map_tag                    category;
+  typedef Point_3                                             value_type;
+  typedef value_type                                          reference;
+  typedef typename Triangulation::Finite_vertices_iterator    key_type;
 
-    Implicit_fct_delaunay_triangulation_vertex_point_const_map(const Triangulation&) {}
+  Implicit_fct_delaunay_triangulation_vertex_point_const_map(const Triangulation&) {}
 
-    /// Free function to access the map elements.
-    friend inline 
-    reference 
-    get(const Implicit_fct_delaunay_triangulation_vertex_point_const_map&, key_type v)
-    {
-      return v->point();
-    }
+  /// Free function to access the map elements.
+  friend inline 
+  reference 
+  get(const Implicit_fct_delaunay_triangulation_vertex_point_const_map&, key_type v)
+  {
+    return v->point();
+  }
 };
 
 /// Free function to get the "vertex_point" property map
