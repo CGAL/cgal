@@ -101,6 +101,17 @@ public:
     friend class CGALi::Curve_pair_analysis_2_rep<Self>;
     
     //!@}
+    //! \name rebind operator
+    //!@{
+
+    template <class NewCurvePair, class NewAlgebraicKernel> 
+    struct rebind { 
+
+        typedef Algebraic_curve_kernel_2<NewCurvePair,
+            NewAlgebraicKernel> Other;        
+    };
+
+    //!@}
 protected:
     //! \name private functors
     //!@{

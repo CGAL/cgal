@@ -250,8 +250,6 @@ struct Poly_hasher {
             return 0xDeadBeef;
         // randomization of the result
         return static_cast<std::size_t>(CGAL::to_double(res));
-            //static_cast<std::size_t>(ceil_log2_abs(res * NT(0x12341234)));
-
     }
 };
     
