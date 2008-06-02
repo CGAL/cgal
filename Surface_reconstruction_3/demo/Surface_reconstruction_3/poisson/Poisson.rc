@@ -435,7 +435,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_MODE_POINT_SET       "Edit point set\nPoint set mode"
+    ID_MODE_POINT_SET       "Edit point set\nPoint Set mode"
     ID_MODE_POISSON         "Create Poisson Delaunay triangulation\nPoisson mode"
 END
 

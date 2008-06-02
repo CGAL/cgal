@@ -244,13 +244,13 @@ public:
     return m_dt;
   }
 
-  /// Get the bounding box.
+  /// Get the surface's bounding box.
   Iso_cuboid bounding_box() const
   {
     return m_dt.bounding_box();
   }
 
-  /// Get bounding sphere.
+  /// Get the surface's bounding sphere.
   Sphere bounding_sphere() const
   {
     return m_dt.bounding_sphere();

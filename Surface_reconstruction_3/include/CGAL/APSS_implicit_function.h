@@ -159,7 +159,7 @@ public:
 
   void setNofNeighbors(unsigned int k) {m->nofNeighbors = k;}
 
-  /// Get bounding sphere.
+  /// Get the surface's bounding sphere.
   const Sphere& bounding_sphere() const
   {
     return m->boundingSphere;

@@ -21,6 +21,7 @@
 /// ReconstructionImplicitFunction is the concept of
 /// implicit function representing a 3D surface
 /// used by the Surface_reconstruction_3 package.
+/// The surface is the zero-level of the implicit function.
 ///
 /// @heading Design Pattern:
 /// A model of ReconstructionImplicitFunction is a
@@ -72,10 +73,10 @@ public:
   ///// Remove all points.
   //void clear();
 
-  ///// Get the bounding box.
+  ///// Get the surface's bounding box.
   //Iso_cuboid bounding_box() const;
 
-  /// Get bounding sphere.
+  /// Get the surface's bounding sphere.
   Sphere bounding_sphere() const;
 
   /// Get the region of interest, ignoring the outliers.
