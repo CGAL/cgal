@@ -341,13 +341,13 @@ sub remove_blank_lines_in_macros
 }
 
 
-# If $buffer matches $pattern, return $buffer, else return an empty string
-sub keep_only_if_match
+# If $buffer matches the function $pattern, return $buffer, else return an empty string
+sub keep_only_if_function
 {
     my $buffer = shift;
     my $pattern = shift;
 
-    if ($buffer =~ /\b\Q$pattern\E\b/sm) {
+    if ($buffer =~ /\\paragraph\{.*\b\Q$pattern\E\b.*\}/) {
         return $buffer;
     } else {
         return "";
@@ -501,7 +501,7 @@ sub format_curly_brace_pairs_expressions
 
     # \ccMethod does not support destructors and there is no \ccDestructor
     # macro => remove destructors
-    if ($item_type =~ m/class\/struct/)
+    if ($item_type eq "class/struct/concept")
     {
         $buf =~ s/\\ccMethod\{.*?~\Q$item_to_document\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
     }
@@ -711,11 +711,9 @@ sub format_doxygen_function_doc
     $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
 
     # Remove declaration of other functions
-    # (loop to remove consecutive functions)
-    for my $i (1..5) {
-        $buf =~ s/(\\paragraph\{.*?)(\\paragraph\{|\\subsubsection\{|\\ccSeeAlso)/
-                  keep_only_if_match($1, $functionName) . "$2"/smge;
-    }
+    $buf =~ s/(\\paragraph\{|\\subsubsection\{|\\ccSeeAlso)/((end))$1/g; # add marker at end of functions
+    $buf =~ s/(\\paragraph\{.*?\(\(end\)\))/keep_only_if_function($1, $functionName)/smge; # remove other functions
+    $buf =~ s/\(\(end\)\)//g; # remove markers
 
     # Format "Heading Parameters:" comments [L. Saboret extension]
     $buf =~ s/\bHeading Parameters:\s*(\\begin\{description\}\s*\\item)\[Parameters:\]/$1\[Template Parameters:\]/smg;
