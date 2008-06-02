@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: orient_normals_minimum_spanning_tree_3.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSorientnormalsminimumspanningtreeRev}{$Id$}
+\RCSdefDate{\RCSorientnormalsminimumspanningtreeDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{orient_normals_minimum_spanning_tree_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{void orient_normals_minimum_spanning_tree_3(VertexIterator first, VertexIterator beyond, VertexIndexMap vertex_index_map, VertexPointMap vertex_point_map, VertexNormalMap vertex_normal_map, unsigned int KNN);}
+{
+Orient the normals of a point set using the method described in {\em Hoppe, DeRose, Duchamp, McDonald, Stuetzle, Surface reconstruction from unorganized points, ACM SIGGRAPH Computer Graphics, v.26 n.2, p.71-78, July 1992}.
+Preconditions:\begin{itemize}
+\item VertexIterator is a model of ForwardIterator.\item VertexIndexMap is a model of \ccc{boost::readable_property_map}.\item VertexPointMap is a model of \ccc{boost::readable_property_map}.\item VertexNormalMap is a model of \ccc{boost::lvalue_property_map}.\item KNN $>$= 2. \end{itemize}
+}
+\ccGlue
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]first input vertex \item[beyond]past-the-end input vertex \item[\ccc{vertex_index_map}]property map VertexIterator -$>$ index \item[\ccc{vertex_point_map}]property map VertexIterator -$>$ \ccc{Point_3} \item[\ccc{vertex_normal_map}]property map VertexIterator -$>$ Normal (in and out) \item[KNN]number of neighbors \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccInclude{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.h}
+
+\ccParameters
+
+The full template declarations is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+class VertexIterator,   \\
+class VertexPointMap,   \\
+class VertexIndexMap,   \\
+class VertexNormalMap$>$  \\
+void  \\
+\ccc{orient_normals_minimum_spanning_tree_3} (VertexIterator first, VertexIterator beyond, VertexIndexMap \ccc{vertex_index_map}, VertexPointMap \ccc{vertex_point_map}, VertexNormalMap \ccc{vertex_normal_map}, unsigned int KNN);  \\
+
+%END-AUTO(\ccParameters)
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the
+\verb|\ccIncludeExampleCode{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.C}|
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Surface_reconstruction_3/orient_normals_minimum_spanning_tree_3.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

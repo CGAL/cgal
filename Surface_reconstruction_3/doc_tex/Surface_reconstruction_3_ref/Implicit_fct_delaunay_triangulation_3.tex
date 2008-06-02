@@ -24,6 +24,8 @@
 
 The \ccc{Implicit_fct_delaunay_triangulation_3} class is the default implementation of the \ccc{ImplicitFctDelaunayTriangulation_3} concept. It provides the interface requested by the \ccc{Poisson_implicit_function} class.
 
+CAUTION: \ccc{invalidate_bounding_box}() must be called after modifying the points.
+
 TODO: Test speed if using \ccc{Triangulation_hierarchy_3}
 
 %END-AUTO(\ccDefinition)
@@ -192,12 +194,12 @@ Get the standard deviation of the distance to barycenter.
 Update barycenter, bounding box, bounding sphere and standard deviation. Owner is responsible to call this function after modifying the triangulation.
 }
 \ccGlue
-\ccMethod{Vertex_handle insert(const Point& p, unsigned char type, Cell_handle start = Cell_handle());}
+\ccMethod{Vertex_handle insert(const Point& p, unsigned char type = INPUT, Cell_handle start = Cell_handle());}
 {
 Insert point to the triangulation.
 }
 \ccGlue
-\ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type);}
+\ccMethod{int insert(InputIterator first, InputIterator beyond, unsigned char type = INPUT);}
 {
 Insert points to the triangulation using a spatial sort.
 Precondition: the value type of InputIterator must \ccc{Point}.
@@ -210,6 +212,22 @@ Precondition: the value type of InputIterator must \ccc{Point}.
 \end{description}
 \begin{description}
 \item[Returns:]the number of inserted points. \end{description}
+\ccGlue
+\ccMethod{unsigned int index_vertices();}
+{
+Index all (finite) vertices following the order of \ccc{Finite_vertices_iterator}.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]the number of (finite) vertices. \end{description}
+\ccGlue
+\ccMethod{unsigned int index_unconstrained_vertices();}
+{
+Index unconstraint vertices following the order of \ccc{Finite_vertices_iterator}.
+}
+\ccGlue
+\begin{description}
+\item[Returns:]the number of unconstraint vertices. \end{description}
 \ccGlue
 
 %END-AUTO(\ccOperations)

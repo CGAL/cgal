@@ -1,0 +1,158 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: merge_epsilon_nearest_points_3.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Laurent Saboret, Pierre Alliez
+% | Package: Surface_reconstruction_3
+% |
+\RCSdef{\RCSmergeepsilonnearestpointsRev}{$Id$}
+\RCSdefDate{\RCSmergeepsilonnearestpointsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{merge_epsilon_nearest_points_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccFunction{OutputIterator merge_epsilon_nearest_points_3(InputIterator first, InputIterator beyond, OutputIterator output, const Kernel &, double epsilon);}
+{
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant requires the kernel.
+Precondition: epsilon $>$ 0.
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]past-the-end output iterator. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]input points \item[output]output points \item[epsilon]tolerance value when comparing 3D points \end{description}
+\end{description}
+\ccGlue
+\ccFunction{void merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, const Kernel &, double epsilon);}
+{
+Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant requires the kernel.
+Precondition: epsilon $>$ 0.
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class. \end{description}
+\end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]input/output points \item[epsilon]tolerance value when comparing 3D points \end{description}
+\end{description}
+\ccGlue
+\ccFunction{OutputIterator merge_epsilon_nearest_points_3(InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);}
+{
+Merge points which belong to the same cell of a grid of cell size = epsilon. This variant deduces the kernel from iterator types.
+Precondition: epsilon $>$ 0.
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]past-the-end output iterator. \end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]input points \item[output]output points \item[epsilon]tolerance value when comparing 3D points \end{description}
+\end{description}
+\ccGlue
+\ccFunction{void merge_epsilon_nearest_points_3(ForwardIterator first, ForwardIterator beyond, double epsilon);}
+{
+Merge points which belong to the same cell of a grid of cell size = epsilon. This function is mutating the input point set. This variant deduces the kernel from iterator types.
+Precondition: epsilon $>$ 0.
+}
+\ccGlue
+\begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[ForwardIterator]\ccc{value_type} is \ccc{Point_3}. \end{description}
+\end{description}
+\begin{description}
+\item[Parameters: ]
+\begin{description}
+\item[first]input/output points \item[epsilon]tolerance value when comparing 3D points \end{description}
+\end{description}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+  
+\ccInclude{Surface_reconstruction_3/merge_epsilon_nearest_points_3.h}
+
+\ccParameters
+
+The full template declarations are:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$  \\
+typename InputIterator,   \\
+typename OutputIterator,   \\
+typename Kernel$>$  \\
+OutputIterator  \\
+\ccc{merge_epsilon_nearest_points_3} (InputIterator first, InputIterator beyond, OutputIterator output, const Kernel \&, double epsilon);  \\
+  \\
+template$<$  \\
+typename ForwardIterator,   \\
+typename Kernel$>$  \\
+void  \\
+\ccc{merge_epsilon_nearest_points_3} (ForwardIterator first, ForwardIterator beyond, const Kernel \&, double epsilon);  \\
+  \\
+template$<$  \\
+typename InputIterator,   \\
+typename OutputIterator$>$  \\
+OutputIterator  \\
+\ccc{merge_epsilon_nearest_points_3} (InputIterator first, InputIterator beyond, OutputIterator output, double epsilon);  \\
+  \\
+template$<$  \\
+typename ForwardIterator$>$  \\
+void  \\
+\ccc{merge_epsilon_nearest_points_3} (ForwardIterator first, ForwardIterator beyond, double epsilon);  \\
+
+%END-AUTO(\ccParameters)
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Surface_reconstruction_3/merge_epsilon_nearest_points_3.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Surface_reconstruction_3/merge_epsilon_nearest_points_3.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

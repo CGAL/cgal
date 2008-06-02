@@ -48,7 +48,7 @@ class \ccc{Poisson_implicit_function};
 \begin{description}
 \item[Parameters:]
 \begin{description}
-\item[\ccc{ImplicitFctDelaunayTriangulation_3}]3D Delaunay triangulation, model of \ccc{ImplicitFctDelaunayTriangulation_3} concept. \end{description}
+\item[Gt]Geometric traits class \item[\ccc{ImplicitFctDelaunayTriangulation_3}]3D Delaunay triangulation, model of \ccc{ImplicitFctDelaunayTriangulation_3} concept. \end{description}
 \end{description}
 
 %END-AUTO(\ccParameters)
@@ -67,7 +67,7 @@ Model of the \ccc{Reconstruction_implicit_function} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-\ccc{Poisson_implicit_function} is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface mesh reconstruction.
+A model of ReconstructionImplicitFunction is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface mesh reconstruction.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -111,24 +111,40 @@ Model of \ccc{PointWithNormal_3}.
 Model of \ccc{OrientedNormal_3} concept.
 }
 \ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
 
 %END-AUTO(\ccTypes)
 
 \ccCreation
-\ccCreationVariable{pif}  %% choose variable name for \ccMethod
+\ccCreationVariable{fct}  %% variable name for \ccMethod below
 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccCreation)
 
 \ccConstructor{Poisson_implicit_function(Triangulation& pdt);}
 {
-Create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
+Create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt. If pdt is empty, create an empty implicit function.
 }
 \ccGlue
 \begin{description}
 \item[Parameters:]
 \begin{description}
 \item[pdt]\ccc{ImplicitFctDelaunayTriangulation_3} base of the Poisson indicator function. \end{description}
+\end{description}
+\ccGlue
+\ccConstructor{Poisson_implicit_function(Triangulation& pdt, InputIterator first, InputIterator beyond);}
+{
+Create an implicit function from a point set. Insert the first...beyond point set into pdt and create a Poisson indicator function f() piecewise-linear over the tetrahedra of pdt.
+Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[pdt]\ccc{ImplicitFctDelaunayTriangulation_3} base of the Poisson indicator function. \item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
 \end{description}
 \ccGlue
 
@@ -139,6 +155,25 @@ Create a Poisson indicator function f() piecewise-linear over the tetrahedra of 
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccOperations)
 
+\ccMethod{int insert(InputIterator first, InputIterator beyond);}
+{
+Insert points.
+Precondition: the value type of InputIterator must be convertible to \ccc{Point_with_normal}.
+}
+\ccGlue
+\begin{description}
+\item[Parameters:]
+\begin{description}
+\item[first]First point to add. \item[beyond]Past-the-end point to add. \end{description}
+\end{description}
+\begin{description}
+\item[Returns:]the number of inserted points. \end{description}
+\ccGlue
+\ccMethod{void clear();}
+{
+Remove all points.
+}
+\ccGlue
 \ccMethod{Triangulation& triangulation();}
 {
 Get embedded triangulation.
@@ -170,22 +205,12 @@ You should call \ccc{compute_implicit_function}() once when points insertion is 
 Return false on error. TODO: add parameters to \ccc{compute_implicit_function}()?
 }
 \ccGlue
-\ccMethod{void estimate_normals_pca(unsigned int k);}
-{
-Estimate normal directions using linear least squares fitting of a plane on the k nearest neighbors.
-}
-\ccGlue
-\ccMethod{void estimate_normals_jet_fitting(unsigned int k);}
-{
-Estimate normal directions using jet fitting on the k nearest neighbors.
-}
-\ccGlue
-\ccMethod{unsigned int delaunay_refinement(const FT threshold, const unsigned int maximum, const FT enlarge_ratio, const unsigned int restart_each);}
+\ccMethod{unsigned int delaunay_refinement(const FT threshold, unsigned int maximum, const FT enlarge_ratio, unsigned int restart_each);}
 {
 Delaunay refinement (break bad tetrahedra, where bad means badly shaped or too big). The normal of Steiner points is set to zero. Return the number of vertices inserted.
 }
 \ccGlue
-\ccMethod{unsigned int delaunay_refinement_shell(FT size_shell, FT sizing, const unsigned int maximum);}
+\ccMethod{unsigned int delaunay_refinement_shell(FT size_shell, FT sizing, unsigned int maximum);}
 {
 }
 \ccGlue
@@ -206,18 +231,18 @@ Shift and orient the implicit function such that:\begin{itemize}
 Return the minimum value of the implicit function.
 }
 \ccGlue
-\ccMethod{FT f(const Point& p);}
+\ccMethod{FT f(const Point& p) const;}
 {
 Evaluate implicit function for any 3D point.
 }
 \ccGlue
-\ccMethod{FT operator()(Point p);}
+\ccMethod{FT operator()(const Point& p) const;}
 {
 [ImplicitFunction interface]
 Evaluate implicit function for any 3D point.
 }
 \ccGlue
-\ccMethod{const Point& get_inner_point() const;}
+\ccMethod{Point get_inner_point() const;}
 {
 Get point inside the surface.
 }

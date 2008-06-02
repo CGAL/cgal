@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL:
+// $Id:
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -28,17 +28,22 @@
 
 CGAL_BEGIN_NAMESPACE
 
-/// Compute average spacing of one query point from KNN nearest neighbors.
+
+/// Compute average spacing of one query point from K nearest neighbors.
 ///
 /// Precondition: KNN >= 2.
 ///
-/// @return average spacing (scalar)
-template < typename Kernel, ///< Geometric traits class.
+/// @heading Parameters:
+/// @param Kernel Geometric traits class.
+/// @param Tree KD-tree.
+///
+/// @return average spacing (scalar).
+template < typename Kernel,
            typename Tree >
 typename Kernel::FT
 average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
-                  Tree& tree, ///< KD-tree
-                  const unsigned int KNN)
+                  Tree& tree,                            ///< KD-tree
+                  unsigned int KNN)                      ///< number of neighbors
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -46,7 +51,7 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
   typedef typename Kernel::Plane_3 Plane;
   typedef typename Kernel::Vector_3 Vector;
 
-  // types for KNN nearest neighbor search
+  // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -69,25 +74,30 @@ average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose nor
   }
 
   // output average spacing
-  return sum_distances / (FT)i; 
+  return sum_distances / (FT)i;
 }
 
 
-/// Compute average spacing from KNN nearest neighbors.
+/// Compute average spacing from K nearest neighbors.
 /// This variant requires the kernel.
 ///
 /// Precondition: KNN >= 2.
-/// @return average spacing (scalar)
-template < typename InputIterator, ///< InputIterator value_type is Point_3.
-           typename Kernel ///< Geometric traits class.
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param Kernel Geometric traits class.
+///
+/// @return average spacing (scalar).
+template <typename InputIterator,
+          typename Kernel
 >
 typename Kernel::FT
 average_spacing_3(InputIterator first,    ///< input points
                   InputIterator beyond,
-                  const unsigned int KNN,   ///< number of neighbors
+                  unsigned int KNN,       ///< number of neighbors
                   const Kernel& /*kernel*/)
 {
-  // types for KNN-nearest neighbor search structure
+  // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
@@ -119,23 +129,29 @@ average_spacing_3(InputIterator first,    ///< input points
   return sum_spacings / (FT)nb_points;
 }
 
-/// Compute average spacing from KNN nearest neighbors.
+/// Compute average spacing from K nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: KNN >= 2.
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param FT number type.
+///
 /// @return average spacing (scalar)
-template < typename InputIterator, ///< InputIterator value_type is Point_3
-           typename FT ///< number type
+template < typename InputIterator,
+           typename FT
 >
 FT
 average_spacing_3(InputIterator first,    ///< input points
                   InputIterator beyond,
-                  const unsigned int KNN)   ///< number of neighbors
+                  unsigned int KNN)       ///< number of neighbors
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return average_spacing_3(first,beyond,KNN,Kernel());
 }
+
 
 CGAL_END_NAMESPACE
 

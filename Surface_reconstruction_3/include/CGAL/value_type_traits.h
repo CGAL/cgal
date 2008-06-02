@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL:
+// $Id:
 //
 // Author(s) : Alberto Ganesh Barbati and Laurent Saboret
 
@@ -28,8 +28,8 @@ CGAL_BEGIN_NAMESPACE
 
 /// Traits class to get the value type of any iterator,
 /// including an output iterator.
-///  Based on code posted by Alberto Ganesh Barbati at
-///  http://www.adras.com/Why-no-std-back-insert-iterator-value-type.t2639-153-3.html
+/// Based on code posted by Alberto Ganesh Barbati at
+/// http://www.adras.com/Why-no-std-back-insert-iterator-value-type.t2639-153-3.html
 ///
 /// Usage is:
 /// typedef typename value_type_traits<Iter>::type value_type;

@@ -24,28 +24,42 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-\ccFunction{void estimate_normals_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel &, const unsigned int degre_fitting = 2);}
+\ccFunction{OutputIterator estimate_normals_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int KNN, const Kernel &, const unsigned int degre_fitting = 2);}
 {
-Estimate normal directions using jet fitting on the K nearest neighbors. This variant requires the kernel.
-Precondition: K $>$= 2.
+Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant requires the kernel.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}. \item[Kernel]Geometric traits class.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]past-the-end output iterator. \end{description}
+\begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[first]input points \item[normals]output normals \item[K]number of neighbors \end{description}
+\item[first]input points \item[normals]output normals \item[KNN]number of neighbors \end{description}
 \end{description}
 \ccGlue
-\ccFunction{void estimate_normals_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const unsigned int degre_fitting = 2);}
+\ccFunction{OutputIterator estimate_normals_jet_fitting_3(InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int KNN, const unsigned int degre_fitting = 2);}
 {
-Estimate normal directions using jet fitting on the K nearest neighbors. This variant deduces the kernel from iterator types.
-Precondition: K $>$= 2.
+Estimate normal directions using jet fitting on the KNN nearest neighbors. This variant deduces the kernel from iterator types.
+Precondition: KNN $>$= 2.
 }
 \ccGlue
 \begin{description}
+\item[Template Parameters:]
+\begin{description}
+\item[InputIterator]\ccc{value_type} is \ccc{Point_3}. \item[OutputIterator]\ccc{value_type} is \ccc{Point_3}.\end{description}
+\end{description}
+\begin{description}
+\item[Returns:]past-the-end output iterator. \end{description}
+\begin{description}
 \item[Parameters: ]
 \begin{description}
-\item[first]input points \item[normals]output normals \item[K]number of neighbors \end{description}
+\item[first]input points \item[normals]output normals \item[KNN]number of neighbors \end{description}
 \end{description}
 \ccGlue
 
@@ -62,14 +76,14 @@ template$<$  \\
 typename InputIterator,   \\
 typename OutputIterator,   \\
 typename Kernel$>$  \\
-void  \\
-\ccc{estimate_normals_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const Kernel \&, const unsigned int \ccc{degre_fitting}=2);  \\
+OutputIterator  \\
+\ccc{estimate_normals_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int KNN, const Kernel \&, const unsigned int \ccc{degre_fitting}=2);  \\
   \\
 template$<$  \\
 typename InputIterator,   \\
 typename OutputIterator$>$  \\
-void  \\
-\ccc{estimate_normals_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int K, const unsigned int \ccc{degre_fitting}=2);  \\
+OutputIterator  \\
+\ccc{estimate_normals_jet_fitting_3} (InputIterator first, InputIterator beyond, OutputIterator normals, const unsigned int KNN, const unsigned int \ccc{degre_fitting}=2);  \\
 
 %END-AUTO(\ccParameters)
 
@@ -87,7 +101,7 @@ void your_example_code() {
 }
 \end{ccExampleCode}
 
-%% \ccIncludeExampleCode{Package/estimate_normals_jet_fitting_3.C}
+%% \ccIncludeExampleCode{Surface_reconstruction_3/estimate_normals_jet_fitting_3.C}
 
 \end{ccRefFunction}
 

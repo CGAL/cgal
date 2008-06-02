@@ -206,7 +206,7 @@ struct propagate_normal
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
-/// - K >= 2.
+/// - KNN >= 2.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
 void
@@ -215,7 +215,7 @@ orient_normals_minimum_spanning_tree_3(VertexIterator first, ///< first input ve
                                        VertexIndexMap vertex_index_map, ///< property map VertexIterator -> index
                                        VertexPointMap vertex_point_map, ///< property map VertexIterator -> Point_3
                                        VertexNormalMap vertex_normal_map, ///< property map VertexIterator -> Normal (in and out)
-                                       unsigned int K)   ///< number of neighbors
+                                       unsigned int KNN) ///< number of neighbors
 {
 CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Input mesh's types
@@ -223,7 +223,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename Normal::Vector Vector;
 
-    // Types for K-nearest neighbor search structure
+    // Types for K nearest neighbors search structure
     typedef Point_vertex_handle_3<VertexIterator> Point_vertex_handle_3;
     typedef Search_traits_vertex_handle_3<VertexIterator> Traits;
     typedef Euclidean_distance_vertex_handle_3<VertexIterator> KDistance;
@@ -241,7 +241,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     CGAL_surface_reconstruction_precondition(first != beyond);
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_surface_reconstruction_precondition(K >= 2);
+    CGAL_surface_reconstruction_precondition(KNN >= 2);
 
     // Number of input vertices
     const int num_input_vertices = distance_MST(first, beyond);
@@ -296,8 +296,8 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // Iterate over input points and create Riemannian Graph:
     // - vertices are numbered like the input vertices' index.
     // - vertices are empty.
-    // - we add the edge (i, j) if either vertex i is in the K-neighborhood of vertex j,
-    //   or vertex j is in the K-neighborhood of vertex i.
+    // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
+    //   or vertex j is in the KNN-neighborhood of vertex i.
 CGAL_TRACE("  Create Riemannian Graph\n");
     Riemannian_graph riemannian_graph(num_input_vertices);
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
@@ -308,14 +308,14 @@ CGAL_TRACE("  Create Riemannian Graph\n");
         unsigned int it_index = get(vertex_index_map,it);
         Vector it_normal_vector = vertex_normal_map[it].get_vector();
 
-        // Gather set of (K+1) neighboring points:
-        // Performs K + 1 queries (if unique the p point is output first).
-        // Search may be aborted when K is greater than number of input points.
+        // Gather set of (KNN+1) neighboring points:
+        // Performs KNN + 1 queries (if unique the p point is output first).
+        // Search may be aborted when KNN is greater than number of input points.
         Point point = get(vertex_point_map, it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
-        Neighbor_search search(tree, point_wrapper, K+1);
+        Neighbor_search search(tree, point_wrapper, KNN+1);
         Search_iterator search_iterator = search.begin();
-        for(unsigned int i=0;i<(K+1);i++)
+        for(unsigned int i=0;i<(KNN+1);i++)
         {
             if(search_iterator == search.end())
                 break; // premature ending

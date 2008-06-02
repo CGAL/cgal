@@ -30,14 +30,15 @@ CGAL_BEGIN_NAMESPACE
 // 8 vertices of a loose bounding box are added in order to bound
 // all Voronoi cells. The last parameter specifies if these points
 // should be removed.
-// return past-the-end iterator of output
-template < typename InputIterator, 
+///
+/// @return past-the-end output iterator.
+template < typename InputIterator,
            typename OutputIterator,
-           typename Kernel, 
+           typename Kernel,
            typename DT> // Delaunay triangulation
 OutputIterator
 estimate_normals_poles_3(InputIterator first,      // input points
-                         InputIterator beyond,   
+                         InputIterator beyond,
                          OutputIterator normals,   // output normals
                          DT& dt,                   // Delaunay triangulation
                          const Kernel::FT,         // inflating factor of bounding box

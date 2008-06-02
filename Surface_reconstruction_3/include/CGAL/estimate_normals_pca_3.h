@@ -33,12 +33,17 @@
 CGAL_BEGIN_NAMESPACE
 
 /// Estimate normal direction using linear least
-/// squares fitting of a plane on the KNN nearest neighbors.
+/// squares fitting of a plane on the K nearest neighbors.
 ///
 /// Precondition: KNN >= 2.
 ///
+/// @heading Parameters:
+/// @param Kernel Geometric traits class.
+/// @param Tree KD-tree.
+/// @param OrientedNormal_3 Type of return value.
+///
 /// @return Computed normal, model of OrientedNormal_3.
-template < typename Kernel, ///< Geometric traits class.
+template < typename Kernel,
            typename Tree,
            typename OrientedNormal_3
 >
@@ -53,7 +58,7 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
   typedef typename Kernel::Vector_3 Vector;
   typedef OrientedNormal_3 Oriented_normal;
 
-  // types for KNN nearest neighbor search
+  // types for K nearest neighbors search
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -91,15 +96,22 @@ estimate_normal_pca_3(const typename Kernel::Point_3& query, ///< 3D point whose
 
 
 /// Estimate normals direction using linear least
-/// squares fitting of a plane on the KNN nearest neighbors.
+/// squares fitting of a plane on the K nearest neighbors.
 /// This variant requires the kernel.
 ///
 /// Precondition: KNN >= 2.
-template < typename InputIterator, ///< InputIterator value_type is Point_3.
-           typename OutputIterator, ///< OutputIterator value_type is a model of OrientedNormal_3.
-           typename Kernel ///< Geometric traits class.
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param OutputIterator value_type is Point_3.
+/// @param Kernel Geometric traits class.
+///
+/// @return past-the-end output iterator.
+template <typename InputIterator,
+          typename OutputIterator,
+          typename Kernel
 >
-OutputIterator ///< return past-the-end iterator of output
+OutputIterator
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
                        OutputIterator normals, ///< output normals
@@ -109,7 +121,7 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Normal;
 
-  // types for KNN-nearest neighbor search structure
+  // types for K nearest neighbors search structure
   typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
@@ -137,14 +149,20 @@ estimate_normals_pca_3(InputIterator first,    ///< input points
 }
 
 /// Estimate normals direction using linear least
-/// squares fitting of a plane on the KNN nearest neighbors.
+/// squares fitting of a plane on the K nearest neighbors.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: KNN >= 2.
-template < typename InputIterator, ///< InputIterator value_type is Point_3
-           typename OutputIterator ///< OutputIterator value_type is a model of OrientedNormal_3
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param OutputIterator value_type is Point_3.
+///
+/// @return past-the-end output iterator.
+template <typename InputIterator,
+          typename OutputIterator
 >
-OutputIterator ///< return past-the-end iterator of output
+OutputIterator
 estimate_normals_pca_3(InputIterator first,    ///< input points
                        InputIterator beyond,
                        OutputIterator normals, ///< output normals

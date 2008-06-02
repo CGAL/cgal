@@ -27,6 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+
 /// Orient a 3D point's normal w.r.t. the position of cameras
 /// that reconstructed the point by photogrammetry.
 template < class Gt, ///< Geometric traits class.

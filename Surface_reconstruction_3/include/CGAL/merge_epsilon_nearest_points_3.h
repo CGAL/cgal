@@ -29,15 +29,15 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// Utility class for merge_epsilon_nearest_points_3():
-// Less_epsilon_points_3 defines a 3D points order / 2 points are equal
-// iff they belong to the same cell of a grid of cell size = epsilon.
+/// Less_epsilon_points_3 defines a 3D points order / 2 points are equal
+/// iff they belong to the same cell of a grid of cell size = epsilon.
 template <class Point_3>
-struct Less_epsilon_points_3 
+struct Less_epsilon_points_3
 {
 private:
 
     double m_epsilon;
-    
+
 public:
 
     Less_epsilon_points_3 (double epsilon)
@@ -45,8 +45,8 @@ public:
     {
         CGAL_precondition(epsilon > 0);
     }
-    
-    bool operator() (const Point_3& a, const Point_3& b) const 
+
+    bool operator() (const Point_3& a, const Point_3& b) const
     {
         // Round points to multiples of m_epsilon, then compare.
         Point_3 rounded_a(round_epsilon(a.x(), m_epsilon),
@@ -69,17 +69,17 @@ private:
 
 
 /// Utility class for merge_epsilon_nearest_points_3():
-/// 3D points set which allows at most 1 point per cell 
+/// 3D points set which allows at most 1 point per cell
 /// of a grid of cell size = epsilon.
 template <class Point_3>
-class Epsilon_point_set_3 
+class Epsilon_point_set_3
   : public std::set<Point_3,Less_epsilon_points_3<Point_3> >
 {
 private:
 
     // superclass
     typedef std::set<Point_3,Less_epsilon_points_3<Point_3> > Base;
-    
+
 public:
 
     Epsilon_point_set_3 (double epsilon)
@@ -87,7 +87,7 @@ public:
     {
         CGAL_precondition(epsilon > 0);
     }
-    
+
     // default copy constructor, operator =() and destructor are fine.
 };
 
@@ -96,11 +96,18 @@ public:
 /// This variant requires the kernel.
 ///
 /// Precondition: epsilon > 0.
-template <typename InputIterator,   ///< InputIterator value_type is Point_3.
-          typename OutputIterator,  ///< OutputIterator value_type is Point_3.
-          typename Kernel           ///< Geometric traits class.
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param OutputIterator value_type is Point_3.
+/// @param Kernel Geometric traits class.
+///
+/// @return past-the-end output iterator.
+template <typename InputIterator,
+          typename OutputIterator,
+          typename Kernel
 >
-OutputIterator                      ///< return past-the-end iterator of output
+OutputIterator
 merge_epsilon_nearest_points_3(
           InputIterator first,      ///< input points
           InputIterator beyond,
@@ -129,8 +136,12 @@ merge_epsilon_nearest_points_3(
 /// This variant requires the kernel.
 ///
 /// Precondition: epsilon > 0.
-template <typename ForwardIterator, ///< ForwardIterator value_type is Point_3.
-          typename Kernel           ///< Geometric traits class.
+///
+/// @heading Parameters:
+/// @param ForwardIterator value_type is Point_3.
+/// @param Kernel Geometric traits class.
+template <typename ForwardIterator,
+          typename Kernel
 >
 void
 merge_epsilon_nearest_points_3(
@@ -146,10 +157,16 @@ merge_epsilon_nearest_points_3(
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: epsilon > 0.
-template <typename InputIterator, ///< InputIterator value_type is Point_3
-          typename OutputIterator ///< OutputIterator value_type is Point_3
+///
+/// @heading Parameters:
+/// @param InputIterator value_type is Point_3.
+/// @param OutputIterator value_type is Point_3.
+///
+/// @return past-the-end output iterator.
+template <typename InputIterator,
+          typename OutputIterator
 >
-OutputIterator                    ///< return past-the-end iterator of output
+OutputIterator
 merge_epsilon_nearest_points_3(
            InputIterator first,   ///< input points
            InputIterator beyond,
@@ -166,7 +183,10 @@ merge_epsilon_nearest_points_3(
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: epsilon > 0.
-template <typename ForwardIterator> ///< ForwardIterator value_type is Point_3
+///
+/// @heading Parameters:
+/// @param ForwardIterator value_type is Point_3.
+template <typename ForwardIterator>
 void
 merge_epsilon_nearest_points_3(
        ForwardIterator first,       ///< input/output points
