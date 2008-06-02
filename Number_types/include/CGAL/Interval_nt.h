@@ -75,7 +75,9 @@ public:
       // Or should I use is_valid() ? or is_valid_or_nan() ?
     CGAL_assertion_msg(!(i>s),
 	      " Variable used before being initialized (or CGAL bug)");
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
     CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
+#endif
   }
 
   Interval_nt(const Pair & p)
@@ -151,12 +153,16 @@ private:
     }
   };
 
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
   static Test_runtime_rounding_modes tester;
+#endif
 };
 
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
 template <bool Protected>
 typename Interval_nt<Protected>::Test_runtime_rounding_modes
 Interval_nt<Protected>::tester;
+#endif
 
 template <bool Protected>
 inline
