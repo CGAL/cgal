@@ -401,6 +401,7 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/*.suo
 Surface_reconstruction_3/test/Surface_reconstruction_3/.cdtproject
 Surface_reconstruction_3/test/Surface_reconstruction_3/.project
 Surface_reconstruction_3/test/Surface_reconstruction_3/.settings
+Surface_reconstruction_3/test/Surface_reconstruction_3/APSS_reconstruction_test
 Surface_reconstruction_3/test/Surface_reconstruction_3/ProgramOutput.*
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test
 Surface_reconstruction_3/test/Surface_reconstruction_3/cgal_test

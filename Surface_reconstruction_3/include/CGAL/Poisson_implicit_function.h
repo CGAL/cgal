@@ -101,7 +101,7 @@ public:
 /// of the triangulation via the TAUCS sparse linear
 /// solver. One vertex must be constrained.
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the Reconstruction_implicit_function concept.
 ///
 /// @heading Design Pattern:
@@ -109,8 +109,8 @@ public:
 /// Strategy [GHJV95]: it implements a strategy of surface mesh reconstruction.
 ///
 /// @heading Parameters:
-/// @param Gt Geometric traits class 
-/// @param ImplicitFctDelaunayTriangulation_3 3D Delaunay triangulation, 
+/// @param Gt Geometric traits class
+/// @param ImplicitFctDelaunayTriangulation_3 3D Delaunay triangulation,
 ///        model of ImplicitFctDelaunayTriangulation_3 concept.
 
 template <class Gt, class ImplicitFctDelaunayTriangulation_3>
@@ -128,7 +128,7 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef typename Triangulation::Point_with_normal Point_with_normal; 
+  typedef typename Triangulation::Point_with_normal Point_with_normal;
                                                      ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
   typedef typename Geom_traits::Vector_3 Vector;
@@ -140,7 +140,6 @@ private:
   typedef typename Triangulation::Triangulation_data_structure Triangulation_data_structure;
   typedef typename Geom_traits::Ray_3 Ray;
   typedef typename Geom_traits::Plane_3 Plane;
-  typedef typename Geom_traits::Vector_3 Vector;
   typedef typename Geom_traits::Segment_3 Segment;
   typedef typename Geom_traits::Triangle_3 Triangle;
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron;
@@ -650,9 +649,9 @@ public:
 
   /// Get point inside the surface.
   Point get_inner_point() const
-  { 
-    // Get point / the implicit function is minimum  
-    return m_sink; 
+  {
+    // Get point / the implicit function is minimum
+    return m_sink;
   }
 
   /// Get average value of the implicit function over input vertices.

@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL:
+// $Id:
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -35,7 +35,7 @@ public:
 
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point;
-  typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Search_traits_vertex_handle_3<Vertex_handle> Traits;
   typedef Euclidean_distance_vertex_handle_3<Vertex_handle> KDistance;
   typedef Orthogonal_k_neighbor_search<Traits,KDistance> Neighbor_search;
@@ -49,7 +49,7 @@ public:
   K_nearest_neighbor() {}
 
   /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
-  template <class InputIterator> 
+  template <class InputIterator>
   K_nearest_neighbor(InputIterator first, InputIterator beyond)
   {
     m_tree = Tree(first, beyond);
@@ -58,7 +58,7 @@ public:
   /// Default copy constructor, operator =() and destructor are fine.
 
   /// Precondition: InputIterator value_type must be convertible to Point_vertex_handle_3.
-  template <class InputIterator> 
+  template <class InputIterator>
   void insert(InputIterator first, InputIterator beyond)
   {
     m_tree = Tree(first, beyond);

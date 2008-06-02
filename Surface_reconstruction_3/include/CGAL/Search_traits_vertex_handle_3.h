@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: 
-// $Id: 
+// $URL:
+// $Id:
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -44,7 +44,7 @@ public:
     m_vertex_handle = NULL;
   }
 
-  Point_vertex_handle_3(double x, double y, double z, 
+  Point_vertex_handle_3(double x, double y, double z,
                         Vertex_handle vertex_handle) ///< NULL for query points
   {
     m_coord[0] = x;
@@ -95,7 +95,7 @@ struct Kernel_traits< Point_vertex_handle_3<Vertex_handle> > {
 template <class Vertex_handle>
 struct Construct_cartesian_const_iterator_vertex_handle_3
 {
-  typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
 
   const double* operator()(const Point_vertex_handle_3& p) const
   { return static_cast<const double*>(p.m_coord); }
@@ -112,7 +112,7 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
-  typedef Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
+  typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {

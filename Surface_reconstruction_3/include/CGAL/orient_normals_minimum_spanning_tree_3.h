@@ -110,7 +110,7 @@ class MST_graph_vertex_normal_map
                                   MST_graph_vertex_normal_map<VertexIterator, VertexNormalMap> >
 {
 public:
-    typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
+    typedef CGAL::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef typename boost::property_traits<VertexNormalMap>::value_type Normal;
     typedef typename MST_graph::vertex_descriptor vertex_descriptor;
 
@@ -157,7 +157,7 @@ template <class VertexIterator,     ///< Input vertex iterator
 struct propagate_normal
   : public boost::base_visitor< propagate_normal<VertexIterator, VertexNormalMap> >
 {
-    typedef MST_graph<VertexIterator, VertexNormalMap> MST_graph;
+    typedef CGAL::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef boost::on_examine_edge event_filter;
 
     template <class Edge>
