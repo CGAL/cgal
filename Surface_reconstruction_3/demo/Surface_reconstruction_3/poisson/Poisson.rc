@@ -55,6 +55,7 @@ BEGIN
     SEPARATOR
     BUTTON      ID_MODE_POINT_SET
     BUTTON      ID_MODE_POISSON
+    BUTTON      ID_MODE_APSS
     SEPARATOR
     BUTTON      ID_APP_ABOUT
 END
@@ -436,6 +437,11 @@ STRINGTABLE
 BEGIN
     ID_MODE_POINT_SET       "Edit point set\nPoint set mode"
     ID_MODE_POISSON         "Create Poisson Delaunay triangulation\nPoisson mode"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_MODE_APSS            "APSS reconstruction\nAPSS mode"
 END
 
 #endif    // Anglais (États-Unis) resources

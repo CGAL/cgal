@@ -46,6 +46,7 @@
 #define ID_EDIT_MODE                    32819
 #define ID_MODE_POINT_SET               32821
 #define ID_MODE_POISSON                 32822
+#define ID_MODE_POISSON2                32823
 #define ID_ANALYSIS                     32825
 #define ID_ANALYSIS_AVERAGESPACING      32826
 #define ID_PROCESSING_REMOVEOUTLIERS    32827
@@ -59,7 +60,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        134
-#define _APS_NEXT_COMMAND_VALUE         32833
+#define _APS_NEXT_COMMAND_VALUE         32834
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
