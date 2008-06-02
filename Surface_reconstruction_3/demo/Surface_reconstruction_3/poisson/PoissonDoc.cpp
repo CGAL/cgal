@@ -10,7 +10,7 @@
 #include "surface_reconstruction_read_pwc.h"
 
 // CGAL
-#define CGAL_C2T3_USE_POLYHEDRON
+//Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
@@ -109,7 +109,7 @@ CPoissonDoc::CPoissonDoc()
   m_poisson_solved = false; // Need to solve Poisson equation
 
   // Surface mesher options
-  m_sm_angle = 20.0; // LR: 30 is OK
+  m_sm_angle = 30.0; // theorical guaranty if angle >= 30
   m_sm_radius = 0.1; // as suggested by LR
   m_sm_distance = 0.005;
 
@@ -662,7 +662,8 @@ void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
-  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && normals_are_oriented);
+  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON) 
+                 && points_have_normals && normals_are_oriented);
 }
 
 // Uniform Delaunay refinement
@@ -1115,7 +1116,8 @@ void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
-  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_normals && normals_are_oriented);
+  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS) 
+                 && points_have_normals && normals_are_oriented);
 }
 
 // "Edit >> Mode >> APSS" is an alias to "Reconstruction >> APSS reconstruction".
@@ -1124,6 +1126,7 @@ void CPoissonDoc::OnModeAPSS()
   OnReconstructionApssReconstruction();
 }
 
+// "Edit >> Mode >> APSS" is an alias to "Reconstruction >> APSS reconstruction".
 void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
 {
   OnUpdateReconstructionApssReconstruction(pCmdUI);

@@ -185,7 +185,7 @@ int main(int argc, char * argv[])
                           Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
 
         // defining meshing criteria
-        FT sm_angle = 20.0; // LR: 30 is OK
+        FT sm_angle = 30.0; // theorical guaranty if angle >= 30
         FT sm_radius = 0.1; // as suggested by LR
         FT sm_distance = 0.005;
         CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
@@ -196,9 +196,9 @@ int main(int argc, char * argv[])
         make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
         // Print status
-        std::cerr << "Poisson reconstruction: " << task_timer.time() << " seconds, "
-                                                << tr.number_of_vertices() << " vertices"
-                                                << std::endl;
+        std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
+                                         << tr.number_of_vertices() << " vertices"
+                                         << std::endl;
         task_timer.reset();
 
     } // for each input file
