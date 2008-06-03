@@ -13,7 +13,7 @@ It exists only when the dimension is a compile-time constant.}
 
 \ccTypes
 
-\ccTypedef{type;}{Either \ccc{Dimension_tag<dim>} if the dimension is a
+\ccNestedType{type}{Either \ccc{Dimension_tag<dim>} if the dimension is a
 compile-time constant of value \ccc{dim}, or \ccc{Dynamic_dimension_tag}
 otherwise.  It is implemented as \ccc{K::Feature_dimension<T>::type}. }
 
@@ -28,8 +28,8 @@ The following retrieves the dimension of a point type.
 \end{cprog} 
 
 \ccSeeAlso
-\ccRefConceptPage{Dimension_tag} \\
-\ccRefConceptPage{Dynamic_dimension_tag} \\
+\ccRefConceptPage{CGAL::Dimension_tag<int dim>} \\
+\ccRefConceptPage{CGAL::Dynamic_dimension_tag} \\
 \ccRefConceptPage{CGAL::Ambient_dimension<T, K = Kernel_traits<T>::Kernel>}
 
 \end{ccRefClass} 
