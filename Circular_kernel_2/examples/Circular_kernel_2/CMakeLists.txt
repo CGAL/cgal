@@ -12,12 +12,6 @@ if ( CGAL_FOUND )
   include(${CGAL_USE_FILE})
   include(CreateSingleSourceCGALProgram)
 
-  create_single_source_cgal_program( arrangement_random_circles.cpp )
-  create_single_source_cgal_program( arrangement_random_circles_segments.cpp )
-  create_single_source_cgal_program( Circular_kernel_arrangement.cpp )
-  create_single_source_cgal_program( Circular_kernel_arrangement_Line_arc.cpp )
-  create_single_source_cgal_program( Circular_kernel_arrangement_Line_Circular.cpp )
   create_single_source_cgal_program( intersecting_arcs.cpp )
-  create_single_source_cgal_program( Exact_circular_kernel.cpp )
 
 endif()
