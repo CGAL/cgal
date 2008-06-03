@@ -453,7 +453,7 @@ private:
   // ptr is composed of a pointer part and the last 2 bits.
   // Here is the meaning of each of the 8 cases.
   //
-  //                          value of the last 2 bits
+  //                          value of the last 2 bits as "Type"
   // pointer part     0              1                2              3
   //         NULL     user elt       unused           free_list end  start/end
   //      != NULL     user elt       block boundary   free elt       unused
@@ -462,26 +462,16 @@ private:
 
   enum Type { USED = 0, BLOCK_BOUNDARY = 1, FREE = 2, START_END = 3 };
 
-  // Using a union is clean and should avoid aliasing problems.
-  union menion {
-    void *         p;
-
-    menion(void * ptr)
-    : p(ptr) {}
-
-    menion(void * ptr, Type type)
-    : p((void*) ((clean_pointer((char *) ptr)) + (int) type))
-    {
-      CGAL_precondition(0 <= type && type < 4);
-    }
-  };
+  // The bit squatting is implemented by casting pointers to (char *), then
+  // subtracting to NULL, doing bit manipulations on the resulting integer,
+  // and converting back.
 
   static char * clean_pointer(char * p)
   {
     return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
   }
 
-  // Returns the pointee, cleaned from the squatted bits (the last 2 bits).
+  // Returns the pointee, cleaned up from the squatted bits.
   static pointer clean_pointee(const_pointer ptr)
   {
     return (pointer) clean_pointer((char *) Traits::pointer(*ptr));
@@ -497,7 +487,8 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void set_type(pointer ptr, void * p, Type t)
   {
-    Traits::pointer(*ptr) = menion(p, t).p;
+    CGAL_precondition(0 <= t && t < 4);
+    Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
   }
 
   // We store a vector of pointers to all allocated blocks and their sizes.
