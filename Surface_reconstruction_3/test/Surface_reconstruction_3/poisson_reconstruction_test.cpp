@@ -193,6 +193,9 @@ int main(int argc, char * argv[])
                                                             sm_distance*size); // upper bound of distance to surface
 
         // meshing surface
+std::cerr << "make_surface_mesh(sphere={center=("<<inner_point << "), radius^2="<<4*size*size << "},\n"
+          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
+          << "                  Non_manifold_tag())...\n";
         make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
         // Print status
