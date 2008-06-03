@@ -465,30 +465,33 @@ private:
   // Using a union is clean and should avoid aliasing problems.
   union menion {
     void *         p;
-    unsigned int   t:2;
 
     menion(void * ptr)
     : p(ptr) {}
 
     menion(void * ptr, Type type)
-    : p(ptr)
+    : p((void*) ((clean_pointer((char *) ptr)) + (int) type))
     {
       CGAL_precondition(0 <= type && type < 4);
-      t = type;
     }
   };
+
+  static char * clean_pointer(char * p)
+  {
+    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
+  }
 
   // Returns the pointee, cleaned from the squatted bits (the last 2 bits).
   static pointer clean_pointee(const_pointer ptr)
   {
-    return (pointer) menion(Traits::pointer(*ptr), USED).p;
+    return (pointer) clean_pointer((char *) Traits::pointer(*ptr));
   }
 
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
-    menion me(Traits::pointer(*ptr));
-    return (Type) me.t;
+    char * p = (char *) Traits::pointer(*ptr);
+    return (Type) (p - clean_pointer(p));
   }
 
   // Sets the pointer part and the type of the pointee.
