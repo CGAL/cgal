@@ -47,7 +47,9 @@ all:            \
                 plane_seg$(EXE_EXT) \
                 ray_isocub$(EXE_EXT) \
                 seg_isocub$(EXE_EXT) \
-                triangle_other$(EXE_EXT) 
+                triangle_other$(EXE_EXT) \
+                line_line$(EXE_EXT) \
+                circle_other$(EXE_EXT)
 
 isocub_isocub$(EXE_EXT): isocub_isocub$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)isocub_isocub isocub_isocub$(OBJ_EXT) $(LDFLAGS)
@@ -76,6 +78,12 @@ seg_isocub$(EXE_EXT): seg_isocub$(OBJ_EXT)
 triangle_other$(EXE_EXT): triangle_other$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangle_other triangle_other$(OBJ_EXT) $(LDFLAGS)
 
+circle_other$(EXE_EXT): circle_other$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)circle_other circle_other$(OBJ_EXT) $(LDFLAGS)
+
+line_line$(EXE_EXT): line_line$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)line_line line_line$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    isocub_isocub.clean \
                    line_isocub.clean \
@@ -85,6 +93,8 @@ clean: \
                    plane_seg.clean \
                    ray_isocub.clean \
                    seg_isocub.clean \
+                   circle_other.clean \
+                   line_line.clean \
                    triangle_other.clean 
 
 #---------------------------------------------------------------------#
