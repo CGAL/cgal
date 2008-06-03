@@ -141,7 +141,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
   // output (100-threshold_percent) % best points
   typename std::multimap<FT,InputIterator>::iterator map_it;
   int index;
-  int last = map.size() * ((100.0-threshold_percent)/100.0);
+  int last = int(double(map.size()) * ((100.0-threshold_percent)/100.0));
   for(map_it = map.begin(), index=0; index < last; ++map_it, ++index)
   {
     InputIterator point_it = map_it->second;

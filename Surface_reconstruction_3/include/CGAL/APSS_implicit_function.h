@@ -35,12 +35,12 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// APSS_implicit_function computes an implicit function 
-/// that defines a Point Set Surface (PSS) based on 
+/// APSS_implicit_function computes an implicit function
+/// that defines a Point Set Surface (PSS) based on
 /// moving least squares (MLS) fitting of algebraic spheres.
 /// See "Algebraic Point Set Surfaces" by Guennebaud and Gross (2007).
 ///
-/// @heading Is Model for the Concepts: 
+/// @heading Is Model for the Concepts:
 /// Model of the Reconstruction_implicit_function concept.
 ///
 /// @heading Design Pattern:
@@ -49,7 +49,7 @@ CGAL_BEGIN_NAMESPACE
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
-/// @param PointWithNormal_3 Model of PointWithNormal_3 concept. 
+/// @param PointWithNormal_3 Model of PointWithNormal_3 concept.
 
 template <class Gt, class PointWithNormal_3>
 class APSS_implicit_function
@@ -223,7 +223,7 @@ private:
 
   /** Check whether the point p is close to the input points or not.
   */
-  inline bool isValid(const Neighbor_search& neighbors, const Point& p) const
+  inline bool isValid(const Neighbor_search& neighbors, const Point& /* p */) const
   {
     for (typename Neighbor_search::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
     {
@@ -381,8 +381,12 @@ private:
     Vector u13;
     enum State {UNDETERMINED=0,PLANE=1,SPHERE=2};
     State state;
-    struct {Point center; FT radius;};
-    struct {Vector normal; FT d;};
+//     struct {Point center; FT radius;};
+//     struct {Vector normal; FT d;};
+    Point center;
+    FT radius;
+    Vector normal;
+    FT d;
 
     AlgebraicSphere() : state(UNDETERMINED) {}
 

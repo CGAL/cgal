@@ -57,9 +57,9 @@ public:
 
   operator Vertex_handle() const { return m_vertex_handle; }
 
-  const double x() const { return m_coord[0]; }
-  const double y() const { return m_coord[1]; }
-  const double z() const { return m_coord[2]; }
+  double x() const { return m_coord[0]; }
+  double y() const { return m_coord[1]; }
+  double z() const { return m_coord[2]; }
 
   double& x() { return m_coord[0]; }
   double& y() { return m_coord[1]; }
@@ -156,8 +156,8 @@ struct Euclidean_distance_vertex_handle_3
     return d0 + d1 + d2;
   }
 
-  double new_distance(double& dist, double old_off, double new_off,
-          int cutting_dimension)  const {
+  double new_distance(double& dist, double old_off, double new_off, int /*cutting_dimension*/) const
+  {
     return dist + new_off*new_off - old_off*old_off;
   }
 
