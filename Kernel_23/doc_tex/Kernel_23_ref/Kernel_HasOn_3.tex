@@ -24,6 +24,10 @@ A model for this must provide:
 {returns true iff $p$ lies on $pl$.}
 
 \ccMemberFunction{bool operator()(const Kernel::Plane_3&pl,
+                                  const Kernel::Line_3&l);}
+{returns true iff $l$ lies on $pl$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&pl,
                                   const Kernel::Circle_3&c);}
 {returns true iff $c$ lies on $pl$.}
 
