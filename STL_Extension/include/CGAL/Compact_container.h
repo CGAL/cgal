@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_COMPACT_CONTAINER_H
