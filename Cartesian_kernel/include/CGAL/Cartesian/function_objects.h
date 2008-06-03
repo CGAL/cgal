@@ -209,6 +209,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT              FT;
     typedef typename K::Point_3         Point_3;
     typedef typename K::Sphere_3        Sphere_3;
+    typedef typename K::Circle_3        Circle_3;
     typedef typename K::Tetrahedron_3   Tetrahedron_3;
     typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
   public:
@@ -217,6 +218,10 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
+    { return s.rep().bounded_side(p); }
+
+    result_type
+    operator()( const Circle_3& s, const Point_3& p) const
     { return s.rep().bounded_side(p); }
 
     result_type
@@ -791,6 +796,39 @@ namespace CartesianKernelFunctors {
     { return CGAL_NTS compare(p.z(), q.z()); }
   };
 
+  template <class K>
+  class Compute_approximate_area_3
+  {
+    typedef typename K::Circle_3                  Circle_3;
+    typedef typename K::FT                        FT;
+
+  public:
+
+    typedef double result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type 
+    operator() (const Circle_3 & c) const
+    { return c.rep().approximate_area(); }
+  };
+
+  template <class K>
+  class Compute_approximate_squared_length_3
+  {
+    typedef typename K::Circle_3                  Circle_3;
+    typedef typename K::FT                        FT;
+
+  public:
+
+    typedef double result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type 
+    operator() (const Circle_3 & c) const
+    { return c.rep().approximate_squared_length(); }
+  };
+
+
   template <typename K>
   class Compute_area_2
   {
@@ -819,6 +857,23 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Triangle_2& t ) const
     { return t.area(); }
+  };
+
+  template <typename K>
+  class Compute_area_divided_by_pi_3
+  {
+    typedef typename K::Circle_3                  Circle_3;
+    typedef typename K::FT                        FT;
+
+  public:
+
+    typedef const FT result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type 
+    operator()(const Circle_3 & c) const
+    { return c.rep().area_divided_by_pi(); }
+
   };
 
   template <typename K>
@@ -927,6 +982,23 @@ namespace CartesianKernelFunctors {
     {
       return squared_distanceC2(p.x(), p.y(), q.x(), q.y());
     }
+  };
+
+  template <class K>
+  class Compute_squared_length_divided_by_pi_square_3
+  {
+    typedef typename K::Circle_3                  Circle_3;
+    typedef typename K::FT                        FT;
+
+  public:
+
+    typedef const FT result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type 
+    operator() (const Circle_3 & c) const
+    { return c.rep().squared_length_divided_by_pi_square(); }
+
   };
 
   // TODO ...
@@ -1744,6 +1816,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Circle_3         Circle_3;
   public:
     typedef Bbox_3          result_type;
     typedef Arity_tag< 1 >  Arity;
@@ -1806,8 +1879,13 @@ namespace CartesianKernelFunctors {
       Interval_nt<> maxz = z+r;
 
       return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
-		    maxx.sup(), maxy.sup(), maxz.sup());
+                    maxx.sup(), maxy.sup(), maxz.sup());
     }
+
+    Bbox_3
+    operator()(const Circle_3& c) const
+    { return c.rep().bbox(); }
+
   };
 
 
@@ -2960,6 +3038,37 @@ namespace CartesianKernelFunctors {
     { return h.rep().projection(p); }
   };
 
+  template <class K> 
+  class Construct_radical_plane_3
+  {
+    typedef typename K::Plane_3            Plane_3;
+    typedef typename K::Sphere_3           Sphere_3;
+    typedef typename K::FT                 FT;
+
+  public:
+
+    typedef Plane_3 result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type 
+    operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
+    {
+      // Concentric Spheres don't have radical plane
+      CGAL_kernel_precondition (s1.center() != s2.center());
+      const FT a = 2*(s2.center().x() - s1.center().x());
+      const FT b = 2*(s2.center().y() - s1.center().y());
+      const FT c = 2*(s2.center().z() - s1.center().z());
+      const FT d = CGAL::square(s1.center().x()) + 
+        CGAL::square(s1.center().y()) +
+        CGAL::square(s1.center().z()) - s1.squared_radius() -
+        CGAL::square(s2.center().x()) -
+        CGAL::square(s2.center().y()) -
+        CGAL::square(s2.center().z()) + s2.squared_radius();
+      return Plane_3(a, b, c, d);
+    }
+  };
+
+
   template <typename K>
   class Construct_scaled_vector_2
   {
@@ -3509,6 +3618,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Segment_3        Segment_3;
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Triangle_3       Triangle_3;
+    typedef typename K::Circle_3         Circle_3;
   public:
     typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
@@ -3546,6 +3656,24 @@ namespace CartesianKernelFunctors {
       return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
           && ((alpha+beta+gamma == FT(1)));
     }
+
+    result_type
+    operator()(const Sphere_3 &a, const Point_3 &p) const
+    { return a.rep().has_on_boundary(p); }
+
+    result_type
+    operator()(const Circle_3 &a, const Point_3 &p) const
+    { return a.rep().has_on(p); }
+
+    result_type
+    operator()(const Sphere_3 &a, const Circle_3 &p) const
+    { return a.rep().has_on(p); }
+
+    result_type
+    operator()(const Plane_3 &a, const Circle_3 &p) const
+    { return a.rep().has_on(p); }
+
+
   };
 
   template <typename K>

@@ -229,6 +229,52 @@ Object
 intersection(const Iso_cuboid_3<R> &box1,
 	     const Iso_cuboid_3<R> &box2) ;
 
+template <class R>
+Object
+intersection(const Line_3<R> &l1,
+             const Line_3<R> &l2);
+
+template <class R>
+Object
+intersection(const Sphere_3<R> &s1,
+             const Sphere_3<R> &s2);
+
+
+template <class R>
+Object
+intersection(const Plane_3<R> &p,
+             const Sphere_3<R> &s);
+
+template <class R>
+inline Object
+intersection(const Sphere_3<R> &s,
+             const Plane_3<R> &p) {
+  return intersection(p, s);
+}
+
+template <class R>
+bool
+do_intersect(const Line_3<R> &l1,
+             const Line_3<R> &l2);
+
+
+template <class R>
+bool
+do_intersect(const Sphere_3<R> &s1,
+             const Sphere_3<R> &s2);
+
+template <class R>
+bool
+do_intersect(const Plane_3<R> &p,
+             const Sphere_3<R> &s);
+
+template <class R>
+inline bool
+do_intersect(const Sphere_3<R> &s,
+             const Plane_3<R> &p) {
+  return do_intersect(p, s);
+}
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/Intersections_3/intersection_3_1_impl.h>

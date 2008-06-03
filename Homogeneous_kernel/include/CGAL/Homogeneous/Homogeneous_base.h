@@ -55,6 +55,7 @@
 #include <CGAL/Homogeneous/SphereH3.h>
 #include <CGAL/Cartesian/Tetrahedron_3.h>
 #include <CGAL/Cartesian/Triangle_3.h>
+#include <CGAL/Cartesian/Circle_3.h>
 #include <CGAL/Homogeneous/VectorH3.h>
 
 #include <CGAL/Homogeneous/basic_constructionsH2.h>
@@ -140,6 +141,7 @@ struct Homogeneous_base
     typedef TetrahedronC3<Kernel>                   Tetrahedron_3;
     typedef Iso_cuboidH3<Kernel>                    Iso_cuboid_3;
     typedef SphereH3<Kernel>                        Sphere_3;
+    typedef CircleC3<Kernel>                        Circle_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
 
     typedef Cartesian_const_iterator_d<const RT *>  Cartesian_const_iterator_2;

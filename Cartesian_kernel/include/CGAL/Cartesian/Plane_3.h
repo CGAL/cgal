@@ -41,6 +41,7 @@ class PlaneC3
   typedef typename R_::Ray_3                Ray_3;
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Plane_3              Plane_3;
+  typedef typename R_::Circle_3             Circle_3;
   typedef typename R_::Construct_point_3    Construct_point_3;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
@@ -124,6 +125,24 @@ public:
   {
     return has_on(l.point())
        &&  has_on(l.point() + l.direction().to_vector());
+  }
+  bool         has_on(const Circle_3 &circle) const
+  {
+    if(circle.squared_radius() != FT(0)) {
+      const Plane_3& p = circle.supporting_plane();
+      if(is_zero(a())) {
+        if(!is_zero(p.a())) return false;
+        if(is_zero(b())) {
+          if(!is_zero(p.b())) return false;
+          return c() * p.d() == d() * p.c();
+        }
+        return (p.c() * b() == c() * p.b()) &&
+               (p.d() * b() == d() * p.b());
+      }
+      return (p.b() * a() == b() * p.a()) &&
+             (p.c() * a() == c() * p.a()) &&
+             (p.d() * a() == d() * p.a());
+    } else return has_on(circle.center());
   }
 
   bool         is_degenerate() const;

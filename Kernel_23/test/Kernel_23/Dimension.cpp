@@ -56,6 +56,7 @@ void test(CGAL::Dimension_tag<3>)
   assert( 3 == CGAL::Ambient_dimension<typename K::Tetrahedron_3>::value );
   assert( 3 == CGAL::Ambient_dimension<typename K::Iso_cuboid_3>::value );
   assert( 3 == CGAL::Ambient_dimension<typename K::Sphere_3>::value );
+  assert( 3 == CGAL::Ambient_dimension<typename K::Circle_3>::value );
   assert( 3 == CGAL::Ambient_dimension<typename K::Aff_transformation_3>::value );
   assert( 3 == CGAL::Ambient_dimension<CGAL::Bbox_3>::value );
 
@@ -70,6 +71,7 @@ void test(CGAL::Dimension_tag<3>)
   assert( 3 == CGAL::Feature_dimension<typename K::Tetrahedron_3>::value );
   assert( 3 == CGAL::Feature_dimension<typename K::Iso_cuboid_3>::value );
   assert( 2 == CGAL::Feature_dimension<typename K::Sphere_3>::value );
+  assert( 1 == CGAL::Feature_dimension<typename K::Circle_3>::value );
   // assert( ? == CGAL::Feature_dimension<typename K::Aff_transformation_3>::value );
   assert( 3 == CGAL::Feature_dimension<CGAL::Bbox_3>::value );
 }

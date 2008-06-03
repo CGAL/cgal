@@ -62,7 +62,7 @@ CGAL_Kernel_obj(Triangle_3)
 CGAL_Kernel_obj(Tetrahedron_3)
 CGAL_Kernel_obj(Iso_cuboid_3)
 CGAL_Kernel_obj(Sphere_3)
-
+CGAL_Kernel_obj(Circle_3)
 
 
 CGAL_Kernel_pred(Angle_2,
@@ -153,10 +153,16 @@ CGAL_Kernel_cons(Compute_c_3,
 		 compute_c_3_object)
 CGAL_Kernel_cons(Compute_d_3,
 		 compute_d_3_object)
+CGAL_Kernel_cons(Compute_approximate_area_3,
+                 compute_approximate_area_3_object)
+CGAL_Kernel_cons(Compute_approximate_squared_length_3,
+                 compute_approximate_squared_length_3_object)
 CGAL_Kernel_cons(Compute_area_2,
 		 compute_area_2_object)
 CGAL_Kernel_cons(Compute_area_3,
 		 compute_area_3_object)
+CGAL_Kernel_cons(Compute_area_divided_by_pi_3,
+		 compute_area_divided_by_pi_3_object)
 CGAL_Kernel_cons(Compute_determinant_2,
 		 compute_determinant_2_object)
 CGAL_Kernel_cons(Compute_determinant_3,
@@ -175,6 +181,8 @@ CGAL_Kernel_cons(Compute_squared_length_2,
 		 compute_squared_length_2_object)
 CGAL_Kernel_cons(Compute_squared_length_3,
 		 compute_squared_length_3_object)
+CGAL_Kernel_cons(Compute_squared_length_divided_by_pi_square_3,
+                 compute_squared_length_divided_by_pi_square_3_object)
 CGAL_Kernel_cons(Compute_squared_radius_2,
 		 compute_squared_radius_2_object)
 CGAL_Kernel_cons(Compute_squared_radius_3,
@@ -259,12 +267,16 @@ CGAL_Kernel_cons(Construct_centroid_3,
 		 construct_centroid_3_object)
 CGAL_Kernel_cons(Construct_circle_2,
 		 construct_circle_2_object)
+CGAL_Kernel_cons(Construct_circle_3,
+		 construct_circle_3_object)
 CGAL_Kernel_cons(Construct_circumcenter_2,
 		 construct_circumcenter_2_object)
 CGAL_Kernel_cons(Construct_circumcenter_3,
 		 construct_circumcenter_3_object)
 CGAL_Kernel_cons(Construct_cross_product_vector_3,
 		 construct_cross_product_vector_3_object)
+CGAL_Kernel_cons(Construct_diametral_sphere_3,
+		 construct_diametral_sphere_3_object)
 CGAL_Kernel_cons(Construct_direction_2,
 		 construct_direction_2_object)
 CGAL_Kernel_cons(Construct_direction_3,
@@ -363,6 +375,8 @@ CGAL_Kernel_cons(Construct_projected_point_3,
 		 construct_projected_point_3_object)
 CGAL_Kernel_cons(Construct_projected_xy_point_2,
 		 construct_projected_xy_point_2_object)
+CGAL_Kernel_cons(Construct_radical_plane_3,
+                 construct_radical_plane_3_object)
 CGAL_Kernel_cons(Construct_ray_2,
 		 construct_ray_2_object)
 CGAL_Kernel_cons(Construct_ray_3,
