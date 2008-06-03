@@ -3,6 +3,10 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
+\ccMemberFunction{bool operator()(const Kernel::Circle_3&c,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $c$.}
+
 \ccMemberFunction{bool operator()(const Kernel::Line_3&l,
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on $l$.}
@@ -19,6 +23,18 @@ A model for this must provide:
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on $pl$.}
 
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&pl,
+                                  const Kernel::Circle_3&c);}
+{returns true iff $c$ lies on $pl$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&s,
+                                  const Kernel::Point_3&c);}
+{returns true iff $c$ lies on $s$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&s,
+                                  const Kernel::Circle_3&c);}
+{returns true iff $c$ lies on $s$.}
+
 \ccMemberFunction{bool operator()(const Kernel::Triangle_3&t,
                                   const Kernel::Point_3&p);}
 {returns true iff $p$ lies on $t$.}
@@ -27,8 +43,10 @@ A model for this must provide:
 \ccc{AdaptableFunctor} (with two arguments)
 
 \ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Line_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Point_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Ray_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Segment_3<Kernel>} \\
 \ccRefIdfierPage{CGAL::Sphere_3<Kernel>} \\

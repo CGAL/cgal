@@ -283,6 +283,8 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Ray_3}{a model of \ccc{Kernel::Ray_3}}
 \ccGlue
+\ccNestedType{Circle_3}{a model of \ccc{Kernel::Circle_3}}
+\ccGlue
 \ccNestedType{Sphere_3}{a model of \ccc{Kernel::Sphere_3}}
 \ccGlue
 \ccNestedType{Segment_3}{a model of \ccc{Kernel::Segment_3}}
@@ -365,9 +367,13 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Construct_perpendicular_plane_3}{a model of \ccc{Kernel::ConstructPerpendicularPlane_3}}
 \ccGlue
+\ccNestedType{Construct_radical_plane_3}{a model of \ccc{Kernel::ConstructRadicalPlane_3}}
+\ccGlue
 \ccNestedType{Construct_perpendicular_line_3}{a model of \ccc{Kernel::ConstructPerpendicularLine_3}}
 \ccGlue
 \ccNestedType{Construct_midpoint_3}{a model of \ccc{Kernel::ConstructMidpoint_3}}
+\ccGlue
+\ccNestedType{Construct_diametral_sphere_3}{a model of \ccc{Kernel::ConstructDiametralSphere_3}}
 \ccGlue
 \ccNestedType{Construct_center_3}{a model of \ccc{Kernel::ConstructCenter_3}}
 \ccGlue
@@ -407,9 +413,17 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 \ccGlue
 \ccNestedType{Compute_squared_area_3}{a model of \ccc{Kernel::ComputeSquaredArea_3}}
 \ccGlue
+\ccNestedType{Compute_area_divided_by_pi_3}{a model of \ccc{Kernel::ComputeAreaDividedByPi_3}}
+\ccGlue
+\ccNestedType{Compute_approximate_area_3}{a model of \ccc{Kernel::ComputeApproximateArea_3}}
+\ccGlue
 \ccNestedType{Compute_squared_distance_3}{a model of \ccc{Kernel::ComputeSquaredDistance_3}}
 \ccGlue
 \ccNestedType{Compute_squared_length_3}{a model of \ccc{Kernel::ComputeSquaredLength_3}}
+\ccGlue
+\ccNestedType{Compute_squared_length_divided_by_pi_square_3}{a model of \ccc{Kernel::ComputeSquaredLengthDividedByPiSquare_3}}
+\ccGlue
+\ccNestedType{Compute_approximate_squared_length_3}{a model of \ccc{Kernel::ComputeApproximateSquaredLength_3}}
 \ccGlue
 \ccNestedType{Compute_squared_radius_3}{a model of \ccc{Kernel::ComputeSquaredRadius_3}}
 \ccGlue
@@ -501,11 +515,11 @@ If the result type is a number type, the prefix is \ccc{Compute_}:
 
 \ccOperations
 
-For each of the function objects above, there must exist a member function
-that requires no arguments and returns an instance of that function object.
-The name of the member function is the uncapitalized name of the type
-returned with the suffix \ccc{_object} appended.  For example, for the 
-function object
+For each of the function objects above, there must exist a member
+function that requires no arguments and returns an instance of that
+function object.  The name of the member function is the uncapitalized
+name of the type returned with the suffix \ccc{_object} appended.  For
+example, for the function object
 \ccc{Kernel::Construct_vector_2} the following member function must exist:
 
 \ccTexHtml{\ccSetThreeColumns{Kernel::Are_strictly_ordered_along_line}{}{\hspace
