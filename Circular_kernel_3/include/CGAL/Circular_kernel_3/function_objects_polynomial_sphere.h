@@ -796,19 +796,9 @@ template < class SK > \
     
     using SK::Linear_kernel::Has_on_3::operator();
 
-    // Some of the has_on here have better to be moved to the Linear_Kernel
-
-    result_type
-    operator()(const Sphere_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }
-
     result_type
     operator()(const Sphere_with_radius_3 &a, const Point_3 &p) const
     { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
-    
-    result_type
-    operator()(const Point_3 &p, const Sphere_3 &a) const
-    { return false; }
     
     result_type
     operator()(const Point_3 &p, const Sphere_with_radius_3 &a) const
@@ -829,15 +819,6 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_point_3 &p, const Sphere_with_radius_3 &a) const
     { return false; }    
-    
-
-    result_type
-    operator()(const Plane_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }
-
-    result_type
-    operator()(const Point_3 &p, const Plane_3 &a) const
-    { return false; }
 
     result_type
     operator()(const Plane_3 &a, const Circular_arc_point_3 &p) const
@@ -848,32 +829,16 @@ template < class SK > \
     { return false; }
 
     result_type
-    operator()(const Line_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }
-
-    result_type
-    operator()(const Point_3 &p, const Line_3 &a) const
-    { return false; }
-
-    result_type
     operator()(const Line_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
 
     result_type
     operator()(const Circular_arc_point_3 &p, const Line_3 &a) const
     { return false; }
-
-    result_type
-    operator()(const Circle_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }
     
     result_type
     operator()(const Circle_on_reference_sphere_3 &a, const Point_3 &p) const
     { return has_on<SK>(a, p); }    
-
-    result_type
-    operator()(const Point_3 &p, const Circle_3 &a) const
-    { return false; }
 
     result_type
     operator()(const Circle_3 &a, const Circular_arc_point_3 &p) const
@@ -884,50 +849,9 @@ template < class SK > \
     { return has_on<SK>(a.supporting_sphere(), p) && has_on<SK>(a.reference_sphere(), p); }    
 
     result_type
-    operator()(const Circular_arc_point_3 &p, const Circle_3 &a) const
-    { return false; }
-
-    result_type
-    operator()(const Sphere_3 &a, const Circle_3 &p) const
-    { return has_on<SK>(a, p); }
-
-    result_type
     operator()(const Sphere_with_radius_3 &a, const Circle_3 &p) const
     { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
     
-    result_type
-    operator()(const Circle_3 &p, const Sphere_3 &a) const
-    { return false; }
-
-    result_type
-    operator()(const Plane_3 &a, const Line_3 &p) const
-    { return has_on<SK>(a, p); }
-
-    result_type
-    operator()(const Line_3 &a, const Plane_3 &p) const
-    { return false; }
-
-    result_type
-    operator()(const Plane_3 &a, const Circle_3 &p) const
-    { return has_on<SK>(a, p); }
-
-    result_type
-    operator()(const Circle_3 &p, const Plane_3 &a) const
-    { return false; }
-
-    // We assume Spheres cannot be points, should we?
-    result_type
-    operator()(const Sphere_3 &a, const Plane_3 &p) const
-    { return false; }
-
-    result_type
-    operator()(const Plane_3 &a, const Sphere_3 &p) const
-    { return false; }
-
-    result_type
-    operator()(const Sphere_3 &a, const Line_3 &p) const
-    { return false; }
-
     result_type
     operator()(const Line_arc_3 &a, const Circular_arc_point_3 &p,
                const bool already_know_point_on_line = false) const
@@ -941,10 +865,6 @@ template < class SK > \
     operator()(const Line_arc_3 &a, const Point_3 &p,
                const bool already_know_point_on_line = false) const
     { return has_on<SK>(a, p, already_know_point_on_line); }
-
-    result_type
-    operator()(const Point_3 &a, const Line_arc_3 &p) const
-    { return false; }
 
     result_type
     operator()(const Plane_3 &p, const Line_arc_3 &a) const
@@ -993,24 +913,12 @@ template < class SK > \
     { return has_on<SK>(a, p, has_on_supporting_circle); }
 
     result_type
-    operator()(const Circular_arc_point_3 &p, const Circular_arc_3 &a) const
-    { return false; }
-
-    result_type
     operator()(const Sphere_3 &a, const Circular_arc_3 &p) const
     { return has_on<SK>(a, p); }
 
     result_type
-    operator()(const Circular_arc_3 &p, const Sphere_3 &a) const
-    { return false; }
-
-    result_type
     operator()(const Plane_3 &a, const Circular_arc_3 &p) const
     { return has_on<SK>(a, p); }
-
-    result_type
-    operator()(const Circular_arc_3 &p, const Plane_3 &a) const
-    { return false; }
 
     result_type
     operator()(const Circle_3 &a, const Circular_arc_3 &p) const
@@ -1049,24 +957,6 @@ template < class SK > \
     typedef typename SK::Object_3 Object_3;
     
     using SK::Linear_kernel::Intersect_3::operator();
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
-	       OutputIterator res) const
-    { return intersect_3<SK> (s1,s2,res); }
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Plane_3 & p, const Sphere_3 & s, 
-	       OutputIterator res) const
-    { return intersect_3<SK> (p,s,res); }
-
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Sphere_3 & s, const Plane_3 & p, 
-	       OutputIterator res) const
-    { return intersect_3<SK> (p,s,res); }
 
     template < class OutputIterator >
     OutputIterator
@@ -1151,18 +1041,6 @@ template < class SK > \
     operator()(const Line_3 & l, const Circle_3 & c,
 	       OutputIterator res) const
     { return intersect_3<SK> (c,l,res); }
-
-    // INTERSECTION LINE-LINE
-    // obs: This intersection should be moved to the Linear Kernel
-    // we need it
-    // For instance I won't put on the Algebraic Kernel for Spheres
-    // this function, I will solve locally
-    // I wont build tests for them, by the way I build tests for 
-    // intersect_3(Line_arc, Line_arc) which should do
-    // this intersection also dont take care with orientation
-    Object_3
-    operator()(const Line_3 & l1, const Line_3 & l2) const
-    { return intersect_3<SK> (l1,l2); }
 
     template < class OutputIterator >
     OutputIterator
