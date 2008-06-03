@@ -20,7 +20,7 @@ manipulation of algebraic curves.
 
 \ccInheritsFrom
 
-\ccc{LinearKernel}
+\ccc{Kernel}
 
 \ccTypes
 
@@ -28,8 +28,11 @@ manipulation of algebraic curves.
 \ccThreeToTwo
 
 The spherical kernel uses basic number types of the algebraic kernel:
+
 \ccTypedef{typedef AlgebraicKernelForSpheres::RT RT;}{Ring number type.}
+\ccGlue
 \ccTypedef{typedef AlgebraicKernelForSpheres::FT FT;}{Field number type.}
+
 In fact, the two number types \ccc{AlgebraicKernelForSpheres::RT} and
 \ccc{LinearKernel::RT} must refer to the same type, as well as
 \ccc{AlgebraicKernelForSpheres::FT} and \ccc{LinearKernel::FT}.
@@ -37,8 +40,8 @@ In fact, the two number types \ccc{AlgebraicKernelForSpheres::RT} and
 The following types are available, as well as all the functionality on
 them described in the \ccc{SphericalKernel} concept. 
 
-\ccTypedef{typedef Circle_3<Spherical_kernel_3> Circle_3;}{}
-\ccGlue
+%\ccTypedef{typedef Circle_3<Spherical_kernel_3> Circle_3;}{}
+%\ccGlue
 \ccTypedef{typedef Line_arc_3<Spherical_kernel_3> Line_arc_3;}{}
 \ccGlue
 \ccTypedef{typedef Circular_arc_3<Spherical_kernel_3> Circular_arc_3;}{}
@@ -51,7 +54,7 @@ of \ccc{AlgebraicKernelForSpheres::PolynomialsForCircles_3}.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{LinearKernel}\\
+\ccRefIdfierPage{Kernel}\\
 \ccRefIdfierPage{AlgebraicKernelForSpheres}\\
 \ccRefIdfierPage{CGAL::Exact_spherical_kernel_3}
 

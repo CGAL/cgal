@@ -1,80 +1,52 @@
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeAreaDividedByPi_3}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularX_3}
+
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{SphericalKernel::Algebraic_kernel::FT
-	operator()(const Circle_3 & c);}
-{Computes the area of the circle, divided by $\pi$.}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{SphericalKernel::ComputeApproximateArea_3}
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $x$-coordinate of the point.}
 
 \end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeSquaredLengthDividedByPiSquare_3}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularY_3}
+
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{SphericalKernel::Algebraic_kernel::FT
-	operator()(const Circle_3 & c);}
-{Computes the squared length of the circle, divided by $\pi^2$.}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{SphericalKernel::ComputeApproximateSquaredLength_3}
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $y$-coordinate of the point.}
 
 \end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateArea_3}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularZ_3}
+
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
-
-An object \ccVar\ of this type must provide:
-
-\ccMemberFunction{double
-	operator()(const Circle_3 & c);}
-{Computes an approximation of the area of the circle.}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{SphericalKernel::ComputeAreaDividedByPi_3}
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $z$-coordinate of the point.}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateSquaredLength_3}
+
+\ccRefines
+
+\ccc{Kernel::ComputeApproximateSquaredLength_3}
+
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
-
-An object \ccVar\ of this type must provide:
+In addition, an object \ccVar\ of this type must provide:
 
 \ccMemberFunction{double
-	operator()(const Circle_3 & c);}
-{Computes an approximation of the squared length of the circle.}
-
-\ccMemberFunction{double
-	operator()(const Circular_arc_3 & c);}
+	operator()(const SphericalKernel::Circular_arc_3 & c);}
 {Computes an approximation of the squared length of the arc.}
-
-\ccSeeAlso
-
-\ccRefIdfierPage{SphericalKernel::ComputeSquaredLengthDividedByPiSquare_3}
 
 \end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateAngle_3}
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
-
 An object \ccVar\ of this type must provide:
 
 \ccMemberFunction{double
-	operator()(const Circular_arc_3 & c);}
+	operator()(const SphericalKernel::Circular_arc_3 & c);}
 {Computes an approximation of the angle of the arc in radians.}
 
 \end{ccRefFunctionObjectConcept}

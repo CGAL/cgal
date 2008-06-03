@@ -1,38 +1,49 @@
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructRadicalPlane_3}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructDiametralSphere_3}
 \ccCreationVariable{fo}
 
-TO BE MOVED TO KERNEL
+\ccRefines
+
+\ccc{Kernel::ConstructDiametralSphere_3}
+
+\ccCreationVariable{fo}
+
+In addition, an object \ccVar\ of this type must provide:
+
+\ccMemberFunction{SphericalKernel::Sphere_3
+	operator()(const SphericalKernel::Circular_arc_3 & a);}
+{Returns the sphere having the supporting circle of \ccc{a} as diameter.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingPlane_3}
+
+\ccCreationVariable{fo}
 
 An object \ccVar\ of this type must provide:
 
 \ccMemberFunction{SphericalKernel::Plane_3
-	operator()(const Sphere_3 & s1, const Sphere_3 & s2);}
-{Returns the radical plane of \ccc{s1} and \ccc{s2}.}
-
-Recall that the \textit{radical plane} of two spheres is the 
-locus of points \ccc{p} that have the same power with respect 
-to these two spheres.
-
-The \textit{power} of \ccc{p} with respect to a sphere \ccc{s} centered at 
-\ccc{c} and of squared radius \ccc{rsq} is $ d(c,p)^2 - rsq $
-(where $d$ denotes the Euclidean distance). 
+	operator()(const SphericalKernel::Circular_arc_3 & c);}
+{Returns the plane containing the arc.}
 
 \end{ccRefFunctionObjectConcept}
-\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructDiametralSphere_3}
-\ccCreationVariable{fo}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingLine_3}
 
-TO BE MOVED TO KERNEL
+\ccCreationVariable{fo}
 
 An object \ccVar\ of this type must provide:
 
-\ccMemberFunction{SphericalKernel::Sphere_3
-	operator()(const Circle_3 & c);}
-{Returns the sphere having \ccc{c} as diameter.}
+\ccMemberFunction{SphericalKernel::Line_3
+	operator()(const SphericalKernel::Line_arc_3 & l);}
+{Returns the line containing the segment.}
 
-and
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ConstructSupportingCircle_3}
 
-\ccMemberFunction{SphericalKernel::Sphere_3
-	operator()(const Circular_arc_3 & a);}
-{Returns the sphere having the supporting circle of \ccc{a} as diameter.}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{SphericalKernel::Circle_3
+	operator()(const SphericalKernel::Circular_arc_3 & c);}
+{Returns the circle containing the arc.}
 
 \end{ccRefFunctionObjectConcept}
