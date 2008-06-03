@@ -76,50 +76,7 @@ namespace CGAL {
       } else {
         l1 = Line_arc_3(l.supporting_line(),p,l.target());
         l2 = Line_arc_3(l.supporting_line(),l.source(),p);
-      } 
-    }
-
-    // It is the vectorial product of 2 3D vectors
-    // Maybe there is already this function somewhere, 
-    // but i didn't find
-    template < class SK >
-    typename SK::Vector_3
-    vp(const typename SK::Vector_3 & v1, 
-       const typename SK::Vector_3 & v2) {
-      return typename SK::Vector_3((v1.y()*v2.z()-v1.z()*v2.y()),
-                                   (v1.z()*v2.x()-v1.x()*v2.z()),
-                                   (v1.x()*v2.y()-v1.y()*v2.x()));
-    }
-
-    template < class SK >
-    typename SK::Object_3
-    intersect_3(const typename SK::Line_3 & l1, 
-                const typename SK::Line_3 & l2,
-                const bool not_equal_lines = false) 
-    { 
-      typedef typename SK::Vector_3 Vector_3;
-      typedef typename SK::Line_3 Line_3;
-      typedef typename SK::Point_3 Point_3;
-      typedef typename SK::Object_3 Object_3;
-      typedef typename SK::FT FT;
-      if(!not_equal_lines) {
-        if(non_oriented_equal<SK>(l1,l2)) 
-          return make_object(l1);
       }
-      if(SK().are_parallel_3_object()(l1,l2)) return Object();
-      const Point_3 &p1 = l1.point();
-      const Point_3 &p3 = l2.point();
-      const Vector_3 &v1 = l1.to_vector();
-      const Vector_3 &v2 = l2.to_vector();
-      const Point_3 p2 = p1 + v1;
-      const Point_3 p4 = p2 + v2;
-      if(!SK().coplanar_3_object()(p1,p2,p3,p4)) return Object();
-      const Vector_3 v3 = p3 - p1;
-      const Vector_3 v3v2 = vp<SK>(v3,v2);
-      const Vector_3 v1v2 = vp<SK>(v1,v2);
-      const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) /
-                   (v1v2.squared_length());
-      return make_object(p1 + (v1 * t));
     }
 
     template < class SK, class OutputIterator >
@@ -133,8 +90,18 @@ namespace CGAL {
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
 
-      if(non_oriented_equal<SK>(l1.supporting_line(),
-                                l2.supporting_line())) {
+      Point_3 inters_p;
+      Line_3 inters_l;
+
+      Object o = SK().intersect_3_object()(l1.supporting_line(),
+        l2.supporting_line());
+
+      if(assign(inters_p, o)) {
+        Circular_arc_point_3 p = inters_p;
+        if(!SK().has_on_3_object()(l1,p,true)) return res;
+        if(!SK().has_on_3_object()(l2,p,true)) return res;
+        *res++ = make_object(std::make_pair(p,1u));
+      } else if(assign(inters_l, o)) {
 
         if(SK().compare_xyz_3_object()(l1.lower_xyz_extremity(), 
                                        l2.lower_xyz_extremity()) < 0) {
@@ -154,7 +121,6 @@ namespace CGAL {
 	  } else if (comparison == 0) {
 	    *res++ = make_object(std::make_pair(l2.lower_xyz_extremity(),1u));
 	  } 
-          return res;
         }
         else {
 	  int comparison = 
@@ -173,20 +139,9 @@ namespace CGAL {
 	  }
 	  else if (comparison == 0){
 	    *res++ = make_object(std::make_pair(l1.lower_xyz_extremity(),1u));
-	  } 
-          return res;
+	  }
         }
       }
-
-      Point_3 inters_p;
-      if(assign(inters_p,intersect_3<SK>(l1.supporting_line(),
-                                         l2.supporting_line(), true))) {
-        Circular_arc_point_3 p = inters_p;
-        if(!SK().has_on_3_object()(l1,p,true)) return res;
-        if(!SK().has_on_3_object()(l2,p,true)) return res;
-        *res++ = make_object(std::make_pair(p,1u));
-      }
-
       return res;
     }
 
@@ -201,17 +156,19 @@ namespace CGAL {
       typedef typename SK::Line_3 Line_3;
       typedef typename SK::Line_arc_3 Line_arc_3;
 
-      if(non_oriented_equal<SK>(l, la.supporting_line())) {
-        *res++ = make_object(la);
-      }
-
       Point_3 inters_p;
-      if(assign(inters_p,intersect_3<SK>(l, la.supporting_line(), true))) {
+      Line_3 inters_l;
+
+      Object o = SK().intersect_3_object()(l, la.supporting_line());
+
+      if(assign(inters_l, o)) {
+        *res++ = make_object(la);
+      } else if(assign(inters_p, o)) {
         Circular_arc_point_3 p = inters_p;
         if(!SK().has_on_3_object()(la,p,true)) return res;
         *res++ = make_object(std::make_pair(p,1u));
       }
-
+      return res;
     }
 
     template < class SK, class OutputIterator >
