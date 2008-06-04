@@ -2364,7 +2364,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Iso_rectangle_2  Iso_rectangle_2;
     typedef typename K::Circle_2         Circle_2;
     typedef typename K::Triangle_2       Triangle_2;
-    typedef typename K::Circle_3         Circle_3;
   public:
     typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;
@@ -2383,14 +2382,6 @@ namespace CommonKernelFunctors {
       return K().bounded_side_2_object()(r,p)== ON_UNBOUNDED_SIDE;
     }
 
-    result_type
-    operator()(const Circle_3& c, const Point_3& p) const
-    {
-      CGAL_kernel_precondition(
-        K().has_on_3_object()(c.supporting_plane(),p)
-      );
-      return c.rep().has_on_unbounded_side(p); 
-    }
   };
 
   template <typename K>
@@ -2399,6 +2390,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
     typedef typename K::Sphere_3         Sphere_3;
+    typedef typename K::Circle_3         Circle_3;
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
     typedef typename K::Bool_type        result_type;
@@ -2415,6 +2407,15 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Iso_cuboid_3& c, const Point_3& p) const
     { return c.rep().has_on_unbounded_side(p); }
+
+    result_type
+    operator()(const Circle_3& c, const Point_3& p) const
+    {
+      CGAL_kernel_precondition(
+        K().has_on_3_object()(c.supporting_plane(),p)
+      );
+      return c.rep().has_on_unbounded_side(p); 
+    }
   };
 
   template <typename K>
