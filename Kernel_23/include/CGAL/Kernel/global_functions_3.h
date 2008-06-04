@@ -904,6 +904,15 @@ orthogonal_vector(const Plane_3<K>& p)
 
 // parallel() functions are in Kernel/global_functions.h
 
+template <class K>
+inline
+typename K::Plane_3
+radical_plane(const Sphere_3<K> &s1,
+              const Sphere_3<K> &s2)
+{
+  return K().construct_radical_plane_3_object()(s1,s2);
+}
+
 template <class K >
 inline
 Bounded_side
