@@ -104,8 +104,8 @@ public:
   ///
   /// Precondition: the value type of InputIterator must be convertible to Point_with_normal.
   ///
-  /// @param first First point to add.
-  /// @param beyond Past-the-end point to add.
+  /// @param first First point of point set.
+  /// @param beyond Past-the-end point of point set.
   template < class InputIterator >
   APSS_implicit_function(InputIterator first, InputIterator beyond)
   {
@@ -119,7 +119,7 @@ public:
     }
     m->tree = new Tree(m->treeElements.begin(), m->treeElements.end());
 
-    // Compute the radius of each points = (distance max to KNN)/2
+    // Compute the radius of each point = (distance max to KNN)/2.
     // The union of these ball defines the surface definition domain.
     i = 0;
     for (InputIterator it=first ; it != beyond ; ++it,++i)
@@ -134,12 +134,14 @@ public:
       }
       m->radii.push_back(2.*sqrt(maxdist2/16.));
     }
+    
+    // Compute barycenter, bounding box, bounding sphere and standard deviation.
+    update_bounding_box(first, beyond);
 
-    // sphere of smallest volume enclosing the input points
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
-    m->boundingSphere = Sphere(ms3.center(), ms3.squared_radius()); // LS 05/2008: 1.2*was sqrt(ms3.squared_radius())
+    // Find a point inside the surface.
+    find_inner_point();
 
-    m->sqError = 0.0000001 * Gt().compute_squared_radius_3_object()(m->boundingSphere);
+    m->sqError = 0.0000001 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
 
   APSS_implicit_function(const APSS_implicit_function& other) {
@@ -159,24 +161,34 @@ public:
 
   void setNofNeighbors(unsigned int k) {m->nofNeighbors = k;}
 
+  /// Get the bounding box.
+  Iso_cuboid bounding_box() const
+  {
+    return m->bounding_box;
+  }
+
   /// Get the surface's bounding sphere.
   const Sphere& bounding_sphere() const
   {
-    return m->boundingSphere;
+    return m->bounding_sphere;
   }
 
   /// Get the region of interest, ignoring the outliers.
   /// This method is used to define the OpenGL arcball sphere.
   Sphere region_of_interest() const
   {
-    // Naive implementation
-    return m->boundingSphere;
+    // A good candidate is a sphere containing the dense region of the point cloud:
+    // - center point is barycenter
+    // - Radius is 2 * standard deviation
+    FT radius = (FT)2 * (FT)m->diameter_standard_deviation;
+    return Sphere(m->barycenter, radius*radius);
   }
 
   /// You should call compute_implicit_function() once when points insertion is over.
   /// Return false on error.
   bool compute_implicit_function()
   {
+    // Nothing to do
     return true;
   }
 
@@ -261,10 +273,7 @@ public:
   /// Get point inside the surface.
   Point get_inner_point() const
   {
-    // Naive implementation
-    Point center = m->boundingSphere.center();
-    CGAL_surface_reconstruction_assertion((*this)(center) < 0);
-    return center;
+    return m->inner_point;
   }
 
 // Private methods:
@@ -374,6 +383,61 @@ private:
       a.x()*b.y() - a.y()*b.x());
   }
 
+  /// Compute barycenter, bounding box, bounding sphere and standard deviation.
+  ///
+  /// @param first First point of point set.
+  /// @param beyond Past-the-end point of point set.
+  template < class InputIterator >
+  void update_bounding_box(InputIterator first, InputIterator beyond)
+  {
+    if (first == beyond)
+      return;
+
+    // Update bounding box and barycenter.
+    // TODO: we should use the functions in PCA component instead.
+    FT xmin,xmax,ymin,ymax,zmin,zmax;
+    xmin = ymin = zmin =  1e38;
+    xmax = ymax = zmax = -1e38;
+    Vector v = CGAL::NULL_VECTOR;
+    FT norm = 0;
+    for (InputIterator it = first; it != beyond; it++)
+    {
+      Point p = *it;
+
+      // update bbox
+      xmin = (std::min)(p.x(),xmin);
+      ymin = (std::min)(p.y(),ymin);
+      zmin = (std::min)(p.z(),zmin);
+      xmax = (std::max)(p.x(),xmax);
+      ymax = (std::max)(p.y(),ymax);
+      zmax = (std::max)(p.z(),zmax);
+
+      // update barycenter
+      v = v + (p - CGAL::ORIGIN);
+      norm += 1;
+    }
+    //
+    Point p(xmin,ymin,zmin);
+    Point q(xmax,ymax,zmax);
+    m->bounding_box = Iso_cuboid(p,q);
+    //
+    m->barycenter = CGAL::ORIGIN + v / norm;
+
+    // sphere of smallest volume enclosing the input points
+    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(first, beyond);
+    m->bounding_sphere = Sphere(ms3.center(), ms3.squared_radius()); // LS 05/2008: 1.2*was sqrt(ms3.squared_radius())
+
+    // Compute standard deviation of the distance to barycenter
+    typename Geom_traits::Compute_squared_distance_3 sqd;
+    FT sq_radius = 0;
+    for (InputIterator it = first; it != beyond; it++)
+    {
+        sq_radius += sqd(*it, m->barycenter);
+    }
+    sq_radius /= std::distance(first, beyond);
+    m->diameter_standard_deviation = CGAL::sqrt(sq_radius);
+  }
+
 private:
 
   struct AlgebraicSphere {
@@ -381,8 +445,6 @@ private:
     Vector u13;
     enum State {UNDETERMINED=0,PLANE=1,SPHERE=2};
     State state;
-//     struct {Point center; FT radius;};
-//     struct {Vector normal; FT d;};
     Point center;
     FT radius;
     Vector normal;
@@ -478,6 +540,32 @@ private:
     }
   };
 
+  /// Find a random point inside the surface.
+  void find_inner_point()
+  {
+    m->inner_point = CGAL::ORIGIN;
+    FT min_f = 1e38;
+
+    // Try random points until we find a point / value < 0
+    Point center = m->bounding_sphere.center();
+    FT radius = sqrt(m->bounding_sphere.squared_radius());
+    CGAL::Random_points_in_sphere_3<Point> rnd(radius);  
+    while (min_f > 0)
+    {
+      // Create random point in bounding sphere
+      Point p = center + (*rnd++ - CGAL::ORIGIN);
+      FT value = (*this)(p);
+      if(value < min_f)
+      {
+        m->inner_point = p;
+        min_f = value;
+      }
+    }
+  }
+
+// Data members
+private:
+
   struct Private {
     Private()
       : nofNeighbors(12), count(1)
@@ -485,15 +573,16 @@ private:
     Tree* tree;
     std::vector<KdTreeElement> treeElements;
     std::vector<FT> radii;
-    Sphere boundingSphere;
+    Iso_cuboid bounding_box; // Points' bounding box
+    Sphere bounding_sphere; // Points' bounding sphere
+    Point barycenter; // Points' barycenter
+    FT diameter_standard_deviation; // Standard deviation of the distance to barycenter
     FT sqError;
     unsigned int nofNeighbors;
     mutable AlgebraicSphere as;
+    Point inner_point; // Point inside the surface
     int count;
   };
-
-// Data members
-private:
 
   Private* m;
 
