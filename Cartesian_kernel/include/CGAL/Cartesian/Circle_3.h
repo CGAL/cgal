@@ -63,7 +63,7 @@ public:
                           (normal.y() != FT(0)) ||
                           (normal.z() != FT(0)));
     base = Rep(Sphere_3(center,squared_r),
-                plane_from_point_direction(center, normal.direction()));
+                Plane_3(center, normal.direction()));
   }
 
   CircleC3(const Point_3& center, const FT& squared_r, const Plane_3& p)
