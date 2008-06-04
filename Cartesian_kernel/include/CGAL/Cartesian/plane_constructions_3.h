@@ -56,6 +56,15 @@ plane_from_point_direction(const PointC3<R> &p,
   return PlaneC3<R>(A, B, C, D);
 }
 
+template <class R>
+inline
+PlaneC3<R>
+radical_plane(const Sphere_3<R> &s1,
+              const Sphere_3<R> &s2)
+{
+  return R().construct_radical_plane_3_object()(s1,s2);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PLANE_CONSTRUCTIONS_3_H
