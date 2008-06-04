@@ -11,23 +11,23 @@ A model for this must provide:
 
 \ccMemberFunction{Kernel::Circle_3 operator()
 			( Kernel::Point_3 const& center, 
-                               Kernel::FT const& squared_radius,
+                               Kernel::FT const& sq_r,
                                Kernel::Plane_3 const& plane);}
 	{introduces a variable  of type \ccc{Kernel::Circle_3}.
         It is initialized to the circle with center \ccc{center},
-        and squared radius \ccc{squared_radius} in the plane \ccc{plane}.
+        and squared radius \ccc{sq_r} in the plane \ccc{plane}.
         \ccPrecond{\ccc{center} lies in \ccc{plane} and
-		\ccc{squared_radius} $\geq$ 0.}}
+		\ccc{sq_r} $\geq$ 0.}}
 
 \ccMemberFunction{Kernel::Circle_3 operator()
 			( Kernel::Point_3 const& center, 
-                               Kernel::FT const& squared_radius,
-                               Kernel::Vector_3 const& normal);}
+                               Kernel::FT const& sq_r,
+                               Kernel::Vector_3 const& n);}
 	{introduces a variable  of type \ccc{Kernel::Circle_3}.
         It is initialized to the circle with center \ccc{center},
-        and squared radius \ccc{squared_radius} in the plane 
-	containing \ccc{center} and normal to \ccc{normal}.
-        \ccPrecond{\ccc{squared_radius} $\geq$ 0.}}
+        and squared radius \ccc{sq_r} in the plane 
+	containing \ccc{center} and normal to \ccc{n}.
+        \ccPrecond{\ccc{sq_r} $\geq$ 0.}}
 
 
 \ccMemberFunction{Kernel::Circle_3 operator()
