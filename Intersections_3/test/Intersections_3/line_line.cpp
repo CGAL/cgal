@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 typedef CGAL::Quotient< CGAL::MP_Float >                    FT;
 typedef CGAL::Cartesian<FT>                                 K;
@@ -44,27 +44,27 @@ void _test_intersection_construct(K k)
         CGAL::Object obj3l = CGAL::intersection(l, l_3);
         CGAL::Object obj4l = CGAL::intersection(l, l_4);
 
-        CGAL_test_assert(CGAL::do_intersect(l, l_1));
-        CGAL_test_assert(CGAL::do_intersect(l, l_2));
-        CGAL_test_assert(CGAL::do_intersect(l, l_3));
-        CGAL_test_assert(!CGAL::do_intersect(l, l_4));
+        assert(CGAL::do_intersect(l, l_1));
+        assert(CGAL::do_intersect(l, l_2));
+        assert(CGAL::do_intersect(l, l_3));
+        assert(!CGAL::do_intersect(l, l_4));
 
         Point_3 interp2, interp3;
         Line_3 interl1;
-        CGAL_test_assert(assign(interl1, obj1));
-        CGAL_test_assert(assign(interp2, obj2));
-        CGAL_test_assert(assign(interp3, obj3));
-        CGAL_test_assert(obj4.is_empty());
-        CGAL_test_assert(interp2 == Point_3(0,0,0));
-        CGAL_test_assert(interp3 == Point_3(a,b,c));
+        assert(assign(interl1, obj1));
+        assert(assign(interp2, obj2));
+        assert(assign(interp3, obj3));
+        assert(obj4.is_empty());
+        assert(interp2 == Point_3(0,0,0));
+        assert(interp3 == Point_3(a,b,c));
         Point_3 interp5, interp6;
         Line_3 interl2;
-        CGAL_test_assert(assign(interl2, obj1l));
-        CGAL_test_assert(assign(interp5, obj2l));
-        CGAL_test_assert(assign(interp6, obj3l));
-        CGAL_test_assert(obj4l.is_empty());
-        CGAL_test_assert(interp5 == Point_3(0,0,0));
-        CGAL_test_assert(interp6 == Point_3(a,b,c));
+        assert(assign(interl2, obj1l));
+        assert(assign(interp5, obj2l));
+        assert(assign(interp6, obj3l));
+        assert(obj4l.is_empty());
+        assert(interp5 == Point_3(0,0,0));
+        assert(interp6 == Point_3(a,b,c));
       }
     }
   }

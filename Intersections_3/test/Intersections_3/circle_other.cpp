@@ -1,7 +1,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Testsuite/assert.h>
+#include <cassert>
 
 typedef CGAL::Quotient< CGAL::MP_Float >                    FT;
 typedef CGAL::Cartesian<FT>                                 K;
@@ -49,60 +49,60 @@ void _test_intersection_construct(K k)
 
           // No intersection
           if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
-            CGAL_test_assert(!CGAL::do_intersect(s, sl_1));
-            CGAL_test_assert(!CGAL::do_intersect(s_t10, sl_2));
-            CGAL_test_assert(obj1.is_empty());
-            CGAL_test_assert(obj2.is_empty());
-            CGAL_test_assert(obj3.is_empty());
-            CGAL_test_assert(obj4.is_empty());
+            assert(!CGAL::do_intersect(s, sl_1));
+            assert(!CGAL::do_intersect(s_t10, sl_2));
+            assert(obj1.is_empty());
+            assert(obj2.is_empty());
+            assert(obj3.is_empty());
+            assert(obj4.is_empty());
           }
 
           // All the sphere intersect
           else if(x == 0 && y == 0 && z == 0 && r == 1) {
-            CGAL_test_assert(CGAL::do_intersect(s, sl_1));
-            CGAL_test_assert(CGAL::do_intersect(s_t10, sl_2));
+            assert(CGAL::do_intersect(s, sl_1));
+            assert(CGAL::do_intersect(s_t10, sl_2));
             Sphere_3 sphere1, sphere2, sphere3, sphere4;
-            CGAL_test_assert(assign(sphere1, obj1));
-            CGAL_test_assert(assign(sphere2, obj2));
-            CGAL_test_assert(assign(sphere3, obj3));
-            CGAL_test_assert(assign(sphere4, obj4));
+            assert(assign(sphere1, obj1));
+            assert(assign(sphere2, obj2));
+            assert(assign(sphere3, obj3));
+            assert(assign(sphere4, obj4));
           } 
 
           // Tangent, 1 Intersection
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
-            CGAL_test_assert(CGAL::do_intersect(s, sl_1));
-            CGAL_test_assert(CGAL::do_intersect(s_t10, sl_2));
+            assert(CGAL::do_intersect(s, sl_1));
+            assert(CGAL::do_intersect(s_t10, sl_2));
             Point_3 interp1, interp2, interp3, interp4;
-            CGAL_test_assert(assign(interp1, obj1));
-            CGAL_test_assert(assign(interp2, obj2));
-            CGAL_test_assert(theHas_on_3(s, interp1));
-            CGAL_test_assert(theHas_on_3(sl_1, interp1));
-            CGAL_test_assert(theHas_on_3(s_t10, interp2));
-            CGAL_test_assert(theHas_on_3(sl_2, interp2));
-            CGAL_test_assert(assign(interp3, obj3));
-            CGAL_test_assert(assign(interp4, obj4));
-            CGAL_test_assert(theHas_on_3(s, interp3));
-            CGAL_test_assert(theHas_on_3(sl_1, interp3));
-            CGAL_test_assert(theHas_on_3(s_t10, interp4));
-            CGAL_test_assert(theHas_on_3(sl_2, interp4));
+            assert(assign(interp1, obj1));
+            assert(assign(interp2, obj2));
+            assert(theHas_on_3(s, interp1));
+            assert(theHas_on_3(sl_1, interp1));
+            assert(theHas_on_3(s_t10, interp2));
+            assert(theHas_on_3(sl_2, interp2));
+            assert(assign(interp3, obj3));
+            assert(assign(interp4, obj4));
+            assert(theHas_on_3(s, interp3));
+            assert(theHas_on_3(sl_1, interp3));
+            assert(theHas_on_3(s_t10, interp4));
+            assert(theHas_on_3(sl_2, interp4));
           }
           // 1 Intersection Circle
           else {
-            CGAL_test_assert(CGAL::do_intersect(s, sl_1));
-            CGAL_test_assert(CGAL::do_intersect(s_t10, sl_2));
+            assert(CGAL::do_intersect(s, sl_1));
+            assert(CGAL::do_intersect(s_t10, sl_2));
             Circle_3 circle1, circle2, circle3, circle4;
-            CGAL_test_assert(assign(circle1, obj1));
-            CGAL_test_assert(assign(circle2, obj2));
-            CGAL_test_assert(assign(circle3, obj3));
-            CGAL_test_assert(assign(circle4, obj4));
-            CGAL_test_assert(theHas_on_3(s, circle1));
-            CGAL_test_assert(theHas_on_3(sl_1, circle1));
-            CGAL_test_assert(theHas_on_3(s_t10, circle2));
-            CGAL_test_assert(theHas_on_3(sl_2, circle2));
-            CGAL_test_assert(theHas_on_3(s, circle3));
-            CGAL_test_assert(theHas_on_3(sl_1, circle3));
-            CGAL_test_assert(theHas_on_3(s_t10, circle4));
-            CGAL_test_assert(theHas_on_3(sl_2, circle4));
+            assert(assign(circle1, obj1));
+            assert(assign(circle2, obj2));
+            assert(assign(circle3, obj3));
+            assert(assign(circle4, obj4));
+            assert(theHas_on_3(s, circle1));
+            assert(theHas_on_3(sl_1, circle1));
+            assert(theHas_on_3(s_t10, circle2));
+            assert(theHas_on_3(sl_2, circle2));
+            assert(theHas_on_3(s, circle3));
+            assert(theHas_on_3(sl_1, circle3));
+            assert(theHas_on_3(s_t10, circle4));
+            assert(theHas_on_3(sl_2, circle4));
           }
         }
       }
@@ -126,31 +126,31 @@ void _test_intersection_construct(K k)
 
           // No intersection
           if(d2 > sq_r) {
-            CGAL_test_assert(!CGAL::do_intersect(p, sl));
-            CGAL_test_assert(obj.is_empty());
-            CGAL_test_assert(objl.is_empty());
+            assert(!CGAL::do_intersect(p, sl));
+            assert(obj.is_empty());
+            assert(objl.is_empty());
           } 
           // Tangent, 1 Intersection
           else if(d2 == sq_r) {
-            CGAL_test_assert(CGAL::do_intersect(p, sl));
+            assert(CGAL::do_intersect(p, sl));
             Point_3 interp, interpl;
-            CGAL_test_assert(assign(interp, obj));
-            CGAL_test_assert(theHas_on_3(sl, interp));
-            CGAL_test_assert(theHas_on_3(p, interp));
-            CGAL_test_assert(assign(interpl, objl));
-            CGAL_test_assert(theHas_on_3(sl, interpl));
-            CGAL_test_assert(theHas_on_3(p, interpl));
+            assert(assign(interp, obj));
+            assert(theHas_on_3(sl, interp));
+            assert(theHas_on_3(p, interp));
+            assert(assign(interpl, objl));
+            assert(theHas_on_3(sl, interpl));
+            assert(theHas_on_3(p, interpl));
           }
           // 1 Intersection Circle
           else {
-            CGAL_test_assert(CGAL::do_intersect(p, sl));
+            assert(CGAL::do_intersect(p, sl));
             Circle_3 circle1, circle2;
-            CGAL_test_assert(assign(circle1, obj));
-            CGAL_test_assert(theHas_on_3(sl, circle1));
-            CGAL_test_assert(theHas_on_3(p, circle1));
-            CGAL_test_assert(assign(circle2, objl));
-            CGAL_test_assert(theHas_on_3(sl, circle2));
-            CGAL_test_assert(theHas_on_3(p, circle2));
+            assert(assign(circle1, obj));
+            assert(theHas_on_3(sl, circle1));
+            assert(theHas_on_3(p, circle1));
+            assert(assign(circle2, objl));
+            assert(theHas_on_3(sl, circle2));
+            assert(theHas_on_3(p, circle2));
           }
         }
       }
