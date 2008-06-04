@@ -1,41 +1,4 @@
 CHANGES
------------------------------ Release 3.4 ----------------------------------
-The geometric Object Circle_3 has been added to the kernel:
-
-Related Predicates: Equal_3,
-                    Has_on_3:
-                        - Sphere_3, Point_3
-                        - Circle_3, Point_3
-                        - Sphere_3, Circle_3
-                        - Plane_3, Circle_3
-                        - Sphere_3, Plane_3
-                        - Sphere_3, Line_3
-                    Bounded_side_3
-                    Has_on_bounded_side_3
-                    Has_on_unbounded_side_3
-                    Do_intersect_3:
-                            - Sphere_3, Sphere_3
-                            - Sphere_3, Plane_3
-
-Constructions: Construct_circle_3
-                       Construct_supporting_plane_3
-                       Construct_supporting_sphere_3
-                       Construct_diametral_sphere_3
-                       Intersect_3:
-                            - Sphere_3, Sphere_3
-                            - Sphere_3, Plane_3
-                       Construct_bbox_3
-                       Compute_area_divided_by_pi_3
-                       Compute_squared_length_divided_by_pi_square_3
-                       Compute_approximate_squared_length_3
-                       Compute_approximate_area_3
-                       Construct_radical_plane_3
-
-Member functions manipulating Circle_3 have been added to Plane_3 and Sphere_3 as well.
-
-Global functions: Intersections, Do_intersects and radical_plane.
-
-The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
 ----------------------------- Release 3.4 ----------------------------------
 The following functionality has been added or changed:
@@ -59,6 +22,43 @@ CMake now replaces install_cgal...
 - Ambiant_dimension and Feature_dimenison have been added to retrieve the
   potentially compile-time dimension of a space or of an object.
 - barycenter() functions have been added.
+
+- The geometric Object Circle_3 has been added to the kernel:
+
+ - Related Predicates: Equal_3,
+                       Has_on_3:
+                          - Sphere_3, Point_3
+                          - Circle_3, Point_3
+                          - Sphere_3, Circle_3
+                          - Plane_3, Circle_3
+                          - Sphere_3, Plane_3
+                          - Sphere_3, Line_3
+                       Bounded_side_3
+                       Has_on_bounded_side_3
+                       Has_on_unbounded_side_3
+                       Do_intersect_3:
+                              - Sphere_3, Sphere_3
+                              - Sphere_3, Plane_3
+
+ - Constructions: Construct_circle_3
+                         Construct_supporting_plane_3
+                         Construct_supporting_sphere_3
+                         Construct_diametral_sphere_3
+                         Intersect_3:
+                              - Sphere_3, Sphere_3
+                              - Sphere_3, Plane_3
+                         Construct_bbox_3
+                         Compute_area_divided_by_pi_3
+                         Compute_squared_length_divided_by_pi_square_3
+                         Compute_approximate_squared_length_3
+                         Compute_approximate_area_3
+                         Construct_radical_plane_3
+
+Member functions manipulating Circle_3 have been added to Plane_3 and Sphere_3 as well.
+
+Global functions: Intersections, Do_intersects and radical_plane.
+
+The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
 
 ----------------------------- Release 3.3.1 ----------------------------------
