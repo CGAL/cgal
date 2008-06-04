@@ -810,12 +810,14 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     // Get implicit surface's size
     Sphere bounding_sphere = m_poisson_function->bounding_sphere();
     FT size = sqrt(bounding_sphere.squared_radius());
-    size = size / FT(2); // empiric rule to get the bounding sphere ignoring Steiner points
 
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
+    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
+    FT    sm_sphere_radius = 2 * size; 
+    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_poisson_function,                    
-                      Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
@@ -823,7 +825,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
-    make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
+    CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
     std::list<Triangle> triangles;
@@ -833,6 +835,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     // Reset contouring value 
     m_poisson_function->set_contouring_value(0.0);
 
+    // Print status
     status_message("Surface meshing...done (%d vertices, %lf s)",
                    m_surface_mesher_dt.number_of_vertices(),duration(init));
     update_status();
@@ -1085,8 +1088,11 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
+    Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
+    FT    sm_sphere_radius = 2 * size; 
+    sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_apss_function,                    
-                      Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
@@ -1101,8 +1107,10 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
     
+    // Record new mode
     m_edit_mode = APSS;
     
+    // Print status
     status_message("APSS reconstruction...done (%d vertices, %lf s)",
                    m_surface_mesher_dt.number_of_vertices(),duration(init));
     update_status();

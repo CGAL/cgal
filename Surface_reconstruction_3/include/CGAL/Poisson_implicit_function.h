@@ -85,7 +85,7 @@ public:
 
 public:
 
-  const float& score() const { return m_score; }
+  float score() const { return m_score; }
   float& score() { return m_score; }
 
   Handle v0() { return m_v0; }
@@ -247,13 +247,13 @@ public:
   /// Get the surface's bounding box.
   Iso_cuboid bounding_box() const
   {
-    return m_dt.bounding_box();
+    return m_dt.input_points_bounding_box();
   }
 
   /// Get the surface's bounding sphere.
   Sphere bounding_sphere() const
   {
-    return m_dt.bounding_sphere();
+    return m_dt.input_points_bounding_sphere();
   }
 
   /// Get the region of interest, ignoring the outliers.
@@ -264,7 +264,7 @@ public:
     // - center point is barycenter
     // - Radius is 2 * standard deviation
     Point barycenter = m_dt.barycenter();
-    float radius = 2.f * (float)m_dt.diameter_standard_deviation();
+    FT radius = 2.f * (FT)m_dt.diameter_standard_deviation();
 
     return Sphere(barycenter, radius*radius);
   }

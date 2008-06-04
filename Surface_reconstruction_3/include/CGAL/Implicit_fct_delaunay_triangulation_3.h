@@ -28,6 +28,8 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Min_sphere_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/centroid.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -248,7 +250,7 @@ private:
   // Base class 
   typedef Delaunay_triangulation_3<Gt,Tds>  Base;
 
-  // Auxiliary class to build a normals iterator
+  // Auxiliary class to build an iterator over normals.
   template <class Node>
   struct Project_normal {
     typedef Node                  argument_type;
@@ -257,6 +259,16 @@ private:
     typedef CGAL::Arity_tag<1>    Arity;
     Normal&       operator()(Node& x)       const { return x.normal(); }
     const Normal& operator()(const Node& x) const { return x.normal(); }
+  };
+
+  // Auxiliary class to build an iterator over input points.
+  class Is_steiner_point
+  {
+  public:
+      bool operator()(const Finite_vertices_iterator& v) const
+      {
+        return (v->type() == Implicit_fct_delaunay_triangulation_3::STEINER);
+      }
   };
 
 // Public types
@@ -304,7 +316,7 @@ public:
   typedef typename Geom_traits::Point_3 Point_with_normal; ///< Model of PointWithNormal_3
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
-  /// Iterator over normals
+  /// Iterator over all normals.
   typedef Iterator_project<Finite_vertices_iterator,
                            Project_normal<Vertex> >  Normal_iterator;
 
@@ -312,17 +324,13 @@ public:
   static const unsigned char INPUT = 0;
   static const unsigned char STEINER = 1;
 
-// Data members
-private:
+  /// Iterator over INPUT vertices.
+  typedef Filter_iterator<Finite_vertices_iterator, Is_steiner_point>
+                                                    Input_vertices_iterator;
 
-  // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and 
-  // m_diameter_standard_deviation below are valid.
-  mutable bool m_bounding_box_is_valid;
-  
-  mutable Iso_cuboid m_bounding_box; // Triangulation's bounding box
-  mutable Sphere m_bounding_sphere; // Triangulation's bounding sphere
-  mutable Point m_barycenter; // Triangulation's barycenter
-  mutable FT m_diameter_standard_deviation; // Triangulation's standard deviation
+  /// Iterator over INPUT points.
+  typedef Iterator_project<Input_vertices_iterator, 
+                           Project_point<Vertex> >  Input_point_iterator;
 
 // Public methods
 public:
@@ -356,7 +364,30 @@ public:
       return Normal_iterator(finite_vertices_end());
   }
 
-  /// Get the bounding box.
+  /// Get first iterator over INPUT vertices.
+  Input_vertices_iterator input_vertices_begin() const
+  {
+      return Input_vertices_iterator(finite_vertices_end(), Is_steiner_point(), 
+                                     finite_vertices_begin());
+  }
+  /// Get past-the-end iterator over INPUT vertices.
+  Input_vertices_iterator input_vertices_end() const
+  {
+      return Input_vertices_iterator(finite_vertices_end(), Is_steiner_point());
+  }
+
+  /// Get first iterator over INPUT points.
+  Input_point_iterator input_points_begin() const
+  {
+      return Input_point_iterator(input_vertices_begin());
+  }
+  /// Get past-the-end iterator over INPUT points.
+  Input_point_iterator input_points_end() const
+  {
+      return Input_point_iterator(input_vertices_end());
+  }
+
+  /// Get the bounding box of all points.
   Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
@@ -365,7 +396,16 @@ public:
     return m_bounding_box;
   }
 
-  /// Get bounding sphere.
+  /// Get the bounding box of INPUT points.
+  Iso_cuboid input_points_bounding_box() const
+  {
+    if (!m_bounding_box_is_valid)
+      update_bounding_box();
+
+    return m_input_points_bounding_box;
+  }
+
+  /// Get the bounding sphere of all points.
   Sphere bounding_sphere() const
   {
     if (!m_bounding_box_is_valid)
@@ -374,7 +414,16 @@ public:
     return m_bounding_sphere;
   }
 
-  /// Get points barycenter.
+  /// Get the bounding sphere of INPUT points.
+  Sphere input_points_bounding_sphere() const
+  {
+    if (!m_bounding_box_is_valid)
+      update_bounding_box();
+
+    return m_input_points_bounding_sphere;
+  }
+
+  /// Get the barycenter of all points.
   Point barycenter() const
   {
     if (!m_bounding_box_is_valid)
@@ -383,7 +432,7 @@ public:
     return m_barycenter;
   }
 
-  /// Get the standard deviation of the distance to barycenter.
+  /// Get the standard deviation of the distance to barycenter (for all points).
   FT diameter_standard_deviation() const
   {
     if (!m_bounding_box_is_valid)
@@ -475,47 +524,75 @@ public:
 // Private methods:
 private:
 
-  /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
+  /// Compute barycenter, bounding box, bounding sphere and standard deviation.
   void update_bounding_box() const
   {
+    typedef CGAL::Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > Min_sphere_d;
+
     if (points_begin() == points_end())
       return;
 
-    // Update bounding box and barycenter.
-    // TODO: we should use the functions in PCA component instead.
-    FT xmin,xmax,ymin,ymax,zmin,zmax;
+    // Compute barycenter and bounding boxes
+    //
+    // LS 06/2008: We should use the functions in PCA component instead.
+    //             Unfortunately, the next lines not compile...
+    //m_bounding_box = CGAL::bounding_box(points_begin(), points_end());
+    //m_barycenter   = CGAL::centroid(points_begin(), points_end());
+    //m_input_points_bounding_box = CGAL::bounding_box(input_points_begin(), input_points_end());
+    //
+    FT xmin,xmax,ymin,ymax,zmin,zmax; // for all points
     xmin = ymin = zmin =  1e38;
     xmax = ymax = zmax = -1e38;
     Vector v = CGAL::NULL_VECTOR;
     FT norm = 0;
-    for (Point_iterator it = points_begin(); it != points_end(); it++)
+    FT input_xmin,input_xmax,input_ymin,input_ymax,input_zmin,input_zmax; // for INPUT points
+    input_xmin = input_ymin = input_zmin =  1e38;
+    input_xmax = input_ymax = input_zmax = -1e38;
+    for (Finite_vertices_iterator it = finite_vertices_begin(); it != finite_vertices_end(); it++)
     {
-      const Point& p = *it;
+      const Point& p = it->point();
 
-      // update bbox
+      // update bounding box of all points
       xmin = (std::min)(p.x(),xmin);
       ymin = (std::min)(p.y(),ymin);
       zmin = (std::min)(p.z(),zmin);
       xmax = (std::max)(p.x(),xmax);
       ymax = (std::max)(p.y(),ymax);
       zmax = (std::max)(p.z(),zmax);
-
-      // update barycenter
+      
+      if (it->type() == INPUT)
+      {
+        // update bounding box of INPUT points
+        input_xmin = (std::min)(p.x(),input_xmin);
+        input_ymin = (std::min)(p.y(),input_ymin);
+        input_zmin = (std::min)(p.z(),input_zmin);
+        input_xmax = (std::max)(p.x(),input_xmax);
+        input_ymax = (std::max)(p.y(),input_ymax);
+        input_zmax = (std::max)(p.z(),input_zmax);
+      }
+      
+      // update barycenter of all points
       v = v + (p - CGAL::ORIGIN);
       norm += 1;
     }
     //
-    Point p(xmin,ymin,zmin);
+    Point p(xmin,ymin,zmin); // for all points
     Point q(xmax,ymax,zmax);
     m_bounding_box = Iso_cuboid(p,q);
-    //
     m_barycenter = CGAL::ORIGIN + v / norm;
+    //
+    Point input_p(input_xmin,input_ymin,input_zmin); // for INPUT points
+    Point input_q(input_xmax,input_ymax,input_zmax);
+    m_input_points_bounding_box = Iso_cuboid(input_p,input_q);
 
-    // bounding sphere
-    Min_sphere_d< CGAL::Optimisation_d_traits_3<Gt> > ms3(points_begin(), points_end());
+    // Compute bounding spheres
+    Min_sphere_d ms3(points_begin(), points_end()); // for all points
     m_bounding_sphere = Sphere(ms3.center(), ms3.squared_radius());
+    //
+    Min_sphere_d input_points_ms3(input_points_begin(), input_points_end()); // for INPUT points
+    m_input_points_bounding_sphere = Sphere(input_points_ms3.center(), input_points_ms3.squared_radius());
 
-    // Compute standard deviation of the distance to barycenter
+    // Compute standard deviation of the distance to barycenter (for all points)
     typename Geom_traits::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (Point_iterator it = points_begin(); it != points_end(); it++)
@@ -527,6 +604,21 @@ private:
 
     m_bounding_box_is_valid = true;
   }
+
+// Data members
+private:
+
+  // Indicate if m_*bounding_box, m_*bounding_sphere, m_barycenter and 
+  // m_diameter_standard_deviation below are valid.
+  mutable bool m_bounding_box_is_valid;
+  
+  mutable Iso_cuboid m_bounding_box; // bounding box of all points.
+  mutable Iso_cuboid m_input_points_bounding_box; // bounding box of INPUT points.
+  mutable Sphere m_bounding_sphere; // bounding sphere of all points.
+  mutable Sphere m_input_points_bounding_sphere; // bounding sphere of INPUT points.
+  mutable Point m_barycenter; // barycenter of all points.
+  mutable FT m_diameter_standard_deviation; // standard deviation of the distance 
+                                            // to barycenter (for all points).
 
 }; // end of Implicit_fct_delaunay_triangulation_3
 

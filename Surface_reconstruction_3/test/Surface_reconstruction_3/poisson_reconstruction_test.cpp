@@ -178,11 +178,13 @@ int main(int argc, char * argv[])
         // Get implicit surface's size
         Sphere bounding_sphere = poisson_function.bounding_sphere();
         FT size = sqrt(bounding_sphere.squared_radius());
-        size = size / FT(2); // empiric rule to get the bounding sphere ignoring Steiner points
 
         // defining the surface
+        Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
+        FT    sm_sphere_radius = 2 * size; 
+        sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
         Surface_3 surface(poisson_function,
-                          Sphere(inner_point,4*size*size)); // bounding sphere centered at inner_point
+                          Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
         // defining meshing criteria
         FT sm_angle = 30.0; // theorical guaranty if angle >= 30
@@ -193,10 +195,10 @@ int main(int argc, char * argv[])
                                                             sm_distance*size); // upper bound of distance to surface
 
         // meshing surface
-std::cerr << "make_surface_mesh(sphere={center=("<<inner_point << "), radius^2="<<4*size*size << "},\n"
-          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
-        make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
+//std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+//          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
+//          << "                  Non_manifold_tag())...\n";
+        CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
         // Print status
         std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
