@@ -21,7 +21,7 @@ void _test_intersection_construct(K k)
   Intersect_3 theIntersect_3 = k.intersect_3_object();
   Construct_line_3 theConstruct_line_3 = k.construct_line_3_object();
 
-  std::cout << "Testing intersection(Line_arc, Line_arc)..." << std::endl;
+  std::cout << "Testing intersection(Line, Line)..." << std::endl;
   // Testing the case where it overlaps, or do not intersect
   for(int vx=0;vx<4;vx++) {
     for(int vy=1;vy<4;vy++) {
