@@ -33,21 +33,21 @@ void _test_bounding_box_construct(const K &k)
 
   c = theConstruct_circle_3(Point_3(0,0,0), 1, Plane_3(1, 0, 0, 0));
   b = c.bbox();
-  CGAL_test_assert(b.xmin() <= 0.001);
-  CGAL_test_assert(b.xmax() >= -0.001);
-  CGAL_test_assert(b.ymin() <= -0.999);
-  CGAL_test_assert(b.ymax() >= 0.999);
-  CGAL_test_assert(b.zmin() <= -0.999);
-  CGAL_test_assert(b.zmax() >= 0.999);
+  assert(b.xmin() <= 0.001);
+  assert(b.xmax() >= -0.001);
+  assert(b.ymin() <= -0.999);
+  assert(b.ymax() >= 0.999);
+  assert(b.zmin() <= -0.999);
+  assert(b.zmax() >= 0.999);
 
   c = theConstruct_circle_3(Sphere_3(Point_3(0,0,0), 1), Plane_3(1, 0, 0, -FT(1)/FT(2)));
   b = c.bbox();
-  CGAL_test_assert(b.xmin() <= 0.501);
-  CGAL_test_assert(b.xmax() >= 0.499);
-  CGAL_test_assert(b.ymin() <= (-std::sqrt(0.5)+0.001));
-  CGAL_test_assert(b.ymax() >= (std::sqrt(0.5)-0.001));
-  CGAL_test_assert(b.zmin() <= (-std::sqrt(0.5)+0.001));
-  CGAL_test_assert(b.zmax() >= (std::sqrt(0.5)-0.001));
+  assert(b.xmin() <= 0.501);
+  assert(b.xmax() >= 0.499);
+  assert(b.ymin() <= (-std::sqrt(0.5)+0.001));
+  assert(b.ymax() >= (std::sqrt(0.5)-0.001));
+  assert(b.zmin() <= (-std::sqrt(0.5)+0.001));
+  assert(b.zmax() >= (std::sqrt(0.5)-0.001));
 }
 
 template <class K>
@@ -103,18 +103,18 @@ void _test_circle_construct(const K &k) {
     const Point_3 p = Point_3(x,y,z);
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
     
-    CGAL_test_assert(circle.supporting_plane().a() == a);
-    CGAL_test_assert(circle.supporting_plane().b() == b);
-    CGAL_test_assert(circle.supporting_plane().c() == c);
-    CGAL_test_assert(circle.supporting_plane().d() == d);
-    CGAL_test_assert(circle.center().x() == x);
-    CGAL_test_assert(circle.center().y() == y);
-    CGAL_test_assert(circle.center().z() == z);
-    CGAL_test_assert(circle.squared_radius() == sqr);
+    assert(circle.supporting_plane().a() == a);
+    assert(circle.supporting_plane().b() == b);
+    assert(circle.supporting_plane().c() == c);
+    assert(circle.supporting_plane().d() == d);
+    assert(circle.center().x() == x);
+    assert(circle.center().y() == y);
+    assert(circle.center().z() == z);
+    assert(circle.squared_radius() == sqr);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
     Circle_3 circle3 = theConstruct_circle_3(p,sqr,Vector_3(a,b,c));
-    CGAL_test_assert(theEqual_3(circle,circle2));
-    CGAL_test_assert(theEqual_3(circle,circle3));
+    assert(theEqual_3(circle,circle2));
+    assert(theEqual_3(circle,circle3));
  }
 
   // No need to test the constructors based on intersection
@@ -155,27 +155,27 @@ void _test_construct_radical_plane(const K &k) {
           intersection_1 = theIntersect_3(s, sl_1);
           Plane_3 p = theConstruct_radical_plane_3(s, sl_1);
           Plane_3 global_p = CGAL::radical_plane(s, sl_1);
-          CGAL_test_assert(p == global_p);
+          assert(p == global_p);
           // No intersection
           if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
-            CGAL_test_assert(intersection_1.is_empty());
+            assert(intersection_1.is_empty());
             CGAL::Object intersection_21, intersection_22;
             intersection_21 = theIntersect_3(p, sl_1);
             intersection_22 = theIntersect_3(p, s);
-            CGAL_test_assert(intersection_21.is_empty());
-            CGAL_test_assert(intersection_22.is_empty());
+            assert(intersection_21.is_empty());
+            assert(intersection_22.is_empty());
           }
           // Tangent, 1 Intersection
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
             Point_3 interp;
-            CGAL_test_assert(assign(interp, intersection_1));
-            CGAL_test_assert(theHas_on_3(p, interp));
+            assert(assign(interp, intersection_1));
+            assert(theHas_on_3(p, interp));
           }
           // 1 Intersection Circle
           else {
             Circle_3 circle1;
-            CGAL_test_assert(assign(circle1, intersection_1));
-            CGAL_test_assert(theHas_on_3(p, circle1));
+            assert(assign(circle1, intersection_1));
+            assert(theHas_on_3(p, circle1));
           }
         }
       }
@@ -238,7 +238,7 @@ void _test_circle_equal(const K &k) {
     const Point_3 p = Point_3(x,y,z);
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
-    CGAL_test_assert(theEqual_3(circle,circle2));
+    assert(theEqual_3(circle,circle2));
   }
 }
 
@@ -265,10 +265,10 @@ void _test_has_on_predicate(const K &k) {
   Point_3 p_2_s_1 = Point_3(0,1,0);
   Point_3 p_3_s_1 = Point_3(0,0,1);
   Point_3 p_4_s_1 = Point_3(1,0,1);
-  CGAL_test_assert(theHas_on_3(s_1,p_1_s_1));
-  CGAL_test_assert(theHas_on_3(s_1,p_2_s_1));
-  CGAL_test_assert(theHas_on_3(s_1,p_3_s_1));
-  CGAL_test_assert(!theHas_on_3(s_1,p_4_s_1));
+  assert(theHas_on_3(s_1,p_1_s_1));
+  assert(theHas_on_3(s_1,p_2_s_1));
+  assert(theHas_on_3(s_1,p_3_s_1));
+  assert(!theHas_on_3(s_1,p_4_s_1));
 
   Circle_3 c_1 = theConstruct_circle_3(Point_3(0,0,0), 1, Plane_3(1,0,0,0));
   Circle_3 c_2 = theConstruct_circle_3(Point_3(0,0,0), 1, Plane_3(1,1,1,0));
@@ -276,30 +276,30 @@ void _test_has_on_predicate(const K &k) {
   Point_3 p_1_c_1 = Point_3(0,0,1);
   Point_3 p_2_c_1 = Point_3(0,1,0);
   Point_3 p_3_c_1 = Point_3(1,0,0);
-  CGAL_test_assert(theHas_on_3(c_1,p_1_c_1));
-  CGAL_test_assert(theHas_on_3(c_1,p_2_c_1));
-  CGAL_test_assert(!theHas_on_3(c_1,p_3_c_1));
+  assert(theHas_on_3(c_1,p_1_c_1));
+  assert(theHas_on_3(c_1,p_2_c_1));
+  assert(!theHas_on_3(c_1,p_3_c_1));
 
   std::cout << "Testing has_on(Sphere,Circle)..." << std::endl;
-  CGAL_test_assert(theHas_on_3(s_1,c_1));
-  CGAL_test_assert(theHas_on_3(s_1,c_2));
+  assert(theHas_on_3(s_1,c_1));
+  assert(theHas_on_3(s_1,c_2));
   Sphere_3 s_2 = theConstruct_sphere_3(Point_3(0,0,0),2);
-  CGAL_test_assert(!theHas_on_3(s_2,c_1));
-  CGAL_test_assert(!theHas_on_3(s_2,c_2));
+  assert(!theHas_on_3(s_2,c_1));
+  assert(!theHas_on_3(s_2,c_2));
   Sphere_3 s_3 = theConstruct_sphere_3(Point_3(5,0,0),26);
-  CGAL_test_assert(theHas_on_3(s_3,c_1));
-  CGAL_test_assert(!theHas_on_3(s_3,c_2));
+  assert(theHas_on_3(s_3,c_1));
+  assert(!theHas_on_3(s_3,c_2));
 
   std::cout << "Testing has_on(Plane,Circle)..." << std::endl;
   Plane_3 p_2 = theConstruct_plane_3(1,1,1,0);
   Plane_3 p_3 = theConstruct_plane_3(3,3,3,0);
   Plane_3 p_4 = theConstruct_plane_3(1,0,0,0);
-  CGAL_test_assert(theHas_on_3(p_2,c_2));
-  CGAL_test_assert(theHas_on_3(p_3,c_2));
-  CGAL_test_assert(!theHas_on_3(p_4,c_2));
-  CGAL_test_assert(!theHas_on_3(p_2,c_1));
-  CGAL_test_assert(!theHas_on_3(p_3,c_1));
-  CGAL_test_assert(theHas_on_3(p_4,c_1));
+  assert(theHas_on_3(p_2,c_2));
+  assert(theHas_on_3(p_3,c_2));
+  assert(!theHas_on_3(p_4,c_2));
+  assert(!theHas_on_3(p_2,c_1));
+  assert(!theHas_on_3(p_3,c_1));
+  assert(theHas_on_3(p_4,c_1));
 }
 
 template <class K>
@@ -320,10 +320,10 @@ void _test_bounded_side(const K &k) {
         Point_3 p = Point_3(x,y,z);
         CGAL::Bounded_side b = theBounded_side_3(s,p);
         if((x*x + y*y + z*z) < 25) {
-          CGAL_test_assert(b == CGAL::ON_BOUNDED_SIDE);
+          assert(b == CGAL::ON_BOUNDED_SIDE);
         } else if((x*x + y*y + z*z) > 25) {
-          CGAL_test_assert(b == CGAL::ON_UNBOUNDED_SIDE);
-        } else CGAL_test_assert(b == CGAL::ON_BOUNDARY);
+          assert(b == CGAL::ON_UNBOUNDED_SIDE);
+        } else assert(b == CGAL::ON_BOUNDARY);
       }
     }
   }
@@ -413,8 +413,8 @@ void _test_compute_on_circle_3(const K &k)
       circle[j] = theConstruct_circle_3(p,sqr,plane);
       const FT ardp = theCompute_area_divided_by_pi_3(circle[j]);
       const FT sldps = theCompute_squared_length_divided_by_pi_square_3(circle[j]);
-      CGAL_test_assert(ardp == r*r);
-      CGAL_test_assert(sldps == 4*r*r);
+      assert(ardp == r*r);
+      assert(sldps == 4*r*r);
     }
 
     const double ar1 = theCompute_approximate_area_3(circle[0]);
@@ -426,14 +426,14 @@ void _test_compute_on_circle_3(const K &k)
     const double asl2 = theCompute_approximate_squared_length_3(circle[1]);
     const FT sldps2 = theCompute_squared_length_divided_by_pi_square_3(circle[1]);
     if(circle[0].squared_radius() > circle[1].squared_radius()) {
-      CGAL_test_assert(ar1 > ar2); CGAL_test_assert(ardp1 > ardp2);
-      CGAL_test_assert(asl1 > asl2); CGAL_test_assert(sldps1 > sldps2);
+      assert(ar1 > ar2); assert(ardp1 > ardp2);
+      assert(asl1 > asl2); assert(sldps1 > sldps2);
     } else if(circle[0].squared_radius() == circle[1].squared_radius()) {
-      CGAL_test_assert(ar1 == ar2); CGAL_test_assert(ardp1 == ardp2);
-      CGAL_test_assert(asl1 == asl2); CGAL_test_assert(sldps1 == sldps2);
+      assert(ar1 == ar2); assert(ardp1 == ardp2);
+      assert(asl1 == asl2); assert(sldps1 == sldps2);
     } else {
-     CGAL_test_assert(ar1 < ar2); CGAL_test_assert(ardp1 < ardp2);
-      CGAL_test_assert(asl1 < asl2); CGAL_test_assert(sldps1 < sldps2);
+     assert(ar1 < ar2); assert(ardp1 < ardp2);
+      assert(asl1 < asl2); assert(sldps1 < sldps2);
     }
   }
 
@@ -443,7 +443,7 @@ void _test_compute_on_circle_3(const K &k)
 
 template <class K>
 bool
-_test_cls_circle_3(const K& k)
+_test_cls_circle_3(const K& k) {
 
   std::cout << "Testing class Circle_3" << std::endl;
   _test_circle_construct(k);
