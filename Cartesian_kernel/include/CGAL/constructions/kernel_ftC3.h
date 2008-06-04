@@ -28,6 +28,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class K>
+inline
+typename K::Plane_3
+radical_plane(const Sphere_3<K> &s1,
+              const Sphere_3<K> &s2)
+{
+  return K().construct_radical_plane_3_object()(s1,s2);
+}
+
 template < class FT >
 CGAL_KERNEL_INLINE
 void
