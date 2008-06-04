@@ -70,7 +70,12 @@ configure()
 {
   echo "Configuring... "
   
-  if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  -DCGAL_DIR="\$CGAL_DIR" .' ; then
+  if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
+                                     -DCGAL_DIR="\$CGAL_DIR" \\
+                                     -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
+                                     -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
+                                     .' ; then
+                                     
     echo "   succesful configuration" >> \$ERRORFILE
   else
     echo "   ERROR:    configuration" >> \$ERRORFILE
@@ -86,9 +91,7 @@ compile_and_run()
   echo "Compiling \$1 ... "
   SUCCES="y"
   
-  if eval '\${MAKE_CMD} TESTSUITE_CXXFLAGS="\$TESTSUITE_CXXFLAGS" \\
-                        TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" \\
-                        VERBOSE=1 -fMakefile \$1' ; then
+  if eval '\${MAKE_CMD} VERBOSE=1 -fMakefile \$1' ; then
     echo "   succesful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE

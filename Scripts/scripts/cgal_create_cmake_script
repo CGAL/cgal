@@ -28,7 +28,6 @@
 #
 # Usage: cgal_create_cmake_script [-options]
 #
-# -d   create a default CGAL cmake script
 # -q   create a CGAL cmake script with Qt support
 
 
