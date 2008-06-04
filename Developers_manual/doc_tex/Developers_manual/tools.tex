@@ -148,21 +148,20 @@ to create:
 \end{description}
 
 
-You should use this script to create {\tt CMakeLists.txt} for testing before submitting
+You should use this script to create {\tt 'CMakeLists.txt'} for testing before submitting
 your packages, but you should {\bf avoid} customizing the {\tt CMakeLists.txt} for your
-package and then submitting it. \ccIndexSubitem{\tt CMakeLists.txt}{submitting}
-CMake scrits get created automatically when a release is made. This ensures
-that the most up-to-date CMakeLists are created. Experience has shown
+package and then submitting it. \ccIndexSubitem{\tt 'CMakeLists.txt'}{submitting}
+CMake scripts get created automatically when a release is made. This ensures
+that the most up-to-date {\tt 'CMakeLists.txt'} are created. Experience has shown
 that cmake scripts need to be updated from time to time, especially if new
 compilers are supported. When cmake scripts are submitted as part of a package,
 they tend to get outdated.
 
-The {\tt CMakeLists.txt} created by this script has two hooks for customization:
+The {\tt 'CMakeLists.txt'} created by this script has two hooks for customization:
 First, if the directory
 where the cmake script is created contains a directory named {\tt include},%
 \index{include directory@{\tt include} directory!local}
-that
-directory will be on the header search path before any other files. This
+that directory will be on the header search path before any other files. This
 provides a means to override header files%
 \ccIndexSubitem{header files}{overriding}.
 Second, any of the following {\em cmake } variables can be defined
@@ -177,8 +176,8 @@ CGAL_EXE_LINKER_FLAGS_RELEASE
 CGAL_EXE_LINKER_FLAGS_DEBUG
 \end{verbatim}
 
-(the \_RELEASE and \_DEBUG variables are added to the general variable, so for each case 
-build type two are used: i.e. CGAL\_CXX\_FLAGS + CGAL\_CXX\_FLAGS\_DEBUG )
+(the \_RELEASE and \_DEBUG variables are added to the general variable, so for each
+build type, two are used: i.e. CGAL\_CXX\_FLAGS + CGAL\_CXX\_FLAGS\_DEBUG )
 
 \ccIndexSubitemEnd{\tt cmake script}{creating}
 \index{cgal_create_cmake_script script@{\tt cgal\_create\_cmake\_script} script|)}
@@ -265,8 +264,8 @@ The generated script calls {\tt cmake} with
 -DCGAL_CXX_FLAGS=${TESTSUITE_CXXFLAGS} -DCGAL_EXE_LINKER_FLAGS=${TESTSUITE_LDFLAGS}
 \end{verbatim}
 
-allowing those {\tt TESTSUITE\_*} enviroment variables to append compiler and linker
-flags as neccesary.
+allowing those {\tt TESTSUITE\_*} environment variables to append compiler and linker
+flags as necessary.
 
 \index{cgal_test_with_cmake script@{\tt cgal\_test\_with\_cmake} script|)}
 \index{create_cgal_test_with_cmake script@{\tt create\_cgal\_test\_with\_cmake} script|)}
@@ -488,17 +487,17 @@ Now cd into each such configuration folder and type
 
 {\tt{\em "<options>"}} corresponds to any specific settings you wish to
 pass to cmake to customize this configuration, 
-such as {\tt -DCMAKE\_BUILD\_TYPE=Debug}.
+such as {\tt -DCMAKE\_BUILD\_TYPE=Debug -DWITH\_CGALPDB='FALSE'}.
 
 Then type "make" to make sure the configuration is correct and the 
 libraries build.
 
 If you need the test script to automatically do anything for this particular configuration,
 such as setting {\tt TESTSUITE\_CXXFLAGS} and {\tt TESTSUITE\_LDFLAGS}, or setting up 
-the compiler, you can create here a shell script named {\tt setup}. The testsuite script 
-creates and runs temporary build and test scripts in each configuration folder to build an test the libraries. 
-Those temporary scripts are created with a verbatim copy of the contents of the {\tt setup} 
-file, if it exists, at the beggining, allowing you to boosttrap the process as needed.
+the compiler, you can create here a shell script named {\tt 'setup'}. The testsuite script 
+creates and runs temporary build and test scripts in each configuration folder to build and test the libraries. 
+Those temporary scripts are created starting with a verbatim copy of the contents of your {\tt 'setup'} 
+script (if it exists) allowing you to bootstrap the process as needed.
 
 The script uses {\tt wget} to download the release to test. The different options you
 may pass to {\tt wget} you should put in the {\tt WGET} variable in {\tt
@@ -546,7 +545,7 @@ to be built on $h$. If \texttt{BUILD\_ON\_$h$} is not defined, it
 defaults to the value of \texttt{COMPILERS\_$h$}. If
 both \texttt{BUILD\_ON\_$h$} and \texttt{COMPILERS\_$h$} are defined,
 the names listed in \texttt{COMPILERS\_$h$} must be a subset of the names 
-listed in \texttt{BUILD\_ON\_$h$}, othwewise the testing phase will fail
+listed in \texttt{BUILD\_ON\_$h$}, otherwise the testing phase will fail
 to cd into the configuration folder indicated.
 
 When the testsuite script builds the release being tested, 
@@ -653,27 +652,27 @@ The default value is empty (no limit).
 \paragraph{Testing with Visual Studio on cygwin} ~
 
 In order to test with Visual Studio you need to use cygwin and set up
-the enviroment for the command line compiler. This can be done
-by setting up the VC command line tools in the {\tt setup} script
-that is used to boostrap the build and test process, as explained before.
-Merly executing the {\tt vcvars32.bat} does not work since the variables
-in there will be defined only the enviroment for the batch file and not
-in the enviroment of the building/testing script (this is why
-the contents of 'setup' is copied into the script instead of just
-executing it)
+the environment for the command line compiler. This can be done
+by setting up the VC command line tools in the {\tt 'setup'} script
+that is used to bootstrap the build and test process, as explained before.
+Merely executing the {\tt 'vcvars32.bat'} that comes with VC does not work 
+since the variables in there will be defined only in the environment for the batch 
+file and not in the environment of the building/testing script (this is why
+the contents of the 'setup' script are copied into the build/test script 
+instead of 'setup' being just executed from there)
 
-Furthermore, within the but {\tt setup} script, the following must be
+Furthermore, within the {\tt 'setup'} script, the following must be
 considered: 
 
 The variables {\tt INCLUDE, LIB and LIBPATH} will be used by the Visual C++ compiler
 {\em directly}, that is, without the path translation that cygwin usually performs.
-Thus, the values for these variales must be a verbatim copy of the values defined in
-{\tt vcvars32.bat} of your installation.
+Thus, the values for these variables must be a verbatim copy of the values defined in
+the {\tt 'vcvars32.bat'} of your Visual Studio installation.
 
 On the other hand, the {\tt PATH} variable will be used by cygwin itself to locate the
 components of the command line tools (cl.exe, link.exe, etc.), thus, each Windows
-path specified in the PATH definition on {\tt vcvars32.bat} must be converted to a
-POSIX paths and properly appended to the cygwin's PATH variable.
+path specified in the PATH definition on {\tt 'vcvars32.bat'} must be converted to a
+POSIX path and properly appended to the cygwin PATH variable.
 
 Below is a sample 'setup' script for Visual C++ 9.0:
 
