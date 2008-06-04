@@ -587,6 +587,35 @@ into each configuration folder to test at, thus, all executables, temporaries
 and results are local to that configuration. When the scripts finishes testing 
 a configuration, the local {\tt /test } subdirectory is deleted.
 
+\paragraph{Command line options for the initial set up} ~
+
+{\tt autotest\_cgal\_with\_cmake} is meant to be run unattended by a cron job. 
+However, in order to simplify the initial set up some command line options are available:
+
+\begin{itemize}
+   \item {\tt -c} Uses an already untared internal release instead of
+                  downloading and untaring a new one. You can use this option
+                  to {\em resume} immediately the test suite process in case it
+                  failed before. In this case, the current contents of RELEASE\_NR 
+                  is used to identify the directory containing the release to test. 
+                  If the symbolic link 'CGAL-I' is currently targetting a different
+                  directory (as is the case normally, without the -c option),
+                  the release on that CGAL-I directory is used as a reference
+                  and its configuration copied into the new release. However,
+                  if CGAL-I points to the release whose test is being resumed,
+                  there is no reference release and no configuration is copied.
+                  In this case, the tested release must have some subdirectory
+                  under {\tt cmake/platforms}.    
+
+   \item {\tt -n} Skips the testing phase, finishing after the libraries has been built.
+                  You can use this option to verify that your system contains all the
+                  necessary elements for the libraries to be build with cmake.
+
+   \item {\tt -l} Do not upload the results to the server.
+                  You can use this option to avoid uploading incomplete results until
+                  the testsuite process works correctly in your system.
+\end{itemize}
+
 \paragraph{List of configurable variables} ~
 
 {\tt MYSHELL} is a variable that must be defined in {\tt .autocgalrc},
@@ -687,6 +716,7 @@ export PATH='/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/Common7/IDE':
 /Program Files/Microsoft Visual Studio 9.0/Common7/Tools/bin':'/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/VC/VCPackages':'/cygdrive/c/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/bin':'/cygdrive/c/Program Files/Microsoft Visual Studio 8/SDK/v2.0/bin':$PATH
 
 \end{verbatim}
+
 
 \index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
 \index{autotest_cgal_with_cmake script@{\tt autotest\_cgal\_with\_cmake} script|)}
