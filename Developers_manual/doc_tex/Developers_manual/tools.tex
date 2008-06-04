@@ -137,35 +137,52 @@ This variable can be set, {\em e.g.}, as an environment variable in
 
 The shell script
 \ccAnchor{https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/Scripts/scripts/cgal_create_cmake_script?root=cgal&view=markup}
-{{\tt cgal\_create\_cmake\_script}} creates a \cgal\ cmake script (CMakeLists.txt) file
+{{\tt cgal\_create\_cmake\_script}} creates a \cgal\ cmake script, that is, a {\tt CMakeLists.txt} file,
 in the current working directory.
-The cmake script will have commands to make an executable from every {\tt .C}
+The cmake script will have commands to make an executable from every {\tt .c}
 and {\tt .cpp} file which contains the word {\tt main} in the directory.
 The following options are available to indicate the kind of cmake script
 to create:
 \begin{description}
-\item[-d]   create a default CGAL makefile
-\item[-t]   create a CGAL makefile for the test suite
 \item[-q]   create a CGAL makefile with Qt support
 \end{description}
 
 
-The cmake scripts created by this script have two hooks for customization.
-If the directory
+You should use this script to create {\tt CMakeLists.txt} for testing before submitting
+your packages, but you should {\bf avoid} customizing the {\tt CMakeLists.txt} for your
+package and then submitting it. \ccIndexSubitem{\tt CMakeLists.txt}{submitting}
+CMake scrits get created automatically when a release is made. This ensures
+that the most up-to-date CMakeLists are created. Experience has shown
+that cmake scripts need to be updated from time to time, especially if new
+compilers are supported. When cmake scripts are submitted as part of a package,
+they tend to get outdated.
+
+The {\tt CMakeLists.txt} created by this script has two hooks for customization:
+First, if the directory
 where the cmake script is created contains a directory named {\tt include},%
 \index{include directory@{\tt include} directory!local}
 that
 directory will be on the header search path before any other files. This
 provides a means to override header files%
 \ccIndexSubitem{header files}{overriding}.
-Furthermore, the cmake script in the
-test suite (created with the {\tt -t} option), contain the variable
-{\tt EXTRA\_FLAGS}.\ccIndexSubitem{\tt cmake script}{test suite}%
-\index{extra_flags variable@{\tt EXTRA\_FLAGS} variable}
-This variable can be set, {\em e.g.}, as an environment variable in
-{\tt cgal\_test\_with\_cmake}, to add {\tt -I} or {\tt -D} options.
+Second, any of the following {\em cmake } variables can be defined
+to control the compiler and linker flags:
+
+\begin{verbatim}
+CGAL_CXX_FLAGS
+CGAL_CXX_FLAGS_RELEASE
+CGAL_CXX_FLAGS_DEBUG
+CGAL_EXE_LINKER_FLAGS
+CGAL_EXE_LINKER_FLAGS_RELEASE
+CGAL_EXE_LINKER_FLAGS_DEBUG
+\end{verbatim}
+
+(the \_RELEASE and \_DEBUG variables are added to the general variable, so for each case 
+build type two are used: i.e. CGAL\_CXX\_FLAGS + CGAL\_CXX\_FLAGS\_DEBUG )
+
 \ccIndexSubitemEnd{\tt cmake script}{creating}
 \index{cgal_create_cmake_script script@{\tt cgal\_create\_cmake\_script} script|)}
+
 
 \section{{\tt create\_cgal\_test}}
 \label{sec:create_cgal_test}
@@ -226,13 +243,12 @@ script when the test suite is run. The script
 {{\tt create\_cgal\_test\_with\_cmake}}
 will create the shell script {\tt cgal\_test\_with\_cmake} in the current directory.
 
-This file will be generated automatically for each subdirectory of {\tt test} if
+As is the case with cmake scripts, this file will be generated automatically 
+for each subdirectory of {\tt test} if
 it is not supplied by the package. This is also the preferred way.
 So you should use {\tt create\_cgal\_test\_with\_cmake} to test your package before
 submitting but generally should avoid submitting the file {\tt cgal\_test\_with\_cmake}.
-But sometimes you may want to do something extra in this script ({\em e.g.}, set
-the {\tt EXTRA\_FLAGS}\index{extra_flags variable@{\tt EXTRA\_FLAGS} variable}
-environment variable that is used in the makefile).
+But sometimes you may want to do something extra in this script ({\em e.g.}.
 In this case, you can run {\tt create\_cgal\_test\_with\_cmake} yourself and edit the result.
 The generated file contains a header that lists the requirements a
 {\tt cgal\_test\_with\_cmake} program should fulfill. These are also listed in
@@ -240,21 +256,18 @@ Section~\ref{sec:test_subdirectory} with the description of the
 {\tt cgal\_test\_with\_cmake} script.
 
 Files which are considered by {{\tt create\_cgal\_test\_with\_cmake}} are those with
-{\tt .C} or {\tt .cpp} extension, and which content match the word {\tt main}.
+{\tt .c} or {\tt .cpp} extension, and which content match the word {\tt main}.
 This way, no attempt is made at linking programs which are made of several
 object files.
 
-%\begin{itemize}
-%\item For every target two one-line messages are written to the file
-%      {\tt error.txt}\in
-%      The first one indicates if the compilation was successful,
-%the second one indicates if the execution was successful.
-%If one of the two was not successful, the line should start with 'ERROR:'
-%\item
-%Running the script should not require any user interaction
-%\item
-%The script should clean up object files and executables
-%\end{itemize}
+The generated script calls {\tt cmake} with
+\begin{verbatim}
+-DCGAL_CXX_FLAGS=${TESTSUITE_CXXFLAGS} -DCGAL_EXE_LINKER_FLAGS=${TESTSUITE_LDFLAGS}
+\end{verbatim}
+
+allowing those {\tt TESTSUITE\_*} enviroment variables to append compiler and linker
+flags as neccesary.
+
 \index{cgal_test_with_cmake script@{\tt cgal\_test\_with\_cmake} script|)}
 \index{create_cgal_test_with_cmake script@{\tt create\_cgal\_test\_with\_cmake} script|)}
 
@@ -430,8 +443,8 @@ The default value is empty (no limit).
 \ccIndexSubitem{test suite}{internal release}
 
 The shell script {\tt autotest\_cgal\_with\_cmake} is used to run automated test suites for
-the internal releases of the library. The script takes no command-line
-argument, but it is configurable using a {\tt .autocgalrc} file stored
+the internal releases of the library. The script need no command-line
+arguments, and it is configurable using a {\tt .autocgalrc} file stored
 in {\tt \$HOME}.
 It is meant to be run regularly by a cron job run by the testers.
 
@@ -472,13 +485,20 @@ in the test results.
 
 Now cd into each such configuration folder and type 
 {\tt cmake {\em <options>} ../../..} 
+
 {\tt{\em "<options>"}} corresponds to any specific settings you wish to
 pass to cmake to customize this configuration, 
-such as {\tt -DCMAKE\_BUILD\_TYPE=Debug -DEXTRA\_FLAGS=...}.
+such as {\tt -DCMAKE\_BUILD\_TYPE=Debug}.
 
-Since this release is not one which will be tested there is no need
-to build it and configuring it is enough.
+Then type "make" to make sure the configuration is correct and the 
+libraries build.
 
+If you need the test script to automatically do anything for this particular configuration,
+such as setting {\tt TESTSUITE\_CXXFLAGS} and {\tt TESTSUITE\_LDFLAGS}, or setting up 
+the compiler, you can create here a shell script named {\tt setup}. The testsuite script 
+creates and runs temporary build and test scripts in each configuration folder to build an test the libraries. 
+Those temporary scripts are created with a verbatim copy of the contents of the {\tt setup} 
+file, if it exists, at the beggining, allowing you to boosttrap the process as needed.
 
 The script uses {\tt wget} to download the release to test. The different options you
 may pass to {\tt wget} you should put in the {\tt WGET} variable in {\tt
@@ -505,8 +525,9 @@ Once the latest release has been downloaded, unzipped and untared,
 say under {\tt \$CGAL\_ROOT/CGAL-3.1-I-abc}, then for each configuration
 folder found under {\tt \$CGAL\_ROOT/CGAL-I/cmake/platforms}, a directory
 with the same name is created under {\tt \$CGAL\_ROOT/CGAL-3.1-I-abc}
-and the file CMakeCache.txt from reference release is copied into this
-new directory. This copies all the configuration settings from
+and the files {\tt CMakeCache.txt} and {\tt setup} from each such source 
+folder are copied (if they exist) into this new directory.
+This copies all the configuration settings from
 {\tt CGAL-I} into the new release to be tested.
 
 The next step is to specify the name of the hosts. To do that, you
@@ -516,7 +537,7 @@ must also specify the variable \texttt{COMPILERS\_$h$} as a list of
 configuration names for which the testsuite is to be run on $h$. 
 Every name in this list must correspond to some existing
 configuration folder of the release being tested
-(that is, under {\tt \$CGAL\_ROOT/CGAL-3.1-I-abc/cmake/platforms}).
+(that is, to a directory under {\tt \$CGAL\_ROOT/CGAL-3.1-I-abc/cmake/platforms}).
 
 
 Optionally, you can also specify a variable \texttt{BUILD\_ON\_$h$} as
@@ -540,7 +561,7 @@ copied from {\tt CGAL-I}.
 
 The names listed in \texttt{COMPILERS\_$h$} indicate in which configuration folders
 to run the testsuite. If any name listed in here does not correspond to an existing
-configuration folder it is ignored. Setting this to \texttt{all} causes the
+configuration folder, it will be just ignored. Setting this to \texttt{all} causes the
 testsuite to be run on each configuration folder found.
 
 \noindent Here is an example setting in {\tt .autocgalrc}:
@@ -555,6 +576,7 @@ COMPILERS_localhost="i686_Linux-2.4.17_g++-3.4.0"
 PROCESSORS_papillon="3" 
 BUILD_ON_papillon="all"
 \end{verbatim}\endgroup
+
 The {\tt PROCESSORS\_hostname} must be set if you have more
 than one processor on that host and of course if you want to give all
 of them to the testsuite. If you want to run the testsuite locally and
@@ -627,6 +649,45 @@ For example, specifying {\tt ''-c 0 -t 10800 -v 2000000''} will prevent
 the creation of dumped core files, will stop processes after 3 hours,
 and will kill them if they reach 2GB of memory.
 The default value is empty (no limit).
+
+\paragraph{Testing with Visual Studio on cygwin} ~
+
+In order to test with Visual Studio you need to use cygwin and set up
+the enviroment for the command line compiler. This can be done
+by setting up the VC command line tools in the {\tt setup} script
+that is used to boostrap the build and test process, as explained before.
+Merly executing the {\tt vcvars32.bat} does not work since the variables
+in there will be defined only the enviroment for the batch file and not
+in the enviroment of the building/testing script (this is why
+the contents of 'setup' is copied into the script instead of just
+executing it)
+
+Furthermore, within the but {\tt setup} script, the following must be
+considered: 
+
+The variables {\tt INCLUDE, LIB and LIBPATH} will be used by the Visual C++ compiler
+{\em directly}, that is, without the path translation that cygwin usually performs.
+Thus, the values for these variales must be a verbatim copy of the values defined in
+{\tt vcvars32.bat} of your installation.
+
+On the other hand, the {\tt PATH} variable will be used by cygwin itself to locate the
+components of the command line tools (cl.exe, link.exe, etc.), thus, each Windows
+path specified in the PATH definition on {\tt vcvars32.bat} must be converted to a
+POSIX paths and properly appended to the cygwin's PATH variable.
+
+Below is a sample 'setup' script for Visual C++ 9.0:
+
+\begin{verbatim}
+export INCLUDE='C:\Program Files\Microsoft Visual Studio 9.0\VC\ATLMFC\INCLUDE;C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE;C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\include;C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\include;c:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\include\'
+
+export LIB='C:\Program Files\Microsoft Visual Studio 9.0\VC\ATLMFC\LIB;C:\Program Files\Microsoft Visual Studio 9.0\VC\LIB;C:\Program Files\Microsoft Visual Studio 8\VC\PlatformSDK\lib;C:\Program Files\Microsoft Visual Studio 8\SDK\v2.0\lib;c:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\Lib\'
+
+export LIBPATH='C:\Program Files\Microsoft Visual Studio 9.0\VC\ATLMFC\LIB;C:\Program Files\Microsoft Visual Studio 9.0\VC\LIB'
+
+export PATH='/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/Common7/IDE':'/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/VC/BIN':'/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/Common7/Tools':'/cygdrive/c
+/Program Files/Microsoft Visual Studio 9.0/Common7/Tools/bin':'/cygdrive/c/Program Files/Microsoft Visual Studio 9.0/VC/VCPackages':'/cygdrive/c/Program Files/Microsoft Visual Studio 8/VC/PlatformSDK/bin':'/cygdrive/c/Program Files/Microsoft Visual Studio 8/SDK/v2.0/bin':$PATH
+
+\end{verbatim}
 
 \index{.autocgalrc configuration file@{\tt .autocgalrc} configuration file|)}
 \index{autotest_cgal_with_cmake script@{\tt autotest\_cgal\_with\_cmake} script|)}
