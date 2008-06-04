@@ -247,6 +247,15 @@ public:
 			a.rep().orientation());
     }
 
+    typename K2::Circle_3
+    operator()(const typename K1::Circle_3 &a) const
+    {
+        typedef typename K2::Circle_3  Circle_3;
+	return Circle_3(operator()(a.center()),
+		        c(a.squared_radius()),
+			c(a.supporting_plane()));
+    }
+
     typename K2::Triangle_3
     operator()(const typename K1::Triangle_3 &a) const
     {

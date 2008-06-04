@@ -3619,6 +3619,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Plane_3          Plane_3;
     typedef typename K::Triangle_3       Triangle_3;
     typedef typename K::Circle_3         Circle_3;
+    typedef typename K::Sphere_3         Sphere_3;
   public:
     typedef typename K::Bool_type        result_type;
     typedef Arity_tag< 2 >               Arity;

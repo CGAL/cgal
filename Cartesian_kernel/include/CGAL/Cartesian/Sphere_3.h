@@ -37,6 +37,7 @@ class SphereC3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Sphere_3             Sphere_3;
+  typedef typename R_::Circle_3             Circle_3;
 
   typedef Triple<Point_3, FT, Orientation>         Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -128,6 +129,7 @@ public:
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_POSITIVE_SIDE, R::ON_ORIENTED_BOUNDARY or
   // R::ON_NEGATIVE_SIDE
+  bool has_on(const Circle_3 &p) const;
   bool has_on_boundary(const Point_3 &p) const;
   bool has_on_positive_side(const Point_3 &p) const;
   bool has_on_negative_side(const Point_3 &p) const;
@@ -178,6 +180,22 @@ bounded_side(const typename SphereC3<R>::Point_3 &p) const
   return Bounded_side((Comparison_result)
                        CGAL_NTS compare(squared_radius(),
                                         squared_distance(center(),p)));
+}
+
+template < class R >
+inline
+bool
+SphereC3<R>::
+has_on(const typename SphereC3<R>::Circle_3 &c) const
+{
+  typedef typename SphereC3<R>::Point_3 Point_3;
+  typedef typename SphereC3<R>::FT      FT;
+  Point_3 proj = c.supporting_plane().projection(center());
+  if(!(proj == c.center())) return false;
+  const FT d2 = CGAL::square(center().x() - c.center().x()) +
+                CGAL::square(center().y() - c.center().y()) +
+                CGAL::square(center().z() - c.center().z());
+  return ((squared_radius() - d2) == c.squared_radius());
 }
 
 template < class R >
