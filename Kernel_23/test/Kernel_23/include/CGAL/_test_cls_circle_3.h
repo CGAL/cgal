@@ -185,7 +185,7 @@ void _test_construct_radical_plane(const K &k) {
 
 // -------------------------- PREDICATES
 
-emplate <class K>
+template <class K>
 void _test_circle_equal(const K &k) {
   typedef typename K::FT                               FT;
   typedef typename K::Point_3                          Point_3;
