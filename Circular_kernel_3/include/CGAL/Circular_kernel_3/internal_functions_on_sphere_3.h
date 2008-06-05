@@ -119,19 +119,21 @@ namespace CGAL {
     template < class SK >
     inline
     bool
-    non_oriented_equal(const typename SK::Sphere_3 & s1, 
-                       const typename SK::Sphere_3 & s2) {
+    non_oriented_equal(const typename SK::Sphere_3 & s1,
+                       const typename SK::Sphere_3 & s2)
+    {
       // Should we compare anyway even if they are degenerated?
       CGAL_kernel_assertion(!(s1.is_degenerate() || s2.is_degenerate()));
       return s1.center() == s2.center() &&
-             s1.squared_radius() == s2.squared_radius();
+      s1.squared_radius() == s2.squared_radius();
     }
 
     template < class SK >
     inline
     bool
-    non_oriented_equal(const typename SK::Plane_3 & p1, 
-                       const typename SK::Plane_3 & p2) {
+    non_oriented_equal(const typename SK::Plane_3 & p1,
+                       const typename SK::Plane_3 & p2)
+    {
       // Should we compare anyway even if they are degenerated?
       CGAL_kernel_assertion(!(p1.is_degenerate() || p2.is_degenerate()));
       if(is_zero(p1.a())) {
@@ -151,20 +153,18 @@ namespace CGAL {
     template < class SK >
     inline
     bool
-    non_oriented_equal(const typename SK::Circle_3 & c1, 
+    non_oriented_equal(const typename SK::Circle_3 & c1,
                        const typename SK::Circle_3 & c2) {
       // We see degeneracies on the other non_oriented_equal functions
-      if(!non_oriented_equal<SK>(c1.diametral_sphere(),
-                                 c2.diametral_sphere())) return false;
-      if(!non_oriented_equal<SK>(c1.supporting_plane(),
-                                 c2.supporting_plane())) return false;
+      if(!non_oriented_equal<SK>(c1.diametral_sphere(), c2.diametral_sphere())) return false;
+      if(!non_oriented_equal<SK>(c1.supporting_plane(), c2.supporting_plane())) return false;
       return true;
     }
 
     template< class SK>
     bool
-    non_oriented_equal( const typename SK::Line_3 &l1,
-                        const typename SK::Line_3 &l2)
+    non_oriented_equal(const typename SK::Line_3 &l1,
+                       const typename SK::Line_3 &l2)
     {
       typedef typename SK::Vector_3 Vector_3;
       if(!SK().has_on_3_object()(l1, l2.point())) return false;
@@ -203,124 +203,6 @@ namespace CGAL {
              (c1.target() == c2.target());
     }
 
-    template < class SK>
-    inline
-    typename SK::Plane_3
-    radical_plane(const typename SK::Sphere_3 & s1, 
-                  const typename SK::Sphere_3 & s2)
-    {
-      typedef typename SK::Plane_3 Plane_3;
-      typedef typename SK::Point_3 Point_3;
-      typedef typename SK::FT FT;
-      // Concentric Spheres don't have radical plane
-      CGAL_kernel_precondition (s1.center() != s2.center());
-      const FT a = 2*(s2.center().x() - s1.center().x());
-      const FT b = 2*(s2.center().y() - s1.center().y());
-      const FT c = 2*(s2.center().z() - s1.center().z());
-      const FT d = CGAL::square(s1.center().x()) + 
-        CGAL::square(s1.center().y()) +
-        CGAL::square(s1.center().z()) - s1.squared_radius() - 
-        CGAL::square(s2.center().x()) - 
-        CGAL::square(s2.center().y()) -
-        CGAL::square(s2.center().z()) + s2.squared_radius();
-      return Plane_3(a, b, c, d);
-    }
-
-    template < class SK, class OutputIterator >
-    OutputIterator
-    intersect_3(const typename SK::Plane_3 & p, 
-               const typename SK::Sphere_3 & s, 
-	       OutputIterator res) 
-    { 
-      typedef typename SK::Algebraic_kernel Algebraic_kernel;
-      typedef typename SK::Sphere_3 Sphere_3;
-      typedef typename SK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
-      typedef typename SK::Polynomial_1_3 Polynomial_1_3;
-      typedef typename SK::Circle_3 Circle_3;
-      typedef typename SK::Plane_3 Plane_3;
-      typedef typename SK::Point_3 Point_3;
-      typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef typename SK::Root_for_spheres_2_3 Root_for_spheres_2_3;
-      typedef typename SK::FT FT;
-
-      //~ CGAL_kernel_precondition(!p.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!s.rep().is_degenerate());
-      CGAL_kernel_precondition(!p.is_degenerate());
-      CGAL_kernel_precondition(!s.is_degenerate());
-
-      const FT d2 = CGAL::square(p.a()*s.center().x() + 
-                                 p.b()*s.center().y() + 
-                                 p.c()*s.center().z() + p.d()) /
-       (CGAL::square(p.a()) + CGAL::square(p.b()) + CGAL::square(p.c()));
-
-      // do not intersect
-      if(d2 >  s.squared_radius()) return res;
-      // tangent
-      if(d2 == s.squared_radius()) {
-        Polynomial_for_spheres_2_3 e1 = get_equation<SK>(s);
-        Polynomial_1_3 e2 = get_equation<SK>(p);
-        typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
-        solutions_container;
-        solutions_container solutions;
-        Algebraic_kernel().solve_object()(e1, e1, e2, std::back_inserter(solutions)); 
-        // only 1 solution
-        typename solutions_container::iterator it = solutions.begin(); 
-	*res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
-					    it->second ));
-        return res;
-      }
-      // d2 < s.squared_radius()
-      Point_3 center = p.projection(s.center());
-      *res++ = make_object(Circle_3(center,s.squared_radius() - d2,p));
-      return res;
-    }
-
-  namespace CGALi {
-    template < class SK >
-    inline
-    bool
-    do_intersect(const typename SK::Sphere_3 & s1, 
-                const typename SK::Sphere_3 & s2)
-    { 
-      typedef typename SK::Root_of_2 Root_of_2;
-      typedef typename SK::FT FT;
-      const FT dx = s2.center().x() - s1.center().x();
-      const FT dy = s2.center().y() - s1.center().y();
-      const FT dz = s2.center().z() - s1.center().z();
-      const FT d2 = CGAL::square(dx) +
-                  CGAL::square(dy) +
-                  CGAL::square(dz);
-      const FT sq_r1r2 = s1.squared_radius()*s2.squared_radius();
-      const FT sq_r1_p_sq_r2 = s1.squared_radius() + s2.squared_radius();
-      Root_of_2 left_1 = make_root_of_2(d2,FT(-2),sq_r1r2);
-      if(left_1 > sq_r1_p_sq_r2) return false;
-      Root_of_2 left_2 = make_root_of_2(d2,FT(2),sq_r1r2);
-      if(left_2 < sq_r1_p_sq_r2) return false;
-      return true;
-    }  
-  }
-
-    template < class SK, class OutputIterator >
-    OutputIterator
-    intersect_3(const typename SK::Sphere_3 & s1, 
-                const typename SK::Sphere_3 & s2, 
-	        OutputIterator res)
-    { 
-      typedef typename SK::Plane_3 Plane_3;
-      typedef typename SK::Sphere_3 Sphere_3;
-      //~ CGAL_kernel_precondition(!s1.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!s2.rep().is_degenerate());
-      CGAL_kernel_precondition(!s1.is_degenerate());
-      CGAL_kernel_precondition(!s2.is_degenerate());
-      if(non_oriented_equal<SK>(s1,s2)) {
-        *res++ = make_object(s1);
-        return res;
-      }
-      if(!CGALi::do_intersect<SK>(s1,s2)) return res;
-      Plane_3 p = radical_plane<SK>(s1,s2);
-      return intersect_3<SK>(p,s1,res);
-    }
-
     template < class SK, class OutputIterator >
     OutputIterator
     intersect_3(const typename SK::Sphere_3 & s, 
@@ -332,8 +214,6 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3      Equation_line; 
       typedef typename SK::Root_for_spheres_2_3        Root_for_spheres_2_3;
       typedef typename SK::Circular_arc_point_3        Circular_arc_point_3;
-      //~ CGAL_kernel_precondition(!s.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!l.rep().is_degenerate());
       CGAL_kernel_precondition(!s.is_degenerate());
       CGAL_kernel_precondition(!l.is_degenerate());      
       Equation_sphere e1 = get_equation<SK>(s);
@@ -350,52 +230,107 @@ namespace CGAL {
       return res;
     }
 
+   namespace CGALi {
+
+    // It just converts when the solution is a Point_3 to Circular_arc_point_3
+    
+    template < class SK, class OutputIterator >
+    OutputIterator
+    intersect_special(const typename SK::Sphere_3 & s1,
+                      const typename SK::Sphere_3 & s2,
+                      OutputIterator res)
+    {
+      Object obj = SK().intersect_3_object()(s1, s2);
+      if(obj.is_empty()) return res;
+      typename SK::Point_3 p;
+      if(assign(p, obj)) {
+        typename SK::Circular_arc_point_3 cp = p;
+        *res++ = make_object(std::make_pair(cp,2u));
+      } else {
+        *res++ = obj;
+      } return res;
+    }
+
+    template < class SK, class OutputIterator >
+    OutputIterator
+    intersect_special(const typename SK::Plane_3 & plane,
+                      const typename SK::Sphere_3 & sphere,
+                      OutputIterator res)
+    {
+      Object obj = SK().intersect_3_object()(plane, sphere);
+      if(obj.is_empty()) return res;
+      typename SK::Point_3 p;
+      if(assign(p, obj)) {
+        typename SK::Circular_arc_point_3 cp = p;
+        *res++ = make_object(std::make_pair(cp,2u));
+      } else {
+        *res++ = obj;
+      } return res;
+    }
+
+    template < class SK, class OutputIterator >
+    OutputIterator
+    intersect_special(const typename SK::Sphere_3 & sphere,
+                      const typename SK::Plane_3 & plane,
+                      OutputIterator res)
+    {
+      Object obj = SK().intersect_3_object()(plane, sphere);
+      if(obj.is_empty()) return res;
+      typename SK::Point_3 p;
+      if(assign(p, obj)) {
+        typename SK::Circular_arc_point_3 cp = p;
+        *res++ = make_object(std::make_pair(cp,2u));
+      } else {
+        *res++ = obj;
+      } return res;
+    }
+
+    }
+
     template < class SK, class OutputIterator >
     OutputIterator
     intersect_3(const typename SK::Sphere_3 & s1, 
                 const typename SK::Sphere_3 & s2, 
 	        const typename SK::Sphere_3 & s3, 
                 OutputIterator res)
-    { 
+    {
        typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
        typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
        typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
        typedef typename SK::Circle_3  Circle_3;
+       typedef typename SK::Point_3  Point_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
        typedef std::vector< Object > solutions_container;
-       //~ CGAL_kernel_precondition(!s1.rep().is_degenerate());
-       //~ CGAL_kernel_precondition(!s2.rep().is_degenerate());
-       //~ CGAL_kernel_precondition(!s3.rep().is_degenerate());
        CGAL_kernel_precondition(!s1.is_degenerate());
        CGAL_kernel_precondition(!s2.is_degenerate());
-       CGAL_kernel_precondition(!s3.is_degenerate());      
+       CGAL_kernel_precondition(!s3.is_degenerate());
        if(non_oriented_equal<SK>(s1,s2) && non_oriented_equal<SK>(s2,s3)) {
          *res++ = make_object(s1);
          return res;
        }
        if(non_oriented_equal<SK>(s1,s2)) {
-         return intersect_3<SK>(s1,s3,res);
+         return CGALi::intersect_special<SK>(s1, s3, res);
        }
-       if((non_oriented_equal<SK>(s1,s3)) || 
+       if((non_oriented_equal<SK>(s1,s3)) ||
           (non_oriented_equal<SK>(s2,s3))) {
-         return intersect_3<SK>(s1,s2,res);
+         return CGALi::intersect_special<SK>(s1, s2, res);
        }
        if(SK().collinear_3_object()(s1.center(),s2.center(),s3.center())) {
-         solutions_container solutions;
-         intersect_3<SK>(s1, s2, std::back_inserter(solutions));
-         if(solutions.size() == 0) return res;
-         std::pair<Circular_arc_point_3, unsigned> pair;
-         if(assign(pair,solutions[0])) {
-           if(SK().has_on_3_object()(s3,pair.first)) {
-             *res++ = solutions[0];
+         Object obj = SK().intersect_3_object()(s1, s2);
+         if(obj.is_empty()) return res;
+         Point_3 p;
+         if(assign(p, obj)) {
+           if(SK().has_on_3_object()(s3, p)) {
+             Circular_arc_point_3 cp = p;
+             *res++ = make_object(std::make_pair(cp,2u));
              return res;
            } else return res;
          }
          // must be a circle
          Circle_3 c;
-         assign(c,solutions[0]);
+         assign(c, obj);
          if(SK().has_on_3_object()(s3,c)) {
-           *res++ = solutions[0];
+           *res++ = obj;
            return res;
          }
          return res;
@@ -421,25 +356,22 @@ namespace CGAL {
                 const typename SK::Sphere_3 & s1, 
 	        const typename SK::Sphere_3 & s2, 
                 OutputIterator res)
-    { 
+    {
       typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
       typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Plane_3  Plane_3;
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
-      //~ CGAL_kernel_precondition(!p.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!s1.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!s2.rep().is_degenerate());
       CGAL_kernel_precondition(!p.is_degenerate());
       CGAL_kernel_precondition(!s1.is_degenerate());
       CGAL_kernel_precondition(!s2.is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
-         return intersect_3<SK>(p,s1,res);
+         return CGALi::intersect_special<SK>(p,s1,res);
       }
-      Plane_3 radical_p = radical_plane<SK>(s1,s2);
+      Plane_3 radical_p = SK().construct_radical_plane_3_object()(s1,s2);
       if(non_oriented_equal<SK>(p,radical_p)) {
-         return intersect_3<SK>(p,s1,res);
+         return CGALi::intersect_special<SK>(p,s1,res);
       }
       Equation_sphere e1 = get_equation<SK>(s1);
       Equation_sphere e2 = get_equation<SK>(s2);
@@ -451,7 +383,7 @@ namespace CGAL {
       for ( typename algebraic_solutions_container::iterator it = 
             solutions.begin(); it != solutions.end(); ++it ) {
        *res++ = make_object(std::make_pair(Circular_arc_point_3(it->first),
-				    it->second ));
+                              it->second ));
       }
       return res;
     }
@@ -468,14 +400,11 @@ namespace CGAL {
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
-      //~ CGAL_kernel_precondition(!p1.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!p2.rep().is_degenerate());
-      //~ CGAL_kernel_precondition(!s.rep().is_degenerate());
       CGAL_kernel_precondition(!p1.is_degenerate());
       CGAL_kernel_precondition(!p2.is_degenerate());
       CGAL_kernel_precondition(!s.is_degenerate());      
       if(non_oriented_equal<SK>(p1,p2)) {
-         return intersect_3<SK>(p1,s,res);
+         return CGALi::intersect_special<SK>(p1,s,res);
       }
       Equation_plane e1 = get_equation<SK>(p1);
       Equation_plane e2 = get_equation<SK>(p2);
@@ -551,7 +480,6 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3    Equation_line;
       typedef typename SK::Circle_3  Circle_3;
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
-      //~ CGAL_kernel_precondition(!l.rep().is_degenerate());
       CGAL_kernel_precondition(!l.is_degenerate());
       Equation_circle e1 = get_equation<SK>(c);
       Equation_line e2 = get_equation<SK>(l);

@@ -29,7 +29,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 
-#include<CGAL/utility.h>
+#include <CGAL/utility.h>
+#include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
 
 namespace CGAL {
   namespace CGALi{

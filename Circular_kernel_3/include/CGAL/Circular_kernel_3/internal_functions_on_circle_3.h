@@ -52,14 +52,6 @@ namespace CGAL {
       return Circle_3(center,s.squared_radius() - d2,p);
     }
 
-    template< class SK>
-    bool
-    equal( const typename SK::Circle_3 &p1,
-           const typename SK::Circle_3 &p2)
-    {
-      return p1.rep() == p2.rep();
-    }
-
   }//SphericalFunctors
 }//CGAL
 

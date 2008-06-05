@@ -33,16 +33,6 @@ namespace CGAL {
     template <class SK>
     inline
     bool
-    has_on(const typename SK::Sphere_3 &a, 
-           const typename SK::Point_3 &p)
-    { 
-      //~ return a.rep().has_on_boundary(p);
-      return a.has_on_boundary(p);
-    }
-
-    template <class SK>
-    inline
-    bool
     has_on(const typename SK::Sphere_with_radius_3 &a, 
            const typename SK::Point_3 &p)
     { 
@@ -69,17 +59,7 @@ namespace CGAL {
            const typename SK::Circular_arc_point_on_reference_sphere_3 &p){
       return has_on<SK>(static_cast<const typename SK::Sphere_3&>(a),static_cast<const typename SK::Circular_arc_point_3&>(p));
     }
-/*
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Plane_3 &a, 
-           const typename SK::Point_3 &p)
-    { 
-      //~ return a.rep().has_on(p);
-      return a.has_on(p);
-    }
-*/
+
     template <class SK>
     inline
     bool
@@ -91,17 +71,7 @@ namespace CGAL {
       Equation equation = get_equation<SK>(a);
       return (Algebraic_kernel().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
-/*
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Line_3 &a,
-           const typename SK::Point_3 &p)
-    { 
-      //~ return a.rep().has_on(p);
-      return a.has_on(p);
-    }
-*/
+
     template <class SK>
     inline
     bool
@@ -112,16 +82,6 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3 Equation;
       Equation equation = get_equation<SK>(a);
       return p.rep().coordinates().is_on_line(equation);
-    }
-
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Circle_3 &a, 
-           const typename SK::Point_3 &p)
-    { 
-      return has_on<SK>(a.diametral_sphere(),p) &&
-             has_on<SK>(a.supporting_plane(),p);
     }
 
     template <class SK>
@@ -153,41 +113,6 @@ namespace CGAL {
     { 
       return has_on<SK>(a.diametral_sphere(),p) &&
              has_on<SK>(a.supporting_plane(),p);
-    }    
-    
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Sphere_3 &a, 
-           const typename SK::Circle_3 &p)
-    { 
-      typedef typename SK::Point_3 Point_3;
-      typedef typename SK::FT FT;
-      Point_3 proj = p.supporting_plane().projection(a.center());
-      if(!(proj == p.center())) return false;
-      const FT d2 = CGAL::square(a.center().x() - p.center().x()) +
-                    CGAL::square(a.center().y() - p.center().y()) +
-                    CGAL::square(a.center().z() - p.center().z());
-      return ((a.squared_radius() - d2) == p.squared_radius());
-    }
-
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Plane_3 &a, 
-           const typename SK::Line_3 &p)
-    { 
-      //~ return a.rep().has_on(p);
-      return a.has_on(p);
-    }
-
-    template <class SK>
-    inline
-    bool
-    has_on(const typename SK::Plane_3 &a, 
-           const typename SK::Circle_3 &p)
-    { 
-      return non_oriented_equal<SK>(a,p.supporting_plane());
     }
 
     template <class SK>
