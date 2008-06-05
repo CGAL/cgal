@@ -825,6 +825,9 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
+std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+          << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
+          << "                  Non_manifold_tag())...\n";
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
@@ -1100,6 +1103,9 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
+std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+          << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
+          << "                  Non_manifold_tag())...\n";
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
