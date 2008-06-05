@@ -47,16 +47,16 @@ template <class R_>
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Vector_3              Vector_3;
+  typedef typename R_::Sphere_3              Sphere_3;
   typedef typename R_::Direction_3           Direction_3;
 
   typedef Circle_3                           Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Circle_3>::value));
 
+public:
   typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<1>  Feature_dimension;
 
-public:
-  typedef typename R_::Sphere_3              Sphere_3;
   typedef typename R_::Kernel_base::Circle_3 Rep;
   typedef R_                                 R;
  
