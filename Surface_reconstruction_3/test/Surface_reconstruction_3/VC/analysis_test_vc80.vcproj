@@ -194,6 +194,14 @@
 			Name="Surface_reconstruction_3 package"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath="..\..\..\include\CGAL\average_spacing_3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\IO\surface_reconstruction_read_xyz.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

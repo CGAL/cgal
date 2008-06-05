@@ -20,6 +20,7 @@
 #define CGAL_SURFACE_RECONSTRUCTION_READ_XYZ_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/value_type_traits.h>
 #include <CGAL/surface_reconstruction_assertions.h>
 
@@ -28,11 +29,21 @@
 CGAL_BEGIN_NAMESPACE
 
 
-/// Read points from a .xyz file (position + optionally normal, ASCII).
+namespace CGALi {
+
+
+/// Read points (positions + normals, if available) from a .xyz file (ASCII).
+///
+/// @heading Parameters:
+/// @param PointWithNormal_3 OutputIterator's value_type.
+/// @param Kernel Geometric traits class.
+/// @param OutputIterator value_type must be a model of the PointWithNormal_3 concept.
+///
 /// @return true on success.
-template <typename OutputIterator> ///< OutputIterator value_type must be
-                                   ///< a model of the PointWithNormal_3 concept.
-bool surface_reconstruction_read_xyz(const char* pFilename, OutputIterator output)
+template <typename Kernel, typename PointWithNormal_3, typename OutputIterator>
+bool surface_reconstruction_read_xyz(const char* pFilename, 
+                                     OutputIterator output, 
+                                     PointWithNormal_3 /* unused */)
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Point_with_normal;
@@ -89,6 +100,61 @@ bool surface_reconstruction_read_xyz(const char* pFilename, OutputIterator outpu
 
   fclose(pFile);
   return true;
+}
+
+/// Read points (positions only) from a .xyz file (ASCII).
+/// Normals are ignored.
+///
+/// @heading Parameters:
+/// @param OutputIterator value_type must be Point_3.
+/// @param Kernel Geometric traits class.
+///
+/// @return true on success.
+template <typename Kernel, typename OutputIterator>
+bool surface_reconstruction_read_xyz(const char* pFilename, 
+                                     OutputIterator output, 
+                                     typename Kernel::Point_3 /* unused */)
+{
+  typedef typename value_type_traits<OutputIterator>::type Value_type;
+  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
+  typedef typename Point_with_normal_3<Kernel> Point_with_normal;
+
+  // Read file in temporary Point_with_normal_3 container
+  std::list<Point_with_normal> pwns;
+
+  // call 1st version
+  if (CGALi::surface_reconstruction_read_xyz<Kernel, Point_with_normal>(
+                          pFilename, std::back_inserter(pwns), Point_with_normal()))
+  {
+    // copy to Point_3 container
+    std::copy(pwns.begin(), pwns.end(), output);
+    
+    return true;
+  }
+  else
+    return false;
+}
+
+
+} // namespace CGALi
+
+
+/// Read points (positions + optionally normals) from a .xyz file (ASCII).
+/// If the ouput is a container of Point_3, normals are skipped.
+/// If the ouput is a container of PointWithNormal_3, normals are read.
+///
+/// @heading Parameters:
+/// @param OutputIterator value_type can be Point_3 or a model of the PointWithNormal_3 concept.
+///
+/// @return true on success.
+template <typename OutputIterator>
+bool surface_reconstruction_read_xyz(const char* pFilename, OutputIterator output)
+{
+  typedef typename value_type_traits<OutputIterator>::type Value_type;
+  typedef typename Kernel_traits<Value_type>::Kernel Kernel;
+
+  // call 1st or 2nd version
+  return CGALi::surface_reconstruction_read_xyz<Kernel>(pFilename, output, Value_type());
 }
 
 

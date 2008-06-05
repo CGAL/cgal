@@ -1,26 +1,27 @@
 // outliers_removal_test.cpp
 
-
 // ----------------------------------------------------------------------------
 // USAGE EXAMPLES
 // ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
 // Test the outliers removal methods
-// No output
 // Input files are .xyz
+// No output
 //----------------------------------------------------------
 // outliers_removal_test points1.xyz points2.xyz...
 
 
-// CGAL
 #include <CGAL/basic.h> // include basic.h before testing #defines
+
+// CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/boost/graph/properties.h>
 
 // This package
 #include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
+#include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
 #include <list>
@@ -42,30 +43,6 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
-
-// read point set from .xyz file
-bool read_point_set(char *input_filename,
-                    std::vector<Point>& points)
-{
-  std::cerr << "  Open " << input_filename << " for reading...";
-
-  std::ifstream stream(input_filename);
-  if(!stream.is_open())
-  {
-    std::cerr << "failed" << std::endl;
-    return false;
-  }
-
-  // read point set
-  Point point;
-  while(!stream.fail())
-  {
-    stream >> point;
-    points.push_back(point);
-  }
-  std::cerr << "ok (" << points.size() << " points)" << std::endl;
-  return true;
-}
 
 void test_avg_knn_sq_distance(const std::vector<Point>& points, // input point set
                               unsigned int k,// number of neighbors
@@ -106,8 +83,11 @@ int main(int argc, char * argv[])
   for(int i=1; i<argc; i++)
   {
     std::vector<Point> points;
-    if(read_point_set(argv[i],points))
+    std::cerr << "  Open " << argv[i] << " for reading...";
+    if(CGAL::surface_reconstruction_read_xyz(argv[i], std::back_inserter(points)))
     {
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
+      
       test_avg_knn_sq_distance(points, k, outliers_percentage);
     }
     else
@@ -115,3 +95,4 @@ int main(int argc, char * argv[])
   }
   return EXIT_SUCCESS;
 }
+ 

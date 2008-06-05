@@ -17,7 +17,10 @@
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
+
+// This package
 #include <CGAL/average_spacing_3.h>
+#include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
 #include <list>
@@ -40,30 +43,6 @@ typedef Kernel::Point_3 Point;
 // Private functions
 // ----------------------------------------------------------------------------
 
-// read point set from .xyz file
-bool read_point_set(char *input_filename,
-                    std::list<Point>& points)
-{
-  std::cerr << "  Open " << input_filename << " for reading...";
-
-  std::ifstream stream(input_filename);
-  if(!stream.is_open())
-  {
-    std::cerr << "failed" << std::endl;
-    return false;
-  }
-
-  // read point set
-  Point point;
-  while(!stream.fail())
-  {
-    stream >> point;
-    points.push_back(point);
-  }
-  std::cerr << "ok (" << points.size() << " points)" << std::endl;
-  return true;
-}
-
 void test_average_spacing(std::list<Point>& points,
                           const unsigned int k)
 {
@@ -74,6 +53,7 @@ void test_average_spacing(std::list<Point>& points,
   std::cerr << " ok" << std::endl;
 }
 
+
 // ----------------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------------
@@ -81,6 +61,7 @@ void test_average_spacing(std::list<Point>& points,
 int main(int argc, char * argv[])
 {
   std::cerr << "Analysis tests" << std::endl;
+  std::cerr << "No output" << std::endl;
 
   if(argc < 2)
   {
@@ -93,8 +74,11 @@ int main(int argc, char * argv[])
   for(int i=1; i<argc; i++)
   {
     std::list<Point> points;
-    if(read_point_set(argv[i],points))
+    std::cerr << "  Open " << argv[i] << " for reading...";
+    if(CGAL::surface_reconstruction_read_xyz(argv[i], std::back_inserter(points)))
     {
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
+      
       test_average_spacing(points,k);
     }
     else
@@ -103,4 +87,3 @@ int main(int argc, char * argv[])
   return EXIT_SUCCESS;
 }
  
-

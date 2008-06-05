@@ -1,16 +1,16 @@
 // normal_estimation_test.cpp
 
-
 // ----------------------------------------------------------------------------
 // USAGE EXAMPLES
 // ----------------------------------------------------------------------------
 
 //----------------------------------------------------------
 // Test the normal estimation methods
-// No output
 // Input files are .xyz
+// No output
 //----------------------------------------------------------
 // normal_estimation_test points1.xyz points2.xyz...
+
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
@@ -28,6 +28,7 @@
 #include <CGAL/orient_normals_minimum_spanning_tree_3.h>
 #include <CGAL/Oriented_normal_3.h>
 #include <CGAL/Vector_index_property_map.h>
+#include <CGAL/IO/surface_reconstruction_read_xyz.h>
 
 // STL stuff
 #include <list>
@@ -51,31 +52,6 @@ typedef CGAL::Oriented_normal_3<Kernel> Normal;
 // ----------------------------------------------------------------------------
 // Private functions
 // ----------------------------------------------------------------------------
-
-
-// read point set from .xyz file
-bool read_point_set(char *input_filename,
-                    std::vector<Point>& points)
-{
-  std::cerr << "  Open " << input_filename << " for reading...";
-
-  std::ifstream stream(input_filename);
-  if(!stream.is_open())
-  {
-    std::cerr << "failed" << std::endl;
-    return false;
-  }
-
-  // read point set
-  Point point;
-  while(!stream.fail())
-  {
-    stream >> point;
-    points.push_back(point);
-  }
-  std::cerr << "ok (" << points.size() << " points)" << std::endl;
-  return true;
-}
 
 void test_pca(const std::vector<Point>& points, // input point set
               std::vector<Normal>& normals, // computed normals
@@ -137,8 +113,11 @@ int main(int argc, char * argv[])
   for(int i=1; i<argc; i++)
   {
     std::vector<Point> points;
-    if(read_point_set(argv[i],points))
+    std::cerr << "  Open " << argv[i] << " for reading...";
+    if(CGAL::surface_reconstruction_read_xyz(argv[i], std::back_inserter(points)))
     {
+      std::cerr << "ok (" << points.size() << " points)" << std::endl;
+      
       std::vector<Normal> normals_pca, normals_jet_fitting;
       test_pca(points, normals_pca, k);
       test_jet_fitting(points, normals_jet_fitting, k);
