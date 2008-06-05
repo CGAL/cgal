@@ -677,6 +677,30 @@ public:
       return output;
     }
   };
+  
+  // Visitor for visit_incident_cells:
+  // WARNING: 2D ONLY
+  // outputs the faces obtained as degenerated cells
+  template <class OutputIterator, class Filter>
+  class DegCell_as_Facet_extractor {
+    OutputIterator output;
+    Filter filter;
+    public:
+    DegCell_as_Facet_extractor(Vertex_handle, OutputIterator _output, const Tds*, Filter _filter): 
+    output(_output), filter(_filter) {}
+
+    void operator()(Cell_handle c) {
+      Facet f = Facet(c,3);
+      if(filter(f))
+      	return;
+      *output++ = f;
+    }
+    CGAL::Emptyset_iterator facet_it() {return CGAL::Emptyset_iterator();}
+    OutputIterator result() {
+      return output;
+    }
+  };
+  
 
 	// Visitor for visit_incident_cells:
 	// outputs the result of Treatment applied to the vertices
@@ -757,8 +781,11 @@ public:
   OutputIterator
   incident_facets(Vertex_handle v, OutputIterator facets, Filter f = Filter()) const
   {
-    CGAL_triangulation_precondition( dimension() == 3 );
-    return visit_incident_cells<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
+    CGAL_triangulation_precondition( dimension() > 1 );
+    if(dimension() == 3)
+    	return visit_incident_cells<Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
+    else
+    	return visit_incident_cells<DegCell_as_Facet_extractor<OutputIterator, Filter>, OutputIterator>(v, facets, f);
   }
 
   template <class OutputIterator>

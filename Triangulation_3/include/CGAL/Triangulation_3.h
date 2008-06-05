@@ -963,8 +963,23 @@ public:
     public:
     Finite_filter(const Self* _t): t(_t) {}
     template<class T>
-    bool operator() (const T& e) {
+    bool operator() (const T& e) const {
       return t->is_infinite(e);
+    }
+  };
+
+  class Finite_filter_2D {
+    const Self* t;
+    public:
+    Finite_filter_2D(const Self* _t): t(_t) {}
+
+    template<class T>
+    bool operator() (const T& e) const {
+      return t->is_infinite(e);
+    }
+
+    bool operator() (const Cell_handle c) {
+      return t->is_infinite(c, 3);
     }
   };
 
@@ -972,13 +987,15 @@ public:
   OutputIterator
   incident_cells(Vertex_handle v, OutputIterator cells) const
   {
-      return _tds.incident_cells(v, cells);
+    return _tds.incident_cells(v, cells);
   }
 
   template <class OutputIterator>
   OutputIterator
   finite_incident_cells(Vertex_handle v, OutputIterator cells) const
   {
+  	if(dimension() == 2)
+  	  return _tds.incident_cells(v, cells, Finite_filter_2D(this));
     return _tds.incident_cells(v, cells, Finite_filter(this));
   }
   
@@ -1038,7 +1055,6 @@ public:
 
   bool is_valid_finite(Cell_handle c, bool verbose = false, int level=0) const;
 };
-
 
 template < class GT, class Tds >
 std::istream & 

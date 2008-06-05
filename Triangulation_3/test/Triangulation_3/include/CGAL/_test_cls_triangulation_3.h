@@ -743,8 +743,61 @@ _test_cls_triangulation_3(const Triangulation &)
     }
     std::cout << nbflips << " flips 2-3" << std::endl;
   }
+  
+  // Finite incident_* in dimension 2 test
+  std::cout << "    Testing finite_incident_* in dim 2  "<< std::endl;
+  Cls* T2[2];
+  T2[0] = &T2_0;
+  T2[1] = &T2_1;
+  
+    for(int k = 0; k < 2; ++k) {
+    std::cout << "      with triangulation " << k + 1 << ": ";
+
+    std::vector<Vertex_handle> f_vertices;
+    std::vector<Edge> f_edges;
+    std::vector<Facet> f_facets;
+    std::vector<Cell_handle> f_cells;
+
+    f_vertices.clear();
+    f_edges.clear();
+    f_facets.clear();
+    f_cells.clear();
+    
+    for(Finite_vertices_iterator i = T2[k]->finite_vertices_begin();
+	i != T2[k]->finite_vertices_end(); ++i) {
+      T2[k]->finite_incident_vertices(i, std::back_inserter(f_vertices));
+      T2[k]->finite_incident_edges(i, std::back_inserter(f_edges));
+      T2[k]->finite_incident_facets(i, std::back_inserter(f_facets));
+      T2[k]->finite_incident_cells(i, std::back_inserter(f_cells));
+    }
+    unsigned int nb_f_edges = 0;
+    Finite_edges_iterator feit = T2[k]->finite_edges_begin();
+    while(feit != T2[k]->finite_edges_end()) {
+      ++nb_f_edges;
+      ++feit;
+    }
+    unsigned int nb_f_facets = 0;
+    Finite_facets_iterator ffait = T2[k]->finite_facets_begin();
+    while(ffait != T2[k]->finite_facets_end()) {
+      ++nb_f_facets;
+      ++ffait;
+    }
+
+    // incidences
+    assert(f_edges.size() == f_vertices.size());
+    assert(2*nb_f_edges == f_edges.size());
+    assert(3*nb_f_facets == f_facets.size());
+    assert(3*nb_f_facets == f_cells.size());
+    
+    int nb_f_vertices = T2[k]->number_of_vertices();
+    
+    // Euler relation
+    assert(nb_f_vertices - nb_f_edges + nb_f_facets == 1);
+    std::cout << "ok\n";
+  }
+  
        // Finite incident_* to vertex test
-  std::cout << "    Testing finite_incident_*   "<< std::endl;
+  std::cout << "    Testing finite_incident_* in dim 3  "<< std::endl;
 
   Cls* T3[6];
   T3[0] = &T3_0;
