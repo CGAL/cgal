@@ -195,10 +195,9 @@ public:
     typename K2::Circle_3
     operator()(const typename K1::Circle_3 &a) const
     {
-        typedef typename K2::Circle_3  Circle_3;
-	return Circle_3(operator()(a.center()),
-		        c(a.squared_radius()),
-			c(a.supporting_plane()));
+        return k.construct_circle_3_object()(operator()(a.center()),
+                                             fc(a.squared_radius()),
+                                             operator()(a.supporting_plane()));
     }
 
     typename K2::Triangle_3

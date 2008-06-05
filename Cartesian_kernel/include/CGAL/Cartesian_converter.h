@@ -253,7 +253,7 @@ public:
         typedef typename K2::Circle_3  Circle_3;
 	return Circle_3(operator()(a.center()),
 		        c(a.squared_radius()),
-			c(a.supporting_plane()));
+			operator()(a.supporting_plane()));
     }
 
     typename K2::Triangle_3
