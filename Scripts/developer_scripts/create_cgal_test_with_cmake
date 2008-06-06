@@ -74,6 +74,7 @@ configure()
                                      -DCGAL_DIR="\$CGAL_DIR" \\
                                      -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
                                      -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
+                                     -DCMAKE_BUILD_TYPE=NOTFOUND \\
                                      .' ; then
                                      
     echo "   succesful configuration" >> \$ERRORFILE
