@@ -3,6 +3,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
+#include <CGAL/Timer.h>
+
 
 #include "surface.h"
 #include "binary_image.h"
@@ -115,6 +117,11 @@ private:
   bool lists_draw_surface_is_valid;
   std::vector<GLuint> lists_draw_surface_mc;
   bool lists_draw_surface_mc_is_valid;
+
+  CGAL::Timer sm_timer;
+  CGAL::Timer mc_timer;
+  int sm_total_time;
+  int mc_total_time;
 private:
   template <typename Iterator>
   void gl_draw_surface(Iterator begin, Iterator end, const QTreeWidgetItem* = 0);

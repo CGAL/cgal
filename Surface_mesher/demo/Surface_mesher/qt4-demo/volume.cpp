@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Timer.h>
 
 #include "volume.h"
 #include "viewer.h"
@@ -439,7 +438,7 @@ void Volume::check_can_export_off()
 void Volume::status_message(QString string)
 {
   std::cerr << qPrintable(string) << std::endl;
-  mw->statusBar()->showMessage(string, 20000);
+  mw->statusBar()->showMessage(string);
 }
 
 void Volume::busy() const 
@@ -470,11 +469,11 @@ void Volume::display_marchin_cube()
       return;
     }
 
-    CGAL::Timer timer;
+    mc_timer.reset();
     busy();
     status_message("Marching cubes...");
 
-    timer.start();
+    mc_timer.start();
     m_surface_mc.clear();
 
     if(mc.ntrigs()!=0)
@@ -511,7 +510,7 @@ void Volume::display_marchin_cube()
       std::vector<double> facets;
       mc.get_facets(facets);
 
-      timer.stop();
+      mc_timer.stop();
       const unsigned int begin = isovalue_id == 0 ? 0 : nbs_of_mc_triangles[isovalue_id-1];
       const unsigned int nbt = facets.size() / 9;
       for(unsigned int i=begin;i<nbt;i++)
@@ -527,15 +526,11 @@ void Volume::display_marchin_cube()
         m_surface_mc.push_back(Facet(t,n,isovalues_list->item(isovalue_id)));
       }
       nbs_of_mc_triangles[isovalue_id]=m_surface_mc.size();
-      timer.start();
+      mc_timer.start();
     }
-    timer.stop();
+    mc_timer.stop();
     not_busy();
-
-    status_message(tr("Marching cubes...done. %2 facets in %1s (CPU time), total time is %3s.")
-                   .arg(timer.time())
-                   .arg(m_surface_mc.size())
-                   .arg(total_time.elapsed()/1000.));
+    mc_total_time = total_time.elapsed();
 
     // invalidate the display list
     lists_draw_surface_mc_is_valid = false;
@@ -561,6 +556,10 @@ void Volume::display_marchin_cube()
                           bbox.ymax(),
                           bbox.zmax());
   }
+  status_message(tr("Marching cubes done. %2 facets in %1s (CPU time), total time is %3s.")
+                 .arg(mc_timer.time())
+                 .arg(m_surface_mc.size())
+                 .arg(mc_total_time/1000.));
 }
 
 void Volume::display_surface_mesher_result()
@@ -584,12 +583,12 @@ void Volume::display_surface_mesher_result()
     }
 
     m_surface.clear();
-    CGAL::Timer timer;
+    sm_timer.reset();
     busy();
 
     status_message("Surface meshing...");
 
-    timer.start();
+    sm_timer.start();
 
     c2t3.clear();
     del.clear();
@@ -657,7 +656,7 @@ void Volume::display_surface_mesher_result()
 
     // meshing surface
     make_surface_mesh(c2t3, surface, oracle, criteria, CGAL::Non_manifold_tag(), 0);
-    timer.stop();
+    sm_timer.stop();
     not_busy();
 
     // get output surface
@@ -678,14 +677,9 @@ void Volume::display_surface_mesher_result()
       m_surface.push_back(Facet(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
     }
 
-    const unsigned int nbt = m_surface.size();
-    status_message(tr("Surface meshing...done. %1 facets in %2s (CPU time), total time is %3s.)")
-                   .arg(nbt)
-                   .arg(timer.time())
-                   .arg(total_time.elapsed()/1000.));
-
     // invalidate the display list
     lists_draw_surface_is_valid = false;
+    sm_total_time = total_time.elapsed();
   }
 
   CGAL::Bbox_3 bbox(0,0,0,0,0,0);
@@ -709,6 +703,10 @@ void Volume::display_surface_mesher_result()
                           bbox.ymax(),
                           bbox.zmax());
   }
+  status_message(tr("Surface meshing done. %1 facets in %2s (CPU time), total time is %3s.")
+                 .arg(m_surface.size())
+                 .arg(sm_timer.time())
+                 .arg(sm_total_time/1000.));
 }
 
 void Volume::draw()
