@@ -75,7 +75,9 @@ int main(int argc, char * argv[])
   {
     std::list<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
-    if(CGAL::surface_reconstruction_read_xyz(argv[i], std::back_inserter(points)))
+    if(CGAL::surface_reconstruction_read_xyz(argv[i], 
+                                             std::back_inserter(points), 
+                                             false /*skip normals*/))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
       
