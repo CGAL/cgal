@@ -254,7 +254,7 @@ template <class K>
 Object
 intersection(const typename K::Plane_3 &p,
              const typename K::Sphere_3 &s,
-             const K& k)
+             const K&)
 {
   typedef typename K::Sphere_3 Sphere_3;
   typedef typename K::Circle_3 Circle_3;
@@ -280,7 +280,7 @@ inline
 bool
 do_intersect(const typename K::Plane_3 &p,
              const typename K::Sphere_3 &s,
-             const K& k)
+             const K&)
 {
   typedef typename K::Sphere_3 Sphere_3;
   typedef typename K::Circle_3 Circle_3;
