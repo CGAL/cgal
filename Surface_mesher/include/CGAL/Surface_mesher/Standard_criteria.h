@@ -52,14 +52,19 @@ namespace CGAL {
     }
 
     bool is_bad (const Facet& f, Quality& q ) const {
+#ifdef CGAL_SURFACE_MESHER_DEBUG_CRITERIA
       bool bad = false;
+#endif
       int i = 0;
       q.resize(criteria.size());
       for (typename Criteria::const_iterator cit = criteria.begin(); cit !=
 	     criteria.end(); ++cit)
 	if ((*cit)->is_bad (f, q[i++]))
+#ifndef CGAL_SURFACE_MESHER_DEBUG_CRITERIA
+          return true;
+      return false;
+#else
           bad = true;
-#ifdef CGAL_SURFACE_MESHER_DEBUG_CRITERIA
       if( bad )
       {
         std::cerr << "bad triangle: |";
@@ -71,8 +76,8 @@ namespace CGAL {
         }
         std::cerr << "\n";
       }
-#endif
       return bad;
+#endif
     }
   };
 
