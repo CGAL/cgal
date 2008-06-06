@@ -1,5 +1,5 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2008       GeometryFactory, Sophia Antipolis (France)
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
@@ -260,7 +260,7 @@ namespace CGAL {
       }
     }
 
-    void before_insertion_impl(const Facet&, const Point& s,
+    void before_insertion_impl(const Facet& f, const Point& s,
 			       Zone& zone) {
       if( bad_edges_initialized )
       {
@@ -275,7 +275,7 @@ namespace CGAL {
                zone.boundary_facets.end(); ++fit)
           before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit);
       }
-      SMB::before_insertion_impl(Facet(), s, zone);
+      SMB::before_insertion_impl(f, s, zone);
     }
 
     void after_insertion_impl(const Vertex_handle v) {

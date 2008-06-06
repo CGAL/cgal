@@ -1,4 +1,5 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2008       GeometryFactory, Sophia Antipolis (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -62,8 +63,8 @@ namespace CGAL {
 
     private:
       Facet canonical_facet(const Facet& f) const {
-	Cell_handle c = f.first;
-	Cell_handle c2 = c->neighbor(f.second);
+	const Cell_handle& c = f.first;
+	const Cell_handle& c2 = c->neighbor(f.second);
 	return (c2 < c) ? std::make_pair(c2,c2->index(c)) : f;
       }
 
@@ -172,7 +173,7 @@ namespace CGAL {
 	}
       }
 
-      void before_insertion_impl(const Facet&, const Point& s,
+      void before_insertion_impl(const Facet& f, const Point& s,
 				 Zone& zone) {
         if(bad_vertices_initialized)
         {
@@ -181,7 +182,7 @@ namespace CGAL {
                  zone.boundary_facets.end(); ++fit)
 	    before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit); 
         }
-	SMMBB::before_insertion_impl(Facet(), s, zone);
+	SMMBB::before_insertion_impl(f, s, zone);
       }
 
     void after_insertion_impl(const Vertex_handle v) {
