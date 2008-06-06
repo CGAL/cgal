@@ -21,7 +21,7 @@ Normal orientation
 
 Implicit function
 - Poisson [Kazhdan et al 2005] (done)
-- Algebraic point set surfaces [Guennebaud-Gross 2007] (laurent)
+- Algebraic point set surfaces [Guennebaud-Gross 2007] (done)
 
 Implicit function contouring
 - Delaunay refinement & filtering (Surface_mesher) (done)
@@ -34,7 +34,7 @@ Delaunay-based contouring
 In addition:
 
 Concepts
-- ReconstructionImplicitFunction concept (to be refined) (laurent)
+- ReconstructionImplicitFunction concept (done)
 - Algorithms are independent global functions (no concepts)
 - Output formats concept to be defined (laurent?)
 
