@@ -16,7 +16,7 @@
 # KDE4's CheckCSourceRuns.cmake
 
 MACRO(CHECK_CXX_SOURCE_RUNS SOURCE VAR TEST)
-  IF("${VAR}" MATCHES "^${VAR}$")
+  IF( DEFINED ${VAR} )
     # Set compiler settings
     SET(MACRO_CHECK_FUNCTION_DEFINITIONS
       "-D${VAR} ${CMAKE_REQUIRED_FLAGS}")
