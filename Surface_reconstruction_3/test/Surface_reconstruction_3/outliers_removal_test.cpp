@@ -71,17 +71,25 @@ int main(int argc, char * argv[])
   std::cerr << "Normal estimation test" << std::endl;
   std::cerr << "No output" << std::endl;
 
+  // decode parameters
   if(argc < 2)
   {
     std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
     return EXIT_FAILURE;
   }
 
-  // for each input file
   const unsigned int k = 10; // # neighbors
   const unsigned int outliers_percentage = 5; // percentage of points to remove
+
+  // Accumulated errors
+  int accumulated_fatal_err = EXIT_SUCCESS;
+
+  // Process each input file
   for(int i=1; i<argc; i++)
   {
+    std::cerr << std::endl;
+
+    // Load point set
     std::vector<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
@@ -93,8 +101,16 @@ int main(int argc, char * argv[])
       test_avg_knn_sq_distance(points, k, outliers_percentage);
     }
     else
-      std::cerr << "  Unable to open file " << argv[i] << std::endl;
-  }
-  return EXIT_SUCCESS;
+    {
+      std::cerr << "  FATAL ERROR: cannot read file " << argv[i] << std::endl;
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
+  } // for each input file
+
+  std::cerr << std::endl;
+
+  // Return accumulated fatal error
+  std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
+  return accumulated_fatal_err;
 }
  

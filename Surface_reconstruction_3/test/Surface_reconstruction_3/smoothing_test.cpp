@@ -71,16 +71,24 @@ int main(int argc, char * argv[])
   std::cerr << "Smoothing test" << std::endl;
   std::cerr << "No output" << std::endl;
 
+  // decode parameters
   if(argc < 2)
   {
     std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz ..." << std::endl;
     return EXIT_FAILURE;
   }
 
-  // for each input file
   const unsigned int k = 20; // # neighbors
+
+  // Accumulated errors
+  int accumulated_fatal_err = EXIT_SUCCESS;
+
+  // Process each input file
   for(int i=1; i<argc; i++)
   {
+    std::cerr << std::endl;
+
+    // Load point set
     std::list<Point> points;
     std::cerr << "  Open " << argv[i] << " for reading...";
     if(CGAL::surface_reconstruction_read_xyz(argv[i], 
@@ -92,11 +100,19 @@ int main(int argc, char * argv[])
       test_jet_fitting(points,k);
     }
     else
-      std::cerr << "  Unable to open file " << argv[i] << std::endl;
-  }
-  return EXIT_SUCCESS;
+    {
+      std::cerr << "  FATAL ERROR: cannot read file " << argv[i] << std::endl;
+      accumulated_fatal_err = EXIT_FAILURE;
+    }
+  } // for each input file
+
+  std::cerr << std::endl;
+
+  // Return accumulated fatal error
+  std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
+  return accumulated_fatal_err;
 }
- 
+
 
 #else // CGAL_USE_LAPACK
 
@@ -110,9 +126,10 @@ int main(int argc, char * argv[])
 
 int main()
 {
-    std::cerr << "Skip smoothing test as LAPACK is not installed" << std::endl;
+    std::cerr << "Skip test as LAPACK is not installed" << std::endl;
     return EXIT_SUCCESS;
 }
+
 
 #endif // CGAL_USE_LAPACK
 
