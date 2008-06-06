@@ -166,42 +166,58 @@ int main(int argc, char **argv) {
     std::ifstream in( read_initial_points.c_str() );
     int n;
     in >> n;
-    CGAL_assertion(in);
-    while( !in.eof() )
+    if(in) 
+    {
+    if(out)
+      std::cerr << "Reading initial points to file \"" 
+                << read_initial_points << "\"...\n";
+      double_options["number_of_initial_points"] = 0;
+      while( in.good() && !in.eof() )
       {
 	Point_3 p;
 	if(in >> p)
-	  {
-	    tr.insert(p);
-	    --n;
-	  }
+        {
+          tr.insert(p);
+          --n;
+        }
       }
-    CGAL_assertion( n == 0 );
-    double_options["number_of_initial_points"] = 0;
+      CGAL_assertion( n == 0 );
+    }
+    else
+    {
+      std::cerr << "Cannot read initial points from file \""
+                << read_initial_points << "\"!\n";
+    }
   }
-//   else
-//   {
-//     const int number_of_initial_points =
-//       static_cast<int>(double_options["number_of_initial_points"]);
+  if(double_options["number_of_initial_points"] != 0)
+  {
+    const int number_of_initial_points =
+      static_cast<int>(double_options["number_of_initial_points"]);
 
-//     std::vector<Point_3> initial_point_sample;
-//     initial_point_sample.reserve(number_of_initial_points);
+    std::vector<Point_3> initial_point_sample;
+    initial_point_sample.reserve(number_of_initial_points);
 
-//     O.initial_points(std::back_inserter(initial_point_sample),
-// 		     number_of_initial_points);
+    typedef CGAL::Surface_mesh_traits_generator_3<Surface>::type Oracle;
+    Oracle::Construct_initial_points initial_points =
+      Oracle().construct_initial_points_object();
+    
+    initial_points(surface, std::back_inserter(initial_point_sample),
+                   number_of_initial_points);
 
-//     std::ofstream out("dump_of_initial_points");
+    std::ofstream out(string_options["dump_of_initial_points"].c_str());
+    if(out)
+      std::cerr << "Dumping initial points to file \"" 
+                << string_options["dump_of_initial_points"] << "\"...\n";
 
-//     out << initial_point_sample.size() << "\n";
-//     for(std::vector<Point_3>::const_iterator it =
-// 	  initial_point_sample.begin();
-// 	it != initial_point_sample.end();
-// 	++it)
-//       out << *it <<"\n";
+    out << initial_point_sample.size() << "\n";
+    for(std::vector<Point_3>::const_iterator it =
+	  initial_point_sample.begin();
+	it != initial_point_sample.end();
+	++it)
+      out << *it <<"\n";
 
-//     tr.insert (initial_point_sample.begin(), initial_point_sample.end());
-//   }
-
+    tr.insert (initial_point_sample.begin(), initial_point_sample.end());
+  }
 
   // defining meshing criteria
   CGAL::Surface_mesh_default_criteria_3<Tr>
@@ -209,9 +225,13 @@ int main(int argc, char **argv) {
              double_options["radius_bound"],  // radius bound
              double_options["distance_bound"]); //distance bound
 
+  std::cerr << "Number of initial points: "
+            << tr.number_of_vertices() << std::endl;
+
   // Surface meshing
   CGAL::make_surface_mesh(c2t3, surface, criteria,
-                          CGAL::Manifold_with_boundary_tag());
+                          CGAL::Manifold_with_boundary_tag(),
+                          0); // zero extra initial points
 
   std::cerr << "\nNumber of points after refine_surface(): "
             << tr.number_of_vertices() << std::endl;
