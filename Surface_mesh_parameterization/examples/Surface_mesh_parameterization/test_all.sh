@@ -1,39 +1,81 @@
 #!/bin/bash
 
-# Intensive test: test all surface parameterization methods with all models in data folder
+############################################################
+# This application is a cross-platform version of cgal_test.
+# Applications must be already compiled.
+############################################################
 
-./test_model.sh holes
-./test_model.sh mannequin-devil
-./test_model.sh mask_cone
-./test_model.sh nefertiti
-./test_model.sh rotor
-./test_model.sh sphere966
-./test_model.sh three_peaks
+ERRORFILE=error.txt
 
-echo "***************************************************************"
+# Find executable name (different on Windows and Unix)
+find_executable()
+{
+    PARAM_APPLICATION=""
+    [ -f ./VC/debug/$1.exe ] && PARAM_APPLICATION="./VC/debug/$1.exe"
+    [ -f ./VC/release/$1.exe ] && PARAM_APPLICATION="./VC/release/$1.exe"
+    [ -f ./VC/x64/debug/$1.exe ] && PARAM_APPLICATION="./VC/x64/debug/$1.exe"
+    [ -f ./VC/x64/release/$1.exe ] && PARAM_APPLICATION="./VC/x64/release/$1.exe"
+    [ -x ./$1 ] && PARAM_APPLICATION="./$1"
+    echo "$PARAM_APPLICATION"
+}
 
-for TST in Authalic_parameterization \
-           Simple_parameterization \
-           Taucs_parameterization \
-           Mesh_cutting_parameterization \
-           Square_border_parameterization \
-           Complete_parameterization_example \
-           polyhedron_ex_parameterization
-do
-    echo " "
-    echo "*** $TST ***"
-
-    # Find executable name (different on Windows and Unix)
-    [ -f ./VC/debug/$TST.exe ] && PARAM_APPLICATION="./VC/debug/$TST.exe"
-    [ -f ./VC/release/$TST.exe ] && PARAM_APPLICATION="./VC/release/$TST.exe"
-    [ -f ./VC/x64/debug/$TST.exe ] && PARAM_APPLICATION="./VC/x64/debug/$TST.exe"
-    [ -f ./VC/x64/release/$TST.exe ] && PARAM_APPLICATION="./VC/x64/release/$TST.exe"
-    [ -x ./$TST ] && PARAM_APPLICATION="./$TST"
-    if [ -z "$PARAM_APPLICATION" ]; then
-        echo "Cannot find $TST executable"
+# run 1 test
+run()
+{
+    # Find exe
+    COMMAND="`find_executable $1`"
+    if [ -z "$COMMAND" ]; then
+        echo "Cannot find $1 executable"
         exit 1
     fi
 
-    COMMAND="$PARAM_APPLICATION `cat $TST.cmd | tr '\n' ' ' | tr '\r' ' '`"
-    eval $COMMAND 2>&1
-done
+    # Add params
+    if [ -f $1.cmd ] ; then
+        COMMAND="$COMMAND `cat $1.cmd`"
+    fi
+    if [ -f $1.cin ] ; then
+        COMMAND="cat $1.cin | $COMMAND"
+    fi
+
+    # Run
+    echo "------------------------------------------------------------------"
+    echo "- Executing $1"
+    echo "------------------------------------------------------------------"
+    echo
+    if eval $COMMAND 2>&1 ; then
+        echo "   succesful execution   of $1" >> $ERRORFILE
+    else
+        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+    fi
+    echo
+}
+
+# remove the previous error file
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+# run the tests
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    run $file
+  done
+else
+  run Authalic_parameterization 
+  run Complete_parameterization_example 
+  run Mesh_cutting_parameterization 
+  run polyhedron_ex_parameterization
+  run Simple_parameterization 
+  run Square_border_parameterization 
+  run Taucs_parameterization 
+fi
+
+# Recap results
+echo "------------------------------------------------------------------"
+echo "- Results"
+echo "------------------------------------------------------------------"
+echo
+cat $ERRORFILE
+echo
+rm -f $ERRORFILE
+
+

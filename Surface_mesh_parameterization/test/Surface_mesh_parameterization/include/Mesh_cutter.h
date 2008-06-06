@@ -13,15 +13,71 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifndef MESH_CUTTER_H
+#define MESH_CUTTER_H
+
 #include <CGAL/Cartesian.h>
 
-#include "Mesh_cutter.h"
+#include "Polyhedron_ex.h"
+
+#include <list>
+
+
+class Mesh_cutter
+{
+// Public types
+public:
+
+    typedef std::list<Polyhedron_ex::Halfedge_handle>
+                                            Backbone;
+
+// Private types
+private:
+
+    typedef My_kernel::Vector_3 Vector_3;
+    typedef My_kernel::Point_3  Point_3;
+    enum {FREE,DONE,FIXED};
+
+// Public operations
+public:
+
+    // life cycle
+    Mesh_cutter(Polyhedron_ex& polyhedron)
+    {
+        m_pPolyhedron = &polyhedron;
+        m_pBackbone = NULL;
+    }
+    ~Mesh_cutter() {}
+
+    void cut(Backbone& backbone);
+    void cut_genus(Backbone& backbone);
+
+// Private operations
+private:
+
+    // genus > 0
+    bool init();
+    bool simplify();
+    bool extend();
+    void precompute_distances();
+    Polyhedron_ex::Halfedge_handle pick_best_halfedge(
+                    std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos);
+    void recursive_tag(Polyhedron_ex::Facet_handle pFacet,int index);
+
+// Fields
+private:
+
+    Polyhedron_ex*              m_pPolyhedron;  // the model to cut
+    Backbone*                   m_pBackbone;    // the backbone to fill
+    Polyhedron_ex::Facet_handle m_pSeedFacet;
+    Polyhedron_ex::Vertex_handle m_pSeedVertex;
+};
 
 
 //***************************************************
 // simple cut for genus 0 mesh
 //***************************************************
-void Mesh_cutter::cut(Backbone& backbone)
+inline void Mesh_cutter::cut(Backbone& backbone)
 {
     m_pBackbone = &backbone;
 
@@ -44,7 +100,7 @@ void Mesh_cutter::cut(Backbone& backbone)
 //***************************************************
 // cut for genus>0 mesh
 //***************************************************
-void Mesh_cutter::cut_genus(Backbone& backbone)
+inline void Mesh_cutter::cut_genus(Backbone& backbone)
 {
     m_pBackbone = &backbone;
 
@@ -59,7 +115,7 @@ void Mesh_cutter::cut_genus(Backbone& backbone)
 //***************************************************
 // init
 //***************************************************
-bool Mesh_cutter::init()
+inline bool Mesh_cutter::init()
 {
     // tag facets
     m_pPolyhedron->tag_facets(FREE);
@@ -96,7 +152,7 @@ bool Mesh_cutter::init()
 //***************************************************
 // extend
 //***************************************************
-bool Mesh_cutter::extend()
+inline bool Mesh_cutter::extend()
 {
     std::list<Polyhedron_ex::Halfedge_handle>::iterator pos;
     Polyhedron_ex::Halfedge_handle pHalfedge = pick_best_halfedge(pos);
@@ -122,7 +178,7 @@ bool Mesh_cutter::extend()
 //***************************************************
 // simplify
 //***************************************************
-bool Mesh_cutter::simplify()
+inline bool Mesh_cutter::simplify()
 {
     // cleanup
     std::list<Polyhedron_ex::Halfedge_handle>::iterator iter;
@@ -157,7 +213,7 @@ bool Mesh_cutter::simplify()
 //***************************************************
 // precompute_distances
 //***************************************************
-void Mesh_cutter::precompute_distances()
+inline void Mesh_cutter::precompute_distances()
 {
     Polyhedron_ex::Halfedge_iterator pHalfedge;
     for(pHalfedge = m_pPolyhedron->halfedges_begin();
@@ -169,8 +225,8 @@ void Mesh_cutter::precompute_distances()
 //***************************************************
 // pick_best_halfedge
 //***************************************************
-Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
-	std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
+inline Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
+    std::list<Polyhedron_ex::Halfedge_handle>::iterator &pos)
 {
     Polyhedron_ex::Halfedge_handle pBest = NULL;
     double min_distance = 1e308; //
@@ -209,3 +265,6 @@ Polyhedron_ex::Halfedge_handle Mesh_cutter::pick_best_halfedge(
     }
     return pBest;
 }
+
+
+#endif // MESH_CUTTER_H
