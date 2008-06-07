@@ -20,7 +20,6 @@
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 
-// #define CGAL_ARR_PLANE                                                 1
 // #define CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED 1
 
 /*! \file
@@ -30,9 +29,6 @@
 
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
-#if defined(CGAL_ARR_PLANE)
-#include <CGAL/Arr_geometry_traits/Arr_plane_3.h>
-#endif
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
@@ -69,14 +65,8 @@ protected:
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
   typedef typename Kernel::Line_3               Line_3;
-      
-#if defined(CGAL_ARR_PLANE)
-  typedef Arr_plane_3<Kernel>                   Plane_3;
-#else
   typedef typename Kernel::Plane_3              Plane_3;
-#endif
   typedef typename Kernel::Point_3              Point_3;
-
   typedef typename Kernel::Direction_2          Direction_2;
   typedef typename Kernel::Vector_2             Vector_2;
 
@@ -85,11 +75,7 @@ protected:
    */
   inline static const Plane_3 & xy_plane()
   {
-#if defined(CGAL_ARR_PLANE)
-    static const Plane_3 p(0, 0, 1);
-#else
     static const Plane_3 p(0, 0, 1, 0);
-#endif
     return p;
   }
 
@@ -98,11 +84,7 @@ protected:
    */
   inline static const Plane_3 & yz_plane()
   {
-#if defined(CGAL_ARR_PLANE)
-    static const Plane_3 p(1, 0, 0);
-#else
     static const Plane_3 p(1, 0, 0, 0);
-#endif
     return p;
   }
   
@@ -111,11 +93,7 @@ protected:
    */
   inline static const Plane_3 & xz_plane()
   {
-#if defined(CGAL_ARR_PLANE)
-    static const Plane_3 p(0, -1, 0);
-#else
     static const Plane_3 p(0, -1, 0, 0);
-#endif
     return p;
   }
   
@@ -1723,11 +1701,7 @@ public:
       typedef std::pair<Point_2,unsigned int>         Point_2_pair;
       const Kernel * kernel = m_traits;
 
-#if defined(CGAL_ARR_PLANE)
-      CGAL::Object obj = intersect(xc1.plane(), xc2.plane());
-#else
       CGAL::Object obj = kernel->intersect_3_object()(xc1.plane(), xc2.plane());
-#endif
       const Plane_3 * plane_ptr = object_cast<Plane_3>(&obj);
       if (plane_ptr != NULL) {
         // The underlying planes are the same
@@ -1741,11 +1715,7 @@ public:
           // Both arcs are vertical
           const Plane_3 & plane1 = xc1.plane();
           const Plane_3 & plane2 = xc2.plane();
-#if defined(CGAL_ARR_PLANE)
-          bool res = plane1.equal(plane2);
-#else
           bool res = kernel->equal_3_object()(plane1, plane2);
-#endif
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
           {
@@ -1880,15 +1850,9 @@ public:
       if (xc2.is_full() && xc1.is_degenerate())
         return xc2.has_on(xc1.left());
 
-#if defined(CGAL_ARR_PLANE)
-      if (!(xc1.plane()).equal(xc2.plane()) &&
-          !(xc1.plane()).equal(xc2.plane().opposite()))
-        return false;
-#else
       if (!equal(xc1.plane(), xc2.plane()) &&
           !equal(xc1.plane(), xc2.plane().opposite()))
         return false;
-#endif
 
       bool eq1 = equal(xc1.right(), xc2.left());
       bool eq2 = equal(xc1.left(), xc2.right());
@@ -2228,14 +2192,9 @@ class Arr_x_monotone_geodesic_arc_on_sphere_3 {
 protected:
   typedef T_Kernel                                              Kernel;
   
-#if defined(CGAL_ARR_PLANE)
-  typedef Arr_plane_3<Kernel>                                   Plane_3;
-#else
   typedef typename Kernel::Plane_3                              Plane_3;
-#endif
   typedef typename Kernel::Point_3                              Point_3;
   typedef typename Kernel::Vector_3                             Vector_3;
-
   typedef typename Kernel::Direction_2                          Direction_2;
 
   // For some reason compilation under Windows fails without the qualifier
@@ -2289,11 +2248,7 @@ protected:
     Vector_3 v2 = d2.vector();
     Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
 
-#if defined(CGAL_ARR_PLANE)
-    Plane_3 plane(p1, p2);
-#else
     Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
-#endif
     return plane;
   }
 
