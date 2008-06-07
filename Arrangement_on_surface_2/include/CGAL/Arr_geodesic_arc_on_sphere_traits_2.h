@@ -65,38 +65,10 @@ protected:
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
   typedef typename Kernel::Line_3               Line_3;
-  typedef typename Kernel::Plane_3              Plane_3;
   typedef typename Kernel::Point_3              Point_3;
   typedef typename Kernel::Direction_2          Direction_2;
   typedef typename Kernel::Vector_2             Vector_2;
 
-  /*! Obtain the xy-plane
-   * \return the xy-plane
-   */
-  inline static const Plane_3 & xy_plane()
-  {
-    static const Plane_3 p(0, 0, 1, 0);
-    return p;
-  }
-
-  /*! Obtain the yz-plane
-   * \return the yz-plane
-   */
-  inline static const Plane_3 & yz_plane()
-  {
-    static const Plane_3 p(1, 0, 0, 0);
-    return p;
-  }
-  
-  /*! Obtain the xz-plane
-   * \return the xz-plane
-   */
-  inline static const Plane_3 & xz_plane()
-  {
-    static const Plane_3 p(0, -1, 0, 0);
-    return p;
-  }
-  
   /*! Obtain the possitive (north) pole
    * \return the possitive (north) pole
    */
@@ -186,17 +158,25 @@ protected:
     return dir;
   }
 
-  /*! Compare the relative position of a direction and a plane.
-   * \param plane the plane.
+  /*! Compare the relative position of a direction and a plane given by its
+   * normal.
+   * \param normal the direction of the plane.
    * \param dir the direction.
    */
-  inline Oriented_side oriented_side(const Plane_3 & plane,
+  inline Oriented_side oriented_side(const Direction_3 & normal,
                                      const Direction_3 dir) const
   {
+#if 0
     const Kernel * kernel = this;
     Vector_3 vec = dir.vector();
     Point_3 point = kernel->construct_translated_point_3_object()(ORIGIN, vec);
+    typename Kernel::Plane_3 plane =
+      kernel->construct_plane_3_object()(ORIGIN, normal);
     return plane.oriented_side(point);
+#else
+    FT dot = normal.vector() * dir.vector();
+    return CGAL::sign(dot);
+#endif
   }
   
   /*! Compute the orientation of two directions.
@@ -208,22 +188,28 @@ protected:
                                         const Direction_2 & d2)
   {
     Kernel kernel;
-    Vector_2 v1 = d1.vector();
-    Vector_2 v2 = d2.vector();
-    return kernel.orientation_2_object()(v1, v2);
+    return kernel.orientation_2_object()(d1.vector(), d2.vector());
   }
 
-  /*! Determined whether a direction is contained in a plane
-   * \param plane the 3D plane.
+  /*! Determined whether a direction is contained in a plane given by its
+   * normal
+   * \param normal the direction of the 3D plane.
    * \param dir the 3D direction.
    * \return true if dir is contained in plane; false otherwise.
    * \pre the plane contains the origin.
    */
-  inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
+  inline bool has_on(const Direction_3 & normal, const Direction_3 & dir) const
   {
+#if 0
     Vector_3 vec = dir.vector();
     Point_3 point = Kernel::construct_translated_point_3_object()(ORIGIN, vec);
+    typename Kernel::Plane_3 plane =
+      kernel->construct_normal_3_object()(ORIGIN, normal);
     return Kernel::has_on_3_object()(plane, point);
+#else
+    FT dot = normal.vector() * dir.vector();
+    return CGAL::sign(dot) == ZERO;
+#endif
   }
   
 public:
@@ -487,7 +473,7 @@ public:
       }
 
       // Compare the point to the underlying plane of xc:
-      Oriented_side os = m_traits->oriented_side(xc.plane(), p);
+      Oriented_side os = m_traits->oriented_side(xc.normal(), p);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xc.is_directed_right()) ?
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -549,7 +535,7 @@ public:
       const Point_2 & l2 = xc2.left();
       if (!l1.is_no_boundary()) {
         // use l2 and xc1:
-        Oriented_side os = m_traits->oriented_side(xc1.plane(), l2);
+        Oriented_side os = m_traits->oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
@@ -557,7 +543,7 @@ public:
       }
       if (!l2.is_no_boundary()) {
         // use l1 and xc2:
-        Oriented_side os = m_traits->oriented_side(xc2.plane(), l1);
+        Oriented_side os = m_traits->oriented_side(xc2.normal(), l1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc2.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -566,14 +552,14 @@ public:
 
       if (m_traits->compare_xy(l1, l2) == SMALLER) {
         // use l2 and xc1:
-        Oriented_side os = m_traits->oriented_side(xc1.plane(), l2);
+        Oriented_side os = m_traits->oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
       // use l1 and xc2: 
-      Oriented_side os = m_traits->oriented_side(xc2.plane(), l1);
+      Oriented_side os = m_traits->oriented_side(xc2.normal(), l1);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xc2.is_directed_right()) ?
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -636,7 +622,7 @@ public:
       const Point_2 & r2 = xc2.right();
       if (!r1.is_no_boundary()) {
         // use r2 and xc1:
-        Oriented_side os = m_traits->oriented_side(xc1.plane(), r2);
+        Oriented_side os = m_traits->oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
@@ -644,7 +630,7 @@ public:
       }
       if (!r2.is_no_boundary()) {
         // use r1 and xc2:
-        Oriented_side os = m_traits->oriented_side(xc2.plane(), r1);
+        Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc2.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -652,14 +638,14 @@ public:
       }
       if (m_traits->compare_xy(r1, r2) == LARGER) {
         // use r2 and xc1:
-        Oriented_side os = m_traits->oriented_side(xc1.plane(), r2);
+        Oriented_side os = m_traits->oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
       // use r1 and xc2: 
-      Oriented_side os = m_traits->oriented_side(xc2.plane(), r1);
+      Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xc2.is_directed_right()) ?
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -887,7 +873,7 @@ public:
         // xcv is vertical, but does not coincide with the discontinuity arc.
         // Obtain the direction contained in the underlying plane, which is
         // also on the xy-plane:
-        Direction_3 normal = xcv.plane().orthogonal_direction();
+        Direction_3 normal = xcv.normal();
         Direction_2 q = (xcv.is_directed_right()) ?
           Direction_2(-(normal.dy()), normal.dx()) :
           Direction_2(normal.dy(), -(normal.dx()));
@@ -947,11 +933,11 @@ public:
         // Non of the arcs coincide with the discontinuity arc:
         // Obtain the directions contained in the underlying planes, which are
         // also on the xy-plane:
-        Direction_3 normal1 = xcv1.plane().orthogonal_direction();
+        Direction_3 normal1 = xcv1.normal();
         Direction_2 p = (xcv1.is_directed_right()) ?
           Direction_2(-(normal1.dy()), normal1.dx()) :
           Direction_2(normal1.dy(), -(normal1.dx()));
-        Direction_3 normal2 = xcv2.plane().orthogonal_direction();
+        Direction_3 normal2 = xcv2.normal();
         Direction_2 q = (xcv2.is_directed_right()) ?
           Direction_2(-(normal2.dy()), normal2.dx()) :
           Direction_2(normal2.dy(), -(normal2.dx()));
@@ -1063,14 +1049,15 @@ public:
         
         if (m_traits->compare_xy(r1, r2) == LARGER) {
           // use r2 and xcv1:
-          Oriented_side os = m_traits->oriented_side(xcv1.plane(), r2);
+          Oriented_side os =
+            m_traits->oriented_side(xcv1.normal(), r2);
           return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
             (xcv1.is_directed_right()) ?
             ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
             ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
         }
         // use r1 and xcv2: 
-        Oriented_side os = m_traits->oriented_side(xcv2.plane(), r1);
+        Oriented_side os = m_traits->oriented_side(xcv2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xcv2.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -1106,14 +1093,14 @@ public:
 
       if (m_traits->compare_xy(l1, l2) == SMALLER) {
         // use l2 and xcv1:
-        Oriented_side os = m_traits->oriented_side(xcv1.plane(), l2);
+        Oriented_side os = m_traits->oriented_side(xcv1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xcv1.is_directed_right()) ?
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
       // use l1 and xcv2: 
-      Oriented_side os = m_traits->oriented_side(xcv2.plane(), l1);
+      Oriented_side os = m_traits->oriented_side(xcv2.normal(), l1);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xcv2.is_directed_right()) ?
         ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
@@ -1191,7 +1178,7 @@ public:
       if (!xcv.is_vertical()) return false;
 
       // If the normal has an x-component, it cannot coincide either:
-      Direction_3 normal = xcv.plane().orthogonal_direction();
+      Direction_3 normal = xcv.normal();
       CGAL::Sign xsign = Traits::x_sign(normal);
       if (xsign != ZERO) return false;
 
@@ -1323,28 +1310,27 @@ public:
           // The arc is vertical => divide it into 2 half arcs;
           const Direction_3 & np = m_traits->neg_pole();
           const Direction_3 & pp = m_traits->pos_pole();
-          X_monotone_curve_2 xc1(np, pp, c.plane(), true, true);
-          X_monotone_curve_2 xc2(pp, np, c.plane(), true, false);
+          X_monotone_curve_2 xc1(np, pp, c.normal(), true, true);
+          X_monotone_curve_2 xc2(pp, np, c.normal(), true, false);
           *oi++ = make_object(xc1);
           *oi++ = make_object(xc2);
           return oi;
         }
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
         // The arc is not vertical => break it at the discontinuity arc:
-        const X_monotone_curve_2 xc(c.plane());
+        const X_monotone_curve_2 xc(c.normal());
         *oi++ = make_object(xc);
 #else
         // Full x-monotone arcs are not supported!
         // Split the arc at the intersection point with the complement of the
         // discontinuity arc:
-        const Plane_3 & plane = c.plane();
-        Direction_3 normal = plane.orthogonal_direction();
+        Direction_3 normal = c.normal();
         bool directed_right = Traits::x_sign(normal) == POSITIVE;
-        typename Kernel::FT z = plane.a() / plane.c();
+        typename Kernel::FT z = normal.dx() / normal.dz();
         Direction_3 d1(-1, 0, z);
         Direction_3 d2(1, 0, -z);
-        X_monotone_curve_2 xc1(d1, d2, plane, false, directed_right);
-        X_monotone_curve_2 xc2(d2, d1, plane, false, directed_right);
+        X_monotone_curve_2 xc1(d1, d2, normal, false, directed_right);
+        X_monotone_curve_2 xc2(d2, d1, normal, false, directed_right);
         *oi++ = make_object(xc1);
         *oi++ = make_object(xc2);
 #endif
@@ -1353,7 +1339,7 @@ public:
       
       const Point_2 & source = c.source();
       const Point_2 & target = c.target();
-      const Plane_3 & plane = c.plane();
+      const Direction_3 & normal = c.normal();
 
       if (c.is_vertical()) {
         /* If one of the endpoints coincide with a pole, divide the arc at
@@ -1362,23 +1348,22 @@ public:
         const Direction_3 & np = m_traits->neg_pole();
         const Direction_3 & pp = m_traits->pos_pole();
         if (source.is_min_boundary() || target.is_min_boundary()) {
-          X_monotone_curve_2 xc1(source, pp, plane, true, true);
-          X_monotone_curve_2 xc2(pp, target, plane, true, false);
+          X_monotone_curve_2 xc1(source, pp, normal, true, true);
+          X_monotone_curve_2 xc2(pp, target, normal, true, false);
           *oi++ = make_object(xc1);
           *oi++ = make_object(xc2);
           return oi;
         }
 
         if (source.is_max_boundary() || target.is_max_boundary()) {
-          X_monotone_curve_2 xc1(source, np, plane, true, false);
-          X_monotone_curve_2 xc2(np, target, plane, true, true);
+          X_monotone_curve_2 xc1(source, np, normal, true, false);
+          X_monotone_curve_2 xc2(np, target, normal, true, true);
           *oi++ = make_object(xc1);
           *oi++ = make_object(xc2);
           return oi;
         }
 
         // None of the enpoints coincide with a pole.
-        Direction_3 normal = plane.orthogonal_direction();
         bool s_is_positive, t_is_positive, plane_is_positive;
         CGAL::Sign xsign = Traits::x_sign(normal);
         if (xsign == ZERO) {
@@ -1393,25 +1378,25 @@ public:
         bool ccw = ((plane_is_positive && s_is_positive) ||
                     (!plane_is_positive && !s_is_positive));
         const Point_2 & pole1 = (ccw) ? pp : np;
-        X_monotone_curve_2 xc1(source, pole1, plane, true, ccw);
+        X_monotone_curve_2 xc1(source, pole1, normal, true, ccw);
         *oi++ = make_object(xc1);
         if (s_is_positive != t_is_positive) {
           // Construct 1 more arc:
-          X_monotone_curve_2 xc2(pole1, target, plane, true, !ccw);
+          X_monotone_curve_2 xc2(pole1, target, normal, true, !ccw);
           *oi++ = make_object(xc2);
           return oi;
         }
         // Construct 2 more arcs:
         const Point_2 & pole2 = (ccw) ? np : pp;
-        X_monotone_curve_2 xc2(pole1, pole2, plane, true, !ccw);
+        X_monotone_curve_2 xc2(pole1, pole2, normal, true, !ccw);
         *oi++ = make_object(xc2);
-        X_monotone_curve_2 xc3(pole2, target, plane, true, ccw);
+        X_monotone_curve_2 xc3(pole2, target, normal, true, ccw);
         *oi++ = make_object(xc3);
         return oi;
       }
 
       // The curve is not vertical, (none of the enpoints coincide with a pole)
-      Point_2 p(-1, 0, plane.a() / plane.c());
+      Point_2 p(-1, 0, normal.dx() / normal.dz());
 
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
@@ -1420,8 +1405,8 @@ public:
       bool directed_right =
         kernel->counterclockwise_in_between_2_object()(nx, s, t);
       
-      X_monotone_curve_2 xc1(source, p, plane, false, directed_right);
-      X_monotone_curve_2 xc2(p, target, plane, false, directed_right);
+      X_monotone_curve_2 xc1(source, p, normal, false, directed_right);
+      X_monotone_curve_2 xc2(p, target, normal, false, directed_right);
       *oi++ = make_object(xc1);
       *oi++ = make_object(xc2);
       return oi;
@@ -1470,12 +1455,12 @@ public:
       CGAL_precondition(!equal_3(p, source));
       CGAL_precondition(!equal_3(p, target));
 
-      xc1.set_plane(xc.plane());
+      xc1.normal(xc.normal());
       xc1.set_is_vertical(xc.is_vertical());
       xc1.set_is_degenerate(false);
       xc1.set_is_empty(false);
 
-      xc2.set_plane(xc.plane());
+      xc2.normal(xc.normal());
       xc2.set_is_vertical(xc.is_vertical());
       xc2.set_is_empty(false);
       
@@ -1537,7 +1522,7 @@ public:
      * \param r1_3
      * \param l2_3
      * \param r2_3
-     * \param plane      - the common plane
+     * \param normal      - the normal of the common plane
      * \param vertical   - is the plane vertical
      * \param start      - the start 2d vertex
      * \param in_between - the in_between operator
@@ -1549,7 +1534,7 @@ public:
                                         const Point_2 r1_3,
                                         const Point_2 & l2_3,
                                         const Point_2 r2_3,
-                                        const Plane_3 & plane,
+                                        const Direction_3 & normal,
                                         bool vertical,
                                         const Direction_2 & start,
                                         const In_between & in_between,
@@ -1567,7 +1552,7 @@ public:
 
       if (equal(l1, l2)) {
         const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l1_3, trg, plane, vertical, true);
+        X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
         *oi++ = make_object(xc);
         return oi;
       }
@@ -1585,7 +1570,7 @@ public:
           return oi;
         }
         const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-        X_monotone_curve_2 xc(l2_3, trg, plane, vertical, true);
+        X_monotone_curve_2 xc(l2_3, trg, normal, vertical, true);
         *oi++ = make_object(xc);
         return oi;
       }
@@ -1599,7 +1584,7 @@ public:
         return oi;
       }
       const Point_2 & trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
-      X_monotone_curve_2 xc(l1_3, trg, plane, vertical, true);
+      X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
       *oi++ = make_object(xc);
       return oi;
     }
@@ -1614,7 +1599,7 @@ public:
                        const X_monotone_curve_2 & xc) const
     {
       const Kernel * kernel = m_traits;
-      CGAL_precondition(m_traits->has_on(xc.plane(), point));
+      CGAL_precondition(m_traits->has_on(xc.normal(), point));
       
       const Point_2 & left = xc.left();
       const Point_2 & right = xc.right();
@@ -1625,7 +1610,7 @@ public:
 
       if (xc.is_vertical()) {
         // Compare the x coordinates. If they are not equal, return false:
-        Direction_3 normal = xc.plane().orthogonal_direction();
+        Direction_3 normal = xc.normal();
         bool plane_is_positive, p_is_positive;
         CGAL::Sign xsign = Traits::x_sign(normal);
         if (xsign == ZERO) {
@@ -1697,13 +1682,19 @@ public:
         Counterclockwise_in_between_2;
       typedef typename Traits::Clockwise_in_between_2
         Clockwise_in_between_2;
+      typedef typename Kernel::Equal_3                          Equal_3;
         
       typedef std::pair<Point_2,unsigned int>         Point_2_pair;
       const Kernel * kernel = m_traits;
 
-      CGAL::Object obj = kernel->intersect_3_object()(xc1.plane(), xc2.plane());
-      const Plane_3 * plane_ptr = object_cast<Plane_3>(&obj);
-      if (plane_ptr != NULL) {
+      Equal_3 equal_3 = kernel->equal_3_object();
+      const Direction_3 & normal1 = xc1.normal();
+      const Direction_3 & normal2 = xc2.normal();
+
+      Direction_3 opposite_normal1 = 
+        kernel->construct_opposite_direction_3_object()(normal1);
+
+      if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
         Equal_2 equal = kernel->equal_2_object();
         Counterclockwise_in_between_2 ccib =
@@ -1713,9 +1704,7 @@ public:
 
         if (xc1.is_vertical()) {
           // Both arcs are vertical
-          const Plane_3 & plane1 = xc1.plane();
-          const Plane_3 & plane2 = xc2.plane();
-          bool res = kernel->equal_3_object()(plane1, plane2);
+          bool res = kernel->equal_3_object()(normal1, normal2);
           if ((!res && (xc1.is_directed_right() == xc2.is_directed_right())) ||
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
           {
@@ -1744,16 +1733,15 @@ public:
           const Point_2 & point =
             xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
 
-          Direction_3 normal = xc1.plane().orthogonal_direction();
-          CGAL::Sign xsign = Traits::x_sign(normal);
-          CGAL::Sign ysign = Traits::y_sign(normal);
+          CGAL::Sign xsign = Traits::x_sign(normal1);
+          CGAL::Sign ysign = Traits::y_sign(normal1);
           bool xz_plane = xsign == ZERO;
           Project project =
             (xz_plane) ? Traits::project_xz : Traits::project_yz;
 
-          Plane_3 plane = (xz_plane) ?
-            ((xsign == POSITIVE) ? xc1.plane() : xc1.plane().opposite()) :
-            ((ysign == NEGATIVE) ? xc1.plane() : xc1.plane().opposite());
+          Direction_3 normal = (xz_plane) ?
+            ((xsign == POSITIVE) ? normal1 : opposite_normal1) :
+            ((ysign == NEGATIVE) ? normal1 : opposite_normal1);
           
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
@@ -1762,33 +1750,32 @@ public:
             // The endpoints reside in the positive x-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
                                         xc2.left(), xc2.right(),
-                                        plane, true, Traits::neg_y_2(),
+                                        normal, true, Traits::neg_y_2(),
                                         ccib, project, oi);
           }
           // The endpoints reside in the negative x-halfspace:
           return compute_intersection(xc1.left(), xc1.right(),
                                       xc2.left(), xc2.right(),
-                                      plane, true, Traits::neg_y_2(),
+                                      normal, true, Traits::neg_y_2(),
                                       cib, project, oi);
         }
 
         // The arcs are not vertical:
-        Direction_3 normal = xc1.plane().orthogonal_direction();
-        bool plane_is_positive = (Traits::z_sign(normal) == POSITIVE);
-        Plane_3 plane =
-          (plane_is_positive) ? xc1.plane() : xc1.plane().opposite();
+        bool plane_is_positive = (Traits::z_sign(normal1) == POSITIVE);
+        Direction_3 normal =
+          (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
-                                    plane, false, Traits::neg_x_2(),
+                                    normal, false, Traits::neg_x_2(),
                                     ccib, Traits::project_xy, oi);
       }
 
-      const Line_3 * line_ptr = object_cast<Line_3>(&obj);
-      CGAL_assertion(line_ptr != NULL);
-      Point_3 p = line_ptr->point(1);
+      Vector_3 v =
+        kernel->
+        construct_cross_product_vector_3_object()(xc1.normal().vector(),
+                                                  xc2.normal().vector());
 
       // Determine which one of the two directions:
-      Vector_3 v = kernel->construct_vector_3_object()(ORIGIN, p);
       Point_2 ed(v.direction());
       if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
         *oi++ = make_object(Point_2_pair(ed, 1));
@@ -1850,8 +1837,11 @@ public:
       if (xc2.is_full() && xc1.is_degenerate())
         return xc2.has_on(xc1.left());
 
-      if (!equal(xc1.plane(), xc2.plane()) &&
-          !equal(xc1.plane(), xc2.plane().opposite()))
+      const Direction_3 & normal1 = xc1.normal();
+      const Direction_3 & normal2 = xc2.normal();
+      Direction_3 opposite_normal1 = 
+        kernel->construct_opposite_direction_3_object()(normal1);
+      if (!equal(normal1, normal2) && !equal(opposite_normal1, normal2))
         return false;
 
       bool eq1 = equal(xc1.right(), xc2.left());
@@ -1929,13 +1919,14 @@ public:
           xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
         xc.set_source(p);
         xc.set_target(p);
-        xc.set_plane(xc1.plane());
+        xc.normal(xc1.normal());
         xc.set_is_full(true);
       }
 #endif
       
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
-        xc.set_plane(xc1.is_directed_right() ? xc1.plane() : xc2.plane());
+        xc.normal(xc1.is_directed_right() ?
+                               xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
 
         if (eq1) {
@@ -1947,7 +1938,7 @@ public:
           xc.set_target(xc1.right());
         }
       } else {
-        xc.set_plane(xc1.plane());
+        xc.normal(xc1.normal());
         xc.set_is_directed_right(false);
 
         if (eq1) {
@@ -2190,17 +2181,16 @@ public:
 template <typename T_Kernel>
 class Arr_x_monotone_geodesic_arc_on_sphere_3 {
 protected:
-  typedef T_Kernel                                              Kernel;
+  typedef T_Kernel                                    Kernel;
   
-  typedef typename Kernel::Plane_3                              Plane_3;
-  typedef typename Kernel::Point_3                              Point_3;
-  typedef typename Kernel::Vector_3                             Vector_3;
-  typedef typename Kernel::Direction_2                          Direction_2;
+  typedef typename Kernel::Plane_3                    Plane_3;
+  typedef typename Kernel::Point_3                    Point_3;
+  typedef typename Kernel::Vector_3                   Vector_3;
+  typedef typename Kernel::Direction_2                Direction_2;
+  typedef typename Kernel::Direction_3                Direction_3;
 
   // For some reason compilation under Windows fails without the qualifier
-  typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
-
-  typedef typename Arr_extended_direction_3::Direction_3        Direction_3;
+  typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
 
   /*! The source point of the arc */
   Arr_extended_direction_3 m_source;
@@ -2208,8 +2198,8 @@ protected:
   /*! The target point of the arc */
   Arr_extended_direction_3 m_target;
 
-  /*! The plane that contains the arc */
-  Plane_3 m_plane;
+  /*! The direction of the plane that contains the arc */
+  Direction_3 m_normal;
 
   /*! The arc is vertical */
   bool m_is_vertical;
@@ -2237,8 +2227,8 @@ protected:
    * \param d1 the first direction.
    * \param d2 the second direction.
    */
-  inline Plane_3 construct_plane_3(const Direction_3 & d1,
-                                   const Direction_3 & d2) const
+  inline Direction_3 construct_normal_3(const Direction_3 & d1,
+                                        const Direction_3 & d2) const
   {
     Kernel kernel;
 
@@ -2249,7 +2239,7 @@ protected:
     Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
 
     Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
-    return plane;
+    return plane.orthogonal_direction();
   }
 
 public:
@@ -2274,12 +2264,12 @@ public:
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & src,
    const Arr_extended_direction_3 & trg,
-   const Plane_3 & plane,
+   const Direction_3 & normal,
    bool is_vertical, bool is_directed_right,
    bool is_full = false, bool is_degenerate = false, bool is_empty = false) :
     m_source(src),
     m_target(trg),
-    m_plane(plane),
+    m_normal(normal),
     m_is_vertical(is_vertical),
     m_is_directed_right(is_directed_right),
     m_is_full(is_full),
@@ -2295,7 +2285,7 @@ public:
   {
     m_source = other.m_source;
     m_target = other.m_target;
-    m_plane = other.m_plane;
+    m_normal = other.m_normal;
     m_is_vertical = other.m_is_vertical;
     m_is_directed_right = other.m_is_directed_right;
     m_is_full = other.m_is_full;
@@ -2309,7 +2299,7 @@ public:
   {
     m_source = other.m_source;
     m_target = other.m_target;
-    m_plane = other.m_plane;
+    m_normal = other.m_normal;
     m_is_vertical = other.m_is_vertical;
     m_is_directed_right = other.m_is_directed_right;
     m_is_full = other.m_is_full;
@@ -2348,7 +2338,7 @@ public:
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
-    m_plane = construct_plane_3(source, target);
+    m_normal = construct_normal_3(source, target);
       
     // Check whether any one of the endpoint coincide with a pole:
     if (source.is_max_boundary()) {
@@ -2427,17 +2417,17 @@ public:
    * \param plane the containing plane.
    * \pre the plane is not vertical
    */
-  Arr_x_monotone_geodesic_arc_on_sphere_3(const Plane_3 & plane) :
-    m_plane(plane),
+  Arr_x_monotone_geodesic_arc_on_sphere_3(const Direction_3 & normal) :
+    m_normal(normal),
     m_is_vertical(false),
-    m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
+    m_is_directed_right(z_sign(normal) == POSITIVE),
     m_is_full(true),
     m_is_degenerate(false),
     m_is_empty(false)
   {
-    CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
+    CGAL_precondition(z_sign(normal) != ZERO);
 
-    Direction_3 d(-1, 0, plane.a() / plane.c());
+    Direction_3 d(-1, 0, normal.dx() / normal.dz());
     m_source = m_target =
       Arr_extended_direction_3(d, Arr_extended_direction_3::MID_BOUNDARY_LOC);
   }
@@ -2448,18 +2438,19 @@ public:
    * \pre the point lies on the open discontinuity arc
    */
   Arr_x_monotone_geodesic_arc_on_sphere_3
-  (const Arr_extended_direction_3 & point, const Plane_3 & plane) :
+  (const Arr_extended_direction_3 & point,
+   const Direction_3 & normal) :
     m_source(point),
     m_target(point),
-    m_plane(plane),
+    m_normal(normal),
     m_is_vertical(false),
-    m_is_directed_right(z_sign(plane.orthogonal_direction()) == POSITIVE),
+    m_is_directed_right(z_sign(normal) == POSITIVE),
     m_is_full(true),
     m_is_degenerate(false),
     m_is_empty(false)
   {
     CGAL_precondition(has_on(point));
-    CGAL_precondition(z_sign(plane.orthogonal_direction()) != ZERO);
+    CGAL_precondition(z_sign(normal) != ZERO);
 #if !defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
     CGAL_error_msg( "Full x-monotone arcs are not supported!");
 #endif
@@ -2476,10 +2467,10 @@ public:
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3 & source,
    const Arr_extended_direction_3 & target,
-   const Plane_3 & plane) :
+   const Direction_3 & normal) :
     m_source(source),
     m_target(target),
-    m_plane(plane),
+    m_normal(normal),
     m_is_full(false),
     m_is_degenerate(false),
     m_is_empty(false)
@@ -2544,10 +2535,10 @@ public:
    */
   void set_target(const Direction_3 & p) { m_target = p; }
 
-  /*! Set the underlying plane.
-   * \param plane the plane.
+  /*! Set the direction of the underlying plane.
+   * \param normal the plane direction.
    */
-  void set_plane(const Plane_3 & plane) { m_plane = plane; }
+  void normal(const Direction_3 & normal) { m_normal = normal; }
 
   void set_is_vertical(bool flag) { m_is_vertical = flag; }
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
@@ -2561,8 +2552,8 @@ public:
   /*! Obtain the target */
   const Arr_extended_direction_3 & target() const { return m_target; }
     
-  /*! Obtain the containing plane */
-  const Plane_3 & plane() const { return m_plane; }
+  /*! Obtain the normal to the containing plane */
+  const Direction_3 & normal() const { return m_normal; }
 
   /*! Obtain the (lexicographically) left endpoint direction */
   const Arr_extended_direction_3 & left() const
@@ -2596,10 +2587,9 @@ public:
         !is_vertical())
       return false;
 
-    Direction_3 normal = m_plane.orthogonal_direction();    
-    return ((x_sign(normal) == ZERO) &&
-            (((y_sign(normal) == NEGATIVE) && !is_directed_right()) ||
-             ((y_sign(normal) == POSITIVE) && is_directed_right())));
+    return ((x_sign(m_normal) == ZERO) &&
+            (((y_sign(m_normal) == NEGATIVE) && !is_directed_right()) ||
+             ((y_sign(m_normal) == POSITIVE) && is_directed_right())));
   }
   
   /*! Determine whether the given point is in the x-range of the
@@ -2618,10 +2608,9 @@ public:
     
     Direction_2 p = Traits::project_xy(point);
     if (is_vertical()) {
-      Direction_3 normal = m_plane.orthogonal_direction();
       Direction_2 q = (is_directed_right()) ?
-        Direction_2(-(normal.dy()), normal.dx()) :
-        Direction_2(normal.dy(), -(normal.dx()));
+        Direction_2(-(m_normal.dy()), m_normal.dx()) :
+        Direction_2(m_normal.dy(), -(m_normal.dx()));
       Kernel kernel;
       return kernel.equal_2_object()(p, q);
     }
@@ -2652,7 +2641,7 @@ public:
     Arr_x_monotone_geodesic_arc_on_sphere_3 opp;
     opp.m_sourse = this->m_target;
     opp.m_target = this->m_sourse;
-    opp.m_plane = this->m_plane;
+    opp.m_normal = this->m_normal;
     opp.m_is_directed_right = !(this->is_directed_right());
     opp.m_is_vertical = this->is_vertical();
     opp.m_is_full = this->is_full();
@@ -2669,10 +2658,17 @@ public:
    */
   inline bool has_on(const Direction_3 & dir) const
   {
+#if 0
     Kernel kernel;
     Vector_3 vec = dir.vector();
     Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
-    return kernel.has_on_3_object()(m_plane, point);
+    typename Kernel::Plane_3 plane =
+      kernel->construct_normal_3_object()(ORIGIN, normal);
+    return kernel.has_on_3_object()(plane, point);
+#else
+    typename Kernel::FT dot = normal().vector() * dir.vector();
+    return CGAL::sign(dot) == ZERO;
+#endif
   }
 };
 
@@ -2717,7 +2713,7 @@ public:
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc
-   * \param plane the plane that contains the arc
+   * \param normal the normal to the  plane that contains the arc
    * \param is_x_monotone is arc  x-monotone ?
    * \param is_vertical is the arc vertical ?
    * \param is_directed_right is the arc directed from left to right?
@@ -2729,19 +2725,18 @@ public:
    */
   Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & src,
                                      const Arr_extended_direction_3 & trg,
-                                     const Plane_3 & plane,
+                                     const Direction_3 & normal,
                                      bool is_x_monotone, bool is_vertical,
                                      bool is_directed_right,
                                      bool is_full = false,
                                      bool is_degenerate = false,
                                      bool is_empty = false) :
-    Base(src, trg, plane,
+    Base(src, trg, normal,
          is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
     m_is_x_monotone(is_x_monotone)
   {
-    CGAL_precondition_code(Kernel kernel);
     CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
-    CGAL_precondition(kernel.has_on_3_object()(plane, point));
+    CGAL_precondition(this->has_on(point));
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
   }
@@ -2778,7 +2773,7 @@ public:
     CGAL_precondition(!kernel.equal_3_object()
                       (kernel.construct_opposite_direction_3_object()(source),
                        target));
-    this->m_plane = this->construct_plane_3(source, target);
+    this->m_normal = this->construct_normal_3(source, target);
 
     // Check whether one of the endpoints coincides with a pole: */
     if (source.is_max_boundary()) {
@@ -2807,7 +2802,7 @@ public:
     }
 
     // None of the enpoints coincide with a pole:
-    Direction_3 normal = this->m_plane.orthogonal_direction();
+    Direction_3 normal = this->m_normal;
     if (z_sign(normal) == ZERO) {
       // The arc is vertical
       this->set_is_vertical(true);
@@ -2858,25 +2853,24 @@ public:
    * \pre Both endpoints lie on the given plane.
    */
   Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3 & source,
-                                     const Arr_extended_direction_3 & target,
-                                     const Plane_3 & plane)
+                               const Arr_extended_direction_3 & target,
+                               const Direction_3 & normal)
   {
     Kernel kernel;
 
     this->set_source(source);
     this->set_target(target);
-    this->set_plane(plane);
+    this->normal(normal);
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     CGAL_precondition_code(typename Kernel::Point_3 point = ORIGIN);
-    CGAL_precondition(kernel.has_on_3_object()(plane, point));
+    CGAL_precondition(this->has_on(point));
     CGAL_precondition(this->has_on(source));
     CGAL_precondition(this->has_on(target));
 
-    Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
       this->set_is_vertical(true);
     
@@ -2979,10 +2973,9 @@ public:
   /*! Construct a full spherical_arc from a plane.
    * \param plane the containing plane.
    */
-  Arr_geodesic_arc_on_sphere_3(const Plane_3 & plane)
+  Arr_geodesic_arc_on_sphere_3(const Direction_3 & normal)
   {
-    this->set_plane(plane);
-    typename Kernel::Direction_3 normal = plane.orthogonal_direction();
+    this->normal(normal);
     this->set_is_vertical(CGAL::sign(normal.dz()) == ZERO);
     this->set_is_directed_right(true);
     this->set_is_full(true);
