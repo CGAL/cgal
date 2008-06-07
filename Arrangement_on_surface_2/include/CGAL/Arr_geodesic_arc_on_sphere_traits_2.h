@@ -68,7 +68,6 @@ public:
 protected:
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
-  typedef typename Kernel::Ray_3                Ray_3;
   typedef typename Kernel::Line_3               Line_3;
       
 #if defined(CGAL_ARR_PLANE)
@@ -80,7 +79,6 @@ protected:
 
   typedef typename Kernel::Direction_2          Direction_2;
   typedef typename Kernel::Vector_2             Vector_2;
-  typedef typename Kernel::Ray_2                Ray_2;
 
   /*! Obtain the xy-plane
    * \return the xy-plane
@@ -218,8 +216,7 @@ protected:
                                      const Direction_3 dir) const
   {
     const Kernel * kernel = this;
-    Ray_3 ray = kernel->construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = kernel->construct_vector_3_object()(ray);
+    Vector_3 vec = dir.vector();
     Point_3 point = kernel->construct_translated_point_3_object()(ORIGIN, vec);
     return plane.oriented_side(point);
   }
@@ -233,10 +230,8 @@ protected:
                                         const Direction_2 & d2)
   {
     Kernel kernel;
-    Ray_2 r1 = kernel.construct_ray_2_object()(ORIGIN, d1);
-    Vector_2 v1 = kernel.construct_vector_2_object()(r1);
-    Ray_2 r2 = kernel.construct_ray_2_object()(ORIGIN, d2);
-    Vector_2 v2 = kernel.construct_vector_2_object()(r2);
+    Vector_2 v1 = d1.vector();
+    Vector_2 v2 = d2.vector();
     return kernel.orientation_2_object()(v1, v2);
   }
 
@@ -248,8 +243,7 @@ protected:
    */
   inline bool has_on(const Plane_3 & plane, const Direction_3 & dir) const
   {
-    Ray_3 ray = Kernel::construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = Kernel::construct_vector_3_object()(ray);
+    Vector_3 vec = dir.vector();
     Point_3 point = Kernel::construct_translated_point_3_object()(ORIGIN, vec);
     return Kernel::has_on_3_object()(plane, point);
   }
@@ -1822,16 +1816,17 @@ public:
       const Line_3 * line_ptr = object_cast<Line_3>(&obj);
       CGAL_assertion(line_ptr != NULL);
       Point_3 p = line_ptr->point(1);
-      Vector_3 v = kernel->construct_vector_3_object()(ORIGIN, p);
-      Direction_3 d = kernel->construct_direction_3_object()(v);
-      Point_2 ed(d);
 
       // Determine which one of the two directions:
+      Vector_3 v = kernel->construct_vector_3_object()(ORIGIN, p);
+      Point_2 ed(v.direction());
       if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
         *oi++ = make_object(Point_2_pair(ed, 1));
         return oi;
       }
-      Point_2 edo(kernel->construct_opposite_direction_3_object()(d));
+      
+      Vector_3 vo(kernel->construct_opposite_vector_3_object()(v));
+      Point_2 edo(vo.direction());
       if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
         *oi++ = make_object(Point_2_pair(edo, 1));
         return oi;
@@ -2239,7 +2234,6 @@ protected:
   typedef typename Kernel::Plane_3                              Plane_3;
 #endif
   typedef typename Kernel::Point_3                              Point_3;
-  typedef typename Kernel::Ray_3                                Ray_3;
   typedef typename Kernel::Vector_3                             Vector_3;
 
   typedef typename Kernel::Direction_2                          Direction_2;
@@ -2289,12 +2283,10 @@ protected:
   {
     Kernel kernel;
 
-    Ray_3 r1 = kernel.construct_ray_3_object()(ORIGIN, d1);
-    Vector_3 v1 = kernel.construct_vector_3_object()(r1);
+    Vector_3 v1 = d1.vector();
     Point_3 p1 = kernel.construct_translated_point_3_object()(ORIGIN, v1);
 
-    Ray_3 r2 = kernel.construct_ray_3_object()(ORIGIN, d2);
-    Vector_3 v2 = kernel.construct_vector_3_object()(r2);
+    Vector_3 v2 = d2.vector();
     Point_3 p2 = kernel.construct_translated_point_3_object()(ORIGIN, v2);
 
 #if defined(CGAL_ARR_PLANE)
@@ -2723,9 +2715,7 @@ public:
   inline bool has_on(const Direction_3 & dir) const
   {
     Kernel kernel;
-
-    Ray_3 ray = kernel.construct_ray_3_object()(ORIGIN, dir);
-    Vector_3 vec = kernel.construct_vector_3_object()(ray);
+    Vector_3 vec = dir.vector();
     Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
     return kernel.has_on_3_object()(m_plane, point);
   }

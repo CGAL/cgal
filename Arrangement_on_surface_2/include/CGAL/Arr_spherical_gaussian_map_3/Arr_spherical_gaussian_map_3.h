@@ -139,10 +139,7 @@ public:
   Halfedge_handle insert_non_intersecting(const Vector_3 & normal1,
                                           const Vector_3 & normal2)
   {
-    Kernel kernel;
-    Point_2 d1(kernel.construct_direction_3_object()(normal1));
-    Point_2 d2(kernel.construct_direction_3_object()(normal2));
-    X_monotone_curve_2 xc(d1, d2);
+    X_monotone_curve_2 xc(normal1.direction(), normal2.direction());
     return insert_non_intersecting_curve(m_sgm, xc);
   }
 
@@ -153,10 +150,7 @@ public:
                                  const Vector_3 & normal2,
                                  OutputIterator oi)
   {
-    Kernel kernel;
-    Point_2 d1(kernel.construct_direction_3_object()(normal1));
-    Point_2 d2(kernel.construct_direction_3_object()(normal2));
-    Curve_2 cv(d1, d2);
+    Curve_2 cv(normal1.direction(), normal2.direction());
     Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
     oi = traits->make_x_monotone_2_object()(cv, oi);
     return oi;
