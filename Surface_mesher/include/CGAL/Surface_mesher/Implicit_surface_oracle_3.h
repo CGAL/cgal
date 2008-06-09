@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
-// Copyright (c) 2008       GeometryFactory (France)
+// Copyright (c) 2008       GeometryFactory, Sophia Antipolis (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -30,9 +30,14 @@
 
 #include <queue>
 
+#ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
+#  define CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
+#endif
+
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
 #  include <string>
 #  include <sstream>
+#  include <boost/format.hpp>
 #endif
 
 // NB: this oracle requires that the user provide a function that can
@@ -222,6 +227,11 @@ namespace CGAL {
         Point_3 a = point_on(s, 0);
         Point_3 b = point_on(s, 1);
 
+#ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
+        std::cerr << 
+          boost::format("** Implicit_surface_oracle_3::operator()( (%1%), (%2%) )\n")
+          % a % b;
+#endif
         // if both extremities are on the same side of the surface, return
         // no intersection
         if(surf_equation(surface, a) == surf_equation(surface, b))
@@ -235,6 +245,9 @@ namespace CGAL {
                                            b,
                                            surface.squared_error_bound());
         // else
+#ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
+        std::cerr << "No intersection\n";
+#endif
         return Object();
       } // end operator()(Surface_3, Segment_3)
 
@@ -300,9 +313,9 @@ namespace CGAL {
                                        Point p2,
                                        const FT& squared_distance_bound)
       {
-        CGAL_SURFACE_MESHER_PROFILER("intersect_clipped_segment")
+        CGAL_SURFACE_MESHER_PROFILER("intersect_clipped_segment");
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
-        std::cerr << "clipped_segment\n";
+        std::cerr << "clipped_segment( ("  << p1 << "), (" << p2 << ") )\n";
 #endif
         typename GT::Compute_squared_distance_3 squared_distance = 
           GT().compute_squared_distance_3_object();
