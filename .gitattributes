@@ -1892,9 +1892,13 @@ GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
 GraphicsView/demo/GraphicsView/icons/polyline.png -text
 GraphicsView/demo/GraphicsView/icons/voronoi.png -text
 GraphicsView/demo/GraphicsView/makefile -text
-GraphicsView/demo/icons/filenew.png -text
+GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
+GraphicsView/demo/icons/Voronoi_diagram_2.png -text
+GraphicsView/demo/icons/cgal_logo.xpm -text
 GraphicsView/demo/icons/fileopen.png -text
 GraphicsView/demo/icons/filesave.png -text
+GraphicsView/demo/icons/inputPolyline.png -text
+GraphicsView/demo/icons/toto.png -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text svneol=unset#application/postscript
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
