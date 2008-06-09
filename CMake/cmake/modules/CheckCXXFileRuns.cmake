@@ -16,7 +16,6 @@
 # KDE4's CheckCSourceRuns.cmake
 
 MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
-  if( DEFINED ${VAR} )
     # Set compiler settings
     SET(MACRO_CHECK_FUNCTION_DEFINITIONS "-D${VAR} ${CMAKE_REQUIRED_FLAGS}")
     if(CMAKE_REQUIRED_LIBRARIES)
@@ -64,6 +63,5 @@ MACRO(CHECK_CXX_FILE_RUNS FILE VAR TEST)
         "Return value: ${result_var}\n"
         "Source file was:\n${SOURCE}\n")
     endif()
-  endif()
 ENDMACRO(CHECK_CXX_FILE_RUNS)
 
