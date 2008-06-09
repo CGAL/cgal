@@ -144,7 +144,7 @@ and {\tt .cpp} file which contains the word {\tt main} in the directory.
 The following options are available to indicate the kind of cmake script
 to create:
 \begin{description}
-\item[-q]   create a CGAL makefile with Qt support
+\item[-q]   create a CMake script with Qt support
 \end{description}
 
 
@@ -482,22 +482,27 @@ Each directory in there, called {\em configuration folder}, will contain the tes
 for a particular configuration and its name will identify the configuration 
 in the test results.
 
-Now cd into each such configuration folder and type 
-{\tt cmake {\em <options>} ../../..} 
+Now cd into each such configuration folder and type:
 
-{\tt{\em "<options>"}} corresponds to any specific settings you wish to
-pass to cmake to customize this configuration, 
-such as {\tt -DCMAKE\_BUILD\_TYPE=Debug -DWITH\_CGALPDB='FALSE'}.
+{\tt cmake -DWITH\_demo=FALSE -DWITH\_examples=FALSE 
+-DCMAKE\_BUILD\_TYPE={\em Debug or Release}  {\em <additional options>} ../../..} 
+
+{\tt{\em <additional options>}} corresponds to any additional specific settings 
+you wish to pass to cmake in order to customize this configuration.
+A typical example would be {\tt -DWITH\_{\em <lib>}=FALSE} to skip building some 
+library component not supported on this platform
+(with <lib> any of {\tt CGALCORE, CGALimageIO, CGALPDB or CGALQt}).
 
 Then type "make" to make sure the configuration is correct and the 
 libraries build.
 
-If you need the test script to automatically do anything for this particular configuration,
-such as setting {\tt TESTSUITE\_CXXFLAGS} and {\tt TESTSUITE\_LDFLAGS}, or setting up 
-the compiler, you can create here a shell script named {\tt 'setup'}. The testsuite script 
-creates and runs temporary build and test scripts in each configuration folder to build and test the libraries. 
-Those temporary scripts are created starting with a verbatim copy of the contents of your {\tt 'setup'} 
-script (if it exists) allowing you to bootstrap the process as needed.
+You can create here a shell script named {\tt 'setup'} in case you need the test script
+to automatically do anything for this particular configuration, such as setting up the compiler,
+or setting {\tt TESTSUITE\_CXXFLAGS} and {\tt TESTSUITE\_LDFLAGS} which are the environment variables 
+defining any {\em additional} compiler and linker flags to append to the flags managed by CMake itself. 
+
+The contents of such file, if it exists, is copied verbatim into the start of the temporary 
+build and test scripts created on each configuration folder. This allows you to bootstrap the process as needed.
 
 The script uses {\tt wget} to download the release to test. The different options you
 may pass to {\tt wget} you should put in the {\tt WGET} variable in {\tt
