@@ -1892,6 +1892,9 @@ GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
 GraphicsView/demo/GraphicsView/icons/polyline.png -text
 GraphicsView/demo/GraphicsView/icons/voronoi.png -text
 GraphicsView/demo/GraphicsView/makefile -text
+GraphicsView/demo/icons/filenew.png -text
+GraphicsView/demo/icons/fileopen.png -text
+GraphicsView/demo/icons/filesave.png -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text svneol=unset#application/postscript
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
