@@ -1883,14 +1883,7 @@ GraphicsView/demo/GraphicsView/#README# -text
 GraphicsView/demo/GraphicsView/MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/MainWindow.rcc -text
 GraphicsView/demo/GraphicsView/MainWindow.ui -text
-GraphicsView/demo/GraphicsView/icons/cgal_logo.xpm -text
-GraphicsView/demo/GraphicsView/icons/delaunay.png -text
-GraphicsView/demo/GraphicsView/icons/filenew.png -text
-GraphicsView/demo/GraphicsView/icons/fileopen.png -text
-GraphicsView/demo/GraphicsView/icons/filesave.png -text
 GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
-GraphicsView/demo/GraphicsView/icons/polyline.png -text
-GraphicsView/demo/GraphicsView/icons/voronoi.png -text
 GraphicsView/demo/GraphicsView/makefile -text
 GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
 GraphicsView/demo/icons/Voronoi_diagram_2.png -text
