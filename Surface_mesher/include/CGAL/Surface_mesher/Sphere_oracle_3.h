@@ -287,19 +287,39 @@ namespace CGAL {
         boost::tie(number_of_roots, root_1, root_2) = 
           intersection_line_sphere_lambda(sphere, a, b);
 
+#ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
+        std::cerr << "Clip segment. Roots=("
+                  << root_1 << ", " << root_2 << ")\n";
+#endif
         if( number_of_roots < 2 )
           return false;
 
-        const Vector ab = vector(a, b);
+        if( root_1 > FT(1) ) // root_x \in ]1,\infinity[
+          return false;      // no intersection
 
-        const Point original_a = a;
-
-        if( ! a_in_sphere )
+        if( root_1 >= FT(0) ) // root_1 \in [0,1[
+        {                     // move point a
+          const Point original_a = a;
+          const Vector ab = vector(a, b);
           a = translated_point(original_a, scaled_vector(ab, root_1));
-        if( ! b_in_sphere )
-          b = translated_point(original_a, scaled_vector(ab, root_2));
-          
-        return true;
+          if( root_2 <= FT(1) ) /// move b iif root_2 <=1
+          {
+            b = translated_point(original_a, scaled_vector(ab, root_2));
+          }
+          return true;
+        }
+        else // root_1 in ]-\infinity, 0[
+        {    // do not move point a
+          if( root_2 < FT(0) ) // root_x in ]-\infinity, 0[
+            return false;      // no intersection
+          else 
+          {
+            const Vector ab = vector(a, b);
+            if( root_2 <= FT(1) )
+              b = translated_point(a, scaled_vector(ab, root_2));
+            return true;
+          }
+        }
       }
 
       /** The return value s is r clipped to sphere.
@@ -344,7 +364,7 @@ namespace CGAL {
         return false;
       } // end clip_ray
 
-      /** The return value s is l clipped to sphere.
+      /** The return value s=(ab) is l clipped to sphere.
           Return false iff l does not intersect sphere. */
       bool clip_line(const Surface_3& sphere, const Line_3& l,
                      Point& a,
@@ -372,7 +392,7 @@ namespace CGAL {
         boost::tie(number_of_roots, root_1, root_2) = 
           intersection_line_sphere_lambda(sphere, a, b);
 
-        if( number_of_roots == 2 && root_2 > FT(0) )
+        if( number_of_roots == 2 )
         {
           const Point original_a = a;
           const Vector ab = vector(a, b);
