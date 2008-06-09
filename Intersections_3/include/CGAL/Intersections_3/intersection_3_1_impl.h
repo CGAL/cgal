@@ -196,7 +196,7 @@ template <class K>
 Object
 intersection(const typename K::Line_3 &l1,
 	     const typename K::Line_3 &l2,
-	     const K& k)
+	     const K&)
 {
   typedef typename K::FT           FT;
   typedef typename K::Line_3       Line_3;
@@ -232,7 +232,7 @@ template <class K>
 bool
 do_intersect(const typename K::Line_3 &l1,
 	     const typename K::Line_3 &l2,
-	     const K& k)
+	     const K&)
 {
   typedef typename K::FT           FT;
   typedef typename K::Line_3       Line_3;
