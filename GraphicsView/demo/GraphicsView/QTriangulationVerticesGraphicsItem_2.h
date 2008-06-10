@@ -4,7 +4,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include "QPainterOstream.h"
-#include "GraphicsItem_2.h"
+#include "QGraphicsItem_2.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -20,27 +20,28 @@ namespace CGAL {
 
 
 template <typename T>
-class TriangulationVerticesGraphicsItem_2 : public GraphicsItem_2
+class QTriangulationVerticesGraphicsItem_2 : public QGraphicsItem_2
 {
 public:
-  TriangulationVerticesGraphicsItem_2(T  * t_);
+  QTriangulationVerticesGraphicsItem_2(T  * t_);
 
-  enum { Type = UserType + 4 };
-  int type() const { return Type; }
+  void 
+  operator()(typename T::Face_handle fh);
   
+  QRectF 
+  boundingRect() const;
   
-  void operator()(typename T::Face_handle fh);
+  void 
+  paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
   
-  QRectF boundingRect() const;
-  
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  void vModelChanged();
+  void 
+  modelChanged();
 
 
 
 private:
-  void updateBoundingBox();
+  void 
+  updateBoundingBox();
 
   T * t;
   typename T::Vertex_handle vh;
@@ -53,7 +54,7 @@ private:
 
 
 template <typename T>
-TriangulationVerticesGraphicsItem_2<T>::TriangulationVerticesGraphicsItem_2(T * t_)
+QTriangulationVerticesGraphicsItem_2<T>::QTriangulationVerticesGraphicsItem_2(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false)
 {
   if(t->number_of_vertices() == 0){
@@ -65,7 +66,8 @@ TriangulationVerticesGraphicsItem_2<T>::TriangulationVerticesGraphicsItem_2(T * 
 }
 
 template <typename T>
-QRectF TriangulationVerticesGraphicsItem_2<T>::boundingRect() const
+QRectF 
+QTriangulationVerticesGraphicsItem_2<T>::boundingRect() const
 {
   return QRectF(bb.xmin()-1, bb.ymin()-1,
 		(bb.xmax()-bb.xmin())+2, (bb.ymax()-bb.ymin())+2); // width height
@@ -75,7 +77,8 @@ QRectF TriangulationVerticesGraphicsItem_2<T>::boundingRect() const
 
 
 template <typename T>
-void TriangulationVerticesGraphicsItem_2<T>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
+void 
+QTriangulationVerticesGraphicsItem_2<T>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
   painter->setPen(pen());
   for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
@@ -88,7 +91,8 @@ void TriangulationVerticesGraphicsItem_2<T>::paint(QPainter *painter, const QSty
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename T>
-void TriangulationVerticesGraphicsItem_2<T>::updateBoundingBox()
+void 
+QTriangulationVerticesGraphicsItem_2<T>::updateBoundingBox()
 {
   if(t->number_of_vertices() == 0){
     bb = Bbox_2(0,0,0,0);
@@ -117,7 +121,8 @@ void TriangulationVerticesGraphicsItem_2<T>::updateBoundingBox()
 
 
 template <typename T>
-void TriangulationVerticesGraphicsItem_2<T>::vModelChanged()
+void 
+QTriangulationVerticesGraphicsItem_2<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0) ){
     this->hide();
@@ -131,4 +136,4 @@ void TriangulationVerticesGraphicsItem_2<T>::vModelChanged()
 
 } // namespace CGAL
 
-#endif // CGAL_TRIANGULATION_VERTICES_GRAPHICS_ITEM_2_H
+#endif // CGAL_Q_TRIANGULATION_VERTICES_GRAPHICS_ITEM_2_H

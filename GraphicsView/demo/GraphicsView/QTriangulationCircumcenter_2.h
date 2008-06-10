@@ -1,7 +1,7 @@
-#ifndef CGAL_TRIANGULATION_CIRCUMCENTER_2
-#define CGAL_TRIANGULATION_CIRCUMCENTER_2
+#ifndef CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
+#define CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
 
-#include "Input.h"
+#include "QInput.h"
 #include <QGraphicsSceneMouseEvent> 
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
@@ -14,12 +14,12 @@
 namespace CGAL {
 
 template <typename DT>
-class TriangulationCircumcenter_2 : public Input
+class QTriangulationCircumcenter_2 : public QInput
 {
 
 
 public:
-  TriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_);
+  QTriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_);
  
   void setPen(const QPen& pen);
 
@@ -41,7 +41,7 @@ private:
 
 
 template <typename T>
-TriangulationCircumcenter_2<T>::TriangulationCircumcenter_2(QGraphicsScene* s, T * dt_)
+QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s, T * dt_)
   :  dt(dt_), scene_(s)
 {
   circle.hide();
@@ -51,28 +51,29 @@ TriangulationCircumcenter_2<T>::TriangulationCircumcenter_2(QGraphicsScene* s, T
 
 template <typename T>
 void
-TriangulationCircumcenter_2<T>::setPen(const QPen& pen)
+QTriangulationCircumcenter_2<T>::setPen(const QPen& pen)
 {
   circle.setPen(pen);
 }
 
 template <typename T>
 void
-TriangulationCircumcenter_2<T>::show()
+QTriangulationCircumcenter_2<T>::show()
 {
   circle.show();
 }
 
 template <typename T>
 void
-TriangulationCircumcenter_2<T>::hide()
+QTriangulationCircumcenter_2<T>::hide()
 {
   circle.hide();
 }
 
 
 template <typename T>
-void TriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void 
+QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
     circle.hide();
@@ -94,7 +95,8 @@ void TriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *ev
 
 
 template <typename T>
-bool TriangulationCircumcenter_2<T>::eventFilter(QObject *obj, QEvent *event)
+bool 
+QTriangulationCircumcenter_2<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -109,4 +111,4 @@ bool TriangulationCircumcenter_2<T>::eventFilter(QObject *obj, QEvent *event)
 
 } // namespace CGAL
 
-#endif // CGAL_TRIANGULATION_CIRCUMCENTER_2
+#endif // CGAL_Q_TRIANGULATION_CIRCUMCENTER_2

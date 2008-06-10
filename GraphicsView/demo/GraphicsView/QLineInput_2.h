@@ -1,6 +1,6 @@
 
-#ifndef CGAL_LINE_INPUT_2_H
-#define CGAL_LINE_INPUT_2_H
+#ifndef CGAL_Q_LINE_INPUT_2_H
+#define CGAL_Q_LINE_INPUT_2_H
 
 #include <QGraphicsView>
 #include <QRectF>
@@ -13,16 +13,16 @@
 #include <QStyleOption>
 #include "QtConverter.h"
 
-#include "Input.h"
+#include "QInput.h"
 
 namespace CGAL {
 
 
 template <typename K>
-class LineInput_2 : public Input
+class QLineInput_2 : public QInput
 {
 public:
-  LineInput_2(QGraphicsScene* s);
+  QLineInput_2(QGraphicsScene* s);
 
 protected:
     
@@ -69,14 +69,14 @@ LineInput_2<K>::boundingRect()
 
 
 template <typename K>
-LineInput_2<K>::LineInput_2(QGraphicsScene* s)
+QLineInput_2<K>::QLineInput_2(QGraphicsScene* s)
   : second(false), scene_(s)
 {}
 
 
 template <typename K>
 QLineF
-LineInput_2<K>::qlinef()
+QLineInput_2<K>::qlinef()
 {
 
   sp = convert(qsp);
@@ -93,14 +93,14 @@ LineInput_2<K>::qlinef()
 
 template <typename K>
 void 
-LineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+QLineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if(second){
       qtp = event->scenePos();
       sp = convert(qsp);
       tp = convert(qtp);
       scene_->removeItem(&line);
-      emit produce(CGAL::make_object(typename K::Line_2(sp,tp)));
+      emit generate(CGAL::make_object(typename K::Line_2(sp,tp)));
   } else {
     qsp = event->scenePos();
     qtp = QPointF(qsp.x()+1, qsp.y());
@@ -114,7 +114,8 @@ LineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void LineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void 
+QLineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   qtp = event->scenePos();
   if(qtp == qsp){
@@ -125,7 +126,8 @@ void LineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void LineInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
+void 
+QLineInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() != Qt::Key_Delete){
     return;
@@ -139,7 +141,8 @@ void LineInput_2<K>::keyPressEvent ( QKeyEvent * event )
 
 
 template <typename K>
-bool LineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
+bool 
+QLineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -161,4 +164,4 @@ bool LineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
 
 } // namespace CGAL
 
-#endif // CGAL_LINE_INPUT_H
+#endif // CGAL_Q_LINE_INPUT_H

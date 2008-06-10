@@ -10,8 +10,8 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 
-#include "TriangulationVerticesGraphicsItem_2.h"
-#include "TriangulationCircumcenter_2.h"
+#include "QTriangulationVerticesGraphicsItem_2.h"
+#include "QTriangulationCircumcenter_2.h"
 
   
 MainWindow::MainWindow()
@@ -20,7 +20,7 @@ MainWindow::MainWindow()
   setupStatusBar();
 
   // The navigation adds zooming and translation functionality to the QGraphicsView
-  navigation = new CGAL::Navigation(this->graphicsView);
+  navigation = new CGAL::QNavigation(this->graphicsView);
   this->graphicsView->viewport()->installEventFilter(navigation);
 
   //  navigation2 = new CGAL::Navigation2(this->graphicsView);
@@ -29,17 +29,17 @@ MainWindow::MainWindow()
   // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
 #ifdef DELAUNAY_VORONOI
   sdt = new CGAL::QTriangulation_2<Delaunay> (&dt);
-  dgi = new CGAL::TriangulationGraphicsItem_2<Delaunay>(&dt);
+  dgi = new CGAL::QTriangulationGraphicsItem_2<Delaunay>(&dt);
 #else 
   sdt = new CGAL::QConstrainedTriangulation_2<Delaunay> (&dt);
-  dgi = new CGAL::ConstrainedTriangulationGraphicsItem_2<Delaunay>(&dt);
+  dgi = new CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay>(&dt);
 #endif    
     
   QObject::connect(sdt, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  CGAL::TriangulationVerticesGraphicsItem_2<Delaunay> * dvgi;
-  dvgi = new  CGAL::TriangulationVerticesGraphicsItem_2<Delaunay>(&dt);
+  CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay> * dvgi;
+  dvgi = new  CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay>(&dt);
   dvgi->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dvgi);
 
@@ -47,10 +47,10 @@ MainWindow::MainWindow()
 		   dvgi, SLOT(modelChanged()));
 
 #ifdef DELAUNAY_VORONOI
-  vgi = new CGAL::VoronoiGraphicsItem_2<Delaunay>(&dt);
+  vgi = new CGAL::QVoronoiGraphicsItem_2<Delaunay>(&dt);
   vgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   QObject::connect(sdt, SIGNAL(changed()),
-  	   vgi, SLOT(modelChanged()));
+		   vgi, SLOT(modelChanged()));
 #endif    
     
 
@@ -58,20 +58,20 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism
     
-  pi = new CGAL::PolylineInput_2<K>(&scene, 0, false); // inputs polylines which are not closed
-  tcc = new CGAL::TriangulationCircumcenter_2<Delaunay>(&scene, &dt);
+  pi = new CGAL::QPolylineInput_2<K>(&scene, 0, false); // inputs polylines which are not closed
+  tcc = new CGAL::QTriangulationCircumcenter_2<Delaunay>(&scene, &dt);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
 #ifdef DELAUNAY_VORONOI
   pi->setNumberOfVertices(1);  // In this case we only want to insert points
 #endif
 
-  QObject::connect(pi, SIGNAL(produce(CGAL::Object)),
-		   sdt, SLOT(consume(CGAL::Object)));
+  QObject::connect(pi, SIGNAL(generate(CGAL::Objecrt)),
+		   sdt, SLOT(insert(CGAL::Object)));
     
-  mp = new CGAL::TriangulationMovingPoint_2<Delaunay>(&dt);
-  QObject::connect(mp, SIGNAL(produce(CGAL::Object)),
-		   sdt, SLOT(consume(CGAL::Object)));
+  mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt);
+  QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
+		   sdt, SLOT(insert(CGAL::Object)));
   
 
   connectActions();
@@ -96,49 +96,8 @@ MainWindow::MainWindow()
 void
 MainWindow::connectActions()
 {
-  // Connect File Menu actions 
-    
-  QObject::connect(this->actionClear, SIGNAL(triggered()), 
-		   this, SLOT(clear()));
-
-  QObject::connect(this->actionLoadConstraints, SIGNAL(triggered()), 
-		   this, SLOT(loadConstraints()));
-
-  QObject::connect(this->actionSaveConstraints, SIGNAL(triggered()), 
-		   this, SLOT(saveConstraints()));
-
   QObject::connect(this->actionExit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
-
-  // Connect Edit Menu actions
-
-  QObject::connect(this->actionInsertRandomPoints, SIGNAL(triggered()),
-		   this, SLOT(insertRandomPoints()));
-    
-
-  // Connect Help Menu actions
-  QObject::connect(this->actionAbout, SIGNAL(triggered()),
-		   this, SLOT(about()));
-
-  QObject::connect(this->actionAboutCGAL, SIGNAL(triggered()),
-		   this, SLOT(aboutCGAL()));
-
-
-  // Connect Tool Menu actions
-QObject::connect(this->actionShowDelaunay, SIGNAL(toggled(bool)),
-		   this, SLOT(showDelaunay(bool)));
-
-//QObject::connect(this->actionShowVoronoi, SIGNAL(toggled(bool)),
-//		   this, SLOT(showVoronoi(bool)));
-
-  QObject::connect(this->actionInsertPolyline, SIGNAL(toggled(bool)),
-		   this, SLOT(insertPolyline(bool)));
-
-  QObject::connect(this->actionMovingPoint, SIGNAL(toggled(bool)),
-		   this, SLOT(movingPoint(bool)));
-
-  QObject::connect(this->actionCircumcenter, SIGNAL(toggled(bool)),
-		   this, SLOT(circumcenter(bool)));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
@@ -149,8 +108,9 @@ QObject::connect(this->actionShowDelaunay, SIGNAL(toggled(bool)),
   this->actionInsertPolyline->setChecked(true);
 }  
 
+
 void
-MainWindow::insertPolyline(bool checked)
+MainWindow::on_actionInsertPolyline_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
@@ -161,7 +121,7 @@ MainWindow::insertPolyline(bool checked)
 
 
 void
-MainWindow::movingPoint(bool checked)
+MainWindow::on_actionMovingPoint_toggled(bool checked)
 {
 
   if(checked){
@@ -173,7 +133,7 @@ MainWindow::movingPoint(bool checked)
 
 
 void
-MainWindow::showDelaunay(bool checked)
+MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   if(checked){
     scene.addItem(dgi);
@@ -197,7 +157,7 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 
 
 void
-MainWindow::circumcenter(bool checked)
+MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
 #ifdef DELAUNAY_VORONOI
   if(checked){
@@ -214,7 +174,7 @@ MainWindow::circumcenter(bool checked)
 
 
 void
-MainWindow::clear()
+MainWindow::on_actionClear_triggered()
 {
   sdt->clear();
   scene.update();
@@ -222,7 +182,7 @@ MainWindow::clear()
 
 
 void
-MainWindow::loadConstraints()
+MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Constraint File"),
@@ -266,7 +226,7 @@ MainWindow::loadConstraints(QString fileName)
 }
 
 void
-MainWindow::saveConstraints()
+MainWindow::on_actionSaveConstraints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save Constraints"),
@@ -285,7 +245,7 @@ MainWindow::saveConstraints(QString fileName)
 }
 
 void
-MainWindow::insertRandomPoints()
+MainWindow::on_actionInsertRandomPoints_triggered()
 {
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
@@ -299,7 +259,7 @@ MainWindow::insertRandomPoints()
 }
 
 void
-MainWindow::about()
+MainWindow::on_actionAbout_triggered()
 {
   QMessageBox::about(this, tr(" About the Demo"),
 		     tr("<h2>Constrained Delaunay Triangulation</h2>"
@@ -309,7 +269,7 @@ MainWindow::about()
 }
 
 void
-MainWindow::aboutCGAL()
+MainWindow::on_actionAboutCGAL_triggered()
 {
   QMessageBox::about(this, tr(" About CGAL"),
 		     tr("<h2>CGAL - Computational Geometry Algorithms Library</h2>"

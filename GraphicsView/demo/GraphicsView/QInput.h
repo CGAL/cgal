@@ -1,22 +1,22 @@
-#ifndef CGAL_INPUT_H
-#define CGAL_INPUT_H
+#ifndef CGAL_Q_INPUT_H
+#define CGAL_Q_INPUT_H
 
 #include <CGAL/Object.h>
 #include <QObject>
 
 namespace CGAL {
 
-class Input  : public QObject
+class QInput  : public QObject
 {
   Q_OBJECT
 
 signals:
 
-  void produce(CGAL::Object o);
+  void generate(CGAL::Object o);
 
 };
 
 
 } // namespace CGAL
 
-#endif // CGAL_INPUT_H
+#endif // CGAL_Q_INPUT_H

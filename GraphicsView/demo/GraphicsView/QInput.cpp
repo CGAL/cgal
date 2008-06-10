@@ -1,8 +1,8 @@
-#include "Input.h"
+#include "QInput.h"
 
 namespace CGAL {
 
-#include "Input.moc"
+#include "QInput.moc"
 
 } // namespace CGAL
 

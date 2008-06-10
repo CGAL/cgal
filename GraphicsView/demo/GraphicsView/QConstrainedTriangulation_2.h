@@ -62,7 +62,7 @@ public:
   }
   
 
-  void insert(CGAL::Object o)
+  virtual void insert(CGAL::Object o)
   {
     typedef typename CT::Point Point;
     std::list<Point> points;

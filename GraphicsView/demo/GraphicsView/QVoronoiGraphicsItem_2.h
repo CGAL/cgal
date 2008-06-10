@@ -1,10 +1,10 @@
 
-#ifndef CGAL_VORONOI_GRAPHICS_ITEM_2_H
-#define CGAL_VORONOI_GRAPHICS_ITEM_2_H
+#ifndef CGAL_Q_VORONOI_GRAPHICS_ITEM_2_H
+#define CGAL_Q_VORONOI_GRAPHICS_ITEM_2_H
 
 
 
-#include "GraphicsItem_2.h"
+#include "QGraphicsItem_2.h"
 #include "QPainterOstream.h"
 
 #include <QGraphicsScene>
@@ -20,20 +20,20 @@ class QGraphicsSceneMouseEvent;
 namespace CGAL {
 
 template <typename DT>
-class VoronoiGraphicsItem_2 : public GraphicsItem_2
+class QVoronoiGraphicsItem_2 : public QGraphicsItem_2
 {
 public:
-      VoronoiGraphicsItem_2(DT  * dt_);
-
-  //enum { Type = UserType + 4 };
-  //int type() const { return Type; }
+  QVoronoiGraphicsItem_2(DT  * dt_);
 
 
-    QRectF boundingRect() const;
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-  void vModelChanged();
+  QRectF 
+  boundingRect() const;
+  
+  void 
+  paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  
+  void 
+  modelChanged();
 
 private:
   DT * dt;
@@ -42,14 +42,15 @@ private:
 
 
 template <typename DT>
-VoronoiGraphicsItem_2<DT>::VoronoiGraphicsItem_2(DT * dt_)
+QVoronoiGraphicsItem_2<DT>::QVoronoiGraphicsItem_2(DT * dt_)
   :  dt(dt_)
 {
   setZValue(3);
 }
 
 template <typename DT>
-QRectF VoronoiGraphicsItem_2<DT>::boundingRect() const
+QRectF 
+QVoronoiGraphicsItem_2<DT>::boundingRect() const
 {
   QRectF rect;
   QList<QGraphicsView *>  views = scene()->views();
@@ -67,9 +68,10 @@ QRectF VoronoiGraphicsItem_2<DT>::boundingRect() const
 
 
 template <typename DT>
-void VoronoiGraphicsItem_2<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
+void 
+QVoronoiGraphicsItem_2<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
-  QtConverter<typename DT::Geom_traits> convert;
+  QConverter<typename DT::Geom_traits> convert;
   QRectF rect = boundingRect();
   
   painter->setPen(pen());
@@ -102,11 +104,12 @@ void VoronoiGraphicsItem_2<DT>::paint(QPainter *painter, const QStyleOptionGraph
 
 
 template <typename T>
-void VoronoiGraphicsItem_2<T>::vModelChanged()
+void 
+QVoronoiGraphicsItem_2<T>::modelChanged()
 {
   update();
 }
 
 } // namespace CGAL
 
-#endif // CGAL_VORONOI_GRAPHICS_ITEM_2_H
+#endif // CGAL_Q_VORONOI_GRAPHICS_ITEM_2_H

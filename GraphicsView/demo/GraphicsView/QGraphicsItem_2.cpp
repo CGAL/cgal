@@ -1,10 +1,10 @@
 
-#include "GraphicsItem_2.h"
+#include "QGraphicsItem_2.h"
 
 namespace CGAL {
 
 
-#include "GraphicsItem_2.moc"
+#include "QGraphicsItem_2.moc"
 
 } // namespace CGAL
 

@@ -105,30 +105,6 @@ delaunay\fast:
 	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\build
 
 # target to build an object file
-GraphicsItem_2.obj:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\GraphicsItem_2.obj
-
-# target to preprocess a source file
-GraphicsItem_2.i:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\GraphicsItem_2.i
-
-# target to generate assembly for a file
-GraphicsItem_2.s:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\GraphicsItem_2.s
-
-# target to build an object file
-Input.obj:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Input.obj
-
-# target to preprocess a source file
-Input.i:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Input.i
-
-# target to generate assembly for a file
-Input.s:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Input.s
-
-# target to build an object file
 MainWindow.obj:
 	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\MainWindow.obj
 
@@ -141,30 +117,6 @@ MainWindow.s:
 	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\MainWindow.s
 
 # target to build an object file
-Navigation.obj:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation.obj
-
-# target to preprocess a source file
-Navigation.i:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation.i
-
-# target to generate assembly for a file
-Navigation.s:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation.s
-
-# target to build an object file
-Navigation2.obj:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation2.obj
-
-# target to preprocess a source file
-Navigation2.i:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation2.i
-
-# target to generate assembly for a file
-Navigation2.s:
-	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\Navigation2.s
-
-# target to build an object file
 QDatastructure.obj:
 	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QDatastructure.obj
 
@@ -175,6 +127,54 @@ QDatastructure.i:
 # target to generate assembly for a file
 QDatastructure.s:
 	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QDatastructure.s
+
+# target to build an object file
+QGraphicsItem_2.obj:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QGraphicsItem_2.obj
+
+# target to preprocess a source file
+QGraphicsItem_2.i:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QGraphicsItem_2.i
+
+# target to generate assembly for a file
+QGraphicsItem_2.s:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QGraphicsItem_2.s
+
+# target to build an object file
+QInput.obj:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QInput.obj
+
+# target to preprocess a source file
+QInput.i:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QInput.i
+
+# target to generate assembly for a file
+QInput.s:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QInput.s
+
+# target to build an object file
+QNavigation.obj:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation.obj
+
+# target to preprocess a source file
+QNavigation.i:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation.i
+
+# target to generate assembly for a file
+QNavigation.s:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation.s
+
+# target to build an object file
+QNavigation2.obj:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation2.obj
+
+# target to preprocess a source file
+QNavigation2.i:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation2.i
+
+# target to generate assembly for a file
+QNavigation2.s:
+	$(MAKE) -f CMakeFiles\delaunay.dir/build.make /nologo -$(MAKEFLAGS) CMakeFiles\delaunay.dir\QNavigation2.s
 
 # target to build an object file
 main.obj:
@@ -257,24 +257,24 @@ help::
 	@echo ... delaunay
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... GraphicsItem_2.obj
-	@echo ... GraphicsItem_2.i
-	@echo ... GraphicsItem_2.s
-	@echo ... Input.obj
-	@echo ... Input.i
-	@echo ... Input.s
 	@echo ... MainWindow.obj
 	@echo ... MainWindow.i
 	@echo ... MainWindow.s
-	@echo ... Navigation.obj
-	@echo ... Navigation.i
-	@echo ... Navigation.s
-	@echo ... Navigation2.obj
-	@echo ... Navigation2.i
-	@echo ... Navigation2.s
 	@echo ... QDatastructure.obj
 	@echo ... QDatastructure.i
 	@echo ... QDatastructure.s
+	@echo ... QGraphicsItem_2.obj
+	@echo ... QGraphicsItem_2.i
+	@echo ... QGraphicsItem_2.s
+	@echo ... QInput.obj
+	@echo ... QInput.i
+	@echo ... QInput.s
+	@echo ... QNavigation.obj
+	@echo ... QNavigation.i
+	@echo ... QNavigation.s
+	@echo ... QNavigation2.obj
+	@echo ... QNavigation2.i
+	@echo ... QNavigation2.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

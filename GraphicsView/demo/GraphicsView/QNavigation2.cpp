@@ -1,12 +1,12 @@
 
-#include "Navigation2.h"
+#include "QNavigation2.h"
 #include <cmath>
 #include <iostream>
 
 namespace CGAL {
 
   bool 
-  Navigation2::eventFilter(QObject *obj, QEvent *event)
+  QNavigation2::eventFilter(QObject *obj, QEvent *event)
   {
     if (event->type() == QEvent::KeyPress) {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -20,7 +20,7 @@ namespace CGAL {
 
 
   bool
-  Navigation2::keyPressEvent(QKeyEvent *event)
+  QNavigation2::keyPressEvent(QKeyEvent *event)
   {    
     std::cout << "Navigation2::keyPressEvent" << std::endl;
     QRectF rect;
@@ -58,12 +58,12 @@ namespace CGAL {
 
 
   void 
-  Navigation2::scaleView(qreal scaleFactor)
+  QNavigation2::scaleView(qreal scaleFactor)
   {
     v->scale(scaleFactor, scaleFactor);
   }
 
-#include "Navigation2.moc"
+#include "QNavigation2.moc"
 
 } // namespace CGAL
 

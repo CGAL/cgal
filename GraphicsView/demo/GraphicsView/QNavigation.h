@@ -1,5 +1,5 @@
-#ifndef CGAL_NAVIGATION_H
-#define CGAL_NAVIGATION_H
+#ifndef CGAL_Q_NAVIGATION_H
+#define CGAL_Q_NAVIGATION_H
 
 #include <QObject>
 #include <QEvent>
@@ -11,7 +11,7 @@
 
 namespace CGAL {
 
-class Navigation: public QObject {
+class QNavigation: public QObject {
 
   Q_OBJECT
 
@@ -19,7 +19,7 @@ class Navigation: public QObject {
   void mouseCoordinates(QString);
 
 public:
-  Navigation(QGraphicsView* v_)
+  QNavigation(QGraphicsView* v_)
     : v(v_)
   {}
   
@@ -37,4 +37,4 @@ private:
 
 } // namespace CGAL
 
-#endif // CGAL_NAVIGATION_H
+#endif // CGAL_Q_NAVIGATION_H

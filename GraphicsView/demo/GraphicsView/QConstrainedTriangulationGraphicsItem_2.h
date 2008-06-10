@@ -1,8 +1,8 @@
 
-#ifndef CGAL_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
-#define CGAL_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
+#ifndef CGAL_Q_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
+#define CGAL_Q_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
 
-#include "TriangulationGraphicsItem_2.h"
+#include "QTriangulationGraphicsItem_2.h"
 
 
 
@@ -12,11 +12,11 @@ namespace CGAL {
 
 
 template <typename T>
-class ConstrainedTriangulationGraphicsItem_2 : public TriangulationGraphicsItem_2<T>
+class QConstrainedTriangulationGraphicsItem_2 : public QTriangulationGraphicsItem_2<T>
 {
 public:
-  ConstrainedTriangulationGraphicsItem_2(T  * t_)
-    : TriangulationGraphicsItem_2<T>(t_)
+  QConstrainedTriangulationGraphicsItem_2(T  * t_)
+    : QTriangulationGraphicsItem_2<T>(t_)
   {}
 
   
@@ -27,8 +27,8 @@ public:
 
 
 template <typename T>
- void 
-ConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh)
+void 
+QConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh)
 {
   QPen blackpen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   QPen redpen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -47,4 +47,4 @@ ConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh
 
 } // namespace CGAL
 
-#endif // CGAL_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
+#endif // CGAL_Q_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H

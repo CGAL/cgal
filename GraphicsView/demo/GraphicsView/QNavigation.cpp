@@ -1,12 +1,12 @@
 
-#include "Navigation.h"
+#include "QNavigation.h"
 #include <cmath>
 #include <iostream>
 
 namespace CGAL {
 
   bool 
-  Navigation::eventFilter(QObject *obj, QEvent *event)
+  QNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     if (event->type() == QEvent::Wheel) {
       QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
@@ -26,7 +26,7 @@ namespace CGAL {
 
 
   void 
-  Navigation::scaleView(qreal scaleFactor)
+  QNavigation::scaleView(qreal scaleFactor)
   {
     qreal factor = v->matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
     //if (factor < 0.001 || factor > 2000)
@@ -35,7 +35,7 @@ namespace CGAL {
     v->scale(scaleFactor, scaleFactor);
 }
 
-#include "Navigation.moc"
+#include "QNavigation.moc"
 
 } // namespace CGAL
 

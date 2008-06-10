@@ -11,14 +11,14 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include "QConstrainedTriangulation_2.h"
 #include "QTriangulation_2.h"
-#include "TriangulationMovingPoint_2.h"
-#include "PolylineInput_2.h"
-#include "TriangulationCircumcenter_2.h"
-#include "TriangulationGraphicsItem_2.h"
-#include "ConstrainedTriangulationGraphicsItem_2.h"
-#include "VoronoiGraphicsItem_2.h"
-#include "Navigation.h"
-#include "Navigation2.h"
+#include "QTriangulationMovingPoint_2.h"
+#include "QPolylineInput_2.h"
+#include "QTriangulationCircumcenter_2.h"
+#include "QTriangulationGraphicsItem_2.h"
+#include "QConstrainedTriangulationGraphicsItem_2.h"
+#include "QVoronoiGraphicsItem_2.h"
+#include "QNavigation.h"
+#include "QNavigation2.h"
 
 #include "ui_MainWindow.h"
 
@@ -47,23 +47,23 @@ private:
   Delaunay dt; 
   QGraphicsScene scene;  
 
-  CGAL::Navigation* navigation;
-  CGAL::Navigation2* navigation2;
+  CGAL::QNavigation* navigation;
+  CGAL::QNavigation2* navigation2;
 
 #ifdef DELAUNAY_VORONOI 
-  CGAL::TriangulationGraphicsItem_2<Delaunay> * dgi; 
+  CGAL::QTriangulationGraphicsItem_2<Delaunay> * dgi; 
   CGAL::QTriangulation_2<Delaunay>  * sdt;
-  CGAL::VoronoiGraphicsItem_2<Delaunay> * vgi;
+  CGAL::QVoronoiGraphicsItem_2<Delaunay> * vgi;
 #else
-  CGAL::ConstrainedTriangulationGraphicsItem_2<Delaunay> * dgi;
+  CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay> * dgi;
   CGAL::QConstrainedTriangulation_2<Delaunay>  * sdt;
 #endif
 
   QLabel* xycoord ;
 
-  CGAL::TriangulationMovingPoint_2<Delaunay> * mp;
-  CGAL::PolylineInput_2<K> * pi;
-  CGAL::TriangulationCircumcenter_2<Delaunay> *tcc;
+  CGAL::QTriangulationMovingPoint_2<Delaunay> * mp;
+  CGAL::QPolylineInput_2<K> * pi;
+  CGAL::QTriangulationCircumcenter_2<Delaunay> *tcc;
 public:
   MainWindow();
 
@@ -73,31 +73,31 @@ private:
 
 public slots:
 
-  void movingPoint(bool checked);
+  void on_actionMovingPoint_toggled(bool checked);
 
-  void showDelaunay(bool checked);
+  void on_actionShowDelaunay_toggled(bool checked);
 
   void on_actionShowVoronoi_toggled(bool checked);
 
-  void insertPolyline(bool checked);
+  void on_actionInsertPolyline_toggled(bool checked);
   
-  void circumcenter(bool checked);
+  void on_actionCircumcenter_toggled(bool checked);
 
-  void clear();
+  void on_actionClear_triggered();
 
-  void loadConstraints();
+  void on_actionLoadConstraints_triggered();
 
   void loadConstraints(QString);
 
-  void saveConstraints();
+  void on_actionSaveConstraints_triggered();
 
   void saveConstraints(QString);
 
-  void insertRandomPoints();
+  void on_actionInsertRandomPoints_triggered();
 
-  void about();
+  void on_actionAbout_triggered();
 
-  void aboutCGAL();
+  void on_actionAboutCGAL_triggered();
 
   void updateMouseCoordinates(QString s);
   

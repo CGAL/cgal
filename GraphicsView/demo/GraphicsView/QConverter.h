@@ -1,5 +1,5 @@
-#ifndef CGAL_QT_CONVERTER_H
-#define CGAL_QT_CONVERTER_H
+#ifndef CGAL_Q_CONVERTER_H
+#define CGAL_Q_CONVERTER_H
 
 #include <QPointF>
 #include <QLineF>
@@ -10,7 +10,7 @@
 namespace CGAL {
 
 template <typename K>
-class QtConverter {
+class QConverter {
 
 public:
 
@@ -58,4 +58,4 @@ public:
 };
 
 } // namespace CGAL
-#endif // CGAL_QT_CONVERTER_H
+#endif // CGAL_Q_CONVERTER_H

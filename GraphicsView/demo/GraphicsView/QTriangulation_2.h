@@ -16,20 +16,25 @@ public:
     : t(t_)
   {}
 
-  void clear()
+
+  void 
+  clear()
   {
     t->clear();
     emit(changed());
   }
 
+
   template <typename Iterator> 
-  void insert(Iterator b, Iterator e)
+  void 
+  insert(Iterator b, Iterator e)
   {
     t->insert(b,e);
     emit(changed());
   }
 
-  void insert(CGAL::Object o)
+
+  virtual void insert(CGAL::Object o)
   {
     typedef typename T::Point Point;
     std::list<Point> points;

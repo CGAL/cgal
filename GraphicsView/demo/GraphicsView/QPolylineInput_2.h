@@ -1,6 +1,6 @@
 
-#ifndef CGAL_POLYLINE_INPUT_2_H
-#define CGAL_POLYLINE_INPUT_2_H
+#ifndef CGAL_Q_POLYLINE_INPUT_2_H
+#define CGAL_Q_POLYLINE_INPUT_2_H
 
 #include <QGraphicsItem>
 #include <QGraphicsPathItem> 
@@ -10,18 +10,18 @@
 #include <QStyleOption>
 #include <QPolygonF>
 #include <QPainterPath>
-#include "QtConverter.h"
+#include "QConverter.h"
 
-#include "Input.h"
+#include "QInput.h"
 
 namespace CGAL {
 
 
 template <typename K>
-class PolylineInput_2 : public Input
+class QPolylineInput_2 : public QInput
 {
 public:
-  PolylineInput_2(QGraphicsScene* s, int n = 0, bool closed = true);
+  QPolylineInput_2(QGraphicsScene* s, int n = 0, bool closed = true);
 
 
   void setNumberOfVertices(int n)
@@ -56,13 +56,14 @@ private:
 
 
 template <typename K>
-PolylineInput_2<K>::PolylineInput_2(QGraphicsScene* s, int n, bool closed)
+QPolylineInput_2<K>::QPolylineInput_2(QGraphicsScene* s, int n, bool closed)
   : path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
 {}
 
 
 template <typename K>
-void PolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void 
+QPolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   polygon.push_back(event->scenePos());
   if(path_item){
@@ -72,9 +73,9 @@ void PolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
   }
   if((event->button() == Qt::RightButton)|| (polygon.size() == n_)){
     std::list<typename K::Point_2> points;
-    typename QtConverter<K> convert;
+    typename QConverter<K> convert;
     convert(points, polygon); 
-    emit(produce(CGAL::make_object(points)));
+    emit(generate(CGAL::make_object(points)));
     polygon.clear();
     if(b){
       scene_->removeItem(b);
@@ -99,7 +100,8 @@ void PolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void PolylineInput_2<K>::rubberbands(const QPointF& p)
+void 
+QPolylineInput_2<K>::rubberbands(const QPointF& p)
 {
   if(polygon.empty()){
     return;
@@ -124,7 +126,8 @@ void PolylineInput_2<K>::rubberbands(const QPointF& p)
 
 
 template <typename K>
-void PolylineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void 
+QPolylineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   sp = event->scenePos();
   rubberbands(sp);
@@ -132,7 +135,8 @@ void PolylineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void PolylineInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
+void 
+QPolylineInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() != Qt::Key_Delete){
     return;
@@ -170,7 +174,8 @@ void PolylineInput_2<K>::keyPressEvent ( QKeyEvent * event )
 
 
 template <typename K>
-bool PolylineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
+bool 
+QPolylineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -192,4 +197,4 @@ bool PolylineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
 
 } // namespace CGAL
 
-#endif // CGAL_POLYLINE_INPUT_H
+#endif // CGAL_Q_POLYLINE_INPUT_H

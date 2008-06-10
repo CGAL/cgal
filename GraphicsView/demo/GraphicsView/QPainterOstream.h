@@ -1,17 +1,17 @@
-#ifndef QPAINTER_OSTREAM_H
-#define QPAINTER_OSTREAM_H
+#ifndef CGAL_Q_PAINTER_OSTREAM_H
+#define CGAL_Q_PAINTER_OSTREAM_H
 
 #include <QPainter>
 #include <QPen>
 #include <QRectF>
-#include "QtConverter.h"
+#include "QConverter.h"
 
 namespace CGAL {
 
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 {
-  QtConverter<K> convert;
+  QConverter<K> convert;
   qp.drawPoint(convert(p));
   return qp;
 }
@@ -19,11 +19,11 @@ QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Segment_2<K>& s)
 {
-  QtConverter<K> convert;
+  QConverter<K> convert;
   qp.drawLine(convert(s.source()), convert(s.target()));
   return qp;
 }
 
 } // namespace CGAL
 
-#endif
+#endif // CGAL_Q_PAINTER_OSTREAM_H

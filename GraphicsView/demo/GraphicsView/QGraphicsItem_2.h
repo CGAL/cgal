@@ -1,5 +1,5 @@
-#ifndef CGAL_GRAPHICS_ITEM_2_H
-#define CGAL_GRAPHICS_ITEM_2_H
+#ifndef CGAL_Q_GRAPHICS_ITEM_2_H
+#define CGAL_Q_GRAPHICS_ITEM_2_H
 
 #include <CGAL/Object.h>
 
@@ -8,24 +8,16 @@
 
 namespace CGAL {
 
-class GraphicsItem_2 : public QObject, public QAbstractGraphicsShapeItem  {
+class QGraphicsItem_2 : public QObject, public QAbstractGraphicsShapeItem  {
 
   Q_OBJECT
 
-protected:
-
-  virtual void vModelChanged() = 0;
-
 public slots:
 
-  void modelChanged()
-  {
-    vModelChanged();
-  }
-
+virtual void modelChanged() = 0;
 };
 
 
 } // namespace CGAL
 
-#endif // CGAL_GRAPHICS_ITEM_2_H
+#endif // CGAL_Q_GRAPHICS_ITEM_2_H
