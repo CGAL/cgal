@@ -6,7 +6,6 @@
 #include <QMouseEvent>
 #include <QPointF>
 #include <QString>
-#include <QKeyEvent>
 #include <QWheelEvent>
 #include <QGraphicsView>
 
@@ -27,8 +26,6 @@ public:
   bool eventFilter(QObject *obj, QEvent *event);
 
 private:
-
-  void keyPressEvent(QKeyEvent *event);
 
   void scaleView(qreal scaleFactor);
 
