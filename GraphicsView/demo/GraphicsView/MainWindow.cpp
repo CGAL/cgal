@@ -1,4 +1,4 @@
-
+#include <fstream>
 #include "MainWindow.h"
 
 
@@ -11,6 +11,7 @@
 #include <CGAL/point_generators_2.h>
 
 #include "TriangulationVerticesGraphicsItem_2.h"
+#include "TriangulationCircumcenter_2.h"
 
   
 MainWindow::MainWindow()
@@ -21,6 +22,9 @@ MainWindow::MainWindow()
   // The navigation adds zooming and translation functionality to the QGraphicsView
   navigation = new CGAL::Navigation(this->graphicsView);
   this->graphicsView->viewport()->installEventFilter(navigation);
+
+  //  navigation2 = new CGAL::Navigation2(this->graphicsView);
+  //this->graphicsView->installEventFilter(navigation2);
 
   // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
 #ifdef DELAUNAY_VORONOI
@@ -36,7 +40,7 @@ MainWindow::MainWindow()
 
   CGAL::TriangulationVerticesGraphicsItem_2<Delaunay> * dvgi;
   dvgi = new  CGAL::TriangulationVerticesGraphicsItem_2<Delaunay>(&dt);
-  dvgi->setPen(QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dvgi->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dvgi);
 
   QObject::connect(sdt, SIGNAL(changed()),
@@ -55,6 +59,8 @@ MainWindow::MainWindow()
   // the signal/slot mechanism
     
   pi = new CGAL::PolylineInput_2<K>(&scene, 0, false); // inputs polylines which are not closed
+  tcc = new CGAL::TriangulationCircumcenter_2<Delaunay>(&scene, &dt);
+  tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
 #ifdef DELAUNAY_VORONOI
   pi->setNumberOfVertices(1);  // In this case we only want to insert points
@@ -75,12 +81,15 @@ MainWindow::MainWindow()
 		   this, SLOT(updateMouseCoordinates(QString)));
 
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  scene.setSceneRect(-200, -20, 400, 400);
-    
+  scene.setSceneRect(0,0, 100, 100);
+
+  //  QMatrix m(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);  // identity matrix with reversed Y
+  //this->graphicsView->setMatrix(m); 
+  this->graphicsView->setTransformationAnchor(QGraphicsView::NoAnchor);
   this->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
   this->graphicsView->setRenderHint(QPainter::Antialiasing);
   this->graphicsView->setScene(&scene);
-  this->graphicsView->setMinimumSize(400, 400);
+  this->graphicsView->setMinimumSize(200, 200); // this is the size in pixels on the screen
 }
 
 
@@ -119,16 +128,17 @@ MainWindow::connectActions()
 QObject::connect(this->actionShowDelaunay, SIGNAL(toggled(bool)),
 		   this, SLOT(showDelaunay(bool)));
 
-QObject::connect(this->actionShowVoronoi, SIGNAL(toggled(bool)),
-		   this, SLOT(showVoronoi(bool)));
- this->actionShowDelaunay->setChecked(true);
-  
+//QObject::connect(this->actionShowVoronoi, SIGNAL(toggled(bool)),
+//		   this, SLOT(showVoronoi(bool)));
 
   QObject::connect(this->actionInsertPolyline, SIGNAL(toggled(bool)),
 		   this, SLOT(insertPolyline(bool)));
 
   QObject::connect(this->actionMovingPoint, SIGNAL(toggled(bool)),
 		   this, SLOT(movingPoint(bool)));
+
+  QObject::connect(this->actionCircumcenter, SIGNAL(toggled(bool)),
+		   this, SLOT(circumcenter(bool)));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
@@ -174,7 +184,7 @@ MainWindow::showDelaunay(bool checked)
 
 
 void
-MainWindow::showVoronoi(bool checked)
+MainWindow::on_actionShowVoronoi_toggled(bool checked)
 {
 #ifdef DELAUNAY_VORONOI
   if(checked){
@@ -187,9 +197,27 @@ MainWindow::showVoronoi(bool checked)
 
 
 void
+MainWindow::circumcenter(bool checked)
+{
+#ifdef DELAUNAY_VORONOI
+  if(checked){
+    scene.installEventFilter(tcc);
+    this->graphicsView->setMouseTracking(true);
+    tcc->show();
+  } else {  
+    scene.removeEventFilter(vgi);
+    this->graphicsView->setMouseTracking(false);
+    tcc->hide();
+  }
+#endif
+}
+
+
+void
 MainWindow::clear()
 {
   sdt->clear();
+  scene.update();
 }
 
 
@@ -210,6 +238,31 @@ MainWindow::loadConstraints()
 void
 MainWindow::loadConstraints(QString fileName)
 {
+  std::cout << qPrintable(fileName) << std::endl;
+  std::ifstream ifs(qPrintable(fileName));
+
+  std::list<K::Point_2> points;
+  std::list< std::pair<K::Point_2,K::Point_2> > segments;
+  K::Point_2 p,q;
+
+  std::vector<K::Point_2> P;
+  P.resize(2);
+  char c;
+  while(ifs >> c){
+    ifs >>p >> q;
+    if(p != q){
+      segments.push_back(std::make_pair(p,q));
+    }
+  }
+  //    sdt->insert_constraints(segments.begin(), segments.end());
+  /*
+  while(ifs >> p){
+    points.push_back(p);
+  }
+  //std::cout << "Read " << points.size() << " points" << std::endl;
+  sdt->insert_polyline(points.begin(), points.end());
+  */
+     this->graphicsView->ensureVisible(dgi);
 }
 
 void

@@ -29,6 +29,39 @@ public:
     emit(changed());
   }
 
+  template <typename Iterator> 
+  void insert_constraints(Iterator b, Iterator e)
+  {
+    for(; b!= e; ++b){
+      ct->insert_constraint(b->first, b->second);
+    }
+    emit(changed());
+  }
+
+ template <typename Iterator> 
+  void insert_polyline(Iterator b, Iterator e)
+  {
+    typename CT::Point p, q;
+    typename CT::Vertex_handle vh, wh;
+    Iterator it = b;
+    vh = ct->insert(*it);
+    p = *it;
+    ++it;
+    for(; it != e; ++it){
+      q = *it;
+      if(p != q){
+	wh = ct->insert(*it);
+	ct->insert_constraint(vh,wh);
+	vh = wh;
+	p = q;
+      } else {
+	std::cout << "duplicate point: " << p << std::endl; 
+      }
+    }
+    emit(changed());
+  }
+  
+
   void insert(CGAL::Object o)
   {
     typedef typename CT::Point Point;

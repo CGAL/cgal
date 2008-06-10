@@ -40,7 +40,7 @@ ConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh
       } else {
 	m_painter->setPen(blackpen);
       }
-      (*m_painter) << t->segment(fh,i);
+      (*m_painter) << t->segment(fh,i);      
     }
 }
 

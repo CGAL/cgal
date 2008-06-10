@@ -1,16 +1,6 @@
 <RCC>
-    <qresource prefix="/new/prefix1" >
-        <file>icons/cgal_logo.xpm</file>
-    </qresource>
-    <qresource prefix="/new/prefix2" >
+    <qresource prefix="/cgal/Actions" >
+        <file>icons/circumcenter.png</file>
         <file>icons/movingPoint.png</file>
-    </qresource>
-    <qresource prefix="/new/prefix3" >
-        <file>icons/delaunay.png</file>
-        <file>icons/filenew.png</file>
-        <file>icons/fileopen.png</file>
-        <file>icons/filesave.png</file>
-        <file>icons/polyline.png</file>
-        <file>icons/voronoi.png</file>
     </qresource>
 </RCC>

@@ -179,7 +179,7 @@ bool PolylineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
   } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
-    return true;
+    return false;
   } else if (event->type() == QEvent::KeyPress) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
     keyPressEvent(keyEvent);

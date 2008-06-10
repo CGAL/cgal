@@ -13,10 +13,12 @@
 #include "QTriangulation_2.h"
 #include "TriangulationMovingPoint_2.h"
 #include "PolylineInput_2.h"
+#include "TriangulationCircumcenter_2.h"
 #include "TriangulationGraphicsItem_2.h"
 #include "ConstrainedTriangulationGraphicsItem_2.h"
 #include "VoronoiGraphicsItem_2.h"
 #include "Navigation.h"
+#include "Navigation2.h"
 
 #include "ui_MainWindow.h"
 
@@ -46,6 +48,7 @@ private:
   QGraphicsScene scene;  
 
   CGAL::Navigation* navigation;
+  CGAL::Navigation2* navigation2;
 
 #ifdef DELAUNAY_VORONOI 
   CGAL::TriangulationGraphicsItem_2<Delaunay> * dgi; 
@@ -60,7 +63,7 @@ private:
 
   CGAL::TriangulationMovingPoint_2<Delaunay> * mp;
   CGAL::PolylineInput_2<K> * pi;
-    
+  CGAL::TriangulationCircumcenter_2<Delaunay> *tcc;
 public:
   MainWindow();
 
@@ -74,10 +77,12 @@ public slots:
 
   void showDelaunay(bool checked);
 
-  void showVoronoi(bool checked);
+  void on_actionShowVoronoi_toggled(bool checked);
 
   void insertPolyline(bool checked);
   
+  void circumcenter(bool checked);
+
   void clear();
 
   void loadConstraints();

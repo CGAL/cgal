@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'MainWindow.ui'
 **
-** Created: Sat May 10 13:09:12 2008
+** Created: Tue Jun 10 17:19:28 2008
 **      by: Qt User Interface Compiler version 4.3.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -39,6 +39,7 @@ public:
     QAction *actionShowDelaunay;
     QAction *actionLoadConstraints;
     QAction *actionSaveConstraints;
+    QAction *actionCircumcenter;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QGraphicsView *graphicsView;
@@ -49,15 +50,15 @@ public:
     QMenu *menuOptions;
     QMenu *menuHelp;
     QStatusBar *statusbar;
-    QToolBar *toolBar;
     QToolBar *fileToolBar;
+    QToolBar *toolBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
     if (MainWindow->objectName().isEmpty())
         MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
     MainWindow->resize(400, 300);
-    MainWindow->setWindowIcon(QIcon(QString::fromUtf8(":/new/prefix1/icons/cgal_logo.xpm")));
+    MainWindow->setWindowIcon(QIcon(QString::fromUtf8(":/cgal/logos/cgal_logo.xpm")));
     actionSfs = new QAction(MainWindow);
     actionSfs->setObjectName(QString::fromUtf8("actionSfs"));
     actionAbout = new QAction(MainWindow);
@@ -73,29 +74,34 @@ public:
     actionMovingPoint = new QAction(MainWindow);
     actionMovingPoint->setObjectName(QString::fromUtf8("actionMovingPoint"));
     actionMovingPoint->setCheckable(true);
-    actionMovingPoint->setIcon(QIcon(QString::fromUtf8(":/new/prefix2/icons/movingPoint.png")));
+    actionMovingPoint->setIcon(QIcon(QString::fromUtf8(":/cgal/Actions/icons/movingPoint.png")));
     actionInsertPolyline = new QAction(MainWindow);
     actionInsertPolyline->setObjectName(QString::fromUtf8("actionInsertPolyline"));
     actionInsertPolyline->setCheckable(true);
     actionInsertPolyline->setChecked(false);
-    actionInsertPolyline->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/polyline.png")));
+    actionInsertPolyline->setIcon(QIcon(QString::fromUtf8(":/cgal/Input/inputPolyline.png")));
     actionClear = new QAction(MainWindow);
     actionClear->setObjectName(QString::fromUtf8("actionClear"));
-    actionClear->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/filenew.png")));
+    actionClear->setIcon(QIcon(QString::fromUtf8(":/cgal/fileToolbar/fileNew.png")));
     actionShowVoronoi = new QAction(MainWindow);
     actionShowVoronoi->setObjectName(QString::fromUtf8("actionShowVoronoi"));
     actionShowVoronoi->setCheckable(true);
-    actionShowVoronoi->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/voronoi.png")));
+    actionShowVoronoi->setChecked(false);
+    actionShowVoronoi->setIcon(QIcon(QString::fromUtf8(":/cgal/Triangulation_2/Voronoi_diagram_2.png")));
     actionShowDelaunay = new QAction(MainWindow);
     actionShowDelaunay->setObjectName(QString::fromUtf8("actionShowDelaunay"));
     actionShowDelaunay->setCheckable(true);
-    actionShowDelaunay->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/delaunay.png")));
+    actionShowDelaunay->setIcon(QIcon(QString::fromUtf8(":/cgal/Triangulation_2/Delaunay_triangulation_2.png")));
     actionLoadConstraints = new QAction(MainWindow);
     actionLoadConstraints->setObjectName(QString::fromUtf8("actionLoadConstraints"));
-    actionLoadConstraints->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/fileopen.png")));
+    actionLoadConstraints->setIcon(QIcon(QString::fromUtf8(":/cgal/fileToolbar/fileOpen.png")));
     actionSaveConstraints = new QAction(MainWindow);
     actionSaveConstraints->setObjectName(QString::fromUtf8("actionSaveConstraints"));
-    actionSaveConstraints->setIcon(QIcon(QString::fromUtf8(":/new/prefix3/icons/filesave.png")));
+    actionSaveConstraints->setIcon(QIcon(QString::fromUtf8(":/cgal/fileToolbar/fileSave.png")));
+    actionCircumcenter = new QAction(MainWindow);
+    actionCircumcenter->setObjectName(QString::fromUtf8("actionCircumcenter"));
+    actionCircumcenter->setCheckable(true);
+    actionCircumcenter->setIcon(QIcon(QString::fromUtf8(":/cgal/Actions/icons/circumcenter.png")));
     centralwidget = new QWidget(MainWindow);
     centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
     gridLayout = new QGridLayout(centralwidget);
@@ -123,12 +129,12 @@ public:
     statusbar = new QStatusBar(MainWindow);
     statusbar->setObjectName(QString::fromUtf8("statusbar"));
     MainWindow->setStatusBar(statusbar);
-    toolBar = new QToolBar(MainWindow);
-    toolBar->setObjectName(QString::fromUtf8("toolBar"));
-    MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
     fileToolBar = new QToolBar(MainWindow);
     fileToolBar->setObjectName(QString::fromUtf8("fileToolBar"));
     MainWindow->addToolBar(Qt::TopToolBarArea, fileToolBar);
+    toolBar = new QToolBar(MainWindow);
+    toolBar->setObjectName(QString::fromUtf8("toolBar"));
+    MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
 
     menubar->addAction(menuFile->menuAction());
     menubar->addAction(menuEdit->menuAction());
@@ -148,13 +154,14 @@ public:
     menuTools->addAction(actionShowVoronoi);
     menuHelp->addAction(actionAbout);
     menuHelp->addAction(actionAboutCGAL);
+    fileToolBar->addAction(actionClear);
+    fileToolBar->addAction(actionLoadConstraints);
+    fileToolBar->addAction(actionSaveConstraints);
     toolBar->addAction(actionInsertPolyline);
     toolBar->addAction(actionMovingPoint);
     toolBar->addAction(actionShowDelaunay);
     toolBar->addAction(actionShowVoronoi);
-    fileToolBar->addAction(actionClear);
-    fileToolBar->addAction(actionLoadConstraints);
-    fileToolBar->addAction(actionSaveConstraints);
+    toolBar->addAction(actionCircumcenter);
 
     retranslateUi(MainWindow);
 
@@ -178,17 +185,19 @@ public:
     actionInsertPolyline->setToolTip(QApplication::translate("MainWindow", "Insert Point or Polyline", 0, QApplication::UnicodeUTF8));
     actionInsertPolyline->setStatusTip(QApplication::translate("MainWindow", "Left: Insert vtx | Right: Final vtx | Del: Delete vtx", 0, QApplication::UnicodeUTF8));
     actionClear->setText(QApplication::translate("MainWindow", "Clear", 0, QApplication::UnicodeUTF8));
-    actionShowVoronoi->setText(QApplication::translate("MainWindow", "Show Voronoi", 0, QApplication::UnicodeUTF8));
-    actionShowDelaunay->setText(QApplication::translate("MainWindow", "Show Delaunay", 0, QApplication::UnicodeUTF8));
+    actionShowVoronoi->setText(QApplication::translate("MainWindow", "Show Voronoi Diagram", 0, QApplication::UnicodeUTF8));
+    actionShowDelaunay->setText(QApplication::translate("MainWindow", "Show Delaunay Triangulation", 0, QApplication::UnicodeUTF8));
     actionLoadConstraints->setText(QApplication::translate("MainWindow", "Load Constraints", 0, QApplication::UnicodeUTF8));
     actionSaveConstraints->setText(QApplication::translate("MainWindow", "Save Constraints", 0, QApplication::UnicodeUTF8));
+    actionCircumcenter->setText(QApplication::translate("MainWindow", "Circumcenter", 0, QApplication::UnicodeUTF8));
+    actionCircumcenter->setToolTip(QApplication::translate("MainWindow", "Draw circumcenter", 0, QApplication::UnicodeUTF8));
     menuFile->setTitle(QApplication::translate("MainWindow", "File", 0, QApplication::UnicodeUTF8));
     menuEdit->setTitle(QApplication::translate("MainWindow", "Edit", 0, QApplication::UnicodeUTF8));
     menuTools->setTitle(QApplication::translate("MainWindow", "Tools", 0, QApplication::UnicodeUTF8));
     menuOptions->setTitle(QApplication::translate("MainWindow", "Options", 0, QApplication::UnicodeUTF8));
     menuHelp->setTitle(QApplication::translate("MainWindow", "Help", 0, QApplication::UnicodeUTF8));
-    toolBar->setWindowTitle(QApplication::translate("MainWindow", "Visualization Tools", 0, QApplication::UnicodeUTF8));
     fileToolBar->setWindowTitle(QApplication::translate("MainWindow", "File Tools", 0, QApplication::UnicodeUTF8));
+    toolBar->setWindowTitle(QApplication::translate("MainWindow", "Visualization Tools", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };

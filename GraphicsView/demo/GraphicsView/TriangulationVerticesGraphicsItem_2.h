@@ -54,8 +54,11 @@ private:
 
 template <typename T>
 TriangulationVerticesGraphicsItem_2<T>::TriangulationVerticesGraphicsItem_2(T * t_)
-  :  t(t_), bb_initialized(false)
+  :  t(t_), bb(0,0,0,0), bb_initialized(false)
 {
+  if(t->number_of_vertices() == 0){
+    this->hide();
+  }
   updateBoundingBox();
   setZValue(4);
 
@@ -88,7 +91,7 @@ template <typename T>
 void TriangulationVerticesGraphicsItem_2<T>::updateBoundingBox()
 {
   if(t->number_of_vertices() == 0){
-    bb = Bbox_2();
+    bb = Bbox_2(0,0,0,0);
     bb_initialized = false;
     return;
   } else if(! bb_initialized){
@@ -116,8 +119,13 @@ void TriangulationVerticesGraphicsItem_2<T>::updateBoundingBox()
 template <typename T>
 void TriangulationVerticesGraphicsItem_2<T>::vModelChanged()
 {
-  updateBoundingBox();
-  update();
+  if((t->number_of_vertices() == 0) ){
+    this->hide();
+  } else if((t->number_of_vertices() > 0) && (! this->isVisible())){
+    updateBoundingBox();
+    this->show();
+    update();
+  }
 }
 
 

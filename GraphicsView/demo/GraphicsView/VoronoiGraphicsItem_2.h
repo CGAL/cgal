@@ -25,8 +25,8 @@ class VoronoiGraphicsItem_2 : public GraphicsItem_2
 public:
       VoronoiGraphicsItem_2(DT  * dt_);
 
-    enum { Type = UserType + 4 };
-    int type() const { return Type; }
+  //enum { Type = UserType + 4 };
+  //int type() const { return Type; }
 
 
     QRectF boundingRect() const;
