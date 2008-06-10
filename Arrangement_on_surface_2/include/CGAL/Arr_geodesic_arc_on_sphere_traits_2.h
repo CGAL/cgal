@@ -126,7 +126,6 @@ protected:
   typedef Direction_2 (*Project)(const Direction_3 & d) ;
   
   /*! Project a 3D direction onto the xy-plane
-   * \todo kernel is missing: ConstructVector_3::operator()(Direction_3 d)
    * \param d the 3D direction
    * \return the projection onto the xy-plane
    */
@@ -137,7 +136,6 @@ protected:
   }
   
   /*! Project a 3D direction onto the yz-plane
-   * \todo kernel is missing: ConstructVector_3::operator()(Direction_3 d)
    * \param d the 3D direction
    * \return the projection onto the yz-plane
    */
@@ -148,7 +146,6 @@ protected:
   }
   
   /*! Project a 3D direction onto the zx-plane
-   * \todo kernel is missing: ConstructVector_3::operator()(Direction_3 d)
    * \param d the 3D direction
    * \return the projection onto the xz-plane
    */
@@ -166,17 +163,8 @@ protected:
   inline Oriented_side oriented_side(const Direction_3 & normal,
                                      const Direction_3 dir) const
   {
-#if 0
-    const Kernel * kernel = this;
-    Vector_3 vec = dir.vector();
-    Point_3 point = kernel->construct_translated_point_3_object()(ORIGIN, vec);
-    typename Kernel::Plane_3 plane =
-      kernel->construct_plane_3_object()(ORIGIN, normal);
-    return plane.oriented_side(point);
-#else
-    FT dot = normal.vector() * dir.vector();
+    typename Kernel::FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot);
-#endif
   }
   
   /*! Compute the orientation of two directions.
@@ -200,16 +188,8 @@ protected:
    */
   inline bool has_on(const Direction_3 & normal, const Direction_3 & dir) const
   {
-#if 0
-    Vector_3 vec = dir.vector();
-    Point_3 point = Kernel::construct_translated_point_3_object()(ORIGIN, vec);
-    typename Kernel::Plane_3 plane =
-      kernel->construct_normal_3_object()(ORIGIN, normal);
-    return Kernel::has_on_3_object()(plane, point);
-#else
-    FT dot = normal.vector() * dir.vector();
+    typename Kernel::FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot) == ZERO;
-#endif
   }
   
 public:
@@ -217,20 +197,17 @@ public:
    * \param p1 the first enpoint direction.
    * \param p2 the second endpoint direction.
    * \param d1_xy the projection of the first endpoint onto the xy-plane.
-   * \return SMALLER - x(p1) < x(p2);
-   *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
-   *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
-   *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
-   *         LARGER  - x(p1) > x(p2).
+   * \return SMALLER - y(p1) < y(p2);
+   *         EQUAL   - y(p1) = y(p2);
+   *         LARGER  - y(p1) > y(p2).
    */
   inline Comparison_result compare_y(const Direction_3 & d1,
                                      const Direction_3 & d2) const
   {
     typedef typename Kernel::FT                     FT;
-    typedef typename Kernel::Construct_vector_3     Construct_vector_3;
-    Construct_vector_3 construct_vec_3 = Kernel::construct_vector_3_object();
-    Vector_3 v1 = construct_vec_3(d1);
-    Vector_3 v2 = construct_vec_3(d2);
+
+    Vector_3 v1 = d1.vector();
+    Vector_3 v2 = d2.vector();
 
     FT norm1 = v1 * v1;
     FT norm2 = v2 * v2;
@@ -247,12 +224,10 @@ public:
    * \param p2 the second endpoint direction.
    * \param d1_xy the projection of the first endpoint onto the xy-plane.
    * \return SMALLER - x(p1) < x(p2);
-   *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
-   *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
-   *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
+   *         EQUAL   - x(p1) = x(p2);
    *         LARGER  - x(p1) > x(p2).
-   * \pre d1 does not lie on the closed discontinuity arc.
-   * \pre d2 does not lie on the closed discontinuity arc.
+   * \pre d1 does not coincide with any pole..
+   * \pre d2 does not coincide with any pole..
    */
   inline Comparison_result compare_x(const Direction_3 & d1,
                                      const Direction_3 & d2) const
@@ -261,10 +236,12 @@ public:
     Direction_2 d1_2 = project_xy(d1);
     Direction_2 d2_2 = project_xy(d2);
 
-    if (Kernel::equal_2_object()(d1_2, d2_2)) return EQUAL;
+    const Kernel * kernel = m_traits;
+    
+    if (kernel->equal_2_object()(d1_2, d2_2)) return EQUAL;
     
     const Direction_2 & nx = neg_x_2();
-    return (Kernel::counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
+    return (kernel->counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
       LARGER : SMALLER;
   }
 
@@ -320,10 +297,10 @@ public:
      * \param p2 the second directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);
-     *         LARGER  - x(p1) > x(p2).
-     * \pre p1 does not lie on the closed discontinuity arc.
-     * \pre p2 does not lie on the closed discontinuity arc.
-     */
+     *         LARGER  - x(p1) > x(p2). 
+     * \pre p1 does not lie on the boundary.
+     * \pre p2 does not lie on the boundary.
+    */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       CGAL_precondition(p1.is_no_boundary());
@@ -362,8 +339,8 @@ public:
      *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
      *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
      *         LARGER  - x(p1) > x(p2).
-     * \pre p1 is not on the discontinuity arc.
-     * \pre p2 is not on the discontinuity arc.
+     * \pre p1 does not lie on the boundary.
+     * \pre p2 does not lie on the boundary.
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
@@ -2100,8 +2077,7 @@ public:
   {}
       
   /*! Constructor */
-  Arr_extended_direction_3(const Direction_3 & dir,
-                           Location_type location) :
+  Arr_extended_direction_3(const Direction_3 & dir, Location_type location) :
     Direction_3(dir),
     m_location(location)
   {}
@@ -2231,7 +2207,10 @@ protected:
                                         const Direction_3 & d2) const
   {
     Kernel kernel;
-
+    Vector_3 v = kernel.construct_cross_product_vector_3_object()(d1.vector(),
+                                                                  d2.vector());
+    return v.direction();
+#if 0
     Vector_3 v1 = d1.vector();
     Point_3 p1 = kernel.construct_translated_point_3_object()(ORIGIN, v1);
 
@@ -2240,6 +2219,7 @@ protected:
 
     Plane_3 plane = kernel.construct_plane_3_object()(ORIGIN, p1, p2);
     return plane.orthogonal_direction();
+#endif
   }
 
 public:
@@ -2502,7 +2482,6 @@ public:
       return;
     }
 
-    Direction_3 normal = plane.orthogonal_direction();
     if (z_sign(normal) == ZERO) {
       set_is_vertical(true);
       bool s_is_positive, plane_is_positive;
@@ -2658,17 +2637,8 @@ public:
    */
   inline bool has_on(const Direction_3 & dir) const
   {
-#if 0
-    Kernel kernel;
-    Vector_3 vec = dir.vector();
-    Point_3 point = kernel.construct_translated_point_3_object()(ORIGIN, vec);
-    typename Kernel::Plane_3 plane =
-      kernel->construct_normal_3_object()(ORIGIN, normal);
-    return kernel.has_on_3_object()(plane, point);
-#else
     typename Kernel::FT dot = normal().vector() * dir.vector();
     return CGAL::sign(dot) == ZERO;
-#endif
   }
 };
 
