@@ -64,6 +64,9 @@ public:
     > 
     Self;
 
+    //! the multiplicity type
+    typedef unsigned int Multiplicity
+    
     //!@}
 
 public:
