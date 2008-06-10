@@ -1,4 +1,5 @@
 // Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2008       GeometryFactory, Sophia Antipolis (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -251,7 +252,7 @@ namespace CGAL {
     {
       if( zone.locate_type == Tr::VERTEX )
       {
-	std::cerr << boost::format("Error: (%1%) is already inserted\n") % p;
+	std::cerr << boost::format("Error: (%1%) is already inserted on surface.\n") % p;
 	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
       }
       else
@@ -360,22 +361,49 @@ namespace CGAL {
     ///////////////////////////////////////////////////////////////////////////
     // Deletes old facets from the restricted Delaunay triangulation
 
-    void before_insertion_impl(const Facet&,
-                               const Point&,
+    void before_insertion_impl(const Facet& source_facet,
+                               const Point& p,
                                Zone& zone) {
       if (tr.dimension() == 3) {
+        bool source_facet_is_in_conflict = false;
 	// On s'occupe des facettes de la zone de conflit
 	for (typename Zone::Facets_iterator fit =
 	       zone.internal_facets.begin();
 	     fit != zone.internal_facets.end();
-	     ++fit)
-	  before_insertion_handle_facet_inside_conflict_zone (*fit);
+	     ++fit) {
+          if(before_insertion_handle_facet_inside_conflict_zone (*fit,
+                                                                 source_facet))
+            source_facet_is_in_conflict = true;
+        }
 
 	for (typename Zone::Facets_iterator fit =
 	       zone.boundary_facets.begin(); fit !=
-	       zone.boundary_facets.end(); ++fit)
-	  before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit);
-      }
+	       zone.boundary_facets.end(); ++fit) {
+          if(before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit,
+                                                                         source_facet))
+            source_facet_is_in_conflict = true;
+        }
+        if(!source_facet_is_in_conflict)
+        {
+          const Facet source_other_side = mirror_facet(source_facet);
+          std::stringstream error_msg;
+          error_msg << 
+            boost::format("Surface_mesher ERROR: "
+                          "A facet is not in conflict with its refinement point!\n"
+                          "Debugging informations:\n"
+                          "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
+                          "  Dual: (%3%, %4%)\n"
+                          "  Refinement point: %5%\n")
+            % (&*source_facet.first) % source_facet.second
+            % source_facet.first->circumcenter()
+            % source_other_side.first->circumcenter()
+            % p
+            % source_facet.first->vertex((source_facet.second + 1)&3)->point()
+            % source_facet.first->vertex((source_facet.second + 2)&3)->point()
+            % source_facet.first->vertex((source_facet.second + 3)&3)->point();
+          CGAL_error_msg(error_msg.str().c_str());
+        }
+      } // end if dimension() == 3
 
       // If dim < 3, then the triangulation has only one facet and the
       // complex has no facet, generically
@@ -383,7 +411,10 @@ namespace CGAL {
 	CGAL_assertion (tr.dimension() == 2);
 	facets_to_refine.clear();
       }
-
+//       CGAL_assertion_code(const Facet& source_other_side = mirror_facet(source_facet));
+//       CGAL_assertion(
+//         facets_to_refine.erase( (source_facet.first < source_other_side.first ) ?
+//                                 source_facet : source_other_side) == false);
     }
 
 
@@ -443,11 +474,13 @@ namespace CGAL {
     // For before_insertion
 
     // Actions to perform on a facet inside the conflict zone
-    void before_insertion_handle_facet_inside_conflict_zone (const Facet& f) 
+    bool before_insertion_handle_facet_inside_conflict_zone (const Facet& f,
+                                                             const Facet& source_facet) 
     {
       const Facet other_side = mirror_facet(f);
 
-      if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first)) return;
+      if(tr.is_infinite(f.first) && tr.is_infinite(other_side.first))
+        return (f==source_facet) || (other_side == source_facet);
 
       // On enleve la facette de la liste des mauvaises facettes
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
@@ -464,12 +497,14 @@ namespace CGAL {
       // On retire la facette du complexe (car on doit etre
       // independant de l'implementation du complexe)
       c2t3.remove_from_complex (f);
+      return (f==source_facet) || (other_side == source_facet);
     }
 
     // Action to perform on a facet on the boundary of the conflict zone
-    void before_insertion_handle_facet_on_boundary_of_conflict_zone (const Facet& f) {
+    bool before_insertion_handle_facet_on_boundary_of_conflict_zone (const Facet& f,
+                                                                     const Facet& source_facet) {
       // perform the same operations as for an internal facet
-      before_insertion_handle_facet_inside_conflict_zone (f);
+      return before_insertion_handle_facet_inside_conflict_zone (f, source_facet);
     }
 
 
