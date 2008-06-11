@@ -26,5 +26,5 @@ if ( CGAL_FOUND )
   qt4_automoc( MainWindow.cpp QNavigation.cpp QNavigation2.cpp QGraphicsItem_2.cpp QInput.cpp QDatastructure.cpp )
 
   add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp ${UI_FILES} ${RESOURCE_FILES} )
-  target_link_libraries( delaunay ${QT_LIBRARIES} )
+  target_link_libraries( delaunay ${QT_LIBRARIES} CGAL )
 endif()
