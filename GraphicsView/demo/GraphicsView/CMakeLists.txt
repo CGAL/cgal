@@ -17,7 +17,7 @@ if ( CGAL_FOUND )
   set( QT_USE_QTSCRIPT  TRUE )
 
 
-  find_package(QT4       REQUIRED)
+  find_package(Qt4       REQUIRED)
   include(${QT_USE_FILE})
   include_directories (BEFORE ../../include)
 
