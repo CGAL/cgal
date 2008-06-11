@@ -1883,6 +1883,8 @@ GraphicsView/demo/GraphicsView/#README# -text
 GraphicsView/demo/GraphicsView/MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/MainWindow.rcc -text
 GraphicsView/demo/GraphicsView/MainWindow.ui -text
+GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
+GraphicsView/demo/GraphicsView/icons/circumcenter.png -text
 GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
 GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
 GraphicsView/demo/icons/File.qrc -text
