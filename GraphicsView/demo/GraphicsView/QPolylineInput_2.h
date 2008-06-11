@@ -73,7 +73,7 @@ QPolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
   }
   if((event->button() == Qt::RightButton)|| (polygon.size() == n_)){
     std::list<typename K::Point_2> points;
-    typename QConverter<K> convert;
+    QConverter<K> convert;
     convert(points, polygon); 
     emit(generate(CGAL::make_object(points)));
     polygon.clear();

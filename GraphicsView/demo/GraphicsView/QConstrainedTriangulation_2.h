@@ -72,7 +72,7 @@ public:
       } else if(points.size() == 2){
 	ct->insert_constraint(points.front(), points.back());
       } else {
-	std::list<Point>::iterator it = points.begin();
+	typename std::list<Point>::iterator it = points.begin();
 	++it;
 	typename CT::Vertex_handle vh, wh;
 	vh = ct->insert(points.front());

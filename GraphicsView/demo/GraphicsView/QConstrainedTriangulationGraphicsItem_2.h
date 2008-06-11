@@ -34,13 +34,13 @@ QConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle f
   QPen redpen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
   for (int i=0; i<3; i++)
-    if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
-      if(t->is_constrained(typename T::Edge(fh,i))){
-	m_painter->setPen(redpen);
+    if (fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i))){
+      if(this->t->is_constrained(typename T::Edge(fh,i))){
+	this->m_painter->setPen(redpen);
       } else {
-	m_painter->setPen(blackpen);
+	this->m_painter->setPen(blackpen);
       }
-      (*m_painter) << t->segment(fh,i);      
+      (*this->m_painter) << this->t->segment(fh,i);      
     }
 }
 
