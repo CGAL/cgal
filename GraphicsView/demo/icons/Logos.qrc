@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/cgal/logos" >
+        <file>cgal_logo.xpm</file>
+    </qresource>
+</RCC>
