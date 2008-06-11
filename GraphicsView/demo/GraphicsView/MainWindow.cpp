@@ -66,7 +66,7 @@ MainWindow::MainWindow()
   pi->setNumberOfVertices(1);  // In this case we only want to insert points
 #endif
 
-  QObject::connect(pi, SIGNAL(generate(CGAL::Objecrt)),
+  QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   sdt, SLOT(insert(CGAL::Object)));
     
   mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt);
@@ -75,6 +75,8 @@ MainWindow::MainWindow()
   
 
   connectActions();
+
+  actionShowDelaunay->setChecked(true);
 
 
   QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
