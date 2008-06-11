@@ -36,7 +36,7 @@ private:
   DT * dt;
   typename DT::Face_handle fh;
   QGraphicsScene *scene_;
-  QGraphicsEllipseItem circle;
+  QGraphicsEllipseItem* circle;
 };
 
 
@@ -44,8 +44,9 @@ template <typename T>
 QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s, T * dt_)
   :  dt(dt_), scene_(s)
 {
-  circle.hide();
-  scene_->addItem(&circle);
+  circle = new QGraphicsEllipseItem();
+  circle->hide();
+  scene_->addItem(circle);
 }
 
 
@@ -53,21 +54,21 @@ template <typename T>
 void
 QTriangulationCircumcenter_2<T>::setPen(const QPen& pen)
 {
-  circle.setPen(pen);
+  circle->setPen(pen);
 }
 
 template <typename T>
 void
 QTriangulationCircumcenter_2<T>::show()
 {
-  circle.show();
+  circle->show();
 }
 
 template <typename T>
 void
 QTriangulationCircumcenter_2<T>::hide()
 {
-  circle.hide();
+  circle->hide();
 }
 
 
@@ -76,7 +77,7 @@ void
 QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
-    circle.hide();
+    circle->hide();
     return;
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
@@ -86,10 +87,10 @@ QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 								    fh->vertex(1)->point(), 
 								    fh->vertex(2)->point());
     CGAL::Bbox_2 bb = c.bbox();
-    circle.setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
-    circle.show();
+    circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
+    circle->show();
   } else {
-    circle.hide();
+    circle->hide();
   }
 }
 
