@@ -30,10 +30,14 @@ public:
   }
 
 protected:
-    
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-  virtual void keyPressEvent(QKeyEvent *event);
+
+  // mousePressEvent returns true iff the event is consummed
+  bool mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+
+  // keyPressEvent returns true iff the event is consummed
+  bool keyPressEvent(QKeyEvent *event);
   
   bool eventFilter(QObject *obj, QEvent *event);
   
@@ -62,16 +66,22 @@ QPolylineInput_2<K>::QPolylineInput_2(QGraphicsScene* s, int n, bool closed)
 
 
 template <typename K>
-void 
+bool
 QPolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
+  if( event->modifiers() )
+    return false;
+  if( event->button() != Qt::RightButton
+      && event->button() != Qt::LeftButton )
+    return false;
   polygon.push_back(event->scenePos());
   if(path_item){
     scene_->removeItem(path_item);
     delete path_item;
     path_item = NULL;
   }
-  if((event->button() == Qt::RightButton)|| (polygon.size() == n_)){
+  if( (n_ == 0 && event->button() == Qt::RightButton)
+      || ( event->button() == Qt::LeftButton && (polygon.size() == n_)) ){
     std::list<typename K::Point_2> points;
     QConverter<K> convert;
     convert(points, polygon); 
@@ -87,7 +97,7 @@ QPolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       delete e;
       e = NULL;
     }
-    return;
+    return true;
   }
   if(event->button() == Qt::LeftButton){
     QPainterPath qpp;
@@ -95,7 +105,9 @@ QPolylineInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
     path_item = new QGraphicsPathItem(qpp);
     path_item->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     scene_->addItem(path_item);
+    return true;
   }
+  return false;
 }
 
 
@@ -135,14 +147,23 @@ QPolylineInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void 
+bool
 QPolylineInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
 {
-  if(event->key() != Qt::Key_Delete){
-    return;
+  if( event->modifiers() )
+    return false;
+
+  switch(event->key())
+  {
+  case Qt::Key_Delete:
+  case Qt::Key_Escape:
+  case Qt::Key_Backspace:
+    break;
+  default:
+    return false;
   }
   if(polygon.empty()){
-    return;
+    return true;
   }
   polygon.pop_back();
   if(polygon.empty()){
@@ -156,7 +177,7 @@ QPolylineInput_2<K>::keyPressEvent ( QKeyEvent * event )
       delete e;
       e = NULL;
     }
-    return;
+    return true;
   }
   if(path_item){
     scene_->removeItem(path_item);
@@ -169,6 +190,7 @@ QPolylineInput_2<K>::keyPressEvent ( QKeyEvent * event )
   path_item->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene_->addItem(path_item);
   rubberbands(sp);
+  return true;
 }
 
 
@@ -179,16 +201,18 @@ QPolylineInput_2<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
-    mousePressEvent(mouseEvent);
-    return true;
+    if(!mousePressEvent(mouseEvent)) {
+      return QObject::eventFilter(obj, event);
+    }
   } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
-    return false;
+    return QObject::eventFilter(obj, event);
   } else if (event->type() == QEvent::KeyPress) {
     QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-    keyPressEvent(keyEvent);
-    return true;
+    if(!keyPressEvent(keyEvent)) {
+      return QObject::eventFilter(obj, event);
+    }
   } else{
     // standard event processing
     return QObject::eventFilter(obj, event);
