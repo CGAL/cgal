@@ -7,6 +7,10 @@ CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
+GraphicsView/demo/GraphicsView/*.exe
+GraphicsView/demo/GraphicsView/Makefile
+GraphicsView/demo/GraphicsView/delaunay
+GraphicsView/demo/GraphicsView/qrc_*.cxx
 Maintenance/rpm/BUILD/*
 Maintenance/rpm/RPMS/*
 Maintenance/rpm/SOURCES/CGAL-*-I-*.tar.gz
