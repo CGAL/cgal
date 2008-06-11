@@ -1,5 +1,5 @@
-
 #include "QNavigation.h"
+#include <QFlags>
 #include <cmath>
 #include <iostream>
 
@@ -10,7 +10,13 @@ namespace CGAL {
   {
     if (event->type() == QEvent::Wheel) {
       QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-      scaleView(pow((double)2, -wheelEvent->delta() / 240.0));
+      double zoom_ratio = 240.0;
+      if( (wheelEvent->modifiers() & Qt::ShiftModifier)
+          || (wheelEvent->modifiers() & Qt::ControlModifier) )
+      {
+        zoom_ratio = 120.0;
+      }
+      scaleView(pow((double)2, -wheelEvent->delta() / zoom_ratio));
       return true;
     } else if (event->type() == QEvent::MouseMove) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
