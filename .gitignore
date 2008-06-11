@@ -11,6 +11,7 @@ GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/Makefile
 GraphicsView/demo/GraphicsView/delaunay
 GraphicsView/demo/GraphicsView/qrc_*.cxx
+GraphicsView/demo/GraphicsView/ui_*.h
 Maintenance/rpm/BUILD/*
 Maintenance/rpm/RPMS/*
 Maintenance/rpm/SOURCES/CGAL-*-I-*.tar.gz
