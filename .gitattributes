@@ -1879,7 +1879,6 @@ Generator/doc_tex/Generator/generators_prog2.pdf -text svneol=unset#application/
 Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/postscript
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
 GraphicsView/TODO -text
-GraphicsView/demo/GraphicsView/#README# -text
 GraphicsView/demo/GraphicsView/MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/MainWindow.rcc -text
 GraphicsView/demo/GraphicsView/MainWindow.ui -text
