@@ -25,6 +25,6 @@ if ( CGAL_FOUND )
   qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Logos.qrc ../icons/Triangulation_2.qrc)
   qt4_automoc( MainWindow.cpp QNavigation.cpp QNavigation2.cpp QGraphicsItem_2.cpp QInput.cpp QDatastructure.cpp )
 
-  add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp ${UI_FILES} ${RESOURCE_FILES} )
+  add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
   target_link_libraries( delaunay ${QT_LIBRARIES} CGAL )
 endif()
