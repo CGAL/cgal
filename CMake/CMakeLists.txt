@@ -99,13 +99,17 @@ foreach(config_test_cpp ${all_config_tests})
     get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
     
     # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
-    CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
+    if( RUNNING_CGAL_AUTO_TEST OR "${config_test_name}" MATCHES "^${config_test_name}$" )
 
-    if ( ${config_test_name} )
-      set ( ${config_test_name} 0 )
-    else()
-      set ( ${config_test_name} 1 )
-    endif()  
+      CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
+
+      if ( ${config_test_name} )
+        set ( ${config_test_name} 0 CACHE INTERNAL "" FORCE )
+      else()
+        set ( ${config_test_name} 1 CACHE INTERNAL "" FORCE )
+      endif()  
+      
+    endif()
     
     add_config_flag( ${config_test_name} ${config_test_name} )
     
@@ -128,7 +132,7 @@ if(QT_FOUND)
 endif()
 
 if ( RUNNING_CGAL_AUTO_TEST AND MSVC )
-  file( APPEND "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>")
+  file( APPEND "${CGAL_BINARY_DIR}/include/CGAL/compiler_config.h" "#include <CGAL/Testsuite/vc_debug_hook.h>" )
 endif()
 
 #--------------------------------------------------------------------------------------------------
