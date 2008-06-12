@@ -23,7 +23,8 @@
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/functional.h>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 CGAL_BEGIN_NAMESPACE
 template < class K_ >
@@ -51,7 +52,7 @@ struct Extremal_polygon_area_traits_2 {
   };
 
   typedef Kgon_triangle_area                         Baseop;
-  typedef typename Bind< Baseop, Point_2, 3 >::Type  Operation;
+  typedef boost::function2<FT,Point_2,Point_2>       Operation;
 
   Extremal_polygon_area_traits_2() {}
   Extremal_polygon_area_traits_2(const K& k_) : k(k_) {}
@@ -64,7 +65,7 @@ struct Extremal_polygon_area_traits_2 {
 
   Operation
   operation( const Point_2& p) const
-  { return bind_3(Baseop(k), p); }
+  { return boost::bind(Baseop(k), _1, _2, p); }
 
   template < class RandomAccessIC, class OutputIterator >
   OutputIterator
@@ -176,7 +177,7 @@ struct Extremal_polygon_perimeter_traits_2 {
   };
 
   typedef Kgon_triangle_perimeter                    Baseop;
-  typedef typename Bind< Baseop, Point_2, 3 >::Type  Operation;
+  typedef boost::function2<FT,Point_2,Point_2>       Operation;
 
   Extremal_polygon_perimeter_traits_2() {}
   Extremal_polygon_perimeter_traits_2(const K& k_) : k(k_) {}
@@ -189,7 +190,7 @@ struct Extremal_polygon_perimeter_traits_2 {
 
   Operation
   operation( const Point_2& p) const
-  { return bind_3( Baseop(k), p); }
+  { return boost::bind(Baseop(k), _1, _2, p); }
 
   template < class RandomAccessIC, class OutputIterator >
   OutputIterator
@@ -225,10 +226,10 @@ struct Extremal_polygon_perimeter_traits_2 {
       max_element(
         points_begin + 1,
         points_end,
-        compose(
+        boost::bind(
           less< FT >(),
-          bind_2(operation(points_begin[0]), points_begin[0]),
-          bind_2(operation(points_begin[0]), points_begin[0]))));
+          boost::bind(operation(points_begin[0]), _1, points_begin[0]),
+          boost::bind(operation(points_begin[0]), _2, points_begin[0]))));
     
     // give result:
     max_perimeter = operation(*points_begin)(*maxi, *points_begin);
