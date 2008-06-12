@@ -28,28 +28,26 @@ MainWindow::MainWindow()
 
   // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
 #ifdef DELAUNAY_VORONOI
-  sdt = new CGAL::QTriangulation_2<Delaunay> (&dt);
   dgi = new CGAL::QTriangulationGraphicsItem_2<Delaunay>(&dt);
 #else 
-  sdt = new CGAL::QConstrainedTriangulation_2<Delaunay> (&dt);
   dgi = new CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay>(&dt);
 #endif    
     
-  QObject::connect(sdt, SIGNAL(changed()),
+  QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
   CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay> * dvgi;
   dvgi = new  CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay>(&dt);
-  dvgi->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dvgi->setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dvgi);
 
-  QObject::connect(sdt, SIGNAL(changed()),
-		   dvgi, SLOT(modelChanged()));
+  QObject::connect(this, SIGNAL(changed()),
+  	   dvgi, SLOT(modelChanged()));
 
 #ifdef DELAUNAY_VORONOI
   vgi = new CGAL::QVoronoiGraphicsItem_2<Delaunay>(&dt);
   vgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  QObject::connect(sdt, SIGNAL(changed()),
+  QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
 #endif    
     
@@ -67,11 +65,11 @@ MainWindow::MainWindow()
 #endif
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   sdt, SLOT(insert(CGAL::Object)));
+		   this, SLOT(process(CGAL::Object)));
     
   mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt);
   QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
-		   sdt, SLOT(insert(CGAL::Object)));
+		   this, SLOT(process(CGAL::Object)));
   
 
   connectActions();
@@ -110,6 +108,15 @@ MainWindow::connectActions()
   this->actionInsertPolyline->setChecked(true);
 }  
 
+void
+MainWindow::process(CGAL::Object o)
+{
+  std::list<Point_2> points;
+  if(CGAL::assign(points, o)){
+    dt.insert(points.begin(), points.end());
+  }
+  emit(changed());
+}
 
 void
 MainWindow::on_actionInsertPolyline_toggled(bool checked)
@@ -178,8 +185,9 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 void
 MainWindow::on_actionClear_triggered()
 {
-  sdt->clear();
-  scene.update();
+  dt.clear();
+  emit(changed());
+  scene.update(); // do we need that?
 }
 
 
@@ -200,7 +208,6 @@ MainWindow::on_actionLoadConstraints_triggered()
 void
 MainWindow::loadConstraints(QString fileName)
 {
-  std::cout << qPrintable(fileName) << std::endl;
   std::ifstream ifs(qPrintable(fileName));
 
   std::list<K::Point_2> points;
@@ -216,13 +223,14 @@ MainWindow::loadConstraints(QString fileName)
       segments.push_back(std::make_pair(p,q));
     }
   }
-  //    sdt->insert_constraints(segments.begin(), segments.end());
+  // dt.insert_constraints(segments.begin(), segments.end());
   /*
   while(ifs >> p){
     points.push_back(p);
   }
   //std::cout << "Read " << points.size() << " points" << std::endl;
-  sdt->insert_polyline(points.begin(), points.end());
+  dt.insert_polyline(points.begin(), points.end());
+  emit(changed());
   */
      this->graphicsView->ensureVisible(dgi);
 }
@@ -257,7 +265,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   for(int i = 0; i < 10; i++){
     points.push_back(*g++);
   }
-  sdt->insert(points.begin(), points.end());
+  dt.insert(points.begin(), points.end());
+  emit(changed());
 }
 
 void

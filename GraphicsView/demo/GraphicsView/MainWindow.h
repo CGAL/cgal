@@ -9,8 +9,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include "QConstrainedTriangulation_2.h"
-#include "QTriangulation_2.h"
 #include "QTriangulationMovingPoint_2.h"
 #include "QPolylineInput_2.h"
 #include "QTriangulationCircumcenter_2.h"
@@ -52,11 +50,9 @@ private:
 
 #ifdef DELAUNAY_VORONOI 
   CGAL::QTriangulationGraphicsItem_2<Delaunay> * dgi; 
-  CGAL::QTriangulation_2<Delaunay>  * sdt;
   CGAL::QVoronoiGraphicsItem_2<Delaunay> * vgi;
 #else
   CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay> * dgi;
-  CGAL::QConstrainedTriangulation_2<Delaunay>  * sdt;
 #endif
 
   QLabel* xycoord ;
@@ -72,6 +68,8 @@ private:
   void setupStatusBar();
 
 public slots:
+
+  void process(CGAL::Object o);
 
   void on_actionMovingPoint_toggled(bool checked);
 
@@ -101,6 +99,9 @@ public slots:
 
   void updateMouseCoordinates(QString s);
   
+  signals:
+
+  void changed();
 };
 
 #endif // MAIN_WINDOW_H
