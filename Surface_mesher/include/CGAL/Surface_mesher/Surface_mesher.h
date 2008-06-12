@@ -383,7 +383,10 @@ namespace CGAL {
                                                                          source_facet))
             source_facet_is_in_conflict = true;
         }
-        if(!source_facet_is_in_conflict)
+
+        // source_facet == Facet() when this->before_insertion_impl is
+        // called from a Mesh_3 visitor.
+        if(source_facet != Facet() && !source_facet_is_in_conflict)
         {
           const Facet source_other_side = mirror_facet(source_facet);
           std::stringstream error_msg;
