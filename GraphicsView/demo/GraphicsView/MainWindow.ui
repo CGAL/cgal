@@ -33,7 +33,7 @@
    </property>
    <widget class="QMenu" name="menuFile" >
     <property name="title" >
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="separator" />
     <addaction name="actionClear" />
@@ -44,13 +44,13 @@
    </widget>
    <widget class="QMenu" name="menuEdit" >
     <property name="title" >
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
     <addaction name="actionInsertRandomPoints" />
    </widget>
    <widget class="QMenu" name="menuTools" >
     <property name="title" >
-     <string>Tools</string>
+     <string>&amp;Tools</string>
     </property>
     <addaction name="actionMovingPoint" />
     <addaction name="actionInsertPolyline" />
@@ -59,12 +59,12 @@
    </widget>
    <widget class="QMenu" name="menuOptions" >
     <property name="title" >
-     <string>Options</string>
+     <string>&amp;Options</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuHelp" >
     <property name="title" >
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout" />
     <addaction name="actionAboutCGAL" />
@@ -106,34 +106,27 @@
    <addaction name="actionShowVoronoi" />
    <addaction name="actionCircumcenter" />
   </widget>
-  <action name="actionSfs" >
-   <property name="text" >
-    <string>sfs</string>
-   </property>
-  </action>
   <action name="actionAbout" >
    <property name="text" >
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="actionAboutCGAL" >
    <property name="text" >
-    <string>About CGAL</string>
-   </property>
-  </action>
-  <action name="actionNew" >
-   <property name="text" >
-    <string>New</string>
+    <string>About &amp;CGAL</string>
    </property>
   </action>
   <action name="actionExit" >
    <property name="text" >
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionInsertRandomPoints" >
    <property name="text" >
-    <string>Insert random points</string>
+    <string>&amp;Insert random points</string>
    </property>
   </action>
   <action name="actionMovingPoint" >
@@ -144,7 +137,7 @@
     <iconset resource="MainWindow.qrc" >:/cgal/Actions/icons/movingPoint.png</iconset>
    </property>
    <property name="text" >
-    <string>Moving Point</string>
+    <string>&amp;Moving Point</string>
    </property>
    <property name="toolTip" >
     <string comment="The comment" >Simulate Insertion</string>
@@ -167,7 +160,7 @@
     <iconset resource="../icons/Input.qrc" >:/cgal/Input/inputPolyline.png</iconset>
    </property>
    <property name="text" >
-    <string>Insert Polyline</string>
+    <string>&amp;Insert Polyline</string>
    </property>
    <property name="toolTip" >
     <string>Insert Point or Polyline</string>
@@ -181,7 +174,7 @@
     <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text" >
-    <string>Clear</string>
+    <string>&amp;Clear</string>
    </property>
   </action>
   <action name="actionShowVoronoi" >
@@ -195,7 +188,10 @@
     <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
    </property>
    <property name="text" >
-    <string>Show Voronoi Diagram</string>
+    <string>Show &amp;Voronoi Diagram</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionShowDelaunay" >
@@ -206,7 +202,10 @@
     <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
    </property>
    <property name="text" >
-    <string>Show Delaunay Triangulation</string>
+    <string>Show &amp;Delaunay Triangulation</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionLoadConstraints" >
@@ -214,7 +213,7 @@
     <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>Load Constraints</string>
+    <string>&amp;Load Constraints</string>
    </property>
   </action>
   <action name="actionSaveConstraints" >
@@ -222,7 +221,10 @@
     <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
-    <string>Save Constraints</string>
+    <string>&amp;Save Constraints</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionCircumcenter" >
@@ -233,7 +235,7 @@
     <iconset resource="MainWindow.qrc" >:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
-    <string>Circumcenter</string>
+    <string>&amp;Circumcenter</string>
    </property>
    <property name="toolTip" >
     <string>Draw circumcenter</string>
