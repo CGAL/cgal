@@ -45,5 +45,6 @@ endif()
 # minimal graphics view executable: min 
 #----------------------------------------
 add_executable  ( min min.cpp )
+qt4_generate_moc( min.cpp min.moc )
 target_link_libraries( min ${QT_LIBRARIES} )
 
