@@ -240,7 +240,13 @@ export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
 cd '${CGAL_BINARY_DIR}';
-cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE -DWITH_examples=FALSE -DRUNNING_CGAL_AUTO_TEST=TRUE VERBOSE=1 ../../..; 
+cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE \\
+                           -DWITH_examples=FALSE \\
+                           -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+                           -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
+                           -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
+                           VERBOSE=1 \\
+                           ../../..; 
 ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
