@@ -33,8 +33,7 @@ QPolylineInput_2_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *e
     delete path_item;
     path_item = NULL;
   }
-  if( (n_ == 0 && event->button() == Qt::RightButton)
-      || ( event->button() == Qt::LeftButton && (polygon.size() == n_)) ){
+  if( (event->button() == Qt::RightButton) || (polygon.size() == n_) ){
     // call the virtual function generate_polygon(), that emit a
     // CGAL::Object containing a list of points
     generate_polygon();

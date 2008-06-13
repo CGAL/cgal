@@ -49,7 +49,6 @@ protected:
   QPolygonF polygon;
 
 private:
-  bool first;
   QGraphicsPathItem *path_item;
   QGraphicsLineItem *b, *e;
   bool closed_;

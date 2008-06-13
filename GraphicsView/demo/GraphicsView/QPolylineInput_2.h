@@ -28,4 +28,4 @@ protected:
 
 } // namespace CGAL
 
-#endif // CGAL_Q_POLYLINE_INPUT_H
+#endif // CGAL_Q_POLYLINE_INPUT_2_H
