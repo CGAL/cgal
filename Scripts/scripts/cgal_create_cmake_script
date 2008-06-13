@@ -130,7 +130,9 @@ usage()
 
 
 case $# in
-  0) usage
+  0) ;;
+  1) ;;
+  *) usage
      exit 1
 esac
 
@@ -138,7 +140,7 @@ esac
 for i do
   case $i in
     -q) QT='y';;
-    -*) usage
+    *) usage
         exit 1;;
   esac
 done
