@@ -1,54 +1,3 @@
-/*
-#include <QApplication>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsScene>
-#include <QKeyEvent>
-#include <iostream>
-
-struct  Up : public QObject {
-
-  Q_OBJECT
-
-public:
-  Up(QGraphicsView* v_)
-    : v(v_)
-  {}
-  
-  bool eventFilter(QObject *obj, QEvent *event)
-  {
-    if (event->type() == QEvent::KeyPress) {
-      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-      if (keyEvent->key() == Qt::Key_Up){
-	std::cout << "up" << std::endl;
-	v->translate(0, -10);
-	return true;
-      }  
-    }
-    return QObject::eventFilter(obj, event);
-  }
-
-  QGraphicsView* v;
-
-};
-
-int main(int argc, char **argv)
-{
-  QApplication app(argc, argv);
-
-
-  QGraphicsScene scene;
-  scene.setSceneRect(0,0, 100, 100);
-  scene.addRect(20, 20, 30, 5);
-
-  QGraphicsView* view = new QGraphicsView(&scene); 
-  view->installEventFilter(new Up(view));
-  view->setTransformationAnchor(QGraphicsView::NoAnchor);
-
-  view->show();
-  return app.exec();
-}
-*/
-
 #include <iostream>
 #include <boost/format.hpp>
 #include <QtGui>
@@ -59,8 +8,21 @@ struct  Navigation : public QObject {
 
 public:
     Navigation(QGraphicsView* v_)
-        : v(v_)
-    {}
+      : v(v_), rectItem(new QGraphicsRectItem)
+    {
+      QColor rect_color(250, 221, 0);
+      rect_color.setAlpha(50);
+      rectItem->setBrush(rect_color);
+      rect_color.setAlpha(200);
+      rectItem->setPen(rect_color);
+      rectItem->hide();
+      v->scene()->addItem(rectItem);
+    }
+
+    ~Navigation()
+    {
+      delete rectItem;
+    }
 
     bool eventFilter(QObject *obj, QEvent *event)
     {
@@ -121,6 +83,41 @@ public:
         return true;
         break;
       } // end case Wheel
+      case QEvent::GraphicsSceneMousePress: {
+        QGraphicsSceneMouseEvent* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+        if( mouseEvent->modifiers() == Qt::ControlModifier && 
+            mouseEvent->button() == Qt::LeftButton){
+          rect_first_point = mouseEvent->scenePos();
+          rectItem->setRect(QRectF(rect_first_point, rect_first_point));
+          rectItem->show();
+          return true;
+        }
+        else {
+          return false;
+        }
+        break;
+      } // end case MouseRelease
+      case QEvent::GraphicsSceneMouseMove: {
+        QGraphicsSceneMouseEvent* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+        if(rectItem->isVisible()) {
+          rectItem->setRect(QRectF(rect_first_point,
+                                   mouseEvent->scenePos()));
+        }
+        break;
+      } // end MouseMove
+      case QEvent::GraphicsSceneMouseRelease: {
+        QGraphicsSceneMouseEvent* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+        if(rectItem->isVisible() && mouseEvent->button() == Qt::LeftButton){
+          v->setSceneRect(v->sceneRect() | rectItem->rect());
+          v->fitInView(rectItem->rect(), Qt::KeepAspectRatio);
+          rectItem->hide();
+          return true;
+        }
+        else {
+          return false;
+        }
+        break;
+      } // end MouseRelease
       } // end switch
       return false;
     }
@@ -190,6 +187,8 @@ public:
   }
 
   QGraphicsView* v;
+  QGraphicsRectItem* rectItem;
+  QPointF rect_first_point;
 };
 
 int main(int argc, char **argv)
@@ -204,9 +203,11 @@ int main(int argc, char **argv)
     scene.addLine(0,100, 100, 0);
 
     QGraphicsView* view = new QGraphicsView(&scene);
-    Navigation* up = new Navigation(view);
-    view->installEventFilter(up);
-    view->viewport()->installEventFilter(up);
+    Navigation* navigation = new Navigation(view);
+    view->installEventFilter(navigation);
+    view->viewport()->installEventFilter(navigation);
+    scene.installEventFilter(navigation);
+    view->setInteractive(true);
 
     view->show();
     return app.exec();
