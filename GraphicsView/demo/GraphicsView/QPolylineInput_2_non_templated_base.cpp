@@ -20,11 +20,13 @@ QPolylineInput_2_non_templated_base::QPolylineInput_2_non_templated_base(QGraphi
 bool
 QPolylineInput_2_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
-  if( event->modifiers() )
+  if( event->modifiers() ){
     return false;
+  }
   if( event->button() != Qt::RightButton
-      && event->button() != Qt::LeftButton )
+      && event->button() != Qt::LeftButton ){
     return false;
+  }
   polygon.push_back(event->scenePos());
   if(path_item){
     scene_->removeItem(path_item);
@@ -148,6 +150,7 @@ QPolylineInput_2_non_templated_base::eventFilter(QObject *obj, QEvent *event)
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     if(!mousePressEvent(mouseEvent)) {
+      // standard event processing if mousePressEvent has returned false
       return QObject::eventFilter(obj, event);
     }
   } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -160,9 +163,9 @@ QPolylineInput_2_non_templated_base::eventFilter(QObject *obj, QEvent *event)
       return QObject::eventFilter(obj, event);
     }
   } else{
-    // standard event processing
+    // standard event processing if keyPressEvent has returned false
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace CGAL
