@@ -382,7 +382,7 @@ template < class SK > \
   };
 
   template < class SK >
-  class Construct_circle_3
+  class Construct_circle_3 : public  SK::Linear_kernel::Construct_circle_3
   {
   public:
 
@@ -399,45 +399,16 @@ template < class SK > \
     typedef Circle_3 result_type;
     typedef Arity_tag<1>          Arity; 
 
-    result_type
-    operator()(void) 
-    { return Rep(); }
-
-    result_type
-    operator()(const Circle_3 &c) const
-    { return Rep(c); }
+    using SK::Linear_kernel::Construct_circle_3::operator();
 
     result_type
     operator() ( const typename SK::Polynomials_for_circle_3 &eq )
     { return Rep(construct_circle_3<SK>(eq)); }
 
-    result_type
-    operator() (const Point_3& p, const FT& sr, const Plane_3& plane)
-    { return Rep(p,sr,plane); }
-
-    result_type
-    operator() (const Point_3& p, const FT& sr, const Vector_3& v)
-    { return Rep(p,sr,v); }
-
-    result_type
-    operator() (const Point_3& p, const FT& sr, const Direction_3& d)
-    { return Rep(p,sr,d); }
-
-    result_type
-    operator() (const Sphere_3& s1, const Sphere_3& s2)
-    { return Rep(s1,s2); }
-
-    result_type
-    operator() (const Plane_3& p, const Sphere_3& s)
-    { return Rep(p,s); }
-
-    result_type
-    operator() (const Sphere_3& s, const Plane_3& p)
-    { return Rep(p,s); }
   };
 
   template <class SK>
-  class Construct_supporting_plane_3//: Has_qrt
+  class Construct_supporting_plane_3 : public  SK::Linear_kernel::Construct_supporting_plane_3
   {
     typedef typename SK::Plane_3        Plane_3;
     typedef typename SK::Circle_3       Circle_3;
@@ -449,8 +420,7 @@ template < class SK > \
     typedef const Plane_3& qualified_result_type;
     typedef Arity_tag<1>   Arity;
     
-    qualified_result_type operator() (const Circle_3 & c) const
-    { return c.rep().supporting_plane(); }
+    using SK::Linear_kernel::Construct_supporting_plane_3::operator();
 
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().supporting_plane(); }
@@ -473,7 +443,7 @@ template < class SK > \
   };  
 
   template <class SK>
-  class Construct_diametral_sphere_3//: Has_qrt
+  class Construct_diametral_sphere_3 : public  SK::Linear_kernel::Construct_diametral_sphere_3
   {
     typedef typename SK::Sphere_3       Sphere_3;
     typedef typename SK::Circle_3       Circle_3;
@@ -485,8 +455,7 @@ template < class SK > \
     typedef const Sphere_3& qualified_result_type;
     typedef Arity_tag<1>    Arity;
     
-    qualified_result_type operator() (const Circle_3 & c) const
-    { return c.rep().diametral_sphere(); }
+    using SK::Linear_kernel::Construct_diametral_sphere_3::operator();
 
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().diametral_sphere(); }
@@ -1288,9 +1257,6 @@ template < class SK > \
     using SK::Linear_kernel::Construct_bbox_3::operator();
 
     result_type operator() (const Circular_arc_point_3 & c) const
-    { return c.rep().bbox(); }
-
-    result_type operator() (const Circle_3 & c) const
     { return c.rep().bbox(); }
 
     result_type operator() (const Line_arc_3 & l) const
