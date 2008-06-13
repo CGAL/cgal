@@ -5,31 +5,45 @@ project (GraphicsView)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-find_package(CGAL)
+find_package(CGAL REQUIRED)
 
-if ( CGAL_FOUND )
+include(${CGAL_USE_FILE})
+include(CreateSingleSourceCGALQt4Program)
 
-  include(${CGAL_USE_FILE})
-  include(CreateSingleSourceCGALQt4Program)
-
-  set( QT_USE_QTXML    TRUE )
-  set( QT_USE_QTMAIN   TRUE )
-  set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTXML    TRUE )
+set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTSCRIPT  TRUE )
 
 
-  find_package(Qt4       REQUIRED)
-  include(${QT_USE_FILE})
-  include_directories (BEFORE ../../include)
+find_package(Qt4       REQUIRED)
+include(${QT_USE_FILE})
+include_directories (BEFORE ../../include)
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui )
-  qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Logos.qrc ../icons/Triangulation_2.qrc)
-  qt4_automoc( MainWindow.cpp QNavigation.cpp QNavigation2.cpp QGraphicsItem_2.cpp QInput.cpp QDatastructure.cpp )
+#--------------------------------
+# The "delaunay" demo: delaunay 
+#--------------------------------
+# UI files (Qt Designer files)
+qt4_wrap_ui( UI_FILES MainWindow.ui )
 
-  add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
+# qrc files (resources files, that contain icons, at least)
+qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Logos.qrc ../icons/Triangulation_2.qrc)
 
-  target_link_libraries( delaunay ${QT_LIBRARIES} )
-  if ( NOT AUTO_LINK_ENABLED )    
+# use the Qt MOC preprocessor on classes that derives from QObject
+qt4_automoc( MainWindow.cpp QNavigation.cpp QNavigation2.cpp QGraphicsItem_2.cpp QInput.cpp QDatastructure.cpp )
+
+# The executable itself.
+add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
+
+# Link with Qt libraries
+target_link_libraries( delaunay ${QT_LIBRARIES} )
+if ( NOT AUTO_LINK_ENABLED )    
+  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
   target_link_libraries( delaunay CGAL )
-  endif()
-
 endif()
+
+#----------------------------------------
+# minimal graphics view executable: min 
+#----------------------------------------
+add_executable  ( min min.cpp )
+target_link_libraries( min ${QT_LIBRARIES} )
+
