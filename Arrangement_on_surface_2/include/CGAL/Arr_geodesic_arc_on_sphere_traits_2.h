@@ -36,6 +36,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#define CGAL_X_MINUS_1_Y_0      0
+#define CGAL_X_MINUS_0_8_Y_0_6  1
+
+#define CGAL_IDENTIFICATION_XY  CGAL_X_MINUS_1_Y_0
+
 template <typename Kernel> class Arr_x_monotone_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_extended_direction_3;
@@ -62,6 +67,8 @@ public:
   Arr_geodesic_arc_on_sphere_traits_2(){}
 
 protected:
+  typedef typename Kernel::FT                   FT;
+
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
   typedef typename Kernel::Line_3               Line_3;
@@ -87,12 +94,20 @@ protected:
     return d;
   }
 
-  /*! Obtain the 2D direction directed along the negative x axis
+  /*! Obtain the intersection of the identification arc and the xy plane as
+   * a direction.
+   * By default, it is the vector directed along the negative x axis.
    * \return the direction directed at x = -infinity
    */
-  inline static const Direction_2 & neg_x_2()
+  inline static const Direction_2 & identification_xy()
   {
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_2 d(-1, 0);
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+    static const Direction_2 d(FT(-8, 10), FT(6,10));
+#else
+    #error CGAL_IDENTIFICATION_XY is not defined
+#endif
     return d;
   }
 
@@ -130,30 +145,21 @@ protected:
    * \return the projection onto the xy-plane
    */
   inline static Direction_2 project_xy(const Direction_3 & d)
-  {
-    Direction_2 dir(d.dx(), d.dy());
-    return dir;
-  }
+  { return Direction_2(d.dx(), d.dy()); }
   
   /*! Project a 3D direction onto the yz-plane
    * \param d the 3D direction
    * \return the projection onto the yz-plane
    */
   inline static Direction_2 project_yz(const Direction_3 & d)
-  {
-    Direction_2 dir(d.dy(), d.dz());
-    return dir;
-  }
+  { return Direction_2(d.dy(), d.dz()); }
   
   /*! Project a 3D direction onto the zx-plane
    * \param d the 3D direction
    * \return the projection onto the xz-plane
    */
   inline static Direction_2 project_xz(const Direction_3 & d)
-  {
-    Direction_2 dir(d.dx(), d.dz());
-    return dir;
-  }
+  { return Direction_2(d.dx(), d.dz()); }
 
   /*! Compare the relative position of a direction and a plane given by its
    * normal.
@@ -193,13 +199,12 @@ protected:
   }
   
 public:
-  /*! Compare two endpoint directions by y.
-   * \param p1 the first enpoint direction.
-   * \param p2 the second endpoint direction.
-   * \param d1_xy the projection of the first endpoint onto the xy-plane.
-   * \return SMALLER - y(p1) < y(p2);
-   *         EQUAL   - y(p1) = y(p2);
-   *         LARGER  - y(p1) > y(p2).
+  /*! Compare two endpoint directions by v.
+   * \param d1 the first enpoint direction.
+   * \param d2 the second endpoint direction.
+   * \return SMALLER - v(d1) < v(d2);
+   *         EQUAL   - v(d1) = v(d2);
+   *         LARGER  - v(d1) > v(d2).
    */
   inline Comparison_result compare_y(const Direction_3 & d1,
                                      const Direction_3 & d2) const
@@ -236,24 +241,22 @@ public:
     Direction_2 d1_2 = project_xy(d1);
     Direction_2 d2_2 = project_xy(d2);
 
-    const Kernel * kernel = m_traits;
-    
+    const Kernel * kernel = this;    
     if (kernel->equal_2_object()(d1_2, d2_2)) return EQUAL;
     
-    const Direction_2 & nx = neg_x_2();
-    return (kernel->counterclockwise_in_between_2_object()(nx, d1_2, d2_2)) ?
+    const Direction_2 & d = identification_xy();
+    return (kernel->counterclockwise_in_between_2_object()(d, d1_2, d2_2)) ?
       LARGER : SMALLER;
   }
 
-
-  /*! Compare two endpoint directions lexigoraphically: by x, then by y.
-   * \param p1 the first enpoint direction.
-   * \param p2 the second endpoint direction.
-   * \return SMALLER - x(p1) < x(p2);
-   *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
-   *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
-   *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
-   *         LARGER  - x(p1) > x(p2).
+  /*! Compare two endpoint directions lexigoraphically: by u, then by v.
+   * \param d1 the first enpoint direction.
+   * \param d2 the second endpoint direction.
+   * \return SMALLER - u(d1) < u(d2);
+   *         SMALLER - u(d1) = u(d2) and v(d1) < v(d2);
+   *         EQUAL   - u(d1) = u(d2) and v(d1) = v(d2);
+   *         LARGER  - u(d1) = u(d2) and v(d1) > v(d2);
+   *         LARGER  - u(d1) > u(d2).
    * \pre d1 does not lie on the discontinuity arc.
    * \pre d2 does not lie on the discontinuity arc.
    */
@@ -857,8 +860,8 @@ public:
         Direction_2 p = Traits::project_xy(point);
         const Kernel * kernel = m_traits;
         if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
+        const Direction_2 & d = Traits::identification_xy();
+        return (kernel->counterclockwise_in_between_2_object()(d, p, q)) ?
           LARGER : SMALLER;
       }
 
@@ -921,8 +924,8 @@ public:
 
         const Kernel * kernel = m_traits;
         if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
+        const Direction_2 & d = Traits::identification_xy();
+        return (kernel->counterclockwise_in_between_2_object()(d, p, q)) ?
           LARGER : SMALLER;
       }
       if (xcv1.is_vertical()) {
@@ -1377,10 +1380,10 @@ public:
 
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
-      const Direction_2 & nx = Traits::neg_x_2();
+      const Direction_2 & d = Traits::identification_xy();
       const Kernel * kernel = m_traits;
       bool directed_right =
-        kernel->counterclockwise_in_between_2_object()(nx, s, t);
+        kernel->counterclockwise_in_between_2_object()(d, s, t);
       
       X_monotone_curve_2 xc1(source, p, normal, false, directed_right);
       X_monotone_curve_2 xc2(p, target, normal, false, directed_right);
@@ -1743,7 +1746,7 @@ public:
           (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
-                                    normal, false, Traits::neg_x_2(),
+                                    normal, false, Traits::identification_xy(),
                                     ccib, Traits::project_xy, oi);
       }
 
@@ -2113,8 +2116,8 @@ public:
     else {
       Direction_2 dir_xy = Traits::project_xy(dir);
       typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-      const Direction_2 & nx = Traits::neg_x_2();
-      m_location = equal_2(dir_xy, nx) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
+      const Direction_2 & d = Traits::identification_xy();
+      m_location = equal_2(dir_xy, d) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
     }
   }
 
@@ -2350,8 +2353,8 @@ public:
     Orientation orient = Traits::orientation(s, t);
     if (orient == COLLINEAR) {
       set_is_vertical(true);
-      const Direction_2 & nx = Traits::neg_x_2();
-      if (Traits::orientation(nx, s) == COLLINEAR) {
+      const Direction_2 & d = Traits::identification_xy();
+      if (Traits::orientation(d, s) == COLLINEAR) {
         // Project onto xz plane:
         s = Traits::project_xz(source);
         t = Traits::project_xz(target);
@@ -2800,17 +2803,16 @@ public:
     Direction_2 t = Traits::project_xy(target);
     Orientation orient = Traits::orientation(s, t);
     
-    const Direction_2 & nx = Traits::neg_x_2();
+    const Direction_2 & d = Traits::identification_xy();
     if (orient == LEFT_TURN) {
       this->set_is_directed_right(true);
-      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(nx,
-                                                                       s, t));
+      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, s, t));
       return;
     }        
 
     // (orient == RIGHT_TURN)
     this->set_is_directed_right(false);
-    set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(nx, t, s));
+    set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, t, s));
     return;
   }
 
@@ -2930,14 +2932,14 @@ public:
     // The arc is not vertical!
     this->set_is_vertical(false);
     this->set_is_directed_right(z_sign(normal) == POSITIVE);
-    const Direction_2 & nx = Traits::neg_x_2();
+    const Direction_2 & d = Traits::identification_xy();
     Direction_2 s = Traits::project_xy(source);
     Direction_2 t = Traits::project_xy(target);    
     typename Kernel::Counterclockwise_in_between_2 ccib =
       kernel.counterclockwise_in_between_2_object();
     bool plane_is_positive = (z_sign(normal) == POSITIVE);
-    set_is_x_monotone((plane_is_positive && !ccib(nx, s, t)) ||
-                      (!plane_is_positive && !ccib(nx, t, s)));
+    set_is_x_monotone((plane_is_positive && !ccib(d, s, t)) ||
+                      (!plane_is_positive && !ccib(d, t, s)));
   }
 
   /*! Construct a full spherical_arc from a plane.
