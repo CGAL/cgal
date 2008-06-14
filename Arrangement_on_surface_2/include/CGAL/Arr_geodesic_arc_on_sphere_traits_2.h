@@ -224,15 +224,31 @@ public:
                          CGAL::sign(dot_p2) * dot_p2 * dot_p2 * norm1);
   }
 
-  /*! Compare two endpoint directions by x.
-   * \param p1 the first enpoint direction.
-   * \param p2 the second endpoint direction.
-   * \param d1_xy the projection of the first endpoint onto the xy-plane.
-   * \return SMALLER - x(p1) < x(p2);
-   *         EQUAL   - x(p1) = x(p2);
-   *         LARGER  - x(p1) > x(p2).
-   * \pre d1 does not coincide with any pole..
-   * \pre d2 does not coincide with any pole..
+  /*! Compare two directions contained in the xy plane by u.
+   * \param d1 the first direction.
+   * \param d2 the second direction.
+   * \return SMALLER - u(d1) < u(d2);
+   *         EQUAL   - u(d1) = u(d2);
+   *         LARGER  - u(d1) > u(d2).
+   */
+  inline Comparison_result compare_x(const Direction_2 & d1,
+                                     const Direction_2 & d2) const
+  {
+    const Kernel * kernel = this;
+    if (kernel->equal_2_object()(d1, d2)) return EQUAL;
+    const Direction_2 & d = identification_xy();
+    return (kernel->counterclockwise_in_between_2_object()(d, d1, d2)) ?
+      LARGER : SMALLER;
+  }
+  
+  /*! Compare two endpoint directions by u.
+   * \param d1 the first enpoint direction.
+   * \param d2 the second endpoint direction.
+   * \return SMALLER - u(d1) < u(d2);
+   *         EQUAL   - u(d1) = u(d2);
+   *         LARGER  - u(d1) > u(d2).
+   * \pre d1 does not coincide with any pole.
+   * \pre d2 does not coincide with any pole.
    */
   inline Comparison_result compare_x(const Direction_3 & d1,
                                      const Direction_3 & d2) const
@@ -240,13 +256,7 @@ public:
     // Compare the projections onto the xy plane:
     Direction_2 d1_2 = project_xy(d1);
     Direction_2 d2_2 = project_xy(d2);
-
-    const Kernel * kernel = this;    
-    if (kernel->equal_2_object()(d1_2, d2_2)) return EQUAL;
-    
-    const Direction_2 & d = identification_xy();
-    return (kernel->counterclockwise_in_between_2_object()(d, d1_2, d2_2)) ?
-      LARGER : SMALLER;
+    return compare_x(d1_2, d2_2);
   }
 
   /*! Compare two endpoint directions lexigoraphically: by u, then by v.
@@ -858,11 +868,7 @@ public:
           Direction_2(-(normal.dy()), normal.dx()) :
           Direction_2(normal.dy(), -(normal.dx()));
         Direction_2 p = Traits::project_xy(point);
-        const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & d = Traits::identification_xy();
-        return (kernel->counterclockwise_in_between_2_object()(d, p, q)) ?
-          LARGER : SMALLER;
+        return m_traits->compare_x(p, q);
       }
 
       // xcv is not a vertical sphercial_arc:
@@ -921,12 +927,7 @@ public:
         Direction_2 q = (xcv2.is_directed_right()) ?
           Direction_2(-(normal2.dy()), normal2.dx()) :
           Direction_2(normal2.dy(), -(normal2.dx()));
-
-        const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & d = Traits::identification_xy();
-        return (kernel->counterclockwise_in_between_2_object()(d, p, q)) ?
-          LARGER : SMALLER;
+        return m_traits->compare_x(p, q);
       }
       if (xcv1.is_vertical()) {
         CGAL_precondition(!xcv1.is_on_boundary());
@@ -1306,9 +1307,8 @@ public:
         // discontinuity arc:
         Direction_3 normal = c.normal();
         bool directed_right = Traits::x_sign(normal) == POSITIVE;
-        typename Kernel::FT z = normal.dx() / normal.dz();
-        Direction_3 d1(-1, 0, z);
-        Direction_3 d2(1, 0, -z);
+        Direction_3 d1(-(normal.dz()), 0, normal.dx());
+        Direction_3 d2(normal.dz(), 0, -(normal.dx()));
         X_monotone_curve_2 xc1(d1, d2, normal, false, directed_right);
         X_monotone_curve_2 xc2(d2, d1, normal, false, directed_right);
         *oi++ = make_object(xc1);
@@ -1376,8 +1376,19 @@ public:
       }
 
       // The curve is not vertical, (none of the enpoints coincide with a pole)
-      Point_2 p(-1, 0, normal.dx() / normal.dz());
-
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
+      Direction_3 dp = (CGAL::sign(normal.dz()) == POSITIVE) ?
+        Direction_3(-(normal.dz()), 0, normal.dx()) :
+        Direction_3(normal.dz(), 0, -(normal.dx()));
+#else
+      const Direction_2 & t = Traits::identification_xy();
+      FT x = t.dx();
+      FT y = t.dy();
+      FT z((t.dx() * normal.dx() + t.dy() * normal.dy()) /  -(normal.dz());
+      Direction_3 dp(x, y, z);
+#endif
+      Point_2 p(dp, Point_2::MID_BOUNDARY_LOC);
+      
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
       const Direction_2 & d = Traits::identification_xy();
@@ -2410,7 +2421,17 @@ public:
   {
     CGAL_precondition(z_sign(normal) != ZERO);
 
-    Direction_3 d(-1, 0, normal.dx() / normal.dz());
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)    
+    Direction_3 d = (CGAL::sign(normal.dz()) == POSITIVE) ?
+      Direction_3(-(normal.dz()), 0, normal.dx()) :
+      Direction_3(normal.dz(), 0, -(normal.dx()));
+#else
+    const Direction_2 & t = Traits::identification_xy();
+    FT x = t.dx();
+    FT y = t.dy();
+    FT z((t.dx() * normal.dx() + t.dy() * normal.dy()) / -(normal.dz());
+    Direction_3 d(x, y, z);
+#endif
     m_source = m_target =
       Arr_extended_direction_3(d, Arr_extended_direction_3::MID_BOUNDARY_LOC);
   }
