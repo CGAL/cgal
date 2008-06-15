@@ -111,6 +111,15 @@ protected:
     return d;
   }
 
+  /*! Obtain the 2D direction directed along the negative x axis
+   * \return the direction directed at x = -infinity
+   */
+  inline static const Direction_2 & neg_x_2()
+  {
+    static const Direction_2 d(-1, 0);
+    return d;
+  }
+
   /*! Obtain the 2D direction directed along the negative y axis
    * \return the direction directed at y = -infinity
    */
@@ -169,7 +178,7 @@ protected:
   inline Oriented_side oriented_side(const Direction_3 & normal,
                                      const Direction_3 dir) const
   {
-    typename Kernel::FT dot = normal.vector() * dir.vector();
+    FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot);
   }
   
@@ -194,7 +203,7 @@ protected:
    */
   inline bool has_on(const Direction_3 & normal, const Direction_3 & dir) const
   {
-    typename Kernel::FT dot = normal.vector() * dir.vector();
+    FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot) == ZERO;
   }
   
@@ -209,8 +218,6 @@ public:
   inline Comparison_result compare_y(const Direction_3 & d1,
                                      const Direction_3 & d2) const
   {
-    typedef typename Kernel::FT                     FT;
-
     Vector_3 v1 = d1.vector();
     Vector_3 v2 = d2.vector();
 
@@ -400,8 +407,8 @@ public:
   /*! A functor that checks whether an x-monotone arc is a vertical */
   class Is_vertical_2 {
   public:
-    /*! Check whether a given arc is a vertical.
-     * \param xc the curve.
+    /*! Check whether a given arc is vertical.
+     * \param xc the arc.
      * \return true if the curve is a vertical spherical_arc; false otherwise.
      * \pre the arc is not degenerate (consists of a single point)
      */
@@ -434,12 +441,12 @@ public:
     
   public:
     /*! Return the location of the given point with respect to the input arc.
-     * \param xc the curve.
+     * \param xc the arc.
      * \param p the point.
      * \return SMALLER - y(p) < xc(x(p)), i.e. the point is below the curve;
      *         EQUAL   - p lies on the curve.
      *         LARGER  - y(p) > xc(x(p)), i.e. the point is above the curve;
-     * \pre p is not a singularity point.
+     * \pre p is not a construction point.
      * \pre p is in the x-range of xc.
      */
     Comparison_result operator()(const Point_2 & p,
@@ -1757,7 +1764,7 @@ public:
           (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
-                                    normal, false, Traits::identification_xy(),
+                                    normal, false, Traits::neg_x_2(),
                                     ccib, Traits::project_xy, oi);
       }
 
@@ -2364,8 +2371,8 @@ public:
     Orientation orient = Traits::orientation(s, t);
     if (orient == COLLINEAR) {
       set_is_vertical(true);
-      const Direction_2 & d = Traits::identification_xy();
-      if (Traits::orientation(d, s) == COLLINEAR) {
+      const Direction_2 & nx = Traits::neg_x_2();
+      if (Traits::orientation(nx, s) == COLLINEAR) {
         // Project onto xz plane:
         s = Traits::project_xz(source);
         t = Traits::project_xz(target);
