@@ -26,13 +26,12 @@ decomposing both polyhedra into convex pieces, compute pair-wise
 Minkowski sums of the convex pieces, and unite the pair-wise sums.
 
 While it is desirable to have a decomposition into a minimum number of
-pieces, this problem is know to be NP-hard~\cite{cgal:c--}. Our
-implementation decomposes a Nef polyhedron $N$ into $O(r^2)$ convex
-pieces, where $r$ is the number of edges, which have two adjacent
-facets that span an angle of more than 180 degrees with respect to the
-interior of the polyhedron. Those edges are also called reflex edges.
-The bound of $O(r^2)$ convex pieces is worst-case
-optimal~\cite{cgal:c--}.
+pieces, this problem is know to be NP-hard. Our implementation
+decomposes a Nef polyhedron $N$ into $O(r^2)$ convex pieces, where $r$
+is the number of edges, which have two adjacent facets that span an
+angle of more than 180 degrees with respect to the interior of the
+polyhedron. Those edges are also called reflex edges.  The bound of
+$O(r^2)$ convex pieces is worst-case optimal.
 
 At the moment our implementation is restricted to the decomposition of
 finite point sets. If the input polyhedron is infinite, i.e., the
@@ -52,4 +51,4 @@ subdivided into convex pieces. The convex pieces can then be used by
 traversing $N$, or by converting them into separate Nef polyhedra, as
 shown in the example code.
 
-\ccIncludeExampleCode{Convex_decomposition_3/.cpp}
+\ccIncludeExampleCode{Convex_decomposition_3/list_of_convex_parts.cpp}
