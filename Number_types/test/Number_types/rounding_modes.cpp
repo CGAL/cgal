@@ -26,7 +26,7 @@ double IA_min_double;
 CGAL::FPU_CW_t
 FPU_empiric_test()
 {
-    IA_min_double = CGAL_IA_MIN_DOUBLE;
+    IA_min_double = CGAL_IA_STOP_CPROP(CGAL_IA_MIN_DOUBLE);
     double y = 1.0, z = -1.0;
     double ye, ze;
     ye = y - IA_min_double;
@@ -34,24 +34,6 @@ FPU_empiric_test()
     if (y == ye && z == ze) return CGAL_FE_TONEAREST;
     if (y == ye) return CGAL_FE_UPWARD;
     if (z == ze) return CGAL_FE_DOWNWARD;
-    return CGAL_FE_TOWARDZERO;
-}
-
-// This variable is global in order to stop constant propagation.
-double m = 0.5;
-
-CGAL::FPU_CW_t FPU_empiric_test_mul ()
-{
-    int i;
-    for (i=0; i<10; i++) {m*=m; /* std::cout <<c << std::endl; */ }
-    double a = m*m;
-    double b = (-m)*m;
-    std::cout << "m = " << m << "\n m*m = " << a << "\n (-m)*m = " << b;
-    std::cout << std::endl;
-// Note: it's not supposed to work here like that.
-    if ((a == 0.0) && (b == 0.0)) return CGAL_FE_TONEAREST;
-    if (a > 0.0) return CGAL_FE_UPWARD;
-    if (b < 0.0) return CGAL_FE_DOWNWARD;
     return CGAL_FE_TOWARDZERO;
 }
 
