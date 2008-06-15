@@ -68,6 +68,13 @@ public:
   Interval_nt(double d)
     : _inf(d), _sup(d) {}
 
+// The Intel compiler on Linux is aggressive with constant propagation and
+// it seems there is no flag to stop it, so disable this check for it.
+#if !defined(CGAL_DISABLE_ROUNDING_MATH_CHECK) && \
+    defined(__INTEL_COMPILER) && defined(__linux)
+#  define CGAL_DISABLE_ROUNDING_MATH_CHECK
+#endif
+
   Interval_nt(double i, double s)
     : _inf(i), _sup(s)
   {
