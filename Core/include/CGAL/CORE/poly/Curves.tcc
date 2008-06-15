@@ -1163,13 +1163,13 @@ int Curve<NT>::verticalIntersections(const BigFloat & x, BFVecInterval & vI,
     d = PY.getTrueDegree();
     if(d <= 0) return(d);
 
-    Sturm<Expr> SS(PY); // should be replaced by BigFloat version
-    // Sturm<BigFloat> SS(PY); // unstable still
-    SS.isolateRoots(vI);
+    Sturm<Expr> Ss(PY); // should be replaced by BigFloat version
+    // Sturm<BigFloat> Ss(PY); // unstable still
+    Ss.isolateRoots(vI);
 
     int s = vI.size();
     if ((aprec != 0) && (s>0))
-	SS.newtonRefineAllRoots(vI, aprec);
+	Ss.newtonRefineAllRoots(vI, aprec);
     
     return s;
   }
@@ -1397,16 +1397,16 @@ if (!xCurr.isExact()) std::cout<<"xCurr has error! xCurr=" << xCurr << std::endl
 //  Assumes that C & D are quasi-monic.(or generally aligned)
 template <class NT>
 void  Xintersections( Curve<NT>& P ,Curve<NT>& Q, BFVecInterval &vI){
-  Sturm<NT> SS(resY(P, Q));
-  SS.isolateRoots(vI);
+  Sturm<NT> Ss(resY(P, Q));
+  Ss.isolateRoots(vI);
 }
 
 //Yintersections(C, D, vI):
 //	similar to Xintersections
 template <class NT>
 void  Yintersections( Curve<NT>& P ,Curve<NT>& Q, BFVecInterval &vI){
-  Sturm<NT> SS(resX(P, Q));
-  SS.isolateRoots(vI);
+  Sturm<NT> Ss(resX(P, Q));
+  Ss.isolateRoots(vI);
 }
 
 // Display Intervals

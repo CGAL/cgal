@@ -76,8 +76,8 @@ struct URefiner {
   typedef typename UI::Exact_certificate Exact_certificate;
   typedef typename UI::Exact_time Exact_root;
   typedef CGAL::Interval_nt_advanced INT;
-  struct CS: public CGAL::Kinetic::Ref_counted<CS> {
-    CS(const Exact_certificate &c): cert_(c){}
+  struct Cs: public CGAL::Kinetic::Ref_counted<Cs> {
+    Cs(const Exact_certificate &c): cert_(c){}
     Exact_certificate cert_;
   };
   
@@ -108,7 +108,7 @@ struct URefiner {
     if (has_exact_root()) return false;
 
     double dd= iv.second-iv.first;
-    if (cert_ == typename CS::Handle()) {
+    if (cert_ == typename Cs::Handle()) {
       CGAL::Protect_FPU_rounding<true> prot;
 
       INT niv=ui_->Newton_refine(certf_, certpf_, INT(iv));
@@ -160,7 +160,7 @@ struct URefiner {
   }
 
   bool has_exact_root() const {
-    return cert_!= typename CS::Handle() ;
+    return cert_!= typename Cs::Handle() ;
   }
     
   CGAL::Sign sign_at(INT t) const {
@@ -180,7 +180,7 @@ struct URefiner {
       ++stat_exact_certificate_functions_;
       ++stat_exact_certificate_functions_from_compare_;
       CGAL_UD_DEBUG("Generating exact with interval " << iv.first << " " << iv.second << std::endl);
-      cert_= new CS(ui_->compute_exact_failure_time(tuple_, iv.first));
+      cert_= new Cs(ui_->compute_exact_failure_time(tuple_, iv.first));
       CGAL_UD_DEBUG("Got " << cert_->cert_.failure_time() << std::endl);
       CGAL_assertion(check_.failure_time() == cert_->cert_.failure_time());
       //iv= CGAL::to_interval(exact_root());
@@ -191,7 +191,7 @@ struct URefiner {
       cs[1]=-1.0;
       typename Exact_certificate::Function f(cs, cs+2);
       // hack
-      cert_= new CS(Exact_certificate(f, typename UI::Kinetic_kernel::Function_kernel(), -1, 2));
+      cert_= new Cs(Exact_certificate(f, typename UI::Kinetic_kernel::Function_kernel(), -1, 2));
       CGAL_UD_DEBUG(f << ": " << exact_root()  << std::endl); 
       CGAL_assertion(exact_root() == Exact_root(iv.first));
 #ifndef NDEBUG
@@ -225,7 +225,7 @@ struct URefiner {
 
   void set_exact_certificate(const Exact_certificate& ec) {
     CGAL_precondition(!has_exact_root());
-    cert_= new CS(ec);
+    cert_= new Cs(ec);
     CGAL_postcondition(exact_root() == check_.failure_time());
   }
 
@@ -239,7 +239,7 @@ struct URefiner {
 
   Cert_tuple tuple_;
   typename UI::Handle ui_;
-  mutable typename CS::Handle cert_;
+  mutable typename Cs::Handle cert_;
   typename UI::Certificate_function certf_;
   typename UI::Certificate_derivitive certpf_;
 #ifndef NDEBUG

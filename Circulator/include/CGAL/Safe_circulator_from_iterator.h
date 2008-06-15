@@ -34,15 +34,15 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Note: TT, SS, and DD are here for backwards compatibility, they are
+// Note: Tt, Ss, and Dd are here for backwards compatibility, they are
 // not used.
-template < class  I, class TT = int, class SS = int, class DD = int>
+template < class  I, class Tt = int, class Ss = int, class Dd = int>
 class Safe_circulator_from_iterator {
 public:
 // TYPES
 
-    typedef Safe_circulator_from_iterator<I,TT,SS,DD> Self;
-    typedef Circulator_from_iterator<I,TT,SS,DD>      Unsafe;
+    typedef Safe_circulator_from_iterator<I,Tt,Ss,Dd> Self;
+    typedef Circulator_from_iterator<I,Tt,Ss,Dd>      Unsafe;
     typedef I                                         iterator;
     typedef std::iterator_traits<iterator>            Traits;
 

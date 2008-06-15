@@ -1099,9 +1099,9 @@ CORE_INLINE bool isZeroIn(BFInterval I) {
 
 template<class NT>
 CORE_INLINE void testSturm(const Polynomial<NT>&P, int prec, int n = -1) {
-  Sturm<NT> SS (P);
+  Sturm<NT> Ss (P);
   BFVecInterval v;
-  SS.refineAllRoots(v, prec);
+  Ss.refineAllRoots(v, prec);
   std::cout << "   Number of roots is " << v.size() <<std::endl;
   if ((n >= 0) & (v.size() == (unsigned)n))
     std::cout << " (CORRECT!)" << std::endl;
@@ -1122,9 +1122,9 @@ CORE_INLINE void testSturm(const Polynomial<NT>&P, int prec, int n = -1) {
 //      (will print an error message if n is wrong)
 template<class NT>
 CORE_INLINE void testNewtonSturm(const Polynomial<NT>&P, int prec, int n = -1) {
-  Sturm<NT> SS (P);
+  Sturm<NT> Ss (P);
   BFVecInterval v;
-  SS.newtonRefineAllRoots(v, prec);
+  Ss.newtonRefineAllRoots(v, prec);
   std::cout << "   Number of roots is " << v.size();
   if ((n >= 0) & (v.size() == (unsigned)n))
     std::cout << " (CORRECT!)" << std::endl;
