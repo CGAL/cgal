@@ -2736,6 +2736,13 @@ Minkowski_sum_2/test/Minkowski_sum_2/data/rooms_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/rooms_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/wheels_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/wheels_part2.dat -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/decomposition_method.eps -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/decomposition_method.pdf -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/glide.eps -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/spoon_star.ps -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/fig/tight_passage.ps -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3/main.aux -text
+Minkowski_sum_3/doc_tex/Minkowski_sum_3_ref/main.aux -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text svneol=unset#application/postscript
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
