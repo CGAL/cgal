@@ -19,7 +19,7 @@
 % +------------------------------------------------------------------------+
 \section{Introduction}
 
-\begin{figure}
+\begin{figure}[h]
   \begin{ccTexOnly}
     \begin{center}
       \includegraphics[width=0.8\textwidth]{Minkowski_sum_3/fig/spoon_star}
@@ -33,7 +33,7 @@
   \caption{The Minkowski sum of a spoon and a star.}
 \end{figure}
 
-The Minkowski sum of two point sets $P$ and $Q$ in $R^d$, denoted by
+The Minkowski sum of two point sets $P$ and $Q$ in $\mathbb{R}^d$, denoted by
 $P \oplus Q$, is defined as the set $\{p+q:p \in P, q \in Q
 \}$. Minkowski sums are used in a wide range of applications such as
 robot motion planning and computer-aided design. This
@@ -57,10 +57,12 @@ the convex pieces and merges the pairwise sums.
   \end{ccTexOnly}
   \begin{ccHtmlOnly}
     <p><center>
-    <img src="./fig/decomposition_method.gif" border=0 alt="Minkowski sum example">
+    <img src="./fig/decomposition_method.gif" border=0 alt="decomposition method">
     </center>
   \end{ccHtmlOnly}
-  \caption{The Minkowski sum of a spoon and a star.}
+  \caption{The decomposition method decomposes both input polyhedra
+           into convex parts, computes all pairwise Minkowski sums
+           of the convex parts, and merges the pairwise sums.}
 \end{figure}
 
 The Minkowski sum is an iherent complex method. Using the
@@ -82,15 +84,18 @@ possible with the current implementation.
 \begin{figure}
   \begin{ccTexOnly}
     \begin{center}
-      \includegraphics[width=0.8\textwidth]{Minkowski_sum_3/fig/tight_passage}
+      \includegraphics[width=0.5\textwidth]{Minkowski_sum_3/fig/tight_passage}
     \end{center}
   \end{ccTexOnly}
   \begin{ccHtmlOnly}
     <p><center>
-    <img src="./fig/tigh_passage.gif" border=0 alt="Minkowski sum example">
+    <img src="./fig/tigh_passage.gif" border=0 alt="tight passage">
     </center>
   \end{ccHtmlOnly}
-  \caption{The Minkowski sum of a spoon and a star.}
+  \caption{The Minkowski sum of a maze and a cube that exactly fits through
+	   the corridor of the maze. Modeling the cube as an open set, the
+	   Minkowski sum includes facets that represent the remaining path
+           for the cubical robot.}
 \end{figure}
 
 We strife for extending the package to work for arbitrary
@@ -126,7 +131,7 @@ destroyed by the function. So, if they are further on needed, they
 need to be copied, first. The copying is not done by the function
 itself to keep the memory usage as small as possible.
 
-\ccIncludeExampleCode{Minkowski_sum_3/minkowski_sum.cpp}
+\ccIncludeExampleCode{Minkowski_sum_3/cube_offset.cpp}
 
 % +------------------------------------------------------------------------+
 \section{Glide}
@@ -134,15 +139,15 @@ itself to keep the memory usage as small as possible.
 \begin{figure}
   \begin{ccTexOnly}
     \begin{center}
-      \includegraphics[width=0.8\textwidth]{Minkowski_sum_3/fig/glide}
+      \includegraphics[width=0.5\textwidth]{Minkowski_sum_3/fig/glide}
     \end{center}
   \end{ccTexOnly}
   \begin{ccHtmlOnly}
     <p><center>
-    <img src="./fig/glide.gif" border=0 alt="Minkowski sum example">
+    <img src="./fig/glide.gif" border=0 alt="glide operation">
     </center>
   \end{ccHtmlOnly}
-  \caption{The Minkowski sum of a spoon and a star.}
+  \caption{The region swept by a star that moves along a polygonal path.}
 \end{figure}
 
 With the function \ccc{minkowski_sum_3} it is also possible to realize
