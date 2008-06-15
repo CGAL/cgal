@@ -21,7 +21,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include<CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/convex_decomposition_3.h> 
 #include <list>
@@ -33,15 +33,8 @@ typedef Nef_polyhedron_3::Volume_const_iterator Volume_const_iterator;
 
 int main(int argc, char* argv[]) {
   
-  if(argc!=2) {
-    std::cerr << "syntax: ./getListOfConvexParts <off-file>" << std::endl;
-    return 1;
-  }
-
-  std::ifstream in(argv[1]);
-  Polyhedron_3 Pin;
-  in >> Pin;
-  Nef_polyhedron_3 N(Pin);
+  Nef_polyhedron_3 N;
+  std::cin >> N;
 
   CGAL::convex_decomposition_3<Nef_polyhedron_3>(N);
   std::list<Polyhedron_3> convex_parts;
