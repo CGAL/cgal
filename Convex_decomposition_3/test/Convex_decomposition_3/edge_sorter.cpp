@@ -24,6 +24,7 @@ public:
   LVertex* source() { return v; }
   LEdge* twin() { return t; }
   void set_twin(LEdge* t_) { t = t_; }
+  void reset_source() { v = NULL; }
 };
 
 template<typename Edget, typename Vertext>
@@ -146,6 +147,10 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(edges.size() == 4);
   CGAL_assertion(edges[2]->twin()->source()->point() == Point_3(-1,0,0));
   CGAL_assertion(edges[3]->source()->point() == Point_3(-1,0,0));
+  CGAL_assertion(edges[2] == e0);
+  CGAL_assertion(edges[3]->twin() == t0);
+  LEdge* en0 = edges[2]->twin();
+  LEdge* en1 = edges[3];
 
   edges.clear();
   edges.push_back(e0b);
@@ -156,6 +161,8 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(edges.size() == 4);
   CGAL_assertion(edges[1]->twin()->source()->point() == Point_3(-1,0,0));
   CGAL_assertion(edges[3]->source()->point() == Point_3(-1,0,0));
+  LEdge* en2 = edges[1]->twin();
+  LEdge* en3 = edges[3];
 
   edges.clear();
   edges.push_back(e1);
@@ -164,4 +171,28 @@ int main(int argc, char* argv[]) {
   CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
   CGAL_assertion(edges.size() == 2);
   CGAL_assertion(edges[0]->source()->point() == Point_3(-2,-1,0)); 
+
+  delete e0;
+  delete e0b;
+  delete e1;
+  delete e2;
+  delete e3;
+  delete e4;
+  delete e5;
+  e6->reset_source();
+  delete e6;
+  delete e7;
+  delete t0;
+  delete t0b;
+  delete t1;
+  delete t2;
+  delete t3;
+  delete t4;
+  delete t5;
+  delete t6;
+  delete t7;
+  delete en0;
+  delete en1;
+  delete en2;
+  delete en3;
 }
