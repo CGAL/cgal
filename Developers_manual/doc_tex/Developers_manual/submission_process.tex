@@ -28,8 +28,7 @@ The editorial committee is in charge of approving the inclusion of new packages
 in the library.  This means that they assure that new contributions
 \begin{itemize}
    \item are in keeping with the philosophy of \cgal\ (Chapter~\ref{chap:intro});
-   \item are generic and fit seamlessly with other parts of
-         the library;
+   \item are generic and fit seamlessly with other parts of the library;
    \item satisfy the coding conventions of \cgal\ (Chapter~\ref{chap:code_format});
    \item carefully and efficiently treat robustness issues
          (Chapter~\ref{chap:robustness});
@@ -42,7 +41,7 @@ Software specifications and implementations should be submitted to the
 editorial committee for approval.  This can be done by sending mail to
 the \ccAnchor{mailto:cgal-editorial-board@lists-sop.inria.fr}{committee}
 \lcTex{(\texttt{cgal-editorial-board@lists-sop.inria.fr})} indicating
-where the (PostScript) documentation and code can be found.  After
+where the (PDF) documentation and code can be found.  After
 some reasonable amount of time, you should receive feedback from
 the committee about the specification and what, if anything, needs to
 be changed. The usual procedure is that someone from the committee is
@@ -54,14 +53,6 @@ modified before being accepted.  When the package has been modified,
 the authors should again notify the editorial committee to let them
 know what has changed so a decision about acceptance of the package
 can be taken.
-
-\InternalOnly{
-The discussion of specific packages are logged on the
-\ccAnchor{http://www.cgal.org/Editors/index.html}{Editorial Committee web page}%
-\lcTex{ (\path|http://www.cgal.org/Editors/index.html|)}.  Reading the
-feedback given on other packages can be quite instructive as a means of
-learning what the editorial committee is looking for.
-}
 
 One should write a specification for a new package
 \InternalOnly{(Chapter~\ref{chap:specification})}
@@ -110,34 +101,12 @@ package names \texttt{pm} and \texttt{arr} are a bit too terse.
 \texttt{Planar\_map} and \texttt{Arrangement} (or
 \texttt{Arrangement\_2}) are better.
 
+Make sure your package does not have any file clashing with any other packages.
+Please also make sure the information such as the maintainer email adress is
+up to date under the \texttt{package\_info} directory.
 \ccIndexSubitem{submitting}{file for}
 
 \ccIndexMainItemEnd{submitting}
-
-
-\section{When something goes wrong\label{sec:submission_problems}}
-\ccIndexSubitemBegin{submitting}{problems with}
-
-There are several reasons why a submission may not succeed.
-In most cases the confirmation message will state that an error occured. In
-some cases, you will not get a confirmation message at all.
-
-The following is a list of reasons why a submission might fail.
-\begin{itemize}
-
-\item The submitted file must obey the naming convention mentioned above,
-      otherwise the submission is rejected.
-
-\item The submitted package must not contain any file whose name is the same
-      as a file in some other submitted package, otherwise the submission is
-      rejected.
-
-\item The package must contain a valid maintainer file containing the email
-      adress(es) of the maintainer(s).
-      \index{maintainer file@{\tt maintainer} file}
-
-\end{itemize}
-\ccIndexSubitemEnd{submitting}{problems with}
 
 
 \section{Requirements and recommendations\label{sec:submission_req_and_rec}}
