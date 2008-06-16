@@ -444,10 +444,6 @@ class SM_walls : SM_decorator<SMap> {
 	      << ", " << sv2->point() 
 	      << " at " << sv1->source()->point() );
 
-    CGAL_assertion_code
-      (Sphere_segment test(sv1->point(),sv2->point(),c));
-    CGAL_assertion(!test.is_long());
-
     bool split_sface = true;
 
     if(is_isolated(sv1)) {
@@ -569,8 +565,6 @@ class SM_walls : SM_decorator<SMap> {
 	CGAL_For_all(hfc,hend) hfc->incident_sface() = sf1;	
       }
     }
-
-
 
     //    SM_decorator SD1(this->sphere_map());
     //    SM_io_parser<SM_decorator>::dump(SD1,std::cerr);
