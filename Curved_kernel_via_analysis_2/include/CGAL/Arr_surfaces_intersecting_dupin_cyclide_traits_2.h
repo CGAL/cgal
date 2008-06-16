@@ -849,19 +849,7 @@ class Arr_surfaces_intersecting_dupin_cyclide_traits_2 :
     public CurvedKernelViaAnalysis_2::template 
 rebind< 
 Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
-  CurvedKernelViaAnalysis_2 
->,
-CGALi::Point_2< 
-  Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
-    CurvedKernelViaAnalysis_2 
-  >
->,
-CGALi::Arc_2<
-  Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
-    CurvedKernelViaAnalysis_2 
-  >
->
->::Other
+  CurvedKernelViaAnalysis_2 > >::Other
 {
 public:
     
@@ -903,7 +891,7 @@ public:
 
     //! type of Base
     typedef typename Curved_kernel_via_analysis_2::template
-    rebind< Self, Point_2, Arc_2 >::Other Base;
+    rebind< Self >::Other Base;
     
     //! Tag to tell that the boundary functors are implemented
     typedef CGAL::Arr_bounded_boundary_tag Boundary_category;

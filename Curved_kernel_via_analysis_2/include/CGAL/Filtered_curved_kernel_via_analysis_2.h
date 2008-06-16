@@ -862,13 +862,7 @@ template < class CurvedKernelViaAnalysis_2 >
 class Filtered_curved_kernel_via_analysis_2 :
     public CurvedKernelViaAnalysis_2::
       template rebind< 
-        Filtered_curved_kernel_via_analysis_2< CurvedKernelViaAnalysis_2 >,
-        CGALi::Point_2 < 
-          Filtered_curved_kernel_via_analysis_2< CurvedKernelViaAnalysis_2 > 
-        >,
-        CGALi::Arc_2 < 
-          Filtered_curved_kernel_via_analysis_2< CurvedKernelViaAnalysis_2 > 
-        > 
+        Filtered_curved_kernel_via_analysis_2< CurvedKernelViaAnalysis_2 >
       >::Other
 {
 public:
@@ -889,8 +883,6 @@ public:
     //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
-    //!@}
-
 public:
     //!\name embedded types  for \c Arrangement_2 package
     //!@{
@@ -915,7 +907,7 @@ public:
 
     //! the base type
     typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self, Point_2, Arc_2 >::Other Base;
+    template rebind< Self >::Other Base;
     
     //!@}
 

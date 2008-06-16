@@ -45,7 +45,10 @@ namespace CGALi {
  * Provides basic types for Curved_kernel_via_analysis_2
  */
 template < class CurvedKernelViaAnalysis_2, class CurveKernel_2 >
-class Curved_kernel_via_analysis_2_base {
+class Curved_kernel_via_analysis_2_base 
+       : public Curved_kernel_via_analysis_2_functors < 
+              CurvedKernelViaAnalysis_2 >
+{
 public:
 
     //!\name Global types
@@ -56,6 +59,15 @@ public:
 
     //! type of curve kernel
     typedef CurveKernel_2 Curve_kernel_2;
+
+    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
+
+    //! type of curve that can be analyzed
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
+
+    //! type of non x-monotone arc on a curve that can be analyzed
+    typedef CGALi::Non_x_monotone_arc_2<Curved_kernel_via_analysis_2>
+             Non_x_monotone_arc_2;
 
     //! this instance itself
     typedef 
@@ -97,19 +109,6 @@ public:
     typedef CGALi::Curve_interval_arcno_cache< Self > 
     Curve_interval_arcno_cache;
 
-    //!@}
-    
-protected:
-    //!\name Internal types
-    //!@{
-
-    //! provides analysis of a single curve
-    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
-    //! provides analysis of a pair of curves
-    typedef typename Curve_kernel_2::Curve_pair_analysis_2
-            Curve_pair_analysis_2;
-    
     //!@}
     
 public:
@@ -202,6 +201,32 @@ public:
     static void reset_instance() {
         set_instance(_reset_instance());
     }
+
+    //!\name Additional functors
+    //!@{
+
+// declares curved kernel functors, for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_CKvA_2_functor_pred(Y, Z) \
+    typedef CGALi::Curved_kernel_via_analysis_2_Functors::Y< \
+         Curved_kernel_via_analysis_2 > Y; \
+    Y Z() const { return Y(&Curved_kernel_via_analysis_2::instance()); }
+
+#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
+    
+public:
+
+    CGAL_CKvA_2_functor_cons(Construct_point_2, 
+                             construct_point_2_object);
+
+    CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, 
+                             construct_point_on_arc_2_object);
+    
+    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
+                             construct_arc_2_object);
+
+#undef CGAL_CKvA_2_functor_pred
+#undef CGAL_CKvA_2_functor_cons
     
 private:
     /*!\brief 
@@ -226,7 +251,6 @@ private:
     
 } // namespace CGALi
 
-
 /*!\brief 
  * Kernel for curves in a two-dimensional space, and points and arcs of them.
  * 
@@ -236,160 +260,35 @@ private:
  *
  * Is a model of CGAL's ArrangementTraits_2 concept.
  */
-template < class CurveKernel_2, 
-           class CKvA_ = void, class Point_ = void, class Arc_ = void >
+template < class CurveKernel_2, class CKvA_ = void>
 class Curved_kernel_via_analysis_2 :
      public CGALi::Curved_kernel_via_analysis_2_base <
-            typename boost::mpl::if_< 
-              boost::mpl::bool_< boost::is_void< CKvA_ >::value >, 
-              Curved_kernel_via_analysis_2< CurveKernel_2 >,
-              CKvA_
-            >::type, 
-            CurveKernel_2 
-     >,
-     public CGALi::Curved_kernel_via_analysis_2_functors < 
-            typename boost::mpl::if_< 
-              boost::mpl::bool_< boost::is_void< CKvA_ >::value >, 
-              Curved_kernel_via_analysis_2< CurveKernel_2 >,
-              CKvA_
-            >::type, 
-            typename CurveKernel_2::Curve_analysis_2,
-            typename boost::mpl::if_< 
-              boost::mpl::bool_< boost::is_void< Point_ >::value >, 
-              CGALi::Point_2 < 
-                typename boost::mpl::if_< 
-                  boost::mpl::bool_< boost::is_void< CKvA_ >::value >, 
-                  Curved_kernel_via_analysis_2< CurveKernel_2 >,
-                  CKvA_
-                >::type
-              >,  
-              Point_
-            >::type,
-            typename boost::mpl::if_< 
-              boost::mpl::bool_< boost::is_void< Arc_ >::value >, 
-              CGALi::Arc_2 < 
-                typename boost::mpl::if_< 
-                  boost::mpl::bool_< boost::is_void< CKvA_ >::value >, 
-                  Curved_kernel_via_analysis_2< CurveKernel_2 >,
-                  CKvA_
-                >::type
-              >,
-              Arc_
-            >::type
-       >
+            CKvA_, CurveKernel_2 >     
 {
+   
 public:
-    //!\name Public types
-    //!@{
-    
-    //! this instance's template argument
+    //! type of curve kernel
     typedef CurveKernel_2 Curve_kernel_2;
 
-    //!@}
-
-protected:
-    //!\name Protected types for internal use
-    //!@{ 
-    
-    //! this instance's second template parameter
-    typedef CKvA_ CKvA;
-    
-    //! this instance's third template parameter
-    typedef Point_ Point;
-
-    //! this instance's fourth template parameter
-    typedef Arc_ Arc;
-
     //! this instance itself
-    typedef 
-    Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA, Point, Arc > Self;
-    
-private: 
-    
-    typedef typename boost::mpl::if_< 
-              boost::mpl::bool_< boost::is_void< CKvA >::value >, 
-              Curved_kernel_via_analysis_2< CurveKernel_2 >,
-              CKvA
-            >::type CKvA_2_;
-    
-protected:
-    //! type of CKvA_2 used internally
-    typedef CKvA_2_ CKvA_2;
+    typedef Curved_kernel_via_analysis_2< Curve_kernel_2, CKvA_> Self;
 
-    //!@}
-
-public:
-    //!\name Rebind 
-    //!@{
-
-    //! allows to rebind CKvA_2 wrt to NewCKvA, NewPoint_2 and NewArc_2
-    template < class NewCKvA_2, class NewPoint_2, class NewArc_2 >
+    //! allows to rebind CKvA_2 wrt to NewCKvA
+    template < class NewCKvA_2 >
     struct rebind {
-        
         //! the rebound type
-        typedef Curved_kernel_via_analysis_2< 
-            Curve_kernel_2, NewCKvA_2, NewPoint_2, NewArc_2 
-        >
+        typedef Curved_kernel_via_analysis_2< Curve_kernel_2, NewCKvA_2 >
         Other;
-
     };
     
-    //!@}
-    
-public:
-    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
-    //!@{
-
-    //! type of curve that can be analyzed
-    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_2;
-        
-private:
-    
-    typedef typename boost::mpl::if_<
-              typename boost::mpl::bool_< boost::is_void< Point >::value >,
-              CGALi::Point_2< CKvA_2 >,
-              Point >::type
-    Point_2_;
-    
-public:
-    //! type of a point on a curve that can be analyzed
-    typedef Point_2_ Point_2;
-
-
-private:
-    
-    typedef typename boost::mpl::if_< 
-              typename boost::mpl::bool_< boost::is_void< Arc >::value >,
-              CGALi::Arc_2< CKvA_2 >,
-              Arc >::type
-    Arc_2_;
-    
-public:
-
-    //! type of an arc on a curve that can be analyzed
-    typedef Arc_2_ Arc_2;
-
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
-    typedef Arc_2 X_monotone_curve_2;
-
-    //! type of non x-monotone arc on a curve that can be analyzed
-    typedef CGALi::Non_x_monotone_arc_2<Self> Non_x_monotone_arc_2;
-
-    //!@}
 protected:
     //!\name Protected base types
     //!@{
     
     //! class collecting basic types
-    typedef CGALi::Curved_kernel_via_analysis_2_base < CKvA_2, CurveKernel_2 >
-    Base_kernel;
-
-    //! class collecting basic functors
-    typedef CGALi::Curved_kernel_via_analysis_2_functors < 
-            CKvA_2, Curve_2, Point_2, Arc_2
-    >  
-    Base_functors;
-    
+    typedef CGALi::Curved_kernel_via_analysis_2_base < CKvA_, Curve_kernel_2 >
+        Base_kernel;
+   
     //!@}
 
 public:
@@ -411,39 +310,78 @@ public:
     Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
         Base_kernel(kernel) {
     }
-    
+   
     //!@}
+}; // class Curved_kernel_via_analysis_2
 
-    //!\name Additional functors
+template <class CurveKernel_2>
+class Curved_kernel_via_analysis_2<CurveKernel_2, void> :
+    public CGALi::Curved_kernel_via_analysis_2_base<
+        Curved_kernel_via_analysis_2<CurveKernel_2, void>, CurveKernel_2 > {
+
+public: 
+    //! type of curve kernel
+    typedef CurveKernel_2 Curve_kernel_2;
+
+    //! this instance itself
+    typedef Curved_kernel_via_analysis_2< Curve_kernel_2, void> Self;
+    
+    //!\name Rebind 
     //!@{
 
-// declares curved kernel functors, for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_CKvA_2_functor_pred(Y, Z) \
-    /*!\brief functor */ \
-    typedef CGALi::Curved_kernel_via_analysis_2_Functors::Y< CKvA_2 > Y; \
-    /*! returns instance of functor */ \
-    Y Z() const { return Y(&CKvA_2::instance()); }
-
-#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
-    
-public:
-
-    CGAL_CKvA_2_functor_cons(Construct_point_2, 
-                             construct_point_2_object);
-
-    CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, 
-                             construct_point_on_arc_2_object);
-    
-    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
-                             construct_arc_2_object);
-
-#undef CGAL_CKvA_2_functor_pred
-#undef CGAL_CKvA_2_functor_cons
+    //! allows to rebind CKvA_2 wrt to NewCKvA
+    template < class NewCKvA_2 >
+    struct rebind {
+        //! the rebound type
+        typedef Curved_kernel_via_analysis_2< Curve_kernel_2, NewCKvA_2 >
+        Other;
+    };
     
     //!@}
+    
+public:
+    //!\name Embedded types to fulfill \c ArrangementTraits_2 concept
+    //!@{
 
-}; // class Curved_kernel_via_analysis_2
+    typedef CGALi::Point_2< Self > Point_2;
+    
+    typedef CGALi::Arc_2< Self > Arc_2;
+    
+    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    typedef Arc_2 X_monotone_curve_2;
+
+    //!@}
+protected:
+    //!\name Protected base types
+    //!@{
+    
+    //! class collecting basic types
+    typedef CGALi::Curved_kernel_via_analysis_2_base < Self, CurveKernel_2 >
+        Base_kernel;
+
+    //!@}
+public:
+    //! \name Constructors
+    //!@{
+
+    /*!\brief
+     * default constructor
+     */
+    Curved_kernel_via_analysis_2() :
+        Base_kernel() {
+    }
+    
+    /*!\brief
+     * construct from \c kernel
+     *
+     * \param kernel Kernel to use internally
+     */
+    Curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
+        Base_kernel(kernel) {
+    }
+    
+    //!@}
+}; 
 
 CGAL_END_NAMESPACE
 

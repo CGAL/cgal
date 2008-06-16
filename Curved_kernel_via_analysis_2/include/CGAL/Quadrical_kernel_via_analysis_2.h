@@ -1849,19 +1849,7 @@ class Quadrical_kernel_via_analysis_2 :
   template rebind<
     Quadrical_kernel_via_analysis_2< 
       CurvedKernelViaAnalysis_2, SurfacePair_3 
-    >,
-    CGALi::Quadric_point_2< 
-      Quadrical_kernel_via_analysis_2<
-        CurvedKernelViaAnalysis_2, SurfacePair_3
-      >,
-      SurfacePair_3
-    >,
-    CGALi::Quadric_arc_2< 
-      Quadrical_kernel_via_analysis_2<
-        CurvedKernelViaAnalysis_2, SurfacePair_3
-      >,
-      SurfacePair_3
-    >
+    >    
   >::Other
 {
 public:
@@ -1918,7 +1906,7 @@ public:
 
     //! the base type
     typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self, Point_2, Arc_2 >::Other Base;
+    template rebind< Self >::Other Base;
     
     //!@}
 

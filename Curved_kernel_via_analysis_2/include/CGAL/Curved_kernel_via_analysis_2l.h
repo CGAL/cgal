@@ -38,19 +38,7 @@ class Curved_kernel_via_analysis_2l :
       template rebind<
         Curved_kernel_via_analysis_2l< 
           CurvedKernelViaAnalysis_2, SurfacePair_3
-        >, 
-        CGALi::Surface_point_2l < 
-          Curved_kernel_via_analysis_2l< 
-            CurvedKernelViaAnalysis_2, SurfacePair_3 
-          >,
-          SurfacePair_3
-        >,
-        CGALi::Surface_arc_2l < 
-          Curved_kernel_via_analysis_2l< 
-            CurvedKernelViaAnalysis_2, SurfacePair_3 
-          >,
-          SurfacePair_3
-        >
+        > 
       >::Other
 {
 public:
@@ -104,7 +92,7 @@ public:
 
     //! the base type
     typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self, Point_2, Arc_2 >::Other Base;
+    template rebind< Self >::Other Base;
     
     //!@}
 

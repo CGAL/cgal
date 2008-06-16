@@ -2408,12 +2408,7 @@ public:
 /*!\brief
  * Collects main set of functors of a curved kernel
  */
-template < 
-    class CurvedKernelViaAnalysis_2, 
-    class Curve_2_, 
-    class Point_2_, 
-    class Arc_2_
->
+template < class CurvedKernelViaAnalysis_2 >
 class Curved_kernel_via_analysis_2_functors {
 
 public:
@@ -2423,14 +2418,6 @@ public:
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
-    //! this instance's second template parameter
-    typedef Curve_2_ Curve_2;
-    
-    //! this instance's third template parameter
-    typedef Point_2_ Point_2;
-    
-    //! this instance's fourth template parameter
-    typedef Arc_2_ Arc_2;
     
     // declares curved kernel functors, 
     // for each functor defines a member function
