@@ -441,6 +441,7 @@ public:
       if ((s_init && !s.has_on(pv)) ||
 	  (!s_init && !c.has_on(pv))) continue;
       CGAL_NEF_TRACEN("candidate "<<pv);
+      CGAL_NEF_TRACEN("p =?= pv: " << p << ", " << pv); 
       if ((start_inclusive || p != pv) && 
 	  (end_inclusive || !s_init || s.target() != pv)) {
         h = Object_handle(vi);     // store vertex
@@ -469,9 +470,12 @@ public:
 	  if(s.is_long()) {
 	    Sphere_segment first_half(p,p.antipode(),c);
 	    Sphere_segment second_part(p.antipode(), s.target(), c);
-	    if(!do_intersect_internally(ei->circle(), first_half, p_res)) {
-	      do_intersect_internally(ei->circle(), second_part, p_res);
-	    }
+	    if(!do_intersect_internally(ei->circle(), first_half, p_res) &&
+	       !do_intersect_internally(ei->circle(), second_part, p_res))
+	      if(se.has_on(p.antipode()))
+		p_res = p.antipode();
+	      else
+		continue;
 	  } else {
 	    if(!do_intersect_internally(ei->circle(), s, p_res)) continue;
 	  }
