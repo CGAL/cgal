@@ -39,7 +39,9 @@ CGAL_BEGIN_NAMESPACE
 #define CGAL_X_MINUS_1_Y_0      0
 #define CGAL_X_MINUS_0_8_Y_0_6  1
 
+#ifndef CGAL_IDENTIFICATION_XY
 #define CGAL_IDENTIFICATION_XY  CGAL_X_MINUS_1_Y_0
+#endif
 
 template <typename Kernel> class Arr_x_monotone_geodesic_arc_on_sphere_3;
 template <typename Kernel> class Arr_geodesic_arc_on_sphere_3;
@@ -94,10 +96,10 @@ protected:
     return d;
   }
 
-  /*! Obtain the intersection of the identification arc and the xy plane as
-   * a direction.
-   * By default, it is the vector directed along the negative x axis.
-   * \return the direction directed at x = -infinity
+  /*! Obtain the intersection of the identification arc and the xy plane.
+   * By default, it is the vector directed along the negative x axis
+   * (x = -infinity).
+   * \return the intersection of the identification arc and the xy plane.
    */
   inline static const Direction_2 & identification_xy()
   {
@@ -106,7 +108,24 @@ protected:
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
     static const Direction_2 d(FT(-8, 10), FT(6,10));
 #else
-    #error CGAL_IDENTIFICATION_XY is not defined
+#error CGAL_IDENTIFICATION_XY is not defined
+#endif
+    return d;
+  }
+
+  /*! Obtain the normal of the plane that contains the identification arc.
+   * By default, it is the vector directed along the positive y axis
+   * (y = infinity).
+   * \return the normal of the plane that contains the identification arc.
+   */
+  inline static const Direction_3 & identification_normal()
+  {
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
+    static const Direction_3 d(0, 1, 0);
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+    static const Direction_3 d(FT(6,10), FT(8, 10), 0);
+#else
+#error CGAL_IDENTIFICATION_XY is not defined
 #endif
     return d;
   }
@@ -1142,6 +1161,16 @@ public:
   class Is_on_y_identification_2 {
   protected:
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits * m_traits;
+    
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Is_on_y_identification_2(const Traits * traits) : m_traits(traits) {}
+
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;    
     
   public:
     /*! Determine whether a point lies on the vertical identification arc.
@@ -1149,10 +1178,7 @@ public:
      * \return a Boolean indicating whether p lies on the vertical
      * identification arc.
      */
-    bool operator()(const Point_2 & p) const
-    {
-      return p.is_mid_boundary();
-    }
+    bool operator()(const Point_2 & p) const { return p.is_mid_boundary(); }
 
     /*! Determine whether an arc coincides with the vertical identification
      * arc.
@@ -1161,25 +1187,12 @@ public:
      * identification arc.
      */
     bool operator()(const X_monotone_curve_2 & xcv) const
-    {
-      // If the curve is not vertical, it cannot coincide with the ident. arc:
-      if (!xcv.is_vertical()) return false;
-
-      // If the normal has an x-component, it cannot coincide either:
-      Direction_3 normal = xcv.normal();
-      CGAL::Sign xsign = Traits::x_sign(normal);
-      if (xsign != ZERO) return false;
-
-      // Check whether xcv coincides or its opposite:
-      CGAL::Sign ysign = Traits::y_sign(normal);
-      return (((ysign == NEGATIVE) && xcv.directed_right()) ||
-              ((ysign == POSITIVE) && !xcv.directed_right()));
-    }
+    { return xcv.is_on_boundary(); }
   };
   
   /*! Obtain a Is_on_y_identification_2 function object */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
-  { return Is_on_y_identification_2(); }
+  { return Is_on_y_identification_2(this); }
   
   /*! A functor that compares the x-coordinate of two given points
    * that lie on the horizontal identification arc.
@@ -1388,10 +1401,10 @@ public:
         Direction_3(-(normal.dz()), 0, normal.dx()) :
         Direction_3(normal.dz(), 0, -(normal.dx()));
 #else
-      const Direction_2 & t = Traits::identification_xy();
-      FT x = t.dx();
-      FT y = t.dy();
-      FT z((t.dx() * normal.dx() + t.dy() * normal.dy()) /  -(normal.dz());
+      const Direction_2 & xy = Traits::identification_xy();
+      FT x = xy.dx();
+      FT y = xy.dy();
+      FT z((xy.dx() * normal.dx() + xy.dy() * normal.dy()) /  -(normal.dz()));
       Direction_3 dp(x, y, z);
 #endif
       Point_2 p(dp, Point_2::MID_BOUNDARY_LOC);
@@ -2090,6 +2103,12 @@ private:
   /*! The point discontinuity type */
   Location_type m_location;
 
+  inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
+
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }  
+
+  inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
+  
 public:
   /*! Default constructor */
   Arr_extended_direction_3() : 
@@ -2104,41 +2123,53 @@ public:
   {}
 
   /*! Constructor
-   * \param x
-   * \param y
-   * \param z
+   * \param x the x coordinate
+   * \param y the y coordinate
+   * \param z the z coordinate
    */
   Arr_extended_direction_3(const FT & x, const FT & y, const FT & z) :
     Direction_3(x, y, z)
-  {
-    m_location =
-      (CGAL::sign(y) != ZERO) ? NO_BOUNDARY_LOC :
-      ((CGAL::sign(x) == POSITIVE) ? NO_BOUNDARY_LOC :
-       ((CGAL::sign(x) == NEGATIVE) ? MID_BOUNDARY_LOC :
-        ((CGAL::sign(z) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC)));
-  }
+  { init(Direction_3(x, y, z)); }
   
   /*! Constructor from a direction
    * \param dir the direction
    */
   Arr_extended_direction_3(const Direction_3 & dir) : Direction_3(dir)
-  {
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-    
-    const Direction_3 & pp = Traits::pos_pole();
-    const Direction_3 & np = Traits::neg_pole();
-    Kernel kernel;
-    typename Kernel::Equal_3 equal_3 = kernel.equal_3_object();
-    if (equal_3(dir, pp)) m_location = MAX_BOUNDARY_LOC;
-    else if (equal_3(dir, np)) m_location = MIN_BOUNDARY_LOC;
-    else {
-      Direction_2 dir_xy = Traits::project_xy(dir);
-      typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
-      const Direction_2 & d = Traits::identification_xy();
-      m_location = equal_2(dir_xy, d) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
-    }
-  }
+  { init(dir); }
 
+  /*! Initialize from a direction
+   * \param dir the direction
+   */
+  void init(const Direction_3 & dir)
+  {
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
+    if (y_sign(dir) != ZERO) {
+      m_location = NO_BOUNDARY_LOC;
+      return;
+    }
+    CGAL::Sign signx = x_sign(dir);
+    m_location =
+      (signx == POSITIVE) ? NO_BOUNDARY_LOC :
+      ((signx == NEGATIVE) ? MID_BOUNDARY_LOC :
+       ((z_sign(dir) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC));
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+    if ((x_sign(dir) == ZERO) && (y_sign(dir) == ZERO)) {
+      m_location =
+        (z_sign(dir) == NEGATIVE) ? MIN_BOUNDARY_LOC : MAX_BOUNDARY_LOC;
+      return;
+    }
+
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
+    Direction_2 dir_xy = Traits::project_xy(dir);
+    Kernel kernel;
+    typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
+    const Direction_2 & xy = Traits::identification_xy();
+    m_location = equal_2(dir_xy, xy) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
+#else
+#error CGAL_IDENTIFICATION_XY is not defined
+#endif
+  }
+  
   /*! Copy constructor */
   Arr_extended_direction_3(const Arr_extended_direction_3 & ed) :
     Direction_3(static_cast<const Direction_3&>(ed))
@@ -2153,7 +2184,7 @@ public:
     m_location = ed.discontinuity_type();
     return (*this);
   }
-    
+
   /*! Obtain the discontinuity type of the point */
   Location_type discontinuity_type() const
   { return m_location; }
@@ -2426,6 +2457,9 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
+    typedef typename Kernel::FT                         FT;
+    
     CGAL_precondition(z_sign(normal) != ZERO);
 
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)    
@@ -2433,10 +2467,10 @@ public:
       Direction_3(-(normal.dz()), 0, normal.dx()) :
       Direction_3(normal.dz(), 0, -(normal.dx()));
 #else
-    const Direction_2 & t = Traits::identification_xy();
-    FT x = t.dx();
-    FT y = t.dy();
-    FT z((t.dx() * normal.dx() + t.dy() * normal.dy()) / -(normal.dz());
+    const Direction_2 & xy = Traits::identification_xy();
+    FT x = xy.dx();
+    FT y = xy.dy();
+    FT z((xy.dx() * normal.dx() + xy.dy() * normal.dy()) / -(normal.dz()));
     Direction_3 d(x, y, z);
 #endif
     m_source = m_target =
@@ -2590,16 +2624,47 @@ public:
   /*! Determines whether the curve is degenerate */
   bool is_empty() const { return m_is_empty; }
   
-  /*! Determine whether both endpoints are on the boundary */
+  /*! Determine whether the curve lie on the identification arc */
   bool is_on_boundary() const
   {
+    /* If the curve is not vertical and non of its endpoints lie on the
+     * boundary, the arc itself cannot lie on the identification arc.
+     */
     if (m_source.is_no_boundary() || m_target.is_no_boundary() ||
         !is_vertical())
       return false;
 
+    /*! The curve is vertical. If at least one endpoint lies on the open
+     * identification arc, it entirely lies on it.
+     */
+    if (m_source.is_mid_boundary() || m_target.is_mid_boundary())
+      return true;
+
+    /* Both endpoints lie on opposite poles respectively. If the normal
+     * coincides with the normal of the plane that contains the identification
+     * arc, the arc lies on the identification arc.
+     */
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     return ((x_sign(m_normal) == ZERO) &&
             (((y_sign(m_normal) == NEGATIVE) && !is_directed_right()) ||
              ((y_sign(m_normal) == POSITIVE) && is_directed_right())));
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
+    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
+
+    Direction_3 & iden_normal = Traits::identification_normal();
+    Direction_2 iden_normal_xy = Traits::project_xy(normal);
+    Direction_2 normal_xy = Traits::project_xy(m_normal);
+    Kernel kernel;
+    if (is_directed_right()) {
+      return kernel->equal_2_object()(normal_xy, iden_normal_xy);
+    } else {
+      Direction_2 opposite_normal_xy = 
+        kernel->construct_opposite_direction_2_object()(normal_xy);
+      return kernel->equal_2_object()(opposite_normal_xy, iden_normal_xy);
+    }
+#else
+#error CGAL_IDENTIFICATION_XY is not defined
+#endif
   }
   
   /*! Determine whether the given point is in the x-range of the
