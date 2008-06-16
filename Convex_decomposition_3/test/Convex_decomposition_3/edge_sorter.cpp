@@ -20,7 +20,7 @@ class LEdge {
   LEdge* t;
 public:
   LEdge(LVertex* v_) : v(v_) {}
-  ~LEdge() { delete v; }
+  ~LEdge() { if(v != NULL) delete v; v = NULL; }
   LVertex* source() { return v; }
   LEdge* twin() { return t; }
   void set_twin(LEdge* t_) { t = t_; }
@@ -64,25 +64,104 @@ int main(int argc, char* argv[]) {
   std::deque<LEdge*> edges;
   LEdge* e0 = new LEdge(new LVertex(Point_3(-1,0,-1)));
   LEdge* t0 = new LEdge(new LVertex(Point_3(-1,0,1)));
+  LEdge* e0b = new LEdge(new LVertex(Point_3(-1,0,-1)));
+  LEdge* t0b = new LEdge(new LVertex(Point_3(-1,0,1)));
   LEdge* e1 = new LEdge(new LVertex(Point_3(-2,-1,0)));
   LEdge* t1 = new LEdge(new LVertex(Point_3(2,1,0)));
+  LEdge* e2 = new LEdge(new LVertex(Point_3(2,-1,0)));
+  LEdge* t2 = new LEdge(new LVertex(Point_3(2,1,0)));
+  LEdge* e3 = new LEdge(new LVertex(Point_3(-2,-1,-1)));
+  LEdge* t3 = new LEdge(new LVertex(Point_3(2,1,-1)));
+  LEdge* e4 = new LEdge(new LVertex(Point_3(-2,-1,1)));
+  LEdge* t4 = new LEdge(new LVertex(Point_3(2,1,1)));
+  LEdge* e5 = new LEdge(new LVertex(Point_3(-1,-1,0)));
+  LEdge* t5 = new LEdge(new LVertex(Point_3(3,1,0)));
+  LEdge* e6 = new LEdge(e0->source());
+  LEdge* t6 = new LEdge(new LVertex(Point_3(0,0,-10)));
+  LEdge* e7 = new LEdge(new LVertex(Point_3(-1,0,-1)));
+  LEdge* t7 = new LEdge(new LVertex(Point_3(3,0,1)));
+
   e0->set_twin(t0);
   t0->set_twin(e0);
+  e0b->set_twin(t0b);
+  t0b->set_twin(e0b);
   e1->set_twin(t1);
   t1->set_twin(e1);
+  e2->set_twin(t2);
+  t2->set_twin(e2);
+  e3->set_twin(t3);
+  t3->set_twin(e3);
+  e4->set_twin(t4);
+  t4->set_twin(e4);
+  e5->set_twin(t5);
+  t5->set_twin(e5);
+  e6->set_twin(t6);
+  t6->set_twin(e6);
+  e7->set_twin(t7);
+  t7->set_twin(e7);
 
+  std::less<Point_3> Less;
   SplitTest st;
   Report_new_vertex<LEdge, LVertex> rnv;
   GesSM gesSM;
 
+  edges.clear();
+  edges.push_back(e2);
+  edges.push_back(e0);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 2);
+  CGAL_assertion(edges[0]->source()->point() == Point_3(-1,0,-1));
+
+  edges.clear();
+  edges.push_back(e3);
+  edges.push_back(e0);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 2);
+  CGAL_assertion(edges[0]->source()->point() == Point_3(-2,-1,-1));
+
+  edges.clear();
+  edges.push_back(e0);
+  edges.push_back(e4);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 2);
+  CGAL_assertion(edges[0]->source()->point() == Point_3(-2,-1,1)); 
+
+  edges.clear();
+  edges.push_back(e5);
+  edges.push_back(e1);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 2);
+  CGAL_assertion(edges[0]->source()->point() == Point_3(-2,-1,0)); 
+
+  edges.clear();
+  edges.push_back(e6);
   edges.push_back(e0);
   edges.push_back(e1);
   gesSM(edges, st, rnv);
-  std::less<Point_3> Less;
   CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 3);
-  CGAL_assertion(edges[1]->twin()->source()->point() == Point_3(-1,0,0));
-  CGAL_assertion(edges[2]->source()->point() == Point_3(-1,0,0));
+  CGAL_assertion(edges.size() == 4);
+  CGAL_assertion(edges[2]->twin()->source()->point() == Point_3(-1,0,0));
+  CGAL_assertion(edges[3]->source()->point() == Point_3(-1,0,0));
 
-  
+  edges.clear();
+  edges.push_back(e0b);
+  edges.push_back(e1);
+  edges.push_back(e6);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 4);
+  CGAL_assertion(edges[1]->twin()->source()->point() == Point_3(-1,0,0));
+  CGAL_assertion(edges[3]->source()->point() == Point_3(-1,0,0));
+
+  edges.clear();
+  edges.push_back(e1);
+  edges.push_back(e7);
+  gesSM(edges, st, rnv);
+  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
+  CGAL_assertion(edges.size() == 2);
+  CGAL_assertion(edges[0]->source()->point() == Point_3(-2,-1,0)); 
 }
