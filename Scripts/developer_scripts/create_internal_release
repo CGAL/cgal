@@ -445,7 +445,7 @@ sub generate_cmake_scripts
             close OPTIONS;
           }
         }
-        system("$SCRIPTSDIR/cgal_create_cmake_script", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_cmake_script failed";
+        system("$SCRIPTSDIR/cgal_create_cmake_script $options") == 0 or die "Execution of \"$SCRIPTSDIR/cgal_create_cmake_script $options\" failed";
       }
         
       chdir '..';
