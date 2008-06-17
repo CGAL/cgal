@@ -49,13 +49,12 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
-				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				BrowseInformation="1"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4267;4311;4800;4503;4244"
+				DisableSpecificWarnings="4267;4311;4800;4503;4244;4345"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -70,7 +69,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="2"
@@ -135,17 +133,15 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm900"
 				Optimization="2"
-				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="include;..\..\..\include;&quot;$(CGALROOT)\include\CGAL\config\msvc&quot;;&quot;$(CGALROOT)\include&quot;;&quot;$(CGALROOT)\auxiliary\gmp\include&quot;;&quot;$(CGALROOT)\auxiliary\taucs\include&quot;;&quot;$(BOOSTROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;CGAL_USE_GMP;CGAL_SURFACE_RECONSTRUCTION_CHECK_EXPENSIVE;CGAL_USE_TAUCS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
-				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4267;4311;4800;4503;4244"
+				DisableSpecificWarnings="4267;4311;4800;4503;4244;4345"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -160,7 +156,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glu32.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
