@@ -99,12 +99,12 @@ END_MESSAGE_MAP()
 
 CPoissonDoc::CPoissonDoc()
 : m_poisson_function(NULL),
-  m_poisson_dt(NULL), 
-  m_apss_function(NULL), 
+  m_poisson_dt(NULL),
+  m_apss_function(NULL),
   m_surface_mesher_c2t3(m_surface_mesher_dt)
 {
   m_edit_mode = NO_EDIT_MODE; // No points yet
-  
+
   m_triangulation_refined = false; // Need to apply Delaunay refinement
   m_poisson_solved = false; // Need to solve Poisson equation
 
@@ -162,7 +162,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   CString extension = lpszPathName;
   extension = extension.Right(4);
   extension.MakeLower();
-  
+
   // set current path
   CString path = lpszPathName;
   path = path.Left(path.ReverseFind('\\'));
@@ -173,7 +173,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   {
     // Is this OFF file a mesh or a point cloud?
     std::ifstream header_stream(lpszPathName);
-    CGAL::File_scanner_OFF header(header_stream, true /* verbose */); 
+    CGAL::File_scanner_OFF header(header_stream, true /* verbose */);
     if(!header_stream || header.size_of_vertices() == 0)
     {
       prompt_message("Unable to read file");
@@ -185,11 +185,11 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     // Read OFF file as a mesh and compute normals from connectivity
     if (is_mesh)
     {
-      // read file in polyhedron 
+      // read file in polyhedron
       typedef Enriched_polyhedron<Kernel> Polyhedron;
       Polyhedron input_mesh;
       std::ifstream file_stream(lpszPathName);
-      CGAL::scan_OFF(file_stream, input_mesh, true /* verbose */); 
+      CGAL::scan_OFF(file_stream, input_mesh, true /* verbose */);
       if(!file_stream || !input_mesh.is_valid() || input_mesh.empty())
       {
         prompt_message("Unable to read file");
@@ -212,7 +212,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     }
     else // Read OFF file as a point cloud
     {
-      if( ! CGAL::surface_reconstruction_read_off_point_cloud(lpszPathName, 
+      if( ! CGAL::surface_reconstruction_read_off_point_cloud(lpszPathName,
                                                               std::back_inserter(m_points)) )
       {
         prompt_message("Unable to read file");
@@ -223,7 +223,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if .pwn extension
   else if(extension.CompareNoCase(".pwn") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_pwn(lpszPathName, 
+    if( ! CGAL::surface_reconstruction_read_pwn(lpszPathName,
                                                 std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
@@ -233,18 +233,18 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   // if .xyz extension
   else if(extension.CompareNoCase(".xyz") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_xyz(lpszPathName, 
+    if( ! CGAL::surface_reconstruction_read_xyz(lpszPathName,
                                                 std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
       return FALSE;
     }
-    // 
+    //
   }
   // if .pnb extension
   else if(extension.CompareNoCase(".pnb") == 0)
   {
-    if( ! CGAL::surface_reconstruction_read_pnb(lpszPathName, 
+    if( ! CGAL::surface_reconstruction_read_pnb(lpszPathName,
                                                 std::back_inserter(m_points)) )
     {
       prompt_message("Unable to read file");
@@ -255,7 +255,7 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
   else if (extension.CompareNoCase(".pwc") == 0)
   {
     std::vector<Point> cameras; // temporary container of cameras to read
-    if( ! surface_reconstruction_read_pwc(lpszPathName, 
+    if( ! surface_reconstruction_read_pwc(lpszPathName,
                                           std::back_inserter(m_points),
                                           std::back_inserter(cameras)) )
     {
@@ -290,9 +290,9 @@ void CPoissonDoc::OnFileSaveAs()
   szFilter += "All Files (*.*)|*.*||";
 
   // create the Save As dialog
-  CFileDialog dlgExport(false, "pwn", NULL, 
+  CFileDialog dlgExport(false, "pwn", NULL,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, AfxGetMainWnd());
-                                
+
   // dialog title
   dlgExport.m_ofn.lpstrTitle = "Save reconstructed surface to file";
 
@@ -304,7 +304,7 @@ void CPoissonDoc::OnFileSaveAs()
     CString extension = dlgExport.m_ofn.lpstrFile;
     extension = extension.Right(4);
     extension.MakeLower();
-    
+
     // set current path
     CString path = dlgExport.m_ofn.lpstrFile;
     path = path.Left(path.ReverseFind('\\'));
@@ -340,7 +340,7 @@ void CPoissonDoc::OnFileSaveAs()
         return;
       }
     }
-    else 
+    else
     {
       prompt_message("File format not supported");
       return;
@@ -362,9 +362,9 @@ void CPoissonDoc::OnFileSaveSurface()
   static char szFilter[] = "OFF Files (*.off)|*.off; *.off|All Files (*.*)|*.*||";
 
   // create the Save As dialog
-  CFileDialog dlgExport(false, "off", NULL, 
+  CFileDialog dlgExport(false, "off", NULL,
                         OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, szFilter, AfxGetMainWnd());
-                                
+
   // dialog title
   dlgExport.m_ofn.lpstrTitle = "Save reconstructed surface to file";
 
@@ -376,7 +376,7 @@ void CPoissonDoc::OnFileSaveSurface()
     CString extension = dlgExport.m_ofn.lpstrFile;
     extension = extension.Right(4);
     extension.MakeLower();
-    
+
     // set current path
     CString path = dlgExport.m_ofn.lpstrFile;
     path = path.Left(path.ReverseFind('\\'));
@@ -391,7 +391,7 @@ void CPoissonDoc::OnFileSaveSurface()
         prompt_message("Unable to save file");
         return;
       }
-        
+
       CGAL::output_surface_facets_to_off(out, m_surface_mesher_c2t3);
     }
     else
@@ -405,15 +405,15 @@ void CPoissonDoc::OnFileSaveSurface()
 // Enable "Save reconstructed surface as..." if surface is computed
 void CPoissonDoc::OnUpdateFileSaveSurface(CCmdUI *pCmdUI)
 {
-  pCmdUI->Enable((m_edit_mode == POISSON || m_edit_mode == APSS) 
+  pCmdUI->Enable((m_edit_mode == POISSON || m_edit_mode == APSS)
                  && m_surface_mesher_dt.number_of_vertices() > 0);
 }
 
 // Update the number of vertices and tetrahedra in the status bar
 // and write them to cerr.
 void CPoissonDoc::update_status()
-{   
-  CStatusBar* pStatus = 
+{
+  CStatusBar* pStatus =
     (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
   ASSERT(pStatus != NULL);
 
@@ -427,7 +427,7 @@ void CPoissonDoc::update_status()
 
     // Update status bar
     pStatus->SetPaneText(1,points);
-    pStatus->UpdateWindow(); 
+    pStatus->UpdateWindow();
   }
   else if (m_edit_mode == POISSON)
   {
@@ -445,16 +445,16 @@ void CPoissonDoc::update_status()
     // Update status bar
     pStatus->SetPaneText(1,vertices);
     pStatus->SetPaneText(2,tets);
-    pStatus->UpdateWindow(); 
+    pStatus->UpdateWindow();
   }
 }
 
 // Write user message in status bar and cerr
 void CPoissonDoc::status_message(char* fmt,...)
-{   
+{
   // format message in 'buffer'
   char buffer[256];
-  va_list argptr;      
+  va_list argptr;
   va_start(argptr,fmt);
   vsprintf(buffer,fmt,argptr);
   va_end(argptr);
@@ -463,19 +463,19 @@ void CPoissonDoc::status_message(char* fmt,...)
   std::cerr << buffer << std::endl;
 
   // write message in status bar
-  CStatusBar* pStatus = 
+  CStatusBar* pStatus =
     (CStatusBar*)AfxGetApp()->m_pMainWnd->GetDescendantWindow(AFX_IDW_STATUS_BAR);
   ASSERT(pStatus != NULL);
   pStatus->SetPaneText(0,buffer);
-  pStatus->UpdateWindow(); 
+  pStatus->UpdateWindow();
 }
 
 // Write user message in message box and cerr
 void CPoissonDoc::prompt_message(char* fmt,...)
-{   
+{
   // format message in 'buffer'
   char buffer[256];
-  va_list argptr;      
+  va_list argptr;
   va_start(argptr,fmt);
   vsprintf(buffer,fmt,argptr);
   va_end(argptr);
@@ -484,7 +484,7 @@ void CPoissonDoc::prompt_message(char* fmt,...)
   std::cerr << buffer << std::endl;
 
   // write message in message box
-  AfxMessageBox(buffer); 
+  AfxMessageBox(buffer);
 }
 
 // Display Options dialog
@@ -519,7 +519,7 @@ void CPoissonDoc::OnEditOptions()
     m_number_of_neighbours = dlg.m_number_of_neighbours;
 
     m_outlier_percentage = dlg.m_outlier_percentage;
-    
+
     UpdateAllViews(NULL);
     EndWaitCursor();
   }
@@ -538,8 +538,8 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByPCA()
   status_message("Estimate Normals Direction by PCA...");
   double init = clock();
 
-  CGAL::estimate_normals_pca_3(m_points.begin(), m_points.end(), 
-                               m_points.normals_begin(), 
+  CGAL::estimate_normals_pca_3(m_points.begin(), m_points.end(),
+                               m_points.normals_begin(),
                                m_number_of_neighbours);
 
   status_message("Estimate Normals Direction by PCA...done (%lf s)",duration(init));
@@ -560,8 +560,8 @@ void CPoissonDoc::OnAlgorithmsEstimateNormalsByJetFitting()
   status_message("Estimate Normals Direction by Jet Fitting...");
   double init = clock();
 
-  CGAL::estimate_normals_jet_fitting_3(m_points.begin(), m_points.end(), 
-                                       m_points.normals_begin(), 
+  CGAL::estimate_normals_jet_fitting_3(m_points.begin(), m_points.end(),
+                                       m_points.normals_begin(),
                                        m_number_of_neighbours);
 
   status_message("Estimate Normals Direction by Jet Fitting...done (%lf s)",duration(init));
@@ -639,13 +639,13 @@ void CPoissonDoc::OnCreatePoissonTriangulation()
 
   // Clean up previous mode
   CloseMode();
-  
+
   // Copy points to m_poisson_dt
   CGAL_assertion(m_poisson_dt == NULL);
   CGAL_assertion(m_poisson_function == NULL);
   m_poisson_dt = new Dt3;
   m_poisson_function = new Poisson_implicit_function(*m_poisson_dt, m_points.begin(), m_points.end());
-  
+
   m_edit_mode = POISSON;
   m_triangulation_refined = false; // Need to apply Delaunay refinement
   m_poisson_solved = false; // Need to solve Poisson equation
@@ -662,7 +662,7 @@ void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
-  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON) 
+  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
                  && points_have_normals && normals_are_oriented);
 }
 
@@ -794,7 +794,7 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     m_surface_mesher_dt.clear();
     m_surface_mesher_c2t3.clear();
     m_surface.clear();
-    
+
     // Apply contouring value defined in Options dialog
     m_poisson_function->set_contouring_value(m_contouring_value);
 
@@ -814,9 +814,9 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, Poisson_implicit_function&> Surface_3;
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size; 
+    FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
-    Surface_3 surface(*m_poisson_function,                    
+    Surface_3 surface(*m_poisson_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
@@ -825,17 +825,17 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+          << "                  Non_manifold_tag())...\n";*/
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
     std::list<Triangle> triangles;
     CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
-    
-    // Reset contouring value 
+
+    // Reset contouring value
     m_poisson_function->set_contouring_value(0.0);
 
     // Print status
@@ -863,7 +863,7 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
   double init = clock();
 
   m_contour.clear(); // clear previous call
-  
+
   std::list<Triangle> triangles;
   int nb = m_poisson_dt->marching_tet(std::back_inserter(triangles), m_contouring_value);
   m_contour.insert(m_contour.end(), triangles.begin(), triangles.end());
@@ -888,14 +888,14 @@ void CPoissonDoc::OnAlgorithmsPoissonStatistics()
   BeginWaitCursor();
 
   // write message in message box
-  prompt_message( 
-    "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf", 
-    m_poisson_function->median_value_at_input_vertices(), 
-    m_poisson_function->average_value_at_input_vertices(), 
-    m_poisson_function->min_value_at_input_vertices(), 
-    m_poisson_function->max_value_at_input_vertices(), 
-    m_poisson_function->median_value_at_convex_hull(), 
-    m_poisson_function->average_value_at_convex_hull(), 
+  prompt_message(
+    "Poisson implicit function:\n- Median value at input vertices = %lf\n- Average value at input vertices = %lf\n- Min value at input vertices = %lf\n- Max value at input vertices = %lf\n- Median value at convex hull = %lf\n- Average value at convex hull = %lf\n- Min value = %lf",
+    m_poisson_function->median_value_at_input_vertices(),
+    m_poisson_function->average_value_at_input_vertices(),
+    m_poisson_function->min_value_at_input_vertices(),
+    m_poisson_function->max_value_at_input_vertices(),
+    m_poisson_function->median_value_at_convex_hull(),
+    m_poisson_function->average_value_at_convex_hull(),
     (*m_poisson_function)(m_poisson_function->get_inner_point()));
 
   EndWaitCursor();
@@ -936,14 +936,14 @@ void CPoissonDoc::OnUpdateAlgorithmsSmoothUsingJetFitting(CCmdUI *pCmdUI)
 void CPoissonDoc::CloseMode()
 {
   // Nothing to do if m_edit_mode == POINT_SET
-  
+
   // If m_edit_mode == POISSON
   delete m_poisson_function; m_poisson_function = NULL;
   delete m_poisson_dt; m_poisson_dt = NULL;
-  
+
   // If m_edit_mode == APSS
   delete m_apss_function; m_apss_function = NULL;
-  
+
   m_edit_mode = NO_EDIT_MODE;
 }
 
@@ -951,10 +951,10 @@ void CPoissonDoc::CloseMode()
 void CPoissonDoc::OnModePointSet()
 {
   // No need to convert Poisson triangulation back to point set (yet)
-  
+
   // Clean up previous mode
   CloseMode();
-  
+
   m_edit_mode = POINT_SET;
 
   update_status();
@@ -968,7 +968,7 @@ void CPoissonDoc::OnUpdateModePointSet(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == POINT_SET);
 }
 
-// "Edit >> Mode >> Poisson" is an alias to 
+// "Edit >> Mode >> Poisson" is an alias to
 // "Reconstruction >> Poisson >> Create Poisson Triangulation".
 void CPoissonDoc::OnModePoisson()
 {
@@ -1064,12 +1064,12 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
 
     // Clean up previous mode
     CloseMode();
-  
+
     // Clear previous call
     m_surface_mesher_dt.clear();
     m_surface_mesher_c2t3.clear();
     m_surface.clear();
-    
+
     unsigned int nofNeighbors = 10;
 
     // Create implicit function
@@ -1092,9 +1092,9 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     // defining the surface
     typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size; 
+    FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
-    Surface_3 surface(*m_apss_function,                    
+    Surface_3 surface(*m_apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
 
     // defining meshing criteria
@@ -1103,19 +1103,19 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
                                                         m_sm_distance*size); // upper bound of distance to surface
 
     // meshing surface
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+          << "                  Non_manifold_tag())...\n";*/
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
     std::list<Triangle> triangles;
     CGAL::output_surface_facets<C2t3,Triangle>(triangles,m_surface_mesher_c2t3);
     m_surface.insert(m_surface.end(), triangles.begin(), triangles.end());
-    
+
     // Record new mode
     m_edit_mode = APSS;
-    
+
     // Print status
     status_message("APSS reconstruction...done (%d vertices, %lf s)",
                    m_surface_mesher_dt.number_of_vertices(),duration(init));
@@ -1130,7 +1130,7 @@ void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
   bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
-  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS) 
+  pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS)
                  && points_have_normals && normals_are_oriented);
 }
 

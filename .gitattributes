@@ -4038,7 +4038,6 @@ Surface_reconstruction_3/test/Surface_reconstruction_3/VC/smoothing_test_vc80.vc
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cmd eol=lf
 Surface_reconstruction_3/test/Surface_reconstruction_3/analysis_test.cpp -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
-Surface_reconstruction_3/test/Surface_reconstruction_3/data/Isidore_only_equalized_KLT_5000_with_normals.xyz -text
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/camel.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
 Surface_reconstruction_3/test/Surface_reconstruction_3/data/sphere966.off -text svneol=unset#application/octet-stream

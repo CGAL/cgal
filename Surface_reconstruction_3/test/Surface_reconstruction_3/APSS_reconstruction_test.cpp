@@ -162,7 +162,7 @@ int main(int argc, char * argv[])
     else if (extension == ".xyz" || extension == ".XYZ")
     {
       // Read the point set file in pwns
-      if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(), 
+      if(!CGAL::surface_reconstruction_read_xyz(input_filename.c_str(),
                                                 std::back_inserter(pwns)))
       {
         std::cerr << "FATAL ERROR: cannot read file " << input_filename << std::endl;
@@ -219,7 +219,7 @@ int main(int argc, char * argv[])
 
     // defining the surface
     Point sm_sphere_center = inner_point; // bounding sphere centered at inner_point
-    FT    sm_sphere_radius = 2 * size; 
+    FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(apss_function,
                       Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
@@ -233,9 +233,9 @@ int main(int argc, char * argv[])
                                                         sm_distance*size); // upper bound of distance to surface
 
         // meshing surface
-std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";
+          << "                  Non_manifold_tag())...\n";*/
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // Print status
@@ -252,4 +252,4 @@ std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radiu
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
- 
+
