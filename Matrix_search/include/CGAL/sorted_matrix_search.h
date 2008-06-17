@@ -23,7 +23,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
-#include <CGAL/functional.h>
+#include <boost/bind.hpp>
 #include <algorithm>
 #include <vector>
 #include <CGAL/Sorted_matrix_search_traits_adaptor.h>
@@ -264,10 +264,10 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     nth_element(active_cells.begin(),
                 active_cells.begin() + upper_median_rank,
                 active_cells.end(),
-                compose(
+                boost::bind(
                   t.compare_strictly(),
-                  Cell_min< Cell >(),
-                  Cell_min< Cell >()));
+                  boost::bind(Cell_min<Cell>(), _1),
+		  boost::bind(Cell_min<Cell>(), _2)));
     
     Cell_iterator lower_median_cell =
       active_cells.begin() + upper_median_rank;
@@ -277,10 +277,10 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     nth_element(active_cells.begin(),
                 active_cells.begin() + lower_median_rank,
                 active_cells.end(),
-                compose(
+                boost::bind(
                   t.compare_strictly(),
-                  Cell_max< Cell >(ccd),
-                  Cell_max< Cell >(ccd)));
+                  boost::bind(Cell_max< Cell >(ccd), _1),
+                  boost::bind(Cell_max< Cell >(ccd), _2)));
     
     Cell_iterator upper_median_cell =
       active_cells.begin() + lower_median_rank;
@@ -292,9 +292,10 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       lower_median_cell =
         find_if(active_cells.begin(),
                 active_cells.end(),
-                compose(
-                  bind_1(equal_to< Value >(), lower_median),
-                  Cell_min< Cell >()));
+                boost::bind(
+		  equal_to< Value >(), 
+		  lower_median,
+		  boost::bind(Cell_min< Cell >(), _1)));
     CGAL_optimisation_assertion(lower_median_cell != active_cells.end());
     // ------------------------------------------------------
     // test feasibility of medians and remove cells accordingly:
@@ -327,9 +328,10 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose(
-              bind_1( t.compare_non_strictly(), min_median),
-              Cell_min< Cell >()));
+            boost::bind(
+              t.compare_non_strictly(), 
+	      min_median,
+              boost::bind(Cell_min< Cell >(), _1)));
     
       } // lower_median and upper_median are feasible
       else { // lower_median is feasible, but upper_median is not
@@ -345,18 +347,16 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose_shared(
+            boost::bind(
               logical_or< bool >(),
-              compose(
-                bind_1(
+	      boost::bind(
+	        t.compare_non_strictly(),
+		lower_median,
+                boost::bind(Cell_min< Cell >(), _1)),
+	      boost::bind(
                   t.compare_non_strictly(),
-                  lower_median),
-                Cell_min< Cell >()),
-              compose(
-                bind_2(
-                  t.compare_non_strictly(),
-                  upper_median),
-                Cell_max< Cell >( ccd))));
+                  boost::bind(Cell_max< Cell >( ccd), _1),
+		  upper_median)));
     
       } // lower_median is feasible, but upper_median is not
     else
@@ -374,18 +374,16 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin() + 1,
             active_cells.end(),
-            compose_shared(
+	    boost::bind(
               logical_or< bool >(),
-              compose(
-                bind_1(
-                  t.compare_non_strictly(),
-                  upper_median),
-                Cell_min< Cell >()),
-              compose(
-                bind_2(
-                  t.compare_non_strictly(),
-                  lower_median),
-                Cell_max< Cell >( ccd))));
+	      boost::bind(
+		t.compare_non_strictly(),
+		upper_median,
+                boost::bind(Cell_min< Cell >(), _1)),
+	      boost::bind(
+                t.compare_non_strictly(),
+		boost::bind(Cell_max< Cell >( ccd), _1),
+		lower_median)));
     
       } // upper_median is feasible, but lower_median is not
       else { // both upper_median and lower_median are infeasible
@@ -397,11 +395,10 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
           remove_if(
             active_cells.begin(),
             active_cells.end(),
-            compose(
-              bind_2(
-                t.compare_non_strictly(),
-                max BOOST_PREVENT_MACRO_SUBSTITUTION ( lower_median, upper_median)),
-              Cell_max< Cell >( ccd)));
+            boost::bind(
+              t.compare_non_strictly(),
+	      boost::bind(Cell_max< Cell >( ccd), _1),
+	      max BOOST_PREVENT_MACRO_SUBSTITUTION ( lower_median, upper_median)));
     
       } // both upper_median and lower_median are infeasible
     

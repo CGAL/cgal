@@ -53,11 +53,11 @@ using std::less;
 using std::greater_equal;
 using std::max;
 using std::cerr;
+using std::cout;
 using std::endl;
 using std::atoi;
 using std::exit;
 using CGAL::Cartesian_matrix;
-using CGAL::bind_2;
 using CGAL::Random;
 using CGAL::default_random;
 using CGAL::sorted_matrix_search;
@@ -188,8 +188,7 @@ main( int argc, char* argv[])
       matrices.begin(),
       matrices.end(),
       sorted_matrix_search_traits_adaptor(
-        bind_2( greater_equal< Value >(),
-                 bound),
+        boost::bind( greater_equal< Value >(), _1, bound),
         *(matrices.begin()))));
   
   #ifdef OUTPUT

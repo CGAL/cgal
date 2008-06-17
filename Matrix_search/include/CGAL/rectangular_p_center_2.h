@@ -21,7 +21,6 @@
 #define CGAL_RECTANGULAR_P_CENTER_2_H 1
 
 #include <CGAL/pierce_rectangles_2.h>
-#include <CGAL/functional.h>
 #include <CGAL/sorted_matrix_search.h>
 #include <CGAL/rectangular_3_center_2.h>
 #include <algorithm>
@@ -322,6 +321,7 @@ rectangular_p_center_2_matrix_search(
 {
   typedef typename Traits::FT FT;
   using std::minus;
+  using boost::bind;
 
   return rectangular_p_center_2_matrix_search(
     f,
@@ -330,7 +330,7 @@ rectangular_p_center_2_matrix_search(
     r,
     pf,
     t,
-    compose(bind_1(Max< FT >(), 0), minus< FT >()));
+    bind(Max<FT>(), 0, bind(minus<FT>(), _1, _2)));
 
 } // Pcenter_matrix_search( ... )
 
