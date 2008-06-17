@@ -27,6 +27,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/array.h>
 #include <CGAL/constant.h>
+#include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,12 +64,12 @@ public:
 
   const FT & x() const
   {
-      return get(base)[0];
+      return CGAL::get(base)[0];
   }
 
   const FT & y() const
   {
-      return get(base)[1];
+      return CGAL::get(base)[1];
   }
 
   const FT & hx() const
@@ -88,12 +89,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return get(base).begin();
+    return CGAL::get(base).begin();
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return get(base).end();
+    return CGAL::get(base).end();
   }
 
 };
