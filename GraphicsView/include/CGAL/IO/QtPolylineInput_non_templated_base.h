@@ -20,16 +20,17 @@ namespace CGAL {
 class QtPolylineInput_non_templated_base : public QtInput
 {
 public:
-  QtPolylineInput_non_templated_base(QGraphicsScene* s,
-                                      int n = 0,
-                                      bool closed = true);
-
   void setNumberOfVertices(int n)
   {
     n_ = n;
   }
 
 protected:
+  // protected constructor
+  QtPolylineInput_non_templated_base(QGraphicsScene* s,
+                                      int n = 0,
+                                      bool closed = true);
+
 
   // mousePressEvent returns true iff the event is consummed
   bool mousePressEvent(QGraphicsSceneMouseEvent *event);
