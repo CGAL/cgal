@@ -79,7 +79,7 @@ struct MyTraits {
     }
   };
   struct Compare_angle_with_x_axis_2
-  : public std::binary_function<Direction_2,Direction_2,bool>
+  : public std::binary_function<Direction_2,Direction_2,CGAL::Comparison_result>
   {
     typedef CGAL::Arity_tag<2> Arity;
     CGAL::Comparison_result
