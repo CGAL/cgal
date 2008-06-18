@@ -1,10 +1,10 @@
 
-#include "QGraphicsItem_2.h"
+#include <CGAL/IO/QtGraphicsItem.h>
 
 namespace CGAL {
 
 
 } // namespace CGAL
 
-#include "QGraphicsItem_2.moc"
+#include "QtGraphicsItem.moc"
 

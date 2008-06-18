@@ -4,8 +4,8 @@
 
 
 
-#include "QGraphicsItem_2.h"
-#include "QPainterOstream.h"
+#include <CGAL/IO/QtGraphicsItem.h>
+#include <CGAL/IO/QtPainterOstream.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -20,10 +20,10 @@ class QGraphicsSceneMouseEvent;
 namespace CGAL {
 
 template <typename DT>
-class QVoronoiGraphicsItem_2 : public QGraphicsItem_2
+class QtVoronoiGraphicsItem : public QtGraphicsItem
 {
 public:
-  QVoronoiGraphicsItem_2(DT  * dt_);
+  QtVoronoiGraphicsItem(DT  * dt_);
 
 
   QRectF 
@@ -42,7 +42,7 @@ private:
 
 
 template <typename DT>
-QVoronoiGraphicsItem_2<DT>::QVoronoiGraphicsItem_2(DT * dt_)
+QtVoronoiGraphicsItem<DT>::QtVoronoiGraphicsItem(DT * dt_)
   :  dt(dt_)
 {
   setZValue(3);
@@ -50,7 +50,7 @@ QVoronoiGraphicsItem_2<DT>::QVoronoiGraphicsItem_2(DT * dt_)
 
 template <typename DT>
 QRectF 
-QVoronoiGraphicsItem_2<DT>::boundingRect() const
+QtVoronoiGraphicsItem<DT>::boundingRect() const
 {
   QRectF rect;
   QList<QGraphicsView *>  views = scene()->views();
@@ -70,9 +70,9 @@ QVoronoiGraphicsItem_2<DT>::boundingRect() const
 
 template <typename DT>
 void 
-QVoronoiGraphicsItem_2<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
+QtVoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
-  QConverter<typename DT::Geom_traits> convert;
+  QtConverter<typename DT::Geom_traits> convert;
   QRectF rect = boundingRect();
   
   painter->setPen(pen());
@@ -106,7 +106,7 @@ QVoronoiGraphicsItem_2<DT>::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 template <typename T>
 void 
-QVoronoiGraphicsItem_2<T>::modelChanged()
+QtVoronoiGraphicsItem<T>::modelChanged()
 {
   update();
 }

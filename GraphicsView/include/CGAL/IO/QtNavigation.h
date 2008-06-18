@@ -14,7 +14,7 @@ class QGraphicsRectItem;
 
 namespace CGAL {
 
-class QNavigation: public QObject {
+class QtNavigation: public QObject {
 
   Q_OBJECT
 
@@ -22,8 +22,8 @@ class QNavigation: public QObject {
   void mouseCoordinates(QString);
 
 public:
-  QNavigation(QGraphicsView* v_);
-  ~QNavigation();
+  QtNavigation(QGraphicsView* v_);
+  ~QtNavigation();
   
   bool eventFilter(QObject *obj, QEvent *event);
 

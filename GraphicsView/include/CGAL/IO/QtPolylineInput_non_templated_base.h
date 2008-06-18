@@ -5,7 +5,7 @@
 #include <QPolygonF>
 #include <QPointF>
 
-#include "QInput.h"
+#include <CGAL/IO/QtInput.h>
 
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
@@ -17,10 +17,10 @@ class QObject;
 
 namespace CGAL {
 
-class QPolylineInput_2_non_templated_base : public QInput
+class QtPolylineInput_non_templated_base : public QtInput
 {
 public:
-  QPolylineInput_2_non_templated_base(QGraphicsScene* s,
+  QtPolylineInput_non_templated_base(QGraphicsScene* s,
                                       int n = 0,
                                       bool closed = true);
 

@@ -7,6 +7,7 @@ CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
 Distance_3/include
+GraphicsView/TAGS
 GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/Makefile
 GraphicsView/demo/GraphicsView/delaunay

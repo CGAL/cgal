@@ -4,14 +4,14 @@
 #include <QPainter>
 #include <QPen>
 #include <QRectF>
-#include "QConverter.h"
+#include <CGAL/IO/QtConverter.h>
 
 namespace CGAL {
 
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 {
-  QConverter<K> convert;
+  QtConverter<K> convert;
   qp.drawPoint(convert(p));
   return qp;
 }
@@ -19,7 +19,7 @@ QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Segment_2<K>& s)
 {
-  QConverter<K> convert;
+  QtConverter<K> convert;
   qp.drawLine(convert(s.source()), convert(s.target()));
   return qp;
 }

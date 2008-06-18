@@ -2,7 +2,7 @@
 #ifndef CGAL_Q_TRIANGULATION_MOVING_POINT_2
 #define CGAL_Q_TRIANGULATION_MOVING_POINT_2
 
-#include "QInput.h"
+#include <CGAL/IO/QtInput.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
@@ -12,7 +12,7 @@
 namespace CGAL {
 
 template <typename DT>
-class QTriangulationMovingPoint_2 : public QInput
+class QTriangulationMovingPoint_2 : public QtInput
 {
 public:
   QTriangulationMovingPoint_2(DT  * dt_);

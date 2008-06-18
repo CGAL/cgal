@@ -1,8 +1,8 @@
-#include "QInput.h"
+#include <CGAL/IO/QtInput.h>
 
 namespace CGAL {
 
-#include "QInput.moc"
+#include "QtInput.moc"
 
 } // namespace CGAL
 

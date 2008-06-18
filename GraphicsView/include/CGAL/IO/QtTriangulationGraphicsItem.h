@@ -4,9 +4,9 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
-#include "QPainterOstream.h"
-#include "QGraphicsItem_2.h"
-#include "QConverter.h"
+#include <CGAL/IO/QtPainterOstream.h>
+#include <CGAL/IO/QtGraphicsItem.h>
+#include <CGAL/IO/QtConverter.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -16,10 +16,10 @@ namespace CGAL {
 
 
 template <typename T>
-class QTriangulationGraphicsItem_2 : public QGraphicsItem_2
+class QtTriangulationGraphicsItem : public QtGraphicsItem
 {
 public:
-  QTriangulationGraphicsItem_2(T* t_);
+  QtTriangulationGraphicsItem(T* t_);
 
   void modelChanged();
 
@@ -84,7 +84,7 @@ protected:
 
 
 template <typename T>
-QTriangulationGraphicsItem_2<T>::QTriangulationGraphicsItem_2(T * t_)
+QtTriangulationGraphicsItem<T>::QtTriangulationGraphicsItem(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false),
      draw_edges(true), draw_vertices(true)
 {
@@ -98,7 +98,7 @@ QTriangulationGraphicsItem_2<T>::QTriangulationGraphicsItem_2(T * t_)
 
 template <typename T>
 QRectF 
-QTriangulationGraphicsItem_2<T>::boundingRect() const
+QtTriangulationGraphicsItem<T>::boundingRect() const
 {
   return bounding_rect;
 }
@@ -106,9 +106,9 @@ QTriangulationGraphicsItem_2<T>::boundingRect() const
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh)
+QtTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
-  QConverter<K> convert;
+  QtConverter<K> convert;
 
   if(draw_edges) {
     for (int i=0; i<3; i++) {
@@ -127,7 +127,7 @@ QTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh)
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::drawAll(QPainter *painter)
+QtTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   if(drawEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
@@ -141,10 +141,10 @@ QTriangulationGraphicsItem_2<T>::drawAll(QPainter *painter)
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::paintVertices(QPainter *painter)
+QtTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
   if(drawVertices()) {
-    QConverter<K> convert;
+    QtConverter<K> convert;
 
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
@@ -160,9 +160,9 @@ QTriangulationGraphicsItem_2<T>::paintVertices(QPainter *painter)
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::paintOneVertex(const typename T::Point& point)
+QtTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
-  QConverter<K> convert;
+  QtConverter<K> convert;
 
   m_painter->setPen(this->verticesPen());
   QMatrix matrix = m_painter->matrix();
@@ -173,7 +173,7 @@ QTriangulationGraphicsItem_2<T>::paintOneVertex(const typename T::Point& point)
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::paint(QPainter *painter, 
+QtTriangulationGraphicsItem<T>::paint(QPainter *painter, 
                                        const QStyleOptionGraphicsItem *option,
                                        QWidget * widget)
 {
@@ -196,7 +196,7 @@ QTriangulationGraphicsItem_2<T>::paint(QPainter *painter,
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::updateBoundingBox()
+QtTriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
   if(t->number_of_vertices() == 0){
@@ -231,7 +231,7 @@ QTriangulationGraphicsItem_2<T>::updateBoundingBox()
 
 template <typename T>
 void 
-QTriangulationGraphicsItem_2<T>::modelChanged()
+QtTriangulationGraphicsItem<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0) ){
     this->hide();

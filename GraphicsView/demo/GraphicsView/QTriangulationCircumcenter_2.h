@@ -1,7 +1,7 @@
 #ifndef CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
 #define CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
 
-#include "QInput.h"
+#include <CGAL/IO/QtInput.h>
 #include <QGraphicsSceneMouseEvent> 
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
@@ -14,7 +14,7 @@
 namespace CGAL {
 
 template <typename DT>
-class QTriangulationCircumcenter_2 : public QInput
+class QTriangulationCircumcenter_2 : public QtInput
 {
 
 

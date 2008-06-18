@@ -10,7 +10,7 @@
 namespace CGAL {
 
 template <typename K>
-class QConverter {
+class QtConverter {
 
 public:
 

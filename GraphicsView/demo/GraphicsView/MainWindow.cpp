@@ -14,12 +14,12 @@
 
 #include "QTriangulationCircumcenter_2.h"
 #include "QTriangulationMovingPoint_2.h"
-#include "QPolylineInput_2.h"
-#include "QTriangulationGraphicsItem_2.h"
-#include "QConstrainedTriangulationGraphicsItem_2.h"
-#include "QVoronoiGraphicsItem_2.h"
+#include <CGAL/IO/QtPolylineInput.h>
+#include <CGAL/IO/QtTriangulationGraphicsItem.h>
+#include <CGAL/IO/QtConstrainedTriangulationGraphicsItem.h>
+#include <CGAL/IO/QtVoronoiGraphicsItem.h>
 
-#include "QNavigation.h"
+#include <CGAL/IO/QtNavigation.h>
 
 #include <QGLWidget>
 
@@ -32,9 +32,9 @@ MainWindow::MainWindow()
 
   // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
 #ifdef DELAUNAY_VORONOI
-  dgi = new CGAL::QTriangulationGraphicsItem_2<Delaunay>(&dt);
+  dgi = new CGAL::QtTriangulationGraphicsItem<Delaunay>(&dt);
 #else 
-  dgi = new CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay>(&dt);
+  dgi = new CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
 #endif    
     
   QObject::connect(this, SIGNAL(changed()),
@@ -43,7 +43,7 @@ MainWindow::MainWindow()
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
 #ifdef DELAUNAY_VORONOI
-  vgi = new CGAL::QVoronoiGraphicsItem_2<Delaunay>(&dt);
+  vgi = new CGAL::QtVoronoiGraphicsItem<Delaunay>(&dt);
   vgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
@@ -54,7 +54,7 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism
     
-  pi = new CGAL::QPolylineInput_2<K>(&scene, 0, false); // inputs polylines which are not closed
+  pi = new CGAL::QtPolylineInput<K>(&scene, 0, false); // inputs polylines which are not closed
   tcc = new CGAL::QTriangulationCircumcenter_2<Delaunay>(&scene, &dt);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
@@ -87,7 +87,7 @@ MainWindow::MainWindow()
   this->graphicsView->setMinimumSize(200, 200); // this is the size in pixels on the screen
 
   // The navigation adds zooming and translation functionality to the QGraphicsView
-  navigation = new CGAL::QNavigation(this->graphicsView);
+  navigation = new CGAL::QtNavigation(this->graphicsView);
   this->graphicsView->viewport()->installEventFilter(navigation);
   this->graphicsView->installEventFilter(navigation);
 

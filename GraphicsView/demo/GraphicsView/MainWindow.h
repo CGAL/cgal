@@ -12,14 +12,13 @@
 #include "ui_MainWindow.h"
 
 namespace CGAL {
-  class QNavigation;
-//   class QNavigation2;
-  template <class Delaunay> class QTriangulationGraphicsItem_2;
-  template <class Delaunay> class QVoronoiGraphicsItem_2;
-  template <class Delaunay> class QConstrainedTriangulationGraphicsItem_2;
+  class QtNavigation;
+  template <class Delaunay> class QtTriangulationGraphicsItem;
+  template <class Delaunay> class QtVoronoiGraphicsItem;
+  template <class Delaunay> class QtConstrainedTriangulationGraphicsItem;
   template <class Delaunay> class QTriangulationMovingPoint_2;
   template <class Delaunay> class QTriangulationCircumcenter_2;
-  template <class K> class QPolylineInput_2;
+  template <class K> class QtPolylineInput;
 } // end namespace CGAL
 
 class QLabel;
@@ -50,20 +49,19 @@ private:
   Delaunay dt; 
   QGraphicsScene scene;  
 
-  CGAL::QNavigation* navigation;
-//   CGAL::QNavigation2* navigation2;
+  CGAL::QtNavigation* navigation;
 
 #ifdef DELAUNAY_VORONOI 
-  CGAL::QTriangulationGraphicsItem_2<Delaunay> * dgi; 
-  CGAL::QVoronoiGraphicsItem_2<Delaunay> * vgi;
+  CGAL::QtTriangulationGraphicsItem<Delaunay> * dgi; 
+  CGAL::QtVoronoiGraphicsItem<Delaunay> * vgi;
 #else
-  CGAL::QConstrainedTriangulationGraphicsItem_2<Delaunay> * dgi;
+  CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
 #endif
 
   QLabel* xycoord ;
 
   CGAL::QTriangulationMovingPoint_2<Delaunay> * mp;
-  CGAL::QPolylineInput_2<K> * pi;
+  CGAL::QtPolylineInput<K> * pi;
   CGAL::QTriangulationCircumcenter_2<Delaunay> *tcc;
 public:
   MainWindow();

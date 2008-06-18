@@ -8,7 +8,7 @@
 
 namespace CGAL {
 
-class QGraphicsItem_2 : public QObject, public QAbstractGraphicsShapeItem  {
+class QtGraphicsItem : public QObject, public QAbstractGraphicsShapeItem  {
 
   Q_OBJECT
 

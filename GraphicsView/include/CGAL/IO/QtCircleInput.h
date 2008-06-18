@@ -11,18 +11,18 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include "QConverter.h"
+#include <CGAL/IO/QtConverter.h>
 
-#include "QInput.h"
+#include <CGAL/IO/QtInput.h>
 
 namespace CGAL {
 
 
 template <typename K>
-class QCircleInput_2 : public QInput
+class QtCircleInput : public QtInput
 {
 public:
-  QCircleInput_2(QGraphicsScene* s, int pointsOnCircle=1); 
+  QtCircleInput(QGraphicsScene* s, int pointsOnCircle=1); 
 
 protected:
     
@@ -44,12 +44,12 @@ private:
   QPointF qp, qq, qr;
   Point_2 p, q, r;
   QGraphicsScene *scene_;  
-  QConverter<K> convert;
+  QtConverter<K> convert;
 };
 
 
 template <typename K>
-QCircleInput_2<K>::QCircleInput_2(QGraphicsScene* s, int pointsOnCircle)
+QtCircleInput<K>::QtCircleInput(QGraphicsScene* s, int pointsOnCircle)
   : qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
 {
   qcircle->hide();
@@ -59,7 +59,7 @@ QCircleInput_2<K>::QCircleInput_2(QGraphicsScene* s, int pointsOnCircle)
 
 template <typename K>
 void 
-QCircleInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+QtCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if(m_pointsOnCircle < 3){
     if(count == 0){
@@ -106,7 +106,7 @@ QCircleInput_2<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QCircleInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+QtCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   CGAL::Bbox_2 bb;
   typename K::Construct_circle_2 construct_circle;
@@ -145,7 +145,7 @@ QCircleInput_2<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QCircleInput_2<K>::keyPressEvent ( QKeyEvent * event ) 
+QtCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() == Qt::Key_Delete){
     if(count>0){
@@ -158,7 +158,7 @@ QCircleInput_2<K>::keyPressEvent ( QKeyEvent * event )
 
 template <typename K>
 bool 
-QCircleInput_2<K>::eventFilter(QObject *obj, QEvent *event)
+QtCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);

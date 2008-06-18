@@ -2,7 +2,7 @@
 #ifndef CGAL_Q_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
 #define CGAL_Q_CONSTRAINED_TRIANGULATION_GRAPHICS_ITEM_2_H
 
-#include "QTriangulationGraphicsItem_2.h"
+#include <CGAL/IO/QtTriangulationGraphicsItem.h>
 #include <QPen>
 
 class QGraphicsSceneMouseEvent;
@@ -11,11 +11,11 @@ namespace CGAL {
 
 
 template <typename T>
-class QConstrainedTriangulationGraphicsItem_2 : public QTriangulationGraphicsItem_2<T>
+class QtConstrainedTriangulationGraphicsItem : public QtTriangulationGraphicsItem<T>
 {
 public:
-  QConstrainedTriangulationGraphicsItem_2(T  * t_)
-    : QTriangulationGraphicsItem_2<T>(t_)
+  QtConstrainedTriangulationGraphicsItem(T  * t_)
+    : QtTriangulationGraphicsItem<T>(t_)
   {
     constraints_pen = this->pen();
     constraints_pen.setColor(Qt::red);
@@ -41,7 +41,7 @@ protected:
 
 template <typename T>
 void 
-QConstrainedTriangulationGraphicsItem_2<T>::drawAll(QPainter *painter)
+QtConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
       eit != this->t->finite_edges_end();
@@ -58,7 +58,7 @@ QConstrainedTriangulationGraphicsItem_2<T>::drawAll(QPainter *painter)
 
 template <typename T>
 void 
-QConstrainedTriangulationGraphicsItem_2<T>::operator()(typename T::Face_handle fh)
+QtConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   for (int i=0; i<3; i++) {
     if (fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i))){

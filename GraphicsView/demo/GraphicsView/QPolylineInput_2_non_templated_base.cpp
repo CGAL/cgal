@@ -8,17 +8,17 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-#include "QPolylineInput_2_non_templated_base.h"
+#include <CGAL/IO/QtPolylineInput_non_templated_base.h>
 
 namespace CGAL {
 
-QPolylineInput_2_non_templated_base::QPolylineInput_2_non_templated_base(QGraphicsScene* s, int n, bool closed)
+QtPolylineInput_non_templated_base::QtPolylineInput_non_templated_base(QGraphicsScene* s, int n, bool closed)
   : path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
 {}
 
 
 bool
-QPolylineInput_2_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
+QtPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if( event->modifiers() ){
     return false;
@@ -63,7 +63,7 @@ QPolylineInput_2_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *e
 
 
 void 
-QPolylineInput_2_non_templated_base::rubberbands(const QPointF& p)
+QtPolylineInput_non_templated_base::rubberbands(const QPointF& p)
 {
   if(polygon.empty()){
     return;
@@ -88,7 +88,7 @@ QPolylineInput_2_non_templated_base::rubberbands(const QPointF& p)
 
 
 void 
-QPolylineInput_2_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+QtPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   sp = event->scenePos();
   rubberbands(sp);
@@ -96,7 +96,7 @@ QPolylineInput_2_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *ev
 
 
 bool
-QPolylineInput_2_non_templated_base::keyPressEvent ( QKeyEvent * event ) 
+QtPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event ) 
 {
   if( event->modifiers() )
     return false;
@@ -144,7 +144,7 @@ QPolylineInput_2_non_templated_base::keyPressEvent ( QKeyEvent * event )
 
 
 bool 
-QPolylineInput_2_non_templated_base::eventFilter(QObject *obj, QEvent *event)
+QtPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);

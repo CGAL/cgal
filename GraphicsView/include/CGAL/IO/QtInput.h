@@ -6,7 +6,7 @@
 
 namespace CGAL {
 
-class QInput  : public QObject
+class QtInput  : public QObject
 {
   Q_OBJECT
 
