@@ -28,7 +28,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/utility.h>
-#include <CGAL/functional.h>
+#include <functional>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
