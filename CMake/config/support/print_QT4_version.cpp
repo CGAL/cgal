@@ -1,8 +1,4 @@
-// Copyright (c) 2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2008 GeometryFactory, Sophia Antipolis (France)
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -17,11 +13,8 @@
 //
 // $URL$
 // $Id$
-// 
-//
-// Author(s)     : various
 
-// Tests if QT is available.
+// Tests if QT4 is available and prints its version string.
 
 #include <iostream>
 #include <QtCore/QtGlobal>
