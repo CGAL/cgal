@@ -140,6 +140,7 @@ if [ \$# -ne 0 ] ; then
     compile_and_run \$file
   done
 else
+  echo "Run all tests."
 EOF
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
