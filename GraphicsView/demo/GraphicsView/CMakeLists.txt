@@ -13,6 +13,7 @@ include(CreateSingleSourceCGALQt4Program)
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
+set( QT_USE_QTOPENGL  TRUE )
 
 
 find_package(Qt4       REQUIRED)
@@ -29,10 +30,10 @@ qt4_wrap_ui( UI_FILES MainWindow.ui )
 qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Logos.qrc ../icons/Triangulation_2.qrc)
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_automoc( MainWindow.cpp QNavigation.cpp QNavigation2.cpp QGraphicsItem_2.cpp QInput.cpp QDatastructure.cpp )
+qt4_automoc( MainWindow.cpp QNavigation.cpp QGraphicsItem_2.cpp QInput.cpp )
 
 # The executable itself.
-add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QNavigation2.cpp QDatastructure.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
+add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( delaunay ${QT_LIBRARIES} )

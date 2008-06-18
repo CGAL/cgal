@@ -13,12 +13,34 @@
    <string>CGAL Constrained Delaunay Triangulation</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../icons/Logos.qrc" >:/cgal/logos/cgal_logo.xpm</iconset>
+   <iconset resource="../icons/Logos.qrc" >
+    <normaloff>:/cgal/logos/cgal_logo.xpm</normaloff>:/cgal/logos/cgal_logo.xpm</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>66</y>
+     <width>400</width>
+     <height>209</height>
+    </rect>
+   </property>
    <layout class="QGridLayout" >
     <item row="0" column="0" >
-     <widget class="QGraphicsView" name="graphicsView" />
+     <widget class="QGraphicsView" name="graphicsView" >
+      <property name="focusPolicy" >
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="verticalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="transformationAnchor" >
+       <enum>QGraphicsView::NoAnchor</enum>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -28,7 +50,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>19</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -56,11 +78,15 @@
     <addaction name="actionInsertPolyline" />
     <addaction name="actionShowDelaunay" />
     <addaction name="actionShowVoronoi" />
+    <addaction name="separator" />
+    <addaction name="actionRecenter" />
    </widget>
    <widget class="QMenu" name="menuOptions" >
     <property name="title" >
      <string>&amp;Options</string>
     </property>
+    <addaction name="actionUse_OpenGL" />
+    <addaction name="actionAntialiasing" />
    </widget>
    <widget class="QMenu" name="menuHelp" >
     <property name="title" >
@@ -75,8 +101,25 @@
    <addaction name="menuOptions" />
    <addaction name="menuHelp" />
   </widget>
-  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>275</y>
+     <width>400</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
   <widget class="QToolBar" name="fileToolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>29</y>
+     <width>116</width>
+     <height>37</height>
+    </rect>
+   </property>
    <property name="windowTitle" >
     <string>File Tools</string>
    </property>
@@ -91,6 +134,14 @@
    <addaction name="actionSaveConstraints" />
   </widget>
   <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>116</x>
+     <y>29</y>
+     <width>284</width>
+     <height>37</height>
+    </rect>
+   </property>
    <property name="windowTitle" >
     <string>Visualization Tools</string>
    </property>
@@ -105,6 +156,7 @@
    <addaction name="actionShowDelaunay" />
    <addaction name="actionShowVoronoi" />
    <addaction name="actionCircumcenter" />
+   <addaction name="actionRecenter" />
   </widget>
   <action name="actionAbout" >
    <property name="text" >
@@ -128,13 +180,17 @@
    <property name="text" >
     <string>&amp;Insert random points</string>
    </property>
+   <property name="shortcut" >
+    <string>Ctrl+I</string>
+   </property>
   </action>
   <action name="actionMovingPoint" >
    <property name="checkable" >
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="MainWindow.qrc" >:/cgal/Actions/icons/movingPoint.png</iconset>
+    <iconset resource="MainWindow.qrc" >
+     <normaloff>:/cgal/Actions/icons/movingPoint.png</normaloff>:/cgal/Actions/icons/movingPoint.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Moving Point</string>
@@ -157,7 +213,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >:/cgal/Input/inputPolyline.png</iconset>
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/inputPolyline.png</normaloff>:/cgal/Input/inputPolyline.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Insert Polyline</string>
@@ -171,10 +228,14 @@
   </action>
   <action name="actionClear" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileNew.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Clear</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionShowVoronoi" >
@@ -185,7 +246,8 @@
     <bool>false</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >
+     <normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Voronoi Diagram</string>
@@ -199,7 +261,8 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="../icons/Triangulation_2.qrc" >:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
+    <iconset resource="../icons/Triangulation_2.qrc" >
+     <normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</normaloff>:/cgal/Triangulation_2/Delaunay_triangulation_2.png</iconset>
    </property>
    <property name="text" >
     <string>Show &amp;Delaunay Triangulation</string>
@@ -210,15 +273,20 @@
   </action>
   <action name="actionLoadConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileOpen.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Constraints</string>
    </property>
+   <property name="shortcut" >
+    <string>Ctrl+L</string>
+   </property>
   </action>
   <action name="actionSaveConstraints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileSave.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Save Constraints</string>
@@ -232,13 +300,51 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="MainWindow.qrc" >:/cgal/Actions/icons/circumcenter.png</iconset>
+    <iconset resource="MainWindow.qrc" >
+     <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Circumcenter</string>
    </property>
    <property name="toolTip" >
     <string>Draw circumcenter</string>
+   </property>
+  </action>
+  <action name="actionUse_OpenGL" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Use &amp;OpenGL</string>
+   </property>
+   <property name="statusTip" >
+    <string>Make Qt use OpenGL to display the graphical items, instead of its native painting system.</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionRecenter" >
+   <property name="icon" >
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/zoom-best-fit.svg</normaloff>:/cgal/Input/zoom-best-fit.svg</iconset>
+   </property>
+   <property name="text" >
+    <string>Recenter the viewport</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionAntialiasing" >
+   <property name="text" >
+    <string>Use &amp;anti-aliasing</string>
+   </property>
+   <property name="statusTip" >
+    <string>Make Qt use anti-aliasing when displaying the graphical items.</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+A</string>
    </property>
   </action>
  </widget>

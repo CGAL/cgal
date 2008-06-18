@@ -3,23 +3,28 @@
 
 #include <QtGui>
 #include <QMainWindow>
-#include <QLabel>
 #include <QString>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include "QTriangulationMovingPoint_2.h"
-#include "QPolylineInput_2.h"
-#include "QTriangulationCircumcenter_2.h"
-#include "QTriangulationGraphicsItem_2.h"
-#include "QConstrainedTriangulationGraphicsItem_2.h"
-#include "QVoronoiGraphicsItem_2.h"
-#include "QNavigation.h"
-#include "QNavigation2.h"
 
 #include "ui_MainWindow.h"
 
+namespace CGAL {
+  class QNavigation;
+//   class QNavigation2;
+  template <class Delaunay> class QTriangulationGraphicsItem_2;
+  template <class Delaunay> class QVoronoiGraphicsItem_2;
+  template <class Delaunay> class QConstrainedTriangulationGraphicsItem_2;
+  template <class Delaunay> class QTriangulationMovingPoint_2;
+  template <class Delaunay> class QTriangulationCircumcenter_2;
+  template <class K> class QPolylineInput_2;
+} // end namespace CGAL
+
+class QLabel;
+class QWidget;
+class QGLWidget;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -46,7 +51,7 @@ private:
   QGraphicsScene scene;  
 
   CGAL::QNavigation* navigation;
-  CGAL::QNavigation2* navigation2;
+//   CGAL::QNavigation2* navigation2;
 
 #ifdef DELAUNAY_VORONOI 
   CGAL::QTriangulationGraphicsItem_2<Delaunay> * dgi; 
@@ -67,9 +72,37 @@ private:
   void connectActions();
   void setupStatusBar();
 
+#ifndef DELAUNAY_VORONOI 
+  template <typename Iterator> 
+  void insert_polyline(Iterator b, Iterator e)
+  {
+    Point_2 p, q;
+    Delaunay::Vertex_handle vh, wh;
+    Iterator it = b;
+    vh = dt.insert(*it);
+    p = *it;
+    ++it;
+    for(; it != e; ++it){
+      q = *it;
+      if(p != q){
+        wh = dt.insert(*it);
+        dt.insert_constraint(vh,wh);
+        vh = wh;
+        p = q;
+      } else {
+        std::cout << "duplicate point: " << p << std::endl; 
+      }
+    }
+    emit(changed());
+  }
+
+#endif // ifndef DELAUNAY_VORONOI
+  
 public slots:
 
   void process(CGAL::Object o);
+
+  void on_actionUse_OpenGL_toggled(bool checked);
 
   void on_actionMovingPoint_toggled(bool checked);
 
@@ -82,6 +115,8 @@ public slots:
   void on_actionCircumcenter_toggled(bool checked);
 
   void on_actionClear_triggered();
+
+  void on_actionRecenter_triggered();
 
   void on_actionLoadConstraints_triggered();
 
@@ -97,8 +132,6 @@ public slots:
 
   void on_actionAboutCGAL_triggered();
 
-  void updateMouseCoordinates(QString s);
-  
   signals:
 
   void changed();

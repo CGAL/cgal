@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/cgal/Input" >
-        <file>inputPolyline.png</file>
-    </qresource>
+  <qresource prefix="/cgal/Input" >
+    <file>zoom-best-fit.svg</file>
+    <file>inputPolyline.png</file>
+  </qresource>
 </RCC>

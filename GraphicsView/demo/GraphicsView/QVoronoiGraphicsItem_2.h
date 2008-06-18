@@ -61,8 +61,9 @@ QVoronoiGraphicsItem_2<DT>::boundingRect() const
     QPoint br = vprect.bottomRight();
     QPointF tlf = view->mapToScene(tl);
     QPointF brf = view->mapToScene(br);
-    rect = QRectF(tlf, brf);
+    rect |= QRectF(tlf, brf);
   }
+//   std::cerr << "boundingRect()\n";
   return rect;
 }
 

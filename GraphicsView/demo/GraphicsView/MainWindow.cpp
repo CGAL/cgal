@@ -5,26 +5,30 @@
 #include <QMainWindow>
 #include <QActionGroup>
 #include <QFileDialog>
+#include <QInputDialog>
+#include <QLabel>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 
-#include "QTriangulationVerticesGraphicsItem_2.h"
 #include "QTriangulationCircumcenter_2.h"
+#include "QTriangulationMovingPoint_2.h"
+#include "QPolylineInput_2.h"
+#include "QTriangulationGraphicsItem_2.h"
+#include "QConstrainedTriangulationGraphicsItem_2.h"
+#include "QVoronoiGraphicsItem_2.h"
+
+#include "QNavigation.h"
+
+#include <QGLWidget>
+
 
   
 MainWindow::MainWindow()
 {
   setupUi(this);
   setupStatusBar();
-
-  // The navigation adds zooming and translation functionality to the QGraphicsView
-  navigation = new CGAL::QNavigation(this->graphicsView);
-  this->graphicsView->viewport()->installEventFilter(navigation);
-
-  //  navigation2 = new CGAL::Navigation2(this->graphicsView);
-  //this->graphicsView->installEventFilter(navigation2);
 
   // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
 #ifdef DELAUNAY_VORONOI
@@ -36,13 +40,7 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
 
-  CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay> * dvgi;
-  dvgi = new  CGAL::QTriangulationVerticesGraphicsItem_2<Delaunay>(&dt);
-  dvgi->setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  scene.addItem(dvgi);
-
-  QObject::connect(this, SIGNAL(changed()),
-  	   dvgi, SLOT(modelChanged()));
+  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
 #ifdef DELAUNAY_VORONOI
   vgi = new CGAL::QVoronoiGraphicsItem_2<Delaunay>(&dt);
@@ -77,9 +75,6 @@ MainWindow::MainWindow()
   actionShowDelaunay->setChecked(true);
 
 
-  QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
-		   this, SLOT(updateMouseCoordinates(QString)));
-
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   scene.setSceneRect(0,0, 100, 100);
 
@@ -90,6 +85,14 @@ MainWindow::MainWindow()
   this->graphicsView->setRenderHint(QPainter::Antialiasing);
   this->graphicsView->setScene(&scene);
   this->graphicsView->setMinimumSize(200, 200); // this is the size in pixels on the screen
+
+  // The navigation adds zooming and translation functionality to the QGraphicsView
+  navigation = new CGAL::QNavigation(this->graphicsView);
+  this->graphicsView->viewport()->installEventFilter(navigation);
+  this->graphicsView->installEventFilter(navigation);
+
+  QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
+		   xycoord, SLOT(setText(QString)));
 }
 
 
@@ -113,9 +116,40 @@ MainWindow::process(CGAL::Object o)
 {
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
-    dt.insert(points.begin(), points.end());
+    if(points.size() == 1) {
+      dt.insert(points.front());
+    }
+#ifndef DELAUNAY_VORONOI
+    else {
+      insert_polyline(points.begin(), points.end());
+    }
+#endif // ifndef DELAUNAY_VORONOI
   }
   emit(changed());
+}
+
+void
+MainWindow::on_actionUse_OpenGL_toggled(bool checked)
+{ 
+  if(checked) {
+    QGLWidget* new_viewport = new QGLWidget;
+
+    // Setup the format to allow antialiasing with OpenGL:
+    // one need to activate the SampleBuffers, if the graphic driver allows
+    // this.
+    QGLFormat glformat = new_viewport->format();
+    glformat.setOption(QGL::SampleBuffers);
+    new_viewport->setFormat(glformat);
+
+    this->graphicsView->setViewport(new_viewport);
+    statusBar()->showMessage(tr("OpenGL activated"), 1000);
+  }
+  else {
+    this->graphicsView->setViewport(new QWidget);
+    statusBar()->showMessage(tr("OpenGL deactivated"), 1000);
+  }
+  this->graphicsView->viewport()->installEventFilter(navigation);
+  this->graphicsView->setFocus();
 }
 
 void
@@ -146,8 +180,11 @@ MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   if(checked){
     scene.addItem(dgi);
-  } else {  
-    scene.removeItem(dgi);
+    dgi->setDrawEdges(true);
+  } else {
+    dgi->setDrawEdges(false);
+    if(!dgi->drawVertices())
+      scene.removeItem(dgi);
   }
 }
 
@@ -187,7 +224,6 @@ MainWindow::on_actionClear_triggered()
 {
   dt.clear();
   emit(changed());
-  scene.update(); // do we need that?
 }
 
 
@@ -211,28 +247,49 @@ MainWindow::loadConstraints(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
 
   std::list<K::Point_2> points;
-  std::list< std::pair<K::Point_2,K::Point_2> > segments;
+  typedef std::list< std::pair<Point_2, Point_2> > Segments;
+  Segments segments;
   K::Point_2 p,q;
+  while(ifs >> p) {
+    points.push_back(p);
+  }
+#ifndef DELAUNAY_VORONOI
+  insert_polyline(points.begin(), points.end());
+#endif
 
   std::vector<K::Point_2> P;
-  P.resize(2);
-  char c;
-  while(ifs >> c){
-    ifs >>p >> q;
-    if(p != q){
-      segments.push_back(std::make_pair(p,q));
-    }
-  }
-  // dt.insert_constraints(segments.begin(), segments.end());
+//   P.resize(2);
+//   char c;
+//   while(ifs >> c){
+//     ifs >>p >> q;
+//     if(p != q){
+//       segments.push_back(std::make_pair(p,q));
+//     }
+//   }
+// #ifndef DELAUNAY_VORONOI
+//   for(Segments::const_iterator it = segments.begin();
+//       it != segments.end(); ++it)
+//   {
+//     dt.insert_constraint(it->first, it->second);
+//   }
+// #endif
   /*
   while(ifs >> p){
     points.push_back(p);
   }
   //std::cout << "Read " << points.size() << " points" << std::endl;
   dt.insert_polyline(points.begin(), points.end());
-  emit(changed());
   */
-     this->graphicsView->ensureVisible(dgi);
+  // recenter
+  actionRecenter->trigger();
+  emit(changed());
+}
+
+void
+MainWindow::on_actionRecenter_triggered()
+{
+  this->graphicsView->setSceneRect(dgi->boundingRect());
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
 }
 
 void
@@ -252,6 +309,7 @@ MainWindow::on_actionSaveConstraints_triggered()
 void
 MainWindow::saveConstraints(QString fileName)
 {
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 void
@@ -260,9 +318,12 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
   
+  const int number_of_points = QInputDialog::getInteger(this, 
+                                                        tr("Number of random points"),
+                                                        tr("Enter number of random points"));
   std::vector<Point_2> points;
-  points.reserve(10);
-  for(int i = 0; i < 10; i++){
+  points.reserve(number_of_points);
+  for(int i = 0; i < number_of_points; i++){
     points.push_back(*g++);
   }
   dt.insert(points.begin(), points.end());
@@ -290,17 +351,10 @@ MainWindow::on_actionAboutCGAL_triggered()
 void
 MainWindow::setupStatusBar()
 {
-  xycoord = new QLabel(" -0.00000 , -0.00000 ");
+  xycoord = new QLabel(" -0.00000 , -0.00000 ", this);
   xycoord->setAlignment(Qt::AlignHCenter);
   xycoord->setMinimumSize(xycoord->sizeHint());
   this->statusbar->addWidget(xycoord);
 }
-void
-MainWindow::updateMouseCoordinates(QString s)
-{
-  xycoord->setText(s);
-}
 
-#include "MainWindow.rcc"
- 
 #include "MainWindow.moc"

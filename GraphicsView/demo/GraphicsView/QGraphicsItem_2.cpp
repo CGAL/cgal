@@ -4,7 +4,7 @@
 namespace CGAL {
 
 
-#include "QGraphicsItem_2.moc"
-
 } // namespace CGAL
+
+#include "QGraphicsItem_2.moc"
 
