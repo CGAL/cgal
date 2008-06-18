@@ -38,9 +38,9 @@
 
 header()
 {
-  echo "#---------------------------------------------------------------------#"
-  echo "#                    $1"
-  echo "#---------------------------------------------------------------------#"
+  printf "#---------------------------------------------------------------------#\n"
+  printf "#                    $1\n"
+  printf "#---------------------------------------------------------------------#\n"
 }
 
 
@@ -56,20 +56,20 @@ create_makefile_entry()
             /\/\/ *moc_source_file *:/ {print $2; COUNT++} \
             END{ if (COUNT==0) exit 1; else exit 0 }' $CFILE`; then
       MOCFILE=${BASE}.moc
-      echo "$MOCFILE: $MOC_FROM"
+      printf "$MOCFILE: $MOC_FROM\n"
       printf "\t\$(QT_MOC) -o $MOCFILE $MOC_FROM\n"
-      echo
-      echo "$BASE\$(OBJ_EXT): $MOCFILE"
-      echo
+      printf "\n"
+      printf "$BASE\$(OBJ_EXT): $MOCFILE\n"
+      printf "\n"
     fi
   fi
 
   # Print target for $1 executable if $CFILE contains a function "main()"
   egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    echo "$BASE\$(EXE_EXT): $BASE\$(OBJ_EXT)"
+    printf "$BASE\$(EXE_EXT): $BASE\$(OBJ_EXT)\n"
     printf "\t\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$BASE $BASE\$(OBJ_EXT) \$(LDFLAGS)\n"
-    echo
+    printf "\n"
   fi;
 }
 
@@ -77,54 +77,54 @@ create_makefile_entry()
 create_makefile()
 {
   # print makefile header
-  echo "# Created by the script cgal_create_makefile"
-  echo "# This is the makefile for compiling a CGAL application."
-  echo
+  printf "# Created by the script cgal_create_makefile\n"
+  printf "# This is the makefile for compiling a CGAL application.\n"
+  printf "\n"
   header "include platform specific settings"
-  echo    "# Choose the right include file from the <cgalroot>/make directory."
-  echo
-  echo    "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE"
-  echo    "include \$(CGAL_MAKEFILE)"
+  printf "# Choose the right include file from the <cgalroot>/make directory.\n"
+  printf "\n"
+  printf "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE\n"
+  printf "include \$(CGAL_MAKEFILE)\n"
 
   # print compiler flags
-  echo
+  printf "\n"
   header "compiler flags"
-  echo
-  echo    "CXXFLAGS = \\"
+  printf "\n"
+  printf "CXXFLAGS = \\\\\n"
   if [ -d include ] ; then
-    echo  "           -Iinclude \\"
+    printf "           -Iinclude \\\\\n"
   fi
-  echo    "           -I../../include \\"
+  printf "           -I../../include \\\\\n"
   if [ ! -z "$TESTSUITE" ] ; then
-    echo    "           \$(TESTSUITE_CXXFLAGS) \\"
-    echo    "           \$(EXTRA_FLAGS) \\"
+    printf "           \$(TESTSUITE_CXXFLAGS) \\\\\n"
+    printf "           \$(EXTRA_FLAGS) \\\\\n"
   fi
-  echo    "           \$(CGAL_CXXFLAGS) \\"
-  echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS)"
+  printf "           \$(CGAL_CXXFLAGS) \\\\\n"
+  printf "           \$(LONG_NAME_PROBLEM_CXXFLAGS)\n"
 
   # print linker flags
-  echo
+  printf "\n"
   header "linker flags"
-  echo
-  echo    "LIBPATH = \\"
+  printf "\n"
+  printf "LIBPATH = \\\\\n"
   if [ ! -z "$TESTSUITE" ] ; then
-    echo    "          \$(TESTSUITE_LIBPATH) \\"
+    printf "          \$(TESTSUITE_LIBPATH) \\\\\n"
   fi
-  echo    "          \$(CGAL_LIBPATH)"
-  echo
-  echo    "LDFLAGS = \\"
+  printf "          \$(CGAL_LIBPATH)\n"
+  printf "\n"
+  printf "LDFLAGS = \\\\\n"
   if [ ! -z "$TESTSUITE" ] ; then
-    echo    "          \$(TESTSUITE_LDFLAGS) \\"
+    printf "          \$(TESTSUITE_LDFLAGS) \\\\\n"
   fi
-  echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
-  echo    "          \$(CGAL_LDFLAGS)"
+  printf "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\\\\n"
+  printf "          \$(CGAL_LDFLAGS)\n"
 
-  echo
+  printf "\n"
   header "target entries"
 
   # print 'all' target
-  echo
-  printf "all:            "
+  printf "\n"
+  printf "all: "
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     # Add $file's executable to "all" target
     # if $file contains a function "main()"
@@ -132,13 +132,13 @@ create_makefile()
     BASE=`basename $BASE .cpp`
     egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-      printf "\\\\\n                $BASE\$(EXE_EXT) "
+      printf "\\\\\n        $BASE\$(EXE_EXT) "
     fi
   done
-  echo
+  printf "\n"
 
   # print rules for each .C and .cpp file
-  echo
+  printf "\n"
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     create_makefile_entry $file
   done
@@ -148,21 +148,20 @@ create_makefile()
   for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
       BASE=`basename $file .C`
       BASE=`basename $BASE .cpp`
-      printf "\\\\\n                   ${BASE}.clean "
+      printf "\\\\\n        ${BASE}.clean "
   done
-  printf    "\n\n"
+  printf "\n\n"
 
   # print "suffix rules"
   header "suffix rules"
-  echo
-  echo    ".C\$(OBJ_EXT):"
-  printf    "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
-  echo
-  echo
-  echo    ".cpp\$(OBJ_EXT):"
-  printf    "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
-  echo
-
+  printf "\n"
+  printf ".C\$(OBJ_EXT):\n"
+  printf "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
+  printf "\n"
+  printf "\n"
+  printf ".cpp\$(OBJ_EXT):\n"
+  printf "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
+  printf "\n"
 }
 
 
