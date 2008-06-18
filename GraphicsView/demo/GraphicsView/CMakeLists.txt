@@ -31,15 +31,13 @@ qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt4_generate_moc( ../../include/CGAL/IO/QtNavigation.h QtNavigation.moc )
-qt4_generate_moc( ../../include/CGAL/IO/QtGraphicsItem.h QtGraphicsItem.moc )
-qt4_generate_moc( ../../include/CGAL/IO/QtInput.h QtInput.moc )
+qt4_generate_moc( ../../include/CGAL/IO/QtGraphicsItem.h QtGraphicsItem_moc.cpp )
+qt4_generate_moc( ../../include/CGAL/IO/QtInput.h QtInput_moc.cpp )
 macro_add_file_dependencies( QNavigation.cpp QtNavigation.moc )
-macro_add_file_dependencies( QInput.cpp QtInput.moc )
-macro_add_file_dependencies( QGraphicsItem_2.cpp QtGraphicsItem.moc )
 qt4_automoc( MainWindow.cpp )
 
 # The executable itself.
-add_executable  ( delaunay main.cpp MainWindow.cpp QNavigation.cpp QGraphicsItem_2.cpp QInput.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
+add_executable  ( delaunay main.cpp MainWindow.cpp QtInput_moc.cpp QNavigation.cpp QtGraphicsItem_moc.cpp QPolylineInput_2_non_templated_base.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( delaunay ${QT_LIBRARIES} )
