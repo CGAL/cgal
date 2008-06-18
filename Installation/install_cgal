@@ -4820,7 +4820,7 @@ support_menu()
 # (assumed to be in columns 6-8)
 _get_timestamp()
 {
-    ${_lsone} -l "$1" | ${_awk} '{printf "%s %s %s",$7,$6,$8}'
+    ${_lsone} -l "$1" | ${_awk} '{printf "%s %s %s",$7,$6,$8; exit 0}'
 }
 
 main_menu()
