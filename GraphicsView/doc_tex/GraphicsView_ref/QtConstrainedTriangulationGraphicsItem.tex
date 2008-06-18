@@ -1,0 +1,32 @@
+
+\begin{ccRefClass}{QtConstrainedTriangulationGraphicsItem<CT>}
+
+\ccDefinition
+An object of type \ccRefName\ is a graphics item that encapsulates a constrained triangulation.
+
+\ccInclude{CGAL/IO/QtConstrainedTriangulationGraphicsItem.h}
+
+\ccParameters
+
+The template parameter of \ccc{QtTriangulationGraphicsItem<CT>} must be a \cgal\ constrained triangulation class.
+
+
+\ccInheritsFrom
+\ccc{QtTriangulationGraphicsItem}
+
+\ccCreation
+\ccCreationVariable{ctgi}
+
+\ccConstructor{QtConstrainedTriangulationGraphicsItem<CT>(CT* ct);}{Constucts a graphics item for triangulation \ccc{ct}.}
+
+\ccMethod{QPen constraintsPen()() const;}{Get the pen that is used to draw constraints.}
+\ccMethod{void setConstraintsPen()(const QPen& p);}{Set the pen that is used to draw constraints.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

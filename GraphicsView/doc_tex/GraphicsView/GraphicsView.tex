@@ -1,0 +1,27 @@
+
+
+\qt\ is a {\sc Gui} toolkit\footnote{http://www.trolltech.com} for
+cross-platform application development. 
+
+% +-----------------------------------------------------+
+\section{Introduction}
+
+This chapter describes classes that help to visualize two dimensional \cgal\ objects
+with the \qt\ GraphicsView framework.
+
+This framework uses the model view paradigm. GraphicsItems are stored in a 
+GraphicsScene and can be displayed in serveral GraphicsViews. The items 
+have a paint method which is called when an item is in the visible area of a view.
+The framework is also responsible for dispatching events from the view
+via the scene to the items. The framework is extensible in the sense
+that users can write new GraphicsItems, and that is what this package is
+about. 
+
+Besided visualizing GraphicsItems users want to enter geometric objects.
+We provide the input generators for all 2D \cgal\ kernel objects.
+
+The package includes also the class \ccc{QtNavigation} providing zooming,
+panning, and scrolling.
+
+
+The following sections describe the interaction between all these classes.
