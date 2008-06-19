@@ -2,9 +2,6 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Nef_3/Nary_union.h>
-#include <CGAL/Nef_3/Nary_union_by_pq.h>
-//#include <CGAL/Nef_3/Nary_union_by_pq_me.h>
-//#include <CGAL/Nef_3/Nary_union_using_distinct_uniter.h>
 #include <CGAL/Nef_3/Relabel_volume.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
@@ -63,7 +60,6 @@ class Trunk_offset {
   typedef typename Box_intersection_d::Box_d<double,3> Box;
   typedef Bounding_box_3<typename Kernel::Kernel_tag, Kernel> EBox;
   typedef Nary_union<Nef_polyhedron> NUBQ;
-  //  typedef Nary_union_using_distinct_uniter<Nef_polyhedron> NUUDU;
   typedef Relabel_volume<Nef_polyhedron> Relabel_volume;
   typedef Mark_bounded_volumes<Nef_polyhedron> Mark_bounded_volumes;
 
