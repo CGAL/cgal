@@ -79,7 +79,7 @@ public:
     /// Compare positions
     bool operator==(const Point_with_normal_3& that)
     {
-      return Base::operator==(that);
+      return ((Base&)(*this) == (Base&)that);
     }
     bool operator!=(const Point_with_normal_3& that)
     {

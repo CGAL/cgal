@@ -112,8 +112,8 @@ merge_epsilon_nearest_points_3(
           InputIterator first,      ///< input points
           InputIterator beyond,
           OutputIterator output,    ///< output points
-          const Kernel& /*kernel*/,
-          double epsilon)           ///< tolerance value when comparing 3D points
+          double epsilon, ///< tolerance value when comparing 3D points
+          const Kernel& /*kernel*/)          
 {
     typedef typename Kernel::Point_3 Point;
 
@@ -123,7 +123,7 @@ merge_epsilon_nearest_points_3(
     CGAL_precondition(epsilon > 0);
 
     // Merge points which belong to the same cell of a grid of cell size = epsilon.
-    Epsilon_point_set_3<Point_3> merged_points(epsilon);
+    Epsilon_point_set_3<Point> merged_points(epsilon);
     merged_points.insert(first, beyond);
 
     // Copy merged points to output
@@ -147,8 +147,9 @@ void
 merge_epsilon_nearest_points_3(
            ForwardIterator first,   ///< input/output points
            ForwardIterator beyond,
-           const Kernel& /*kernel*/,
-           double epsilon)          ///< tolerance value when comparing 3D points
+           double epsilon,  ///< tolerance value when comparing 3D points
+           const Kernel& /*kernel*/)
+        
 {
   CGAL_precondition(false); // nyi
 }
@@ -175,7 +176,7 @@ merge_epsilon_nearest_points_3(
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  return merge_epsilon_nearest_points_3(first,beyond,output,Kernel(),epsilon);
+  return merge_epsilon_nearest_points_3(first,beyond,output,epsilon,Kernel());
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
@@ -195,7 +196,7 @@ merge_epsilon_nearest_points_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  merge_epsilon_nearest_points_3(first,beyond,Kernel(),epsilon);
+  merge_epsilon_nearest_points_3(first,beyond,epsilon,Kernel());
 }
 
 

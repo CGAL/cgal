@@ -22,7 +22,7 @@
 
 #include <CGAL/Point_with_normal_3.h>
 
-#include <vector>
+#include <set>
 #include <algorithm>
 
 
@@ -54,7 +54,7 @@ public:
     typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
 
     /// Iterator over cameras
-    typedef typename std::vector<Point_3>::const_iterator Camera_const_iterator;
+    typedef typename std::set<Point_3>::const_iterator Camera_const_iterator;
 
 // Public methods
 public:
@@ -81,7 +81,7 @@ public:
                     InputIterator first_camera, InputIterator beyond_camera)
     : Base(point, CGAL::NULL_VECTOR)
     {
-      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
+      list_of_cameras.insert(first_camera, beyond_camera); 
     }
     template < class InputIterator >
     Gyroviz_point_3(const Point_3& point,
@@ -89,7 +89,7 @@ public:
                     InputIterator first_camera, InputIterator beyond_camera)
     : Base(point, normal)
     {
-      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
+      list_of_cameras.insert(first_camera, beyond_camera); 
     }
 
     // Default copy constructor and operator =() are fine
@@ -104,21 +104,30 @@ public:
       return ! (*this == that); 
     }
 
-    // Get/set cameras
+    // Get cameras
+    Camera_const_iterator cameras_begin() const { return  list_of_cameras.begin(); }
+    Camera_const_iterator cameras_end  () const { return  list_of_cameras.end(); }
+    
+    // Set cameras
     template < class InputIterator >
     void set_cameras(InputIterator first_camera, InputIterator beyond_camera)
     {
       list_of_cameras.clear();
-      std::copy(first_camera, beyond_camera, std::back_inserter(list_of_cameras));
+      list_of_cameras.insert(first_camera, beyond_camera); 
     }
-    Camera_const_iterator cameras_begin() const { return  list_of_cameras.begin(); }
-    Camera_const_iterator cameras_end  () const { return  list_of_cameras.end(); }
+    
+    // Add cameras
+    template < class InputIterator >
+    void add_cameras(InputIterator first_camera, InputIterator beyond_camera)
+    {
+      list_of_cameras.insert(first_camera, beyond_camera); 
+    }
     
 // Data
 private:
 
   // List of cameras
-  std::vector<Point_3> list_of_cameras;
+  std::set<Point_3> list_of_cameras;
 };
 
 

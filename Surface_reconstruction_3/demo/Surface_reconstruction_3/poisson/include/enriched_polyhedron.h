@@ -135,11 +135,29 @@ private:
 
   typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3> Base;
 
+  // Auxiliary class to build a triangles iterator
+  template <class Node> // Node is Facet
+  struct Project_triangle {
+    typedef Node                                  argument_type;
+    typedef typename PolyhedronTraits_3::Triangle_3 Triangle;
+    typedef Triangle                              result_type;
+    typedef CGAL::Arity_tag<1>                    Arity;
+    typedef typename PolyhedronTraits_3::Point_3  Point;
+    
+    Triangle operator()(const Node& f) const {
+        Halfedge_const_handle he = f.halfedge();
+        const Point& a = he->vertex()->point();
+        const Point& b = he->next()->vertex()->point();
+        const Point& c = he->next()->next()->vertex()->point();
+        return Triangle(a,b,c);
+    }
+  };
+
   // Public types
 public:
 
-  typedef typename PolyhedronTraits_3::FT FT;
-  typedef typename PolyhedronTraits_3::Point_3 Point;
+  typedef typename PolyhedronTraits_3::FT         FT;
+  typedef typename PolyhedronTraits_3::Point_3    Point;
 
   // Repeat Polyhedron_3 public types
   typedef typename Base::HalfedgeDS               HalfedgeDS;
@@ -165,6 +183,10 @@ public:
   typedef typename Base::Halfedge_around_vertex_circulator        Halfedge_around_vertex_circulator;
   typedef typename Base::Halfedge_around_vertex_const_circulator  Halfedge_around_vertex_const_circulator;
 
+  // Iterator over triangles
+  typedef CGAL::Iterator_project<Facet_const_iterator, Project_triangle<Facet> >  
+                                                                  Triangle_const_iterator;      
+
 public :
 
   // Default constructor, copy constructor and operator =() are fine.
@@ -176,6 +198,10 @@ public :
   Base::facets_end;
   Base::vertices_begin;
   Base::vertices_end;
+
+  // Get first/last iterators over triangles.
+  Triangle_const_iterator triangles_begin() const { return Triangle_const_iterator(facets_begin()); }
+  Triangle_const_iterator triangles_end() const   { return Triangle_const_iterator(facets_end()); }
 
   // Compute normals using mesh connectivity (per facet, then per vertex)
   void compute_normals_per_facet()

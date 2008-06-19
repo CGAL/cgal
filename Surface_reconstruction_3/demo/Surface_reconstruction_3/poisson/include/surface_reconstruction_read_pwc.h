@@ -28,7 +28,7 @@ bool surface_reconstruction_read_pwc(const char* pFilename,
   FILE *pFile = fopen(pFilename,"rt");
   if(pFile == NULL)
   {
-    std::cerr << "Error: cannot open " << pFilename;
+    std::cerr << "Error: cannot open " << pFilename << std::endl;
     return false;
   }
 
@@ -52,7 +52,7 @@ bool surface_reconstruction_read_pwc(const char* pFilename,
       if ( (sscanf(pLine,"%s",signature) != 1) || (strcmp(signature, "CamOFF") != 0) )
       {
         // if unsupported file format
-        std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename;
+        std::cerr << "Incorrect file format line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }    
@@ -62,7 +62,7 @@ bool surface_reconstruction_read_pwc(const char* pFilename,
     {
       if (sscanf(pLine,"%ld %ld",&camCount,&pointsCount) != 2)
       {
-        std::cerr << "Error line " << lineNumber << " of " << pFilename;
+        std::cerr << "Error line " << lineNumber << " of " << pFilename << std::endl;
         return false;
       }
     }       
@@ -106,6 +106,10 @@ bool surface_reconstruction_read_pwc(const char* pFilename,
           *gyroviz_point_output = Gyroviz_point(position, 
                                                 list_of_cameras.begin(), list_of_cameras.end());
           gyroviz_point_output++;
+        }
+        else
+        {
+          //std::cerr << "Skip (" << position << ") line " << lineNumber << " of " << pFilename << std::endl;
         }
       }
       // ...or skip comment line
