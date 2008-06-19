@@ -197,6 +197,9 @@ public:
   typedef Lazy_cartesian_const_iterator_2<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_2, typename Exact_kernel::Construct_cartesian_const_iterator_2>   Construct_cartesian_const_iterator_2;
   typedef Lazy_cartesian_const_iterator_3<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_3, typename Exact_kernel::Construct_cartesian_const_iterator_3>   Construct_cartesian_const_iterator_3;
 
+  typedef CGAL::CartesianKernelFunctors::Compute_approximate_squared_length_3<Kernel>  Compute_approximate_squared_length_3;
+  typedef CGAL::CartesianKernelFunctors::Compute_approximate_area_3<Kernel>  Compute_approximate_area_3;
+
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
 
@@ -224,6 +227,13 @@ public:
   construct_cartesian_const_iterator_3_object() const
   { return Construct_cartesian_const_iterator_3(); }
 
+  Compute_approximate_squared_length_3
+  compute_approximate_squared_length_3_object() const
+  { return Compute_approximate_squared_length_3(); }
+
+  Compute_approximate_area_3
+  compute_approximate_area_3_object() const
+  { return Compute_approximate_area_3(); }
 };
 
 
