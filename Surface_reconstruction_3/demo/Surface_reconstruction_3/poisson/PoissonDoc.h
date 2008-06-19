@@ -118,11 +118,12 @@ private:
     // Surface mesher and marching tet common options
     double m_contouring_value;
 
-    // Normal estimation options
+    // K-nearest neighbours options
     unsigned int m_number_of_neighbours;
 
     // Outlier removal
-    double m_outlier_percentage;
+    double m_min_cameras_cone_angle;             // Outliers threshold = min angle of the cameras cone
+    int m_threshold_percent_avg_knn_sq_dst;      // Threshold corresponding to the number of points to be removed 
 
 // Public methods
 public:
@@ -214,8 +215,10 @@ public:
     afx_msg void OnUpdateReconstructionDelaunayRefinement(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsRefineInShell(CCmdUI *pCmdUI);
     afx_msg void OnUpdateAlgorithmsExtrapolateNormals(CCmdUI *pCmdUI);
-    afx_msg void OnRemoveOutliers();
-    afx_msg void OnUpdateRemoveOutliers(CCmdUI *pCmdUI);
+    afx_msg void OnAlgorithmsOutliersRemovalWrtCamerasConeAngle();
+    afx_msg void OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI);
+    afx_msg void OnOutliersRemovalWrtAvgKnnSqDist();
+    afx_msg void OnUpdateOutliersRemovalWrtAvgKnnSqDist(CCmdUI *pCmdUI);
     afx_msg void OnAnalysisAverageSpacing();
     afx_msg void OnOneStepPoissonReconstruction();
     afx_msg void OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI);

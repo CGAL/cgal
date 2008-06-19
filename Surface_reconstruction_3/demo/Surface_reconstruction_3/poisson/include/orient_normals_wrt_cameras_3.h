@@ -1,31 +1,12 @@
-// Copyright (c) 2007-08  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s) : Pierre Alliez and Laurent Saboret
+// Author: Laurent Saboret
 
-
-#ifndef CGAL_ORIENT_NORMALS_WRT_CAMERAS_3_H
-#define CGAL_ORIENT_NORMALS_WRT_CAMERAS_3_H
+#ifndef ORIENT_NORMALS_WRT_CAMERAS_3_H
+#define ORIENT_NORMALS_WRT_CAMERAS_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Oriented_normal_3.h>
 
 #include <iterator>
-
-CGAL_BEGIN_NAMESPACE
 
 
 /// Orient a 3D point's normal w.r.t. the position of cameras
@@ -133,7 +114,5 @@ orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices
 }
 
 
-CGAL_END_NAMESPACE
-
-#endif // CGAL_ORIENT_NORMALS_WRT_CAMERAS_3_H
+#endif // ORIENT_NORMALS_WRT_CAMERAS_3_H
 

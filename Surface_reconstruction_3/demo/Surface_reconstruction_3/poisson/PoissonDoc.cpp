@@ -8,6 +8,7 @@
 #include "PoissonDoc.h"
 #include "enriched_polyhedron.h"
 #include "surface_reconstruction_read_pwc.h"
+#include "remove_outliers_wrt_camera_cone_angle_3.h"
 
 // CGAL
 //Warning: crash when using #define CGAL_C2T3_USE_POLYHEDRON
@@ -82,8 +83,10 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnUpdateReconstructionDelaunayRefinement)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_REFINEINSHELL, OnUpdateAlgorithmsRefineInShell)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnUpdateAlgorithmsExtrapolateNormals)
-    ON_COMMAND(ID_PROCESSING_REMOVEOUTLIERS, OnRemoveOutliers)
-    ON_UPDATE_COMMAND_UI(ID_PROCESSING_REMOVEOUTLIERS, OnUpdateRemoveOutliers)
+    ON_COMMAND(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_CAMERAS_CONE_ANGLE, OnAlgorithmsOutliersRemovalWrtCamerasConeAngle)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_CAMERAS_CONE_ANGLE, OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle)
+    ON_COMMAND(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_AVG_KNN_SQ_DIST, OnOutliersRemovalWrtAvgKnnSqDist)
+    ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_AVG_KNN_SQ_DIST, OnUpdateOutliersRemovalWrtAvgKnnSqDist)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
     ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
     ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
@@ -121,11 +124,12 @@ CPoissonDoc::CPoissonDoc()
   // Surface mesher and marching tet common options
   m_contouring_value = 0.0; // 0 by default
 
-  // Normal estimation options
+  // K-nearest neighbours options
   m_number_of_neighbours = 7; // by default
 
   // Outlier removal
-  m_outlier_percentage = 10.0;
+  m_min_cameras_cone_angle = 0.03;              // Outliers threshold = min angle of the cameras cone 
+  m_threshold_percent_avg_knn_sq_dst = 10;      // Threshold corresponding to the number of points to be removed 
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -262,6 +266,9 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
       prompt_message("Unable to read file");
       return FALSE;
     }
+    
+    // Set options for Gyroviz file
+    m_number_of_neighbours = 50;
   }
   // if unknown extension
   else
@@ -502,7 +509,8 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_contouring_value = m_contouring_value;
 
   dlg.m_number_of_neighbours = m_number_of_neighbours;
-  dlg.m_outlier_percentage = m_outlier_percentage;
+  dlg.m_min_cameras_cone_angle = m_min_cameras_cone_angle;
+  dlg.m_threshold_percent_avg_knn_sq_dst = m_threshold_percent_avg_knn_sq_dst;
 
   if(dlg.DoModal() == IDOK)
   {
@@ -518,7 +526,8 @@ void CPoissonDoc::OnEditOptions()
 
     m_number_of_neighbours = dlg.m_number_of_neighbours;
 
-    m_outlier_percentage = dlg.m_outlier_percentage;
+    m_min_cameras_cone_angle = dlg.m_min_cameras_cone_angle;
+    m_threshold_percent_avg_knn_sq_dst = dlg.m_threshold_percent_avg_knn_sq_dst;
 
     UpdateAllViews(NULL);
     EndWaitCursor();
@@ -859,7 +868,7 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
   CGAL_assertion(m_poisson_function != NULL);
 
   BeginWaitCursor();
-  status_message("Marching tet contouring (%3.1lf%%)...",m_outlier_percentage);
+  status_message("Marching tet contouring (%3.1lf%%)...",m_threshold_percent_avg_knn_sq_dst);
   double init = clock();
 
   m_contour.clear(); // clear previous call
@@ -1008,10 +1017,42 @@ void CPoissonDoc::OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI)
   OnUpdateCreatePoissonTriangulation(pCmdUI);
 }
 
-void CPoissonDoc::OnRemoveOutliers()
+// Remove vertices / cameras cone's angle is low
+void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
 {
   BeginWaitCursor();
-  status_message("Remove outliers (%3.1lf%%)...",m_outlier_percentage);
+  status_message("Remove outliers / cameras cone's angle is low...");
+  double init = clock();
+
+  // todo: use mutating version when ready
+  Point_set output;
+  remove_outliers_wrt_camera_cone_angle_3(
+          m_points.begin(), m_points.end(),
+          std::back_inserter(output),
+          m_min_cameras_cone_angle);
+  m_points.clear();
+  std::copy(output.begin(),output.end(),std::back_inserter(m_points));
+
+  status_message("Remove outliers / cameras cone's angle is low...done (%lf s)", duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateAlgorithmsOutliersRemovalWrtCamerasConeAngle(CCmdUI *pCmdUI)
+{
+  CGAL_assertion(m_points.begin() != m_points.end());
+  bool points_have_cameras = (m_points.begin()->cameras_begin() != m_points.begin()->cameras_end());
+  pCmdUI->Enable(m_edit_mode == POINT_SET && points_have_cameras);
+}
+
+// Remove outliers:
+// - compute average squared distance to the K nearest neighbors,
+// - remove threshold_percent worst points.
+void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
+{
+  BeginWaitCursor();
+  status_message("Remove outliers wrt average squared distance to knn...");
   double init = clock();
 
   // todo: use mutating version when ready
@@ -1020,18 +1061,17 @@ void CPoissonDoc::OnRemoveOutliers()
           m_points.begin(), m_points.end(),
           std::back_inserter(output),
           m_number_of_neighbours,
-          m_outlier_percentage);
-
+          m_threshold_percent_avg_knn_sq_dst);
   m_points.clear();
   std::copy(output.begin(),output.end(),std::back_inserter(m_points));
 
-  status_message("Remove outliers...done (%lf s)",duration(init));
+  status_message("Remove outliers wrt average squared distance to knn...done (%lf s)", duration(init));
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
 }
 
-void CPoissonDoc::OnUpdateRemoveOutliers(CCmdUI *pCmdUI)
+void CPoissonDoc::OnUpdateOutliersRemovalWrtAvgKnnSqDist(CCmdUI *pCmdUI)
 {
   pCmdUI->Enable(m_edit_mode == POINT_SET);
 }

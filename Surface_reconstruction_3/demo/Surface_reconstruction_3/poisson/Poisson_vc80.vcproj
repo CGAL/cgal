@@ -288,6 +288,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\orient_normals_wrt_cameras_3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\Point_set_3.h"
 				>
 			</File>
@@ -308,7 +312,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\RedirectIOToConsole.h"
+				>
+			</File>
+			<File
 				RelativePath=".\RedirectIOToConsole.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\remove_outliers_wrt_camera_cone_angle_3.h"
 				>
 			</File>
 			<File
@@ -396,10 +408,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\orient_normals_minimum_spanning_tree_3.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\include\CGAL\orient_normals_wrt_cameras_3.h"
 				>
 			</File>
 			<File

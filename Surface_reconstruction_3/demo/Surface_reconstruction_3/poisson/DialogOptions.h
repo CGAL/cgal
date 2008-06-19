@@ -28,6 +28,6 @@ public:
 	double m_dr_sizing;
 	double m_contouring_value;
 	unsigned int m_number_of_neighbours;
-public:
-  double m_outlier_percentage;
+	double m_min_cameras_cone_angle;             // Outliers threshold 
+  int m_threshold_percent_avg_knn_sq_dst;      // Threshold corresponding to the number of points to be removed 
 };

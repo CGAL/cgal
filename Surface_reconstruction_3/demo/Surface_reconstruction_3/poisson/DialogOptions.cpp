@@ -19,7 +19,7 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
 	, m_dr_sizing(0)
 	, m_contouring_value(0)
   , m_number_of_neighbours(0)
-  , m_outlier_percentage(0)
+  , m_threshold_percent_avg_knn_sq_dst(0)
 {
 }
 
@@ -32,7 +32,8 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 
   // processing
-	DDX_Text(pDX,IDC_EDIT_OUTLIER_PERCENTAGE,m_outlier_percentage);
+  DDX_Text(pDX,IDC_EDIT_MIN_CAMERAS_CONE_ANGLE,     m_min_cameras_cone_angle);
+	DDX_Text(pDX,IDC_EDIT_AVG_KNN_SQ_DST_PERCENTAGE,m_threshold_percent_avg_knn_sq_dst);
 
 	DDX_Text(pDX,IDC_EDIT_SM_ANGLE,m_sm_angle);
 	DDX_Text(pDX,IDC_EDIT_SM_RADIUS,m_sm_radius);
