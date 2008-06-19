@@ -60,6 +60,11 @@ Global functions: Intersections, Do_intersects and radical_plane.
 
 The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
+4- STL Extensions: The functor adaptors for argument binding and
+composition (bind_*, compose, compose_shared, swap_*, negate, along
+with the helper functions set_arity_*) are deprecated.  Use
+boost::bind instead.  The concept AdaptableFunctor has been changed
+accordingly such that only a nested result_type is required.
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
