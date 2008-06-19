@@ -32,8 +32,6 @@ CGAL_BEGIN_NAMESPACE
 
 template < class A, class S >
 struct Select : public std::binary_function< A, A, A > {
-  typedef Arity_tag< 2 > Arity;
-
   Select() {}
   Select(const S& s) : s_(s) {}
   A operator()(const A& a, const A& b) const
@@ -49,7 +47,6 @@ struct I_Signed_x_distance_2
 : public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
-  typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.x() - q2.x(); }
@@ -59,7 +56,6 @@ struct I_Signed_y_distance_2
 : public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
-  typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { return q1.y() - q2.y(); }
@@ -69,7 +65,6 @@ struct I_Infinity_distance_2
 : public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
-  typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const {
     BOOST_USING_STD_MAX();
@@ -83,7 +78,6 @@ struct I_Signed_infinity_distance_2
 : public std::binary_function<
   Point_2< R >, Point_2< R >, typename R::FT >
 {
-  typedef Arity_tag< 2 > Arity;
   typename R::FT
   operator()(const Point_2< R >& q1, const Point_2< R >& q2) const
   { 

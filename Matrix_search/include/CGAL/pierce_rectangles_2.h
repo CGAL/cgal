@@ -479,6 +479,7 @@ four_cover_points(
 
   return four_cover_points(d, o, ok, t);
 } // four_cover_points(f, l, o, ok, t)
+
 template < class OutputIterator, class Traits >
 OutputIterator
 two_cover_points(
@@ -497,9 +498,6 @@ two_cover_points(
   typename Traits::Signed_infinity_distance_2 sdist =
     d.traits.signed_infinity_distance_2_object();
 
-  Min< FT > minft;
-  less< FT > lessft;
-
   if (sdist(d[2], d[0]) <= FT(0)) {
     // the location domain is degenerate and [f,l) is one-pierceable
     *o++ = d[0];
@@ -512,9 +510,9 @@ two_cover_points(
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                bind(lessft, 
+                bind(less<FT>(), 
 		     d.r,
-		     bind(minft, 
+		     bind(Min<FT>(), 
 			  bind(dist, d[0], _1), 
 			  bind(dist, d[2], _1)))))
       {
@@ -528,9 +526,9 @@ two_cover_points(
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                bind(lessft, 
+                bind(less<FT>(), 
 		     d.r,
-		     bind(minft, 
+		     bind(Min<FT>(), 
 			  bind(dist, d[1], _1), 
 			  bind(dist, d[3], _1)))))
       {
@@ -544,6 +542,7 @@ two_cover_points(
   ok = false;
   return o;
 } // two_cover_points(d, o, ok, t)
+
 template < class OutputIterator, class Traits >
 OutputIterator
 three_cover_points(
@@ -564,7 +563,6 @@ three_cover_points(
   typedef typename Loc_domain< Traits >::Iterator  Iterator;
   typename Traits::Infinity_distance_2 dist =
     d.traits.infinity_distance_2_object();
-  less< FT > lessft;
 
   // test the four corners:
   for (int k = 0; k < 4; ++k) {
@@ -574,7 +572,7 @@ three_cover_points(
     
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
-                         bind(lessft, d.r, bind(dist, corner, _1)));
+                         bind(less<FT>(), d.r, bind(dist, corner, _1)));
     
     // are all points already covered?
     if (i == d.end()) {
@@ -617,7 +615,7 @@ three_cover_points(
     
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
-                          bind(lessft, d.r, bind(dist, corner, _1))));
+                          bind(less<FT>(), d.r, bind(dist, corner, _1))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          bind(std::greater_equal<FT>(), 
@@ -673,7 +671,6 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   typedef typename Staircases< Traits >::Citerator  Citerator;
   typedef typename Staircases< Traits >::Intervall  Intervall;
   
-  less< FT > lessft;
   Infinity_distance_2 dist   = d.traits.infinity_distance_2_object();
   Less_x_2 lessx             = d.traits.less_x_2_object();
   Less_y_2 lessy             = d.traits.less_y_2_object();
@@ -713,7 +710,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
-                         bind(lessft, d.r, bind(dist, corner, _1)));
+                         bind(less<FT>(), d.r, bind(dist, corner, _1)));
     
     // are all points already covered?
     if (i == d.end()) {
@@ -756,7 +753,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
-                          bind(lessft, d.r, bind(dist, corner, _1))));
+                          bind(less<FT>(), d.r, bind(dist, corner, _1))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
                          bind(std::greater_equal<FT>(), 
