@@ -26,6 +26,8 @@
 #ifndef CGAL_FUNCTIONAL_H
 #define CGAL_FUNCTIONAL_H 1
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #include <CGAL/functional_base.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -149,6 +151,7 @@ struct Set_arity {
 };
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 0 >::Type
 set_arity_0(const F& f)
@@ -158,6 +161,7 @@ set_arity_0(const F& f)
 }
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 1 >::Type
 set_arity_1(const F& f)
@@ -167,6 +171,7 @@ set_arity_1(const F& f)
 }
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 2 >::Type
 set_arity_2(const F& f)
@@ -176,6 +181,7 @@ set_arity_2(const F& f)
 }
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 3 >::Type
 set_arity_3(const F& f)
@@ -185,6 +191,7 @@ set_arity_3(const F& f)
 }
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 4 >::Type
 set_arity_4(const F& f)
@@ -194,6 +201,7 @@ set_arity_4(const F& f)
 }
 
 template < class F >
+CGAL_DEPRECATED 
 inline
 typename Set_arity< F, 5 >::Type
 set_arity_5(const F& f)
@@ -383,29 +391,33 @@ struct Swap {
   typedef CGALi::Swapper< F, i, typename Arity_traits< F >::Arity > Type;
 };
 
-template < class F > inline
-typename Swap< F, 1 >::Type
+template < class F >
+CGAL_DEPRECATED 
+inline typename Swap< F, 1 >::Type
 swap_1(const F& f) {
   typedef typename Swap< F, 1 >::Type S;
   return S(f);
 }
 
-template < class F > inline
-typename Swap< F, 2 >::Type
+template < class F >
+CGAL_DEPRECATED 
+inline typename Swap< F, 2 >::Type
 swap_2(const F& f) {
   typedef typename Swap< F, 2 >::Type S;
   return S(f);
 }
 
-template < class F > inline
-typename Swap< F, 3 >::Type
+template < class F >
+CGAL_DEPRECATED 
+inline typename Swap< F, 3 >::Type
 swap_3(const F& f) {
   typedef typename Swap< F, 3 >::Type S;
   return S(f);
 }
 
-template < class F > inline
-typename Swap< F, 4 >::Type
+template < class F >
+CGAL_DEPRECATED 
+inline typename Swap< F, 4 >::Type
 swap_4(const F& f) {
   typedef typename Swap< F, 4 >::Type S;
   return S(f);
@@ -685,6 +697,7 @@ struct Bind {
   typedef CGALi::Binder< T, typename Arity_traits< T >::Arity, A, i > Type;
 };
 template < class F, class A >
+CGAL_DEPRECATED 
 inline typename Bind< F, A, 1 >::Type
 bind_1(const F& f, const A& a) {
   typedef typename Bind< F, A, 1 >::Type B;
@@ -692,6 +705,7 @@ bind_1(const F& f, const A& a) {
 }
 
 template < class F, class A >
+CGAL_DEPRECATED 
 inline typename Bind< F, A, 2 >::Type
 bind_2(const F& f, const A& a) {
   typedef typename Bind< F, A, 2 >::Type B;
@@ -699,6 +713,7 @@ bind_2(const F& f, const A& a) {
 }
 
 template < class F, class A >
+CGAL_DEPRECATED 
 inline typename Bind< F, A, 3 >::Type
 bind_3(const F& f, const A& a) {
   typedef typename Bind< F, A, 3 >::Type B;
@@ -706,6 +721,7 @@ bind_3(const F& f, const A& a) {
 }
 
 template < class F, class A >
+CGAL_DEPRECATED 
 inline typename Bind< F, A, 4 >::Type
 bind_4(const F& f, const A& a) {
   typedef typename Bind< F, A, 4 >::Type B;
@@ -713,6 +729,7 @@ bind_4(const F& f, const A& a) {
 }
 
 template < class F, class A >
+CGAL_DEPRECATED 
 inline typename Bind< F, A, 5 >::Type
 bind_5(const F& f, const A& a) {
   typedef typename Bind< F, A, 5 >::Type B;
@@ -3243,6 +3260,7 @@ struct Compose_shared {
 // ------------------------------------------------------------------------
 
 template < class F0, class F1 >
+CGAL_DEPRECATED 
 inline typename Compose< F0, F1 >::Type
 compose(const F0& f0, const F1& f1) {
   typedef typename Compose< F0, F1 >::Type C;
@@ -3250,6 +3268,7 @@ compose(const F0& f0, const F1& f1) {
 }
 
 template < class F0, class F1, class F2 >
+CGAL_DEPRECATED 
 inline typename Compose< F0, F1, F2 >::Type
 compose(const F0& f0, const F1& f1, const F2& f2)
 {
@@ -3258,6 +3277,7 @@ compose(const F0& f0, const F1& f1, const F2& f2)
 }
 
 template < class F0, class F1, class F2 >
+CGAL_DEPRECATED 
 inline typename Compose_shared< F0, F1, F2 >::Type
 compose_shared(const F0& f0, const F1& f1, const F2& f2)
 {
@@ -3266,6 +3286,7 @@ compose_shared(const F0& f0, const F1& f1, const F2& f2)
 }
 
 template < class F0, class F1, class F2, class F3 >
+CGAL_DEPRECATED 
 inline typename Compose< F0, F1, F2, F3 >::Type
 compose(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
 {
@@ -3274,6 +3295,7 @@ compose(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
 }
 
 template < class F0, class F1, class F2, class F3 >
+CGAL_DEPRECATED 
 inline typename Compose_shared< F0, F1, F2, F3 >::Type
 compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
 {
@@ -3282,7 +3304,9 @@ compose_shared(const F0& f0, const F1& f1, const F2& f2, const F3& f3)
 }
 
 // adaptor for not/negation
-template < typename F > inline
+template < typename F > 
+CGAL_DEPRECATED 
+inline
 typename Compose< std::logical_not<typename F::result_type>, F >::Type
 negate(const F& f)
 {
@@ -3290,6 +3314,8 @@ negate(const F& f)
 }
 
 CGAL_END_NAMESPACE
+
+#endif // !def CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_FUNCTIONAL_H //
 

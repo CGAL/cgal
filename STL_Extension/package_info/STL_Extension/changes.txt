@@ -1,3 +1,6 @@
+19 June 2008 Michael Hoffmann
+- deprecate bind/compose/swap functor adaptors
+
 17 February 2007 Andreas Meyer
 - added a mpl struct is_same_or_derived<A,B> similar to
   boost::is_same / boost::is_base_and_derived
