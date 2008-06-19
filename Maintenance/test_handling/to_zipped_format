@@ -34,9 +34,10 @@ sub reformat_results($)
     my $platform = $_;
 #    system("dos2unix ${platform}.txt ${platform}.txt");
     open (PLATFORM_RESULTS,"<${platform}.txt") or return;
-    while (/^\s*$/) {
-	$_= <PLATFORM_RESULTS>;
+    my $line;
+    while ( ($line = <PLATFORM_RESULTS>) && /^\s*$/) {
     }
+    $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
     my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-");
@@ -105,7 +106,19 @@ sub reformat_results($)
 	if (/CUSTOM_LDFLAGS = '([^']*)'/) {
 	    $LDFLAGS="$1";
 	}
-	$_= <PLATFORM_RESULTS>;
+        if(/^CGAL_TEST_PLATFORM /) {
+            # should be the last one of the header
+            last;
+        }
+        if(! /^[A-Z][A-Z]/ ) {
+            # the header is finished
+            print PLATFORM_NEW_RESULTS $_;
+            last;
+        }
+	if(! ($_= <PLATFORM_RESULTS>)) {
+            # should never happen!!
+            last;
+        }
     }
     while (<PLATFORM_RESULTS>) {
 	print PLATFORM_NEW_RESULTS $_;
