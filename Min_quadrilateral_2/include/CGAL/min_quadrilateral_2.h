@@ -83,7 +83,7 @@ convex_bounding_box_2(
   Greater_yx_2 greater_yx_2 = boost::bind(less_yx_2, _2, _1);
 
   if (less_xy_2(*minx, *f) ||
-      less_yx_2(*minx, *f) && !less_xy_2(*f, *minx))
+      (less_yx_2(*minx, *f) && !less_xy_2(*f, *minx)))
     if (less_yx_2(*minx, *f))
       // first quadrant
       for (;;) {
