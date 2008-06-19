@@ -1898,6 +1898,7 @@ GraphicsView/demo/icons/fileSave.png -text
 GraphicsView/demo/icons/inputPolyline.png -text
 GraphicsView/demo/icons/zoom-best-fit.svg -text
 GraphicsView/doc_tex/GraphicsView/uml-design.eps -text
+GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
 GraphicsView/doc_tex/GraphicsView/uml-design.png -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.eps -text svneol=unset#application/postscript

@@ -1,5 +1,5 @@
 
-\begin{ccRefClass}{QtPolylineInput<K>}
+\begin{ccRefClass}{GraphicsViewPolylineInput<K>}
 
 \ccDefinition
 An object of type \ccRefName\ creates a list of points. A new 
@@ -11,22 +11,22 @@ The tool can serve at the same time for entering a single point,
 a polyline with a given number of points, and for open and closed
 polylines.
 
-\ccInclude{CGAL/IO/QtPolylineInput.h}
+\ccInclude{CGAL/IO/GraphicsViewPolylineInput.h}
 
 \ccParameters
 
-The template parameter of \ccc{QtPolylineInput<K>} must be a \cgal\ \ccc{Kernel}. 
+The template parameter of \ccc{GraphicsViewPolylineInput<K>} must be a \cgal\ \ccc{Kernel}. 
 
 \ccInheritsFrom
-\ccc{QtInput}
+\ccc{GraphicsViewInput}
 
 \ccGlue
 
 \ccCreation
 \ccCreationVariable{in}
-\ccSetTwoColumns{QtPolylineInput}{}
+\ccSetTwoColumns{GraphicsViewPolylineInput}{}
 
-\ccConstructor{QtPolylineInput<T>(QGraphicsScene* s, int n = 0, bool closed = true);}{\ccc{s} is the scene where we want to draw the polyline. \ccc{n} is the number of points of the polyline to generate. When \ccc{closed} is \ccc{true} the function displays a polygon.}
+\ccConstructor{GraphicsViewPolylineInput<T>(QGraphicsScene* s, int n = 0, bool closed = true);}{\ccc{s} is the scene where we want to draw the polyline. \ccc{n} is the number of points of the polyline to generate. When \ccc{closed} is \ccc{true} the function displays a polygon.}
 
 \end{ccRefClass}
 

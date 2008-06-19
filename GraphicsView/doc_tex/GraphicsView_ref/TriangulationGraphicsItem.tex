@@ -1,14 +1,14 @@
 
-\begin{ccRefClass}{QtTriangulationGraphicsItem<T>}
+\begin{ccRefClass}{TriangulationGraphicsItem<T>}
 
 \ccDefinition
 An object of type \ccRefName\ is a graphics item that encapsulates a triangulation.
 
-\ccInclude{CGAL/IO/QtTriangulationGraphicsItem.h}
+\ccInclude{CGAL/IO/TriangulationGraphicsItem.h}
 
 \ccParameters
 
-The template parameter of \ccc{QtTriangulationGraphicsItem<T>} must be a \cgal\ triangulation class.
+The template parameter of \ccc{TriangulationGraphicsItem<T>} must be a \cgal\ triangulation class.
 
 
 \ccInheritsFrom
@@ -17,7 +17,7 @@ The template parameter of \ccc{QtTriangulationGraphicsItem<T>} must be a \cgal\ 
 \ccCreation
 \ccCreationVariable{tgi}
 
-\ccConstructor{QtTriangulationGraphicsItem<T>(T* t);}{Constucts a graphics item for triangulation \ccc{t}.}
+\ccConstructor{TriangulationGraphicsItem<T>(T* t);}{Constucts a graphics item for triangulation \ccc{t}.}
 
 \ccMethod{QPen verticesPen()() const;}{Get the pen that is used to draw vertices.}
 \ccMethod{void setVerticesPen()(const QPen& p);}{Set the pen that is used to draw vertices.}
