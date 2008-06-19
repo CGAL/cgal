@@ -1,10 +1,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>
-#include <CGAL/functional.h>
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <functional>
 
 typedef int                                     Value;
 typedef std::vector<Value>                      Vector;
@@ -38,7 +38,7 @@ int main()
   CGAL::sorted_matrix_search(
     &M, &M + 1,
     CGAL::sorted_matrix_search_traits_adaptor(
-      CGAL::bind_2(std::greater_equal<Value>(), bound), M));
+      std::bind2nd(std::greater_equal<Value>(), bound), M));
   std::cout << "Upper bound for " << bound << " is "
             << upper_bound << "." << std::endl;
 
