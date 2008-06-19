@@ -103,18 +103,3 @@ the set given its {\em exact} position (and not just using an insertion hint);
 looking up keys whose type may differ from \ccc{Type}, as long as users supply
 a comparison functor \ccc{CompareKey}, between the keys and set elements;
 and catenating and splitting sets.
-
-\section{Functor Adaptors}
-
-The standard library contains some adaptors for binding functors, that
-is fixing one argument of a functor to a specific value thereby
-creating a new functor that takes one argument less than the original
-functor.  Also, though non-standard, some STL implementations (such as
-SGI) provide adaptors to compose function objects. Unfortunately,
-these bind and compose adaptors are limited to unary and binary
-functors only, and these functors must not be overloaded.
-
-Since there are a number of functors in \cgal\ that take more than two
-arguments, and since functors may also be overloaded, i.e., accept
-several different sets of arguments, we have to define our own
-adaptors to be used with \cgal\ functors.
