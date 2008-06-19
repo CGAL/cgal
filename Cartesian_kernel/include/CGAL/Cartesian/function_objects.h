@@ -809,7 +809,8 @@ namespace CartesianKernelFunctors {
 
     result_type 
     operator() (const Circle_3 & c) const
-    { return c.rep().approximate_area(); }
+    // { return c.rep().approximate_area(); }
+    { return CGAL_PI * to_double(c.squared_radius()); }
   };
 
   template <class K>
@@ -825,7 +826,8 @@ namespace CartesianKernelFunctors {
 
     result_type 
     operator() (const Circle_3 & c) const
-    { return c.rep().approximate_squared_length(); }
+    // { return c.rep().approximate_squared_length(); }
+    { return CGAL_PI * CGAL_PI * 4.0 * to_double(c.squared_radius()); }
   };
 
 
@@ -867,7 +869,7 @@ namespace CartesianKernelFunctors {
 
   public:
 
-    typedef const FT result_type;
+    typedef FT result_type;
     typedef Arity_tag<1> Arity;
 
     result_type 
@@ -992,7 +994,7 @@ namespace CartesianKernelFunctors {
 
   public:
 
-    typedef const FT result_type;
+    typedef FT result_type;
     typedef Arity_tag<1> Arity;
 
     result_type 
