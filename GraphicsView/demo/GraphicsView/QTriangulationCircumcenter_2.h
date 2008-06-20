@@ -16,10 +16,9 @@ namespace CGAL {
 template <typename DT>
 class QTriangulationCircumcenter_2 : public QtInput
 {
-
-
 public:
   QTriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_);
+  ~QTriangulationCircumcenter_2();
  
   void setPen(const QPen& pen);
 
@@ -49,6 +48,11 @@ QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
   scene_->addItem(circle);
 }
 
+template <typename T>
+QTriangulationCircumcenter_2<T>::~QTriangulationCircumcenter_2()
+{
+  delete circle;
+}
 
 template <typename T>
 void
@@ -81,11 +85,11 @@ QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     return;
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
-  typename T::Face_handle fh = dt->locate(p);
+  fh = dt->locate(p, fh); // fh is used as a hint
   if(!dt->is_infinite(fh)){
-    CGAL::Exact_predicates_inexact_constructions_kernel::Circle_2 c(fh->vertex(0)->point(), 
-								    fh->vertex(1)->point(), 
-								    fh->vertex(2)->point());
+    typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
+                                        fh->vertex(1)->point(), 
+                                        fh->vertex(2)->point());
     CGAL::Bbox_2 bb = c.bbox();
     circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
     circle->show();
