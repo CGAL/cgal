@@ -119,7 +119,7 @@ CPoissonDoc::CPoissonDoc()
   m_sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
   m_sm_radius = 0.1; // as suggested by LR
   m_sm_distance = 0.005;
-  m_sm_error_bound = 2e-3;
+  m_sm_error_bound = 1e-3;
 
   // Poisson options
   m_dr_shell_size = 0.01; // 3 Delaunay refinements options

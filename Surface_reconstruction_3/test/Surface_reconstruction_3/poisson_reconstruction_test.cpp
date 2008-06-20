@@ -196,7 +196,7 @@ int main(int argc, char * argv[])
     FT sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
     FT sm_radius = 0.1; // as suggested by LR
     FT sm_distance = 0.005;
-    FT sm_error_bound = 2e-3;
+    FT sm_error_bound = 1e-3;
 
     STr tr;           // 3D-Delaunay triangulation
     C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
