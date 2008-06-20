@@ -37,8 +37,9 @@ protected:
 
 
 template <typename T>
-QTriangulationMovingPoint_2<T>::QTriangulationMovingPoint_2(T * dt_)
-  :  dt(dt_), movePointToInsert(false), fh()
+QTriangulationMovingPoint_2<T>::QTriangulationMovingPoint_2(T * dt_,
+                                                            QObject* parent)
+  :  QtInput(parent), dt(dt_), movePointToInsert(false), fh()
 {}
 
 

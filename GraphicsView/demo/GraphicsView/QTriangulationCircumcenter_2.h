@@ -17,7 +17,7 @@ template <typename DT>
 class QTriangulationCircumcenter_2 : public QtInput
 {
 public:
-  QTriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_);
+  QTriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_, QObject* parent);
   ~QTriangulationCircumcenter_2();
  
   void setPen(const QPen& pen);
@@ -40,8 +40,10 @@ private:
 
 
 template <typename T>
-QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s, T * dt_)
-  :  dt(dt_), scene_(s)
+QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
+                                                              T * dt_
+                                                              QObject* parent)
+  :  QtInput(parent), dt(dt_), scene_(s)
 {
   circle = new QGraphicsEllipseItem();
   circle->hide();
