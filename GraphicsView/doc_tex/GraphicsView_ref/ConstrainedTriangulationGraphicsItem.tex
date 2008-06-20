@@ -8,7 +8,8 @@ An object of type \ccRefName\ is a graphics item that encapsulates a constrained
 
 \ccParameters
 
-The template parameter of \ccc{QtTriangulationGraphicsItem<CT>} must be a \cgal\ constrained triangulation class.
+The template parameter of \ccc{QtTriangulationGraphicsItem<CT>} must be a
+\cgal\ 2D constrained triangulation class.
 
 
 \ccInheritsFrom
@@ -17,7 +18,10 @@ The template parameter of \ccc{QtTriangulationGraphicsItem<CT>} must be a \cgal\
 \ccCreation
 \ccCreationVariable{ctgi}
 
-\ccConstructor{ConstrainedTriangulationGraphicsItem<CT>(CT* ct);}{Constucts a graphics item for triangulation \ccc{ct}.}
+\ccConstructor{ConstrainedTriangulationGraphicsItem<CT>(CT* ct);}{Constructs
+  a graphics item for triangulation \ccc{ct}.}
+
+\ccOperations
 
 \ccMethod{QPen constraintsPen()() const;}{Get the pen that is used to draw constraints.}
 \ccMethod{void setConstraintsPen()(const QPen& p);}{Set the pen that is used to draw constraints.}

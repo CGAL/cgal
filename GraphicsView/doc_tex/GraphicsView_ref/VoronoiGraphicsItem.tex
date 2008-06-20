@@ -9,7 +9,8 @@ Voronoi diagram.
 
 \ccParameters
 
-The template parameter \ccc{DT} of \ccc{VoronoiGraphicsItem<DT>} must be a \cgal\ Delaunay triangulation class.
+The template parameter \ccc{DT} of \ccc{VoronoiGraphicsItem<DT>} must be a
+\cgal\ 2D Delaunay triangulation class.
 
 
 \ccInheritsFrom
@@ -18,9 +19,10 @@ The template parameter \ccc{DT} of \ccc{VoronoiGraphicsItem<DT>} must be a \cgal
 \ccCreation
 \ccCreationVariable{vgi}
 
-\ccConstructor{VoronoiGraphicsItem<DT>(DT* dt);}{Constucts a graphics item for the dual of the 
+\ccConstructor{VoronoiGraphicsItem<DT>(DT* dt);}{Constructs a graphics item for the dual of the 
 Delaunay triangulation \ccc{dt}.}
 
+\ccOperations
 \ccMethod{QPen edgesPen()() const;}{Get the pen that is used to draw edges.}
 \ccMethod{void setEdgesPen()(const QPen& p);}{Set the pen that is used to draw edges.}
 

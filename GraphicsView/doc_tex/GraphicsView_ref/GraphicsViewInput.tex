@@ -2,15 +2,16 @@
 \begin{ccRefClass}{GraphicsViewInput}
 
 \ccDefinition
-An object of type \ccRefName\ emits \ccc{CGAL::Object}.
+An object of type \ccRefName\ can emit a signal with \ccc{CGAL::Object} as argument.
 
 \ccInclude{CGAL/IO/GraphicsViewInput.h}
 
 
 \ccCreationVariable{in}
-\ccMethod{void emit(Object);}{A signal.}
-\end{ccRefClass}
 
+\ccHeading{Signals}
+\ccMethod{void generate(Object);}{A signal that emits a \ccc{CGAL::Object}.}
+\end{ccRefClass}
 
 
 
