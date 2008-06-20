@@ -1,13 +1,3 @@
-What's to do? Almost everything!
-
-Currently in demo/GraphicsView you can find
-- the files which are the demo files
-- the files that should go somewhere under include/CGAL/IO/...
-- the files that should go in src/CgalQt
-
-
-
-Zoom sur rectangle (avec Control)
 Les inputs se sont seulement un simple  mousePressEvent (pour un circle, il faut cliquer deux fois)
 Pour le cercle, ça serait bien d'avoir la possibilité d'entrée un cercle par centre/rayon, ou deux points diamétraux, ou trois points.
 Bloquer l'input sur un truc // aux axes (avec shift)
@@ -17,3 +7,5 @@ Control: pour les navigations
 Shift: pour // aux axes.
 
 Affichage du (x,y) par rapport à l'origine de l'objet en cours.
+
+Integrer src/CGALQt4 dans le build process de CGAL, avec CMake.
