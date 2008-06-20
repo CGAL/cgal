@@ -59,8 +59,8 @@ typedef std::vector<Point_with_normal> PointList;
 typedef CGAL::APSS_implicit_function<Kernel,Point_with_normal> APSS_implicit_function;
 
 // Surface mesher
-typedef CGAL::Surface_mesh_default_triangulation_3 Str;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Str> C2t3;
+typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, APSS_implicit_function&> Surface_3;
 
 
@@ -108,8 +108,6 @@ int main(int argc, char * argv[])
     std::cerr << "Usage: " << argv[0] << " mesh1.off point_set2.xyz ..." << std::endl;
     return(EXIT_FAILURE);
   }
-
-  unsigned int nofNeighbors = 10;
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -193,14 +191,26 @@ int main(int argc, char * argv[])
 
     //reshape(pwns); // Scale point set to [-1,1]^3
 
-    APSS_implicit_function apss_function(pwns.begin(), pwns.end());
-    apss_function.setNofNeighbors(nofNeighbors);
+    // APSS options
+    unsigned int number_of_neighbours = 10;
+    double projection_error = 3.16e-4; // sqrt(1e-7)
+
+    // Create implicit function
+    APSS_implicit_function apss_function(pwns.begin(), pwns.end(),
+                                         number_of_neighbours,
+                                         projection_error); // dichotomy stops when segment < projection_error*size
 
     //***************************************
     // Surface mesh generation
     //***************************************
 
-    Str tr;           // 3D-Delaunay triangulation
+    // Surface mesher options
+    FT sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
+    FT sm_radius = 0.1; // as suggested by LR
+    FT sm_distance = 0.005;
+    FT sm_error_bound = 2e-3;
+
+    STr tr;           // 3D-Delaunay triangulation
     C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
 
     // Get inner point
@@ -222,20 +232,22 @@ int main(int argc, char * argv[])
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(apss_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
+                      sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < sm_error_bound*size
 
     // defining meshing criteria
-    FT sm_angle = 30.0; // theorical guaranty if angle >= 30
-    FT sm_radius = 0.1; // as suggested by LR
-    FT sm_distance = 0.005;
-    CGAL::Surface_mesh_default_criteria_3<Str> criteria(sm_angle,  // lower bound of facets angles (degrees)
+    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
                                                         sm_distance*size); // upper bound of distance to surface
 
-        // meshing surface
-/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+std::cerr << "APSS_implicit_function(knn="<<number_of_neighbours << ",\n"
+          << "                       projection error="<<projection_error*size << ")\n";
+std::cerr << "Implicit_surface_3(dichotomy error="<<sm_error_bound*size << ")\n";
+std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";*/
+          << "                  Non_manifold_tag())...\n";
+
+    // meshing surface
     CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // Print status

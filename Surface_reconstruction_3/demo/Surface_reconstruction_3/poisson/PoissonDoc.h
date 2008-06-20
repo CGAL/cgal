@@ -106,24 +106,26 @@ private:
     Triangular_surface m_contour;
 
     // Surface mesher options
-    double m_sm_angle;
-    double m_sm_radius;
-    double m_sm_distance;
+    double m_sm_angle; // lower bound of facets angles (degrees)
+    double m_sm_radius; // upper bound of Delaunay balls radii
+    double m_sm_distance; // upper bound of distance to surface
+    double m_sm_error_bound; // error bound to stop dichotomy
 
-    // Delaunay refinement options
-    double m_dr_sizing;
+    // Poisson options
+    double m_dr_sizing; // 3 Delaunay refinements options
     double m_dr_shell_size;
     unsigned int m_dr_max_vertices;
+    double m_contouring_value; // Poisson contouring value (TEST)
 
-    // Surface mesher and marching tet common options
-    double m_contouring_value;
+    // APSS options
+	double m_projection_error; // APSS projection error
 
     // K-nearest neighbours options
     unsigned int m_number_of_neighbours;
 
     // Outlier removal
-    double m_min_cameras_cone_angle;             // Outliers threshold = min angle of the cameras cone
-    int m_threshold_percent_avg_knn_sq_dst;      // Threshold corresponding to the number of points to be removed 
+    double m_min_cameras_cone_angle; // min angle of camera's cone (degrees)
+    int m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
 
 // Public methods
 public:

@@ -106,8 +106,12 @@ public:
   ///
   /// @param first First point of point set.
   /// @param beyond Past-the-end point of point set.
+  /// @param k Number of nearest neighbours.
+  /// @param projection_error Dichotomy error when projecting point.
   template < class InputIterator >
-  APSS_implicit_function(InputIterator first, InputIterator beyond)
+  APSS_implicit_function(InputIterator first, InputIterator beyond,
+                         unsigned int k,
+                         FT projection_error = 3.16e-4) // sqrt(1e-7)
   {
     m = new Private;
 
@@ -140,8 +144,13 @@ public:
 
     // Find a point inside the surface.
     find_inner_point();
+    
+    // Number of nearest neighbours
+    m->nofNeighbors = k;
 
-    m->sqError = 0.0000001 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
+    // Dichotomy error when projecting point (squared)
+//    m->sqError = 0.0000001 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
+    m->sqError = projection_error * projection_error * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
 
   APSS_implicit_function(const APSS_implicit_function& other) {
@@ -577,8 +586,8 @@ private:
     Sphere bounding_sphere; // Points' bounding sphere
     Point barycenter; // Points' barycenter
     FT diameter_standard_deviation; // Standard deviation of the distance to barycenter
-    FT sqError;
-    unsigned int nofNeighbors;
+    FT sqError; // Dichotomy error when projecting point (squared)
+    unsigned int nofNeighbors; // Number of nearest neighbours
     mutable AlgebraicSphere as;
     Point inner_point; // Point inside the surface
     int count;

@@ -37,6 +37,10 @@
 // STL
 #include <iostream>
 #include <fstream>
+#include <math.h>
+#ifndef M_PI
+  #define M_PI       3.14159265358979323846
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -112,24 +116,26 @@ CPoissonDoc::CPoissonDoc()
   m_poisson_solved = false; // Need to solve Poisson equation
 
   // Surface mesher options
-  m_sm_angle = 30.0; // theorical guaranty if angle >= 30
+  m_sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
   m_sm_radius = 0.1; // as suggested by LR
   m_sm_distance = 0.005;
+  m_sm_error_bound = 2e-3;
 
-  // Delaunay refinement options
-  m_dr_shell_size = 0.01;
+  // Poisson options
+  m_dr_shell_size = 0.01; // 3 Delaunay refinements options
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
+  m_contouring_value = 0.0; // Poisson contouring value; should be 0 (TEST)
 
-  // Surface mesher and marching tet common options
-  m_contouring_value = 0.0; // 0 by default
+  // APSS options
+  m_projection_error = 3.16e-4 /* sqrt(1e-7) */; // APSS projection error
 
   // K-nearest neighbours options
-  m_number_of_neighbours = 7; // by default
+  m_number_of_neighbours = 10; // was 7
 
   // Outlier removal
-  m_min_cameras_cone_angle = 0.03;              // Outliers threshold = min angle of the cameras cone 
-  m_threshold_percent_avg_knn_sq_dst = 10;      // Threshold corresponding to the number of points to be removed 
+  m_min_cameras_cone_angle = 2; // min angle of camera's cone (degrees) 
+  m_threshold_percent_avg_knn_sq_dst = 10; // percentage of outliers to remove 
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -501,12 +507,14 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_sm_angle = m_sm_angle;
   dlg.m_sm_radius = m_sm_radius;
   dlg.m_sm_distance = m_sm_distance;
+  dlg.m_sm_error_bound = m_sm_error_bound;
 
   dlg.m_dr_sizing = m_dr_sizing;
   dlg.m_dr_shell_size = m_dr_shell_size;
   dlg.m_dr_max_vertices = m_dr_max_vertices;
-
   dlg.m_contouring_value = m_contouring_value;
+
+  dlg.m_projection_error = m_projection_error;
 
   dlg.m_number_of_neighbours = m_number_of_neighbours;
   dlg.m_min_cameras_cone_angle = m_min_cameras_cone_angle;
@@ -517,12 +525,14 @@ void CPoissonDoc::OnEditOptions()
     m_sm_angle = dlg.m_sm_angle;
     m_sm_radius = dlg.m_sm_radius;
     m_sm_distance = dlg.m_sm_distance;
+    m_sm_error_bound = dlg.m_sm_error_bound;
 
     m_dr_sizing = dlg.m_dr_sizing;
     m_dr_shell_size = dlg.m_dr_shell_size;
     m_dr_max_vertices = dlg.m_dr_max_vertices;
-
     m_contouring_value = dlg.m_contouring_value;
+
+    m_projection_error = dlg.m_projection_error;
 
     m_number_of_neighbours = dlg.m_number_of_neighbours;
 
@@ -826,17 +836,20 @@ void CPoissonDoc::OnReconstructionPoissonSurfaceMeshing()
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_poisson_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
+                      m_sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound*size
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance*size); // upper bound of distance to surface
 
-    // meshing surface
-/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+std::cerr << "Implicit_surface_3(dichotomy error="<<m_sm_error_bound*size << ")\n";
+std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";*/
+          << "                  Non_manifold_tag())...\n";
+
+    // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface
@@ -1029,7 +1042,7 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
   remove_outliers_wrt_camera_cone_angle_3(
           m_points.begin(), m_points.end(),
           std::back_inserter(output),
-          m_min_cameras_cone_angle);
+          m_min_cameras_cone_angle*M_PI/180.0);
   m_points.clear();
   std::copy(output.begin(),output.end(),std::back_inserter(m_points));
 
@@ -1110,11 +1123,10 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     m_surface_mesher_c2t3.clear();
     m_surface.clear();
 
-    unsigned int nofNeighbors = 10;
-
     // Create implicit function
-    m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end());
-    m_apss_function->setNofNeighbors(nofNeighbors);
+    m_apss_function = new APSS_implicit_function(m_points.begin(), m_points.end(), 
+                                                 m_number_of_neighbours,
+                                                 m_projection_error); // dichotomy stops when segment < m_projection_error*size
 
     // Get inner point
     Point inner_point = m_apss_function->get_inner_point();
@@ -1135,17 +1147,22 @@ void CPoissonDoc::OnReconstructionApssReconstruction()
     FT    sm_sphere_radius = 2 * size;
     sm_sphere_radius *= 1.1; // <= the Surface Mesher fails if the sphere does not contain the surface
     Surface_3 surface(*m_apss_function,
-                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius));
+                      Sphere(sm_sphere_center,sm_sphere_radius*sm_sphere_radius),
+                      m_sm_error_bound*size/sm_sphere_radius); // dichotomy stops when segment < m_sm_error_bound*size
 
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(m_sm_angle,  // lower bound of facets angles (degrees)
                                                         m_sm_radius*size,  // upper bound of Delaunay balls radii
                                                         m_sm_distance*size); // upper bound of distance to surface
 
-    // meshing surface
-/*std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
+std::cerr << "APSS_implicit_function(knn="<<m_number_of_neighbours << ",\n"
+          << "                       projection error="<<m_projection_error*size << ")\n";
+std::cerr << "Implicit_surface_3(dichotomy error="<<m_sm_error_bound*size << ")\n";
+std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
           << "                  criteria={angle="<<m_sm_angle << ", radius="<<m_sm_radius*size << ", distance="<<m_sm_distance*size << "},\n"
-          << "                  Non_manifold_tag())...\n";*/
+          << "                  Non_manifold_tag())...\n";
+
+    // meshing surface
     CGAL::make_surface_mesh(m_surface_mesher_c2t3, surface, criteria, CGAL::Non_manifold_tag());
 
     // get output surface

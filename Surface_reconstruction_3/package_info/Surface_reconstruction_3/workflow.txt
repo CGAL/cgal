@@ -7,7 +7,7 @@ Analysis
 Processing
 - smoothing (via jet-fitting + reprojection) (done)
 - outlier removal (to check which one is easy with CGAL components) (done)
-- decimate point sets (laurent)
+- simplify point sets: clustering, random simplification (laurent)
 
 Normal estimation
 - KNN + point-based PCA (done)
@@ -25,7 +25,7 @@ Implicit function
 
 Implicit function contouring
 - Delaunay refinement & filtering (Surface_mesher) (done)
-- Integration of Marching Cubes? (laurent)
+- Integration of Marching Cubes (laurent)
 
 Delaunay-based contouring
 - Integration of "Da - Cohen-Steiner" [Cohen Steiner-Da 2003] (laurent)
