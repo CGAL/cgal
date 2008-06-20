@@ -30,14 +30,20 @@ include_directories (BEFORE ../../include)
 if(QT4_FOUND) 
   include(${QT_USE_FILE})
 
+  # a moc file that is included in a .cpp file
   qt4_generate_moc( ../../include/CGAL/IO/QtNavigation.h QtNavigation.moc )
+  macro_add_file_dependencies( QtNavigation.cpp QtNavigation.moc )
+
+  # two moc files that are compiled directly as cpp files
   qt4_generate_moc( ../../include/CGAL/IO/QtGraphicsItem.h QtGraphicsItem_moc.cpp )
   qt4_generate_moc( ../../include/CGAL/IO/QtInput.h QtInput_moc.cpp )
-  macro_add_file_dependencies( QtNavigation.cpp QtNavigation.moc )
+
+  # qrc files (resources files, that contain icons, at least)
+  qt4_add_resources ( RESOURCE_FILES ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Logos.qrc ../../demo/icons/Triangulation_2.qrc)
 
   set( CGAL_QT4_BASENAME CGAL-Qt4 )
 
-  add_library( CGAL_QT4 QtInput_moc.cpp QtNavigation.cpp QtGraphicsItem_moc.cpp QtPolylineInput_non_templated_base.cpp )
+  add_library( CGAL_QT4 QtInput_moc.cpp QtNavigation.cpp QtGraphicsItem_moc.cpp QtPolylineInput.cpp ${RESOURCE_FILES} )
   target_link_libraries( CGAL_QT4 ${QT_LIBRARIES} )
   if ( NOT AUTO_LINK_ENABLED )    
     # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.

@@ -8,7 +8,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-#include <CGAL/IO/QtPolylineInput_non_templated_base.h>
+#include <CGAL/IO/QtPolylineInput.h>
 
 namespace CGAL {
 

@@ -48,7 +48,7 @@ public:
   }
 
      
-  void operator()(std::list< CGAL::Point_2<K> >& p, const QPolygonF& qp) const
+  void operator()(std::list< typename K::Point_2 >& p, const QPolygonF& qp) const
   {
     for(int i = 0; i < qp.size(); i++){
       p.push_back(operator()(qp[i]));

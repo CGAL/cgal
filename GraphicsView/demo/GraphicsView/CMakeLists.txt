@@ -27,7 +27,7 @@ link_directories(../../src/CGALQt4)
 qt4_wrap_ui( UI_FILES MainWindow.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Logos.qrc ../icons/Triangulation_2.qrc)
+qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt4_automoc( MainWindow.cpp )
