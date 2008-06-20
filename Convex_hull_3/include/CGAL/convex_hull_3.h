@@ -27,13 +27,13 @@
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/functional.h>
 #include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <iostream>
 #include <algorithm>
 #include <utility>
 #include <list>
 #include <vector>
+#include <boost/bind.hpp>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
@@ -205,7 +205,7 @@ farthest_outside_point(Facet_handle f_handle, std::list<Point>& outside_set,
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
                            outside_set.end(), 
-                           bind_1(less_dist_to_plane, plane));
+                           boost::bind(less_dist_to_plane, plane, _1, _2));
 
    return *farthest_it;
 }
@@ -496,8 +496,8 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
   min_max = CGAL::min_max_element(points.begin(), points.end(), 
-                                  bind_1(compare_dist, plane),
-                                  bind_1(compare_dist, plane));
+                                  boost::bind(compare_dist, plane, _1, _2),
+                                  boost::bind(compare_dist, plane, _1, _2));
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
   {
@@ -601,8 +601,8 @@ convex_hull_3(InputIterator first, InputIterator beyond,
      Less_dist less_dist = traits.less_distance_to_point_3_object();
      P3_iterator_pair endpoints = 
       min_max_element(points.begin(), points.end(), 
-                      bind_1(less_dist, *points.begin()), 
-                      bind_1(less_dist, *points.begin()));
+                      boost::bind(less_dist, *points.begin(), _1, _2), 
+                      boost::bind(less_dist, *points.begin(), _1, _2));
 
      typename Traits::Construct_segment_3 construct_segment =
             traits.construct_segment_3_object();
