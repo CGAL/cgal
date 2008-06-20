@@ -41,7 +41,7 @@ private:
 
 template <typename T>
 QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
-                                                              T * dt_
+                                                              T * dt_,
                                                               QObject* parent)
   :  QtInput(parent), dt(dt_), scene_(s)
 {

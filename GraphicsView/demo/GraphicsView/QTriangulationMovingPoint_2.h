@@ -19,7 +19,7 @@ public:
   typedef typename DT::Vertex_handle Vertex_handle;
   typedef typename DT::Point Point;
 
-  QTriangulationMovingPoint_2(DT  * dt_);
+  QTriangulationMovingPoint_2(DT  * dt_, QObject* parent);
 
 protected:
   void localize_and_insert_point(QPointF qt_point);
