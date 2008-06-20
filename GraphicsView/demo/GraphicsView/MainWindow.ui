@@ -330,7 +330,7 @@
      <normaloff>:/cgal/Input/zoom-best-fit.svg</normaloff>:/cgal/Input/zoom-best-fit.svg</iconset>
    </property>
    <property name="text" >
-    <string>Recenter the viewport</string>
+    <string>Re&amp;center the viewport</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+R</string>

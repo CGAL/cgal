@@ -1,5 +1,6 @@
 <RCC>
-    <qresource prefix="/cgal/logos" >
-        <file>cgal_logo.xpm</file>
-    </qresource>
+  <qresource prefix="/cgal/logos" >
+    <file alias="CGAL.gif" >cgal_large_FAF8E8.gif</file>
+    <file>cgal_logo.xpm</file>
+  </qresource>
 </RCC>

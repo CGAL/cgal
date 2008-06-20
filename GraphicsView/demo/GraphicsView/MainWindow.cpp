@@ -30,7 +30,7 @@ MainWindow::MainWindow()
   setupUi(this);
   setupStatusBar();
 
-  // Add GraphicItems for the Delaunay triangulation, the input points and the Voronoi diagram
+  // Add a GraphicItem for the Delaunay triangulation
 #ifdef DELAUNAY_VORONOI
   dgi = new CGAL::QtTriangulationGraphicsItem<Delaunay>(&dt);
 #else 
@@ -41,23 +41,22 @@ MainWindow::MainWindow()
 		   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  scene.addItem(dgi);
 
 #ifdef DELAUNAY_VORONOI
+  // Add a GraphicItem for the Voronoi diagram
   vgi = new CGAL::QtVoronoiGraphicsItem<Delaunay>(&dt);
   vgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
+  scene.addItem(vgi);
+  vgi->hide();
 #endif    
-    
 
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism
-    
+  // the signal/slot mechanism    
   pi = new CGAL::QtPolylineInput<K>(&scene, 0, false); // inputs polylines which are not closed
-  tcc = new CGAL::QTriangulationCircumcenter_2<Delaunay>(&scene, &dt);
-  tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
 #ifdef DELAUNAY_VORONOI
   pi->setNumberOfVertices(1);  // In this case we only want to insert points
 #endif
@@ -65,40 +64,20 @@ MainWindow::MainWindow()
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(process(CGAL::Object)));
     
-  mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt);
+  mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt, this);
+  // QTriangulationMovingPoint_2<Delaunay> generates an empty Object() each
+  // time the moving point moves.
+  // The following connection is for the purpose of emitting changed().
   QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(process(CGAL::Object)));
+
+  tcc = new CGAL::QTriangulationCircumcenter_2<Delaunay>(&scene, &dt, this);
+  tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   
 
-  connectActions();
-
-  actionShowDelaunay->setChecked(true);
-
-
-  scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  scene.setSceneRect(0,0, 100, 100);
-
-  //  QMatrix m(1.0, 0.0, 0.0, -1.0, 0.0, 0.0);  // identity matrix with reversed Y
-  //this->graphicsView->setMatrix(m); 
-  this->graphicsView->setTransformationAnchor(QGraphicsView::NoAnchor);
-  this->graphicsView->setCacheMode(QGraphicsView::CacheBackground);
-  this->graphicsView->setRenderHint(QPainter::Antialiasing);
-  this->graphicsView->setScene(&scene);
-  this->graphicsView->setMinimumSize(200, 200); // this is the size in pixels on the screen
-
-  // The navigation adds zooming and translation functionality to the QGraphicsView
-  navigation = new CGAL::QtNavigation(this->graphicsView);
-  this->graphicsView->viewport()->installEventFilter(navigation);
-  this->graphicsView->installEventFilter(navigation);
-
-  QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
-		   xycoord, SLOT(setText(QString)));
-}
-
-
-void
-MainWindow::connectActions()
-{
+  // 
+  // Manual handling of actions
+  //
   QObject::connect(this->actionExit, SIGNAL(triggered()), 
 		   this, SLOT(close()));
 
@@ -107,9 +86,28 @@ MainWindow::connectActions()
   ag->addAction(this->actionInsertPolyline);
   ag->addAction(this->actionMovingPoint);
 
-  // The following function call also emits a toggled signal
+  // Check two actions 
   this->actionInsertPolyline->setChecked(true);
-}  
+  this->actionShowDelaunay->setChecked(true);
+
+  //
+  // Setup the scene
+  //
+  scene.setItemIndexMethod(QGraphicsScene::NoIndex);
+  scene.setSceneRect(0,0, 100, 100);
+
+  this->graphicsView->setRenderHint(QPainter::Antialiasing);
+  this->graphicsView->setScene(&scene);
+
+  // The navigation adds zooming and translation functionality to the
+  // QGraphicsView
+  navigation = new CGAL::QtNavigation(this->graphicsView);
+  this->graphicsView->viewport()->installEventFilter(navigation);
+  this->graphicsView->installEventFilter(navigation);
+
+  QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
+		   xycoord, SLOT(setText(QString)));
+}
 
 void
 MainWindow::process(CGAL::Object o)
@@ -178,14 +176,7 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
 void
 MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
-  if(checked){
-    scene.addItem(dgi);
-    dgi->setDrawEdges(true);
-  } else {
-    dgi->setDrawEdges(false);
-    if(!dgi->drawVertices())
-      scene.removeItem(dgi);
-  }
+  dgi->setDrawEdges(checked);
 }
 
 
@@ -194,9 +185,9 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 {
 #ifdef DELAUNAY_VORONOI
   if(checked){
-    scene.addItem(vgi);
+    vgi->show();
   } else {  
-    scene.removeItem(vgi);
+    vgi->hide();
   }
 #endif
 }
@@ -211,7 +202,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
     this->graphicsView->setMouseTracking(true);
     tcc->show();
   } else {  
-    scene.removeEventFilter(vgi);
+    scene.removeEventFilter(tcc);
     this->graphicsView->setMouseTracking(false);
     tcc->hide();
   }
@@ -309,7 +300,9 @@ MainWindow::on_actionSaveConstraints_triggered()
 void
 MainWindow::saveConstraints(QString fileName)
 {
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
+  QMessageBox::warning(this,
+                       tr("saveConstraints"),
+                       tr("Not implemented!"));
 }
 
 void
@@ -318,12 +311,14 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
   
-  const int number_of_points = QInputDialog::getInteger(this, 
-                                                        tr("Number of random points"),
-                                                        tr("Enter number of random points"));
+  const int number_of_points = 
+    QInputDialog::getInteger(this, 
+                             tr("Number of random points"),
+                             tr("Enter number of random points"));
+
   std::vector<Point_2> points;
   points.reserve(number_of_points);
-  for(int i = 0; i < number_of_points; i++){
+  for(int i = 0; i < number_of_points; ++i){
     points.push_back(*g++);
   }
   dt.insert(points.begin(), points.end());
@@ -333,21 +328,29 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 void
 MainWindow::on_actionAbout_triggered()
 {
-  QMessageBox::about(this, tr(" About the Demo"),
-		     tr("<h2>Constrained Delaunay Triangulation</h2>"
-			"<p>Copyright &copy; 2008 GeometryFactory"
-			"<p>This application illustrates the 2D Constrained Delaunay triangulation "
-			"of CGAL. <p>See also <a href='http://www.cgal.org/Pkg/Triangulation2'>the online manual</a>"));
+  QFile about_demo(":/cgal/help/about_demo.html");
+  about_demo.open(QIODevice::ReadOnly);
+  QMessageBox mb(QMessageBox::NoIcon,
+                 tr(" About the Demo"),
+                 QTextStream(&about_demo).readAll(),
+                 QMessageBox::Ok,
+                 this);
+  mb.exec();
 }
 
 void
 MainWindow::on_actionAboutCGAL_triggered()
 {
-  QMessageBox::about(this, tr(" About CGAL"),
-		     tr("<h2>CGAL - Computational Geometry Algorithms Library</h2>"
-			"<p>CGAL provides efficient and reliable geometric algorithms in the form of a C++ library."
-                        "<p>For more information visit <a href='http://www.cgal.org/'>www.cgal.org</a>"));
+  QFile about_CGAL(":/cgal/help/about_CGAL.html");
+  about_CGAL.open(QIODevice::ReadOnly);
+  QMessageBox mb(QMessageBox::NoIcon,
+                 tr("About CGAL"),
+                 QTextStream(&about_CGAL).readAll(),
+                 QMessageBox::Ok,
+                 this);
+  mb.exec();
 }
+
 void
 MainWindow::setupStatusBar()
 {

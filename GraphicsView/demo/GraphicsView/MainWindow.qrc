@@ -1,6 +1,10 @@
 <RCC>
-    <qresource prefix="/cgal/Actions" >
-        <file>icons/circumcenter.png</file>
-        <file>icons/movingPoint.png</file>
-    </qresource>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/circumcenter.png</file>
+    <file>icons/movingPoint.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help" lang="en" >
+    <file>about_CGAL.html</file>
+    <file>about_demo.html</file>
+  </qresource>
 </RCC>

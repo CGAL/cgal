@@ -1882,6 +1882,8 @@ Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/
 GraphicsView/TODO -text
 GraphicsView/demo/GraphicsView/MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/MainWindow.ui -text
+GraphicsView/demo/GraphicsView/about_CGAL.html svneol=native#text/html
+GraphicsView/demo/GraphicsView/about_demo.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
 GraphicsView/demo/GraphicsView/icons/circumcenter.png -text
 GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
@@ -1891,6 +1893,7 @@ GraphicsView/demo/icons/Input.qrc -text
 GraphicsView/demo/icons/Logos.qrc -text
 GraphicsView/demo/icons/Triangulation_2.qrc -text
 GraphicsView/demo/icons/Voronoi_diagram_2.png -text
+GraphicsView/demo/icons/cgal_large_FAF8E8.gif -text svneol=unset#image/gif
 GraphicsView/demo/icons/cgal_logo.xpm -text
 GraphicsView/demo/icons/fileNew.png -text
 GraphicsView/demo/icons/fileOpen.png -text

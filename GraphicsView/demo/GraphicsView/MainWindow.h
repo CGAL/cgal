@@ -67,7 +67,6 @@ public:
   MainWindow();
 
 private:
-  void connectActions();
   void setupStatusBar();
 
 #ifndef DELAUNAY_VORONOI 
