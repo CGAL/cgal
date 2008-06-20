@@ -1,22 +1,23 @@
 
 
-\qt\ is a {\sc Gui} toolkit\footnote{http://www.trolltech.com} for
-cross-platform application development. 
+\ccTexHtml{\qt{}}{<a href="http://trolltech.com/products/qt">QT</a>} is a
+{\sc Gui} toolkit\ccTexHtml{\footnote{http://trolltech.com/products/qt}}{} for
+cross-platform application development.
 
 % +-----------------------------------------------------+
 \section{Introduction}
 
 This chapter describes classes that help to visualize two dimensional \cgal\ objects
-with the \qt\ GraphicsView framework.
+with the \qt\ Graphics View framework.
 
-This framework uses the model view paradigm. GraphicsItems are stored in a 
-GraphicsScene and are displayed in a GraphicsViews. The items 
+This framework uses the model view paradigm. \ccc{QGraphicsItem}s are stored in a 
+\ccc{QGraphicsScene} and are displayed in \ccc{QGraphicsView}s. The items 
 have a paint method which is called when an item is in the visible area of a view.
 The framework is also responsible for dispatching events from the view
 via the scene to the items. The framework is extensible in the sense
-that users can add classes derived from GraphicsItems.
+that users can add classes derived from \ccc{QGraphicsItem}.
 
-Besided visualizing GraphicsItems users want to enter geometric objects.
+Besides visualizing \ccc{QGraphicsItem}s users want to enter geometric objects.
 We provide the input generators for all 2D \cgal\ kernel objects.
 
 The package includes also a class for providing zooming, panning, and scrolling
@@ -24,12 +25,12 @@ to the graphics view.
 
 
 The following sections describe the interaction between all these classes,
-We finally describe the internals of a GraphicsItem.
+We finally describe the internals of a \ccc{QGraphicsItem}.
 
 \subsection{Naming Conventions}
 
-As Qt and \cgal\ have diferent naming conventions, and as this package
-brings them togther we adopted the following, hybrid naming conventions.
+As Qt and \cgal\ have different naming conventions, and as this package
+brings them together we adopted the following, hybrid naming conventions.
 
 \begin{itemize}
 \item Because it is an I/O related package all header files are in the directory
@@ -47,14 +48,14 @@ brings them togther we adopted the following, hybrid naming conventions.
 \section{Overall Design}
 
 In Figure~\ref{graphicsview:uml} you see four classes depicted in grey,
-that come from the Qt GraphicsView framework. It is the \ccc{QGraphicsScene},
-which contains \ccc{QGraphicsItems}, which get displayed in any number
-of \ccc{QGraphicsViews}.   The views are widgets that is they take screen space
-in an application.   
+that come from the Qt Graphics View framework. It is the \ccc{QGraphicsScene},
+which contains \ccc{QGraphicsItem}s, which get displayed in any number
+of \ccc{QGraphicsView}s. The views are widgets, that is they take screen space
+in an application.
 
 The fourth class is the \ccc{QObject}. It plays an important role in Qt for
-event handling. First, it allows to add signals and slots, and to connect them.
-Second, it allows to install event filters. 
+event handling and memory management. First, it allows to add signals and
+slots, and to connect them.  Second, it allows to install event filters.
 
 
 \begin{figure}[t]
@@ -77,7 +78,7 @@ Second, it allows to install event filters.
 In order to visualize for example a \ccc{CGAL::Delaunay_triangulation_2<K>}, we
 provide the graphics item class \ccc{CGAL::TriangulationGraphicsItem<T>}.
 It provides a \ccc{paint} method that draws the edges and vertices of a triangulation
-usign the drawing primitives of the \ccc{QPainter}.   The color of vertices and edges, 
+using the drawing primitives of the \ccc{QPainter}.   The color of vertices and edges, 
 can be chosen by setting a user defined  \ccc{QPen}.
 
 
@@ -94,7 +95,7 @@ triangulation changes the application emits a signal that can get connected to t
 
 We provide a class \ccc{CGAL::GraphicsViewNavigation} that can be
 installed as an event filter of a graphics view and its viewport. Like
-all Qt widgets the {QGraphicsView} is derived from
+all Qt widgets, the {QGraphicsView} is derived from
 \ccc{QObject} and events like mouse clicks, mouse movements, pressed keys and 
 modifier keys are passed to the view which first hands them over to the
 event filter.  The \ccc{GraphicsViewNavigation} event filter allows to zoom, scroll, and recenter.
@@ -111,17 +112,17 @@ in order to enter a point.
 Once the input generator has assembled the object, which can involve several mouse clicks,
 it emits a \ccc{CGAL::Object} wrapping the input.  The emitted input can be connected
 by the application developer to a slot. In the 2D demos of \cgal, which use the 
-GraphicsView framework we connect it to the slot \ccc{MainWindow::processInput(CGAL::Object)}.
+Graphics View framework we connect it to the slot \ccc{MainWindow::processInput(CGAL::Object)}.
 This method unwraps from the \ccc{CGAL::Object} and inserts it in the data structure. 
 It then typically emits a signal \ccc{modelChanged()} which the application developer 
 connects to the graphics item representing the data structure.
 
 All input generators we provide use the left mouse button for entering points.
 The right click terminates a sequence of entered points. 'Delete' and 'backspace'
-remove the last entered poin. 'Esc' resets the input generator.  As the 'Ctrl' key
+remove the last entered point. 'Esc' resets the input generator.  As the 'Ctrl' key
 is used by the \ccc{CGAL::GraphicsViewNavigation} this modifier is not used.  The 'Shift'
 key is used for generation of axis aligned segments, rays, and lines. 
 
 \section{How to write a GraphicsItem} 
 
-Explaining the Qt GraphicsView framework is beyond the scope of this manual.
+Explaining the Qt Graphics View framework is beyond the scope of this manual.
