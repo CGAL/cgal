@@ -53,7 +53,6 @@ QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
 template <typename T>
 QTriangulationCircumcenter_2<T>::~QTriangulationCircumcenter_2()
 {
-  delete circle;
 }
 
 template <typename T>
