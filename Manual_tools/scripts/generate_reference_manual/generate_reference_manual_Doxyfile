@@ -35,7 +35,8 @@ DISTRIBUTE_GROUP_DOC   = NO
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 4
 ALIASES                = "subheading=@name Subheading" \
-                         heading=Heading
+                         heading=Heading \
+			 commentheading=CommentHeading
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 BUILTIN_STL_SUPPORT    = YES

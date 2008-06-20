@@ -44,8 +44,8 @@ my @placeholders = (
     '[Ss]ome(\\\\_\w+)+[,\.]',
 );
 
-# Conversion table from clear text to macro names
-my %macro_names = (
+# Conversion table from clear text to \ccHeading macros
+my %heading_names = (
     '\ccHeading{Has Models}' => '\ccHasModels',
     '\ccHeading{Is Model for the Concepts}' => '\ccIsModel',
     '\ccHeading{Design Pattern}' => '\ccHeading{Design Pattern}',
@@ -57,6 +57,11 @@ my %macro_names = (
     '\ccHeading{Modifiers}' => '\ccModifiers',
     '\ccHeading{Implementation}' => '\ccImplementation',
 #   '\ccHeading{Parameters}' => '\ccParameters', # processed separately
+);
+
+# Conversion table from clear text to \ccCommentHeading macros
+my %comment_heading_names = (
+    '\ccCommentHeading{Precondition}' => '\ccPrecond',
 );
 
 # Warning sentence before automatically generated sections
@@ -355,8 +360,8 @@ sub keep_only_if_function
 }
 
 
-# Convert clear text to macro name
-# Param: heading name in doxygen latex doc, of the form "Heading ...:" or "Subheading ..."
+# Convert clear text to \ccHeading and \ccSubHeading macros
+# Param: macro name in doxygen latex doc, of the form "Heading ...:" or "Subheading ..."
 # Return value: the formatted macro name
 sub convert_heading_name
 {
@@ -367,8 +372,27 @@ sub convert_heading_name
     $heading =~ s/^Subheading (.*?):?$/\\ccSubHeading\{$1\}/;
 
     # Use CGAL Manual shortcut if available
-    if (defined($macro_names{$heading})) {
-        $heading = $macro_names{$heading};
+    if (defined($heading_names{$heading})) {
+        $heading = $heading_names{$heading};
+    }
+
+    return $heading;
+}
+
+
+# Convert clear text to \ccCommentHeading macros
+# Param: macro name in doxygen latex doc, of the form "CommentHeading ...:"
+# Return value: the formatted macro name
+sub convert_comment_heading_name
+{
+    my $heading = shift;
+
+    # Convert to \ccHeading or \subsubsection
+    $heading =~ s/^CommentHeading (.*?):$/\\ccCommentHeading\{$1\}/;
+
+    # Use CGAL Manual shortcut if available
+    if (defined($comment_heading_names{$heading})) {
+        $heading = $comment_heading_names{$heading};
     }
 
     return $heading;
@@ -384,8 +408,8 @@ sub extented_format_headings
     # Get parameter: buffer containing a doxygen-generated latex file
     my $buf = shift;
 
-    # Extract @headings sections from from detailed section.
-    # @heading is in fact an alias to "Heading".
+    # Extract @heading sections from from detailed section.
+    # - @heading is in fact an alias to "Heading".
     # - the macro name starts at "Heading" and ends with ":".
     # - the macro content lies on a unique line, except lists.
     #   Doxygen may concat lines, thus we also stop at the first dot.
@@ -660,6 +684,11 @@ sub format_doxygen_class_doc
     # Rename \ccNestedType, \ccEnum, \ccConstructor, \ccMethod, \ccVariable expressions
     $buf = format_curly_brace_pairs_expressions($className, "class/struct/concept", $buf);
 
+    # Convert @commentheading sections [L. Saboret + S. Hornus extension]
+    # - @commentheading is in fact an alias to "CommentHeading".
+    # - the macro name starts at "CommentHeading" and ends with ":".
+    $buf =~ s/(CommentHeading.*?:)/convert_comment_heading_name($1)/smge;
+
     # Remove CGAL:: prefix (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
 
@@ -754,6 +783,11 @@ sub format_doxygen_function_doc
 
     # Rename \ccFunction expressions
     $buf = format_curly_brace_pairs_expressions($functionName, "function", $buf);
+
+    # Convert @commentheading sections [L. Saboret + S. Hornus extension].
+    # - @commentheading is in fact an alias to "CommentHeading".
+    # - the macro name starts at "CommentHeading" and ends with ":".
+    $buf =~ s/(CommentHeading.*?:)/convert_comment_heading_name($1)/smge;
 
     # Remove CGAL:: prefix (implicit)
     $buf =~ s/CGAL::(\w+)/$1/g;
