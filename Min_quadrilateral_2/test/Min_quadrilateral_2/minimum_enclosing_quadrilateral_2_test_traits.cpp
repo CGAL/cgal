@@ -49,14 +49,14 @@ struct MyTraits {
   {
     typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.xc < q.xc || p.xc == q.xc && p.yc < q.yc; }
+    { return p.xc < q.xc || (p.xc == q.xc && p.yc < q.yc); }
   };
   struct Less_yx_2
   : public std::binary_function<Point_2,Point_2,bool>
   {
     typedef CGAL::Arity_tag<2> Arity;
     bool operator()(const Point_2& p, const Point_2& q) const
-    { return p.yc < q.yc || p.yc == q.yc && p.xc < q.xc; }
+    { return p.yc < q.yc || (p.yc == q.yc && p.xc < q.xc); }
   };
   struct Orientation_2 {
     typedef CGAL::Orientation result_type;
