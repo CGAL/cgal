@@ -111,7 +111,7 @@ QTriangulationMovingPoint_2<T>::eventFilter(QObject *obj, QEvent *event)
   } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseMoveEvent(mouseEvent);
-    return true;
+    return false; // do not eat move event!
   } else if (event->type() == QEvent::GraphicsSceneMouseRelease) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
     mouseReleaseEvent(mouseEvent);
