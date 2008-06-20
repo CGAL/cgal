@@ -15,11 +15,16 @@ GraphicsView/demo/GraphicsView/delaunay
 GraphicsView/demo/GraphicsView/min
 GraphicsView/demo/GraphicsView/qrc_*.cxx
 GraphicsView/demo/GraphicsView/ui_*.h
+GraphicsView/doc_tex/GraphicsView.tex
+GraphicsView/doc_tex/GraphicsView/auto
+GraphicsView/doc_tex/GraphicsView_ref/auto
+GraphicsView/doc_tex/auto
 GraphicsView/src/CGALQt4/*.dll
 GraphicsView/src/CGALQt4/*.lib
 GraphicsView/src/CGALQt4/*.so
 GraphicsView/src/CGALQt4/*_moc.cpp
 GraphicsView/src/CGALQt4/Makefile
+GraphicsView/src/CGALQt4/qrc_*.cxx
 Maintenance/rpm/BUILD/*
 Maintenance/rpm/RPMS/*
 Maintenance/rpm/SOURCES/CGAL-*-I-*.tar.gz
