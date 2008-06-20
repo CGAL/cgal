@@ -15,33 +15,46 @@ template <typename DT>
 class QTriangulationMovingPoint_2 : public QtInput
 {
 public:
+  typedef typename DT::Face_handle Face_handle;
+  typedef typename DT::Vertex_handle Vertex_handle;
+  typedef typename DT::Point Point;
+
   QTriangulationMovingPoint_2(DT  * dt_);
 
-  void operator()(typename DT::Face_handle fh);
- 
 protected:
+  void localize_and_insert_point(QPointF qt_point);
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
   bool eventFilter(QObject *obj, QEvent *event);
 
-private:
-
   DT * dt;
-  typename DT::Vertex_handle vh;
-  typename DT::Point p;
+  Vertex_handle vh;
+  Face_handle fh;
   bool movePointToInsert;
-  CGAL::Bbox_2 bb;  
 };
-
-
 
 
 template <typename T>
 QTriangulationMovingPoint_2<T>::QTriangulationMovingPoint_2(T * dt_)
-  :  dt(dt_), movePointToInsert(false)
+  :  dt(dt_), movePointToInsert(false), fh()
 {}
+
+
+template <typename T>
+void 
+QTriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
+{
+  Point p(qt_point.x(), qt_point.y());
+  typename T::Locate_type lt;
+  int li;
+  fh = dt->locate(p, lt, li, fh); // fh serves as a hint
+
+  vh = dt->insert(p, lt, fh, li);
+  fh = vh->face(); // update the hint fh after the insertion
+  emit(generate(CGAL::Object()));
+}
 
 
 template <typename T>
@@ -51,14 +64,8 @@ QTriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
   if(dt->number_of_vertices() == 0){
     return;
   }
-  p = typename T::Point(event->scenePos().x(), event->scenePos().y());
   movePointToInsert = true;
-  typename T::Locate_type lt;
-  int li;
-  typename T::Face_handle fh = dt->locate(p, lt, li);
-
-  vh = dt->insert(p, lt, fh, li);
-  emit(generate(CGAL::Object()));
+  localize_and_insert_point(event->scenePos());
 }
 
 
@@ -69,15 +76,11 @@ QTriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
   if(! movePointToInsert) return;
 
+  // fh will be destroyed by the removal of vh.
+  // Let us take a neighbor that is not in the star of vh.
+  fh = fh->neighbor(fh->index(vh));
   dt->remove(vh);
-  p = typename T::Point(event->scenePos().x(), event->scenePos().y());
-  typename T::Locate_type lt;
-  int li;
-  typename T::Face_handle fh = dt->locate(p, lt, li);
- 
-  vh = dt->insert(p, lt, fh, li);
-  emit(generate(CGAL::Object()));
-
+  localize_and_insert_point(event->scenePos());
 }
 
 
@@ -86,7 +89,9 @@ void
 QTriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if(! movePointToInsert) return;
+
   dt->remove(vh);
+  fh = Face_handle();
   
   emit(generate(CGAL::Object()));
  
