@@ -10,12 +10,14 @@ class QtInput  : public QObject
 {
   Q_OBJECT
 
+public:
+  QtInput(QObject* parent) : QObject(parent)
+  {
+  }
+
 signals:
-
   void generate(CGAL::Object o);
-
 };
-
 
 } // namespace CGAL
 
