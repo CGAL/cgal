@@ -2651,16 +2651,16 @@ public:
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_0_8_Y_0_6)
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
-    Direction_3 & iden_normal = Traits::identification_normal();
-    Direction_2 iden_normal_xy = Traits::project_xy(normal);
+    const Direction_3 & iden_normal = Traits::identification_normal();
+    const Direction_2 iden_normal_xy = Traits::project_xy(iden_normal);
     Direction_2 normal_xy = Traits::project_xy(m_normal);
     Kernel kernel;
     if (is_directed_right()) {
-      return kernel->equal_2_object()(normal_xy, iden_normal_xy);
+      return kernel.equal_2_object()(normal_xy, iden_normal_xy);
     } else {
       Direction_2 opposite_normal_xy = 
-        kernel->construct_opposite_direction_2_object()(normal_xy);
-      return kernel->equal_2_object()(opposite_normal_xy, iden_normal_xy);
+        kernel.construct_opposite_direction_2_object()(normal_xy);
+      return kernel.equal_2_object()(opposite_normal_xy, iden_normal_xy);
     }
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
