@@ -63,7 +63,7 @@ QTriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->number_of_vertices() == 0 ||
      event->modifiers() != 0 ||
-     event->button() != Qt::RightButton) {
+     event->button() != Qt::LeftButton) {
     return;
   }
   movePointToInsert = true;
@@ -93,7 +93,7 @@ void
 QTriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if(! movePointToInsert ||
-     event->button() != Qt::RightButton) {
+     event->button() != Qt::LeftButton) {
     return;
   }
 
