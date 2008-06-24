@@ -152,7 +152,7 @@ section:
 
 \ccMethod{template <class InputIterator>
     Halfedge_handle add_facet( InputIterator first, InputIterator beyond);}{
-    is a synonym for \ccc{begin_facet()}, a call to \ccc{add_facet()} for each
+    is a synonym for \ccc{begin_facet()}, a call to \ccc{add_vertex_to_facet()} for each
     value in the range \ccc{[first,beyond)}, and a call to \ccc{end_facet()}.
     Returns the return value of \ccc{end_facet()}.
     \ccPrecond The value type of \ccc{InputIterator} is \ccc{std::size_t}.

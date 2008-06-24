@@ -303,7 +303,7 @@ public:
 
     template <class InputIterator>
     Halfedge_handle add_facet( InputIterator first, InputIterator beyond) {
-        // synonym for begin_facet(), a call to add_facet() for each iterator
+        // synonym for begin_facet(), a call to add_vertex_to_facet() for each iterator
         // value type, and end_facet().
         begin_facet();
         for ( ; ! m_error && first != beyond; ++first)
