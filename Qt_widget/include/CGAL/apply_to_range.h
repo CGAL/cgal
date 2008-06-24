@@ -108,7 +108,7 @@ void apply_to_range(const Tr &t,
       }
       l2++;
     }while(!t.is_infinite(l2) && 
-	   t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_top)));
+	   t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_bottom)));
   }
   if(l3 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the BOTTOM segment
   {
@@ -120,7 +120,7 @@ void apply_to_range(const Tr &t,
       }
       l3++;
     }while(!t.is_infinite(l3) && 
-	   t.triangle(l3).has_on_unbounded_side(POINT(xr_right, yr_top)));
+	   t.triangle(l3).has_on_unbounded_side(POINT(xr_left, yr_bottom)));
   }
   if(l4 != (CGAL_NULL_TYPE) NULL) //found at least one face that intersect the LEFT segment
   {
@@ -132,7 +132,7 @@ void apply_to_range(const Tr &t,
       }
       l4++;
     }while(!t.is_infinite(l4) && 
-	   t.triangle(l4).has_on_unbounded_side(POINT(xr_right, yr_top)));
+	   t.triangle(l4).has_on_unbounded_side(POINT(xr_left, yr_top)));
   }
   
   //HERE we begin to walk through the faces DFS
