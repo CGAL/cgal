@@ -43,6 +43,9 @@ sub reformat_results($)
     my ($CGAL_VERSION,$LEDA_VERSION,$TESTER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$BLAS,$LAPACK,$OPENGL,$TAUCS,$BOOST,$QT) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
+        if(/^\s*$/) {
+            goto NEXT;
+        }
 	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
 	    $CGAL_VERSION = $1;
 	}
@@ -110,12 +113,12 @@ sub reformat_results($)
             # should be the last one of the header
             last;
         }
-        if(! /^[A-Z][A-Z]/ ) {
-            # the header is finished
-            print PLATFORM_NEW_RESULTS $_;
-            last;
-        }
-	if(! ($_= <PLATFORM_RESULTS>)) {
+#        if(! /^[A-Z][a-z]/ ) {
+#            # the header is finished
+#            print PLATFORM_NEW_RESULTS $_;
+#            last;
+#        }
+NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
             last;
         }

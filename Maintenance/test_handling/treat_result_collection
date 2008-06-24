@@ -50,8 +50,14 @@ sub unpack_results{
     @results=grep /tar$|tar\.gz$/, `tar tf ${tarname}`;
     chomp @results;
     system("tar", "xf", ${tarname}, @results);
-    system("$scriptsdir/to_zipped_format", "-v", $cgal_version, @results)==0
-	or die "to_zipped_format failed. Test collection not installed.\n";
+    if( ($? != 0) || (@results  == 0) ) {
+        print TESTRESULTSLOG "(EE) Cannot read tar file \"${tarname}\"!\n";
+    }
+    else {
+        print TESTRESULTSLOG "(II) Processing tar file \"${tarname}\"...\n";
+        system("$scriptsdir/to_zipped_format", "-v", $cgal_version, @results)==0
+            or die "to_zipped_format failed. Test collection not installed.\n";
+    }
 }
 
 
@@ -121,6 +127,9 @@ sub append_to_file{
 }
 
 
+open (TESTRESULTSLOG, ">>", "./test_results.log")
+    or die "Could not open test_results.log\n";
+
 my $dir_h;
 my $i;
 my $is_good;
@@ -168,3 +177,4 @@ while( $i=readdir($dir_h)){
   }    
 }
 closedir($dir_h);
+close (TESTRESULTSLOG);
