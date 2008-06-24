@@ -91,14 +91,16 @@ MainWindow::MainWindow()
   this->actionShowDelaunay->setChecked(true);
 
   //
-  // Setup the scene
+  // Setup the scene and the view
   //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   scene.setSceneRect(0,0, 100, 100);
-
   this->graphicsView->setRenderHint(QPainter::Antialiasing);
   this->graphicsView->setScene(&scene);
 
+  // Turn the vertical axe upside down
+  this->graphicsView->matrix().scale(1, -1);
+                                                      
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   navigation = new CGAL::QtNavigation(this->graphicsView);
@@ -355,6 +357,7 @@ MainWindow::setupStatusBar()
   xycoord = new QLabel(" -0.00000 , -0.00000 ", this);
   xycoord->setAlignment(Qt::AlignHCenter);
   xycoord->setMinimumSize(xycoord->sizeHint());
+  xycoord->clear();
   this->statusbar->addWidget(xycoord);
 }
 
