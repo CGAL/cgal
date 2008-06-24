@@ -23,6 +23,12 @@ set( GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED 1 )
     message( STATUS "Using ${CMAKE_CXX_COMPILER} compiler." )
   endif()
 
+  if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
+    message( STATUS "Using SunPro compiler, using STLPort 4." )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -features=extensions -library=stlport4 -D_GNU_SOURCE" )
+    set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -library=stlport4" )
+  endif()
+  
   if ( CMAKE_BUILD_TYPE )
     
     # If a build type is specified, VC project files contain only a configurartion for that build type

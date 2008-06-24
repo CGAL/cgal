@@ -5,6 +5,8 @@
 # ${CMAKE_BINARY_DIR} or ${CGAL_BINARY_DIR}.
 project(CGAL)
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= BASIC SETUP =-
@@ -16,6 +18,14 @@ project(CGAL)
 set(CGAL_CMAKE_MODULE_PATH ${CGAL_SOURCE_DIR}/cmake/modules)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_CMAKE_MODULE_PATH} )
+
+# This allows else(), endif(), etc... (without repeating the expression)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+
+if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
+  message( STATUS "Loading reference cache from ${CGAL_REFERENCE_CACHE_DIR}" )
+  load_cache( ${CGAL_REFERENCE_CACHE_DIR} )
+endif()
 
 include(CGALcommon)
 include(GeneratorSpecificSettings)

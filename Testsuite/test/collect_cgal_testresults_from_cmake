@@ -27,7 +27,7 @@ fi
 BUILD_LOGFILE=''
 TEST_REPORT=''
 RESULT_FILE=''
-shared_or_static='?'
+shared_or_static='shared'
 
 #print_testresult <platform> <directory>
 print_testresult()
@@ -66,14 +66,14 @@ parse_lib_building_results()
 {
   libname=$1
   target=$2
-  
+
   if [ ! -e "${libname}_${shared_or_static}" ]; then
     mkdir "${libname}_${shared_or_static}"
   fi
   
   y_or_no='n'
   
-  if grep -q "Built target ${target}$" ${BUILD_LOGFILE} ; then
+  if grep -q "Built target ${target}" ${BUILD_LOGFILE} ; then
     y_or_no='y'
   fi
    
@@ -82,7 +82,7 @@ parse_lib_building_results()
   if [ -n "${marker_beg}" ]; then
   
     if [ ! "$target" = "CGAL" ]; then  
-      cat ${BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" > ${libname}_${shared_or_static}/$TEST_REPORT
+      cat ${BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
     fi
     
     # Test if there is a warning in the build log.
@@ -93,7 +93,7 @@ parse_lib_building_results()
     fi
     
   else
-    echo "Not configured!" > ${libname}_${shared_or_static}/$TEST_REPORT
+    echo "Not configured!" >> ${libname}_${shared_or_static}/$TEST_REPORT
   fi
   
   echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
