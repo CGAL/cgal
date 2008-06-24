@@ -31,7 +31,6 @@ protected:
 
   DT * dt;
   Vertex_handle vh;
-  Face_handle fh;
   bool movePointToInsert;
 };
 
@@ -39,7 +38,7 @@ protected:
 template <typename T>
 QTriangulationMovingPoint_2<T>::QTriangulationMovingPoint_2(T * dt_,
                                                             QObject* parent)
-  :  QtInput(parent), dt(dt_), movePointToInsert(false), fh()
+  :  QtInput(parent), dt(dt_), movePointToInsert(false), vh()
 {}
 
 
@@ -50,10 +49,10 @@ QTriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
   Point p(qt_point.x(), qt_point.y());
   typename T::Locate_type lt;
   int li;
+  Face_handle fh = (vh == Vertex_handle()) ? Face_handle() : vh->face();
   fh = dt->locate(p, lt, li, fh); // fh serves as a hint
 
   vh = dt->insert(p, lt, fh, li);
-  fh = vh->face(); // update the hint fh after the insertion
   emit(generate(CGAL::Object()));
 }
 
@@ -62,7 +61,9 @@ template <typename T>
 void 
 QTriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(dt->number_of_vertices() == 0){
+  if(dt->number_of_vertices() == 0 ||
+     event->modifiers() != 0 ||
+     event->button() != Qt::RightButton) {
     return;
   }
   movePointToInsert = true;
@@ -79,8 +80,10 @@ QTriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
   // fh will be destroyed by the removal of vh.
   // Let us take a neighbor that is not in the star of vh.
-  fh = fh->neighbor(fh->index(vh));
+  const Face_handle fh = vh->face();
+  Vertex_handle next_hint = fh->vertex((fh->index(vh)+1&3));
   dt->remove(vh);
+  vh = next_hint;
   localize_and_insert_point(event->scenePos());
 }
 
@@ -89,10 +92,13 @@ template <typename T>
 void 
 QTriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-  if(! movePointToInsert) return;
+  if(! movePointToInsert ||
+     event->button() != Qt::RightButton) {
+    return;
+  }
 
   dt->remove(vh);
-  fh = Face_handle();
+  vh = Vertex_handle();
   
   emit(generate(CGAL::Object()));
  
