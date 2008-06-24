@@ -35,6 +35,7 @@ sub write_select()
   print OUTPUTV "<table><tr><td>You can browse the test results of a different version :\n";
   print OUTPUTV '<td><select id="sel" onchange="sel=document.getElementById(\'sel\'); top.location.href=sel.options[sel.selectedIndex].value">'."\n";
 
+  print OUTPUTV '<option value="">', "</option>\n";
   foreach $_ (sort { $a =~ /results-([^I]*)(|-I-(.*))\.shtml/;
                      my ($maj_a, $min_a) = ($1, $2 ? $3 : "9999");
 		     # public releases are given minor 9999.
