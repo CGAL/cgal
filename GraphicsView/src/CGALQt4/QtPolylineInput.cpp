@@ -12,8 +12,12 @@
 
 namespace CGAL {
 
-QtPolylineInput_non_templated_base::QtPolylineInput_non_templated_base(QGraphicsScene* s, int n, bool closed)
-  : path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
+QtPolylineInput_non_templated_base::
+QtPolylineInput_non_templated_base(QObject* parent,
+                                   QGraphicsScene* s,
+                                   int n,
+                                   bool closed)
+  : QtInput(parent), path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
 {}
 
 

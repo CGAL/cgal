@@ -41,7 +41,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pi = new CGAL::QtPolylineInput<K>(&scene, 0, false); // inputs polylines which are not closed
+  pi = new CGAL::QtPolylineInput<K>(this, &scene, 0, false); // inputs polylines which are not closed
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(process(CGAL::Object)));

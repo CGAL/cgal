@@ -28,9 +28,10 @@ public:
 
 protected:
   // protected constructor
-  QtPolylineInput_non_templated_base(QGraphicsScene* s,
-                                      int n = 0,
-                                      bool closed = true);
+  QtPolylineInput_non_templated_base(QObject* parent, 
+                                     QGraphicsScene* s,
+                                     int n = 0,
+                                     bool closed = true);
 
 
   // mousePressEvent returns true iff the event is consummed
@@ -63,8 +64,8 @@ template <typename K>
 class QtPolylineInput : public QtPolylineInput_non_templated_base
 {
 public:
-  QtPolylineInput(QGraphicsScene* s, int n = 0, bool closed = true)
-    : QtPolylineInput_non_templated_base(s, n, closed)
+  QtPolylineInput(QObject* parent, QGraphicsScene* s, int n = 0, bool closed = true)
+    : QtPolylineInput_non_templated_base(parent, s, n, closed)
   {
   }
 
