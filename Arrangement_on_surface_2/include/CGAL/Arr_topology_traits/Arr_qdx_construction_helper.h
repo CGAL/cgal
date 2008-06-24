@@ -188,7 +188,7 @@ public:
             Vertex_handle vh(v);
             
             if (v == NULL) {
-                m_arr_access.create_boundary_vertex (xc, ind,
+                vh = m_arr_access.create_boundary_vertex (xc, ind,
                                                      ps_x, ps_y);
             } 
             
