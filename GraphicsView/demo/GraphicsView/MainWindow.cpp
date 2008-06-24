@@ -196,7 +196,6 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 void
 MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
-#ifdef DELAUNAY_VORONOI
   if(checked){
     scene.installEventFilter(tcc);
     this->graphicsView->setMouseTracking(true);
@@ -206,7 +205,6 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
     this->graphicsView->setMouseTracking(false);
     tcc->hide();
   }
-#endif
 }
 
 
