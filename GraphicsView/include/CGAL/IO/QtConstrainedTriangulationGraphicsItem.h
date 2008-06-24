@@ -43,15 +43,17 @@ template <typename T>
 void 
 QtConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
-  for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
-      eit != this->t->finite_edges_end();
-      ++eit){
-    if(this->t->is_constrained(*eit)){
-      painter->setPen(constraintsPen());
-    } else {
-      painter->setPen(this->pen());
+  if(this->drawEdges()) {
+    for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
+        eit != this->t->finite_edges_end();
+        ++eit){
+      if(this->t->is_constrained(*eit)){
+        painter->setPen(constraintsPen());
+      } else {
+        painter->setPen(this->pen());
+      }
+      (*painter) << this->t->segment(*eit);
     }
-    (*painter) << this->t->segment(*eit);
   }
   this->paintVertices(painter);
 }
@@ -61,9 +63,10 @@ void
 QtConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   for (int i=0; i<3; i++) {
-    if (fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i))){
+    if (this->drawEdges() &&
+        ( fh < fh->neighbor(i) || this->t->is_infinite(fh->neighbor(i)) ) ) {
       if(this->t->is_constrained(typename T::Edge(fh,i))){
-	this->m_painter->setPen(constraintsPen());
+        this->m_painter->setPen(constraintsPen());
       } else {
 	this->m_painter->setPen(this->pen());
       }
