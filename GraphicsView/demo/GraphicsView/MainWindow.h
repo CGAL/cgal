@@ -14,7 +14,6 @@
 namespace CGAL {
   class QtNavigation;
   template <class Delaunay> class QtTriangulationGraphicsItem;
-  template <class Delaunay> class QtVoronoiGraphicsItem;
   template <class Delaunay> class QtConstrainedTriangulationGraphicsItem;
   template <class Delaunay> class QTriangulationMovingPoint_2;
   template <class Delaunay> class QTriangulationCircumcenter_2;
@@ -33,13 +32,7 @@ typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 
 
-#define DELAUNAY_VORONOI
-
-#ifdef DELAUNAY_VORONOI
-typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
-#else 
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> Delaunay;
-#endif
 
 class MainWindow : public QMainWindow, public Ui::MainWindow
 {
@@ -51,12 +44,7 @@ private:
 
   CGAL::QtNavigation* navigation;
 
-#ifdef DELAUNAY_VORONOI 
-  CGAL::QtTriangulationGraphicsItem<Delaunay> * dgi; 
-  CGAL::QtVoronoiGraphicsItem<Delaunay> * vgi;
-#else
   CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
-#endif
 
   QLabel* xycoord ;
 
@@ -69,7 +57,6 @@ public:
 private:
   void setupStatusBar();
 
-#ifndef DELAUNAY_VORONOI 
   template <typename Iterator> 
   void insert_polyline(Iterator b, Iterator e)
   {
@@ -93,8 +80,6 @@ private:
     emit(changed());
   }
 
-#endif // ifndef DELAUNAY_VORONOI
-  
 public slots:
 
   void process(CGAL::Object o);
@@ -104,8 +89,6 @@ public slots:
   void on_actionMovingPoint_toggled(bool checked);
 
   void on_actionShowDelaunay_toggled(bool checked);
-
-  void on_actionShowVoronoi_toggled(bool checked);
 
   void on_actionInsertPolyline_toggled(bool checked);
   

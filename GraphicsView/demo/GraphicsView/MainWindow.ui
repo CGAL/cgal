@@ -255,6 +255,9 @@
    <property name="shortcut" >
     <string>Ctrl+V</string>
    </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionShowDelaunay" >
    <property name="checkable" >

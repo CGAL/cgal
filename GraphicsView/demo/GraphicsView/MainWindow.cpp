@@ -17,7 +17,6 @@
 #include <CGAL/IO/QtPolylineInput.h>
 #include <CGAL/IO/QtTriangulationGraphicsItem.h>
 #include <CGAL/IO/QtConstrainedTriangulationGraphicsItem.h>
-#include <CGAL/IO/QtVoronoiGraphicsItem.h>
 
 #include <CGAL/IO/QtNavigation.h>
 
@@ -31,11 +30,7 @@ MainWindow::MainWindow()
   setupStatusBar();
 
   // Add a GraphicItem for the Delaunay triangulation
-#ifdef DELAUNAY_VORONOI
-  dgi = new CGAL::QtTriangulationGraphicsItem<Delaunay>(&dt);
-#else 
   dgi = new CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
-#endif    
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
@@ -43,23 +38,10 @@ MainWindow::MainWindow()
   dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
-#ifdef DELAUNAY_VORONOI
-  // Add a GraphicItem for the Voronoi diagram
-  vgi = new CGAL::QtVoronoiGraphicsItem<Delaunay>(&dt);
-  vgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  QObject::connect(this, SIGNAL(changed()),
-		   vgi, SLOT(modelChanged()));
-  scene.addItem(vgi);
-  vgi->hide();
-#endif    
-
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   pi = new CGAL::QtPolylineInput<K>(&scene, 0, false); // inputs polylines which are not closed
-#ifdef DELAUNAY_VORONOI
-  pi->setNumberOfVertices(1);  // In this case we only want to insert points
-#endif
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(process(CGAL::Object)));
@@ -119,11 +101,9 @@ MainWindow::process(CGAL::Object o)
     if(points.size() == 1) {
       dt.insert(points.front());
     }
-#ifndef DELAUNAY_VORONOI
     else {
       insert_polyline(points.begin(), points.end());
     }
-#endif // ifndef DELAUNAY_VORONOI
   }
   emit(changed());
 }
@@ -183,19 +163,6 @@ MainWindow::on_actionShowDelaunay_toggled(bool checked)
 
 
 void
-MainWindow::on_actionShowVoronoi_toggled(bool checked)
-{
-#ifdef DELAUNAY_VORONOI
-  if(checked){
-    vgi->show();
-  } else {  
-    vgi->hide();
-  }
-#endif
-}
-
-
-void
 MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
   if(checked){
@@ -244,34 +211,10 @@ MainWindow::loadConstraints(QString fileName)
   while(ifs >> p) {
     points.push_back(p);
   }
-#ifndef DELAUNAY_VORONOI
   insert_polyline(points.begin(), points.end());
-#endif
 
   std::vector<K::Point_2> P;
-//   P.resize(2);
-//   char c;
-//   while(ifs >> c){
-//     ifs >>p >> q;
-//     if(p != q){
-//       segments.push_back(std::make_pair(p,q));
-//     }
-//   }
-// #ifndef DELAUNAY_VORONOI
-//   for(Segments::const_iterator it = segments.begin();
-//       it != segments.end(); ++it)
-//   {
-//     dt.insert_constraint(it->first, it->second);
-//   }
-// #endif
-  /*
-  while(ifs >> p){
-    points.push_back(p);
-  }
-  //std::cout << "Read " << points.size() << " points" << std::endl;
-  dt.insert_polyline(points.begin(), points.end());
-  */
-  // recenter
+
   actionRecenter->trigger();
   emit(changed());
 }
@@ -358,7 +301,8 @@ MainWindow::setupStatusBar()
   xycoord->setAlignment(Qt::AlignHCenter);
   xycoord->setMinimumSize(xycoord->sizeHint());
   xycoord->clear();
-  this->statusbar->addWidget(xycoord);
+  this->statusbar->addWidget(new QLabel(this), 1);
+  this->statusbar->addWidget(xycoord, 0);
 }
 
 #include "MainWindow.moc"
