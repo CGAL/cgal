@@ -106,7 +106,14 @@ namespace CGAL {
     } // end case Wheel
     case QEvent::MouseButtonPress: {
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-      if( mouseEvent->modifiers() == Qt::ControlModifier ) {
+      if( (mouseEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+          && mouseEvent->button() == Qt::RightButton )
+      {
+        QPoint offset = mouseEvent->pos() - v->viewport()->rect().center();
+        translateView(offset.x(), offset.y());
+        return true;
+      }
+      else if( mouseEvent->modifiers() == Qt::ControlModifier ) {
         if(mouseEvent->button() == Qt::LeftButton) {
           rect_first_point = v->mapToScene(mouseEvent->pos());
           rectItem->setRect(QRectF(rect_first_point, rect_first_point));
