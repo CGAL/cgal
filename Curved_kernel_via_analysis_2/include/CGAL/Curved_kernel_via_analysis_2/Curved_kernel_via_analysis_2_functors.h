@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
 #ifndef CERR
-#define CKvA_DEBUG_PRINT_CERR
+//#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
 #define CERR(x) std::cerr << x
 #else
