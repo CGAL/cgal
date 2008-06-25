@@ -35,18 +35,14 @@ namespace CGALi {
  * for each \c Status_line_1 object stores the precomputed mapping
  * from interval arcnos (on left and right sides) to event arcnos 
  */
-template <class CurvedKernelViaAnalysis_2>
+template <class CurveKernel_2>
 struct Curve_interval_arcno_cache {
 
     //!\name Public types
     //!@{
 
     //! this instance's first template parameter
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
-    //! type of curve kernel
-    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
-    Curve_kernel_2;
+    typedef CurveKernel_2 Curve_kernel_2;
     
     //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
@@ -83,13 +79,9 @@ struct Curve_interval_arcno_cache {
 
     /*!\brief
      * Standard constructor
-     *
-     * \param kernel The kernel that is used internally
      */
-    Curve_interval_arcno_cache(Curved_kernel_via_analysis_2 *kernel) :
-        _m_curved_kernel_2(kernel), _m_last_curve_id(-1) {
-        
-        CGAL_assertion(kernel != NULL);
+    Curve_interval_arcno_cache() :
+            _m_last_curve_id(-1) {
     }
     
     //!@}
@@ -207,9 +199,6 @@ private:
     //!\name Private members
     //!@{
 
-    //! pointer to \c Curved_kernel_via_analysis_2 
-    Curved_kernel_via_analysis_2 *_m_curved_kernel_2;
-    
     //! a pair of vectors (right and left side of event-line respectively)
     typedef std::pair<std::vector<Arcno_desc>, std::vector<Arcno_desc> >
         Arcno_vector_pair;

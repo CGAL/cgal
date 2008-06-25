@@ -199,14 +199,15 @@ public:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Is_bounded_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Is_bounded_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Is_bounded_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! the bae type
-    typedef typename Curved_kernel_via_analysis_2::Base::Is_bounded_2 Base;
+    typedef typename Curved_kernel_via_analysis_2::Functor_base::Is_bounded_2
+         Base;
     
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -236,14 +237,14 @@ public:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Equal_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Equal_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Equal_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! the bae type
-    typedef typename Curved_kernel_via_analysis_2::Base::Equal_2 Base;
+    typedef typename Curved_kernel_via_analysis_2::Functor_base::Equal_2 Base;
     
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -332,7 +333,8 @@ protected:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_right_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_right_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Compare_y_at_x_right_2
+{
 
 public:
     //! this instance' first template parameter
@@ -340,7 +342,7 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2::Base::Compare_y_at_x_right_2 Base;
+    Curved_kernel_via_analysis_2::Functor_base::Compare_y_at_x_right_2 Base;
 
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -445,7 +447,7 @@ public:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Compare_y_at_x_left_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_left_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Compare_y_at_x_left_2 {
 
 public:
     //! this instance' first template parameter
@@ -453,7 +455,7 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2::Base::Compare_y_at_x_left_2 Base;
+    Curved_kernel_via_analysis_2::Functor_base::Compare_y_at_x_left_2 Base;
 
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -558,14 +560,15 @@ public:
  */
 template < class CurvedKernelViaAnalysis_2 >
 class Intersect_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Intersect_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Intersect_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     //! the bae type
-    typedef typename Curved_kernel_via_analysis_2::Base::Intersect_2 Base;
+    typedef typename Curved_kernel_via_analysis_2::Functor_base::Intersect_2
+         Base;
     
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -655,7 +658,7 @@ protected:
 
 template < class CurvedKernelViaAnalysis_2 >
 class Make_x_monotone_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Make_x_monotone_2 {
+        public CurvedKernelViaAnalysis_2::Functor_base::Make_x_monotone_2 {
 
 public:
     //! this instance' first template parameter
@@ -663,7 +666,7 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2::Base::Make_x_monotone_2 Base;
+    Curved_kernel_via_analysis_2::Functor_base::Make_x_monotone_2 Base;
     
     CGAL_DC_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
 
@@ -838,23 +841,77 @@ public:
 
 } // namespace  Dupin_cyclide_via_analysis_2_Functors
 
+template <class ASiDC_traits_2, class BaseCKvA>
+struct Dupin_cyclide_functor_base :
+        public BaseCKvA::template rebind< ASiDC_traits_2 >::Functor_base {
+
+    typedef ASiDC_traits_2 Self;
+
+    typedef typename BaseCKvA::template rebind< Self >::Functor_base
+         Functor_base;
+        
+#if 0 
+    // TODO add special construct_point_2 and construct_arc_2 functors
+    // -> points/curves on identifications
+    CGAL_CKvA_2_functor_cons(Construct_point_2, 
+                             construct_point_2_object);
+
+    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
+                             construct_arc_2_object);
+#endif    
+
+// declares curved kernel functors, for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_DC_CKvA_2_functor_pred(Y, Z) \
+    typedef Dupin_cyclide_via_analysis_2_Functors::Y< Self > Y; \
+    Y Z() const { \
+        return Y(&Self::instance()); \
+    } 
+    
+#define CGAL_DC_CKvA_2_functor_cons(Y, Z) \
+    CGAL_DC_CKvA_2_functor_pred(Y, Z)
+    
+    CGAL_DC_CKvA_2_functor_pred(Compare_x_on_identification_2, 
+                                compare_x_on_identification_2_object);
+
+    CGAL_DC_CKvA_2_functor_pred(Compare_y_on_identification_2, 
+                                compare_y_on_identification_2_object);
+
+    CGAL_DC_CKvA_2_functor_pred(Equal_2, equal_2_object);
+
+    CGAL_DC_CKvA_2_functor_pred(Intersect_2, intersect_2_object);
+
+    CGAL_DC_CKvA_2_functor_pred(Compare_y_at_x_right_2, 
+                                compare_y_at_x_right_2_object);
+
+    CGAL_DC_CKvA_2_functor_pred(Compare_y_at_x_left_2, 
+                                compare_y_at_x_left_2_object);
+
+    CGAL_DC_CKvA_2_functor_cons(Make_x_monotone_2, 
+                                make_x_monotone_2_object);
+
+#undef CGAL_DC_CKvA_2_functor_pred
+#undef CGAL_DC_CKvA_2_functor_cons
+
+};
+
 } // namespace CGALi
 
 /*!\brief
  * Derived ArrangmentTraits class for points and segments embedded on 
  * a given Dupin cyclide.
  */
-template < class CurvedKernelViaAnalysis_2 >
+template < class BaseCKvA_2 >
 class Arr_surfaces_intersecting_dupin_cyclide_traits_2 :
-    public CurvedKernelViaAnalysis_2::template 
-rebind< 
-Arr_surfaces_intersecting_dupin_cyclide_traits_2 <
-  CurvedKernelViaAnalysis_2 > >::Other
+    public CGALi::Curved_kernel_via_analysis_2_base<
+        Arr_surfaces_intersecting_dupin_cyclide_traits_2< BaseCKvA_2 >,
+        BaseCKvA_2, typename BaseCKvA_2::Curve_kernel_2,
+        CGALi::Dupin_cyclide_functor_base >
 {
 public:
     
     //! this instance's template parameter
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+    typedef BaseCKvA_2 Curved_kernel_via_analysis_2;
     
     //! the class itself
     typedef Arr_surfaces_intersecting_dupin_cyclide_traits_2 
@@ -889,12 +946,17 @@ public:
     //! type of x-monotone curve
     typedef Arc_2 X_monotone_curve_2;
 
-    //! type of Base
-    typedef typename Curved_kernel_via_analysis_2::template
-    rebind< Self >::Other Base;
-    
-    //! Tag to tell that the boundary functors are implemented
+        //! Tag to tell that the boundary functors are implemented
     typedef CGAL::Arr_bounded_boundary_tag Boundary_category;
+
+
+protected:
+
+    //! base kernel type
+    typedef CGALi::Curved_kernel_via_analysis_2_base<
+        Self, Curved_kernel_via_analysis_2, Curve_kernel_2,
+         CGALi::Dupin_cyclide_functor_base >
+    Base_kernel;
     
 public:
     //!\name Constructors
@@ -929,54 +991,6 @@ public:
         return this->_m_base;
     }
     
-    //!@}
-    
-    //!\name Predicates and Constructions
-    //!@{
-    
-#if 0 
-    // TODO add special construct_point_2 and construct_arc_2 functors
-    // -> points/curves on identifications
-    CGAL_CKvA_2_functor_cons(Construct_point_2, 
-                             construct_point_2_object);
-
-    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
-                             construct_arc_2_object);
-#endif    
-
-// declares curved kernel functors, for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_DC_CKvA_2_functor_pred(Y, Z) \
-    typedef CGAL::CGALi::Dupin_cyclide_via_analysis_2_Functors::Y< Self > Y; \
-    Y Z() const { \
-        return Y(&Self::instance()); \
-    } \
-    
-#define CGAL_DC_CKvA_2_functor_cons(Y, Z) \
-    CGAL_DC_CKvA_2_functor_pred(Y, Z)
-    
-    CGAL_DC_CKvA_2_functor_pred(Compare_x_on_identification_2, 
-                                compare_x_on_identification_2_object);
-
-    CGAL_DC_CKvA_2_functor_pred(Compare_y_on_identification_2, 
-                                compare_y_on_identification_2_object);
-
-    CGAL_DC_CKvA_2_functor_pred(Equal_2, equal_2_object);
-
-    CGAL_DC_CKvA_2_functor_pred(Intersect_2, intersect_2_object);
-
-    CGAL_DC_CKvA_2_functor_pred(Compare_y_at_x_right_2, 
-                                compare_y_at_x_right_2_object);
-
-    CGAL_DC_CKvA_2_functor_pred(Compare_y_at_x_left_2, 
-                                compare_y_at_x_left_2_object);
-
-    CGAL_DC_CKvA_2_functor_cons(Make_x_monotone_2, 
-                                make_x_monotone_2_object);
-
-#undef CGAL_DC_CKvA_2_functor_pred
-#undef CGAL_DC_CKvA_2_functor_cons
-
     //!@}
     
 protected:

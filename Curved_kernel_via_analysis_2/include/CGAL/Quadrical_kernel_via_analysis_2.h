@@ -555,14 +555,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_xy_2 : 
-        public CurvedKernelViaAnalysis_2l::Base::Compare_xy_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_xy_2 {
     
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Compare_xy_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_xy_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -609,14 +611,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_x_near_boundary_2 : 
-        public CurvedKernelViaAnalysis_2l::Base::Compare_x_near_boundary_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_x_near_boundary_2 {
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Compare_x_near_boundary_2
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_x_near_boundary_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
@@ -725,14 +729,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_y_near_boundary_2 : 
-        public CurvedKernelViaAnalysis_2l::Base::Compare_y_near_boundary_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_near_boundary_2 {
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Compare_y_near_boundary_2
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_near_boundary_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
@@ -778,9 +784,9 @@ public:
         int sheet2 = cv2.sheet();
 
         Base base_compare_y_near_boundary(this->_ckva());
-        typename Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_right_2
+        typename Curved_kernel_via_analysis_2l::Functor_base::Compare_y_at_x_right_2
             base_compare_y_at_x_right(this->_ckva());
-        typename Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_left_2
+        typename Curved_kernel_via_analysis_2l::Functor_base::Compare_y_at_x_left_2
             base_compare_y_at_x_left(this->_ckva());
         
         if (sheet1 != sheet2) {
@@ -817,7 +823,8 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_y_at_x_2 : 
-        public CurvedKernelViaAnalysis_2l::Base::Compare_y_at_x_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_2 {
 
 public:
     //! this instance' first template parameter
@@ -825,7 +832,8 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_2 Base;
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -882,14 +890,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_y_at_x_left_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Compare_y_at_x_left_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_left_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_left_2
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_left_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
@@ -962,7 +972,8 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Compare_y_at_x_right_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Compare_y_at_x_right_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_right_2 {
 
 public:
     //! this instance' first template parameter
@@ -970,7 +981,8 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Compare_y_at_x_right_2
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Compare_y_at_x_right_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
@@ -1042,7 +1054,8 @@ public:
 //!\brief returns Parameter_space_in_y_2
 template < class CurvedKernelViaAnalysis_2l >
 class Parameter_space_in_y_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Parameter_space_in_y_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Parameter_space_in_y_2 {
 
 public:
     //! this instance' first template parameter
@@ -1050,7 +1063,8 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Parameter_space_in_y_2 Base;
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Parameter_space_in_y_2 Base;
     
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1097,7 +1111,8 @@ public:
 //!\brief Constructs min vertex of arc
 template < class CurvedKernelViaAnalysis_2l >
 class Construct_min_vertex_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Construct_min_vertex_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Construct_min_vertex_2 {
 
 public:
     //! this instance' first template parameter
@@ -1105,7 +1120,8 @@ public:
 
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Construct_min_vertex_2 Base;
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Construct_min_vertex_2 Base;
     
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1143,7 +1159,8 @@ public:
 //!\brief Constructs max vertex of arc
 template < class CurvedKernelViaAnalysis_2l >
 class Construct_max_vertex_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Construct_max_vertex_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Construct_max_vertex_2 {
 
 public:
     //! this instance' first template parameter
@@ -1151,7 +1168,8 @@ public:
     
     //! the base type
     typedef typename 
-    Curved_kernel_via_analysis_2l::Base::Construct_max_vertex_2 Base;
+    CurvedKernelViaAnalysis_2l::
+            Functor_base::Construct_max_vertex_2 Base;
     
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1189,14 +1207,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Do_overlap_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Do_overlap_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Do_overlap_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Do_overlap_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Do_overlap_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1239,14 +1259,16 @@ public:
 //!\brief Tests two objects, whether they are equal
 template < class CurvedKernelViaAnalysis_2l >
 class Equal_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Equal_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Equal_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Equal_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Equal_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1308,14 +1330,15 @@ public:
 //! checks wether and how two arcs are intersection - with first filtering
 template < class CurvedKernelViaAnalysis_2l >
 class Intersect_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Intersect_2 {
+        public CurvedKernelViaAnalysis_2l::Functor_base::Intersect_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Intersect_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Intersect_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1488,14 +1511,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Trim_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Trim_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Trim_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Trim_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Trim_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
@@ -1543,14 +1568,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Split_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Split_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Split_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Split_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Split_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
 
@@ -1615,14 +1642,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Are_mergeable_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Are_mergeable_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Are_mergeable_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Are_mergeable_2
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Are_mergeable_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
@@ -1661,11 +1690,9 @@ public:
             res = false;
         }
         
-        if (res) {
-            Base base_are_mergeable(this->_ckva());
-            res = base_are_mergeable(cv1, cv2);
-        }
-        
+        if (res) 
+            res = Base::operator()(cv1, cv2);
+                
         CERR("result: " << res << "\n");
         return res;
     }
@@ -1674,14 +1701,16 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Merge_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Merge_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Merge_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Merge_2 Base;
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Merge_2 Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
 
@@ -1742,23 +1771,24 @@ public:
 
 template < class CurvedKernelViaAnalysis_2l >
 class Make_x_monotone_2 :
-        public CurvedKernelViaAnalysis_2l::Base::Make_x_monotone_2 {
+        public CurvedKernelViaAnalysis_2l::
+            Functor_base::Make_x_monotone_2 {
 
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2l Curved_kernel_via_analysis_2l;
 
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2l::Base::Make_x_monotone_2
+    typedef typename CurvedKernelViaAnalysis_2l::
+            Functor_base::Make_x_monotone_2
     Base;
 
     CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES;
     
-    typedef typename 
-    Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2
-    Curved_kernel_via_analysis_2;
+    typedef typename
+        Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2
+        Curved_kernel_via_analysis_2;
     
-
     typedef QdX::Quadric_3_z_at_xy_isolator_traits< 
         Curved_kernel_via_analysis_2, Curve_2 // Remark: Curve_2 == Surface_3
     > Z_at_xy_traits;
@@ -1840,114 +1870,16 @@ public:
 
 } // Quadrical_kernel_via_analysis_2_functors
 
-} // namespace CGALi
 
-//! basic kernel to maintain points and arcs on a quadric
-template < class CurvedKernelViaAnalysis_2, class SurfacePair_3 >
-class Quadrical_kernel_via_analysis_2 :
-  public CurvedKernelViaAnalysis_2::
-  template rebind<
-    Quadrical_kernel_via_analysis_2< 
-      CurvedKernelViaAnalysis_2, SurfacePair_3 
-    >    
-  >::Other
-{
-public:
-    //! \name public typedefs
-    //!@{
-    
-    //! this instance's first template argument
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
-    //! this instance's second template parameter
-    typedef SurfacePair_3 Surface_pair_3;
-     
-    //! myself
-    typedef Quadrical_kernel_via_analysis_2< 
-        Curved_kernel_via_analysis_2, Surface_pair_3 
-    > 
-    Self;
+template <class QKvA, class BaseCKvA>
+struct Quadrical_functor_base :
+        public BaseCKvA::template rebind< QKvA >::Functor_base {
 
-    //! type of curve kernel
-    typedef typename 
-    Curved_kernel_via_analysis_2::Curve_kernel_2 Curve_kernel_2;
+    typedef QKvA Self;
 
-    //! type of curve analysis
-    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
+    typedef typename BaseCKvA::template rebind< Self >::Functor_base
+         Functor_base;
 
-    //!@}
-
-    //!\name embedded types  for \c Arrangement_2 package
-    //!@{
-
-    //! type of surface
-    typedef typename Surface_pair_3::Surface_3 Surface_3;
-
-    //! type of curve_2
-    typedef Surface_3 Curve_2;
-        
-    //! type of a point on generic curve
-    typedef CGALi::Quadric_point_2< Self, Surface_pair_3 > Point_2; 
-
-    //! type of an arc on generic curve
-    typedef CGALi::Quadric_arc_2< Self, Surface_pair_3 > Arc_2; 
-
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
-    typedef Arc_2 X_monotone_curve_2;
-
-    //! tag specifies which boundary functors are implemented
-    typedef CGAL::Arr_all_boundary_tag Boundary_category;
-
-    //!@}
-    
-public:
-    //!\name base type
-    //!@{
-
-    //! the base type
-    typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self >::Other Base;
-    
-    //!@}
-
-public:
-    //! \name Constructors
-    //!@{
-
-    //! default constructor
-    Quadrical_kernel_via_analysis_2() :
-        Base() {
-    }
-    
-    //! standard constructor
-    Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
-        Base(),
-        _m_reference(reference) {
-    }
-    
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel,
-                                    const Surface_3& reference) :
-        Base(kernel),
-        _m_reference(reference) {
-    }
-    
-    //!@}
-
-    //!\name Access members
-    //!@{
-
-    //! returns the reference surface
-    inline
-    const Surface_3& reference() {
-        return _m_reference;
-    }
-    //!@}
-
-public:
-    //!\name embedded constructions and predicates 
-    //!@{
-    
     //! type of Construct_point_2 functor
     typedef 
     CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l<Self> 
@@ -1958,15 +1890,12 @@ public:
     }
     
     //! type of Construct_projected_point_2 functor
-    typedef 
-    typename Curved_kernel_via_analysis_2::Construct_point_2 
-    Construct_projected_point_2;
+    typedef typename BaseCKvA::Construct_point_2 Construct_projected_point_2;
     
     //! returns an instance of Construct_projected_point_2 functor
     Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return 
-            Curved_kernel_via_analysis_2(this->kernel()).
-            construct_point_2_object();
+
+        return BaseCKvA::instance().construct_point_2_object();
     }
 
     //! type of Construct_arc_2 functor
@@ -1979,14 +1908,12 @@ public:
     }
 
     //! type of Construct_projected_arc_2 functor
-    typedef 
-    typename Curved_kernel_via_analysis_2::Construct_arc_2 
-    Construct_projected_arc_2;
+    typedef typename BaseCKvA::Construct_arc_2 Construct_projected_arc_2;
     //! returns an instance of Construct_projected_arc_2 functor
     Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return
-            Curved_kernel_via_analysis_2(this->kernel()).
-            construct_arc_2_object();
+
+//!@todo: alternative: BaseCKvA(Self::instance().kernel()).instance(). ?
+        return BaseCKvA::instance().construct_arc_2_object();
     }
     
 // declares curved kernel functors, for each functor defines a member function
@@ -2061,6 +1988,108 @@ public:
     
 #undef CGAL_QKvA_2_functor_pred
 #undef CGAL_QKvA_2_functor_cons
+
+};
+
+} // namespace CGALi
+
+//! basic kernel to maintain points and arcs on a quadric
+template < class BaseCKvA_2, class SurfacePair_3 >
+class Quadrical_kernel_via_analysis_2 :
+    public CGALi::Curved_kernel_via_analysis_2_base<
+        Quadrical_kernel_via_analysis_2< BaseCKvA_2, SurfacePair_3 >,
+        BaseCKvA_2, typename BaseCKvA_2::Curve_kernel_2,
+        CGALi::Quadrical_functor_base >
+{
+public:
+    //! \name public typedefs
+    //!@{
+    
+    //! this instance's first template argument
+    typedef BaseCKvA_2 Curved_kernel_via_analysis_2;
+    
+    //! this instance's second template parameter
+    typedef SurfacePair_3 Surface_pair_3;
+     
+    //! myself
+    typedef Quadrical_kernel_via_analysis_2< 
+        Curved_kernel_via_analysis_2, Surface_pair_3 
+    > 
+    Self;
+
+    //! type of curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
+         Curve_kernel_2;
+
+    //! type of curve analysis
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
+
+    //!@}
+
+    //!\name embedded types  for \c Arrangement_2 package
+    //!@{
+
+    //! type of surface
+    typedef typename Surface_pair_3::Surface_3 Surface_3;
+
+    //! type of curve_2
+    typedef Surface_3 Curve_2;
+        
+    //! type of a point on generic curve
+    typedef CGALi::Quadric_point_2< Self, Surface_pair_3 > Point_2; 
+
+    //! type of an arc on generic curve
+    typedef CGALi::Quadric_arc_2< Self, Surface_pair_3 > Arc_2; 
+
+    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    typedef Arc_2 X_monotone_curve_2;
+
+    //! tag specifies which boundary functors are implemented
+    typedef CGAL::Arr_all_boundary_tag Boundary_category;
+
+    //!@}
+    
+protected:
+
+    //! base kernel type
+    typedef CGALi::Curved_kernel_via_analysis_2_base<
+        Self, Curved_kernel_via_analysis_2, Curve_kernel_2,
+         CGALi::Quadrical_functor_base >
+    Base_kernel;
+    
+public:
+    //! \name Constructors
+    //!@{
+
+    //! default constructor
+    Quadrical_kernel_via_analysis_2() :
+        Base_kernel() {
+    }
+    
+    //! standard constructor
+    Quadrical_kernel_via_analysis_2(const Surface_3& reference) :
+        Base_kernel(),
+        _m_reference(reference) {
+    }
+    
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    Quadrical_kernel_via_analysis_2(const Curve_kernel_2& kernel,
+                                    const Surface_3& reference) :
+        Base_kernel(kernel),
+        _m_reference(reference) {
+    }
+    
+    //!@}
+
+    //!\name Access members
+    //!@{
+
+    //! returns the reference surface
+    inline
+    const Surface_3& reference() {
+        return _m_reference;
+    }
+    //!@}
 
 protected:
     //!\name Data members

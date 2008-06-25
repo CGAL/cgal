@@ -32,10 +32,8 @@
 CGAL_BEGIN_NAMESPACE
 
 #ifndef CKvA_CERR
-#ifndef CKvA_DEBUG_PRINT_CERR
-#define CKvA_DEBUG_PRINT_CERR 0
-#endif
-#if CKvA_DEBUG_PRINT_CERR
+//#define FCKvA_DEBUG_PRINT_CERR 
+#ifdef FCKvA_DEBUG_PRINT_CERR
 #define CKvA_CERR(x) std::cout << x
 #else
 #define CKvA_CERR(x) static_cast<void>(0)
@@ -52,9 +50,9 @@ namespace Filtered_curved_kernel_via_analysis_2_Functors {
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2; \
 
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_xy_2 :
-        public CurvedKernelViaAnalysis_2::Base::Compare_xy_2 {
+        public FunctorBase::Compare_xy_2 {
 
 public:
     //! this instance template parameter
@@ -73,7 +71,7 @@ public:
 #endif
     
     //! the base type
-    typedef typename Curved_kernel_via_analysis_2::Base::Compare_xy_2 Base;
+    typedef typename FunctorBase::Compare_xy_2 Base;
 
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -98,20 +96,14 @@ public:
 
         CKvA_CERR("\nfilteredcompare_xy_; p1: " << p1 << "; p2: " <<
              p2 << "\n");
-        
-        Base base_compare_xy(this->_ckva());
-    
-        result_type res = base_compare_xy(p1, p2, equal_x);
-        
-        CKvA_CERR("result: " << res << "\n");
-        
-        return res;
+
+        return Base::operator()(p1, p2, equal_x);
     }
 };
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_near_boundary_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_near_boundary_2 {
+        public FunctorBase::Compare_y_near_boundary_2 {
     
 public:
     //! this instance template parameter
@@ -131,7 +123,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename CurvedKernelViaAnalysis_2::Base::Compare_y_near_boundary_2
+    typedef typename FunctorBase::Compare_y_near_boundary_2
     Base;
     
     //! the result type
@@ -161,7 +153,7 @@ public:
         CGAL_assertion_code (
                 CGAL::Arr_parameter_space loc1 = cv1.location(ce);
         )
-        CGAL_precondition(cv1.is_on_left_right(loc1) &&
+        CGAL_precondition(Arc_2::is_on_left_right(loc1) &&
                           loc1 == cv2.location(ce));
         // comparing ids is the same as calling is_identical() ??
         if (cv1.id() == cv2.id()) {
@@ -209,7 +201,7 @@ public:
                 CGAL_assertion_code(bool check = )
                     CGAL::assign(asym_info2, obj2);
                 CGAL_assertion(check);
-                filter_res = this->_ckva()->kernel().compare_x_2_object()(
+                filter_res = Base::_ckva()->kernel().compare_x_2_object()(
                         asym_info1, asym_info2
                 );
             }
@@ -228,18 +220,13 @@ public:
             return filter_res;
         }
 
-        Base base_compare_y_near_boundary(this->_ckva());
-
-        result_type res = base_compare_y_near_boundary(cv1, cv2, ce);
-        
-        CKvA_CERR("result: " << res << "\n");
-        return res;
+        return Base::operator()(cv1, cv2, ce);
     }
 };
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_at_x_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_2 {
+        public FunctorBase::Compare_y_at_x_2 {
     
 public:
     //! this instance template parameter
@@ -259,7 +246,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_2 Base;
+    typedef typename FunctorBase::Compare_y_at_x_2 Base;
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -281,21 +268,13 @@ public:
      */
     result_type operator()(const Point_2& p, const Arc_2& cv) const {
      
-        CKvA_CERR("\nfilteredcompare_y_at_x; p: " << p 
-                  << ";\n cv:" << cv << "\n");
-        
-        Base base_compare_y_at_x(this->_ckva());
-
-        result_type res = base_compare_y_at_x(p, cv);
-        
-        CKvA_CERR("result: " << res << "\n");
-        return res;
+        return Base::operator()(p, cv);
     }
 };
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_at_x_left_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_left_2 {
+        public FunctorBase::Compare_y_at_x_left_2 {
     
 public:
     //! this instance template parameter
@@ -315,8 +294,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_left_2 Base;
+    typedef typename FunctorBase::Compare_y_at_x_left_2 Base;
 
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -343,22 +321,13 @@ public:
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
 
-        CKvA_CERR("\ncompare_y_at_x_left(cv2); cv1: " << cv1 << "; cv2: " <<
-            cv2 << "; p: " << p << "\n");
-
-        
-        Base base_compare_y_at_x_left(this->_ckva());
-
-        result_type res = base_compare_y_at_x_left(cv1, cv2, p);
-        
-        CKvA_CERR("result: " << res << "\n");
-        return res;
+        return Base::operator()(cv1, cv2, p);
     }
 };
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_at_x_right_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_right_2 {
+        public FunctorBase::Compare_y_at_x_right_2 {
     
 public:
     //! this instance template parameter
@@ -378,8 +347,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename 
-    CurvedKernelViaAnalysis_2::Base::Compare_y_at_x_right_2 Base;
+    typedef typename FunctorBase::Compare_y_at_x_right_2 Base;
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
@@ -409,24 +377,24 @@ public:
         CKvA_CERR("\ncompare_y_at_x_right(cv2); cv1: " << cv1 << "; cv2: " <<
             cv2 << "; p: " << p << "\n");
 
-        
-        Base base_compare_y_at_x_right(this->_ckva());
-
-        result_type res = base_compare_y_at_x_right(cv1, cv2, p);
-        
-        CKvA_CERR("result: " << res << "\n");
-        return res;
+        return Base::operator()(cv1, cv2, p);
     }
 };
 
-//!\brief Tests two objects, whether two arcs can have an intersection
-template < class CurvedKernelViaAnalysis_2 >
-class May_have_intersection_2 {
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
+class May_have_intersection_2 :
+        public Curved_kernel_via_analysis_2_Functors::
+    Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
 public:
     //! this instance template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
     CGAL_FILTERED_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
+
+    typedef Curved_kernel_via_analysis_2_Functors::
+        Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 >
+    Base;
 
 #if DOXYGEN_RUNNING
     //! type of curve
@@ -470,16 +438,14 @@ public:
     
     //! standard constructor
     May_have_intersection_2(Curved_kernel_via_analysis_2 *kernel) :
-        _m_curved_kernel(kernel) {
-        CGAL_assertion(kernel != NULL);
+        Base(kernel) {
     }
     
     /*!\brief
      * Checks whether \c cv1 and \c cv2 can have an intersection. If
      * not it certainly returns false, if possible, it return true.
      */
-    template < class Arc_2_ >
-    bool operator()(const Arc_2_& cv1, const Arc_2_& cv2) const {
+    bool operator()(const Arc_2& cv1, const Arc_2& cv2) const {
         
         Arc_2 trimmed_cv1, trimmed_cv2;
 
@@ -599,8 +565,8 @@ public:
      */
     template < class OutputIterator >
     OutputIterator construct_covering_approximation(
-            const Arc_2& arc, OutputIterator oi
-    ) const {
+            const Arc_2& arc, OutputIterator oi) const {
+
         CKvA_CERR("\nconstruct_covering_approximation; arc: " << arc 
              << ";\n cv:" << arc << "\n");
 
@@ -641,46 +607,36 @@ public:
         update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MAX_END));
 
 
+        typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
+            construct_pt_on_arc(Base::_ckva()->
+                construct_point_on_arc_2_object());
+         
         if(!arc.is_vertical()) {
-        
-
+    
+            std::vector<Xy_coordinate_2> pts;
 #ifdef USE_X_CRITICAL_POINTS
 #warning Uses X_critical points!
 
-            std::vector<Xy_coordinate_2> x_critical_points;
-            
             typename Curve_kernel_2::X_critical_points_2() 
-                (arc.curve(), std::back_inserter(x_critical_points));
-
-            int n = static_cast<int>(x_critical_points.size());
-            
-            for( int i = 0; i < n; i++ ) {
-
-                Xy_coordinate_2& curr_xy = x_critical_points[i]; 
-
-                Point_2 curr_point 
-                    = typename Curved_kernel_via_analysis_2
-                        ::Construct_point_2(_m_curved_kernel)
-                            (curr_xy.x(),curr_xy.curve(), curr_xy.arcno());
-
+                (arc.curve(), std::back_inserter(pts));
 #else
-
-            std::vector<Point_2> y_extreme_points;
-                
-            _m_curved_kernel->y_extreme_points_2_object() 
-                (arc.curve(), std::back_inserter(y_extreme_points));
-
-            int n = static_cast<int>(y_extreme_points.size());
-            
-            for( int i = 0; i < n; i++ ) {
-
-                Point_2& curr_point = y_extreme_points[i];
-                    
+            Base::_ckva()->y_extreme_points_2_object()(arc.curve(),
+                    std::back_inserter(pts));
 
 #endif
-                
-                if( typename Curved_kernel_via_analysis_2
-                        ::Is_on_2(_m_curved_kernel) (curr_point, arc) ) {
+            int n = static_cast<int>(pts.size());
+            for( int i = 0; i < n; i++ ) {
+
+                const Xy_coordinate_2& curr_xy = pts[i]; 
+            
+                CERR("construct point on arc call: " << 
+                    curr_xy << "; arc = " << arc << "\n\n");
+                Point_2 curr_point = construct_pt_on_arc
+                   (curr_xy.x(), curr_xy.curve(), curr_xy.arcno(), arc);
+    
+                CERR("is_on_2 call: " << 
+                    curr_point << "; arc = " << arc << "\n\n");
+                if(Base::_ckva()->is_on_2_object()(curr_point, arc)) {
                     CGAL::Bbox_2 point_bbox 
                         = curr_point.xy().approximation_box_2(threshold());
                     std::pair<double,double> y_iv 
@@ -689,7 +645,6 @@ public:
 
                 }
             }
-
         }
 
         CGAL::Bbox_2 bbox(x_min, y_min, x_max, y_max);
@@ -700,16 +655,13 @@ public:
         return oi;
     }
 
-private:
-    //! pointer to \c Curved_kernel_via_analysis_2 ?
-    Curved_kernel_via_analysis_2 *_m_curved_kernel;
 };
 
 
 //! checks wether and how two arcs are intersection - with first filtering
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Intersect_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Intersect_2 {
+        public FunctorBase::Intersect_2 {
     
 public:
     //! this instance template parameter
@@ -729,7 +681,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename CurvedKernelViaAnalysis_2::Base::Intersect_2 Base;
+    typedef typename FunctorBase::Intersect_2 Base;
 
     //! standard constructor
     Intersect_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -754,39 +706,29 @@ public:
         CKvA_CERR("\nfiltered_intersect; cv1: " << cv1 
              << ";\n cv2:" << cv2 << "");
 
-        if (!this->_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
+        if (!Base::_ckva()->may_have_intersection_2_object()(cv1, cv2)) {
             // return no one
             CKvA_CERR("\nfilter: sucessfull\n");
 
             CGAL_assertion_code(
             {
-                std::list< CGAL::Object > tmp;
-                Base base_intersection(this->_ckva());
-                base_intersection(cv1, cv2, std::back_inserter(tmp));
+                std::vector<CGAL::Object> tmp;
+                Base::operator()(cv1, cv2, std::back_inserter(tmp));
                 CGAL_assertion(tmp.empty());
             });
-            
             return oi;
         }
 
         // else 
         CKvA_CERR("\nfilter: failed\n");
 
-        // and call usual intersection
-        std::list< CGAL::Object > tmp;
-        Base base_intersection(this->_ckva());
-        base_intersection(cv1, cv2, std::back_inserter(tmp));
-        for (std::list< CGAL::Object >::const_iterator it = tmp.begin();
-             it != tmp.end(); it++) {
-            *oi++ = *it;
-        }
-        return oi;
+        return Base::operator()(cv1, cv2, oi);
     }
 };
 
-template < class CurvedKernelViaAnalysis_2 >
+template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Is_on_2 : 
-        public CurvedKernelViaAnalysis_2::Base::Is_on_2 {
+        public FunctorBase::Is_on_2 {
     
 public:
     //! this instance template parameter
@@ -806,7 +748,7 @@ public:
 #endif
 
     //! the bae type
-    typedef typename CurvedKernelViaAnalysis_2::Base::Is_on_2 Base;
+    typedef typename FunctorBase::Is_on_2 Base;
     
     //! the result type
     typedef bool result_type;
@@ -825,25 +767,14 @@ public:
      */
     result_type operator()(const Point_2& p, const Curve_2& c) const {
         
-        //CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
-        
-        Base base_is_on(this->_ckva());
-        result_type res = base_is_on(p, c);
-        
-        CKvA_CERR("result: " << res << "\n");
-        
-        return res;
+        CKvA_CERR("\nfiltered_is_on; p: " << p << ";\n c:" << c << "");
+
+        return Base::operator()(p, c);
     }
 
-    result_type operator()(const Point_2& p, const Arc_2& c) const {
+    result_type operator()(const Point_2& p, const Arc_2& arc) const {
         
-        Base base_is_on(this->_ckva());
-        result_type res = base_is_on(p, c);
-        
-        CKvA_CERR("result: " << res << "\n");
-        
-        return res;
-
+        return Base::operator()(p, arc);
     }
 };
 
@@ -851,117 +782,23 @@ public:
 
 } // namespace Filtered_curved_kernel_via_analysis_2_Functors 
 
-} // namespace CGALi
 
-/*!\brief
- * Filtered curved kernel, i.e., intersection predicate is filted by first
- * computing a covering approximation. Only if these overlap for two arcs
- * the exact intersection predicate is called.
- */
-template < class CurvedKernelViaAnalysis_2 >
-class Filtered_curved_kernel_via_analysis_2 :
-    public CurvedKernelViaAnalysis_2::
-      template rebind< 
-        Filtered_curved_kernel_via_analysis_2< CurvedKernelViaAnalysis_2 >
-      >::Other
-{
-public:
-    //! \name public typedefs
-    //!@{
+template <class FCKvA, class BaseCKvA>
+struct Filtered_functor_base :
+      public BaseCKvA::template rebind< FCKvA >::Functor_base {
 
-    //! this instance's first template argument
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
-    //! myself
-    typedef 
-    Filtered_curved_kernel_via_analysis_2< Curved_kernel_via_analysis_2 > Self;
+    typedef FCKvA Self;
 
-    //! type of curve kernel
-    typedef typename 
-    Curved_kernel_via_analysis_2::Curve_kernel_2 Curve_kernel_2;
+    typedef BaseCKvA Base_ckva;
 
-    //! type of curve analysis
-    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
-public:
-    //!\name embedded types  for \c Arrangement_2 package
-    //!@{
+    typedef typename BaseCKvA::template rebind< Self >::Functor_base 
+        Functor_base;
 
-    //! type of curve_2
-    typedef Curve_analysis_2 Curve_2;
-        
-    //! type of a point on generic curve
-    typedef CGALi::Point_2< Self > Point_2; 
-
-    //! type of an arc on generic curve
-    typedef CGALi::Arc_2< Self > Arc_2; 
-
-    //! type of weakly x-monotone arc for \c ArrangementTraits_2
-    typedef Arc_2 X_monotone_curve_2;
-
-    //!@}
-
-public:
-    //!\name base type
-    //!@{
-
-    //! the base type
-    typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self >::Other Base;
-    
-    //!@}
-
-public:
-    //! \name Constructors
-    //!@{
-
-    //! default constructor
-    Filtered_curved_kernel_via_analysis_2() :
-        Base() {
-    }
-    
-    //! construct using specific \c Curve_kernel_2 instance (for controlling)
-    Filtered_curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
-        Base(kernel) {
-    }
-    
-    //!@}
-    
-    //!\name Additional functors
-    //!@{
-    
-// declares curved kernel functors, for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_CKvA_2_functor_pred(Y, Z) \
-    typedef CGALi::Curved_kernel_via_analysis_2_Functors::Y<Self> Y; \
-    Y Z() const { return Y(&Self::instance()); }
-
-#define CGAL_CKvA_2_functor_cons(Y, Z) CGAL_CKvA_2_functor_pred(Y, Z)
-    
-public:
-
-    CGAL_CKvA_2_functor_cons(Construct_point_2, 
-                             construct_point_2_object);
-    
-    CGAL_CKvA_2_functor_cons(Construct_point_on_arc_2, 
-                             construct_point_on_arc_2_object);
-    
-    CGAL_CKvA_2_functor_cons(Construct_arc_2, 
-                             construct_arc_2_object);
-
-    CGAL_CKvA_2_functor_cons(X_extreme_points_2, 
-                             x_extreme_points_2_object);
-
-    CGAL_CKvA_2_functor_cons(Y_extreme_points_2, 
-                             y_extreme_points_2_object);
-
-#undef CGAL_CKvA_2_functor_pred
-#undef CGAL_CKvA_2_functor_cons
-    
 // declares curved kernel functors, for each functor defines a member function
 // returning an instance of this functor
 #define CGAL_FILTERED_CKvA_2_functor_pred(Y, Z) \
-    typedef CGALi::Filtered_curved_kernel_via_analysis_2_Functors::Y<Self> Y; \
+    typedef CGALi::Filtered_curved_kernel_via_analysis_2_Functors:: \
+        Y< Self, Functor_base > Y; \
     Y Z() const { return Y(&Self::instance()); }
 
 #define CGAL_FILTERED_CKvA_2_functor_cons(Y, Z) \
@@ -990,10 +827,83 @@ public:
 #undef CGAL_FILTERED_CKvA_2_functor_pred
 #undef CGAL_FILTERED_CKvA_2_functor_cons
 
-    //!@}
+};
+
+} // namespace CGALi
+
+/*!\brief
+ * Filtered curved kernel, i.e., intersection predicate is filted by first
+ * computing a covering approximation. Only if these overlap for two arcs
+ * the exact intersection predicate is called.
+ */
+template < class BaseCKvA_2 >
+class Filtered_curved_kernel_via_analysis_2 :
+    public CGALi::Curved_kernel_via_analysis_2_base<
+        Filtered_curved_kernel_via_analysis_2< BaseCKvA_2 >,
+        BaseCKvA_2, typename BaseCKvA_2::Curve_kernel_2,
+        CGALi::Filtered_functor_base >
+{
+public:
+    //! \name public typedefs
+    //!@{
+
+    //! this instance's first template argument
+    typedef BaseCKvA_2 Curved_kernel_via_analysis_2;
     
-}; // class Curved_kernel_via_analysis_2
+    //! myself
+    typedef Filtered_curved_kernel_via_analysis_2<
+            Curved_kernel_via_analysis_2 > Self;
+
+    //! type of curve kernel
+    typedef typename 
+    Curved_kernel_via_analysis_2::Curve_kernel_2 Curve_kernel_2;
+
+    //! type of curve analysis
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
+    
+public:
+    //!\name embedded types  for \c Arrangement_2 package
+    //!@{
+
+    //! type of curve_2
+    typedef Curve_analysis_2 Curve_2;
+        
+    //! type of a point on generic curve
+    typedef CGALi::Point_2< Self > Point_2; 
+
+    //! type of an arc on generic curve
+    typedef CGALi::Arc_2< Self > Arc_2; 
+
+    //! type of weakly x-monotone arc for \c ArrangementTraits_2
+    typedef Arc_2 X_monotone_curve_2;
+
+    //!@}
+
+protected:
+    
+    //! base kernel type
+    typedef CGALi::Curved_kernel_via_analysis_2_base<
+        Self, Curved_kernel_via_analysis_2, Curve_kernel_2,
+        CGALi::Filtered_functor_base > Base_kernel;
+
+public:
+    //! \name Constructors
+    //!@{
+
+    //! default constructor
+    Filtered_curved_kernel_via_analysis_2() :
+        Base_kernel() {
+    }
+    
+    //! construct using specific \c Curve_kernel_2 instance (for controlling)
+    Filtered_curved_kernel_via_analysis_2(const Curve_kernel_2& kernel) :
+        Base_kernel(kernel) {
+    }
+    
+    //!@}
+ 
+}; // class Filtered_curved_kernel_via_analysis_2
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_H
+#endif // CGAL_FILTERED_CURVED_KERNEL_VIA_ANALYSIS_2_H

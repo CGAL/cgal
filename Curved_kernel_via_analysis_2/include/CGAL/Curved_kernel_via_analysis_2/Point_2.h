@@ -450,9 +450,9 @@ public:
     //!\name Predicates
     //!@{
 
-#define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y, Z) \
+#define CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(X, Y) \
     typename Curved_kernel_via_analysis_2::X Y = \
-         Curved_kernel_via_analysis_2::instance().Z(); \
+         Curved_kernel_via_analysis_2::instance().Y##_object(); \
 
     /*!\brief
      * Compares x-coordinates of this point with \c q
@@ -468,9 +468,7 @@ public:
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, 
-                                              compare_x_2, 
-                                              compare_x_2_object);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, compare_x_2);
         CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
@@ -492,9 +490,7 @@ public:
         CGAL_precondition(this->ptr()->_m_xy);
         CGAL_precondition(q.ptr()->_m_xy);
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, 
-                                              compare_xy_2, 
-                                              compare_xy_2_object);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2);
         CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
         return compare_xy_2(
                 *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
@@ -513,9 +509,7 @@ public:
     ) const {
         CGAL_precondition(this->ptr()->_m_xy);
 
-        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, 
-                                              is_on_2, 
-                                              is_on_2_object);
+        CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2);
         CGAL_precondition(dynamic_cast< const Kernel_point_2* >(this));
         return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
@@ -673,9 +667,9 @@ public:
     // befriending the functors
     
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
-    friend class Curved_kernel_via_analysis_2::Z; \
+    friend class Curved_kernel_via_analysis_2::Z;  \
     friend class Curved_kernel_via_analysis_2_Functors:: \
-    Z< Curved_kernel_via_analysis_2 >; \
+          Z< Curved_kernel_via_analysis_2 >; 
     
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);

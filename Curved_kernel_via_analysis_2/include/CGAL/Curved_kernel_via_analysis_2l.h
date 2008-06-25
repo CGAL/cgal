@@ -28,25 +28,93 @@
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
-
 CGAL_BEGIN_NAMESPACE
 
+namespace CGALi {
+
+template <class CKvA2l, class BaseCKvA>
+struct CKvA2l_functor_base :
+        public BaseCKvA::template rebind< CKvA2l >::Functor_base {
+
+    typedef CKvA2l Self;
+
+    typedef typename BaseCKvA::template rebind< Self >::Functor_base
+         Functor_base;
+
+    //! type of Construct_point_2 functor
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l< Self > 
+    Construct_point_2;
+    //! returns an instance of Construct_point_2 functor
+    Construct_point_2 construct_point_2_object() const { 
+        return Construct_point_2(&Self::instance());
+    }
+
+    //! type of Construct_projected_point_2 functor
+    typedef typename BaseCKvA::Construct_point_2 
+    Construct_projected_point_2;
+    //! returns an instance of Construct_projected_point_2 functor
+    Construct_projected_point_2 construct_projected_point_2_object() const { 
+        
+        return BaseCKvA::instance().construct_point_2_object();
+    }
+    
+    //! type of Construct_arc_2 functor
+    typedef 
+    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_arc_2l< Self > 
+    Construct_arc_2;
+    //! returns an instance of Construct_arc_2 functor
+    Construct_arc_2 construct_arc_2_object() const { 
+        return Construct_arc_2(&Self::instance());
+    }
+    
+    //! type of Construct_projected_arc_2 functor
+    typedef typename BaseCKvA::Construct_arc_2 
+    Construct_projected_arc_2;
+    //! returns an instance of Construct_projected_arc_2 functor
+    Construct_projected_arc_2 construct_projected_arc_2_object() const { 
+        
+        return BaseCKvA::instance().construct_arc_2_object();
+    }
+    
+    // declares curved kernel functors, 
+    // for each functor defines a member function
+// returning an instance of this functor
+#define CGAL_CKvA_2l_functor_pred(Y, Z) \
+    typedef CGALi::Curved_kernel_via_analysis_2l_Functors::Y< Self > Y; \
+    Y Z() const { return Y(&Self::instance()); }
+
+#define CGAL_CKvA_2l_functor_cons(Y, Z) CGAL_CKvA_2l_functor_pred(Y, Z)
+    
+public:
+
+    CGAL_CKvA_2l_functor_pred(Compare_xyz_3, compare_xyz_3_object);
+
+    CGAL_CKvA_2l_functor_pred(Is_on_2, is_on_2_object);
+
+    CGAL_CKvA_2l_functor_pred(Is_on_3, is_on_3_object);
+
+#undef CGAL_CKvA_2l_functor_pred
+#undef CGAL_CKvA_2l_functor_cons
+};
+
+} // namespace CGALi
+
+
 //! basic kernel to maintain points and arcs on a surface
-template < class CurvedKernelViaAnalysis_2, class SurfacePair_3 >
+template < class BaseCKvA_2, class SurfacePair_3 >
 class Curved_kernel_via_analysis_2l :
-    public CurvedKernelViaAnalysis_2::
-      template rebind<
-        Curved_kernel_via_analysis_2l< 
-          CurvedKernelViaAnalysis_2, SurfacePair_3
-        > 
-      >::Other
+    public CGALi::Curved_kernel_via_analysis_2_base<
+        Curved_kernel_via_analysis_2l< BaseCKvA_2, SurfacePair_3 >,
+        BaseCKvA_2, typename BaseCKvA_2::Curve_kernel_2,
+        CGALi::CKvA2l_functor_base >
 {
 public:
     //! \name public typedefs
     //!@{
     
     //! this instance's first template argument
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+    typedef BaseCKvA_2 Curved_kernel_via_analysis_2;
     
     //! this instance's second template parameter
     typedef SurfacePair_3 Surface_pair_3;
@@ -86,15 +154,13 @@ public:
 
     //!@}
     
-public:
-    //!\name base type
-    //!@{
+protected:
 
-    //! the base type
-    typedef typename Curved_kernel_via_analysis_2::
-    template rebind< Self >::Other Base;
-    
-    //!@}
+    //! base kernel type
+    typedef CGALi::Curved_kernel_via_analysis_2_base<
+        Self, Curved_kernel_via_analysis_2, Curve_kernel_2,
+         CGALi::CKvA2l_functor_base >
+    Base_kernel;
 
 public:
     //! \name Constructors
@@ -102,77 +168,14 @@ public:
 
     //! default constructor
     Curved_kernel_via_analysis_2l() :
-        Base() {
+        Base_kernel() {
     }
     
     //! construct using specific \c Curve_kernel_2 instance (for controlling)
     Curved_kernel_via_analysis_2l(const Curve_kernel_2& kernel) :
-        Base(kernel) {
+        Base_kernel(kernel) {
     }
     
-    //!@}
-    
-    //!\name embedded constructions and predicates 
-    //!@{
-    
-    //! type of Construct_point_2 functor
-    typedef 
-    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_point_2l< Self > 
-    Construct_point_2;
-    //! returns an instance of Construct_point_2 functor
-    Construct_point_2 construct_point_2_object() const { 
-        return Construct_point_2(&Self::instance());
-    }
-
-    //! type of Construct_projected_point_2 functor
-    typedef typename Curved_kernel_via_analysis_2::Construct_point_2 
-    Construct_projected_point_2;
-    //! returns an instance of Construct_projected_point_2 functor
-    Construct_projected_point_2 construct_projected_point_2_object() const { 
-        return 
-            Curved_kernel_via_analysis_2(this->kernel()).
-            construct_point_2_object();
-    }
-    
-    //! type of Construct_arc_2 functor
-    typedef 
-    CGALi::Curved_kernel_via_analysis_2l_Functors::Construct_arc_2l< Self > 
-    Construct_arc_2;
-    //! returns an instance of Construct_arc_2 functor
-    Construct_arc_2 construct_arc_2_object() const { 
-        return Construct_arc_2(&Self::instance());
-    }
-    
-    //! type of Construct_projected_arc_2 functor
-    typedef typename Curved_kernel_via_analysis_2::Construct_arc_2 
-    Construct_projected_arc_2;
-    //! returns an instance of Construct_projected_arc_2 functor
-    Construct_projected_arc_2 construct_projected_arc_2_object() const { 
-        return 
-            Curved_kernel_via_analysis_2(this->kernel()).
-            construct_arc_2_object();
-    }
-    
-    // declares curved kernel functors, 
-    // for each functor defines a member function
-// returning an instance of this functor
-#define CGAL_CKvA_2l_functor_pred(Y, Z) \
-    typedef CGALi::Curved_kernel_via_analysis_2l_Functors::Y< Self > Y; \
-    Y Z() const { return Y(&Self::instance()); }
-
-#define CGAL_CKvA_2l_functor_cons(Y, Z) CGAL_CKvA_2l_functor_pred(Y, Z)
-    
-public:
-
-    CGAL_CKvA_2l_functor_pred(Compare_xyz_3, compare_xyz_3_object);
-
-    CGAL_CKvA_2l_functor_pred(Is_on_2, is_on_2_object);
-
-    CGAL_CKvA_2l_functor_pred(Is_on_3, is_on_3_object);
-
-#undef CGAL_CKvA_2l_functor_pred
-#undef CGAL_CKvA_2l_functor_cons
-
     //!@}
 
 }; // class Curved_kernel_via_analysis_2l

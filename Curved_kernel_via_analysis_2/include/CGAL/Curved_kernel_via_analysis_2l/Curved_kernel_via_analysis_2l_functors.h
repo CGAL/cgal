@@ -41,7 +41,7 @@ namespace CGALi {
 namespace Curved_kernel_via_analysis_2l_Functors {
 
 #define CGAL_CKvA_2l_GRAB_BASE_FUNCTOR_TYPES \
-    typedef typename Base::Curve_2 Curve_2; \
+    typedef typename Base::Curve_analysis_2 Curve_analysis_2; \
     typedef typename Base::Point_2 Point_2; \
     typedef typename Base::Arc_2 Arc_2; \
     typedef typename Base::X_coordinate_1 X_coordinate_1; \
@@ -577,7 +577,7 @@ public:
      * \param c The curve
      * \return (true) if the \c p lies on \c c
      */
-    result_type operator()(const Point_2& p, const Curve_2& c) const {
+    result_type operator()(const Point_2& p, const Curve_analysis_2& c) const {
 
         CERR("\nqkvais_on_2: p: " << p << "\n curve: " << c << "\n");
         // FUTURE TODO implement Is_on_2 with Curve_2 == Surface_3 (eriC)
