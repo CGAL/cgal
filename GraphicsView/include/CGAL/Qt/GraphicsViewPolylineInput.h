@@ -1,12 +1,12 @@
 
-#ifndef CGAL_Q_POLYLINE_INPUT_2_H
-#define CGAL_Q_POLYLINE_INPUT_2_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
 
 #include <QPolygonF>
 #include <QPointF>
 
-#include <CGAL/IO/QtInput.h>
-#include <CGAL/IO/QtConverter.h>
+#include <CGAL/Qt/GraphicsViewInput.h>
+#include <CGAL/Qt/Converter.h>
 
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
@@ -18,7 +18,7 @@ class QObject;
 
 namespace CGAL {
 
-class QtPolylineInput_non_templated_base : public QtInput
+class GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
 {
 public:
   void setNumberOfVertices(int n)
@@ -28,7 +28,7 @@ public:
 
 protected:
   // protected constructor
-  QtPolylineInput_non_templated_base(QObject* parent, 
+  GraphicsViewPolylineInput_non_templated_base(QObject* parent, 
                                      QGraphicsScene* s,
                                      int n = 0,
                                      bool closed = true);
@@ -58,26 +58,27 @@ private:
   int n_;
   QPointF sp;
   QGraphicsScene *scene_;
-}; // end class QtPolylineInput_non_templated_base
+}; // end class GraphicsViewPolylineInput_non_templated_base
 
 template <typename K>
-class QtPolylineInput : public QtPolylineInput_non_templated_base
+class GraphicsViewPolylineInput : public GraphicsViewPolylineInput_non_templated_base
 {
 public:
-  QtPolylineInput(QObject* parent, QGraphicsScene* s, int n = 0, bool closed = true)
-    : QtPolylineInput_non_templated_base(parent, s, n, closed)
+  GraphicsViewPolylineInput(QObject* parent, QGraphicsScene* s, int n = 0, bool closed = true)
+    : GraphicsViewPolylineInput_non_templated_base(parent, s, n, closed)
   {
   }
 
 protected:
   void generate_polygon() {
     std::list<typename K::Point_2> points;
-    QtConverter<K> convert;
+    Converter<K> convert;
     convert(points, this->polygon); 
     emit(generate(CGAL::make_object(points)));
   }
-}; // end class QtPolylineInput
+}; // end class GraphicsViewPolylineInput
 
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_POLYLINE_INPUT_2_H
+#endif // CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H

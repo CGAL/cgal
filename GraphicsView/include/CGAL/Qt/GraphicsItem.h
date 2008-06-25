@@ -1,23 +1,23 @@
-#ifndef CGAL_Q_GRAPHICS_ITEM_2_H
-#define CGAL_Q_GRAPHICS_ITEM_2_H
+#ifndef CGAL_QT_GRAPHICS_ITEM_H
+#define CGAL_QT_GRAPHICS_ITEM_H
 
 #include <CGAL/Object.h>
 
 
-#include <QAbstractGraphicsShapeItem>
-
 namespace CGAL {
+namespace Qt {
 
-class QtGraphicsItem : public QObject, public QAbstractGraphicsShapeItem  {
+class GraphicsItem : public QObject {
 
   Q_OBJECT
 
 public slots:
 
-virtual void modelChanged() = 0;
+  virtual void modelChanged() = 0;
 };
 
 
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_GRAPHICS_ITEM_2_H
+#endif // CGAL_QT_GRAPHICS_ITEM_H

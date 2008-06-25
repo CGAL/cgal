@@ -1,25 +1,25 @@
 
-#ifndef CGAL_Q_TRIANGULATION_GRAPHICS_ITEM_2_H
-#define CGAL_Q_TRIANGULATION_GRAPHICS_ITEM_2_H
+#ifndef CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
+#define CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
-#include <CGAL/IO/QtPainterOstream.h>
-#include <CGAL/IO/QtGraphicsItem.h>
-#include <CGAL/IO/QtConverter.h>
+#include <CGAL/Qt/QtPainterOstream.h>
+#include <CGAL/Qt/QtGraphicsItem.h>
+#include <CGAL/Qt/QtConverter.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
 
 namespace CGAL {
-
+namespace Qt {
 
 template <typename T>
-class QtTriangulationGraphicsItem : public QtGraphicsItem
+class TriangulationGraphicsItem : public GraphicsItem
 {
 public:
-  QtTriangulationGraphicsItem(T* t_);
+  TriangulationGraphicsItem(T* t_);
 
   void modelChanged();
 
@@ -84,7 +84,7 @@ protected:
 
 
 template <typename T>
-QtTriangulationGraphicsItem<T>::QtTriangulationGraphicsItem(T * t_)
+TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false),
      draw_edges(true), draw_vertices(true)
 {
@@ -98,7 +98,7 @@ QtTriangulationGraphicsItem<T>::QtTriangulationGraphicsItem(T * t_)
 
 template <typename T>
 QRectF 
-QtTriangulationGraphicsItem<T>::boundingRect() const
+TriangulationGraphicsItem<T>::boundingRect() const
 {
   return bounding_rect;
 }
@@ -106,9 +106,9 @@ QtTriangulationGraphicsItem<T>::boundingRect() const
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
+TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
-  QtConverter<K> convert;
+  Converter<K> convert;
 
   if(draw_edges) {
     for (int i=0; i<3; i++) {
@@ -127,7 +127,7 @@ QtTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
+TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   if(drawEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
@@ -141,10 +141,10 @@ QtTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
+TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
   if(drawVertices()) {
-    QtConverter<K> convert;
+    Converter<K> convert;
 
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
@@ -160,9 +160,9 @@ QtTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
+TriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
-  QtConverter<K> convert;
+  Converter<K> convert;
 
   m_painter->setPen(this->verticesPen());
   QMatrix matrix = m_painter->matrix();
@@ -173,7 +173,7 @@ QtTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::paint(QPainter *painter, 
+TriangulationGraphicsItem<T>::paint(QPainter *painter, 
                                        const QStyleOptionGraphicsItem *option,
                                        QWidget * widget)
 {
@@ -196,7 +196,7 @@ QtTriangulationGraphicsItem<T>::paint(QPainter *painter,
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::updateBoundingBox()
+TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
   if(t->number_of_vertices() == 0){
@@ -231,7 +231,7 @@ QtTriangulationGraphicsItem<T>::updateBoundingBox()
 
 template <typename T>
 void 
-QtTriangulationGraphicsItem<T>::modelChanged()
+TriangulationGraphicsItem<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0) ){
     this->hide();
@@ -243,6 +243,7 @@ QtTriangulationGraphicsItem<T>::modelChanged()
 }
 
 
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_TRIANGULATION_GRAPHICS_ITEM_2_H
+#endif // CGAL_QT_TRIANGULATION_GRAPHICS_ITEM_H

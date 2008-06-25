@@ -1,6 +1,6 @@
 
-#ifndef CGAL_Q_LINE_INPUT_2_H
-#define CGAL_Q_LINE_INPUT_2_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_LINE_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_LINE_INPUT_H
 
 #include <QGraphicsView>
 #include <QRectF>
@@ -11,18 +11,18 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include <CGAL/IO/QtConverter.h>
 
-#include <CGAL/IO/QtInput.h>
+#include <CGAL/Qt/Converter.h>
+#include <CGAL/Qt/GraphicsViewInput.h>
 
 namespace CGAL {
-
+namespace Qt {
 
 template <typename K>
-class QtLineInput : public QtInput
+class GraphicsViewLineInput : public GraphicsViewInput
 {
 public:
-  QtLineInput(QGraphicsScene* s);
+  GraphicsViewLineInput(QGraphicsScene* s);
 
 protected:
     
@@ -46,7 +46,7 @@ private:
   typename K::Point_2 sp, tp;
   typename K::Line_2 l;
   QGraphicsScene *scene_;  
-  QtConverter<K> convert;
+  Converter<K> convert;
 };
 
 template <typename K>
@@ -69,14 +69,14 @@ LineInput_2<K>::boundingRect()
 
 
 template <typename K>
-QtLineInput<K>::QtLineInput(QGraphicsScene* s)
+GraphicsViewLineInput<K>::GraphicsViewLineInput(QGraphicsScene* s)
   : second(false), scene_(s)
 {}
 
 
 template <typename K>
 QLineF
-QtLineInput<K>::qlinef()
+GraphicsViewLineInput<K>::qlinef()
 {
 
   sp = convert(qsp);
@@ -93,7 +93,7 @@ QtLineInput<K>::qlinef()
 
 template <typename K>
 void 
-QtLineInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewLineInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if(second){
       qtp = event->scenePos();
@@ -115,7 +115,7 @@ QtLineInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QtLineInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewLineInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   qtp = event->scenePos();
   if(qtp == qsp){
@@ -127,7 +127,7 @@ QtLineInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QtLineInput<K>::keyPressEvent ( QKeyEvent * event ) 
+GraphicsViewLineInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() != Qt::Key_Delete){
     return;
@@ -142,7 +142,7 @@ QtLineInput<K>::keyPressEvent ( QKeyEvent * event )
 
 template <typename K>
 bool 
-QtLineInput<K>::eventFilter(QObject *obj, QEvent *event)
+GraphicsViewLineInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -162,6 +162,7 @@ QtLineInput<K>::eventFilter(QObject *obj, QEvent *event)
   }
 } 
 
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_LINE_INPUT_H
+#endif // CGAL_QT_GRAPHICS_VIEW_LINE_INPUT_H

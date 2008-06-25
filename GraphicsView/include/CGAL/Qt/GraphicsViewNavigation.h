@@ -1,5 +1,5 @@
-#ifndef CGAL_Q_NAVIGATION_H
-#define CGAL_Q_NAVIGATION_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_NAVIGATION_H
+#define CGAL_QT_GRAPHICS_VIEW_NAVIGATION_H
 
 #include <QObject>
 #include <QPointF>
@@ -13,8 +13,9 @@ class QEvent;
 class QGraphicsRectItem;
 
 namespace CGAL {
+namespace Qt {
 
-class QtNavigation: public QObject {
+class GraphicsViewNavigation: public QObject {
 
   Q_OBJECT
 
@@ -22,8 +23,8 @@ class QtNavigation: public QObject {
   void mouseCoordinates(QString);
 
 public:
-  QtNavigation(QGraphicsView* v_);
-  ~QtNavigation();
+  GraphicsViewNavigation(QGraphicsView* v_);
+  ~GraphicsViewNavigation();
   
   bool eventFilter(QObject *obj, QEvent *event);
 
@@ -43,7 +44,7 @@ private:
   QCursor cursor_backup;
 };
 
-
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_NAVIGATION_H
+#endif // CGAL_QT_GRAPHICS_VIEW_NAVIGATION_H

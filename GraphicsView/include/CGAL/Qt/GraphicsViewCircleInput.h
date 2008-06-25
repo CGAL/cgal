@@ -1,6 +1,6 @@
 
-#ifndef CGAL_Q_CIRCLE_INPUT_2_H
-#define CGAL_Q_CIRCLE_INPUT_2_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H
 
 #include <QGraphicsView>
 #include <QRectF>
@@ -11,18 +11,18 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include <CGAL/IO/QtConverter.h>
 
-#include <CGAL/IO/QtInput.h>
+#include <CGAL/Qt/Converter.h>
+#include <CGAL/Qt/GraphicsViewInput.h>
 
 namespace CGAL {
-
+namespac Qt {
 
 template <typename K>
-class QtCircleInput : public QtInput
+class GraphicsViewCircleInput : public GraphicsViewInput
 {
 public:
-  QtCircleInput(QGraphicsScene* s, int pointsOnCircle=1); 
+  GraphicsViewCircleInput(QGraphicsScene* s, int pointsOnCircle=1); 
 
 protected:
     
@@ -44,12 +44,12 @@ private:
   QPointF qp, qq, qr;
   Point_2 p, q, r;
   QGraphicsScene *scene_;  
-  QtConverter<K> convert;
+  Converter<K> convert;
 };
 
 
 template <typename K>
-QtCircleInput<K>::QtCircleInput(QGraphicsScene* s, int pointsOnCircle)
+GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QGraphicsScene* s, int pointsOnCircle)
   : qcircle(new QGraphicsEllipseItem()), scene_(s), m_pointsOnCircle(pointsOnCircle), count(0)
 {
   qcircle->hide();
@@ -59,7 +59,7 @@ QtCircleInput<K>::QtCircleInput(QGraphicsScene* s, int pointsOnCircle)
 
 template <typename K>
 void 
-QtCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if(m_pointsOnCircle < 3){
     if(count == 0){
@@ -106,7 +106,7 @@ QtCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QtCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   CGAL::Bbox_2 bb;
   typename K::Construct_circle_2 construct_circle;
@@ -145,7 +145,7 @@ QtCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename K>
 void 
-QtCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
+GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
   if(event->key() == Qt::Key_Delete){
     if(count>0){
@@ -158,7 +158,7 @@ QtCircleInput<K>::keyPressEvent ( QKeyEvent * event )
 
 template <typename K>
 bool 
-QtCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
+GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -180,4 +180,4 @@ QtCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 
 } // namespace CGAL
 
-#endif // CGAL_Q_CIRCLE_INPUT_H
+#endif // CGAL_QT_GRAPHIC_SVIEW_CIRCLE_INPUT_H
