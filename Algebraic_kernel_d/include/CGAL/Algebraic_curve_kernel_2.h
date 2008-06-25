@@ -309,25 +309,6 @@ public:
                 Self::curve_pair_cache()(std::make_pair(ca1, ca2));
             cpa_2._set_swapped(ca1.id() > ca2.id());
             return cpa_2;
-
-            /*Pair_of_curves_2 poc(ca1, ca2);
-            bool swap = (ca1.id() > ca2.id());
-            if(swap) {
-                poc.first = ca2;
-                poc.second = ca1;
-            }   
-            std::pair<typename Curve_pair_cache::Hashed_iterator, bool> res =
-                Self::curve_pair_cache().find(poc);
-            if(res.second) {
-                Curve_pair_analysis_2 cpa = res.first->second;
-                cpa._set_swapped(swap);
-                return cpa;
-            }
-
-            Curve_pair_analysis_2 cpa_2(poc.first, poc.second);
-            cpa_2._set_swapped(swap);
-            return (Self::curve_pair_cache().
-                insert(std::make_pair(poc, cpa_2))).first->second;*/
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
@@ -502,7 +483,7 @@ public:
         }
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
                                          const Xy_coordinate_2& xy2) const {
-            return ((*this)(xy1.x(), xy2.x()));
+            return (*this)(xy1.x(), xy2.x());
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_x_2, compare_x_2_object);
@@ -512,7 +493,7 @@ public:
         public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
-        Compare_y_2(Algebraic_curve_kernel_2 *kernel) :
+        Compare_y_2(Self *kernel) :
              _m_kernel(kernel) {
          }
 
@@ -520,20 +501,20 @@ public:
                                      const Xy_coordinate_2& xy2) const {
             
             // It is easier if the x coordinates are equal!
-            if(Compare_x_2()(xy1.x(),xy2.x()) == CGAL::EQUAL) {
-                return Compare_xy_2(_m_kernel)(xy1,xy2);
-            }
-
-            return (Compare_x_2()(xy1.y(), xy2.y()));
+            if(_m_kernel->compare_x_2_object()(xy1.x(), xy2.x()) ==
+                    CGAL::EQUAL) 
+                return _m_kernel->compare_xy_2_object()(xy1, xy2, true);
+            
+            return _m_kernel->compare_x_2_object()(xy1.y(), xy2.y());
         }
 
-    private:
-        Algebraic_curve_kernel_2 *_m_kernel;   
+    protected:
+        Self *_m_kernel;   
 
     };
     //CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
     Compare_y_2 compare_y_2_object() const {
-        return Compare_y_2((Algebraic_curve_kernel_2 *)this);
+        return Compare_y_2((Self *)this);
     }
     
     //! lexicographical comparison of two objects of type \c Xy_coordinate_2
@@ -543,7 +524,7 @@ public:
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
 
-         Compare_xy_2(Algebraic_curve_kernel_2 *kernel) :
+         Compare_xy_2(Self *kernel) :
              _m_kernel(kernel) {
          }
     
@@ -577,13 +558,13 @@ public:
              return (swap ? -res : res);
         }
 
-    private:
-        Algebraic_curve_kernel_2 *_m_kernel;    
+    protected:
+        Self *_m_kernel;    
         
     };
     //CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
     Compare_xy_2 compare_xy_2_object() const {
-        return Compare_xy_2((Algebraic_curve_kernel_2 *)this);
+        return Compare_xy_2((Self *)this);
     }
 
     //! \brief checks whether curve has only finitely many self-intersection

@@ -462,28 +462,20 @@ public:
             if(angle_360_deg)
                 angle_help = 360;
             
-            Extended_rational tmp;
-            //if-clause to decide from which side should be the addition
-            //theorem used (examples: 18° -> start 15°; 24° -> start 30°)
-            if(!new_start_point)
-                while((angle - angle_help) != 0) {
-                    //sin(x+y) = sin(x)*cos(y) + sin(y)*cos(x)
-                    tmp = esine*ecosine3 + esine3*ecosine;
-                    //cos(x+y) = cos(x)*cos(y) - sin(x)*sin(y)
-                    ecosine = ecosine*ecosine3 - esine*esine3;
-                    esine = tmp;                    
-                    angle_help += 3;
-                }
-            else 
-               while((angle_help - angle) != 0) {
-                    //sin(x-y) = sin(x)*cos(y) - sin(y)*cos(x)
-                    tmp = esine*ecosine3 - esine3*ecosine;
-                    //cos(x-y) = cos(x)*cos(y) + sin(x)*sin(y)
-                    ecosine = ecosine*ecosine3 + esine*esine3;
-                    esine = tmp;
-                    angle_help -= 3;
-                }
-         }
+            int inc = 3;
+            if(new_start_point) {
+                esine3 = -esine3;
+                inc = -3;
+            }
+            while((angle - angle_help) != 0) {
+                //sin(x+y) = sin(x)*cos(y) + sin(y)*cos(x)
+                Extended_rational tmp = esine*ecosine3 + esine3*ecosine;
+                //cos(x+y) = cos(x)*cos(y) - sin(x)*sin(y)
+                ecosine = ecosine*ecosine3 - esine*esine3;
+                esine = tmp;                    
+                angle_help += inc;
+            }
+        }
 
         //defines the zero, needed for the subs_poly_* creation
         ezero =

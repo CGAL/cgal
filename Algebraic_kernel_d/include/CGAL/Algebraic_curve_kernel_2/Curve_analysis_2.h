@@ -320,7 +320,13 @@ public:
     friend std::size_t hash_value(const Self& x) {
         return static_cast<std::size_t>(x.id());
     }
-    
+
+    friend std::ostream& operator <<(std::ostream& os, const Self&) {
+        os << "Unfortunately output operator is not implemented for "
+        " Curve_analysis_2. If you feel like doing this - go ahead! \n";
+        return os;
+    }
+  
 }; // class Curve_analysis_2
 
 } // namespace CGALi
