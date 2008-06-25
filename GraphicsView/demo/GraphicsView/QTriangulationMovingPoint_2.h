@@ -1,6 +1,6 @@
 
-#ifndef CGAL_Q_TRIANGULATION_MOVING_POINT_2
-#define CGAL_Q_TRIANGULATION_MOVING_POINT_2
+#ifndef CGAL_QT_TRIANGULATION_MOVING_POINT
+#define CGAL_QT_TRIANGULATION_MOVING_POINT
 
 #include <CGAL/IO/QtInput.h>
 #include <QGraphicsSceneMouseEvent>
@@ -10,16 +10,17 @@
 
 
 namespace CGAL {
+namespace Qt {
 
 template <typename DT>
-class QTriangulationMovingPoint_2 : public QtInput
+class TriangulationMovingPoint : public GraphicsViewInput
 {
 public:
   typedef typename DT::Face_handle Face_handle;
   typedef typename DT::Vertex_handle Vertex_handle;
   typedef typename DT::Point Point;
 
-  QTriangulationMovingPoint_2(DT  * dt_, QObject* parent);
+  TriangulationMovingPoint(DT  * dt_, QObject* parent);
 
 protected:
   void localize_and_insert_point(QPointF qt_point);
@@ -36,15 +37,15 @@ protected:
 
 
 template <typename T>
-QTriangulationMovingPoint_2<T>::QTriangulationMovingPoint_2(T * dt_,
-                                                            QObject* parent)
-  :  QtInput(parent), dt(dt_), movePointToInsert(false), vh()
+TriangulationMovingPoint_2<T>::TriangulationMovingPoint_2(T * dt_,
+							  QObject* parent)
+  :  GraphicsViewInput(parent), dt(dt_), movePointToInsert(false), vh()
 {}
 
 
 template <typename T>
 void 
-QTriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
+TriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(qt_point.x(), qt_point.y());
   typename T::Locate_type lt;
@@ -59,7 +60,7 @@ QTriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
 
 template <typename T>
 void 
-QTriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->number_of_vertices() == 0 ||
      event->modifiers() != 0 ||
@@ -73,7 +74,7 @@ QTriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-QTriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
   if(! movePointToInsert) return;
@@ -90,7 +91,7 @@ QTriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-QTriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if(! movePointToInsert ||
      event->button() != Qt::LeftButton) {
@@ -109,7 +110,7 @@ QTriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *even
 
 template <typename T>
 bool 
-QTriangulationMovingPoint_2<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationMovingPoint_2<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -130,7 +131,7 @@ QTriangulationMovingPoint_2<T>::eventFilter(QObject *obj, QEvent *event)
 } 
 
 
-
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_TRIANGULATION_MOVING_POINT_2
+#endif // CGAL_QT_TRIANGULATION_MOVING_POINT

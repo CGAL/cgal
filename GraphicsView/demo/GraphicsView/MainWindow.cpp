@@ -12,13 +12,13 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 
-#include "QTriangulationCircumcenter_2.h"
-#include "QTriangulationMovingPoint_2.h"
-#include <CGAL/IO/QtPolylineInput.h>
-#include <CGAL/IO/QtTriangulationGraphicsItem.h>
-#include <CGAL/IO/QtConstrainedTriangulationGraphicsItem.h>
+#include "TriangulationCircumcircle.h"
+#include "TriangulationMovingPoint_2.h"
+#include <CGAL/Qt/GraphicsViewPolylineInput.h>
+#include <CGAL/Qt/TriangulationGraphicsItem.h>
+#include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
 
-#include <CGAL/IO/QtNavigation.h>
+#include <CGAL/Qt/GraphicsViewNavigation.h>
 
 #include <QGLWidget>
 
@@ -30,7 +30,7 @@ MainWindow::MainWindow()
   setupStatusBar();
 
   // Add a GraphicItem for the Delaunay triangulation
-  dgi = new CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
+  dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
@@ -41,19 +41,19 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pi = new CGAL::QtPolylineInput<K>(this, &scene, 0, false); // inputs polylines which are not closed
+  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, false); // inputs polylines which are not closed
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(process(CGAL::Object)));
+		   this, SLOT(processInput(CGAL::Object)));
     
-  mp = new CGAL::QTriangulationMovingPoint_2<Delaunay>(&dt, this);
-  // QTriangulationMovingPoint_2<Delaunay> generates an empty Object() each
+  mp = new CGAL::Qt::TriangulationMovingPoint<Delaunay>(&dt, this);
+  // TriangulationMovingPoint<Delaunay> generates an empty Object() each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(process(CGAL::Object)));
+		   this, SLOT(processInput(CGAL::Object)));
 
-  tcc = new CGAL::QTriangulationCircumcenter_2<Delaunay>(&scene, &dt, this);
+  tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   
 
@@ -85,7 +85,7 @@ MainWindow::MainWindow()
                                                       
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
-  navigation = new CGAL::QtNavigation(this->graphicsView);
+  navigation = new CGAL::Qt::GraphicsViewNavigation(this->graphicsView);
   this->graphicsView->viewport()->installEventFilter(navigation);
   this->graphicsView->installEventFilter(navigation);
 
@@ -94,7 +94,7 @@ MainWindow::MainWindow()
 }
 
 void
-MainWindow::process(CGAL::Object o)
+MainWindow::processInput(CGAL::Object o)
 {
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){

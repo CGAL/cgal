@@ -1,7 +1,6 @@
-#ifndef CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
-#define CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
+#ifndef CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
+#define CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 
-#include <CGAL/IO/QtInput.h>
 #include <QGraphicsSceneMouseEvent> 
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
@@ -9,16 +8,17 @@
 #include <QPen>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
+#include <CGAL/Qt/GraphicsViewInput.h>
 
 namespace CGAL {
+namespace Qt {
 
 template <typename DT>
-class QTriangulationCircumcenter_2 : public QtInput
+class TriangulationCircumcircle_2 : public GraphicsViewInput
 {
 public:
-  QTriangulationCircumcenter_2(QGraphicsScene* s, DT  * dt_, QObject* parent);
-  ~QTriangulationCircumcenter_2();
+  QTriangulationCircumcircle_2(QGraphicsScene* s, DT  * dt_, QObject* parent);
+  ~QTriangulationCircumcircle_2();
  
   void setPen(const QPen& pen);
 
@@ -40,7 +40,7 @@ private:
 
 
 template <typename T>
-QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
+QTriangulationCircumcircle_2<T>::QTriangulationCircumcircle_2(QGraphicsScene* s,
                                                               T * dt_,
                                                               QObject* parent)
   :  QtInput(parent), dt(dt_), scene_(s)
@@ -50,28 +50,32 @@ QTriangulationCircumcenter_2<T>::QTriangulationCircumcenter_2(QGraphicsScene* s,
   scene_->addItem(circle);
 }
 
+
 template <typename T>
-QTriangulationCircumcenter_2<T>::~QTriangulationCircumcenter_2()
+QTriangulationCircumcircle_2<T>::~QTriangulationCircumcircle_2()
 {
 }
 
+
 template <typename T>
 void
-QTriangulationCircumcenter_2<T>::setPen(const QPen& pen)
+QTriangulationCircumcircle_2<T>::setPen(const QPen& pen)
 {
   circle->setPen(pen);
 }
 
+
 template <typename T>
 void
-QTriangulationCircumcenter_2<T>::show()
+QTriangulationCircumcircle_2<T>::show()
 {
   circle->show();
 }
 
+
 template <typename T>
 void
-QTriangulationCircumcenter_2<T>::hide()
+QTriangulationCircumcircle_2<T>::hide()
 {
   circle->hide();
 }
@@ -79,7 +83,7 @@ QTriangulationCircumcenter_2<T>::hide()
 
 template <typename T>
 void 
-QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+QTriangulationCircumcircle_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
     circle->hide();
@@ -102,7 +106,7 @@ QTriangulationCircumcenter_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 bool 
-QTriangulationCircumcenter_2<T>::eventFilter(QObject *obj, QEvent *event)
+QTriangulationCircumcircle_2<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -114,7 +118,7 @@ QTriangulationCircumcenter_2<T>::eventFilter(QObject *obj, QEvent *event)
   }
 } 
 
-
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_TRIANGULATION_CIRCUMCENTER_2
+#endif // CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H

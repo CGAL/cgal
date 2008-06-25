@@ -1,3 +1,80 @@
+#include <iostream>  // for cout
+#include <stdlib.h>  // for exit
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Triangle_3.h>
+#include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Polyhedron_3.h>
+
+template <class HDS>
+class Build_Surface : public CGAL::Modifier_base<HDS>
+{
+public:
+  Build_Surface() { }
+  void operator()( HDS& hds );
+};
+
+template <class HDS>
+void Build_Surface< HDS >::operator()( HDS &hds )
+{
+  /// Build a simple surface made of two triangles.
+  CGAL::Polyhedron_incremental_builder_3<HDS> pB(hds, true);
+  pB.begin_surface( 6, 2, 0);
+
+  typedef typename HDS::Vertex::Point Point;
+  pB.add_vertex( Point( 0.0, 0.0, 0.0));
+  pB.add_vertex( Point( 1.0, 0.0, 0.0));
+  pB.add_vertex( Point( 0.0, 1.0, 0.0));
+  pB.add_vertex( Point( 0.0, 0.0, 1.0));
+  pB.add_vertex( Point( 1.0, 1.0, 1.0));
+  pB.add_vertex( Point( 1.0, 0.0, 1.0));
+
+  // First triangle:
+  pB.begin_facet();
+    pB.add_vertex_to_facet(2);
+    pB.add_vertex_to_facet(4);
+    pB.add_vertex_to_facet(0);
+  pB.end_facet();
+  
+  // Second triangle:
+  std::vector< std::size_t> t;
+  t.push_back(0); t.push_back(5); t.push_back(4);
+  if( pB.test_facet(t.begin(), t.end()) == true )
+    std::cout << "Test passed." << std::endl;
+  else
+  {
+    std::cout << "Test failed." << std::endl;
+    exit( 0 ) ;
+  }
+
+  pB.begin_facet();
+    pB.add_vertex_to_facet(t[0]);
+    pB.add_vertex_to_facet(t[1]);
+    pB.add_vertex_to_facet(t[2]);
+  pB.end_facet();
+
+  std::cout << "before end_surface()" << std::endl;
+  pB.end_surface();
+  std::cout << "after end_surface()" << std::endl;
+}
+
+int main()
+{
+  typedef CGAL::Simple_cartesian<double> Kernel;
+  typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+  typedef Polyhedron::HalfedgeDS HalfedgeDS;
+
+  Polyhedron P;
+  Build_Surface<HalfedgeDS> surface;
+  P.delegate(surface);
+  std::cout << "Done with surface building." << std::endl;
+  return 0;
+}
+
+
+
+
+#if 0
 #include <iostream>
 #include <boost/format.hpp>
 #include <QtGui>
@@ -288,3 +365,5 @@ int main(int argc, char **argv)
 }
 
 #include "min.moc"
+
+#endif

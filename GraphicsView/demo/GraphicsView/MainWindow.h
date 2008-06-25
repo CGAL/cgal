@@ -12,13 +12,15 @@
 #include "ui_MainWindow.h"
 
 namespace CGAL {
-  class QtNavigation;
-  template <class Delaunay> class QtTriangulationGraphicsItem;
-  template <class Delaunay> class QtConstrainedTriangulationGraphicsItem;
-  template <class Delaunay> class QTriangulationMovingPoint_2;
-  template <class Delaunay> class QTriangulationCircumcenter_2;
-  template <class K> class QtPolylineInput;
-} // end namespace CGAL
+  namespace Qt {
+    class GraphicsViewNavigation;
+    template <class Delaunay> class TriangulationGraphicsItem;
+    template <class Delaunay> class ConstrainedTriangulationGraphicsItem;
+    template <class Delaunay> class TriangulationMovingPoint;
+    template <class Delaunay> class TriangulationCircumcircle;
+    template <class K> class GraphicsItemPolylineInput;
+  } // namespace Qt
+} // namespace CGAL
 
 class QLabel;
 class QWidget;
@@ -42,15 +44,15 @@ private:
   Delaunay dt; 
   QGraphicsScene scene;  
 
-  CGAL::QtNavigation* navigation;
+  CGAL::Qt::GraphicsViewNavigation* navigation;
 
-  CGAL::QtConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
+  CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
 
   QLabel* xycoord ;
 
-  CGAL::QTriangulationMovingPoint_2<Delaunay> * mp;
-  CGAL::QtPolylineInput<K> * pi;
-  CGAL::QTriangulationCircumcenter_2<Delaunay> *tcc;
+  CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
+  CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
+  CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
 public:
   MainWindow();
 
@@ -82,7 +84,7 @@ private:
 
 public slots:
 
-  void process(CGAL::Object o);
+  void processInput(CGAL::Object o);
 
   void on_actionUse_OpenGL_toggled(bool checked);
 

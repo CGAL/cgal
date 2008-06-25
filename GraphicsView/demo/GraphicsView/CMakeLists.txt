@@ -27,7 +27,7 @@ link_directories(../../src/CGALQt4)
 qt4_wrap_ui( UI_FILES MainWindow.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc )
+qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt4_automoc( MainWindow.cpp )
@@ -39,8 +39,9 @@ add_executable  ( delaunay main.cpp MainWindow.cpp ${UI_FILES} ${RESOURCE_FILES}
 target_link_libraries( delaunay ${QT_LIBRARIES} )
 if ( NOT AUTO_LINK_ENABLED )    
   # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( delaunay CGAL CGAL-Qt4 )
+  target_link_libraries( delaunay CGAL )
 endif()
+target_link_libraries( delaunay CGAL-Qt4 )
 
 #----------------------------------------
 # minimal graphics view executable: min 
