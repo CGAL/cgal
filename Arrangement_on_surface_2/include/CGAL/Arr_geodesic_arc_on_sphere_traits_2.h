@@ -3069,9 +3069,13 @@ OutputStream & operator<<(OutputStream & os,
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
+#if 0
+  os << ed.dx() << ", " << ed.dy() << ", " << ed.dz();
+#else
   os << static_cast<float>(todouble(ed.dx())) << ", "
      << static_cast<float>(todouble(ed.dy())) << ", "
      << static_cast<float>(todouble(ed.dz()));
+#endif
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << ")"
      << ", "
