@@ -1,4 +1,4 @@
-#include <CGAL/IO/QtNavigation.h>
+#include <CGAL/Qt/GraphicsViewNavigation.h>
 #include <cmath>
 #include <iostream>
 #include <boost/format.hpp>
@@ -12,8 +12,9 @@
 #include <QScrollBar>
 
 namespace CGAL {
+namespace Qt {
 
-  QtNavigation::QtNavigation(QGraphicsView* v_)
+  GraphicsViewNavigation::GraphicsViewNavigation(QGraphicsView* v_)
     : v(v_),
       rectItem(new QGraphicsRectItem),
       dragging(false)
@@ -27,13 +28,13 @@ namespace CGAL {
     rectItem->setZValue(10000);
   }
 
-  QtNavigation::~QtNavigation()
+  GraphicsViewNavigation::~GraphicsViewNavigation()
   {
     delete rectItem;
   }
 
   bool 
-  QtNavigation::eventFilter(QObject *obj, QEvent *event)
+  GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
     switch(event->type()) 
     {
@@ -184,7 +185,7 @@ namespace CGAL {
 
 
   void 
-  QtNavigation::scaleView(qreal scaleFactor)
+  GraphicsViewNavigation::scaleView(qreal scaleFactor)
   {
     QPointF center = v->mapToScene(v->viewport()->rect().center());
 //     qreal factor = v->matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
@@ -196,7 +197,7 @@ namespace CGAL {
     translateView(offset.x(), offset.y());
   }
 
-  void QtNavigation::drag_to(QPoint new_pos)
+  void GraphicsViewNavigation::drag_to(QPoint new_pos)
   {
     QPoint dragging_start_in_view = v->mapFromScene(dragging_start);
     QPoint offset = new_pos - dragging_start_in_view;
@@ -210,14 +211,14 @@ namespace CGAL {
 //       % dragging_start_in_view.x() % dragging_start_in_view.y();
   }
 
-  QRectF QtNavigation::mapToScene(QRect rect) const
+  QRectF GraphicsViewNavigation::mapToScene(QRect rect) const
   {
     QPointF top_left = v->mapToScene(rect.topLeft());
     QPointF bottom_right = v->mapToScene(rect.bottomRight());
     return QRectF(top_left, bottom_right);
   }
 
-  void QtNavigation::translateView(int dx,  int dy)
+  void GraphicsViewNavigation::translateView(int dx,  int dy)
   {
     if( dx == 0 && dy == 0 ) {
       return;
@@ -259,7 +260,7 @@ namespace CGAL {
 //     display_parameters();
   }
 
-  void QtNavigation::display_parameters()
+  void GraphicsViewNavigation::display_parameters()
   {
     std::cerr << 
       boost::format("matrix translation=(%1%, %2%)\n"
@@ -296,7 +297,8 @@ namespace CGAL {
       % v->verticalScrollBar()->maximum();
   }
 
-#include "QtNavigation.moc"
+#include "GraphicsViewNavigation.moc"
 
+} // namespace Qt
 } // namespace CGAL
 

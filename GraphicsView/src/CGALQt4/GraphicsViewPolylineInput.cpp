@@ -8,12 +8,13 @@
 #include <QEvent>
 #include <QKeyEvent>
 
-#include <CGAL/IO/QtPolylineInput.h>
+#include <CGAL/Qt/GraphicsViewPolylineInput.h>
 
 namespace CGAL {
+namespace Qt {
 
-QtPolylineInput_non_templated_base::
-QtPolylineInput_non_templated_base(QObject* parent,
+GraphicsViewPolylineInput_non_templated_base::
+GraphicsViewPolylineInput_non_templated_base(QObject* parent,
                                    QGraphicsScene* s,
                                    int n,
                                    bool closed)
@@ -22,7 +23,7 @@ QtPolylineInput_non_templated_base(QObject* parent,
 
 
 bool
-QtPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *event)
 { 
   if( event->modifiers() ){
     return false;
@@ -67,7 +68,7 @@ QtPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMouseEvent *ev
 
 
 void 
-QtPolylineInput_non_templated_base::rubberbands(const QPointF& p)
+GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
 {
   if(polygon.empty()){
     return;
@@ -92,7 +93,7 @@ QtPolylineInput_non_templated_base::rubberbands(const QPointF& p)
 
 
 void 
-QtPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+GraphicsViewPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   sp = event->scenePos();
   rubberbands(sp);
@@ -100,7 +101,7 @@ QtPolylineInput_non_templated_base::mouseMoveEvent(QGraphicsSceneMouseEvent *eve
 
 
 bool
-QtPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event ) 
+GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event ) 
 {
   if( event->modifiers() )
     return false;
@@ -148,7 +149,7 @@ QtPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event )
 
 
 bool 
-QtPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *event)
+GraphicsViewPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
@@ -171,4 +172,5 @@ QtPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *event)
   }
 }
 
+} // namespace Qt
 } // namespace CGAL
