@@ -60,7 +60,7 @@ Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
 Arrangement_on_surface_with_history_2 (Geometry_traits_2 *tr) :
   Base_arr_2 (static_cast<Data_traits_2*> (tr))
 {
-  m_observer.attach (this);
+  m_observer.attach (*this);
 }
 
 //-----------------------------------------------------------------------------
