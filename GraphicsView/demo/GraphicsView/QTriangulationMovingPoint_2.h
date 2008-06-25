@@ -2,7 +2,7 @@
 #ifndef CGAL_QT_TRIANGULATION_MOVING_POINT
 #define CGAL_QT_TRIANGULATION_MOVING_POINT
 
-#include <CGAL/IO/QtInput.h>
+#include <CGAL/Qt/GraphicsItemInput.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
