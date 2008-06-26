@@ -14,7 +14,7 @@
 // code coverage test for Algebraic_curve_kernel_2
 
 #ifndef CGAL_ACK_USE_EXACUS
-#define CGAL_ACK_USE_EXACUS 1
+#define CGAL_ACK_USE_EXACUS 0
 #endif
 
 #ifndef AcX_DEBUG_PRINT
