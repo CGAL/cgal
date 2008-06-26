@@ -18,6 +18,7 @@ namespace Qt {
 template <typename T>
 class TriangulationGraphicsItem : public GraphicsItem
 {
+  typedef typename T::Geom_traits Geom_traits;
 public:
   TriangulationGraphicsItem(T* t_);
 
@@ -80,7 +81,7 @@ protected:
 
   T * t;
   QPainter* m_painter;
-  PainterOstream<K> painterostream;
+  PainterOstream<Geom_traits> painterostream;
 
   typename T::Vertex_handle vh;
   typename T::Point p;
@@ -140,7 +141,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
-  painterostream = PainterOstream<K>(painter);
+  painterostream = PainterOstream<Geom_traits>(painter);
   if(drawEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
@@ -156,7 +157,7 @@ void
 TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
   if(drawVertices()) {
-    Converter<K> convert;
+    Converter<Geom_traits> convert;
 
     painter->setPen(verticesPen());
     QMatrix matrix = painter->matrix();
@@ -174,7 +175,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
-  Converter<K> convert;
+  Converter<Geom_traits> convert;
 
   m_painter->setPen(this->verticesPen());
   QMatrix matrix = m_painter->matrix();
@@ -195,7 +196,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
     drawAll(painter);
   } else {
     m_painter = painter;
-    painterostream = PainterOstream<K>(painter);
+    painterostream = PainterOstream<Geom_traits>(painter);
     CGAL::apply_to_range (*t, 
                           typename T::Point(option->exposedRect.left(),
                                             option->exposedRect.bottom()), 

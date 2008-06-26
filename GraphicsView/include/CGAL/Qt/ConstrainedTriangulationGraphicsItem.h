@@ -14,6 +14,7 @@ namespace Qt {
 template <typename T>
 class ConstrainedTriangulationGraphicsItem : public TriangulationGraphicsItem<T>
 {
+  typedef typename T::Geom_traits Geom_traits;
 public:
   ConstrainedTriangulationGraphicsItem(T  * t_)
     : TriangulationGraphicsItem<T>(t_)
@@ -44,7 +45,7 @@ template <typename T>
 void 
 ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
-  this->painterostream = PainterOstream<K>(painter);
+  this->painterostream = PainterOstream<Geom_traits>(painter);
   if(this->drawEdges()) {
     for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
         eit != this->t->finite_edges_end();
