@@ -21,6 +21,7 @@
 #define GYROVIZ_POINT_3_H
 
 #include <CGAL/Point_with_normal_3.h>
+#include <CGAL/Iterator_project.h>
 
 #include <set>
 #include <algorithm>
@@ -29,9 +30,11 @@
 /// The Gyroviz_point_3 class represents a 3D point with:
 /// - a position,
 /// - a normal (oriented or not),
-///  - a list of cameras used to reconstruct the point from an image sequence.
+/// - a list of camera/2D point pairs used to reconstruct the point 
+/// from an image sequence.
 ///
-/// @heading Is Model for the Concepts: Model of the PointWithNormal_3 concept.
+/// @heading Is Model for the Concepts: 
+/// Model of the PointWithNormal_3 concept.
 ///
 /// @heading Parameters:
 /// @param Gt   Kernel's geometric traits.
@@ -44,90 +47,147 @@ private:
 
   typedef typename CGAL::Point_with_normal_3<Gt> Base;
 
+  // Auxiliary class to build a camera iterator
+  template <class Node> // Node is Camera_point2_pair
+  struct Project_camera {
+    typedef Node                  argument_type;
+    typedef typename Gt::Point_3  Point_3;
+    typedef Point_3               result_type;
+    typedef CGAL::Arity_tag<1>    Arity;
+    Point_3&       operator()(Node& x)       const { return x.first; }
+    const Point_3& operator()(const Node& x) const { return x.first; }
+  };
+
 // Public types
 public:
 
-    // Repeat Point_with_normal_3 public types
-    typedef Gt Geom_traits; ///< Kernel's geometric traits
-    typedef typename Geom_traits::FT FT;
-    typedef typename Geom_traits::Point_3  Point_3;  ///< Kernel's Point_3 class.
-    typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; ///< Model of OrientedNormal_3 concept.
+  // Repeat Point_with_normal_3 public types
+  typedef Gt Geom_traits; ///< Kernel's geometric traits.
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_2  Point_2; ///< Kernel's Point_2 class.
+  typedef typename Geom_traits::Point_3  Point_3; ///< Kernel's Point_3 class.
+  typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; 
+                                                  ///< Model of OrientedNormal_3 concept.
 
-    /// Iterator over cameras
-    typedef typename std::set<Point_3>::const_iterator Camera_const_iterator;
+  /// Camera/2D point pair. The 2D point is the 3D point (*this) projection's
+  /// in the camera's image plane.
+  typedef std::map <Point_3, Point_2> Camera_point2_map;
+  typedef std::pair<Point_3, Point_2> Camera_point2_pair;
+
+  /// Iterator over camera/2D point pairs.
+  typedef typename Camera_point2_map::const_iterator 
+                                      Camera_point2_pair_const_iterator;
+
+  /// Iterator over cameras.
+  typedef CGAL::Iterator_project<Camera_point2_pair_const_iterator, 
+                                 Project_camera<std::pair<const Point_3,Point_2> > > // warning: const is required
+                                      Camera_const_iterator;      
 
 // Public methods
 public:
 
-    /// Point is (0,0,0) by default.
-    /// Normal is (0,0,0) by default.
-    /// Normal is oriented by default.
-    /// Camera list is empty by default.
-    Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
-    : Base(o)
-    {
-    }
-    Gyroviz_point_3(FT x, FT y, FT z)
-    : Base(x,y,z)
-    {
-    }
-    Gyroviz_point_3(const Point_3& point,
-                    const Normal& normal = CGAL::NULL_VECTOR)
-    : Base(point, normal)
-    {
-    }
-    template < class InputIterator >
-    Gyroviz_point_3(const Point_3& point,
-                    InputIterator first_camera, InputIterator beyond_camera)
-    : Base(point, CGAL::NULL_VECTOR)
-    {
-      list_of_cameras.insert(first_camera, beyond_camera); 
-    }
-    template < class InputIterator >
-    Gyroviz_point_3(const Point_3& point,
-                    const Normal& normal,
-                    InputIterator first_camera, InputIterator beyond_camera)
-    : Base(point, normal)
-    {
-      list_of_cameras.insert(first_camera, beyond_camera); 
-    }
+  /// Point is (0,0,0) by default.
+  /// Normal is (0,0,0) by default.
+  /// Normal is oriented by default.
+  /// Camera list is empty by default.
+  Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
+  : Base(o)
+  {
+  }
+  Gyroviz_point_3(FT x, FT y, FT z)
+  : Base(x,y,z)
+  {
+  }
+  Gyroviz_point_3(const Point_3& point,
+                  const Normal& normal = CGAL::NULL_VECTOR)
+  : Base(point, normal)
+  {
+  }
+  template < class InputIterator >
+  Gyroviz_point_3(const Point_3& point,
+                  InputIterator first_camera_point2_pair, 
+                  InputIterator beyond_camera_point2_pair)
+  : Base(point, CGAL::NULL_VECTOR)
+  {
+    camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
+  }
+  template < class InputIterator >
+  Gyroviz_point_3(const Point_3& point,
+                  const Normal& normal,
+                  InputIterator first_camera_point2_pair, 
+                  InputIterator beyond_camera_point2_pair)
+  : Base(point, normal)
+  {
+    camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
+  }
 
-    // Default copy constructor and operator =() are fine
+  // Default copy constructor and operator =() are fine
 
-    /// Compare positions
-    bool operator==(const Gyroviz_point_3& that)
-    { 
-      return Base::operator==(that); 
-    }
-    bool operator!=(const Gyroviz_point_3& that)
-    { 
-      return ! (*this == that); 
-    }
-
-    // Get cameras
-    Camera_const_iterator cameras_begin() const { return  list_of_cameras.begin(); }
-    Camera_const_iterator cameras_end  () const { return  list_of_cameras.end(); }
+  /// Merge points, including lists of camera/2D point pairs.
+  void merge(const Gyroviz_point_3& that)
+  { 
+    // we assume that both points 3D position is the same
     
-    // Set cameras
-    template < class InputIterator >
-    void set_cameras(InputIterator first_camera, InputIterator beyond_camera)
-    {
-      list_of_cameras.clear();
-      list_of_cameras.insert(first_camera, beyond_camera); 
-    }
-    
-    // Add cameras
-    template < class InputIterator >
-    void add_cameras(InputIterator first_camera, InputIterator beyond_camera)
-    {
-      list_of_cameras.insert(first_camera, beyond_camera); 
-    }
+    // merge camera/2D point maps
+    camera_point2_map.insert(that.camera_point2_pairs_begin(), that.camera_point2_pairs_end()); 
+  }
+
+  /// Compare positions.
+  bool operator==(const Gyroviz_point_3& that)
+  { 
+    return Base::operator==(that); 
+  }
+  bool operator!=(const Gyroviz_point_3& that)
+  { 
+    return ! (*this == that); 
+  }
+
+  /// Get camera/2D point pairs.
+  Camera_point2_pair_const_iterator camera_point2_pairs_begin() const 
+  { 
+    return camera_point2_map.begin(); 
+  }
+  Camera_point2_pair_const_iterator camera_point2_pairs_end  () const 
+  { 
+    return camera_point2_map.end(); 
+  }
+
+  /// Set camera/2D point pairs.
+  template < class InputIterator >
+  void set_camera_point2_pairs(InputIterator first_camera_point2_pair, 
+                               InputIterator beyond_camera_point2_pair)
+  {
+    camera_point2_map.clear();
+    camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
+  }
+
+  /// Add camera/2D point pairs.
+  void add_camera_point2_pair(Camera_point2_pair camera_and_point2)
+  {
+    camera_point2_map.insert(camera_and_point2); 
+  }
+  template < class InputIterator >
+  void add_camera_point2_pairs(InputIterator first_camera_point2_pair, 
+                               InputIterator beyond_camera_point2_pair)
+  {
+    camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
+  }
+
+  /// Get cameras.
+  Camera_const_iterator cameras_begin() const 
+  { 
+    return Camera_const_iterator(camera_point2_pairs_begin()); 
+  }
+  Camera_const_iterator cameras_end() const   
+  { 
+    return Camera_const_iterator(camera_point2_pairs_end()); 
+  }
     
 // Data
 private:
 
   // List of cameras
-  std::set<Point_3> list_of_cameras;
+  Camera_point2_map camera_point2_map;
 };
 
 

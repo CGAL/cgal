@@ -13,7 +13,6 @@
 
 /// The Poisson_dt3 class is a 3D triangulation class that provides:
 /// - the interface requested by the Poisson_implicit_function class
-/// - read/write methods from/to .off, .xyz, .pwn, .pnb and .pwc files
 /// - OpenGL rendering
 ///
 /// @heading Is Model for the Concepts: 

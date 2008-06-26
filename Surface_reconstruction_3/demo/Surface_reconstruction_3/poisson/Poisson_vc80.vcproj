@@ -312,11 +312,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\RedirectIOToConsole.h"
+				RelativePath=".\RedirectIOToConsole.h"
 				>
 			</File>
 			<File
-				RelativePath=".\RedirectIOToConsole.h"
+				RelativePath=".\include\RedirectIOToConsole.h"
 				>
 			</File>
 			<File
@@ -329,6 +329,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\surface_reconstruction_read_g23.h"
 				>
 			</File>
 			<File

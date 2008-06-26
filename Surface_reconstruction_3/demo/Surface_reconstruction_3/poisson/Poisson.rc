@@ -301,7 +301,7 @@ END
 STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "CGAL - Poisson Reconstruction"
-    IDR_PoissonTYPE         "\nPoisson\nPoisson\nPoint Sets (*.pwn;*.xyz;*.off;*.pnb;*.pwc)\n.pwn;.xyz;.off;.pnb;.pwc\nPoisson.Document\nPoisson.Document"
+    IDR_PoissonTYPE         "\nPoisson\nPoisson\nPoint Sets (*.pwn;*.xyz;*.off;*.pnb;*.g23;*.pwc)\n.pwn;.xyz;.off;.pnb;.g23;.pwc\nPoisson.Document\nPoisson.Document"
     IDS_MESSAGE0            "----------------------"
     IDS_MESSAGE1            "---------------------"
     IDS_MESSAGE2            "------------------------"

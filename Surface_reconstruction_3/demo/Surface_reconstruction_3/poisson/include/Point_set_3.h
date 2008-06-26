@@ -71,18 +71,16 @@ public:
   typedef typename Point_with_normal::Normal Normal; ///<Model of OrientedNormal_3 concept.
 
   // Iterator over points
-  typedef std::vector<Point_with_normal>::iterator 
-    Point_iterator;      
-  typedef std::vector<Point_with_normal>::const_iterator 
-    Point_const_iterator;      
+  typedef std::vector<Point_with_normal>::iterator        Point_iterator;      
+  typedef std::vector<Point_with_normal>::const_iterator  Point_const_iterator;      
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 
-    Project_normal<Point_with_normal> >  
-    Normal_iterator;      
+                                 Project_normal<Point_with_normal> >  
+                                                          Normal_iterator;      
   typedef CGAL::Iterator_project<const_iterator, 
-    Project_normal<Point_with_normal> >  
-    Normal_const_iterator;      
+                                 Project_normal<Point_with_normal> >  
+                                                          Normal_const_iterator;      
 
 // Data members
 private:

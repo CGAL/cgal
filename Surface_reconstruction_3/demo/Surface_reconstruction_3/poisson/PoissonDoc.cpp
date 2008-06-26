@@ -8,6 +8,7 @@
 #include "PoissonDoc.h"
 #include "enriched_polyhedron.h"
 #include "surface_reconstruction_read_pwc.h"
+#include "surface_reconstruction_read_g23.h"
 #include "remove_outliers_wrt_camera_cone_angle_3.h"
 
 // CGAL
@@ -268,6 +269,23 @@ BOOL CPoissonDoc::OnOpenDocument(LPCTSTR lpszPathName)
     if( ! surface_reconstruction_read_pwc(lpszPathName,
                                           std::back_inserter(m_points),
                                           std::back_inserter(cameras)) )
+    {
+      prompt_message("Unable to read file");
+      return FALSE;
+    }
+    
+    // Set options for Gyroviz file
+    m_number_of_neighbours = 50;
+  }
+  // if Gyroviz .g23 extension
+  else if (extension.CompareNoCase(".g23") == 0)
+  {
+    std::string movie_file_name;
+    std::vector<Point> cameras; // temporary container of cameras to read
+    if( ! surface_reconstruction_read_g23(lpszPathName,
+                                          std::back_inserter(m_points),
+                                          std::back_inserter(cameras),
+                                          &movie_file_name) )
     {
       prompt_message("Unable to read file");
       return FALSE;
