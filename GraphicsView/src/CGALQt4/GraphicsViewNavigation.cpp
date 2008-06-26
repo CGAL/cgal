@@ -23,7 +23,7 @@ namespace Qt {
     rect_color.setAlpha(50);
     rectItem->setBrush(rect_color);
     rect_color.setAlpha(255);
-    rectItem->setPen(QPen(rect_color, 0, Qt::DashLine));
+    rectItem->setPen(QPen(rect_color, 0, ::Qt::DashLine));
     rectItem->hide();
     rectItem->setZValue(10000);
   }
@@ -41,33 +41,33 @@ namespace Qt {
     case QEvent::KeyPress: {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       int offset = 10;
-      if( (keyEvent->modifiers() & Qt::ShiftModifier)
-          || (keyEvent->modifiers() & Qt::ControlModifier) ) {
+      if( (keyEvent->modifiers() & ::Qt::ShiftModifier)
+          || (keyEvent->modifiers() & ::Qt::ControlModifier) ) {
         offset = 20;
       }
       switch (keyEvent->key()) {
-      case Qt::Key_Up:
+      case ::Qt::Key_Up:
         translateView(0, -offset);
         break;
-      case Qt::Key_Down:
+      case ::Qt::Key_Down:
         translateView(0, offset);
         break;
-      case Qt::Key_Left:
+      case ::Qt::Key_Left:
         translateView(-offset, 0);
         break;
-      case Qt::Key_Right:
+      case ::Qt::Key_Right:
         translateView(offset, 0);
         break;
-      case Qt::Key_PageUp:
+      case ::Qt::Key_PageUp:
         v->rotate(-6);
         break;
-      case Qt::Key_PageDown:
+      case ::Qt::Key_PageDown:
         v->rotate(6);
         break;
-      case Qt::Key_Plus:
+      case ::Qt::Key_Plus:
         scaleView(1.2);
         break;
-      case Qt::Key_Minus:
+      case ::Qt::Key_Minus:
         scaleView(1 / 1.2);
         break;
       default:
@@ -79,7 +79,7 @@ namespace Qt {
     } // end case KeyPress
     case QEvent::KeyRelease: {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-      if(keyEvent->key() == Qt::Key_Control && rectItem->isVisible() ) {
+      if(keyEvent->key() == ::Qt::Key_Control && rectItem->isVisible() ) {
         dragging = false;
         v->setCursor(cursor_backup);
         v->scene()->removeItem(rectItem);
@@ -91,12 +91,12 @@ namespace Qt {
     } // end case KeyRelease
     case QEvent::Wheel: {
       QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
-      if(wheelEvent->orientation() != Qt::Vertical) {
+      if(wheelEvent->orientation() != ::Qt::Vertical) {
         return false;
       }
       double zoom_ratio = 240.0;
-      if( (wheelEvent->modifiers() & Qt::ShiftModifier)
-          || (wheelEvent->modifiers() & Qt::ControlModifier) ) {
+      if( (wheelEvent->modifiers() & ::Qt::ShiftModifier)
+          || (wheelEvent->modifiers() & ::Qt::ControlModifier) ) {
         zoom_ratio = 120.0;
       }
       scaleView(pow((double)2, -wheelEvent->delta() / zoom_ratio));
@@ -107,26 +107,26 @@ namespace Qt {
     } // end case Wheel
     case QEvent::MouseButtonPress: {
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-      if( (mouseEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-          && mouseEvent->button() == Qt::RightButton )
+      if( (mouseEvent->modifiers() == (::Qt::ControlModifier | ::Qt::ShiftModifier))
+          && mouseEvent->button() == ::Qt::RightButton )
       {
         QPoint offset = mouseEvent->pos() - v->viewport()->rect().center();
         translateView(offset.x(), offset.y());
         return true;
       }
-      else if( mouseEvent->modifiers() == Qt::ControlModifier ) {
-        if(mouseEvent->button() == Qt::LeftButton) {
+      else if( mouseEvent->modifiers() == ::Qt::ControlModifier ) {
+        if(mouseEvent->button() == ::Qt::LeftButton) {
           rect_first_point = v->mapToScene(mouseEvent->pos());
           rectItem->setRect(QRectF(rect_first_point, rect_first_point));
           rectItem->show();
           v->scene()->addItem(rectItem);
           return true;
         }
-        else if( mouseEvent->button() == Qt::RightButton) {
+        else if( mouseEvent->button() == ::Qt::RightButton) {
           dragging = true;
           dragging_start = v->mapToScene(mouseEvent->pos());
           cursor_backup = v->cursor();
-          v->setCursor(Qt::ClosedHandCursor);
+          v->setCursor(::Qt::ClosedHandCursor);
           return true;
         }
       }
@@ -161,14 +161,14 @@ namespace Qt {
     } // end MouseMove
     case QEvent::MouseButtonRelease: {
       QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-      if(rectItem->isVisible() && mouseEvent->button() == Qt::LeftButton){
+      if(rectItem->isVisible() && mouseEvent->button() == ::Qt::LeftButton){
         v->setSceneRect(v->sceneRect() | rectItem->rect());
-        v->fitInView(rectItem->rect(), Qt::KeepAspectRatio);
+        v->fitInView(rectItem->rect(), ::Qt::KeepAspectRatio);
         v->scene()->removeItem(rectItem);
         rectItem->hide();
         return true;
       }
-      else if(  mouseEvent->button() == Qt::RightButton ) {
+      else if(  mouseEvent->button() == ::Qt::RightButton ) {
         if(dragging) {
           dragging = false;
           drag_to(mouseEvent->pos());

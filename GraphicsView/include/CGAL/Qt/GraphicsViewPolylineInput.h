@@ -17,6 +17,7 @@ class QEvent;
 class QObject;
 
 namespace CGAL {
+namespace Qt {
 
 class GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
 {

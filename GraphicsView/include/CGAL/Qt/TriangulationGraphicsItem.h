@@ -4,9 +4,9 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/apply_to_range.h>
-#include <CGAL/Qt/QtPainterOstream.h>
-#include <CGAL/Qt/QtGraphicsItem.h>
-#include <CGAL/Qt/QtConverter.h>
+#include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -35,9 +35,19 @@ public:
     return vertices_pen;
   }
 
+  const QPen& edgesPen() const
+  {
+    return edges_pen;
+  }
+
   void setVerticesPen(const QPen& pen)
   {
     vertices_pen = pen;
+  }
+
+  void setEdgesPen(const QPen& pen)
+  {
+    edges_pen = pen;
   }
 
   bool drawVertices() const
@@ -78,6 +88,7 @@ protected:
   QRectF bounding_rect;
 
   QPen vertices_pen;
+  QPen edges_pen;
   bool draw_vertices;
   bool draw_edges;
 };
@@ -88,7 +99,7 @@ TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false),
      draw_edges(true), draw_vertices(true)
 {
-  setVerticesPen(QPen(Qt::red, 3.));
+  setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
     this->hide();
   }
@@ -108,12 +119,10 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
-  Converter<K> convert;
-
   if(draw_edges) {
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
-        m_painter->setPen(this->pen());
+        m_painter->setPen(this->edgesPen());
         (*m_painter) << t->segment(fh,i);
       }
     }
@@ -177,7 +186,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
                                        const QStyleOptionGraphicsItem *option,
                                        QWidget * widget)
 {
-  painter->setPen(this->pen());
+  painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());
   if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
     drawAll(painter);

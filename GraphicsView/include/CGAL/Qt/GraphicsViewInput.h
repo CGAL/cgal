@@ -1,24 +1,25 @@
-#ifndef CGAL_Q_INPUT_H
-#define CGAL_Q_INPUT_H
+#ifndef CGAL_QT_RAPHICS_VIEW_INPUT_H
+#define CGAL_QT_RAPHICS_VIEW_INPUT_H
 
 #include <CGAL/Object.h>
 #include <QObject>
 
 namespace CGAL {
-
-class QtInput  : public QObject
+namespace Qt {
+class GraphicsViewInput  : public QObject
 {
   Q_OBJECT
 
 public:
-  QtInput(QObject* parent) : QObject(parent)
-  {
-  }
+  GraphicsViewInput(QObject* parent) 
+    : QObject(parent)
+  {}
 
 signals:
   void generate(CGAL::Object o);
 };
 
+} // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_Q_INPUT_H
+#endif // CGAL_QT_RAPHICS_VIEW_INPUT_H

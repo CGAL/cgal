@@ -18,7 +18,7 @@ namespace CGAL {
     template <class Delaunay> class ConstrainedTriangulationGraphicsItem;
     template <class Delaunay> class TriangulationMovingPoint;
     template <class Delaunay> class TriangulationCircumcircle;
-    template <class K> class GraphicsItemPolylineInput;
+    template <class K> class GraphicsViewPolylineInput;
   } // namespace Qt
 } // namespace CGAL
 

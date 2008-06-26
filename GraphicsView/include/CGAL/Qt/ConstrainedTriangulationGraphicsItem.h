@@ -18,8 +18,8 @@ public:
   ConstrainedTriangulationGraphicsItem(T  * t_)
     : TriangulationGraphicsItem<T>(t_)
   {
-    constraints_pen = this->pen();
-    constraints_pen.setColor(Qt::red);
+    constraints_pen = this->edgesPen();
+    constraints_pen.setColor(::Qt::red);
   }
   
   void operator()(typename T::Face_handle fh);
@@ -51,7 +51,7 @@ ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       if(this->t->is_constrained(*eit)){
         painter->setPen(constraintsPen());
       } else {
-        painter->setPen(this->pen());
+        painter->setPen(this->edgesPen());
       }
       (*painter) << this->t->segment(*eit);
     }
@@ -69,7 +69,7 @@ ConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
       if(this->t->is_constrained(typename T::Edge(fh,i))){
         this->m_painter->setPen(constraintsPen());
       } else {
-	this->m_painter->setPen(this->pen());
+	this->m_painter->setPen(this->edgesPen());
       }
       (*this->m_painter) << this->t->segment(fh,i);      
     }

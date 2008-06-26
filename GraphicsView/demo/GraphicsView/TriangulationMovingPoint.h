@@ -2,7 +2,7 @@
 #ifndef CGAL_QT_TRIANGULATION_MOVING_POINT
 #define CGAL_QT_TRIANGULATION_MOVING_POINT
 
-#include <CGAL/Qt/GraphicsItemInput.h>
+#include <CGAL/Qt/GraphicsViewInput.h>
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
@@ -37,7 +37,7 @@ protected:
 
 
 template <typename T>
-TriangulationMovingPoint_2<T>::TriangulationMovingPoint_2(T * dt_,
+TriangulationMovingPoint<T>::TriangulationMovingPoint(T * dt_,
 							  QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), movePointToInsert(false), vh()
 {}
@@ -45,7 +45,7 @@ TriangulationMovingPoint_2<T>::TriangulationMovingPoint_2(T * dt_,
 
 template <typename T>
 void 
-TriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
+TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(qt_point.x(), qt_point.y());
   typename T::Locate_type lt;
@@ -60,11 +60,11 @@ TriangulationMovingPoint_2<T>::localize_and_insert_point(QPointF qt_point)
 
 template <typename T>
 void 
-TriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->number_of_vertices() == 0 ||
      event->modifiers() != 0 ||
-     event->button() != Qt::LeftButton) {
+     event->button() != ::Qt::LeftButton) {
     return;
   }
   movePointToInsert = true;
@@ -74,7 +74,7 @@ TriangulationMovingPoint_2<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-TriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
   if(! movePointToInsert) return;
@@ -91,10 +91,10 @@ TriangulationMovingPoint_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-TriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if(! movePointToInsert ||
-     event->button() != Qt::LeftButton) {
+     event->button() != ::Qt::LeftButton) {
     return;
   }
 
@@ -110,7 +110,7 @@ TriangulationMovingPoint_2<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event
 
 template <typename T>
 bool 
-TriangulationMovingPoint_2<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationMovingPoint<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);

@@ -31,7 +31,7 @@ if(QT4_FOUND)
   include(${QT_USE_FILE})
 
   # a moc file that is included in a .cpp file
-  qt4_generate_moc( ../../include/CGAL/Qt/GtraphicsViewNavigation.h GraphicsViewNavigation.moc )
+  qt4_generate_moc( ../../include/CGAL/Qt/GraphicsViewNavigation.h GraphicsViewNavigation.moc )
   macro_add_file_dependencies( GraphicsViewNavigation.cpp GraphicsViewNavigation.moc )
 
   # two moc files that are compiled directly as cpp files

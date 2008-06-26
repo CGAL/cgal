@@ -18,7 +18,7 @@ GraphicsViewPolylineInput_non_templated_base(QObject* parent,
                                    QGraphicsScene* s,
                                    int n,
                                    bool closed)
-  : QtInput(parent), path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
+  : GraphicsViewInput(parent), path_item(NULL), b(NULL), e(NULL), n_(n), closed_(closed) , scene_(s)
 {}
 
 
@@ -28,8 +28,8 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
   if( event->modifiers() ){
     return false;
   }
-  if( event->button() != Qt::RightButton
-      && event->button() != Qt::LeftButton ){
+  if( event->button() != ::Qt::RightButton
+      && event->button() != ::Qt::LeftButton ){
     return false;
   }
   polygon.push_back(event->scenePos());
@@ -38,7 +38,7 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
     delete path_item;
     path_item = NULL;
   }
-  if( (event->button() == Qt::RightButton) || (polygon.size() == n_) ){
+  if( (event->button() == ::Qt::RightButton) || (polygon.size() == n_) ){
     // call the virtual function generate_polygon(), that emit a
     // CGAL::Object containing a list of points
     generate_polygon();
@@ -55,11 +55,11 @@ GraphicsViewPolylineInput_non_templated_base::mousePressEvent(QGraphicsSceneMous
     }
     return true;
   }
-  if(event->button() == Qt::LeftButton){
+  if(event->button() == ::Qt::LeftButton){
     QPainterPath qpp;
     qpp.addPolygon(polygon);
     path_item = new QGraphicsPathItem(qpp);
-    path_item->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(path_item);
     return true;
   }
@@ -75,12 +75,12 @@ GraphicsViewPolylineInput_non_templated_base::rubberbands(const QPointF& p)
   }
   if(!b && closed_ ){
     b = new QGraphicsLineItem();
-    b->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    b->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(b);
   }
   if( !e){
     e = new QGraphicsLineItem();    
-    e->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    e->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     scene_->addItem(e);
   }
   if(closed_){
@@ -108,9 +108,9 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
 
   switch(event->key())
   {
-  case Qt::Key_Delete:
-  case Qt::Key_Escape:
-  case Qt::Key_Backspace:
+  case ::Qt::Key_Delete:
+  case ::Qt::Key_Escape:
+  case ::Qt::Key_Backspace:
     break;
   default:
     return false;
@@ -140,7 +140,7 @@ GraphicsViewPolylineInput_non_templated_base::keyPressEvent ( QKeyEvent * event 
   QPainterPath qpp;
   qpp.addPolygon(polygon);
   path_item = new QGraphicsPathItem(qpp);
-  path_item->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  path_item->setPen(QPen(::Qt::red, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
   scene_->addItem(path_item);
   rubberbands(sp);
   return true;

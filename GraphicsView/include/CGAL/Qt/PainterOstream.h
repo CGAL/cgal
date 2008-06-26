@@ -7,12 +7,12 @@
 #include <CGAL/Qt/Converter.h>
 
 namespace CGAL {
-namesapce Qt {
+namespace Qt {
 
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 {
-  QtConverter<K> convert;
+  Converter<K> convert;
   qp.drawPoint(convert(p));
   return qp;
 }
@@ -20,7 +20,7 @@ QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
 template <typename K>
 QPainter& operator<<(QPainter& qp, const Segment_2<K>& s)
 {
-  QtConverter<K> convert;
+  Converter<K> convert;
   qp.drawLine(convert(s.source()), convert(s.target()));
   return qp;
 }

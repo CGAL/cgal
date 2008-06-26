@@ -14,11 +14,11 @@ namespace CGAL {
 namespace Qt {
 
 template <typename DT>
-class TriangulationCircumcircle_2 : public GraphicsViewInput
+class TriangulationCircumcircle : public GraphicsViewInput
 {
 public:
-  QTriangulationCircumcircle_2(QGraphicsScene* s, DT  * dt_, QObject* parent);
-  ~QTriangulationCircumcircle_2();
+  TriangulationCircumcircle(QGraphicsScene* s, DT  * dt_, QObject* parent);
+  ~TriangulationCircumcircle();
  
   void setPen(const QPen& pen);
 
@@ -40,10 +40,10 @@ private:
 
 
 template <typename T>
-QTriangulationCircumcircle_2<T>::QTriangulationCircumcircle_2(QGraphicsScene* s,
+TriangulationCircumcircle<T>::TriangulationCircumcircle(QGraphicsScene* s,
                                                               T * dt_,
                                                               QObject* parent)
-  :  QtInput(parent), dt(dt_), scene_(s)
+  :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {
   circle = new QGraphicsEllipseItem();
   circle->hide();
@@ -52,14 +52,14 @@ QTriangulationCircumcircle_2<T>::QTriangulationCircumcircle_2(QGraphicsScene* s,
 
 
 template <typename T>
-QTriangulationCircumcircle_2<T>::~QTriangulationCircumcircle_2()
+TriangulationCircumcircle<T>::~TriangulationCircumcircle()
 {
 }
 
 
 template <typename T>
 void
-QTriangulationCircumcircle_2<T>::setPen(const QPen& pen)
+TriangulationCircumcircle<T>::setPen(const QPen& pen)
 {
   circle->setPen(pen);
 }
@@ -67,7 +67,7 @@ QTriangulationCircumcircle_2<T>::setPen(const QPen& pen)
 
 template <typename T>
 void
-QTriangulationCircumcircle_2<T>::show()
+TriangulationCircumcircle<T>::show()
 {
   circle->show();
 }
@@ -75,7 +75,7 @@ QTriangulationCircumcircle_2<T>::show()
 
 template <typename T>
 void
-QTriangulationCircumcircle_2<T>::hide()
+TriangulationCircumcircle<T>::hide()
 {
   circle->hide();
 }
@@ -83,7 +83,7 @@ QTriangulationCircumcircle_2<T>::hide()
 
 template <typename T>
 void 
-QTriangulationCircumcircle_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
     circle->hide();
@@ -106,7 +106,7 @@ QTriangulationCircumcircle_2<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 bool 
-QTriangulationCircumcircle_2<T>::eventFilter(QObject *obj, QEvent *event)
+TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMouseMove) {
     QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);

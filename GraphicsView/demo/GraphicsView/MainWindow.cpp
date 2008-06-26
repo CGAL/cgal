@@ -13,7 +13,7 @@
 #include <CGAL/point_generators_2.h>
 
 #include "TriangulationCircumcircle.h"
-#include "TriangulationMovingPoint_2.h"
+#include "TriangulationMovingPoint.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
