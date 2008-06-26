@@ -27,12 +27,22 @@
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Algebraic_real_traits.h>
+
+#if CGAL_ACK_USE_EXACUS
 #include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2.h>
+#else
+#include <CGAL/Algebraic_curve_kernel_2/analyses/Curve_analysis_2.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/Curve_pair_analysis_2.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 
+#if CGAL_ACK_USE_EXACUS
 template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
+#else
+template < class AlgebraicKernel_1 >
+#endif
 class Algebraic_curve_kernel_2 {
 
 // for each predicate functor defines a member function returning an instance
@@ -46,32 +56,43 @@ class Algebraic_curve_kernel_2 {
 protected:    
     // temporary types
     
-    // type of an internal curve pair
-    typedef AlgebraicCurvePair_2 Internal_curve_pair_2;
-
-    // type of an internal curve
-    typedef typename AlgebraicCurvePair_2::Algebraic_curve_2 Internal_curve_2;
-
 public:
     //!\name public typedefs
     //!@{
-    
-    //! type of internal x_coordinate
-    typedef typename Internal_curve_2::X_coordinate X_coordinate_1;
-    typedef X_coordinate_1 Y_coordinate_1;
-    
-    //! type of internal coefficient
-    typedef typename Internal_curve_2::Coefficient Coefficient;
 
-    
     //! type of 1D algebraic kernel
     typedef AlgebraicKernel_1 Algebraic_kernel_1;
+    
+    //! type of X_coordinate
+    
+#if CGAL_ACK_USE_EXACUS    
+    // type of an internal curve pair
+    typedef AlgebraicCurvePair_2 Internal_curve_pair_2;
+    
+    // type of an internal curve
+    typedef typename AlgebraicCurvePair_2::Algebraic_curve_2 Internal_curve_2;
+#endif
+
+#if CGAL_ACK_USE_EXACUS
+    typedef typename Internal_curve_2::X_coordinate X_coordinate_1;
+#else
+    typedef typename Algebraic_kernel_1::Algebraic_real_1 X_coordinate_1;
+#endif
+
+    typedef X_coordinate_1 Y_coordinate_1;
+    
+    //! type of coefficient
+    typedef typename Algebraic_kernel_1::Coefficient Coefficient;
 
     //! myself
+#if CGAL_ACK_USE_EXACUS
     typedef Algebraic_curve_kernel_2<AlgebraicCurvePair_2, AlgebraicKernel_1>
-        Self;
+       Self;
+#else
+    typedef Algebraic_curve_kernel_2<AlgebraicKernel_1> Self;
+#endif
     
-    // TODO remove when deriving from AK_1
+    // Boundary type
     typedef typename Algebraic_kernel_1::Boundary Boundary;
         
     //! new CGAL univariate polynomial type 
@@ -91,10 +112,18 @@ public:
     typedef CGALi::Xy_coordinate_2<Self> Xy_coordinate_2;
 
     //! type of 1-curve analysis
+#if CGAL_ACK_USE_EXACUS
     typedef CGALi::Curve_analysis_2<Self> Curve_analysis_2; 
+#else
+    typedef Curve_analysis_2<Self> Curve_analysis_2; 
+#endif
 
     //! type of 2-curve analysis
+#if CGAL_ACK_USE_EXACUS
     typedef CGALi::Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
+#else
+    typedef Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
+#endif
 
     //! berfriending representations to make protected typedefs available
     friend class CGALi::Curve_analysis_2_rep<Self>;
@@ -103,13 +132,18 @@ public:
     //!@}
     //! \name rebind operator
     //!@{
-
-    template <class NewCurvePair, class NewAlgebraicKernel> 
-    struct rebind { 
-
-        typedef Algebraic_curve_kernel_2<NewCurvePair,
-            NewAlgebraicKernel> Other;        
+#if CGAL_ACK_USE_EXACUS
+    template <class NewCurvePair, class NewAlgebraicKernel>
+    struct rebind {
+        typedef Algebraic_curve_kernel_2<NewCurvePair,NewAlgebraicKernel> 
+            Other;
     };
+#else
+    template <class NewAlgebraicKernel> 
+    struct rebind { 
+        typedef Algebraic_curve_kernel_2<NewAlgebraicKernel> Other;        
+    };
+#endif
 
     //!@}
 protected:
@@ -318,9 +352,13 @@ public:
     typedef CGALi::Algebraic_real_traits<X_coordinate_1> X_real_traits_1;
 
     //! traits class for \c Xy_coorinate_2
-    typedef CGALi::Algebraic_real_traits_for_y<Xy_coordinate_2,
-         Internal_curve_pair_2> Y_real_traits_1;
-
+#if CGAL_ACK_USE_EXACUS
+    typedef CGALi::Algebraic_real_traits_for_y
+        <Xy_coordinate_2,Internal_curve_pair_2> Y_real_traits_1;
+#else
+    typedef CGALi::Algebraic_real_traits_for_y
+        <Xy_coordinate_2,CGAL::Null_functor> Y_real_traits_1;
+#endif
         
     mutable Cmp_xy_map _m_cmp_xy;   
     
@@ -660,13 +698,15 @@ public:
                 OutputIterator oi2, OutputIterator oib) const {
 
             Construct_curve_2 cc_2;
+#if CGAL_ACK_USE_EXACUS
             typedef std::vector<Internal_curve_2> Curves;
-            Curves parts_f, parts_g;
-            
-            if(Internal_curve_2::decompose(ca1._internal_curve(),
-                    ca2._internal_curve(), std::back_inserter(parts_f),
-                     std::back_inserter(parts_g))) {
 
+            Curves parts_f, parts_g;
+
+            if(Internal_curve_2::decompose(ca1._internal_curve(),
+                                           ca2._internal_curve(), 
+                                           std::back_inserter(parts_f),
+                                           std::back_inserter(parts_g))) {
                 typename Curves::const_iterator cit;
                 // this is temporary solution while curves are cached on
                 // AlciX level
@@ -681,6 +721,54 @@ public:
                         *oi2++ = cc_2(cit->f());
                 return true;
             }
+                
+                
+#else          
+            
+            if (ca1.id() == ca2.id()) {
+                return false;
+            }
+
+            const Polynomial_2& f = ca1.polynomial_2();
+            const Polynomial_2& g = ca2.polynomial_2();
+            
+            if(f == g) {
+                std::cout << "WARNING, both curves are equal, but have different representations!" << std::endl;
+                CGAL_assertion(false);
+                return false;
+            }
+            typename Curve_analysis_2::Gcd_cache& gcd_cache 
+                = Curve_analysis_2::get_gcd_cache();
+            typedef typename Curve_analysis_2::size_type size_type;
+            Polynomial_2 gcd = gcd_cache(std::make_pair(f,g));
+            size_type n = gcd.degree();
+            size_type nc = typename CGAL::Polynomial_traits_d< Polynomial_2 >
+                ::Univariate_content_up_to_constant_factor()( gcd ).degree();
+            if( n!=0 || nc!=0 ) {
+                Curve_analysis_2 common_curve = cc_2(gcd);
+                oib++ = common_curve;
+                Polynomial_2 divided_curve 
+                    = CGAL::integral_division(f,gcd);
+                if( divided_curve.degree()>=1 || 
+                    typename CGAL::Polynomial_traits_d< Polynomial_2 >
+                        ::Univariate_content_up_to_constant_factor()
+                            ( divided_curve ).degree() >=1 ) {
+                    Curve_analysis_2 divided_c = cc_2(divided_curve);
+                    oi1++ = divided_c;
+                }
+                divided_curve = CGAL::integral_division(g,gcd);
+                if(divided_curve.degree() >= 1 ||
+                   typename CGAL::Polynomial_traits_d< Polynomial_2 >
+                       ::Univariate_content_up_to_constant_factor()
+                           ( divided_curve ).degree() >=1) {
+                    Curve_analysis_2 divided_c = cc_2(divided_curve);
+                    oi2++ = divided_c;
+                }
+                return true;
+            }
+
+#endif
+                
             // copy original curves to the output iterator:
             *oi1++ = ca1;
             *oi2++ = ca2;

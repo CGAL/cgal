@@ -298,6 +298,16 @@ Algebraic_kernel_d/include/CGAL/Algebraic_kernel_d/refine_zero_against.h -text
 Algebraic_kernel_d/include/CGAL/Filtered_algebraic_curve_kernel_2.h -text
 Algebraic_kernel_d/include/CGAL/Rotated_algebraic_curve_kernel_2.h -text
 Algebraic_kernel_d/package_info/Algebraic_kernel_d/maintainer -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/Algebraic_curve_kernel_2.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/Best_approximation_cache.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/Bitstream_descartes_bfs.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/Curve_analysis_2.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/Curve_pair_analysis_2.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/alg_real_utils.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/include/CGAL/_test_algebraic_curve_kernel_2.h -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/makefile -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/sturm_habicht_sequence.cpp -text
+Algebraic_kernel_d/test/Algebraic_curve_kernel_2/subresultants.cpp -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_kernel_1.cpp -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Algebraic_real_pure.cpp -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/Bitstream_descartes.cpp -text

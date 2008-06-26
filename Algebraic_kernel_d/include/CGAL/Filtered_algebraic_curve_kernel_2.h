@@ -25,10 +25,18 @@
 
 CGAL_BEGIN_NAMESPACE
 
+#if CGAL_ACK_USE_EXACUS
 template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
+#else
+template < class AlgebraicKernel_1 >
+#endif
 class Filtered_algebraic_curve_kernel_2 
     : public CGAL::Algebraic_curve_kernel_2
-          < AlgebraicCurvePair_2, AlgebraicKernel_1 > {
+#if CGAL_ACK_USE_EXACUS
+    < AlgebraicCurvePair_2, AlgebraicKernel_1 > {
+#else
+    < AlgebraicKernel_1 > {
+#endif
 
 // for each predicate functor defines a member function returning an instance
 // of this predicate
@@ -39,22 +47,39 @@ class Filtered_algebraic_curve_kernel_2
 #define CGAL_Algebraic_Kernel_cons(Y,Z) CGAL_Algebraic_Kernel_pred(Y,Z)
 
 public:
-    //! template parameter ?
+
     typedef AlgebraicKernel_1 Algebraic_kernel_1;
+    
+#if CGAL_ACK_USE_EXACUS
+    typedef AlgebraicCurvePair_2 Algebraic_curve_pair_2;
 
+    typedef CGAL::Algebraic_curve_kernel_2
+        < Algebraic_curve_pair_2, Algebraic_kernel_1 > 
+        Algebraic_curve_kernel_2;
+#else
+    typedef CGAL::Algebraic_curve_kernel_2 < Algebraic_kernel_1 > 
+        Algebraic_curve_kernel_2;
+#endif
+
+    typedef Algebraic_curve_kernel_2 Base;
+
+#if CGAL_ACK_USE_EXACUS
 protected:
-
-    // base superclass
-    typedef CGAL::Algebraic_curve_kernel_2< AlgebraicCurvePair_2,
-            Algebraic_kernel_1 > Base;
+    // type of an internal curve pair
+    typedef typename Base::Internal_curve_pair_2 Internal_curve_pair_2;
+#endif
 
 public:
     //! \name types and functors for \c GPA_2< >
     //!@{
     
     //! myself
+#if CGAL_ACK_USE_EXACUS
     typedef Filtered_algebraic_curve_kernel_2
         < AlgebraicCurvePair_2, Algebraic_kernel_1 > Self;
+#else
+    typedef Filtered_algebraic_curve_kernel_2 < Algebraic_kernel_1 > Self;
+#endif
     
     //! type of coefficient
     typedef typename Base::Coefficient Coefficient;
