@@ -64,9 +64,19 @@ public:
     return typename K::Iso_rectangle_2(operator()(qr.bottomLeft()), operator()(qr.topRight()));
   }
 
+
   QRectF operator()(const typename K::Iso_rectangle_2& r) const
   {
     return QRectF(operator()(r[3]), operator()(r[1]));  // top left, bottom right
+  }
+
+
+  QRectF operator()(const CGAL::Bbox_2& bb)
+  {
+    return QRectF(bb.xmin(),
+		  bb.ymin(),
+		  bb.xmax()-bb.xmin(),
+		  bb.ymax()-bb.ymin());
   }
 
      
@@ -97,6 +107,14 @@ public:
     }
     return QLineF();
   }
+
+  QPolygonF operator()(const typename K::Triangle_2 &t)
+  {
+    QPolygonF qp;
+    qp << operator()(t.vertex(0)) << operator()(t.vertex(1)) << operator()(t.vertex(2));
+    return qp;
+  }
+
 
   void operator()(std::list< typename K::Point_2 >& p, const QPolygonF& qp) const
   {

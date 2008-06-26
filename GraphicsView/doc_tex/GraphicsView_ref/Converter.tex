@@ -4,6 +4,8 @@
 \ccDefinition
 An object of type \ccRefName\ converts 2D \cgal\ kernel objects to their equivalent 
 objects in \qt, and the other way round. Note that some objects have no equivalent.
+For exmaple the \ccc{CGAL::Circle_2<K>} cannot be converted to something in Qt,
+and the unbounded objects \ccc{CGAL::Ray_2<K>} and \ccc{CGAL::Line_2<K>} are clipped.
 
 \ccInclude{CGAL/Qt/Converter.h}
 
@@ -14,32 +16,32 @@ objects in \qt, and the other way round. Note that some objects have no equivale
 
 \ccHeading{From CGAL to Qt}
 
-\ccMethod{QRectF operator()(Bbox_2);}{.}
+\ccMethod{QRectF operator()(Bbox_2);}{Converts a bounding box.}
 
-\ccMethod{QPointF operator()(K::Point_2);}{.}
+\ccMethod{QPointF operator()(K::Point_2);}{Converts a point.}
 
-\ccMethod{QLineF operator()(K::Segment_2);}{.}
+\ccMethod{QLineF operator()(K::Segment_2);}{Converts a segment.}
 
-\ccMethod{QLineF operator()(K::Ray_2);}{.}
+\ccMethod{QLineF operator()(K::Ray_2);}{Clips the ray and converts the resulting segment.}
 
-\ccMethod{QLineF operator()(K::Line_2);}{.}
+\ccMethod{QLineF operator()(K::Line_2);}{Clips the line and converts the resulting segment.}
 
-\ccMethod{QPolygonF operator()(K::Triangle_2);}{.}
+\ccMethod{QPolygonF operator()(K::Triangle_2);}{Converts a triangle.}
 
-\ccMethod{QRectF operator()(K::Iso_rectangle_2);}{.}
+\ccMethod{QRectF operator()(K::Iso_rectangle_2);}{Converts an iso rectangle.}
 
-\ccMethod{QPolygonF operator()(std::list<K::Point_2>);}{.}
+\ccMethod{QPolygonF operator()(std::list<K::Point_2>);}{Converts a list of points to a polygon.}
 
 
 \ccHeading{From Qt to CGAL}
 
-\ccMethod{K::Point_2 operator()(QPointF);}{.}
+\ccMethod{K::Point_2 operator()(QPointF);}{Converts a point.}
 
-\ccMethod{K::Segment_2 operator()(QLineF);}{.}
+\ccMethod{K::Segment_2 operator()(QLineF);}{Converts a segment.}
 
-\ccMethod{K::Iso_rectangle_2 operator()(QRectF);}{.}
+\ccMethod{K::Iso_rectangle_2 operator()(QRectF);}{Converts an iso rectangle.}
 
-\ccMethod{std::list<K::Point_2> operator()(QPolygonF);}{.}
+\ccMethod{std::list<K::Point_2> operator()(QPolygonF);}{Converts a polygon to a list of points.}
 
 \end{ccRefClass}
 

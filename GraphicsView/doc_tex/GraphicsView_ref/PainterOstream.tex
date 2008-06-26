@@ -4,6 +4,8 @@
 \ccDefinition
 An object of type \ccRefName\ provides output operators for \cgal\ kernel objects.
 As \cgal\ has unbounded objects the \ccRefName\ must be constructed with a clipping rectangle.
+This is typically the visible area of the widget where the unbounded object is displayed.
+
 \ccInclude{CGAL/Qt/PainterOstream.h}
 
 \ccCreationVariable{os}
@@ -13,25 +15,27 @@ As \cgal\ has unbounded objects the \ccRefName\ must be constructed with a clipp
 
 \ccOperations
 
-\ccMethod{PainterOstream<K> operator<<(Bbox_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Point_2);}{Draws a point.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Point_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Segment_2);}{Draws a segment.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Segment_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Ray_2);}{Draws a clipped ray.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Ray_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Line_2);}{Draws a clipped line.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Line_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Triangle_2);}{Draws a triangle.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Triangle_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Iso_rectangle_2);}{Draws an iso rectangle.}
 
-\ccMethod{PainterOstream<K> operator<<(K::Iso_rectangle_2);}{.}
+\ccMethod{PainterOstream<K> operator<<(K::Circle_2);}{Draws a circle.}
 
-\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{.}
+\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{Draws a polyline.}
 
+\ccMethod{PainterOstream<K> operator<<(Bbox_2);}{Draws an iso rectangle.}
 
-\ccMethod{PainterOstream<K> operator<<(QPen);}{.}
-\ccMethod{PainterOstream<K> operator<<(QBrush);}{.}
+\ccMethod{PainterOstream<K> operator<<(QPen);}{Sets the pen which is used in the next paint operation.}
+
+\ccMethod{PainterOstream<K> operator<<(QBrush);}{Sets the brush which is used in the next paint operation.}
 
 \end{ccRefClass}
 

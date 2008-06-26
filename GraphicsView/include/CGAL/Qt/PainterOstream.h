@@ -54,7 +54,17 @@ public:
     return *this;
   }
 
+  PainterOstream& operator<<(const Iso_rectangle_2<K>& r)
+  {
+    qp->drawRect(convert(r));
+    return *this;
+  }
 
+  PainterOstream& operator<<(const Circle_2<K>& c)
+  {
+    qp->drawRect(convert(c.bbox()));
+    return *this;
+  }
 };
 
 } // namespace Qt
