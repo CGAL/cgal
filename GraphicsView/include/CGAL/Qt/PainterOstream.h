@@ -14,12 +14,11 @@ class PainterOstream {
 
 private:
   QPainter* qp;
-  QRectF clippingRect;
   Converter<K> convert;
   
 public:
   PainterOstream(QPainter* p, QRectF rect)
-    : qp(p), clippingRect(rect), convert(rect)
+    : qp(p), convert(rect)
   {}
 
   PainterOstream& operator<<(const Point_2<K>& p)
