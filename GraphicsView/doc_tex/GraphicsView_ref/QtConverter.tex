@@ -1,11 +1,11 @@
 \ccDefGlobalScope{CGAL::}
-\begin{ccRefClass}[Qt::]{QtConverter<K>}
+\begin{ccRefClass}[Qt::]{Converter<K>}
 
 \ccDefinition
 An object of type \ccRefName\ converts 2D \cgal\ kernel objects to their equivalent 
 objects in \qt, and the other way round. Note that some objects have no equivalent.
 
-\ccInclude{CGAL/Qt/QtConverter.h}
+\ccInclude{CGAL/Qt/Converter.h}
 
 \ccCreationVariable{c}
 
@@ -14,6 +14,15 @@ objects in \qt, and the other way round. Note that some objects have no equivale
 \ccMethod{K::Point_2 operator()(QPointF);}{.}
 \ccMethod{QPointF operator()(K::Point_2);}{.}
 
+\ccMethod{K::Segment_2 operator()(QLineF);}{.}
+\ccMethod{QLineF operator()(K::Segment_2);}{.}
+
+
+\ccMethod{K::Iso_rectangle_2 operator()(QRectF);}{.}
+\ccMethod{QRectF operator()(K::Iso_rectangle_2);}{.}
+
+\ccMethod{std::list<K::Point_2> operator()(QPolygonF);}{.}
+\ccMethod{QPolygonF operator()(std::list<K::Point_2>);}{.}
 \end{ccRefClass}
 
 
