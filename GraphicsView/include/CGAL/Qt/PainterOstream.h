@@ -10,20 +10,53 @@ namespace CGAL {
 namespace Qt {
 
 template <typename K>
-QPainter& operator<<(QPainter& qp, const Point_2<K>& p)
-{
-  Converter<K> convert;
-  qp.drawPoint(convert(p));
-  return qp;
-}
+class PainterOstream {
 
-template <typename K>
-QPainter& operator<<(QPainter& qp, const Segment_2<K>& s)
-{
+private:
+  QPainter* qp;
+  QRectF clippingRect;
   Converter<K> convert;
-  qp.drawLine(convert(s.source()), convert(s.target()));
-  return qp;
-}
+  
+public:
+  PainterOstream(QPainter* p, QRectF rect)
+    : qp(p), clippingRect(rect), convert(rect)
+  {}
+
+  PainterOstream& operator<<(const Point_2<K>& p)
+  {
+    qp->drawPoint(convert(p));
+    return *this;
+  }
+  
+  PainterOstream& operator<<(const Segment_2<K>& s)
+  {
+    qp->drawLine(convert(s.source()), convert(s.target()));
+    return *this;
+  }
+  
+  
+  PainterOstream& operator<<(const Ray_2<K>& r)
+  {
+    qp->drawLine(convert(r));
+    return *this;
+  }
+
+  
+  PainterOstream& operator<<(const Line_2<K>& l)
+  {
+    qp->drawLine(convert(l));
+    return *this;
+  }
+
+
+  PainterOstream& operator<<(const Triangle_2<K>& t)
+  {
+    qp->drawPolygon(convert(t));
+    return *this;
+  }
+
+
+};
 
 } // namespace Qt
 } // namespace CGAL

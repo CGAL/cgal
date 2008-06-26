@@ -7,6 +7,8 @@
 #include <QPolygonF>
 #include <list>
 
+#include <CGAL/intersection_2.h>
+
 namespace CGAL {
 namespace Qt {
 
@@ -14,7 +16,15 @@ namespace Qt {
 template <typename K>
 class Converter {
 
+  K::Iso_rectangle_2 clippingRect;
+
 public:
+
+  Converter(QRectF rect)
+  {
+    clippingRect = this->operator()(rect);
+  }
+
 
   typename K::Point_2 operator()(const QPointF& qp) const
   {
@@ -50,6 +60,32 @@ public:
   }
 
      
+  QLineF operator()(const typename K::Ray_2 &r) const
+  {
+    Object o = CGAL::intersection(r, clippingRect);
+    typename K::Segment_2 s;
+    typename K::Point_2 p;
+    if(CGAL::assign(s,o)){
+      return this->operator()(s);
+    } else if(CGAL::assign(p,o)){
+      return QLineF(operator()(p), operator()(p))
+    }
+    return QLineF();
+  }
+
+  QLineF operator()(const typename K::Line_2 &l) const
+  {
+    Object o = CGAL::intersection(l, clippingRect);
+    typename K::Segment_2 s;
+    typename K::Point_2 p;
+    if(CGAL::assign(s,o)){
+      return this->operator()(s);
+    } else if(CGAL::assign(p,o)){
+      return QLineF(operator()(p), operator()(p))
+    }
+    return QLineF();
+  }
+
   void operator()(std::list< typename K::Point_2 >& p, const QPolygonF& qp) const
   {
     for(int i = 0; i < qp.size(); i++){

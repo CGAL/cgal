@@ -147,7 +147,7 @@ template <typename K>
 void 
 GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
 {
-  if(event->key() == Qt::Key_Delete){
+  if(event->key() == ::Qt::Key_Delete){
     if(count>0){
       --count;
     }
@@ -180,4 +180,4 @@ GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 
 } // namespace CGAL
 
-#endif // CGAL_QT_GRAPHIC_SVIEW_CIRCLE_INPUT_H
+#endif // CGAL_QT_GRAPHICS_VIEW_CIRCLE_INPUT_H

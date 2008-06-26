@@ -83,8 +83,8 @@ template <typename DT>
 void 
 VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
-  Converter<typename DT::Geom_traits> convert;
-  QRectF rect = boundingRect();
+  QRectF rect = option->exposedRect;
+  PainterOstream pos(painter, rect);
   
   painter->setPen(edgesPen());
   for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
@@ -95,21 +95,11 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
     typename DT::Geom_traits::Ray_2 r;
     typename DT::Geom_traits::Line_2 l;
     if(CGAL::assign(s,o)){
-      (*painter) << s;
+      pos << s;
     } else if(CGAL::assign(r,o)) {
-      typename DT::Geom_traits::Iso_rectangle_2 ir;
-      ir = convert(rect);
-      o = CGAL::intersection(r, ir);
-      if(CGAL::assign(s,o)){
-	(*painter) << s;
-      }
+      pos << r;
     }else if(CGAL::assign(l,o)) {
-      typename DT::Geom_traits::Iso_rectangle_2 ir;
-      ir = convert(rect);
-      o = CGAL::intersection(l, ir);
-      if(CGAL::assign(s,o)){
-	(*painter) << s;
-      }
+      pos < l;
     } 
   }
 }
