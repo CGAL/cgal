@@ -52,36 +52,8 @@ int main() {
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   CGAL::Random theRandom(random_seed);
   int count = 0;
-  double mean = 0;
-  for(int i=0; i<10000; i++) {
-    double x1 = theRandom.get_double(0.0,5.0);
-    double y1 = theRandom.get_double(0.0,5.0);
-    double z1 = theRandom.get_double(0.0,5.0);
-    double r = 1.0;
-    double x2 = theRandom.get_double(0.0,5.0);
-    double y2 = theRandom.get_double(0.0,5.0);
-    double z2 = theRandom.get_double(0.0,5.0);
-    Sphere_3 s1 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(FT(x1),FT(y1),FT(z1),FT(r)));
-    Sphere_3 s2 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(FT(x2),FT(y2),FT(z2),FT(r)));
-    std::vector< CGAL::Object > intersection_1;
-    theIntersect_3(s1, s2, std::back_inserter(intersection_1));
-    if(intersection_1.size() > 0) {
-      count++;
-      Circle_3 c;
-      if(assign(c,intersection_1[0])) {
-        mean += std::sqrt(CGAL::to_double(c.squared_radius()));
-      }
-    }
-  }
 
-  std::cout << "The approximate probability that 2 spheres with radius 1"
-            << std::endl;
-  std::cout << "choosen (uniformly) randomly on a 5x5x5 box intersect is: "
-            << ((double)count)/((double)(10000)) << std::endl;
-  std::cout << "The mean size of the radius of the intersection circle is: "
-            << (mean / ((double)count)) << std::endl << std::endl;
-
-  count = 0;
+  std::cout << "We will calcule the approximate probability that 3 spheres with radius 1 intersect on a 5x5x5 box, it may take some time." << std::endl;
 
   for(int i=0; i<10000; i++) {
     double x1 = theRandom.get_double(0.0,5.0);
