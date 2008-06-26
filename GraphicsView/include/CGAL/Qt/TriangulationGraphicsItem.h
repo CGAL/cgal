@@ -80,6 +80,7 @@ protected:
 
   T * t;
   QPainter* m_painter;
+  PainterOstream<K> painterostream;
 
   typename T::Vertex_handle vh;
   typename T::Point p;
@@ -97,7 +98,8 @@ protected:
 template <typename T>
 TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
   :  t(t_), bb(0,0,0,0), bb_initialized(false),
-     draw_edges(true), draw_vertices(true)
+     draw_edges(true), draw_vertices(true),
+     painterostream(0)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
@@ -123,7 +125,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
         m_painter->setPen(this->edgesPen());
-        (*m_painter) << t->segment(fh,i);
+        painterostream << t->segment(fh,i);
       }
     }
   }
@@ -138,11 +140,12 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
+  painterostream = PainterOstream<K>(painter);
   if(drawEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
         ++eit){
-      (*painter) << t->segment(*eit);
+      painterostream << t->segment(*eit);
     }
   }
   paintVertices(painter);
@@ -183,8 +186,8 @@ TriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 template <typename T>
 void 
 TriangulationGraphicsItem<T>::paint(QPainter *painter, 
-                                       const QStyleOptionGraphicsItem *option,
-                                       QWidget * widget)
+                                    const QStyleOptionGraphicsItem *option,
+                                    QWidget * widget)
 {
   painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());
@@ -192,6 +195,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
     drawAll(painter);
   } else {
     m_painter = painter;
+    painterostream = PainterOstream<K>(painter);
     CGAL::apply_to_range (*t, 
                           typename T::Point(option->exposedRect.left(),
                                             option->exposedRect.bottom()), 

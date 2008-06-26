@@ -16,15 +16,25 @@ namespace Qt {
 template <typename K>
 class Converter {
 
+  bool clippingRectIsInitialized;
   typename K::Iso_rectangle_2 clippingRect;
 
 public:
 
-  Converter(QRectF rect)
+  Converter()
+    : clippingRectIsInitialized(false)
   {
-    clippingRect = this->operator()(rect);
   }
 
+  Converter(QRectF rect)
+  {
+    if(rect.isValid()) {
+      clippingRect = this->operator()(rect);
+      clippingRectIsInitialized = true;
+    }
+    else
+      clippingRectIsInitialized = false;
+  }
 
   typename K::Point_2 operator()(const QPointF& qp) const
   {
@@ -62,6 +72,7 @@ public:
      
   QLineF operator()(const typename K::Ray_2 &r) const
   {
+    CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(r, clippingRect);
     typename K::Segment_2 s;
     typename K::Point_2 p;
@@ -75,6 +86,7 @@ public:
 
   QLineF operator()(const typename K::Line_2 &l) const
   {
+    CGAL_assertion(clippingRectIsInitialized);
     Object o = CGAL::intersection(l, clippingRect);
     typename K::Segment_2 s;
     typename K::Point_2 p;

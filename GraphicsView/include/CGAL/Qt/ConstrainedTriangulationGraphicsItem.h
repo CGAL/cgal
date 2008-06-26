@@ -44,6 +44,7 @@ template <typename T>
 void 
 ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
+  this->painterostream = PainterOstream<K>(painter);
   if(this->drawEdges()) {
     for(typename T::Finite_edges_iterator eit = this->t->finite_edges_begin();
         eit != this->t->finite_edges_end();
@@ -53,7 +54,7 @@ ConstrainedTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       } else {
         painter->setPen(this->edgesPen());
       }
-      (*painter) << this->t->segment(*eit);
+      this->painterostream << this->t->segment(*eit);
     }
   }
   this->paintVertices(painter);
@@ -71,7 +72,7 @@ ConstrainedTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
       } else {
 	this->m_painter->setPen(this->edgesPen());
       }
-      (*this->m_painter) << this->t->segment(fh,i);      
+      this->painterostream << this->t->segment(fh,i);      
     }
     if(this->drawVertices()) {
       paintOneVertex(fh->vertex(i)->point());

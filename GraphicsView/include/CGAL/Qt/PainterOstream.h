@@ -17,7 +17,7 @@ private:
   Converter<K> convert;
   
 public:
-  PainterOstream(QPainter* p, QRectF rect)
+  PainterOstream(QPainter* p, QRectF rect = QRectF())
     : qp(p), convert(rect)
   {}
 
