@@ -40,6 +40,7 @@
 #include "CGAL/_test_fct_coplanar_3.h"
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
+#include "CGAL/_test_cls_circle_3.h"
 
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
@@ -59,6 +60,7 @@ main()
   std::cout << "Testing 3d with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;
   _test_3( Cls() );
+  _test_cls_circle_3( Cls() );
 
   std::cout << "Testing new 2d with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;

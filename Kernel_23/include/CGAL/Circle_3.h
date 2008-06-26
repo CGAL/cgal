@@ -78,6 +78,9 @@ public:
 
   Circle_3() {}
 
+  Circle_3(const Sphere_3& s, const Plane_3& p, int a)
+    : Rep(typename R::Construct_circle_3()(s,p,a)) {}
+
   Circle_3(const Point_3& c, const FT& sr, const Plane_3& p)
     : Rep(typename R::Construct_circle_3()(c,sr,p)) {}
 
