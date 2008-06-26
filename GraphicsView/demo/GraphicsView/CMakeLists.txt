@@ -46,7 +46,7 @@ target_link_libraries( delaunay CGAL-Qt4 )
 #----------------------------------------
 # minimal graphics view executable: min 
 #----------------------------------------
-add_executable  ( min min.cpp )
+add_executable  ( min EXCLUDE_FROM_ALL min.cpp )
 qt4_generate_moc( min.cpp min.moc )
 target_link_libraries( min ${QT_LIBRARIES} )
 
