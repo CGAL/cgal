@@ -207,7 +207,7 @@ public:
     Point_2 operator()(const X_coordinate_1& x,
             const Curve_analysis_2& c, int arcno, const Arc_2& arc) {
 
-        CGAL::set_pretty_mode(std::cerr);
+        //CGAL::set_pretty_mode(std::cerr);
         CERR("Construct_pt_on_arc: " << CGAL::to_double(x) << ", " << arcno <<
              ", " << c.id() <<  "\narc = " << arc << "\n");
 
