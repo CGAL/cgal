@@ -1,5 +1,6 @@
 <ui version="4.0" >
- <class>MainWindow</class>
+ <author>GeometryFactory</author>
+ <class>Constrained_Delaunay_triangulation_MainWindow</class>
  <widget class="QMainWindow" name="MainWindow" >
   <property name="geometry" >
    <rect>
@@ -192,7 +193,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="MainWindow.qrc" >
+    <iconset resource="Constrained_Delaunay_triangulation_MainWindow.qrc" >
      <normaloff>:/cgal/Actions/icons/movingPoint.png</normaloff>:/cgal/Actions/icons/movingPoint.png</iconset>
    </property>
    <property name="text" >
@@ -306,7 +307,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="MainWindow.qrc" >
+    <iconset resource="Constrained_Delaunay_triangulation_MainWindow.qrc" >
      <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
@@ -329,8 +330,9 @@
    </property>
   </action>
  </widget>
+ <includes/>
  <resources>
-  <include location="MainWindow.qrc" />
+  <include location="Constrained_Delaunay_triangulation_MainWindow.qrc" />
   <include location="../icons/File.qrc" />
   <include location="../icons/Logos.qrc" />
   <include location="../icons/Triangulation_2.qrc" />

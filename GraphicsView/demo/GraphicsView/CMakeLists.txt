@@ -21,28 +21,28 @@ include_directories (BEFORE ../../include)
 link_directories(../../src/CGALQt4)
 
 #--------------------------------
-# The "delaunay" demo: delaunay 
+# The "constrained Delaunay" demo: constrained_Delaunay_triangulation
 #--------------------------------
 # UI files (Qt Designer files)
-qt4_wrap_ui( UI_FILES MainWindow.ui )
+qt4_wrap_ui( UI_FILES Constrained_Delaunay_triangulation_MainWindow.ui )
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Triangulation_2.qrc )
+qt4_add_resources ( RESOURCE_FILES ./Constrained_Delaunay_triangulation_MainWindow.qrc ../icons/Input.qrc ../icons/File.qrc ../icons/Triangulation_2.qrc )
 
 # use the Qt MOC preprocessor on classes that derives from QObject
-qt4_automoc( MainWindow.cpp )
+qt4_automoc( Constrained_Delaunay_triangulation_MainWindow.cpp )
 qt4_automoc( DemosMainWindow.cpp )
 
 # The executable itself.
-add_executable  ( delaunay main.cpp MainWindow.cpp DemosMainWindow.cpp ${UI_FILES} ${RESOURCE_FILES} )
+add_executable  ( constrained_Delaunay_triangulation constrained_Delaunay_triangulation.cpp Constrained_Delaunay_triangulation_MainWindow.cpp DemosMainWindow.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
 # Link with Qt libraries
-target_link_libraries( delaunay ${QT_LIBRARIES} )
+target_link_libraries( constrained_Delaunay_triangulation ${QT_LIBRARIES} )
 if ( NOT AUTO_LINK_ENABLED )    
   # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( delaunay CGAL )
+  target_link_libraries( constrained_Delaunay_triangulation CGAL )
 endif()
-target_link_libraries( delaunay CGAL-Qt4 )
+target_link_libraries( constrained_Delaunay_triangulation CGAL-Qt4 )
 
 #----------------------------------------
 # minimal graphics view executable: min 

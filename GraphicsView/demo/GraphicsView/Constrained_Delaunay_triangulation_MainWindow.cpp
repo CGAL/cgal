@@ -1,5 +1,5 @@
 #include <fstream>
-#include "MainWindow.h"
+#include "Constrained_Delaunay_triangulation_MainWindow.h"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -15,7 +15,7 @@
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
   
-MainWindow::MainWindow()
+Constrained_Delaunay_triangulation_MainWindow::Constrained_Delaunay_triangulation_MainWindow()
   : DemosMainWindow()
 {
   setupUi(this);
@@ -82,12 +82,12 @@ MainWindow::MainWindow()
 
   this->setupStatusBar();
   this->setupOptionsMenu();
-  this->addAboutDemo(":/cgal/help/about_demo.html");
+  this->addAboutDemo(":/cgal/help/about_constrained_Delaunay_triangulation.html");
   this->addAboutCGAL();
 }
 
 void
-MainWindow::processInput(CGAL::Object o)
+Constrained_Delaunay_triangulation_MainWindow::processInput(CGAL::Object o)
 {
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
@@ -102,7 +102,7 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 void
-MainWindow::on_actionInsertPolyline_toggled(bool checked)
+Constrained_Delaunay_triangulation_MainWindow::on_actionInsertPolyline_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
@@ -113,7 +113,7 @@ MainWindow::on_actionInsertPolyline_toggled(bool checked)
 
 
 void
-MainWindow::on_actionMovingPoint_toggled(bool checked)
+Constrained_Delaunay_triangulation_MainWindow::on_actionMovingPoint_toggled(bool checked)
 {
 
   if(checked){
@@ -125,14 +125,14 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
 
 
 void
-MainWindow::on_actionShowDelaunay_toggled(bool checked)
+Constrained_Delaunay_triangulation_MainWindow::on_actionShowDelaunay_toggled(bool checked)
 {
   dgi->setDrawEdges(checked);
 }
 
 
 void
-MainWindow::on_actionCircumcenter_toggled(bool checked)
+Constrained_Delaunay_triangulation_MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(tcc);
@@ -147,7 +147,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 
 
 void
-MainWindow::on_actionClear_triggered()
+Constrained_Delaunay_triangulation_MainWindow::on_actionClear_triggered()
 {
   dt.clear();
   emit(changed());
@@ -155,7 +155,7 @@ MainWindow::on_actionClear_triggered()
 
 
 void
-MainWindow::on_actionLoadConstraints_triggered()
+Constrained_Delaunay_triangulation_MainWindow::on_actionLoadConstraints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Constraint File"),
@@ -169,7 +169,7 @@ MainWindow::on_actionLoadConstraints_triggered()
 
 
 void
-MainWindow::loadConstraints(QString fileName)
+Constrained_Delaunay_triangulation_MainWindow::loadConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
 
@@ -189,14 +189,14 @@ MainWindow::loadConstraints(QString fileName)
 }
 
 void
-MainWindow::on_actionRecenter_triggered()
+Constrained_Delaunay_triangulation_MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
   this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
 }
 
 void
-MainWindow::on_actionSaveConstraints_triggered()
+Constrained_Delaunay_triangulation_MainWindow::on_actionSaveConstraints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save Constraints"),
@@ -210,7 +210,7 @@ MainWindow::on_actionSaveConstraints_triggered()
 
 
 void
-MainWindow::saveConstraints(QString fileName)
+Constrained_Delaunay_triangulation_MainWindow::saveConstraints(QString fileName)
 {
   QMessageBox::warning(this,
                        tr("saveConstraints"),
@@ -218,7 +218,7 @@ MainWindow::saveConstraints(QString fileName)
 }
 
 void
-MainWindow::on_actionInsertRandomPoints_triggered()
+Constrained_Delaunay_triangulation_MainWindow::on_actionInsertRandomPoints_triggered()
 {
   typedef CGAL::Creator_uniform_2<double,Point_2>  Creator;
   CGAL::Random_points_in_disc_2<Point_2,Creator> g( 100.0);
@@ -237,4 +237,4 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   emit(changed());
 }
 
-#include "MainWindow.moc"
+#include "Constrained_Delaunay_triangulation_MainWindow.moc"

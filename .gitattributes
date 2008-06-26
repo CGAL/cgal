@@ -1900,10 +1900,10 @@ Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/p
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
-GraphicsView/demo/GraphicsView/MainWindow.qrc -text
-GraphicsView/demo/GraphicsView/MainWindow.ui -text
+GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.qrc -text
+GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.ui -text
 GraphicsView/demo/GraphicsView/about_CGAL.html svneol=native#text/html
-GraphicsView/demo/GraphicsView/about_demo.html svneol=native#text/html
+GraphicsView/demo/GraphicsView/about_constrained_Delaunay_triangulation.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
 GraphicsView/demo/GraphicsView/icons/circumcenter.png -text
 GraphicsView/demo/GraphicsView/icons/movingPoint.png -text

@@ -8,7 +8,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
-#include "ui_MainWindow.h"
+#include "ui_Constrained_Delaunay_triangulation_MainWindow.h"
 #include "DemosMainWindow.h"
 
 namespace CGAL {
@@ -35,7 +35,9 @@ typedef CGAL::Exact_predicates_tag              Itag;
 
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> Delaunay;
 
-class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
+class Constrained_Delaunay_triangulation_MainWindow :
+  public CGAL::Qt::DemosMainWindow,
+  public Ui::Constrained_Delaunay_triangulation_MainWindow
 {
   Q_OBJECT
   
@@ -49,7 +51,7 @@ private:
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
 public:
-  MainWindow();
+  Constrained_Delaunay_triangulation_MainWindow();
 
 private:
   template <typename Iterator> 

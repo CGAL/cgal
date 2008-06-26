@@ -11,7 +11,7 @@ GraphicsView/TAGS
 GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/*_moc.cpp
 GraphicsView/demo/GraphicsView/Makefile
-GraphicsView/demo/GraphicsView/delaunay
+GraphicsView/demo/GraphicsView/constrained_Delaunay_triangulation
 GraphicsView/demo/GraphicsView/min
 GraphicsView/demo/GraphicsView/qrc_*.cxx
 GraphicsView/demo/GraphicsView/ui_*.h
