@@ -1,8 +1,18 @@
-grep 
-TO BE MOVED TO KERNEL
-TODO
+prioritaire ============
 
-ajouter 
+copyright
+
+remplacer les std::acos(-1.) par CGAL_PI
+
+cercle par 3 points
+
+============
+nettoyer 
+Solve 
+critical points
+
+============
+(?) ajouter 
 -	Function Object Concept SphericalKernel::ConstructLine_3
 	Line_3 fo.operator()(Circular_arc_point_3 p1, Circular_arc_point_3 p2)
 - same for Line_arc_3
@@ -15,15 +25,10 @@ ajouter
 
 
 - the ability to negate a particular coordinate of a arc point--this  is a bit idiosyncratic, perhaps the ability to apply some subclass of  affine transform
-- a way to check for the intersection of three spheres (I can do 2  using the linear kernel)--I can presumably work around this though
+
 - the output iterator based intersect is even more annoying than the  normal intersect. 
 ============
 
-----------
-nettoyer 
-Solve 
-critical points
-----------
 
 ? deplacer       
 typedef std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 >
@@ -32,27 +37,14 @@ dans AK ? (c'est dans SK)
 
 ----------
 
-remplacer les std::acos(-1.) par CGAL_PI
-
 filtered bbox kernel (voir TODO CK2)
-Exact_circular_kernel_3
-Lazy
-tests for those
-
-check do_intersect(sphere,sphere): should be in Kernel, our local 
-version uses alg. nbs..
 
 changer les noms des polynomes (cercles et droites) dans le code... 
 
-cercle par 3 points
-
 --> a transferer dans linear kernel 
         - unoriented equal (pb general orientation dans noyau cgal...)
-        - intersection de deux Line_3
-        - radical plane
-        - calculs de longueurs et surfaces
 
 intersection arcs/triangle
 
-spherical patch 'triangle'
+spherical patch 'triangle'...
 (NB: package Curved_kernel dans branch/cannot_wait...)
