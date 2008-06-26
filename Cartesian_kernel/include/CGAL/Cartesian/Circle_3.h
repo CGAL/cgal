@@ -92,6 +92,8 @@ public:
     }
   }
 
+  CircleC3(const Plane_3 &p, const Sphere_3 &s, int) : base(s, p) {}
+
   CircleC3(const Plane_3 &p, const Sphere_3 &s) {
     Object obj = R().intersect_3_object()(p, s);
     // s1,s2 must intersect

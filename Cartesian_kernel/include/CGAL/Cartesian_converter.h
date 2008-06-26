@@ -252,7 +252,7 @@ public:
     {
         typedef typename K2::Circle_3  Circle_3;
 	return Circle_3(operator()(a.diametral_sphere()),
-			operator()(a.supporting_plane()));
+			operator()(a.supporting_plane()),1);
     }
 
     typename K2::Triangle_3
