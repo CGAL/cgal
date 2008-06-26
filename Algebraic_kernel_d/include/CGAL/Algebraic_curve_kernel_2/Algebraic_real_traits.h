@@ -29,8 +29,10 @@
 #define CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION 0
 #endif
 
+#if CGAL_ACK_USE_EXACUS
 #if !CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
 #include <AcX/Algebraic_curve_pair_2.h>
+#endif
 #endif
 
 #define CGAL_SNAP_ALGEBRAIC_REAL_TRAITS_2_TYPEDEFS \
@@ -329,6 +331,161 @@ struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
         }
     };
 };
+
+#if !CGAL_ACK_USE_EXACUS
+// !!!! TODO: That is preliminary!
+
+
+template <class AlgebraicKernel_2>
+struct Algebraic_real_traits_for_y<Xy_coordinate_2<
+    AlgebraicKernel_2>, CGAL::Null_functor > {
+    
+    typedef AlgebraicKernel_2 Algebraic_kernel_2;
+
+     //! this instance's first template argument
+    typedef Xy_coordinate_2<Algebraic_kernel_2> Algebraic_real_2;
+    
+    //! myself
+    typedef Algebraic_real_traits_for_y< Algebraic_real_2, CGAL::Null_functor > Self;
+    
+    //! For convenience
+    typedef Algebraic_real_2 Type;
+
+    typedef typename Algebraic_real_2::Boundary Boundary;
+
+    typedef typename Algebraic_kernel_2::Curve_analysis_2 Curve_analysis_2;
+    
+    typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
+
+    typedef typename Status_line_1::Bitstream_descartes Isolator;
+
+    //! computes boundary between y-coordinates of two algebraic reals
+    //! defined over the same vertical line
+    struct Boundary_between 
+            : public Binary_function< Type, Type, Boundary > {
+        
+        Boundary operator()(const Type& r1, const Type& r2) const {
+
+            CGAL_precondition(r1.y() != r2.y());
+
+            Boundary res(0);
+
+            Isolator isol1 =
+                r1.curve().status_line_at_exact_x(r1.x()).isolator();
+
+            Isolator isol2 =
+                r2.curve().status_line_at_exact_x(r2.x()).isolator();
+            
+            Boundary low1, low2, high1, high2;
+            
+            while (true) {
+                low1 = isol1.left_boundary(r1.arcno());
+                high1 = isol1.right_boundary(r1.arcno());
+                
+                low2 = isol2.left_boundary(r2.arcno());
+                high2 = isol2.right_boundary(r2.arcno());
+                
+                if (low1 > high2) {
+                    res = ((low1 + high2)/Boundary(2));
+                    break;
+                }
+                if (low2 > high1) {
+                    res = ((low2 + high1)/Boundary(2));
+                    break;
+                }
+                
+                // else
+                isol1.refine_interval(r1.arcno());
+                isol2.refine_interval(r2.arcno());
+            }
+
+            CGAL::simplify(res);
+
+            CGAL_postcondition_code(
+                    CGAL::Comparison_result exp = CGAL::SMALLER
+            );
+            CGAL_postcondition_code(
+                    if (r1.y() > r2.y()) {
+                        exp = CGAL::LARGER;
+                    }
+            );
+            CGAL_postcondition(r1.y().compare(res) == exp);
+            CGAL_postcondition(r2.y().compare(res) == -exp);
+
+            return res;
+        }
+    };
+    
+    //! returns current lower boundary of an isolating interval defining 
+    //! y-coordinate of an algebraic real
+    struct Lower_boundary
+            : public Unary_function<Type, Boundary> {
+        
+        Boundary operator()(const Type& r) const {
+            return r.curve().status_line_at_exact_x(r.x()).
+                lower_boundary(r.arcno());
+        }
+    };
+
+    //! returns current upper boundary of an isolating interval defining 
+    //! y-coordinate of an algebraic real
+    struct Upper_boundary
+            : public Unary_function<Type, Boundary> {
+         
+        Boundary operator()(const Type& r) const {
+            return r.curve().status_line_at_exact_x(r.x()).
+                upper_boundary(r.arcno());
+        }
+    };
+                
+    struct Refine
+            : public Unary_function<Type, void> {
+        
+        //! \brief refines isolating interval of an y-coorinate of algebraic 
+        //! real to make it at least half of the original interval
+        //!
+        //! note that an interval may also degenerate to a single point
+        void operator()(const Type& r) const {
+            r.curve().status_line_at_exact_x(r.x()).refine(r.arcno());
+        }
+        
+        //! \brief refines isolating interval of an y-coorinate of algebraic 
+        //! real w.r.t. the given relative precision
+        //!
+        //! resulting interval is:
+        //! <tt>|lower - upper|/|r.y()| <= 2^(-rel_prec)</tt> 
+        void operator()(const Type& r, int rel_prec) const {
+            Boundary low = Lower_boundary()(r);
+            Boundary high = Upper_boundary()(r);
+            
+            Boundary prec = (high - low) /
+                CGAL::ipower(Boundary(2), rel_prec);
+            
+            /////////// attention!! need to test for exact zero !!
+               
+            // Refine until both boundaries have the same sign
+            while (CGAL::sign(low) != CGAL::sign(high)) {
+                Refine()(r);
+                low = Lower_boundary()(r);
+                high = Upper_boundary()(r);
+            }
+            
+            CGAL_assertion(
+                    CGAL::sign(low) != CGAL::ZERO &&
+                    CGAL::sign(high) != CGAL::ZERO);
+            
+            // Refine until precision is reached
+            while (((high - low) / CGAL::max(CGAL::abs(high), CGAL::abs(low)))
+                   > prec ) {
+                Refine()(r);
+                low = Lower_boundary()(r);
+                high = Upper_boundary()(r);
+            }
+        }
+    };
+};
+
+#endif
 
 } // namespace CGALi 
             

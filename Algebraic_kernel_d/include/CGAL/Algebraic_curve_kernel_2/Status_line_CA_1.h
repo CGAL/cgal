@@ -31,6 +31,15 @@ template <class CurveAnalysis_2, class Rep>
 std::ostream& operator<< (std::ostream&, 
     const Status_line_CA_1<CurveAnalysis_2, Rep>&);
 
+#if !CGAL_ACK_USE_EXACUS
+template < typename CurveAnalysis_2 > 
+class Event_line_builder;
+
+template < typename CurveAnalysis_2 > 
+class Shear_transformation;
+#endif
+
+
 template < class CurveAnalysis_2 >
 class Status_line_CA_1_rep {
 
@@ -132,9 +141,6 @@ public:
     // match side arcs to event arcs
     mutable std::vector< int > matching_[2];
     
-    // match side arcs to tending
-    mutable std::vector< NiX::Tending > tending_[2];
-
     // total number of arcs
     int numarcs_at_;
 
@@ -152,6 +158,10 @@ public:
     
      // befriending the handle
     friend class Status_line_CA_1<Curve_analysis_2, Self>;
+    //friend class Curve_analysis_2;
+    //friend class Event_line_builder<Curve_analysis_2>;
+    //friend class Shear_transformation<Curve_analysis_2>;
+
 };
 
 //! \brief The class provides information about the intersections of a curve 
@@ -244,7 +254,11 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
+#if CGAL_ACK_USE_EXACUS
             ca._internal_curve().x_to_index(x, idx, is_event);
+#else
+            ca.x_to_index(x, idx, is_event);
+#endif
             CGAL_precondition(!is_event && idx == i);
         );
     }
@@ -272,8 +286,13 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
+#if CGAL_ACK_USE_EXACUS
             ca._internal_curve().x_to_index(x, idx, is_event);
             CGAL_precondition(is_event && idx == i);
+#else
+            ca.x_to_index(x, idx, is_event);
+            CGAL_precondition(idx == i);
+#endif
         );
         _set_arcs(arcs);
         if(has_v_line)
@@ -293,8 +312,13 @@ public:
         CGAL_precondition_code(
             bool is_event;
             size_type idx;
+#if CGAL_ACK_USE_EXACUS
             ca._internal_curve().x_to_index(x, idx, is_event);
             CGAL_precondition(is_event && idx == i);
+#else
+            ca.x_to_index(x, idx, is_event);
+            CGAL_precondition(idx == i);
+#endif
         );
     }
     
@@ -353,6 +377,16 @@ public:
     bool is_event() const {
         return this->ptr()->_m_event;
     }
+
+    /*! \brief 
+     * returns \c true if the ith point is an event point
+     */
+    bool is_event(size_type i) const {
+        // TODO: Make it possible to detect singularities as well
+        Arc_pair branches = number_of_incident_branches(i);
+        return branches.first!=1 || branches.second!=1;
+    } 
+        
 
     /*! \brief
      * returns number of distinct and finite intersections of a curve with a
@@ -460,7 +494,12 @@ public:
     void write(std::ostream& os) const {
 
         os << "status_line [CA@" << this->ptr()->_m_ca.id();
+#if CGAL_ACK_USE_EXACUS
         os << "; x = " << x() << "; #events: " << number_of_events() << "; ";
+#else
+        os << "; x = " << CGAL::to_double(x()) << "; #events: " 
+           << number_of_events() << "; ";
+#endif
 
         if(is_event()) {
             os << "incident branches: {";
@@ -499,13 +538,41 @@ public:
     //! Returns the isolator instance
     Bitstream_descartes& isolator() const {
         CGAL_assertion(this->ptr()->isolator);
-        return this->ptr()->isolator->get();
+        return this->ptr()->isolator.get();
     }
 
     //! Returns whether an isolator has been given for that status line
     bool has_isolator() const {
         return this->ptr()->isolator;
     }
+
+    typename Bitstream_descartes::Boundary lower_boundary(int index) const {
+        return isolator().left_boundary(index);
+    }
+
+    typename Bitstream_descartes::Boundary upper_boundary(int index) const {
+        return isolator().right_boundary(index);
+    }
+
+    typename Bitstream_descartes::Boundary interval_length(int index) const {
+        return isolator().right_boundary(index)-
+               isolator().left_boundary(index);
+    }
+
+    int get_upper_bound_for_multiplicity(int index) const {
+        return isolator().get_upper_bound_for_multiplicity(index);
+    }
+
+    void refine(int index) const {
+        return isolator().refine_interval(index);
+    }
+
+    void refine_to(int index, typename Bitstream_descartes::Boundary b) {
+            while(upper_boundary(index) - lower_boundary(index) > b) {
+                refine(index);
+            }
+    }
+
 
     //! these are our friends
     //friend class Curve_analysis_2;

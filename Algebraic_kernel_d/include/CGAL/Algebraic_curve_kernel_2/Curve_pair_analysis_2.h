@@ -206,6 +206,11 @@ public:
         return (c == 0 ? triple.ffy : triple.ggy);
     }
 
+    //! Shortcut for coherent tests
+    SoX::Index_triple event_indices(size_type i) const {
+        return this->ptr()->_m_curve_pair.event_indices(i);
+    }
+
     /*! \brief
      * returns an instance of \c StatusLine_1 at the i-th event
      *

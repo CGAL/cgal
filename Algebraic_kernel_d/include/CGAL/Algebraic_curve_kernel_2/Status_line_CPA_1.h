@@ -223,9 +223,15 @@ public:
         // unless x-coordiate was explicitly set with _set_x: compute its value
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
+#if CGAL_ACK_USE_EXACUS
                 this->ptr()->_m_cpa._internal_curve_pair().event_x(index()) :
                 X_coordinate_1(this->ptr()->_m_cpa._internal_curve_pair().
+                               boundary_value_in_interval(index())));
+#else   
+                this->ptr()->_m_cpa.event_x(index()) :
+                X_coordinate_1(this->ptr()->_m_cpa.
                     boundary_value_in_interval(index())));
+#endif
         }
         return *(this->ptr()->_m_x);
     }
@@ -396,7 +402,8 @@ public:
     void write(std::ostream& os) const {
     
         os << "status_line [CPA@" << this->ptr()->_m_cpa.id();
-        os << "; x = " << x() << "; #events: " << number_of_events() << "; ";
+        
+        os << "; x = " << (index()==-1 ? 999.999 : CGAL::to_double(x())) << "; #events: " << number_of_events() << "; ";
         
         typename Arc_container::const_iterator ait =
                 this->ptr()->_m_arcs.begin();

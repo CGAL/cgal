@@ -21,9 +21,6 @@
 #include <CGAL/Algebraic_curve_kernel_2/Xy_coordinate_2.h>
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 
-// TODO remove Exacus-include
-#include <NiX/Compactified.h>
-
 CGAL_BEGIN_NAMESPACE
 
 template < class AlgebraicCurveKernel_2, class Rep_ > 
@@ -108,6 +105,9 @@ public:
     
     //! x-coordinate type
     typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
+
+    //! y-coordinate type
+    typedef X_coordinate_1 Y_coordinate_1;
 
     //! type of a curve point
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
@@ -220,6 +220,7 @@ public:
 
         sline._set_number_of_branches_approaching_infinity(minus_inf,
                 plus_inf);
+        sline.set_isolator(info.refinement());
         return sline;
 #endif // CGAL_ACK_2_USE_STATUS_LINES
     }
@@ -231,10 +232,18 @@ public:
     Status_line_1 status_line_of_interval(size_type i) const
     {
         CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
-
+        typedef typename Internal_curve_2::Event1_info Event1_info;
+        Event1_info info 
+            = _internal_curve().event_info_at_x
+                (_internal_curve().boundary_value_in_interval(i));
         size_type n_arcs = _internal_curve().arcs_over_interval(i);
-        return Status_line_1(X_coordinate_1(_internal_curve().
-              boundary_value_in_interval(i)), i, *this, n_arcs);
+        Status_line_1 sline
+            (X_coordinate_1(_internal_curve().boundary_value_in_interval(i)),
+             i,
+             *this,
+             n_arcs);
+        sline.set_isolator(info.refinement());
+        return sline;
     }
 
     //! \brief returns status_line_at_event(i), if x hits i-th event,
@@ -274,8 +283,13 @@ public:
         if(is_evt) 
             return status_line_at_event(i);
         
+        typedef typename Internal_curve_2::Event1_info Event1_info;
+        Event1_info info 
+            = _internal_curve().event_info_at_x(x);
         size_type n_arcs = _internal_curve().arcs_over_interval(i);
-        return Status_line_1(x, i, *this, n_arcs);
+        Status_line_1 sline(x,i,*this,n_arcs);
+        sline.set_isolator(info.refinement());
+        return sline;
     }
 
     /*!\brief

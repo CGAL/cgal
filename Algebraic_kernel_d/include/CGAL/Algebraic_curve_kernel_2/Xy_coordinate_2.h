@@ -274,59 +274,51 @@ public:
             typename Y_root_map::iterator yit = 
                 y_root_map.find(line);
 
-            if (yit == y_root_map.end()) {
+            // TODO: Cache resultant computation
+            // exacus-related code shouldn't be used here
+            //curve().x_to_index(x(),i,is_event);
+            if (line.is_event()) {
+                //typename Internal_curve_2::Event1_info ev_info =
+                //   curve().event_info(i);
+                typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
+                    line.number_of_incident_branches(arcno());
                 
-                // exacus-related code shouldn't be used here
-                //curve().x_to_index(x(),i,is_event);
-                if (line.is_event()) {
-                    //typename Internal_curve_2::Event1_info ev_info =
-                    //   curve().event_info(i);
-                    typename Curve_analysis_2::Status_line_1::Arc_pair ipair =
-                        line.number_of_incident_branches(arcno());
-                    
-                    if (ipair.first != 1 || ipair.second != 1) {
-                        point_is_certainly_critical = true;
-                        y_pol = 
-                            typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
-                                    CGAL::CGALi::resultant
-                                    (typename CGAL::Polynomial_traits_d
-                                         <Polynomial_2>::Swap() (f,0,1),
-                                     typename CGAL::Polynomial_traits_d
-                                         <Polynomial_2>::Swap() 
-                                             (CGAL::diff(f),0,1))
-                            );
-                        // BUGFIX: y_pol might be zero:
-                        if(y_pol.is_zero()) {
-                            // force re-computation with bigger resultant
-                            point_is_certainly_critical=false;
-                        }
-                            
-                              
-                    }
-                }
-                
-                if (!point_is_certainly_critical) {
-                    
-                    Polynomial_2 r(x().polynomial());
-                    
-                    y_pol = typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
-                            CGAL::CGALi::resultant
+                if (ipair.first != 1 || ipair.second != 1) {
+                    point_is_certainly_critical = true;
+                    y_pol = 
+                        typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
+                                CGAL::CGALi::resultant
                                 (typename CGAL::Polynomial_traits_d
-                                     <Polynomial_2>::Swap() (f,0,1),
+                                 <Polynomial_2>::Swap() (f,0,1),
                                  typename CGAL::Polynomial_traits_d
-                                     <Polynomial_2>::Swap() (r,0,1))
-                    );
+                                 <Polynomial_2>::Swap() 
+                                 (CGAL::diff(f),0,1))
+                        );
+                    // BUGFIX: y_pol might be zero:
+                    if(y_pol.is_zero()) {
+                        // force re-computation with bigger resultant
+                        point_is_certainly_critical=false;
+                    }                             
+                    
                 }
-                typename Algebraic_kernel_1::Solve_1 real_roots;
-                
-                Roots y_roots_tmp;
-                real_roots(y_pol, std::back_inserter(y_roots_tmp)); 
-
-                yit = 
-                    y_root_map.insert(yit, std::make_pair(line, y_roots_tmp));
             }
             
-            Roots y_roots = yit->second;
+            if (!point_is_certainly_critical) {
+                
+                Polynomial_2 r(x().polynomial());
+                y_pol = typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()(
+                        CGAL::CGALi::resultant
+                        (typename CGAL::Polynomial_traits_d
+                         <Polynomial_2>::Swap() (f,0,1),
+                         typename CGAL::Polynomial_traits_d
+                         <Polynomial_2>::Swap() (r,0,1))
+                );
+                
+            }
+            typename Algebraic_kernel_1::Solve_1 real_roots;
+            
+            Roots y_roots;
+            real_roots(y_pol, std::back_inserter(y_roots)); 
             
             Boundary_interval y_iv = get_approximation_y();
             
@@ -365,7 +357,7 @@ public:
             CGAL_assertion(static_cast< int >(candidates.size()) == 1);
             this->ptr()->_m_y = 
                 Y_coordinate_1(
-                        y_pol, 
+                        (*candidates.begin())->polynomial(), 
                         (*candidates.begin())->low(), 
                         (*candidates.begin())->high()
                 );
