@@ -31,9 +31,10 @@ qt4_add_resources ( RESOURCE_FILES ./MainWindow.qrc ../icons/Input.qrc ../icons/
 
 # use the Qt MOC preprocessor on classes that derives from QObject
 qt4_automoc( MainWindow.cpp )
+qt4_automoc( DemosMainWindow.cpp )
 
 # The executable itself.
-add_executable  ( delaunay main.cpp MainWindow.cpp ${UI_FILES} ${RESOURCE_FILES} )
+add_executable  ( delaunay main.cpp MainWindow.cpp DemosMainWindow.cpp ${UI_FILES} ${RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( delaunay ${QT_LIBRARIES} )

@@ -2,7 +2,6 @@
 #define MAIN_WINDOW_H
 
 #include <QtGui>
-#include <QMainWindow>
 #include <QString>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -10,10 +9,10 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include "ui_MainWindow.h"
+#include "DemosMainWindow.h"
 
 namespace CGAL {
   namespace Qt {
-    class GraphicsViewNavigation;
     template <class Delaunay> class TriangulationGraphicsItem;
     template <class Delaunay> class ConstrainedTriangulationGraphicsItem;
     template <class Delaunay> class TriangulationMovingPoint;
@@ -36,7 +35,7 @@ typedef CGAL::Exact_predicates_tag              Itag;
 
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> Delaunay;
 
-class MainWindow : public QMainWindow, public Ui::MainWindow
+class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
 {
   Q_OBJECT
   
@@ -44,11 +43,7 @@ private:
   Delaunay dt; 
   QGraphicsScene scene;  
 
-  CGAL::Qt::GraphicsViewNavigation* navigation;
-
   CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
-
-  QLabel* xycoord ;
 
   CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -57,8 +52,6 @@ public:
   MainWindow();
 
 private:
-  void setupStatusBar();
-
   template <typename Iterator> 
   void insert_polyline(Iterator b, Iterator e)
   {
@@ -86,10 +79,6 @@ public slots:
 
   void processInput(CGAL::Object o);
 
-  void on_actionUse_Antialiasing_toggled(bool checked);
-
-  void on_actionUse_OpenGL_toggled(bool checked);
-
   void on_actionMovingPoint_toggled(bool checked);
 
   void on_actionShowDelaunay_toggled(bool checked);
@@ -111,10 +100,6 @@ public slots:
   void saveConstraints(QString);
 
   void on_actionInsertRandomPoints_triggered();
-
-  void on_actionAbout_triggered();
-
-  void on_actionAboutCGAL_triggered();
 
   signals:
 

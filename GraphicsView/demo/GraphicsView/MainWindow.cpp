@@ -1,12 +1,9 @@
 #include <fstream>
 #include "MainWindow.h"
 
-
-#include <QMainWindow>
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <QLabel>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -17,17 +14,11 @@
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
-
-#include <CGAL/Qt/GraphicsViewNavigation.h>
-
-#include <QGLWidget>
-
-
   
 MainWindow::MainWindow()
+  : DemosMainWindow()
 {
   setupUi(this);
-  setupStatusBar();
 
   // Add a GraphicItem for the Delaunay triangulation
   dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
@@ -87,12 +78,12 @@ MainWindow::MainWindow()
                                                       
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
-  navigation = new CGAL::Qt::GraphicsViewNavigation(this->graphicsView);
-  this->graphicsView->viewport()->installEventFilter(navigation);
-  this->graphicsView->installEventFilter(navigation);
+  this->addNavigation(this->graphicsView);
 
-  QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
-		   xycoord, SLOT(setText(QString)));
+  this->setupStatusBar();
+  this->setupOptionsMenu();
+  this->addAboutDemo(":/cgal/help/about_demo.html");
+  this->addAboutCGAL();
 }
 
 void
@@ -108,38 +99,6 @@ MainWindow::processInput(CGAL::Object o)
     }
   }
   emit(changed());
-}
-
-void
-MainWindow::on_actionUse_Antialiasing_toggled(bool checked)
-{
-    this->graphicsView->setRenderHint(QPainter::Antialiasing, checked);
-    statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-")
-                             , 1000);
-}
-
-void
-MainWindow::on_actionUse_OpenGL_toggled(bool checked)
-{ 
-  if(checked) {
-    QGLWidget* new_viewport = new QGLWidget;
-
-    // Setup the format to allow antialiasing with OpenGL:
-    // one need to activate the SampleBuffers, if the graphic driver allows
-    // this.
-    QGLFormat glformat = new_viewport->format();
-    glformat.setOption(QGL::SampleBuffers);
-    new_viewport->setFormat(glformat);
-
-    this->graphicsView->setViewport(new_viewport);
-    statusBar()->showMessage(tr("OpenGL activated"), 1000);
-  }
-  else {
-    this->graphicsView->setViewport(new QWidget);
-    statusBar()->showMessage(tr("OpenGL deactivated"), 1000);
-  }
-  this->graphicsView->viewport()->installEventFilter(navigation);
-  this->graphicsView->setFocus();
 }
 
 void
@@ -276,43 +235,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   }
   dt.insert(points.begin(), points.end());
   emit(changed());
-}
-
-void
-MainWindow::on_actionAbout_triggered()
-{
-  QFile about_demo(":/cgal/help/about_demo.html");
-  about_demo.open(QIODevice::ReadOnly);
-  QMessageBox mb(QMessageBox::NoIcon,
-                 tr(" About the Demo"),
-                 QTextStream(&about_demo).readAll(),
-                 QMessageBox::Ok,
-                 this);
-  mb.exec();
-}
-
-void
-MainWindow::on_actionAboutCGAL_triggered()
-{
-  QFile about_CGAL(":/cgal/help/about_CGAL.html");
-  about_CGAL.open(QIODevice::ReadOnly);
-  QMessageBox mb(QMessageBox::NoIcon,
-                 tr("About CGAL"),
-                 QTextStream(&about_CGAL).readAll(),
-                 QMessageBox::Ok,
-                 this);
-  mb.exec();
-}
-
-void
-MainWindow::setupStatusBar()
-{
-  xycoord = new QLabel(" -0.00000 , -0.00000 ", this);
-  xycoord->setAlignment(Qt::AlignHCenter);
-  xycoord->setMinimumSize(xycoord->sizeHint());
-  xycoord->clear();
-  this->statusbar->addWidget(new QLabel(this), 1);
-  this->statusbar->addWidget(xycoord, 0);
 }
 
 #include "MainWindow.moc"

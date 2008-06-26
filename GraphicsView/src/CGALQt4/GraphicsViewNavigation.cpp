@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QFlags>
 #include <QScrollBar>
@@ -14,9 +15,8 @@
 namespace CGAL {
 namespace Qt {
 
-  GraphicsViewNavigation::GraphicsViewNavigation(QGraphicsView* v_)
-    : v(v_),
-      rectItem(new QGraphicsRectItem),
+  GraphicsViewNavigation::GraphicsViewNavigation()
+    : rectItem(new QGraphicsRectItem),
       dragging(false)
   {
     QColor rect_color(250, 221, 0);
@@ -36,6 +36,17 @@ namespace Qt {
   bool 
   GraphicsViewNavigation::eventFilter(QObject *obj, QEvent *event)
   {
+    QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
+    if(v == NULL) {
+      QWidget* viewport = qobject_cast<QWidget*>(obj);
+      if(viewport == NULL) {
+        return false;
+      }
+      v = qobject_cast<QGraphicsView*>(viewport->parent());
+      if(v == NULL) {
+        return false;
+      }
+    }
     switch(event->type()) 
     {
     case QEvent::KeyPress: {
@@ -47,16 +58,16 @@ namespace Qt {
       }
       switch (keyEvent->key()) {
       case ::Qt::Key_Up:
-        translateView(0, -offset);
+        translateView(v, 0, -offset);
         break;
       case ::Qt::Key_Down:
-        translateView(0, offset);
+        translateView(v, 0, offset);
         break;
       case ::Qt::Key_Left:
-        translateView(-offset, 0);
+        translateView(v, -offset, 0);
         break;
       case ::Qt::Key_Right:
-        translateView(offset, 0);
+        translateView(v, offset, 0);
         break;
       case ::Qt::Key_PageUp:
         v->rotate(-6);
@@ -65,10 +76,10 @@ namespace Qt {
         v->rotate(6);
         break;
       case ::Qt::Key_Plus:
-        scaleView(1.2);
+        scaleView(v, 1.2);
         break;
       case ::Qt::Key_Minus:
-        scaleView(1 / 1.2);
+        scaleView(v, 1 / 1.2);
         break;
       default:
         return false;
@@ -99,7 +110,7 @@ namespace Qt {
           || (wheelEvent->modifiers() & ::Qt::ControlModifier) ) {
         zoom_ratio = 120.0;
       }
-      scaleView(pow((double)2, -wheelEvent->delta() / zoom_ratio));
+      scaleView(v, pow((double)2, -wheelEvent->delta() / zoom_ratio));
 
       //         display_parameters();
       return true;
@@ -111,7 +122,7 @@ namespace Qt {
           && mouseEvent->button() == ::Qt::RightButton )
       {
         QPoint offset = mouseEvent->pos() - v->viewport()->rect().center();
-        translateView(offset.x(), offset.y());
+        translateView(v, offset.x(), offset.y());
         return true;
       }
       else if( mouseEvent->modifiers() == ::Qt::ControlModifier ) {
@@ -171,7 +182,7 @@ namespace Qt {
       else if(  mouseEvent->button() == ::Qt::RightButton ) {
         if(dragging) {
           dragging = false;
-          drag_to(mouseEvent->pos());
+          drag_to(v, mouseEvent->pos());
           v->setCursor(cursor_backup);
           return true;
         }
@@ -185,7 +196,7 @@ namespace Qt {
 
 
   void 
-  GraphicsViewNavigation::scaleView(qreal scaleFactor)
+  GraphicsViewNavigation::scaleView(QGraphicsView* v, qreal scaleFactor)
   {
     QPointF center = v->mapToScene(v->viewport()->rect().center());
 //     qreal factor = v->matrix().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
@@ -194,10 +205,10 @@ namespace Qt {
 
     v->scale(scaleFactor, scaleFactor);
     QPoint offset = v->mapFromScene(center) - v->viewport()->rect().center();
-    translateView(offset.x(), offset.y());
+    translateView(v, offset.x(), offset.y());
   }
 
-  void GraphicsViewNavigation::drag_to(QPoint new_pos)
+  void GraphicsViewNavigation::drag_to(QGraphicsView* v, QPoint new_pos)
   {
     QPoint dragging_start_in_view = v->mapFromScene(dragging_start);
     QPoint offset = new_pos - dragging_start_in_view;
@@ -205,20 +216,20 @@ namespace Qt {
 //                                "         offset=(%3%, %4%)\n")
 //       % dragging_start_in_view.x() % dragging_start_in_view.y()
 //       % offset.x() % offset.y();
-    translateView(-offset.x(), -offset.y());
+    translateView(v, -offset.x(), -offset.y());
     dragging_start_in_view = v->mapFromScene(dragging_start);
 //     std::cerr << boost::format("         after=(%1%, %2%)\n")
 //       % dragging_start_in_view.x() % dragging_start_in_view.y();
   }
 
-  QRectF GraphicsViewNavigation::mapToScene(QRect rect) const
+  QRectF GraphicsViewNavigation::mapToScene(QGraphicsView* v, QRect rect) const
   {
     QPointF top_left = v->mapToScene(rect.topLeft());
     QPointF bottom_right = v->mapToScene(rect.bottomRight());
     return QRectF(top_left, bottom_right);
   }
 
-  void GraphicsViewNavigation::translateView(int dx,  int dy)
+  void GraphicsViewNavigation::translateView(QGraphicsView* v, int dx,  int dy)
   {
     if( dx == 0 && dy == 0 ) {
       return;
@@ -244,7 +255,7 @@ namespace Qt {
       QRect vp_rect = v->viewport()->rect();
       QPointF new_center = v->mapToScene(vp_rect.center() + QPoint(dx, dy));
       vp_rect |= vp_rect.translated(dx, dy);
-      QRectF rect = mapToScene(vp_rect);
+      QRectF rect = mapToScene(v, vp_rect);
       v->setSceneRect(v->sceneRect() | rect);
       v->centerOn(new_center);
 
@@ -260,7 +271,7 @@ namespace Qt {
 //     display_parameters();
   }
 
-  void GraphicsViewNavigation::display_parameters()
+  void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
   {
     std::cerr << 
       boost::format("matrix translation=(%1%, %2%)\n"

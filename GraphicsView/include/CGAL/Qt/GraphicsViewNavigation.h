@@ -9,6 +9,7 @@
 #include <QRectF>
 
 class QGraphicsView;
+class QGraphicsScene;
 class QEvent;
 class QGraphicsRectItem;
 
@@ -23,20 +24,19 @@ class GraphicsViewNavigation: public QObject {
   void mouseCoordinates(QString);
 
 public:
-  GraphicsViewNavigation(QGraphicsView* v_);
+  GraphicsViewNavigation();
   ~GraphicsViewNavigation();
   
   bool eventFilter(QObject *obj, QEvent *event);
 
 private:
 
-  void scaleView(qreal scaleFactor);
-  void translateView(int dx,  int dy);
-  void drag_to(QPoint new_pos);
-  QRectF mapToScene(QRect rect) const;
-  void display_parameters();
+  void scaleView(QGraphicsView*, qreal scaleFactor);
+  void translateView(QGraphicsView*, int dx,  int dy);
+  void drag_to(QGraphicsView*, QPoint new_pos);
+  QRectF mapToScene(QGraphicsView*, QRect rect) const;
+  void display_parameters(QGraphicsView*);
 
-  QGraphicsView* v;
   QGraphicsRectItem* rectItem;
   QPointF rect_first_point;
   bool dragging;
