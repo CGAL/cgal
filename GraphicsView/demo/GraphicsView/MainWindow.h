@@ -86,6 +86,8 @@ public slots:
 
   void processInput(CGAL::Object o);
 
+  void on_actionUse_Antialiasing_toggled(bool checked);
+
   void on_actionUse_OpenGL_toggled(bool checked);
 
   void on_actionMovingPoint_toggled(bool checked);

@@ -77,8 +77,8 @@ MainWindow::MainWindow()
   //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   scene.setSceneRect(0,0, 100, 100);
-  this->graphicsView->setRenderHint(QPainter::Antialiasing);
   this->graphicsView->setScene(&scene);
+  actionUse_Antialiasing->setChecked(true);
 
   // Turn the vertical axe upside down
   this->graphicsView->matrix().scale(1, -1);
@@ -106,6 +106,12 @@ MainWindow::processInput(CGAL::Object o)
     }
   }
   emit(changed());
+}
+
+void
+MainWindow::on_actionUse_Antialiasing_toggled(bool checked)
+{
+    this->graphicsView->setRenderHint(QPainter::Antialiasing, checked);
 }
 
 void
