@@ -1,0 +1,712 @@
+// TODO: Add licence
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id: $
+// 
+//
+// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
+//
+// ============================================================================
+
+#ifndef CGAL_ACK_EVENT_LINE_BUILDER
+#define CGAL_ACK_EVENT_LINE_BUILDER 1
+
+#include <CGAL/basic.h>
+
+#include <CGAL/Algebraic_curve_kernel_2/from_nix/sturm_habicht_sequence.h>
+
+#include <CGAL/Algebraic_structure_traits.h>
+
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/alg_real_utils.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
+
+#include <CGAL/Algebraic_curve_kernel_2/analyses/subresultants.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
+
+#include <boost/numeric/interval.hpp>
+#include <vector>
+#include <algorithm>
+#include <utility>
+
+// Constant for the interval test in \c compute_mk
+#define AcX_PRECISION 10000
+
+CGAL_BEGIN_NAMESPACE
+
+namespace CGALi {
+
+/*!
+ * \brief Constructs Vert_line-objects for an algebraic curve.
+ *
+ *  
+ * The method \ref create_event_line builds such a vert-line
+ * for critical x-values. See the 
+ * documentation of this routines for further information.
+ *
+ */
+template<typename CurveAnalysis_2>
+class Event_line_builder {
+
+public:
+
+    // \brief The curve class.
+    typedef CurveAnalysis_2 Curve_analysis_2;
+
+    typedef typename CurveAnalysis_2::Algebraic_kernel_2
+        Algebraic_kernel_2;
+
+    // \brief Type of the coefficients of the input polynomial
+    typedef typename Algebraic_kernel_2::Coefficient Coefficient;
+
+    // \brief The type for rational x-coordinates and for interval boundaries
+    typedef typename Algebraic_kernel_2::Boundary Boundary;
+
+    // \brief Univariate polynomials
+    typedef typename Algebraic_kernel_2::Polynomial_1 Polynomial_1;
+
+    // \brief Bivariate polynomials
+    typedef typename Algebraic_kernel_2::Polynomial_2 Polynomial_2;
+
+    // \brief Rational polynomials
+    typedef CGAL::Polynomial<Boundary> Poly_rat_1;
+
+    // \brief Type for x-values
+    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1;
+
+    //! \brief \c Vert_line specification for critical x-values 
+    typedef typename 
+    Curve_analysis_2::Status_line_1 Status_line_1;
+
+    // \brief Type for Polynomial traits
+    typedef typename Curve_analysis_2::Polynomial_traits_2 
+        Polynomial_traits_2;
+
+    //! Default Constructor
+    Event_line_builder() {}
+
+    /*!
+     * \brief Constructs the builder for the \c curve object.
+     *
+     * Apart from the curve itself a polynomial is passed which is expected
+     * to be the primitive part of the curve.
+     * If the flag \c compute_sturm_habicht is set, the principal and 
+     * coprincipal Sturm-Habicht coefficients of \c polynomial are computed.
+     * These coefficients provide information about properties of the curve
+     * at certain <tt>x</tt>-coordinates. Some methods of this class are only
+     * possible if they are computed.
+     *
+     * See \c NiX_resultant_matrix  for 
+     * more details about Sturm-Habicht sequences.
+     */
+    Event_line_builder(Curve_analysis_2 curve,
+                       Polynomial_2 polynomial)
+        throw(CGALi::Zero_resultant_exception<Polynomial_2>) 
+        : curve(curve), polynomial(polynomial)
+    {}
+
+
+    /*! 
+     * \brief Creates an event line at position \c alpha for the specified 
+     * curve.
+     *
+     * Additionally, the \c id of the event line to be created has to be
+     * specfied, and
+     * the number of arcs that are entering from the left and leaving to the
+     * right are needed. Furthermore, the flag \c root_of_resultant tells
+     * whether \c alpha is a root of the resultant of the specified curve, and
+     * \c root_of_content indicates whether \c alpha is a root of the content,
+     * which is equivalent to the existence of a vertical line component.
+     *
+     * The function tries to apply the Bitstream Descartes method to isolate
+     * the real roots and create the Vert_line accordingly. For that purpose,
+     * symbolic precomputations are mostly necessary, using the Sturm-Habicht
+     * coefficients. It is necessary that they were computed beforehand.
+     * However, such symbolic computations need not be done if alpha is a
+     * simple root of the resultant, so if \c mult equals 1.
+     * 
+     * The method will succeed, if the curve has only one multiple root
+     * at \c alpha over the complex numbers. It will never succeed, if there is
+     * more than one real root at \c alpha. In other cases, the outcome is not
+     * clear. In cases where the functions fails, a 
+     * CGAL::CGALi::Non_generic_position_exception is thrown, otherwise, a 
+     * fixed AcX::Vert_line object is returned.
+     */
+    Status_line_1
+    create_event_line(int id,X_coordinate_1 alpha,int arcs_left,int arcs_right,
+                      bool root_of_resultant, bool root_of_content,int mult) 
+        throw(CGAL::CGALi::Non_generic_position_exception) {
+
+        try {
+	
+            int k;
+
+
+            Bitstream_descartes bit_des 
+                = construct_bitstream_descartes(alpha,k,root_of_resultant,mult,
+                                                arcs_left,arcs_right);
+
+            //	AcX_DSTREAM("bitstream descartes constructed" << std::endl);
+	
+            int n = bit_des.number_of_real_roots();
+
+            int c = this->get_index_of_multiple_root(bit_des);
+
+            //AcX_DSTREAM <<"n and c: " << n << " " << c << std::endl);
+
+            int arcs_to_candidate_left=arcs_left-n+1;
+            int arcs_to_candidate_right=arcs_right-n+1;
+	
+            bool event_flag;
+
+            //if(false) {
+            if(arcs_to_candidate_left!=1 || arcs_to_candidate_right!= 1) {
+                event_flag=true;
+            }
+            else {
+
+// Need this flag to decide the event flag correctly, 
+// we don't care about it for now!
+#if !AcX_CHECK_CANDIDATE_FOR_SINGULARITY
+                event_flag=false;
+#else
+
+                Polynomial_2& f = polynomial;
+
+                if(c==-1 || k==0) {
+                    event_flag=false;
+                } else {
+                    AcX_DSTREAM("Ev check..." << std::flush);
+                    Polynomial_2 fx 
+                        = typename Polynomial_traits_2::Derivative() (f,0);
+                    Polynomial_2 fy(f);
+                    fy.diff();
+                    event_flag=event_point_checker(bit_des,f,alpha,k,fx,fy);
+
+                }
+#endif
+            }
+	
+            int root_number=bit_des.number_of_real_roots();
+            
+            typename Status_line_1::Arc_container arc_container;
+
+            for(int i=0;i<root_number;i++) {
+                if(i != c ) {
+                    arc_container.push_back(std::make_pair(1,1));
+                }
+                else {
+                    arc_container.push_back
+                        (std::make_pair(arcs_to_candidate_left,
+                                        arcs_to_candidate_right));
+                }
+            }
+            
+            Status_line_1 vl(alpha, id, curve, arcs_left, arcs_right, 
+                             arc_container);
+            vl.set_isolator(bit_des);
+                    
+            vl._set_number_of_branches_approaching_infinity
+                (std::make_pair(0,0),std::make_pair(0,0));
+
+#if !AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+            if(alpha.is_root_of(polynomial.lcoeff())) {
+                int n = polynomial.degree();
+                CGAL_assertion(! alpha.is_root_of(polynomial[n-1]));
+                CGAL::Sign asym_sign 
+                    = CGAL::CGALi::estimate_sign_at
+                        (alpha,polynomial[n-1],Boundary(0))*
+                    CGAL::CGALi::estimate_sign_at
+                        (alpha,CGAL::diff(polynomial[n]),Boundary(0));
+                if(asym_sign==CGAL::SMALLER) {
+                    vl._set_number_of_branches_approaching_infinity
+                        (std::make_pair(1,0),std::make_pair(0,1));
+                } else {
+                    vl._set_number_of_branches_approaching_infinity
+                        (std::make_pair(0,1),std::make_pair(1,0));
+                }
+            }
+#endif
+        
+     
+            if(root_of_content) {
+                vl._set_v_line();
+            }
+            return vl;
+        }
+        catch(CGAL::CGALi::Non_generic_position_exception err) {
+            AcX_DSTREAM("Detected non-generic position for alpha=" 
+                        << CGAL::to_double(alpha) << std::endl);
+            throw CGAL::CGALi::Non_generic_position_exception();
+        }
+      
+    }
+
+protected:
+
+    /*!
+     * Typedef for the Interval type
+     */
+    typedef boost::numeric::interval<Boundary> Interval;
+
+    // \brief Refinement type from the curve class.
+    typedef typename Curve_analysis_2::Bitstream_descartes 
+    Bitstream_descartes;
+
+    typedef typename Curve_analysis_2::Bitstream_traits 
+    Bitstream_traits;
+
+    //! The curve whose Status_line_1s are built.
+    Curve_analysis_2 curve;
+
+    //! The content free part of the curve's polynomial
+    Polynomial_2 polynomial;
+
+
+    // Shortcut functions
+    Polynomial_1 stha(int i) const {
+        return curve.principal_sturm_habicht_primitive_f(i);
+    }
+
+    Polynomial_1 costha(int i) const {
+        return curve.coprincipal_sturm_habicht_primitive_f(i);
+    }
+
+
+
+    /*! 
+     * \brief Exact information about <tt>f<sub>x=alpha</sub></tt>.
+     *
+     * Returns a pair <tt>(m,k)</tt> with the following meaning. Let 
+     * \c seq be a sequence <tt>g<sub>0</sub>,...,g<sub>n</sub></tt>.
+     * Then, \c k is the first index for which <tt>g<sub>i</sub>(alpha)</tt>
+     * is not zero. The number <tt>m</tt> is the result of the function
+     * <tt>C (g<sub>0</sub>(alpha),...,g<sub>n</sub>(alpha))</tt>, where
+     * <tt>C</tt> is defined as in L.Gonzalez-Vega, I.Necula: Efficient
+     * topology determination of implicitly defined algebraic plane curves.
+     * <i>Computer Aided Geometric Design</i> <b>19</b> (2002) 719-743.
+     * If \c seq is the sequence of principal Sturm-Habicht coefficients, 
+     * \c m is the number of real roots of <tt>f<sub>x=alpha</sub></tt>, 
+     * counted without multiplicity.
+     *
+     * If the first elements in the sequence are known to be zero,
+     * \c first_elements_zero can be set accordingly. The zero test is then
+     * ommitted for that leading elements.
+     */
+    template<typename InputIterator>
+    std::pair<int,int> compute_mk(X_coordinate_1 alpha,
+				  InputIterator seq_begin,
+                                  InputIterator seq_end,
+				  int first_elements_zero=0) {
+     
+        typedef InputIterator Input_iterator;
+
+
+        X_coordinate_1& alpha_ref=alpha;
+
+        int m,k=-1; // Initialize to prevent compiler warning
+	
+        bool k_fixed=false;
+        
+        int seq_size = std::distance(seq_begin,seq_end);
+
+        typedef int VT;
+
+        typedef std::vector<VT> A_vector;
+        A_vector spec_stha(0);
+
+        //AcX_DSTREAM(seq_size << std::endl);
+
+        CGAL_assertion(spec_stha.size()==0);
+        //AcX_DSTREAM(seq_size << " elements to consider" << std::endl);
+        int start_i=first_elements_zero;
+        for(int i=0;i<start_i;i++) {
+            spec_stha.push_back(VT(0));
+        }
+        AcX_DSTREAM("mk.." << std::flush);
+        Input_iterator seq_it = seq_begin;
+        std::advance(seq_it,start_i);
+        for(int i=start_i;i< seq_size ;i++,seq_it++ ) {
+            //std::cout << "Seq_it : " << *seq_it<< std::endl;
+            //AcX_DSTREAM(spec_stha.size() << " " << i << std::endl);
+            //AcX_DSTREAM("Now: " << i << "th stha" << std::flush);
+
+            //AcX_DSTREAM("\nTry interval arithmetic.." << std::endl);
+            CGAL::Sign ia_try
+                =estimate_sign_at(alpha_ref,*seq_it,
+                                  Boundary(1,AcX_PRECISION));
+	
+            //CGAL::Sign ia_try=CGAL::ZERO;
+
+            if(ia_try!=CGAL::ZERO) {
+                if(! k_fixed) {
+                    k=i;
+                    k_fixed=true;
+                    //AcX_DSTREAM("m.." << std::flush);
+                }
+                spec_stha.push_back(ia_try);
+                //AcX_DSTREAM("successful" << std::endl);	  
+                continue;
+            }
+            //AcX_DSTREAM("no success" << std::endl);
+	
+
+            //AcX_DSTREAM("Is root of..." << std::flush);
+            //AcX_DSTREAM("s." << std::flush);
+
+            bool root_of = CGAL::CGALi::is_root_of(alpha,*seq_it);
+
+            //AcX_DSTREAM("done " << ((root_of) ? "true" : "false") << std::endl);
+            if(root_of) {
+                //AcX_DSTREAM("Is zero" << std::endl);
+
+                spec_stha.push_back(VT(0));
+            } 
+            else {
+                //AcX_DSTREAM("is nonzero.." << std::flush);
+                if(! k_fixed) {
+                    k=i;
+                    k_fixed=true;
+                    //AcX_DSTREAM("m.." << std::flush);
+                }
+                //::CGAL::set_ascii_mode(AcX_DSTREAM);
+                //AcX_DSTREAM("Stha: " << (*seq_it) << std::endl);
+	  
+	  
+                VT beta
+                    =estimate_sign_at(alpha_ref,*seq_it,Boundary(0));
+	  
+
+                //VT beta = seq[i].evaluate(alg_alpha);
+	  
+                //AcX_DSTREAM("Value: " << beta << std::endl);
+                spec_stha.push_back(beta);
+                //AcX_DSTREAM(" " << spec_stha.size() << std::endl);
+            }
+        }
+        /*
+          AcX_DSTREAM("--------" << std::endl);
+          AcX_DSTREAM(" " << spec_stha.size() << std::endl);
+          for(int j=0;j<(int)spec_stha.size();j++) {
+          AcX_DSTREAM(j << ": " << spec_stha[j] << std::endl);
+          }
+          AcX_DSTREAM("--------" << std::endl);
+        */        
+
+        typename A_vector::iterator it=spec_stha.begin() + k;
+        //AcX_DSTREAM("k=" << k << ", Compute m..." << std::flush);
+        m = CGAL::stha_count_number_of_real_roots<VT>(it,spec_stha.end());
+        //AcX_DSTREAM("done" << std::endl);
+        AcX_DSTREAM("k=" << k << " m=" << m << ".."<< std::flush);
+
+        return std::make_pair(m,k);
+
+    }
+
+    Poly_rat_1 mod(Poly_rat_1 a,Poly_rat_1 b) const {
+        Poly_rat_1 ret=CGAL::mod(a,b);
+        return ret;
+    }
+
+    /*! 
+     * \brief  Symbolic zero test.
+     *
+     * Checks whether <tt>h(x,y(x))=0</tt>, where <tt>y(x)</tt> is a rational 
+     * expression in terms of \c x, i.e. <tt>y=p/q</tt> with <tt>p,q</tt> 
+     * univariate polynomials
+     */
+    bool zero_test_bivariate(const X_coordinate_1& alpha,
+			     const Polynomial_2& h,
+			     const Polynomial_1& p,
+			     const Polynomial_1& q) const {
+
+
+        // Compute h_0(x)=q(x)^n*h(x,p(x)/q(x))
+      
+
+        bool result;
+#if !AcX_USE_NO_REDUCTION_MODULO_RESULTANT
+        bool general = !alpha.is_rational();
+      
+        if(general) {
+
+            Poly_rat_1 p_rat(p.begin(),p.end()),
+                q_rat(q.begin(),q.end());
+            Poly_rat_1 modulus(alpha.polynomial().begin(),
+                              alpha.polynomial().end());
+            //AcX_DSTREAM("Mod: " << modulus << std::endl);
+            p_rat=this->mod(p_rat,modulus);
+            q_rat=this->mod(q_rat,modulus);
+
+            int n = h.degree();
+            // Create the powers of p and q mod modulus
+            //AcX_DSTREAM("precomp powers.." << std::flush);
+            std::vector<Poly_rat_1> p_powers(n+1),q_powers(n+1);
+            p_powers[0]=Poly_rat_1(Boundary(1));
+            q_powers[0]=Poly_rat_1(Boundary(1));
+            Poly_rat_1 intermediate;
+            for(int i=1;i<=n;i++) {
+                //	  AcX_DSTREAM(i << ": mult.." << std::flush);
+                intermediate=p_powers[i-1]*p_rat;
+                //AcX_DSTREAM("mod.." << std::flush);
+                p_powers[i]=this->mod(intermediate,modulus);
+                //AcX_DSTREAM("simpl.." << std::flush);
+                p_powers[i].simplify_coefficients();
+                //CGAL_assertion(this->mod(CGAL::ipower(p_rat,i),modulus)==p_powers[i]);
+                //AcX_DSTREAM("mult.." << std::flush);
+                intermediate=q_powers[i-1]*q_rat;
+                //AcX_DSTREAM("mod.." << std::flush);
+                q_powers[i]=this->mod(intermediate,modulus);
+                //AcX_DSTREAM("simpl.." << std::flush);
+                q_powers[i].simplify_coefficients();
+                //CGAL_assertion(this->mod(CGAL::ipower(q_rat,i),modulus)==q_powers[i]);
+            }
+            //AcX_DSTREAM <<"done\ncomp rat pol.." << std::flush);
+	
+            Poly_rat_1 curr_coeff,curr_fac;
+            Poly_rat_1 h_0_rat(Boundary(0));
+            for(int i=0;i<=n;i++) {
+                //	  curr_coeff=this->mod(Poly_rat_1(h[i].begin(),h[i].end()),modulus);
+                //curr_fac=this->mod(curr_coeff*p_powers[i],modulus);
+                //curr_fac=this->mod(curr_fac*q_powers[n-i],modulus);
+                curr_fac=this->mod
+                    (Poly_rat_1(h[i].begin(),h[i].end())*p_powers[i]*q_powers[n-i],
+                     modulus);
+                h_0_rat+=curr_fac;
+            }
+            //AcX_DSTREAM("done\ntransform to intpol.." << std::flush);
+            //AcX_DSTREAM("h_0_rat: " << h_0_rat << std::endl);
+            // Transform h_0 to integer
+            std::vector<Boundary> rat_coeff;
+            std::vector<Coefficient> int_coeff;
+            std::copy(h_0_rat.begin(),h_0_rat.end(),std::back_inserter(rat_coeff));
+            Coefficient lcm(1),num,denom;
+            typename CGAL::Fraction_traits<Boundary>::Decompose decompose;
+            for(int i=0;i<static_cast<int>(rat_coeff.size());i++) {
+                decompose(rat_coeff[i],num,denom);
+                lcm=(lcm/CGAL::CGALi::gcd(lcm,denom))*denom;
+            }
+            for(int i=0;i<static_cast<int>(rat_coeff.size());i++) {
+                decompose(rat_coeff[i],num,denom);
+                int_coeff.push_back(num*CGAL::integral_division(lcm,denom));
+            }
+            Polynomial_1 h_0(int_coeff.begin(),int_coeff.end());
+            //AcX_DSTREAM("h_0: " << h_0 << std::endl);
+            //AcX_DSTREAM("degree of h: " << h_0.degree() << ", degree of alpha: " << alpha.polynomial().degree() << std::endl);
+	
+            result = CGAL::CGALi::is_root_of(alpha,h_0);
+        }
+        else {
+            Boundary b = alpha.rational(),
+                p_b=p.evaluate(b),q_b=q.evaluate(b);
+            int n = h.degree();
+            Boundary eval(0);
+            for(int i=0;i<=n;i++) {
+                eval+=h[i].evaluate(b)*CGAL::ipower(p_b,i)*CGAL::ipower(q_b,n-i);
+            }
+            result=(CGAL::sign(eval)==CGAL::ZERO);
+        }
+#else
+        Polynomial_1 h_0=h.evaluate_homogeneous(p,q);
+        result=CGAL::CGALi::is_root_of(alpha,h_0);
+#endif      
+	
+        return result;
+
+    }
+
+    /*! 
+     * \brief Constructs a Bitstream Descartes object for 
+     * <tt>f<sub>x=alpha</sub></tt>
+     *
+     * Tries to isolate the roots of <tt>f<sub>x=alpha</sub></tt> with the 
+     * Bitstream m-k-Descartes method. As additional information, the value
+     * \c k is returned which is the greatest common divisor of \c f with its
+     * derivative. The flag \c root_of_resultant denotes whether alpha is
+     * a root of the resultant of \c f with its derivative.
+     * Also, the multiplicity of \c alpha as root of the resultant is given
+     * It his multiplcity is 1, one can avoid the computations with the 
+     * Sturm-Habicht coefficient by looking at \c arcs_left and \c arcs_right.
+     *
+     * This method requires the Sturm-Habicht coefficients of \c f to be
+     * computed beforehand.
+     * On failure, the error CGAL::CGALi::Non_generic_position_exception 
+     * is thrown.
+     */
+    Bitstream_descartes construct_bitstream_descartes(const X_coordinate_1& 
+						      alpha,
+						      int& k,
+						      bool root_of_resultant,
+						      int mult,
+						      int arcs_left,
+						      int arcs_right) 
+        throw(CGAL::CGALi::Non_generic_position_exception) {
+
+        Bitstream_traits traits(alpha,true);
+
+        if(root_of_resultant) {
+#if !AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+            if(alpha.is_root_of(polynomial.lcoeff())) {
+                Polynomial_2 trunc_pol = 
+                    CGAL::CGALi::poly_non_vanish_leading_term
+                        (polynomial,alpha);
+                CGAL_assertion(trunc_pol.degree()+1 == polynomial.degree());
+                CGAL::CGALi::Square_free_descartes_tag t;
+
+                Bitstream_descartes bit_des(t,trunc_pol,traits);
+
+                return bit_des;
+            }
+#endif
+
+            int m;
+            CGAL_assertion(mult>0);
+            if(mult==1) {
+                m=(arcs_left+arcs_right) / 2;
+                k=1;
+            }
+            else {
+                std::pair<int,int> mk 
+                    = compute_mk(alpha,
+                                 curve.principal_sturm_habicht_begin(),
+                                 curve.principal_sturm_habicht_end(),
+                                 1);
+
+                m = mk.first;
+                k = mk.second;
+            }
+	
+            AcX_DSTREAM("Bit Des..." << std::flush);
+      
+            CGAL::CGALi::M_k_descartes_tag t;
+
+            Bitstream_descartes bit_des(t,polynomial,m,k,traits);
+
+            return bit_des;
+        }
+        else {
+            CGAL::CGALi::Square_free_descartes_tag t;
+            Bitstream_descartes bit_des(t,polynomial,traits);
+
+            return bit_des;
+        }
+
+    }
+
+
+    /*!
+     * \brief Checks whether a point is a singularity or not.  
+     *
+     * This routine is applied in situations where a potential event point
+     * has one incident arc to the left and to the right. To distinguish 
+     * singularities from other points, this method checks whether the two
+     * linearly independent partial derivatives \c der_1 and \c der_2 vanish
+     * at the point \c (alpha,beta). Here, \c beta is implicitly defined as
+     * \f[\beta=\frac{-costha[k-1]}{k\cdot stha[k]}\f]
+     * and it is verified first that \c beta is indeed the y-value that
+     * corresponds to the multiple root in the <tt>bit_des</tt>-instance.
+     * If it is not, a Non_generic_position_exception is thrown.
+     *
+     * If no exception is thrown, the function returns true if and only if
+     * there is a singularity at <tt>(alpha,beta)</tt>.
+     */
+    bool event_point_checker(Bitstream_descartes& bit_des,
+			     const Polynomial_2& polynomial,
+			     const X_coordinate_1& alpha,
+			     int k,
+			     const Polynomial_2& der_1,
+			     const Polynomial_2& der_2) 
+        throw(CGAL::CGALi::Non_generic_position_exception) {
+     
+        //Guess the right expression for y
+        //      AcX_DSTREAM(costha.size() << " " << stha.size() << std::endl);
+        //AcX_DSTREAM(k << std::endl);
+        //AcX_DSTREAM("Costha: " << costha[k-1] << " Stha: " << stha[k] << std::endl);
+      
+        Polynomial_1 p = -costha(k-1);
+        Polynomial_1 q = Coefficient(k)*stha(k);
+        //AcX_DSTREAM(k << " " <<CGAL::to_double(alpha) << std::endl);
+        //AcX_DSTREAM(p << " " << q << std::endl << polynomial << std::endl);
+        //Boundary a_d = alpha.low();
+        //AcX_DSTREAM(CGAL::to_double(p.evaluate(a_d)/q.evaluate(a_d)) << std::endl);
+        // Check whether it lies in the candidates interval
+      
+      
+        AcX_DSTREAM("iv-test..." << std::flush);
+      
+        int c = this->get_index_of_multiple_root(bit_des);
+        Interval isol_iv(bit_des.left_boundary(c),bit_des.right_boundary(c));
+
+        typedef CGAL::CGALi::Approximate_arithmetic_controller
+            <Polynomial_1,X_coordinate_1> Approximate_controller;
+      
+        Approximate_controller approx_controller_q(q,alpha);
+
+        while(true) {
+            Interval eval_iv = approx_controller_q.interval_approximation();
+            if(! boost::numeric::in_zero(eval_iv)) {
+                break;
+            }
+            else {
+                approx_controller_q.refine_value();
+            }
+        }
+      
+        Approximate_controller approx_controller_p(p,alpha);
+
+        while(true) {
+            Interval iv(alpha.low(),alpha.high());
+            Interval eval_iv = approx_controller_p.interval_approximation();
+            eval_iv/=approx_controller_q.interval_approximation();
+            if(boost::numeric::subset
+               (eval_iv,isol_iv)) {
+                break;
+            }
+            if(! boost::numeric::overlap
+               (eval_iv,isol_iv)) {
+                throw CGAL::CGALi::Non_generic_position_exception();
+            }
+            approx_controller_p.refine_value(); // This also refines the value
+            // in approx_controller_q!
+        }
+        AcX_DSTREAM("on f..." << std::flush);
+        if(! zero_test_bivariate(alpha,polynomial,p,q)) {
+            AcX_DSTREAM("Detected non-generic position for alpha=" 
+                        << CGAL::to_double(alpha) << std::endl);
+            throw CGAL::CGALi::Non_generic_position_exception();
+        }
+        // Check whether the two partial derivatives vanish
+        AcX_DSTREAM("on fx..." << std::flush);
+        bool is_singularity = zero_test_bivariate(alpha,der_1,p,q);
+        if(is_singularity) {
+            AcX_DSTREAM("on fy..." << std::flush);
+            return zero_test_bivariate(alpha,der_2,p,q);
+        } else {
+            return false;
+        }
+    }
+
+protected:
+
+    int get_index_of_multiple_root(const Bitstream_descartes& bit_des) const {
+        int n = bit_des.number_of_real_roots();
+        for(int i=0;i<n;i++) {
+            if(! bit_des.is_certainly_simple_root(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+         
+
+}; //class Event_line_builder
+
+} // namespace CGALi
+
+CGAL_END_NAMESPACE
+
+
+#endif //CGAL_ACK_VERT_EVENT_BUILDER
