@@ -16,7 +16,7 @@ namespace Qt {
 template <typename K>
 class Converter {
 
-  K::Iso_rectangle_2 clippingRect;
+  typename K::Iso_rectangle_2 clippingRect;
 
 public:
 
@@ -68,7 +68,7 @@ public:
     if(CGAL::assign(s,o)){
       return this->operator()(s);
     } else if(CGAL::assign(p,o)){
-      return QLineF(operator()(p), operator()(p))
+      return QLineF(operator()(p), operator()(p));
     }
     return QLineF();
   }
@@ -81,7 +81,7 @@ public:
     if(CGAL::assign(s,o)){
       return this->operator()(s);
     } else if(CGAL::assign(p,o)){
-      return QLineF(operator()(p), operator()(p))
+      return QLineF(operator()(p), operator()(p));
     }
     return QLineF();
   }
