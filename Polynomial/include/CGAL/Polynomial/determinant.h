@@ -32,21 +32,39 @@ namespace CGALi {
         : public std::vector< std::vector< Coeff > > {
         
         typedef Coeff NT;    
+
+        Simple_matrix() {
+        }
                 
         Simple_matrix( int m ) {
-            initialize( m, m );
+            initialize( m, m, Coeff(0) );
         }
                         
-        Simple_matrix( int m, int n ) {
-            initialize( m, n );
+        Simple_matrix( int m, int n, Coeff x = Coeff(0) ) {
+            initialize( m, n, x );
         }
         
+        void swap_rows(int i, int j) {
+            std::vector< Coeff > swap = this->operator[](i);
+            this->operator[](i) = this->operator[](j);
+            this->operator[](j) = swap;
+        }
+
+        void swap_columns(int i, int j) {
+            for(int k = 0; k < m; k++) {
+                Coeff swap = this->operator[](k).operator[](i);
+                this->operator[](k).operator[](i)
+                    = this->operator[](k).operator[](j);
+                this->operator[](k).operator[](j) = swap;
+            }
+        }
+
         int row_dimension() const { return m; }
         int column_dimension() const { return n; } 
         
         private:
         
-        void initialize( int m, int n ) {
+        void initialize( int m, int n, Coeff x ) {
             this->reserve( m );
             this->m = m;
             this->n = n;
@@ -54,7 +72,7 @@ namespace CGALi {
                 this->push_back( std::vector< Coeff >() );
                 this->operator[](i).reserve(n);
                 for( int j = 0; j < n; ++j ) {
-                    this->operator[](i).push_back( Coeff(0) );
+                    this->operator[](i).push_back( x );
                 }
             }            
         }
