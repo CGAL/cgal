@@ -9,20 +9,38 @@ objects in \qt, and the other way round. Note that some objects have no equivale
 
 \ccCreationVariable{c}
 
-\ccOperations
+\ccCreation
+\ccConstructor{Converter<K>(QRectF clippingRect);}{The clipping rect is used for unbounded \cgal\ objects.}
 
-\ccMethod{K::Point_2 operator()(QPointF);}{.}
+\ccHeading{From CGAL to Qt}
+
+\ccMethod{QRectF operator()(Bbox_2);}{.}
+
 \ccMethod{QPointF operator()(K::Point_2);}{.}
 
-\ccMethod{K::Segment_2 operator()(QLineF);}{.}
 \ccMethod{QLineF operator()(K::Segment_2);}{.}
 
+\ccMethod{QLineF operator()(K::Ray_2);}{.}
 
-\ccMethod{K::Iso_rectangle_2 operator()(QRectF);}{.}
+\ccMethod{QLineF operator()(K::Line_2);}{.}
+
+\ccMethod{QPolygonF operator()(K::Triangle_2);}{.}
+
 \ccMethod{QRectF operator()(K::Iso_rectangle_2);}{.}
 
-\ccMethod{std::list<K::Point_2> operator()(QPolygonF);}{.}
 \ccMethod{QPolygonF operator()(std::list<K::Point_2>);}{.}
+
+
+\ccHeading{From Qt to CGAL}
+
+\ccMethod{K::Point_2 operator()(QPointF);}{.}
+
+\ccMethod{K::Segment_2 operator()(QLineF);}{.}
+
+\ccMethod{K::Iso_rectangle_2 operator()(QRectF);}{.}
+
+\ccMethod{std::list<K::Point_2> operator()(QPolygonF);}{.}
+
 \end{ccRefClass}
 
 
