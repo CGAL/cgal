@@ -373,59 +373,78 @@ public:
         
         if (!this->ptr()->_m_approximation) {
 
-            typedef typename Curve_analysis_2::Algebraic_curve_kernel_2::
+            typedef typename Projected_point_2::Curve_kernel_2::
                 Boundary Rational;
             
-            double x, y, z;
-            
-            // X
-            {
-                x = CGAL::to_double(this->x()); // TODO replace by CGAL::
-            }
-
-            Rational bound(2e-10); // TODO correct threshold?
-            // Y
-            {
-                typename Curve_analysis_2::Algebraic_curve_kernel_2::
-                    Xy_coordinate_2 xy = 
-                    this->curve().status_line_at_exact_x(this->x()).
-                    algebraic_real_2(this->arcno());
-                
-                typename Curve_analysis_2::Algebraic_curve_kernel_2::
-                    Lower_boundary_y_2 lower_boundary_y;
-                typename Curve_analysis_2::Algebraic_curve_kernel_2::
-                    Upper_boundary_y_2 upper_boundary_y;
-                typename Curve_analysis_2::Algebraic_curve_kernel_2::
-                    Refine_y_2 refine_y;
-                
-                while (upper_boundary_y(xy) - lower_boundary_y(xy) > bound) {
-                    refine_y(xy);
-                }
-                
-                y = CGAL::to_double(lower_boundary_y(xy));
-            }
             // TODO replace xy by planar approximation (renderer, Pavel)
+            // X + Y
+            std::pair< double, double > double_xy = 
+                this->curve().status_line_at_exact_x(this->x()).
+                algebraic_real_2(this->arcno()).to_double();
+            
             // Z
-            {
-                typedef typename Surface_pair_3::Restricted_cad_3
-                    Restricted_cad_3;
-                typedef typename Surface_pair_3::Z_at_xy_isolator
-                    Z_at_xy_isolator;
-                Restricted_cad_3 cad =
-                    Restricted_cad_3::cad_cache()(this->surface());
-                boost::optional< Z_at_xy_isolator > isolator =
-                    cad.isolator_at(this->projected_point(),
-                                    this->surface());
-                CGAL_assertion(isolator);
-                
-                while (isolator->length(this->sheet()) > bound) {
-                    isolator->refine_interval(this->sheet());
+#if 0 // use this code            
+            
+            long old_prec = get_precision(BF());
+            
+            set_precision (BF(), 53);
+            
+            double double_z;
+            
+            typename Y_real_traits_1::Lower_boundary lower;
+            typename Y_real_traits_1::Upper_boundary upper;
+            typename Y_real_traits_1::Refine refine;
+            
+            if (lower(*this)==upper(*this)) {
+                double_y = CGAL::to_double(convert_to_bfi(lower(*this)));
+            } else if(is_y_zero()) {
+                double_y = 0.;
+            } else {
+                while(CGAL::sign(lower(*this)) != 
+                      CGAL::sign(upper(*this)) ) {
+                    refine(*this);
                 }
+                long final_prec = set_precision(BF(),get_precision(BF())+4);
                 
-                z = CGAL::to_double(isolator->left_boundary(this->sheet()));
+                BFI bfi = CGAL::hull(convert_to_bfi(lower(*this)), 
+                                     convert_to_bfi(upper(*this)));
+                
+                while( !singleton(bfi) &&  
+                       get_significant_bits(bfi) < final_prec  ){
+                    refine(*this);
+                    bfi = CGAL::hull(
+                            convert_to_bfi(lower(*this)), 
+                            convert_to_bfi(upper(*this)));
+                }
+                double_z 
+                    = CGAL::to_double((CGAL::lower(bfi)+ CGAL::upper(bfi)) / 2);
+            }
+            set_precision(BF(),old_prec);
+#endif
+            
+            // Z
+            typedef typename Surface_pair_3::Restricted_cad_3
+                Restricted_cad_3;
+            typedef typename Surface_pair_3::Z_at_xy_isolator
+                Z_at_xy_isolator;
+            Restricted_cad_3 cad =
+                Restricted_cad_3::cad_cache()(this->surface());
+            boost::optional< Z_at_xy_isolator > isolator =
+                cad.isolator_at(this->projected_point(),
+                                this->surface());
+            CGAL_assertion(isolator);
+            
+            Rational bound(1e-17);
+            
+            while (isolator->length(this->sheet()) > bound) {
+                isolator->refine_interval(this->sheet());
             }
             
-            this->ptr()->_m_approximation = Approximation_3(x,y,z);
+            double double_z = 
+                CGAL::to_double(isolator->left_boundary(this->sheet()));
+            
+            this->ptr()->_m_approximation = 
+                Approximation_3(double_xy.first, double_xy.second, double_z);
         }
         
         CGAL_postcondition(this->ptr()->_m_approximation);
