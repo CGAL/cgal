@@ -9,7 +9,7 @@
     <node id="n0">
       <data key="d0">
         <y:UMLClassNode>
-          <y:Geometry height="118.25" width="201.75" x="509.0575836820085" y="140.23786610878662"/>
+          <y:Geometry height="92.25" width="201.75" x="509.0575836820085" y="140.23786610878662"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="190.0" x="5.875" y="26.701171875">CGAL::Qt::GraphicsViewInput</y:NodeLabel>
@@ -24,14 +24,14 @@
     <node id="n1">
       <data key="d0">
         <y:UMLClassNode>
-          <y:Geometry height="81.33012552301255" width="251.29121338912125" x="483.19231171548137" y="316.26213389121335"/>
+          <y:Geometry height="81.33012552301255" width="272.29121338912125" x="483.19231171548137" y="316.26213389121335"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="248.0" x="1.6456066945606267" y="3.0">CGAL::Qt::GraphicsViewPointInput&lt;K&gt;</y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="267.0" x="2.6456066945606267" y="3.0">CGAL::Qt::GraphicsViewPolylineInput&lt;K&gt;</y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel/>
             <y:MethodLabel>signal: void generate(CGAL::Object)
-bool eventFilter(...)</y:MethodLabel>
+bool eventFilter(QObject*, QEvent*)</y:MethodLabel>
           </y:UML>
         </y:UMLClassNode>
       </data>
@@ -55,7 +55,7 @@ bool eventFilter(...)</y:MethodLabel>
     <node id="n3">
       <data key="d0">
         <y:UMLClassNode>
-          <y:Geometry height="104.39999999999998" width="243.39414225941425" x="369.70172774491596" y="462.81715481171545"/>
+          <y:Geometry height="87.39999999999998" width="243.39414225941425" x="369.70172774491596" y="462.81715481171545"/>
           <y:Fill color="#CCFFCC" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="87.0" x="78.19707112970713" y="3.0">MainWindow</y:NodeLabel>
@@ -149,13 +149,13 @@ void setEdgesPen(QPen)</y:MethodLabel>
     <node id="n9">
       <data key="d0">
         <y:UMLClassNode>
-          <y:Geometry height="54.5" width="228.02907949790801" x="250.06490585774054" y="315.09890167364017"/>
+          <y:Geometry height="62.5" width="228.02907949790801" x="250.06490585774054" y="315.09890167364017"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.92626953125" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="226.0" x="1.0145397489540073" y="3.0">CGAL::Qt::GraphicsViewNavigation</y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel/>
-            <y:MethodLabel/>
+            <y:MethodLabel>bool eventFilter(QObject*, QEvent*)</y:MethodLabel>
           </y:UML>
         </y:UMLClassNode>
       </data>
@@ -182,7 +182,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="2.214599068353664" y="-30.89166259765625"/>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="-0.19840932721126592" y="-43.8682861328125"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -192,11 +192,12 @@ void setEdgesPen(QPen)</y:MethodLabel>
       <data key="d2">
         <y:PolyLineEdge>
           <y:Path sx="119.87656249999998" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="342.64016736401675" y="560.2430962343096"/>
+            <y:Point x="340.64016736401675" y="555.2430962343096"/>
+            <y:Point x="361.5" y="543.0"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="diamond"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="27.665942671653852" y="-4.394520346038462"/>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="26.669848921653852" y="-11.943001680305088"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -218,12 +219,12 @@ void setEdgesPen(QPen)</y:MethodLabel>
       <data key="d2">
         <y:PolyLineEdge>
           <y:Path sx="121.67363362970713" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="818.5924686192468" y="501.01171548117145"/>
-            <y:Point x="814.6125" y="99.78781380753134"/>
+            <y:Point x="784.5924686192468" y="507.01171548117145"/>
+            <y:Point x="780.6125" y="103.78781380753134"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="-125.25260740144495" y="-430.3737096662626"/>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="-142.2693920694137" y="-419.4214053153597"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -235,7 +236,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="-178.5824642420813" y="-42.06348951043435"/>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="4.0" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="4.0" x="-178.5824642420813" y="-37.96870579580589"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -259,7 +260,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           <y:Path sx="0.0" sy="40.64991975026146" tx="39.99999999999994" ty="-52.219531250000045"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="55.0" x="-25.599982594854737" y="23.24517342156446">connect()</y:EdgeLabel>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="55.0" x="-34.06707148627481" y="23.263148275080084">connect()</y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -271,7 +272,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="55.0" x="-195.85016167139335" y="3.4418962483537143">connect()</y:EdgeLabel>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="55.0" x="-195.85016167139335" y="6.161440987245555">connect()</y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -297,7 +298,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           </y:Path>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="119.0" x="-175.00248965824096" y="-63.00905946449666">installEventHandler()</y:EdgeLabel>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="119.0" x="-185.49992618167846" y="-63.00905946449666">installEventHandler()</y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -309,7 +310,7 @@ void setEdgesPen(QPen)</y:MethodLabel>
           <y:Path sx="0.0" sy="0.0" tx="40.0" ty="20.781289062500036"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="119.0" x="-27.574898644632356" y="-37.78243990463193">installEventHandler()</y:EdgeLabel>
+          <y:EdgeLabel alignment="center" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="tail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="119.0" x="-26.22322593390794" y="-37.776427941741304">installEventHandler()</y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
