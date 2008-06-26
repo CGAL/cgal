@@ -36,8 +36,19 @@ public:
   void 
   modelChanged();
 
+  const QPen& edgesPen() const
+  {
+    return edges_pen;
+  }
+
+  void setEdgesPen(const QPen& pen)
+  {
+    edges_pen = pen;
+  }
+
 private:
   DT * dt;
+  QPen edges_pen;
 };
 
 
@@ -64,7 +75,6 @@ VoronoiGraphicsItem<DT>::boundingRect() const
     QPointF brf = view->mapToScene(br);
     rect |= QRectF(tlf, brf);
   }
-//   std::cerr << "boundingRect()\n";
   return rect;
 }
 
@@ -76,7 +86,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
   Converter<typename DT::Geom_traits> convert;
   QRectF rect = boundingRect();
   
-  painter->setPen(pen());
+  painter->setPen(edgesPen());
   for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
       eit != dt->finite_edges_end();
       eit++){
