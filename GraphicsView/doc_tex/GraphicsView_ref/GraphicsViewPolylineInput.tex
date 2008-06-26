@@ -4,7 +4,8 @@
 \ccDefinition
 An object of type \ccRefName\ creates a list of points. A new 
 vertex is inserted every time the left mouse button is pressed.
-The list of points is emitted on a right click. You can use the \ccc{Escape}
+The list of points is emitted on a right click or when the number of
+points specified in the constructor is reached. You can use the \ccc{Escape}
 key if you want to remove your last entered point in the polygon.
 
 The tool can serve at the same time for entering a single point,
@@ -18,7 +19,7 @@ polylines.
 The template parameter of \ccc{GraphicsViewPolylineInput<K>} must be a \cgal\ \ccc{Kernel}. 
 
 \ccInheritsFrom
-\ccc{GraphicsViewInput}
+\ccc{Qt::GraphicsViewInput}
 
 \ccGlue
 
@@ -34,7 +35,7 @@ The template parameter of \ccc{GraphicsViewPolylineInput<K>} must be a \cgal\ \c
   limited. When \ccc{closed} is \ccc{true} the function displays a
   polygon.}
 
-\ccMethod{void generate(Object o);}{The object \ccc{o} contains a \ccc{std:list<K::Point_2>}.}
+\ccMethod{void generate(CGAL::Object o);}{The object \ccc{o} contains a \ccc{std:list<K::Point_2>}.}
 
 \end{ccRefClass}
 
