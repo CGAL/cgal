@@ -1,0 +1,43 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{PainterOstream<K>}
+
+\ccDefinition
+An object of type \ccRefName\ provides output operators for \cgal\ kernel objects.
+As \cgal\ has unbounded objects the \ccRefName\ must be constructed with a clipping rectangle.
+\ccInclude{CGAL/Qt/PainterOstream.h}
+
+\ccCreationVariable{os}
+
+\ccCreation
+\ccConstructor{PainterOstream<K>(QPainter* qp, QRectF clippingRect);}{The clipping rect is used for unbounded \cgal\ objects.}
+
+\ccOperations
+
+\ccMethod{PainterOstream<K> operator<<(Bbox_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Point_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Segment_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Ray_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Line_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Triangle_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Iso_rectangle_2);}{.}
+
+\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{.}
+
+
+\ccMethod{PainterOstream<K> operator<<(QPen);}{.}
+\ccMethod{PainterOstream<K> operator<<(QBrush);}{.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+
