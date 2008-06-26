@@ -391,9 +391,9 @@ namespace CGALi {
     int n = A.row_dimension();
     int i=0;
     while(i<n-i-1) {
-      A.swap_rows(i,n-i-1); 
-      A.swap_columns(i,n-i-1); 
-      i++;
+        A.swap_rows(i,n-i-1); 
+        A.swap_columns(i,n-i-1); 
+        i++;
     }
   }
   
@@ -403,7 +403,7 @@ namespace CGALi {
 	      const typename CGALi::Simple_matrix<NT>& B,
 	      InputIterator num,int size)
     {
-      typename CGALi::Simple_matrix<NT>::Matrix S(size);
+      typename CGALi::Simple_matrix<NT> S(size);
       int n = B.row_dimension();
       CGAL_precondition(n==(int)B.column_dimension());
       int curr_num;
@@ -472,7 +472,7 @@ namespace CGALi {
  * See also \c CGAL::minors_berkowitz
  */
 template<class NT>
-typename CGALi::Simple_matrix< NT> polynomial_subresultants(
+typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
                                                CGAL::Polynomial<NT> f,
 					       CGAL::Polynomial<NT> g,
 					       int d=0) {
