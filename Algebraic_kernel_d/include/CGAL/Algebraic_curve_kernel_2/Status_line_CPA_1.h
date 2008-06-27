@@ -238,6 +238,7 @@ public:
     
     //! returns this vertical line's index (event or interval index)
     size_type index() const {
+        CGAL_precondition(this->ptr()->_m_index>=0);
         return this->ptr()->_m_index;
     }
         
@@ -261,7 +262,6 @@ public:
     size_type event_of_curve(size_type k, bool c) const {
     
         if(this->ptr()->_m_cpa.is_swapped()){ // reverse the curve order since
-           // std::cout << "evt of curve: content swapped\n";
             c ^= 1;    // polynomials are swapped in curve pair
         }
         CGAL_precondition_msg(0 <= k &&
