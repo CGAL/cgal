@@ -146,6 +146,18 @@ public:
     typedef Nef_polynomial<NT> Type;
     typedef typename AST_NT::Is_exact            Is_exact;
     typedef Tag_false                            Is_numerical_sensitive;                                                           
+    class Integral_division
+        : public Binary_function< Type, Type,
+                                Type > {
+    public:
+        Type operator()( const Type& x,
+                const Type& y ) const {
+	  Type result = x / y;
+	  CGAL_postcondition_msg(result * y == x, "exact_division failed\n");
+	  return result;
+        }
+    };
+
     class Gcd 
       : public Binary_function< Type, Type, Type > {
     public:
@@ -208,6 +220,59 @@ template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> >
         }
     };
 };
+
+template <typename NT>
+class Fraction_traits<Nef_polynomial<NT> > {
+public:
+    typedef Nef_polynomial<NT> Type;
+    typedef Fraction_traits<NT> Base_traits;
+    typedef typename Base_traits::Is_fraction Is_fraction;
+    typedef CGAL::Nef_polynomial<typename Base_traits::Numerator_type>
+      Numerator_type;
+    typedef typename Base_traits::Denominator_type Denominator_type;
+    //TODO:    typedef Base_traits::Common_factor Common_factor;
+    class Decompose {
+    public:
+        typedef Type first_argument_type;
+        typedef Numerator_type second_argument_type;
+        typedef Denominator_type third_argument_type;
+        void operator () (const first_argument_type& rat, 
+			  second_argument_type& num,
+			  third_argument_type& den) {
+	  typename Base_traits::Decompose decompose;
+	  third_argument_type num0;
+	  third_argument_type num1;
+	  third_argument_type den1;
+	  third_argument_type den0;
+	  decompose(rat[0], num0, den0);
+	  if(rat.degree() > 0) {
+	    decompose(rat[1], num1, den1);
+	    // TODO	    den = den1/gcd(den0, den1)*den0;
+	    den = den1*den0;
+	    num = Numerator_type(num0*den1, num1*den0);
+	  } else {
+	    den = den0;
+	    num = Numerator_type(num0);
+	  }
+        }
+    };
+    class Compose {
+    public:
+        typedef Numerator_type first_argument_type;
+        typedef Denominator_type second_argument_type;
+        typedef Type result_type;
+        result_type operator () (const first_argument_type& num,
+				 const second_argument_type& den) {
+	  typename Base_traits::Compose compose;
+	  if(num.degree() == 0)
+	    return result_type(compose(num[0],den));
+	  else
+	    return result_type(compose(num[0],den),
+			       compose(num[1],den));
+        }
+    };
+};
+
 
 CGAL_END_NAMESPACE
 
