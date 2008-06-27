@@ -30,6 +30,7 @@
 #include <CGAL/Nef_3/SNC_constructor.h>
 #include <CGAL/Nef_3/SNC_external_structure.h>
 #include <CGAL/Nef_3/ID_support_handler.h>
+#include <CGAL/Nef_3/Binary_operation.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 19
@@ -52,8 +53,10 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     SNC_external_structure;
   typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
   typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
+  typedef CGAL::Binary_operation<SNC_structure>        Binary_operation;
 
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
 
   typedef typename SNC_structure::Vertex_const_iterator Vertex_const_iterator;
   typedef typename SNC_structure::Halfedge_const_iterator Halfedge_const_iterator;
@@ -73,18 +76,17 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
   SNC_point_locator* pl;
 
  public:
+  enum Intersection_mode { CLOSED_HALFSPACE=0, OPEN_HALFSPACE=1, PLANE_ONLY=2 };
+
   Combine_with_halfspace(SNC_structure& W, SNC_point_locator* pl_) 
     : Base(W), pl(pl_) {}
     
-  template <typename Selection>
+  template <typename Selection, typename Intersection_mode>
   void combine_with_halfspace(const SNC_structure& snc,
 			      const Plane_3& plane,
 			      const Selection& BOP,
-			      bool with_boundary = true) {
+			      Intersection_mode im) {
     
-    //    SNC_io_parser<SNC_structure> O0(std::cerr,snc());
-    //    O0.print();
-
     Association A;
     SHalfedge_const_iterator sei;
     CGAL_forall_shalfedges(sei, snc)
@@ -93,20 +95,29 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     CGAL_forall_shalfloops(sli, snc)
       A.initialize_hash(sli);
     
-    Vertex_const_iterator v0;
-    CGAL_forall_vertices( v0, snc) {
-      Oriented_side os = plane.oriented_side(v0->point());
-      if(os == ON_ORIENTED_BOUNDARY) {
-	SNC_constructor C(*this->sncp());
-	Vertex_handle vp =
-	  C.create_from_plane(plane, v0->point(),
-			      with_boundary, true, false);
-	Vertex_handle vr = 
-	  binop_local_views(v0, vp, BOP, *this->sncp(), A);
-	this->sncp()->delete_vertex(vp);
-      } else if(os == ON_NEGATIVE_SIDE) {
-	SNC_constructor C(*this->sncp());
-	Vertex_handle v1 = C.clone_SM(v0);	
+    int index0(Index_generator::get_unique_index());
+    int index1(Index_generator::get_unique_index());
+    Halffacet_handle dummy_facet = 
+      this->sncp()->new_halffacet_pair(plane, im != OPEN_HALFSPACE);
+
+    Binary_operation bo(*this->sncp());
+    if(im != PLANE_ONLY) {
+      Vertex_const_iterator v0;
+      CGAL_forall_vertices( v0, snc) {
+	Oriented_side os = plane.oriented_side(v0->point());
+	if(os == ON_ORIENTED_BOUNDARY) {
+	  SNC_constructor C(*this->sncp());
+	  Vertex_handle vp =
+	    C.create_from_plane(plane, v0->point(),
+				im != OPEN_HALFSPACE, 
+				im != PLANE_ONLY, false);
+	  Vertex_handle vr = 
+	    bo.binop_local_views(v0, vp, BOP, *this->sncp(), A);
+	  this->sncp()->delete_vertex(vp);
+	} else if(os == ON_NEGATIVE_SIDE) {
+	  SNC_constructor C(*this->sncp());
+	  Vertex_handle v1 = C.clone_SM(v0);	
+	}
       }
     }
 
@@ -124,15 +135,26 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
       SNC_constructor C(*this->sncp());
       Vertex_handle vp = 
 	C.create_from_plane(plane, ip,
-			    with_boundary, true, false);
+			    im != OPEN_HALFSPACE, 
+			    im != PLANE_ONLY, false);
+
+      vp->shalfloop()->set_index_facet(dummy_facet);
+      vp->shalfloop()->twin()->set_index_facet(dummy_facet->twin());
+      vp->shalfloop()->set_index(index0);
+      vp->shalfloop()->twin()->set_index(index1);
+      A.initialize_hash(vp->shalfloop());
+      A.initialize_hash(vp->shalfloop()->twin());
+
       Vertex_handle ve = C.create_from_edge(e0, ip);
       
       Vertex_handle vr = 
-	binop_local_views(ve, vp, BOP, *this->sncp(), A);
+	bo.binop_local_views(ve, vp, BOP, *this->sncp(), A);
       this->sncp()->delete_vertex(vp);
       this->sncp()->delete_vertex(ve);
     }
     
+    this->sncp()->delete_halffacet_pair(dummy_facet);
+
     SHalfedge_iterator se;
     CGAL_forall_sedges(se, *this->sncp()) {
       se->circle() = normalized(se->circle());
