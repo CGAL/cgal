@@ -225,7 +225,8 @@ public:
       if(!Infi_box::is_standard(hf->plane()))
 	++i;
     }
-    CGAL_assertion(i>=6);
+    CGAL_warning("altered code");
+    //    CGAL_assertion(i>=6);
     return (i == 6);
   }
 
