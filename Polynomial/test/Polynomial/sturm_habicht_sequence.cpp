@@ -207,6 +207,23 @@ template<typename ArithmeticKernel> void test_routine() {
       assert(stha[i]==co_f[i]*f + co_fx[i]*fx);
     }
 
+    stha.clear();
+    co_f.clear();
+    co_fx.clear();
+    typename CGAL::Polynomial_traits_d<PNT_1>
+        ::Sturm_habicht_sequence_with_cofactors()(f,
+                                                  std::back_inserter(stha),
+                                                  std::back_inserter(co_f),
+                                                  std::back_inserter(co_fx)
+        );
+    
+    n = static_cast<int>(stha.size());
+    assert(n == static_cast<int>(stha_check.size()));
+    for(int i = 0; i < n; i++) {
+      assert(stha[i]==stha_check[i]);
+      assert(stha[i]==co_f[i]*f + co_fx[i]*fx);
+    }
+
   }
 
   { // Cofactors, defective case

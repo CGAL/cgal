@@ -97,6 +97,15 @@ template <typename OutputIterator, typename NT > inline
 template<typename OutputIterator, typename NT> OutputIterator
     sturm_habicht_sequence(CGAL::Polynomial<NT> P, OutputIterator out);
 
+  template<typename OutputIterator1,
+    typename OutputIterator2,
+    typename OutputIterator3,
+    typename NT> OutputIterator1
+    sturm_habicht_sequence_with_cofactors(CGAL::Polynomial<NT> P, 
+                                          OutputIterator1 out_stha,
+                                          OutputIterator2 out_f,
+                                          OutputIterator3 out_fx);
+
 
 } // namespace CGALi
 

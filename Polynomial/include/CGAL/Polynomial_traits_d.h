@@ -1381,8 +1381,28 @@ public:
                                                            out);
         }  
     };
+
+    //       Sturm-Habicht sequence with cofactors
+    struct Sturm_habicht_sequence_with_cofactors {
+        template<typename OutputIterator1,
+                 typename OutputIterator2,
+                 typename OutputIterator3>
+        OutputIterator1 operator()(
+                const Polynomial_d& p, 
+                OutputIterator1 out_stha,
+                OutputIterator2 out_f,
+                OutputIterator3 out_fx,
+                int i = (d-1) ) const {
+            if(i == (d-1) )
+                return CGAL::CGALi::sturm_habicht_sequence_with_cofactors
+                    (p,out_stha,out_f,out_fx);
+            else
+                return CGAL::CGALi::sturm_habicht_sequence_with_cofactors
+                    (Move()(p,i),out_stha,out_f,out_fx);
+        }  
+    };
     
-    //       Sturm-Habicht sequence
+    //       Principal Sturm-Habicht sequence
     struct Principal_sturm_habicht_sequence {
         
         template<typename OutputIterator>
