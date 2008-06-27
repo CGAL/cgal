@@ -21,6 +21,7 @@
 #include <CGAL/Polynomial/Polynomial_type.h>
 #include <CGAL/Polynomial/polynomial_utils.h>
 #include <CGAL/Polynomial/resultant.h>
+#include <CGAL/Polynomial/subresultants.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
@@ -1327,6 +1328,76 @@ public:
                 return resultant(Move()(p,i),Move()(q,i));
         }  
     };
+
+
+    //       polynomial subresultants;
+    struct Polynomial_subresultants {
+        
+        template<typename OutputIterator>
+        OutputIterator operator()(
+                const Polynomial_d& p, 
+                const Polynomial_d& q,
+                OutputIterator out,
+                int i = (d-1) ) const {
+            if(i == (d-1) )
+                return CGAL::CGALi::polynomial_subresultants(p,q,out);
+            else
+                return CGAL::CGALi::polynomial_subresultants(Move()(p,i),
+                                                             Move()(q,i),
+                                                             out);
+        }  
+    };
+
+    //       principal subresultants;
+    struct Principal_subresultants {
+        
+        template<typename OutputIterator>
+        OutputIterator operator()(
+                const Polynomial_d& p, 
+                const Polynomial_d& q,
+                OutputIterator out,
+                int i = (d-1) ) const {
+            if(i == (d-1) )
+                return CGAL::CGALi::principal_subresultants(p,q,out);
+            else
+                return CGAL::CGALi::principal_subresultants(Move()(p,i),
+                                                            Move()(q,i),
+                                                            out);
+        }  
+    };
+
+    //       Sturm-Habicht sequence
+    struct Sturm_habicht_sequence {
+        
+        template<typename OutputIterator>
+        OutputIterator operator()(
+                const Polynomial_d& p, 
+                OutputIterator out,
+                int i = (d-1) ) const {
+            if(i == (d-1) )
+                return CGAL::CGALi::sturm_habicht_sequence(p,out);
+            else
+                return CGAL::CGALi::sturm_habicht_sequence(Move()(p,i),
+                                                           out);
+        }  
+    };
+    
+    //       Sturm-Habicht sequence
+    struct Principal_sturm_habicht_sequence {
+        
+        template<typename OutputIterator>
+        OutputIterator operator()(
+                const Polynomial_d& p, 
+                OutputIterator out,
+                int i = (d-1) ) const {
+            if(i == (d-1) )
+                return CGAL::CGALi::principal_sturm_habicht_sequence(p,out);
+            else
+                return CGAL::CGALi::principal_sturm_habicht_sequence
+                    (Move()(p,i),out);
+        }  
+    };
+    
     
     //
     // Functors not mentioned in the reference manual
