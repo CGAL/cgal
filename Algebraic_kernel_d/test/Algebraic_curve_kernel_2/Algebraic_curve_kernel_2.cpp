@@ -104,15 +104,12 @@ void test_algebraic_curve_kernel_2() {
 
 int main() {
 
-#ifdef LiS_HAVE_CORE
-        typedef CGAL::CORE_arithmetic_kernel AT;
-#else
+#ifdef CGAL_USE_CORE
+    test_algebraic_curve_kernel_2<CGAL::CORE_arithmetic_kernel>();
+#endif
 #ifdef CGAL_USE_LEDA
-        typedef CGAL::LEDA_arithmetic_kernel AT;
+    test_algebraic_curve_kernel_2<CGAL::LEDA_arithmetic_kernel>();
 #endif
-#endif
-
-    test_algebraic_curve_kernel_2<AT>();
     
     return 0;
 }
