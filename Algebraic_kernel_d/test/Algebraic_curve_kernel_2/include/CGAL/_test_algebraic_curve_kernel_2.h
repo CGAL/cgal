@@ -84,7 +84,7 @@ void test_algebraic_curve_kernel_2() {
 
     ::CGAL::set_mode(std::cerr, ::CGAL::IO::PRETTY);
     
-    std::cerr << "constructing curves..\n";
+    //std::cerr << "constructing curves..\n";
     for(int i = 0; i < ACK_2_n_polys; i++) {
         istringstream in(ACK_2_ascii_polys[i]);
         in >> polys[i];    
@@ -104,7 +104,7 @@ void test_algebraic_curve_kernel_2() {
             c3 = kernel_2.construct_curve_2_object()(polys[3]),
             c5 = kernel_2.construct_curve_2_object()(polys[5]),
             c6 = kernel_2.construct_curve_2_object()(polys[6]);
-    std::cerr << "done..\n";
+    //std::cerr << "done..\n";
             
     Status_line_1 line1, line2;
     Xy_coordinate_2 xy1, xy2, xy3, xy4;
@@ -118,7 +118,7 @@ void test_algebraic_curve_kernel_2() {
         assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
 
-        std::cerr << "done..1.5\n";
+        //std::cerr << "done..1.5\n";
         assert(kernel_2.sign_at_2_object()(c7_c6, xy) == CGAL::ZERO);
     }
     {    
@@ -131,11 +131,11 @@ void test_algebraic_curve_kernel_2() {
         assert(line.number_of_events() > 0);
         Xy_coordinate_2 xy = line.algebraic_real_2(0);
 
-        std::cerr << "done..1.6\n";
+        //std::cerr << "done..1.6\n";
         assert(kernel_2.sign_at_2_object()(c8_c6, xy) == CGAL::ZERO);
     }
 
-    std::cerr << "done..2\n";
+    //std::cerr << "done..2\n";
     
 
     ///////// test buggy y() //////////////
@@ -178,15 +178,15 @@ void test_algebraic_curve_kernel_2() {
     xy3 = line2.algebraic_real_2(3);
     xy4 = line2.algebraic_real_2(4);
 
-    std::cerr << "y_comp 1" << std::flush;
+    //std::cerr << "y_comp 1" << std::flush;
     assert(kernel_2.compare_y_2_object()(xy1, xy2) == CGAL::LARGER);
-    std::cerr << " 2" << std::flush;
+    //std::cerr << " 2" << std::flush;
     assert(kernel_2.compare_y_2_object()(xy1, xy3) == CGAL::SMALLER);
-    std::cerr << " 3" << std::flush;
+    //std::cerr << " 3" << std::flush;
     assert(kernel_2.compare_y_2_object()(xy1, xy4) == CGAL::SMALLER);
-    std::cerr << " 4" << std::flush;
+    //std::cerr << " 4" << std::flush;
     assert(kernel_2.compare_y_2_object()(xy2, xy3) == CGAL::SMALLER);
-    std::cerr << " done" << std::endl;
+    //std::cerr << " done" << std::endl;
 
     /////// testing squarefreeness and coprimality /////////
 
@@ -224,8 +224,8 @@ void test_algebraic_curve_kernel_2() {
     typename Curves_2::const_iterator cit;
     typename Int_vector::const_iterator iit;
 
-    std::cerr << "n_factors: " << kernel_2.decompose_2_object()(c1,
-        std::back_inserter(parts),  std::back_inserter(mults));
+    //std::cerr << "n_factors: " << kernel_2.decompose_2_object()(c1,
+    //    std::back_inserter(parts),  std::back_inserter(mults));
     
     for(cit = parts.begin(), iit = mults.begin(); cit != parts.end();
             cit++, iit++) {
@@ -235,9 +235,10 @@ void test_algebraic_curve_kernel_2() {
     parts.clear();
     mults.clear();
 
-    std::cerr << "n_factors :" <<
-        kernel_2.decompose_2_object()(c3, std::back_inserter(parts),
-            std::back_inserter(mults));
+
+    //std::cerr << "n_factors :" <<
+    //    kernel_2.decompose_2_object()(c3, std::back_inserter(parts),
+    //        std::back_inserter(mults));
     for(cit = parts.begin(), iit = mults.begin(); cit != parts.end();
             cit++, iit++) {
         //std::cerr << "part: " << cit->f() << "; mult: " << *iit << "\n";
@@ -303,20 +304,20 @@ void test_algebraic_curve_kernel_2() {
         
         line = c0.status_line_at_event(ii);
         n_events = line.number_of_events();
-        std::cout << ii << "pts at event: \n";
+        //std::cout << ii << "pts at event: \n";
         for(jj = 0; jj < n_events; jj++) {
             xy = line.algebraic_real_2(jj);
-            std::cout << "sign 2: " <<
-                kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
+            //std::cout << "sign 2: " <<
+            //    kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
         }
             
-        std::cout << ii << "pts over interval: \n";
+        //std::cout << ii << "pts over interval: \n";
         line = c0.status_line_of_interval(ii);
         n_events = line.number_of_events();
         for(jj = 0; jj < n_events; jj++) {
             xy = line.algebraic_real_2(jj);
-            std::cout << " sign 2: " <<
-                kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
+            //std::cout << " sign 2: " <<
+            //    kernel_2.sign_at_2_object()(c1, xy) << "\n\n";
         }
     }
     

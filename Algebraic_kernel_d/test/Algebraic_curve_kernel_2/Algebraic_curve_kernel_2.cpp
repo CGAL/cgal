@@ -83,11 +83,11 @@ void test_algebraic_curve_kernel_2() {
         Algebraic_kernel_2;
 #endif
         
-    std::cout << "Non-filtered kernel..." << std::endl;
+    //std::cout << "Non-filtered kernel..." << std::endl;
     CGAL::CGALi::test_algebraic_curve_kernel_2<Algebraic_kernel_2>();
 
 
-    std::cout << "Filtered kernel..." << std::endl;
+    //std::cout << "Filtered kernel..." << std::endl;
 #if CGAL_ACK_USE_EXACUS
     
     typedef CGAL::Filtered_algebraic_curve_kernel_2<Algebraic_curve_pair_2, 
@@ -106,9 +106,13 @@ int main() {
 
 #ifdef CGAL_USE_CORE
     test_algebraic_curve_kernel_2<CGAL::CORE_arithmetic_kernel>();
+#else
+    std::cerr << "CORE tests skipped" << std::endl;
 #endif
 #ifdef CGAL_USE_LEDA
     test_algebraic_curve_kernel_2<CGAL::LEDA_arithmetic_kernel>();
+#else
+    std::cerr << "LEDA tests skipped" << std::endl;
 #endif
     
     return 0;
