@@ -212,7 +212,8 @@ public:
       }
     }
 
-    Ray_3 r( p, Vector_3( -1, 0, 0));
+    CGAL_warning("altered code in SNC_ray_shooter");
+    Ray_3 r( p, Vector_3( 0, 0, 1));
     return Object_handle(determine_volume(r));
   }   
 
