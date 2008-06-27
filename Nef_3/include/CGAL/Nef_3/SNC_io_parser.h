@@ -643,6 +643,16 @@ class Geometry_io<Cartesian_tag, CGAL::Lazy_kernel<CGAL::Simple_cartesian<ET> > 
   }  
 
   template <typename R> static
+  void print_vector(std::ostream& out, const CGAL::Vector_3<R> vec) {
+    typedef typename CGAL::Simple_cartesian<ET> SC;
+    typedef typename SC::Vector_3 Exact_vector;
+    typedef Geometry_io<Cartesian_tag, SC> Gio;
+    
+    Exact_vector ev(vec.x().exact(), vec.y().exact(), vec.z().exact());
+    Gio::print_vector(out, ev);
+  }  
+
+  template <typename R> static
   void print_plane(std::ostream& out, const CGAL::Plane_3<R> p) {
     typedef typename CGAL::Simple_cartesian<ET> SC;
     typedef typename SC::Plane_3 Exact_plane;
@@ -694,7 +704,7 @@ class Geometry_io<Cartesian_tag, Kernel> {
   }
 
   template <typename R> static
-  void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
+    void print_point(std::ostream& out, const CGAL::Point_3<R> p) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
     typedef typename NV::iterator NV_iter;
@@ -704,17 +714,17 @@ class Geometry_io<Cartesian_tag, Kernel> {
     typename FracTraits::Decompose decomposer;
     NV vec;
 
-    decomposer(p.hx(),num,denom);
+    decomposer(p.x(),num,denom);
     vec.push_back(num);
     vec.push_back(denom);
     vec.push_back(denom);
     vec.push_back(denom);
-    decomposer(p.hy(),num,denom);
+    decomposer(p.y(),num,denom);
     vec[0]*=denom;
     vec[1]*=num;
     vec[2]*=denom;
     vec[3]*=denom;
-    decomposer(p.hz(),num,denom);
+    decomposer(p.z(),num,denom);
     vec[0]*=denom;
     vec[1]*=denom;
     vec[2]*=num;
@@ -723,6 +733,36 @@ class Geometry_io<Cartesian_tag, Kernel> {
       normalized(vec.begin(),vec.end());
     out << vec[0] << " " << vec[1] << " "
 	<< vec[2] << " " << vec[3];
+  }
+
+  template <typename R> static
+    void print_vector(std::ostream& out, const CGAL::Vector_3<R> p) {
+    typedef Fraction_traits<typename R::FT> FracTraits;
+    typedef typename FracTraits::Numerator_type NumType;
+    typedef std::vector<NumType> NV;
+    typedef typename NV::iterator NV_iter;
+
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom;
+    typename FracTraits::Decompose decomposer;
+    NV vec;
+
+    decomposer(p.x(),num,denom);
+    vec.push_back(num);
+    vec.push_back(denom);
+    vec.push_back(denom);
+    decomposer(p.y(),num,denom);
+    vec[0]*=denom;
+    vec[1]*=num;
+    vec[2]*=denom;
+    decomposer(p.z(),num,denom);
+    vec[0]*=denom;
+    vec[1]*=denom;
+    vec[2]*=num;
+    Normalizing<Homogeneous_tag>::
+      normalized(vec.begin(),vec.end());
+    out << vec[0] << " " << vec[1] << " "
+	<< vec[2] << " " << NumType(1);
   }
 
   template <typename R> static
@@ -784,6 +824,11 @@ class Geometry_io<Homogeneous_tag, Kernel> {
   template <typename R> static
   void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
     out << p;
+  }
+
+  template <typename R> static
+  void print_vector(std::ostream& out, const CGAL::Vector_3<R>& vec) {
+    out << vec;
   }
 
   template <typename R> static
@@ -1320,13 +1365,15 @@ void SNC_io_parser<EW>::read_items(int plus01) {
     if (!read_vertex<K>(*vi))
       CGAL_error_msg("SNC_io_parser::read: error in node line");
   }
-
+  
   typename std::vector<Halfedge_iterator>::iterator ei;
   for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
     if (!read_edge<K>(*ei))
       CGAL_error_msg("SNC_io_parser::read: error in edge line");
   }
-  typename std::vector<Halffacet_iterator>::iterator fi;
+  
+  typedef typename std::vector<Halffacet_iterator>::iterator vhf_iterator;
+  vhf_iterator fi;
   for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
     if (!read_facet<K>(*fi))
       CGAL_error_msg("SNC_io_parser::read: error in facet line");
@@ -1383,8 +1430,8 @@ void SNC_io_parser<EW>::print_vertex(Vertex_handle v) const
     << index(SD.shalfloop()) << " | ";
   }
   if(reduce) {
-    Standard_point p(Infi_box::standard_point(v->point()));
-    out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
+    Geometry_io<typename Standard_kernel::Kernel_tag, Standard_kernel>::
+      print_point(out, Infi_box::standard_point(v->point())); 
   }
   else
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_point(out, v->point());
@@ -1445,11 +1492,13 @@ void SNC_io_parser<EW>::print_edge(Halfedge_handle e) const
   else out << "0 " << index(e->out_sedge());
   out << " | ";
   if(reduce) {
-    Standard_vector p(Infi_box::standard_vector(e->vector()));
-    out << p.hx() << " " << p.hy() << " " << p.hz() << " " << p.hw();
+    Standard_point sp = Infi_box::standard_point(e->point());
+    Geometry_io<typename Standard_kernel::Kernel_tag, Standard_kernel>::
+      print_vector(out, sp-CGAL::ORIGIN); 
   }
   else
-    Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_point(out, (Point_3) e->point());
+    Geometry_io<typename Kernel::Kernel_tag, Kernel>::
+      print_vector(out, e->vector());
 
   out << " } "<< e->mark();
 #ifdef CGAL_NEF_OUTPUT_INDEXES
@@ -1511,8 +1560,8 @@ void SNC_io_parser<EW>::print_facet(Halffacet_handle f) const
     if ( it.is_shalfloop() ) out << index(SHalfloop_handle(it)) << ' ';
   out << ", " << index(f->incident_volume()) << " | ";
   if(reduce) {
-    Standard_plane p(Infi_box::standard_plane(f->plane()));
-    out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
+    Geometry_io<typename Standard_kernel::Kernel_tag, Standard_kernel>::
+      print_plane(out, Infi_box::standard_plane(f->plane()));
   }
   else
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::print_plane(out, f->plane());
@@ -1616,8 +1665,8 @@ print_sedge(SHalfedge_handle e) const {
       << index(e->facet()) 
       << " | ";
   if(reduce) {
-    Standard_plane p(Infi_box::standard_plane(e->circle()));
-    out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
+    Geometry_io<typename Standard_kernel::Kernel_tag, Standard_kernel>::
+      print_plane(out, Infi_box::standard_plane(e->circle()));
   }
   else
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::
@@ -1690,8 +1739,8 @@ print_sloop(SHalfloop_handle l) const
       << index(l->facet()) 
       << " | ";  
   if(reduce) {
-    Standard_plane p(Infi_box::standard_plane(l->circle()));
-    out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
+    Geometry_io<typename Standard_kernel::Kernel_tag, Standard_kernel>::
+      print_plane(out, Infi_box::standard_plane(l->circle()));
   }
   else
     Geometry_io<typename Kernel::Kernel_tag, Kernel>::
