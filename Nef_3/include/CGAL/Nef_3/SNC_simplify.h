@@ -74,6 +74,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   typedef typename SNC_decorator::Sphere_circle Sphere_circle;
   typedef typename SNC_decorator::Sphere_direction Sphere_direction;
 
+  typedef typename SNC_structure::Infi_box Infi_box;
+
   bool simplified;
 
  public:
@@ -191,6 +193,16 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACE("has two svertices ");
     Sphere_point sp1(p1->point()), sp2(p2->point());
     return (sp1 == sp2.antipode());
+  }
+
+  bool simplify_redundant_box_vertex(Vertex_handle v, bool snc_computed) {
+    CGAL_warning("altered code");
+    return false;
+    if(snc_computed) return false;
+    if(!Infi_box::is_redundant_box_vertex(*v)) return false;
+    this->sncp()->delete_vertex(v);
+    simplified = true;
+    return true;
   }
 
   bool simplify_redundant_vertex_in_volume(Vertex_handle v) {
@@ -313,9 +325,10 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     while( v != (*this->sncp()).vertices_end()) {
       Vertex_iterator v_next(v);
       ++v_next;
-      if(!simplify_redundant_vertex_in_volume(v))
-	if(!simplify_redundant_vertex_on_facet(v))
-	  simplify_redundant_vertex_on_edge(v, snc_computed);
+      if(!simplify_redundant_box_vertex(v, snc_computed))
+	if(!simplify_redundant_vertex_in_volume(v))
+	  if(!simplify_redundant_vertex_on_facet(v))
+	    simplify_redundant_vertex_on_edge(v, snc_computed);
       v = v_next;
     }
     return simplified;
