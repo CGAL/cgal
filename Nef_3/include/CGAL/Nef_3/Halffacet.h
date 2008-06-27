@@ -37,7 +37,6 @@ CGAL_BEGIN_NAMESPACE
 template <typename Refs>
 class Halffacet_base  {
 
-  typedef void* GenPtr;
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Plane_3   Plane_3;
   typedef typename Refs::Halffacet_handle         Halffacet_handle;
@@ -101,9 +100,6 @@ class Halffacet_base  {
 
       Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
       const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
-
-      GenPtr& info() { return this->info_; }
-      const GenPtr& info() const { return this->info_; }
 
       Halffacet_cycle_iterator facet_cycles_begin()
       { return boundary_entry_objects_.begin(); }
