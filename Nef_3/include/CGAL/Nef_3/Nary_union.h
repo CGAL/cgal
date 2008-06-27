@@ -58,6 +58,7 @@ class Nary_union {
 
     while(queue.size() > 1)
       unite();
+    inserted = 0;
     return queue.front();
   }
 };
