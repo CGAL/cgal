@@ -415,7 +415,7 @@ private:
 
     Status_line_CPA_1 create_event_slice(size_type i,bool use_shear=true) const {
 #if !AcX_NO_ARC_FLIP
-        size_type index_in_fg = this->ptr()->index_triples[i].fg;
+        size_type index_in_fg = event_indices(i).fg;
         if(index_in_fg == -1 ) {
             return create_slice_with_multiplicity_zero_or_one(i);
         } else {
@@ -856,7 +856,10 @@ private:
     }
 
     // Creates an intermediate slice at a rational value
-    Status_line_CPA_1 create_intermediate_slice_at(Boundary r) const {
+    Status_line_CPA_1 create_intermediate_slice_at(int i) const {
+        
+        Boundary r = boundary_value_in_interval(i);
+
 
         typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
         
@@ -926,7 +929,7 @@ private:
         }
 
         Status_line_CPA_1 new_slice 
-            = create_slice_from_slice_info(-1,slice_info,false);
+            = create_slice_from_slice_info(i,slice_info,false);
 
         return new_slice;          
     }
@@ -1554,9 +1557,8 @@ public:
 
         if(! this->ptr()->intermediate_slices[i]) {
 
-            Boundary intermediate_x_value = boundary_value_in_interval(i);
             this->ptr()->intermediate_slices[i] 
-                = create_intermediate_slice_at(intermediate_x_value);
+                = create_intermediate_slice_at(i);
           
         }
 
