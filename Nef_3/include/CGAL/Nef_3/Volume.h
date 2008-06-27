@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename Refs>
 class Volume_base  {
-  typedef void* GenPtr;
+
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Volume_handle  Volume_handle;
   typedef typename Refs::Volume_const_handle  Volume_const_handle;
@@ -73,9 +73,6 @@ class Volume_base  {
 
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
-
-    GenPtr& info() { return this->info_; }
-    const GenPtr& info() const { return this->info_; }
 
     Object_list& shell_entry_objects() { return shell_entry_objects_; }
     const Object_list& shell_entry_objects() const { 
