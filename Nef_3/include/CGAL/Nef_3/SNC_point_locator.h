@@ -763,7 +763,11 @@ public:
     }    CGAL_NEF_TIMER(pl_t.start());
     CGAL_NEF_TIMER(pl_t.stop());
     return result;
+
+
   } else {   // standard kernel
+
+
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "locate "<<p);
     typename SNC_structure::FT min_distance;
@@ -836,8 +840,8 @@ public:
     */
     for(;o!=candidates.end();++o) {
       if( CGAL::assign( e, *o)) {
-	if(first && 
-	   (e->source() == v  || e->twin()->source() == v)) continue;
+	//	if(first && 
+	//	   (e->source() == v  || e->twin()->source() == v)) continue;
 	Segment_3 ss(e->source()->point(),e->twin()->source()->point());
 	CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
 	  if(is.does_contain_internally(ss, p) ) {
@@ -892,10 +896,33 @@ public:
       else CGAL_error_msg( "wrong handle type");
     }
 
+    CGAL_warning("altered code in SNC_point_locator");
+    /*
+      Halffacet_iterator fc;
+      CGAL_forall_facets(fc, *this->sncp()) {
+	CGAL_assertion(!is.does_intersect_internally(s,f,ip));
+      }
+      
+      Halfedge_iterator ec;
+      CGAL_forall_edges(ec, *this->sncp()) {
+	Segment_3 ss(ec->source()->point(), ec->twin()->source()->point());
+	CGAL_assertion(!is.does_intersect_internally(s,ss,ip));
+      }
+
+      Vertex_iterator vc;
+      CGAL_forall_vertices(vc, *this->sncp()) {
+	std::cerr << "test vertex " << vc->point() << std::endl;
+	CGAL_assertion(vc->point() == s.target() || !s.has_on(vc->point()));
+      }
+    */
+
     if( CGAL::assign( v, result)) {
-      _CGAL_NEF_TRACEN("vertex hit, obtaining volume...");
+      _CGAL_NEF_TRACEN("vertex hit, obtaining volume..." << v->point());
+
+      CGAL_warning("altered code in SNC_point_locator");
       SM_point_locator L(&*v);
-      Object_handle so = L.locate(s.source()-s.target(), true);
+      //      Object_handle so = L.locate(s.source()-s.target(), true);
+      Object_handle so = L.locate(s.source()-s.target());
       SFace_handle sf;
       if(CGAL::assign(sf,so))
         return sf->volume();
