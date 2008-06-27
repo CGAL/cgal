@@ -22,6 +22,7 @@
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
+#include <CGAL/Cartesian_converter.h>
 
 CGAL_BEGIN_NAMESPACE 
 

@@ -20,6 +20,8 @@
 #ifndef CGAL_MARCHING_TETRAHEDRA_OBSERVER_DEFAULT_3_H
 #define CGAL_MARCHING_TETRAHEDRA_OBSERVER_DEFAULT_3_H
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Vertex_iterator, 

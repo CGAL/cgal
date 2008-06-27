@@ -20,6 +20,8 @@
 #ifndef CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_WITH_FACE_INFORMATION_H
 #define CGAL_SKIN_SURFACE_POLYHEDRAL_ITEMS_WITH_FACE_INFORMATION_H
 
+#include <CGAL/Polyhedron_items_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Refs, class TriangulatedMixedComplex3>

@@ -26,6 +26,10 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulated_mixed_complex_observer_3.h>
 #include <CGAL/Triangulation_incremental_builder_3.h>
+
+#include <CGAL/Skin_surface_base_3.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 // NGHK: move this one to SkinSurfaceTraits
 #include <CGAL/Compute_anchor_3.h>
 

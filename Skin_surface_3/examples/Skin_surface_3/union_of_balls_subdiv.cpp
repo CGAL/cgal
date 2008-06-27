@@ -30,7 +30,7 @@ int main() {
 
   CGAL::subdivide_union_of_balls_mesh_3(union_of_balls, p);
 
-  std::ofstream out("output.txt");
+  std::ofstream out("output.off");
   out << p;
   return 0;
 }

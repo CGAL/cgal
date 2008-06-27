@@ -20,7 +20,11 @@
 #ifndef CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 #define CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_converter.h>
+
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Skin_surface_polyhedral_items_3.h>
 
 #include <CGAL/intersection_3_1.h>
 CGAL_BEGIN_NAMESPACE

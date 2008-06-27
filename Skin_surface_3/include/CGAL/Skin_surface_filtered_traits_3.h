@@ -17,6 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
+#include <CGAL/Skin_surface_traits_3.h>
+
 #ifndef CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
 #define CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
 
