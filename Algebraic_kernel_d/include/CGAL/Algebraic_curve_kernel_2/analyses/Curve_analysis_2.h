@@ -14,6 +14,8 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 
+
+
 #include <vector>
 #include <set>
 #include <map>
@@ -30,7 +32,7 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
 
-//#include <CGAL/Polynomial_traits_d.h>
+#include <CGAL/Polynomial_traits_d.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/macros.h>
 
@@ -42,7 +44,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
-#include <CGAL/Algebraic_curve_kernel_2/from_nix/sturm_habicht_sequence.h>
+#include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/from_nix/shear.h>
 
@@ -1084,7 +1086,8 @@ private:
             stha.push_back(f_primitive());
         } else {
             
-#if AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
+#if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
+#warning USES BEZOUT MATRIX FOR SUBRESULTANTS
             CGAL::bezout_polynomial_subresultants
                 (f_primitive(),
                  CGAL::diff(f_primitive()),
@@ -1101,8 +1104,8 @@ private:
             }
             
 #else
-            CGAL::sturm_habicht_sequence(f_primitive(),
-                                        std::back_inserter(stha));
+            typename Polynomial_traits_2::Sturm_habicht_sequence()
+                (f_primitive(),std::back_inserter(stha));
 #endif
         }
         // Also set the resultant, if not yet set

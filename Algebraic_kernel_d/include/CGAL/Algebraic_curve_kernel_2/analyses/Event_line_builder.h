@@ -16,8 +16,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/from_nix/sturm_habicht_sequence.h>
-
 #include <CGAL/Algebraic_structure_traits.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/alg_real_utils.h>
@@ -25,6 +23,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/subresultants.h>
+#include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
 
 #include <boost/numeric/interval.hpp>

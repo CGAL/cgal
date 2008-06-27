@@ -987,24 +987,26 @@ private:
         const Polynomial_2& f = this->ptr()->f, g=this->ptr()->g;
         std::vector<Polynomial_2> subresultants;
         if(f.degree()<g.degree()) {
-#if AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
+#if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
             CGAL::bezout_polynomial_subresultants(g,
                                                  f,
                                                  std::back_inserter(subresultants));
 #else
-            CGAL::polynomial_subresultants(g,
-                                          f,
-                                          std::back_inserter(subresultants));
+            typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Polynomial_subresultants()(g,
+                                             f,
+                                         std::back_inserter(subresultants));
 #endif
         } else {
-#if AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
+#if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
             CGAL::bezout_polynomial_subresultants(f,
                                                  g,
                                                  std::back_inserter(subresultants));
 #else
-            CGAL::polynomial_subresultants(f,
-                                          g,
-                                          std::back_inserter(subresultants)); 
+            typename CGAL::Polynomial_traits_d<Polynomial_2>
+                ::Polynomial_subresultants()(f,
+                                             g,
+                                         std::back_inserter(subresultants)); 
 #endif
         }
 
