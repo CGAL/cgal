@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename Refs> 
 class SHalfloop_base {
-  typedef void* GenPtr;
+
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Sphere_circle  Sphere_circle;
   typedef typename Refs::SHalfloop_handle SHalfloop_handle;
@@ -49,7 +49,7 @@ class SHalfloop_base {
   SHalfloop_handle   twin_;
   SFace_handle       incident_sface_;
   Halffacet_handle   facet_;
-  GenPtr             info_;
+
   // temporary needed:
   Mark               mark_;
   Sphere_circle      circle_;
@@ -57,7 +57,7 @@ class SHalfloop_base {
  public:
 
   SHalfloop_base() : twin_(), incident_sface_(), facet_(), 
-    info_(), mark_(), circle_() {}
+    mark_(), circle_() {}
 
     ~SHalfloop_base() {
       CGAL_NEF_TRACEN("  destroying SHalfloop_base item "<<&*this);
@@ -66,7 +66,6 @@ class SHalfloop_base {
       { twin_ = l.twin_;
 	incident_sface_ = l.incident_sface_;
 	facet_ = l.facet_;
-	info_ = 0;
 	mark_ = l.mark_;
 	circle_ = l.circle_;
       }
@@ -75,7 +74,6 @@ class SHalfloop_base {
       { twin_ = l.twin_;
 	incident_sface_ = l.incident_sface_;
 	facet_ = l.facet_;
-	info_ = 0;
 	mark_ = l.mark_;
 	circle_ = l.circle_;
 	return *this;
@@ -95,9 +93,6 @@ class SHalfloop_base {
 
     Halffacet_handle& facet() { return facet_; }
     Halffacet_const_handle facet() const { return facet_; }
-
-    GenPtr& info() { return info_; }
-    const GenPtr& info() const { return info_; }
 
  public:
     std::string debug() const
