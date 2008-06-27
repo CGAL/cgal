@@ -397,7 +397,8 @@ protected:
 
         typename A_vector::iterator it=spec_stha.begin() + k;
         //AcX_DSTREAM("k=" << k << ", Compute m..." << std::flush);
-        m = CGAL::stha_count_number_of_real_roots<VT>(it,spec_stha.end());
+        m = CGAL::CGALi::stha_count_number_of_real_roots<VT>
+            (it,spec_stha.end());
         //AcX_DSTREAM("done" << std::endl);
         AcX_DSTREAM("k=" << k << " m=" << m << ".."<< std::flush);
 
