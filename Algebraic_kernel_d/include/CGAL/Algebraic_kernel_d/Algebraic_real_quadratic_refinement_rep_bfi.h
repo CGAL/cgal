@@ -22,6 +22,7 @@
 
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+#include <CGAL/convert_to_bfi.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 
