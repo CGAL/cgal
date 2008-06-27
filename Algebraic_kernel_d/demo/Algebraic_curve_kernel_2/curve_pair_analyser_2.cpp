@@ -1,35 +1,29 @@
-// ============================================================================
-//
-// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
-// All rights reserved.
-//
-// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
-// you may redistribute it under the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with EXACUS.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// TODO: Add licence
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// ----------------------------------------------------------------------------
+// $URL:$
+// $Id: $
+// 
 //
-// Library       : AcX
-// File          : demos/Curve_pair_analyser.C
-// AcX_release   : $Name:  $
-// Revision      : $Revision: 1.16 $
-// Revision_date : $Date: 2008/04/24 07:19:01 $
-//
-// Author(s)     : Michael Kerber  <mkerber@mpi-inf.mpg.de>
+// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
+
 
 #ifndef AcX_DEBUG_PRINT
 #define AcX_DEBUG_PRINT 1
 #endif
 
-#include <AcX/basic.h>
+#if AcX_DEBUG_PRINT
+#define AcX_DSTREAM(str) std::cout << str;
+#else
+#define AcX_DSTREAM(str) 
+#endif
+
+
+#include <CGAL/basic.h>
 
 #ifndef AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
 #define AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
@@ -42,14 +36,14 @@
 #define AcX_SPEED_UP_FOR_REGULAR_CURVES 0
 #endif
 
-#ifdef LiS_HAVE_CORE
-#ifndef AcX_USE_CORE
-#define AcX_USE_CORE 1
+#ifdef CGAL_HAVE_CORE
+#ifndef CGAL_ACK_USE_CORE
+#define CGAL_ACK_USE_CORE 1
 #endif
-#elif
+#else
 #ifdef CGAL_USE_LEDA
-#ifndef AcX_USE_LEDA
-#define AcX_USE_LEDA 1
+#ifndef CGAL_ACK_USE_LEDA
+#define CGAL_ACK_USE_LEDA 1
 #endif
 #endif
 #endif
@@ -140,10 +134,10 @@ int main(int argc,char** argv) {
 
   ::CGAL::set_pretty_mode(std::cout);
 
-#if AcX_USE_CORE
+#if CGAL_ACK_USE_CORE
   std::cout << "Use CORE library" << std::endl;
   typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
-#elif defined(AcX_USE_LEDA)
+#elif defined(CGAL_ACK_USE_LEDA)
   std::cout << "Use LEDA library" << std::endl;
   typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
 #else

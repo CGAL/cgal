@@ -357,7 +357,6 @@ int main(int argc, char** argv) {
         std::cout << cgal_arrangement.number_of_edges() << " edges" << std::endl;
         std::cout << cgal_arrangement.number_of_faces() << " faces" << std::endl;
         std::cout << overall_timer.time() << " time elpased in total" << std::endl;
-
     }
     
     return 0;
