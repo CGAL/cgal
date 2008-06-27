@@ -184,8 +184,9 @@ protected:
 
         template<class T1, class T2>
         std::pair<T1, T2> operator()(const std::pair<T1, T2>& p) const {
-            if(p.first.id() > p.second.id())
-                return std::make_pair(p.second, p.first);
+            
+            //if(p.first.id() > p.second.id())
+            //    return std::make_pair(p.second, p.first);
             return p;
         }
     };
@@ -341,7 +342,7 @@ public:
                  
             Curve_pair_analysis_2 cpa_2 =
                 Self::curve_pair_cache()(std::make_pair(ca1, ca2));
-            cpa_2._set_swapped(ca1.id() > ca2.id());
+            //cpa_2._set_swapped(ca1.id() > ca2.id());
             return cpa_2;
         }
     };
