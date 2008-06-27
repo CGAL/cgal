@@ -48,6 +48,7 @@ class Extended_cartesian : public
 public:
 typedef CGAL::Simple_cartesian< CGAL::Nef_polynomial<pFT> > Base;
 typedef Extended_cartesian<pFT> Self;
+typedef Cartesian_tag Kernel_tag;
 
 /*{\Xdefinition |\Mname| is a kernel model realizing the concept
   extended geometry. }*/
