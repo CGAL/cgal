@@ -38,6 +38,7 @@ public:
   typedef Tr                                   Triangulation;
   typedef typename Tr::Intersection_tag        Intersection_tag;
   typedef Constrained_triangulation_plus_2<Tr> Self;
+  typedef Tr                                   Base;
 
   typedef typename Triangulation::Edge             Edge;
   typedef typename Triangulation::Vertex           Vertex;
@@ -85,7 +86,7 @@ public:
     : Triangulation(gt) { }
 
   Constrained_triangulation_plus_2(const Self& ctp)
-    : Triangulation()    { copy(ctp);}
+    : Triangulation()    { copy_triangulation(ctp);}
 
   virtual ~Constrained_triangulation_plus_2() {}
 
@@ -116,8 +117,8 @@ public:
   }
 
     //Helping
-  void clear() { Tr::clear(); hierarchy.clear();}
-  void copy(const Constrained_triangulation_plus_2 &ctp);
+  void clear() { Base::clear(); hierarchy.clear();}
+  void copy_triangulation(const Constrained_triangulation_plus_2 &ctp);
   void swap(Constrained_triangulation_plus_2 &ctp);
 
   // INSERTION
@@ -243,9 +244,9 @@ public:
 template <class Tr>
 void
 Constrained_triangulation_plus_2<Tr>::
-copy(const Constrained_triangulation_plus_2 &ctp)
+copy_triangulation(const Constrained_triangulation_plus_2 &ctp)
 {
-  copy_triangulation(ctp);
+  Base::copy_triangulation(ctp);
   //the following assume that the triangulation and its copy
   // iterates on their vertices on the same order 
   std::map<Vertex_handle,Vertex_handle> vmap;
@@ -263,7 +264,7 @@ void
 Constrained_triangulation_plus_2<Tr>::
 swap(Constrained_triangulation_plus_2 &ctp)
 {
-  Tr::swap(ctp);
+  Base::swap(ctp);
   hierarchy.swap(ctp.hierarchy);
 }
 
@@ -272,7 +273,7 @@ Constrained_triangulation_plus_2<Tr>&
 Constrained_triangulation_plus_2<Tr>::
 operator=(const Constrained_triangulation_plus_2 &ctp)
 {
-  copy(ctp);
+  copy_triangulation(ctp);
   return *this;
 }
 
