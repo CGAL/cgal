@@ -84,7 +84,7 @@ void
 VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *w)
 {
   QRectF rect = option->exposedRect;
-  PainterOstream pos(painter, rect);
+  PainterOstream<typename DT::Geom_traits> pos(painter, rect);
   
   painter->setPen(edgesPen());
   for(typename DT::Finite_edges_iterator eit = dt->finite_edges_begin();
@@ -99,7 +99,7 @@ VoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem
     } else if(CGAL::assign(r,o)) {
       pos << r;
     }else if(CGAL::assign(l,o)) {
-      pos < l;
+      pos << l;
     } 
   }
 }
