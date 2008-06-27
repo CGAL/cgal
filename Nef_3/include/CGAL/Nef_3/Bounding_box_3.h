@@ -34,7 +34,7 @@ class Bounding_box_3 :
 public Box_intersection_d::Box_d< double, 3> {
 
   typedef Box_intersection_d::Box_d< double, 3>  Base;
-  typedef typename Kernel::Point_3             Point_3;
+  typedef typename Kernel::Point_3               Point_3;
 
 public:
   Bounding_box_3() : Base(false) {
@@ -68,7 +68,12 @@ public:
   Bounding_box_3(FT q[3]) : Base(q,q), initialized(true) {}
     
   void extend(FT q[3]) {
-    Base::extend(q);
+    if(initialized)
+      Base::extend(q);
+    else {
+      initialized = true;
+      (Base) *this = Base(q,q);
+    }
   }
 
   void extend(const Point_3& p) {
@@ -81,7 +86,8 @@ public:
       Base::extend(q);
     else {
       initialized = true;
-      (Base) *this = Base(q,q);
+      std::copy( q, q + 3, Base::lo );
+      std::copy( q, q + 3, Base::hi );     
     }
   }	  
 };
