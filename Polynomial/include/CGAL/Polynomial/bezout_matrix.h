@@ -32,8 +32,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
-
+namespace CGALi {
 
 /*! \ingroup CGAL_resultant_matrix
  *  \brief construct hybrid Bezout matrix of two polynomials
@@ -301,8 +300,8 @@ OutputIterator symmetric_bezout_subresultants(
     
     std::vector<NT> minors;
     minors_berkowitz(B,std::back_inserter(minors),n,m);
-    CGAL::symmetric_minors_to_subresultants(minors.begin(),sres,
-					   divisor,n,m,swapped);
+    CGAL::CGALi::symmetric_minors_to_subresultants(minors.begin(),sres,
+                                                   divisor,n,m,swapped);
     
     return sres; 
   }
@@ -331,7 +330,7 @@ typename CGALi::Simple_matrix<NT> modified_hybrid_bezout_matrix(
       swapped=true;
     }
     
-    Matrix B = CGAL::hybrid_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::hybrid_bezout_matrix(f,g);
 
 
     // swap columns
@@ -372,7 +371,7 @@ OutputIterator hybrid_bezout_subresultants(
     int n = f.degree();
     int m = g.degree();
 
-    Matrix B = CGAL::modified_hybrid_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::modified_hybrid_bezout_matrix(f,g);
 
     if(n<m) {
       std::swap(n,m);
@@ -381,8 +380,6 @@ OutputIterator hybrid_bezout_subresultants(
     return minors_berkowitz(B,sres,n,m);
   }
 
-
-namespace CGALi {
 
   // Swap entry A_ij with A_(n-i)(n-j) for square matrix A of dimension n
   template<class NT>
@@ -496,7 +493,7 @@ typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
     };
 
 
-    Matrix B = CGAL::symmetric_bezout_matrix(f,g);
+    Matrix B = CGAL::CGALi::symmetric_bezout_matrix(f,g);
 
     // For easier notation, we swap all entries:
     CGALi::swap_entries<NT>(B);
