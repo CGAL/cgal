@@ -249,6 +249,7 @@ private:
 public:
   friend class Objects_along_ray;
   friend class Objects_around_segment;
+  friend class Objects_around_box;
 
 public:
   
@@ -646,6 +647,120 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
       Base::initialize( k, Segment_3( p, q));
     }
   };
+
+class Objects_around_box {
+
+ public:
+  class Iterator;
+ protected:
+  Node *root_node;
+  Bounding_box_3 box;
+  bool initialized;
+
+ public:
+  Objects_around_box() : initialized(false) {}
+  Objects_around_box(const K3_tree& k, const Bounding_box_3& b) : 
+    root_node(k.root), box(b), initialized(true) {}
+      
+  void initialize( const K3_tree& k, const Bounding_box_3& b) {
+    root_node = k.root;
+    box = b;
+    initialized = true;
+  }
+  
+ public:
+  Iterator begin() const {
+    CGAL_assertion( initialized == true);
+    return Iterator( root_node, box);
+  }
+
+  Iterator end() const {
+    return Iterator();
+  }
+
+  class Iterator {
+
+    friend class K3_tree;
+    typedef Iterator Self;
+    typedef std::pair< const Node*, Bounding_box_3> Candidate;
+
+  protected:
+    std::list<Candidate> S;
+    const Node* node;
+
+  public:
+    Iterator() : node(0) {}
+
+    Iterator( const Node* root, const Bounding_box_3& s) {
+      S.push_front( Candidate( root, s));
+      ++(*this); // place the interator in the first intersected cell
+    }
+
+    Iterator( const Self& i) : S(i.S), node(i.node) {}
+
+    const Object_list& operator*() const { 
+      CGAL_assertion( node != 0);
+      return node->objects();
+    }
+    
+    Self& operator++() {
+        
+      if(S.empty())
+	node = 0; // end of the iterator
+      else {
+	while( !S.empty()) {
+	  const Node* n = S.front().first;
+	  Bounding_box_3 b = S.front().second;
+	  S.pop_front();
+	  if( n->is_leaf()) {
+	    node = n;
+	    break;
+	  } else {
+	    Point_3 pmin(b.min_coord(0), b.min_coord(1), b.min_coord(2));
+	    Point_3 pmax(b.max_coord(0), b.max_coord(1), b.max_coord(2));
+	    Oriented_side src_side = 
+	      n->plane().oriented_side(pmax);
+	    Oriented_side tgt_side = 
+	      n->plane().oriented_side(pmin);
+	    if( src_side == tgt_side &&
+		src_side != ON_ORIENTED_BOUNDARY)
+	      S.push_front( Candidate( get_child_by_side( n, src_side), b));
+	    else {
+	      S.push_front( Candidate( get_child_by_side( n, tgt_side), b));
+	      S.push_front( Candidate( get_child_by_side( n, src_side), b));
+	    }
+	  }
+	}
+      }
+      return *this;
+    }
+
+    bool operator==(const Self& i) const { 
+      return (node == i.node); 
+    }
+
+    bool operator!=(const Self& i) const { 
+      return !(*this == i); 
+    }
+
+  private:
+    const Node* get_node() const { 
+      CGAL_assertion( node != 0);
+      return node;
+    }
+      
+    inline 
+    const Node* get_child_by_side( const Node* node, Oriented_side side) {
+      CGAL_assertion( node != NULL);
+      CGAL_assertion( side != ON_ORIENTED_BOUNDARY);
+      if( side == ON_NEGATIVE_SIDE) {
+	return node->left();
+      }
+      CGAL_assertion( side == ON_POSITIVE_SIDE);
+      return node->right();
+    }
+  };
+};
 
 private:
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
