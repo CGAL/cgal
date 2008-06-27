@@ -241,7 +241,7 @@ class Normalizing<Cartesian_tag> {
     RT y = p.hy()/g;
     RT z = p.hz()/g;
     
-    return CGAL::Sphere_point<R>(CGAL::Point_3<R>(x,y,z,1));
+    return CGAL::Sphere_point<R>(x,y,z);
   }
 
   template <typename R> static
@@ -294,7 +294,8 @@ class Normalizing<Cartesian_tag> {
     
     typename FracTraits::Numerator_type num;
     typename FracTraits::Denominator_type denom;
-    typename FracTraits::Decompose decomposer;   
+    typename FracTraits::Decompose decomposer; 
+    typename FracTraits::Compose composer; 
     NV vec;
     
     decomposer(h.a(),num,denom);
@@ -320,8 +321,10 @@ class Normalizing<Cartesian_tag> {
     
     Normalizing<Homogeneous_tag>::
       normalized(vec.begin(),vec.end());
-    return typename R::Plane_3(FT(vec[0]),FT(vec[1]),
-			       FT(vec[2]),FT(vec[3]));
+    return typename R::Plane_3(composer(vec[0],1),
+			       composer(vec[1],1),
+			       composer(vec[2],1),
+			       composer(vec[3],1));
   }
 
   template <typename R> static
