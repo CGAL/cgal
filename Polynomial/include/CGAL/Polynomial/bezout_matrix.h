@@ -452,8 +452,6 @@ namespace CGALi {
     }
     return it;
   }
-}// namespace CGALi
-
 
 /*! \ingroup CGAL_resultant_matrix
  * \brief computes the coefficients of the polynomial subresultant sequence 
@@ -554,6 +552,7 @@ typename CGALi::Simple_matrix< NT> polynomial_subresultant_matrix(
     return Ret;
 }
 
+}
 
 CGAL_END_NAMESPACE
 

@@ -3145,7 +3145,11 @@ Polynomial/include/CGAL/Polynomial/may_have_common_factor.h -text
 Polynomial/include/CGAL/Polynomial/modular_filter.h -text
 Polynomial/include/CGAL/Polynomial/resultant.h -text
 Polynomial/include/CGAL/Polynomial/square_free_factorization.h -text
+Polynomial/include/CGAL/Polynomial/sturm_habicht_sequence.h -text
+Polynomial/include/CGAL/Polynomial/subresultants.h -text
 Polynomial/include/CGAL/Polynomial/univariate_polynomial_utils.h -text
+Polynomial/test/Polynomial/sturm_habicht_sequence.cpp -text
+Polynomial/test/Polynomial/subresultants.cpp -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/dist.png -text
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.eps -text svneol=unset#application/postscript
 Polytope_distance_d/doc_tex/Polytope_distance_d/polydist.gif -text svneol=unset#image/gif

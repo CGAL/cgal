@@ -73,8 +73,35 @@ inline int square_free_factorization_for_regular_polynomial(const Polynomial<Coe
 template <class NT> inline bool may_have_multiple_factor( const Polynomial<NT>&);
 template <class NT> inline bool may_have_common_factor(const Polynomial<NT>&,const Polynomial<NT>&);
 
+template< class Coeff >
+struct Simple_matrix;
+
+template<class NT>
+CGALi::Simple_matrix<NT> polynomial_subresultant_matrix(
+                                               CGAL::Polynomial<NT> f,
+					       CGAL::Polynomial<NT> g,
+					       int d=0);
+
+
+template <typename OutputIterator, typename NT> inline
+    OutputIterator polynomial_subresultants(CGAL::Polynomial<NT> A, CGAL::Polynomial<NT> B,
+                                            OutputIterator out);
+template <typename OutputIterator, typename NT> inline
+    OutputIterator principal_subresultants(CGAL::Polynomial<NT> A, CGAL::Polynomial<NT> B,
+                                            OutputIterator out);
+
+template <typename OutputIterator, typename NT > inline
+      OutputIterator principal_sturm_habicht_sequence(CGAL::Polynomial<NT> A, 
+                                                      OutputIterator out);
+
+template<typename OutputIterator, typename NT> OutputIterator
+    sturm_habicht_sequence(CGAL::Polynomial<NT> P, OutputIterator out);
+
 
 } // namespace CGALi
+
+
+
 } // namespace CGAL
 
 
