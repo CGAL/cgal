@@ -77,7 +77,7 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
 	  return Sphere_circle(Sphere_point(ORIGIN+(*pprev-*pcur)),
 			       Sphere_point(ORIGIN+(*pnext-*pcur)));
       }
-      CGAL_error_msg( "all points lie on a common line");
+      std::cerr << "all points lie on a common line" << std::endl;
       return Sphere_circle();
     }
 
@@ -91,6 +91,7 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
 	--pprev;
 	++pnext;
 	c = find_supporting_plane(pbegin, pend);
+	if(c == Sphere_circle()) continue;
 	for(;pbegin!=pend; ++pbegin,++pprev, ++pnext) {
 	  if(pprev == pend) pprev = begin->first;
 	  if(pnext == pend) pnext = begin->first;
