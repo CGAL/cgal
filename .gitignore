@@ -10,6 +10,7 @@ Distance_3/include
 GraphicsView/TAGS
 GraphicsView/demo/GraphicsView/*.exe
 GraphicsView/demo/GraphicsView/*_moc.cpp
+GraphicsView/demo/GraphicsView/Delaunay_triangulation
 GraphicsView/demo/GraphicsView/Makefile
 GraphicsView/demo/GraphicsView/constrained_Delaunay_triangulation
 GraphicsView/demo/GraphicsView/min

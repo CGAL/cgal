@@ -1898,6 +1898,8 @@ GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
 GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.ui -text
+GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.qrc -text
+GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.ui -text
 GraphicsView/demo/GraphicsView/about_CGAL.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/about_constrained_Delaunay_triangulation.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
