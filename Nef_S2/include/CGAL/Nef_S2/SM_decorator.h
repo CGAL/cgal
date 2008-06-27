@@ -727,8 +727,6 @@ GenPtr& info(SVertex_handle v) const
 { return v->info(); }
 GenPtr& info(SHalfedge_handle e) const
 { return e->info(); }
-GenPtr& info(SHalfloop_handle l) const
-{ return l->info(); }
 GenPtr& info(SFace_handle f) const
 { return f->info(); }
 
@@ -736,8 +734,6 @@ const GenPtr& info(SVertex_const_handle v) const
 { return v->info(); }
 const GenPtr& info(SHalfedge_const_handle e) const
 { return e->info(); }
-const GenPtr& info(SHalfloop_const_handle l) const
-{ return l->info(); }
 const GenPtr& info(SFace_const_handle f) const
 { return f->info(); }
 
