@@ -1,29 +1,24 @@
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef CONSTRAINED_DELAUNAY_TRIANGULATION_MAIN_WINDOW_H
+#define CONSTRAINED_DELAUNAY_TRIANGULATION_MAIN_WINDOW_H
 
 #include <QtGui>
 #include <QString>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include "ui_Constrained_Delaunay_triangulation_MainWindow.h"
 #include "DemosMainWindow.h"
 
+// forward declarations
 namespace CGAL {
   namespace Qt {
-    template <class Delaunay> class TriangulationGraphicsItem;
     template <class Delaunay> class ConstrainedTriangulationGraphicsItem;
     template <class Delaunay> class TriangulationMovingPoint;
     template <class Delaunay> class TriangulationCircumcircle;
     template <class K> class GraphicsViewPolylineInput;
   } // namespace Qt
 } // namespace CGAL
-
-class QLabel;
-class QWidget;
-class QGLWidget;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -103,10 +98,9 @@ public slots:
 
   void on_actionInsertRandomPoints_triggered();
 
-  signals:
-
+signals:
   void changed();
 };
 
-#endif // MAIN_WINDOW_H
+#endif // CONSTRAINED_DELAUNAY_TRIANGULATION_MAIN_WINDOW_H
 

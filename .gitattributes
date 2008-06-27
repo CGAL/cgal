@@ -1904,6 +1904,7 @@ GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.ui 
 GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.qrc -text
 GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.ui -text
 GraphicsView/demo/GraphicsView/about_CGAL.html svneol=native#text/html
+GraphicsView/demo/GraphicsView/about_Delaunay_triangulation.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/about_constrained_Delaunay_triangulation.html svneol=native#text/html
 GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
 GraphicsView/demo/GraphicsView/icons/circumcenter.png -text
@@ -1919,6 +1920,7 @@ GraphicsView/demo/icons/cgal_logo.xpm -text
 GraphicsView/demo/icons/fileNew.png -text
 GraphicsView/demo/icons/fileOpen.png -text
 GraphicsView/demo/icons/fileSave.png -text
+GraphicsView/demo/icons/inputPoint.png -text svneol=unset#image/png
 GraphicsView/demo/icons/inputPolyline.png -text
 GraphicsView/demo/icons/zoom-best-fit.svg -text
 GraphicsView/doc_tex/GraphicsView/uml-design.eps -text

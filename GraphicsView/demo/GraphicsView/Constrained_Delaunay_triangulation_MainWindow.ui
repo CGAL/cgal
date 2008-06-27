@@ -1,7 +1,7 @@
 <ui version="4.0" >
  <author>GeometryFactory</author>
  <class>Constrained_Delaunay_triangulation_MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
+ <widget class="QMainWindow" name="Constrained_Delaunay_triangulation_MainWindow" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon" >
    <iconset resource="../icons/Logos.qrc" >
-    <normaloff>:/cgal/logos/cgal_logo.xpm</normaloff>:/cgal/logos/cgal_logo.xpm</iconset>
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <property name="geometry" >
@@ -330,7 +330,6 @@
    </property>
   </action>
  </widget>
- <includes/>
  <resources>
   <include location="Constrained_Delaunay_triangulation_MainWindow.qrc" />
   <include location="../icons/File.qrc" />

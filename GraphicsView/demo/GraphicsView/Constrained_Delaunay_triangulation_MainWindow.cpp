@@ -9,7 +9,6 @@
 #include "TriangulationCircumcircle.h"
 #include "TriangulationMovingPoint.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
-#include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
   
 Constrained_Delaunay_triangulation_MainWindow::Constrained_Delaunay_triangulation_MainWindow()
@@ -171,15 +170,11 @@ Constrained_Delaunay_triangulation_MainWindow::loadConstraints(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
 
   std::list<K::Point_2> points;
-  typedef std::list< std::pair<Point_2, Point_2> > Segments;
-  Segments segments;
-  K::Point_2 p,q;
+  K::Point_2 p;
   while(ifs >> p) {
     points.push_back(p);
   }
   insert_polyline(points.begin(), points.end());
-
-  std::vector<K::Point_2> P;
 
   actionRecenter->trigger();
   emit(changed());

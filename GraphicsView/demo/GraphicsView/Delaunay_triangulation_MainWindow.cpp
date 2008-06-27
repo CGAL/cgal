@@ -17,19 +17,24 @@ Delaunay_triangulation_MainWindow::Delaunay_triangulation_MainWindow()
 {
   setupUi(this);
 
-  // Add GraphicItems for the Delaunay triangulation
+  // Add a GraphicItem for the Delaunay triangulation
   dgi = new CGAL::Qt::TriangulationGraphicsItem<Delaunay>(&dt);
-  vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(&dt);
-    
+
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
+
+  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  scene.addItem(dgi);
+
+  // Add a GraphicItem for the Voronoi diagram
+  vgi = new CGAL::Qt::VoronoiGraphicsItem<Delaunay>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
 		   vgi, SLOT(modelChanged()));
 
-  dgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  scene.addItem(dgi);
+  vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
+  vgi->hide();
 
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
@@ -59,11 +64,11 @@ Delaunay_triangulation_MainWindow::Delaunay_triangulation_MainWindow()
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
-  ag->addAction(this->actionInsertPolyline);
+  ag->addAction(this->actionInsertPoint);
   ag->addAction(this->actionMovingPoint);
 
   // Check two actions 
-  this->actionInsertPolyline->setChecked(true);
+  this->actionInsertPoint->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
 
   //
@@ -85,7 +90,7 @@ Delaunay_triangulation_MainWindow::Delaunay_triangulation_MainWindow()
 
   this->setupStatusBar();
   this->setupOptionsMenu();
-  this->addAboutDemo(":/cgal/help/about_constrained_Delaunay_triangulation.html");
+  this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation.html");
   this->addAboutCGAL();
 }
 
@@ -102,7 +107,7 @@ Delaunay_triangulation_MainWindow::processInput(CGAL::Object o)
 }
 
 void
-Delaunay_triangulation_MainWindow::on_actionInsertPolyline_toggled(bool checked)
+Delaunay_triangulation_MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
@@ -130,6 +135,11 @@ Delaunay_triangulation_MainWindow::on_actionShowDelaunay_toggled(bool checked)
   dgi->setDrawEdges(checked);
 }
 
+void
+Delaunay_triangulation_MainWindow::on_actionShowVoronoi_toggled(bool checked)
+{
+  vgi->setVisible(checked);
+}
 
 void
 Delaunay_triangulation_MainWindow::on_actionCircumcenter_toggled(bool checked)
@@ -173,14 +183,10 @@ Delaunay_triangulation_MainWindow::loadConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
 
-  std::list<K::Point_2> points;
-  typedef std::list< std::pair<Point_2, Point_2> > Segments;
-  Segments segments;
-  K::Point_2 p,q;
+  K::Point_2 p;
   while(ifs >> p) {
-    points.push_back(p);
+    dt.insert(p);
   }
-  std::vector<K::Point_2> P;
 
   actionRecenter->trigger();
   emit(changed());

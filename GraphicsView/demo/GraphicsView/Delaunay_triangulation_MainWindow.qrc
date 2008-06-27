@@ -5,6 +5,6 @@
   </qresource>
   <qresource prefix="/cgal/help" lang="en" >
     <file>about_CGAL.html</file>
-    <file>about_constrained_Delaunay_triangulation.html</file>
+    <file>about_Delaunay_triangulation.html</file>
   </qresource>
 </RCC>
