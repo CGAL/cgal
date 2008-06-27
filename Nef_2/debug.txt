@@ -22,12 +22,13 @@ include/CGAL/Nef_3/SNC_intersection.h:#define CGAL_NEF_DEBUG 37
 include/CGAL/Nef_3/SNC_simplify.h:#define CGAL_NEF_DEBUG 41
 include/CGAL/Nef_3/SNC_structure.h:#define CGAL_NEF_DEBUG 41
 include/CGAL/Nef_3/SNC_constructor.h:#define CGAL_NEF_DEBUG 43
+include/CGAL/Nef_3/SNC_external_structure.h:#define CGAL_NEF_DEBUG 43
 include/CGAL/Nef_S2/SM_point_locator.h:#define CGAL_NEF_DEBUG 47
 include/CGAL/Nef_polyhedron_S2.h:#define CGAL_NEF_DEBUG 53
 include/CGAL/Bounded_kernel.h:#define CGAL_NEF_DEBUG 59
 include/CGAL/Nef_3/Pluecker_line_3.h:#define CGAL_NEF_DEBUG 61
 include/CGAL/Nef_S2/SM_const_decorator.h:#define CGAL_NEF_DEBUG 67
-71
+include/CGAL/Nef_3/Edge_edge_overlay.h:#define CGAL_NEF_DEBUG 71
 73
 include/CGAL/normal_vector_newell_3.h:#define CGAL_NEF_DEBUG 79
 include/CGAL/Nef_3/SNC_items.h:#define CGAL_NEF_DEBUG 83
@@ -61,7 +62,8 @@ include/CGAL/Nef_3/Minkowski/Nef_S2/Gausian_map.h: CGAL_NEF_DEBUG 223
 include/CGAL/Nef_3/Minkowski/Nef_S2/SM_walls.h: CGAL_NEF_DEBUG 227
 include/CGAL/Nef_3/Minkowski/Nef_3/Single_wall_creator.h: CGAL_NEF_DEBUG 229
 include/CGAL/Nef_3/Minkowski/Nef_3/Ray_hit_generator.h: CGAL_NEF_DEBUG 233
-239
+include/CGAL/Nef_3/Minkowski/Nef_3/Ray_hit_generator2.h: CGAL_NEF_DEBUG 233
+include/CGAL/Nef_3/Minkowski/Nef_3/is_reflex_sedge.h: CGAL_NEF_DEBUG 239
 241
 251
 257
