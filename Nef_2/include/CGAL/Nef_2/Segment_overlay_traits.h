@@ -129,6 +129,7 @@ public:
   typedef leda_p_queue<Point_2,ISegment>                         SegQueue; 
   typedef leda_map<ST_item,Halfedge_handle>    AssocEdgeMap;
   typedef leda_slist<ITERATOR>                                   IsoList;
+  typedef typename IsoList::item                        slist_item;
   typedef leda_map<ST_item, IsoList* >         AssocIsoMap;
   typedef leda_map2<ISegment,ISegment,ST_item> EventHash;
 
@@ -366,7 +367,7 @@ public:
     GO.halfedge_below(v,Edge_of[sit_pred]);
     if ( Isos_of[event] != 0 ) {
       const IsoList& IL = *(Isos_of[event]);
-      CGAL_LEDA_SCOPE::slist_item iso_it;
+      slist_item iso_it;
       for (iso_it = IL.first(); iso_it; iso_it=IL.succ(iso_it) ) 
         GO.trivial_segment(v,IL[iso_it] );
       delete (Isos_of[event]); // clean up the list
