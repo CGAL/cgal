@@ -147,7 +147,11 @@ Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v)
 }
 
 void halfedge_below(Vertex_handle v, Halfedge_handle e) const
-{ G.halfedge_below(v) = e; }
+{ 
+  CGAL_NEF_TRACEN("   edge below " << v->point() << ":");
+  CGAL_NEF_TRACEN(&*e);
+  G.halfedge_below(v) = e; 
+}
 
 void supporting_segment(Halfedge_handle e, IT it) const
 { INFO& si = M[it];
@@ -1139,6 +1143,10 @@ subdivide(const Map* M0, const Map* M1,
 	  bool with_trivial_segments) {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
+
+  bool compute_halfsphere[3][2];
+  int cs=0;
+
   Seg_list L;
   Seg_map  From;
   for (int i=0; i<2; ++i) {
@@ -1146,28 +1154,34 @@ subdivide(const Map* M0, const Map* M1,
     CGAL_forall_svertices(v,PI[i]) {
       CGAL_NEF_TRACEN(v->point() << " from " << i << " mark " << v->mark());
       if ( !PI[i].is_isolated(v) ) continue;
+      cs = -1;
       L.push_back(trivial_segment(PI[i],v));
       From[--L.end()] = Seg_info(v,i);
     }
     SHalfedge_const_iterator e;
     CGAL_forall_sedges(e,PI[i]) {
       if ( e->source() == e->target() ) {
-       if(with_trivial_segments) {
+       if(with_trivial_segments) {	 
+	  CGAL_NEF_TRACEN("trivial segment " << e->source()->point());
           v = e->source();
           L.push_back(trivial_segment(PI[i],v));
           From[--L.end()] = Seg_info(v,i);
         } else {
+	  CGAL_NEF_TRACEN("once around " << e->source()->point());
           Seg_pair p = two_segments(PI[i],e);
           L.push_back(p.first);
           L.push_back(p.second);
           From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
         }
       } else {
+	CGAL_NEF_TRACEN("normal segment " << e->source()->point()
+			<< "->" << e->twin()->source()->point());
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
       }
     }
     if ( PI[i].has_shalfloop() ) {
+      CGAL_NEF_TRACEN("loop ");
       SHalfloop_const_handle shl = PI[i].shalfloop();
       Seg_pair p = two_segments(PI[i],shl);
       L.push_back(p.first); 
@@ -1179,13 +1193,14 @@ subdivide(const Map* M0, const Map* M1,
 
   CGAL_assertion_code(typename Seg_list::iterator it);
   CGAL_assertion_code(CGAL_forall_iterators(it,L) CGAL_NEF_TRACEN("  "<<*it));
-  bool compute_halfsphere[3][2];
+
 #ifdef CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
-  int cs = -1;
+  cs = -1;
   compute_halfsphere[2][0]=true;
   compute_halfsphere[2][1]=true;
 #else
-  int cs = check_sphere(L, compute_halfsphere);
+  if(cs != -1)
+    cs = check_sphere(L, compute_halfsphere);
 #endif
 
   CGAL_NEF_TRACEN("compute_halfsphere\n  cs = " << cs);
@@ -1378,6 +1393,10 @@ subdivide(const Map* M0, const Map* M1,
 {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
+
+  bool compute_halfsphere[3][2];
+  int cs=0;
+
   Seg_list L;
   Seg_map  From;
   for (int i=0; i<2; ++i) {
@@ -1385,6 +1404,7 @@ subdivide(const Map* M0, const Map* M1,
     CGAL_forall_svertices(v,PI[i]) {
       CGAL_NEF_TRACEN(v->point() << " from " << i << " mark " << v->mark());
       if ( !PI[i].is_isolated(v) ) continue;
+      cs = -1;
       L.push_back(trivial_segment(PI[i],v));
       From[--L.end()] = Seg_info(v,i);
     }
@@ -1392,21 +1412,25 @@ subdivide(const Map* M0, const Map* M1,
     CGAL_forall_sedges(e,PI[i]) {
       if ( e->source() == e->target() ) {
        if(with_trivial_segments) {
+	 CGAL_NEF_TRACEN("trivial segment " << e->source()->point());
           v = e->source();
           L.push_back(trivial_segment(PI[i],v));
           From[--L.end()] = Seg_info(v,i);
         } else {
+	 CGAL_NEF_TRACEN("once around " << e->source()->point());
           Seg_pair p = two_segments(PI[i],e);
           L.push_back(p.first);
           L.push_back(p.second);
           From[--L.end()] = From[--(--L.end())] = Seg_info(e,i);
         }
       } else {
+	CGAL_NEF_TRACEN("normal segment " << e->source()->point());
         L.push_back(segment(PI[i],e));
         From[--L.end()] = Seg_info(e,i);
       }
     }
     if ( PI[i].has_shalfloop() ) {
+      CGAL_NEF_TRACEN("loop ");
       SHalfloop_const_handle shl = PI[i].shalfloop();
       Seg_pair p = two_segments(PI[i],shl);
       L.push_back(p.first); 
@@ -1419,13 +1443,13 @@ subdivide(const Map* M0, const Map* M1,
   CGAL_assertion_code(typename Seg_list::iterator it);
   CGAL_assertion_code(CGAL_forall_iterators(it,L) CGAL_NEF_TRACEN("  "<<*it));
 
-  bool compute_halfsphere[3][2];
 #ifdef CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
-  int cs = -1;
+  cs = -1;
   compute_halfsphere[2][0]=true;
   compute_halfsphere[2][1]=true;
 #else
-  int cs = check_sphere(L, compute_halfsphere);
+  if(cs != -1)
+    cs = check_sphere(L, compute_halfsphere);
 #endif
 
   CGAL_NEF_TRACEN("compute_halfsphere\n  cs = " << cs);
