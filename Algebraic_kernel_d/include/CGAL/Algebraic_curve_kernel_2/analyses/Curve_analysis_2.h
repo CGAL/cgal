@@ -46,7 +46,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/from_nix/shear.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/shear.h>
 
 CGAL_BEGIN_NAMESPACE
 

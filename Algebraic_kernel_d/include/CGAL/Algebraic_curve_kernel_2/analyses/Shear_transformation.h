@@ -23,7 +23,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_traits_on_vert_line.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/from_nix/shear.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/shear.h>
 
 CGAL_BEGIN_NAMESPACE
 
