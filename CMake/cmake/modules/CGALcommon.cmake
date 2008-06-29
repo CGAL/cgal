@@ -86,8 +86,10 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     message( FATAL_ERROR "CMAKE_ROOT enviroment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
-
+  if ( COMMAND cmake_policy )
+    cmake_policy( SET CMP0003 NEW )  
+  endif()
+  
   if ( NOT BUILD_SHARED_LIBS )
     if ( WIN32 )
       set(BUILD_SHARED_LIBS OFF)
