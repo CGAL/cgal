@@ -1408,7 +1408,6 @@ public:
       Direction_3 dp(x, y, z);
 #endif
       Point_2 p(dp, Point_2::MID_BOUNDARY_LOC);
-      
       Direction_2 s = Traits::project_xy(source);
       Direction_2 t = Traits::project_xy(target);
       const Direction_2 & d = Traits::identification_xy();
@@ -1777,7 +1776,7 @@ public:
           (plane_is_positive) ? normal1 : opposite_normal1;
         return compute_intersection(xc1.left(), xc1.right(),
                                     xc2.left(), xc2.right(),
-                                    normal, false, Traits::neg_x_2(),
+                                    normal, false, Traits::identification_xy(),
                                     ccib, Traits::project_xy, oi);
       }
 
@@ -3096,7 +3095,7 @@ operator<<(OutputStream & os,
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "(";
 #endif
-  os << "(" << arc.left() << "), (" << arc.right() << ")";
+  os << "(" << arc.source() << "), (" << arc.target() << ")";
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "("
      << ", " << (arc.is_vertical() ? " |" : "!|")
