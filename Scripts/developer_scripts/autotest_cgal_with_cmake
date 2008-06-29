@@ -314,15 +314,22 @@ setup_dirs()
     
         
     if [ "${LOCAL_BUILD_ON}" = "all" ]; then
-      if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
-        cd "${REFERENCE_PLATFORMS_DIR}"
-        for LOCAL_PLATFORM in * ; do
-          if [ -d "${LOCAL_PLATFORM}" ]; then
-            if ! find "${LOCAL_PLATFORM}" "${PLATFORMS}" ; then
-              PLATFORMS="${PLATFORMS} ${LOCAL_PLATFORM}"
+    
+      log "${ACTUAL_LOGFILE}" "Indicated to build on ALL platform folders for host $HOST"
+      
+      if [ -n "${REFERENCE_PLATFORMS_DIR}" ]; then
+        if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
+          cd "${REFERENCE_PLATFORMS_DIR}"
+          for LOCAL_PLATFORM in * ; do
+            if [ -d "${LOCAL_PLATFORM}" ]; then
+              if ! find "${LOCAL_PLATFORM}" "${PLATFORMS}" ; then
+                PLATFORMS="${PLATFORMS} ${LOCAL_PLATFORM}"
+              fi
             fi
-          fi
-        done    
+          done    
+        else
+          log "${ACTUAL_LOGFILE}" "WARNING: Invalid reference platforms directory: ${REFERENCE_PLATFORMS_DIR}"
+        fi
       fi
     else
       for LOCAL_PLATFORM in ${LOCAL_BUILD_ON}; do
@@ -334,19 +341,21 @@ setup_dirs()
     
   done
 
-  # Now create each platform directory in the current release
-  log "${ACTUAL_LOGFILE}" "All platforms to build on: ${PLATFORMS}"
-  
-  for PLATFORM in ${PLATFORMS}; do
+  if [ -n "${PLATFORMS}" ]; then
+    # Now create each platform directory in the current release
+    log "${ACTUAL_LOGFILE}" "All platforms to build on: ${PLATFORMS}"
     
-    CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
+    for PLATFORM in ${PLATFORMS}; do
+      
+      CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
 
-    if [ ! -d "${CGAL_BINARY_DIR}" ]; then
-      log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
-      mkdir "${CGAL_BINARY_DIR}"
-    fi
-    
-  done  
+      if [ ! -d "${CGAL_BINARY_DIR}" ]; then
+        log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
+        mkdir "${CGAL_BINARY_DIR}"
+      fi
+      
+    done  
+  fi  
   
 }
 
@@ -356,18 +365,24 @@ setup_dirs()
 # ----------------------------------------------------------------------------------------
 copy_old_stuff()
 {
-  cd "${CGAL_BINARY_DIR_BASE}"
-  
-  for PLATFORM in * ; do
-    if [ -d "${PLATFORM}" ]; then
+  if [ -n "${REFERENCE_PLATFORMS_DIR}" ]; then
+    if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
+    
+      cd "${CGAL_BINARY_DIR_BASE}"
+      
+      for PLATFORM in * ; do
+        if [ -d "${PLATFORM}" ]; then
 
-      # if the reference platform folder contains a setup script, copy it
-      if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
-        log "${ACTUAL_LOGFILE}" "Copying reference platform setup script [${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup] in [${CGAL_BINARY_DIR_BASE}/${PLATFORM}]"
-        cp "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" "${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
-      fi
+          # if the reference platform folder contains a setup script, copy it
+          if [ -f "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+            log "${ACTUAL_LOGFILE}" "Copying reference platform setup script [${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup] in [${CGAL_BINARY_DIR_BASE}/${PLATFORM}]"
+            cp "${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" "${CGAL_BINARY_DIR_BASE}/${PLATFORM}"
+          fi
+        fi
+      done
     fi
-  done
+  fi
+  
 }
 
 
@@ -388,29 +403,33 @@ build_cgal_on_host()
     PLATFORMS=""
     cd "${CGAL_BINARY_DIR_BASE}"
     for PLATFORM in * ; do
-      PLATFORMS="${PLATFORMS} ${PLATFORM}"  
+      if [ -d "${PLATFORM}" ]; then
+        PLATFORMS="${PLATFORMS} ${PLATFORM}"  
+      fi
     done
   fi
   
-  log "${ACTUAL_LOGFILE}" "Building cgal libs on host: ${HOST} and platforms: ${PLATFORMS}"
+  if [ -n "${PLATFORMS}" ]; then
   
-  for PLATFORM in ${PLATFORMS} ; do
+    log "${ACTUAL_LOGFILE}" "Building cgal libs on host: ${HOST} and platforms: ${PLATFORMS}"
     
-    CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
-    
-    log "${ACTUAL_LOGFILE}" "Building libs under ${CGAL_BINARY_DIR}"
-    
-    CGAL_REFERENCE_CACHE_DIR=${REFERENCE_PLATFORMS_DIR}/${PLATFORM}
-    
-    log "${ACTUAL_LOGFILE}" "Uing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
+    for PLATFORM in ${PLATFORMS} ; do
+      
+      CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
+      
+      log "${ACTUAL_LOGFILE}" "Building libs under ${CGAL_BINARY_DIR}"
+      
+      CGAL_REFERENCE_CACHE_DIR=${REFERENCE_PLATFORMS_DIR}/${PLATFORM}
+      
+      log "${ACTUAL_LOGFILE}" "Using reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
 
-    if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
-      cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
-    else
-      rm -f "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
-    fi
-    
-    cat >> "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" <<EOF
+      if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
+        cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
+      else
+        rm -f "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
+      fi
+      
+      cat >> "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" <<EOF
 CGAL_BINARY_DIR='${CGAL_BINARY_DIR}';
 CMAKE_GENERATOR='${CMAKE_GENERATOR}';
 MAKE_CMD='${MAKE_CMD}';
@@ -421,22 +440,25 @@ export CGAL_BINARY_DIR;
 export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
 cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE \\
-                           -DWITH_examples=FALSE \\
-                           -DRUNNING_CGAL_AUTO_TEST=TRUE \\
-                           -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
-                           -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
-                           -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
-                           VERBOSE=1 \\
-                           ../../..; 
+                             -DWITH_examples=FALSE \\
+                             -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+                             -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
+                             -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
+                             -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
+                             VERBOSE=1 \\
+                             ../../..; 
 ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
-    chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
-    remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" >> "${ACTUAL_LOGFILE}" 2>&1
-                           
-    cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR}/installation.log.${HOST}"
-      
-  done
+      chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
+      remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" >> "${ACTUAL_LOGFILE}" 2>&1
+                             
+      cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR}/installation.log.${HOST}"
+        
+    done
+  else
+    error "There are no platform directories under ${CGAL_BINARY_DIR_BASE} to test! "
+  fi
       
 }
 
@@ -525,6 +547,15 @@ EOF
   cd "${CGAL_TEST_DIR}"
   log "${ACTUAL_LOGFILE}.${HOST}" "PUTTING RESULTS ON THE WEB"
   log "${ACTUAL_LOGFILE}.${HOST}" "RESULTS COLLECTED ${PLATFORM}-${HOST}"
+  
+  # If this file does not exist results collection failed. Fake a results so this fact is itself reported
+  if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
+    log "${ACTUAL_LOGFILE}.${HOST}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!" 
+    echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt" 
+    ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+    ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
+  fi
+  
   ${TAR} cf "test_results-${HOST}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}.tar"
   COMPILER=`echo -n $2 | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
@@ -568,8 +599,7 @@ run_test()
     if [ "${PLATFORMS}" = "all" ]; then
       PLATFORMS=""
       cd "${CGAL_BINARY_DIR_BASE}"
-      for PLATFORM in * 
-      do
+      for PLATFORM in * ; do
         if [ -d "${PLATFORM}" ]; then
           PLATFORMS="${PLATFORMS} ${PLATFORM}"
         fi
