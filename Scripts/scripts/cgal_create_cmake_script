@@ -44,6 +44,8 @@ create_cmake_script()
   
   echo "project( ${PROJECT} ) "
   echo
+  echo 'CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)'
+  echo
   echo 'set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)'
   echo
 
