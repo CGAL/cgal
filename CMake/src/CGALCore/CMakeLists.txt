@@ -47,8 +47,8 @@ else()
                        )
   
   if ( HAS_CFG_INTDIR )                      
-    add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND copy /Y "$(TargetPath)" "$(SolutionDir)lib" )
-    add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND if exist "$(TargetDir)$(TargetName).pdb" copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)lib" )
+    add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND copy /Y "$(TargetDir)CGAL-core*.lib" "$(SolutionDir)lib" )
+    add_custom_command(TARGET CGAL_CORE POST_BUILD COMMAND copy /Y "$(TargetDir)CGAL-core*.pdb" "$(SolutionDir)lib" )
   endif()
   
 endif()
