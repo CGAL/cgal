@@ -17,6 +17,7 @@
 
 #include <CGAL/basic.h>
 #include <boost/pool/pool_alloc.hpp>
+#include <boost/numeric/interval.hpp>
 
 #include <CGAL/Bbox_2.h>
 
