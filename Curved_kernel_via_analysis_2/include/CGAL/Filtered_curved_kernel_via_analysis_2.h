@@ -601,16 +601,9 @@ public:
         y_min = numeric_limits<double>::infinity();
         y_max = -numeric_limits<double>::infinity();
 
-
-
         update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MIN_END));
         update_y(y_min,y_max,y_interval_for_arc_end(arc,CGAL::ARR_MAX_END));
 
-
-        typename Curved_kernel_via_analysis_2::Construct_point_on_arc_2
-            construct_pt_on_arc(Base::_ckva()->
-                construct_point_on_arc_2_object());
-         
         if(!arc.is_vertical()) {
     
             std::vector<Xy_coordinate_2> pts;
@@ -629,20 +622,21 @@ public:
 
                 const Xy_coordinate_2& curr_xy = pts[i]; 
             
-                CERR("construct point on arc call: " << 
-                    curr_xy << "; arc = " << arc << "\n\n");
-                Point_2 curr_point = construct_pt_on_arc
-                   (curr_xy.x(), curr_xy.curve(), curr_xy.arcno(), arc);
-    
-                CERR("is_on_2 call: " << 
-                    curr_point << "; arc = " << arc << "\n\n");
-                if(Base::_ckva()->is_on_2_object()(curr_point, arc)) {
-                    CGAL::Bbox_2 point_bbox 
-                        = curr_point.xy().approximation_box_2(threshold());
-                    std::pair<double,double> y_iv 
-                        = std::make_pair(point_bbox.ymin(),point_bbox.ymax());
-                    update_y(y_min,y_max,y_iv);
-
+                CERR("check if arcnos match: " << 
+                     curr_xy << "; arc = " << arc << "\n\n"); 
+                // this is the simpler test, thus we evaluate it first
+                if (arc.arcno() == curr_xy.arcno()) {
+                    CERR("check if x-coordinate lies in interior: " << 
+                         curr_xy << "; arc = " << arc << "\n\n");
+                    // this is the more sophisticated test, thus second
+                    if (arc.is_in_x_range_interior(curr_xy.x())) {
+                        CERR("update y coordinates");
+                        CGAL::Bbox_2 point_bbox 
+                            = curr_xy.approximation_box_2(threshold());
+                        std::pair<double,double> y_iv = 
+                            std::make_pair(point_bbox.ymin(),point_bbox.ymax());
+                        update_y(y_min,y_max,y_iv);
+                    }
                 }
             }
         }
