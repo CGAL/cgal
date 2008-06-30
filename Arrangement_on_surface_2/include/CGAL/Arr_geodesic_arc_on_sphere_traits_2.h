@@ -1749,9 +1749,8 @@ public:
           Project project =
             (xz_plane) ? Traits::project_xz : Traits::project_yz;
 
-          Direction_3 normal = (xz_plane) ?
-            ((xsign == POSITIVE) ? normal1 : opposite_normal1) :
-            ((ysign == NEGATIVE) ? normal1 : opposite_normal1);
+          Direction_3 normal = (xc1.is_directed_right()) ?
+            normal1 : opposite_normal1;
           
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
