@@ -1261,7 +1261,7 @@ public:
                 cpa_2.status_line_for_x(p.x());
 
         CGAL_precondition(cpv_line.is_intersection());
-        int j = cpv_line.event_of_curve(arcno(p.x()), 0),
+        int j = cpv_line.event_of_curve(arcno(p.x()), curve()),
             mult = cpv_line.multiplicity_of_intersection(j);
             
         CGAL_postcondition(mult > 0);
@@ -1736,8 +1736,9 @@ protected:
                       kernel().construct_curve_pair_2_object()(pt.curve(), c);
                    
                 cpv_line = cpa_2.status_line_for_x(pt.x());
-                CGAL_precondition(cpv_line.event_of_curve(pt.arcno(), 0)
-                    == cpv_line.event_of_curve(arcno_on_c, 1));
+                CGAL_precondition(cpv_line.event_of_curve(pt.arcno(), 
+                                                          pt.curve())
+                    == cpv_line.event_of_curve(arcno_on_c, c));
             } 
             std::vector< Curve_analysis_2 > dummy[3]; 
             // ensure that curves are not decomposable
@@ -1942,8 +1943,8 @@ protected:
                     cpa_2.number_of_status_lines_with_event());
         
         CGAL::Sign res = 
-            CGAL::sign(cpv_line.event_of_curve(arcno(), 0) -
-                       cpv_line.event_of_curve(cv2.arcno(), 1));
+            CGAL::sign(cpv_line.event_of_curve(arcno(), curve()) -
+                       cpv_line.event_of_curve(cv2.arcno(), cv2.curve()));
         CERR("result: " << res << "\n");
         return res;
     }
@@ -2812,8 +2813,8 @@ protected:
                 mult = -1; // need to compute
             }
             
-            int pos = tmp.event_of_curve(arcno1, 0);
-            if (pos != tmp.event_of_curve(arcno2, 1)) {
+            int pos = tmp.event_of_curve(arcno1, f);
+            if (pos != tmp.event_of_curve(arcno2, g)) {
                 continue;
             }
             if (mult == -1) {

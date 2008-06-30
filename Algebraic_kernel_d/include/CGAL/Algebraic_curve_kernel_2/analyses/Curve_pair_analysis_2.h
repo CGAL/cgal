@@ -123,11 +123,11 @@ struct Curve_pair_analysis_2_rep {
     
     // DefaultConstructible
     Curve_pair_analysis_2_rep() :
-        c1_(), c2_(), _m_swapped(false) {
+        c1_(), c2_() {
     }
 
     Curve_pair_analysis_2_rep(Curve_analysis_2 c1, Curve_analysis_2 c2) :
-        c1_(c1), c2_(c2), _m_swapped(false) {
+        c1_(c1), c2_(c2) {
     }
     
     mutable boost::optional<std::vector<Polynomial_1> > 
@@ -182,8 +182,6 @@ struct Curve_pair_analysis_2_rep {
     typedef typename Curve_analysis_2::Integer Integer;
 
     mutable CGAL::CGALi::Shear_controller<Integer> shear_controller;
-
-    mutable bool _m_swapped;
 
     friend class Curve_pair_analysis_2<Self>;
 
@@ -1433,18 +1431,20 @@ public:
 
     //! Returns curve analysis for the cth curve
     Curve_analysis_2 curve_analysis(bool c) const {
-        if(is_swapped()) {
-            c = !c;
-        }
         return c ? this->ptr()->c2_ : this->ptr()->c1_;
     }
 
     size_type event_of_curve_analysis(size_type i, bool c) const {
-        if(is_swapped()) {
-            c=!c;
-        }
         Index_triple& triple = this->ptr()->index_triples[i];
         return c ? triple.ggy : triple.ffy;
+    }
+
+    size_type event_of_curve_analysis(size_type i, 
+                                      const Curve_analysis_2& c) const {
+        CGAL_assertion(c.id()==curve_analysis(false).id() ||
+                       c.id()==curve_analysis(true).id());
+        Index_triple& triple = this->ptr()->index_triples[i];
+        return (c.id()==curve_analysis(false).id()) ? triple.ffy : triple.ggy;
     }
 
     /*! 
@@ -1522,14 +1522,6 @@ public:
         return status_line_for_x(x);
     }
 
-
-    bool is_swapped() const {
-        return this->ptr()->_m_swapped;
-    }
-
-    void _set_swapped(bool swapped) const {
-        this->ptr()->_m_swapped = swapped;
-    }   
 
 private:
       

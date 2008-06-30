@@ -185,8 +185,8 @@ protected:
         template<class T1, class T2>
         std::pair<T1, T2> operator()(const std::pair<T1, T2>& p) const {
             
-            //if(p.first.id() > p.second.id())
-            //    return std::make_pair(p.second, p.first);
+            if(p.first.id() > p.second.id())
+                return std::make_pair(p.second, p.first);
             return p;
         }
     };
@@ -342,7 +342,6 @@ public:
                  
             Curve_pair_analysis_2 cpa_2 =
                 Self::curve_pair_cache()(std::make_pair(ca1, ca2));
-            //cpa_2._set_swapped(ca1.id() > ca2.id());
             return cpa_2;
         }
     };
@@ -929,7 +928,7 @@ public:
                     if(!cpv_line.is_intersection())
                         continue;
                     // obtain the y-position of j-th event of curve p
-                    k = cpv_line.event_of_curve(j, 0);
+                    k = cpv_line.event_of_curve(j, ca_2);
                     ipair = cpv_line.curves_at_event(k);
                     
                     // pick up only event comprised of both curve and its der
@@ -1039,7 +1038,7 @@ public:
             
             if(cpv_line.is_event() && cpv_line.is_intersection()) {
                 // get an y-position of the point r
-                int idx = cpv_line.event_of_curve(r.arcno(), 1);
+                int idx = cpv_line.event_of_curve(r.arcno(), r.curve());
                 std::pair<int, int> ipair =
                       cpv_line.curves_at_event(idx);
                 if(ipair.first != -1 && ipair.second != -1)

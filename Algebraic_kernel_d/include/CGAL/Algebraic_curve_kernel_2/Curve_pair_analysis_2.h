@@ -54,8 +54,8 @@ public:
 
     // constructs from two curve analysis instances
     Curve_pair_analysis_2_rep(const Curve_analysis_2& ca1,
-        const Curve_analysis_2& ca2) : _m_ca1(ca1), _m_ca2(ca2),
-            _m_swapped(false) {
+                              const Curve_analysis_2& ca2) 
+        : _m_ca1(ca1), _m_ca2(ca2) {
         
         _m_curve_pair = Internal_curve_pair_2(
             ca1._internal_curve(), ca2._internal_curve());
@@ -66,10 +66,6 @@ public:
 
     // temporarily this implementation is based on Curve_pair_2 from GAPS
     mutable Internal_curve_pair_2 _m_curve_pair;
-    
-    // indicates that curve analyses in a curve pair were swapped during
-    // precaching
-    mutable bool _m_swapped;
     
     // befriending the handle
     friend class Curve_pair_analysis_2<Algebraic_curve_kernel_2, Self>;
@@ -170,8 +166,6 @@ public:
      */
     Curve_analysis_2 curve_analysis(bool c) const
     { 
-        if(this->ptr()->_m_swapped)
-            c ^= 1;
         if(c == 0)
             return this->ptr()->_m_ca1;
         return this->ptr()->_m_ca2;
@@ -185,9 +179,6 @@ public:
         return this->ptr()->_m_curve_pair.num_events();
     }
 
-    bool is_swapped() const {
-        return this->ptr()->_m_swapped;
-    }
 
     /*! \brief
      *  given the i-th event of the curve pair this method returns the
@@ -201,10 +192,18 @@ public:
         CGAL_precondition(i >= 0 && i < number_of_status_lines_with_event());
         SoX::Index_triple triple = 
             this->ptr()->_m_curve_pair.event_indices(i);
-        if(this->ptr()->_m_swapped)
-            c ^= 1;
         return (c == 0 ? triple.ffy : triple.ggy);
     }
+    
+    size_type event_of_curve_analysis(size_type i, 
+                                      const Curve_analysis_2& c) const {
+        CGAL_assertion(c.id()==curve_analysis(false).id() ||
+                       c.id()==curve_analysis(true).id());
+        SoX::Index_triple triple = 
+            this->ptr()->_m_curve_pair.event_indices(i);
+        return (c.id()==curve_analysis(false).id()) ? triple.ffy : triple.ggy;
+    }
+
 
     //! Shortcut for coherent tests
     SoX::Index_triple event_indices(size_type i) const {
@@ -242,9 +241,6 @@ public:
                         typo = 2;
                     } else {
                         typo = (pair.first != -1 ? 0 : 1);
-                        if (this->ptr()->_m_swapped) {
-                            typo = 1 - typo;
-                        }
                     }
                /*std::cout << "[" << pair.first << "; " << pair.second << "] and "  <<
                       (int)(slice.arc_at_event(j).first) << "\n";*/
@@ -285,9 +281,6 @@ public:
                 for (int j = 0; j < slice.num_arcs(); j++) {
                     pair = line.curves_at_event(j);
                     typo = (pair.first != -1 ? 0 : 1);
-                    if (this->ptr()->_m_swapped) {
-                        typo = 1 - typo;
-                    }
                     CGAL_precondition(typo == slice.arc_at_interval(j));
                 }
         );
@@ -345,11 +338,6 @@ public:
         sline._set_x(x);
         return sline;
     }
-
-    // only set during initialization by ACK_2::Construct_curve_pair_2
-    void _set_swapped(bool swapped) const {
-        this->ptr()->_m_swapped = swapped;
-    }   
 
     //!@}
 protected:

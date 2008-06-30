@@ -470,8 +470,8 @@ private:
             
         typename Curve_pair_analysis_2::Status_line_1 vline =
             cpa_2.status_line_for_x(x());
-        return CGAL::sign(vline.event_of_curve(arcno(), 0) -
-                    vline.event_of_curve(q.arcno(), 1));
+        return CGAL::sign(vline.event_of_curve(arcno(), f) -
+                    vline.event_of_curve(q.arcno(), g));
     }
     
     //!@}

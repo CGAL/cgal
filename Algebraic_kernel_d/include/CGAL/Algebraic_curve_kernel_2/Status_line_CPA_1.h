@@ -251,6 +251,27 @@ public:
         return this->ptr()->_m_arcs.size();
     }
 
+
+    /*! \brief
+     *  returns the y-position of the k-th event of 
+     *  the curve in the sequence of events.
+     *
+     * Note that each event is formed by the 1st, 2nd, or both curves
+     *
+     * \pre 0 <= k < "number of arcs defined for curve c at x()"
+     */
+    size_type event_of_curve(size_type k, 
+                             const typename Curve_pair_analysis_2
+                                 ::Curve_analysis_2& c) const {
+        CGAL_assertion(c.id()==this->ptr()->_m_cpa.curve_analysis(false).id()||
+                       c.id()==this->ptr()->_m_cpa.curve_analysis(true).id());
+        bool b = (c.id()==this->ptr()->_m_cpa.curve_analysis(true).id());
+        return event_of_curve(k,b);
+    }
+
+
+
+
     /*! \brief
      *  returns the y-position of the k-th event of the c-th (0 or 1)
      * curve in the sequence of events.
@@ -261,9 +282,6 @@ public:
      */
     size_type event_of_curve(size_type k, bool c) const {
     
-        if(this->ptr()->_m_cpa.is_swapped()){ // reverse the curve order since
-            c ^= 1;    // polynomials are swapped in curve pair
-        }
         CGAL_precondition_msg(0 <= k &&
             k < static_cast<size_type>(this->ptr()->_m_arcno_to_pos[c].size()),
                 "Invalid arc number of the c-th curve specified");
@@ -298,10 +316,6 @@ public:
     {
         CGAL_precondition(0 <= j && j < number_of_events());
         const Arc_pair& arc = this->ptr()->_m_arcs[j];
-        if(this->ptr()->_m_cpa.is_swapped()) {
-            //std::cout << "swapped content\n";
-            return Arc_pair(arc.second, arc.first);
-        }
         return arc;
     }
 
