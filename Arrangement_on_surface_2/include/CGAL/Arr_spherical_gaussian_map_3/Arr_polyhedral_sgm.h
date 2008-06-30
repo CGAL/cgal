@@ -689,6 +689,18 @@ public:
     minkowski_sum(sgm1, sgm2);
   }
 
+  /*! Compute the minkowski sum of a range of objects of type
+   * Arr_polyhedral_sgm
+   */
+  template <typename SgmIterator, typename OverlayTraits>  
+  void minkowski_sum(SgmIterator begin, SgmIterator end,
+                     OverlayTraits & overlay_traits)
+  {
+    Arr_polyhedral_sgm * sgm1 = *begin++;
+    Arr_polyhedral_sgm * sgm2 = *begin;
+    minkowski_sum(sgm1, sgm2, overlay_traits);
+  }
+ 
   /*! Compute the Minkowski sum of 2 objects of type Arr_polyhedral_sgm
    * \param sgm1 the first Arr_polyhedral_sgm object
    * \param sgm2 the second Arr_polyhedral_sgm object
@@ -701,6 +713,15 @@ public:
     // print_stat();
   }
 
+  /*! Compute the Minkowski sum of 2 objects of type Arr_polyhedral_sgm
+   * \param sgm1 the first Arr_polyhedral_sgm object
+   * \param sgm2 the second Arr_polyhedral_sgm object
+   */
+  template <typename OverlayTraits>
+  void minkowski_sum(Arr_polyhedral_sgm * sgm1, Arr_polyhedral_sgm * sgm2,
+                     OverlayTraits & overlay_traits)
+  { CGAL::overlay(*sgm1, *sgm2, *this, overlay_traits); }
+  
   /*! Obtain the number of (primal) vertices */
   unsigned int number_of_vertices() const
   { return (static_cast<const Base*>(this))->number_of_faces(); }
