@@ -352,7 +352,7 @@ public:
      * Analyses the curve given by the polynomial. If the parameter is 
      * ommitted, the polynomial <tt>f=1</tt> is taken as standard argument.
      */
-    Curve_analysis_2(Polynomial_2 f) 
+    explicit Curve_analysis_2(Polynomial_2 f) 
         throw(CGALi::Zero_resultant_exception<Polynomial_2>)
         : Base(Rep(f,CGAL::CGALi::SHEAR_STRATEGY))
     {
