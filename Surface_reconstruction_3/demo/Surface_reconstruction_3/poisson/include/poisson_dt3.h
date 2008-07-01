@@ -244,7 +244,7 @@ public:
         v++)
     { 
       Normal n = v->normal();
-      if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
+	  if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() == 0)
       {
         Point a = v->point();
         Point b = a + c * n.get_vector();
@@ -254,6 +254,22 @@ public:
     }
     ::glEnd();
     
+	/*::glColor3ub(0,0,255);
+    ::glBegin(GL_LINES);
+    for(Finite_vertices_iterator v = finite_vertices_begin();
+        v != finite_vertices_end();
+        v++)
+    { 
+      Normal n = v->normal();
+	  if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() != 0)
+      {
+        Point a = v->point();
+        Point b = a + c * n.get_vector();
+        glVertex3d(a.x(),a.y(),a.z());
+        glVertex3d(b.x(),b.y(),b.z());
+      }
+    }
+    ::glEnd();*/
     // Draw *non-oriented* normals
     ::glColor3ub(255,0,0);
     ::glBegin(GL_LINES);

@@ -29,6 +29,7 @@ public:
 	double m_dr_shell_size;
 	double m_dr_sizing;
 	double m_contouring_value; // Poisson contouring value (TEST)
+	double m_lambda;
 	double m_projection_error; // APSS projection error
 	unsigned int m_number_of_neighbours; // K-nearest neighbours
 	double m_min_cameras_cone_angle; // min angle of camera's cone (degrees) 

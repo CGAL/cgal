@@ -19,6 +19,7 @@ CDialogOptions::CDialogOptions(CWnd* pParent /*=NULL*/)
 	, m_dr_shell_size(0)
 	, m_dr_sizing(0)
 	, m_contouring_value(0)
+	, m_lambda(0)
 	, m_projection_error(0)
     , m_number_of_neighbours(0)
     , m_threshold_percent_avg_knn_sq_dst(0)
@@ -46,6 +47,7 @@ void CDialogOptions::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX,IDC_EDIT_DR_SIZING,m_dr_sizing);
 	DDX_Text(pDX,IDC_EDIT_DR_MAXV,m_dr_max_vertices);
 	DDX_Text(pDX,IDC_EDIT_CONTOURING_VALUE,m_contouring_value);
+	DDX_Text(pDX,IDC_EDIT_LAMBDA,m_lambda);
 
 	DDX_Text(pDX,IDC_EDIT_APSS_ERROR,m_projection_error);
 

@@ -110,15 +110,16 @@ private:
     double m_sm_radius; // upper bound of Delaunay balls radii
     double m_sm_distance; // upper bound of distance to surface
     double m_sm_error_bound; // error bound to stop dichotomy
-
+    
     // Poisson options
     double m_dr_sizing; // 3 Delaunay refinements options
     double m_dr_shell_size;
     unsigned int m_dr_max_vertices;
     double m_contouring_value; // Poisson contouring value (TEST)
+    double m_lambda;  //laplacian options
 
     // APSS options
-	double m_projection_error; // APSS projection error
+    double m_projection_error; // APSS projection error
 
     // K-nearest neighbours options
     unsigned int m_number_of_neighbours;
@@ -182,8 +183,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	afx_msg void OnOneStepPoissonReconstructionWithNormalizedDivergence();
     afx_msg void OnReconstructionDelaunayRefinement();
     afx_msg void OnReconstructionPoisson();
+	afx_msg void OnReconstructionPoissonNormalized();
     afx_msg void OnAlgorithmsRefineInShell();
     afx_msg void OnReconstructionPoissonSurfaceMeshing();
     afx_msg void OnEditOptions();
@@ -229,6 +232,10 @@ public:
     afx_msg void OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI);
     afx_msg void OnModeAPSS();
     afx_msg void OnUpdateModeAPSS(CCmdUI *pCmdUI);
+	afx_msg void OnCalculateAverageSpacing();
+	afx_msg void OnExtrapolateNormalsUsingGaussianKernel();
+public:
+	afx_msg void OnReconstructionSaveas();
 };
 
 

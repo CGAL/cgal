@@ -24,13 +24,14 @@
 #include <queue>
 #include <list>
 #include <algorithm>
-
+#include <cmath>
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
 #include <CGAL/k_nearest_neighbor.h>
 #include <CGAL/centroid.h>
 #include <CGAL/surface_reconstruction_assertions.h>
+#include <CGAL/remove_outliers_wrt_avg_knn_sq_distance_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -294,10 +295,11 @@ public:
     // Smooth normals field.
     // Commented out as it shrinks the reconstructed model.
     //extrapolate_normals();
-
+    
     // Solve Poisson equation
+    double lambda = 0.1;
     double duration_assembly, duration_factorization, duration_solve;
-    bool success = solve_poisson(&duration_assembly, &duration_factorization, &duration_solve);
+    bool success = solve_poisson(lambda, &duration_assembly, &duration_factorization, &duration_solve);
 
     // Shift and orient f() such that:
     // - f() = 0 on the input points,
@@ -306,7 +308,70 @@ public:
 
     return success;
   }
+  
+  //Calculate and store average spacing at each input point
+  void average_spacing_avg_knn_sq_distance_3()
+  {
+	   Finite_vertices_iterator v;
+	   int number_vertices = 0;
+		for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+		number_vertices++;
+    for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+	{
+	  FT sq_distance = 0.0;
+	  int counter = 0;
+	// std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
+	  //  vertices.push(v);
+	std::list<Vertex_handle> v_neighbors;	
+	m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
+	typename std::list<Vertex_handle>::iterator it;
+	for(it = v_neighbors.begin();
+			it != v_neighbors.end();
+			it++)
+	{
+		sq_distance = sq_distance +  distance(*it,v)*distance(*it,v);
+		counter++;
+	}
 
+		/*while(!vertices.empty() && counter < 0.001 * number_vertices )
+		{
+			Vertex_handle v_cur = vertices.top();
+			vertices.pop();
+			// get incident_vertices
+			std::vector<Vertex_handle> v_neighbors;
+			sq_distance = sq_distance + distance(v_cur,v)* distance(v_cur,v);
+			counter++;
+			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
+			std::vector<Vertex_handle>::iterator it;
+			for(it = v_neighbors.begin();
+			it != v_neighbors.end();
+			it++)
+			{
+				Vertex_handle nv = *it;
+				int tag = nv->tag();
+				int index = v_cur->index();
+				if (tag != index) 
+				{
+					vertices.push(nv);
+					nv->tag() = index;
+				}
+			}
+		*/	
+		
+	v->average_spacing() = std::sqrt(sq_distance/counter);
+
+	//}
+	/*for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+			v->tag() = -1;*/
+	}
+  }
+	  
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
   /// Steiner points is set to zero.
@@ -515,9 +580,89 @@ public:
     }
   }
 
+   FT gaussian_function( FT sigma , FT distance)
+   {
+	   FT answer = (1 / std::sqrt(2 * 3.14)) * std::exp(-1 * distance * distance /(2 * sigma * sigma));
+	   return answer;
+   }
+
+
+  /// Extrapolate the normals field:
+
+  int extrapolate_normals_using_gaussian_kernel()
+  {
+	  int counter = 0;
+	Finite_vertices_iterator v;
+    for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)	
+	{
+    if(v->type() == Triangulation::INPUT)
+	{
+		FT limit_distance =  v->average_spacing();
+		std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
+	    vertices.push(v);
+		
+		while(!vertices.empty())
+		{
+			Vertex_handle v_cur = vertices.top();
+			vertices.pop();
+			FT distance_cur = distance(v,v_cur);
+			if (distance_cur > limit_distance) 
+				continue;
+			if (v_cur->type() != Triangulation::INPUT)
+			{	
+				FT gf = gaussian_function(limit_distance,distance_cur);
+				v_cur->normal() = Normal(v_cur->normal().get_vector() 
+								  + gf * v->normal().get_vector() , true) ;
+
+			}
+			// get incident_vertices
+			std::vector<Vertex_handle> v_neighbors;
+			
+			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
+			std::vector<Vertex_handle>::iterator it;
+			for(it = v_neighbors.begin();
+			it != v_neighbors.end();
+			it++)
+			{
+				Vertex_handle nv = *it;
+				int tag = nv->tag();
+				int index = v_cur->index();
+				if (tag != index) 
+				{
+					vertices.push(nv);
+					nv->tag() = index;
+				}
+			}
+		}
+	}
+
+	}
+	
+ for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)	
+	{
+		if(v->type() != Triangulation::INPUT )
+		{
+			FT sq_norm = std::sqrt(v->normal().get_vector()*v->normal().get_vector());
+			 if(sq_norm > 0.0) 
+			 {
+				 v->normal() = Normal(v->normal().get_vector() / sq_norm , true);
+			     counter++; 
+			}
+			//v->type() = Triangulation::INPUT;
+		}
+    }
+   return counter;
+  }
+
+
   /// Poisson reconstruction.
   /// Return false on error.
-  bool solve_poisson(double* duration_assembly,
+  bool solve_poisson(double lambda,
+                     double* duration_assembly,
                      double* duration_factorization,
                      double* duration_solve)
   {
@@ -533,7 +678,7 @@ public:
     // at least one vertex must be constrained
     if(nb_variables == m_dt.number_of_vertices())
     {
-      constrain_one_vertex_on_convex_hull();
+   //  constrain_input_vertex_on_convex_hull();
       nb_variables = m_dt.index_unconstrained_vertices();
     }
 
@@ -550,7 +695,7 @@ public:
       if(!v->constrained())
       {
         B[v->index()] = div(v); // rhs -> divergent
-        assemble_poisson_row(solver,v,B);
+        assemble_poisson_row(solver,v,B,lambda);
       }
     }
 
@@ -599,6 +744,126 @@ public:
 
     return true;
   }
+
+
+	bool solve_poisson_normalized(double lambda,
+	                              double* duration_assembly,
+                                  double* duration_factorization,
+                                  double* duration_solve)
+  {
+    double time_init = clock();
+
+    *duration_assembly = 0.0;
+    *duration_factorization = 0.0;
+    *duration_solve = 0.0;
+
+    // get #variables
+    unsigned int nb_variables = m_dt.index_unconstrained_vertices();
+
+    // at least one vertex must be constrained
+    if(nb_variables == m_dt.number_of_vertices())
+    {
+    //constrain_input_vertex_on_convex_hull();
+      nb_variables = m_dt.index_unconstrained_vertices();
+    }
+
+    // Assemble linear system
+    Taucs_solver solver;
+    std::vector<double> X(nb_variables);
+    std::vector<double> B(nb_variables);
+
+    Finite_vertices_iterator v;
+    for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+    {
+      if(!v->constrained())
+      {
+        B[v->index()] = div_normalized(v); // rhs -> divergent
+        assemble_poisson_row(solver,v,B,lambda);
+      }
+    }
+
+    *duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
+
+    /*
+    time_init = clock();
+    if(!solver.solve_conjugate_gradient(B,X,10000,1e-15))
+      return false;
+    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    */
+
+    // Choleschy factorization M = L L^T
+    time_init = clock();
+    if(!solver.factorize_ooc())
+      return false;
+    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+
+    // direct solve by forward and backward substitution
+    time_init = clock();
+    if(!solver.solve_ooc(B,X))
+      return false;
+    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+
+    /*
+    // Choleschy factorization M = L L^T
+    time_init = clock();
+    if(!solver.factorize(true))
+      return false;
+    *duration_factorization = (clock() - time_init)/CLOCKS_PER_SEC;
+
+    // direct solve by forward and backward substitution
+    time_init = clock();
+    if(!solver.solve(B,X,1))
+      return false;
+    *duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
+    */
+
+    // set values to vertices
+    unsigned int index = 0;
+    for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+      if(!v->constrained())
+        v->f() = X[index++];
+
+    return true;
+  }
+
+  void SaveAsMeshFile()
+  {
+    std::ofstream os("function.mesh");
+    Finite_vertices_iterator v;
+    int counter = 0;
+    for(v = m_dt.finite_vertices_begin();
+        v != m_dt.finite_vertices_end();
+        v++)
+  	{
+  		Point& p = v->point();
+  		if (std::abs(f(p) - 0) < 0.001)  
+  		  counter++;
+  	}
+    os << "MeshVersionFormatted 1\n"
+       << "Dimension\n"
+       << "3 \n\n"
+       << "Vertices\n"
+       << counter << " \n";
+    for(v = m_dt.finite_vertices_begin();
+      v != m_dt.finite_vertices_end();
+      v++)
+    {
+      Point& p = v->point();
+      if (std::abs(f(p) - 0) < 0.01)  
+        os << p.x() << " " << p.y() << " " << p.z() << " " << 0 << std::endl;
+    }
+
+    os << "\n" << "End\n";
+
+    os.close();
+  }
+	
+
+
 
   /// Shift and orient the implicit function such that:
   /// - the implicit function = 0 for points / f() = contouring_value,
@@ -914,6 +1179,18 @@ private:
     v->f() = value;
   }
 
+  void constrain_input_vertex_on_convex_hull(const FT value = 0.0)
+  {
+    for(Finite_vertices_iterator v = m_dt.finite_vertices_begin();
+      v != m_dt.finite_vertices_end();
+      v++)
+	  if (v->type() == Triangulation::INPUT)
+	  {
+		  v->constrained() = true;
+		  v->f() = value;
+	  }
+  }
+
   // divergent
   FT div(Vertex_handle v)
   {
@@ -955,6 +1232,83 @@ private:
     return div;
   }
 
+ FT div_normalized(Vertex_handle v)
+  {
+    std::list<Cell_handle> cells;
+    m_dt.incident_cells(v,std::back_inserter(cells));
+    if(cells.size() == 0)
+      return 0.0;
+	FT length = 100000;
+	int counter = 0;
+    FT div = 0.0;
+    typename std::list<Cell_handle>::iterator it;
+    for(it = cells.begin();
+        it != cells.end();
+        it++)
+    {
+      Cell_handle cell = *it;
+      if(m_dt.is_infinite(cell))
+        continue;
+
+      // compute average normal per cell
+      Vector n = cell_normal(cell);
+
+      // zero normal - no need to compute anything else
+      if(n == CGAL::NULL_VECTOR)
+        continue;
+
+      // compute n'
+      int index = cell->index(v);
+	  const Point& x = cell->vertex(index)->point();
+      const Point& a = cell->vertex((index+1)%4)->point();
+      const Point& b = cell->vertex((index+2)%4)->point();
+      const Point& c = cell->vertex((index+3)%4)->point();
+      Vector nn = (index%2==0) ? CGAL::cross_product(b-a,c-a) : CGAL::cross_product(c-a,b-a);
+	  nn = nn / std::sqrt(nn*nn); // normalize
+	  Vector p = a - x;
+      Vector q = b - x;
+	  Vector r = c - x;
+	  FT p_n = std::sqrt(p*p);
+	  FT q_n = std::sqrt(q*q);
+	  FT r_n = std::sqrt(r*r);
+	  FT solid_angle = p*(CGAL::cross_product(q,r));
+	  solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));	
+	  Triangle face(a,b,c);
+      FT area = std::sqrt(face.squared_area());
+	  length = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
+	  counter++;	
+		div += n * nn * area * 3 / length ;
+     }
+    return div;
+  }
+
+ FT mesh_size(Vertex_handle v) {
+	  std::list<Cell_handle> cells;
+	  int counter = 0;
+	  FT length_total = 100000.0;
+    m_dt.incident_cells(v,std::back_inserter(cells));
+    if(cells.size() == 0)
+      return 0.0;
+	    typename std::list<Cell_handle>::iterator it;
+    for(it = cells.begin();
+        it != cells.end();
+        it++)
+    {
+      Cell_handle cell = *it;
+      if(m_dt.is_infinite(cell))
+        continue;	
+	  int index = cell->index(v);
+	  const Point& x = cell->vertex(index)->point();
+      const Point& a = cell->vertex((index+1)%4)->point();
+      const Point& b = cell->vertex((index+2)%4)->point();
+      const Point& c = cell->vertex((index+3)%4)->point();
+     if (length_total > std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c))) 
+	  length_total = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
+	  counter++;
+	  }
+	 return length_total / 3 ;
+  }
+
   Vector cell_normal(Cell_handle cell)
   {
     const Vector& n0 = cell->vertex(0)->normal().get_vector();
@@ -982,6 +1336,67 @@ private:
     Vector primal = pj - pi;
     FT len_primal = std::sqrt(primal * primal);
     return area_voronoi_face(edge) / len_primal;
+  }
+
+ FT area_normal_ratio(Cell_handle cell, Edge& edge)
+ {
+      Vertex_handle vi = cell->vertex(edge.second);
+      Vertex_handle vj = cell->vertex(edge.third);
+      int index1 = cell->index(vi);
+      int index2 = cell->index(vj);
+	  Point& p_vi = cell->vertex(index1)->point();
+	  Point& p_vj = cell->vertex(index2)->point();
+	  Point& a = cell->vertex(index1)->point();
+	  Point& c = cell->vertex(index1)->point(); 
+	  if ((index1+1)%4 == index2)
+	  {
+	   a = cell->vertex((index1+2)%4)->point();
+       c = cell->vertex((index1+3)%4)->point();
+	  }
+	  if ((index1+2)%4 == index2)
+	  {
+	   a = cell->vertex((index1+1)%4)->point();
+       c = cell->vertex((index1+3)%4)->point();
+	  }
+	  if ((index1+3)%4 == index2)
+	  {
+	   a = cell->vertex((index1+1)%4)->point();
+       c = cell->vertex((index1+2)%4)->point();
+	  }
+      Triangle face(p_vi,a,c);
+      FT area = std::sqrt(face.squared_area());
+      
+      Vector x = p_vj - a;
+      Vector n1 = CGAL::cross_product(a-c,p_vi-c);
+      FT sq_norm1  = std::sqrt(n1*n1);
+      FT normal = std::abs((x*n1)/sq_norm1);
+      
+      Vector n2 = CGAL::cross_product(a-c,p_vj-c);
+      FT sq_norm2  = std::sqrt(n2*n2);
+      FT cos = std::abs(n1 * n2 / (sq_norm1 * sq_norm2));
+      
+      
+      return (area * cos / normal);
+ }
+
+
+
+ FT cotan_FEM(Edge& edge)
+  {
+     FT answer = 0.0;
+     Cell_circulator circ = m_dt.incident_cells(edge);
+     Cell_circulator done = circ; 
+     do
+     {
+      Cell_handle cell = circ;
+      if(!m_dt.is_infinite(cell))
+       {  
+          answer = answer + area_normal_ratio(cell,edge);
+       }
+      else return cotan_geometric(edge);
+     }
+     while ( circ != done);
+    return answer;
   }
 
   // spin around edge
@@ -1107,7 +1522,8 @@ private:
 
   void assemble_poisson_row(Taucs_solver& solver,
                             Vertex_handle vi,
-                            std::vector<double>& B)
+                            std::vector<double>& B,
+                            double lambda)
   {
     // assemble new row
     solver.begin_row();
@@ -1126,6 +1542,7 @@ private:
       // get corresponding edge
       Edge edge = sorted_edge(vi,vj);
 
+     // double cij = cotan_FEM(edge);
       double cij = cotan_geometric(edge);
       if(vj->constrained())
         B[vi->index()] -= cij * vj->f(); // change rhs
@@ -1137,8 +1554,11 @@ private:
     }
 
     // diagonal coefficient
-    solver.add_value(vi->index(),diagonal);
-
+    if (vi->type() == Triangulation::INPUT)
+      solver.add_value(vi->index(),diagonal + lambda) ;
+    else 
+      solver.add_value(vi->index(),diagonal);
+      
     // end matrix row
     solver.end_row();
   }

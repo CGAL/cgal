@@ -55,6 +55,7 @@ IMPLEMENT_DYNCREATE(CPoissonDoc, CDocument)
 BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
+	ON_COMMAND(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnReconstructionPoissonNormalized)
     ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
     ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
@@ -94,12 +95,16 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_OUTLIERS_REMOVAL_WRT_AVG_KNN_SQ_DIST, OnUpdateOutliersRemovalWrtAvgKnnSqDist)
     ON_COMMAND(ID_ANALYSIS_AVERAGE_SPACING, OnAnalysisAverageSpacing)
     ON_COMMAND(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnOneStepPoissonReconstruction)
+	ON_COMMAND(ID_RECONSTRUCTION_ONE_STEP_NORMALIZED, OnOneStepPoissonReconstructionWithNormalizedDivergence)
     ON_UPDATE_COMMAND_UI(ID_ONE_STEP_POISSON_RECONSTRUCTION, OnUpdateOneStepPoissonReconstruction)
     ON_UPDATE_COMMAND_UI(ID_ANALYSIS_AVERAGE_SPACING, OnUpdateAnalysisAverageSpacing)
     ON_COMMAND(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnReconstructionApssReconstruction)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_APSS_RECONSTRUCTION, OnUpdateReconstructionApssReconstruction)
     ON_COMMAND(ID_MODE_APSS, OnModeAPSS)
     ON_UPDATE_COMMAND_UI(ID_MODE_APSS, OnUpdateModeAPSS)
+	ON_COMMAND(ID_RECONSTRUCTION_SAVEAS, &CPoissonDoc::OnReconstructionSaveas)
+	ON_COMMAND(ID_STEP_CALCULATEAVERAGESPACING, OnCalculateAverageSpacing)
+	ON_COMMAND(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS,OnExtrapolateNormalsUsingGaussianKernel)
 END_MESSAGE_MAP()
 
 
@@ -119,7 +124,7 @@ CPoissonDoc::CPoissonDoc()
   // Surface mesher options
   m_sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
   m_sm_radius = 0.1; // as suggested by LR
-  m_sm_distance = 0.005;
+  m_sm_distance = 0.002; // AG: was 0.005
   m_sm_error_bound = 1e-3;
 
   // Poisson options
@@ -127,6 +132,7 @@ CPoissonDoc::CPoissonDoc()
   m_dr_sizing = 0.5 * m_dr_shell_size;
   m_dr_max_vertices = (unsigned int)5e6;
   m_contouring_value = 0.0; // Poisson contouring value; should be 0 (TEST)
+  m_lambda = 0.1;
 
   // APSS options
   m_projection_error = 3.16e-4 /* sqrt(1e-7) */; // APSS projection error
@@ -531,6 +537,7 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_dr_shell_size = m_dr_shell_size;
   dlg.m_dr_max_vertices = m_dr_max_vertices;
   dlg.m_contouring_value = m_contouring_value;
+  dlg.m_lambda = m_lambda;
 
   dlg.m_projection_error = m_projection_error;
 
@@ -549,6 +556,7 @@ void CPoissonDoc::OnEditOptions()
     m_dr_shell_size = dlg.m_dr_shell_size;
     m_dr_max_vertices = dlg.m_dr_max_vertices;
     m_contouring_value = dlg.m_contouring_value;
+	m_lambda = dlg.m_lambda;
 
     m_projection_error = dlg.m_projection_error;
 
@@ -795,9 +803,40 @@ void CPoissonDoc::OnReconstructionPoisson()
   // - (*m_poisson_function)() = 0 on the input points,
   // - (*m_poisson_function)() < 0 inside the surface.
   double duration_assembly, duration_factorization, duration_solve;
-  m_poisson_solved = m_poisson_function->solve_poisson(&duration_assembly,
+  m_poisson_solved = m_poisson_function->solve_poisson(m_lambda,
+                                                       &duration_assembly,
                                                        &duration_factorization,
                                                        &duration_solve);
+  m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
+  m_contouring_value = 0.0;
+
+  double total_duration = duration(init);
+  if (!m_poisson_solved)
+      status_message("Solve Poisson equation...solver failed");
+  else
+      status_message("Solve Poisson equation...done (%lf s)", total_duration);
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnReconstructionPoissonNormalized()
+{
+  CGAL_assertion(m_poisson_dt != NULL);
+  CGAL_assertion(m_poisson_function != NULL);
+
+  BeginWaitCursor();
+  status_message("Solve Poisson equation with normalized divergence...");
+  double init = clock();
+
+  // Solve Poisson equation such that:
+  // - (*m_poisson_function)() = 0 on the input points,
+  // - (*m_poisson_function)() < 0 inside the surface.
+  double duration_assembly, duration_factorization, duration_solve;
+  m_poisson_solved = m_poisson_function->solve_poisson_normalized(m_lambda,
+                                                                  &duration_assembly,
+                                                                  &duration_factorization,
+                                                                  &duration_solve);
   m_poisson_function->set_contouring_value(m_poisson_function->median_value_at_input_vertices());
   m_contouring_value = 0.0;
 
@@ -1048,6 +1087,25 @@ void CPoissonDoc::OnUpdateOneStepPoissonReconstruction(CCmdUI *pCmdUI)
   OnUpdateCreatePoissonTriangulation(pCmdUI);
 }
 
+void CPoissonDoc::OnOneStepPoissonReconstructionWithNormalizedDivergence()
+{
+  BeginWaitCursor();
+  status_message("1-step Poisson reconstruction with normalized divergence...");
+  double init = clock();
+
+  OnCreatePoissonTriangulation();
+  //OnCalculateAverageSpacing();
+  OnReconstructionDelaunayRefinement();
+  //OnExtrapolateNormalsUsingGaussianKernel(); // TO TEST
+  OnReconstructionPoissonNormalized();
+  OnReconstructionPoissonSurfaceMeshing();
+
+  status_message("1-step Poisson reconstruction with normalized divergence...done (%lf s)",duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
 // Remove vertices / cameras cone's angle is low
 void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
 {
@@ -1222,3 +1280,37 @@ void CPoissonDoc::OnUpdateModeAPSS(CCmdUI *pCmdUI)
   pCmdUI->SetCheck(m_edit_mode == APSS);
 }
 
+
+void CPoissonDoc::OnReconstructionSaveas()
+{
+	m_poisson_function->SaveAsMeshFile();
+}
+
+void CPoissonDoc::OnCalculateAverageSpacing()
+{
+	BeginWaitCursor();
+  status_message("Calculating average spacing");
+  double init = clock();
+
+  // todo: use mutating version when ready
+  Point_set output;
+  m_poisson_function->average_spacing_avg_knn_sq_distance_3();
+  status_message("Average spacing calculated...took %f seconds",duration(init));
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
+{
+	BeginWaitCursor();
+  status_message("Extrapolating using gaussian kernels");
+  double init = clock();
+
+  // todo: use mutating version when ready
+	int a = m_poisson_function->extrapolate_normals_using_gaussian_kernel();
+	status_message("Extrapolation of normals done... %d normals inserted",a);
+	
+   update_status();
+   UpdateAllViews(NULL);
+   EndWaitCursor();
+}

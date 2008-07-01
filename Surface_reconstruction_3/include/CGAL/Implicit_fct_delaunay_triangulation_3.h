@@ -137,6 +137,8 @@ private:
   bool m_constrained;   // is vertex constrained?
   unsigned char m_type; // INPUT or STEINER
   unsigned int m_index; // index in matrix
+  double m_average_spacing;   // average spacing
+  int m_tag;
 
 // Public methods
 public:
@@ -148,6 +150,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
+	m_average_spacing = 0.0;
+	m_tag = -1;
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(const Point& p)
@@ -157,6 +161,9 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
+	m_average_spacing = 0.0;
+	m_tag = -1;
+	
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(const Point& p, Cell_handle c)
@@ -166,6 +173,8 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
+	m_average_spacing = 0.0;
+	m_tag = -1;
   }
 
   Implicit_fct_delaunay_triangulation_vertex_base_3(Cell_handle c)
@@ -175,15 +184,28 @@ public:
     m_type = 0;
     m_constrained = false;
     m_index = 0;
+	m_average_spacing = 0.0;
+	tag = -1;
   }
 
   /// is vertex constrained?
   bool  constrained() const { return m_constrained; }
   bool& constrained()       { return m_constrained; }
 
+  //tag
+  int tag() const { return m_tag; }
+  int& tag()       { return m_tag; }
+
+
   /// Get/set the value of the implicit function.
   FT  f() const { return m_f; }
   FT& f()       { return m_f; }
+
+	
+  /// Get/set the value of the implicit function.
+  double  average_spacing() const { return m_average_spacing; }
+  double& average_spacing()       { return m_average_spacing; }
+
 
   /// Get/set the type = INPUT or STEINER.
   unsigned char  type() const { return m_type; }
