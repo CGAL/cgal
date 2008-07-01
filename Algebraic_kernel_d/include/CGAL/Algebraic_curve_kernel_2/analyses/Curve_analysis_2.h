@@ -1766,7 +1766,8 @@ std::ostream& operator<< (
         typename Curve::Y_coordinate_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
-            CGAL::Arr_parameter_space loc;
+      	    // Assignment to prevent compiler warning
+	    CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
             CGAL_assertion_code(bool is_valid = )
                 CGAL::assign(loc, curr_asym_info_obj);
             CGAL_assertion(is_valid);
@@ -1804,8 +1805,9 @@ std::ostream& operator<< (
         typename Curve::Y_coordinate_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
-            CGAL::Arr_parameter_space loc;
-            CGAL_assertion_code(bool is_valid = )
+	    // Assignment to prevent compiler warning
+	    CGAL::Arr_parameter_space loc = CGAL::ARR_LEFT_BOUNDARY;
+	    CGAL_assertion_code(bool is_valid = )
                 CGAL::assign(loc, curr_asym_info_obj);
             CGAL_assertion(is_valid);
             if(loc == CGAL::ARR_TOP_BOUNDARY) {
