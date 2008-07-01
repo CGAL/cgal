@@ -23,8 +23,11 @@
 
 #include <queue>
 #include <list>
+#include <vector>
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+
 #include <CGAL/Implicit_fct_delaunay_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/taucs_solver.h>
@@ -295,7 +298,7 @@ public:
     // Smooth normals field.
     // Commented out as it shrinks the reconstructed model.
     //extrapolate_normals();
-    
+
     // Solve Poisson equation
     double lambda = 0.1;
     double duration_assembly, duration_factorization, duration_solve;
@@ -308,7 +311,7 @@ public:
 
     return success;
   }
-  
+
   //Calculate and store average spacing at each input point
   void average_spacing_avg_knn_sq_distance_3()
   {
@@ -326,7 +329,7 @@ public:
 	  int counter = 0;
 	// std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
 	  //  vertices.push(v);
-	std::list<Vertex_handle> v_neighbors;	
+	std::list<Vertex_handle> v_neighbors;
 	m_dt.incident_vertices(v,std::back_inserter(v_neighbors));
 	typename std::list<Vertex_handle>::iterator it;
 	for(it = v_neighbors.begin();
@@ -354,14 +357,14 @@ public:
 				Vertex_handle nv = *it;
 				int tag = nv->tag();
 				int index = v_cur->index();
-				if (tag != index) 
+				if (tag != index)
 				{
 					vertices.push(nv);
 					nv->tag() = index;
 				}
 			}
-		*/	
-		
+		*/
+
 	v->average_spacing() = std::sqrt(sq_distance/counter);
 
 	//}
@@ -371,7 +374,7 @@ public:
 			v->tag() = -1;*/
 	}
   }
-	  
+
   /// Delaunay refinement (break bad tetrahedra, where
   /// bad means badly shaped or too big). The normal of
   /// Steiner points is set to zero.
@@ -595,33 +598,33 @@ public:
 	Finite_vertices_iterator v;
     for(v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
-        v++)	
+        v++)
 	{
     if(v->type() == Triangulation::INPUT)
 	{
 		FT limit_distance =  v->average_spacing();
 		std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
 	    vertices.push(v);
-		
+
 		while(!vertices.empty())
 		{
 			Vertex_handle v_cur = vertices.top();
 			vertices.pop();
 			FT distance_cur = distance(v,v_cur);
-			if (distance_cur > limit_distance) 
+			if (distance_cur > limit_distance)
 				continue;
 			if (v_cur->type() != Triangulation::INPUT)
-			{	
+			{
 				FT gf = gaussian_function(limit_distance,distance_cur);
-				v_cur->normal() = Normal(v_cur->normal().get_vector() 
+				v_cur->normal() = Normal(v_cur->normal().get_vector()
 								  + gf * v->normal().get_vector() , true) ;
 
 			}
 			// get incident_vertices
 			std::vector<Vertex_handle> v_neighbors;
-			
+
 			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
-			std::vector<Vertex_handle>::iterator it;
+			typename std::vector<Vertex_handle>::iterator it;
 			for(it = v_neighbors.begin();
 			it != v_neighbors.end();
 			it++)
@@ -629,7 +632,7 @@ public:
 				Vertex_handle nv = *it;
 				int tag = nv->tag();
 				int index = v_cur->index();
-				if (tag != index) 
+				if (tag != index)
 				{
 					vertices.push(nv);
 					nv->tag() = index;
@@ -639,18 +642,18 @@ public:
 	}
 
 	}
-	
+
  for(v = m_dt.finite_vertices_begin();
         v != m_dt.finite_vertices_end();
-        v++)	
+        v++)
 	{
 		if(v->type() != Triangulation::INPUT )
 		{
 			FT sq_norm = std::sqrt(v->normal().get_vector()*v->normal().get_vector());
-			 if(sq_norm > 0.0) 
+			 if(sq_norm > 0.0)
 			 {
 				 v->normal() = Normal(v->normal().get_vector() / sq_norm , true);
-			     counter++; 
+			     counter++;
 			}
 			//v->type() = Triangulation::INPUT;
 		}
@@ -840,7 +843,7 @@ public:
         v++)
   	{
   		Point& p = v->point();
-  		if (std::abs(f(p) - 0) < 0.001)  
+  		if (std::abs(f(p) - 0) < 0.001)
   		  counter++;
   	}
     os << "MeshVersionFormatted 1\n"
@@ -853,7 +856,7 @@ public:
       v++)
     {
       Point& p = v->point();
-      if (std::abs(f(p) - 0) < 0.01)  
+      if (std::abs(f(p) - 0) < 0.01)
         os << p.x() << " " << p.y() << " " << p.z() << " " << 0 << std::endl;
     }
 
@@ -861,7 +864,7 @@ public:
 
     os.close();
   }
-	
+
 
 
 
@@ -1272,11 +1275,11 @@ private:
 	  FT q_n = std::sqrt(q*q);
 	  FT r_n = std::sqrt(r*r);
 	  FT solid_angle = p*(CGAL::cross_product(q,r));
-	  solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));	
+	  solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));
 	  Triangle face(a,b,c);
       FT area = std::sqrt(face.squared_area());
 	  length = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
-	  counter++;	
+	  counter++;
 		div += n * nn * area * 3 / length ;
      }
     return div;
@@ -1296,13 +1299,13 @@ private:
     {
       Cell_handle cell = *it;
       if(m_dt.is_infinite(cell))
-        continue;	
+        continue;
 	  int index = cell->index(v);
 	  const Point& x = cell->vertex(index)->point();
       const Point& a = cell->vertex((index+1)%4)->point();
       const Point& b = cell->vertex((index+2)%4)->point();
       const Point& c = cell->vertex((index+3)%4)->point();
-     if (length_total > std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c))) 
+     if (length_total > std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c)))
 	  length_total = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
 	  counter++;
 	  }
@@ -1347,7 +1350,7 @@ private:
 	  Point& p_vi = cell->vertex(index1)->point();
 	  Point& p_vj = cell->vertex(index2)->point();
 	  Point& a = cell->vertex(index1)->point();
-	  Point& c = cell->vertex(index1)->point(); 
+	  Point& c = cell->vertex(index1)->point();
 	  if ((index1+1)%4 == index2)
 	  {
 	   a = cell->vertex((index1+2)%4)->point();
@@ -1365,17 +1368,17 @@ private:
 	  }
       Triangle face(p_vi,a,c);
       FT area = std::sqrt(face.squared_area());
-      
+
       Vector x = p_vj - a;
       Vector n1 = CGAL::cross_product(a-c,p_vi-c);
       FT sq_norm1  = std::sqrt(n1*n1);
       FT normal = std::abs((x*n1)/sq_norm1);
-      
+
       Vector n2 = CGAL::cross_product(a-c,p_vj-c);
       FT sq_norm2  = std::sqrt(n2*n2);
       FT cos = std::abs(n1 * n2 / (sq_norm1 * sq_norm2));
-      
-      
+
+
       return (area * cos / normal);
  }
 
@@ -1385,12 +1388,12 @@ private:
   {
      FT answer = 0.0;
      Cell_circulator circ = m_dt.incident_cells(edge);
-     Cell_circulator done = circ; 
+     Cell_circulator done = circ;
      do
      {
       Cell_handle cell = circ;
       if(!m_dt.is_infinite(cell))
-       {  
+       {
           answer = answer + area_normal_ratio(cell,edge);
        }
       else return cotan_geometric(edge);
@@ -1556,9 +1559,9 @@ private:
     // diagonal coefficient
     if (vi->type() == Triangulation::INPUT)
       solver.add_value(vi->index(),diagonal + lambda) ;
-    else 
+    else
       solver.add_value(vi->index(),diagonal);
-      
+
     // end matrix row
     solver.end_row();
   }
