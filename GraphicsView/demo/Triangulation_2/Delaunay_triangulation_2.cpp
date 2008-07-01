@@ -1,34 +1,28 @@
 #include <fstream>
 
+// CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
+#include <CGAL/point_generators_2.h>
+
+// Qt headers
 #include <QtGui>
 #include <QString>
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
-#include <CGAL/point_generators_2.h>
 
+// GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
 #include "TriangulationMovingPoint.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
   
+// the two base classes
 #include "ui_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
-
-// forward declarations
-namespace CGAL {
-  namespace Qt {
-    template <class Delaunay> class TriangulationGraphicsItem;
-    template <class Delaunay> class VoronoiGraphicsItem;
-    template <class Delaunay> class TriangulationMovingPoint;
-    template <class Delaunay> class TriangulationCircumcircle;
-    template <class K> class GraphicsViewPolylineInput;
-  } // namespace Qt
-} // namespace CGAL
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -60,31 +54,29 @@ public slots:
 
   void on_actionMovingPoint_toggled(bool checked);
 
+  void on_actionCircumcenter_toggled(bool checked);
+
   void on_actionShowDelaunay_toggled(bool checked);
 
   void on_actionShowVoronoi_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
   
-  void on_actionCircumcenter_toggled(bool checked);
+  void on_actionInsertRandomPoints_triggered();
+
+  void on_actionLoadPoints_triggered();
+
+  void on_actionSavePoints_triggered();
 
   void on_actionClear_triggered();
 
   void on_actionRecenter_triggered();
 
-  void on_actionLoadConstraints_triggered();
-
-  void loadConstraints(QString);
-
-  void on_actionSaveConstraints_triggered();
-
-  void saveConstraints(QString);
-
-  void on_actionInsertRandomPoints_triggered();
 
 signals:
   void changed();
 };
+
 
 MainWindow::MainWindow()
   : DemosMainWindow()
@@ -124,7 +116,7 @@ MainWindow::MainWindow()
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+		   this, SIGNAL(changed()));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -149,13 +141,13 @@ MainWindow::MainWindow()
   // Setup the scene and the view
   //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  scene.setSceneRect(0,0, 100, 100);
+  scene.setSceneRect(-100, -100, 100, 100);
   this->graphicsView->setScene(&scene);
 
   // Uncomment the following line to get antialiasing by default.
 //   actionUse_Antialiasing->setChecked(true);
 
-  // Turn the vertical axe upside down
+  // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
                                                       
   // The navigation adds zooming and translation functionality to the
@@ -167,6 +159,7 @@ MainWindow::MainWindow()
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
 }
+
 
 void
 MainWindow::processInput(CGAL::Object o)
@@ -180,6 +173,14 @@ MainWindow::processInput(CGAL::Object o)
   emit(changed());
 }
 
+
+/* 
+ *  Qt Automatic Connections
+ *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ * 
+ *  setupUi(this) generates connections to the slots named
+ *  "on_<action_name>_<signal_name>"
+ */
 void
 MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
@@ -204,18 +205,6 @@ MainWindow::on_actionMovingPoint_toggled(bool checked)
 
 
 void
-MainWindow::on_actionShowDelaunay_toggled(bool checked)
-{
-  dgi->setDrawEdges(checked);
-}
-
-void
-MainWindow::on_actionShowVoronoi_toggled(bool checked)
-{
-  vgi->setVisible(checked);
-}
-
-void
 MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
   if(checked){
@@ -231,69 +220,26 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 
 
 void
+MainWindow::on_actionShowDelaunay_toggled(bool checked)
+{
+  dgi->setDrawEdges(checked);
+}
+
+
+void
+MainWindow::on_actionShowVoronoi_toggled(bool checked)
+{
+  vgi->setVisible(checked);
+}
+
+
+void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
   emit(changed());
 }
 
-
-void
-MainWindow::on_actionLoadConstraints_triggered()
-{
-  QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Constraint File"),
-						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
-  if(! fileName.isEmpty()){
-    loadConstraints(fileName);
-  }
-}
-
-
-void
-MainWindow::loadConstraints(QString fileName)
-{
-  std::ifstream ifs(qPrintable(fileName));
-
-  K::Point_2 p;
-  while(ifs >> p) {
-    dt.insert(p);
-  }
-
-  actionRecenter->trigger();
-  emit(changed());
-}
-
-void
-MainWindow::on_actionRecenter_triggered()
-{
-  this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
-}
-
-void
-MainWindow::on_actionSaveConstraints_triggered()
-{
-  QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save Constraints"),
-						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
-  if(! fileName.isEmpty()){
-    saveConstraints(fileName);
-  }
-}
-
-
-void
-MainWindow::saveConstraints(QString fileName)
-{
-  QMessageBox::warning(this,
-                       tr("saveConstraints"),
-                       tr("Not implemented!"));
-}
 
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
@@ -315,18 +261,68 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   emit(changed());
 }
 
+
+void
+MainWindow::on_actionLoadPoints_triggered()
+{
+  QString fileName = QFileDialog::getOpenFileName(this,
+						  tr("Open Points file"),
+						  ".");
+  if(! fileName.isEmpty()){
+    std::ifstream ifs(qPrintable(fileName));
+
+    K::Point_2 p;
+    std::vector<K::Point_2> points;
+    while(ifs >> p) {
+      points.push_back(p);
+    }
+    dt.insert(points.begin(), points.end());
+
+    actionRecenter->trigger();
+    emit(changed());
+  }
+}
+
+
+void
+MainWindow::on_actionSavePoints_triggered()
+{
+  QString fileName = QFileDialog::getSaveFileName(this,
+						  tr("Save points"),
+						  ".");
+  if(! fileName.isEmpty()){
+    std::ofstream ofs(qPrintable(fileName));
+    for(Delaunay::Finite_vertices_iterator 
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+        vit!= end; ++vit)
+    {
+      ofs << vit->point() << std::endl;
+    }
+  }
+}
+
+
+void
+MainWindow::on_actionRecenter_triggered()
+{
+  this->graphicsView->setSceneRect(dgi->boundingRect());
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+}
+
+
 #include "Delaunay_triangulation_2.moc"
 
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
 
-  // import resources from libCGALQt4
+  // Import resources from libCGALQt4.
+  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
   Q_INIT_RESOURCE(File);
   Q_INIT_RESOURCE(Triangulation_2);
   Q_INIT_RESOURCE(Input);
   Q_INIT_RESOURCE(Logos);
-
 
   MainWindow mainWindow;
   mainWindow.show();

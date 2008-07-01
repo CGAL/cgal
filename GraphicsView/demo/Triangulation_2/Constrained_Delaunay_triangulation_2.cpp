@@ -23,16 +23,6 @@
 #include "ui_Constrained_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
-// forward declarations
-namespace CGAL {
-  namespace Qt {
-    template <class Delaunay> class ConstrainedTriangulationGraphicsItem;
-    template <class Delaunay> class TriangulationMovingPoint;
-    template <class Delaunay> class TriangulationCircumcircle;
-    template <class K> class GraphicsViewPolylineInput;
-  } // namespace Qt
-} // namespace CGAL
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
@@ -41,7 +31,7 @@ typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
 
 
-typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> Delaunay;
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -50,14 +40,14 @@ class MainWindow :
   Q_OBJECT
   
 private:  
-  Delaunay dt; 
+  CDT cdt; 
   QGraphicsScene scene;  
 
-  CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay> * dgi;
+  CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT> * dgi;
 
-  CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
+  CGAL::Qt::TriangulationMovingPoint<CDT> * mp;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
-  CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
+  CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
 public:
   MainWindow();
 
@@ -66,16 +56,16 @@ private:
   void insert_polyline(Iterator b, Iterator e)
   {
     Point_2 p, q;
-    Delaunay::Vertex_handle vh, wh;
+    CDT::Vertex_handle vh, wh;
     Iterator it = b;
-    vh = dt.insert(*it);
+    vh = cdt.insert(*it);
     p = *it;
     ++it;
     for(; it != e; ++it){
       q = *it;
       if(p != q){
-        wh = dt.insert(*it);
-        dt.insert_constraint(vh,wh);
+        wh = cdt.insert(*it);
+        cdt.insert_constraint(vh,wh);
         vh = wh;
         p = q;
       } else {
@@ -121,8 +111,8 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Delaunay triangulation
-  dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<Delaunay>(&dt);
+  // Add a GraphicItem for the CDT triangulation
+  dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT>(&cdt);
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
@@ -138,14 +128,14 @@ MainWindow::MainWindow()
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
     
-  mp = new CGAL::Qt::TriangulationMovingPoint<Delaunay>(&dt, this);
-  // TriangulationMovingPoint<Delaunay> generates an empty Object() each
+  mp = new CGAL::Qt::TriangulationMovingPoint<CDT>(&cdt, this);
+  // TriangulationMovingPoint<CDT> generates an empty Object() each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+		   this, SIGNAL(changed()));
 
-  tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
+  tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   
 
@@ -168,13 +158,13 @@ MainWindow::MainWindow()
   // Setup the scene and the view
   //
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
-  scene.setSceneRect(0,0, 100, 100);
+  scene.setSceneRect(-100, -100, 100, 100);
   this->graphicsView->setScene(&scene);
 
   // Uncomment the following line to get antialiasing by default.
 //   actionUse_Antialiasing->setChecked(true);
 
-  // Turn the vertical axe upside down
+  // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
                                                       
   // The navigation adds zooming and translation functionality to the
@@ -187,13 +177,14 @@ MainWindow::MainWindow()
   this->addAboutCGAL();
 }
 
+
 void
 MainWindow::processInput(CGAL::Object o)
 {
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if(points.size() == 1) {
-      dt.insert(points.front());
+      cdt.insert(points.front());
     }
     else {
       insert_polyline(points.begin(), points.end());
@@ -202,6 +193,14 @@ MainWindow::processInput(CGAL::Object o)
   emit(changed());
 }
 
+
+/* 
+ *  Qt Automatic Connections
+ *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ * 
+ *  setupUi(this) generates connections to the slots named
+ *  "on_<action_name>_<signal_name>"
+ */
 void
 MainWindow::on_actionInsertPolyline_toggled(bool checked)
 {
@@ -250,7 +249,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 void
 MainWindow::on_actionClear_triggered()
 {
-  dt.clear();
+  cdt.clear();
   emit(changed());
 }
 
@@ -285,12 +284,14 @@ MainWindow::loadConstraints(QString fileName)
   emit(changed());
 }
 
+
 void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
   this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
 }
+
 
 void
 MainWindow::on_actionSaveConstraints_triggered()
@@ -314,6 +315,7 @@ MainWindow::saveConstraints(QString fileName)
                        tr("Not implemented!"));
 }
 
+
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
@@ -330,7 +332,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   for(int i = 0; i < number_of_points; ++i){
     points.push_back(*g++);
   }
-  dt.insert(points.begin(), points.end());
+  cdt.insert(points.begin(), points.end());
   emit(changed());
 }
 
@@ -340,7 +342,8 @@ int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
 
-  // import resources from libCGALQt4
+  // Import resources from libCGALQt4.
+  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
   Q_INIT_RESOURCE(File);
   Q_INIT_RESOURCE(Triangulation_2);
   Q_INIT_RESOURCE(Input);

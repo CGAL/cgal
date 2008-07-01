@@ -265,7 +265,7 @@
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Load Constraints</string>
+    <string>&amp;Load Constraints...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+L</string>
@@ -277,7 +277,7 @@
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Save Constraints</string>
+    <string>&amp;Save Constraints...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
@@ -301,7 +301,7 @@
   <action name="actionRecenter" >
    <property name="icon" >
     <iconset resource="../icons/Input.qrc" >
-     <normaloff>:/cgal/Input/zoom-best-fit.svg</normaloff>:/cgal/Input/zoom-best-fit.svg</iconset>
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text" >
     <string>Re&amp;center the viewport</string>

@@ -74,8 +74,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionClear" />
-   <addaction name="actionLoadConstraints" />
-   <addaction name="actionSaveConstraints" />
+   <addaction name="actionLoadPoints" />
+   <addaction name="actionSavePoints" />
   </widget>
   <widget class="QToolBar" name="toolBar" >
    <property name="geometry" >
@@ -117,8 +117,8 @@
     </property>
     <addaction name="separator" />
     <addaction name="actionClear" />
-    <addaction name="actionLoadConstraints" />
-    <addaction name="actionSaveConstraints" />
+    <addaction name="actionLoadPoints" />
+    <addaction name="actionSavePoints" />
     <addaction name="separator" />
     <addaction name="actionExit" />
    </widget>
@@ -256,25 +256,25 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionLoadConstraints" >
+  <action name="actionLoadPoints" >
    <property name="icon" >
     <iconset resource="../icons/File.qrc" >
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Load Constraints</string>
+    <string>&amp;Load Points...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="actionSaveConstraints" >
+  <action name="actionSavePoints" >
    <property name="icon" >
     <iconset resource="../icons/File.qrc" >
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Save Constraints</string>
+    <string>&amp;Save Points...</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+S</string>
@@ -298,7 +298,7 @@
   <action name="actionRecenter" >
    <property name="icon" >
     <iconset resource="../icons/Input.qrc" >
-     <normaloff>:/cgal/Input/zoom-best-fit.svg</normaloff>:/cgal/Input/zoom-best-fit.svg</iconset>
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text" >
     <string>Re&amp;center the viewport</string>
