@@ -12,19 +12,12 @@
 //
 // ============================================================================
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 1
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
-#endif
-
-
-#ifndef BITSTREAM_USES_E08_TREE
-#define BITSTREAM_USES_E08_TREE 0
+#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
+#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
 #endif
 
 #include <CGAL/basic.h>
@@ -228,7 +221,7 @@ void test_routine() {
     Poly_int1 f;
 
     ss >> f;
-#if BITSTREAM_USES_E08_TREE
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
     Bitstream_tree tree(1,f.begin(),f.end(),
                         typename Bitstream_tree::Monomial_basis_tag());
 #else

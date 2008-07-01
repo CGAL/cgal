@@ -11,31 +11,24 @@
 //
 // ============================================================================
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 0
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_STATIC_SEED
+#define CGAL_ACK_STATIC_SEED 0
 #endif
 
-
-#ifndef AcX_STATIC_SEED
-#define AcX_STATIC_SEED 0
+#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
+#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
 #endif
 
-#ifndef BITSTREAM_USES_E08_TREE
-#define BITSTREAM_USES_E08_TREE 0
+#ifndef CGAL_ACK_USE_FILTERED_CKvA_2
+#define CGAL_ACK_USE_FILTERED_CKvA_2 0
 #endif
 
-#ifndef AcX_USE_CGAL_FILTERED_CKvA_2
-#define AcX_USE_CGAL_FILTERED_CKvA_2 0
-#endif
-
-#ifndef AcX_ONE_SEGMENT_PER_CURVE
-#define AcX_ONE_SEGMENT_PER_CURVE 0
+#ifndef CGAL_ACK_ONE_SEGMENT_PER_CURVE
+#define CGAL_ACK_ONE_SEGMENT_PER_CURVE 0
 #endif
 
 #ifndef CGAL_ACK_USE_CORE
@@ -45,35 +38,28 @@
 #define CGAL_ACK_USE_LEDA 0
 #endif
 
-#ifndef AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 1
+#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
 #endif
 
 #include <CGAL/basic.h>
 
-#ifndef NiX_USE_QUADRATIC_REFINEMENT 
-#ifndef NiX_USE_QUADRATIC_REFINEMENT_BFI
-#define NiX_REFINEMENTS_BEFORE_GCD 16
-#endif
+#ifndef CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY
+#define CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY 0
 #endif
 
-#ifndef AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY
-#define AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY 0
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
 #endif
 
-#ifndef AcX_SECOND_RUN_OF_SWEEP
-#define AcX_SECOND_RUN_OF_SWEEP 0
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD 11
 #endif
 
-#ifndef AcX_USE_MAPLE_FOR_MODULAR_RESULTANT
-#define AcX_USE_MAPLE_FOR_MODULAR_RESULTANT 0
-#endif
-#ifndef AcX_SPEED_UP_FOR_REGULAR_CURVES
-#define AcX_SPEED_UP_FOR_REGULAR_CURVES 0
-#endif
-
-#ifndef AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL
-#define AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL 999
+// Allows to switch off the fast method for Status_line_CPA_1
+// if multiplicity is zero or one (not recommended to set this to one)
+#ifndef ACK_CGAL_NO_ARC_FLIP
+#define ACK_CGAL_NO_ARC_FLIP 0
 #endif
 
 #ifndef AcX_NO_ARC_FLIP
@@ -82,18 +68,6 @@
 
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
-
-#if AcX_USE_GLOBAL_TIMERS_ARR
-#include<AcX/macros.h>
-#ifndef AcX_USE_GLOBAL_TIMERS
-#define AcX_USE_GLOBAL_TIMERS 1
-#endif
-AcX_TIMERS
-#endif
-
-#ifndef AcX_COEFFICIENT
-#define AcX_COEFFICIENT Integer
-#endif
 
 #include <sstream>
 #include <fstream>
@@ -108,7 +82,7 @@ AcX_TIMERS
 #include <CGAL/Algebraic_curve_kernel_2.h>
 
 
-#if AcX_USE_CGAL_FILTERED_CKvA_2
+#if CGAL_ACK_USE_FILTERED_CKvA_2
 #include <CGAL/Filtered_algebraic_curve_kernel_2.h>
 #include <CGAL/Filtered_curved_kernel_via_analysis_2.h>
 #else
@@ -169,7 +143,7 @@ int main(int argc, char** argv) {
     typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
         Algebraic_kernel_1;
 
-#if !AcX_USE_CGAL_FILTERED_CKvA_2
+#if !CGAL_ACK_USE_FILTERED_CKvA_2
     typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_1>
         Algebraic_curve_kernel_2;
 #else
@@ -241,7 +215,7 @@ int main(int argc, char** argv) {
     CGAL::Timer overall_timer;
     overall_timer.start();
     
-#if !AcX_USE_CGAL_FILTERED_CKvA_2
+#if !CGAL_ACK_USE_FILTERED_CKvA_2
     typedef CGAL::Curved_kernel_via_analysis_2< Algebraic_curve_kernel_2 > 
         Curved_kernel_2; 
 #else
@@ -258,13 +232,6 @@ int main(int argc, char** argv) {
 
     std::vector<CGAL::Object> sweepable_objects;  
 
-#if AcX_ONE_SEGMENT_PER_CURVE
-#if AcX_STATIC_SEED
-    srand48(AcX_STATIC_SEED);
-#else
-    srand48(time(NULL));
-#endif
-#endif
     for(std::vector<Polynomial_2>::iterator it=curves.begin();
         it!=curves.end();it++) {
         Curved_kernel_2::Curve_kernel_2::Construct_curve_2 construct_curve =
@@ -272,7 +239,7 @@ int main(int argc, char** argv) {
         
         Curved_kernel_2::Curve_kernel_2::Curve_analysis_2 curr_curve = 
             construct_curve(*it);
-#if AcX_ONE_SEGMENT_PER_CURVE
+#if CGAL_ACK_ONE_SEGMENT_PER_CURVE
 #warning Warning, only one segment per curve is chosen
         std::vector<CGAL::Object> curr_sweepable_objects;  
         make_x_monotone(curr_curve,std::back_inserter(curr_sweepable_objects));

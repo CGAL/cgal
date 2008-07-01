@@ -18,7 +18,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 
-#if BITSTREAM_USES_E08_TREE
+// NOTE: If this flag is set, you need EXACUS!
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
 #include <NiX/Bitstream_descartes_E08_tree.h>
 #else
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
@@ -108,7 +109,7 @@ CGAL_BEGIN_NAMESPACE
             typedef Generic_descartes_bfs_rep<Bitstream_descartes_rndl_tree_traits> Self;
       
             //! The type of the used Bitstream Descartes tree
-#if BITSTREAM_USES_E08_TREE
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
             typedef NiX::Bitstream_descartes_E08_tree
                 <Bitstream_descartes_rndl_tree_traits> 
                 Bitstream_tree;
@@ -158,7 +159,7 @@ CGAL_BEGIN_NAMESPACE
                     //AcX_DSTREAM("f: " << f << std::endl);
                     if(f.degree()>0) {
                         bitstream_tree 
-#if BITSTREAM_USES_E08_TREE
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
                             = Bitstream_tree(-log_div,
                                              f.begin(),
                                              f.end(),
@@ -326,7 +327,7 @@ CGAL_BEGIN_NAMESPACE
                                 upper_bound_log2_abs_approximator 
                                 = traits.upper_bound_log2_abs_approximator_object();
                             //AcX_DSTREAM("Fujiwara bound.." << p <<  std::endl);
-#if BITSTREAM_USES_E08_TREE
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
                             log_div = -NiX::Fujiwara_root_bound_log(p.begin(),
                                                                     p.end(),
                                                                     lower_bound_log2_abs,
@@ -1669,7 +1670,7 @@ CGAL_BEGIN_NAMESPACE
         Self;
     
         // Type for the Bitstream Descartes tree
-#if BITSTREAM_USES_E08_TREE
+#if CGAL_ACK_BITSTREAM_USES_E08_TREE
         typedef NiX::Bitstream_descartes_E08_tree
         <Bitstream_descartes_rndl_tree_traits> 
         Bitstream_tree;

@@ -15,14 +15,12 @@
 #define CGAL_ACK_USE_EXACUS 0
 #endif
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 0
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_DEBUG_PRINT
+#define CGAL_ACK_DEBUG_PRINT std::cout
 #endif
 
 #ifndef DO_SQRT_EXTENSION_TESTS

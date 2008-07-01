@@ -11,29 +11,22 @@
 //
 // ============================================================================
 
-
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 1
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_DEBUG_PRINT
+#define CGAL_ACK_DEBUG_PRINT std::cout
 #endif
-
 
 #include <CGAL/basic.h>
 
-#ifndef AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
-#define AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
+#ifndef CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
+#define CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
 #endif
 
-#ifndef AcX_USE_MAPLE_FOR_MODULAR_RESULTANT
-#define AcX_USE_MAPLE_FOR_MODULAR_RESULTANT 0
-#endif
-#ifndef AcX_SPEED_UP_FOR_REGULAR_CURVES
-#define AcX_SPEED_UP_FOR_REGULAR_CURVES 0
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
 #endif
 
 #ifdef CGAL_HAVE_CORE

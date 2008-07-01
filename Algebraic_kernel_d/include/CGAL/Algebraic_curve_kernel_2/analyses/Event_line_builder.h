@@ -22,7 +22,6 @@
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/analyses/subresultants.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
 
@@ -147,15 +146,22 @@ public:
             Bitstream_descartes bit_des 
                 = construct_bitstream_descartes(alpha,k,root_of_resultant,mult,
                                                 arcs_left,arcs_right);
-
-            //	AcX_DSTREAM("bitstream descartes constructed" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "bitstream descartes constructed" 
+                                 << std::endl;
+#endif
+*/
 	
             int n = bit_des.number_of_real_roots();
 
             int c = this->get_index_of_multiple_root(bit_des);
 
-            //AcX_DSTREAM <<"n and c: " << n << " " << c << std::endl);
-
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "n and c: " << n << " " << c << std::endl;
+#endif
+*/
             int arcs_to_candidate_left=arcs_left-n+1;
             int arcs_to_candidate_right=arcs_right-n+1;
 	
@@ -178,7 +184,9 @@ public:
                 if(c==-1 || k==0) {
                     event_flag=false;
                 } else {
-                    AcX_DSTREAM("Ev check..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "Ev check..." << std::flush;
+#endif
                     Polynomial_2 fx 
                         = typename Polynomial_traits_2::Derivative() (f,0);
                     Polynomial_2 fy(f);
@@ -211,7 +219,7 @@ public:
             vl._set_number_of_branches_approaching_infinity
                 (std::make_pair(0,0),std::make_pair(0,0));
 
-#if !AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+#if !CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
             if(alpha.is_root_of(polynomial.lcoeff())) {
                 int n = polynomial.degree();
                 CGAL_assertion(! alpha.is_root_of(polynomial[n-1]));
@@ -237,8 +245,10 @@ public:
             return vl;
         }
         catch(CGAL::CGALi::Non_generic_position_exception err) {
-            AcX_DSTREAM("Detected non-generic position for alpha=" 
-                        << CGAL::to_double(alpha) << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Detected non-generic position for alpha=" 
+                                 << CGAL::to_double(alpha) << std::endl;
+#endif
             throw CGAL::CGALi::Non_generic_position_exception();
         }
       
@@ -316,24 +326,37 @@ protected:
 
         typedef std::vector<VT> A_vector;
         A_vector spec_stha(0);
-
-        //AcX_DSTREAM(seq_size << std::endl);
-
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << seq_size << std::endl;
+#endif
+*/
         CGAL_assertion(spec_stha.size()==0);
-        //AcX_DSTREAM(seq_size << " elements to consider" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << seq_size << " elements to consider" 
+                             << std::endl;
+#endif
+*/
         int start_i=first_elements_zero;
         for(int i=0;i<start_i;i++) {
             spec_stha.push_back(VT(0));
         }
-        AcX_DSTREAM("mk.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "mk.." << std::flush;
+#endif
+*/
         Input_iterator seq_it = seq_begin;
         std::advance(seq_it,start_i);
         for(int i=start_i;i< seq_size ;i++,seq_it++ ) {
-            //std::cout << "Seq_it : " << *seq_it<< std::endl;
-            //AcX_DSTREAM(spec_stha.size() << " " << i << std::endl);
-            //AcX_DSTREAM("Now: " << i << "th stha" << std::flush);
-
-            //AcX_DSTREAM("\nTry interval arithmetic.." << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << spec_stha.size() << " " << i << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "Now: " << i << "th stha" << std::flush;
+            CGAL_ACK_DEBUG_PRINT << "\nTry interval arithmetic.." << std::endl;
+#endif
+*/
             CGAL::Sign ia_try
                 =estimate_sign_at(alpha_ref,*seq_it,
                                   Boundary(1,AcX_PRECISION));
@@ -344,63 +367,106 @@ protected:
                 if(! k_fixed) {
                     k=i;
                     k_fixed=true;
-                    //AcX_DSTREAM("m.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "m.." << std::flush;
+#endif
                 }
                 spec_stha.push_back(ia_try);
-                //AcX_DSTREAM("successful" << std::endl);	  
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "successful" << std::endl;
+#endif	  
+*/
                 continue;
             }
-            //AcX_DSTREAM("no success" << std::endl);
-	
-
-            //AcX_DSTREAM("Is root of..." << std::flush);
-            //AcX_DSTREAM("s." << std::flush);
-
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "no success" << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "Is root of..." << std::flush;
+            CGAL_ACK_DEBUG_PRINT << "s." << std::flush;
+#endif
+*/
             bool root_of = CGAL::CGALi::is_root_of(alpha,*seq_it);
-
-            //AcX_DSTREAM("done " << ((root_of) ? "true" : "false") << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done " 
+                                 << ((root_of) ? "true" : "false") 
+                                 << std::endl;
+#endif
+*/
             if(root_of) {
-                //AcX_DSTREAM("Is zero" << std::endl);
 
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Is zero" << std::endl;
+#endif
+*/
                 spec_stha.push_back(VT(0));
             } 
             else {
-                //AcX_DSTREAM("is nonzero.." << std::flush);
+/*                
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "is nonzero.." << std::flush;
+#endif
+*/
                 if(! k_fixed) {
                     k=i;
                     k_fixed=true;
-                    //AcX_DSTREAM("m.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "m.." << std::flush;
+#endif
+*/
                 }
-                //::CGAL::set_ascii_mode(AcX_DSTREAM);
-                //AcX_DSTREAM("Stha: " << (*seq_it) << std::endl);
-	  
-	  
+/*
+#if CGAL_ACK_DEBUG_FLAG                
+                ::CGAL::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
+                CGAL_ACK_DEBUG_PRINT << "Stha: " << (*seq_it) << std::endl;
+#endif
+*/
                 VT beta
                     =estimate_sign_at(alpha_ref,*seq_it,Boundary(0));
-	  
-
-                //VT beta = seq[i].evaluate(alg_alpha);
-	  
-                //AcX_DSTREAM("Value: " << beta << std::endl);
+                
+/*          
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Value: " << beta << std::endl;
+#endif
+*/
                 spec_stha.push_back(beta);
-                //AcX_DSTREAM(" " << spec_stha.size() << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << " " << spec_stha.size() << std::endl;
+#endif
+*/
             }
         }
-        /*
-          AcX_DSTREAM("--------" << std::endl);
-          AcX_DSTREAM(" " << spec_stha.size() << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+          CGAL_ACK_DEBUG_PRINT << "--------" << std::endl;
+          CGAL_ACK_DEBUG_PRINT << " " << spec_stha.size() << std::endl;
           for(int j=0;j<(int)spec_stha.size();j++) {
-          AcX_DSTREAM(j << ": " << spec_stha[j] << std::endl);
+              CGAL_ACK_DEBUG_PRINT << j << ": " << spec_stha[j] << std::endl;
           }
-          AcX_DSTREAM("--------" << std::endl);
-        */        
+          CGAL_ACK_DEBUG_PRINT << "--------" << std::endl;
+#endif
+*/        
 
         typename A_vector::iterator it=spec_stha.begin() + k;
-        //AcX_DSTREAM("k=" << k << ", Compute m..." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG        
+        CGAL_ACK_DEBUG_PRINT << "k=" << k << ", Compute m..." << std::flush;
+#endif
+*/
         m = CGAL::CGALi::stha_count_number_of_real_roots<VT>
             (it,spec_stha.end());
-        //AcX_DSTREAM("done" << std::endl);
-        AcX_DSTREAM("k=" << k << " m=" << m << ".."<< std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
+*/
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "k=" << k << " m=" << m << ".."<< std::flush;
+#endif
 
         return std::make_pair(m,k);
 
@@ -428,7 +494,7 @@ protected:
       
 
         bool result;
-#if !AcX_USE_NO_REDUCTION_MODULO_RESULTANT
+#if !CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT
         bool general = !alpha.is_rational();
       
         if(general) {
@@ -437,52 +503,90 @@ protected:
                 q_rat(q.begin(),q.end());
             Poly_rat_1 modulus(alpha.polynomial().begin(),
                               alpha.polynomial().end());
-            //AcX_DSTREAM("Mod: " << modulus << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Mod: " << modulus << std::endl;
+#endif
+*/
             p_rat=this->mod(p_rat,modulus);
             q_rat=this->mod(q_rat,modulus);
 
             int n = h.degree();
             // Create the powers of p and q mod modulus
-            //AcX_DSTREAM("precomp powers.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "precomp powers.." << std::flush;
+#endif
+*/
             std::vector<Poly_rat_1> p_powers(n+1),q_powers(n+1);
             p_powers[0]=Poly_rat_1(Boundary(1));
             q_powers[0]=Poly_rat_1(Boundary(1));
             Poly_rat_1 intermediate;
             for(int i=1;i<=n;i++) {
-                //	  AcX_DSTREAM(i << ": mult.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << i << ": mult.." << std::flush;
+#endif
+*/
                 intermediate=p_powers[i-1]*p_rat;
-                //AcX_DSTREAM("mod.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mod.." << std::flush;
+#endif
+*/
                 p_powers[i]=this->mod(intermediate,modulus);
-                //AcX_DSTREAM("simpl.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "simpl.." << std::flush;
+#endif
+*/
                 p_powers[i].simplify_coefficients();
-                //CGAL_assertion(this->mod(CGAL::ipower(p_rat,i),modulus)==p_powers[i]);
-                //AcX_DSTREAM("mult.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mult.." << std::flush;
+#endif
+*/
                 intermediate=q_powers[i-1]*q_rat;
-                //AcX_DSTREAM("mod.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mod.." << std::flush;
+#endif
+*/
                 q_powers[i]=this->mod(intermediate,modulus);
-                //AcX_DSTREAM("simpl.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "simpl.." << std::flush;
+#endif
+*/
                 q_powers[i].simplify_coefficients();
-                //CGAL_assertion(this->mod(CGAL::ipower(q_rat,i),modulus)==q_powers[i]);
             }
-            //AcX_DSTREAM <<"done\ncomp rat pol.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done\ncomp rat pol.." << std::flush;
+#endif
+*/
 	
             Poly_rat_1 curr_coeff,curr_fac;
             Poly_rat_1 h_0_rat(Boundary(0));
             for(int i=0;i<=n;i++) {
-                //	  curr_coeff=this->mod(Poly_rat_1(h[i].begin(),h[i].end()),modulus);
-                //curr_fac=this->mod(curr_coeff*p_powers[i],modulus);
-                //curr_fac=this->mod(curr_fac*q_powers[n-i],modulus);
                 curr_fac=this->mod
-                    (Poly_rat_1(h[i].begin(),h[i].end())*p_powers[i]*q_powers[n-i],
+                    (Poly_rat_1(h[i].begin(),h[i].end())
+                     *p_powers[i]*q_powers[n-i],
                      modulus);
                 h_0_rat+=curr_fac;
             }
-            //AcX_DSTREAM("done\ntransform to intpol.." << std::flush);
-            //AcX_DSTREAM("h_0_rat: " << h_0_rat << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done\ntransform to intpol.." 
+                                 << std::flush;
+            CGAL_ACK_DEBUG_PRINT << "h_0_rat: " << h_0_rat << std::endl
+#endif
+*/;
             // Transform h_0 to integer
             std::vector<Boundary> rat_coeff;
             std::vector<Coefficient> int_coeff;
-            std::copy(h_0_rat.begin(),h_0_rat.end(),std::back_inserter(rat_coeff));
+            std::copy(h_0_rat.begin(),h_0_rat.end(),
+                      std::back_inserter(rat_coeff));
             Coefficient lcm(1),num,denom;
             typename CGAL::Fraction_traits<Boundary>::Decompose decompose;
             for(int i=0;i<static_cast<int>(rat_coeff.size());i++) {
@@ -494,8 +598,14 @@ protected:
                 int_coeff.push_back(num*CGAL::integral_division(lcm,denom));
             }
             Polynomial_1 h_0(int_coeff.begin(),int_coeff.end());
-            //AcX_DSTREAM("h_0: " << h_0 << std::endl);
-            //AcX_DSTREAM("degree of h: " << h_0.degree() << ", degree of alpha: " << alpha.polynomial().degree() << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "h_0: " << h_0 << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "degree of h: " << h_0.degree() 
+                                 << ", degree of alpha: " 
+                                 << alpha.polynomial().degree() << std::endl;
+#endif
+*/
 	
             result = CGAL::CGALi::is_root_of(alpha,h_0);
         }
@@ -548,7 +658,7 @@ protected:
         Bitstream_traits traits(alpha,true);
 
         if(root_of_resultant) {
-#if !AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+#if !CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
             if(alpha.is_root_of(polynomial.lcoeff())) {
                 Polynomial_2 trunc_pol = 
                     CGAL::CGALi::poly_non_vanish_leading_term
@@ -579,7 +689,9 @@ protected:
                 k = mk.second;
             }
 	
-            AcX_DSTREAM("Bit Des..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Bit Des..." << std::flush;
+#endif
       
             CGAL::CGALi::M_k_descartes_tag t;
 
@@ -622,20 +734,35 @@ protected:
         throw(CGAL::CGALi::Non_generic_position_exception) {
      
         //Guess the right expression for y
-        //      AcX_DSTREAM(costha.size() << " " << stha.size() << std::endl);
-        //AcX_DSTREAM(k << std::endl);
-        //AcX_DSTREAM("Costha: " << costha[k-1] << " Stha: " << stha[k] << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << costha.size() << " " 
+                             << stha.size() << std::endl;
+        CGAL_ACK_DEBUG_PRINT << k << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Costha: " << costha[k-1] 
+                             << " Stha: " << stha[k] << std::endl;
+#endif
+*/
       
         Polynomial_1 p = -costha(k-1);
         Polynomial_1 q = Coefficient(k)*stha(k);
-        //AcX_DSTREAM(k << " " <<CGAL::to_double(alpha) << std::endl);
-        //AcX_DSTREAM(p << " " << q << std::endl << polynomial << std::endl);
-        //Boundary a_d = alpha.low();
-        //AcX_DSTREAM(CGAL::to_double(p.evaluate(a_d)/q.evaluate(a_d)) << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << k << " " << CGAL::to_double(alpha) 
+                             << std::endl);
+        CGAL_ACK_DEBUG_PRINT << p << " " << q << std::endl 
+                             << polynomial << std::endl;
+        Boundary a_d = alpha.low();
+        CGAL_ACK_DEBUG_PRINT << CGAL::to_double(p.evaluate(a_d)/
+                                                q.evaluate(a_d)) 
+                             << std::endl;
+#endif
+*/
         // Check whether it lies in the candidates interval
       
-      
-        AcX_DSTREAM("iv-test..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "iv-test..." << std::flush;
+#endif
       
         int c = this->get_index_of_multiple_root(bit_des);
         Interval isol_iv(bit_des.left_boundary(c),bit_des.right_boundary(c));
@@ -672,17 +799,25 @@ protected:
             approx_controller_p.refine_value(); // This also refines the value
             // in approx_controller_q!
         }
-        AcX_DSTREAM("on f..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "on f..." << std::flush;
+#endif
         if(! zero_test_bivariate(alpha,polynomial,p,q)) {
-            AcX_DSTREAM("Detected non-generic position for alpha=" 
-                        << CGAL::to_double(alpha) << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Detected non-generic position for alpha=" 
+                                 << CGAL::to_double(alpha) << std::endl;
+#endif
             throw CGAL::CGALi::Non_generic_position_exception();
         }
         // Check whether the two partial derivatives vanish
-        AcX_DSTREAM("on fx..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "on fx..." << std::flush;
+#endif
         bool is_singularity = zero_test_bivariate(alpha,der_1,p,q);
         if(is_singularity) {
-            AcX_DSTREAM("on fy..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "on fy..." << std::flush;
+#endif
             return zero_test_bivariate(alpha,der_2,p,q);
         } else {
             return false;

@@ -11,14 +11,8 @@
 //
 // ============================================================================
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 1
-#endif
-
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
 #include <CGAL/basic.h>

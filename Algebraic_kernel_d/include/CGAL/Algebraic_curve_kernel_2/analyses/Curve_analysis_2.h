@@ -14,8 +14,6 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 
-
-
 #include <vector>
 #include <set>
 #include <map>
@@ -40,7 +38,6 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Event_line_builder.h>
-#include <CGAL/Algebraic_curve_kernel_2/analyses/subresultants.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
@@ -642,7 +639,7 @@ private:
         
             X_coordinate_1 x = event.val;
             
-#if AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+#if CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
             if(event.mult_of_prim_lcoeff_root > 0) {
                 throw CGAL::CGALi::Non_generic_position_exception();
             }
@@ -656,13 +653,13 @@ private:
         
 #endif
         
-#if AcX_DEBUG_PRINT
+#if CGAL_ACK_DEBUG_FLAG
             double ev_approx = CGAL::to_double(x);
-            AcX_DSTREAM((index+1) << "th line: "
-                        << std::setw(6) << std::setprecision(3)
-                        << ev_approx
-                        << ".."
-                        << std::flush);
+            CGAL_ACK_DEBUG_PRINT << (index+1) << "th line: "
+                                 << std::setw(6) << std::setprecision(3)
+                                 << ev_approx
+                                 << ".."
+                                 << std::flush;
 #endif	
             size_type left_arcs 
                 = status_line_for_x(x,CGAL::NEGATIVE).number_of_events();
@@ -673,8 +670,18 @@ private:
             bool root_of_content=(event.mult_of_content_root>0);
         
             size_type mult_of_resultant  = event.mult_of_prim_res_root;
-            
-            //AcX_DSTREAM("Event line for " << index << " " << root_of_resultant << " " << root_of_content << " " << mult_of_resultant << " " << left_arcs << " " << right_arcs << std::endl);
+
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Event line for " << index << " " 
+                                 << root_of_resultant << " " 
+                                 << root_of_content << " " 
+                                 << mult_of_resultant << " " 
+                                 << left_arcs << " " << right_arcs 
+                                 << std::endl;
+#endif
+*/
+
             Status_line_1 ev_line 
                 = event_line_builder().create_event_line(index,
                                                          x,
@@ -685,7 +692,11 @@ private:
                                                          mult_of_resultant);
         
             event.stack = ev_line;
-            AcX_DSTREAM("done" << std::endl);
+
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
+
             return ev_line;
         } catch(CGAL::CGALi::Non_generic_position_exception exc) {
             switch(this->ptr()->degeneracy_strategy) {
@@ -712,14 +723,18 @@ private:
      */
     Status_line_1 create_non_generic_event_with_shear(size_type index) const {
 
-        AcX_DSTREAM("Use sheared technique..." << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Use sheared technique..." << std::endl;
+#endif
         CGALi::Shear_controller<Integer> shear_controller;
         Integer s(0);
         while(true) {
             try {
                 s = shear_controller.get_shear_factor();
-
-                AcX_DSTREAM("Trying shear factor " << s << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Trying shear factor " 
+                                     << s << std::endl;
+#endif
                 // TODO: Move shear somewhere else
                 Self D(CGAL::CGALi::shear(f_primitive(),Coefficient(s)),
                        CGAL::CGALi::EXCEPTION_STRATEGY);
@@ -744,7 +759,10 @@ private:
             catch(CGAL::CGALi::Non_generic_position_exception err) {
 
                 shear_controller.report_failure(s);
-                AcX_DSTREAM("Bad shear factor, retrying..." << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Bad shear factor, retrying..." 
+                                     << std::endl;
+#endif
             }
         }
         
@@ -856,12 +874,11 @@ public:
 
     //! \brief Number of arcs over the given interval
     size_type arcs_over_interval(size_type i) const {
-        //std::cout << "Polynomial=" << this->ptr()->f.get() 
-        //<< ".." << std::flush;
         CGAL_precondition(has_defining_equation());
-        //std::cout << "okay!" << std::endl;
-        size_type n = static_cast<size_type>(intermediate_values().size());
-        (void)n;
+        CGAL_assertion_code(
+                size_type n 
+                    = static_cast<size_type>(intermediate_values().size());
+        );
         CGAL_precondition(i>=0 && i<=n);
         return status_line_of_interval(i).number_of_events();
     }
@@ -986,15 +1003,21 @@ private:
     void compute_content_and_primitive_part() const {
 
         CGAL_assertion(has_defining_equation());
-
-        AcX_DSTREAM("Computing the content..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Computing the content..." << std::flush;
+#endif
         this->ptr()->content = typename CGAL::Polynomial_traits_d< Polynomial_2 >::Univariate_content_up_to_constant_factor()( f() );
         if(content().degree()==0) {
-            AcX_DSTREAM("no vertical lines as components" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "no vertical lines as components" 
+                                 << std::endl;
+#endif
             this->ptr()->f_primitive=f();
         }
         else {
-            AcX_DSTREAM("non-trivial content found" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "non-trivial content found" << std::endl;
+#endif
             // Content must be square free, because the curve is square free
             CGAL_assertion( typename CGAL::Polynomial_traits_d< Polynomial_1 >::Is_square_free()(content()));
             this->ptr()->f_primitive=f() / content();
@@ -1076,7 +1099,9 @@ private:
     void compute_sturm_habicht_primitive_f() const
         throw(CGALi::Zero_resultant_exception<Polynomial_2>) {
         
-        AcX_DSTREAM("Compute Sturm-Habicht.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Compute Sturm-Habicht.." << std::flush;
+#endif
         std::vector<Polynomial_2> stha;
         
         // Fix a problem for constant primitive part.
@@ -1088,7 +1113,7 @@ private:
             
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
 #warning USES BEZOUT MATRIX FOR SUBRESULTANTS
-            CGAL::bezout_polynomial_subresultants
+            CGAL::CGALi::bezout_polynomial_subresultants
                 (f_primitive(),
                  CGAL::diff(f_primitive()),
                  std::back_inserter(stha));
@@ -1121,7 +1146,9 @@ private:
                        principal_sturm_habicht_primitive_f(0) ||
                        resultant_primitive_f_fy() == 
                        -principal_sturm_habicht_primitive_f(0) );
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
     }
 
 public:
@@ -1149,19 +1176,21 @@ private:
     void compute_resultant_primitive_f_fy() const
         throw(CGALi::Zero_resultant_exception<Polynomial_2>) {
         
-        AcX_DSTREAM("Compute resultant.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Compute resultant.." << std::flush;
+#endif
 
         CGAL_assertion(has_defining_equation());
 
-#if AcX_SPEED_UP_FOR_REGULAR_CURVES
-        bool speed_up=true;
+#if CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
+        bool speed_up = true;
 #else
-#ifdef AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL
-        bool speed_up = f().degree() > 
-            AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL;
+        bool speed_up=polynomial_2().degree() >= 
+            CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD;
+#endif
 #else
         bool speed_up=false;
-#endif
 #endif
         
         if(! speed_up) {
@@ -1182,7 +1211,9 @@ private:
 
         }
 
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
         if(resultant_primitive_f_fy().is_zero()) {
             throw CGALi::Zero_resultant_exception<Polynomial_2>(f());
@@ -1193,7 +1224,9 @@ private:
     void compute_resultant_primitive_f_fx() const
         throw(CGALi::Zero_resultant_exception<Polynomial_2>) {
         
-        AcX_DSTREAM("Compute x-resultant.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Compute x-resultant.." << std::flush;
+#endif
 
         CGAL_assertion(has_defining_equation());
 
@@ -1225,7 +1258,9 @@ private:
                      (CGAL::diff(f_yx_primitive),0,1) );
         }
         
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
         if(resultant_primitive_f_fx().is_zero()) {
             throw CGALi::Zero_resultant_exception<Polynomial_2>(f());
@@ -1275,7 +1310,9 @@ private:
     void compute_event_coordinates() const
         throw(CGALi::Zero_resultant_exception<Polynomial_2>) {
          
-        AcX_DSTREAM("compute events..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "compute events..." << std::flush;
+#endif
          
         Solve_1 solve_1;
          
@@ -1394,22 +1431,24 @@ private:
                 break;
             }
             } // of switch
-            /*
-              AcX_DSTREAM("Constructed event_coordinate: " 
-              << CGAL::to_double(curr_event.val) << " " 
-              << "\nmult_of_prim_res_root : "
-              << curr_event.mult_of_prim_res_root
-              << "\nindex_of_prim_res_root : "
-              << curr_event.index_of_prim_res_root
-              << "\nmult_of_content_root : "
-              << curr_event.mult_of_content_root
-              << "\nindex_of_content_root : "
-              << curr_event.index_of_content_root
-              << "\nmult_of_lcoeff_root : "
-              << curr_event.mult_of_prim_lcoeff_root
-              << "\nindex_of_lcoeff_root : "
-              << curr_event.index_of_prim_lcoeff_root
-              << std::endl);
+            /*           
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Constructed event_coordinate: " 
+                                 << CGAL::to_double(curr_event.val) << " " 
+                                 << "\nmult_of_prim_res_root : "
+                                 << curr_event.mult_of_prim_res_root
+                                 << "\nindex_of_prim_res_root : "
+                                 << curr_event.index_of_prim_res_root
+                                 << "\nmult_of_content_root : "
+                                 << curr_event.mult_of_content_root
+                                 << "\nindex_of_content_root : "
+                                 << curr_event.index_of_content_root
+                                 << "\nmult_of_lcoeff_root : "
+                                 << curr_event.mult_of_prim_lcoeff_root
+                                 << "\nindex_of_lcoeff_root : "
+                                 << curr_event.index_of_prim_lcoeff_root
+                                 << std::endl;
+#endif
             */
             event_coordinate_vector.push_back(curr_event);
         }
@@ -1427,7 +1466,9 @@ private:
             (event_coordinate_vector.size()+1);
         this->ptr()->event_coordinates = event_coordinate_vector;
       
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
     }
 
@@ -1505,11 +1546,21 @@ public:
 
     void refine_all(Boundary precision) {
 
-        for(size_type i=0;i<static_cast<size_type>(event_coordinates().size());i++) {
-            //	AcX_DSTREAM(i << ": " << std::flush);
+        for(size_type i=0;
+            i<static_cast<size_type>(event_coordinates().size());
+            i++) {
+        /*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << i << ": " << std::flush;
+#endif
+        */
             Status_line_1& el = status_line_at_event(i);
             for(size_type j=0;j<el.number_of_events();j++) {
-                //AcX_DSTREAM(j << " " << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << j << " " << std::flush;
+#endif
+*/
                 el.refine_to(j,precision);
             }
         }

@@ -158,7 +158,7 @@ public:
             return 0;
         }
     
-#if AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+#if CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
 #warning uses no bfi-approx!
 
 Integer operator() (Coefficient f, long p) {

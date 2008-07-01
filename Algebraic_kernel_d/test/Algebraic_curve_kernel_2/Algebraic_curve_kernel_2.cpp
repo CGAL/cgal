@@ -17,14 +17,8 @@
 #define CGAL_ACK_USE_EXACUS 0
 #endif
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 0
-#endif
-
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
 #include <CGAL/basic.h>
@@ -37,7 +31,7 @@
 #include <CGAL/Benchmark/Option_parser.hpp>
 
 // required for Kernel_2::decompose tests
-#define AcX_CHECK_POLYNOMIALS_FOR_COPRIMABILITY 1
+#define CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY 1
 
 #include <CGAL/Arithmetic_kernel.h>
 #if CGAL_ACK_USE_EXACUS

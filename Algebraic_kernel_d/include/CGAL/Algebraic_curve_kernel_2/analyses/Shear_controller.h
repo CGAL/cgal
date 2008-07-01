@@ -42,14 +42,11 @@ CGAL_BEGIN_NAMESPACE
       //! Constructor, getting the maximal absolute value of the shear factor
       Shear_controller()
 	: max(InitialMax)
-#if !AcX_INDEPENDENT_SHEAR_ORDER
-           , pos_next_factor(0)
-#endif
-	{
+        , pos_next_factor(0)  {
           CGAL_assertion(max>=1);
-#if AcX_STATIC_SEED
+#if CGAL_ACK_STATIC_SEED
 	  #warning Warning, uses static seed!
-          srand(AcX_STATIC_SEED);
+          srand(CGAL_ACK_STATIC_SEED);
 #else
           srand(time(NULL));
 #endif
@@ -67,14 +64,10 @@ CGAL_BEGIN_NAMESPACE
 
         //! Gets a shear factor
         Int get_shear_factor() {
-#if !AcX_INDEPENDENT_SHEAR_ORDER
           if(pos_next_factor==static_cast<int>(value_order().size())) {
             value_order().push_back(get_new_shear_factor());
           }
           return value_order()[pos_next_factor++];
-#else 
-          return get_new_shear_factor();
-#endif
         }
 
     private:
@@ -93,15 +86,12 @@ CGAL_BEGIN_NAMESPACE
 	// Maximal absolute value
 	Int max;
 
-#if !AcX_INDEPENDENT_SHEAR_ORDER
         static std::vector<Int>& value_order() {
           static std::vector<Int> value_order_;
           return value_order_;
         }
 
         int pos_next_factor;
-#endif
-
 	
 	// Unsuccesfull shear factors
 	std::set<Int> bad_shears;

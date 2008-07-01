@@ -18,7 +18,6 @@
 
 #include <vector>
 
-#include <CGAL/Algebraic_curve_kernel_2/analyses/subresultants.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/macros.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_traits_on_vert_line.h>
@@ -88,10 +87,13 @@ public:
         this->C=C;
         this->s=s;
         this->use_primitive_curve = use_primitive_curve;
-        //std::cout << "Curve_analysis_2: " << C.f() << std::endl);
-        //std::cout << "num events: " << C.num_events() << std::endl);
-        //std::cout << "s: " << s << std::endl);
-      
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Curve_analysis_2: " << C.f() << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "num events: " << C.num_events() << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "s: " << s << std::endl;
+#endif
+*/
         x_structure.clear();
         /*
           sh_disc_roots.clear();
@@ -103,7 +105,9 @@ public:
           pre_vert_lines.clear();
           sh_intermediate_lines.clear();
         */
-        AcX_DSTREAM("Compute the polynomials.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Compute the polynomials.." << std::flush;
+#endif
 
         if(this->use_primitive_curve) {
             pol = C.f_primitive();
@@ -115,55 +119,82 @@ public:
             throw CGAL::CGALi::Non_generic_position_exception();
         }
         if(! D.has_defining_equation()) {
-            AcX_DSTREAM("set f.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "set f.." << std::flush;
+#endif
             D.set_f(sh_pol);
-            AcX_DSTREAM("done.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done.." << std::flush;
+#endif
         }
       
         der_sh_pol=sh_pol;
         der_sh_pol.diff();
         sh_der_sh_pol = CGAL::CGALi::shear(der_sh_pol,Coefficient(-s));
       
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
       
         Solve_1 solve_1;
       
-        AcX_DSTREAM("Store the discriminant roots.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Store the discriminant roots.." 
+                             << std::flush;
+#endif
         Root_container disc_roots;
         for(Status_line_1_iterator it=C.event_begin();
             it!=C.event_end();
             it++) {
             disc_roots.push_back(it->x());
         }
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
         if(! sh_disc_roots_computed) {
-            AcX_DSTREAM("Compute the sheared discriminant.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Compute the sheared discriminant.." 
+                                 << std::flush;
+#endif
 
             Polynomial_1 sh_disc = CGAL::CGALi::resultant(sh_pol,der_sh_pol);
 
-            AcX_DSTREAM("root isolation.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "root isolation.." << std::flush;
+#endif
             solve_1(sh_disc,std::back_inserter(sh_disc_roots),
                     std::back_inserter(sh_disc_roots_mults));
-            AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
             sh_disc_roots_computed=true;
         }
 
-        AcX_DSTREAM("Compute the event resultant.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Compute the event resultant.." << std::flush;
+#endif
 
         Polynomial_1 ev_res = CGAL::CGALi::resultant(pol,sh_der_sh_pol);
 
-        AcX_DSTREAM("root isolation.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "root isolation.." << std::flush;
+#endif
         Root_container ev_res_roots;
 
         solve_1(ev_res,std::back_inserter(ev_res_roots),
                 std::back_inserter(ev_res_roots_mults));
 
-        AcX_DSTREAM("done, " << ev_res_roots.size() 
-                    << " roots found" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done, " << ev_res_roots.size() 
+                             << " roots found" << std::endl;
+#endif
 
-        AcX_DSTREAM("Merge both root sets..." << std::flush);
-        typename CGAL::Real_embeddable_traits<X_coordinate_1>::Compare x_compare;
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Merge both root sets..." << std::flush;
+#endif
+        typename CGAL::Real_embeddable_traits<X_coordinate_1>::Compare 
+            x_compare;
 
         CGAL::CGALi::set_union_with_source
             (disc_roots.begin(),
@@ -174,42 +205,48 @@ public:
              std::back_inserter(x_structure_info),
              x_compare);
  
-        AcX_DSTREAM("done" << std::endl);
-
-        AcX_DSTREAM("Take the stripe values..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Take the stripe values..." << std::flush;
+#endif
 
         CGAL::CGALi::find_intermediate_values(sh_disc_roots.begin(),
                                       sh_disc_roots.end(),
                                       std::back_inserter(stripe_values));
-        AcX_DSTREAM("done" << std::endl);
-
-        AcX_DSTREAM("Search sheared event points..." << std::flush);
-        //std::cout << std::time(NULL) << std::endl;
-
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Search sheared event points..." << std::flush;
+#endif
         find_sheared_event_points();
 
-        AcX_DSTREAM("done" << std::endl);
-
-        AcX_DSTREAM("Find start- and endpoints for sweep.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Find start- and endpoints for sweep.." 
+                             << std::flush;
+#endif
         find_far_points(D);
-        AcX_DSTREAM("done" << std::endl);
 
-        AcX_DSTREAM("Start sweep..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Start sweep..." << std::flush;
+#endif
         
         sweep();
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "vert lines info:" << std::endl;
 
-        AcX_DSTREAM("done" << std::endl);
-      
-        AcX_DSTREAM("Pre vert lines info:" << std::endl);
         for(int i=0;i<static_cast<int>(pre_vert_lines.size());i++) {
-        
-            AcX_DSTREAM("At: " << CGAL::to_double(sh_disc_roots[i]) << ", "
-                        << pre_vert_lines[i].number_of_non_event_roots
-                        << " non-event-roots, and " << pre_vert_lines[i].event_points.size()
-                        << std::endl); 
-        
+            
+            CGAL_ACK_DEBUG_PRINT << "At: " 
+                                 << CGAL::to_double(sh_disc_roots[i]) << ", "
+                                 << pre_vert_lines[i].number_of_non_event_roots
+                                 << " non-event-roots, and " 
+                                 << pre_vert_lines[i].event_points.size()
+                                 << std::endl;  
         }
-        AcX_DSTREAM("Vert_lines.." << std::flush);
+        CGAL_ACK_DEBUG_PRINT << "Vert_lines.." << std::flush;
+#endif
 
         CGAL_assertion(sh_disc_roots.size()==pre_vert_lines.size());
         std::vector<Status_line_1> sh_ev_lines;
@@ -219,7 +256,9 @@ public:
         D.set_event_lines(sh_ev_lines.begin(),sh_ev_lines.end(),
                           sh_intermediate_lines.begin(),
                           sh_intermediate_lines.end());
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
     }
 
@@ -317,7 +356,13 @@ private:
         far_left = far_left-1;
         far_right = far_right+1;
         y_in_box = (upper_bound + lower_bound)/2;
-        //std::cout << "far_left: " << far_left << "\nfar_right: " << far_right << "\ny_in_box: " << y_in_box << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "far_left: " << far_left << "\nfar_right: " 
+                             << far_right << "\ny_in_box: " << y_in_box 
+                             << std::endl;
+#endif
+*/
     }
 
     template<class OutputIterator>
@@ -420,7 +465,13 @@ private:
             int arcs_left = arc_pair.first;
             int arcs_right = arc_pair.second;
             if(arcs_left+arcs_right!=2) {
-                //AcX_DSTREAM("Sheared event point found at " << ev.x().to_double() << ", index " << ev_id << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Sheared event point found at " 
+                                     << ev.x().to_double() << ", index " 
+                                     << ev_id << std::endl;
+#endif
+*/
                 out++=ev_id;
                 left_id+=arcs_left;
                 right_id+=arcs_right;
@@ -428,23 +479,32 @@ private:
             }
             else {
                 if(arcs_left==1 && arcs_right==1) {
-                    //std::cout << "HOORAY: " << left << "left-id: " << left_id << right << "right-id: " << right_id << std::endl;
-                    Y_coordinate_1 left_y(left_pol,left.lower_boundary(left_id),
-                                        left.upper_boundary(left_id));
+
+                    Y_coordinate_1 left_y(left_pol,
+                                          left.lower_boundary(left_id),
+                                          left.upper_boundary(left_id));
 
                     CGAL::Sign left_sign 
                         = CGAL::CGALi::estimate_sign_at
                             (left_y,left_sh_der_sh_pol,Boundary(0));
 
-                    Y_coordinate_1 right_y(right_pol,right.lower_boundary(right_id),
-                                         right.upper_boundary(right_id));
+                    Y_coordinate_1 right_y(right_pol,
+                                           right.lower_boundary(right_id),
+                                           right.upper_boundary(right_id));
 
                     CGAL::Sign right_sign 
                         = CGAL::CGALi::estimate_sign_at
                             (right_y,right_sh_der_sh_pol,Boundary(0));
 
                     if(left_sign!=right_sign) {
-                        //AcX_DSTREAM("Sheared event point found at " << ev.x().to_double() << ", index " << ev_id << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
+                                             << ev.x().to_double() 
+                                             << ", index " << ev_id 
+                                             << std::endl;
+#endif
+*/
                         out++=ev_id;
                     }
                     ev_id++;
@@ -468,7 +528,14 @@ private:
                         =CGAL::CGALi::estimate_sign_at
                             (left_y_2,left_sh_der_sh_pol,Boundary(0));
                     if(left_sign_1!=left_sign_2) {
-                        //AcX_DSTREAM("Sheared event point found at " << ev.x().to_double() << ", index " << ev_id << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
+                                             << ev.x().to_double() 
+                                             << ", index " << ev_id 
+                                             << std::endl;
+#endif
+*/
                         out++=ev_id;
                     }
                     ev_id++;
@@ -488,7 +555,14 @@ private:
                         = CGAL::CGALi::estimate_sign_at
                             (right_y_2,right_sh_der_sh_pol,Boundary(0));
                     if(right_sign_1!=right_sign_2) {
-                        //AcX_DSTREAM("Sheared event point found at " << ev.x().to_double() << ", index " << ev_id << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
+                                             << ev.x().to_double()  
+                                             << ", index " << ev_id 
+                                             << std::endl;
+#endif
+*/
                         out++=ev_id;
                     }
                     ev_id++;
@@ -510,7 +584,11 @@ private:
         find_intermediate_values(x_structure.begin(),
                                  x_structure.end(),
                                  std::back_inserter(intermediate_values));
-        //      std::cout << "interline.." << std::flush;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "interline.." << std::flush;
+#endif
+*/
         std::vector<Status_line_1> intermediate_lines(intermediate_values.size());
 
         int i=0;
@@ -521,33 +599,45 @@ private:
             i++;
         }
         int event_count=0;
-        //std::cout << "at some x.." << std::flush;
+/*
+#if CGAL_ACK_DEBUG_FLAG        
+        CGAL_ACK_DEBUG_PRINT << "at some x.." << std::flush;
+#endif
+*/
         for(int i=0;i<static_cast<int>(x_structure.size());i++) {
-            //std::cout << i << "th of " << x_structure.size() << std::endl;
             CGAL::CGALi::Three_valued info = x_structure_info[i];
-            //std::cout << "To_double approx" << std::endl;
-            //std::cout <<"x_struct: " << CGAL::to_double(x_structure[i]) << std::endl;
-            //AcX_DSTREAM("Info: " << info << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT <<  i << "th of " << x_structure.size() 
+                                 << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "To_double approx" << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "x_struct: " 
+                                 << CGAL::to_double(x_structure[i]) 
+                                 << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "Info: " << info << std::endl;
+#endif
+*/
             if(info==CGAL::CGALi::ROOT_OF_SECOND_SET || 
                info==CGAL::CGALi::ROOT_OF_BOTH_SETS) {
-                /*
-                  if(info==CGAL::CGALi::ROOT_OF_SECOND_SET) {
-                  std::cout << "new inter.." << x_structure[i] << std::flush;
-                  } else {
-                  std::cout << "old one.." << std::flush;
-                  }
-                */
                 const Status_line_1& event_line_at_x = 
                     (info==CGAL::CGALi::ROOT_OF_BOTH_SETS)
                     ? C.status_line_at_event(event_count) : C.status_line_at_exact_x(x_structure[i]);
-                //  std::cout << "now really at x.." << std::flush;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "now really at x.." << std::flush;
+#endif
+*/
                 find_sheared_event_points_at_x(event_line_at_x,
                                                intermediate_lines[i],
                                                intermediate_lines[i+1],
                                                std::back_inserter
                                                (sh_ev_indices[i]));
 
-                //          std::cout << "done" << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
+*/
             }
             if(info==CGAL::CGALi::ROOT_OF_FIRST_SET || 
                info==CGAL::CGALi::ROOT_OF_BOTH_SETS) {
@@ -672,9 +762,20 @@ private:
                 info.asym_right_plus=info.asym_right_minus=0;
             pre_vert_lines.push_back(info);
         }
-        //std::cout << "X-coordinate (far left) " << CGAL::to_double(far_left) << std::endl;
-        Status_line_1 far_left_line = C.status_line_at_exact_x(X_coordinate_1(far_left));
-        //std::cout << "No. arcs " << far_left_line.number_of_events() << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far left) " 
+                             << CGAL::to_double(far_left) << std::endl;
+#endif
+*/
+        Status_line_1 far_left_line 
+            = C.status_line_at_exact_x(X_coordinate_1(far_left));
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "No. arcs " 
+                             << far_left_line.number_of_events() << std::endl;
+#endif
+*/
         for(int i=0;i<far_left_line.number_of_events();i++) {
             y_structure.push_back(create_unbounded_element(far_left_line,i));
         }
@@ -683,27 +784,47 @@ private:
     
     void end_sweep() {
         Status_line_1 far_right_line = C.status_line_at_exact_x(X_coordinate_1(far_right));
-        //std::cout << "X-coordinate (far right) " << CGAL::to_double(far_right) << std::endl;
-        //std::cout << "BLUBB: " << "s=" << s << "\n" << far_right_line << std::endl << far_right_line.number_of_events() << " " << static_cast<int>(y_structure.size()) << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far right) " 
+                             << CGAL::to_double(far_right) << std::endl;
+#endif
+*/
         CGAL_assertion(far_right_line.number_of_events()
                        ==static_cast<int>(y_structure.size()));
       
         typename Y_structure::iterator y_it=y_structure.begin();
         for(int i=0;i<far_right_line.number_of_events();i++) {
-            Y_structure_element y_el = create_unbounded_element(far_right_line,i);
+            Y_structure_element y_el 
+                = create_unbounded_element(far_right_line,i);
             handle_edge(*y_it,y_el);
             y_it++;
         }
     }
 
     void sweep_at_x_coordinate(int index) {
-        //std::cout << "X-coordinate " << CGAL::to_double(x_structure[index]) << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate " 
+                             << CGAL::to_double(x_structure[index]) 
+                             << std::endl;
+#endif
+*/
         std::vector<int>::iterator sh_ev_it = sh_ev_indices[index].begin();
         Status_line_1 ev=C.status_line_at_exact_x(x_structure[index]);
-        //std::cout << "EV: " << std::endl << ev << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "EV: " << std::endl << ev << std::endl;
+#endif
+*/
         int ev_id=0, ev_n=ev.number_of_events();
         typename Y_structure::iterator y_it=y_structure.begin();
-        //std::cout << "Y-structure has " << y_structure.size() << " elements" << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Y-structure has " << y_structure.size() 
+                             << " elements" << std::endl;
+#endif
+*/
         // needed for vertical components
         std::vector<Y_structure_element> events_at_x; 
         bool vert=ev.covers_line() && ! this->use_primitive_curve;
@@ -831,20 +952,22 @@ private:
     
     void handle_edge(Y_structure_element& e1,
                      Y_structure_element& e2) {
-        //std::cout << "Y-STRUCT: " << std::endl;
-        /*
-          for(typename Y_structure::iterator it=y_structure.begin();
-          it!=y_structure.end();it++) {
-          y_struct_info(*it,std::cout);
-          }
-        */
-        //std::cout << "Y-STRUCT done" << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Y-STRUCT: " << std::endl;
+        for(typename Y_structure::iterator it=y_structure.begin();
+            it!=y_structure.end();it++) {
+            y_struct_info(*it,CGAL_ACK_DEBUG_PRINT);
+        }
+        CGAL_ACK_DEBUG_PRINT << "Y-STRUCT done" << std::endl;
       
-        // std::cout << "handle edge..." << std::flush;
-        // std::cout << "info for e1: ";
-        // y_struct_info(e1,std::cout);
-        // std::cout << "info for e2: ";
-        // y_struct_info(e2,std::cout);
+        CGAL_ACK_DEBUG_PRINT << "handle edge..." << std::flush;
+        CGAL_ACK_DEBUG_PRINT << "info for e1: ";
+        y_struct_info(e1,CGAL_ACK_DEBUG_PRINT);
+        CGAL_ACK_DEBUG_PRINT << "info for e2: ";
+        y_struct_info(e2,CGAL_ACK_DEBUG_PRINT);
+#endif
+*/
         if(! e1.one_event_known) {
             int id = e1.x_index;
             typename Y_structure::iterator it=y_structure.begin();
@@ -852,7 +975,6 @@ private:
                 if((! it->one_event_known) && it->x_index==id) {
                     //it=y_structure.erase(it);
                     //it=y_structure.insert(it,e2);
-                    //std::cout << "REPLACING" << std::endl;
                     *it=e2;
                 }
                 it++;
@@ -923,37 +1045,59 @@ private:
                 }
             }   
         }
-        //AcX_DSTREAM("handle edge done" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "handle edge done" << std::endl;
+#endif
+*/
       
     }
 
     void sweep() {
-        //      AcX_DSTREAM("Init.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Init.." << std::flush;
+#endif
+*/
         start_sweep();
       
-        //std::cout << "initial Y-struct before x" << std::endl;
-        /*
-          for(typename Y_structure::iterator it=y_structure.begin();it!=y_structure.end();it++) {
-          y_struct_info(*it,std::cout);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        for(typename Y_structure::iterator it=y_structure.begin();
+            it!=y_structure.end();
+            it++) {
+            y_struct_info(*it,CGAL_ACK_DEBUG_PRINT);
           }
-        */
-        //std::cout << "End of y-struct" << std::endl;
-        //AcX_DSTREAM("done" << std::endl;
+
+        CGAL_ACK_DEBUG_PRINT << "End of y-struct" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
+*/
         for(int i=0;i<static_cast<int>(x_structure.size());i++) {
-            //        AcX_DSTREAM("Coordinate.." << CGAL::to_double(x_structure[i]) << ", index " << i << std::endl;
-        
-            //std::cout << "Y-struct before x" << std::endl;
-            /*
-              for(typename Y_structure::iterator it=y_structure.begin();it!=y_structure.end();it++) {
-              y_struct_info(*it,std::cout);
-              }
-            */
-            //std::cout << "End of y-struct" << std::endl;
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Coordinate.." 
+                                 << CGAL::to_double(x_structure[i]) 
+                                 << ", index " << i << std::endl;
+            CGAL_ACK_DEBUG_PRINT <<  << "Y-struct before x" << std::endl;
+            for(typename Y_structure::iterator it=y_structure.begin();
+                it!=y_structure.end();
+                it++) {
+                y_struct_info(*it,CGAL_ACK_DEBUG_PRINT);
+            }
+            
+            CGAL_ACK_DEBUG_PRINT << "End of y-struct" << std::endl;
+#endif
+*/
             sweep_at_x_coordinate(i);
         }
-        //AcX_DSTREAM("Terminate.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Terminate.." << std::flush;
+#endif
         end_sweep();
-        //AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
     }
 
     Status_line_1 create_event_line(Curve_analysis_2& D,int i) {

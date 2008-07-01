@@ -313,49 +313,60 @@ public:
               CGAL::CGALi::Non_generic_position_exception)
         : Base(Rep(c1, c2)) {
 
-#if AcX_DEBUG_PRINT
-            CGAL::set_pretty_mode(std::cout);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL::set_pretty_mode(CGAL_ACK_DEBUG_PRINT);
 #endif
             
             
             this->ptr()->f = this->ptr()->c1_.f();
             this->ptr()->g = this->ptr()->c2_.f();
             
-#if AcX_SPEED_UP_FOR_REGULAR_CURVES
-            bool speed_up = true;
+#if CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
+        bool speed_up = true;
 #else
-#if AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL
-            bool speed_up = std::min(this->ptr()->f.degree(),
-                                     this->ptr()->g.degree()) >= 
-                AcX_SPEED_UP_FOR_DEGREE_GREATER_EQUAL;
-#else
-            bool speed_up=false;
+        bool speed_up = std::min(curve_analysis(false).degree(),
+                                 curve_analysis(true).degree()) >= 
+            CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD;
 #endif
+#else
+        bool speed_up=false;
 #endif
 
-            AcX_DSTREAM("Check content for squarefreeness.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Check content for squarefreeness.." 
+                                 << std::flush;
+#endif
             if(this->ptr()->c1_.content().degree()>0 &&
                this->ptr()->c2_.content().degree()>0) {
                 if(CGAL::CGALi::gcd_utcf
                    (this->ptr()->c1_.content(), 
                     this->ptr()->c2_.content()).degree() >= 1) {
 
-                    AcX_DSTREAM("Common vertical line discovered" 
-                                << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "Common vertical line discovered" 
+                                         << std::endl;
+#endif
                     throw CGAL::CGALi::Non_generic_position_exception();
                 } else {
-                    AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
                 }
             }
 
             if(speed_up) {
-                AcX_DSTREAM("Compute the resultant of f and g..." 
-                            << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Compute the resultant of f and g..." 
+                                     << std::flush;
+#endif
                 this->ptr()->resultant 
                     = CGAL::CGALi::resultant(this->ptr()->f,this->ptr()->g);
             } else {
-                AcX_DSTREAM("Compute the subresultant-sequence of f and g..." 
-                            << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Compute the subres-seq of f and g..." 
+                                     << std::flush;
+#endif
                 compute_subresultant_coefficients();
                      
                 this->ptr()->resultant 
@@ -368,25 +379,32 @@ public:
                     (this->ptr()->f,
                      this->ptr()->g);
             }
-            AcX_DSTREAM("done" << std::endl);
-            //AcX_DSTREAM("R=" << resultant << std::endl);
-            AcX_DSTREAM("Isolate the real roots of the resultant..." 
-                        << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+            //CGAL_ACK_DEBUG_PRINT << "R=" << resultant << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "Isolate the real roots of resultant..." 
+                                 << std::flush;
+#endif
             Solve_1 solve_1;
             solve_1(this->ptr()->resultant, 
                     std::back_inserter(this->ptr()->resultant_roots),
                     std::back_inserter(this->ptr()->
                                        multiplicities_of_resultant_roots) );
-            AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
 
             for(size_type i = 0;
                 i<static_cast<size_type>(this->ptr()->resultant_roots.size());
                 i++) {
-                AcX_DSTREAM("Root at " 
-                            << CGAL::to_double(this->ptr()->resultant_roots[i])
-                            << " with multiplicity "
-                            << this->ptr()->multiplicities_of_resultant_roots[i]
-                            << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT 
+                    << "Root at " 
+                    << CGAL::to_double(this->ptr()->resultant_roots[i])
+                    << " with multiplicity "
+                    << this->ptr()->multiplicities_of_resultant_roots[i]
+                    << std::endl;
+#endif
             }
         
             compute_event_and_intermediate_values();
@@ -412,7 +430,7 @@ private:
 
 
     Status_line_CPA_1 create_event_slice(size_type i,bool use_shear=true) const {
-#if !AcX_NO_ARC_FLIP
+#if !CGAL_ACK_NO_ARC_FLIP
         size_type index_in_fg = event_indices(i).fg;
         if(index_in_fg == -1 ) {
             return create_slice_with_multiplicity_zero_or_one(i);
@@ -424,7 +442,7 @@ private:
             } else {
 #endif
                 return create_slice_of_higher_multiplicity(i,use_shear);
-#if !AcX_NO_ARC_FLIP
+#if !CGAL_ACK_NO_ARC_FLIP
             }
         }
 #endif
@@ -766,10 +784,18 @@ private:
 	this->ptr()->index_triples.reserve(number_of_events);
 
         for(size_type i=0;i<static_cast<size_type>(events.size());i++) {
-            //AcX_DSTREAM(CGAL::to_double(events[i]) << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << CGAL::to_double(events[i]) << std::flush;
+#endif
+*/
             switch(events_type[i]) {
             case(CGAL::CGALi::ROOT_OF_FIRST_SET): {
-                //AcX_DSTREAM(" one curve event" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
+#endif
+*/
                 this->ptr()->event_slices.push_back(Lazy_status_line_1());
                 switch(*(one_curve_it++)) {
                 case(CGAL::CGALi::ROOT_OF_FIRST_SET): {
@@ -792,7 +818,11 @@ private:
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_SECOND_SET): {
-                //AcX_DSTREAM(" two curve event" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << " two curve event" << std::endl;
+#endif
+*/
                 this->ptr()->
                     event_slices.push_back(Lazy_status_line_1());
 
@@ -802,7 +832,12 @@ private:
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_BOTH_SETS): {
-                //AcX_DSTREAM(" one and two curve event" << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << " one and two curve event" 
+                                     << std::endl;
+#endif
+*/
                 this->ptr()->
                     event_slices.push_back(Lazy_status_line_1());
 
@@ -837,8 +872,10 @@ private:
                        == static_cast<size_type>
                            (this->ptr()->resultant_roots.size()));
         CGAL_assertion(one_curve_it==one_curve_events_type.end());
-        AcX_DSTREAM("done" << std::endl);
-        AcX_DSTREAM("Prepare intermediate slices.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Prepare intermediate slices.." << std::flush;
+#endif
 
 	this->ptr()->intermediate_values.reserve(number_of_events+1);
 	this->ptr()->intermediate_slices.reserve(number_of_events+1);
@@ -850,7 +887,9 @@ private:
             //boundary_value_in_interval(i);
             this->ptr()->intermediate_slices.push_back(Lazy_status_line_1());
         }
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
     }
 
     // Creates an intermediate slice at a rational value
@@ -989,9 +1028,8 @@ private:
         std::vector<Polynomial_2> subresultants;
         if(f.degree()<g.degree()) {
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
-            CGAL::bezout_polynomial_subresultants(g,
-                                                 f,
-                                                 std::back_inserter(subresultants));
+            CGAL::CGALi::bezout_polynomial_subresultants
+                (g,f,std::back_inserter(subresultants));
 #else
             typename CGAL::Polynomial_traits_d<Polynomial_2>
                 ::Polynomial_subresultants()(g,
@@ -1000,7 +1038,7 @@ private:
 #endif
         } else {
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 
-            CGAL::bezout_polynomial_subresultants(f,
+            CGAL::CGALi::bezout_polynomial_subresultants(f,
                                                  g,
                                                  std::back_inserter(subresultants));
 #else
@@ -1052,9 +1090,12 @@ private:
     Slice_info construct_slice_info(X_coordinate_1 alpha) const
         throw(CGAL::CGALi::Non_generic_position_exception) {
         
-        //        AcX_DSTREAM("Consider alpha=" << CGAL::to_double(alpha) 
-        //                                      << std::endl);
-        
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Consider alpha=" << CGAL::to_double(alpha) 
+                             << std::endl;
+#endif
+*/      
 
         Status_line_CA_1 e1 = this->ptr()->c1_.status_line_at_exact_x(alpha);
 
@@ -1069,8 +1110,12 @@ private:
             if(find_possible_matching(e2,match,e1) != i) {
                 continue;
             }
-            //AcX_DSTREAM("New matching: (" << i 
-            //            << "," << match << ")" << std::endl); 
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "New matching: (" << i 
+                                 << "," << match << ")" << std::endl;
+#endif
+*/
             matchings.push_back(std::make_pair(i,match));
         }
         size_type i1=0, i2=0,
@@ -1228,8 +1273,13 @@ private:
         if(left_index < left_slice.number_of_events()) {
             curr = left_functor(left_index);
             number_of_changes=0;
-            //std::cout << num_of_arcs_to_candidate_left << num_of_arcs_to_candidate_right << left_index << right_index << std::endl;
-          
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT <<  num_of_arcs_to_candidate_left 
+                                 << num_of_arcs_to_candidate_right 
+                                 << left_index << right_index << std::endl;
+#endif
+*/          
             for(size_type i=1;i<num_of_arcs_to_candidate_left;i++) {
                 if(curr != left_functor(left_index+i)) {
                     curr = left_functor(left_index+i);
@@ -1368,9 +1418,10 @@ private:
      * unique point on \c e2 which might be equal to \c p. If no point
      * can be equal, -1 is returned.
      */
-    size_type find_possible_matching(Status_line_CA_1& e1, size_type index1,Status_line_CA_1& e2) const {
-        //std::cout << "lines: " << e1 << e2 << std::endl; 
-        //std::cout << "Index: " << index1 << std::endl;
+    size_type find_possible_matching(Status_line_CA_1& e1, 
+                                     size_type index1,
+                                     Status_line_CA_1& e2) const {
+
         std::vector<size_type> possible_overlaps;
         for(size_type i=0;i<e2.number_of_events();i++) {
             if(overlap(e1,index1,e2,i)) {
@@ -1391,7 +1442,6 @@ private:
             typename std::vector<size_type>::iterator it
                 = possible_overlaps.begin();
             while(it!=possible_overlaps.end()) {
-                //std::cout << *it << " " << std::flush;
                 if(!overlap(e1,index1,e2,*it)) {
                     it=possible_overlaps.erase(it);
                 }
@@ -1663,7 +1713,7 @@ private:
         // Compute h_0(x)=q(x)^n*h(x,p(x)/q(x))
       
         bool result;
-#if !AcX_USE_NO_REDUCTION_MODULO_RESULTANT
+#if !CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT
         bool general = ! alpha.is_rational();
       
         if(general) {
@@ -1684,41 +1734,72 @@ private:
                  boost::make_transform_iterator
                  (alpha.polynomial().end(),Coefficient_to_coercion_functor()));
 
-            //AcX_DSTREAM("Mod: " << modulus << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "Mod: " << modulus << std::endl;
+#endif 
+*/
             p_rat=this->mod(p_rat,modulus);
             q_rat=this->mod(q_rat,modulus);
 
             size_type n = h.degree();
             // Create the powers of p and q mod modulus
-            //AcX_DSTREAM("precomp powers.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "precomp powers.." << std::flush;
+#endif
+*/
             std::vector<Poly_coer_1> p_powers(n+1),q_powers(n+1);
             p_powers[0]=Poly_coer_1(Boundary(1));
             q_powers[0]=Poly_coer_1(Boundary(1));
             Poly_coer_1 intermediate;
             for(size_type i=1;i<=n;i++) {
-                //	  AcX_DSTREAM(i << ": mult.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << i << ": mult.." << std::flush;
+#endif
+*/
                 intermediate=p_powers[i-1]*p_rat;
-                //AcX_DSTREAM("mod.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mod.." << std::flush;
+#endif
+*/
                 p_powers[i]=this->mod(intermediate,modulus);
-                //AcX_DSTREAM("simpl.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "simpl.." << std::flush;
+#endif
+*/
                 p_powers[i].simplify_coefficients();
-                //CGAL_assertion(this->mod(CGAL::ipower(p_rat,i),modulus)==p_powers[i]);
-                //AcX_DSTREAM("mult.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mult.." << std::flush;
+#endif
+*/
                 intermediate=q_powers[i-1]*q_rat;
-                //AcX_DSTREAM("mod.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "mod.." << std::flush;
+#endif
+*/
                 q_powers[i]=this->mod(intermediate,modulus);
-                //AcX_DSTREAM("simpl.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "simpl.." << std::flush;
+#endif
+*/
                 q_powers[i].simplify_coefficients();
-                //CGAL_assertion(this->mod(CGAL::ipower(q_rat,i),modulus)==q_powers[i]);
             }
-            //AcX_DSTREAM("done\ncomp rat pol.." << std::flush);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "done\ncomp rat pol.." << std::flush;
+#endif
+*/
 	
             Poly_coer_1 curr_coeff,curr_fac;
             Poly_coer_1 h_0_rat(Coercion_type(0));
             for(size_type i=0;i<=n;i++) {
-                //	  curr_coeff=this->mod(Poly_coer_1(h[i].begin(),h[i].end()),modulus);
-                //curr_fac=this->mod(curr_coeff*p_powers[i],modulus);
-                //curr_fac=this->mod(curr_fac*q_powers[n-i],modulus);
                 Poly_coer_1 tmp_pol
                     (boost::make_transform_iterator
                      (h[i].begin(),Coefficient_to_coercion_functor()),
@@ -1798,8 +1879,9 @@ private:
 
     void new_shear_for_intersection_info
     (Intersection_info_container& info_container) const {
-        AcX_DSTREAM("Use shear for intersections.." << std::endl);
-        
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Use shear for intersections.." << std::endl;
+#endif
         bool good_direction_found=false;
         Self sh_pair;
         Integer s;
@@ -1809,26 +1891,41 @@ private:
                 info_container.clear();
                 info_container.resize(this->ptr()->resultant_roots.size());                
                 s = this->ptr()->shear_controller.get_shear_factor();
-                AcX_DSTREAM("Try shear factor " << s << std::endl);
-                AcX_DSTREAM(">>>>>>>>>>> Transform first curve"  << std::endl);
-                Curve_analysis_2 sh1 = this->ptr()->c1_.shear_primitive_part(s);
-                AcX_DSTREAM("<<<<<<<<<<< End of transform first curve" << std::endl);
-                AcX_DSTREAM(">>>>>>>>>>> Transform second curve" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT << "Try shear factor " << s << std::endl;
+                CGAL_ACK_DEBUG_PRINT 
+                    << ">>>>>>>>>>> Transform first curve"  << std::endl;
+#endif
+
+                Curve_analysis_2 sh1 
+                    = this->ptr()->c1_.shear_primitive_part(s);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT 
+                    << "<<<<<<<<<<< End of transform first curve" << std::endl;
+                CGAL_ACK_DEBUG_PRINT << ">>>>>>>>>>> Transform second curve" 
+                                     << std::endl;
+#endif
                 Curve_analysis_2 sh2 = this->ptr()->c2_.shear_primitive_part(s);
-                AcX_DSTREAM("<<<<<<<<<<< End of transform second curve" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+                CGAL_ACK_DEBUG_PRINT 
+                    << "<<<<<<<<<<< End of transform second curve" 
+                    << std::endl;
+#endif
                 sh_pair=Self(sh1,sh2);
 
-      
-            
- 
-                AcX_DSTREAM("Shear back intersection points..." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG 
+                CGAL_ACK_DEBUG_PRINT << "Shear back intersection points..." 
+                                     << std::flush;
+#endif
                 for(size_type i=0;
-                    i<static_cast<size_type>(sh_pair.ptr()->event_x_coordinates.size());
+                    i<static_cast<size_type>
+                        (sh_pair.ptr()->event_x_coordinates.size());
                     i++) {
                     if(sh_pair.ptr()->index_triples[i].fg==-1) {
                         continue;
                     }
-                    Status_line_CPA_1 slice = sh_pair._status_line_at_event(i,false);
+                    Status_line_CPA_1 slice 
+                        = sh_pair._status_line_at_event(i,false);
                     Curves_at_event_functor functor(slice);
                     for(size_type j=0;j<slice.number_of_events();j++) {
                         if(functor(j) == CGAL::CGALi::INTERSECTION) {
@@ -1846,7 +1943,9 @@ private:
             }
         }
 
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
         return;
     }
 
@@ -1881,7 +1980,9 @@ private:
     Status_line_CPA_1 
         create_event_slice_from_current_intersection_info (size_type i) 
         const throw(CGAL::CGALi::Non_generic_position_exception){
-        AcX_DSTREAM("Reduce the candidates.." << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Reduce the candidates.." << std::flush;
+#endif
         Index_triple triple = this->ptr()->index_triples[i];
         size_type index_of_fg = triple.fg;
         Intersection_info_container& intersection_info_container
@@ -1890,9 +1991,11 @@ private:
         CGAL_assertion(index_of_fg <
                        static_cast<size_type>
                            (intersection_info_container.size()));
-        AcX_DSTREAM(i << "th slice has " 
-                    << intersection_info_container[index_of_fg].size()
-                    << " intersections" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << i << "th slice has " 
+                             << intersection_info_container[index_of_fg].size()
+                             << " intersections" << std::endl;
+#endif
         Status_line_CA_1 e1=this->ptr()->c1_.
             status_line_at_exact_x(this->ptr()->resultant_roots[index_of_fg]),
             e2=this->ptr()->c2_.
@@ -1926,7 +2029,9 @@ private:
             }
         }
           
-        AcX_DSTREAM("done" << std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
         return create_slice_from_slice_info(i,slice,true);
           
     }
@@ -2021,7 +2126,13 @@ private:
                                                          Status_line_CA_1& e2,
                                                          Slice_info& slice,
                                                          size_type k=-1) const {
-        //AcX_DSTREAM("Reduce: " << n << " " << CGAL::to_double(e1.x()) << " " << k << std::endl);
+/*
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Reduce: " << n << " " 
+                             << CGAL::to_double(e1.x()) << " " << k 
+                             << std::endl;
+#endif
+*/
         size_type number_of_intersections=0;
         size_type number_of_candidates=0;
         for(size_type i=0;i<static_cast<size_type>(slice.size());i++) {
@@ -2039,7 +2150,6 @@ private:
         size_type max_candidate_mult=0;
         while(n<number_of_candidates+number_of_intersections) {
             if(slice_it==slice.end()) {
-                //std::cout << "i1=" << i1 << " i2=" << i2 << " e1.num=" << e1.number_of_events() << " e2.num=" << e2.number_of_events() <<std::endl;
                 CGAL_assertion(e1.number_of_events()==i1 && e2.number_of_events()==i2);
                 if(max_candidate_mult<k) {
                     throw CGAL::CGALi::Non_generic_position_exception();
@@ -2109,24 +2219,37 @@ private:
             for(size_type j=0;j<static_cast<size_type>(this->ptr()->slice_info_container[i].get().size());j++) {
                 switch(this->ptr()->slice_info_container[i].get()[j].first) {
                 case(CGAL::CGALi::FIRST_CURVE): {
-                    AcX_DSTREAM("1" << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "1" << std::flush;
+#endif
                     break;
                 }
                 case(CGAL::CGALi::SECOND_CURVE): {
-                    AcX_DSTREAM("2" << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "2" << std::flush;
+#endif
                     break;
                 }
                 case(CGAL::CGALi::INTERSECTION): {
-                    AcX_DSTREAM("(S," << *(this->ptr()->slice_info_container[i])[j].second << ")" << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT 
+                        << "(S," 
+                        << *(this->ptr()->slice_info_container[i])[j].second 
+                        << ")" << std::flush;
+#endif
                     break;
                 }
                 case(CGAL::CGALi::CANDIDATE): {
-                    AcX_DSTREAM("C" << std::flush);
+#if CGAL_ACK_DEBUG_FLAG
+                    CGAL_ACK_DEBUG_PRINT << "C" << std::flush;
+#endif
                     break;
                 }
                 }
             }
-            AcX_DSTREAM(std::endl);
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << std::endl;
+#endif
         }
     }
 

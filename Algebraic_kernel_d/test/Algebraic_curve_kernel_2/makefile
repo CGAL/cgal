@@ -58,8 +58,6 @@ all:            \
                 Algebraic_curve_kernel_2$(EXE_EXT) \
                 Curve_analysis_2$(EXE_EXT) \
                 Curve_pair_analysis_2$(EXE_EXT) \
-                subresultants$(EXE_EXT) \
-		sturm_habicht_sequence$(EXE_EXT) \
 		Bitstream_descartes_bfs$(EXE_EXT) \
 		alg_real_utils$(EXE_EXT) \
 		Best_approximation_cache$(EXE_EXT)

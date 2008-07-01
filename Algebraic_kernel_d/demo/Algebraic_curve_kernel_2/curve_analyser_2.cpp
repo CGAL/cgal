@@ -11,64 +11,66 @@
 //
 // ============================================================================
 
-#ifndef BITSTREAM_USES_E08_TREE
-#define BITSTREAM_USES_E08_TREE 0
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
 #endif
 
-#ifndef AcX_STATIC_SEED
-#define AcX_STATIC_SEED 0
+#ifndef CGAL_ACK_DEBUG_PRINT
+#define CGAL_ACK_DEBUG_PRINT std::cout
 #endif
 
-#ifndef AcX_DEBUG_PRINT
-#define AcX_DEBUG_PRINT 1
+#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
+#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
 #endif
 
-#if AcX_DEBUG_PRINT
-#define AcX_DSTREAM(str) std::cout << str;
-#else
-#define AcX_DSTREAM(str) 
+#ifndef CGAL_ACK_STATIC_SEED
+#define CGAL_ACK_STATIC_SEED 0
 #endif
 
-
-//#define NDEBUG
-
-#ifndef AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
-#define AcX_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
+#ifndef CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
+#define CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
 #endif
 
-#ifndef AcX_USE_MAPLE_FOR_MODULAR_RESULTANT
-#define AcX_USE_MAPLE_FOR_MODULAR_RESULTANT 0
-#endif
-#ifndef AcX_SPEED_UP_FOR_REGULAR_CURVES
-#define AcX_SPEED_UP_FOR_REGULAR_CURVES 0
-#endif
-
-#ifndef AcX_WRITE_GRAPH_TO_FILE
-#define AcX_WRITE_GRAPH_TO_FILE 1
-#endif
-
-#ifndef CGAL_ACK_MAKE_SQUARE_FREE
-#define CGAL_ACK_MAKE_SQUARE_FREE 0
-#endif
-
-#ifndef AcX_COEFFICIENT
-#define AcX_COEFFICIENT Integer
-#define AcX_COEFFICIENT_HELP 1
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
 #endif
 
 // This flag determines the strategy how Bitstream coefficients are obtained
 // If set to 1, it uses an approach specifically for integer coefficient
 // At the moment, it seems to be more efficient than the (general) bigfloat
 // approach
-#ifndef AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define AcX_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
+#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
 #endif
 
 // Enables/disbales the optimization for vertical asymptotic arcs
-#ifndef AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES
-#define AcX_SHEAR_ALL_NOT_Y_REGULAR_CURVES 0
+// It is not recommended to set it to one
+#ifndef CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+#define CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES 0
 #endif
 
+
+// demo-specific flags
+
+// Does the demo create a file "gen_plot" 
+// that displays the input curves topology?
+#ifndef CGAL_ACK_WRITE_GRAPH_TO_FILE
+#define CGAL_ACK_WRITE_GRAPH_TO_FILE 1
+#endif
+
+// Is the input curve made square free beforehand, 
+// or does the program rely on a square free input?
+#ifndef CGAL_ACK_MAKE_SQUARE_FREE
+#define CGAL_ACK_MAKE_SQUARE_FREE 0
+#endif
+
+// What is the coefficient type of the input?
+#ifndef CGAL_ACK_COEFFICIENT
+#define CGAL_ACK_COEFFICIENT Integer
+#define CGAL_ACK_COEFFICIENT_HELP 1
+#endif
+
+//Which underlying number type is used?
 #ifndef CGAL_ACK_USE_CORE
 #define CGAL_ACK_USE_CORE 1
 #endif
@@ -79,6 +81,7 @@
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
 
+// Bitsize for random coefficients, if created
 #define COEFFICIENT_BITSIZE 32
 
 #include <sstream>
@@ -312,12 +315,10 @@ int main(int argc,char** argv) {
   std::exit(1);
 #endif
 
-  //AcX::compiler_flag_info(std::cout);
-
   typedef Arithmetic_kernel::Rational Rational;
   typedef Arithmetic_kernel::Integer Integer;
 
-  typedef AcX_COEFFICIENT Coefficient;
+  typedef CGAL_ACK_COEFFICIENT Coefficient;
   typedef CGAL::Polynomial<Coefficient> Poly_variably1;
   typedef CGAL::Polynomial<Poly_variably1> Poly_variably2;
 
@@ -361,7 +362,7 @@ int main(int argc,char** argv) {
        }
      }
    }
-#if AcX_COEFFICIENT_HELP == 1
+#if CGAL_ACK_COEFFICIENT_HELP == 1
    if(strcmp(argv[1],"RANDOM")==0) {
      srand48(time(NULL));
      // Create random polynomial of given degree
@@ -413,7 +414,7 @@ int main(int argc,char** argv) {
 
      std::cout << "Overall time: " << overall_timer.time() << std::endl;
      
-#if AcX_WRITE_GRAPH_TO_FILE
+#if CGAL_ACK_WRITE_GRAPH_TO_FILE
      // Now, create the plot:
      typedef Curve_analysis_2::Status_line_1 Event_line;
      typedef Curve_analysis_2::Status_line_1 Intermediate_line;

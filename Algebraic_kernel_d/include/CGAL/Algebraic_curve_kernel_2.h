@@ -697,6 +697,10 @@ public:
             const Curve_analysis_2& ca2, OutputIterator oi1,
                 OutputIterator oi2, OutputIterator oib) const {
 
+#if !CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY
+        return false;  
+#else 
+
             Construct_curve_2 cc_2;
 #if CGAL_ACK_USE_EXACUS
             typedef std::vector<Internal_curve_2> Curves;
@@ -724,7 +728,7 @@ public:
                 
                 
 #else          
-            
+
             if (ca1.id() == ca2.id()) {
                 return false;
             }
@@ -773,6 +777,7 @@ public:
             *oi1++ = ca1;
             *oi2++ = ca2;
             return false;
+#endif
         }
     };
     CGAL_Algebraic_Kernel_cons(Decompose_2, decompose_2_object);
