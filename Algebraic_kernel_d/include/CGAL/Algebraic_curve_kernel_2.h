@@ -697,7 +697,7 @@ public:
             const Curve_analysis_2& ca2, OutputIterator oi1,
                 OutputIterator oi2, OutputIterator oib) const {
 
-#if !CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY
+#if CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY
         return false;  
 #else 
 

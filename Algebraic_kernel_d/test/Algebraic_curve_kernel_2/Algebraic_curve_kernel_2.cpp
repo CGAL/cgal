@@ -30,8 +30,8 @@
 #include <CGAL/Benchmark/Benchmark.hpp>
 #include <CGAL/Benchmark/Option_parser.hpp>
 
-// required for Kernel_2::decompose tests
-#define CGAL_ACK_CHECK_POLYNOMIALS_FOR_COPRIMALITY 1
+// This is required for the test
+#define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 0
 
 #include <CGAL/Arithmetic_kernel.h>
 #if CGAL_ACK_USE_EXACUS
