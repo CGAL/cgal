@@ -135,10 +135,10 @@ int main(int argc,char** argv) {
   ::CGAL::set_pretty_mode(std::cout);
 
 #if CGAL_ACK_USE_CORE
-  std::cout << "Use CORE library" << std::endl;
+  //std::cout << "Use CORE library" << std::endl;
   typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
 #elif defined(CGAL_ACK_USE_LEDA)
-  std::cout << "Use LEDA library" << std::endl;
+  //std::cout << "Use LEDA library" << std::endl;
   typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
 #else
   std::cerr << "CORE or LEDA required!" << std::endl;
