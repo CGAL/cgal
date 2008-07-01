@@ -28,9 +28,9 @@ protected:
   DemosMainWindow (QWidget * parent = 0, ::Qt::WindowFlags flags = 0 );
   void setupStatusBar();
   void addNavigation(QGraphicsView*);
-  void setupOptionsMenu(QMenu* menu  = NULL);
-  void addAboutCGAL(QMenu* menu  = NULL);
-  void addAboutDemo(QString htmlResourceName, QMenu* menu  = NULL);
+  void setupOptionsMenu(QMenu* menu  = 0);
+  void addAboutCGAL(QMenu* menu  = 0);
+  void addAboutDemo(QString htmlResourceName, QMenu* menu  = 0);
 
 protected slots:
   void setUseAntialiasing(bool checked);

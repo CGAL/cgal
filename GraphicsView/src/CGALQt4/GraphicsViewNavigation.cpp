@@ -81,6 +81,9 @@ namespace Qt {
       case ::Qt::Key_Minus:
         scaleView(v, 1 / 1.2);
         break;
+      case ::Qt::Key_Control:
+        cursor_backup = v->cursor();
+        v->setCursor(::Qt::CrossCursor);
       default:
         return false;
       }
@@ -90,11 +93,13 @@ namespace Qt {
     } // end case KeyPress
     case QEvent::KeyRelease: {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-      if(keyEvent->key() == ::Qt::Key_Control && rectItem->isVisible() ) {
-        dragging = false;
+      if(keyEvent->key() == ::Qt::Key_Control) {
+        if(rectItem->isVisible() ) {
+          dragging = false;
+          v->scene()->removeItem(rectItem);
+          rectItem->hide();
+        }
         v->setCursor(cursor_backup);
-        v->scene()->removeItem(rectItem);
-        rectItem->hide();
         return true;
       }
       return false;
@@ -136,7 +141,6 @@ namespace Qt {
         else if( mouseEvent->button() == ::Qt::RightButton) {
           dragging = true;
           dragging_start = v->mapToScene(mouseEvent->pos());
-          cursor_backup = v->cursor();
           v->setCursor(::Qt::ClosedHandCursor);
           return true;
         }
@@ -307,8 +311,6 @@ namespace Qt {
       % v->verticalScrollBar()->value()
       % v->verticalScrollBar()->maximum();
   }
-
-#include "GraphicsViewNavigation.moc"
 
 } // namespace Qt
 } // namespace CGAL

@@ -11,7 +11,7 @@
 #include <QGLWidget>
 #include <QTextStream>
 
-#include "DemosMainWindow.h"
+#include <CGAL/Qt/DemosMainWindow.h>
 
 namespace CGAL {
 namespace Qt {
@@ -215,5 +215,3 @@ DemosMainWindow::popupAboutDemo()
 
 } // namespace Qt
 } // namespace CGAL
-
-#include "DemosMainWindow.moc"

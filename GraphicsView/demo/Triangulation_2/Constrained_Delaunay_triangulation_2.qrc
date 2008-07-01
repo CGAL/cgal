@@ -4,7 +4,7 @@
     <file>icons/movingPoint.png</file>
   </qresource>
   <qresource prefix="/cgal/help" lang="en" >
-    <file>about_CGAL.html</file>
-    <file>about_Delaunay_triangulation.html</file>
+    <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
+    <file>about_Constrained_Delaunay_triangulation_2.html</file>
   </qresource>
 </RCC>

@@ -1,7 +1,7 @@
 <ui version="4.0" >
  <author>GeometryFactory</author>
- <class>Delaunay_triangulation_MainWindow</class>
- <widget class="QMainWindow" name="Delaunay_triangulation_MainWindow" >
+ <class>Constrained_Delaunay_triangulation_2</class>
+ <widget class="QMainWindow" name="Constrained_Delaunay_triangulation_2" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>CGAL Delaunay Triangulation</string>
+   <string>CGAL Constrained Delaunay Triangulation</string>
   </property>
   <property name="windowIcon" >
    <iconset resource="../icons/Logos.qrc" >
@@ -82,7 +82,7 @@
     <rect>
      <x>116</x>
      <y>29</y>
-     <width>218</width>
+     <width>284</width>
      <height>37</height>
     </rect>
    </property>
@@ -95,7 +95,7 @@
    <attribute name="toolBarBreak" >
     <bool>false</bool>
    </attribute>
-   <addaction name="actionInsertPoint" />
+   <addaction name="actionInsertPolyline" />
    <addaction name="actionMovingPoint" />
    <addaction name="actionShowDelaunay" />
    <addaction name="actionShowVoronoi" />
@@ -133,7 +133,7 @@
      <string>&amp;Tools</string>
     </property>
     <addaction name="actionMovingPoint" />
-    <addaction name="actionInsertPoint" />
+    <addaction name="actionInsertPolyline" />
     <addaction name="actionShowDelaunay" />
     <addaction name="actionShowVoronoi" />
     <addaction name="separator" />
@@ -174,7 +174,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="Delaunay_triangulation_MainWindow.qrc" >
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
      <normaloff>:/cgal/Actions/icons/movingPoint.png</normaloff>:/cgal/Actions/icons/movingPoint.png</iconset>
    </property>
    <property name="text" >
@@ -190,7 +190,7 @@
     <string comment="what" >whats this</string>
    </property>
   </action>
-  <action name="actionInsertPoint" >
+  <action name="actionInsertPolyline" >
    <property name="checkable" >
     <bool>true</bool>
    </property>
@@ -199,16 +199,16 @@
    </property>
    <property name="icon" >
     <iconset resource="../icons/Input.qrc" >
-     <normaloff>:/cgal/Input/inputPoint.png</normaloff>:/cgal/Input/inputPoint.png</iconset>
+     <normaloff>:/cgal/Input/inputPolyline.png</normaloff>:/cgal/Input/inputPolyline.png</iconset>
    </property>
    <property name="text" >
-    <string>&amp;Insert Point</string>
+    <string>&amp;Insert Polyline</string>
    </property>
    <property name="toolTip" >
-    <string>Insert Point</string>
+    <string>Insert Point or Polyline</string>
    </property>
    <property name="statusTip" >
-    <string>Left: Insert vtx</string>
+    <string>Left: Insert vtx | Right: Final vtx | Del: Delete vtx</string>
    </property>
   </action>
   <action name="actionClear" >
@@ -239,6 +239,9 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+V</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionShowDelaunay" >
@@ -285,7 +288,7 @@
     <bool>true</bool>
    </property>
    <property name="icon" >
-    <iconset resource="Delaunay_triangulation_MainWindow.qrc" >
+    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >
      <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text" >
@@ -309,7 +312,7 @@
   </action>
  </widget>
  <resources>
-  <include location="Delaunay_triangulation_MainWindow.qrc" />
+  <include location="Constrained_Delaunay_triangulation_2.qrc" />
   <include location="../icons/File.qrc" />
   <include location="../icons/Logos.qrc" />
   <include location="../icons/Triangulation_2.qrc" />

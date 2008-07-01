@@ -1899,16 +1899,15 @@ Generator/doc_tex/Generator/generators_prog2.ps -text svneol=unset#application/p
 Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#image/gif
 GraphicsView/GraphicsView.odp -text
 GraphicsView/TODO -text
-GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.qrc -text
-GraphicsView/demo/GraphicsView/Constrained_Delaunay_triangulation_MainWindow.ui -text
-GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.qrc -text
-GraphicsView/demo/GraphicsView/Delaunay_triangulation_MainWindow.ui -text
-GraphicsView/demo/GraphicsView/about_CGAL.html svneol=native#text/html
-GraphicsView/demo/GraphicsView/about_Delaunay_triangulation.html svneol=native#text/html
-GraphicsView/demo/GraphicsView/about_constrained_Delaunay_triangulation.html svneol=native#text/html
-GraphicsView/demo/GraphicsView/icons/circumcenter.pdf -text
-GraphicsView/demo/GraphicsView/icons/circumcenter.png -text
-GraphicsView/demo/GraphicsView/icons/movingPoint.png -text
+GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.qrc -text
+GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2.ui -text
+GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.qrc -text
+GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2.ui -text
+GraphicsView/demo/Triangulation_2/about_Constrained_Delaunay_triangulation_2.html svneol=native#text/html
+GraphicsView/demo/Triangulation_2/about_Delaunay_triangulation_2.html svneol=native#text/html
+GraphicsView/demo/Triangulation_2/icons/circumcenter.pdf -text
+GraphicsView/demo/Triangulation_2/icons/circumcenter.png -text
+GraphicsView/demo/Triangulation_2/icons/movingPoint.png -text
 GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
 GraphicsView/demo/icons/File.qrc -text
 GraphicsView/demo/icons/Input.qrc -text
@@ -1923,6 +1922,7 @@ GraphicsView/demo/icons/fileSave.png -text
 GraphicsView/demo/icons/inputPoint.png -text svneol=unset#image/png
 GraphicsView/demo/icons/inputPolyline.png -text
 GraphicsView/demo/icons/zoom-best-fit.svg -text
+GraphicsView/demo/resources/about_CGAL.html svneol=native#text/html
 GraphicsView/doc_tex/GraphicsView/uml-design.eps -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text

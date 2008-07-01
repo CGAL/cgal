@@ -23,6 +23,7 @@ find_package(CGAL REQUIRED)
 include(${CGAL_USE_FILE})
 
 set( QT_USE_QTMAIN   TRUE )
+set( QT_USE_QTOPENGL TRUE )
 find_package(Qt4 QUIET)
 
 include_directories (BEFORE ../../include)
@@ -30,11 +31,10 @@ include_directories (BEFORE ../../include)
 if(QT4_FOUND) 
   include(${QT_USE_FILE})
 
-  # a moc file that is included in a .cpp file
-  qt4_generate_moc( ../../include/CGAL/Qt/GraphicsViewNavigation.h GraphicsViewNavigation.moc )
-  macro_add_file_dependencies( GraphicsViewNavigation.cpp GraphicsViewNavigation.moc )
 
-  # two moc files that are compiled directly as cpp files
+  # moc files that are compiled directly as cpp files
+  qt4_generate_moc( ../../include/CGAL/Qt/GraphicsViewNavigation.h GraphicsViewNavigation_moc.cpp )
+  qt4_generate_moc( ../../include/CGAL/Qt/DemosMainWindow.h DemosMainWindow_moc.cpp )
   qt4_generate_moc( ../../include/CGAL/Qt/GraphicsItem.h GraphicsItem_moc.cpp )
   qt4_generate_moc( ../../include/CGAL/Qt/GraphicsViewInput.h GraphicsViewInput_moc.cpp )
 
@@ -43,7 +43,7 @@ if(QT4_FOUND)
 
   set( CGAL_QT4_BASENAME CGAL-Qt4 )
 
-  add_library( CGAL_QT4 GraphicsViewInput_moc.cpp GraphicsViewNavigation.cpp GraphicsItem_moc.cpp GraphicsViewPolylineInput.cpp ${RESOURCE_FILES} )
+  add_library( CGAL_QT4 GraphicsViewInput_moc.cpp GraphicsViewNavigation.cpp GraphicsViewNavigation_moc.cpp GraphicsItem_moc.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp DemosMainWindow_moc.cpp ${RESOURCE_FILES} )
   target_link_libraries( CGAL_QT4 ${QT_LIBRARIES} )
   if ( NOT AUTO_LINK_ENABLED )    
     # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
