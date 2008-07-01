@@ -1330,7 +1330,7 @@ public:
     };
 
 
-    //       polynomial subresultants;
+    //       Polynomial subresultants (aka subresultant polynomials)
     struct Polynomial_subresultants {
         
         template<typename OutputIterator>
@@ -1348,7 +1348,7 @@ public:
         }  
     };
 
-    //       principal subresultants;
+    //       principal subresultants (aka scalar subresultants)
     struct Principal_subresultants {
         
         template<typename OutputIterator>
@@ -1366,7 +1366,7 @@ public:
         }  
     };
 
-    //       Sturm-Habicht sequence
+    //       Sturm-Habicht sequence (aka signed subresultant sequence)
     struct Sturm_habicht_sequence {
         
         template<typename OutputIterator>
@@ -1402,7 +1402,8 @@ public:
         }  
     };
     
-    //       Principal Sturm-Habicht sequence
+    //       Principal Sturm-Habicht sequence (formal leading coefficients
+    //       of Sturm-Habicht sequence)
     struct Principal_sturm_habicht_sequence {
         
         template<typename OutputIterator>
