@@ -73,7 +73,6 @@ protected:
 
   typedef typename Kernel::Direction_3          Direction_3;
   typedef typename Kernel::Vector_3             Vector_3;
-  typedef typename Kernel::Line_3               Line_3;
   typedef typename Kernel::Point_3              Point_3;
   typedef typename Kernel::Direction_2          Direction_2;
   typedef typename Kernel::Vector_2             Vector_2;
