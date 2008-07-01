@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
 template <typename Traits_,
           typename ArrangementRed_,
           typename ArrangementBlue_>
-class Arr_overlay_traits_2 : public Traits_
+class Arr_overlay_traits_2
 {
 public:
 
@@ -108,6 +108,8 @@ public:
   Arr_overlay_traits_2 (Traits_2& base_tr) :
     m_base_traits (&base_tr)
   {}
+
+  Traits_2* base_traits() const { return m_base_traits; }
 
   /*! \class
    * Nested extension of the x-monotone curve type.
@@ -426,7 +428,7 @@ public:
       const Arr_parameter_space  bx2 = ps_x_op (xcv2, ARR_MIN_END);
       const Arr_parameter_space  by2 = ps_y_op (xcv2, ARR_MIN_END);
 
-      Traits_2 * m_base_tr = m_traits;
+      Traits_2 * m_base_tr = m_traits->base_traits();
 
       if (bx1 == ARR_INTERIOR && by1 == ARR_INTERIOR &&
           bx2 == ARR_INTERIOR && by2 == ARR_INTERIOR)

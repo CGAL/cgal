@@ -202,7 +202,7 @@ public:
   typedef typename Kernel::Segment_2                       Segment_2;
   typedef typename Kernel::Line_2                          Line_2;
 
-private:
+protected:
 
   typedef typename Point_2::CoordNT                        CoordNT;
 
