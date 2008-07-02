@@ -13,7 +13,7 @@
 
 // code coverage test for Algebraic_curve_kernel_2
 
-#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
+#include <CGAL/Algebraic_curve_kernel_2/flags.h>
 #include <CGAL/basic.h>
 
 //#include <CGAL/Benchmark/Benchmark.hpp>

@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
+#include <CGAL/Algebraic_curve_kernel_2/flags.h>
 
 // Switches on/off tests for Sqrt-extension types
 #ifndef DO_SQRT_EXTENSION_TESTS

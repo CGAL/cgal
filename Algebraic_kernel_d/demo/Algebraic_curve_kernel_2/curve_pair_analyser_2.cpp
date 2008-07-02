@@ -14,7 +14,7 @@
 // Allow only coprime curve pairs for that demo!
 #define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 1
 
-#include<CGAL/Algebraic_curve_kernel_2/flags.hpp>
+#include<CGAL/Algebraic_curve_kernel_2/flags.h>
 
 #include <CGAL/basic.h>
 
