@@ -17,7 +17,7 @@ GraphicsView/demo/GraphicsView/min
 GraphicsView/demo/GraphicsView/qrc_*.cxx
 GraphicsView/demo/GraphicsView/ui_*.h
 GraphicsView/demo/Triangulation_2/*.exe
-GraphicsView/demo/Triangulation_2/Constrained_delaunay_triangulation_2
+GraphicsView/demo/Triangulation_2/Constrained_Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Delaunay_triangulation_2
 GraphicsView/demo/Triangulation_2/Makefile
 GraphicsView/demo/Triangulation_2/qrc_*.cxx
