@@ -236,11 +236,9 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(tcc);
-    this->graphicsView->setMouseTracking(true);
     tcc->show();
   } else {  
     scene.removeEventFilter(tcc);
-    this->graphicsView->setMouseTracking(false);
     tcc->hide();
   }
 }
