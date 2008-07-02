@@ -1,0 +1,2653 @@
+// TODO: Add licence
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id: $
+// 
+//
+// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
+//
+// ============================================================================
+
+/*!\file CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h
+ * \brief definition of Curve_renderer_2<> 
+ * rasterization of algebraic curves
+ */
+
+#ifndef CGAL_CKVA_CURVE_RENDERER_2_H
+#define CGAL_CKVA_CURVE_RENDERER_2_H
+
+#include <vector>
+#include <stack>
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/sequenced_index.hpp>
+
+#include <CGAL/Polynomial.h>
+#include <CGAL/Interval_nt.h>
+
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
+
+#include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_internals.h>
+#include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h>
+
+using boost::multi_index::multi_index_container;
+using boost::multi_index::get;
+using boost::multi_index::project;
+
+CGAL_BEGIN_NAMESPACE
+
+#ifndef CGAL_CURVE_RENDERER_DEFS
+#define CGAL_CURVE_RENDERER_DEFS
+
+// subdivision level beyond which visibly coincide branches are not further
+// discriminated
+#define CGAL_COINCIDE_LEVEL 4 
+
+// maximal recursion depth for derivative check
+#define CGAL_DER_CHECK_DEPTH 5 
+
+// # of pixels to enlarge the drawing window in y-direction: required to skip
+// closely located clip-points
+#define CGAL_WINDOW_ENLARGE  15 
+
+// refine factor for intervals in x-direction (in pixel size)
+#define CGAL_REFINE_X        100    
+
+// refine factor for intervals in y-direction (in pixel size) 
+#define CGAL_REFINE_Y        100000  
+
+// refine factor for clip-points 
+#define CGAL_REFINE_CLIP_POINTS  1000 
+
+#endif // CGAL_CURVE_RENDERER_DEFS                                     
+
+/*!
+ * \brief The class template \c Curve_renderer_2 and its associate functions.
+ * 
+ * The class implements rendering of distinct curve arcs and points as 
+ * defined by \c CurvedKernelViaAnalysis_2::Arc_2 and 
+ * \c CurvedKernelViaAnalysis_2::Point_2. \c Coeff_ template parameter
+ * defines an underlying number type to be used in polynomial and range 
+ * evaluations. Valid instantiations are \c double, multi-precision float or 
+ * exact rational number type. The main float-point number type is defined by 
+ * \c Curve_renderer_traits<Coeff_>::Float.
+ */
+//!@{
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+class Curve_renderer_2
+{
+public: 
+    //! \name public typedefs 
+    //!@{ 
+    
+    //! this instance's first template argument
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+    
+    //! this instance's second template argument
+    typedef Coeff_ Coeff;
+    
+    //! type of embedded curve kernel
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+        Curve_kernel_2;
+    
+    //! type of x-monotone arc
+    typedef typename Curved_kernel_via_analysis_2::X_monotone_curve_2 Arc_2;
+    
+    //! type of a point on curve
+    typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
+    
+    //! type of 1-curve analysis
+    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_analysis_2;
+    
+    //!@}
+private:    
+    //! \name private typedefs 
+    //!@{
+
+    //! type of X_coordinate
+    typedef typename Curve_kernel_2::X_coordinate_1 X_coordinate_1;
+
+    //! type of xy-coordinate ? ;)
+    typedef typename Curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
+
+    //! rendering low-level routine
+    typedef CGALi::Curve_renderer_internals<Curve_kernel_2, Coeff>
+        Renderer_internals;
+
+    //! exact rational number type
+    typedef typename Renderer_internals::Rational Rational;
+
+    /// polynomial traits should be used whenever possible
+    typedef typename Renderer_internals::Polynomial_traits_2
+            Polynomial_traits_2;
+
+    //! curve renderer type conversion traits
+    typedef typename Renderer_internals::Renderer_traits Renderer_traits;
+    
+    //! coercion between rational and polynomial coefficients number type
+    typedef typename Renderer_internals::Rat_coercion_type Rat_coercion_type;
+    
+    //! instance of X_real_traits
+    typedef typename Curve_kernel_2::X_real_traits_1 X_real_traits_1;
+    
+    //! instance of Y_real_traits
+    typedef typename Curve_kernel_2::Y_real_traits_1 Y_real_traits_1;
+
+    //! lower/upper boundary and one step refinement for \c X_coordinate_1     
+    typename X_real_traits_1::Lower_boundary lbound_x;
+    typename X_real_traits_1::Upper_boundary ubound_x;
+    typename X_real_traits_1::Refine refine_x;
+    
+    //! lower/upper boundary and one step refinement for \c Xy_coordinate_2 
+    typename Y_real_traits_1::Lower_boundary lbound_y;
+    typename Y_real_traits_1::Upper_boundary ubound_y;
+    typename Y_real_traits_1::Refine refine_y;
+    
+    //! specialized integer number type
+    typedef typename Renderer_traits::Integer Integer;
+    
+    //! event line instance type
+    typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
+    
+    //! underlying bivariate polynomial type
+    typedef typename Renderer_internals::Polynomial_2 Polynomial_2;
+    
+    //! underlying univariate polynomial type
+    typedef typename Renderer_internals::Poly_dst_1 Poly_dst_1;
+    
+    //! basic number type used in all computations
+    typedef typename Renderer_internals::NT NT;
+    
+    //! instance of a univariate polynomial
+    typedef typename Renderer_internals::Poly_1 Poly_1;
+    //! instance of a bivariate polynomial
+    typedef typename Renderer_internals::Poly_2 Poly_2;
+    
+    //! conversion from the basic number type to doubles
+    typename CGAL::Real_embeddable_traits<NT>::To_double to_double;
+    
+    //! conversion from the basic number type to integers
+    typename Renderer_traits::Rat_to_integer rat2integer;
+    //! conversion from \c Integer type to built-in integer
+    typename Renderer_traits::Float_to_int float2int;
+    
+    //! conversion from \c Rational type to used number type
+    typename Renderer_traits::Rat_to_float rat2float;
+    //! makes the result exact after inexact operation (applicable only for
+    //! exact number types
+    typename Renderer_traits::Make_exact make_exact;
+    
+    //! returns \c true when the precision limit for a specified number type is
+    //! reached
+    typename Renderer_traits::Precision_limit limit;
+    //! maximum level of subdivision dependending on speficied number type
+    static const unsigned MAX_SUBDIVISION_LEVEL = 
+            Renderer_traits::MAX_SUBDIVISION_LEVEL;
+            
+    //! pixel instance type
+    typedef CGALi::Pixel_2_templ<Integer> Pixel_2;
+    //! seed point instance type
+    typedef CGALi::Seed_point_templ<Integer> Seed_point;
+    //! support for multiple seed points
+    typedef std::stack<Seed_point> Seed_stack;
+    
+    //! map container element's type for maintaining a list of cache instances
+    typedef std::pair<int, int> LRU_entry;
+    //! a range of x-coordinates to define bottom/top clip points
+    typedef CGALi::Clip_point_templ<Rational, X_coordinate_1>
+            Clip_point_entry;
+    //! a container of bottom/top clip points
+    typedef std::vector<Clip_point_entry> Clip_points;
+    //! an integer index container
+    typedef std::vector<int> index_vector;
+        
+    //! LRU list used for effective cache switching
+    typedef boost::multi_index::multi_index_container<
+        LRU_entry, boost::multi_index::indexed_by<
+            boost::multi_index::sequenced<>,
+            boost::multi_index::ordered_unique<
+                BOOST_MULTI_INDEX_MEMBER(LRU_entry,int,first) > > >
+    LRU_list;
+    
+    //! internal use only: a stripe defined by bounding polynomials
+    //! and coordinates on sides, index 0 - lower boundary, 1 - upper boundary
+    struct Stripe {
+        Poly_1 poly[2];
+        NT key[2];
+        unsigned level[2];
+    } ;
+    
+    //!@}
+public: 
+    //! \name constructor
+    //!@{ 
+    
+    //! default constructor: a curve segment is undefined
+    Curve_renderer_2() : cache_id(-1), initialized(false), one(1) { 
+    }
+    
+    //!@}
+public:
+    //! \name public methods
+    //!@{
+        
+    //! sets up drawing window and pixel resolution
+    void setup(const Bbox_2& bbox_, int res_w_, int res_h_) {
+         
+        initialized = engine.setup(bbox_, res_w_, res_h_);
+        clip_pts_computed = false; // need to recompute clip points each time
+                                   // the window dimensions are changed
+    }
+     
+    //! \brief returns currently used supporting algebraic curve
+    Curve_analysis_2 curve() const
+    {
+        return *support;
+    }
+    
+    //! \brief returns the drawing window
+    void get_window(Bbox_2& bbox_) const {
+        bbox_ = Bbox_2(to_double(engine.x_min), to_double(engine.y_min),
+                       to_double(engine.x_max), to_double(engine.y_max));
+    }
+    
+    //! \brief returns the pixel resolution
+    void get_resolution(int& res_w_, int& res_h_) const {
+        res_w_ = engine.res_w; 
+        res_h_ = engine.res_h;
+    }
+    
+    //! \brief the main rendering procedure for curve arcs
+    //! returns a sequence of integer pixel coordinates \c points
+    //!
+    //! An exception \c Insufficient_rasterize_precision_exception is 
+    //! thrown whenever the precision of currently used NT is not enough
+    //! to correctly render a curve arc. The exception has to be caught
+    //! outside the renderer to switch to a higher-precision arithmetic
+    void draw(const Arc_2& arc, std::list<CGALi::Coord_vec_2>& points, 
+        std::pair<CGALi::Coord_2, CGALi::Coord_2>& end_points);
+
+    /*!\brief
+     * overloaded version to rasterize points on curves
+     */
+    bool draw(const Point_2& pt, CGALi::Coord_2& coord);
+    
+    //!@}    
+private:
+    //! \name Private methods
+    //!@{ 
+    
+    //! \brief switches to another cache instance depending on the
+    //! supporting curve of a segment
+    void select_cache_entry(const Arc_2& arc);
+    
+    //! \brief draws a piece of a semgment from pix_1 to pix_2
+    void draw_lump(CGALi::Coord_vec_2& points, int& last_x, int arcno,
+        const Pixel_2& pix_1, const Pixel_2& pix_2);
+    
+    //! \brief copmutes an isolating interval for y-coordinate of an end-point,
+    //! uses caching if possible
+    Rational get_endpoint_y(const Arc_2& arc, const Rational& x,
+        CGAL::Arr_curve_end end, bool is_clipped);
+
+    //! \brief returns whether a polynomial has zero over an interval,
+    //! we are not interested in concrete values
+    //!
+    //! a bit mask \c check indicates which boundaries are to be computed
+    //! 0th bit - of a polynomial itself (0th derivative, default)
+    //! 1st bit - of the first derivative (sets \c first_der flag)
+    //! 2nd bit - of the second derivative
+    bool get_range_1(int var, const NT& lower, const NT& upper, const NT& key, 
+        const Poly_1& poly, int check = 1);
+        
+    //! \brief advances pixel's coordinates by given increments
+    void advance_pixel(Pixel_2& pix, int new_dir)
+    {
+        int x_inc = CGALi::directions[new_dir].x,
+            y_inc = CGALi::directions[new_dir].y;
+        if(pix.level == 0) {
+            pix.x += x_inc;
+            pix.y += y_inc;
+        } else {
+            Integer x = pix.sub_x + x_inc,
+                    y = pix.sub_y + y_inc, pow = (one << pix.level) - 1;
+            (x < 0 ? pix.x-- : x > pow ? pix.x++ : x);
+            (y < 0 ? pix.y-- : y > pow ? pix.y++ : y);
+            pix.sub_x = x&pow;
+            pix.sub_y = y&pow;
+        }   
+//         int taken = CGALi::DIR_TAKEN_MAP[new_dir];
+//         if(taken != -1&&taken!=direction_taken) {
+//             Gfx_OUT("ERROR: direction reversed at pixel: " << 
+//                 pix << " new_dir = " << new_dir << std::endl);
+//             throw -1;
+//         }
+    }
+    
+    //! computes pixel coordinates from rational point
+    void get_pixel_coords(const Rational& x, const Rational& y, 
+            Pixel_2& pix, Rational *ppix_x=NULL, Rational *ppix_y=NULL)
+    {
+        Rational p_x = (x - engine.x_min_r) / engine.pixel_w_r,
+                 p_y = (y - engine.y_min_r) / engine.pixel_h_r;
+        pix.x = static_cast<int>(std::floor(CGAL::to_double(p_x)));
+        pix.y = static_cast<int>(std::floor(CGAL::to_double(p_y)));
+        
+        if(ppix_x != NULL && ppix_y != NULL) {
+//             NiX::simplify(p_x);
+//             NiX::simplify(p_y);
+            *ppix_x = p_x;
+            *ppix_y = p_y;
+        }
+    }
+    
+    //! refines y-coordinate of \c Xy_coordinate_2 to a certain bound
+    void refine_xy(const Xy_coordinate_2& xy, const Rational& bound) {
+        while(ubound_y(xy) - lbound_y(xy) >= bound)
+            refine_y(xy);
+    }
+    
+    //! returns h/v boundaries for 8-pixel neighbourhood
+    void get_boundaries(int var, const Pixel_2& pix, Stripe& stripe);
+    
+    //! returns univariate polynomials (depending on subdivision level cache
+    //! might be used)
+    void get_polynomials(int var, Stripe& stripe);
+    
+    //! checks 8-pixel neighbourhood of a pixel, returns \c true if 
+    //! only one curve branch intersects pixel's neighbourhood, \c dir
+    //! defines backward direction, \c new_dir is a new tracking direction
+    bool test_neighbourhood(const Pixel_2& pix, int dir, int& new_dir, 
+        int step_x = 2, int step_y = 2);
+        
+//#ifdef    Gfx_DEBUG_PRINT
+    // debug only!
+    void dump_neighbourhood(const Pixel_2& pix);
+//#else
+//  #define dump_neighbourhood ((void)0)
+//#endif
+    
+    //! returns a subpixel which is crossed by the curve branch, subpixels
+    //! are tested w.r.t. preferred direction (only for h/v directions)
+    int get_subpixel_hv(const Pixel_2& pix, int pref_dir);
+    
+    //! the same for diagonal directions
+    int get_subpixel_diag(const Pixel_2& pix, int pref_dir);
+    
+    //! recursively subdivides pixel into 4 subpixels, returns a new tracking
+    //! direction
+    bool subdivide(Pixel_2& pix, int dir, int& new_dir);
+    
+    //! returns the starting witness pixel and two directions from it
+    bool get_seed_point(const Rational& seed, int arcno, Pixel_2& start, 
+        int *dir, int *b_taken, bool& b_coincide);
+    
+    //! tests whether a polynomial has only one root over an interval
+    bool recursive_check(int var, const NT& beg, const NT& end,
+        const NT& key, const Poly_1& poly, int depth = 0);
+    
+    //! if success returns two directions among 8, where a curve branch
+    //! crosses the pixel's neighbourhood
+    bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, 
+        bool& b_coincide);
+    
+    //! computes an isolating box of an end-point
+    bool get_isolating_box(const Rational& x_s, const Rational& y_s, 
+        Pixel_2& res);
+    
+    //! returns true if \c pix is encompassed into one of isolating rectangles
+    //! (stopping criteria)
+    bool is_isolated_pixel(const Pixel_2& pix);
+    
+    //! computes clip points on top and bottom window boundaries
+    void horizontal_clip();
+    
+    //! refines an algebraic point w.r.t. certain criteria
+    void refine_alg_point(Rational& l, Rational& r, const Poly_dst_1& poly, 
+        const Rational& criteria, int mode=0);
+    
+    //! computes bottom and top horizontal clip-points of a segment    
+    void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
+        const Rational& y_lower, const Rational& y_upper,
+            const Rational& y_clip, const Poly_dst_1& poly, int arcno,
+             Clip_points& clip_points, index_vector& clip_indices);
+             
+public:
+    //! destructor
+    ~Curve_renderer_2()
+    {
+        cache_list.clear();
+    }
+    
+    //!@}
+private:
+    //! \name Private properties
+    //!@{ 
+    
+    unsigned max_level;            //! maximum subdivision level
+    unsigned current_level;
+    
+    bool clip_pts_computed;     //! indicates whether clip points are computed
+    
+    Pixel_2 isolated_l, isolated_h; //! isolating rectangles for lower  and
+                                    //! upper end-points
+                                    
+    //! an instance of rendering engine
+    CGALi::Curve_renderer_internals<Curve_kernel_2, Coeff> engine;
+                                            
+    Curve_analysis_2 *support; //! supporting 1-curve analysis
+    Curve_analysis_2 support_[CGAL_N_CACHES];
+                                    
+    Clip_points btm_clip, top_clip;  //! a set of bottom and top clip points
+    Poly_dst_1 btm_poly, top_poly;   //! bottom and top polynomials 
+    
+    int cache_id;        //! index of currently used cache instance
+    LRU_list cache_list; //! list of indices of cache instances
+    
+    Seed_stack s_stack;      //! a stack of seed points
+    Seed_point current_seed; //! current seed point
+    
+    bool initialized;  //! indicates whether the renderer has been initialized
+                       //! with correct parameters
+    const Integer one; //! just "one"
+    bool branches_coincide; //! indicates that there are several branches
+                           //! passing through one neighbourhood pixel
+    int direction_taken;  //! stores a direction taken from the seed point 
+                          //! during tracking, if it's possible to determine
+                          //! 0 - towards lower point, 1 - towards upper
+    //!@} 
+}; // class Curve_renderer_2<>
+
+//! \brief main rasterization procedure, takes coordinates of event points and 
+//! the arc number and draws a curve segment
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
+    const Arc_2& arc, std::list<CGALi::Coord_vec_2>& points,
+     std::pair<CGALi::Coord_2, CGALi::Coord_2>& end_points)
+{
+    if(!initialized)
+        return;
+    select_cache_entry(arc); // lookup for appropriate cache instance 
+    
+    Gfx_OUT("\n////////////////////\n resolution: " << engine.res_w << " x "
+            << engine.res_h << std::endl);
+    Gfx_OUT("box: [" << engine.x_min << "; " << engine.y_min << "]x[" <<
+        engine.x_max << "; " << engine.y_max << "]" << std::endl);
+     
+    Rational lower, upper, y_lower = 0, y_upper = 0;
+    bool infty_src = true, infty_tgt = true, clip_src=false, clip_tgt=false;
+
+    CGAL::Arr_parameter_space loc_p1 = arc.location(CGAL::ARR_MIN_END),
+        loc_p2 = arc.location(CGAL::ARR_MAX_END);
+    
+    if(loc_p1 != CGAL::ARR_LEFT_BOUNDARY) {
+        const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MIN_END);
+
+        //while(x0.high() - x0.low() > engine.pixel_w_r/CGAL_REFINE_X)
+          //  x0.refine();
+        //lower = p1.finite().high();
+        //if(!p1.finite().is_rational()&&!seg.is_vertical())
+          //  arcno_p1 = seg.arcno();
+
+        while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
+            refine_x(x0);
+            
+        lower = ubound_x(x0);
+//         NiX::simplify(lower);
+    } else 
+        lower = engine.x_min_r;
+            
+    // since end-points are sorted lexicographically, no need to check for
+    // lower boundary        
+    if(loc_p2 == CGAL::ARR_TOP_BOUNDARY && arc.is_vertical()) 
+        y_upper = engine.y_max_r;
+
+    if(loc_p2 != CGAL::ARR_RIGHT_BOUNDARY) {
+        const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MAX_END);
+        while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
+            refine_x(x0);
+        
+        upper = lbound_x(x0);
+//         NiX::simplify(upper);
+    } else 
+        upper = engine.x_max_r;
+       
+    if(upper <= engine.x_min_r||lower >= engine.x_max_r) 
+        return;
+    
+    if(lower < engine.x_min_r) {
+        lower = engine.x_min_r;
+        clip_src = true;
+    }
+    if(upper > engine.x_max_r) {
+        upper = engine.x_max_r;
+        clip_tgt = true;
+    }
+
+    Rational height_r = (engine.y_max_r-engine.y_min_r)*2;
+    switch(loc_p1) {
+    case CGAL::ARR_BOTTOM_BOUNDARY:
+        y_lower = (arc.is_vertical() ? engine.y_min_r :
+            engine.y_min_r - height_r);
+        break;
+        
+    case CGAL::ARR_TOP_BOUNDARY:
+        // endpoints must be sorted lexicographical
+        CGAL_precondition(!arc.is_vertical());
+        y_lower = engine.y_max_r + height_r;
+        break;
+        
+    default:
+        infty_src = false;
+        y_lower = get_endpoint_y(arc, lower, CGAL::ARR_MIN_END, clip_src);
+    }
+    
+    switch(loc_p2) {
+    case CGAL::ARR_BOTTOM_BOUNDARY:
+        // endpoints must be sorted lexicographical
+        CGAL_precondition(!arc.is_vertical());
+        y_upper = engine.y_min_r - height_r;
+        break;
+        
+    case CGAL::ARR_TOP_BOUNDARY:
+        y_upper = (arc.is_vertical() ? engine.y_max_r :
+                    engine.y_max_r + height_r);
+        break;
+    default:
+        infty_tgt = false;
+        y_upper = get_endpoint_y(arc, upper, CGAL::ARR_MAX_END, clip_tgt);
+    }
+        
+//     NiX::simplify(y_lower);
+//     NiX::simplify(y_upper);
+    Pixel_2 pix_1, pix_2;
+    
+    Gfx_OUT("lower: " << CGAL::to_double(lower) << "; upper: " <<
+         CGAL::to_double(upper) << "; y_lower: " << NiX::to_double(y_lower) <<
+         "; y_upper: " << CGAL::to_double(y_upper) << "\n");
+
+    get_pixel_coords(lower, y_lower, pix_1);  
+    get_pixel_coords(upper, y_upper, pix_2);  
+    
+    end_points.first.x = (clip_src ? engine.res_w+4 : pix_1.x); 
+    end_points.first.y = pix_1.y;
+    end_points.second.x = (clip_tgt ? engine.res_w+4 : pix_2.x);
+    end_points.second.y = pix_2.y;
+    
+     Gfx_OUT("lower pix: (" << pix_1.x << "; " << pix_1.y <<
+          ") upper pix: (" << pix_2.x << "; " << pix_2.y <<
+          ") pixel_w: " << engine.pixel_w << " pixel_h: " << engine.pixel_h <<
+             std::endl);
+     
+    CGALi::Coord_vec_2 rev_points;
+    // reserve at least enough space for arc's x-length
+    rev_points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
+    
+    if(arc.is_vertical()) {
+        rev_points.push_back(CGALi::Coord_2(pix_1.x, pix_1.y));
+        rev_points.push_back(CGALi::Coord_2(pix_2.x, pix_2.y));
+        points.push_back(rev_points);
+        return;
+    }
+
+    if(!clip_pts_computed) {
+        Gfx_OUT("computing clip points\n");
+        horizontal_clip();
+        clip_pts_computed = true;
+    }
+    
+    typedef std::pair<int, int> Int_pair;
+    typedef std::vector<Int_pair> index_pair_vector;
+    index_vector btm_idx, top_idx;
+    index_pair_vector seg_pts;
+    
+    Gfx_OUT("checking bottom clip: y = " << engine.y_min << "\n");
+    segment_clip_points(lower, upper, y_lower, y_upper, engine.y_min_r,
+        btm_poly, arc.arcno(), btm_clip, btm_idx);
+        
+    Gfx_OUT("checking top clip: y = " << engine.y_max << "\n");
+    segment_clip_points(lower, upper, y_lower, y_upper, engine.y_max_r,
+        top_poly, arc.arcno(), top_clip, top_idx);
+        
+    index_vector::iterator it1 = btm_idx.begin(), it2 = top_idx.begin();
+    while(1) { 
+        bool push_1 = true;
+        if(it1 != btm_idx.end()) {
+            if(it2 != top_idx.end())
+                push_1 = ((btm_clip)[*it1].left < (top_clip)[*it2].left);
+        } else if(it2 != top_idx.end()) 
+            push_1 = false;
+        else 
+            break;
+        if(push_1) {  // 0 - bottom point, 1 - top point
+            seg_pts.push_back(Int_pair(*it1,0));
+            it1++; 
+        } else {
+            seg_pts.push_back(Int_pair(*it2,1));
+            it2++; 
+        }
+    }
+    
+    max_level = 0;
+    Pixel_2 start;
+    int dir[2], b_taken[2], last_x = -engine.res_w;
+    bool b_coincide;
+    Rational pt, mid;
+    
+    branches_coincide = false;
+    // make a small tolerance
+    bool pt1_inside = (pix_1.y >= 0 && pix_1.y < engine.res_h),
+         pt2_inside = (pix_2.y >= 0 && pix_2.y < engine.res_h);
+         
+//TODO: use Event1_info::multiplicity(i) - to gather information about roots ?
+    if(seg_pts.size() == 1 && pt1_inside && pt2_inside)
+        seg_pts.clear();
+        
+    // easy case: no clip-points found    
+    if(seg_pts.size() == 0) {
+        if(!pt1_inside&&!pt2_inside) {
+            Gfx_OUT("segment is outside\n");
+            return;
+        }
+    /// WARNING: if x-interval is small while y coordinates are far away from
+    /// the window, we can get into the troubles..
+        if(0){//pix_2.x - pix_1.x <= 1) {// it goes away right here
+            rev_points.push_back(CGALi::Coord_2(pix_1.x,pix_1.y));
+            rev_points.push_back(CGALi::Coord_2(pix_2.x,pix_2.y));
+            points.push_back(rev_points);
+            return;
+        } 
+        Gfx_OUT("NO clip points\n");
+        mid = (lower + upper)/2;
+//         NiX::simplify(mid);
+        pt = engine.x_min_r + (pix_1.x*2+5)*engine.pixel_w_r/2;
+//         NiX::simplify(pt);
+        // segment is almost vertical - start from a middle point
+        //if(pt > mid) 
+            pt = mid; 
+        if(!get_seed_point(pt, arc.arcno(), start, dir, b_taken, 
+            b_coincide)) {
+            Gfx_OUT("generic error occurred..\n");   
+            return;
+        }
+         Gfx_OUT("starting pixel found: " << start << " directions: " << dir[0]
+             << " and " << dir[1] << std::endl);
+        // only one point list
+        draw_lump(rev_points, last_x, arc.arcno(), pix_1, pix_2);
+        points.push_back(rev_points);
+        
+        Gfx_OUT("exit normal, max_level: " << max_level << std::endl);
+        return;
+    } 
+    
+    // clip-points presented
+    Rational l, r, y_clip;
+    X_coordinate_1 alpha;
+    Poly_dst_1 *ppoly;
+    Clip_point_entry *pclip, *ptmp;
+        
+    Gfx_OUT("segment is not completely inside the window..\n");
+    index_pair_vector::iterator it = seg_pts.begin(), 
+            eend = seg_pts.end();
+    
+    Gfx_OUT("\n\nSEGMENT clip points: \n");
+    Pixel_2 pix_beg, pix_end;
+    bool straight_segment;
+    
+    while(it != eend) {
+        if(it != seg_pts.begin() && it == eend-1 && !pt2_inside)
+            break;
+        straight_segment = false;
+        
+        int idx = it->first;
+        if(it->second == 0) {// bottom points
+            pclip = &btm_clip[idx];
+            ppoly = &btm_poly;
+            y_clip = engine.y_min_r;
+        } else { // top points
+            pclip = &top_clip[idx];
+            ppoly = &top_poly;
+            y_clip = engine.y_max_r;
+        }
+        l = pclip->left;
+        r = pclip->right;
+        
+        if(last_x != -engine.res_w) {  // compute screen coordinates of a pixel
+            Rational last_pt = engine.x_min_r + static_cast<Rational>(last_x)*
+                engine.pixel_w_r; 
+            if(r <= last_pt) { // skip a clip-point if already drawn
+                Gfx_OUT("clip point skipped..\n");
+                it++;
+                continue;
+            }
+        }
+        
+        rev_points.clear();
+        if(it == seg_pts.begin() && pt1_inside) { 
+
+            Gfx_OUT("starting point is near the left end-point\n");
+            //pt = engine.x_min_r + (pix_1.x*2+5)*engine.pixel_w_r/2;
+            pt = (lower + l)/2;
+//             NiX::simplify(pt);
+            if(pt <= lower) {
+                refine_alg_point(l, r, *ppoly, lower, 1);
+                pt = l; 
+                if(l - lower <= engine.pixel_w_r*2) 
+                    straight_segment = true;
+            }
+            pix_beg = pix_1;
+            get_pixel_coords(l, y_clip, pix_end);  
+            
+        } else if(it == eend - 1 && pt2_inside) {
+
+            Gfx_OUT("starting point is near the right end-point\n");
+            //pt = engine.x_min_r + (pix_2.x*2-3)*engine.pixel_w_r/2;
+            pt = (r + upper)/2;
+            Gfx_OUT("pt is: " << CGAL::to_double(pt) << "; r is: " <<
+                CGAL::to_double(r) << ": pixel_w_r: " <<
+                    CGAL::to_double(engine.pixel_w_r) << "\n");
+            
+//             NiX::simplify(pt);
+            if(pt >= upper) {
+                // ensure that clip-point interval is sufficiently small
+                refine_alg_point(l, r, *ppoly, upper, 1);
+                pt = r; 
+                if(upper - r <= engine.pixel_w_r*2) 
+                    straight_segment = true;
+            }
+            pix_end = pix_2;
+            get_pixel_coords(r, y_clip, pix_beg);  
+              
+        } else {
+            Gfx_OUT("starting point is between clip-points\n");
+            it++;
+            
+            if(it == seg_pts.end()) {
+                Gfx_OUT("ERROR: clip point missed ?\n");
+                break;
+            }
+            
+            idx = it->first;
+            ptmp = (it->second ? &top_clip[idx] : &btm_clip[idx]);
+            pt = pclip->alpha.rational_between(ptmp->alpha);
+            
+            get_pixel_coords(l, y_clip, pix_beg);  
+            get_pixel_coords(ptmp->left, it->second ? engine.y_max_r :
+                engine.y_min_r,pix_end); 
+            
+            if(CGAL_ABS(ptmp->left - l) <= engine.pixel_w_r*2) {
+                
+                Xy_coordinate_2 xy(X_coordinate_1(pt), *support, arc.arcno());
+                refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_Y);
+                mid = ubound_y(xy);
+
+                rev_points.push_back(CGALi::Coord_2(pix_beg.x, pix_beg.y));
+                get_pixel_coords(pt, mid, pix_beg); 
+                straight_segment = true;
+            } 
+        }
+            
+        if(straight_segment) {
+            Gfx_OUT("straight subsegment found\n");
+            rev_points.push_back(CGALi::Coord_2(pix_beg.x, pix_beg.y));
+            rev_points.push_back(CGALi::Coord_2(pix_end.x, pix_end.y));
+            points.push_back(rev_points);
+            it++;
+            continue;
+        }
+            
+        if(!get_seed_point(pt, arc.arcno(), start, dir, b_taken, 
+                b_coincide)) {
+            Gfx_OUT("get_seed_point: a problem occurred..\n");
+            it++; 
+            continue;
+        }
+            
+         Gfx_OUT("starting pixel found: " << start << " directions: " <<
+              dir[0] << " and " << dir[1] << std::endl);
+        draw_lump(rev_points, last_x, arc.arcno(), pix_beg, pix_end);
+        points.push_back(rev_points);
+        if(it == eend)
+            break;
+        it++;
+    }
+    
+    /*if(!get_isolating_box(lower, y_lower, isolated_l))
+        isolated_l.level = -1u;
+    if(!get_isolating_box(upper, y_upper, isolated_h))
+        isolated_h.level = -1u;*/
+}
+
+//! draws a segment's piece from pix_1 to pix_2, the starting pixel is taken
+//! from the seed point stack
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
+    CGALi::Coord_vec_2& rev_points, int& last_x, int arcno,
+    const Pixel_2& pix_1, const Pixel_2& pix_2)
+{
+    Pixel_2 start, pix, witness, prev_pix, stored_pix, stored_prev;
+    int back_dir, new_dir, stored_dir, dir[2], b_taken[2], ux, uy;
+    bool b_coincide, failed;
+    start = s_stack.top().start;
+    
+    bool pix_1_close = (CGAL_ABS(start.x - pix_1.x) <= 1&&
+            CGAL_ABS(start.y - pix_1.y) <= 1),
+         pix_2_close = (CGAL_ABS(start.x - pix_2.x) <= 1&&
+            CGAL_ABS(start.y - pix_2.y) <= 1);
+    
+    // stores an x-coordinate of the last traced pixel in --> direction:
+    // required to "jump" over clip-points
+    last_x = -engine.res_w; 
+    
+    if(pix_1_close && pix_2_close) { // suppress drawing of trivial segments
+        rev_points.push_back(CGALi::Coord_2(pix_1.x,pix_1.y));
+        rev_points.push_back(CGALi::Coord_2(pix_2.x,pix_2.y));
+        return;
+    }
+
+    CGALi::Coord_vec_2 points;
+    // reserve a list of point coordinates
+    points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
+
+    direction_taken = -1;
+    bool overstep = (pix_1_close||pix_2_close);
+    bool ready = false;
+    while(!s_stack.empty())
+    {
+    current_seed = s_stack.top();
+    s_stack.pop();
+    branches_coincide = current_seed.branches_coincide;
+    if(direction_taken == -1) 
+        direction_taken = current_seed.direction_taken;
+    witness = current_seed.start;
+    pix = witness;
+    current_level = witness.level;
+    pix.sub_x = 0;
+    pix.sub_y = 0;
+    pix.level = 0;
+    back_dir = current_seed.back_dir;
+    stored_dir = back_dir;
+    stored_pix = pix;
+    stored_prev = pix;
+
+    // store result in a list or reversed list depending on the orientation
+    CGALi::Coord_vec_2 *ppoints = (current_seed.orient == 0 ?
+        &rev_points : &points);
+    
+    Gfx_OUT("continuing from a seed point: " << witness << "; back_dir: " <<
+        back_dir << " direction_taken: " << direction_taken << std::endl);
+        
+    bool is_exit = false;
+    while(1) {
+// #ifdef  CGAL_CKVA_SYNCHRONOUS_CANCEL
+//     pthread_testcancel(); // this is a cancellation point
+// #endif
+
+        if(pix.x < 0 || pix.x > engine.res_w || pix.y < -CGAL_WINDOW_ENLARGE||
+            pix.y > engine.res_h + CGAL_WINDOW_ENLARGE) {
+            branches_coincide = false;
+            break;
+        } 
+        ppoints->push_back(CGALi::Coord_2(pix.x, pix.y));
+           
+        if((direction_taken == 0 && pix.x <= pix_1.x) ||
+                (direction_taken == 1 && pix.x >= pix_2.x)) {
+            //Gfx_OUT("STOP: reached end-point x-coordinate\n");
+            branches_coincide = false;
+            is_exit = true;
+            break;
+        }
+        
+        bool set_ready = false;
+        if(CGAL_ABS(pix.x - pix_1.x) <= 1 && CGAL_ABS(pix.y - pix_1.y) <= 1) {
+            if(!overstep||ready) {
+                pix.x = pix_1.x; 
+                pix.y = pix_1.y;
+                branches_coincide = false;
+                break;
+            }
+            set_ready = true;
+        } 
+        if(CGAL_ABS(pix.x - pix_2.x) <= 1 && CGAL_ABS(pix.y - pix_2.y) <= 1) {
+            if(!overstep||ready) {
+                pix.x = pix_2.x; 
+                pix.y = pix_2.y;
+                branches_coincide = false;
+                break;
+            }
+            ready = true;
+        }
+        if(set_ready)
+            ready = true;
+        if(!test_neighbourhood(pix, back_dir, new_dir)) {
+            ux = pix.x;
+            uy = pix.y;
+            if(witness == pix) { // witness subpixel is a pixel itself
+                if(!subdivide(pix,back_dir,new_dir)) {
+                    is_exit = true;
+                    break;
+                }
+                prev_pix = pix;
+                advance_pixel(pix,new_dir); 
+                back_dir = (new_dir+4)&7;
+            } else {
+                back_dir = stored_dir;
+                pix = witness;
+                prev_pix = witness;
+            }
+            stored_dir = -1;
+            failed = false;
+            while(ux == pix.x && uy == pix.y) {
+                if(!failed && ((prev_pix.sub_x & 2) != (pix.sub_x & 2)||
+                    (prev_pix.sub_y & 2) != (pix.sub_y & 2))) {
+                    stored_pix = pix;
+                    pix.sub_x >>= 1;
+                    pix.sub_y >>= 1;
+                    pix.level--;
+                    stored_dir = back_dir;
+                    stored_prev = prev_pix;
+                }
+                if(!test_neighbourhood(pix, back_dir, new_dir)) {
+                    if(stored_dir != -1) {
+                        pix = stored_pix;
+                        prev_pix = stored_prev;
+                        back_dir = stored_dir;
+                        stored_dir = -1;
+                        failed = true;
+                        continue;
+                    }
+                    if(!subdivide(pix,back_dir,new_dir)) {
+                        is_exit = true;
+                        break;
+                    }
+                }
+                //Gfx_OUT(pix << " dir = " << new_dir << std::endl);
+                prev_pix = pix;
+                advance_pixel(pix,new_dir);
+                if(is_isolated_pixel(pix)) {
+                    branches_coincide = false;
+                    is_exit = true;
+                    break;
+                }
+                back_dir = (new_dir+4)&7;
+            }
+            if(is_exit)
+                break;
+            stored_dir = back_dir;
+            witness = pix; 
+            pix.level = 0;
+            pix.sub_x = 0;
+            pix.sub_y = 0;
+            Gfx_OUT(witness << " " << prev_pix << std::endl);
+        } else {
+            ux = pix.x;
+            uy = pix.y;
+            advance_pixel(pix,new_dir);
+            witness = pix;
+        }
+        back_dir = (new_dir+4)&7;
+    }
+    
+    if(branches_coincide) { // oops, need another seed point
+        if(direction_taken == -1) {
+            Gfx_OUT("\n\nFATAL: unknown direction in coincide mode!\n\n");
+            return;
+        }
+        
+        (direction_taken == 0) ? pix.x -= 1 : pix.x += 1;
+        if(pix.x >= pix_2.x-1||pix.x <= pix_1.x+1)
+            goto Lexit;
+            
+        Gfx_OUT("New seed point required at: " << pix << std::endl);
+        if(!get_seed_point(engine.x_min_r+pix.x*engine.pixel_w_r, arcno,
+            start, dir, 
+                b_taken, b_coincide)) { 
+            std::cerr << " wrong seed point found " << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        
+        Gfx_OUT("new seed point found: " << start << " directions: " << dir[0]
+             << " and " << dir[1] << "; taken = " << direction_taken <<
+                 std::endl);
+                 
+        b_taken[0] = CGALi::DIR_TAKEN_MAP[dir[0]];
+        b_taken[1] = CGALi::DIR_TAKEN_MAP[dir[1]];
+        if(b_taken[0] != -1) 
+            new_dir = dir[b_taken[0] != direction_taken ? 0: 1];
+        else if(b_taken[1] != -1) 
+            new_dir = dir[b_taken[1] != direction_taken ? 1: 0];
+        else {
+            std::cerr << "ERROR: wrong backward dir after seed point: " << 
+                dir[0] << " " << dir[1] << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        s_stack.push(Seed_point(start,new_dir, current_seed.orient,
+                direction_taken, b_coincide));
+        continue;
+    } else if(is_exit) {
+Lexit:  if(direction_taken==0) {
+            pix.x = pix_1.x; 
+            pix.y = pix_1.y;
+        } else if(direction_taken==1) {
+            pix.x = pix_2.x; 
+            pix.y = pix_2.y;
+        } 
+    }
+    ppoints->push_back(CGALi::Coord_2(pix.x, pix.y));
+            
+    // we were tracing in --> direction: store the pixel where we stopped
+    if(direction_taken == 1)
+        last_x = pix.x;
+    if(direction_taken != -1)
+        direction_taken = 1 - direction_taken;
+    ready = false;
+    }
+
+    std::reverse(rev_points.begin(), rev_points.end());
+    // resize rev_points to accomodate the size of points vector
+    unsigned rsize = rev_points.size();
+    rev_points.resize(rsize + points.size());
+    std::copy(points.begin(), points.end(), rev_points.begin() + rsize);
+}
+
+/*!\brief
+ * overloaded version to rasterize distinct points on curves
+ *
+ * \return \c false indicating that the point lies outside the drawing window
+ * \c true in case the point coordinates were successfully computed
+ */
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
+    const Point_2& pt, CGALi::Coord_2& coord) {
+
+    const X_coordinate_1& x0 = pt.x();
+    while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
+        refine_x(x0);
+        
+    Rational x_s = lbound_x(x0), y_s;
+//     NiX::simplify(x_s);
+    if(x_s < engine.x_min_r || x_s > engine.x_max_r)
+        return false;
+    
+    typename Curve_analysis_2::Internal_curve_2::Event1_info
+        event = pt.curve()._internal_curve().event_info_at_x(pt.x());
+    event.refine_to(pt.arcno(), engine.pixel_h_r/CGAL_REFINE_X);
+
+    y_s = event.lower_boundary(pt.arcno());
+
+    Pixel_2 pix;
+    get_pixel_coords(x_s, y_s, pix);
+    if(pix.x < 0 || pix.x >= engine.res_w ||
+            pix.y < 0 || pix.y >= engine.res_h)
+        return false;
+        
+    coord.x = pix.x;
+    coord.y = pix.y;    
+    return true;
+}
+
+namespace CGALi
+{
+// map from box sides to subpixel numbers (for h/v directions)
+// these are old versions
+static const int HV_SUBPIX_MAP[][4] = {
+    {1,3,0,2},  // right(0)
+    {3,2,1,0},  // top(1)
+    {2,0,3,1},  // left(2)
+    {0,1,2,3}}; // bottom(3)
+static const int D_SUBPIX_MAP[][4] = {
+    {3,1,2,0},  // dir = 0
+    {2,3,0,1},  // dir = 1
+    {0,2,1,3},  // dir = 2
+    {1,0,3,2}}; // dir = 3
+} // namespace CGALi
+
+//! recursively subdivides pixel into 4 subpixels, returns a new tracking
+//! direction
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::subdivide(
+    Pixel_2& pix, int back_dir, int& new_dir)
+{   
+    //Gfx_OUT("\n\nSubdivision of a pixel" << pix << " with back_dir =  " << 
+        //back_dir << std::endl);
+    NT inv = NT(1) / NT(one << pix.level);
+    make_exact(inv);
+    int idx, pref_dir = back_dir>>1;
+    
+    if(pix.level >= MAX_SUBDIVISION_LEVEL) {
+        std::cerr << "reached maximum subdivision level: " << pix << 
+            std::endl;
+        throw CGALi::Insufficient_rasterize_precision_exception();
+    }
+    
+    if(limit(engine.pixel_w * inv) || limit(engine.pixel_h * inv)) {
+        std::cerr << "too small subpixel size: " << pix << std::endl;
+        throw CGALi::Insufficient_rasterize_precision_exception();
+    }
+    
+    // if several branches coincide withing this pixel we cannot perform
+    // a subdivision
+    if(branches_coincide) 
+        return false;
+        
+    if(back_dir&1) { // diagonal direction
+        idx = get_subpixel_diag(pix,pref_dir);
+        if(idx == -1) {
+            std::cerr << "wrong diag subpixel: " << pix << " direction: " <<
+                pref_dir << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        idx = CGALi::D_SUBPIX_MAP[pref_dir][idx];
+        
+    } else {
+        idx = get_subpixel_hv(pix,pref_dir);
+        if(idx == -1) {
+            std::cerr << "wrong h/v subpixel" << pix << " direction: " <<
+                pref_dir << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        idx = CGALi::HV_SUBPIX_MAP[pref_dir][idx];
+    }
+    
+    pix.level++;
+    if(max_level < pix.level)
+        max_level = pix.level;
+    if(current_level < pix.level)
+        current_level = pix.level;
+    
+    pix.sub_x = (pix.sub_x<<1) + (idx&1);
+    pix.sub_y = (pix.sub_y<<1) + (idx>>1);
+    //Gfx_DETAILED_OUT("subpixel index: " << idx << " (" << pix.sub_x << "; "
+        // << pix.sub_y << ")" << std::endl);
+    if(!test_neighbourhood(pix, back_dir, new_dir))
+        return subdivide(pix,back_dir,new_dir);
+    //Gfx_DETAILED_OUT("new direction found: " << new_dir << " at a pixel:" <<
+        //pix << std::endl);
+    return true;
+}
+
+//! returns a "seed" point of a segment and two possible directions from it
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_seed_point(
+    const Rational& seed, int arcno, Pixel_2& start, int *dir, 
+        int *b_taken, bool& b_coincide)
+{
+    Rational x_s = seed, y_s;
+
+    Xy_coordinate_2 xy(X_coordinate_1(seed), *support, arcno);
+    refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_Y);
+    y_s = ubound_y(xy);
+
+    Integer lvl = one;
+    Rational x_seed, y_seed;
+    get_pixel_coords(x_s, y_s, start, &x_seed, &y_seed);
+    
+    Gfx_OUT("y_seed = " << rat2float(y_seed) << std::endl);
+    
+    // we allow a small tolerance for seed point coordinates due to
+    // round off errors
+    if(start.y < -CGAL_WINDOW_ENLARGE || 
+        start.y > engine.res_h + CGAL_WINDOW_ENLARGE) {
+        Gfx_OUT("get_seed_point: starting pixel does not fit the window " 
+            "boundaries " << std::endl);
+        return false;
+    }
+    
+    start.level = 0;
+    start.sub_x = 0;
+    start.sub_y = 0;
+    current_level = 0;
+    
+    //Gfx_OUT("refining starting pixel: " << start << std::endl);
+//     Gfx_OUT("x/y seed: (" << NiX::to_double(x_seed) << "; " <<
+//         NiX::to_double(y_seed) << ")" << std::endl);
+    b_taken[0] = b_taken[1] = -1;
+    b_coincide = false;
+    
+    int coincide_level = 0;
+    while(!test_pixel(start, (int *)dir, (int *)b_taken, b_coincide)) {
+        
+        //Gfx_OUT("refining starting pixel: " << start << std::endl);
+        if(start.level >= MAX_SUBDIVISION_LEVEL) {
+            std::cerr << "get_seed_point: reached maximum subdivision level "
+                << start.level << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        //dump_neighbourhood(start);
+        
+        if(limit(engine.pixel_w/NT(lvl))||limit(engine.pixel_h/NT(lvl))) {
+            std::cerr << "get_seed_point: too small subpixel size: " <<
+                 start.level << std::endl;
+            throw CGALi::Insufficient_rasterize_precision_exception();
+        }
+        
+        start.level++;
+        if(start.level > max_level)
+            max_level = start.level;
+        if(start.level > current_level)
+            current_level = start.level;
+        lvl <<= 1;
+        
+        if(lvl > CGAL_REFINE_Y) {
+             refine_xy(xy, engine.pixel_h_r/(lvl*2));
+             y_s = ubound_y(xy);
+//            event.refine_to(arcno, engine.pixel_h_r/(lvl*2));
+ //           y_s = event.upper_boundary(arcno);
+            
+            y_seed = (y_s - engine.y_min_r)/engine.pixel_h_r;
+//             NiX::simplify(y_seed);
+        }
+        
+        start.sub_x = rat2integer((x_seed - start.x)*lvl);
+        start.sub_y = rat2integer((y_seed - start.y)*lvl);
+        /*if(start.sub_x >= lvl || start.sub_x < 0 || 
+            start.sub_y >= lvl || start.sub_y < 0)
+            Gfx_OUT << "bad subpixel found" << std::endl;*/
+        
+        if(start.sub_x < 0)
+            start.sub_x = 0;
+        start.sub_x &= (lvl-1);
+        if(start.sub_y < 0)
+            start.sub_y = 0;
+        start.sub_y &= (lvl-1);
+        
+        if(current_level >= CGAL_COINCIDE_LEVEL) {
+        
+            Pixel_2 test = start;
+            test.sub_x = start.sub_x >> (start.level - coincide_level);
+            test.sub_y = start.sub_y >> (start.level - coincide_level);
+            test.level = coincide_level;
+
+            if(test_pixel(test, (int *)dir, (int *)b_taken, b_coincide)) {
+                start = test;
+                break;
+            }
+            coincide_level++;
+        }
+        //Gfx_DETAILED_OUT("\nTesting pixel: " << start << std::endl);
+    }
+
+    //Gfx_OUT("directions found: " << dir[0] << "; " << dir[1] << "\n");
+    int t0 = CGALi::DIR_TAKEN_MAP[dir[0]], t1 = CGALi::DIR_TAKEN_MAP[dir[1]];
+    if(t0 != -1&&t0 == t1) {
+        Gfx_OUT("get_seed_point: one-side directions found: " <<
+                 dir[0] << " and " << dir[1] << std::endl);
+    }
+
+    if(!branches_coincide) {
+        if(t0 == -1) {
+            if(t1 == -1) {
+                // vx = -df/dy; vy = df/dx
+                typename Renderer_internals::Coercion::Cast rccast;
+                Rat_coercion_type xcs = rccast(x_s), ycs = rccast(y_s);
+
+                Rat_coercion_type
+                  vx = -engine.substitute_xy(*(engine.rational_fy), x_s, y_s),
+                  vy = engine.substitute_xy(*(engine.rational_fx), x_s, y_s);
+                
+  /*              typename Renderer_traits::Convert_poly convert_poly;
+                Poly_2 ffx, ffy;
+                ffx = convert_poly(*(engine.rational_fx));
+                ffy = convert_poly(*(engine.rational_fy));
+    
+                typename CGAL::Coercion_traits<Rational, Coeff>::Cast
+                castr; 
+
+                Coeff xx1 = castr(x_s), yy1 = castr(y_s);
+                Coeff vvx = NiX::substitute_xy(ffy, xx1, yy1);
+                Coeff vvy = NiX::substitute_xy(ffx, xx1, yy1); */           
+    
+                typename CGAL::Coercion_traits<Rat_coercion_type, Coeff>::Cast
+                cast; 
+
+//                 Gfx_OUT("poly: " << *(engine.rational_fy) <<
+//                     "\n\nat: " << xcs << "; and " << ycs << "\n");
+// 
+//                 Gfx_OUT("vx before: " << cast(vx) << " " << (vy > 0) << 
+//                         "\nvvx before: " << vvx << " " << (vvy > 0) << "\n");
+
+//                 vvx = -vvx;
+//                 vx = -vx;
+
+//                 Gfx_OUT("vx after: " << cast(vx) << " " << (vy > 0) << "\nvy = " <<
+//                         (vy) <<  "\n");
+//                 Gfx_OUT("vvx after: " << vvx << " " << (vvy > 0) << "; vvy = " << vvy << "\n");
+        
+                NT vvx = rat2float(vx), vvy = rat2float(vy);
+                //Coeff vvx = cast(vx), vvy = cast(vy);
+                if(vvy < 0) {
+                    vvx = -vvx;
+                }                
+
+                Gfx_OUT("final vvx = " << vvx << " " << (vvx > 0) << "\n");
+
+                // vx > 0: 2 - right(1), 6 - left(0)
+                // vx < 0: 2 - left(0), 6 - right(1)
+                bool flag = (vvx > 0);
+                if(dir[0] == 2||dir[1] == 6) {
+                // taken 2 = 0 if vx>0, 1 if vx<0
+                // taken 6 = 1 if vx>0, 0 if vx<0
+                    b_taken[0] = !flag; // !(vx > 0)
+                    b_taken[1] = flag; //  vx > 0
+                } else if(dir[0] == 6||dir[1] == 2) {
+                    b_taken[0] = flag;  // vx > 0 
+                    b_taken[1] = !flag;  // !(vx > 0)
+                } 
+            } else  // t1 != -1
+               b_taken[0] = 1 - b_taken[1];
+        } else if(t1 == -1)
+            b_taken[1] = 1 - b_taken[0];
+            
+        s_stack.push(Seed_point(start, dir[0], 1, b_taken[0], b_coincide));
+        s_stack.push(Seed_point(start, dir[1], 0, b_taken[1], b_coincide));
+    }
+    if(b_coincide)
+        Gfx_DETAILED_OUT("seed point with coincide branches found" <<
+            std::endl);
+    return true;
+}
+
+//! checks whether only one curve branch crosses the pixel, required to
+//! compute a starting witness pixel
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_pixel(
+    const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
+{
+    Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
+    NT lvl = NT(one << pix.level), inv = NT(1) / lvl;
+    make_exact(inv);
+    get_boundaries(CGAL_X_RANGE, pix, box[1]);
+    get_boundaries(CGAL_Y_RANGE, pix, box[0]);
+    NT bottom = box[1].key[0], //top = box[1].key[1], 
+        left = box[0].key[0], lower;//, right = box[0].key[1], lower;
+    // bottom(2), top(3), left(0), right(1)
+    int n_sign = 0, i, j, n_dir = 0, shift, n_local, new_dir;
+    get_polynomials(CGAL_Y_RANGE, box[0]);
+    Gfx_DETAILED_OUT("\ncomputing left/right sides " << std::endl);
+    
+    b_coincide = false;
+    int n_corner_dir = 0, corner_dir[] = {-1, -1};
+    // process subsegments: left/right
+    for(i = 0; i < 2; i++) { 
+        for(j = 0, n_local = 0, lower = bottom; j < 3; j++, lower += inv)  
+
+            if(get_range_1(CGAL_Y_RANGE, lower, lower+inv, box[0].key[i],
+                box[0].poly[i], 3) || engine.zero_bounds) {
+                
+                Gfx_DETAILED_OUT("intersection detected at subsegment: " << j
+                  << " side: " << i << "; left(0), right(1), bottom(2), top(3)"
+                  << std::endl);
+                
+                if(engine.zero_bounds) {
+                    
+                    bool is_corner = false;
+                    int diff = float2int((lower - pix.y)*lvl - pix.sub_y);
+                    int low_sign = engine.evaluate_generic(CGAL_Y_RANGE, lower,
+                        box[0].key[i], box[0].poly[i]);
+
+                    Gfx_DETAILED_OUT("zero bounds detected, low_sign: "
+                        << low_sign << "\n");
+                        
+                    if(diff != 0) {
+                        if(diff == 1) {
+                            is_corner = (engine.evaluate_generic(CGAL_Y_RANGE,
+                               lower+inv, box[0].key[i], box[0].poly[i]) == 0);
+                            // in case there is intersection at lower point =>
+                            // it is counted as normal intersection
+                            if(!is_corner && low_sign != 0)
+                                continue;
+                        } else {
+                            is_corner = (low_sign == 0);
+                            if(!is_corner)
+                                continue;
+                        }
+                            
+                        if(is_corner) {
+                            // compute corner direction
+                            diff = CGALi::DIR_MAP[i][diff+1];
+                            if(n_corner_dir >= 2) {
+                                Gfx_DETAILED_OUT("too many corners\n");
+                                return false;
+                            }
+                           // corner dirs on vertical segs cannot be identified
+                            corner_dir[n_corner_dir++] = diff;
+                            Gfx_DETAILED_OUT("corner direction saved: "
+                                << diff << "\n");
+                        }
+                    } else if(low_sign != 0)
+                        continue;
+                }
+                  
+                n_local++;
+                if(n_local > 1) {
+             Gfx_DETAILED_OUT("more than 1 intersection along vertical side "
+                     << i << std::endl);
+                    return false;
+                }
+                // no need to check the derivative if already coincide mode
+                if(!b_coincide)
+                    if(engine.first_der && !recursive_check(CGAL_Y_RANGE,
+                        lower, lower+inv, box[0].key[i],box[0].poly[i])) {
+                Gfx_DETAILED_OUT("\nrecursive_check failed" << std::endl);
+                        if(current_level < CGAL_COINCIDE_LEVEL)
+                            return false;
+                        b_coincide = true;
+                    }
+                shift = float2int((lower - pix.y)*lvl - pix.sub_y);
+                new_dir = CGALi::DIR_MAP[i][shift+1];
+            // left side (i = 0) - direction taken = 1
+            // right side (i = 1) - direction taken = 0
+                b_taken[n_dir] = 1 - i;
+                Gfx_DETAILED_OUT("new dir found: " << new_dir);
+                dir[n_dir++] = new_dir;
+            }
+        n_sign += n_local;
+    }
+    
+    get_polynomials(CGAL_X_RANGE,box[1]);
+    Gfx_DETAILED_OUT("computing bottom/top sides" << std::endl);
+    for(i = 0; i < 2; i++) {
+        for(j = 0, n_local = 0, lower = left; j < 3; j++, lower += inv)  {
+        
+            if(get_range_1(CGAL_X_RANGE,lower,lower+inv,box[1].key[i],
+                box[1].poly[i], 3) || engine.zero_bounds) {
+                
+           Gfx_DETAILED_OUT("intersection detected at subsegment: " << j <<
+            " side: " << i + 2 << "; left(0), right(1), bottom(2), top(3) "
+                  << std::endl);
+
+                if(engine.zero_bounds) {
+
+                    bool is_corner = false;
+                    int diff = float2int((lower - pix.x)*lvl - pix.sub_x);
+                    int low_sign = engine.evaluate_generic(CGAL_X_RANGE, lower,
+                        box[1].key[i], box[1].poly[i]);
+
+                    Gfx_DETAILED_OUT("zero bounds detected, low_sign: "
+                        << low_sign << "\n");
+                    
+                    if(diff != 0) {
+                        if(diff == 1) {
+                            is_corner = (engine.evaluate_generic(CGAL_X_RANGE,
+                               lower+inv, box[1].key[i], box[1].poly[i]) == 0);
+                            // in case there is intersection at lower point =>
+                            // it is counted as normal intersection
+                            if(!is_corner && low_sign != 0)
+                                continue;
+                        } else {
+                            is_corner = (low_sign == 0);
+                            if(!is_corner)
+                                continue;
+                        }
+                            
+                        if(is_corner) {
+                            Gfx_DETAILED_OUT("corner direction detected\n");
+                            // compute corner direction
+                            diff = CGALi::DIR_MAP[i+2][diff+1];
+                            if(n_corner_dir > 0 && (corner_dir[0] == diff ||
+                                    corner_dir[1] == diff)) {
+                           Gfx_DETAILED_OUT("corner_dir identified: "
+                            << diff << "\n");
+                                continue;
+                            }
+                        }
+                    } else if(low_sign != 0)
+                        continue;
+                }  
+    
+                n_local++;
+                n_sign++;
+                if(n_local > 1||n_sign > 2) {
+                Gfx_DETAILED_OUT("more than 1 intersection along horizontal "
+                         "side " << i+2 << std::endl);
+                    return false;
+                }
+                
+                if(!b_coincide)
+                    if(engine.first_der && !recursive_check(CGAL_X_RANGE,
+                    lower, lower+inv, box[1].key[i],box[1].poly[i])) {
+                Gfx_DETAILED_OUT("\nrecursive_check failed" << std::endl);
+                        if(current_level < CGAL_COINCIDE_LEVEL)
+                            return false;
+                        b_coincide = true;
+                    }
+                shift = float2int((lower - pix.x)*lvl - pix.sub_x);
+                new_dir = CGALi::DIR_MAP[i+2][shift+1];
+                b_taken[n_dir] = 1 - CGALi::DIR_TAKEN_MAP[new_dir];
+
+                Gfx_DETAILED_OUT(" new dir found: " << new_dir << "\n");
+                dir[n_dir++] = new_dir;
+            }
+        }
+    }
+    if(n_sign < 2) {
+        Gfx_DETAILED_OUT("ERROR: not enough intersections found" <<
+             std::endl);
+        return false;
+    }
+    return true;
+
+    /*Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
+    NT lvl = NT(one << pix.level), inv = NT(1) / lvl, llow[2];
+    make_exact(inv);
+    get_boundaries(CGAL_X_RANGE,pix,box[1]);
+    get_boundaries(CGAL_Y_RANGE,pix,box[0]);
+    //NT bottom = box[1].key[0], //top = box[1].key[1], 
+        //left = box[0].key[0], right = box[0].key[1];
+    NT lower;
+    // bottom(2), top(3), left(0), right(1)
+    int f_der[2];
+    int idx[2], ibox, ikey, var, n_sign = 0, i, j, n_dir = 0, shift, 
+        n_local, new_dir;
+    get_polynomials(CGAL_Y_RANGE,box[0]);
+    b_coincide = false;
+    for(i = 0; i < 4; i++) { 
+        if(i == 2)
+            get_polynomials(CGAL_X_RANGE,box[1]);
+        var = (i < 2 ? CGAL_Y_RANGE : CGAL_X_RANGE);
+        ibox = i >> 1;
+        ikey = i & 1;
+        lower = box[1-ibox].key[0]; 
+        for(j = 0, n_local = 0; j < 3; j++, lower += inv)  
+            if(get_range_1(var,lower,lower+inv,box[ibox].key[ikey],
+                box[ibox].poly[ikey])||zero_bounds) {
+                Gfx_DETAILED_OUT("intersection detected at subsegment: " << j
+                  << " side: " << i << "; left(0), right(1), bottom(2), top(3)"
+                    << std::endl);
+                if(zero_bounds&&evaluate_modular(var, lower, 
+                    box[ibox].key[ikey], true) != 0)
+                    continue;
+                n_local++;
+                n_sign++;
+                if(n_local > 1||n_sign > 2) {
+                  Gfx_DETAILED_OUT("more than 1 intersection along side " << i 
+                        << std::endl);
+                    return false;
+                }
+                f_der[n_dir] = engine.first_der;
+                llow[n_dir] = lower;
+                idx[n_dir++] = i;
+            }
+    }
+    if(n_sign < 2) {
+        Gfx_DETAILED_OUT("not enough intersections found" << std::endl);
+        return false;
+    }
+    for(i = 0; i < 2; i++) {
+        var = (idx[i] < 2 ? CGAL_Y_RANGE : CGAL_X_RANGE);
+        ibox = idx[i] >> 1;
+        ikey = idx[i] & 1;
+        lower = llow[i];
+        if(f_der[i] == -1) { // the 1st derivative needs to be computed
+            get_range_1(var,lower,lower+inv,box[ibox].key[ikey],
+                box[ibox].poly[ikey],2);
+            f_der[i] = engine.first_der;
+        }
+        // no need to check the derivative if already coincide mode
+        if(!b_coincide)
+        if(f_der[i]&&!recursive_check(var,lower,lower+inv,box[ibox].key[ikey],
+            box[ibox].poly[ikey])) {
+        Gfx_DETAILED_OUT("\nrecursive_check failed" << std::endl);
+            if(current_level < CGAL_COINCIDE_LEVEL)
+                return false;
+            b_coincide = true;
+        }
+        if(var == CGAL_Y_RANGE)
+            shift = float2int((lower - pix.y)*lvl - pix.sub_y);
+        else
+            shift = float2int((lower - pix.x)*lvl - pix.sub_x);
+        new_dir = CGALi::DIR_MAP[idx[i]][shift+1];
+        b_taken[i] = 1 - CGALi::DIR_TAKEN_MAP[new_dir];
+        dir[i] = new_dir;
+        Gfx_DETAILED_OUT(" direction " << i << " found: " << new_dir << 
+            " taken: " << b_taken[i] << std::endl);
+    }
+    return true;*/
+}
+
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::horizontal_clip()
+{
+    typedef typename CGAL::Fraction_traits<Rational> F_traits;
+    typename F_traits::Numerator_type num;
+    typename F_traits::Denominator_type denom;
+    typename F_traits::Decompose decompose;
+
+    top_clip.clear();
+    btm_clip.clear();
+    Rational l, r;
+    
+    typename CGAL::Polynomial_traits_d< Poly_dst_1 >::Make_square_free msf;
+
+    decompose(engine.y_min_r, num, denom);
+    btm_poly = msf(support->polynomial_2().evaluate_homogeneous(num, denom));
+  
+    decompose(engine.y_max_r, num, denom);
+    top_poly = msf(support->polynomial_2().evaluate_homogeneous(num, denom));
+
+    CGAL::CGALi::Bitstream_descartes<Poly_dst_1, Rational>
+            isolator_btm(btm_poly), isolator_top(top_poly);
+    
+    int n_roots = isolator_btm.number_of_real_roots(), i;
+    Rational criteria = engine.pixel_w_r/CGAL_REFINE_CLIP_POINTS;
+//     NiX::simplify(criteria);
+    
+    for(i = 0; i < n_roots; i++) {
+        l = isolator_btm.left_boundary(i);
+        r = isolator_btm.right_boundary(i);
+        refine_alg_point(l, r, btm_poly, criteria);
+        if(l > engine.x_max_r || r < engine.x_min_r)
+            continue;
+        btm_clip.push_back(Clip_point_entry(l,r));
+    }
+    
+    n_roots = isolator_top.number_of_real_roots();
+    for(i = 0; i < n_roots; i++) {
+        l = isolator_top.left_boundary(i),
+        r = isolator_top.right_boundary(i);
+        refine_alg_point(l, r, top_poly, criteria);
+        if(l > engine.x_max_r || r < engine.x_min_r)
+            continue;
+        top_clip.push_back(Clip_point_entry(l,r));
+    }
+}
+
+// low_pix, up_pix and y_clip define segment end-points in pixel space
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::segment_clip_points(
+        const Rational& x_lower, const Rational& x_upper,
+        const Rational& y_lower, const Rational& y_upper,
+            const Rational& y_clip, const Poly_dst_1& poly, int arcno,
+             Clip_points& clip_points, index_vector& clip_indices)
+{
+    //typename Curve_analysis_2::Internal_curve_2::Event1_info event;
+    
+    int n_arcs, i, j = 0;
+    typename Clip_points::iterator it = clip_points.begin();
+    Rational low, high, d, l, r;
+    Gfx_DETAILED_OUT("segment: (" << rat2float(x_lower) << "; " << 
+        rat2float(x_upper) << "); arcno: " << arcno << "\n");
+    
+    while(it != clip_points.end()) {
+        l = it->left;
+        r = it->right;
+        if(r > x_lower && l < x_upper) {
+            X_coordinate_1 alpha = (l == r ? X_coordinate_1(r) :
+                 X_coordinate_1(poly, l, r));
+//             if(l == r)           
+//                 Gfx_DETAILED_OUT("checking rational clip-point\n ");
+//             else {
+//                 Gfx_DETAILED_OUT("checking [" << l << "; " << r <<
+//                     "] clip-point; poly = " << poly <<
+//                     "; support: " << support->polynomial_2() << " \n\n");
+// 
+//                 if(!CGAL::CGALi::is_square_free(poly))
+//                     std::cerr << "polynomial is not square-free!\n";
+// 
+//                 if(poly.sign_at(l) == poly.sign_at(r))
+//                     std::cerr << "signs are the same!!\n\n";    
+//             }
+                
+            // need precise comparisons in case of tight boundaries
+            if(l < x_lower && alpha.compare(x_lower) != ::CGAL::LARGER) {
+                it++; j++;
+                continue;
+            }
+            if(r > x_upper && alpha.compare(x_upper) != ::CGAL::SMALLER) {
+                it++; j++;
+                continue;
+            }
+            if(it->arcno == -1) {
+//                 event = support->_internal_curve().event_info_at_x(
+//                         alpha);
+                Status_line_1 sline = support->status_line_for_x(alpha);
+                n_arcs = sline.number_of_events();
+                for(i = 0; i < n_arcs; i++) {
+        
+                    Xy_coordinate_2 xy(alpha, *support, i);
+                    low = lbound_y(xy); 
+                    high = ubound_y(xy); 
+
+    //TODO: no need to refine y-intervals: you need only to check whether
+    // polynomial vanishes at y_clip, since algebraic real you specify is exact
+                    if((low < y_clip && high > y_clip)||
+                            low == y_clip||high == y_clip) {
+                        //event.refine_to(i, engine.pixel_h_r/CGAL_REFINE_Y);
+                        refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_Y);
+                        if(lbound_y(xy) <= y_clip && ubound_y(xy) >= y_clip) {
+                            it->arcno = i;
+                            it->alpha = alpha;
+                            Gfx_DETAILED_OUT("clip point assigned to arcno: "
+                                << i << "\n");
+                            break;
+                        } 
+                    }
+                }
+            }
+            if(it->arcno == arcno) {
+                bool set = true;
+                Xy_coordinate_2 xy(it->alpha, *support, arcno);
+                 
+                if(r - x_lower <= engine.pixel_w_r) {
+                    d = ubound_y(xy) - y_lower;
+                   set = (CGAL_ABS(d) > engine.pixel_h_r);
+                } else if(x_upper - r <= engine.pixel_w_r) {
+                    d = ubound_y(xy) - y_upper;
+                    set = (CGAL_ABS(d) > engine.pixel_h_r);
+                }   
+                if(set) {
+                    Gfx_DETAILED_OUT("clip-point found\n");
+                    clip_indices.push_back(j); // store point index
+                } 
+            }
+        }
+        it++; j++;
+    }
+}
+
+// mode = 0: criteria specifies the length of the refined interval
+// mode = 1: criteria specifies a point that must be lie outside the interval
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::refine_alg_point(
+        Rational& l, Rational& r, const Poly_dst_1& poly, 
+            const Rational& criteria, int mode)
+{
+    CGAL::Sign eval_l, eval_m;
+    Rational mid;
+    eval_l = poly.sign_at(l);
+    while(1) {
+        if(mode == 0) {
+            if(r - l < criteria)
+                break;
+        } else if(l > criteria || r < criteria)
+            break;
+        mid = (l+r)/2;
+//         NiX::simplify(mid);
+        eval_m = poly.sign_at(mid);
+        if(eval_m == CGAL::EQUAL)
+            l = r = mid;
+        else if(eval_m == eval_l) 
+            l = mid;
+        else
+            r = mid;
+    } 
+}
+
+//! recursively checks whether only one curve branch crosses a line segment
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::recursive_check(
+    int var, const NT& beg_, const NT& end_, const NT& key, const Poly_1& poly,
+        int depth)
+{
+    // if polynomial is linear/quadratic and there is sign-change over interval
+    // => only one curve branch is guaranteed
+    if(poly.degree() < 3) 
+        return true;
+
+    int val_1, val_2, val_3;
+    NT mid = (beg_+end_)/2, key_1, key_2, beg = beg_, end = end_;
+    make_exact(mid);
+    
+    Gfx_DETAILED_OUT("executing recursive check" << std::endl);
+    val_1 = engine.evaluate_generic(var, beg, key, poly);
+    val_3 = engine.evaluate_generic(var, end, key, poly);
+    
+    Gfx_DETAILED_OUT("beg: " << val_1 << " end: " << val_3 << std::endl);
+    // no sing change: at least two curve branches inside
+    if((val_1^val_3)==0)
+        return false;
+    
+    val_2 = engine.evaluate_generic(var, mid, key, poly);
+    // select the half with even number of intersections
+    if((val_1^val_2)==0)
+        key_1 = beg;    
+    else
+        key_1 = end;        
+    if(get_range_1(var, key_1, mid, key, poly)) 
+        return false;   // at least three intersections over the interval: done
+     key_2 = beg + end - key_1;
+    
+    get_range_1(var, key_2, mid, key, poly, 3);
+ 
+    // the first derivative does not straddle zero then only one intersection
+    if(!engine.first_der)     
+        return true;  
+    // if second derivative does not stranddle zero - only 1 first derivative
+    //if(engine.second_der == 0) 
+        //return true;
+    if(depth > CGAL_DER_CHECK_DEPTH) 
+        return true;
+    return recursive_check(var, key_2, mid, key, poly, depth+1);
+}
+
+//! computes lower/upper boundaries for pixel's neighbourhood
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_boundaries(
+    int var, const Pixel_2& pix, Stripe& stripe)
+{   
+    int level = pix.level, val = pix.y;
+    Integer sub = pix.sub_y, cur_sub;
+    if(var == CGAL_Y_RANGE) {
+        sub = pix.sub_x;
+        val = pix.x;
+    }
+    cur_sub = sub;
+    if(level > 0) {
+        cur_sub += 2; // obtain local coordinates for upper boundary
+        // for even boundaries raise the level up
+        while(level > 0 && ((cur_sub & 1) == 0)) {
+            level--; 
+            cur_sub >>= 1;
+        }
+    }
+    stripe.level[1] = level;
+    if(level == 0) 
+        cur_sub = 2 - cur_sub;
+    stripe.key[1] = val + NT(cur_sub) / NT(one << level);
+    make_exact(stripe.key[1]);
+    level = pix.level; 
+    cur_sub = sub - 1; 
+    while(level > 0 && ((cur_sub & 1) == 0)) {
+        level--; 
+        cur_sub >>= 1;
+    }
+    stripe.level[0] = level;
+    stripe.key[0] = val + NT(cur_sub) / NT(one << level);
+    make_exact(stripe.key[0]);
+}
+
+//! shortcut to get precached polynomials
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_polynomials(
+    int var, Stripe& stripe)
+{
+    engine.get_precached_poly(var, stripe.key[1], stripe.level[1],
+        stripe.poly[1]);
+    engine.get_precached_poly(var, stripe.key[0], stripe.level[0],
+         stripe.poly[0]);
+}
+
+//! \brief checks 8-pixel neighbourhood of a pixel, returns \c true if 
+//! only one curve branch intersects pixel's neighbourhood, \c dir
+//! defines backward direction, \c new_dir is a new tracking direction
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_neighbourhood(
+    const Pixel_2& pix, int dir, int& new_dir, int step_x, int step_y)
+{
+    NT lvl = NT(one << pix.level);
+    NT inv = NT(1.0) / lvl;
+    make_exact(inv);
+    int back_dir = dir, idx[5], n_pts = 5, n_sign;
+    int shift, i, j, res, var, s_shift = 0, tmp;
+    // box[0].key[0] - x-coordinate of left pixel boundary
+    // box[0].key[1] - x-coordinate of right pixel boundary
+    // box[1].key[0] - y-coordinate of bottom pixel boundary
+    // box[1].key[1] - y-coordinate of top pixel boundary
+    Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
+    NT p1, p2, lower; 
+    get_boundaries(CGAL_X_RANGE,pix,box[1]);
+    get_boundaries(CGAL_Y_RANGE,pix,box[0]);
+    
+    struct {         // local point descriptor 
+        NT key;      // respective "key"
+        int flag;    // 0th bit: 0: lower polynomial(left/bottom); 
+                     //          1: upper polynomial(right/top)
+                     // 1st bit: 0: x-range poly; 1: y-range poly
+                     // 2nd bit: 0: c is in lower poly; 1: c is in upper poly 
+                     // (for regular points only)
+    } pts[6] = {{box[0].key[0], 0}, {box[0].key[0], 1}, {box[0].key[1], 1|4}, 
+            {box[0].key[1], 0|4}};
+            
+    int ix = CGALi::directions[back_dir].x;
+    int e_dir = back_dir, _3and5 = 0, _3and7 = 0;
+    if(back_dir&1) {// 5 and 3: 4; 7 and 1: 0
+        _3and5 = (e_dir == 5||e_dir == 3);
+        _3and7 = e_dir&2;
+        e_dir = _3and5 ? 4: 0;
+    }
+    int _4and6 = e_dir>>2, _2and6 = (e_dir&2)>>1;
+    int _2and4 = (e_dir==2)||(e_dir==4);
+    
+    pts[4].key = box[_2and6].key[_4and6] + (1-(_4and6<<1))*inv;
+    pts[4].flag = (_2and6<<1) + _2and4;
+    pts[5].key = pts[4].key;
+    pts[5].flag = pts[4].flag^1; //(_2and6<<1) + (!_2and4); // pts[4].flag^1 ?
+    idx[0] = 4;
+    idx[3] = 5;
+    if(back_dir&1) 
+        (_3and7) ? pts[5].key += ix*inv : pts[4].key += ix*inv;
+    shift = (6 - e_dir) >> 1; 
+    n_pts = 4;
+    idx[1] = (1 + shift) & 3;
+    idx[2] = (2 + shift) & 3;
+/*  NT xx, yy;
+        if(var == CGAL_X_RANGE) {
+            xx = pts[idx[i]].key;
+            yy = box[shift].key[fl&1];
+        } else {
+            yy = pts[idx[i]].key;
+            xx = box[shift].key[fl&1];
+        }
+        xx = xx*20+ofsxx;
+        yy = yy*20+100;
+        if(i == 0)
+            ppnt->moveTo(int(to_double(xx)),700-int(to_double(yy)));
+        else
+            ppnt->lineTo(int(to_double(xx)),700-int(to_double(yy)));
+        prev = curr;
+    }*/
+
+    Gfx_DETAILED_OUT("test_neigh for " << pix << "; dir = " << dir << "\n");
+
+    n_sign = 0;
+    get_polynomials(CGAL_Y_RANGE,box[0]); 
+    get_polynomials(CGAL_X_RANGE,box[1]); 
+    int f_der = -1, corner_dir = -1;
+    bool set_coincide = false;
+    new_dir = -1;
+    for(i = 0; i < n_pts - 1; i++) {
+        int f1 = pts[idx[i]].flag, f2 = pts[idx[i+1]].flag;
+        var = CGAL_Y_RANGE;
+        p1 = pts[idx[i]].key; 
+        p2 = pts[idx[i+1]].key;
+        if((f1&2) + (f2&2) == 0) {// both can use x-range polynomials
+         // different polys in x-range - use y-range instead
+            if((f1&1)!=(f2&1)) {
+                shift = (f1&4)>>2;
+                p1 = box[1].key[0]; 
+                p2 = box[1].key[1]; 
+            } else { // same polys in x-range
+                shift = f1&1;
+                var = CGAL_X_RANGE; 
+                shift += 2;
+            }
+        } else { 
+            if((f1&2) == 0) { // first point is in x-range (convert to y-range)
+                shift = f2&1;
+                p1 = box[1].key[f1&1]; 
+            } else {   // second point is in x-range
+                shift = f1&1;
+                p2 = box[1].key[f2&1]; 
+            }
+        } 
+        if(p1 > p2) {
+            NT tmp1 = p1;
+            p1 = p2;
+            p2 = tmp1;
+        }
+        res = float2int((p2 - p1)*lvl); 
+        int local_sign = 0;
+        for(j = 0; j < res; j++, p1 += inv) {
+
+            NT lkey = box[shift>>1].key[shift&1];
+            const Poly_1& lpoly = box[shift>>1].poly[shift&1];
+             
+            if(get_range_1(var, p1, p1+inv, lkey, lpoly, 3) ||
+                    engine.zero_bounds) {
+
+                Gfx_DETAILED_OUT("sign-change found at: " << i << "; subseg: "
+                     << j <<  std::endl);
+                    
+                if(engine.zero_bounds) {
+                    Gfx_DETAILED_OUT("also with zero_bounds");
+                
+                    bool is_corner = false;
+                    int diff = float2int(var == CGAL_X_RANGE ?
+                        ((p1 - pix.x)*lvl - pix.sub_x) :
+                        ((p1 - pix.y)*lvl - pix.sub_y));
+                    int low_sign = engine.evaluate_generic(var, p1, lkey,
+                            lpoly);
+                    
+                    if(diff != 0) {
+                        // diff == -1: test lower corner: p1
+                        // diff ==  1: test upper corver: p1+inv
+                        if(diff == 1) {
+                            is_corner = (engine.evaluate_generic(var, p1+inv,
+                                lkey, lpoly) == 0);
+                            // in case there is intersection at lower point =>
+                            // it is counted as normal intersection
+                            if(!is_corner && low_sign != 0)
+                                continue;
+                        } else {
+                            is_corner = (low_sign == 0);
+                            if(!is_corner)
+                                continue;
+                        }
+                            
+                        if(is_corner) {
+                            // compute corner direction
+                            tmp = CGALi::DIR_MAP[shift][diff+1];
+                            Gfx_DETAILED_OUT("corner direction detected: "
+                                << tmp << "\n");
+                                
+                            if(corner_dir == -1)
+                                corner_dir = tmp;
+                            else if(corner_dir != tmp) {
+                                Gfx_DETAILED_OUT("different corner \
+                                    directions found\n");
+                                return false;
+                            } else {
+                                // decrement since sign change occurs in the
+                                // corner
+                                local_sign--;
+                                Gfx_DETAILED_OUT("corner found: sign: "
+                                    << n_sign << "; local: " << local_sign
+                                        << "\n");
+                            }
+                        }
+                    } else if(low_sign != 0)
+                        continue;
+                }
+                local_sign++; 
+              // Gfx_DETAILED_OUT("a curve branch detected at interval: (" << i
+                 //   << "; " << i+1 << ") segment: " << j << std::endl);
+                if(local_sign > 1) {
+                    Gfx_DETAILED_OUT("more than 1 curve branch detected" <<
+                        std::endl);
+                    return false;
+                }
+                lower = p1; 
+                s_shift = shift;
+                f_der = engine.first_der;
+            }
+        }
+        n_sign += local_sign;
+        if(local_sign == 1) {
+            tmp = float2int(var == CGAL_X_RANGE ? // bottom/top
+                ((lower - pix.x)*lvl - pix.sub_x) :
+                ((lower - pix.y)*lvl - pix.sub_y));
+            tmp = CGALi::DIR_MAP[s_shift][tmp+1];
+            /*if(new_dir != -1&&new_dir != tmp) // more than 1 direction found
+                return false;
+            else {
+                if(!branches_coincide&&
+                    (current_level < CGAL_COINCIDE_LEVEL))
+                    return false; // level is too small 
+                set_coincide = true; // diagonal coincide mode
+            }*/
+            new_dir = tmp;
+            if(n_sign > 1) {
+                Gfx_DETAILED_OUT("test_neigh: too many intersections found");
+                return false;
+            }
+        }
+    }
+    
+    //Gfx_DETAILED_OUT("processing segment: [" << lower << "; " << lower+inv <<
+      //  "]" <<std::endl);
+    if(n_sign == 0) {
+        Gfx_DETAILED_OUT("ERROR: test_neigh: no sign changes detected..\n");
+        return false;
+    }
+    var = ((s_shift & 2) ? CGAL_X_RANGE : CGAL_Y_RANGE);
+    int ibox = s_shift>>1, ikey = s_shift&1;
+    if(f_der == -1) { // need to compute the first derivative
+        get_range_1(var, lower, lower+inv, box[ibox].key[ikey],
+            box[ibox].poly[ikey], 3);
+        f_der = engine.first_der;
+    }
+    // if coincide already set - no need to check the derivative
+    if(!set_coincide && f_der && !recursive_check(var,lower,lower+inv,
+        box[ibox].key[ikey], box[ibox].poly[ikey])) {
+        
+        //Gfx_DETAILED_OUT("first derivative presented" << std::endl);
+        
+        if(!branches_coincide &&    
+              (current_level < CGAL_COINCIDE_LEVEL))//||direction_taken == -1))
+            return false;
+        if(!branches_coincide)
+            Gfx_DETAILED_OUT("Branches coincide at pixel: " << pix <<
+                std::endl);
+        set_coincide = true;
+    }
+    int taken = CGALi::DIR_TAKEN_MAP[new_dir];
+    if(taken != -1&&taken != direction_taken) {
+    
+       Gfx_DETAILED_OUT("\nERROR: wrong direction " << new_dir << " at pixel: "
+            << pix << "; back_dir = " << back_dir << "; taken = " <<
+                direction_taken << std::endl);
+        if(back_dir == 2)
+            new_dir = 6;
+        else if(back_dir == 6)
+            new_dir = 2;
+        else 
+            return false;
+    }
+    if(set_coincide)
+        branches_coincide = true;
+    return true;
+}
+
+
+//! \brief returns whether a polynomial has zero at a given interval,
+//! we are not interested in concrete values
+//!
+//! if \t der_check is set a range for the first derivative is also computed
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+inline bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::
+    get_range_1(int var, const NT& lower, const NT& upper, const NT& key, 
+        const Poly_1& poly, int check)
+{
+    bool res = engine.get_range_QF_1(var, lower, upper, key, poly, check);
+        //engine.get_range_MAA_1(var, lower, upper, key, poly, check);
+    return res;
+}
+
+//! \brief copmutes an isolating interval for y-coordinate of an end-point,
+//! uses caching if possible
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+typename Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::Rational 
+Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_endpoint_y(
+    const Arc_2& arc, const Rational& x, CGAL::Arr_curve_end end,
+        bool is_clipped) {
+        
+//    typename Curve_analysis_2::Internal_curve_2::Event1_info event;
+    int arcno;
+    Xy_coordinate_2 xy;
+    
+    if(arc.location(end) != CGAL::ARR_LEFT_BOUNDARY &&
+        arc.location(end) != CGAL::ARR_RIGHT_BOUNDARY && !is_clipped) {
+        //event = arc.curve_end(end).curve()._internal_curve().
+          //  event_info_at_x(arc.curve_end_x(end));
+        arcno = arc.curve_end(end).arcno();
+        xy = Xy_coordinate_2(arc.curve_end_x(end),
+            arc.curve_end(end).curve(), arcno);
+    } else {
+        //sline = support->status_line_for_x(X_coordinate_1(x));
+        //event = support->_internal_curve().event_info_at_x(
+          //              X_coordinate_1(x));
+        arcno = arc.arcno();
+        xy = Xy_coordinate_2(X_coordinate_1(x), *support, arcno);
+    }
+
+    // refine the y-interval until its size is smaller than the pixel size
+    ////////////////////////// CHANGED REFINE_Y by REFINE_X
+    //event.refine_to(arcno, engine.pixel_h_r/CGAL_REFINE_X);
+    refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_X);
+    ////////////////////////// CHANGED REFINE_Y by REFINE_X
+    return ubound_y(xy);//event.upper_boundary(arcno);
+}
+
+//! \brief switches to a certain cache instance depending on currently used 
+//! algebraic curve
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::select_cache_entry(
+    const Arc_2& arc)
+{
+    typename boost::multi_index::nth_index<LRU_list,1>::type& 
+        idx = cache_list.get<1>();
+    typename boost::multi_index::nth_index_iterator<LRU_list,1>::type
+        it = idx.find(arc.curve().id());
+        
+    int new_id;
+    if(it == idx.end()) {
+        new_id = cache_list.size();
+        if(new_id >= CGAL_N_CACHES) {
+            new_id = cache_list.back().second;
+            cache_list.pop_back();
+        } 
+        cache_list.push_front(LRU_entry(arc.curve().id(),new_id));
+    } else { // mark this element as most recently used
+        new_id = (*it).second;
+        cache_list.relocate(cache_list.begin(), cache_list.project<0>(it));
+    }
+    
+    if(cache_id != new_id) 
+        clip_pts_computed = false;
+    cache_id = new_id;
+    
+    support = support_ + cache_id;
+    engine.select_cache_entry(cache_id);
+    
+    while(!s_stack.empty())
+        s_stack.pop();
+        
+    if(it == idx.end()) {
+        *support = arc.curve();
+        engine.precompute(support->polynomial_2());
+    }
+}
+
+//! \brief returns one of 4 subpixels of a pixel which is crossed by the curve
+//! branch
+//!
+//! subpixels are chosen with the priority \c dir which defines a preferred 
+//! direction, i.e. right(0), top(1), left(2) or bottom(3) this is only for h/v
+//! directions
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_hv(
+    const Pixel_2& pix, int dir)
+{
+    Poly_1 box[4];
+    NT inv = NT(1) / NT(one << pix.level), inv_2;
+    make_exact(inv);
+    inv_2 = inv/2;
+    make_exact(inv_2);
+    NT pix_x = pix.x + pix.sub_x * inv;
+    NT pix_y = pix.y + pix.sub_y * inv;
+    NT s_c, s_key, inc_c, inc_key;
+    int var, inv_var;
+    if(dir&1) { // 1 or 3 (vertical direction)
+        var = CGAL_X_RANGE;
+        s_c = pix_x;
+        s_key = pix_y;
+    } else {  // 0 or 2 (horizontal direction)
+        var = CGAL_Y_RANGE;
+        s_c = pix_y;
+        s_key = pix_x;
+    }
+    inc_key = ((dir&2)-1)*inv_2;
+    inc_c = (1-2*((dir>>1)^(dir&1)))*inv_2;
+    inv_var = 1 - var;
+    s_c = s_c + inv_2 - inc_c;
+    s_key = s_key + inv_2 - inc_key;
+    engine.get_precached_poly(var, s_key, pix.level, box[0]);
+    
+    //Gfx_DETAILED_OUT("hv subdpixel" << std::endl);
+    int p0 = engine.evaluate_generic(var, s_c, s_key, box[0]); // 0
+    int p1 = engine.evaluate_generic(var, s_c + inc_c, s_key, box[0]); // 1
+    if(p0^p1)
+        return 0; 
+        
+    int p2 = engine.evaluate_generic(var, s_c + inc_c*2, s_key, box[0]); // 2
+    if(p2^p1)
+        return 1;
+        
+    engine.get_precached_poly(inv_var, s_c, pix.level, box[1]);    
+    int p3 = engine.evaluate_generic(inv_var, s_key+inc_key, s_c, box[1]); // 3
+    if(p3^p0)
+        return 0;
+        
+    engine.get_precached_poly(inv_var, s_c + inc_c*2, pix.level, box[2]);
+    int p4 = engine.evaluate_generic(inv_var, s_key+inc_key, s_c + inc_c*2,
+        box[2]);
+     
+    if(p4^p2)
+        return 1;
+        
+    int p5 = engine.evaluate_generic(inv_var, s_key+inc_key*2, s_c, box[1]); 
+    if(p3^p5)
+        return 2;
+        
+    int p7 = engine.evaluate_generic(inv_var, s_key+inc_key*2, s_c + inc_c*2,
+        box[2]); // 7
+    if(p4^p7)
+        return 3;
+        
+    engine.get_precached_poly(var, s_key+inc_key*2, pix.level, box[3]);
+    int p6 = engine.evaluate_generic(var, s_c + inc_c, s_key+inc_key*2,
+        box[3]); // 6
+    if(p5^p6)
+        return 2;
+    if(p6^p7)
+        return 3;
+    return -1;  
+}
+
+//! \brief the same for diagonal directions
+//! 
+//! preferred direction: NE(0), NW(1), SW(2), SE(3)
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_diag(
+    const Pixel_2& pix, int dir)
+{
+    Poly_1 box[4];
+    NT inv = NT(1) / NT(one << pix.level);
+    make_exact(inv);
+    NT inv_2 = inv/2;
+    make_exact(inv_2);
+    NT pix_x = pix.x + pix.sub_x * inv;
+    NT pix_y = pix.y + pix.sub_y * inv;
+    NT key_1, key_2, inc_1, inc_2;
+    int var, inv_var;
+    if(dir&1) { // 1 or 3 (vertical direction)
+        var = CGAL_X_RANGE;
+        key_1 = pix_x;
+        key_2 = pix_y;
+    } else {  // 0 or 2 (horizontal direction)
+        var = CGAL_Y_RANGE;
+        key_1 = pix_y;
+        key_2 = pix_x;
+    }
+    inc_1 = (2*((dir>>1)^(dir&1))-1)*inv_2;
+    inc_2 = ((dir&2)-1)*inv_2;
+    inv_var = 1 - var;
+    key_1 = key_1 + inv_2 - inc_1;
+    key_2 = key_2 + inv_2 - inc_2;
+    
+    engine.get_precached_poly(var, key_2, pix.level, box[0]);
+    int p0 = engine.evaluate_generic(var, key_1, key_2, box[0]); // 0
+    int p1 = engine.evaluate_generic(var, key_1 + inc_1, key_2, box[0]); // 1
+    //Gfx_DETAILED_OUT("p0: " << p0 << "; p1: " << p1 << std::endl);
+    
+    if(p0^p1)
+        return 0; 
+    
+    engine.get_precached_poly(inv_var, key_1, pix.level, box[1]);  
+    int p2 = engine.evaluate_generic(inv_var, key_2+inc_2, key_1, box[1]); // 2
+    //Gfx_DETAILED_OUT << "p2: " << p2 << std::endl;
+    if(p2^p0)
+        return 0;   
+    
+    int p3 = engine.evaluate_generic(var, key_1 + inc_1*2, key_2, box[0]); // 3
+    //Gfx_DETAILED_OUT << "p3: " << p3 << std::endl;
+    if(p3^p1)
+        return 1;
+    
+    int p4 = engine.evaluate_generic(inv_var, key_2+inc_2*2, key_1, box[1]);
+    //Gfx_DETAILED_OUT << "p4: " << p4 << std::endl;
+    if(p4^p2)
+        return 2;
+        
+    engine.get_precached_poly(inv_var, key_1 + inc_1*2, pix.level, box[2]);    
+    int p5 = engine.evaluate_generic(inv_var, key_2+inc_2, key_1 + inc_1*2,
+        box[2]);
+    //Gfx_DETAILED_OUT << "p5: " << p5 << std::endl;
+    if(p3^p5)
+        return 1;
+        
+    engine.get_precached_poly(var, key_2+inc_2*2, pix.level, box[3]);
+    int p6 = engine.evaluate_generic(var, key_1 + inc_1, key_2+inc_2*2,
+        box[3]); // 6
+    //Gfx_DETAILED_OUT << "p6: " << p6 << std::endl;
+    if(p4^p6)
+        return 2;   
+        
+    int p7 = engine.evaluate_generic(var, key_1+inc_1*2, key_2 + inc_2*2,
+        box[3]); // 7
+    //Gfx_DETAILED_OUT << "p7: " << p7 << std::endl;
+    if(p5^p7)
+        return 3;
+
+    if(p6^p7)
+        return 3;
+    return -1;  
+}
+
+//! attempts to find an isolating box for an end-point whose upper/lower
+//! boundaries do not intersect with a curve 
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_isolating_box(
+    const Rational& x_s, const Rational& y_s, Pixel_2& res)
+{
+    Integer lvl = one;
+    Rational x_seed, y_seed;
+    get_pixel_coords(x_s, y_s, res, &x_seed, &y_seed);
+    res.level = 0;
+    res.sub_x = 0;
+    res.sub_y = 0;
+    
+    NT inv = NT(1), bottom = NT(res.y), top = bottom + inv, left = NT(res.x); 
+    
+    Poly_1 poly_btm, poly_top;
+    engine.get_precached_poly(CGAL_X_RANGE, bottom, 0, poly_btm);
+    engine.get_precached_poly(CGAL_X_RANGE, top, 0, poly_top);
+    
+    while(1) {
+        inv = NT(1) / NT(lvl);
+        make_exact(inv);
+        left = NT(res.x) + NT(res.sub_x) * inv;
+        
+        Gfx_DETAILED_OUT("processing pixel: " << res << std::endl);
+        if(get_range_1(CGAL_X_RANGE,left,left+inv,bottom,poly_btm)&&
+            !engine.zero_bounds) { 
+            
+            Gfx_DETAILED_OUT("bottom boundary intersection found at pixel: " <<
+                res << std::endl);
+        } else {
+            if(!get_range_1(CGAL_X_RANGE,left,left+inv,top,poly_top)) {
+            
+                Gfx_DETAILED_OUT("no bottom/top intersections found at pixel:"
+                    << res << std::endl);
+                break;
+            } else {    
+                Gfx_DETAILED_OUT("top boundary intersection found at pixel: "
+                    << res << std::endl);
+            }
+        }
+        lvl <<= 1;
+        /*if(lvl > CGAL_REFINE_Y) {
+            event.refine_to(arcno, pixel_h_r/(lvl*2));
+            y_seed = (event.lower_boundary(arcno) + 
+                event.upper_boundary(arcno))/2;
+        }*/
+        if(res.level >= MAX_SUBDIVISION_LEVEL) {
+        std::cerr("get_isolating_box: reached maximum subdivision level "
+                << res.level << std::endl);
+            return false;
+        }
+        res.level++;
+        res.sub_x = rat2integer((x_seed - res.x)*lvl);
+        res.sub_y = rat2integer((y_seed - res.y)*lvl);
+        if(res.sub_x < 0)
+            res.sub_x = 0;
+        res.sub_x &= (lvl-1);
+        if(res.sub_y < 0)
+            res.sub_y = 0;
+        res.sub_y &= (lvl-1);
+    } 
+    return true;
+}
+
+//! returns true if \c pix is encompassed into one of isolating rectangles
+//! (stopping criteria)
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+inline bool
+Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::is_isolated_pixel(
+        const Pixel_2& pix)
+{
+    /*Integer sub_x;
+    if(isolated_l.level != -1u&&isolated_l.y == pix.y&&isolated_l.x == pix.x&&
+        pix.level >= isolated_l.level) {
+        sub_x = pix.sub_x >> (pix.level - isolated_l.level);
+        if(CGAL_ABS(sub_x - isolated_l.sub_x) <= 1)
+            return true;
+    }
+    if(isolated_h.level != -1u&&isolated_h.y == pix.y&&isolated_h.x == pix.x&&
+        pix.level >= isolated_h.level) {
+        sub_x = pix.sub_x >> (pix.level - isolated_h.level);
+        if(CGAL_ABS(sub_x - isolated_h.sub_x) <= 1)
+            return true;
+    }*/
+    return false;
+}
+
+#ifdef    Gfx_DEBUG_PRINT
+// DEBUG ONLY
+template <class CurvedKernelViaAnalysis_2, class Coeff_>
+void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::dump_neighbourhood(
+    const Pixel_2& pix)
+{
+    CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
+    CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
+
+    Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
+    //NT inv = NT(1) / NT(one << pix.level);
+    get_boundaries(CGAL_X_RANGE,pix,box[1]);
+    get_boundaries(CGAL_Y_RANGE,pix,box[0]);
+    NT bottom = box[1].key[0], top = box[1].key[1],
+        left = box[0].key[0], right = box[0].key[1];
+    
+    Gfx_OUT("\n\nComputing nighbourhood for pixel: " << pix << std::endl);
+    get_polynomials(CGAL_X_RANGE, box[1]);
+    get_polynomials(CGAL_Y_RANGE, box[0]);
+    NT a,b,range,inc,val;
+    ///////////////////////////////////////////////////////////////////////
+    Gfx_OUT("\nevaluate RIGHT side:" << std::endl);
+    range = top - bottom; 
+    inc = range / 3;
+    val = bottom;
+    
+    if(get_range_1(CGAL_Y_RANGE, bottom, top, right, box[0].poly[1]))
+        Gfx_OUT("segment RIGHT registered" << std::endl);
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, right, box[0].poly[1]))
+        Gfx_OUT("segment 0 registered" << std::endl);
+    
+    a = engine.evaluate_generic(CGAL_Y_RANGE, val, right, box[0].poly[1]);
+    Gfx_OUT("val = " << a << std::endl);
+    val += inc;
+    
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, right, box[0].poly[1]);
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 0" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, right, box[0].poly[1]))
+        Gfx_OUT("segment 1 registered" << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, right, box[0].poly[1]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 1" << std::endl);
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, right, box[0].poly[1]))
+        Gfx_OUT("segment 2 registered" << std::endl);
+    a = b;
+    val = top;
+
+    Gfx_OUT("poly right: " << box[0].poly[1] << " at (" << val << "; " <<
+        right << ")\n");
+    
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, right, box[0].poly[1]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 2" << std::endl);
+    ///////////////////////////////////////////////////////////////////////    
+    Gfx_OUT("\nevaluate BOTTOM side:" << std::endl);
+    range = right - left; 
+    inc = range / 3;
+    val = left;
+    if(get_range_1(CGAL_X_RANGE, left, right, bottom, box[1].poly[0]))
+        Gfx_OUT("segment BOTTOM registered" << std::endl);
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, bottom, box[1].poly[0]))
+        Gfx_OUT("segment 0 registered" << std::endl);
+
+    Gfx_OUT("poly bottom: " << box[1].poly[0] << " at (" << val << "; " <<
+        bottom << ")\n");
+        
+    engine.show_dump = true;        
+    a = engine.evaluate_generic(CGAL_X_RANGE, val, bottom, box[1].poly[0]);
+    engine.show_dump = false;
+    
+    Gfx_OUT("val = " << a << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, bottom, box[1].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 0" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, bottom, box[1].poly[0]))
+        Gfx_OUT("segment 1 registered" << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, bottom, box[1].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 1" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, bottom, box[1].poly[0]))
+        Gfx_OUT("segment 2 registered" << std::endl);
+    val = right;
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, bottom, box[1].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 2" << std::endl);
+    ///////////////////////////////////////////////////////////////////////    
+    Gfx_OUT("\nevaluate LEFT side:" << std::endl);
+    range = top - bottom; 
+    inc = range / 3;
+    val = bottom;
+    if(get_range_1(CGAL_Y_RANGE, bottom, top, left, box[0].poly[0]))
+        Gfx_OUT("segment LEFT registered" << std::endl);
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, left, box[0].poly[0]))
+        Gfx_OUT("segment 0 registered" << std::endl);
+
+    Gfx_OUT("poly left: " << box[0].poly[0] << " at (" << val << "; " <<
+        left << ")\n");
+    engine.show_dump = true;
+    a = engine.evaluate_generic(CGAL_Y_RANGE, val, left, box[0].poly[0]);
+    engine.show_dump = false;
+
+        
+    Gfx_OUT("val = " << a << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, left, box[0].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 0" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, left, box[0].poly[0]))
+        Gfx_OUT("segment 1 registered" << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, left, box[0].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 1" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_Y_RANGE, val, val + inc, left, box[0].poly[0]))
+        Gfx_OUT("segment 2 registered" << std::endl);
+    val = top;
+    b = engine.evaluate_generic(CGAL_Y_RANGE, val, left, box[0].poly[0]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 2" << std::endl);
+    ///////////////////////////////////////////////////////////////////////    
+    Gfx_OUT("\nevaluate TOP side:" << std::endl);
+    range = right - left; 
+    inc = range / 3;
+    val = left;
+    if(get_range_1(CGAL_X_RANGE, left, right, top, box[1].poly[1]))
+        Gfx_OUT("segment TOP registered" << std::endl);
+        
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, top, box[1].poly[1]))
+        Gfx_OUT("segment 0 registered" << std::endl);
+    a = engine.evaluate_generic(CGAL_X_RANGE, val, top, box[1].poly[1]);
+    
+    Gfx_OUT("val = " << a << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, top, box[1].poly[1]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 0" << std::endl);
+    a = b;
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, top, box[1].poly[1]))
+        Gfx_OUT("segment 1 registered" << std::endl);
+    val += inc;
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, top, box[1].poly[1]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 1" << std::endl);
+    a = b;
+    
+    if(get_range_1(CGAL_X_RANGE, val, val + inc, top, box[1].poly[1]))
+        Gfx_OUT("segment 2 registered" << std::endl);
+
+    val = right;
+
+    Gfx_OUT("poly top: " << box[1].poly[1] << " at (" << val << "; " <<
+        top << ")\n");
+    b = engine.evaluate_generic(CGAL_X_RANGE, val, top, box[1].poly[1]);
+    
+    Gfx_OUT("val = " << b << std::endl);
+    if(a*b < 0) 
+        Gfx_OUT("sign change at segment 2" << std::endl);
+}
+#endif
+
+//!@}
+CGAL_END_NAMESPACE
+
+#endif // CGAL_CKVA_CURVE_RENDERER_2_H
