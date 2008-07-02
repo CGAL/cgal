@@ -1,6 +1,6 @@
 include(MacroFindOptionalCGALDependency)
 
-find_package(Boost2 REQUIRED)
+find_package(Boost REQUIRED)
 if(Boost_FOUND)
     set(CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_3RD_PARTY_INCLUDE_DIRS}   ${Boost_INCLUDE_DIR})
     set(CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_3RD_PARTY_LIBRARIES_DIRS} ${Boost_LIBRARY_DIR})
