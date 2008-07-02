@@ -33,6 +33,7 @@ protected:
 private:
 
   DT * dt;
+  typename DT::Vertex_handle hint;
   typename DT::Face_handle fh;
   QGraphicsScene *scene_;
   QGraphicsEllipseItem* circle;
@@ -45,6 +46,7 @@ TriangulationCircumcircle<T>::TriangulationCircumcircle(QGraphicsScene* s,
                                                               QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {
+  hint = dt->infinite_vertex();
   circle = new QGraphicsEllipseItem();
   circle->hide();
   scene_->addItem(circle);
@@ -90,7 +92,8 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     return;
   }
   typename T::Point p = typename T::Point(event->scenePos().x(), event->scenePos().y());
-  fh = dt->locate(p, fh); // fh is used as a hint
+  fh = dt->locate(p, hint->face());
+  hint = fh->vertex(0);
   if(!dt->is_infinite(fh)){
     typename T::Geom_traits::Circle_2 c(fh->vertex(0)->point(), 
                                         fh->vertex(1)->point(), 
