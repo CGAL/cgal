@@ -330,17 +330,30 @@ public:
 
 private:
   typedef Facet Edge_2D;
-  void remove_2D(Vertex_handle v);
-  void make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole);
-  void fill_hole_delaunay_2D(std::list<Edge_2D> & hole);
+  template < class VertexRemover >
+  VertexRemover& remove_dim_down(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& remove_1D(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& remove_2D(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& make_hole_2D(Vertex_handle v,
+      std::list<Edge_2D> & hole, VertexRemover &remover);
+  template < class VertexRemover >
+  void fill_hole_2D(std::list<Edge_2D> & hole,
+      VertexRemover &remover);
 
   void make_canonical(Vertex_triple& t) const;
 
   Vertex_triple
   make_vertex_triple(const Facet& f) const;
 
-  void remove_3D(Vertex_handle v);
-  void remove_3D_new(Vertex_handle v);
+  template < class VertexRemover >
+  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover);
+  void remove_3D_ear(Vertex_handle v);
+
+  template < class VertexRemover >
+  void remove(Vertex_handle v, VertexRemover &remover);
 
   Bounded_side
   side_of_sphere(const Vertex_handle& v0, const Vertex_handle& v1,
@@ -448,9 +461,9 @@ private:
 
   void fill_hole_3D_ear(const std::vector<Facet> & boundhole);
 
-void make_hole_3D_new( Vertex_handle v,
-		       std::map<Vertex_triple,Facet>& outer_map,
-		       std::vector<Cell_handle> & hole);
+  void make_hole_3D( Vertex_handle v,
+      std::map<Vertex_triple,Facet>& outer_map,
+      std::vector<Cell_handle> & hole);
 
 
   class Conflict_tester_3
@@ -528,6 +541,9 @@ void make_hole_3D_new( Vertex_handle v,
       }
   };
 
+  template < class DelaunayTriangulation_3 >
+  class Vertex_remover;
+
   friend class Perturbation_order;
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
@@ -595,24 +611,93 @@ move_point(Vertex_handle v, const Point & p)
     return insert(p, old_neighbor->cell());
 }
 
+template <class Gt, class Tds >
+template <class DelaunayTriangulation_3>
+class Delaunay_triangulation_3<Gt, Tds>::Vertex_remover {
+  typedef DelaunayTriangulation_3 Delaunay;
+public:
+  typedef CGAL_NULL_TYPE Hidden_points_iterator;
+
+  Vertex_remover(Delaunay &tmp_) : tmp(tmp_) {}
+
+  Delaunay &tmp;
+
+  void add_hidden_points(Cell_handle ch) {}
+  Hidden_points_iterator hidden_points_begin() { return CGAL_NULL; }
+  Hidden_points_iterator hidden_points_end() { return CGAL_NULL; }
+
+  Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
+    const Point &r, const Point &s, bool perturb = false) const {
+    return tmp.coplanar_side_of_bounded_circle(p,q,r,s,perturb);
+  }
+};
+
 template < class Gt, class Tds >
-void
+template < class VertexRemover >
+VertexRemover&
 Delaunay_triangulation_3<Gt,Tds>::
-remove_2D(Vertex_handle v)
+remove_dim_down(Vertex_handle v, VertexRemover &remover)
+{
+    CGAL_triangulation_precondition (dimension() >= 0);
+
+    // Collect all the hidden points.
+    for (All_cells_iterator ci = tds().raw_cells_begin();
+            ci != tds().raw_cells_end(); ++ci)
+        remover.add_hidden_points(ci);
+
+    tds().remove_decrease_dimension(v, infinite_vertex());
+
+    // Now try to see if we need to re-orient.
+    if (dimension() == 2) {
+        Facet f = *finite_facets_begin();
+        if (coplanar_orientation(f.first->vertex(0)->point(),
+                                 f.first->vertex(1)->point(),
+                                 f.first->vertex(2)->point()) == NEGATIVE)
+            tds().reorient();
+    }
+
+    return remover;
+}
+
+template < class Gt, class Tds >
+template < class VertexRemover >
+VertexRemover&
+Delaunay_triangulation_3<Gt,Tds>::
+remove_1D(Vertex_handle v, VertexRemover &remover)
+{
+    CGAL_triangulation_precondition (dimension() == 1);
+
+    Cell_handle c1 = v->cell();
+    Cell_handle c2 = c1->neighbor(c1->index(v) == 0 ? 1 : 0);
+    remover.add_hidden_points(c1);
+    remover.add_hidden_points(c2);
+
+    tds().remove_from_maximal_dimension_simplex (v);
+
+    return remover;
+}
+
+template < class Gt, class Tds >
+template < class VertexRemover >
+VertexRemover&
+Delaunay_triangulation_3<Gt,Tds>::
+remove_2D(Vertex_handle v, VertexRemover &remover)
 {
     CGAL_triangulation_precondition(dimension() == 2);
     std::list<Edge_2D> hole;
-    make_hole_2D(v, hole);
-    fill_hole_delaunay_2D(hole);
+    make_hole_2D(v, hole, remover);
+    fill_hole_2D(hole, remover);
     tds().delete_vertex(v);
+    return remover;
 }
 
 
 
 template <class Gt, class Tds >
+template < class VertexRemover >
 void
 Delaunay_triangulation_3<Gt, Tds>::
-fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
+fill_hole_2D(std::list<Edge_2D> & first_hole, VertexRemover &remover)
 {
   typedef std::list<Edge_2D> Hole;
 
@@ -690,7 +775,7 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 	  const Point &p = vv->point();
 	  if (coplanar_orientation(p0, p1, p) == COUNTERCLOCKWISE) {
 	    if (is_infinite(v2) ||
-	        coplanar_side_of_bounded_circle(p0, p1, *p2, p, true)
+	        remover.side_of_bounded_circle(p0, p1, *p2, p, true)
 		  == ON_BOUNDED_SIDE) {
 		v2 = vv;
 		p2 = &p;
@@ -746,9 +831,10 @@ fill_hole_delaunay_2D(std::list<Edge_2D> & first_hole)
 }
 
 template <class Gt, class Tds >
-void
+template < class VertexRemover >
+VertexRemover&
 Delaunay_triangulation_3<Gt, Tds>::
-make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
+make_hole_2D(Vertex_handle v, std::list<Edge_2D> &hole, VertexRemover &remover)
 {
   std::vector<Cell_handle> to_delete;
 
@@ -768,12 +854,14 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole)
     fn->set_neighbor(in, Cell_handle());
 
     hole.push_back(Edge_2D(fn, in));
+    remover.add_hidden_points(f);
     to_delete.push_back(f);
 
     ++fc;
   } while (fc != done);
 
   tds().delete_cells(to_delete.begin(), to_delete.end());
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -826,7 +914,7 @@ make_vertex_triple(const Facet& f) const
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-remove_3D(Vertex_handle v)
+remove_3D_ear(Vertex_handle v)
 {
   std::vector<Facet> boundhole; // facets on the boundary of the hole
   boundhole.reserve(64);        // 27 on average.
@@ -842,9 +930,10 @@ remove_3D(Vertex_handle v)
 
 
 template < class Gt, class Tds >
-void
+template < class VertexRemover >
+VertexRemover&
 Delaunay_triangulation_3<Gt,Tds>::
-remove_3D_new(Vertex_handle v)
+remove_3D(Vertex_handle v, VertexRemover &remover)
 {
   std::vector<Cell_handle> hole;
   hole.reserve(64);
@@ -855,7 +944,14 @@ remove_3D_new(Vertex_handle v)
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
-  make_hole_3D_new(v, outer_map, hole);
+  make_hole_3D(v, outer_map, hole);
+  CGAL_assertion(remover.hidden_points_begin() ==
+      remover.hidden_points_end() );
+
+  // Output the hidden points.
+  for (typename std::vector<Cell_handle>::iterator
+      hi = hole.begin(), hend = hole.end(); hi != hend; ++hi)
+    remover.add_hidden_points(*hi);
 
   bool inf = false;
   unsigned int i;
@@ -866,15 +962,14 @@ remove_3D_new(Vertex_handle v)
   incident_vertices(v, std::back_inserter(vertices));
 
   // create a Delaunay triangulation of the points on the boundary
-  // and make a map from the vertices in aux towards the vertices in *this
-  Self aux;
+  // and make a map from the vertices in remover.tmp towards the vertices
+  // in *this
 
   Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
-
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
-      Vertex_handle vh = aux.insert(vertices[i]->point(), ch);
+      Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
       ch = vh->cell();
       vmap[vh] = vertices[i];
     }else {
@@ -882,22 +977,22 @@ remove_3D_new(Vertex_handle v)
     }
   }
 
-  if(aux.dimension()==2){
-    Vertex_handle fake_inf = aux.insert(v->point());
+  if(remover.tmp.dimension()==2){
+    Vertex_handle fake_inf = remover.tmp.insert(v->point());
     vmap[fake_inf] = infinite_vertex();
   } else {
-    vmap[aux.infinite_vertex()] = infinite_vertex();
+    vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(aux.dimension() == 3);
+  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
 
-  // Construct the set of vertex triples of aux
+  // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
-  // Also note that we use the vertices of *this, not of aux
+  // Also note that we use the vertices of *this, not of remover.tmp
 
   if(inf){
-    for(All_cells_iterator it = aux.all_cells_begin();
-	it != aux.all_cells_end();
+    for(All_cells_iterator it = remover.tmp.all_cells_begin();
+	it != remover.tmp.all_cells_end();
 	++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
@@ -908,8 +1003,8 @@ remove_3D_new(Vertex_handle v)
       }
     }
   } else {
-      for(Finite_cells_iterator it = aux.finite_cells_begin();
-	it != aux.finite_cells_end();
+      for(Finite_cells_iterator it = remover.tmp.finite_cells_begin();
+	it != remover.tmp.finite_cells_end();
 	++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
@@ -975,53 +1070,47 @@ remove_3D_new(Vertex_handle v)
   }
   tds().delete_vertex(v);
   tds().delete_cells(hole.begin(), hole.end());
+
+  return remover;
 }
 
+template < class Gt, class Tds >
+template < class VertexRemover >
+void
+Delaunay_triangulation_3<Gt, Tds>::
+remove(Vertex_handle v, VertexRemover &remover) {
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
 
+  if (test_dim_down (v)) {
+    remove_dim_down (v, remover);
+  }
+  else {
+    switch (dimension()) {
+    case 1: remove_1D (v, remover); break;
+    case 2: remove_2D (v, remover); break;
+    case 3: remove_3D (v, remover); break;
+    default:
+      CGAL_triangulation_assertion (false);
+    }
+  }
+}
 
 template < class Gt, class Tds >
 bool
 Delaunay_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
-  CGAL_triangulation_precondition( v != Vertex_handle());
-  CGAL_triangulation_precondition( !is_infinite(v));
-  CGAL_triangulation_expensive_precondition(is_vertex(v));
-
-  if (dimension() >= 0 && test_dim_down(v)) {
-      tds().remove_decrease_dimension(v);
-      // Now try to see if we need to re-orient.
-      if (dimension() == 2) {
-	  Facet f = *finite_facets_begin();
-          if (coplanar_orientation(f.first->vertex(0)->point(),
-		                   f.first->vertex(1)->point(),
-				   f.first->vertex(2)->point()) == NEGATIVE)
-	      tds().reorient();
-      }
-      CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
-  }
-
-  if (dimension() == 1) {
-      tds().remove_from_maximal_dimension_simplex(v);
-      CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
-  }
-
-  if (dimension() == 2) {
-      remove_2D(v);
-      CGAL_triangulation_expensive_postcondition(is_valid());
-      return true;
-  }
-
-  CGAL_triangulation_assertion( dimension() == 3 );
-
-
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
-  remove_3D(v);
-#else
-  remove_3D_new(v);
+  if (dimension()==3 && !test_dim_down(v)) {
+    remove_3D_ear(v);
+    return true;
+  }
 #endif
+  Self tmp;
+  Vertex_remover<Self> remover (tmp);
+  remove(v,remover);
 
   CGAL_triangulation_expensive_postcondition(is_valid());
   return true;
@@ -1632,7 +1721,7 @@ make_hole_3D_ear( Vertex_handle v,
 template < class Gt, class Tds >
 void
 Delaunay_triangulation_3<Gt,Tds>::
-make_hole_3D_new( Vertex_handle v,
+make_hole_3D( Vertex_handle v,
 	      std::map<Vertex_triple,Facet>& outer_map,
 	      std::vector<Cell_handle> & hole)
 {

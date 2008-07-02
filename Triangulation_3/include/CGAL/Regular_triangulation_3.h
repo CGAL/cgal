@@ -80,6 +80,8 @@ public:
   typedef typename Gt::Triangle_3                  Triangle;
   typedef typename Gt::Tetrahedron_3               Tetrahedron;
 
+  typedef Weighted_point             Point;
+
   // types for dual:
   typedef typename Gt::Line_3        Line;
   typedef typename Gt::Ray_3         Ray;
@@ -283,11 +285,13 @@ public:
 private:
   typedef Facet Edge_2D;
  
-  template < class OutputIterator >
-  OutputIterator
-  make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole, OutputIterator hidden);
+  template < class VertexRemover >
+  VertexRemover& make_hole_2D(Vertex_handle v,
+      std::list<Edge_2D> & hole, VertexRemover &remover);
   
-  void fill_hole_regular_2D(std::list<Edge_2D> & hole);
+  template < class VertexRemover >
+  void fill_hole_2D(std::list<Edge_2D> & hole,
+      VertexRemover &remover);
 
   void make_canonical(Vertex_triple& t) const;
 
@@ -321,14 +325,16 @@ private:
   }
 #endif
 
-  template < class OutputIterator >
-  OutputIterator remove_dim_down(Vertex_handle v, OutputIterator hidden);
-  template < class OutputIterator >
-  OutputIterator remove_1D(Vertex_handle v, OutputIterator hidden);
-  template < class OutputIterator >
-  OutputIterator remove_2D(Vertex_handle v, OutputIterator hidden);
-  template < class OutputIterator >
-  OutputIterator remove_3D(Vertex_handle v, OutputIterator hidden);
+  template < class VertexRemover >
+  VertexRemover& remove_dim_down(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& remove_1D(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& remove_2D(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  VertexRemover& remove_3D(Vertex_handle v, VertexRemover &remover);
+  template < class VertexRemover >
+  void remove(Vertex_handle v, VertexRemover &remover);
 
 protected:
 
@@ -744,6 +750,9 @@ private:
       c->hide_point(p);
     }
   };
+
+  template < class RegularTriangulation_3 >
+  class Vertex_remover;
 
   friend class Conflict_tester_for_find_conflicts_3;
   friend class Conflict_tester_for_find_conflicts_2;
@@ -1274,18 +1283,54 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int lj)
   return insert_in_conflict(p, lt,c,li,lj, tester, hidden_point_visitor);
 }
 
+template <class Gt, class Tds >
+template <class RegularTriangulation_3>
+class Regular_triangulation_3<Gt, Tds>::Vertex_remover {
+  typedef RegularTriangulation_3 Regular;
+public:
+  typedef typename std::vector<Point>::iterator
+      Hidden_points_iterator;
+
+  Vertex_remover(Regular &tmp_) : tmp(tmp_) {}
+
+  Regular &tmp;
+
+  void add_hidden_points(Cell_handle ch) {
+    std::copy (ch->hidden_points_begin(), ch->hidden_points_end(), 
+                std::back_inserter(hidden));
+  }
+
+  Hidden_points_iterator hidden_points_begin() {
+    return hidden.begin();
+  }
+  Hidden_points_iterator hidden_points_end() {
+    return hidden.end();
+  }
+
+  Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
+    const Point &r, const Point &s, bool perturb = false) const {
+    return tmp.side_of_bounded_power_circle(p,q,r,s,perturb);
+  }
+
+private:
+  // The removal of v may un-hide some points,
+  // Space functions output them.
+  std::vector<Point> hidden;
+};
+
+
 template < class Gt, class Tds >
-template < class OutputIterator >
-OutputIterator
+template < class VertexRemover >
+VertexRemover&
 Regular_triangulation_3<Gt,Tds>::
-remove_dim_down(Vertex_handle v, OutputIterator hidden)
+remove_dim_down(Vertex_handle v, VertexRemover &remover)
 {
     CGAL_triangulation_precondition (dimension() >= 0);
 
     // Collect all the hidden points.
     for (All_cells_iterator ci = tds().raw_cells_begin();
             ci != tds().raw_cells_end(); ++ci)
-        std::copy (ci->hidden_points_begin(), ci->hidden_points_end(), hidden);
+      remover.add_hidden_points(ci);
 
     tds().remove_decrease_dimension(v, infinite_vertex());
 
@@ -1298,25 +1343,25 @@ remove_dim_down(Vertex_handle v, OutputIterator hidden)
             tds().reorient();
     }
 
-    return hidden;
+    return remover;
 }
 
 template < class Gt, class Tds >
-template < class OutputIterator >
-OutputIterator
+template < class VertexRemover >
+VertexRemover&
 Regular_triangulation_3<Gt,Tds>::
-remove_1D(Vertex_handle v, OutputIterator hidden)
+remove_1D(Vertex_handle v, VertexRemover &remover)
 {
     CGAL_triangulation_precondition (dimension() == 1);
 
     Cell_handle c1 = v->cell();
     Cell_handle c2 = c1->neighbor(c1->index(v) == 0 ? 1 : 0);
-    std::copy (c1->hidden_points_begin(), c1->hidden_points_end(), hidden);
-    std::copy (c2->hidden_points_begin(), c2->hidden_points_end(), hidden);
+    remover.add_hidden_points(c1);
+    remover.add_hidden_points(c2);
 
     tds().remove_from_maximal_dimension_simplex (v);
 
-    return hidden;
+    return remover;
 }
 
 // The following functions (fill_hole_regular_2D, make_hole_2D, make_canonical,
@@ -1324,9 +1369,10 @@ remove_1D(Vertex_handle v, OutputIterator hidden)
 // their counterpart in Delaunay_triangulation_3. In a perfect world most of
 // this code would be in Triangulation_3 and Triangulation_data_structure_3.
 template <class Gt, class Tds >
+template < class VertexRemover >
 void
 Regular_triangulation_3<Gt, Tds>::
-fill_hole_regular_2D(std::list<Edge_2D> & first_hole)
+fill_hole_2D(std::list<Edge_2D> & first_hole, VertexRemover &remover)
 {
     typedef std::list<Edge_2D> Hole;
 
@@ -1379,9 +1425,9 @@ fill_hole_regular_2D(std::list<Edge_2D> & first_hole)
         Vertex_handle v0 = ff->vertex(cw(ii));
         Vertex_handle v1 = ff->vertex(ccw(ii));
         Vertex_handle v2 = infinite_vertex();
-        const Weighted_point &p0 = v0->point();
-        const Weighted_point &p1 = v1->point();
-        const Weighted_point *p2 = NULL; // Initialize to NULL to avoid warning.
+        const Point &p0 = v0->point();
+        const Point &p1 = v1->point();
+        const Point *p2 = NULL; // Initialize to NULL to avoid warning.
 
         typename Hole::iterator hdone = hole.end();
         typename Hole::iterator hit = hole.begin();
@@ -1400,10 +1446,10 @@ fill_hole_regular_2D(std::list<Edge_2D> & first_hole)
                     cut_after = hit;
             }
             else {     // vv is a finite vertex
-                const Weighted_point &p = vv->point();
+                const Point &p = vv->point();
                 if (coplanar_orientation(p0, p1, p) == COUNTERCLOCKWISE) {
                     if (is_infinite(v2) ||
-                            side_of_bounded_power_circle(p0, p1, *p2, p, true)
+                            remover.side_of_bounded_circle(p0, p1, *p2, p, true)
                             == ON_BOUNDED_SIDE) {
                         v2 = vv;
                         p2 = &p;
@@ -1458,10 +1504,10 @@ fill_hole_regular_2D(std::list<Edge_2D> & first_hole)
 }
 
 template < class Gt, class Tds >
-template < class OutputIterator >
-OutputIterator
+template < class VertexRemover >
+VertexRemover&
 Regular_triangulation_3<Gt, Tds>::
-make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole, OutputIterator hidden)
+make_hole_2D(Vertex_handle v, std::list<Edge_2D> &hole, VertexRemover &remover)
 {
     std::vector<Cell_handle> to_delete;
 
@@ -1481,28 +1527,28 @@ make_hole_2D(Vertex_handle v, std::list<Edge_2D> & hole, OutputIterator hidden)
         fn->set_neighbor(in, Cell_handle());
 
         hole.push_back(Edge_2D(fn, in));
-        std::copy (f->hidden_points_begin(), f->hidden_points_end(), hidden);
+        remover.add_hidden_points(f);
         to_delete.push_back(f);
 
         ++fc;
     } while (fc != done);
 
     tds().delete_cells(to_delete.begin(), to_delete.end());
-    return hidden;
+    return remover;
 }
 
 template < class Gt, class Tds >
-template < class OutputIterator >
-OutputIterator
+template < class VertexRemover >
+VertexRemover&
 Regular_triangulation_3<Gt,Tds>::
-remove_2D(Vertex_handle v, OutputIterator hidden)
+remove_2D(Vertex_handle v, VertexRemover &remover)
 {
     CGAL_triangulation_precondition(dimension() == 2);
     std::list<Edge_2D> hole;
-    make_hole_2D(v, hole, hidden);
-    fill_hole_regular_2D(hole);
+    make_hole_2D(v, hole, remover);
+    fill_hole_2D(hole, remover);
     tds().delete_vertex(v);
-    return hidden;
+    return remover;
 }
 
 #ifndef CGAL_CFG_NET2003_MATCHING_BUG
@@ -1576,10 +1622,10 @@ make_vertex_triple(const Facet& f) const
 }
 
 template < class Gt, class Tds >
-template < class OutputIterator >
-OutputIterator
+template < class VertexRemover >
+VertexRemover&
 Regular_triangulation_3<Gt,Tds>::
-remove_3D(Vertex_handle v, OutputIterator hidden)
+remove_3D(Vertex_handle v, VertexRemover &remover)
 {
   std::vector<Cell_handle> hole;
   hole.reserve(64);
@@ -1591,14 +1637,13 @@ remove_3D(Vertex_handle v, OutputIterator hidden)
   Vertex_triple_Facet_map inner_map;
 
   make_hole_3D (v, outer_map, hole);
+  CGAL_assertion(remover.hidden_points_begin() ==
+      remover.hidden_points_end() );
   
   // Output the hidden points.
   for (typename std::vector<Cell_handle>::iterator
        hi = hole.begin(), hend = hole.end(); hi != hend; ++hi) 
-  {
-    std::copy ((*hi)->hidden_points_begin(), (*hi)->hidden_points_end(), hidden);
-  }
-
+    remover.add_hidden_points(*hi);
 
   bool inf = false;
   unsigned int i;
@@ -1609,15 +1654,14 @@ remove_3D(Vertex_handle v, OutputIterator hidden)
   incident_vertices(v, std::back_inserter(vertices));
   
   // create a Regular triangulation of the points on the boundary
-  // and make a map from the vertices in aux towards the vertices in *this
-  Self aux;
+  // and make a map from the vertices in remover.tmp towards the vertices 
+  // in *this
 
   Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
-
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
-      Vertex_handle vh = aux.insert(vertices[i]->point(), ch);
+      Vertex_handle vh = remover.tmp.insert(vertices[i]->point(), ch);
       ch = vh->cell();
       vmap[vh] = vertices[i];
     }else {
@@ -1625,22 +1669,22 @@ remove_3D(Vertex_handle v, OutputIterator hidden)
     }
   }
 
-  if(aux.dimension()==2){
-    Vertex_handle fake_inf = aux.insert(v->point());
+  if(remover.tmp.dimension()==2){
+    Vertex_handle fake_inf = remover.tmp.insert(v->point());
     vmap[fake_inf] = infinite_vertex();
   } else {
-    vmap[aux.infinite_vertex()] = infinite_vertex();
+    vmap[remover.tmp.infinite_vertex()] = infinite_vertex();
   }
 
-  CGAL_triangulation_assertion(aux.dimension() == 3);
+  CGAL_triangulation_assertion(remover.tmp.dimension() == 3);
 
-  // Construct the set of vertex triples of aux
+  // Construct the set of vertex triples of remover.tmp
   // We reorient the vertex triple so that it matches those from outer_map
-  // Also note that we use the vertices of *this, not of aux
+  // Also note that we use the vertices of *this, not of remover.tmp
   
   if(inf){
-    for(All_cells_iterator it = aux.all_cells_begin();
-	it != aux.all_cells_end();
+    for(All_cells_iterator it = remover.tmp.all_cells_begin();
+	it != remover.tmp.all_cells_end();
 	++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
@@ -1651,8 +1695,8 @@ remove_3D(Vertex_handle v, OutputIterator hidden)
       }
     }
   } else {
-      for(Finite_cells_iterator it = aux.finite_cells_begin();
-	it != aux.finite_cells_end();
+      for(Finite_cells_iterator it = remover.tmp.finite_cells_begin();
+	it != remover.tmp.finite_cells_end();
 	++it){
       for(i=0; i < 4; i++){
 	Facet f = std::pair<Cell_handle,int>(it,i);
@@ -1720,7 +1764,30 @@ remove_3D(Vertex_handle v, OutputIterator hidden)
   tds().delete_vertex(v);
   tds().delete_cells(hole.begin(), hole.end());
 
-  return hidden;
+  return remover;
+}
+
+template < class Gt, class Tds >
+template < class VertexRemover >
+void
+Regular_triangulation_3<Gt, Tds>::
+remove(Vertex_handle v, VertexRemover &remover) {
+  CGAL_triangulation_precondition( v != Vertex_handle());
+  CGAL_triangulation_precondition( !is_infinite(v));
+  CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
+
+  if (test_dim_down (v)) {
+    remove_dim_down (v, remover);
+  }
+  else {
+    switch (dimension()) {
+    case 1: remove_1D (v, remover); break;
+    case 2: remove_2D (v, remover); break;
+    case 3: remove_3D (v, remover); break;
+    default:
+      CGAL_triangulation_assertion (false);
+    }
+  }
 }
 
 template < class Gt, class Tds >
@@ -1728,36 +1795,22 @@ void
 Regular_triangulation_3<Gt,Tds>::
 remove(Vertex_handle v)
 {
-    CGAL_triangulation_precondition( v != Vertex_handle());
-    CGAL_triangulation_precondition( !is_infinite(v));
-    CGAL_triangulation_expensive_precondition( tds().is_vertex(v) );
-
-    // The removal of v may un-hide some points,
-    // remove_*D() functions output them.
-    std::vector<Weighted_point> hidden;
-
     Cell_handle c;
     if (dimension() > 0)
         c = v->cell()->neighbor(v->cell()->index(v));
 
-    if (test_dim_down (v)) remove_dim_down (v, std::back_inserter(hidden));
-    else switch (dimension())
-    {
-    case 1: remove_1D (v, std::back_inserter(hidden)); break;
-    case 2: remove_2D (v, std::back_inserter(hidden)); break;
-    case 3: remove_3D (v, std::back_inserter(hidden)); break;
-    default:
-        CGAL_triangulation_assertion (false);
-    }
+    Self tmp;
+    Vertex_remover<Self> remover(tmp);
+    remove(v,remover);
 
     // Re-insert the points that v was hiding.
-    for (typename std::vector<Weighted_point>::iterator
-         hi = hidden.begin(); hi != hidden.end(); ++hi)
-    {
-        Vertex_handle hv = insert (*hi, c);
-        if (hv != Vertex_handle()) c = hv->cell();
+    for (typename Vertex_remover<Self>::Hidden_points_iterator
+        hi = remover.hidden_points_begin(); 
+        hi != remover.hidden_points_end(); ++hi) {
+      //std::cout << "INSERT: " << *hi << std::endl;
+      Vertex_handle hv = insert (*hi, c);
+      if (hv != Vertex_handle()) c = hv->cell();
     }
-
     CGAL_triangulation_expensive_postcondition (is_valid());
 }
 
