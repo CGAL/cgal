@@ -33,13 +33,14 @@ protected:
   DT * dt;
   Vertex_handle vh;
   bool movePointToInsert;
+  bool insertedPoint;
 };
 
 
 template <typename T>
 TriangulationMovingPoint<T>::TriangulationMovingPoint(T * dt_,
 							  QObject* parent)
-  :  GraphicsViewInput(parent), dt(dt_), movePointToInsert(false), vh()
+  :  GraphicsViewInput(parent), dt(dt_), movePointToInsert(false), insertedPoint(false), vh()
 {}
 
 
@@ -52,9 +53,14 @@ TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
   int li;
   Face_handle fh = (vh == Vertex_handle()) ? Face_handle() : vh->face();
   fh = dt->locate(p, lt, li, fh); // fh serves as a hint
-
-  vh = dt->insert(p, lt, fh, li);
-  emit(generate(CGAL::Object()));
+  if(lt != T::VERTEX){
+    vh = dt->insert(p, lt, fh, li);
+    insertedPoint = true;
+    emit(generate(CGAL::Object()));
+  } else {
+    vh = fh->vertex(0);
+    insertedPoint = false;
+  }
 }
 
 
@@ -83,7 +89,9 @@ TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   // Let us take a neighbor that is not in the star of vh.
   const Face_handle fh = vh->face();
   Vertex_handle next_hint = fh->vertex((fh->index(vh)+1&3));
-  dt->remove(vh);
+  if(insertedPoint){
+    dt->remove(vh);
+  }
   vh = next_hint;
   localize_and_insert_point(event->scenePos());
 }
@@ -98,7 +106,9 @@ TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     return;
   }
 
-  dt->remove(vh);
+  if(insertedPoint){
+    dt->remove(vh);
+  }
   vh = Vertex_handle();
   
   emit(generate(CGAL::Object()));
