@@ -5,7 +5,8 @@
 An object of type \ccRefName\ creates a circle, defined by either
 center and radius, or two or three points on the circle. A new 
 vertex is inserted every time the left mouse button is pressed.
-The \ccc{Escape} key removes the last entered point.
+The \ccc{Del} key removes the last entered point. The \ccc{Esc} 
+key removes all entered points.
 
 
 \ccInclude{CGAL/Qt/GraphicsViewCircleInput.h}
@@ -24,7 +25,7 @@ The template parameter of \ccRefName\ must be a \cgal\ \ccc{Kernel}.
 \ccSetTwoColumns{GraphicsViewCircleInput}{}
 
 \ccConstructor{GraphicsViewCircleInput<T>(QGraphicsScene* s, int pointsOnCircle = 1);}
-{\ccc{s} is the scene where we want to draw the circle. \ccc{pointsOnCircle} is the
+{\ccc{s} is the scene where we want to enter the circle. \ccc{pointsOnCircle} is the
   number of points on the circle to generate.}
 
 \ccMethod{void generate(Object o);}{The object \ccc{o} contains a \ccc{std::pair<K::Point_2, K::FT>}
