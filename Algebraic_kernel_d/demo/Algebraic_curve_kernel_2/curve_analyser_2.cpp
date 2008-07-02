@@ -19,7 +19,7 @@
 #define CGAL_ACK_DEBUG_PRINT std::cout
 #endif
 
-#include<CGAL/Algebraic_curve_kernel_2/flags.h  >
+#include<CGAL/Algebraic_curve_kernel_2/flags.h>
 
 // demo-specific flags
 
@@ -37,8 +37,8 @@
 
 // What is the coefficient type of the input?
 #ifndef CGAL_ACK_COEFFICIENT
-#define CGAL_ACK_COEFFICIENT Integer
-#define CGAL_ACK_COEFFICIENT_HELP 1
+#define CGAL_ACK_COEFFICIENT CGAL::CORE_arithmetic_kernel::Integer
+#define CGAL_ACK_COEFFICIENT_IS_INTEGER 1
 #endif
 
 //Which Arithmetic_kernel is used?
@@ -53,18 +53,12 @@ CGAL::Timer overall_timer;
 #include <sstream>
 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Algebraic_kernel_1.h>
-
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
+#include <CGAL/Prefered_algebraic_curve_kernels_2.h>
 
-#include <CGAL/Algebraic_curve_kernel_2.h>
-
-const char* name="Curve_analyser";
-
-
-void print_help() {
-  std::cout << "Usage: " << name 
+void print_help(char* execname) {
+  std::cout << "Usage: " << execname 
 	    << " (RANDOM n)|(FILE filename)|(FILESEQ filename)|(INPUT input)"
 	    << std::endl << std::endl
 	    << "if RANDOM is used, a random bivariate polynomial of bidegree "
@@ -87,12 +81,12 @@ void print_help() {
 	    << "of the polynomial. "
 	    << "Try \"graph -T X gen_plot\" to display the graph "
 	    << "on X-window systems" << std::endl << std::endl
-	    << "Example: " << std::endl << "\t" <<  name << " RANDOM 4  "
+	    << "Example: " << std::endl << "\t" <<  execname << " RANDOM 4  "
 	    << "(analyses random polynomial of bidegree 4)" << std::endl
-	    << "\t" << name 
+	    << "\t" << execname 
 	    << " INPUT \"P[2(0,P[2(0,-1)(2,1)])(2,P[0(0,1)])]\" "
 	    << "(analyses the unit circle)" << std::endl
-	    << "\t" << name << " FILE poly1  (analyses the polynomial "
+	    << "\t" << execname << " FILE poly1  (analyses the polynomial "
 	    << "defined in the textfile poly1)" << std::endl <<std::endl;
 
 }
@@ -266,42 +260,33 @@ void connect (std::ofstream& out,
 int main(int argc,char** argv) {
   
   if(argc<3) {
-    print_help();
+    print_help(argv[0]);
     exit(-1);
   }
 
   ::CGAL::set_pretty_mode(std::cout);
 
-  typedef ARITHMETIC_KERNEL Arithmetic_kernel;
-
-  typedef Arithmetic_kernel::Rational Rational;
-  typedef Arithmetic_kernel::Integer Integer;
-
   typedef CGAL_ACK_COEFFICIENT Coefficient;
-  typedef CGAL::Polynomial<Coefficient> Poly_variably1;
-  typedef CGAL::Polynomial<Poly_variably1> Poly_variably2;
 
-  typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
-      < Coefficient, Rational > Rep_class;
-  typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial< Coefficient >, 
-      Rational > Isolator;
-
-  typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
-      Algebraic_kernel_1;
-
-  typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_1> 
+  typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+      ::Algebraic_curve_kernel_with_qir_and_bitstream_2
       Algebraic_curve_kernel_2;
 
   typedef Algebraic_curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-  std::vector<Poly_variably2> curves;
-  Poly_variably2 f;
+  typedef Algebraic_curve_kernel_2::Polynomial_2 Polynomial_2;
+  typedef Algebraic_curve_kernel_2::Polynomial_1 Polynomial_1;
+  typedef Algebraic_curve_kernel_2::Boundary Rational;
+  
+
+  std::vector<Polynomial_2> curves;
+  Polynomial_2 f;
 
 
   if(strcmp(argv[1],"FILE")!=0 
      && strcmp(argv[1],"RANDOM")!=0  
      && strcmp(argv[1],"INPUT")!=0 
      && strcmp(argv[1],"FILESEQ")!=0) {
-    print_help();
+    print_help(argv[0]);
     exit(-1);
   }
 
@@ -321,22 +306,26 @@ int main(int argc,char** argv) {
        }
      }
    }
-#if CGAL_ACK_COEFFICIENT_HELP == 1
    if(strcmp(argv[1],"RANDOM")==0) {
+#if CGAL_ACK_COEFFICIENT_IS_INTEGER 
      srand48(time(NULL));
      // Create random polynomial of given degree
      
      int degree = atoi(argv[2]);
-     std::vector<Poly_variably1> coeffs;
+     std::vector<Polynomial_1> coeffs;
      for(int i=0;i<=degree;i++) {
-       std::vector<Integer> curr_coeffs 
-	 = randvector<Integer>(degree-i,COEFFICIENT_BITSIZE);
-       coeffs.push_back(Poly_variably1(curr_coeffs.begin(),curr_coeffs.end()));
+       std::vector<Coefficient> curr_coeffs 
+	 = randvector<Coefficient>(degree-i,COEFFICIENT_BITSIZE);
+       coeffs.push_back(Polynomial_1(curr_coeffs.begin(),curr_coeffs.end()));
      }
-     f=Poly_variably2(coeffs.begin(),coeffs.end());
+     f=Polynomial_2(coeffs.begin(),coeffs.end());
      curves.push_back(f);
-   }
+#else
+     std::cerr << "Choosen coefficient type does not allow "
+               << " creation of random numbers" << std::endl;
+     std::exit(1);
 #endif
+   }
    if(strcmp(argv[1],"INPUT")==0) {
      std::stringstream ss(argv[2]);
      ss >> f;

@@ -26,10 +26,11 @@
 #define CGAL_ACK_ONE_SEGMENT_PER_CURVE 0
 #endif
 
-// Defines the underlying ArithmeticKernel
-#define ARITHMETIC_KERNEL CGAL::CORE_arithmetic_kernel
-
-
+// What is the coefficient type of the input?
+#ifndef CGAL_ACK_COEFFICIENT
+#define CGAL_ACK_COEFFICIENT CGAL::CORE_arithmetic_kernel::Integer
+#define CGAL_ACK_COEFFICIENT_IS_INTEGER 1
+#endif
 
 #include <CGAL/basic.h>
 
@@ -42,11 +43,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Timer.h>
 
 #include <CGAL/Arithmetic_kernel.h>
-
-#include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
-#include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
-#include <CGAL/Algebraic_kernel_1.h>
-#include <CGAL/Algebraic_curve_kernel_2.h>
+#include <CGAL/Prefered_algebraic_curve_kernels_2.h>
 
 
 #if CGAL_ACK_USE_FILTERED_CKvA_2
@@ -57,6 +54,32 @@ CGAL::Timer overall_timer;
 #endif
 
 #include <CGAL/Arrangement_2.h>
+
+void print_help(char* execname) {
+  std::cout << "Usage: " << execname 
+	    << " CGAL (RANDOM no deg bitsize)|filename"
+	    << std::endl << std::endl
+            << "The first argument specifies the way the arrangement is "
+            << "computed. At the moment, \"CGAL\" (denoting that "
+            << "CGAL's Arrangement_2 package is used) is obligatory"
+            << std::endl
+	    << "If RANDOM is used, the next three parameters specify "
+            << "the number of input curves, their maximal degree, "
+            << "and their maximal bitsize."
+            << std::endl
+	    << "Otherwise, the file given by filename is read. All polynomials"
+            << " in that file are required to be in the EXACUS format "
+            << "for polynomials" << std::endl
+            << "Example: " << std::endl << "\t" 
+            <<  execname << " CGAL RANDOM 10 4 16 "
+	    << "(computes an arrangement of 10 random degree 4 curves "
+            << " with 16 bit coefficients)" << std::endl
+	    << "\t" << execname << " CGAL polys  (computes the arrangement "
+	    << "defined in the textfile polys)" << std::endl <<std::endl;
+
+}
+
+
 
 template<typename Poly1> Poly1 
 random_dense_univariate_polynomial(int degree,int bitsize) {
@@ -88,28 +111,20 @@ random_dense_bivariate_polynomial(int degree,int bitsize) {
 
 int main(int argc, char** argv) {
     if(argc<3) {
-        std::cerr << "Needs method specification and Input file" << std::endl;
-        return 1;
+        print_help(argv[0]);
+        std::exit(-1);
     }
-    typedef ARITHMETIC_KERNEL AK;
 
-    typedef AK::Integer Coefficient;
-    typedef AK::Rational Rational;
-
-    typedef CGAL::CGALi::Algebraic_real_quadratic_refinement_rep_bfi
-        < Coefficient, Rational > Rep_class;
-    typedef CGAL::CGALi::Bitstream_descartes< CGAL::Polynomial< Coefficient >, 
-        Rational > Isolator;
-    
-    typedef CGAL::Algebraic_kernel_1<Coefficient,Rational,Rep_class, Isolator> 
-        Algebraic_kernel_1;
+    typedef CGAL_ACK_COEFFICIENT Coefficient;
 
 #if !CGAL_ACK_USE_FILTERED_CKvA_2
-    typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_1>
-        Algebraic_curve_kernel_2;
+    typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+      ::Algebraic_curve_kernel_with_qir_and_bitstream_2
+      Algebraic_curve_kernel_2;
 #else
-    typedef CGAL::Filtered_algebraic_curve_kernel_2<Algebraic_kernel_1>
-        Algebraic_curve_kernel_2;
+    typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
+      ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2
+      Algebraic_curve_kernel_2;
 #endif
     typedef Algebraic_curve_kernel_2::Polynomial_2 Polynomial_2;
 
@@ -126,22 +141,21 @@ int main(int argc, char** argv) {
     } else if(str=="NAIV" || str=="Naiv" || str=="naiv") {
         arrangement_type=3;
     } else {
-        std::cerr << "Second argument must specify the arrangement type: " 
-                  << "LEDA or CGAL possible" << std::endl;
-        return 1;
+        print_help(argv[0]);
+        std::exit(-1);
     }
 
     if(argc<3) {
-        std::cerr << "Input file needed! (or random for random generated arrangements)" 
-                  << std::endl;
+        print_help(argv[0]);
         std::exit(1);
     }
     std::string file(argv[2]);
 
     if(file=="RANDOM" || file=="random" || file=="Random") {
+#if CGAL_ACK_COEFFICIENT_IS_INTEGER
         if(argc<6) {
-            std::cout << "Need to specify: Number of curves, degree, bitsize" 
-                      << std::endl;
+            print_help(argv[0]);
+            std::exit(-1);
         }
         int no_curves = atoi(argv[3]);
         int max_degree = atoi(argv[4]);
@@ -151,6 +165,12 @@ int main(int argc, char** argv) {
             curves.push_back(curr_curve);
             std::cout << curr_curve << std::endl;
         }
+#else
+        std::cerr << "Given Coefficient type does not support "
+                  << "creation of random polynomials"
+                  << std::endl;
+        std::exit(-1);
+#endif
     } else {
       
         std::ifstream input(file.c_str());
