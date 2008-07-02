@@ -191,20 +191,6 @@ protected:
         }
     };
     
-    //! polynomial pair gcd creator
-    template <class Poly> 
-    struct Poly_pair_gcd_creator {
-    
-        typedef std::pair<Poly, Poly> Poly_pair;
-        typedef Poly_pair argument_type;
-        typedef Poly result_type;
-            
-        Poly operator()(const Poly_pair& p) const
-        {
-            return CGAL::gcd(p.first, p.second);
-        }
-    };     
-
     template <class Result>
     struct Pair_creator {
 
@@ -236,14 +222,6 @@ protected:
         Curve_pair_analysis_2, CGALi::Pair_hasher, Pair_id_equal_to,
         Pair_id_order,
         Pair_creator<Curve_pair_analysis_2> > Curve_pair_cache;
-
-
-    typedef CGALi::LRU_hashed_map<std::pair<
-        typename Self::Xy_coordinate_2,
-        typename Self::Xy_coordinate_2>,
-        CGAL::Comparison_result, CGALi::Pair_hasher,
-        Pair_id_equal_to > Cmp_xy_map;
-      
     
     typedef std::pair<Polynomial_2, Polynomial_2>
         Pair_of_polynomial_2;
@@ -360,8 +338,6 @@ public:
         <Xy_coordinate_2,CGAL::Null_functor> Y_real_traits_1;
 #endif
         
-    mutable Cmp_xy_map _m_cmp_xy;   
-    
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
         public Unary_function<Xy_coordinate_2, X_coordinate_1> {
@@ -514,9 +490,6 @@ public:
 
         Comparison_result operator()(const X_coordinate_1& x1, 
                                      const X_coordinate_1& x2) const {
-        // not yet implemented in Algebraic_kernel_1 (will it be ?)
-        //   Algebraic_kernel_1 ak;
-        //   return (ak.compare_x_2_object()(x1, x2));
             return x1.compare(x2);
         }
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -562,15 +535,14 @@ public:
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
 
-         Compare_xy_2(Self *kernel) :
-             _m_kernel(kernel) {
+         Compare_xy_2(Self *) {
          }
     
          Comparison_result operator()(const Xy_coordinate_2& xy1, 
              const Xy_coordinate_2& xy2, bool equal_x = false) const {
 
              // handle easy cases first
-             if(xy1.is_identical(xy2))
+             /*if(xy1.is_identical(xy2))
                 return CGAL::EQUAL;
                 
              if(equal_x && xy1.curve().is_identical(xy2.curve()))
@@ -588,17 +560,12 @@ public:
              if(r.second) {
                //std::cerr << "Xy_coordinate2: precached compare_xy result\n";
                  return (swap ? -(r.first->second) : r.first->second);
-             }
+             }*/
 
-             CGAL::Comparison_result res =
-                   p.first.compare_xy(p.second, equal_x);
-             _m_kernel->_m_cmp_xy.insert(std::make_pair(p, res));
-             return (swap ? -res : res);
+            return xy1.compare_xy(xy2, equal_x);             
+             //_m_kernel->_m_cmp_xy.insert(std::make_pair(p, res));
+             //return (swap ? -res : res);
         }
-
-    protected:
-        Self *_m_kernel;    
-        
     };
     //CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
     Compare_xy_2 compare_xy_2_object() const {
