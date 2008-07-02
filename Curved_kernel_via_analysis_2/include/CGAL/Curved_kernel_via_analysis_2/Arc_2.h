@@ -149,18 +149,6 @@ public:
     //! stores boundary value in x-range of non-vertical interval
     mutable boost::optional< Boundary > _m_boundary_in_interval;
 
-    // caches
-#if 0
-    typedef std::pair<int, int> Int_pair;
-    typedef CGALi::LRU_hashed_map<Int_pair, CGAL::Comparison_result,
-        CGALi::Stub<Int_pair>, CGALi::Int_pair_hash> Int_pair_map;
-    mutable Int_pair_map _m_cmp_ends_at_x;
-
-    typedef CGALi::LRU_hashed_map<int, CGAL::Comparison_result> Int_map;
-    
-    mutable Int_map _m_cmp_y_at_x;
-#endif
-
     //!@}
 };
 
@@ -227,17 +215,6 @@ public:
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
 
-#if 0 
-    // TODO put cache types to functors 
-    // (might be possible to add to base_functor)
-
-    typedef typename Rep::Int_pair Int_pair;
-
-    typedef typename Rep::Int_map Int_map;
-    
-    typedef typename Rep::Int_pair_map Int_pair_map;
-#endif
-    
     //!@}
 
 public:
