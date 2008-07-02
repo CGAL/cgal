@@ -1238,6 +1238,59 @@ void test_canonicalize(){
     }
     std::cerr << " ok "<< std::endl;
 }
+// //       Substitute;
+template <class Polynomial_traits_d>
+void test_substitute(){
+    std::cerr << "start test_substitute "; std::cerr.flush();
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
+    typename PT::Substitute substitute;
+    typedef typename PT::Innermost_coefficient Innermost_coefficient;
+    
+    
+    std::vector<Innermost_coefficient> vec;
+    for(int i = 0; i < PT::d; i++){
+        vec.push_back(Innermost_coefficient(i));
+    }
+    assert(Innermost_coefficient(0) 
+            == substitute(Polynomial_d(0),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(1) 
+            == substitute(Polynomial_d(1),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(2) 
+            == substitute(Polynomial_d(2),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(-2) 
+            == substitute(Polynomial_d(-2),vec.begin(),vec.end()));
+    
+    for(int i = 0; i< 5; i++){
+        Polynomial_d p = 
+            generate_sparse_random_polynomial<Polynomial_d>(3); 
+        assert(typename PT::Evaluate()(p,vec.begin(),vec.end()) 
+                == substitute(p,vec.begin(),vec.end()));
+    }
+    
+    
+    for(int i = 0; i< 5; i++){
+        typedef typename PT
+            :: template Rebind<Innermost_coefficient,5>::Other PT_5;
+        typedef typename PT_5::Polynomial_d Polynomial_5;
+        std::vector<Polynomial_5> vec1,vec2;
+        for(int j = 0; j < PT::d; j++){
+            vec1.push_back(
+                    generate_sparse_random_polynomial<Polynomial_5>(3));
+        }
+        vec2=vec1;
+        std::swap(vec2[0],vec2[PT::d-1]);
+        Polynomial_d p 
+            = generate_sparse_random_polynomial<Polynomial_d>(3); 
+        assert( substitute(p,vec1.begin(),vec1.end()) == 
+                substitute(typename PT::Swap()(p,0,PT::d-1),
+                        vec2.begin(),vec2.end()));
+    }   
+    
+    std::cerr << " ok "<< std::endl;
+}
+
+
+
 
 template< class Polynomial_traits_d, class AlgebraicCategory >
 struct Test_polynomial_traits_d;
@@ -1247,7 +1300,7 @@ struct Test_polynomial_traits_d<Polynomial_traits_d, CGAL::Null_tag > {
     void operator()() {    
         std::cout << "\n start test for dimension: "
                   << Polynomial_traits_d::d << std::endl; 
-    
+        
         //       Construct_polynomial;
         test_construct_polynomial<Polynomial_traits_d>();
         //       Get_coefficient;
@@ -1318,7 +1371,8 @@ struct Test_polynomial_traits_d<Polynomial_traits_d, CGAL::Null_tag > {
         test_resultant<Polynomial_traits_d>();
         //       Canonicalize;
         test_canonicalize<Polynomial_traits_d>();
-        
+        //      Substitute;
+        test_substitute<Polynomial_traits_d>();
         //   private:
         //       Innermost_leading_coefficient;
     }

@@ -14,6 +14,13 @@
 #ifndef CGAL_POLYNOMIAL_TRAITS_D_H
 #define CGAL_POLYNOMIAL_TRAITS_D_H
 
+// TODO: 
+// - USE ITERATOR TRAITS IN EVALUATE 
+// - Polynomial_generator<T,d>::Type vs. Rebind 
+// - wrap up 
+// - document Rebind
+// - document Substitute 
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Polynomial/fwd.h>
@@ -26,7 +33,7 @@
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
 
-#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                               \
+#define CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS                          \
     typedef Polynomial_traits_d< Polynomial< Coefficient_ > > PT;       \
     typedef Polynomial_traits_d< Coefficient_ > PTC;                    \
                                                                         \
@@ -34,9 +41,9 @@
     typedef Polynomial<Coefficient_>                  Polynomial_d;     \
     typedef Coefficient_                              Coefficient;      \
                                                                         \
-    typedef typename Innermost_coefficient<Polynomial_d>::Type \
+    typedef typename Innermost_coefficient<Polynomial_d>::Type          \
     Innermost_coefficient;                                              \
-    static const int d = Dimension<Polynomial_d>::value; \
+    static const int d = Dimension<Polynomial_d>::value;                \
                                                                         \
                                                                         \
     private:                                                            \
@@ -113,7 +120,8 @@ template< class Coefficient_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
             Polynomial< Coefficient_ >, Euclidean_ring_tag >
     : public Polynomial_traits_d_base_icoeff_algebraic_category< 
-                Polynomial< Coefficient_ >, Unique_factorization_domain_tag > {}; 
+                Polynomial< Coefficient_ >, Unique_factorization_domain_tag >
+{}; 
 
 template< class Coefficient_ >
 class Polynomial_traits_d_base_icoeff_algebraic_category< 
@@ -386,12 +394,31 @@ public:
     
     struct Evaluate {        
         template< class Input_iterator >
-        ICoeff operator()( const Polynomial_d& p, Input_iterator, Input_iterator ) {
+        ICoeff operator()( 
+                const Polynomial_d& p, Input_iterator, Input_iterator ) {
             //std::cerr << p << std::endl;
             return p;
         } 
     };
     
+    struct Substitute{
+    public:
+        template <class Input_iterator>
+        typename 
+        CGAL::Coercion_traits<
+        typename std::iterator_traits<Input_iterator>::value_type,
+                                   Innermost_coefficient>::Type
+        operator()(
+                const Innermost_coefficient& p, 
+                Input_iterator begin, 
+                Input_iterator end){ 
+            CGAL_precondition(end == begin);
+            typedef typename std::iterator_traits<Input_iterator>::value_type 
+                value_type;
+            typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+            return typename CT::Cast()(p);
+       }
+    };
 };
 
 // Evaluate_homogeneous_func for recursive homogeneous evaluation of a
@@ -414,8 +441,6 @@ struct Evaluate_homogeneous_func< Polynomial, 1 > {
             const ICoeff& v ) const {
         --end;
         CGAL_precondition( begin == end );
-/*            std::cerr << (*end) << ", " << v << ", " << total_degree << std::endl;
-              std::cerr << p << std::endl;*/
         return p.evaluate_homogeneous( (*end), v, total_degree );
     }
         
@@ -1482,6 +1507,71 @@ public:
             result.insert(result.begin(),polynomial.degree());
             return result;
         }
+    };
+
+    // substitute every variable by its new value in the iterator range
+    // begin refers to the innermost/first variable
+    struct Substitute{
+    public:
+        template <class Input_iterator>
+        typename 
+        CGAL::Coercion_traits
+        <typename std::iterator_traits<Input_iterator>::value_type, 
+         Innermost_coefficient>::Type
+        operator()(
+                const Polynomial_d& p_, 
+                Input_iterator begin, 
+                Input_iterator end){
+            typedef typename std::iterator_traits<Input_iterator> ITT;
+            typedef typename ITT::iterator_category  Category; 
+            return (*this)(p_,begin,end,Category()); 
+        }
+        
+        template <class Input_iterator>
+        typename 
+        CGAL::Coercion_traits
+        <typename std::iterator_traits<Input_iterator>::value_type, 
+         Innermost_coefficient>::Type
+        operator()(
+                const Polynomial_d& p_, 
+                Input_iterator begin, 
+                Input_iterator end,
+                std::forward_iterator_tag){
+            typedef typename std::iterator_traits<Input_iterator> ITT;
+            std::list<typename ITT::value_type> list(begin,end); 
+            return (*this)(p_,list.begin(),list.end()); 
+        }
+        
+        template <class Input_iterator>
+        typename 
+        CGAL::Coercion_traits
+        <typename std::iterator_traits<Input_iterator>::value_type, 
+         Innermost_coefficient>::Type
+        operator()(
+                const Polynomial_d& p_, 
+                Input_iterator begin, 
+                Input_iterator end,
+                std::bidirectional_iterator_tag){
+            
+            typedef typename std::iterator_traits<Input_iterator>::value_type 
+                value_type;
+            typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+            typename PTC::Substitute subs; 
+
+            Polynomial_d p = p_;
+            end--;
+            typename CT::Type x = typename CT::Cast()(*end);  
+            
+            int i = Degree()(p);
+            typename CT::Type y = 
+                subs(Get_coefficient()(p,i),begin,end);
+            
+            while (--i >= 0){
+                y *= x;
+                y += subs(Get_coefficient()(p,i),begin,end);
+            }
+            return y;  
+       }        
     };
 };
 
