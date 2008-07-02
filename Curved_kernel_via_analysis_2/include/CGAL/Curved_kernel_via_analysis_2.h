@@ -84,13 +84,13 @@ public:
     //!\name Tags
     //!@{
     
-    //! tag specifies that "to the left of" comparisons supported
+    //! tag specifies that "to the left of" comparisons are supported
     typedef CGAL::Tag_true Has_left_category;
 
-    //! tag specifies that merge and split functors supported
+    //! tag specifies that merge and split functors are supported
     typedef CGAL::Tag_true Has_merge_category; 
 
-    //! tag specifies that unbounded arcs supported
+    //! tag specifies that unbounded arcs are supported
     typedef CGAL::Tag_true Has_boundary_category;
 
     //! tag specifies which boundary functors are implemented
