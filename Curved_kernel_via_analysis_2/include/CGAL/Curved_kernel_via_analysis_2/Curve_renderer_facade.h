@@ -29,9 +29,9 @@
 // whether to use exact rational arithmetic
 #define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-#if AcX_SQRT_EXTENSION // not use rational arithmetic when sqrt-extended
-#undef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
-#endif 
+//#if AcX_SQRT_EXTENSION // not use rational arithmetic when sqrt-extended
+//#undef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
+//#endif 
 
 // this turns on a signleton curve renderer 
 // (not recommended for multi-threaded applications)
