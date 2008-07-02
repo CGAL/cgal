@@ -11,9 +11,7 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
+#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
 #include <CGAL/basic.h>
 

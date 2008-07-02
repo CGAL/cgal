@@ -11,60 +11,27 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
 
-#ifndef CGAL_ACK_STATIC_SEED
-#define CGAL_ACK_STATIC_SEED 0
-#endif
+#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
-#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
-#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
-#endif
+// demo-speficic flags
 
+// Allows to use the Filtered_curve_kernel_via_analysis_2
 #ifndef CGAL_ACK_USE_FILTERED_CKvA_2
 #define CGAL_ACK_USE_FILTERED_CKvA_2 0
 #endif
 
+// If set, only one (random) segment of each input curve is choosen
 #ifndef CGAL_ACK_ONE_SEGMENT_PER_CURVE
 #define CGAL_ACK_ONE_SEGMENT_PER_CURVE 0
 #endif
 
-#ifndef CGAL_ACK_USE_CORE
-#define CGAL_ACK_USE_CORE 1
-#endif
-#ifndef CGAL_ACK_USE_LEDA
-#define CGAL_ACK_USE_LEDA 0
-#endif
+// Defines the underlying ArithmeticKernel
+#define ARITHMETIC_KERNEL CGAL::CORE_arithmetic_kernel
 
-#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
-#endif
+
 
 #include <CGAL/basic.h>
-
-#ifndef CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY
-#define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 0
-#endif
-
-#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
-#endif
-
-#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD 11
-#endif
-
-// Allows to switch off the fast method for Status_line_CPA_1
-// if multiplicity is zero or one (not recommended to set this to one)
-#ifndef ACK_CGAL_NO_ARC_FLIP
-#define ACK_CGAL_NO_ARC_FLIP 0
-#endif
-
-#ifndef AcX_NO_ARC_FLIP
-#define AcX_NO_ARC_FLIP 0
-#endif
 
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
@@ -124,13 +91,7 @@ int main(int argc, char** argv) {
         std::cerr << "Needs method specification and Input file" << std::endl;
         return 1;
     }
-#if CGAL_ACK_USE_CORE
-    typedef CGAL::CORE_arithmetic_kernel AK;
-#elif defined CGAL_ACK_USE_LEDA
-    typedef CGAL::LEDA_arithmetic_kernel AK;
-#else
-#error
-#endif
+    typedef ARITHMETIC_KERNEL AK;
 
     typedef AK::Integer Coefficient;
     typedef AK::Rational Rational;

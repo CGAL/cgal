@@ -12,8 +12,8 @@
 // ============================================================================
 
 
-#ifndef AcX_ENUMS_H
-#define AcX_ENUMS_H 1
+#ifndef CGAL_ACK_ENUMS_H
+#define CGAL_ACK_ENUMS_H 1
 
 CGAL_BEGIN_NAMESPACE
 

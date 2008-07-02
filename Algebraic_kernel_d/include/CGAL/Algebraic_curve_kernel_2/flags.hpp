@@ -1,0 +1,169 @@
+// TODO: Add licence
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id: $
+// 
+//
+// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
+//
+// ============================================================================
+
+#ifndef CGAL_ACK_FLAGS_HPP
+#define CGAL_ACK_FLAGS_HPP 1
+
+// Is debug-information printed?
+#ifndef CGAL_ACK_DEBUG_FLAG
+#define CGAL_ACK_DEBUG_FLAG 0
+#endif
+
+// If CGAL_ACK_DEBUG_FLAG is set, which output stream is used for debug?
+#ifndef CGAL_ACK_DEBUG_PRINT
+#define CGAL_ACK_DEBUG_PRINT std::cout
+#endif
+
+/**
+ * For random choices in the algorithm, this seed is used 
+ * If set to zero, a random seed is used
+ */
+#ifndef CGAL_ACK_STATIC_SEED
+#define CGAL_ACK_STATIC_SEED 0
+#endif
+
+/**
+ * Allows to use the Bitstream tree described in Eigenwillig's thesis
+ * This tree is currently only implemented in EXACUS, so the code
+ * won't work without that library
+ */
+#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
+#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
+#endif
+
+
+/**
+ * If set, the program uses the AlciX-code 
+ * for the curve- and curve-pair-analysis.
+ * This flag is only for debugging purposes.
+ */
+#ifndef CGAL_ACK_USE_EXACUS
+#define CGAL_ACK_USE_EXACUS 0
+#endif
+
+/**
+ * The curve analysis does not distinguish between "(1,1)-singularities"
+ * (i.e., vertical cusps, isolated points on arcs), and usual regular points.
+ * The candidate point on each status line can be checked for being singular
+ * using this flag. This gives additional information but increases
+ * compuation time
+ *
+ * WARNING: Currently, the status line does not store the additional
+ * information whether a point is singluar or not. 
+ * Therefore, there is currently no reasons to set this flag. It is still
+ * contained for possible further extension of the status line.
+ */
+#ifndef CGAL_ACK_CHECK_CANDIDATE_FOR_SINGULARITY
+#define CGAL_ACK_CHECK_CANDIDATE_FOR_SINGULARITY 0
+#endif
+
+/**
+ * Determines the strategy how Bitstream coefficients are obtained
+ * If set to 1, it uses an approach specifically for integer coefficient
+ * At the moment, it seems to be more efficient than the (general) bigfloat
+ * approach
+ */
+#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
+#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
+#endif
+
+/**
+ * If set to 1, curve pairs are not checked for coprimality. Only do this
+ * if you know what you are doing!
+ */
+#ifndef CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY
+#define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 0
+#endif
+
+/**
+ * The "resultant first" strategy means: instead of computing the full
+ * subresultant sequence (or Sturm-Habicht sequence), the algorithm
+ * only computed the resultant in a first step. This suffices already for
+ * many curves (i.e., regular ones). The full subresultant is computed 
+ * if it is needed for the first time.
+ *
+ * This strategy only makes sense if computing resultants is faster than
+ * computing subresultants, otherwise, it wastes computation time.
+ * Since the current resultant computation method is actually computed
+ * by a subresultant computation, the flag should not be set to one currently
+ */
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
+#endif
+
+/**
+ * If CGAL_ACK_RESULTANT_FIRST_STRATEGY is set, this flag determines
+ * for which curves the "resultant first" strategy is used. Depending
+ * on the resultant algorithm, the strategy might only be advantageous
+ * for higher degree curves
+ *
+ * If CGAL_ACK_RESULTANT_FIRST_STRATEGY is not set, this flag has no effect
+ */
+#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
+#define CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD 11
+#endif
+
+/**
+ * Subresultants can be computed by a polynomial remainder sequence (default),
+ * or by evaluating minors of the bezout matrix by setting this flag.
+ * Tests have shown that the polynomial remainder sequence is more efficient
+ * so it is not recommended to set this flag.
+ */
+#ifndef CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
+#define CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
+#endif
+
+/**
+ * Allows to switch off the specialized method for Status_line_CPA_1
+ * if multiplicity is zero or one.
+ * Since this methods improves the performance, 
+ * it is not recommended to set this flag unless for testing
+ */
+#ifndef ACK_CGAL_NO_ARC_FLIP
+#define ACK_CGAL_NO_ARC_FLIP 0
+#endif
+
+/**
+ * The algorithm can also handle non-y-regular curves without shearing,
+ * in case that the resultant multiplicity at vertical asymptotes is one.
+ * This special treatement can be switched off by setting this flag.
+ * It is not recommended to do this because of efficiency
+ */
+#ifndef CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
+#define CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES 0
+#endif
+
+/**
+ * At some points in the algorithm, it is checked whether a polynomial
+ * H(x):=h(p(x),q(x)) vanishes for an algebraic number x_0 with polynomial r.
+ * For that check, the computation of H is done modulo r for efficiency.
+ * This can be switched off by this flag, though it is recommended not to 
+ * do so.
+ */
+#ifndef CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT
+#define CGAL_ACK_USE_NO_REDUCTION_MODULO_RESULTANT 0
+#endif
+
+/**
+ * These flags are experimental, concerning interval arithmetic methods
+ * Don't change them!
+ */
+#ifndef CGAL_ACK_USE_DERIVATIVE_OPTION
+#define CGAL_ACK_USE_DERIVATIVE_OPTION 0
+#endif
+#ifndef CGAL_ACK_USE_BISECTION_OPTION
+#define CGAL_ACK_USE_BISECTION_OPTION 0
+#endif
+
+
+#endif // CGAL_ACK_FLAGS_HPP

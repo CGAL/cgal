@@ -12,13 +12,7 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
-
-#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
-#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
-#endif
+#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
 #include <CGAL/basic.h>
 

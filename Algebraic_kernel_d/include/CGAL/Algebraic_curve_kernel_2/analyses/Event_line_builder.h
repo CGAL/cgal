@@ -31,7 +31,7 @@
 #include <utility>
 
 // Constant for the interval test in \c compute_mk
-#define AcX_PRECISION 10000
+#define CGAL_ACK_COMPUTE_MK_PRECISION 10000
 
 CGAL_BEGIN_NAMESPACE
 
@@ -175,7 +175,7 @@ public:
 
 // Need this flag to decide the event flag correctly, 
 // we don't care about it for now!
-#if !AcX_CHECK_CANDIDATE_FOR_SINGULARITY
+#if !CGAL_ACK_CHECK_CANDIDATE_FOR_SINGULARITY
                 event_flag=false;
 #else
 
@@ -359,7 +359,7 @@ protected:
 */
             CGAL::Sign ia_try
                 =estimate_sign_at(alpha_ref,*seq_it,
-                                  Boundary(1,AcX_PRECISION));
+                                  Boundary(1,CGAL_ACK_COMPUTE_MK_PRECISION));
 	
             //CGAL::Sign ia_try=CGAL::ZERO;
 

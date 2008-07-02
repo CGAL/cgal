@@ -11,36 +11,19 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
+// Allow only coprime curve pairs for that demo!
+#define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 1
 
-#ifndef CGAL_ACK_DEBUG_PRINT
-#define CGAL_ACK_DEBUG_PRINT std::cout
-#endif
+#include<CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
 #include <CGAL/basic.h>
 
-#ifndef CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
-#define CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
-#endif
+// demo-specific flags
 
-#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
-#endif
+// Underlying Arithmetic_kernel
+#define ARITHMETIC_KERNEL CGAL::CORE_arithmetic_kernel
 
-#ifdef CGAL_HAVE_CORE
-#ifndef CGAL_ACK_USE_CORE
-#define CGAL_ACK_USE_CORE 1
-#endif
-#else
-#ifdef CGAL_USE_LEDA
-#ifndef CGAL_ACK_USE_LEDA
-#define CGAL_ACK_USE_LEDA 1
-#endif
-#endif
-#endif
-
+// Bitsize of coefficients for random polynomials
 #define COEFFICIENT_BITSIZE 8
 
 #include <sstream>
@@ -127,16 +110,7 @@ int main(int argc,char** argv) {
 
   ::CGAL::set_pretty_mode(std::cout);
 
-#if CGAL_ACK_USE_CORE
-  //std::cout << "Use CORE library" << std::endl;
-  typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
-#elif defined(CGAL_ACK_USE_LEDA)
-  //std::cout << "Use LEDA library" << std::endl;
-  typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
-#else
-  std::cerr << "CORE or LEDA required!" << std::endl;
-  std::exit(1);
-#endif
+  typedef ARITHMETIC_KERNEL Arithmetic_kernel;
 
   typedef Arithmetic_kernel::Rational Rational;
   typedef Arithmetic_kernel::Integer Integer;

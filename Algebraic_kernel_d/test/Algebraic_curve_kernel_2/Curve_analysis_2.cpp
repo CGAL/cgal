@@ -11,18 +11,9 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_USE_EXACUS
-#define CGAL_ACK_USE_EXACUS 0
-#endif
+#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
-
-#ifndef CGAL_ACK_DEBUG_PRINT
-#define CGAL_ACK_DEBUG_PRINT std::cout
-#endif
-
+// Switches on/off tests for Sqrt-extension types
 #ifndef DO_SQRT_EXTENSION_TESTS
 #define DO_SQRT_EXTENSION_TESTS 0
 #endif

@@ -12,43 +12,14 @@
 // ============================================================================
 
 #ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
+#define CGAL_ACK_DEBUG_FLAG 1
 #endif
 
 #ifndef CGAL_ACK_DEBUG_PRINT
 #define CGAL_ACK_DEBUG_PRINT std::cout
 #endif
 
-#ifndef CGAL_ACK_BITSTREAM_USES_E08_TREE
-#define CGAL_ACK_BITSTREAM_USES_E08_TREE 0
-#endif
-
-#ifndef CGAL_ACK_STATIC_SEED
-#define CGAL_ACK_STATIC_SEED 0
-#endif
-
-#ifndef CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
-#define CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS 0
-#endif
-
-#ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY
-#define CGAL_ACK_RESULTANT_FIRST_STRATEGY 0
-#endif
-
-// This flag determines the strategy how Bitstream coefficients are obtained
-// If set to 1, it uses an approach specifically for integer coefficient
-// At the moment, it seems to be more efficient than the (general) bigfloat
-// approach
-#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
-#endif
-
-// Enables/disbales the optimization for vertical asymptotic arcs
-// It is not recommended to set it to one
-#ifndef CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
-#define CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES 0
-#endif
-
+#include<CGAL/Algebraic_curve_kernel_2/flags.hpp>
 
 // demo-specific flags
 
@@ -70,13 +41,8 @@
 #define CGAL_ACK_COEFFICIENT_HELP 1
 #endif
 
-//Which underlying number type is used?
-#ifndef CGAL_ACK_USE_CORE
-#define CGAL_ACK_USE_CORE 1
-#endif
-#ifndef CGAL_ACK_USE_LEDA
-#define CGAL_ACK_USE_LEDA 0
-#endif
+//Which Arithmetic_kernel is used?
+#define ARITHMETIC_KERNEL CGAL::CORE_arithmetic_kernel
 
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
@@ -306,14 +272,7 @@ int main(int argc,char** argv) {
 
   ::CGAL::set_pretty_mode(std::cout);
 
-#if CGAL_ACK_USE_CORE
-  typedef CGAL::CORE_arithmetic_kernel Arithmetic_kernel;
-#elif defined(CGAL_ACK_USE_LEDA)
-  typedef CGAL::LEDA_arithmetic_kernel Arithmetic_kernel;
-#else
-  std::cerr << "CORE or LEDA required!" << std::endl;
-  std::exit(1);
-#endif
+  typedef ARITHMETIC_KERNEL Arithmetic_kernel;
 
   typedef Arithmetic_kernel::Rational Rational;
   typedef Arithmetic_kernel::Integer Integer;

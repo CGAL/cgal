@@ -13,27 +13,14 @@
 
 // code coverage test for Algebraic_curve_kernel_2
 
-#ifndef CGAL_ACK_USE_EXACUS
-#define CGAL_ACK_USE_EXACUS 0
-#endif
-
-#ifndef CGAL_ACK_DEBUG_FLAG
-#define CGAL_ACK_DEBUG_FLAG 0
-#endif
-
+#include <CGAL/Algebraic_curve_kernel_2/flags.hpp>
 #include <CGAL/basic.h>
 
-#ifndef CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE
-#define CGAL_ACK_2_NO_ALG_REAL_TRAITS_FOR_XY_COORDINATE 0
-#endif
-
-#include <CGAL/Benchmark/Benchmark.hpp>
-#include <CGAL/Benchmark/Option_parser.hpp>
-
-// This is required for the test
-#define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 0
+//#include <CGAL/Benchmark/Benchmark.hpp>
+//#include <CGAL/Benchmark/Option_parser.hpp>
 
 #include <CGAL/Arithmetic_kernel.h>
+
 #if CGAL_ACK_USE_EXACUS
 #include <AcX/Algebraic_curve_2.h>
 #include <AcX/Algebraic_curve_pair_2.h>
