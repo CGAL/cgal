@@ -411,12 +411,6 @@ public:
         if(is_identical(q)) 
             return CGAL::EQUAL;
 
-        // no need to cache comparison of points lying on the same curve
-/*        if(!curve().is_identical(q.curve())) {
-            if(this->id() > q.id())
-                return (- q.compare_xy(*this));
-        }*/
-
         CGAL::Comparison_result res = (equal_x ? CGAL::EQUAL : compare_x(q)); 
         if(res == CGAL::EQUAL) {
             res = _compare_y_at_x(q);
