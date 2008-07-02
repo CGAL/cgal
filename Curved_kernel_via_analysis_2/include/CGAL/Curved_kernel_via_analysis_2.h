@@ -223,7 +223,7 @@ private:
     
 } // namespace CGALi
 
-template <class CurveKernel_2>
+template < class CurveKernel_2 >
 class Curved_kernel_via_analysis_2 :
     public CGALi::Curved_kernel_via_analysis_2_base<
         Curved_kernel_via_analysis_2<CurveKernel_2>,
@@ -237,7 +237,7 @@ public:
     typedef Curved_kernel_via_analysis_2< Curve_kernel_2 > Self;
     
     //! redefine rebind to terminate unrolling nested templates 
-    template <class X>
+    template < class X >
     struct rebind {
 
         typedef CGALi::Curved_kernel_via_analysis_2_functors< X >
@@ -291,4 +291,4 @@ public:
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_H
-// EOF
+// 
