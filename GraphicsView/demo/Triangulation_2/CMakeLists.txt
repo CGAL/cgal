@@ -21,7 +21,7 @@ include_directories (BEFORE ../../include)
 link_directories(../../src/CGALQt4)
 
 #--------------------------------
-# The "constrained Delaunay" demo: Constrained_delaunay_triangulation_2
+# The "constrained Delaunay" demo: Constrained_Delaunay_triangulation_2
 #--------------------------------
 # UI files (Qt Designer files)
 qt4_wrap_ui( CDT_UI_FILES Constrained_Delaunay_triangulation_2.ui )
@@ -33,15 +33,15 @@ qt4_add_resources ( CDT_RESOURCE_FILES ./Constrained_Delaunay_triangulation_2.qr
 qt4_generate_moc( Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc )
 
 # The executable itself.
-add_executable  ( Constrained_delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
+add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
 # Link with Qt libraries
-target_link_libraries( Constrained_delaunay_triangulation_2 ${QT_LIBRARIES} )
+target_link_libraries( Constrained_Delaunay_triangulation_2 ${QT_LIBRARIES} )
 if ( NOT AUTO_LINK_ENABLED )    
   # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( Constrained_delaunay_triangulation_2 CGAL )
+  target_link_libraries( Constrained_Delaunay_triangulation_2 CGAL )
 endif()
-target_link_libraries( Constrained_delaunay_triangulation_2 CGAL-Qt4 )
+target_link_libraries( Constrained_Delaunay_triangulation_2 CGAL-Qt4 )
 
 #--------------------------------
 # The "Delaunay" demo: Delaunay_triangulation_2
