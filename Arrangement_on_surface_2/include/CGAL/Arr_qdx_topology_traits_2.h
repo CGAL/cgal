@@ -56,10 +56,8 @@
 #include <CGAL/Arr_topology_traits/Arr_qdx_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
-#if QdX_USE_AcX
 #include <SoX/GAPS/Restricted_cad_3.h>
 #include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -258,51 +256,7 @@ private:
     void _initialize_with_quadric(const Quadric_3& base) {
         CGAL_precondition(base.is_ellipsoid() || base.is_elliptic_cylinder() ||
                           base.is_elliptic_paraboloid());
-#if !QdX_USE_AcX        
-        std::vector < typename Quadric_3::P_curve_2 > sils;
-        base.silhouette(std::back_inserter(sils));
-        int csil = static_cast< int >(sils.size());
-        
-        // check position of quadric
-        if (base.is_ellipsoid()) {
-            // extreme points of projected silhouette match singular points
-            CGAL_precondition(csil == 1);
-            _m_left = CGAL::ARR_CONTRACTION;
-            _m_right = CGAL::ARR_CONTRACTION;
-        }
-        if (base.is_elliptic_cylinder()) {
-            // ensure to be a "non-vertical" cylinder:
-            // test whether projected silhouette has two parallel lines
-            // going to infinity
-            
-            if (csil == 1) {
-                CGAL_precondition(sils[0].arcs_over_interval(0) == 2);
-            } else {
-                CGAL_precondition(csil == 2);
-                CGAL_precondition(sils[0].arcs_over_interval(0) == 1 &&
-                                  sils[1].arcs_over_interval(0) == 1);
-            }
-            _m_left = CGAL::ARR_UNBOUNDED;
-            _m_right = CGAL::ARR_UNBOUNDED;
-        }
-        if (base.is_elliptic_paraboloid()) {
-            CGAL_precondition(csil == 1);
-            // check whether not "vertical"
-            // TASK otherwise we have singularity in y
-            CGAL_precondition(sils[0].f().degree() == 2);
-            // ensure to be left- or right oriented
-            // and extreme of projected silhouette matches to singularity
-            CGAL_precondition(sils[0].arcs_over_interval(0) != 1); 
-            // == 2 || == 0
-            if (sils[0].arcs_over_interval(0) == 2) {
-                _m_left = CGAL::ARR_UNBOUNDED;
-                _m_right = CGAL::ARR_CONTRACTION;
-            } else {
-                _m_left = CGAL::ARR_CONTRACTION;
-                _m_right = CGAL::ARR_UNBOUNDED;
-            }
-        }
-#else
+
         typedef QdX::Quadric_3_z_at_xy_isolator_traits< 
             typename Geometry_traits_2::Curved_kernel_via_analysis_2, 
             Quadric_3 
@@ -389,7 +343,6 @@ private:
                 _m_right = CGAL::ARR_UNBOUNDED;
             }
         }
-#endif
         _m_quadric = base;
         this->init_dcel();
     }
