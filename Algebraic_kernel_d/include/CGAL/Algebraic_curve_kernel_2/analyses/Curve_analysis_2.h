@@ -428,7 +428,6 @@ public:
             Boundary q = it2->x().rational();
             
             intermediate_values()[i] = q;
-            
             this->ptr()->vert_line_map[it2->x()] = *it2;
             this->ptr()->vert_line_at_rational_map[q] = *it2;
             
@@ -548,9 +547,12 @@ public:
 
     //! \brief Returns the ith event line.
     Status_line_1& status_line_at_event(size_type i) const {
+
         CGAL_precondition(has_defining_equation());
-        size_type n = static_cast<size_type>(event_coordinates().size());
-        (void)n;
+        CGAL_precondition_code(
+                size_type n = 
+                static_cast<size_type>(event_coordinates().size());
+        );
         CGAL_precondition(i>=0 && i<n);
         if(! event_coordinates()[i].stack) {
             Status_line_1 event_line = create_status_line_at_event(i);
@@ -558,6 +560,7 @@ public:
                 = event_line; 
             event_coordinates()[i].stack = event_line;
         }
+        CGAL_postcondition(event_coordinates()[i].stack.get().is_event());
         return event_coordinates()[i].stack.get();
     }
     
@@ -585,6 +588,7 @@ private:
                 (alpha.rational());
             
             if (it != this->ptr()->vert_line_at_rational_map.end()) {
+                CGAL_assertion(!it->second.is_event());
                 return it->second;
             }
         }
@@ -593,6 +597,7 @@ private:
             this->ptr()->vert_line_map.find(alpha);
         
         if (it != this->ptr()->vert_line_map.end()) {
+            CGAL_assertion(!it->second.is_event());
             return it->second;
         }
         
@@ -600,6 +605,7 @@ private:
         // Not stored yet, so create it and store it
         Status_line_1 cvl 
             = create_status_line_at_non_event(alpha);
+        CGAL_assertion(!cvl.is_event());
         this->ptr()->vert_line_map[alpha] = cvl;
         
         if(alpha.is_rational()) {
@@ -776,8 +782,13 @@ public:
         CGAL_precondition(i >= 0 && i <= number_of_status_lines_with_event());
         
         Boundary b = boundary_value_in_interval(i);
+        
+        Status_line_1 intermediate_line 
+            = status_line_at_exact_non_event_x(X_coordinate_1(b));
 
-        return status_line_at_exact_non_event_x(X_coordinate_1(b));
+        CGAL_postcondition(! intermediate_line.is_event());
+
+        return intermediate_line;
     }
     
 
@@ -845,6 +856,8 @@ private:
         Status_line_1 status_line(ar, index, *this, 
                                   root_number);
         status_line.set_isolator(bitstream_descartes);
+        
+        CGAL_assertion(! status_line.is_event());
 
         return status_line;
     }
