@@ -332,11 +332,7 @@ private:
             }
             // Create intermediate line for later use
             X_coordinate_1 xval(curr_bound);
-            typename Status_line_1::Arc_container arc_container;
-            for(int j=0;j<m;j++) {
-                arc_container.push_back(std::make_pair(1,1));
-            }
-            Status_line_1 inter_line(xval,i,D,m,m,arc_container);
+            Status_line_1 inter_line(xval,i,D,m);
             inter_line.set_isolator(descartes);
             sh_intermediate_lines.push_back(inter_line);
         }
