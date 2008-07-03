@@ -22,6 +22,7 @@
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_curve_kernel_2/flags.h>
 #include <CGAL/Algebraic_kernel_1.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/LRU_hashed_map.h>
