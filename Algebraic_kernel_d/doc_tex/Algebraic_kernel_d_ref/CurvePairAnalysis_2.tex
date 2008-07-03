@@ -39,13 +39,25 @@ not allowed.
 }
 
 \ccMethod{size_type event_of_curve(size_type k, bool c);}{
-  returns the $y$-position of the $k$-th event of the $c$-th
-  (0 or 1) curve in the sequence of events. Note that each event
+  returns the $y$-position of the $k$-th curve event of the $c$-th
+  (0 or 1) curve in the sequence of curve pair events. 
+  Note that each curve pair event
   is formed by the first, the second, or both curves. 
   \ccPrecond{
-    $0 \leq k < $ \ccc{number_of_events()}}
-  The precondition can be checked by quering first the corresponding status
-  line of the curve's analysis.
+    $0 \leq k$ 
+    and the status line of the $c$-th curve at that $x$-coordinate
+    has more than $k$ events}
+}
+
+\ccMethod{size_type event_of_curve(size_type k, Curve_analysis_2 ca);}{
+  returns the $y$-position of the $k$-th curve event of the curve $ca$
+  in the sequence of curve pair events. 
+  Note that each curve pair event
+  is formed by the first, the second, or both curves. 
+  \ccPrecond{
+    $0 \leq k$ 
+    and the status line of $ca$ at that $x$-coordinate
+    has more than $k$ events}
 }
 
 \ccMethod{Multiplicity multiplicity_of_intersection(size_type j);}{
@@ -103,6 +115,14 @@ on the $x$-axis. \ccc{StatusLine_1}
 at values in between one such interval
 differ only in the values of the \ccc{Algebraic_real_2} entries. Topological 
 information is equal. 
+
+{\bf Warning:} When a curve pair is constructed using the call
+{\tt cpa(ca\_1,ca\_2)}, it is {\bf not} required that 
+{\tt ca\_1==cpa.curve\_analysis(0)} and {\tt ca\_2==cpa.curve\_analysis(1)} 
+holds.
+In other words, the curves might be swapped internally.
+The user is responsible to find out whether such a swapping took place
+during the creation.
 
 \ccRefines{
   \ccc{DefaultConstructible, CopyConstructible, Assignable}
@@ -167,6 +187,15 @@ If the signature is not provided by a model, a compile error occurs.
   this method returns the id of the event of the corresponding curve
   analysis $c$ (0 or 1), or $-1$, if the curve has no event 
   at this coordinate.
+  \ccPrecond{$0 \leq i < $\ccc{num\_status\_lines\_with\_event()}}
+}
+
+\ccMethod{size_type event_of_curve_analysis(size_type i, Curve_analysis_2 ca);}{
+  Given the $i$-th event of the curve pair 
+  this method returns the id of the event of the curve analysis $ca$, 
+  or $-1$, if the curve has no event at this coordinate.
+  \ccPrecond{$ca$ is one of the curves that form the curve pair}
+  \ccPrecond{$0 \leq i < $\ccc{num\_status\_lines\_with\_event()}}
 }
 
 \ccMethod{Status_line status_line_at_event(size_type i);}{
