@@ -28,7 +28,16 @@ print_testresult()
     if eval grep ERROR ErrorOutput_$1 > /dev/null ; then
       RESULT="n"
     else
-      if eval grep -i warning CompilerOutput_$1 | grep -v 'read_only_relocs,warning' > /dev/null
+      # grep -q means "quiet": no output, the return code is 0 iff the file
+      # matches the regular expression.
+      # grep -i means "case insensitive".
+      # grep -E means "extended regular expressions".
+      # All those three options are in the Single Unix Specification version 3
+      # The extended regular expression '[^a-zA-Z_,]warning' matches any
+      # string "warning" preceded with a letter that is not a letter or '_' or ','
+      # That avoids some false positives such as
+      # '-read_only_relocs,warning' or '-D_CRT_SECURE_NO_WARNINGS'
+      if grep -i -E -q '[^a-zA-Z_,]warning' CompilerOutput_$1 
       then
         RESULT="w"
       else
@@ -89,7 +98,8 @@ do_platform()
 
       # Test if there is a warning in the build log.
       if [ "$y_or_no" = "y" ]; then
-        if grep -i warning ${libname}_${shared_or_static}/$TEST_REPORT | grep -v 'read_only_relocs,warning' > /dev/null; then
+        # See the comment line 31.
+        if grep -i -E -q '[^a-zA-Z_,]warning' ${libname}_${shared_or_static}/$TEST_REPORT ; then
           y_or_no=w
         fi
       fi
