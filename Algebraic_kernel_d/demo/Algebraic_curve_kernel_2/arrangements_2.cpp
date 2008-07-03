@@ -45,6 +45,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
+#include <CGAL/Polynomial_parser_2.h>
 
 #if CGAL_ACK_USE_FILTERED_CKvA_2
 #include <CGAL/Filtered_algebraic_curve_kernel_2.h>
@@ -54,6 +55,11 @@ CGAL::Timer overall_timer;
 #endif
 
 #include <CGAL/Arrangement_2.h>
+
+void print_parse_error(std::string str) {
+    std::cout << "Interpreting " << str << " as a polynomial in MAPLE format, "
+              << "parser reports an error" << std::endl;
+}
 
 void print_help(char* execname) {
   std::cout << "Usage: " << execname 
@@ -68,8 +74,9 @@ void print_help(char* execname) {
             << "and their maximal bitsize."
             << std::endl
 	    << "Otherwise, the file given by filename is read. All polynomials"
-            << " in that file are required to be in the EXACUS format "
-            << "for polynomials" << std::endl
+            << " in that file are required to be either in MAPLE format, "
+            << "delimited by '\\n', or in the EXACUS format for polynomials" 
+            << std::endl
             << "Example: " << std::endl << "\t" 
             <<  execname << " CGAL RANDOM 10 4 16 "
 	    << "(computes an arrangement of 10 random degree 4 curves "
@@ -177,13 +184,24 @@ int main(int argc, char** argv) {
     
         while(!input.eof()) {
             Polynomial_2 f;
-            int g = input.get();
-            if(g=='P') {
-                input.putback(g);
+            if(input.peek()=='P') {
                 input >> f; 
                 curves.push_back(CGAL::CGALi::canonicalize_polynomial(f));
+            } else {
+                std::string str;
+                std::getline(input,str);
+                if(str.length()>0) {
+                    bool check 
+                        = CGAL::Polynomial_parser_2<Polynomial_2>() (str, f);
+                    if(! check) {
+                        print_parse_error(str);
+                        std::exit(-1);
+                    }
+                    curves.push_back(CGAL::CGALi::canonicalize_polynomial(f));
+                }
             }
         }
+        
     }
   
     ::CGAL::set_pretty_mode(std::cout);

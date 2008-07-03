@@ -39,6 +39,13 @@ CGAL::Timer first_curve_timer, second_curve_timer,
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
+#include <CGAL/Polynomial_parser_2.h>
+
+void print_parse_error(std::string str) {
+    std::cout << "Interpreting " << str << " as a polynomial in MAPLE format, "
+              << "parser reports an error" << std::endl;
+}
+
 void print_help(char* execname) {
   std::cout << "Usage: " << execname 
 	    << " (RANDOM n m)|(FILE filename)|(INPUT input1 input2)"
@@ -54,13 +61,14 @@ void print_help(char* execname) {
             << "as definition of the polynomial" 
             << std::endl << std::endl
 	    << "For the options FILE and INPUT, the program expects the "
-	    << "polynomials to be of the pattern P[...], according to the "
+	    << "polynomials to be in MAPLE format, "
+            << "or of the pattern P[...], according to the "
 	    << "EXACUS format" << std::endl << std::endl
             << "Example: " << std::endl << "\t" <<  execname << " RANDOM 4 5 "
 	    << "(analyses random curve pair of bidegrees 4 and 5)" << std::endl
 	    << "\t" << execname 
-	    << " INPUT \"P[2(0,P[2(0,-1)(2,1)])(2,P[0(0,1)])]\" "
-            << "\"P[1(0,P[2(2,-1)])(1,P[0(0,1)])]\" "
+	    << " INPUT \"x^2+y^2-1\" "
+            << "\"y-x^2\" "
 	    << "(analyses unit circle with parabola)" << std::endl
 	    << "\t" << execname << " FILE poly_pair  (analyses the polynomial "
 	    << "defined in the textfile poly_pair)" << std::endl <<std::endl;
@@ -122,29 +130,50 @@ int main(int argc,char** argv) {
      && strcmp(argv[1],"RANDOM")!=0  
      && strcmp(argv[1],"INPUT")!=0 
      && strcmp(argv[1],"FILESEQ")!=0) {
-    print_help(argv[0]);
-    exit(-1);
+      print_help(argv[0]);
+      exit(-1);
   }
-
-   if(strcmp(argv[1],"FILE")==0) {
-    std::ifstream input(argv[2]);
-    input >> f; 
-    input >> g;
-    curve_pairs.push_back(std::make_pair(f,g));
-   }
-   if(strcmp(argv[1],"RANDOM")==0) {
+  
+  if(strcmp(argv[1],"FILE")==0) {
+      std::ifstream input(argv[2]);
+      if(input.peek()=='P') {
+          input >> f;
+      } else {
+          std::string str;
+          std::getline(input,str);
+          bool check = CGAL::Polynomial_parser_2<Polynomial_2>() (str, f);
+          if(! check) {
+              print_parse_error(str);
+              std::exit(-1);
+          }
+      }
+      if(input.peek()=='P') {
+          input >> g;
+      } else {
+          std::string str;
+          std::getline(input,str);
+          bool check = CGAL::Polynomial_parser_2<Polynomial_2>() (str, g);
+          if(! check) {
+              print_parse_error(str);
+              std::exit(-1);
+          }
+      }
+      
+      curve_pairs.push_back(std::make_pair(f,g));
+  }
+  if(strcmp(argv[1],"RANDOM")==0) {
 #if CGAL_ACK_COEFFICIENT_IS_INTEGER
-     if(argc<4) {
-       print_help(argv[0]);
-       exit(-1);
-     }
-     srand48(time(NULL));
-     // Create random polynomial of given degree
-     int degree1 = atoi(argv[2]);
-     int degree2 = atoi(argv[3]);
-     std::vector<Polynomial_1> coeffs;
-     for(int i=0;i<=degree1;i++) {
-       std::vector<Coefficient> curr_coeffs 
+      if(argc<4) {
+          print_help(argv[0]);
+          exit(-1);
+      }
+      srand48(time(NULL));
+      // Create random polynomial of given degree
+      int degree1 = atoi(argv[2]);
+      int degree2 = atoi(argv[3]);
+      std::vector<Polynomial_1> coeffs;
+      for(int i=0;i<=degree1;i++) {
+          std::vector<Coefficient> curr_coeffs 
 	 = randvector<Coefficient>(degree1-i,COEFFICIENT_BITSIZE);
        coeffs.push_back(Polynomial_1(curr_coeffs.begin(),curr_coeffs.end()));
      }
@@ -169,9 +198,27 @@ int main(int argc,char** argv) {
        exit(-1);
      }
      std::stringstream ss1(argv[2]);
-     ss1 >> f;
+     if(ss1.peek()=='P') {
+         ss1 >> f;
+     } else {
+         std::string str = ss1.str();
+         bool check = CGAL::Polynomial_parser_2<Polynomial_2>() (str, f);
+         if(! check) {
+             print_parse_error(str);
+             std::exit(-1);
+         }
+     }
      std::stringstream ss2(argv[3]);
-     ss2 >> g;
+     if(ss2.peek()=='P') {
+         ss2 >> g;
+     } else {
+         std::string str = ss2.str();
+         bool check = CGAL::Polynomial_parser_2<Polynomial_2>() (str, g);
+         if(! check) {
+             print_parse_error(str);
+             std::exit(-1);
+         }
+     }
      curve_pairs.push_back(std::make_pair(f,g));
    }
    for(int i=0;i<static_cast<int>(curve_pairs.size());i++) {
