@@ -46,11 +46,6 @@ struct Get_algebraic_curve_kernel_2 {
 
     typedef CGAL::Algebraic_curve_kernel_2 
     < typename CGAL::Get_algebraic_kernel_1<Coefficient,Boundary>
-        ::Fast_algebraic_kernel_1 >
-        Fast_algebraic_curve_kernel_2;
-
-    typedef CGAL::Algebraic_curve_kernel_2 
-    < typename CGAL::Get_algebraic_kernel_1<Coefficient,Boundary>
         ::Algebraic_kernel_with_qir_and_bitstream_1 >
          Algebraic_curve_kernel_with_qir_and_bitstream_2;
 
@@ -68,129 +63,10 @@ struct Get_algebraic_curve_kernel_2 {
 
     typedef CGAL::Filtered_algebraic_curve_kernel_2 
     < typename CGAL::Get_algebraic_kernel_1<Coefficient,Boundary>
-        ::Fast_algebraic_kernel_1 >
-        Fast_filtered_algebraic_curve_kernel_2;
-
-    typedef CGAL::Filtered_algebraic_curve_kernel_2 
-    < typename CGAL::Get_algebraic_kernel_1<Coefficient,Boundary>
         ::Algebraic_kernel_with_qir_and_bitstream_1 >
          Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2;
 
 };
-
-/*
- * CORE integer kernels
- */
-
-// Unfiltered
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Default_algebraic_curve_kernel_2 
-    CORE_integer_default_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Algebraic_curve_kernel_with_bisection_and_descartes_2 
-    CORE_integer_algebraic_curve_kernel_with_bisection_and_descartes_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Fast_algebraic_curve_kernel_2 
-    CORE_integer_fast_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Algebraic_curve_kernel_with_qir_and_bitstream_2 
-    CORE_integer_algebraic_curve_kernel_with_qir_and_bitstream_2;
-
-// Filtered
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Default_filtered_algebraic_curve_kernel_2 
-    CORE_integer_default_filtered_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Filtered_algebraic_curve_kernel_with_bisection_and_descartes_2 
-    CORE_integer_filtered_algebraic_curve_kernel_with_bisection_and_descartes_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Fast_filtered_algebraic_curve_kernel_2 
-    CORE_integer_fast_filtered_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::CORE_arithmetic_kernel::Integer,
-      CGAL::CORE_arithmetic_kernel::Rational >
-    ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2
-    CORE_integer_filtered_algebraic_curve_kernel_with_qir_and_bitstream_2;
-
-/*
- * LEDA integer kernels
- */
-
-// Unfiltered
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Default_algebraic_curve_kernel_2 
-    LEDA_integer_default_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Algebraic_curve_kernel_with_bisection_and_descartes_2 
-    LEDA_integer_algebraic_curve_kernel_with_bisection_and_descartes_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Fast_algebraic_curve_kernel_2 
-    LEDA_integer_fast_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Algebraic_curve_kernel_with_qir_and_bitstream_2 
-    LEDA_integer_algebraic_curve_kernel_with_qir_and_bitstream_2;
-
-// Filtered
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Default_filtered_algebraic_curve_kernel_2 
-    LEDA_integer_default_filtered_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Filtered_algebraic_curve_kernel_with_bisection_and_descartes_2 
-    LEDA_integer_filtered_algebraic_curve_kernel_with_bisection_and_descartes_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Fast_filtered_algebraic_curve_kernel_2 
-    LEDA_integer_fast_filtered_algebraic_curve_kernel_2;
-
-typedef CGAL::Get_algebraic_curve_kernel_2
-    < CGAL::LEDA_arithmetic_kernel::Integer,
-      CGAL::LEDA_arithmetic_kernel::Rational >
-    ::Filtered_algebraic_curve_kernel_with_qir_and_bitstream_2 
-    LEDA_integer_filtered_algebraic_curve_kernel_with_qir_and_bitstream_2;
-
-
 
 CGAL_END_NAMESPACE
 

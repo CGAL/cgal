@@ -26,8 +26,11 @@
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
 
-CGAL_BEGIN_NAMESPACE
+// Needed for the bisection kernel
+#include <CGAL/Algebraic_kernel_d/Algebraic_real_pure.h>
+#include <CGAL/Algebraic_kernel_d/Descartes.h>
 
+CGAL_BEGIN_NAMESPACE
 
 /**
  * Defines default and a fast Algebraic_kernel_1, 
@@ -39,8 +42,14 @@ struct Get_algebraic_kernel_1 {
 
     typedef CGAL::Algebraic_kernel_1 <Coefficient, Boundary>
         Default_algebraic_kernel_1;
-    typedef Default_algebraic_kernel_1 
-        Algebraic_kernel_with_bisection_and_descartes_1;
+
+    typedef CGAL::Algebraic_kernel_1
+    < Coefficient, 
+      Boundary,
+      CGAL::CGALi::Algebraic_real_rep< Coefficient, Boundary >,
+      CGAL::CGALi::Descartes< CGAL::Polynomial< Coefficient >, Boundary >
+    > Algebraic_kernel_with_bisection_and_descartes_1;
+
     typedef CGAL::Algebraic_kernel_1
     < Coefficient, 
       Boundary,
@@ -48,67 +57,8 @@ struct Get_algebraic_kernel_1 {
            < Coefficient, Boundary >,
       CGAL::CGALi::Bitstream_descartes
         < CGAL::Polynomial< Coefficient >, Boundary >
-    > Fast_algebraic_kernel_1;
-    typedef Fast_algebraic_kernel_1 
-        Algebraic_kernel_with_qir_and_bitstream_1;
+    > Algebraic_kernel_with_qir_and_bitstream_1;
 };
-
-/*
- * CORE integer kernels
- */
-
-
-typedef CGAL::Get_algebraic_kernel_1
-    < CORE_arithmetic_kernel::Integer,
-      CORE_arithmetic_kernel::Rational >
-    ::Default_algebraic_kernel_1 CORE_integer_default_algebraic_kernel_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < CORE_arithmetic_kernel::Integer,
-      CORE_arithmetic_kernel::Rational >
-    ::Algebraic_kernel_with_bisection_and_descartes_1 
-    CORE_integer_algebraic_kernel_with_bisection_and_descartes_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < CORE_arithmetic_kernel::Integer,
-      CORE_arithmetic_kernel::Rational >
-    ::Fast_algebraic_kernel_1 CORE_integer_fast_algebraic_kernel_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < CORE_arithmetic_kernel::Integer,
-      CORE_arithmetic_kernel::Rational >
-    ::Algebraic_kernel_with_qir_and_bitstream_1 
-    CORE_integer_algebraic_kernel_with_qir_and_bitstream_1;
-
-
-
-
-/*
- * LEDA integer kernels
- */
-
-typedef CGAL::Get_algebraic_kernel_1
-    < LEDA_arithmetic_kernel::Integer,
-      LEDA_arithmetic_kernel::Rational >
-    ::Default_algebraic_kernel_1 LEDA_integer_default_algebraic_kernel_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < LEDA_arithmetic_kernel::Integer,
-      LEDA_arithmetic_kernel::Rational >
-    ::Algebraic_kernel_with_bisection_and_descartes_1 
-    LEDA_integer_algebraic_kernel_with_bisection_and_descartes_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < LEDA_arithmetic_kernel::Integer,
-      LEDA_arithmetic_kernel::Rational >
-    ::Fast_algebraic_kernel_1 LEDA_integer_fast_algebraic_kernel_1;
-
-typedef CGAL::Get_algebraic_kernel_1
-    < LEDA_arithmetic_kernel::Integer,
-      LEDA_arithmetic_kernel::Rational >
-    ::Algebraic_kernel_with_qir_and_bitstream_1 
-    LEDA_integer_algebraic_kernel_with_qir_and_bitstream_1;
-
 
 CGAL_END_NAMESPACE
 
