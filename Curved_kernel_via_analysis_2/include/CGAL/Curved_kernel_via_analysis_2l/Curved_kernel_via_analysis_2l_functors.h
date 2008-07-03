@@ -429,8 +429,6 @@ public:
                     return CGAL::sign(sheet1 - sheet2);
                 }
 
-#if QdX_USE_AcX // TODO other flag
-                
                 // otherwise use "z-stacke of surface pair 
                 // (point location in 2d-map gives z-stacke 
                 // 2d map consists of silhouettes-curves plus cut curve
@@ -453,10 +451,6 @@ public:
                 int level2 = z_stack.z_level_of_sheet(s2, sheet2);
                 
                 return CGAL::sign(level1 - level2);
-#else
-                CGAL_error_msg("Compare_xyz_3 not working without AcX");
-                return CGAL::EQUAL;
-#endif
             }
         }
         
