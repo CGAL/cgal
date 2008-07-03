@@ -622,7 +622,7 @@ public:
 
   Delaunay &tmp;
 
-  void add_hidden_points(Cell_handle ch) {}
+  void add_hidden_points(Cell_handle) {}
   Hidden_points_iterator hidden_points_begin() { return CGAL_NULL; }
   Hidden_points_iterator hidden_points_end() { return CGAL_NULL; }
 
