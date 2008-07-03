@@ -43,7 +43,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Timer.h>
 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Prefered_algebraic_curve_kernels_2.h>
+#include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
 
 #if CGAL_ACK_USE_FILTERED_CKvA_2

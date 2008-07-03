@@ -37,7 +37,7 @@ CGAL::Timer first_curve_timer, second_curve_timer,
   pair_timer;
 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Prefered_algebraic_curve_kernels_2.h>
+#include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
 void print_help(char* execname) {
   std::cout << "Usage: " << execname 

@@ -24,7 +24,7 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_curve_kernel_2.h>
 #include <CGAL/Filtered_algebraic_curve_kernel_2.h>
-#include <CGAL/Prefered_algebraic_kernels_1.h>
+#include <CGAL/Preferred_algebraic_kernels_1.h>
 
 CGAL_BEGIN_NAMESPACE
 

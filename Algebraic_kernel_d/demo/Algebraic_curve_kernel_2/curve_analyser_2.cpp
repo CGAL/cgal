@@ -55,7 +55,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_quadratic_refinement_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes.h>
-#include <CGAL/Prefered_algebraic_curve_kernels_2.h>
+#include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
 void print_help(char* execname) {
   std::cout << "Usage: " << execname 
