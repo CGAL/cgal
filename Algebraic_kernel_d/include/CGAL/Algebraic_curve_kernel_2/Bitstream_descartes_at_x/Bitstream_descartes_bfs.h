@@ -1499,7 +1499,7 @@ CGAL_BEGIN_NAMESPACE
         typedef typename Vert_line::Curve_analysis_2 Curve_analysis_2;
 
         //! type of Curve_kernel_2;
-        typedef typename Curve_analysis_2::Algebraic_curve_kernel_2 
+        typedef typename Curve_analysis_2::Algebraic_kernel_2 
         Curve_kernel_2;
 
         //! The Coeeficient type of the input polynomial
