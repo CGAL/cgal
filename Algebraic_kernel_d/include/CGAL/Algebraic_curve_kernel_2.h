@@ -535,7 +535,8 @@ public:
           public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
 
-         Compare_xy_2(Self *) {
+         Compare_xy_2(Self *kernel) :
+             _m_kernel(kernel) {
          }
     
          Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -566,6 +567,9 @@ public:
              //_m_kernel->_m_cmp_xy.insert(std::make_pair(p, res));
              //return (swap ? -res : res);
         }
+
+    protected:
+        Self *_m_kernel;        
     };
     //CGAL_Algebraic_Kernel_pred(Compare_xy_2, compare_xy_2_object);
     Compare_xy_2 compare_xy_2_object() const {
