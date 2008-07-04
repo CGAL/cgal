@@ -571,38 +571,26 @@ public:
         switch(::CGAL::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "point@" << this->id() << "(";
-            os << "sup@" << this->curve().id() << ", ";
+            os << "sup@" << this->curve().id() << "; ";
             os << "loc=" << this->location() << "; ";
-            if (this->location() != CGAL::ARR_LEFT_BOUNDARY &&
-                this->location() != CGAL::ARR_RIGHT_BOUNDARY) {
-                os << "x=" << CGAL::to_double(this->x());
-            } else {
-                if (this->location() == CGAL::ARR_LEFT_BOUNDARY) {
-                    os << "x=-oo";
-                } else {
-                    os << "x=+oo";
-                }
-            }
-            os << ", ";
             os << std::flush;
-            if (is_finite()) {
-                
-                typedef typename Curve_kernel_2::Boundary Rational;
-                typename Curve_kernel_2::Lower_boundary_y_2 lower_boundary_y;
-                typename Curve_kernel_2::Upper_boundary_y_2 upper_boundary_y;
-                typename Curve_kernel_2::Refine_y_2 refine_y;
-                
-                Rational bound(10e-10);
-                
-                while (upper_boundary_y(xy()) - 
-                       lower_boundary_y(xy()) > bound) {
-                    refine_y(xy());
-                }
-                
-                double yd = 
-                    CGAL::to_double(lower_boundary_y(xy()));
-                os << "y=" << yd;
-            } else {
+            switch (this->location()) {
+            case CGAL::ARR_INTERIOR: {
+                std::pair< double, double > xyd = xy().to_double();
+                os << "x=" << xyd.first << "; y= " << xyd.second;
+                break;
+            }
+            case CGAL::ARR_LEFT_BOUNDARY:
+                os << "x=-oo; ";
+                break;
+            case CGAL::ARR_RIGHT_BOUNDARY:
+                os << "x=-oo; ";
+                break;
+            default:
+                break;
+            }
+            os << std::flush;
+            if (!is_finite()) {
                 switch (this->location()) {
                 case CGAL::ARR_BOTTOM_BOUNDARY:
                     os << "y=-oo";
@@ -612,7 +600,6 @@ public:
                     break;
                 case CGAL::ARR_LEFT_BOUNDARY:
                 case CGAL::ARR_RIGHT_BOUNDARY: {
-                    // TODO concept!
                     CGAL::Object obj = 
                         this->curve().asymptotic_value_of_arc(
                                 this->location(), this->arcno()
@@ -638,13 +625,15 @@ public:
                     break;
                 }
             }
-            os << ", ";
+            os << "; ";
+            os << std::flush;
             if (this->ptr()->_m_xy || this->ptr()->_m_arcno) {
                 os << "ARCNO=" << this->arcno();
             } else {
                 os << "ARCNO=n/a";
             }
             os << ")";
+            os << std::flush;
             break;
         case ::CGAL::IO::BINARY:
             std::cerr << "BINARY format not yet implemented" << std::endl;
