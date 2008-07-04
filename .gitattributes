@@ -1922,11 +1922,8 @@ GraphicsView/demo/Triangulation_2/icons/movingPoint.png -text
 GraphicsView/demo/icons/Delaunay_triangulation_2.png -text
 GraphicsView/demo/icons/File.qrc -text
 GraphicsView/demo/icons/Input.qrc -text
-GraphicsView/demo/icons/Logos.qrc -text
 GraphicsView/demo/icons/Triangulation_2.qrc -text
 GraphicsView/demo/icons/Voronoi_diagram_2.png -text
-GraphicsView/demo/icons/cgal_large_FAF8E8.gif -text svneol=unset#image/gif
-GraphicsView/demo/icons/cgal_logo.xpm -text
 GraphicsView/demo/icons/fileNew.png -text
 GraphicsView/demo/icons/fileOpen.png -text
 GraphicsView/demo/icons/fileSave.png -text
@@ -1934,7 +1931,10 @@ GraphicsView/demo/icons/inputPoint.png -text svneol=unset#image/png
 GraphicsView/demo/icons/inputPolyline.png -text
 GraphicsView/demo/icons/zoom-best-fit.png -text svneol=unset#image/png
 GraphicsView/demo/icons/zoom-best-fit.svg -text
+GraphicsView/demo/resources/CGAL.qrc -text
 GraphicsView/demo/resources/about_CGAL.html svneol=native#text/html
+GraphicsView/demo/resources/cgal_large_FAF8E8.gif -text svneol=unset#image/gif
+GraphicsView/demo/resources/cgal_logo.xpm -text
 GraphicsView/doc_tex/GraphicsView/uml-design.eps -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text

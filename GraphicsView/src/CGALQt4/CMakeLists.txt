@@ -39,11 +39,11 @@ if(QT4_FOUND)
   qt4_generate_moc( ../../include/CGAL/Qt/GraphicsViewInput.h GraphicsViewInput_moc.cpp )
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( RESOURCE_FILES ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Logos.qrc ../../demo/icons/Triangulation_2.qrc)
+  qt4_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
 
   set( CGAL_QT4_BASENAME CGAL-Qt4 )
 
-  add_library( CGAL_QT4 GraphicsViewInput_moc.cpp GraphicsViewNavigation.cpp GraphicsViewNavigation_moc.cpp GraphicsItem_moc.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp DemosMainWindow_moc.cpp ${RESOURCE_FILES} )
+  add_library( CGAL_QT4 debug.cpp GraphicsViewInput_moc.cpp GraphicsViewNavigation.cpp GraphicsViewNavigation_moc.cpp GraphicsItem_moc.cpp GraphicsViewPolylineInput.cpp DemosMainWindow.cpp DemosMainWindow_moc.cpp ${RESOURCE_FILES} )
   target_link_libraries( CGAL_QT4 ${QT_LIBRARIES} )
   if ( NOT AUTO_LINK_ENABLED )    
     # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
