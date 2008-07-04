@@ -835,7 +835,7 @@ is_on_new_perimetric_face_boundary (const Halfedge *prev1,
     CGAL::Sign sign = sign_of_path(prev2, prev1, cv);
     CGAL_assertion(sign != CGAL::ZERO);
     
-    return (sign == CGAL::POSITIVE);
+    return (sign == CGAL::NEGATIVE);
 }
 
 //-----------------------------------------------------------------------------
@@ -1041,7 +1041,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             
             if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
                 if (ps1 != ps2) {
-                    if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
+                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
                         // bottom to top
                         result = CGAL::POSITIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
@@ -1063,7 +1063,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
             
             if (he1_psy != he2_psy) {
-                if (he1_psy == CGAL::ARR_TOP_BOUNDARY) {
+                if (he1_psy == CGAL::ARR_BOTTOM_BOUNDARY) {
                     result = CGAL::POSITIVE;
                     //std::cout << "SOShh:yp1" << std::endl;
                 } else {
@@ -1182,7 +1182,7 @@ _sign_of_subpath (const Halfedge* he1,
             
             if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
                 if (ps1 != ps2) {
-                    if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
+                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
                         // bottom to top
                         result = CGAL::POSITIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
@@ -1226,7 +1226,7 @@ _sign_of_subpath (const Halfedge* he1,
             }
             
             if (modify) {
-                if (he1_trg_ps_y == CGAL::ARR_TOP_BOUNDARY) {
+                if (he1_trg_ps_y == CGAL::ARR_BOTTOM_BOUNDARY) {
                     result = CGAL::POSITIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
                     std::cout << "SOShcv:yp1" << std::endl;
