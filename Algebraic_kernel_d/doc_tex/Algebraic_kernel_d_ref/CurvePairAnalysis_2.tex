@@ -74,6 +74,17 @@ not allowed.
   \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
 }
 
+\ccMethod{size_type> curve_at_event(size_type j, Curve_analysis_2 ca);}{
+  returns an index of type \ccc{size_type} 
+  indicating whether event $j$ is formed by 
+  which arc numbers of the curve $ca$, or $-1$, if the $ca$ is not involved
+  int that curve pair event.
+  \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
+  \ccPrecond{$ca$ is one of the curves involved in the curve pair}
+}
+
+
+
 %Note that this interface mainly rewrites $\{f,g,x\}^n$ in a different way - 
 %using \ccc{size_type}. Actually the CPVL has to compute this sequence, but for
 %the interface it is nicer to have it already here to avoid conversion objects
