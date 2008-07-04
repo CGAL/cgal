@@ -1,0 +1,40 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Sturm_habicht_sequence_with_cofactors}
+\ccDefinition
+
+Computes the Sturm-Habicht sequence of a polynomials $f$ of type 
+\ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable $x_i$.
+Additionally, it computes two ranges of cofactors, {\tt co\_f} and {\tt co\_fx}
+with the property that {\tt stha[i] == co\_f[i] f + co\_fx[i] f'}.
+
+\ccOperations
+\ccMethod{template< typename OutputIterator1,
+                    typename OutputIterator2,
+                    typename OutputIterator3 >
+        OutputIterator1 operator()(Polynomial_d   f,
+                                   OutputIterator1 stha,
+                                   OutputIterator2 co_f,
+                                   OutputIterator3 co_fx);}
+         { computes the Sturm-Habicht sequence of $f$, and the cofactors, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+\ccMethod{template< typename OutputIterator1,
+                    typename OutputIterator2,
+                    typename OutputIterator3 >
+        OutputIterator1 operator()(Polynomial_d   f,
+                                   OutputIterator1 stha,
+                                   OutputIterator2 co_f,
+                                   OutputIterator3 co_fx,
+                                   int i);}
+         { computes the Sturm-Habicht sequence of $f$, and the cofactors, 
+           with respect to $x_i$. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
