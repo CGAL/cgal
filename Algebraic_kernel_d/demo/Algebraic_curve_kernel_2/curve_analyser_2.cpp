@@ -323,7 +323,6 @@ int main(int argc,char** argv) {
             } else {
                 std::string str;
                 std::getline(input,str);
-                std::cout << "str=" << str << std::endl;
                 if(str.length()>0) {
                     CGAL::Polynomial_parser_2<Polynomial_2>() (str, f);
                     curves.push_back(f);
