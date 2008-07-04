@@ -182,7 +182,7 @@ public:
       facets.reserve(64);
 
       if (dimension() == 2) {
-          Conflict_tester_for_find_conflicts_2 tester(p, this);
+          Conflict_tester_2 tester(p, this);
           if (! tester (c)) return make_triple (bfit, cit, ifit);
 	  ifit = Tr_Base::find_conflicts
 	    (c, tester,
@@ -191,7 +191,7 @@ public:
 			 ifit)).third;
       }
       else {
-          Conflict_tester_for_find_conflicts_3 tester(p, this);
+          Conflict_tester_3 tester(p, this);
           if (! tester (c)) return make_triple (bfit, cit, ifit);
 	  ifit = Tr_Base::find_conflicts
 	    (c, tester,
@@ -506,43 +506,10 @@ private:
       return true;
   }
 
-  // Conflict_tester_for_find_conflicts_2 and _3 are const
-  // while Conflict_tester_2 and _3 are not
-  class Conflict_tester_for_find_conflicts_3
-  {
-      const Weighted_point &p;
-      const Self *t;
-  public:
-
-      Conflict_tester_for_find_conflicts_3(const Weighted_point &pt, const Self *tr)
-	  : p(pt), t(tr) {}
-
-      bool operator()(const Cell_handle c) const
-      {
-	return t->in_conflict_3(p, c);
-      }
-  };
-
-  class Conflict_tester_for_find_conflicts_2
-  {
-      const Weighted_point &p;
-      const Self *t;
-  public:
-
-      Conflict_tester_for_find_conflicts_2(const Weighted_point &pt, const Self *tr)
-	  : p(pt), t(tr) {}
-
-      bool operator()(const Cell_handle c) const
-      {
-	return t->in_conflict_2(p, c, 3);
-      }
-  };
-
   class Conflict_tester_3
   {
     const Weighted_point &p;
     const Self *t;
-    //       mutable std::vector<Vertex_handle> &cv;
     
   public:
     
@@ -694,11 +661,6 @@ private:
 
   template < class RegularTriangulation_3 >
   class Vertex_remover;
-
-  friend class Conflict_tester_for_find_conflicts_3;
-  friend class Conflict_tester_for_find_conflicts_2;
-  friend class Conflict_tester_3;
-  friend class Conflict_tester_2;
 
   Hidden_point_visitor hidden_point_visitor;
 };
