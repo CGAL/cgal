@@ -571,9 +571,9 @@ public:
         typedef typename AT::Bigfloat_interval BFI; 
         typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF;
 
-        long old_prec = get_precision(BF());
+        long old_prec = get_precision(BFI());
         
-        set_precision (BF(), 53);
+        set_precision (BFI(), 53);
 
         double double_x = this->ptr()->_m_x.to_double();
         double double_y;
@@ -591,7 +591,7 @@ public:
                   CGAL::sign(upper(*this)) ) {
                 refine(*this);
             }
-            long final_prec = set_precision(BF(),get_precision(BF())+4);
+            long final_prec = set_precision(BFI(),get_precision(BFI())+4);
             
             BFI bfi = CGAL::hull(convert_to_bfi(lower(*this)), 
                                   convert_to_bfi(upper(*this)));
@@ -606,7 +606,7 @@ public:
             double_y 
                 = CGAL::to_double((CGAL::lower(bfi)+ CGAL::upper(bfi)) / 2);
         }
-        set_precision(BF(),old_prec);
+        set_precision(BFI(),old_prec);
         return std::make_pair(double_x, double_y); 
     }
 
