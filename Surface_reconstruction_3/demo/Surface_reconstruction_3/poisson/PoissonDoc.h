@@ -33,10 +33,13 @@ typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Tetrahedron_3 Tetrahedron;
 
 // Point + normal
-typedef Gyroviz_point_3<Kernel> Point_with_normal; // Model of the PointWithNormal_3 concept
+typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // Model of the PointWithNormal_3 concept
 typedef Point_with_normal::Normal Normal; // Model of OrientedNormal_3 concept
 
-// Point set
+// Point + normal + Gyroviz stuff
+typedef Gyroviz_point_3<Kernel> Gyroviz_point; // subclass of Point_with_normal
+
+// Point set (points are of type Gyroviz_point)
 typedef Point_set_3<Kernel> Point_set;
 
 // Poisson's Delaunay triangulation 3 and implicit function
@@ -108,10 +111,10 @@ private:
     // Surface mesher options
     double m_sm_angle; // lower bound of facets angles (degrees)
     double m_sm_radius; // upper bound of Delaunay balls radii
-    double m_sm_distance; // upper bound of distance to surface
     double m_sm_error_bound; // error bound to stop dichotomy
-    
+
     // Poisson options
+    double m_sm_distance_poisson; // Upper bound of distance to surface (Poisson)
     double m_dr_sizing; // 3 Delaunay refinements options
     double m_dr_shell_size;
     unsigned int m_dr_max_vertices;
@@ -119,7 +122,7 @@ private:
     double m_lambda;  //laplacian options
 
     // APSS options
-    double m_projection_error; // APSS projection error
+  	double m_sm_distance_apss; // Upper bound of distance to surface (APSS)
 
     // K-nearest neighbours options
     unsigned int m_number_of_neighbours;
@@ -164,8 +167,6 @@ private:
     void status_message(char* fmt,...);
     // Write user message in message box and cerr
     void prompt_message(char* fmt,...);
-    // Utility: compute elapsed time
-    double duration(const double time_init);
 
     // Clean up current edit mode
     void CloseMode();

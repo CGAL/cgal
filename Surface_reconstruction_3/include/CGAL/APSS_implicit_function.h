@@ -64,7 +64,7 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef PointWithNormal_3 Point_with_normal;       ///< Model of PointWithNormal_3
+  typedef PointWithNormal_3 Point_with_normal;       ///< Model of PointWithNormal_3 concept.
   typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
   typedef typename Geom_traits::Vector_3 Vector;
 
@@ -72,17 +72,19 @@ public:
 private:
 
   // Item in the Kd-tree: position (Point_3) + normal + index
-  class KdTreeElement : public Point_with_normal
+  class KdTreeElement : public PointWithNormal_3
   {
   public:
     unsigned int index;
 
-    KdTreeElement() {}
-    KdTreeElement(const Point_with_normal& pwn, unsigned int id=0)
-      : Point_with_normal(pwn), index(id)
+    KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
+      : PointWithNormal_3(o), index(id)
+    {}
+    KdTreeElement(const PointWithNormal_3& pwn, unsigned int id=0)
+      : PointWithNormal_3(pwn), index(id)
     {}
     KdTreeElement(const Point& p, unsigned int id=0)
-      : Point_with_normal(p), index(id)
+      : PointWithNormal_3(p), index(id)
     {}
   };
 
@@ -96,6 +98,8 @@ private:
   typedef Search_traits_3<KdTreeGT> TreeTraits;
   typedef Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
+  typedef typename Neighbor_search::Point_with_transformed_distance 
+                                    Point_with_transformed_distance;
 
 // Public methods
 public:
@@ -115,6 +119,10 @@ public:
   {
     m = new Private;
 
+    // Number of nearest neighbours
+    m->nofNeighbors = k;
+
+    // Create kd-tree
     unsigned int i=0;
     m->treeElements.reserve(std::distance(first, beyond));
     for (InputIterator it=first ; it != beyond ; ++it,++i)
@@ -124,19 +132,13 @@ public:
     m->tree = new Tree(m->treeElements.begin(), m->treeElements.end());
 
     // Compute the radius of each point = (distance max to KNN)/2.
-    // The union of these ball defines the surface definition domain.
+    // The union of these balls defines the surface definition domain.
     i = 0;
     for (InputIterator it=first ; it != beyond ; ++it,++i)
     {
-      KdTreeElement query(*it);
-      Neighbor_search search(*(m->tree), query, 16);
-      FT maxdist2 = 0.;
-      for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
-      {
-        if (maxdist2<it->second)
-          maxdist2 = it->second;
-      }
-      m->radii.push_back(2.*sqrt(maxdist2/16.));
+      Neighbor_search search(*(m->tree), *it, 16); // why 16?
+      FT maxdist2 = (--search.end())->second; // squared distance to furthest neighbor
+      m->radii.push_back(sqrt(maxdist2)/2.);
     }
     
     // Compute barycenter, bounding box, bounding sphere and standard deviation.
@@ -145,11 +147,7 @@ public:
     // Find a point inside the surface.
     find_inner_point();
     
-    // Number of nearest neighbours
-    m->nofNeighbors = k;
-
     // Dichotomy error when projecting point (squared)
-//    m->sqError = 0.0000001 * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
     m->sqError = projection_error * projection_error * Gt().compute_squared_radius_3_object()(m->bounding_sphere);
   }
 
@@ -206,11 +204,9 @@ private:
   /** Fit an algebraic sphere on a set of neigbors in a Moving Least Square sense.
   The weight function is scaled such that the weight of the furthest neighbor is 0.
   */
-  void fit(Neighbor_search& neighbors) const
+  void fit(const Neighbor_search& search) const
   {
-    typename Neighbor_search::iterator last = neighbors.end();
-    last--;
-    FT r2 = last->second;
+    FT r2 = (--search.end())->second; // squared distance to furthest neighbor
 
     Vector sumP(0,0,0);
     Vector sumN(0,0,0);
@@ -220,9 +216,8 @@ private:
 
     r2 *= 1.001;
     FT invr2 = 1./r2;
-    for (typename Neighbor_search::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
+    for (typename Neighbor_search::iterator it = search.begin(); it != search.end(); ++it)
     {
-      //const Point& p = m->points[it->first.index];
       Vector p = it->first - CGAL::ORIGIN;
       const Vector& n = it->first.normal().get_vector();
       FT w = 1. - it->second*invr2;
@@ -242,17 +237,13 @@ private:
     m->as.finalize();
   }
 
-  /** Check whether the point p is close to the input points or not.
+  /** Check whether the point 'p' is close to the input points or not.
+      We assume that it's not if it is far from its nearest neighbor.
   */
-  inline bool isValid(const Neighbor_search& neighbors, const Point& /* p */) const
+  inline bool isValid(const Point_with_transformed_distance& nearest_neighbor, const Point& /* p */) const
   {
-    for (typename Neighbor_search::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
-    {
-      FT r = 2. * m->radii[it->first.index];
-      if (r*r > it->second)
-        return true;
-    }
-    return false;
+      FT r = 2. * m->radii[nearest_neighbor.first.index];
+      return (r*r > nearest_neighbor.second);
   }
 
 public:
@@ -260,22 +251,48 @@ public:
   /// [ImplicitFunction interface]
   ///
   /// Evaluate implicit function for any 3D point.
+  //
+  // Implementation note: this function is called a large number of times,
+  // thus us heavily optimized. The bottleneck is Neighbor_search's constructor,
+  // which we try to avoid calling.
   FT operator()(const Point& p) const
   {
-    KdTreeElement query(p);
-    Neighbor_search search(*(m->tree), query, m->nofNeighbors);
-    //unsigned int closestId = search.begin()->first.index;
-
-    if (!isValid(search,p))
+    // Is 'p' close to the surface?
+    // Optimization: test first if 'p' is close to one of the neighbors 
+    //               computed during the previous call.
+    typename Geom_traits::Compute_squared_distance_3 sqd;
+    m->cached_nearest_neighbor.second = sqd(p, m->cached_nearest_neighbor.first);
+    if (!isValid(m->cached_nearest_neighbor, p))
     {
-      Vector n;
-      Point pp = p;
-      project(pp,n,1);
-      Vector h = sub(p,pp);
-      return length(h) * ( dot(n,h)>0. ? 1. : -1.);
+      // Compute the nearest neighbor and cache it
+      KdTreeElement query(p);
+      Neighbor_search search_1nn(*(m->tree), query, 1);
+      m->cached_nearest_neighbor = *(search_1nn.begin());
+    
+      // Is 'p' close to the surface?
+      if (!isValid(m->cached_nearest_neighbor, p))
+      {
+        // If 'p' is far from the surface, project it onto its nearest neighbor
+        Vector n;
+        Point pp = p;
+        //project(pp,n,1);
+        pp = m->cached_nearest_neighbor.first;
+        n  = m->cached_nearest_neighbor.first.normal().get_vector();
+        Vector h = sub(p,pp);
+        return length(h) * ( dot(n,h)>0. ? 1. : -1.);
+      }
     }
-
-    fit(search);
+    
+    // Compute k nearest neighbors and cache the first one
+    KdTreeElement query(p);
+    Neighbor_search search_knn(*(m->tree), query, m->nofNeighbors);
+    m->cached_nearest_neighbor = *(search_knn.begin());
+    
+    // If 'p' is close to the surface, fit an algebraic sphere 
+    // on a set of neigbors in a Moving Least Square sense.
+    fit(search_knn);
+    
+    // return the distance to the sphere
     return m->as.euclideanDistance(p);
   }
 
@@ -575,10 +592,17 @@ private:
 // Data members
 private:
 
-  struct Private {
+  struct Private 
+  {
     Private()
-      : nofNeighbors(12), count(1)
+      : tree(NULL), count(1)
     {}
+    
+    ~Private()
+    {
+      delete tree; tree = NULL;
+    }
+    
     Tree* tree;
     std::vector<KdTreeElement> treeElements;
     std::vector<FT> radii;
@@ -588,9 +612,10 @@ private:
     FT diameter_standard_deviation; // Standard deviation of the distance to barycenter
     FT sqError; // Dichotomy error when projecting point (squared)
     unsigned int nofNeighbors; // Number of nearest neighbours
-    mutable AlgebraicSphere as;
     Point inner_point; // Point inside the surface
-    int count;
+    mutable AlgebraicSphere as;
+    mutable Point_with_transformed_distance cached_nearest_neighbor;
+    int count; // reference counter
   };
 
   Private* m;

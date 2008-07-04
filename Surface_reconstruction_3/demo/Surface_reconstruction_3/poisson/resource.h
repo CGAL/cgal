@@ -12,7 +12,7 @@
 #define IDS_MESSAGE3                    133
 #define IDC_EDIT_SM_ANGLE               1000
 #define IDC_EDIT_SM_RADIUS              1001
-#define IDC_EDIT_SM_DISTANCE            1002
+#define IDC_EDIT_SM_DISTANCE_POISSON            1002
 #define IDC_EDIT_DR_SHELL_SIZE          1003
 #define IDC_EDIT_DR_SIZING              1004
 #define IDC_EDIT_DR_MAXV                1005
@@ -21,7 +21,7 @@
 #define IDC_EDIT_MIN_CAMERAS_CONE_ANGLE 1008
 #define IDC_EDIT_SM_ERROR_BOUND         1009
 #define IDC_EDIT_AVG_KNN_SQ_DST_PERCENTAGE 1010
-#define IDC_EDIT_APSS_ERROR             1011
+#define IDC_EDIT_SM_DISTANCE_APSS             1011
 #define IDC_EDIT_LAMBDA                 1012
 #define ID_RENDER_POINTS                32771
 #define ID_RENDER_NORMALS               32772

@@ -45,7 +45,7 @@ class Gyroviz_point_3 : public CGAL::Point_with_normal_3<Gt>
 // Private types
 private:
 
-  typedef typename CGAL::Point_with_normal_3<Gt> Base;
+  typedef CGAL::Point_with_normal_3<Gt> Base;
 
   // Auxiliary class to build a camera iterator
   template <class Node> // Node is Camera_point2_pair
@@ -64,10 +64,10 @@ public:
   // Repeat Point_with_normal_3 public types
   typedef Gt Geom_traits; ///< Kernel's geometric traits.
   typedef typename Geom_traits::FT FT;
-  typedef typename Geom_traits::Point_2  Point_2; ///< Kernel's Point_2 class.
-  typedef typename Geom_traits::Point_3  Point_3; ///< Kernel's Point_3 class.
-  typedef typename CGAL::Oriented_normal_3<Geom_traits> Normal; 
-                                                  ///< Model of OrientedNormal_3 concept.
+  typedef typename Geom_traits::Point_2 Point_2; ///< Kernel's Point_2 class.
+  typedef typename Geom_traits::Point_3 Point_3; ///< Kernel's Point_3 class.
+  typedef CGAL::Point_with_normal_3<Gt> Point_with_normal; ///< Model of the PointWithNormal_3 concept.
+  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
   /// Camera/2D point pair. The 2D point is the 3D point (*this) projection's
   /// in the camera's image plane.
@@ -101,6 +101,10 @@ public:
   Gyroviz_point_3(const Point_3& point,
                   const Normal& normal = CGAL::NULL_VECTOR)
   : Base(point, normal)
+  {
+  }
+  Gyroviz_point_3(const Point_with_normal& pwn)
+  : Base(pwn)
   {
   }
   template < class InputIterator >

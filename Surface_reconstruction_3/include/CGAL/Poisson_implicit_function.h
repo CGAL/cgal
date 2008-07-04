@@ -571,8 +571,8 @@ public:
 
     // set normals
     for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
+      v != m_dt.finite_vertices_end();
+      v++)
     {
       if(v->normal().get_vector() != CGAL::NULL_VECTOR)
         continue;
@@ -594,71 +594,71 @@ public:
 
   int extrapolate_normals_using_gaussian_kernel()
   {
-	  int counter = 0;
-	Finite_vertices_iterator v;
+    int counter = 0;
+    Finite_vertices_iterator v;
     for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-	{
-    if(v->type() == Triangulation::INPUT)
-	{
-		FT limit_distance =  v->average_spacing();
-		std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
-	    vertices.push(v);
+      v != m_dt.finite_vertices_end();
+      v++)
+    {
+      if(v->type() == Triangulation::INPUT)
+      {
+        FT limit_distance =  v->average_spacing();
+        std::stack<Vertex_handle> vertices; // use to walk in 3D Delaunay
+        vertices.push(v);
 
-		while(!vertices.empty())
-		{
-			Vertex_handle v_cur = vertices.top();
-			vertices.pop();
-			FT distance_cur = distance(v,v_cur);
-			if (distance_cur > limit_distance)
-				continue;
-			if (v_cur->type() != Triangulation::INPUT)
-			{
-				FT gf = gaussian_function(limit_distance,distance_cur);
-				v_cur->normal() = Normal(v_cur->normal().get_vector()
-								  + gf * v->normal().get_vector() , true) ;
+        while(!vertices.empty())
+        {
+          Vertex_handle v_cur = vertices.top();
+          vertices.pop();
+          FT distance_cur = distance(v,v_cur);
+          if (distance_cur > limit_distance)
+            continue;
+          if (v_cur->type() != Triangulation::INPUT)
+          {
+            FT gf = gaussian_function(limit_distance,distance_cur);
+            v_cur->normal() = Normal(v_cur->normal().get_vector()
+              + gf * v->normal().get_vector() , true) ;
 
-			}
-			// get incident_vertices
-			std::vector<Vertex_handle> v_neighbors;
+          }
+          // get incident_vertices
+          std::vector<Vertex_handle> v_neighbors;
 
-			 m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
-			typename std::vector<Vertex_handle>::iterator it;
-			for(it = v_neighbors.begin();
-			it != v_neighbors.end();
-			it++)
-			{
-				Vertex_handle nv = *it;
-				int tag = nv->tag();
-				int index = v_cur->index();
-				if (tag != index)
-				{
-					vertices.push(nv);
-					nv->tag() = index;
-				}
-			}
-		}
-	}
+          m_dt.incident_vertices(v_cur,std::back_inserter(v_neighbors));
+          typename std::vector<Vertex_handle>::iterator it;
+          for(it = v_neighbors.begin();
+            it != v_neighbors.end();
+            it++)
+          {
+            Vertex_handle nv = *it;
+            int tag = nv->tag();
+            int index = v_cur->index();
+            if (tag != index)
+            {
+              vertices.push(nv);
+              nv->tag() = index;
+            }
+          }
+        }
+      }
 
-	}
-
- for(v = m_dt.finite_vertices_begin();
-        v != m_dt.finite_vertices_end();
-        v++)
-	{
-		if(v->type() != Triangulation::INPUT )
-		{
-			FT sq_norm = std::sqrt(v->normal().get_vector()*v->normal().get_vector());
-			 if(sq_norm > 0.0)
-			 {
-				 v->normal() = Normal(v->normal().get_vector() / sq_norm , true);
-			     counter++;
-			}
-			//v->type() = Triangulation::INPUT;
-		}
     }
-   return counter;
+
+    for(v = m_dt.finite_vertices_begin();
+      v != m_dt.finite_vertices_end();
+      v++)
+    {
+      if(v->type() != Triangulation::INPUT )
+      {
+        FT sq_norm = std::sqrt(v->normal().get_vector()*v->normal().get_vector());
+        if(sq_norm > 0.0)
+        {
+          v->normal() = Normal(v->normal().get_vector() / sq_norm , true);
+          counter++;
+        }
+        //v->type() = Triangulation::INPUT;
+      }
+    }
+    return counter;
   }
 
 
