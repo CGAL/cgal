@@ -41,9 +41,6 @@
 #define CGAL_ACK_COEFFICIENT_IS_INTEGER 1
 #endif
 
-//Which Arithmetic_kernel is used?
-#define ARITHMETIC_KERNEL CGAL::CORE_arithmetic_kernel
-
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
 
@@ -289,7 +286,6 @@ int main(int argc,char** argv) {
 
     std::vector<Polynomial_2> curves;
     Polynomial_2 f;
-
 
     if(strcmp(argv[1],"FILE")!=0 
        && strcmp(argv[1],"RANDOM")!=0  
