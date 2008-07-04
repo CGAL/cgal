@@ -1073,7 +1073,11 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             }
         }
     }
-        
+
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+    std::cout << "result: " << result << std::endl;
+#endif
+    
     return result;
 }
 
@@ -1241,7 +1245,10 @@ _sign_of_subpath (const Halfedge* he1,
         }
     }
     
-    //std::cout << "result: " << result << std::endl;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+    std::cout << "result: " << result << std::endl;
+#endif
+
     return result;
 }
 
