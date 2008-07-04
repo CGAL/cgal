@@ -319,6 +319,31 @@ public:
         return arc;
     }
 
+    /*!
+     * returns an index indicating whether event \c j is formed
+     * by which arc numbers of the curve \c ca, or -1, if the
+     * corresponding curve is not involved.
+     */
+    Arc_pair curves_at_event(size_type j, 
+                             const typename Curve_pair_analysis_2
+                                 ::Curve_analysis_2& c1,
+                             const typename Curve_pair_analysis_2
+                                 ::Curve_analysis_2& c2) const 
+    {
+
+        CGAL_precondition(0 <= j && j < number_of_events());
+        CGAL_assertion(c1.id()!=c2.id());
+        CGAL_assertion
+            (c1.id()==this->ptr()->_m_cpa.curve_analysis(false).id()||
+             c1.id()==this->ptr()->_m_cpa.curve_analysis(true).id());
+        CGAL_assertion
+            (c2.id()==this->ptr()->_m_cpa.curve_analysis(false).id()||
+             c2.id()==this->ptr()->_m_cpa.curve_analysis(true).id());
+        bool b = (c1.id()==this->ptr()->_m_cpa.curve_analysis(false).id());
+        const Arc_pair& arc_pair = curves_at_event(j);
+        return b ? arc_pair : std::make_pair(arc_pair.second, arc_pair.first);
+    }
+
     /*! \brief
      *  returns true if a curve has an event or in case there is an
      *  intersection of both curves.

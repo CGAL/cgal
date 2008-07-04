@@ -2417,7 +2417,7 @@ protected:
                 // no intersections at this curve pair => skip it
                 if(arcno() >= cpv_line.number_of_events())
                     continue; 
-                ipair = cpv_line.curves_at_event(arcno());
+                ipair = cpv_line.curves_at_event(arcno(),*it_com,*it_parts);
                 // this must be 1-curve event: is this true ???
                 CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
                 if(ipair.first != -1) // lies on a common part
@@ -2440,7 +2440,9 @@ protected:
                 // no intersections at this curve pair => skip it
                 if(cv2.arcno() >= cpv_line.number_of_events())
                     continue; 
-                ipair = cpv_line.curves_at_event(cv2.arcno());
+                ipair = cpv_line.curves_at_event(cv2.arcno(),
+                                                 it_found->first,
+                                                 *it_parts);
                 // this must be 1-curve event: is this true ???
                 CGAL_assertion(!(ipair.first != -1&&ipair.second != -1));
                 if(ipair.first == -1 || ipair.first == it_found->second) 
@@ -2461,7 +2463,9 @@ protected:
                     int a = arcno(src.x());
                     if(a != arcno()) {
                         cpv_line = cpa_2.status_line_for_x(src.x());
-                        ipair = cpv_line.curves_at_event(a);
+                        ipair = cpv_line.curves_at_event(a,
+                                                         it_found->first,
+                                                         *it_parts);
                         // should ultimately lie on the common curve ?
                         CGAL_assertion(ipair.first != -1);
                         rep._m_arcno_min = ipair.first;
@@ -2471,7 +2475,9 @@ protected:
                     int a = arcno(tgt.x());
                     if(a != arcno()) {
                         cpv_line = cpa_2.status_line_for_x(tgt.x());
-                        ipair = cpv_line.curves_at_event(a);
+                        ipair = cpv_line.curves_at_event(a,
+                                                         it_found->first,
+                                                         *it_parts);
                         // should ultimately lie on the common curve ?
                         CGAL_assertion(ipair.first != -1);
                         rep._m_arcno_max = ipair.first;

@@ -828,8 +828,8 @@ public:
                     continue;
                 n_arcs = cpv_line.number_of_events();
                 for(j = 0; j < n_arcs; j++) {
-                    ipair = cpv_line.curves_at_event(j);
-                    if(ipair.first == -1||ipair.second == -1) 
+                    ipair = cpv_line.curves_at_event(j, ca_2,ca_2x);
+                    if(ipair.first == -1|| ipair.second == -1) 
                         continue;
                     if(!vline_constructed) {
                         cv_line = ca_2.status_line_at_exact_x(cpv_line.x());
@@ -1085,7 +1085,7 @@ public:
                 // store x-coord for future use
                 X_coordinate_1 x = cpv_line.x(); 
                 for(j = 0; j < cpv_line.number_of_events(); j++) {
-                    ipair = cpv_line.curves_at_event(j);
+                    ipair = cpv_line.curves_at_event(j,ca1,ca2);
                     if(ipair.first == -1 || ipair.second == -1) 
                         continue;
                     // VOILA!! we've got it !!!
