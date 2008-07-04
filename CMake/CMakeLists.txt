@@ -138,7 +138,8 @@ add_config_flag( CGAL_USE_OPENGL )
 add_config_flag( CGAL_USE_ZLIB )
 add_config_flag( CGAL_USE_TAUCS )
 
-find_package(Qt3)
+# Called in FindCGALDependencies:
+# find_package(Qt3)
 if(QT_FOUND)
   set( CGAL_USE_QT TRUE ) 
   add_config_flag( CGAL_USE_QT )
