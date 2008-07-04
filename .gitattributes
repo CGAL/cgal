@@ -1586,6 +1586,7 @@ CMake/cmake/modules/Extract_TAUCS_version.cmake -text
 CMake/cmake/modules/Extract_ZLIB_version.cmake -text
 CMake/cmake/modules/FindBOOST_PROGRAM_OPTIONS.cmake -text
 CMake/cmake/modules/FindBOOST_THREAD.cmake -text
+CMake/cmake/modules/FindBoost.cmake -text
 CMake/cmake/modules/FindBoost2.cmake -text
 CMake/cmake/modules/FindCGALDependencies.cmake -text
 CMake/cmake/modules/FindCGAL_CORE.cmake -text
