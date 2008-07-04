@@ -74,13 +74,15 @@ not allowed.
   \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
 }
 
-\ccMethod{size_type> curve_at_event(size_type j, Curve_analysis_2 ca);}{
-  returns an index of type \ccc{size_type} 
-  indicating whether event $j$ is formed by 
-  which arc numbers of the curve $ca$, or $-1$, if the $ca$ is not involved
-  int that curve pair event.
+\ccMethod{std::pair< size_type>  curves_at_event(size_type j, 
+                                                 Curve_analysis_2 ca1,
+                                                 Curve_analysis_2 ca2);}{
+  returns a pair of \ccc{size_type} indicating whether event $j$ is formed by 
+  which arc numbers of {\tt ca1} and {\tt ca2}, or $-1$, if the 
+  corresponding curve is not involved in the $j$-th curve pair event. 
   \ccPrecond{$0 \leq j < $\ccc{number\_of_events()}}
-  \ccPrecond{$ca$ is one of the curves involved in the curve pair}
+  \ccPrecond{$ca1$ and $ca2$ are the two curves involved in the curve pair}
+  \ccPrecond{$ca1 != ca2$}
 }
 
 
