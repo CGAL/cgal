@@ -2791,6 +2791,9 @@ Minkowski_sum_3/doc_tex/Minkowski_sum_3_ref/main.aux -text
 Minkowski_sum_3/examples/Minkowski_sum_3/cube.nef3 -text
 Minkowski_sum_3/examples/Minkowski_sum_3/cube_offset.cin -text
 Minkowski_sum_3/examples/Minkowski_sum_3/glide.cin -text
+Minkowski_sum_3/test/Minkowski_sum_3/single_edge.nef3 -text
+Minkowski_sum_3/test/Minkowski_sum_3/single_facet10.nef3 -text
+Minkowski_sum_3/test/Minkowski_sum_3/single_vertex.nef3 -text
 Minkowski_sum_3/test/Minkowski_sum_3/star.nef3 -text
 Modifier/doc_tex/Modifier/idraw/modifier.eps -text svneol=unset#application/postscript
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
