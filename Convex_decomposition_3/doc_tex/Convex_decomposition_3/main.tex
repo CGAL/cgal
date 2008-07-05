@@ -26,29 +26,49 @@ decomposing both polyhedra into convex pieces, compute pair-wise
 Minkowski sums of the convex pieces, and unite the pair-wise sums.
 
 While it is desirable to have a decomposition into a minimum number of
-pieces, this problem is know to be NP-hard. Our implementation
-decomposes a Nef polyhedron $N$ into $O(r^2)$ convex pieces, where $r$
-is the number of edges, which have two adjacent facets that span an
-angle of more than 180 degrees with respect to the interior of the
-polyhedron. Those edges are also called reflex edges.  The bound of
-$O(r^2)$ convex pieces is worst-case optimal.
+pieces, this problem is know to be NP-hard~\cite{c-cpplb-84}. Our
+implementation decomposes a Nef polyhedron $N$ into $O(r^2)$ convex
+pieces, where $r$ is the number of edges, which have two adjacent
+facets that span an angle of more than 180 degrees with respect to the
+interior of the polyhedron. Those edges are also called reflex edges.
+The bound of $O(r^2)$ convex pieces is worst-case
+optimal~\cite{c-cpplb-84}.
 
 At the moment our implementation is restricted to the decomposition of
-finite point sets. If the input polyhedron is infinite, i.e., the
-outer volume is part of the polyhedron, then this volume is ignored
-during the decomposition process. An extension to infinite point sets
-is planned.
+bounded polyhedra. An extension to unbounded polyhedra is planned.
 
 % +------------------------------------------------------------------------+
-\section{Usage}
+\section{Interface and Usage}
 
-The following example illustrates the usage of the function
-\ccc{convex_decomposition_3}. It takes a \ccc{Nef_polyhedron_3}
-$N$ as input parameter. The result is the modified polyhedron $N$.
-After the execution of the function, it contains additional facets,
-such that each marked volume (except for the outer volume) is
-subdivided into convex pieces. The convex pieces can then be used by
-traversing $N$, or by converting them into separate Nef polyhedra, as
-shown in the example code.
+The \ccc{Nef_polyhedron_3} represents a subdivision of the
+three-dimensional space into vertices, edges, facets, and volumes. The
+represented polyhedron is the union of the point sets represented by
+the selected items. As an example, a cube is represented by 8
+vertices, 12 edges, 6 facets, and 2 volumes, where one volume
+represents the interior of the cube and the other the volume outside
+of the cube. All of these items are selected, except for outer volume.
+Read the chapter on 3D Boolean operations on Nef polyhedra for more
+details~\ref{chapterNef3}.
+
+The function \ccc{convex_decomposition_3} takes one
+\ccc{Nef_polyhedron_3} as input an inserts additional facets into the
+selected volumes. These additional facets are also selected and
+therefore redundant for the representation of the polyhedron. If some
+of these facets split a volume into two parts, each of the two volumes
+is represented by a separate volume item. The insertion of facets
+stops when all the selected volumes are convex. The modified
+polyhedron is the result of the function
+\ccc{convex_decomposition_3}. Note that the function 
+\ccc{convex_decomposition_3} is restricted to standard kernels. 
+The extended kernels, which allow the representation of polyhedra with
+an infinite boundary (e.g. halfspaces) only add further unbounded
+polyhedra to the domain of representable polyhedra. Using a standard
+kernel, unbounded polyhedra can be identified by the selected outer
+volume. In such a case, we ignore the outer volume in the
+decomposition process.
+
+The convex pieces of the modified polyhedron can be accessed by
+traversing $N$~\ref{subsectionNef_3ShellExploration}, or by converting
+them into separate Nef polyhedra, as illustrated by the example code.
 
 \ccIncludeExampleCode{Convex_decomposition_3/list_of_convex_parts.cpp}

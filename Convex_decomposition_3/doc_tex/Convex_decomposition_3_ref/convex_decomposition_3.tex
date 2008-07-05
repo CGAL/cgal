@@ -17,12 +17,12 @@
 \ccDefinition
 
 This function takes a \ccc{Nef_polyhedron_3} $N$ and inserts
-additional facets, such that each marked volume (except for the outer
-volume) is subdivided into convex pieces. At the moment the function
-is restricted to the decomposition of finite point sets. If the input
-polyhedron is infinite, i.e., the outer volume is part of the
-polyhedron, then this volume is ignored during the decomposition
-process.
+additional facets, such that each bounded marked volume (the outer
+volume is unbouned) is subdivided into convex pieces. At the moment
+the function is restricted to the decomposition of bounded
+polyhedra. If the input polyhedron is unbounded, i.e., the outer
+volume is part of the polyhedron, then this volume is ignored during
+the decomposition process.
 
 \ccGlobalFunction{void convex_decomposition_3(Nef_polyhedron_3& N);}
 
