@@ -2909,6 +2909,8 @@ Nef_3/doc_tex/Nef_3_ref/fig/snc.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#application/pdf
 Nef_3/examples/Nef_3/complex_construction.cin -text
 Nef_3/examples/Nef_3/handling_double_coordinates.cin -text
+Nef_3/include/CGAL/Nef_3/Binary_operation.h -text
+Nef_3/include/CGAL/Nef_3/Edge_edge_overlay.h -text
 Nef_3/include/CGAL/Nef_3/Halfedge.h -text
 Nef_3/include/CGAL/Nef_3/Halffacet.h -text
 Nef_3/include/CGAL/Nef_3/ID_support_handler.h -text
@@ -2919,6 +2921,7 @@ Nef_3/include/CGAL/Nef_3/SNC_external_structure.h -text
 Nef_3/include/CGAL/Nef_3/SNC_indexed_items.h -text
 Nef_3/include/CGAL/Nef_3/Vertex.h -text
 Nef_3/include/CGAL/Nef_3/Volume.h -text
+Nef_3/include/CGAL/Nef_3/shell_to_nef_3.h -text
 Nef_3/performance/Nef_3/cube.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/grid_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
 Nef_3/performance/Nef_3/nef3/tetrahedra_15_15_15_12345.nef3 -text svneol=native#application/octet-stream
