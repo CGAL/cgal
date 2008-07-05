@@ -38,6 +38,7 @@ template<typename Nef3>
   typedef typename Gaussian_map::SFace_const_handle         SFace_const_handle;
   typedef typename Gaussian_map::SHalfedge_const_iterator   SHalfedge_const_iterator;
   typedef typename Gaussian_map::SHalfedge_const_handle     SHalfedge_const_handle;
+  typedef typename Gaussian_map::SHalfloop_const_handle     SHalfloop_const_handle;
   typedef typename Gaussian_map::SVertex_const_iterator     SVertex_const_iterator;
   typedef typename Gaussian_map::SVertex_const_handle       SVertex_const_handle;
   typedef typename Gaussian_map::SHalfedge_around_sface_const_circulator
@@ -56,15 +57,15 @@ template<typename Nef3>
  public:
   Gaussian_map_to_nef_3(const Gaussian_map& Gin) : G(Gin) {}
     
-  void operator()(SNC_structure& snc) {
-    snc.clear();
+  void create_solid(SNC_structure& snc) {
+  
     CGAL::Unique_hash_map<SHalfedge_const_handle, int> SE2i;
     SHalfedge_const_iterator sei;
     CGAL_forall_sedges(sei, G) {
       SE2i[sei] = Index_generator::get_unique_index();
       SE2i[sei->twin()] = SE2i[sei];
     }
-
+    
     CGAL::Unique_hash_map
       <SVertex_const_handle, std::pair<int, int> > SV2i;
     SVertex_const_iterator svi;
@@ -72,7 +73,7 @@ template<typename Nef3>
       SV2i[svi] = std::pair<int, int>
       (Index_generator::get_unique_index(), 
        Index_generator::get_unique_index());
-
+    
     CGAL::Unique_hash_map<SFace_const_handle, Vertex_handle> sface2vertex;
     SFace_const_iterator sfi;
     for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
@@ -136,8 +137,6 @@ template<typename Nef3>
       se_first->sprev() = se;
       se->snext() = se_first;
 
-      // orientation ?
-      
       SFace_handle sf0 = SM.new_sface();
       SFace_handle sf1 = SM.new_sface();
       sf0->mark() = false;
@@ -145,6 +144,107 @@ template<typename Nef3>
       SM.link_as_face_cycle(se,sf0);
       SM.link_as_face_cycle(se->twin(),sf1);
     }
+  }
+
+  void create_single_vertex(SNC_structure& snc) {
+    Vertex_handle v = 
+      snc.new_vertex(G.sfaces_begin()->mark().point(),
+		     G.sfaces_begin()->mark().boolean());
+    SM_decorator SM(&*v);
+    SFace_handle sf = SM.new_sface();
+    sf->mark() = false;
+  }
+
+  void create_single_edge(SNC_structure& snc) {
+    SHalfloop_const_handle slc = G.shalfloop();
+    Vertex_handle v0 = 
+      snc.new_vertex(slc->incident_sface()->mark().point(),
+		     slc->incident_sface()->mark().boolean());
+    SM_decorator SM0(&*v0);
+    SVertex_handle sv0 = SM0.new_svertex();
+    sv0->point() = slc->circle().orthogonal_vector();
+    sv0->mark() = true;
+    SFace_handle sf0 = SM0.new_sface();
+    sf0->mark() = false;
+    SM0.link_as_isolated_vertex(sv0, sf0);
+
+    Vertex_handle v1 = 
+      snc.new_vertex(slc->twin()->incident_sface()->mark().point(),
+		     slc->twin()->incident_sface()->mark().boolean());
+    SM_decorator SM1(&*v1);
+    SVertex_handle sv1 = SM1.new_svertex();
+    sv1->point() = sv0->point().antipode();
+    sv1->mark() = true;
+    SFace_handle sf1 = SM1.new_sface();
+    sf1->mark() = false;
+    SM1.link_as_isolated_vertex(sv1, sf1);
+  }
+
+  void create_single_facet(SNC_structure& snc) {
+       CGAL::Unique_hash_map<SHalfedge_const_handle, int> SE2i;
+    SHalfedge_const_iterator sei;
+    CGAL_forall_sedges(sei, G) {
+      SE2i[sei] = Index_generator::get_unique_index();
+      SE2i[sei->twin()] = SE2i[sei];
+    }
+    
+    CGAL::Unique_hash_map
+      <SVertex_const_handle, std::pair<int, int> > SV2i;
+    SVertex_const_iterator svi;
+    CGAL_forall_svertices(svi, G)
+      SV2i[svi] = std::pair<int, int>
+      (Index_generator::get_unique_index(), 
+       Index_generator::get_unique_index());
+    
+    CGAL::Unique_hash_map<SFace_const_handle, Vertex_handle> sface2vertex;
+    SFace_const_iterator sfi;
+    for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
+      sface2vertex[sfi] = snc.new_vertex(sfi->mark().point(), 
+					 sfi->mark().boolean());
+    }
+
+    for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
+      Vertex_handle v = sface2vertex[sfi];
+      SM_decorator SM(&*v);
+
+      SHalfedge_const_handle sec = sfi->sface_cycles_begin();
+      SHalfedge_around_sface_const_circulator sfc(sec);
+      
+      SVertex_handle sv0 = 
+	SM.new_svertex(sface2vertex[sfc->twin()->incident_sface()]->point()-v->point());
+      sv0->mark() = sfc->mark().boolean();
+      sv0->set_index(SE2i[sfc]);
+      ++sfc;
+      SVertex_handle sv1 = 
+	SM.new_svertex(sface2vertex[sfc->twin()->incident_sface()]->point()-v->point());
+      sv1->mark() = sfc->mark().boolean();
+      sv1->set_index(SE2i[sfc]);
+
+      SHalfedge_handle se = SM.new_shalfedge_pair(sv0, sv1);
+      se->mark() = se->twin()->mark() = sfc->source()->mark().boolean();
+      se->set_index(SV2i[sfc->source()].first);
+      se->twin()->set_index(SV2i[sfc->source()].second);
+      se->circle() = Sphere_circle(sv0->point(), sv1->point());
+      se->circle() = normalized(se->circle());
+      se->twin()->circle() = se->circle().opposite();
+
+      SFace_handle sf = SM.new_sface();
+      sf->mark() = false;
+      SM.link_as_face_cycle(se, sf);
+    } 
+  }
+
+  void operator()(SNC_structure& snc) {
+    snc.clear();
+
+    if(G.number_of_sfaces() == 1)
+      create_single_vertex(snc);
+    else if(G.number_of_sfaces() == 2)
+      create_single_edge(snc);
+    else if(G.number_of_svertices() == 2)
+      create_single_facet(snc);
+    else
+      create_solid(snc);
   }
 
 
