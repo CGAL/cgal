@@ -42,11 +42,11 @@ sums can be used to plan the motion of a translational robot. We want
 to know which are legal positions of the robot, and where can the
 robot go to from a specified starting position. If we model both, the
 robot and the obstacles as a polyhedron and compute the Minkowski sum
-of the inverted robot and the obstacles, then this Minkowski sum
-represents all illegal positions of the robot, i.e., all positions
-where it intersects the obstacle. Of course, the complement of that
-polyhedron are all legal positions of the robot, i.e., all positions
-where it does not intersect an obstacle.
+of the inverted robot (robot reflected at the origin) and the obstacles,
+then this Minkowski sum represents all illegal positions of the robot,
+i.e., all positions where it intersects the obstacle. Of course, the
+complement of that polyhedron are all legal positions of the robot,
+i.e., all positions where it does not intersect an obstacle.
 
 \begin{figure}
   \begin{ccTexOnly}
@@ -76,9 +76,10 @@ Section~\ref{sec:restrictions}.
 \section{Decomposition Method}
 
 The decomposition method for computing the Minkowski sum of non-convex
-polyhedra decomposes both polyhedra into convex pieces computes all
-pairwise Minkowski sums of the convex pieces and merges the pairwise
-sums.
+polyhedra makes use of the fact that Minkowski sums of convex
+polyhedra are rather easy to compute. It decomposes both polyhedra
+into convex pieces, computes all pairwise Minkowski sums of the convex
+pieces, and merges the pairwise sums.
 
 \begin{figure}[t]
   \begin{ccTexOnly}
@@ -100,7 +101,8 @@ The Minkowski sum is an inherent complex method. Using the
 decomposition method, each polyhedron might be divided into a
 quadratic number of pieces, which is worst-case optimal. Then up to
 $n^2m^2$ pairwise sums have to be computed and merged, where $n$ and
-$m$ is the complexity of the two input polyhedra.
+$m$ is the complexity of the two input polyhedra. In total the
+operation runs in $O(n^3m^3)$ time.
 
 % +------------------------------------------------------------------------+
 \section{Features and Restrictions}
@@ -118,9 +120,10 @@ passages will occurr as lower-dimensional
 exclusions. Figure~\ref{fig:motionPlanning} shows such a tight
 passage scenario.
 
-We strife for extending the package to work for arbitrary
-polyhedra. Yet we added several features, but are not complete. At
-the moment we allow an input polyhedron to consist of:
+We strive for extending the package to work for arbitrary
+polyhedra. In addition to the Minkowski sums of two solids, we added
+several features, but are not complete. At the moment we allow an
+input polyhedron to consist of:
 \begin{enumerate}
 \item singular vertices
 \item singular edges
@@ -132,12 +135,9 @@ the moment we allow an input polyhedron to consist of:
 Taking a different viewpoint, the implementation is restricted as
 follows:
 \begin{enumerate}
-\item The input polyhedra must be finite point sets.
-\item Every convex Minkowski sum must be full-dimensional, i.e., one 
-of the two input polyhedra must not include lower-dimensional
-featueres. Note that lower-dimensional holes are still possible.
+\item The input polyhedra must be bounded.
 \item All sets of coplanar facets that form a side of a full-dimensional
-featuer, must have the same selection mark.
+feature, must have the same selection mark.
 \item All facets of lower-dimensional features need to be convex and 
 must not have holes.
 \end{enumerate}
@@ -147,7 +147,7 @@ must not have holes.
 
 The following example code illustrates the usage of the function
 \ccc{minkowski_sum_3}. Note that the two input polyhedra will be
-destroyed by the function. So, if they are further on needed, they
+destroyed by the function. So, if they are needed further on, they
 need to be copied, first. The copying is not done by the function
 itself to keep the memory usage as small as possible.
 
