@@ -29,6 +29,14 @@
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
+#ifdef CGAL_CKvA_COMPILE_RENDERER
+// no need to pollute global namespace with qt stuff
+#define CGAL_CKVA_NO_QT_WIDGET_INTERFACE 
+#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
+#endif
+
+#include <CGAL/Cartesian.h> // drawing
+
 #include <QdX/Quadric_pair_3.h>
 #include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
 
@@ -292,6 +300,13 @@ public:
     //! type of surface point
     typedef typename Quadrical_kernel_via_analysis_2::Point_2 Quadric_point_2;
 
+    //! for visualization
+    typedef CGAL::Polynomial< double > Poly_double_1;
+    typedef CGAL::Polynomial< Poly_double_1 > Poly_double_2;
+    typedef CGAL::Polynomial< Poly_double_2 > Poly_double_3;   
+
+    typedef typename CGAL::Cartesian< double >::Point_3 Approximation_3;
+
 public:
     //!\name Simple constructors
     //!@{
@@ -489,6 +504,82 @@ public:
         );
     }
 
+    //!@}
+    //!\name visualization
+    //!@{
+
+#ifdef CGAL_CKvA_COMPILE_RENDERER
+
+    /*!\brief
+     * renders an arc into window \c bbox with resolution \c res_w by \c res_h
+     * returns objects of type \c Approximation_3 
+     */
+    template <class OutputIterator>
+    OutputIterator render(CGAL::Bbox_2 bbox, int res_w, int res_h,
+             OutputIterator oi) const {
+
+        typedef CGALi::Curve_renderer_singleton< typename
+            Quadrical_kernel_via_analysis_2::Curved_kernel_via_analysis_2 >
+                Renderer_inst;
+
+        typedef typename Renderer_inst::Coord_vec_2 Coord_vec_2;
+        typedef typename Renderer_inst::Coord_2 Coord_2;
+
+        std::list<Coord_vec_2> points;
+        std::pair<Coord_2, Coord_2> end_points;
+
+        Renderer_inst::draw(bbox, res_w, res_h, this->projected_arc(), points,
+                end_points);
+        
+        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
+        typename std::list<Coord_vec_2>::const_iterator lit = points.begin();  
+        while(lit != points.end()) {
+            
+            const Coord_vec_2& tmp = *lit++;
+            typename Coord_vec_2::const_iterator cit;
+            for(cit = tmp.begin(); cit != tmp.end(); cit++) {
+    
+                double x0 = bbox.xmin() + (double)cit->x * lx / res_w,
+                       y0 = bbox.ymin() + (double)cit->y * ly / res_h;
+                //! @todo is there any way to get rid of substitute_xy ???
+                Poly_double_1 ppt = NiX::substitute_xy(base_poly_approx(), 
+                    x0, y0);    
+                *oi++ = Approximation_3(x0, y0, _compute_z(ppt));
+            }
+        }
+        return oi;
+    }
+
+    //! sets / retrieves base polynomial approximation
+    static Poly_double_3 base_poly_approx( 
+            const boost::optional< Poly_double_3>& poly = boost::none) {
+        static Poly_double_3 _polynomial;
+        if (poly) {
+            _polynomial = *poly;
+        }
+        return _polynomial;
+    }
+
+protected:
+
+    double _compute_z(const Poly_double_1& ppt) const {
+        
+        if(ppt.degree() < 1) 
+            return 0;
+        // comparison for equality does not work for doubles
+        if(fabs(ppt[2]) < 1e-30) 
+            return -ppt[0]/ppt[1];
+
+        double d = ppt[1]*ppt[1]-4*ppt[2]*ppt[0],
+            inv = 0.5 / ppt[2], c = -ppt[1] * inv;
+        if(d <= 0)
+            return c;
+        d = std::sqrt(d) * inv;
+        if(this->sheet() == 0) // take minimal root
+            return c + (d < 0 ? d : -d);
+        return c + (d < 0 ? -d : d);    
+    }
+#endif // CGAL_CKvA_COMPILE_RENDERER
     //!@}
 
     // friends

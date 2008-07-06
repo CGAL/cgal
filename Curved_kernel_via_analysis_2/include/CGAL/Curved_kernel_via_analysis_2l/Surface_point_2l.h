@@ -29,6 +29,12 @@
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
+#ifdef CGAL_CKvA_COMPILE_RENDERER
+// no need to pollute global namespace with qt stuff
+#define CGAL_CKVA_NO_QT_WIDGET_INTERFACE 
+#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
+#endif
+
 #include <SoX/GAPS/Restricted_cad_3.h>
 #include <SoX/GAPS/Restricted_cad_3_accessor.h>
 
@@ -280,6 +286,7 @@ public:
                 );
         }
         return *this->ptr()->_m_projected_point;
+// todo: what if you simply call static_cast<> on *this ?
     }
 
     /*\brief
@@ -365,24 +372,54 @@ public:
 
 #undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
     
-    //!\name Approximation
+    //!\name Approximation & visualization
     //!@{
-    
-    // returns an non-robust approximation of the point
-    Approximation_3 to_double() const {
-        
-        if (!this->ptr()->_m_approximation) {
 
-            typedef typename Projected_point_2::Curve_kernel_2::
-                Boundary Rational;
-            
-            // TODO replace xy by planar approximation (renderer, Pavel)
-            // X + Y
-            std::pair< double, double > double_xy = 
+#ifdef CGAL_CKvA_COMPILE_RENDERER
+
+    /*!\brief
+     * renders a point into window \c bbox with resolution \c res_w by \c res_h
+     * returns \c false if the point does not fall within the window
+     *
+     * @note: don't use this method with CORE number types otherwise the
+     * renderer hangs when computing point approximation..
+     */
+    bool render(CGAL::Bbox_2 bbox, int res_w, int res_h,
+        Approximation_3& result) const {
+    
+    //! @note: curve renderer computes approximation valid for
+    //! given resolution, storing it for later use it might not be a good idea
+    //! if resolution is changed
+
+        typedef CGALi::Curve_renderer_singleton< typename
+            Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2 >
+                Renderer_inst;
+
+        typename Renderer_inst::Coord_2 cc;
+        if(!Renderer_inst::draw(bbox, res_w, res_h, 
+                this->projected_point(), cc))
+            return false; // bad luck
+         // gotcha !!           
+        
+        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
+        double x0 = bbox.xmin() + (double)cc.x * lx / res_w,
+               y0 = bbox.ymin() + (double)cc.y * ly / res_h;
+        result = Approximation_3(x0, y0, _compute_z(x0, y0));
+        return true;
+    }
+#endif // CGAL_CKvA_COMPILE_RENDERER    
+
+    // returns an non-robust approximation of the point
+    //! returns \c false if point does not fall within box \c bbox
+    bool to_double(CGAL::Bbox_2 bbox, int res_w, int res_h,
+        Approximation_3& pt) const {
+        
+        if (!this->ptr()->_m_approximation) { 
+        
+             std::pair< double, double > xy = 
                 this->curve().status_line_at_exact_x(this->x()).
                 algebraic_real_2(this->arcno()).to_double();
-            
-            // Z
+                
 #if 0 // use this code            
             
             long old_prec = get_precision(BF());
@@ -421,34 +458,36 @@ public:
             }
             set_precision(BF(),old_prec);
 #endif
-            
-            // Z
-            typedef typename Surface_pair_3::Restricted_cad_3
+            this->ptr()->_m_approximation = 
+                Approximation_3(xy.first, xy.second, 
+                    _compute_z(xy.first, xy.second));
+         }
+         CGAL_postcondition(this->ptr()->_m_approximation);
+         return *this->ptr()->_m_approximation;
+    }
+ 
+protected:
+        
+    double _compute_z(const double& x0, const double& y0) const {
+
+        typedef typename Projected_point_2::Curve_kernel_2::
+                Boundary Rational;
+        typedef typename Surface_pair_3::Restricted_cad_3
                 Restricted_cad_3;
-            typedef typename Surface_pair_3::Z_at_xy_isolator
+        typedef typename Surface_pair_3::Z_at_xy_isolator
                 Z_at_xy_isolator;
-            Restricted_cad_3 cad =
+        Restricted_cad_3 cad =
                 Restricted_cad_3::cad_cache()(this->surface());
-            boost::optional< Z_at_xy_isolator > isolator =
+        boost::optional< Z_at_xy_isolator > isolator =
                 cad.isolator_at(this->projected_point(),
                                 this->surface());
-            CGAL_assertion(isolator);
+        CGAL_assertion(isolator);
             
-            Rational bound(1e-17);
-            
-            while (isolator->length(this->sheet()) > bound) {
-                isolator->refine_interval(this->sheet());
-            }
-            
-            double double_z = 
-                CGAL::to_double(isolator->left_boundary(this->sheet()));
-            
-            this->ptr()->_m_approximation = 
-                Approximation_3(double_xy.first, double_xy.second, double_z);
-        }
-        
-        CGAL_postcondition(this->ptr()->_m_approximation);
-        return *this->ptr()->_m_approximation;
+        Rational bound(1e-17);
+        while (isolator->length(this->sheet()) > bound) {
+            isolator->refine_interval(this->sheet());
+        }            
+        return CGAL::to_double(isolator->left_boundary(this->sheet()));
     }
 
     //!@}
