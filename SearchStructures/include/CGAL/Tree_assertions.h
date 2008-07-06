@@ -37,9 +37,9 @@
 #  define CGAL_Tree_assertion_code(CODE)
 #else
 #  define CGAL_Tree_assertion(EX) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_assertion_code(CODE) CODE
 #endif // CGAL_TREE_NO_ASSERTIONS
 
@@ -51,9 +51,9 @@
 #  define CGAL_Tree_exactness_assertion_code(CODE)
 #else
 #  define CGAL_Tree_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_exactness_assertion_code(CODE) CODE
 #endif // CGAL_TREE_NO_ASSERTIONS
 
@@ -66,9 +66,9 @@
 #  define CGAL_Tree_expensive_assertion_code(CODE)
 #else
 #  define CGAL_Tree_expensive_assertion(EX) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_assertion_code(CODE) CODE
 #endif // CGAL_TREE_NO_ASSERTIONS
 
@@ -81,9 +81,9 @@
 #  define CGAL_Tree_expensive_exactness_assertion_code(CODE)
 #else
 #  define CGAL_Tree_expensive_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_exactness_assertion_code(CODE) CODE
 #endif // CGAL_TREE_NO_ASSERTIONS
 
@@ -98,9 +98,9 @@
 #  define CGAL_Tree_precondition_code(CODE)
 #else
 #  define CGAL_Tree_precondition(EX) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_precondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_PRECONDITIONS
 
@@ -112,9 +112,9 @@
 #  define CGAL_Tree_exactness_precondition_code(CODE)
 #else
 #  define CGAL_Tree_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_exactness_precondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_PRECONDITIONS
 
@@ -126,9 +126,9 @@
 #  define CGAL_Tree_expensive_precondition_code(CODE)
 #else
 #  define CGAL_Tree_expensive_precondition(EX) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_precondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_PRECONDITIONS
 
@@ -141,9 +141,9 @@
 #  define CGAL_Tree_expensive_exactness_precondition_code(CODE)
 #else
 #  define CGAL_Tree_expensive_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_exactness_precondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_PRECONDITIONS
 
@@ -158,9 +158,9 @@
 #  define CGAL_Tree_postcondition_code(CODE)
 #else
 #  define CGAL_Tree_postcondition(EX) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_postcondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_POSTCONDITIONS
 
@@ -172,9 +172,9 @@
 #  define CGAL_Tree_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_Tree_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_POSTCONDITIONS
 
@@ -186,9 +186,9 @@
 #  define CGAL_Tree_expensive_postcondition_code(CODE)
 #else
 #  define CGAL_Tree_expensive_postcondition(EX) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_postcondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_POSTCONDITIONS
 
@@ -201,9 +201,9 @@
 #  define CGAL_Tree_expensive_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_Tree_expensive_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_TREE_NO_POSTCONDITIONS
 
@@ -218,9 +218,9 @@
 #  define CGAL_Tree_warning_code(CODE)
 #else
 #  define CGAL_Tree_warning(EX) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_warning_code(CODE) CODE
 #endif // CGAL_TREE_NO_WARNINGS
 
@@ -232,9 +232,9 @@
 #  define CGAL_Tree_exactness_warning_code(CODE)
 #else
 #  define CGAL_Tree_exactness_warning(EX) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_exactness_warning_code(CODE) CODE
 #endif // CGAL_TREE_NO_WARNINGS
 
@@ -246,9 +246,9 @@
 #  define CGAL_Tree_expensive_warning_code(CODE)
 #else
 #  define CGAL_Tree_expensive_warning(EX) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_warning_code(CODE) CODE
 #endif // CGAL_TREE_NO_WARNINGS
 
@@ -261,9 +261,9 @@
 #  define CGAL_Tree_expensive_exactness_warning_code(CODE)
 #else
 #  define CGAL_Tree_expensive_exactness_warning(EX) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_Tree_expensive_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?((void)0):warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_Tree_expensive_exactness_warning_code(CODE) CODE
 #endif // CGAL_TREE_NO_WARNINGS
 

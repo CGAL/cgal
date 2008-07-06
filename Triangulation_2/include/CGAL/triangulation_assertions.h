@@ -32,9 +32,9 @@
 #  define CGAL_triangulation_assertion_code(CODE)
 #else
 #  define CGAL_triangulation_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_assertion_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_ASSERTIONS
 
@@ -46,9 +46,9 @@
 #  define CGAL_triangulation_exactness_assertion_code(CODE)
 #else
 #  define CGAL_triangulation_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_exactness_assertion_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_ASSERTIONS
 
@@ -61,9 +61,9 @@
 #  define CGAL_triangulation_expensive_assertion_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_assertion_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_ASSERTIONS
 
@@ -76,9 +76,9 @@
 #  define CGAL_triangulation_expensive_exactness_assertion_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_exactness_assertion_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_ASSERTIONS
 
@@ -93,9 +93,9 @@
 #  define CGAL_triangulation_precondition_code(CODE)
 #else
 #  define CGAL_triangulation_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_precondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_PRECONDITIONS
 
@@ -107,9 +107,9 @@
 #  define CGAL_triangulation_exactness_precondition_code(CODE)
 #else
 #  define CGAL_triangulation_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_exactness_precondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_PRECONDITIONS
 
@@ -121,9 +121,9 @@
 #  define CGAL_triangulation_expensive_precondition_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_precondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_PRECONDITIONS
 
@@ -136,9 +136,9 @@
 #  define CGAL_triangulation_expensive_exactness_precondition_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_exactness_precondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_PRECONDITIONS
 
@@ -153,9 +153,9 @@
 #  define CGAL_triangulation_postcondition_code(CODE)
 #else
 #  define CGAL_triangulation_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_postcondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_POSTCONDITIONS
 
@@ -167,9 +167,9 @@
 #  define CGAL_triangulation_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_triangulation_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_POSTCONDITIONS
 
@@ -181,9 +181,9 @@
 #  define CGAL_triangulation_expensive_postcondition_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_postcondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_POSTCONDITIONS
 
@@ -196,9 +196,9 @@
 #  define CGAL_triangulation_expensive_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_POSTCONDITIONS
 
@@ -213,9 +213,9 @@
 #  define CGAL_triangulation_warning_code(CODE)
 #else
 #  define CGAL_triangulation_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_warning_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_WARNINGS
 
@@ -227,9 +227,9 @@
 #  define CGAL_triangulation_exactness_warning_code(CODE)
 #else
 #  define CGAL_triangulation_exactness_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_exactness_warning_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_WARNINGS
 
@@ -241,9 +241,9 @@
 #  define CGAL_triangulation_expensive_warning_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_warning_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_WARNINGS
 
@@ -256,9 +256,9 @@
 #  define CGAL_triangulation_expensive_exactness_warning_code(CODE)
 #else
 #  define CGAL_triangulation_expensive_exactness_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_triangulation_expensive_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_triangulation_expensive_exactness_warning_code(CODE) CODE
 #endif // CGAL_TRIANGULATION_NO_WARNINGS
 

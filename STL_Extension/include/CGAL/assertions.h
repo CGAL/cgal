@@ -26,8 +26,6 @@
 #ifndef CGAL_ASSERTIONS_H
 #define CGAL_ASSERTIONS_H
 
-#include <CGAL/Uncertain.h>
-
 CGAL_BEGIN_NAMESPACE
 
 // types
@@ -71,9 +69,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_assertion_code(CODE)
 #else
 #  define CGAL_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
@@ -83,9 +81,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_assertion_code(CODE)
 #else
 #  define CGAL_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_exactness_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
@@ -95,9 +93,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_assertion_code(CODE)
 #else
 #  define CGAL_expensive_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
@@ -107,9 +105,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_exactness_assertion_code(CODE)
 #else
 #  define CGAL_expensive_exactness_assertion(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_exactness_assertion_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_exactness_assertion_code(CODE) CODE
 #endif // CGAL_NO_ASSERTIONS
 
@@ -123,9 +121,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_precondition_code(CODE)
 #else
 #  define CGAL_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
@@ -135,9 +133,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_precondition_code(CODE)
 #else
 #  define CGAL_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_exactness_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
@@ -147,9 +145,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_precondition_code(CODE)
 #else
 #  define CGAL_expensive_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
@@ -159,9 +157,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_exactness_precondition_code(CODE)
 #else
 #  define CGAL_expensive_exactness_precondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_exactness_precondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_exactness_precondition_code(CODE) CODE
 #endif // CGAL_NO_PRECONDITIONS
 
@@ -175,9 +173,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_postcondition_code(CODE)
 #else
 #  define CGAL_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
@@ -187,9 +185,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
@@ -199,9 +197,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_postcondition_code(CODE)
 #else
 #  define CGAL_expensive_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
@@ -211,9 +209,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_exactness_postcondition_code(CODE)
 #else
 #  define CGAL_expensive_exactness_postcondition(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_exactness_postcondition_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::postcondition_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_exactness_postcondition_code(CODE) CODE
 #endif // CGAL_NO_POSTCONDITIONS
 
@@ -227,9 +225,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_warning_code(CODE)
 #else
 #  define CGAL_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
@@ -239,9 +237,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_exactness_warning_code(CODE)
 #else
 #  define CGAL_exactness_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_exactness_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
@@ -251,9 +249,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_warning_code(CODE)
 #else
 #  define CGAL_expensive_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
@@ -263,9 +261,9 @@ void warning_fail( const char*, const char*, int, const char* = "");
 #  define CGAL_expensive_exactness_warning_code(CODE)
 #else
 #  define CGAL_expensive_exactness_warning(EX) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_expensive_exactness_warning_msg(EX,MSG) \
-   (CGAL::certainly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
+   ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_expensive_exactness_warning_code(CODE) CODE
 #endif // CGAL_NO_WARNINGS
 
