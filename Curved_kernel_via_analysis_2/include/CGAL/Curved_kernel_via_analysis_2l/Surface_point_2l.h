@@ -410,9 +410,7 @@ public:
 #endif // CGAL_CKvA_COMPILE_RENDERER    
 
     // returns an non-robust approximation of the point
-    //! returns \c false if point does not fall within box \c bbox
-    bool to_double(CGAL::Bbox_2 bbox, int res_w, int res_h,
-        Approximation_3& pt) const {
+    Approximation_3 to_double() const {
         
         if (!this->ptr()->_m_approximation) { 
         
