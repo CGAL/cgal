@@ -91,10 +91,8 @@ struct Is_positive :public Unary_function< NT, bool > {
 
 // Sign would result in a name clash with enum.h
 template < class NT >
-struct Sgn :public Unary_function< NT, Sign > {
-    Sign operator()( const NT& x) const
-    { return CGAL_NTS sign( x); }
-};
+struct Sgn : Real_embeddable_traits<NT>::Sign {};
+
 template < class NT >
 struct Abs :public Unary_function< NT, NT > {
     NT operator()( const NT& x) const
