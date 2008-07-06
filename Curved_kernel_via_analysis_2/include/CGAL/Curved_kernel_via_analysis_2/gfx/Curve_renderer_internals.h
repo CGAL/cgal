@@ -299,7 +299,8 @@ public:
     //!@{
     
     //! default constructor
-    Curve_renderer_internals() {
+    Curve_renderer_internals() : window(0.0, 0.0, 0.0, 0.0), res_w(0),
+         res_h(0) {
     }
     
     //! sets up drawing window and pixel resolution
@@ -432,8 +433,9 @@ public:
     //!\name public data (can be accessed from hosting curve renderer)
     //!@{
     
-    NT x_min, x_max, y_min, y_max; //! drawing window boundaries
-    NT pixel_w, pixel_h;           //! pixel dimensions w.r.t. resolution
+    CGAL::Bbox_2 window;            //! drawing window 
+    NT x_min, x_max, y_min, y_max;  
+    NT pixel_w, pixel_h;            //! pixel dimensions w.r.t. resolution
     
     Rational x_min_r, y_min_r, x_max_r, y_max_r; //! rational versions
     Rational pixel_w_r, pixel_h_r; 
@@ -492,6 +494,7 @@ template <class CurveKernel_2, class Coeff_>
 bool Curve_renderer_internals<CurveKernel_2, Coeff_>::setup(
     const ::CGAL::Bbox_2& box_, int res_w_, int res_h_) 
 { 
+    window = box_;
     x_min = static_cast<NT>(box_.xmin());
     y_min = static_cast<NT>(box_.ymin());
     x_max = static_cast<NT>(box_.xmax());

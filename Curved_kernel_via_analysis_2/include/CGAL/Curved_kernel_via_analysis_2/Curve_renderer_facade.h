@@ -25,13 +25,9 @@
 //#define CGAL_CKVA_DUMMY_RENDERER
 
 // whether to use multi-precision arithmetic
-#define CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
+//#define CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
 // whether to use exact rational arithmetic
-#define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
-
-//#if AcX_SQRT_EXTENSION // not use rational arithmetic when sqrt-extended
-//#undef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
-//#endif 
+//#define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
 // this turns on a signleton curve renderer 
 // (not recommended for multi-threaded applications)
@@ -92,15 +88,19 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
 
+    //! approximation coordinates
+    typedef CGALi::Coord_2 Coord_2;
+    
+    //! vector of coordinates
+    typedef CGALi::Coord_vec_2 Coord_vec_2;
+    
     //! exact rational number type
     typedef typename ::CGAL::Get_arithmetic_kernel<
             typename Curve_kernel_2::Coefficient>::Arithmetic_kernel
         Arithmetic_kernel;
 
     //! multi-precision float NT
-    //typedef typename Arithmetic_kernel::Bigfloat Bigfloat;
     typedef typename Arithmetic_kernel::Bigfloat_interval BFI;
-
     typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary 
         Bigfloat; 
 
@@ -197,8 +197,8 @@ public:
      * returns a list of sequences of pixel coordinates in \c points and
      * end-point coordinats in \c end_points 
      */
-    inline void draw(const Arc_2& arc, std::list<CGALi::Coord_vec_2>& points,
-        std::pair<CGALi::Coord_2, CGALi::Coord_2>& end_points)
+    inline void draw(const Arc_2& arc, std::list<Coord_vec_2>& points,
+        std::pair<Coord_2, Coord_2>& end_points)
     {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         try {

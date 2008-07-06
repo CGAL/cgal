@@ -252,8 +252,7 @@ public:
     
     //! \brief returns the drawing window
     void get_window(Bbox_2& bbox_) const {
-        bbox_ = Bbox_2(to_double(engine.x_min), to_double(engine.y_min),
-                       to_double(engine.x_max), to_double(engine.y_max));
+        bbox_ = engine.window;
     }
     
     //! \brief returns the pixel resolution
@@ -473,7 +472,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     if(!initialized)
         return;
     select_cache_entry(arc); // lookup for appropriate cache instance 
-    
+
     Gfx_OUT("\n////////////////////\n resolution: " << engine.res_w << " x "
             << engine.res_h << std::endl);
     Gfx_OUT("box: [" << engine.x_min << "; " << engine.y_min << "]x[" <<
@@ -485,6 +484,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     CGAL::Arr_parameter_space loc_p1 = arc.location(CGAL::ARR_MIN_END),
         loc_p2 = arc.location(CGAL::ARR_MAX_END);
     
+//!@todo: should be adapted for other boundary types
     if(loc_p1 != CGAL::ARR_LEFT_BOUNDARY) {
         const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MIN_END);
 
@@ -808,7 +808,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
             continue;
         }
             
-         Gfx_OUT("starting pixel found: " << start << " directions: " <<
+        Gfx_OUT("starting pixel found: " << start << " directions: " <<
               dir[0] << " and " << dir[1] << std::endl);
         draw_lump(rev_points, last_x, arc.arcno(), pix_beg, pix_end);
         points.push_back(rev_points);
@@ -1070,20 +1070,22 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
         refine_x(x0);
         
     Rational x_s = lbound_x(x0), y_s;
-//     NiX::simplify(x_s);
     if(x_s < engine.x_min_r || x_s > engine.x_max_r)
         return false;
+
+    Xy_coordinate_2 xy(x0, pt.curve(), pt.arcno());
+    refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_X);
     
-    typename Curve_analysis_2::Internal_curve_2::Event1_info
+    /*typename Curve_analysis_2::Internal_curve_2::Event1_info
         event = pt.curve()._internal_curve().event_info_at_x(pt.x());
     event.refine_to(pt.arcno(), engine.pixel_h_r/CGAL_REFINE_X);
-
-    y_s = event.lower_boundary(pt.arcno());
+    y_s = event.lower_boundary(pt.arcno());*/
+    y_s = lbound_y(xy);
 
     Pixel_2 pix;
     get_pixel_coords(x_s, y_s, pix);
-    if(pix.x < 0 || pix.x >= engine.res_w ||
-            pix.y < 0 || pix.y >= engine.res_h)
+    if(pix.x < 0 || pix.x >= engine.res_w || pix.y < 0 || 
+            pix.y >= engine.res_h)
         return false;
         
     coord.x = pix.x;
