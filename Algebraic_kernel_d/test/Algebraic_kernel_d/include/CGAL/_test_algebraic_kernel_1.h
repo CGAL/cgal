@@ -12,10 +12,12 @@
 //
 // ============================================================================
 
+// DONE: test construct_solve_1_object(), etc.
+// TODO: Use proper construction of Polynomials 
+
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Algebraic_kernel_1.h>
-
 
 // Test for the Algebraic_kernel syntax
 #ifndef CGAL_TEST_ALGEBRAIC_KERNEL_1_H
@@ -25,7 +27,13 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-template< class AK_, class AlgebraicReal1, class Isolator_, class Coefficient_, class Polynomial1, class Boundary_  >
+template< 
+class AK_, 
+class AlgebraicReal1, 
+class Isolator_, 
+class Coefficient_, 
+class Polynomial1, 
+class Boundary_  >
 void test_algebraic_kernel_1() {
     typedef AK_            AK;
     typedef AlgebraicReal1 Algebraic_real_1;
@@ -51,7 +59,8 @@ void test_algebraic_kernel_1() {
     
     // Test of functors
     // Test AK::Solve_1...
-    typename AK::Solve_1 solve_1;
+    
+    typename AK::Solve_1 solve_1 = AK().construct_solve_1_object();
     Polynomial_1 poly1( -4,0,1 );
     Polynomial_1 poly2( 0, 0, 1 );
     std::vector< Algebraic_real_1 > roots_vec;
@@ -104,24 +113,29 @@ void test_algebraic_kernel_1() {
     
     // Just syntax tests... (TODO)
     // Test AK::Is_square_free_1...
-    typename AK::Is_square_free_1 is_square_free_1;
+    typename AK::Is_square_free_1 is_square_free_1 
+      = AK().construct_is_square_free_1_object();
     is_square_free_1( poly1 );
     
     // Test AK::Is_coprime_1...
-    typename AK::Is_coprime_1 is_coprime_1;
+    typename AK::Is_coprime_1 is_coprime_1
+      = AK().construct_is_coprime_1_object();
     is_coprime_1( poly1, poly2 );
         
     // Test AK::Make_square_free_1...
-    typename AK::Make_square_free_1 make_square_free_1;
+    typename AK::Make_square_free_1 make_square_free_1
+      = AK().construct_make_square_free_1_object();
     make_square_free_1( poly1 );
     
     // Test AK::Make_coprime_1...
-    typename AK::Make_coprime_1 make_coprime_1;
+    typename AK::Make_coprime_1 make_coprime_1 
+      = AK().construct_make_coprime_1_object();
     Polynomial_1 g, q1, q2;
     make_coprime_1( poly1, poly2, g, q1, q2 );
     
     // Test AK::Square_free_factorization_1...
-    typename AK::Square_free_factorization_1 square_free_factorization_1;
+    typename AK::Square_free_factorization_1 square_free_factorization_1 
+      = AK().construct_square_free_factorization_1_object();
     std::vector<Polynomial_1> factors;
     std::vector<int> mults;
     square_free_factorization_1( poly1, std::back_inserter(factors), 
@@ -130,54 +144,53 @@ void test_algebraic_kernel_1() {
     ////////////////////////////////////////////////////////////////////////////
     
     // (Not only) syntax tests for Algebraic_real_traits
-    typedef typename AK::Algebraic_real_traits ART;
-    
-    BOOST_STATIC_ASSERT((::boost::is_same<
-            typename AK::Algebraic_real_1,
-            typename ART::Type >::value));
             
-    BOOST_STATIC_ASSERT((::boost::is_same<
-            Boundary,
-            typename ART::Boundary >::value));        
-        
     // Create test polynomial
     Polynomial_1 p2( -2,0,1 );
     std::vector< Algebraic_real_1 > roots_vec2;
     
     solve_1( p2, std::back_inserter( roots_vec2 ) );
     
-    // Test ART::Boundary_between...
-    typename ART::Boundary_between boundary_between;
-    assert( typename ART::Boundary( -2 ) < boundary_between( roots_vec2[0], roots_vec2[1] ) );
-    assert( typename ART::Boundary(  2 ) > boundary_between( roots_vec2[0], roots_vec2[1] ) );
+    // Test AK::Boundary_between...
+    typename AK::Boundary_between_1 boundary_between 
+      = AK().construct_boundary_between_1_object();
+    assert( typename AK::Boundary( -2 ) < 
+        boundary_between( roots_vec2[0], roots_vec2[1] ) );
+    assert( typename AK::Boundary(  2 ) > 
+        boundary_between( roots_vec2[0], roots_vec2[1] ) );
     
-    // Test ART::Lower_boundary
-    typename ART::Lower_boundary lower_boundary;
-    assert( lower_boundary( roots_vec2[0] ) < typename ART::Boundary(-1) );
-    assert( lower_boundary( roots_vec2[1] ) < typename ART::Boundary( 2) );
+    // Test AK::Lower_boundary
+    typename AK::Lower_boundary_1 lower_boundary 
+      = AK().construct_lower_boundary_1_object();
+    assert( lower_boundary( roots_vec2[0] ) < typename AK::Boundary(-1) );
+    assert( lower_boundary( roots_vec2[1] ) < typename AK::Boundary( 2) );
 
-    // Test ART::Upper_boundary
-    typename ART::Upper_boundary upper_boundary;
-    assert( upper_boundary( roots_vec2[0] ) > typename ART::Boundary(-1) );
-    assert( upper_boundary( roots_vec2[1] ) > typename ART::Boundary( 1) );
+    // Test AK::Upper_boundary
+    typename AK::Upper_boundary_1 upper_boundary
+      = AK().construct_upper_boundary_1_object();
+    assert( upper_boundary( roots_vec2[0] ) > typename AK::Boundary(-1) );
+    assert( upper_boundary( roots_vec2[1] ) > typename AK::Boundary( 1) );
     
-    // Test ART::Refine
-    typename ART::Refine refine;
+    // Test AK::Refine
+    typename AK::Refine_1 refine
+      = AK().construct_refine_1_object();
     Algebraic_real_1 ar = roots_vec2[1];
-    typename ART::Boundary old_lower_boundary = ar.low();
-    typename ART::Boundary old_upper_boundary = ar.high(); 
+    typename AK::Boundary old_lower_boundary = ar.low();
+    typename AK::Boundary old_upper_boundary = ar.high(); 
 
     refine( ar );
     
     assert( old_lower_boundary <= lower_boundary( ar ) );
     assert( old_upper_boundary >= upper_boundary( ar ) );
-    typename ART::Boundary interval_size_old = CGAL::abs( old_upper_boundary - old_lower_boundary );
-    typename ART::Boundary interval_size_new = CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) );
-    assert( interval_size_new * typename ART::Boundary(2) <= interval_size_old );
-
+    typename AK::Boundary interval_size_old 
+      = CGAL::abs( old_upper_boundary - old_lower_boundary );
+    typename AK::Boundary interval_size_new 
+      = CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) );
+    assert( interval_size_new * typename AK::Boundary(2) <= interval_size_old );
+    
     refine( ar, 100 );
     assert( CGAL::abs( upper_boundary( ar ) - lower_boundary( ar ) ) < 
-        (typename ART::Boundary(1) / CGAL::ipower(typename ART::Boundary(2), 99 )) );
+        (typename AK::Boundary(1) / CGAL::ipower(typename AK::Boundary(2), 99 )) );
 
 }
 
