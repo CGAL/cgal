@@ -1,7 +1,8 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/ch_graham_andrew.h>
 
-typedef   CGAL::Point_2<CGAL::Cartesian<double> >        Point_2;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::Point_2 Point_2;
 
 int main()
 {
