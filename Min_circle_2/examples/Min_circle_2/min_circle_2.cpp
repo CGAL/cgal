@@ -1,12 +1,10 @@
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Min_circle_2.h>
 #include <CGAL/Min_circle_2_traits_2.h>
-#include <CGAL/Gmpz.h>
 #include <iostream>
 
 // typedefs
-typedef  CGAL::Gmpz                      NT;
-typedef  CGAL::Homogeneous<NT>           K;
+typedef  CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef  CGAL::Min_circle_2_traits_2<K>  Traits;
 typedef  CGAL::Min_circle_2<Traits>      Min_circle;
 
