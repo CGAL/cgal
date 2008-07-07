@@ -706,6 +706,9 @@ else
   MAKE_CMD='make'
 fi
 
+# that line makes the script remove the lock file in case of unwanted exit
+trap "rm -f $LOCK_FILE" EXIT HUP INT TERM
+
 # Acquire lock
 lockfile -r 5 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
