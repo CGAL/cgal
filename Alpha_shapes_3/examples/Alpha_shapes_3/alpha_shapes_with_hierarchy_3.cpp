@@ -7,7 +7,7 @@
 #include <list>
 #include <cassert>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Alpha_shape_vertex_base_3<K>               Vb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vb>  Vbh;
