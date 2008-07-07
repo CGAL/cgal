@@ -5,22 +5,20 @@ Alpha shape.
 
 ************************************************************************/
 
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Alpha_shape_2.h>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <list>
 
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Alpha_shape_2.h>
 
-typedef double coord_type;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Simple_cartesian<coord_type>  SC;
-typedef CGAL::Filtered_kernel<SC> K;
+typedef K::FT FT;
 
 typedef K::Point_2  Point;
 typedef K::Segment_2  Segment;
@@ -96,7 +94,7 @@ int main()
   }
 
   Alpha_shape_2 A(points.begin(), points.end(),
-		  coord_type(10000),
+		  FT(10000),
 		  Alpha_shape_2::GENERAL);
 
   std::vector<Segment> segments;

@@ -5,25 +5,22 @@ the weighted Alpha Shape.
 
 ************************************************************************/
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <list>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <list>
 
-typedef double coord_type;
 
-typedef CGAL::Simple_cartesian<coord_type>  SC;
-typedef CGAL::Filtered_kernel<SC> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::FT FT;
 typedef K::Point_2 Point_base;
-typedef CGAL::Weighted_point<Point_base,coord_type>  Point;
+typedef CGAL::Weighted_point<Point_base,FT>  Point;
 typedef K::Segment_2  Segment;
 
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
@@ -60,7 +57,7 @@ typedef Alpha_shape_2::Alpha_shape_edges_iterator Alpha_shape_edges_iterator;
 template <class InputIterator, class OutputIterator>
 void
 alpha_edges(InputIterator begin, InputIterator end,
-	    const coord_type &Alpha,
+	    const FT &Alpha,
 	    bool mode,
 	    OutputIterator out)
   // Generate Alpha Shape
@@ -103,7 +100,7 @@ file_input(std::list<Point>& L)
   for( ; n>0 ; n--)
     {
       is >> p;
-      L.push_back(Point (p,coord_type(10)));
+      L.push_back(Point (p, FT(10)));
     }
   std::cout << "Points inserted" << std::endl;
   return true;
@@ -117,7 +114,7 @@ int main()
   file_input(points);
   std::vector<Gt::Segment_2> segments;
   alpha_edges(points.begin(), points.end(),
-	      coord_type(10000),Alpha_shape_2::GENERAL,
+	      FT(10000),Alpha_shape_2::GENERAL,
 	      std::back_inserter(segments));
   std::cout << segments.size() << " alpha shape edges." << std::endl;
   return 0;
