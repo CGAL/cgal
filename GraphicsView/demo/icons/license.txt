@@ -1,0 +1,5 @@
+The following files have been copied from Qt Free Edition version 4.4:
+  fileNew.png
+  fileOpen.png
+  fileSave.png,
+  fit-page-32.png 
