@@ -43,7 +43,7 @@ inside of the convex hull of $S$, and hence the $\alpha$-shape for
 $\alpha \rightarrow \infty$ is the convex hull of $S$.\footnote{ice cream, ice cream!!!
 The wording of this introductory paragraphs is borrowed from  Kaspar Fischer's
 `` Introduction to Alpha Shapes'' which can be found at 
-http://n.ethz.ch/student/fischerk/alphashapes/as/index.html.
+http://people.inf.ethz.ch/fischerk/pubs/as.pdf.
 The picture has been taken from Walter Luh's homepage at
 http://www.stanford.edu/\~wluh/cs448b/alphashapes.html.}
 
@@ -186,7 +186,7 @@ The following code snippet shows how to obtain a basic
 alpha shape type.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Alpha_shape_vertex_base_2<K> Av;
 
@@ -208,7 +208,7 @@ Delaunay triangulation and differs only in the types of the vertices
 and faces. Therefore, the only part that changes are the typedefs in the beginning.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Alpha_shape_vertex_base_2<K> Avb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_2<Avb> Av 
@@ -233,7 +233,7 @@ face class, namely \ccc{CGAL::Regular_triangulation_face_base_2<Gt>}.
 Note that there is no special weighted alpha shape class.
 
 \begin{cprog}
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Weighted_alpha_shape_euclidean_traits_2<K> Gt;
 
 typedef CGAL::Alpha_shape_vertex_base_2<Gt> Av;
