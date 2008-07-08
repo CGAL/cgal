@@ -1,15 +1,11 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/copy_n.h>
 
 #include <list>
 
-typedef CGAL::Simple_cartesian<double> SK;
-typedef CGAL::Filtered_kernel<SK> FK;
-struct K : public FK {};
-
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef K::Point_3                                  Point_3;
 typedef CGAL::Delaunay_triangulation_3<K>           Delaunay;
 typedef Delaunay::Vertex_handle                     Vertex_handle;
