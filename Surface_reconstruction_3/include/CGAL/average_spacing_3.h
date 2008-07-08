@@ -41,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
 template < typename Kernel,
            typename Tree >
 typename Kernel::FT
-average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose normal we want to compute
+average_spacing_3(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
                   Tree& tree,                            ///< KD-tree
                   unsigned int KNN)                      ///< number of neighbors
 {

@@ -63,7 +63,7 @@ private:
     // Round number to multiples of epsilon
     static inline double round_epsilon(double value, double epsilon)
     {
-        return double(int(value/epsilon)) * epsilon;
+        return std::floor(value/epsilon) * epsilon;
     }
 };
 
@@ -98,8 +98,8 @@ public:
 /// Precondition: epsilon > 0.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
+/// @param OutputIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -112,22 +112,19 @@ merge_epsilon_nearest_points_3(
           InputIterator first,      ///< input points
           InputIterator beyond,
           OutputIterator output,    ///< output points
-          double epsilon, ///< tolerance value when comparing 3D points
+          double epsilon,           ///< tolerance value when comparing 3D points
           const Kernel& /*kernel*/)          
 {
-    typedef typename Kernel::Point_3 Point;
-
-    // precondition: at least one element in the container
-    CGAL_precondition(first != beyond);
+    typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
     CGAL_precondition(epsilon > 0);
 
     // Merge points which belong to the same cell of a grid of cell size = epsilon.
-    Epsilon_point_set_3<Point> merged_points(epsilon);
-    merged_points.insert(first, beyond);
+    Epsilon_point_set_3<Point> points_to_keep(epsilon);
+    points_to_keep.insert(first, beyond);
 
     // Copy merged points to output
-    std::copy(merged_points.begin(), merged_points.end(), output);
+    output = std::copy(points_to_keep.begin(), points_to_keep.end(), output);
     return output;
 }
 
@@ -138,20 +135,43 @@ merge_epsilon_nearest_points_3(
 /// Precondition: epsilon > 0.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator,
           typename Kernel
 >
-void
+ForwardIterator
 merge_epsilon_nearest_points_3(
            ForwardIterator first,   ///< input/output points
            ForwardIterator beyond,
-           double epsilon,  ///< tolerance value when comparing 3D points
+           double epsilon,          ///< tolerance value when comparing 3D points
            const Kernel& /*kernel*/)
         
 {
-  CGAL_precondition(false); // nyi
+    typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
+
+    CGAL_precondition(epsilon > 0);
+
+    // Merge points which belong to the same cell of a grid of cell size = epsilon.
+    // points_to_keep will contain 1 point per cell; the others will be in points_to_remove.
+    Epsilon_point_set_3<Point> points_to_keep(epsilon);
+    std::vector<Point> points_to_remove;
+    for (ForwardIterator it=first ; it != beyond ; it++)
+    {
+        std::pair<Epsilon_point_set_3<Point>::iterator,bool> result;
+        result = points_to_keep.insert(*it);
+        if (!result.second) // if not inserted
+          points_to_remove.push_back(*it);
+    }
+
+    // Replace [first, beyond) range by the content of points_to_keep, then points_to_remove.
+    ForwardIterator first_iterator_to_remove = 
+      std::copy(points_to_keep.begin(), points_to_keep.end(), first);
+    std::copy(points_to_remove.begin(), points_to_remove.end(), first_iterator_to_remove);
+    
+    return first_iterator_to_remove;
 }
 
 /// Merge points which belong to the same cell of a grid of cell size = epsilon.
@@ -160,8 +180,8 @@ merge_epsilon_nearest_points_3(
 /// Precondition: epsilon > 0.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
+/// @param OutputIterator value_type must be convertible to Point_3.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -186,9 +206,11 @@ merge_epsilon_nearest_points_3(
 /// Precondition: epsilon > 0.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
-void
+ForwardIterator
 merge_epsilon_nearest_points_3(
        ForwardIterator first,       ///< input/output points
        ForwardIterator beyond,
@@ -196,7 +218,7 @@ merge_epsilon_nearest_points_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  merge_epsilon_nearest_points_3(first,beyond,epsilon,Kernel());
+  return merge_epsilon_nearest_points_3(first,beyond,epsilon,Kernel());
 }
 
 

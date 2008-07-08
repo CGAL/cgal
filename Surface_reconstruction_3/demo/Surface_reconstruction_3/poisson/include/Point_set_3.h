@@ -66,21 +66,21 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  typedef Gyroviz_point_3<Gt> Point_with_normal; ///<Model of PointWithNormal_3
-  typedef Gyroviz_point_3<Gt> Gyroviz_point;     ///<Model of PointWithNormal_3 + cameras
-  typedef typename Point_with_normal::Normal Normal; ///<Model of OrientedNormal_3 concept.
+  typedef CGAL::Point_with_normal_3<Gt> Point_with_normal; ///< Model of PointWithNormal_3
+  typedef Gyroviz_point_3<Gt> Gyroviz_point; ///< Point_with_normal + selection flag + cameras
+  typedef typename Point_with_normal::Normal Normal; ///< Model of OrientedNormal_3 concept.
 
-  // Iterator over points
-  typedef std::vector<Point_with_normal>::iterator        Point_iterator;      
-  typedef std::vector<Point_with_normal>::const_iterator  Point_const_iterator;      
+  // Iterator over Point_3 points
+  typedef std::vector<Gyroviz_point>::iterator        Point_iterator;      
+  typedef std::vector<Gyroviz_point>::const_iterator  Point_const_iterator;      
 
   // Iterator over normals
   typedef CGAL::Iterator_project<iterator, 
-                                 Project_normal<Point_with_normal> >  
-                                                          Normal_iterator;      
+                                 Project_normal<Gyroviz_point> >  
+                                                      Normal_iterator;      
   typedef CGAL::Iterator_project<const_iterator, 
-                                 Project_normal<Point_with_normal> >  
-                                                          Normal_const_iterator;      
+                                 Project_normal<Gyroviz_point> >  
+                                                      Normal_const_iterator;      
 
 // Data members
 private:
@@ -93,6 +93,8 @@ private:
   mutable Sphere m_bounding_sphere; // point set's bounding sphere
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
+  
+  int m_nb_selected_points; // number of selected points
 
 // Public methods
 public:
@@ -100,6 +102,7 @@ public:
   /// Default constructor.
   Point_set_3()
   {
+    m_nb_selected_points = 0;
     m_bounding_box_is_valid = false;
   }
 
@@ -117,6 +120,44 @@ public:
   Normal_const_iterator normals_begin() const { return Normal_iterator(begin()); }
   Normal_iterator normals_end()               { return Normal_iterator(end()); }
   Normal_const_iterator normals_end() const   { return Normal_iterator(end()); }
+
+  /// Get the number of selected points.
+  int nb_selected_points() const { return m_nb_selected_points; }
+
+  /// Mark a point as selected/not selected.
+  void select(Gyroviz_point* gpt, bool is_selected = true)
+  {
+    if (gpt->is_selected() != is_selected)
+    {
+      gpt->select(is_selected);
+      m_nb_selected_points += (is_selected ? 1 : -1);
+    }
+  } 
+
+  /// Mark a range of points as selected/not selected.
+  ///
+  /// @param first First point to select/unselect.
+  /// @param beyond Past-the-end point to select/unselect.
+  void select(iterator first, iterator beyond, 
+              bool is_selected = true)
+  {
+    for (iterator it = first; it != beyond; it++)
+      it->select(is_selected);
+      
+    m_nb_selected_points = std::count_if(begin(), end(), 
+                                         std::mem_fun_ref(&Gyroviz_point::is_selected));
+  } 
+
+  /// Delete selected points.
+  void deleted_selection()
+  {
+    // erase-remove idiom
+    erase(std::remove_if(begin(), end(), 
+                         std::mem_fun_ref(&Gyroviz_point::is_selected)),
+          end());    
+
+    m_nb_selected_points = 0;
+  } 
 
   /// Get the bounding box.
   Iso_cuboid bounding_box() const
@@ -177,35 +218,55 @@ public:
 
   // Draw points using OpenGL calls.
   void gl_draw_vertices(unsigned char r, unsigned char g, unsigned char b,
-    float size) const
+                        float point_size) const
   {
-    ::glPointSize(size);
-    ::glColor3ub(r,g,b);
-    ::glBegin(GL_POINTS);
-    for (Point_const_iterator it = begin(); it != end(); it++)
+    // Draw *selected* points
+    if (m_nb_selected_points > 0)
     {
-      const Point& p = *it;
-      ::glVertex3d(p.x(),p.y(),p.z());
+      ::glPointSize(point_size*1.5);  // selected => bigger
+      ::glColor3ub(255, 0, 0);      // selected = red
+      ::glBegin(GL_POINTS);
+      for (const_iterator it = begin(); it != end(); it++)
+      {
+        const Gyroviz_point& p = *it;
+        if (p.is_selected())
+          ::glVertex3d(p.x(), p.y(), p.z());
+      }
+      ::glEnd();
     }
-    ::glEnd();
+
+    // Draw *non-selected* points
+    if (m_nb_selected_points < size())
+    {
+      ::glPointSize(point_size);
+      ::glColor3ub(r,g,b);
+      ::glBegin(GL_POINTS);
+      for (const_iterator it = begin(); it != end(); it++)
+      {
+        const Gyroviz_point& p = *it;
+        if ( ! p.is_selected() )
+          ::glVertex3d(p.x(), p.y(), p.z());
+      }
+      ::glEnd();
+    }
   }
 
   // Draw normals using OpenGL calls.
   void gl_draw_normals(unsigned char r, unsigned char g, unsigned char b,
-    FT scale = 1.0) const
+                       FT scale = 1.0) const
   {
     // Draw *oriented* normals
     ::glColor3ub(r,g,b);
     ::glBegin(GL_LINES);
-    for (Point_const_iterator it = begin(); it != end(); it++)
+    for (const_iterator it = begin(); it != end(); it++)
     {
-      const Point& p = *it;
-      Normal n = it->normal();
-      if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
+      const Gyroviz_point& p = *it;
+      const Normal& n = p.normal();
+      if (n.is_oriented())
       {
         Point q = p + scale * n.get_vector();
-        glVertex3d(p.x(),p.y(),p.z());
-        glVertex3d(q.x(),q.y(),q.z());
+        ::glVertex3d(p.x(),p.y(),p.z());
+        ::glVertex3d(q.x(),q.y(),q.z());
       }
     }
     ::glEnd();
@@ -213,15 +274,15 @@ public:
     // Draw *non-oriented* normals
     ::glColor3ub(255,0,0);
     ::glBegin(GL_LINES);
-    for (Point_const_iterator it = begin(); it != end(); it++)
+    for (const_iterator it = begin(); it != end(); it++)
     {
-      const Point& p = *it;
-      Normal n = it->normal();
-      if ( !n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
+      const Gyroviz_point& p = *it;
+      const Normal& n = p.normal();
+      if ( ! n.is_oriented() )
       {
         Point q = p + scale * n.get_vector();
-        glVertex3d(p.x(),p.y(),p.z());
-        glVertex3d(q.x(),q.y(),q.z());
+        ::glVertex3d(p.x(),p.y(),p.z());
+        ::glVertex3d(q.x(),q.y(),q.z());
       }
     }
     ::glEnd();
@@ -274,9 +335,7 @@ private:
     typename Geom_traits::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (Point_const_iterator it = begin(); it != end(); it++)
-    {
         sq_radius += sqd(*it, m_barycenter);
-    }
     sq_radius /= size();
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
@@ -327,18 +386,18 @@ get(CGAL::vertex_point_t, const Point_set_3<Gt>& points)
 /// of an Point_set_3 object.
 template <class Gt>
 class Point_set_vertex_normal_map 
-  : public boost::put_get_helper<typename Point_set_3<Gt>::Point_with_normal::Normal&, 
+  : public boost::put_get_helper<typename Point_set_3<Gt>::Normal&, 
   Point_set_vertex_normal_map<Gt> >
 {
 public:
   typedef Point_set_3<Gt> Point_set;
-  typedef typename Point_set::Point_with_normal::Normal Normal;  
+  typedef typename Point_set::Normal Normal;  
 
   // Property maps required types
   typedef boost::lvalue_property_map_tag            category;
   typedef Normal                                    value_type;
   typedef Normal&                                   reference;
-  typedef typename Point_set::Point_iterator        key_type;
+  typedef typename Point_set::iterator              key_type;
 
   Point_set_vertex_normal_map(const Point_set&) {}
 

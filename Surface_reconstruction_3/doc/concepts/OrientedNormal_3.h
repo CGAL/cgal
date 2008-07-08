@@ -43,7 +43,7 @@ public:
     Vector get_vector() const;
 
     /// Get normal orientation.
-    bool is_normal_oriented() const;
+    bool is_oriented() const;
 
     /// Set normal (vector + orientation).
     void set(const Vector& vector, bool oriented = true);

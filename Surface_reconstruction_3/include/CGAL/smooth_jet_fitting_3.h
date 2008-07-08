@@ -133,12 +133,9 @@ smooth_jet_fitting_3(InputIterator first,    ///< input points
   Tree tree(first,beyond);
 
   // iterate over input points, compute and output smooth points
-  InputIterator it;
-  for(it = first; it != beyond; it++)
-  {
-    *output = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,KNN,degre_fitting,degree_monge);
-    output++;
-  }
+  for(InputIterator it = first; it != beyond; it++)
+    *output++ = smooth_jet_fitting_3<Kernel,Tree,Point>(*it,tree,KNN,degre_fitting,degree_monge);
+    
   return output;
 }
 

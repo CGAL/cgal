@@ -203,8 +203,10 @@ int CPoissonView::OnCreate(LPCREATESTRUCT lpCreateStruct)
   if(CreateViewGLContext(hDC)==FALSE)
     return -1;
 
-  // Default mode
+  // Activate Z-buffer
   glEnable(GL_DEPTH_TEST);
+  
+  // Background color
   glClearColor(1.0f,1.0f,1.0f,1.0f);
 
   // activate lighting
@@ -239,6 +241,21 @@ void CPoissonView::OnPaint()
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  CGAL_assertion(pDoc->points()->begin() != pDoc->points()->end());
+
+  // Scene's region of interest (= bounding sphere minus outliers)
+  Sphere region_of_interest;
+  if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
+    region_of_interest = pDoc->points()->region_of_interest();
+  else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
+    region_of_interest = pDoc->poisson_function()->region_of_interest();
+  else if (pDoc->edit_mode() == CPoissonDoc::APSS)
+    region_of_interest = pDoc->apss_function()->region_of_interest();
+
+  // Do points have normals?
+  bool points_have_normals = (pDoc->points()->begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+  bool normals_are_oriented = pDoc->points()->begin()->normal().is_oriented();
+
   if(first_paint)
   {
     // allocate new arcball
@@ -246,17 +263,10 @@ void CPoissonView::OnPaint()
     GetClientRect(&rect);
     int width = rect.Width();
     int height = rect.Height();
-    Sphere arcball_sphere;
-    if (pDoc->edit_mode() == CPoissonDoc::POINT_SET)
-      arcball_sphere = pDoc->points()->region_of_interest();
-    else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-      arcball_sphere = pDoc->poisson_function()->region_of_interest();
-    else if (pDoc->edit_mode() == CPoissonDoc::APSS)
-      arcball_sphere = pDoc->apss_function()->region_of_interest();
-    float size = (float)sqrt(arcball_sphere.squared_radius());
-    float cx = (float)arcball_sphere.center().x();
-    float cy = (float)arcball_sphere.center().y();
-    float cz = (float)arcball_sphere.center().z();
+    float size = (float)sqrt(region_of_interest.squared_radius());
+    float cx = (float)region_of_interest.center().x();
+    float cy = (float)region_of_interest.center().y();
+    float cz = (float)region_of_interest.center().z();
     delete m_pArcball;
     m_pArcball = new Arcball(width,height,size,cx,cy,cz);
     first_paint = false;
@@ -291,22 +301,23 @@ void CPoissonView::OnPaint()
     if(m_view_vertices)
     {
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_vertices(0,0,0,2.0f);
+        pDoc->points()->gl_draw_vertices(0,0,0 /*color*/, 2.0f /*size*/);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0,2.0f);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_vertices(0,0,0 /*color*/, 2.0f /*size*/);
     }
 
     // draw Delaunay edges
     if(m_view_delaunay_edges && pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0,1.0f);
+        pDoc->poisson_function()->triangulation().gl_draw_delaunay_edges(0,0,0 /*color*/, 1.0f /*size*/);
 
     // draw normals
-    if(m_view_normals)
+    if(m_view_normals && points_have_normals)
     {
+      float length = (float)sqrt(region_of_interest.squared_radius() / 5000.0f);
       if (pDoc->edit_mode() == CPoissonDoc::POINT_SET || pDoc->edit_mode() == CPoissonDoc::APSS)
-        pDoc->points()->gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
+        pDoc->points()->gl_draw_normals(0,255,0 /*color*/, length);
       else if (pDoc->edit_mode() == CPoissonDoc::POISSON)
-        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /* color */, 0.2 /* length */);
+        pDoc->poisson_function()->triangulation().gl_draw_normals(0,255,0 /*color*/, length);
     }
 
     // draw surface reconstructed by marching tet

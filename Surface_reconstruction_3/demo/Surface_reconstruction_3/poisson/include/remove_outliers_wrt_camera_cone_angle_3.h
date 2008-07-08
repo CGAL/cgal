@@ -15,13 +15,10 @@
 ///
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
-/// @param InputIterator value_type is Point_3.
 ///
 /// @return computed greatest camera angle (radians).
-template < typename Kernel, typename CameraInputIterator >
-double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position, 
-                                       CameraInputIterator first_camera, 
-                                       CameraInputIterator beyond_camera)
+template <typename Kernel>
+double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -29,18 +26,17 @@ double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position,
     typedef typename Kernel::Vector_3 Vector;
 
     std::vector<Point> cameras;
-    std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
+    std::copy(gpt.cameras_begin(), gpt.cameras_end(), std::back_inserter(cameras));
 
     // give a score to each vertex: the score will help detecting outliers			  
     FT greatest_camera_angle=0, v1_v2, n_v1, n_v2, intermediate_score;
     Vector v1, v2;
-
     for(int i=0; i<cameras.size()-1; ++i)
     {
         for(int j=i+1; j<cameras.size(); ++j)
         {
-            v1 = cameras[i] - position;
-            v2 = cameras[j] - position;
+            v1 = cameras[i] - gpt;
+            v2 = cameras[j] - gpt;
             n_v1  = sqrt(v1.squared_length());
             n_v2  = sqrt(v2.squared_length()); 
             v1_v2 = v1 * v2; // scalar product
@@ -53,27 +49,45 @@ double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position,
     return greatest_camera_angle;
 }
 
+/// Utility class for remove_outliers_wrt_camera_cone_angle_3():
+/// Predicate that indicates if cameras cone's angle >= min_camera_cone_angle.
+template <typename Kernel>
+struct Is_cameras_cone_angle_greater_equal
+{
+    typedef typename Kernel::FT FT;
 
+private:
+    double m_min_camera_cone_angle;
 
-/// Remove vertices / cameras cone's angle < min_camera_cone_angle.
+public:
+    Is_cameras_cone_angle_greater_equal(FT min_camera_cone_angle) ///< min angle of camera's cone (radians)
+      : m_min_camera_cone_angle (min_camera_cone_angle) {}
+
+    bool operator() (const Gyroviz_point_3<Kernel>& gpt) const {
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(gpt);
+        return (greatest_camera_angle >= m_min_camera_cone_angle);
+    }
+};
+
+/// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This variant requires the kernel.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Gyroviz_point.
-/// @param OutputIterator value_type is Gyroviz_point.
+/// @param InputIterator value_type must be Gyroviz_point_3.
+/// @param OutputIterator value_type must be Gyroviz_point_3.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
-typename OutputIterator,
-typename Kernel
+          typename OutputIterator,
+          typename Kernel
 >
 OutputIterator
-remove_outliers_wrt_camera_cone_angle_3(InputIterator first,            ///< input points 
+remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< input points 
                                         InputIterator beyond,
-                                        OutputIterator output,          ///< output points
+                                        OutputIterator output,         ///< output points
                                         double min_camera_cone_angle,  ///< min angle of camera's cone (radians)
                                         const Kernel& /*kernel*/)
 {
@@ -82,66 +96,70 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,            ///< inp
     typedef typename Kernel::Point_3           Point;
     typedef Gyroviz_point_3<Kernel>            Gyroviz_point_3;
     
-
-  
-    // precondition: at least one element in the container.
-    // to fix: should have at least three distinct points
-    // but this is costly to check
-    CGAL_precondition(first != beyond);
-
     // precondition: at least 0
     CGAL_precondition(min_camera_cone_angle >= 0);
 
-    // iterate over input points
+    // iterate over input points and output points / camera angle >= min_camera_cone_angle
     for(InputIterator point_it = first; point_it != beyond; point_it++)
     {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it, point_it->cameras_begin(), point_it->cameras_end());
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it);
         if (greatest_camera_angle >= min_camera_cone_angle)
             *output++ = *point_it;
     }
-
     return output;
 }
 
-/// Remove vertices / cameras cone's angle < min_camera_cone_angle.
+/// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This function is mutating the input point set.
 /// This variant requires the kernel.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be Gyroviz_point_3.
 /// @param Kernel Geometric traits class.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator,
-typename Kernel
+          typename Kernel
 >
-void
-remove_outliers_wrt_camera_cone_angle_3(ForwardIterator first,          ///< input/output points
+ForwardIterator
+remove_outliers_wrt_camera_cone_angle_3(ForwardIterator first,         ///< input/output points
                                         ForwardIterator beyond,
                                         double min_camera_cone_angle,  ///< min angle of camera's cone (radians)
                                         const Kernel& /*kernel*/)
 {
-    CGAL_precondition(false); // nyi
+    // geometric types
+    typedef typename Kernel::FT                FT;
+    typedef typename Kernel::Point_3           Point;
+    typedef Gyroviz_point_3<Kernel>            Gyroviz_point_3;
+    
+    // precondition: at least 0
+    CGAL_precondition(min_camera_cone_angle >= 0);
+
+    ForwardIterator first_iterator_to_remove =
+      std::partition(first, beyond, Is_cameras_cone_angle_greater_equal<Kernel>(min_camera_cone_angle));
+
+    return first_iterator_to_remove;
 }
 
-
-/// Remove vertices / cameras cone's angle < min_camera_cone_angle.
+/// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be Gyroviz_point_3.
+/// @param OutputIterator value_type must be Gyroviz_point_3.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
-typename OutputIterator
+          typename OutputIterator
 >
 OutputIterator
-remove_outliers_wrt_camera_cone_angle_3(InputIterator first,            ///< input points
+remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< input points
                                         InputIterator beyond,
-                                        OutputIterator output,          ///< output points
+                                        OutputIterator output,         ///< output points
                                         double min_camera_cone_angle)  ///< min angle of camera's cone (radians)
 {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
@@ -149,23 +167,25 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,            ///< inp
     return remove_outliers_wrt_camera_cone_angle_3(first,beyond,output,min_camera_cone_angle,Kernel());
 }
 
-/// Remove vertices / cameras cone's angle < min_camera_cone_angle.
+/// Remove points / cameras cone's angle < min_camera_cone_angle.
 /// This function is mutating the input point set.
 /// This variant deduces the kernel from iterator types.
 ///
 /// Precondition: min_camera_cone_angle >= 0.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be Gyroviz_point_3.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
-void
-remove_outliers_wrt_camera_cone_angle_3(ForwardIterator first,          ///< input/output points
+ForwardIterator
+remove_outliers_wrt_camera_cone_angle_3(ForwardIterator first,         ///< input/output points
                                         ForwardIterator beyond,
                                         double min_camera_cone_angle)  ///< min angle of camera's cone (radians)
 {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
     typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
-    remove_outliers_wrt_camera_cone_angle_3(first,beyond,min_camera_cone_angle,Kernel());
+    return remove_outliers_wrt_camera_cone_angle_3(first,beyond,min_camera_cone_angle,Kernel());
 }
 
 

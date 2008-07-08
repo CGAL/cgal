@@ -138,6 +138,7 @@
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
+				BrowseInformation="0"
 				WarningLevel="2"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
@@ -424,6 +425,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\CGAL\Poisson_implicit_function.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\CGAL\random_simplification_points_3.h"
 				>
 			</File>
 			<File

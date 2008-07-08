@@ -87,16 +87,14 @@ public:
   // Default constructor, copy constructor and operator =() are fine
 
   void gl_draw_delaunay_vertices(unsigned char r, unsigned char g, unsigned char b,
-                                 float size) const
+                                 float point_size) const
   {
     // Draw input points
-    ::glPointSize(size);
+    ::glPointSize(point_size);
     ::glColor3ub(r,g,b);
     ::glBegin(GL_POINTS);
     Finite_vertices_iterator v;
-    for(v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
+    for(v = finite_vertices_begin(); v != finite_vertices_end(); v++)
     {
       if(v->type() != INPUT)
         continue;
@@ -109,16 +107,12 @@ public:
     ::glPointSize(1.0f);
     ::glColor3ub(0,0,125);
     ::glBegin(GL_POINTS);
-    for(v = finite_vertices_begin();
-        v != finite_vertices_end();
-        v++)
+    for(v = finite_vertices_begin(); v != finite_vertices_end(); v++)
     {
+      if(v->type() != STEINER)
+        continue;
       const Point& p = v->point();
-      switch(v->type())
-      {
-        case STEINER:
-          ::glVertex3d(p.x(),p.y(),p.z());
-      }
+      ::glVertex3d(p.x(),p.y(),p.z());
     }
     ::glEnd();
   }
@@ -244,7 +238,7 @@ public:
         v++)
     { 
       Normal n = v->normal();
-	  if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() == 0)
+	  if ( n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() == 0)
       {
         Point a = v->point();
         Point b = a + c * n.get_vector();
@@ -261,7 +255,7 @@ public:
         v++)
     { 
       Normal n = v->normal();
-	  if ( n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() != 0)
+	  if ( n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR && v->type() != 0)
       {
         Point a = v->point();
         Point b = a + c * n.get_vector();
@@ -278,7 +272,7 @@ public:
         v++)
     {
       Normal n = v->normal();
-      if ( ! n.is_normal_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
+      if ( ! n.is_oriented() && n.get_vector() != CGAL::NULL_VECTOR )
       {
         Point a = v->point();
         Point b = a + c * n.get_vector();

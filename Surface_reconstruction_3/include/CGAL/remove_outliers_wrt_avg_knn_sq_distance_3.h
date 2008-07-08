@@ -24,6 +24,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
 #include <iterator>
+#include <algorithm>
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
@@ -55,10 +56,10 @@ compute_avg_knn_sq_distance_3(
     typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
     typedef typename Neighbor_search::iterator Search_iterator;
 
-    // gather set of (KNN+1) neighboring points
-    // performs KNN + 1 queries (if unique the query point is
-    // output first). search may be aborted when KNN is greater
-    // than number of input points
+    // Gather set of (KNN+1) neighboring points.
+    // Perform KNN + 1 queries (if in point set, the query point is
+    // output first). Search may be aborted when KNN is greater
+    // than number of input points.
     std::vector<Point> points;
     Neighbor_search search(tree,query,KNN+1);
     Search_iterator search_iterator = search.begin();
@@ -72,12 +73,12 @@ compute_avg_knn_sq_distance_3(
     }
     CGAL_precondition(points.size() >= 1);
 
-    // compute squared distance
+    // compute average squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
     FT sq_distance = 0;
     for(typename std::vector<Point>::iterator neighbor = points.begin(); neighbor != points.end(); neighbor++)
         sq_distance += sqd(*neighbor, query);
-    sq_distance /= FT(KNN);
+    sq_distance /= FT(points.size());
     return sq_distance;
 }
 
@@ -89,8 +90,8 @@ compute_avg_knn_sq_distance_3(
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
+/// @param OutputIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
 ///
 /// @return past-the-end output iterator.
@@ -107,48 +108,48 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      const Kernel& /*kernel*/,
                      double threshold_percent)  ///< percentage of points to remove
 {
-  // geometric types
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_3 Point;
+    // geometric types
+    typedef typename Kernel::FT FT;
+    typedef typename std::iterator_traits<InputIterator>::value_type Point;
 
-  // types for K nearest neighbors search structure
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
+    // types for K nearest neighbors search structure
+    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
+    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+    typedef typename Neighbor_search::Tree Tree;
+    typedef typename Neighbor_search::iterator Search_iterator;
 
-  // precondition: at least one element in the container.
-  // to fix: should have at least three distinct points
-  // but this is costly to check
-  CGAL_precondition(first != beyond);
+    // precondition: at least one element in the container.
+    // to fix: should have at least three distinct points
+    // but this is costly to check
+    CGAL_precondition(first != beyond);
 
-  // precondition: at least 2 nearest neighbors
-  CGAL_precondition(KNN >= 2);
+    // precondition: at least 2 nearest neighbors
+    CGAL_precondition(KNN >= 2);
 
-  CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
+    CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
-  // instanciate a KD-tree search
-  Tree tree(first,beyond);
+    // instanciate a KD-tree search
+    Tree tree(first,beyond);
 
-  // iterate over input points and add them to multimap sorted by distance to knn
-  std::multimap<FT,InputIterator> map;
-  for(InputIterator point_it = first; point_it != beyond; point_it++)
-  {
-    FT sq_distance = compute_avg_knn_sq_distance_3<Kernel,Tree>(*point_it,tree,KNN);
-    map.insert( std::pair<FT,InputIterator>(sq_distance,point_it) );
-  }
+    // iterate over input points and add them to multimap sorted by distance to knn
+    std::multimap<FT,Point> sorted_points;
+    for(InputIterator point_it = first; point_it != beyond; point_it++)
+    {
+      FT sq_distance = compute_avg_knn_sq_distance_3<Kernel>(*point_it,tree,KNN);
+      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
+    }
 
-  // output (100-threshold_percent) % best points
-  typename std::multimap<FT,InputIterator>::iterator map_it;
-  int index;
-  int last = int(double(map.size()) * ((100.0-threshold_percent)/100.0));
-  for(map_it = map.begin(), index=0; index < last; ++map_it, ++index)
-  {
-    InputIterator point_it = map_it->second;
-    *output = *point_it;
-    output++;
-  }
-  return output;
+    // output (100-threshold_percent) % best points
+    int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
+    typename std::multimap<FT,Point>::iterator src;
+    int index;
+    for (src = sorted_points.begin(), index = 0; 
+         index < first_index_to_remove; 
+         ++src, ++index)
+    {
+      *output++ = src->second;
+    }
+    return output;
 }
 
 /// Remove outliers:
@@ -160,12 +161,14 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3.
 /// @param Kernel Geometric traits class.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator,
           typename Kernel
 >
-void
+ForwardIterator
 remove_outliers_wrt_avg_knn_sq_distance_3(
                      ForwardIterator first,     ///< input/output points
                      ForwardIterator beyond,
@@ -173,9 +176,55 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
                      const Kernel& /*kernel*/,
                      double threshold_percent)  ///< percentage of points to remove
 {
-  CGAL_precondition(false); // nyi
-}
+    // geometric types
+    typedef typename Kernel::FT FT;
+    typedef typename std::iterator_traits<ForwardIterator>::value_type Point;
 
+    // types for K nearest neighbors search structure
+    typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
+    typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
+    typedef typename Neighbor_search::Tree Tree;
+    typedef typename Neighbor_search::iterator Search_iterator;
+
+    // precondition: at least one element in the container.
+    // to fix: should have at least three distinct points
+    // but this is costly to check
+    CGAL_precondition(first != beyond);
+
+    // precondition: at least 2 nearest neighbors
+    CGAL_precondition(KNN >= 2);
+
+    CGAL_precondition(threshold_percent >= 0 && threshold_percent <= 100);
+
+    // instanciate a KD-tree search
+    Tree tree(first,beyond);
+
+    // iterate over input points and add them to multimap sorted by distance to knn
+    std::multimap<FT,Point> sorted_points;
+    for(ForwardIterator point_it = first; point_it != beyond; point_it++)
+    {
+      FT sq_distance = compute_avg_knn_sq_distance_3<Kernel>(*point_it,tree,KNN);
+      sorted_points.insert( std::make_pair(sq_distance,*point_it) );
+    }
+    
+    // Replace [first, beyond) range by the multimap content.
+    // Return the iterator after the (100-threshold_percent) % best points.
+    ForwardIterator first_iterator_to_remove = beyond;
+    ForwardIterator dst = first;
+    int first_index_to_remove = int(double(sorted_points.size()) * ((100.0-threshold_percent)/100.0));
+    typename std::multimap<FT,Point>::iterator src;
+    int index;
+    for (src = sorted_points.begin(), index = 0; 
+         src != sorted_points.end(); 
+         ++src, ++index)
+    {
+      *dst++ = src->second;
+      if (index == first_index_to_remove)
+        first_iterator_to_remove = dst;
+    }
+
+    return first_iterator_to_remove;
+}
 
 /// Remove outliers:
 /// - compute average squared distance to the K nearest neighbors,
@@ -185,8 +234,8 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param InputIterator value_type is Point_3.
-/// @param OutputIterator value_type is Point_3.
+/// @param InputIterator value_type must be convertible to OutputIterator's value_type.
+/// @param OutputIterator value_type must be convertible to Point_3.
 ///
 /// @return past-the-end output iterator.
 template <typename InputIterator,
@@ -214,9 +263,11 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 /// Precondition: KNN >= 2.
 ///
 /// @heading Parameters:
-/// @param ForwardIterator value_type is Point_3.
+/// @param ForwardIterator value_type must be convertible to Point_3.
+///
+/// @return First iterator to remove (see erase-remove idiom).
 template <typename ForwardIterator>
-void
+ForwardIterator
 remove_outliers_wrt_avg_knn_sq_distance_3(
                      ForwardIterator first,     ///< input/output points
                      ForwardIterator beyond,
@@ -225,7 +276,7 @@ remove_outliers_wrt_avg_knn_sq_distance_3(
 {
   typedef typename std::iterator_traits<ForwardIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
-  remove_outliers_wrt_avg_knn_sq_distance_3(first,beyond,KNN,Kernel(),threshold_percent);
+  return remove_outliers_wrt_avg_knn_sq_distance_3(first,beyond,KNN,Kernel(),threshold_percent);
 }
 
 

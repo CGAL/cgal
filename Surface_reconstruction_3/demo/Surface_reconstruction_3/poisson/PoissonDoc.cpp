@@ -35,6 +35,8 @@
 #include <CGAL/smooth_jet_fitting_3.h>
 #include <CGAL/estimate_normals_pca_3.h>
 #include <CGAL/average_spacing_3.h>
+#include <CGAL/merge_epsilon_nearest_points_3.h>
+#include <CGAL/random_simplification_points_3.h>
 
 // STL
 #include <iostream>
@@ -54,20 +56,24 @@
 IMPLEMENT_DYNCREATE(CPoissonDoc, CDocument)
 
 BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
+    ON_COMMAND(ID_FILE_SAVE_SURFACE, OnFileSaveSurface)
+    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SURFACE, OnUpdateFileSaveSurface)
+    ON_COMMAND(ID_FILE_SAVE_AS, OnFileSaveAs)
+    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, OnUpdateFileSaveAs)
+    ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
+    ON_COMMAND(ID_EDIT_DELETE, OnEditDelete)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, OnUpdateEditDelete)
+    ON_COMMAND(ID_EDIT_RESET_SELECTION, OnEditResetSelection)
+    ON_UPDATE_COMMAND_UI(ID_EDIT_RESET_SELECTION, OnUpdateEditResetSelection)
     ON_COMMAND(ID_RECONSTRUCTION_DELAUNAYREFINEMENT, OnReconstructionDelaunayRefinement)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON, OnReconstructionPoisson)
 	ON_COMMAND(ID_RECONSTRUCTION_POISSON_NORMALIZED, OnReconstructionPoissonNormalized)
     ON_COMMAND(ID_ALGORITHMS_REFINEINSHELL, OnAlgorithmsRefineInShell)
     ON_COMMAND(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnReconstructionPoissonSurfaceMeshing)
-    ON_COMMAND(ID_EDIT_OPTIONS, OnEditOptions)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON, OnUpdateReconstructionPoisson)
     ON_UPDATE_COMMAND_UI(ID_RECONSTRUCTION_POISSON_SURFACE_MESHING, OnUpdateReconstructionPoissonSurfaceMeshing)
     ON_COMMAND(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnAlgorithmsMarchingTetContouring)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_MARCHINGTETCONTOURING, OnUpdateAlgorithmsMarchingTetContouring)
-    ON_COMMAND(ID_FILE_SAVE_SURFACE, OnFileSaveSurface)
-    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SURFACE, OnUpdateFileSaveSurface)
-    ON_COMMAND(ID_FILE_SAVE_AS, OnFileSaveAs)
-    ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, OnUpdateFileSaveAs)
     ON_COMMAND(ID_ALGORITHMS_EXTRAPOLATENORMALS, OnAlgorithmsExtrapolatenormals)
     ON_COMMAND(ID_ALGORITHMS_POISSONSTATISTICS, OnAlgorithmsPoissonStatistics)
     ON_UPDATE_COMMAND_UI(ID_ALGORITHMS_POISSONSTATISTICS, OnUpdateAlgorithmsPoissonStatistics)
@@ -106,6 +112,10 @@ BEGIN_MESSAGE_MAP(CPoissonDoc, CDocument)
 	ON_COMMAND(ID_RECONSTRUCTION_SAVEAS, &CPoissonDoc::OnReconstructionSaveas)
 	ON_COMMAND(ID_STEP_CALCULATEAVERAGESPACING, OnCalculateAverageSpacing)
 	ON_COMMAND(ID_STEP_EXTRAPOLATENORMALSUSINGGAUSSIANKERNELS,OnExtrapolateNormalsUsingGaussianKernel)
+    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, &CPoissonDoc::OnPointCloudSimplificationByClustering)
+    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_BY_CLUSTERING, &CPoissonDoc::OnUpdatePointCloudSimplificationByClustering)
+    ON_COMMAND(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, &CPoissonDoc::OnPointCloudSimplificationRandom)
+    ON_UPDATE_COMMAND_UI(ID_POINT_CLOUD_SIMPLIFICATION_RANDOM, &CPoissonDoc::OnUpdatePointCloudSimplificationRandom)
 END_MESSAGE_MAP()
 
 
@@ -142,9 +152,13 @@ CPoissonDoc::CPoissonDoc()
   // K-nearest neighbours options
   m_number_of_neighbours = 7;
 
-  // Outlier removal
-  m_min_cameras_cone_angle = 2; // min angle of camera's cone (degrees) 
-  m_threshold_percent_avg_knn_sq_dst = 10; // percentage of outliers to remove 
+  // Outliers removal
+  m_min_cameras_cone_angle = 0.5; // min angle of camera's cone (degrees) 
+  m_threshold_percent_avg_knn_sq_dst = 5.0; // percentage of outliers to remove 
+
+  // Point set simplification
+  m_clustering_step = 0.004; // Grid's step for simplification by clustering
+  m_random_simplification_percentage = 50.0; // percentage of random points to remove 
 }
 
 CPoissonDoc::~CPoissonDoc()
@@ -460,12 +474,15 @@ void CPoissonDoc::update_status()
   {
     CString points;
     points.Format("%d points",m_points.size());
+    CString selected_points;
+    selected_points.Format("%d selected",m_points.nb_selected_points());
 
     // write message to cerr
-    std::cerr << "=> " << points << std::endl;
+    std::cerr << "=> " << points << " (" << selected_points << ")" << std::endl;
 
     // Update status bar
     pStatus->SetPaneText(1,points);
+    pStatus->SetPaneText(2,selected_points);
     pStatus->UpdateWindow();
   }
   else if (m_edit_mode == POISSON)
@@ -543,6 +560,8 @@ void CPoissonDoc::OnEditOptions()
   dlg.m_number_of_neighbours = m_number_of_neighbours;
   dlg.m_min_cameras_cone_angle = m_min_cameras_cone_angle;
   dlg.m_threshold_percent_avg_knn_sq_dst = m_threshold_percent_avg_knn_sq_dst;
+  dlg.m_clustering_step = m_clustering_step;
+  dlg.m_random_simplification_percentage = m_random_simplification_percentage;
 
   if(dlg.DoModal() == IDOK)
   {
@@ -559,6 +578,8 @@ void CPoissonDoc::OnEditOptions()
     m_number_of_neighbours = dlg.m_number_of_neighbours;
     m_min_cameras_cone_angle = dlg.m_min_cameras_cone_angle;
     m_threshold_percent_avg_knn_sq_dst = dlg.m_threshold_percent_avg_knn_sq_dst;
+    m_clustering_step = dlg.m_clustering_step;
+    m_random_simplification_percentage = dlg.m_random_simplification_percentage;
 
     UpdateAllViews(NULL);
     EndWaitCursor();
@@ -615,12 +636,21 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   BeginWaitCursor();
   status_message("Orient Normals with MST...");
   CGAL::Timer task_timer; task_timer.start();
+  
+  // Copy normals to select swapped ones below
+  std::vector<Normal> normals_copy(m_points.normals_begin(), m_points.normals_end());
 
   CGAL::orient_normals_minimum_spanning_tree_3(m_points.begin(), m_points.end(),
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
                                                m_number_of_neighbours);
+                                               
+  // Select swapped normals
+  m_points.select(m_points.begin(), m_points.end(), false);
+  for (int i=0; i<m_points.size(); i++)
+    if (m_points[i].normal().get_vector() * normals_copy[i].get_vector() < 0)
+      m_points.select(&m_points[i]);
 
   status_message("Orient Normals with MST...done (%lf s)", task_timer.time());
   update_status();
@@ -643,10 +673,19 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWrtCameras()
   status_message("Orient Normals wrt Cameras...");
   CGAL::Timer task_timer; task_timer.start();
 
+  // Copy normals to select swapped ones below
+  std::vector<Normal> normals_copy(m_points.normals_begin(), m_points.normals_end());
+
   CGAL::orient_normals_wrt_cameras_3(m_points.begin(), m_points.end(),
                                      get(CGAL::vertex_point, m_points),
                                      get(boost::vertex_normal, m_points),
                                      get(boost::vertex_cameras, m_points));
+                                               
+  // Select swapped normals
+  m_points.select(m_points.begin(), m_points.end(), false);
+  for (int i=0; i<m_points.size(); i++)
+    if (m_points[i].normal().get_vector() * normals_copy[i].get_vector() < 0)
+      m_points.select(&m_points[i]);
 
   status_message("Orient Normals wrt Cameras...done (%lf s)", task_timer.time());
   update_status();
@@ -695,7 +734,7 @@ void CPoissonDoc::OnUpdateCreatePoissonTriangulation(CCmdUI *pCmdUI)
 {
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
+  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == POISSON)
                  && points_have_normals && normals_are_oriented);
 }
@@ -927,7 +966,7 @@ void CPoissonDoc::OnAlgorithmsMarchingTetContouring()
   CGAL_assertion(m_poisson_function != NULL);
 
   BeginWaitCursor();
-  status_message("Marching tet contouring (%3.1lf%%)...",m_threshold_percent_avg_knn_sq_dst);
+  status_message("Marching tet contouring (%3.1lf%%)...", m_contouring_value);
   CGAL::Timer task_timer; task_timer.start();
 
   m_contour.clear(); // clear previous call
@@ -1104,14 +1143,12 @@ void CPoissonDoc::OnAlgorithmsOutliersRemovalWrtCamerasConeAngle()
   status_message("Remove outliers / cameras cone's angle is low...");
   CGAL::Timer task_timer; task_timer.start();
 
-  // todo: use mutating version when ready
-  Point_set output;
-  remove_outliers_wrt_camera_cone_angle_3(
-          m_points.begin(), m_points.end(),
-          std::back_inserter(output),
-          m_min_cameras_cone_angle*M_PI/180.0);
-  m_points.clear();
-  std::copy(output.begin(),output.end(),std::back_inserter(m_points));
+  // Select points to delete
+  Point_set::iterator first_iterator_to_remove = 
+    remove_outliers_wrt_camera_cone_angle_3(
+            m_points.begin(), m_points.end(),
+            m_min_cameras_cone_angle*M_PI/180.0);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Remove outliers / cameras cone's angle is low...done (%lf s)", task_timer.time());
   update_status();
@@ -1134,16 +1171,14 @@ void CPoissonDoc::OnOutliersRemovalWrtAvgKnnSqDist()
   BeginWaitCursor();
   status_message("Remove outliers wrt average squared distance to knn...");
   CGAL::Timer task_timer; task_timer.start();
-
-  // todo: use mutating version when ready
-  Point_set output;
-  CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
-          m_points.begin(), m_points.end(),
-          std::back_inserter(output),
-          m_number_of_neighbours,
-          m_threshold_percent_avg_knn_sq_dst);
-  m_points.clear();
-  std::copy(output.begin(),output.end(),std::back_inserter(m_points));
+  
+  // Select points to delete
+  Point_set::iterator first_iterator_to_remove = 
+    CGAL::remove_outliers_wrt_avg_knn_sq_distance_3(
+            m_points.begin(), m_points.end(),
+            m_number_of_neighbours,
+            m_threshold_percent_avg_knn_sq_dst);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
 
   status_message("Remove outliers wrt average squared distance to knn...done (%lf s)", task_timer.time());
   update_status();
@@ -1251,7 +1286,7 @@ void CPoissonDoc::OnUpdateReconstructionApssReconstruction(CCmdUI *pCmdUI)
 {
   CGAL_assertion(m_points.begin() != m_points.end());
   bool points_have_normals = (m_points.begin()->normal().get_vector() != CGAL::NULL_VECTOR);
-  bool normals_are_oriented = m_points.begin()->normal().is_normal_oriented();
+  bool normals_are_oriented = m_points.begin()->normal().is_oriented();
   pCmdUI->Enable((m_edit_mode == POINT_SET || m_edit_mode == APSS)
                  && points_have_normals && normals_are_oriented);
 }
@@ -1289,6 +1324,7 @@ void CPoissonDoc::OnCalculateAverageSpacing()
   UpdateAllViews(NULL);
   EndWaitCursor();
 }
+
 void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
 {
   BeginWaitCursor();
@@ -1301,4 +1337,90 @@ void CPoissonDoc::OnExtrapolateNormalsUsingGaussianKernel()
   update_status();
   UpdateAllViews(NULL);
   EndWaitCursor();
+}
+
+void CPoissonDoc::OnEditDelete()
+{
+    BeginWaitCursor();
+    status_message("Delete selected points");
+
+    m_points.deleted_selection();
+
+    update_status();
+    UpdateAllViews(NULL);
+    EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateEditDelete(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
+
+void CPoissonDoc::OnEditResetSelection()
+{
+    BeginWaitCursor();
+    status_message("Reset selection");
+
+    m_points.select(m_points.begin(), m_points.end(), false);
+
+    update_status();
+    UpdateAllViews(NULL);
+    EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdateEditResetSelection(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
+
+void CPoissonDoc::OnPointCloudSimplificationByClustering()
+{
+  BeginWaitCursor();
+  status_message("Point cloud simplification by clustering...");
+  CGAL::Timer task_timer; task_timer.start();
+
+  // Get point set's size
+  Sphere bounding_sphere = m_points.bounding_sphere();
+  FT size = sqrt(bounding_sphere.squared_radius());
+
+  // Select points to delete
+  Point_set::iterator first_iterator_to_remove = 
+    CGAL::merge_epsilon_nearest_points_3(
+            m_points.begin(), m_points.end(),
+            m_clustering_step*size);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
+
+  status_message("Point cloud simplification by clustering...done (%lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
+}
+
+void CPoissonDoc::OnPointCloudSimplificationRandom()
+{
+  BeginWaitCursor();
+  status_message("Random point cloud simplification...");
+  CGAL::Timer task_timer; task_timer.start();
+
+  // Select points to delete
+  Point_set::iterator first_iterator_to_remove = 
+    CGAL::random_simplification_points_3(
+            m_points.begin(), m_points.end(),
+            m_random_simplification_percentage);
+  m_points.select(first_iterator_to_remove, m_points.end(), true);
+
+  status_message("Random point cloud simplification...done (%lf s)", task_timer.time());
+  update_status();
+  UpdateAllViews(NULL);
+  EndWaitCursor();
+}
+
+void CPoissonDoc::OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI)
+{
+  pCmdUI->Enable(m_edit_mode == POINT_SET);
 }

@@ -33,5 +33,7 @@ public:
 	double m_sm_distance_apss; // upper bound of distance to surface (APSS)
 	unsigned int m_number_of_neighbours; // K-nearest neighbours
 	double m_min_cameras_cone_angle; // min angle of camera's cone (degrees) 
-  int m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove 
+    double m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove 
+    double m_clustering_step; // Grid's step for simplification by clustering 
+    double m_random_simplification_percentage; // percentage of random points to remove 
 };

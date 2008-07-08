@@ -559,7 +559,7 @@ public:
       {
         Vertex_handle nv = *it;
         normal = normal + nv->normal().get_vector();
-        oriented_normal &=  nv->normal().is_normal_oriented();
+        oriented_normal &=  nv->normal().is_oriented();
       }
 
       FT sq_norm = normal * normal;

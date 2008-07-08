@@ -7,7 +7,7 @@ Analysis
 Processing
 - smoothing (via jet-fitting + reprojection) (done)
 - outlier removal (to check which one is easy with CGAL components) (done)
-- simplify point sets: clustering, random simplification (laurent)
+- simplify point sets: clustering, random simplification (done)
 
 Normal estimation
 - KNN + point-based PCA (done)

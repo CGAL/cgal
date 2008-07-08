@@ -93,19 +93,23 @@ public:
   Gyroviz_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
   : Base(o)
   {
+    m_is_selected = false;
   }
   Gyroviz_point_3(FT x, FT y, FT z)
   : Base(x,y,z)
   {
+    m_is_selected = false;
   }
   Gyroviz_point_3(const Point_3& point,
                   const Normal& normal = CGAL::NULL_VECTOR)
   : Base(point, normal)
   {
+    m_is_selected = false;
   }
   Gyroviz_point_3(const Point_with_normal& pwn)
   : Base(pwn)
   {
+    m_is_selected = false;
   }
   template < class InputIterator >
   Gyroviz_point_3(const Point_3& point,
@@ -113,6 +117,7 @@ public:
                   InputIterator beyond_camera_point2_pair)
   : Base(point, CGAL::NULL_VECTOR)
   {
+    m_is_selected = false;
     camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
   }
   template < class InputIterator >
@@ -122,6 +127,7 @@ public:
                   InputIterator beyond_camera_point2_pair)
   : Base(point, normal)
   {
+    m_is_selected = false;
     camera_point2_map.insert(first_camera_point2_pair, beyond_camera_point2_pair); 
   }
 
@@ -145,6 +151,10 @@ public:
   { 
     return ! (*this == that); 
   }
+
+  // Selection
+  bool is_selected() const { return m_is_selected; }
+  void select(bool is_selected=true) { m_is_selected = is_selected; }
 
   /// Get camera/2D point pairs.
   Camera_point2_pair_const_iterator camera_point2_pairs_begin() const 
@@ -189,6 +199,9 @@ public:
     
 // Data
 private:
+
+  // selection flag for GUI purpose
+  bool m_is_selected;
 
   // List of cameras
   Camera_point2_map camera_point2_map;

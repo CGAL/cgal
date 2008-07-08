@@ -66,20 +66,6 @@ orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point positio
     {
       normal = Normal(n, false /* non oriented */);
     }
-    //// TEST: flag only inverted normals as oriented to see the result in 3D rendering
-    //if (max_dot_product > 0)
-    //{
-    //  Vector cp = p - max_camera;
-    //  FT dot = (cp * n);
-    //  if (dot > 0)
-    //    normal = Normal(-n, true /* oriented */);
-    //  else
-    //    normal = Normal(n, false /* non oriented */);
-    //}
-    //else // if failure
-    //{
-    //  normal = Normal(n, false /* non oriented */);
-    //}
 }
 
 
@@ -92,7 +78,7 @@ orient_normal_wrt_cameras_3(const typename Gt::Point_3& p, ///< 3D point positio
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
 /// - VertexCamerasMap is a model of boost::readable_property_map.
-
+/// - Normals must be unit vectors.
 template < class VertexIterator, class VertexPointMap, class VertexNormalMap, class VertexCamerasMap >
 void
 orient_normals_wrt_cameras_3(VertexIterator first, ///< range of vertices

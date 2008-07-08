@@ -37,7 +37,7 @@ typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // Model of the Poi
 typedef Point_with_normal::Normal Normal; // Model of OrientedNormal_3 concept
 
 // Point + normal + Gyroviz stuff
-typedef Gyroviz_point_3<Kernel> Gyroviz_point; // subclass of Point_with_normal
+typedef Gyroviz_point_3<Kernel> Gyroviz_point; // Point_with_normal + selection flag + cameras
 
 // Point set (points are of type Gyroviz_point)
 typedef Point_set_3<Kernel> Point_set;
@@ -129,7 +129,9 @@ private:
 
     // Outlier removal
     double m_min_cameras_cone_angle; // min angle of camera's cone (degrees)
-    int m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
+    double m_threshold_percent_avg_knn_sq_dst; // percentage of outliers to remove
+    double m_clustering_step; // Grid's step for simplification by clustering 
+    double m_random_simplification_percentage; // percentage of random points to remove
 
 // Public methods
 public:
@@ -179,26 +181,32 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
+protected:
+
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
     virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+    afx_msg void OnFileSaveSurface();
+    afx_msg void OnUpdateFileSaveSurface(CCmdUI *pCmdUI);
+    afx_msg void OnFileSaveAs();
+    afx_msg void OnUpdateFileSaveAs(CCmdUI *pCmdUI);
+    afx_msg void OnEditOptions();
+    afx_msg void OnEditDelete();
+    afx_msg void OnUpdateEditDelete(CCmdUI *pCmdUI);
+    afx_msg void OnEditResetSelection();
+    afx_msg void OnUpdateEditResetSelection(CCmdUI *pCmdUI);
 	afx_msg void OnOneStepPoissonReconstructionWithNormalizedDivergence();
     afx_msg void OnReconstructionDelaunayRefinement();
     afx_msg void OnReconstructionPoisson();
 	afx_msg void OnReconstructionPoissonNormalized();
     afx_msg void OnAlgorithmsRefineInShell();
     afx_msg void OnReconstructionPoissonSurfaceMeshing();
-    afx_msg void OnEditOptions();
     afx_msg void OnUpdateReconstructionPoisson(CCmdUI *pCmdUI);
     afx_msg void OnUpdateReconstructionPoissonSurfaceMeshing(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsMarchingTetContouring();
     afx_msg void OnUpdateAlgorithmsMarchingTetContouring(CCmdUI *pCmdUI);
-    afx_msg void OnFileSaveSurface();
-    afx_msg void OnUpdateFileSaveSurface(CCmdUI *pCmdUI);
-    afx_msg void OnFileSaveAs();
-    afx_msg void OnUpdateFileSaveAs(CCmdUI *pCmdUI);
     afx_msg void OnAlgorithmsExtrapolatenormals();
     afx_msg void OnAlgorithmsPoissonStatistics();
     afx_msg void OnUpdateAlgorithmsPoissonStatistics(CCmdUI *pCmdUI);
@@ -235,8 +243,11 @@ public:
     afx_msg void OnUpdateModeAPSS(CCmdUI *pCmdUI);
 	afx_msg void OnCalculateAverageSpacing();
 	afx_msg void OnExtrapolateNormalsUsingGaussianKernel();
-public:
 	afx_msg void OnReconstructionSaveas();
+    afx_msg void OnPointCloudSimplificationByClustering();
+    afx_msg void OnPointCloudSimplificationRandom();
+    afx_msg void OnUpdatePointCloudSimplificationByClustering(CCmdUI *pCmdUI);
+    afx_msg void OnUpdatePointCloudSimplificationRandom(CCmdUI *pCmdUI);
 };
 
 
