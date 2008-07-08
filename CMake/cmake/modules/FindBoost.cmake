@@ -346,9 +346,9 @@ ELSE ()
   
   IF (MSVC90)
     SET (_boost_COMPILER "-vc90")
-  ELSEIF ()
+  ELSEIF (MSVC80)
     SET (_boost_COMPILER "-vc80")
-  ELSEIF ()
+  ELSEIF (MSVC71)
     SET (_boost_COMPILER "-vc71")
   ENDIF()
   
