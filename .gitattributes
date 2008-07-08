@@ -3095,6 +3095,11 @@ Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.pdf -text svneol=unset#application/pdf
 Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
+Polyhedron/demo/Polyhedron/MainWindow.ui -text
+Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
+Polyhedron/demo/Polyhedron/editcopy.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/minus.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/plus.png -text svneol=unset#image/png
 Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text svneol=unset#application/postscript
 Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text svneol=unset#application/postscript

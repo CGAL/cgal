@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/cgal/icons" >
+    <file alias="duplicate" >editcopy.png</file>
+    <file alias="plus" >plus.png</file>
+    <file alias="minus" >minus.png</file>
+  </qresource>
+</RCC>

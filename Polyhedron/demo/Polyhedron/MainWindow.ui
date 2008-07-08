@@ -1,0 +1,312 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>43</y>
+     <width>800</width>
+     <height>532</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2" >
+    <item>
+     <widget class="QSplitter" name="splitter" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="" >
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QTreeView" name="treeView" >
+          <property name="editTriggers" >
+           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+          </property>
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
+          </property>
+          <property name="indentation" >
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout" >
+          <item>
+           <widget class="QToolButton" name="addButton" >
+            <property name="text" >
+             <string>+</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="Polyhedron_3.qrc" >
+              <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="removeButton" >
+            <property name="text" >
+             <string>-</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="Polyhedron_3.qrc" >
+              <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="duplicateButton" >
+            <property name="text" >
+             <string>...</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="Polyhedron_3.qrc" >
+              <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="Viewer" name="viewer" />
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionQuit" />
+   </widget>
+   <widget class="QMenu" name="menuEdit" >
+    <property name="title" >
+     <string>&amp;Edit</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAlgorithms" >
+    <property name="title" >
+     <string>&amp;Algorithms</string>
+    </property>
+    <widget class="QMenu" name="menu_Principale_components_analysis" >
+     <property name="title" >
+      <string>&amp;Principale components analysis</string>
+     </property>
+     <addaction name="actionFitPlane" />
+     <addaction name="actionFitLine" />
+    </widget>
+    <addaction name="menu_Principale_components_analysis" />
+    <addaction name="actionCurvatureEstimation" />
+   </widget>
+   <widget class="QMenu" name="menuOperations" >
+    <property name="title" >
+     <string>&amp;Operations</string>
+    </property>
+    <widget class="QMenu" name="menuSubdivision" >
+     <property name="title" >
+      <string>Subdivision</string>
+     </property>
+     <addaction name="actionCatmullClark" />
+    </widget>
+    <widget class="QMenu" name="menu_Boolean_operations" >
+     <property name="title" >
+      <string>&amp;Boolean operations</string>
+     </property>
+     <addaction name="actionUnion" />
+     <addaction name="actionIntersection" />
+     <addaction name="actionDifference" />
+    </widget>
+    <addaction name="actionSimplify" />
+    <addaction name="menuSubdivision" />
+    <addaction name="actionKernel" />
+    <addaction name="menu_Boolean_operations" />
+   </widget>
+   <widget class="QMenu" name="menuView" >
+    <property name="title" >
+     <string>&amp;View</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuCamera" >
+    <property name="title" >
+     <string>&amp;Camera</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuScene" >
+    <property name="title" >
+     <string>&amp;Scene</string>
+    </property>
+    <addaction name="actionLoadPolyhedron" />
+    <addaction name="actionErasePolyhedron" />
+    <addaction name="actionDuplicatePolyhedron" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuScene" />
+   <addaction name="menuEdit" />
+   <addaction name="menuAlgorithms" />
+   <addaction name="menuOperations" />
+   <addaction name="menuView" />
+   <addaction name="menuCamera" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>575</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>29</y>
+     <width>800</width>
+     <height>14</height>
+    </rect>
+   </property>
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="actionQuit" >
+   <property name="text" >
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionSimplify" >
+   <property name="text" >
+    <string>&amp;Simplify</string>
+   </property>
+  </action>
+  <action name="actionCatmullClark" >
+   <property name="text" >
+    <string>Catmull-Clark</string>
+   </property>
+  </action>
+  <action name="actionKernel" >
+   <property name="text" >
+    <string>&amp;Kernel</string>
+   </property>
+  </action>
+  <action name="actionUnion" >
+   <property name="text" >
+    <string>&amp;Union</string>
+   </property>
+  </action>
+  <action name="actionIntersection" >
+   <property name="text" >
+    <string>&amp;Intersection</string>
+   </property>
+  </action>
+  <action name="actionDifference" >
+   <property name="text" >
+    <string>&amp;Difference</string>
+   </property>
+  </action>
+  <action name="actionFitPlane" >
+   <property name="text" >
+    <string>Fit a &amp;plane</string>
+   </property>
+  </action>
+  <action name="actionFitLine" >
+   <property name="text" >
+    <string>Fit a &amp;line</string>
+   </property>
+  </action>
+  <action name="actionCurvatureEstimation" >
+   <property name="text" >
+    <string>&amp;Curvature estimation</string>
+   </property>
+  </action>
+  <action name="actionLoadPolyhedron" >
+   <property name="icon" >
+    <iconset resource="Polyhedron_3.qrc" >
+     <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Load polyhedron...</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionErasePolyhedron" >
+   <property name="icon" >
+    <iconset resource="Polyhedron_3.qrc" >
+     <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Erase selected polyhedron</string>
+   </property>
+  </action>
+  <action name="actionDuplicatePolyhedron" >
+   <property name="icon" >
+    <iconset resource="Polyhedron_3.qrc" >
+     <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+   </property>
+   <property name="text" >
+    <string>&amp;Duplicate selected polyhedron</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QGLViewer</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Polyhedron_3.qrc" />
+ </resources>
+ <connections/>
+</ui>

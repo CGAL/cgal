@@ -225,6 +225,14 @@ Optimisation_doc/.tmp
 Optimisation_doc/Makefile
 Optimisation_doc/bin
 Optimisation_doc/doc_ps
+Polyhedron/demo/Polyhedron/*.exe
+Polyhedron/demo/Polyhedron/*.ui
+Polyhedron/demo/Polyhedron/*_moc.cpp
+Polyhedron/demo/Polyhedron/.qglviewer*.xml
+Polyhedron/demo/Polyhedron/Makefile
+Polyhedron/demo/Polyhedron/Polyhedron_3
+Polyhedron/demo/Polyhedron/moc_*.h
+Polyhedron/demo/Polyhedron/ui_*.h
 Polynomial/doc_html
 Polynomial/doc_pdf
 Polynomial/doc_ps
