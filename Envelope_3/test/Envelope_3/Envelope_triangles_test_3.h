@@ -81,7 +81,8 @@ protected:
 
   typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
-  typedef std::pair<X_monotone_curve_2, Intersection_type>           Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, 
+    typename EnvelopeTraits_3::Multiplicity>                         Intersection_curve;
 
 public:
   // c'tor
@@ -170,6 +171,10 @@ public:
             #endif
             curves_col.push_back(curve.first);
             //insert(result, curve.first, pl);
+          }
+          else
+          {
+            CGAL_assertion_msg(false, "wrong intersection type");
           }
         }
       }

@@ -81,7 +81,8 @@ protected:
   typedef typename Minimization_diagram_2::Inner_ccb_iterator        Hole_iterator;
   typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
-  typedef std::pair<X_monotone_curve_2, Intersection_type>           Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, 
+    typename EnvelopeTraits_3::Multiplicity>                         Intersection_curve;
 
 public:
   // c'tor
@@ -93,7 +94,9 @@ public:
   virtual ~Envelope_test_3(){}
   
   template <class SurfaceIterator>
-  void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end, Minimization_diagram_2 &result)
+  void construct_lu_envelope(SurfaceIterator begin, 
+                             SurfaceIterator end, 
+                             Minimization_diagram_2 &result)
   {
     if (begin == end)
     {
@@ -162,7 +165,7 @@ public:
           else if (CGAL::assign(curve, cur_obj))
           {
             curves_col.push_back(curve.first);
-           /* #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
+            /*#ifdef CGAL_DEBUG_ENVELOPE_TEST_3
               std::cout << "intersection between surfaces is a curve: " << curve.first << std::endl;
             #endif
             std::list<Object> objs;
@@ -176,6 +179,10 @@ public:
               curves_col.push_back(curr_cv);
             }*/
             //insert(result, curve.first, pl);
+          }
+          else
+          {
+            CGAL_assertion_msg(false, "wrong intersection type");
           }
         }
       }

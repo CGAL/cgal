@@ -65,7 +65,7 @@ public:
     return (m_decision != DAC_DECISION_NOT_SET);
   }
   
-  Dac_decision get_decision()
+  Dac_decision get_decision() const
   {
     return m_decision;
   }                                                   
