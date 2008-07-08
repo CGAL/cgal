@@ -34,19 +34,19 @@
 CGAL_BEGIN_NAMESPACE
 
 /* Defines functors:
-- Is_zero
-- Is_one
-- Is_negative
-- Is_positive
-- Sgn
-- Abs
-- Compare
-- Square
-- Sqrt
-- Div
-- Gcd
-- To_double
-- To_interval
+   - Is_zero
+   - Is_one
+   - Is_negative
+   - Is_positive
+   - Sgn
+   - Abs
+   - Compare
+   - Square
+   - Sqrt
+   - Div
+   - Gcd
+   - To_double
+   - To_interval
 */
 
 template < class NT >
@@ -55,8 +55,6 @@ template < class NT >
 struct Is_positive : Real_embeddable_traits<NT>::Is_positive {};
 template < class NT >
 struct Abs : Real_embeddable_traits<NT>::Abs{};
-template < class NT >
-struct Compare : Real_embeddable_traits<NT>::Compare {};
 template < class NT >
 struct To_double : Real_embeddable_traits<NT>::To_double{};
 template < class NT >
@@ -87,12 +85,37 @@ template <class AST_Is_zero, class RET_Is_zero>
 struct Is_zero_base : AST_Is_zero {} ;
 template <class RET_Is_zero>
 struct Is_zero_base <CGAL::Null_functor, RET_Is_zero >: RET_Is_zero {} ;
-}
+} // namespace CGALi
 template < class NT >
 struct Is_zero : 
   CGALi::Is_zero_base
   <typename Algebraic_structure_traits<NT>::Is_zero,
    typename Real_embeddable_traits<NT>::Is_zero>{}; 
+
+
+// This is due to the fact that CGAL::Compare is used for other 
+// non-realembeddable types as well.
+// In this case we try to provide a default implementation
+namespace CGALi {
+template <class NT, class Compare> struct Compare_base: public Compare {};
+template <class NT> struct Compare_base<NT,Null_functor>
+  :public Binary_function< NT, NT, Comparison_result > {
+  Comparison_result operator()( const NT& x, const NT& y) const
+  {
+    if (x < y) return SMALLER;
+    if (x > y) return LARGER;
+    CGAL_postcondition(x == y);
+    return EQUAL;   
+  }
+};
+} // namespace CGALi
+
+template < class NT >
+struct Compare
+  :public CGALi::Compare_base
+  <NT,typename Real_embeddable_traits<NT>::Compare>{};
+
+
 
 CGAL_END_NAMESPACE
 
