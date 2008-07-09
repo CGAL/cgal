@@ -15,10 +15,13 @@
 ///
 /// @heading Parameters:
 /// @param Kernel Geometric traits class.
+/// @param CameraInputIterator value_type must be convertible to Point_3.
 ///
 /// @return computed greatest camera angle (radians).
-template <typename Kernel>
-double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
+template < typename Kernel, typename CameraInputIterator >
+double compute_greatest_camera_angle_3(const typename Kernel::Point_3& position, 
+                                       CameraInputIterator first_camera, 
+                                       CameraInputIterator beyond_camera)
 {
     // geometric types
     typedef typename Kernel::FT FT;
@@ -26,7 +29,7 @@ double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
     typedef typename Kernel::Vector_3 Vector;
 
     std::vector<Point> cameras;
-    std::copy(gpt.cameras_begin(), gpt.cameras_end(), std::back_inserter(cameras));
+    std::copy(first_camera, beyond_camera, std::back_inserter(cameras));
 
     // give a score to each vertex: the score will help detecting outliers			  
     FT greatest_camera_angle=0, v1_v2, n_v1, n_v2, intermediate_score;
@@ -35,8 +38,8 @@ double compute_greatest_camera_angle_3(const Gyroviz_point_3<Kernel>& gpt)
     {
         for(int j=i+1; j<cameras.size(); ++j)
         {
-            v1 = cameras[i] - gpt;
-            v2 = cameras[j] - gpt;
+            v1 = cameras[i] - position;
+            v2 = cameras[j] - position;
             n_v1  = sqrt(v1.squared_length());
             n_v2  = sqrt(v2.squared_length()); 
             v1_v2 = v1 * v2; // scalar product
@@ -64,7 +67,8 @@ public:
       : m_min_camera_cone_angle (min_camera_cone_angle) {}
 
     bool operator() (const Gyroviz_point_3<Kernel>& gpt) const {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(gpt);
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(gpt, 
+                                                                           gpt.cameras_begin(), gpt.cameras_end());
         return (greatest_camera_angle >= m_min_camera_cone_angle);
     }
 };
@@ -102,7 +106,8 @@ remove_outliers_wrt_camera_cone_angle_3(InputIterator first,           ///< inpu
     // iterate over input points and output points / camera angle >= min_camera_cone_angle
     for(InputIterator point_it = first; point_it != beyond; point_it++)
     {
-        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it);
+        FT greatest_camera_angle = compute_greatest_camera_angle_3<Kernel>(*point_it, 
+                                                                           point_it->cameras_begin(), point_it->cameras_end());
         if (greatest_camera_angle >= min_camera_cone_angle)
             *output++ = *point_it;
     }
