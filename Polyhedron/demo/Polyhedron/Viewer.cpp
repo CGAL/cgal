@@ -1,8 +1,10 @@
 #include "Viewer.h"
 #include "Scene.h"
 
-Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent), scene(0)
+Viewer::Viewer(QWidget* parent, bool antialiasing)
+  : QGLViewer(parent),
+    scene(0),
+    antialiasing(antialiasing)
 {
   setBackgroundColor(Qt::white);
 }
@@ -26,6 +28,19 @@ Viewer::draw()
   ::glLineWidth(1.0f);
   ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  ::glEnable(GL_LINE_SMOOTH);
+  if(antiAliasing())
+  {
+    ::glEnable(GL_LINE_SMOOTH);
+    ::glEnable(GL_BLEND);
+    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    ::glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+  }
+  else
+  {
+    ::glDisable(GL_LINE_SMOOTH);
+    ::glDisable (GL_BLEND);
+    ::glBlendFunc(GL_ONE, GL_ZERO);
+    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+  }
   scene->draw();
 }

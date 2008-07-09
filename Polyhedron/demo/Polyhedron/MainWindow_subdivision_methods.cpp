@@ -9,6 +9,7 @@ void MainWindow::on_actionCatmullClark_triggered()
   if(!poly) return;
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*poly, 1);
   poly->compute_normals();
+  viewer->updateGL();
 }
 
 void MainWindow::on_actionSqrt3_triggered()
@@ -17,4 +18,5 @@ void MainWindow::on_actionSqrt3_triggered()
   if(!poly) return;
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
   poly->compute_normals();
+  viewer->updateGL();
 }

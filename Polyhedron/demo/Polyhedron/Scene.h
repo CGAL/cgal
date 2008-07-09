@@ -66,7 +66,6 @@ public:
 public slots:
   void setSelectedItem(int i )
   {
-    std::cerr << "selected_item = " << i << "\n";
     selected_item = i;
   };
 

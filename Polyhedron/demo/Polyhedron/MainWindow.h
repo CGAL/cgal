@@ -27,6 +27,8 @@ protected slots:
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
+
+  // subdivision methods are defined in MainWindow_subdivision_methods.cpp
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
 
@@ -44,8 +46,6 @@ private:
 
 bool MainWindow::onePolygonIsSelected() const
 {
-  std::cerr << "selected: " 
-            << treeView->selectionModel()->selectedIndexes().size() << "\n";
   return treeView->selectionModel()->selectedRows().size() == 1;
 }
 

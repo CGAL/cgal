@@ -40,16 +40,24 @@ Scene::open(QString filename)
   cerr << QString("Opening file \"%1\"...").arg(filename);
 
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
   QFileInfo fileinfo(filename);
   std::ifstream in(filename.toUtf8());
-  if(!in) return false;
+
+  if(!in || !fileinfo.isFile() || ! fileinfo.isReadable()) {
+    QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
+                          tr("Cannot open file"),
+                          tr("File %1 is not a readable file.").arg(filename));
+    QApplication::restoreOverrideCursor();
+    return false;
+  }
 
   Polyhedron* poly = new Polyhedron;
   in >> *poly;
   if(!in)
   {
     QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
-                          tr("Cannot open file"),
+                          tr("Cannot read file"),
                           tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
     return false;
@@ -65,6 +73,7 @@ Scene::open(QString filename)
   cerr << " done.\n";
   QApplication::restoreOverrideCursor();
 
+  selected_item = -1;
   emit updated_bbox();
   emit updated();
   QAbstractListModel::reset();
@@ -78,6 +87,7 @@ Scene::erase(int polyhedron_index)
   delete polyhedra[polyhedron_index].polyhedron_ptr;
   polyhedra.removeAt(polyhedron_index);
 
+  selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
 }
@@ -97,6 +107,7 @@ Scene::duplicate(int polyhedron_index)
   entry2.activated = entry.activated;
   polyhedra.push_back(entry2);
 
+  selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
 }
@@ -134,8 +145,6 @@ Scene::draw()
   {
     Polyhedron_entry& entry = polyhedra[index];
     if(entry.activated) {
-      std::cerr << "Drawing " << qPrintable(entry.name)
-                << std::endl;
       Polyhedron* poly = entry.polyhedron_ptr;
       ::glEnable(GL_LIGHTING);
       if(index == selected_item) {

@@ -13,6 +13,10 @@ MainWindow::MainWindow(QWidget* parent)
 {
   setupUi(this);
 
+  addDockWidget(Qt::LeftDockWidgetArea, polyhedraDockWidget);
+  menuDockWindows->addAction(polyhedraDockWidget->toggleViewAction());
+  menuDockWindows->removeAction(dummyAction);
+
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
 
@@ -37,6 +41,9 @@ MainWindow::MainWindow(QWidget* parent)
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(on_treeView_itemSelectionChanged()));
 
+  connect(actionAntiAliasing, SIGNAL(toggled(bool)),
+          viewer, SLOT(setAntiAliasing(bool)));
+
   // add the "About CGAL..." entry
   this->addAboutCGAL();
 
@@ -59,10 +66,14 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
-  QString filename = event->mimeData()->urls().at(0).path();
-  QTextStream(stderr) << QString("dropEvent(\"%1\")\n").arg(filename);
-  if(scene->open(filename))
-    event->acceptProposedAction();
+  Q_FOREACH(QUrl url, event->mimeData()->urls()) {
+    QString filename = url.toLocalFile();
+    if(!filename.isEmpty()) {
+      QTextStream(stderr) << QString("dropEvent(\"%1\")\n").arg(filename);
+      scene->open(filename);
+    }
+  }
+  event->acceptProposedAction();
 }
 
 void MainWindow::updateViewerBBox()
