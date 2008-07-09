@@ -31,22 +31,24 @@
     </center>
   \end{ccHtmlOnly}
   \caption{The Minkowski sum of a spoon and a star.}
+  \label{fig:spoonStar}
 \end{figure}
 
 The Minkowski sum of two point sets $P$ and $Q$ in $\mathbb{R}^d$, denoted by
 $P \oplus Q$, is defined as the set $\{p+q:p \in P, q \in Q
 \}$. Minkowski sums are used in a wide range of applications such as
-robot motion planning and computer-aided
-design. Figure~\ref{fig:motionPlanning} shows an example how Minkowski
-sums can be used to plan the motion of a translational robot. We want
-to know which are legal positions of the robot, and where can the
-robot go to from a specified starting position. If we model both, the
-robot and the obstacles as a polyhedron and compute the Minkowski sum
-of the inverted robot (robot reflected at the origin) and the obstacles,
-then this Minkowski sum represents all illegal positions of the robot,
-i.e., all positions where it intersects the obstacle. Of course, the
-complement of that polyhedron are all legal positions of the robot,
-i.e., all positions where it does not intersect an obstacle.
+robot motion planning~\cite{l-rmp-91} and computer-aided
+design~\cite{cgal:ek-sicad-99}. Figure~\ref{fig:motionPlanning} shows an
+example how Minkowski sums can be used to plan the motion of a
+translational robot. We want to know which are legal positions of the
+robot, and where can the robot go to from a specified starting
+position. If we model both, the robot and the obstacles as a
+polyhedron and compute the Minkowski sum of the inverted robot (robot
+reflected at the origin) and the obstacles, then this Minkowski sum
+represents all illegal positions of the robot, i.e., all positions
+where it intersects the obstacle. Of course, the complement of that
+polyhedron are all legal positions of the robot, i.e., all positions
+where it does not intersect an obstacle.
 
 \begin{figure}
   \begin{ccTexOnly}
@@ -69,7 +71,7 @@ i.e., all positions where it does not intersect an obstacle.
 
 This package provides a function \ccc{minkowski_sum_3} that computes
 the Minkowski sum of two Nef polyhedra. We do not support arbitrary
-Nef polyhedra, yet. The restrictions are discussed
+Nef polyhedra, yet. The restrictions are discussed in detail in
 Section~\ref{sec:restrictions}.
 
 % +------------------------------------------------------------------------+
@@ -79,7 +81,7 @@ The decomposition method for computing the Minkowski sum of non-convex
 polyhedra makes use of the fact that Minkowski sums of convex
 polyhedra are rather easy to compute. It decomposes both polyhedra
 into convex pieces, computes all pairwise Minkowski sums of the convex
-pieces, and merges the pairwise sums.
+pieces, and merges the pairwise sums~\cite{bkos-cgaa-97}.
 
 \begin{figure}[t]
   \begin{ccTexOnly}
@@ -102,7 +104,32 @@ decomposition method, each polyhedron might be divided into a
 quadratic number of pieces, which is worst-case optimal. Then up to
 $n^2m^2$ pairwise sums have to be computed and merged, where $n$ and
 $m$ is the complexity of the two input polyhedra. In total the
-operation runs in $O(n^3m^3)$ time.
+operation runs in $O(n^3m^3)$ time. 
+
+Since the computation of the Minkowski sum takes quite some time, we
+give the running times of some Minkowski sum computations. The were
+computed with CGAL 3.3 on a machine with a 2.4 GHz AMD Opteron
+processor and 4 GB RAM. The code was compiled with
+{g\raise.08ex\hbox{\tt ++}} 3.2 and compiler options -O2. The
+\ccc{Nef\_polyhedron\_3} class was instantiated with the geometric
+kernel \ccc{Homogeneous<leda_integer>}. The Minkowski sum of the spoon
+and the star is illustrated in Figure~\ref{fig:spoonStar}.
+
+\begin{table}[h]
+\center
+\begin{tabular}{|ccc|ccc|c|}
+\hline
+\multicolumn{3}{|c|}{model 1} & \multicolumn{3}{|c|}{model 2} & running \\
+name & facets & conv. pcs. & name & facets & conv. pcs. & time \\ 
+\hline
+mushroom & 448 & 255 & cube & 6 & 1 & 204s \\
+mushrrom & 448 & 255 & ball1 & 128 & 1 & 553s \\
+spoon & 336 & 186 & star & 24 & 5 & 882s \\
+cup & 1000 & 774 & ball2 & 1000 & 1 & 9851s \\
+\hline
+\end{tabular}
+\caption{Performance of the function \ccc{minkowski_sum_3}.}
+\end{table}
 
 % +------------------------------------------------------------------------+
 \section{Features and Restrictions}
@@ -111,35 +138,55 @@ operation runs in $O(n^3m^3)$ time.
 This package was written to allow the computation of Minkowski sums of
 full-dimensional polyhedra even in so-called tight-passage scenarios.
 Tight passage scenarios occur in robot motion planning, when a robot
-is just as wide as a passage it needs to traverse. The Minkowski sum
-of the i.e., solve motion planing problems with passages that are
-exactly as wide as the robot. In these scenarios at least one
-polyhedron---the obstacles or the robot---must be modeled as an open
-set. Then the Minkowski sum will also be an open set and tight
-passages will occurr as lower-dimensional
-exclusions. Figure~\ref{fig:motionPlanning} shows such a tight
-passage scenario.
+is just as wide as a passage it needs to traverse. In these scenarios
+at least one polyhedron---the obstacles or the robot---must be modeled
+as an open set. Then the Minkowski sum will also be an open set and
+tight passages will occurr as lower-dimensional exclusions, i.e., as
+facets, lines, or vertices that are, in contrast to the volume around
+them, not part of the resulting point
+set. Figure~\ref{fig:motionPlanning} shows such a tight passage
+scenario.
 
-We strive for extending the package to work for arbitrary
-polyhedra. In addition to the Minkowski sums of two solids, we added
-several features, but are not complete. At the moment we allow an
-input polyhedron to consist of:
+Our implementation uses \ccc{Nef_polyhedron_3} to model the input
+polyhedra and the result polyhedron. A \ccc{Nef_polyhedron_3}
+represents a subdivision of the three-dimensional space into vertices,
+edges, facets, and volumes. Each of these items contains set-selection
+mark, which indicates whether the item belongs to the represented
+point set or not.The represented polyhedron is the union of the point
+sets represented by the selected items. As an example, a cube is
+represented by 8 vertices, 12 edges, 6 facets, and 2 volumes, where
+one volume represents the interior of the cube and the other the
+volume outside of the cube. All of these items are selected, except
+for outer volume.  Read the chapter on 3D Boolean operations on Nef
+polyhedra for more details~\ref{chapterNef3}.
+
+The use of \ccc{Nef_polyhedron_3} allows many scenarios beyond the
+Minkowski sum of two solids. First, they can model the input and the
+result of a tight passage scenario, i.e., they can model open and
+closed solids for the input, and they can model lower-dimensional
+exclusions by unselected facets, edges, and vertices. We strive for
+extending the package to work for arbitrary 3D Nef polyhedra. In
+addition to the Minkowski sums of two solids, we added several
+features, but are not complete. At the moment we allow an input
+polyhedron to consist of:
 \begin{enumerate}
 \item singular vertices
 \item singular edges
 \item singular convex facets without holes
 \item surface with convex facets that have no holes.
-\item open or closed solids
+\item three-dimensional features, whose coplanar facets have
+common selection marks (this includes open and closed solids)
 \end{enumerate}
 
 Taking a different viewpoint, the implementation is restricted as
 follows:
 \begin{enumerate}
-\item The input polyhedra must be bounded.
-\item All sets of coplanar facets that form a side of a full-dimensional
-feature, must have the same selection mark.
+\item The input polyhedra must be bounded (selected outer volume is ignored).
+\item All sets of coplanar facets of a full-dimensional
+feature must have the same selection mark (in case of different
+selection marks, unselected is assumed).
 \item All facets of lower-dimensional features need to be convex and 
-must not have holes.
+must not have holes (non-convex facets and holes are ignored).
 \end{enumerate}
 
 % +------------------------------------------------------------------------+
