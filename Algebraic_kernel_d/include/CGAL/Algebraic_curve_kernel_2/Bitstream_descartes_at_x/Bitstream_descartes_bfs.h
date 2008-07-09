@@ -236,8 +236,8 @@ CGAL_BEGIN_NAMESPACE
                             ++end;
                             begin=curr;
                             do {
-                                //AcX_DSTREAM(bitstream_tree.lower(begin) << " " << bitstream_tree.upper(begin) << std::endl);
-                                //AcX_DSTREAM(bitstream_tree.min_var(begin) << " " << bitstream_tree.max_var(begin) << std::endl);
+                                //std::cout << bitstream_tree.lower(begin) << " " << bitstream_tree.upper(begin) << std::endl;
+                                //std::cout << bitstream_tree.min_var(begin) << " " << bitstream_tree.max_var(begin) << std::endl;
                                 int new_intervals = bitstream_tree.subdivide(begin,new_begin,helper);
                                 intervals+=new_intervals-1;
                                 begin=new_begin;
@@ -256,9 +256,10 @@ CGAL_BEGIN_NAMESPACE
                                     intervals+=bitstream_tree.subdivide(curr,new_begin,helper)-1;
                                     curr=helper;
                                 }
+                                
                             }
                             while(intervals!=1);
-                            //AcX_DSTREAM("Refined " << left_boundary(i) << " " << right_boundary(i) << std::endl); 
+                            //std::cout << "Refined " << left_boundary(i) << " " << right_boundary(i) << std::endl; 
       
                         }
 
