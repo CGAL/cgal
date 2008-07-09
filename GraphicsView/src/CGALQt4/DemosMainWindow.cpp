@@ -91,6 +91,7 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
           this, SLOT(setUseAntialiasing(bool)));
   connect(actionUse_OpenGL, SIGNAL(toggled(bool)),
           this, SLOT(setUseOpenGL(bool)));
+  actionUse_Antialiasing->setChecked(true);
 }
 
 void

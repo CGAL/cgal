@@ -162,9 +162,6 @@ MainWindow::MainWindow()
   this->graphicsView->setScene(&scene);
   this->graphicsView->setMouseTracking(true);
 
-  // Uncomment the following line to get antialiasing by default.
-//   actionUse_Antialiasing->setChecked(true);
-
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
                                                       
