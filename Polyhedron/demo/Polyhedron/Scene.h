@@ -23,14 +23,13 @@ typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
 
+struct Polyhedron : public Enriched_polyhedron<Kernel,
+                                               Enriched_items> {};
+
 class Scene  :
   public QAbstractListModel
 {
   Q_OBJECT
-public:
-  typedef Enriched_polyhedron<Kernel,
-                              Enriched_items> Polyhedron;
-  typedef Kernel::Point_3 Point_3;
 
 private:
   struct Polyhedron_entry {
@@ -41,12 +40,14 @@ private:
   };
 
 public:
-  Scene();
+  Scene(QObject*  parent);
   ~Scene();
 
   bool open(QString);
   void erase(int);
   void duplicate(int);
+
+  inline Polyhedron* getPolyhedron(int);
 
   void draw();
   CGAL::Bbox_3 bbox();
@@ -62,6 +63,13 @@ public:
   Qt::ItemFlags flags ( const QModelIndex & index ) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+public slots:
+  void setSelectedItem(int i )
+  {
+    std::cerr << "selected_item = " << i << "\n";
+    selected_item = i;
+  };
+
 signals:
   void updated_bbox();
   void updated();
@@ -69,6 +77,15 @@ signals:
 private:
   typedef QList<Polyhedron_entry> Polyhedra;
   Polyhedra polyhedra;
+  int selected_item;
 }; // end class Scene
+
+Polyhedron* Scene::getPolyhedron(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return 0;
+  else 
+    return polyhedra[index].polyhedron_ptr;
+}
 
 #endif // SCENE_H

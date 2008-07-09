@@ -7,6 +7,7 @@
 class QDragEnterEvent;
 class QDropEvent;
 class Scene;
+class Polyhedron;
 
 class MainWindow : 
   public CGAL::Qt::DemosMainWindow,
@@ -21,16 +22,40 @@ public slots:
   void open(QString filename);
 
 protected slots:
+  void on_treeView_itemSelectionChanged();
+
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
+  void on_actionCatmullClark_triggered();
+  void on_actionSqrt3_triggered();
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
 
+  inline bool onePolygonIsSelected() const;
+  inline int getSelectedPolygonIndex() const;
+
+  Polyhedron* getSelectedPolygon();
 private:
   Scene* scene;
 };
+
+bool MainWindow::onePolygonIsSelected() const
+{
+  std::cerr << "selected: " 
+            << treeView->selectionModel()->selectedIndexes().size() << "\n";
+  return treeView->selectionModel()->selectedRows().size() == 1;
+}
+
+int MainWindow::getSelectedPolygonIndex() const
+{
+  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  if(selectedRows.empty())
+    return -1;
+  else
+    return selectedRows.first().row();
+}
 
 #endif // ifndef MAINWINDOW_H

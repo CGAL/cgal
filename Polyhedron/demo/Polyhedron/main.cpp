@@ -23,3 +23,4 @@ int main(int argc, char **argv)
 
 #include "MainWindow.cpp"
 #include "Scene.cpp"
+#include "MainWindow_subdivision_methods.cpp"

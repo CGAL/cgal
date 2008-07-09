@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QGLWidget>
+#include <QMessageBox>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -15,7 +16,9 @@ namespace {
   }
 }
 
-Scene::Scene()
+Scene::Scene(QObject* parent)
+  : QAbstractListModel(parent),
+    selected_item(-1)
 {
 }
 
@@ -42,7 +45,15 @@ Scene::open(QString filename)
   if(!in) return false;
 
   Polyhedron* poly = new Polyhedron;
-  CGAL::scan_OFF(in, *poly, true);
+  in >> *poly;
+  if(!in)
+  {
+    QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
+                          tr("Cannot open file"),
+                          tr("File %1 is not a valid OFF file.").arg(filename));
+    QApplication::restoreOverrideCursor();
+    return false;
+  }
   poly->compute_normals();
 
   Polyhedron_entry entry;
@@ -98,7 +109,7 @@ Scene::bbox()
   }
   else
   {
-    Point_3 p = polyhedra.begin()->polyhedron_ptr->vertices_begin()->point();
+    Point p = polyhedra.begin()->polyhedron_ptr->vertices_begin()->point();
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     for(Polyhedra::iterator 
           poly_it = polyhedra.begin(),
@@ -119,20 +130,28 @@ Scene::bbox()
 void 
 Scene::draw()
 {
-  for(Polyhedra::iterator 
-        poly_it = polyhedra.begin(),
-        poly_end = polyhedra.end();
-      poly_it != poly_end; ++poly_it)
+  for(int index = 0; index < polyhedra.size(); ++index)
   {
-    if(poly_it->activated) {
-      std::cerr << "Drawing " << qPrintable(poly_it->name)
+    Polyhedron_entry& entry = polyhedra[index];
+    if(entry.activated) {
+      std::cerr << "Drawing " << qPrintable(entry.name)
                 << std::endl;
-      Polyhedron* poly = poly_it->polyhedron_ptr;
+      Polyhedron* poly = entry.polyhedron_ptr;
       ::glEnable(GL_LIGHTING);
-      CGALglcolor(poly_it->color);
+      if(index == selected_item) {
+        CGALglcolor(entry.color.lighter(120));
+      }
+      else {
+        CGALglcolor(entry.color);
+      }
       poly->gl_draw_direct_triangles(false,
                                      true);
-      CGALglcolor(poly_it->color.lighter(50));
+      if(index == selected_item) {
+        CGALglcolor(entry.color.lighter(70));
+      }
+      else {
+        CGALglcolor(entry.color.lighter(50));
+      }
       ::glDisable(GL_LIGHTING);
       poly->superimpose_edges(true,false);
     }

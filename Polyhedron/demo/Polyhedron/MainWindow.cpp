@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget* parent)
   setAcceptDrops(true);
 
   // setup scene
-  scene = new Scene;
+  scene = new Scene(this);
   viewer->setScene(scene);
   treeView->setModel(scene);
 
@@ -32,6 +32,10 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
+
+  connect(treeView->selectionModel(), 
+          SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
+          this, SLOT(on_treeView_itemSelectionChanged()));
 
   // add the "About CGAL..." entry
   this->addAboutCGAL();
@@ -86,27 +90,48 @@ void MainWindow::open(QString filename)
   scene->open(filename);
 }
 
+
+Polyhedron* MainWindow::getSelectedPolygon()
+{
+  // scene->getPolyhedron(...) returns 0 iff the index is not valid
+  return scene->getPolyhedron(getSelectedPolygonIndex());
+}
+
+void MainWindow::on_treeView_itemSelectionChanged()
+{
+  if(onePolygonIsSelected()) {
+    scene->setSelectedItem(getSelectedPolygonIndex());
+  }
+  else {
+    scene->setSelectedItem(-1);
+  }
+  viewer->updateGL();
+}
+
 void MainWindow::on_actionLoadPolyhedron_triggered()
 {
-  QString filename = QFileDialog::getOpenFileName(this,
-                                                  tr("Load polyhedron..."),
-                                                  QString(),
-                                                  tr("OFF files (*.off)\n"
-                                                     "All files (*)"));
-  if(!filename.isEmpty())
-    scene->open(filename);
+  QStringList filenames = 
+    QFileDialog::getOpenFileNames(this,
+                                  tr("Load polyhedron..."),
+                                  QString(),
+                                  tr("OFF files (*.off)\n"
+                                     "All files (*)"));
+  if(!filenames.isEmpty()) {
+    Q_FOREACH(QString filename, filenames) {
+      scene->open(filename);
+    }
+  }
 }
 
 void MainWindow::on_actionErasePolyhedron_triggered()
 {
-  if(treeView->selectionModel()->selectedIndexes().empty())
-    return;
-  scene->erase(treeView->selectionModel()->selectedIndexes().first().row());
+  if(onePolygonIsSelected())
+    scene->erase(getSelectedPolygonIndex());
 }
 
 void MainWindow::on_actionDuplicatePolyhedron_triggered()
 {
-  if(treeView->selectionModel()->selectedIndexes().empty())
-    return;
-  scene->duplicate(treeView->selectionModel()->selectedIndexes().first().row());
+  if(onePolygonIsSelected())
+    scene->duplicate(getSelectedPolygonIndex());
 }
+
