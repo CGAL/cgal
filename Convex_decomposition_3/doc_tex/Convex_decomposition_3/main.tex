@@ -34,21 +34,56 @@ interior of the polyhedron. Those edges are also called reflex edges.
 The bound of $O(r^2)$ convex pieces is worst-case
 optimal~\cite{c-cpplb-84}.
 
+\begin{figure}[h]
+  \begin{ccTexOnly}
+    \begin{center}
+      \includegraphics[width=0.245\textwidth]{Convex_decomposition_3/fig/two_cubes} \hspace{4mm}
+      \includegraphics[width=0.25\textwidth]{Convex_decomposition_3/fig/two_cubes_cylindrical} \hspace{1mm}
+      \includegraphics[width=0.27\textwidth]{Convex_decomposition_3/fig/two_cubes_vertical}
+    \end{center}
+  \end{ccTexOnly}
+  \begin{ccHtmlOnly}
+    <p><center>
+    <img src="./fig/two_cubes.gif" border=0 alt="Decomposition example">
+    </center>
+  \end{ccHtmlOnly}
+  \caption{Vertical decomposition based on the insertion of walls 
+	   (viewed from the top). Left: Non-convex polyhedron. Middle:
+	   Non-vertical relfex edges have been resolved. Right: Vertical
+           reflex edges have been resolved. The cells are convex.}
+  \label{fig:verticalDecomposition}
+\end{figure}
+
+Our decomposition runs in two steps. In the first step, each
+non-vertical reflex edge $e$ is resolved by insertion of vertical
+facets $W(e)$ through $e$. In the second step, we do the same with the
+vertical reflex edges. Figure~\ref{fig:verticalDecomposition}
+illustrates the two steps.
+
+The worst-case running time of our implementation is
+$O(n^2r^4\sqrt[3]{nr^2}\log{nr})$, where $n$ is the complexity of the
+polyhedron and $r$ is the number of reflex edges. But this running
+time is very pessimistic. Assuming that every inserted facet has
+complexity $O(n)$ and that ray shooting queries run in logarithmic
+time, the running time is $O(nr^2\log{nr})$.
+
 At the moment our implementation is restricted to the decomposition of
 bounded polyhedra. An extension to unbounded polyhedra is planned.
 
 % +------------------------------------------------------------------------+
 \section{Interface and Usage}
 
-The \ccc{Nef_polyhedron_3} represents a subdivision of the
-three-dimensional space into vertices, edges, facets, and volumes. The
-represented polyhedron is the union of the point sets represented by
-the selected items. As an example, a cube is represented by 8
-vertices, 12 edges, 6 facets, and 2 volumes, where one volume
-represents the interior of the cube and the other the volume outside
-of the cube. All of these items are selected, except for outer volume.
-Read the chapter on 3D Boolean operations on Nef polyhedra for more
-details~\ref{chapterNef3}.
+A \ccc{Nef_polyhedron_3} represents a subdivision of the
+three-dimensional space into vertices, edges, facets, and
+volumes. Each of these items contains set-selection mark, which
+indicates whether the item belongs to the represented point set or
+not. The represented polyhedron is the union of the point sets
+represented by the selected items. As an example, a cube is
+represented by 8 vertices, 12 edges, 6 facets, and 2 volumes, where
+one volume represents the interior of the cube and the other the
+volume outside of the cube. All of these items are selected, except
+for outer volume.  Read the chapter on 3D Boolean operations on Nef
+polyhedra for more details~\ref{chapterNef3}.
 
 The function \ccc{convex_decomposition_3} takes one
 \ccc{Nef_polyhedron_3} as input an inserts additional facets into the

@@ -1660,6 +1660,15 @@ Circular_kernel_3/include/CGAL/Sphere_with_radius_3.h -text
 Circular_kernel_3/include/CGAL/Theta_rep.h -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.pdf -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes.ps -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes2.png -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_cylindrical.pdf -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_cylindrical.ps -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.pdf -text
+Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.ps -text
 Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj eol=crlf
