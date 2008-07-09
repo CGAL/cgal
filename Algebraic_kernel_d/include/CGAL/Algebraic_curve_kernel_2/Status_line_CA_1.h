@@ -493,39 +493,51 @@ public:
 
     void write(std::ostream& os) const {
 
-        os << "status_line [CA@" << this->ptr()->_m_ca.id();
+        os << "status_line [CA@" << this->ptr()->_m_ca.id() << std::flush;
 #if CGAL_ACK_USE_EXACUS
-        os << "; x = " << x() << "; #events: " << number_of_events() << "; ";
+        os << "; x = " << x() << "; #events: " << number_of_events() << "; "
+           << std::flush;
 #else
         os << "; x = " << CGAL::to_double(x()) << "; #events: " 
-           << number_of_events() << "; ";
+           << number_of_events() << "; " << std::flush;
 #endif
 
+        
         if(is_event()) {
-            os << "incident branches: {";
+            os << "incident branches: {" << std::flush;
             typename Arc_container::const_iterator ait =
                 (*this->ptr()->_m_arcs).begin();
-            for(; ait != (*this->ptr()->_m_arcs).end(); ait++) {
+            for(int i = 0; i < number_of_events(); i++) {
+                
+                Arc_pair arc_pair = number_of_incident_branches(i);
 
-                if(ait != (*this->ptr()->_m_arcs).begin())
-                    os << ", ";
-                os << "(" << ait->first << ", " << ait->second << ")";
+                if(i!=0) {
+                    os << ", " << std::flush;
+                }
+                Xy_coordinate_2 xy = algebraic_real_2(i);
+                typedef typename Bitstream_descartes::Boundary Boundary;
+                Boundary th = CGAL::ipower(Boundary(1,2),53);
+                double d 
+                    = CGAL::to_double(xy.get_approximation_y(th).lower());
+                os << "y=" << d << ", " << std::flush;
+                os << "(" << arc_pair.first << ", " << arc_pair.second << ")"
+                   << std::flush;
             }
             os << "}";
             Arc_pair p = number_of_branches_approaching_minus_infinity();
             if(p.first + p.second > 0)
                 os << "; approaching -oo: (" << p.first << "; " <<
-                    p.second << ")";
+                    p.second << ")" << std::flush;
             p = number_of_branches_approaching_plus_infinity();
             if(p.first + p.second > 0)
                 os << "; approaching +oo: (" << p.first << "; " <<
-                    p.second << ")";
+                    p.second << ")" << std::flush;
             if(covers_line())
-                os << "; covers line";
+                os << "; covers line" << std::flush;
         } else 
-            os << "interval line";
+            os << "interval line" << std::flush;
 
-        os << ']';
+        os << "]" << std::flush;
     }
 
     //!@}
