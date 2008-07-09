@@ -16,6 +16,7 @@
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
 #include "TriangulationMovingPoint.h"
+#include "TriangulationRemoveVertex.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
@@ -43,6 +44,7 @@ private:
   CGAL::Qt::VoronoiGraphicsItem<Delaunay> * vgi;
 
   CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
+  CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
 public:
@@ -110,12 +112,16 @@ MainWindow::MainWindow()
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
-    
+
   mp = new CGAL::Qt::TriangulationMovingPoint<Delaunay>(&dt, this);
-  // TriangulationMovingPoint<Delaunay> generates an empty Object() each
+  // TriangulationMovingPoint<Delaunay> emits a modelChanged() signal each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
-  QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
+  QObject::connect(mp, SIGNAL(modelChanged()),
+		   this, SIGNAL(changed()));
+
+  trv = new CGAL::Qt::TriangulationRemoveVertex<Delaunay>(&dt, this);
+  QObject::connect(trv, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<Delaunay>(&scene, &dt, this);
@@ -184,8 +190,10 @@ MainWindow::on_actionInsertPoint_toggled(bool checked)
 {
   if(checked){
     scene.installEventFilter(pi);
+    scene.installEventFilter(trv);
   } else {
     scene.removeEventFilter(pi);
+    scene.removeEventFilter(trv);
   }
 }
 
