@@ -1488,7 +1488,9 @@ Benchmark/doc_tex/Benchmark/fig/classification.gif -text svneol=unset#image/gif
 Benchmark/doc_tex/Benchmark/fig/classification.pdf -text svneol=unset#application/pdf
 Benchmark/src/Benchmark/benchmark_lexer.l -text
 Benchmark_instances/developer_scripts/cgal_create_bench_webpage -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/Qt_widget_locate_layer.cpp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations.vcproj eol=crlf
+Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2.h -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2/help/index.html svneol=native#text/html

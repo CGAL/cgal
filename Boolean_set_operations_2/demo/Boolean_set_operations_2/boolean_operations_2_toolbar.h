@@ -48,15 +48,14 @@
 #include "typedefs.h"
 #include "Qt_widget_locate_layer.h"
 
-extern bool                                      red_active;
-extern Polygon_set                               red_set;
-extern Polygon_set                               blue_set;
+class MyWindow;
 
 class Tools_toolbar : public QToolBar
 {
   Q_OBJECT
 public:
-	Tools_toolbar(CGAL::Qt_widget *w, QMainWindow *mw);
+	//mw type was QMainWindow 
+	Tools_toolbar(CGAL::Qt_widget *w, MyWindow *mw);
   ~Tools_toolbar(){};
 
   void deactivate()
@@ -68,7 +67,7 @@ public:
 
   void reset()
   {
-    locatebut.reset();
+    locatebut->reset();
   }
 
 private:
@@ -78,7 +77,7 @@ private:
 
   CGAL::Qt_widget_get_circ_polygon<Kernel>     getsimplebut;
   CGAL::Qt_widget_get_circle<Kernel>           getcirclebut;
-  Qt_widget_locate_layer                       locatebut;
+  Qt_widget_locate_layer*                       locatebut;
 
 };//end class
 
