@@ -1,5 +1,5 @@
-#ifndef CGAL_QT_RAPHICS_VIEW_INPUT_H
-#define CGAL_QT_RAPHICS_VIEW_INPUT_H
+#ifndef CGAL_QT_GRAPHICS_VIEW_INPUT_H
+#define CGAL_QT_GRAPHICS_VIEW_INPUT_H
 
 #include <CGAL/Object.h>
 #include <QObject>
@@ -17,9 +17,10 @@ public:
 
 signals:
   void generate(CGAL::Object o);
+  void modelChanged();
 };
 
 } // namespace Qt
 } // namespace CGAL
 
-#endif // CGAL_QT_RAPHICS_VIEW_INPUT_H
+#endif // CGAL_QT_GRAPHICS_VIEW_INPUT_H
