@@ -30,9 +30,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
 #ifdef CGAL_CKvA_COMPILE_RENDERER
-// no need to pollute global namespace with qt stuff
-#define CGAL_CKVA_NO_QT_WIDGET_INTERFACE 
-#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
+#include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 #endif
 
 #include <CGAL/Cartesian.h> // drawing
@@ -132,6 +130,13 @@ public:
     //! type of planar point
     typedef typename Base::Projected_point_2 Projected_point_2;
     
+    //! for visualization
+    typedef CGAL::Polynomial< double > Poly_double_1;
+    typedef CGAL::Polynomial< Poly_double_1 > Poly_double_2;
+    typedef CGAL::Polynomial< Poly_double_2 > Poly_double_3;  
+
+    typedef typename CGAL::Cartesian< double >::Point_3 Approximation_3;
+
 public:
     //!\name Standard constructors
     //!@{
@@ -185,6 +190,78 @@ protected:
     Quadric_point_2(Rep rep) :
         Base(rep) {
     }
+    //!@}
+public:
+    //!\name approximation & visualization
+    //!@{
+
+#ifdef CGAL_CKvA_COMPILE_RENDERER
+    
+    //! sets up rendering window \c bbox and resolution \c res_w by \c res_h
+    static void setup_renderer(CGAL::Bbox_2 bbox, int res_w, int res_h) {
+        Curve_renderer_facade< typename Base::Projected_kernel_2 >::
+            setup(bbox, res_w, res_h);
+    }
+
+    //! sets / retrieves base polynomial approximation
+    static Poly_double_3 base_poly_approx( 
+            const boost::optional< Poly_double_3 >& poly = boost::none) {
+        static Poly_double_3 _poly;
+        if(poly) 
+            _poly = *poly;
+        return _poly;
+    }
+
+    //! computes z-coordinate
+    static double compute_z(const Poly_double_1& ppt, int which_root) {
+        
+        if(ppt.degree() < 1) 
+            return 0;
+        // comparison for equality does not work for doubles
+        if(fabs(ppt[2]) < 1e-17) 
+            return -ppt[0]/ppt[1];
+
+        double d = ppt[1]*ppt[1]-4*ppt[2]*ppt[0],
+            inv = 0.5 / ppt[2], c = -ppt[1] * inv;
+        if(d <= 0)
+            return c;
+        d = std::sqrt(d) * inv;
+        if(which_root == 0) // take minimal root
+            return c + (d < 0 ? d : -d);
+        return c + (d < 0 ? -d : d);    
+    }
+
+    /*!\brief
+     * computes approximation of a point 
+     *
+     * returns \c false if the point does not fall within the window
+     *
+     * @note: don't use this method with CORE number types otherwise the
+     * renderer hangs while isolating y-intervals ..
+     */
+    bool compute_approximation(Approximation_3& result) const {
+    
+        typedef Curve_renderer_facade< typename Base::Projected_kernel_2 >
+             Facade;
+        typename Facade::Coord_2 cc;
+
+        if(!Facade::instance().draw(this->projected_point(), cc))
+            return false; // bad luck
+         
+        CGAL::Bbox_2 bbox;
+        int res_w, res_h;
+        Facade::instance().get_resolution(res_w, res_h);
+        Facade::instance().get_window(bbox);
+        // gotcha !!           
+        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
+        double x0 = bbox.xmin() + (double)cc.x * lx / res_w,
+               y0 = bbox.ymin() + (double)cc.y * ly / res_h;
+
+        Poly_double_1 ppt = NiX::substitute_xy(base_poly_approx(), x0, y0);   
+        result = Approximation_3(x0, y0, compute_z(ppt, this->sheet()));
+        return true;
+    }
+#endif // CGAL_CKvA_COMPILE_RENDERER    
     //!@}
     
     //! for constructint points
@@ -510,75 +587,64 @@ public:
 
 #ifdef CGAL_CKvA_COMPILE_RENDERER
 
+  
+
     /*!\brief
-     * renders an arc into window \c bbox with resolution \c res_w by \c res_h
-     * returns objects of type \c Approximation_3 
+     * computes arc's approximation within window \c bbox with resolution 
+     * \c res_w by \c res_h
+     *
+     * @note: call Quadric_point_2::setup_renderer() and base_poly_approx()
+     * before computing approximation
      */
     template <class OutputIterator>
-    OutputIterator render(CGAL::Bbox_2 bbox, int res_w, int res_h,
-             OutputIterator oi) const {
+    OutputIterator compute_approximation(OutputIterator oi) const {
 
-        typedef CGALi::Curve_renderer_singleton< typename
-            Quadrical_kernel_via_analysis_2::Curved_kernel_via_analysis_2 >
-                Renderer_inst;
-
-        typedef typename Renderer_inst::Coord_vec_2 Coord_vec_2;
-        typedef typename Renderer_inst::Coord_2 Coord_2;
+        typedef Curve_renderer_facade< typename Base::Projected_kernel_2 >
+             Facade;
+        typedef typename Facade::Coord_vec_2 Coord_vec_2;
+        typedef typename Facade::Coord_2 Coord_2;
 
         std::list<Coord_vec_2> points;
         std::pair<Coord_2, Coord_2> end_points;
 
-        Renderer_inst::draw(bbox, res_w, res_h, this->projected_arc(), points,
-                end_points);
-        
-        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
+        Facade::instance().draw(this->projected_arc(), points, end_points);
+        if(points.empty()) 
+            return oi;        
+    
+        CGAL::Bbox_2 bbox;
+        int res_w, res_h;
+        Facade::instance().get_resolution(res_w, res_h);
+        Facade::instance().get_window(bbox);
+
+        double pixw = (bbox.xmax() - bbox.xmin()) / res_w, 
+               pixh = (bbox.ymax() - bbox.ymin()) / res_h;
         typename std::list<Coord_vec_2>::const_iterator lit = points.begin();  
         while(lit != points.end()) {
             
             const Coord_vec_2& tmp = *lit++;
             typename Coord_vec_2::const_iterator cit;
+            int xprev = -1, yprev = -1;
             for(cit = tmp.begin(); cit != tmp.end(); cit++) {
     
-                double x0 = bbox.xmin() + (double)cit->x * lx / res_w,
-                       y0 = bbox.ymin() + (double)cit->y * ly / res_h;
+                if(xprev == cit->x && yprev == cit->y) 
+                    continue; // don't push duplicate points
+                xprev = cit->x, yprev = cit->y;
+                double x0 = bbox.xmin() + (double)xprev * pixw,
+                       y0 = bbox.ymin() + (double)yprev * pixh;
+
+//                 std::cerr << "x = " << cit->x << "; y = " << cit->y << 
+//                     "; x0 = " << x0 << "; y0 = " << y0 << std::endl;
                 //! @todo is there any way to get rid of substitute_xy ???
-                Poly_double_1 ppt = NiX::substitute_xy(base_poly_approx(), 
-                    x0, y0);    
-                *oi++ = Approximation_3(x0, y0, _compute_z(ppt));
+                Poly_double_1 ppt = NiX::substitute_xy(
+                    Quadric_point_2::base_poly_approx(), x0, y0);    
+                *oi++ = Approximation_3(x0, y0, 
+                    Quadric_point_2::compute_z(ppt, this->sheet()));
             }
         }
         return oi;
     }
 
-    //! sets / retrieves base polynomial approximation
-    static Poly_double_3 base_poly_approx( 
-            const boost::optional< Poly_double_3>& poly = boost::none) {
-        static Poly_double_3 _polynomial;
-        if (poly) {
-            _polynomial = *poly;
-        }
-        return _polynomial;
-    }
-
-protected:
-
-    double _compute_z(const Poly_double_1& ppt) const {
-        
-        if(ppt.degree() < 1) 
-            return 0;
-        // comparison for equality does not work for doubles
-        if(fabs(ppt[2]) < 1e-30) 
-            return -ppt[0]/ppt[1];
-
-        double d = ppt[1]*ppt[1]-4*ppt[2]*ppt[0],
-            inv = 0.5 / ppt[2], c = -ppt[1] * inv;
-        if(d <= 0)
-            return c;
-        d = std::sqrt(d) * inv;
-        if(this->sheet() == 0) // take minimal root
-            return c + (d < 0 ? d : -d);
-        return c + (d < 0 ? -d : d);    
-    }
+    
 #endif // CGAL_CKvA_COMPILE_RENDERER
     //!@}
 

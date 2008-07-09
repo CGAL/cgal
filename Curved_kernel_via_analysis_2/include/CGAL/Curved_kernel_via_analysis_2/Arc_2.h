@@ -599,7 +599,7 @@ protected:
     //!@}
 
 public:
-    //!\name Destructors
+    //!\name Destructors (can be many ?)
     //!@{
 
     /*!\brief
@@ -921,35 +921,6 @@ public:
      *
      * \pre the curve ends lie on the bottom or top boundary
      */
-#if 0 // TODO activate cache again (in functor?) (Pavel)
-    CGAL::Comparison_result compare_x_near_boundary(
-            CGAL::Arr_curve_end ce1,
-            const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2
-    ) const {
-
-        if (this->id() > cv2.id()) {
-            return (- cv2.compare_x_near_boundary(
-                            ce2, *dynamic_cast< const Kernel_arc_2*>(this), 
-                            ce1)
-            );
-        }
-        Int_pair pair(cv2.id(), ((ce1 << 16)|ce2) );
-
-        std::pair<typename Int_pair_map::Hashed_iterator, bool> r =
-            this->ptr()->_m_cmp_ends_at_x.find(pair);
-
-        if (r.second) {
-            //std::cerr << "precached compare_x_near_boundary result\n";
-            return r.first->second;
-        }
-
-        //std::cerr << "compare_x_near_boundary\n";
-        CGAL::Comparison_result res = 
-            compare_x_near_boundary(ce1, cv2, ce2, true);
-        this->ptr()->_m_cmp_ends_at_x.insert(std::make_pair(pair, res));
-        return res;     
-    }
-#else
     CGAL::Comparison_result compare_x_near_boundary(
             CGAL::Arr_curve_end ce1,
             const Kernel_arc_2& cv2, CGAL::Arr_curve_end ce2) const {
@@ -961,7 +932,6 @@ public:
                 *dynamic_cast< const Kernel_arc_2* >(this), ce1, cv2, ce2
         );
     }   
-#endif    
   
     /*!\brief
      * Compare the relative y-positions of two arcs whose ends approach
@@ -1000,21 +970,6 @@ public:
      *
      * \pre p is in the x-range of the arc.
      */
-#if 0 // TODO activate cache again (in functor?) (Pavel)
-    CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
-        
-        std::pair<typename Int_map::Hashed_iterator, bool> r =
-            this->ptr()->_m_cmp_y_at_x.find(p.id());
-            
-        if(r.second) {
-            //std::cerr << "precached compare_y_at_x result\n";
-            return r.first->second;
-        }
-        CGAL::Comparison_result res = compare_y_at_x(p, true);
-        this->ptr()->_m_cmp_y_at_x.insert(std::make_pair(p.id(), res));
-        return res;
-   }
-#else    
     CGAL::Comparison_result compare_y_at_x(const Point_2& p) const {
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Compare_y_at_x_2,
@@ -1022,7 +977,6 @@ public:
         CGAL_precondition(dynamic_cast< const Kernel_arc_2* >(this));
         return compare_y_at_x_2(p, *dynamic_cast< const Kernel_arc_2* >(this));
     }
-#endif    
 
     /*!\brief
      * Compares the relative vertical aligment of this arc with a second 
@@ -2862,9 +2816,8 @@ public:
             std::cerr << "ASCII format not yet implemented" << std::endl;
         }
     }
-    
     //!@}
-
+   
     // befriending the kernel point
     friend class Curved_kernel_via_analysis_2::Point_2;
     

@@ -70,10 +70,6 @@ public:
     typedef CGALi::Non_x_monotone_arc_2<NewCKvA>
              Non_x_monotone_arc_2;
 
-    //! this instance itself
-    typedef Curved_kernel_via_analysis_2_base< NewCKvA, BaseCKvA,
-             CurveKernel_2, FunctorBase > Self;
-
     //! the multiplicity type
     typedef unsigned int Multiplicity;
     
@@ -184,7 +180,7 @@ public:
         static NewCKvA binstance;
         
         if (&ckva == &_reset_instance()) {
-            instance = binstance;
+            instance = binstance; 
         } else if (&ckva != &_set_instance()) {
             binstance = instance;
             instance = ckva;

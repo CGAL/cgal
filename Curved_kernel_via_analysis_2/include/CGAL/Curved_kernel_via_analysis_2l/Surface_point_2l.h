@@ -29,12 +29,6 @@
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
-// no need to pollute global namespace with qt stuff
-#define CGAL_CKVA_NO_QT_WIDGET_INTERFACE 
-#include <CGAL/IO/Qt_widget_Curve_renderer_2.h>
-#endif
-
 #include <SoX/GAPS/Restricted_cad_3.h>
 #include <SoX/GAPS/Restricted_cad_3_accessor.h>
 
@@ -372,42 +366,8 @@ public:
 
 #undef CGAL_CKvA_2l_GRAB_CK_FUNCTOR_FOR_POINT
     
-    //!\name Approximation & visualization
+    //!\name Approximation 
     //!@{
-
-#ifdef CGAL_CKvA_COMPILE_RENDERER
-
-    /*!\brief
-     * renders a point into window \c bbox with resolution \c res_w by \c res_h
-     * returns \c false if the point does not fall within the window
-     *
-     * @note: don't use this method with CORE number types otherwise the
-     * renderer hangs when computing point approximation..
-     */
-    bool render(CGAL::Bbox_2 bbox, int res_w, int res_h,
-        Approximation_3& result) const {
-    
-    //! @note: curve renderer computes approximation valid for
-    //! given resolution, storing it for later use it might not be a good idea
-    //! if resolution is changed
-
-        typedef CGALi::Curve_renderer_singleton< typename
-            Curved_kernel_via_analysis_2l::Curved_kernel_via_analysis_2 >
-                Renderer_inst;
-
-        typename Renderer_inst::Coord_2 cc;
-        if(!Renderer_inst::draw(bbox, res_w, res_h, 
-                this->projected_point(), cc))
-            return false; // bad luck
-         // gotcha !!           
-        
-        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
-        double x0 = bbox.xmin() + (double)cc.x * lx / res_w,
-               y0 = bbox.ymin() + (double)cc.y * ly / res_h;
-        result = Approximation_3(x0, y0, _compute_z(x0, y0));
-        return true;
-    }
-#endif // CGAL_CKvA_COMPILE_RENDERER    
 
     // returns an non-robust approximation of the point
     Approximation_3 to_double() const {

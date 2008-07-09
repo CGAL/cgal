@@ -62,6 +62,48 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class CurvedKernelViaAnalysis_2, class Float_>
+class Curve_renderer_interface;
+
+/*!\brief 
+ * represents a single curve renderer instance with usual parameter set to
+ * speed up rendering of several objects supported by the same curve
+ * 
+ * @warning not recommended to use for multi-threaded applications
+ */
+template <class CurvedKernelViaAnalysis_2>
+class Curve_renderer_facade
+{
+    Curve_renderer_facade() { // private constructor
+    }
+
+public:
+    typedef CGAL::Interval_nt<true> Interval_double;
+
+    typedef Curve_renderer_interface<CurvedKernelViaAnalysis_2,
+             Interval_double> Curve_renderer;
+
+    typedef typename Curve_renderer::Coord_vec_2 Coord_vec_2;
+
+    typedef typename Curve_renderer::Coord_2 Coord_2;
+
+    static Curve_renderer& instance() {
+        static Curve_renderer _this;
+        return _this;
+    }
+
+    static void setup(const CGAL::Bbox_2& bbox, int res_w, int res_h) {
+        int _w, _h;
+        CGAL::Bbox_2 tmp;
+        instance().get_resolution(_w, _h);
+        instance().get_window(tmp);
+
+        if(bbox != tmp || res_w != _w || res_h != _h) {
+            instance().setup(bbox, res_w, res_h);
+        }
+    }
+};
+
 /*! \brief 
  * CKvA interface to the curve renderer. Provides three levels of increasing
  * arithmetic precision
@@ -72,7 +114,7 @@ CGAL_BEGIN_NAMESPACE
  * provided by the currently used \c Arithmetic_kernel 
  */
 template <class CurvedKernelViaAnalysis_2, class Float_>
-class Curve_renderer_facade
+class Curve_renderer_interface
 {
 public:
     //! \name Public typedefs 
@@ -150,21 +192,18 @@ public:
 #endif
 #else // !CGAL_CKVA_USE_STATIC_RENDERER
     Default_renderer_2 rend;
-    Default_renderer_2& renderer()
-    {
+    Default_renderer_2& renderer() {
         return rend;
     }
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
     Bigfloat_renderer_2 bigfloat_rend;
-    Bigfloat_renderer_2& bigfloat_renderer()
-    {
+    Bigfloat_renderer_2& bigfloat_renderer() {
         return bigfloat_rend;
     }
 #endif
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
     Exact_renderer_2 exact_rend;
-    Exact_renderer_2& exact_renderer()
-    {
+    Exact_renderer_2& exact_renderer() {
         return exact_rend;
     }
 #endif
@@ -176,6 +215,14 @@ public:
 public:
     //! \name Public methods and properties
     //!@{
+
+    inline void get_window(CGAL::Bbox_2& bbox) {
+        return renderer().get_window(bbox);
+    }
+    
+    inline void get_resolution(int& res_w, int& res_h) {
+        return renderer().get_resolution(res_w, res_h);
+    }
     
     /*!\brief
      * initializes renderer with drawing window dimensions
@@ -213,8 +260,9 @@ public:
             if(::boost::is_same<typename NiX::NT_traits<Float>::Is_exact,
                     CGAL::Tag_true>::value)
                 goto Lexit;
-            renderer().get_window(bbox);
-            renderer().get_resolution(res_w, res_h);
+            
+            get_window(bbox);
+            get_resolution(res_w, res_h);
             bigfloat_renderer().setup(bbox, res_w, res_h);
             try {
                 points.clear();
@@ -231,8 +279,8 @@ public:
                         CGAL::Tag_true>::value)
                     goto Lexit;
 
-                renderer().get_window(bbox);
-                renderer().get_resolution(res_w, res_h);
+                get_window(bbox);
+                get_resolution(res_w, res_h);
                 exact_renderer().setup(bbox, res_w, res_h);
 
                 try {
@@ -277,7 +325,8 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
     }
 
    //!@}
-}; // Curve_renderer_facade
+}; // Curve_renderer_interface
+
 
 
 CGAL_END_NAMESPACE

@@ -102,7 +102,7 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
     
     //! type of 1-curve analysis
-    typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_analysis_2;
+    typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
     
     //!@}
 private:    
@@ -229,6 +229,7 @@ public:
     
     //! default constructor: a curve segment is undefined
     Curve_renderer_2() : cache_id(-1), initialized(false), one(1) { 
+        setup(Bbox_2(-1.0, -1.0, 1.0, 1.0), 640, 480);
     }
     
     //!@}
@@ -1065,6 +1066,7 @@ template <class CurvedKernelViaAnalysis_2, class Coeff_>
 bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     const Point_2& pt, CGALi::Coord_2& coord) {
 
+Gfx_OUT("refining x-range\n");
     const X_coordinate_1& x0 = pt.x();
     while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
         refine_x(x0);
@@ -1074,13 +1076,15 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
         return false;
 
     Xy_coordinate_2 xy(x0, pt.curve(), pt.arcno());
-    refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_X);
+Gfx_OUT("refining y-range\n");
+    refine_xy(xy, engine.pixel_h_r / CGAL_REFINE_X);
     
     /*typename Curve_analysis_2::Internal_curve_2::Event1_info
         event = pt.curve()._internal_curve().event_info_at_x(pt.x());
     event.refine_to(pt.arcno(), engine.pixel_h_r/CGAL_REFINE_X);
     y_s = event.lower_boundary(pt.arcno());*/
-    y_s = lbound_y(xy);
+Gfx_OUT("obtaining lower bounds");
+    y_s = ubound_y(xy);
 
     Pixel_2 pix;
     get_pixel_coords(x_s, y_s, pix);
