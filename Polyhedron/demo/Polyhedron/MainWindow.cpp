@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QFileDialog>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
@@ -59,6 +60,18 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(actionQuit, SIGNAL(triggered()),
           qApp, SLOT(quit()));
+
+  // recent files...
+  for (int i = 0; i < MaxRecentFiles; ++i) {
+    recentFileActs[i] = new QAction(this);
+    recentFileActs[i]->setVisible(false);
+    connect(recentFileActs[i], SIGNAL(triggered()),
+            this, SLOT(openRecentFile()));
+    menuFile->insertAction(actionQuit, recentFileActs[i]);
+  }
+  recentFilesSeparator = menuFile->insertSeparator(actionQuit);
+  recentFilesSeparator->setVisible(false);
+  updateRecentFileActions();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -73,7 +86,7 @@ void MainWindow::dropEvent(QDropEvent *event)
     QString filename = url.toLocalFile();
     if(!filename.isEmpty()) {
       QTextStream(stderr) << QString("dropEvent(\"%1\")\n").arg(filename);
-      scene->open(filename);
+      open(filename);
     }
   }
   event->acceptProposedAction();
@@ -102,6 +115,7 @@ void MainWindow::updateViewerBBox()
 void MainWindow::open(QString filename)
 {
   scene->open(filename);
+  setCurrentFile(filename);
 }
 
 
@@ -122,6 +136,51 @@ void MainWindow::selectionChanged()
   viewer->updateGL();
 }
 
+void MainWindow::openRecentFile()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    scene->open(action->data().toString());
+}
+
+void MainWindow::setCurrentFile(const QString &fileName)
+{
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+  files.removeAll(fileName);
+  files.prepend(fileName);
+  while (files.size() > MaxRecentFiles)
+    files.removeLast();
+
+  settings.setValue("recentFileList", files);
+
+  updateRecentFileActions();
+}
+
+QString MainWindow::strippedName(const QString &fullFileName)
+{
+  return QFileInfo(fullFileName).fileName();
+}
+
+void MainWindow::updateRecentFileActions()
+{
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+
+  int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+
+  for (int i = 0; i < numRecentFiles; ++i) {
+    QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
+    recentFileActs[i]->setText(text);
+    recentFileActs[i]->setData(files[i]);
+    recentFileActs[i]->setVisible(true);
+  }
+  for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
+    recentFileActs[j]->setVisible(false);
+
+  recentFilesSeparator->setVisible(numRecentFiles > 0);
+}
+
 void MainWindow::on_actionLoadPolyhedron_triggered()
 {
   QStringList filenames = 
@@ -132,7 +191,7 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
                                      "All files (*)"));
   if(!filenames.isEmpty()) {
     Q_FOREACH(QString filename, filenames) {
-      scene->open(filename);
+      open(filename);
     }
   }
 }

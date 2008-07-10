@@ -24,8 +24,11 @@ public slots:
 
 protected slots:
   void selectionChanged();
+  void openRecentFile();
+  void setCurrentFile(const QString &fileName);
+  void updateRecentFileActions();
 
-	void on_actionConvexHull_triggered();
+  void on_actionConvexHull_triggered();
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
@@ -44,7 +47,13 @@ protected:
 
   Polyhedron* getSelectedPolygon();
 private:
+  QString strippedName(const QString &fullFileName);
+  QAction* recentFilesSeparator;
+
   Scene* scene;
+
+  enum { MaxRecentFiles = 10 };
+  QAction *recentFileActs[MaxRecentFiles];
 };
 
 bool MainWindow::onePolygonIsSelected() const
