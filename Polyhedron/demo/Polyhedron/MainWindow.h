@@ -29,6 +29,7 @@ protected slots:
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
+	void on_actionSimplify_triggered();
 
   // subdivision methods are defined in MainWindow_subdivision_methods.cpp
   void on_actionCatmullClark_triggered();

@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>29</y>
+     <y>24</y>
      <width>966</width>
-     <height>541</height>
+     <height>549</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>966</width>
-     <height>29</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -139,7 +139,7 @@
     </property>
     <widget class="QMenu" name="menu_Principale_components_analysis" >
      <property name="title" >
-      <string>&amp;Principale components analysis</string>
+      <string>PCA</string>
      </property>
      <addaction name="actionFitPlane" />
      <addaction name="actionFitLine" />
@@ -167,10 +167,10 @@
      <addaction name="actionDifference" />
     </widget>
     <addaction name="actionConvexHull" />
+    <addaction name="menuSubdivision" />
     <addaction name="actionSimplify" />
     <addaction name="actionKernel" />
     <addaction name="menu_Boolean_operations" />
-    <addaction name="menuSubdivision" />
    </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
@@ -210,9 +210,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>570</y>
+     <y>573</y>
      <width>966</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -226,7 +226,7 @@
   </action>
   <action name="actionSimplify" >
    <property name="text" >
-    <string>&amp;Simplify</string>
+    <string>&amp;Simplification</string>
    </property>
   </action>
   <action name="actionCatmullClark" >
@@ -256,12 +256,12 @@
   </action>
   <action name="actionFitPlane" >
    <property name="text" >
-    <string>Fit a &amp;plane</string>
+    <string>Fit &amp;plane</string>
    </property>
   </action>
   <action name="actionFitLine" >
    <property name="text" >
-    <string>Fit a &amp;line</string>
+    <string>Fit &amp;line</string>
    </property>
   </action>
   <action name="actionCurvatureEstimation" >

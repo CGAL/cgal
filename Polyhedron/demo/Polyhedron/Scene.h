@@ -52,9 +52,8 @@ public:
   bool open(QString);
   void erase(int);
   void duplicate(int);
-
-	// convex hull
 	void convex_hull(int);
+	void simplify(int);
 
   inline Polyhedron* getPolyhedron(int);
 

@@ -2,6 +2,12 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/convex_hull_3.h>
 
+// simplification
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+
+
 #include <iostream>
 #include <fstream>
 
@@ -141,6 +147,24 @@ void Scene::convex_hull(int polyhedron_index)
   polyhedra.push_back(entry2);
 
   selected_item = -1;
+  emit updated();
+  QAbstractListModel::reset();
+}
+
+void Scene::simplify(int polyhedron_index)
+{
+  const Polyhedron_entry& entry = polyhedra[polyhedron_index];
+
+	// get active polyhedron
+  Polyhedron* poly = entry.polyhedron_ptr;
+
+	// simplify
+	//namespace SMS = CGAL::Surface_mesh_simplification ;
+	//SMS::Count_stop_predicate< Polyhedron > stop(1000); // target # edges
+	//SMS::edge_collapse(*poly, stop,
+ //                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*poly))
+	//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*poly)));
+	poly->compute_normals();
   emit updated();
   QAbstractListModel::reset();
 }

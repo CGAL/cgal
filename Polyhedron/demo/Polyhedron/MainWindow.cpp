@@ -154,3 +154,12 @@ void MainWindow::on_actionConvexHull_triggered()
   if(onePolygonIsSelected())
     scene->convex_hull(getSelectedPolygonIndex());
 }
+
+void MainWindow::on_actionSimplify_triggered()
+{
+  if(onePolygonIsSelected())
+    scene->simplify(getSelectedPolygonIndex());
+}
+
+
+
