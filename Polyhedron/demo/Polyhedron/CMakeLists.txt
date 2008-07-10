@@ -9,6 +9,9 @@ foreach(INCDIR ../../../GraphicsView/include ../../../Surface_mesher/include)
     include_directories (BEFORE ${INCDIR})
   endif()
 endforeach()
+
+include_directories(include)
+
 if(EXISTS ../../../GraphicsView/src/CGALQt4)
   link_directories(../../../GraphicsView/src/CGALQt4)
 endif(EXISTS ../../../GraphicsView/src/CGALQt4)
