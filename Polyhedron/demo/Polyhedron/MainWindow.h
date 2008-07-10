@@ -1,13 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtOpenGL/qgl.h>
 #include "ui_MainWindow.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
 class QDragEnterEvent;
 class QDropEvent;
 class Scene;
-class Polyhedron;
+struct Polyhedron;
 
 class MainWindow : 
   public CGAL::Qt::DemosMainWindow,
