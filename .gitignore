@@ -225,8 +225,12 @@ Optimisation_doc/.tmp
 Optimisation_doc/Makefile
 Optimisation_doc/bin
 Optimisation_doc/doc_ps
+Polyhedron/demo/Polyhedron/*.cpp_parameters
+Polyhedron/demo/Polyhedron/*.dir
 Polyhedron/demo/Polyhedron/*.exe
+Polyhedron/demo/Polyhedron/*.sln
 Polyhedron/demo/Polyhedron/*.ui
+Polyhedron/demo/Polyhedron/*.vcproj
 Polyhedron/demo/Polyhedron/*_moc.cpp
 Polyhedron/demo/Polyhedron/.qglviewer*.xml
 Polyhedron/demo/Polyhedron/Makefile
