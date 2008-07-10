@@ -5,6 +5,8 @@
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QItemDelegate>
+#include <QPixmap>
 
 // CGAL
 #include <CGAL/basic.h>
@@ -25,6 +27,9 @@ typedef Kernel::Triangle_3 Triangle_3;
 
 struct Polyhedron : public Enriched_polyhedron<Kernel,
                                                Enriched_items> {};
+
+class QEvent;
+class QMouseEvent;
 
 class Scene  :
   public QAbstractListModel
@@ -78,6 +83,31 @@ private:
   Polyhedra polyhedra;
   int selected_item;
 }; // end class Scene
+
+class SceneDelegate : public QItemDelegate
+{
+public:
+  SceneDelegate(QObject * parent = 0)
+    : QItemDelegate(parent),
+      checkOnPixmap(":/cgal/icons/check-on.png"),
+      checkOffPixmap(":/cgal/icons/check-off.png")
+  {
+  }
+
+  bool editorEvent(QEvent *event, QAbstractItemModel *model,
+                   const QStyleOptionViewItem &option,
+                   const QModelIndex &index);
+  void paint(QPainter *painter, const QStyleOptionViewItem &option,
+             const QModelIndex &index) const;
+
+private:
+  QPixmap checkOnPixmap;
+  QPixmap checkOffPixmap;
+}; // end class SceneDelegate
+
+/*
+ * Inlined functions
+ */ 
 
 Polyhedron* Scene::getPolyhedron(int index)
 {

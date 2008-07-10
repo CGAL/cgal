@@ -8,6 +8,9 @@
 #include <QFileInfo>
 #include <QGLWidget>
 #include <QMessageBox>
+#include <QEvent>
+#include <QMouseEvent>
+#include <QPainter>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -275,4 +278,54 @@ Scene::setData(const QModelIndex &index,
     return false;
   }
   return false;
+}
+
+bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                const QStyleOptionViewItem &option,
+                                const QModelIndex &index)
+{
+  if (index.column() != Scene::ActivatedColumn)
+    return QItemDelegate::editorEvent(event, model, option, index);
+
+  if (event->type() == QEvent::MouseButtonPress) {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+    if(mouseEvent->button() == Qt::LeftButton)
+      model->setData(index, ! model->data(index).toBool() );
+    return false; //so that the selection can change
+  }
+
+  return true;
+}
+
+void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const
+{
+  if (index.column() != Scene::ActivatedColumn) {
+    QItemDelegate::paint(painter, option, index);
+  } else {
+    const QAbstractItemModel *model = index.model();
+    QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ?
+      (option.state & QStyle::State_Active) ? QPalette::Normal : QPalette::Inactive : QPalette::Disabled;
+
+    if (option.state & QStyle::State_Selected)
+      painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
+
+    bool checked = model->data(index, Qt::DisplayRole).toBool();
+    int width = option.rect.width();
+    int height = option.rect.height();
+    int size = std::min(width, height);
+    int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
+    int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
+    if(checked) {
+      painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
+                                                     Qt::KeepAspectRatio,
+                                                     Qt::SmoothTransformation));
+    }
+//     else {
+//       painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
+//                                                      Qt::KeepAspectRatio,
+//                                                      Qt::SmoothTransformation));
+//     }
+    drawFocus(painter, option, option.rect); // since we draw the grid ourselves
+  }
 }

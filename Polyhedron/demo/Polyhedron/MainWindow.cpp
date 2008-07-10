@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->setScene(scene);
   treeView->setModel(scene);
+  treeView->setItemDelegate(new SceneDelegate(this));
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           viewer, SLOT(updateGL()));

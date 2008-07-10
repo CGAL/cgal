@@ -3113,6 +3113,10 @@ Polygon/doc_tex/Polygon/pgn_algos.xml svneol=native#text/xml
 Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
+Polyhedron/demo/Polyhedron/check-off.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/check-off.svg -text
+Polyhedron/demo/Polyhedron/check-on.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/check.svg -text
 Polyhedron/demo/Polyhedron/editcopy.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/minus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/plus.png -text svneol=unset#image/png
