@@ -133,26 +133,22 @@ Scene::duplicate(int polyhedron_index)
 
 void Scene::convex_hull(int polyhedron_index)
 {
-  const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-
 	// get active polyhedron
-  Polyhedron* poly = entry.polyhedron_ptr;
-
-  poly->compute_normals();
+  const Polyhedron_entry& selected_entry = polyhedra[polyhedron_index];
+  Polyhedron* pMesh = selected_entry.polyhedron_ptr;
 
 	// add convex hull as new polyhedron
   Polyhedron *pConvex_hull = new Polyhedron;
-
-	// compute convex hull
-	CGAL::convex_hull_3(poly->points_begin(),poly->points_end(),*pConvex_hull);
+	CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
 	pConvex_hull->compute_normals();
 
-  Polyhedron_entry entry2;
-  entry2.polyhedron_ptr = pConvex_hull;
-  entry2.name = QString("%1 (convex hull)").arg(entry.name);
-  entry2.color = entry.color;
-  entry2.activated = entry.activated;
-  polyhedra.push_back(entry2);
+	// set new entry
+  Polyhedron_entry new_entry;
+  new_entry.polyhedron_ptr = pConvex_hull;
+  new_entry.name = QString("%1 (convex hull)").arg(selected_entry.name);
+  new_entry.color = selected_entry.color;
+  new_entry.activated = selected_entry.activated;
+  polyhedra.push_back(new_entry);
 
   selected_item = -1;
   emit updated();
@@ -161,18 +157,20 @@ void Scene::convex_hull(int polyhedron_index)
 
 void Scene::simplify(int polyhedron_index)
 {
+	// get selected polyhedron
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-
-	// get active polyhedron
-  Polyhedron* poly = entry.polyhedron_ptr;
+  Polyhedron* pMesh = entry.polyhedron_ptr;
 
 	// simplify
+	//unsigned int nb_edges = 1000; // TODO: should be an option 
 	//namespace SMS = CGAL::Surface_mesh_simplification ;
-	//SMS::Count_stop_predicate< Polyhedron > stop(1000); // target # edges
-	//SMS::edge_collapse(*poly, stop,
- //                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*poly))
-	//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*poly)));
-	poly->compute_normals();
+	//SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
+	//SMS::edge_collapse( *pMesh, stop,
+ //                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
+	//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
+	// recompute normals
+	pMesh->compute_normals();
+
   emit updated();
   QAbstractListModel::reset();
 }
@@ -181,7 +179,8 @@ CGAL::Bbox_3
 Scene::bbox()
 {
   if(polyhedra.empty()) {
-    return CGAL::Bbox_3(0, 0, 0, 1, 1, 1);
+    return CGAL::Bbox_3(0.0, 0.0, 0.0, 
+			                  1.0, 1.0, 1.0);
   }
   else
   {
