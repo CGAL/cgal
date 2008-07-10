@@ -319,8 +319,13 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 
   if (event->type() == QEvent::MouseButtonPress) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-    if(mouseEvent->button() == Qt::LeftButton)
-      model->setData(index, ! model->data(index).toBool() );
+    if(mouseEvent->button() == Qt::LeftButton) {
+      int x = mouseEvent->pos().x() - option.rect.x();
+      if(x >= (option.rect.width() - size)/2 && 
+         x <= (option.rect.width() + size)/2) {
+        model->setData(index, ! model->data(index).toBool() );
+      }
+    }
     return false; //so that the selection can change
   }
 
@@ -343,7 +348,7 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     bool checked = model->data(index, Qt::DisplayRole).toBool();
     int width = option.rect.width();
     int height = option.rect.height();
-    int size = (std::min)(width, height);
+    size = (std::min)(width, height);
     int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
     int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
     if(checked) {
@@ -351,11 +356,11 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                                                      Qt::KeepAspectRatio,
                                                      Qt::SmoothTransformation));
     }
-//     else {
-//       painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-//                                                      Qt::KeepAspectRatio,
-//                                                      Qt::SmoothTransformation));
-//     }
+    else {
+      painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
+                                                     Qt::KeepAspectRatio,
+                                                     Qt::SmoothTransformation));
+    }
     drawFocus(painter, option, option.rect); // since we draw the grid ourselves
   }
 }

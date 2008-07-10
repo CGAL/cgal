@@ -107,6 +107,7 @@ public:
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
+  mutable int size;
 }; // end class SceneDelegate
 
 /*
