@@ -126,6 +126,10 @@
     <property name="title" >
      <string>&amp;File</string>
     </property>
+    <addaction name="actionLoadPolyhedron" />
+    <addaction name="actionErasePolyhedron" />
+    <addaction name="actionDuplicatePolyhedron" />
+    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
@@ -139,7 +143,7 @@
     </property>
     <widget class="QMenu" name="menu_Principale_components_analysis" >
      <property name="title" >
-      <string>PCA</string>
+      <string>&amp;PCA</string>
      </property>
      <addaction name="actionFitPlane" />
      <addaction name="actionFitLine" />
@@ -185,26 +189,11 @@
     <addaction name="actionAntiAliasing" />
     <addaction name="menuDockWindows" />
    </widget>
-   <widget class="QMenu" name="menuCamera" >
-    <property name="title" >
-     <string>&amp;Camera</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuScene" >
-    <property name="title" >
-     <string>&amp;Scene</string>
-    </property>
-    <addaction name="actionLoadPolyhedron" />
-    <addaction name="actionErasePolyhedron" />
-    <addaction name="actionDuplicatePolyhedron" />
-   </widget>
    <addaction name="menuFile" />
-   <addaction name="menuScene" />
    <addaction name="menuEdit" />
    <addaction name="menuAlgorithms" />
    <addaction name="menuOperations" />
    <addaction name="menuView" />
-   <addaction name="menuCamera" />
   </widget>
   <widget class="QStatusBar" name="statusbar" >
    <property name="geometry" >
