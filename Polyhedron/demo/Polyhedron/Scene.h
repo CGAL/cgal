@@ -1,6 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <QtOpenGL/qgl.h>
 #include <QAbstractListModel>
 #include <QString>
 #include <QColor>
