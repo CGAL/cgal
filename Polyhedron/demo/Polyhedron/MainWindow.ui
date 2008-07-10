@@ -10,15 +10,15 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>MainWindow</string>
+   <string>Polyhedron demo</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>24</y>
+     <y>29</y>
      <width>966</width>
-     <height>549</height>
+     <height>541</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>966</width>
-     <height>24</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -210,9 +210,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>573</y>
+     <y>570</y>
      <width>966</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
