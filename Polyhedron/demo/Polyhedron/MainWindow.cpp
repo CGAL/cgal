@@ -40,10 +40,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(treeView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-          this, SLOT(on_treeView_itemSelectionChanged()));
+          this, SLOT(selectionChanged()));
 
   connect(actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
+
+  actionAntiAliasing->setChecked(true);
 
   // add the "About CGAL..." entry
   this->addAboutCGAL();
@@ -109,7 +111,7 @@ Polyhedron* MainWindow::getSelectedPolygon()
   return scene->getPolyhedron(getSelectedPolygonIndex());
 }
 
-void MainWindow::on_treeView_itemSelectionChanged()
+void MainWindow::selectionChanged()
 {
   if(onePolygonIsSelected()) {
     scene->setSelectedItem(getSelectedPolygonIndex());

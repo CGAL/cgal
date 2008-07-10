@@ -23,7 +23,7 @@ public slots:
   void open(QString filename);
 
 protected slots:
-  void on_treeView_itemSelectionChanged();
+  void selectionChanged();
 
 	void on_actionConvexHull_triggered();
   void on_actionLoadPolyhedron_triggered();
