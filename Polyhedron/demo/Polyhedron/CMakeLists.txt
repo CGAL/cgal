@@ -5,16 +5,16 @@ project( Polyhedron )
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 foreach(INCDIR ../../../GraphicsView/include ../../../Surface_mesher/include)
-  if(EXISTS ${INCDIR})
-    include_directories (BEFORE ${INCDIR})
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
+    include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
   endif()
 endforeach()
 
 include_directories(include)
 
-if(EXISTS ../../../GraphicsView/src/CGALQt4)
-  link_directories(../../../GraphicsView/src/CGALQt4)
-endif(EXISTS ../../../GraphicsView/src/CGALQt4)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
+  link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 
 find_package(CGAL REQUIRED)
 include( ${CGAL_USE_FILE} )
