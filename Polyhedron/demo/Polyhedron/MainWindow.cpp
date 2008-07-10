@@ -115,9 +115,10 @@ void MainWindow::updateViewerBBox()
 void MainWindow::open(QString filename)
 {
   int index = scene->open(filename);
-  std::cerr << "opened " << index << "\n";
-  setCurrentFile(filename);
-  selectPolyhedron(index);
+  if(index >= 0) {
+    setCurrentFile(filename);
+    selectPolyhedron(index);
+  }
 }
 
 void MainWindow::selectPolyhedron(int i)
@@ -162,7 +163,7 @@ void MainWindow::openRecentFile()
 {
   QAction *action = qobject_cast<QAction *>(sender());
   if (action)
-    scene->open(action->data().toString());
+    open(action->data().toString());
 }
 
 void MainWindow::setCurrentFile(const QString &fileName)
@@ -192,7 +193,7 @@ void MainWindow::updateRecentFileActions()
   int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
 
   for (int i = 0; i < numRecentFiles; ++i) {
-    QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
+    QString text = tr("&%1 %2").arg(i).arg(strippedName(files[i]));
     recentFileActs[i]->setText(text);
     recentFileActs[i]->setData(files[i]);
     recentFileActs[i]->setVisible(true);
