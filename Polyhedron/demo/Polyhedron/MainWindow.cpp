@@ -147,3 +147,8 @@ void MainWindow::on_actionDuplicatePolyhedron_triggered()
     scene->duplicate(getSelectedPolygonIndex());
 }
 
+void MainWindow::on_actionConvexHull_triggered()
+{
+  if(onePolygonIsSelected())
+    scene->convex_hull(getSelectedPolygonIndex());
+}

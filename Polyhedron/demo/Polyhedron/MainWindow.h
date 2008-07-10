@@ -25,6 +25,7 @@ public slots:
 protected slots:
   void on_treeView_itemSelectionChanged();
 
+	void on_actionConvexHull_triggered();
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();

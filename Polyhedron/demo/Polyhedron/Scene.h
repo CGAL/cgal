@@ -53,6 +53,9 @@ public:
   void erase(int);
   void duplicate(int);
 
+	// convex hull
+	void convex_hull(int);
+
   inline Polyhedron* getPolyhedron(int);
 
   void draw();

@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/convex_hull_3.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -107,6 +109,34 @@ Scene::duplicate(int polyhedron_index)
   entry2.polyhedron_ptr = poly;
   entry2.name = QString("%1 (copy)").arg(entry.name);
   entry2.color=entry.color;
+  entry2.activated = entry.activated;
+  polyhedra.push_back(entry2);
+
+  selected_item = -1;
+  emit updated();
+  QAbstractListModel::reset();
+}
+
+void Scene::convex_hull(int polyhedron_index)
+{
+  const Polyhedron_entry& entry = polyhedra[polyhedron_index];
+
+	// get active polyhedron
+  Polyhedron* poly = entry.polyhedron_ptr;
+
+  poly->compute_normals();
+
+	// add convex hull as new polyhedron
+  Polyhedron *pConvex_hull = new Polyhedron;
+
+	// compute convex hull
+	CGAL::convex_hull_3(poly->points_begin(),poly->points_end(),*pConvex_hull);
+	pConvex_hull->compute_normals();
+
+  Polyhedron_entry entry2;
+  entry2.polyhedron_ptr = pConvex_hull;
+  entry2.name = QString("%1 (convex hull)").arg(entry.name);
+  entry2.color = entry.color;
   entry2.activated = entry.activated;
   polyhedra.push_back(entry2);
 
