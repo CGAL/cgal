@@ -212,20 +212,16 @@ struct Vertex_normal // (functor)
 };
 
 //*********************************************************
-template <class kernel,
-          class items,
-#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
-          template < class T, class I, class A>
-#endif
-          class HDS = CGAL::HalfedgeDS_default >
-class Enriched_polyhedron : public CGAL::Polyhedron_3<kernel,items,HDS>
+template <class Kernel,
+          class items>
+class Enriched_polyhedron : public CGAL::Polyhedron_3<Kernel,items>
 {
 public :
-  typedef typename kernel::FT FT;
-  typedef typename kernel::Point_3 Point;
-  typedef typename kernel::Vector_3 Vector;
-  typedef typename kernel::Iso_cuboid_3 Iso_cuboid;
-  typedef CGAL::Polyhedron_3<kernel,items,HDS> Base;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
+  typedef CGAL::Polyhedron_3<Kernel,items> Base;
   
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Vertex_iterator Vertex_iterator;
