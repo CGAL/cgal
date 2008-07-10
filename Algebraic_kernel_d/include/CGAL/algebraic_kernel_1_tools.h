@@ -24,6 +24,7 @@
 #include <CGAL/Algebraic_kernel_1.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <vector>
+
 #include <boost/optional.hpp>
 
 CGAL_BEGIN_NAMESPACE
@@ -45,8 +46,14 @@ compute_smallest_nonnegative_root(
   
   solve_1(p, std::back_inserter(roots));
   typename std::vector<Root>::const_iterator it = roots.begin();
-  while (CGAL::is_negative(*it)) it++;
- 
+  for (; it != roots.end(); ++it)
+  {
+    if(CGAL::is_negative(*it) == false)
+    {
+      break;
+    }
+  }
+
   if (it == roots.end())
     return Root_option();
   else 
