@@ -1,0 +1,2 @@
+- add a rendering mode as attributes of the polyhedra, with two possible
+  values: "fill", "wireframe".
