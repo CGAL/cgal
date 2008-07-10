@@ -313,7 +313,7 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     bool checked = model->data(index, Qt::DisplayRole).toBool();
     int width = option.rect.width();
     int height = option.rect.height();
-    int size = std::min(width, height);
+    int size = (std::min)(width, height);
     int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
     int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
     if(checked) {
