@@ -1,2 +1,7 @@
 - add a rendering mode as attributes of the polyhedra, with two possible
   values: "fill", "wireframe".
+- color chooser: list
+- PCA: add plane polyhedron as best fitting plane, same for line
+- menu file / previously opened files
+- render non-triangular meshes
+
