@@ -55,8 +55,9 @@ NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
         signflip ^= (A.degree() & B.degree() & 1);
         Polynomial<NT>::pseudo_division(A, B, Q, R, d);
         delta = A.degree() - B.degree();
-        CGAL_expensive_assertion( 
-           typename CGAL::Algebraic_structure_traits<NT>::Is_exact == CGAL_Tag_false  
+        typedef typename CGAL::Algebraic_structure_traits<NT>::Is_exact
+          Is_exact;
+        CGAL_expensive_assertion(CGAL::check_tag(Is_exact()) == false
           || d == CGAL::ipower(B.lcoeff(), delta + 1) );
         A = B;
         B = R / (g * CGAL::ipower(h, delta));
