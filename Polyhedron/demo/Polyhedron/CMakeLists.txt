@@ -2,15 +2,18 @@
 
 project( Polyhedron ) 
 
+cmake_minimum_required(VERSION 2.4)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-foreach(INCDIR ../../../GraphicsView/include ../../../Surface_mesher/include)
+foreach(INCDIR ../../../GraphicsView/include include)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
     include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
   endif()
 endforeach()
-
-include_directories(include)
 
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
