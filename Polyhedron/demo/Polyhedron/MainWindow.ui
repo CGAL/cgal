@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>966</width>
-    <height>592</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,14 +16,14 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>29</y>
+     <y>24</y>
      <width>966</width>
-     <height>538</height>
+     <height>549</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
     <item row="0" column="1" >
-     <widget class="Viewer" name="viewer" />
+     <widget class="Viewer" native="1" name="viewer" />
     </item>
     <item row="0" column="0" >
      <widget class="QDockWidget" name="polyhedraDockWidget" >
@@ -34,9 +34,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>23</y>
-         <width>342</width>
-         <height>497</height>
+         <y>22</y>
+         <width>932</width>
+         <height>509</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>966</width>
-     <height>29</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -166,10 +166,11 @@
      <addaction name="actionIntersection" />
      <addaction name="actionDifference" />
     </widget>
+    <addaction name="actionConvexHull" />
     <addaction name="actionSimplify" />
-    <addaction name="menuSubdivision" />
     <addaction name="actionKernel" />
     <addaction name="menu_Boolean_operations" />
+    <addaction name="menuSubdivision" />
    </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
@@ -209,9 +210,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>567</y>
+     <y>573</y>
      <width>966</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -322,11 +323,16 @@
     <string>n/a</string>
    </property>
   </action>
+  <action name="actionConvexHull" >
+   <property name="text" >
+    <string>Convex hull</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>Viewer</class>
-   <extends>QGLViewer</extends>
+   <extends>QWidget</extends>
    <header>Viewer.h</header>
   </customwidget>
  </customwidgets>
