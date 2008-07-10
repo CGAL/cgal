@@ -114,10 +114,31 @@ void MainWindow::updateViewerBBox()
 
 void MainWindow::open(QString filename)
 {
-  scene->open(filename);
+  int index = scene->open(filename);
+  std::cerr << "opened " << index << "\n";
   setCurrentFile(filename);
+  selectPolyhedron(index);
 }
 
+void MainWindow::selectPolyhedron(int i)
+{
+  treeView->selectionModel()->select(scene->createSelection(i),
+                                     QItemSelectionModel::ClearAndSelect);
+}
+
+bool MainWindow::onePolygonIsSelected() const
+{
+  return treeView->selectionModel()->selectedRows().size() == 1;
+}
+
+int MainWindow::getSelectedPolygonIndex() const
+{
+  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  if(selectedRows.empty())
+    return -1;
+  else
+    return selectedRows.first().row();
+}
 
 Polyhedron* MainWindow::getSelectedPolygon()
 {
@@ -129,6 +150,7 @@ void MainWindow::selectionChanged()
 {
   if(onePolygonIsSelected()) {
     scene->setSelectedItem(getSelectedPolygonIndex());
+    std::cerr << "selected index = " << getSelectedPolygonIndex() << "\n";
   }
   else {
     scene->setSelectedItem(-1);
@@ -198,14 +220,18 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
 
 void MainWindow::on_actionErasePolyhedron_triggered()
 {
-  if(onePolygonIsSelected())
-    scene->erase(getSelectedPolygonIndex());
+  if(onePolygonIsSelected()) {
+    int index = scene->erase(getSelectedPolygonIndex());
+    selectPolyhedron(index);
+  }
 }
 
 void MainWindow::on_actionDuplicatePolyhedron_triggered()
 {
-  if(onePolygonIsSelected())
-    scene->duplicate(getSelectedPolygonIndex());
+  if(onePolygonIsSelected()) {
+    int index = scene->duplicate(getSelectedPolygonIndex());
+    selectPolyhedron(index);
+  }
 }
 
 void MainWindow::on_actionConvexHull_triggered()

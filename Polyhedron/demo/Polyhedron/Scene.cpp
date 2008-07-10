@@ -44,7 +44,7 @@ Scene::~Scene()
   polyhedra.clear();
 }
 
-bool
+int
 Scene::open(QString filename)
 {
   QTextStream cerr(stderr);
@@ -60,7 +60,7 @@ Scene::open(QString filename)
                           tr("Cannot open file"),
                           tr("File %1 is not a readable file.").arg(filename));
     QApplication::restoreOverrideCursor();
-    return false;
+    return -1;
   }
 
   Polyhedron* poly = new Polyhedron;
@@ -71,7 +71,7 @@ Scene::open(QString filename)
                           tr("Cannot read file"),
                           tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
-    return false;
+    return -1;
   }
   poly->compute_normals();
 
@@ -89,21 +89,27 @@ Scene::open(QString filename)
   emit updated();
   QAbstractListModel::reset();
 
-  return true;
+  return polyhedra.size() - 1;
 }
 
-void 
+int
 Scene::erase(int polyhedron_index)
 {
   delete polyhedra[polyhedron_index].polyhedron_ptr;
-  polyhedra.removeAt(polyhedron_index);
+  polyhedra.removeAt(polyhedron_index--);
 
   selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
+
+  if(polyhedron_index >= 0)
+    return polyhedron_index;
+  if(!polyhedra.isEmpty())
+    return 0;
+  return -1;
 }
 
-void 
+int
 Scene::duplicate(int polyhedron_index)
 {
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
@@ -121,6 +127,8 @@ Scene::duplicate(int polyhedron_index)
   selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
+
+  return polyhedra.size() - 1;
 }
 
 void Scene::convex_hull(int polyhedron_index)

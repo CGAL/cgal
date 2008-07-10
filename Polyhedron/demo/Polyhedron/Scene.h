@@ -8,6 +8,7 @@
 #include <QList>
 #include <QItemDelegate>
 #include <QPixmap>
+#include <QItemSelection>
 
 // CGAL
 #include <CGAL/basic.h>
@@ -49,11 +50,20 @@ public:
   Scene(QObject*  parent);
   ~Scene();
 
-  bool open(QString);
-  void erase(int);
-  void duplicate(int);
-	void convex_hull(int);
-	void simplify(int);
+  int open(QString);  // Returns the index of the new polyhedra (-1 if
+                      // error)
+
+  int erase(int);     // Returns the index of the polyhedra just before the
+                      // one that is erased, or just after. Returns -1 if
+                      // the list is empty.
+
+  int duplicate(int); // Returns the index of the new polyhedra
+
+  inline QItemSelection createSelection(int i);
+
+  // TODO: move that elsewhere (in MainWindow)
+  void convex_hull(int);
+  void simplify(int);
 
   inline Polyhedron* getPolyhedron(int);
 
@@ -61,7 +71,8 @@ public:
   CGAL::Bbox_3 bbox();
 
   enum Columns { NameColumn = 0, ColorColumn, ActivatedColumn,
-                 AfterLastColumn = ActivatedColumn + 1};
+                 LastColumn = ActivatedColumn,
+                 AfterLastColumn = LastColumn + 1};
 
   // QAbstractItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
@@ -119,6 +130,12 @@ Polyhedron* Scene::getPolyhedron(int index)
     return 0;
   else 
     return polyhedra[index].polyhedron_ptr;
+}
+
+QItemSelection Scene::createSelection(int i)
+{
+  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
+                        QAbstractItemModel::createIndex(i, LastColumn));
 }
 
 #endif // SCENE_H

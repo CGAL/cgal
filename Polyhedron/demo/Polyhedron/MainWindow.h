@@ -42,8 +42,9 @@ protected:
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
 
-  inline bool onePolygonIsSelected() const;
-  inline int getSelectedPolygonIndex() const;
+  void selectPolyhedron(int i);
+  bool onePolygonIsSelected() const;
+  int getSelectedPolygonIndex() const;
 
   Polyhedron* getSelectedPolygon();
 private:
@@ -55,19 +56,5 @@ private:
   enum { MaxRecentFiles = 10 };
   QAction *recentFileActs[MaxRecentFiles];
 };
-
-bool MainWindow::onePolygonIsSelected() const
-{
-  return treeView->selectionModel()->selectedRows().size() == 1;
-}
-
-int MainWindow::getSelectedPolygonIndex() const
-{
-  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
-  if(selectedRows.empty())
-    return -1;
-  else
-    return selectedRows.first().row();
-}
 
 #endif // ifndef MAINWINDOW_H
