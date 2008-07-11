@@ -14,7 +14,8 @@
    <string>CGAL 2D Polygon</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../icons/Logos.qrc" >:/cgal/logos/cgal_icon</iconset>
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QHBoxLayout" >
@@ -24,6 +25,12 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QGraphicsView" name="graphicsView" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>2</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy" >
         <enum>Qt::StrongFocus</enum>
        </property>
@@ -37,7 +44,14 @@
         <enum>QGraphicsView::NoAnchor</enum>
        </property>
       </widget>
-      <widget class="QTextEdit" name="textEdit" />
+      <widget class="QTextEdit" name="textEdit" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -125,7 +139,8 @@
   </action>
   <action name="actionClear" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileNew.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Clear</string>
@@ -136,7 +151,8 @@
   </action>
   <action name="actionLoadPoints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileOpen.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Load Points...</string>
@@ -147,7 +163,8 @@
   </action>
   <action name="actionSavePoints" >
    <property name="icon" >
-    <iconset resource="../icons/File.qrc" >:/cgal/fileToolbar/fileSave.png</iconset>
+    <iconset resource="../icons/File.qrc" >
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text" >
     <string>&amp;Save Points...</string>
@@ -158,7 +175,8 @@
   </action>
   <action name="actionRecenter" >
    <property name="icon" >
-    <iconset resource="../icons/Input.qrc" >:/cgal/Input/zoom-best-fit</iconset>
+    <iconset resource="../icons/Input.qrc" >
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text" >
     <string>Re&amp;center the viewport</string>
@@ -171,7 +189,7 @@
  <resources>
   <include location="Polygon_2.qrc" />
   <include location="../icons/File.qrc" />
-  <include location="../icons/Logos.qrc" />
+  <include location="../resources/CGAL.qrc" />
   <include location="../icons/Input.qrc" />
  </resources>
  <connections/>
