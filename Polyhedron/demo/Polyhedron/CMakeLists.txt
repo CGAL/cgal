@@ -27,6 +27,8 @@ set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
 
+find_package(OpenGL REQUIRED)
+
 find_package(Qt4       REQUIRED)
 include(${QT_USE_FILE})
 
