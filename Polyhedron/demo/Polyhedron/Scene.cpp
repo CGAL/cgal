@@ -129,16 +129,10 @@ Scene::duplicate(int polyhedron_index)
 
   poly->compute_normals();
 
-  Polyhedron_entry entry2;
-  entry2.polyhedron_ptr = poly;
-  entry2.name = QString("%1 (copy)").arg(entry.name);
-  entry2.color=entry.color;
-  entry2.activated = entry.activated;
-  polyhedra.push_back(entry2);
-
-  selected_item = -1;
-  emit updated();
-  QAbstractListModel::reset();
+  addPolyhedron(poly,
+                tr("%1 (copy)").arg(entry.name),
+                entry.color,
+                entry.activated);
 
   return polyhedra.size() - 1;
 }
