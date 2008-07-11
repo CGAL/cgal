@@ -247,7 +247,7 @@ Scene::columnCount(const QModelIndex & parent) const
   if (parent.isValid())
     return 0;
   else
-    return AfterLastColumn;
+    return NumberOfColumns;
 }
 
 QVariant 

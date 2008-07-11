@@ -44,6 +44,7 @@ private:
     QString name;
     QColor color;
     bool activated;
+    RenderingMode rendering_mode;
   };
 
 public:
@@ -70,9 +71,11 @@ public:
   void draw();
   CGAL::Bbox_3 bbox();
 
+  enum RenderingMode { Fill = 0, Wireframe, LastRenderingMode = Wireframe,
+                       NumberOfRenderingMode = Wireframe+1};
   enum Columns { NameColumn = 0, ColorColumn, ActivatedColumn,
                  LastColumn = ActivatedColumn,
-                 AfterLastColumn = LastColumn + 1};
+                 NumberOfColumns = LastColumn + 1};
 
   // QAbstractItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
