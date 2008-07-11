@@ -25,6 +25,13 @@
 #endif
 
 /**
+ * The threshold that is used in the Filtered_algebraic_curve_kernel_2
+ */
+#ifndef CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL
+#define CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL 0.01
+#endif
+
+/**
  * For random choices in the algorithm, this seed is used 
  * If set to zero, a random seed is used
  */

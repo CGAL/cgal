@@ -14,7 +14,7 @@
 /*! \file Filtered_algebraic_curve_kernel_2.h
  *  \brief defines class \c Filtered_algebraic_curve_kernel_2
  *  
- *  Curve and curve pair analysis for algebraic plane curves
+ *  Algebraic_curve_kernel_2 with some filter techniques
  */
 
 #ifndef CGAL_FILTERED_ALGEBRAIC_CURVE_KERNEL_2_H
@@ -25,6 +25,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
+/*! 
+ * \b Filtered_algebraic_curve_kernel_2 is an extension of
+ * \c Algebraic_curve_kernel_2, thus also a model of
+ * \c AlgebraicKernelWithAnalysis_d_2 and \c CurveKernel_2.
+ * It redefines some functors in a way that numeric filters are used before
+ * the exact computation is triggered.
+ *
+ * The basic idea behind all numeric computations in this kernel is that
+ * coordinates are refined up to a certain threshold, and the exact method
+ * is called if the approximate functor did not succeed until the threshold
+ * was reached. This threshold is a double value, defined by the flag
+ * CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL whose default value is set
+ * inside the file Algebraic_curve_kernel/flags.h
+ */
 #if CGAL_ACK_USE_EXACUS
 template < class AlgebraicCurvePair_2, class AlgebraicKernel_1 >
 #else
@@ -108,7 +122,7 @@ public:
     static double& threshold() {
         static boost::optional<double> _b;
         if(! _b) {
-            _b = .01; 
+            _b = CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL; 
         }
         return _b.get();
     }
