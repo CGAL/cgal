@@ -38,6 +38,7 @@ class Scene  :
 {
   Q_OBJECT
 
+  friend class SceneDelegate;
 public:
   enum RenderingMode { Fill = 0, 
                        Wireframe, 
@@ -48,23 +49,11 @@ public:
                  ColorColumn, 
                  RenderingModeColumn, 
                  ActivatedColumn,
-                 LastColumn = ActivatedColumn,
+                 ABColumn,
+                 LastColumn = ABColumn,
                  NumberOfColumns = LastColumn + 1};
 
-private:
-  static const QColor defaultColor;
 
-  struct Polyhedron_entry {
-    Polyhedron_entry() : rendering_mode(Fill) {};
-
-    Polyhedron* polyhedron_ptr;
-    QString name;
-    QColor color;
-    bool activated;
-    RenderingMode rendering_mode;
-  };
-
-public:
   Scene(QObject*  parent);
   ~Scene();
 
@@ -120,9 +109,23 @@ signals:
   void updated();
 
 private:
+  static const QColor defaultColor; // defined in Scene.cpp
+
+  struct Polyhedron_entry {
+    Polyhedron_entry() : rendering_mode(Fill) {};
+
+    Polyhedron* polyhedron_ptr;
+    QString name;
+    QColor color;
+    bool activated;
+    RenderingMode rendering_mode;
+  };
+
   typedef QList<Polyhedron_entry> Polyhedra;
   Polyhedra polyhedra;
   int selected_item;
+  int item_A;
+  int item_B;
 }; // end class Scene
 
 class SceneDelegate : public QItemDelegate

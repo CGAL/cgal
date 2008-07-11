@@ -25,7 +25,9 @@ const QColor Scene::defaultColor = QColor(100, 100, 255);
 
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
-    selected_item(-1)
+    selected_item(-1),
+    item_A(-1),
+    item_B(-1)
 {
 }
 
@@ -237,9 +239,21 @@ Scene::data(const QModelIndex &index, int role) const
       return ::Qt::AlignCenter;
     }
     break;
+  case ABColumn:
+    if(role == ::Qt::DisplayRole) {
+      if(index.row() == item_A)
+        return "A";
+      if(index.row() == item_B)
+        return "B";
+    }
+    else if(role == ::Qt::TextAlignmentRole) {
+      return ::Qt::AlignCenter;
+    }
+    break;
   case ActivatedColumn:
     if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).activated;
+    break;
   default:
     return QVariant();
   }
@@ -262,6 +276,9 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
         break;
       case RenderingModeColumn:
         return tr("Mode");
+      case ABColumn:
+        return tr("A/B");
+        break;
       case ActivatedColumn:
         return tr("Activated");
         break;
@@ -269,8 +286,13 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
         return QVariant();
       }
     }
-    else if(role == ::Qt::ToolTipRole && section == RenderingModeColumn) {
-      return tr("Rendering mode (fill/fireframe)");
+    else if(role == ::Qt::ToolTipRole) {
+      if(section == RenderingModeColumn) {
+        return tr("Rendering mode (fill/fireframe)");
+      }
+      else if(section == ABColumn) {
+        return tr("Selection A/Selection B");
+      }
     }
   }
   return QAbstractListModel::headerData(section, orientation, role);
@@ -385,6 +407,8 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index)
 {
+  Scene *scene = static_cast<Scene*>(model);
+  Q_ASSERT(scene);
   switch(index.column()) {
   case Scene::ActivatedColumn:
     if (event->type() == QEvent::MouseButtonPress) {
@@ -424,6 +448,27 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     }
     else if(event->type() == QEvent::MouseButtonDblClick) {
       return true; // block double-click
+    }
+    return false;
+    break;
+  case Scene::ABColumn:
+    if (event->type() == QEvent::MouseButtonPress) {
+      if(index.row() == scene->item_B) {
+        scene->item_A = index.row();
+        scene->item_B = -1;
+      }
+      else if(index.row() == scene->item_A) {
+        scene->item_B = index.row();
+        scene->item_A = -1;
+      }
+      else if(scene->item_A == -1) {
+        scene->item_A = index.row();
+      }
+      else {
+        scene->item_B = index.row();
+      }
+      scene->dataChanged(scene->createIndex(Scene::ABColumn, 0),
+                         scene->createIndex(Scene::ABColumn, scene->rowCount()));
     }
     return false;
     break;

@@ -28,19 +28,30 @@ protected slots:
   void setCurrentFile(const QString &fileName);
   void updateRecentFileActions();
 
-  void on_actionConvexHull_triggered();
+  // settings
+  void quit();
+  void readSettings();
+  void writeSettings();
+
   void on_actionLoadPolyhedron_triggered();
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
-	void on_actionSimplify_triggered();
+
+  // defined in MainWindow_simplify.cpp
+  void on_actionSimplify_triggered();
+
+  // defined in MainWindow_convex_hull.cpp
+  void on_actionConvexHull_triggered();
 
   // subdivision methods are defined in MainWindow_subdivision_methods.cpp
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
 
+
 protected:
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
+  void closeEvent(QCloseEvent *event);
 
   void selectPolyhedron(int i);
   bool onePolygonIsSelected() const;

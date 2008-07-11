@@ -34,11 +34,14 @@ MainWindow::MainWindow(QWidget* parent)
   treeView->setItemDelegate(new SceneDelegate(this));
   treeView->resizeColumnToContents(Scene::ColorColumn);
   treeView->resizeColumnToContents(Scene::RenderingModeColumn);
+  treeView->resizeColumnToContents(Scene::ABColumn);
   treeView->resizeColumnToContents(Scene::ActivatedColumn);
+
   treeView->header()->setStretchLastSection(false);
   treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
+  treeView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   treeView->header()->setResizeMode(Scene::ActivatedColumn, QHeaderView::Fixed);
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
@@ -71,7 +74,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(actionQuit, SIGNAL(triggered()),
-          qApp, SLOT(quit()));
+          this, SLOT(quit()));
 
   // recent files...
   for (int i = 0; i < MaxRecentFiles; ++i) {
@@ -84,6 +87,8 @@ MainWindow::MainWindow(QWidget* parent)
   recentFilesSeparator = menuFile->insertSeparator(actionQuit);
   recentFilesSeparator->setVisible(false);
   updateRecentFileActions();
+
+  readSettings(); // Among other things, the column widths are stored.
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -215,6 +220,48 @@ void MainWindow::updateRecentFileActions()
   recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
+void MainWindow::quit()
+{
+  writeSettings();
+  close();
+}
+
+void MainWindow::readSettings()
+{
+  QSettings settings;
+  
+  settings.beginGroup("MainWindow");
+  resize(settings.value("size", QSize(400, 400)).toSize());
+  move(settings.value("pos", QPoint(0, 0)).toPoint());
+  settings.endGroup();
+
+  settings.beginGroup("SceneView");
+  treeView->setColumnWidth(Scene::NameColumn,
+                           settings.value("NameColumn width").toInt());
+  settings.endGroup();
+}
+
+void MainWindow::writeSettings()
+{
+  QSettings settings;
+
+  settings.beginGroup("MainWindow");
+  settings.setValue("size", size());
+  settings.setValue("pos", pos());
+  settings.endGroup();
+
+  settings.beginGroup("SceneView");
+  settings.setValue("NameColumn width", treeView->columnWidth(Scene::NameColumn));
+  settings.endGroup();
+  std::cerr << "Write setting... done.\n";
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+  writeSettings();
+  event->accept();
+}
+
 void MainWindow::on_actionLoadPolyhedron_triggered()
 {
   QStringList filenames = 
@@ -245,3 +292,4 @@ void MainWindow::on_actionDuplicatePolyhedron_triggered()
     selectPolyhedron(index);
   }
 }
+
