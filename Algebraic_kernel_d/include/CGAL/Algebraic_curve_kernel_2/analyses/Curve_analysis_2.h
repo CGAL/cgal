@@ -34,8 +34,6 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/macros.h>
 
-
-
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CA_1.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Event_line_builder.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
@@ -205,24 +203,35 @@ private:
 
 
 /*!
- * \brief Algebraic curves of arbitrary degree. 
+ * \brief Analysis for algebraic curves of arbitrary degree. 
  *
- * TODO: Update doc
- * A realisation of SoX::AlgebraicCurve_2, defined in the \ref SoX_intro 
- * SweepX-library.\n
- * The object contains two vector of objects that describe
- * the curve at given x-values. One vector (called \c event_lines) stores
- * the data for x-values where singularities and x-extreme points can occur.
- * The second one (calles \c intermediate_lines) contains the information for
- * some rational value between two critical values. In other words, the
- * following invariant is satisfied:
- * \code intermediate_lines[i].x() <= event_lines[i].x() 
- * <= intermediate_lines[i+1].x() \endcode
- * for all valid values of \c i.\n 
- * The data at the x-values is represented by specialisations
- * of the AcX::Vert_line class. This class is itself derived from 
- * SoX::Event1_info. So, this framework is compatible with 
- * \ref SoX_GAPS "GAPS".
+ * This class constitutes a model for the concept
+ * AlgebraicKernelWithAnalysis_d_2::CurveAnalysis_2.
+ * For a square-free bivariate polynomial \c f, a topologic-geometrical
+ * analysis of the algebraic curve defined by the vanishing set of \c f
+ * is provided. This means, one can ask for the total number, and the position
+ * of the critical x-coordinates of the curve, and for each x-coordinate, 
+ * geometric information about the curve can be obtained. This data
+ * is capsuled into an object of type \c Curve_analysis_2::Status_line_1,
+ * which is in fact a \c Status_line_CA_1 object.
+ *
+ * Note that the restriction to square-free curves is weak, since the curves
+ * can be made square-free before passed to the analysis. 
+ * The \c Construct_curve_2 functor of \c Algebraic_curve_kernel_2 is
+ * doing so, thus it accepts arbitrary bivariate polynomials.
+ *
+ * The analysis is implemented in a "lazy" fashion. This means, when
+ * created, the analysis delays all computations until the information
+ * is queried for the first time. This means, if only parts of the curves
+ * are of interest, only a partial analysis is performed. 
+ * We remark that nevertheless, the global \e projection \e step
+ * (i.e., computing the (sub)resultants) must be done once a \c Status_line_1
+ * is queried. Often, this step forms the bottleneck in the whole computation.
+ *
+ * For more details of the algorithm, consult the reference:
+ * A.Eigenwillig, M.Kerber, N.Wolpert: Fast and Exact Geometric Analysis of 
+ * Real Algebraic Plane Curves. Proceedings of the International Symposium 
+ * on Symbolic and Algebraic Computation (ISSAC 2007), pp. 151-158
  */
 template<typename AlgebraicKernel_2, 
   typename Rep_ 
