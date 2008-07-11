@@ -53,6 +53,8 @@ public:
 
 private:
   struct Polyhedron_entry {
+    Polyhedron_entry() : rendering_mode(Fill) {};
+
     Polyhedron* polyhedron_ptr;
     QString name;
     QColor color;

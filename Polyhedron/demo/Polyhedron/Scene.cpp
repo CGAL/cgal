@@ -211,15 +211,17 @@ Scene::draw()
     Polyhedron_entry& entry = polyhedra[index];
     if(entry.activated) {
       Polyhedron* poly = entry.polyhedron_ptr;
-      ::glEnable(GL_LIGHTING);
-      if(index == selected_item) {
-        CGALglcolor(entry.color.lighter(120));
+      if(entry.rendering_mode == Fill) {
+        ::glEnable(GL_LIGHTING);
+        if(index == selected_item) {
+          CGALglcolor(entry.color.lighter(120));
+        }
+        else {
+          CGALglcolor(entry.color);
+        }
+        poly->gl_draw_direct_triangles(false,
+                                       true);
       }
-      else {
-        CGALglcolor(entry.color);
-      }
-      poly->gl_draw_direct_triangles(false,
-                                     true);
       if(index == selected_item) {
         CGALglcolor(entry.color.lighter(70));
       }
