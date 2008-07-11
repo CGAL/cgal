@@ -1,12 +1,5 @@
 #include "Scene.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/convex_hull_3.h>
-
-// simplification
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
-#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
-
 
 #include <iostream>
 #include <fstream>
@@ -135,50 +128,6 @@ Scene::duplicate(int polyhedron_index)
                 entry.activated);
 
   return polyhedra.size() - 1;
-}
-
-void Scene::convex_hull(int polyhedron_index)
-{
-	// get active polyhedron
-  const Polyhedron_entry& selected_entry = polyhedra[polyhedron_index];
-  Polyhedron* pMesh = selected_entry.polyhedron_ptr;
-
-	// add convex hull as new polyhedron
-  Polyhedron *pConvex_hull = new Polyhedron;
-	CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
-	pConvex_hull->compute_normals();
-
-	// set new entry
-  Polyhedron_entry new_entry;
-  new_entry.polyhedron_ptr = pConvex_hull;
-  new_entry.name = QString("%1 (convex hull)").arg(selected_entry.name);
-  new_entry.color = selected_entry.color;
-  new_entry.activated = selected_entry.activated;
-  polyhedra.push_back(new_entry);
-
-  selected_item = -1;
-  emit updated();
-  QAbstractListModel::reset();
-}
-
-void Scene::simplify(int polyhedron_index)
-{
-	// get selected polyhedron
-  const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-  Polyhedron* pMesh = entry.polyhedron_ptr;
-
-	// simplify
-	//unsigned int nb_edges = 1000; // TODO: should be an option 
-	//namespace SMS = CGAL::Surface_mesh_simplification ;
-	//SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
-	//SMS::edge_collapse( *pMesh, stop,
- //                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
-	//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
-	// recompute normals
-	pMesh->compute_normals();
-
-  emit updated();
-  QAbstractListModel::reset();
 }
 
 CGAL::Bbox_3 
@@ -374,7 +323,7 @@ Scene::setData(const QModelIndex &index,
   return false;
 }
 
-Polyhedron* Scene::getPolyhedron(int index)
+Polyhedron* Scene::polyhedron(int index)
 {
   if( index < 0 || index >= polyhedra.size() )
     return 0;
@@ -382,10 +331,54 @@ Polyhedron* Scene::getPolyhedron(int index)
     return polyhedra[index].polyhedron_ptr;
 }
 
+QString Scene::polyhedronName(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return QString();
+  else 
+    return polyhedra[index].name;
+}
+
+QColor Scene::polyhedronColor(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return QColor();
+  else 
+    return polyhedra[index].color;
+}
+
+bool Scene::isPolyhedronActivated(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return false;
+  else 
+    return polyhedra[index].activated;
+}
+
+Scene::RenderingMode Scene::polyhedronRenderingMode(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return RenderingMode();
+  else 
+    return polyhedra[index].rendering_mode;
+}
+
 QItemSelection Scene::createSelection(int i)
 {
   return QItemSelection(QAbstractItemModel::createIndex(i, 0),
                         QAbstractItemModel::createIndex(i, LastColumn));
+}
+
+void Scene::polyhedronChanged(int i)
+{
+  emit dataChanged(QAbstractItemModel::createIndex(i, 0),
+                   QAbstractItemModel::createIndex(i, LastColumn));
+}
+
+void Scene::polyhedronChanged(Polyhedron*)
+{
+  emit dataChanged(QAbstractItemModel::createIndex(0, 0),
+                   QAbstractItemModel::createIndex(polyhedra.size() - 1, LastColumn));
 }
 
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,

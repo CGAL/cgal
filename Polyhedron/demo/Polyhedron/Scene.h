@@ -83,11 +83,15 @@ public:
 
   int duplicate(int); // Returns the index of the new polyhedra
 
-  // TODO: move that elsewhere (in MainWindow)
-  void convex_hull(int);
-  void simplify(int);
+  // accessors
+  Polyhedron* polyhedron(int i);
+  QColor polyhedronColor(int);
+  QString polyhedronName(int);
+  bool isPolyhedronActivated(int);
+  RenderingMode polyhedronRenderingMode(int);
 
-  Polyhedron* getPolyhedron(int);
+  // for backward compatibility
+  Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
 
   // draw() is called by Viewer::draw()
   void draw();
@@ -104,6 +108,8 @@ public:
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
 public slots:
+  void polyhedronChanged(int i);
+  void polyhedronChanged(Polyhedron*);
   void setSelectedItem(int i )
   {
     selected_item = i;

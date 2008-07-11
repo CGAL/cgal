@@ -163,7 +163,6 @@ void MainWindow::selectionChanged()
 {
   if(onePolygonIsSelected()) {
     scene->setSelectedItem(getSelectedPolygonIndex());
-    std::cerr << "selected index = " << getSelectedPolygonIndex() << "\n";
   }
   else {
     scene->setSelectedItem(-1);
@@ -247,17 +246,51 @@ void MainWindow::on_actionDuplicatePolyhedron_triggered()
   }
 }
 
+#include <CGAL/convex_hull_3.h>
+// simplification
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 void MainWindow::on_actionConvexHull_triggered()
 {
   if(onePolygonIsSelected())
-    scene->convex_hull(getSelectedPolygonIndex());
+  {
+    int index = getSelectedPolygonIndex();
+
+    // get active polyhedron
+    Polyhedron* pMesh = scene->polyhedron(index);
+
+    // add convex hull as new polyhedron
+    Polyhedron *pConvex_hull = new Polyhedron;
+    CGAL::convex_hull_3(pMesh->points_begin(),pMesh->points_end(),*pConvex_hull);
+    pConvex_hull->compute_normals();
+
+    scene->addPolyhedron(pConvex_hull,
+                         tr("%1 (convex hull)").arg(scene->polyhedronName(index)),
+                         scene->polyhedronColor(index),
+                         scene->isPolyhedronActivated(index),
+                         scene->polyhedronRenderingMode(index));
+  }
 }
 
 void MainWindow::on_actionSimplify_triggered()
 {
   if(onePolygonIsSelected())
-    scene->simplify(getSelectedPolygonIndex());
+  {
+    int index = getSelectedPolygonIndex();
+    Polyhedron* pMesh = scene->polyhedron(index);
+    // simplify
+    //unsigned int nb_edges = 1000; // TODO: should be an option 
+    //namespace SMS = CGAL::Surface_mesh_simplification ;
+    //SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
+    //SMS::edge_collapse( *pMesh, stop,
+    //                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
+    //		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
+
+    // recompute normals
+    pMesh->compute_normals();
+
+    // Tell the scene that polyhedron #index has been changed
+    scene->polyhedronChanged(index);
+  }
 }
-
-
-
