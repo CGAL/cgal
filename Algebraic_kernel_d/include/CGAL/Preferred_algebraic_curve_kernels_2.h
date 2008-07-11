@@ -13,8 +13,7 @@
 // ============================================================================
 
 // This file defines several instances of Algebraic_curve_kernel_2 
-// specializations that are often
-// used in tests and demos. 
+// specializations that are used in tests and demos. 
 
 #ifndef CGAL_PREFERED_ALGEBRAIC_CURVE_KERNEL_H
 #define CGAL_PREFERED_ALGEBRAIC_CURVE_KERNEL_H 1

@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
  * coordinates are refined up to a certain threshold, and the exact method
  * is called if the approximate functor did not succeed until the threshold
  * was reached. This threshold is a double value, defined by the flag
- * CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL whose default value is set
+ * CGAL_ACK_THRESHOLD_FOR_FILTERED_KERNEL, its default value is set
  * inside the file Algebraic_curve_kernel/flags.h
  */
 #if CGAL_ACK_USE_EXACUS
@@ -115,6 +115,9 @@ public:
     //! type of 1-curve analysis
     typedef typename Base::Curve_analysis_2 Curve_analysis_2;
 
+    // Polynomial type
+    typedef typename Base::Polynomial_2 Polynomial_2;
+
 public:
     
     typedef typename Xy_coordinate_2::Bbox_2 Bbox_2;
@@ -152,7 +155,7 @@ protected:
 
 public:
 
-    //! \brief comparison of y-coordinates of two points
+    //! Filtered comparison of y-coordinates of two points
     struct Compare_y_2 :
         public Base::Compare_y_2 {
 
@@ -176,9 +179,7 @@ public:
         return Compare_y_2((Self *)this);
     }
 
-    //! lexicographical comparison of two objects of type \c Xy_coordinate_2
-    //!
-    //! \c equal_x specifies that only y-coordinates need to be compared
+    //! Filtered lexicographic comparison of two points
     struct Compare_xy_2 :
           public Base::Compare_xy_2 {
 
@@ -210,12 +211,7 @@ public:
         return Compare_xy_2((Self *)this);
     }
 
-    /*!\brief 
-     * computes the sign of a bivariate polynomial \c p evaluated at the root 
-     * \c r of a system of two bivariate polynomial equations
-     *
-     * returns a value convertible to \c CGAL::Sign
-     */
+    //! Filtered sign computation of polynomial and point
     struct Sign_at_2 :
         public Base::Sign_at_2 {
 
@@ -241,9 +237,14 @@ public:
             }
             return Base::operator()(ca, r);
         }
+
+        Sign operator()(Polynomial_2& f,
+                        const Xy_coordinate_2& r) const
+        {
+            return (*this)(typename Base::Construct_curve_2()(f),r);
+        }
         
     };
-
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
 #undef CGAL_Algebraic_Kernel_pred    
