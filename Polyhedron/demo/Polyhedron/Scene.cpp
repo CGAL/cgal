@@ -369,6 +369,20 @@ Scene::setData(const QModelIndex &index,
   return false;
 }
 
+Polyhedron* Scene::getPolyhedron(int index)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return 0;
+  else 
+    return polyhedra[index].polyhedron_ptr;
+}
+
+QItemSelection Scene::createSelection(int i)
+{
+  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
+                        QAbstractItemModel::createIndex(i, LastColumn));
+}
+
 bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index)

@@ -75,13 +75,13 @@ public:
 
   int duplicate(int); // Returns the index of the new polyhedra
 
-  inline QItemSelection createSelection(int i);
+  QItemSelection createSelection(int i);
 
   // TODO: move that elsewhere (in MainWindow)
   void convex_hull(int);
   void simplify(int);
 
-  inline Polyhedron* getPolyhedron(int);
+  Polyhedron* getPolyhedron(int);
 
   void draw();
   CGAL::Bbox_3 bbox();
@@ -131,23 +131,5 @@ private:
   QPixmap checkOffPixmap;
   mutable int size;
 }; // end class SceneDelegate
-
-/*
- * Inlined functions
- */ 
-
-Polyhedron* Scene::getPolyhedron(int index)
-{
-  if( index < 0 || index >= polyhedra.size() )
-    return 0;
-  else 
-    return polyhedra[index].polyhedron_ptr;
-}
-
-QItemSelection Scene::createSelection(int i)
-{
-  return QItemSelection(QAbstractItemModel::createIndex(i, 0),
-                        QAbstractItemModel::createIndex(i, LastColumn));
-}
 
 #endif // SCENE_H
