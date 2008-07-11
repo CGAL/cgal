@@ -19,6 +19,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QColorDialog>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -345,22 +346,33 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index)
 {
-  if (index.column() != Scene::ActivatedColumn)
-    return QItemDelegate::editorEvent(event, model, option, index);
-
-  if (event->type() == QEvent::MouseButtonPress) {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-    if(mouseEvent->button() == Qt::LeftButton) {
-      int x = mouseEvent->pos().x() - option.rect.x();
-      if(x >= (option.rect.width() - size)/2 && 
-         x <= (option.rect.width() + size)/2) {
-        model->setData(index, ! model->data(index).toBool() );
+  switch(index.column()) {
+  case Scene::ActivatedColumn:
+    if (event->type() == QEvent::MouseButtonPress) {
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+      if(mouseEvent->button() == Qt::LeftButton) {
+        int x = mouseEvent->pos().x() - option.rect.x();
+        if(x >= (option.rect.width() - size)/2 && 
+           x <= (option.rect.width() + size)/2) {
+          model->setData(index, ! model->data(index).toBool() );
+        }
+      }
+      return false; //so that the selection can change
+    }
+    return true;
+    break;
+  case Scene::ColorColumn:
+    if (event->type() == QEvent::MouseButtonPress) {
+      QColor color = QColorDialog::getColor(Qt::green, 0);
+      if (color.isValid()) {
+          model->setData(index, color );
       }
     }
-    return false; //so that the selection can change
+    return true;
+    break;
+  default:
+    return QItemDelegate::editorEvent(event, model, option, index);
   }
-
-  return true;
 }
 
 void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
