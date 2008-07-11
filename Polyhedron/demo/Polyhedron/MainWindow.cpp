@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QFileDialog>
 #include <QSettings>
+#include <QHeaderView>
 
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
@@ -28,7 +29,15 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->setScene(scene);
   treeView->setModel(scene);
+
+  // setup the treeview: delegation and columns sizing...
   treeView->setItemDelegate(new SceneDelegate(this));
+  treeView->resizeColumnToContents(Scene::ColorColumn);
+  treeView->resizeColumnToContents(Scene::ActivatedColumn);
+  treeView->header()->setStretchLastSection(false);
+  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+  treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
+  treeView->header()->setResizeMode(Scene::ActivatedColumn, QHeaderView::Fixed);
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           viewer, SLOT(updateGL()));
