@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   setupUi(this);
 
-  addDockWidget(Qt::LeftDockWidgetArea, polyhedraDockWidget);
+  addDockWidget(::Qt::LeftDockWidgetArea, polyhedraDockWidget);
   menuDockWindows->addAction(polyhedraDockWidget->toggleViewAction());
   menuDockWindows->removeAction(dummyAction);
 

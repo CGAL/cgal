@@ -6,7 +6,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
     scene(0),
     antialiasing(antialiasing)
 {
-  setBackgroundColor(Qt::white);
+  setBackgroundColor(::Qt::white);
 }
 
 void 

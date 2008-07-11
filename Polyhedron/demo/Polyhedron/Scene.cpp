@@ -51,7 +51,7 @@ Scene::open(QString filename)
   QTextStream cerr(stderr);
   cerr << QString("Opening file \"%1\"...").arg(filename);
 
-  QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+  QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
 
   QFileInfo fileinfo(filename);
   std::ifstream in(filename.toUtf8());
@@ -261,30 +261,30 @@ Scene::data(const QModelIndex &index, int role) const
   switch(index.column())
   {
   case ColorColumn:
-    if(role == Qt::DisplayRole || role == Qt::EditRole)
+    if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).color;
-    else if(role == Qt::DecorationRole)
+    else if(role == ::Qt::DecorationRole)
       return polyhedra.value(index.row()).color;
     break;
   case NameColumn:
-    if(role == Qt::DisplayRole || role == Qt::EditRole)
+    if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).name;
     break;
   case RenderingModeColumn:
-    if(role == Qt::DisplayRole) {
+    if(role == ::Qt::DisplayRole) {
       if(polyhedra.value(index.row()).rendering_mode == Scene::Wireframe)
         return tr("wire");
       else return tr("fill");
     }
-    else if(role == Qt::EditRole) {
+    else if(role == ::Qt::EditRole) {
       return static_cast<int>(polyhedra.value(index.row()).rendering_mode);
     }
-    else if(role == Qt::TextAlignmentRole) {
-      return Qt::AlignCenter;
+    else if(role == ::Qt::TextAlignmentRole) {
+      return ::Qt::AlignCenter;
     }
     break;
   case ActivatedColumn:
-    if(role == Qt::DisplayRole || role == Qt::EditRole)
+    if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).activated;
   default:
     return QVariant();
@@ -293,10 +293,10 @@ Scene::data(const QModelIndex &index, int role) const
 }
 
 QVariant 
-Scene::headerData ( int section, Qt::Orientation orientation, int role ) const
+Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
 {
-  if(orientation == Qt::Horizontal)  {
-    if (role == Qt::DisplayRole)
+  if(orientation == ::Qt::Horizontal)  {
+    if (role == ::Qt::DisplayRole)
     {
       switch(section)
       {
@@ -315,7 +315,7 @@ Scene::headerData ( int section, Qt::Orientation orientation, int role ) const
         return QVariant();
       }
     }
-    else if(role == Qt::ToolTipRole && section == RenderingModeColumn) {
+    else if(role == ::Qt::ToolTipRole && section == RenderingModeColumn) {
       return tr("Rendering mode (fill/fireframe)");
     }
   }
@@ -326,7 +326,7 @@ Qt::ItemFlags
 Scene::flags ( const QModelIndex & index ) const
 {
   if (index.isValid() && index.column() == NameColumn) {
-    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
+    return QAbstractListModel::flags(index) | ::Qt::ItemIsEditable;
   }
   else {
     return QAbstractListModel::flags(index); 
@@ -338,7 +338,7 @@ Scene::setData(const QModelIndex &index,
                const QVariant &value,
                int role)
 {
-  if( role != Qt::EditRole || !index.isValid() )
+  if( role != ::Qt::EditRole || !index.isValid() )
     return false;
 
   Polyhedron_entry& entry = polyhedra[index.row()];
@@ -377,7 +377,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
   case Scene::ActivatedColumn:
     if (event->type() == QEvent::MouseButtonPress) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-      if(mouseEvent->button() == Qt::LeftButton) {
+      if(mouseEvent->button() == ::Qt::LeftButton) {
         int x = mouseEvent->pos().x() - option.rect.x();
         if(x >= (option.rect.width() - size)/2 && 
            x <= (option.rect.width() + size)/2) {
@@ -390,7 +390,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     break;
   case Scene::ColorColumn:
     if (event->type() == QEvent::MouseButtonPress) {
-      QColor color = QColorDialog::getColor(Qt::green, 0);
+      QColor color = QColorDialog::getColor(::Qt::green, 0);
       if (color.isValid()) {
           model->setData(index, color );
       }
@@ -403,7 +403,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
   case Scene::RenderingModeColumn:
     if (event->type() == QEvent::MouseButtonPress) {
       Scene::RenderingMode rendering_mode = 
-        static_cast<Scene::RenderingMode>(model->data(index, Qt::EditRole).toInt());
+        static_cast<Scene::RenderingMode>(model->data(index, ::Qt::EditRole).toInt());
       std::cerr << "render mode = " << rendering_mode << "\n";
       if(rendering_mode == Scene::Wireframe)
         model->setData(index, static_cast<int>(Scene::Fill));
@@ -433,7 +433,7 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     if (option.state & QStyle::State_Selected)
       painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
 
-    bool checked = model->data(index, Qt::DisplayRole).toBool();
+    bool checked = model->data(index, ::Qt::DisplayRole).toBool();
     int width = option.rect.width();
     int height = option.rect.height();
     size = (std::min)(width, height);
@@ -441,13 +441,13 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
     if(checked) {
       painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
-                                                     Qt::KeepAspectRatio,
-                                                     Qt::SmoothTransformation));
+                                                     ::Qt::KeepAspectRatio,
+                                                     ::Qt::SmoothTransformation));
     }
     else {
       painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-                                                     Qt::KeepAspectRatio,
-                                                     Qt::SmoothTransformation));
+                                                     ::Qt::KeepAspectRatio,
+                                                     ::Qt::SmoothTransformation));
     }
     drawFocus(painter, option, option.rect); // since we draw the grid ourselves
   }
