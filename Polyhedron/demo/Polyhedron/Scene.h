@@ -52,6 +52,8 @@ public:
                  NumberOfColumns = LastColumn + 1};
 
 private:
+  static const QColor defaultColor;
+
   struct Polyhedron_entry {
     Polyhedron_entry() : rendering_mode(Fill) {};
 
@@ -66,6 +68,12 @@ public:
   Scene(QObject*  parent);
   ~Scene();
 
+  void addPolyhedron(Polyhedron* p,
+                     QString name,
+                     QColor color = defaultColor,
+                     bool activated = true,
+                     RenderingMode mode = Fill);
+
   int open(QString);  // Returns the index of the new polyhedra (-1 if
                       // error)
 
@@ -75,14 +83,13 @@ public:
 
   int duplicate(int); // Returns the index of the new polyhedra
 
-  QItemSelection createSelection(int i);
-
   // TODO: move that elsewhere (in MainWindow)
   void convex_hull(int);
   void simplify(int);
 
   Polyhedron* getPolyhedron(int);
 
+  // draw() is called by Viewer::draw()
   void draw();
   CGAL::Bbox_3 bbox();
 
@@ -94,6 +101,8 @@ public:
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+  // auxiliary public function for QMainWindow
+  QItemSelection createSelection(int i);
 public slots:
   void setSelectedItem(int i )
   {

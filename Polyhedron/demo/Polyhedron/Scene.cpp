@@ -28,6 +28,8 @@ namespace {
   }
 }
 
+const QColor Scene::defaultColor = QColor(100, 100, 255);
+
 Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
     selected_item(-1)
@@ -76,21 +78,30 @@ Scene::open(QString filename)
   }
   poly->compute_normals();
 
-  Polyhedron_entry entry;
-  entry.polyhedron_ptr = poly;
-  entry.name = fileinfo.baseName();
-  entry.color=QColor(100, 100, 255);
-  entry.activated = true;
-  polyhedra.push_back(entry);
-  cerr << " done.\n";
+  addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
+
+  return polyhedra.size() - 1;
+}
+
+void Scene::addPolyhedron(Polyhedron* p,
+                          QString name,
+                          QColor color,
+                          bool activated,
+                          RenderingMode mode)
+{
+  Polyhedron_entry entry;
+  entry.polyhedron_ptr = p;
+  entry.name = name;
+  entry.color = color;
+  entry.activated = activated;
+  entry.rendering_mode = mode;
+  polyhedra.push_back(entry);
 
   selected_item = -1;
   emit updated_bbox();
   emit updated();
   QAbstractListModel::reset();
-
-  return polyhedra.size() - 1;
 }
 
 int
