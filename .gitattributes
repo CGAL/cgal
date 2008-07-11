@@ -3116,6 +3116,7 @@ Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/data/knot.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/part5.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
 Polyhedron/demo/Polyhedron/resources/check-off.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/check-off.svg -text
 Polyhedron/demo/Polyhedron/resources/check-on.png -text svneol=unset#image/png

@@ -268,6 +268,19 @@ Scene::data(const QModelIndex &index, int role) const
     if(role == Qt::DisplayRole || role == Qt::EditRole)
       return polyhedra.value(index.row()).name;
     break;
+  case RenderingModeColumn:
+    if(role == Qt::DisplayRole) {
+      if(polyhedra.value(index.row()).rendering_mode == Scene::Wireframe)
+        return tr("wire");
+      else return tr("fill");
+    }
+    else if(role == Qt::EditRole) {
+      return static_cast<int>(polyhedra.value(index.row()).rendering_mode);
+    }
+    else if(role == Qt::TextAlignmentRole) {
+      return Qt::AlignCenter;
+    }
+    break;
   case ActivatedColumn:
     if(role == Qt::DisplayRole || role == Qt::EditRole)
       return polyhedra.value(index.row()).activated;
@@ -280,21 +293,28 @@ Scene::data(const QModelIndex &index, int role) const
 QVariant 
 Scene::headerData ( int section, Qt::Orientation orientation, int role ) const
 {
-  if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
-  {
-    switch(section)
+  if(orientation == Qt::Horizontal)  {
+    if (role == Qt::DisplayRole)
     {
-    case NameColumn:
-      return tr("Name");
-      break;
-    case ColorColumn:
-      return tr("Color");
-      break;
-    case ActivatedColumn:
-      return tr("Activated");
-      break;
-    default:
-      return QVariant();
+      switch(section)
+      {
+      case NameColumn:
+        return tr("Name");
+        break;
+      case ColorColumn:
+        return tr("Color");
+        break;
+      case RenderingModeColumn:
+        return tr("Mode");
+      case ActivatedColumn:
+        return tr("Activated");
+        break;
+      default:
+        return QVariant();
+      }
+    }
+    else if(role == Qt::ToolTipRole && section == RenderingModeColumn) {
+      return tr("Rendering mode (fill/fireframe)");
     }
   }
   return QAbstractListModel::headerData(section, orientation, role);
@@ -303,7 +323,7 @@ Scene::headerData ( int section, Qt::Orientation orientation, int role ) const
 Qt::ItemFlags 
 Scene::flags ( const QModelIndex & index ) const
 {
-  if (index.isValid()) {
+  if (index.isValid() && index.column() == NameColumn) {
     return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
   }
   else {
@@ -313,8 +333,8 @@ Scene::flags ( const QModelIndex & index ) const
 
 bool 
 Scene::setData(const QModelIndex &index, 
-                    const QVariant &value,
-                    int role)
+               const QVariant &value,
+               int role)
 {
   if( role != Qt::EditRole || !index.isValid() )
     return false;
@@ -329,6 +349,11 @@ Scene::setData(const QModelIndex &index,
     break;
   case ColorColumn:
     entry.color = value.value<QColor>();
+    emit dataChanged(index, index);
+    return true;
+    break;
+  case RenderingModeColumn:
+    entry.rendering_mode = static_cast<RenderingMode>(value.toInt());
     emit dataChanged(index, index);
     return true;
     break;
@@ -368,7 +393,25 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
           model->setData(index, color );
       }
     }
-    return true;
+    else if(event->type() == QEvent::MouseButtonDblClick) {
+      return true; // block double-click
+    }
+    return false;
+    break;
+  case Scene::RenderingModeColumn:
+    if (event->type() == QEvent::MouseButtonPress) {
+      Scene::RenderingMode rendering_mode = 
+        static_cast<Scene::RenderingMode>(model->data(index, Qt::EditRole).toInt());
+      std::cerr << "render mode = " << rendering_mode << "\n";
+      if(rendering_mode == Scene::Wireframe)
+        model->setData(index, static_cast<int>(Scene::Fill));
+      else 
+        model->setData(index, static_cast<int>(Scene::Wireframe));
+    }
+    else if(event->type() == QEvent::MouseButtonDblClick) {
+      return true; // block double-click
+    }
+    return false;
     break;
   default:
     return QItemDelegate::editorEvent(event, model, option, index);

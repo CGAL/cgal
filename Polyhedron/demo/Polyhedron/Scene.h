@@ -38,6 +38,19 @@ class Scene  :
 {
   Q_OBJECT
 
+public:
+  enum RenderingMode { Fill = 0, 
+                       Wireframe, 
+                       LastRenderingMode = Wireframe,
+                       NumberOfRenderingMode = Wireframe+1};
+
+  enum Columns { NameColumn = 0, 
+                 ColorColumn, 
+                 RenderingModeColumn, 
+                 ActivatedColumn,
+                 LastColumn = ActivatedColumn,
+                 NumberOfColumns = LastColumn + 1};
+
 private:
   struct Polyhedron_entry {
     Polyhedron* polyhedron_ptr;
@@ -70,12 +83,6 @@ public:
 
   void draw();
   CGAL::Bbox_3 bbox();
-
-  enum RenderingMode { Fill = 0, Wireframe, LastRenderingMode = Wireframe,
-                       NumberOfRenderingMode = Wireframe+1};
-  enum Columns { NameColumn = 0, ColorColumn, ActivatedColumn,
-                 LastColumn = ActivatedColumn,
-                 NumberOfColumns = LastColumn + 1};
 
   // QAbstractItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;

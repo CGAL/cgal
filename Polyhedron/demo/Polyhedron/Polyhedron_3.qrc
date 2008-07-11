@@ -6,4 +6,7 @@
     <file alias="check-off.png" >resources/check-off.png</file>
     <file alias="minus" >resources/minus.png</file>
   </qresource>
+  <qresource prefix="/cgal/Polyhedron_3" >
+    <file alias="about.html" >resources/about.html</file>
+  </qresource>
 </RCC>
