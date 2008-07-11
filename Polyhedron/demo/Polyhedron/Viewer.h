@@ -18,17 +18,11 @@ public:
   bool antiAliasing() const { return antialiasing; }
 
 public slots:
-  inline void setAntiAliasing(bool b);
+  void setAntiAliasing(bool b);
 
 private:
   Scene* scene;
   bool antialiasing;
 }; // end class Viewer
-
-void Viewer::setAntiAliasing(bool b)
-{
-  antialiasing = b;
-  updateGL();
-}
 
 #endif // VIEWER_H

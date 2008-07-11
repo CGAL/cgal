@@ -15,6 +15,13 @@ Viewer::setScene(Scene* scene)
   this->scene = scene;
 }
 
+
+void Viewer::setAntiAliasing(bool b)
+{
+  antialiasing = b;
+  updateGL();
+}
+
 void
 Viewer::draw()
 {
