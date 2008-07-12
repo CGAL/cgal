@@ -18,7 +18,7 @@
 
 // surface
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/enriched_polyhedron.h>
+//#include <CGAL/enriched_polyhedron.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
