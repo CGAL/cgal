@@ -3,6 +3,10 @@
 
 #include <GL/glu.h>
 
+// forward declaration
+template <class Facet, class Kernel>
+typename Kernel::Vector_3 compute_normal(Facet& f);
+
 template <class Polyhedron>
 void gl_render(Polyhedron& polyhedron)
 {
@@ -30,7 +34,7 @@ void gl_render(Polyhedron& polyhedron)
 		::glBegin(GL_POLYGON);
 
 		// compute normal
-		Vector n = compute_normal<Polyhedron::Facet,Kernel>(*f);
+		Vector n = compute_normal<typename Polyhedron::Facet,Kernel>(*f);
 		::glNormal3d(n.x(),n.y(),n.z());
 
 		// revolve around current face to get vertices
