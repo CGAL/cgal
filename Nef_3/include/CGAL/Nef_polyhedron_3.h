@@ -68,7 +68,7 @@
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
-#include <list> // || (circulator_size(c) != 2 && !result));
+#include <list>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -168,6 +168,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
  
+  struct Polylines {};
+
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
 
@@ -178,6 +180,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   /*{\Menum selection flag for the point location mode.}*/
 
  //  enum Intersection_mode { CLOSED_HALFSPACE, OPEN_HALFSPACE, PLANE_ONLY };
+
+ static const Polylines POLYLINES;
 
 protected: 
   struct AND { Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const { return b1&&b2; } };
@@ -203,7 +207,8 @@ protected:
     SNC_point_locator_default;
   typedef CGAL::Combine_with_halfspace<SNC_structure, SNC_point_locator> 
           Combine_with_halfspace;
-
+ typedef typename Combine_with_halfspace::Intersection_mode Intersection_mode;
+ 
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SNC_simplify        SNC_simplify;
@@ -412,6 +417,124 @@ protected:
       set_snc (snc());
    }
   
+ template<typename Items, typename SNC_structure>
+ class Sphere_map_creator {
+   typedef typename SNC_structure::SM_decorator     SM_decorator;
+   typedef typename SNC_structure::Vertex_handle    Vertex_handle;
+   typedef typename SNC_structure::SVertex_handle   SVertex_handle;
+   typedef typename SNC_structure::SFace_handle     SFace_handle;
+   typedef typename SNC_structure::Sphere_point     Sphere_point;
+   
+   public:
+   Sphere_map_creator() {}
+   
+   template<typename point_iterator>
+   void create_end_sphere_map(SNC_structure& snc,
+			      point_iterator cur,
+			      point_iterator prev) {
+     Vertex_handle v(snc.new_vertex(*cur, true));
+     SM_decorator SM(&*v);
+     SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
+				      true));
+     SFace_handle sf(v->new_sface());
+     SM.link_as_isolated_vertex(sv,sf);
+   }
+   
+   template<typename point_iterator>
+   void create_sphere_map(SNC_structure& snc,
+			  point_iterator cur,
+			  point_iterator prev,
+			  point_iterator next) {
+     Vertex_handle v(snc.new_vertex(*cur, true));
+     SM_decorator SM(&*v);
+     SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
+				       true));
+     SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
+				       true));      
+     SFace_handle sf(v->new_sface());
+     SM.link_as_isolated_vertex(sv1,sf);
+     SM.link_as_isolated_vertex(sv2,sf);
+   }
+ };
+ 
+ template<typename SNC_structure>
+ class Sphere_map_creator<CGAL::SNC_indexed_items, SNC_structure> {
+   typedef typename SNC_structure::SM_decorator     SM_decorator;
+   typedef typename SNC_structure::Vertex_handle    Vertex_handle;
+   typedef typename SNC_structure::SVertex_handle   SVertex_handle;
+   typedef typename SNC_structure::SFace_handle     SFace_handle;
+   typedef typename SNC_structure::Sphere_point     Sphere_point;
+   
+   bool first;
+   int index;
+ public:
+   Sphere_map_creator() : first(true) {}
+     
+     template<typename point_iterator>
+       void create_end_sphere_map(SNC_structure& snc,
+				  point_iterator cur,
+				  point_iterator prev) {
+       Vertex_handle v(snc.new_vertex(*cur, true));
+       SM_decorator SM(&*v);
+       SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
+					true));
+       SFace_handle sf(v->new_sface());
+       SM.link_as_isolated_vertex(sv,sf);
+       if(first) {
+	 sv->set_index();
+	 index = sv->get_index();
+	 first = false;
+       } else
+	 sv->set_index(index);
+     }
+     
+     template<typename point_iterator>
+       void create_sphere_map(SNC_structure& snc,
+			      point_iterator cur,
+			      point_iterator prev,
+			      point_iterator next) {
+       Vertex_handle v(snc.new_vertex(*cur, true));
+       SM_decorator SM(&*v);
+       SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
+					 true));
+       SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
+					 true));      
+       SFace_handle sf(v->new_sface());
+       SM.link_as_isolated_vertex(sv1,sf);
+       SM.link_as_isolated_vertex(sv2,sf);
+       sv1->set_index(index);
+       sv2->set_index();
+       index = sv2->get_index();
+     }
+ };
+ 
+ template <typename InputIterator>
+ Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines) {
+   typedef typename std::iterator_traits<InputIterator>::value_type
+     point_iterator_pair;
+   typedef typename point_iterator_pair::first_type
+     point_iterator;
+
+   empty_rep();
+   set_snc(snc());
+   initialize_infibox_vertices(EMPTY);
+
+   point_iterator pbegin, pend, pnext, pprev;
+   Sphere_map_creator<Items, SNC_structure> smc;
+   for(;begin != end; ++begin) {
+     pend = begin->second;
+     pprev = pnext = pbegin = begin->first;
+     ++pnext;
+     CGAL_assertion(pnext != pend);
+     smc.create_end_sphere_map(snc(),pbegin,pnext);
+     for(++pbegin,++pnext; pnext!=pend; ++pbegin,++pprev,++pnext)
+       smc.create_sphere_map(snc(),pbegin,pprev,pnext);
+     smc.create_end_sphere_map(snc(),pbegin,pprev);
+   }
+   build_external_structure();
+   simplify();
+ }
+
  template <class T1, class T2,
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
            template <class T31, class T32, class T33>
@@ -1207,8 +1330,8 @@ protected:
   }
 
   Nef_polyhedron_3<Kernel,Items, Mark>
-   intersection(const Plane_3& plane, int im = 0) const {
-    std::cerr << "plane " << plane << std::endl;
+   intersection(const Plane_3& plane, 
+		Intersection_mode im) const {
     AND _and;
     SNC_structure rsnc;
     Nef_polyhedron_3<Kernel,Items, Mark> res(rsnc, new SNC_point_locator_default, false);
