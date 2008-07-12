@@ -43,6 +43,9 @@ protected slots:
   // defined in MainWindow_convex_hull.cpp
   void on_actionConvexHull_triggered();
 
+  // defined in MainWindow_kernel.cpp
+  void on_actionKernel_triggered();
+
   // subdivision methods are defined in MainWindow_subdivision_methods.cpp
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();

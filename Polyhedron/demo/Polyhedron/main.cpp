@@ -29,3 +29,4 @@ int main(int argc, char **argv)
 #include "MainWindow_subdivision_methods.cpp"
 #include "MainWindow_convex_hull.cpp"
 #include "MainWindow_simplify.cpp"
+#include "MainWindow_kernel.cpp"

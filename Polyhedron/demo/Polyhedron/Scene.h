@@ -18,14 +18,13 @@
 
 // surface
 #include <CGAL/Polyhedron_3.h>
-//#include <CGAL/enriched_polyhedron.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
-typedef Kernel::Triangle_3 Triangle_3;
+typedef Kernel::Triangle_3 Triangle;
 
 //struct Polyhedron : public Enriched_polyhedron<Kernel,
   //                                             Enriched_items> {};
