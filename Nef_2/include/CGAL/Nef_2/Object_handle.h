@@ -71,9 +71,9 @@ public:
 
   bool is_empty() const
   { empty E; return assign(E); }
-  bool operator==(CGAL_NULL_TYPE n) const
+  bool operator==(Nullptr_t n) const
   { CGAL_assertion(n == 0); return is_empty(); }
-  bool operator!=(CGAL_NULL_TYPE n) const
+  bool operator!=(Nullptr_t n) const
   { CGAL_assertion(n == 0); return !is_empty(); }
 
 };

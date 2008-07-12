@@ -27,7 +27,6 @@
 #define CGAL_CONFIG_H
 
 
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -211,23 +210,11 @@ using std::max;
 #endif
 
 
-// Macros for NULL and the NULL type.
-#include <cstddef>
+CGAL_BEGIN_NAMESPACE
 
-#ifndef CGAL_NULL_TYPE
-// Why is this GCC specific?  Let's try to remove this.
-#if 0
-#  if defined( __GNUG__ )
-#    define CGAL_NULL_TYPE const void*
-#    define CGAL_NULL 0
-#  else // __GNUG__ //
-#    define CGAL_NULL_TYPE int
-#    define CGAL_NULL NULL
-#  endif // __GNUG__ //
-#else
-#  define CGAL_NULL_TYPE const void *
-#  define CGAL_NULL NULL
-#endif
-#endif // CGAL_NULL_TYPE
+// Typedef for the type of NULL.
+typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_CONFIG_H

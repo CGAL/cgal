@@ -39,11 +39,11 @@ public:
 // OPERATIONS Forward Category
 // ---------------------------
 
-    bool operator==( CGAL_NULL_TYPE p ) const {
+    bool operator==( Nullptr_t p ) const {
       CGAL_assertion( p == NULL );
       return Iter::operator==( Iter(NULL) );
     }
-    bool operator!=( CGAL_NULL_TYPE p ) const {
+    bool operator!=( Nullptr_t p ) const {
       return !(*this == p);
     }
     bool operator==( const Self& i ) const {

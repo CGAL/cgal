@@ -55,8 +55,8 @@ public:
   /// OPERATIONS Forward Category
   /// ---------------------------
 
-    bool  operator==(CGAL_NULL_TYPE ptr) const { return (const Base&)*this == ptr; }
-    bool  operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
+    bool  operator==(Nullptr_t ptr) const { return (const Base&)*this == ptr; }
+    bool  operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
     bool  operator==(const Self& it) const { return (const Base&)*this == it; }
     bool  operator!=(const Self& it) const { return ! (*this == it); }
 

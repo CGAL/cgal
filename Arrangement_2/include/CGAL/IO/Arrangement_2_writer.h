@@ -325,7 +325,7 @@ protected:
   /*! Get the number of edges along a given CCB. */
   std::size_t _circulator_size (Ccb_halfedge_const_circulator circ) const
   {
-    CGAL_assertion (circ != CGAL_NULL);
+    CGAL_assertion (circ != NULL);
 
     std::size_t                    n = 0;
     Ccb_halfedge_const_circulator  curr = circ;

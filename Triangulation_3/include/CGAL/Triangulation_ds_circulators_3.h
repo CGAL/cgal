@@ -146,13 +146,13 @@ public:
     return ch != pos;
   }
 
-  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(n)) const
+  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
   {
     CGAL_triangulation_assertion( n == NULL);
     return pos == Cell_handle();
   }
 
-  bool operator!=(CGAL_NULL_TYPE n) const
+  bool operator!=(Nullptr_t n) const
   {
     return ! (*this == n);
   }
@@ -365,13 +365,13 @@ public:
     return ! (*this == ccir);
   }
 
-  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(c)) const
+  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(c)) const
   {
-    CGAL_triangulation_assertion(c == CGAL_NULL);
+    CGAL_triangulation_assertion(c == NULL);
     return pos == Cell_handle();
   }
 
-  bool operator!=(CGAL_NULL_TYPE c) const
+  bool operator!=(Nullptr_t c) const
   {
     return ! (*this == c);
   }
@@ -465,13 +465,13 @@ public:
     return ! (*this == ccir);
   }
 
-  bool operator==(CGAL_NULL_TYPE CGAL_triangulation_assertion_code(c)) const
+  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(c)) const
   {
-    CGAL_triangulation_assertion(c == CGAL_NULL);
+    CGAL_triangulation_assertion(c == NULL);
     return pos == Cell_handle();
   }
 
-  bool operator!=(CGAL_NULL_TYPE c) const
+  bool operator!=(Nullptr_t c) const
   {
     return ! (*this == c);
   }

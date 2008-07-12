@@ -68,12 +68,12 @@ class Polygon_2_const_edge_circulator {
     Polygon_2_const_edge_circulator(Vertex_const_circulator f)
       : first_vertex(f) {}
 
-    bool operator==( CGAL_NULL_TYPE p ) const {
+    bool operator==( Nullptr_t p ) const {
       CGAL_polygon_assertion( p == 0);
       return (first_vertex == 0);
     }
 
-    bool operator!=( CGAL_NULL_TYPE p ) const
+    bool operator!=( Nullptr_t p ) const
     {
       return !(*this == p);
     }

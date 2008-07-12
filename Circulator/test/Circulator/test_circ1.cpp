@@ -2375,11 +2375,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2488,11 +2488,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2730,11 +2730,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2892,11 +2892,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3303,11 +3303,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3528,11 +3528,11 @@ void test_circulator_from_iterator() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3737,11 +3737,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3850,11 +3850,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4092,11 +4092,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4255,11 +4255,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4666,11 +4666,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4892,11 +4892,11 @@ void test_circulator_from_container() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = c;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.

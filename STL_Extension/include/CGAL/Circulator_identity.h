@@ -57,11 +57,11 @@ public:
 
   Circulator  current_circulator() const { return nt;}
 
-  bool operator==( CGAL_NULL_TYPE p) const {
+  bool operator==( Nullptr_t p) const {
     CGAL_assertion( p == 0);
     return ( nt == 0);                                    //###//
   }
-  bool operator!=( CGAL_NULL_TYPE p) const {
+  bool operator!=( Nullptr_t p) const {
     return !(*this == p);
   }
   bool operator==( const Self& i) const {

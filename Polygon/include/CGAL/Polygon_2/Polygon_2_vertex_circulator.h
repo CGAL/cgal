@@ -71,11 +71,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {

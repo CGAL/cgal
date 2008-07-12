@@ -87,11 +87,11 @@ public:
     bool operator!=(const Self& it) const { return ! (*this == it); }
 
     /// Comparison to NULL pointer
-    bool operator==(CGAL_NULL_TYPE ptr) const {
+    bool operator==(Nullptr_t ptr) const {
         CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return (const Base&)*this == Base();
     }
-    bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
+    bool operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
 
     /// Conversion to handle
     operator Param_mesh_patch_vertex_handle<Adaptor>() const {
@@ -146,11 +146,11 @@ public:
     bool operator!=(const Self& it) const { return ! (*this == it); }
 
     /// Comparison to NULL pointer
-    bool operator==(CGAL_NULL_TYPE ptr) const {
+    bool operator==(Nullptr_t ptr) const {
         CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
         return (const Base&)*this == Base();
     }
-    bool operator!=(CGAL_NULL_TYPE ptr) const { return ! (*this == ptr); }
+    bool operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
 
     /// Conversion to handle
     operator Param_mesh_patch_vertex_const_handle<Adaptor>() const {

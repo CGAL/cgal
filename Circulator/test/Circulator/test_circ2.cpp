@@ -299,11 +299,11 @@ void test_struct(){
     
         // Check tests for empty data structures.
         Struct_circulator z = Struct_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Struct_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -408,11 +408,11 @@ void test_struct(){
     
         // Check tests for empty data structures.
         Struct_const_circulator z = Struct_const_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Struct_const_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -646,11 +646,11 @@ void test_struct(){
     
         // Check tests for empty data structures.
         Struct_bi_circulator z = Struct_bi_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Struct_bi_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -804,11 +804,11 @@ void test_struct(){
     
         // Check tests for empty data structures.
         Struct_bi_const_circulator z = Struct_bi_const_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Struct_bi_const_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -964,11 +964,11 @@ void test_class(){
     
         // Check tests for empty data structures.
         Class_circulator z = Class_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Class_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -1073,11 +1073,11 @@ void test_class(){
     
         // Check tests for empty data structures.
         Class_const_circulator z = Class_const_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Class_const_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -1311,11 +1311,11 @@ void test_class(){
     
         // Check tests for empty data structures.
         Class_bi_circulator z = Class_bi_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Class_bi_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -1469,11 +1469,11 @@ void test_class(){
     
         // Check tests for empty data structures.
         Class_bi_const_circulator z = Class_bi_const_circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Class_bi_const_circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -1886,11 +1886,11 @@ void test_array() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.
@@ -2114,11 +2114,11 @@ void test_array() {
     
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == CGAL_NULL);
-        assert( ! (z != CGAL_NULL));
+        assert(   z == NULL);
+        assert( ! (z != NULL));
         Circulator i = start;
-        assert( ! (i == CGAL_NULL));
-        assert(   i != CGAL_NULL);
+        assert( ! (i == NULL));
+        assert(   i != NULL);
         assert( i == start);
         assert( i == start);
         // Do I reach myself.

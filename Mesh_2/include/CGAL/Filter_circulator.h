@@ -63,11 +63,11 @@ public:
 	}
     };
 
-  bool operator==( CGAL_NULL_TYPE ) const {
+  bool operator==( Nullptr_t ) const {
     return is_null;
   }
 
-  bool operator!=( CGAL_NULL_TYPE ) const {
+  bool operator!=( Nullptr_t ) const {
     return !is_null;
   }
 

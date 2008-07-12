@@ -582,15 +582,15 @@ template <class DelaunayTriangulation_3>
 class Delaunay_triangulation_3<Gt, Tds>::Vertex_remover {
   typedef DelaunayTriangulation_3 Delaunay;
 public:
-  typedef CGAL_NULL_TYPE Hidden_points_iterator;
+  typedef Nullptr_t Hidden_points_iterator;
 
   Vertex_remover(Delaunay &tmp_) : tmp(tmp_) {}
 
   Delaunay &tmp;
 
   void add_hidden_points(Cell_handle) {}
-  Hidden_points_iterator hidden_points_begin() { return CGAL_NULL; }
-  Hidden_points_iterator hidden_points_end() { return CGAL_NULL; }
+  Hidden_points_iterator hidden_points_begin() { return NULL; }
+  Hidden_points_iterator hidden_points_end() { return NULL; }
 
   Bounded_side side_of_bounded_circle(const Point &p, const Point &q,
     const Point &r, const Point &s, bool perturb = false) const {

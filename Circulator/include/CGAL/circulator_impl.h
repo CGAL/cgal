@@ -65,11 +65,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(S*)this->_ptr;}
@@ -108,11 +108,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(const S*)this->_ptr;}
@@ -155,11 +155,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(S*)this->_ptr;}
@@ -207,11 +207,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     reference  operator*()             const { return *(const S*)this->_ptr;}
@@ -266,11 +266,11 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     C&   operator*()                   const { return *(C*)this->_ptr;}
@@ -304,11 +304,11 @@ public:
 // OPERATIONS
 
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     const C&  operator*()              const { return *(C*)this->_ptr;}
@@ -341,11 +341,11 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     C&   operator*()                   const { return *(C*)this->_ptr;}
@@ -390,11 +390,11 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return this->_ptr == NULL;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c)    const { return this->_ptr == c._ptr; }
     bool operator!=( const Self& c)    const { return !(*this == c); }
     const C&  operator*()              const { return *(C*)this->_ptr;}
@@ -462,11 +462,11 @@ public:
 
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return _i >= _size;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const {
         CGAL_assertion( this->_ptr  == c._ptr);  // belong to the same array?
         CGAL_assertion( _size == c._size); // same size when instantiated ?
@@ -586,11 +586,11 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( CGAL_NULL_TYPE p) const {
-        CGAL_assertion( p == CGAL_NULL);
+    bool operator==( Nullptr_t p) const {
+        CGAL_assertion( p == NULL);
         return _i >= _size;
     }
-    bool operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+    bool operator!=( Nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const {
         CGAL_assertion( this->_ptr  == c._ptr);  // belong to the same array?
         CGAL_assertion( _size == c._size); // same size when instantiated ?

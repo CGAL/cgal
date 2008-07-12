@@ -686,7 +686,7 @@ namespace CGALi {
     }
 
     // Construction from NULL
-    CC_iterator (CGAL_NULL_TYPE CGAL_assertion_code(n))
+    CC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
@@ -804,7 +804,7 @@ namespace CGALi {
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  CGAL_NULL_TYPE CGAL_assertion_code(n))
+                  Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs == NULL;
@@ -813,7 +813,7 @@ namespace CGALi {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  CGAL_NULL_TYPE CGAL_assertion_code(n))
+		  Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;

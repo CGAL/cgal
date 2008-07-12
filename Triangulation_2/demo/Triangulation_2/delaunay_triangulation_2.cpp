@@ -177,7 +177,7 @@ private slots:
       widget->lock();
       Line_face_circulator lfc =
          tr1.line_walk(l.point(1), l.point(2)), done(lfc);
-      if(lfc == (CGAL_NULL_TYPE) NULL){
+      if(lfc == NULL){
       } else {
         *widget << CGAL::BLUE;
         *widget << CGAL::FillColor(CGAL::YELLOW);

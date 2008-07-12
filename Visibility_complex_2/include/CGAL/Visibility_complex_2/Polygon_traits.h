@@ -63,7 +63,7 @@ public:
   void split (Arc_2& tmp, const Bitangent_2& v)
   {
     Point_2 p=v.source_object()==object()?v.source():v.target();
-    if (first == CGAL_NULL) {
+    if (first == NULL) {
       first = object()->vertices_circulator();
       while (*first != p) ++first;
       beyond = first; //++beyond;
@@ -80,7 +80,7 @@ public:
   void split_cw(Arc_2& tmp, const Bitangent_2& v) 
   {
     Point_2 p=v.source_object()==object()?v.source():v.target();
-    if (first == CGAL_NULL) {
+    if (first == NULL) {
       first = object()->vertices_circulator();
       while (*first != p) ++first;
       beyond = first; //++beyond;

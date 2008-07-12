@@ -309,11 +309,11 @@ public:
   Circulator  current_circulator() const { return nt;}
 
   Iterator  current_iterator() const { return nt;}
-  bool operator==( CGAL_NULL_TYPE p) const {
+  bool operator==( Nullptr_t p) const {
     CGAL_assertion( p == 0);
     return empty;
   }
-  bool  operator!=( CGAL_NULL_TYPE p) const { return !(*this == p); }
+  bool  operator!=( Nullptr_t p) const { return !(*this == p); }
   bool  operator==( const Self& i) const { return (empty && i.empty) ||( nt == i.nt); }
   bool  operator!=( const Self& i) const { return !(*this == i); }
   reference operator*()  const { return *nt; }
