@@ -8,7 +8,7 @@ void MainWindow::on_actionCatmullClark_triggered()
   Polyhedron* poly = getSelectedPolygon();
   if(!poly) return;
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*poly, 1);
-  poly->compute_normals();
+  //poly->compute_normals();
   scene->polyhedronChanged(poly);
 }
 
@@ -17,6 +17,6 @@ void MainWindow::on_actionSqrt3_triggered()
   Polyhedron* poly = getSelectedPolygon();
   if(!poly) return;
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
-  poly->compute_normals();
+  //poly->compute_normals();
   scene->polyhedronChanged(poly);
 }

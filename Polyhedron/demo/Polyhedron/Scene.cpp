@@ -14,6 +14,8 @@
 #include <QPainter>
 #include <QColorDialog>
 
+#include <CGAL/gl_render.h>
+
 namespace {
   void CGALglcolor(QColor c)
   {
@@ -71,7 +73,7 @@ Scene::open(QString filename)
     QApplication::restoreOverrideCursor();
     return -1;
   }
-  poly->compute_normals();
+  //poly->compute_normals();
 
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
@@ -122,7 +124,7 @@ Scene::duplicate(int polyhedron_index)
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
   Polyhedron* poly = new Polyhedron(*entry.polyhedron_ptr);
 
-  poly->compute_normals();
+  //poly->compute_normals();
 
   addPolyhedron(poly,
                 tr("%1 (copy)").arg(entry.name),
@@ -175,8 +177,10 @@ Scene::draw()
         else {
           CGALglcolor(entry.color);
         }
-        poly->gl_draw_direct_triangles(false,
-                                       true);
+        
+	gl_render(*poly);
+	//poly->gl_draw_direct_triangles(false,
+          //                             true);
       }
       if(index == selected_item) {
         CGALglcolor(entry.color.lighter(70));
@@ -185,7 +189,7 @@ Scene::draw()
         CGALglcolor(entry.color.lighter(50));
       }
       ::glDisable(GL_LIGHTING);
-      poly->superimpose_edges(true,false);
+      //poly->superimpose_edges(true,false);
     }
   }
 }

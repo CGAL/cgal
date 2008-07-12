@@ -27,8 +27,12 @@ typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle_3;
 
-struct Polyhedron : public Enriched_polyhedron<Kernel,
-                                               Enriched_items> {};
+//struct Polyhedron : public Enriched_polyhedron<Kernel,
+  //                                             Enriched_items> {};
+
+struct Polyhedron : public CGAL::Polyhedron_3<Kernel> {};
+
+//typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 class QEvent;
 class QMouseEvent;

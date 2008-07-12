@@ -20,7 +20,7 @@ void MainWindow::on_actionSimplify_triggered()
     //		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
 
     // recompute normals
-    pMesh->compute_normals();
+    //pMesh->compute_normals();
 
     // Tell the scene that polyhedron #index has been changed
     scene->polyhedronChanged(index);
