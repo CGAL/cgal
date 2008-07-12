@@ -178,9 +178,7 @@ Scene::draw()
           CGALglcolor(entry.color);
         }
         
-	gl_render(*poly);
-	//poly->gl_draw_direct_triangles(false,
-          //                             true);
+	gl_render_facets(*poly);
       }
       if(index == selected_item) {
         CGALglcolor(entry.color.lighter(70));
@@ -189,7 +187,7 @@ Scene::draw()
         CGALglcolor(entry.color.lighter(50));
       }
       ::glDisable(GL_LIGHTING);
-      //poly->superimpose_edges(true,false);
+      gl_render_edges(*poly);
     }
   }
 }
