@@ -24,7 +24,7 @@
 #ifndef CGAL_SAME_UNCERTAINTY_H
 #define CGAL_SAME_UNCERTAINTY_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 

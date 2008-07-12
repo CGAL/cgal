@@ -21,9 +21,9 @@
 #ifndef CGAL_UNCERTAIN_H
 #define CGAL_UNCERTAIN_H
 
-#include <CGAL/basic.h>
-#include <stdexcept>
+#include <CGAL/config.h>
 #include <CGAL/enum.h>
+#include <stdexcept>
 
 CGAL_BEGIN_NAMESPACE
 
