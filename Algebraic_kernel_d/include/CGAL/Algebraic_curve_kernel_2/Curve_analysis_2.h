@@ -233,16 +233,18 @@ public:
     {
         CGAL_precondition(i >= 0&&i <= number_of_status_lines_with_event());
         typedef typename Internal_curve_2::Event1_info Event1_info;
-        Event1_info info 
-            = _internal_curve().event_info_at_x
-                (_internal_curve().boundary_value_in_interval(i));
         size_type n_arcs = _internal_curve().arcs_over_interval(i);
         Status_line_1 sline
             (X_coordinate_1(_internal_curve().boundary_value_in_interval(i)),
              i,
              *this,
              n_arcs);
+#ifndef CGAL_ACK_2_USE_STATUS_LINES
+        Event1_info info 
+            = _internal_curve().event_info_at_x
+                (_internal_curve().boundary_value_in_interval(i));
         sline.set_isolator(info.refinement());
+#endif
         return sline;
     }
 
