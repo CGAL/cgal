@@ -45,7 +45,7 @@ CGAL::Timer overall_timer;
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Preferred_algebraic_curve_kernels_2.h>
 
-#include <CGAL/Polynomial_parser_2.h>
+#include "include/CGAL/Polynomial_parser_2.h"
 
 #if CGAL_ACK_USE_FILTERED_CKvA_2
 #include <CGAL/Filtered_algebraic_curve_kernel_2.h>
