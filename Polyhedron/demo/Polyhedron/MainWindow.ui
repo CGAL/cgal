@@ -161,6 +161,7 @@
      <property name="title" >
       <string>&amp;Subdivision</string>
      </property>
+     <addaction name="actionLoop" />
      <addaction name="actionCatmullClark" />
      <addaction name="actionSqrt3" />
     </widget>
@@ -327,6 +328,11 @@
   <action name="actionOptions" >
    <property name="text" >
     <string>Options...</string>
+   </property>
+  </action>
+  <action name="actionLoop" >
+   <property name="text" >
+    <string>Loop</string>
    </property>
   </action>
  </widget>

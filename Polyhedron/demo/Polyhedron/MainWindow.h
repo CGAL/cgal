@@ -47,6 +47,7 @@ protected slots:
   void on_actionKernel_triggered();
 
   // subdivision methods are defined in MainWindow_subdivision_methods.cpp
+  void on_actionLoop_triggered();
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
 
