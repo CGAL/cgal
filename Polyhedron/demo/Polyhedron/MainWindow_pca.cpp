@@ -3,7 +3,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Make_quad.h> // for plane fitting
+#include <CGAL/Make_quad_soup.h> // for plane fitting
 #include <CGAL/Make_bar.h>  // for line fitting
 
 // for Visual C++ (which defines min/max macros)
@@ -54,15 +54,17 @@ void MainWindow::on_actionFitPlane_triggered()
 		Vector u2 = plane.base2();
 		u2 = u2 / std::sqrt(u2*u2);
 		u2 = u2 * 0.7 * diag;
-		Point a = center_of_mass + u1;
-		Point b = center_of_mass + u2;
-		Point c = center_of_mass - u1;
-		Point d = center_of_mass - u2;
+		std::list<Point> points;
+		points.push_back(center_of_mass + u1);
+		points.push_back(center_of_mass + u2);
+		points.push_back(center_of_mass - u1);
+		points.push_back(center_of_mass - u2);
 
 		// add best fit plane as new polyhedron
 		Polyhedron *pFit = new Polyhedron;
-		Make_quad<Polyhedron,Kernel> quad;
-		quad.run(a,b,c,d,*pFit);
+		typedef std::list<Point>::iterator Iterator;
+		Make_quad_soup<Polyhedron,Kernel,Iterator> quad;
+		quad.run(points.begin(),points.end(),*pFit);
 
 		scene->addPolyhedron(pFit,
 			tr("%1 (plane fit)").arg(scene->polyhedronName(index)),
