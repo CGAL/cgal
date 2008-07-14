@@ -1,5 +1,5 @@
-#ifndef _DUALIZER_
-#define _DUALIZER_
+#ifndef _MAKE_QUAD_
+#define _MAKE_QUAD_
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
@@ -35,10 +35,10 @@ public:
 			B.add_vertex(m_points[i]);
 
 		B.begin_facet();
-		B.add_vertex_to_facet(0);
-		B.add_vertex_to_facet(1);
-		B.add_vertex_to_facet(2);
-		B.add_vertex_to_facet(3);
+			B.add_vertex_to_facet(0);
+			B.add_vertex_to_facet(1);
+			B.add_vertex_to_facet(2);
+			B.add_vertex_to_facet(3);
 		B.end_facet();
 		
 		B.end_surface();
@@ -66,4 +66,4 @@ public:
 	}
 };
 
-#endif // _DUALIZER_
+#endif // _MAKE_QUAD_

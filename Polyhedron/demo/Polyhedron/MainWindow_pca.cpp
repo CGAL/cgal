@@ -3,7 +3,8 @@
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
-#include <CGAL/Make_quad.h>
+#include <CGAL/Make_quad.h> // for plane fitting
+#include <CGAL/Make_bar.h>  // for line fitting
 
 // for Visual
 #undef min 
@@ -64,7 +65,7 @@ void MainWindow::on_actionFitPlane_triggered()
 
 		scene->addPolyhedron(pFit,
 			tr("%1 (plane fit)").arg(scene->polyhedronName(index)),
-			scene->polyhedronColor(index), // to be changed to red 
+			scene->polyhedronColor(index), // PA: to be changed to red 
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
 	}
@@ -79,13 +80,70 @@ void MainWindow::on_actionFitLine_triggered()
 		// get active polyhedron
 		Polyhedron* pMesh = scene->polyhedron(index);
 
+		// get triangles
+		std::list<Triangle> triangles;
+		Polyhedron::Facet_iterator f;
+		for(f = pMesh->facets_begin();
+		    f != pMesh->facets_end();
+		    ++f)
+		{
+				const Point& a = f->halfedge()->vertex()->point();
+				const Point& b = f->halfedge()->next()->vertex()->point();
+				const Point& c = f->halfedge()->prev()->vertex()->point();
+				triangles.push_back(Triangle(a,b,c));
+		}
 
-		// add best fit line as new polyhedron
+		// fit line
+		Line line;
+		CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::Dimension_tag<2>());
+
+		// compute centroid
+		Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
+
+		// compute bounding box diagonal
+		Iso_cuboid bbox = CGAL::bounding_box(pMesh->points_begin(),pMesh->points_end());
+
+		// compute scale for rendering using diagonal of bbox
+		Point cmin = bbox.min();
+		Point cmax = bbox.max();
+		FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
+
+		// construct a 3D bar
+		Vector u = line.to_vector();
+		u = u / std::sqrt(u*u);
+
+		Point a = center_of_mass + u * diag;
+		Point b = center_of_mass - u * diag;
+
+		Plane plane_a = line.perpendicular_plane(a);
+
+		Vector u1 = plane_a.base1();
+		u1 = u1 / std::sqrt(u1*u1);
+		u1 = u1 * 0.01 * diag;
+		Vector u2 = plane_a.base2();
+		u2 = u2 / std::sqrt(u2*u2);
+		u2 = u2 * 0.01 * diag;
+
+		Point points[8];
+
+		points[0] = a + u1;
+		points[1] = a + u2;
+		points[2] = a - u1;
+		points[3] = a - u2;
+
+		points[4] = b + u1;
+		points[5] = b + u2;
+		points[6] = b - u1;
+		points[7] = b - u2;
+
+		// add best fit line as new polyhedron bar
 		Polyhedron *pFit = new Polyhedron;
+		Make_bar<Polyhedron,Kernel> bar;
+		bar.run(points,*pFit);
 
 		scene->addPolyhedron(pFit,
 			tr("%1 (line fit)").arg(scene->polyhedronName(index)),
-			scene->polyhedronColor(index),
+			scene->polyhedronColor(index), // PA: to be changed to red 
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
 	}
