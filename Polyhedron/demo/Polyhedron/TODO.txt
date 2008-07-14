@@ -1,5 +1,6 @@
-- PCA: add plane polyhedron as best fitting plane, same for line
-- render non-triangular meshes -> pierre
+
+- conversion from exact to inexact polyhedra
+- conversion from inexact to exact polyhedra
 
 
 operations:

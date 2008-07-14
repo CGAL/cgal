@@ -15,8 +15,9 @@
 
 // kernel
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-// surface
+// surface mesh
 #include <CGAL/Polyhedron_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -28,6 +29,10 @@ typedef Kernel::Sphere_3 Sphere;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
+
+// Boolean operations work only with exact kernel
+typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
+typedef CGAL::Polyhedron_3<Exact_Kernel> Exact_polyhedron;
 
 struct Polyhedron : public CGAL::Polyhedron_3<Kernel> {};
 

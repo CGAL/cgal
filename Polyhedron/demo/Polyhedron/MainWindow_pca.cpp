@@ -6,7 +6,7 @@
 #include <CGAL/Make_quad.h> // for plane fitting
 #include <CGAL/Make_bar.h>  // for line fitting
 
-// for Visual
+// for Visual C++ (which defines min/max macros)
 #undef min 
 #undef max 
 
@@ -15,9 +15,10 @@ void MainWindow::on_actionFitPlane_triggered()
 {
 	if(onePolygonIsSelected())
 	{
-		int index = getSelectedPolygonIndex();
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		// get active polyhedron
+		int index = getSelectedPolygonIndex();
 		Polyhedron* pMesh = scene->polyhedron(index);
 
 		// get triangles
@@ -68,6 +69,8 @@ void MainWindow::on_actionFitPlane_triggered()
 			scene->polyhedronColor(index), // PA: to be changed to red 
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
+
+		QApplication::setOverrideCursor(Qt::ArrowCursor);
 	}
 }
 
@@ -75,9 +78,10 @@ void MainWindow::on_actionFitLine_triggered()
 {
 	if(onePolygonIsSelected())
 	{
-		int index = getSelectedPolygonIndex();
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 
 		// get active polyhedron
+		int index = getSelectedPolygonIndex();
 		Polyhedron* pMesh = scene->polyhedron(index);
 
 		// get triangles
@@ -146,5 +150,7 @@ void MainWindow::on_actionFitLine_triggered()
 			scene->polyhedronColor(index), // PA: to be changed to red 
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
+
+		QApplication::setOverrideCursor(Qt::ArrowCursor);
 	}
 }

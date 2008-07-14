@@ -18,6 +18,10 @@ class MainWindow :
 public:
   MainWindow(QWidget* parent = 0);
 
+enum  {	BOOLEAN_UNION,
+	BOOLEAN_INTERSECTION,
+	BOOLEAN_DIFFERENCE};
+
 public slots:
   void updateViewerBBox();
   void open(QString filename);
@@ -51,9 +55,17 @@ protected slots:
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
 
+  // Boolean operations defined in MainWindow_boolean_operations.cpp
+  void on_actionUnion_triggered();
+  void on_actionIntersection_triggered();
+  void on_actionDifference_triggered();
+
   // PCA
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
+
+protected:
+  void boolean_operation(const int operation);
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);

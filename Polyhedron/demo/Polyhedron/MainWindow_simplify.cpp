@@ -9,6 +9,10 @@ void MainWindow::on_actionSimplify_triggered()
 {
 	if(onePolygonIsSelected())
 	{
+		// wait cursor
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		// get selected polyhedron
 		int index = getSelectedPolygonIndex();
 		Polyhedron* pMesh = scene->polyhedron(index);
 
@@ -22,7 +26,10 @@ void MainWindow::on_actionSimplify_triggered()
 		//                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
 		//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
 
-		// Tell the scene that polyhedron #index has been changed
+		// update scene
 		scene->polyhedronChanged(index);
+
+		// default cursor
+		QApplication::setOverrideCursor(Qt::ArrowCursor);
 	}
 }
