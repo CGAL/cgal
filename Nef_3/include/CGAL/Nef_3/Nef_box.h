@@ -130,11 +130,12 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
 
   Nef_box(Vertex_handle vin) : v(vin), type(VERTEX) {
   
-    if(!Const_decorator::is_standard(v->point()))
+    if(!Const_decorator::is_standard(v))
       init(true);
     else {
       init(false);
-      extend(v->point());
+      extend(v->point(), 
+	     typename Is_extended_kernel<Kernel>::value_type());
     }
   }
 
