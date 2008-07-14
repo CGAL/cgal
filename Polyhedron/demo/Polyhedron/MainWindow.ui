@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>966</width>
-    <height>595</height>
+    <width>978</width>
+    <height>594</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,8 +17,8 @@
     <rect>
      <x>0</x>
      <y>24</y>
-     <width>966</width>
-     <height>549</height>
+     <width>978</width>
+     <height>548</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -27,16 +27,19 @@
     </item>
     <item row="0" column="0" >
      <widget class="QDockWidget" name="polyhedraDockWidget" >
+      <property name="locale" >
+       <locale country="UnitedStates" language="English" />
+      </property>
       <property name="windowTitle" >
-       <string>Polyhedra list</string>
+       <string>Polyhedra</string>
       </property>
       <widget class="QWidget" name="dockWidgetContent" >
        <property name="geometry" >
         <rect>
          <x>0</x>
          <y>22</y>
-         <width>342</width>
-         <height>509</height>
+         <width>354</width>
+         <height>508</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -118,7 +121,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>966</width>
+     <width>978</width>
      <height>24</height>
     </rect>
    </property>
@@ -182,9 +185,9 @@
      <addaction name="actionDifference" />
     </widget>
     <addaction name="actionConvexHull" />
+    <addaction name="actionKernel" />
     <addaction name="menuSubdivision" />
     <addaction name="actionSimplify" />
-    <addaction name="actionKernel" />
     <addaction name="menu_Boolean_operations" />
    </widget>
    <widget class="QMenu" name="menuView" >
@@ -200,8 +203,20 @@
     <addaction name="actionAntiAliasing" />
     <addaction name="menuDockWindows" />
    </widget>
+   <widget class="QMenu" name="menuSelections" >
+    <property name="locale" >
+     <locale country="UnitedStates" language="English" />
+    </property>
+    <property name="title" >
+     <string>Selections</string>
+    </property>
+    <addaction name="actionSelect_all" />
+    <addaction name="actionSelect_none" />
+    <addaction name="actionSelect_invert" />
+   </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
+   <addaction name="menuSelections" />
    <addaction name="menuAlgorithms" />
    <addaction name="menuOperations" />
    <addaction name="menuView" />
@@ -210,8 +225,8 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>573</y>
-     <width>966</width>
+     <y>572</y>
+     <width>978</width>
      <height>22</height>
     </rect>
    </property>
@@ -371,6 +386,26 @@
   <action name="actionSelf_intersection" >
    <property name="text" >
     <string>Self-intersection</string>
+   </property>
+  </action>
+  <action name="actionSelections" >
+   <property name="text" >
+    <string>Selections</string>
+   </property>
+  </action>
+  <action name="actionSelect_all" >
+   <property name="text" >
+    <string>Select all</string>
+   </property>
+  </action>
+  <action name="actionSelect_none" >
+   <property name="text" >
+    <string>Select none</string>
+   </property>
+  </action>
+  <action name="actionSelect_invert" >
+   <property name="text" >
+    <string>Invert selection</string>
    </property>
   </action>
  </widget>

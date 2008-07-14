@@ -23,11 +23,12 @@ void MainWindow::on_actionSelf_intersection_triggered()
 		typedef std::list<Triangle>::iterator Iterator;
 		typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,Iterator> Box;
 
+		// compute self-intersections
 		std::list<Triangle> intersecting_triangles;
 		typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
 		self_intersect<Polyhedron,Kernel,OutputIterator>(*pMesh,std::back_inserter(intersecting_triangles));
 
-		// add intersecting triangles as a new polyhedron (triangle soup)
+		// add intersecting triangles as a new polyhedron (a triangle soup)
 		Polyhedron *pSoup = new Polyhedron;
 		Make_soup<Polyhedron,Kernel,Iterator> soup;
 		soup.run(intersecting_triangles.begin(),intersecting_triangles.end(),*pSoup);
