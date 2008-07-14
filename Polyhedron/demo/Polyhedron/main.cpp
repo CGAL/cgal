@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
   Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2);
+  Q_INIT_RESOURCE(Triangulation_2); // PA: sounds weird here
   Q_INIT_RESOURCE(Input);
   Q_INIT_RESOURCE(CGAL);
 
@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 
 #include "MainWindow.cpp"
 #include "Scene.cpp"
+#include "MainWindow_curvature_estimation.cpp"
 #include "MainWindow_subdivision_methods.cpp"
 #include "MainWindow_boolean_operations.cpp"
 #include "MainWindow_self_intersection.cpp"

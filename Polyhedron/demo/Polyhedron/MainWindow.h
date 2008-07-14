@@ -66,6 +66,9 @@ protected slots:
   void on_actionIntersection_triggered();
   void on_actionDifference_triggered();
 
+  // curvature estimation
+  void on_actionEstimateCurvature_triggered();
+
   // PCA
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();

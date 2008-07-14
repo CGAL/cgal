@@ -162,7 +162,7 @@
     </widget>
     <addaction name="actionSelf_intersection" />
     <addaction name="menu_Principale_components_analysis" />
-    <addaction name="actionCurvatureEstimation" />
+    <addaction name="actionEstimateCurvature" />
    </widget>
    <widget class="QMenu" name="menuOperations" >
     <property name="title" >
@@ -279,7 +279,7 @@
     <string>Fit &amp;line</string>
    </property>
   </action>
-  <action name="actionCurvatureEstimation" >
+  <action name="actionEstimateCurvature" >
    <property name="text" >
     <string>&amp;Curvature estimation</string>
    </property>
