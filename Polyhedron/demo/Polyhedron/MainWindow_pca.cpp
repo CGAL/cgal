@@ -1,0 +1,92 @@
+#include "MainWindow.h"
+#include "Scene.h"
+#include <CGAL/centroid.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Make_quad.h>
+
+// for Visual
+#undef min 
+#undef max 
+
+
+void MainWindow::on_actionFitPlane_triggered()
+{
+	if(onePolygonIsSelected())
+	{
+		int index = getSelectedPolygonIndex();
+
+		// get active polyhedron
+		Polyhedron* pMesh = scene->polyhedron(index);
+
+		// get triangles
+		std::list<Triangle> triangles;
+		Polyhedron::Facet_iterator f;
+		for(f = pMesh->facets_begin();
+		    f != pMesh->facets_end();
+		    ++f)
+		{
+				const Point& a = f->halfedge()->vertex()->point();
+				const Point& b = f->halfedge()->next()->vertex()->point();
+				const Point& c = f->halfedge()->prev()->vertex()->point();
+				triangles.push_back(Triangle(a,b,c));
+		}
+
+		// fit plane
+		Plane plane;
+		CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
+
+		// compute centroid
+		Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
+
+		// compute bounding box diagonal
+		Iso_cuboid bbox = CGAL::bounding_box(pMesh->points_begin(),pMesh->points_end());
+
+		// compute scale for rendering using diagonal of bbox
+		Point cmin = bbox.min();
+		Point cmax = bbox.max();
+		FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
+		Vector u1 = plane.base1();
+		u1 = u1 / std::sqrt(u1*u1);
+		u1 = u1 * 0.7 * diag;
+		Vector u2 = plane.base2();
+		u2 = u2 / std::sqrt(u2*u2);
+		u2 = u2 * 0.7 * diag;
+		Point a = center_of_mass + u1;
+		Point b = center_of_mass + u2;
+		Point c = center_of_mass - u1;
+		Point d = center_of_mass - u2;
+
+		// add best fit plane as new polyhedron
+		Polyhedron *pFit = new Polyhedron;
+		Make_quad<Polyhedron,Kernel> quad;
+		quad.run(a,b,c,d,*pFit);
+
+		scene->addPolyhedron(pFit,
+			tr("%1 (plane fit)").arg(scene->polyhedronName(index)),
+			scene->polyhedronColor(index), // to be changed to red 
+			scene->isPolyhedronActivated(index),
+			scene->polyhedronRenderingMode(index));
+	}
+}
+
+void MainWindow::on_actionFitLine_triggered()
+{
+	if(onePolygonIsSelected())
+	{
+		int index = getSelectedPolygonIndex();
+
+		// get active polyhedron
+		Polyhedron* pMesh = scene->polyhedron(index);
+
+
+		// add best fit line as new polyhedron
+		Polyhedron *pFit = new Polyhedron;
+
+		scene->addPolyhedron(pFit,
+			tr("%1 (line fit)").arg(scene->polyhedronName(index)),
+			scene->polyhedronColor(index),
+			scene->isPolyhedronActivated(index),
+			scene->polyhedronRenderingMode(index));
+	}
+}

@@ -51,6 +51,9 @@ protected slots:
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
 
+  // PCA
+  void on_actionFitPlane_triggered();
+  void on_actionFitLine_triggered();
 
 protected:
   void dragEnterEvent(QDragEnterEvent *event);
