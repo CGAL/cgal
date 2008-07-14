@@ -5,15 +5,15 @@
   - Invert selection (SHIFT+V)
   - 
 - selection in list of polyhedra: allows multiple selection with SHIFT
+  - an action should apply to all of them
 
 - conversion from exact to inexact polyhedra
 - conversion from inexact to exact polyhedra
+
 - merge all -> merge all polyhedra into one (with several connected components)
 - merge -> merge selected polyhedra into one
 
 
-
-operations:
 - simplification -> pierre
 - Boolean operations -> laurent for selecting A and B, pierre for nef_3
 - curvature estimate -> pierre
