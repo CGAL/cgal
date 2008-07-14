@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 #include "Scene.h"
-#include <CGAL/Make_soup.h>
+#include <CGAL/Make_triangle_soup.h>
 
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
@@ -30,7 +30,7 @@ void MainWindow::on_actionSelf_intersection_triggered()
 
 		// add intersecting triangles as a new polyhedron (a triangle soup)
 		Polyhedron *pSoup = new Polyhedron;
-		Make_soup<Polyhedron,Kernel,Iterator> soup;
+		Make_triangle_soup<Polyhedron,Kernel,Iterator> soup;
 		soup.run(intersecting_triangles.begin(),intersecting_triangles.end(),*pSoup);
 
 		scene->addPolyhedron(pSoup,

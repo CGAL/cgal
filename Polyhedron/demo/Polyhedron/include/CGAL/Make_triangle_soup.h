@@ -4,7 +4,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 template <class HDS,class Polyhedron,class Kernel,class InputIterator>
-class CModifierSoup : public CGAL::Modifier_base<HDS>
+class CModifierTriangleSoup : public CGAL::Modifier_base<HDS>
 {
 private:
 	typedef typename Kernel::Triangle_3 Triangle;
@@ -14,11 +14,11 @@ private:
 public:
 
 	// life cycle
-	CModifierSoup(InputIterator begin,InputIterator end)
+	CModifierTriangleSoup(InputIterator begin,InputIterator end)
 		: m_begin(begin), m_end(end)
 	{
 	}
-	~CModifierSoup() {}
+	~CModifierTriangleSoup() {}
 
 	// make a polygon soup
 	void operator()( HDS& hds)
@@ -47,19 +47,19 @@ public:
 };
 
 template <class Polyhedron,class Kernel,class InputIterator>
-class Make_soup
+class Make_triangle_soup
 {
 public:
 	typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-	Make_soup() {}
-	~Make_soup() {}
+	Make_triangle_soup() {}
+	~Make_triangle_soup() {}
 
 public:
 	void run(InputIterator begin,
 		 InputIterator end,
 		 Polyhedron &output)
 	{
-		CModifierSoup<HalfedgeDS,Polyhedron,Kernel,InputIterator> soup(begin,end);
+		CModifierTriangleSoup<HalfedgeDS,Polyhedron,Kernel,InputIterator> soup(begin,end);
 		output.delegate(soup);
 	}
 };
