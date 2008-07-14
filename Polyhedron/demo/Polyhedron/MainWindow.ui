@@ -157,6 +157,7 @@
      <addaction name="actionFitPlane" />
      <addaction name="actionFitLine" />
     </widget>
+    <addaction name="actionSelf_intersection" />
     <addaction name="menu_Principale_components_analysis" />
     <addaction name="actionCurvatureEstimation" />
    </widget>
@@ -365,6 +366,11 @@
   <action name="actionMerge" >
    <property name="text" >
     <string>Merge</string>
+   </property>
+  </action>
+  <action name="actionSelf_intersection" >
+   <property name="text" >
+    <string>Self-intersection</string>
    </property>
   </action>
  </widget>

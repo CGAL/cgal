@@ -70,6 +70,9 @@ protected slots:
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
 
+  // self intersection
+  void on_actionSelf_intersection_triggered();
+
 protected:
   void boolean_operation(const int operation);
 
