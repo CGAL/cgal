@@ -131,6 +131,13 @@
     <addaction name="actionErase_all" />
     <addaction name="actionDuplicatePolyhedron" />
     <addaction name="separator" />
+    <addaction name="actionMerge" />
+    <addaction name="actionMerge_all" />
+    <addaction name="separator" />
+    <addaction name="actionSave" />
+    <addaction name="actionSave_all" />
+    <addaction name="actionSave_as" />
+    <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
    <widget class="QMenu" name="menuEdit" >
@@ -333,6 +340,31 @@
   <action name="actionLoop" >
    <property name="text" >
     <string>Loop</string>
+   </property>
+  </action>
+  <action name="actionSave_as" >
+   <property name="text" >
+    <string>Save as...</string>
+   </property>
+  </action>
+  <action name="actionSave" >
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSave_all" >
+   <property name="text" >
+    <string>Save all</string>
+   </property>
+  </action>
+  <action name="actionMerge_all" >
+   <property name="text" >
+    <string>Merge all</string>
+   </property>
+  </action>
+  <action name="actionMerge" >
+   <property name="text" >
+    <string>Merge</string>
    </property>
   </action>
  </widget>

@@ -73,12 +73,41 @@ Scene::open(QString filename)
     QApplication::restoreOverrideCursor();
     return -1;
   }
-  //poly->compute_normals();
 
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
   return polyhedra.size() - 1;
+}
+
+bool Scene::save(int index,
+		 QString filename)
+{
+  QTextStream cerr(stderr);
+  cerr << QString("Saving file \"%1\"...").arg(filename);
+
+  Polyhedron_entry entry = polyhedra[index];
+  Polyhedron* poly = entry.polyhedron_ptr;
+
+  QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
+
+  QFileInfo fileinfo(filename);
+  std::ofstream out(filename.toUtf8());
+
+  if(!out || !fileinfo.isFile() || ! fileinfo.isWritable())
+  {
+    QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
+                          tr("Cannot open file"),
+                          tr("File %1 is not a writable file.").arg(filename));
+    QApplication::restoreOverrideCursor();
+    return false;
+  }
+
+  out << *poly;
+
+  QApplication::restoreOverrideCursor();
+
+  return true;
 }
 
 void Scene::addPolyhedron(Polyhedron* p,

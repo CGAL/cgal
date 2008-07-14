@@ -71,6 +71,7 @@ public:
 
   int open(QString);  // Returns the index of the new polyhedra (-1 if
                       // error)
+  bool save(int,QString); // Returns true upon successful save
 
   int erase(int);     // Returns the index of the polyhedra just before the
                       // one that is erased, or just after. Returns -1 if

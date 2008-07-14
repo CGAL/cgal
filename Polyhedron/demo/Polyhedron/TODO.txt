@@ -1,6 +1,8 @@
 
 - conversion from exact to inexact polyhedra
 - conversion from inexact to exact polyhedra
+- merge all -> merge all polyhedra into one (with several connected components)
+- merge -> merge selected polyhedra into one
 
 
 operations:

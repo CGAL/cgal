@@ -41,6 +41,12 @@ protected slots:
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
 
+  // save
+  // TODO: save all, save current (do we store the current file name?)
+  void on_actionSave_as_triggered(); // save selected polyhedron as...
+
+  // merge (TODO)
+
   // defined in MainWindow_simplify.cpp
   void on_actionSimplify_triggered();
 

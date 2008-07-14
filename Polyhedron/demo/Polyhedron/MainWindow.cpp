@@ -138,6 +138,8 @@ void MainWindow::open(QString filename)
   }
 }
 
+
+
 void MainWindow::selectPolyhedron(int i)
 {
   treeView->selectionModel()->select(scene->createSelection(i),
@@ -276,6 +278,24 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
     }
   }
 }
+
+void MainWindow::on_actionSave_as_triggered()
+{
+  if(!onePolygonIsSelected())
+	  return;
+
+  QString filename = 
+    QFileDialog::getSaveFileName(this,
+                                 tr("Save polyhedron..."),
+                                 QString(),
+                                 tr("OFF files (*.off)\n"
+                                    "All files (*)"));
+  if(!filename.isEmpty())
+        scene->save(getSelectedPolygonIndex(),filename);
+}
+
+
+
 
 void MainWindow::on_actionErasePolyhedron_triggered()
 {

@@ -87,11 +87,29 @@ void MainWindow::boolean_operation(const int operation)
 	Polyhedron *pResult = new Polyhedron;
 	from_exact(exact_result,*pResult);
 
-	scene->addPolyhedron(pResult,
-		tr("%1 union %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-		scene->polyhedronColor(indexA), // PA: to be changed to red 
-		scene->isPolyhedronActivated(indexA),
-		scene->polyhedronRenderingMode(indexA));
+	switch(operation)
+	{
+		case BOOLEAN_UNION:
+			scene->addPolyhedron(pResult,
+				tr("%1 union %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
+				scene->polyhedronColor(indexA), // PA: to be changed to red 
+				scene->isPolyhedronActivated(indexA),
+				scene->polyhedronRenderingMode(indexA));
+			break;
+		case BOOLEAN_INTERSECTION:
+			scene->addPolyhedron(pResult,
+				tr("%1 intersection %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
+				scene->polyhedronColor(indexA), // PA: to be changed to red 
+				scene->isPolyhedronActivated(indexA),
+				scene->polyhedronRenderingMode(indexA));
+			break;
+		case BOOLEAN_DIFFERENCE:
+			scene->addPolyhedron(pResult,
+				tr("%1 minus %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
+				scene->polyhedronColor(indexA), // PA: to be changed to red 
+				scene->isPolyhedronActivated(indexA),
+				scene->polyhedronRenderingMode(indexA));
+	}
 
 	QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
