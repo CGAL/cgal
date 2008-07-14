@@ -22,6 +22,7 @@
 
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Unique_hash_map.h>
+#include <map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 131
