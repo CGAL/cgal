@@ -31,7 +31,6 @@ CGAL_BEGIN_NAMESPACE
 // predicate (dynamic filters with IA).
 
 // TODO :
-// - We should specialize it for the static filters versions when possible...
 // - each predicate in the default kernel should define a tag that says if it
 //   wants to be filtered or not (=> all homogeneous predicate define this
 //   tag).  We could even test-suite that automatically.  It makes a strong
@@ -42,7 +41,7 @@ CGAL_BEGIN_NAMESPACE
 // - same thing for constructions => virtual operator() ?
 // - similarly, constructions should have a tag saying if they can throw or
 //   not, or we let all this up to the compiler optimizer to figure out ?
-// - Some caching should be done at the Point_2 level.
+// - Some caching could be done at the Point_2 level.
 
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
