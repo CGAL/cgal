@@ -1,3 +1,5 @@
+Polyline_constructor.h
+Polygon_constructor.h
 Shell_constructor.h
 Progress_indicator.h
 Visualizor.h
@@ -10,3 +12,4 @@ bbox
 performance
 Visual_hull
 SNC_walker
+Edge_edge_constructor.h
