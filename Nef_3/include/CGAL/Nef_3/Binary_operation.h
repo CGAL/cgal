@@ -35,7 +35,7 @@
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/binop_intersection_tests.h>
 #include <CGAL/Nef_3/ID_support_handler.h>
-#include <CGAL/Nef_3/Edge_edge_overlay.h>
+//#include <CGAL/Nef_3/Edge_edge_overlay.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 19
