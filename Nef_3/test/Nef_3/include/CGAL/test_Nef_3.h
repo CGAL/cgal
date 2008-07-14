@@ -525,21 +525,6 @@ private:
 			   Point_3(1,0,0)));
 
       CGAL_assertion(!is.does_intersect_internally(
-			   Segment_3(Point_3(0,0,0), Point_3(0,0,0)),
-		       	   Segment_3(Point_3(1,0,0), Point_3(-1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
-			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
-		       	   Segment_3(Point_3(0,0,0), Point_3(0,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
-			   Segment_3(Point_3(0,0,0), Point_3(0,0,0)),
-		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
-			   Segment_3(Point_3(0,1,0), Point_3(0,0,0)),
-		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
-			   Segment_3(Point_3(0,0,0), Point_3(0,-1,0)),
-		       	   Segment_3(Point_3(1,0,0), Point_3(1,0,0)), p));
-      CGAL_assertion(!is.does_intersect_internally(
 			   Segment_3(Point_3(0,1,0), Point_3(0,-1,0)),
 		       	   Segment_3(Point_3(0,0,0), Point_3(-1,0,0)), p));
       CGAL_assertion(!is.does_intersect_internally(
@@ -596,9 +581,6 @@ private:
     
       CGAL_assertion(!is.does_contain_internally(
 			    N.halffacets_begin(), Point_3(0,0,0)));
-      CGAL_forall_halffacets(hf, N)
-	CGAL_assertion(!is.does_intersect_internally(
-			    Segment_3(Point_3(-31,15,0),Point_3(-31,15,0)),hf,p));
       CGAL_forall_halffacets(hf, N)
 	CGAL_assertion(!is.does_intersect_internally(
 			    Segment_3(Point_3(-31,15,0),Point_3(-31,15,1)),hf,p));
