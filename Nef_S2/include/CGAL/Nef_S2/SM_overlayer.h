@@ -1143,7 +1143,6 @@ subdivide(const Map* M0, const Map* M1,
 	  bool with_trivial_segments) {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
-
   bool compute_halfsphere[3][2];
   int cs=0;
 
@@ -1393,7 +1392,7 @@ subdivide(const Map* M0, const Map* M1,
 {
   PI[0] = SM_const_decorator(M0); 
   PI[1] = SM_const_decorator(M1);
-
+ 
   bool compute_halfsphere[3][2];
   int cs=0;
 
@@ -1430,6 +1429,7 @@ subdivide(const Map* M0, const Map* M1,
       }
     }
     if ( PI[i].has_shalfloop() ) {
+      cs = -1;
       CGAL_NEF_TRACEN("loop ");
       SHalfloop_const_handle shl = PI[i].shalfloop();
       Seg_pair p = two_segments(PI[i],shl);
@@ -1445,12 +1445,13 @@ subdivide(const Map* M0, const Map* M1,
 
 #ifdef CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
   cs = -1;
-  compute_halfsphere[2][0]=true;
-  compute_halfsphere[2][1]=true;
-#else
+#endif
   if(cs != -1)
     cs = check_sphere(L, compute_halfsphere);
-#endif
+  else {
+    compute_halfsphere[2][0]=true;
+    compute_halfsphere[2][1]=true;
+  }
 
   CGAL_NEF_TRACEN("compute_halfsphere\n  cs = " << cs);
   for(int i=0; i<6; ++i)
