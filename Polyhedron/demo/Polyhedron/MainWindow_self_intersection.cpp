@@ -35,7 +35,7 @@ void MainWindow::on_actionSelf_intersection_triggered()
 
 		scene->addPolyhedron(pSoup,
 			tr("%1 (intersecting triangles)").arg(scene->polyhedronName(index)),
-			scene->polyhedronColor(index), // PA: to be changed to red 
+			Qt::red,
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
 

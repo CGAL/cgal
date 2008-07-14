@@ -66,7 +66,7 @@ void MainWindow::on_actionFitPlane_triggered()
 
 		scene->addPolyhedron(pFit,
 			tr("%1 (plane fit)").arg(scene->polyhedronName(index)),
-			scene->polyhedronColor(index), // PA: to be changed to red 
+			Qt::red,
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
 
@@ -147,7 +147,7 @@ void MainWindow::on_actionFitLine_triggered()
 
 		scene->addPolyhedron(pFit,
 			tr("%1 (line fit)").arg(scene->polyhedronName(index)),
-			scene->polyhedronColor(index), // PA: to be changed to red 
+			Qt::red,
 			scene->isPolyhedronActivated(index),
 			scene->polyhedronRenderingMode(index));
 

@@ -1,5 +1,5 @@
 // compute self-intersection of a CGAL triangle polyhedron mesh
-// originally from Lutz Kettner
+// original code from Lutz Kettner
 #ifndef _SELF_INTERSECT_H_
 #define _SELF_INTERSECT_H_
 
@@ -155,11 +155,8 @@ template <class Polyhedron, class Kernel, class OutputIterator>
 	// compute self-intersections filtered out by boxes
 	Intersect_facets<Polyhedron,Kernel,OutputIterator> intersect_facets(out);
 	CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,2000);
+
 } // end self_intersect
 
 
 #endif // _SELF_INTERSECT_H_
-
-
-
-
