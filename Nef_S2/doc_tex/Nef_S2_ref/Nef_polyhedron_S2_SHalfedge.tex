@@ -111,6 +111,12 @@ class \ccc{Nef_polyhedron_S2<Traits>} manages the needed shalfedges internally.
 
 \ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
 
+\ccMethod{bool in_outer_sface_cycle() const; }{determines whether \ccVar\ is
+  in an outer sface cycle.}
+
+\ccMethod{bool in_inner_sface_cycle() const; }{determines whether \ccVar\ is
+  in an inner sface cycle.}
+
 \ccSeeAlso
 
 \ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::SVertex}\\
