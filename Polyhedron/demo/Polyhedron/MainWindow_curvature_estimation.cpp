@@ -54,16 +54,13 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 			const int dim_fitting = 2;
 			Monge_form monge_form = monge_fit(points.begin(),points.end(),dim_fitting,dim_monge);
 
+			// make monge form comply with vertex normal (to get correct orientation)
+			Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
+			monge_form.comply_wrt_given_normal(n);
+
 			Vector normal = min_edge_len * monge_form.normal_direction();
 			Vector umin = min_edge_len * monge_form.minimal_principal_direction();
 			Vector umax = min_edge_len * monge_form.maximal_principal_direction();
-
-			Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
-			if(n * normal < 0.0)
-			{
-				normal = -normal;
-				std::swap(umin,umax);
-			}
 
 			Point lifted_point = central_point + 0.1 * normal;
 
