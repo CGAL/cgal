@@ -62,8 +62,7 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 			if(n * normal < 0.0)
 			{
 				normal = -normal;
-				umin = -umin;
-				umax = -umax;
+				std::swap(umin,umax);
 			}
 
 			Point lifted_point = central_point + 0.1 * normal;
