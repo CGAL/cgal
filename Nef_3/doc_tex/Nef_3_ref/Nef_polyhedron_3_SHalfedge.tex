@@ -139,7 +139,15 @@ class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfedges internally.
 \ccMethod{Halffacet_const_handle facet() const;}
 {the facet that corresponds to \ccVar\ in the 3D incidence structure.}
 
-\ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
+\ccMethod{SFace_const_handle incident_sface() const;}{the incident
+  sface of \ccVar\ .}
+
+\ccMethod{bool in_outer_cycle() const; }{determines whether \ccVar\ is
+  in an outer facet cycle.}
+
+\ccMethod{bool in_inner_cycle() const; }{determines whether \ccVar\ is
+  in an inner facet cycle.}
+
 
 \ccSeeAlso
 
