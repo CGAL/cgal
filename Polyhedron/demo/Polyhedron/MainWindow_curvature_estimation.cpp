@@ -58,7 +58,7 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 			Vector umin = min_edge_len * monge_form.minimal_principal_direction();
 			Vector umax = min_edge_len * monge_form.maximal_principal_direction();
 
-			Vector n = compute_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
+			Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
 			if(n * normal < 0.0)
 			{
 				normal = -normal;

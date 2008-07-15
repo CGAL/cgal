@@ -14,7 +14,7 @@ void MainWindow::on_actionKernel_triggered()
 		Polyhedron* pMesh = scene->polyhedron(index);
 
 		typedef CGAL::Gmpzf ET; // choose exact integral type
-		typedef Polyhedron_kernel<typename Kernel,typename ET> Polyhedron_kernel;
+		typedef Polyhedron_kernel<Kernel,ET> Polyhedron_kernel;
 
 		double init = clock();
 

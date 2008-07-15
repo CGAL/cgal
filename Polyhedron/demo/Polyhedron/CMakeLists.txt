@@ -9,7 +9,7 @@ endif(COMMAND cmake_policy)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-foreach(INCDIR ../../../GraphicsView/include include)
+foreach(INCDIR ./include ../../../GraphicsView/include  ../../../Nef_3/include)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
     include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
   endif()
@@ -21,6 +21,8 @@ endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../../../GraphicsView/src/CGALQt4)
 
 find_package(CGAL REQUIRED)
 include( ${CGAL_USE_FILE} )
+
+find_package(Boost 1.34.1 COMPONENTS thread REQUIRED)
 
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
@@ -55,8 +57,16 @@ add_executable  ( Polyhedron_3 MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp m
 # Link with Qt libraries
 target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
 
+# If auto-link is not enabled (on Linux for example), link with libCGAL and Boost.Thread explicitly.
 if ( NOT AUTO_LINK_ENABLED )    
-  # If auto-link is not enabled (on Linux for example), link with libCGAL explicitly.
-  target_link_libraries( Polyhedron_3 CGAL )
+  target_link_libraries( Polyhedron_3 CGAL ${Boost_THREAD_LIBRARY_RELEASE} )
 endif()
+
+# Link with libCGAL-Qt4, libQGLViewer, OpenGL
 target_link_libraries( Polyhedron_3 CGAL-Qt4 ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
+# Blas and Lapack, under Linux
+if( NOT AUTO_LINK_ENABLED )
+  add_definitions( -DCGAL_USE_F2C )
+  target_link_libraries( Polyhedron_3 lapack blas )
+endif()

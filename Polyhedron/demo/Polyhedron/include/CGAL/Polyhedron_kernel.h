@@ -42,7 +42,7 @@ private:
 
 	// program and solution types
 	typedef CGAL::Quadratic_program<double> LP;
-	typedef typename CGAL::Quadratic_program_solution<typename ET> Solution;
+	typedef typename CGAL::Quadratic_program_solution<ET> Solution;
 	typedef typename Solution::Variable_value_iterator Variable_value_iterator;
 
 	// linear program

@@ -146,7 +146,7 @@ template <class Polyhedron, class Kernel, class OutputIterator>
 	// generate box pointers
 	std::vector<const Box*> box_ptr;
 	box_ptr.reserve(polyhedron.size_of_facets());
-	std::vector<Box>::iterator b;
+	typename std::vector<Box>::iterator b;
 	for(b = boxes.begin();
 	    b != boxes.end();
 	    b++)
