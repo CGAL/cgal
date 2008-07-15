@@ -17,15 +17,15 @@
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
-#ifndef CGAL_NEF_NARY_UNION_H
-#define CGAL_NEF_NARY_UNION_H
+#ifndef CGAL_NEF_NARY_UNION_3_H
+#define CGAL_NEF_NARY_UNION_3_H
 
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Polyhedron>
-class Nary_union {
+class Nef_nary_union_3 {
 
   int inserted;
   std::list<Polyhedron> queue;
@@ -33,7 +33,7 @@ class Nary_union {
   Polyhedron empty;
 
  public:
-  Nary_union() : inserted(0) {}
+  Nef_nary_union_3() : inserted(0) {}
   
   void unite() {
     pit i1(queue.begin()), i2(i1);
