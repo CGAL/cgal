@@ -16,7 +16,7 @@ class Nary_intersection {
  public:
   Nary_intersection() : inserted(0) {}
   
-  void unite() {
+  void intersect() {
     pit i1(queue.begin()), i2(i1);
     ++i2;
 
@@ -31,14 +31,15 @@ class Nary_intersection {
     queue.push_front(P);
     ++inserted;
     for(int i=2;(inserted%i) == 0; i*=2) {
-      unite();
+      intersect();
     }
   }
 
   Polyhedron get_intersection() {
 
     while(queue.size() > 1)
-      unite();
+      intersect();
+    inserted = 0;
     return queue.front();
   }
 };

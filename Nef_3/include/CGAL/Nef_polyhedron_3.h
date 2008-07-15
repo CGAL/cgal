@@ -68,6 +68,12 @@
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
+#include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Triangulation_euclidean_traits_yz_3.h>
+#include <CGAL/Triangulation_euclidean_traits_xz_3.h>
+#include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
 
 // RO: includes for "vertex cycle to Nef" constructor
@@ -577,8 +583,7 @@ protected:
     typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
     typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
     typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
-    typedef typename CGAL::No_intersection_tag                               Itag;
-    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>      CT;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS>           CT;
 
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Vertex_handle         CTVertex_handle;
