@@ -182,38 +182,31 @@ Scene::draw()
     if(entry.activated)
     {
       Polyhedron* poly = entry.polyhedron_ptr;
-      bool selected = index == selected_item;
       if(entry.rendering_mode == Fill)
       {
         ::glEnable(GL_LIGHTING);
         ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        draw(entry,selected);
-
-        ::glDisable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        draw(entry,selected);
+        if(index == selected_item)
+          CGALglcolor(entry.color.lighter(120));
+        else
+          CGALglcolor(entry.color);
+        draw(entry);
       }
+
+      ::glDisable(GL_LIGHTING);
+      ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+      if(index == selected_item)
+        CGALglcolor(entry.color.lighter(70));
       else
-      {
-        ::glDisable(GL_LIGHTING);
-        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-        draw(entry,selected);
-      }
-
+        CGALglcolor(entry.color.lighter(50));
+      draw(entry);
     }
   }
 }
 
 void
-Scene::draw(Polyhedron_entry& entry, 
-            const bool selected)
+Scene::draw(Polyhedron_entry& entry)
 {
-  ::glEnable(GL_LIGHTING);
-  if(selected)
-    CGALglcolor(entry.color.lighter(120));
-  else
-    CGALglcolor(entry.color);
-
   if(!entry.display_list_built)
   {
     ::glDeleteLists(entry.display_list,1);
@@ -232,9 +225,8 @@ Scene::draw(Polyhedron_entry& entry,
     entry.display_list_built = true;
   }
 
-  if(::glIsList(entry.display_list) == GL_TRUE)
+//   if(::glIsList(entry.display_list) == GL_TRUE)
     ::glCallList(entry.display_list);
-
 }
 
 int 

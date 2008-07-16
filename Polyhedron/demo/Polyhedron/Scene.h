@@ -133,7 +133,7 @@ private:
     bool display_list_built;
   };
 
-  void draw(Polyhedron_entry& entry, const bool selected); // draw one entry
+  void draw(Polyhedron_entry& entry); // draw one entry
 
   typedef QList<Polyhedron_entry> Polyhedra;
   Polyhedra polyhedra;
