@@ -30,6 +30,25 @@ especially for equality testing.
 \ccGlue
 \ccNestedType{RT}{a model of \ccc{RingNumberType}}
 
+The following types describe the return types of predicates.  They typically
+map to \ccc{bool} and CGAL kernel enum types, except when an interval arithmetic
+number type is used such as within the filtering kernels.
+
+\ccNestedType{Bool_type}{typically \ccc{bool}}
+\ccGlue
+\ccNestedType{Sign}{typically \ccc{CGAL::Sign}}
+\ccGlue
+\ccNestedType{Comparison_result}{typically \ccc{CGAL::Comparison_result}}
+\ccGlue
+\ccNestedType{Orientation}{typically \ccc{CGAL::Orientation}}
+\ccGlue
+\ccNestedType{Oriented_side}{typically \ccc{CGAL::Oriented_side}}
+\ccGlue
+\ccNestedType{Bounded_side}{typically \ccc{CGAL::Bounded_side}}
+\ccGlue
+\ccNestedType{Angle}{typically \ccc{CGAL::Angle}}
+
+
 \ccHeading{Two-dimensional Kernel}
 
 \ccHeading{Coordinate Access}

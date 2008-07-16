@@ -80,7 +80,6 @@ public:
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
   typedef FT RT;
 
-  // FIXME : Document these typedefs !
   typedef typename Same_uncertainty_nt<bool, FT>::type
 	                                                              Bool_type;
   typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
