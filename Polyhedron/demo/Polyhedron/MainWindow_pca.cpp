@@ -36,7 +36,9 @@ void MainWindow::on_actionFitPlane_triggered()
 
 		// fit plane
 		Plane plane;
+		std::cout << "Fit plane...";
 		CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
+		std::cout << "ok" << std::endl;
 
 		// compute centroid
 		Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());
@@ -101,7 +103,9 @@ void MainWindow::on_actionFitLine_triggered()
 
 		// fit line
 		Line line;
+		std::cout << "Fit line...";
 		CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,CGAL::Dimension_tag<2>());
+		std::cout << "ok" << std::endl;
 
 		// compute centroid
 		Point center_of_mass = CGAL::centroid(triangles.begin(),triangles.end());

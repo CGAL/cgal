@@ -67,6 +67,7 @@ void MainWindow::boolean_operation(const int operation)
 	Nef_polyhedron n1(exact_polyA); 
 	Nef_polyhedron n2(exact_polyB); 
 
+	std::cout << "Boolean operation...";
 	switch(operation)
 	{
 		case BOOLEAN_UNION:
@@ -78,6 +79,7 @@ void MainWindow::boolean_operation(const int operation)
 		case BOOLEAN_DIFFERENCE:
 			n1 -= n2;
 	}
+	std::cout << "ok" << std::endl;
 
 	// save the exact resulting mesh
 	Exact_polyhedron exact_result;

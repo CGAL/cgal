@@ -60,9 +60,11 @@ Scene::open(QString filename)
                           tr("Cannot open file"),
                           tr("File %1 is not a readable file.").arg(filename));
     QApplication::restoreOverrideCursor();
+		cerr << QString("\n");
     return -1;
   }
 
+	// allocate new polyhedron
   Polyhedron* poly = new Polyhedron;
   in >> *poly;
   if(!in)
@@ -71,12 +73,15 @@ Scene::open(QString filename)
                           tr("Cannot read file"),
                           tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
+		cerr << QString("\n");
+		delete poly;
     return -1;
   }
 
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
+	cerr << QString("ok (%1 vertices)\n").arg(poly->size_of_vertices());
   return polyhedra.size() - 1;
 }
 

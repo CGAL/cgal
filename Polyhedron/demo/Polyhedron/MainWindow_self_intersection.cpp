@@ -23,7 +23,7 @@ void MainWindow::on_actionSelf_intersection_triggered()
 		typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,Iterator> Box;
 		std::list<Triangle> intersecting_triangles;
 		typedef std::back_insert_iterator<std::list<Triangle> > OutputIterator;
-		std::cout << "self-intersect...";
+		std::cout << "Self-intersect...";
 		self_intersect<Polyhedron,Kernel,OutputIterator>(*pMesh,std::back_inserter(intersecting_triangles));
 		std::cout << "ok (" << intersecting_triangles.size() << " triangle(s))" << std::endl;
 
