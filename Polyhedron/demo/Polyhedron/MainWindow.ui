@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>29</y>
+     <y>66</y>
      <width>978</width>
-     <height>540</height>
+     <height>503</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -39,7 +39,7 @@
          <x>0</x>
          <y>23</y>
          <width>354</width>
-         <height>499</height>
+         <height>462</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -204,7 +204,6 @@
    <addaction name="menuAlgorithms" />
    <addaction name="menuOperations" />
    <addaction name="menuView" />
-   <addaction name="menuSelections" />
   </widget>
   <widget class="QStatusBar" name="statusbar" >
    <property name="geometry" >
@@ -215,6 +214,28 @@
      <height>25</height>
     </rect>
    </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>29</y>
+     <width>978</width>
+     <height>37</height>
+    </rect>
+   </property>
+   <property name="windowTitle" >
+    <string>Tools</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionLoadPolyhedron" />
+   <addaction name="actionErasePolyhedron" />
+   <addaction name="actionDuplicatePolyhedron" />
   </widget>
   <action name="actionQuit" >
    <property name="text" >
