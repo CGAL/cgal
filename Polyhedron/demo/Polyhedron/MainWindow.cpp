@@ -64,6 +64,9 @@ MainWindow::MainWindow(QWidget* parent)
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
+  connect(viewer, SIGNAL(selected(int)),
+          this, SLOT(selectPolyhedron(int)));
+
   connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 

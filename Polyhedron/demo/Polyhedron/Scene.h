@@ -70,7 +70,7 @@ public:
   Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
 
   // draw() is called by Viewer::draw()
-  void draw();
+  void draw(bool with_names = false);
 
   struct Bbox {
     double xmin, ymin, zmin;

@@ -22,6 +22,11 @@ void Viewer::setAntiAliasing(bool b)
 
 void Viewer::draw()
 {
+  draw_aux(false);
+}
+
+void Viewer::draw_aux(bool with_names)
+{
   QGLViewer::draw();
   if(scene == 0)
     return;
@@ -46,5 +51,15 @@ void Viewer::draw()
     ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
-  scene->draw();
+  scene->draw(with_names);
+}
+
+void Viewer::drawWithNames()
+{
+  draw_aux(true);
+}
+
+void Viewer::postSelection(const QPoint&)
+{
+  emit selected(this->selectedName());
 }

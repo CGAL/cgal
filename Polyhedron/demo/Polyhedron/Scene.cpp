@@ -174,10 +174,13 @@ Scene::duplicate(int polyhedron_index)
 }
 
 void 
-Scene::draw()
+Scene::draw(bool with_names)
 {
   for(int index = 0; index < polyhedra.size(); ++index)
   {
+    if(with_names) {
+      ::glPushName(index);
+    }
     Polyhedron_entry& entry = polyhedra[index];
     if(entry.activated)
     {
@@ -202,6 +205,9 @@ Scene::draw()
           CGALglcolor(entry.color.lighter(50));
         draw(entry);
       }
+    }
+    if(with_names) {
+      ::glPopName();
     }
   }
 }

@@ -13,14 +13,24 @@ class Viewer : public QGLViewer {
 
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
+
+  // overload several QGLViewer virtual functions
   void draw();
+  void drawWithNames();
+  void postSelection(const QPoint&);
+
   void setScene(Scene* scene);
   bool antiAliasing() const { return antialiasing; }
+
+signals:
+  void selected(int);
 
 public slots:
   void setAntiAliasing(bool b);
 
 private:
+  void draw_aux(bool with_names);
+
   Scene* scene;
   bool antialiasing;
 }; // end class Viewer

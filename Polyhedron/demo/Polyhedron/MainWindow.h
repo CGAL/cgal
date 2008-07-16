@@ -27,6 +27,8 @@ public slots:
   void updateViewerBBox();
   void open(QString filename);
 
+  void selectPolyhedron(int i);
+
 protected slots:
   void selectionChanged();
   void openRecentFile();
@@ -92,7 +94,6 @@ protected:
   void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);
 
-  void selectPolyhedron(int i);
   bool onePolygonIsSelected() const;
   int getSelectedPolygonIndex() const;
 
