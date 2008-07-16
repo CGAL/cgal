@@ -48,31 +48,34 @@ void MainWindow::on_actionEstimateCurvature_triggered()
 				min_edge_len = edge_len < min_edge_len ? edge_len : min_edge_len;
 			}
 
-			// estimate curvature by fitting
-			Fitting monge_fit;
-			const int dim_monge = 2;
-			const int dim_fitting = 2;
-			Monge_form monge_form = monge_fit(points.begin(),points.end(),dim_fitting,dim_monge);
+			if(points.size() > 5)
+			{
+				// estimate curvature by fitting
+				Fitting monge_fit;
+				const int dim_monge = 2;
+				const int dim_fitting = 2;
+				Monge_form monge_form = monge_fit(points.begin(),points.end(),dim_fitting,dim_monge);
 
-			// make monge form comply with vertex normal (to get correct orientation)
-			Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
-			monge_form.comply_wrt_given_normal(n);
+				// make monge form comply with vertex normal (to get correct orientation)
+				Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
+				monge_form.comply_wrt_given_normal(n);
 
-			Vector normal = min_edge_len * monge_form.normal_direction();
-			Vector umin = min_edge_len * monge_form.minimal_principal_direction();
-			Vector umax = min_edge_len * monge_form.maximal_principal_direction();
+				Vector normal = min_edge_len * monge_form.normal_direction();
+				Vector umin = min_edge_len * monge_form.minimal_principal_direction();
+				Vector umax = min_edge_len * monge_form.maximal_principal_direction();
 
-			Point lifted_point = central_point + 0.1 * normal;
+				Point lifted_point = central_point + 0.1 * normal;
 
-			min_directions.push_back(lifted_point +  0.2 * umin + 0.02 * umax);
-			min_directions.push_back(lifted_point -  0.2 * umin + 0.02 * umax);
-			min_directions.push_back(lifted_point -  0.2 * umin - 0.02 * umax);
-			min_directions.push_back(lifted_point +  0.2 * umin - 0.02 * umax);
+				min_directions.push_back(lifted_point +  0.2 * umin + 0.02 * umax);
+				min_directions.push_back(lifted_point -  0.2 * umin + 0.02 * umax);
+				min_directions.push_back(lifted_point -  0.2 * umin - 0.02 * umax);
+				min_directions.push_back(lifted_point +  0.2 * umin - 0.02 * umax);
 
-			max_directions.push_back(lifted_point + 0.02 * umin +  0.2 * umax);
-			max_directions.push_back(lifted_point - 0.02 * umin +  0.2 * umax);
-			max_directions.push_back(lifted_point - 0.02 * umin -  0.2 * umax);
-			max_directions.push_back(lifted_point + 0.02 * umin -  0.2 * umax);
+				max_directions.push_back(lifted_point + 0.02 * umin +  0.2 * umax);
+				max_directions.push_back(lifted_point - 0.02 * umin +  0.2 * umax);
+				max_directions.push_back(lifted_point - 0.02 * umin -  0.2 * umax);
+				max_directions.push_back(lifted_point + 0.02 * umin -  0.2 * umax);
+			}
 		}
 
 		// add principal curvature directions as new polyhedron
