@@ -330,3 +330,24 @@ void MainWindow::on_actionDuplicatePolyhedron_triggered()
   }
 }
 
+void MainWindow::on_actionActivatePolyhedron_triggered()
+{
+  Q_FOREACH(QModelIndex index, treeView->selectionModel()->selectedRows())
+  {
+    int i = index.row();
+    scene->setPolyhedronActivated(i,
+                                  !scene->isPolyhedronActivated(i));
+  }
+}
+
+void MainWindow::on_actionSetPolyhedronA_triggered()
+{
+  int i = getSelectedPolygonIndex();
+  scene->setPolyhedronA(i);
+}
+
+void MainWindow::on_actionSetPolyhedronB_triggered()
+{
+  int i = getSelectedPolygonIndex();
+  scene->setPolyhedronB(i);
+}

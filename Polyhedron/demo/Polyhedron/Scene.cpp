@@ -424,6 +424,15 @@ bool Scene::isPolyhedronActivated(int index) const
     return polyhedra[index].activated;
 }
 
+void Scene::setPolyhedronActivated(int index, bool b)
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return;
+  polyhedra[index].activated = b;
+  emit dataChanged(QAbstractItemModel::createIndex(index, ActivatedColumn),
+                   QAbstractItemModel::createIndex(index, ActivatedColumn));
+}
+
 Scene::RenderingMode Scene::polyhedronRenderingMode(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
@@ -502,7 +511,6 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     if (event->type() == QEvent::MouseButtonPress) {
       Scene::RenderingMode rendering_mode = 
         static_cast<Scene::RenderingMode>(model->data(index, ::Qt::EditRole).toInt());
-      std::cerr << "render mode = " << rendering_mode << "\n";
       if(rendering_mode == Scene::Wireframe)
         model->setData(index, static_cast<int>(Scene::Fill));
       else 
@@ -570,4 +578,27 @@ void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     }
     drawFocus(painter, option, option.rect); // since we draw the grid ourselves
   }
+}
+
+void Scene::setPolyhedronA(int i)
+{
+  item_A = i;
+  if(item_A == item_B)
+  {
+    item_B = -1;
+  }
+  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
+                   QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
+}
+
+void Scene::setPolyhedronB(int i)
+{
+  item_B = i;
+  if(item_A == item_B)
+  {
+    item_A = -1;
+  }
+  emit updated();
+  emit dataChanged(QAbstractItemModel::createIndex(0, ABColumn),
+                   QAbstractItemModel::createIndex(polyhedra.size()-1, ABColumn));
 }

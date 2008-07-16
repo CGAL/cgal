@@ -57,7 +57,7 @@ public:
 
   int duplicate(int); // Returns the index of the new polyhedra
 
-  // accessors
+  // Accessors (getters)
   Polyhedron* polyhedron(int i) const;
   QColor polyhedronColor(int) const;
   QString polyhedronName(int) const;
@@ -65,7 +65,6 @@ public:
   RenderingMode polyhedronRenderingMode(int) const;
   int selectionAindex() const;
   int selectionBindex() const;
-
 
   // for backward compatibility
   Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
@@ -103,6 +102,10 @@ public slots:
     viewEdges = b;
     emit updated();
   }
+  // Accessors (setters)
+  void setPolyhedronActivated(int, bool b);
+  void setPolyhedronA(int i);
+  void setPolyhedronB(int i);
 
 signals:
   void updated_bbox();

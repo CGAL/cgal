@@ -42,6 +42,10 @@ protected slots:
   void on_actionErasePolyhedron_triggered();
   void on_actionDuplicatePolyhedron_triggered();
 
+  void on_actionActivatePolyhedron_triggered();
+  void on_actionSetPolyhedronA_triggered();
+  void on_actionSetPolyhedronB_triggered();
+
   // save
   // TODO: save all, save current (do we store the current file name?)
   void on_actionSaveAs_triggered(); // save selected polyhedron as...
