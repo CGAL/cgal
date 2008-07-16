@@ -26,16 +26,6 @@
 #include <CGAL/Uncertain.h>
 
 CGAL_BEGIN_NAMESPACE
-#if 0
-inline
-Sign
-operator*(const Sign &s1, const Sign &s2)
-{
-  if ( s1 == ZERO || s2 == ZERO )  return ZERO;
-  if ( s1 == s2 )  return POSITIVE;
-  return NEGATIVE;
-}
-#endif
 
 template < class RT >
 Uncertain<Sign>
