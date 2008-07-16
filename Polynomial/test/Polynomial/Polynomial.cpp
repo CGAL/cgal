@@ -166,11 +166,13 @@ void arithmetic() {
 
     // sign etc., if applicable
     // TODO: Replaced Is_real_comparable with RET::Is_real_embeddable, OK?
-    typedef typename CGAL::Real_embeddable_traits<NT>::Is_real_embeddable Embeddable;
+    typedef typename CGAL::Real_embeddable_traits<NT>::Is_real_embeddable 
+      Embeddable;
     signs<NT>(Embeddable());
 
     // division, if applicable
-    typedef typename CGAL::Algebraic_structure_traits<NT>::Algebraic_category Algebra_type;
+    typedef typename CGAL::Algebraic_structure_traits<NT>::Algebraic_category 
+      Algebra_type;
     division<NT>(Algebra_type());
 }
 
@@ -255,6 +257,8 @@ void division(CGAL::Integral_domain_tag) {
     q = POLY(NT(24), NT(-14), NT(2));  // 2(x-3)(x-4)
     r = POLY(NT(-5), NT(1));           //       (x-5)
     s = p*q + r;
+
+    assert(!CGAL::divides(q,s));
 
     POLY Q, R;
     POLY::euclidean_division(s, p, Q, R);  // works, since p.lcoeff() == 1

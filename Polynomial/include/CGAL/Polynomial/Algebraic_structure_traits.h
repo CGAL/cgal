@@ -20,6 +20,7 @@
 #define CGAL_POLYNOMIAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Coercion_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -107,10 +108,79 @@ class Polynomial_algebraic_structure_traits_base< POLY, Integral_domain_tag >
         POLY operator()( const POLY& x, const POLY& y ) const {
           return x / y;
         }
-        
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( POLY )
-        
     };
+private:
+  typedef typename POLY::NT COEFF;
+  typedef Algebraic_structure_traits<COEFF> AST_COEFF;
+  typedef typename AST_COEFF::Divides Divides_coeff;
+  typedef typename Divides_coeff::result_type BOOL;
+public:
+  class Divides 
+    : public Binary_function<POLY,POLY,BOOL>{  
+  public:
+     BOOL operator()( const POLY& p1, const POLY& p2) const {
+       POLY q; 
+       return (*this)(p1,p2,q);
+     }
+     BOOL operator()( const POLY& p1, const POLY& p2, POLY& q) const {
+       Divides_coeff divides_coeff;   
+       
+       q=POLY(0);
+      
+       COEFF q1;
+       BOOL result;
+       if (p2.is_zero()) {
+         q=POLY(0); 
+         return true;
+       }
+       
+       int d1 = p1.degree();
+       int d2 = p2.degree();
+       if ( d2 < d1 ) {
+         q = POLY(0);
+         return false;
+       }
+
+       typedef std::vector<COEFF> Vector;
+       Vector V_R, V_Q;    
+       V_Q.reserve(d2);
+       if(d1==0){
+         for(int i=d2;i>=0;--i){   
+           result=divides_coeff(p1[0],p2[i],q1);
+           if(!result) return false;
+           V_Q.push_back(q1);
+         }
+         V_R.push_back(COEFF(0));
+       }
+       else{        
+         V_R.reserve(d2);
+         V_R=Vector(p2.begin(),p2.end());
+         Vector tmp1;
+         tmp1.reserve(d1);
+         for(int k=0; k<=d2-d1; ++k){
+           result=divides_coeff(p1[d1],V_R[d2-k],q1);
+           if(!result) return false;
+           V_Q.push_back(q1);  
+           for(int j=0;j<d1;++j){   
+             tmp1.push_back(p1[j]*V_Q[k]);
+           }   
+           V_R[d2-k]=COEFF(0);            
+           for(int i=d2-d1-k;i<=d2-k-1;++i){
+             V_R[i]=V_R[i]-tmp1[i-(d2-d1-k)];
+           }   
+           tmp1.clear();
+         }
+        
+
+       }
+       q = POLY(V_Q.rbegin(),V_Q.rend());
+       POLY r = POLY(V_R.begin(),V_R.end());
+
+       return (r == POLY(0));
+     }
+     CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(POLY,BOOL); 
+   };
 };
 
 template< class POLY >
