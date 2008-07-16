@@ -22,6 +22,7 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SHORT_NAMES_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SHORT_NAMES_2_H
 
+#if 0 // Disabled to see if it's still really needed.
 
 #define Segment_Delaunay_graph_site_2                    Sdgs2
 #define Segment_Delaunay_graph_simple_site_2             Sdgsims2
@@ -36,5 +37,6 @@
 #define Segment_Delaunay_graph_traits_wrapper_2          Sdgtw2
 #define Segment_Delaunay_graph_kernel_wrapper_2          Sdgkw2
 
+#endif // 0
 
 #endif //CGAL_SEGMENT_DELAUNAY_GRAPH_2_SHORT_NAMES_2_H

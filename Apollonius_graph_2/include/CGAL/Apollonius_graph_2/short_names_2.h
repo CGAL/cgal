@@ -22,6 +22,7 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H
 #define CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H
 
+#if 0 // Disabled to see if it's still really needed.
 
 #define Apollonius_site_2                          As2
 #define Apollonius_graph_2                         Ag2
@@ -34,5 +35,6 @@
 #define Apollonius_graph_traits_wrapper_2          Agtw2
 #define Apollonius_graph_kernel_wrapper_2          Agkw2
 
+#endif // 0
 
 #endif //CGAL_APOLLONIUS_GRAPH_2_SHORT_NAMES_2_H
