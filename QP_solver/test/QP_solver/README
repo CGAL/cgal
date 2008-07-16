@@ -1,7 +1,7 @@
 *******************************************************************************
-IMPORTANT NOTE: Currently, test_solver.C does not run the nonstandard-form
+IMPORTANT NOTE: Currently, test_solver.cpp does not run the nonstandard-form
 with all pricing strategies. Once these pricing strategies are implemented for
-nonstandard-form problems, you should fix test_solver.C (see the line
+nonstandard-form problems, you should fix test_solver.cpp (see the line
 beginning with the comment "// temporary (todo): exit if pricing strategy is
 different from FE") and remove this note.
 *******************************************************************************
@@ -11,7 +11,7 @@ This file describes the testsuite of package QP_solver.
 THE CGAL TESTSUITE
 
 What CGAL does for us is to compile and call every file in test/QP_solver that
-ends in ".C". If for such a file a corresponding ".cin" file exits, the latter
+ends in ".cpp". If for such a file a corresponding ".cin" file exits, the latter
 is used as input. In our case, this means that the CGAL testsuite will
 automatically perform the following commands:
 
@@ -93,19 +93,19 @@ HOW THE DERIVATIVES ARE GENERATED
 
 The ./create_test_solver_cin script generates the derivates by calling the
 program ./master_mps_to_derivatives (compiling the latter first, if
-needed). The C++-program master_mps_to_derivatives.C reads in a master
+needed). The C++-program master_mps_to_derivatives.cpp reads in a master
 MPS-file and generates all the derivatives.  So if you want to add a new kind
-of derivates then you should look into master_mps_to_derivatives.C; you
+of derivates then you should look into master_mps_to_derivatives.cpp; you
 probably want to create a routine like create_shifted_instance().  Please do
 name derived instances with a suffix (like "_shifted"); the prefix MUST stay
 the same for the ./create_test_solver_cin script to work (see routine
-create_output_file() in master_mps_to_derivatives.C).
+create_output_file() in master_mps_to_derivatives.cpp).
 
 Note that ./create_test_solver_cin is clever enough not to generate all
 derivatives anew when you call it.  Rather, it searches for all currently
 known derivatives of a given master MPS-file and looks whether the master is
 newer than any of the derivatives; if so, it regenerates the derivatives.  (In
-particular, this means that when you extend master_mps_to_derivatives.C to
+particular, this means that when you extend master_mps_to_derivatives.cpp to
 output a new kind of derivatives, you first need to touch the masters by doing
 
   touch test_solver_data/masters/cgal/*
