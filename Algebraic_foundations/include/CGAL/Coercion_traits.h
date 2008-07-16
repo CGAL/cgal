@@ -43,15 +43,15 @@
 // Makro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the
 // number type
-#define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  )    \
-  template < class NT1, class NT2 >                                        \
-  Result_type operator()( const NT1& x, const NT2& y ) const {             \
-    BOOST_STATIC_ASSERT((::boost::is_same<                                 \
-          typename Coercion_traits< NT1, NT2 >::Type, NT          \
-                                         >::value));                       \
-                                                                           \
-    typename Coercion_traits< NT1, NT2 >::Cast cast;                       \
-    return operator()( cast(x), cast(y) );                                 \
+#define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \
+  template < class CT_Type_1, class CT_Type_2 >                         \
+  Result_type operator()( const CT_Type_1& x, const CT_Type_2& y ) const { \
+    BOOST_STATIC_ASSERT((::boost::is_same<                              \
+            typename Coercion_traits< CT_Type_1, CT_Type_2 >::Type, NT  \
+            >::value));                                                 \
+                                                                        \
+    typename Coercion_traits< CT_Type_1, CT_Type_2 >::Cast cast;        \
+    return operator()( cast(x), cast(y) );                              \
   }
 
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( NT ) \
