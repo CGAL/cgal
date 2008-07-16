@@ -134,11 +134,7 @@
     <addaction name="actionErase_all" />
     <addaction name="actionDuplicatePolyhedron" />
     <addaction name="separator" />
-    <addaction name="actionMerge" />
     <addaction name="actionMerge_all" />
-    <addaction name="separator" />
-    <addaction name="actionSave" />
-    <addaction name="actionSave_all" />
     <addaction name="actionSave_as" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
@@ -203,23 +199,12 @@
     <addaction name="actionAntiAliasing" />
     <addaction name="menuDockWindows" />
    </widget>
-   <widget class="QMenu" name="menuSelections" >
-    <property name="locale" >
-     <locale country="UnitedStates" language="English" />
-    </property>
-    <property name="title" >
-     <string>Selections</string>
-    </property>
-    <addaction name="actionSelect_all" />
-    <addaction name="actionSelect_none" />
-    <addaction name="actionSelect_invert" />
-   </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
-   <addaction name="menuSelections" />
    <addaction name="menuAlgorithms" />
    <addaction name="menuOperations" />
    <addaction name="menuView" />
+   <addaction name="menuSelections" />
   </widget>
   <widget class="QStatusBar" name="statusbar" >
    <property name="geometry" >
