@@ -1,0 +1,8 @@
+16. July 2008 Michael Hemmer
+
+Added functor Divides to Algebraic_structure_traits. 
+AST::Divides()(d,n) returns true if 'd' divides 'n'. 
+
+==== CGAL 3.3 ====
+
+new package 
