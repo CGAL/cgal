@@ -22,10 +22,12 @@ void MainWindow::on_actionSimplify_triggered()
                                            tr("Number of edges:"),
                                            pMesh->size_of_halfedges () / 4, 
                                            // current value: nb of edges /2 
-                                           3, // min
+                                           3, // min = one triangle
                                            pMesh->size_of_halfedges(), // max
                                            1, // step for the spinbox
                                            &ok);
+
+                // check user cancellation
                 if(!ok) return;
 
 		// simplify
