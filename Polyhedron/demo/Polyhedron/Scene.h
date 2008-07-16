@@ -98,6 +98,12 @@ public slots:
     selected_item = i;
   };
 
+  void setViewEdges(bool b) 
+  {
+    viewEdges = b;
+    emit updated();
+  }
+
 signals:
   void updated_bbox();
   void updated();
@@ -142,6 +148,7 @@ private:
   int selected_item;
   int item_A;
   int item_B;
+  bool viewEdges;
 }; // end class Scene
 
 class SceneDelegate : public QItemDelegate

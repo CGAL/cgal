@@ -29,7 +29,8 @@ Scene::Scene(QObject* parent)
   : QAbstractListModel(parent),
     selected_item(-1),
     item_A(-1),
-    item_B(-1)
+    item_B(-1),
+    viewEdges(true)
 {
 }
 
@@ -191,14 +192,16 @@ Scene::draw()
           CGALglcolor(entry.color);
         draw(entry);
       }
-
-      ::glDisable(GL_LIGHTING);
-      ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-      if(index == selected_item)
-        CGALglcolor(entry.color.lighter(70));
-      else
-        CGALglcolor(entry.color.lighter(50));
-      draw(entry);
+      if(viewEdges)
+      {
+        ::glDisable(GL_LIGHTING);
+        ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+        if(index == selected_item)
+          CGALglcolor(entry.color.lighter(70));
+        else
+          CGALglcolor(entry.color.lighter(50));
+        draw(entry);
+      }
     }
   }
 }

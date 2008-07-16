@@ -197,6 +197,7 @@
      <addaction name="dummyAction" />
     </widget>
     <addaction name="actionAntiAliasing" />
+    <addaction name="actionViewEdges" />
     <addaction name="menuDockWindows" />
    </widget>
    <addaction name="menuFile" />
@@ -455,6 +456,17 @@
   <action name="actionSelectInvert" >
    <property name="text" >
     <string>&amp;Invert selection</string>
+   </property>
+  </action>
+  <action name="actionViewEdges" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>View edges</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>

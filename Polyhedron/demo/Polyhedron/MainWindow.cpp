@@ -69,6 +69,11 @@ MainWindow::MainWindow(QWidget* parent)
 
   ui->actionAntiAliasing->setChecked(true);
 
+  connect(ui->actionViewEdges, SIGNAL(toggled(bool)),
+          scene, SLOT(setViewEdges(bool)));
+
+  ui->actionViewEdges->setChecked(true);
+
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
