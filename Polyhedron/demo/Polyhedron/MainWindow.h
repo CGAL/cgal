@@ -2,23 +2,26 @@
 #define MAINWINDOW_H
 
 #include <QtOpenGL/qgl.h>
-#include "ui_MainWindow.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
 class QDragEnterEvent;
 class QDropEvent;
 class Scene;
+class Viewer;
+class QTreeView;
+namespace Ui {
+  class MainWindow;
+}
 
 #include "Polyhedron_type_fwd.h"
-// #include "Scene.h"
 
 class MainWindow : 
-  public CGAL::Qt::DemosMainWindow,
-  public Ui::MainWindow
+  public CGAL::Qt::DemosMainWindow
 {
   Q_OBJECT
 public:
   MainWindow(QWidget* parent = 0);
+  ~MainWindow();
 
 public slots:
   void updateViewerBBox();
@@ -95,6 +98,9 @@ private:
   QAction* recentFilesSeparator;
 
   Scene* scene;
+  Viewer* viewer;
+  QTreeView* treeView;
+  Ui::MainWindow* ui;
 
   enum { MaxRecentFiles = 10 };
   QAction *recentFileActs[MaxRecentFiles];

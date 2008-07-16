@@ -1,3 +1,6 @@
+#include <QApplication>
+#include <QTime>
+
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Polyhedron_type.h"

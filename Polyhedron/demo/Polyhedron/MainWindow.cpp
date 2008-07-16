@@ -10,14 +10,21 @@
 #include <QSettings>
 #include <QHeaderView>
 
+#include "ui_MainWindow.h"
+
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
-  setupUi(this);
+  ui = new Ui::MainWindow;
+  ui->setupUi(this);
 
-  addDockWidget(::Qt::LeftDockWidgetArea, polyhedraDockWidget);
-  menuDockWindows->addAction(polyhedraDockWidget->toggleViewAction());
-  menuDockWindows->removeAction(dummyAction);
+  // Save some pointers from ui, for latter use.
+  treeView = ui->treeView;
+  viewer = ui->viewer;
+
+  addDockWidget(::Qt::LeftDockWidgetArea, ui->polyhedraDockWidget);
+  ui->menuDockWindows->addAction(ui->polyhedraDockWidget->toggleViewAction());
+  ui->menuDockWindows->removeAction(ui->dummyAction);
 
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
@@ -57,23 +64,23 @@ MainWindow::MainWindow(QWidget* parent)
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(selectionChanged()));
 
-  connect(actionAntiAliasing, SIGNAL(toggled(bool)),
+  connect(ui->actionAntiAliasing, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
 
-  actionAntiAliasing->setChecked(true);
+  ui->actionAntiAliasing->setChecked(true);
 
   // add the "About CGAL..." and "About demo..." entries
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
 
   // Connect the button "addButton" with actionLoadPolyhedron
-  addButton->setDefaultAction(actionLoadPolyhedron);
+  ui->addButton->setDefaultAction(ui->actionLoadPolyhedron);
   // Same with "removeButton" and "duplicateButton"
-  removeButton->setDefaultAction(actionErasePolyhedron);
-  duplicateButton->setDefaultAction(actionDuplicatePolyhedron);
+  ui->removeButton->setDefaultAction(ui->actionErasePolyhedron);
+  ui->duplicateButton->setDefaultAction(ui->actionDuplicatePolyhedron);
 
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
-  connect(actionQuit, SIGNAL(triggered()),
+  connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
 
   // recent files...
@@ -82,13 +89,18 @@ MainWindow::MainWindow(QWidget* parent)
     recentFileActs[i]->setVisible(false);
     connect(recentFileActs[i], SIGNAL(triggered()),
             this, SLOT(openRecentFile()));
-    menuFile->insertAction(actionQuit, recentFileActs[i]);
+    ui->menuFile->insertAction(ui->actionQuit, recentFileActs[i]);
   }
-  recentFilesSeparator = menuFile->insertSeparator(actionQuit);
+  recentFilesSeparator = ui->menuFile->insertSeparator(ui->actionQuit);
   recentFilesSeparator->setVisible(false);
   updateRecentFileActions();
 
   readSettings(); // Among other things, the column widths are stored.
+}
+
+MainWindow::~MainWindow()
+{
+  delete ui;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

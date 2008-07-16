@@ -2,6 +2,7 @@
 #include "Scene.h"
 
 #include <QInputDialog>
+#include <QTime>
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
