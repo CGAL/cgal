@@ -7,6 +7,9 @@
 #include <CGAL/Make_quad_soup.h> // for plane fitting
 #include <CGAL/Make_bar.h>  // for line fitting
 
+#undef min
+#undef max
+
 void MainWindow::on_actionFitPlane_triggered()
 {
 	if(onePolygonIsSelected())

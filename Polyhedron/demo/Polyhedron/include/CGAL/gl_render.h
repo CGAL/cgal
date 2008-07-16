@@ -1,9 +1,8 @@
 #ifndef _GL_RENDER_
 #define _GL_RENDER_
 
-#include <GL/glu.h>
+#include <GL/gl.h>
 #include <CGAL/compute_normal.h>
-
 
 template <class Polyhedron>
 void gl_render_facets(Polyhedron& polyhedron)
