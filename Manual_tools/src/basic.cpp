@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  basic.C
+  basic.cpp
   =============================================================
   Project   : CGAL merger tool for the specification task
   Function  : Assertions, indented output, etc.

@@ -1,7 +1,7 @@
           
 /**************************************************************************
  
-  cc_index_link.C
+  cc_index_link.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual_index.sty.
   Function  : adds links in HTML-index (combines manual.ind with HREF)

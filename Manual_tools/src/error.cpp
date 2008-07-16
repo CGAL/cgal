@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  error.C
+  error.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Error messages and protocol output.

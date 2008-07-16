@@ -1,6 +1,6 @@
 /**************************************************************************
 
-  macro_dictionary.C
+  macro_dictionary.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Dictionary of TeX macro definitions.

@@ -1,6 +1,6 @@
 /**************************************************************************
 
-  internal_macros.C
+  internal_macros.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Internal macro definitions.
@@ -201,7 +201,7 @@ void OpenFileforIndex() {
           new_main_filename = macroX("\\lciSubSubItemFile");
         }
         else {
-           cerr << " internal_macros.C : warning: unknown variable WhichItem"
+           cerr << " internal_macros.cpp : warning: unknown variable WhichItem"
                 << endl;
            exit(1);
         }

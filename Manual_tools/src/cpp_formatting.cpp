@@ -1,6 +1,6 @@
 /**************************************************************************
 
-  cpp_formatting.C
+  cpp_formatting.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : C++ Formatting functions.

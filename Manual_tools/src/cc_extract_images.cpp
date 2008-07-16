@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  cc_extract_images.C
+  cc_extract_images.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Extracts inline filenames from a HTML stream given on stdin,

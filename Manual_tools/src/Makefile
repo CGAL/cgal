@@ -107,7 +107,7 @@ all: $(ALL)
 
 basic.o : basic.h
 
-buffer.o : buffer.C buffer.h config.h basic.h
+buffer.o : buffer.cpp buffer.h config.h basic.h
 
 
 # LaTeX Converter
@@ -117,14 +117,14 @@ buffer.o : buffer.C buffer.h config.h basic.h
 # --------------------
 include Makefile_depend
 
-cc_extract_html.o : cc_extract_html.C
-	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_extract_html.C
+cc_extract_html.o : cc_extract_html.cpp
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_extract_html.cpp
 
-cc_anchor_filter.o : cc_anchor_filter.C
-	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_anchor_filter.C
+cc_anchor_filter.o : cc_anchor_filter.cpp
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_anchor_filter.cpp
 
-cc_remove_unwanted_links.o : cc_remove_unwanted_links.C
-	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_remove_unwanted_links.C
+cc_remove_unwanted_links.o : cc_remove_unwanted_links.cpp
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c cc_remove_unwanted_links.cpp
 
 # program
 # --------------------
@@ -143,15 +143,15 @@ OBJHTML    = lexer.o    \
 	     regex++.o		\
 	     regex_dictionary.o
 
-OBJIMAGES = cc_extract_images_lexer.C cc_extract_images.o
+OBJIMAGES = cc_extract_images_lexer.cpp cc_extract_images.o
 
 
-# configure input.C with the right parameters
-input.o: input.C
+# configure input.cpp with the right parameters
+input.o: input.cpp
 	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} \
 		-DLATEX_CONVERTER_CONFIG=\"${LATEX_CONV_CONFIG}\" \
 		-DLATEX_CONVERTER_INPUTS=\"${LATEX_CONV_INPUTS}\" \
-		-c input.C
+		-c input.cpp
 
 
 cc_extract_html : $(OBJHTML)
@@ -173,15 +173,15 @@ cc_remove_unwanted_links : cc_remove_unwanted_links.o
 # Generic Production Rules:
 # =====================================================================
 
-%.C: %.lex
-	${FLEX} $*.lex > $*.C
+%.cpp: %.lex
+	${FLEX} $*.lex > $*.cpp
 
-%.C %.tab.h: %.y
+%.cpp %.tab.h: %.y
 	${BISON} $*.y
-	mv $*.tab.c $*.C
+	mv $*.tab.c $*.cpp
 
-%.o: %.C
-	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c $*.C
+%.o: %.cpp
+	${CXX} -I. ${CPPFLAGS} ${CXXFLAGS} -c $*.cpp
 
 %.o: %.c
 	${CC} -I. ${CPPFLAGS} -c $*.c
@@ -223,18 +223,18 @@ install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 # Target to Create Dependencies Automatically:
 # =====================================================================
 
-DEPENDSRC  = lexer.C    \
-             syntax.C \
-             basic.C             \
-             buffer.C            \
-             macro_dictionary.C  \
-             internal_macros.C   \
-             error.C        \
-             string_conversion.C \
-             cpp_formatting.C    \
-             input.C             \
-             output.C            \
-             cc_extract_html.C
+DEPENDSRC  = lexer.cpp    \
+             syntax.cpp \
+             basic.cpp             \
+             buffer.cpp            \
+             macro_dictionary.cpp  \
+             internal_macros.cpp   \
+             error.cpp        \
+             string_conversion.cpp \
+             cpp_formatting.cpp    \
+             input.cpp             \
+             output.cpp            \
+             cc_extract_html.cpp
 
 
 # Prepared for SunPro CC. Change -xM1 to -M, -MM, or -MD, for Gnu g++.
@@ -251,13 +251,13 @@ depend: ${DEPENDSRC}
 # =====================================================================
 clean :
 	-rm -f	*.o *~ *.bak	\
-		lexer.C		\
+		lexer.cpp		\
 		syntax.output	\
 		syntax.tab.h	\
-		syntax.C	\
-		cc_remove_unwanted_links.C \
-		cc_anchor_filter.C \
-		cc_extract_images_lexer.C
+		syntax.cpp	\
+		cc_remove_unwanted_links.cpp \
+		cc_anchor_filter.cpp \
+		cc_extract_images_lexer.cpp
 
 cleanall : clean
 	-rm -f  $(PROGRAM_FILES)

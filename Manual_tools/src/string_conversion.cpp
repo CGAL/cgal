@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  string_conversion.C
+  string_conversion.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : String conversion functions.

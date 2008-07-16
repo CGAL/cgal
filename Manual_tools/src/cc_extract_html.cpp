@@ -1,6 +1,6 @@
 /**************************************************************************
 
-  cc_extract_html.C
+  cc_extract_html.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : main program, command line parameter parsing

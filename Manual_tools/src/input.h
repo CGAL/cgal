@@ -46,7 +46,7 @@ extern string  latex_conv_inputs;
 /* ======================================= */
 
 // Returns true if file 'name' can be opened for read.
-bool     exist_file( const string& name); // defined in output.C
+bool     exist_file( const string& name); // defined in output.cpp
 
 // Checks if 'name' exists as readable file. Tries '.tex' and '.sty'
 // suffixes in addition to the plain name. Returns found filename

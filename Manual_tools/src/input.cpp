@@ -1,6 +1,6 @@
 /**************************************************************************
  
-  input.C
+  input.cpp
   =============================================================
   Project   : Tools for the CC manual writing task around cc_manual.sty.
   Function  : Input file management and auxiliary functions.
