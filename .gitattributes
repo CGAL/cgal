@@ -1765,7 +1765,7 @@ Curved_kernel_via_analysis_2/include/CGAL/Curved_kernel_via_analysis_2/test/simp
 Curved_kernel_via_analysis_2/include/CGAL/IO/Qt_widget_Curve_renderer_2.h -text
 Curved_kernel_via_analysis_2/package_info/Curved_kernel_via_analysis_2/maintainer -text
 Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/makefile -text
-Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/simple_models.C -text
+Curved_kernel_via_analysis_2/test/Curved_kernel_via_analysis_2/simple_models.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript
