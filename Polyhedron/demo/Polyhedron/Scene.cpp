@@ -75,9 +75,12 @@ Scene::open(QString filename)
     QApplication::restoreOverrideCursor();
 		cerr << QString("\n");
 		destroy(poly);
+    
+    delete poly;
     return -1;
   }
 
+  cerr << QString("ok\n");
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
