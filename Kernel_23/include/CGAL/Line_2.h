@@ -143,47 +143,47 @@ public:
     return R().construct_projected_point_2_object()(*this,p);
   }
 
-  bool
+  typename R::Bool_type
   is_horizontal() const
   {
     return R().is_horizontal_2_object()(*this);
   }
 
-  bool
+  typename R::Bool_type
   is_vertical() const
   {
     return R().is_vertical_2_object()(*this);
   }
 
-  bool
+  typename R::Bool_type
   is_degenerate() const
   { return R().is_degenerate_2_object()(*this); }
 
-  Oriented_side
+  typename R::Oriented_side
   oriented_side(const Point_2 &p) const
   {
     return R().oriented_side_2_object()(*this,p);
   }
 
-  bool
+  typename R::Bool_type
   has_on_boundary(const Point_2 &p) const
   {
     return oriented_side(p) == ON_ORIENTED_BOUNDARY;
   }
 
-  bool
+  typename R::Bool_type
   has_on_positive_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_POSITIVE_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on_negative_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_NEGATIVE_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on(const Point_2 &p) const
   {
     return has_on_boundary(p);
@@ -213,13 +213,13 @@ public:
     return R().construct_point_2_object()(*this,i);
   }
 
-  bool
+  typename R::Bool_type
   operator==(const Line_2 &l) const
   {
     return R().equal_2_object()(*this, l);
   }
 
-  bool
+  typename R::Bool_type
   operator!=(const Line_2 &l) const
   {
     return !(*this == l);

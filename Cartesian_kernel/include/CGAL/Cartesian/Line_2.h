@@ -55,8 +55,8 @@ public:
   LineC2(const FT &a, const FT &b, const FT &c)
     : base(CGALi::make_array(a, b, c)) {}
   
-  bool            operator==(const LineC2 &l) const;
-  bool            operator!=(const LineC2 &l) const;
+  typename R_::Bool_type operator==(const LineC2 &l) const;
+  typename R_::Bool_type operator!=(const LineC2 &l) const;
 
   const FT & a() const
   {
@@ -75,7 +75,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Bool_type
 LineC2<R>::operator==(const LineC2<R> &l) const
 {
   if (CGAL::identical(base, l.base))
@@ -85,7 +85,7 @@ LineC2<R>::operator==(const LineC2<R> &l) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 LineC2<R>::operator!=(const LineC2<R> &l) const
 {
   return ! (*this == l);

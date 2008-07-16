@@ -310,7 +310,7 @@ compare_slopesC2(const FT &l1a, const FT &l1b, const FT &l2a, const FT &l2b)
    if (l1_sign < l2_sign) return SMALLER;
    if (l1_sign > l2_sign) return LARGER;
 
-   if (l1_sign > 0)
+   if (l1_sign > ZERO)
      return CGAL_NTS compare ( CGAL_NTS abs(l1a * l2b),
 			       CGAL_NTS abs(l2a * l1b) );
 
@@ -362,7 +362,7 @@ compare_slopesC2(const FT &s1_src_x, const FT &s1_src_y, const FT &s1_tgt_x,
    if (s1_sign < s2_sign) return SMALLER;
    if (s1_sign > s2_sign) return LARGER;
 
-   if (s1_sign > 0)
+   if (s1_sign > ZERO)
      return CGAL_NTS compare( CGAL_NTS abs(s1_ydiff * s2_xdiff),
                               CGAL_NTS abs(s2_ydiff * s1_xdiff));
 

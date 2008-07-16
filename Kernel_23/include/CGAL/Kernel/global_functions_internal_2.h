@@ -47,7 +47,7 @@ angle(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 are_ordered_along_line(const typename K::Point_2 &p,
                        const typename K::Point_2 &q,
                        const typename K::Point_2 &r, const K& k)
@@ -57,7 +57,7 @@ are_ordered_along_line(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 are_strictly_ordered_along_line(const typename K::Point_2 &p,
                                 const typename K::Point_2 &q,
                                 const typename K::Point_2 &r,
@@ -213,7 +213,7 @@ circumcenter(const typename K::Triangle_2 &t, const K& k)
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 collinear(const typename K::Point_2 &p,
           const typename K::Point_2 &q,
           const typename K::Point_2 &r, const K& k)
@@ -223,7 +223,7 @@ collinear(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 collinear_are_ordered_along_line(const typename K::Point_2 &p,
                                  const typename K::Point_2 &q,
                                  const typename K::Point_2 &r,
@@ -234,7 +234,7 @@ collinear_are_ordered_along_line(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 collinear_are_strictly_ordered_along_line(
              const typename K::Point_2 &p,
              const typename K::Point_2 &q,
@@ -245,7 +245,7 @@ collinear_are_strictly_ordered_along_line(
 
 template < typename K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_angle_with_x_axis(const typename K::Direction_2& d1,
                           const typename K::Direction_2& d2,
                           const K& k)
@@ -255,7 +255,7 @@ compare_angle_with_x_axis(const typename K::Direction_2& d1,
 
 template <class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_distance_to_point(const typename K::Point_2 &p,
                           const typename K::Point_2 &q,
                           const typename K::Point_2 &r, const K& k)
@@ -265,7 +265,7 @@ compare_distance_to_point(const typename K::Point_2 &p,
 
 template <class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_squared_distance(const typename K::Point_2 &p,
                          const typename K::Point_2 &q,
                          const typename K::FT &d2, const K& k)
@@ -275,7 +275,7 @@ compare_squared_distance(const typename K::Point_2 &p,
 
 template <class K>
 inline
-Comparison_result
+typename K::Comparison_result
 compare_signed_distance_to_line(const typename K::Point_2& p,
 				const typename K::Point_2& q,
 				const typename K::Point_2& r,
@@ -289,7 +289,7 @@ compare_signed_distance_to_line(const typename K::Point_2& p,
 
 template <class K>
 inline
-Comparison_result
+typename K::Comparison_result
 compare_signed_distance_to_line(const typename K::Line_2& l,
 				const typename K::Point_2& p,
 				const typename K::Point_2& q,
@@ -302,7 +302,7 @@ compare_signed_distance_to_line(const typename K::Line_2& l,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_slopes(const typename K::Line_2 &l1,
                const typename K::Line_2 &l2, const K& k)
 {
@@ -311,7 +311,7 @@ compare_slopes(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_slopes(const typename K::Segment_2 &s1,
                const typename K::Segment_2 &s2, const K& k)
 {
@@ -320,7 +320,7 @@ compare_slopes(const typename K::Segment_2 &s1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x(const typename K::Point_2 &p,
           const typename K::Point_2 &q, const K& k)
 {
@@ -329,7 +329,7 @@ compare_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x(const typename K::Point_2 &p,
           const typename K::Line_2 &l1,
           const typename K::Line_2 &l2, const K& k)
@@ -339,7 +339,7 @@ compare_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x(const typename K::Line_2 &l,
           const typename K::Line_2 &h1,
           const typename K::Line_2 &h2, const K& k)
@@ -349,7 +349,7 @@ compare_x(const typename K::Line_2 &l,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x(const typename K::Line_2 &l1,
           const typename K::Line_2 &h1,
           const typename K::Line_2 &l2,
@@ -360,7 +360,7 @@ compare_x(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x_at_y(const typename K::Point_2& p,
                const typename K::Line_2& h, const K& k)
 {
@@ -370,7 +370,7 @@ compare_x_at_y(const typename K::Point_2& p,
 /* Undocumented
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Point_2 &p,
                const typename K::Segment_2 &s, const K& k)
 {
@@ -380,7 +380,7 @@ compare_y_at_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x_at_y(const typename K::Point_2 &p,
                const typename K::Line_2 &h1,
                const typename K::Line_2 &h2, const K& k)
@@ -390,7 +390,7 @@ compare_x_at_y(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x_at_y(const typename K::Line_2 &l1,
                const typename K::Line_2 &l2,
                const typename K::Line_2 &h, const K& k)
@@ -400,7 +400,7 @@ compare_x_at_y(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_x_at_y(const typename K::Line_2 &l1,
                const typename K::Line_2 &l2,
                const typename K::Line_2 &h1,
@@ -411,7 +411,7 @@ compare_x_at_y(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_xy(const typename K::Point_2 &p,
            const typename K::Point_2 &q, const K& k)
 {
@@ -420,7 +420,7 @@ compare_xy(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_yx(const typename K::Point_2 &p,
            const typename K::Point_2 &q, const K& k)
 {
@@ -429,7 +429,7 @@ compare_yx(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y(const typename K::Point_2 &p,
           const typename K::Point_2 &q, const K& k)
 {
@@ -438,7 +438,7 @@ compare_y(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y(const typename K::Point_2 &p,
           const typename K::Line_2 &l1,
           const typename K::Line_2 &l2, const K& k)
@@ -448,7 +448,7 @@ compare_y(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y(const typename K::Line_2 &l1,
           const typename K::Line_2 &l2,
           const typename K::Line_2 &h1,
@@ -459,7 +459,7 @@ compare_y(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y(const typename K::Line_2 &l,
           const typename K::Line_2 &h1,
           const typename K::Line_2 &h2, const K& k)
@@ -469,7 +469,7 @@ compare_y(const typename K::Line_2 &l,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Point_2 &p,
                const typename K::Segment_2 &s, const K& k)
 {
@@ -478,7 +478,7 @@ compare_y_at_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Point_2 &p,
                const typename K::Segment_2 &s1,
                const typename K::Segment_2 &s2, const K& k)
@@ -488,7 +488,7 @@ compare_y_at_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Point_2 &p,
                const typename K::Line_2 &l, const K& k)
 {
@@ -497,7 +497,7 @@ compare_y_at_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Point_2 &p,
                const typename K::Line_2 &h1,
                const typename K::Line_2 &h2, const K& k)
@@ -507,7 +507,7 @@ compare_y_at_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Line_2 &l1,
                const typename K::Line_2 &l2,
                const typename K::Line_2 &h, const K& k)
@@ -517,7 +517,7 @@ compare_y_at_x(const typename K::Line_2 &l1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_y_at_x(const typename K::Line_2 &l1,
                const typename K::Line_2 &l2,
                const typename K::Line_2 &h1,
@@ -537,7 +537,7 @@ determinant(const typename K::Vector_2 &v0,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_larger_distance_to_point(const typename K::Point_2 &p,
 			     const typename K::Point_2 &q,
 			     const typename K::Point_2 &r,
@@ -548,7 +548,7 @@ has_larger_distance_to_point(const typename K::Point_2 &p,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_smaller_distance_to_point(const typename K::Point_2 &p,
                               const typename K::Point_2 &q,
                               const typename K::Point_2 &r,
@@ -559,7 +559,7 @@ has_smaller_distance_to_point(const typename K::Point_2 &p,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_smaller_signed_distance_to_line(const typename K::Line_2& l,
 				    const typename K::Point_2& p,
 				    const typename K::Point_2& q,
@@ -570,7 +570,7 @@ has_smaller_signed_distance_to_line(const typename K::Line_2& l,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_larger_signed_distance_to_line(const typename K::Line_2& l,
 				   const typename K::Point_2& p,
 				   const typename K::Point_2& q,
@@ -581,7 +581,7 @@ has_larger_signed_distance_to_line(const typename K::Line_2& l,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_larger_signed_distance_to_line(const typename K::Point_2& p,
 				   const typename K::Point_2& q,
 				   const typename K::Point_2& r,
@@ -593,7 +593,7 @@ has_larger_signed_distance_to_line(const typename K::Point_2& p,
 
 template <class K>
 inline
-bool
+typename K::Bool_type
 has_smaller_signed_distance_to_line(const typename K::Point_2& p,
                                     const typename K::Point_2& q,
                                     const typename K::Point_2& r,
@@ -605,7 +605,7 @@ has_smaller_signed_distance_to_line(const typename K::Point_2& p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 left_turn(const typename K::Point_2 &p,
           const typename K::Point_2 &q,
           const typename K::Point_2 &r, const K& k)
@@ -615,7 +615,7 @@ left_turn(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 less_x(const typename K::Point_2 &p,
        const typename K::Point_2 &q, const K& k)
 {
@@ -624,7 +624,7 @@ less_x(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 less_y(const typename K::Point_2 &p,
        const typename K::Point_2 &q, const K& k)
 {
@@ -633,7 +633,7 @@ less_y(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_xy_larger(const typename K::Point_2 &p,
                             const typename K::Point_2 &q,
                             const K& k)
@@ -643,7 +643,7 @@ lexicographically_xy_larger(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_xy_larger_or_equal(const typename K::Point_2 &p,
                                      const typename K::Point_2 &q,
                                      const K& k)
@@ -653,7 +653,7 @@ lexicographically_xy_larger_or_equal(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_xy_smaller(const typename K::Point_2 &p,
                              const typename K::Point_2 &q,
                              const K& k)
@@ -663,7 +663,7 @@ lexicographically_xy_smaller(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_xy_smaller_or_equal(const typename K::Point_2 &p,
                                       const typename K::Point_2 &q,
                                       const K& k)
@@ -673,7 +673,7 @@ lexicographically_xy_smaller_or_equal(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_yx_smaller(const typename K::Point_2 &p,
                              const typename K::Point_2 &q,
                              const K& k)
@@ -683,7 +683,7 @@ lexicographically_yx_smaller(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_yx_smaller_or_equal(const typename K::Point_2 &p,
                                       const typename K::Point_2 &q,
                                       const K& k)
@@ -694,7 +694,7 @@ lexicographically_yx_smaller_or_equal(const typename K::Point_2 &p,
 // FIXME : Undocumented
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_yx_larger(const typename K::Point_2 &p,
                             const typename K::Point_2 &q,
                             const K& k)
@@ -705,7 +705,7 @@ lexicographically_yx_larger(const typename K::Point_2 &p,
 // FIXME : Undocumented
 template < class K >
 inline
-bool
+typename K::Bool_type
 lexicographically_yx_larger_or_equal(const typename K::Point_2 &p,
                                      const typename K::Point_2 &q,
                                      const K& k)
@@ -759,7 +759,7 @@ orientation(const typename K::Vector_2 &u,
 
 template <typename K>
 inline
-bool
+typename K::Bool_type
 parallel(const typename K::Line_2 &l1,
          const typename K::Line_2 &l2, const K &k)
 {
@@ -768,7 +768,7 @@ parallel(const typename K::Line_2 &l1,
 
 template <typename K>
 inline
-bool
+typename K::Bool_type
 parallel(const typename K::Ray_2 &r1,
          const typename K::Ray_2 &r2, const K &k)
 {
@@ -777,7 +777,7 @@ parallel(const typename K::Ray_2 &r1,
 
 template <typename K>
 inline
-bool
+typename K::Bool_type
 parallel(const typename K::Segment_2 &s1,
          const typename K::Segment_2 &s2, const K &k)
 {
@@ -786,7 +786,7 @@ parallel(const typename K::Segment_2 &s1,
 
 template <typename K>
 inline
-bool
+typename K::Bool_type
 right_turn(const typename K::Point_2 &p,
            const typename K::Point_2 &q,
            const typename K::Point_2 &r, const K &k)
@@ -847,7 +847,7 @@ squared_radius(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 x_equal(const typename K::Point_2 &p,
         const typename K::Point_2 &q, const K &k)
 {
@@ -856,7 +856,7 @@ x_equal(const typename K::Point_2 &p,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 y_equal(const typename K::Point_2 &p,
         const typename K::Point_2 &q, const K &k)
 {

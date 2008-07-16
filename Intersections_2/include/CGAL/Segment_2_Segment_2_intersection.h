@@ -33,6 +33,7 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
 #include <CGAL/Object.h>
+#include <CGAL/Uncertain.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -75,7 +76,7 @@ bool seg_seg_do_intersect_crossing(
 	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
 	const K& k)
 {
-    switch (k.orientation_2_object()(p1,p2,p3)) {
+    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
       return ! (k.orientation_2_object()(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
     case RIGHT_TURN:
@@ -94,7 +95,7 @@ bool seg_seg_do_intersect_contained(
 	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
 	const K& k)
 {
-    switch (k.orientation_2_object()(p1,p2,p3)) {
+    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
       return ! (k.orientation_2_object()(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
     case RIGHT_TURN:
@@ -143,15 +144,15 @@ do_intersect(const typename K::Segment_2 &seg1,
     }
     if (less_xy(A1,A2)) {
         if (less_xy(B1,B2)) {
-            switch(compare_xy(A1,B1)) {
+            switch(make_certain(compare_xy(A1,B1))) {
             case SMALLER:
-                switch(compare_xy(A2,B1)) {
+                switch(make_certain(compare_xy(A2,B1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(A2,B2)) {
+                    switch(make_certain(compare_xy(A2,B2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
                     case EQUAL:
@@ -163,13 +164,13 @@ do_intersect(const typename K::Segment_2 &seg1,
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_xy(B2,A1)) {
+                switch(make_certain(compare_xy(B2,A1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(B2,A2)) {
+                    switch(make_certain(compare_xy(B2,A2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
                     case EQUAL:
@@ -180,15 +181,15 @@ do_intersect(const typename K::Segment_2 &seg1,
                 }
             }
         } else {
-            switch(compare_xy(A1,B2)) {
+            switch(make_certain(compare_xy(A1,B2))) {
             case SMALLER:
-                switch(compare_xy(A2,B2)) {
+                switch(make_certain(compare_xy(A2,B2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(A2,B1)) {
+                    switch(make_certain(compare_xy(A2,B1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A1,A2,B2,B1, k);
                     case EQUAL:
@@ -200,13 +201,13 @@ do_intersect(const typename K::Segment_2 &seg1,
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_xy(B1,A1)) {
+                switch(make_certain(compare_xy(B1,A1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(B1,A2)) {
+                    switch(make_certain(compare_xy(B1,A2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A1,A2, k);
                     case EQUAL:
@@ -219,15 +220,15 @@ do_intersect(const typename K::Segment_2 &seg1,
         }
     } else {
         if (less_xy(B1,B2)) {
-            switch(compare_xy(A2,B1)) {
+            switch(make_certain(compare_xy(A2,B1))) {
             case SMALLER:
-                switch(compare_xy(A1,B1)) {
+                switch(make_certain(compare_xy(A1,B1))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(A1,B2)) {
+                    switch(make_certain(compare_xy(A1,B2))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B1,B2, k);
                     case EQUAL:
@@ -239,13 +240,13 @@ do_intersect(const typename K::Segment_2 &seg1,
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_xy(B2,A2)) {
+                switch(make_certain(compare_xy(B2,A2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(B2,A1)) {
+                    switch(make_certain(compare_xy(B2,A1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B1,B2,A2,A1, k);
                     case EQUAL:
@@ -256,15 +257,15 @@ do_intersect(const typename K::Segment_2 &seg1,
                 }
             }
         } else {
-            switch(compare_xy(A2,B2)) {
+            switch(make_certain(compare_xy(A2,B2))) {
             case SMALLER:
-                switch(compare_xy(A1,B2)) {
+                switch(make_certain(compare_xy(A1,B2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(A1,B1)) {
+                    switch(make_certain(compare_xy(A1,B1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(A2,A1,B2,B1, k);
                     case EQUAL:
@@ -276,13 +277,13 @@ do_intersect(const typename K::Segment_2 &seg1,
             case EQUAL:
                 return true;
             case LARGER:
-                switch(compare_xy(B1,A2)) {
+                switch(make_certain(compare_xy(B1,A2))) {
                 case SMALLER:
                     return false;
                 case EQUAL:
                     return true;
                 case LARGER:
-                    switch(compare_xy(B1,A1)) {
+                    switch(make_certain(compare_xy(B1,A1))) {
                     case SMALLER:
                         return seg_seg_do_intersect_crossing(B2,B1,A2,A1, k);
                     case EQUAL:

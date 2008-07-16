@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 equal_direction(const DirectionC2<K> &d1,
                 const DirectionC2<K> &d2)
 {
@@ -37,7 +37,7 @@ equal_direction(const DirectionC2<K> &d1,
 
 template < class K >
 inline
-Comparison_result
+typename K::Comparison_result
 compare_angle_with_x_axis(const DirectionC2<K> &d1,
                           const DirectionC2<K> &d2)
 {

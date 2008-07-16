@@ -85,7 +85,7 @@ public:
   Direction_2(const RT &x, const RT &y)
     :  RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), x,y)) {}
 
-  bool
+  typename R::Bool_type
   counterclockwise_in_between(const Direction_2 &d1,
 			      const Direction_2 &d2) const
   {
@@ -116,28 +116,28 @@ public:
     return (i==0) ? dx() : dy();
   }
 
-  bool
+  typename R::Bool_type
   operator<(const Direction_2 &d) const
   {
     return R().compare_angle_with_x_axis_2_object()(*this, d) == SMALLER;
   }
 
 
-  bool
+  typename R::Bool_type
   operator>(const Direction_2 &d) const
   {
     return d < *this;
   }
 
 
-  bool
+  typename R::Bool_type
   operator>=(const Direction_2 &d) const
   {
     return R().compare_angle_with_x_axis_2_object()(*this, d) != SMALLER;
   }
 
 
-  bool
+  typename R::Bool_type
   operator<=(const Direction_2 &d) const
   {
     return R().compare_angle_with_x_axis_2_object()(*this, d) != LARGER;
@@ -159,13 +159,13 @@ public:
     return this->vector();
   }
 
-  bool
+  typename R::Bool_type
   operator==(const Direction_2& d) const
   {
     return R().equal_2_object()(*this, d);
   }
 
-  bool
+  typename R::Bool_type
   operator!=(const Direction_2& d) const
   {
     return !(*this == d);

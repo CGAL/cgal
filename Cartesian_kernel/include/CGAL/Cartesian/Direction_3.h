@@ -66,8 +66,8 @@ public:
   DirectionC3(const FT &x, const FT &y, const FT &z)
     : base(CGALi::make_array(x, y, z)) {}
 
-  bool           operator==(const DirectionC3 &d) const;
-  bool           operator!=(const DirectionC3 &d) const;
+  typename R::Bool_type operator==(const DirectionC3 &d) const;
+  typename R::Bool_type operator!=(const DirectionC3 &d) const;
 
   Vector_3       to_vector() const;
   Vector_3       vector() const { return to_vector(); }
@@ -105,7 +105,7 @@ public:
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 DirectionC3<R>::operator==(const DirectionC3<R> &d) const
 {
   if (CGAL::identical(base, d.base))
@@ -115,7 +115,7 @@ DirectionC3<R>::operator==(const DirectionC3<R> &d) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 DirectionC3<R>::operator!=(const DirectionC3<R> &d) const
 {
   return !(*this == d);

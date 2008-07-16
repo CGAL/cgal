@@ -38,7 +38,7 @@ class Circle_2 : public R_::Kernel_base::Circle_2
 {
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
-  typedef typename R_::Kernel_base::Circle_2  RCircle_2;
+  typedef typename R_::Kernel_base::Circle_2 RCircle_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
   typedef Circle_2                           Self;
@@ -108,41 +108,43 @@ public:
 
   Orientation orientation() const
   {
-    return R().orientation_2_object()(*this);
+    // This make_certain(), the uncertain orientation of circles, the orientation
+    // of circles, are all yucky.
+    return make_certain(R().orientation_2_object()(*this));
   }
 
 
-  Bounded_side
+  typename R::Bounded_side
   bounded_side(const Point_2 &p) const
   {
     return R().bounded_side_2_object()(*this, p);
   }
 
-  Oriented_side
+  typename R::Oriented_side
   oriented_side(const Point_2 &p) const
   {
     return R().oriented_side_2_object()(*this, p);
   }
 
-  bool
+  typename R::Bool_type
   has_on_boundary(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDARY;
   }
 
-  bool
+  typename R::Bool_type
   has_on_bounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on_unbounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on_negative_side(const Point_2 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -150,7 +152,7 @@ public:
     return has_on_bounded_side(p);
   }
 
-  bool
+  typename R::Bool_type
   has_on_positive_side(const Point_2 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -158,7 +160,7 @@ public:
     return has_on_unbounded_side(p);
   }
 
-  bool
+  typename R::Bool_type
   is_degenerate() const
   {
     return CGAL_NTS is_zero(squared_radius());
@@ -179,13 +181,13 @@ public:
     return R().construct_bbox_2_object()(*this);
   }
 
-  bool
+  typename R::Bool_type
   operator==(const Circle_2 &c) const
   {
     return R().equal_2_object()(*this, c);
   }
 
-  bool
+  typename R::Bool_type
   operator!=(const Circle_2 &c) const
   {
     return !(*this == c);

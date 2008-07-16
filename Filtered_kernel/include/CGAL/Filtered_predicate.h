@@ -157,8 +157,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(args)...);
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -179,8 +179,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -199,8 +199,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ")+ std::string(CGAL_PRETTY_FUNCTION));
@@ -219,8 +219,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -239,8 +239,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -260,8 +260,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -281,8 +281,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -304,8 +304,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -327,8 +327,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -352,8 +352,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -377,8 +377,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9), c2a(a10));
-      if (! is_indeterminate(res))
-        return res;
+      if (is_singleton(res))
+        return extract_singleton(res);
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));

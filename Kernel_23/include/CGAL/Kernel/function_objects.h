@@ -673,7 +673,7 @@ namespace CommonKernelFunctors {
       typename K::Orientation_2 orientation;
       typename K::Compute_squared_distance_2 squared_distance;
       typename K::Construct_circumcenter_2 circumcenter;
-      Orientation orient = orientation(p, q, r);
+      typename K::Orientation orient = orientation(p, q, r);
       CGAL_kernel_precondition( orient != COLLINEAR);
 
       Point_2 center = circumcenter(p, q, r);
@@ -2667,7 +2667,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Point_2& r, const Point_2& p, const Point_2& q) const
     {
-      Orientation ori = o(r, p, q);
+      typename K::Orientation ori = o(r, p, q);
       if ( ori == LEFT_TURN )
 	return true;
       else if ( ori == RIGHT_TURN )

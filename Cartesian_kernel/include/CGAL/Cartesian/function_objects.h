@@ -337,13 +337,13 @@ namespace CartesianKernelFunctors {
     {
       const Point_2 & source = r.source();
       const Point_2 & second = r.second_point();
-      switch(compare_x(source, second)) {
+      switch(make_certain(compare_x(source, second))) {
       case SMALLER:
         return compare_x(source, p) != LARGER;
       case LARGER:
         return compare_x(p, source) != LARGER;
       default:
-        switch(compare_y(source, second)){
+        switch(make_certain(compare_y(source, second))){
         case SMALLER:
 	  return compare_y(source, p) != LARGER;
         case LARGER:
@@ -3996,7 +3996,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
-    { return Oriented_side(c.bounded_side(p) * c.orientation()); }
+    { return enum_cast<Oriented_side>(c.bounded_side(p)) * c.orientation(); }
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const

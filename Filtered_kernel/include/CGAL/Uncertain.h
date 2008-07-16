@@ -107,17 +107,38 @@ public:
   T inf() const { return _i; }
   T sup() const { return _s; }
 
-  // NB : conversion to bool might be too risky
-  //      (boost::tribool uses something else).
-  operator T() const
+  bool is_singleton() const { return _i == _s; }
+
+  T make_certain() const
   {
-    if (_i == _s)
+    if (is_singleton())
       return _i;
-    //++failures;
-    ++Uncertain<bool>::number_of_failures();  // reasonnable ?
+    ++Uncertain<bool>::number_of_failures();
     throw Uncertain_conversion_exception(
                         "undecidable conversion of CGAL::Uncertain<T>");
   }
+
+#if 1 // Comment out in order to spot some unwanted conversions.
+  // NB : the general conversion to bool might be too risky.
+  //      boost::tribool uses a more restricted conversion (see below).
+  operator T() const
+  {
+    return make_certain();
+  }
+#else
+private:
+  struct dummy {
+    void nonnull() {};
+  };
+
+  typedef void (dummy::*safe_bool)();
+
+public:
+  operator safe_bool() const
+  {
+    return make_certain() ? &dummy::nonnull : 0;
+  }
+#endif
 
   static unsigned & number_of_failures() { return failures; }
 
@@ -148,8 +169,32 @@ T sup(Uncertain<T> i)
 }
 
 
+// possibly() declarations (needed as used in the assertions)
+// ----------------------------------------------------------
+
+inline bool possibly(bool b);
+
+inline
+bool possibly(Uncertain<bool> c);
+
+
 // Basic functions
 // ---------------
+
+template < typename T >
+inline
+bool is_singleton(Uncertain<T> a)
+{
+  return a.is_singleton();
+}
+
+template < typename T >
+inline
+T extract_singleton(Uncertain<T> a)
+{
+  CGAL_assertion(is_singleton(a));
+  return a.inf();
+}
 
 template < typename T >
 inline
@@ -170,14 +215,30 @@ template < typename T >
 inline
 bool is_indeterminate(Uncertain<T> a)
 {
-  return a.inf() != a.sup();
+  return ! a.is_singleton();
 }
 
-template < typename T >
+
+// certainly/possibly
+// ------------------
+
+inline bool certainly(bool b) { return b; }
+inline bool possibly(bool b) { return b; }
+
 inline
-bool is_singleton(Uncertain<T> a)
+bool certainly(Uncertain<bool> c)
 {
-  return a.inf() == a.sup();
+  if (is_singleton(c))
+    return extract_singleton(c);
+  return false;
+}
+
+inline
+bool possibly(Uncertain<bool> c)
+{
+  if (is_singleton(c))
+    return extract_singleton(c);
+  return true;
 }
 
 
@@ -394,6 +455,26 @@ Uncertain<T> make_uncertain(Uncertain<T> t)
 }
 
 
+// make_certain() : Forcing a cast to certain (possibly throwing).
+// This is meant to be used only in cases where we cannot easily propagate the
+// uncertainty, such as when used in a switch statement (code may later be
+// revisited to do things in a better way).
+
+template < typename T >
+inline
+T make_certain(T t)
+{
+  return t;
+}
+
+template < typename T >
+inline
+T make_certain(Uncertain<T> t)
+{
+  return t.make_certain();
+}
+
+
 // opposite
 template < typename T > // should be constrained only for enums.
 inline
@@ -404,7 +485,6 @@ Uncertain<T> operator-(Uncertain<T> u)
 
 // "sign" multiplication.
 // Should be constrained only for "sign" enums, useless for bool.
-// Well, Uncertain<> should probably be split into Uncertain_bool (std::bool_set) and Uncertain_enum<>.
 template < typename T >
 Uncertain<T> operator*(Uncertain<T> a, Uncertain<T> b)
 {
@@ -451,6 +531,20 @@ Uncertain<T> operator*(Uncertain<T> a, Uncertain<T> b)
   }
 }
 
+template < typename T >
+inline
+Uncertain<T> operator*(T a, Uncertain<T> b)
+{
+	return Uncertain<T>(a) * b;
+}
+
+template < typename T >
+inline
+Uncertain<T> operator*(Uncertain<T> a, T b)
+{
+	return a * Uncertain<T>(b);
+}
+
 // enum_cast overload
 
 #ifdef CGAL_CFG_MATCHING_BUG_5
@@ -473,28 +567,6 @@ Uncertain<T> enum_cast(Uncertain<U> u)
 }
 
 #endif
-
-
-// Additional goodies
-
-inline bool certainly(bool b) { return b; }
-inline bool possibly(bool b) { return b; }
-
-inline
-bool certainly(Uncertain<bool> c)
-{
-  if (is_indeterminate(c))
-       return false;
-  else return static_cast<bool>(c);
-}
-
-inline
-bool possibly(Uncertain<bool> c)
-{
-  if (is_indeterminate(c))
-       return true;
-  else return static_cast<bool>(c);
-}
 
 CGAL_END_NAMESPACE
 

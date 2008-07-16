@@ -30,7 +30,7 @@ CGAL_BEGIN_NAMESPACE
 
 template < class K >
 inline
-Oriented_side
+typename K::Oriented_side
 side_of_oriented_plane(const PlaneC3<K> &h,
                        const PointC3<K> &p)
 { 
@@ -40,7 +40,7 @@ side_of_oriented_plane(const PlaneC3<K> &h,
 
 template < class K >
 inline
-bool
+typename K::Bool_type
 equal_plane(const PlaneC3<K> &h, const PlaneC3<K> &p)
 { 
   return equal_planeC3(h.a(), h.b(), h.c(), h.d(),

@@ -108,43 +108,43 @@ public:
     return R().construct_opposite_sphere_3_object()(*this);
   }
 
-  Orientation orientation() const
+  typename R::Orientation orientation() const
   {
     return R().orientation_3_object()(*this);
   }
 
-  Bounded_side
+  typename R::Bounded_side
   bounded_side(const Point_3 &p) const
   {
     return R().bounded_side_3_object()(*this, p);
   }
 
-  Oriented_side
+  typename R::Oriented_side
   oriented_side(const Point_3 &p) const
   {
     return R().oriented_side_3_object()(*this, p);
   }
 
-  bool
+  typename R::Bool_type
   has_on_boundary(const Point_3 &p) const
   {
     return R().has_on_boundary_3_object()(*this, p);
     //return bounded_side(p) == ON_BOUNDARY;
   }
 
-  bool
+  typename R::Bool_type
   has_on_bounded_side(const Point_3 &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on_unbounded_side(const Point_3 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
 
-  bool
+  typename R::Bool_type
   has_on_negative_side(const Point_3 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -152,7 +152,7 @@ public:
     return has_on_bounded_side(p);
   }
 
-  bool
+  typename R::Bool_type
   has_on_positive_side(const Point_3 &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
@@ -160,7 +160,7 @@ public:
     return has_on_unbounded_side(p);
   }
 
-  bool
+  typename R::Bool_type
   is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);

@@ -21,6 +21,8 @@
 #ifndef CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H
 
+#include <CGAL/Uncertain.h>
+
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
@@ -192,11 +194,11 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t1,
 
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3 &t1, 
-		  const typename K::Triangle_3 &t2,
-		  const K & k) 
+typename K::Bool_type
+do_intersect(const typename K::Triangle_3 &t1, 
+	     const typename K::Triangle_3 &t2,
+	     const K & k) 
 {
-
   CGAL_kernel_precondition( ! k.is_degenerate_3_object() (t1) );
   CGAL_kernel_precondition( ! k.is_degenerate_3_object() (t2) );
 
@@ -223,9 +225,9 @@ bool do_intersect(const typename K::Triangle_3 &t1,
    const Point_3  * t_max1;
    
    // Compute distance signs  of p, q and r to the plane of triangle(a,b,c)
-   const Orientation dp = orientation(a,b,c,p);
-   const Orientation dq = orientation(a,b,c,q);
-   const Orientation dr = orientation(a,b,c,r);
+   const Orientation dp = make_certain(orientation(a,b,c,p));
+   const Orientation dq = make_certain(orientation(a,b,c,q));
+   const Orientation dr = make_certain(orientation(a,b,c,r));
    
  
     switch ( dp ) {
@@ -332,9 +334,9 @@ bool do_intersect(const typename K::Triangle_3 &t1,
     const Point_3  * t_max2;
     
     // Compute distance signs  of a, b and c to the plane of triangle(p,q,r)
-    const Orientation da = orientation(p,q,r,a);
-    const Orientation db = orientation(p,q,r,b);
-    const Orientation dc = orientation(p,q,r,c);
+    const Orientation da = make_certain(orientation(p,q,r,a));
+    const Orientation db = make_certain(orientation(p,q,r,b));
+    const Orientation dc = make_certain(orientation(p,q,r,c));
     
 
     switch ( da ) {
@@ -444,8 +446,9 @@ bool do_intersect(const typename K::Triangle_3 &t1,
 
 
 template <class K>
-inline bool do_intersect(const Triangle_3<K> &t1, 
-			 const Triangle_3<K> &t2) 
+inline typename K::Bool_type
+do_intersect(const Triangle_3<K> &t1, 
+	     const Triangle_3<K> &t2) 
 {
   return typename K::Do_intersect_3()(t1,t2);
 }

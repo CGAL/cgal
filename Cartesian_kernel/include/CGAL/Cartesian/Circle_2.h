@@ -36,6 +36,7 @@ class CircleC2
   typedef typename R_::RT                   RT;
   typedef typename R_::Circle_2             Circle_2;
   typedef typename R_::Point_2              Point_2;
+  typedef typename R_::Orientation          Orientation;
 
   typedef Triple<Point_2, FT, Orientation>         Rep;
   typedef typename R_::template Handle<Rep>::type  Base;

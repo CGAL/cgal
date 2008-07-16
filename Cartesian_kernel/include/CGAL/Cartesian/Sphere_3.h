@@ -62,7 +62,7 @@ public:
   SphereC3(const Point_3 &p, const Point_3 &q,
            const Point_3 &r, const Point_3 &s)
   {
-    Orientation orient = CGAL::orientation(p, q, r, s);
+    Orientation orient = make_certain(CGAL::orientation(p, q, r, s));
     Point_3 center = circumcenter(p, q, r, s);
     FT      squared_radius = squared_distance(p, center);
 
@@ -101,8 +101,8 @@ public:
     base = Rep(center, FT(0), o);
   }
 
-  bool operator==(const SphereC3 &) const;
-  bool operator!=(const SphereC3 &) const;
+  typename R::Bool_type operator==(const SphereC3 &) const;
+  typename R::Bool_type operator!=(const SphereC3 &) const;
 
   const Point_3 & center() const
   {
@@ -120,30 +120,30 @@ public:
   }
 
   // A circle is degenerate if its (squared) radius is null or negative
-  bool is_degenerate() const;
+  typename R::Bool_type is_degenerate() const;
 
   // Returns a circle with opposite orientation
   Sphere_3 opposite() const;
 
-  Oriented_side  oriented_side(const Point_3 &p) const;
+  typename R_::Oriented_side  oriented_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_POSITIVE_SIDE, R::ON_ORIENTED_BOUNDARY or
   // R::ON_NEGATIVE_SIDE
-  bool has_on(const Circle_3 &p) const;
-  bool has_on_boundary(const Point_3 &p) const;
-  bool has_on_positive_side(const Point_3 &p) const;
-  bool has_on_negative_side(const Point_3 &p) const;
+  typename R::Bool_type has_on(const Circle_3 &p) const;
+  typename R::Bool_type has_on_boundary(const Point_3 &p) const;
+  typename R::Bool_type has_on_positive_side(const Point_3 &p) const;
+  typename R::Bool_type has_on_negative_side(const Point_3 &p) const;
 
-  Bounded_side bounded_side(const Point_3 &p) const;
+  typename R_::Bounded_side bounded_side(const Point_3 &p) const;
   //! precond: ! x.is_degenerate() (when available)
   // Returns R::ON_BOUNDED_SIDE, R::ON_BOUNDARY or R::ON_UNBOUNDED_SIDE
-  bool has_on_bounded_side(const Point_3 &p) const;
-  bool has_on_unbounded_side(const Point_3 &p) const;
+  typename R::Bool_type has_on_bounded_side(const Point_3 &p) const;
+  typename R::Bool_type has_on_unbounded_side(const Point_3 &p) const;
 };
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Bool_type
 SphereC3<R>::operator==(const SphereC3<R> &t) const
 {
   if (CGAL::identical(base, t.base))
@@ -155,7 +155,7 @@ SphereC3<R>::operator==(const SphereC3<R> &t) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::operator!=(const SphereC3<R> &t) const
 {
   return !(*this == t);
@@ -163,28 +163,26 @@ SphereC3<R>::operator!=(const SphereC3<R> &t) const
 
 template < class R >
 CGAL_KERNEL_MEDIUM_INLINE
-Oriented_side
+typename R::Oriented_side
 SphereC3<R>::
 oriented_side(const typename SphereC3<R>::Point_3 &p) const
 {
-  return Oriented_side(bounded_side(p) * orientation());
+  return enum_cast<Oriented_side>(bounded_side(p)) * orientation();
 }
 
 template < class R >
 CGAL_KERNEL_INLINE
-Bounded_side
+typename R::Bounded_side
 SphereC3<R>::
 bounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
-    // FIXME: it's a predicate...
-  return Bounded_side((Comparison_result)
-                       CGAL_NTS compare(squared_radius(),
-                                        squared_distance(center(),p)));
+  return enum_cast<Bounded_side>(compare(squared_radius(),
+                                         squared_distance(center(), p)));
 }
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on(const typename SphereC3<R>::Circle_3 &c) const
 {
@@ -200,7 +198,7 @@ has_on(const typename SphereC3<R>::Circle_3 &c) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on_boundary(const typename SphereC3<R>::Point_3 &p) const
 {
@@ -213,7 +211,7 @@ has_on_boundary(const typename SphereC3<R>::Point_3 &p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on_negative_side(const typename SphereC3<R>::Point_3 &p) const
 {
@@ -226,7 +224,7 @@ has_on_negative_side(const typename SphereC3<R>::Point_3 &p) const
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on_positive_side(const typename SphereC3<R>::Point_3 &p) const
 {
@@ -239,7 +237,7 @@ has_on_positive_side(const typename SphereC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on_bounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
@@ -251,7 +249,7 @@ has_on_bounded_side(const typename SphereC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::
 has_on_unbounded_side(const typename SphereC3<R>::Point_3 &p) const
 {
@@ -263,7 +261,7 @@ has_on_unbounded_side(const typename SphereC3<R>::Point_3 &p) const
 
 template < class R >
 inline
-bool
+typename R::Bool_type
 SphereC3<R>::
 is_degenerate() const
 {

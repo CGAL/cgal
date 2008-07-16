@@ -89,11 +89,11 @@ public:
     return base.cartesian_end(); 
   }
 
-  bool operator==(const PointC2 &p) const
+  typename R_::Bool_type operator==(const PointC2 &p) const
   {
       return base == p.base;
   }
-  bool operator!=(const PointC2 &p) const
+  typename R_::Bool_type operator!=(const PointC2 &p) const
   {
       return !(*this == p);
   }
