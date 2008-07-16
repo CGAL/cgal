@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 
+#include "Polyhedron_type.h"
 #include <CGAL/Subdivision_method_3.h>
 
 void MainWindow::on_actionLoop_triggered()
