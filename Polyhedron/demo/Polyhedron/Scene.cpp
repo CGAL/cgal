@@ -84,6 +84,7 @@ Scene::open(QString filename)
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
+  cerr << " Ok.\n";
   return polyhedra.size() - 1;
 }
 
