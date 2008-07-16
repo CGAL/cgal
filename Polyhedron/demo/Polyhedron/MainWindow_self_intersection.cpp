@@ -8,7 +8,7 @@
 #include <CGAL/self_intersect.h>
 #include <CGAL/Make_triangle_soup.h>
 
-void MainWindow::on_actionSelf_intersection_triggered()
+void MainWindow::on_actionSelfIntersection_triggered()
 {
 	if(onePolygonIsSelected())
 	{

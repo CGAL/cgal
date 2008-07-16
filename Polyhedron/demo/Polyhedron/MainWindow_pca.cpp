@@ -1,15 +1,11 @@
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Make_quad_soup.h> // for plane fitting
 #include <CGAL/Make_bar.h>  // for line fitting
-
-// for Visual C++ (which defines min/max macros)
-#undef min 
-#undef max 
-
 
 void MainWindow::on_actionFitPlane_triggered()
 {
@@ -47,8 +43,8 @@ void MainWindow::on_actionFitPlane_triggered()
 		Iso_cuboid bbox = CGAL::bounding_box(pMesh->points_begin(),pMesh->points_end());
 
 		// compute scale for rendering using diagonal of bbox
-		Point cmin = bbox.min();
-		Point cmax = bbox.max();
+		Point cmin = (bbox.min)();
+		Point cmax = (bbox.max)();
 		FT diag = std::sqrt(CGAL::squared_distance(cmin,cmax));
 		Vector u1 = plane.base1();
 		u1 = u1 / std::sqrt(u1*u1);

@@ -8,7 +8,9 @@
 class QDragEnterEvent;
 class QDropEvent;
 class Scene;
-struct Polyhedron;
+
+#include "Polyhedron_type_fwd.h"
+// #include "Scene.h"
 
 class MainWindow : 
   public CGAL::Qt::DemosMainWindow,
@@ -17,10 +19,6 @@ class MainWindow :
   Q_OBJECT
 public:
   MainWindow(QWidget* parent = 0);
-
-enum  {	BOOLEAN_UNION,
-	BOOLEAN_INTERSECTION,
-	BOOLEAN_DIFFERENCE};
 
 public slots:
   void updateViewerBBox();
@@ -43,7 +41,7 @@ protected slots:
 
   // save
   // TODO: save all, save current (do we store the current file name?)
-  void on_actionSave_as_triggered(); // save selected polyhedron as...
+  void on_actionSaveAs_triggered(); // save selected polyhedron as...
 
   // merge (TODO)
 
@@ -66,20 +64,23 @@ protected slots:
   void on_actionIntersection_triggered();
   void on_actionDifference_triggered();
 
-  // curvature estimation
+  // curvature estimation, in MainWindow_curvature_estimation.cpp
   void on_actionEstimateCurvature_triggered();
 
-  // PCA
+  // PCA, in MainWindow_pca.cpp
   void on_actionFitPlane_triggered();
   void on_actionFitLine_triggered();
 
-  // self intersection
-  void on_actionSelf_intersection_triggered();
+  // self intersection, in MainWindow_self_intersection.cpp
+  void on_actionSelfIntersection_triggered();
 
 protected:
-  void boolean_operation(const int operation);
+  enum  Boolean_operation { BOOLEAN_UNION,
+                            BOOLEAN_INTERSECTION,
+                            BOOLEAN_DIFFERENCE };
+  // define in MainWindow_boolean_operations.cpp
+  void boolean_operation(const Boolean_operation operation);
 
-protected:
   void dragEnterEvent(QDragEnterEvent *event);
   void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);

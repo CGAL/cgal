@@ -24,11 +24,8 @@ int main(int argc, char **argv)
   return app.exec();
 }
 
-#include "MainWindow.cpp"
-#include "Scene.cpp"
 #include "MainWindow_curvature_estimation.cpp"
 #include "MainWindow_subdivision_methods.cpp"
-#include "MainWindow_boolean_operations.cpp"
 #include "MainWindow_self_intersection.cpp"
 #include "MainWindow_convex_hull.cpp"
 #include "MainWindow_simplify.cpp"

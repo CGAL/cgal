@@ -279,7 +279,7 @@ void MainWindow::on_actionLoadPolyhedron_triggered()
   }
 }
 
-void MainWindow::on_actionSave_as_triggered()
+void MainWindow::on_actionSaveAs_triggered()
 {
   if(!onePolygonIsSelected())
 	  return;

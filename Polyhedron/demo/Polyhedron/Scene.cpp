@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <iostream>
 #include <fstream>
@@ -13,8 +12,9 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QColorDialog>
+#include <QApplication>
 
-#include <CGAL/gl_render.h>
+#include "Scene_rendering.h"
 
 namespace {
   void CGALglcolor(QColor c)
@@ -39,7 +39,7 @@ Scene::~Scene()
         poly_it = polyhedra.begin(),
         poly_end = polyhedra.end();
       poly_it != poly_end; ++poly_it) {
-    delete poly_it->polyhedron_ptr;
+    this->destroy(poly_it->polyhedron_ptr);
   }
   polyhedra.clear();
 }
@@ -64,9 +64,9 @@ Scene::open(QString filename)
     return -1;
   }
 
-	// allocate new polyhedron
-  Polyhedron* poly = new Polyhedron;
-  in >> *poly;
+  // allocate new polyhedron
+  Polyhedron* poly = this->new_polyhedron();
+  this->load_polyhedron(poly, in);
   if(!in)
   {
     QMessageBox::critical(qobject_cast<QWidget*>(QObject::parent()),
@@ -74,14 +74,13 @@ Scene::open(QString filename)
                           tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
 		cerr << QString("\n");
-		delete poly;
+		destroy(poly);
     return -1;
   }
 
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
-	cerr << QString("ok (%1 vertices)\n").arg(poly->size_of_vertices());
   return polyhedra.size() - 1;
 }
 
@@ -109,7 +108,7 @@ bool Scene::save(int index,
     return false;
   }
 
-  out << *poly;
+  this->save_polyhedron(poly, out);
   cerr << QString("ok\n");
 
   QApplication::restoreOverrideCursor();
@@ -140,7 +139,7 @@ void Scene::addPolyhedron(Polyhedron* p,
 int
 Scene::erase(int polyhedron_index)
 {
-  delete polyhedra[polyhedron_index].polyhedron_ptr;
+  this->destroy(polyhedra[polyhedron_index].polyhedron_ptr);
   polyhedra.removeAt(polyhedron_index--);
 
   selected_item = -1;
@@ -158,7 +157,7 @@ int
 Scene::duplicate(int polyhedron_index)
 {
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-  Polyhedron* poly = new Polyhedron(*entry.polyhedron_ptr);
+  Polyhedron* poly = this->copy_polyhedron(entry.polyhedron_ptr);
 
   addPolyhedron(poly,
                 tr("%1 (copy)").arg(entry.name),
@@ -166,34 +165,6 @@ Scene::duplicate(int polyhedron_index)
                 entry.activated);
 
   return polyhedra.size() - 1;
-}
-
-CGAL::Bbox_3 
-Scene::bbox()
-{
-  if(polyhedra.empty()) {
-    return CGAL::Bbox_3(0.0, 0.0, 0.0, 
-			                  1.0, 1.0, 1.0);
-  }
-  else
-  {
-    Point p = polyhedra.begin()->polyhedron_ptr->vertices_begin()->point();
-    CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    for(Polyhedra::iterator 
-          poly_it = polyhedra.begin(),
-          poly_end = polyhedra.end();
-        poly_it != poly_end; ++poly_it)
-		{
-      for(Polyhedron::Vertex_iterator
-            v = poly_it->polyhedron_ptr->vertices_begin(),
-            v_end = poly_it->polyhedron_ptr->vertices_end();
-          v != v_end; ++v)
-      {
-        bbox = bbox + v->point().bbox();
-      }
-    }
-    return bbox;
-  }
 }
 
 void 
@@ -213,7 +184,7 @@ Scene::draw()
         else
           CGALglcolor(entry.color);
         
-				gl_render_facets(*poly);
+	gl_render_facets(poly);
       }
 
       if(index == selected_item)
@@ -223,7 +194,7 @@ Scene::draw()
 
 			// superimpose edges
       ::glDisable(GL_LIGHTING);
-      gl_render_edges(*poly);
+      gl_render_edges(poly);
     }
   }
 }
@@ -421,6 +392,14 @@ Scene::RenderingMode Scene::polyhedronRenderingMode(int index)
     return RenderingMode();
   else 
     return polyhedra[index].rendering_mode;
+}
+
+int Scene::selectionAindex() const {
+  return item_A;
+}
+
+int Scene::selectionBindex() const {
+  return item_B;
 }
 
 QItemSelection Scene::createSelection(int i)

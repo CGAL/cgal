@@ -1,7 +1,9 @@
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Make_quad_soup.h>
+#include <CGAL/compute_normal.h>
 
 void MainWindow::on_actionEstimateCurvature_triggered()
 {

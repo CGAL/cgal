@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>24</y>
+     <y>29</y>
      <width>978</width>
-     <height>548</height>
+     <height>540</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -37,9 +37,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>22</y>
+         <y>23</y>
          <width>354</width>
-         <height>508</height>
+         <height>499</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -122,7 +122,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>24</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -131,11 +131,11 @@
     </property>
     <addaction name="actionLoadPolyhedron" />
     <addaction name="actionErasePolyhedron" />
-    <addaction name="actionErase_all" />
+    <addaction name="actionEraseAll" />
     <addaction name="actionDuplicatePolyhedron" />
     <addaction name="separator" />
-    <addaction name="actionMerge_all" />
-    <addaction name="actionSave_as" />
+    <addaction name="actionMergeAll" />
+    <addaction name="actionSaveAs" />
     <addaction name="separator" />
     <addaction name="actionQuit" />
    </widget>
@@ -156,7 +156,7 @@
      <addaction name="actionFitPlane" />
      <addaction name="actionFitLine" />
     </widget>
-    <addaction name="actionSelf_intersection" />
+    <addaction name="actionSelfIntersection" />
     <addaction name="menu_Principale_components_analysis" />
     <addaction name="actionEstimateCurvature" />
    </widget>
@@ -210,9 +210,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>572</y>
+     <y>569</y>
      <width>978</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -312,7 +312,7 @@
     <bool>true</bool>
    </property>
    <property name="text" >
-    <string>Antialiasing</string>
+    <string>&amp;Antialiasing</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+A</string>
@@ -325,72 +325,67 @@
   </action>
   <action name="actionConvexHull" >
    <property name="text" >
-    <string>Convex hull</string>
+    <string>&amp;Convex hull</string>
    </property>
   </action>
-  <action name="actionErase_all" >
+  <action name="actionEraseAll" >
    <property name="text" >
-    <string>Erase all</string>
+    <string>&amp;Erase all</string>
    </property>
   </action>
   <action name="actionOptions" >
    <property name="text" >
-    <string>Options...</string>
+    <string>&amp;Options...</string>
    </property>
   </action>
   <action name="actionLoop" >
    <property name="text" >
-    <string>Loop</string>
+    <string>&amp;Loop</string>
    </property>
   </action>
-  <action name="actionSave_as" >
+  <action name="actionSaveAs" >
    <property name="text" >
-    <string>Save as...</string>
+    <string>Save &amp;as...</string>
    </property>
   </action>
   <action name="actionSave" >
    <property name="text" >
-    <string>Save</string>
+    <string>&amp;Save</string>
    </property>
   </action>
-  <action name="actionSave_all" >
+  <action name="actionSaveAll" >
    <property name="text" >
-    <string>Save all</string>
+    <string>Save a&amp;ll</string>
    </property>
   </action>
-  <action name="actionMerge_all" >
+  <action name="actionMergeAll" >
    <property name="text" >
-    <string>Merge all</string>
+    <string>Mer&amp;ge all</string>
    </property>
   </action>
   <action name="actionMerge" >
    <property name="text" >
-    <string>Merge</string>
+    <string>&amp;Merge</string>
    </property>
   </action>
-  <action name="actionSelf_intersection" >
+  <action name="actionSelfIntersection" >
    <property name="text" >
-    <string>Self-intersection</string>
+    <string>Self-&amp;intersection</string>
    </property>
   </action>
-  <action name="actionSelections" >
+  <action name="actionSelectAll" >
    <property name="text" >
-    <string>Selections</string>
+    <string>Select &amp;all</string>
    </property>
   </action>
-  <action name="actionSelect_all" >
+  <action name="actionSelectNone" >
    <property name="text" >
-    <string>Select all</string>
+    <string>Select &amp;none</string>
    </property>
   </action>
-  <action name="actionSelect_none" >
+  <action name="actionSelectInvert" >
    <property name="text" >
-    <string>Select none</string>
-   </property>
-  </action>
-  <action name="actionSelect_invert" >
-   <property name="text" >
-    <string>Invert selection</string>
+    <string>&amp;Invert selection</string>
    </property>
   </action>
  </widget>

@@ -1,8 +1,17 @@
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_polyhedron_3.h> 
+#include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <iostream>
+#include <fstream>
+
+// Boolean operations work only with exact kernel
+typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
+typedef CGAL::Polyhedron_3<Exact_Kernel> Exact_polyhedron;
 
 // quick hacks to convert polyhedra from exact to inexact and vice-versa
 
@@ -39,22 +48,18 @@ void MainWindow::on_actionDifference_triggered()
 	boolean_operation(BOOLEAN_DIFFERENCE);
 }
 
-void MainWindow::boolean_operation(const int operation)
+void MainWindow::boolean_operation(const Boolean_operation operation)
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	// PA: to be done by LR?
-	//int indexA = scene->getPolygonAIndex();
-	//int indexB = scene->getPolygonBIndex();
-
-	// to remove
-	int indexA = 0;
-	int indexB = 1;
+        const int indexA = scene->selectionAindex();
+        const int indexB = scene->selectionBindex();
 
 	Polyhedron* polyA = scene->polyhedron(indexA);
 	Polyhedron* polyB = scene->polyhedron(indexB);
 	if(!polyA) return;
 	if(!polyB) return;
+        if(polyA == polyB) return;
 
 	typedef CGAL::Nef_polyhedron_3<Exact_Kernel> Nef_polyhedron; 
 

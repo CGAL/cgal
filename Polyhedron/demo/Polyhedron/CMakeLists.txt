@@ -9,7 +9,7 @@ endif(COMMAND cmake_policy)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-foreach(INCDIR ./include ../../../GraphicsView/include)
+foreach(INCDIR ./include ../../../GraphicsView/include ../../../Nef_3/include)
   if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
     include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR})
   endif()
@@ -52,7 +52,19 @@ add_file_dependencies( Scene_moc.cpp Scene.h )
 
 qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
-add_executable  ( Polyhedron_3 MainWindow_moc.cpp Scene_moc.cpp Viewer_moc.cpp main.cpp Viewer.cpp ${UI_FILES} ${RESOURCE_FILES} )
+add_executable  ( Polyhedron_3 MainWindow.cpp
+                               MainWindow_boolean_operations.cpp
+                               main.cpp
+                               Viewer.cpp
+                               Scene.cpp
+                               Scene_polyhedron_operations.cpp
+                               Scene_rendering.cpp
+
+                               MainWindow_moc.cpp
+                               Scene_moc.cpp
+                               Viewer_moc.cpp
+
+                               ${UI_FILES} ${RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )

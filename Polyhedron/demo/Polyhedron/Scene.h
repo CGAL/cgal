@@ -10,31 +10,10 @@
 #include <QPixmap>
 #include <QItemSelection>
 
-// CGAL
-#include <CGAL/basic.h>
+#include "Polyhedron_type_fwd.h"
+#include <CGAL/Bbox_3.h>
 
-// kernel
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-// surface mesh
-#include <CGAL/Polyhedron_3.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT FT;
-typedef Kernel::Line_3 Line;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Plane_3 Plane;
-typedef Kernel::Sphere_3 Sphere;
-typedef Kernel::Vector_3 Vector;
-typedef Kernel::Triangle_3 Triangle;
-typedef Kernel::Iso_cuboid_3 Iso_cuboid;
-
-// Boolean operations work only with exact kernel
-typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
-typedef CGAL::Polyhedron_3<Exact_Kernel> Exact_polyhedron;
-
-struct Polyhedron : public CGAL::Polyhedron_3<Kernel> {};
+#include <iostream>
 
 class QEvent;
 class QMouseEvent;
@@ -85,12 +64,16 @@ public:
   QString polyhedronName(int);
   bool isPolyhedronActivated(int);
   RenderingMode polyhedronRenderingMode(int);
+  int selectionAindex() const;
+  int selectionBindex() const;
 
   // for backward compatibility
   Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
 
   // draw() is called by Viewer::draw()
   void draw();
+
+  // defined in Scene_polyhedron_operations.cpp
   CGAL::Bbox_3 bbox();
 
   // QAbstractItemModel functions
@@ -114,6 +97,19 @@ public slots:
 signals:
   void updated_bbox();
   void updated();
+
+private:
+  // functions that need to know the type Polyhedron
+  // defined in Scene_polyhedron_operations.cpp
+  Polyhedron* new_polyhedron();
+  Polyhedron* copy_polyhedron(Polyhedron* poly);
+  void destroy(Polyhedron*);
+  bool load_polyhedron(Polyhedron* poly, std::istream& in); // return true
+                                                            // iif the
+                                                            // loading is ok.
+  bool save_polyhedron(Polyhedron* poly, std::ostream& out); // return true
+                                                             // iif the
+                                                             // save is ok.
 
 private:
   static const QColor defaultColor; // defined in Scene.cpp

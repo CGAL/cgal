@@ -17,14 +17,13 @@ void MainWindow::on_actionSimplify_triggered()
 		Polyhedron* pMesh = scene->polyhedron(index);
 
 		// simplify
-		unsigned int nb_edges = 1000; // TODO: should be an option 
+		const unsigned int nb_edges = 1000; // TODO: should be an option 
 		namespace SMS = CGAL::Surface_mesh_simplification;
 
-		// DOES NOT COMPILE
-		//SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
-		//SMS::edge_collapse( *pMesh, stop,
-		//                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
-		//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
+		SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
+		SMS::edge_collapse( *pMesh, stop,
+		                    CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
+				                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
 
 		// update scene
 		scene->polyhedronChanged(index);
