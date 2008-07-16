@@ -82,7 +82,6 @@ Scene::open(QString filename)
     return -1;
   }
 
-  cerr << QString("ok\n");
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
@@ -253,6 +252,9 @@ Scene::data(const QModelIndex &index, int role) const
   if (!index.isValid())
     return QVariant();
   
+  if(role == ::Qt::ToolTipRole)
+    return polyhedronToolTip(index.row());
+
   switch(index.column())
   {
   case ColorColumn:
@@ -384,7 +386,7 @@ Scene::setData(const QModelIndex &index,
   return false;
 }
 
-Polyhedron* Scene::polyhedron(int index)
+Polyhedron* Scene::polyhedron(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return 0;
@@ -392,7 +394,7 @@ Polyhedron* Scene::polyhedron(int index)
     return polyhedra[index].polyhedron_ptr;
 }
 
-QString Scene::polyhedronName(int index)
+QString Scene::polyhedronName(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return QString();
@@ -400,7 +402,7 @@ QString Scene::polyhedronName(int index)
     return polyhedra[index].name;
 }
 
-QColor Scene::polyhedronColor(int index)
+QColor Scene::polyhedronColor(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return QColor();
@@ -408,7 +410,7 @@ QColor Scene::polyhedronColor(int index)
     return polyhedra[index].color;
 }
 
-bool Scene::isPolyhedronActivated(int index)
+bool Scene::isPolyhedronActivated(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return false;
@@ -416,7 +418,7 @@ bool Scene::isPolyhedronActivated(int index)
     return polyhedra[index].activated;
 }
 
-Scene::RenderingMode Scene::polyhedronRenderingMode(int index)
+Scene::RenderingMode Scene::polyhedronRenderingMode(int index) const
 {
   if( index < 0 || index >= polyhedra.size() )
     return RenderingMode();

@@ -58,13 +58,14 @@ public:
   int duplicate(int); // Returns the index of the new polyhedra
 
   // accessors
-  Polyhedron* polyhedron(int i);
-  QColor polyhedronColor(int);
-  QString polyhedronName(int);
-  bool isPolyhedronActivated(int);
-  RenderingMode polyhedronRenderingMode(int);
+  Polyhedron* polyhedron(int i) const;
+  QColor polyhedronColor(int) const;
+  QString polyhedronName(int) const;
+  bool isPolyhedronActivated(int) const;
+  RenderingMode polyhedronRenderingMode(int) const;
   int selectionAindex() const;
   int selectionBindex() const;
+
 
   // for backward compatibility
   Polyhedron* getPolyhedron(int i) { return polyhedron(i); }
@@ -104,6 +105,7 @@ signals:
 private:
   // functions that need to know the type Polyhedron
   // defined in Scene_polyhedron_operations.cpp
+  QString polyhedronToolTip(int index) const;
   Polyhedron* new_polyhedron();
   Polyhedron* copy_polyhedron(Polyhedron* poly);
   void destroy(Polyhedron*);

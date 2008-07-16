@@ -29,8 +29,7 @@ bool Scene::save_polyhedron(Polyhedron* poly, std::ostream& out)
   return out;
 }
 
-Scene::Bbox
-Scene::bbox()
+Scene::Bbox Scene::bbox()
 {
   if(polyhedra.empty()) {
     Bbox bbox;
@@ -63,4 +62,22 @@ Scene::bbox()
     result.zmax = bbox.zmax();
     return result;
   }
+}
+
+QString Scene::polyhedronToolTip(int index) const
+{
+  Polyhedron* poly = polyhedron(index);
+  if(!poly)
+    return QString();
+
+  return tr("<p><b>%1</b> (mode: %5, color: %6)</p>"
+            "<p>Number of vertices: %2<br />"
+            "Number of edges: %3<br />"
+            "Number of facets: %4</p>")
+    .arg(polyhedronName(index))
+    .arg(poly->size_of_vertices())
+    .arg(poly->size_of_halfedges()/2)
+    .arg(poly->size_of_facets())
+    .arg(polyhedra[index].rendering_mode == Wireframe ? "wireframe" : "fill")
+    .arg(polyhedra[index].color.name());
 }
