@@ -105,10 +105,12 @@ bool Scene::save(int index,
                           tr("Cannot open file"),
                           tr("File %1 is not a writable file.").arg(filename));
     QApplication::restoreOverrideCursor();
+	  cerr << QString("\n");
     return false;
   }
 
   out << *poly;
+  cerr << QString("ok\n");
 
   QApplication::restoreOverrideCursor();
 
@@ -158,8 +160,6 @@ Scene::duplicate(int polyhedron_index)
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
   Polyhedron* poly = new Polyhedron(*entry.polyhedron_ptr);
 
-  //poly->compute_normals();
-
   addPolyhedron(poly,
                 tr("%1 (copy)").arg(entry.name),
                 entry.color,
@@ -182,7 +182,8 @@ Scene::bbox()
     for(Polyhedra::iterator 
           poly_it = polyhedra.begin(),
           poly_end = polyhedra.end();
-        poly_it != poly_end; ++poly_it) {
+        poly_it != poly_end; ++poly_it)
+		{
       for(Polyhedron::Vertex_iterator
             v = poly_it->polyhedron_ptr->vertices_begin(),
             v_end = poly_it->polyhedron_ptr->vertices_end();
@@ -201,25 +202,26 @@ Scene::draw()
   for(int index = 0; index < polyhedra.size(); ++index)
   {
     Polyhedron_entry& entry = polyhedra[index];
-    if(entry.activated) {
+    if(entry.activated)
+		{
       Polyhedron* poly = entry.polyhedron_ptr;
-      if(entry.rendering_mode == Fill) {
+      if(entry.rendering_mode == Fill)
+			{
         ::glEnable(GL_LIGHTING);
-        if(index == selected_item) {
+        if(index == selected_item)
           CGALglcolor(entry.color.lighter(120));
-        }
-        else {
+        else
           CGALglcolor(entry.color);
-        }
         
-	gl_render_facets(*poly);
+				gl_render_facets(*poly);
       }
-      if(index == selected_item) {
+
+      if(index == selected_item)
         CGALglcolor(entry.color.lighter(70));
-      }
-      else {
+      else
         CGALglcolor(entry.color.lighter(50));
-      }
+
+			// superimpose edges
       ::glDisable(GL_LIGHTING);
       gl_render_edges(*poly);
     }
