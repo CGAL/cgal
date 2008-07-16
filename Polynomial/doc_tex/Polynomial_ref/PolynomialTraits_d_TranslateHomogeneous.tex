@@ -17,12 +17,12 @@ This \ccc{AdaptableFunctor} translate a
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
                                  PolynomialTraits_d::Coefficient  a,
                                  PolynomialTraits_d::Coefficient  b);}
-         { return $b^{degree}\cdot p(x+a)/b$, with respect to the outermost variable. }
+         { return $b^{degree}\cdot p(x+a/b)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
                                  PolynomialTraits_d::Coefficient a,
                                  PolynomialTraits_d::Coefficient  b,
                                  int i);}
-         { return $b^{degree}\cdot p(x+a)/b$, with respect to variable $x_i$. 
+         { return $b^{degree}\cdot p(x+a/b)$, with respect to variable $x_i$. 
            \ccPrecond $0 \leq i  < d$ 
          }
 
