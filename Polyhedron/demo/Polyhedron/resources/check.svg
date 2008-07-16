@@ -17,7 +17,7 @@
    sodipodi:docname="check.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.0"
-   inkscape:export-filename="/home/lrineau/CGAL/Packages/trunk/Polyhedron/demo/Polyhedron/check.png"
+   inkscape:export-filename="/home/lrineau/CGAL/Packages/trunk/Polyhedron/demo/Polyhedron/resources/check-on.png"
    inkscape:export-xdpi="180"
    inkscape:export-ydpi="180">
   <defs
@@ -68,16 +68,16 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="8.003835"
-     inkscape:cy="8.019625"
+     inkscape:zoom="36.9375"
+     inkscape:cx="8"
+     inkscape:cy="8"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="959"
      inkscape:window-height="803"
-     inkscape:window-x="953"
-     inkscape:window-y="0" />
+     inkscape:window-x="0"
+     inkscape:window-y="313" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -99,10 +99,5 @@
        d="M 369.84713,534.37518 C 370.52057,533.70176 371.18453,533.045 371.85797,532.37158 C 372.5314,532.98187 373.20483,533.59216 373.87827,534.20245 C 376.52992,531.5929 379.18157,528.98334 381.83322,526.37378 C 382.54875,527.08931 383.26427,527.80485 383.9798,528.52039 C 380.7368,531.83344 377.49379,535.14648 374.25079,538.45953 C 372.78606,537.09253 371.31185,535.74218 369.84713,534.37518 z"
        id="path2422"
        sodipodi:nodetypes="ccccccc" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#path2422"
-       id="use3230" />
   </g>
 </svg>
