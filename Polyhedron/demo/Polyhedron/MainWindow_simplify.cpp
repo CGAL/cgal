@@ -21,7 +21,7 @@ void MainWindow::on_actionSimplify_triggered()
 		namespace SMS = CGAL::Surface_mesh_simplification;
 
 		// DOES NOT COMPILE
-		// SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
+		//SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
 		//SMS::edge_collapse( *pMesh, stop,
 		//                     CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
 		//		                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
