@@ -81,7 +81,7 @@ Scene::open(QString filename)
   addPolyhedron(poly, fileinfo.baseName());
   QApplication::restoreOverrideCursor();
 
-	cerr << QString("ok (%1 vertices)\n").arg(poly->size_of_vertices());
+	cerr << QString("ok (%1 vertices, %2 faces)\n").arg(poly->size_of_vertices(), poly->size_of_facets());
   return polyhedra.size() - 1;
 }
 

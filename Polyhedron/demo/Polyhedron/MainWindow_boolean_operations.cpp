@@ -64,10 +64,17 @@ void MainWindow::boolean_operation(const int operation)
 	Exact_polyhedron exact_polyB; 
 	to_exact(*polyB,exact_polyB);
 
+	// convert to nef polyhedra
+	QTime time;
+	time.start();
+	std::cout << "Convert to nef polyhedra...";
 	Nef_polyhedron n1(exact_polyA); 
 	Nef_polyhedron n2(exact_polyB); 
+	std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
+	// perform Boolean operation
 	std::cout << "Boolean operation...";
+	time.start();
 	switch(operation)
 	{
 		case BOOLEAN_UNION:
@@ -79,7 +86,7 @@ void MainWindow::boolean_operation(const int operation)
 		case BOOLEAN_DIFFERENCE:
 			n1 -= n2;
 	}
-	std::cout << "ok" << std::endl;
+	std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
 	// save the exact resulting mesh
 	Exact_polyhedron exact_result;
