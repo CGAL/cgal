@@ -13,9 +13,6 @@
            #-DCGAL_PROFILE \
            #-g
 
-CGAL_MAKEFILE =/proj/geometrica/home/CGAL/CGAL-I/make/makefile_i686_Linux-2.6_g++-4.0.2
-#makefile_i686_Linux-2.6_g++-3.4.4
-
 include $(CGAL_MAKEFILE)
 
 
@@ -64,6 +61,6 @@ clean: \
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT):
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
