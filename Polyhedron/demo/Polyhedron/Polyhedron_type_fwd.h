@@ -5,12 +5,12 @@
 
 struct Kernel;
 namespace CGAL {
-  struct Polyhedron_items_3;
+  class Polyhedron_items_3;
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
   template < class T, class I, class A>
 #endif
-  struct HalfedgeDS_default;
+  class HalfedgeDS_default;
 
   template < class PolyhedronTraits_3,
              class PolyhedronItems_3,
