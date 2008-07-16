@@ -7,3 +7,5 @@
 
 - simplification -> pierre
 - Boolean operations -> laurent for selecting A and B, pierre for nef_3
+
+- use the signal QMenu::aboutToShow() to enable/disable some menu entries.
