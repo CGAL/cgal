@@ -19,6 +19,13 @@ int main(int argc, char **argv)
   mainWindow.show();
   QStringList args = app.arguments();
   args.removeAt(0);
+
+  if(args[0] == "--use-meta")
+  {
+    mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
+    args.removeAt(0);
+  }
+
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);
   }

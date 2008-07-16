@@ -29,6 +29,8 @@ public slots:
 
   void selectPolyhedron(int i);
 
+  void setAddKeyFrameKeyboardModifiers(Qt::KeyboardModifiers);
+
 protected slots:
   void selectionChanged();
   void openRecentFile();

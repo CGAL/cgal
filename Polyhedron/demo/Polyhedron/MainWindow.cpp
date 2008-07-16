@@ -354,3 +354,8 @@ void MainWindow::on_actionSetPolyhedronB_triggered()
   int i = getSelectedPolygonIndex();
   scene->setPolyhedronB(i);
 }
+
+void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
+{
+  viewer->setAddKeyFrameKeyboardModifiers(m);
+}
