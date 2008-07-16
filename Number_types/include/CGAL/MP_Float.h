@@ -415,7 +415,7 @@ template <> class Algebraic_structure_traits< MP_Float >
                 const Type& y ) const {
             std::pair<MP_Float, MP_Float> res = CGALi::division(x, y);
             CGAL_assertion_msg(res.second == 0,
-                    "exact_division() called with operands which do not divide");
+                "exact_division() called with operands which do not divide");
             return res.first;
         }
     };
@@ -449,7 +449,24 @@ template <> class Algebraic_structure_traits< MP_Float >
         }
     };
 
-    typedef INTERN_AST::Mod_per_operator< Type > Mod;
+  typedef INTERN_AST::Mod_per_operator< Type > Mod;
+// Default implementation of Divides functor for unique factorization domains
+  // x divides y if gcd(y,x) equals x up to inverses 
+  class Divides 
+    : public Binary_function<Type,Type,bool>{ 
+  public:
+    bool operator()( const Type& x,  const Type& y) const {  
+      return CGALi::division(y,x).second == 0 ;
+    }
+    // second operator computing q = x/y 
+    bool operator()( const Type& x,  const Type& y, Type& q) const {    
+      std::pair<Type,Type> qr = CGALi::division(y,x);
+      q=qr.first;
+      return qr.second == 0;
+      
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type , bool)
+  };
 };
 
 
@@ -626,6 +643,13 @@ division(const MP_Float & n, const MP_Float & d)
   return std::make_pair(res, MP_Float(0));
 }
 
+inline // Move it to libCGAL once it's stable.
+bool
+divides(const MP_Float & d, const MP_Float & n)
+{
+  return CGALi::division(n, d).second == 0;
+}
+
 } // namespace CGALi
 
 inline
@@ -635,12 +659,7 @@ is_integer(const MP_Float &m)
   return m.is_integer();
 }
 
-inline // Move it to libCGAL once it's stable.
-bool
-divides(const MP_Float & n, const MP_Float & d)
-{
-  return CGALi::division(n, d).second == 0;
-}
+
 
 inline
 MP_Float
@@ -688,7 +707,7 @@ namespace INTERN_MP_FLOAT {
     while (true) {
       x = x % y;
       if (x == 0) {
-        CGAL_postcondition(divides(a, y) && divides(b, y));
+        CGAL_postcondition(CGALi::divides(y, a) && CGALi::divides(y, b));
         y.gcd_normalize();
         return y;
       }

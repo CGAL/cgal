@@ -94,12 +94,12 @@ void test_integral_division()
     //std::cout << "n = " << n << std::endl;
     assert( integral_division(nd, n) == d);
     assert( integral_division(nd, d) == n);
-    assert( CGAL::divides(nd, n) );
-    assert( CGAL::divides(nd, d) );
+    assert( CGAL::divides(n,nd) );
+    assert( CGAL::divides(d,nd) );
   }
   
-  assert( ! CGAL::divides(MPF(1), MPF(3)) );
-  assert( ! CGAL::divides(MPF(2), MPF(7)) );
+  assert( ! CGAL::divides(MPF(3), MPF(1)) );
+  assert( ! CGAL::divides(MPF(7), MPF(2)) );
   // test if we're lucky :)
   assert( ! CGAL::divides(MPF(non_zero_double()), MPF(non_zero_double())) );
 }

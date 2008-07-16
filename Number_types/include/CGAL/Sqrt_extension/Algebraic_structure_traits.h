@@ -55,22 +55,83 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
 template< class Type >
 class Sqrt_extension_algebraic_structure_traits_base< Type,
                                                     CGAL::Integral_domain_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Type,
+    : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
-  public:
+public:
     typedef CGAL::Integral_domain_tag Algebraic_category;
-
+    
     class Integral_division
-      : public Binary_function< Type, Type,
-                                Type > {
-      public:
-        Type operator()( const Type& x,
-                                        const Type& y ) const {
-          return x/y;
-        }
-
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
+      : public Binary_function< Type, Type, Type > {
+    public:
+      Type operator()( const Type& x,const Type& y ) const {
+        return x/y;
+      }
+      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
+    
+private:
+  typedef typename Type::NT COEFF;
+  typedef typename Type::ROOT ROOT;
+  typedef typename CGAL::Coercion_traits< ROOT, COEFF >::Cast Root_nt_cast;
+  typedef CGAL::Algebraic_structure_traits<COEFF> AST_COEFF;
+  typedef typename AST_COEFF::Divides Divides_coeff;   
+public:
+  class Divides 
+    : public Binary_function<Type,Type,typename Divides_coeff::result_type>{ 
+    typedef typename Divides_coeff::result_type BOOL;
+  public:
+    BOOL operator()( const Type& x, const Type& y) const {  
+      Type q;
+      return (*this)(x,y,q);
+    }
+    
+    BOOL operator()( const Type& x, const Type& y, Type& q) const {       
+      Divides_coeff divides;
+        
+//            std::cout<<"integral domain for sqrt"<<std::endl;
+      BOOL result;
+      COEFF q1, q2;
+      if(x.is_extended()){
+//                std::cout<<" y is extended "<<std::endl;
+        COEFF denom = x.a0()*x.a0() - x.a1()*x.a1() * Root_nt_cast()(x.root());
+        if ( denom == COEFF(0) ) {   
+          // this is for the rare case in which root is a square
+          // and the (pseudo) algebraic conjugate of p becomes zero 
+          result = divides(COEFF(2)*x.a0(),y.a0(),q1);
+          if(!result) return false;
+          result = divides(COEFF(2)*x.a1(),y.a1(),q2);
+          if(!result) return false;
+          q = Type(q1 + q2); 
+        }else{
+          q = y;
+          q *= Type(x.a0(),-x.a1(),x.root());
+          result = divides(denom,q.a0(),q1);
+          if(!result) return false;
+          result = divides(denom,q.a1(),q2);
+          if(!result) return false;
+          q =  Type( q1, q2, y.root());
+        }
+      }else{
+//                std::cout<<" x is not extended "<<std::endl;
+        if(y.is_extended()){
+          result = divides(x.a0(),y.a0(),q1);
+          if(!result) return false;
+          result = divides(x.a0(),y.a1(),q2);  
+          if(!result) return false;
+          q = Type(q1, q2, y.root());
+        }else{
+          result = divides(x.a0(),y.a0(),q1);
+          if(!result) return false;
+          q = q1;
+        }
+      }
+      if(q*x==y)
+        return true; 
+      else
+        return false;
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,BOOL)
+  }; 
 };
 
 template< class Type >

@@ -48,7 +48,7 @@ CGAL_BEGIN_NAMESPACE
 
 template<>
 class Algebraic_structure_traits< mpz_class >
-    :public Algebraic_structure_traits_base<  mpz_class , Null_tag > {
+  :public Algebraic_structure_traits_base<  mpz_class , Euclidean_ring_tag > {
 public:
     typedef mpz_class           Type;
     typedef Euclidean_ring_tag  Algebraic_category;

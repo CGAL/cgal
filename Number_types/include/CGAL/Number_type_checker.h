@@ -524,19 +524,37 @@ public:
 
 // CGAL::Algebraic_structure_traits< >::Integral_division
     class Integral_division
-        : public Binary_function< Type,
-                                  Type,
-                                  Type > {
+        : public Binary_function< Type, Type, Type > {
     public:
-        Type operator()(
-                const Type& a,
-                const Type& b) const {
+        Type operator()( const Type& a, const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Integral_division");
             return Type(
                     typename AST1::Integral_division()(a.n1(),b.n1()),
                     typename AST2::Integral_division()(a.n2(),b.n2()));
         }
-    };
+    }; 
+  
+  class Divides
+    : public Binary_function< Type, Type, bool > {
+  public:
+    bool operator()( const Type& a, const Type& b) const {
+      CGAL_NT_CHECK_DEBUG("AST::Divides");
+      bool result =  typename AST1::Divides()(a.n1(),b.n1());
+      CGAL_assertion(result == typename AST2::Divides()(a.n2(),b.n2()));
+      return result;
+    }
+    bool operator()( const Type& a, const Type& b, Type& q) const {
+      CGAL_NT_CHECK_DEBUG("AST::Divides");
+      NT1 q1; 
+      bool result1 =  typename AST1::Divides()(a.n1(),b.n1(),q1);
+      NT2 q2; 
+      bool result2 =  typename AST2::Divides()(a.n2(),b.n2(),q2);
+      q = Type(q1,q2);
+      CGAL_assertion(result1 == result2);
+      return result1;
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,bool)
+  };
 };
 
 
@@ -675,9 +693,8 @@ public:
 
 template < typename NT1, typename NT2, typename Cmp >
 class Algebraic_structure_traits <Number_type_checker<NT1, NT2, Cmp> >
-    :public NTC_INTERN::NTC_AST_base
-      < Number_type_checker< NT1, NT2, Cmp> ,
-        typename Algebraic_structure_traits<NT1>::Algebraic_category >
+  :public NTC_INTERN::NTC_AST_base< Number_type_checker< NT1, NT2, Cmp> ,
+                                 typename Algebraic_structure_traits<NT1>::Algebraic_category >
 {
     typedef Algebraic_structure_traits<NT1> AST1;
 public:

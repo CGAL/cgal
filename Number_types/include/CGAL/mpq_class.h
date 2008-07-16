@@ -47,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 // AST for mpq_class
 template<>
 class Algebraic_structure_traits< mpq_class  >
-  : public Algebraic_structure_traits_base< mpq_class , Null_tag >  {
+  : public Algebraic_structure_traits_base< mpq_class , Field_tag >  {
   public:
     typedef mpq_class           Type;
     typedef Field_tag           Algebraic_category;

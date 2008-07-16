@@ -1,3 +1,8 @@
+16 July 2008 Michael Hemmer
+- Added Divides Functor to Algebraic_structure_traits
+  Added function CGAL::divides(d,n), returns true if 'd' divides 'n' 
+  Had to swap semantic of arguments of this function in MP_float.h  
+
 18 July 2006 Menelaos Karavelas
 - changed "using Nef::isvalid" to "using Nef::is_valid"in forward
   declaration of Nef related polynomials; this should get rid of some
