@@ -75,25 +75,13 @@ private:
     if ( sign_of_Dw == POSITIVE ) {
       if ( R != SMALLER )  return LARGER;
 
-      Uncertain<Sign> s =
-	uncertain_sign_a_plus_b_x_sqrt_c(D1 - D2 + CGAL::square(Dw),
-					 RT(2) * Dw, D1);
-      if ( is_indeterminate(s) ) {
-	return Uncertain<Comparison_result>::indeterminate();
-      }
-
-      return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
+      return uncertain_sign_a_plus_b_x_sqrt_c(D1 - D2 + CGAL::square(Dw),
+					      RT(2) * Dw, D1);
     }
 
     if ( R != LARGER )  return SMALLER;
-    Uncertain<Sign> s =
-      uncertain_sign_a_plus_b_x_sqrt_c(D1 - D2 - CGAL::square(Dw),
-				       RT(2) * Dw, D2);
-    if ( is_indeterminate(s) ) {
-      return Uncertain<Comparison_result>::indeterminate();
-    }
-
-    return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
+    return uncertain_sign_a_plus_b_x_sqrt_c(D1 - D2 - CGAL::square(Dw),
+				            RT(2) * Dw, D2);
   }
 
   Comparison_result
@@ -125,14 +113,7 @@ public:
   operator()(const Site_2& p1, const Site_2& p2,
 	     const Point_2 &p) const
   {
-    Uncertain<Comparison_result> r =
-      compare_distances(p1, p2, p, Method_tag());
-
-    if ( is_indeterminate(r) ) {
-      return Uncertain<Oriented_side>::indeterminate();
-    }
-    if ( r == EQUAL ) { return ON_ORIENTED_BOUNDARY; }
-    return ( r == LARGER ) ? ON_NEGATIVE_SIDE : ON_POSITIVE_SIDE;
+    return - compare_distances(p1, p2, p, Method_tag());
   }
 
 };
