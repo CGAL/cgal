@@ -29,12 +29,14 @@ bool Scene::save_polyhedron(Polyhedron* poly, std::ostream& out)
   return out;
 }
 
-CGAL::Bbox_3 
+Scene::Bbox
 Scene::bbox()
 {
   if(polyhedra.empty()) {
-    return CGAL::Bbox_3(0.0, 0.0, 0.0, 
-			                  1.0, 1.0, 1.0);
+    Bbox bbox;
+    bbox.xmin = bbox.ymin = bbox.zmin = 0.0;
+    bbox.xmax = bbox.ymax = bbox.zmax = 1.0;
+    return bbox;
   }
   else
   {
@@ -52,6 +54,13 @@ Scene::bbox()
         bbox = bbox + v->point().bbox();
       }
     }
-    return bbox;
+    Bbox result;
+    result.xmin = bbox.xmin();
+    result.ymin = bbox.ymin();
+    result.zmin = bbox.zmin();
+    result.xmax = bbox.xmax();
+    result.ymax = bbox.ymax();
+    result.zmax = bbox.zmax();
+    return result;
   }
 }

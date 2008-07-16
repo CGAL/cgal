@@ -111,13 +111,13 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::updateViewerBBox()
 {
-  const CGAL::Bbox_3 bbox = scene->bbox();
-  const double xmin = bbox.xmin();
-  const double ymin = bbox.ymin();
-  const double zmin = bbox.zmin();
-  const double xmax = bbox.xmax();
-  const double ymax = bbox.ymax();
-  const double zmax = bbox.zmax();
+  const Scene::Bbox bbox = scene->bbox();
+  const double xmin = bbox.xmin;
+  const double ymin = bbox.ymin;
+  const double zmin = bbox.zmin;
+  const double xmax = bbox.xmax;
+  const double ymax = bbox.ymax;
+  const double zmax = bbox.zmax;
   QTextStream(stderr)
     << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
     .arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);

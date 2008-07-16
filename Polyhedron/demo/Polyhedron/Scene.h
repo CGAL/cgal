@@ -11,7 +11,6 @@
 #include <QItemSelection>
 
 #include "Polyhedron_type_fwd.h"
-#include <CGAL/Bbox_3.h>
 
 #include <iostream>
 
@@ -73,8 +72,12 @@ public:
   // draw() is called by Viewer::draw()
   void draw();
 
+  struct Bbox {
+    double xmin, ymin, zmin;
+    double xmax, ymax, zmax;
+  };
   // defined in Scene_polyhedron_operations.cpp
-  CGAL::Bbox_3 bbox();
+  Bbox bbox();
 
   // QAbstractItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
