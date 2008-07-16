@@ -1,4 +1,4 @@
-// (Refer to file stability.C or stability-exact.C for more information.)
+// (Refer to file stability.cpp or stability-exact.cpp for more information.)
 
 #ifndef MINIBALL_STABILITY
 #define MINIBALL_STABILITY

@@ -4,7 +4,7 @@
 // double arithmetic (although this test doesn't say anything about
 // the quality of the produced result).
 //
-// Note: This program is identical to the benchmark.C program in
+// Note: This program is identical to the benchmark.cpp program in
 // the examples directory, with the only difference that the LP-algorithm
 // is run instead of the default algorithm.  (In particular, the output
 // radii should be the same.)
