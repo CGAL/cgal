@@ -209,6 +209,9 @@ Scene::draw()
 void
 Scene::draw(Polyhedron_entry& entry)
 {
+  gl_render_facets(entry.polyhedron_ptr);
+
+  /*
   if(!entry.display_list_built)
   {
     ::glDeleteLists(entry.display_list,1);
@@ -227,8 +230,8 @@ Scene::draw(Polyhedron_entry& entry)
     entry.display_list_built = true;
   }
 
-//   if(::glIsList(entry.display_list) == GL_TRUE)
-    ::glCallList(entry.display_list);
+  ::glCallList(entry.display_list);
+  */
 }
 
 int 

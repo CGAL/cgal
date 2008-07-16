@@ -3125,6 +3125,8 @@ Polyhedron/demo/Polyhedron/data/knot_2_3.off -text svneol=unset#application/octe
 Polyhedron/demo/Polyhedron/data/lucy-25kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/part5.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/sphere.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
 Polyhedron/demo/Polyhedron/resources/check-off.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/check-off.svg -text

@@ -3,6 +3,15 @@
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
+template <class Face_handle>
+struct Facet_cmp
+{
+	bool operator()(Face_handle a, Face_handle b) const
+	{
+		return &*a < &*b;
+	}
+};
+
 template <class HDS,class Polyhedron,class Kernel>
 class CModifierDual : public CGAL::Modifier_base<HDS>
 {
@@ -21,6 +30,7 @@ private:
 
 	typedef typename CGAL::Polyhedron_incremental_builder_3<HDS> builder;
 	Polyhedron *m_pMesh;
+	std::map<Face_handle,int,Facet_cmp<Face_handle> > m_face_map;
 
 public:
 
@@ -41,23 +51,35 @@ public:
 		B.end_surface();
 	}
 
+
+
+
 	// add vertices
 	void add_vertices(builder &B)
 	{
 		int index = 0;
-		Facet_iterator f;
-		for(f = m_pMesh->facets_begin();
-			f != m_pMesh->facets_end();
-			f++)
+		Facet_iterator it;
+		for(it = m_pMesh->facets_begin();
+			it != m_pMesh->facets_end();
+			it++)
 		{
-			f->tag() = index++;
+			Face_handle f = it;
+			m_face_map[f] = index++;
 			B.add_vertex(dual(f));
 		}
 	}
 
+	Plane facet_plane(Face_handle f)
+	{
+		const Point& a = f->halfedge()->vertex()->point();
+		const Point& b = f->halfedge()->next()->vertex()->point();
+		const Point& c = f->halfedge()->next()->next()->vertex()->point();
+		return Plane(a,b,c);
+	}
+
 	Point dual(Face_handle f)
 	{
-		Plane plane = m_pMesh->plane(f);
+		Plane plane = facet_plane(f);
 		FT sqd = CGAL::squared_distance(Point(CGAL::ORIGIN),plane);
 		FT distance_to_origin = std::sqrt(sqd);
 		Vector normal = plane.orthogonal_vector();
@@ -77,7 +99,7 @@ public:
 			HV_circulator he = v->vertex_begin();
 			HV_circulator end = he;
 			CGAL_For_all(he,end)
-				B.add_vertex_to_facet(he->facet()->tag());
+				B.add_vertex_to_facet(m_face_map[he->facet()]);
 			B.end_facet();
 		}
 	}

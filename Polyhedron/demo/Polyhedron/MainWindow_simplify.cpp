@@ -16,34 +16,34 @@ void MainWindow::on_actionSimplify_triggered()
 		int index = getSelectedPolygonIndex();
 		Polyhedron* pMesh = scene->polyhedron(index);
 
-                // get option (#edges)
-                bool ok;
+		// get option (#edges)
+		bool ok;
 		const unsigned int nb_edges = 
-                  QInputDialog::getInteger(this, tr("Stop condition"),
-                                           tr("Number of edges:"),
-                                           pMesh->size_of_halfedges () / 4, 
-                                           // current value: nb of edges /2 
-                                           3, // min = one triangle
-                                           pMesh->size_of_halfedges(), // max
-                                           1, // step for the spinbox
-                                           &ok);
+			QInputDialog::getInteger(this, tr("Stop condition"),
+			tr("Number of edges:"),
+			pMesh->size_of_halfedges () / 4, 
+			// current value: nb of edges /2 
+			3, // min = one triangle
+			pMesh->size_of_halfedges(), // max
+			1, // step for the spinbox
+			&ok);
 
-                // check user cancellation
-                if(!ok) return;
+		// check user cancellation
+		if(!ok) return;
 
 		// simplify
-                QTime time;
-        	time.start();
-                std::cout << "Simplify...";
+		QTime time;
+		time.start();
+		std::cout << "Simplify...";
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 		namespace SMS = CGAL::Surface_mesh_simplification;
 		SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target # edges
 		SMS::edge_collapse( *pMesh, stop,
-		                    CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
-				                       .edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
+			CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,*pMesh))
+			.edge_index_map(boost::get(CGAL::edge_external_index,*pMesh)));
 
-                std::cout << "ok (" << time.elapsed() << " ms, " 
-                          << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
+		std::cout << "ok (" << time.elapsed() << " ms, " 
+			<< pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
 
 		// update scene
 		scene->polyhedronChanged(index);
