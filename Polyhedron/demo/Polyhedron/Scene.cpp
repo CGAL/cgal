@@ -76,7 +76,6 @@ Scene::open(QString filename)
 		cerr << QString("\n");
 		destroy(poly);
     
-    delete poly;
     return -1;
   }
 
