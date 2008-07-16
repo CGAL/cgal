@@ -28,6 +28,10 @@ concept. \ccc{T} must be a model of the concept
 
 \ccNestedType{Direction}{directions in our plane.}
 
+\ccNestedType{Polygons_tag}{tag for calling polygon constructor.}
+
+\ccNestedType{Polylines_tag}{tag for calling polyline constructor.}
+
 %\ccNestedType{Aff_transformation}{affine transformations of the plane.}
 
 \ccEnum{enum Boundary { EXCLUDED,  INCLUDED }}{construction selection.}
@@ -63,6 +67,16 @@ all degenerate cases there's only one unbounded face adjacent to the
 degenerate polygon. If \ccc{b == INCLUDED} then \ccc{N} is just the
 boundary. If \ccc{b == EXCLUDED} then \ccc{N} is the whole plane
 without the boundary.  }
+
+\ccConstructor{template <class Forward_iterator>
+ Nef_polyhedron_2<T>(Forward_iterator it, Forward_iterator end,
+ Polygons_tag)}{The iterator range [it, end) defines a set point
+   ranges, each of which defines the boundary of simple polygon.}
+  
+\ccConstructor{template <class Forward_iterator>
+Nef_polyhedron_2<T>(Forward_iterator it, Forward_iterator end,
+Polylines_tag)}{The iterator range [it, end) defines a set point
+ranges, each of which defines a polyline.}
 
 \ccSetTwoOfThreeColumns{4cm}{3cm}
 

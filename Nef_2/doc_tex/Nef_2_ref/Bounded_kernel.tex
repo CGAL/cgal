@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Bounded_kernel.tex
+% +------------------------------------------------------------------------+
+% | 15.07.2008 Peter Hachenberger
+% | Package:   Nef_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccAutoIndexingOff
+\begin{ccRefClass}{Bounded_kernel<Kernel>}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Bounded_kernel}{}{Nef polyhedron, 2D}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as an adaptor for standard kernels, such
+that they fullfil the \ccc{ExtendedKernelTraits_2}
+concept. The \ccRefName\ supports all features defined
+in \ccc{ExtendedKernelTraits_2}, except for those that are related to
+extended geometry. If such features are used, an error message occurs.
+
+\ccInclude{CGAL/Bounded_kernel.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ExtendedKernelTraits_2}%
+\ccIndexSubitem[c]{ExtendedKernelTraits_2}{model} \\
+
+\ccCreation
+\ccCreationVariable{B}  %% choose variable name
+
+\ccConstructor{Bounded_kernel();}{default constructor.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Extended_cartesian<FT>} \\
+\ccRefIdfierPage{CGAL::Extended_homogeneous<RT>} \\
+\ccRefIdfierPage{CGAL::Filtered_extended_homogeneous<RT>} 
+
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn
+
+% EOF
