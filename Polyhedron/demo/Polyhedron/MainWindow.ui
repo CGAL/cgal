@@ -463,7 +463,7 @@
     <bool>true</bool>
    </property>
    <property name="text" >
-    <string>View edges</string>
+    <string>Superimpose edges</string>
    </property>
    <property name="shortcut" >
     <string>Ctrl+E</string>
