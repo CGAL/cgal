@@ -3117,11 +3117,10 @@ Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/dilo.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot_2_3.off -text svneol=unset#application/octet-stream
-Polyhedron/demo/Polyhedron/data/lucy-100kt.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/lucy-25kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/part5.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html

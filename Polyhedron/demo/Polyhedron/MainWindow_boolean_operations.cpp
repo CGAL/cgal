@@ -4,9 +4,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Nef_polyhedron_3.h> 
 
-// PA: dirty hacks to convert polyhedra from exact to inexact and vice-versa
-// Laurent, if you have a better idea
-
+// quick hacks to convert polyhedra from exact to inexact and vice-versa
 
 void from_exact(Exact_polyhedron& in,
 		Polyhedron& out)
@@ -45,12 +43,14 @@ void MainWindow::boolean_operation(const int operation)
 {
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-// PA: to be done by LR
+	// PA: to be done by LR?
 	//int indexA = scene->getPolygonAIndex();
 	//int indexB = scene->getPolygonBIndex();
 
+	// to remove
 	int indexA = 0;
 	int indexB = 1;
+
 	Polyhedron* polyA = scene->polyhedron(indexA);
 	Polyhedron* polyB = scene->polyhedron(indexB);
 	if(!polyA) return;
@@ -92,22 +92,22 @@ void MainWindow::boolean_operation(const int operation)
 		case BOOLEAN_UNION:
 			scene->addPolyhedron(pResult,
 				tr("%1 union %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-				scene->polyhedronColor(indexA), // PA: to be changed to red 
-				scene->isPolyhedronActivated(indexA),
+				Qt::yellow,
+				true,
 				scene->polyhedronRenderingMode(indexA));
 			break;
 		case BOOLEAN_INTERSECTION:
 			scene->addPolyhedron(pResult,
 				tr("%1 intersection %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-				scene->polyhedronColor(indexA), // PA: to be changed to red 
-				scene->isPolyhedronActivated(indexA),
+				Qt::yellow,
+				true,
 				scene->polyhedronRenderingMode(indexA));
 			break;
 		case BOOLEAN_DIFFERENCE:
 			scene->addPolyhedron(pResult,
 				tr("%1 minus %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-				scene->polyhedronColor(indexA), // PA: to be changed to red 
-				scene->isPolyhedronActivated(indexA),
+				Qt::yellow,
+				true,
 				scene->polyhedronRenderingMode(indexA));
 	}
 
