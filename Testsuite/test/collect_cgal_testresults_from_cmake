@@ -76,7 +76,7 @@ parse_shared_or_static()
 
 parse_flags_and_third_party_choices()
 {
-  grep "^-- USING " ${BUILD_LOGFILE} >> $RESULT_FILE 
+  grep "-- USING " ${BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
 
@@ -128,9 +128,9 @@ parse_lib_building_results()
 
 output_main_logs()
 {
-  mkdir "libCGAL_${shared_or_static}"
+  mkdir "Installation"
   
-  MAIN_LOG_REPORT="libCGAL_${shared_or_static}/$TEST_REPORT"
+  MAIN_LOG_REPORT="Installation/$TEST_REPORT"
   
   echo "---------------------------------------------------------------" >  $MAIN_LOG_REPORT
   echo "             installation.log.${CGAL_TEST_HOST}"                 >> $MAIN_LOG_REPORT
