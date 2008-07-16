@@ -1,4 +1,5 @@
-// file          : Benchmark/Spatial_searching/Split_data.C
+// $URL:$
+// $Id:$
 
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Random.h>

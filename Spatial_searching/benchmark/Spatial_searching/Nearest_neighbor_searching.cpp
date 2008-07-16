@@ -1,4 +1,5 @@
-// file          : Benchmark/Spatial_searching/Nearest_neighbor_searching.C
+// $URL:$
+// $Id:$
 
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

@@ -1,4 +1,5 @@
-// file          : Benchmark/Spatial_searching/Nearest_neighbor_searching_2D_user_defined.C
+// $URL:$
+// $Id:$
 
 #include <CGAL/basic.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>

@@ -1,4 +1,5 @@
-// file          : Benchmark/Spatial_searching/Nearest_neighbor_searching_2D.C
+// $URL:$
+// $Id:$
 
 // #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
