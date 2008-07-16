@@ -35,13 +35,16 @@ Scene::Scene(QObject* parent)
 
 Scene::~Scene()
 {
-  for(Polyhedra::iterator 
-        poly_it = polyhedra.begin(),
-        poly_end = polyhedra.end();
-      poly_it != poly_end; ++poly_it) {
-    this->destroy(poly_it->polyhedron_ptr);
-  }
-  polyhedra.clear();
+        for(Polyhedra::iterator 
+                poly_it = polyhedra.begin(),
+                poly_end = polyhedra.end();
+        poly_it != poly_end; ++poly_it)
+        {
+                Polyhedron_entry& entry = *poly_it;
+                this->destroy(entry.polyhedron_ptr);
+                glDeleteLists(entry.display_list,1);
+        }
+        polyhedra.clear();
 }
 
 int
@@ -173,33 +176,65 @@ Scene::duplicate(int polyhedron_index)
 void 
 Scene::draw()
 {
-  for(int index = 0; index < polyhedra.size(); ++index)
-  {
-    Polyhedron_entry& entry = polyhedra[index];
-    if(entry.activated)
-		{
-      Polyhedron* poly = entry.polyhedron_ptr;
-      if(entry.rendering_mode == Fill)
-			{
+        for(int index = 0; index < polyhedra.size(); ++index)
+        {
+                Polyhedron_entry& entry = polyhedra[index];
+                if(entry.activated)
+                {
+                        Polyhedron* poly = entry.polyhedron_ptr;
+                        bool selected = index == selected_item;
+                        if(entry.rendering_mode == Fill)
+                        {
+                                ::glEnable(GL_LIGHTING);
+                                ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                                draw(entry,selected);
+
+                                ::glDisable(GL_LIGHTING);
+                                ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                                draw(entry,selected);
+                        }
+                        else
+                        {
+                                ::glDisable(GL_LIGHTING);
+                                ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                                draw(entry,selected);
+                        }
+
+                }
+        }
+}
+
+void
+Scene::draw(Polyhedron_entry& entry, 
+            const bool selected)
+{
         ::glEnable(GL_LIGHTING);
-        if(index == selected_item)
-          CGALglcolor(entry.color.lighter(120));
+        if(selected)
+                CGALglcolor(entry.color.lighter(120));
         else
-          CGALglcolor(entry.color);
-        
-	gl_render_facets(poly);
-      }
+                CGALglcolor(entry.color);
 
-      if(index == selected_item)
-        CGALglcolor(entry.color.lighter(70));
-      else
-        CGALglcolor(entry.color.lighter(50));
+        if(!entry.display_list_built)
+        {
+                ::glDeleteLists(entry.display_list,1);
 
-			// superimpose edges
-      ::glDisable(GL_LIGHTING);
-      gl_render_edges(poly);
-    }
-  }
+                entry.display_list = ::glGenLists(1);
+                if(entry.display_list == 0)
+                {
+                        std::cerr << "Unable to create display list" << std::endl;
+                        return;
+                }
+
+                // draw	the mesh in a display list
+                ::glNewList(entry.display_list,GL_COMPILE_AND_EXECUTE);
+                gl_render_facets(entry.polyhedron_ptr);
+                ::glEndList();
+                entry.display_list_built = true;
+        }
+
+        if(::glIsList(entry.display_list) == GL_TRUE)
+                ::glCallList(entry.display_list);
+
 }
 
 int 

@@ -118,14 +118,22 @@ private:
   static const QColor defaultColor; // defined in Scene.cpp
 
   struct Polyhedron_entry {
-    Polyhedron_entry() : rendering_mode(Fill) {};
+    Polyhedron_entry()
+            : rendering_mode(Fill),
+              display_list_built(false) {};
 
     Polyhedron* polyhedron_ptr;
     QString name;
     QColor color;
     bool activated;
     RenderingMode rendering_mode;
+
+    // display list
+    unsigned int display_list;
+    bool display_list_built;
   };
+
+  void draw(Polyhedron_entry& entry, const bool selected); // draw one entry
 
   typedef QList<Polyhedron_entry> Polyhedra;
   Polyhedra polyhedra;

@@ -2,3 +2,4 @@
 - display lists for rendering
 - superimpose edges as option
 - use the signal QMenu::aboutToShow() to enable/disable some menu entries.
+- check that display list is deleted when destroys one entry
