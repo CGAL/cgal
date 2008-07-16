@@ -122,7 +122,7 @@ struct triple
   Point mP[6];
 } ;
 
-#include <CGAL/test_sls_traits_aux.C>
+#include <CGAL/test_sls_traits_aux.cpp>
 
 void test_exist_event()
 {
