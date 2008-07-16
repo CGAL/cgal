@@ -39,7 +39,7 @@ is represented by two halfedges or two halffacets, respectively.
 
 \begin{tabbing}
 \ccc{template <} \=\ccc{class Nef_polyhedronTraits_3,}\\
-                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::SNC_items,}\\
+                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>,}\\
                  \>\ccc{class Nef_polyhedronMarks = bool >}\\
     \ccc{class Nef_polyhedron_3;}
 \end{tabbing}
@@ -139,6 +139,8 @@ template parameters.
 \ccGlue
 \ccNestedType{Aff_transformation_3}{affine transformation.}
 
+\ccNestedType{Polylines_tag}{tag for calling polyline constructor.}
+
 \ccEnum{enum Boundary { EXCLUDED,  INCLUDED }}{construction selection.}
 \ccGlue
 \ccEnum{enum Content { EMPTY,  COMPLETE }}{construction selection.}
@@ -178,6 +180,11 @@ template parameters.
               supporting plane, the constructor tries to triangulate
               the polygon into multiple facets.If the construction does
               not succeed, the empty set is created.}
+
+\ccConstructor{template <class Forward_iterator>
+Nef_polyhedron_3(Forward_iterator it, Forward_iterator end,
+Polylines_tag)}{The iterator range [it, end) defines a set point
+ranges, each of which defines a polyline.}
 
 %\ccConstructor{Nef_polyhedron_3(const char* filename);}{
 %  loads a Nef polyhedron from \ccc{filename}.}
