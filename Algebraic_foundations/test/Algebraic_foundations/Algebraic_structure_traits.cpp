@@ -17,7 +17,8 @@ int main(){
     BOOST_STATIC_ASSERT((::boost::is_same<void,Type>::value)); 
 
     typedef AST::Algebraic_category Algebraic_category;
-    BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Algebraic_category>::value)); 
+    BOOST_STATIC_ASSERT(
+        (::boost::is_same<CGAL::Null_tag,Algebraic_category>::value)); 
 
     typedef AST::Is_exact Is_exact;
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Is_exact>::value)); 
@@ -27,6 +28,7 @@ int main(){
     CGAL_IS_AST_NULL_FUNCTOR (  Simplify);
     CGAL_IS_AST_NULL_FUNCTOR (  Unit_part);
     CGAL_IS_AST_NULL_FUNCTOR (  Integral_division);
+    CGAL_IS_AST_NULL_FUNCTOR (  Divides);
     CGAL_IS_AST_NULL_FUNCTOR (  Is_square);    
     CGAL_IS_AST_NULL_FUNCTOR (  Gcd);
     CGAL_IS_AST_NULL_FUNCTOR (  Div_mod);

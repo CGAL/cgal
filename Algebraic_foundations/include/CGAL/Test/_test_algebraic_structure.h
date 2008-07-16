@@ -37,20 +37,21 @@
 
 
 #define CGAL_SNAP_AST_FUNCTORS(Traits)                         \
-    typedef typename AST::Simplify Simplify ;                  \
-    typedef typename AST::Unit_part Unit_part;                 \
-    typedef typename AST::Integral_division Integral_division; \
-    typedef typename AST::Is_square Is_square;                 \
-    typedef typename AST::Gcd Gcd;                             \
-    typedef typename AST::Div_mod Div_mod;                     \
-    typedef typename AST::Div Div;                             \
-    typedef typename AST::Mod Mod;                             \
-    typedef typename AST::Square Square;                       \
-    typedef typename AST::Is_zero Is_zero;                     \
-    typedef typename AST::Is_one Is_one;                       \
-    typedef typename AST::Sqrt Sqrt;                           \
-    typedef typename AST::Kth_root Kth_root;                   \
-    typedef typename AST::Root_of Root_of;
+  typedef typename AST::Simplify Simplify ;                    \
+  typedef typename AST::Unit_part Unit_part;                   \
+  typedef typename AST::Integral_division Integral_division;   \
+  typedef typename AST::Divides Divides;                       \
+  typedef typename AST::Is_square Is_square;                   \
+  typedef typename AST::Gcd Gcd;                               \
+  typedef typename AST::Div_mod Div_mod;                       \
+  typedef typename AST::Div Div;                               \
+  typedef typename AST::Mod Mod;                               \
+  typedef typename AST::Square Square;                         \
+  typedef typename AST::Is_zero Is_zero;                       \
+  typedef typename AST::Is_one Is_one;                         \
+  typedef typename AST::Sqrt Sqrt;                             \
+  typedef typename AST::Kth_root Kth_root;                     \
+  typedef typename AST::Root_of Root_of;
 
 CGAL_BEGIN_NAMESPACE
 	
@@ -75,7 +76,7 @@ AS unit_normal( const AS& x ) {
     const Unit_part unit_part = Unit_part();
     const Integral_division integral_division = Integral_division();
   
-  return integral_division( x, unit_part(x) );
+    return integral_division( x, unit_part(x) );
 }
 
 //Syntax tests
@@ -92,7 +93,8 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     
     using CGAL::Null_functor;
     BOOST_STATIC_ASSERT(
-            (!::boost::is_same< Integral_division, Null_functor >::value));
+        (!::boost::is_same< Integral_division, Null_functor >::value));
+    BOOST_STATIC_ASSERT((!::boost::is_same< Divides, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Is_zero, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Is_one, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Square, Null_functor >::value));
@@ -128,6 +130,42 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     assert( CGAL_NTS integral_division( a,b) == c);
     assert( CGAL_NTS integral_division( a,c) == b);
     assert( CGAL_NTS integral_division( a+a-a,c*b-c) == b);
+
+
+    const Divides divides = Divides();
+    assert( divides(b,AS(0)));
+    assert( divides(b,a));
+    assert( divides(c,a));
+    //assert( divides(c*b-c,a+a-a));
+    assert( CGAL_NTS divides(b,AS(0))); 
+    assert( CGAL_NTS divides(b,a)); 
+    assert( CGAL_NTS divides(c,a));
+    //assert( CGAL_NTS divides(c*b-c,a+a-a));
+    
+    typedef typename AST::Is_exact Is_exact;
+    // VC7 produced an ICE for
+    // assert( ! Is_exact::value || ... );
+    bool ie = Is_exact::value;
+    AS tmp; 
+    assert( divides(b,AS(0),tmp));
+    assert( !ie || tmp == integral_division(AS(0),b));
+    assert( divides(b,a,tmp)); 
+    assert( !ie || tmp == integral_division(a,b));
+    assert( divides(c,a,tmp));
+    assert( !ie || tmp == integral_division(a,c));
+    assert( divides(c*b-c,a+a-a,tmp));
+    assert( !ie || tmp == integral_division(a+a-a,c*b-c));
+    
+
+    
+    assert( CGAL_NTS divides(b,AS(0),tmp)); 
+    assert( !ie || tmp == integral_division(AS(0),b));
+    assert( CGAL_NTS divides(b,a,tmp)); 
+    assert( !ie || tmp == integral_division(a,b));
+    assert( CGAL_NTS divides(c,a,tmp));
+    assert( !ie || tmp == integral_division(a,c));
+    assert( CGAL_NTS divides(AS(c*b-c),AS(a+a-a),tmp));
+    assert( !ie || tmp == integral_division(a+a-a,c*b-c));   
 };
 	
 template< class  AS  >
@@ -283,6 +321,26 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
     a /=  AS (2);
     a /=  AS (2); // that must work correctly also for float types
     assert( a *  AS (4) ==  AS (1));
+    
+    typename AST::Divides divides;
+    assert(divides(AS(2),AS(0)));
+    assert(divides(AS(2),AS(5)));
+    assert(divides(AS(5),AS(2)));
+    AS tmp;
+    assert(divides(AS(2),AS(0),tmp));
+    assert(!ie || tmp == AS(0));
+    assert(divides(AS(2),AS(5),tmp));
+    assert(!ie || tmp == AS(5)/AS(2));
+    assert(divides(AS(5),AS(2),tmp));
+    assert(!ie || tmp == AS(2)/AS(5));
+
+    assert(CGAL_NTS divides(AS(2),AS(0),tmp));
+    assert(!ie || tmp == AS(0));
+    assert(CGAL_NTS divides(AS(2),AS(5),tmp));
+    assert(!ie || tmp == AS(5)/AS(2));
+    assert(CGAL_NTS divides(AS(5),AS(2),tmp));
+    assert(!ie || tmp == AS(2)/AS(5));
+    
 };
 
 template <class  AS >
@@ -371,6 +429,15 @@ void test_algebraic_structure_intern(
      assert(integral_division(c*a,c)==a);
      assert(integral_division(c*b,c)==b);
      assert(CGAL_NTS integral_division(c*b,c)==b);
+     
+     const Divides divides = Divides();
+     assert(divides(a,a*b));
+     assert(divides(a,a*c));
+     assert(divides(b,b*a));
+     assert(divides(b,b*c));
+     assert(divides(c,c*a));
+     assert(divides(c,c*b));
+     assert(CGAL_NTS divides(c,c*b));
  };
     
 template <class  AS >

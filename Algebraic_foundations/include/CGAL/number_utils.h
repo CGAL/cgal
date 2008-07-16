@@ -107,6 +107,24 @@ integral_division( const A& x, const B& y ) {
 
 template< class A, class B >
 inline
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type> 
+::Divides::result_type
+divides( const A& x, const B& y ) {
+  typedef typename Coercion_traits<A,B>::Type Type;
+  typename Algebraic_structure_traits< Type >::Divides  divides;
+  return divides( x, y );
+}
+
+template< class Type >
+inline
+typename Algebraic_structure_traits<Type>::Divides::result_type
+divides( const Type& x, const Type& y, Type& q ) {
+  typename Algebraic_structure_traits< Type >::Divides  divides;
+  return divides( x, y, q);
+}
+
+template< class A, class B >
+inline
 typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
 ::Gcd::result_type
 gcd( const A& x, const B& y ) {

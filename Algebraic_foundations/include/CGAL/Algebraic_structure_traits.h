@@ -84,6 +84,7 @@ class Algebraic_structure_traits  {
     typedef Null_functor Sqrt;
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of; 
+    typedef Null_functor Divides; 
   
 };
 
@@ -207,6 +208,30 @@ class Algebraic_structure_traits_base< Type_,
   public:
     typedef Type_  Type;
     typedef Unique_factorization_domain_tag    Algebraic_category;
+
+  // Default implementation of Divides functor for unique factorization domains
+  // x divides y if gcd(y,x) equals x up to inverses 
+  class Divides 
+    : public Binary_function<Type,Type,bool>{ 
+  public:
+    bool operator()( const Type& x,  const Type& y) const {  
+      typedef CGAL::Algebraic_structure_traits<Type> AST;
+      typename AST::Gcd gcd;
+      typename AST::Unit_part unit_part;
+      typename AST::Integral_division idiv;
+      return gcd(y,x) == idiv(x,unit_part(x));
+    }
+    // second operator computing q = x/y 
+    bool operator()( const Type& x,  const Type& y, Type& q) const {    
+      typedef CGAL::Algebraic_structure_traits<Type> AST;
+      typename AST::Integral_division idiv;
+      bool result = (*this)(x,y);
+      if( result == true ) 
+        q = idiv(x,y);
+      return result; 
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,bool)
+  };
 };
 
 
@@ -370,6 +395,28 @@ class Algebraic_structure_traits_base< Type_,
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
+
+  // Divides for Euclidean Ring 
+  class Divides 
+    : public Binary_function<Type, Type, bool>{
+  public:
+    bool operator()( const Type& x, const Type& y) const {
+      typedef Algebraic_structure_traits<Type> AST;
+      typename AST::Mod mod;
+      CGAL_precondition(typename AST::Is_zero()(x) == false );
+      return typename AST::Is_zero()(mod(y,x));
+    }
+    // second operator computing q 
+    bool operator()( const Type& x, const Type& y, Type& q) const {
+      typedef Algebraic_structure_traits<Type> AST;
+      typename AST::Div_mod div_mod;
+      CGAL_precondition(typename AST::Is_zero()(x) == false );
+      Type r;
+      div_mod(y,x,q,r);
+      return (typename AST::Is_zero()(r));
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,bool)
+  };
 };
 
 
@@ -412,8 +459,29 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
                     "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
             return x / y;
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
-            };
+      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
+    };
+
+  // Default implementation of Divides functor for Field: 
+  // returns always true
+  // \pre: x != 0
+  class Divides
+    : public Binary_function< Type, Type, bool > { 
+  public:
+    bool operator()( const Type& x, const Type& y) const {
+      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition( typename AST::Is_zero()(x) == false );
+      return true;
+    } 
+    // second operator computing q
+    bool operator()( const Type& x, const Type& y, Type& q) const {
+      typedef Algebraic_structure_traits<Type> AST;
+      CGAL_precondition( typename AST::Is_zero()(x) == false );
+      q = y/x;
+      return true;
+    }
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,bool)
+  };
 };
 
 
