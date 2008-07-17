@@ -327,10 +327,12 @@ endif()
 # This allows programs to locate CGALConfig.cmake
 set(CGAL_DIR ${CGAL_BINARY_DIR} )
 
-# This script does not configure demos and examples by default, but its does if requested.
-optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
-optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
+if ( NOT RUNNING_CGAL_AUTO_TEST )
 
+  optional_add_subdirectory( demo     ON EXCLUDE_FROM_ALL )
+  optional_add_subdirectory( examples ON EXCLUDE_FROM_ALL )
+  
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #

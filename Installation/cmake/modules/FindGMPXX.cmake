@@ -26,9 +26,5 @@ if(GMP_FOUND)
   include(FindPackageHandleStandardArgs)
   
   find_package_handle_standard_args(GMPXX "DEFAULT_MSG" GMPXX_LIBRARIES GMPXX_INCLUDE_DIR )
-  
-  if ( GMPXX_FOUND )
-    message( STATUS "USING GMPXX_VERSION ${GMP_VERSION}" )
-  endif()
 
 endif()

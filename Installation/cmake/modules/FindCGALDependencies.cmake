@@ -59,10 +59,16 @@ endif()
 
 find_package(Qt3)
 
-message( STATUS "USING BOOST_VERSION = '${Boost_VERSION}'" )
+message( STATUS "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'" )
 
 get_dependency_version(OPENGL OpenGL)
+
 get_dependency_version(GMP)
+
+if ( GMPXX_FOUND )
+  message( STATUS "USING GMPXX_VERSION = '${GMP_VERSION}'" )
+endif()
+
 get_dependency_version(MPFR)
 get_dependency_version(ZLIB)
 get_dependency_version(TAUCS)
