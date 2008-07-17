@@ -48,6 +48,7 @@ struct Circular_kernel_type_equality_wrapper
     typedef CGAL::Circular_arc_2<Kernel>               Circular_arc_2;     
     typedef CGAL::Line_arc_2<Kernel>                   Line_arc_2;
     typedef CGAL::Circular_arc_point_2<Kernel>         Circular_arc_point_2;
+
     //typedef CGAL::Root_of_2<typename Kernel_base::FT>  Root_of_2;
     
 	//Something has to be done with these 3, maybe a lazy Algebraic kernel?
