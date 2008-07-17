@@ -25,6 +25,7 @@ else
 fi
 
 BUILD_LOGFILE=''
+HOST_BUILD_LOGFILE=''
 TEST_REPORT=''
 RESULT_FILE=''
 shared_or_static=''
@@ -61,9 +62,9 @@ print_testresult()
 
 parse_shared_or_static()
 {
-  if [ -f "${BUILD_LOGFILE}" ] ; then
+  if [ -f "${HOST_BUILD_LOGFILE}" ] ; then
   
-    if grep "Building shared libraries"  ${BUILD_LOGFILE}; then
+    if grep "Building shared libraries"  ${HOST_BUILD_LOGFILE}; then
       shared_or_static='shared'  
     else
       shared_or_static='static'  
@@ -76,7 +77,7 @@ parse_shared_or_static()
 
 parse_flags_and_third_party_choices()
 {
-  grep "-- USING " ${BUILD_LOGFILE} >> $RESULT_FILE 
+  grep "-- USING " ${HOST_BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
 
@@ -93,20 +94,20 @@ parse_lib_building_results()
 
   configured=''
   
-  if [ -f "${BUILD_LOGFILE}" ]; then
+  if [ -f "${HOST_BUILD_LOGFILE}" ]; then
   
-    if grep -q "Built target ${target}" ${BUILD_LOGFILE} ; then
+    if grep -q "Built target ${target}" ${HOST_BUILD_LOGFILE} ; then
       y_or_no='y'
     fi
      
-    marker_beg=`grep "${target}.dir/depend$" ${BUILD_LOGFILE}`
+    marker_beg=`grep "${target}.dir/depend$" ${HOST_BUILD_LOGFILE}`
     
     if [ -n "${marker_beg}" ]; then
   
       configured='y'
       
       if [ ! "$target" = "CGAL" ]; then  
-        cat ${BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
+        cat ${HOST_BUILD_LOGFILE} | sed -n "\|${marker_beg}|,\|depend$| p" >> ${libname}_${shared_or_static}/$TEST_REPORT
       fi
       
       # Test if there is a warning in the build log.
@@ -132,14 +133,52 @@ output_main_logs()
   
   MAIN_LOG_REPORT="Installation/$TEST_REPORT"
   
+  
   echo "---------------------------------------------------------------" >  $MAIN_LOG_REPORT
-  echo "             installation.log.${CGAL_TEST_HOST}"                 >> $MAIN_LOG_REPORT
+  echo "                    ${BUILD_LOGFILE}"                            >> $MAIN_LOG_REPORT
   echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
   echo ""                                                                >> $MAIN_LOG_REPORT
   if [ -f "${BUILD_LOGFILE}" ] ; then
     cat "${BUILD_LOGFILE}" >> $MAIN_LOG_REPORT
   else
     echo "Not found!" >> $MAIN_LOG_REPORT 
+  fi
+  
+  echo "---------------------------------------------------------------" >>  $MAIN_LOG_REPORT
+  echo "                ${HOST_BUILD_LOGFILE}"                           >> $MAIN_LOG_REPORT
+  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+  echo ""                                                                >> $MAIN_LOG_REPORT
+  if [ -f "${HOST_BUILD_LOGFILE}" ] ; then
+    cat "${HOST_BUILD_LOGFILE}" >> $MAIN_LOG_REPORT
+  else
+    echo "Not found!" >> $MAIN_LOG_REPORT 
+  fi
+  
+  if [ -f "$HOME/.autocgal_with_cmake_rc" ] ; then
+    echo ""                                                                >> $MAIN_LOG_REPORT
+    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+    echo "                  .autocgal_with_cmake_rc"                       >> $MAIN_LOG_REPORT
+    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+    echo ""                                                                >> $MAIN_LOG_REPORT
+    cat "$HOME/.autocgal_with_cmake_rc" >> $MAIN_LOG_REPORT
+  else
+    if [ -f "$HOME/.autocgalrc" ] ; then
+      echo ""                                                                >> $MAIN_LOG_REPORT
+      echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+      echo "                       .autocgalrc"                              >> $MAIN_LOG_REPORT
+      echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+      echo ""                                                                >> $MAIN_LOG_REPORT
+      cat "$HOME/.autocgalrc" >> $MAIN_LOG_REPORT
+    fi
+  fi
+  
+  if [ -f "../setup" ] ; then
+    echo ""                                                                >> $MAIN_LOG_REPORT
+    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+    echo "                           setup"                                >> $MAIN_LOG_REPORT
+    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
+    echo ""                                                                >> $MAIN_LOG_REPORT
+    cat "../setup" >> $MAIN_LOG_REPORT
   fi
   
   
@@ -187,15 +226,6 @@ output_main_logs()
     echo "Not found!" >> $MAIN_LOG_REPORT 
   fi
   
-  if [ -f "../setup" ] ; then
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo "                           setup"                                >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    cat "../setup" >> $MAIN_LOG_REPORT
-  fi
-  
 }
 
 echo "---------------------------------------------------------------"
@@ -209,7 +239,8 @@ TESTER_ADDRESS="${CGAL_TESTER_ADDRESS:-${TESTER}}"
 TEST_REPORT="TestReport_${TESTER}_${CGAL_TEST_PLATFORM}"
 RESULT_FILE=$CURRENT_DIR/results_${TESTER}_${CGAL_TEST_PLATFORM}.txt
 CGAL_DIR=../../../..
-BUILD_LOGFILE="../installation.log.${CGAL_TEST_HOST}"
+BUILD_LOGFILE="../../installation.log"
+HOST_BUILD_LOGFILE="../installation.log.${CGAL_TEST_HOST}"
 rm -f $RESULT_FILE
 touch $RESULT_FILE
 sed -n '/CGAL_VERSION /s/#define //p' < $CGAL_DIR/include/CGAL/version.h >> $RESULT_FILE
@@ -217,7 +248,8 @@ echo "TESTER ${TESTER}" >> $RESULT_FILE
 echo "TESTER_NAME ${TESTER_NAME}" >> $RESULT_FILE
 echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> $RESULT_FILE
 echo "CGAL_TEST_PLATFORM ${CGAL_TEST_PLATFORM}" >> $RESULT_FILE
-echo "Installation log file: ${BUILD_LOGFILE}"  >> $RESULT_FILE
+echo "General installation log file: ${BUILD_LOGFILE}"  >> $RESULT_FILE
+echo "Host-specific installation log file: ${HOST_BUILD_LOGFILE}"  >> $RESULT_FILE
 
 parse_shared_or_static
 
@@ -229,7 +261,9 @@ parse_lib_building_results "libCGALCore"    "CGAL_CORE"
 parse_lib_building_results "libCGAL"        "CGAL"    
 parse_lib_building_results "libCGALimageIO" "CGAL_IMAGEIO" 
 parse_lib_building_results "libCGALPDB"     "CGAL_PDB"     
-parse_lib_building_results "libCGALQt"      "CGAL_QT"      
+parse_lib_building_results "libCGALQt"      "CGAL_QT"
+
+echo "Installation y" >> $RESULT_FILE
 
 for DIR in $TEST_DIRECTORIES ; do
   if [ -d $DIR ] ; then

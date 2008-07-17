@@ -156,7 +156,8 @@ remote_command()
       eval $2
   else
     printf "** Logging into host ${1} **\n"
-    ${RSH} ${1} ${MYSHELL} \"${2}\"
+    #${RSH} ${1} ${MYSHELL} \"${2}\"
+    eval $2
   fi
 }
 
@@ -411,18 +412,14 @@ build_cgal_on_host()
   
   if [ -n "${PLATFORMS}" ]; then
   
-    log "${ACTUAL_LOGFILE}" "Building cgal libs on host: ${HOST} and platforms: ${PLATFORMS}"
-    
     for PLATFORM in ${PLATFORMS} ; do
       
       CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
       
-      log "${ACTUAL_LOGFILE}" "Building libs under ${CGAL_BINARY_DIR}"
-      
       CGAL_REFERENCE_CACHE_DIR=${REFERENCE_PLATFORMS_DIR}/${PLATFORM}
       
-      log "${ACTUAL_LOGFILE}" "Using reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
-
+      log "${ACTUAL_LOGFILE}.${HOST}" "Building cgal libs on host ${HOST} and platform ${PLATFORMS}\nUnder ${CGAL_BINARY_DIR}\nUsing reference cache directory ${CGAL_REFERENCE_CACHE_DIR}"
+      
       if [ -f "${CGAL_BINARY_DIR}/setup" ]; then
         cp "${CGAL_BINARY_DIR}/setup" "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
       else
@@ -440,20 +437,20 @@ export CGAL_BINARY_DIR;
 export CGAL_REFERENCE_CACHE_DIR;
 cd '${CGAL_BINARY_DIR}';
 cmake '${CMAKE_GENERATOR}' -DWITH_demo=FALSE \\
-                             -DWITH_examples=FALSE \\
-                             -DRUNNING_CGAL_AUTO_TEST=TRUE \\
-                             -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
-                             -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
-                             -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
-                             VERBOSE=1 \\
-                             ../../..; 
+                           -DWITH_examples=FALSE \\
+                           -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+                           -DCGAL_CXX_FLAGS="\$TESTSUITE_CXXFLAGS" \\
+                           -DCGAL_EXE_LINKER_FLAGS="\$TESTSUITE_LDFLAGS" \\
+                           -DCGAL_REFERENCE_CACHE_DIR="\$CGAL_REFERENCE_CACHE_DIR" \\
+                            VERBOSE=1 \\
+                            ../../..; 
 ${MAKE_CMD} -k -fMakefile;
 cd ..;
 EOF
       chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript.${HOST}"
-      remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" >> "${ACTUAL_LOGFILE}" 2>&1
+      remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript.${HOST}" >> "${ACTUAL_LOGFILE}.${HOST}" 2>&1
                              
-      cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR}/installation.log.${HOST}"
+      cp "${ACTUAL_LOGFILE}.${HOST}" "${CGAL_BINARY_DIR}/installation.log.${HOST}"
         
     done
   else
@@ -472,6 +469,7 @@ build_cgal()
       build_cgal_on_host ${i}
   done
   log_done "${ACTUAL_LOGFILE}"
+  cp "${ACTUAL_LOGFILE}" "${CGAL_BINARY_DIR_BASE}/installation.log"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
   mv "${ACTUAL_LOGFILE}.gz" "${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz"
 }
@@ -490,7 +488,7 @@ run_test_on_host_and_platform()
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
-  log "${ACTUAL_LOGFILE}.${HOST}" "Testing on ${HOST} with ${PLATFORM}"
+  log "${ACTUAL_LOGFILE}.${HOST}" "Testing on host ${HOST} and platform ${PLATFORM}"
   if [ "${NUMBER_OF_PROCESSORS}" = "1" ] ; then
     MAKE_OPTS=""
   else
