@@ -173,13 +173,30 @@ T sup(Uncertain<T> i)
 // ----------------------------------------------------------
 
 inline bool possibly(bool b);
-
-inline
-bool possibly(Uncertain<bool> c);
+inline bool possibly(Uncertain<bool> c);
 
 
 // Basic functions
 // ---------------
+
+#if 1
+// Commenting them out allows the test-suite to spot those predicates that do not
+// propagate Uncertain-ty correctly.  But they should probably be enabled
+// for now, for backward-compatibility.
+template < typename T >
+inline
+bool is_singleton(T)
+{
+  return true;
+}
+
+template < typename T >
+inline
+T extract_singleton(T t)
+{
+  return t;
+}
+#endif
 
 template < typename T >
 inline
