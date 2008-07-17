@@ -25,6 +25,7 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Triangulation_short_names_2.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/constructions_on_weighted_points_cartesian_2.h>
@@ -44,7 +45,7 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 		      const Weighted_point< Bare_point,We >& r,
 		      Cartesian_tag )
 {
-  typename Bare_point::R::RT x,y;
+  typename Kernel_traits<Bare_point>::Kernel::RT x,y;
   weighted_circumcenterC2(p.x(),p.y(),p.weight(),
 			  q.x(),q.y(),q.weight(),
 			  r.x(),r.y(),r.weight(),x,y);
@@ -59,7 +60,7 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 		      const Weighted_point< Bare_point,We >& r,
 		      Homogeneous_tag )
 {
-  typename Bare_point::R::RT x,y,w;
+  typename Kernel_traits<Bare_point>::Kernel::RT x,y,w;
   weighted_circumcenterH2(p.hx(),p.hy(),p.hw(),p.weight(),
 			  q.hx(),q.hy(),q.hw(),q.weight(),
 			  r.hx(),r.hy(),r.hw(),r.weight(),
@@ -75,7 +76,7 @@ weighted_circumcenter(const Weighted_point< Bare_point,We >& p,
 		      const Weighted_point< Bare_point,We >& q,
 		      const Weighted_point< Bare_point,We >& r)
 {
-  typedef typename Bare_point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Bare_point>::Kernel::Rep_tag Tag;
   return weighted_circumcenter(p, q, r, Tag()); 
 }
 
@@ -103,13 +104,13 @@ public:
 
 template < class Bare_point, class We >
 inline
-Line_2<typename Bare_point::R>
+Line_2<typename Kernel_traits<Bare_point>::Kernel>
 radical_axis(const Weighted_point< Bare_point,We >& p,
 	     const Weighted_point< Bare_point,We >& q,
 	     Cartesian_tag )
 {
-  typedef typename Bare_point::R::RT RT;
-  typedef typename Bare_point::R     Rep;
+  typedef typename Kernel_traits<Bare_point>::Kernel::RT RT;
+  typedef typename Kernel_traits<Bare_point>::Kernel     Rep;
   RT a,b,c;
   radical_axisC2(p.x(),p.y(),p.weight(),q.x(),q.y(),q.weight(),a,b,c);
   return Line_2<Rep>(a,b,c);
@@ -117,13 +118,13 @@ radical_axis(const Weighted_point< Bare_point,We >& p,
 
 template < class Bare_point, class We >
 inline
-Line_2<typename Bare_point::R>
+Line_2<typename Kernel_traits<Bare_point>::Kernel>
 radical_axis(const Weighted_point< Bare_point,We >& p,
 	     const Weighted_point< Bare_point,We >& q,
 	      Homogeneous_tag)
 {
-  typedef typename Bare_point::R::RT RT;
-  typedef typename Bare_point::R     Rep;
+  typedef typename Kernel_traits<Bare_point>::Kernel::RT RT;
+  typedef typename Kernel_traits<Bare_point>::Kernel     Rep;
   RT a,b,c;
   radical_axisH2(p.hx(),p.hy(), p.hw(), p.weight(),
 		 q.hx(),q.hy(), q.hw(), q.weight(),a,b,c);
@@ -132,11 +133,11 @@ radical_axis(const Weighted_point< Bare_point,We >& p,
 
 template < class Bare_point, class We >
 inline
-Line_2<typename Bare_point::R>
+Line_2<typename Kernel_traits<Bare_point>::Kernel>
 radical_axis(const Weighted_point< Bare_point,We >& p,
 	     const Weighted_point< Bare_point,We >& q)
 {
-  typedef typename Bare_point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Bare_point>::Kernel::Rep_tag Tag;
   return radical_axis(p, q, Tag()); 
 }
 
@@ -162,12 +163,12 @@ public:
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Comparison_result
+typename Kernel_traits<Bare_point>::Kernel::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r, Cartesian_tag)
 {
-  typedef typename Bare_point::R::FT  FT;
+  typedef typename Kernel_traits<Bare_point>::Kernel::FT  FT;
   return compare_power_distanceC2(p.x(), p.y(), FT(p.weight()),
 				  q.x(), q.y(), FT(q.weight()),
 				  r.x(), r.y());
@@ -175,12 +176,12 @@ compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Comparison_result
+typename Kernel_traits<Bare_point>::Kernel::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r, Homogeneous_tag)
 {
-  typedef typename Bare_point::R::RT  RT;
+  typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
   return compare_power_distanceH2(p.hx(), p.hy(), p.hw(), FT(p.weight()),
 				  q.hx(), q.hy(), q.hw(), FT(q.weight()),
 				  r.hx(), r.hy(), r.hw());
@@ -188,12 +189,12 @@ compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Comparison_result
+typename Kernel_traits<Bare_point>::Kernel::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r)
 {
-  typedef typename Bare_point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Bare_point>::Kernel::Rep_tag Tag;
   return compare_power_distance(p, q, r, Tag());
 }
 
@@ -220,14 +221,14 @@ public:
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t,
 	   Cartesian_tag )
 {
-  typedef typename Bare_point::R::FT  FT;
+  typedef typename Kernel_traits<Bare_point>::Kernel::FT  FT;
   return power_testC2(p.x(), p.y(), FT(p.weight()),
 		      q.x(), q.y(), FT(q.weight()),
 		      r.x(), r.y(), FT(r.weight()),
@@ -236,14 +237,14 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t,
 	   Homogeneous_tag )
 {
-  typedef typename Bare_point::R::RT  RT;
+  typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
   return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
 		      q.hx(), q.hy(), q.hw(), RT(q.weight()),
 		      r.hx(), r.hy(), r.hw(), RT(r.weight()),
@@ -252,25 +253,25 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t)
 {
-  typedef typename Bare_point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Bare_point>::Kernel::Rep_tag Tag;
   return power_test_2(p, q, r, t, Tag());
 }
   
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t,
 	     Cartesian_tag )
 {
-    typedef typename Bare_point::R::FT  FT;
+    typedef typename Kernel_traits<Bare_point>::Kernel::FT  FT;
     return power_testC2(p.x(), p.y(), FT(p.weight()),
                         q.x(), q.y(), FT(q.weight()),
                         t.x(), t.y(), FT(t.weight()));
@@ -279,13 +280,13 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t,
 	     Homogeneous_tag )
 {
-   typedef typename Bare_point::R::RT  RT;
+   typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
                         q.hx(), q.hy(), q.hw(), RT(q.weight()),
                         t.hx(), t.hy(), t.hw(), RT(t.weight()));
@@ -293,22 +294,22 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t)
 {
-  typedef typename Bare_point::R::Rep_tag Tag;
+  typedef typename Kernel_traits<Bare_point>::Kernel::Rep_tag Tag;
   return power_test_2(p, q, t, Tag());
 }
 
 template < class Bare_point, class Weight >
 inline
-typename Bare_point::R::Oriented_side
+typename Kernel_traits<Bare_point>::Kernel::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &t)
 {
-  typedef typename Bare_point::R::RT  RT;
+  typedef typename Kernel_traits<Bare_point>::Kernel::RT  RT;
   Comparison_result r = compare(p.weight(), t.weight());
   if(r == LARGER)    return ON_NEGATIVE_SIDE;
   else if (r == SMALLER) return ON_POSITIVE_SIDE;
