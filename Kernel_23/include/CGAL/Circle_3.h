@@ -100,6 +100,9 @@ public:
   Circle_3(const Plane_3& p, const Sphere_3& s)
     : Rep(typename R::Construct_circle_3()(p,s)) {}
 
+  Circle_3(const Point_3& p1, const Point_3& p2, const Point_3& p3)
+    : Rep(typename R::Construct_circle_3()(p1,p2,p3)) {}
+
   Circle_3(const Rep& r)
     : Rep(r) {}
 

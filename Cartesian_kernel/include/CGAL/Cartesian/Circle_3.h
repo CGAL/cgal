@@ -88,7 +88,8 @@ public:
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     else {
       assign(point, obj);
-      CircleC3(point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
+      CircleC3 circle = CircleC3(point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
+      base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
   }
 
@@ -104,8 +105,24 @@ public:
       base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     else {
       assign(point, obj);
-      CircleC3(point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
+      CircleC3 circle = CircleC3(point, FT(0), Vector_3(FT(1),FT(0),FT(0)));
+      base = Rep(circle.diametral_sphere(), circle.supporting_plane());
     }
+  }
+
+  CircleC3(const Point_3 &p, const Point_3 &q, const Point_3 &r) {
+	  // p, q, r are not collinear
+	  CGAL_kernel_precondition(!R().collinear_3_object()(p, q, r));
+		Plane_3 p1 = R().construct_plane_3_object()(p, q, r);
+    Plane_3 p2 = R().construct_bisector_3_object()(p, q);
+    Plane_3 p3 = R().construct_bisector_3_object()(p, r);
+    Object obj = R().intersect_3_object()(p1, p2, p3);
+    // must be a point, otherwise they are collinear
+    Point_3 center;
+		assign(center, obj);
+		FT sqr = R().compute_squared_distance_3_object()(center, r);
+		Sphere_3 s = R().construct_sphere_3_object()(center, sqr);
+		base = Rep(s, p1);
   }
 
   const Plane_3& supporting_plane() const

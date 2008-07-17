@@ -82,9 +82,13 @@ void _test_circle_construct(const K &k) {
   typedef typename K::Vector_3                         Vector_3;
   typedef typename K::Equal_3                          Equal_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
+  typedef typename K::Compute_squared_distance_3       Compute_squared_distance_3;
+  typedef typename K::Collinear_3                      Collinear_3;
 
   Equal_3 theEqual_3 = k.equal_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
+	Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
+  Collinear_3 collinear = k.collinear_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -138,7 +142,30 @@ void _test_circle_construct(const K &k) {
     Circle_3 circle3 = theConstruct_circle_3(p,sqr,Vector_3(a,b,c));
     assert(theEqual_3(circle,circle2));
     assert(theEqual_3(circle,circle3));
- }
+  }
+
+  Point_3 p1, p2, p3;
+  p1 = Point_3(1,0,0);
+  p2 = Point_3(0,1,0);
+  p3 = Point_3(0,0,1);
+	Circle_3 c = theConstruct_circle_3(p1, p2, p3);
+	FT r1 = squared_distance(c.center(), p1);
+	FT r2 = squared_distance(c.center(), p2);
+	FT r3 = squared_distance(c.center(), p3);
+	assert(r1 == r2);
+	assert(r2 == r3);
+	assert(r3 == c.squared_radius());
+
+	p1 = Point_3(1.3,0.2,0.1);
+  p2 = Point_3(0.57,1.23,3.0);
+  p3 = Point_3(9,1.2,1.3);
+	c = theConstruct_circle_3(p1, p2, p3);
+	r1 = squared_distance(c.center(), p1);
+	r2 = squared_distance(c.center(), p2);
+	r3 = squared_distance(c.center(), p3);
+	assert(r1 == r2);
+	assert(r2 == r3);
+	assert(r3 == c.squared_radius());
 
   // No need to test the constructors based on intersection
   // _test_intersect_construct will test it

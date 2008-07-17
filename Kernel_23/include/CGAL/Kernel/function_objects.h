@@ -810,6 +810,11 @@ namespace CommonKernelFunctors {
                 const Sphere_3& s, int a) const
     { return Rep(p, s, a); }
 
+    Rep
+    operator() (Return_base_tag, const Point_3& p1,
+                const Point_3& p2, const Point_3& p3) const
+    { return Rep(p1, p2, p3); }
+
     Circle_3
     operator()(const Point_3& p, const FT& sr,
                const Plane_3& plane) const
@@ -844,6 +849,10 @@ namespace CommonKernelFunctors {
     Circle_3
     operator() (const Sphere_3& s, const Plane_3& p, int a) const
     { return this->operator()(Return_base_tag(), p, s, a); }
+
+    Circle_3
+    operator()(	const Point_3& p1, const Point_3& p2, const Point_3& p3) const
+    { return this->operator()(Return_base_tag(), p1, p2, p3); }
   };
 
 
