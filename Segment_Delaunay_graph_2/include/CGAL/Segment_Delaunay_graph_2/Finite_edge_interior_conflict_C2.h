@@ -17,9 +17,6 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
-
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_FINITE_EDGE_INTERIOR_CONFLICT_C2_H
 
@@ -54,6 +51,7 @@ public:
   typedef typename Base::Sign                 Sign;
   typedef typename Base::Orientation          Orientation;
   typedef typename Base::Oriented_side        Oriented_side;
+  typedef typename Base::Bool_type            Bool_type;
 
   typedef typename Base::Homogeneous_point_2  Homogeneous_point_2;
 
@@ -634,12 +632,12 @@ private:
   //------------------------------------------------------------------------
 
 public:
-  typedef bool              result_type;
+  typedef Bool_type         result_type;
   typedef Site_2            argument_type;
   struct Arity {};
 
-  bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
-		  const Site_2& s, const Site_2& t, Sign sgn) const
+  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& r,
+		       const Site_2& s, const Site_2& t, Sign sgn) const
   {
     if ( sgn == POSITIVE ) {
       return is_interior_in_conflict_none(p, q, r, s, t, Method_tag());
@@ -651,8 +649,8 @@ public:
   }
 
 
-  bool operator()(const Site_2& p, const Site_2& q, const Site_2& ,
-		  const Site_2& t, Sign sgn) const
+  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& ,
+		       const Site_2& t, Sign sgn) const
   {
     if ( t.is_point() ) {
       return ( sgn == NEGATIVE );
@@ -674,8 +672,8 @@ public:
     return ( p_is_endpoint && q_is_endpoint );
   }
 
-  bool operator()(const Site_2& p, const Site_2& q, const Site_2& t,
-		  Sign ) const
+  Bool_type operator()(const Site_2& p, const Site_2& q, const Site_2& t,
+		       Sign ) const
   {
     if ( p.is_segment() || q.is_segment()) {
       return false;

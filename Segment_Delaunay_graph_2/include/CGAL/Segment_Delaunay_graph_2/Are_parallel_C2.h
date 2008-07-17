@@ -37,7 +37,8 @@ class Are_parallel_C2
 
 public:
   typedef typename K::Site_2       Site_2;
-  typedef bool                     result_type;
+  typedef typename K::Bool_type    Bool_type;
+  typedef Bool_type                result_type;
   typedef Arity_tag<2>             Arity;
   typedef Site_2                   argument_type;
 
@@ -46,7 +47,7 @@ private:
   typedef typename K::FT           FT;
 
 private:
-  bool predicate(const Site_2& p, const Site_2& q) const {
+  Bool_type predicate(const Site_2& p, const Site_2& q) const {
     CGAL_precondition( p.is_segment() && q.is_segment() );
     
     Segment_2 s1 = p.segment();

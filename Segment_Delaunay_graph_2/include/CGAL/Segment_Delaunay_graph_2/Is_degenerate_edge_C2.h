@@ -17,15 +17,11 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
-
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_IS_DEGENERATE_EDGE_C2_H
 
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_C2.h>
-
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,6 +34,7 @@ class Is_degenerate_edge_C2
 {
 public:
   typedef typename K::Site_2      Site_2;
+  typedef typename K::Bool_type   Bool_type;
 
 private:
   typedef Voronoi_vertex_C2<K,Method_tag>  Voronoi_vertex_2;
@@ -53,12 +50,12 @@ private:
   }
 
 public:
-  typedef bool          result_type;
+  typedef Bool_type     result_type;
   typedef Site_2        argument_type;
   typedef Arity_tag<4>  Arity;
 
-  bool operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& s) const
+  Bool_type operator()(const Site_2& p, const Site_2& q,
+		       const Site_2& r, const Site_2& s) const
   {
     Voronoi_vertex_2 vpqr(p, q, r);
     if ( vpqr.incircle_no_easy(s) == POSITIVE ) { return false; }

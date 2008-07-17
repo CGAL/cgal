@@ -17,8 +17,6 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
 
-
-
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_INFINITE_EDGE_INTERIOR_CONFLICT_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_INFINITE_EDGE_INTERIOR_CONFLICT_C2_H
 
@@ -39,10 +37,11 @@ class Infinite_edge_interior_conflict_C2
 public:
   typedef typename K::Site_2           Site_2;
   typedef typename K::RT               RT;
+  typedef typename K::Bool_type        Bool_type;
   typedef Are_same_points_C2<K>        Are_same_points_2;
   typedef Are_same_segments_C2<K>      Are_same_segments_2;
 
-  typedef bool                         result_type;
+  typedef Bool_type                    result_type;
   struct argument_type {};
   typedef Arity_tag<5>                 Arity;
 
@@ -51,8 +50,8 @@ private:
   Are_same_segments_2  same_segments;
 
 public:
-  bool operator()(const Site_2& q, const Site_2& s, const Site_2& r,
-		  const Site_2& t, Sign sgn) const
+  Bool_type operator()(const Site_2& q, const Site_2& s, const Site_2& r,
+		       const Site_2& t, Sign sgn) const
   {
     if ( t.is_segment() ) {
       return false;
