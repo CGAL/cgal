@@ -162,7 +162,7 @@ public:
 
 template < class Bare_point, class Weight >
 inline
-Comparison_result
+typename Bare_point::R::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r, Cartesian_tag)
@@ -175,7 +175,7 @@ compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 
 template < class Bare_point, class Weight >
 inline
-Comparison_result
+typename Bare_point::R::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r, Homogeneous_tag)
@@ -188,7 +188,7 @@ compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 
 template < class Bare_point, class Weight >
 inline
-Comparison_result
+typename Bare_point::R::Comparison_result
 compare_power_distance(const Weighted_point<Bare_point, Weight>& p,
 		       const Weighted_point<Bare_point, Weight>& q,
 		       const Bare_point& r)
@@ -203,6 +203,7 @@ class Compare_power_distance_2
 public:
   typedef typename K::Weighted_point_2         Weighted_point_2;
   typedef typename K::Point_2                  Point_2;
+  typedef typename K::Comparison_result        Comparison_result;
 
   typedef Arity_tag<3>        Arity;
   typedef Comparison_result   result_type;
@@ -219,7 +220,7 @@ public:
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
@@ -235,7 +236,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
@@ -251,7 +252,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
@@ -263,7 +264,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
   
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t,
@@ -278,7 +279,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t,
@@ -292,7 +293,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &q,
 	     const Weighted_point<Bare_point, Weight> &t)
@@ -303,7 +304,7 @@ power_test_2(const Weighted_point<Bare_point, Weight> &p,
 
 template < class Bare_point, class Weight >
 inline
-Oriented_side
+typename Bare_point::R::Oriented_side
 power_test_2(const Weighted_point<Bare_point, Weight> &p,
 	     const Weighted_point<Bare_point, Weight> &t)
 {
@@ -320,6 +321,7 @@ class Power_test_2
 {
 public:
   typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Oriented_side            Oriented_side;
 
   typedef Arity_tag< 4 >   Arity;
   typedef Oriented_side    result_type;
