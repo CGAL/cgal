@@ -264,6 +264,9 @@ Scene::data(const QModelIndex &index, int role) const
   if (!index.isValid())
     return QVariant();
   
+  if(index.row() < 0 || index.row() >= polyhedra.size())
+    return QVariant();
+
   if(role == ::Qt::ToolTipRole)
     return polyhedronToolTip(index.row());
 
@@ -368,6 +371,9 @@ Scene::setData(const QModelIndex &index,
                int role)
 {
   if( role != ::Qt::EditRole || !index.isValid() )
+    return false;
+
+  if(index.row() < 0 || index.row() >= polyhedra.size())
     return false;
 
   Polyhedron_entry& entry = polyhedra[index.row()];
