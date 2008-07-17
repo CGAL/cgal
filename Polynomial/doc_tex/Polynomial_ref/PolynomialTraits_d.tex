@@ -83,22 +83,27 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 \ccNestedType{Evaluate_homogeneous}
         { A model of \ccc{PolynomialTraits_d::EvaluateHomogeneous}.}
 
+\ccNestedType{Substitute}
+        { A model of \ccc{PolynomialTraits_d::Substitute}.}
+\ccNestedType{Substitute_homogeneous}
+        { A model of \ccc{PolynomialTraits_d::SubstituteHomogeneous}.}
+
 \ccNestedType{Is_zero_at}
         { A model of \ccc{PolynomialTraits_d::IsZeroAt}.}
 \ccNestedType{Is_zero_at_homogeneous}
         { A model of \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}.}
 
 \ccNestedType{Sign_at}{
-        A model of \ccc{PolynomialTraits_d::SignAt}.
+        A model of \ccc{PolynomialTraits_d::SignAt}.\\
         In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
 \ccNestedType{Sign_at_homogeneous}{ 
-        A model of \ccc{PolynomialTraits_d::SignHomogeneous}.
+        A model of \ccc{PolynomialTraits_d::SignAtHomogeneous}.\\
         In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
 
 \ccNestedType{Compare}{ 
-        A model of \ccc{PolynomialTraits_d::Compare}. 
+        A model of \ccc{PolynomialTraits_d::Compare}. \\
         In case \ccc{Innermost_coefficient} is not \ccc{LessThanComparable} this 
         is \ccc{CGAL::Null_functor}.}
  

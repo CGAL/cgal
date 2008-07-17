@@ -1,0 +1,48 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SubstituteHomogeneous}
+\ccDefinition
+
+This \ccc{Functor} substitutes all variables of a given multivariate 
+\ccc{PolynomialTraits_d::Polynomial_d} by the values given in the 
+iterator range, where begin refers the the value for the innermost variabel. 
+In conrast to \ccc{PolynomialTraits_d::Substitute} is interpreted as a homogeneous 
+polynomial. Hence the iterator range is required to be of lenght \ccc{PolynomialTraits_d::d+1}. 
+
+Note that the \ccc{result_type} is the coercion type of the value type of the 
+given iterator range and \ccc{PolynomialTraits_d::Innermost_ceofficient}. 
+In particular \ccc{std::iterator_traits<Input_iterator>::value_type} must be at least 
+\ccc{ExplicitInteroperable} with \ccc{PolynomialTraits_d::Innermost_ceofficient}. 
+
+\ccRefines 
+
+Assignable\\
+CopyConstructible\\
+DefaultConstructible\\
+
+% \ccTypes
+% no public types 
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{substitute_homogeneous}
+
+\ccOperations
+\ccMethod{
+template<class Input_iterator>        
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                       Input_iterator begin, Input_iterator end);}{ 
+Substitute each variabel of $p$ by the values given in the iterator range, where the $p$
+is interpreted as a homogeneous polynomial. 
+The begin iterator refers to the innermost variable $x_0$. 
+The homogeneous degree is considered as equal to the total degree of $p$.
+\ccPrecond The length of the iterator range is \ccc{PolynomialTraits_d::d+1}.} 
+
+        
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Substitute}\\
+\ccRefIdfierPage{CoercionTraits}\\
+
+\end{ccRefConcept}

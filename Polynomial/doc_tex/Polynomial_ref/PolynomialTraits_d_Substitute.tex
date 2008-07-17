@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Substitute}
+\ccDefinition
+
+This \ccc{Functor} substitutes all variables of a given multivariate 
+\ccc{PolynomialTraits_d::Polynomial_d} by the values given in the 
+iterator range, where begin refers the the value for the innermost variabel. 
+
+Note that the \ccc{result_type} is the coercion type of the value type of the 
+given iterator range and \ccc{PolynomialTraits_d::Innermost_ceofficient}. 
+In particular \ccc{std::iterator_traits<Input_iterator>::value_type} must be at least 
+\ccc{ExplicitInteroperable} with \ccc{PolynomialTraits_d::Innermost_ceofficient}. 
+
+\ccRefines 
+
+Assignable\\
+CopyConstructible\\
+DefaultConstructible\\
+
+% \ccTypes
+% no public types 
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{substitute}
+
+\ccOperations
+\ccMethod{
+template<class Input_iterator>        
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                       Input_iterator begin, Input_iterator end);}{ 
+Substitutes each variabel of $p$ by the values given in the iterator range, 
+where begin refers to the innermost variable $x_0$. 
+\ccPrecond The length of the iterator range is \ccc{PolynomialTraits_d::d}.} 
+
+        
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SubstituteHomogeneous}\\
+\ccRefIdfierPage{CoercionTraits}\\
+
+\end{ccRefConcept}

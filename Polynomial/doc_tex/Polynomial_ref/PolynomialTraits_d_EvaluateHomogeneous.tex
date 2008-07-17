@@ -16,22 +16,15 @@ in one variable.
 
 \ccOperations
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
-                                 PolynomialTraits_d::Innermost_coefficient u,
-                                 PolynomialTraits_d::Innermost_coefficient  v);}
+                                 PolynomialTraits_d::Coefficient   u,
+                                 PolynomialTraits_d::Coefficient   v);}
          { return $p(u,v)$, with respect to the outermost variable. \\
            The homogeneous degree is considered as equal to the degree of $p$.  }
 
-%\ccMethod{result_type operator()(first_argument_type  p,
-%                                 second_argument_type u,
-%                                 third_argument_type  v,
-%                                 fourth_argument_type h);}
-%          { return $p(u,v)$, with respect to the outermost variable. \\
-%            The homogeneous degree is $h$.
-%            \ccPrecond: $h \geq degree(p)$  }
 
-\ccMethod{result_type operator()( PolynomialTraits_d::Polynomial_d          p,
-                                  PolynomialTraits_d::Innermost_coefficient u,
-                                  PolynomialTraits_d::Innermost_coefficient v,
+\ccMethod{result_type operator()( PolynomialTraits_d::Polynomial_d  p,
+                                  PolynomialTraits_d::Coefficient   u,
+                                  PolynomialTraits_d::Coefficient   v,
                                   int i);}
           { return $p(u,v)$, with respect to the variable $x_i$. \\
             The homogeneous degree is considered as equal to the $degree(p,i)$.
