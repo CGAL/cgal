@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Ron Wein <baruchzu@post.tau.ac.il>
+//                 Baruch Zukerman <baruchzu@post.tau.ac.il>
 
 /*! \file
  * Definition of the internal _Arr_default_overlay_traits_base class template.
