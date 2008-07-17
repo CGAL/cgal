@@ -926,32 +926,17 @@ void test_evaluate(){
     assert(evaluate(Polynomial_d(1),ICoeff(0)) == Coeff(1));
     assert(evaluate(Polynomial_d(2),ICoeff(5)) == Coeff(2));
 
-    assert(
-            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0)) == Coeff(3));
-    assert(
-            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1)) == Coeff(5));
-    assert(
-            evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2)) == Coeff(7));
+    assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0)) == Coeff(3));
+    assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1)) == Coeff(5));
+    assert( evaluate(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2)) == Coeff(7));
     
     for(int i = 0; i < 5; i++){
         int n = my_rnd.get_int(0,PT::d-1);
         Polynomial_d p,q;
         p = generate_sparse_random_polynomial<Polynomial_d>();
-        assert(evaluate(p,ICoeff(3),n) == 
-                evaluate(move(p,n,PT::d-1),ICoeff(3)));
+        assert(evaluate(p,ICoeff(3),n) 
+            == evaluate(move(p,n,PT::d-1),ICoeff(3)));
     }
-    
-    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
-    std::vector< ICoeff > ev;
-    for(int i = 0; i < PT::d-1; ++i) {
-        ev.push_back(ICoeff(0));
-    }
-    ev.push_back(ICoeff(1));
-    assert(evaluate(p, ev.begin(), ev.end()) == ICoeff(1+2+3));
-    ev.pop_back();
-    ev.push_back(ICoeff(2));  
-    assert(evaluate(p, ev.begin(), ev.end()) == ICoeff(1+4+12));
-    
     
     std::cerr << " ok "<< std::endl;
 }
@@ -967,34 +952,13 @@ void test_evaluate_homogeneous(){
     assert(evh(Polynomial_d(1),ICoeff(0),ICoeff(2)) == Coeff(1));
     assert(evh(Polynomial_d(2),ICoeff(5),ICoeff(3)) == Coeff(2));
 
-    assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(0),ICoeff(1)) ==
-            Coeff(3));
-    assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(1),ICoeff(1)) ==
-            Coeff(5));
-    assert(evh(Polynomial_d(Coeff(3),Coeff(2)),ICoeff(2),ICoeff(3)) ==
-            Coeff(9+4));
+    assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(0),ICoeff(1)) 
+        == Coeff(3));
+    assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(1),ICoeff(1)) 
+        == Coeff(5));
+    assert(evh( Polynomial_d(Coeff(3),Coeff(2)) , ICoeff(2),ICoeff(3)) 
+        == Coeff(9+4));
     
-    // hdegree parameter no longer available
-    /*assert(evh(Polynomial_d(Coeff(5),Coeff(7)),ICoeff(2),ICoeff(3),2)
-      == Coeff(5*3*3+7*3*2));*/
-    
-    Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
-    std::vector< ICoeff > ev;
-    for(int i = 0; i < PT::d-1; ++i) {
-        ev.push_back(ICoeff(0));
-    }
-    ev.push_back(ICoeff(1));
-    ev.push_back(ICoeff(1));
-    assert(evh(p, ev.begin(), ev.end()) == ICoeff(1+2+3));
-    ev.pop_back();
-    ev.push_back(ICoeff(2));  
-    assert(evh(p, ev.begin(), ev.end()) == ICoeff(4+4+3));
-    ev.pop_back();
-    ev.pop_back();
-    ev.push_back(ICoeff(2));  
-    ev.push_back(ICoeff(2));  
-    assert(evh(p, ev.begin(), ev.end()) == ICoeff(4+8+12));
-        
     std::cerr << " ok "<< std::endl;
 }
 
@@ -1036,31 +1000,25 @@ void test_is_zero_at_homogeneous() {
     
     typename PT::Is_zero_at_homogeneous is_zero_at_homogeneous;
     
-    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
+    Polynomial_d p(Coeff(-1), Coeff(0), Coeff(4));
+    std::cout << p << std::endl;
     
     std::vector< ICoeff > cv;
     for(int i = 0; i < PT::d-1; ++i)
         cv.push_back(ICoeff(0));
-        
-    for(int v = 1; v < 5; ++v) {
-        cv.push_back(ICoeff(0));
-        cv.push_back(ICoeff(v));
-        assert(!is_zero_at_homogeneous(p, cv.begin(), cv.end()));
-        
-        cv.pop_back();
-        cv.pop_back();
-        cv.push_back(ICoeff(v));
-        cv.push_back(ICoeff(v));
-        assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
-        
-        cv.pop_back();
-        cv.pop_back();
-        cv.push_back(ICoeff(-v));
-        cv.push_back(ICoeff(v));
-        assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
-        
-        cv.pop_back();
-        cv.pop_back();
+    
+    for(int v = 2; v < 5; ++v) {
+      cv.push_back(ICoeff(v));
+      cv.push_back(ICoeff(2*v));
+      assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
+      cv.pop_back();
+      cv.pop_back();
+
+      cv.push_back(ICoeff(v));
+      cv.push_back(ICoeff(2*-v));
+      assert(is_zero_at_homogeneous(p, cv.begin(), cv.end()));
+      cv.pop_back();
+      cv.pop_back();
     }
     
     std::cerr << " ok" << std::endl;
@@ -1258,15 +1216,7 @@ void test_substitute(){
     assert(Innermost_coefficient(2) 
             == substitute(Polynomial_d(2),vec.begin(),vec.end()));
     assert(Innermost_coefficient(-2) 
-            == substitute(Polynomial_d(-2),vec.begin(),vec.end()));
-    
-    for(int i = 0; i< 5; i++){
-        Polynomial_d p = 
-            generate_sparse_random_polynomial<Polynomial_d>(3); 
-        assert(typename PT::Evaluate()(p,vec.begin(),vec.end()) 
-                == substitute(p,vec.begin(),vec.end()));
-    }
-    
+            == substitute(Polynomial_d(-2),vec.begin(),vec.end())); 
     
     for(int i = 0; i< 5; i++){
         typedef typename PT
@@ -1283,6 +1233,50 @@ void test_substitute(){
             = generate_sparse_random_polynomial<Polynomial_d>(3); 
         assert( substitute(p,vec1.begin(),vec1.end()) == 
                 substitute(typename PT::Swap()(p,0,PT::d-1),
+                        vec2.begin(),vec2.end()));
+    }   
+    
+    std::cerr << " ok "<< std::endl;
+}
+
+// //       Substitute;
+template <class Polynomial_traits_d>
+void test_substitute_homogeneous(){
+    std::cerr << "start test_substitute_homogeneous "; std::cerr.flush();
+    CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
+    typename PT::Substitute_homogeneous substitute_homogeneous;
+    typedef typename PT::Innermost_coefficient Innermost_coefficient;
+    
+    
+    std::vector<Innermost_coefficient> vec;
+    for(int i = 0; i < PT::d; i++){
+        vec.push_back(Innermost_coefficient(i));
+    }
+    vec.push_back(Innermost_coefficient(3));
+    assert(Innermost_coefficient(0) 
+            == substitute_homogeneous(Polynomial_d(0),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(1) 
+            == substitute_homogeneous(Polynomial_d(1),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(2) 
+            == substitute_homogeneous(Polynomial_d(2),vec.begin(),vec.end()));
+    assert(Innermost_coefficient(-2) 
+            == substitute_homogeneous(Polynomial_d(-2),vec.begin(),vec.end())); 
+    
+    for(int i = 0; i< 5; i++){
+        typedef typename PT
+            :: template Rebind<Innermost_coefficient,5>::Other PT_5;
+        typedef typename PT_5::Polynomial_d Polynomial_5;
+        std::vector<Polynomial_5> vec1,vec2;
+        for(int j = 0; j < PT::d+1; j++){
+            vec1.push_back(
+                    generate_sparse_random_polynomial<Polynomial_5>(3));
+        }
+        vec2=vec1;
+        std::swap(vec2[0],vec2[PT::d-1]);
+        Polynomial_d p 
+            = generate_sparse_random_polynomial<Polynomial_d>(3); 
+        assert( substitute_homogeneous(p,vec1.begin(),vec1.end()) == 
+                substitute_homogeneous(typename PT::Swap()(p,0,PT::d-1),
                         vec2.begin(),vec2.end()));
     }   
     
@@ -1373,6 +1367,8 @@ struct Test_polynomial_traits_d<Polynomial_traits_d, CGAL::Null_tag > {
         test_canonicalize<Polynomial_traits_d>();
         //      Substitute;
         test_substitute<Polynomial_traits_d>();
+        //      Substitute_homogeneous;
+        test_substitute_homogeneous<Polynomial_traits_d>();
         //   private:
         //       Innermost_leading_coefficient;
     }

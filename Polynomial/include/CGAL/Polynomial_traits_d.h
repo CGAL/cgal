@@ -422,61 +422,36 @@ public:
       return typename CT::Cast()(p);
     }
   };
-};
 
-// Evaluate_homogeneous_func for recursive homogeneous evaluation of a
-//  polynomial, used by Polynomial_traits_d_base for polynomials.
-template< class Polynomial, int d = CGAL::Polynomial_traits_d< Polynomial>::d >
-struct Evaluate_homogeneous_func;
+  struct Substitute_homogeneous{
+  public:
+    // this is the end of the recursion
+    // begin contains the homogeneous variabel 
+    // hdegree is the remaining degree 
+    template <class Input_iterator>
+    typename 
+    CGAL::Coercion_traits<
+        typename std::iterator_traits<Input_iterator>::value_type,
+                                   Innermost_coefficient>::Type
+    operator()(
+        const Innermost_coefficient& p, 
+        Input_iterator begin, 
+        Input_iterator end,
+        int hdegree){ 
+      
+      typedef typename std::iterator_traits<Input_iterator>::value_type 
+        value_type;
+      typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
+      typename CT::Type result =   
+        typename CT::Cast()(CGAL::ipower(*begin++,hdegree)) 
+        * typename CT::Cast()(p);
 
-template< class Polynomial >
-struct Evaluate_homogeneous_func< Polynomial, 1 > {
-  typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
-  typedef typename PT::Coefficient Coefficient;
-  typedef typename PT::Innermost_coefficient ICoeff;
-  typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
-        
-  template< class Input_iterator >
-  ICoeff operator()( const Polynomial& p,
-      Input_iterator begin,
-      Input_iterator end,
-      int total_degree,
-      const ICoeff& v ) const {
-    // TODO: remove --end in case of Input_iterator
-    --end;
-    CGAL_precondition( begin == end );
-    return p.evaluate_homogeneous( (*end), v, total_degree );
-  }
-        
-}; 
-
-template< class Polynomial, int d >
-struct Evaluate_homogeneous_func {
-  typedef typename CGAL::Polynomial_traits_d< Polynomial > PT;
-  typedef typename PT::Coefficient Coefficient;
-  typedef typename PT::Innermost_coefficient ICoeff;
-  typedef typename CGAL::Polynomial_traits_d< Coefficient > PTC;
-        
-  template< class Input_iterator >
-  ICoeff operator()( const Polynomial& p,
-      Input_iterator begin,
-      Input_iterator end,
-      int total_degree,
-      const ICoeff& v ) const {
-    CGAL_precondition( begin != end );
-    //typename PT::Evaluate evaluate;
-    typename PT::Degree degree;            
-    Evaluate_homogeneous_func< Coefficient > eval_hom;
-    // TODO: remove --end in case of Input_iterator
-    --end;
-            
-    std::vector< ICoeff > cv;  
-    for( int i = 0; i <= degree(p); ++i ) {
-      cv.push_back( eval_hom( p[i], begin, end, total_degree - i, v ) );
+      CGAL_precondition(end == begin);
+      CGAL_precondition(hdegree >= 0);
+      return result;
     }
-    
-    return (CGAL::Polynomial< ICoeff >( cv.begin(), cv.end() )).evaluate((*end));
-  }
+  };
+  
 };
 
 // Now the version for the polynomials with all functors provided by all 
@@ -862,78 +837,67 @@ public:
     }
   };
 
-  //       Evaluate;
+  // Evaluate;
   struct Evaluate
-    :public Unary_function<Polynomial_d,Innermost_coefficient>{
+    :public Unary_function<Polynomial_d,Coefficient>{
+    // Evaluate with respect to one variable 
     Coefficient
-    operator()(const Polynomial_d& p, Innermost_coefficient x, int i = (d-1)) 
-      const {
-      if(i == (d-1) )
-        return p.evaluate(x);
-      else{
-        return Move()(p,i).evaluate(x);
-      }
+    operator()(const Polynomial_d& p, Coefficient x) const {
+      return p.evaluate(x);
     }
-        
-    template< class Input_iterator >
-    Innermost_coefficient 
-    operator()( 
-        const Polynomial_d& p, 
-        Input_iterator begin, 
-        Input_iterator end ) const 
+    Coefficient 
+    operator()(const Polynomial_d& p, Coefficient x, int i ) const {
+      return Move()(p,i).evaluate(x);
+    } 
+#define ICOEFF typename First_if_different<Innermost_coefficient, Coefficient>::Type 
+    Coefficient operator()
+      ( const Polynomial_d& p, const ICOEFF& x) const 
     {
-      CGAL_precondition( begin != end );
-            
-      typename PT::Evaluate evaluatePoly;
-      typename PTC::Evaluate evaluateCoeff;
-      // TODO: remove --end in case of Input_iterator
-      --end;
-      return evaluateCoeff( evaluatePoly( p, (*end) ), begin, end );            
-    }  
+      return p.evaluate(x);
+    }
+    Coefficient operator()
+      (const Polynomial_d& p, const ICOEFF& x, int i) const 
+    {
+      return Move()(p,i,PT::d-1).evaluate(x);
+    }
+#undef ICOEFF      
   };
-    
-  //       Evaluate_homogeneous;
+  
+  // Evaluate_homogeneous;
   struct Evaluate_homogeneous{
     typedef Coefficient           result_type;  
     typedef Polynomial_d          first_argument_type;
-    typedef Innermost_coefficient second_argument_type;
-    typedef Innermost_coefficient third_argument_type;
-    typedef Arity_tag< 3 >         Arity;
-        
-    Coefficient
-    operator()(
-        const Polynomial_d& p, 
-        Innermost_coefficient a, 
-        Innermost_coefficient b,
-        int i = (PT::d-1) ) const {
-      if (i == (d-1) )
-        return p.evaluate_homogeneous(a,b);
-      else
-        return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
+    typedef Coefficient           second_argument_type;
+    typedef Coefficient           third_argument_type;
+    typedef Arity_tag< 3 >        Arity;
+       
+    Coefficient operator()(
+        const Polynomial_d& p, Coefficient a, Coefficient b) const 
+    {
+      return p.evaluate_homogeneous(a,b);
     }
-        
-    template< class Input_iterator >
-    Innermost_coefficient operator()( const Polynomial_d & p,
-        Input_iterator begin,
-        Input_iterator end ) const {
-      typename PT::Total_degree total_degree;
-      typename PT::Evaluate_homogeneous eval_hom;
-      return eval_hom( p, begin, end, total_degree(p) );
+    Coefficient operator()(
+        const Polynomial_d& p, Coefficient a, Coefficient b, int i) const 
+    {
+      return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
     }
-        
-    template< class Input_iterator >
-    Innermost_coefficient operator()( const Polynomial_d& p,
-        Input_iterator begin,
-        Input_iterator end,
-        int total_degree ) const {
-      --end;
-      Evaluate_homogeneous_func< Polynomial_d > eval_hom;
-      return eval_hom( p, begin, end, total_degree, (*end) );
+
+#define ICOEFF typename First_if_different<Innermost_coefficient, Coefficient>::Type 
+    Coefficient operator()
+      ( const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b) const 
+    {
+      return p.evaluate_homogeneous(a,b);
     }
-        
+    Coefficient operator()
+      (const Polynomial_d& p, const ICOEFF& a, const ICOEFF& b, int i) const 
+    {
+      return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b);
+    }
+#undef ICOEFF    
+
   };
     
-  //       Is_zero_at;
+  // Is_zero_at;
   struct Is_zero_at {
   private:
     typedef Algebraic_structure_traits<Innermost_coefficient> AST;
@@ -946,8 +910,8 @@ public:
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end ) const {
-      typename PT::Evaluate evaluate;            
-      return( CGAL::is_zero( evaluate( p, begin, end ) ) );
+      typename PT::Substitute substitute;            
+      return( CGAL::is_zero( substitute( p, begin, end ) ) );
     } 
   };
     
@@ -960,13 +924,11 @@ public:
     typedef BOOL result_type;
         
     template< class Input_iterator >
-    BOOL operator()( 
-        const Polynomial_d& p, 
-        Input_iterator begin, 
-        Input_iterator end ) const 
+    BOOL operator()
+      ( const Polynomial_d& p, Input_iterator begin, Input_iterator end ) const 
     {
-      typename PT::Evaluate_homogeneous evaluate_homogeneous;
-      return( CGAL::is_zero( evaluate_homogeneous( p, begin, end ) ) );
+      typename PT::Substitute_homogeneous substitute_homogeneous;
+      return( CGAL::is_zero( substitute_homogeneous( p, begin, end ) ) );
     }
   };
 
@@ -984,13 +946,11 @@ public:
         Input_iterator begin, 
         Input_iterator end ) const 
     {
-      typename PT::Evaluate evaluate;
-      return CGAL::sign( evaluate( p, begin, end ) );
+      typename PT::Substitute substitute;
+      return CGAL::sign( substitute( p, begin, end ) );
     }
   };
   
-  // TODO: Fix error in evaluate homogenous
-  //       Sign_at_homogeneous;
   struct Sign_at_homogeneous {
     typedef Real_embeddable_traits<Innermost_coefficient> RT;
     typedef typename RT::Sign::result_type SIGN;
@@ -1002,8 +962,8 @@ public:
         const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end) const {
-      typename PT::Evaluate_homogeneous evaluate_homogeneous;
-      return CGAL::sign( evaluate_homogeneous( p, begin, end ) );
+      typename PT::Substitute_homogeneous substitute_homogeneous;
+      return CGAL::sign( substitute_homogeneous( p, begin, end ) );
     }
   };
     
@@ -1344,8 +1304,7 @@ public:
         
     Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient& c,
         int i = (PT::d-1) ) {
-      typename PT::Scale_homogeneous scale_homogeneous;
-            
+      typename PT::Scale_homogeneous scale_homogeneous;          
       return scale_homogeneous( p, c, Innermost_coefficient(1), i );
     }
         
@@ -1553,37 +1512,37 @@ public:
     }
   };
 
-  // substitute every variable by its new value in the iterator range
+    // substitute every variable by its new value in the iterator range
   // begin refers to the innermost/first variable
   struct Substitute{
   public:
     template <class Input_iterator>
-    typename 
-    CGAL::Coercion_traits
-    <typename std::iterator_traits<Input_iterator>::value_type, 
-         Innermost_coefficient>::Type
+    typename CGAL::Coercion_traits<
+         typename std::iterator_traits<Input_iterator>::value_type, 
+         Innermost_coefficient
+    >::Type
     operator()(
-        const Polynomial_d& p_, 
+        const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end){
       typedef typename std::iterator_traits<Input_iterator> ITT;
       typedef typename ITT::iterator_category  Category; 
-      return (*this)(p_,begin,end,Category()); 
+      return (*this)(p,begin,end,Category()); 
     }
         
     template <class Input_iterator>
-    typename 
-    CGAL::Coercion_traits
-    <typename std::iterator_traits<Input_iterator>::value_type, 
-         Innermost_coefficient>::Type
+    typename CGAL::Coercion_traits< 
+         typename std::iterator_traits<Input_iterator>::value_type, 
+         Innermost_coefficient
+    >::Type
     operator()(
-        const Polynomial_d& p_, 
+        const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end,
         std::forward_iterator_tag){
       typedef typename std::iterator_traits<Input_iterator> ITT;
       std::list<typename ITT::value_type> list(begin,end); 
-      return (*this)(p_,list.begin(),list.end()); 
+      return (*this)(p,list.begin(),list.end()); 
     }
         
     template <class Input_iterator>
@@ -1592,7 +1551,7 @@ public:
     <typename std::iterator_traits<Input_iterator>::value_type, 
          Innermost_coefficient>::Type
     operator()(
-        const Polynomial_d& p_, 
+        const Polynomial_d& p, 
         Input_iterator begin, 
         Input_iterator end,
         std::bidirectional_iterator_tag){
@@ -1602,9 +1561,7 @@ public:
       typedef CGAL::Coercion_traits<Innermost_coefficient,value_type> CT;
       typename PTC::Substitute subs; 
 
-      Polynomial_d p = p_;
-      end--;
-      typename CT::Type x = typename CT::Cast()(*end);  
+      typename CT::Type x = typename CT::Cast()(*(--end));  
             
       int i = Degree()(p);
       typename CT::Type y = 
@@ -1616,7 +1573,72 @@ public:
       }
       return y;  
     }        
+  };  // substitute every variable by its new value in the iterator range
+
+
+  
+  // begin refers to the innermost/first variable
+  struct Substitute_homogeneous{
+
+    template<typename Input_iterator>
+    struct Result_type{
+      typedef std::iterator_traits<Input_iterator> ITT;
+      typedef typename ITT::value_type value_type;
+      typedef Coercion_traits<value_type, Innermost_coefficient> CT; 
+      typedef typename CT::Type Type; 
+    };
+    
+  public:
+    
+    template <class Input_iterator>
+    typename Result_type<Input_iterator>::Type
+    operator()( const Polynomial_d& p, Input_iterator begin, Input_iterator end){
+      int hdegree = Total_degree()(p);
+
+      typedef std::iterator_traits<Input_iterator> ITT;
+      std::list<typename ITT::value_type> list(begin,end); 
+      
+      // make the homogeneous variable the first in the list
+      list.push_front(list.back());
+      list.pop_back();
+      
+      // reverse and begin with the outermost variable 
+      return (*this)(p, list.rbegin(), list.rend(), hdegree); 
+    }
+      
+    // this operator is undcoumented and for internal use:
+    // the iterator range starts with the outermost variable 
+    // and ends with the homogeneous variable 
+    template <class Input_iterator>
+    typename Result_type<Input_iterator>::Type
+    operator()(
+        const Polynomial_d& p, 
+        Input_iterator begin, 
+        Input_iterator end,
+        int hdegree){
+      
+      
+      typedef std::iterator_traits<Input_iterator> ITT;
+      typedef typename ITT::value_type value_type;
+      typedef Coercion_traits<value_type, Innermost_coefficient> CT; 
+      typedef typename CT::Type Type; 
+      
+      typename PTC::Substitute_homogeneous subsh; 
+      
+      typename CT::Type x = typename CT::Cast()(*begin++);  
+            
+
+      int i = Degree()(p);
+      typename CT::Type y = subsh(Get_coefficient()(p,i),begin,end, hdegree-i);
+       
+      while (--i >= 0){
+        y *= x;
+        y += subsh(Get_coefficient()(p,i),begin,end,hdegree-i);
+      }
+      return y;  
+    }        
   };
+
 };
 
 } // namespace CGALi
