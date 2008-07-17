@@ -21,8 +21,10 @@
 #ifndef CGAL_FILTERED_PREDICATE_H
 #define CGAL_FILTERED_PREDICATE_H
 
-#include <CGAL/basic.h>
+#include <string>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
 
 CGAL_BEGIN_NAMESPACE
