@@ -5,6 +5,7 @@
 #include <CGAL/convex_hull_3.h>
 
 #include <CGAL/Dualizer.h>
+#include <CGAL/translate.h>
 
 void MainWindow::on_actionKernel_triggered()
 {
@@ -72,7 +73,7 @@ void MainWindow::on_actionKernel_triggered()
     // dualize and translate back to get final kernel
     Dualizer<Polyhedron,Kernel> dualizer;
     dualizer.run(convex_hull,*pKernel);
-    //translate(*pKernel,translate); // TODO
+    ::translate<Polyhedron,Kernel>(*pKernel,translate);
     pKernel->inside_out();
 
     scene->addPolyhedron(pKernel,
