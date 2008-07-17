@@ -1743,7 +1743,6 @@ public:
             xc1.left().is_min_boundary() ? xc1.right() : xc1.left();
 
           CGAL::Sign xsign = Traits::x_sign(normal1);
-          CGAL::Sign ysign = Traits::y_sign(normal1);
           bool xz_plane = xsign == ZERO;
           Project project =
             (xz_plane) ? Traits::project_xz : Traits::project_yz;
