@@ -63,6 +63,10 @@ public:
     : P_point(p),bb(NULL)
       {}
 
+  // This avoids Memory Leaks, but may decrease the performance
+  // probably not the best solution
+  Circular_arc_point_with_bbox_2(const Circular_arc_point_with_bbox_2 &c) : P_point(c.P_point), bb(NULL) { }
+	~Circular_arc_point_with_bbox_2() { if(bb) delete bb; }
 
   ////Accesors////
   const RCircular_arc_point_2 & point() const

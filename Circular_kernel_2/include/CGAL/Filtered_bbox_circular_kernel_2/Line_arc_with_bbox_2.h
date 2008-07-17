@@ -90,6 +90,10 @@ public:
     		: P_arc(a) , bb(NULL)
 		{}
 
+    // This avoids Memory Leaks, but may decrease the performance
+    // probably not the best solution
+    Line_arc_with_bbox_2(const Line_arc_with_bbox_2 &c) : P_arc(c.P_arc), bb(NULL) { }
+	  ~Line_arc_with_bbox_2() { if(bb) delete bb; }
 
 
 		//////////Predicates//////////
