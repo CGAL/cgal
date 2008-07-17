@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   QStringList args = app.arguments();
   args.removeAt(0);
 
-  if(args[0] == "--use-meta")
+  if(!args.empty() && args[0] == "--use-meta")
   {
     mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
     args.removeAt(0);
