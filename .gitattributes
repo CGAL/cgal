@@ -1571,7 +1571,6 @@ CGALimageIO/src/CGALimageIO/CGALimageIO_71.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CGALimageIO_80.vcproj eol=crlf
 CGALimageIO/src/CGALimageIO/CMakeLists.txt -text
 CGALimageIO/src/CGALimageIO/local_makefile -text
-CMake/src/CMakeLists.txt -text
 Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
@@ -2038,6 +2037,7 @@ Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
 Installation/src/CGAL/all_files.cpp -text
+Installation/src/CMakeLists.txt -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
