@@ -151,14 +151,18 @@ void MainWindow::updateViewerBBox()
 
 void MainWindow::open(QString filename)
 {
-  int index = scene->open(filename);
-  if(index >= 0) {
-    setCurrentFile(filename);
-    selectPolyhedron(index);
+  QFileInfo fileinfo(filename);
+  if(fileinfo.isFile() && fileinfo.isReadable()) {
+    int index = scene->open(filename);
+    if(index >= 0) {
+      QSettings settings;
+      settings.setValue("OFF open directory",
+			fileinfo.absoluteDir().absolutePath());
+	setCurrentFile(filename);
+      selectPolyhedron(index);
+    }
   }
 }
-
-
 
 void MainWindow::selectPolyhedron(int i)
 {
@@ -286,10 +290,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::on_actionLoadPolyhedron_triggered()
 {
+  QSettings settings;
+  QString directory = settings.value("OFF open directory",
+				     QDir::current().dirName()).toString();
   QStringList filenames = 
     QFileDialog::getOpenFileNames(this,
                                   tr("Load polyhedron..."),
-                                  QString(),
+                                  directory,
                                   tr("OFF files (*.off)\n"
                                      "All files (*)"));
   if(!filenames.isEmpty()) {
