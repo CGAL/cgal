@@ -318,8 +318,8 @@ public:
 #endif
             
             
-            this->ptr()->f = this->ptr()->c1_.f();
-            this->ptr()->g = this->ptr()->c2_.f();
+            this->ptr()->f = this->ptr()->c1_.polynomial_2();
+            this->ptr()->g = this->ptr()->c2_.polynomial_2();
             
 #if CGAL_ACK_RESULTANT_FIRST_STRATEGY
 #ifndef CGAL_ACK_RESULTANT_FIRST_STRATEGY_DEGREE_THRESHOLD
@@ -739,7 +739,8 @@ private:
         Curve_analysis_2& c1=this->ptr()->c1_, c2=this->ptr()->c2_;
 	
 	size_type number_of_one_curve_events 
-            = c1.num_events() + c2.num_events();
+            = c1.number_of_status_lines_with_event() + 
+              c2.number_of_status_lines_with_event();
 
 	std::vector<X_coordinate_1> one_curve_events;
 	one_curve_events.reserve(number_of_one_curve_events);
@@ -909,11 +910,11 @@ private:
         
         Poly_coer_1 f1_at_r_with_denom 
             = typename Polynomial_traits_2::Swap() 
-                (this->ptr()->c1_.f(), 0, 1).evaluate(r);
+                (this->ptr()->c1_.polynomial_2(), 0, 1).evaluate(r);
 
         Poly_coer_1 f2_at_r_with_denom 
             = typename Polynomial_traits_2::Swap() 
-                (this->ptr()->c2_.f(), 0, 1).evaluate(r);
+                (this->ptr()->c2_.polynomial_2(), 0, 1).evaluate(r);
 
         typename FT::Decompose() (f1_at_r_with_denom, 
                                   p1, denom); 
@@ -1175,8 +1176,8 @@ private:
         size_type index_of_ffy =this->ptr()->index_triples[i].ffy;
         size_type index_of_ggy =this->ptr()->index_triples[i].ggy;
         if(index_of_fg>=0) {
-            if(alpha.is_root_of(this->ptr()->c1_.f().lcoeff())
-               || alpha.is_root_of(this->ptr()->c2_.f().lcoeff())) {
+            if(alpha.is_root_of(this->ptr()->c1_.polynomial_2().lcoeff()) ||
+               alpha.is_root_of(this->ptr()->c2_.polynomial_2().lcoeff())) {
                 throw CGAL::CGALi::Non_generic_position_exception();
             }
             size_type k = -1; // not yet computed
@@ -1506,11 +1507,6 @@ public:
      */
     size_type number_of_status_lines_with_event() const {
         return static_cast<size_type>(this->ptr()->event_x_coordinates.size());
-    }
-
-    //! For convenience
-    size_type num_events() const {
-        return number_of_status_lines_with_event();
     }
 
     //! Returns the x-coordinate of the <tt>i</tt>th event
@@ -2268,7 +2264,8 @@ std::ostream& operator<<
     typedef typename Curve_pair_analysis_2::Index_triple Index_triple;
     typedef typename Curve_pair_analysis_2::Status_line_CPA_1 Slice;
     out << "--------------- Analysis results ---------------" << std::endl;
-    out << "Number of constructed event lines: " << curve_pair.num_events() 
+    out << "Number of constructed event lines: " 
+        << curve_pair.number_of_status_lines_with_event() 
         << std::endl;
       
     out << "Intermediate line: "  << std::flush;
@@ -2286,7 +2283,9 @@ std::ostream& operator<<
         }
     }          
     out << std::endl << std::endl;
-    for(size_type j = 0; j<curve_pair.num_events();j++) {
+    for(size_type j = 0; 
+        j < curve_pair.number_of_status_lines_with_event();
+        j++) {
 
         out << "Event line at " << CGAL::to_double(curve_pair.event_x(j))
             << ": " << std::endl;

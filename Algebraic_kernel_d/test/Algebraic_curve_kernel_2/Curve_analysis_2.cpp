@@ -282,7 +282,7 @@ template<typename Arithmetic_kernel> void test_routine() {
     {
         curve=Curve_analysis_2();
 #if !CGAL_ACK_USE_EXACUS
-        assert(! curve.has_defining_equation());
+        assert(! curve.has_defining_polynomial());
 #endif
     }
     {
@@ -315,7 +315,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         CGAL_ACK_DEBUG_PRINT << "P[2(0,P[2(1,3)(2,6)])(1,P[2(0,-3)(1,-11)(2,1)])(2,P[1(0,5)(1,-1)])]" << std::endl;
 #endif
 #if !CGAL_ACK_USE_EXACUS
-        assert(curve.polynomial_2()==curve.f_primitive());
+        assert(curve.polynomial_2()==curve.primitive_polynomial_2());
         assert(number_of_objects<Algebraic_kernel_2>(curve)==4);
         Curve_analysis_2 sh_curve=curve.shear_primitive_part(2);
         assert(number_of_objects<Algebraic_kernel_2>(sh_curve)==7);

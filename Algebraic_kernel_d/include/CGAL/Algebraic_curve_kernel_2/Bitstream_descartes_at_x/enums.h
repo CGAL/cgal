@@ -27,13 +27,6 @@ namespace CGALi {
 
   };
 
-  enum Degeneracy_strategy {
-
-    SHEAR_STRATEGY = 0,
-    EXCEPTION_STRATEGY = 1,
-
-  };
-
 } // namespace CGALi
 
 CGAL_END_NAMESPACE

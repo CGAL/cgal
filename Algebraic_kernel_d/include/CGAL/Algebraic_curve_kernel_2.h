@@ -773,15 +773,16 @@ public:
                 typename Curves::const_iterator cit;
                 // this is temporary solution while curves are cached on
                 // AlciX level
-                CGAL_precondition(parts_f[0].f() == parts_g[0].f());
-                *oib++ = cc_2(parts_f[0].f());
+                CGAL_precondition(parts_f[0].polynomial_2() == 
+                                  parts_g[0].polynomial_2());
+                *oib++ = cc_2(parts_f[0].polynomial_2());
                 
                 if(parts_f.size() > 1)
                     for(cit = parts_f.begin() + 1; cit != parts_f.end(); cit++)
-                        *oi1++ = cc_2(cit->f());
+                        *oi1++ = cc_2(cit->polynomial_2());
                 if(parts_g.size() > 1)
                     for(cit = parts_g.begin() + 1; cit != parts_g.end(); cit++)
-                        *oi2++ = cc_2(cit->f());
+                        *oi2++ = cc_2(cit->polynomial_2());
                 return true;
             }
                 
@@ -800,8 +801,7 @@ public:
                 CGAL_assertion(false);
                 return false;
             }
-            typename Curve_analysis_2::Gcd_cache& gcd_cache 
-                = Curve_analysis_2::get_gcd_cache();
+            Gcd_cache_2& gcd_cache = Self::gcd_cache_2();
             typedef typename Curve_analysis_2::size_type size_type;
             Polynomial_2 gcd = gcd_cache(std::make_pair(f,g));
             size_type n = gcd.degree();

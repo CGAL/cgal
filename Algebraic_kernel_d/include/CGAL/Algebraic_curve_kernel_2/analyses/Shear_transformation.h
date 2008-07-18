@@ -89,8 +89,11 @@ public:
         this->use_primitive_curve = use_primitive_curve;
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "Curve_analysis_2: " << C.f() << std::endl;
-        CGAL_ACK_DEBUG_PRINT << "num events: " << C.num_events() << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "Curve_analysis_2: " 
+                             << C.polynomial_2() << std::endl;
+        CGAL_ACK_DEBUG_PRINT << "num events: " 
+                             << C.number_of_status_lines_with_event() 
+                             << std::endl;
         CGAL_ACK_DEBUG_PRINT << "s: " << s << std::endl;
 #endif
 */
@@ -110,15 +113,15 @@ public:
 #endif
 
         if(this->use_primitive_curve) {
-            pol = C.f_primitive();
+            pol = C.primitive_polynomial_2();
         } else {
-            pol=C.f();
+            pol=C.polynomial_2();
         }
         sh_pol=CGAL::CGALi::shear(pol,Coefficient(s));
         if(typename CGAL::Polynomial_traits_d< Polynomial_2 >::Univariate_content_up_to_constant_factor()( sh_pol ).degree()>0) {
             throw CGAL::CGALi::Non_generic_position_exception();
         }
-        if(! D.has_defining_equation()) {
+        if(! D.has_defining_polynomial()) {
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "set f.." << std::flush;
 #endif
@@ -340,12 +343,14 @@ private:
             : x_sheared(left_bound,lower_bound,-s)-1;
         far_right=(s<0) ? x_sheared(right_bound,lower_bound,-s)
             : x_sheared(right_bound,upper_bound,-s)+1;
-        if(C.num_events()>0) {
+        if(C.number_of_status_lines_with_event()>0) {
             if(far_left>C.status_line_at_event(0).x().low()) {
                 far_left = C.status_line_at_event(0).x().low();
             }   
-            if(far_right<C.status_line_at_event(C.num_events()-1).x().high()) {
-                far_right = C.status_line_at_event(C.num_events()-1).x().high();
+            if(far_right<C.status_line_at_event
+               (C.number_of_status_lines_with_event()-1).x().high()) {
+                far_right = C.status_line_at_event
+                    (C.number_of_status_lines_with_event()-1).x().high();
             }
         }
         // just to be sure...
@@ -641,7 +646,7 @@ private:
             }
         }
 
-        CGAL_assertion(event_count==C.num_events());
+        CGAL_assertion(event_count==C.number_of_status_lines_with_event());
     }
     
     struct Sh_ev_point_info {

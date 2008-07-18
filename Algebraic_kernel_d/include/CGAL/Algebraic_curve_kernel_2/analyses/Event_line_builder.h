@@ -277,11 +277,11 @@ protected:
 
     // Shortcut functions
     Polynomial_1 stha(int i) const {
-        return curve.principal_sturm_habicht_primitive_f(i);
+        return curve.principal_sturm_habicht_of_primitive(i);
     }
 
     Polynomial_1 costha(int i) const {
-        return curve.coprincipal_sturm_habicht_primitive_f(i);
+        return curve.coprincipal_sturm_habicht_of_primitive(i);
     }
 
 

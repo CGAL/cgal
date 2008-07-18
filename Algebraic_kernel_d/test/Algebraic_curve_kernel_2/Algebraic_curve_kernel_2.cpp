@@ -16,9 +16,6 @@
 #include <CGAL/Algebraic_curve_kernel_2/flags.h>
 #include <CGAL/basic.h>
 
-//#include <CGAL/Benchmark/Benchmark.hpp>
-//#include <CGAL/Benchmark/Option_parser.hpp>
-
 #include <CGAL/Arithmetic_kernel.h>
 
 #if CGAL_ACK_USE_EXACUS
