@@ -324,11 +324,20 @@ void MainWindow::on_actionSaveAs_triggered()
 
 
 
-void MainWindow::on_actionErasePolyhedron_triggered()
+bool MainWindow::on_actionErasePolyhedron_triggered()
 {
   if(onePolygonIsSelected()) {
     int index = scene->erase(getSelectedPolygonIndex());
     selectPolyhedron(index);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void MainWindow::on_actionEraseAll_triggered()
+{
+  while(on_actionErasePolyhedron_triggered()) {
   }
 }
 

@@ -43,7 +43,8 @@ protected slots:
   void writeSettings();
 
   void on_actionLoadPolyhedron_triggered();
-  void on_actionErasePolyhedron_triggered();
+  bool on_actionErasePolyhedron_triggered();
+  void on_actionEraseAll_triggered();
   void on_actionDuplicatePolyhedron_triggered();
 
   void on_actionActivatePolyhedron_triggered();
