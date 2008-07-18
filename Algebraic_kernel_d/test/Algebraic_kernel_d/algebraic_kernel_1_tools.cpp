@@ -47,8 +47,8 @@ void test_algebraic_kernel_1_tools(){
   Root r1 = roots1[1]; // sqrt(2)
   Root r2 = roots2[1]; // sqrt(3)
   
-  assert(r1 == CGAL::compute_smallest_nonnegative_root(ak,p1));
-  assert(r2 == CGAL::compute_smallest_nonnegative_root(ak,p2));
+  assert(r1 == *CGAL::compute_smallest_nonnegative_root(ak,p1));
+  assert(r2 == *CGAL::compute_smallest_nonnegative_root(ak,p2));
   
   assert(CGAL::compare_smallest_nonnegative_roots(ak,p1,p2) 
       == CGAL::compare(r1,r2));                 
@@ -57,7 +57,6 @@ void test_algebraic_kernel_1_tools(){
 
 
 int main(){
-
   typedef CGAL::Arithmetic_kernel Arithmetic_kernel;
   typedef Arithmetic_kernel::Integer Coefficient;
   typedef Arithmetic_kernel::Rational Boundary;
