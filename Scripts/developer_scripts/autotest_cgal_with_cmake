@@ -156,8 +156,7 @@ remote_command()
       eval $2
   else
     printf "** Logging into host ${1} **\n"
-    #${RSH} ${1} ${MYSHELL} \"${2}\"
-    eval $2
+    ${RSH} ${1} ${MYSHELL} \"${2}\"
   fi
 }
 

@@ -77,7 +77,7 @@ parse_shared_or_static()
 
 parse_flags_and_third_party_choices()
 {
-  grep "-- USING " ${HOST_BUILD_LOGFILE} >> $RESULT_FILE 
+  grep -e "^-- USING " ${HOST_BUILD_LOGFILE} >> $RESULT_FILE 
   echo "------------" >> $RESULT_FILE
 }
 
@@ -100,7 +100,7 @@ parse_lib_building_results()
       y_or_no='y'
     fi
      
-    marker_beg=`grep "${target}.dir/depend$" ${HOST_BUILD_LOGFILE}`
+    marker_beg=`grep -e "${target}.dir/depend$" ${HOST_BUILD_LOGFILE}`
     
     if [ -n "${marker_beg}" ]; then
   
@@ -131,99 +131,98 @@ output_main_logs()
 {
   mkdir "Installation"
   
-  MAIN_LOG_REPORT="Installation/$TEST_REPORT"
-  
-  
-  echo "---------------------------------------------------------------" >  $MAIN_LOG_REPORT
-  echo "                    ${BUILD_LOGFILE}"                            >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  INSTALLATION_TEST_REPORT="Installation/$TEST_REPORT"
+ 
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                    ${BUILD_LOGFILE}"                            >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "${BUILD_LOGFILE}" ] ; then
-    cat "${BUILD_LOGFILE}" >> $MAIN_LOG_REPORT
+    cat "${BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
-  echo "---------------------------------------------------------------" >>  $MAIN_LOG_REPORT
-  echo "                ${HOST_BUILD_LOGFILE}"                           >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  echo "---------------------------------------------------------------" >>  $INSTALLATION_TEST_REPORT
+  echo "                ${HOST_BUILD_LOGFILE}"                           >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "${HOST_BUILD_LOGFILE}" ] ; then
-    cat "${HOST_BUILD_LOGFILE}" >> $MAIN_LOG_REPORT
+    cat "${HOST_BUILD_LOGFILE}" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
   if [ -f "$HOME/.autocgal_with_cmake_rc" ] ; then
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo "                  .autocgal_with_cmake_rc"                       >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    cat "$HOME/.autocgal_with_cmake_rc" >> $MAIN_LOG_REPORT
+    echo ""                                                                >> $INSTALLATION_TEST_REPORT
+    echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+    echo "                  .autocgal_with_cmake_rc"                       >> $INSTALLATION_TEST_REPORT
+    echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+    echo ""                                                                >> $INSTALLATION_TEST_REPORT
+    cat "$HOME/.autocgal_with_cmake_rc" >> $INSTALLATION_TEST_REPORT
   else
     if [ -f "$HOME/.autocgalrc" ] ; then
-      echo ""                                                                >> $MAIN_LOG_REPORT
-      echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-      echo "                       .autocgalrc"                              >> $MAIN_LOG_REPORT
-      echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-      echo ""                                                                >> $MAIN_LOG_REPORT
-      cat "$HOME/.autocgalrc" >> $MAIN_LOG_REPORT
+      echo ""                                                                >> $INSTALLATION_TEST_REPORT
+      echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+      echo "                       .autocgalrc"                              >> $INSTALLATION_TEST_REPORT
+      echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+      echo ""                                                                >> $INSTALLATION_TEST_REPORT
+      cat "$HOME/.autocgalrc" >> $INSTALLATION_TEST_REPORT
     fi
   fi
   
   if [ -f "../setup" ] ; then
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo "                           setup"                                >> $MAIN_LOG_REPORT
-    echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-    echo ""                                                                >> $MAIN_LOG_REPORT
-    cat "../setup" >> $MAIN_LOG_REPORT
+    echo ""                                                                >> $INSTALLATION_TEST_REPORT
+    echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+    echo "                           setup"                                >> $INSTALLATION_TEST_REPORT
+    echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+    echo ""                                                                >> $INSTALLATION_TEST_REPORT
+    cat "../setup" >> $INSTALLATION_TEST_REPORT
   fi
   
   
-  echo ""                                                                >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo "                       CMakeCache.txt"                           >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                       CMakeCache.txt"                           >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "../CMakeCache.txt" ] ; then
-    cat "../CMakeCache.txt" >> $MAIN_LOG_REPORT
+    cat "../CMakeCache.txt" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
-  echo ""                                                                >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo "                       CGALConfig.cmake"                         >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                       CGALConfig.cmake"                         >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "../CGALConfig.cmake" ] ; then
-    cat "../CGALConfig.cmake" >> $MAIN_LOG_REPORT
+    cat "../CGALConfig.cmake" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
-  echo ""                                                                >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo "                       CMakeError.log"                           >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                       CMakeError.log"                           >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "../CMakeFiles/CMakeError.log" ] ; then
-    cat "../CMakeFiles/CMakeError.log" >> $MAIN_LOG_REPORT
+    cat "../CMakeFiles/CMakeError.log" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
-  echo ""                                                                >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo "                       CMakeOutput.log"                          >> $MAIN_LOG_REPORT
-  echo "---------------------------------------------------------------" >> $MAIN_LOG_REPORT
-  echo ""                                                                >> $MAIN_LOG_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo "                       CMakeOutput.log"                          >> $INSTALLATION_TEST_REPORT
+  echo "---------------------------------------------------------------" >> $INSTALLATION_TEST_REPORT
+  echo ""                                                                >> $INSTALLATION_TEST_REPORT
   if [ -f "../CMakeFiles/CMakeOutput.log" ] ; then
-    cat "../CMakeFiles/CMakeOutput.log" >> $MAIN_LOG_REPORT
+    cat "../CMakeFiles/CMakeOutput.log" >> $INSTALLATION_TEST_REPORT
   else
-    echo "Not found!" >> $MAIN_LOG_REPORT 
+    echo "Not found!" >> $INSTALLATION_TEST_REPORT 
   fi
   
 }
@@ -263,8 +262,6 @@ parse_lib_building_results "libCGALimageIO" "CGAL_IMAGEIO"
 parse_lib_building_results "libCGALPDB"     "CGAL_PDB"     
 parse_lib_building_results "libCGALQt"      "CGAL_QT"
 
-echo "Installation y" >> $RESULT_FILE
-
 for DIR in $TEST_DIRECTORIES ; do
   if [ -d $DIR ] ; then
     echo "  $DIR ..."
@@ -272,8 +269,10 @@ for DIR in $TEST_DIRECTORIES ; do
 
     print_testresult $CGAL_TEST_PLATFORM $DIR >> $RESULT_FILE
 
-    rm -f ${TEST_REPORT}
-    touch $TEST_REPORT
+    if [ ! "$DIR" = "Installation" ] ; then
+      rm -f ${TEST_REPORT}
+      touch $TEST_REPORT
+    fi
 
     if [ ! -f ErrorOutput_${CGAL_TEST_PLATFORM} ] ; then
       echo "Error: file $DIR/ErrorOutput_${CGAL_TEST_PLATFORM} does not exist!"
@@ -301,6 +300,7 @@ for DIR in $TEST_DIRECTORIES ; do
     cd ..
   fi
 done
+
 
 OUTPUT_FILE=results_${TESTER}_${CGAL_TEST_PLATFORM}.tar
 rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
