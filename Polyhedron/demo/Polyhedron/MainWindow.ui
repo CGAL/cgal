@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>111</y>
+     <y>100</y>
      <width>978</width>
-     <height>458</height>
+     <height>472</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -37,9 +37,9 @@
        <property name="geometry" >
         <rect>
          <x>0</x>
-         <y>23</y>
+         <y>22</y>
          <width>354</width>
-         <height>417</height>
+         <height>432</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -122,7 +122,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>29</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -213,9 +213,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>569</y>
+     <y>572</y>
      <width>978</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -223,9 +223,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>29</y>
-     <width>116</width>
-     <height>37</height>
+     <y>24</y>
+     <width>105</width>
+     <height>34</height>
     </rect>
    </property>
    <property name="windowTitle" >
@@ -244,10 +244,10 @@
   <widget class="QToolBar" name="algorithmsToolbar" >
    <property name="geometry" >
     <rect>
-     <x>116</x>
-     <y>29</y>
-     <width>862</width>
-     <height>37</height>
+     <x>105</x>
+     <y>24</y>
+     <width>873</width>
+     <height>34</height>
     </rect>
    </property>
    <property name="windowTitle" >
@@ -268,9 +268,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>66</y>
+     <y>58</y>
      <width>978</width>
-     <height>45</height>
+     <height>42</height>
     </rect>
    </property>
    <property name="windowTitle" >
@@ -318,11 +318,19 @@
    </property>
   </action>
   <action name="actionKernel" >
+   <property name="icon" >
+    <iconset>
+     <normaloff>resources/kernel.png</normaloff>resources/kernel.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Kernel</string>
    </property>
   </action>
   <action name="actionUnion" >
+   <property name="icon" >
+    <iconset>
+     <normaloff>resources/boolean-union.png</normaloff>resources/boolean-union.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Union</string>
    </property>
@@ -331,6 +339,10 @@
    </property>
   </action>
   <action name="actionIntersection" >
+   <property name="icon" >
+    <iconset>
+     <normaloff>resources/boolean-intersection.png</normaloff>resources/boolean-intersection.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Intersection</string>
    </property>
@@ -339,6 +351,10 @@
    </property>
   </action>
   <action name="actionDifference" >
+   <property name="icon" >
+    <iconset>
+     <normaloff>resources/boolean-diff.png</normaloff>resources/boolean-diff.png</iconset>
+   </property>
    <property name="text" >
     <string>&amp;Difference</string>
    </property>

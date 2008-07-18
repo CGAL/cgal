@@ -3115,12 +3115,16 @@ Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-
 Polyhedron/demo/Polyhedron/data/sphere.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
+Polyhedron/demo/Polyhedron/resources/boolean-diff.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/resources/boolean-intersection.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/resources/boolean-union.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/check-off.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/check-off.svg -text
 Polyhedron/demo/Polyhedron/resources/check-on.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/check.svg -text
 Polyhedron/demo/Polyhedron/resources/convex-hull.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/editcopy.png -text svneol=unset#image/png
+Polyhedron/demo/Polyhedron/resources/kernel.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/minus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/plus.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/simplification.png -text svneol=unset#image/png
