@@ -82,45 +82,61 @@ static const int DIR_TAKEN_MAP[] =
     {1, 1, -1, 0, 0, 0, -1, 1};
 
 template <class Integer>
-struct Pixel_2_templ
+struct Pixel_2_
 {
     int x, y;             // pixel coordinates relative to the drawing area
     unsigned level;       // subdivision level: 0 - for pixels, 
                           // 1 - for 1/2 pixels, and so on)
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    double xv, yv; // double approximation of curve-pixel intersection point
+#endif
+
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
-    bool operator ==(const Pixel_2_templ<Integer>& pix) const
-    {
+        
+    Pixel_2_& operator =(const Pixel_2_& pix) {
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        memcpy(this, &pix, sizeof(int)*3 + sizeof(double)*2);
+#else
+        memcpy(this, &pix, sizeof(int)*3);
+#endif
+        sub_x = pix.sub_x;
+        sub_y = pix.sub_y;
+        return *this;
+    }
+
+    bool operator ==(const Pixel_2_& pix) const {
         if(memcmp(this, &pix, sizeof(int)*3))
             return false;
-        return (sub_x==pix.sub_x&&sub_y==pix.sub_y);
+        return (sub_x == pix.sub_x && sub_y == pix.sub_y);
     }
 };
 
 // structure describing the seed point and backward direction, support for
 // multiple seed points
 template <class Integer>
-struct Seed_point_templ
+struct Seed_point_
 {
-    Seed_point_templ()
+    Seed_point_()
     { }
-    Seed_point_templ(const Pixel_2_templ<Integer>& start_, int dir_,
-        int orient_, int taken_, bool coincide_) : start(start_),
-        back_dir(dir_), orient(orient_), direction_taken(taken_), 
+
+    Seed_point_(const Pixel_2_<Integer>& start_, int dir_,
+            int taken_, bool coincide_) : start(start_),
+        back_dir(dir_), direction_taken(taken_), 
         branches_coincide(coincide_)
     { }
-    Pixel_2_templ<Integer> start; // starting pixel
+
+    Pixel_2_<Integer> start; // starting pixel
     int back_dir; // backward direction
-    int orient;   // 0 - push_back, 1 - push_front
     int direction_taken;
     bool branches_coincide;
 };
 
 template <class Rational, class AlgebraicReal>
-struct Clip_point_templ // describes a bottom/top clip point
+struct Clip_point_ // describes a bottom/top clip point
 {
-    Clip_point_templ() { }
-    Clip_point_templ(Rational left_, Rational right_, int arcno_=-1) :
+    Clip_point_() { }
+    Clip_point_(Rational left_, Rational right_, int arcno_=-1) :
         left(left_), right(right_), arcno(arcno_) { } 
     Rational left, right;       // isolating interval boundaries
     int arcno;          // arcno of a segment this point belongs to
@@ -128,7 +144,7 @@ struct Clip_point_templ // describes a bottom/top clip point
 };
 
 template <class Integer>
-std::ostream& operator <<(std::ostream& os, const Pixel_2_templ<Integer>& pix) 
+std::ostream& operator <<(std::ostream& os, const Pixel_2_<Integer>& pix) 
 {
     os << " (" << pix.x << "/" << pix.sub_x << "; " << pix.y << "/" << 
         pix.sub_y << ") level = " << pix.level;
@@ -139,17 +155,6 @@ std::ostream& operator <<(std::ostream& os, const Pixel_2_templ<Integer>& pix)
 //! type is not sufficient
 class Insufficient_rasterize_precision_exception
 {  };
-
-struct Coord_2 {
-
-    Coord_2() {
-    }
-    Coord_2(int x_, int y_) : x(x_), y(y_) {
-    }
-    int x, y;
-};
-
-typedef std::vector<Coord_2> Coord_vec_2;
 
 /*! \brief defines class \c Curve_renderer_internals
  *  
@@ -502,9 +507,9 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::setup(
     res_w = res_w_; 
     res_h = res_h_;
     
-    if(x_min >= x_max||y_min >= y_max||res_w < 5||res_h < 5||res_w > 1024||
-          res_h > 1024) {
-        Gfx_OUT("Incorrect setup parameters" << std::endl);
+    if(x_min >= x_max||y_min >= y_max||res_w < 4||res_h < 4||res_w > 2048||
+          res_h > 2048) {
+        std::cerr << "Incorrect setup parameters" << std::endl;
         return false;
     }
     
@@ -515,8 +520,6 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::setup(
         
     pixel_w_r = (x_max_r - x_min_r) / res_w;
     pixel_h_r = (y_max_r - y_min_r) / res_h;
-//     NiX::simplify(pixel_w_r);
-//     NiX::simplify(pixel_h_r);
         
     pixel_w = rat2float(pixel_w_r);
     pixel_h = rat2float(pixel_h_r);
@@ -863,10 +866,6 @@ int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_generic(
     } else
         c1 = y_min + c*pixel_h;
 
-    if(show_dump) {
-        //Gfx_OUT("evaluate " << poly << " at: " << c1 << "\n");
-    }
-    
     if(!not_cached) {
         hash_key.first = x_min + x*pixel_w;
         hash_key.second = y_min + y*pixel_h;

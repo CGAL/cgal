@@ -28,11 +28,12 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Fourtuple.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 #endif
 
@@ -864,17 +865,20 @@ public:
     //! itself
     typedef Dupin_cyclide_point_2 Self;
 
-    //! point approximation
-    typedef typename CGAL::Cartesian< double >::Point_3 Approximation_3;
+    //! our lovely cyclide
+    typedef typename ASiDC_traits_2::Dupin_cyclide_3 Dupin_cyclide_3;
 
-    //! types needed to replicate constructors
+     //! types needed to replicate constructors
     typedef typename Base::Curve_analysis_2 Curve_analysis_2;
     typedef typename Base::X_coordinate_1 X_coordinate_1;
     typedef typename Base::Rep Rep;
 
-       //! for visualization
+       //! for parameterization
     typedef CGAL::Polynomial< double > Poly_double_1;
     typedef CGAL::Polynomial< Poly_double_1 > Poly_double_2;
+    
+    typedef CGAL::Fourtuple< double > Point_double_4;
+    
 
     //!\name replicates all constructors of the base (stupid solution)
     //! see base type constructors for detailed description 
@@ -917,70 +921,97 @@ public:
     //!\name visualization & approximation
     //!@{
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
     //! sets up rendering window \c bbox and resolution 
     static void setup_renderer(CGAL::Bbox_2 bbox, int res_w, int res_h) {
         Curve_renderer_facade< ASiDC_traits_2 >::setup(bbox, res_w, res_h);
     }
     
     //! sets up cyclide parameterization equations 
-    static void setup_parameterization(
-         const typename ASiDC_traits_2::Dupin_cyclide_3& base_surf) {
+    static void setup_parameterization(const Dupin_cyclide_3& base_surf) {
          
-        parametrize_poly(0, CGAL::to_double(base_surf.x_param()));
-        parametrize_poly(1, CGAL::to_double(base_surf.y_param()));
-        parametrize_poly(2, CGAL::to_double(base_surf.z_param()));
-        parametrize_poly(3, CGAL::to_double(base_surf.w_param()));
+        param_surface(&base_surf);
+        param_tube_circle(&base_surf);
+        param_outer_circle(&base_surf);
+        param_pole(&base_surf);
     }
 
     //! get / set parameterization polynomial with index \c idx (0..3)
-    static const Poly_double_2& parametrize_poly(unsigned idx, 
-            const boost::optional< Poly_double_2 >& ref = boost::none) {
+    static const Poly_double_2 *param_surface(
+        const Dupin_cyclide_3* base_surf = NULL) {
+
         static Poly_double_2 _param[4]; // x, y, z, w respectively
-        
-        CGAL_precondition(idx < 4);
-        if(ref) 
-            _param[idx] = *ref;
-        return _param[idx];
+        if(base_surf != NULL) 
+            _param[0] = CGAL::to_double(base_surf->x_param()),
+            _param[1] = CGAL::to_double(base_surf->y_param()),
+            _param[2] = CGAL::to_double(base_surf->z_param()),   
+            _param[3] = CGAL::to_double(base_surf->w_param());
+               
+        return _param;
     }
+
+    static const Poly_double_1 *param_tube_circle(
+        const Dupin_cyclide_3* base_surf = NULL) {
+        
+        static Poly_double_1 _param[4]; // see above 
+        if(base_surf != NULL) 
+// make_transform_iterator ?
+            _param[0] = CGAL::to_double(base_surf->tube_circle()[0]),
+            _param[1] = CGAL::to_double(base_surf->tube_circle()[1]),
+            _param[2] = CGAL::to_double(base_surf->tube_circle()[2]),
+            _param[3] = CGAL::to_double(base_surf->tube_circle()[3]);
+        return _param;
+    }    
+
+    static const Poly_double_1 *param_outer_circle(
+        const Dupin_cyclide_3* base_surf = NULL) {
+        
+        static Poly_double_1 _param[4]; // see above 
+        if(base_surf != NULL) 
+            _param[0] = CGAL::to_double(base_surf->outer_circle()[0]),
+            _param[1] = CGAL::to_double(base_surf->outer_circle()[1]),
+            _param[2] = CGAL::to_double(base_surf->outer_circle()[2]),
+            _param[3] = CGAL::to_double(base_surf->outer_circle()[3]);
+        return _param;
+    }    
+
+    static const Point_double_4& param_pole(
+        const Dupin_cyclide_3* base_surf = NULL) {
+
+        static Point_double_4 _pole;
+        if(base_surf != NULL) 
+            _pole.e0 = CGAL::to_double(base_surf->pole().e0),
+            _pole.e1 = CGAL::to_double(base_surf->pole().e1),
+            _pole.e2 = CGAL::to_double(base_surf->pole().e2),
+            _pole.e3 = CGAL::to_double(base_surf->pole().e3);
+        return _pole;
+    } 
 
     /*!\brief
      * computes approximation of a point 
      *
      * returns \c false if the point does not fall within the drawing window
+     * \c Coord_3 must be constructible from a triple of doubles
      */
-    bool compute_approximation(Approximation_3& result) const {
+    template < class Coord_3 >
+    bool compute_approximation(Coord_3& result) const {
     
         typedef Curve_renderer_facade< ASiDC_traits_2 > Facade;
-        typename Facade::Coord_2 cc;
-
+        
+        CGAL::Twotuple< double > cc;
         if(!Facade::instance().draw(*this, cc))
             return false; // bad luck
 
-        Poly_double_2 px = parametrize_poly(0), py = parametrize_poly(1),
-            pz = parametrize_poly(2), pw = parametrize_poly(3);
-         
-        CGAL::Bbox_2 bbox;
-        int res_w, res_h;
-        Facade::instance().get_resolution(res_w, res_h);
-        Facade::instance().get_window(bbox);
-        // gotcha !!           
-        double lx = bbox.xmax() - bbox.xmin(), ly = bbox.ymax() - bbox.ymin();
-        double s = bbox.xmin() + (double)cc.x * lx / res_w,
-               t = bbox.ymin() + (double)cc.y * ly / res_h;
-        
-        double x0, y0, z0, w0 = NiX::substitute_xy(pw, s, t);
-        if(std::abs(w0) < 1e-17)
-            return false;
-                
-        x0 = NiX::substitute_xy(px, s, t) / w0;
-        y0 = NiX::substitute_xy(py, s, t) / w0;
-        z0 = NiX::substitute_xy(pz, s, t) / w0;
-         
-        result = Approximation_3(x0, y0, z0);
+        const Poly_double_2* params = param_surface();
+        double x0 = NiX::substitute_xy(params[0], cc.e0, cc.e1), 
+               y0 = NiX::substitute_xy(params[1], cc.e0, cc.e1),
+               z0 = NiX::substitute_xy(params[2], cc.e0, cc.e1),
+               invw0 = 1.0 / NiX::substitute_xy(params[3], cc.e0, cc.e1);
+
+        result = Coord_3(x0*invw0, y0*invw0, z0*invw0);
         return true;
     }
-#endif // CGAL_CKvA_COMPILE_RENDERER
+#endif // CGAL_CKVA_COMPILE_RENDERER
     //!@}
 
     friend class CGALi::Arc_2<ASiDC_traits_2>;
@@ -1005,7 +1036,7 @@ public:
     typedef typename ASiDC_traits_2::Point_2 Point_2;
     
     //! point approximation
-    typedef typename CGAL::Cartesian< double >::Point_3 Approximation_3;
+    //typedef typename CGAL::Cartesian< double >::Point_3 Approximation_3;
 
     //! types needed to replicate constructors
     typedef typename Base::Curve_analysis_2 Curve_analysis_2;
@@ -1093,70 +1124,9 @@ public:
     //!\name visualization & approximation
     //!@{
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
 
-    /*!\brief
-     * computes arc's approximation using preset window and resolution
-     *
-     * @note: call Dupin_cyclide_point_2::setup_renderer() and
-     * setup_parameterization() before computing approximation
-     */
-    template <class OutputIterator>
-    OutputIterator compute_approximation(OutputIterator oi) const {
-
-        typedef Curve_renderer_facade< ASiDC_traits_2 > Facade;
-        typedef typename Facade::Coord_vec_2 Coord_vec_2;
-        typedef typename Facade::Coord_2 Coord_2;
-
-        std::list<Coord_vec_2> points;
-        std::pair<Coord_2, Coord_2> end_points;
-
-        Facade::instance().draw(*this, points, end_points);
-        if(points.empty()) 
-            return oi;        
-    
-        CGAL::Bbox_2 bbox;
-        int res_w, res_h;
-        Facade::instance().get_resolution(res_w, res_h);
-        Facade::instance().get_window(bbox);
-
-        Poly_double_2 px = Point_2::parametrize_poly(0), 
-            py = Point_2::parametrize_poly(1),
-            pz = Point_2::parametrize_poly(2), 
-            pw = Point_2::parametrize_poly(3);
-
-        double pixw = (bbox.xmax() - bbox.xmin()) / res_w, 
-               pixh = (bbox.ymax() - bbox.ymin()) / res_h;
-        typename std::list<Coord_vec_2>::const_iterator lit = points.begin();  
-        while(lit != points.end()) {
-            
-            const Coord_vec_2& tmp = *lit++;
-            typename Coord_vec_2::const_iterator cit;
-            int xprev = -1, yprev = -1;
-            for(cit = tmp.begin(); cit != tmp.end(); cit++) {
-    
-                if(xprev == cit->x && yprev == cit->y) 
-                    continue; // don't push duplicate points
-                xprev = cit->x, yprev = cit->y;
-                double s = bbox.xmin() + (double)xprev * pixw,
-                       t = bbox.ymin() + (double)yprev * pixh;
-
-//                 std::cerr << "x = " << cit->x << "; y = " << cit->y << 
-//                     "; x0 = " << x0 << "; y0 = " << y0 << std::endl;
-                double x0, y0, z0, w0 = NiX::substitute_xy(pw, s, t);
-                if(std::abs(w0) < 1e-17)
-                    continue;
-                
-                x0 = NiX::substitute_xy(px, s, t) / w0;
-                y0 = NiX::substitute_xy(py, s, t) / w0;
-                z0 = NiX::substitute_xy(pz, s, t) / w0;
-                *oi++ = Approximation_3(x0, y0, z0);
-            }
-        }
-        return oi;
-    }
-
-#endif // CGAL_CKvA_COMPILE_RENDERER
+#endif    
     //!@}
 
 

@@ -56,6 +56,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Twotuple.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h>
@@ -69,23 +70,20 @@ class Curve_renderer_interface;
  * represents a single curve renderer instance with usual parameter set to
  * speed up rendering of several objects supported by the same curve
  * 
- * @warning not recommended to use for multi-threaded applications
+ * @warning not recommended to use in multi-threaded applications
  */
 template <class CurvedKernelViaAnalysis_2>
 class Curve_renderer_facade
 {
     Curve_renderer_facade() { // private constructor
+        
     }
 
 public:
     typedef CGAL::Interval_nt<true> Interval_double;
 
     typedef Curve_renderer_interface<CurvedKernelViaAnalysis_2,
-             Interval_double> Curve_renderer;
-
-    typedef typename Curve_renderer::Coord_vec_2 Coord_vec_2;
-
-    typedef typename Curve_renderer::Coord_2 Coord_2;
+             Interval_double > Curve_renderer;
 
     static Curve_renderer& instance() {
         static Curve_renderer _this;
@@ -95,9 +93,9 @@ public:
     static void setup(const CGAL::Bbox_2& bbox, int res_w, int res_h) {
         int _w, _h;
         CGAL::Bbox_2 tmp;
-        instance().get_resolution(_w, _h);
-        instance().get_window(tmp);
-
+        CORE::CORE_init(2);
+    CORE::setDefaultPrecision(70, CORE::extLong::getPosInfty());
+        instance().get_setup_parameters(&tmp, _w, _h);
         if(bbox != tmp || res_w != _w || res_h != _h) {
             instance().setup(bbox, res_w, res_h);
         }
@@ -130,12 +128,6 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
 
-    //! approximation coordinates
-    typedef CGALi::Coord_2 Coord_2;
-    
-    //! vector of coordinates
-    typedef CGALi::Coord_vec_2 Coord_vec_2;
-    
     //! exact rational number type
     typedef typename ::CGAL::Get_arithmetic_kernel<
             typename Curve_kernel_2::Coefficient>::Arithmetic_kernel
@@ -216,12 +208,11 @@ public:
     //! \name Public methods and properties
     //!@{
 
-    inline void get_window(CGAL::Bbox_2& bbox) {
-        return renderer().get_window(bbox);
-    }
-    
-    inline void get_resolution(int& res_w, int& res_h) {
-        return renderer().get_resolution(res_w, res_h);
+    //!@note pass null-pointer for \c pbox parameter if you don't need
+    //! the drawing window 
+    inline void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w, 
+                int& res_h) {
+        return renderer().get_setup_parameters(pbox, res_w, res_h);
     }
     
     /*!\brief
@@ -241,51 +232,55 @@ public:
     /*!\brief
      * rasterizes an x-monotone curve \c arc
      *
-     * returns a list of sequences of pixel coordinates in \c points and
-     * end-point coordinats in \c end_points 
+     * outputs the list of sequences of pixel coordinates as objects of type
+     * \c Coord_2 to the output iterator \c pts , end-point coordinates are
+     * returned as a two-tuple \c end_pts
+     *
+     * \c Container must support \c push_back and \c clear operations
+     *
+     * \c Coord_2 must be constructible from a pair of integers / doubles
+     * depending on the renderer type
      */
-    inline void draw(const Arc_2& arc, std::list<Coord_vec_2>& points,
-        std::pair<Coord_2, Coord_2>& end_points)
-    {
+    template < class Coord_2, template < class > class Container >
+    inline void draw(const Arc_2& arc, Container< std::vector<Coord_2> >& pts,
+            CGAL::Twotuple< Coord_2 >& end_pts) {
+
 #ifndef CGAL_CKVA_DUMMY_RENDERER
+        Bbox_2 bbox;
+        int res_w, res_h;
         try {
-            renderer().draw(arc, points, end_points);
+            renderer().draw(arc, pts, end_pts);
         } 
         catch(CGALi::Insufficient_rasterize_precision_exception) {
             std::cerr << "Switching to multi-precision arithmetic" << 
                 std::endl;
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
-            Bbox_2 bbox;
-            int res_w, res_h;
-            if(::boost::is_same<typename NiX::NT_traits<Float>::Is_exact,
-                    CGAL::Tag_true>::value)
+            if(::boost::is_same<typename Algebraic_structure_traits< Float >::
+                    Is_exact, CGAL::Tag_true>::value)
                 goto Lexit;
-            
-            get_window(bbox);
-            get_resolution(res_w, res_h);
+         
+            get_setup_parameters(&bbox, res_w, res_h);
             bigfloat_renderer().setup(bbox, res_w, res_h);
             try {
-                points.clear();
-                bigfloat_renderer().draw(arc, points, end_points);
+                pts.clear();
+                bigfloat_renderer().draw(arc, pts, end_pts);
                 return;
             }
             catch(CGALi::Insufficient_rasterize_precision_exception) {
 
                 std::cerr << "Switching to exact arithmetic" << std::endl;
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
-                Bbox_2 bbox;
-                int res_w, res_h;
-                if(::boost::is_same<typename NiX::NT_traits<Float>::Is_exact,
-                        CGAL::Tag_true>::value)
+                
+                if(::boost::is_same<
+                    typename Algebraic_structure_traits< Float >::Is_exact,
+                         CGAL::Tag_true>::value)
                     goto Lexit;
 
-                get_window(bbox);
-                get_resolution(res_w, res_h);
+                get_setup_parameters(&bbox, res_w, res_h);
                 exact_renderer().setup(bbox, res_w, res_h);
-
                 try {
-                    points.clear();
-                    exact_renderer().draw(arc, points, end_points);
+                    pts.clear();
+                    exact_renderer().draw(arc, pts, end_pts);
                     return;
                 }
                 catch(CGALi::Insufficient_rasterize_precision_exception) {
@@ -299,8 +294,9 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
         std::cerr << "polynomial: " << renderer().curve().polynomial_2() <<
             std::endl;
         
-        renderer().get_window(bbox);
-        std::cerr << "window: " << bbox << std::endl;
+        renderer().get_setup_parameters(&bbox, res_w, res_h);
+        std::cerr << "window: " << bbox << "; resolution: " <<
+            res_w << " x " << res_h << std::endl;
         
 #endif  // CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
         }
@@ -308,9 +304,14 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
     }
     
     /*!\brief
-     * rasterizes a point on curve
+     * rasterizes a point on curve, returns point coordinates as objects of 
+     * type \c Coord_2 which are constructible from a pair of ints / doubles
+     *
+     * retunrs \c false if point lies outside the window or cannot be 
+     * rasterized due to precision problems
      */  
-    bool draw(const Point_2& point, CGALi::Coord_2& coord) {
+    template < class Coord_2 >
+    bool draw(const Point_2& point, Coord_2& coord) {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         try {
             return renderer().draw(point, coord);
@@ -326,8 +327,6 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
 
    //!@}
 }; // Curve_renderer_interface
-
-
 
 CGAL_END_NAMESPACE
 

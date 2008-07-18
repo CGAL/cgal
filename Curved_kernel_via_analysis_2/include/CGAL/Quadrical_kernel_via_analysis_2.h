@@ -29,7 +29,7 @@
 #include <CGAL/Curved_kernel_via_analysis_2l/Surface_arc_2l.h>
 #include <CGAL/Curved_kernel_via_analysis_2l/Curved_kernel_via_analysis_2l_functors.h>
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
 #include <CGAL/Curved_kernel_via_analysis_2/Curve_renderer_facade.h>
 #endif
 
@@ -195,7 +195,7 @@ public:
     //!\name approximation & visualization
     //!@{
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
     
     //! sets up rendering window \c bbox and resolution \c res_w by \c res_h
     static void setup_renderer(CGAL::Bbox_2 bbox, int res_w, int res_h) {
@@ -261,7 +261,7 @@ public:
         result = Approximation_3(x0, y0, compute_z(ppt, this->sheet()));
         return true;
     }
-#endif // CGAL_CKvA_COMPILE_RENDERER    
+#endif // CGAL_CKVA_COMPILE_RENDERER    
     //!@}
     
     //! for constructint points
@@ -585,7 +585,7 @@ public:
     //!\name visualization
     //!@{
 
-#ifdef CGAL_CKvA_COMPILE_RENDERER
+#ifdef CGAL_CKVA_COMPILE_RENDERER
 
   
 
@@ -645,7 +645,7 @@ public:
     }
 
     
-#endif // CGAL_CKvA_COMPILE_RENDERER
+#endif // CGAL_CKVA_COMPILE_RENDERER
     //!@}
 
     // friends

@@ -29,15 +29,16 @@ CGAL_BEGIN_NAMESPACE
  * outputs a curve arc to \c Qt_widget
  */
 template <class CKvA_2>
-Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Arc_2& arc) {
+Qt_widget& operator << (Qt_widget& ws, const CGALi::Arc_2< CKvA_2 >& arc) {
     
     typedef Curve_renderer_facade<CKvA_2> Facade;
-    typedef typename Facade::Coord_vec_2 Coord_vec_2;
-    typedef typename Facade::Coord_2 Coord_2;
 
+    typedef CGAL::Twotuple< int > Coord_2;
+    typedef std::vector< Coord_2 > Coord_vec_2;
+
+    CGAL::Twotuple< Coord_2 > end_points;
     std::list<Coord_vec_2> points;
-    std::pair<Coord_2, Coord_2> end_points;
-
+   
     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
             ws.width(), ws.height());
     
@@ -48,6 +49,8 @@ Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Arc_2& arc) {
     QPainter *ppnt = &ws.get_painter();
     int height = ws.height();
 
+   // std::cerr << ws.width() << " and " <<  ws.height() << "\n";
+
     typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
     while(lit != points.end()) {
 
@@ -55,15 +58,18 @@ Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Arc_2& arc) {
         typename Coord_vec_2::const_iterator vit = vec.begin();
             
         if(vec.size() == 2) {
-            ppnt->moveTo(vit->x, height - vit->y);
+            ppnt->moveTo(vit->e0, height - vit->e1);
             vit++;
-            ppnt->lineTo(vit->x, height - vit->y);
+            ppnt->lineTo(vit->e0, height - vit->e1);
                 
         } else {
-            ppnt->moveTo(vit->x, height - vit->y);
+            ppnt->moveTo(vit->e0, height - vit->e1);
+            //std::cerr << "(" << vit->e0 << "; " << vit->e1 << "\n";
             while(vit != vec.end()) {
-                ppnt->lineTo(vit->x, height - vit->y);
+                ppnt->lineTo(vit->e0, height - vit->e1);
                 vit++;
+                //if(vit != vec.end())
+                //std::cerr << "(" << vit->e0 << "; " << vit->e1 << "\n";
             }
         }
         lit++;
@@ -72,9 +78,8 @@ Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Arc_2& arc) {
     QPen old_pen = ppnt->pen();
     ppnt->setPen(QPen(Qt::NoPen)); // avoid drawing outlines
     // draw with the current brush attributes
-    ppnt->drawEllipse(end_points.first.x-3,height-end_points.first.y-3, 6, 6);
-    ppnt->drawEllipse(end_points.second.x-3,height-end_points.second.y-3,
-            6, 6);
+    ppnt->drawEllipse(end_points.e0.e0-3,height-end_points.e0.e1-3, 6, 6);
+    ppnt->drawEllipse(end_points.e1.e0-3,height-end_points.e1.e1-3, 6, 6);
     ppnt->setPen(old_pen);
 
     return ws;
@@ -84,11 +89,11 @@ Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Arc_2& arc) {
  *  outputs a curve point to \c Qt_widget
  */
 template <class CKvA_2>
-Qt_widget& operator << (Qt_widget& ws, const typename CKvA_2::Point_2& pt) {
+Qt_widget& operator << (Qt_widget& ws, const CGALi::Point_2< CKvA_2 >& pt) {
     
     typedef Curve_renderer_facade<CKvA_2> Facade;
    
-    typename Facade::Coord_2 coord;
+    CGAL::Twotuple< int > coord;
     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
             ws.width(), ws.height());
 

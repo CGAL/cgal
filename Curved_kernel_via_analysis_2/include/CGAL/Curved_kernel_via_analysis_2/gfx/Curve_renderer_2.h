@@ -64,7 +64,40 @@ CGAL_BEGIN_NAMESPACE
 // refine factor for clip-points 
 #define CGAL_REFINE_CLIP_POINTS  1000 
 
-#endif // CGAL_CURVE_RENDERER_DEFS                                     
+// refine threshold for double point approximation
+#define CGAL_REFINE_DOUBLE_APPROX 1e-10
+
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+//!@note: points are drawn in any case even if they are outside the window
+#warning approximation of curve arcs in coincide mode is not reliable ! \
+ and also does not work with CORE::BigFloat (due to bug in it)
+
+    #define CGAL_CKVA_STORE_COORDS(container, pixel) \
+        container.push_back(Coord_2(pixel.xv, pixel.yv));
+#else
+    #define CGAL_CKVA_STORE_COORDS(container, pixel) \
+        container.push_back(Coord_2(pixel.x, pixel.y));
+#endif
+
+#endif // CGAL_CURVE_RENDERER_DEFS   
+
+namespace {
+// map from box sides to subpixel numbers (for h/v directions)
+// these are old versions
+static const int HV_SUBPIX_MAP[][4] = {
+    {1,3,0,2},  // right(0)
+    {3,2,1,0},  // top(1)
+    {2,0,3,1},  // left(2)
+    {0,1,2,3}   // bottom(3)
+}; 
+
+static const int D_SUBPIX_MAP[][4] = {
+    {3,1,2,0},  // dir = 0
+    {2,3,0,1},  // dir = 1
+    {0,2,1,3},  // dir = 2
+    {1,0,3,2}   // dir = 3
+}; 
+} // anonymous namespace                                  
 
 /*!
  * \brief The class template \c Curve_renderer_2 and its associate functions.
@@ -190,16 +223,16 @@ private:
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
             
     //! pixel instance type
-    typedef CGALi::Pixel_2_templ<Integer> Pixel_2;
+    typedef CGALi::Pixel_2_<Integer> Pixel_2;
     //! seed point instance type
-    typedef CGALi::Seed_point_templ<Integer> Seed_point;
+    typedef CGALi::Seed_point_<Integer> Seed_point;
     //! support for multiple seed points
     typedef std::stack<Seed_point> Seed_stack;
     
     //! map container element's type for maintaining a list of cache instances
     typedef std::pair<int, int> LRU_entry;
     //! a range of x-coordinates to define bottom/top clip points
-    typedef CGALi::Clip_point_templ<Rational, X_coordinate_1>
+    typedef CGALi::Clip_point_<Rational, X_coordinate_1>
             Clip_point_entry;
     //! a container of bottom/top clip points
     typedef std::vector<Clip_point_entry> Clip_points;
@@ -224,18 +257,13 @@ private:
     
     //!@}
 public: 
-    //! \name constructor
+    //! \name public methods
     //!@{ 
     
     //! default constructor: a curve segment is undefined
     Curve_renderer_2() : cache_id(-1), initialized(false), one(1) { 
         setup(Bbox_2(-1.0, -1.0, 1.0, 1.0), 640, 480);
     }
-    
-    //!@}
-public:
-    //! \name public methods
-    //!@{
         
     //! sets up drawing window and pixel resolution
     void setup(const Bbox_2& bbox_, int res_w_, int res_h_) {
@@ -251,60 +279,25 @@ public:
         return *support;
     }
     
-    //! \brief returns the drawing window
-    void get_window(Bbox_2& bbox_) const {
-        bbox_ = engine.window;
-    }
-    
-    //! \brief returns the pixel resolution
-    void get_resolution(int& res_w_, int& res_h_) const {
+    //! \brief returns the drawing window and resolution 
+    void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w_, 
+                int& res_h_) const {
+        if(pbox != NULL)
+            *pbox = engine.window;
         res_w_ = engine.res_w; 
         res_h_ = engine.res_h;
     }
-    
-    //! \brief the main rendering procedure for curve arcs
-    //! returns a sequence of integer pixel coordinates \c points
-    //!
-    //! An exception \c Insufficient_rasterize_precision_exception is 
-    //! thrown whenever the precision of currently used NT is not enough
-    //! to correctly render a curve arc. The exception has to be caught
-    //! outside the renderer to switch to a higher-precision arithmetic
-    void draw(const Arc_2& arc, std::list<CGALi::Coord_vec_2>& points, 
-        std::pair<CGALi::Coord_2, CGALi::Coord_2>& end_points);
 
-    /*!\brief
-     * overloaded version to rasterize points on curves
-     */
-    bool draw(const Point_2& pt, CGALi::Coord_2& coord);
-    
+    //! destructor
+    ~Curve_renderer_2() {
+        cache_list.clear();
+    }
+      
     //!@}    
 private:
     //! \name Private methods
     //!@{ 
     
-    //! \brief switches to another cache instance depending on the
-    //! supporting curve of a segment
-    void select_cache_entry(const Arc_2& arc);
-    
-    //! \brief draws a piece of a semgment from pix_1 to pix_2
-    void draw_lump(CGALi::Coord_vec_2& points, int& last_x, int arcno,
-        const Pixel_2& pix_1, const Pixel_2& pix_2);
-    
-    //! \brief copmutes an isolating interval for y-coordinate of an end-point,
-    //! uses caching if possible
-    Rational get_endpoint_y(const Arc_2& arc, const Rational& x,
-        CGAL::Arr_curve_end end, bool is_clipped);
-
-    //! \brief returns whether a polynomial has zero over an interval,
-    //! we are not interested in concrete values
-    //!
-    //! a bit mask \c check indicates which boundaries are to be computed
-    //! 0th bit - of a polynomial itself (0th derivative, default)
-    //! 1st bit - of the first derivative (sets \c first_der flag)
-    //! 2nd bit - of the second derivative
-    bool get_range_1(int var, const NT& lower, const NT& upper, const NT& key, 
-        const Poly_1& poly, int check = 1);
-        
     //! \brief advances pixel's coordinates by given increments
     void advance_pixel(Pixel_2& pix, int new_dir)
     {
@@ -321,12 +314,6 @@ private:
             pix.sub_x = x&pow;
             pix.sub_y = y&pow;
         }   
-//         int taken = CGALi::DIR_TAKEN_MAP[new_dir];
-//         if(taken != -1&&taken!=direction_taken) {
-//             Gfx_OUT("ERROR: direction reversed at pixel: " << 
-//                 pix << " new_dir = " << new_dir << std::endl);
-//             throw -1;
-//         }
     }
     
     //! computes pixel coordinates from rational point
@@ -335,12 +322,15 @@ private:
     {
         Rational p_x = (x - engine.x_min_r) / engine.pixel_w_r,
                  p_y = (y - engine.y_min_r) / engine.pixel_h_r;
+
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        pix.xv = CGAL::to_double(x);
+        pix.yv = CGAL::to_double(y);
+#endif  
         pix.x = static_cast<int>(std::floor(CGAL::to_double(p_x)));
-        pix.y = static_cast<int>(std::floor(CGAL::to_double(p_y)));
-        
+        pix.y = static_cast<int>(std::floor(CGAL::to_double(p_y)));   
+
         if(ppix_x != NULL && ppix_y != NULL) {
-//             NiX::simplify(p_x);
-//             NiX::simplify(p_y);
             *ppix_x = p_x;
             *ppix_y = p_y;
         }
@@ -351,79 +341,7 @@ private:
         while(ubound_y(xy) - lbound_y(xy) >= bound)
             refine_y(xy);
     }
-    
-    //! returns h/v boundaries for 8-pixel neighbourhood
-    void get_boundaries(int var, const Pixel_2& pix, Stripe& stripe);
-    
-    //! returns univariate polynomials (depending on subdivision level cache
-    //! might be used)
-    void get_polynomials(int var, Stripe& stripe);
-    
-    //! checks 8-pixel neighbourhood of a pixel, returns \c true if 
-    //! only one curve branch intersects pixel's neighbourhood, \c dir
-    //! defines backward direction, \c new_dir is a new tracking direction
-    bool test_neighbourhood(const Pixel_2& pix, int dir, int& new_dir, 
-        int step_x = 2, int step_y = 2);
-        
-//#ifdef    Gfx_DEBUG_PRINT
-    // debug only!
-    void dump_neighbourhood(const Pixel_2& pix);
-//#else
-//  #define dump_neighbourhood ((void)0)
-//#endif
-    
-    //! returns a subpixel which is crossed by the curve branch, subpixels
-    //! are tested w.r.t. preferred direction (only for h/v directions)
-    int get_subpixel_hv(const Pixel_2& pix, int pref_dir);
-    
-    //! the same for diagonal directions
-    int get_subpixel_diag(const Pixel_2& pix, int pref_dir);
-    
-    //! recursively subdivides pixel into 4 subpixels, returns a new tracking
-    //! direction
-    bool subdivide(Pixel_2& pix, int dir, int& new_dir);
-    
-    //! returns the starting witness pixel and two directions from it
-    bool get_seed_point(const Rational& seed, int arcno, Pixel_2& start, 
-        int *dir, int *b_taken, bool& b_coincide);
-    
-    //! tests whether a polynomial has only one root over an interval
-    bool recursive_check(int var, const NT& beg, const NT& end,
-        const NT& key, const Poly_1& poly, int depth = 0);
-    
-    //! if success returns two directions among 8, where a curve branch
-    //! crosses the pixel's neighbourhood
-    bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, 
-        bool& b_coincide);
-    
-    //! computes an isolating box of an end-point
-    bool get_isolating_box(const Rational& x_s, const Rational& y_s, 
-        Pixel_2& res);
-    
-    //! returns true if \c pix is encompassed into one of isolating rectangles
-    //! (stopping criteria)
-    bool is_isolated_pixel(const Pixel_2& pix);
-    
-    //! computes clip points on top and bottom window boundaries
-    void horizontal_clip();
-    
-    //! refines an algebraic point w.r.t. certain criteria
-    void refine_alg_point(Rational& l, Rational& r, const Poly_dst_1& poly, 
-        const Rational& criteria, int mode=0);
-    
-    //! computes bottom and top horizontal clip-points of a segment    
-    void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
-        const Rational& y_lower, const Rational& y_upper,
-            const Rational& y_clip, const Poly_dst_1& poly, int arcno,
-             Clip_points& clip_points, index_vector& clip_indices);
-             
-public:
-    //! destructor
-    ~Curve_renderer_2()
-    {
-        cache_list.clear();
-    }
-    
+               
     //!@}
 private:
     //! \name Private properties
@@ -460,15 +378,25 @@ private:
     int direction_taken;  //! stores a direction taken from the seed point 
                           //! during tracking, if it's possible to determine
                           //! 0 - towards lower point, 1 - towards upper
-    //!@} 
-}; // class Curve_renderer_2<>
+//!@}
+//!\name public methods
+//!@{
 
-//! \brief main rasterization procedure, takes coordinates of event points and 
-//! the arc number and draws a curve segment
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
-    const Arc_2& arc, std::list<CGALi::Coord_vec_2>& points,
-     std::pair<CGALi::Coord_2, CGALi::Coord_2>& end_points)
+public: 
+
+/*!\brief 
+ * main rendering procedure for curve arcs
+ * returns a list of sequences of coordinates as objects of type \c Coord_2
+ * which must be constructible from a pair of ints / doubles
+ *
+ * An exception \c Insufficient_rasterize_precision_exception is 
+ * thrown whenever the precision of currently used NT is not enough
+ * to correctly render a curve arc. The exception has to be caught
+ * outside the renderer to switch to a higher-precision arithmetic
+ */
+template < class Coord_2, template < class > class Container >
+void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
+    CGAL::Twotuple< Coord_2 >& end_points)
 {
     if(!initialized)
         return;
@@ -488,18 +416,9 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
 //!@todo: should be adapted for other boundary types
     if(loc_p1 != CGAL::ARR_LEFT_BOUNDARY) {
         const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MIN_END);
-
-        //while(x0.high() - x0.low() > engine.pixel_w_r/CGAL_REFINE_X)
-          //  x0.refine();
-        //lower = p1.finite().high();
-        //if(!p1.finite().is_rational()&&!seg.is_vertical())
-          //  arcno_p1 = seg.arcno();
-
         while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
             refine_x(x0);
-            
         lower = ubound_x(x0);
-//         NiX::simplify(lower);
     } else 
         lower = engine.x_min_r;
             
@@ -512,9 +431,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
         const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MAX_END);
         while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
             refine_x(x0);
-        
         upper = lbound_x(x0);
-//         NiX::simplify(upper);
     } else 
         upper = engine.x_max_r;
        
@@ -524,10 +441,12 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     if(lower < engine.x_min_r) {
         lower = engine.x_min_r;
         clip_src = true;
+        loc_p1 = CGAL::ARR_INTERIOR;
     }
     if(upper > engine.x_max_r) {
         upper = engine.x_max_r;
         clip_tgt = true;
+        loc_p2 = CGAL::ARR_INTERIOR;
     }
 
     Rational height_r = (engine.y_max_r-engine.y_min_r)*2;
@@ -563,9 +482,6 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
         infty_tgt = false;
         y_upper = get_endpoint_y(arc, upper, CGAL::ARR_MAX_END, clip_tgt);
     }
-        
-//     NiX::simplify(y_lower);
-//     NiX::simplify(y_upper);
     Pixel_2 pix_1, pix_2;
     
     Gfx_OUT("lower: " << CGAL::to_double(lower) << "; upper: " <<
@@ -575,26 +491,35 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     get_pixel_coords(lower, y_lower, pix_1);  
     get_pixel_coords(upper, y_upper, pix_2);  
     
-    end_points.first.x = (clip_src ? engine.res_w+4 : pix_1.x); 
-    end_points.first.y = pix_1.y;
-    end_points.second.x = (clip_tgt ? engine.res_w+4 : pix_2.x);
-    end_points.second.y = pix_2.y;
+    //(clip_src ? engine.res_w+4 : pix_1.x); 
+    //(clip_tgt ? engine.res_w+4 : pix_2.x); 
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    end_points.e0 = Coord_2(pix_1.xv, pix_1.yv);
+    end_points.e1 = Coord_2(pix_2.xv, pix_2.yv);
+#else
+    end_points.e0 = Coord_2(pix_1.x, pix_1.y);
+    end_points.e1 = Coord_2(pix_2.x, pix_2.y);
+#endif
     
      Gfx_OUT("lower pix: (" << pix_1.x << "; " << pix_1.y <<
           ") upper pix: (" << pix_2.x << "; " << pix_2.y <<
           ") pixel_w: " << engine.pixel_w << " pixel_h: " << engine.pixel_h <<
              std::endl);
      
-    CGALi::Coord_vec_2 rev_points;
+    std::vector< Coord_2 > rev_points;
     // reserve at least enough space for arc's x-length
     rev_points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
     
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT
     if(arc.is_vertical()) {
-        rev_points.push_back(CGALi::Coord_2(pix_1.x, pix_1.y));
-        rev_points.push_back(CGALi::Coord_2(pix_2.x, pix_2.y));
+        CGAL_CKVA_STORE_COORDS(rev_points, pix_1);
+        CGAL_CKVA_STORE_COORDS(rev_points, pix_2);
         points.push_back(rev_points);
         return;
     }
+//!@todo no need to draw arc completely to obtain the refinement: just 
+//! loop over all pixels and collect the points
+#endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
 
     if(!clip_pts_computed) {
         Gfx_OUT("computing clip points\n");
@@ -642,27 +567,28 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
     
     branches_coincide = false;
     // make a small tolerance
-    bool pt1_inside = (pix_1.y >= 0 && pix_1.y < engine.res_h),
-         pt2_inside = (pix_2.y >= 0 && pix_2.y < engine.res_h);
+    bool pt1_inside = (pix_1.y >= -1 && pix_1.y <= engine.res_h),
+         pt2_inside = (pix_2.y >= -1 && pix_2.y <= engine.res_h);
          
 //TODO: use Event1_info::multiplicity(i) - to gather information about roots ?
     if(seg_pts.size() == 1 && pt1_inside && pt2_inside)
         seg_pts.clear();
-        
+           
     // easy case: no clip-points found    
     if(seg_pts.size() == 0) {
-        if(!pt1_inside&&!pt2_inside) {
+        if(!pt1_inside && !pt2_inside) {
             Gfx_OUT("segment is outside\n");
             return;
         }
     /// WARNING: if x-interval is small while y coordinates are far away from
     /// the window, we can get into the troubles..
-        if(0){//pix_2.x - pix_1.x <= 1) {// it goes away right here
-            rev_points.push_back(CGALi::Coord_2(pix_1.x,pix_1.y));
-            rev_points.push_back(CGALi::Coord_2(pix_2.x,pix_2.y));
+        /*if(pix_2.x - pix_1.x <= 1) {// it goes away right here
+            rev_points.push_back(Coord_2(pix_1.x ,pix_1.y));
+            rev_points.push_back(Coord_2(pix_2.x, pix_2.y));
             points.push_back(rev_points);
             return;
-        } 
+        } */
+
         Gfx_OUT("NO clip points\n");
         mid = (lower + upper)/2;
 //         NiX::simplify(mid);
@@ -710,14 +636,17 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
             pclip = &btm_clip[idx];
             ppoly = &btm_poly;
             y_clip = engine.y_min_r;
+            Gfx_OUT("bottom clip-point: [");
         } else { // top points
             pclip = &top_clip[idx];
             ppoly = &top_poly;
             y_clip = engine.y_max_r;
+            Gfx_OUT("up clip-point: [");
         }
         l = pclip->left;
         r = pclip->right;
-        
+        Gfx_OUT(CGAL::to_double(l) << "; " << CGAL::to_double(r) << "\n");   
+
         if(last_x != -engine.res_w) {  // compute screen coordinates of a pixel
             Rational last_pt = engine.x_min_r + static_cast<Rational>(last_x)*
                 engine.pixel_w_r; 
@@ -743,7 +672,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
             }
             pix_beg = pix_1;
             get_pixel_coords(l, y_clip, pix_end);  
-            
+
         } else if(it == eend - 1 && pt2_inside) {
 
             Gfx_OUT("starting point is near the right end-point\n");
@@ -763,7 +692,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
             }
             pix_end = pix_2;
             get_pixel_coords(r, y_clip, pix_beg);  
-              
+
         } else {
             Gfx_OUT("starting point is between clip-points\n");
             it++;
@@ -779,28 +708,29 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
             
             get_pixel_coords(l, y_clip, pix_beg);  
             get_pixel_coords(ptmp->left, it->second ? engine.y_max_r :
-                engine.y_min_r,pix_end); 
-            
+                engine.y_min_r, pix_end); 
             if(CGAL_ABS(ptmp->left - l) <= engine.pixel_w_r*2) {
                 
                 Xy_coordinate_2 xy(X_coordinate_1(pt), *support, arc.arcno());
                 refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_Y);
                 mid = ubound_y(xy);
 
-                rev_points.push_back(CGALi::Coord_2(pix_beg.x, pix_beg.y));
+                CGAL_CKVA_STORE_COORDS(rev_points, pix_beg);
                 get_pixel_coords(pt, mid, pix_beg); 
                 straight_segment = true;
             } 
         }
-            
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT            
         if(straight_segment) {
             Gfx_OUT("straight subsegment found\n");
-            rev_points.push_back(CGALi::Coord_2(pix_beg.x, pix_beg.y));
-            rev_points.push_back(CGALi::Coord_2(pix_end.x, pix_end.y));
+            CGAL_CKVA_STORE_COORDS(rev_points, pix_beg);
+            CGAL_CKVA_STORE_COORDS(rev_points, pix_end);
+
             points.push_back(rev_points);
             it++;
             continue;
         }
+#endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
             
         if(!get_seed_point(pt, arc.arcno(), start, dir, b_taken, 
                 b_coincide)) {
@@ -824,13 +754,59 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
         isolated_h.level = -1u;*/
 }
 
+/*!\brief
+ * overloaded version to rasterize distinct points on curves
+ *
+ * \return \c false indicating that the point lies outside the drawing window
+ * \c true in case the point coordinates were successfully computed
+ */
+template < class Coord_2 >
+bool draw(const Point_2& pt, Coord_2& coord) {
+
+    Gfx_OUT("rasterizing point: " << pt << std::endl);
+
+    const X_coordinate_1& x0 = pt.x();
+    while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
+        refine_x(x0);
+        
+    Rational x_s = lbound_x(x0), y_s;
+//#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
+    if(x_s < engine.x_min_r || x_s > engine.x_max_r)
+        return false;
+//#endif
+
+    Xy_coordinate_2 xy(x0, pt.curve(), pt.arcno());
+    refine_xy(xy, engine.pixel_h_r / CGAL_REFINE_X);
+    y_s = ubound_y(xy);
+
+    Pixel_2 pix;
+    get_pixel_coords(x_s, y_s, pix);
+//#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
+    if(pix.x < 0 || pix.x >= engine.res_w || pix.y < 0 || 
+            pix.y >= engine.res_h)
+        return false;
+//#endif
+
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT        
+    coord = Coord_2(pix.xv, pix.yv);
+#else
+    coord = Coord_2(pix.x, pix.y);
+#endif
+
+    return true;
+}
+
+//!@}
+private:
+//!\name private methods
+//!@{
+
 //! draws a segment's piece from pix_1 to pix_2, the starting pixel is taken
 //! from the seed point stack
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
-    CGALi::Coord_vec_2& rev_points, int& last_x, int arcno,
-    const Pixel_2& pix_1, const Pixel_2& pix_2)
-{
+template < class Coord_2 >
+void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x, int arcno,
+    const Pixel_2& pix_1, const Pixel_2& pix_2) {
+
     Pixel_2 start, pix, witness, prev_pix, stored_pix, stored_prev;
     int back_dir, new_dir, stored_dir, dir[2], b_taken[2], ux, uy;
     bool b_coincide, failed;
@@ -846,25 +822,28 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
     last_x = -engine.res_w; 
     
     if(pix_1_close && pix_2_close) { // suppress drawing of trivial segments
-        rev_points.push_back(CGALi::Coord_2(pix_1.x,pix_1.y));
-        rev_points.push_back(CGALi::Coord_2(pix_2.x,pix_2.y));
+        CGAL_CKVA_STORE_COORDS(rev_points, pix_1);
+        CGAL_CKVA_STORE_COORDS(rev_points, pix_2);
         return;
     }
 
-    CGALi::Coord_vec_2 points;
+    std::vector< Coord_2 > points;
     // reserve a list of point coordinates
     points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
 
     direction_taken = -1;
     bool overstep = (pix_1_close||pix_2_close);
     bool ready = false;
+
     while(!s_stack.empty())
     {
+
     current_seed = s_stack.top();
     s_stack.pop();
     branches_coincide = current_seed.branches_coincide;
     if(direction_taken == -1) 
         direction_taken = current_seed.direction_taken;
+
     witness = current_seed.start;
     pix = witness;
     current_level = witness.level;
@@ -877,25 +856,23 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
     stored_prev = pix;
 
     // store result in a list or reversed list depending on the orientation
-    CGALi::Coord_vec_2 *ppoints = (current_seed.orient == 0 ?
-        &rev_points : &points);
+    std::vector< Coord_2 > & ppoints = (direction_taken == 0 ?
+        rev_points : points);
     
     Gfx_OUT("continuing from a seed point: " << witness << "; back_dir: " <<
         back_dir << " direction_taken: " << direction_taken << std::endl);
         
     bool is_exit = false;
     while(1) {
-// #ifdef  CGAL_CKVA_SYNCHRONOUS_CANCEL
-//     pthread_testcancel(); // this is a cancellation point
-// #endif
-
         if(pix.x < 0 || pix.x > engine.res_w || pix.y < -CGAL_WINDOW_ENLARGE||
             pix.y > engine.res_h + CGAL_WINDOW_ENLARGE) {
             branches_coincide = false;
             break;
         } 
-        ppoints->push_back(CGALi::Coord_2(pix.x, pix.y));
-           
+
+        CGAL_CKVA_STORE_COORDS(ppoints, pix);
+
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT      
         if((direction_taken == 0 && pix.x <= pix_1.x) ||
                 (direction_taken == 1 && pix.x >= pix_2.x)) {
             //Gfx_OUT("STOP: reached end-point x-coordinate\n");
@@ -903,21 +880,21 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
             is_exit = true;
             break;
         }
+#endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
         
         bool set_ready = false;
         if(CGAL_ABS(pix.x - pix_1.x) <= 1 && CGAL_ABS(pix.y - pix_1.y) <= 1) {
-            if(!overstep||ready) {
-                pix.x = pix_1.x; 
-                pix.y = pix_1.y;
+            if(!overstep || ready) {
+                pix = pix_1; 
                 branches_coincide = false;
                 break;
             }
             set_ready = true;
         } 
+
         if(CGAL_ABS(pix.x - pix_2.x) <= 1 && CGAL_ABS(pix.y - pix_2.y) <= 1) {
-            if(!overstep||ready) {
-                pix.x = pix_2.x; 
-                pix.y = pix_2.y;
+            if(!overstep || ready) {
+                pix = pix_2; 
                 branches_coincide = false;
                 break;
             }
@@ -925,6 +902,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
         }
         if(set_ready)
             ready = true;
+
         if(!test_neighbourhood(pix, back_dir, new_dir)) {
             ux = pix.x;
             uy = pix.y;
@@ -941,6 +919,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
                 pix = witness;
                 prev_pix = witness;
             }
+
             stored_dir = -1;
             failed = false;
             while(ux == pix.x && uy == pix.y) {
@@ -953,6 +932,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
                     stored_dir = back_dir;
                     stored_prev = prev_pix;
                 }
+
                 if(!test_neighbourhood(pix, back_dir, new_dir)) {
                     if(stored_dir != -1) {
                         pix = stored_pix;
@@ -969,7 +949,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
                 }
                 //Gfx_OUT(pix << " dir = " << new_dir << std::endl);
                 prev_pix = pix;
-                advance_pixel(pix,new_dir);
+                advance_pixel(pix, new_dir);
                 if(is_isolated_pixel(pix)) {
                     branches_coincide = false;
                     is_exit = true;
@@ -979,6 +959,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
             }
             if(is_exit)
                 break;
+
             stored_dir = back_dir;
             witness = pix; 
             pix.level = 0;
@@ -988,7 +969,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
         } else {
             ux = pix.x;
             uy = pix.y;
-            advance_pixel(pix,new_dir);
+            advance_pixel(pix, new_dir);
             witness = pix;
         }
         back_dir = (new_dir+4)&7;
@@ -1006,8 +987,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
             
         Gfx_OUT("New seed point required at: " << pix << std::endl);
         if(!get_seed_point(engine.x_min_r+pix.x*engine.pixel_w_r, arcno,
-            start, dir, 
-                b_taken, b_coincide)) { 
+            start, dir, b_taken, b_coincide)) { 
             std::cerr << " wrong seed point found " << std::endl;
             throw CGALi::Insufficient_rasterize_precision_exception();
         }
@@ -1018,6 +998,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
                  
         b_taken[0] = CGALi::DIR_TAKEN_MAP[dir[0]];
         b_taken[1] = CGALi::DIR_TAKEN_MAP[dir[1]];
+
         if(b_taken[0] != -1) 
             new_dir = dir[b_taken[0] != direction_taken ? 0: 1];
         else if(b_taken[1] != -1) 
@@ -1027,98 +1008,53 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw_lump(
                 dir[0] << " " << dir[1] << std::endl;
             throw CGALi::Insufficient_rasterize_precision_exception();
         }
-        s_stack.push(Seed_point(start,new_dir, current_seed.orient,
-                direction_taken, b_coincide));
+
+        s_stack.push(Seed_point(start, new_dir, direction_taken, b_coincide));
         continue;
+
     } else if(is_exit) {
-Lexit:  if(direction_taken==0) {
-            pix.x = pix_1.x; 
-            pix.y = pix_1.y;
-        } else if(direction_taken==1) {
-            pix.x = pix_2.x; 
-            pix.y = pix_2.y;
-        } 
+Lexit:  
+        pix = (direction_taken == 0 ? pix_1 : pix_2);
     }
-    ppoints->push_back(CGALi::Coord_2(pix.x, pix.y));
+
+    //!@note: this can cause missing end-points !!
+    //! if they proceeded by pt1/2_inside (-1 or res_h+1)
+    //if(pix.y >= 0 && pix.y < engine.res_h)
+        CGAL_CKVA_STORE_COORDS(ppoints, pix);
             
     // we were tracing in --> direction: store the pixel where we stopped
     if(direction_taken == 1)
         last_x = pix.x;
+
     if(direction_taken != -1)
         direction_taken = 1 - direction_taken;
     ready = false;
-    }
+    
+    }  // while(!s_stack.empty())
 
     std::reverse(rev_points.begin(), rev_points.end());
+
+//     std::cerr << "reversed pts list:\n";
+//     for(cvit = rev_points.begin(); cvit != rev_points.end(); cvit++) {
+//         std::cerr << cvit->x << "; " << cvit->y << "\n";
+//     }    
+//     std::cerr << "--------------normal pts list:\n";
+//     for(cvit = points.begin(); cvit != points.end(); cvit++) {
+//         std::cerr << cvit->x << "; " << cvit->y << "\n";
+//     }    
+//     std::cerr << "==========================end\n";
     // resize rev_points to accomodate the size of points vector
     unsigned rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
     std::copy(points.begin(), points.end(), rev_points.begin() + rsize);
 }
 
-/*!\brief
- * overloaded version to rasterize distinct points on curves
- *
- * \return \c false indicating that the point lies outside the drawing window
- * \c true in case the point coordinates were successfully computed
- */
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::draw(
-    const Point_2& pt, CGALi::Coord_2& coord) {
 
-Gfx_OUT("refining x-range\n");
-    const X_coordinate_1& x0 = pt.x();
-    while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
-        refine_x(x0);
-        
-    Rational x_s = lbound_x(x0), y_s;
-    if(x_s < engine.x_min_r || x_s > engine.x_max_r)
-        return false;
-
-    Xy_coordinate_2 xy(x0, pt.curve(), pt.arcno());
-Gfx_OUT("refining y-range\n");
-    refine_xy(xy, engine.pixel_h_r / CGAL_REFINE_X);
-    
-    /*typename Curve_analysis_2::Internal_curve_2::Event1_info
-        event = pt.curve()._internal_curve().event_info_at_x(pt.x());
-    event.refine_to(pt.arcno(), engine.pixel_h_r/CGAL_REFINE_X);
-    y_s = event.lower_boundary(pt.arcno());*/
-Gfx_OUT("obtaining lower bounds");
-    y_s = ubound_y(xy);
-
-    Pixel_2 pix;
-    get_pixel_coords(x_s, y_s, pix);
-    if(pix.x < 0 || pix.x >= engine.res_w || pix.y < 0 || 
-            pix.y >= engine.res_h)
-        return false;
-        
-    coord.x = pix.x;
-    coord.y = pix.y;    
-    return true;
-}
-
-namespace CGALi
-{
-// map from box sides to subpixel numbers (for h/v directions)
-// these are old versions
-static const int HV_SUBPIX_MAP[][4] = {
-    {1,3,0,2},  // right(0)
-    {3,2,1,0},  // top(1)
-    {2,0,3,1},  // left(2)
-    {0,1,2,3}}; // bottom(3)
-static const int D_SUBPIX_MAP[][4] = {
-    {3,1,2,0},  // dir = 0
-    {2,3,0,1},  // dir = 1
-    {0,2,1,3},  // dir = 2
-    {1,0,3,2}}; // dir = 3
-} // namespace CGALi
 
 //! recursively subdivides pixel into 4 subpixels, returns a new tracking
 //! direction
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::subdivide(
-    Pixel_2& pix, int back_dir, int& new_dir)
-{   
+bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {   
+
     //Gfx_OUT("\n\nSubdivision of a pixel" << pix << " with back_dir =  " << 
         //back_dir << std::endl);
     NT inv = NT(1) / NT(one << pix.level);
@@ -1141,14 +1077,14 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::subdivide(
     if(branches_coincide) 
         return false;
         
-    if(back_dir&1) { // diagonal direction
+    if(back_dir & 1) { // diagonal direction
         idx = get_subpixel_diag(pix,pref_dir);
         if(idx == -1) {
             std::cerr << "wrong diag subpixel: " << pix << " direction: " <<
                 pref_dir << std::endl;
             throw CGALi::Insufficient_rasterize_precision_exception();
         }
-        idx = CGALi::D_SUBPIX_MAP[pref_dir][idx];
+        idx = D_SUBPIX_MAP[pref_dir][idx];
         
     } else {
         idx = get_subpixel_hv(pix,pref_dir);
@@ -1157,7 +1093,7 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::subdivide(
                 pref_dir << std::endl;
             throw CGALi::Insufficient_rasterize_precision_exception();
         }
-        idx = CGALi::HV_SUBPIX_MAP[pref_dir][idx];
+        idx = HV_SUBPIX_MAP[pref_dir][idx];
     }
     
     pix.level++;
@@ -1178,11 +1114,9 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::subdivide(
 }
 
 //! returns a "seed" point of a segment and two possible directions from it
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_seed_point(
-    const Rational& seed, int arcno, Pixel_2& start, int *dir, 
-        int *b_taken, bool& b_coincide)
-{
+bool get_seed_point(const Rational& seed, int arcno, Pixel_2& start, int *dir, 
+        int *b_taken, bool& b_coincide) {
+
     Rational x_s = seed, y_s;
 
     Xy_coordinate_2 xy(X_coordinate_1(seed), *support, arcno);
@@ -1242,19 +1176,12 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_seed_point(
         if(lvl > CGAL_REFINE_Y) {
              refine_xy(xy, engine.pixel_h_r/(lvl*2));
              y_s = ubound_y(xy);
-//            event.refine_to(arcno, engine.pixel_h_r/(lvl*2));
- //           y_s = event.upper_boundary(arcno);
-            
-            y_seed = (y_s - engine.y_min_r)/engine.pixel_h_r;
-//             NiX::simplify(y_seed);
+             y_seed = (y_s - engine.y_min_r)/engine.pixel_h_r;
         }
         
         start.sub_x = rat2integer((x_seed - start.x)*lvl);
         start.sub_y = rat2integer((y_seed - start.y)*lvl);
-        /*if(start.sub_x >= lvl || start.sub_x < 0 || 
-            start.sub_y >= lvl || start.sub_y < 0)
-            Gfx_OUT << "bad subpixel found" << std::endl;*/
-        
+                
         if(start.sub_x < 0)
             start.sub_x = 0;
         start.sub_x &= (lvl-1);
@@ -1349,8 +1276,8 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_seed_point(
         } else if(t1 == -1)
             b_taken[1] = 1 - b_taken[0];
             
-        s_stack.push(Seed_point(start, dir[0], 1, b_taken[0], b_coincide));
-        s_stack.push(Seed_point(start, dir[1], 0, b_taken[1], b_coincide));
+        s_stack.push(Seed_point(start, dir[0], b_taken[0], b_coincide));
+        s_stack.push(Seed_point(start, dir[1], b_taken[1], b_coincide));
     }
     if(b_coincide)
         Gfx_DETAILED_OUT("seed point with coincide branches found" <<
@@ -1360,9 +1287,7 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_seed_point(
 
 //! checks whether only one curve branch crosses the pixel, required to
 //! compute a starting witness pixel
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_pixel(
-    const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
+bool test_pixel(const Pixel_2& pix, int *dir, int *b_taken, bool& b_coincide)
 {
     Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
     NT lvl = NT(one << pix.level), inv = NT(1) / lvl;
@@ -1616,8 +1541,7 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_pixel(
     return true;*/
 }
 
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::horizontal_clip()
+void horizontal_clip()
 {
     typedef typename CGAL::Fraction_traits<Rational> F_traits;
     typename F_traits::Numerator_type num;
@@ -1664,15 +1588,11 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::horizontal_clip()
 }
 
 // low_pix, up_pix and y_clip define segment end-points in pixel space
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::segment_clip_points(
-        const Rational& x_lower, const Rational& x_upper,
+void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
         const Rational& y_lower, const Rational& y_upper,
             const Rational& y_clip, const Poly_dst_1& poly, int arcno,
-             Clip_points& clip_points, index_vector& clip_indices)
-{
-    //typename Curve_analysis_2::Internal_curve_2::Event1_info event;
-    
+             Clip_points& clip_points, index_vector& clip_indices) {
+
     int n_arcs, i, j = 0;
     typename Clip_points::iterator it = clip_points.begin();
     Rational low, high, d, l, r;
@@ -1685,20 +1605,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::segment_clip_points(
         if(r > x_lower && l < x_upper) {
             X_coordinate_1 alpha = (l == r ? X_coordinate_1(r) :
                  X_coordinate_1(poly, l, r));
-//             if(l == r)           
-//                 Gfx_DETAILED_OUT("checking rational clip-point\n ");
-//             else {
-//                 Gfx_DETAILED_OUT("checking [" << l << "; " << r <<
-//                     "] clip-point; poly = " << poly <<
-//                     "; support: " << support->polynomial_2() << " \n\n");
-// 
-//                 if(!CGAL::CGALi::is_square_free(poly))
-//                     std::cerr << "polynomial is not square-free!\n";
-// 
-//                 if(poly.sign_at(l) == poly.sign_at(r))
-//                     std::cerr << "signs are the same!!\n\n";    
-//             }
-                
+               
             // need precise comparisons in case of tight boundaries
             if(l < x_lower && alpha.compare(x_lower) != ::CGAL::LARGER) {
                 it++; j++;
@@ -1709,8 +1616,6 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::segment_clip_points(
                 continue;
             }
             if(it->arcno == -1) {
-//                 event = support->_internal_curve().event_info_at_x(
-//                         alpha);
                 Status_line_1 sline = support->status_line_for_x(alpha);
                 n_arcs = sline.number_of_events();
                 for(i = 0; i < n_arcs; i++) {
@@ -1756,13 +1661,11 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::segment_clip_points(
     }
 }
 
-// mode = 0: criteria specifies the length of the refined interval
-// mode = 1: criteria specifies a point that must be lie outside the interval
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::refine_alg_point(
-        Rational& l, Rational& r, const Poly_dst_1& poly, 
-            const Rational& criteria, int mode)
-{
+//! mode = 0: criteria specifies the length of the refined interval
+//! mode = 1: criteria specifies a point that must be lie outside the interval
+void refine_alg_point(Rational& l, Rational& r, const Poly_dst_1& poly, 
+            const Rational& criteria, int mode = 0) {
+
     CGAL::Sign eval_l, eval_m;
     Rational mid;
     eval_l = poly.sign_at(l);
@@ -1773,7 +1676,6 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::refine_alg_point(
         } else if(l > criteria || r < criteria)
             break;
         mid = (l+r)/2;
-//         NiX::simplify(mid);
         eval_m = poly.sign_at(mid);
         if(eval_m == CGAL::EQUAL)
             l = r = mid;
@@ -1785,10 +1687,8 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::refine_alg_point(
 }
 
 //! recursively checks whether only one curve branch crosses a line segment
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::recursive_check(
-    int var, const NT& beg_, const NT& end_, const NT& key, const Poly_1& poly,
-        int depth)
+bool recursive_check(int var, const NT& beg_, const NT& end_, 
+    const NT& key, const Poly_1& poly, int depth = 0)
 {
     // if polynomial is linear/quadratic and there is sign-change over interval
     // => only one curve branch is guaranteed
@@ -1832,10 +1732,8 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::recursive_check(
 }
 
 //! computes lower/upper boundaries for pixel's neighbourhood
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_boundaries(
-    int var, const Pixel_2& pix, Stripe& stripe)
-{   
+void get_boundaries(int var, const Pixel_2& pix, Stripe& stripe) {
+   
     int level = pix.level, val = pix.y;
     Integer sub = pix.sub_y, cur_sub;
     if(var == CGAL_Y_RANGE) {
@@ -1868,22 +1766,22 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_boundaries(
 }
 
 //! shortcut to get precached polynomials
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
- void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_polynomials(
-    int var, Stripe& stripe)
-{
+inline void get_polynomials(int var, Stripe& stripe) {
     engine.get_precached_poly(var, stripe.key[1], stripe.level[1],
         stripe.poly[1]);
     engine.get_precached_poly(var, stripe.key[0], stripe.level[0],
          stripe.poly[0]);
 }
 
-//! \brief checks 8-pixel neighbourhood of a pixel, returns \c true if 
-//! only one curve branch intersects pixel's neighbourhood, \c dir
-//! defines backward direction, \c new_dir is a new tracking direction
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_neighbourhood(
-    const Pixel_2& pix, int dir, int& new_dir, int step_x, int step_y)
+/*! 
+ * checks 8-pixel neighbourhood of a pixel, returns \c true if 
+ * only one curve branch intersects pixel's neighbourhood, \c dir
+ * defines backward direction, \c new_dir is a new tracking direction
+ *
+ * if \c CGAL_CKVA_RENDER_WITH_REFINEMENT is set, in case of success \c pix
+ * receives double approximations of intersection point 
+ */
+bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
 {
     NT lvl = NT(one << pix.level);
     NT inv = NT(1.0) / lvl;
@@ -2101,8 +1999,6 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_neighbourhood(
     if(!set_coincide && f_der && !recursive_check(var,lower,lower+inv,
         box[ibox].key[ikey], box[ibox].poly[ikey])) {
         
-        //Gfx_DETAILED_OUT("first derivative presented" << std::endl);
-        
         if(!branches_coincide &&    
               (current_level < CGAL_COINCIDE_LEVEL))//||direction_taken == -1))
             return false;
@@ -2111,8 +2007,9 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_neighbourhood(
                 std::endl);
         set_coincide = true;
     }
+
     int taken = CGALi::DIR_TAKEN_MAP[new_dir];
-    if(taken != -1&&taken != direction_taken) {
+    if(taken != -1 && taken != direction_taken) {
     
        Gfx_DETAILED_OUT("\nERROR: wrong direction " << new_dir << " at pixel: "
             << pix << "; back_dir = " << back_dir << "; taken = " <<
@@ -2124,20 +2021,92 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::test_neighbourhood(
         else 
             return false;
     }
-    if(set_coincide)
+    if(set_coincide) {
         branches_coincide = true;
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        std::cerr << "WARNING: unreliable approximation in coincide mode\n";
+        
+        NT x = lower + inv/2, y = box[ibox].key[ikey]; // take median
+        make_exact(x);
+        if(var == CGAL_Y_RANGE)
+            std::swap(x, y);
+        
+        pix.xv = CGAL::to_double(engine.x_min + x*engine.pixel_w);
+        pix.yv = CGAL::to_double(engine.y_min + y*engine.pixel_h);
+#endif
+    } 
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    else 
+        compute_double_approx(var, lower, lower+inv, box[ibox].key[ikey],
+            box[ibox].poly[ikey], pix);
+#endif
     return true;
 }
 
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+void compute_double_approx(int var, const NT& l_, const NT& r_, 
+    const NT& key, const Poly_1& poly, Pixel_2& pix) {
 
-//! \brief returns whether a polynomial has zero at a given interval,
+    NT l(l_), r(r_);
+    if(l > r) {
+        l = r_;
+        r = l_;
+    }
+    
+    int eval1, eval2, mid_eval;
+    NT threshold(CGAL_REFINE_DOUBLE_APPROX);
+    eval1 = engine.evaluate_generic(var, l, key, poly);
+    if(eval1 == 0)
+        goto Lexit;
+    
+    eval2 = engine.evaluate_generic(var, r, key, poly);
+    if(eval2 == 0) {
+        l = r;
+        goto Lexit;
+    }
+
+    if(eval1 == eval2) {
+        std::cerr << "ERROR: no sign change in compute_double_approx\n";
+        l = (l+r)/NT(2);
+        make_exact(l);  
+        goto Lexit;
+    }
+   
+    while((r - l) > threshold) {
+        NT mid = (l + r) / NT(2);
+        make_exact(mid);
+        //Gfx_DETAILED_OUT("current approx: " << (r - l) << "; threshold = " << threshold << "\n");
+        //Gfx_DETAILED_OUT("l = " << l << "; r = " << r << "; mid = " << mid <<  "\n");
+        mid_eval = engine.evaluate_generic(var, mid, key, poly);
+        if(mid_eval == 0) {
+            l = r = mid;    
+            break;
+        }   
+        if(mid_eval == eval1)
+            l = mid;
+        else
+            r = mid;
+    }
+Lexit:     
+    NT x = l, y = key;
+    if(var == CGAL_Y_RANGE) {
+        x = key;
+        y = l;
+    }
+    pix.xv = CGAL::to_double(engine.x_min + x*engine.pixel_w);
+    pix.yv = CGAL::to_double(engine.y_min + y*engine.pixel_h);
+}
+#endif // CGAL_CKVA_RENDER_WITH_REFINEMENT
+
+//! \brief returns whether a polynomial has zero over an interval,
 //! we are not interested in concrete values
 //!
-//! if \t der_check is set a range for the first derivative is also computed
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-inline bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::
-    get_range_1(int var, const NT& lower, const NT& upper, const NT& key, 
-        const Poly_1& poly, int check)
+//! a bit mask \c check indicates which boundaries are to be computed
+//! 0th bit - of a polynomial itself (0th derivative, default)
+//! 1st bit - of the first derivative (sets \c first_der flag)
+//! 2nd bit - of the second derivative
+inline bool get_range_1(int var, const NT& lower, const NT& upper, 
+    const NT& key, const Poly_1& poly, int check = 1)
 {
     bool res = engine.get_range_QF_1(var, lower, upper, key, poly, check);
         //engine.get_range_MAA_1(var, lower, upper, key, poly, check);
@@ -2146,34 +2115,24 @@ inline bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::
 
 //! \brief copmutes an isolating interval for y-coordinate of an end-point,
 //! uses caching if possible
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-typename Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::Rational 
-Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_endpoint_y(
-    const Arc_2& arc, const Rational& x, CGAL::Arr_curve_end end,
-        bool is_clipped) {
+Rational get_endpoint_y(const Arc_2& arc, const Rational& x,
+     CGAL::Arr_curve_end end, bool is_clipped) {
         
-//    typename Curve_analysis_2::Internal_curve_2::Event1_info event;
     int arcno;
     Xy_coordinate_2 xy;
     
     if(arc.location(end) != CGAL::ARR_LEFT_BOUNDARY &&
         arc.location(end) != CGAL::ARR_RIGHT_BOUNDARY && !is_clipped) {
-        //event = arc.curve_end(end).curve()._internal_curve().
-          //  event_info_at_x(arc.curve_end_x(end));
         arcno = arc.curve_end(end).arcno();
         xy = Xy_coordinate_2(arc.curve_end_x(end),
             arc.curve_end(end).curve(), arcno);
     } else {
-        //sline = support->status_line_for_x(X_coordinate_1(x));
-        //event = support->_internal_curve().event_info_at_x(
-          //              X_coordinate_1(x));
         arcno = arc.arcno();
         xy = Xy_coordinate_2(X_coordinate_1(x), *support, arcno);
     }
 
     // refine the y-interval until its size is smaller than the pixel size
     ////////////////////////// CHANGED REFINE_Y by REFINE_X
-    //event.refine_to(arcno, engine.pixel_h_r/CGAL_REFINE_X);
     refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_X);
     ////////////////////////// CHANGED REFINE_Y by REFINE_X
     return ubound_y(xy);//event.upper_boundary(arcno);
@@ -2181,10 +2140,8 @@ Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_endpoint_y(
 
 //! \brief switches to a certain cache instance depending on currently used 
 //! algebraic curve
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::select_cache_entry(
-    const Arc_2& arc)
-{
+void select_cache_entry(const Arc_2& arc) {
+
     typename boost::multi_index::nth_index<LRU_list,1>::type& 
         idx = cache_list.get<1>();
     typename boost::multi_index::nth_index_iterator<LRU_list,1>::type
@@ -2225,9 +2182,7 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::select_cache_entry(
 //! subpixels are chosen with the priority \c dir which defines a preferred 
 //! direction, i.e. right(0), top(1), left(2) or bottom(3) this is only for h/v
 //! directions
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_hv(
-    const Pixel_2& pix, int dir)
+int get_subpixel_hv(const Pixel_2& pix, int dir)
 {
     Poly_1 box[4];
     NT inv = NT(1) / NT(one << pix.level), inv_2;
@@ -2298,9 +2253,7 @@ int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_hv(
 //! \brief the same for diagonal directions
 //! 
 //! preferred direction: NE(0), NW(1), SW(2), SE(3)
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_diag(
-    const Pixel_2& pix, int dir)
+int get_subpixel_diag(const Pixel_2& pix, int dir)
 {
     Poly_1 box[4];
     NT inv = NT(1) / NT(one << pix.level);
@@ -2377,9 +2330,7 @@ int Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_subpixel_diag(
 
 //! attempts to find an isolating box for an end-point whose upper/lower
 //! boundaries do not intersect with a curve 
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_isolating_box(
-    const Rational& x_s, const Rational& y_s, Pixel_2& res)
+bool get_isolating_box(const Rational& x_s, const Rational& y_s, Pixel_2& res)
 {
     Integer lvl = one;
     Rational x_seed, y_seed;
@@ -2442,11 +2393,7 @@ bool Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::get_isolating_box(
 
 //! returns true if \c pix is encompassed into one of isolating rectangles
 //! (stopping criteria)
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-inline bool
-Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::is_isolated_pixel(
-        const Pixel_2& pix)
-{
+inline bool is_isolated_pixel(const Pixel_2& pix) {
     /*Integer sub_x;
     if(isolated_l.level != -1u&&isolated_l.y == pix.y&&isolated_l.x == pix.x&&
         pix.level >= isolated_l.level) {
@@ -2465,10 +2412,8 @@ Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::is_isolated_pixel(
 
 #ifdef    Gfx_DEBUG_PRINT
 // DEBUG ONLY
-template <class CurvedKernelViaAnalysis_2, class Coeff_>
-void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::dump_neighbourhood(
-    const Pixel_2& pix)
-{
+void dump_neighbourhood(const Pixel_2& pix) {
+
     CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
     CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
 
@@ -2652,6 +2597,9 @@ void Curve_renderer_2<CurvedKernelViaAnalysis_2, Coeff_>::dump_neighbourhood(
         Gfx_OUT("sign change at segment 2" << std::endl);
 }
 #endif
+
+//!@} 
+}; // class Curve_renderer_2<>
 
 //!@}
 CGAL_END_NAMESPACE
