@@ -866,11 +866,8 @@ public:
         }
 
         CGAL_precondition_code(
-                (                
-                        CGAL::Arr_parameter_space 
-                        loc1 = cv1.location(ce1), 
-                        loc2 = cv2.location(ce2);
-                )
+                CGAL::Arr_parameter_space loc1 = cv1.location(ce1);
+                CGAL::Arr_parameter_space loc2 = cv2.location(ce2);
         );
         CGAL_precondition(cv1.is_on_bottom_top(loc1));
         CGAL_precondition(cv1.is_on_bottom_top(loc2));
