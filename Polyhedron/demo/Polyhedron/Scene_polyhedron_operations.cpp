@@ -32,35 +32,25 @@ bool Scene::save_polyhedron(Polyhedron* poly, std::ostream& out)
 Scene::Bbox Scene::bbox()
 {
   if(polyhedra.empty()) {
-    Bbox bbox;
-    bbox.xmin = bbox.ymin = bbox.zmin = 0.0;
-    bbox.xmax = bbox.ymax = bbox.zmax = 1.0;
+    Bbox bbox; // default constructor defined
+    //bbox.xmin = bbox.ymin = bbox.zmin = 0.0;
+    //bbox.xmax = bbox.ymax = bbox.zmax = 1.0;
     return bbox;
   }
   else
   {
-    Point p = polyhedra.begin()->polyhedron_ptr->vertices_begin()->point();
+    const Point& p = *(polyhedra.begin()->polyhedron_ptr->points_begin());
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    for(Polyhedra::iterator 
-          poly_it = polyhedra.begin(),
-          poly_end = polyhedra.end();
-        poly_it != poly_end; ++poly_it) {
-      for(Polyhedron::Vertex_iterator
-            v = poly_it->polyhedron_ptr->vertices_begin(),
-            v_end = poly_it->polyhedron_ptr->vertices_end();
-          v != v_end; ++v)
-      {
-        bbox = bbox + v->point().bbox();
-      }
-    }
-    Bbox result;
-    result.xmin = bbox.xmin();
-    result.ymin = bbox.ymin();
-    result.zmin = bbox.zmin();
-    result.xmax = bbox.xmax();
-    result.ymax = bbox.ymax();
-    result.zmax = bbox.zmax();
-    return result;
+    for(Polyhedra::iterator poly_it = polyhedra.begin();
+        poly_it != polyhedra.end();
+        ++poly_it)
+      for(Polyhedron::Point_iterator it = poly_it->polyhedron_ptr->points_begin();
+          it != poly_it->polyhedron_ptr->points_end();
+	  ++it)
+        bbox = bbox + it->bbox();
+
+    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+                bbox.xmax(),bbox.ymax(),bbox.zmax());
   }
 }
 

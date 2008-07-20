@@ -75,6 +75,17 @@ public:
   struct Bbox {
     double xmin, ymin, zmin;
     double xmax, ymax, zmax;
+    Bbox(const double _xmin,const double _ymin,const double _zmin,
+         const double _xmax,const double _ymax,const double _zmax)
+	 : xmin(_xmin), ymin(_ymin), zmin(_zmin),
+	   xmax(_xmax), ymax(_ymax), zmax(_zmax)
+    {
+    }
+    Bbox()
+	 : xmin(0.0), ymin(0.0), zmin(0.0),
+	   xmax(1.0), ymax(1.0), zmax(1.0)
+    {
+    }
   };
   // defined in Scene_polyhedron_operations.cpp
   Bbox bbox();
