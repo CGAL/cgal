@@ -584,7 +584,7 @@ public:
                 os << "x=-oo; ";
                 break;
             case CGAL::ARR_RIGHT_BOUNDARY:
-                os << "x=-oo; ";
+                os << "x=+oo; ";
                 break;
             default:
                 break;
