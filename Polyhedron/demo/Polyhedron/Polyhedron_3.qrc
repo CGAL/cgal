@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="/cgal/icons" >
+    <file>resources/boolean-union.png</file>
+    <file>resources/kernel.png</file>
+    <file>resources/boolean-diff.png</file>
+    <file>resources/boolean-intersection.png</file>
     <file alias="convex-hull.png" >resources/convex-hull.png</file>
     <file alias="simplification.png" >resources/simplification.png</file>
     <file alias="duplicate" >resources/editcopy.png</file>

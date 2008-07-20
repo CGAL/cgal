@@ -51,9 +51,6 @@ public:
     B.end_surface();
   }
 
-
-
-
   // add vertices
   void add_vertices(builder &B)
   {
@@ -106,7 +103,7 @@ public:
 
 };
 
-template <class Polyhedron,class Kernel>
+template <class Polyhedron, class Kernel>
 class Dualizer
 {
 public:
@@ -115,10 +112,10 @@ public:
   ~Dualizer() {}
 
 public:
-  void run(Polyhedron &input,Polyhedron &dual)
+  void run(Polyhedron &input, Polyhedron &output)
   {
     CModifierDual<HalfedgeDS,Polyhedron,Kernel> dualizer(&input);
-    dual.delegate(dualizer);
+    output.delegate(dualizer);
   }
 };
 

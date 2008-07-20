@@ -57,7 +57,7 @@ void MainWindow::on_actionKernel_triggered()
       Plane plane(p0,p1,p2); 
       Vector normal = plane.orthogonal_vector();
       normal = normal / std::sqrt(normal*normal);
-      // compute distance to origin (note: bad idea to use plane.d())
+      // compute distance to origin (do not use plane.d())
       FT distance_to_origin = std::sqrt(CGAL::squared_distance(Point(CGAL::ORIGIN),plane));
       Point dual_point = CGAL::ORIGIN + normal / distance_to_origin;
       dual_points.push_back(dual_point);
@@ -78,7 +78,7 @@ void MainWindow::on_actionKernel_triggered()
 
     scene->addPolyhedron(pKernel,
       tr("%1 (kernel)").arg(scene->polyhedronName(index)),
-      scene->polyhedronColor(index),
+      Qt::magenta,
       scene->isPolyhedronActivated(index),
       scene->polyhedronRenderingMode(index));
   }

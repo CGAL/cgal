@@ -41,7 +41,6 @@ struct Copy_polyhedron_to
       in_poly.size_of_facets(),
       in_poly.size_of_halfedges());
 
-
     for(Vertex_const_iterator
       vi = in_poly.vertices_begin(), end = in_poly.vertices_end();
       vi != end ; ++vi) 
@@ -54,8 +53,6 @@ struct Copy_polyhedron_to
 
     typedef CGAL::Inverse_index<Vertex_const_iterator> Index;
     Index index( in_poly.vertices_begin(), in_poly.vertices_end());
-
-
 
     for(Facet_const_iterator 
       fi = in_poly.facets_begin(), end = in_poly.facets_end();
@@ -89,20 +86,13 @@ void from_exact(Exact_polyhedron& in,
 		Polyhedron& out)
 {
   copy_to(in, out);
-  // 	std::ofstream out_stream("tmp.off");
-  // 	out_stream << in;
-  // 	std::ifstream in_stream("tmp.off");
-  // 	in_stream >> out;
+  CGAL_assertion(out.is_valid());
 }
 
 void to_exact(Polyhedron& in,
 	      Exact_polyhedron& out)
 {
   copy_to(in, out);
-  // 	std::ofstream out_stream("tmp.off");
-  // 	out_stream << in;
-  // 	std::ifstream in_stream("tmp.off");
-  // 	in_stream >> out;
   CGAL_assertion(out.is_valid());
 }
 
@@ -179,21 +169,21 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   case BOOLEAN_UNION:
     scene->addPolyhedron(pResult,
       tr("%1 union %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-      Qt::yellow,
+      Qt::magenta,
       true,
       scene->polyhedronRenderingMode(indexA));
     break;
   case BOOLEAN_INTERSECTION:
     scene->addPolyhedron(pResult,
       tr("%1 intersection %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-      Qt::yellow,
+      Qt::magenta,
       true,
       scene->polyhedronRenderingMode(indexA));
     break;
   case BOOLEAN_DIFFERENCE:
     scene->addPolyhedron(pResult,
       tr("%1 minus %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-      Qt::yellow,
+      Qt::magenta,
       true,
       scene->polyhedronRenderingMode(indexA));
   }
