@@ -510,16 +510,24 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     // reserve at least enough space for arc's x-length
     rev_points.reserve(CGAL_ABS(pix_2.x - pix_1.x));
     
-#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT
     if(arc.is_vertical()) {
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT
         CGAL_CKVA_STORE_COORDS(rev_points, pix_1);
         CGAL_CKVA_STORE_COORDS(rev_points, pix_2);
+#else
+        int inc = (pix_2.y > pix_1.y ? 1 : -1);
+        for(; pix_1.y != pix_2.y; pix_1.y += inc) {
+            CGAL_CKVA_STORE_COORDS(rev_points, pix_1);
+            pix_1.yv += engine.pixel_h * NT(inc);
+        }
+
+#endif
         points.push_back(rev_points);
         return;
     }
 //!@todo no need to draw arc completely to obtain the refinement: just 
 //! loop over all pixels and collect the points
-#endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
+
 
     if(!clip_pts_computed) {
         Gfx_OUT("computing clip points\n");
@@ -1119,6 +1127,7 @@ bool get_seed_point(const Rational& seed, int arcno, Pixel_2& start, int *dir,
 
     Rational x_s = seed, y_s;
 
+    Gfx_OUT("get seed point: " << rat2float(seed) << "\n");
     Xy_coordinate_2 xy(X_coordinate_1(seed), *support, arcno);
     refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_Y);
     y_s = ubound_y(xy);
