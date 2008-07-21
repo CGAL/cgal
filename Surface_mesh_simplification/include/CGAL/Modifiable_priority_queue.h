@@ -19,7 +19,7 @@
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
 #include <climits> // Neeeded by the following Boost header for CHAR_BIT.
-#include <CGAL/boost_relaxed_heap.hpp>
+#include <boost/pending/relaxed_heap.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,7 +37,7 @@ public:
   typedef Compare_     Compare;
   typedef ID_          ID ;
   
-  typedef boost::boost_relaxed_heap<IndexedType,Compare,ID> Heap ;
+  typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap ;
   
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
