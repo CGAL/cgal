@@ -691,7 +691,7 @@ void test_square_free_factorization(){
     typedef CGAL::Algebraic_structure_traits<Polynomial_d> AST;
     typename AST::Integral_division idiv;
     typename PT::Square_free_factorization sqff;
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 5; i++){
         Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
         Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);    
         Polynomial_d p = f1*f1*f2;
@@ -889,7 +889,7 @@ void test_square_free_factorization_up_to_constant_factor(){
     typename PT::Integral_division_up_to_constant_factor idiv_utcf;
     typename PT::Square_free_factorization_up_to_constant_factor sqff_utcf;
     typename PT::Canonicalize canonicalize;
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < 2; i++){
         Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
         Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);    
         Polynomial_d p = f1*f1*f2;
@@ -1220,12 +1220,12 @@ void test_substitute(){
     
     for(int i = 0; i< 5; i++){
         typedef typename PT
-            :: template Rebind<Innermost_coefficient,5>::Other PT_5;
-        typedef typename PT_5::Polynomial_d Polynomial_5;
-        std::vector<Polynomial_5> vec1,vec2;
+            :: template Rebind<Innermost_coefficient,2>::Other PT_2;
+        typedef typename PT_2::Polynomial_d Polynomial_2;
+        std::vector<Polynomial_2> vec1,vec2;
         for(int j = 0; j < PT::d; j++){
             vec1.push_back(
-                    generate_sparse_random_polynomial<Polynomial_5>(3));
+                    generate_sparse_random_polynomial<Polynomial_2>(3));
         }
         vec2=vec1;
         std::swap(vec2[0],vec2[PT::d-1]);
@@ -1262,14 +1262,14 @@ void test_substitute_homogeneous(){
     assert(Innermost_coefficient(-2) 
             == substitute_homogeneous(Polynomial_d(-2),vec.begin(),vec.end())); 
     
-    for(int i = 0; i< 5; i++){
+    for(int i = 0; i< 2; i++){
         typedef typename PT
-            :: template Rebind<Innermost_coefficient,5>::Other PT_5;
-        typedef typename PT_5::Polynomial_d Polynomial_5;
-        std::vector<Polynomial_5> vec1,vec2;
+            :: template Rebind<Innermost_coefficient,2>::Other PT_2;
+        typedef typename PT_2::Polynomial_d Polynomial_2;
+        std::vector<Polynomial_2> vec1,vec2;
         for(int j = 0; j < PT::d+1; j++){
             vec1.push_back(
-                    generate_sparse_random_polynomial<Polynomial_5>(3));
+                    generate_sparse_random_polynomial<Polynomial_2>(3));
         }
         vec2=vec1;
         std::swap(vec2[0],vec2[PT::d-1]);
