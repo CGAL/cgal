@@ -2,16 +2,18 @@
 
 \ccDefinition
 
-For a given monomial the vector of its exponents is called the 
+For a given (multivariate) monomial the vector of its exponents is called the 
 exponent vector. The class \ccClassName\ is meant to represent 
 such a vector.
 
 A vector is considered as valid, in case it represents a valid monomial. 
-In particular, it should not contain negative exponents. 
-\footnote{We choose value type int, since negative exponents may appear in intermediate results. }
-
-Note that the set of exponent vectors with element vise 
+that is, it should not contain negative exponents. 
+We decided to use int as the value type, 
+since negative exponents may appear in intermediate results.
+The set of exponent vectors with elementwise 
 addition forms an {\em Abelian Group}. 
+
+
 \footnote{Should we add a scalar multiplication? }
 
 

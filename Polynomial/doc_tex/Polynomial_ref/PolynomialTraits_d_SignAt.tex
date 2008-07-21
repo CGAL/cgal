@@ -2,7 +2,7 @@
 \ccDefinition
 
 This \ccc{AdaptableFunctor} returns the sign of a
-\ccc{PolynomialTraits_d::Polynomial_d} $p$ at given cartesian point represented 
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ at given Cartesian point represented 
 as an iterator range.
 
 \ccRefines 
@@ -20,7 +20,7 @@ template <class InputIterator>
 result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                        InputIterator                     begin,
                        InputIterator                     end );}{ 
-Returns the sign of $p$ at the given cartesian point, where $begin$ is referring 
+Returns the sign of $p$ at the given Cartesian point, where $begin$ is referring 
 to the innermost variable.
 \ccPrecond (end-begin == \ccc{PolynomialTraits_d::d})  
 }

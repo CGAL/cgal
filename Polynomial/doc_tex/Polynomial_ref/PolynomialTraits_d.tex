@@ -1,8 +1,9 @@
 \begin{ccRefConcept}{PolynomialTraits_d}
 
 \ccDefinition
-A model of \ccc{PolynomialTraits_d} is associated to an type 
-\ccc{Polynomial_d}, representing a multivariate polynomial
+A model of \ccc{PolynomialTraits_d} is associated to a type 
+\ccc{Polynomial_d}. 
+The type \ccc{Polynomial_d} represents a multivariate polynomial
 \footnote{Univariate polynomials are not excluded by this concept.}. 
 The number of variables is denoted as the dimension $d$ of the polynomial,
 it is arbitrary but fixed for a certain model of this concept.  
@@ -13,14 +14,14 @@ multivariate polynomial.
 \begin{itemize}
 \item A recursive view, that sees the polynomial as an element of 
 $R[x_0,\dots,x_{d-2}][x_{d-1}]$. In this view, the polynomial is handled as
-an univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
+a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
 \item A symmetric view, which is symmetric with respect to all variables,
 seeing the polynomials as element of $R[x_0,\dots,x_{d-1}]$.
 \end{itemize}
 
 
 The default view is the recursive view, therefore all functors are 
-designed such that there default version performs the operation 
+designed such that their default version performs the operation 
 with respect to this view. 
 
 \ccRefines
@@ -107,9 +108,84 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
         In case \ccc{Innermost_coefficient} is not \ccc{LessThanComparable} this 
         is \ccc{CGAL::Null_functor}.}
  
+\ccNestedType{Univariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
+        \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
+        a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
+%\begin{ccAdvanced}
+\ccNestedType{Multivariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
+        a model of \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, 
+        otherwise this is a model of 
+        \ccc{PolynomialTraits_d::MultivariateContent}.}
+%\end{ccAdvanced}
+
+%Manipulation
+\ccNestedType{Shift}{ A model of \ccc{PolynomialTraits_d::Shift}.}\ccGlue
+\ccNestedType{Negate}{ A model of \ccc{PolynomialTraits_d::Negate}.}\ccGlue
+\ccNestedType{Invert}{ A model of \ccc{PolynomialTraits_d::Invert}.}
+
+\ccNestedType{Translate}{ A model of \ccc{PolynomialTraits_d::Translate}.}\ccGlue
+\ccNestedType{Translate_homogeneous}
+{ A model of \ccc{PolynomialTraits_d::TranslateHomogeneous}.}
+
+\ccNestedType{Scale}{ A model of \ccc{PolynomialTraits_d::Scale}.}\ccGlue
+\ccNestedType{Scale_homogeneous}
+{ A model of \ccc{PolynomialTraits_d::ScaleHomogeneous}.}
+
+%\begin{ccAdvanced}
+%\ccNestedType{Scale_up}{ A model of \ccc{PolynomialTraits_d::ScaleUp, return $p(a*x)$}.}
+%\ccNestedType{Scale_down}{ A model of \ccc{PolynomialTraits_d::ScaleDown, return $b^{degree}*p(x/b)$}.}
+%\end{ccAdvanced}
+
+%unary operations
+\ccNestedType{Make_square_free}
+{ A model of \ccc{PolynomialTraits_d::MakeSquareFree}.}\ccGlue
+\ccNestedType{Square_free_factorization}
+{ In case \ccc{PolynomialTraits::Polynomial_d} 
+is not a model of \ccc{UFDomain}, this is of type \ccc{CGAL::Null_type},
+ otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorize}.}
+
+
+%pseudo division
+\ccNestedType{Pseudo_division          }
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division}.}\ccGlue
+\ccNestedType{Pseudo_division_remainder}
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division_remainder}.}\ccGlue
+\ccNestedType{Pseudo_division_quotient }
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division_quotient}.}
+
+
+%utcf
+\ccNestedType{Gcd_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::GcdUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Integral_division_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Content_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::ContentUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Square_free_factorization_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}.}
+
+%resultant
+\ccNestedType{Resultant}{ A model of \ccc{PolynomialTraits_d::Resultant}.}
+
+% This was added by Michael Kerber, no review so far
+%\ccNestedType{Polynomial_subresultants}
+%{ A model of \ccc{PolynomialTraits_d::PolynomialSubresultant}.}
+%\ccNestedType{Principal_subresultants}
+%{ A model of \ccc{PolynomialTraits_d::PrincipalSubresultant}.}
+%\ccNestedType{Sturm_habicht_sequence}
+%{ A model of \ccc{PolynomialTraits_d::SturmHabichtSequence}.}
+%\ccNestedType{Sturm_habicht_sequence_with_cofactors}
+%{ A model of \ccc{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}.}
+%\ccNestedType{Principal_sturm_habicht_sequence}
+%{ A model of \ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}.}
+
 \ccSeeAlso 
 
 \ccRefIdfierPage{Polynomial_d}\\
-\ccRefIdfierPage{PolynomialToolBox_d}\\
 
 \end{ccRefConcept}

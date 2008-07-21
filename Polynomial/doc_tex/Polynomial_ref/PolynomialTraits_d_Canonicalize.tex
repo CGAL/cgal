@@ -7,8 +7,15 @@ $\{ q | \lambda * q = p with \lambda \in R  \}$, where $p$ is the given polynomi
 $R$ the base of the polynomial ring. 
 In particular, the computed polynomial has the same zero set as the given one.
 
-\footnote{In case \ccc{PolynomialTraits::Innermost_coefficient} is a model of \ccc{Field}, 
-the computed polynomial is {\em monic}. (Innermost leading coefficient is one.)}
+In case \ccc{PolynomialTraits::Innermost_coefficient} is a model of \ccc{Field}, 
+the computed polynomial is the {\em monic} polynomial, 
+that is the innermost leading coefficient equals one.
+In case \ccc{PolynomialTraits::Innermost_coefficient} is a model 
+of \ccc{UniqueFactorizationDomain}, the gcd over all innermost coefficients of 
+the computed polynomial is one.
+For all other cases the notion of uniqueness is up to the concrete model. 
+
+
 
 \ccRefines 
 

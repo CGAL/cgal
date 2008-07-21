@@ -4,6 +4,9 @@
 This \ccc{AdaptableBinaryFunction} translate a 
 \ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
 
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+
 \ccRefines 
 \ccc{AdaptableBinaryFunction}
 
@@ -24,7 +27,7 @@ This \ccc{AdaptableBinaryFunction} translate a
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type c,
                                  int i);}
-         { return $p(x+c)$, with respect to variable $x_i$. 
+         { Same as first operator but for variable $x_i$. 
            \ccPrecond $0 \leq i  < d$
          }
 

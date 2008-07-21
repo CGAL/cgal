@@ -4,6 +4,12 @@
 This \ccc{AdaptableUnaryFunction} negates a \ccc{PolynomialTraits_d::Polynomial_d} with  
 respect to one variable. 
 
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+
+This functor is provided for efficiency reasons, since this operation just flips the sign 
+of all odd coefficients with respect to the specified variable.  
+
 \ccRefines 
 \ccc{AdaptableUnaryFunction}
 

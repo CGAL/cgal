@@ -2,8 +2,12 @@
 \ccDefinition
 
 This \ccc{AdaptableFunctor} returns the sign of a
-\ccc{PolynomialTraits_d::Polynomial_d} $p$ at a given homogeneous point 
-represented by an iterator range.
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ at a given homogeneous point, 
+which is given by an iterator range.
+
+The polynomial is interpreted as a homogeneous polynomial in all variables. \\
+For instance the polynomial $p(x_0,x_1) = x_0^2x_1^3+x_1^4$ is interpreted as the homogeneous
+polynomial  $p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1$.
 
 \ccRefines 
 \ccc{AdaptableFunctor}

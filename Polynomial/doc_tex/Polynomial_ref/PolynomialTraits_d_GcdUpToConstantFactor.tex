@@ -11,10 +11,11 @@ is not a \ccc{UFDomain} or not a \ccc{Field} the polynomial ring
 $R[x_0,\dots,x_{d-1}]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
 possess greatest common divisor. However, since the $R$ is an integral 
 domain one can consider its quotient field $Q(R)$ for which $gcd$s of 
-polynomials exist. A $gcd\_up_to_constant_factor(f,g)$ is a denominator-free 
-constant multiple of $gcd(f,g)$ in $Q(R)[x_0,\dots,x_{d-1}]$. 
+polynomials exist. 
 
-{\bf Note:} It may not be a divisor of $f$ and $g$ in $R[x_0,\dots,x_{d-1}]$.
+This functor computes $gcd\_utcf(f,g) = D * gcd(f,g)$, 
+for some $D \in R$ such that $gcd\_utcf(f,g) \in R[x_0,\dots,x_{d-1}]$.\\
+Hence, $gcd\_utcf(f,g)$ may not be a divisor of $f$ and $g$ in $R[x_0,\dots,x_{d-1}]$.
 
 \ccRefines 
 
@@ -33,7 +34,7 @@ constant multiple of $gcd(f,g)$ in $Q(R)[x_0,\dots,x_{d-1}]$.
 
 \ccMethod{result_type operator()(first_argument_type  f,
                                  second_argument_type g);}
-                {return a denominator-free, constant multiple of $gcd(f,g)$}
+                {Computes a denominator-free, constant multiple of $gcd(f,g)$}
 
 
 

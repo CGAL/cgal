@@ -2,8 +2,12 @@
 \ccDefinition
 
 This \ccc{AdaptableFunctor} returns whether a
-\ccc{PolynomialTraits_d::Polynomial_d} $p$ is zero at a given homogeneous point 
-, which is represented by an iterator range.
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ is zero at a given homogeneous point,
+which is given by an iterator range.
+
+The polynomial is interpreted as a homogeneous polynomial in all variables. \\
+For instance the polynomial $p(x_0,x_1) = x_0^2x_1^3+x_1^4$ is interpreted as the homogeneous
+polynomial  $p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1$.
 
 \ccRefines 
 \ccc{AdaptableFunctor}
@@ -19,11 +23,11 @@ template <class InputIterator>
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  InputIterator                     begin,
                                  InputIterator                     end );}{ 
-Computes whether $p$ is zero at the given homogeneous point, 
+Computes whether $p$ is zero at the homogeneous point given by the iterator range, 
 where $begin$ is referring to the innermost variable.
 \ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  
   \ccc{PolynomialTraits_d::Innermost_coefficient}.}
-\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d} + 1)  
+\ccPrecond 
 }
 %\ccHasModels
 

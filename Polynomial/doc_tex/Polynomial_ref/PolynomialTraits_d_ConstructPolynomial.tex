@@ -23,7 +23,7 @@ to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
 
 \ccMethod{template < class InputIterator >
         result_type operator()(InputIterator begin, InputIterator end);}
-        {\ccPrecond \ccc{InputIterator} must allow the value type 
+        {\ccPrecond The value type of \ccc{InputIterator} is
         \ccc{PolynomialTraits_d::Coefficient}. \\
         
         The operator constructs the a polynomial from the iterator range, 
@@ -39,13 +39,16 @@ to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
    
         Constructs a \ccc{Polynomial_d} from a given iterator range of 
         \ccc{std::pair<Exponent_vector, PolynomialTraits_d::Innermost_coefficient>}. 
+        
+        The optional parameter \ccc{is_sorted} indicates whether the given iterator range is 
+        already sorted.  
 
-
-        \ccPrecond value type of \ccc{InputIterator} is
+        \ccPrecond The value type of \ccc{InputIterator} is
         \ccc{std::pair<Exponent_vector, 
         PolynomialTraits_d::Innermost_coefficient>}.    
         \ccPrecond Each \ccc{Exponent_vector} must have size $d$.
         \ccPrecond All appearing \ccc{Exponent_vector}s are different.  
+       
         }
 
 %\ccHasModels

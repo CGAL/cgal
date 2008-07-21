@@ -1,8 +1,11 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Shift}
 \ccDefinition
 
-This \ccc{AdaptableFunctor} shifts a \ccc{PolynomialTraits_d::Polynomial_d} by 
-some power of a variable. 
+This \ccc{AdaptableFunctor} multiplies a \ccc{PolynomialTraits_d::Polynomial_d} by 
+the given power of the specified variable. 
+
+This functor is provided for efficiency reasons, since multiplication by some variable 
+will in general correspond to a shift of coefficients in the internal representation. 
 
 \ccRefines 
 \ccc{AdaptableFunctor}
@@ -20,7 +23,7 @@ some power of a variable.
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  int e,
                                  int i);}
-         { return $p * x_i^e$
+         { Same as first operator but for variable $x_i$.
           \ccPrecond $0 \leq e$   
           \ccPrecond $0 \leq i < d$
          }

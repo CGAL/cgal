@@ -4,6 +4,12 @@
 This \ccc{AdaptableFunctor} scale a 
 \ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
 
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+Moreover, the polynomial is considered as a homogeneous polynomial in that variable.
+Note that $a$ and $b$ are of type \ccc{PolynomialTraits_d::Coefficient}.
+
+
 \ccRefines 
 \ccc{AdaptableFunctor}
 
@@ -17,12 +23,12 @@ This \ccc{AdaptableFunctor} scale a
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  PolynomialTraits_d::Coefficient   a,
                                  PolynomialTraits_d::Coefficient   b);}
-         { return $b^{degree}\cdot p(a\cdot x/b)$, with respect to the outermost variable. }
+         { return $b^{degree}\cdot p(a/b\cdot x)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
                                  PolynomialTraits_d::Coefficient   a,
                                  PolynomialTraits_d::Coefficient   b,
                                  int i);}
-         { return $b^{degree}\cdot p(a\cdot x/b) $, with respect to variable $x_i$. 
+         { Same as first operator but for variable $x_i$. 
 \ccPrecond $0 \leq i  < d$
          }
 

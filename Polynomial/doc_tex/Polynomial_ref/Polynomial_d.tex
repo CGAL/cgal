@@ -3,13 +3,14 @@
 \ccDefinition
 
 A model of \ccRefName\ is representing a multivariate 
-polynomial in $d$ variables over some basic ring $R$, 
-this type is denoted as the innermost coefficient.
+polynomial in $d$ variables over some basic ring $R$. 
+This type is denoted as the innermost coefficient.
 A model of \ccRefName\ possesses a traits class 
 \ccc{CGAL::Polynomial_traits_d<Polynomial_d>}, which is a model of 
 \ccc{PolynomialTraits_d}. 
-The innermost coefficient of the polynomial is accessible through the traits 
-class \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient}.
+The innermost coefficient type of the polynomial is accessible through 
+the traits class providing 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient}.
  
 \ccRefines
 
@@ -40,5 +41,7 @@ Note:The concept \ccc{Polynomial_1} refines \ccc{EuclideanRing} in case
 \ccRefIdfierPage{PolynomialTraits_d}\\
 
 \ccHasModels
+
+\ccRefIdfierPage{CGAL::Polynomial<Coeff>}
 
 \end{ccRefConcept}

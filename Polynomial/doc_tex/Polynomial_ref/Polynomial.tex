@@ -13,26 +13,24 @@ multivariate polynomials.
 
 The template argument \ccc{Coeff} must be at 
 least a model of \ccc{IntegralDomainWithoutDiv}.
-For all operations naturally involving division, a \ccc{IntegralDomain} 
+For all operations naturally involving division, an \ccc{IntegralDomain} 
 is required. 
 %If more than a \c IntegralDomain is required, this is documented.
-Inexact and limited-precision types can be used as coefficients,
-but at the user's risk. The algorithms implemented were written with
-exact number types in mind.
 \ccc{Polynomial} offers a full set of algebraic operators, i.e.
-binary +, -, *, / as well as +=, -=, *=, /=; not only for polynomials
+binary  {\tt +}, {\tt  -}, {\tt  *}, {\tt /} as well as  
+{\tt +=}, {\tt -=}, {\tt *=}, {\tt  /=}; not only for polynomials
 but also for a polynomial and a number of the coefficient type.
-(The / operator must only be used for integral divisions, i.e.
+(The  {\tt /} operator must only be used for integral divisions, i.e.
 those with remainder zero.)
-The operations are implemented naively: + and - need a number of \ccc{Coeff}
+The operations are implemented naively:  {\tt +} and  {\tt -} need a number of \ccc{Coeff}
 operations which is linear in the degree while * is quadratic.
 %The advanced algebraic operations are implemented with classical
 %non-modular methods.
-Unary + and - and (in)equality ==, != are provided as well.
+Unary  {\tt +} and {\tt -} and (in)equality {\tt ==}, {\tt !=} are provided as well.
 
 \ccc{Polynomial} is a model of \ccc{LessThanComparable} if \ccc{Coeff} is a 
 model of \ccc{LessThanComparable}. In this case \ccc{Polynomial} provides 
-comparison operators <, >, <=, >=, where the comparison amounts to 
+comparison operators  {\tt <}, {\tt >}, {\tt <=}, {\tt >=}, where the comparison amounts to 
 lexicographic comparison of the coefficient sequence,
 with the coefficient of the highest power taking precedence over
 those of lower powers.
@@ -51,6 +49,13 @@ model of \ccc{Modularizable}, where the homomorphic map on the polynomials
 is simply defined as the canonical extension of the homomorphic map which is 
 defined on the coefficient type.  
 
+
+
+\ccImplementation
+Inexact and limited-precision types can be used as coefficients,
+but at the user's risk. The algorithms implemented were written with
+exact number types in mind.
+
 This data type is implemented as a handle type with value semantics
 using \ccc{CGAL::Handle_with_policy}, where \ccc{HandlePolicy}
 is \ccc{Handle_policy_no_union}. 
@@ -58,9 +63,11 @@ An important invariant to be preserved by all methods is that
 the coefficient sequence does not contain leading zero coefficients
 (where leading means at the high-degree end), with the exception that
 the zero polynomial is represented by a single zero coefficient.
-An empty coefficient sequence denotes an undefined value.
+%However, this has the disadvantage that each time a new polynomial is 
+%created the leading coefficient is tested against zero. 
 
-
+%This is not true anymore:
+%An empty coefficient sequence denotes an undefined value.
 
 \ccIsModel 
 \begin{tabular}{ll}

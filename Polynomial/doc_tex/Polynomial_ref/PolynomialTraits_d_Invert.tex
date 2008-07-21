@@ -1,8 +1,16 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Invert}
 \ccDefinition
 
-This \ccc{AdaptableUnaryFunction} inverts (reverse) a 
-\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+This \ccc{AdaptableUnaryFunction} inverts on variable in a given
+\ccc{PolynomialTraits_d::Polynomial_d}.
+
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+
+This functor is provided for efficiency reasons, since this operation just inverts the 
+order of the coefficients with respect to the specified variable. 
+
+
 
 \ccRefines 
 \ccc{AdaptableUnaryFunction}
@@ -16,11 +24,11 @@ This \ccc{AdaptableUnaryFunction} inverts (reverse) a
 
 \ccOperations
 \ccMethod{result_type operator()(argument_type  p);}{ 
-        return $x^{degree}\cdot p(1/x)$, with respect to the outermost variable.}
+        return $x^{degree(p)}p(1/x)$, where x refers to the outermost variable $x_{d-1}$.
+        }
 
-\ccMethod{result_type operator()(argument_type  p,
-                                 int i);}{ 
-        return $x^{degree}\cdot p(1/x)$, with respect to variable $x_i$.
+\ccMethod{result_type operator()(argument_type  p,  int i);}{ 
+        return $x^{degree(p)}p(1/x)$, where x refers to the variable $x_{i}$.        
         \ccPrecond $0 \leq i  < d$ }
 
 %\ccHasModels
