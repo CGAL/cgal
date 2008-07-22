@@ -2688,7 +2688,7 @@ Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
 Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj eol=crlf
-Min_circle_2/test/Min_circle_2/test_Min_circle_2.cmd eol=lf
+Min_circle_2/test/Min_circle_2/test_Min_circle.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
 Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj eol=crlf
 Min_ellipse_2/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
