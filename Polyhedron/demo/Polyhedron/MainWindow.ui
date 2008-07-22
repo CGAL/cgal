@@ -188,7 +188,7 @@
     <addaction name="menuSubdivision" />
     <addaction name="actionSimplify" />
     <addaction name="menu_Boolean_operations" />
-    <addaction name="actionInside_out" />
+    <addaction name="actionInsideOut" />
    </widget>
    <widget class="QMenu" name="menuView" >
     <property name="title" >
@@ -536,7 +536,7 @@
     <string>Ctrl+B</string>
    </property>
   </action>
-  <action name="actionInside_out" >
+  <action name="actionInsideOut" >
    <property name="text" >
     <string>Inside-out</string>
    </property>

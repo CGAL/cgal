@@ -3105,6 +3105,7 @@ Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cow.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/cross.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/cube_tri.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot.off -text svneol=unset#application/octet-stream

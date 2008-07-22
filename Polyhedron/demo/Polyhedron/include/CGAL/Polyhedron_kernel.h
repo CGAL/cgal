@@ -2,7 +2,6 @@
 #include <CGAL/QP_functions.h>
 #include <CGAL/QP_models.h>
 
-
 // Taken from http://www.qhull.org/html/qhalf.htm
 
 // If you do not know an interior point for the halfspaces, use linear programming
@@ -74,7 +73,7 @@ public:
 
 		int j = 0;
 		InputIterator it;
-		for(it = begin; it != end; it++)
+		for(it = begin; it != end; it++, j++)
 		{
 			const Triangle& triangle = *it;
 			const Point& a = triangle[0];
@@ -94,7 +93,7 @@ public:
 			lp.set_a(index_x4, j, -1.0); // -x4
 
 			// right hand side (>= -dj)
-			FT dj = distance_to_origin(plane);
+			FT dj = distance_to_origin(plane) * CGAL::sign(plane.d());
 			lp.set_b(j, -dj);  
 		}
 

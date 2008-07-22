@@ -28,7 +28,7 @@ void MainWindow::on_actionKernel_triggered()
     // solve LP 
     std::cout << "Solve linear program...";
     Polyhedron_kernel kernel;
-    if(kernel.solve(triangles.begin(),triangles.end()))
+    if(!kernel.solve(triangles.begin(),triangles.end()))
     {
       std::cout << "empty kernel" << std::endl;
       return;

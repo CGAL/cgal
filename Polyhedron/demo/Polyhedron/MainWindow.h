@@ -50,6 +50,7 @@ protected slots:
   void on_actionActivatePolyhedron_triggered();
   void on_actionSetPolyhedronA_triggered();
   void on_actionSetPolyhedronB_triggered();
+	void on_actionInsideOut_triggered();
 
   // save
   // TODO: save all, save current (do we store the current file name?)
