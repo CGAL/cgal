@@ -58,6 +58,72 @@ An object \ccVar\ of this type must provide:
 {For two circular arcs.}
 
 \end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::BoundedSide_2}
+
+\ccRefines
+
+\ccc{Kernel::BoundedSide_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{Bounded_side
+	operator()
+	(const CircularKernel::Circle_2& s, 
+	const CircularKernel::Circular_arc_point_2& p);}
+{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::HasOnBoundedSide_2}\\
+\ccRefIdfierPage{CircularKernel::HasOnUnboundedSide_2}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::HasOnBoundedSide_2}
+
+\ccRefines
+
+\ccc{Kernel::HasOnBoundedSide_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const CircularKernel::Circle_2& s, 
+	const CircularKernel::Circular_arc_point_2& p);}
+{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::BoundedSide_2}\\
+\ccRefIdfierPage{CircularKernel::HasOnUnboundedSide_2}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::HasOnUnboundedSide_2}
+
+\ccRefines
+
+\ccc{Kernel::HasOnUnboundedSide_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const CircularKernel::Circle_2& s, 
+	const CircularKernel::Circular_arc_point_2& p);}
+{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::BoundedSide_2}\\
+\ccRefIdfierPage{CircularKernel::HasOnBoundedSide_2}
+
+\end{ccRefFunctionObjectConcept}
 \begin{ccRefFunctionObjectConcept}{CircularKernel::InXRange_2}
 
 \ccDefinition
