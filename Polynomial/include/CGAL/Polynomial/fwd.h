@@ -94,6 +94,17 @@ template <typename OutputIterator, typename NT > inline
       OutputIterator principal_sturm_habicht_sequence(CGAL::Polynomial<NT> A, 
                                                       OutputIterator out);
 
+template<typename NT,
+    typename OutputIterator1, 
+    typename OutputIterator2,
+    typename OutputIterator3>
+    OutputIterator1 prs_subresultants_with_cofactors(CGAL::Polynomial<NT> P,
+                                                     CGAL::Polynomial<NT> Q,
+                                                     OutputIterator1 sres_out,
+                                                     OutputIterator2 coP_out,
+                                                     OutputIterator3 coQ_out);
+
+
 template<typename OutputIterator, typename NT> OutputIterator
     sturm_habicht_sequence(CGAL::Polynomial<NT> P, OutputIterator out);
 
