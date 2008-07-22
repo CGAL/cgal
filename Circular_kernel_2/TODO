@@ -1,14 +1,11 @@
 intersect(line_2,*) was forgotten!!!!!
 
-improve manual like SK3 (see answer to Efi's review, jan3, 2008)
-
 heriter result_type des foncteurs du Kernel (Bool_type \neq bool...)
 
 fix manual for operator>>
 
 manual filtered bbox kernel, ref counting
-manual calculs aires, longueurs, etc
-manual bounded_side etc
+
 manual orientation: NO (only when points have same delta, so don't document)
 
 add Do_intersect_2
