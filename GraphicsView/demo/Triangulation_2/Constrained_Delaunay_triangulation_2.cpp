@@ -1,11 +1,13 @@
 #include <fstream>
+#include <vector>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
-
+#include <CGAL/spatial_sort.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Timer.h>
 
 // Qt headers
 #include <QtGui>
@@ -30,6 +32,65 @@ typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
 typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
+
+
+
+typedef std::pair<std::vector<Point_2>*, int> Point_iterator;
+
+
+
+template <typename Kernel, typename Iterator>
+struct Sort_traits_2 {
+
+  Kernel k;
+
+  Sort_traits_2 (const Kernel &kernel = Kernel())
+      : k (kernel)
+  {}
+
+  typedef Iterator Point_2;
+
+  struct Less_x_2 {
+    Kernel k;
+    Less_x_2 (const Kernel &kernel = Kernel())
+        : k (kernel)
+    {}
+    bool operator() (const Point_2 &p, const Point_2 &q) const
+    {
+      return k.less_x_2_object() ((*(p.first))[p.second], (*(q.first))[q.second]);
+    }
+  };
+
+  Less_x_2
+  less_x_2_object() const
+  {
+    return Less_x_2(k);
+  }
+
+  struct Less_y_2 {
+    Kernel k;
+    Less_y_2 (const Kernel &kernel = Kernel())
+        : k (kernel)
+    {}
+    bool operator() (const Point_2 &p, const Point_2 &q) const
+    {
+      return k.less_y_2_object() ((*(p.first))[p.second], (*(q.first))[q.second]);
+    }
+  };
+
+
+  Less_y_2
+  less_y_2_object() const
+  {
+    return Less_y_2(k);
+  }
+};
+
+
+typedef CGAL::Hilbert_sort_2<Sort_traits_2<K, Point_iterator> > Hilbert_sort_2;
+typedef CGAL::Multiscale_sort<Hilbert_sort_2> Spatial_sort_2;
+
+
 
 
 typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
@@ -298,20 +359,23 @@ MainWindow::loadPolyConstraints(QString fileName)
     first = false;
   }
 
-  actionRecenter->trigger();
   emit(changed());
+  actionRecenter->trigger();
 }
 
 
 void
 MainWindow::loadEdgConstraints(QString fileName)
 {
+  CGAL::Timer tim;
+  tim.start();
   std::ifstream ifs(qPrintable(fileName));
   bool first=true;
   int n;
   ifs >> n;
   
   K::Point_2 p,q, qold;
+#if 1
   CDT::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {
     ifs >> q;
@@ -331,8 +395,67 @@ MainWindow::loadEdgConstraints(QString fileName)
     first = false;
   }
 
-  actionRecenter->trigger();
+#else 
+
+  Spatial_sort_2 sort_2;
+
+  std::vector<Point_2> points;
+  std::vector<bool> bop; // beginning of polyline
+  std::vector<std::pair<std::vector<Point_2>*,int> > iterators;
+  std::vector<CDT::Vertex_handle> vertices;
+  CDT::Vertex_handle vh;
+
+  points.reserve(n); // As n is the number of segments the vectors might become twice as big
+  bop.reserve(n);
+
+  while(ifs >> p){
+    ifs >> q;
+    if(p == q){
+      std::cout << "Ignore zero length segment" << std::endl;
+      continue;
+    }
+    if(first || (p != qold)){
+      // start a new polyline
+      bop.push_back(true);
+      points.push_back(p);
+    } 
+    bop.push_back(false);
+    points.push_back(q);
+    first = false;
+  }
+  iterators.reserve(points.size());
+  for(int i=0; i < points.size(); i++){
+    iterators.push_back(std::make_pair(&points,i));
+  }
+
+  sort_2(iterators.begin(), iterators.end());
+
+  // insert the points in the spatial sort order
+  first = true;
+  vertices.resize(points.size());
+  for(std::vector<std::pair<std::vector<Point_2>*,int> >::iterator it = iterators.begin();
+      it != iterators.end(); 
+      it++) {
+    if(first){
+      vh = vertices[it->second] = cdt.insert(points[it->second]);
+      first = false;
+    } else {
+      vh = vertices[it->second] = cdt.insert(points[it->second], vh->face());
+    }
+  }
+
+  // insert the constraints
+  CDT::Vertex_handle vp, vq;
+  for(int i = 0; i < vertices.size(); i++){
+    if(!bop[i]){
+      cdt.insert_constraint(vertices[i-1], vertices[i]);
+    }
+  }
+#endif
+  tim.stop();
+  statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
   emit(changed());
+  actionRecenter->trigger();
 }
 
 
