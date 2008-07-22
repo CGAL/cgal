@@ -40,7 +40,6 @@ public:
   typedef typename K::Site_2    Site_2;
   typedef bool                  result_type;
   typedef Site_2                argument_type;
-  typedef Arity_tag<2>          Arity;
 
   bool operator()(const Site_2& p, const Site_2& q) const
   {

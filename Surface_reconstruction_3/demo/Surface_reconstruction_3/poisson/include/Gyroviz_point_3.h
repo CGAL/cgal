@@ -53,7 +53,6 @@ private:
     typedef Node                  argument_type;
     typedef typename Gt::Point_3  Point_3;
     typedef Point_3               result_type;
-    typedef CGAL::Arity_tag<1>    Arity;
     Point_3&       operator()(Node& x)       const { return x.first; }
     const Point_3& operator()(const Node& x) const { return x.first; }
   };

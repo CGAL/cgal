@@ -1075,7 +1075,6 @@ private:
         typedef typename Parameterization_polyhedron_adaptor_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
-        typedef CGAL::Arity_tag<1>                  Arity;
 
         /// Get the target vertex of a halfedge
         Vertex&       operator()(Halfedge& h)       const {
@@ -1092,7 +1091,6 @@ private:
         typedef typename Parameterization_polyhedron_adaptor_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
-        typedef CGAL::Arity_tag<1>                  Arity;
 
         /// Convert Vertex_handle to Vertex
         Vertex&       operator()(Vertex_handle& vh)       const { return *vh; }
@@ -1105,7 +1103,6 @@ private:
         typedef typename Parameterization_polyhedron_adaptor_3::Vertex
                                                     Vertex;
         typedef Vertex                              result_type;
-        typedef CGAL::Arity_tag<1>                  Arity;
 
         /// Get the source vertex of a halfedge
         Vertex&       operator()(Halfedge& h)       const {

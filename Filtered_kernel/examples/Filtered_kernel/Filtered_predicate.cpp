@@ -17,7 +17,6 @@ struct My_orientation_2
   typedef typename K::Point_2       Point_2;
 
   typedef typename K::Orientation   result_type;
-  typedef CGAL::Arity_tag< 3 >      Arity;
 
   result_type
   operator()(const Point_2 &p, const Point_2 &q, const Point_2 &r) const

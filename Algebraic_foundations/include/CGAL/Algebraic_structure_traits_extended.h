@@ -105,7 +105,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& x, 
                 const Type& y, 
@@ -139,7 +138,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& x, 
                 const Type& y, 
@@ -171,7 +169,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& x, 
                 const Type& y, 
@@ -241,7 +238,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& x, 
                 const Type& y, 
@@ -336,7 +332,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& p1, 
                 const Type& p2, 
@@ -442,7 +437,6 @@ public:
         typedef Type    first_argument_type;
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
-        typedef Arity_tag< 3 >         Arity;
         typedef bool  result_type;
         bool operator()( const Type& p1, 
                 const Type& p2, 

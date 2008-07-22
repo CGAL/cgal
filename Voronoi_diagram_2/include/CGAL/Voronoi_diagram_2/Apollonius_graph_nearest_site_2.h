@@ -39,7 +39,6 @@ class Apollonius_graph_nearest_site_2
  public:
   typedef DG                                          Delaunay_graph;
   typedef typename Delaunay_graph::Point_2            Point_2;
-  typedef Arity_tag<2>                                Arity;
 
  private:
   typedef Triangulation_cw_ccw_2                      CW_CCW_2;

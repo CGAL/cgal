@@ -45,7 +45,6 @@ struct Identity_edge_rejector
 {
   typedef DG                  Delaunay_graph;
   typedef bool                result_type;
-  typedef Arity_tag<2>        Arity;
 
   typedef typename Delaunay_graph::Edge                   Edge;
   typedef typename Delaunay_graph::Face_handle            Face_handle;
@@ -87,7 +86,6 @@ struct Identity_face_rejector
 {
   typedef DG                  Delaunay_graph;
   typedef bool                result_type;
-  typedef Arity_tag<2>        Arity;
 
   typedef typename Delaunay_graph::Vertex_handle  Vertex_handle;
 

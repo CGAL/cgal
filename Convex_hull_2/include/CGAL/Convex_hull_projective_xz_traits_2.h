@@ -32,7 +32,6 @@ class Less_xy_plane_xz_2
 {
 public:
    typedef bool           result_type;
-   typedef Arity_tag<2>   Arity;
 
    bool 
    operator()(const Point_3& p, const Point_3& q) const
@@ -47,7 +46,6 @@ class Equal_xy_plane_xz_2
 {
 public:
    typedef bool           result_type;
-   typedef Arity_tag<2>   Arity;
 
    bool 
    operator()(const Point_3& p, const Point_3& q) const
@@ -62,7 +60,6 @@ class Less_yx_plane_xz_2
 {
 public:
    typedef bool           result_type;
-   typedef Arity_tag<2>   Arity;
 
    bool 
    operator()(const Point_3& p, const Point_3& q) const
@@ -77,7 +74,6 @@ class Left_turn_plane_xz_2
 {
 public:
    typedef bool           result_type;
-   typedef Arity_tag<2>   Arity;
 
    bool 
    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -93,7 +89,6 @@ class Less_dist_to_line_plane_xz_2
 {
 public:
    typedef bool           result_type;
-   typedef Arity_tag<4>   Arity;
 
    bool
    operator()(const Point_3& p, const Point_3& q,
@@ -119,7 +114,6 @@ class Less_rotate_ccw_plane_xz_2
 public:
 
    typedef bool         result_type;
-   typedef Arity_tag<3> Arity;
 
    bool
    operator()(const Point_3& r, const Point_3& p, const Point_3& q) const

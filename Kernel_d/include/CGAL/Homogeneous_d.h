@@ -94,7 +94,6 @@ public:
 
   public:
     typedef Cartesian_const_iterator_d result_type;
-    typedef Arity_tag< 1> Arity;
 
     Cartesian_const_iterator_d
     operator()(const Point_d& p) const
@@ -118,7 +117,6 @@ public:
     typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
   public:
     typedef Point_d result_type;
-    typedef Arity_tag< 2> Arity;
 
     Point_d operator()(const Iso_box_d&  b, int i)
     {
@@ -140,7 +138,6 @@ public:
     typedef typename K::Iso_box_d Iso_box_d;
   public:
     typedef Point_d result_type;
-    typedef Arity_tag< 1 > Arity;
 
     Point_d operator()(const Iso_box_d&  b)
     {
@@ -163,7 +160,6 @@ public:
     typedef typename K::Iso_box_d Iso_box_d;
   public:
     typedef Point_d result_type;
-    typedef Arity_tag< 1 > Arity;
 
     Point_d operator()(const Iso_box_d&  b)
     {

@@ -43,7 +43,6 @@ public:
   typedef typename K::Orientation  Orientation;
 
   typedef Orientation              result_type;
-  typedef Arity_tag<3>             Arity;
   typedef Site_2                   argument_type;
 
 private:

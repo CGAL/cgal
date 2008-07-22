@@ -120,7 +120,6 @@ class Call_has_on_positive_side
 {
   public:
     typedef bool           result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     bool
@@ -132,7 +131,6 @@ class Call_oriented_side
 {
   public:
     typedef Oriented_side   result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     template <class Cls, class Arg>
     Oriented_side
@@ -144,7 +142,6 @@ class Intersect
 {
   public:
     typedef CGAL::Object   result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     template <class T1, class T2>
     CGAL::Object

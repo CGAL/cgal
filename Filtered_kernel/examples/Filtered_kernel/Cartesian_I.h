@@ -40,7 +40,6 @@ public:
     typedef typename K::Segment_2     Segment_2;
   public:
     typedef void result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Intersect_with_iterators_2() {}
 

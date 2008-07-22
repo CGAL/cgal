@@ -40,7 +40,6 @@ public:
   typedef typename K::RT                RT;	
   typedef typename K::Sign              Sign;
   typedef Sign                          result_type;
-  struct Arity {};
 
 protected:
 

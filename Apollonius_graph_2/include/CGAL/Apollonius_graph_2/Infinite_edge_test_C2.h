@@ -265,7 +265,6 @@ public:
 
 public:
   typedef bool            result_type;
-  typedef Arity_tag<5>    Arity;
   struct argument_type {};
 
 

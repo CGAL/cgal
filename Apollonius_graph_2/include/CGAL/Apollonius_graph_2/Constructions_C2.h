@@ -74,7 +74,6 @@ public:
   typedef typename Gt::Site_2               Site_2;
 
   typedef Point_2       result_type;
-  typedef Arity_tag<3>  Arity;
 
   Point_2 operator() (const Site_2& p, const Site_2& q,
                       const Site_2& r) const
@@ -129,9 +128,8 @@ public:
   typedef typename Gt::Site_2             Site_2;
 
 #if 0
-  // WARNING: the following two types are just a hack; none of the
-  // two is really valid
-  struct Arity {};
+  // WARNING: the following type is just a hack; it is not
+  // really valid
   typedef Site_2 result_type;
 #endif
 

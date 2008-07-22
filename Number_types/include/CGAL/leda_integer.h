@@ -84,7 +84,6 @@ template <> class Algebraic_structure_traits< leda_integer >
         typedef Type& third_argument_type; 
         typedef Type& fourth_argument_type; 
         typedef void result_type;
-        typedef Arity_tag< 4 >         Arity;
         
         void operator()(const Type& x, const Type& y, Type& q, Type& r) const {
             

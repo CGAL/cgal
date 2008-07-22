@@ -88,7 +88,6 @@ public:
   typedef typename K::Weighted_point_2         Weighted_point_2;
   typedef typename K::Bare_point               Bare_point;
 
-  typedef Arity_tag< 3 >   Arity;
   typedef Bare_point       result_type;
 
   Bare_point operator() ( const Weighted_point_2 & p,
@@ -149,7 +148,6 @@ public:
   typedef typename K::Weighted_point_2                Weighted_point_2;
   typedef typename K::Line_2                          Line_2;
 
-  typedef Arity_tag< 2 >   Arity;
   typedef Line_2           result_type;
 
   Line_2
@@ -206,7 +204,6 @@ public:
   typedef typename K::Point_2                  Point_2;
   typedef typename K::Comparison_result        Comparison_result;
 
-  typedef Arity_tag<3>        Arity;
   typedef Comparison_result   result_type;
 
   Comparison_result operator()(const Point_2& p,
@@ -324,7 +321,6 @@ public:
   typedef typename K::Weighted_point_2         Weighted_point_2;
   typedef typename K::Oriented_side            Oriented_side;
 
-  typedef Arity_tag< 4 >   Arity;
   typedef Oriented_side    result_type;
 
   Oriented_side operator() ( const Weighted_point_2 & p,

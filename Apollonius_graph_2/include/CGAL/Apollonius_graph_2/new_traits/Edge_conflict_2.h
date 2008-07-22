@@ -42,7 +42,6 @@ public:
   typedef typename Base::Inverted_weighted_point   Inverted_weighted_point;
   typedef bool                                     result_type;
   typedef typename Base::Sign                      Sign;
-  struct Arity {};
 
 protected:
 

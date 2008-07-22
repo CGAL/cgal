@@ -47,7 +47,6 @@ public:
   {
     //    typedef P                        Site_2;
     typedef CGAL::Comparison_result  result_type;
-    typedef Arity_tag<3>             Arity;
 
     result_type operator()(const Site_2& q, const Site_2& p1,
 			   const Site_2& p2) const

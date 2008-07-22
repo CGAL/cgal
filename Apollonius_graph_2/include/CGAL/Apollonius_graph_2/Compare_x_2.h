@@ -38,7 +38,6 @@ public:
   typedef typename K::Site_2               Site_2;
 
   typedef typename K::Comparison_result    result_type;
-  typedef Arity_tag<2>                     Arity;
   typedef Site_2                           argument_type;
 
   inline

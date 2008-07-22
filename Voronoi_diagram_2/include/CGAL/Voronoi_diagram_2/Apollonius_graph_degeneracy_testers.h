@@ -47,7 +47,6 @@ class Apollonius_graph_edge_tester_2
   typedef typename DG::Finite_edges_iterator       Finite_edges_iterator;
 
   typedef bool           result_type;
-  typedef Arity_tag<2>   Arity;
 
  private:
   typedef Triangulation_cw_ccw_2                     CW_CCW_2;

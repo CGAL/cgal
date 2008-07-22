@@ -456,7 +456,6 @@ private:
 
 public:
   typedef Site_2                   argument_type;
-  typedef Arity_tag<2>             Arity;
 
 
   result_type

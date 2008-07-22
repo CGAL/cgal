@@ -123,7 +123,6 @@ template < class Cell >
 struct Cell_min
 : public std::unary_function< Cell, typename Cell::Value >
 {
-  typedef Arity_tag< 1 > Arity;
   typename Cell::Value
   operator()( const Cell& c) const
   { return (c.min)(); }
@@ -132,7 +131,6 @@ struct Cell_min
 template < class Cell >
 struct Cell_max
 : public std::unary_function< Cell, typename Cell::Value > {
-  typedef Arity_tag< 1 > Arity;
 
   Cell_max( int offset) : ofs( offset) {}
 

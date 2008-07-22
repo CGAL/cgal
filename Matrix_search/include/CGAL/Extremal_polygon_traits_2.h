@@ -38,7 +38,6 @@ struct Extremal_polygon_area_traits_2 {
 #endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 
   struct Kgon_triangle_area {
-    typedef Arity_tag< 3 >  Arity;
     typedef FT              result_type;
   
     Kgon_triangle_area(const K& k_) : k(k_) {}
@@ -159,7 +158,6 @@ struct Extremal_polygon_perimeter_traits_2 {
 #endif // CGAL_OPTIMISATION_EXPENSIVE_PRECONDITION_TAG
 
   struct Kgon_triangle_perimeter {
-    typedef Arity_tag< 3 >  Arity;
     typedef FT              result_type;
   
     Kgon_triangle_perimeter(const K& k_): k(k_) {}

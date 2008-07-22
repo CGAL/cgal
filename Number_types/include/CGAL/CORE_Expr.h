@@ -67,7 +67,6 @@ template <> class Algebraic_structure_traits< CORE::Expr >
 //        typedef CORE::BigRat Boundary;
         typedef Type   result_type;
 
-        typedef Arity_tag< 3 >         Arity;
 
       public:
         // constructs the kth roots of the polynomial

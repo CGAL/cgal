@@ -189,7 +189,6 @@ private:
 public:
   typedef Sign                result_type;
   typedef Site_2              argument_type;
-  struct Arity {};
 
   inline
   Sign operator()(const Site_2& p1, const Site_2& p2,

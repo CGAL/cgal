@@ -141,7 +141,6 @@ private:
     typedef Node                                  argument_type;
     typedef typename PolyhedronTraits_3::Triangle_3 Triangle;
     typedef Triangle                              result_type;
-    typedef CGAL::Arity_tag<1>                    Arity;
     typedef typename PolyhedronTraits_3::Point_3  Point;
     
     Triangle operator()(const Node& f) const {

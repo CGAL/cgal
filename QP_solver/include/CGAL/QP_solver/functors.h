@@ -95,7 +95,6 @@ template < class MatrixIt, bool check_1st_lower, bool check_1st_upper,
 class QP_matrix_accessor {
 
   public:    
-    typedef CGAL::Arity_tag<2> Arity;
     typedef int argument1_type;
     typedef int argument2_type;
     typedef typename std::iterator_traits<MatrixIt>::value_type VectorIt;

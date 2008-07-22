@@ -694,7 +694,6 @@ namespace QP_solution_detail {
   class Quotient_normalizer {
   public:
     typedef CGAL::Quotient<ET> result_type;
-    typedef CGAL::Arity_tag<1> Arity;
    
   private:
       typedef CGAL::Algebraic_structure_traits<ET> AST;

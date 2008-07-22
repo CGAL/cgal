@@ -40,7 +40,6 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
   
   typedef Trisegment_2_ptr result_type ;
   
-  typedef Arity_tag<3> Arity ;
 
   result_type operator() () const { return cgal_make_optional( Trisegment_2::null() ) ; }
   
@@ -59,7 +58,6 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aTrisegment, boost::optional<FT> aMaxTime ) const
   {
@@ -81,7 +79,6 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Point_2 const& aContourNode, Segment_2 const& aEdge ) const
   {
@@ -102,7 +99,6 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<Comparison_result> result_type ;
-  typedef Arity_tag<2>                 Arity ;
 
   Uncertain<Comparison_result> operator() ( Trisegment_2_ptr const& aL, Trisegment_2_ptr const& aR ) const
   {
@@ -124,7 +120,6 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
   typedef typename Base::Point_2          Point_2 ;
 
   typedef Uncertain<Oriented_side> result_type ;
-  typedef Arity_tag<5>             Arity ;
 
   Uncertain<Oriented_side> operator() ( Trisegment_2_ptr const& aEvent
                                       , Segment_2        const& aE0
@@ -150,7 +145,6 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Trisegment_2_ptr const& aA, Trisegment_2_ptr const& aB ) const
   {
@@ -170,7 +164,6 @@ struct Are_ss_edges_collinear_2 : Functor_base_2<K>
   typedef typename Base::Segment_2 Segment_2 ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
   {
@@ -190,7 +183,6 @@ struct Are_ss_edges_parallel_2 : Functor_base_2<K>
   typedef typename Base::Segment_2 Segment_2 ;
 
   typedef Uncertain<bool> result_type ;
-  typedef Arity_tag<2>    Arity ;
 
   Uncertain<bool> operator() ( Segment_2 const& aA, Segment_2 const& aB ) const
   {
@@ -217,7 +209,6 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   
   typedef boost::optional<rtype> result_type ;
   
-  typedef Arity_tag<1>  Arity ;
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
   {

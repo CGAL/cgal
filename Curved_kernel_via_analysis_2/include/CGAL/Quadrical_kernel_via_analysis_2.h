@@ -688,7 +688,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_x_on_identification_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -727,7 +726,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_xy_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -784,7 +782,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
 
     //! standard constructor
@@ -903,7 +900,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
 
     //! standard constructor
@@ -997,7 +993,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_y_at_x_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1064,7 +1059,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_left_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1147,7 +1141,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_right_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1230,7 +1223,6 @@ public:
     typedef CGAL::Arr_parameter_space result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Parameter_space_in_y_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1287,7 +1279,6 @@ public:
     typedef Point_2 result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<1> Arity;
     
 
     //! standard constructor
@@ -1335,7 +1326,6 @@ public:
     typedef Point_2 result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<1> Arity;
     
 
     //! standard constructor
@@ -1380,7 +1370,6 @@ public:
     
     //! the result type 
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Do_overlap_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1432,7 +1421,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Equal_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1502,7 +1490,6 @@ public:
     
     //! the result type
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
-    typedef Arity_tag<3> Arity;    
     
     //! standard constructor
     Intersect_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1684,7 +1671,6 @@ public:
     
     //! the result type
     typedef Arc_2 result_type;
-    typedef Arity_tag<3> Arity;
     
     //! standard constructor
     Trim_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1741,7 +1727,6 @@ public:
 
     //! the result type
     typedef void result_type;
-    typedef Arity_tag<4> Arity;    
     
     //! standard constructor
     Split_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1816,7 +1801,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;    
     
     //! standard constructor
     Are_mergeable_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1874,7 +1858,6 @@ public:
 
     //! the result type
     typedef void result_type;
-    typedef Arity_tag<2> Arity;    
     
     //! standard constructor
     Merge_2(Curved_kernel_via_analysis_2l *kernel) :
@@ -1954,7 +1937,6 @@ public:
     
     //! the result type 
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
-    typedef Arity_tag<2> Arity;   
     
     //! standard constructor
     Make_x_monotone_2(Curved_kernel_via_analysis_2l *kernel) :

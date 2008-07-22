@@ -361,7 +361,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Compare_xyz_3(Curved_kernel_via_analysis_2l *kernel) :
@@ -483,7 +482,6 @@ public:
 
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Is_on_3(Curved_kernel_via_analysis_2l *kernel) :
@@ -558,7 +556,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Is_on_2(Curved_kernel_via_analysis_2l *kernel) :

@@ -31,7 +31,6 @@ class r_Less_dist_to_line
 {
 public:
   typedef bool    result_type;
-  typedef  Arity_tag< 4 >   Arity;
 
   typedef typename R::Point_2  Point;
   typedef typename R::Line_2   Line;

@@ -151,7 +151,6 @@ public:
         typedef mpz_class    second_argument_type;
         typedef mpz_class&   third_argument_type;
         typedef mpz_class&   fourth_argument_type;
-        typedef Arity_tag< 4 >         Arity;
         typedef void         result_type;
         template <typename T,  typename U1, typename U2>
         void operator()(

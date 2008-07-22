@@ -87,7 +87,6 @@ public:
     typedef typename Point_2::Rep  Rep;
   public:
     typedef Point_2                result_type;
-    typedef CGAL::Arity_tag< 1 >   Arity;
 
     // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
     // Unfortunately it is needed for optimizing away copy-constructions,

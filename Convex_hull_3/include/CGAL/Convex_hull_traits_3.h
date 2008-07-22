@@ -109,7 +109,6 @@ public:
     typedef typename K::Plane_3 Plane_3;
 
     typedef bool             result_type;
-    typedef Arity_tag< 3 >   Arity;
 
     bool
     operator()( const Plane_3& h, const Point_3& p, const Point_3& q) const

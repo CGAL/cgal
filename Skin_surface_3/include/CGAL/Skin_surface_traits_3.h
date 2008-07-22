@@ -41,7 +41,6 @@ public:
 
   Side_of_mixed_cell_3(const FT &shrink) : s(shrink) {}
   
-  typedef CGAL::Arity_tag< 5 > Arity;
   typedef CGAL::Sign           result_type;
   
   result_type operator()(const Weighted_point &p1,
@@ -90,7 +89,6 @@ public:
 
   Construct_anchor_point_3(const FT &shrink) : s(shrink) {}
   
-  typedef CGAL::Arity_tag< 2 > Arity;
   typedef Bare_point           result_type;
   
   result_type operator()(const Bare_point &p_del,

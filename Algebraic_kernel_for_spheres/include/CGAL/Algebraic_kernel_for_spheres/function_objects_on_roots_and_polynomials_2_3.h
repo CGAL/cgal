@@ -228,7 +228,6 @@ namespace AlgebraicSphereFunctors {
 
   public:
     typedef CGAL::Sign   result_type;
-    typedef Arity_tag<2> Arity;
 
     result_type
     operator()( const Polynomial_for_spheres_2_3 & equation,
@@ -253,7 +252,6 @@ namespace AlgebraicSphereFunctors {
 
   public:
     typedef void         result_type;
-    typedef Arity_tag<2> Arity;
 
     Root_for_spheres_2_3
     operator()(const Polynomial_for_spheres_2_3 & c, 
@@ -288,7 +286,6 @@ namespace AlgebraicSphereFunctors {
 
   public:
     typedef void         result_type;
-    typedef Arity_tag<2> Arity;
 
     Root_for_spheres_2_3
     operator()(const Polynomial_for_spheres_2_3 & c, 
@@ -323,7 +320,6 @@ namespace AlgebraicSphereFunctors {
 
   public:
     typedef void         result_type;
-    typedef Arity_tag<2> Arity;
 
     Root_for_spheres_2_3
     operator()(const Polynomial_for_spheres_2_3 & c, 

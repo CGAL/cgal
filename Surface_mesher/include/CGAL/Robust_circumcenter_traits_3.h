@@ -50,7 +50,6 @@ class Robust_construct_circumcenter_3
 
 public:
   typedef Point_3          result_type;
-  typedef Arity_tag< 4 >   Arity;
 
   Point_3 operator() (const Point_3 & p,
 		      const Point_3 & q,
@@ -114,7 +113,6 @@ class Robust_squared_radius_3
 			      To_double<EK::FT> > Back_from_exact;
 public:
   typedef FT               result_type;
-  typedef Arity_tag< 1 >   Arity;
 
   result_type
   operator()( const Sphere_3& s) const
@@ -179,7 +177,6 @@ public:
   typedef typename K::Bare_point                     Bare_point;
   typedef typename K::FT                             FT;
 
-  typedef Arity_tag< 4 >   Arity;
   typedef Bare_point       result_type;
 
   typedef Weighted_converter_3<Cartesian_converter<typename K::Kernel,EK2> >

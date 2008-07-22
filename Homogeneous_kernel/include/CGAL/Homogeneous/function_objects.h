@@ -60,7 +60,6 @@ namespace HomogeneousKernelFunctors {
     Construct_vector_2 c;
   public:
     typedef typename K::Angle               result_type;
-    typedef Arity_tag< 3 >                  Arity;
 
     Angle_2() {}
     Angle_2(const Construct_vector_2& c_) : c(c_) {}
@@ -79,7 +78,6 @@ namespace HomogeneousKernelFunctors {
     Construct_vector_3 c;
   public:
     typedef typename K::Angle               result_type;
-    typedef Arity_tag< 3 >                  Arity;
 
     Angle_3() {}
     Angle_3(const Construct_vector_3& c_) : c(c_) {}
@@ -100,7 +98,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
   public:
     typedef typename K::Bounded_side    result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -151,7 +148,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Iso_cuboid_3    Iso_cuboid_3;
   public:
     typedef typename K::Bounded_side    result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
@@ -246,7 +242,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_ordered_along_line_2() {}
@@ -297,7 +292,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_ordered_along_line_3() {}
@@ -379,7 +373,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_strictly_ordered_along_line_2() {}
@@ -431,7 +424,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 3 >              Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Collinear_are_strictly_ordered_along_line_3() {}
@@ -466,7 +458,6 @@ namespace HomogeneousKernelFunctors {
     Compare_xy_2 cxy;
   public:
     typedef typename K::Bool_type             result_type;
-    typedef Arity_tag< 2 >                    Arity;
 
     Collinear_has_on_2() {}
     Collinear_has_on_2(const Construct_point_on_2& cp_,
@@ -496,7 +487,6 @@ namespace HomogeneousKernelFunctors {
     Orientation_2 o;
   public:
     typedef typename K::Bool_type      result_type;
-    typedef Arity_tag< 3 >             Arity;
 
     Collinear_2() {}
     Collinear_2(const Orientation_2 o_) : o(o_) {}
@@ -549,7 +539,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Direction_2        Direction_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()(const Direction_2& d1, const Direction_2& d2) const
@@ -615,7 +604,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2            Point_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -668,7 +656,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::FT                 FT;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const FT& d2) const
@@ -683,7 +670,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3            Point_3;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -723,7 +709,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::FT                 FT;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const FT& d2) const
@@ -739,7 +724,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Segment_2          Segment_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()(const Line_2& l1, const Line_2& l2) const
@@ -833,7 +817,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2             Line_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Line_2& h) const
@@ -871,7 +854,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3            Point_3;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -911,7 +893,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2            Point_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -942,7 +923,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2            Point_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -973,7 +953,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3            Point_3;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -1003,7 +982,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2             Line_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -1040,7 +1018,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3            Point_3;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -1055,7 +1032,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Segment_2          Segment_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Line_2& h) const
@@ -1176,7 +1152,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2             Line_2;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -1219,7 +1194,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3            Point_3;
   public:
     typedef typename K::Comparison_result  result_type;
-    typedef Arity_tag< 2 >                 Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -1232,7 +1206,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3             Point_3;
   public:
     typedef typename K::Comparison_result   result_type;
-    typedef Arity_tag< 2 >                  Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -1252,7 +1225,6 @@ namespace HomogeneousKernelFunctors {
     Construct_vector_2 co;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r ) const
@@ -1281,7 +1253,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2          Vector_2;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
@@ -1298,7 +1269,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3          Vector_3;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 3 >   Arity;
 
     result_type
     operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
@@ -1318,7 +1288,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2          Vector_2;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     FT
     operator()(const Vector_2& v, const Vector_2& w) const
@@ -1336,7 +1305,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3          Vector_3;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     FT
     operator()(const Vector_3& v, const Vector_3& w) const
@@ -1355,7 +1323,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2    Circle_2;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Circle_2& c) const
@@ -1382,7 +1349,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Sphere_3    Sphere_3;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()( const Sphere_3& s) const
@@ -1419,7 +1385,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Iso_cuboid_3   Iso_cuboid_3;
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_3& p0, const Point_3& p1,
@@ -1469,7 +1434,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_2& p) const
@@ -1493,7 +1457,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_3& p) const
@@ -1517,7 +1480,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_2& p) const
@@ -1541,7 +1503,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_3& p) const
@@ -1565,7 +1526,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef FT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     FT
     operator()(const Point_3& p) const
@@ -1588,7 +1548,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Direction_2& d) const
@@ -1605,7 +1564,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Direction_3& d) const
@@ -1622,7 +1580,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Direction_2& d) const
@@ -1639,7 +1596,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Direction_3& d) const
@@ -1656,7 +1612,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Direction_3& d) const
@@ -1675,7 +1630,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_2& p) const
@@ -1700,7 +1654,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_3& p) const
@@ -1725,7 +1678,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_2& p) const
@@ -1750,7 +1702,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_3& p) const
@@ -1775,7 +1726,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_3& p) const
@@ -1800,7 +1750,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_2& p) const
@@ -1825,7 +1774,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef RT               result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     const result_type &
     operator()(const Point_3& p) const
@@ -1851,7 +1799,6 @@ namespace HomogeneousKernelFunctors {
     Construct_orthogonal_vector_3 co;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Construct_base_vector_3() {}
     Construct_base_vector_3(const Construct_orthogonal_vector_3& co_)
@@ -1903,7 +1850,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2         Circle_2;
   public:
     typedef Bbox_2           result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Bbox_2
     operator()( const Point_2& p) const
@@ -1969,7 +1915,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Sphere_3         Sphere_3;
   public:
     typedef Bbox_3           result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Bbox_3
     operator()(const Point_3& p) const
@@ -2048,7 +1993,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2  Line_2;
   public:
     typedef Line_2           result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Line_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -2092,7 +2036,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3 Plane_3;
   public:
     typedef Plane_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Plane_3
     operator()(const Point_3& p, const Point_3& q) const
@@ -2139,7 +2082,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_2  Triangle_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 3 >   Arity;
 
     Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -2187,7 +2129,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 3 >   Arity;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -2242,7 +2183,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_2  Triangle_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 3 >   Arity;
 
     Point_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -2325,7 +2265,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 4 >   Arity;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
@@ -2428,7 +2367,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3  Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()(const Vector_3& a, const Vector_3& b) const
@@ -2446,7 +2384,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2  Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()(const Vector_2& v, const Vector_2& w) const
@@ -2463,7 +2400,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3  Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()(const Vector_3& v, const Vector_3& w) const
@@ -2490,7 +2426,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef Direction_2       result_type;
-    typedef Arity_tag< 1 >    Arity;
 
     Rep // Direction_2
     operator()(Return_base_tag, const RT& x, const RT& y) const
@@ -2559,7 +2494,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename Direction_3::Rep   Rep;
   public:
     typedef Direction_3       result_type;
-    typedef Arity_tag< 1 >    Arity;
 
     Rep // Direction_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
@@ -2610,7 +2544,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2  Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()(const Vector_2& v, const Vector_2& w) const
@@ -2627,7 +2560,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3  Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()(const Vector_3& v, const Vector_3& w) const
@@ -2647,7 +2579,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2  Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()(const Vector_2& v, const FT& f ) const
@@ -2671,7 +2602,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3  Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()(const Vector_3& v, const FT& f ) const
@@ -2699,7 +2629,6 @@ namespace HomogeneousKernelFunctors {
 
   public:
     typedef Iso_rectangle_2   result_type;
-    typedef Arity_tag< 2 >    Arity;
 
     Rep // Iso_rectangle_2
     operator()(Return_base_tag, const Point_2& p, const Point_2& q, int) const
@@ -2820,7 +2749,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3                    Plane_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_3
     operator()(const Plane_3& h, const Point_2& p) const
@@ -2846,7 +2774,6 @@ namespace HomogeneousKernelFunctors {
     Construct_point_on_2 cp;
   public:
     typedef Line_2            result_type;
-    typedef Arity_tag< 2 >    Arity;
 
     Construct_line_2() {}
     Construct_line_2(const Construct_point_on_2& cp_) : cp(cp_) {}
@@ -2928,7 +2855,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_2
     operator()(const Point_2& p, const Point_2& q) const
@@ -2949,7 +2875,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3   Point_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
@@ -2971,7 +2896,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2    Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Vector_2
     operator()( const Vector_2& v) const
@@ -2984,7 +2908,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3    Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Vector_3
     operator()( const Vector_3& v) const
@@ -2999,7 +2922,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Plane_3     Plane_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Vector_3
     operator()( const Plane_3& p ) const
@@ -3018,7 +2940,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2   Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()( const Vector_2& v, Orientation o) const
@@ -3037,7 +2958,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Direction_2   Direction_2;
   public:
     typedef Direction_2      result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Direction_2
     operator()( const Direction_2& d, Orientation o) const
@@ -3059,7 +2979,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
   public:
     typedef Line_2           result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Line_2
     operator()( const Line_2& l, const Point_2& p) const
@@ -3078,7 +2997,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename Point_2::Rep  Rep;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Rep // Point_2
     operator()(Return_base_tag, Origin o) const
@@ -3138,7 +3056,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename Point_3::Rep  Rep;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 1 >   Arity;
 
     Rep // Point_3
     operator()(Return_base_tag, Origin o) const
@@ -3185,7 +3102,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2      Line_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_2
     operator()( const Line_2& l, const Point_2& p ) const
@@ -3208,7 +3124,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3   Vector_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3245,7 +3160,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2   Vector_2;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_2
     operator()( const Vector_2& v, const RT& c) const
@@ -3268,7 +3182,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3   Vector_3;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Vector_3
     operator()( const Vector_3& v, const RT& c) const
@@ -3290,7 +3203,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_2  Vector_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_2
     operator()( const Point_2& p, const Vector_2& v) const
@@ -3314,7 +3226,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Vector_3  Vector_3;
   public:
     typedef Point_3          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Point_3
     operator()( const Point_3& p, const Vector_3& v) const
@@ -3346,7 +3257,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename Vector_2::Rep   Rep;
   public:
     typedef Vector_2         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Rep // Vector_2
     operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
@@ -3454,7 +3364,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename Vector_3::Rep   Rep;
   public:
     typedef Vector_3         result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     Rep // Vector_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
@@ -3559,7 +3468,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_2       Triangle_2;
   public:
     typedef Point_2          result_type;
-    typedef Arity_tag< 2 >   Arity;
 
     const Point_2 &
     operator()( const Segment_2& s, int i) const
@@ -3619,7 +3527,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Orientation  result_type;
-    typedef Arity_tag< 4 >           Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Coplanar_orientation_3() {}
@@ -3701,7 +3608,6 @@ namespace HomogeneousKernelFunctors {
 #endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bounded_side  result_type;
-    typedef Arity_tag< 4 >            Arity;
 
 #ifdef CGAL_kernel_exactness_preconditions
     Coplanar_side_of_bounded_circle_3() {}
@@ -3731,7 +3637,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3    Point_3;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3747,7 +3652,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2    Point_2;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3760,7 +3664,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3    Point_3;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3773,7 +3676,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2    Point_2;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -3786,7 +3688,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3    Point_3;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3799,7 +3700,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3    Point_3;
   public:
     typedef typename K::Bool_type  result_type;
-    typedef Arity_tag< 2 >         Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -3818,7 +3718,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Tetrahedron_3    Tetrahedron_3;
   public:
     typedef typename K::Bool_type        result_type;
-    typedef Arity_tag< 2 >               Arity;
 
     result_type
     operator()( const Line_3& l, const Point_3& p) const
@@ -3886,7 +3785,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
   public:
     typedef typename K::Bool_type result_type;
-    typedef Arity_tag< 3 >        Arity;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -3939,7 +3837,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3   Point_3;
   public:
     typedef typename K::Bool_type result_type;
-    typedef Arity_tag< 3 >        Arity;
 
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
@@ -3978,7 +3875,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2    Line_2;
   public:
     typedef typename K::Bool_type result_type;
-    typedef Arity_tag< 4 >        Arity;
 
     result_type
     operator()(const Point_2& p, const Point_2& q,
@@ -4038,7 +3934,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Construct_plane_3  Construct_plane_3;
   public:
     typedef typename K::Bool_type          result_type;
-    typedef Arity_tag< 3 >                 Arity;
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p, const Point_3& q) const
@@ -4080,7 +3975,6 @@ namespace HomogeneousKernelFunctors {
     Compare_xyz_3 c;
   public:
     typedef typename K::Bool_type      result_type;
-    typedef Arity_tag< 2 >             Arity;
 
     Less_xyz_3() {}
     Less_xyz_3(const Compare_xyz_3& c_) : c(c_) {}
@@ -4098,7 +3992,6 @@ namespace HomogeneousKernelFunctors {
     Compare_xy_2 c;
   public:
     typedef typename K::Bool_type     result_type;
-    typedef Arity_tag< 2 >            Arity;
 
     Less_xy_2() {}
     Less_xy_2(const Compare_xy_2& c_) : c(c_) {}
@@ -4116,7 +4009,6 @@ namespace HomogeneousKernelFunctors {
     Compare_xy_3 c;
   public:
     typedef typename K::Bool_type     result_type;
-    typedef Arity_tag< 2 >            Arity;
 
     Less_xy_3() {}
     Less_xy_3(const Compare_xy_3& c_) : c(c_) {}
@@ -4132,7 +4024,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2         Point_2;
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4145,7 +4036,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3         Point_3;
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -4158,7 +4048,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2       Point_2;
   public:
     typedef typename K::Bool_type     result_type;
-    typedef Arity_tag< 2 >            Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4194,7 +4083,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2         Point_2;
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q) const
@@ -4207,7 +4095,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3         Point_3;
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -4220,7 +4107,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3         Point_3;
   public:
     typedef typename K::Bool_type       result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -4235,7 +4121,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2     Circle_2;
   public:
     typedef typename K::Orientation  result_type;
-    typedef Arity_tag< 3 >           Arity;
 
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
@@ -4286,7 +4171,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Sphere_3       Sphere_3;
   public:
     typedef typename K::Orientation  result_type;
-    typedef Arity_tag< 4 >           Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
@@ -4331,7 +4215,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_2     Triangle_2;
   public:
     typedef typename K::Oriented_side  result_type;
-    typedef Arity_tag< 2 >             Arity;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
@@ -4378,7 +4261,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2        Point_2;
   public:
     typedef typename K::Bounded_side   result_type;
-    typedef Arity_tag< 4 >             Arity;
 
     result_type
     operator()( const Point_2& p, const Point_2& q, const Point_2& t) const
@@ -4469,7 +4351,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3        Point_3;
   public:
     typedef typename K::Bounded_side   result_type;
-    typedef Arity_tag< 5 >             Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& t) const
@@ -4536,7 +4417,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2        Point_2;
   public:
     typedef typename K::Oriented_side  result_type;
-    typedef Arity_tag< 4 >             Arity;
 
     result_type
     operator()( const Point_2& q, const Point_2& r,
@@ -4600,7 +4480,6 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3        Point_3;
   public:
     typedef typename K::Oriented_side  result_type;
-    typedef Arity_tag< 5 >             Arity;
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,

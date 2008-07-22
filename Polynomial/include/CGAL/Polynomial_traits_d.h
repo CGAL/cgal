@@ -696,7 +696,6 @@ public:
     typedef Polynomial_d        first_argument_type;
     typedef int                 second_argument_type;
     typedef int                 third_argument_type;
-    typedef Arity_tag< 3 >         Arity;
              
   public:
 
@@ -732,7 +731,6 @@ public:
     typedef Polynomial_d        first_argument_type;
     typedef int                 second_argument_type;
     typedef int                 third_argument_type;
-    typedef Arity_tag< 3 >         Arity;
         
     Polynomial_d 
     operator()(const Polynomial_d& p, int i, int j = (d-1) ) const {
@@ -868,7 +866,6 @@ public:
     typedef Polynomial_d          first_argument_type;
     typedef Coefficient           second_argument_type;
     typedef Coefficient           third_argument_type;
-    typedef Arity_tag< 3 >        Arity;
        
     Coefficient operator()(
         const Polynomial_d& p, Coefficient a, Coefficient b) const 

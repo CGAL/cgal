@@ -176,7 +176,6 @@ template<> class Algebraic_structure_traits< short int >
         typedef Type    second_argument_type;
         typedef Type&   third_argument_type;
         typedef Type&   fourth_argument_type;
-        typedef Arity_tag< 4 >         Arity;
         typedef void  result_type;
         void operator()( const Type& x,
                          const Type& y,

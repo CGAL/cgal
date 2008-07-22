@@ -64,7 +64,6 @@ public:
   typedef C2A   To_approximate_converter;
 
   typedef typename EP::result_type  result_type;
-  typedef typename EP::Arity        Arity;
   // AP::result_type must be convertible to EP::result_type.
 
   Filtered_predicate()

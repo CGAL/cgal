@@ -441,7 +441,6 @@ private:
 public:
   typedef Site_2      argument_type;
   typedef Sign        result_type;
-  struct Arity {};
 
 
   Sign operator()(const Site_2& p, const Site_2& q,

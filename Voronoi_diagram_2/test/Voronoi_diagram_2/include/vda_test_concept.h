@@ -344,8 +344,6 @@ void test_er_concept(const DG& dg, const ER& er)
 {
   // types for AdaptableFunctor concept
   typedef typename ER::result_type               result_type;
-  typedef typename ER::Arity                     Arity;
-
 
   typedef typename ER::Delaunay_graph            Delaunay_graph;
   typedef typename ER::Edge                      Edge;
@@ -406,7 +404,6 @@ void test_fr_concept(const DG& dg, const FR& fr)
 {
   // types for the AdaptableFunctor concept
   typedef typename FR::result_type               result_type;
-  typedef typename FR::Arity                     Arity;
 
   typedef typename FR::Delaunay_graph            Delaunay_graph;
   typedef typename FR::Vertex_handle             Vertex_handle;
@@ -449,7 +446,6 @@ void test_as_concept(const DG& dg, const AS& as)
 {
   // types for the AdaptableFunctor concept
   typedef typename AS::result_type               result_type;
-  typedef typename AS::Arity                     Arity;
 
   typedef typename AS::Vertex_handle             Vertex_handle;
 
@@ -467,7 +463,6 @@ void test_cvp_concept(const DG& dg, const CVP& cvp)
 {
   // types for the AdaptableFunctor concept
   typedef typename CVP::result_type               result_type;
-  typedef typename CVP::Arity                     Arity;
 
   typedef typename CVP::Face_handle               Face_handle;
 
@@ -493,7 +488,6 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
   typedef typename Site_inserter::Site_2           Site_2;
 
   // types for the AdaptableFunctor concept
-  typedef typename Site_inserter::Arity            Arity;
   typedef typename Site_inserter::result_type      result_type;
 
   Site_inserter si = ap.site_inserter_object();
@@ -541,7 +535,6 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
   typedef typename Nearest_site_2::Point_2        Point_2;
 
   // types for the AdaptableFunctor concept
-  typedef typename Nearest_site_2::Arity          Arity;
   typedef typename Nearest_site_2::result_type    result_type;
 
   typedef typename AT::Delaunay_vertex_handle     Vertex_handle;

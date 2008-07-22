@@ -47,7 +47,6 @@ class Connected_components
   typedef typename Voronoi_diagram_2::size_type          size_type;
   typedef size_type                                      result_type;
   typedef Voronoi_diagram_2                              argument_type;
-  typedef Arity_tag<1>                                   Arity;
 
  private:
   struct Halfedge_handle_less {

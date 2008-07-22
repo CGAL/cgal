@@ -542,7 +542,6 @@ private:
 public:
   typedef bool                  result_type;
   struct argument_type {};
-  struct Arity {};
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,

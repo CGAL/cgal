@@ -54,7 +54,6 @@ public:
   typedef Site                             Site_2;
   typedef typename Site_2::Point_2         Point_2;
   typedef Site_2                           result_type;
-  struct Arity_tag {};
 
 public:
   result_type operator()(const Point_2& p) const {
@@ -91,7 +90,6 @@ public:
   typedef Site                             Site_2;
   typedef typename Site_2::Point_2         Point_2;
   typedef Site_2                           result_type;
-  struct Arity_tag {};
 
 public:
   result_type operator()(const Point_2& p) const {
@@ -118,7 +116,6 @@ public:
   typedef Voronoi_vertex_C2<K,M>            Voronoi_vertex_2;
   typedef typename K::Point_2               Point_2;
   typedef Point_2                           result_type;
-  typedef Arity_tag<3>                      Arity;
 
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,
@@ -143,7 +140,6 @@ public:
   typedef Voronoi_vertex_C2<Gt,M>             Voronoi_vertex_2;
   typedef typename Gt::Circle_2               Circle_2;
   typedef Circle_2                            result_type;
-  typedef Arity_tag<3>                        Arity;
 
 public:
   Circle_2 operator() (const Site_2& s1, const Site_2& s2,
@@ -169,7 +165,6 @@ public:
   typedef typename Gt::Point_2       Point_2;
   typedef typename Gt::Line_2        Line_2;
   typedef Line_2                     result_type;
-  typedef Arity_tag<2>               Arity;
 
 private:
   static
@@ -228,7 +223,6 @@ public:
   typedef typename Gt::Construct_svd_vertex_2   Construct_svd_vertex_2;
   typedef typename Gt::Equal_2                  Equal_2;
   typedef Ray_2                                 result_type;
-  typedef Arity_tag<3>                          Arity;
 
   Ray_2 operator()(const Site_2& p, const Site_2& q,
 		   const Site_2& r) const
@@ -280,7 +274,6 @@ public:
 
   typedef CGAL::Object                         Object_2;
   typedef Object_2                             result_type;
-  typedef Arity_tag<4>                         Arity;
 
   result_type operator()(const Site_2& p, const Site_2& q,
 			 const Site_2& r, const Site_2& s) const

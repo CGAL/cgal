@@ -46,7 +46,6 @@ private:
 
 public:
   typedef AC_result_type           result_type;
-  typedef typename AC::Arity       Arity;
 
 public:
   Filtered_construction() {}

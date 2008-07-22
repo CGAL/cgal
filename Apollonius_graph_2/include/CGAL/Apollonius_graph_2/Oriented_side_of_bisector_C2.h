@@ -104,7 +104,6 @@ private:
 
 public:
   typedef Oriented_side                   result_type;
-  typedef Arity_tag<3>                    Arity;
   struct argument_type {};
 
   inline

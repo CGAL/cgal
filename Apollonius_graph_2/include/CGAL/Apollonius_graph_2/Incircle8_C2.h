@@ -48,7 +48,6 @@ public:
 public:
   typedef Sign                result_type;
   typedef Site_2              argument_type;
-  struct Arity {};
 
   inline
   Sign predicate(const FT& Exp, const FT& Eyp, const FT& Erp,

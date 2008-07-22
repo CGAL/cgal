@@ -44,7 +44,6 @@ public:
   typedef typename K::Site_2                       Site_2;
   typedef typename K::Point_2                      Point_2;
   typedef bool                                     result_type;
-  struct Arity {};
 
     inline
     bool operator()(const Site_2& p1, const Site_2& p2, 

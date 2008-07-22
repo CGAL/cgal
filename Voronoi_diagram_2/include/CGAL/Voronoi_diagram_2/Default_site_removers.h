@@ -36,7 +36,6 @@ struct Default_site_remover
   typedef DG                                        Delaunay_graph;
   typedef typename Delaunay_graph::Vertex_handle    Vertex_handle;
   typedef void                                      result_type;
-  typedef Arity_tag<2>                              Arity;
 
   Default_site_remover() {}
 
@@ -62,7 +61,6 @@ public:
   typedef typename Adaptation_traits::Delaunay_graph   Delaunay_graph;
   typedef typename Site_remover::Vertex_handle         Vertex_handle;
   typedef typename Site_remover::result_type           result_type;
-  typedef Arity_tag<2>                                 Arity;
 
 public:
   Default_caching_site_remover(const Adaptation_traits* at = NULL) : at_(at) {}

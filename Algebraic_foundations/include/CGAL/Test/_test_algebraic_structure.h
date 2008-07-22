@@ -18,7 +18,6 @@
 // within this file AS ^= Type
 
 #include <CGAL/basic.h>
-#include <CGAL/Test/_test_basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 //#include <CGAL/Real_embeddable_traits.h>
 
@@ -751,32 +750,9 @@ void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
 }
 
 
-template< class AS >
-void test_ast_functor_arity() {
-  typedef CGAL::Algebraic_structure_traits<AS> AST;
-
-  Test_functor_arity< typename AST::Simplify >()(1);
-  Test_functor_arity< typename AST::Is_zero >()(1);
-  Test_functor_arity< typename AST::Is_one >()(1);
-  Test_functor_arity< typename AST::Square >()(1);
-
-  Test_functor_arity< typename AST::Integral_division >()(2);
-  Test_functor_arity< typename AST::Is_square >()(2);
-
-  Test_functor_arity< typename AST::Sqrt >()(1);
-  Test_functor_arity< typename AST::Kth_root >()(2);
-  Test_functor_arity< typename AST::Root_of >()(3);
-
-  Test_functor_arity< typename AST::Gcd >()(2);
-  Test_functor_arity< typename AST::Div >()(2);
-  Test_functor_arity< typename AST::Mod >()(2);
-  Test_functor_arity< typename AST::Div_mod >()(4);
-}
-
 template <class  AS , class Algebraic_category, class Is_exact>
 void test_algebraic_structure(){
    
-    test_ast_functor_arity<AS>();
     test_Type_functions< AS >(Algebraic_category());
   
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;

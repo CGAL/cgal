@@ -39,7 +39,6 @@ class Compute_squared_radius_orthogonalcircleC2
 {
 public:
   typedef return_type result_type;
-  typedef Arity_tag< 3 >   Arity;
   typedef typename K::Point T;
 
   result_type operator()(const T& p, const T& q, const T& r)
@@ -86,7 +85,6 @@ class Side_of_bounded_orthogonalcircleC2
 {
 public:
   typedef Bounded_side result_type;
-  typedef Arity_tag< 3 >   Arity;
   typedef typename K::Point Point;
   result_type operator()(const Point& p, const Point& q, const Point& t)
   {  

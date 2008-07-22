@@ -50,7 +50,6 @@ struct Point_with_surface_index_creator
   typedef FT    argument2_type;
   typedef FT    argument3_type;
   typedef My_traits::Point_3 result_type;
-  typedef CGAL::Arity_tag<3> Arity;
 
   result_type operator()(const FT& x, const FT& y, const FT& z) const
   {

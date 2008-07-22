@@ -37,7 +37,6 @@ struct Default_site_inserter
   typedef DG                                        Delaunay_graph;
   typedef Site_t                                    Site_2;
   typedef typename Delaunay_graph::Vertex_handle    result_type;
-  typedef Arity_tag<2>                              Arity;
 
   Default_site_inserter() {}
 
@@ -69,7 +68,6 @@ public:
   typedef typename Adaptation_traits::Delaunay_graph  Delaunay_graph;
   typedef typename Site_inserter::Site_2              Site_2;
   typedef typename Delaunay_graph::Vertex_handle      result_type;
-  typedef Arity_tag<2>                                Arity;
 
 public:
   Default_caching_site_inserter(const Adaptation_traits* at = NULL) : at_(at) {}
@@ -144,7 +142,6 @@ public:
   typedef typename Adaptation_traits::Delaunay_graph   Delaunay_graph;
   typedef typename Adaptation_traits::Site_2           Site_2;
   typedef int                                          result_type;
-  typedef Arity_tag<3>                                 Arity;
 
 public:
   Default_aggregate_site_inserter() : site_inserter() {}

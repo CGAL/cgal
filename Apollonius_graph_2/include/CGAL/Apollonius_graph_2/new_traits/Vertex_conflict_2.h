@@ -41,7 +41,6 @@ public:
     typedef typename K::Site_2                Site_2;
     typedef typename K::RT                    RT;	
     typedef Sign                              result_type;
-    struct Arity {};
 
 private:
     

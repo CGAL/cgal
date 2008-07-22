@@ -76,7 +76,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_x_on_identification_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -135,7 +134,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_y_on_identification_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -222,7 +220,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Is_bounded_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -259,7 +256,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
 public:
     //! standard constructor
@@ -357,7 +353,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_right_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -470,7 +465,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_left_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -583,7 +577,6 @@ public:
     
     //! the result type
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
-    typedef Arity_tag<2> Arity;
     
 public:
     //! standard constructor
@@ -681,7 +674,6 @@ public:
 
     //! the result type 
     typedef std::iterator< output_iterator_tag, CGAL::Object > result_type;
-    typedef Arity_tag<2> Arity;   
     
     typedef typename Curved_kernel_via_analysis_2::Curve_2 Curve_2;
 

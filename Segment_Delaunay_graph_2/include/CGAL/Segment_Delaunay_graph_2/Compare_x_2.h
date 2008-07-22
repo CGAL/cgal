@@ -39,7 +39,6 @@ public:
   typedef typename K::Point_2             Point_2;
 
   typedef typename K::Comparison_result   result_type;
-  typedef Arity_tag<2>                    Arity;
 
 private:
   typedef typename K::Compare_x_2         Kernel_compare_x_2;

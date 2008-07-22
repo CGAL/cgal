@@ -39,7 +39,6 @@ public:
   typedef typename K::Site_2       Site_2;
   typedef typename K::Bool_type    Bool_type;
   typedef Bool_type                result_type;
-  typedef Arity_tag<2>             Arity;
   typedef Site_2                   argument_type;
 
 private:

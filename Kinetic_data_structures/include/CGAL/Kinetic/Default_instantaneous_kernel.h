@@ -333,7 +333,6 @@ public:
     typedef CGAL::Comparison_result result_type;
     typedef T first_argument_type;
     typedef T second_argument_type;
-    typedef typename Arity_traits<typename Static_kernel::Compare_x_2>::Arity Arity;
     result_type operator()(const T &a, const T&b) const {
       return CGAL::compare(a,b);
     }

@@ -304,7 +304,6 @@ private:
 public:
   typedef Oriented_side              result_type;
   typedef Site_2                     argument_type;
-  typedef Arity_tag<3>               Arity;
 
 
   Oriented_side

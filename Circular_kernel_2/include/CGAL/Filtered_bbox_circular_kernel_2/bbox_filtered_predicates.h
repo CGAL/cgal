@@ -195,7 +195,6 @@ template < class BK >
 
   public:
     typedef Line_arc_2   result_type;
-    typedef Arity_tag<3> Arity;
     
     result_type
     operator()(void) 
@@ -252,7 +251,6 @@ template < class BK >
 
   public:
     typedef  Circular_arc_2 result_type;
-    typedef  Arity_tag<3>   Arity;
     
     result_type
     operator()(void) 

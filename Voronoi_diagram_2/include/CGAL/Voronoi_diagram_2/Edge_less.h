@@ -31,7 +31,6 @@ struct Edge_less
 {
   typedef Edge_t        Edge;
   typedef bool          result_type;
-  typedef Arity_tag<2>  Arity;
 
   bool operator()(const Edge& e1, const Edge& e2) const {
     if ( e1.first != e2.first ) { return e1.first < e2.first; }

@@ -46,7 +46,6 @@ public:
   typedef typename K::Weighted_point_3                  Weighted_point_3;
   typedef typename K::Oriented_side                     Oriented_side;
 
-  typedef Arity_tag< 5 >   Arity;
   typedef Oriented_side    result_type;
 
   Oriented_side operator() ( const Weighted_point_3 & p,
@@ -89,7 +88,6 @@ public:
   typedef typename K::Bare_point                        Point_3;
   typedef typename K::Comparison_result                 Comparison_result;
 
-  typedef Arity_tag< 3 >     Arity;
   typedef Comparison_result  result_type;
 
   Comparison_result operator() ( const Point_3 & p,
@@ -111,7 +109,6 @@ public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::Sign                           Sign;
 
-  typedef Arity_tag< 5 >   Arity;
   typedef Sign             result_type;
 
   Sign operator() ( const Weighted_point_3 & p,
@@ -171,7 +168,6 @@ public :
   typedef typename K::In_smallest_orthogonal_sphere_3  In_sphere;
   typedef typename K::Bounded_side                     Bounded_side;
 
-  typedef Arity_tag< 5 >   Arity;
   typedef Bounded_side     result_type;
 
   Bounded_side operator() ( const Weighted_point_3 & p,
@@ -211,7 +207,6 @@ public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::Bounded_side                   Bounded_side;
 
-  typedef Arity_tag< 4 >   Arity;
   typedef Bounded_side     result_type;
 
   Bounded_side operator()(const Weighted_point_3 & p,
@@ -253,7 +248,6 @@ public:
   typedef typename K::Bare_point                     Bare_point;
   typedef typename K::FT                             FT;
 
-  typedef Arity_tag< 4 >   Arity;
   typedef Bare_point       result_type;
 
   Bare_point operator() ( const Weighted_point_3 & p,
@@ -301,7 +295,6 @@ public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::FT                             FT;
 
-  typedef Arity_tag< 2 >   Arity;
   typedef FT               result_type;
 
   FT operator() (const Weighted_point_3 & p,
@@ -320,7 +313,6 @@ public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
   typedef typename K::FT                             FT;
 
-  typedef Arity_tag< 4 >   Arity;
   typedef FT               result_type;
 
   FT operator() ( const Weighted_point_3 & p,
@@ -364,7 +356,6 @@ class Compute_critical_squared_radius_3
   typedef typename K::Weighted_point_3                  Weighted_point_3; 
   typedef typename K::FT                                FT;
  
-  typedef Arity_tag< 5 >   Arity;
   typedef FT               result_type;
 
   result_type operator() (const Weighted_point_3 & p,

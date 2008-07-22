@@ -40,7 +40,6 @@ namespace CircularFunctors {
   public:
     
     typedef typename CK::Circle_2 result_type;
-    typedef Arity_tag<1>          Arity; 
 
     using CK::Linear_kernel::Construct_circle_2::operator();
 
@@ -57,7 +56,6 @@ namespace CircularFunctors {
     public:
 
     typedef typename CK::Polynomial_for_circles_2_2 result_type;
-    typedef Arity_tag<1>                            Arity;
 
     using LinearFunctors::Get_equation<CK>::operator();
 

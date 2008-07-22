@@ -54,7 +54,6 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<Comparison_result> result_type ;
-  typedef Arity_tag<2>                 Arity ;
 
   Uncertain<Comparison_result> operator() ( FT const& aT, Trisegment_2_ptr const& aE ) const
   {
@@ -75,7 +74,6 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 
   typedef boost::optional<Point_2> result_type ;
   
-  typedef Arity_tag<3> Arity ;
 
   result_type operator() ( FT               const& aT
                          , Segment_2        const& aE0

@@ -48,7 +48,6 @@ class Segment_Delaunay_graph_edge_tester_2
   Finite_edges_iterator;
 
   typedef bool           result_type;
-  typedef Arity_tag<2>   Arity;
 
  private:
   typedef typename Delaunay_graph::Geom_traits         Geom_traits;
@@ -161,7 +160,6 @@ class Segment_Delaunay_graph_face_tester_2
   typedef typename Delaunay_graph::Vertex_handle   Vertex_handle;
 
   typedef bool           result_type;
-  typedef Arity_tag<2>   Arity;
 
  private:
   typedef Segment_Delaunay_graph_edge_tester_2<Delaunay_graph>  Edge_tester;

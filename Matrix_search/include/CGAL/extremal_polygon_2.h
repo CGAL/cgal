@@ -37,7 +37,6 @@ template < class Array, class Index, class Element >
 struct Index_operator
 : public std::binary_function< Array, Index, Element >
 {
-  typedef Arity_tag< 2 > Arity;
 
   Element&
   operator()( Array& a, const Index& i) const

@@ -43,7 +43,6 @@ public:
 
   typedef typename Base::Orientation   Orientation;
   typedef Orientation                  result_type;
-  typedef Arity_tag<3>                 Arity;
   typedef Site_2                       argument_type;
 
     Orientation operator() (const Site_2 &s0, const Site_2 &s1,

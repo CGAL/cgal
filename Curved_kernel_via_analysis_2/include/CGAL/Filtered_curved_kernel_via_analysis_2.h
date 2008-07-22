@@ -75,7 +75,6 @@ public:
 
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_xy_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -128,7 +127,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -250,7 +248,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_y_at_x_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -298,7 +295,6 @@ public:
 
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_left_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -351,7 +347,6 @@ public:
     
     //! the result type
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_at_x_right_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -434,7 +429,6 @@ private:
 
 public:
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     May_have_intersection_2(Curved_kernel_via_analysis_2 *kernel) :
@@ -746,7 +740,6 @@ public:
     
     //! the result type
     typedef bool result_type;
-    typedef Arity_tag<2> Arity;
     
     //! standard constructor
     Is_on_2(Curved_kernel_via_analysis_2 *kernel) :

@@ -45,7 +45,6 @@ class Delaunay_triangulation_edge_tester_2
   typedef typename Delaunay_graph::Finite_edges_iterator Finite_edges_iterator;
 
   typedef bool           result_type;
-  typedef Arity_tag<2>   Arity;
 
  private:
   typedef typename Delaunay_graph::Geom_traits        Geom_traits;

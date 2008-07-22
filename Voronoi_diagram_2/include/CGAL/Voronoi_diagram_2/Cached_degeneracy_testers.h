@@ -60,7 +60,6 @@ public:
   typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
   typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
-  typedef typename Edge_rejector::Arity                  Arity;
 
 private:
   typedef std::map<Edge,bool,Edge_less<Edge> >   Edge_map;
@@ -176,7 +175,6 @@ public:
   typedef typename Edge_rejector::All_edges_iterator     All_edges_iterator;
   typedef typename Edge_rejector::Finite_edges_iterator  Finite_edges_iterator;
   typedef typename Edge_rejector::result_type            result_type;
-  typedef typename Edge_rejector::Arity                  Arity;
 
 private:
   enum Three_valued { UNDEFINED = -1, False, True };
@@ -286,7 +284,6 @@ public:
   typedef typename Face_rejector::Delaunay_graph  Delaunay_graph;
   typedef typename Face_rejector::Vertex_handle   Vertex_handle;
   typedef typename Face_rejector::result_type     result_type;
-  typedef typename Face_rejector::Arity           Arity;
 
 private:
   typedef Cached_face_rejector<Face_rejector,Tag_true>  Self;
@@ -367,7 +364,6 @@ public:
   typedef typename Face_rejector::Delaunay_graph  Delaunay_graph;
   typedef typename Face_rejector::Vertex_handle   Vertex_handle;
   typedef typename Face_rejector::result_type     result_type;
-  typedef typename Face_rejector::Arity           Arity;
 
 private:
   typedef Cached_face_rejector<Face_rejector,Tag_false> Self;

@@ -49,7 +49,6 @@ public:
 
   public:
     typedef Point_2                     result_type;
-    typedef CGAL::Arity_tag< 1 >        Arity;
 
     Point_2 operator()(CGAL::Origin o) const { return New_point_2(0, 0, 0); }
 

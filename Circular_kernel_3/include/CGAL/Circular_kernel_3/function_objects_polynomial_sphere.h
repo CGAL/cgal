@@ -53,7 +53,6 @@ template < class SK > \
     typedef typename SK::Point_3 Point_3;\
   public:\
     typedef  typename SK::Linear_kernel::Compare_ ##V## _3::result_type result_type;\
-    typedef Arity_tag<2>             Arity;\
     using SK::Linear_kernel::Compare_ ##V## _3::operator();\
     result_type\
     operator() (const Circular_arc_point_3 &p0,\
@@ -97,7 +96,6 @@ template < class SK > \
 
     typedef  Root_of_2  result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().x()); }
@@ -113,7 +111,6 @@ template < class SK > \
 
     typedef  Root_of_2  result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().y()); }
@@ -129,7 +126,6 @@ template < class SK > \
 
     typedef  Root_of_2  result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().z()); }
@@ -155,7 +151,6 @@ template < class SK > \
 
   public:
     typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
      
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Equal_3::operator();
@@ -228,7 +223,6 @@ template < class SK > \
 
   public:
     typedef  Circular_arc_point_3 result_type;
-    typedef Arity_tag<1>             Arity;
 
 
     result_type
@@ -343,7 +337,6 @@ template < class SK > \
   public:
     
     typedef typename SK::Sphere_3 result_type;
-    typedef Arity_tag<1>          Arity; 
 
     using SK::Linear_kernel::Construct_sphere_3::operator();
 
@@ -358,7 +351,6 @@ template < class SK > \
   public:
     
     typedef typename SK::Plane_3 result_type;
-    typedef Arity_tag<1>          Arity; 
 
     using SK::Linear_kernel::Construct_plane_3::operator();
 
@@ -373,7 +365,6 @@ template < class SK > \
   public:
     
     typedef typename SK::Line_3 result_type;
-    typedef Arity_tag<1>          Arity; 
 
     using SK::Linear_kernel::Construct_line_3::operator();
 
@@ -398,7 +389,6 @@ template < class SK > \
     typedef typename Circle_3::Rep              Rep;
 
     typedef Circle_3 result_type;
-    typedef Arity_tag<1>          Arity; 
 
     using SK::Linear_kernel::Construct_circle_3::operator();
 
@@ -419,7 +409,6 @@ template < class SK > \
 
     typedef Plane_3        result_type;
     typedef const Plane_3& qualified_result_type;
-    typedef Arity_tag<1>   Arity;
     
     using SK::Linear_kernel::Construct_supporting_plane_3::operator();
 
@@ -436,7 +425,6 @@ template < class SK > \
 
     typedef Sphere_3        result_type;
     typedef const result_type& qualified_result_type;
-    typedef Arity_tag<1>   Arity;
     
     qualified_result_type operator() (const Circle_3 & c) const
     { return c.rep().supporting_sphere(); }
@@ -454,7 +442,6 @@ template < class SK > \
 
     typedef Sphere_3        result_type;
     typedef const Sphere_3& qualified_result_type;
-    typedef Arity_tag<1>    Arity;
     
     using SK::Linear_kernel::Construct_diametral_sphere_3::operator();
 
@@ -479,7 +466,6 @@ template < class SK > \
 
   public:
     typedef Line_arc_3   result_type;
-    typedef Arity_tag<3> Arity; // It is not true that each constructor has
                                 // 3 operands, maybe we should remove this
     
     result_type
@@ -572,7 +558,6 @@ template < class SK > \
     typedef typename Circular_arc_3::Rep               Rep;
   public:
     typedef Circular_arc_3   result_type;
-    typedef Arity_tag<3> Arity; // It is not true that each constructor has
                                 // 3 operands, maybe we should remove this
 
     result_type
@@ -643,7 +628,6 @@ template < class SK > \
 
     typedef Circular_arc_point_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().lower_xyz_extremity()); }
@@ -660,7 +644,6 @@ template < class SK > \
 
     typedef Circular_arc_point_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().higher_xyz_extremity()); }
@@ -678,7 +661,6 @@ template < class SK > \
 
     typedef Circular_arc_point_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().source()); }
@@ -699,7 +681,6 @@ template < class SK > \
 
     typedef Circular_arc_point_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().target()); }
@@ -719,7 +700,6 @@ template < class SK > \
 
     typedef Line_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
     { return (a.rep().supporting_line()); }
@@ -736,7 +716,6 @@ template < class SK > \
 
     typedef Circle_3 result_type;
     typedef const result_type &  qualified_result_type;
-    typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Circular_arc_3 & a) const
     { return (a.rep().supporting_circle()); }
@@ -762,7 +741,6 @@ template < class SK > \
 
   public:
     typedef bool result_type;
-    typedef Arity_tag<2>             Arity;
     
     using SK::Linear_kernel::Has_on_3::operator();
 
@@ -922,7 +900,6 @@ template < class SK > \
     public:
 
     typedef void result_type;   
-    //typedef Arity_tag<2> Arity; // The Arity can be 2 and 3
                                   // Is there some solution for this problem??
     typedef typename SK::Object_3 Object_3;
     
@@ -1193,7 +1170,6 @@ template < class SK > \
 
   public:
     typedef bool         result_type;
-    typedef Arity_tag<2> Arity;
 
     result_type
     operator() (const Line_arc_3 &l1, const Line_arc_3 &l2,
@@ -1225,7 +1201,6 @@ template < class SK > \
   public:
 
     typedef void         result_type;
-    typedef Arity_tag<4> Arity;
 
     result_type
     operator()(const Line_arc_3 &l, 
@@ -1253,7 +1228,6 @@ template < class SK > \
   public:
 
     typedef CGAL::Bbox_3 result_type;
-    typedef Arity_tag<1> Arity;
 
     using SK::Linear_kernel::Construct_bbox_3::operator();
 
@@ -1277,7 +1251,6 @@ template < class SK > \
   public:
 
     typedef const FT result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
     { return c.rep().area_divided_by_pi(); }
@@ -1293,7 +1266,6 @@ template < class SK > \
   public:
 
     typedef const FT result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
     { return c.rep().squared_length_divided_by_pi_square(); }
@@ -1309,7 +1281,6 @@ template < class SK > \
   public:
 
     typedef double result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
     { return c.rep().approximate_area(); }
@@ -1326,7 +1297,6 @@ template < class SK > \
   public:
 
     typedef double result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
     { return c.rep().approximate_squared_length(); }
@@ -1344,7 +1314,6 @@ template < class SK > \
   public:
 
     typedef double result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_angle(); }
@@ -1361,7 +1330,6 @@ template < class SK > \
   public:
 
     typedef Plane_3 result_type;
-    typedef Arity_tag<1> Arity;
 
     result_type operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
     { return radical_plane<SK>(s1, s2); }
@@ -1379,7 +1347,6 @@ template < class SK > \
   public:
     //~ typedef typename SK::Linear_kernel::Bounded_side    result_type;
     typedef typename SK::Linear_kernel::Bounded_side_3::result_type    result_type;
-    typedef Arity_tag< 2 >              Arity;
 
     using SK::Linear_kernel::Bounded_side_3::operator();
 
@@ -1406,7 +1373,6 @@ template < class SK > \
 
   public:
     typedef bool result_type;
-    typedef Arity_tag< 2 >               Arity;
 
     using SK::Linear_kernel::Has_on_bounded_side_3::operator();
 
@@ -1433,7 +1399,6 @@ template < class SK > \
 
   public:
     typedef bool result_type;
-    typedef Arity_tag< 2 >               Arity;
 
     using SK::Linear_kernel::Has_on_unbounded_side_3::operator();
 

@@ -38,7 +38,6 @@ public:
   typedef typename Storage_traits::Point_handle      Point_handle;
 
   typedef Storage_site_2                             result_type;
-  //  struct Arity {};
 
 protected:
   typedef Construct_storage_site_2<Storage_traits>   Base;

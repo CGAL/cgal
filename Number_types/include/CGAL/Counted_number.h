@@ -587,7 +587,6 @@ struct Root_of_selector {
     struct Root_of {
 //      typedef typename Functor::Boundary Boundary;
       typedef NT result_type;
-      typedef Arity_tag< 3 >         Arity;
       template< class Input_iterator >
       NT operator()( int k, Input_iterator begin, Input_iterator end ) const {
         NT::inc_root_of_count();
@@ -665,7 +664,6 @@ struct Div_mod_selector {
     typedef NT   second_argument_type;
     typedef NT&  third_argument_type;
     typedef NT&  fourth_argument_type;
-    typedef Arity_tag< 4 >         Arity;
 
     void operator()( const NT& x, const NT& y, NT& q, NT& r ) const {
       x.div_mod( y, q, r );

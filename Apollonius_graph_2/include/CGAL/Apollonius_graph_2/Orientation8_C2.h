@@ -45,7 +45,6 @@ public:
   typedef typename K::FT           FT;
 
   typedef Orientation              result_type;
-  typedef Arity_tag<3>             Arity;
   typedef Site_2                   argument_type;
 
 public:
@@ -164,7 +163,6 @@ public:
   typedef typename K::FT           FT;
 
   typedef Orientation              result_type;
-  typedef Arity_tag<3>             Arity;
   typedef Site_2                   argument_type;
 
 private:

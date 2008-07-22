@@ -58,7 +58,6 @@ public:
   struct Construct_Voronoi_point_2 {
     typedef Point_2       result_type;
     typedef typename DG::Face_handle   Face_handle;
-    typedef Arity_tag<1>  Arity;
 
     Point_2 operator()(const Face_handle& ) const {
       return Point_2();

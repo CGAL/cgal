@@ -37,7 +37,6 @@ public:
   typedef typename Storage_traits::Geom_traits       Geom_traits;
 
   typedef Storage_site_2                             result_type;
-  //  struct Arity {};
 
 protected:
   typedef typename Geom_traits::Intersections_tag    ITag;

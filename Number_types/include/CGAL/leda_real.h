@@ -83,7 +83,6 @@ template <> class Algebraic_structure_traits< leda_real >
     class Root_of {
       public:
         typedef Type result_type;
-        typedef Arity_tag< 3 >         Arity;
 
 //        typedef leda_rational Boundary;
       private:

@@ -53,7 +53,6 @@ class Compare_xy_2
 
 public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_xy_2(SweepCurvesAdapter_2 *adapter) :
@@ -160,7 +159,6 @@ class Less_xy_2
 
 public:
     typedef bool result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Less_xy_2(SweepCurvesAdapter_2 *adapter) :
@@ -187,7 +185,6 @@ class Compare_y_at_x_2
    
 public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Compare_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
@@ -314,7 +311,6 @@ class Equal_y_at_x_2
    
 public:
     typedef bool result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Equal_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
@@ -343,7 +339,6 @@ class Multiplicity_of_intersection_2 {
    
 public:
     typedef int result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Multiplicity_of_intersection_2(SweepCurvesAdapter_2 *) {
@@ -378,7 +373,6 @@ class Compare_y_right_of_point_2
    
 public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Compare_y_right_of_point_2(SweepCurvesAdapter_2 *) {
@@ -418,7 +412,6 @@ class Source_2
    
 public:
     typedef Point_2 result_type;
-    typedef Arity_tag<1>            Arity;
     
     //! standard constructor
     Source_2(SweepCurvesAdapter_2 *adapter) :
@@ -446,7 +439,6 @@ class Target_2
    
 public:
     typedef Point_2 result_type;
-    typedef Arity_tag<1>            Arity;
     
     //! standard constructor
     Target_2(SweepCurvesAdapter_2 *adapter) :
@@ -474,7 +466,6 @@ class Construct_segment_2
    
 public:
     typedef Arc_2 result_type;
-    typedef Arity_tag<1>            Arity;
     
     //! standard constructor
     Construct_segment_2(SweepCurvesAdapter_2 *) {
@@ -498,7 +489,6 @@ class Is_degenerate_2
    
 public:
     typedef bool result_type;
-    typedef Arity_tag<1>            Arity;
     
     //! standard constructor
     Is_degenerate_2(SweepCurvesAdapter_2 *) {
@@ -520,7 +510,6 @@ class Do_overlap_2
    
 public:
     typedef bool result_type;
-    typedef Arity_tag<2>            Arity;
     
     //! standard constructor
     Do_overlap_2(SweepCurvesAdapter_2 *) {
@@ -546,7 +535,6 @@ class New_endpoints_2 {
    
 public:
     typedef Arc_2 result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     New_endpoints_2(SweepCurvesAdapter_2 *adapter) :
@@ -584,7 +572,6 @@ class New_endpoints_opposite_2 {
    
 public:
     typedef Arc_2 result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     New_endpoints_opposite_2(SweepCurvesAdapter_2 *) {
@@ -614,7 +601,6 @@ class Intersect_2 {
    
 public:
     //typedef bool result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Intersect_2(SweepCurvesAdapter_2 *) {
@@ -643,7 +629,6 @@ class Intersect_right_of_point_2 {
    
 public:
     typedef bool result_type;
-    typedef Arity_tag<3>            Arity;
     
     //! standard constructor
     Intersect_right_of_point_2(SweepCurvesAdapter_2 *adapter) :
@@ -697,7 +682,6 @@ class Make_x_monotone_2
 public:
     typedef std::iterator<std::output_iterator_tag, Generic_arc_2> 
       result_type;
-    typedef Arity_tag<2> Arity;   
     
     //! standard constructor
     Make_x_monotone_2(SweepCurvesAdapter_2 *adapter) :

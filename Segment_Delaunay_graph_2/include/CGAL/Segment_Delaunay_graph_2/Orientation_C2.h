@@ -169,7 +169,6 @@ private:
 public:
   typedef Orientation                  result_type;
   typedef Site_2                       argument_type;
-  typedef Arity_tag<3>                 Arity;
 
   Orientation operator()(const Site_2& p, const Site_2& q,
 			 const Site_2& r) const

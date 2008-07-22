@@ -81,7 +81,6 @@ private:
 public:
   typedef Bool_type      result_type;
   typedef Site_2         argument_type;
-  typedef Arity_tag<2>   Arity;
 
   Bool_type operator()(const Site_2& p, const Site_2& q) const
   {

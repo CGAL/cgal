@@ -16,7 +16,6 @@
 //    number types.
 
 #include <CGAL/basic.h>
-#include <CGAL/Test/_test_basic.h>
 
 #include <cstddef>
 #include <boost/static_assert.hpp>
@@ -115,21 +114,6 @@ CGAL_BEGIN_NAMESPACE
         }
     };
 
-template< class RE >
-void test_ret_functor_arity() {
-  typedef CGAL::Real_embeddable_traits<RE> RET;
-
-  Test_functor_arity< typename RET::Is_finite >()(1);
-  Test_functor_arity< typename RET::Abs >()(1);
-  Test_functor_arity< typename RET::Compare >()(2);
-  Test_functor_arity< typename RET::Sign >()(1);
-  Test_functor_arity< typename RET::Is_zero >()(1);
-  Test_functor_arity< typename RET::Is_positive >()(1);
-  Test_functor_arity< typename RET::Is_negative >()(1);
-  Test_functor_arity< typename RET::To_double >()(1);
-  Test_functor_arity< typename RET::To_interval >()(1);
-}
-
 
 //! tests if \c Type is a model for the \c RealComparable concept
 //! and terminates the program with an error message if not.
@@ -141,7 +125,6 @@ void test_real_embeddable() {
     using CGAL::Tag_true;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
 
-    test_ret_functor_arity< Type >();
     typename RET::Compare compare;
     const Sign    sign = Sign();
     const Abs     abs=Abs(); 

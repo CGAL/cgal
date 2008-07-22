@@ -90,7 +90,6 @@ class Primitive_checker
 public:
 
     typedef typename Pair_maker::result_type   result_type;
-    typedef typename P1::Arity                 Arity;
 
     Primitive_checker(const P1 &pp1 = P1(), const P2 &pp2 = P2(),
                       const Cmp &c = Cmp())

@@ -55,7 +55,6 @@ struct Site_accessor
 {
   typedef typename Const_ref_chooser<S,Use_const_ref>::Type  result_type;
   typedef typename DG::Vertex_handle                         Vertex_handle;
-  typedef Arity_tag<1>                                       Arity;
 
   result_type operator()(const Vertex_handle& v) const {
     return v->site();
@@ -69,7 +68,6 @@ struct Point_accessor
 {
   typedef typename Const_ref_chooser<P,Use_const_ref>::Type  result_type;
   typedef typename DG::Vertex_handle                         Vertex_handle;
-  typedef Arity_tag<1>                                       Arity;
 
   result_type operator()(const Vertex_handle& v) const {
     return v->point();

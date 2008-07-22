@@ -58,7 +58,6 @@ namespace SphericalFunctors {
 
     typedef typename SK::Circle_on_reference_sphere_3   result_type;
     typedef const result_type &                         qualified_result_type;
-    typedef Arity_tag<1>                                Arity;
 
     qualified_result_type operator() (const Half_circle_on_reference_sphere_3 & a) const
     { return (a.rep().supporting_circle()); }
@@ -72,7 +71,6 @@ namespace SphericalFunctors {
 
     typedef typename CGAL::Hcircle_type                 result_type;
     typedef const result_type &                         qualified_result_type;
-    typedef Arity_tag<1>                                Arity;
 
     qualified_result_type operator() (const Half_circle_on_reference_sphere_3 & a) const
     { return (a.rep().get_position()); }
@@ -88,7 +86,6 @@ namespace SphericalFunctors {
     typedef typename SK::FT result_type;
     //~ typedef const result_type &        qualified_result_type;
     typedef result_type               qualified_result_type;
-    typedef Arity_tag<1>              Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().circle_center_coefficient()); }
@@ -103,7 +100,6 @@ namespace SphericalFunctors {
     typedef typename SK::FT result_type;
     //~ typedef const result_type &        qualified_result_type;
     typedef result_type               qualified_result_type;
-    typedef Arity_tag<1>              Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().extremal_point_z()); }
@@ -118,7 +114,6 @@ namespace SphericalFunctors {
 
     typedef typename CGAL::Circle_type result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().type_of_circle_on_reference_sphere()); }    
@@ -132,7 +127,6 @@ namespace SphericalFunctors {
 
     typedef typename SK::FT result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().supporting_sphere_radius()); }    
@@ -148,7 +142,6 @@ namespace SphericalFunctors {
     typedef typename SK::FT result_type;
     //~ typedef const result_type &        qualified_result_type;
     typedef result_type        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().supporting_sphere_squared_radius()); }    
@@ -164,7 +157,6 @@ namespace SphericalFunctors {
     typedef typename SK::Point_3 result_type;
     //~ typedef const result_type &        qualified_result_type;
     typedef result_type        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().supporting_sphere_center()); }
@@ -178,7 +170,6 @@ namespace SphericalFunctors {
 
     typedef typename SK::Sphere_with_radius_3 result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circle_on_reference_sphere_3 & a) const
     { return (a.rep().reference_sphere()); }
@@ -198,7 +189,6 @@ namespace SphericalFunctors {
 
     typedef typename SK::FT result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Sphere_with_radius_3 & a) const
     { return (a.rep().radius()); }    
@@ -212,7 +202,6 @@ namespace SphericalFunctors {
 
     typedef CGAL::HQ_NT result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Theta_rep & a) const
     { return (a.rep().hq()); }    
@@ -226,7 +215,6 @@ namespace SphericalFunctors {
 
     typedef  Root_of_2  result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Theta_rep & a) const
     { return (a.rep().ftheta()); }    
@@ -241,7 +229,6 @@ namespace SphericalFunctors {
 
     typedef  typename  SK::Theta_rep result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
     { return (a.rep().theta_rep()); }
@@ -256,7 +243,6 @@ namespace SphericalFunctors {
 
     typedef  Root_of_2  result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
     { return (a.rep().theta_rep().ftheta()); }    
@@ -270,7 +256,6 @@ namespace SphericalFunctors {
 
     typedef CGAL::HQ_NT result_type;
     typedef const result_type &        qualified_result_type;
-    typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_on_reference_sphere_3 & a) const
     { return (a.rep().theta_rep().hq()); }    
@@ -297,8 +282,6 @@ namespace SphericalFunctors {
     
   public:
     typedef Circular_arc_on_reference_sphere_3   result_type;
-    typedef Arity_tag<3> Arity; // It is not true that each constructor has
-                                // 3 operands, maybe we should remove this
 
     result_type
     operator()(void) const
@@ -363,7 +346,6 @@ namespace SphericalFunctors {
     typedef typename Half_circle_on_reference_sphere_3::Rep                  Rep;
   public:
     typedef Half_circle_on_reference_sphere_3                           result_type;
-    typedef Arity_tag<1>                                                Arity;
 
     //~ result_type
     //~ operator()()
@@ -384,7 +366,6 @@ namespace SphericalFunctors {
 
   public:
     typedef  Circle_on_reference_sphere_3 result_type;
-    typedef Arity_tag<1>             Arity;
 
     result_type
     operator()()
@@ -408,7 +389,6 @@ namespace SphericalFunctors {
 
   public:
     typedef  Sphere_with_radius_3 result_type;
-    typedef Arity_tag<1>             Arity;
 
 
     result_type
@@ -436,7 +416,6 @@ namespace SphericalFunctors {
 
   public:
     typedef  Theta_rep result_type;
-    typedef Arity_tag<1>             Arity;
 
 
     result_type
@@ -466,7 +445,6 @@ namespace SphericalFunctors {
 
   public:
     typedef  Circular_arc_point_on_reference_sphere_3 result_type;
-    typedef Arity_tag<1>             Arity;
 
 
     result_type
@@ -516,7 +494,6 @@ namespace SphericalFunctors {
     public:
     
     typedef void result_type;
-    typedef Arity_tag< 3 >      Arity;
     
     void set_CA(const typename SK::Circle_on_reference_sphere_3& C,
                         Inter_alg_info& CA) const{
@@ -564,7 +541,6 @@ namespace SphericalFunctors {
   template <class SK>
   struct Compare_theta_3{
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag< 2 >          Arity;
     
     result_type operator()(const typename SK::Theta_rep& T1,const typename SK::Theta_rep& T2) const {
       CGAL::HQ_NT res=T1.hq()-T2.hq();
@@ -590,7 +566,6 @@ namespace SphericalFunctors {
   template <class SK>
   struct Compare_theta_z_3{
     typedef CGAL::Comparison_result   result_type;
-    typedef Arity_tag< 2 >            Arity;
     
     result_type operator()(const typename CGAL::Circular_arc_point_on_reference_sphere_3<SK>& p1,
                            const typename CGAL::Circular_arc_point_on_reference_sphere_3<SK>& p2,
@@ -613,7 +588,6 @@ namespace SphericalFunctors {
     
     public:
     typedef CGAL::Comparison_result   result_type;
-    typedef Arity_tag< 2 >            Arity;
     
     //At theta=0
     //Compare the intersection point of an half circle with M_theta for theta=0 with the critical points of a circle on reference sphere
@@ -769,7 +743,6 @@ namespace SphericalFunctors {
   template <class SK>
   struct Compare_z_to_left_3{
     typedef CGAL::Comparison_result      result_type;
-    typedef Arity_tag< 2 >                      Arity;
     //theta=0
     result_type 
     operator()( const typename SK::Half_circle_on_reference_sphere_3& H1,

@@ -41,7 +41,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef void         result_type; 
-    typedef Arity_tag<3> Arity;
 
     template < class OutputIterator >
     OutputIterator
@@ -83,7 +82,6 @@ namespace AlgebraicFunctors {
   public:
     
     typedef Polynomial_for_circles_2_2 result_type;
-    typedef Arity_tag<3>               Arity;
 
     result_type
     operator()(const RT& xc, const RT& yc, const RT& r_sq) const
@@ -100,7 +98,6 @@ namespace AlgebraicFunctors {
   public:
     
     typedef Polynomial_1_2 result_type;
-    typedef Arity_tag<3>   Arity;
 
     result_type
     operator()( const RT& a, const RT& b, const RT& c) const
@@ -117,7 +114,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef CGAL::Sign   result_type;
-    typedef Arity_tag<2> Arity;
 
     result_type
     operator()( const Polynomial_for_circles_2_2 & equation,
@@ -139,7 +135,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef void         result_type;
-    typedef Arity_tag<2> Arity;
 
     Root_for_circles_2_2
     operator()(const Polynomial_for_circles_2_2 & c, 
@@ -162,7 +157,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef void         result_type;
-    typedef Arity_tag<2> Arity;
 
     Root_for_circles_2_2
     operator()(const Polynomial_for_circles_2_2 & c, 
@@ -185,7 +179,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
 
     result_type
     operator()(const Root_for_circles_2_2& r1, 
@@ -202,7 +195,6 @@ namespace AlgebraicFunctors {
     
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
 
     result_type
     operator()(const Root_for_circles_2_2& r1, 
@@ -219,7 +211,6 @@ namespace AlgebraicFunctors {
 
   public:
     typedef CGAL::Comparison_result result_type;
-    typedef Arity_tag<2>            Arity;
 
     result_type
     operator()(const Root_for_circles_2_2& r1, 

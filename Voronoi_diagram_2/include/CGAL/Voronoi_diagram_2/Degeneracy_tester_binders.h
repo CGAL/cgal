@@ -36,7 +36,6 @@ private:
 
 public:
   typedef typename ER::result_type               result_type;
-  typedef Arity_tag<1>                           Arity;
 
   Edge_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
 
@@ -60,7 +59,6 @@ private:
 
 public:
   typedef typename FR::result_type               result_type;
-  typedef Arity_tag<1>                           Arity;
 
   Face_rejector_binder(const VDA* vda = NULL) : vda_(vda) {}
 

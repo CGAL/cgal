@@ -50,7 +50,6 @@ public:
   typedef argument_type third_argument_type;
   typedef argument_type fourth_argument_type;
   typedef argument_type fifth_argument_type;
-  typedef typename Arity_traits<Static_predicate>::Arity Arity;
 
   result_type operator()(const first_argument_type &arg0) const
   {

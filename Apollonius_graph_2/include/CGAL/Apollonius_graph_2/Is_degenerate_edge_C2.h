@@ -60,7 +60,6 @@ public:
 public:
   typedef Site_2             argument_type;
   typedef bool               result_type;
-  typedef Arity_tag<4>       Arity;
 
   bool operator()(const Site_2& p1, const Site_2& p2,
 		  const Site_2& p3, const Site_2& p4) const

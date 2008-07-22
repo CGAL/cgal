@@ -43,7 +43,6 @@ public:
 
   typedef Bool_type                    result_type;
   struct argument_type {};
-  typedef Arity_tag<5>                 Arity;
 
 private:
   Are_same_points_2    same_points;

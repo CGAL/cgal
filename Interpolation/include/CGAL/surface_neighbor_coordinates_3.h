@@ -201,7 +201,6 @@ struct Project_vertex_iterator_to_point
   typedef typename std::iterator_traits<NodeIterator>::value_type Node;
   typedef typename Node::Point  Point;
   typedef Point                 result_type;
-  typedef Arity_tag<1> Arity;
   Point&       operator()( NodeIterator& x) const { return x->point(); }
   const Point& operator()( const NodeIterator& x) const { return x->point(); }
 };

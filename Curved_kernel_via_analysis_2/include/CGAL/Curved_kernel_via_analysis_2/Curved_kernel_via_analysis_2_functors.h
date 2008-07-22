@@ -448,7 +448,6 @@ public:
     typedef bool result_type;
     
     //! the arity of the functor
-    typedef Arity_tag<1> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -492,7 +491,6 @@ public:
     typedef bool result_type;
     
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
 
     Is_bounded_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
@@ -532,7 +530,6 @@ public:
     typedef CGAL::Arr_parameter_space result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -585,7 +582,6 @@ public:
     typedef CGAL::Arr_parameter_space result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -641,7 +637,6 @@ public:
     typedef Point_2 result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<1> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -688,7 +683,6 @@ public:
     typedef Point_2 result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<1> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -735,7 +729,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -784,7 +777,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -841,7 +833,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<4>            Arity;
 
     Compare_x_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
@@ -1033,7 +1024,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<3>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1104,7 +1094,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1207,7 +1196,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<3>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1319,7 +1307,6 @@ public:
     typedef CGAL::Comparison_result result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<3>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1430,7 +1417,6 @@ public:
     typedef bool result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2>            Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1475,7 +1461,6 @@ public:
     typedef bool result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1560,7 +1545,6 @@ public:
     typedef bool result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1673,7 +1657,6 @@ public:
     result_type;
     
     //! the arity of the functor
-    typedef Arity_tag<3> Arity;    
     
     /*!\brief 
      * Standard constructor
@@ -1755,7 +1738,6 @@ public:
     typedef Arc_2 result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<3> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -1815,7 +1797,6 @@ public:
     typedef void result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<4> Arity;    
     
     /*!\brief 
      * Standard constructor
@@ -1877,7 +1858,6 @@ public:
     typedef bool result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;    
     
     /*!\brief 
      * Standard constructor
@@ -1985,7 +1965,6 @@ public:
     typedef void result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;    
     
     /*!\brief 
      * Standard constructor
@@ -2059,7 +2038,6 @@ public:
     typedef bool result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;
     
     /*!\brief 
      * Standard constructor
@@ -2127,7 +2105,6 @@ public:
     result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;   
     
     /*!\brief 
      * Standard constructor
@@ -2228,7 +2205,6 @@ public:
          result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;   
     
     /*!\brief 
      * Standard constructor
@@ -2294,7 +2270,6 @@ public:
              result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<2> Arity;   
     
     /*!\brief 
      * Standard constructor

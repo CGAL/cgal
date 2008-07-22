@@ -238,7 +238,6 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
         typedef POLY& third_argument_type;
         typedef POLY& fourth_argument_type;
         typedef void result_type;
-        typedef Arity_tag< 4 >  Arity;
         
         void operator()( const POLY& x, const POLY& y, 
                          POLY& q, POLY& r ) const {

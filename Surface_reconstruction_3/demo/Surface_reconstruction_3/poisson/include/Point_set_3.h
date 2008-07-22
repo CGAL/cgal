@@ -44,7 +44,6 @@ private:
     typedef Node                  argument_type;
     typedef typename Node::Normal Normal;
     typedef Normal                result_type;
-    typedef CGAL::Arity_tag<1>    Arity;
     Normal&       operator()(Node& x)       const { return x.normal(); }
     const Normal& operator()(const Node& x) const { return x.normal(); }
   };

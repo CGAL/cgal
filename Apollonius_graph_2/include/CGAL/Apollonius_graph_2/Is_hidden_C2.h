@@ -69,7 +69,6 @@ private:
 public:
   typedef bool                 result_type;
   typedef Site_2               argument_type;
-  typedef Arity_tag<2>         Arity;
 
   inline bool operator()(const Site_2 &p, const Site_2 &q) const {
 #ifdef AG2_PROFILE_PREDICATES

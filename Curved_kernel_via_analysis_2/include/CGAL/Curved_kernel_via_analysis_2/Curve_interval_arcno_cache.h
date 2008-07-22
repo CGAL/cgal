@@ -70,7 +70,6 @@ struct Curve_interval_arcno_cache {
     typedef Arcno_desc            result_type;
 
     //! the arity of the functor
-    typedef Arity_tag<3> Arity;   
     
     //!@}
     
