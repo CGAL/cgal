@@ -1,16 +1,5 @@
 intersect(line_2,*) was forgotten!!!!!
 
-memory leaks in Filtered_bbox_circular_kernel_2
-from Andreas: 
-- there are new statements in constructors having no corresponding 
-delete statements.
-This concerns the files in the directory:
-CGAL-3.3.1/include/CGAL/Filtered_bbox_circular_kernel_2/...with_bbox_2.h
-It should be enough to add destructors and add conditional
-deletes.
-Reading the code I think that the IO routines also don't
-do what they should do, namely computing new bboxes. 
-
 improve manual like SK3 (see answer to Efi's review, jan3, 2008)
 
 heriter result_type des foncteurs du Kernel (Bool_type \neq bool...)
@@ -29,18 +18,12 @@ also, check that examples use Exact_CK
 
 clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
 used in solve to check that solutions are the same)
-clean/update manual Ro2
 
 rendre Bbox filtered kernel completement generique -> 
 	utilisation dans linear kernel aussi
 	CK3
 
 echecs de filtres 
-
-resoudre problemes avec GMP
-pb general Ro2 avec GMP, pb make_root_of_2
-Lazy_CK avec GMP (constructions Gmpz(Gmpq) evidemment non trouvees...) (?)
-resolu par Sebastien ?
 
 voir make_x_monotone pour que ca retourne des arcs 
 (necessite bricolage de la traits car Arr_2 demande des Object)
@@ -49,9 +32,6 @@ interface intersect avec plusieurs outputIt types (types de retour differents)
 
 --> a transferer dans linear kernel ? 
 	- unoriented equal (pb general orientation dans noyau cgal...)
-	- intersection de deux Line_3 
-	- radical plane
-	- calculs de longueurs et surfaces
 
 mettre fonctions globales 
 - systematiquement dans code (il y en a qqs unes)
@@ -67,6 +47,17 @@ but they are undefined in Lazy_kernel...
 construct intersection for *arcs* should use solve or solve in range
 
 ----------- done (?)
+memory leaks in Filtered_bbox_circular_kernel_2
+from Andreas: 
+- there are new statements in constructors having no corresponding 
+delete statements.
+This concerns the files in the directory:
+CGAL-3.3.1/include/CGAL/Filtered_bbox_circular_kernel_2/...with_bbox_2.h
+It should be enough to add destructors and add conditional
+deletes.
+Reading the code I think that the IO routines also don't
+do what they should do, namely computing new bboxes. 
+
 tracker les vestiges de l'ancienne representation des points (pointeurs
 vers cercles)
 
@@ -76,7 +67,4 @@ enlever messages de debug
 
 add "using..." in all functors that derive from another
 
------------ not relevant any more (traits tracer abandoned)
-
-regarder traits-tracer (seg fault)
 
