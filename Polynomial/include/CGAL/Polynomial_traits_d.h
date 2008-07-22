@@ -135,10 +135,8 @@ public:
   //       Multivariate_content;
   struct Multivariate_content
     : public Unary_function< Polynomial_d , Innermost_coefficient >{
-    Innermost_coefficient 
-    operator()(const Polynomial_d& p) const {
-      typename PT::Compare compare;
-      if( compare( p, Polynomial_d(0) ) == EQUAL )
+    Innermost_coefficient operator()(const Polynomial_d& p) const {
+      if( CGAL::is_zero(p) )
         return Innermost_coefficient(0);
       else
         return Innermost_coefficient(1);
@@ -933,15 +931,18 @@ public:
     }
   };
 
-  //       Sign_at;
-  struct Sign_at {
+  // Sign_at, Sign_at_homogeneous, Compare 
+  // define XXX_ even though ICoeff may not be Real_embeddable 
+  // select propoer XXX among XXX_ or Null_functor using ::boost::mpl::if_
+private:
+  struct Sign_at_ {
   private:
     typedef Real_embeddable_traits<Innermost_coefficient> RT;
     typedef typename RT::Sign::result_type SIGN;
   public:
     typedef SIGN result_type;
-    template< class Input_iterator >
 
+    template< class Input_iterator >
     SIGN operator()( 
         const Polynomial_d& p, 
         Input_iterator begin, 
@@ -952,7 +953,7 @@ public:
     }
   };
   
-  struct Sign_at_homogeneous {
+  struct Sign_at_homogeneous_ {
     typedef Real_embeddable_traits<Innermost_coefficient> RT;
     typedef typename RT::Sign::result_type SIGN;
   public:
@@ -969,13 +970,22 @@ public:
   };
     
   // Compare;
-  struct Compare
+  struct Compare_
     : public Binary_function< Comparison_result, Polynomial_d, Polynomial_d > {
     Comparison_result operator()
       ( const Polynomial_d& p1, const Polynomial_d& p2 ) const {
       return p1.compare( p2 );
     }
   };
+ 
+  typedef Real_embeddable_traits<Innermost_coefficient> RET_IC;
+  typedef typename RET_IC::Is_real_embeddable IC_is_real_embeddable;
+public:
+  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_,Null_functor>::type Sign_at; 
+  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_homogeneous_,Null_functor>::type Sign_at_homogeneous; 
+  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Compare_,Null_functor>::type Compare; 
+ 
+
 
   // This is going to be in PolynomialToolBox 
   struct Coefficient_begin                                                  
