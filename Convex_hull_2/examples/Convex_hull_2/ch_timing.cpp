@@ -16,25 +16,25 @@ typedef K::Point_2 Point_2;
 
 int main( int argc, char* argv[] )
 {
-  if (argc < 2 || argc > 3)   // assertion
+  if (argc < 1 || argc > 3)
   {
-      std::cerr << "Usage: ch_example_timing data_file_name ";
-      std::cerr << "[number_of_iterations]" << std::endl;
+      std::cerr << "Usage: " << argv[0] << " [data_file_name = files/CD500] ";
+      std::cerr << "[number_of_iterations = 10]" << std::endl;
       std::exit(1);
   }
-  std::vector< Point_2 > V;
-  std::vector< Point_2 > VE;
-  std::ifstream F(argv[1]);
+
+  std::ifstream F( (argc >= 2) ? argv[1] : "files/CD500");
   CGAL::set_ascii_mode( F );
   std::istream_iterator< Point_2>  in_start( F );
   std::istream_iterator< Point_2>  in_end;
+
+  std::vector< Point_2 > V, VE;
   std::copy( in_start, in_end , std::back_inserter(V) );
   std::copy( V.begin(), V.end(), std::back_inserter(VE) );
-  int iterations;
-  if (argc == 3)
-    iterations = std::atoi( argv[2] );
-  else
-    iterations = 1;
+
+  int iterations = (argc == 3) ? std::atoi( argv[2] ) : 10;
+
   CGAL::ch_timing(V.begin(), V.end(), VE.begin(), iterations, K() );
+
   return 0;
 }
