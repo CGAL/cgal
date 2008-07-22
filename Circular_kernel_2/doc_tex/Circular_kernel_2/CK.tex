@@ -66,26 +66,12 @@ and provide other filtering techniques.
 
 \section{Examples}
 
-	\subsection{Computing an Arrangement of Random Circles} 
+	\subsection{Computing Intersections} 
 
-This example shows how to construct incrementally an arrangement of
-circles, using the traits class for arrangement of circular arcs
-provided with the package.
+This example shows how to construct circles or circular arcs from
+points, and how to compute intersections between them.
 
-\ccIncludeExampleCode{Circular_kernel_2/arrangement_random_circles.cpp}
-
-	\subsection{Constructing an Arrangement of Circles and Segments} 
-
-In this example, the traits class using the
-\ccAnchor{http://www.boost.org/doc/html/variant.html}{boost::variant}
-is used in order to provide arrangements with curves that can be
-either circular arcs or line segments.
-
-\ccIncludeExampleCode{Circular_kernel_2/arrangement_random_circles_segments.cpp}
-
-	\subsection{Using the Predefined Kernel} 
-
-\ccIncludeExampleCode{Circular_kernel_2/Exact_circular_kernel.cpp}
+\ccIncludeExampleCode{Circular_kernel_2/intersecting_arcs.cpp}
 
 \section{Design and Implementation History}
 
@@ -108,6 +94,7 @@ prototype version of this kernel in 2003. Julien Hazebrouck
 participated in the implementation of this kernel in July and August
 2005. The contribution of Pedro Machado Manh\~{a}es de Castro in
 summer 2006 improved significantly the efficiency of this kernel. 
+He also added more functionality in 2008. 
 
 This work was partially supported by the IST Programme of the EU as a
 Shared-cost RTD (FET Open) Project under Contract No IST-2000-26473
