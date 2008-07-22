@@ -3116,6 +3116,7 @@ Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-
 Polyhedron/demo/Polyhedron/data/pipe.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/sphere.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/tripod.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
 Polyhedron/demo/Polyhedron/resources/boolean-diff.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/boolean-intersection.png -text svneol=unset#image/png
