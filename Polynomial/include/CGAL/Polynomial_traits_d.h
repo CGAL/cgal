@@ -29,6 +29,7 @@
 #include <CGAL/Polynomial/polynomial_utils.h>
 #include <CGAL/Polynomial/resultant.h>
 #include <CGAL/Polynomial/subresultants.h>
+#include <CGAL/Polynomial/sturm_habicht_sequence.h>
 #include <CGAL/Polynomial/square_free_factorization.h>
 #include <CGAL/Polynomial/modular_filter.h>
 #include <CGAL/extended_euclidean_algorithm.h>
