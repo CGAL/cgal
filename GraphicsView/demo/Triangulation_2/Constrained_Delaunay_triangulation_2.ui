@@ -62,7 +62,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionInsertPolyline" />
-   <addaction name="actionMovingPoint" />
    <addaction name="actionShowDelaunay" />
    <addaction name="actionShowVoronoi" />
    <addaction name="actionCircumcenter" />
@@ -98,7 +97,6 @@
     <property name="title" >
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionMovingPoint" />
     <addaction name="actionInsertPolyline" />
     <addaction name="actionShowDelaunay" />
     <addaction name="actionShowVoronoi" />
@@ -135,26 +133,6 @@
    </property>
    <property name="shortcut" >
     <string>Ctrl+I</string>
-   </property>
-  </action>
-  <action name="actionMovingPoint" >
-   <property name="checkable" >
-    <bool>true</bool>
-   </property>
-   <property name="icon" >
-    <iconset resource="Constrained_Delaunay_triangulation_2.qrc" >:/cgal/Actions/icons/movingPoint.png</iconset>
-   </property>
-   <property name="text" >
-    <string>&amp;Moving Point</string>
-   </property>
-   <property name="toolTip" >
-    <string comment="The comment" >Simulate Insertion</string>
-   </property>
-   <property name="statusTip" >
-    <string comment="and its comment" >Move mouse with left button pressed to see where point would be inserted</string>
-   </property>
-   <property name="whatsThis" >
-    <string comment="what" >whats this</string>
    </property>
   </action>
   <action name="actionInsertPolyline" >

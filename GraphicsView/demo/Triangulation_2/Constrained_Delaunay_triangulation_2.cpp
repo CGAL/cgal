@@ -18,7 +18,6 @@
 
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
-#include "TriangulationMovingPoint.h"
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/ConstrainedTriangulationGraphicsItem.h>
   
@@ -107,7 +106,6 @@ private:
 
   CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT> * dgi;
 
-  CGAL::Qt::TriangulationMovingPoint<CDT> * mp;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
   CGAL::Qt::TriangulationCircumcircle<CDT> *tcc;
 public:
@@ -141,7 +139,6 @@ public slots:
 
   void processInput(CGAL::Object o);
 
-  void on_actionMovingPoint_toggled(bool checked);
 
   void on_actionShowDelaunay_toggled(bool checked);
 
@@ -196,12 +193,6 @@ MainWindow::MainWindow()
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
     
-  mp = new CGAL::Qt::TriangulationMovingPoint<CDT>(&cdt, this);
-  // TriangulationMovingPoint<CDT> generates an empty Object() each
-  // time the moving point moves.
-  // The following connection is for the purpose of emitting changed().
-  QObject::connect(mp, SIGNAL(generate(CGAL::Object)),
-		   this, SIGNAL(changed()));
 
   tcc = new CGAL::Qt::TriangulationCircumcircle<CDT>(&scene, &cdt, this);
   tcc->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -216,7 +207,6 @@ MainWindow::MainWindow()
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPolyline);
-  ag->addAction(this->actionMovingPoint);
 
   // Check two actions 
   this->actionInsertPolyline->setChecked(true);
@@ -274,18 +264,6 @@ MainWindow::on_actionInsertPolyline_toggled(bool checked)
     scene.installEventFilter(pi);
   } else {
     scene.removeEventFilter(pi);
-  }
-}
-
-
-void
-MainWindow::on_actionMovingPoint_toggled(bool checked)
-{
-
-  if(checked){
-    scene.installEventFilter(mp);
-  } else {
-    scene.removeEventFilter(mp);
   }
 }
 
