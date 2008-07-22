@@ -373,7 +373,7 @@ MainWindow::on_actionMakeGabrielConform_triggered()
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
-  std::cout << "Added " << nv << " vertices" << std::endl;
+  statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   emit(changed());
 }
 
@@ -383,7 +383,7 @@ MainWindow::on_actionMakeDelaunayConform_triggered()
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
   nv = cdt.number_of_vertices() - nv;
-  std::cout << "Added " << nv << " vertices" << std::endl;
+  statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   emit(changed());
 }
 
