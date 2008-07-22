@@ -257,26 +257,39 @@ public:
   struct Square_free_factorization{
     typedef int result_type;
         
-    template < class OutputIterator1, class OutputIterator2 >
-    int operator()(
-        const Polynomial_d& p, 
-        OutputIterator1 fit, 
-        OutputIterator2 mit) const {
-      return square_free_factorization( p, fit, mit );
-    }
-        
-    template< class OutputIterator1, class OutputIterator2 >
-    int operator()( const Polynomial_d& p, OutputIterator1 fit,
-        OutputIterator2 mit, Innermost_coefficient& a ) {
-      if( p == Polynomial_d(0) ) {
-        a = Innermost_coefficient(0);
-        return 0;
+    template < class OutputIterator >
+    OutputIterator operator()( const Polynomial_d& p, OutputIterator oi) const {
+      std::vector<Polynomial_d> factors;
+      std::vector<int> mults; 
+      
+      square_free_factorization
+        ( p, std::back_inserter(factors), std::back_inserter(mults) );
+      
+      CGAL_postcondition( factors.size() == mults.size() );
+      for(unsigned int i = 0; i < factors.size(); i++){
+        *oi++=std::make_pair(factors[i],mults[i]);
       }
+      
+      return oi;
+    }
+    
+    template< class OutputIterator >
+    OutputIterator operator()( 
+        const Polynomial_d&    p , 
+        OutputIterator         oi, 
+        Innermost_coefficient& a ) {
+      
+      if( CGAL::is_zero(p) ) {
+        a = Innermost_coefficient(0);
+        return oi;
+      }
+
       typedef Polynomial_traits_d< Polynomial_d > PT;
       typename PT::Innermost_leading_coefficient ilcoeff;
       typename PT::Multivariate_content mcontent;
-      a = CGAL::unit_part( ilcoeff( p ) ) * mcontent( p );            
-      return square_free_factorization( p/Polynomial_d(a), fit, mit );
+      a = CGAL::unit_part( ilcoeff( p ) ) * mcontent( p ); 
+      
+      return (*this)( p/Polynomial_d(a), oi);
     }
   };   
 };
@@ -625,7 +638,6 @@ public:
       Polynomial_d operator()( 
           Monom_rep_iterator begin,
           Monom_rep_iterator end) const {
-        //std::cout << " ------\n "  << std::endl;
                 
         typedef Polynomial_traits_d<Coefficient> PT;
         typename PT::Construct_polynomial construct;
@@ -636,11 +648,9 @@ public:
         Monom_rep_iterator it = begin; 
         while(it != end){
           int current_exp = it->first[PT::d];
-          //std::cout <<"current_exp: " <<  current_exp << std::endl;
           // fill up with zeros until current exp is reached
           while( (int) coefficients.size() < current_exp){
             coefficients.push_back(Coefficient(0));
-            //std::cout <<" insert "<< std::endl;
           }
           // collect all coeffs for this exp
           Monom_rep monoms; 
@@ -653,7 +663,6 @@ public:
           coefficients.push_back(
               construct(monoms.begin(), monoms.end()));
         }
-        //std::cout << " ------\n "  << std::endl;
         return Polynomial_d(coefficients.begin(),coefficients.end());
       }
     };
@@ -1167,43 +1176,51 @@ public:
         
     // rsqff_utcf computes the sqff recursively for Coeff  
     // end of recursion: ICoeff
-    template < class OutputIterator1, class OutputIterator2 >
-    int rsqff_utcf  (ICoeff , 
-        OutputIterator1 , 
-        OutputIterator2 ) const{
-      return 0;
+    
+    template < class OutputIterator >
+    OutputIterator rsqff_utcf ( ICoeff , OutputIterator oi) const{ 
+      return oi;
     }        
-    template < class OutputIterator1, class OutputIterator2 >
-    int rsqff_utcf (
+    
+    template < class OutputIterator >
+    OutputIterator rsqff_utcf (
         typename First_if_different<Coeff,ICoeff>::Type c,
-        OutputIterator1 fit, 
-        OutputIterator2 mit) const {
+        OutputIterator                                 oi) const {
+      
       typename PTC::Square_free_factorization_up_to_constant_factor sqff;
-      std::vector<Coefficient> factors;
-      int n = sqff(c, std::back_inserter(factors), mit);
-      for(int i = 0; i < (int)factors.size(); i++){
-        *fit++=Polynomial_d(factors[i]);
+      std::vector<std::pair<Coefficient,int> > fac_mul_pairs;
+      sqff(c,std::back_inserter(fac_mul_pairs));
+      
+      for(unsigned int i = 0; i < fac_mul_pairs.size(); i++){
+        Polynomial_d factor(fac_mul_pairs[i].first);
+        int mult = fac_mul_pairs[i].second;
+        *oi++=std::make_pair(factor,mult);
       }
-      return n; 
+      return oi;
     }
+
   public:
-    template < class OutputIterator1, class OutputIterator2 >
-    int operator()(
-        Polynomial_d p, 
-        OutputIterator1 fit, 
-        OutputIterator2 mit) const {
-            
-      if (CGAL::is_zero(p)) return 0;
+    template < class OutputIterator>
+    OutputIterator 
+    operator()(Polynomial_d p, OutputIterator oi) const {            
+      if (CGAL::is_zero(p)) return oi;
 
       Univariate_content_up_to_constant_factor ucontent_utcf;
       Integral_division_up_to_constant_factor idiv_utcf;
       Coefficient c = ucontent_utcf(p);
+      
       p = idiv_utcf( p , Polynomial_d(c));
-      int n = square_free_factorization_utcf(p,fit,mit);
-      if (Total_degree()(c) > 0) 
-        return rsqff_utcf(c,fit,mit)+n;
-      else 
-        return n;
+      std::vector<Polynomial_d> factors;
+      std::vector<int> mults;
+      square_free_factorization_utcf(
+          p, std::back_inserter(factors), std::back_inserter(mults));
+      for(unsigned int i = 0; i < factors.size() ; i++){
+         *oi++=std::make_pair(factors[i],mults[i]);
+      }
+      if (CGAL::total_degree(c) == 0)
+        return oi;
+      else
+        return rsqff_utcf(c,oi);
     }
   };
 
@@ -1478,7 +1495,6 @@ public:
     create_monom_representation 
     ( const Polynomial_d& p, OutputIterator oit, Tag_true ) const{
       for( int exponent = 0; exponent <= p.degree(); ++exponent ) {
-        // std::cout << "p[exponent]: "<<p[exponent];
         if ( p[exponent] != Coefficient(0) ){
           Exponent_vector exp_vec;
           exp_vec.push_back( exponent );

@@ -708,61 +708,52 @@ void test_square_free_factorization(const Polynomial_traits_d&){
   typedef CGAL::Algebraic_structure_traits<Polynomial_d> AST;
   typename AST::Integral_division idiv;
   typename PT::Square_free_factorization sqff;
+  typename PT::Canonicalize canonicalize;
+
   for(int i = 0; i < 5; i++){
     Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
     Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);    
     Polynomial_d p = f1*f1*f2;
-    std::vector<Polynomial_d> factors;
-    std::vector<int> mults;
-    int n = sqff(p, std::back_inserter(factors), std::back_inserter(mults));
-    //std::cout << "n: " << n <<std::endl;
-    assert(n == (int) factors.size());
-    assert(n == (int) mults.size());
+    std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
+    sqff(p, std::back_inserter(fac_mul_pairs));
+    int n = fac_mul_pairs.size();
     for (int j = 0; j < n; j++){
-      for (int k = 0; k < mults[j]; k++){
-        p = idiv(p,factors[j]);
+      Polynomial_d factor = fac_mul_pairs[j].first;
+      int multi = fac_mul_pairs[j].second;
+      for (int k = 0; k < multi; k++){
+        p = idiv(p,factor);
       }
     }
-    assert(typename PT::Total_degree()(p) == 0);
-    //if(typename PT::Total_degree()(p) != 0){
-    //    std::cout<< p << std::endl; 
-    //}
-        
+    assert(CGAL::is_one(canonicalize(p)));
   }
     
-  typename PT::Canonicalize canonicalize;
+  
   typename PT::Innermost_leading_coefficient ileading_coeff;
   typename PT::Multivariate_content multivariate_content;
   Polynomial_d p = generate_sparse_random_polynomial< Polynomial_d >(2);
   p *= p*generate_sparse_random_polynomial< Polynomial_d >(2);    
-  std::vector< Polynomial_d > factors;
-  std::vector< int > mults;
+  std::vector< std::pair< Polynomial_d,int> > fac_mul_pairs;
+
   ICoeff alpha;
-  Polynomial_d rec_p(1);
-  sqff(p, std::back_inserter(factors), std::back_inserter(mults), alpha);
-    
-  assert(alpha == CGAL::unit_part(ileading_coeff(p)) * 
-      multivariate_content(p));
+ 
+  
+  sqff(p, std::back_inserter(fac_mul_pairs), alpha);
+
+  assert(alpha 
+      == CGAL::unit_part(ileading_coeff(p)) * multivariate_content(p));
     
   //std::cerr << std::endl;
-  std::vector< int >::iterator mults_it = mults.begin();
-  for(typename std::vector< Polynomial_d >::iterator it = factors.begin();
-      it != factors.end(); ++it) {
-    assert((*it) == canonicalize((*it)));
-    //std::cerr << "faktor= " << (*it) << ", ";
-    //std::cerr << "mult= " << (*mults_it) << std::endl; 
-    assert(mults_it != mults.end());
-    rec_p *= CGAL::ipower((*it),(*mults_it++));
-  }
-    
-  rec_p *= Polynomial_d(alpha);
-  //std::cerr << "ALPHA= " << alpha << std::endl;
-  //std::cerr << "    p= " << p << std::endl;
-  //std::cerr << "rec_p= " << rec_p << std::endl;
+  Polynomial_d rec_p(alpha);
+  for( unsigned int i = 0; i < fac_mul_pairs.size() ; i ++){
+    Polynomial_d factor = fac_mul_pairs[i].first;
+    int mult = fac_mul_pairs[i].second;
+    assert(factor == canonicalize(factor));
+    rec_p *= CGAL::ipower(factor,mult);
+  }  
   assert(p == rec_p);
 
   std::cerr << "ok"<< std::endl; 
-    
+  
 }
 // //       Pseudo_division;
 template <class Polynomial_traits_d>
@@ -906,25 +897,28 @@ void test_square_free_factorization_up_to_constant_factor(const Polynomial_trait
   typename PT::Integral_division_up_to_constant_factor idiv_utcf;
   typename PT::Square_free_factorization_up_to_constant_factor sqff_utcf;
   typename PT::Canonicalize canonicalize;
-  for(int i = 0; i < 2; i++){
+
+
+    for(int i = 0; i < 5; i++){
     Polynomial_d f1 = generate_sparse_random_polynomial<Polynomial_d>(2);
     Polynomial_d f2 = generate_sparse_random_polynomial<Polynomial_d>(2);    
     Polynomial_d p = f1*f1*f2;
-    std::vector<Polynomial_d> factors;
-    std::vector<int> mults;
-    int n = sqff_utcf(p, 
-        std::back_inserter(factors), 
-        std::back_inserter(mults));
-    //std::cout << "n: " << n <<std::endl;
-    assert(n == (int) factors.size());
-    assert(n == (int) mults.size());
+    std::vector<std::pair<Polynomial_d,int> > fac_mul_pairs;
+    sqff_utcf(p, std::back_inserter(fac_mul_pairs)) ;
+     
+    int n = fac_mul_pairs.size();
+   
     for (int j = 0; j < n; j++){
-      for (int k = 0; k < mults[j]; k++){
-        p = idiv_utcf(p,factors[j]);
+      Polynomial_d factor = fac_mul_pairs[j].first;
+      assert(factor == canonicalize(factor));
+      int multi = fac_mul_pairs[j].second;
+      for (int k = 0; k < multi; k++){
+        p = idiv_utcf(p,factor);
       }
     }
     assert(CGAL::is_one(canonicalize(p)));
   }
+
   std::cerr << "ok"<< std::endl; 
 }
 
@@ -1018,7 +1012,6 @@ void test_is_zero_at_homogeneous(const Polynomial_traits_d&) {
   typename PT::Is_zero_at_homogeneous is_zero_at_homogeneous;
     
   Polynomial_d p(Coeff(-1), Coeff(0), Coeff(4));
-  std::cout << p << std::endl;
     
   std::vector< ICoeff > cv;
   for(int i = 0; i < PT::d-1; ++i)
