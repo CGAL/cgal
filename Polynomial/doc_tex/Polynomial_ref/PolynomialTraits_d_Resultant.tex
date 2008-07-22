@@ -1,20 +1,26 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Resultant}
 \ccDefinition
 
-This \ccc{AdaptableBinaryFunction} computes the resultant of two polynomials $f$ and $g$ of 
-type \ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable.
+This \ccc{AdaptableBinaryFunction} computes the resultant of two polynomials 
+$f$ and $g$ of type \ccc{PolynomialTraits_d::Polynomial_d} with respect a 
+certain variable.
  
-Note that this functor operates on the polynomial in the univariate view, that is, 
-the polynomial is considered as a univariate polynomial in one specific variable. 
+Note that this functor operates on the polynomial in the univariate view, 
+\that is, the polynomial is considered as a univariate polynomial in one 
+specific variable. 
 
 Given two polynomials $f$ and $g$ over some \ccc{IntegralDomain}, where 
-\[f := f_n \prod_{i=1}^{n}{(x-\alpha_i)}\] and 
-\[g :=  g_n \prod_{j=1}^{m}{(x-\beta_j)}.\] The resultant of $f$ and $g$ is defined as 
+\[f := f_n \prod_{i=1}^{n}{(x-\alpha_i)}\] 
+and 
+\[g :=  g_n \prod_{j=1}^{m}{(x-\beta_j)}.\] 
+The resultant of $f$ and $g$ is defined as 
 \[f_n g_n \prod_{i=1}^{n}\prod_{i=1}^{m}{(\alpha_i-\beta_j)}.\] 
 
-There are various ways to compute the resultant. Naive options are the computation of the 
-resultant as the determinant of the Sylvester Matrix or the Bézout Matrix as well as the so 
-called subresultant algorithm, which is a variant of the Euclidean Algorithm. 
+There are various ways to compute the resultant. 
+Naive options are the computation of the 
+resultant as the determinant of the Sylvester Matrix or the Bezout 
+Matrix as well as the so called subresultant algorithm, 
+which is a variant of the Euclidean Algorithm. 
 More sophisticated methods may use modular arithmetic and interpolation. 
 For more information we refer to, e.g., \cite{gg-mca-99}. 
 
