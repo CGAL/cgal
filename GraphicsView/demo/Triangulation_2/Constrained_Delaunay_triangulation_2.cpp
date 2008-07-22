@@ -4,6 +4,9 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Delaunay_mesher_2.h>
+#include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/point_generators_2.h>
@@ -28,10 +31,12 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
-typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
+//typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
+typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
 typedef CGAL::Triangulation_data_structure_2<Vertex_base, Face_base>  TDS;
 typedef CGAL::Exact_predicates_tag              Itag;
-
+typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+typedef CGAL::Delaunay_mesh_size_criteria_2<CDT> Criteria;
 
 
 typedef std::pair<std::vector<Point_2>*, int> Point_iterator;
@@ -91,8 +96,6 @@ typedef CGAL::Multiscale_sort<Hilbert_sort_2> Spatial_sort_2;
 
 
 
-
-typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -188,7 +191,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
-  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, false); // inputs polylines which are not closed
+  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
@@ -472,7 +475,9 @@ void
 MainWindow::on_actionMakeGabrielConform_triggered()
 {
   int nv = cdt.number_of_vertices();
-  CGAL::make_conforming_Gabriel_2(cdt);
+  //  CGAL::make_conforming_Gabriel_2(cdt);
+
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.1));
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   emit(changed());
