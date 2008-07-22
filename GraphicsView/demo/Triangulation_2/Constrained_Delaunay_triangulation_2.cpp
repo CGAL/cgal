@@ -3,6 +3,7 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_conformer_2.h>
 
 #include <CGAL/point_generators_2.h>
 
@@ -93,11 +94,17 @@ public slots:
 
   void on_actionLoadConstraints_triggered();
 
-  void loadConstraints(QString);
+  void loadPolyConstraints(QString);
+
+  void loadEdgConstraints(QString);
 
   void on_actionSaveConstraints_triggered();
 
   void saveConstraints(QString);
+
+  void on_actionMakeGabrielConform_triggered();
+
+  void on_actionMakeDelaunayConform_triggered();
 
   void on_actionInsertRandomPoints_triggered();
 
@@ -256,25 +263,73 @@ MainWindow::on_actionLoadConstraints_triggered()
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Constraint File"),
 						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
+						  tr("Edge files (*.edg)\n"
+						     "Poly files (*.poly)"));
   if(! fileName.isEmpty()){
-    loadConstraints(fileName);
+    if(fileName.endsWith(".poly")){
+      loadPolyConstraints(fileName);
+    } else if(fileName.endsWith(".edg")){
+      loadEdgConstraints(fileName);
+    }
   }
+}
+
+void
+MainWindow::loadPolyConstraints(QString fileName)
+{
+  std::ifstream ifs(qPrintable(fileName));
+  bool first=true;
+  int n;
+  ifs >> n;
+  
+  K::Point_2 p,q, qold;
+  CDT::Vertex_handle vp, vq, vqold;
+  while(ifs >> p) {
+    ifs >> q;
+    if((!first) && (p == qold)){
+      vp = vqold;
+    } else {
+      vp = cdt.insert(p);
+    }
+    vq = cdt.insert(q, vp->face());
+    cdt.insert_constraint(vp,vq);
+    qold = q;
+    vqold = vq;
+    first = false;
+  }
+
+  actionRecenter->trigger();
+  emit(changed());
 }
 
 
 void
-MainWindow::loadConstraints(QString fileName)
+MainWindow::loadEdgConstraints(QString fileName)
 {
   std::ifstream ifs(qPrintable(fileName));
-
-  std::list<K::Point_2> points;
-  K::Point_2 p;
+  bool first=true;
+  int n;
+  ifs >> n;
+  
+  K::Point_2 p,q, qold;
+  CDT::Vertex_handle vp, vq, vqold;
   while(ifs >> p) {
-    points.push_back(p);
+    ifs >> q;
+    if(p == q){
+      std::cout << "Ignore zero length segment" << std::endl;
+      continue;
+    }
+    if((!first) && (p == qold)){
+      vp = vqold;
+    } else {
+      vp = cdt.insert(p);
+    }
+    vq = cdt.insert(q, vp->face());
+    cdt.insert_constraint(vp,vq);
+    qold = q;
+    vqold = vq;
+    first = false;
   }
-  insert_polyline(points.begin(), points.end());
 
   actionRecenter->trigger();
   emit(changed());
@@ -309,6 +364,27 @@ MainWindow::saveConstraints(QString fileName)
   QMessageBox::warning(this,
                        tr("saveConstraints"),
                        tr("Not implemented!"));
+}
+
+
+void
+MainWindow::on_actionMakeGabrielConform_triggered()
+{
+  int nv = cdt.number_of_vertices();
+  CGAL::make_conforming_Gabriel_2(cdt);
+  nv = cdt.number_of_vertices() - nv;
+  std::cout << "Added " << nv << " vertices" << std::endl;
+  emit(changed());
+}
+
+void
+MainWindow::on_actionMakeDelaunayConform_triggered()
+{
+  int nv = cdt.number_of_vertices();
+  CGAL::make_conforming_Delaunay_2(cdt);
+  nv = cdt.number_of_vertices() - nv;
+  std::cout << "Added " << nv << " vertices" << std::endl;
+  emit(changed());
 }
 
 
