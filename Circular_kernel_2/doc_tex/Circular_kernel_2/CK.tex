@@ -17,10 +17,10 @@ The design is done in such a way that the algebraic concepts and the
 geometric concepts are clearly separated. \ccc{Circular_kernel_2}
 has therefore two template parameters: 
 \begin{itemize}
-\item {} the \ccc{LinearKernel}, from which the circular kernel derives,
-provides all elementary geometric objects like points, lines, circles, and
-elementary functionality on them. It must be a model of the \cgal\ two 
-dimensional \ccc{Kernel} concept.
+\item {} the first parameter must model the \cgal\ 
+three dimensional \ccc{Kernel} concept. The circular kernel derives
+from it, and it provides all elementary geometric objects like points,
+lines, circles, and elementary functionality on them. 
 %The \cgal\ 2D Kernel can be used as parameter,
 %but the user may plug his own kernel 
 %instead, as long as it follows the \cgal\ kernel concept. 
@@ -33,7 +33,7 @@ provides exact computations on algebraic objects.
 
 The circular kernel uses the extensibility scheme presented in the 2D
 kernel manual (see Section~\ref{section-extensible-kernel}). 
-The types of \ccc{LinearKernel} are inherited
+The types of \ccc{Kernel} are inherited
 by the circular kernel and some types are taken from the
 \ccc{AlgebraicKernelForCircles} parameter. Three new main geometric objects are
 introduced by \ccc{Circular_kernel_2}: circular arcs, points of
@@ -44,14 +44,13 @@ are points of this new type.
 In fact, the circular kernel is documented as a concept, \ccc{CircularKernel}, 
 and two models are provided: 
 \begin{itemize}
-\item {} \ccc{Circular_kernel_2<LinearKernel,AlgebraicKernelForCircles>}, the basic kernel, 
+\item {} \ccc{Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}, the basic kernel, 
 \item {} and
 a predefined filtered kernel \ccc{Exact_circular_kernel_2}, 
 that is based on similar techniques as 
 \ccc{Exact_predicates_exact_constructions_kernel}. 
 \end{itemize}
-More work is in progress to increase the efficiency of this filtered kernel
-and provide other filtering techniques. 
+
 % those comments may need to be updated
 %several filtered kernels are built on top of this basic kernel to
 %increase effciency:\\
