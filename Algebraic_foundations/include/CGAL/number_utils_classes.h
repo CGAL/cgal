@@ -99,7 +99,7 @@ struct Is_zero :
 namespace CGALi {
 template <class NT, class Compare> struct Compare_base: public Compare {};
 template <class NT> struct Compare_base<NT,Null_functor>
-  :public Binary_function< NT, NT, Comparison_result > {
+  :public std::binary_function< NT, NT, Comparison_result > {
   Comparison_result operator()( const NT& x, const NT& y) const
   {
     if (x < y) return SMALLER;

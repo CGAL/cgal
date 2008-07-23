@@ -25,7 +25,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/tags.h>
 #include <cassert>
-#include <CGAL/functional_base.h>
+#include <functional>
 
 #include <vector>
 

@@ -50,7 +50,7 @@ class Real_embeddable_traits {
 namespace INTERN_RET {
     template< class Type, class AST_is_zero >
     class Is_zero_selector
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:        
         //! the function call.
         bool operator()( const Type& x ) const {
@@ -60,7 +60,7 @@ namespace INTERN_RET {
     
     template< class Type >
     class Is_zero_selector< Type, Null_functor >
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:        
         //! the function call.
         bool operator()( const Type& x ) const {
@@ -83,7 +83,7 @@ class Real_embeddable_traits_base {
     
     //! The generic \c Is_finite functor returns true
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& ) const {
           return true;
@@ -92,7 +92,7 @@ class Real_embeddable_traits_base {
     //! The generic \c Abs functor implementation
     //! uses one comparisons and the unary minus if necessary.
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         //! the function call.
         Type  operator()( const Type& x ) const {
@@ -102,7 +102,7 @@ class Real_embeddable_traits_base {
     
     //! The generic \c Sign functor implementation uses two comparisons.
     class Sign 
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         //! the function call.
         ::CGAL::Sign operator()( const Type& x ) const {
@@ -116,7 +116,7 @@ class Real_embeddable_traits_base {
     
     //! The generic \c Is_positive functor implementation uses one comparison.
     class Is_positive 
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:        
         //! the function call.
         bool operator()( const Type& x ) const {
@@ -126,7 +126,7 @@ class Real_embeddable_traits_base {
     
     //! The generic \c Is_negative functor implementation uses one comparison.
     class Is_negative 
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:        
         //! the function call.
         bool operator()( const Type& x ) const {
@@ -136,7 +136,7 @@ class Real_embeddable_traits_base {
         
     //! The generic \c Compare functor implementation uses two comparisons.
     class Compare 
-      : public Binary_function< Type, Type, 
+      : public std::binary_function< Type, Type, 
                                 Comparison_result > {
       public:
         //! the function call.
@@ -172,7 +172,7 @@ namespace INTERN_RET {
 
   template< class Type >
   class To_double_by_conversion 
-    : public Unary_function< Type, double > {
+    : public std::unary_function< Type, double > {
     public:      
       //! the function call.
       double operator()( const Type& x ) const {
@@ -182,7 +182,7 @@ namespace INTERN_RET {
   
   template< class Type >
   class To_interval_by_conversion 
-    : public Unary_function< Type, std::pair< double, double > > {
+    : public std::unary_function< Type, std::pair< double, double > > {
     public:      
         //! the function call.
       std::pair<double, double> operator()( const Type& x ) const {
