@@ -20,8 +20,6 @@
 #ifndef CGAL_CH_FUNCTION_OBJECTS_2_H
 #define CGAL_CH_FUNCTION_OBJECTS_2_H
 
-#include <CGAL/functional_base.h>
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {

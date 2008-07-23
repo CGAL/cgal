@@ -22,7 +22,6 @@
 
 #include <CGAL/predicates/kernel_ftC2.h>
 #include <CGAL/predicates_on_points_2.h>
-#include <CGAL/functional_base.h>
 #include <CGAL/function_objects.h>
 
 namespace CGAL {

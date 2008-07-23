@@ -21,7 +21,6 @@
 #define CGAL_CONVEX_HULL_PROJECTIVE_XY_TRAITS_2_H
 
 #include <CGAL/predicates/kernel_ftC2.h>
-#include <CGAL/functional_base.h>
 
 namespace CGAL {
 
