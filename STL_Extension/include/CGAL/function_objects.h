@@ -26,7 +26,6 @@
 #ifndef CGAL_FUNCTION_OBJECTS_H
 #define CGAL_FUNCTION_OBJECTS_H 1
 
-#include <CGAL/functional_base.h>
 #include <functional>
 
 CGAL_BEGIN_NAMESPACE
