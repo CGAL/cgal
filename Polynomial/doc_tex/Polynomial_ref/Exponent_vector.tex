@@ -13,8 +13,12 @@ since negative exponents may appear in intermediate results.
 The set of exponent vectors with elementwise 
 addition forms an {\em Abelian Group}. 
 
+Though this class is derived from \ccc{std::vector<int>} the comparision
+is changes such that the lexigraphic order starts with the last entry. 
+This reflects the fact that the last entry corresponds 
+to the last/outermost variable of a multivariate polynomial. 
 
-\footnote{Should we add a scalar multiplication? }
+%\footnote{Should we add a scalar multiplication? }
 
 
 \ccInclude{CGAL/Exponent_vector.h}
@@ -95,14 +99,14 @@ Group Operation:
                 \ccPrecond \ccVar.size() == ev2.size()
         }
 
-\begin{ccAdvanced}
-TODO: Should we add these functions? what about operator $/$ ? 
-\ccMethod{Exponent_vector operator*=(int i);}{}
-\ccGlue
-\ccFunction{Exponent_vector operator*(const Exponent_vector &ev, int i);}{}
-\ccGlue
-\ccFunction{Exponent_vector operator*(int i ,const Exponent_vector &ev);}{}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%TODO: Should we add these functions? what about operator $/$ ? 
+%\ccMethod{Exponent_vector operator*=(int i);}{}
+%\ccGlue
+%\ccFunction{Exponent_vector operator*(const Exponent_vector &ev, int i);}{}
+%\ccGlue
+%\ccFunction{Exponent_vector operator*(int i ,const Exponent_vector &ev);}{}
+%\end{ccAdvanced}
 
 \ccc{EqualityComparable}: 
 \ccFunction{bool 

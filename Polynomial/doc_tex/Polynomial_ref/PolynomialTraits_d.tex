@@ -28,7 +28,7 @@ with respect to this view.
 
 \ccConstants
  
-\ccVariable{const int d;}{The dimension and the number of variables respectively.}
+\ccVariable{static const int d;}{The dimension and the number of variables respectively.}
 
 \ccTypes
 
@@ -105,7 +105,7 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 
 \ccNestedType{Compare}{ 
         A model of \ccc{PolynomialTraits_d::Compare}. \\
-        In case \ccc{Innermost_coefficient} is not \ccc{LessThanComparable} this 
+        In case \ccc{Innermost_coefficient} is not \ccc{RealEmbeddable} this 
         is \ccc{CGAL::Null_functor}.}
  
 \ccNestedType{Univariate_content}{ 
@@ -184,8 +184,13 @@ is not a model of \ccc{UFDomain}, this is of type \ccc{CGAL::Null_type},
 %\ccNestedType{Principal_sturm_habicht_sequence}
 %{ A model of \ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}.}
 
+
 \ccSeeAlso 
 
 \ccRefIdfierPage{Polynomial_d}\\
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polynomial_traits_d<Polynomial_d>}
 
 \end{ccRefConcept}
