@@ -36,7 +36,7 @@
 
 #include <CGAL/vector.h>
 #include <CGAL/Partition_2/Rotation_tree_node_2.h>
-#include <CGAL/functional.h>
+#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -57,7 +57,7 @@ public:
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
    
-      std::sort(this->begin(), this->end(), swap_1(Traits().less_xy_2_object()));
+      std::sort(this->begin(), this->end(), bind(Traits().less_xy_2_object(), _2, _1));
       std::unique(this->begin(), this->end());
    
       // front() is the point with the largest x coordinate
