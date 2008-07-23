@@ -23,7 +23,7 @@ CMake now replaces install_cgal...
   potentially compile-time dimension of a space or of an object.
 - barycenter() functions have been added.
 
-- The geometric Object Circle_3 has been added to the kernel:
+- The geometric object Circle_3 has been added to the kernel:
 
  - Related Predicates: Equal_3,
                        Has_on_3:
@@ -60,11 +60,12 @@ Global functions: Intersections, Do_intersects and radical_plane.
 
 The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
-4- STL Extensions: The functor adaptors for argument binding and
-composition (bind_*, compose, compose_shared, swap_*, negate, along
-with the helper functions set_arity_*) are deprecated.  Use
-boost::bind instead.  The concept AdaptableFunctor has been changed
-accordingly such that only a nested result_type is required.
+4- STL Extensions: The functor adaptors for argument binding and composition
+(bind_*, compose, compose_shared, swap_*, negate, along with the helper
+functions set_arity_* and Arity class and Arity_tag typedefs) which were provided
+by <CGAL/functional.h> have been removed.  Please use the better boost::bind
+mecanism instead.  The concept AdaptableFunctor has been changed accordingly
+such that only a nested result_type is required.
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
