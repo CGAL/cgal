@@ -66,7 +66,7 @@ is_nan_by_mask_double(unsigned int h, unsigned int l)
 
 template<>
 class Is_valid< double >
-  : public Unary_function< double, bool > {
+  : public std::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const{
       double d = x;
@@ -81,7 +81,7 @@ class Is_valid< double >
 
 template<>
 class Is_valid< double >
-  : public Unary_function< double, bool > {
+  : public std::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const {
       return ! _isnan(x);
@@ -92,7 +92,7 @@ class Is_valid< double >
 
 template<>
 class Is_valid< double >
-  : public Unary_function< double, bool > {
+  : public std::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const {
       return (x == x);
@@ -111,7 +111,7 @@ template <> class Algebraic_structure_traits< double >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -119,7 +119,7 @@ template <> class Algebraic_structure_traits< double >
     };
 
     class Kth_root
-      : public Binary_function<int, Type, Type> {
+      : public std::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -137,7 +137,7 @@ template <> class Real_embeddable_traits< double >
 // GCC is faster with std::fabs().
 #ifdef __GNUG__
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::fabs( x );
@@ -153,7 +153,7 @@ template <> class Real_embeddable_traits< double >
 // Is_finite depends on platform
 #ifdef CGAL_CFG_IEEE_754_BUG
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
           Type d = x;
@@ -163,7 +163,7 @@ template <> class Real_embeddable_traits< double >
     };
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
            return (x == x) && (is_valid(x-x));
@@ -171,7 +171,7 @@ template <> class Real_embeddable_traits< double >
     };
 #else
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
           return (x != std::numeric_limits<Type>::infinity())

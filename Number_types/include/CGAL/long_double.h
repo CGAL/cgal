@@ -62,7 +62,7 @@ is_nan_by_mask_long_double(unsigned int h, unsigned int l)
 
 template<>
 class Is_valid< long double >
-  : public Unary_function< long double, bool > {
+  : public std::unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       double d = x;
@@ -75,7 +75,7 @@ class Is_valid< long double >
 
 template<>
 class Is_valid< long double >
-  : public Unary_function< long double, bool > {
+  : public std::unary_function< long double, bool > {
   public :
     bool operator()( const long double& x ) const {
       return (x == x);
@@ -95,7 +95,7 @@ template <> class Algebraic_structure_traits< long double >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -103,7 +103,7 @@ template <> class Algebraic_structure_traits< long double >
     };
 
     class Kth_root
-      :public Binary_function<int, Type, Type > {
+      :public std::binary_function<int, Type, Type > {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -122,7 +122,7 @@ template <> class Real_embeddable_traits< long double >
     typedef INTERN_RET::To_double_by_conversion< Type >
                                                                   To_double;
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           // The conversion long double to double does not always follow the
@@ -148,7 +148,7 @@ template <> class Real_embeddable_traits< long double >
 // Is_finite depends on platform
 #ifdef CGAL_CFG_IEEE_754_BUG
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           Type d = x;
@@ -158,7 +158,7 @@ template <> class Real_embeddable_traits< long double >
     };
 #else
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
          return (x == x) && (is_valid(x-x));

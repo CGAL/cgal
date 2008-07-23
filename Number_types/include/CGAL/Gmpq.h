@@ -35,7 +35,7 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_false            Is_numerical_sensitive;
 
     class Is_square
-      : public Binary_function< Type, Type&,
+      : public std::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x_, Type& y ) const {
@@ -53,7 +53,7 @@ template <> class Algebraic_structure_traits< Gmpq >
     };
 
     class Simplify
-      : public Unary_function< Type&, void > {
+      : public std::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
           mpq_canonicalize( x.mpq() );
@@ -69,7 +69,7 @@ template <> class Real_embeddable_traits< Gmpq >
   public:
 
     class Sign
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
@@ -77,7 +77,7 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -85,7 +85,7 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           mpfr_t y;

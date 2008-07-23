@@ -35,7 +35,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     typedef Sqrt_extension<COEFF, ROOT> Type;
 
     class Sign
-        : public Unary_function< Type, ::CGAL::Sign >{
+        : public std::unary_function< Type, ::CGAL::Sign >{
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
@@ -43,7 +43,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     };
     
     class Compare
-        : public Binary_function< Type, Type, Comparison_result > {
+        : public std::binary_function< Type, Type, Comparison_result > {
     public:
         Comparison_result operator()( const Type& x, const Type& y) const {
             // must be from the same extension 
@@ -63,7 +63,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double,double> operator()(const Type& x) const {
             return x.to_interval();
@@ -71,7 +71,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         // The main problem here is, that even tough the total
         // expression fits into double, one of the coefficients

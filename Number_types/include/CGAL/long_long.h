@@ -44,7 +44,7 @@ template<> class Algebraic_structure_traits< long long int >
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
 
     class Is_square
-      : public Binary_function< Type, Type&,
+      : public std::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x,
@@ -68,7 +68,7 @@ template <> class Real_embeddable_traits< long long int >
                                                                       To_double;
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);

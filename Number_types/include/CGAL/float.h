@@ -59,7 +59,7 @@ is_nan_by_mask_float(unsigned int u)
 
 template<>
 class Is_valid< float >
-  : public Unary_function< float, bool > {
+  : public std::unary_function< float, bool > {
   public :
     bool operator()( const float& x ) const {
       float f = x;
@@ -72,7 +72,7 @@ class Is_valid< float >
 
 template<>
 class Is_valid< float >
-  : public Unary_function< float, bool > {
+  : public std::unary_function< float, bool > {
   public :
     bool operator()( const float& x ) const {
       return (x == x);
@@ -89,7 +89,7 @@ template <> class Algebraic_structure_traits< float >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -97,7 +97,7 @@ template <> class Algebraic_structure_traits< float >
     };
 
     class Kth_root
-      : public Binary_function<int, Type, Type> {
+      : public std::binary_function<int, Type, Type> {
       public:
         Type operator()( int k, const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
@@ -119,7 +119,7 @@ template <> class Real_embeddable_traits< float >
 #ifdef CGAL_CFG_IEEE_754_BUG
 
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           Type f = x;
@@ -129,7 +129,7 @@ template <> class Real_embeddable_traits< float >
     };
 #else
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           return (x == x) && (is_valid(x-x));

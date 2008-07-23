@@ -492,7 +492,7 @@ relative_precision(const Interval_nt<Protected> & d)
 
 template< bool Protected >
 class Is_valid< Interval_nt<Protected> >
-  : public Unary_function< Interval_nt<Protected>, bool > {
+  : public std::unary_function< Interval_nt<Protected>, bool > {
   public :
     bool operator()( const Interval_nt<Protected>& x ) const {
       return is_valid(x.inf()) &&
@@ -796,7 +796,7 @@ operator/ (const Interval_nt<Protected> & a, int b)
 
 template <bool Protected>
 struct Min <Interval_nt<Protected> >
-    : public Binary_function<Interval_nt<Protected>,
+    : public std::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -811,7 +811,7 @@ struct Min <Interval_nt<Protected> >
 
 template <bool Protected>
 struct Max <Interval_nt<Protected> >
-    : public Binary_function<Interval_nt<Protected>,
+    : public std::binary_function<Interval_nt<Protected>,
                              Interval_nt<Protected>,
                              Interval_nt<Protected> >
 {
@@ -844,7 +844,7 @@ ldexp(const Interval_nt<b> &i, int e)
 // TODO: To which concept do these functors belong? Can we remove them??
 template < bool b >
 struct Equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -853,7 +853,7 @@ struct Equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -862,7 +862,7 @@ struct Not_equal_to < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -871,7 +871,7 @@ struct Greater < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -880,7 +880,7 @@ struct Less < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -889,7 +889,7 @@ struct Greater_equal < Interval_nt<b>, Interval_nt<b> >
 
 template < bool b >
 struct Less_equal < Interval_nt<b>, Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
+  : public std::binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
 {
   Uncertain<bool> operator()( const Interval_nt<b>& x,
                               const Interval_nt<b>& y) const
@@ -1050,7 +1050,7 @@ namespace INTERN_INTERVAL_NT {
 
 /*  template < bool b >
   struct Is_zero < Interval_nt<b> >
-    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
   {
     Uncertain<bool> operator()( const Interval_nt<b>& x) const
     { return CGAL_NTS is_zero(x); }
@@ -1058,7 +1058,7 @@ namespace INTERN_INTERVAL_NT {
 
   template < bool b >
   struct Is_one < Interval_nt<b> >
-    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
   {
     Uncertain<bool> operator()( const Interval_nt<b>& x) const
     { return CGAL_NTS is_one(x); }
@@ -1066,7 +1066,7 @@ namespace INTERN_INTERVAL_NT {
 
   template < bool b >
   struct Is_negative < Interval_nt<b> >
-    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
   {
     Uncertain<bool> operator()( const Interval_nt<b>& x) const
     { return CGAL_NTS is_negative(x); }
@@ -1074,7 +1074,7 @@ namespace INTERN_INTERVAL_NT {
 
   template < bool b >
   struct Is_positive < Interval_nt<b> >
-    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+    : public std::unary_function< Interval_nt<b>, Uncertain<bool> >
   {
     Uncertain<bool> operator()( const Interval_nt<b>& x) const
     { return CGAL_NTS is_positive(x); }
@@ -1082,7 +1082,7 @@ namespace INTERN_INTERVAL_NT {
 
   template < bool b >
   struct Sgn < Interval_nt<b> >
-    : public Unary_function< Interval_nt<b>, Uncertain<Sign> >
+    : public std::unary_function< Interval_nt<b>, Uncertain<Sign> >
   {
     Uncertain<Sign> operator()( const Interval_nt<b>& x) const
     { return CGAL_NTS sign(x); }
@@ -1090,7 +1090,7 @@ namespace INTERN_INTERVAL_NT {
 
   template < bool b >
   struct Compare < Interval_nt<b> >
-    : public Binary_function< Interval_nt<b>, Interval_nt<b>,
+    : public std::binary_function< Interval_nt<b>, Interval_nt<b>,
                               Uncertain<Comparison_result> >
   {
     Uncertain<Comparison_result>
@@ -1107,7 +1107,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     typedef Interval_nt<B>  Type;
 
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::abs( x );
@@ -1115,7 +1115,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Sign
-        : public Unary_function< Type, Uncertain< ::CGAL::Sign > > {
+        : public std::unary_function< Type, Uncertain< ::CGAL::Sign > > {
       public:
         Uncertain< ::CGAL::Sign > operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::sign( x );
@@ -1123,7 +1123,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_positive
-      : public Unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_positive( x );
@@ -1131,7 +1131,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_negative
-      : public Unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_negative( x );
@@ -1139,7 +1139,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Uncertain<Comparison_result> > {
       public:
         Uncertain<Comparison_result> operator()(
@@ -1152,7 +1152,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_double( x );
@@ -1160,7 +1160,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_interval( x );
@@ -1168,7 +1168,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
@@ -1188,7 +1188,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Tag_true            Is_numerical_sensitive;
 
     class Is_zero
-      : public Unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_zero( x );
@@ -1196,7 +1196,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Is_one
-      : public Unary_function< Type, Uncertain<bool> > {
+      : public std::unary_function< Type, Uncertain<bool> > {
       public:
         Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_one( x );
@@ -1204,7 +1204,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Square
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::square( x );
@@ -1212,7 +1212,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::sqrt( x );
@@ -1220,7 +1220,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     };
 
     struct Is_square
-        :public Binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
+        :public std::binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
     {
         bool operator()(const Interval_nt<B>& x) const {
             return INTERN_INTERVAL_NT::is_positive( x );

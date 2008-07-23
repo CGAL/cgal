@@ -157,7 +157,7 @@ public:
     typedef Tag_true            Is_numerical_sensitive;
 
     class Sqrt
-        : public Unary_function< Type, Type > {
+        : public std::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             return ::boost::numeric::sqrt(x);
@@ -170,7 +170,7 @@ template <> class Real_embeddable_traits< leda_bigfloat_interval >
 public:
 
     class Abs
-        : public Unary_function< Type, Type > {
+        : public std::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             return ::boost::numeric::abs(x);
@@ -178,7 +178,7 @@ public:
     };
 
     class To_double
-        : public Unary_function< Type, double > {
+        : public std::unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return CGAL::to_double(::boost::numeric::median(x));
@@ -186,7 +186,7 @@ public:
     };
 
     class To_interval
-        : public Unary_function< Type, std::pair< double, double > > {
+        : public std::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {            
             std::pair<double, double> lower_I(CGAL::to_interval(x.lower()));
@@ -294,98 +294,98 @@ public:
     typedef CGAL::Tag_true Is_interval; 
     typedef CGAL::Tag_true With_empty_interval; 
 
-    struct Construct :public Binary_function<Boundary,Boundary,Interval>{
+    struct Construct :public std::binary_function<Boundary,Boundary,Interval>{
         Interval operator()( const Boundary& l,const Boundary& r) const {
             CGAL_precondition( l < r ); 
             return Interval(l,r);
         }
     };
 
-    struct Lower :public Unary_function<Interval,Boundary>{
+    struct Lower :public std::unary_function<Interval,Boundary>{
         Boundary operator()( const Interval& a ) const {
             return a.lower();
         }
     };
 
-    struct Upper :public Unary_function<Interval,Boundary>{
+    struct Upper :public std::unary_function<Interval,Boundary>{
         Boundary operator()( const Interval& a ) const {
             return a.upper();
         }
     };
 
-    struct Width :public Unary_function<Interval,Boundary>{
+    struct Width :public std::unary_function<Interval,Boundary>{
         Boundary operator()( const Interval& a ) const {
             return ::boost::numeric::width(a);
         }
     };
 
-    struct Median :public Unary_function<Interval,Boundary>{
+    struct Median :public std::unary_function<Interval,Boundary>{
         Boundary operator()( const Interval& a ) const {
             return ::boost::numeric::median(a);
         }
     };
     
-    struct Norm :public Unary_function<Interval,Boundary>{
+    struct Norm :public std::unary_function<Interval,Boundary>{
         Boundary operator()( const Interval& a ) const {
             return ::boost::numeric::norm(a);
         }
     };
 
-    struct Empty :public Unary_function<Interval,bool>{
+    struct Empty :public std::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::empty(a);
         }
     };
 
-    struct Singleton :public Unary_function<Interval,bool>{
+    struct Singleton :public std::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::singleton(a);
         }
     };
 
-    struct Zero_in :public Unary_function<Interval,bool>{
+    struct Zero_in :public std::unary_function<Interval,bool>{
         bool operator()( const Interval& a ) const {
             return ::boost::numeric::in_zero(a);
         }
     };
 
-    struct In :public Binary_function<Boundary,Interval,bool>{
+    struct In :public std::binary_function<Boundary,Interval,bool>{
         bool operator()( Boundary x, const Interval& a ) const {
             return ::boost::numeric::in(x,a);
         }
     };
 
-    struct Equal :public Binary_function<Interval,Interval,bool>{
+    struct Equal :public std::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::equal(a,b);
         }
     };
     
-    struct Overlap :public Binary_function<Interval,Interval,bool>{
+    struct Overlap :public std::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::overlap(a,b);
         }
     };
     
-    struct Subset :public Binary_function<Interval,Interval,bool>{
+    struct Subset :public std::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::subset(a,b);
         }
     };
     
-    struct Proper_subset :public Binary_function<Interval,Interval,bool>{
+    struct Proper_subset :public std::binary_function<Interval,Interval,bool>{
         bool operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::proper_subset(a,b);
         }
     };
     
-    struct Hull :public Binary_function<Interval,Interval,Interval>{
+    struct Hull :public std::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             return ::boost::numeric::hull(a,b);
         }
     };
     
-    struct Intersection :public Binary_function<Interval,Interval,Interval>{
+    struct Intersection :public std::binary_function<Interval,Interval,Interval>{
         Interval operator()( const Interval& a, const Interval& b ) const {
             Interval r = ::boost::numeric::intersect(a,b);      
             return r;
@@ -403,7 +403,7 @@ public:
     typedef leda_bigfloat_interval NT;
     typedef leda::bigfloat BF;
 
-    struct Get_significant_bits : public Unary_function<NT,long>{
+    struct Get_significant_bits : public std::unary_function<NT,long>{
 
         long operator()( NT x) const {
             leda::bigfloat lower = x.lower();
@@ -428,7 +428,7 @@ public:
         }
     };
   
-    struct Set_precision : public Unary_function<long,long> {
+    struct Set_precision : public std::unary_function<long,long> {
         long operator()( long prec ) const {
             return BF::set_precision(prec); 
         }

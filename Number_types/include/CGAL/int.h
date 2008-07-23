@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 namespace INTERN_INT {
     template< class Type >
     class Is_square_per_double_conversion
-      : public Binary_function< Type, Type&,
+      : public std::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x,
@@ -115,7 +115,7 @@ template<> class Algebraic_structure_traits< short int >
     //  interoperability. This is nescessary because of the implicit conversion
     //  to int for binary operations between short ints.
     class Integral_division
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -129,7 +129,7 @@ template<> class Algebraic_structure_traits< short int >
     };
 
     class Gcd
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -188,7 +188,7 @@ template<> class Algebraic_structure_traits< short int >
 
     // based on \c Div_mod.
     class Div
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -199,7 +199,7 @@ template<> class Algebraic_structure_traits< short int >
 
     // based on \c Div_mod.
     class Mod
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,

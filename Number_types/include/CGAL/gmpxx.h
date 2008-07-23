@@ -46,7 +46,6 @@
 #include <CGAL/mpz_class.h>
 #include <CGAL/mpq_class.h>
 #include <CGAL/gmpxx_coercion_traits.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
 

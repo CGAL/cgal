@@ -398,7 +398,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     typedef Tag_true            Is_numerical_sensitive;
 
     struct Unit_part
-      : public Unary_function< Type , Type >
+      : public std::unary_function< Type , Type >
     {
       Type operator()(const Type &x) const {
         return x.unit_part();
@@ -406,7 +406,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     struct Integral_division
-        : public Binary_function< Type,
+        : public std::binary_function< Type,
                                  Type,
                                  Type > {
     public:
@@ -422,7 +422,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 
 
     class Square
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::square(x);
@@ -430,7 +430,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Gcd
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -440,7 +440,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Div
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -453,7 +453,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 // Default implementation of Divides functor for unique factorization domains
   // x divides y if gcd(y,x) equals x up to inverses 
   class Divides 
-    : public Binary_function<Type,Type,bool>{ 
+    : public std::binary_function<Type,Type,bool>{ 
   public:
     bool operator()( const Type& x,  const Type& y) const {  
       return CGALi::division(y,x).second == 0 ;
@@ -477,7 +477,7 @@ template <> class Real_embeddable_traits< MP_Float >
   public:
 
     class Sign
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
@@ -485,7 +485,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -495,7 +495,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_double( x );
@@ -503,7 +503,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_interval( x );
@@ -788,14 +788,14 @@ class Real_embeddable_traits< Quotient<MP_Float> >
     : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<
 Quotient<MP_Float> >{
 public:
-    struct To_double: public Unary_function<Quotient<MP_Float>, double>{
+    struct To_double: public std::unary_function<Quotient<MP_Float>, double>{
          inline
          double operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_double(q);
         }
     };
     struct To_interval
-        : public Unary_function<Quotient<MP_Float>, std::pair<double,double> > {
+        : public std::unary_function<Quotient<MP_Float>, std::pair<double,double> > {
         inline
         std::pair<double,double> operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_interval(q);
@@ -810,14 +810,14 @@ public:
 //     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base<
 // Root_of_2<MP_Float> >{
 // public:
-//     struct To_double: public Unary_function<Root_of_2<MP_Float>, double>{
+//     struct To_double: public std::unary_function<Root_of_2<MP_Float>, double>{
 //          inline
 //          double operator()(const Root_of_2<MP_Float>& q) const {
 //             return INTERN_MP_FLOAT::to_double(q);
 //         }
 //     };
 //     struct To_interval
-//         : public Unary_function<Root_of_2<MP_Float>, std::pair<double,double> > {
+//         : public std::unary_function<Root_of_2<MP_Float>, std::pair<double,double> > {
 //         inline
 //         std::pair<double,double> operator()(const Root_of_2<MP_Float>& q) const {
 //             return INTERN_MP_FLOAT::to_interval(q);

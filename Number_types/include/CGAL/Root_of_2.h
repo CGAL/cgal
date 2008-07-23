@@ -416,7 +416,7 @@ public:
     typedef Root_of_2<RT> Type;
     typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
     struct Square
-        : public Unary_function< Root_of_2<RT> , Root_of_2<RT> >{
+        : public std::unary_function< Root_of_2<RT> , Root_of_2<RT> >{
         Root_of_2<RT> operator()(const Root_of_2<RT>& a){
 
             CGAL_assertion(is_valid(a));
@@ -448,7 +448,7 @@ public:
     typedef Tag_true Is_real_embeddable;
 
     class Abs
-        : public Unary_function< Type, Type >{
+        : public std::unary_function< Type, Type >{
     public:
         Type operator()(const Type& x) const {
             return (x>=0)?x:-x;
@@ -456,7 +456,7 @@ public:
     };
 
     class Sign
-        : public Unary_function< Type, ::CGAL::Sign >{
+        : public std::unary_function< Type, ::CGAL::Sign >{
     public:
         ::CGAL::Sign operator()(const Type& a) const {
             const ::CGAL::Sign sign_alpha = CGAL_NTS sign(a.alpha());
@@ -476,7 +476,7 @@ public:
     };
 
     class Compare
-        : public Binary_function< Type,
+        : public std::binary_function< Type,
                                   Type,
                                   Comparison_result >{
     public:
@@ -679,7 +679,7 @@ public:
     };
 
     class To_double
-        : public Unary_function< Type, double >{
+        : public std::unary_function< Type, double >{
     public:
         double operator()(const Type& x) const {
             typedef typename Root_of_traits<RT>::RootOf_1 FT;
@@ -703,7 +703,7 @@ public:
     };
 
     class To_interval
-        : public Unary_function< Type, std::pair< double, double > >{
+        : public std::unary_function< Type, std::pair< double, double > >{
     public:
         std::pair<double,double> operator()(const Type& x) const {
 
@@ -1377,7 +1377,7 @@ print(std::ostream &os, const Root_of_2<RT> &r)
 }
 
 template < typename RT >
-class Is_valid<Root_of_2<RT> >: public Unary_function<Root_of_2<RT> , bool>{
+class Is_valid<Root_of_2<RT> >: public std::unary_function<Root_of_2<RT> , bool>{
 public:
     bool operator()(const Root_of_2<RT> &r)
     {

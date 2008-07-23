@@ -46,8 +46,8 @@
 
 // basic tools needed in several files
 #include <boost/type_traits/is_same.hpp>
+#include <functional>
 
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
 #include <CGAL/Kernel/mpl.h>      // First_if_different
 #include <CGAL/known_bit_size_integers.h>
 #include <CGAL/enum.h>            // CGAL::Sign etc.

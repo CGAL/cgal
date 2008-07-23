@@ -50,7 +50,7 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
     typedef Tag_true            Is_numerical_sensitive;
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
@@ -58,7 +58,7 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
     };
 
     class Kth_root
-      : public Binary_function<int, Type, Type> {
+      : public std::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -78,7 +78,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
   public:
 
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -86,7 +86,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
 
     class Sign
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -94,7 +94,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -107,7 +107,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -115,7 +115,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
@@ -129,7 +129,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
 
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x )  const {
           return !( CGAL_LEDA_SCOPE::isInf(x) || CGAL_LEDA_SCOPE::isNaN(x) );
@@ -139,7 +139,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
 
 template<>
 class Is_valid< leda_bigfloat >
-  : public Unary_function< leda_bigfloat, bool > {
+  : public std::unary_function< leda_bigfloat, bool > {
   public :
     bool operator()( const leda_bigfloat& x ) const {
       return !( CGAL_LEDA_SCOPE::isNaN(x) );

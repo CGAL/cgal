@@ -498,7 +498,7 @@ operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
 
 template< class NT >
 class Is_valid< Quotient<NT> >
-  : public Unary_function< Quotient<NT>, bool > {
+  : public std::unary_function< Quotient<NT>, bool > {
   public :
     bool operator()( const Quotient<NT>& x ) const {
       return is_valid(x.num) && is_valid(x.den);
@@ -557,7 +557,7 @@ namespace INTERN_QUOTIENT {
   class Sqrt_selector {
     public:
       class Sqrt
-        : public Unary_function< NT, NT > {
+        : public std::unary_function< NT, NT > {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
@@ -589,7 +589,7 @@ public:
 
 
     class Is_square
-        : public Binary_function< Quotient<NT>, Quotient<NT>&, bool > {
+        : public std::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
     public:
         bool operator()( Quotient<NT> x, Quotient<NT>& y ) const {
             NT x_num, x_den, y_num, y_den;
@@ -620,7 +620,7 @@ public:
                             >::type Sqrt;
 
     class Simplify
-      : public Unary_function< Type&, void > {
+      : public std::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -638,7 +638,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     typedef Quotient<NT> Type;
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -648,7 +648,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
         // Original global function was marked with an TODO!!
@@ -680,7 +680,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           Interval_nt<> quot =
@@ -691,7 +691,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class Is_finite
-      : public Unary_function< Type, bool > {
+      : public std::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite(x.num) && CGAL_NTS is_finite(x.den);

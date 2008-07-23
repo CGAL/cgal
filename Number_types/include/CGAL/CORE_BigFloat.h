@@ -43,7 +43,7 @@ public:
     typedef CORE::BigFloat Boundary;
     typedef CGAL::Tag_true Is_interval; 
  
-    struct Lower :public Unary_function<Interval,Boundary>{
+    struct Lower :public std::unary_function<Interval,Boundary>{
         Boundary operator() ( Interval x ) const {   
             CORE::BigFloat result = ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
             CGAL_postcondition(result <= x);
@@ -51,7 +51,7 @@ public:
         }
     };
     
-    struct Upper :public Unary_function<Interval,Boundary>{
+    struct Upper :public std::unary_function<Interval,Boundary>{
         Boundary operator() ( Interval x ) const {     
             CORE::BigFloat result = ::CORE::BigFloat(x.m()+x.err(),0,x.exp());
             CGAL_postcondition(result >= x);
@@ -59,7 +59,7 @@ public:
         }
     };
 
-    struct Width :public Unary_function<Interval,Boundary>{
+    struct Width :public std::unary_function<Interval,Boundary>{
          
         Boundary operator() ( Interval x ) const {    
             unsigned long err = 2*x.err();
@@ -67,51 +67,51 @@ public:
         }
     };
 
-    struct Median :public Unary_function<Interval,Boundary>{
+    struct Median :public std::unary_function<Interval,Boundary>{
          
         Boundary operator() ( Interval x ) const {   
             return Boundary(x.m(),0,x.exp());
         }
     };
 
-    struct Norm :public Unary_function<Interval,Boundary>{
+    struct Norm :public std::unary_function<Interval,Boundary>{
         Boundary operator() ( Interval x ) const {      
             return std::max(Upper()(x).abs(),Lower()(x).abs());
         }
     };
     
-    struct Zero_in :public Unary_function<Interval,bool>{
+    struct Zero_in :public std::unary_function<Interval,bool>{
         bool operator() ( Interval x ) const {      
             return x.isZeroIn(); 
         }
     };
 
-    struct In :public Binary_function<Boundary,Interval,bool>{  
+    struct In :public std::binary_function<Boundary,Interval,bool>{  
         bool operator()( Boundary x, const Interval& a ) const {    
             CGAL_precondition(CGAL::singleton(x));
             return (Lower()(a) <= x && x <= Upper()(a));
         }
     };
 
-    struct Equal :public Binary_function<Interval,Interval,bool>{  
+    struct Equal :public std::binary_function<Interval,Interval,bool>{  
         bool operator()( const Interval& a, const Interval& b ) const { 
             return (Upper()(a) == Upper()(b) &&  Lower()(a) == Lower()(b));
         }
     };
     
-    struct Subset :public Binary_function<Interval,Interval,bool>{  
+    struct Subset :public std::binary_function<Interval,Interval,bool>{  
         bool operator()( const Interval& a, const Interval& b ) const {   
             return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b);
         }
     };
     
-    struct Proper_subset :public Binary_function<Interval,Interval,bool>{ 
+    struct Proper_subset :public std::binary_function<Interval,Interval,bool>{ 
         bool operator()( const Interval& a, const Interval& b ) const { 
             return Subset()(a,b) && (!Equal()(a,b));
         }
     };
     
-    struct Intersection :public Binary_function<Interval,Interval,Interval>{ 
+    struct Intersection :public std::binary_function<Interval,Interval,Interval>{ 
         Interval operator()( const Interval& a, const Interval& b ) const {
             // std::cout <<"a= (" << a.m() << "+-" << a.err() << ")*2^" << a.exp() << std::endl;
             Boundary l(CGAL::max(Lower()(a),Lower()(b)));
@@ -123,7 +123,7 @@ public:
     };
  
 
-    struct Overlap :public Binary_function<Interval,Interval,bool>{
+    struct Overlap :public std::binary_function<Interval,Interval,bool>{
         bool operator() ( Interval x, Interval y ) const {       
             Self::Zero_in Zero_in;
             bool result = Zero_in(x-y);
@@ -131,7 +131,7 @@ public:
         }
     };
    
-    struct Hull :public Binary_function<Interval,Interval,Interval>{
+    struct Hull :public std::binary_function<Interval,Interval,Interval>{
 
 /* for debugging
         void print_bf(CORE::BigFloat bf, std::string s) const {
@@ -221,13 +221,13 @@ public:
         }
     };
 
-    struct Singleton :public Unary_function<Interval,bool> {
+    struct Singleton :public std::unary_function<Interval,bool> {
         bool operator() ( Interval x ) const {       
             return (x.err() == 0); 
         }
     };
 
-    struct Construct :public Binary_function<Boundary,Boundary,Interval>{
+    struct Construct :public std::binary_function<Boundary,Boundary,Interval>{
         Interval operator()( const Boundary& l,const Boundary& r) const {
             CGAL_precondition( l < r ); 
             return Hull()(l,r);
@@ -345,7 +345,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     typedef Tag_true           Is_numerical_sensitive;
 
     class Sqrt
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             // What I want is a sqrt computed with ::CORE::defRelPrec bits.
@@ -373,7 +373,7 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     };
 
     class Kth_root
-      : public Binary_function<int, Type, Type> {
+      : public std::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -397,7 +397,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
   public:
 
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             Type result; 
@@ -430,7 +430,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class Sign
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             ::CGAL::Sign result =  sign( x.sign());
@@ -439,7 +439,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -451,7 +451,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -461,7 +461,7 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
                         

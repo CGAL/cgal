@@ -21,7 +21,7 @@
 #ifndef CGAL_NT_CONVERTER_H
 #define CGAL_NT_CONVERTER_H
 
-#include <CGAL/functional_base.h>
+#include <functional>
 
 template <bool> class Interval_nt;
 

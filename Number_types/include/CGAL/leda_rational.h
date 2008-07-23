@@ -63,7 +63,7 @@ template <> class Algebraic_structure_traits< leda_rational >
 //                                                                 Is_square;
 
     class Simplify
-      : public Unary_function< Type&, void > {
+      : public std::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -77,7 +77,7 @@ template <> class Real_embeddable_traits< leda_rational >
   public:
 
     class Abs
-      : public Unary_function< Type, Type > {
+      : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -85,7 +85,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Sign
-      : public Unary_function< Type, ::CGAL::Sign > {
+      : public std::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -93,7 +93,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class Compare
-      : public Binary_function< Type, Type,
+      : public std::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -104,7 +104,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_double
-      : public Unary_function< Type, double > {
+      : public std::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return x.to_double();
@@ -112,7 +112,7 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 
     class To_interval
-      : public Unary_function< Type, std::pair< double, double > > {
+      : public std::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
