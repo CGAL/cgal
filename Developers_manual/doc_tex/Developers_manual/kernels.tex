@@ -317,7 +317,7 @@ number-type based predicates ease re-use with non-\cgal\ types.
 redundant functionality. In particular, they do not provide a right
 turn predicate, since a left turn predicate exists. A right turn
 functor can be created from the left turn functor using the function
-\ccc{CGAL::swap_1}.
+\ccc{boost::bind}.
 
 Whenever you need a predicate that is not present in the current kernel
 traits, you should first try to re-use the available predicates (you
