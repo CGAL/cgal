@@ -141,6 +141,19 @@
 #endif
 
 /**
+ * This flags defines the default strategy to handle degenerate curves
+ * There are three choices currently available:
+ * SHEAR_STRATEGY performs a shear whenever a degenerate situation occurs.
+ * SHEAR_ONLY_AT_IRRATIONAL_STRATEGY handles rational coordinates with
+ * a more direct method, but performs a shear for irrational x-coordinates
+ * that have a degeneracy. Finally, EXCEPTION_STRATEGY throws an exception 
+ * whenever a degeneracy occurs.
+ */
+#ifndef CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY
+#define CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY
+#endif
+
+/**
  * The algorithm can also handle non-y-regular curves without shearing,
  * in case that the resultant multiplicity at vertical asymptotes is one.
  * This special treatement can be switched off by setting this flag.

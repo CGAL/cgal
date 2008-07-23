@@ -60,7 +60,7 @@ enum Degeneracy_strategy {
     
     SHEAR_STRATEGY = 0,
     EXCEPTION_STRATEGY = 1,
-    
+    SHEAR_ONLY_AT_IRRATIONAL_STRATEGY = 2
 };
 
 
@@ -380,11 +380,16 @@ public:
      * Analyses the curve that is defined by the vanishing set of the
      * polynomial \c f. 
      * \pre \c f is square free.
-     * \param strategy The default strategy (\c SHEAR_STRATEGY)
+     * \param strategy The default strategy 
+     * (\c SHEAR_ONLY_AT_IRRATIONAL_STRATEGY)
      * is to \c shear the curve
-     * if a degenerate situation is detected during the analysis. The analysis
+     * if a degenerate situation is detected during the analysis,
+     * except at rational x-coordinates where the curve can be analysed
+     * more directly. The analysis
      * is then performed in  the sheared system, and finally translated back
-     * into the original system. With that strategy, it is guaranteed that
+     * into the original system. 
+     * Using \c SHEAR_STRATEGY, a shear is triggered also for degeneracies
+     * at rational x-coordinate. With both strategies, it is guaranteed that
      * the analysis works successfully for any square free input curve.
      * On the other hand, the EXCEPTION_STRATEGY throws an exception of type
      * \c CGALi::Zero_resultant_exception<Polynomial_2>, 
@@ -392,7 +397,7 @@ public:
      */
     explicit Curve_analysis_2(const Polynomial_2& f,
                               CGAL::Degeneracy_strategy strategy
-                                  = CGAL::SHEAR_STRATEGY) 
+                                  = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
         throw(CGALi::Zero_resultant_exception<Polynomial_2>)
         : Base(Rep(f,strategy))
     {
@@ -666,6 +671,10 @@ private:
     Status_line_1 create_status_line_at_event(size_type index) const 
         throw(CGAL::CGALi::Non_generic_position_exception) {
 
+        Event_coordinate_1& event = event_coordinates()[index];
+        
+        X_coordinate_1 x = event.val;
+        
         try {
             
             Event_coordinate_1& event = event_coordinates()[index];
@@ -737,6 +746,12 @@ private:
                 throw CGAL::CGALi::Non_generic_position_exception();
                 break;
             }
+            case(CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY): {
+                if(x.is_rational()) {
+                    return create_non_generic_event_at_rational(x,index);
+                }
+                // FALL INTO NEXT CASE                    
+            }
             case(CGAL::SHEAR_STRATEGY): {
                 return create_non_generic_event_with_shear(index);
                 break;
@@ -803,6 +818,200 @@ private:
         
         return status_line_at_event(index);
     }
+
+private:
+
+    /*
+     * \brief creates a status line for a rational event x-coordinate
+     *
+     * If an event coordinate is rational, a shear can be prevented
+     * by plugging in the x-coordinate for x and explicitly computing
+     * the square free part of the defining polynomial at this position.
+     */
+    Status_line_1 create_non_generic_event_at_rational(X_coordinate_1 x,
+                                                       size_type index) const {
+
+        
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "Non-generic, rational position x = " 
+                             << CGAL::to_double(x)
+                             << std::flush;
+#endif
+        
+        CGAL_precondition(x.is_rational());
+        Boundary r = x.rational();
+
+        typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
+        Poly_coer_1 f_at_x_with_denom 
+            = typename Polynomial_traits_2::Swap() (primitive_polynomial_2(), 
+                                                    0, 1).evaluate(r);
+        typename FT::Numerator_type f_at_x, f_at_x_sq_free;
+        typename FT::Denominator_type denom;
+        typename FT::Decompose() (f_at_x_with_denom, f_at_x, denom);
+        
+        f_at_x_sq_free 
+            = typename CGAL::Polynomial_traits_d<typename FT::Numerator_type>
+                ::Make_square_free() (f_at_x);
+
+        Bitstream_traits traits(x);
+
+        // We need to make an artificial bivariate polynomial
+        typedef CGAL::Polynomial<typename FT::Numerator_type> Poly_coer_num_2;
+        std::vector<typename FT::Numerator_type> coeffs;
+        for(int i = 0; i <= f_at_x_sq_free.degree(); i++) {
+            coeffs.push_back(typename FT::Numerator_type(f_at_x_sq_free[i]));
+        }
+        Poly_coer_num_2 f_at_x_ext(coeffs.begin(), coeffs.end());
+
+        Bitstream_descartes isolator(CGAL::CGALi::Square_free_descartes_tag(),
+                                     f_at_x_ext,
+                                     traits);
+        
+        // Now adjacencies
+        std::vector<Boundary> bucket_borders;
+
+        int n = isolator.number_of_real_roots();
+
+        if(n==0) {
+            bucket_borders.push_back(0);
+        } else {
+            bucket_borders.push_back(
+                    CGAL::CGALi::simple_rational_left_of
+                        (X_coordinate_1(isolator.left_boundary(0))));
+            for(int i = 1; i < n; i++) {
+                while(X_coordinate_1(isolator.right_boundary(i-1))==
+                      X_coordinate_1(isolator.left_boundary(i))) {
+                    isolator.refine_interval(i-1);
+                    isolator.refine_interval(i);
+                }
+                bucket_borders.push_back(
+                        CGAL::CGALi::simple_rational_between
+                        (X_coordinate_1(isolator.right_boundary(i-1)),
+                         X_coordinate_1(isolator.left_boundary(i)))
+                );
+            }
+            
+            bucket_borders.push_back(
+                    CGAL::CGALi::simple_rational_right_of
+                        (X_coordinate_1(isolator.right_boundary(n-1))));
+        }
+
+        Boundary left = boundary_value_in_interval(index);
+        Boundary right = boundary_value_in_interval(index+1);
+        
+        typedef boost::numeric::interval<Boundary> Boundary_interval;
+
+        for(int i = 0; i < static_cast<int>(bucket_borders.size()); i++) {
+            
+            Poly_coer_1 curr_pol 
+                =  primitive_polynomial_2().evaluate(bucket_borders[i]);
+            
+            while(true) {
+                Boundary_interval curr_interval 
+                    = evaluate_iv(curr_pol,Boundary_interval(left,right));
+
+                if(boost::numeric::in_zero(curr_interval)) {
+                    // "refine"
+                    Boundary middle = (left+right)/2;
+                    if(middle==r) {
+                        left=(left+middle)/2;
+                        right = (right+middle)/2;
+                    } else if(middle>r) {
+                        right=middle;
+                    } else {
+                        left=middle;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        Status_line_1 left_line 
+            = status_line_at_exact_non_event_x(X_coordinate_1(left)),
+            right_line 
+            = status_line_at_exact_non_event_x(X_coordinate_1(right));
+        
+        int n_left = left_line.number_of_events();
+        int n_right = right_line.number_of_events();
+        
+        std::vector<int> left_arcs(bucket_borders.size()+1),
+            right_arcs(bucket_borders.size()+1);
+        
+        for(unsigned int i=0;i<left_arcs.size();i++) {
+            left_arcs[i]=0;
+        }
+        for(unsigned int i=0;i<right_arcs.size();i++) {
+            right_arcs[i]=0;
+        }
+        
+        int curr_index=0;
+        for(int i=0; i < n_left; i++) {
+            
+            while(true) {
+                if(curr_index==static_cast<int>(bucket_borders.size())) {
+                    left_arcs[curr_index]++;
+                    break;
+                } else if(left_line.lower_boundary(i)>
+                          bucket_borders[curr_index]) {
+                    curr_index++;
+                } else if(left_line.upper_boundary(i)<
+                          bucket_borders[curr_index]) {
+                    left_arcs[curr_index]++;
+                    break;
+                } else {
+                    left_line.refine(i);
+                }
+            }
+        }
+        curr_index=0;
+        for(int i=0; i < n_right; i++) {
+            
+            while(true) {
+                if(curr_index==static_cast<int>(bucket_borders.size())) {
+                    right_arcs[curr_index]++;
+                    break;
+                } else if(right_line.lower_boundary(i)>
+                          bucket_borders[curr_index]) {
+                    curr_index++;
+                } else if(right_line.upper_boundary(i)<
+                          bucket_borders[curr_index]) {
+                    right_arcs[curr_index]++;
+                    break;
+                } else {
+                    right_line.refine(i);
+                }
+            }
+
+        }
+        
+        typename Status_line_1::Arc_container arc_container;
+        
+        for(int i = 0; i < n; i++) {
+            arc_container.push_back(std::make_pair(left_arcs[i+1],
+                                                   right_arcs[i+1]));
+        }
+        
+        Status_line_1 status_line(x,index,*this,n_left,n_right,arc_container);
+
+        status_line._set_number_of_branches_approaching_infinity
+            (std::make_pair(left_arcs[0],right_arcs[0]),
+             std::make_pair(left_arcs[n+1],right_arcs[n+1]));
+
+        status_line.set_isolator(isolator);
+
+        if(event_coordinates()[index].mult_of_content_root > 0) {
+            status_line._set_v_line();
+        }
+
+#if CGAL_ACK_DEBUG_FLAG
+        CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
+#endif
+
+        return status_line;
+    }
+
+
 
 public:
 
