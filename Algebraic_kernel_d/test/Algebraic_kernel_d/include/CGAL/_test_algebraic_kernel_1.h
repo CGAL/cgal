@@ -136,10 +136,9 @@ void test_algebraic_kernel_1() {
     // Test AK::Square_free_factorization_1...
     typename AK::Square_free_factorization_1 square_free_factorization_1 
       = AK().construct_square_free_factorization_1_object();
-    std::vector<Polynomial_1> factors;
-    std::vector<int> mults;
-    square_free_factorization_1( poly1, std::back_inserter(factors), 
-                                     std::back_inserter(mults) );
+    
+    std::vector<std::pair<Polynomial_1,int> > fac_mult_pairs;
+    square_free_factorization_1( poly1, std::back_inserter(fac_mult_pairs) );
         
     ////////////////////////////////////////////////////////////////////////////
     
