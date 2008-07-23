@@ -29,6 +29,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/Degeneracy_strategy.h>
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Non_generic_position_exception.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/Status_line_CPA_1.h>
@@ -145,8 +146,10 @@ struct Curve_pair_analysis_2_rep {
         c1_(), c2_() {
     }
 
-    Curve_pair_analysis_2_rep(Curve_analysis_2 c1, Curve_analysis_2 c2) :
-        c1_(c1), c2_(c2), f(c1.polynomial_2()), g(c2.polynomial_2()) {
+    Curve_pair_analysis_2_rep(Curve_analysis_2 c1, Curve_analysis_2 c2,
+                              CGAL::Degeneracy_strategy strategy) :
+        c1_(c1), c2_(c2), f(c1.polynomial_2()), g(c2.polynomial_2()),
+        degeneracy_strategy(strategy) {
     }
 
     //! @}
@@ -191,6 +194,8 @@ private:
     mutable Lazy_intersection_info_container intersection_info_container;
 
     typedef typename Curve_analysis_2::Integer Integer;
+
+    CGAL::Degeneracy_strategy degeneracy_strategy;
 
     mutable CGAL::CGALi::Shear_controller<Integer> shear_controller;
 
@@ -341,10 +346,13 @@ public:
      * which cannot be used from outside the object, or a 
      * Non_generic_position_exception is thrown.
      */
-    Curve_pair_analysis_2(Curve_analysis_2 c1, Curve_analysis_2 c2) 
+    Curve_pair_analysis_2(Curve_analysis_2 c1, 
+                          Curve_analysis_2 c2,
+                          CGAL::Degeneracy_strategy strategy
+                              = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
         throw(CGAL::CGALi::Zero_resultant_exception<Polynomial_2>,
               CGAL::CGALi::Non_generic_position_exception)
-        : Base(Rep(c1, c2)) {
+        : Base(Rep(c1, c2, strategy)) {
             
 #if CGAL_ACK_DEBUG_FLAG
             CGAL::set_pretty_mode(CGAL_ACK_DEBUG_PRINT);
@@ -500,7 +508,7 @@ private:
         return this->ptr()->subresultants.get();
     }
 
-    Polynomial_2& subresultants(size_type i) {
+    Polynomial_2& subresultants(size_type i) const {
         CGAL_assertion(i>=0 && 
                        i < static_cast<size_type>(subresultants().size()));
         return subresultants()[i];
@@ -568,7 +576,7 @@ private:
     /*!
      * TODO doc
      */
-    Status_line_CPA_1 create_event_slice(size_type i,bool use_shear=true) 
+    Status_line_CPA_1 create_event_slice(size_type i) 
         const {
 #if !CGAL_ACK_NO_ARC_FLIP
         size_type index_in_fg = index_triples(i).fg;
@@ -581,15 +589,14 @@ private:
                 return create_slice_with_multiplicity_zero_or_one(i);
             } else {
 #endif
-                return create_slice_of_higher_multiplicity(i,use_shear);
+                return create_slice_of_higher_multiplicity(i);
 #if !CGAL_ACK_NO_ARC_FLIP
             }
         }
 #endif
     }
 
-    Status_line_CPA_1 create_slice_of_higher_multiplicity(size_type i,
-                                                          bool use_shear=true) 
+    Status_line_CPA_1 create_slice_of_higher_multiplicity(size_type i) 
         const {
         bool is_resultant_root = index_triples(i).fg >=0;
         if(is_resultant_root &&
@@ -601,17 +608,73 @@ private:
 
             return slice;
         } catch(CGAL::CGALi::Non_generic_position_exception ex) {
-
-            if(! use_shear) {
-                throw;
-            } else {
+            switch(this->ptr()->degeneracy_strategy) {
+            case(CGAL::EXCEPTION_STRATEGY): {
+                throw ex;
+                break;
+            }
+            case(CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY): {
+                if(event_x(i).is_rational()) {
+                    return create_event_slice_at_rational(i);
+                }
+                // FALL INTO NEXT CASE
+            }
+            case(CGAL::SHEAR_STRATEGY): {
                 return create_event_slice_with_shear(i);
             }
+            }
+            
+            
+            // NEVER HAPPENS
+            return Status_line_CPA_1();
+            
         }
+    }
 
-        // NEVER HAPPENS
-        return Status_line_CPA_1();
+private:
+    Status_line_CPA_1 create_event_slice_at_rational(size_type i) const {
+        
+        X_coordinate_1& x = event_x(i);
 
+        CGAL_precondition(x.is_rational());
+        Boundary r = x.rational();
+
+        typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
+        
+        int k = degree_of_local_gcd(index_triples(i).fg,x);
+        Polynomial_2 sres = subresultants(k);
+        
+        Poly_coer_1 gcd_with_denom 
+            = typename Polynomial_traits_2::Swap() (sres, 
+                                                    0, 1).evaluate(r);
+        typename FT::Numerator_type gcd, gcd_sq_free;
+        typename FT::Denominator_type denom;
+        typename FT::Decompose() (gcd_with_denom, gcd, denom);
+        
+        gcd_sq_free 
+            = typename CGAL::Polynomial_traits_d<typename FT::Numerator_type>
+                ::Make_square_free() (gcd);
+
+        std::vector<X_coordinate_1> gcd_roots;
+        Solve_1()(gcd_sq_free,std::back_inserter(gcd_roots));
+        int m = gcd_roots.size();
+
+        Slice_info slice_info = construct_slice_info(x);
+        reduce_number_of_candidates_and_intersections_to
+            (m,
+             this->ptr()->c1_.status_line_at_exact_x(x),
+             this->ptr()->c2_.status_line_at_exact_x(x),
+             slice_info);
+        for(typename Slice_info::iterator it=slice_info.begin();
+            it!=slice_info.end();
+            it++) {
+
+            if(it->first==CGAL::CGALi::CANDIDATE) {
+                it->first=CGAL::CGALi::INTERSECTION;
+            }
+        }
+        
+        return create_slice_from_slice_info(i,slice_info,true);
     }
 
 private:
@@ -768,7 +831,7 @@ public:
     }
 
     //! Returns the x-coordinate of the <tt>i</tt>th event
-    X_coordinate_1 event_x(size_type i) const {
+    X_coordinate_1& event_x(size_type i) const {
         CGAL_assertion(i>=0 && 
                        i<static_cast<size_type>(event_x_coordinates().size()));
         return event_x_coordinates()[i];
@@ -816,23 +879,15 @@ public:
     }
 
 
-private:
-      
-    const Status_line_CPA_1& _status_line_at_event(size_type i,
-                                             bool use_shear) const {
-        
-        if(! this->ptr()->event_slices[i]) {
-            this->ptr()->event_slices[i] = create_event_slice(i,use_shear);
-        }
-        
-        return *(this->ptr()->event_slices[i]);
-    }
-
 public:
       
     //! Returns the Status_line_CPA_1 at the <tt>i</tt>th event
     const Status_line_CPA_1& status_line_at_event(size_type i) const {
-        return this->_status_line_at_event(i,true);
+        if(! this->ptr()->event_slices[i]) {
+            this->ptr()->event_slices[i] = create_event_slice(i);
+        }
+        CGAL_assertion(this->ptr()->event_slices[i]);
+        return this->ptr()->event_slices[i].get();
     }
       
 
@@ -2292,7 +2347,6 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
     CGAL_ACK_DEBUG_PRINT << "Use shear for intersections.." << std::endl;
 #endif
     bool good_direction_found=false;
-    Self sh_pair;
     Integer s;
     
     while(! good_direction_found) {
@@ -2320,7 +2374,7 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
                 << "<<<<<<<<<<< End of transform second curve" 
                 << std::endl;
 #endif
-            sh_pair=Self(sh1,sh2);
+            Self sh_pair(sh1,sh2,CGAL::EXCEPTION_STRATEGY);
             
 #if CGAL_ACK_DEBUG_FLAG 
             CGAL_ACK_DEBUG_PRINT << "Shear back intersection points..." 
@@ -2334,7 +2388,7 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
                     continue;
                 }
                 Status_line_CPA_1 slice 
-                    = sh_pair._status_line_at_event(i,false);
+                    = sh_pair.status_line_at_event(i);
                 Curves_at_event_functor functor(slice);
                 for(size_type j=0;j<slice.number_of_events();j++) {
                     if(functor(j) == CGAL::CGALi::INTERSECTION) {

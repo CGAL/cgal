@@ -39,6 +39,7 @@
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_controller.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Shear_transformation.h>
 #include <CGAL/Algebraic_curve_kernel_2/analyses/Zero_resultant_exception.h>
+#include <CGAL/Algebraic_curve_kernel_2/analyses/Degeneracy_strategy.h>
 #include <CGAL/Polynomial/sturm_habicht_sequence.h>
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/shear.h>
@@ -48,21 +49,6 @@ CGAL_BEGIN_NAMESPACE
 template<typename AlgebraicKernel_2, 
          typename Rep_>
 class Curve_analysis_2;
-
-/*!
- * \brief Represents different strategies how to handle 
- * degenerate cases during the analysis
- *
- * Currently, there are two possible strategies implemented. See the 
- * constructor of \c Curve_analysis_2 for more details.
- */
-enum Degeneracy_strategy {
-    
-    SHEAR_STRATEGY = 0,
-    EXCEPTION_STRATEGY = 1,
-    SHEAR_ONLY_AT_IRRATIONAL_STRATEGY = 2
-};
-
 
 namespace CGALi {
 
@@ -155,7 +141,7 @@ private:
     boost::optional<Polynomial_2> f;
 
     //! How degenerate situations are handled
-    size_type degeneracy_strategy;
+    CGAL::Degeneracy_strategy degeneracy_strategy;
 
     /*!
      * \brief The polynomial without its content (the gcd of the coeffs).
