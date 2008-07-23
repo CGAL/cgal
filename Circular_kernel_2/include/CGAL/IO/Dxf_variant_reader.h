@@ -1,10 +1,9 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -18,11 +17,12 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion
 //                 Andreas Fabri, Ron Wein, Julien Hazebrouck
 
+// Partially supported by the IST Programme of the EU as a Shared-cost
+// RTD (FET Open) Project under Contract No  IST-2000-26473 
+// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// and a STREP (FET Open) Project under Contract No  IST-006413 
+// (ACS -- Algorithms for Complex Shapes)
 
-// Descriptions of the file format can be found at
-// http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
-// http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
-// 
 // Descriptions of the file format can be found at
 // http://www.autodesk.com/techpubs/autocad/acad2000/dxf/
 // http://www.tnt.uni-hannover.de/soft/compgraph/fileformats/docs/DXF.ascii
