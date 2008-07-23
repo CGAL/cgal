@@ -27,8 +27,6 @@
 // These functors come from the 2D-3D kernels.
 // Since they have changed there, they now need to be copied here.
 
-#include <CGAL/functional_base.h>
-
 CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
