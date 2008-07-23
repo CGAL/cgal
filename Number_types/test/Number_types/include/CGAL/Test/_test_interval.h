@@ -15,7 +15,6 @@
 // TODO: Add Is_empty?
 
 #include <CGAL/basic.h>
-#include <CGAL/Test/_test_basic.h>
 
 #include <cstddef>
 #include <boost/static_assert.hpp>
@@ -60,7 +59,6 @@ void test_with_empty_interval(CGAL::Tag_true) {
 
     typedef CGAL::Interval_traits<Interval> IT;
     typedef typename IT::Empty Empty;
-    Test_functor_arity<Empty >()(1);
     const  Empty empty = Empty();
 
     assert(empty(typename IT::Intersection()(Interval(1),Interval(2))));
@@ -97,23 +95,6 @@ void test_interval() {
     typedef typename IT::Intersection Intersection;
     typedef typename IT::Hull Hull;
 
-    Test_functor_arity<Construct >()(2);
-    Test_functor_arity<Lower >()(1);
-    Test_functor_arity<Upper >()(1); 
-    Test_functor_arity<Width >()(1); 
-    Test_functor_arity<Median >()(1);  
-    Test_functor_arity<Norm >()(1); 
- 
-    Test_functor_arity<Singleton >()(1);
-    Test_functor_arity<In >()(2);
-    Test_functor_arity<Zero_in >()(1);   
-    Test_functor_arity<Equal >()(2);
-    Test_functor_arity<Overlap >()(2);
-    Test_functor_arity<Subset >()(2);
-    Test_functor_arity<Proper_subset >()(2);
-    Test_functor_arity<Intersection >()(2);
-    Test_functor_arity<Hull >()(2);
-    
     const  Construct construct = Construct();
     const  Lower lower = Lower();
     const  Upper upper = Upper(); 
