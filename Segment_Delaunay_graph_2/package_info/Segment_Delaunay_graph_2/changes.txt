@@ -1,3 +1,7 @@
+23 July 2008 Michael Hoffmann
+- Remove dependency on CGAL/functional -> replace Unary_function
+  and Binary_function by std:: counterparts.
+
 25 August 2006:  Menelaos Karavelas
 - more name changes for variables called "small"
 

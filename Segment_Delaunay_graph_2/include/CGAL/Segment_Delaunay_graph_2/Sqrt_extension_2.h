@@ -259,7 +259,7 @@ public:
     typedef Sqrt_extension_2<NT> Real_embeddable;
     
     class Abs 
-        : public Unary_function< Real_embeddable, Real_embeddable >{
+        : public std::unary_function< Real_embeddable, Real_embeddable >{
     public:
         Real_embeddable operator()(const Real_embeddable& x) const {
             return (x>=0)?x:-x;
@@ -267,7 +267,7 @@ public:
     };    
 
     class Sign 
-        : public Unary_function< Real_embeddable, CGAL::Sign >{
+        : public std::unary_function< Real_embeddable, CGAL::Sign >{
     public:
         CGAL::Sign operator()(const Real_embeddable& x) const {
             return x.sign();
@@ -275,7 +275,7 @@ public:
     };
     
     class Compare 
-        : public Binary_function< Real_embeddable, 
+        : public std::binary_function< Real_embeddable, 
                                   Real_embeddable, 
                                   CGAL::Comparison_result >{
     public:
@@ -289,7 +289,7 @@ public:
     };
     
     class To_double 
-        : public Unary_function< Real_embeddable, double >{
+        : public std::unary_function< Real_embeddable, double >{
     public:
         double operator()(const Real_embeddable& x) const {
             return x.to_double();
@@ -297,7 +297,7 @@ public:
     };
     
     class To_interval 
-        : public Unary_function< Real_embeddable, std::pair< double, double > >{
+        : public std::unary_function< Real_embeddable, std::pair< double, double > >{
     public:
         std::pair<double,double> operator()(const Real_embeddable& x) const {
             return x.to_interval();
