@@ -447,9 +447,10 @@ public:
     struct Rep_bind {
         //! this default constructor contains some compile-time checks.
         Rep_bind() {
-            Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>
-                check;
-            (void)check;
+	  //Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>
+	  //     check;
+          //  (void)check;
+	  (void)Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>();
         }
         //! the representation type including a reference counter. 
         //! The handle allocates objects of this type.
@@ -578,9 +579,10 @@ public:
     struct Rep_bind {
         //! this default constructor contains some compile-time checks.
         Rep_bind() {
-            Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>
-                check;
-            (void)check;
+	  //Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>
+	  //     check;
+	  // (void)check;
+	  (void)Intern::Rep_bind_reference_counted_with_forwarding<T, hierarchy>();
         }
         //! the representation type including a reference counter. 
         //! The handle allocates objects of this type.
@@ -797,8 +799,9 @@ private:
     }
     template <class TT>
     Rep* make_from_single_arg( TT t, ::CGAL::Tag_true ) {
-        Bind bind_; // trigger compile-time check
-        (void)bind_;
+      //Bind bind_; // trigger compile-time check
+      // (void)bind_;
+      (void)Bind(); // shouldn't this be enough to trigger?
         return t; // has to be a pointer convertible to Rep*
     }
 
@@ -853,8 +856,9 @@ protected:
     Handle_with_policy( Rep* p) : ptr_( p) {
         BOOST_STATIC_ASSERT((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
-        Bind bind_; // trigger compile-time check
-        (void)bind_;
+        //Bind bind_; // trigger compile-time check
+        //(void)bind_;
+	(void)Bind();
     }
 
     //! initializes the representation after the constructor from 
@@ -866,8 +870,9 @@ protected:
     void initialize_with( Rep* p) {
         BOOST_STATIC_ASSERT((
            ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
-        Bind bind_; // trigger compile-time check
-        (void)bind_;
+        //Bind bind_; // trigger compile-time check
+        //(void)bind_;
+	(void)Bind();
         CGAL_precondition_msg( ptr_ == 0, "Handle_with_policy::initialize_with(): the "
                          "representation has already been initialized.");
         ptr_ = p;
@@ -1052,8 +1057,9 @@ public:
 
     //! destructor, decrements reference count.
     ~Handle_with_policy() {
-        Bind bind_; // trigger compile-time check
-        (void)bind_;
+      //Bind bind_; // trigger compile-time check
+      //(void)bind_;
+      (void)Bind();
         CGAL_precondition_msg( ptr_ != 0, "Handle_with_policy::~Handle_with_policy(): probably used "
                          "special protected constructor and not the "
                          "'initialize_with()' function.");

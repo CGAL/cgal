@@ -1,3 +1,6 @@
+23 July 2008 Michael Hoffmann
+- remove bind/compose/swap functor adaptors
+
 19 June 2008 Michael Hoffmann
 - deprecate bind/compose/swap functor adaptors
 

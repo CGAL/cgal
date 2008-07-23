@@ -593,14 +593,12 @@
   \ccThree{typename Compare_to_less< F >::Type}{compare_to_less}{}
   
   \ccFunction{template < class F > Compare_to_less< F >
-     compare_to_less(const F& f);}{returns a functor
-    equivalent to \ccc{f}, but which returns a bool instead of a
-    \ccc{Comparison_result}.  \ccRequire F is a model for
-    \ccc{AdaptableFunctor}.}
+    compare_to_less(const F& f);}{returns a functor equivalent to
+    \ccc{f}, but which returns a bool instead of a
+    \ccc{Comparison_result}.}
   
   \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Compare_to_less<F>}\\
-  \ccRefConceptPage{AdaptableFunctor}
+  \ccRefIdfierPage{CGAL::Compare_to_less<F>}
   
 \end{ccRefFunction}
 
@@ -618,32 +616,9 @@
   \ccNestedType{Type}{type of the composed functor.}
   
   \ccSeeAlso
-  \ccRefIdfierPage{CGAL::compare_to_less}\\
-  \ccRefConceptPage{AdaptableFunctor}
+  \ccRefIdfierPage{CGAL::compare_to_less}
   
 \end{ccRefClass}
-
-\begin{ccRefFunctionObjectConcept}{AdaptableFunctor}
-  
-  \ccDefinition The concept \ccRefName\ defines an adaptable functor,
-  i.e., a functor that can be used with function object adaptors such
-  as binders.
-
-  \ccTypes 
-  
-  \ccTwo{Arity}{} \ccNestedType{result_type}{return type of the
-    functor.}  
-
-  \ccOperations
-  
-  \ccTagFullDeclarations\ccCreationVariable{f} \ccMethod{result_type
-    operator()(type1 a1, type2 a2, ..., typen an) const;}{returns
-    \ccc{f(a1,...an)}.}  \ccTagDefaults
-    
-  \ccHasModels All functors from the standard library, and all
-  functors from the lower dimensional CGAL kernels. 
-
-\end{ccRefFunctionObjectConcept}
 
 %% +=========================================================================+
 
