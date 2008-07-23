@@ -11,6 +11,8 @@
 //
 // ============================================================================
 
+#define CGAL_ACK_DEBUG_FLAG 0
+
 // Allow only coprime curve pairs for that demo!
 #define CGAL_ACK_DONT_CHECK_POLYNOMIALS_FOR_COPRIMALITY 1
 
@@ -33,8 +35,6 @@
 
 #include <CGAL/Timer.h>
 CGAL::Timer overall_timer;
-CGAL::Timer first_curve_timer, second_curve_timer,
-  pair_timer;
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Preferred_algebraic_curve_kernels_2.h>
@@ -77,9 +77,6 @@ void print_help(char* execname) {
 
 void reset_timers() {
   overall_timer.reset();
-  first_curve_timer.reset();
-  second_curve_timer.reset();
-  pair_timer.reset();
 }
 
 template<class NT>
@@ -146,6 +143,9 @@ int main(int argc,char** argv) {
               print_parse_error(str);
               std::exit(-1);
           }
+      }
+      while(input.peek()=='\n' || input.peek()==' ') {
+          input.get();
       }
       if(input.peek()=='P') {
           input >> g;
@@ -228,30 +228,14 @@ int main(int argc,char** argv) {
                << std::endl;
      reset_timers();
      overall_timer.start();
-     std::cout << "+++++++++++++++ One curve analysis starts +++++++++++" << std::endl;
-     first_curve_timer.start();
      Curve_analysis_2 F(f);
-     first_curve_timer.stop();
-     second_curve_timer.start();
      Curve_analysis_2 G(g);
-     second_curve_timer.stop();
-     std::cout << "+++++++++++++++ One curve analysis ends +++++++++++" << std::endl;
-     std::cout << "*************** Two  curve analysis starts ***************" << std::endl;
-     pair_timer.start();
      Curve_pair_analysis_2 algebraic_curve_pair(F,G);
-     pair_timer.stop();
-     overall_timer.stop();   
-     std::cout << "*************** Two curve analysis ends ***************" << std::endl;
 
      std::cout << algebraic_curve_pair << std::endl;
 
-     std::cout << "TIMINGS: " << std::endl;
-     std::cout << "Analysing 1st curve:  " << first_curve_timer.time() 
-               << std::endl; 
-     std::cout << "Analysing 2nd curve:  " << second_curve_timer.time() 
-               << std::endl;
-     std::cout << "Analysing curve pair: " << pair_timer.time() << std::endl; 
-     std::cout << "----" << std::endl;
+     overall_timer.stop();   
+
      std::cout << "Overall timer:        " << overall_timer.time() << std::endl; 
 
    }
