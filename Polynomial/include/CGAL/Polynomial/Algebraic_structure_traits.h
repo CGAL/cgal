@@ -78,7 +78,7 @@ class Polynomial_algebraic_structure_traits_base< POLY,
     typedef Integral_domain_without_division_tag Algebraic_category;
     
     class Simplify 
-      : public Unary_function< POLY&, void > {
+      : public std::unary_function< POLY&, void > {
       public:
         void operator()( POLY& p ) const {
           p.simplify_coefficients();
@@ -86,7 +86,7 @@ class Polynomial_algebraic_structure_traits_base< POLY,
     };
     
     class Unit_part 
-      : public Unary_function< POLY, POLY > {
+      : public std::unary_function< POLY, POLY > {
       public:
         POLY operator()( const POLY& x ) const {
           return POLY( x.unit_part() );
@@ -103,7 +103,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Integral_domain_tag >
     typedef Integral_domain_tag Algebraic_category;
     
     class Integral_division 
-      : public Binary_function< POLY, POLY, POLY > {
+      : public std::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()( const POLY& x, const POLY& y ) const {
           return x / y;
@@ -117,7 +117,7 @@ private:
   typedef typename Divides_coeff::result_type BOOL;
 public:
   class Divides 
-    : public Binary_function<POLY,POLY,BOOL>{  
+    : public std::binary_function<POLY,POLY,BOOL>{  
   public:
      BOOL operator()( const POLY& p1, const POLY& p2) const {
        POLY q; 
@@ -191,7 +191,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
     typedef Unique_factorization_domain_tag Algebraic_category;
     
     class Gcd 
-      : public Binary_function< POLY, POLY, POLY > {
+      : public std::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()( const POLY& x, const POLY& y ) const {
             typedef Algebraic_structure_traits<POLY> AST;
@@ -258,7 +258,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
     };
     
     class Div 
-      : public Binary_function< POLY, POLY, POLY > {
+      : public std::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()(const POLY& a, const POLY& b) const {
           POLY q, r;
@@ -270,7 +270,7 @@ class Polynomial_algebraic_structure_traits_base< POLY, Field_tag >
     };
     
     class Mod 
-      : public Binary_function< POLY, POLY, POLY > {
+      : public std::binary_function< POLY, POLY, POLY > {
       public:
         POLY operator () (const POLY& a, const POLY& b) const {
           POLY q, r;
