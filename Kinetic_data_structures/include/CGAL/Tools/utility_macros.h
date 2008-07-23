@@ -224,7 +224,7 @@ template <class A, class B>			\
 
 #define CGAL_REAL_EMBEDDABLE_BODY					\
   class Abs								\
-    : public Unary_function< Type, Type > {				\
+    : public std::unary_function< Type, Type > {				\
   public:								\
     Type operator()( const Type& x ) const {				\
       if (x < Type(0)) return -x;					\
@@ -233,7 +233,7 @@ template <class A, class B>			\
   };									\
   									\
   class Sign								\
-    : public Unary_function< Type, ::CGAL::Sign > {			\
+    : public std::unary_function< Type, ::CGAL::Sign > {			\
   public:								\
     ::CGAL::Sign operator()( const Type& x ) const {			\
       return static_cast<CGAL::Sign>(x.compare(0));			\
@@ -241,7 +241,7 @@ template <class A, class B>			\
   };									\
   									\
   class Compare								\
-    : public Binary_function< Type, Type,				\
+    : public std::binary_function< Type, Type,				\
 			      Comparison_result > {			\
   public:								\
       Comparison_result operator()( const Type& x,			\
@@ -255,7 +255,7 @@ template <class A, class B>			\
   };									\
 									\
   class To_double							\
-    : public Unary_function< Type, double > {				\
+    : public std::unary_function< Type, double > {				\
   public:								\
     double operator()( const Type& x ) const {				\
       return x.approximation(.00000001);				\
@@ -263,7 +263,7 @@ template <class A, class B>			\
   };									\
 									\
   class To_interval							\
-    : public Unary_function< Type, std::pair< double, double > > {	\
+    : public std::unary_function< Type, std::pair< double, double > > {	\
   public:								\
     std::pair<double, double> operator()( const Type& x ) const {	\
 									\

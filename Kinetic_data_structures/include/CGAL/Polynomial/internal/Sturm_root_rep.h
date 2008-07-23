@@ -952,7 +952,7 @@ class Real_embeddable_traits< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> >
 public:
   typedef CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I>  Type;
   class Abs 
-    : public Unary_function< Type, Type > {
+    : public std::unary_function< Type, Type > {
   public:
     Type operator()( const Type& x ) const {
       if (x < Type(0)) return -x;
@@ -961,7 +961,7 @@ public:
   };
     
   class Sign 
-    : public Unary_function< Type, ::CGAL::Sign > {
+    : public std::unary_function< Type, ::CGAL::Sign > {
   public:
     ::CGAL::Sign operator()( const Type& x ) const {
       return static_cast<CGAL::Sign>(x.compare(0));
@@ -969,7 +969,7 @@ public:
   };
     
   class Compare 
-    : public Binary_function< Type, Type,
+    : public std::binary_function< Type, Type,
 			      Comparison_result > {
   public:
     Comparison_result operator()( const Type& x, 
@@ -983,7 +983,7 @@ public:
       };
     
   class To_double 
-    : public Unary_function< Type, double > {
+    : public std::unary_function< Type, double > {
   public:
     double operator()( const Type& x ) const {
       // this call is required to get reasonable values for the double
@@ -993,7 +993,7 @@ public:
   };
     
   class To_interval 
-    : public Unary_function< Type, std::pair< double, double > > {
+    : public std::unary_function< Type, std::pair< double, double > > {
   public:
     std::pair<double, double> operator()( const Type& x ) const {
 

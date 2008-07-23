@@ -1,3 +1,7 @@
+23 July 2008 Michael Hoffmann
+- Remove dependency on CGAL/functional -> replace Unary_function
+  and Binary_function by std:: counterparts.
+
 9 March 2006 Joachim Reichel
 - LGPL copyright notice added to src/CGALQt/kds{,_deps}.makefile
 

@@ -21,7 +21,7 @@
 #ifndef CGAL_INSTANTANEOUS_ADAPTOR_H
 #define CGAL_INSTANTANEOUS_ADAPTOR_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/functional_base.h>
+#include <functional>
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
