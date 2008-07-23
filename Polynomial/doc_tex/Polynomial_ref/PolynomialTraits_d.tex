@@ -110,12 +110,12 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
  
 \ccNestedType{Univariate_content}{ 
         In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
-        \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
+        \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
         a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
 %\begin{ccAdvanced}
 \ccNestedType{Multivariate_content}{ 
         In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
-        a model of \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, 
+        a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, 
         otherwise this is a model of 
         \ccc{PolynomialTraits_d::MultivariateContent}.}
 %\end{ccAdvanced}
@@ -143,7 +143,7 @@ In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
 { A model of \ccc{PolynomialTraits_d::MakeSquareFree}.}\ccGlue
 \ccNestedType{Square_free_factorization}
 { In case \ccc{PolynomialTraits::Polynomial_d} 
-is not a model of \ccc{UFDomain}, this is of type \ccc{CGAL::Null_type},
+is not a model of \ccc{UniqueFactorizationDomain}, this is of type \ccc{CGAL::Null_type},
  otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorize}.}
 
 
