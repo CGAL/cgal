@@ -5,6 +5,8 @@ void MainWindow::on_actionInsideOut_triggered()
 {
   if(onePolygonIsSelected())
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     // get selected polyhedron
     int index = getSelectedPolygonIndex();
     Polyhedron* pMesh = scene->polyhedron(index);

@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>100</y>
+     <y>82</y>
      <width>978</width>
-     <height>472</height>
+     <height>490</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -39,7 +39,7 @@
          <x>0</x>
          <y>22</y>
          <width>354</width>
-         <height>432</height>
+         <height>450</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -271,7 +271,7 @@
      <x>0</x>
      <y>58</y>
      <width>978</width>
-     <height>42</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="windowTitle" >
@@ -305,10 +305,6 @@
    </property>
   </action>
   <action name="actionSimplify" >
-   <property name="icon" >
-    <iconset resource="Polyhedron_3.qrc" >
-     <normaloff>:/cgal/icons/simplification.png</normaloff>:/cgal/icons/simplification.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Simplification</string>
    </property>
@@ -319,19 +315,11 @@
    </property>
   </action>
   <action name="actionKernel" >
-   <property name="icon" >
-    <iconset>
-     <normaloff>resources/kernel.png</normaloff>resources/kernel.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Kernel</string>
    </property>
   </action>
   <action name="actionUnion" >
-   <property name="icon" >
-    <iconset>
-     <normaloff>resources/boolean-union.png</normaloff>resources/boolean-union.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Union</string>
    </property>
@@ -340,10 +328,6 @@
    </property>
   </action>
   <action name="actionIntersection" >
-   <property name="icon" >
-    <iconset>
-     <normaloff>resources/boolean-intersection.png</normaloff>resources/boolean-intersection.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Intersection</string>
    </property>
@@ -352,10 +336,6 @@
    </property>
   </action>
   <action name="actionDifference" >
-   <property name="icon" >
-    <iconset>
-     <normaloff>resources/boolean-diff.png</normaloff>resources/boolean-diff.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Difference</string>
    </property>
@@ -433,10 +413,6 @@
    </property>
   </action>
   <action name="actionConvexHull" >
-   <property name="icon" >
-    <iconset resource="Polyhedron_3.qrc" >
-     <normaloff>:/cgal/icons/convex-hull.png</normaloff>:/cgal/icons/convex-hull.png</iconset>
-   </property>
    <property name="text" >
     <string>&amp;Convex hull</string>
    </property>

@@ -11,6 +11,8 @@ void MainWindow::on_actionKernel_triggered()
 {
   if(onePolygonIsSelected())
   {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     int index = getSelectedPolygonIndex();
 
     // get active polyhedron
@@ -81,5 +83,7 @@ void MainWindow::on_actionKernel_triggered()
       Qt::magenta,
       scene->isPolyhedronActivated(index),
       scene->polyhedronRenderingMode(index));
+
+    QApplication::restoreOverrideCursor();
   }
 }
