@@ -380,7 +380,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         typedef typename Algebraic_kernel_2_with_sqrt::Curve_analysis_2
             Sqrt_curve_analysis_2;
         
-        typedef typename Sqrt_curve_analysis_2::X_coordinate_1 
+        typedef typename Sqrt_curve_analysis_2::Algebraic_real_1 
             Sqrt_algebraic_real;
 
         typedef typename Sqrt_curve_analysis_2::Status_line_1 

@@ -399,7 +399,7 @@ int main(int argc,char** argv) {
         typedef Curve_analysis_2::Event_line_iterator Event_iterator;
         typedef Curve_analysis_2::Intermediate_line_iterator 
             Intermediate_iterator;
-        typedef Curve_analysis_2::X_coordinate_1 Algebraic_real;
+        typedef Curve_analysis_2::Algebraic_real_1 Algebraic_real;
         std::ofstream out("gen_plot");
      
         // Event points
