@@ -22,10 +22,10 @@ be included in an automated way into the internal (and public) releases of the
 library, the files must be organized in a specific directory structure, which 
 we describe here.  We describe the entire directory structure for a package. 
 Not every package will have all the parts described here. Only the files
-{\tt maintainer}, {\tt changes.txt} and {\tt description.txt} 
+{\tt maintainer} and {\tt description.txt} 
 are obligatory.
 \index{maintainer file@{\tt maintainer} file}
-\ccIndexMainItem{\tt changes.txt}\ccIndexMainItem{\tt description.txt}
+\ccIndexMainItem{\tt description.txt}
 Submissions should not contain files in other places than described here.
 Packages may be rejected if they do, and the contents won't go into releases.
 
@@ -53,8 +53,6 @@ The directory structure of a package named Package should be as follows:
       +--- developer_scripts/
       |
       +--- package_info/Package/
-                               |
-                               +- changes.txt
                                |
                                +- description.txt
                                |
@@ -107,17 +105,6 @@ The directory structure of a package named Package should be as follows:
          directory@{\tt developers\_scripts} directory} contains
        scripts that are of interest to CGAL developers. This directory
        is included in internal releases only, not in public releases.
-  \item[\ccAnchor{example/changes.txt}{{\tt changes.txt}}]%
-    \ccIndexMainItem{\tt changes.txt} used to document important
-    changes between subsequent versions. Each entry must provide the
-    date of the change and the name of the person who committed it, as
-    in the following example:
-       \begin{verse}
-       2 Feb 2004  Sylvain Pion\\
-       - Fix a memory-leak in file.h.\\
-       - Optimized function A::f().
-       \end{verse}
-
   \item[{\tt description.txt}]%
        \ccIndexMainItem{\tt description.txt}
        should give a very short description of the contents of the package. 

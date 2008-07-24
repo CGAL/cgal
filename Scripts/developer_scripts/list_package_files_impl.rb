@@ -20,7 +20,6 @@ def get_internal_package_files_list(package_dir)
          'dont_submit',
          'maintainer',
          'description.txt',
-         'changes.txt',
          'doc_tex',
          '.svn'
         ]
