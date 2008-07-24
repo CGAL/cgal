@@ -22,6 +22,7 @@
 // - document Substitute 
 
 #include <CGAL/basic.h>
+#include <functional>
 
 #include <CGAL/Polynomial/fwd.h>
 #include <CGAL/Polynomial/misc.h>
@@ -685,7 +686,7 @@ public:
   //     Get_innermost_coefficient;
   struct Get_innermost_coefficient
     : public 
-    Binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient >
+    std::binary_function< Polynomial_d, Exponent_vector, Innermost_coefficient >
   {
         
     Innermost_coefficient 
@@ -1325,7 +1326,7 @@ public:
   //       Scale;
   struct Scale 
     : public 
-    Binary_function< Polynomial_d, Innermost_coefficient, Polynomial_d > {
+    std::binary_function< Polynomial_d, Innermost_coefficient, Polynomial_d > {
         
     Polynomial_d operator()( Polynomial_d p, const Innermost_coefficient& c,
         int i = (PT::d-1) ) {
