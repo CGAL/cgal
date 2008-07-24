@@ -2,12 +2,9 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
-typedef CGAL::Cartesian<NT>                             Linear_k;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>      Algebraic_k;
-typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>   Circular_k;
+typedef CGAL::Exact_circular_kernel_2                   Circular_k;
 typedef Circular_k::Point_2                             Point_2;
 typedef Circular_k::Circle_2                            Circle_2;
 typedef Circular_k::Circular_arc_2                      Circular_arc_2;
@@ -29,7 +26,6 @@ double prob_2() {
     Circular_k().intersect_2_object()(o1, o2, std::back_inserter(res));
     prob += (res.size() != 0) ? 1.0 : 0.0;
   }
-
   return prob/10000.0;
 }
 
@@ -38,7 +34,7 @@ int main()
   std::cout << "What is the probability that two arcs formed by" << std::endl;
   std::cout << "three random counterclockwise-oriented points on" << std::endl;
   std::cout << "an unity square intersect? (wait a second please)" << std::endl;
-  std::cout << "The probability is: " << prob_2<Circular_arc_2>() << 
+  std::cout << "The probability is: " << prob_2<Circular_arc_2>() <<
     std::endl << std::endl;
   std::cout << "And what about the probability that two circles formed by" 
     << std::endl;
