@@ -236,7 +236,7 @@ int main(int argc,char** argv) {
 
      overall_timer.stop();   
 
-     std::cout << "Overall timer:        " << overall_timer.time() << std::endl; 
+     std::cout << "Overall timer: " << overall_timer.time() << std::endl; 
 
    }
    return 0;
