@@ -1,5 +1,0 @@
-25 January 2006 Andreas Fabri
-- put the gwt_field(..) method of the Triangular_filed_2 and the Regular_grid_2 in the class scope (to please VC7)
-
-14 September 2005 Abdelkrim Mebarki
-- Initial version.

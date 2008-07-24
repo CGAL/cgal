@@ -1,2 +1,0 @@
-22 October 2004  Sylvain Pion
-- Leftturn_2 -> Left_turn_2.

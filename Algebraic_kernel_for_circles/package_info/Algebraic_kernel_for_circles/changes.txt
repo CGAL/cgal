@@ -1,5 +1,0 @@
-2 march 2006 Monique Teillaud
-- global functions -> dontsubmit
-
-10 February 2006 Sylvain Pion
-- Move Root_of_2 to Number_types (not the manual...).

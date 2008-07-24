@@ -1,8 +1,0 @@
-
-Surface_reconstruction_3 Package: Release changes
-------------------------------------------------------
-
-1.0
-
-    - CGAL 3.4: first version of the package.
-

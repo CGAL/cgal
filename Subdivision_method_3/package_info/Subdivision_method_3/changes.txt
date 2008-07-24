@@ -1,2 +1,0 @@
-13 March 2006 Andreas Fabri
-- The examples now return 0, if they are called without arguments

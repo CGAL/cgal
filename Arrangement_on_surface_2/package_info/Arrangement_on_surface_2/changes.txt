@@ -1,3 +1,0 @@
-3.3.4 (15 Aug 2007)
-
-- First revision. This package replaces the obslete Arrangement_2 package

@@ -1,7 +1,0 @@
-17 August 2006 Fernando Cacciola
- - Fixed various bugs in the handling of boundaries
-20 June 2006 Fernando Cacciola
- - Bug fixes
-31 March 2006 Fernando Cacciola
- - Start
-

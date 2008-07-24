@@ -1,2 +1,0 @@
-Changes done to the `Approximate_min_ellipsoid' package
-
