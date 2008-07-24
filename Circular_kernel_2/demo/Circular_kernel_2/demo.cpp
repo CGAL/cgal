@@ -1,14 +1,14 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France)
+// Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France) 
 // All rights reserved.
 //
-// Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
-//           Radu Ursu
+// $URL$
+// $Id$
+//
+// Authors : Monique Teillaud, Sylvain Pion, Radu Ursu
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473
 // (CGAL - Effective Computational Geometry for Curves and Surfaces)
-
 
 // TODO :
 // - Add the possibility to input full circles.

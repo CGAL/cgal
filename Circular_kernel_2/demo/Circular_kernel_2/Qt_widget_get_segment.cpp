@@ -1,6 +1,9 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
-//                     Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2003-2008  INRIA Sophia-Antipolis (France) and
+//                          Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
+//
+// $URL$
+// $Id$
 //
 // Authors : Radu Ursu
 //
