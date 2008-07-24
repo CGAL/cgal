@@ -131,11 +131,14 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
 
   public:
-    typedef bool result_type;
-     
+
+		typedef typename SK::Linear_kernel::Equal_3::result_type result_type;    
+
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Equal_3::operator();
 #else  
+    typedef bool result_type;
+
     result_type
     operator() (const Point_3 &p0,
                 const Point_3 &p1) const
@@ -317,7 +320,7 @@ template < class SK > \
   {
   public:
     
-    typedef typename SK::Sphere_3 result_type;
+		typedef typename SK::Linear_kernel::Construct_sphere_3::result_type result_type; 
 
     using SK::Linear_kernel::Construct_sphere_3::operator();
 
@@ -331,7 +334,7 @@ template < class SK > \
   {
   public:
     
-    typedef typename SK::Plane_3 result_type;
+		typedef typename SK::Linear_kernel::Construct_plane_3::result_type result_type;
 
     using SK::Linear_kernel::Construct_plane_3::operator();
 
@@ -345,7 +348,7 @@ template < class SK > \
   {
   public:
     
-    typedef typename SK::Line_3 result_type;
+		typedef typename SK::Linear_kernel::Construct_line_3::result_type result_type;
 
     using SK::Linear_kernel::Construct_line_3::operator();
 
@@ -369,7 +372,7 @@ template < class SK > \
     typedef typename SK::Kernel_base::Circle_3  RCircle_3;
     typedef typename Circle_3::Rep              Rep;
 
-    typedef Circle_3 result_type;
+		typedef typename SK::Linear_kernel::Construct_circle_3::result_type result_type;
 
     using SK::Linear_kernel::Construct_circle_3::operator();
 
@@ -388,8 +391,7 @@ template < class SK > \
 
   public:
 
-    typedef Plane_3        result_type;
-    typedef const Plane_3& qualified_result_type;
+		typedef typename SK::Linear_kernel::Construct_supporting_plane_3::result_type result_type;
     
     using SK::Linear_kernel::Construct_supporting_plane_3::operator();
 
@@ -421,8 +423,7 @@ template < class SK > \
 
   public:
 
-    typedef Sphere_3        result_type;
-    typedef const Sphere_3& qualified_result_type;
+		typedef typename SK::Linear_kernel::Construct_diametral_sphere_3::result_type result_type;
     
     using SK::Linear_kernel::Construct_diametral_sphere_3::operator();
 
@@ -718,7 +719,7 @@ template < class SK > \
     
 
   public:
-    typedef bool result_type;
+		typedef typename SK::Linear_kernel::Has_on_3::result_type result_type;
     
     using SK::Linear_kernel::Has_on_3::operator();
 
@@ -842,8 +843,8 @@ template < class SK > \
     
     public:
 
-    typedef void result_type;   
-                                  // Is there some solution for this problem??
+		typedef typename SK::Linear_kernel::Intersect_3::result_type result_type;
+                                
     typedef typename SK::Object_3 Object_3;
     
     using SK::Linear_kernel::Intersect_3::operator();
@@ -1118,7 +1119,7 @@ template < class SK > \
 
   public:
 
-    typedef CGAL::Bbox_3 result_type;
+		typedef typename SK::Linear_kernel::Construct_bbox_3::result_type result_type;
 
     using SK::Linear_kernel::Construct_bbox_3::operator();
 
@@ -1236,7 +1237,6 @@ template < class SK > \
     typedef typename SK::Point_3               Point_3;
 
   public:
-    //~ typedef typename SK::Linear_kernel::Bounded_side    result_type;
     typedef typename SK::Linear_kernel::Bounded_side_3::result_type    result_type;
 
     using SK::Linear_kernel::Bounded_side_3::operator();
@@ -1263,7 +1263,7 @@ template < class SK > \
     typedef typename SK::Point_3               Point_3;
 
   public:
-    typedef bool result_type;
+    typedef typename SK::Linear_kernel::Has_on_bounded_side_3::result_type    result_type;
 
     using SK::Linear_kernel::Has_on_bounded_side_3::operator();
 
@@ -1289,7 +1289,7 @@ template < class SK > \
     typedef typename SK::Point_3               Point_3;
 
   public:
-    typedef bool result_type;
+    typedef typename SK::Linear_kernel::Has_on_unbounded_side_3::result_type    result_type;
 
     using SK::Linear_kernel::Has_on_unbounded_side_3::operator();
 
