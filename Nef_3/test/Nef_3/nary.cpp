@@ -2,14 +2,14 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
-#include <CGAL/Nary_union.h>
-#include <CGAL/Nary_intersection.h>
+#include <CGAL/Nef_nary_union_3.h>
+#include <CGAL/Nef_nary_intersection_3.h>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items> Nef_polyhedron;
-typedef CGAL::Nary_union<Nef_polyhedron> Union;
-typedef CGAL::Nary_intersection<Nef_polyhedron> Intersection;
+typedef CGAL::Nef_nary_union_3<Nef_polyhedron> Union;
+typedef CGAL::Nef_nary_intersection_3<Nef_polyhedron> Intersection;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Aff_transformation_3 Aff_transformation_3;
 
