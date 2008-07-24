@@ -26,8 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
-#include <CGAL/Nef_3/SNC_items.h>
-#include <CGAL/Nef_S2/SM_items.h>
+#include <CGAL/Nef_3/Default_items.h>
 #include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_3/SNC_const_decorator.h>
@@ -154,7 +153,7 @@ halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
 |union|, |difference|, |complement| and under the topological operations
 |boundary|, |closure|, and |interior|.}*/
 
-template <typename Kernel_, typename Items_ = SNC_items, typename Mark_ = bool>
+template <typename Kernel_, typename Items_ = typename CGAL::Default_items<Kernel_>::Items, typename Mark_ = bool>
 class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, Items_, Mark_> >, 
 			 public SNC_const_decorator<SNC_structure<Kernel_,Items_,Mark_> >
 { 
@@ -173,8 +172,8 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
   typedef typename Kernel::Vector_3                   Vector_3;
   typedef typename Kernel::Segment_3                  Segment_3;
   typedef typename Kernel::Aff_transformation_3       Aff_transformation_3;
- 
-  struct Polylines {};
+
+  struct Polylines_tag {};
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
   /*{\Menum construction selection.}*/
@@ -184,10 +183,6 @@ class Nef_polyhedron_3 : public CGAL::Handle_for< Nef_polyhedron_3_rep<Kernel_, 
 
   typedef enum { DEFAULT, NAIVE, WALKING, SPATIAL_SUBDIVISION  } Location_mode;
   /*{\Menum selection flag for the point location mode.}*/
-
- //  enum Intersection_mode { CLOSED_HALFSPACE, OPEN_HALFSPACE, PLANE_ONLY };
-
- static const Polylines POLYLINES;
 
 protected: 
   struct AND { Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const { return b1&&b2; } };
@@ -515,7 +510,7 @@ protected:
  };
  
  template <typename InputIterator>
- Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines) {
+ Nef_polyhedron_3(InputIterator begin, InputIterator end, Polylines_tag) {
    typedef typename std::iterator_traits<InputIterator>::value_type
      point_iterator_pair;
    typedef typename point_iterator_pair::first_type
