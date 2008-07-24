@@ -44,7 +44,7 @@ public:
 
     typedef std::pair<Boundary,Boundary> Point;
 
-    typedef std::vector< X_coordinate_1 > Root_container;
+    typedef std::vector< Algebraic_real_1 > Root_container;
 
     typedef typename Root_container::iterator Root_iterator;
     
@@ -196,7 +196,7 @@ public:
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Merge both root sets..." << std::flush;
 #endif
-        typename CGAL::Real_embeddable_traits<X_coordinate_1>::Compare 
+        typename CGAL::Real_embeddable_traits<Algebraic_real_1>::Compare 
             x_compare;
 
         CGAL::CGALi::set_union_with_source
@@ -278,7 +278,7 @@ private:
     int compute_stripe(Status_line_1& ev, int index) {
         int left_index = -1, 
             right_index = static_cast<int>(stripe_values.size()-1);
-        X_coordinate_1 xv = ev.x();
+        Algebraic_real_1 xv = ev.x();
         Boundary lx = xv.low(), rx=xv.high(),
             x_iv_size = rx-lx;
         Boundary ly = ev.lower_boundary(index),
@@ -319,7 +319,7 @@ private:
       
         lower_bound = upper_bound = Boundary(0);
         for(int i=0;i<n;i++) {
-            X_coordinate_1 curr_bound(stripe_values[i]);
+            Algebraic_real_1 curr_bound(stripe_values[i]);
             Bitstream_traits traits(curr_bound);
             CGAL::CGALi::Square_free_descartes_tag tag;
             Bitstream_descartes descartes(tag,sh_pol,traits);
@@ -334,7 +334,7 @@ private:
                 }
             }
             // Create intermediate line for later use
-            X_coordinate_1 xval(curr_bound);
+            Algebraic_real_1 xval(curr_bound);
             Status_line_1 inter_line(xval,i,D,m);
             inter_line.set_isolator(descartes);
             sh_intermediate_lines.push_back(inter_line);
@@ -481,7 +481,7 @@ private:
             else {
                 if(arcs_left==1 && arcs_right==1) {
 
-                    Y_coordinate_1 left_y(left_pol,
+                    Algebraic_real_1 left_y(left_pol,
                                           left.lower_boundary(left_id),
                                           left.upper_boundary(left_id));
 
@@ -489,7 +489,7 @@ private:
                         = CGAL::CGALi::estimate_sign_at
                             (left_y,left_sh_der_sh_pol,Boundary(0));
 
-                    Y_coordinate_1 right_y(right_pol,
+                    Algebraic_real_1 right_y(right_pol,
                                            right.lower_boundary(right_id),
                                            right.upper_boundary(right_id));
 
@@ -513,7 +513,7 @@ private:
                     right_id++;
                 }
                 else if(arcs_left==2 && arcs_right==0) {
-                    Y_coordinate_1 left_y_1(left_pol,
+                    Algebraic_real_1 left_y_1(left_pol,
                                           left.lower_boundary(left_id),
                                           left.upper_boundary(left_id));
 
@@ -522,7 +522,7 @@ private:
                             (left_y_1,left_sh_der_sh_pol,Boundary(0));
 
                     left_id++;
-                    Y_coordinate_1 left_y_2(left_pol,
+                    Algebraic_real_1 left_y_2(left_pol,
                                           left.lower_boundary(left_id),
                                           left.upper_boundary(left_id));
                     CGAL::Sign left_sign_2 
@@ -543,15 +543,17 @@ private:
                     left_id++;
                 }
                 else if(arcs_left==0 && arcs_right==2) {
-                    Y_coordinate_1 right_y_1(right_pol,right.lower_boundary(right_id),
-                                           right.upper_boundary(right_id));
+                    Algebraic_real_1 right_y_1(right_pol,
+                                               right.lower_boundary(right_id),
+                                               right.upper_boundary(right_id));
 
                     CGAL::Sign right_sign_1 
                         = CGAL::CGALi::estimate_sign_at
                             (right_y_1,right_sh_der_sh_pol,Boundary(0));
                     right_id++;
-                    Y_coordinate_1 right_y_2(right_pol,right.lower_boundary(right_id),
-                                           right.upper_boundary(right_id));
+                    Algebraic_real_1 right_y_2(right_pol,
+                                               right.lower_boundary(right_id),
+                                               right.upper_boundary(right_id));
                     CGAL::Sign right_sign_2 
                         = CGAL::CGALi::estimate_sign_at
                             (right_y_2,right_sh_der_sh_pol,Boundary(0));
@@ -770,7 +772,7 @@ private:
 #endif
 */
         Status_line_1 far_left_line 
-            = C.status_line_at_exact_x(X_coordinate_1(far_left));
+            = C.status_line_at_exact_x(Algebraic_real_1(far_left));
 /*
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "No. arcs " 
@@ -784,7 +786,8 @@ private:
 
     
     void end_sweep() {
-        Status_line_1 far_right_line = C.status_line_at_exact_x(X_coordinate_1(far_right));
+        Status_line_1 far_right_line 
+            = C.status_line_at_exact_x(Algebraic_real_1(far_right));
 /*
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "X-coordinate (far right) " 
@@ -1102,7 +1105,7 @@ private:
     }
 
     Status_line_1 create_event_line(Curve_analysis_2& D,int i) {
-        X_coordinate_1 xval = sh_disc_roots[i];
+        Algebraic_real_1 xval = sh_disc_roots[i];
         Bitstream_traits traits(xval);
         CGAL::CGALi::Backshear_descartes_tag tag;
         int number_of_events 

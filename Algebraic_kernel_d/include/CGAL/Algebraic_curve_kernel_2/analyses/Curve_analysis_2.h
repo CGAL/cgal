@@ -80,12 +80,12 @@ public:
     
 #if 1 // TODO using x() results in much slower running times (pre-precision)
     typedef 
-    std::map< X_coordinate_1, 
+    std::map< Algebraic_real_1, 
               Status_line_1, 
-              CGAL::Handle_id_less_than< X_coordinate_1 > >
+              CGAL::Handle_id_less_than< Algebraic_real_1 > >
     Vert_line_map;
 #else
-    typedef std::map< X_coordinate_1, Status_line_1 >
+    typedef std::map< Algebraic_real_1, Status_line_1 >
     Vert_line_map;
 #endif
     
@@ -113,7 +113,7 @@ private:
 
     // Internal information struct about x-coordinates
     struct Event_coordinate_1 {
-        X_coordinate_1 val;
+        Algebraic_real_1 val;
         size_type mult_of_prim_res_root;
         size_type index_of_prim_res_root;
         size_type mult_of_content_root;
@@ -126,7 +126,7 @@ private:
     // Functor to get the X_coordinate of an Event_coordinate
     struct Val_functor {
         typedef Event_coordinate_1 argument_type;
-        typedef X_coordinate_1 result_type;
+        typedef Algebraic_real_1 result_type;
         result_type operator() (argument_type event) const {
             return event.val;
         }
@@ -160,7 +160,8 @@ private:
 
     //! the polynomial containing all roots of the resultant of the primitive
     //! part of f and its x-derivative
-    mutable boost::optional<Polynomial_1> resultant_of_primitive_and_derivative_x;
+    mutable boost::optional<Polynomial_1> 
+        resultant_of_primitive_and_derivative_x;
 
     //! The Sturm-Habicht polynomials of f
     mutable boost::optional<std::vector<Polynomial_2> > 
@@ -218,7 +219,7 @@ private:
  * is capsuled into an object of type \c Curve_analysis_2::Status_line_1,
  * which is in fact a \c Status_line_CA_1 object.
  *
- * Note that the restriction to square-free curves is weak, since the curves
+ * The restriction to square-free curves is a weak one, since the curves
  * can be made square-free before passed to the analysis. 
  * The \c Construct_curve_2 functor of \c Algebraic_curve_kernel_2 is
  * doing so, thus it accepts arbitrary bivariate polynomials.
@@ -242,6 +243,9 @@ template<typename AlgebraicKernel_2,
 >
 class Curve_analysis_2 : public ::CGAL::Handle_with_policy< Rep_ > {
   
+    //! \name typedefs
+    //! @{
+
 public:
     //! this instance' first template parameter
     typedef AlgebraicKernel_2 Algebraic_kernel_2;
@@ -270,6 +274,8 @@ public:
     
     CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS;
 
+private:
+
     //! Traits type for Polynomial_2
     typedef CGAL::Polynomial_traits_d<Polynomial_2> Polynomial_traits_2;
 
@@ -290,19 +296,20 @@ public:
     //! Polynomial over the \c Coercion_type
     typedef CGAL::Polynomial< Coercion_type > Poly_coer_1;
 
-#if DOXYGEN_RUNNUNG
-
-#endif
+public:
 
     //! Type to represent points on curves
-    typedef typename Algebraic_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
+    typedef typename Algebraic_kernel_2::Algebraic_real_2 Algebraic_real_2;
 
     //! type for horizontal asymtote values
     typedef CGAL::Object Asymptote_y;
 
+    //! @}
+
 private:
 
-    // Helping structs
+    //! \name Helping structs
+    // @{
     
     struct Event_functor {
         Event_functor(const Self* curve) : curve(curve) {}
@@ -334,7 +341,12 @@ private:
         }
     };
 
+    //! @}
+
 public:
+
+    //! \name Iterators
+    //! @{
 
     //! Iterator type for status lines at events
     typedef boost::transform_iterator<Event_functor, 
@@ -350,6 +362,8 @@ public:
     typedef boost::transform_iterator<Stha_functor, 
                               boost::counting_iterator<size_type> > 
     Principal_sturm_habicht_iterator;
+
+    //! @}
 
 public:
 
@@ -398,7 +412,11 @@ public:
 
 
     //!@}
-      
+
+
+    //! \name Members
+    //!@{
+
 private:
 
     /*
@@ -548,7 +566,7 @@ public:
      * \param i is set to the index of the event if \c x is an event. Otherwise
      * \c i is set to the index of the interval \c x is contained in.
      */
-    void x_to_index(X_coordinate_1 x,size_type& i,bool& is_event) const {
+    void x_to_index(Algebraic_real_1 x,size_type& i,bool& is_event) const {
         CGAL_precondition(has_defining_polynomial());
         typename Rep::Val_functor xval;
         i = std::lower_bound(
@@ -588,7 +606,7 @@ public:
 
     //! Returns a status line at the rational <tt>x</tt>-coordinate \c b
     Status_line_1& status_line_at_exact_x(Boundary b) const {
-        return status_line_at_exact_x(X_coordinate_1(b));
+        return status_line_at_exact_x(Algebraic_real_1(b));
     }
 
 private:
@@ -600,7 +618,7 @@ private:
      * This function controls the internal cache that stores already created
      * status line at non-events. 
      */
-    Status_line_1& status_line_at_exact_non_event_x(X_coordinate_1 alpha) 
+    Status_line_1& status_line_at_exact_non_event_x(Algebraic_real_1 alpha) 
         const {
 
         if(alpha.is_rational()) {
@@ -639,7 +657,7 @@ private:
 public:
 
     //! Returns a vert line for the <tt>x</tt>-coordinate alpha
-    Status_line_1& status_line_at_exact_x(X_coordinate_1 alpha) const {
+    Status_line_1& status_line_at_exact_x(Algebraic_real_1 alpha) const {
         bool is_event_value;
         size_type index;
         this->x_to_index(alpha,index,is_event_value);
@@ -659,13 +677,13 @@ private:
 
         Event_coordinate_1& event = event_coordinates()[index];
         
-        X_coordinate_1 x = event.val;
+        Algebraic_real_1 x = event.val;
         
         try {
             
             Event_coordinate_1& event = event_coordinates()[index];
         
-            X_coordinate_1 x = event.val;
+            Algebraic_real_1 x = event.val;
             
 #if CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
             if(event.mult_of_prim_lcoeff_root > 0) {
@@ -814,7 +832,7 @@ private:
      * by plugging in the x-coordinate for x and explicitly computing
      * the square free part of the defining polynomial at this position.
      */
-    Status_line_1 create_non_generic_event_at_rational(X_coordinate_1 x,
+    Status_line_1 create_non_generic_event_at_rational(Algebraic_real_1 x,
                                                        size_type index) const {
 
         
@@ -863,23 +881,23 @@ private:
         } else {
             bucket_borders.push_back(
                     CGAL::CGALi::simple_rational_left_of
-                        (X_coordinate_1(isolator.left_boundary(0))));
+                        (Algebraic_real_1(isolator.left_boundary(0))));
             for(int i = 1; i < n; i++) {
-                while(X_coordinate_1(isolator.right_boundary(i-1))==
-                      X_coordinate_1(isolator.left_boundary(i))) {
+                while(Algebraic_real_1(isolator.right_boundary(i-1))==
+                      Algebraic_real_1(isolator.left_boundary(i))) {
                     isolator.refine_interval(i-1);
                     isolator.refine_interval(i);
                 }
                 bucket_borders.push_back(
                         CGAL::CGALi::simple_rational_between
-                        (X_coordinate_1(isolator.right_boundary(i-1)),
-                         X_coordinate_1(isolator.left_boundary(i)))
+                        (Algebraic_real_1(isolator.right_boundary(i-1)),
+                         Algebraic_real_1(isolator.left_boundary(i)))
                 );
             }
             
             bucket_borders.push_back(
                     CGAL::CGALi::simple_rational_right_of
-                        (X_coordinate_1(isolator.right_boundary(n-1))));
+                        (Algebraic_real_1(isolator.right_boundary(n-1))));
         }
 
         Boundary left = boundary_value_in_interval(index);
@@ -914,9 +932,9 @@ private:
         }
 
         Status_line_1 left_line 
-            = status_line_at_exact_non_event_x(X_coordinate_1(left)),
+            = status_line_at_exact_non_event_x(Algebraic_real_1(left)),
             right_line 
-            = status_line_at_exact_non_event_x(X_coordinate_1(right));
+            = status_line_at_exact_non_event_x(Algebraic_real_1(right));
         
         int n_left = left_line.number_of_events();
         int n_right = right_line.number_of_events();
@@ -1016,7 +1034,7 @@ public:
         Boundary b = boundary_value_in_interval(i);
         
         Status_line_1 intermediate_line 
-            = status_line_at_exact_non_event_x(X_coordinate_1(b));
+            = status_line_at_exact_non_event_x(Algebraic_real_1(b));
 
         CGAL_postcondition(! intermediate_line.is_event());
 
@@ -1039,7 +1057,7 @@ public:
      * on whether \c perturb is set to \c CGAL::NEGATIVE or \c CGAL::POSITIVE.
      * If \c x is not an event, \c perturb has no effect. 
      */ 
-    Status_line_1 status_line_for_x(X_coordinate_1 x,
+    Status_line_1 status_line_for_x(Algebraic_real_1 x,
                                     CGAL::Sign perturb = CGAL::ZERO) const
     {
         size_type i;
@@ -1068,7 +1086,7 @@ private:
      * within the method, and the index of the status line is set accordingly.
      */
     Status_line_1
-    create_status_line_at_non_event(X_coordinate_1 ar, int index = -1) const {
+    create_status_line_at_non_event(Algebraic_real_1 ar, int index = -1) const {
 
         if(index==-1) {
             bool event;
@@ -1555,7 +1573,7 @@ private:
          
         Solve_1 solve_1;
          
-        std::vector<X_coordinate_1> content_roots;
+        std::vector<Algebraic_real_1> content_roots;
         std::vector<size_type> content_mults;
         solve_1(content(),
                 std::back_inserter(content_roots),
@@ -1564,13 +1582,13 @@ private:
         // Set the vertical_line_components flag as side effect
         this->ptr()->has_vertical_component = (content_roots.size() > 0);
 
-        std::vector<X_coordinate_1> res_roots;
+        std::vector<Algebraic_real_1> res_roots;
         std::vector<size_type> res_mults;
         solve_1(resultant_of_primitive_and_derivative_y(),
                 std::back_inserter(res_roots),
                 std::back_inserter(res_mults));
         
-        std::vector<X_coordinate_1> lcoeff_roots;
+        std::vector<Algebraic_real_1> lcoeff_roots;
         std::vector<size_type> lcoeff_mults;
         solve_1(primitive_polynomial_2().lcoeff(),
                 std::back_inserter(lcoeff_roots),
@@ -1578,9 +1596,10 @@ private:
         
 
         //Now, merge the vertical line positions with the resultant roots
-        typename CGAL::Real_embeddable_traits<X_coordinate_1>::Compare compare;
+        typename 
+            CGAL::Real_embeddable_traits<Algebraic_real_1>::Compare compare;
 
-        std::vector<X_coordinate_1> event_values;
+        std::vector<Algebraic_real_1> event_values;
         std::vector<CGAL::CGALi::Three_valued> event_values_info;
 
         CGAL::CGALi::set_union_with_source
@@ -1866,7 +1885,7 @@ public:
      *
      * This method returns for the <tt>arcno</tt>th arc that goes to -infinity
      * or +infinity (depending on \c loc) the y-coordinate it converges to.
-     * Possible values are either a \c Y_coordinate_1 object, or one of the
+     * Possible values are either a \c Algebraic_real_1 object, or one of the
      * values \c CGAL::ARR_TOP_BOUNDARY, \c CGAL::ARR_BOTTOM_BOUNDARY
      * that denote that the arc is unbounded in y-direction. 
      * The result is wrapped into a \c CGAL::Object object.
@@ -1918,7 +1937,7 @@ private:
         Polynomial_1 leading_coefficient_in_x 
             = typename Polynomial_traits_2::Swap() 
                 (this->polynomial_2(),0,1).lcoeff();
-        std::vector<Y_coordinate_1> roots_of_lcoeff;
+        std::vector<Algebraic_real_1> roots_of_lcoeff;
         
         solve_1(leading_coefficient_in_x,
                 std::back_inserter(roots_of_lcoeff),
@@ -1935,7 +1954,7 @@ private:
             decompose(beta,num,denom);
             Polynomial_1 poly_at_beta 
                 = this->polynomial_2().evaluate_homogeneous(num,denom);
-            std::vector<X_coordinate_1> x_coordinates_at_beta;
+            std::vector<Algebraic_real_1> x_coordinates_at_beta;
             solve_1(poly_at_beta,std::back_inserter(x_coordinates_at_beta),
                     std::back_inserter(dummy_multiplicities));
             size_type number_of_roots 
@@ -1960,7 +1979,7 @@ private:
         Polynomial_1 curve_at_left_end 
             = typename Polynomial_traits_2::Swap() (this->polynomial_2(),0,1)
             .evaluate_homogeneous(num,denom);
-        std::vector<Y_coordinate_1> roots_at_left_end;
+        std::vector<Algebraic_real_1> roots_at_left_end;
         solve_1(curve_at_left_end,std::back_inserter(roots_at_left_end));
         size_type number_of_roots_at_left_end 
             = static_cast<size_type>(roots_at_left_end.size());
@@ -1998,7 +2017,7 @@ private:
         Polynomial_1 curve_at_right_end 
             = typename Polynomial_traits_2::Swap() (this->polynomial_2(),0,1)
             .evaluate_homogeneous(num,denom);
-        std::vector<Y_coordinate_1> roots_at_right_end;
+        std::vector<Algebraic_real_1> roots_at_right_end;
         solve_1(curve_at_right_end,std::back_inserter(roots_at_right_end));
         size_type number_of_roots_at_right_end 
             = static_cast<size_type>(roots_at_right_end.size());
@@ -2034,7 +2053,11 @@ private:
         this->ptr()->horizontal_asymptotes_right = asym_right_info;
  
     }
-  
+
+    //! @}
+
+    //! \name friends
+    //! @{
 
     // friend function for id-based hashing
     friend std::size_t hash_value(const Self& x) {
@@ -2044,6 +2067,8 @@ private:
     // another friend
     friend class Shear_transformation<Self>;
     
+    //! @}
+
 }; // class Algebraic_curve_2_2
 
 
@@ -2068,7 +2093,7 @@ std::ostream& operator<< (
         
         const Asymptote_y& curr_asym_info_obj 
             = curve.asymptotic_value_of_arc(CGAL::ARR_LEFT_BOUNDARY,i);
-        typename Curve::Y_coordinate_1 curr_asym_info;
+        typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
       	    // Assignment to prevent compiler warning
@@ -2108,7 +2133,7 @@ std::ostream& operator<< (
 
         const Asymptote_y& curr_asym_info_obj 
             = curve.asymptotic_value_of_arc(CGAL::ARR_RIGHT_BOUNDARY,i);
-        typename Curve::Y_coordinate_1 curr_asym_info;
+        typename Curve::Algebraic_real_1 curr_asym_info;
         bool is_finite = CGAL::assign(curr_asym_info,curr_asym_info_obj);
         if(! is_finite) {
 	    // Assignment to prevent compiler warning

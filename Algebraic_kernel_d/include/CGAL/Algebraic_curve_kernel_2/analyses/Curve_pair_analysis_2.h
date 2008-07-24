@@ -61,9 +61,13 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 // Curve_pair_2
 
-// Forward
+// Forwards
 template < typename AlgebraicKernel_2 >
 struct Curve_pair_analysis_2;
+
+template<typename AlgebraicKernel_2>
+std::ostream& operator<< 
+    (std::ostream&,const Curve_pair_analysis_2<AlgebraicKernel_2>&);
 
 namespace CGALi {
 
@@ -76,13 +80,23 @@ enum Slice_type {
     CANDIDATE = 3
 };
 
+
+/*!
+ * An x-event of the curve pair is either a root of a dicriminant of a single
+ * curve, or a root of the resultant of both curves, or both.
+ * The \c Event_indices vector stores a triple <tt>(fg,ffy,ggy)</tt> denoting
+ * that some event is the <tt>fg</tt> root of <tt>res(f,g,y)</tt>, 
+ * the <tt>ffy</tt>th root of <tt>disc(f,y)</tt> and
+ * the <tt>ggy</tt>th root of <tt>disc(g,y)</tt>.
+ */
 template<typename size_type>
-struct Index_triple {
+struct Event_indices {
 
     size_type fg;
     size_type ffy;
     size_type ggy;
-    Index_triple(size_type fg,size_type ffy, size_type ggy) : fg(fg), ffy(ffy), ggy(ggy) {}
+    Event_indices(size_type fg,size_type ffy, size_type ggy) 
+    : fg(fg), ffy(ffy), ggy(ggy) {}
 };
 
 // Representation class for curve pairs
@@ -103,7 +117,7 @@ struct Curve_pair_analysis_2_rep {
 
     typedef typename Curve_analysis_2::Polynomial_2 Polynomial_2;
         
-    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;
         
     typedef typename Polynomial_2::NT Polynomial_1;
 
@@ -119,7 +133,7 @@ struct Curve_pair_analysis_2_rep {
 
     typedef boost::optional<Boundary> Lazy_boundary;
 
-    typedef CGAL::CGALi::Index_triple<size_type> Index_triple;
+    typedef CGAL::CGALi::Event_indices<size_type> Event_indices;
 
     struct Intersection_info {
         typename Curve_analysis_2::Status_line_1 ev;
@@ -134,7 +148,7 @@ struct Curve_pair_analysis_2_rep {
         Lazy_intersection_info_container;
 
     // For lazy evaluation of Status_line_CPA_1s.
-    typedef boost::optional<Status_line_CPA_1> Lazy_status_line_1;
+    typedef boost::optional<Status_line_CPA_1> Lazy_status_line_CPA_1;
 
     //! @}
 
@@ -175,21 +189,21 @@ private:
         
     mutable boost::optional<Polynomial_1> resultant;
 
-    mutable boost::optional<std::vector<X_coordinate_1> > resultant_roots;
-    mutable boost::optional<std::vector<X_coordinate_1> > event_x_coordinates;
+    mutable boost::optional<std::vector<Algebraic_real_1> > resultant_roots;
+    mutable boost::optional<std::vector<Algebraic_real_1> > event_x_coordinates;
     mutable boost::optional<std::vector<size_type> > 
         multiplicities_of_resultant_roots;
 
     mutable boost::optional<std::vector<Boundary> > stripe_values;
         
-    mutable std::vector< Lazy_status_line_1 > event_slices;
+    mutable std::vector< Lazy_status_line_CPA_1 > event_slices;
 
     mutable boost::optional<std::vector< Lazy_boundary > > intermediate_values;
 
-    mutable boost::optional< std::vector< Lazy_status_line_1 > >
+    mutable boost::optional< std::vector< Lazy_status_line_CPA_1 > >
         intermediate_slices;
 
-    mutable boost::optional<std::vector<Index_triple> > index_triples;
+    mutable boost::optional<std::vector<Event_indices> > event_indices;
 
     mutable Lazy_intersection_info_container intersection_info_container;
 
@@ -212,70 +226,142 @@ private:
 
 } // namespace CGALi
 
-  /*!
-   * TODO UPDATE
-   * \brief A non-trivial model of an CurvePairAnalysis_2. Analysis is 
-   * performed
-   */
+/*!
+ * A model for <tt>AlgebraicKernelWithAnalysis_2::CurvePairAnalysis_2</tt>
+ * It provides topological-geometric information about the intersection
+ * points, and the vertical order of arcs of two algebraic plane curves.
+ *
+ * The curve pair is passed by two \c Curve_analysis_2 instances.
+ * It is required that they do not share a component, i.e., the number
+ * of common points must be finite. Note that overlapping curves are handled
+ * by \c Algebraic_curve_kernel_2::Construct_curve_pair_2.
+ * Also for caching reasons, it is recommended to construct curve pairs
+ * always with this method.
+ *
+ * As for the single-curve analysis, the curve pair analysis is implemented
+ * in a "lazy" fashion. That means, any computation is triggered when
+ * the result is actually queried by the user. This prevents
+ * expensive symbolic computations in some cases.
+ *
+ * For all algorithmic details of the curve pair analysis, we refer to
+ * Arno Eigenwillig, Michael Kerber: Exact and Efficient 2D-Arrangements 
+ * of Arbitrary Algebraic Curves. Proceedings of the Nineteenth Annual 
+ * ACM-SIAM Symposium on Discrete Algorithms (SODA 2008), pp. 122-131
+ */
 template < typename AlgebraicKernel_2 >
 class Curve_pair_analysis_2 : 
-    public ::CGAL::Handle_with_policy< CGAL::CGALi::Curve_pair_analysis_2_rep< AlgebraicKernel_2 > > {
+    public ::CGAL::Handle_with_policy
+        < CGAL::CGALi::Curve_pair_analysis_2_rep< AlgebraicKernel_2 > > {
+    
 
 public:
 
+    //! \name typedefs
+    //! @{
+
+    //! The algebraic kernel that uses the curve pair analysis
     typedef AlgebraicKernel_2 Algebraic_kernel_2;
 
+private:
+    
+    //! Representation class
     typedef CGAL::CGALi::Curve_pair_analysis_2_rep< Algebraic_kernel_2 > Rep;
+    
+    //! Base class
     typedef ::CGAL::Handle_with_policy< Rep >        Base;
 
+public:
+    //! The Curve_pair_analysis_2 itself
     typedef Curve_pair_analysis_2<Algebraic_kernel_2> Self;
-
+    
+    //! The corresponding Curve_analysis_2 class
     typedef typename Rep::Curve_analysis_2 Curve_analysis_2;
+
+    //! Index type
     typedef typename Rep::size_type size_type;
+
+    //! Univariate polynomials
     typedef typename Rep::Polynomial_1 Polynomial_1;
+
+    //! Bivariate polynomials
     typedef typename Rep::Polynomial_2 Polynomial_2;
-    typedef typename Rep::X_coordinate_1 X_coordinate_1;
 
-    typedef X_coordinate_1 Algebraic_real_1;
+    //! Type for algebraic numbers (one dimension)
+    typedef typename Rep::Algebraic_real_1 Algebraic_real_1;
+
+    //! Type for points with algebraic coordinates
     typedef typename Algebraic_kernel_2::Algebraic_real_2 Algebraic_real_2;
-    typedef typename Algebraic_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
+    //! Boundary type (for rational numbers)
     typedef typename Rep::Boundary Boundary;
+
+private:
+    // Optional for boundaries
     typedef typename Rep::Lazy_boundary Lazy_boundary;
+
+    // Object to store information about intersection points 
     typedef typename Rep::Intersection_info_container 
         Intersection_info_container;
+
+    // Its lazy version
     typedef typename Rep::Lazy_intersection_info_container 
         Lazy_intersection_info_container;
-    typedef typename Rep::Index_triple Index_triple;
+
+    // Type for indices of events.
+    typedef typename Rep::Event_indices Event_indices;
+
+    // Integer type
     typedef typename Curve_analysis_2::Integer Integer;
+
+    // Status line of single curve analysis
     typedef typename Curve_analysis_2::Status_line_1 Status_line_CA_1;
 
+    // Coefficient type
     typedef typename Curve_analysis_2::Coefficient Coefficient;
     
-    typedef typename Curve_analysis_2::Polynomial_traits_2 Polynomial_traits_2;
+    // Polynomial traits class
+    typedef CGAL::Polynomial_traits_d<Polynomial_2> Polynomial_traits_2;
   
-    typedef typename Rep::Lazy_status_line_1 Lazy_status_line_1;
-
-    typedef typename Curve_analysis_2::Coercion Coercion;
+public:
     
-    typedef typename Curve_analysis_2::Coercion_type Coercion_type;
-
-    typedef typename Curve_analysis_2::Poly_coer_1 Poly_coer_1;
-
-    typedef typename Curve_analysis_2::Solve_1 Solve_1;
-
-    typedef typename Rep::Slice_info Slice_info;
-    typedef typename Rep::Lazy_slice_info Lazy_slice_info;
-
     //! The event slice object type
-    typedef CGAL::CGALi::Status_line_CPA_1< Self > 
-        Status_line_CPA_1;
-
+    typedef typename Rep::Status_line_CPA_1 Status_line_CPA_1;
+    
     /*!
      * Required by the concept. The name is not used internally 
      * to distinguish from one curve status_lines syntactically
      */
     typedef Status_line_CPA_1 Status_line_1;
+
+private:
+
+    // Lazy version of status lines
+    typedef typename Rep::Lazy_status_line_CPA_1 Lazy_status_line_CPA_1;
+
+    // Coercion between Boundary and Coefficient type
+    typedef CGAL::Coercion_traits<Boundary, Coefficient> Coercion;
+    
+    // The common supertype
+    typedef typename Coercion::Type Coercion_type;
+
+    // Polynomials over that supertype
+    typedef CGAL::Polynomial<Coercion_type> Poly_coer_1;
+
+    // Functor to isolate real roots of univariate polynomials
+    typedef typename Algebraic_kernel_2::Algebraic_kernel_1::Solve_1 Solve_1;
+
+    // Slice info objects
+    typedef typename Rep::Slice_info Slice_info;
+
+    // Lazy version
+    typedef typename Rep::Lazy_slice_info Lazy_slice_info;
+
+    //! @}
+
+private:
+
+    //! \name Internal structs
+    //! @{
 
     struct Curves_at_event_functor {
         
@@ -310,18 +396,21 @@ public:
                               boost::counting_iterator<size_type> > 
         Status_line_CPA_iterator;
 
-
-    // Helping functor
     struct Xval_of_status_line_CA_1 {
         typedef Status_line_CA_1 argument_type;
-        typedef X_coordinate_1 result_type;
-        X_coordinate_1 operator() (const Status_line_CA_1& status_line) const {
+        typedef Algebraic_real_1 result_type;
+        Algebraic_real_1 operator() (const Status_line_CA_1& status_line) 
+            const {
             return status_line.x();
         }
     };
-    
 
+    // @}
+
+    //! \name Constructors
+    //! @{
     
+public:
 
     //! DefaultConstructible
     Curve_pair_analysis_2() :
@@ -337,14 +426,26 @@ public:
     // Assignable
     
     /*!
-     * TODO UPDATE
      * \brief Constructable from two curves
      *
-     * If \c full_analysis is set, the curves are possibly sheared, if not
-     * in generic position. Also, the complete Status_line_CPA_1 objects are
-     * constructed. If not set, only internal pre-information is computed
-     * which cannot be used from outside the object, or a 
-     * Non_generic_position_exception is thrown.
+     * Create a curve pair object for the two curves \c c1 and \c c2, 
+     * given by their curve analysis object. The two curves are checked
+     * to have no common vertical line component (if they have, an
+     * exception of type \c CGAL::CGALi::Non_generic_position_exception
+     * is thrown), no further computation is performed.
+     *
+     * \param strategy If a degenerate situation (e.g., two covertical 
+     * intersection at the same x-coordinate) occurs during the analysis, 
+     * this value controls the strategy to handle it. If set to
+     * CGAL::EXCEPTION_STRATEGY, an exception of type
+     * \c CGAL::CGALi::Non_generic_position_exception is thrown whenever
+     * such a degeneracy occurs. If set to \c CGAL::SHEAR_STRATEGY, a shear
+     * transformation is performed, and the sheared curve pair is used
+     * to handle degenerate situations. Finally, if set to 
+     * CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY, degeneracies at rational
+     * x-ccordinates are handled directly, and a shear is only applied
+     * in other situations. The default argument for \c strategy is
+     * \c CGAL::SHEAR_ONLY_AT_IRRATIONAL_STRATEGY.
      */
     Curve_pair_analysis_2(Curve_analysis_2 c1, 
                           Curve_analysis_2 c2,
@@ -352,21 +453,22 @@ public:
                               = CGAL_ACK_DEFAULT_DEGENERACY_STRATEGY) 
         throw(CGAL::CGALi::Zero_resultant_exception<Polynomial_2>,
               CGAL::CGALi::Non_generic_position_exception)
-        : Base(Rep(c1, c2, strategy)) {
-            
+        : Base(Rep(c1, c2, strategy)) 
+    {
+        
 #if CGAL_ACK_DEBUG_FLAG
-            CGAL::set_pretty_mode(CGAL_ACK_DEBUG_PRINT);
+        CGAL::set_pretty_mode(CGAL_ACK_DEBUG_PRINT);
 #endif
             
 #if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "Check content for squarefreeness.." 
-                                 << std::flush;
+        CGAL_ACK_DEBUG_PRINT << "Check content for squarefreeness.." 
+                             << std::flush;
 #endif
-            if(this->ptr()->c1_.content().degree()>0 &&
-               this->ptr()->c2_.content().degree()>0) {
-                if(CGAL::CGALi::gcd_utcf
-                   (this->ptr()->c1_.content(), 
-                    this->ptr()->c2_.content()).degree() >= 1) {
+        if(this->ptr()->c1_.content().degree()>0 &&
+           this->ptr()->c2_.content().degree()>0) {
+            if(CGAL::CGALi::gcd_utcf
+               (this->ptr()->c1_.content(), 
+                this->ptr()->c2_.content()).degree() >= 1) {
                 
 #if CGAL_ACK_DEBUG_FLAG
                 CGAL_ACK_DEBUG_PRINT << "Common vertical line discovered" 
@@ -377,16 +479,45 @@ public:
 #if CGAL_ACK_DEBUG_FLAG
                 CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif
-                }
             }
-            
         }
+        
+    }
+    
+    //! @}
 
 
 private:
 
+    // Computes the resultant of the defining polynomials wrt \c y
     void compute_resultant() const;
 
+    // Computes the subresultant coefficients of the defining polynomials
+    void compute_subresultants() const;
+
+    /* 
+     * Computes the roots of the resultants (via isolation) and their
+     * multiplicities
+     */
+    void compute_resultant_roots_with_multiplicities() const;
+    
+    /*
+     * Computes all x-events of the curve pair, 
+     * together with their event indices 
+     */
+    void compute_event_x_coordinates_with_event_indices() const;
+
+    /*
+     * \brief Computes the intermediate x-coordinates and their status lines
+     *
+     * In fact, it only fills the data fields with boost::none instances,
+     * according to the lazy philosophy of the whole class.
+     */
+    void compute_intermediate_values_and_slices() const;
+    
+public:
+
+    //! Returns the resultant of the defing polynomials wrt \c y
     Polynomial_1 resultant() const {
         if(! this->ptr()->resultant) {
             compute_resultant();
@@ -395,9 +526,7 @@ private:
         return this->ptr()->resultant.get();
     }
 
-    void compute_resultant_roots_with_multiplicities() const;
-
-    std::vector<X_coordinate_1>& resultant_roots() const {
+    std::vector<Algebraic_real_1>& resultant_roots() const {
         if(! this->ptr()->resultant_roots) {
             compute_resultant_roots_with_multiplicities();
         }
@@ -405,7 +534,7 @@ private:
         return this->ptr()->resultant_roots.get();
     }
 
-    X_coordinate_1& resultant_roots(size_type i) const {
+    Algebraic_real_1& resultant_roots(size_type i) const {
         CGAL_assertion(i>=0 && 
                        i < static_cast<size_type>(resultant_roots().size()));
         return resultant_roots()[i];
@@ -438,22 +567,20 @@ private:
         return this->ptr()->stripe_values.get();
     }
 
-    void compute_event_x_coordinates_with_index_triples() const;
-
-    std::vector<X_coordinate_1>& event_x_coordinates() const {
+    std::vector<Algebraic_real_1>& event_x_coordinates() const {
         if(! this->ptr()->event_x_coordinates) {
-            compute_event_x_coordinates_with_index_triples();
+            compute_event_x_coordinates_with_event_indices();
         }
         CGAL_assertion(this->ptr()->event_x_coordinates);
         return this->ptr()->event_x_coordinates.get();
     }
 
-    std::vector<Index_triple>& index_triples() const {
-        if(! this->ptr()->index_triples) {
-            compute_event_x_coordinates_with_index_triples();
+    std::vector<Event_indices>& event_indices() const {
+        if(! this->ptr()->event_indices) {
+            compute_event_x_coordinates_with_event_indices();
         }
-        CGAL_assertion(this->ptr()->index_triples);
-        return this->ptr()->index_triples.get();
+        CGAL_assertion(this->ptr()->event_indices);
+        return this->ptr()->event_indices.get();
     } 
 
 public:
@@ -461,23 +588,21 @@ public:
     /*
      * \brief Returns the indices of the <tt>i</tt>th event value
      *
-     * Returns a Index_triple <tt>(fg,ffy,ggy)</tt> such that
+     * Returns a Event_indices <tt>(fg,ffy,ggy)</tt> such that
      * the <tt>i</tt>th event root is the <tt>fg</tt>th root of the 
      * resultant of \c f and \c g, the <tt>ffy</tt>th root of the 
      * discriminant of \c f, and  the <tt>ggy</tt>th root of the 
      * discriminant of \c g.
      */
-    Index_triple index_triples(size_type i) const {
+    Event_indices event_indices(size_type i) const {
         CGAL_assertion(i>=0 && 
                        i < static_cast<size_type>
-                           (index_triples().size()));
-        return index_triples()[i];
+                           (event_indices().size()));
+        return event_indices()[i];
     } 
 
 private:
 
-    void compute_intermediate_values_and_slices() const;
-    
     std::vector<Lazy_boundary>& intermediate_values() const {
         if(! this->ptr()->intermediate_values) {
             compute_intermediate_values_and_slices();
@@ -486,7 +611,7 @@ private:
         return this->ptr()->intermediate_values.get();
     }
 
-    std::vector<Lazy_status_line_1>& intermediate_slices() const {
+    std::vector<Lazy_status_line_CPA_1>& intermediate_slices() const {
         if(! this->ptr()->intermediate_slices) {
             compute_intermediate_values_and_slices();
         }
@@ -496,9 +621,6 @@ private:
 
 
 private:
-
-    // Computes the subresultant coefficients of \c f and \c g
-    void compute_subresultants() const;
 
     std::vector<Polynomial_2>& subresultants() const {
         if(! this->ptr()->subresultants) {
@@ -579,7 +701,7 @@ private:
     Status_line_CPA_1 create_event_slice(size_type i) 
         const {
 #if !CGAL_ACK_NO_ARC_FLIP
-        size_type index_in_fg = index_triples(i).fg;
+        size_type index_in_fg = event_indices(i).fg;
         if(index_in_fg == -1 ) {
             return create_slice_with_multiplicity_zero_or_one(i);
         } else {
@@ -598,7 +720,7 @@ private:
 
     Status_line_CPA_1 create_slice_of_higher_multiplicity(size_type i) 
         const {
-        bool is_resultant_root = index_triples(i).fg >=0;
+        bool is_resultant_root = event_indices(i).fg >=0;
         if(is_resultant_root &&
            this->ptr()->intersection_info_container) {
             return create_event_slice_with_shear(i);
@@ -634,29 +756,26 @@ private:
 private:
     Status_line_CPA_1 create_event_slice_at_rational(size_type i) const {
         
-        X_coordinate_1& x = event_x(i);
+        Algebraic_real_1& x = event_x(i);
 
         CGAL_precondition(x.is_rational());
         Boundary r = x.rational();
 
         typedef typename CGAL::Fraction_traits<Poly_coer_1> FT;
         
-        int k = degree_of_local_gcd(index_triples(i).fg,x);
+        int k = degree_of_local_gcd(event_indices(i).fg,x);
         Polynomial_2 sres = subresultants(k);
         
         Poly_coer_1 gcd_with_denom 
             = typename Polynomial_traits_2::Swap() (sres, 
                                                     0, 1).evaluate(r);
-        typename FT::Numerator_type gcd, gcd_sq_free;
+        typename FT::Numerator_type gcd;
         typename FT::Denominator_type denom;
         typename FT::Decompose() (gcd_with_denom, gcd, denom);
         
-        gcd_sq_free 
-            = typename CGAL::Polynomial_traits_d<typename FT::Numerator_type>
-                ::Make_square_free() (gcd);
-
-        std::vector<X_coordinate_1> gcd_roots;
-        Solve_1()(gcd_sq_free,std::back_inserter(gcd_roots));
+        std::vector<Algebraic_real_1> gcd_roots;
+        std::vector<int> mults;
+        Solve_1()(gcd,std::back_inserter(gcd_roots),std::back_inserter(mults));
         int m = gcd_roots.size();
 
         Slice_info slice_info = construct_slice_info(x);
@@ -699,8 +818,8 @@ private:
 
 private:
 
-    // Computes a slice_info object at X_coordinate_1 \c alpha
-    Slice_info construct_slice_info(X_coordinate_1 alpha) const
+    // Computes a slice_info object at Algebraic_real_1 \c alpha
+    Slice_info construct_slice_info(Algebraic_real_1 alpha) const
         throw(CGAL::CGALi::Non_generic_position_exception);
       
 private:
@@ -744,7 +863,7 @@ private:
                                       size_type k) const {
         Polynomial_1 p = -coprincipal_subresultants(k-1);
         Polynomial_1 q = principal_subresultants(k)*Coefficient(k);
-        X_coordinate_1 alpha = e1.x();
+        Algebraic_real_1 alpha = e1.x();
         CGAL_assertion(alpha==e2.x());
         if(zero_test_bivariate(alpha,this->ptr()->f,p,q) && 
            zero_test_bivariate(alpha,this->ptr()->g,p,q)) {
@@ -786,7 +905,7 @@ private:
 
 
     size_type degree_of_local_gcd(size_type index_of_fg,
-                            X_coordinate_1 alpha) const {
+                            Algebraic_real_1 alpha) const {
         
         if(multiplicities_of_resultant_roots(index_of_fg) == 1) {
             return 1;
@@ -807,16 +926,16 @@ public:
     }
 
     size_type event_of_curve_analysis(size_type i, bool c) const {
-        Index_triple& triple = index_triples(i);
-        return c ? triple.ggy : triple.ffy;
+        Event_indices& ev_ind = event_indices(i);
+        return c ? ev_ind.ggy : ev_ind.ffy;
     }
 
     size_type event_of_curve_analysis(size_type i, 
                                       const Curve_analysis_2& c) const {
         CGAL_assertion(c.id()==curve_analysis(false).id() ||
                        c.id()==curve_analysis(true).id());
-        Index_triple& triple = index_triples(i);
-        return (c.id()==curve_analysis(false).id()) ? triple.ffy : triple.ggy;
+        Event_indices& ev_ind = event_indices(i);
+        return (c.id()==curve_analysis(false).id()) ? ev_ind.ffy : ev_ind.ggy;
     }
 
     /*! 
@@ -831,7 +950,7 @@ public:
     }
 
     //! Returns the x-coordinate of the <tt>i</tt>th event
-    X_coordinate_1& event_x(size_type i) const {
+    Algebraic_real_1& event_x(size_type i) const {
         CGAL_assertion(i>=0 && 
                        i<static_cast<size_type>(event_x_coordinates().size()));
         return event_x_coordinates()[i];
@@ -844,9 +963,9 @@ public:
      * event value, the \c event flag is set to true, otherwise to false
      * and the slice of the interval to which \c x belongs is returned
      */
-    void x_to_index(X_coordinate_1 x, 
+    void x_to_index(Algebraic_real_1 x, 
                     size_type& idx, bool& event) const {
-        const std::vector<X_coordinate_1>& sl = event_x_coordinates();
+        const std::vector<Algebraic_real_1>& sl = event_x_coordinates();
         idx = std::lower_bound(sl.begin(),
                                sl.end(),
                                x) - sl.begin();
@@ -855,7 +974,7 @@ public:
     }
 
 
-    Status_line_CPA_1 status_line_for_x(X_coordinate_1 x, 
+    Status_line_CPA_1 status_line_for_x(Algebraic_real_1 x, 
                                         CGAL::Sign perturb = CGAL::ZERO) 
     const {
         size_type index;
@@ -874,7 +993,7 @@ public:
     }
         
 
-    Status_line_CPA_1 status_line_at_exact_x(X_coordinate_1 x) {
+    Status_line_CPA_1 status_line_at_exact_x(Algebraic_real_1 x) {
         return status_line_for_x(x);
     }
 
@@ -908,7 +1027,7 @@ public:
     //!  Returns boundary representative value at the <tt>i</tt>th interval
     const Boundary boundary_value_in_interval(size_type i) const {
 
-        const std::vector<X_coordinate_1>& events = event_x_coordinates(); 
+        const std::vector<Algebraic_real_1>& events = event_x_coordinates(); 
 
         if(! intermediate_values()[i]) {
             // Create the intermediate x-coordinate first
@@ -965,7 +1084,7 @@ private:
      * expression in terms of \c x, i.e. <tt>y=p/q</tt> with <tt>p,q</tt> 
      * univariate polynomials
      */
-    bool zero_test_bivariate(const X_coordinate_1& alpha,
+    bool zero_test_bivariate(const Algebraic_real_1& alpha,
                              const Polynomial_2& h,
                              const Polynomial_1& p,
                              const Polynomial_1& q) const;
@@ -1065,6 +1184,9 @@ private:
     // .id()
     // .is_identical
 
+    friend std::ostream& operator<< <>
+               (std::ostream& out, 
+                const Self& curve_pair);
 
 }; // end of Curve_pair_analysis_2
 
@@ -1075,7 +1197,7 @@ std::ostream& operator<<
      const Curve_pair_analysis_2<AlgebraicKernel_2>& curve_pair) {
     typedef Curve_pair_analysis_2<AlgebraicKernel_2> Curve_pair_analysis_2;
     typedef typename Curve_pair_analysis_2::size_type size_type;
-    typedef typename Curve_pair_analysis_2::Index_triple Index_triple;
+    typedef typename Curve_pair_analysis_2::Event_indices Event_indices;
     typedef typename Curve_pair_analysis_2::Status_line_CPA_1 Slice;
     out << "--------------- Analysis results ---------------" << std::endl;
     out << "Number of constructed event lines: " 
@@ -1104,9 +1226,9 @@ std::ostream& operator<<
         out << "Event line at " << CGAL::to_double(curve_pair.event_x(j))
             << ": " << std::endl;
         out << "Indices: ";
-        Index_triple triple = curve_pair.index_triples(j);
-        out << "fg: " << triple.fg << ", ffy: " 
-            << triple.ffy <<", ggy: " << triple.ggy 
+        Event_indices ev_ind = curve_pair.event_indices(j);
+        out << "fg: " << ev_ind.fg << ", ffy: " 
+            << ev_ind.ffy <<", ggy: " << ev_ind.ggy 
             << std::endl; 
         slice = curve_pair.status_line_at_event(j);
         out << slice.number_of_events() << " passing arcs" << std::endl ;
@@ -1206,7 +1328,7 @@ compute_resultant_roots_with_multiplicities() const {
                          << std::flush;
 #endif
     Solve_1 solve_1;
-    this->ptr()->resultant_roots = std::vector<X_coordinate_1>();
+    this->ptr()->resultant_roots = std::vector<Algebraic_real_1>();
     this->ptr()->multiplicities_of_resultant_roots
         = std::vector<size_type>();
     solve_1(resultant(), 
@@ -1234,20 +1356,20 @@ compute_resultant_roots_with_multiplicities() const {
     
 }
 
-//////////////////// compute_event_x_coordinates_with_index_triples
+//////////////////// compute_event_x_coordinates_with_event_indices
 
 template<typename AlgebraicKernel_2>
 void Curve_pair_analysis_2<AlgebraicKernel_2>::
-compute_event_x_coordinates_with_index_triples() const {
+compute_event_x_coordinates_with_event_indices() const {
     
     Xval_of_status_line_CA_1 xval;
     const Curve_analysis_2& c1=this->ptr()->c1_, c2=this->ptr()->c2_;
     
-    std::vector<X_coordinate_1> one_curve_events;
+    std::vector<Algebraic_real_1> one_curve_events;
     
     std::vector<CGAL::CGALi::Three_valued> one_curve_events_type;
     
-    typename CGAL::Real_embeddable_traits<X_coordinate_1>::Compare compare;
+    typename CGAL::Real_embeddable_traits<Algebraic_real_1>::Compare compare;
     
     CGAL::CGALi::set_union_with_source
         (::boost::make_transform_iterator(c1.event_begin(),xval),
@@ -1258,7 +1380,7 @@ compute_event_x_coordinates_with_index_triples() const {
          std::back_inserter(one_curve_events_type),
          compare);
     
-    this->ptr()->event_x_coordinates = std::vector<X_coordinate_1>();
+    this->ptr()->event_x_coordinates = std::vector<Algebraic_real_1>();
     std::vector<CGAL::CGALi::Three_valued> events_type;
     CGAL::CGALi::set_union_with_source
         (one_curve_events.begin(),
@@ -1268,15 +1390,15 @@ compute_event_x_coordinates_with_index_triples() const {
          std::back_inserter(this->ptr()->event_x_coordinates.get()),
          std::back_inserter(events_type),
          compare);
-    std::vector<X_coordinate_1>& events 
+    std::vector<Algebraic_real_1>& events 
         = this->ptr()->event_x_coordinates.get();
     
     typename std::vector<CGAL::CGALi::Three_valued>::iterator one_curve_it
         =one_curve_events_type.begin();
     size_type inter_count=0, f_count=0,g_count=0;
-    this->ptr()->index_triples = std::vector<Index_triple>();
-    std::vector<Index_triple>& index_triples
-        = this->ptr()->index_triples.get();
+    this->ptr()->event_indices = std::vector<Event_indices>();
+    std::vector<Event_indices>& event_indices
+        = this->ptr()->event_indices.get();
     for(size_type i=0;i<static_cast<size_type>(events.size());i++) {
 /*
         #if CGAL_ACK_DEBUG_FLAG
@@ -1290,20 +1412,20 @@ compute_event_x_coordinates_with_index_triples() const {
                 CGAL_ACK_DEBUG_PRINT << " one curve event" << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_1());
+            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
             switch(*(one_curve_it++)) {
             case(CGAL::CGALi::ROOT_OF_FIRST_SET): {
-                index_triples.push_back(Index_triple(-1,f_count,-1));
+                event_indices.push_back(Event_indices(-1,f_count,-1));
                 f_count++;
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_SECOND_SET): {
-                index_triples.push_back(Index_triple(-1,-1,g_count));
+                event_indices.push_back(Event_indices(-1,-1,g_count));
                 g_count++;
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_BOTH_SETS): {
-                index_triples.push_back(Index_triple(-1,f_count,g_count));
+                event_indices.push_back(Event_indices(-1,f_count,g_count));
                 f_count++;
                 g_count++;
                 break;
@@ -1318,10 +1440,10 @@ compute_event_x_coordinates_with_index_triples() const {
 #endif
 */
             this->ptr()->
-                event_slices.push_back(Lazy_status_line_1());
+                event_slices.push_back(Lazy_status_line_CPA_1());
             
-            index_triples.push_back
-                (Index_triple(inter_count,-1,-1));
+            event_indices.push_back
+                (Event_indices(inter_count,-1,-1));
             inter_count++;
             break;
         }
@@ -1332,25 +1454,25 @@ compute_event_x_coordinates_with_index_triples() const {
                                      << std::endl;
 #endif
 */
-            this->ptr()->event_slices.push_back(Lazy_status_line_1());
+            this->ptr()->event_slices.push_back(Lazy_status_line_CPA_1());
             
             
             switch(*(one_curve_it++)) {
             case(CGAL::CGALi::ROOT_OF_FIRST_SET): {
-                index_triples.push_back
-                    (Index_triple(inter_count,f_count,-1));
+                event_indices.push_back
+                    (Event_indices(inter_count,f_count,-1));
                 f_count++;
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_SECOND_SET): {
-                index_triples.push_back
-                    (Index_triple(inter_count,-1,g_count));
+                event_indices.push_back
+                    (Event_indices(inter_count,-1,g_count));
                 g_count++;
                 break;
             }
             case(CGAL::CGALi::ROOT_OF_BOTH_SETS): {
-                index_triples.push_back
-                    (Index_triple(inter_count,f_count,g_count));
+                event_indices.push_back
+                    (Event_indices(inter_count,f_count,g_count));
                 f_count++;
                 g_count++;
                 break;
@@ -1381,14 +1503,14 @@ compute_intermediate_values_and_slices() const {
     CGAL_ACK_DEBUG_PRINT << "Prepare intermediate slices.." << std::flush;
 #endif
     this->ptr()->intermediate_values=std::vector<Lazy_boundary>();
-    this->ptr()->intermediate_slices=std::vector<Lazy_status_line_1>();
+    this->ptr()->intermediate_slices=std::vector<Lazy_status_line_CPA_1>();
     
     for(size_type i=0;
         i<=static_cast<size_type>(event_x_coordinates().size());
         i++) {
         this->ptr()->intermediate_values.get().push_back(Lazy_boundary());
         this->ptr()->intermediate_slices.get().push_back
-            (Lazy_status_line_1());
+            (Lazy_status_line_CPA_1());
     }
     
 #if CGAL_ACK_DEBUG_FLAG
@@ -1472,9 +1594,9 @@ typename Curve_pair_analysis_2<AlgebraicKernel_2>::Status_line_CPA_1
 Curve_pair_analysis_2<AlgebraicKernel_2>::
 create_slice_with_multiplicity_zero_or_one(size_type i) const {
     
-    const std::vector<X_coordinate_1>& events 
+    const std::vector<Algebraic_real_1>& events 
         = event_x_coordinates();
-    X_coordinate_1 alpha = events[i];
+    Algebraic_real_1 alpha = events[i];
     const Curve_analysis_2& c1=curve_analysis(false), c2=curve_analysis(true);
     size_type i1,i2;
     bool flag1,flag2;
@@ -1753,18 +1875,18 @@ create_intermediate_slice_at(int i) const {
                               p2, denom); 
     
     Solve_1 solve_1;
-    std::vector<X_coordinate_1> p1_roots,p2_roots;
+    std::vector<Algebraic_real_1> p1_roots,p2_roots;
     solve_1(p1,std::back_inserter(p1_roots));
     solve_1(p2,std::back_inserter(p2_roots));
     
     size_type number_of_roots 
         = static_cast<size_type>(p1_roots.size() + p2_roots.size());
-    std::vector<X_coordinate_1> p12_roots;
+    std::vector<Algebraic_real_1> p12_roots;
     p12_roots.reserve(number_of_roots);
     std::vector<CGAL::CGALi::Three_valued> p12_order;
     p12_order.reserve(number_of_roots);
     
-    CGAL::CGALi::Distinct_compare<X_coordinate_1> distinct_compare;
+    CGAL::CGALi::Distinct_compare<Algebraic_real_1> distinct_compare;
     set_union_with_source(p1_roots.begin(),
                           p1_roots.end(),
                           p2_roots.begin(),
@@ -1860,7 +1982,7 @@ create_slice_from_slice_info(size_type id,
 template<typename AlgebraicKernel_2>
 typename Curve_pair_analysis_2<AlgebraicKernel_2>::Slice_info 
 Curve_pair_analysis_2<AlgebraicKernel_2>::
-construct_slice_info(X_coordinate_1 alpha) const
+construct_slice_info(Algebraic_real_1 alpha) const
     throw(CGAL::CGALi::Non_generic_position_exception) {
     
 /*
@@ -1944,13 +2066,13 @@ Curve_pair_analysis_2<AlgebraicKernel_2>::
 construct_generic_case(size_type i) const 
     throw(CGAL::CGALi::Non_generic_position_exception) {
     
-    X_coordinate_1 alpha = event_x(i);
+    Algebraic_real_1 alpha = event_x(i);
     
     Slice_info slice_info;
     
-    size_type index_of_fg = index_triples(i).fg;
-    size_type index_of_ffy =index_triples(i).ffy;
-    size_type index_of_ggy =index_triples(i).ggy;
+    size_type index_of_fg = event_indices(i).fg;
+    size_type index_of_ffy =event_indices(i).ffy;
+    size_type index_of_ggy =event_indices(i).ggy;
     if(index_of_fg>=0) {
         if(alpha.is_root_of(this->ptr()->c1_.polynomial_2().lcoeff()) ||
            alpha.is_root_of(this->ptr()->c2_.polynomial_2().lcoeff())) {
@@ -2101,10 +2223,10 @@ check_candidate(Status_line_CA_1& e1,size_type i1,
                 InputIterator slice_it,
                 size_type root_index) const {
     
-    X_coordinate_1 xval = e1.x();
+    Algebraic_real_1 xval = e1.x();
     CGAL_assertion(xval==e2.x());
     bool is_intersection=false;
-    size_type index_in_fg = index_triples(root_index).fg;
+    size_type index_in_fg = event_indices(root_index).fg;
     size_type mult_of_resultant
         = multiplicities_of_resultant_roots(index_in_fg);
     
@@ -2198,7 +2320,7 @@ find_possible_matching(Status_line_CA_1& e1,
 
 template<typename AlgebraicKernel_2>
 bool Curve_pair_analysis_2<AlgebraicKernel_2>::
-zero_test_bivariate(const X_coordinate_1& alpha,
+zero_test_bivariate(const Algebraic_real_1& alpha,
                     const Polynomial_2& h,
                     const Polynomial_1& p,
                     const Polynomial_1& q) const {
@@ -2384,7 +2506,7 @@ new_shear_for_intersection_info(Intersection_info_container& info_container)
                 i<static_cast<size_type>
                     (sh_pair.event_x_coordinates().size());
                 i++) {
-                if(sh_pair.index_triples(i).fg==-1) {
+                if(sh_pair.event_indices(i).fg==-1) {
                     continue;
                 }
                 Status_line_CPA_1 slice 
@@ -2422,11 +2544,11 @@ create_event_slice_from_current_intersection_info (size_type i)
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "Reduce the candidates.." << std::flush;
 #endif
-    Index_triple triple = index_triples(i);
-    size_type index_of_fg = triple.fg;
+    Event_indices ev_ind = event_indices(i);
+    size_type index_of_fg = ev_ind.fg;
     Intersection_info_container& intersection_info_container
         = *(this->ptr()->intersection_info_container);
-    X_coordinate_1 alpha = event_x(i);
+    Algebraic_real_1 alpha = event_x(i);
     CGAL_assertion(index_of_fg <
                    static_cast<size_type>
                    (intersection_info_container.size()));
@@ -2459,7 +2581,7 @@ create_event_slice_from_current_intersection_info (size_type i)
         }
         if(slice[j].first==CGAL::CGALi::CANDIDATE) {
             slice[j].first=CGAL::CGALi::INTERSECTION;
-            if(triple.ffy==-1 && triple.ggy==-1 && inter_info_it->mult==-1) {
+            if(ev_ind.ffy==-1 && ev_ind.ggy==-1 && inter_info_it->mult==-1) {
                 // Multiplicity unknown for case where we need it
                 throw CGAL::CGALi::Non_generic_position_exception();
             }
@@ -2487,7 +2609,7 @@ update_intersection_info(Intersection_info_container&
                          size_type j,
                          Integer s) const {
     typedef typename Rep::Intersection_info Intersection_info;
-    const X_coordinate_1& xval = sh_pair.event_x(i);
+    const Algebraic_real_1& xval = sh_pair.event_x(i);
     CGAL_assertion(Curves_at_event_functor(slice)(j)
                    ==CGAL::CGALi::INTERSECTION);
     Status_line_CA_1 ev = sh_pair.ptr()->c1_.status_line_at_exact_x(xval);
@@ -2502,7 +2624,7 @@ update_intersection_info(Intersection_info_container&
     // first the "x-coordiante"
     size_type left_index = -1, 
         right_index = static_cast<size_type>(stripe_values().size()-1);
-    X_coordinate_1 xv = ev.x();
+    Algebraic_real_1 xv = ev.x();
     Boundary lx = xv.low(), rx=xv.high(),
         x_iv_size = rx-lx;
     Boundary ly = ev.lower_boundary(index),

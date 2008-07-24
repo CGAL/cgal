@@ -73,15 +73,13 @@ public:
     typedef CGAL::Polynomial<Boundary> Poly_rat_1;
 
     // \brief Type for x-values
-    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;
 
     //! \brief \c Vert_line specification for critical x-values 
-    typedef typename 
-    Curve_analysis_2::Status_line_1 Status_line_1;
+    typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
 
     // \brief Type for Polynomial traits
-    typedef typename Curve_analysis_2::Polynomial_traits_2 
-        Polynomial_traits_2;
+    typedef CGAL::Polynomial_traits_d<Polynomial_2> Polynomial_traits_2;
 
     //! Default Constructor
     Event_line_builder() {}
@@ -134,7 +132,7 @@ public:
      * fixed AcX::Vert_line object is returned.
      */
     Status_line_1
-    create_event_line(int id,X_coordinate_1 alpha,int arcs_left,int arcs_right,
+    create_event_line(int id,Algebraic_real_1 alpha,int arcs_left,int arcs_right,
                       bool root_of_resultant, bool root_of_content,int mult) 
         throw(CGAL::CGALi::Non_generic_position_exception) {
 
@@ -306,7 +304,7 @@ protected:
      * ommitted for that leading elements.
      */
     template<typename InputIterator>
-    std::pair<int,int> compute_mk(X_coordinate_1 alpha,
+    std::pair<int,int> compute_mk(Algebraic_real_1 alpha,
 				  InputIterator seq_begin,
                                   InputIterator seq_end,
 				  int first_elements_zero=0) {
@@ -314,7 +312,7 @@ protected:
         typedef InputIterator Input_iterator;
 
 
-        X_coordinate_1& alpha_ref=alpha;
+        Algebraic_real_1& alpha_ref=alpha;
 
         int m,k=-1; // Initialize to prevent compiler warning
 	
@@ -484,7 +482,7 @@ protected:
      * expression in terms of \c x, i.e. <tt>y=p/q</tt> with <tt>p,q</tt> 
      * univariate polynomials
      */
-    bool zero_test_bivariate(const X_coordinate_1& alpha,
+    bool zero_test_bivariate(const Algebraic_real_1& alpha,
 			     const Polynomial_2& h,
 			     const Polynomial_1& p,
 			     const Polynomial_1& q) const {
@@ -646,7 +644,7 @@ protected:
      * On failure, the error CGAL::CGALi::Non_generic_position_exception 
      * is thrown.
      */
-    Bitstream_descartes construct_bitstream_descartes(const X_coordinate_1& 
+    Bitstream_descartes construct_bitstream_descartes(const Algebraic_real_1& 
 						      alpha,
 						      int& k,
 						      bool root_of_resultant,
@@ -727,7 +725,7 @@ protected:
      */
     bool event_point_checker(Bitstream_descartes& bit_des,
 			     const Polynomial_2& polynomial,
-			     const X_coordinate_1& alpha,
+			     const Algebraic_real_1& alpha,
 			     int k,
 			     const Polynomial_2& der_1,
 			     const Polynomial_2& der_2) 
@@ -768,7 +766,7 @@ protected:
         Interval isol_iv(bit_des.left_boundary(c),bit_des.right_boundary(c));
 
         typedef CGAL::CGALi::Approximate_arithmetic_controller
-            <Polynomial_1,X_coordinate_1> Approximate_controller;
+            <Polynomial_1,Algebraic_real_1> Approximate_controller;
       
         Approximate_controller approx_controller_q(q,alpha);
 

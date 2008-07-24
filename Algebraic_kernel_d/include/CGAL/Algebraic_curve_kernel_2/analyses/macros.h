@@ -27,14 +27,13 @@ CGAL_BEGIN_NAMESPACE
     typedef typename CGAL::Get_arithmetic_kernel<Boundary> \
         ::Arithmetic_kernel Arithmetic_kernel; \
     typedef typename Arithmetic_kernel::Integer Integer; \
-    typedef typename Algebraic_kernel_1::Algebraic_real_1 X_coordinate_1;   \
-    typedef X_coordinate_1  Y_coordinate_1; \
-    typedef CGAL::Polynomial< Coefficient > Polynomial_1; \
+    typedef typename Algebraic_kernel_1::Algebraic_real_1 Algebraic_real_1;   \
+        typedef CGAL::Polynomial< Coefficient > Polynomial_1; \
     typedef CGAL::Polynomial< Polynomial_1 > Polynomial_2; \
     typedef typename Algebraic_kernel_1::Solve_1 Solve_1;       \
     typedef \
     CGAL::CGALi::Bitstream_descartes_traits_on_vert_line<Polynomial_1,   \
-                                                    X_coordinate_1,      \
+                                                    Algebraic_real_1,      \
                                                     Integer >          \
     Bitstream_traits; \
     typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits> \

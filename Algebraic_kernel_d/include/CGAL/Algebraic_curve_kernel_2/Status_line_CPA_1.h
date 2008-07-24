@@ -39,12 +39,12 @@ class Status_line_CPA_1_rep {
     typedef Status_line_CPA_1_rep<Curve_pair_analysis_2> Self;
 
     // type of x-coordinate
-    typedef typename Curve_pair_analysis_2::X_coordinate_1
-                X_coordinate_1; 
+    typedef typename Curve_pair_analysis_2::Algebraic_real_1
+                Algebraic_real_1; 
 
     // type of a curve point
-    typedef typename Curve_pair_analysis_2::Xy_coordinate_2
-                Xy_coordinate_2;
+    typedef typename Curve_pair_analysis_2::Algebraic_real_2
+                Algebraic_real_2;
 
     // an instance of a size type
     typedef typename Curve_pair_analysis_2::size_type size_type;
@@ -74,7 +74,7 @@ public:
     
     // represents x-coordinate of event of rational value over interval
     // computed only by demand
-    mutable boost::optional<X_coordinate_1> _m_x;
+    mutable boost::optional<Algebraic_real_1> _m_x;
 
     // for each event point stores a pair of arcnos of the 1st and 2nd curve
     // or -1 if respective curve is not involved
@@ -129,10 +129,10 @@ public:
     typedef Status_line_CPA_1<Curve_pair_analysis_2, Rep> Self;
 
     //! type of x-coordinate
-    typedef typename Curve_pair_analysis_2::X_coordinate_1 X_coordinate_1; 
+    typedef typename Curve_pair_analysis_2::Algebraic_real_1 Algebraic_real_1; 
 
     //! type of a curve point
-    typedef typename Curve_pair_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
+    typedef typename Curve_pair_analysis_2::Algebraic_real_2 Algebraic_real_2;
 
     //! an instance of a size type
     typedef typename Curve_pair_analysis_2::size_type size_type;
@@ -219,17 +219,17 @@ public:
     /*! \brief
      * returns the x-coordinate of the vertical line (always a finite value).
      */
-    X_coordinate_1 x() const {
+    Algebraic_real_1 x() const {
         // unless x-coordiate was explicitly set with _set_x: compute its value
         if(!this->ptr()->_m_x) {
             this->ptr()->_m_x = (is_event() ?
 #if CGAL_ACK_USE_EXACUS
                 this->ptr()->_m_cpa._internal_curve_pair().event_x(index()) :
-                X_coordinate_1(this->ptr()->_m_cpa._internal_curve_pair().
+                Algebraic_real_1(this->ptr()->_m_cpa._internal_curve_pair().
                                boundary_value_in_interval(index())));
 #else   
                 this->ptr()->_m_cpa.event_x(index()) :
-                X_coordinate_1(this->ptr()->_m_cpa.
+                Algebraic_real_1(this->ptr()->_m_cpa.
                     boundary_value_in_interval(index())));
 #endif
         }
@@ -366,7 +366,7 @@ public:
     /*!\brief
      * sets x-coordinate of a status line
      */
-    void _set_x(X_coordinate_1 x) const {
+    void _set_x(Algebraic_real_1 x) const {
         this->ptr()->_m_x = x;
     }
 

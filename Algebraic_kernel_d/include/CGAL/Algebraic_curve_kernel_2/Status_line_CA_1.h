@@ -50,12 +50,12 @@ class Status_line_CA_1_rep {
     typedef Status_line_CA_1_rep<Curve_analysis_2> Self;
 
     // type of x-coordinate
-    typedef typename Curve_analysis_2::X_coordinate_1
-                X_coordinate_1; 
+    typedef typename Curve_analysis_2::Algebraic_real_1
+                Algebraic_real_1; 
 
     // type of a curve point
-    typedef typename Curve_analysis_2::Xy_coordinate_2
-                Xy_coordinate_2;
+    typedef typename Curve_analysis_2::Algebraic_real_2
+                Algebraic_real_2;
 
     // type of bivariate Polynomial
     typedef typename Curve_analysis_2::Polynomial_2
@@ -73,7 +73,7 @@ class Status_line_CA_1_rep {
     // Traits class for local isolator
     typedef CGAL::CGALi::Bitstream_descartes_traits_on_vert_line
         <typename Polynomial_traits_d<Polynomial_2>::Coefficient,
-         X_coordinate_1 > Bitstream_traits;
+         Algebraic_real_1 > Bitstream_traits;
 
     // Isolator type
     typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits> 
@@ -86,7 +86,7 @@ public:
     {   }
 
     // constructs status line over interval
-    Status_line_CA_1_rep(X_coordinate_1 x, size_type i,
+    Status_line_CA_1_rep(Algebraic_real_1 x, size_type i,
             const Curve_analysis_2& ca, size_type n_arcs) :
             _m_x(x), _m_index(i), _m_ca(ca),/*_m_num_arcs(n_arcs, n_arcs),*/
             _m_total_arcs(n_arcs), _m_vertical_line(false), _m_event(false),
@@ -95,7 +95,7 @@ public:
     }
 
     // constructs status line at event
-    Status_line_CA_1_rep(X_coordinate_1 x, size_type i,
+    Status_line_CA_1_rep(Algebraic_real_1 x, size_type i,
         const Curve_analysis_2& ca, size_type n_arcs_left,
         size_type n_arcs_right) :
              _m_x(x), _m_index(i), _m_ca(ca),
@@ -105,7 +105,7 @@ public:
     }
 
     //! x-coordinate of event info
-    mutable X_coordinate_1 _m_x;
+    mutable Algebraic_real_1 _m_x;
 
     //! this status line id (# of event or # of interval depending on whether
     //! or not this status line encodes an event)
@@ -151,7 +151,7 @@ public:
     std::vector< int > multiplicities_;*/
     
     // stores algebraic real over the vertical line
-    mutable std::vector<boost::optional< Xy_coordinate_2 > >_m_xy_coords;
+    mutable std::vector<boost::optional< Algebraic_real_2 > >_m_xy_coords;
 
     // stores the isolator instance
     mutable boost::optional<Bitstream_descartes> isolator;
@@ -197,12 +197,10 @@ public:
     typedef Status_line_CA_1<Curve_analysis_2, Rep> Self;
 
     //! type of x-coordinate
-    typedef typename Curve_analysis_2::X_coordinate_1 X_coordinate_1; 
+    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1; 
 
     //! type of a curve point
-    typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
-
-    typedef Xy_coordinate_2 Algebraic_real_2;
+    typedef typename Curve_analysis_2::Algebraic_real_2 Algebraic_real_2;
 
     //! an instance of a size type
     typedef typename Curve_analysis_2::size_type size_type;
@@ -246,7 +244,7 @@ public:
      *
      * \pre specified x-coordinate belongs to \c i-th interval
      */
-    Status_line_CA_1(X_coordinate_1 x, size_type i, const Curve_analysis_2& ca,
+    Status_line_CA_1(Algebraic_real_1 x, size_type i, const Curve_analysis_2& ca,
             size_type n_arcs) :
         Base(Rep(x, i, ca, n_arcs)) {
     
@@ -277,7 +275,7 @@ public:
      *
      * \pre there is a curve event at specified x-coordinate
      */
-    Status_line_CA_1(X_coordinate_1 x, size_type i, const Curve_analysis_2& ca,
+    Status_line_CA_1(Algebraic_real_1 x, size_type i, const Curve_analysis_2& ca,
             size_type n_arcs_left, size_type n_arcs_right, 
             Arc_container arcs, bool has_v_line = false) :
         Base(Rep(x, i, ca, n_arcs_left, n_arcs_right)) {
@@ -304,7 +302,7 @@ public:
      *
      * arcs and vertical line flag can be set later
      */
-    Status_line_CA_1(X_coordinate_1 x, size_type i, const Curve_analysis_2& ca,
+    Status_line_CA_1(Algebraic_real_1 x, size_type i, const Curve_analysis_2& ca,
             size_type n_arcs_left, size_type n_arcs_right) :
         Base(Rep(x, i, ca, n_arcs_left, n_arcs_right)) {
 
@@ -337,7 +335,7 @@ public:
     /*! \brief
      *  returns the x-coordinate of the status line (always a finite value)
      */
-    X_coordinate_1 x() const {
+    Algebraic_real_1 x() const {
         return this->ptr()->_m_x;
     }
     
@@ -398,15 +396,15 @@ public:
     }
 
     /*!\brief
-     *  returns \c Xy_coordinate_2 for j-th event over this vert line
+     *  returns \c Algebraic_real_2 for j-th event over this vert line
      *
      * \pre 0 <= j < num_of_events()
      */
-    Xy_coordinate_2 algebraic_real_2(size_type j) const
+    Algebraic_real_2 algebraic_real_2(size_type j) const
     {
         CGAL_precondition(0 <= j&&j < number_of_events());
         if(!this->ptr()->_m_xy_coords[j])
-            this->ptr()->_m_xy_coords[j] = Xy_coordinate_2(x(), 
+            this->ptr()->_m_xy_coords[j] = Algebraic_real_2(x(), 
                 this->ptr()->_m_ca, j);
         return *(this->ptr()->_m_xy_coords[j]);
     }
@@ -414,7 +412,7 @@ public:
     /*!\brief
      * alias for \c get_algebraic_real_2()
      */
-    Xy_coordinate_2 xy_coordinate_2(size_type j) const {
+    Algebraic_real_2 xy_coordinate_2(size_type j) const {
         return algebraic_real_2(j);
     }
 
@@ -514,7 +512,7 @@ public:
                 if(i!=0) {
                     os << ", " << std::flush;
                 }
-                Xy_coordinate_2 xy = algebraic_real_2(i);
+                Algebraic_real_2 xy = algebraic_real_2(i);
                 typedef typename Bitstream_descartes::Boundary Boundary;
                 Boundary th = CGAL::ipower(Boundary(1,2),53);
                 double d 
