@@ -828,6 +828,34 @@ void _test_circle_construct(CK ck)
   //theSplit_2(circ1_arc_low, arc_aux.source(),
   //	     circ_arc_split_1, circ_arc_split_2);
 
+  // testing intersect_2(Line_2, Circular_arc_2)
+  Line_2 lo1 = Line_2(Point_2(0,0), Point_2(0,10));
+  Circular_arc_2 cao1 = Circular_arc_2(Point_2(0,0), Point_2(-5,5), Point_2(0,10)); // = two intersection p/arc
+  Circular_arc_2 cao2 = Circular_arc_2(Point_2(0,0), Point_2(5,5), Point_2(0,10));
+  Circular_arc_2 cao3 = Circular_arc_2(Point_2(-5,5), Point_2(0,0), Point_2(5,5)); // = one intersection p/ arc
+  Circular_arc_2 cao4 = Circular_arc_2(Point_2(-5,5), Point_2(0,10), Point_2(5,5));
+  Circular_arc_2 cao5 = Circular_arc_2(Point_2(1,1), Point_2(-1,2), Point_2(1,4)); // = zero-two intersections
+  Circular_arc_2 cao6 = Circular_arc_2(Point_2(1,4), Point_2(-1,2), Point_2(1,1)); 
+  Circular_arc_2 cao7 = Circular_arc_2(Point_2(10,10), Point_2(0,0), Point_2(10,-10)); // = tangency
+  Circular_arc_2 cao8 = Circular_arc_2(Point_2(11,10), Point_2(1,0), Point_2(11,-10)); // = no intersection
 
+  std::cout << "Testing intersect with lines" << std::endl;
+  std::vector< CGAL::Object > v_ll1, v_ll2, v_ll3, v_ll4, v_ll5, v_ll6, v_ll7, v_ll8;
+  theConstruct_intersect_2(lo1, cao1, std::back_inserter(v_ll1));
+  theConstruct_intersect_2(lo1, cao2, std::back_inserter(v_ll2));
+  theConstruct_intersect_2(lo1, cao3, std::back_inserter(v_ll3));
+  theConstruct_intersect_2(lo1, cao4, std::back_inserter(v_ll4));
+  theConstruct_intersect_2(lo1, cao5, std::back_inserter(v_ll5));
+  theConstruct_intersect_2(lo1, cao6, std::back_inserter(v_ll6));
+  theConstruct_intersect_2(lo1, cao7, std::back_inserter(v_ll7));
+  theConstruct_intersect_2(lo1, cao8, std::back_inserter(v_ll8));
+  assert(v_ll1.size() == 2);
+  assert(v_ll2.size() == 2);
+  assert(v_ll3.size() == 1);
+  assert(v_ll4.size() == 1);
+  assert(v_ll5.size() == 0);
+  assert(v_ll6.size() == 2);
+  assert(v_ll7.size() == 1);
+  assert(v_ll8.size() == 0);
 
 }

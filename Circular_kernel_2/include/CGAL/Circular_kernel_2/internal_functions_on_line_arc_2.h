@@ -712,7 +712,65 @@ namespace CircularFunctors {
     }
     return res;
   }*/
-  
+
+  template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_2 &l,
+	       const typename CK::Line_arc_2 &la,
+	       OutputIterator res )
+  {
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
+    typedef typename CK::Line_arc_2               Line_arc_2;
+    typedef typename CK::Point_2                  Point_2;
+    typedef typename CK::Line_2                   Line_2;
+    typedef typename CK::Root_of_2                Root_of_2;
+    typedef typename CK::Root_for_circles_2_2     Root_for_circles_2_2;
+
+    if(LinearFunctors::non_oriented_equal<CK>(l, la.supporting_line())) {
+      *res++ = make_object(la);
+    }
+    
+    Object obj = intersection(l, la.supporting_line());
+    const Point_2 *pt = CGAL::object_cast<Point_2>(&obj);
+    if(pt == NULL) return res;
+    Circular_arc_point_2 intersect_point = Circular_arc_point_2(*pt);
+
+    if (CircularFunctors::compare_xy<CK>(intersect_point, la.source()) !=
+	 CircularFunctors::compare_xy<CK>(intersect_point, la.target()))
+      *res++ = make_object(std::make_pair(intersect_point, 1u));
+
+    return res;
+  }
+
+  template< class CK, class OutputIterator>
+  OutputIterator
+  intersect_2( const typename CK::Line_2 &l,
+	       const typename CK::Circular_arc_2 &c,
+	       OutputIterator res )
+  {
+    typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;
+    typedef typename CK::Line_2 Line_2;
+    typedef std::vector<CGAL::Object > solutions_container;
+
+    solutions_container solutions;
+
+    CGAL::LinearFunctors::intersect_2<CK>
+      ( l, c.supporting_circle(),
+	std::back_inserter(solutions) );
+
+    for (typename solutions_container::iterator it = solutions.begin();
+	 it != solutions.end(); ++it) {
+      const std::pair<typename CK::Circular_arc_point_2, unsigned>
+        *result = CGAL::object_cast
+	  <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+      if (has_on<CK>(c,result->first,true)) {
+	*res++ = *it;
+      }
+    }
+    return res;
+  }  
+
   template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Circular_arc_2 &c,

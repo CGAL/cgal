@@ -547,6 +547,7 @@ template < class CK >
     typedef typename CK::Circle_2                 Circle;
     typedef typename CK::Circular_arc_2           Circular_arc;
     typedef typename CK::Line_arc_2               Line_arc;
+    typedef typename CK::Line_2                   Line;
     
     public:
 
@@ -594,6 +595,30 @@ template < class CK >
     operator()(const Circular_arc & c1, const Line_arc & c2, 
 	       OutputIterator res) const
     { return CircularFunctors::intersect_2<CK> (c2,c1,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line & l, const Circular_arc & c, 
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (l,c,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line & l, const Line_arc & la, 
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (l,la,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc & c, const Line & l, 
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (l,c,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc & la, const Line & l,
+	       OutputIterator res) const
+    { return CircularFunctors::intersect_2<CK> (l,la,res); }
 
   };
 
