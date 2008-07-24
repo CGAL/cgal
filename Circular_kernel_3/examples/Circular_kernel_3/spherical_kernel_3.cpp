@@ -1,26 +1,19 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/Spherical_kernel_3.h>
+#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Random.h>
 
-typedef CGAL::Quotient< CGAL::MP_Float >                    NT;
-typedef CGAL::Cartesian<NT>                                 Linear_k1;
-typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT>          Algebraic_k1;
-typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK;
-typedef SK::FT                                              FT;
+typedef CGAL::Exact_spherical_kernel_3                      SK;
+typedef SK::Point_3                                         Point_3;
 typedef SK::Sphere_3                                        Sphere_3;
 typedef SK::Circle_3                                        Circle_3;
 typedef SK::Intersect_3                                     Intersect_3;
-typedef SK::Construct_sphere_3                              Construct_sphere_3;
-typedef SK::Algebraic_kernel                                AK;
-typedef AK::Polynomial_for_spheres_2_3                      Polynomial_for_spheres_2_3;
 
 int main() {
 
   Intersect_3 theIntersect_3 = SK().intersect_3_object();
-  Construct_sphere_3 theConstruct_sphere_3 = SK().construct_sphere_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -40,9 +33,9 @@ int main() {
     double x3 = theRandom.get_double(0.0,5.0);
     double y3 = theRandom.get_double(0.0,5.0);
     double z3 = theRandom.get_double(0.0,5.0);
-    Sphere_3 s1 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(FT(x1),FT(y1),FT(z1),FT(r)));
-    Sphere_3 s2 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(FT(x2),FT(y2),FT(z2),FT(r)));
-    Sphere_3 s3 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(FT(x3),FT(y3),FT(z3),FT(r)));
+    Sphere_3 s1 = Sphere_3(Point_3(x1,y1,z1), r);
+    Sphere_3 s2 = Sphere_3(Point_3(x2,y2,z2), r);
+    Sphere_3 s3 = Sphere_3(Point_3(x3,y3,z3), r);
     std::vector< CGAL::Object > intersection_1;
     theIntersect_3(s1, s2, s3, std::back_inserter(intersection_1));
     if(intersection_1.size() > 0) count++;
