@@ -48,18 +48,13 @@ template <class R_>
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Vector_3              Vector_3;
-  // typedef typename R_::Sphere_3              Sphere_3;
+  typedef typename R_::Sphere_3              Sphere_3;
   typedef typename R_::Direction_3           Direction_3;
 
   typedef Circle_3                           Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Circle_3>::value));
 
 public:
-
-  // NOTE: this one is here so the stuffs of Sebastien keep working
-  //       on Circular_kernel_3, but this need to be fixed 
-  typedef typename R_::Sphere_3              Sphere_3;
-  // TODO: from public to private
 
   typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<1>  Feature_dimension;

@@ -1595,21 +1595,6 @@ Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text svneol=
 Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset#image/gif
 Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
-Circular_kernel_3/include/CGAL/Circle_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_arc_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_arc_point_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/Circle_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/Circular_arc_point_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/Half_circle_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/Sphere_with_radius_3.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/Theta_rep.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/constant.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/function_objects_polynomial_reference_sphere.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_function_compare_to_left_spherical_kernel.h -text
-Circular_kernel_3/include/CGAL/Circular_kernel_3/internal_functions_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Half_circle_on_reference_sphere_3.h -text
-Circular_kernel_3/include/CGAL/Sphere_with_radius_3.h -text
-Circular_kernel_3/include/CGAL/Theta_rep.h -text
 Circular_kernel_3/test/Circular_kernel_3/test_Lazy_Spherical_kernel.cpp -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text

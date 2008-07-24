@@ -27,31 +27,13 @@
 #include <CGAL/Circular_kernel_3/Circular_arc_point_3.h>
 #include <CGAL/Circular_arc_point_3.h>
 
-#include <CGAL/Circular_kernel_3/Circular_arc_point_on_reference_sphere_3.h>
-#include <CGAL/Circular_arc_point_on_reference_sphere_3.h>
-
-#include <CGAL/Circular_kernel_3/Theta_rep.h>
-#include <CGAL/Theta_rep.h>
-
-#include <CGAL/Circular_kernel_3/Sphere_with_radius_3.h>
-#include <CGAL/Sphere_with_radius_3.h>
-
 #include <CGAL/Circular_kernel_3/Line_arc_3.h>
 #include <CGAL/Line_arc_3.h>
 
 #include <CGAL/Circular_kernel_3/Circular_arc_3.h>
 #include <CGAL/Circular_arc_3.h>
 
-#include <CGAL/Circular_arc_on_reference_sphere_3.h>
-
-#include <CGAL/Circular_kernel_3/Circle_on_reference_sphere_3.h>
-#include <CGAL/Circle_on_reference_sphere_3.h>
-
-#include <CGAL/Circular_kernel_3/Half_circle_on_reference_sphere_3.h>
-#include <CGAL/Half_circle_on_reference_sphere_3.h>
-
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
-#include <CGAL/Circular_kernel_3/function_objects_polynomial_reference_sphere.h>
 
 #include <CGAL/Circular_kernel_3/get_equation_object_on_curved_kernel_3.h>
 
@@ -68,14 +50,7 @@ namespace CGAL {
         typedef CGALi::Circular_arc_point_3<SphericalKernel>                        Circular_arc_point_3;
         typedef CGALi::Line_arc_3<SphericalKernel>                                  Line_arc_3;
         typedef CGALi::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
-        typedef CGALi::Circular_arc_point_on_reference_sphere_3<SphericalKernel>    Circular_arc_point_on_reference_sphere_3;
-        typedef CGALi::Circle_on_reference_sphere_3<SphericalKernel>                Circle_on_reference_sphere_3;
-        typedef CGALi::Half_circle_on_reference_sphere_3<SphericalKernel>                Half_circle_on_reference_sphere_3;
-        typedef CGALi::Circular_arc_3<SphericalKernel,CGAL::Circle_on_reference_sphere_3<SphericalKernel>,CGAL::Circular_arc_point_on_reference_sphere_3<SphericalKernel> >    Circular_arc_on_reference_sphere_3;
-        typedef CGALi::Theta_rep<SphericalKernel>                                   Theta_rep;
-        typedef CGALi::Sphere_with_radius_3<SphericalKernel>                        Sphere_with_radius_3;
-        
-        
+       
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >
         struct Handle { typedef Handle_for<T>    type; };

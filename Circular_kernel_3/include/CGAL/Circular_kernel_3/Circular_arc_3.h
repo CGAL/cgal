@@ -30,32 +30,22 @@
 
 namespace CGAL {
   namespace CGALi{
-    template <class SK,class Circle=CGAL::Circle_3<SK>, class Circular_arc_point=CGAL::Circular_arc_point_3<SK> >
+    template < class SK >
     class Circular_arc_3 {
       typedef typename SK::Plane_3              Plane_3;
-      //~ typedef typename SK::Circle_3             Circle_3;
-      typedef Circle                            Circle_3;
-      //~ typedef typename SK::Sphere_3             Sphere_3;
-      typedef typename Circle_3::Sphere_3             Sphere_3;
+      typedef typename SK::Circle_3             Circle_3;
+      typedef typename SK::Sphere_3             Sphere_3;
       typedef typename SK::Point_3              Point_3;
-      //~ typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
-      typedef Circular_arc_point                Circular_arc_point_3;
+      typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Line_3               Line_3;
       typedef typename SK::FT                   FT;
 
     private:
-      
-      const Sphere_3& get_ref_sphere(const typename SK::Circle_on_reference_sphere_3& C){return C.reference_sphere();}
-      Sphere_3 get_ref_sphere(const typename SK::Circle_3& C){CGAL_error();}
 
       typedef Triple<Circle_3, Circular_arc_point_3, 
                                Circular_arc_point_3> Rep;
       typedef typename SK::template Handle<Rep>::type Base;
 
-    
-    
-      
-    
       Base base;
       mutable bool _full;
       // It is the sign of the cross product 
@@ -244,10 +234,8 @@ namespace CGAL {
         return _sign_cross_product;
       }
 
-      static double pi;
-
       double approximate_angle() const {
-        if(is_full()) return 2.0*pi;
+        if(is_full()) return 2.0*CGAL_PI;
         const double x1 = to_double(source().x());
         const double y1 = to_double(source().y());
         const double z1 = to_double(source().z());
@@ -260,7 +248,7 @@ namespace CGAL {
         const double d_sq = dx*dx + dy*dy + dz*dz;
         const double r_sq = to_double(squared_radius());
         const double ap_ang = 2.0 * std::asin(0.5 * std::sqrt(d_sq / r_sq));
-        if(sign_cross_product() == NEGATIVE) return 2.0 * pi - ap_ang;
+        if(sign_cross_product() == NEGATIVE) return 2.0 * CGAL_PI - ap_ang;
         else return ap_ang;
       }
 
@@ -280,23 +268,20 @@ namespace CGAL {
 
     };
 
-    template < class SK ,class Circle, class Circular_arc_point>
-    double Circular_arc_3<SK,Circle,Circular_arc_point>::pi = CGAL_PI;
-
-    template < class SK ,class Circle, class Circular_arc_point>
+    template < class SK >
     CGAL_KERNEL_INLINE
     bool
-    Circular_arc_3<SK,Circle,Circular_arc_point>::operator==(const Circular_arc_3<SK,Circle,Circular_arc_point> &t) const
+    Circular_arc_3<SK>::operator==(const Circular_arc_3<SK> &t) const
     {
       if (CGAL::identical(base, t.base))
         return true;		
       return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
     }
 
-    template < class SK ,class Circle, class Circular_arc_point>
+    template < class SK >
     CGAL_KERNEL_INLINE
     bool
-    Circular_arc_3<SK,Circle,Circular_arc_point>::operator!=(const Circular_arc_3<SK,Circle,Circular_arc_point> &t) const
+    Circular_arc_3<SK>::operator!=(const Circular_arc_3<SK> &t) const
     {
       return !(*this == t);
     }

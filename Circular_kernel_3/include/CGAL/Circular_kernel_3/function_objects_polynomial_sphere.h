@@ -33,7 +33,6 @@
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
-#include <CGAL/Circular_kernel_3/internal_functions_on_reference_sphere_3.h>
 #include <CGAL/Object.h>
 
 
@@ -44,7 +43,6 @@ namespace SphericalFunctors {
 template < class SK > \
   class Compare_ ##V## _3: public SK::Linear_kernel::Compare_ ##V## _3{\
     typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;\
-    typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;\
     typedef typename SK::Point_3 Point_3;\
   public:\
     typedef  typename SK::Linear_kernel::Compare_ ##V## _3::result_type result_type;\
@@ -61,18 +59,6 @@ template < class SK > \
     operator() (const Point_3 &p0,\
                 const Circular_arc_point_3 &p1) const\
     { return compare_ ##V <SK>(p0, p1); }\
-    result_type\
-    operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
-                const Circular_arc_point_on_reference_sphere_3 &p1) const\
-    { return (*this)(static_cast<const Circular_arc_point_3&>(p0), static_cast<const Circular_arc_point_3&>(p1)); }\
-    result_type\
-    operator() (const Circular_arc_point_on_reference_sphere_3 &p0,\
-                const Point_3 &p1) const\
-    { return   (*this)(static_cast<const Circular_arc_point_3&>(p0),p1);}\
-    result_type\
-    operator() (const Point_3 &p0,\
-                const Circular_arc_point_on_reference_sphere_3 &p1) const\
-    { return (*this)(p0, static_cast<const Circular_arc_point_3&>(p1));}\
   };\
   
   CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(x)
@@ -723,15 +709,12 @@ template < class SK > \
   {
     typedef typename SK::Point_3                 Point_3;
     typedef typename SK::Sphere_3                Sphere_3;
-    typedef typename SK::Sphere_with_radius_3                Sphere_with_radius_3;
     typedef typename SK::Plane_3                 Plane_3;
     typedef typename SK::Line_3                  Line_3;
     typedef typename SK::Line_arc_3              Line_arc_3;
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
-    typedef typename SK::Circular_arc_point_on_reference_sphere_3 Circular_arc_point_on_reference_sphere_3;
     typedef typename SK::Circular_arc_3          Circular_arc_3;
     typedef typename SK::Circle_3                Circle_3;
-    typedef typename SK::Circle_on_reference_sphere_3                Circle_on_reference_sphere_3;
     
 
   public:
@@ -740,28 +723,12 @@ template < class SK > \
     using SK::Linear_kernel::Has_on_3::operator();
 
     result_type
-    operator()(const Sphere_with_radius_3 &a, const Point_3 &p) const
-    { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
-    
-    result_type
-    operator()(const Point_3 &p, const Sphere_with_radius_3 &a) const
-    { return false; }
-    
-    result_type
     operator()(const Sphere_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
 
     result_type
-    operator()(const Sphere_with_radius_3 &a, const Circular_arc_point_on_reference_sphere_3 &p) const
-    { return (*this)(static_cast<const Sphere_3&>(a),static_cast<const Circular_arc_point_3&>(p)); }    
-
-    result_type
     operator()(const Circular_arc_point_3 &p, const Sphere_3 &a) const
     { return false; }
-    
-    result_type
-    operator()(const Circular_arc_point_3 &p, const Sphere_with_radius_3 &a) const
-    { return false; }    
 
     result_type
     operator()(const Plane_3 &a, const Circular_arc_point_3 &p) const
@@ -778,23 +745,11 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_point_3 &p, const Line_3 &a) const
     { return false; }
-    
-    result_type
-    operator()(const Circle_on_reference_sphere_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }    
 
     result_type
     operator()(const Circle_3 &a, const Circular_arc_point_3 &p) const
     { return has_on<SK>(a, p); }
-    
-    result_type
-    operator()(const Circle_on_reference_sphere_3& a, const Circular_arc_point_on_reference_sphere_3 &p) const
-    { return has_on<SK>(a.supporting_sphere(), p) && has_on<SK>(a.reference_sphere(), p); }    
 
-    result_type
-    operator()(const Sphere_with_radius_3 &a, const Circle_3 &p) const
-    { return has_on<SK>(static_cast<const Sphere_3&>(a), p); }
-    
     result_type
     operator()(const Line_arc_3 &a, const Circular_arc_point_3 &p,
                const bool already_know_point_on_line = false) const
@@ -870,13 +825,6 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_3 &p, const Circle_3 &a) const
     { return has_on<SK>(p, a); }
-    
-    result_type
-    operator() (const typename SK::Half_circle_on_reference_sphere_3& H,
-                          const typename SK::Circular_arc_point_on_reference_sphere_3& P,
-                          bool point_is_on_circle=false) const{
-      return has_on_ref_sphere<SK>(H,P,point_is_on_circle);
-    }
     
   };
 
@@ -1099,58 +1047,6 @@ template < class SK > \
     operator()(const Line_arc_3 & la, const Circular_arc_3 & ca,
 	       OutputIterator res) const
     { return intersect_3<SK> (ca,la,res); }
-
-    //On reference sphere
-    //NOTE THAT THIS IMPLEMENTATION PROVIDE ONLY INTERSECTION POINT THAT ARE NOT A POLE
-    template < class OutputIterator > 
-    OutputIterator 
-    operator()( const typename SK::Circle_on_reference_sphere_3& C1,
-                          const typename SK::Circle_on_reference_sphere_3& C2,
-                          CGAL::Inter_alg_info& IA,
-                          OutputIterator out) const
-    {
-      return intersect_3<SK>(C1,C2,IA,out);
-    }
-      
-    template < class OutputIterator >
-    OutputIterator 
-    operator()(const typename SK::Circle_on_reference_sphere_3& C1,
-                         const typename SK::Circle_on_reference_sphere_3& C2,
-                         OutputIterator out) const
-    {
-      return intersect_3<SK>(C1,C2,out);
-    }
-      
-    template <class OutputIterator>
-    OutputIterator 
-    operator()(const typename SK::Circle_on_reference_sphere_3& C1,
-                         const typename SK::Circle_on_reference_sphere_3& C2,CGAL::Inter_alg_info &IA,
-                         OutputIterator out, CGAL::EvtPt_num num) const
-    {
-      return intersect_3<SK>(C1,C2,IA,out,num);
-    }
-    
-    template <class OutputIterator>
-    OutputIterator operator()(const typename SK::Half_circle_on_reference_sphere_3& H,
-                                              const typename SK::Circle_on_reference_sphere_3&        C,
-                                              OutputIterator out) const{
-      return intersect_3<SK>(C,H,out);
-    }
-
-    template <class OutputIterator>
-    OutputIterator operator()(const typename SK::Circle_on_reference_sphere_3&        C,
-                                              const typename SK::Half_circle_on_reference_sphere_3& H,
-                                              OutputIterator out) const{
-      return intersect_3<SK>(C,H,out);
-    }
-    
-    template <class OutputIterator>
-    OutputIterator operator()(const typename SK::Half_circle_on_reference_sphere_3& H1,
-                                              const typename SK::Half_circle_on_reference_sphere_3& H2,
-                                              OutputIterator out) const{
-      return intersect_3<SK>(H1,H2,out);
-    }
-    
     
   };
 
