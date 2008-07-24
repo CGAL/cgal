@@ -1204,13 +1204,13 @@ public:
     typedef Lazy_exact_nt<ET_numerator> Numerator_type;
     typedef Lazy_exact_nt<ET_denominator> Denominator_type;
 
-    struct Common_factor : Binary_function<Denominator_type,Denominator_type,Denominator_type>{
+    struct Common_factor : std::binary_function<Denominator_type,Denominator_type,Denominator_type>{
         Denominator_type operator()(const Denominator_type& a, const Denominator_type& b) const {
             typename ETT::Common_factor common_factor;
             return Denominator_type(common_factor(a.exact(),b.exact()));
         }
     };
-    struct Compose : Binary_function<Type,Numerator_type,Denominator_type>{
+    struct Compose : std::binary_function<Type,Numerator_type,Denominator_type>{
         Type operator()(const Numerator_type& n, const Denominator_type& d) const {
             typename ETT::Compose compose;
             return Type(compose(n.exact(),d.exact()));
