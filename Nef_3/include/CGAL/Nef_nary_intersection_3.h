@@ -1,12 +1,12 @@
-#ifndef CGAL_NEF_NARY_INTERSECTION_H
-#define CGAL_NEF_NARY_INTERSECTION_H
+#ifndef CGAL_NEF_NARY_INTERSECTION_3_H
+#define CGAL_NEF_NARY_INTERSECTION_3_H
 
 #include <list>
 
 CGAL_BEGIN_NAMESPACE
 
 template<class Polyhedron>
-class Nary_intersection {
+class Nef_nary_intersection_3 {
 
   int inserted;
   std::list<Polyhedron> queue;
@@ -14,7 +14,7 @@ class Nary_intersection {
   Polyhedron empty;
 
  public:
-  Nary_intersection() : inserted(0) {}
+  Nef_nary_intersection_3() : inserted(0) {}
   
   void intersect() {
     pit i1(queue.begin()), i2(i1);
@@ -45,4 +45,4 @@ class Nary_intersection {
 };
 
 CGAL_END_NAMESPACE
-#endif // CGAL_NEF_NARY_INTERSECTION_H
+#endif // CGAL_NEF_NARY_INTERSECTION_3_H

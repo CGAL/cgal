@@ -29,7 +29,7 @@
 #include<CGAL/Cartesian.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_S2/Normalizing.h>
-#include<CGAL/Nef_3/Nary_union.h>
+#include<CGAL/Nef_nary_union_3.h>
 
 #ifdef CGAL_USE_LEDA
 #include<CGAL/leda_integer.h>
@@ -111,7 +111,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    typedef typename Nef_3::Kernel          Kernel;
    typedef typename Nef_3::Point_3         Point_3;
    typedef typename std::vector<Point_3>   Point_set;
-   CGAL::Nary_union<Nef_3>                 nary_union;
+   CGAL::Nef_nary_union_3<Nef_3>            nary_union;
    // input data structure
    typedef double	                   Scan_NT;
    typedef CGAL::Cartesian<Scan_NT>        Scan_kernel;
