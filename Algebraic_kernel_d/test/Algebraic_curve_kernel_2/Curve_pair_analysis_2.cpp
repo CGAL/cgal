@@ -92,7 +92,7 @@ void test_routine() {
 #if CGAL_ACK_USE_EXACUS
         typedef SoX::Index_triple Triple;
 #else
-        typedef CGAL::CGALi::Index_triple<int> Triple;
+        typedef CGAL::CGALi::Event_indices<int> Triple;
 #endif
         int i;
         {
@@ -456,7 +456,7 @@ void test_routine() {
 #if CGAL_ACK_USE_EXACUS
         typedef SoX::Index_triple Triple;
 #else
-        typedef CGAL::CGALi::Index_triple<int> Triple;
+        typedef CGAL::CGALi::Event_indices<int> Triple;
 #endif
         int i;
         {
@@ -724,7 +724,7 @@ void test_routine() {
         Curve_pair_analysis_2 curve_pair(c1,c2);
         assert(curve_pair.number_of_status_lines_with_event()==10);
         typedef typename Curve_pair_analysis_2::Status_line_1 Status_line_1;
-        typedef CGAL::CGALi::Index_triple<int> Triple;
+        typedef CGAL::CGALi::Event_indices<int> Triple;
         int i;
     
         {

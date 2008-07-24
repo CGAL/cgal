@@ -221,7 +221,7 @@ template<typename Arithmetic_kernel> void test_routine() {
         assert(! event.is_event(0));
 
         CGAL::Arr_parameter_space loc;
-        typename Curve_analysis_2::Y_coordinate_1 y_coor;
+        Algebraic_real y_coor;
 
 
         assert(CGAL::assign
@@ -442,7 +442,7 @@ template<typename Arithmetic_kernel> void test_routine() {
 
 
         CGAL::Arr_parameter_space loc;
-        typename Sqrt_curve_analysis_2::Y_coordinate_1 y_coor;
+        Sqrt_algebraic_real y_coor;
 
 
         assert(CGAL::assign
