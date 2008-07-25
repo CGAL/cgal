@@ -3,26 +3,27 @@
 \ccDefinition
 A model of \ccc{PolynomialTraits_d} is associated to a type 
 \ccc{Polynomial_d}. 
-The type \ccc{Polynomial_d} represents a multivariate polynomial
-\footnote{Univariate polynomials are not excluded by this concept.}. 
+The type \ccc{Polynomial_d} represents a multivariate polynomial.
 The number of variables is denoted as the dimension $d$ of the polynomial,
 it is arbitrary but fixed for a certain model of this concept.  
+Note that univariate polynomials are not excluded by this concept. In this case 
+$d$ is just set to one.  
 
 \ccc{PolynomialTraits_d} provides two different views on the 
 multivariate polynomial. 
 
 \begin{itemize}
-\item A recursive view, that sees the polynomial as an element of 
-$R[x_0,\dots,x_{d-2}][x_{d-1}]$. In this view, the polynomial is handled as
-a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
-\item A symmetric view, which is symmetric with respect to all variables,
-seeing the polynomials as element of $R[x_0,\dots,x_{d-1}]$.
+\item The recursive view:  In this view, the polynomials is considered as 
+an element of $R[x_0,\dots,x_{d-2}][x_{d-1}]$. That is, the polynomial 
+is treated as a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
+\item The symmetric or multivariate view: This view is symmetric 
+with respect to all variables,
+considering the polynomials as element of $R [x_0,\dots,x_{d-1}]$.
 \end{itemize}
 
-
-The default view is the recursive view, therefore all functors are 
-designed such that their default version performs the operation 
-with respect to this view. 
+Many functors consider the polynomial as a univariate polynomial in one variable.
+By default this is the outermost variable $x_{d-1}$. However, in general it 
+is possible to select a certain variable. 
 
 \ccRefines
 
@@ -38,8 +39,8 @@ with respect to this view.
 
 \ccNestedType{template <typename T, int d> struct Rebind}
 {This nested template class has to define a type \ccc{Other} which is a model 
-of the concept \ccc{PolynomialTraits_d}, where \ccc{d} is the number of variables 
-and \ccc{T} the \ccc{Innermost_coefficient_type}.}
+of the concept \ccc{PolynomialTraits_d}, where \ccc{d} is the number of 
+variables and \ccc{T} the \ccc{Innermost_coefficient}.}
 
 \ccHeading{Functors}
 
