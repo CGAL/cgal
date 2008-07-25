@@ -256,8 +256,7 @@ public:
     
   //       Square_free_factorization;
   struct Square_free_factorization{
-    typedef int result_type;
-        
+    
     template < class OutputIterator >
     OutputIterator operator()( const Polynomial_d& p, OutputIterator oi) const {
       std::vector<Polynomial_d> factors;
@@ -1170,7 +1169,6 @@ public:
 
   //       Square_free_factorization_up_to_constant_factor;
   struct Square_free_factorization_up_to_constant_factor {
-    typedef int result_type;
   private:
     typedef Coefficient Coeff;
     typedef Innermost_coefficient ICoeff;
