@@ -43,12 +43,12 @@ class Dxf_reader_doubles {
 
 public:
   typedef double       FT;
-  typedef boost::array<double, 3>  Triple;
-  typedef Triple Point_2_and_bulge;
-  typedef Triple Circle_2;
+  typedef boost::array<double, 3>  Triplet;
+  typedef Triplet Point_2_and_bulge;
+  typedef Triplet Circle_2;
 
 
-  typedef std::list<Triple > Polygon;
+  typedef std::list<Triplet > Polygon;
   typedef std::list<Polygon> Polygons;
   typedef std::list<Circle_2> Circles;
 

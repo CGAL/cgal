@@ -44,7 +44,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   OutputIterator variant_load(std::istream& is, OutputIterator res)
 {
 
-  typedef boost::array<double, 3> Triple;
+  typedef boost::array<double, 3> Triplet;
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
   typedef typename CK::Root_of_2 Root_of_2;
@@ -53,9 +53,9 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   typedef typename CK::Point_2 Point_2;
   typedef typename CK::Circle_2 Circle_2;
   typedef typename boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
-  typedef std::list<Triple> Polygon;
+  typedef std::list<Triplet> Polygon;
   typedef std::list<Polygon> Polygons;
-  typedef std::list<Triple> Circles;
+  typedef std::list<Triplet> Circles;
 
   Polygons polygons;
   Circles circles;
