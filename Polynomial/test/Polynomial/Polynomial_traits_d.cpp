@@ -13,20 +13,14 @@
 // ============================================================================
 
 #include <iostream>
-#include <CGAL/basic.h>
-
-#include <CGAL/Sqrt_extension.h>
-
-#include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Polynomial.h>
-#include <CGAL/Polynomial_traits_d.h>
-
-#include <CGAL/ipower.h>
-
 #include <cassert>
 
-#include <CGAL/Test/_test_basic.h>
-
+#include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Sqrt_extension.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial_traits_d.h>
+#include <CGAL/ipower.h>
 #include <CGAL/Random.h>
 
 static CGAL::Random my_rnd(346); // some seed 
@@ -308,8 +302,6 @@ void test_degree(const Polynomial_traits_d&){
 
   typename PT::Construct_polynomial construct;
   typename PT::Degree degree;
-
-  CGAL::Test_functor_arity< typename PT::Degree >()(1);
     
   Polynomial_d p; 
   p= construct(Coeff(0));
