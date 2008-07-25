@@ -99,7 +99,8 @@
   CGAL_Circular_Kernel_pred(Has_on_unbounded_side_2, has_on_unbounded_side_2_object)
   CGAL_Circular_Kernel_pred(Bounded_side_2, bounded_side_2_object)
   CGAL_Circular_Kernel_pred(Collinear_2, collinear_2_object)
-  
+  CGAL_Circular_Kernel_pred(Do_intersect_2, do_intersect_2_object)
+
   CGAL_Circular_Kernel_cons(Construct_supporting_circle_2,
   construct_supporting_circle_2_object)
   CGAL_Circular_Kernel_cons(Construct_supporting_line_2,

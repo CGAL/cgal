@@ -79,6 +79,7 @@ template <class CK>
     typedef Bbox_functors::Equal_2<Self>		     Equal_2;
     typedef Bbox_functors::In_x_range_2<Self>		     In_x_range_2;
     typedef Bbox_functors::Make_x_monotone_2<Self>	     Make_x_monotone_2;
+    typedef Bbox_functors::Do_intersect_2<Self>                 Do_intersect_2;
     typedef Bbox_functors::Intersect_2<Self>                 Intersect_2;
     typedef Bbox_functors::Split_2<Self>		     Split_2;
     typedef Bbox_functors::Is_vertical_2<Self>               Is_vertical_2;
@@ -161,6 +162,10 @@ template <class CK>
 	Is_vertical_2
 	  is_vertical_2_object() const
 	{ return Is_vertical_2(); }
+	
+	Do_intersect_2
+	  do_intersect_2_object() const
+	{ return Do_intersect_2(); }
 };
 
 CGAL_END_NAMESPACE

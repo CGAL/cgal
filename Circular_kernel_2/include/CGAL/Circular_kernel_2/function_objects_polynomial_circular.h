@@ -25,6 +25,7 @@
 #ifndef CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 #define CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 
+#include <CGAL/Circular_kernel_2/internal_functions_on_intersection_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
@@ -538,6 +539,18 @@ template < class CK >
 
   };
 
+  template < class CK >
+  class Do_intersect_2
+    : public CK::Linear_kernel::Do_intersect_2
+  {
+  public:
+    typedef typename CK::Linear_kernel::Do_intersect_2::result_type   result_type;
+    template <class T1, class T2>
+    result_type
+    operator()(const T1& t1, const T2& t2) const
+    { return CGALi::do_intersect(t1, t2, CK()); }
+    using CK::Linear_kernel::Do_intersect_2::operator();
+  };
   
   template < class CK >
   class Intersect_2

@@ -23,7 +23,7 @@ double prob_2() {
     if(CGAL::orientation(p4, p5, p6) != CGAL::COUNTERCLOCKWISE) std::swap(p4, p6);
     T o2 = T(p4, p5, p6);
     std::vector< CGAL::Object > res;
-    Circular_k().intersect_2_object()(o1, o2, std::back_inserter(res));
+		CGAL::intersection(o1, o2, std::back_inserter(res));
     prob += (res.size() != 0) ? 1.0 : 0.0;
   }
   return prob/10000.0;

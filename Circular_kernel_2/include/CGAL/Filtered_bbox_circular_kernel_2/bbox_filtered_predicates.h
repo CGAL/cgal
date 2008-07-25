@@ -26,6 +26,7 @@
 #ifndef CGAL_BBOX_FILTERED_PREDICATES_H  
 #define CGAL_BBOX_FILTERED_PREDICATES_H  
 
+#include <CGAL/Filtered_bbox_circular_kernel_2/bbox_filtered_intersections.h>
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <CGAL/Object.h>
@@ -681,6 +682,16 @@ class Do_overlap_2
       }
   };
 
+  template < class BK >
+  class Do_intersect_2
+  {
+  public:
+    typedef typename BK::Bool_type  result_type;
+    template <class T1, class T2>
+    result_type
+    operator()(const T1& t1, const T2& t2) const
+    { return CGALi::do_intersect(t1, t2, BK()); }
+  };
 
   template < class BK >
   class Intersect_2
