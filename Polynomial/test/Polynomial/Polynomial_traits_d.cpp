@@ -45,7 +45,6 @@ generate_sparse_random_polynomial(int max_degree = 10){
   CGAL_SNAP_CGALi_TRAITS_D(PT);
   typename PT::Construct_polynomial construct; 
 
-
   typedef CGAL::Exponent_vector Exponent_vector;
   typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;
   typedef std::vector< Monom > Monom_rep;
@@ -105,6 +104,7 @@ void test_construct_polynomial(const Polynomial_traits_d&){
         == construct(Coeff(3),Coeff(2),Coeff(1),Coeff(0)));
     assert(construct(Coeff(3),Coeff(2),Coeff(1)) 
         != construct(Coeff(3),Coeff(2),Coeff(1),Coeff(1)));
+
     // construct via iterator range
     std::vector<Coeff> coeffs;
     assert(construct(coeffs.begin(),coeffs.end()) == construct(0));
@@ -135,7 +135,10 @@ void test_construct_polynomial(const Polynomial_traits_d&){
     assert(p == p1+p2);
     
     assert(construct(monom_rep. begin(),monom_rep. end()) 
-        == construct(monom_rep.rbegin(),monom_rep.rend()));  
+        == construct(monom_rep.rbegin(),monom_rep.rend()));
+    // test with boolean flag is_sorted 
+    assert(construct(monom_rep. begin(),monom_rep. end(),false) 
+        == construct(monom_rep.rbegin(),monom_rep.rend(),false));  
   }
   std::cerr << " ok "<< std::endl; 
 }
@@ -489,11 +492,25 @@ void test_shift(const Polynomial_traits_d&){
   std::cerr << "start test_shift "; std::cerr.flush();
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
   typename PT::Shift shift; 
+  typename PT::Swap  swap; 
   typename PT::Construct_polynomial construct;
   for(int i = 0; i < 5; i++){ 
     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>();
     Polynomial_d q = p*CGAL::ipower(construct(Coeff(0),Coeff(1)),5);
     assert(shift(p,5) == q);   
+  }
+  int d = Polynomial_traits_d::d;
+  if( d > 1){ 
+    assert(shift(Polynomial_d(1),1,0) !=  shift(Polynomial_d(1),1,1));
+    assert(shift(Polynomial_d(1),1,0) !=  shift(Polynomial_d(1),1,1));
+    assert(shift(Polynomial_d(1),1,0) !=  shift(Polynomial_d(1),1,d-1));
+    assert(shift(Polynomial_d(1),1,0) !=  shift(Polynomial_d(1),1,d-1));
+    
+    assert(shift(Polynomial_d(1),1,0) ==  swap(shift(Polynomial_d(1),1,1),0,1));
+    assert(shift(Polynomial_d(1),1,0) ==  swap(shift(Polynomial_d(1),1,1),0,1));
+    assert(shift(Polynomial_d(1),1,0) ==  swap(shift(Polynomial_d(1),1,d-1),0,d-1));
+    assert(shift(Polynomial_d(1),1,0) ==  swap(shift(Polynomial_d(1),1,d-1),0,d-1));
+    
   }
   std::cerr << " ok "<< std::endl; 
 }

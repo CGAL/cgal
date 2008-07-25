@@ -581,6 +581,8 @@ public:
         const Coefficient& a8) const 
     {return Polynomial_d(a0,a1,a2,a3,a4,a5,a6,a7,a8);}
         
+
+
     template< class Input_iterator >
     inline
     Polynomial_d construct( 
@@ -600,7 +602,6 @@ public:
       return Create_polynomial_from_monom_rep< Coefficient >()( begin, end ); 
     }
         
-
     template< class Input_iterator >
     Polynomial_d 
     operator()( Input_iterator begin, Input_iterator end ) const {
@@ -608,7 +609,18 @@ public:
       typedef typename Input_iterator::value_type value_type;
       typedef Boolean_tag<boost::is_same<value_type,Coefficient>::value> 
         Is_coeff;
-      return construct(begin,end,Is_coeff());
+      std::vector<value_type> vec(begin,end);
+      return construct(vec.begin(),vec.end(),Is_coeff());
+    }
+
+    
+    template< class Input_iterator >
+    Polynomial_d 
+    operator()( Input_iterator begin, Input_iterator end , bool is_sorted) const {
+      if(is_sorted) 
+        return Create_polynomial_from_monom_rep< Coefficient >()( begin, end );
+      else
+        return (*this)(begin,end);
     }
     
   public: 
@@ -1226,8 +1238,9 @@ public:
   //       Shift;
   struct Shift
     : public std::unary_function< Polynomial_d, Polynomial_d >{
+    
     Polynomial_d 
-    operator()(const Polynomial_d& p, int e, int i = PT::d) const {
+    operator()(const Polynomial_d& p, int e, int i = (d-1)) const {
       Construct_polynomial construct; 
       Get_monom_representation gmr; 
       Monom_rep monom_rep;
@@ -1235,7 +1248,7 @@ public:
       for(typename Monom_rep::iterator it = monom_rep.begin(); 
           it != monom_rep.end();
           it++){
-        it->first[i-1]+=e;
+        it->first[i]+=e;
       }
       return construct(monom_rep.begin(), monom_rep.end());
     }
