@@ -795,6 +795,45 @@ void _test_circle_construct(CK ck)
     assert(circular_arc_2_random.is_x_monotone());
   }
 
+	std::cout << "Split_2_object " << std::endl;
+	//we make the circle1
+	int center1_x = theRandom.get_int(random_min, random_max);
+	int center1_y = theRandom.get_int(random_min, random_max);
+	Point_2 center1(center1_x,center1_y); 
+	int circ1_r = theRandom.get_int(1, random_max);
+	Circle_2 circ1(center1, circ1_r * circ1_r);
+	Point_2 center1_low_right(center1_x + circ1_r, center1_y - circ1_r);
+	Circle_2 circ1_low_right(center1_low_right, circ1_r * circ1_r);
+	Point_2 center1_low_left(center1_x - circ1_r, center1_y - circ1_r);
+	Circle_2 circ1_low_left(center1_low_left, circ1_r * circ1_r);
+	Point_2 point_2_left(center1_x - circ1_r, center1_y);
+	Line_2 theLine_2_horizontal(center1, point_2_left);
+	//The circ1_arc_high and circ1_arc_low are x_monotone
+	Circular_arc_2 circ1_arc_low(circ1,
+	                              theLine_2_horizontal,true,
+	                              theLine_2_horizontal, false);
+	//p1 is lefter and lower than p2
+	Circular_arc_point_2 circ1_arc_end_p1 =
+	           CGAL::circle_intersect<CK>(circ1, circ1_low_right, true);
+	Split_2 theSplit_2 = ck.split_2_object();
+	Circular_arc_2 circ_arc_split_1;
+	Circular_arc_2 circ_arc_split_2;
+	theSplit_2(circ1_arc_low, circ1_arc_end_p1,
+	           circ_arc_split_1, circ_arc_split_2);
+	assert(circ_arc_split_1.target() == circ1_arc_end_p1);
+	assert(circ1_arc_low.source() == circ_arc_split_1.source());
+	assert(circ_arc_split_1.target() == circ_arc_split_2.source());
+	assert(circ1_arc_low.target() == circ_arc_split_2.target());
+	
+	//We used a point created without the support circle
+	Circular_arc_point_2 circ1_arc_end_p2 =
+	            CGAL::circle_intersect<CK>(circ1_low_left, circ1_low_right, true);
+	theSplit_2(circ1_arc_low, circ1_arc_end_p2,
+	            circ_arc_split_1, circ_arc_split_2);
+	assert(circ_arc_split_1.target() == circ1_arc_end_p2);
+	assert(circ1_arc_low.source() == circ_arc_split_1.source());
+	assert(circ_arc_split_1.target() == circ_arc_split_2.source());
+	assert(circ1_arc_low.target() == circ_arc_split_2.target());
   
   //The commented code in bottom must create an error
   ////We used a point which is not on the arc
@@ -841,6 +880,4 @@ void _test_circle_construct(CK ck)
   assert(theDo_intersect_2(lo1, cao7));
   assert(v_ll8.size() == 0);
   assert(!theDo_intersect_2(lo1, cao8));
-	CGAL::intersection(lo1, cao8, std::back_inserter(v_ll8));
-	CGAL::do_intersect(lo1, cao8);
 }
