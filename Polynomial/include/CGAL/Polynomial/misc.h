@@ -3,7 +3,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/fwd.h>
-#include <CGAL/Polynomial/Polynomial_type.h>
 
 namespace CGAL{
 namespace CGALi{

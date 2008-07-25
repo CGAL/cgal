@@ -972,8 +972,107 @@ void test_scalar_factor_traits(){
 }
 
 
+template<class Polynomial_d, class T>
+void test_interoperable_with(){
+    // construction
+  assert(Polynomial_d(-2) == T(-2));
+
+  // operators 
+  Polynomial_d f(4); 
+  assert( f + T(2) == Polynomial_d( 6));
+  assert( f - T(2) == Polynomial_d( 2));
+  assert( f * T(2) == Polynomial_d( 8));
+  assert( f / T(2) == Polynomial_d( 2));
+  
+  assert( T(2) + f == Polynomial_d( 6));
+  assert( T(2) - f == Polynomial_d(-2));
+  assert( T(2) * f == Polynomial_d( 8));
+  assert( T(8) / f == Polynomial_d( 2));
+
+  f+=T(2);
+  f-=T(4);
+  f*=T(3);
+  f/=T(2);
+  assert( f == Polynomial_d(3));
+  
+
+  assert(  T(2) == Polynomial_d(2));
+  assert(  T(2) != Polynomial_d(4));
+    
+  assert( (T(2) <  Polynomial_d(4)));
+  assert(!(T(4) <  Polynomial_d(4)));
+  assert(!(T(6) <  Polynomial_d(4)));
+
+  assert(!(T(2) >  Polynomial_d(4)));
+  assert(!(T(4) >  Polynomial_d(4)));
+  assert( (T(6) >  Polynomial_d(4)));
+
+  assert(  T(2) <= Polynomial_d(4));
+  assert(  T(4) <= Polynomial_d(4));
+  assert(!(T(6) <= Polynomial_d(4)));
+
+  assert(!(T(2) >= Polynomial_d(4)));
+  assert( (T(4) >= Polynomial_d(4)));
+  assert( (T(6) >= Polynomial_d(4)));
+}
+
+template<class Polynomial_d>
+void test_interoperable_poly(){
+  typedef CGAL::Polynomial_traits_d<Polynomial_d> PT;
+  typedef typename PT::Coefficient                Coefficient;
+  typedef typename PT::Innermost_coefficient      Innermost_coefficient;
+
+  test_interoperable_with<Polynomial_d,int>();
+  test_interoperable_with<Polynomial_d,Innermost_coefficient>();
+  test_interoperable_with<Polynomial_d,Coefficient>();
+  test_interoperable_with<Polynomial_d,Polynomial_d>();
+  
+  
+}
+
+template<class AT>
+void test_interoperable_at(){
+  typedef typename AT::Integer Integer;
+  typedef CGAL::Sqrt_extension<Integer,Integer> EXT; 
+  {
+    typedef int Coefficient;
+    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef CGAL::Polynomial<Poly_1> Poly_2;
+    typedef CGAL::Polynomial<Poly_2> Poly_3;
+    typedef CGAL::Polynomial<Poly_3> Poly_4;
+    test_interoperable_poly<Poly_1>();
+    test_interoperable_poly<Poly_2>();
+    // test_interoperable_poly<Poly_3>();
+    // test_interoperable_poly<Poly_4>();
+  }{
+    typedef Integer Coefficient;
+    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef CGAL::Polynomial<Poly_1> Poly_2;
+    typedef CGAL::Polynomial<Poly_2> Poly_3;
+    typedef CGAL::Polynomial<Poly_3> Poly_4;
+    test_interoperable_poly<Poly_1>();
+    test_interoperable_poly<Poly_2>();
+    // test_interoperable_poly<Poly_3>();
+    // test_interoperable_poly<Poly_4>();
+  }{
+    typedef EXT Coefficient;
+    typedef CGAL::Polynomial<Coefficient>    Poly_1;
+    typedef CGAL::Polynomial<Poly_1> Poly_2;
+    typedef CGAL::Polynomial<Poly_2> Poly_3;
+    typedef CGAL::Polynomial<Poly_3> Poly_4;
+    test_interoperable_poly<Poly_1>();
+    test_interoperable_poly<Poly_2>();
+    // test_interoperable_poly<Poly_3>();
+    // test_interoperable_poly<Poly_4>();
+  }
+}
+
+
 template <class AT>
 void test_AT(){
+  
+  test_interoperable_at<AT>();
+
     basic_tests<int>();
     basic_tests<double>();
     // TODO: The flat_iterator_test leads to compile errors. Need to be fixed
