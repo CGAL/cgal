@@ -24,8 +24,8 @@
 #ifndef CGAL_CARTESIAN_TRIANGLE_2_H
 #define CGAL_CARTESIAN_TRIANGLE_2_H
 
-#include <CGAL/Threetuple.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -37,7 +37,7 @@ class TriangleC2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Triangle_2           Triangle_2;
 
-  typedef Threetuple<Point_2>	                   Rep;
+  typedef boost::array<Point_2, 3>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -48,7 +48,7 @@ public:
   TriangleC2() {}
 
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : base(p, q, r) {}
+    : base(CGALi::make_array(p, q, r)) {}
 
 
   const Point_2 &
@@ -56,9 +56,9 @@ public:
   {
     if (i>2) i = i%3;
     else if (i<0) i = (i%3) + 3;
-    return (i==0) ? get(base).e0 :
-      (i==1) ? get(base).e1 :
-      get(base).e2;
+    return (i==0) ? get(base)[0] :
+      (i==1) ? get(base)[1] :
+      get(base)[2];
   }
   
   const Point_2 &
