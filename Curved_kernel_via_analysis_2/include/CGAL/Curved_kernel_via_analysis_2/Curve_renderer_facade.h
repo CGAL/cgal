@@ -56,9 +56,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Twotuple.h>
 #include <CGAL/Arithmetic_kernel.h>
 
+#include <boost/array.hpp>
 #include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -93,8 +93,8 @@ public:
     static void setup(const CGAL::Bbox_2& bbox, int res_w, int res_h) {
         int _w, _h;
         CGAL::Bbox_2 tmp;
-        CORE::CORE_init(2);
-    CORE::setDefaultPrecision(70, CORE::extLong::getPosInfty());
+//         CORE::CORE_init(2);
+//     CORE::setDefaultPrecision(70, CORE::extLong::getPosInfty());
         instance().get_setup_parameters(&tmp, _w, _h);
         if(bbox != tmp || res_w != _w || res_h != _h) {
             instance().setup(bbox, res_w, res_h);
@@ -243,7 +243,7 @@ public:
      */
     template < class Coord_2, template < class > class Container >
     inline void draw(const Arc_2& arc, Container< std::vector<Coord_2> >& pts,
-            CGAL::Twotuple< Coord_2 >& end_pts) {
+            boost::array< Coord_2, 2 >& end_pts) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;

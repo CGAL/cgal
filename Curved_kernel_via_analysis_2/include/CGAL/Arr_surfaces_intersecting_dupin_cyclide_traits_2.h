@@ -28,7 +28,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Fourtuple.h>
+#include <boost/array.hpp>
 
 #include <CGAL/Curved_kernel_via_analysis_2.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h>
@@ -869,7 +869,7 @@ public:
     typedef CGAL::Polynomial< double > Poly_double_1;
     typedef CGAL::Polynomial< Poly_double_1 > Poly_double_2;
     
-    typedef CGAL::Fourtuple< double > Point_double_4;
+    typedef boost::array< double, 4 > Point_double_4;
     
 
     //!\name replicates all constructors of the base (stupid solution)
@@ -934,6 +934,7 @@ public:
 
         static Poly_double_2 _param[4]; // x, y, z, w respectively
         if(base_surf != NULL) 
+    // cannot use std::transform because of stupid layout
             _param[0] = CGAL::to_double(base_surf->x_param()),
             _param[1] = CGAL::to_double(base_surf->y_param()),
             _param[2] = CGAL::to_double(base_surf->z_param()),   
@@ -946,12 +947,13 @@ public:
         const Dupin_cyclide_3* base_surf = NULL) {
         
         static Poly_double_1 _param[4]; // see above 
-        if(base_surf != NULL) 
-// make_transform_iterator ?
-            _param[0] = CGAL::to_double(base_surf->tube_circle()[0]),
-            _param[1] = CGAL::to_double(base_surf->tube_circle()[1]),
-            _param[2] = CGAL::to_double(base_surf->tube_circle()[2]),
-            _param[3] = CGAL::to_double(base_surf->tube_circle()[3]);
+        if(base_surf != NULL) {
+            typename Real_embeddable_traits<
+                typename Dupin_cyclide_3::Polynomial_1 >::To_double
+                    to_double;
+            std::transform(base_surf->tube_circle(),
+                 base_surf->tube_circle()+4, _param, to_double);
+        }
         return _param;
     }    
 
@@ -959,11 +961,14 @@ public:
         const Dupin_cyclide_3* base_surf = NULL) {
         
         static Poly_double_1 _param[4]; // see above 
-        if(base_surf != NULL) 
-            _param[0] = CGAL::to_double(base_surf->outer_circle()[0]),
-            _param[1] = CGAL::to_double(base_surf->outer_circle()[1]),
-            _param[2] = CGAL::to_double(base_surf->outer_circle()[2]),
-            _param[3] = CGAL::to_double(base_surf->outer_circle()[3]);
+        if(base_surf != NULL) {
+            typename Real_embeddable_traits<
+                typename Dupin_cyclide_3::Polynomial_1 >::To_double
+                    to_double;
+            std::transform(base_surf->outer_circle(),
+                 base_surf->outer_circle()+4, _param, to_double);
+        }
+        
         return _param;
     }    
 
@@ -971,11 +976,15 @@ public:
         const Dupin_cyclide_3* base_surf = NULL) {
 
         static Point_double_4 _pole;
-        if(base_surf != NULL) 
-            _pole.e0 = CGAL::to_double(base_surf->pole().e0),
-            _pole.e1 = CGAL::to_double(base_surf->pole().e1),
-            _pole.e2 = CGAL::to_double(base_surf->pole().e2),
-            _pole.e3 = CGAL::to_double(base_surf->pole().e3);
+
+        if(base_surf != NULL) {
+            typename Real_embeddable_traits<
+                typename Dupin_cyclide_3::Point_int_4::value_type >::To_double
+                    to_double;
+            std::transform(base_surf->pole().begin(),
+                base_surf->pole().end(), _pole.begin(), 
+                to_double);
+        }
         return _pole;
     } 
 
@@ -983,24 +992,25 @@ public:
      * computes approximation of a point 
      *
      * returns \c false if the point does not fall within the drawing window
-     * \c Coord_3 must be constructible from a triple of doubles
      */
-    template < class Coord_3 >
-    bool compute_approximation(Coord_3& result) const {
+    template < class OutputIterator >
+    bool compute_approximation(OutputIterator oi) const {
     
         typedef Curve_renderer_facade< ASiDC_traits_2 > Facade;
         
-        CGAL::Twotuple< double > cc;
+        std::pair< double, double > cc;
         if(!Facade::instance().draw(*this, cc))
             return false; // bad luck
 
         const Poly_double_2* params = param_surface();
-        double x0 = NiX::substitute_xy(params[0], cc.e0, cc.e1), 
-               y0 = NiX::substitute_xy(params[1], cc.e0, cc.e1),
-               z0 = NiX::substitute_xy(params[2], cc.e0, cc.e1),
-               invw0 = 1.0 / NiX::substitute_xy(params[3], cc.e0, cc.e1);
-
-        result = Coord_3(x0*invw0, y0*invw0, z0*invw0);
+        double x0 = NiX::substitute_xy(params[0], cc.first, cc.second), 
+               y0 = NiX::substitute_xy(params[1], cc.first, cc.second),
+               z0 = NiX::substitute_xy(params[2], cc.first, cc.second),
+               invw0 = 1.0 / NiX::substitute_xy(params[3], cc.first,
+                     cc.second);
+        *oi++ = x0*invw0;
+        *oi++ = y0*invw0;
+        *oi++ = z0*invw0;
         return true;
     }
 #endif // CGAL_CKVA_COMPILE_RENDERER

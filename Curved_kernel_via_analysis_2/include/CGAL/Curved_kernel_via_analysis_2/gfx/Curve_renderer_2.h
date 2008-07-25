@@ -69,8 +69,7 @@ CGAL_BEGIN_NAMESPACE
 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
 //!@note: points are drawn in any case even if they are outside the window
-#warning approximation of curve arcs in coincide mode is not reliable ! \
- and also does not work with CORE::BigFloat (due to bug in it)
+#warning approximation hangs for CORE::BigFloat !!
 
     #define CGAL_CKVA_STORE_COORDS(container, pixel) \
         container.push_back(Coord_2(pixel.xv, pixel.yv));
@@ -262,6 +261,7 @@ public:
     
     //! default constructor: a curve segment is undefined
     Curve_renderer_2() : cache_id(-1), initialized(false), one(1) { 
+        arcno = -1;
         setup(Bbox_2(-1.0, -1.0, 1.0, 1.0), 640, 480);
     }
         
@@ -349,6 +349,8 @@ private:
     
     unsigned max_level;            //! maximum subdivision level
     unsigned current_level;
+
+    int arcno;  //! arcno ?
     
     bool clip_pts_computed;     //! indicates whether clip points are computed
     
@@ -396,7 +398,7 @@ public:
  */
 template < class Coord_2, template < class > class Container >
 void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
-    CGAL::Twotuple< Coord_2 >& end_points)
+    boost::array< Coord_2, 2 >& end_points)
 {
     if(!initialized)
         return;
@@ -494,11 +496,11 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     //(clip_src ? engine.res_w+4 : pix_1.x); 
     //(clip_tgt ? engine.res_w+4 : pix_2.x); 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    end_points.e0 = Coord_2(pix_1.xv, pix_1.yv);
-    end_points.e1 = Coord_2(pix_2.xv, pix_2.yv);
+    end_points[0] = Coord_2(pix_1.xv, pix_1.yv);
+    end_points[1] = Coord_2(pix_2.xv, pix_2.yv);
 #else
-    end_points.e0 = Coord_2(pix_1.x, pix_1.y);
-    end_points.e1 = Coord_2(pix_2.x, pix_2.y);
+    end_points[0] = Coord_2(pix_1.x, pix_1.y);
+    end_points[1] = Coord_2(pix_2.x, pix_2.y);
 #endif
     
      Gfx_OUT("lower pix: (" << pix_1.x << "; " << pix_1.y <<
@@ -525,9 +527,6 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
         points.push_back(rev_points);
         return;
     }
-//!@todo no need to draw arc completely to obtain the refinement: just 
-//! loop over all pixels and collect the points
-
 
     if(!clip_pts_computed) {
         Gfx_OUT("computing clip points\n");
@@ -582,6 +581,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     if(seg_pts.size() == 1 && pt1_inside && pt2_inside)
         seg_pts.clear();
            
+    arcno = arc.arcno();
     // easy case: no clip-points found    
     if(seg_pts.size() == 0) {
         if(!pt1_inside && !pt2_inside) {
@@ -605,15 +605,14 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
         // segment is almost vertical - start from a middle point
         //if(pt > mid) 
             pt = mid; 
-        if(!get_seed_point(pt, arc.arcno(), start, dir, b_taken, 
-            b_coincide)) {
+        if(!get_seed_point(pt, start, dir, b_taken, b_coincide)) {
             Gfx_OUT("generic error occurred..\n");   
             return;
         }
          Gfx_OUT("starting pixel found: " << start << " directions: " << dir[0]
              << " and " << dir[1] << std::endl);
         // only one point list
-        draw_lump(rev_points, last_x, arc.arcno(), pix_1, pix_2);
+        draw_lump(rev_points, last_x, pix_1, pix_2);
         points.push_back(rev_points);
         
         Gfx_OUT("exit normal, max_level: " << max_level << std::endl);
@@ -740,8 +739,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
         }
 #endif // !CGAL_CKVA_RENDER_WITH_REFINEMENT
             
-        if(!get_seed_point(pt, arc.arcno(), start, dir, b_taken, 
-                b_coincide)) {
+        if(!get_seed_point(pt, start, dir, b_taken, b_coincide)) {
             Gfx_OUT("get_seed_point: a problem occurred..\n");
             it++; 
             continue;
@@ -749,7 +747,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
             
         Gfx_OUT("starting pixel found: " << start << " directions: " <<
               dir[0] << " and " << dir[1] << std::endl);
-        draw_lump(rev_points, last_x, arc.arcno(), pix_beg, pix_end);
+        draw_lump(rev_points, last_x, pix_beg, pix_end);
         points.push_back(rev_points);
         if(it == eend)
             break;
@@ -771,7 +769,7 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
 template < class Coord_2 >
 bool draw(const Point_2& pt, Coord_2& coord) {
 
-    Gfx_OUT("rasterizing point: " << pt << std::endl);
+    Gfx_OUT("rasterizing point: " << CGAL::to_double(pt.x()) << std::endl);
 
     const X_coordinate_1& x0 = pt.x();
     while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
@@ -812,7 +810,7 @@ private:
 //! draws a segment's piece from pix_1 to pix_2, the starting pixel is taken
 //! from the seed point stack
 template < class Coord_2 >
-void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x, int arcno,
+void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
     const Pixel_2& pix_1, const Pixel_2& pix_2) {
 
     Pixel_2 start, pix, witness, prev_pix, stored_pix, stored_prev;
@@ -994,8 +992,8 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x, int arcno,
             goto Lexit;
             
         Gfx_OUT("New seed point required at: " << pix << std::endl);
-        if(!get_seed_point(engine.x_min_r+pix.x*engine.pixel_w_r, arcno,
-            start, dir, b_taken, b_coincide)) { 
+        if(!get_seed_point(engine.x_min_r+pix.x*engine.pixel_w_r, start, dir,
+                 b_taken, b_coincide)) { 
             std::cerr << " wrong seed point found " << std::endl;
             throw CGALi::Insufficient_rasterize_precision_exception();
         }
@@ -1042,15 +1040,6 @@ Lexit:
 
     std::reverse(rev_points.begin(), rev_points.end());
 
-//     std::cerr << "reversed pts list:\n";
-//     for(cvit = rev_points.begin(); cvit != rev_points.end(); cvit++) {
-//         std::cerr << cvit->x << "; " << cvit->y << "\n";
-//     }    
-//     std::cerr << "--------------normal pts list:\n";
-//     for(cvit = points.begin(); cvit != points.end(); cvit++) {
-//         std::cerr << cvit->x << "; " << cvit->y << "\n";
-//     }    
-//     std::cerr << "==========================end\n";
     // resize rev_points to accomodate the size of points vector
     unsigned rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
@@ -1122,7 +1111,7 @@ bool subdivide(Pixel_2& pix, int back_dir, int& new_dir) {
 }
 
 //! returns a "seed" point of a segment and two possible directions from it
-bool get_seed_point(const Rational& seed, int arcno, Pixel_2& start, int *dir, 
+bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir, 
         int *b_taken, bool& b_coincide) {
 
     Rational x_s = seed, y_s;
@@ -1701,8 +1690,8 @@ bool recursive_check(int var, const NT& beg_, const NT& end_,
 {
     // if polynomial is linear/quadratic and there is sign-change over interval
     // => only one curve branch is guaranteed
-    if(poly.degree() < 3) 
-        return true;
+    //if(poly.degree() < 3) 
+      //  return true;
 
     int val_1, val_2, val_3;
     NT mid = (beg_+end_)/2, key_1, key_2, beg = beg_, end = end_;
@@ -1861,7 +1850,7 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
     get_polynomials(CGAL_Y_RANGE,box[0]); 
     get_polynomials(CGAL_X_RANGE,box[1]); 
     int f_der = -1, corner_dir = -1;
-    bool set_coincide = false;
+    bool set_coincide = false, s_change = false;
     new_dir = -1;
     for(i = 0; i < n_pts - 1; i++) {
         int f1 = pts[idx[i]].flag, f2 = pts[idx[i+1]].flag;
@@ -1903,9 +1892,10 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
             if(get_range_1(var, p1, p1+inv, lkey, lpoly, 3) ||
                     engine.zero_bounds) {
 
-                Gfx_DETAILED_OUT("sign-change found at: " << i << "; subseg: "
-                     << j <<  std::endl);
-                    
+                Gfx_DETAILED_OUT("range including 0 found at: " << i << 
+                "; subseg: " << j <<  "; first der = " << engine.first_der <<
+                     std::endl);
+
                 if(engine.zero_bounds) {
                     Gfx_DETAILED_OUT("also with zero_bounds");
                 
@@ -1967,6 +1957,7 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
                 lower = p1; 
                 s_shift = shift;
                 f_der = engine.first_der;
+                s_change = engine.sign_change;
             }
         }
         n_sign += local_sign;
@@ -2004,15 +1995,17 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
             box[ibox].poly[ikey], 3);
         f_der = engine.first_der;
     }
+    
     // if coincide already set - no need to check the derivative
-    if(!set_coincide && f_der && !recursive_check(var,lower,lower+inv,
-        box[ibox].key[ikey], box[ibox].poly[ikey])) {
+    if(!set_coincide && f_der && 
+        (!s_change || !recursive_check(var,lower,lower+inv,
+        box[ibox].key[ikey], box[ibox].poly[ikey]))) {
         
         if(!branches_coincide &&    
               (current_level < CGAL_COINCIDE_LEVEL))//||direction_taken == -1))
             return false;
         if(!branches_coincide)
-            Gfx_DETAILED_OUT("Branches coincide at pixel: " << pix <<
+            Gfx_OUT("Branches coincide at pixel: " << pix <<
                 std::endl);
         set_coincide = true;
     }
@@ -2033,21 +2026,26 @@ bool test_neighbourhood(Pixel_2& pix, int dir, int& new_dir)
     if(set_coincide) {
         branches_coincide = true;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        std::cerr << "WARNING: unreliable approximation in coincide mode\n";
+        NT seed = (var == CGAL_X_RANGE ? lower + inv/2 : box[ibox].key[ikey]);
+        seed = engine.x_min + seed*engine.pixel_w;
+
+        Gfx_DETAILED_OUT("approximating in coincide mode: " << seed << "\n");
+        Xy_coordinate_2 xy(X_coordinate_1(Rational(seed)), *support, arcno);
+        refine_xy(xy, CGAL_REFINE_DOUBLE_APPROX);
+        Rational yseed = ubound_y(xy);
         
-        NT x = lower + inv/2, y = box[ibox].key[ikey]; // take median
-        make_exact(x);
-        if(var == CGAL_Y_RANGE)
-            std::swap(x, y);
-        
-        pix.xv = CGAL::to_double(engine.x_min + x*engine.pixel_w);
-        pix.yv = CGAL::to_double(engine.y_min + y*engine.pixel_h);
+        pix.xv = CGAL::to_double(seed);
+        pix.yv = CGAL::to_double(yseed);
 #endif
     } 
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    else 
+    else {
+        Gfx_DETAILED_OUT("new dir = " << new_dir << 
+        "; compute_double_approx for lower = " << lower << "; key = " <<
+            box[ibox].key[ikey] << "\n");
         compute_double_approx(var, lower, lower+inv, box[ibox].key[ikey],
             box[ibox].poly[ikey], pix);
+    }
 #endif
     return true;
 }
@@ -2075,7 +2073,8 @@ void compute_double_approx(int var, const NT& l_, const NT& r_,
     }
 
     if(eval1 == eval2) {
-        std::cerr << "ERROR: no sign change in compute_double_approx\n";
+        std::cerr << "ERROR: no sign change in compute_double_approx: " <<
+            eval1 << " and " << eval2 << "\n";
         l = (l+r)/NT(2);
         make_exact(l);  
         goto Lexit;

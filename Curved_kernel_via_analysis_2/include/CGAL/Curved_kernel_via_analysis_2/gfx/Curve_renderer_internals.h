@@ -307,38 +307,7 @@ public:
     Curve_renderer_internals() : window(0.0, 0.0, 0.0, 0.0), res_w(0),
          res_h(0) {
     }
-    
-    //! sets up drawing window and pixel resolution
-    //!
-    //! returns \c false if parameters are incorrect
-    bool setup(const ::CGAL::Bbox_2& box_, int res_w_, int res_h_); 
-    
-    //! activates a certain cache entry
-    void select_cache_entry(int cache_id);
-    
-    //! precomputes polynomials and derivative coefficients
-    void precompute(const Polynomial_2& in);
-       
-    //! \brief fixes one coordinate of a bivariate polynomial, uses caching
-    //! if appropriate 
-    void get_precached_poly(int var, const NT& key, int level, Poly_1& poly);
-    
-    //! \brief computes the sign of polynomial at (x; y)
-    //!
-    //! if computation with the current precision is not reliable, the sign is
-    //! recomputed with modular or exact rational arithmetic
-    int evaluate_generic(int var, const NT& c, const NT& key, 
-        const Poly_1& poly);
-    
-    //! \brief evaluates a polynomial at (x; y) using modular arithmetic
-    //!
-    //! this is a fast way to test for exact zero if the test fails we obtain
-    //! a correct sign by evaluating rational polynomial
-    int evaluate_modular(int var, const NT& c, const NT& key);
-    
-    //! \brief evaluates a polynomial at (x, y) using exact rational arithmetic
-    int evaluate_rational(int var, const NT& c, const NT& key);
-        
+         
     //! \brief checks whether interval contains zero
     inline bool is_zero(const NT& low, const NT& up)
     {
@@ -414,19 +383,6 @@ public:
         return r;
     }
     
-    //! First Quadratic Form for univariate case (with recursive
-    //! derivative technique)
-    bool get_range_QF_1(int var, const NT& lower, const NT& upper, 
-        const NT& key, const Poly_1& poly, int check = 1);
-        
-    //! Modified Affine Arithmetic for univariate case (with recursive
-    //! derivative technique)
-    bool get_range_MAA_1(int var, const NT& lower, const NT& upper, 
-        const NT& key, const Poly_1& poly, int check = 1);
-        
-    //! empties all cache instances
-    void clear_caches();
-        
     //! destructor    
     ~Curve_renderer_internals()
     {
@@ -447,8 +403,6 @@ public:
     
     int res_w, res_h; //! pixel resolution
     
-    // TODO: make them pointers to const ?
-    
     Poly_2 *coeffs_x, *coeffs_y; //! f(x(y)) / f(y(x))
     Derivative_2 *der_x, *der_y;  //! derivative coefficients df/dx (df/dy)
     
@@ -466,11 +420,12 @@ public:
     //! 0 - the 1st (2nd) derivative does not have zero over an 
     //! interval; 1 - does have 0; -1 - not computed
     int first_der, second_der;  
+    bool sign_change;  //! detected a sign change over interval    
     
     bool zero_bounds;  //! indicates that the result of the last range 
                        //! evaluation has at least one zero boundary
                        
-    static bool show_dump;    //! for debugging
+   // static bool show_dump;    //! for debugging
                        
     //!@}
 private:
@@ -487,17 +442,17 @@ private:
     Rational_poly_2 rational_fx_[CGAL_N_CACHES], rational_fy_[CGAL_N_CACHES];
         
     //!@}
-};
+public:
+    //! \name public methods
+    //!@{
 
-template <class CurveKernel_2, class Coeff_>
-bool Curve_renderer_internals<CurveKernel_2, Coeff_>::show_dump = false;
+// template <class CurveKernel_2, class Coeff_>
+// bool Curve_renderer_internals<CurveKernel_2, Coeff_>::show_dump = false;
 
 //! sets up drawing window and pixel resolution
 //!
 //! returns \c false if parameters are incorrect
-template <class CurveKernel_2, class Coeff_>
-bool Curve_renderer_internals<CurveKernel_2, Coeff_>::setup(
-    const ::CGAL::Bbox_2& box_, int res_w_, int res_h_) 
+bool setup(const CGAL::Bbox_2& box_, int res_w_, int res_h_) 
 { 
     window = box_;
     x_min = static_cast<NT>(box_.xmin());
@@ -526,17 +481,14 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::setup(
     make_exact(pixel_w);
     make_exact(pixel_h);
     
-    show_dump = false;
-    
+    //show_dump = false;
     return true;
 }   
 
 //! \brief evaluates a univariate polynomial over an interval using
 //! First Quadratic Affine Form
-template <class CurveKernel_2, class Coeff_>
-bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_QF_1(
-    int var, const NT& l_, const NT& r_, const NT& key, const Poly_1& poly,
-        int check)
+bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key, 
+    const Poly_1& poly, int check = 1)
 {
     Derivative_2 *der = (var == CGAL_X_RANGE ? der_x : der_y);
     NT l(l_), r(r_), l1, r1, low, up;
@@ -546,7 +498,7 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_QF_1(
     der_iterator_1 der_it, der_begin;
     const_iterator_1 cache_it, begin;
 
-    first_der = false;
+    first_der = false, sign_change = false;
     if(poly.degree()==0) {
         zero_bounds = false;
         return (poly.lcoeff()==NT(0.0));
@@ -562,10 +514,10 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_QF_1(
     
     eval1 = evaluate_generic(var, l, key, poly);
     eval2 = evaluate_generic(var, r, key, poly);
-    bool sign_change = (eval1*eval2 < 0);
+    sign_change = (eval1*eval2 < 0);
     
-    zero_bounds = ((eval1&eval2) == 0);
-    if((sign_change||zero_bounds)&&check==1)
+    zero_bounds = ((eval1 & eval2) == 0);
+    if((sign_change || zero_bounds) && check==1)
         return true;
         
     if(var == CGAL_X_RANGE) {
@@ -662,17 +614,14 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_QF_1(
         eval1 = CGAL_SGN(low);
         eval2 = CGAL_SGN(up);
     }
-    
     zero_bounds = ((eval1 & eval2) == 0);
     return (eval1*eval2 < 0);
 }
 
 //! \brief evaluates a univariate polynomial over an interval using
 //! Modified Affine Arithmetic 
-template <class CurveKernel_2, class Coeff_>
-bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_MAA_1(
-    int var, const NT& l_, const NT& r_, const NT& key, const Poly_1& poly,
-        int check)
+bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key, 
+    const Poly_1& poly, int check = 1)
 {
     Derivative_2 *der = (var == CGAL_X_RANGE) ? der_x : der_y;
     // stores precomputed polynomial derivatives and binominal coeffs
@@ -683,7 +632,7 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_MAA_1(
     NT v1, v2, v;
     int eval1, eval2;
 
-    first_der = false;
+    first_der = false, sign_change = false;
     if(poly.degree()==0) {
         zero_bounds = false;
         return (poly.lcoeff()==NT(0.0));
@@ -699,7 +648,7 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_MAA_1(
     eval1 = evaluate_generic(var, l, key, poly);
     eval2 = evaluate_generic(var, r, key, poly);
     
-    bool sign_change = (eval1*eval2 < 0);
+    sign_change = (eval1*eval2 < 0);
     zero_bounds = ((eval1&eval2) == 0);
     
     if((sign_change || zero_bounds) && check == 1)
@@ -801,9 +750,7 @@ bool Curve_renderer_internals<CurveKernel_2, Coeff_>::get_range_MAA_1(
 
 //! \brief fixes one coordinate of a bivariate polynomial, uses caching
 //! if appropriate 
-template <class CurveKernel_2, class Coeff_>
-void Curve_renderer_internals<CurveKernel_2, Coeff_>::get_precached_poly(
-    int var, const NT& key, int level, Poly_1& poly)
+void get_precached_poly(int var, const NT& key, int level, Poly_1& poly)
 {
     NT key1;
     Poly_cache *cached = cached_x;
@@ -846,9 +793,7 @@ void Curve_renderer_internals<CurveKernel_2, Coeff_>::get_precached_poly(
 //!
 //! if computation with the current precision is not reliable, the sign is
 //! recomputed with modular or exact rational arithmetic
-template <class CurveKernel_2, class Coeff_>
-int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_generic(
-    int var, const NT& c, const NT& key, const Poly_1& poly)
+int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 {   
     NT x = key, y = c, c1;
     Eval_hash_key hash_key;
@@ -907,9 +852,7 @@ int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_generic(
 //! this is a fast way to test for exact zero if the test fails we obtain
 //! a correct sign by evaluating with rational polynomial, returns -1, 0 or 1
 //! depending on the sign of the evaluation
-template <class CurveKernel_2, class Coeff_>
-int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_modular(
-    int var, const NT& c, const NT& key)
+int evaluate_modular(int var, const NT& c, const NT& key)
 {
 #if !AcX_SQRT_EXTENSION
     Modular_poly_1 poly;
@@ -934,9 +877,7 @@ int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_modular(
 }
 
 //! \brief evaluates a polynomial at (x, y) using exact rational arithmetic
-template <class CurveKernel_2, class Coeff_>
-int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_rational(
-    int var, const NT& c, const NT& key)
+int evaluate_rational(int var, const NT& c, const NT& key)
 {
     //Rational_poly_1 poly;
     Rational c_r = float2rat(c), key_r = float2rat(key);
@@ -955,10 +896,8 @@ int Curve_renderer_internals<CurveKernel_2, Coeff_>::evaluate_rational(
 }
 
 //! precomputes polynomials and derivative coefficients
-template <class CurveKernel_2, class Coeff_>
-void Curve_renderer_internals<CurveKernel_2, Coeff_>::precompute(
-    const Polynomial_2& in)
-{
+void precompute(const Polynomial_2& in) {
+
     typedef typename Polynomial_traits_2::Innermost_coefficient Coeff_src;
     
     Max_coeff<Coeff_src> max_coeff;
@@ -1035,9 +974,7 @@ void Curve_renderer_internals<CurveKernel_2, Coeff_>::precompute(
 }
 
 //! \brief activates the cache entry \c cache_id 
-template <class CurveKernel_2, class Coeff_>
-void Curve_renderer_internals<CurveKernel_2, Coeff_>::select_cache_entry(
-    int cache_id)
+void select_cache_entry(int cache_id)
 {
     coeffs_x = coeffs_x_ + cache_id;
     coeffs_y = coeffs_y_ + cache_id;
@@ -1055,9 +992,8 @@ void Curve_renderer_internals<CurveKernel_2, Coeff_>::select_cache_entry(
 }
 
 //! \brief empties all cache instances
-template <class CurveKernel_2, class Coeff_>
-void Curve_renderer_internals<CurveKernel_2, Coeff_>::clear_caches()
-{
+void clear_caches() {
+
     for(unsigned i = 0; i < CGAL_N_CACHES; i++) {
         cached_x_[i].clear(); 
         cached_y_[i].clear(); 
@@ -1066,6 +1002,10 @@ void Curve_renderer_internals<CurveKernel_2, Coeff_>::clear_caches()
         der_y_[i].clear();
     }
 }
+
+//!@}
+
+}; // Curve_renderer_internals
 
 } // namespace CGALi
 
