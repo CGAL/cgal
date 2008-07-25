@@ -821,7 +821,7 @@ public:
             
         Curve_analysis_2 operator()(const Poly_int_2& f, int angle=0) const {
             Rotation_traits traits;
-            return Base::curve_cache()(traits(f, angle));
+            return Base::curve_cache_2()(traits(f, angle));
         }
 
         Curve_analysis_2 operator()(const Poly_ext_2& f) const {
