@@ -2903,6 +2903,7 @@ Nef_3/doc_tex/Nef_3_ref/fig/snc.pdf -text svneol=unset#application/pdf
 Nef_3/examples/Nef_3/complex_construction.cin -text
 Nef_3/examples/Nef_3/handling_double_coordinates.cin -text
 Nef_3/include/CGAL/Nef_3/Binary_operation.h -text
+Nef_3/include/CGAL/Nef_3/Default_items.h -text
 Nef_3/include/CGAL/Nef_3/Edge_edge_overlay.h -text
 Nef_3/include/CGAL/Nef_3/Halfedge.h -text
 Nef_3/include/CGAL/Nef_3/Halffacet.h -text
