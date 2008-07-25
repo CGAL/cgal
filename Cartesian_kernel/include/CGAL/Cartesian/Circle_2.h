@@ -24,7 +24,6 @@
 #ifndef CGAL_CARTESIAN_CIRCLE_2_H
 #define CGAL_CARTESIAN_CIRCLE_2_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <boost/tuple/tuple.hpp>
 

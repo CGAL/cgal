@@ -18,15 +18,12 @@
 // $URL$
 // $Id$
 //
-//
 // Author(s)     : Sven Schoenherr
 //                 Stefan Schirra
-
 
 #ifndef CGAL_CIRCLEH2_H
 #define CGAL_CIRCLEH2_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Interval_nt.h>
 #include <boost/tuple/tuple.hpp>
 

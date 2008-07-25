@@ -23,7 +23,6 @@
 #ifndef CGAL_CARTESIAN_CIRCLEC3_H
 #define CGAL_CARTESIAN_CIRCLEC3_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Interval_nt.h>
 
 CGAL_BEGIN_NAMESPACE

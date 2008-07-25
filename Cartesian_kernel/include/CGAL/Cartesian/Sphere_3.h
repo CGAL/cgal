@@ -24,7 +24,6 @@
 #ifndef CGAL_CARTESIAN_SPHERE_3_H
 #define CGAL_CARTESIAN_SPHERE_3_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Interval_nt.h>
 #include <boost/tuple/tuple.hpp>
