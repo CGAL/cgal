@@ -77,7 +77,7 @@ namespace CGALi {
     class Real_embeddable_extension< long > {            
       public:      
         struct Ceil_log2_abs
-            : public Unary_function< long, long > {
+            : public std::unary_function< long, long > {
             long operator()( long x ) {
                 if (x < 0) x = -x;
                 CGAL_precondition(x > 0);
@@ -87,7 +87,7 @@ namespace CGALi {
         };
 
         struct Floor_log2_abs
-            : public Unary_function< long, long > {
+            : public std::unary_function< long, long > {
           private:          
             signed char floor_log2_4bit[16];
           public:
@@ -123,11 +123,11 @@ namespace CGALi {
         };
 
         struct Floor
-            : public Unary_function< long, long > {
+            : public std::unary_function< long, long > {
             long operator() (long x) { return x;}
         };
         struct Ceil
-            : public Unary_function< long, long > {
+            : public std::unary_function< long, long > {
             long operator() (long x) { return x;}
         };
     };
@@ -140,7 +140,7 @@ namespace CGALi {
     class Real_embeddable_extension< leda_integer > {
       public:
         struct Ceil_log2_abs
-            : public Unary_function< leda_integer, long > {
+            : public std::unary_function< leda_integer, long > {
                 long operator()( const leda_integer& x ) const {
                     CGAL_precondition(x != leda_integer(0));
                     ::leda::digit_sz ldgzeros = ::leda::digLeadingZeros(x.highword());
@@ -160,7 +160,7 @@ namespace CGALi {
          };
 
         struct Floor_log2_abs
-            : public Unary_function< leda_integer, long > {
+            : public std::unary_function< leda_integer, long > {
                 long operator()( const leda_integer& x ) const {
                     CGAL_precondition(x != leda_integer(0));
                     ::leda::digit_sz ldgzeros 
@@ -172,11 +172,11 @@ namespace CGALi {
         };
 
         struct Floor
-            : public Unary_function< leda_integer, leda_integer > {
+            : public std::unary_function< leda_integer, leda_integer > {
             leda_integer operator() (const leda_integer& x) const { return x;}
         };
         struct Ceil
-            : public Unary_function< leda_integer, leda_integer > {
+            : public std::unary_function< leda_integer, leda_integer > {
             leda_integer operator() (const leda_integer& x) const { return x;}
         };
     };
@@ -185,7 +185,7 @@ namespace CGALi {
     class Real_embeddable_extension< leda_bigfloat > {
       public:
         struct Floor_log2_abs
-            : public Unary_function< leda_bigfloat, long > {
+            : public std::unary_function< leda_bigfloat, long > {
             long operator()( const leda_bigfloat& x ) const {
                 CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
                 ::leda::integer abs_sign = abs(x.get_significant());
@@ -195,7 +195,7 @@ namespace CGALi {
         };
         
         struct Ceil_log2_abs
-            : public Unary_function< leda_bigfloat, long > {
+            : public std::unary_function< leda_bigfloat, long > {
             long operator()( const leda_bigfloat& x ) const {
                 CGAL_precondition(CGAL::sign(x) != CGAL::ZERO);
                 return ::leda::ilog2(x).to_long();                
@@ -203,14 +203,14 @@ namespace CGALi {
         };
 
         struct Floor
-            : public Unary_function< leda_bigfloat, leda_integer > {
+            : public std::unary_function< leda_bigfloat, leda_integer > {
             leda_integer operator() ( const leda_bigfloat& x ) const { 
                 return leda::to_integer( x, leda::TO_N_INF );
             }
         };
         
         struct Ceil
-            : public Unary_function< leda_bigfloat, leda_integer > {
+            : public std::unary_function< leda_bigfloat, leda_integer > {
             leda_integer operator() ( const leda_bigfloat& x ) const { 
                 return leda::to_integer( x, leda::TO_P_INF );
             }
@@ -222,7 +222,7 @@ namespace CGALi {
     class Real_embeddable_extension< leda_bigfloat_interval > {
         public:
           struct Floor_log2_abs
-              : public Unary_function< leda_bigfloat_interval, long > {
+              : public std::unary_function< leda_bigfloat_interval, long > {
               
               result_type operator() (const argument_type& x) const {
                   CGAL_precondition(! ::boost::numeric::in_zero(x));
@@ -231,7 +231,7 @@ namespace CGALi {
           };
         
           struct Ceil_log2_abs
-              : public Unary_function< leda_bigfloat_interval, long > {
+              : public std::unary_function< leda_bigfloat_interval, long > {
               long operator()( const leda_bigfloat_interval& x ) const {
                   CGAL_precondition(!(::boost::numeric::in_zero(x) && 
                                       ::boost::numeric::singleton(x)));
@@ -240,7 +240,7 @@ namespace CGALi {
           };
 
           struct Floor
-              : public Unary_function< leda_bigfloat_interval, leda_integer > {
+              : public std::unary_function< leda_bigfloat_interval, leda_integer > {
               leda_integer operator() ( const leda_bigfloat_interval& x ) 
                   const { 
                   return CGALi::floor( x.lower() );
@@ -248,7 +248,7 @@ namespace CGALi {
           };
         
           struct Ceil
-              : public Unary_function< leda_bigfloat_interval, leda_integer > {
+              : public std::unary_function< leda_bigfloat_interval, leda_integer > {
               leda_integer operator() ( const leda_bigfloat_interval& x ) 
                   const { 
                   return CGALi::ceil( x.upper() );
@@ -265,27 +265,27 @@ namespace CGALi {
     class Real_embeddable_extension< CORE::BigInt > {
       public:
         struct Floor_log2_abs
-            : public Unary_function< CORE::BigInt, long > {
+            : public std::unary_function< CORE::BigInt, long > {
             long operator()( const CORE::BigInt& x ) const {
                 return CORE::floorLg(x);
             }            
         };
         
         struct Ceil_log2_abs
-            : public Unary_function< CORE::BigInt, long > {
+            : public std::unary_function< CORE::BigInt, long > {
             long operator()( const CORE::BigInt& x ) const {
                 return CORE::ceilLg(x);
             }
         };
 
         struct Floor
-            : public Unary_function< CORE::BigInt, CORE::BigInt > {
+            : public std::unary_function< CORE::BigInt, CORE::BigInt > {
             CORE::BigInt operator() (const CORE::BigInt& x) const { 
                 return x;
             }
         };
         struct Ceil
-            : public Unary_function< CORE::BigInt, CORE::BigInt > {
+            : public std::unary_function< CORE::BigInt, CORE::BigInt > {
             CORE::BigInt operator() (const CORE::BigInt& x) const { 
                 return x;
             }
@@ -297,7 +297,7 @@ namespace CGALi {
     class Real_embeddable_extension< CORE::BigFloat > {
       public:
         struct Floor_log2_abs
-            : public Unary_function< CORE::BigFloat, long > {
+            : public std::unary_function< CORE::BigFloat, long > {
             long operator()( CORE::BigFloat x ) const {
                 CGAL_precondition(!CGAL::zero_in(x));
                 x = CGAL::abs(x);
@@ -306,7 +306,7 @@ namespace CGALi {
         };
         
         struct Ceil_log2_abs
-            : public Unary_function< CORE::BigFloat, long > {
+            : public std::unary_function< CORE::BigFloat, long > {
             long operator()( CORE::BigFloat x ) const {
                 // (already commented out in EXACUS)...
                 //   NiX_precond(!(NiX::in_zero(x) && NiX::singleton(x)));
@@ -316,7 +316,7 @@ namespace CGALi {
         };
 
         struct Floor
-            : public Unary_function< CORE::BigFloat, CORE::BigInt > {
+            : public std::unary_function< CORE::BigFloat, CORE::BigInt > {
             CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
                 CORE::BigInt xi = x.BigIntValue();
                 if(x.sign() < 0 && x.cmp(xi)!=0) {
@@ -327,7 +327,7 @@ namespace CGALi {
         };
         
         struct Ceil
-            : public Unary_function< CORE::BigFloat, CORE::BigInt > {
+            : public std::unary_function< CORE::BigFloat, CORE::BigInt > {
             CORE::BigInt operator() ( const CORE::BigFloat& x ) const { 
                 CORE::BigInt xi = x.BigIntValue();
                 if(x.sign() >0 && x.cmp(xi)!=0) {

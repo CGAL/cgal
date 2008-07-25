@@ -133,7 +133,7 @@ public:
 protected:
 
     struct Approximate_compare_y_2 :
-        public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
+        public std::binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 

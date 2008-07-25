@@ -125,7 +125,7 @@ public:
     };
     
     struct Boundary_creator
-    //: public CGAL::Binary_function<Integer,long,Boundary>
+    //: public std::binary_function<Integer,long,Boundary>
     {
         typedef Integer first_argument_type;
         typedef long second_argument_type;

@@ -49,7 +49,7 @@ public:
     typedef typename Algebraic_real_1::Rational   Boundary;
                 
     struct Boundary_between 
-      : public Binary_function< Type, Type, Boundary > {
+      : public std::binary_function< Type, Type, Boundary > {
       Boundary operator()( const Type& t1, 
           const Type& t2 ) const {
         return t1.rational_between( t2 );
@@ -57,21 +57,21 @@ public:
     };
                                 
     struct Lower_boundary
-      : public Unary_function< Type, Boundary > {
+      : public std::unary_function< Type, Boundary > {
       Boundary operator()( const Type& t ) const {
         return t.low();
       }
     };
                 
     struct Upper_boundary
-      : public Unary_function< Type, Boundary > {
+      : public std::unary_function< Type, Boundary > {
       Boundary operator()( const Type& t ) const {
         return t.high();
       }
     };
                 
     struct Refine
-      : public Unary_function< Type, void > {
+      : public std::unary_function< Type, void > {
       void operator()( const Type& t ) const {
         t.refine();
       }
@@ -142,7 +142,7 @@ public:
   };
             
   struct Sign_at_1 
-    : public Binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
+    : public std::binary_function< Polynomial_1, Algebraic_real_1, CGAL::Sign > {
     CGAL::Sign operator()( const Polynomial_1& p, const Algebraic_real_1& ar ) const {
       typedef typename Algebraic_real_traits::Boundary Boundary;
       Boundary low = ar.low();
@@ -162,7 +162,7 @@ public:
   };                
             
   struct Is_square_free_1 
-    : public Unary_function< Polynomial_1, bool > {
+    : public std::unary_function< Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Is_square_free isf;
       return isf(p);
@@ -170,7 +170,7 @@ public:
   };
             
   struct Is_coprime_1
-    : public Binary_function< Polynomial_1, Polynomial_1, bool > {
+    : public std::binary_function< Polynomial_1, Polynomial_1, bool > {
     bool operator()( const Polynomial_1& p1, const Polynomial_1& p2 ) const {
       typename CGAL::Polynomial_traits_d< Polynomial_1 >::Total_degree total_degree;
                         
@@ -180,7 +180,7 @@ public:
   }; 
             
   struct Make_square_free_1
-    : public Unary_function< Polynomial_1, Polynomial_1 > {
+    : public std::unary_function< Polynomial_1, Polynomial_1 > {
     Polynomial_1 operator()( const Polynomial_1& p ) const {
       return typename CGAL::Polynomial_traits_d< Polynomial_1 >::Make_square_free()( p );
     }

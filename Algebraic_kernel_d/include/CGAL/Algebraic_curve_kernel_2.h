@@ -205,7 +205,7 @@ protected:
     
     //! polynomial canonicalizer, needed for the cache
     template <class Poly> 
-    struct Poly_canonicalizer : public Unary_function< Poly, Poly >
+    struct Poly_canonicalizer : public std::unary_function< Poly, Poly >
     {
     // use Polynomial_traits_d<>::Canonicalize ?
         Poly operator()(Poly p) 
@@ -348,7 +348,7 @@ public:
      * when appropriate
      */
     struct Construct_curve_2 :
-        public Unary_function< Polynomial_2, Curve_analysis_2 > {
+        public std::unary_function< Polynomial_2, Curve_analysis_2 > {
             
         Curve_analysis_2 operator()
                 (const Polynomial_2& f) const {
@@ -363,7 +363,7 @@ public:
      * caching is used when appropriate
      */
     struct Construct_curve_pair_2 :
-            public Binary_function<Curve_analysis_2, Curve_analysis_2,
+            public std::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
            
         Curve_pair_analysis_2 operator()
@@ -379,7 +379,7 @@ public:
             
     //! returns the x-coordinate of an \c Xy_coordinate_2 object
     struct Get_x_2 :
-        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        public std::unary_function<Xy_coordinate_2, X_coordinate_1> {
         
         X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.x();
@@ -400,7 +400,7 @@ public:
      * made arbitrarily good by iteratively calling \c Refine_y_2.}
      */
     struct Get_y_2 :
-        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        public std::unary_function<Xy_coordinate_2, X_coordinate_1> {
         
         X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.y();
@@ -410,7 +410,7 @@ public:
     
     //! Refines the x-coordinate of an Xy_coordinate_2 object
     struct Refine_x_2 :
-        public Unary_function<Xy_coordinate_2, void> {
+        public std::unary_function<Xy_coordinate_2, void> {
       
         /*! 
          * \brief Refines the approximation of the x-coordinate by at least
@@ -438,7 +438,7 @@ public:
     
     //! Refines the y-coordinate of an Xy_coordinate_2 object
     struct Refine_y_2 :
-        public Unary_function<Xy_coordinate_2, void> {
+        public std::unary_function<Xy_coordinate_2, void> {
       
         /*! 
          * \brief Refines the approximation of the y-coordinate by at least
@@ -555,7 +555,7 @@ public:
     
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
-         public Binary_function<X_coordinate_1, X_coordinate_1, 
+         public std::binary_function<X_coordinate_1, X_coordinate_1, 
                 Comparison_result > {
 
         Comparison_result operator()(const X_coordinate_1& x1, 
@@ -579,7 +579,7 @@ public:
      * If possible, it is recommended to avoid this functor for efficiency.}
      */
     struct Compare_y_2 :
-        public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
+        public std::binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
         Compare_y_2(Self *kernel) :
@@ -613,7 +613,7 @@ public:
      * to have equal x-coordinates, thus only the y-coordinates are compared.
      */
     struct Compare_xy_2 :
-          public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
+          public std::binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
 
          Compare_xy_2(Self *kernel) :
@@ -665,7 +665,7 @@ public:
      * the polynomial \c p is square free.
      */
     struct Has_finite_number_of_self_intersections_2 :
-            public Unary_function< Polynomial_2, bool > {
+            public std::unary_function< Polynomial_2, bool > {
 
         bool operator()(const Polynomial_2& p) const {
 
@@ -685,7 +685,7 @@ public:
      * the two polynomials \c f and \c g are coprime.
      */ 
     struct Has_finite_number_of_intersections_2 :
-        public Binary_function< Polynomial_2, Polynomial_2, bool > {
+        public std::binary_function< Polynomial_2, Polynomial_2, bool > {
          
         bool operator()(const Polynomial_2& f,
                         const Polynomial_2& g) const {
@@ -870,7 +870,7 @@ public:
     
     //! computes the derivative w.r.t. x
     struct Derivative_x_2 : 
-        public Unary_function< Polynomial_2, Polynomial_2 > {
+        public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const
         {
@@ -882,7 +882,7 @@ public:
 
     //! \brief computes the derivative w.r.t. y
     struct Derivative_y_2 :
-        public Unary_function< Polynomial_2, Polynomial_2 > {
+        public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const
         {
@@ -902,7 +902,7 @@ public:
      * In pariticular, each singular point is x-critical.
      */
     struct X_critical_points_2 : 
-        public Binary_function< Curve_analysis_2, 
+        public std::binary_function< Curve_analysis_2, 
             std::iterator<std::output_iterator_tag, Xy_coordinate_2>,
             std::iterator<std::output_iterator_tag, Xy_coordinate_2> > {
        
@@ -971,7 +971,7 @@ public:
      * In pariticular, each singular point is y-critical.
      */
     struct Y_critical_points_2 :
-        public Binary_function< Curve_analysis_2, 
+        public std::binary_function< Curve_analysis_2, 
             std::iterator<std::output_iterator_tag, Xy_coordinate_2>,
             std::iterator<std::output_iterator_tag, Xy_coordinate_2> > {
         
@@ -1052,7 +1052,7 @@ public:
      * curve. Returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 :
-        public Binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
+        public std::binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
 
         typedef typename Xy_coordinate_2::Boundary Boundary;
         typedef typename Xy_coordinate_2::Boundary_interval Boundary_interval;

@@ -99,7 +99,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
     struct Boundary_between 
-            : public Binary_function< Type, Type, Boundary > {
+            : public std::binary_function< Type, Type, Boundary > {
         
         Boundary operator()(const Type& r1, const Type& r2) const {
 
@@ -171,7 +171,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! returns current lower boundary of an isolating interval defining 
     //! y-coordinate of an algebraic real
     struct Lower_boundary
-            : public Unary_function<Type, Boundary> {
+            : public std::unary_function<Type, Boundary> {
         
         Boundary operator()(const Type& r) const {
 #if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
@@ -187,7 +187,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! returns current upper boundary of an isolating interval defining 
     //! y-coordinate of an algebraic real
     struct Upper_boundary
-            : public Unary_function<Type, Boundary> {
+            : public std::unary_function<Type, Boundary> {
          
         Boundary operator()(const Type& r) const {
 #if CGAL_ACK_2_USE_EXPENSIVE_Y_MEMBER_FOR_APPROXIMATION
@@ -201,7 +201,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     };
                 
     struct Refine
-            : public Unary_function<Type, void> {
+            : public std::unary_function<Type, void> {
         
         //! \brief refines isolating interval of an y-coorinate of algebraic 
         //! real to make it at least half of the original interval
@@ -275,7 +275,7 @@ struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
 
     //! computes rational boundary between two algebraic reals
     struct Boundary_between 
-        : public Binary_function< Type, Type, Boundary > {
+        : public std::binary_function< Type, Type, Boundary > {
         
         Boundary operator()(const Type& t1, const Type& t2 ) const {
             return t1.rational_between(t2);
@@ -284,7 +284,7 @@ struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
 
     //! returns current lower boundary of an algebraic real
     struct Lower_boundary
-        : public Unary_function< Type, Boundary > {
+        : public std::unary_function< Type, Boundary > {
                     
         Boundary operator()(const Type& t) const {
             return t.low();
@@ -293,7 +293,7 @@ struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
 
     //! returns current upper boundary of an algebraic real
     struct Upper_boundary
-        : public Unary_function< Type, Boundary > {
+        : public std::unary_function< Type, Boundary > {
         
         Boundary operator()(const Type& t) const {
             return t.high();
@@ -301,7 +301,7 @@ struct Algebraic_real_traits<CGAL::CGALi::Algebraic_real_pure
     };
 
     struct Refine
-        : public Unary_function< Type, void > {
+        : public std::unary_function< Type, void > {
 
         //! \brief refines isolating interval defining algebraic real to make
         //! it at least half of the original interval
@@ -362,7 +362,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! computes boundary between y-coordinates of two algebraic reals
     //! defined over the same vertical line
     struct Boundary_between 
-            : public Binary_function< Type, Type, Boundary > {
+            : public std::binary_function< Type, Type, Boundary > {
         
         Boundary operator()(const Type& r1, const Type& r2) const {
 
@@ -419,7 +419,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! returns current lower boundary of an isolating interval defining 
     //! y-coordinate of an algebraic real
     struct Lower_boundary
-            : public Unary_function<Type, Boundary> {
+            : public std::unary_function<Type, Boundary> {
         
         Boundary operator()(const Type& r) const {
             return r.curve().status_line_at_exact_x(r.x()).
@@ -430,7 +430,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     //! returns current upper boundary of an isolating interval defining 
     //! y-coordinate of an algebraic real
     struct Upper_boundary
-            : public Unary_function<Type, Boundary> {
+            : public std::unary_function<Type, Boundary> {
          
         Boundary operator()(const Type& r) const {
             return r.curve().status_line_at_exact_x(r.x()).
@@ -439,7 +439,7 @@ struct Algebraic_real_traits_for_y<Xy_coordinate_2<
     };
                 
     struct Refine
-            : public Unary_function<Type, void> {
+            : public std::unary_function<Type, void> {
         
         //! \brief refines isolating interval of an y-coorinate of algebraic 
         //! real to make it at least half of the original interval

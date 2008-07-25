@@ -349,7 +349,7 @@ public:
     typedef CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > Type;
         
     class Compare
-        : public Binary_function< Type, Type, CGAL::Comparison_result > {
+        : public std::binary_function< Type, Type, CGAL::Comparison_result > {
         public:
             CGAL::Comparison_result operator()( const Type& a, const Type& b ) const {
                 return a.compare( b );
@@ -357,7 +357,7 @@ public:
     };
     
     class Sign
-        : public Unary_function< Type, CGAL::Sign > {
+        : public std::unary_function< Type, CGAL::Sign > {
         public:
             CGAL::Sign operator()( const Type& a ) const {
                 return a.compare( Rational(0) );
@@ -365,7 +365,7 @@ public:
     };
     
     class To_double 
-        : public Unary_function< Type, double > {
+        : public std::unary_function< Type, double > {
         public:
             double operator()(const Type& a) const {
                 return a.to_double();
@@ -373,7 +373,7 @@ public:
     };
     
     class To_interval 
-        : public Unary_function< Type, typename Type::Interval > {
+        : public std::unary_function< Type, typename Type::Interval > {
         public:
             typename std::pair<double, double> operator()(const Type& a) const {         
                 return a.to_interval(); 

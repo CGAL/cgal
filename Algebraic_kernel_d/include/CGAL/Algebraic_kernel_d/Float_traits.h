@@ -42,21 +42,21 @@ namespace CGALi {
       public:
       
         struct Get_mantissa
-            : public Unary_function< leda_bigfloat, leda_integer > {
+            : public std::unary_function< leda_bigfloat, leda_integer > {
             leda_integer operator()( const leda_bigfloat& x ) const {
                 return x.get_significant();                
             }
         };
         
         struct Get_exponent
-            : public Unary_function< leda_bigfloat, long > {
+            : public std::unary_function< leda_bigfloat, long > {
             long operator()( const leda_bigfloat& x ) const {
                 return x.get_exponent().to_long();                
             }
         };
 
         struct Mul_by_pow_of_2
-            : public Binary_function< leda_bigfloat, leda_integer, 
+            : public std::binary_function< leda_bigfloat, leda_integer, 
                                       leda_bigfloat> {
             leda_bigfloat operator()( const leda_bigfloat& a, 
                                       const leda_integer&  e ) const {
@@ -75,21 +75,21 @@ namespace CGALi {
       public:
       
         struct Get_mantissa
-            : public Unary_function< CORE::BigFloat, CORE::BigInt > {
+            : public std::unary_function< CORE::BigFloat, CORE::BigInt > {
             CORE::BigInt operator()( const CORE::BigFloat& x ) const {
                 return x.m();
             }
         };
         
         struct Get_exponent
-            : public Unary_function< CORE::BigFloat, long > {
+            : public std::unary_function< CORE::BigFloat, long > {
             long operator()( const CORE::BigFloat& x ) const {
                 return 14*x.exp(); // The basis is 8092                 
             }
         };
 
         struct Mul_by_pow_of_2
-            : public Binary_function< CORE::BigFloat, CORE::BigInt, 
+            : public std::binary_function< CORE::BigFloat, CORE::BigInt, 
                                       CORE::BigFloat> {
             CORE::BigFloat operator()( const CORE::BigFloat& a, 
                                        const CORE::BigInt&   e ) const {
