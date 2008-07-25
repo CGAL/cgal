@@ -33,7 +33,6 @@
 #include <iostream>
 
 #include <CGAL/Triangulation_utils_3.h>
-#include <CGAL/utility.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compact_container.h>

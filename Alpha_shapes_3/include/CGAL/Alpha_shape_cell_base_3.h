@@ -21,7 +21,6 @@
 #define CGAL_ALPHA_SHAPE_CELL_BASE_3_H
 
 #include <vector>
-#include <CGAL/utility.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
