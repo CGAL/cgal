@@ -157,7 +157,7 @@ void test_get_coefficient(const Polynomial_traits_d&) {
   assert(get_coeff(p, 1) == Coeff(2));
   assert(get_coeff(p, 2) == Coeff(3));
   assert(get_coeff(p, 3) == Coeff(0));
-    
+   
   std::cerr << " ok" << std::endl;
 }
 
@@ -360,13 +360,18 @@ void test_leading_coefficient(const Polynomial_traits_d&){
 
 template< class Polynomial_traits_d >
 void test_innermost_leading_coefficient(const Polynomial_traits_d&) {
+
   std::cerr << "start test_innermost_leading_coefficient "; std::cerr.flush();
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
   typename PT::Innermost_leading_coefficient ilcoeff;
   Polynomial_d p(Coeff(1), Coeff(2), Coeff(3));
-    
   assert(ilcoeff(p) == ICoeff(3));
+  
+  p = generate_sparse_random_polynomial<Polynomial_d>();
+  typename PT::Degree_vector degree_vector;
+  typename PT::Get_innermost_coefficient icoeff;
+  assert(ilcoeff(p) == icoeff(p,degree_vector(p)));
     
   std::cerr << " ok" << std::endl;
 }
@@ -556,8 +561,7 @@ void test_invert(const Polynomial_traits_d&){
     }   
     int n = my_rnd.get_int(0,PT::d-1);
         
-    assert(
-        invert(p,n) == swap(invert(swap(p,n,PT::d-1)),n,PT::d-1));
+    assert(invert(p,n) == swap(invert(swap(p,n,PT::d-1)),n,PT::d-1));
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -775,8 +779,10 @@ void test_pseudo_division(const Polynomial_traits_d&){
     Polynomial_d g = generate_sparse_random_polynomial<Polynomial_d>(2);    
     Coeff D;
     Polynomial_d q,r;
-    pdiv(f,g,q,r,D);
-    assert(f*Polynomial_d(D) == g*q+r);
+    if (!CGAL::is_zero(q)){
+      pdiv(f,g,q,r,D);
+      assert(f*Polynomial_d(D) == g*q+r);
+    }
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -792,9 +798,11 @@ void test_pseudo_division_remainder(const Polynomial_traits_d&){
     Polynomial_d f = generate_sparse_random_polynomial<Polynomial_d>(3);
     Polynomial_d g = generate_sparse_random_polynomial<Polynomial_d>(2);    
     Coeff D;
-    Polynomial_d q,r;
-    pdiv(f,g,q,r,D);
-    assert(r == pdiv_r(f,g));
+    Polynomial_d q,r; 
+    if (!CGAL::is_zero(q)){
+      pdiv(f,g,q,r,D);
+      assert(r == pdiv_r(f,g));
+    }
   }
   std::cerr << " ok "<< std::endl;
 }
@@ -811,8 +819,10 @@ void test_pseudo_division_quotient(const Polynomial_traits_d&){
     Polynomial_d g = generate_sparse_random_polynomial<Polynomial_d>(2);    
     Coeff D;
     Polynomial_d q,r;
-    pdiv(f,g,q,r,D);
-    assert(q == pdiv_q(f,g));
+    if (!CGAL::is_zero(q)){
+      pdiv(f,g,q,r,D);
+      assert(q == pdiv_q(f,g));
+    }
   }
   std::cerr << " ok "<< std::endl;
 }

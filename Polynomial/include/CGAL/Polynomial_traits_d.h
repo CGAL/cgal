@@ -691,7 +691,11 @@ public:
         return Coefficient(0);
       return p[i];
     }
-            
+    
+    Coefficient operator()( const Polynomial_d& p, int i, int index) const {
+      CGAL_precondition(0 <= index && index < d);
+      return (*this)(Swap()(p,index,d-1),i);
+    }       
   };
     
   //     Get_innermost_coefficient;
@@ -1539,11 +1543,9 @@ public:
         
     // returns the exponent vector of inner_most_lcoeff. 
     result_type operator()(const Polynomial_d& polynomial){
-            
       typename PTC::Degree_vector degree_vector;
-            
       Exponent_vector result = degree_vector(polynomial.lcoeff());
-      result.insert(result.begin(),polynomial.degree());
+      result.push_back(polynomial.degree());
       return result;
     }
   };
