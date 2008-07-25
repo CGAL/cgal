@@ -13,8 +13,6 @@ typedef SK::Intersect_3                                     Intersect_3;
 
 int main() {
 
-  Intersect_3 theIntersect_3 = SK().intersect_3_object();
-
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
   CGAL::Random theRandom(random_seed);
@@ -36,9 +34,9 @@ int main() {
     Sphere_3 s1 = Sphere_3(Point_3(x1,y1,z1), r);
     Sphere_3 s2 = Sphere_3(Point_3(x2,y2,z2), r);
     Sphere_3 s3 = Sphere_3(Point_3(x3,y3,z3), r);
-    std::vector< CGAL::Object > intersection_1;
-    theIntersect_3(s1, s2, s3, std::back_inserter(intersection_1));
-    if(intersection_1.size() > 0) count++;
+    std::vector< CGAL::Object > intersecs;
+    CGAL::intersection(s1, s2, s3, std::back_inserter(intersecs));
+    if(intersecs.size() > 0) count++;
   }
 
   std::cout << "The approximate probability that 3 spheres with radius 1"

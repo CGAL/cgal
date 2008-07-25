@@ -24,6 +24,8 @@
 #define CGAL_SPHERICAL_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_SPHERE_H
 
 #include <CGAL/kernel_basic.h>
+
+#include <CGAL/Circular_kernel_3/internal_functions_on_intersection_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_line_3.h>
@@ -37,6 +39,7 @@
 
 
 namespace CGAL {
+	
 namespace SphericalFunctors {
 
 #define CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(V)\
@@ -827,6 +830,75 @@ template < class SK > \
     operator()(const Circular_arc_3 &p, const Circle_3 &a) const
     { return has_on<SK>(p, a); }
     
+  };
+
+  template < class SK >
+  class Do_intersect_3
+    : public SK::Linear_kernel::Do_intersect_3
+  {
+  
+    typedef typename SK::Sphere_3                 Sphere_3;
+    typedef typename SK::Line_3                   Line_3;
+    typedef typename SK::Line_arc_3               Line_arc_3;
+    typedef typename SK::Circular_arc_3           Circular_arc_3;
+    typedef typename SK::Plane_3                  Plane_3;
+    typedef typename SK::Circle_3                 Circle_3;
+  
+  public:
+
+	  typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
+  
+    using SK::Linear_kernel::Do_intersect_3::operator();
+
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
+  result_type \
+  operator()(const A & c1, const B & c2) const \
+  { std::vector< Object > res; \
+    typename SK::Intersect_3()(c1,c2,std::back_inserter(res)); \
+	  return res.size() != 0; }
+	
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C) \
+  result_type \
+  operator()(const A & c1, const B & c2, const C & c3) const \
+  { std::vector< Object > res; \
+    typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res)); \
+	  return res.size() != 0; }
+
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Plane_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Sphere_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Plane_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Plane_3, Plane_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Plane_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Plane_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circular_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circular_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circular_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circle_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circular_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Sphere_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circular_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Plane_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_arc_3)
+	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circular_arc_3)
+
   };
 
   template < class SK >
