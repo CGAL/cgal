@@ -401,7 +401,7 @@ OutputIterator hybrid_bezout_subresultants(
 	      InputIterator num,int size)
     {
       typename CGALi::Simple_matrix<NT> S(size);
-      int n = B.row_dimension();
+      CGAL_precondition_code(int n = B.row_dimension();)
       CGAL_precondition(n==(int)B.column_dimension());
       int curr_num;
       bool negate;
