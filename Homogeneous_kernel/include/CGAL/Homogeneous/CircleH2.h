@@ -28,6 +28,7 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Interval_nt.h>
+#include <boost/tuple/tuple.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,7 +39,7 @@ class CircleH2
     typedef typename R_::RT                   RT;
     typedef typename R_::Point_2              Point_2;
 
-    typedef Triple<Point_2, FT, Orientation>         Rep;
+    typedef boost::tuple<Point_2, FT, Orientation>   Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
 
     Base base;
@@ -116,13 +117,13 @@ template <class R>
 inline
 const typename CircleH2<R>::Point_2 &
 CircleH2<R>::center() const
-{ return get(base).first; }
+{ return get(base).get<0>(); }
 
 template <class R>
 inline
 const typename CircleH2<R>::FT &
 CircleH2<R>::squared_radius() const
-{ return get(base).second; }
+{ return get(base).get<1>(); }
 
 template <class R>
 CGAL_KERNEL_INLINE
@@ -138,7 +139,7 @@ template <class R>
 inline
 Orientation
 CircleH2<R>::orientation() const
-{ return get(base).third; }
+{ return get(base).get<2>(); }
 
 template <class R>
 CGAL_KERNEL_INLINE

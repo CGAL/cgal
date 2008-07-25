@@ -27,6 +27,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Interval_nt.h>
+#include <boost/tuple/tuple.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +40,7 @@ class SphereC3
   typedef typename R_::Sphere_3             Sphere_3;
   typedef typename R_::Circle_3             Circle_3;
 
-  typedef Triple<Point_3, FT, Orientation>         Rep;
+  typedef boost::tuple<Point_3, FT, Orientation>   Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -106,17 +107,17 @@ public:
 
   const Point_3 & center() const
   {
-      return get(base).first;
+      return get(base).get<0>();
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return get(base).second;
+      return get(base).get<1>();
   }
   Orientation orientation() const
   {
-      return get(base).third;
+      return get(base).get<2>();
   }
 
   // A circle is degenerate if its (squared) radius is null or negative

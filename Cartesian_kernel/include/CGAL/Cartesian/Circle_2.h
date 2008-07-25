@@ -26,6 +26,7 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
+#include <boost/tuple/tuple.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -38,7 +39,7 @@ class CircleC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Orientation          Orientation;
 
-  typedef Triple<Point_2, FT, Orientation>         Rep;
+  typedef boost::tuple<Point_2, FT, Orientation>   Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -62,17 +63,17 @@ public:
 
   const Point_2 & center() const
   {
-    return get(base).first;
+    return get(base).get<0>();
   }
 
   const FT & squared_radius() const
   {
-    return get(base).second;
+    return get(base).get<1>();
   }
 
   Orientation orientation() const
   {
-    return get(base).third;
+    return get(base).get<2>();
   }
 
 };
