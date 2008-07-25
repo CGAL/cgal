@@ -34,6 +34,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,7 +43,7 @@ class Dxf_reader_doubles {
 
 public:
   typedef double       FT;
-  typedef CGAL::Triple<double, double,double>  Triple;
+  typedef boost::array<double, 3>  Triple;
   typedef Triple Point_2_and_bulge;
   typedef Triple Circle_2;
 

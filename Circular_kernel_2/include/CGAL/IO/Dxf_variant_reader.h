@@ -35,7 +35,7 @@
 #include <string>
 #include <list>
 #include <boost/variant.hpp>
-
+#include <CGAL/array.h>
 
 
 namespace CGAL {
@@ -44,7 +44,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   OutputIterator variant_load(std::istream& is, OutputIterator res)
 {
 
-  typedef CGAL::Triple<double,double,double> Triple;
+  typedef boost::array<double, 3> Triple;
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
   typedef typename CK::Root_of_2 Root_of_2;
