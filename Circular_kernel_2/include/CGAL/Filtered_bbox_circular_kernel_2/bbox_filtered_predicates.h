@@ -695,6 +695,7 @@ class Do_overlap_2
     typedef typename BK::Rline_arc_2              Rline_arc_2;
     typedef typename BK::Rcirc_arc_point_2        Rcirc_arc_point_2;
     typedef typename BK::Circle_2                 Circle;
+    typedef typename BK::Line_2                   Line_2;
 
     template < class OutputIterator >
     OutputIterator
@@ -829,8 +830,35 @@ class Do_overlap_2
     operator()(const Line_arc_2 & c1, const Circular_arc_2 & c2, 
 	       OutputIterator res)
       {	return operator()(c2,c1,res);}
-     
-    
+   
+	    template < class OutputIterator >
+	  OutputIterator
+	  operator()(const Line_2 & c1, const Circular_arc_2 & c2, 
+		       OutputIterator res)
+	    {
+		    return CK().intersect_2_object()(c1,c2.arc(),res);
+		  }
+
+		template < class OutputIterator >
+		OutputIterator
+		operator()(const Line_2 & c1, const Line_arc_2 & c2, 
+		       OutputIterator res)
+		  {
+			  return CK().intersect_2_object()(c1,c2.arc(),res);
+			}	  
+
+		    template < class OutputIterator >
+		  OutputIterator
+		  operator()(const Circular_arc_2 & c1, const Line_2 & c2, 
+			       OutputIterator res)
+		    {	return operator()(c2,c1,res);}
+
+			template < class OutputIterator >
+			OutputIterator
+			operator()(const Line_arc_2 & c1, const Line_2 & c2, 
+			       OutputIterator res)
+			  {	return operator()(c2,c1,res);}
+   
   };
 
 
