@@ -13,7 +13,7 @@
 
 #include "Polyhedron_type_fwd.h"
 
-struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;

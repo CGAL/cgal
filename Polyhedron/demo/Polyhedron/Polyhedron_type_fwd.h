@@ -1,9 +1,13 @@
 #ifndef POLYHEDRON_TYPE_FWD_H
 #define POLYHEDRON_TYPE_FWD_H
 
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <memory>
 
-struct Kernel;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+//struct Kernel;
 namespace CGAL {
   class Polyhedron_items_3;
 
