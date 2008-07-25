@@ -24,8 +24,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_LINE_ARC_3_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_sphere_3.h>
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
   namespace CGALi{
@@ -40,7 +40,7 @@ namespace CGAL {
       typedef typename SK::FT                   FT;
 
     private:
-      typedef Triple<Line_3, Circular_arc_point_3, 
+      typedef boost::tuple<Line_3, Circular_arc_point_3, 
                              Circular_arc_point_3>  Rep;
       typedef typename SK::template Handle<Rep>::type  Base;
 
@@ -173,17 +173,17 @@ namespace CGAL {
 
       const Line_3& supporting_line() const 
       {
-        return get(base).first;
+        return get(base).get<0>();
       }
 
       const Circular_arc_point_3& source() const 
       {
-        return get(base).second;
+        return get(base).get<1>();
       }
 
       const Circular_arc_point_3& target() const 
       {
-        return get(base).third;
+        return get(base).get<2>();
       }
 
       const Circular_arc_point_3& lower_xyz_extremity() const

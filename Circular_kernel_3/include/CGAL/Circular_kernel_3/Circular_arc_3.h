@@ -24,8 +24,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 
-#include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
+#include <boost/tuple/tuple.hpp>
 
 
 namespace CGAL {
@@ -42,7 +42,7 @@ namespace CGAL {
 
     private:
 
-      typedef Triple<Circle_3, Circular_arc_point_3, 
+      typedef boost::tuple<Circle_3, Circular_arc_point_3, 
                                Circular_arc_point_3> Rep;
       typedef typename SK::template Handle<Rep>::type Base;
 
@@ -56,7 +56,7 @@ namespace CGAL {
     public:
 
       const Sphere_3& reference_sphere(){
-        return get_ref_sphere(get(base).first);
+        return get_ref_sphere(get(base).get<0>());
       };
 
         
@@ -197,17 +197,17 @@ namespace CGAL {
 
       const Circle_3& supporting_circle() const 
       {
-        return get(base).first;
+        return get(base).get<0>();
       }
 
       const Circular_arc_point_3& source() const 
       {
-        return get(base).second;
+        return get(base).get<1>();
       }
 
       const Circular_arc_point_3& target() const 
       {
-        return get(base).third;
+        return get(base).get<2>();
       }
 
       Plane_3 supporting_plane() const {
