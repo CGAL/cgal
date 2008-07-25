@@ -903,7 +903,9 @@ private:
         Boundary left = boundary_value_in_interval(index);
         Boundary right = boundary_value_in_interval(index+1);
         
-        typedef boost::numeric::interval<Boundary> Boundary_interval;
+        typedef boost::numeric::interval<Coercion_type> Coercion_interval;
+
+        typename Coercion::Cast cast;
 
         for(int i = 0; i < static_cast<int>(bucket_borders.size()); i++) {
             
@@ -911,8 +913,9 @@ private:
                 =  primitive_polynomial_2().evaluate(bucket_borders[i]);
             
             while(true) {
-                Boundary_interval curr_interval 
-                    = evaluate_iv(curr_pol,Boundary_interval(left,right));
+                Coercion_interval curr_interval 
+                    = evaluate_iv(curr_pol,Coercion_interval(cast(left),
+                                                             cast(right)));
 
                 if(boost::numeric::in_zero(curr_interval)) {
                     // "refine"

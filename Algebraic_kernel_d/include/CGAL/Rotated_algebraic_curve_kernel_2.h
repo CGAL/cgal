@@ -27,7 +27,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace { 
 
-#ifdef AcX_USE_CORE
 // quick hack to rebind curve pairs & ak_1
 template <class Coefficient, class Rational>
 struct Rebind_helper {
@@ -40,10 +39,7 @@ struct Rebind_helper {
     typedef CGAL::Algebraic_kernel_1<Coefficient, Rational, Rep_class,
          Isolator>  Kernel_1;
    
-    typedef AcX::Algebraic_curve_2< Kernel_1 > Curve;
-    typedef AcX::Algebraic_curve_pair_2< Curve > Curve_pair;
 };
-#endif // AcX_USE_CORE
 
 #ifdef CnX_USE_whatever_blabla
 
@@ -718,8 +714,7 @@ public:
 
     //! rebound kernel after substituting coefficient type
     typedef typename AlgebraicCurveKernel_2::template 
-        rebind<typename Rebind_helper::Curve_pair,
-               typename Rebind_helper::Kernel_1>::Other Rebound_kernel;
+        rebind<typename Rebind_helper::Kernel_1>::Other Rebound_kernel;
 
     //!@}
     //!\name functor invokation 
@@ -824,13 +819,13 @@ public:
     
     struct Construct_curve_2 {
             
-        Curve_analysis_2 operator()(const Poly_int_2& f, int angle) const {
+        Curve_analysis_2 operator()(const Poly_int_2& f, int angle=0) const {
             Rotation_traits traits;
             return Base::curve_cache()(traits(f, angle));
         }
 
         Curve_analysis_2 operator()(const Poly_ext_2& f) const {
-            return Base::curve_cache()(f);
+            return Base::curve_cache_2()(f);
         };
     };
     

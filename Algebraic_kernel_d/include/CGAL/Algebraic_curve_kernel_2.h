@@ -281,7 +281,7 @@ protected:
     template<typename T> struct Gcd {
     
         T operator() (std::pair<T,T> pair) {
-            return CGAL::CGALi::gcd(pair.first,pair.second);
+            return CGAL::CGALi::gcd_utcf(pair.first,pair.second);
         }
     } ;     
 
@@ -1054,8 +1054,10 @@ public:
     struct Sign_at_2 :
         public Binary_function< Curve_analysis_2, Xy_coordinate_2, Sign > {
 
-        typedef typename Y_real_traits_1::Boundary Boundary;
-        typedef boost::numeric::interval<Boundary> Interval;
+        typedef typename Xy_coordinate_2::Boundary Boundary;
+        typedef typename Xy_coordinate_2::Boundary_interval Boundary_interval;
+
+        typedef typename Xy_coordinate_2::Coercion_interval Coercion_interval;
         
         typedef CGAL::Polynomial<Boundary> Poly_rat_1;
         typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
@@ -1072,14 +1074,15 @@ public:
             if(ca_2.is_identical(r.curve()) || _test_exact_zero(ca_2, r))
                 return CGAL::ZERO;
             
-            Interval ix = r.get_approximation_x();
-            Interval iy = r.get_approximation_y();
+            Boundary_interval ix = r.get_approximation_x();
+            Boundary_interval iy = r.get_approximation_y();
 
             Boundary x_len = ix.upper() - ix.lower(),
                 y_len = iy.upper() - iy.lower();
 
             while(1) {
-                Interval iv = r.interval_evaluate_2(ca_2.polynomial_2());
+                Coercion_interval iv 
+                    = r.interval_evaluate_2(ca_2.polynomial_2());
                 CGAL::Sign s_lower = CGAL::sign(iv.lower());
                 if(s_lower == sign(iv.upper()))
                     return s_lower;

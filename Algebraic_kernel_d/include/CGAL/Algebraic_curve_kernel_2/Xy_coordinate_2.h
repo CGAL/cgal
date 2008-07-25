@@ -45,7 +45,8 @@ public:
     typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
         Curve_analysis_2;
 
-    typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
+    typedef typename Algebraic_curve_kernel_2::Algebraic_real_1 
+        Algebraic_real_1;
 
     typedef CGAL::Bbox_2 Bbox_2;
 
@@ -59,14 +60,14 @@ public:
     }
     
     // standard constructor
-    Xy_coordinate_2_rep(const X_coordinate_1& x,
+    Xy_coordinate_2_rep(const Algebraic_real_1& x,
         const Curve_analysis_2& curve, int arcno) :
             _m_x(x), _m_curve(curve), _m_arcno(arcno) {
     }
 
     // data
     // x-coordinate
-    X_coordinate_1 _m_x;
+    Algebraic_real_1 _m_x;
     
     // supporting curve
     mutable Curve_analysis_2 _m_curve;
@@ -75,7 +76,7 @@ public:
     mutable int _m_arcno;
 
     // y-coordinate
-    mutable boost::optional< X_coordinate_1 > _m_y;
+    mutable boost::optional< Algebraic_real_1 > _m_y;
 
     //! A bounding box for the given point
     mutable boost::optional< std::pair<double,Bbox_2> > _m_bbox_2_pair;
@@ -86,7 +87,7 @@ public:
 //! two polynomial equations in two variables that are models 
 //! \c AlgebraicCurveKernel_2::Polynomial_2
 //!
-//! \c Xy_coordinate_2 coordinate is represented by an \c X_coordinate_1,
+//! \c Xy_coordinate_2 coordinate is represented by an \c Algebraic_real_1,
 //! a supporting curve and an arcno and is valid only for finite solutions,
 //! i.e., it cannot represent points at infinity 
 template <class AlgebraicCurveKernel_2, 
@@ -119,9 +120,12 @@ public:
     typedef typename Algebraic_curve_kernel_2::Algebraic_kernel_1 
         Algebraic_kernel_1;
     
-    //! type of X_coordinate
-    typedef typename Algebraic_curve_kernel_2::X_coordinate_1 X_coordinate_1;
-    typedef typename Algebraic_curve_kernel_2::Y_coordinate_1 Y_coordinate_1;
+    //! type of (explicit) x- and y-coordinates
+    typedef typename Algebraic_curve_kernel_2::Algebraic_real_1 
+        Algebraic_real_1;
+
+    //! Coefficient type
+    typedef typename Algebraic_curve_kernel_2::Coefficient Coefficient;
 
     //! type of curve pair analysis
     typedef typename Algebraic_curve_kernel_2::Curve_pair_analysis_2
@@ -144,6 +148,13 @@ public:
 
     //! type for boundary intervals
     typedef boost::numeric::interval<Boundary> Boundary_interval;
+
+    typedef CGAL::Coercion_traits<Coefficient,Boundary> Coercion;
+
+    typedef typename CGAL::Coercion_traits<Coefficient,Boundary>::Type
+        Coercion_type;
+
+    typedef boost::numeric::interval<Coercion_type> Coercion_interval;
 
     //! Type for the bounding box
     typedef typename Rep::Bbox_2 Bbox_2;
@@ -209,7 +220,7 @@ public:
      * are also constructed in this way
      */
      // TODO: construct this from curve analysis object ?
-    Xy_coordinate_2(const X_coordinate_1& x, const Curve_analysis_2& curve,
+    Xy_coordinate_2(const Algebraic_real_1& x, const Curve_analysis_2& curve,
                  int arcno) :
             Base(Rep(x, curve, arcno)) {
             
@@ -236,7 +247,7 @@ public:
     /*!\brief 
      * x-coordinate of the point
      */
-    const X_coordinate_1& x() const { 
+    const Algebraic_real_1& x() const { 
         return this->ptr()->_m_x; 
     }
 
@@ -247,12 +258,12 @@ public:
      * for the y-coordinate. It is recommended to use it carefully,
      * and using get_approximation_y() instead whenever approximations suffice.
      */
-    Y_coordinate_1 y() const {
+    Algebraic_real_1 y() const {
 
         typedef typename Algebraic_curve_kernel_2::Polynomial_2 Polynomial_2;
         typedef typename Algebraic_curve_kernel_2::Polynomial_1 Polynomial_1;
         
-        typedef std::vector< Y_coordinate_1 > Roots;
+        typedef std::vector< Algebraic_real_1 > Roots;
         typedef typename Curve_analysis_2::Status_line_1 Key;
         typedef Roots Data;
         typedef std::map< Key, Data, CGAL::Handle_id_less_than< Key > > 
@@ -323,7 +334,7 @@ public:
             
             Boundary_interval y_iv = get_approximation_y();
             
-            typedef typename std::vector<Y_coordinate_1>::const_iterator
+            typedef typename std::vector<Algebraic_real_1>::const_iterator
                 Iterator;
             
             std::list< Iterator > candidates;
@@ -357,7 +368,7 @@ public:
             }
             CGAL_assertion(static_cast< int >(candidates.size()) == 1);
             this->ptr()->_m_y = 
-                Y_coordinate_1(
+                Algebraic_real_1(
                         (*candidates.begin())->polynomial(), 
                         (*candidates.begin())->low(), 
                         (*candidates.begin())->high()
@@ -747,19 +758,19 @@ public:
     }
 
     template<typename Polynomial_2>
-    Boundary_interval interval_evaluate_2(const Polynomial_2& p) const {
+    Coercion_interval interval_evaluate_2(const Polynomial_2& p) const {
         
-        //TODO: This function assumes a CGAL::Polynomial type, do it generically
+        //TODO: This function assumes CGAL::Polynomial type, do it generically
 
-        //TODO: Assumes that the Coercion of Polynomial's scalar
-        // and boundary is a boundary, repair this
+        typename Coercion::Cast cast;
 
-        Boundary_interval iy = get_approximation_y();
+        Coercion_interval iy(cast(get_approximation_y().lower()),
+                             cast(get_approximation_y().upper()));
 
         // CGAL::Polynomial does not provide Coercion_traits for number
         // types => therefore evaluate manually
         typename Polynomial_2::const_iterator it = p.end() - 1;
-        Boundary_interval res(interval_evaluate_1(*it));
+        Coercion_interval res(interval_evaluate_1(*it));
         
         while((it--) != p.begin()) 
             res = res * iy + (interval_evaluate_1(*it));
@@ -767,19 +778,19 @@ public:
     }
     
     template<typename Polynomial_1>
-    Boundary_interval interval_evaluate_1(const Polynomial_1& p) const {
+    Coercion_interval interval_evaluate_1(const Polynomial_1& p) const {
         
-        //TODO: This function assumes a CGAL::Polynomial type, do it generically
+        //TODO: This function assumes CGAL::Polynomial type, do it generically
 
-        //TODO: Assumes that the Coercion of Polynomial's scalar
-        // and boundary is a boundary, repair this
+        typename Coercion::Cast cast;
 
-        Boundary_interval ix = get_approximation_x();
+        Coercion_interval ix(cast(get_approximation_x().lower()),
+                             cast(get_approximation_x().upper()));
 
         typename Polynomial_1::const_iterator it = p.end() - 1;
-        Boundary_interval res(*it);
+        Coercion_interval res(cast(*it));
         while((it--) != p.begin()) 
-            res = res * ix + Boundary_interval(*it);
+            res = res * ix + Coercion_interval(cast(*it));
         return res;
     }
 
