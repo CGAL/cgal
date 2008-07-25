@@ -33,6 +33,7 @@ public:
     Exponent_vector(): Base(){};
     Exponent_vector(Base::size_type i): Base(i){};
     Exponent_vector(Base::size_type i, Base::value_type x): Base(i,x){};
+    Exponent_vector(int i, int x): Base(i,x){};
     Exponent_vector(const Exponent_vector& x): Base ( x ){};
 
     template <class InputIterator>
