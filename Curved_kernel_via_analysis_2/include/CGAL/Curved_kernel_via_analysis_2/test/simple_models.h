@@ -1022,7 +1022,7 @@ public:
     
     //! \brief constructs \c Curve_analysis_2 object, uses caching if appropriate
     struct Construct_curve_2 :
-            public Unary_function< Polynomial_2, Curve_analysis_2 >
+            public std::unary_function< Polynomial_2, Curve_analysis_2 >
     {
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
         //! no default constructor provided
@@ -1041,7 +1041,7 @@ public:
      * caching is used when appropriate
      */
     struct Construct_curve_pair_2 :
-            public Binary_function<Curve_analysis_2, Curve_analysis_2,
+            public std::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
            
         Curve_pair_analysis_2 operator()
@@ -1067,7 +1067,7 @@ public:
     
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
-        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        public std::unary_function<Xy_coordinate_2, X_coordinate_1> {
         
         X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.x();
@@ -1077,7 +1077,7 @@ public:
     
     //! returns the second coordinate of \c Xy_coordinate_2
     struct Get_y_2 :
-        public Unary_function<Xy_coordinate_2, X_coordinate_1> {
+        public std::unary_function<Xy_coordinate_2, X_coordinate_1> {
         
         X_coordinate_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.y();
@@ -1086,7 +1086,7 @@ public:
     CGAL_Algebraic_Kernel_cons(Get_y_2, Get_y_2_object);
     
     struct Refine_x_2 :
-        public Unary_function<Xy_coordinate_2, void> {
+        public std::unary_function<Xy_coordinate_2, void> {
       
         void operator()(const Xy_coordinate_2& r) const {  }
         
@@ -1095,7 +1095,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
     
     struct Refine_y_2 :
-        public Unary_function<Xy_coordinate_2, void> {
+        public std::unary_function<Xy_coordinate_2, void> {
       
         void operator()(const Xy_coordinate_2& r) const {  }
         
@@ -1185,7 +1185,7 @@ public:
     
     //! \brief comparison of x-coordinates 
     struct Compare_x_2 :
-         public Binary_function<X_coordinate_1, X_coordinate_1, 
+         public std::binary_function<X_coordinate_1, X_coordinate_1, 
                 Comparison_result > {
 
         Comparison_result operator()(const X_coordinate_1& x1, 
@@ -1201,7 +1201,7 @@ public:
 
     //! \brief comparison of y-coordinates of two points
     struct Compare_y_2 :
-        public Binary_function< Xy_coordinate_2, Xy_coordinate_2, 
+        public std::binary_function< Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > {
         
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -1215,7 +1215,7 @@ public:
     //!
     //! \c equal_x specifies that only y-coordinates need to be compared
     struct Compare_xy_2 :
-          public Binary_function<Xy_coordinate_2, Xy_coordinate_2, 
+          public std::binary_function<Xy_coordinate_2, Xy_coordinate_2, 
                 Comparison_result > 
     {
         Comparison_result operator()(const Xy_coordinate_2& xy1, 
@@ -1232,7 +1232,7 @@ public:
     //! for algerbaic curves this means that supporting polynomial is 
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
-            public Unary_function< Polynomial_2, bool > {
+            public std::unary_function< Polynomial_2, bool > {
 
         bool operator()(const Polynomial_2& p) const {
             return true; //is_square_free(p);
@@ -1247,7 +1247,7 @@ public:
     //! in case of algerbaic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
-        public Binary_function< Curve_analysis_2, Curve_analysis_2, bool > { 
+        public std::binary_function< Curve_analysis_2, Curve_analysis_2, bool > { 
                
         bool operator()(const Curve_analysis_2& c1, 
                         const Curve_analysis_2& c2) const {
@@ -1307,7 +1307,7 @@ public:
     
     //! \brief computes the derivative w.r.t. the first (innermost) variable
     struct Derivative_x_2 : 
-        public Unary_function< Polynomial_2, Polynomial_2 > {
+        public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const {
             return p;
@@ -1317,7 +1317,7 @@ public:
 
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
-        public Unary_function< Polynomial_2, Polynomial_2 > {
+        public std::unary_function< Polynomial_2, Polynomial_2 > {
         
         Polynomial_2 operator()(const Polynomial_2& p) const  {
             return p;
@@ -1366,7 +1366,7 @@ public:
      * returns a value convertible to \c CGAL::Sign
      */
     struct Sign_at_2 :
-        public Binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
+        public std::binary_function< Polynomial_2, Xy_coordinate_2, Sign > {
 
         Sign operator()(const Polynomial_2& p, const Xy_coordinate_2& r) const
         {
