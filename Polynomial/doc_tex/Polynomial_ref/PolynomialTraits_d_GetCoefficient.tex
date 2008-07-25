@@ -19,10 +19,15 @@ This \ccc{AdaptableBinaryFunction} provides access to coefficients of a
 \ccOperations
 
 \ccMethod{result_type operator()( first_argument_type p, 
-                                  second_argument_type i);}{ 
-Returns coefficient of $x_{d-1}^i$ by value, 
+                                  second_argument_type e);}{ 
+Returns coefficient of $x_{d-1}^e$ by value, 
 where $x_{d-1}$ is the outermost variable.}
 
+\ccMethod{result_type operator()( first_argument_type p, 
+                                  second_argument_type e,
+                                  int i);}{ 
+Returns coefficient of $x_{i}^e$ by value. 
+}
 %\ccHasModels
 
 \ccSeeAlso
