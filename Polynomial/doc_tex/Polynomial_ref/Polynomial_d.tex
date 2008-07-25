@@ -5,18 +5,21 @@
 A model of \ccRefName\ is representing a multivariate 
 polynomial in $d$ variables over some basic ring $R$. 
 This type is denoted as the innermost coefficient.
-A model of \ccRefName\ possesses a traits class 
+A model of \ccRefName\ accompanied by a traits class 
 \ccc{CGAL::Polynomial_traits_d<Polynomial_d>}, which is a model of 
 \ccc{PolynomialTraits_d}. 
-The innermost coefficient type of the polynomial is accessible through 
-the traits class providing 
-\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient}.
- 
+Please have a look at the concept \ccc{PolynomialTraits_d}, since nearly 
+all functionality related to polynomials is provided by the traits. 
+
+%The innermost coefficient type of the polynomial is accessible through 
+%the traits, that is, the traits provides the public type 
+%\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient}.
+
 \ccRefines
 
 \ccc{IntegralDomainWithoutDiv} \\
 
-The algebraic structure of \ccc{Polynomial} depends on the 
+The algebraic structure of \ccc{Polynomial_d} depends on the 
 algebraic structure of \ccc{Innermost_coefficient}:
 
 \begin{tabular}{|l|l|}
@@ -31,9 +34,10 @@ algebraic structure of \ccc{Innermost_coefficient}:
 \hline
 \end{tabular}
 
+Note: In case the polynomial is univariate and the innermost coefficient is a \ccc{Field} the polynomial is model of \ccc{EuclideanRing}.
 
-Note:The concept \ccc{Polynomial_1} refines \ccc{EuclideanRing} in case 
-\ccc{Innermost_coefficient} is a \ccc{Field}. 
+%Note:The concept \ccc{Polynomial_1} refines \ccc{EuclideanRing} in case 
+%\ccc{Innermost_coefficient} is a \ccc{Field}. 
 
 \ccSeeAlso 
 
