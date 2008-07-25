@@ -21,11 +21,10 @@
 //
 // Author(s)     : Stefan Schirra
  
-
 #ifndef CGAL_RAYH2_H
 #define CGAL_RAYH2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,7 +38,7 @@ class RayH2
     typedef typename R_::Line_2               Line_2;
     typedef typename R_::Vector_2             Vector_2;
 
-    typedef Twotuple<Point_2>                        Rep;
+    typedef boost::array<Point_2, 2>          Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
 
     Base base;
@@ -50,16 +49,16 @@ public:
     RayH2() {}
 
     RayH2( const Point_2& sp, const Point_2& secondp)
-      : base(sp, secondp) {}
+      : base(CGALi::make_array(sp, secondp)) {}
 
     RayH2( const Point_2& sp, const Direction_2& d)
-      : base(sp, sp + d.to_vector()) {}
+      : base(CGALi::make_array(sp, sp + d.to_vector())) {}
 
     RayH2( const Point_2& sp, const Vector_2& v)
-      : base(sp, sp + v) {}
+      : base(CGALi::make_array(sp, sp + v)) {}
 
     RayH2( const Point_2& sp, const Line_2& l)
-      : base(sp, sp + l.to_vector()) {}
+      : base(CGALi::make_array(sp, sp + l.to_vector())) {}
 
     bool    operator==(const RayH2<R>& r) const;
     bool    operator!=(const RayH2<R>& r) const;
@@ -86,7 +85,7 @@ template < class R >
 inline
 const typename RayH2<R>::Point_2 &
 RayH2<R>::source() const
-{ return get(base).e0; }
+{ return get(base)[0]; }
 
 template < class R >
 inline
@@ -118,7 +117,7 @@ const typename RayH2<R>::Point_2 &
 RayH2<R>::second_point() const
 {
   CGAL_kernel_precondition( !is_degenerate() );
-  return get(base).e1;
+  return get(base)[1];
 }
 
 template < class R >
@@ -175,7 +174,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 bool
 RayH2<R>::is_degenerate() const
-{ return start() == get(base).e1; }
+{ return start() == get(base)[1]; }
 
 template < class R >
 inline

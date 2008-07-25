@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_SEGMENT_2_H
 #define CGAL_CARTESIAN_SEGMENT_2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -34,7 +34,7 @@ class SegmentC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Segment_2            Segment_2;
 
-  typedef Twotuple<Point_2>                        Rep;
+  typedef boost::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -46,19 +46,19 @@ public:
   {}
 
   SegmentC2(const Point_2 &sp, const Point_2 &ep)
-    : base(sp, ep) 
+    : base(CGALi::make_array(sp, ep))
   {}
 
   const Point_2 &   
   source() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   
   const Point_2 &   
   target() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 
 };

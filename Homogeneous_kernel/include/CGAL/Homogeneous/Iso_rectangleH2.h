@@ -24,7 +24,7 @@
 #ifndef CGAL_ISO_RECTANGLEH2_H
 #define CGAL_ISO_RECTANGLEH2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +36,7 @@ class Iso_rectangleH2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
 
-  typedef Twotuple<Point_2>                        Rep;
+  typedef boost::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -49,7 +49,7 @@ public:
   Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
-    : base(p, q)
+    : base(CGALi::make_array(p, q))
   {
     // I have to remove the assertions, because of Homogeneous_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -68,13 +68,13 @@ template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base).e0; }
+{ return get(base)[0]; }
 
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
 Iso_rectangleH2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
-{ return get(base).e1; }
+{ return get(base)[1]; }
 
 template < class R >
 CGAL_KERNEL_INLINE

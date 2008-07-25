@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_RAY_2_H
 #define CGAL_CARTESIAN_RAY_2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,7 +35,7 @@ class RayC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Ray_2                Ray_2;
 
-  typedef Twotuple<Point_2>                        Rep;
+  typedef boost::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -47,20 +47,20 @@ public:
   {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
-    : base(sp, secondp) 
+    : base(CGALi::make_array(sp, secondp)) 
   {}
 
 
   const Point_2&
   source() const
   {
-    return get(base).e0;
+    return get(base)[0];
   }
 
   const Point_2 &
   second_point() const
   {
-    return get(base).e1;
+    return get(base)[1];
   }
 
   typename R_::Bool_type is_degenerate() const

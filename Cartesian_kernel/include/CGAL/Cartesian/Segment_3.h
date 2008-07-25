@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_SEGMENT_3_H
 #define CGAL_CARTESIAN_SEGMENT_3_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -38,7 +38,7 @@ class SegmentC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Segment_3            Segment_3;
 
-  typedef Twotuple<Point_3>                        Rep;
+  typedef boost::array<Point_3, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -49,7 +49,7 @@ public:
   SegmentC3() {}
 
   SegmentC3(const Point_3 &sp, const Point_3 &ep)
-    : base(sp, ep) {}
+    : base(CGALi::make_array(sp, ep)) {}
 
   bool        has_on(const Point_3 &p) const;
   bool        collinear_has_on(const Point_3 &p) const;
@@ -59,11 +59,11 @@ public:
 
   const Point_3 &   source() const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const Point_3 &   target() const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 
   const Point_3 &   start() const;

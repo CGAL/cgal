@@ -24,7 +24,7 @@
 #ifndef CGAL_CARTESIAN_ISO_RECTANGLE_2_H
 #define CGAL_CARTESIAN_ISO_RECTANGLE_2_H
 
-#include <CGAL/Twotuple.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +36,7 @@ class Iso_rectangleC2
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
   typedef typename R_::Construct_point_2    Construct_point_2;
 
-  typedef Twotuple<Point_2>                        Rep;
+  typedef boost::array<Point_2, 2>          Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -50,7 +50,7 @@ public:
   //  : base(p, q) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q, int)
-    : base(p, q)
+    : base(CGALi::make_array(p, q))
   {
     // I have to remove the assertions, because of Cartesian_converter.
     // CGAL_kernel_assertion(p<=q);
@@ -58,11 +58,11 @@ public:
 
   const Point_2 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
-      return get(base).e0;
+      return get(base)[0];
   }
   const Point_2 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
-      return get(base).e1;
+      return get(base)[1];
   }
 
 };
