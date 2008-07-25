@@ -26,8 +26,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/IO/io.h>
-#include <CGAL/Fourtuple.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/array.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,7 +36,7 @@ struct Simple_cartesian;
 
 class Bbox_2
 {
-  typedef Fourtuple<double>            BBox_rep_2;
+  typedef boost::array<double, 4>            BBox_rep_2;
 
   BBox_rep_2 rep;
 
@@ -51,7 +51,7 @@ public:
 
              Bbox_2(double x_min, double y_min,
                     double x_max, double y_max)
-		 : rep(x_min, y_min, x_max, y_max) {}
+		 : rep(CGALi::make_array(x_min, y_min, x_max, y_max)) {}
 
   inline bool       operator==(const Bbox_2 &b) const;
   inline bool       operator!=(const Bbox_2 &b) const;
@@ -72,22 +72,22 @@ public:
 inline
 double
 Bbox_2::xmin() const
-{ return rep.e0; }
+{ return rep[0]; }
 
 inline
 double
 Bbox_2::ymin() const
-{ return rep.e1; }
+{ return rep[1]; }
 
 inline
 double
 Bbox_2::xmax() const
-{ return rep.e2; }
+{ return rep[2]; }
 
 inline
 double
 Bbox_2::ymax() const
-{ return rep.e3; }
+{ return rep[3]; }
 
 inline
 bool
