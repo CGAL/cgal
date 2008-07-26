@@ -37,6 +37,7 @@ int main(int argc, char **argv)
 #include "MainWindow_self_intersection.cpp"
 #include "MainWindow_convex_hull.cpp"
 #include "MainWindow_inside_out.cpp"
+#include "MainWindow_remeshing.cpp"
 #include "MainWindow_simplify.cpp"
 #include "MainWindow_kernel.cpp"
 #include "MainWindow_pca.cpp"

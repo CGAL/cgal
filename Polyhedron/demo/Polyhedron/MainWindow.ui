@@ -187,6 +187,7 @@
     <addaction name="actionKernel" />
     <addaction name="menuSubdivision" />
     <addaction name="actionSimplify" />
+    <addaction name="actionRemeshing" />
     <addaction name="menu_Boolean_operations" />
     <addaction name="actionInsideOut" />
    </widget>
@@ -515,6 +516,11 @@
   <action name="actionInsideOut" >
    <property name="text" >
     <string>Inside-out</string>
+   </property>
+  </action>
+  <action name="actionRemeshing" >
+   <property name="text" >
+    <string>Remeshing</string>
    </property>
   </action>
  </widget>
