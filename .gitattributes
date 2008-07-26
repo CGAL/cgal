@@ -2893,6 +2893,8 @@ Nef_3/doc_tex/Nef_3/fig/visualization_SNC.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.pdf -text svneol=unset#application/pdf
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.png -text svneol=unset#image/png
 Nef_3/doc_tex/Nef_3/fig/visualization_SNC.ps -text svneol=unset#application/postscript
+Nef_3/doc_tex/Nef_3_ref/Nef_nary_intersection_3.tex -text
+Nef_3/doc_tex/Nef_3_ref/Nef_nary_union_3.tex -text
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
