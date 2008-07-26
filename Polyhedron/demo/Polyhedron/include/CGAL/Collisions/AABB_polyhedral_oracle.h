@@ -7,18 +7,19 @@
 
 namespace CGAL {
 
-template <class Surface, class Kernel>
-class AABB_polyhedral_oracle
+template <class Polyhedron, class Kernel>
+class AABB_polyhedral_oracle : public Polyhedron
 {
 public:
-  typedef Surface Surface_3;
+  typedef Polyhedron Surface_3;
   typedef typename Kernel::FT FT;
-  typedef typename Kernel::Ray_3 Ray;
-  typedef typename Kernel::Line_3 Line;
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Segment_3 Segment;
-  typedef typename AABB_polyhedral_oracle<Surface,Kernel> Self;
+  typedef typename Kernel::Ray_3 Ray_3;
+  typedef typename Kernel::Line_3 Line_3;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  typedef typename AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
   typedef typename Self Surface_mesher_traits_3;
+  typedef typename Point_3 Intersection_point;
 
 public:
 

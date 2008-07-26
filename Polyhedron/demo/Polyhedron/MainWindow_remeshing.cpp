@@ -41,9 +41,9 @@ void MainWindow::on_actionRemeshing_triggered()
     // TODO: set triangles, construct tree
 
     // remesh
-    //Input_surface input;
+    Input_surface input;
     //std::cout << "Remesh...";
-    //CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
+    CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
     //std::cout << "done (" << tr.number_of_vertices() << " vertices)" << std::endl;
 
     // add remesh as new polyhedron
