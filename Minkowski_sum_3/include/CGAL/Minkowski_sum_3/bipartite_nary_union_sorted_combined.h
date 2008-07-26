@@ -32,7 +32,7 @@
 #elif defined CGAL_NEF3_NARY_UNION_BY_SMALL_QUEUE
 #include <CGAL/Nef_3/Nary_union_by_small_queue.h>
 #else
-#include <CGAL/Nef_3/Nary_union.h>
+#include <CGAL/Nef_3/Nef_nary_union_3.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -93,7 +93,7 @@ bipartite_nary_union_sorted_combined(Nef_polyhedron& N0,
   CGAL::Nary_union_by_small_queue<Nef_polyhedron>
     nary_union;
 #else
-  CGAL::Nary_union<Nef_polyhedron> nary_union;
+  CGAL::Nef_nary_union_3<Nef_polyhedron> nary_union;
 #endif
 
   typedef std::pair<Gaussian_map, Point_3> GMapPoint;
