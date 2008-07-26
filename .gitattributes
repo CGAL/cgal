@@ -3109,6 +3109,7 @@ Polyhedron/demo/Polyhedron/data/cube_tri.off -text svneol=unset#application/octe
 Polyhedron/demo/Polyhedron/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/knot_2_3.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/lucy-100kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/lucy-25kf.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/part5.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
