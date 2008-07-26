@@ -61,7 +61,7 @@ Sphere_segment_rep(const Circle& c1,
 { CGAL_assertion(!equal_as_sets(c1,c2)); 
   ps_ = intersection(c1,c2);
   pt_ = ps_.antipode();
-  if ( orientation(Point_3(0,0,0),ps_,pt_,
+  if ( R_::orientation(Point_3(0,0,0),ps_,pt_,
                    CGAL::ORIGIN + c_.orthogonal_vector()) !=
        CGAL::POSITIVE ) std::swap(ps_,pt_);
 }
@@ -188,15 +188,16 @@ void split_halfcircle(Sphere_segment<R>& s1,
 
 bool is_short() const 
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
-{ return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
-         == CGAL::POSITIVE; }
+{ 
+  return R().orientation_3_object()(Point_3(0,0,0), source(), target(),
+				    CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
+    == CGAL::POSITIVE; }
 
 bool is_long() const 
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
-{ return CGAL::orientation(Point_3(0,0,0), source(), target(),
-                           CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
-         == CGAL::NEGATIVE; }
+{ return R().orientation_3_object()(Point_3(0,0,0), source(), target(),
+				    CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector()) 
+    == CGAL::NEGATIVE; }
 
 bool is_degenerate() const { return source() == target(); }
 /*{\Mop return true iff |\Mvar| is degenerate.}*/

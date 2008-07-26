@@ -67,7 +67,7 @@ between $p$ and $q$. If $p$ and $q$ are antipodal of each other then we
 create any great circle that contains $p$ and $q$.}*/ 
 { Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
   if ( p != q.antipode() ) {
-    if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
+    if (R_().orientation_3_object()(p1,p,q,p4) != CGAL::POSITIVE )
       *this = Self(opposite());
   } else {
     /* previous method was: *this = Self(Plane_3(p1,q-p)); 
