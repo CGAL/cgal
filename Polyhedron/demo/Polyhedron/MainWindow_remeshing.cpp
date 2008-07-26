@@ -13,6 +13,8 @@
 #define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
+#include <QTime>
+
 void MainWindow::on_actionRemeshing_triggered()
 {
   if(onePolygonIsSelected())
@@ -37,23 +39,24 @@ void MainWindow::on_actionRemeshing_triggered()
     // meshing parameters
     CGAL::Surface_mesh_default_criteria_3<Tr>  
       facets_criteria(25.0, // angular bound
-      0.01,  // mesh sizing
+      0.01,   // mesh sizing
       0.001); // approximation error
 
     // AABB tree
+    QTime time;
+    time.start();
     std::cout << "Build AABB tree...";
     typedef CGAL::AABB_tree<GT,Polyhedron::Facet_handle,Polyhedron> Tree;
     Tree tree;
     tree.build_faces(*pMesh);
-    std::cout << "done" << std::endl;
+    std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
     // input surface
     typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT> Input_surface;
-
-    // instantiate surface (linked to the AABB tree)
     Input_surface input(&tree);
 
     // initial point set
+    time.start();
     std::cout << "Insert initial point set...";
     unsigned int nb_initial_points = 10;
     Polyhedron::Point_iterator it;
@@ -62,12 +65,13 @@ void MainWindow::on_actionRemeshing_triggered()
         it != pMesh->points_end(), i < nb_initial_points;
 	it++, i++)
       tr.insert(*it);
-    std::cout << "done" << std::endl;
+    std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
     // remesh
+    time.start();
     std::cout << "Remesh...";
     CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
-    std::cout << "done (" << tr.number_of_vertices() << " vertices)" << std::endl;
+    std::cout << "done (" << time.elapsed() << " ms, " << tr.number_of_vertices() << " vertices)" << std::endl;
 
     if(tr.number_of_vertices() > 0)
     {
