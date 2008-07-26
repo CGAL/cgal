@@ -13,6 +13,7 @@
 #include "Plucker_ray_3_Bbox_3_do_intersect.h"
 #include "Sphere_3_Bbox_do_intersect.h"
 
+CGAL_BEGIN_NAMESPACE
 
 template <class Kernel, class Input, class PSC>
 class AABB_node
@@ -1511,6 +1512,8 @@ public:
     }
   }
 };
+
+CGAL_END_NAMESPACE
 
 #endif // _AABB_NODE_
 

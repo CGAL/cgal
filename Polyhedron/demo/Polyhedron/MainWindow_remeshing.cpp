@@ -38,7 +38,7 @@ void MainWindow::on_actionRemeshing_triggered()
 
     // AABB tree
     std::cout << "Build AABB tree...";
-    typedef AABB_tree<Kernel,Polyhedron::Facet_handle,Polyhedron> Tree;
+    typedef CGAL::AABB_tree<GT,Polyhedron::Facet_handle,Polyhedron> Tree;
     Tree tree;
     tree.build_faces(*pMesh);
     std::cout << "done" << std::endl;
@@ -46,11 +46,13 @@ void MainWindow::on_actionRemeshing_triggered()
     // input surface
     typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT> Input_surface;
 
+    // instantiate surface (linked to the AABB tree)
+    Input_surface input(&tree);
+
     // remesh
-    Input_surface input;
-    //std::cout << "Remesh...";
+    std::cout << "Remesh...";
     CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
-    //std::cout << "done (" << tr.number_of_vertices() << " vertices)" << std::endl;
+    std::cout << "done (" << tr.number_of_vertices() << " vertices)" << std::endl;
 
     // add remesh as new polyhedron
     Polyhedron *pRemesh = new Polyhedron;

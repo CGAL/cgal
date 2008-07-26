@@ -8,6 +8,8 @@
 #include "AABB_node.h"
 #include "knn.h"
 
+CGAL_BEGIN_NAMESPACE
+
 template <class Kernel, class Input, class PSC>
 class AABB_tree
 {
@@ -480,5 +482,7 @@ public:
     m_root->gl_draw_recurse(psc, m_data.size());
   }
 };
+
+CGAL_END_NAMESPACE
 
 #endif // _AABB_TREE_

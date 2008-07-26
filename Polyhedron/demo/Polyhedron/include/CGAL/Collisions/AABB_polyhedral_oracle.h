@@ -5,6 +5,8 @@
 #include <utility>
 #include <CGAL/iterator.h>
 
+#include "AABB_tree.h"
+
 namespace CGAL {
 
 template <class Polyhedron, class Kernel>
@@ -17,16 +19,33 @@ public:
   typedef typename Kernel::Line_3 Line_3;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
+
   typedef typename AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
   typedef typename Self Surface_mesher_traits_3;
   typedef typename Point_3 Intersection_point;
 
-public:
+  // AABB tree
+  typedef AABB_tree<Kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
+  Tree *m_pTree;
 
+public:
+  Tree* tree() { return m_pTree; }
+
+public:
   // Surface constructor
   AABB_polyhedral_oracle()
   {
+    m_pTree = NULL;
   }
+  AABB_polyhedral_oracle(Tree *pTree)
+  {
+    m_pTree = pTree;
+  }
+  AABB_polyhedral_oracle(const AABB_polyhedral_oracle& oracle)
+  {
+    m_pTree = oracle.tree();
+  }
+
 
   class Intersect_3;
 
