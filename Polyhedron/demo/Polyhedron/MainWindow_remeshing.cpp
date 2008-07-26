@@ -6,7 +6,7 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 
-#include <CGAL/AABB_polyhedral_oracle.h>
+#include <CGAL/Collisions/AABB_polyhedral_oracle.h>
 
 void MainWindow::on_actionRemeshing_triggered()
 {

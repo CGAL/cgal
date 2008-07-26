@@ -16,9 +16,9 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>82</y>
+     <y>58</y>
      <width>978</width>
-     <height>490</height>
+     <height>514</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout" >
@@ -39,7 +39,7 @@
          <x>0</x>
          <y>22</y>
          <width>354</width>
-         <height>450</height>
+         <height>474</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2" >
@@ -248,7 +248,7 @@
     <rect>
      <x>105</x>
      <y>24</y>
-     <width>873</width>
+     <width>315</width>
      <height>34</height>
     </rect>
    </property>
@@ -269,10 +269,10 @@
   <widget class="QToolBar" name="operationsToolbar" >
    <property name="geometry" >
     <rect>
-     <x>0</x>
-     <y>58</y>
-     <width>978</width>
-     <height>24</height>
+     <x>420</x>
+     <y>24</y>
+     <width>558</width>
+     <height>34</height>
     </rect>
    </property>
    <property name="windowTitle" >
@@ -288,7 +288,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak" >
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionConvexHull" />
    <addaction name="actionSimplify" />
