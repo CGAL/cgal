@@ -7,6 +7,7 @@
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 
 #include <CGAL/Collisions/AABB_polyhedral_oracle.h>
+#include <CGAL/Collisions/AABB_tree.h>
 
 void MainWindow::on_actionRemeshing_triggered()
 {
@@ -35,10 +36,15 @@ void MainWindow::on_actionRemeshing_triggered()
       0.5,  // mesh sizing
       0.1); // approximation error
 
+    // AABB tree
+    std::cout << "Build AABB tree...";
+    typedef AABB_tree<Kernel,Polyhedron::Facet_handle,Polyhedron> Tree;
+    Tree tree;
+    tree.build_faces(*pMesh);
+    std::cout << "done" << std::endl;
+
     // input surface
     typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT> Input_surface;
-
-    // TODO: set triangles, construct tree
 
     // remesh
     Input_surface input;
