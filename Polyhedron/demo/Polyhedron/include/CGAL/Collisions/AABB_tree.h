@@ -279,6 +279,20 @@ public:
     return true;
   }
 
+  bool furthest_intersection(const Line& line,
+    const Point& from,
+    Point_with_input& closest)
+  {
+    std::vector<Point_with_input> ps;
+    m_root->list_intersections(line, ps, m_data.size());
+
+    if(ps.size() == 0)
+      return false;
+
+    closest = furthest_point_from(ps,from);
+    return true;
+  }
+
 
 
   // -------------- PLANE QUERIES -------------------//

@@ -13,7 +13,6 @@ template <class Polyhedron, class Kernel>
 class AABB_polyhedral_oracle : public Polyhedron
 {
 public:
-  typedef Polyhedron Surface_3;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Ray_3 Ray_3;
   typedef typename Kernel::Line_3 Line_3;
@@ -23,13 +22,17 @@ public:
   typedef typename AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
   typedef typename Self Surface_mesher_traits_3;
   typedef typename Point_3 Intersection_point;
+  typedef Self Surface_3;
+ // Visitor visitor;
+
 
   // AABB tree
   typedef AABB_tree<Kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
+  typedef typename Tree::Point_with_input Point_with_facet_handle;
   Tree *m_pTree;
 
 public:
-  Tree* tree() { return m_pTree; }
+  Tree* tree() const { return m_pTree; }
 
 public:
   // Surface constructor
@@ -58,19 +61,34 @@ public:
     {
     }
 
-    Object operator()(const Surface_3& surface, const Segment_3& s) const
+    Object operator()(const Surface_3& surface, const Segment_3& segment) const
     {
-      return Object();
+      Point_with_facet_handle pwh;
+      if(surface.tree()->furthest_intersection(segment,CGAL::ORIGIN,pwh))
+	//                                       ^^^^^^^^^^^^ to fix
+	return make_object(pwh.first);
+      else
+	return Object();
     }
     
-    Object operator()(const Surface_3& surface, const Ray_3& r) const
+    Object operator()(const Surface_3& surface, const Ray_3& ray) const
     {
-      return Object();
+      Point_with_facet_handle pwh;
+      if(surface.tree()->furthest_intersection(ray,CGAL::ORIGIN,pwh))
+	//                                       ^^^^^^^^^^^^ to fix
+	return make_object(pwh.first);
+      else
+	return Object();
     }
       
-    Object operator()(const Surface_3& surface, const Line_3& l) const
+    Object operator()(const Surface_3& surface, const Line_3& line) const
     {
-      return Object();
+      Point_with_facet_handle pwh;
+      if(surface.tree()->furthest_intersection(line,CGAL::ORIGIN,pwh))
+	//                                       ^^^^^^^^^^^^ to fix
+	return make_object(pwh.first);
+      else
+	return Object();
     }
   };
 
@@ -96,6 +114,8 @@ public:
                                      OutputIteratorPoints out, 
                                      int n) const 
     {
+      // TODO (with visitor)
+      // std::cout << "construct initial point set" << std::endl;
       // *out++= p;
       return out;
     }
@@ -109,6 +129,7 @@ public:
   template <class P>
   bool is_in_volume(const Surface_3& surface, const P& p)
   {
+    std::cout << "DEBUG: call is in volume" << std::endl;
     return true;
   }
 }; // end class AABB_polyhedral_oracle

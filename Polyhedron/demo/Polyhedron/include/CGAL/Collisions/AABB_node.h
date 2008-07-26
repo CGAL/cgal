@@ -570,11 +570,18 @@ public:
   // -----------------------LINE ORACLES-------------------------//
   // -----------------------------------------------------------//
 
-  static bool intersection(const Line& line, 
-    const typename PSC::Facet_handle& f, 
-    Point& p)
+  static bool intersection(const Line& line,
+    Input f,
+    Point& result)
   {
-    return PSC::intersection(line, f, p);
+    Triangle t = triangle(f);
+    if(CGAL::do_intersect(t,line)) 
+    {
+      CGAL::Object inter = CGAL::intersection(t.supporting_plane(),line);
+      if(CGAL::assign(result, inter))
+	return true;
+    }
+    return false;
   }
 
   static bool intersection(const Line& line, 
@@ -828,12 +835,18 @@ public:
   // -----------------------SEGMENT ORACLES-------------------------//
   // -----------------------------------------------------------//
 
-
-  static bool intersection(const Segment& segment, 
-    const typename PSC::Facet_handle& f, 
-    Point& p)
+  static bool intersection(const Segment& segment,
+    Input f,
+    Point& result)
   {
-    return PSC::intersection(segment, f, p);
+    Triangle t = triangle(f);
+    if(CGAL::do_intersect(t,segment)) 
+    {
+      CGAL::Object inter = CGAL::intersection(t.supporting_plane(),segment);
+      if(CGAL::assign(result, inter))
+	return true;
+    }
+    return false;
   }
 
   static bool intersection(const Segment& segment, 
@@ -849,10 +862,17 @@ public:
     return false;
   }
 
-  static bool do_intersect(const Segment& segment, 
-    const typename PSC::Facet_handle& f)
+  static Triangle triangle(Input f)
   {
-    return PSC::do_intersect(segment, f);
+    const Point& a = f->halfedge()->vertex()->point();
+    const Point& b = f->halfedge()->next()->vertex()->point();
+    const Point& c = f->halfedge()->next()->next()->vertex()->point();
+    return Triangle(a,b,c);
+  }
+
+  static bool do_intersect(const Segment& segment, Input f)
+  {
+    return CGAL::do_intersect(triangle(f),segment);
   }
 
   static bool do_intersect(const Segment& segment,
@@ -865,11 +885,18 @@ public:
   // -----------------------RAY ORACLES-------------------------//
   // -----------------------------------------------------------//
 
-  static bool intersection(const Ray& ray, 
-    const typename PSC::Facet_handle& f, 
-    Point& p)
+  static bool intersection(const Ray& ray,
+    Input f,
+    Point& result)
   {
-    return PSC::intersection(ray, f, p);
+    Triangle t = triangle(f);
+    if(CGAL::do_intersect(t,ray)) 
+    {
+      CGAL::Object inter = CGAL::intersection(t.supporting_plane(),ray);
+      if(CGAL::assign(result, inter))
+	return true;
+    }
+    return false;
   }
 
   static bool intersection(const Ray& ray, 

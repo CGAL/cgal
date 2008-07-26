@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "Scene.h"
+#include <fstream>
 
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
@@ -8,6 +9,9 @@
 
 #include <CGAL/Collisions/AABB_polyhedral_oracle.h>
 #include <CGAL/Collisions/AABB_tree.h>
+
+#define CGAL_C2T3_USE_POLYHEDRON
+#include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 void MainWindow::on_actionRemeshing_triggered()
 {
@@ -33,8 +37,8 @@ void MainWindow::on_actionRemeshing_triggered()
     // meshing parameters
     CGAL::Surface_mesh_default_criteria_3<Tr>  
       facets_criteria(25.0, // angular bound
-      0.5,  // mesh sizing
-      0.1); // approximation error
+      0.01,  // mesh sizing
+      0.001); // approximation error
 
     // AABB tree
     std::cout << "Build AABB tree...";
@@ -49,19 +53,40 @@ void MainWindow::on_actionRemeshing_triggered()
     // instantiate surface (linked to the AABB tree)
     Input_surface input(&tree);
 
+    // initial point set
+    std::cout << "Insert initial point set...";
+    unsigned int nb_initial_points = 10;
+    Polyhedron::Point_iterator it;
+    unsigned int i = 0;
+    for(it = pMesh->points_begin();
+        it != pMesh->points_end(), i < nb_initial_points;
+	it++, i++)
+      tr.insert(*it);
+    std::cout << "done" << std::endl;
+
     // remesh
     std::cout << "Remesh...";
     CGAL::make_surface_mesh(c2t3, input, facets_criteria, CGAL::Manifold_tag());
     std::cout << "done (" << tr.number_of_vertices() << " vertices)" << std::endl;
 
-    // add remesh as new polyhedron
-    Polyhedron *pRemesh = new Polyhedron;
+    if(tr.number_of_vertices() > 0)
+    {
+      // add remesh as new polyhedron
+      Polyhedron *pRemesh = new Polyhedron;
 
-    //scene->addPolyhedron(pRemesh,
-    //  tr("%1 (remesh)").arg(scene->polyhedronName(index)),
-    //  Qt::magenta,
-    //  scene->isPolyhedronActivated(index),
-    //  scene->polyhedronRenderingMode(index));
+      // TODO: dump output to polyhedron
+
+      // for now...
+      std::ofstream out("d:\\remesh.off");
+      CGAL::output_surface_facets_to_off(out, c2t3);
+
+      // NO IDEA WHY THIS LINE DOES NOT COMPILE
+ //     scene->addPolyhedron(pRemesh,
+	//tr("%1 (remesh)").arg(scene->polyhedronName(index)),
+	//Qt::magenta,
+	//scene->isPolyhedronActivated(index),
+	//scene->polyhedronRenderingMode(index));
+    }
 
     QApplication::restoreOverrideCursor();
   }
