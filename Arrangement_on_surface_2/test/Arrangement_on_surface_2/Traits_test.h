@@ -785,8 +785,8 @@ bool Traits_test<T_Traits>::
 boundary_near_x_wrapper_imp (std::istringstream & str_stream,
                              CGAL::Arr_has_boundary_tag)
 {
-  CGAL::Comparison_result exp_answer,real_answer;
-  CGAL::Arr_curve_end cv_end1,cv_end2;
+  CGAL::Comparison_result exp_answer, real_answer = CGAL::EQUAL;
+  CGAL::Arr_curve_end cv_end1, cv_end2;
   unsigned int id1,id2;
   //first argument must be a number (either a point or a xcurve)
   str_stream >> id1;

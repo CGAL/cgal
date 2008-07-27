@@ -314,7 +314,7 @@ Object Arr_simple_point_location<Arrangement>::_base_vertical_ray_shoot
       );
 
     CGAL_assertion (res1 == res2);
-    CGAL_assertion (res1 = point_above_under);
+    CGAL_assertion (res1 == point_above_under);
 
     if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
         (! shoot_up && closest_he->direction() == ARR_RIGHT_TO_LEFT))

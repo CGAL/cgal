@@ -1443,7 +1443,7 @@ private:
     _extra_data_P->side = _sign_of_extra_data (_source.x(), _source.y());
 
     CGAL_assertion (_extra_data_P->side != ZERO);
-    CGAL_assertion (_extra_data_P->side = _sign_of_extra_data(_target.x(),
+    CGAL_assertion (_extra_data_P->side == _sign_of_extra_data(_target.x(),
 							      _target.y()));
 
     return;
