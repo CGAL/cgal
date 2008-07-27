@@ -473,7 +473,7 @@ protected:
     CGAL_assertion (m_in != NULL);
 
     int     c;
-    while ((c = m_in->get()) != EOF && c != '\n');
+    while ((c = m_in->get()) != EOF && c != '\n') {};
     return;
   }
   
@@ -488,7 +488,7 @@ protected:
     if (c == ' ')
     {
       // Skip blanks until EOL.
-      while ((c = m_in->get()) != EOF && c == ' ');
+      while ((c = m_in->get()) != EOF && c == ' ') {};
       if (c != '\n')
       {
         m_in->putback (c);
