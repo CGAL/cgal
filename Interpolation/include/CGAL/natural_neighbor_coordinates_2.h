@@ -24,6 +24,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/number_utils_classes.h>
+#include <CGAL/utility.h>
 
 CGAL_BEGIN_NAMESPACE
 
