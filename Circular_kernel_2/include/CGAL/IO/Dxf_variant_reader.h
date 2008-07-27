@@ -68,7 +68,7 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
 
 
   for(typename Circles::iterator it = circles.begin(); it != circles.end(); it++){
-    Arc arc = typename CK::Construct_circular_arc_2()(typename CK::Construct_circle_2()(typename CK::Construct_point_2()(it->first, it->second), FT(it->third)));
+    Arc arc = typename CK::Construct_circular_arc_2()(typename CK::Construct_circle_2()(typename CK::Construct_point_2()((*it)[0], (*it)[1]), FT((*it)[2])));
     *res++ = arc;
   }
   
@@ -83,21 +83,21 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   for(typename Polygons::iterator it = polygons.begin(); it != polygons.end(); it++){
     typename Polygon::iterator pit = it->begin();
 
-    std::pair<double,double> xyfirst = std::make_pair(pit->first, pit->second);    
-    std::pair<double,double> xyps, xypt = std::make_pair(pit->first, pit->second);
+    std::pair<double,double> xyfirst = std::make_pair((*pit)[0], (*pit)[1]);    
+    std::pair<double,double> xyps, xypt = std::make_pair((*pit)[0], (*pit)[1]);
     Point_2 ps, pt = typename CK::Construct_point_2()(xypt.first, xypt.second);
     Point_2 first = pt;
 
       while(true){
       xyps = xypt;
       ps = pt;
-      bulge = pit->third;
+      bulge = (*pit)[2];
       pit++;
 
       if(pit ==it->end()){
 	break;
       }
-      xypt = std::make_pair(pit->first, pit->second);
+      xypt = std::make_pair((*pit)[0], (*pit)[1]);
       pt = typename CK::Construct_point_2()(xypt.first, xypt.second);
 
       p_cap_it = points.find(xyps);	  

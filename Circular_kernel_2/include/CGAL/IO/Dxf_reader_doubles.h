@@ -137,7 +137,7 @@ private:
   is >> r;
   FT rft(r);
 
-  circ = Circle_2(cx,cy,rft);
+  circ = CGALi::make_array(cx,cy,rft);
 }
 
 
@@ -176,7 +176,7 @@ read_polygon(std::istream& is, Polygon& poly)
       } else {
 	CGAL_assertion(n == 0);
       }
-      poly.push_back(Point_2_and_bulge(x,y, len));
+      poly.push_back(CGALi::make_array(x,y, len));
     }
 
   } while (str != "SEQEND");
