@@ -44,6 +44,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
 #include <CGAL/Iterator_project.h>
+#include <CGAL/utility.h>
 
 
 /*
