@@ -15,7 +15,7 @@ typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
 int  main() {
-  const int K = 8;
+  const unsigned int K = 8;
 
   std::list<Point_d> points;
   points.push_back(Point_d(3,4));

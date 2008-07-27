@@ -13,7 +13,7 @@ typedef K_neighbor_search::Tree Tree;
 
 int main() {
   const int N = 1000;
-  const int K = 5;
+  const unsigned int K = 5;
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
 

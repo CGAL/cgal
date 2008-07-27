@@ -1,5 +1,5 @@
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 
 // #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
@@ -20,7 +20,7 @@ typedef Neighbor_search::Tree Tree;
 int main() {
 
   CGAL::Timer t;
-  int NN_number;
+  unsigned int NN_number;
   double Eps;
   std::cout << "Enter number of neighbors to be computed \n" ;
   std::cin >> NN_number;

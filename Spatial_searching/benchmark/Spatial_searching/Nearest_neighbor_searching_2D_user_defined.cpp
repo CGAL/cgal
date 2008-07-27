@@ -1,5 +1,5 @@
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 
 #include <CGAL/basic.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -20,7 +20,7 @@ typedef Neighbor_search::Tree Tree;
 int main() {
 
   CGAL::Timer t;
-  int NN_number;
+  unsigned int NN_number;
   int bucket_size;
   double Eps;
   std::cout << "Enter number of neighbors to be computed \n" ;

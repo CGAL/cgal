@@ -15,7 +15,7 @@ typedef CGAL::Orthogonal_k_neighbor_search<Traits,Distance,Fair> Neighbor_search
 typedef Neighbor_search::Tree Tree;
 
 int main() {
-  const int N = 1000;
+  const unsigned int N = 1000;
   // generator for random data points in the square ( (-1,-1), (1,1) )
   Random_points_iterator rpit( 1.0);
 

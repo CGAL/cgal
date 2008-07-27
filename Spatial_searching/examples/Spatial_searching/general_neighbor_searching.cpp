@@ -15,7 +15,7 @@ typedef Neighbor_search::Tree Tree;
 
 int  main() {
   const int N = 1000;
-  const int K = 10;
+  const unsigned int K = 10;
 
   Tree tree;
   Random_points_iterator rpg;

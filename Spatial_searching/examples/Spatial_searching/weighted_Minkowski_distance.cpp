@@ -17,7 +17,7 @@ typedef K_neighbor_search::Tree Tree;
 int main() {
   const int D = 2;
   const int N = 1000;
-  const int K = 5;
+  const unsigned int K = 5;
 
 
   Random_points_iterator rpit( 1.0);

@@ -75,8 +75,8 @@ namespace CGAL {
   private:
 
     NN_list l;
-    int max_k;
-    int actual_k;
+    unsigned int max_k;
+    unsigned int actual_k;
   
   
     bool 
@@ -134,7 +134,7 @@ namespace CGAL {
 
     // constructor
     K_neighbor_search(Tree& tree, const Query_item& q, 
-		      int k=1, FT Eps=FT(0.0), 
+		      unsigned int k=1, FT Eps=FT(0.0), 
 		      bool Search_nearest=true,
 		      const Distance& d=Distance())
       : number_of_internal_nodes_visited(0), number_of_leaf_nodes_visited(0), 

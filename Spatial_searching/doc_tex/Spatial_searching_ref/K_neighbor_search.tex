@@ -57,7 +57,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 
 \def\ccLongParamLayout{\ccTrue}
-\ccConstructor{K_neighbor_search(Tree& tree, Query_item q, int k=1, FT eps=FT(0.0),
+\ccConstructor{K_neighbor_search(Tree& tree, Query_item q, unsigned int k=1, FT eps=FT(0.0),
 	                         bool search_nearest=true, GeneralDistance d=GeneralDistance());}
 {Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
 in the points stored in \ccc{tree} using 

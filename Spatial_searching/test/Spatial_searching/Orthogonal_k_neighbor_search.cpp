@@ -18,7 +18,7 @@ typedef Neighbor_search::Tree Tree;
 void 
 search(bool nearest)
 {
-  const int N = 1000;
+  const unsigned int N = 1000;
   const double cube_side_length = 1.0;
   // generator for random data points in the square ( (-1,-1), (1,1) ) 
   Random_points_iterator rpit( cube_side_length);

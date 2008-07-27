@@ -13,7 +13,7 @@ typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
 typedef Neighbor_search::Tree Tree;
 
 int main() {
-  const int N = 1;
+  const unsigned int N = 1;
 
   std::list<Point_d> points;
   points.push_back(Point_d(0,0));

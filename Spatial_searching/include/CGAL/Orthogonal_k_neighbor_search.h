@@ -98,7 +98,7 @@ private:
   FT distance_to_root;   
 
   NN_list l; // Set of points, sorted by distance
-  int max_k;
+  unsigned int max_k;
   
   Distance distance_instance;
 
@@ -153,7 +153,7 @@ public:
 
   // constructor
   Orthogonal_k_neighbor_search(Tree& tree, const Query_item& q,  
-    int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance())
+    unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance())
     : number_of_internal_nodes_visited(0), number_of_leaf_nodes_visited(0), number_of_items_visited(0), 
     search_nearest(Search_nearest), multiplication_factor(d.transformed_distance(1.0+Eps)), query_object(q), 
     total_item_number(tree.size()), l(Distance_larger(Search_nearest)), max_k(k), distance_instance(d) 
