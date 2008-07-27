@@ -180,7 +180,7 @@ public:
   std::pair<Point_2, FT> get_biggest_circle()
     {
       Pq_element m_Pq = Biggest_circle;
-      std::pair<Point_2, FT> circle(m_Pq.fourth.first, m_Pq.fourth.second);
+      std::pair<Point_2, FT> circle(m_Pq.get<3>().first, m_Pq.get<3>().second);
       return circle;
     }
 protected:
@@ -893,13 +893,13 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
   while (!pq_temp.empty())
     {
       Pq_element m_Pq_element = pq_temp.top();
-      Vertex_handle v0 = m_Pq_element.first;
-      Vertex_handle v1 = m_Pq_element.second;
-      Vertex_handle v2 = m_Pq_element.third;
+      Vertex_handle v0 = m_Pq_element.get<0>();
+      Vertex_handle v1 = m_Pq_element.get<1>();
+      Vertex_handle v2 = m_Pq_element.get<2>();
       pq_temp.pop();
       Face_handle fr;
       bool b0 = m_DT.is_face(v0,v1,v2,fr);
-      Point_2 sdPoint = m_Pq_element.fourth.first;
+      Point_2 sdPoint = m_Pq_element.get<3>().first;
       if (b0)
   _list.push_front(sdPoint);
     }
