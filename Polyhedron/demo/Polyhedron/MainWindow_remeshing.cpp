@@ -14,6 +14,7 @@
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
 #include <QTime>
+#include <QInputDialog>
 
 void MainWindow::on_actionRemeshing_triggered()
 {
@@ -36,11 +37,45 @@ void MainWindow::on_actionRemeshing_triggered()
     Tr tr; // 3D-Delaunay triangulation
     C2t3 c2t3(tr); // 2D-complex in 3D-Delaunay triangulation
 
+    // TODO: get parameters using ONE dialog box
+    // sizing and approximation parameters should be expressed as ratio of 
+    // scene bbox diagonal.
+
+    double diag = scene->len_diagonal();
+
+    bool ok;
+    const double angle = 
+      QInputDialog::getDouble(this, "Min triangle angle",
+      "Angle:",
+      25, // default value
+      1, // min
+      30, // max
+      2, // decimals
+      &ok);
+    if(!ok) return;
+
+    const double sizing = 
+      QInputDialog::getDouble(this, "Sizing",
+      "Size:",
+      diag * 0.1, // default value
+      diag * 10e-6, // min
+      diag, // max
+      4, // decimals
+      &ok);
+    if(!ok) return;
+
+    const double approx = 
+      QInputDialog::getDouble(this, "Approximation error",
+      "Error:",
+      diag * 0.01, // default value
+      diag * 10e-7, // min
+      diag, // max
+      6, // decimals
+      &ok);
+    if(!ok) return;
+
     // meshing parameters
-    CGAL::Surface_mesh_default_criteria_3<Tr>  
-      facets_criteria(25.0, // angular bound
-      0.01,   // mesh sizing
-      0.001); // approximation error
+    CGAL::Surface_mesh_default_criteria_3<Tr> facets_criteria(angle,sizing,approx);
 
     // AABB tree
     QTime time;

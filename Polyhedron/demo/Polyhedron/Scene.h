@@ -87,6 +87,16 @@ public:
     {
     }
   };
+
+  double len_diagonal()
+  {
+    Bbox box = bbox();
+    double dx = box.xmax - box.xmin;
+    double dy = box.ymax - box.ymin;
+    double dz = box.zmax - box.zmin;
+    return std::sqrt(dx*dx + dy*dy + dz*dz);
+  }
+
   // defined in Scene_polyhedron_operations.cpp
   Bbox bbox();
 
