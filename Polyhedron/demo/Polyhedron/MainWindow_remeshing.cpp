@@ -20,8 +20,6 @@ void MainWindow::on_actionRemeshing_triggered()
 {
   if(onePolygonIsSelected())
   {
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-
     int index = getSelectedPolygonIndex();
 
     // get active polyhedron
@@ -76,6 +74,8 @@ void MainWindow::on_actionRemeshing_triggered()
 
     // meshing parameters
     CGAL::Surface_mesh_default_criteria_3<Tr> facets_criteria(angle,sizing,approx);
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // AABB tree
     QTime time;
