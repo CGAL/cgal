@@ -23,6 +23,7 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
+#include <CGAL/utility.h>
 
 CGAL_BEGIN_NAMESPACE 
 
