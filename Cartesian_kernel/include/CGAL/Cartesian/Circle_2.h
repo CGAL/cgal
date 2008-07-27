@@ -62,17 +62,17 @@ public:
 
   const Point_2 & center() const
   {
-    return get(base).get<0>();
+    return get(base).template get<0>();
   }
 
   const FT & squared_radius() const
   {
-    return get(base).get<1>();
+    return get(base).template get<1>();
   }
 
   Orientation orientation() const
   {
-    return get(base).get<2>();
+    return get(base).template get<2>();
   }
 
 };
