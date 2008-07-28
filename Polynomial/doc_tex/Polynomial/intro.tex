@@ -94,8 +94,7 @@ The following example illustrates the application of the functors discussed abov
 \ccIncludeExampleCode{Polynomial/coefficient_access.cpp}
 
 
-
-\section{Degree}
+\section{Degree, total degree and degree vector}
 
 Currently there are three functors in \ccc{PolynomialTraits_d} related to the degree of 
 a polynomial. 
@@ -120,69 +119,132 @@ The following example illustrates the application of the functors discussed abov
 
 \section{Changing the order of variables}
 
-Given for instance a bivariate polynomial it may likely happen that one once to 
+Given for instance a bivariate polynomial it is conceivable that one once to 
 interchange the role of $x$ and $y$. That is one wants to interpret the $x$ as $y$ 
 and vice versa. For such a case the polynomial traits provides \ccc{PolynomialTraits_d::Swap}. 
 Given a polynomial $p$ and to two indices $i$ and $j$, the functor returns the polynomial 
 in which $x_i$ is substituted by $x_j$ and vice versa, that is, the variables swap their positions.
 The order of the other variables remains untouched. 
 
-Another scenario is, that a particular variable should be moved to another position, e.g., it should become the 
+Another scenario is, that a particular variable should be moved to another position, 
+for instance, it should become the 
 outermost variable while the relative order of the other variables remains unchanged. 
 For such a case the polynomial traits provides \ccc{PolynomialTraits_d::Move}.
-
 
 \subsection{Examples}
 The following example illustrates the application of the functors discussed above:
 \ccIncludeExampleCode{Polynomial/swap_move.cpp}
 
 
+\section{GCD and more}
 
+Since the concept \ccc{PolynomialTraits_d} refines the concept \ccc{AlgebraicStructureTraits} the polynomial 
+traits provides functors for integral division, division with remainder, greatest common divisor, etc.
+But note that the algebraic structure of a polynomial depends on the algebraic structure of the innermost
+coefficient, for instance, a gcd is only available if and only if the innermost coefficient is a \ccc{Field} or 
+a \ccc{UniqueFactorizationDomain}. Hence, we can not provide a $gcd$ if the innermost coefficient is just an
+\ccc{IntegralDomain} since it is not well defined\footnote{%
+An example for such a number type is the template \ccc{CGAL::Sqrt_extension<NT,ROOT>} representing an 
+algebraic extension of degree 2. This is just an \ccc{IntegralDomain} if NT is not a \ccc{Field}. }.
+% 
+However, in general this is just due to the fact that (for efficiency reasons) we do not want to represent 
+the polynomials over the quotient field of the ring. In this case the $gcd$ would be well defined. 
+Hence, the only problem is that the result can not be represented over the ring 
+since it contains denominators.  
+Therefore, the \ccc{PolynomialTraits_d} requires functors such as 
+\ccc{PolynomialTraits_d::GcdUpToConstantFactor}. 
+This functor computes the gcd of two polynomials up to a constant factor (utcf).  
+That is, it returns the correct gcd for polynomials over the quotient field, 
+but multiplied by some constant such that the result is representable with coefficients in the ring. 
 
+However, note that these 'utcf' functions are usually a bit faster than their counter parts. 
+This is due to the fact that the 'utcf' functions can skip the computation of the correct constant factor.
+Note that in many cases this constant factors is in fact not needed, 
+for instance, if the polynomials are supposed to represent some vanishing set, 
+that is, an algebraic curve or surface.  
 
-
-
-
-
-Many functors consider the polynomial as a univariate polynomial in one variable.
-By default this is the outermost variable $x_{d-1}$. However, in general it 
-is possible to select a certain variable. 
-
-
-
-
-
-
-\section{Short Introduction for the reviewer}
-
-
-Note that, depending on the coefficient type,  
-it is sometimes not possible to provided a certain functor. 
-For instance it is not possible to provide  a \ccc{SignAt} if the coefficient type
-is not \ccc{RealEmbeddable}. A similar argument holds for functors requiring  
-a gcd on the innermost coefficient. However, whenever possible the 
-\ccc{PolynomialToolBox_d} provides an alternative functor, which computes the 
-desired entity up to a constant factor. For an example see 
-\ccc{SquareFreeFactorize} and \ccc{SquareFreeFactorizeUpToConstantFactor}.
-
-The main idea of the concepts is, that the \ccc{PolynomialTraits_d} provides two 
-different views on a multivariate polynomial. 
-
+The concepts for the related functors are: 
 \begin{itemize}
-\item 
-A recursive view, that sees the polynomial as an element of 
-$R[x_0,\dots,x_{d-2}][x_{d-1}]$. In this view, the polynomial is handled as
-an univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
-\item 
-A symmetric view, which is symmetric with respect to all variables,
-seeing the polynomials as element of $R[x_0,\dots,x_{d-1}]$.
+\item \ccc{AlgebraicStructureTraits::Gcd}\\     
+      \ccc{PolynomialTraits_d::GcdUpToConstantFactor}
+
+\item \ccc{AlgebraicStructureTraits::IntegralDivision}\\        
+      \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}
+
+\item \ccc{PolynomialTraits_d::UnivariateContent}
+      \ccc{PolynomialTraits_d::UnivariateContentUpToConstantFactor}\\
+       
+\item \ccc{PolynomialTraits_d::SquareFreeFactorize}\\
+      \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}
 \end{itemize}
 
-All functors related to the univariate view are written such that 
-outermost variable $x_{d-1}$ is the default variable. For instance, 
-\ccc{PolynomialTraits_d::Degree}$()(p)$ returns the degree of $p$ with respect to $x_{d-1}$. 
-However, it is also possible to call 
-\ccc{PolynomialTraits_d::Degree}$()(p,i)$ returning the 
-degree with respect to variable $x_{i}$. The corresponding functor for the 
-multivariate view is \ccc{PolynomialTraits_d::TotalDegree} which is 
-symmetric in all variables. 
+In case of \ccc{PolynomialTraits_d::MultivariateContent} a counter part does 
+not make sense, since it is defined as the gcd of all innermost coefficients. 
+There is also no counterpart to \ccc{PolynomialTraits_d::MakeSquareFree}, since 
+the result is canonicalized, which is supposed to remove superfluous constant factors 
+anyway. (See also \ccc{PolynomialTraits_d::Canonicalize}.)
+
+
+Another analog functionality is the pseudo division. The related functors replace 
+the usual division with remainder in case the Polynomial is not a \ccc{EuclideanRing}. \\
+The concepts for the related functors are: 
+\begin{itemize}
+\item \ccc{AlgebraicStructureTraits::Div_mod}
+\item \ccc{PolynomialTraits_d::PseudoDivision}
+\item \ccc{AlgebraicStructureTraits::Div}
+\item \ccc{PolynomialTraits_d::PseudoDivisionQuotient}
+\item \ccc{AlgebraicStructureTraits::Mod}
+\item \ccc{PolynomialTraits_d::PseudoDivisionRemainder}
+\end{itemize}
+
+
+\subsection{Examples}
+The following example illustrates the application of some functors discussed above:
+\ccIncludeExampleCode{Polynomial/gcd_up_to_constant_factor.cpp}
+
+\section{Evaluation and Substitution}
+
+Of it should also be possible to evaluate a polynomial or substitute its variables.
+We also require a special functor to determine whether a polynomial is zero at a given point. 
+In case the inner most coefficient is \ccc{RealEmbeddable} the traits also must provide 
+a function to compute the sign at a given point. \\
+The concepts for the related functors are:
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::Substitute}
+\item \ccc{PolynomialTraits_d::Evaluate}
+\item \ccc{PolynomialTraits_d::IsZeroAt}
+\item \ccc{PolynomialTraits_d::SignAt}
+\end{itemize}
+
+The traits is also required to provide variants of these functors that interpret the 
+polynomial as a homogeneous polynomial. For instance, these functors can be useful 
+to determine the sign of a polynomial at a rational point although the polynomial is defined 
+over integer coefficients. \\
+For more details have a look at the following concepts:
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::SubstituteHomogeneous}
+\item \ccc{PolynomialTraits_d::EvaluateHomogeneous}
+\item \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}
+\item \ccc{PolynomialTraits_d::SignAtHomogeneous}
+\end{itemize}
+
+Note that substitute allows the substitution of the variables by any type that 
+is \ccc{ExplicitInteroperable} with the innermost coefficient type. 
+This is a very powerful tool since it allows the substitution of the variables by polynomials
+However, for some standard manipulations such as translation or scaling we require 
+special functors since they are expected to be faster than there equivalent implementation using 
+substitution: \\
+
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::Shift}
+\item \ccc{PolynomialTraits_d::Negate}
+\item \ccc{PolynomialTraits_d::Invert}
+\item \ccc{PolynomialTraits_d::Translate}
+\item \ccc{PolynomialTraits_d::TranslateHomogeneous}
+\item \ccc{PolynomialTraits_d::Scale}
+\item \ccc{PolynomialTraits_d::ScaleHomogeneous}
+\end{itemize}
+
+\subsection{Examples}   
+The following example illustrates the application of some functors discussed above:
+\ccIncludeExampleCode{Polynomial/substitute.cpp}
