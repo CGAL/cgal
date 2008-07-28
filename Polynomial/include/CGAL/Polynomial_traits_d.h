@@ -1691,7 +1691,8 @@ class Polynomial_traits_d
   : public CGALi::Polynomial_traits_d_base< Polynomial,  
     typename Algebraic_structure_traits<
 typename CGALi::Innermost_coefficient<Polynomial>::Type >::Algebraic_category,
-    typename Algebraic_structure_traits< Polynomial >::Algebraic_category > {
+    typename Algebraic_structure_traits< Polynomial >::Algebraic_category > ,
+  public Algebraic_structure_traits<Polynomial>{
 
 //------------ Rebind ----------- 
 private:
