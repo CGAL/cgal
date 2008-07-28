@@ -78,6 +78,8 @@ The missing intersection/do_intersect between Line_3 and Line_3 has been added a
     maker functions by make_tuple.
     This way, in a further release, we will be able to switch to boost::tuple more easily.
 
+5- 3D Triangulations
+  - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:

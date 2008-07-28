@@ -183,29 +183,6 @@ public:
   bool is_valid(bool = false, int = 0) const
   { return true; }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // Obsolete, kept for backward compatibility.
-  // This should emit a warning.
-  int mirror_index(int i) const
-  {
-      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
-      CGAL_triangulation_precondition ( i>=0 && i<4 );
-      Cell_handle ni = neighbor(i);
-      if (&*ni->neighbor(0) == this) return 0;
-      if (&*ni->neighbor(1) == this) return 1;
-      if (&*ni->neighbor(2) == this) return 2;
-      CGAL_triangulation_assertion(&*ni->neighbor(3) == this);
-      return 3;
-  }
-
-  // Obsolete as above.
-  Vertex_handle mirror_vertex(int i) const
-  {
-      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
-      return neighbor(i)->vertex(mirror_index(i));
-  }
-#endif
-
   // This is here in the *ds*_cell_base to ease its use as default
   // template parameter, so that the .dual() functions of Delaunay_3
   // still work.
