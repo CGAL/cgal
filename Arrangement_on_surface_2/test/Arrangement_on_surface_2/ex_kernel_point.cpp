@@ -46,9 +46,26 @@ public:
     typedef typename K::RT              RT;
     typedef typename K::Point_2         Point_2;
     typedef typename K::Line_2          Line_2;
+    typedef typename Point_2::Rep       Rep;
+
 
   public:
     typedef Point_2                     result_type;
+
+    // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
+    // Unfortunately it is needed for optimizing away copy-constructions,
+    // due to current lack of delegating constructors in the C++ standard.
+    Rep operator()(CGAL::Return_base_tag, CGAL::Origin o) const
+    { return Rep(o); }
+
+    Rep operator()(CGAL::Return_base_tag, const RT& x, const RT& y) const
+    { return Rep(x, y); }
+
+    Rep operator()(CGAL::Return_base_tag, const RT& x, const RT& y, 
+                   const RT& w) const
+    { return Rep(x, y, w); }
+    
+    // End of hell
 
     Point_2 operator()(CGAL::Origin o) const { return New_point_2(0, 0, 0); }
 

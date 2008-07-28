@@ -49,9 +49,23 @@ public:
     typedef typename K::Point_2         Point_2;
     typedef typename K::Line_2          Line_2;
     typedef typename K::Segment_2       Segment_2;
+    typedef typename Segment_2::Rep     Rep;
 
   public:
     typedef Segment_2                   result_type;
+
+    // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
+    // Unfortunately it is needed for optimizing away copy-constructions,
+    // due to current lack of delegating constructors in the C++ standard.
+
+    Rep operator()(CGAL::Return_base_tag, const Point_2 & p, 
+                   const Point_2 & q) const
+    { return Rep(p, q); }
+    Rep operator()(CGAL::Return_base_tag, const Point_2 & p, 
+                   const Point_2 & q, int data) const
+      { return Rep(p, q, data); }
+
+    // end of hell
 
     Segment_2 operator()(const Point_2 & p, const Point_2 & q) const
     { return New_segment_2<K>(p, q, 0); }
