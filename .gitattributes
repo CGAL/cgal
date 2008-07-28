@@ -3211,6 +3211,7 @@ Polynomial/doc_tex/Polynomial_ref/Polynomial_traits_d.tex -text
 Polynomial/examples/Polynomial/coefficient_access.cpp -text
 Polynomial/examples/Polynomial/construction.cpp -text
 Polynomial/examples/Polynomial/degree.cpp -text
+Polynomial/examples/Polynomial/substitute.cpp -text
 Polynomial/examples/Polynomial/swap_move.cpp -text
 Polynomial/include/CGAL/Polynomial/Coercion_traits.h -text
 Polynomial/include/CGAL/Polynomial/bezout_matrix.h -text
