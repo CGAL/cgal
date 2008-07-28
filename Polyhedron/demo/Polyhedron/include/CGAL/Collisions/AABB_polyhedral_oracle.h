@@ -64,8 +64,7 @@ public:
     Object operator()(const Surface_3& surface, const Segment_3& segment) const
     {
       Point_with_facet_handle pwh;
-      if(surface.tree()->furthest_intersection(segment,CGAL::ORIGIN,pwh))
-	//                                       ^^^^^^^^^^^^ to fix
+      if(surface.tree()->first_intersection(segment,pwh))
 	return make_object(pwh.first);
       else
 	return Object();
@@ -74,8 +73,7 @@ public:
     Object operator()(const Surface_3& surface, const Ray_3& ray) const
     {
       Point_with_facet_handle pwh;
-      if(surface.tree()->furthest_intersection(ray,CGAL::ORIGIN,pwh))
-	//                                       ^^^^^^^^^^^^ to fix
+      if(surface.tree()->first_intersection(ray,pwh))
 	return make_object(pwh.first);
       else
 	return Object();
@@ -84,8 +82,7 @@ public:
     Object operator()(const Surface_3& surface, const Line_3& line) const
     {
       Point_with_facet_handle pwh;
-      if(surface.tree()->furthest_intersection(line,CGAL::ORIGIN,pwh))
-	//                                       ^^^^^^^^^^^^ to fix
+      if(surface.tree()->first_intersection(line,pwh))
 	return make_object(pwh.first);
       else
 	return Object();

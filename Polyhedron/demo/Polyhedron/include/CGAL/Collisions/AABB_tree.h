@@ -91,76 +91,44 @@ public:
     return m_data.size() < 2; // TODO: change this requirement to < 1
   }
 
-
-
-  bool furthest_intersection(const Ray& ray,
-    const Point& from,
-    Point_with_input& furthest)
+  bool first_intersection(const Ray& ray,
+                          Point_with_input& pwh)
   {
-    std::vector<Point_with_input> ps;
-    m_root->list_intersections(ray, ps, m_data.size());
-
-    if(ps.size() == 0)
-      return false;
-
-    furthest = furthest_point_from(ps,from);
-    return true;
-  }
-
-
-  bool furthest_intersection(const Segment& seg,
-    const Point& from,
-    Point_with_input& furthest)
-  {
-    std::vector<Point_with_input> ps;
-    m_root->list_intersections(seg, ps, m_data.size());
-
-    if(ps.size() == 0)
-      return false;
-
-    furthest = furthest_point_from(ps,from);
-    return true;
-  }
-
-  bool furthest_intersection(const Line& line,
-    const Point& from,
-    Point_with_input& closest)
-  {
-    std::vector<Point_with_input> ps;
-    m_root->list_intersections(line, ps, m_data.size());
-
-    if(ps.size() == 0)
-      return false;
-
-    closest = furthest_point_from(ps,from);
-    return true;
-  }
-
-
-  // -------------- Any query ----------------------//
-
-
-  template<class PointInputContainer, class Pt>
-  Point_with_input furthest_point_from(const PointInputContainer& intersections,
-    const Pt& from)
-  {
-    typename PointInputContainer::const_iterator it = intersections.begin();
-    Point_with_input furthest_point = *it;
-    FT max_sqd = CGAL::squared_distance(from,furthest_point.first);
-    it++;
-    for(;it != intersections.end();it++)
+    std::pair<bool,Point_with_input> result;
+    m_root->first_intersection(ray, result, m_data.size());
+    if(result.first)
     {
-      FT sqd = CGAL::squared_distance(from,(*it).first);
-      if(sqd > max_sqd)
-      {
-	furthest_point = *it;
-	max_sqd = sqd;
-      }
+      pwh = result.second;
+      return true;
     }
-    return furthest_point;
+    return false;
   }
 
+  bool first_intersection(const Segment& seg,
+                          Point_with_input& pwh)
+  {
+    std::pair<bool,Point_with_input> result;
+    m_root->first_intersection(seg, result, m_data.size());
+    if(result.first)
+    {
+      pwh = result.second;
+      return true;
+    }
+    return false;
+  }
 
+  bool first_intersection(const Line& line,
+                          Point_with_input& pwh)
+  {
+    std::pair<bool,Point_with_input> result;
+    m_root->first_intersection(line, result, m_data.size());
+    if(result.first)
+    {
+      pwh = result.second;
+      return true;
+    }
+    return false;
+  }
 };
 
 CGAL_END_NAMESPACE

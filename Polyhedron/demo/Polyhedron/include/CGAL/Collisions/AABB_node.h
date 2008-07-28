@@ -217,45 +217,36 @@ private:
 
 public:
 
-  // -----------------------------------------------------------//
-  // --------------------LISTING QUERIES------------------------//
-  // -----------------------------------------------------------//
 
-  // puts the intersection points with the query q in the container result.
-  // This function will work for any type QueryType such that the following
-  // two oracles are defined:
-
-  //		static bool intersection(const QueryType& q, const typename Input& f, Container::value_type& p)
-  //		static bool do_intersect(const QueryType& q, const Iso_cuboid& bbox)
-  // [do NOT use a template parameter for the QueryType when defining such oracles]
-
+  // compute the first intersection encountered.
   // nb_primitives = number of primitives contained in this node.
-  template<class QueryType, class Container>
-  void list_intersections(const QueryType& q,
-    Container& result, 
+  template<class QueryType, class ResultType>
+  void first_intersection(const QueryType& q,
+    ResultType& result, 
     int nb_primitives)
   {
-    traversal<Listing_traits<QueryType, Container> >(q, result, nb_primitives);
+    traversal<First_intersection_traits<QueryType, ResultType> >(q, result, nb_primitives);
   }
 
-  template<class QueryType, class Container>
-  class Listing_traits
+  template<class QueryType, class ResultType>
+  class First_intersection_traits
   {
-    typedef typename Container::value_type Pt;
   private:
-    Container& r;
+    ResultType& r;
   public:
     bool go_further()
     {
-      return true;
+      return !r.first;
     }
-    Listing_traits(Container& result) : r(result) {}
+    First_intersection_traits(ResultType& result) : r(result) {}
+
     bool intersection(const QueryType& q, const Input& i)
     {
-      Pt p;
-      if(Node::intersection(q, i, p))
+      ResultType result;
+      if(Node::intersection(q, i, result.second))
       {
-	r.push_back(p);
+	r.first = true;
+	r.second = result.second;
 	return true;
       }
       return false;
@@ -265,10 +256,6 @@ public:
       return Node::do_intersect(q, node);
     }
   };
-
-
-
-
 
   // -----------------------------------------------------------//
   // -----------------------LINE ORACLES-------------------------//
@@ -417,7 +404,6 @@ public:
   // general traversal query, the traits class allows to use it for the various 
   // traversal methods we need: listing, counting, detecting intersections, drawing the boxes.
 
-  // TODO: document the traits class requirements...
   template<class Traits, class QueryType, class ResultType>
   void traversal(const QueryType& query,
     ResultType& result,
@@ -427,18 +413,18 @@ public:
     bool left_test;
     switch(nb_primitives)
     {
-    case 2: // comment
+    case 2:
       left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
       if((! left_test) || (traits.go_further()))
 	traits.intersection(query, *static_cast<Input*>(m_right_child));
       break;
-    case 3: // comment
+    case 3:
       left_test = traits.intersection(query, *static_cast<Input*>(m_left_child));
       if((! left_test) || (traits.go_further()))
 	if(traits.do_intersect(query, *static_cast<Node*>(m_right_child)))
 	  static_cast<Node*>(m_right_child)->traversal<Traits>(query, result, 2);
       break;
-    default: // comment
+    default:
       if(traits.do_intersect(query, *static_cast<Node*>(m_left_child)))
       {
 	static_cast<Node*>(m_left_child)->traversal<Traits>(query, result, nb_primitives/2);
