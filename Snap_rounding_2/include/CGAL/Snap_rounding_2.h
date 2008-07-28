@@ -335,8 +335,8 @@ bool Hot_pixel<Traits_>::intersect_left(const Segment_2 & seg,
     Comparison_result c_target = compare_y(construct_vertex(seg, 1), p_up);
     Comparison_result c_source = compare_y(construct_vertex(seg, 0), p_up);
 
-    return(c_p != EQUAL || seg_dir == SEG_UP_LEFT && c_source != EQUAL ||
-           seg_dir == SEG_DOWN_RIGHT && c_target != EQUAL);
+    return(c_p != EQUAL || (seg_dir == SEG_UP_LEFT && c_source != EQUAL) ||
+           (seg_dir == SEG_DOWN_RIGHT && c_target != EQUAL));
   } else if (assign(s,result))
     return(true);
   else
@@ -372,8 +372,8 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
     Comparison_result c4 = compare_y(trg, p_up);
 
     if (c1 == EQUAL)
-      return (seg_dir == SEG_UP_RIGHT && c3 != EQUAL ||
-              seg_dir == SEG_DOWN_LEFT && c4 != EQUAL);
+      return ((seg_dir == SEG_UP_RIGHT && c3 != EQUAL) ||
+              (seg_dir == SEG_DOWN_LEFT && c4 != EQUAL));
     else if (c2 == EQUAL)
       return false;// was checked
 
@@ -381,10 +381,10 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
     Comparison_result c_target = compare_x(p_right, trg);
     Comparison_result c_source = compare_x(p_right, src);
       
-    return ((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
-             seg_dir == SEG_UP_LEFT) && c_target != EQUAL ||
-            (seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
-             seg_dir == SEG_UP_RIGHT) && c_source != EQUAL);
+    return (((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
+	      seg_dir == SEG_UP_LEFT) && c_target != EQUAL) ||
+            ((seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
+	      seg_dir == SEG_UP_RIGHT) && c_source != EQUAL));
   }
   return false;
 }
@@ -411,9 +411,8 @@ bool Hot_pixel<Traits_>::intersect_bot(const Segment_2 & seg,
     Comparison_result c_target = compare_x(construct_vertex(seg, 1), p_right);
     Comparison_result c_source = compare_x(construct_vertex(seg, 0), p_right);
 
-    return(c_p != EQUAL || seg_dir == SEG_UP_LEFT &&
-           c_target != EQUAL || seg_dir == SEG_DOWN_RIGHT &&
-           c_source != EQUAL);
+    return(c_p != EQUAL || (seg_dir == SEG_UP_LEFT && c_target != EQUAL) || 
+	   (seg_dir == SEG_DOWN_RIGHT && c_source != EQUAL));
   } else if (assign(s,result))
     return(true);
   else
@@ -450,10 +449,10 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
     if (c1 == EQUAL || c2 == EQUAL)
       return(false);// were checked
     else
-      return((seg_dir == SEG_DOWN || seg_dir == SEG_DOWN_LEFT ||
-              seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL ||
-             (seg_dir == SEG_UP || seg_dir == SEG_UP_LEFT ||
-              seg_dir == SEG_UP_RIGHT) && c4 != EQUAL);
+      return(((seg_dir == SEG_DOWN || seg_dir == SEG_DOWN_LEFT ||
+	       seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL) ||
+             ((seg_dir == SEG_UP || seg_dir == SEG_UP_LEFT ||
+	       seg_dir == SEG_UP_RIGHT) && c4 != EQUAL));
   } 
   return(false);
 }
@@ -503,17 +502,18 @@ bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
   SEG_Direction seg_dir = h1->get_direction();
 
   // Point segment intersects only one pixel, thus ignored
-  return(seg_dir == SEG_UP_RIGHT &&
-         (cx == SMALLER || cx == EQUAL &&
-          cy == SMALLER) || seg_dir == SEG_UP_LEFT &&
-         (cx == LARGER || 
-          cx == EQUAL && cy == SMALLER) || seg_dir == SEG_DOWN_RIGHT &&
-         (cx == SMALLER || cx == EQUAL && cy == LARGER) ||
-         seg_dir == SEG_DOWN_LEFT &&
-         (cx == LARGER || cx == EQUAL &&
-          cy == LARGER) || seg_dir == SEG_UP && cy == SMALLER ||
-         seg_dir == SEG_DOWN && cy == LARGER || seg_dir == SEG_LEFT &&
-         cx == LARGER || seg_dir == SEG_RIGHT && cx == SMALLER);
+  return((seg_dir == SEG_UP_RIGHT &&  (cx == SMALLER || (cx == EQUAL &&
+							 cy == SMALLER))) || 
+	 (seg_dir == SEG_UP_LEFT && (cx == LARGER || (cx == EQUAL && 
+						      cy == SMALLER))) || 
+	 (seg_dir == SEG_DOWN_RIGHT && (cx == SMALLER || (cx == EQUAL && 
+							  cy == LARGER))) ||
+         (seg_dir == SEG_DOWN_LEFT && (cx == LARGER || (cx == EQUAL &&
+							cy == LARGER))) || 
+	 (seg_dir == SEG_UP && cy == SMALLER) ||
+         (seg_dir == SEG_DOWN && cy == LARGER) || 
+	 (seg_dir == SEG_LEFT && cx == LARGER) || 
+	 (seg_dir == SEG_RIGHT && cx == SMALLER));
 }
 
 /*! */

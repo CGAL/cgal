@@ -174,8 +174,8 @@ private:
 
     // force the vector to [0-90)
     Vector_2 v(construct_vertex(seg, 0), construct_vertex(seg, 1));
-    if (cx == EQUAL || cx == LARGER && cy == SMALLER ||
-        cx == SMALLER && cy == LARGER)
+    if (cx == EQUAL || (cx == LARGER && cy == SMALLER) ||
+        (cx == SMALLER && cy == LARGER))
       v = v.perpendicular(RIGHT_TURN);
 
     Direction_2 d(v.direction());
