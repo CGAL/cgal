@@ -85,7 +85,6 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
   CGAL_NEF_TRACEN("  e " << e->source()->point() 
 		  << "->" << e->twin()->source()->point()
 		  << " (" << e->point() << ")");
-  CGAL_NEF_TRACEN("  marks " << se->incident_sface()->mark());
   
   if(e->point() == dir || e->point() == CGAL::ORIGIN - dir)
     return 0;
