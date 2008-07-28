@@ -621,36 +621,6 @@ public:
   }
  
 protected:
-  template <class Conflict_test,
-            class OutputIteratorBoundaryFacets,
-            class OutputIteratorCells,
-            class OutputIteratorInternalFacets>
-  Triple<OutputIteratorBoundaryFacets,
-         OutputIteratorCells,
-         OutputIteratorInternalFacets>
-  find_conflicts_2(Cell_handle c, const Conflict_test &tester,
-	           Triple<OutputIteratorBoundaryFacets,
-                          OutputIteratorCells,
-		          OutputIteratorInternalFacets> it) const {
-    bool FIND_CONFLICTS_2_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts(c,tester,it);
-  }
-
-  template <class Conflict_test,
-            class OutputIteratorBoundaryFacets,
-            class OutputIteratorCells,
-            class OutputIteratorInternalFacets>
-  Triple<OutputIteratorBoundaryFacets,
-         OutputIteratorCells,
-         OutputIteratorInternalFacets>
-  find_conflicts_3(Cell_handle c, const Conflict_test &tester,
-	           Triple<OutputIteratorBoundaryFacets,
-                          OutputIteratorCells,
-		          OutputIteratorInternalFacets> it) const {
-    bool FIND_CONFLICTS_3_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts(c,tester,it);
-  }
-
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
   //
