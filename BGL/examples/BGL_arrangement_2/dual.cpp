@@ -55,13 +55,13 @@ int main ()
   Arrangement_2   arr;
 
   // Construct an arrangement of seven intersecting line segments.
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (7, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
-  insert_curve (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
-  insert_curve (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert_curve (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (7, 1)));
+  insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
+  insert (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
+  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
+  insert (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
+  insert (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
 
   // Create a mapping of the arrangement faces to indices.
   CGAL::Arr_face_index_map<Arrangement_2>      index_map (arr);
