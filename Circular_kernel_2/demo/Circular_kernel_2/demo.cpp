@@ -74,7 +74,6 @@ typedef std::vector<CGAL::Object>                           ArcContainer;
 const QString my_title_string("CGAL :: "
                               "Intersecting Circles, Line Arcs, Circular Arcs");
 
-// This layer controls the drawing of the Planar Map.
 class Qt_layer_show_intersections
   : public CGAL::Qt_widget_layer
 {
@@ -134,7 +133,6 @@ public:
   }
 };
 
-// This layer controls the drawing of the arc_container.
 struct Qt_layer_show_ch
   : public CGAL::Qt_widget_layer
 {
@@ -185,12 +183,10 @@ public:
     widget = new CGAL::Qt_widget(this);
     setCentralWidget(widget);
 
-    // create a timer for checking if something changed
     QTimer *timer = new QTimer( this );
     connect( timer, SIGNAL(timeout()), this, SLOT(timer_done()) );
     timer->start( 200, FALSE );
 
-    // file menu
     QPopupMenu * file = new QPopupMenu( this );
     menuBar()->insertItem( "&File", file );
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
@@ -201,8 +197,6 @@ public:
     file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
     file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
 
-
-    // help menu
     QPopupMenu * help = new QPopupMenu( this );
     menuBar()->insertItem( "&Help", help );
     help->insertItem("How To", this, SLOT(howto()), Key_F1);
@@ -210,14 +204,11 @@ public:
     help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
     help->insertItem("About &Qt", this, SLOT(aboutQt()) );
 
-    // the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
-    // my tool bar
     QToolBar * layers_toolbar = new QToolBar("Tools", this,
                                              QMainWindow::Top, TRUE, "Tools");
 
-    // the show intersections button
     QToolButton * show_intersections_button =
                    new QToolButton(QPixmap((const char**)::sweeper_xpm ),
                                    "Showing Intersections",
@@ -231,7 +222,6 @@ public:
     connect(show_intersections_button, SIGNAL(stateChanged(int)),
             &show_intersections_layer, SLOT(stateChanged(int)));
 
-    // the button controlling if we show the input arcs
     QToolButton * show_container_button =
                    new QToolButton(QPixmap((const char**)::get_arc),
                                    "Show Original arcs",
@@ -246,7 +236,6 @@ public:
     connect(show_container_button, SIGNAL(stateChanged(int)),
             &testlayer, SLOT(stateChanged(int)));
 
-    // the button controlling if we use circular arcs or line
     QToolButton * line_circle_button =
                        new QToolButton(QPixmap((const char**)::lines_icon),
                                        "Use Line",
@@ -259,7 +248,6 @@ public:
     line_circle_button->setToggleButton(true);
     arc_circle = true;
 
-    // this button clears the content of the arc container
     QToolButton * clear_button =
                        new QToolButton(QPixmap((const char**)trash),
                                        "Clear",
@@ -356,7 +344,8 @@ private slots:
 
   void about()
   {
-    QMessageBox::about(this, my_title_string, "This is a demo of the CGAL's Circular_kernel_2.\n Particularly, the intersection functionality.");
+    QMessageBox::about(this, my_title_string, 
+    "This is a demo of the CGAL's Circular_kernel_2.\n Particularly, the intersection functionality.");
   }
 
   void aboutQt()
@@ -420,7 +409,7 @@ int
 main(int argc, char **argv)
 {
   QApplication app(argc, argv);
-  MyWindow widget(800, 700); // physical window size
+  MyWindow widget(800, 700);
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
