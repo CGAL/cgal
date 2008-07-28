@@ -172,4 +172,21 @@ to force its definition on the command line, and it is possible to prevent its d
 definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
 
 
+\section{Code deprecation}
+
+Sometimes, the \cgal\ project decides that a feature is deprecated.  This means
+that it still works in the current release, but it will be removed in the next,
+or a subsequent release.  This can happen when we have found a better way to do
+something, and we would like to reduce the maintenance cost of \cgal\ at some
+point in the future.  There is a trade-off between maintaining backward
+compatibility and implementing new features more easily.
+
+In order to help users managing the changes to apply to their code, we attempt
+to make \cgal\ code emit warnings when deprecated code is used.  This can be
+done using some compiler specific features.  On top of this, we also provide a
+macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined, disables all
+deprecated features.  This allows users to easily test if their code relies on
+deprecated features.
+
+
 \input{Introduction_ref/checks} % extra chapter

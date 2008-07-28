@@ -281,12 +281,16 @@ done to avoid some \texttt{\#ifdef}s in our actual code.
  \index{cgal_deprecated macro@\texttt{CGAL\_DEPRECATED} macro}
   \ccIndexMainItem{deprecated}
   used to declare a function as deprecated --- just add it before the
-  function declaration:
+  function declaration.  You may also surround deprecated code with
+  \texttt{CGAL\_NO\_DEPRECATED\_CODE}, such that it is easy to test
+  if a piece of code uses deprecated code or not:
 \begin{verbatim}
+#ifndef CGAL_NO_DEPRECATED_CODE
 CGAL_DEPRECATED void foo(int i)
 {
  ...
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 \end{verbatim}
 \end{description}
 \ccIndexSubitemEnd{macros}{for workarounds}
