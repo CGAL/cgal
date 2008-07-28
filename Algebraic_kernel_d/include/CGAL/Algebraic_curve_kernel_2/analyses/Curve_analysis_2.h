@@ -274,6 +274,9 @@ public:
     
     CGAL_ACK_SNAP_ALGEBRAIC_CURVE_TYPEDEFS;
 
+    //! Required by the CurveKernel_2 concept
+    typedef Algebraic_real_1 X_coordinate_1;
+
 private:
 
     //! Traits type for Polynomial_2
@@ -300,6 +303,9 @@ public:
 
     //! Type to represent points on curves
     typedef typename Algebraic_kernel_2::Algebraic_real_2 Algebraic_real_2;
+
+    //! Required by the CurveKernel_2 concept
+    typedef Algebraic_real_2 Xy_coordinate_2;
 
     //! type for horizontal asymtote values
     typedef CGAL::Object Asymptote_y;
