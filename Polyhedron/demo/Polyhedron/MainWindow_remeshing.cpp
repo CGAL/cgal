@@ -119,20 +119,8 @@ void MainWindow::on_actionRemeshing_triggered()
     {
       // add remesh as new polyhedron
       Polyhedron *pRemesh = new Polyhedron;
-
-      // TODO: dump output to polyhedron
-
-      // for now...
-#ifdef WIN32
-      std::ofstream out("d:\\remesh.off");
-#else
-      std::ofstream out("remesh.off");
-#endif
-      CGAL::output_surface_facets_to_off(out, c2t3);
-
       CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
       pRemesh->delegate(builder);
-
       scene->addPolyhedron(pRemesh,
 			   QObject::tr("%1 remeshed (%2 %3 %4)")
 			   .arg(scene->polyhedronName(index))
@@ -142,43 +130,8 @@ void MainWindow::on_actionRemeshing_triggered()
 			   Qt::magenta,
 			   true,
 			   scene->polyhedronRenderingMode(index));
-
-      // NO IDEA WHY THIS LINE DOES NOT COMPILE
- //     scene->addPolyhedron(pRemesh,
-	//tr("%1 (remesh)").arg(scene->polyhedronName(index)),
-	//Qt::magenta,
-	//scene->isPolyhedronActivated(index),
-	//scene->polyhedronRenderingMode(index));
     }
 
     QApplication::restoreOverrideCursor();
   }
 }
-
-/*
-
-
-int main() {
-
-// defining the surface
-std::ifstream file_input("data/triceratops.off");
-Polyhedral_surface surface(file_input);
-
-// defining meshing criteria
-CGAL::Surface_mesh_default_criteria_3<Tr> 
-facets_criteria(30.,  // angular bound
-0.5,  // radius bound
-0.5); // distance bound
-CGAL::Surface_mesh_default_edges_criteria_3<Tr>
-edges_criteria(0.5,  // radius bound
-0.5); // distance bound
-
-// meshing surface
-CGAL::make_piecewise_smooth_surface_mesh(c2t3, surface,
-facets_criteria, edges_criteria,
-CGAL::Manifold_tag());
-
-std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
-}
-
-*/
