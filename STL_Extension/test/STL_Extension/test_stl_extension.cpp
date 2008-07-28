@@ -8910,6 +8910,12 @@ void test_Triple()
   T1 x1;
   x1 = CGAL::make_triple(1, 1.5, true);
 
+  T1 xx1 = CGAL::make_tuple(1, 1.5, true);
+  assert(x1 == xx1);
+  assert(xx1.get<0>() == 1);
+  assert(xx1.get<1>() == 1.5);
+  assert(xx1.get<2>() == true);
+
   My_to_int mti;
   My_to_double mtd;
   My_to_bool mtb;
@@ -8944,6 +8950,14 @@ void test_Quadruple()
 
   T1 x1;
   x1 = CGAL::make_quadruple(1, 2.5f, 1.5, true);
+
+  T1 xx1 = CGAL::make_tuple(1, 2.5f, 1.5, true);
+  assert(x1 == xx1);
+  assert(xx1.get<0>() == 1);
+  assert(xx1.get<1>() == 2.5f);
+  assert(xx1.get<2>() == 1.5);
+  assert(xx1.get<3>() == true);
+
   My_to_int mti;
   My_to_float mtf;
   My_to_double mtd;

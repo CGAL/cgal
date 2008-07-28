@@ -1544,11 +1544,11 @@
   \ccTypedef{typedef T3 third_type;}{}
 
   \ccHeading{Variables}
-  \ccVariable{T1 first;}{first element}
+  \ccVariable{T1 first;}{first element.  Please access it using \ccc{get<0>()}.}
   \ccGlue
-  \ccVariable{T2 second;}{second element}
+  \ccVariable{T2 second;}{second element.  Please access it using \ccc{get<1>()}.}
   \ccGlue
-  \ccVariable{T3 third;}{third element}
+  \ccVariable{T3 third;}{third element.  Please access it using \ccc{get<2>()}.}
 
   \ccCreation
   \ccCreationVariable{t}
@@ -1568,6 +1568,12 @@
     conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
     \ccc{T2}, and \ccc{W} to \ccc{T3}.}
 
+  \ccMemberFunction{template <int i> T get();}
+    {Gives access to \ccc{first}, \ccc{second} or \ccc{third} whenever
+     \ccc{i} is 0, 1 or 2, via a, potentially const, reference.
+     Note: \ccc{T} stands for \ccc{T1}, \ccc{T2} or \ccc{T3} depending
+     on \ccc{i}.}
+
   \ccFunction{template <class T1, class T2, class T3> bool
     operator<(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
     comparison operator. It uses lexicographic comparison: the return
@@ -1581,7 +1587,7 @@
     result of comparing the third elements of \ccc{x} and \ccc{y}.
     This operator may only be used if \ccc{T1}, \ccc{T2} and \ccc{T3}
     define the comparison operator.}
-  
+
   \ccFunction{template <class T1, class T2, class T3> bool
     operator==(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
     equality operator. The return value is true if and only the first
@@ -1592,6 +1598,10 @@
   
   \ccFunction{template <class T1, class T2, class T3> Triple<T1, T2,
     T3> make_triple(T1 x, T2 y, T3 z);} {Equivalent to
+    \ccStyle{Triple<T1, T2, T3>(x, y, z)}.}
+  
+  \ccFunction{template <class T1, class T2, class T3> Triple<T1, T2,
+    T3> make_tuple(T1 x, T2 y, T3 z);} {Equivalent to
     \ccStyle{Triple<T1, T2, T3>(x, y, z)}.}
 
 \end{ccRefClass}
@@ -1630,13 +1640,13 @@
   \ccTypedef{typedef T4 fourth_type;}{}
 
   \ccHeading{Variables}
-  \ccVariable{T1 first;}{first element}
+  \ccVariable{T1 first;}{first element.  Please access it using \ccc{get<0>()}.}
   \ccGlue
-  \ccVariable{T2 second;}{second element}
+  \ccVariable{T2 second;}{second element.  Please access it using \ccc{get<1>()}.}
   \ccGlue
-  \ccVariable{T3 third;}{third element}
+  \ccVariable{T3 third;}{third element.  Please access it using \ccc{get<2>()}.}
   \ccGlue
-  \ccVariable{T4 fourth;}{fourth element}
+  \ccVariable{T4 fourth;}{fourth element.  Please access it using \ccc{get<3>()}.}
 
   \ccCreation
   \ccCreationVariable{t}
@@ -1657,6 +1667,12 @@
     and \ccc{fourth} is constructed from \ccc{x}. \ccRequire Proper
     conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
     \ccc{T2}, \ccc{W} to \ccc{T3}, and \ccc{X} to \ccc{T4}.  }
+
+  \ccMemberFunction{template <int i> T get();}
+    {Gives access to \ccc{first}, \ccc{second}, \ccc{third} or \ccc{fourth}
+     whenever \ccc{i} is 0, 1, 2 or 3, via a, potentially const, reference.
+     Note: \ccc{T} stands for \ccc{T1}, \ccc{T2}, \ccc{T3} or \ccc{T4}
+     depending on \ccc{i}.}
    
   \ccFunction{template <class T1, class T2, class T3, class T4> bool
     operator<(Quadruple<T1, T2, T3, T4> x, Quadruple<T1, T2, T3, T4>
@@ -1687,6 +1703,10 @@
   
   \ccFunction{template <class T1, class T2, class T3, class T4>
     Quadruple<T1, T2, T3, T4> make_quadruple(T1 x, T2 y, T3 z, T4 w);}
+  {Equivalent to \ccStyle{Quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4>
+    Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);}
   {Equivalent to \ccStyle{Quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
 
 \end{ccRefClass}

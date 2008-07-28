@@ -60,14 +60,22 @@ Global functions: Intersections, Do_intersects and radical_plane.
 
 The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
-4- STL Extensions: The functor adaptors for argument binding and composition
-(bind_*, compose, compose_shared, swap_*, negate, along with the helper
-functions set_arity_* and Arity class and Arity_tag typedefs) which were provided
-by <CGAL/functional.h> have been removed.  Please use the better boost::bind
-mecanism instead.  The concept AdaptableFunctor has been changed accordingly
-such that only a nested result_type is required.
-The accessory classes Twotuple, Threetuple, Fourtuple and Sixtuple are also
-deprecated (use boost::array instead).
+4- STL Extensions:
+  - The functor adaptors for argument binding and composition
+    (bind_*, compose, compose_shared, swap_*, negate, along with the helper
+    functions set_arity_* and Arity class and Arity_tag typedefs) which were provided
+    by <CGAL/functional.h> have been removed.  Please use the better boost::bind
+    mecanism instead.  The concept AdaptableFunctor has been changed accordingly
+    such that only a nested result_type is required.
+  - The accessory classes Twotuple, Threetuple, Fourtuple and Sixtuple are also
+    deprecated (use boost::array instead).
+  - CGAL::Triple and CGAL::Quadruple are in the process of being replaced by
+    boost::tuple.  As a first step, we strongly recommend that you replace
+    the direct access to the data members (.first, .second, .third, .fourth),
+    by the get<i>() member function; and replace the make_triple and make_quadruple
+    maker functions by make_tuple.
+    This way, in a further release, we will be able to switch to boost::tuple more easily.
+
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:
