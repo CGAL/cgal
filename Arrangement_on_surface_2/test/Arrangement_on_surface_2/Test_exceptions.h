@@ -137,7 +137,7 @@ void did_violation_occur()
 void failure_handler(const char * type, const char * expr, const char * file,
                         int line, const char * msg)
 {
-  std::string tmp=std::string(file);
+  std::string tmp = std::string(file);
   unsigned int loc = tmp.find_last_of("/"); // !!!for windows use back slash !!!to ask efi
   if ((int)loc==-1)
   {

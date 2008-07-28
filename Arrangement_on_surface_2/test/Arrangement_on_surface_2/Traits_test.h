@@ -513,36 +513,44 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     buff[0] = '\0';
     str_stream.getline(buff, 128, ' ');
     std::string str_command(buff);
-    unsigned int location=0;
-    violation_occurred=violation_tested=NON;
-    if ((int)str_command.find("_precondition",0)!=-1)
+    unsigned int location = 0;
+    violation_occurred = violation_tested = NON;
+
+    if ((int)str_command.find("_precondition", 0) != -1)
     {
-      location=str_command.find("_precondition",0);
-      violation_tested=PRECONDITION;
+      location = str_command.find("_precondition", 0);
+      violation_tested = PRECONDITION;
     }
-    else if ((int)str_command.find("_postcondition",0)!=-1)
+    else if ((int)str_command.find("_postcondition",0) != -1)
     {
-      location=str_command.find("_postcondition",0);
-      violation_tested=POSTCONDITION;
+      location = str_command.find("_postcondition", 0);
+      violation_tested = POSTCONDITION;
     }
-    else if ((int)str_command.find("_assertion",0)!=-1)
+    else if ((int)str_command.find("_assertion", 0) != -1)
     {
-      location=str_command.find("_assertion",0);
-      violation_tested=ASSERTION;
+      location = str_command.find("_assertion", 0);
+      violation_tested = ASSERTION;
     }
-    else if ((int)str_command.find("_warning",0)!=-1)
+    else if ((int)str_command.find("_warning", 0) != -1)
     {
-      location=str_command.find("_warning",0);
-      violation_tested=WARNING;
+      location = str_command.find("_warning", 0);
+      violation_tested = WARNING;
     }
-    if (violation_tested!=NON)
+
+    counter++;
+    std::cout << "case number : " << counter << std::endl;
+    if (violation_tested != NON)
     {
-      str_command=str_command.substr(0,location);
+#if !defined(NDEBUG)
+      str_command = str_command.substr(0, location);
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
+#else
+      std::cout << "Skipping condition tests in release mode." << std::endl;
+      continue;
+#endif
     }
-    counter++;
-    std::cout << "iter number : " << counter << std::endl;
+
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) continue;
