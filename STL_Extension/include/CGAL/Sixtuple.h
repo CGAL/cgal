@@ -24,6 +24,8 @@
 #ifndef CGAL_SIXTUPLE_H
 #define CGAL_SIXTUPLE_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 CGAL_BEGIN_NAMESPACE
 
 template < class T >
@@ -43,5 +45,7 @@ struct Sixtuple
 };
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_SIXTUPLE_H

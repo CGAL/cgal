@@ -24,6 +24,8 @@
 #ifndef CGAL_FOURTUPLE_H
 #define CGAL_FOURTUPLE_H
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 CGAL_BEGIN_NAMESPACE
 
 template < class T >
@@ -42,5 +44,7 @@ struct Fourtuple
 };
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_FOURTUPLE_H
