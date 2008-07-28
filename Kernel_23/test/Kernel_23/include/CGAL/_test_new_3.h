@@ -108,7 +108,6 @@ test_new_3(const R& rep)
         = rep.construct_point_3_object();
   Point_3 p1;
   Point_3 p2 = construct_point(ORIGIN);
-#ifndef CGAL_NO_DEPRECATED_CODE
   Point_3 p3 = construct_point(1,1,1);
   Point_3 p3bis = construct_point(RT(1),RT(1),RT(1));
   Point_3 p3ter = construct_point(FT(1),FT(1),FT(1));
@@ -116,40 +115,24 @@ test_new_3(const R& rep)
   Point_3 p4 = construct_point(1,1,2,2);
   Point_3 p5 = construct_point(1,2,3,4);
   Point_3 p6 = construct_point(4,2,1,2);
-#else
-  Point_3 p3 (1,1,1);
-  Point_3 p4 (1,1,2,2);
-  Point_3 p5 (1,2,3,4);
-  Point_3 p6 (4,2,1,2);
-#endif // CGAL_NO_DEPRECATED_CODE
 
   typename R::Construct_vector_3 construct_vector
         = rep.construct_vector_3_object();
   Vector_3 v1;
   Vector_3 v2 = construct_vector(NULL_VECTOR);
-#ifndef CGAL_NO_DEPRECATED_CODE
   Vector_3 v3 = construct_vector(1,1,1);
   Vector_3 v3bis = construct_vector(RT(1),RT(1),RT(1));
   Vector_3 v3ter = construct_vector(FT(1),FT(1),FT(1));
   use(v3bis); use(v3ter);
   Vector_3 v4 = construct_vector(1,1,2,2);
-#else
-  Vector_3 v3 (1,1,1);
-  Vector_3 v4 (1,1,2,2);
-#endif // CGAL_NO_DEPRECATED_CODE
   Vector_3 v5 = construct_vector(p5, p6);
 
   typename R::Construct_direction_3 construct_direction
         = rep.construct_direction_3_object();
   Direction_3 d1;
   Direction_3 d2 = construct_direction(v3);
-#ifndef CGAL_NO_DEPRECATED_CODE
   Direction_3 d3 = construct_direction(1,1,5);
   Direction_3 d4 = construct_direction(1,5,5);
-#else
-  Direction_3 d3 (1,1,5);
-  Direction_3 d4 (1,5,5);
-#endif // CGAL_NO_DEPRECATED_CODE
   // remaining constructions tested below, after the 
   // corresponding types have been introduced
 
