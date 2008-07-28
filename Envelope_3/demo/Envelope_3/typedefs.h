@@ -249,7 +249,7 @@ void construct_polygon(CGAL::Qt_widget* w,
       App_point_2  *pts = new App_point_2 [n + 1];
       cv.polyline_approximation (n, pts);
 
-      if (cc->direction() == CGAL::LARGER) {
+      if (cc->direction() == CGAL::ARR_RIGHT_TO_LEFT) {
         std::reverse(pts, pts+n+1);
       }
 
