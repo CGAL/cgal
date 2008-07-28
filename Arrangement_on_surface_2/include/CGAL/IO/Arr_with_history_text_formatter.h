@@ -166,7 +166,7 @@ private:
   void __skip_until_EOL () 
   {
     int     c;
-    while ((c = this->in().get()) != EOF && c != '\n');
+    while ((c = this->in().get()) != EOF && c != '\n') {};
     return;
   }
   

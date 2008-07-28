@@ -516,7 +516,7 @@ public:
   std::pair<bool, bool>
   face_split_after_edge_insertion(const Halfedge * prev1,
                                   const Halfedge * prev2,
-                                  const X_monotone_curve_2 & cv) const
+                                  const X_monotone_curve_2 & /*cv*/) const
   {
     CGAL_precondition(prev1->is_on_inner_ccb());
     CGAL_precondition(prev2->is_on_inner_ccb());

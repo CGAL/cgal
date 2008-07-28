@@ -60,8 +60,8 @@ int main ()
   const Point_2                           q = Point_2 (_7_halves, 7);
   CGAL::Object                            obj = pl.locate (q);
   Arr_with_hist_2::Halfedge_const_handle  e;
-  bool                                    success = CGAL::assign (e, obj);
 
+  CGAL_assertion_code(bool success = ) CGAL::assign (e, obj);
   CGAL_assertion (success);
  
   // Split the edge e to two edges e1 and e2;

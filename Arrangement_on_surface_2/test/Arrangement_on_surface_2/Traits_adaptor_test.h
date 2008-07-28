@@ -672,7 +672,7 @@ bool Traits_adaptor_test<T_Traits>::ta_is_in_x_range_wrapper
   else
     CGAL_error();
   std::cout << " ) ? " ;
-  bool real_answer;
+  bool real_answer = false;
   if (c == 'p')
     real_answer = m_traits.is_in_x_range_2_object() ( m_xcurves[id1] ,m_points[id2] );
   else if (c == 'x')

@@ -95,7 +95,7 @@ protected:
     // Go over the arrangement vertices and construct their boundig box.
     const Arrangement_2    *arr = this->arrangement();
     Vertex_const_iterator   vit; 
-    double                  x_min, x_max, y_min, y_max;
+    double                  x_min = 0, x_max = 1, y_min = 0, y_max = 1;
     double                  x, y;
     bool                    first = true;
 

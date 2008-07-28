@@ -134,7 +134,7 @@ public:
     {
       for (pairs_it = lm_pairs.begin();
            pairs_it != lm_pairs.end() && (*pairs_it).first != (*pt_it);
-           ++pairs_it);
+           ++pairs_it) {};
       if ((*pairs_it).first == (*pt_it))
       {
         nnp_list.push_back (NN_Point_2 ((*pt_it),(*pairs_it).second));
