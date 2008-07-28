@@ -251,14 +251,6 @@ test_new_2(const R& rep)
   cccit = construct_cartesian_const_iterator_2(v6);
   cccit = construct_cartesian_const_iterator_2(v6,0);
   
-#ifndef CGAL_NO_DEPRECATED_CODE
-  typename R::Construct_supporting_line_2 construct_supporting_line
-        = rep.construct_supporting_line_2_object();
-  Line_2 tmp8a = construct_supporting_line(r2);
-  Line_2 tmp8b = construct_supporting_line(s2);
-  use(tmp8a); use(tmp8b);
-#endif // CGAL_NO_DEPRECATED_CODE
-
   typename R::Construct_perpendicular_vector_2 construct_perpendicular_vector
         = rep.construct_perpendicular_vector_2_object();
   Vector_2 tmp9 = construct_perpendicular_vector(v2,CLOCKWISE);

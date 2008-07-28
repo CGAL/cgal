@@ -1608,44 +1608,6 @@ namespace CommonKernelFunctors {
     { return this->operator()(Return_base_tag(), center, orientation); }
   };
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  template <typename K>
-  class Construct_supporting_line_2
-  {
-    typedef typename K::Line_2     Line_2;
-    typedef typename K::Ray_2      Ray_2;
-    typedef typename K::Segment_2  Segment_2;
-  public:
-    typedef Line_2                 result_type;
-
-    Line_2
-    operator()( const Ray_2& r) const
-    { return r.supporting_line(); }
-
-    Line_2
-    operator()( const Segment_2& s) const
-    { return s.supporting_line(); }
-  };
-
-  template <typename K>
-  class Construct_supporting_line_3
-  {
-    typedef typename K::Line_3     Line_3;
-    typedef typename K::Ray_3      Ray_3;
-    typedef typename K::Segment_3  Segment_3;
-  public:
-    typedef Line_3                 result_type;
-
-    Line_3
-    operator()( const Ray_3& r) const
-    { return r.rep().supporting_line(); }
-
-    Line_3
-    operator()( const Segment_3& s) const
-    { return s.supporting_line(); }
-  };
-#endif // CGAL_NO_DEPRECATED_CODE
-
   template <typename K>
   class Construct_supporting_plane_3
   {

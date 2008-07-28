@@ -403,12 +403,6 @@ CGAL_Kernel_cons(Construct_source_3,
 		 construct_source_3_object)
 CGAL_Kernel_cons(Construct_sphere_3,
 		 construct_sphere_3_object)
-#ifndef CGAL_NO_DEPRECATED_CODE
-CGAL_Kernel_cons(Construct_supporting_line_2,
-		 construct_supporting_line_2_object)
-CGAL_Kernel_cons(Construct_supporting_line_3,
-		 construct_supporting_line_3_object)
-#endif // CGAL_NO_DEPRECATED_CODE
 CGAL_Kernel_cons(Construct_supporting_plane_3,
 		 construct_supporting_plane_3_object)
 CGAL_Kernel_cons(Construct_target_2,
