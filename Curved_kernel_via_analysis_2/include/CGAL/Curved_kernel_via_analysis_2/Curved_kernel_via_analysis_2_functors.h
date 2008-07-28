@@ -2198,10 +2198,10 @@ public:
 
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
 
-    typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
+    typedef typename Curve_analysis_2::Algebraic_real_2 Algebraic_real_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Xy_coordinate_2 >
+    typedef std::iterator< std::output_iterator_tag, Algebraic_real_2 >
          result_type;
 
     //! the arity of the functor
