@@ -4,17 +4,11 @@
 // $URL$
 // $Id$
 //
-// Authors : Monique Teillaud, Sylvain Pion, Radu Ursu
+// Authors : Monique Teillaud, Sylvain Pion, Pedro Machado, Radu Ursu
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473
 // (CGAL - Effective Computational Geometry for Curves and Surfaces)
-
-// TODO :
-// - Add the possibility to input full circles.
-// - locate the cell containing a point.
-// - Move more basic IO routines in include/CGAL/IO/
-// - File menu
 
 #include <CGAL/basic.h>
 
