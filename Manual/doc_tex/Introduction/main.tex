@@ -181,12 +181,13 @@ something, and we would like to reduce the maintenance cost of \cgal\ at some
 point in the future.  There is a trade-off between maintaining backward
 compatibility and implementing new features more easily.
 
-In order to help users managing the changes to apply to their code, we attempt
+In order to help users manage the changes to apply to their code, we attempt
 to make \cgal\ code emit warnings when deprecated code is used.  This can be
-done using some compiler specific features.  On top of this, we also provide a
-macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined, disables all
-deprecated features.  This allows users to easily test if their code relies on
-deprecated features.
+done using some compiler specific features.  Those warnings can be disabled
+by defining the macro \ccc{CGAL_NO_DEPRECATION_WARNINGS}.  On top of this, we
+also provide a macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined,
+disables all deprecated features.  This allows users to easily test if their
+code relies on deprecated features.
 
 
 \input{Introduction_ref/checks} % extra chapter

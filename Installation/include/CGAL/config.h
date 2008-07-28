@@ -184,7 +184,9 @@ using std::max;
 
 
 // Macro to trigger deprecation warnings
-#if defined (__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+#ifdef CGAL_NO_DEPRECATION_WARNINGS
+#  define CGAL_DEPRECATED
+#elif defined (__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 #  define CGAL_DEPRECATED __attribute__((__deprecated__))
 #elif defined (_MSC_VER) && (_MSC_VER > 1300)
 #  define CGAL_DEPRECATED __declspec(deprecated)
