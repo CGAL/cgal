@@ -11,7 +11,6 @@
 
 #include "Polyhedron_type_fwd.h"
 
-//typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;
@@ -21,7 +20,6 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Triangle_3 Triangle;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid;
 
-// struct Polyhedron : public CGAL::Polyhedron_3<Kernel> {};
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 #endif // POLYHEDRON_TYPE_H

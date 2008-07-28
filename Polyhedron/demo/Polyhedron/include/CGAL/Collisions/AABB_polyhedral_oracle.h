@@ -9,7 +9,7 @@
 
 namespace CGAL {
 
-template <class Polyhedron, class Kernel>
+template <class Polyhedron, class Kernel, class AABBTree_kernel>
 class AABB_polyhedral_oracle : public Polyhedron
 {
 public:
@@ -19,15 +19,15 @@ public:
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
 
-  typedef AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
+  typedef AABB_polyhedral_oracle<Polyhedron,Kernel,AABBTree_kernel> Self;
   typedef Self Surface_mesher_traits_3;
   typedef Point_3 Intersection_point;
   typedef Self Surface_3;
 
   // AABB tree
-  typedef AABB_tree<Kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
+  typedef AABB_tree<AABBTree_kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
   typedef typename Tree::Point_with_input Point_with_facet_handle;
-  // typedef CGAL::Cartesian_converter<Kernel,Tree_kernel> Converter;
+  typedef CGAL::Cartesian_converter<Kernel,AABBTree_kernel> Converter;
   Tree *m_pTree;
 
 public:
@@ -60,9 +60,9 @@ public:
 
     Object operator()(const Surface_3& surface, const Segment_3& segment) const
     {
-      //Converter convert;
+      Converter convert;
       Point_with_facet_handle pwh;
-      if(surface.tree()->first_intersection(segment,pwh))
+      if(surface.tree()->first_intersection(convert(segment),pwh))
 	return make_object(pwh.first);
       else
 	return Object();
@@ -70,9 +70,9 @@ public:
     
     Object operator()(const Surface_3& surface, const Ray_3& ray) const
     {
-      //Converter convert;
+      Converter convert;
       Point_with_facet_handle pwh;
-      if(surface.tree()->first_intersection(ray,pwh))
+      if(surface.tree()->first_intersection(convert(ray),pwh))
 	return make_object(pwh.first);
       else
 	return Object();
@@ -80,9 +80,9 @@ public:
       
     Object operator()(const Surface_3& surface, const Line_3& line) const
     {
-      //Converter convert;
+      Converter convert;
       Point_with_facet_handle pwh;
-      if(surface.tree()->first_intersection(line,pwh))
+      if(surface.tree()->first_intersection(convert(line),pwh))
 	return make_object(pwh.first);
       else
 	return Object();

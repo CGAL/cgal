@@ -39,8 +39,10 @@ public:
   typedef std::pair<Point, Input> Point_with_input;
 
   typedef typename PSC::Traits PSC_kernel;
-  typedef typename PSC_kernel::Point_3 PSC_Point;
-  //typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
+  typedef typename PSC_kernel::Point_3 PSC_point;
+  typedef typename PSC_kernel::Vector_3 PSC_vector;
+  typedef typename PSC_kernel::Triangle_3 PSC_triangle;
+  typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
 
 private:
 
@@ -88,10 +90,9 @@ private:
 
   Bbox compute_bbox(Input f)
   {
-    // Converter convert;
-    const Point a = f->halfedge()->vertex()->point();
-    const Point b = f->halfedge()->next()->vertex()->point();
-    const Point c = f->halfedge()->next()->next()->vertex()->point();
+    const PSC_point a = f->halfedge()->vertex()->point();
+    const PSC_point b = f->halfedge()->next()->vertex()->point();
+    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
     return a.bbox() + b.bbox() + c.bbox();
   }
 
@@ -138,15 +139,15 @@ private:
 
   static Point centroid(Input f)
   {
-    //Converter convert;
-    const Point a = f->halfedge()->vertex()->point();
-    const Point b = f->halfedge()->next()->vertex()->point();
-    const Point c = f->halfedge()->next()->next()->vertex()->point();
+    const PSC_point a = f->halfedge()->vertex()->point();
+    const PSC_point b = f->halfedge()->next()->vertex()->point();
+    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
     // somehow CGAL::centroid does not compile
-    Vector u = a - CGAL::ORIGIN;
-    Vector v = b - CGAL::ORIGIN;
-    Vector w = c - CGAL::ORIGIN;
-    return CGAL::ORIGIN + (u + v + w) / 3.0;
+    PSC_vector u = a - CGAL::ORIGIN;
+    PSC_vector v = b - CGAL::ORIGIN;
+    PSC_vector w = c - CGAL::ORIGIN;
+    Converter convert;
+    return convert(CGAL::ORIGIN + (u + v + w) / 3.0);
   }
 
   template<typename Input_>
@@ -330,11 +331,11 @@ public:
 
   static Triangle triangle(Input f)
   {
-    // Converter convert;
-    const Point a = f->halfedge()->vertex()->point();
-    const Point b = f->halfedge()->next()->vertex()->point();
-    const Point c = f->halfedge()->next()->next()->vertex()->point();
-    return Triangle(a,b,c);
+    Converter convert;
+    const PSC_point a = f->halfedge()->vertex()->point();
+    const PSC_point b = f->halfedge()->next()->vertex()->point();
+    const PSC_point c = f->halfedge()->next()->next()->vertex()->point();
+    return convert(PSC_triangle(a,b,c));
   }
 
   static bool do_intersect(const Segment& segment, Input f)

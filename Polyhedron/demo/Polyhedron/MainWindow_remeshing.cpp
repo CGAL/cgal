@@ -82,14 +82,14 @@ void MainWindow::on_actionRemeshing_triggered()
     QTime time;
     time.start();
     std::cout << "Build AABB tree...";
-    typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
+    typedef CGAL::Cartesian<double> Cartesian_kernel; 
     typedef CGAL::AABB_tree<GT,Polyhedron::Facet_handle,Polyhedron> Tree;
     Tree tree;
     tree.build_faces(*pMesh);
     std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
     // input surface
-    typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT> Input_surface;
+    typedef CGAL::AABB_polyhedral_oracle<Polyhedron,GT,GT> Input_surface;
     Input_surface input(&tree);
 
     // initial point set
@@ -97,11 +97,13 @@ void MainWindow::on_actionRemeshing_triggered()
     std::cout << "Insert initial point set...";
     unsigned int nb_initial_points = 10;
     Polyhedron::Point_iterator it;
+    typedef CGAL::Cartesian_converter<Kernel,GT> Converter;
+    Converter convert;
     unsigned int i = 0;
     for(it = pMesh->points_begin();
         it != pMesh->points_end(), i < nb_initial_points;
 	it++, i++)
-      tr.insert(*it);
+      tr.insert(convert(*it));
     std::cout << "done (" << time.elapsed() << " ms)" << std::endl;
 
     // remesh
