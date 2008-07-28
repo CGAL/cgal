@@ -49,7 +49,7 @@ bool check_sorting(Iterator begin, Iterator end, Compare& compare)
   if(begin == end) return true;
   Iterator next = begin;
   for(++next; next != end; ++begin, ++next) {
-    if((*next)->source()->point() < (*begin)->source()->point())
+    if(compare((*next)->source()->point(), (*begin)->source()->point()))
       return false;
   }
   return true;
@@ -59,7 +59,7 @@ typedef CGAL::Need_to_split<Kernel, std::less<Point_3> > SplitTest;
 typedef CGAL::Generic_edge_sorter<Point_3, std::less<Point_3>,  std::less<FT>,
 				  SplitTest, Report_new_vertex<LEdge, LVertex>, std::deque<LEdge*> > GesSM;
 
-int main(int argc, char* argv[]) {
+int main() {
 
 
   std::deque<LEdge*> edges;
