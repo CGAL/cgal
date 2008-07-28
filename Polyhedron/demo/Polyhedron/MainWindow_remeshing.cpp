@@ -1,6 +1,11 @@
+#include <CGAL/Collisions/AABB_polyhedral_oracle.h>
+#include <CGAL/Collisions/AABB_tree.h>
+
 #include "MainWindow.h"
 #include "Scene.h"
 #include <fstream>
+
+#define CGAL_SURFACE_MESHER_VERBOSE 1
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -8,11 +13,8 @@
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Surface_mesh_default_criteria_3.h>
 
-#include <CGAL/Collisions/AABB_polyhedral_oracle.h>
-#include <CGAL/Collisions/AABB_tree.h>
-
-#define CGAL_C2T3_USE_POLYHEDRON
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
+#include <CGAL/IO/Complex_2_in_triangulation_3_polyhedron_builder.h>
 
 #include <QTime>
 #include <QInputDialog>
@@ -26,8 +28,9 @@ void MainWindow::on_actionRemeshing_triggered()
     // get active polyhedron
     Polyhedron* pMesh = scene->polyhedron(index);
 
+    if(!pMesh) return;
+
     // remesh
-    double init = clock();
 
     typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
     typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
@@ -120,8 +123,25 @@ void MainWindow::on_actionRemeshing_triggered()
       // TODO: dump output to polyhedron
 
       // for now...
+#ifdef WIN32
       std::ofstream out("d:\\remesh.off");
+#else
+      std::ofstream out("remesh.off");
+#endif
       CGAL::output_surface_facets_to_off(out, c2t3);
+
+      CGAL::Complex_2_in_triangulation_3_polyhedron_builder<C2t3, Polyhedron> builder(c2t3);
+      pRemesh->delegate(builder);
+
+      scene->addPolyhedron(pRemesh,
+			   QObject::tr("%1 remeshed (%2 %3 %4)")
+			   .arg(scene->polyhedronName(index))
+			   .arg(angle)
+			   .arg(sizing)
+			   .arg(approx),
+			   Qt::magenta,
+			   true,
+			   scene->polyhedronRenderingMode(index));
 
       // NO IDEA WHY THIS LINE DOES NOT COMPILE
  //     scene->addPolyhedron(pRemesh,

@@ -88,7 +88,7 @@ protected slots:
   void on_actionSelfIntersection_triggered();
 
   // remeshing, in MainWindow_remeshing.cpp
-	void on_actionRemeshing_triggered();
+  void on_actionRemeshing_triggered();
 
 protected:
   enum  Boolean_operation { BOOLEAN_UNION,
