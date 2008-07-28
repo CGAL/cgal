@@ -26,6 +26,8 @@
 #ifndef CGAL_UTILITY_H
 #define CGAL_UTILITY_H 1
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #include <CGAL/basic.h>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
@@ -276,5 +278,7 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
 
 
 CGAL_END_NAMESPACE
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_UTILITY_H
