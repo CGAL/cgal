@@ -17,7 +17,7 @@ CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel_for_circles/include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) 
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

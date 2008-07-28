@@ -358,11 +358,8 @@ public:
     Line l2 (second_point, center);
 
     return Circular_arc_2 (circ,
-     // FIXME which one is newer?
-     //l1, compare_lexicographically_xy(first_point,  center) == CGAL::SMALLER,
-     //l2, compare_lexicographically_xy(second_point, center) == CGAL::SMALLER);
-	       l1, CGAL::compare_xy(first_point,  center) == CGAL::SMALLER,
-	       l2, CGAL::compare_xy(second_point, center) == CGAL::SMALLER);
+       l1, CGAL::compare_xy(first_point,  center) == CGAL::SMALLER,
+       l2, CGAL::compare_xy(second_point, center) == CGAL::SMALLER);
   }
 
 private:
