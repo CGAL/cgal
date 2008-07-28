@@ -173,7 +173,7 @@ namespace CGALi {
   
     }
 
-    // the general function for CGAL::Unique_factorization_domain_tag
+    // the general function for CGAL::Integral_domain_tag
     template <typename OutputIterator1, 
       typename OutputIterator2, 
       typename NT> inline 
@@ -182,7 +182,7 @@ namespace CGALi {
         (CGAL::Polynomial<NT> A, 
          OutputIterator1 pstha,
          OutputIterator2 copstha,
-         CGAL::Unique_factorization_domain_tag) {
+         CGAL::Integral_domain_tag) {
 
         return prs_first_two_sturm_habicht_coefficients(A,pstha,copstha);
   
@@ -213,13 +213,13 @@ namespace CGALi {
       return bezout_principal_sturm_babicht_sequence(A,out);
     }
       
-    // the specialization for CGAL::Unique_factorization_domain_tag
+    // the specialization for CGAL::Integral_domain_tag
     template <typename OutputIterator, typename NT> inline
       OutputIterator
       principal_sturm_habicht_sequence_
         (CGAL::Polynomial<NT> A, 
          OutputIterator out,
-         CGAL::Unique_factorization_domain_tag) {
+         CGAL::Integral_domain_tag) {
     
       return prs_principal_sturm_habicht_sequence(A,out);
     }

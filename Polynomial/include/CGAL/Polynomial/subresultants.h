@@ -456,13 +456,13 @@ CGAL_BEGIN_NAMESPACE
     }
 
   
-    // the specialization for CGAL::Unique_factorization_domain_tag
+    // the specialization for CGAL::Integral_domain_tag
     template <typename OutputIterator, typename NT> inline
       OutputIterator
       polynomial_subresultants_(CGAL::Polynomial<NT> A, 
                                 CGAL::Polynomial<NT> B,
                                 OutputIterator out,
-                                CGAL::Unique_factorization_domain_tag){
+                                CGAL::Integral_domain_tag){
     
       return prs_polynomial_subresultants(A,B,out);
     
@@ -490,13 +490,13 @@ CGAL_BEGIN_NAMESPACE
   
     }
     
-    // the specialization for CGAL::Unique_factorization_domain_tag
+    // the specialization for CGAL::Integral_domain_tag
     template <typename OutputIterator, typename NT> inline
       OutputIterator
       principal_subresultants_(CGAL::Polynomial<NT> A, 
                                 CGAL::Polynomial<NT> B,
                                 OutputIterator out,
-                                CGAL::Unique_factorization_domain_tag){
+                                CGAL::Integral_domain_tag){
     
       return prs_principal_subresultants(A,B,out);
     
@@ -529,7 +529,8 @@ CGAL_BEGIN_NAMESPACE
    *  CGAL::prs_polynomial_subresultants is used.
    */
   template <typename OutputIterator, typename NT> inline
-    OutputIterator polynomial_subresultants(CGAL::Polynomial<NT> A, CGAL::Polynomial<NT> B,
+    OutputIterator polynomial_subresultants(CGAL::Polynomial<NT> A, 
+                                            CGAL::Polynomial<NT> B,
                                             OutputIterator out) {
       return CGAL::CGALi::polynomial_subresultants_(A, B, out);
   }   
