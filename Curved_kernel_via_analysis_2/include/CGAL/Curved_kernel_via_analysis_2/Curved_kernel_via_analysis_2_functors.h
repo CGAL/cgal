@@ -2198,10 +2198,10 @@ public:
 
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
 
-    typedef typename Curve_analysis_2::Algebraic_real_2 Algebraic_real_2;
+    typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Algebraic_real_2 >
+    typedef std::iterator< std::output_iterator_tag, Xy_coordinate_2 >
          result_type;
 
     //! the arity of the functor
@@ -2263,10 +2263,10 @@ public:
 
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES;
 
-    typedef typename Curve_analysis_2::Algebraic_real_2 Algebraic_real_2;
+    typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
     
     //! the result type
-    typedef std::iterator< std::output_iterator_tag, Algebraic_real_2 >
+    typedef std::iterator< std::output_iterator_tag, Xy_coordinate_2 >
              result_type;
 
     //! the arity of the functor
@@ -2293,12 +2293,12 @@ public:
         Curve_analysis_2 ca_yx 
             = curve_kernel.swap_x_and_y_2_object() (ca);
         
-        std::vector<Algebraic_real_2> y_critical_points;
+        std::vector<Xy_coordinate_2> y_critical_points;
 
         Base::_ckva()->x_extreme_points_2_object()(ca_yx,
              std::back_inserter(y_critical_points));
 
-        for( typename std::vector<Algebraic_real_2>::iterator it 
+        for( typename std::vector<Xy_coordinate_2>::iterator it 
                  = y_critical_points.begin();
              it != y_critical_points.end();
              it++ ) {
@@ -2310,7 +2310,7 @@ public:
             int lifts = status_line.number_of_events();
             
             for( int i = 0; i < lifts; i++ ) {
-                Algebraic_real_2 lift_xy = status_line.algebraic_real_2(i);
+                Xy_coordinate_2 lift_xy = status_line.algebraic_real_2(i);
                 
                 bool y_coordinate_found;
 
@@ -2331,7 +2331,7 @@ public:
                 }
                     
                 if(y_coordinate_found) {
-                    *oi++ = Algebraic_real_2(curr_x, ca, i);
+                    *oi++ = Xy_coordinate_2(curr_x, ca, i);
                     break;
                 }    
             }
