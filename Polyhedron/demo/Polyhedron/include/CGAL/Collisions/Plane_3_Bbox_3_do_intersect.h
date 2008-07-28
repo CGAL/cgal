@@ -8,17 +8,6 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi {
 
   template <class K>
-  bool do_intersect(const typename K::Plane_3& plane, 
-    const CGAL::Bbox_3& bbox,
-    const K& kernel)
-  {	
-    K::Point_3 p_max, p_min;
-    get_min_max<K>(plane.orthogonal_vector(), bbox, p_min, p_max);
-    return ! (plane.oriented_side(p_max) == ON_NEGATIVE_SIDE || 
-      plane.oriented_side(p_min) == ON_POSITIVE_SIDE);
-  }
-
-  template <class K>
   void get_min_max(const typename K::Vector_3& p,
     const CGAL::Bbox_3& bbox,
     typename K::Point_3& p_min, 
@@ -52,6 +41,17 @@ namespace CGALi {
 	p_max = K::Point_3(bbox.xmin(), bbox.ymin(),bbox.zmin());}
       }
     }
+  }
+
+  template <class K>
+  bool do_intersect(const typename K::Plane_3& plane, 
+    const CGAL::Bbox_3& bbox,
+    const K& kernel)
+  {	
+    typename K::Point_3 p_max, p_min;
+    get_min_max<K>(plane.orthogonal_vector(), bbox, p_min, p_max);
+    return ! (plane.oriented_side(p_max) == ON_NEGATIVE_SIDE || 
+      plane.oriented_side(p_min) == ON_POSITIVE_SIDE);
   }
 
 } // namespace CGALi

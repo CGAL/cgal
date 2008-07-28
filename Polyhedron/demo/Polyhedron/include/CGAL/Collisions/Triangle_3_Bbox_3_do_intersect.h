@@ -12,45 +12,6 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-  // assumes that the intersection with the supporting plane has
-  // already been checked.
-  template <class K>
-  bool do_intersect(const typename K::Triangle_3& triangle, 
-    const CGAL::Bbox_3& bbox,
-    const K& kernel)
-  {
-    //  if(! CGAL::do_intersect(triangle.supporting_plane(), bbox))
-    //    return false;
-
-    if(! do_bbox_intersect<K>(triangle, bbox))
-      return false;
-
-    typename K::Vector_3 sides[3];
-    sides[0] = triangle[1] - triangle[0];
-    sides[1] = triangle[2] - triangle[1];
-    sides[2] = triangle[0] - triangle[2];
-
-    if(! do_axis_intersect<K,0,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,0,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,0,2>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,2>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,2>(triangle, sides, bbox))
-      return false;
-    return true; 
-  }
-
   template <class K>
   inline
     bool do_bbox_intersect(const typename K::Triangle_3& triangle, 
@@ -106,25 +67,25 @@ namespace CGALi {
     //								AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
     //								AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0);
 
-    const K::Point_3& j = triangle.vertex(SIDE);
-    const K::Point_3& k = triangle.vertex((SIDE+2)%3);
+    const typename K::Point_3& j = triangle.vertex(SIDE);
+    const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
     //	K::FT t_min = a.x()*j.x() + a.y()*j.y() + a.z()*j.z();
-    K::FT t_min = AXE==0? -sides[SIDE].z()*j.y() + sides[SIDE].y()*j.z():
+    typename K::FT t_min = AXE==0? -sides[SIDE].z()*j.y() + sides[SIDE].y()*j.z():
       AXE==1?  sides[SIDE].z()*j.x() - sides[SIDE].x()*j.z(): 
       -sides[SIDE].y()*j.x() + sides[SIDE].x()*j.y();
     //	K::FT t_max = a.x()*k.x() + a.y()*k.y() + a.z()*k.z();
-    K::FT t_max = AXE==0? -sides[SIDE].z()*k.y() + sides[SIDE].y()*k.z():
+    typename K::FT t_max = AXE==0? -sides[SIDE].z()*k.y() + sides[SIDE].y()*k.z():
       AXE==1?  sides[SIDE].z()*k.x() - sides[SIDE].x()*k.z(): 
       -sides[SIDE].y()*k.x() + sides[SIDE].x()*k.y();
 
-    K::FT tmp;
+    typename K::FT tmp;
     if(t_max < t_min)
     {
       tmp = t_min;
       t_min = t_max;
       t_max = tmp;
     }
-    K::Point_3 p_min, p_max;
+    typename K::Point_3 p_min, p_max;
     get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
       AXE==0? -sides[SIDE].z(): AXE==1? 0: sides[SIDE].x(),
       AXE==0? sides[SIDE].y(): AXE==1? -sides[SIDE].x(): 0,
@@ -156,32 +117,71 @@ namespace CGALi {
   {
     if(AXE == 0 || px > 0) {
       if(AXE == 1 || py > 0) {
-	if(AXE == 2 || pz > 0) { p_min = K::Point_3(c.xmin(), c.ymin(),c.zmin()); 
-	p_max = K::Point_3(c.xmax(), c.ymax(),c.zmax());}
-	else {							     p_min = K::Point_3(c.xmin(), c.ymin(),c.zmax()); 
-	p_max = K::Point_3(c.xmax(), c.ymax(),c.zmin());}
+	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmin()); 
+	p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmax());}
+	else {							     p_min = typename K::Point_3(c.xmin(), c.ymin(),c.zmax()); 
+	p_max = typename K::Point_3(c.xmax(), c.ymax(),c.zmin());}
       }
       else {
-	if(AXE == 2 || pz > 0) { p_min = K::Point_3(c.xmin(), c.ymax(),c.zmin()); 
-	p_max = K::Point_3(c.xmax(), c.ymin(),c.zmax());}
-	else {					         p_min = K::Point_3(c.xmin(), c.ymax(),c.zmax()); 
-	p_max = K::Point_3(c.xmax(), c.ymin(),c.zmin());}
+	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmin()); 
+	p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmax());}
+	else {					         p_min = typename K::Point_3(c.xmin(), c.ymax(),c.zmax()); 
+	p_max = typename K::Point_3(c.xmax(), c.ymin(),c.zmin());}
       }
     }
     else {
       if(AXE == 1 || py > 0) {
-	if(AXE == 2 || pz > 0) { p_min = K::Point_3(c.xmax(), c.ymin(),c.zmin()); 
-	p_max = K::Point_3(c.xmin(), c.ymax(),c.zmax());}
-	else {					         p_min = K::Point_3(c.xmax(), c.ymin(),c.zmax()); 
-	p_max = K::Point_3(c.xmin(), c.ymax(),c.zmin());}
+	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmin()); 
+	p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmax());}
+	else {					         p_min = typename K::Point_3(c.xmax(), c.ymin(),c.zmax()); 
+	p_max = typename K::Point_3(c.xmin(), c.ymax(),c.zmin());}
       }
       else {
-	if(AXE == 2 || pz > 0) { p_min = K::Point_3(c.xmax(), c.ymax(),c.zmin()); 
-	p_max = K::Point_3(c.xmin(), c.ymin(),c.zmax());}
-	else {					         p_min = K::Point_3(c.xmax(), c.ymax(),c.zmax()); 
-	p_max = K::Point_3(c.xmin(), c.ymin(),c.zmin());}
+	if(AXE == 2 || pz > 0) { p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmin()); 
+	p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmax());}
+	else {					         p_min = typename K::Point_3(c.xmax(), c.ymax(),c.zmax()); 
+	p_max = typename K::Point_3(c.xmin(), c.ymin(),c.zmin());}
       }
     }
+  }
+
+  // assumes that the intersection with the supporting plane has
+  // already been checked.
+  template <class K>
+  bool do_intersect(const typename K::Triangle_3& triangle, 
+    const CGAL::Bbox_3& bbox,
+    const K& kernel)
+  {
+    //  if(! CGAL::do_intersect(triangle.supporting_plane(), bbox))
+    //    return false;
+
+    if(! do_bbox_intersect<K>(triangle, bbox))
+      return false;
+
+    typename K::Vector_3 sides[3];
+    sides[0] = triangle[1] - triangle[0];
+    sides[1] = triangle[2] - triangle[1];
+    sides[2] = triangle[0] - triangle[2];
+
+    if(! do_axis_intersect<K,0,0>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,0,1>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,0,2>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,1,0>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,1,1>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,1,2>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,2,0>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,2,1>(triangle, sides, bbox))
+      return false;
+    if(! do_axis_intersect<K,2,2>(triangle, sides, bbox))
+      return false;
+    return true; 
   }
 
 } // namespace CGALi

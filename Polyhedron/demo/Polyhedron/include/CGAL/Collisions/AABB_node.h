@@ -34,15 +34,14 @@ public:
   typedef typename Kernel::Segment_3 Segment;
   typedef typename Kernel::Triangle_3 Triangle;
 
-  typedef typename PSC PSC;
-  typedef typename AABB_node<Kernel,Input,PSC> Node;
+  typedef AABB_node<Kernel,Input,PSC> Node;
   typedef typename std::vector<Input>::iterator Iterator;
-  typedef typename std::pair<Point, Input> Point_with_input;
+  typedef std::pair<Point, Input> Point_with_input;
 
   typedef typename PSC::Traits PSC_kernel;
   typedef typename PSC_kernel::Point_3 PSC_Point;
-  typedef typename CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
-  typedef typename CGAL::Cartesian_converter<Kernel, PSC_kernel > BConverter;
+  typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
+  typedef CGAL::Cartesian_converter<Kernel, PSC_kernel > BConverter;
 
 
 private:
@@ -151,21 +150,21 @@ private:
     return CGAL::ORIGIN + (u + v + w) / 3.0;
   }
 
-  template<typename Input>
-  static bool lower_x(const Input& i1,
-    const Input& i2)
+  template<typename Input_>
+  static bool lower_x(const Input_& i1,
+    const Input_& i2)
   {
     return lower_x(i1,i2);
   }
-  template<typename Input>
-  static bool lower_y(const Input& i1,
-    const Input& i2)
+  template<typename Input_>
+  static bool lower_y(const Input_& i1,
+    const Input_& i2)
   {
     return lower_y(i1,i2);
   }
-  template<typename Input>
-  static bool lower_z(const Input& i1,
-    const Input& i2)
+  template<typename Input_>
+  static bool lower_z(const Input_& i1,
+    const Input_& i2)
   {
     return lower_z(i1,i2);
   }

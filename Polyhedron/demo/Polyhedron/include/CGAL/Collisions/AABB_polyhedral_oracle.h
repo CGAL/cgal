@@ -19,9 +19,9 @@ public:
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
 
-  typedef typename AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
-  typedef typename Self Surface_mesher_traits_3;
-  typedef typename Point_3 Intersection_point;
+  typedef AABB_polyhedral_oracle<Polyhedron,Kernel> Self;
+  typedef Self Surface_mesher_traits_3;
+  typedef Point_3 Intersection_point;
   typedef Self Surface_3;
  // Visitor visitor;
 

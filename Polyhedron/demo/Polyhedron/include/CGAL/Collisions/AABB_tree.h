@@ -26,7 +26,7 @@ public:
   typedef typename Kernel::Triangle_3 Triangle;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid;
 
-  typedef typename AABB_node<Kernel,Input,PSC> Node;
+  typedef AABB_node<Kernel,Input,PSC> Node;
   typedef typename Node::Point_with_input Point_with_input;
 
   // types for K nearest neighbors search structure
@@ -79,7 +79,7 @@ public:
   {
     unsigned int nbf = psc.size_of_facets();
     m_data.reserve(nbf);
-    PSC::Facet_iterator f;
+    typename PSC::Facet_iterator f;
     for(f = psc.facets_begin();
       f != psc.facets_end();
       f++)
@@ -144,7 +144,7 @@ public:
   Point_with_input furthest_point_from(const PointInputContainer& intersections,
     const Pt& from)
   {
-    PointInputContainer::const_iterator it = intersections.begin();
+    typename PointInputContainer::const_iterator it = intersections.begin();
     Point_with_input furthest_point = *it;
     FT max_sqd = CGAL::squared_distance(from,furthest_point.first);
     it++;
