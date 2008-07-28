@@ -56,6 +56,8 @@
 #include <CGAL/Arr_topology_traits/Arr_qdx_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
+#include <CGAL/Arr_topology_traits/Sign_of_path.h>
+
 #include <SoX/GAPS/Restricted_cad_3.h>
 #include <QdX/Quadric_3_z_at_xy_isolator_traits.h>
 
@@ -118,11 +120,6 @@ protected:
     
     typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>    Traits_adaptor_2;
 
-    enum Discontinuity_crossing {
-        AFTER_TO_BEFORE = 1,
-        BEFORE_TO_AFTER = 2
-    };
-    
     // less functor
     struct Point_2_less {
         Point_2_less() {
@@ -148,7 +145,7 @@ protected:
 
     friend class Point_2_less;
 
-    //! type of line of discontinuity
+    //! type of curve of identification
     typedef std::map< Point_2, Vertex*, Point_2_less > Identification;
 
     typedef std::map< Vertex*, typename Identification::iterator,
@@ -183,10 +180,10 @@ protected:
     //! the top face
     mutable  Face *f_top;
 
-    //! used to locate curve-ends on the line of discontinuity
+    //! used to locate curve-ends on the curve of identification
     mutable Identification _m_identification;
 
-    //! used to locate vertices on the line of discontinuity
+    //! used to locate vertices on the curve of identification
     mutable Vertices_on_identification 
     _m_vertices_on_identification;
 
@@ -893,7 +890,7 @@ public:
         if (it == _m_identification.end()) {
             return (f_top);
         } else {
-            return (_face_before_vertex_on_discontinuity (it->second));
+            return (_face_before_vertex_on_identification(it->second));
         }
     }
 
@@ -905,12 +902,12 @@ public:
         if (it == _m_identification.end()) {
             return (f_top);
         } else {
-            return (_face_before_vertex_on_discontinuity (it->second));
+            return (_face_before_vertex_on_identification(it->second));
         }
     }
     
-    /*! Get the vertex on line of discontinuity associated with \c pt*/
-    Vertex* discontinuity_vertex(const Point_2& pt) {
+    /*! Get the vertex on curve of identification associated with \c pt*/
+    Vertex* vertex_on_identification(const Point_2& pt) {
         typename Identification::iterator it = 
             this->_m_identification.find(pt);
         if (it != this->_m_identification.end()) {
@@ -921,7 +918,7 @@ public:
     }
     
     /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
+     *  along the curve of identification
      */
     typename Identification::iterator 
     curve_ends_and_vertices_on_identification_begin() {
@@ -929,7 +926,7 @@ public:
     }
 
     /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity
+     *  along the curve of identification
      */
     typename Identification::iterator 
     curve_ends_and_vertices_on_identification_end() {
@@ -937,7 +934,7 @@ public:
     }
 
     /*! Get the beginning of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
+     *  along the curve of identification (const version)
      */
     typename Identification::const_iterator 
     curve_ends_and_vertices_on_identification_begin() const {
@@ -945,7 +942,7 @@ public:
     }
 
     /*! Get the past-the-end value of all pairs of curve-end and its vertices
-     *  along the line of discontinuity (const version)
+     *  along the curve of identification (const version)
      */
     typename Identification::const_iterator 
     curve_ends_and_vertices_on_identification_end() const {
@@ -953,8 +950,12 @@ public:
     }
 
     /*! Get the geometry traits */
-    Geometry_traits_2* geometry_traits ()
-    {
+    Geometry_traits_2* geometry_traits() { 
+        return (_m_traits);
+    }
+
+    /*! Get the geometry traits (const version) */
+    Geometry_traits_2* geometry_traits() const {
         return (_m_traits);
     }
     
@@ -985,8 +986,8 @@ protected:
             bool allow_equal) const;
     
     /*!
-     * Locate given curve end at a boundary vertex on the line of
-     * discontinuity.
+     * Locate given curve end at a boundary vertex on the curve of
+     * identification
      * \param v The boundary vertex 
      * \param cv The curve
      * \param ind ARR_MIN_END if the vertex is induced by the minimal end;
@@ -995,91 +996,43 @@ protected:
      *         in the circular of incident halfedges around 
      *         the boundary vertex.
      */
-    Halfedge* _locate_around_vertex_on_discontinuity(
+    Halfedge* _locate_around_vertex_on_identification(
             Vertex* v,
             const X_monotone_curve_2 & cv,
             CGAL::Arr_curve_end ind) const;
     
-#if 0
-    /*!
-     * Get the curve associated with a boundary vertex.
-     * \param v The boundary vertex.
-     * \param ind Output: ARR_MIN_END if the vertex is induced by the minimal end;
-     *                    ARR_MAX_END if it is induced by the curve's maximal end.
-     * \pre v is a valid boundary vertex.
-     * \return The curve that induces v.
-     */
-    const X_monotone_curve_2& _curve (const Vertex *v,
-                                      CGAL::Arr_curve_end& ind) const;
-
-    /*!
-     * Compares two curve-ends around a point on the line of discontinuity
-     * \param cv1 First curve
-     * \param ind1 End of first curve
-     * \param cv2 Second curve
-     * \param ind2 End of second curve
-     * \return the comparison result
-     */
-    CGAL::Comparison_result _cw_order_at_boundary_vertex (
-            const X_monotone_curve_2& cv1,
-            const CGAL::Arr_curve_end& ind1,
-            const X_monotone_curve_2& cv2,
-            const CGAL::Arr_curve_end& ind2) const;
-
-     /*!
-     * Get the predecessing halfedge of a curve-end at a boundary vertex.
-     * \param v The boundary vertex 
-     * \param cv The curve
-     * \param ind ARR_MIN_END if the vertex is induced by the minimal end;
-     *            ARR_MAX_END if it is induced by the curve's maximal end.
-     * \param overlaps OUTPUT: is true in case (cv,ind) overlaps with an 
-     *                         existing halfedge which is then returned
-     * \pre v is a valid boundary vertex.
-     * \return The predecessing halfedge of the curve-end (cv, ind) 
-     *         in the circular of incident halfedges around 
-     *         the boundary vertex.
-     */
-    Halfedge* _find_predecessor_at_boundary_vertex(
-            Vertex *v,
-            const X_monotone_curve_2& cv,
-            CGAL::Arr_curve_end ind,
-            bool& overlaps) const;
-
-#endif
-
     /*! Return the face that lies before the given vertex, which lies
-     * on the line of discontinuity.
+     * on the curve of identification
      */
-    Face * _face_before_vertex_on_discontinuity (Vertex * v) const;
-    
+    Face * _face_before_vertex_on_identification(Vertex * v) const;
     
     /*!
-     * Computes the number of crossing of a path with the line of discontinuity
-     * \param he1 Beginning of path
-     * \param he2 End of path
-     * \param leftmost OUTPUT: returns whether the leftmost intersection
-     *                         is AFTER_TO_BEFORE or BEFORE_TO_AFTER
-     * \param loop Indicates whether we should consider he1 as defining a 
-     *        ccb-loop
-     * \return a pair of values, crossings from AFTER_TO_BEFORE and 
-               BEFORE_TO_AFTER
+     * Computes the sign of two halfedges approaching and leaving the
+     * boundary
+     * \param he1 The halfedge entering the boundary
+     * \param he2 The halfedge leaving the boundary
+     * \return the perimetricity of the subpath
      */
-    std::pair< unsigned int, unsigned int >
-    _crossings_with_identification(
-            const Halfedge* he1, const Halfedge* he2,
-            Discontinuity_crossing& leftmost) const;
-
+    CGAL::Sign _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) 
+        const;
+    
     /*!
-     * Given two halfedges, determine if the path from the source vertex of the
-     * first halfedge to the source vertex of the second haldedge (i.e. we go
-     * from the first halfedge until reaching the second) is perimetric.
-     * \param e1 The first halfedge.
-     * \param e2 The second halfedge.
-     * \return Whether the path from e1 to e2 (not inclusive) is perimetric.
+     * Computes the sign of a halfedge and a curve approaching and leaving the
+     * boundary
+     * \param he1 The halfedge entering the boundary
+     * \param cv2 The curve leaving the boundary
+     * \param end2 The end of the curve leaving the boundary
+     * \return the perimetricity of the subpath
      */
-    bool _is_perimetric_path (const Halfedge *e1,
-                              const Halfedge *e2) const;
-
+    CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
+                                const X_monotone_curve_2& cv2,
+                                const CGAL::Arr_curve_end& end2) const;
+    
+    //! type of Sign_of_path functor
+    typedef CGALi::Sign_of_path< Geometry_traits_2, Self > Sign_of_path;
+    
+    friend class CGALi::Sign_of_path< Geometry_traits_2, Self >;
+    
     //@}
 };
 

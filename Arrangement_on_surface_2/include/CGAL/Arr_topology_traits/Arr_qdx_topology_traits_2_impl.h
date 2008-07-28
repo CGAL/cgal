@@ -31,8 +31,8 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------------
 // Default constructor.
 //
-template <class GeomTraits, class Dcel_>
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
+template < class GeomTraits, class Dcel_ >
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
 Arr_qdx_topology_traits_2() :
     _m_own_traits (true), 
     _m_left(CGAL::ARR_NUMBER_OF_BOUNDARY_TYPES),
@@ -49,8 +49,8 @@ Arr_qdx_topology_traits_2() :
 //-----------------------------------------------------------------------------
 // Constructor with a geometry-traits class.
 //
-template <class GeomTraits, class Dcel_>
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
+template < class GeomTraits, class Dcel_ >
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
 Arr_qdx_topology_traits_2 (Geometry_traits_2 *tr) : 
     _m_own_traits(false),  
     _m_left(CGAL::ARR_NUMBER_OF_BOUNDARY_TYPES),
@@ -69,8 +69,8 @@ Arr_qdx_topology_traits_2 (Geometry_traits_2 *tr) :
 //-----------------------------------------------------------------------------
 // Assign the contents of another topology-traits class.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
+template < class GeomTraits, class Dcel_ >
+void Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::assign // open
     (const Self& other)
 {
     // Assign the class.
@@ -102,8 +102,8 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::assign // open
 //-----------------------------------------------------------------------------
 // Make the necessary updates after the DCEL structure have been updated.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
+template < class GeomTraits, class Dcel_ >
+void Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::dcel_updated ()
 {
     // Go over the DCEL vertices and locate all points with boundary condition
     typename Dcel::Vertex_iterator vit;
@@ -165,8 +165,8 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::dcel_updated ()
 //-----------------------------------------------------------------------------
 // Initialize an empty DCEL structure.
 //
-template <class GeomTraits, class Dcel_>
-void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::init_dcel () // open
+template < class GeomTraits, class Dcel_ >
+void Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::init_dcel () // open
 {
     //std::cout << "Arr_qdx_topology_traits_2 init_dcel"  << std::endl;
     // Clear the current DCEL.
@@ -210,9 +210,9 @@ void Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::init_dcel () // open
 //-----------------------------------------------------------------------------
 // Compare the relative y-position of the given point and the given edge
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 Comparison_result
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::compare_y_at_x
 (const Point_2& p, const Halfedge* he) const
 {
     //std::cout << "Arr_qdx_topology_traits_2 compare_y_at_x"  << std::endl;
@@ -223,8 +223,8 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::compare_y_at_x
 //-----------------------------------------------------------------------------
 // Check if the given vertex is associated with the given curve end.
 //
-template <class GeomTraits, class Dcel_>
-bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::are_equal
+template < class GeomTraits, class Dcel_ >
+bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::are_equal
 (const Vertex *v,
  const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
  CGAL::Arr_parameter_space ps_x, CGAL::Arr_parameter_space ps_y) const
@@ -261,9 +261,9 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::are_equal
 // interior of the curve, find a place for a boundary vertex that will
 // represent the curve end along the face boundary.
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 CGAL::Object
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::place_boundary_vertex // done
     (Face *f,
      const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
      CGAL::Arr_parameter_space ps_x, CGAL::Arr_parameter_space ps_y)
@@ -289,7 +289,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
         CGAL_assertion(ps_y != CGAL::ARR_INTERIOR);
         // locate curve-end (here a concrete point) 
         // in local structure of for points on 
-        // line of discontiuity!
+        // curve of identification
         typename Identification::iterator it = 
             this->_m_identification.find(
                     (ind == CGAL::ARR_MIN_END ?
@@ -328,9 +328,9 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::place_boundary_vertex // done
 // Locate the predecessor halfedge for the given curve around a given
 // vertex with boundary conditions.
 //
-template <class GeomTraits, class Dcel_>
-typename Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::Halfedge* 
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
+template < class GeomTraits, class Dcel_ >
+typename Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::Halfedge* 
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::locate_around_boundary_vertex
     (Vertex *v,
      const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
      CGAL::Arr_parameter_space ps_x, CGAL::Arr_parameter_space ps_y) const
@@ -363,13 +363,13 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::locate_around_boundary_vertex
     CGAL_assertion(ps_x == CGAL::ARR_INTERIOR && 
                    ps_y != CGAL::ARR_INTERIOR);
     
-    return (_locate_around_vertex_on_discontinuity (v, cv, ind));
+    return (_locate_around_vertex_on_identification(v, cv, ind));
 }
 
 
-template <class GeomTraits, class Dcel_>
-typename Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::Halfedge* 
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::
+template < class GeomTraits, class Dcel_ >
+typename Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::Halfedge* 
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
 _locate_around_vertex_with_boundary_at_x
 (Vertex *v,
  const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind, bool& equal,
@@ -397,8 +397,8 @@ _locate_around_vertex_with_boundary_at_x
 
     // If we compare a curve and its successor around the left/right
     // event, the result LARGER (left) [SMALLER (right)] 
-    // indicates that the line of
-    // discontinuity is located in between the two curves.
+    // indicates that the curve of identification
+    // is located in between the two curves.
     const Comparison_result cross_res = 
         (curve_end == CGAL::ARR_MAX_END ? CGAL::LARGER : CGAL::SMALLER);
     
@@ -423,13 +423,14 @@ _locate_around_vertex_with_boundary_at_x
         curr_next_res = 
             compare_y_near_boundary(curr->curve(), next->curve(), curve_end);
         if (curr_next_res == cross_res) {
-            // The line of discontinuity must lie between curr and next, so the
-            // comparison result of cv with the two curves should be equal:
+            // The curve of identification must lie between curr and next, 
+            // so the comparison result of cv with the two curves should 
+            // be equal:
             if (curr_res == next_res) {
                 return curr;
             }
         } else {
-            // The line of discontinuity does not lie between curr and next, 
+            // The curve of identification does not lie between curr and next, 
             // so the comparison results must be different if cv 
             // lies in between.
             if (curr_res != next_res) {
@@ -453,12 +454,12 @@ _locate_around_vertex_with_boundary_at_x
  * the predecessor of a halfedge, the curve of which is given, that is about
  * to be inserted into the dcel.
  */
-template <class GeomTraits, class Dcel>
-typename Arr_qdx_topology_traits_2<GeomTraits, Dcel>::Halfedge*
-Arr_qdx_topology_traits_2<GeomTraits, Dcel>::
-_locate_around_vertex_on_discontinuity(Vertex* v,
-                                       const X_monotone_curve_2 & xc,
-                                       CGAL::Arr_curve_end ind) const
+template < class GeomTraits, class Dcel >
+typename Arr_qdx_topology_traits_2< GeomTraits, Dcel >::Halfedge*
+Arr_qdx_topology_traits_2< GeomTraits, Dcel >::
+_locate_around_vertex_on_identification(Vertex* v,
+                                        const X_monotone_curve_2 & xc,
+                                        CGAL::Arr_curve_end ind) const
 {
     // If the vertex is isolated, there is no predecssor halfedge.
     if (v->is_isolated()) {
@@ -537,9 +538,10 @@ _locate_around_vertex_on_discontinuity(Vertex* v,
 //-----------------------------------------------------------------------------
 // Notifies on the creation of a boundary vertex
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 void 
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
+notify_on_boundary_vertex_creation
 (Vertex *v,
  const X_monotone_curve_2& cv,
  CGAL::Arr_curve_end ind,
@@ -579,7 +581,7 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
             id_size
     );
     
-    // update the local structure for points on the line of discontinuity
+    // update the local structure for points on the curve of identification
     typename Identification::iterator it = 
         this->_m_identification.find(v->point());
     // not existing so far
@@ -606,8 +608,8 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::notify_on_boundary_vertex_creation
 //-----------------------------------------------------------------------------
 // Locate a DCEL feature that contains the given curve end.
 //
-template <class GeomTraits, class Dcel_>
-CGAL::Object Arr_qdx_topology_traits_2<GeomTraits, Dcel_>:: // open
+template < class GeomTraits, class Dcel_ >
+CGAL::Object Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >:: // open
 locate_curve_end (const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
                   CGAL::Arr_parameter_space ps_x, 
                   CGAL::Arr_parameter_space ps_y)
@@ -705,15 +707,16 @@ locate_curve_end (const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
     // else
     CGAL_assertion(search_face);
     
-    // At this point, the iterator it points to a vertex on the line of
-    // discontinuity that is strictly after the curve end. If there is none,
+    // At this point, the iterator it points to a vertex on the 
+    // curve of identification that is strictly after the curve end. 
+    // If there is none,
     // we know the curve end is contained in the top face. Otherwise,
     // we return the face that lies below the vertex v.
     if (it == _m_identification.end()) {
         return CGAL::make_object(f_top);
     }
     v = it->second;
-    return CGAL::make_object(_face_before_vertex_on_discontinuity(v));
+    return CGAL::make_object(_face_before_vertex_on_identification(v));
     
 }
 
@@ -722,9 +725,9 @@ locate_curve_end (const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind,
 // a face, determine what happens when we insert an edge connecting the
 // target vertices of the two edges.
 //
-template <class GeomTraits, class Dcel_>
-std::pair<bool, bool>
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
+template < class GeomTraits, class Dcel_ >
+std::pair< bool, bool >
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
     (const Halfedge *prev1,
      const Halfedge *prev2,
      const X_monotone_curve_2& cv) const
@@ -740,9 +743,18 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
     // If both are not perimetric, then the split face becomes a hole in the
     // original face.
     bool    face_split = true;
-    bool    is_hole = (! _is_perimetric_path (prev1->next(), prev2->next()) &&
-                       ! _is_perimetric_path (prev2->next(), prev1->next()));
 
+    Sign_of_path sign_of_path(this);
+    
+    //std::cout << "Path1: " << std::endl;
+    CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
+    //std::cout << "sign1: " << sign_12 << std::endl;
+    //std::cout << "Path2: " << std::endl;
+    CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
+    //std::cout << "sign2: " << sign_21 << std::endl;
+    
+    bool is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
+    
     return (std::make_pair (face_split, is_hole));
 }
 
@@ -750,62 +762,59 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::face_split_after_edge_insertion
 // Determine whether the removal of the given edge will cause the creation
 // of a hole.
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 bool
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::hole_creation_after_edge_removal
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::hole_creation_after_edge_removal
     (const Halfedge *he) const
 {
     CGAL_precondition (! he->is_on_inner_ccb());
     CGAL_precondition (! he->opposite()->is_on_inner_ccb());
 
+    Sign_of_path sign_of_path(this);
+    
     // Check whether the halfedge and its twin belong to the same outer CCB
     // (and are therefore incident to the same face).
     if (he->outer_ccb() == he->opposite()->outer_ccb())
     {
-      // Check the two cycles that will be created once we remove he and its
-      // twin (from he->next() to he's twin, not inclusive, and from the
-      // successor of he's twin to he, not inclusive).
-      if (_is_perimetric_path (he->next(), he->opposite()) &&
-          _is_perimetric_path (he->opposite()->next(), he))
-      {
-        // Both paths are perimetric, so the two cycles become to separate
-        // outer CCBs of the same face, and no hole is created.
-        return (false);
-      }
-      else
-      {
-        // At least one cyclic path is non-perimetic. This cycle will become
-        // an inner CCB representing a hole in the face.
-        return (true);
-      }
-    }
-    else
-    {
-      // The edge to be removed separates two faces.
-      // Check the cyclic path from he and back, and from its twin and back.
-      if (_is_perimetric_path (he, he) &&
-          _is_perimetric_path (he->opposite(), he->opposite()))
-      {
-        // In this case we disconnect a perimetric cycle around the quadric,
-        // causing two perimetric faces to merge. The remainder of the cycle
-        // becomes an inner CCB (a hole) in the merged face.
-        return (true);
-      }
-      else
-      {
-        // In this case we are about to merge to incident faces, so their
-        // outer CCBs are merged and no new hole is created.
-        return (false);
-      }
+        // Check the two cycles that will be created once we remove he and its
+        // twin (from he->next() to he's twin, not inclusive, and from the
+        // successor of he's twin to he, not inclusive).
+        if (sign_of_path(he->next(), he->opposite()) != CGAL::ZERO &&
+            sign_of_path(he->opposite()->next(), he) != CGAL::ZERO)
+        {
+            // Both paths are perimetric, so the two cycles become to separate
+            // outer CCBs of the same face, and no hole is created.
+            return (false);
+        } else {
+            // At least one cyclic path is non-perimetic. This cycle will become
+            // an inner CCB representing a hole in the face.
+            return (true);
+        }
+    } else {
+        // The edge to be removed separates two faces.
+        // Check the cyclic path from he and back, and from its twin and back.
+        if (sign_of_path(he, he) != CGAL::ZERO &&
+            sign_of_path(he->opposite(), he->opposite()) != CGAL::ZERO)
+        {
+            // In this case we disconnect a perimetric cycle around the quadric,
+            // causing two perimetric faces to merge. The remainder of the cycle
+            // becomes an inner CCB (a hole) in the merged face.
+            return (true);
+        } else {
+            // In this case we are about to merge to incident faces, so their
+            // outer CCBs are merged and no new hole is created.
+            return (false);
+        }
     }
 }
 
 //-----------------------------------------------------------------------------
 // checks whether halfedges are on a new perimetric face boundary
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 bool
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::is_on_new_perimetric_face_boundary
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
+is_on_new_perimetric_face_boundary
 (const Halfedge *prev1,
  const Halfedge *prev2,
  const X_monotone_curve_2& cv) const
@@ -813,6 +822,10 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::is_on_new_perimetric_face_boundary
     //std::cout << "Arr_qdx_topology_traits_2::" 
     //          << "is_on_new_perimetric_face_boundary"
     //          << std::endl;
+    
+    CGAL_precondition (prev1->is_on_inner_ccb());
+    CGAL_precondition (prev2->is_on_inner_ccb());
+    CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
     
     // can only be possible for a paraboloid.
     if ((_m_left == CGAL::ARR_UNBOUNDED && _m_right == CGAL::ARR_UNBOUNDED) ||
@@ -822,33 +835,31 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::is_on_new_perimetric_face_boundary
     }
     CGAL_assertion(_m_quadric.is_elliptic_paraboloid());
     
-    // so we use leftmost disconti-crossing of 
-    // path ending in prev1 (and starting in prev2)
-    CGAL_assertion(_is_perimetric_path(prev2, prev1));
-    Discontinuity_crossing leftmost;
-    std::pair< unsigned int, unsigned int > crossings =
-        _crossings_with_identification(prev2, prev1, leftmost);
-    // is perimetric test
-    CGAL_assertion((crossings.first + crossings.second) % 2 == 1);
-
-    // to check whether new face contains singular point
-    // and therefore prev1 belongs to the outer_ccb of this new face
-    if (leftmost == BEFORE_TO_AFTER) { 
-        // the face is "on the left" side of the surfacs
-        return (_m_left == CGAL::ARR_CONTRACTION);
-    } else {
-        CGAL_assertion(leftmost == AFTER_TO_BEFORE);
-        // the face is "on the rightt" side of the surfacs
-        return (_m_right == CGAL::ARR_CONTRACTION);
-    }
+    // maintain the invariant that the upper right corner 
+    // is always in the top_face,
+    // i.e, it is the face that contains everything and has now outer ccb
+    // If upper right corner is part of a ccb itself, its incident face is 
+    // the face that  contains everything.
+    
+    Sign_of_path sign_of_path(this);
+    
+    CGAL::Sign sign = sign_of_path(prev2, prev1, cv);
+    CGAL_assertion(sign != CGAL::ZERO);
+    
+    if (_m_left == CGAL::ARR_CONTRACTION) {
+        return (sign == CGAL::NEGATIVE);
+    } 
+    // else
+    CGAL_assertion(_m_right == CGAL::ARR_CONTRACTION);
+    return (sign == CGAL::POSITIVE);
 }
 
 //-----------------------------------------------------------------------------
 // checks whether halfedges are boundaries of the same face
 //
-template <class GeomTraits, class Dcel_>
+template < class GeomTraits, class Dcel_ >
 bool
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::boundaries_of_same_face
 (const Halfedge *e1,
  const Halfedge *e2) const
 {
@@ -856,22 +867,26 @@ Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::boundaries_of_same_face
     //          << std::endl;
     // This predicate is only used for case 3.3.2 of the insertion process
     
-    Discontinuity_crossing leftmost1;
-    std::pair< unsigned int, unsigned int > crossings1 =
-        _crossings_with_identification(e1, NULL, leftmost1);
-
-    Discontinuity_crossing leftmost2;
-    std::pair< unsigned int, unsigned int > crossings2 =
-        _crossings_with_identification(e2, NULL, leftmost2);
-
-    return (leftmost1 != leftmost2);
+    Sign_of_path sign_of_path(this);
+    
+    // compute signs of path (both must be non-zero)
+    //std::cout << "Path1:" << std::endl;
+    CGAL::Sign sign1 = sign_of_path(e1, e1);
+    //std::cout << "Sign1: " << sign1 << std::endl;
+    //std::cout << "Path2:" << std::endl;
+    CGAL::Sign sign2 = sign_of_path(e2, e2);
+    //std::cout << "Sign2: " << sign2 << std::endl;
+    CGAL_assertion(sign1 != CGAL::ZERO);
+    CGAL_assertion(sign2 != CGAL::ZERO);
+    
+    return (sign1 != sign2);
 }
 
 //-----------------------------------------------------------------------------
 // Determine whether the given vertex lies in the interior of the given face.
 //
-template <class GeomTraits, class Dcel_>
-bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
+template < class GeomTraits, class Dcel_ >
+bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_in_face // open
 (const Face *f, const Point_2& p, const Vertex *v) const
 {
     // NEEDED for incremental insertion
@@ -969,7 +984,7 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
         // if no halfedge found
         if (closest == NULL) {
             std::cout << "No halfedge found" << std::endl;
-            // search the line of discontinuity for right most point
+            // search the curve of identification for right most point
             // whose x is smaller than p's x
             typename Identification::const_iterator
                 lower_bound,
@@ -1097,15 +1112,16 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
              curr_by == CGAL::ARR_TOP_BOUNDARY) ||
             (last_by == CGAL::ARR_TOP_BOUNDARY &&
              curr_by == CGAL::ARR_BOTTOM_BOUNDARY)) {
-            // "jumped over the line of discontinuity"
+            // "jumped over the curve of identification"
             std::swap(seg_smaller, seg_larger);
         }
 #endif
 #if 0
         if (curr->curve().get_level() != curr->next()->curve().get_level()) {
-            // "jumped over the line of discontinuity"
+            // "jumped over the curve of identification"
             std::swap(seg_smaller, seg_larger);
-            std::cout << "swap: less=" << seg_smaller << ", greater=" << seg_larger << std::endl;
+            std::cout << "swap: less=" << seg_smaller << ", greater=" 
+                      << seg_larger << std::endl;
         }
 #endif        
 
@@ -1163,8 +1179,8 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_in_face // open
 //-----------------------------------------------------------------------------
 // Determine whether the given face is unbounded.
 //
-template <class GeomTraits, class Dcel_>
-bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
+template < class GeomTraits, class Dcel_ >
+bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_unbounded
 (const Face *f) const
 {
     //std::cout << "Arr_qdx_topology_traits_2 is_unbounded"  << std::endl;
@@ -1206,27 +1222,22 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
         }
         //CGAL_assertion(this->_m_quadric.is_elliptic_paraboloid());
         
-        // check wether the face contains the singularity -> return false;
+        // check wether the face contains the contraction -> return false;
         // otherwise it contains a point at infinity -> return true;
 
-        // we use the perimetric path defined by the outer ccb
-        CGAL_assertion(_is_perimetric_path(first, first->next()));
-        Discontinuity_crossing leftmost;
-        std::pair< unsigned int, unsigned int > crossings =
-            _crossings_with_identification(first, NULL, leftmost);
-        // is perimetric test
-        CGAL_assertion((crossings.first + crossings.second) % 2 == 1);
+        Sign_of_path sign_of_path(this);
         
-        // and check how the leftmost crossing of the path crosses the line of
-        /// discontiuity
-        if (leftmost == BEFORE_TO_AFTER) { 
-            // the face is "on the left" side of the surfacs
-            return (_m_left == CGAL::ARR_UNBOUNDED);
-        } else {
-            CGAL_assertion(leftmost == AFTER_TO_BEFORE);
-            // the face is "on the rightt" side of the surfacs
+        CGAL::Sign sign = sign_of_path(first, first);
+        CGAL_assertion(sign != CGAL::ZERO);
+        
+        if (sign == CGAL::POSITIVE) {
             return (_m_right == CGAL::ARR_UNBOUNDED);
         }
+        CGAL_assertion(sign == CGAL::NEGATIVE);
+        return (_m_left == CGAL::ARR_UNBOUNDED);
+        
+
+
         
         /* NOT REACHED */
         CGAL_error();
@@ -1250,8 +1261,8 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_unbounded
 //-----------------------------------------------------------------------------
 // Determine whether a boundary vertex is redundant
 //
-template <class GeomTraits, class Dcel_>
-bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_redundant
+template < class GeomTraits, class Dcel_ >
+bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_redundant
 (const Vertex *v) const
 {
     //std::cout << "Arr_qdx_topology_traits_2 is_redundant"  << std::endl;
@@ -1266,8 +1277,8 @@ bool Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::is_redundant
 //-----------------------------------------------------------------------------
 // Determine whether a boundary vertex is redundant
 //
-template <class GeomTraits, class Dcel_>
-typename Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::Halfedge* 
+template < class GeomTraits, class Dcel_ >
+typename Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::Halfedge* 
 Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
 (Vertex *v) 
 {
@@ -1286,7 +1297,8 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
         // ensure that f_top is set to the correct one;
         if (!f_top->is_unbounded()) {
             // go over the DCEL faces and locate the unbounded face.
-            for (typename Dcel::Face_iterator fit = this->_m_dcel.faces_begin();
+            for (typename Dcel::Face_iterator fit = 
+                     this->_m_dcel.faces_begin();
                  fit != this->_m_dcel.faces_end(); ++fit) {
                 if (fit->is_unbounded()) {
                     this->f_top = &(*fit);
@@ -1296,7 +1308,7 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
         }
     }
 
-    // else v is a vertex on the line of discontinuity
+    // else v is a vertex on the curve of identification
     // unfortnunately no incident curve-end can give us the key
     // -> but we stored something else useful: find iterator
     typename Identification::iterator it =
@@ -1310,12 +1322,12 @@ Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::erase_redundant_vertex // open
 }
 
 /*! \brief Return the face that lies before the given vertex, which lies
- * on the line of discontinuity.
+ * on the curve of identification.
  */
-template <class GeomTraits, class Dcel>
-typename Arr_qdx_topology_traits_2<GeomTraits, Dcel>::Face *
+template < class GeomTraits, class Dcel >
+typename Arr_qdx_topology_traits_2< GeomTraits, Dcel >::Face *
 Arr_qdx_topology_traits_2<GeomTraits, Dcel>::
-_face_before_vertex_on_discontinuity (Vertex * v) const {
+_face_before_vertex_on_identification(Vertex * v) const {
     
     // If the vertex is isolated, just return the face that contains it.
     if (v->is_isolated()) {
@@ -1447,9 +1459,297 @@ _face_before_vertex_on_discontinuity (Vertex * v) const {
     }
 }
 
+//-----------------------------------------------------------------------------
+// Computes the sign of two halfedges approaching and leaving the boundary
+
+template <class GeomTraits, class Dcel_>
+CGAL::Sign 
+Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
+_sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
+
+    CGAL::Sign result = CGAL::ZERO;
+    
+    CGAL::Arr_curve_end end1 = 
+        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END);
+    
+    CGAL::Arr_curve_end end2 = 
+        (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+         CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+    
+    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        _m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        _m_traits->parameter_space_in_y_2_object();
+    
+    CGAL::Arr_parameter_space he1_psx =
+        parameter_space_in_x(he1->curve(), end1);
+
+    CGAL::Arr_parameter_space he1_psy =
+        parameter_space_in_y(he1->curve(), end1);
+    
+    CGAL::Arr_parameter_space he2_psx =
+        parameter_space_in_x(he2->curve(), end2);
+
+    CGAL::Arr_parameter_space he2_psy =
+        parameter_space_in_y(he2->curve(), end2);
+    
+    if (he1_psx == CGAL::ARR_INTERIOR &&
+        he1_psy == CGAL::ARR_INTERIOR &&
+        he2_psx == CGAL::ARR_INTERIOR &&
+        he2_psy == CGAL::ARR_INTERIOR) {
+        return result;
+    }
+
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+    std::cout << "he1: " << he1->curve() << std::endl;
+    std::cout << "dir1: " << he1->direction() << std::endl;
+    std::cout << "he2: " << he2->curve() << std::endl;
+    std::cout << "dir2: " << he2->direction() << std::endl;
+#endif
+    
+    if (he1_psx != CGAL::ARR_INTERIOR) {
+        // can influence pole
+        
+#if 0 // TODO check what to do for meeting at contraction or infinity
+        CGAL_assertion(he2_psx != CGAL::ARR_INTERIOR);
+        
+        CGAL::Object obj1 = 
+            he1->curve().curve().asymptotic_value_of_arc(
+                    he1_psx,
+                    he1->curve().arcno()
+            );
+        CGAL::Object obj2 = 
+            he2->curve().curve().asymptotic_value_of_arc(
+                    he1_psx,
+                    he2->curve().arcno()
+            );
+        
+        CGAL::Arr_parameter_space ps1, ps2;
+        
+        if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
+            if (ps1 != ps2) {
+                if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    // bottom to top
+                    result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShh:xp2" << std::endl;
+#endif
+                } else {
+                    // top to bottom
+                    result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShh:xn2" << std::endl;
+#endif
+                }
+            }
+        }
+#endif // END TODO
+    } else {
+        
+        CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
+        CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
+        
+        if (he1_psy != he2_psy) {
+            if (he1_psy == CGAL::ARR_BOTTOM_BOUNDARY) {
+                result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh:yp1" << std::endl;
+#endif
+            } else {
+                result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh::yn1" << std::endl;
+#endif
+            }
+        }
+    }
+    
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+    std::cout << "result: " << result << std::endl;
+#endif
+
+    return result;
+}
 
 //-----------------------------------------------------------------------------
-// Number of crossing with the line of discontiniuty
+// Computes the sign of a halfedge and a curve approaching and leaving the 
+// boundary
+
+template <class GeomTraits, class Dcel_>
+CGAL::Sign 
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
+_sign_of_subpath(const Halfedge* he1, 
+                 const X_monotone_curve_2& cv2,
+                 const CGAL::Arr_curve_end& end2) const {
+   
+    CGAL_assertion(!he1->has_null_curve());
+    
+    CGAL::Sign result = CGAL::EQUAL;
+    
+    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
+        _m_traits->parameter_space_in_x_2_object();
+    typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
+        _m_traits->parameter_space_in_y_2_object();
+    
+    // check whether cv can influence the counters
+    
+    CGAL::Arr_parameter_space ps_x = 
+        parameter_space_in_x(cv2, end2);
+    CGAL::Arr_parameter_space ps_y = 
+        parameter_space_in_y(cv2, end2);
+    
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+    if (ps_x != CGAL::ARR_INTERIOR || ps_y != CGAL::ARR_INTERIOR) {
+        std::cout << "he1: " << he1->curve() << std::endl;
+        std::cout << "dir1: " << he1->direction() << std::endl;
+        std::cout << "cv2: " << cv2 << std::endl;
+        std::cout << "end: " << end2 << std::endl;
+    }
+#endif
+    
+    CGAL::Arr_curve_end he1_trg_end =
+        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
+        );
+    
+    CGAL::Arr_parameter_space he1_trg_ps_x = 
+        parameter_space_in_x(he1->curve(), he1_trg_end);
+    CGAL::Arr_parameter_space he1_trg_ps_y = 
+        parameter_space_in_y(he1->curve(), he1_trg_end);
+    
+    if (he1_trg_ps_x != CGAL::ARR_INTERIOR) {
+        
+#if 0 // TODO check what to do for meeting at contraction or infinity
+        if (he1_trg_ps_x != ps_x) {
+            // possible jump over x
+
+            bool modify = true;
+            
+            // check next
+            if (he1->vertex()->halfedge() !=
+                he1->vertex()->halfedge()->opposite()->prev()) {
+                
+                const Halfedge* next1 = he1->next();
+                CGAL_assertion(!next1->has_null_curve());
+                
+                CGAL::Arr_curve_end next1_src_end =
+                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                
+                CGAL::Arr_parameter_space next1_src_ps_x = 
+                    parameter_space_in_x(next1->curve(), 
+                                         next1_src_end);
+                
+                CGAL_assertion(next1_src_ps_x != CGAL::ARR_INTERIOR);
+                
+                modify = (next1_src_ps_x != ps_x);
+            }
+            
+            if (modify) {
+                if (he1_trg_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
+                    result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShcv:xp1" << std::endl;
+#endif
+                } else {
+                    result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShcv:xn1" << std::endl;
+#endif
+                }
+            }
+
+        } else {
+            
+            CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
+
+            CGAL::Object obj1 = 
+                he1->curve().curve().asymptotic_value_of_arc(
+                        ps_x,
+                        he1->curve().arcno()
+                );
+            CGAL::Object obj2 = 
+                cv2.curve().asymptotic_value_of_arc(
+                        ps_x,
+                        cv2.arcno()
+                );
+            
+            CGAL::Arr_parameter_space ps1, ps2;
+            
+            if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
+                if (ps1 != ps2) {
+                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+                        // bottom to top
+                        result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                        std::cout << "SOShcv:xp2" << std::endl;
+#endif
+                    } else {
+                        // top to bottom
+                        result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                        std::cout << "SOShcv:xn2" << std::endl;
+#endif
+                    }
+                }
+            }
+        }
+#endif // END TODO
+    } else if (he1_trg_ps_y != CGAL::ARR_INTERIOR) {
+        
+        if (he1_trg_ps_y != ps_y) {
+            // possible jump over y
+
+            bool modify = true;
+            
+            // check next
+            if (he1->vertex()->halfedge() !=
+                he1->vertex()->halfedge()->opposite()->prev()) {
+                
+                const Halfedge* next1 = he1->next();
+                CGAL_assertion(!next1->has_null_curve());
+                
+                CGAL::Arr_curve_end next1_src_end =
+                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
+                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
+                
+                CGAL::Arr_parameter_space next1_src_ps_y = 
+                    parameter_space_in_y(next1->curve(), 
+                                         next1_src_end);
+                
+                CGAL_assertion(next1_src_ps_y != CGAL::ARR_INTERIOR);
+                
+                modify = (next1_src_ps_y != ps_y);
+            }
+            
+            if (modify) {
+                if (he1_trg_ps_y == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShcv:yp1" << std::endl;
+#endif
+                } else {
+                    result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                    std::cout << "SOShcv:yn1" << std::endl;
+#endif
+                }
+            }
+        }
+    }
+    
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+    std::cout << "result: " << result << std::endl;
+#endif
+
+    return result;
+}
+
+
+#if 0
+//-----------------------------------------------------------------------------
+// Number of crossing with the curve of identification
 //
 template <class GeomTraits, class Dcel_>
     std::pair< unsigned int, unsigned int >
@@ -1589,28 +1889,7 @@ _crossings_with_identification(
     return std::make_pair(n_crossings_after_to_before,
                           n_crossings_before_to_after);
 }
-
-//-----------------------------------------------------------------------------
-// Check whether the path between two halfedges is perimetric.
-//
-template <class GeomTraits, class Dcel_>
-bool
-Arr_qdx_topology_traits_2<GeomTraits,Dcel_>::_is_perimetric_path
-(const Halfedge *e1,
- const Halfedge *e2) const
-{
-    Discontinuity_crossing tmp;
-    std::pair< unsigned int, unsigned int > crossings;
-    // TODO check order
-    if (e1 == e2) {
-        crossings = _crossings_with_identification(e1, NULL, tmp);
-    } else {
-        crossings = _crossings_with_identification(e1, e2, tmp);
-    }
-    // return whether there has been an odd number of intersections
-    bool res = ((crossings.first + crossings.second) % 2 == 1);
-    return res;
-}
+#endif
 
 CGAL_END_NAMESPACE
 
