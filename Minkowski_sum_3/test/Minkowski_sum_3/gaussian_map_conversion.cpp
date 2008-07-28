@@ -9,6 +9,7 @@
 #include<CGAL/Nef_S2/SM_const_decorator.h>
 #include<CGAL/Minkowski_sum_3/Gaussian_map.h>
 #include<CGAL/Minkowski_sum_3/Gaussian_map_to_nef_3.h>
+#include<fstream>
 
 typedef CGAL::Gmpz RT;
 typedef CGAL::Homogeneous<RT> Kernel;
