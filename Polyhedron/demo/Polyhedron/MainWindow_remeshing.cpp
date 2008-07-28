@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <fstream>
 
+#include <CGAL/Cartesian.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
@@ -55,7 +56,7 @@ void MainWindow::on_actionRemeshing_triggered()
     const double sizing = 
       QInputDialog::getDouble(this, "Sizing",
       "Size:",
-      diag * 0.1, // default value
+      diag * 0.05, // default value
       diag * 10e-6, // min
       diag, // max
       4, // decimals
@@ -65,7 +66,7 @@ void MainWindow::on_actionRemeshing_triggered()
     const double approx = 
       QInputDialog::getDouble(this, "Approximation error",
       "Error:",
-      diag * 0.01, // default value
+      diag * 0.005, // default value
       diag * 10e-7, // min
       diag, // max
       6, // decimals
@@ -81,6 +82,7 @@ void MainWindow::on_actionRemeshing_triggered()
     QTime time;
     time.start();
     std::cout << "Build AABB tree...";
+    typedef CGAL::Simple_cartesian<double> Simple_cartesian_kernel; 
     typedef CGAL::AABB_tree<GT,Polyhedron::Facet_handle,Polyhedron> Tree;
     Tree tree;
     tree.build_faces(*pMesh);

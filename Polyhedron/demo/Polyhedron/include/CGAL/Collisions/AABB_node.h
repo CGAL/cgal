@@ -40,9 +40,7 @@ public:
 
   typedef typename PSC::Traits PSC_kernel;
   typedef typename PSC_kernel::Point_3 PSC_Point;
-  typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
-  typedef CGAL::Cartesian_converter<Kernel, PSC_kernel > BConverter;
-
+  //typedef CGAL::Cartesian_converter<PSC_kernel, Kernel > Converter;
 
 private:
 
@@ -90,9 +88,10 @@ private:
 
   Bbox compute_bbox(Input f)
   {
-    const Point& a = f->halfedge()->vertex()->point();
-    const Point& b = f->halfedge()->next()->vertex()->point();
-    const Point& c = f->halfedge()->next()->next()->vertex()->point();
+    // Converter convert;
+    const Point a = f->halfedge()->vertex()->point();
+    const Point b = f->halfedge()->next()->vertex()->point();
+    const Point c = f->halfedge()->next()->next()->vertex()->point();
     return a.bbox() + b.bbox() + c.bbox();
   }
 
@@ -104,7 +103,6 @@ private:
       bbox = bbox + compute_bbox(*a);
     return bbox;
   }
-
 
 public:
   // builds the tree by recursive expansion.
@@ -140,9 +138,10 @@ private:
 
   static Point centroid(Input f)
   {
-    const Point& a = f->halfedge()->vertex()->point();
-    const Point& b = f->halfedge()->next()->vertex()->point();
-    const Point& c = f->halfedge()->next()->next()->vertex()->point();
+    //Converter convert;
+    const Point a = f->halfedge()->vertex()->point();
+    const Point b = f->halfedge()->next()->vertex()->point();
+    const Point c = f->halfedge()->next()->next()->vertex()->point();
     // somehow CGAL::centroid does not compile
     Vector u = a - CGAL::ORIGIN;
     Vector v = b - CGAL::ORIGIN;
@@ -151,36 +150,32 @@ private:
   }
 
   template<typename Input_>
-  static bool lower_x(const Input_& i1,
-    const Input_& i2)
+  static bool lower_x(const Input_& i1, const Input_& i2)
   {
     return lower_x(i1,i2);
   }
+
   template<typename Input_>
-  static bool lower_y(const Input_& i1,
-    const Input_& i2)
+  static bool lower_y(const Input_& i1, const Input_& i2)
   {
     return lower_y(i1,i2);
   }
+
   template<typename Input_>
-  static bool lower_z(const Input_& i1,
-    const Input_& i2)
+  static bool lower_z(const Input_& i1, const Input_& i2)
   {
     return lower_z(i1,i2);
   }
 
-  static bool lower_x(const Input& f1,
-    const Input& f2)
+  static bool lower_x(const Input& f1, const Input& f2)
   {
     return centroid(f1).x() < centroid(f2).x();
   }
-  static bool lower_y(const Input& f1,
-    const Input& f2)
+  static bool lower_y(const Input& f1, const Input& f2)
   {
     return centroid(f1).y() < centroid(f2).y();
   }
-  static bool lower_z(const Input& f1,
-    const Input& f2)
+  static bool lower_z(const Input& f1, const Input& f2)
   {
     return centroid(f1).z() < centroid(f2).z();
   }
@@ -335,9 +330,10 @@ public:
 
   static Triangle triangle(Input f)
   {
-    const Point& a = f->halfedge()->vertex()->point();
-    const Point& b = f->halfedge()->next()->vertex()->point();
-    const Point& c = f->halfedge()->next()->next()->vertex()->point();
+    // Converter convert;
+    const Point a = f->halfedge()->vertex()->point();
+    const Point b = f->halfedge()->next()->vertex()->point();
+    const Point c = f->halfedge()->next()->next()->vertex()->point();
     return Triangle(a,b,c);
   }
 

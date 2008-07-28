@@ -23,12 +23,11 @@ public:
   typedef Self Surface_mesher_traits_3;
   typedef Point_3 Intersection_point;
   typedef Self Surface_3;
- // Visitor visitor;
-
 
   // AABB tree
   typedef AABB_tree<Kernel,typename Polyhedron::Facet_handle,Polyhedron> Tree;
   typedef typename Tree::Point_with_input Point_with_facet_handle;
+  // typedef CGAL::Cartesian_converter<Kernel,Tree_kernel> Converter;
   Tree *m_pTree;
 
 public:
@@ -49,9 +48,7 @@ public:
     m_pTree = oracle.tree();
   }
 
-
   class Intersect_3;
-
   friend class Intersect_3;
 
   class Intersect_3 {
@@ -63,6 +60,7 @@ public:
 
     Object operator()(const Surface_3& surface, const Segment_3& segment) const
     {
+      //Converter convert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(segment,pwh))
 	return make_object(pwh.first);
@@ -72,6 +70,7 @@ public:
     
     Object operator()(const Surface_3& surface, const Ray_3& ray) const
     {
+      //Converter convert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(ray,pwh))
 	return make_object(pwh.first);
@@ -81,6 +80,7 @@ public:
       
     Object operator()(const Surface_3& surface, const Line_3& line) const
     {
+      //Converter convert;
       Point_with_facet_handle pwh;
       if(surface.tree()->first_intersection(line,pwh))
 	return make_object(pwh.first);

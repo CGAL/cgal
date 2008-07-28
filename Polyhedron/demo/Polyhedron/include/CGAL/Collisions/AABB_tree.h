@@ -3,8 +3,6 @@
 
 #include <list>
 #include <stack>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include "AABB_node.h"
 #include "knn.h"
 
@@ -31,15 +29,11 @@ public:
 
   // types for K nearest neighbors search structure
   typedef CNeighbor_search<Kernel> Neighbor_search;
-  typedef typename Node::BConverter BConverter;
 
 private:
 
   // set of input primitives (halfedge or face handles)
   std::vector<Input> m_data;
-
-  // set of nodes
-  std::vector<Node> m_nodes;
 
   // single root node
   Node *m_root;
