@@ -183,7 +183,8 @@ public:
                   CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
                 );
             
-            DVertex * v = m_top_traits->discontinuity_vertex(event->point());
+            DVertex * v = 
+                m_top_traits->vertex_on_identification(event->point());
             
             Vertex_handle vh(v);
             
@@ -262,7 +263,7 @@ public:
     bool swap_predecessors(Event * event) const
     {
         // If we insert an edge whose right end has boundary condition
-        // before the curve of discontinuity 
+        // before the curve of identification
         // have to flip the order of predecessor halfegdes.
         return (event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
                 event->parameter_space_in_y() == CGAL::ARR_RIGHT_BOUNDARY);
