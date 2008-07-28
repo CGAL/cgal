@@ -25,7 +25,7 @@ public:
 
 
 template <class List, class Traits>
-bool compare_lists(const List& list1, const List& list2, Traits& tr)
+  bool compare_lists(const List& list1, const List& list2, Traits& /*tr*/)
 {
   typedef typename List::const_iterator  Iter;
   Iter begin1 = list1.begin();
