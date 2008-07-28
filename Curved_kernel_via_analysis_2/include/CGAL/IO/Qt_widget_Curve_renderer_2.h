@@ -36,7 +36,7 @@ Qt_widget& operator << (Qt_widget& ws, const CGALi::Arc_2< CKvA_2 >& arc) {
     typedef std::pair< int, int > Coord_2;
     typedef std::vector< Coord_2 > Coord_vec_2;
 
-    CGAL::Twotuple< Coord_2 > end_points;
+    boost::array< Coord_2, 2 > end_points;
     std::list<Coord_vec_2> points;
    
     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
