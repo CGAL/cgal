@@ -9,6 +9,7 @@
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de  
 //                 Ralf Schindlbeck <rschindl@mpi-inf.mpg.de>
+//                 Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
 
@@ -264,8 +265,10 @@ struct Normalized_angle {
         // wrap around the base angle to [0..360) range 
         tmp = BaseAngle % 360,
         modulo = tmp + (tmp < 0 ? 360 : 0),
-        angle = ((modulo % 15) == 0 ? 15 : (modulo % 18) == 0 ? 18 : 
-                (modulo % 3) == 0 ? 3 : -1)
+        angle = ((modulo % 45) == 0 ? 45 :
+                 (modulo % 30) == 0 ? 30 :
+                 (modulo % 15) == 0 ? 15 : (modulo % 18) == 0 ? 18 : 
+                 (modulo % 3) == 0 ? 3 : -1)
     };    
 };
 
@@ -319,8 +322,8 @@ public:
     void operator()(Extended_rational& esine, Extended_rational& ecosine,
          Extended_rational& ezero, int& angle) {
         
-        if(angle % 3) // nearest angle divisible by 3
-            angle = (((2*angle+3) / 6) * 3) % 360;
+        if(angle % 3) 
+            CGAL_error_msg("angle is not a multiple of 3");
 
         int angle_help = angle, sign = 1;
         
@@ -539,8 +542,8 @@ public:
     void operator()(Extended_rational& esine, Extended_rational& ecosine,
          Extended_rational& ezero, int& angle) {
         
-        if(angle % 15) // nearest angle divisible by 15
-            angle = (((2*angle + 15) / 30) * 15) % 360;
+        if(angle % 15) 
+            CGAL_error_msg("angle is not a multiple of 15");
 
         int angle_help = angle, sign = 1;
         if(angle_help >= 180) {
@@ -616,8 +619,8 @@ public:
     void operator()(Extended_rational& esine, Extended_rational& ecosine,
          Extended_rational& ezero, int& angle) {
         
-        if(angle % 18) // nearest angle divisible by 3
-            angle = (((angle + 9) / 18) * 18) % 360;
+        if(angle % 18) 
+            CGAL_error_msg("angle is not a multiple of 18");
 
         int angle_help = angle, sign = 1;
         if(angle_help >= 180) {
@@ -657,6 +660,136 @@ public:
                   EXT3i_int(EXT2_int(Integer(10),Integer(-2),Integer(5)),
                         EXT2_int(Integer(0),Integer(0),Integer(5)),
                         EXT2_int(Integer(10),Integer(2),Integer(5))));
+        if(sign == -1) {
+            esine = -esine;
+            ecosine = -ecosine;
+        }
+    }
+    //!@}
+};
+
+/*!\brief
+ * Rotation kernel for angles which are multiple of 30 degrees
+ */
+template <class AlgebraicCurveKernel_2>
+struct Rotation_traits_base<AlgebraicCurveKernel_2, 30> {
+
+    typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
+
+    typedef typename CGAL::Get_arithmetic_kernel<
+        typename Algebraic_curve_kernel_2::Boundary>::Arithmetic_kernel
+            Arithmetic_kernel;    
+
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
+
+private:
+    typedef CGAL::Sqrt_extension<Rational, Integer> EXT2; //root(3)
+    typedef CGAL::Sqrt_extension<Integer, Integer> EXT2_int; 
+
+public:
+    typedef EXT2 Extended_rational;
+
+    typedef typename CGAL::Fraction_traits<Extended_rational>::Numerator_type
+        Extended_coefficient;
+
+    //! bivaritate polynomial over integers 
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2 Poly_int_2;
+    //! univariate polynomial over sqrts
+    typedef CGAL::Polynomial<Extended_coefficient> Poly_ext_1;
+    //! bivaritate polynomial over sqrts
+    typedef CGAL::Polynomial<Poly_ext_1> Poly_ext_2;
+
+    //!\name functor invokation
+    //!@{    
+
+    // computes rotation angles
+    void operator()(Extended_rational& esine, Extended_rational& ecosine,
+         Extended_rational& ezero, int& angle) {
+        
+        if(angle % 30) 
+            CGAL_error_msg("angle is not a multiple of 30");
+
+        int angle_help = angle, sign = 1;
+        if(angle_help >= 180) {
+            sign = -1;
+            angle_help -= 180;
+        }
+
+        _Packed<Rational> t;
+        _15_degree_selector<Rational>(t, angle_help);
+
+        esine = EXT2(t.a1_sine,t.a2_sine,Integer(3)); 
+
+        ecosine = EXT2(t.a1_cosine,t.a2_cosine, Integer(3));
+
+        ezero = EXT2(Rational(0),Rational(0),Integer(3));
+
+        if(sign == -1) {
+            esine = -esine;
+            ecosine = -ecosine;
+        }
+    }
+    //!@}
+};
+
+/*!\brief
+ * Rotation kernel for angles which are multiple of 45 degrees
+ */
+template <class AlgebraicCurveKernel_2>
+struct Rotation_traits_base<AlgebraicCurveKernel_2, 45> {
+
+    typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
+
+    typedef typename CGAL::Get_arithmetic_kernel<
+        typename Algebraic_curve_kernel_2::Boundary>::Arithmetic_kernel
+            Arithmetic_kernel;    
+
+    typedef typename Arithmetic_kernel::Integer Integer;
+    typedef typename Arithmetic_kernel::Rational Rational;
+
+private:
+    typedef CGAL::Sqrt_extension<Rational, Integer> EXT2; //root(2)
+    typedef CGAL::Sqrt_extension<Integer, Integer> EXT2_int; 
+
+public:
+    typedef EXT2 Extended_rational;
+
+    typedef typename CGAL::Fraction_traits<Extended_rational>::Numerator_type
+        Extended_coefficient;
+
+    //! bivaritate polynomial over integers 
+    typedef typename Algebraic_curve_kernel_2::Polynomial_2 Poly_int_2;
+    //! univariate polynomial over sqrts
+    typedef CGAL::Polynomial<Extended_coefficient> Poly_ext_1;
+    //! bivaritate polynomial over sqrts
+    typedef CGAL::Polynomial<Poly_ext_1> Poly_ext_2;
+
+    //!\name functor invokation
+    //!@{    
+
+    // computes rotation angles
+    void operator()(Extended_rational& esine, Extended_rational& ecosine,
+         Extended_rational& ezero, int& angle) {
+        
+        if(angle % 45) 
+            CGAL_error_msg("angle is not a multiple of 45");
+
+        int angle_help = angle, sign = 1;
+        if(angle_help >= 180) {
+            sign = -1;
+            angle_help -= 180;
+        }
+
+        _Packed<Rational> t;
+        _15_degree_selector<Rational>(t, angle_help);
+
+        esine = EXT2(t.a1_sine,t.b1_sine,Integer(2)); 
+
+        ecosine = EXT2(t.a1_cosine,t.b1_cosine, Integer(2));
+
+        ezero = EXT2(Rational(0),Rational(0),Integer(2));
+
         if(sign == -1) {
             esine = -esine;
             ecosine = -ecosine;
