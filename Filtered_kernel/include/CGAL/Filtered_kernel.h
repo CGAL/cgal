@@ -119,14 +119,6 @@ struct Filtered_kernel
                    Filtered_kernel<CK> > >
 {};
 
-
-// The following is only kept for backward compatibility.
-#ifndef CGAL_NO_DEPRECATED_CODE
-template < typename CK >
-struct Filtered_kernel_without_type_equality
-  : public Filtered_kernel_adaptor <CK> {};
-#endif
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FILTERED_KERNEL_H
