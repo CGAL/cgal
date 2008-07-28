@@ -15,6 +15,8 @@
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Qt/GraphicsViewInput.h>
 
+#include <CGAL/array.h>
+
 namespace CGAL {
 namespac Qt {
 
@@ -96,7 +98,7 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
       r = convert(qr);
       typename K::Collinear_2 collinear;
       if(! collinear(p,q,r)){
-	emit generate(CGAL::make_object(CGAL::Triple<Point_2, Point_2, Point_2>(p,q,r)));
+	emit generate(CGAL::make_object(make_array(p,q,r)));
 	count = 0;
       }
     }
