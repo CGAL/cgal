@@ -41,13 +41,15 @@ void Viewer::draw_aux(bool with_names)
   {
     ::glEnable(GL_BLEND);
     ::glEnable(GL_LINE_SMOOTH);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+//     ::glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+    ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else
   {
     ::glDisable(GL_BLEND);
     ::glDisable(GL_LINE_SMOOTH);
+    ::glDisable(GL_POLYGON_SMOOTH_HINT);
     ::glBlendFunc(GL_ONE, GL_ZERO);
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
