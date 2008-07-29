@@ -37,7 +37,8 @@ public:
     Exponent_vector(const Exponent_vector& x): Base ( x ){};
 
     template <class InputIterator>
-    Exponent_vector(InputIterator, InputIterator){
+    Exponent_vector(InputIterator begin , InputIterator end)
+        :Base(begin,end){
         typedef typename InputIterator::value_type value_type;
         BOOST_STATIC_ASSERT(( ::boost::is_same<value_type, int>::value));
     }
