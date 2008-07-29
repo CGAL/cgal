@@ -22,10 +22,8 @@ int main( )
   Edge_iterator eit =T.edges_begin();
   for ( ; eit !=T.edges_end(); ++eit) {
     CGAL::Object o = T.dual(eit);
-    K::Segment_2 s;
-    K::Ray_2     r;
-    if (CGAL::assign(s,o)) {++ns;}
-    if (CGAL::assign(r,o)) {++nr;}
+    if (CGAL::object_cast<K::Segment_2>(&o)) {++ns;}
+    else if (CGAL::object_cast<K::Ray_2>(&o)) {++nr;}
   }
   std::cout << "The Voronoi diagram has " << ns << " finite edges "
 	    << " and " << nr << " rays" << std::endl;
