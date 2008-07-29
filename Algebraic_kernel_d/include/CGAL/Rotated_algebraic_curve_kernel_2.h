@@ -191,7 +191,7 @@ void _18_degree_selector(_Packed<Rational>& t, int angle) {
             //, also equals sin(216)=(-1)*(1/4*sqrt(10-2*sqrt(5)))
             //cos(36)=1/4+1/4*sqrt(5)
             //, also equals cos(216)=(-1)*(1/4+1/4*sqrt(5))
-            t.a3_sine = Rational(1,4);
+            t.a2_sine = Rational(-1,8), t.b2_sine = Rational(1,8);
             t.a1_cosine = Rational(1,4), t.b1_cosine = Rational(1,4);
             break;
         case 54:
@@ -200,7 +200,7 @@ void _18_degree_selector(_Packed<Rational>& t, int angle) {
             //cos(54)=1/4*sqrt(10-2*sqrt(5))
             //, also equals cos(234)=(-1)*(1/4*sqrt(10-2*sqrt(5)))
             t.a1_sine = Rational(1,4), t.b1_sine = Rational(1,4);
-            t.a3_cosine = Rational(1,4);
+            t.a2_cosine = Rational(-1,8), t.b2_cosine = Rational(1,8);
             break;
         case 72:
             //sin(72)=1/4*sqrt(10+2*sqrt(5))
@@ -228,17 +228,17 @@ void _18_degree_selector(_Packed<Rational>& t, int angle) {
         case 126:
             //sin(126)=1/4+1/4*sqrt(5)
             //, also equals sin(306)=(-1)*(1/4+1/4*sqrt(5))
-            //cos(126)=-1/4*sqrt(10-2*sqrt(5))
+            //cos(126)=1/8*sqrt(10+2*sqrt(5))-1/8*sqrt(10+2*sqrt(5))*sqrt(5)
             //, also equals cos(306)=(-1)*(-1/4*sqrt(10-2*sqrt(5)))
             t.a1_sine = Rational(1,4); t.b1_sine = Rational(1,4);
-            t.a3_cosine = Rational(-1,4);
+            t.a2_cosine = Rational(1,8), t.b2_cosine=Rational(-1,8);
             break;
         case 144:
-            //sin(144)=1/4*sqrt(10-2*sqrt(5))
+            //sin(144)=-1/8*sqrt(10+2*sqrt(5))+1/8*sqrt(10+2*sqrt(5))*sqrt(5)
             //, also equals sin(324)=(-1)*(1/4*sqrt(10-2*sqrt(5)))
             //cos(144)=-1/4-1/4*sqrt(5)
             //, also equals cos(324)=(-1)*(-1/4-1/4*sqrt(5))
-            t.a3_sine = Rational(1,4);
+            t.a2_sine = Rational(-1,8), t.b2_sine = Rational(1,8);
             t.a1_cosine = Rational(-1,4), t.b1_cosine = Rational(-1,4);
             break;
         case 162:
@@ -597,10 +597,9 @@ private:
 
     typedef CGAL::Sqrt_extension<EXT2_int, EXT2_int> EXT3i_int; 
     typedef CGAL::Sqrt_extension<EXT2, EXT2_int> EXT3i; //root(10+2*root(5))
-    typedef CGAL::Sqrt_extension<EXT3i, EXT3i_int> EXT4i; //root(10-2*root(5))
-
+    
 public:
-    typedef EXT4i Extended_rational;
+    typedef EXT3i Extended_rational;
 
     typedef typename CGAL::Fraction_traits<Extended_rational>::Numerator_type
         Extended_coefficient;
@@ -631,35 +630,18 @@ public:
         _Packed<Rational> t;
         _18_degree_selector<Rational>(t, angle_help);
 
-        esine = EXT4i(EXT3i(EXT2(t.a1_sine, t.b1_sine, Integer(5)),
-                           EXT2(t.a2_sine, t.b2_sine, Integer(5)),
-                           EXT2_int(Integer(10),Integer(2),Integer(5))),
-                    EXT3i(EXT2(t.a3_sine,Rational(0),Integer(5)),
-                            EXT2(Rational(0),Rational(0),Integer(5)),
-                            EXT2_int(Integer(10),Integer(2),Integer(5))),
-                    EXT3i_int(EXT2_int(Integer(10),Integer(-2),Integer(5)),
-                            EXT2_int(Integer(0),Integer(0),Integer(5)),
-                            EXT2_int(Integer(10),Integer(2),Integer(5))));
+        esine = EXT3i(EXT2(t.a1_sine, t.b1_sine, Integer(5)),
+                      EXT2(t.a2_sine, t.b2_sine, Integer(5)),
+                      EXT2_int(Integer(10),Integer(2),Integer(5)));
+                    
+        ecosine = EXT3i(EXT2(t.a1_cosine, t.b1_cosine, Integer(5)),
+                        EXT2(t.a2_cosine, t.b2_cosine, Integer(5)),
+                        EXT2_int(Integer(10),Integer(2),Integer(5)));
 
-        ecosine = EXT4i(EXT3i(EXT2(t.a1_cosine, t.b1_cosine, Integer(5)),
-                             EXT2(t.a2_cosine, t.b2_cosine, Integer(5)),
-                            EXT2_int(Integer(10),Integer(2),Integer(5))),
-                      EXT3i(EXT2(t.a3_cosine, Rational(0),Integer(5)),
-                            EXT2(Rational(0),Rational(0),Integer(5)),
-                            EXT2_int(Integer(10),Integer(2),Integer(5))),
-                      EXT3i_int(EXT2_int(Integer(10),Integer(-2),Integer(5)),
-                            EXT2_int(Integer(0),Integer(0),Integer(5)),
-                            EXT2_int(Integer(10),Integer(2),Integer(5))));
+        ezero = EXT3i(EXT2(Rational(0),Rational(0),Integer(5)),
+                      EXT2(Rational(0),Rational(0),Integer(5)),
+                      EXT2_int(Integer(10),Integer(2),Integer(5)));
 
-        ezero = EXT4i(EXT3i(EXT2(Rational(0),Rational(0),Integer(5)),
-                        EXT2(Rational(0),Rational(0),Integer(5)),
-                        EXT2_int(Integer(10),Integer(2),Integer(5))),
-                  EXT3i(EXT2(Rational(0),Rational(0),Integer(5)),
-                        EXT2(Rational(0),Rational(0),Integer(5)),
-                        EXT2_int(Integer(10),Integer(2),Integer(5))),
-                  EXT3i_int(EXT2_int(Integer(10),Integer(-2),Integer(5)),
-                        EXT2_int(Integer(0),Integer(0),Integer(5)),
-                        EXT2_int(Integer(10),Integer(2),Integer(5))));
         if(sign == -1) {
             esine = -esine;
             ecosine = -ecosine;
