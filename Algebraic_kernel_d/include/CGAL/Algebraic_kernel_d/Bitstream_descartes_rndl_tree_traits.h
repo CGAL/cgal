@@ -149,7 +149,8 @@ public:
         while(CGAL::zero_in(ptr->polynomial_approx[i])){
           ptr->refine_approximation();
         }             
-        typename CGALi::Real_embeddable_extension<BFI>::Floor_log2_abs floor_log2_abs;
+        typename CGALi::Real_embeddable_extension<BFI>::Floor_log2_abs 
+            floor_log2_abs;
         return floor_log2_abs(ptr->polynomial_approx[i]);
       }
     }; 
@@ -159,11 +160,12 @@ public:
         
         Upper_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
         
-        bool initial_upper_bound(int i, long& upper_log, bool& is_certainly_zero){
+        bool initial_upper_bound(int i,long& upper_log, bool& is_certainly_zero){
             is_certainly_zero = CGAL::is_zero(ptr->polynomial[i]);
             if (is_certainly_zero) return true;
  
-            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs ceil_log2_abs;
+            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs
+                ceil_log2_abs;
             upper_log = ceil_log2_abs(ptr->polynomial_approx[i]);
             return true;
         }
@@ -184,7 +186,8 @@ public:
         Integer operator() (int i, long p) { 
 #if 1
           //std::cout << " Approximator begin  " << "Precision: " << p << std::flush;
-            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs ceil_log2_abs;
+            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs 
+                ceil_log2_abs;
             typename CGALi::Float_traits<BF>::Get_exponent get_exp;
             typename CGALi::Float_traits<BF>::Get_mantissa get_m;
             
@@ -195,13 +198,15 @@ public:
               return Integer(0);
             }
             //get position of first wrong bit
-            long wbit   = ceil_log2_abs(approx) - CGAL::get_significant_bits(approx)+p;
+            long wbit   = ceil_log2_abs(approx) - 
+                CGAL::get_significant_bits(approx)+p;
              // approx until pos of first wrong bit is negative
             while( wbit >= -5 && ! CGAL::singleton(approx) ){
 
                 ptr->refine_approximation();
                 approx = ptr->polynomial_approx[i]; 
-                wbit   = ceil_log2_abs(approx) - CGAL::get_significant_bits(approx) + p;
+                wbit   = ceil_log2_abs(approx) - 
+                    CGAL::get_significant_bits(approx) + p;
             }  
             BF lower = CGAL::lower(approx); // could take upper also 
             long shift = - (p + get_exp(lower)); 
