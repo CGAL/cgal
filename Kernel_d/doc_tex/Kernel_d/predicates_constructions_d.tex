@@ -75,7 +75,7 @@ assignments, so that you can put them in lists or arrays. Note that
 Therefore, there is no automatic conversion from these classes to
 \ccc{Object} Rather this is done with the global function
 \ccc{make_object()}. This encapsulation mechanism requires the use of
-\ccc{assign} to unwrap the encapsulated class.
+\ccc{object_cast} to unwrap the encapsulated class.
 
 \ccExample 
 In the following example, the object type is used as a return value for
@@ -83,14 +83,15 @@ the \ccHtmlNoLinksFrom{intersection} computation, as there are
 possibly different return values.
 \ccHtmlLinksOff%
 \begin{cprog}
-  Point_d< Cartesian_d<double> > p;
-  Segment_d< Cartesian_d<double> > s, s1, s2;
+  typedef Point_d< Cartesian_d<double> >    Point;
+  typedef Segment_d< Cartesian_d<double> >  Segment;
+  Segment s1, s2;
   std::cin >> s1 >> s2;
   Object obj = intersection(s1, s2);
-  if ( assign(p, obj) ) {
-    /* do something with p */
-  } else if ( (assign(s, obj) ) {
-    /* do something with s */
+  if (const Point *p = object_cast<Point>(&obj) ) {
+    /* do something with *p */
+  } else if (const Segment *s = object_cast<Segment>(&obj) ) {
+    /* do something with *s */
   }
   /*  there was no intersection */
 \end{cprog}
