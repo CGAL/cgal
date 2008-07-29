@@ -51,11 +51,11 @@ protected:
 
 protected:
   QPolygonF polygon;
+  bool closed_;
 
 private:
   QGraphicsPathItem *path_item;
   QGraphicsLineItem *b, *e;
-  bool closed_;
   int n_;
   QPointF sp;
   QGraphicsScene *scene_;
@@ -75,6 +75,9 @@ protected:
     std::list<typename K::Point_2> points;
     Converter<K> convert;
     convert(points, this->polygon); 
+    if(closed_){
+      points.push_back(points.front());
+    }
     emit(generate(CGAL::make_object(points)));
   }
 }; // end class GraphicsViewPolylineInput
