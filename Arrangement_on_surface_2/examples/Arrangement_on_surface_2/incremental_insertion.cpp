@@ -47,7 +47,7 @@ int main ()
   CGAL::Object   obj = pl.locate (q);
   
   Arrangement_2::Face_const_handle  f;
-  bool           success = CGAL::assign (f, obj);
+  CGAL_assertion_code (bool           success =) CGAL::assign (f, obj);
 
   CGAL_assertion (success);
   std::cout << "The query point (" << q << ") is located in: ";
