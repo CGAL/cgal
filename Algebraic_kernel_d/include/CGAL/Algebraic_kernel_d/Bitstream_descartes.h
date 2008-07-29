@@ -88,14 +88,17 @@ private: // member
 public:
     Bitstream_descartes(): number_of_real_roots_(-1),polynomial_(0){};
     
-    Bitstream_descartes(const Polynomial& poly): number_of_real_roots_(-1), polynomial_(poly) {
+    Bitstream_descartes(const Polynomial& poly)
+        : number_of_real_roots_(-1), polynomial_(poly) {
         if(polynomial_ == Polynomial(0)) return; 
         
 
         typedef typename Tree::TRAITS Traits;  
         Traits traits(poly);
-        typename Traits::Lower_bound_log2_abs lbd = traits.lower_bound_log2_abs_object();
-        typename Traits::Upper_bound_log2_abs ubd = traits.upper_bound_log2_abs_object();
+        typename Traits::Lower_bound_log2_abs lbd = 
+            traits.lower_bound_log2_abs_object();
+        typename Traits::Upper_bound_log2_abs ubd = 
+            traits.upper_bound_log2_abs_object();
     
         Tree tree(
                 Fujiwara_root_bound_log(traits.begin(),traits.end(),lbd,ubd)+1,
