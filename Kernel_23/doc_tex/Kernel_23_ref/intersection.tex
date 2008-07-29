@@ -338,25 +338,21 @@ The following example demonstrates the most common use of
 
 void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
 {
-    CGAL::Object result;
-    CGAL::Point_2<Kernel> ipoint;
-    CGAL::Segment_2<Kernel> iseg;
-
-    result = CGAL::intersection(seg, line);
-    if (CGAL::assign(ipoint, result)) {
+    CGAL::Object result = CGAL::intersection(seg, line);
+    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
 \end{verbatim}%
 \ccHtmlLinksOff%
 \begin{verbatim}
-        // handle the point intersection case.
+        // handle the point intersection case with *ipoint.
 \end{verbatim}%
 \ccHtmlLinksOn%
 \begin{verbatim}
     } else
-        if (CGAL::assign(iseg, result)) {
+        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
 \end{verbatim}%
 \ccHtmlLinksOff%
 \begin{verbatim}
-            // handle the segment intersection case.
+            // handle the segment intersection case with *iseg.
 \end{verbatim}%
 \ccHtmlLinksOn%
 \begin{verbatim}
