@@ -7,6 +7,7 @@
 #include<CGAL/convex_decomposition_3.h>
 #include<CGAL/Nef_3/Nary_union.h>
 #include<CGAL/Nef_3/SNC_indexed_items.h>
+#include<fstream>
 
 typedef CGAL::Gmpz RT;
 typedef CGAL::Homogeneous<RT> Kernel;
@@ -46,13 +47,9 @@ void check_decomposition(Nef_polyhedron_3& N)
   CGAL_assertion(nu.get_union().symmetric_difference(N).is_empty());
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   Nef_polyhedron_3 N;
-  if(argc == 1) {
-    std::ifstream in("star.nef3");
-    in >> N;
-  } else
-    std::cin >> N;
+  std::cin >> N;
   check_decomposition(N);
 }
