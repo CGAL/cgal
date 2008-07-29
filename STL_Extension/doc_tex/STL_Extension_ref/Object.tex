@@ -2,7 +2,6 @@
 
 \ccInclude{CGAL/Object.h}
 
-
 \ccDefinition  
 Some functions can return different types of objects. A typical
 \CC\ solution to this problem is to derive all possible return
@@ -18,6 +17,8 @@ automatic conversion from these classes to \ccRefName. Rather
 this is done with the global function \ccc{make_object}. This 
 encapsulation mechanism requires the use of \ccc{assign} or
 \ccc{object_cast} to use the functionality of the encapsulated class.
+
+This class is similar in spirit to \ccc{boost::any}.
 
 \ccCreation
 \ccCreationVariable{obj}
@@ -104,7 +105,7 @@ In the following example, the object class is used as return value for the
 
 
 \medskip
-Another way to access the object is to use \ccc{object_cast},
+A more efficient way to access the object is to use \ccc{object_cast},
 which allows to skip a default construction and assignment :
 
 \begin{cprog}
@@ -166,9 +167,5 @@ Object intersection(Segment_2<Kernel> s1, Segment_2<Kernel> s2)
     return Object();
 }
 \end{cprog} 
-
-\ccSeeAlso
-\ccRefConceptPage{Kernel::Object_2}\\
-\ccRefConceptPage{Kernel::Object_3}\\
 
 \end{ccRefClass} 

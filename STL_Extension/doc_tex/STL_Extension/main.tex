@@ -25,7 +25,8 @@ uses three-valued comparisons and offers additional functionality,
 generic algorithms, iterators, functor adaptors for binding and swapping
 arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
-Chapter~\ref{chapterCirculators}.
+Chapter~\ref{chapterCirculators}.  A class storing polymorphic objects
+is also provided.
 
 \section{Doubly-Connected List Managing Items in Place}
 
@@ -103,3 +104,11 @@ the set given its {\em exact} position (and not just using an insertion hint);
 looking up keys whose type may differ from \ccc{Type}, as long as users supply
 a comparison functor \ccc{CompareKey}, between the keys and set elements;
 and catenating and splitting sets.
+
+\section{Polymorphic Object}
+
+The class \ccStyle{Object} can store an object of whatever other type.
+It can be used by a function to return objects of different types.
+A mechanism to extract the stored object based on its type is also provided.
+This class is similar to \ccc{boost::any}.
+
