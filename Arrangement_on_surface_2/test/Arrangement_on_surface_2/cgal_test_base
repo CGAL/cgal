@@ -1010,23 +1010,22 @@ touch $ERRORFILE
 #---------------------------------------------------------------------#
 #                    compile and run the tests
 #---------------------------------------------------------------------#
-if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-    configure
+# if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+#     configure
     
-    if [ $# -ne 1 ] ; then
+#     if [ $# -ne 1 ] ; then
+#     for file in $* ; do
+# 	if [ "$*" != "-cmake" ] ; then
+# 	    compile_and_run $file
+# 	fi
+#     done
+#     fi
+# else
+if [ $# -ne 0 ] ; then
     for file in $* ; do
-	if [ "$*" != "-cmake" ] ; then
-	    compile_and_run $file
-	fi
+	compile_and_run $file
     done
-    fi
 else
-    if [ $# -ne 0 ] ; then
-	for file in $* ; do
-	    compile_and_run $file
-	done
-    fi
-fi
     echo "Run all tests."
 
 #     if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
@@ -1080,3 +1079,4 @@ fi
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE
     cat $FULL_ERROR_DESCRIPTION_FILE >> $ERRORFILE
+fi
