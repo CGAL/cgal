@@ -22,7 +22,7 @@ typedef CGAL::Object Object;
 
 int main()
 {
-  CGAL::Lazy_exact_nt<CGAL::Gmpq> nt;
+  CGAL::Lazy_exact_nt<CGAL::Gmpq> nt = 1;
   nt = nt + nt * nt;
 
   K::Intersect_with_iterators_2 iwi;
@@ -37,7 +37,7 @@ int main()
   intersect(s1, s2, std::back_inserter(intersections));
   for(std::list<CGAL::Object>::iterator it = intersections.begin(); it != intersections.end(); it++){
     if(const Point_2 *ip = CGAL::object_cast<Point_2>(&*it)){
-      std::cout << "intersection at " << ip << std::endl;
+      std::cout << "intersection at " << *ip << std::endl;
     }
   }
 
@@ -59,11 +59,10 @@ int main()
   Segment_2 s4(Point_2(1,0), Point_2(1,2));
 
   CGAL::Object o = intersection(s3,s4);
-  Point_2 rp;
 
-  if(CGAL::assign(rp, o)){
+  if(const Point_2 *rp = CGAL::object_cast<Point_2>(&o)){
     std::cout << "Intersection is a point:" << std::endl;
-    std::cout << rp;
+    std::cout << *rp;
   }
 
 
