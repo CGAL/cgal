@@ -24,8 +24,16 @@ int main() {
     assert(!(ev2 < ev1)) ; 
     assert( (ev2 > ev1)) ;  
     
-    
     assert(CGAL::is_valid(ev1));
+
+    std::vector<int> vec;
+    vec.push_back(0); vec.push_back(1); vec.push_back(5); 
+    
+    ev1 = CGAL::Exponent_vector(vec.begin(),vec.end());
+    assert(ev1[0] == 0);  
+    assert(ev1[1] == 1);  
+    assert(ev1[2] == 5);
+   
     
     return 0;
 }
