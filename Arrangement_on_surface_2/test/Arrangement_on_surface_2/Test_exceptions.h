@@ -55,11 +55,14 @@ std::map<Violation_type,std::string> violation_map;
 
 //Indicates whether the end-of-line has been printed
 bool end_of_line_printed;
+
 //indicates to run only one error test or run all the tests
 bool abort_on_error;
+
 //indicates if precondition or postcondition or 
 //assertion or warning violation is tested
 Violation_type violation_tested;
+
 //indicates if precondition or postcondition or 
 //assertion or warning is violated
 Violation_type violation_occurred;
@@ -149,29 +152,29 @@ void failure_handler(const char * type, const char * expr, const char * file,
     global_lib=tmp.substr(0,loc+1);
     global_file=tmp.substr(loc+1);
   }
-  global_type=std::string(( !type ? "" : type ));
-  global_expr=std::string(( !expr ? "" : expr ));
-  global_line=line;
-  global_msg=std::string(( !msg ? "" : msg ));
+  global_type = std::string(( !type ? "" : type ));
+  global_expr = std::string(( !expr ? "" : expr ));
+  global_line = line;
+  global_msg = std::string(( !msg ? "" : msg ));
   if (!global_type.compare("precondition"))
   {
-    violation_occurred=PRECONDITION;
-    throw_exceptions(violation_tested==PRECONDITION);
+    violation_occurred = PRECONDITION;
+    throw_exceptions(violation_tested == PRECONDITION);
   }
   else if (!global_type.compare("postcondition"))
   {
-    violation_occurred=POSTCONDITION;
-    throw_exceptions(violation_tested==POSTCONDITION);
+    violation_occurred = POSTCONDITION;
+    throw_exceptions(violation_tested == POSTCONDITION);
   }
   else if (!global_type.compare("assertion"))
   {
-    violation_occurred=ASSERTION;
-    throw_exceptions(violation_tested==ASSERTION);
+    violation_occurred = ASSERTION;
+    throw_exceptions(violation_tested == ASSERTION);
   }
   else if (!global_type.compare("warning"))
   {
-    violation_occurred=WARNING;
-    throw_exceptions(violation_tested==WARNING);
+    violation_occurred = WARNING;
+    throw_exceptions(violation_tested == WARNING);
   }
 }
 
