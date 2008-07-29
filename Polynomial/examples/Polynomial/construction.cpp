@@ -44,9 +44,10 @@ int main(){
   std::cout << "The bivariate polynomial G: " << G << std::endl;
   
   //construction using shift 
-  Poly_2 x = PT_2::Shift()(Poly_2(1),1,0); // 'multiply' 1 by x_0^1
-  Poly_2 y = PT_2::Shift()(Poly_2(1),1,1); // 'multiply' 1 by x_1^1
+  PT_2::Shift shift;
+  Poly_2 x = shift(Poly_2(1),1,0); // 'multiply' 1 by x_0^1
+  Poly_2 y = shift(Poly_2(1),1,1); // 'multiply' 1 by x_1^1
   
-  Poly_2 H = 5 * x * y + 3 * CGAL::ipower(y,5); 
+  Poly_2 H = 5 * x * y + 3 * y * y; 
   std::cout << "The bivariate polynomial H: " << H << std::endl;
 }
