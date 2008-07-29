@@ -33,11 +33,10 @@ int main()
   Segment_2 s1(Point_2(0,1), Point_2(2,1));
   Segment_2 s2(Point_2(1,0), Point_2(1,2));
 
-  Point_2 ip;
   std::list<Object> intersections;
   intersect(s1, s2, std::back_inserter(intersections));
   for(std::list<CGAL::Object>::iterator it = intersections.begin(); it != intersections.end(); it++){
-    if(CGAL::assign(ip, *it)){
+    if(const Point_2 *ip = CGAL::object_cast<Point_2>(&*it)){
       std::cout << "intersection at " << ip << std::endl;
     }
   }
