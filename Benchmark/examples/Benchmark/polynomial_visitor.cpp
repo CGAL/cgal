@@ -52,14 +52,14 @@ int main( int argc, char* argv[] ) {
         if ( cb::benchmark_parse_stream( std::cin, "<cin>", & pv)) {
 	    std::cout << "ok" << std::endl;
 	    typedef cb::Polynomial_visitor::iterator iterator;
-            CGAL::Polynomial< int                           > p_int;
-            CGAL::Polynomial< CGAL::Sqrt_extension<int,int> > p_sqrt_ext;
 	    for( iterator it = pv.objects_begin(); it != pv.objects_end(); ++it ) {
-	      if( CGAL::assign( p_sqrt_ext, *it ) ) {
-	        std::cout << "read CGAL::Polynomial< CGAL::Sqrt_extension<int,int> >: " << p_sqrt_ext << std::endl;
+	      if (const CGAL::Polynomial< CGAL::Sqrt_extension<int,int> > *p_sqrt_ext =
+	               CGAL::object_cast<CGAL::Polynomial< CGAL::Sqrt_extension<int,int> > >( &*it ) ) {
+	        std::cout << "read CGAL::Polynomial< CGAL::Sqrt_extension<int,int> >: " << *p_sqrt_ext << std::endl;
 	      }
-	      else if( CGAL::assign( p_int, *it ) ) {
-	        std::cout << "read CGAL::Polynomial< int >: " << p_int << std::endl;
+	      else if (const CGAL::Polynomial<int> * p_int =
+	               CGAL::object_cast<CGAL::Polynomial<int> >( &*it ) ) {
+	        std::cout << "read CGAL::Polynomial< int >: " << *p_int << std::endl;
 	      } else {
 	        std::cout << "read unknown object" << std::endl;
 	      }
