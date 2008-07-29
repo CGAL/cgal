@@ -39,11 +39,9 @@ int main()
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object);
 
   // determine what kind of object it is
-  Segment_3 segment;
-  Polyhedron_3 polyhedron;
-  if ( CGAL::assign(segment, ch_object) )
+  if (CGAL::object_cast<Segment_3>(&ch_object) )
      std::cout << "convex hull is a segment " << std::endl;
-  else if ( CGAL::assign (polyhedron, ch_object) )
+  else if (CGAL::object_cast<Polyhedron_3>(&ch_object) )
      std::cout << "convex hull is a polyhedron " << std::endl;
   else
      std::cout << "convex hull error!" << std::endl;
