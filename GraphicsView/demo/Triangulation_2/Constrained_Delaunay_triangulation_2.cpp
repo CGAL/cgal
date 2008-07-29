@@ -30,6 +30,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
+typedef K::Segment_2 Segment_2;
 typedef CGAL::Triangulation_vertex_base_2<K>  Vertex_base;
 //typedef CGAL::Constrained_triangulation_face_base_2<K> Face_base;
 typedef CGAL::Delaunay_mesh_face_base_2<K> Face_base;
@@ -166,6 +167,8 @@ public slots:
   void on_actionMakeGabrielConform_triggered();
 
   void on_actionMakeDelaunayConform_triggered();
+
+  void on_actionMakeDelaunayMesh_triggered();
 
   void on_actionInsertRandomPoints_triggered();
 
@@ -475,19 +478,41 @@ void
 MainWindow::on_actionMakeGabrielConform_triggered()
 {
   int nv = cdt.number_of_vertices();
-  //  CGAL::make_conforming_Gabriel_2(cdt);
-
-  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, 0.1));
+  CGAL::make_conforming_Gabriel_2(cdt);
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   emit(changed());
 }
+
 
 void
 MainWindow::on_actionMakeDelaunayConform_triggered()
 {
   int nv = cdt.number_of_vertices();
   CGAL::make_conforming_Delaunay_2(cdt);
+  nv = cdt.number_of_vertices() - nv;
+  statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
+  emit(changed());
+}
+
+
+void
+MainWindow::on_actionMakeDelaunayMesh_triggered()
+{
+  double len = 0;
+  int cc = 0;
+  for(CDT::Finite_edges_iterator it = cdt.finite_edges_begin();
+      it != cdt.finite_edges_end();
+      ++it){
+    if(cdt.is_constrained(*it)){
+      ++cc;
+      len+= sqrt(cdt.segment(*it).squared_length());
+    }
+  }
+  double al = len/cc;
+  al /= 2.0;
+  int nv = cdt.number_of_vertices();
+  CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, al));
   nv = cdt.number_of_vertices() - nv;
   statusBar()->showMessage(QString("Added %1 vertices").arg(nv), 2000);
   emit(changed());

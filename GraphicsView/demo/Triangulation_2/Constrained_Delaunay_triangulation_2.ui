@@ -104,6 +104,7 @@
     <addaction name="actionRecenter" />
     <addaction name="actionMakeGabrielConform" />
     <addaction name="actionMakeDelaunayConform" />
+    <addaction name="actionMakeDelaunayMesh" />
    </widget>
    <addaction name="menuFile" />
    <addaction name="menuEdit" />
@@ -255,6 +256,11 @@
   <action name="actionMakeDelaunayConform" >
    <property name="text" >
     <string>Make Delaunay conform</string>
+   </property>
+  </action>
+  <action name="actionMakeDelaunayMesh" >
+   <property name="text" >
+    <string>Make Delaunay mesh</string>
    </property>
   </action>
  </widget>
