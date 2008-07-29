@@ -32,8 +32,8 @@ static CGAL::Random my_rnd(346); // some seed
   typedef typename PT::Innermost_coefficient ICoeff;            \
   typedef CGAL::Polynomial_traits_d<Coeff> PTC;                 \
   typedef CGAL::Exponent_vector Exponent_vector;                \
-  typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;    \
-  typedef std::vector< Monom > Monom_rep;    
+  typedef std::pair< CGAL::Exponent_vector , ICoeff > Monom;    
+
 
 #define ASSERT_IS_NULL_FUNCTOR(T)                                       \
   BOOST_STATIC_ASSERT((boost::is_same<T,CGAL::Null_functor >::value))   
@@ -106,39 +106,43 @@ void test_construct_polynomial(const Polynomial_traits_d&){
         != construct(Coeff(3),Coeff(2),Coeff(1),Coeff(1)));
 
     // construct via iterator range
-    std::vector<Coeff> coeffs;
+    std::list<Coeff> coeffs;
     assert(construct(coeffs.begin(),coeffs.end()) == construct(0));
     for(int i = 0; i<4;i++){coeffs.push_back(Coeff(i));}
     assert(construct(coeffs.begin(),coeffs.end())
         == construct(Coeff(0),Coeff(1),Coeff(2),Coeff(3)));
         
-    Monom_rep monom_rep;
-    assert(
-        construct(monom_rep.begin(),monom_rep.end()) == construct(0));
+
+    typedef std::list< Monom > Monom_list;    
+    typedef std::vector< Monom > Monom_vec;    
+
+    // construct from InputIterator
+    Monom_list monom_list;
+    assert(construct(monom_list.begin(),monom_list.end()) == construct(0));
     CGAL::Random rnd(7);
     for(int j = 0; j < 2; j++){
       CGAL::Exponent_vector exps(d);
       for(int i = 0; i < d; i++){
         exps[i]=j+i*5;
       }
-      monom_rep.push_back(Monom(exps,ICoeff(j+1)));
-    }
-    //std::cout<<"\n"<<std::endl;
-    //std::cout<<"monom_rep_1: "; print_monom_rep(monom_rep); 
-       
-    std::random_shuffle(monom_rep. begin(),monom_rep. end());
-    Polynomial_d p1 = construct(monom_rep. begin(),
-        monom_rep. begin()+((monom_rep. end()- monom_rep. begin())/2));
-    Polynomial_d p2 = construct(monom_rep. begin()+
-        ((monom_rep. end()- monom_rep. begin())/2), monom_rep. end());
-    Polynomial_d p  = construct(monom_rep. begin(), monom_rep. end());
+      monom_list.push_back(Monom(exps,ICoeff(j+1)));
+    };
+    
+    Monom_vec monom_vec(monom_list.begin(),monom_list.end());
+    std::random_shuffle(monom_vec. begin(),monom_vec. end());
+      
+    Polynomial_d p1 = construct(monom_vec. begin(),
+        monom_vec. begin()+((monom_vec. end()- monom_vec. begin())/2));
+    Polynomial_d p2 = construct(monom_vec. begin()+
+        ((monom_vec. end()- monom_vec. begin())/2), monom_vec. end());
+    Polynomial_d p  = construct(monom_vec. begin(), monom_vec. end());
     assert(p == p1+p2);
     
-    assert(construct(monom_rep. begin(),monom_rep. end()) 
-        == construct(monom_rep.rbegin(),monom_rep.rend()));
+    assert(construct(monom_vec. begin(),monom_vec. end()) 
+        == construct(monom_vec.rbegin(),monom_vec.rend()));
     // test with boolean flag is_sorted 
-    assert(construct(monom_rep. begin(),monom_rep. end(),false) 
-        == construct(monom_rep.rbegin(),monom_rep.rend(),false));  
+    assert(construct(monom_vec. begin(),monom_vec. end(),false) 
+        == construct(monom_vec.rbegin(),monom_vec.rend(),false));  
   }
   std::cerr << " ok "<< std::endl; 
 }
@@ -201,7 +205,8 @@ void test_get_monom_representation(const Polynomial_traits_d&){
   std::cerr << "start test_get_monom_representation "; 
   std::cerr.flush();
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
-    
+  typedef std::vector< Monom > Monom_rep;    
+
   typename PT::Construct_polynomial construct;
   typename PT::Get_monom_representation gmr;
         
@@ -1003,7 +1008,7 @@ void test_is_zero_at(const Polynomial_traits_d&) {
     
   Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
-  std::vector< ICoeff > cv;
+  std::list< ICoeff > cv;
   for(int i = 0; i < PT::d-1; ++i)
     cv.push_back(ICoeff(0));
         
@@ -1032,7 +1037,7 @@ void test_is_zero_at_homogeneous(const Polynomial_traits_d&) {
     
   Polynomial_d p(Coeff(-1), Coeff(0), Coeff(4));
     
-  std::vector< ICoeff > cv;
+  std::list< ICoeff > cv;
   for(int i = 0; i < PT::d-1; ++i)
     cv.push_back(ICoeff(0));
     
@@ -1064,7 +1069,7 @@ void test_sign_at(const Polynomial_traits_d&) {
     
   Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
-  std::vector< ICoeff > cv;
+  std::list< ICoeff > cv;
   for(int i = 0; i < PT::d-1; ++i)
     cv.push_back(ICoeff(0));
         
@@ -1097,7 +1102,7 @@ void test_sign_at_homogeneous(const Polynomial_traits_d&) {
     
   Polynomial_d p(Coeff(-1), Coeff(0), Coeff(1));
     
-  std::vector< ICoeff > cv;
+  std::list< ICoeff > cv;
   for(int i = 0; i < PT::d-1; ++i)
     cv.push_back(ICoeff(0));
         
@@ -1234,35 +1239,35 @@ void test_substitute(const Polynomial_traits_d&){
   typedef typename PT::Innermost_coefficient Innermost_coefficient;
     
     
-  std::vector<Innermost_coefficient> vec;
+  std::list<Innermost_coefficient> list;
   for(int i = 0; i < PT::d; i++){
-    vec.push_back(Innermost_coefficient(i));
+    list.push_back(Innermost_coefficient(i));
   }
   assert(Innermost_coefficient(0) 
-      == substitute(Polynomial_d(0),vec.begin(),vec.end()));
+      == substitute(Polynomial_d(0),list.begin(),list.end()));
   assert(Innermost_coefficient(1) 
-      == substitute(Polynomial_d(1),vec.begin(),vec.end()));
+      == substitute(Polynomial_d(1),list.begin(),list.end()));
   assert(Innermost_coefficient(2) 
-      == substitute(Polynomial_d(2),vec.begin(),vec.end()));
+      == substitute(Polynomial_d(2),list.begin(),list.end()));
   assert(Innermost_coefficient(-2) 
-      == substitute(Polynomial_d(-2),vec.begin(),vec.end())); 
+      == substitute(Polynomial_d(-2),list.begin(),list.end())); 
     
   for(int i = 0; i< 5; i++){
     typedef typename PT
       :: template Rebind<Innermost_coefficient,2>::Other PT_2;
     typedef typename PT_2::Polynomial_d Polynomial_2;
-    std::vector<Polynomial_2> vec1,vec2;
+    std::vector<Polynomial_2> vector1,vector2;
     for(int j = 0; j < PT::d; j++){
-      vec1.push_back(
+      vector1.push_back(
           generate_sparse_random_polynomial<Polynomial_2>(3));
     }
-    vec2=vec1;
-    std::swap(vec2[0],vec2[PT::d-1]);
+    vector2=vector1;
+    std::swap(vector2[0],vector2[PT::d-1]);
     Polynomial_d p 
       = generate_sparse_random_polynomial<Polynomial_d>(3); 
-    assert( substitute(p,vec1.begin(),vec1.end()) == 
+    assert( substitute(p,vector1.begin(),vector1.end()) == 
         substitute(typename PT::Swap()(p,0,PT::d-1),
-            vec2.begin(),vec2.end()));
+            vector2.begin(),vector2.end()));
   }   
     
   std::cerr << " ok "<< std::endl;
@@ -1277,19 +1282,19 @@ void test_substitute_homogeneous(const Polynomial_traits_d&){
   typedef typename PT::Innermost_coefficient Innermost_coefficient;
     
     
-  std::vector<Innermost_coefficient> vec;
+  std::list<Innermost_coefficient> list;
   for(int i = 0; i < PT::d; i++){
-    vec.push_back(Innermost_coefficient(i));
+    list.push_back(Innermost_coefficient(i));
   }
-  vec.push_back(Innermost_coefficient(3));
+  list.push_back(Innermost_coefficient(3));
   assert(Innermost_coefficient(0) 
-      == substitute_homogeneous(Polynomial_d(0),vec.begin(),vec.end()));
+      == substitute_homogeneous(Polynomial_d(0),list.begin(),list.end()));
   assert(Innermost_coefficient(1) 
-      == substitute_homogeneous(Polynomial_d(1),vec.begin(),vec.end()));
+      == substitute_homogeneous(Polynomial_d(1),list.begin(),list.end()));
   assert(Innermost_coefficient(2) 
-      == substitute_homogeneous(Polynomial_d(2),vec.begin(),vec.end()));
+      == substitute_homogeneous(Polynomial_d(2),list.begin(),list.end()));
   assert(Innermost_coefficient(-2) 
-      == substitute_homogeneous(Polynomial_d(-2),vec.begin(),vec.end())); 
+      == substitute_homogeneous(Polynomial_d(-2),list.begin(),list.end())); 
     
   for(int i = 0; i< 2; i++){
     typedef typename PT
