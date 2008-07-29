@@ -976,7 +976,6 @@ public:
         const Dupin_cyclide_3* base_surf = NULL) {
 
         static Point_double_4 _pole;
-
         if(base_surf != NULL) {
             typename Real_embeddable_traits<
                 typename Dupin_cyclide_3::Point_int_4::value_type >::To_double
@@ -994,24 +993,63 @@ public:
      * returns \c false if the point does not fall within the drawing window
      */
     template < class OutputIterator >
-    bool compute_approximation(OutputIterator oi) const {
+    OutputIterator compute_approximation(OutputIterator oi) const {
+    
+        double c, invw;
+        switch(this->location()) {
+        case CGAL::ARR_BOTTOM_BOUNDARY:
+        case CGAL::ARR_TOP_BOUNDARY: {
+
+            const Poly_double_1 *outer = param_outer_circle();
+            c = CGAL::to_double(this->x());
+            invw = 1.0 / outer[3].evaluate(c);
+            *oi++ = outer[0].evaluate(c) * invw,
+            *oi++ = outer[1].evaluate(c) * invw,
+            *oi++ = outer[2].evaluate(c) * invw;
+            return oi;
+        }
+        
+        case CGAL::ARR_LEFT_BOUNDARY:
+        case CGAL::ARR_RIGHT_BOUNDARY: {
+            CGAL::Object o = this->curve().asymptotic_value_of_arc(
+                this->location(), this->arcno());
+        
+            if(const X_coordinate_1 *x =
+                 CGAL::object_cast<X_coordinate_1>(&o)) {
+
+                const Poly_double_1 *tube = param_tube_circle();
+                c = CGAL::to_double(*x);
+                //std::cerr << "horizontal asymptote: \n";// incorrect
+                invw = 1.0 / tube[3].evaluate(c);
+                *oi++ = tube[0].evaluate(c) * invw,
+                *oi++ = tube[1].evaluate(c) * invw,
+                *oi++ = tube[2].evaluate(c) * invw;
+            } else {
+                const Point_double_4& pole = param_pole();
+                invw = 1.0 / pole[3];
+                *oi++ = pole[0] * invw, *oi++ = pole[1] * invw, 
+                *oi++ = pole[2] * invw;
+            }
+            return oi;
+        }
+        default:; // make compiler happy
+        }
     
         typedef Curve_renderer_facade< ASiDC_traits_2 > Facade;
         
         std::pair< double, double > cc;
         if(!Facade::instance().draw(*this, cc))
-            return false; // bad luck
+            return oi; // bad luck
 
         const Poly_double_2* params = param_surface();
         double x0 = NiX::substitute_xy(params[0], cc.first, cc.second), 
                y0 = NiX::substitute_xy(params[1], cc.first, cc.second),
-               z0 = NiX::substitute_xy(params[2], cc.first, cc.second),
-               invw0 = 1.0 / NiX::substitute_xy(params[3], cc.first,
-                     cc.second);
-        *oi++ = x0*invw0;
-        *oi++ = y0*invw0;
-        *oi++ = z0*invw0;
-        return true;
+               z0 = NiX::substitute_xy(params[2], cc.first, cc.second);
+        invw = 1.0 / NiX::substitute_xy(params[3], cc.first, cc.second);
+        *oi++ = x0*invw;
+        *oi++ = y0*invw;
+        *oi++ = z0*invw;
+        return oi;
     }
 #endif // CGAL_CKVA_COMPILE_RENDERER
     //!@}
