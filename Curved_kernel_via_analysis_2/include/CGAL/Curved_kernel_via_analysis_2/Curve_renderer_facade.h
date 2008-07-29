@@ -212,7 +212,9 @@ public:
     //! the drawing window 
     inline void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w, 
                 int& res_h) {
+#ifndef CGAL_CKVA_DUMMY_RENDERER
         return renderer().get_setup_parameters(pbox, res_w, res_h);
+#endif
     }
     
     /*!\brief
@@ -226,30 +228,32 @@ public:
     {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         renderer().setup(bbox, res_w, res_h);
-#endif //  !CGAL_CKVA_DUMMY_RENDERER
+#endif 
     }
 
     /*!\brief
      * rasterizes an x-monotone curve \c arc
      *
-     * outputs the list of sequences of pixel coordinates as objects of type
-     * \c Coord_2 to the output iterator \c pts , end-point coordinates are
-     * returned as a two-tuple \c end_pts
-     *
-     * \c Container must support \c push_back and \c clear operations
+     * inserts the list of sequences of pixel coordinates as objects of type
+     * \c Coord_2 to \c pts , \c Container must support \c push_back and \c
+     * clear operations
      *
      * \c Coord_2 must be constructible from a pair of integers / doubles
-     * depending on the renderer type
+     * depending on the renderer type 
+     *
+     * computes optionaly end-point coordinates (even if they lie outside the
+     * window)
      */
     template < class Coord_2, template < class > class Container >
     inline void draw(const Arc_2& arc, Container< std::vector<Coord_2> >& pts,
-            boost::array< Coord_2, 2 >& end_pts) {
+        boost::optional< Coord_2 > *end_pt1 = NULL, 
+        boost::optional< Coord_2 > *end_pt2 = NULL) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;
         int res_w, res_h;
         try {
-            renderer().draw(arc, pts, end_pts);
+            renderer().draw(arc, pts, end_pt1, end_pt2);
         } 
         catch(CGALi::Insufficient_rasterize_precision_exception) {
             std::cerr << "Switching to multi-precision arithmetic" << 
@@ -263,7 +267,7 @@ public:
             bigfloat_renderer().setup(bbox, res_w, res_h);
             try {
                 pts.clear();
-                bigfloat_renderer().draw(arc, pts, end_pts);
+                bigfloat_renderer().draw(arc, pts, end_pt1, end_pt2);
                 return;
             }
             catch(CGALi::Insufficient_rasterize_precision_exception) {
@@ -280,7 +284,7 @@ public:
                 exact_renderer().setup(bbox, res_w, res_h);
                 try {
                     pts.clear();
-                    exact_renderer().draw(arc, pts, end_pts);
+                    exact_renderer().draw(arc, pts, end_pt1, end_pt2);
                     return;
                 }
                 catch(CGALi::Insufficient_rasterize_precision_exception) {

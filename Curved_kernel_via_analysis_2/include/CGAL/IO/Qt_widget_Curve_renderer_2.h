@@ -36,13 +36,13 @@ Qt_widget& operator << (Qt_widget& ws, const CGALi::Arc_2< CKvA_2 >& arc) {
     typedef std::pair< int, int > Coord_2;
     typedef std::vector< Coord_2 > Coord_vec_2;
 
-    boost::array< Coord_2, 2 > end_points;
+    boost::optional < Coord_2 > p1, p2;
     std::list<Coord_vec_2> points;
    
     Facade::setup(CGAL::Bbox_2(ws.x_min(), ws.y_min(), ws.x_max(), ws.y_max()),
             ws.width(), ws.height());
-    
-    Facade::instance().draw(arc, points, end_points);
+
+    Facade::instance().draw(arc, points, &p1, &p2);
     if(points.empty()) 
         return ws;
         
@@ -50,38 +50,35 @@ Qt_widget& operator << (Qt_widget& ws, const CGALi::Arc_2< CKvA_2 >& arc) {
     int height = ws.height();
 
    // std::cerr << ws.width() << " and " <<  ws.height() << "\n";
-
     typename std::list<Coord_vec_2>::const_iterator lit = points.begin();
+    //ppnt->moveTo((*p1).first, height - (*p1).second);
     while(lit != points.end()) {
 
         const Coord_vec_2& vec = *lit;
         typename Coord_vec_2::const_iterator vit = vec.begin();
-            
-        if(vec.size() == 2) {
-            ppnt->moveTo(vit->first, height - vit->second);
-            vit++;
+        //std::cerr << "(" << vit->first << "; " << vit->second << ")\n";
+        if(/*lit != points.begin() &&*/ vit != vec.end()) {
             ppnt->lineTo(vit->first, height - vit->second);
-                
-        } else {
-            ppnt->moveTo(vit->first, height - vit->second);
+            vit++;
+        }
+        while(vit != vec.end()) {
+            ppnt->lineTo(vit->first, height - vit->second);
+            vit++;
             //std::cerr << "(" << vit->e0 << "; " << vit->e1 << "\n";
-            while(vit != vec.end()) {
-                ppnt->lineTo(vit->first, height - vit->second);
-                vit++;
-                //if(vit != vec.end())
-                //std::cerr << "(" << vit->e0 << "; " << vit->e1 << "\n";
-            }
         }
         lit++;
     }
+    //ppnt->lineTo((*p2).first, height - (*p2).second);
         
     QPen old_pen = ppnt->pen();
     ppnt->setPen(QPen(Qt::NoPen)); // avoid drawing outlines
     // draw with the current brush attributes
-    ppnt->drawEllipse(end_points[0].first-3, height-end_points[0].second-3, 
-        6, 6);
-    ppnt->drawEllipse(end_points[1].first-3, height-end_points[1].second-3, 
-        6, 6);
+
+    //std::cerr << "endpts1: (" << (*p1).first << "; " << (*p1).second << "\n";
+    //std::cerr << "endpts2: (" << (*p2).first << "; " << (*p2).second << "\n";
+
+    ppnt->drawEllipse((*p1).first-3, height-(*p1).second-3, 6, 6);
+    ppnt->drawEllipse((*p2).first-3, height-(*p2).second-3, 6, 6);
     ppnt->setPen(old_pen);
 
     return ws;

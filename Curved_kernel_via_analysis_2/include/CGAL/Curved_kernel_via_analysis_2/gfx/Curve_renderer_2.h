@@ -395,11 +395,14 @@ public:
  * thrown whenever the precision of currently used NT is not enough
  * to correctly render a curve arc. The exception has to be caught
  * outside the renderer to switch to a higher-precision arithmetic
+ *
+ * \c end_pt1/2 computes end-points (optionally)
  */
 template < class Coord_2, template < class > class Container >
 void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
-    boost::array< Coord_2, 2 >& end_points)
-{
+          boost::optional< Coord_2 > *end_pt1 = NULL, 
+          boost::optional< Coord_2 > *end_pt2 = NULL) {
+
     if(!initialized)
         return;
     select_cache_entry(arc); // lookup for appropriate cache instance 
@@ -410,20 +413,22 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
         engine.x_max << "; " << engine.y_max << "]" << std::endl);
      
     Rational lower, upper, y_lower = 0, y_upper = 0;
-    bool infty_src = true, infty_tgt = true, clip_src=false, clip_tgt=false;
+    bool clip_src = false, clip_tgt = false;
 
     CGAL::Arr_parameter_space loc_p1 = arc.location(CGAL::ARR_MIN_END),
         loc_p2 = arc.location(CGAL::ARR_MAX_END);
     
-//!@todo: should be adapted for other boundary types
+    Rational ref_bound = engine.pixel_w_r/CGAL_REFINE_X;
     if(loc_p1 != CGAL::ARR_LEFT_BOUNDARY) {
         const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MIN_END);
-        while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
+        while(ubound_x(x0) - lbound_x(x0) > ref_bound)
             refine_x(x0);
         lower = ubound_x(x0);
-    } else 
-        lower = engine.x_min_r;
-            
+    } else {
+        lower = engine.x_min_r; 
+        clip_src = true;
+    }            
+
     // since end-points are sorted lexicographically, no need to check for
     // lower boundary        
     if(loc_p2 == CGAL::ARR_TOP_BOUNDARY && arc.is_vertical()) 
@@ -431,59 +436,95 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
 
     if(loc_p2 != CGAL::ARR_RIGHT_BOUNDARY) {
         const X_coordinate_1& x0 = arc.curve_end_x(CGAL::ARR_MAX_END);
-        while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/CGAL_REFINE_X)
+        while(ubound_x(x0) - lbound_x(x0) > ref_bound)
             refine_x(x0);
         upper = lbound_x(x0);
-    } else 
+    } else { 
         upper = engine.x_max_r;
-       
-    if(upper <= engine.x_min_r||lower >= engine.x_max_r) 
+        clip_tgt = true;
+    }
+
+    bool x_outside_window = false;
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    Rational lower0 = lower, upper0 = upper, y_lower0(-1), y_upper0(-1);
+#endif
+
+    if(upper <= engine.x_min_r||lower >= engine.x_max_r) {
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        x_outside_window = true;
+        clip_src = clip_tgt = true;
+#else
         return;
+#endif
+    }
     
     if(lower < engine.x_min_r) {
         lower = engine.x_min_r;
         clip_src = true;
-        loc_p1 = CGAL::ARR_INTERIOR;
     }
     if(upper > engine.x_max_r) {
         upper = engine.x_max_r;
         clip_tgt = true;
-        loc_p2 = CGAL::ARR_INTERIOR;
     }
 
-    Rational height_r = (engine.y_max_r-engine.y_min_r)*2;
-    switch(loc_p1) {
-    case CGAL::ARR_BOTTOM_BOUNDARY:
-        y_lower = (arc.is_vertical() ? engine.y_min_r :
-            engine.y_min_r - height_r);
-        break;
-        
-    case CGAL::ARR_TOP_BOUNDARY:
-        // endpoints must be sorted lexicographical
-        CGAL_precondition(!arc.is_vertical());
-        y_lower = engine.y_max_r + height_r;
-        break;
-        
-    default:
-        infty_src = false;
-        y_lower = get_endpoint_y(arc, lower, CGAL::ARR_MIN_END, clip_src);
-    }
+    if(!x_outside_window) {
+        Rational height_r = (engine.y_max_r-engine.y_min_r)*2;
+        ref_bound = engine.pixel_h_r/CGAL_REFINE_X;
+
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+#endif
+        if(loc_p1 == CGAL::ARR_INTERIOR || clip_src) 
+            y_lower = get_endpoint_y(arc, lower, CGAL::ARR_MIN_END, clip_src,
+                ref_bound);
     
-    switch(loc_p2) {
-    case CGAL::ARR_BOTTOM_BOUNDARY:
-        // endpoints must be sorted lexicographical
-        CGAL_precondition(!arc.is_vertical());
-        y_upper = engine.y_min_r - height_r;
-        break;
+        else if(loc_p1 == CGAL::ARR_BOTTOM_BOUNDARY) 
+            y_lower = (arc.is_vertical() ? engine.y_min_r :
+                engine.y_min_r - height_r);
+    
+        else { // endpoints must be sorted lexicographical
+            CGAL_precondition(!arc.is_vertical());
+            y_lower = engine.y_max_r + height_r;
+        }
+
+        if(loc_p2 == CGAL::ARR_INTERIOR || clip_tgt) 
+            y_upper = get_endpoint_y(arc, upper, CGAL::ARR_MAX_END, clip_tgt,
+                ref_bound);
         
-    case CGAL::ARR_TOP_BOUNDARY:
-        y_upper = (arc.is_vertical() ? engine.y_max_r :
+        else if(loc_p2 == CGAL::ARR_BOTTOM_BOUNDARY) {
+            CGAL_precondition(!arc.is_vertical());
+            y_upper = engine.y_min_r - height_r;
+    
+        } else
+            y_upper = (arc.is_vertical() ? engine.y_max_r :
                     engine.y_max_r + height_r);
-        break;
-    default:
-        infty_tgt = false;
-        y_upper = get_endpoint_y(arc, upper, CGAL::ARR_MAX_END, clip_tgt);
+    }        
+
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    if(end_pt1 != NULL && loc_p1 == CGAL::ARR_INTERIOR && 
+         (clip_src || y_lower < engine.y_min_r || y_lower > engine.y_max_r)) {
+        y_lower0 = (clip_src ? 
+            get_endpoint_y(arc, lower0, CGAL::ARR_MIN_END, false,
+                CGAL_REFINE_DOUBLE_APPROX) : y_lower);
+        Gfx_OUT("lower end-point: [" << CGAL::to_double(lower0) << "; " <<
+                CGAL::to_double(y_lower0) << "]\n");
+        *end_pt1 = Coord_2(CGAL::to_double(lower0), 
+                CGAL::to_double(y_lower0));  
     }
+    if(end_pt2 != NULL && loc_p2 == CGAL::ARR_INTERIOR && 
+         (clip_tgt || y_upper < engine.y_min_r || y_upper > engine.y_max_r)) { 
+        y_upper0 = (clip_tgt ? 
+            get_endpoint_y(arc, upper0, CGAL::ARR_MAX_END, false,
+                CGAL_REFINE_DOUBLE_APPROX) : y_upper);
+        Gfx_OUT("upper end-point: [" << CGAL::to_double(upper0) << "; " <<
+                CGAL::to_double(y_upper0) << "]\n");
+        *end_pt2 = Coord_2(CGAL::to_double(upper0), 
+                CGAL::to_double(y_upper0));
+    }
+    if(x_outside_window)
+        return;
+#endif        
+
     Pixel_2 pix_1, pix_2;
     
     Gfx_OUT("lower: " << CGAL::to_double(lower) << "; upper: " <<
@@ -493,14 +534,11 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
     get_pixel_coords(lower, y_lower, pix_1);  
     get_pixel_coords(upper, y_upper, pix_2);  
     
-    //(clip_src ? engine.res_w+4 : pix_1.x); 
-    //(clip_tgt ? engine.res_w+4 : pix_2.x); 
-#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-    end_points[0] = Coord_2(pix_1.xv, pix_1.yv);
-    end_points[1] = Coord_2(pix_2.xv, pix_2.yv);
-#else
-    end_points[0] = Coord_2(pix_1.x, pix_1.y);
-    end_points[1] = Coord_2(pix_2.x, pix_2.y);
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT
+    if(end_pt1 != NULL)
+        *end_pt1 = Coord_2(pix_1.x, pix_1.y);
+    if(end_pt2 != NULL)
+        *end_pt2 = Coord_2(pix_2.x, pix_2.y);
 #endif
     
      Gfx_OUT("lower pix: (" << pix_1.x << "; " << pix_1.y <<
@@ -753,11 +791,6 @@ void draw(const Arc_2& arc, Container< std::vector < Coord_2 > >& points,
             break;
         it++;
     }
-    
-    /*if(!get_isolating_box(lower, y_lower, isolated_l))
-        isolated_l.level = -1u;
-    if(!get_isolating_box(upper, y_upper, isolated_h))
-        isolated_h.level = -1u;*/
 }
 
 /*!\brief
@@ -772,33 +805,42 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     Gfx_OUT("rasterizing point: " << CGAL::to_double(pt.x()) << std::endl);
 
     const X_coordinate_1& x0 = pt.x();
-    while(ubound_x(x0) - lbound_x(x0) > engine.pixel_w_r/2)
+    Rational ref_bound = 
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
+        engine.pixel_w_r / CGAL_REFINE_X;
+#else
+        engine.pixel_w_r / 2;
+#endif
+
+    while(ubound_x(x0) - lbound_x(x0) > ref_bound)
         refine_x(x0);
         
     Rational x_s = lbound_x(x0), y_s;
-//#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
     if(x_s < engine.x_min_r || x_s > engine.x_max_r)
         return false;
-//#endif
+#endif
+    ref_bound = engine.pixel_h_r / CGAL_REFINE_X;
+
+#ifdef CGAL_REFINE_DOUBLE_APPROX
+    ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
+#endif
 
     Xy_coordinate_2 xy(x0, pt.curve(), pt.arcno());
-    refine_xy(xy, engine.pixel_h_r / CGAL_REFINE_X);
+    refine_xy(xy, ref_bound);
     y_s = ubound_y(xy);
 
     Pixel_2 pix;
     get_pixel_coords(x_s, y_s, pix);
-//#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
+#ifndef CGAL_CKVA_RENDER_WITH_REFINEMENT 
     if(pix.x < 0 || pix.x >= engine.res_w || pix.y < 0 || 
             pix.y >= engine.res_h)
         return false;
-//#endif
 
-#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT        
-    coord = Coord_2(pix.xv, pix.yv);
-#else
     coord = Coord_2(pix.x, pix.y);
+#else
+    coord = Coord_2(pix.xv, pix.yv);
 #endif
-
     return true;
 }
 
@@ -832,6 +874,8 @@ void draw_lump(std::vector< Coord_2 >& rev_points, int& last_x,
         CGAL_CKVA_STORE_COORDS(rev_points, pix_2);
         return;
     }
+
+    Gfx_OUT("draw_lump: pix_1 = " << pix_1 << "; pix_2 = " << pix_2 << "\n");
 
     std::vector< Coord_2 > points;
     // reserve a list of point coordinates
@@ -1236,26 +1280,11 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
                 typename CGAL::Coercion_traits<Rat_coercion_type, Coeff>::Cast
                 cast; 
 
-//                 Gfx_OUT("poly: " << *(engine.rational_fy) <<
-//                     "\n\nat: " << xcs << "; and " << ycs << "\n");
-// 
-//                 Gfx_OUT("vx before: " << cast(vx) << " " << (vy > 0) << 
-//                         "\nvvx before: " << vvx << " " << (vvy > 0) << "\n");
-
-//                 vvx = -vvx;
-//                 vx = -vx;
-
-//                 Gfx_OUT("vx after: " << cast(vx) << " " << (vy > 0) << "\nvy = " <<
-//                         (vy) <<  "\n");
-//                 Gfx_OUT("vvx after: " << vvx << " " << (vvy > 0) << "; vvy = " << vvy << "\n");
-        
                 NT vvx = rat2float(vx), vvy = rat2float(vy);
                 //Coeff vvx = cast(vx), vvy = cast(vy);
                 if(vvy < 0) {
                     vvx = -vvx;
                 }                
-
-                Gfx_OUT("final vvx = " << vvx << " " << (vvx > 0) << "\n");
 
                 // vx > 0: 2 - right(1), 6 - left(0)
                 // vx < 0: 2 - left(0), 6 - right(1)
@@ -2124,7 +2153,7 @@ inline bool get_range_1(int var, const NT& lower, const NT& upper,
 //! \brief copmutes an isolating interval for y-coordinate of an end-point,
 //! uses caching if possible
 Rational get_endpoint_y(const Arc_2& arc, const Rational& x,
-     CGAL::Arr_curve_end end, bool is_clipped) {
+     CGAL::Arr_curve_end end, bool is_clipped, Rational refine_bound) {
         
     int arcno;
     Xy_coordinate_2 xy;
@@ -2141,7 +2170,7 @@ Rational get_endpoint_y(const Arc_2& arc, const Rational& x,
 
     // refine the y-interval until its size is smaller than the pixel size
     ////////////////////////// CHANGED REFINE_Y by REFINE_X
-    refine_xy(xy, engine.pixel_h_r/CGAL_REFINE_X);
+    refine_xy(xy, refine_bound);
     ////////////////////////// CHANGED REFINE_Y by REFINE_X
     return ubound_y(xy);//event.upper_boundary(arcno);
 }
