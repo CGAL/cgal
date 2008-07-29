@@ -157,10 +157,9 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    Cgal_Polygon poly;
-    if (CGAL::assign(poly, obj))
+    if (const Cgal_Polygon *poly = CGAL::object_cast<Cgal_Polygon>(&obj))
     {
-      polygon = poly;
+      polygon = *poly;
       something_changed();
     }
     widget->redraw();

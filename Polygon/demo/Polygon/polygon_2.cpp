@@ -191,14 +191,12 @@ private slots:
 
   void get_new_object(CGAL::Object obj)
   {
-    Cgal_Polygon poly;
-    Point_2 p;
-    if(CGAL::assign(poly, obj)) {
-      polygon = poly;
+    if(const Cgal_Polygon *poly = CGAL::object_cast<Cgal_Polygon>(&obj)) {
+      polygon = *poly;
       something_changed();
       show_info();
-    } else if(CGAL::assign(p, obj)) {
-      point = p;
+    } else if(const Point_2 *p = CGAL::object_cast<Point_2>(&obj)) {
+      point = *p;
       is_point_visible = true;
       show_pinfo();
       something_changed();
