@@ -75,41 +75,14 @@ or arrays. Note that \ccc{Object} is NOT a common base class for the
 elementary classes. Therefore, there is no 
 automatic conversion from these classes to \ccc{Object}. Rather 
 this is done with the global function \ccc{make_object()}. This 
-encapsulation mechanism requires the use of \ccc{assign} or
-\ccc{object_cast} to access the encapsulated class.
+encapsulation mechanism requires the use of
+\ccc{object_cast} to access the encapsulated class (a less
+efficient way, which is now discouraged, used to be to
+use the \ccc{assign} function).
 
 \ccExample
 In the following example, the object class is used as return value for the 
 \ccHtmlNoLinksFrom{intersection} computation, as there are possibly different return values.
-
-\begin{cprog}
-{
-    typedef Cartesian<double>  K;
-    typedef K::Point_2         Point_2;
-    typedef K::Segment_2       Segment_2;
-
-    Point_2 point;
-    Segment_2 segment, segment_1, segment_2;
-
-    std::cin >> segment_1 >> segment_2;
-
-    Object obj = intersection(segment_1, segment_2);
-
-    if (assign(point, obj)) {
-        /* do something with point */
-    } else if ((assign(segment, obj)) {
-        /* do something with segment*/
-    }
-\end{cprog}
-\ccHtmlLinksOff%
-\begin{cprog}
-    /*  there was no intersection */
-}
-\end{cprog}
-\ccHtmlLinksOn%
-
-\medskip
-A more efficient way is to use \ccc{object_cast} :
 
 \begin{cprog}
 {
