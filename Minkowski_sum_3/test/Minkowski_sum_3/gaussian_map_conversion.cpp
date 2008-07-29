@@ -4,7 +4,7 @@
 #include<CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include<CGAL/Polyhedron_3.h>
 #include<CGAL/convex_decomposition_3.h>
-#include<CGAL/Nef_3/Nary_union.h>
+#include<CGAL/Nef_nary_union_3.h>
 #include<CGAL/Nef_3/SNC_indexed_items.h>
 #include<CGAL/Nef_S2/SM_const_decorator.h>
 #include<CGAL/Minkowski_sum_3/Gaussian_map.h>
@@ -15,7 +15,7 @@ typedef CGAL::Gmpz RT;
 typedef CGAL::Homogeneous<RT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items> Nef_polyhedron_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-typedef CGAL::Nary_union<Nef_polyhedron_3> Nary_union;
+typedef CGAL::Nef_nary_union_3<Nef_polyhedron_3> Nary_union;
 typedef Nef_polyhedron_3::SFace_const_iterator SFace_const_iterator;
 typedef Nef_polyhedron_3::SNC_structure SNC_structure;
 typedef SNC_structure::Sphere_map Sphere_map;

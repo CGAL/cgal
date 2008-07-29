@@ -32,7 +32,7 @@
 #elif defined CGAL_NEF3_NARY_UNION_BY_SMALL_QUEUE
 #include <CGAL/Nef_3/Nary_union_by_small_queue.h>
 #else
-#include <CGAL/Nef_3/Nef_nary_union_3.h>
+#include <CGAL/Nef_nary_union_3.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
