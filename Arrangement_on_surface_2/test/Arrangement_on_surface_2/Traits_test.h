@@ -541,7 +541,7 @@ bool Traits_test<T_Traits>::perform(std::ifstream & is)
     std::cout << "case number : " << counter << std::endl;
     if (violation_tested != NON)
     {
-#if !defined(NDEBUG)
+#if !defined(CGAL_NDEBUG)
       str_command = str_command.substr(0, location);
       std::cout << "Test " << violation_map[violation_tested] 
                 << " violation : ";
