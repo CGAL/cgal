@@ -754,45 +754,43 @@ bool Traits_test<T_Traits>::
 boundary_near_x_wrapper_imp (std::istringstream & str_stream,
                              CGAL::Arr_has_boundary_tag)
 {
-  CGAL::Arr_curve_end cv_end1, cv_end2;
-  unsigned int id1,id2;
-  //first argument must be a number (either a point or a xcurve)
+  CGAL::Comparison_result real_answer;
+  unsigned int id1, id2;
+  // first argument must be a number (either a point or a xcurve)
   str_stream >> id1;
   std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
-  //second argument can be number or text (either xcurve or curve_end)
-  if (next_input.first == NUMBER)
-  {
+  // second argument can be number or text (either xcurve or curve_end)
+  if (next_input.first == NUMBER) {
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = get_next_input(str_stream);
     CGAL_assertion(next_input.first == CURVE_END);
-    cv_end1=static_cast<CGAL::Arr_curve_end>(next_input.second);
-    CGAL::Comparison_result real_answer = 
-      m_traits.compare_x_near_boundary_2_object()
-      (m_points[id1],m_xcurves[id2],cv_end1);
+    CGAL::Arr_curve_end cv_end1 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
+    real_answer = m_traits.compare_x_near_boundary_2_object()
+      (m_points[id1],m_xcurves[id2], cv_end1);
     std::cout << "Test: boundary_near_x( " << m_points[id1] << " , "
               << m_xcurves[id2]<< " , "
               << (cv_end1 == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
   }
-  else if (next_input.first == CURVE_END)
-  {
-    cv_end1=static_cast<CGAL::Arr_curve_end>(next_input.second);
+  else if (next_input.first == CURVE_END) {
+    CGAL::Arr_curve_end cv_end1 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
     next_input = get_next_input(str_stream);
     CGAL_assertion(next_input.first == NUMBER);
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = get_next_input(str_stream);
     CGAL_assertion(next_input.first == CURVE_END);
-    cv_end2=static_cast<CGAL::Arr_curve_end>(next_input.second);
+    CGAL::Arr_curve_end cv_end2 =
+      static_cast<CGAL::Arr_curve_end>(next_input.second);
     real_answer = m_traits.compare_x_near_boundary_2_object()
-                              (m_xcurves[id1],cv_end1,m_xcurves[id2],cv_end2);
+                              (m_xcurves[id1],cv_end1,m_xcurves[id2], cv_end2);
     std::cout << "Test: boundary_near_x( " << m_xcurves[id1] << " , "
               << (cv_end1 == CGAL::ARR_MIN_END?"MIN_END , ":"MAX_END , ")
               << m_xcurves[id2]<< " , "
               << (cv_end2 == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
   }
-  else
-  {
-    CGAL_assertion(false);
-  }
+  else CGAL_error();
+
   next_input = get_next_input(str_stream);
   CGAL_assertion(next_input.first == SIGN);
   CGAL::Comparison_result exp_answer = 
