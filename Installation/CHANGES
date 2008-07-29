@@ -20,6 +20,8 @@ Additional supported platforms:
 
 3- Kernels
 
+- We recommend that you use the object_cast() function instead of assign()
+  to extract an object from a CGAL::Object, for efficiency reasons.
 - The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
 - The deprecated linear kernel functors Construct_supporting_line_2 and
   Construct_supporting_line_3 have been removed.

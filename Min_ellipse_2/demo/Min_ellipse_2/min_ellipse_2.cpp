@@ -193,9 +193,8 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Point_2 p;
-    if(CGAL::assign(p,obj)) {
-      list_of_points.push_back(p);
+    if(const Point_2 *p = CGAL::object_cast<Point_2>(&obj)) {
+      list_of_points.push_back(*p);
       something_changed();
     }
   };
