@@ -44,6 +44,10 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/analyses/shear.h>
 
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+// put includes here
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 template<typename AlgebraicKernel_2, 
@@ -170,9 +174,6 @@ private:
     //! The content of f
     mutable boost::optional<Polynomial_1> content;
 
-    //! The object for building event lines
-    //mutable boost::optional<Event_line_builder> event_line_builder;
-    
     //! The non-working shear factors, as far as known
     mutable std::set<Integer> bad_shears;
 
@@ -514,7 +515,12 @@ public:
      * A curve is called y-regular if the leading coefficient of its defining
      * polynomial wrt y is a constant, i.e., contains no x
      */
-    bool is_y_regular() {
+    bool is_y_regular() const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_is_y_regular();
+        }
+#endif
         return polynomial_2().lcoeff().degree() == 0;
     }
     
@@ -527,6 +533,11 @@ public:
      * of its defining polynomial has a real root.
      */
     bool has_vertical_component() const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_has_vertical_components();
+        }
+#endif
         if(is_y_regular()) {
 	    this->ptr()->has_vertical_component = false;
         }
@@ -557,6 +568,11 @@ public:
      */
     size_type number_of_status_lines_with_event() const {
         CGAL_precondition(this->ptr()->f);
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_number_of_status_lines_with_event();
+        }
+#endif
         return static_cast<size_type>(event_coordinates().size());
     }
       
@@ -573,6 +589,11 @@ public:
      * \c i is set to the index of the interval \c x is contained in.
      */
     void x_to_index(Algebraic_real_1 x,size_type& i,bool& is_event) const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_x_to_index(x,i,is_event);
+        }
+#endif
         CGAL_precondition(has_defining_polynomial());
         typename Rep::Val_functor xval;
         i = std::lower_bound(
@@ -593,6 +614,11 @@ public:
     Status_line_1& status_line_at_event(size_type i) const {
 
         CGAL_precondition(has_defining_polynomial());
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_status_line_at_event(i);
+        }
+#endif
         CGAL_precondition_code(
                 size_type n = 
                 static_cast<size_type>(event_coordinates().size());
@@ -612,6 +638,11 @@ public:
 
     //! Returns a status line at the rational <tt>x</tt>-coordinate \c b
     Status_line_1& status_line_at_exact_x(Boundary b) const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_status_line_at_exact_x(b);
+        }
+#endif
         return status_line_at_exact_x(Algebraic_real_1(b));
     }
 
@@ -664,6 +695,11 @@ public:
 
     //! Returns a vert line for the <tt>x</tt>-coordinate alpha
     Status_line_1& status_line_at_exact_x(Algebraic_real_1 alpha) const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_status_line_at_exact_x(alpha);
+        }
+#endif
         bool is_event_value;
         size_type index;
         this->x_to_index(alpha,index,is_event_value);
@@ -1039,7 +1075,13 @@ public:
     Status_line_1 status_line_of_interval(size_type i) const
     {
         CGAL_precondition(i >= 0 && i <= number_of_status_lines_with_event());
-        
+      
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_status_line_of_interval(i);
+        }
+#endif
+  
         Boundary b = boundary_value_in_interval(i);
         
         Status_line_1 intermediate_line 
@@ -1069,6 +1111,12 @@ public:
     Status_line_1 status_line_for_x(Algebraic_real_1 x,
                                     CGAL::Sign perturb = CGAL::ZERO) const
     {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_status_line_for_x(x,perturb);
+        }
+#endif
+
         size_type i;
         bool is_evt;
         x_to_index(x, i, is_evt);
@@ -1134,14 +1182,6 @@ private:
     */
     Event_line_builder event_line_builder() const {
         
-        /*
-        if(! this->ptr()->event_line_builder) {
-            this->ptr()->event_line_builder 
-                = Event_line_builder(this, primitive_polynomial_2());
-        }
-                
-        return this->ptr()->event_line_builder.get();
-        */
         return Event_line_builder(*this, primitive_polynomial_2());
     }
 
@@ -1154,6 +1194,11 @@ public:
      */
     size_type arcs_over_interval(size_type i) const {
         CGAL_precondition(has_defining_polynomial());
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_arcs_over_interval(i);
+        }
+#endif
         CGAL_assertion_code(
                 size_type n 
                     = static_cast<size_type>(intermediate_values().size());
@@ -1171,6 +1216,11 @@ public:
      * for the status lines of intervals.
      */
     Boundary boundary_value_in_interval(size_type i) const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_boundary_value_in_interval(i);
+        }
+#endif
         CGAL_assertion(i>=0 && 
                        i < static_cast<size_type>
                            (intermediate_values().size()));
@@ -1211,6 +1261,11 @@ public:
      * as polynomial in \c y)
      */
     Polynomial_1 content() const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_content();
+        }
+#endif
         if(! this->ptr()->content) {
             compute_content_and_primitive_part();
         }
@@ -1225,6 +1280,11 @@ public:
      * The primitive part of \c f is the \c f divided by its content.
      */
     Polynomial_2 primitive_polynomial_2() const {
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_primitive_polynomial_2();
+        }
+#endif
         if(! this->ptr()->f_primitive) {
             compute_content_and_primitive_part();
         }
@@ -1760,6 +1820,11 @@ public:
         throw(CGAL::CGALi::Non_generic_position_exception)
     {
         CGAL_assertion(s!=0);
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_shear_primitive_part();
+        }
+#endif
         if(this->ptr()->bad_shears.find(s) !=
            this->ptr()->bad_shears.end()) {
             throw CGAL::CGALi::Non_generic_position_exception();
@@ -1822,6 +1887,12 @@ public:
      * isolating interval has absolute size smaller then \c precision.
      */
     void refine_all(Boundary precision) {
+
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_refine_all(precision);
+        }
+#endif
 
         for(size_type i=0;
             i<static_cast<size_type>(event_coordinates().size());
@@ -1904,6 +1975,12 @@ public:
         
         CGAL_precondition(loc == CGAL::ARR_LEFT_BOUNDARY ||
                           loc == CGAL::ARR_RIGHT_BOUNDARY);
+
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+        if(polynomial_2().degree()==2) {
+            return this->conic_asymptotic_value_of_arc(loc,arcno);
+        }
+#endif
         
         if(loc == CGAL::ARR_LEFT_BOUNDARY) {
             
@@ -2062,6 +2139,101 @@ private:
         this->ptr()->horizontal_asymptotes_right = asym_right_info;
  
     }
+
+    //! @}
+
+    // \name Internal functions for Conic optimization
+    //! @{
+
+#if CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+
+private:
+    
+    bool conic_is_y_regular() const {
+        CGAL_error_msg("Implement me");
+        return false;
+    }
+
+    bool conic_has_vertical_component() const {
+        CGAL_error_msg("Implement me");
+        return false;
+    }
+
+    size_type conic_number_of_status_lines_with_event() const {
+        CGAL_error_msg("Implement me");
+        return 0;
+    }
+
+    void conic_x_to_index(Algebraic_real_1 x,size_type& i,bool& is_event) const
+    {
+        CGAL_error_msg("Implement me");
+    }
+
+    Status_line_1& conic_status_line_at_event(size_type i) const {
+        CGAL_error_msg("Implement me");
+        // Just a random status line to make compiler happy
+        return this->ptr()->vert_line_at_rational_map[Boundary(0)];
+    }
+
+    Status_line_1& conic_status_line_at_exact_x(Boundary b) const {
+        CGAL_error_msg("Implement me");
+        return this->ptr()->vert_line_at_rational_map[Boundary(0)];
+    }
+
+    Status_line_1& conic_status_line_at_exact_x(Algebraic_real_1 alpha) const {
+        CGAL_error_msg("Implement me");
+        return this->ptr()->vert_line_at_rational_map[Boundary(0)];
+    }
+
+    Status_line_1 conic_status_line_of_interval(size_type i) const {
+        CGAL_error_msg("Implement me");
+        return this->ptr()->vert_line_at_rational_map[Boundary(0)];
+    }
+
+    Status_line_1 conic_status_line_for_x
+        (Algebraic_real_1 x,
+         CGAL::Sign perturb = CGAL::ZERO) const {
+        CGAL_error_msg("Implement me");
+        return this->ptr()->vert_line_at_rational_map[Boundary(0)];
+    }
+
+    size_type conic_arcs_over_interval(size_type i) const {
+        CGAL_error_msg("Implement me");
+        return -1;
+    }
+
+    Boundary conic_boundary_value_in_interval(size_type i) const {
+        CGAL_error_msg("Implement me");
+        return Boundary(0);
+    }
+
+    Polynomial_1 conic_content() const {
+        CGAL_error_msg("Implement me");
+        return Polynomial_1();
+    }
+
+    Polynomial_2 conic_primitive_polynomial_2() const {
+        CGAL_error_msg("Implement me");
+        return Polynomial_2();
+    }
+
+    Self& conic_shear_primitive_part(Integer s) const {
+        CGAL_error_msg("Implement me");
+        return Self();
+    }
+
+    void conic_refine_all(Boundary precision) {
+        CGAL_error_msg("Implement me");
+    }
+
+    Asymptote_y conic_asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
+                                              size_type arcno) const {
+        CGAL_error_msg("Implement me");
+        return Asymptote_y();
+    }
+
+#endif
+
 
     //! @}
 

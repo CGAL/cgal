@@ -11,8 +11,8 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ACK_FLAGS_HPP
-#define CGAL_ACK_FLAGS_HPP 1
+#ifndef CGAL_ACK_FLAGS_H
+#define CGAL_ACK_FLAGS_H 1
 
 // Is debug-information printed?
 #ifndef CGAL_ACK_DEBUG_FLAG
@@ -56,6 +56,14 @@
  */
 #ifndef CGAL_ACK_USE_EXACUS
 #define CGAL_ACK_USE_EXACUS 0
+#endif
+
+/**
+ * If set, the curve and curve pair analysis are using specialized code
+ * to analyse conic curves, i.e. curves of degree 2
+ */
+#ifndef CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
+#define CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX 0
 #endif
 
 /**
@@ -186,4 +194,4 @@
 #endif
 
 
-#endif // CGAL_ACK_FLAGS_HPP
+#endif // CGAL_ACK_FLAGS_H
