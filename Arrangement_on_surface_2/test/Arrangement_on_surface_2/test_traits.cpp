@@ -37,13 +37,8 @@ int main (int argc, char * argv[])
 {
   CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
   CGAL::set_warning_behaviour(CGAL::THROW_EXCEPTION);
-//   prev_error_handler = CGAL::set_error_handler(failure_handler);
-//   prev_warning_handler = CGAL::set_warning_handler(failure_handler);
   Traits_test<Traits> test(argc, argv);
-  bool rc;
-  rc = test.start();
-//   CGAL::set_error_handler(prev_error_handler);
-//   CGAL::set_warning_handler(prev_warning_handler);
+  bool rc  = test.start();
   return (rc) ? 0 : -1;
 }
 
@@ -223,7 +218,8 @@ Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
     return true;
   }
   // If we reached here, we have an unknown rational arc type:
-  std::cerr << "Illegal rational arc type specification: " << type << "." << std::endl;
+  std::cerr << "Illegal rational arc type specification: " << type << "."
+            << std::endl;
   return (false);
 }
 

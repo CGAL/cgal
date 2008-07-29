@@ -1,43 +1,57 @@
 #ifndef CGAL_TRAITS_TEST_H
 #define CGAL_TRAITS_TEST_H
 
-#include "Test_exceptions.h"
-#include <cstdlib>
+#include <CGAL/basic.h>
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <map>
+// #include <cstdlib>
+
+#include <boost/lexical_cast.hpp>
+
+#include <CGAL/exceptions.h>
+#include <CGAL/Object.h>
+#include <CGAL/Arr_tags.h>
+
+#include "Traits_base_test.h"
+
+/* The test test_traits has a global configuration flag, abort_on_error.
+ * It determines what happens when an unexpected CGAL assertion, pre-condition,
+ * post-condition, or error occur. By default abort_on_error is false.
+ * This means that when an unexpected CGAL assertion, pre-condition, 
+ * post-condition or error occur, the test does not abort, instead it proceeds
+ * to the next sub-test.
+ *
+ * in general you may test any violation by appending _precondition or 
+ * _postcondition or _assertion or _warning to the wrappers token in the test 
+ * input file
+ *
+ * the CGAL error and warning handling is set to a failure_handler function 
+ * that throws a special exceptions, which indicates whether the violation was
+ * expected or not unexpected. Depending on abort_on_error the right exceptions
+ * is thrown. the exceptions are caught in perform function.
+ * so basiclly we have 4 cases:
+ * 
+ *                          | violation occurred       | violation did 
+ *                          |                          |  not occurred
+ * ---------------------------------------------------------------------------
+ * violation is expected    |                          |      fail, if 
+ * (violation appended      |     pass, continue       |  !abort_on_error
+ * to token)                |                          | continue else abort
+ * ---------------------------------------------------------------------------
+ * violation is unexpected  | fail, if !abort_on_error |   pass, continue
+ * (use regular tokens)     |   continue else abort    |
+ * ---------------------------------------------------------------------------
+ */
 
 template <class T_Traits>
-class Traits_test {
+class Traits_test : public Traits_base_test<T_Traits> {
 private:
   typedef T_Traits                                      Traits;
-  typedef typename Traits::Point_2                      Point_2;
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef typename Traits::Curve_2                      Curve_2;
-
-  /*! The input data file of points*/
-  std::string m_filename_points;
-
-  /*! The input data file of curves*/
-  std::string m_filename_curves;
-
-  /*! The input data file of xcurves*/
-  std::string m_filename_xcurves;
-
-  /*! The input data file of commands*/
-  std::string m_filename_commands;
-
-  /*! The traits type */
-  std::string m_traitstype;
-
-  /*! An instance of the traits */
-  Traits m_traits;
-
-  /*! The container of input points */
-  std::vector<Point_2>  m_points;
-
-  /*! The container of input curves */
-  std::vector<Curve_2>  m_curves;
-
-  /*! The container of x-monotone curves */
-  std::vector<X_monotone_curve_2>  m_xcurves;
 
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool (Traits_test::* Wrapper)(std::istringstream &);
@@ -45,71 +59,29 @@ private:
   typedef typename Wrapper_map::iterator        Wrapper_iter;
   Wrapper_map m_wrappers;
 
-  /*! Collect the data depending on obj_t */
-  bool read_input(std::ifstream & is , Read_object_type obj_t);
-
-  /*! Perform the test */
-  bool perform(std::ifstream & is);
-
-  /*! Skip comments */
-  void skip_comments(std::ifstream & is, char * one_line);
-
-  std::string remove_blanks(char * str);
-  bool get_expected_boolean(std::istringstream & str_stream);
-  unsigned int get_expected_enum(std::istringstream & str_stream);
-  bool translate_boolean(std::string & str_value);
-  unsigned int translate_enumerator(std::string & str_value);
-  std::pair<Enum_type,unsigned int> translate_int_or_text(std::string & str_value);
-  std::pair<Enum_type,unsigned int> get_next_input(std::istringstream & str_stream);
-
-  bool compare_points(const Point_2 & exp_answer, const Point_2 & real_answer,
-                      const char * str = "result")
+  virtual bool exec(std::istringstream & str_stream,
+                    const std::string & str_command,
+                    bool & result)
   {
-    typename Traits::Equal_2 equal = m_traits.equal_2_object();
-    if (!(equal (exp_answer, real_answer))) {
-      if (!end_of_line_printed) print_end_of_line();
-      std::cout << "Expected " << str << ": " << exp_answer << std::endl
-                << "Obtained " << str << ": " << real_answer << std::endl;
-      end_of_line_printed = true;
-      return false;
-    }
-    return true;
+    Wrapper_iter wi = m_wrappers.find(str_command);
+    str_stream.clear();
+    if (wi == m_wrappers.end()) return true;
+    Wrapper wrapper = (*wi).second;
+    result = (this->*wrapper)(str_stream);
+    return false;
   }
-
-  bool compare(const unsigned int & exp_answer,
-               const unsigned int & real_answer,
-               const char * str = "result")
-  {
-    if (exp_answer != real_answer) {
-      if (!end_of_line_printed) print_end_of_line();
-      std::cout << "Expected " << str << ": " << exp_answer << std::endl
-                << "Obtained " << str << ": " << real_answer << std::endl;
-      end_of_line_printed = true;
-      return false;
-    }
-    return true;
-  }
-
-  template <class stream>
-  bool read_point(stream & is, Point_2 &);
-
-  template <class stream>
-  bool read_xcurve(stream & is, X_monotone_curve_2 &);
-
-  template <class stream>
-  bool read_curve(stream & is, Curve_2 &);
 
   //@{
 
   /*! Test Compare_x_2
    */
-  bool compare_x_wrapper(std::istringstream & );
+  bool compare_x_wrapper(std::istringstream &);
   bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_no_boundary_tag);
   bool compare_x_wrapper_imp(std::istringstream &, CGAL::Arr_has_boundary_tag);
 
   /*! Test Compare_x_near_boundary_2
    */
-  bool boundary_near_x_wrapper(std::istringstream & );
+  bool boundary_near_x_wrapper(std::istringstream &);
   bool boundary_near_x_wrapper_imp(std::istringstream &,
                                    CGAL::Arr_no_boundary_tag);
   bool boundary_near_x_wrapper_imp(std::istringstream &,
@@ -117,7 +89,7 @@ private:
 
   /*! Test Compare_y_near_boundary_2
    */
-  bool boundary_near_y_wrapper(std::istringstream & );
+  bool boundary_near_y_wrapper(std::istringstream &);
   bool boundary_near_y_wrapper_imp(std::istringstream &,
                                    CGAL::Arr_no_boundary_tag);
   bool boundary_near_y_wrapper_imp(std::istringstream &,
@@ -125,7 +97,7 @@ private:
 
   /*! Test Parameter_space_in_x_2
    */
-  bool parameter_space_x_wrapper(std::istringstream & );
+  bool parameter_space_x_wrapper(std::istringstream &);
   bool parameter_space_x_wrapper_imp(std::istringstream &,
                                      CGAL::Arr_no_boundary_tag);
   bool parameter_space_x_wrapper_imp(std::istringstream &,
@@ -133,7 +105,7 @@ private:
 
   /*! Test Parameter_space_in_y_2
    */
-  bool parameter_space_y_wrapper(std::istringstream & );
+  bool parameter_space_y_wrapper(std::istringstream &);
   bool parameter_space_y_wrapper_imp(std::istringstream &,
                                      CGAL::Arr_no_boundary_tag);
   bool parameter_space_y_wrapper_imp(std::istringstream &,
@@ -252,9 +224,6 @@ public:
 
   /*! Destructor */
   ~Traits_test();
-
-  /*! Entry point */
-  bool start();
 };
 
 /*!
@@ -262,30 +231,11 @@ public:
  * Accepts test data file name.
  */
 template <class T_Traits>
-Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
+Traits_test<T_Traits>::Traits_test(int argc, char * argv[]) :
+  Traits_base_test(argc, argv)
 {
   typedef T_Traits Traits;
-  abort_on_error=false;//run all tests (defualt)
-  //abort_on_error=true;//run only one error test
-  end_of_line_printed = true;
-  violation_map[PRECONDITION]=std::string("precondition");
-  violation_map[POSTCONDITION]=std::string("postcondition");
-  violation_map[ASSERTION]=std::string("assertion");
-  violation_map[WARNING]=std::string("warning");
-  if (argc != 6) {
-    std::cout << "Usage: " << argv[0] <<
-      " points_file xcurves_file curves_file commands_file traits_type_name"
-      << std::endl;
-    end_of_line_printed = true;
-  }
-  else
-  {
-    m_filename_points = argv[1];
-    m_filename_xcurves = argv[2];
-    m_filename_curves = argv[3];
-    m_filename_commands = argv[4];
-    m_traitstype = argv[5];
-  }
+  
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
   m_wrappers[std::string("compare_xy")] =
@@ -332,407 +282,10 @@ Traits_test<T_Traits>::Traits_test(int argc, char * argv[])
 
 /*!
  * Destructor. 
- * Declares as virtual.
  */
 template <class T_Traits>
-Traits_test<T_Traits>::~Traits_test()
-{
-  m_filename_points.clear();
-  m_filename_xcurves.clear();
-  m_filename_curves.clear();
-  m_filename_commands.clear();
-  m_points.clear();
-  m_curves.clear();
-  m_xcurves.clear();
-}
+Traits_test<T_Traits>::~Traits_test() {}
 
-/*!
- * Test entry point 
- */
-template<class T_Traits>
-bool Traits_test<T_Traits>::start()
-{
-  std::ifstream in_pt(m_filename_points.c_str());
-  std::ifstream in_xcv(m_filename_xcurves.c_str());
-  std::ifstream in_cv(m_filename_curves.c_str());
-  std::ifstream in_com(m_filename_commands.c_str());
-  if (!in_pt.is_open()) {
-    std::cerr << "Error opening file " << m_filename_points.c_str() << std::endl;
-    end_of_line_printed = true;
-    return false;
-  }
-  if (!in_xcv.is_open()) {
-    std::cerr << "Error opening file " << m_filename_xcurves.c_str() << std::endl;
-    end_of_line_printed = true;
-    return false;
-  }
-  if (!in_cv.is_open()) {
-    std::cerr << "Error opening file " << m_filename_curves.c_str() << std::endl;
-    end_of_line_printed = true;
-    return false;
-  }
-  if (!in_com.is_open()) {
-    std::cerr << "Error opening file " << m_filename_commands.c_str() << std::endl;
-    end_of_line_printed = true;
-    return false;
-  }
-  if (!read_input(in_pt,POINT)) {
-    in_pt.close(); 
-    return false;
-  }
-  if (!read_input(in_xcv,XCURVE)) {
-    in_xcv.close(); 
-    return false;
-  }
-  if (!read_input(in_cv,CURVE)) {
-    in_cv.close(); 
-    return false;
-  }
-  if (!perform(in_com)) {
-    in_com.close(); 
-    return false;
-  }
-  return true;
-}
-
-template <class T_Traits>
-bool Traits_test<T_Traits>::read_input(std::ifstream & is,
-                                       Read_object_type obj_t)
-{
-  char one_line[128];
-  skip_comments(is, one_line);
-  std::istringstream str_stream(one_line, std::istringstream::in);
-  try {
-    for (int i = 0; !is.eof() ; ++i) {
-      switch (obj_t) {
-       case POINT :
-        m_points.resize(m_points.size()+1);
-        if (!read_point(str_stream, m_points[i])) {
-          std::cerr << "Error reading point!" << std::endl;
-          end_of_line_printed = true;
-          return false;
-        }
-        break;
-       case CURVE :
-        m_curves.resize(m_curves.size()+1);
-        if (!read_curve(str_stream, m_curves[i])) {
-          std::cerr << "Error reading curves!" << std::endl;
-          end_of_line_printed = true;
-          return false;
-        }
-        break;
-       case XCURVE :
-        m_xcurves.resize(m_xcurves.size()+1);
-        if (!read_xcurve(str_stream, m_xcurves[i])) {
-          std::cerr << "Error reading xcurves!" << std::endl;
-          end_of_line_printed = true;
-          return false;
-        }
-        break;
-      }//switch
-      str_stream.clear();
-      skip_comments(is, one_line);
-      str_stream.str(one_line);
-    }//for
-     /*for (int i = 0; i < num; ++i)
-     { //for debug
-        switch (obj_t)
-        {
-          case POINT :
-            std::cout << "POINT size " << i << " " << m_points.size() << " := " << m_points[i] << std::endl;
-            break;
-          case CURVE :
-            std::cout << "CURVE size " << i << " " << m_curves.size() << " := " << m_curves[i] << std::endl;
-            break;
-          case XCURVE :
-            std::cout << "XCURVE size " << i << " " << m_xcurves.size() << " := " << m_xcurves[i] << std::endl;
-            break;
-        } //switch
-     }*/ //for
-  }//try
-  catch (std::exception e)
-  {
-    switch (obj_t) {
-     case POINT :
-      std::cout << "Abort Test, a violation during reading point!" 
-                << std::endl;
-      break;
-     case CURVE :
-      std::cout << "Abort Test, a violation during reading curve!" 
-                << std::endl;
-      break;
-     case XCURVE :
-      std::cout << "Abort Test, a violation during reading xcurve!" 
-                << std::endl;
-      break;
-    }//switch
-    is.close();
-    return false;
-  }//catch
-  return true;
-}
-
-/*!
- * Command dispatcher. Retrieves a line from the input file and performes
- * some action. See comments for suitable function in order to know specific
- * command arguments. 
- */
-template <class T_Traits>
-bool Traits_test<T_Traits>::perform(std::ifstream & is)
-{
-  bool test_result = true;
-  std::cout << "Performing test : traits type is " << m_traitstype <<
-    ", input files are " << m_filename_points << " " <<
-    m_filename_xcurves << " " << m_filename_curves << " " <<
-    m_filename_commands << std::endl;
-  end_of_line_printed = true;
-  char one_line[128];
-  char buff[128];
-  bool abort=false;
-  int counter=0;
-  while (!(is.eof() || abort)) 
-  {
-    skip_comments(is, one_line);
-    std::istringstream str_stream(one_line, std::istringstream::in);
-    buff[0] = '\0';
-    str_stream.getline(buff, 128, ' ');
-    std::string str_command(buff);
-    unsigned int location = 0;
-    violation_occurred = violation_tested = NON;
-
-    if ((int)str_command.find("_precondition", 0) != -1)
-    {
-      location = str_command.find("_precondition", 0);
-      violation_tested = PRECONDITION;
-    }
-    else if ((int)str_command.find("_postcondition",0) != -1)
-    {
-      location = str_command.find("_postcondition", 0);
-      violation_tested = POSTCONDITION;
-    }
-    else if ((int)str_command.find("_assertion", 0) != -1)
-    {
-      location = str_command.find("_assertion", 0);
-      violation_tested = ASSERTION;
-    }
-    else if ((int)str_command.find("_warning", 0) != -1)
-    {
-      location = str_command.find("_warning", 0);
-      violation_tested = WARNING;
-    }
-
-    counter++;
-    std::cout << "case number : " << counter << std::endl;
-    if (violation_tested != NON)
-    {
-#if !defined(CGAL_NDEBUG)
-      str_command = str_command.substr(0, location);
-      std::cout << "Test " << violation_map[violation_tested] 
-                << " violation : ";
-#else
-      std::cout << "Skipping condition tests in release mode." << std::endl;
-      continue;
-#endif
-    }
-
-    Wrapper_iter wi = m_wrappers.find(str_command);
-    str_stream.clear();
-    if (wi == m_wrappers.end()) continue;
-    Wrapper wrapper = (*wi).second;
-    try
-    {
-      test_result &= (this->*wrapper)(str_stream);
-    }
-    catch (CGAL::Precondition_exception e)
-    {
-      if (violation_tested != PRECONDITION)
-      {
-        test_result = false;
-        if (abort_on_error)
-          abort = true;
-      }
-    }
-    catch (CGAL::Postcondition_exception e)
-    {
-      if (violation_tested != POSTCONDITION)
-      {
-        test_result = false;
-        if (abort_on_error)
-          abort = true;
-      }
-    }
-    catch (CGAL::Warning_exception e)
-    {
-      if (violation_tested != WARNING)
-      {
-        test_result = false;
-        if (abort_on_error)
-          abort = true;
-      }
-    }
-    catch (CGAL::Assertion_exception e)
-    {
-      if (violation_tested != ASSERTION)
-      {
-        test_result = false;
-        if (abort_on_error)
-          abort = true;
-      }
-    }
-  }
-  return test_result;
-}
-
-/*!
- * Skip comments. Comments start with the '#' character and extend to the
- * end of the line
- */
-template <class T_Traits>
-void Traits_test<T_Traits>::skip_comments(std::ifstream & is, char * one_line)
-{
-  while (!is.eof()) {
-    is.getline(one_line, 128);
-    if (one_line[0] != '#') break;
-  }
-}
-
-/*!
- */
-template <class T_Traits>
-std::string Traits_test<T_Traits>::remove_blanks(char * str)
-{
-  std::string result = "";
-  bool flag = false;
-  //only alphanumeric characters and underscores are allowed
-  for (; *str != '\0'; ++str)
-  {
-    if ((*str >= '0' && *str <= '9') || //digits
-        (*str >= 'A' && *str <= 'Z') || //upper case letters
-        (*str >= 'a' && *str <= 'z') || //lower case letters
-         *str == '_') //underscores
-    {
-      if (!flag)
-        flag=true;
-      result += *str;
-    }
-    if (*str == ' ' && flag)
-      break;
-  }
-  return result;
-}
-
-/*!
- */
-template <class T_Traits_class>
-bool Traits_test<T_Traits_class>::translate_boolean(std::string & str_value)
-{
-  if (str_value == "TRUE") return true;
-  return false;
-}
-
-/*!
- */
-template <class T_Traits>
-unsigned int
-Traits_test<T_Traits>::translate_enumerator(std::string & str_value)
-{
-  if (str_value == "LARGER" ) {
-    return static_cast<unsigned int>(CGAL::LARGER);
-  } else if (str_value == "SMALLER" ) {
-    return static_cast<unsigned int>(CGAL::SMALLER);
-  } else if (str_value == "EQUAL" ) {
-    return static_cast<unsigned int>(CGAL::EQUAL);
-  }
-  CGAL_error();
-  return static_cast<unsigned int>(-220776); // My birthday :-)
-}
-
-/*!
- */
-template <class T_Traits>
-std::pair<Enum_type , unsigned int>
-Traits_test<T_Traits>::translate_int_or_text(std::string & str_value)
-{
-  if (str_value == "MIN_END" ) {
-    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MIN_END);
-  } else if (str_value == "MAX_END" ) {
-    return std::pair<enum Enum_type,unsigned int>(CURVE_END,CGAL::ARR_MAX_END);
-  } else if (str_value == "SMALLER" ) {
-    return std::pair<enum Enum_type,unsigned int>(SIGN,
-                                    static_cast<unsigned int>(CGAL::SMALLER));
-  } else if (str_value == "EQUAL" ) {
-    return std::pair<enum Enum_type,unsigned int>(SIGN,
-                                    static_cast<unsigned int>(CGAL::EQUAL));
-  } else if (str_value == "LARGER" ) {
-    return std::pair<enum Enum_type,unsigned int>(SIGN,
-                                    static_cast<unsigned int>(CGAL::LARGER));
-  } else if (str_value == "ARR_INTERIOR" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (BOUNDARY,static_cast<unsigned int>(CGAL::ARR_INTERIOR));
-  } else if (str_value == "BOTTOM_BOUNDARY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_BOTTOM_BOUNDARY));
-  } else if (str_value == "TOP_BOUNDARY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_TOP_BOUNDARY));
-  } else if (str_value == "LEFT_BOUNDARY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_LEFT_BOUNDARY));
-  } else if (str_value == "RIGHT_BOUNDARY" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_RIGHT_BOUNDARY));
-  } else if (str_value == "INTERIOR" ) {
-    return std::pair<enum Enum_type,unsigned int>
-      (PARAMETER_SPACE,static_cast<unsigned int>(CGAL::ARR_INTERIOR));
-  }
-  return std::pair<enum Enum_type,unsigned int>
-    (NUMBER,static_cast<unsigned int>(std::atoi(str_value.c_str())));
-}
-
-/*!
- */
-template <class T_Traits>
-bool
-Traits_test<T_Traits>::get_expected_boolean(std::istringstream & str_stream)
-{
-  char buff[128];
-  str_stream.getline( buff, 128, '.');
-  buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
-  return translate_boolean(str_expres);
-}
-
-/*!
- */
-template <class T_Traits>
-unsigned int
-Traits_test<T_Traits>::get_expected_enum(std::istringstream & str_stream)
-{
-  char buff[128];
-  str_stream.getline(buff, 128, '.');
-  buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
-  return translate_enumerator(str_expres);
-}
-
-/*!
- */
-template <class T_Traits>
-std::pair<Enum_type,unsigned int>
-Traits_test<T_Traits>::get_next_input(std::istringstream & str_stream)
-{
-  char buff[128];
-  do
-  {
-    str_stream.getline(buff, 128, ' ');
-  } while (str_stream.gcount() == 1);
-  buff[str_stream.gcount()] = '\0';
-  std::string str_expres = remove_blanks(buff);
-  return translate_int_or_text(str_expres);
-}
-
-/*! Test Compare_x_near_boundary_2
-*/
 template <class T_Traits>
 bool Traits_test<T_Traits>::
 boundary_near_x_wrapper (std::istringstream & str_stream)
@@ -770,7 +323,7 @@ boundary_near_x_wrapper_imp (std::istringstream & str_stream,
       (m_points[id1],m_xcurves[id2], cv_end1);
     std::cout << "Test: boundary_near_x( " << m_points[id1] << " , "
               << m_xcurves[id2]<< " , "
-              << (cv_end1 == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end1 == CGAL::ARR_MIN_END ? "MIN_END":"MAX_END") << " ) ? ";
   }
   else if (next_input.first == CURVE_END) {
     CGAL::Arr_curve_end cv_end1 =
@@ -785,9 +338,9 @@ boundary_near_x_wrapper_imp (std::istringstream & str_stream,
     real_answer = m_traits.compare_x_near_boundary_2_object()
                               (m_xcurves[id1],cv_end1,m_xcurves[id2], cv_end2);
     std::cout << "Test: boundary_near_x( " << m_xcurves[id1] << " , "
-              << (cv_end1 == CGAL::ARR_MIN_END?"MIN_END , ":"MAX_END , ")
+              << (cv_end1 == CGAL::ARR_MIN_END ? "MIN_END , ":"MAX_END , ")
               << m_xcurves[id2]<< " , "
-              << (cv_end2 == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end2 == CGAL::ARR_MIN_END ? "MIN_END":"MAX_END") << " ) ? ";
   }
   else CGAL_error();
 
@@ -795,9 +348,8 @@ boundary_near_x_wrapper_imp (std::istringstream & str_stream,
   CGAL_assertion(next_input.first == SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER?"SMALLER":
-               (exp_answer == CGAL::LARGER?"LARGER":"EQUAL")) << " ";
-  did_violation_occur();
+  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
+               (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
   return compare(exp_answer, real_answer);
 }
 
@@ -824,32 +376,33 @@ bool Traits_test<T_Traits>::
 boundary_near_y_wrapper_imp (std::istringstream & str_stream,
                              CGAL::Arr_has_boundary_tag)
 {
-  unsigned int id1,id2;
+  unsigned int id1, id2;
   str_stream >> id1 >> id2;
   std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
   CGAL_assertion(next_input.first == CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
-  CGAL::Comparison_result real_answer = 
-    m_traits.compare_y_near_boundary_2_object()
-    (m_xcurves[id1], m_xcurves[id2], cv_end);
   std::cout << "Test: boundary_near_y( " << m_xcurves[id1] << " , "
             << m_xcurves[id2]<< " , "
-            << (cv_end == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+            << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END") << " ) ? ";
   next_input = get_next_input(str_stream);
   CGAL_assertion(next_input.first == SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
-  std::cout << (exp_answer == CGAL::SMALLER?"SMALLER":
-               (exp_answer == CGAL::LARGER?"LARGER":"EQUAL")) << " ";
-  did_violation_occur();
+  std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
+               (exp_answer == CGAL::LARGER ? "LARGER" : "EQUAL")) << " ";
+
+  CGAL::Comparison_result real_answer = 
+    m_traits.compare_y_near_boundary_2_object()
+    (m_xcurves[id1], m_xcurves[id2], cv_end);
   return compare(exp_answer, real_answer);
 }
 
 /*! Test Parameter_space_in_x_2
 */
 template <class T_Traits>
-bool Traits_test<T_Traits>::parameter_space_x_wrapper(std::istringstream & str_stream)
+bool Traits_test<T_Traits>::
+parameter_space_x_wrapper(std::istringstream & str_stream)
 {
   typedef typename T_Traits::Boundary_category          Boundary_category;
   return parameter_space_x_wrapper_imp(str_stream, Boundary_category());
@@ -872,31 +425,31 @@ parameter_space_x_wrapper_imp (std::istringstream & str_stream,
   unsigned int id;
   str_stream >> id;
   std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
-  if (next_input.first == CURVE_END)
-  {
-    CGAL::Arr_curve_end cv_end =
-      static_cast<CGAL::Arr_curve_end>(next_input.second);
-    real_answer =
-      m_traits.parameter_space_in_x_2_object()(m_xcurves[id],cv_end);
+  bool curves_op = (next_input.first == CURVE_END);
+  CGAL::Arr_curve_end cv_end;
+  if (curves_op) {
+    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
     std::cout << "Test: parameter_space_x( " << m_xcurves[id] << " , "
-              << (cv_end == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
+              << " ) ? ";
     next_input = get_next_input(str_stream);
     CGAL_assertion(next_input.first == PARAMETER_SPACE);
-    exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
   } else if (next_input.first == PARAMETER_SPACE) {
-    real_answer = m_traits.parameter_space_in_x_2_object()(m_points[id]);
     std::cout << "Test: parameter_space_x( " << m_points[id] << " ) ? ";
-    exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
   } else {
     CGAL_error();
     return false;
   }
-  did_violation_occur();
-  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY?"LEFT_BOUNDARY":
-               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY?"RIGHT_BOUNDARY":
-               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY?"BOTTOM_BOUNDARY":
-               (exp_answer == CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR"
-                )))) << " ";
+  exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
+  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY" :
+               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY" :
+               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY" :
+               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
+                "TOP_BOUNDARY":"INTERIOR")))) << " ";
+
+  real_answer = (curves_op) ?
+    m_traits.parameter_space_in_x_2_object()(m_xcurves[id], cv_end) :
+    m_traits.parameter_space_in_x_2_object()(m_points[id]);
   return compare(exp_answer, real_answer);
 }
 
@@ -927,34 +480,33 @@ parameter_space_y_wrapper_imp (std::istringstream & str_stream,
   unsigned int id;
   str_stream >> id;
   std::pair<Enum_type,unsigned int> next_input = get_next_input(str_stream);
-  if (next_input.first == CURVE_END)
-  {
-    CGAL::Arr_curve_end cv_end =
-      static_cast<CGAL::Arr_curve_end>(next_input.second);
-    real_answer =
-      m_traits.parameter_space_in_y_2_object()(m_xcurves[id],cv_end);
+  bool curves_op = (next_input.first == CURVE_END);
+  CGAL::Arr_curve_end cv_end;
+  if (curves_op) {
+    cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
     std::cout << "Test: parameter_space_y( " << m_xcurves[id] << " , "
-              << (cv_end == CGAL::ARR_MIN_END?"MIN_END":"MAX_END") << " ) ? ";
+              << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
+              << " ) ? ";
     next_input = get_next_input(str_stream);
     CGAL_assertion(next_input.first == PARAMETER_SPACE);
-    exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
   } else if (next_input.first == PARAMETER_SPACE) {
-    real_answer = m_traits.parameter_space_in_y_2_object()(m_points[id]);
     std::cout << "Test: parameter_space_y( " << m_points[id] << " ) ? ";
-    exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
   } else {
     CGAL_error();
     return false;
   }
-  did_violation_occur();
-  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY?"LEFT_BOUNDARY":
-               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY?"RIGHT_BOUNDARY":
-               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY?"BOTTOM_BOUNDARY":
-               (exp_answer == CGAL::ARR_TOP_BOUNDARY?"TOP_BOUNDARY":"INTERIOR"
-                )))) << " ";
+  exp_answer = static_cast<CGAL::Arr_parameter_space>(next_input.second);
+  std::cout << (exp_answer == CGAL::ARR_LEFT_BOUNDARY ? "LEFT_BOUNDARY":
+               (exp_answer == CGAL::ARR_RIGHT_BOUNDARY ? "RIGHT_BOUNDARY":
+               (exp_answer == CGAL::ARR_BOTTOM_BOUNDARY ? "BOTTOM_BOUNDARY":
+               (exp_answer == CGAL::ARR_TOP_BOUNDARY ?
+                "TOP_BOUNDARY":"INTERIOR")))) << " ";
+
+  real_answer = (curves_op) ?
+    m_traits.parameter_space_in_y_2_object()(m_xcurves[id],cv_end) :
+    m_traits.parameter_space_in_y_2_object()(m_points[id]);
   return compare(exp_answer, real_answer);
 }
-
 
 /*! Test Compare_x_2
  */
@@ -973,20 +525,17 @@ compare_x_wrapper_imp (std::istringstream & str_stream,
   unsigned int id1, id2;
   unsigned int real_answer = 0, exp_answer = 0;
   str_stream >> id1;
-  std::pair<Enum_type,unsigned int> exp_answer_1 = get_next_input(str_stream);
-  if (exp_answer_1.first == NUMBER)
-  {
-    id2=exp_answer_1.second;
-    std::pair<Enum_type,unsigned int> exp_answer_2 =get_next_input(str_stream);
-    if (exp_answer_2.first == SIGN)
-    {
+  std::pair<Enum_type, unsigned int> exp_answer_1 = get_next_input(str_stream);
+  if (exp_answer_1.first == NUMBER) {
+    id2 = exp_answer_1.second;
+    std::pair<Enum_type, unsigned int> exp_answer_2 = get_next_input(str_stream);
+    if (exp_answer_2.first == SIGN) {
       exp_answer = exp_answer_2.second;
       std::cout << "Test: compare_x( " << m_points[id1]
                 << ", " << m_points[id2] << " ) ? " << exp_answer << " ";
-      real_answer =m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
+      real_answer = m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
     }
   }
-  did_violation_occur();
   return compare(exp_answer, real_answer);
 }
 
@@ -998,12 +547,12 @@ compare_x_wrapper_imp (std::istringstream & str_stream,
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = get_expected_enum(str_stream);
-  unsigned int real_answer =
-  m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
-  did_violation_occur();
   std::cout << "Test: compare_x( " << m_points[id1] << ", "
             << m_points[id2] << " ) ? " << exp_answer << " ";
- return compare(exp_answer, real_answer);
+
+  unsigned int real_answer =
+    m_traits.compare_x_2_object()(m_points[id1], m_points[id2]);
+  return compare(exp_answer, real_answer);
 }
 
 /*! Test Compare_xy_2
@@ -1014,12 +563,11 @@ bool Traits_test<T_Traits>::compare_xy_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = get_expected_enum(str_stream);
+  std::cout << "Test: compare_xy( " << m_points[id1] << ", "
+            << m_points[id2] << " ) ? " << exp_answer << " ";
+
   unsigned int real_answer =
     m_traits.compare_xy_2_object()(m_points[id1], m_points[id2]);
-  did_violation_occur();
-  std::cout << "Test: compare_xy( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? ";
-  std::cout << exp_answer << " ";
   return compare(exp_answer, real_answer);
 }
 
@@ -1032,11 +580,11 @@ bool Traits_test<T_Traits>::min_vertex_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   Point_2 & exp_answer = m_points[id2];
+  std::cout << "Test: min_vertex( " << m_xcurves[id1] << " ) ? "
+            << exp_answer << " ";
+
   Point_2 real_answer =
     m_traits.construct_min_vertex_2_object()(m_xcurves[id1]);
-  did_violation_occur();
-  std::cout << "Test: min_vertex( " << m_xcurves[id1] << " ) ? ";
-  std::cout << exp_answer << " ";
   return compare_points(exp_answer, real_answer);
 }
 
@@ -1049,11 +597,11 @@ bool Traits_test<T_Traits>::max_vertex_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   Point_2 & exp_answer = m_points[id2];
+  std::cout << "Test: max_vertex( " << m_xcurves[id1] << " ) ? "
+            << exp_answer << " ";
+
   Point_2 real_answer =
     m_traits.construct_max_vertex_2_object()(m_xcurves[id1]);
-  did_violation_occur();
-  std::cout << "Test: max_vertex( " << m_xcurves[id1] << " ) ? ";
-  std::cout << exp_answer << " ";
   return compare_points(exp_answer, real_answer);
 }
 
@@ -1064,11 +612,10 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream & str_stream)
   unsigned int id;
   str_stream >> id;
   bool exp_answer = get_expected_boolean(str_stream);
+  std::cout << "Test: is_vertical( " << m_xcurves[id] << " ) ? "
+            << exp_answer << " ";
+  
   bool real_answer = m_traits.is_vertical_2_object()(m_xcurves[id]);
-  did_violation_occur();
-  std::cout << "Test: is_vertical( " << m_xcurves[id]
-            << " ) ? ";
-  std::cout << exp_answer << " ";
   return compare(exp_answer, real_answer);
 }
 
@@ -1085,12 +632,10 @@ Traits_test<T_Traits>::compare_y_at_x_wrapper(std::istringstream & str_stream)
   str_stream >> id1 >> id2;
   unsigned int exp_answer = get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x( " << m_points[id1] << ","
-            << m_xcurves[id2]
-            << " ) ? ";
-  std::cout << exp_answer << " ";
+            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
+
   unsigned int real_answer =
     m_traits.compare_y_at_x_2_object()(m_points[id1], m_xcurves[id2]);
-  did_violation_occur();
   return compare(exp_answer, real_answer);
 }
 
@@ -1113,8 +658,7 @@ compare_y_at_x_left_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool
 Traits_test<T_Traits>::
-compare_y_at_x_left_wrapper_imp(std::istringstream & ,
-                                CGAL::Tag_false)
+compare_y_at_x_left_wrapper_imp (std::istringstream &, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
@@ -1130,13 +674,11 @@ compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
-            << m_xcurves[id2] << ", " << m_points[id3]
-            << " ) ? "; 
-  unsigned int real_answer = m_traits.compare_y_at_x_left_2_object()
-                               (m_xcurves[id1],m_xcurves[id2],m_points[id3]);
-  did_violation_occur();
-  std::cout << exp_answer << " ";
+            << m_xcurves[id2] << ", " << m_points[id3] << " ) ? "
+            << exp_answer << " ";
 
+  unsigned int real_answer = m_traits.compare_y_at_x_left_2_object()
+    (m_xcurves[id1], m_xcurves[id2], m_points[id3]);
   return compare(exp_answer, real_answer);
 }
 
@@ -1156,13 +698,12 @@ compare_y_at_x_right_wrapper(std::istringstream & str_stream)
   str_stream >> id1 >> id2 >> id3;
   unsigned int exp_answer = get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x_right( " << m_xcurves[id1] << ","
-            << m_xcurves[id2] << ", " << m_points[id3]
-            << " ) ? ";
+            << m_xcurves[id2] << ", " << m_points[id3] << " ) ? "
+            << exp_answer << " ";
+
   unsigned int real_answer =
     m_traits.compare_y_at_x_right_2_object()
-      (m_xcurves[id1], m_xcurves[id2], m_points[id3]);
-  did_violation_occur();
-  std::cout << exp_answer << " ";
+    (m_xcurves[id1], m_xcurves[id2], m_points[id3]);
   return compare(exp_answer, real_answer);
 }
 
@@ -1176,11 +717,10 @@ Traits_test<T_Traits>::equal_points_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = get_expected_boolean(str_stream);
-  bool real_answer = m_traits.equal_2_object()(m_points[id1], m_points[id2]);
-  did_violation_occur();
   std::cout << "Test: equal( " << m_points[id1] << ", "
-            << m_points[id2] << " ) ? ";
-  std::cout << exp_answer << " ";
+            << m_points[id2] << " ) ? " << exp_answer << " ";
+
+  bool real_answer = m_traits.equal_2_object()(m_points[id1], m_points[id2]);
   return compare(exp_answer, real_answer);
 }
 
@@ -1194,11 +734,10 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = get_expected_boolean(str_stream);
-  bool real_answer = m_traits.equal_2_object()(m_xcurves[id1], m_xcurves[id2]);
-  did_violation_occur();
   std::cout << "Test: equal( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? ";
-  std::cout << exp_answer << " ";
+            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
+
+  bool real_answer = m_traits.equal_2_object()(m_xcurves[id1], m_xcurves[id2]);
   return compare(exp_answer, real_answer);
 }
 
@@ -1226,13 +765,10 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
   std::vector<CGAL::Object> object_vec;
   m_traits.make_x_monotone_2_object()(m_curves[id],
                                       std::back_inserter(object_vec));
-  did_violation_occur();
   unsigned int num;
   str_stream >> num;
-  if (!compare(num, (unsigned int)object_vec.size(), "size")) {
-    print_result(false);
-    return false;
-  }
+  if (!compare(num, (unsigned int)object_vec.size(), "size")) return false;
+
   Equal_2 equal = m_traits.equal_2_object();
   for (unsigned int i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
@@ -1245,19 +781,9 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
     const X_monotone_curve_2 * xcv_ptr;
     xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
-      if (!compare(type, exp_type, "type")) {
-        print_result(false);
-        return false;
-      }
-      if (!equal(m_xcurves[id], *xcv_ptr)) {
-        std::cerr << "Expected x-monotone curve [" << id << "]: "
-                  << m_xcurves[id] << std::endl
-                  << "Obtained x-monotone curve: "
-                  << *xcv_ptr << std::endl;
-        end_of_line_printed = true;
-        print_result(false);
-        return false;
-      }
+      if (!compare(type, exp_type, "type")) return false;
+
+      if (!compare_curves(m_xcurves[id], *xcv_ptr)) return false;
       continue;
     }
 
@@ -1265,22 +791,11 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream & str_stream)
     const Point_2 * pt_ptr;
     pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
     CGAL_assertion (pt_ptr != NULL);
-    if (!compare(type, exp_type, "type")) {
-      print_result(false);
-      return false;
-    }
-    if (!equal(m_points[id], *pt_ptr)) {
-      std::cerr << "Expected point [" << i << "]: "
-                << m_points[id] << std::endl
-                << "Obtained point: "
-                << *pt_ptr << std::endl;
-      end_of_line_printed = true;
-      print_result(false);
-      return false;
-    }
+    if (!compare(type, exp_type, "type")) return false;
+
+    if (!compare_points(m_points[id], *pt_ptr)) return false;
   }
   object_vec.clear();
-  print_result(true);
   return true;
 }
 
@@ -1306,70 +821,40 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream & str_stream)
   std::vector<CGAL::Object> object_vec;
   m_traits.intersect_2_object()(m_xcurves[id1], m_xcurves[id2],
                                 std::back_inserter(object_vec));
-  did_violation_occur();
   std::cout << "Test: intersect( " << m_xcurves[id1] << "," << m_xcurves[id2]
             << " ) ? ";
   unsigned int num;
   str_stream >> num;
-  if (!compare(num, object_vec.size(), "size")) {
-    print_result(false);
-    return false;
-  }
-  Equal_2 equal = m_traits.equal_2_object();
+  if (!compare(num, object_vec.size(), "size")) return false;
+
   for (unsigned int i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
     unsigned int multiplicity;
-    if (type == 0) {
-      str_stream >> multiplicity;
-    }
+    if (type == 0) str_stream >> multiplicity;
     unsigned int exp_type = 1;
-    const X_monotone_curve_2 * xcv_ptr;
-    xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
+    const X_monotone_curve_2 * xcv_ptr =
+      CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
-      if (!compare(type, exp_type, "type")) {
-        print_result(false);
-        return false;
-      }
-      if (!equal(m_xcurves[id], *xcv_ptr)) {
-        std::cerr << "Expected x-monotone curve [" << i << "]: "
-                  << m_xcurves[id] << std::endl
-                  << "Obtained x-monotone curve: "
-                  << *xcv_ptr << std::endl;
-        end_of_line_printed = true;
-        print_result(false);
-        return false;
-      }
+      if (!compare(type, exp_type, "type")) return false;
+
+      if (!compare_curves(m_xcurves[id], *xcv_ptr)) return false;
       continue;
     }
 
     exp_type = 0;
     typedef std::pair<Point_2,unsigned int> Point_2_pair;
-    const Point_2_pair * pt_pair_ptr;
-    pt_pair_ptr = CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
+    const Point_2_pair * pt_pair_ptr =
+      CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
     CGAL_assertion (pt_pair_ptr != NULL);
-    if (!compare(type, exp_type, "type")) {
-      print_result(false);
+    if (!compare(type, exp_type, "type")) return false;
+    if (!compare_points(m_points[id], (*pt_pair_ptr).first)) return false;
+    if (!compare(multiplicity, (*pt_pair_ptr).second, "multiplicity"))
       return false;
-    }
-    if (!equal(m_points[id], (*pt_pair_ptr).first)) {
-      std::cerr << "Expected point [" << i << "]: "
-                << m_points[id] << std::endl
-                << "Obtained point: "
-                << (*pt_pair_ptr).first << std::endl;
-      end_of_line_printed = true;
-      print_result(false);
-      return false;
-    }
-    if (!compare(multiplicity, (*pt_pair_ptr).second, "multiplicity")) {
-      print_result(false);
-      return false;
-    }
   }
   object_vec.clear();
-  print_result(true);
   return true;
 }
 
@@ -1387,26 +872,15 @@ bool Traits_test<T_Traits>::split_wrapper(std::istringstream & str_stream)
   typedef typename Traits::Curve_2              Curve_2;
   typedef typename Traits::Equal_2              Equal_2;
 
-  unsigned int id1, id2;
-  str_stream >> id1 >> id2;
+  unsigned int id1, id2, id3, id4;
+  str_stream >> id1 >> id2 >> id3 >> id4;
   X_monotone_curve_2 cv1, cv2;
-  m_traits.split_2_object()(m_xcurves[id1], m_points[id2], cv1, cv2);
-  did_violation_occur();
   std::cout << "Test: split( " << m_xcurves[id1] << "," << m_points[id2]
             << " ) ? ";
-  Equal_2 equal = m_traits.equal_2_object();
-  str_stream >> id1 >> id2;                   // ... curve respectively
-  if (!equal(m_xcurves[id1], cv1) || !equal(m_xcurves[id2], cv2)) {
-    std::cerr << "Expected x-monotone curves: "
-              << m_xcurves[id1] << ", " << m_xcurves[id2] << std::endl
-              << "Obtained x-monotone curve: "
-              << cv1 << "," << cv2 << std::endl;
-    end_of_line_printed = true;
-    print_result(false);
-    return false;
-  }
-  print_result(true);
-  return true;
+
+  m_traits.split_2_object()(m_xcurves[id1], m_points[id2], cv1, cv2);
+  return compare_curves(m_xcurves[id3], cv1) &&
+    compare_curves(m_xcurves[id4], cv2);
 }
 
 /*! Tests Are_mergeable_2.
@@ -1423,7 +897,7 @@ Traits_test<T_Traits>::are_mergeable_wrapper(std::istringstream & str_stream)
 template <class T_Traits>
 bool
 Traits_test<T_Traits>::
-are_mergeable_wrapper_imp(std::istringstream & , CGAL::Tag_false)
+are_mergeable_wrapper_imp(std::istringstream &, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
@@ -1437,12 +911,11 @@ are_mergeable_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   bool exp_answer = get_expected_boolean(str_stream);
-  bool real_answer = m_traits.are_mergeable_2_object()(m_xcurves[id1],
-                                                       m_xcurves[id2]);
-  did_violation_occur();
   std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? ";
-  std::cout << exp_answer << " ";
+            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
+
+  bool real_answer =
+    m_traits.are_mergeable_2_object()(m_xcurves[id1], m_xcurves[id2]);
   return compare(exp_answer, real_answer);
 }
 
@@ -1457,7 +930,7 @@ bool Traits_test<T_Traits>::merge_wrapper(std::istringstream & str_stream)
 }
 
 template <class T_Traits>
-bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & ,
+bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream &,
                                               CGAL::Tag_false)
 {
   CGAL_error();
@@ -1475,20 +948,11 @@ bool Traits_test<T_Traits>::merge_wrapper_imp(std::istringstream & str_stream,
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
   X_monotone_curve_2 cv;
-  m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
-  did_violation_occur();
   std::cout << "Test: merge( " << m_xcurves[id1] << ", "
             << m_xcurves[id2] << " ) ? " << m_xcurves[id] << " ";
-  Equal_2 equal = m_traits.equal_2_object();
-  if (!equal(m_xcurves[id], cv)) {
-    std::cerr << "Expected x-monotone curve: " << m_xcurves[id] << std::endl
-              << "Obtained x-monotone curve: " << cv << std::endl;
-    end_of_line_printed = true;
-    print_result(false);
-    return false;
-  }
-  print_result(true);
-  return true;
+
+  m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
+  return compare_curves(m_xcurves[id], cv);
 }
 
 /*! Tests Approximate_2.
@@ -1509,46 +973,6 @@ bool Traits_test<T_Traits>::
 construct_x_monotone_curve_wrapper(std::istringstream & )
 {
   return false;
-}
-
-template <class T_Traits>
-template <class stream>
-bool
-Traits_test<T_Traits>::read_point(stream & is, typename T_Traits::Point_2 & p)
-{
-  Basic_number_type x, y;
-  is >> x >> y;
-  p = typename T_Traits::Point_2(x, y);
-  return true;
-}
-
-template <class T_Traits>
-template <class stream>
-bool
-Traits_test<T_Traits>::read_xcurve(stream & is,
-                                   typename T_Traits::X_monotone_curve_2 & xcv)
-{
-  Basic_number_type x1, y1, x2, y2;
-  is >> x1 >> y1 >> x2 >> y2;
-  Point_2 p1(x1, y1);
-  Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
-  xcv = typename T_Traits::X_monotone_curve_2(p1, p2);
-  return true;
-}
-
-template <class T_Traits>
-template <class stream>
-bool
-Traits_test<T_Traits>::read_curve(stream & is, typename T_Traits::Curve_2 & cv)
-{
-  Basic_number_type x1, y1, x2, y2;
-  is >> x1 >> y1 >> x2 >> y2;
-  Point_2 p1(x1, y1);
-  Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
-  cv = typename T_Traits::Curve_2(p1, p2);
-  return true;
 }
 
 #endif

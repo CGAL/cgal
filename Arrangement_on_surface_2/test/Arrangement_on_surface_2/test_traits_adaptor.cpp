@@ -22,15 +22,10 @@ typedef Traits::Curve_2                                 Curve_2;
 
 int main (int argc, char * argv[])
 {
-  CGAL::set_error_behaviour(CGAL::CONTINUE);
-  CGAL::set_warning_behaviour(CGAL::CONTINUE);
-  prev_error_handler = CGAL::set_error_handler(failure_handler);
-  prev_warning_handler = CGAL::set_warning_handler(failure_handler);
+  CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
+  CGAL::set_warning_behaviour(CGAL::THROW_EXCEPTION);
   Traits_adaptor_test<Traits> test(argc, argv);
-  bool rc;
-  rc = test.start();
-  CGAL::set_error_handler(prev_error_handler);
-  CGAL::set_warning_handler(prev_warning_handler);
+  bool rc = test.start();
   return (rc) ? 0 : -1;
 }
 
