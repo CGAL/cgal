@@ -401,6 +401,10 @@ public:
      * On the other hand, the EXCEPTION_STRATEGY throws an exception of type
      * \c CGALi::Zero_resultant_exception<Polynomial_2>, 
      * instead of performing a shear.
+     *
+     * \Todo Currently the defualt strategy has been changed to SHEAR_STRATEGY
+     * because there exist a problem if vertical asymtotes are present at
+     * the rational x-coordinate.
      */
     explicit Curve_analysis_2(const Polynomial_2& f,
                               CGAL::Degeneracy_strategy strategy
