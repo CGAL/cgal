@@ -18,10 +18,10 @@ public:
   MainWindow(MainWindow* other_window = 0);
   void dragEnterEvent(QDragEnterEvent *);
   void dropEvent(QDropEvent *event);
-  void surface_open(const QString& filename);
 
 public slots:
   void show_only(QString);
+  void surface_open(const QString& filename);
 
 private slots:
   void on_action_Open_triggered();

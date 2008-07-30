@@ -57,6 +57,10 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
   surface = new Volume(this);
 
   addAboutCGAL();
+  this->addRecentFiles(this->menu_File,
+		       this->action_Quit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(surface_open(QString)));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -75,6 +79,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 void MainWindow::surface_open(const QString& filename)
 {
   surface->open(filename);
+  this->addToRecentFiles(filename);
 }
 
 void MainWindow::show_only(QString tag)
