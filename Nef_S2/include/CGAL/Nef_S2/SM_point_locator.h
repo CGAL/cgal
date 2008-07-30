@@ -471,11 +471,13 @@ public:
 	    Sphere_segment first_half(p,p.antipode(),c);
 	    Sphere_segment second_part(p.antipode(), s.target(), c);
 	    if(!do_intersect_internally(ei->circle(), first_half, p_res) &&
-	       !do_intersect_internally(ei->circle(), second_part, p_res))
-	      if(se.has_on(p.antipode()))
+	       !do_intersect_internally(ei->circle(), second_part, p_res)) {
+	      if(se.has_on(p.antipode())) {
 		p_res = p.antipode();
-	      else
+	      } else {
 		continue;
+              }
+            }
 	  } else {
 	    if(!do_intersect_internally(ei->circle(), s, p_res)) continue;
 	  }
