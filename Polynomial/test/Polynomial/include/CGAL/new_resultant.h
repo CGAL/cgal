@@ -238,8 +238,8 @@ Coeff new_resultant_decompose(
     typedef typename Numerator::NT RES;
     
     Denominator a, b;
-    F.simplify_coefficients();
-    G.simplify_coefficients();
+    // F.simplify_coefficients(); not const 
+    // G.simplify_coefficients(); not const 
     Numerator F0; decompose(F,F0,a);
     Numerator G0; decompose(G,G0,b);
     Denominator c = CGAL::ipower(a, G.degree()) * CGAL::ipower(b, F.degree());
