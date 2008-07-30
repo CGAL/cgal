@@ -1,11 +1,10 @@
-#define CGAL_NEF_NO_INDEXED_ITEMS
 #include<CGAL/Gmpz.h>
 #include<CGAL/Homogeneous.h>
 #include<CGAL/Nef_polyhedron_3.h>
 #include<CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include<CGAL/Polyhedron_3.h>
 #include<CGAL/convex_decomposition_3.h>
-#include<CGAL/Nef_3/Nary_union.h>
+#include<CGAL/Nef_nary_union_3.h>
 #include<CGAL/Nef_3/SNC_indexed_items.h>
 #include<fstream>
 
@@ -14,13 +13,11 @@ typedef CGAL::Homogeneous<RT> Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
 //typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items> Nef_polyhedron_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-typedef CGAL::Nary_union<Nef_polyhedron_3> Nary_union;
+typedef CGAL::Nef_nary_union_3<Nef_polyhedron_3> Nary_union;
 
 void check_decomposition(Nef_polyhedron_3& N)
 {
-  //  Nef_polyhedron_3 N(C);
   CGAL::convex_decomposition_3(N);
-  //  return;
   std::list<Nef_polyhedron_3> convex_parts;
   Nef_polyhedron_3::Volume_const_iterator ci;
   for(ci = ++N.volumes_begin(); ci != N.volumes_end(); ++ci) {
