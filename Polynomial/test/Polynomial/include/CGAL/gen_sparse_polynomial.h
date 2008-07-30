@@ -38,7 +38,7 @@ generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
         result += construct(monom_rep.begin(), monom_rep.end());
         CGAL_postcondition(result.degree() >= 0);
     }
-    std::cout << result << std::endl;
+    // std::cout << result << std::endl;
     return result;
 }
 
