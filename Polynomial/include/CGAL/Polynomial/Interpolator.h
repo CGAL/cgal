@@ -56,7 +56,7 @@ public:
   
   // constructor from an InputIterator range with value type std::pair<IC,Coeff> 
   template<class InputIterator>
-  Interpolator(const InputIterator& begin, const InputIterator& end){
+  Interpolator(InputIterator begin, InputIterator end){
     for(InputIterator it = begin; it != end; it++){
       add_interpolation_point(*it);
     }
