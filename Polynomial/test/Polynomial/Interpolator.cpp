@@ -4,24 +4,26 @@
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Modular.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 
 #include <CGAL/gen_sparse_polynomial.h>
-#include <CGAL/Interpolator.h>
+#include <CGAL/Polynomial/Interpolator.h>
 
 static CGAL::Random my_rnd(346); // some seed 
 
 template<class Polynomial_d> 
-void test_interpolate(){
+void test_interpolator(){
     typedef typename CGAL::Polynomial_traits_d<Polynomial_d> PT;
     typedef typename PT::Innermost_coefficient IC; 
     typedef typename PT::Coefficient Coeff; 
-   
+    
     for(int k = 0 ; k < 5; k++){
-        Polynomial_d F = 
+      // gen some polynomial
+      Polynomial_d F = 
             CGAL::generate_sparse_random_polynomial<Polynomial_d>
             (my_rnd, 20/PT::d);
         
@@ -31,12 +33,22 @@ void test_interpolate(){
         for(int i = 0; i <= F.degree(); i++){
             points.push_back(Point(IC(i),typename PT::Evaluate()(F,IC(i))));
         }
-        CGAL::Interpolator<Polynomial_d> 
-            interpolator(points.begin(),points.end());
-        Polynomial_d F_new = interpolator.get_interpolant();
-        assert(F_new == F);
+
+        
+        typedef CGAL::CGALi::Interpolator<Polynomial_d> Interpolator_d;
+        Interpolator_d interpolator_1(points.begin(),points.end());
+        assert(F == interpolator_1.get_interpolant());
+        
+        Interpolator_d interpolator_2;
+        assert(Polynomial_d(0) == interpolator_2.get_interpolant());
+        for(unsigned int i = 0; i < points.size(); i++){
+          interpolator_2.add_interpolation_point(points[i]);
+          if(i%10 == 0 ) 
+            assert(F != interpolator_2.get_interpolant());
+        }
+        assert(F == interpolator_2.get_interpolant());
     }
-    std::cout << "end interpolate: " << PT::d << std::endl;
+    //std::cout << "end interpolate: " << PT::d << std::endl;
 }
 
 int main(){
@@ -54,14 +66,19 @@ int main(){
     typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
     typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
 
+    typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
+    typedef CGAL::Polynomial<EXT>            EPolynomial_1;
+    typedef CGAL::Polynomial<EPolynomial_1>  EPolynomial_2;
+    typedef CGAL::Polynomial<EPolynomial_2>  EPolynomial_3;
 
-    // test_resultant<Polynomial_3>();
-
-    test_interpolate<Polynomial_1>();
-    test_interpolate<Polynomial_2>();
-    test_interpolate<Polynomial_3>();
-    test_interpolate<MPolynomial_1>();
-    test_interpolate<MPolynomial_2>();
-    test_interpolate<MPolynomial_3>();
+    test_interpolator<Polynomial_1>();
+    test_interpolator<Polynomial_2>();
+    test_interpolator<Polynomial_3>();
+    test_interpolator<MPolynomial_1>();
+    test_interpolator<MPolynomial_2>();
+    test_interpolator<MPolynomial_3>();
+    test_interpolator<EPolynomial_1>();
+    test_interpolator<EPolynomial_2>();
+    test_interpolator<EPolynomial_3>();
 }
 
