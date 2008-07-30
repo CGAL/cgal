@@ -514,7 +514,7 @@ operator<(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
   if (a.identical(b))
     return false;
   Uncertain<bool> res = a.approx() < b.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return extract_singleton(res);
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() < b.exact();
@@ -528,7 +528,7 @@ operator==(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
   if (a.identical(b))
     return true;
   Uncertain<bool> res = a.approx() == b.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return extract_singleton(res);
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() == b.exact();
@@ -578,7 +578,7 @@ operator<(const Lazy_exact_nt<ET>& a, int b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = a.approx() < b;
-  if (is_singleton(res))
+  if (is_certain(res))
     return res;
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() < b;
@@ -590,7 +590,7 @@ operator>(const Lazy_exact_nt<ET>& a, int b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b < a.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return extract_singleton(res);
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b < a.exact();
@@ -602,7 +602,7 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b == a.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return extract_singleton(res);
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b == a.exact();
@@ -616,7 +616,7 @@ operator<(const Lazy_exact_nt<ET>& a, double b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = a.approx() < b;
-  if (is_singleton(res))
+  if (is_certain(res))
     return res;
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() < b;
@@ -628,7 +628,7 @@ operator>(const Lazy_exact_nt<ET>& a, double b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b < a.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return res;
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b < a.exact();
@@ -640,7 +640,7 @@ operator==(const Lazy_exact_nt<ET>& a, double b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b == a.approx();
-  if (is_singleton(res))
+  if (is_certain(res))
     return res;
   CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b == a.exact();
@@ -1036,7 +1036,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
         ::CGAL::Sign operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             Uncertain< ::CGAL::Sign> res = CGAL_NTS sign(a.approx());
-            if (is_singleton(res))
+            if (is_certain(res))
                 return extract_singleton(res);
             CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
             return CGAL_NTS sign(a.exact());
@@ -1053,7 +1053,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
             if (a.identical(b))
                 return EQUAL;
             Uncertain<Comparison_result> res = CGAL_NTS compare(a.approx(), b.approx());
-            if (is_singleton(res))
+            if (is_certain(res))
                 return extract_singleton(res);
             CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
             return CGAL_NTS compare(a.exact(), b.exact());

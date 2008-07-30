@@ -1,4 +1,4 @@
-// Copyright (c) 2005  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -14,7 +14,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Sylvain Pion
 
@@ -107,11 +106,11 @@ public:
   T inf() const { return _i; }
   T sup() const { return _s; }
 
-  bool is_singleton() const { return _i == _s; }
+  bool is_certain() const { return _i == _s; }
 
   T make_certain() const
   {
-    if (is_singleton())
+    if (is_certain())
       return _i;
     ++Uncertain<bool>::number_of_failures();
     throw Uncertain_conversion_exception(
@@ -185,7 +184,7 @@ inline bool possibly(Uncertain<bool> c);
 // for now, for backward-compatibility.
 template < typename T >
 inline
-bool is_singleton(T)
+bool is_certain(T)
 {
   return true;
 }
@@ -200,16 +199,16 @@ T extract_singleton(T t)
 
 template < typename T >
 inline
-bool is_singleton(Uncertain<T> a)
+bool is_certain(Uncertain<T> a)
 {
-  return a.is_singleton();
+  return a.is_certain();
 }
 
 template < typename T >
 inline
 T extract_singleton(Uncertain<T> a)
 {
-  CGAL_assertion(is_singleton(a));
+  CGAL_assertion(is_certain(a));
   return a.inf();
 }
 
@@ -232,7 +231,7 @@ template < typename T >
 inline
 bool is_indeterminate(Uncertain<T> a)
 {
-  return ! a.is_singleton();
+  return ! a.is_certain();
 }
 
 
@@ -245,7 +244,7 @@ inline bool possibly(bool b) { return b; }
 inline
 bool certainly(Uncertain<bool> c)
 {
-  if (is_singleton(c))
+  if (is_certain(c))
     return extract_singleton(c);
   return false;
 }
@@ -253,7 +252,7 @@ bool certainly(Uncertain<bool> c)
 inline
 bool possibly(Uncertain<bool> c)
 {
-  if (is_singleton(c))
+  if (is_certain(c))
     return extract_singleton(c);
   return true;
 }
