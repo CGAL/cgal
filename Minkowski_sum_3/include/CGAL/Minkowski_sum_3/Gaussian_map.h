@@ -27,9 +27,6 @@
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Minkowski_sum_3/PointMark.h>
 
-#include <CGAL/IO/Qt_widget_Nef_S2.h>
-#include <qapplication.h>
-
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 223
 #include <CGAL/Nef_2/debug.h>
@@ -1187,25 +1184,6 @@ class Gaussian_map :
     return Object_handle();
   }
   
-  void dump() const {
-    SM_io_parser<Base>::dump(*this,std::cerr);
-  }
-  
-  void visualize() {
-    int argc=1;
-    char* argv[argc];
-    argv[0] = "Gaussian Map Viewer";
-    
-    typedef typename CGAL::Nef_polyhedron_S2<K,CGAL::SM_items,Mark> Nef_polyhedron_S2;      
-    Nef_polyhedron_S2 NS2(*this->sphere_map());
-    
-    QApplication a(argc, argv);
-    CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
-    new CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>(NS2);
-    a.setMainWidget(w);
-    w->show();
-    a.exec();     
-  }
 };
 
 template<typename Kernel, typename Nef, typename Mark>
