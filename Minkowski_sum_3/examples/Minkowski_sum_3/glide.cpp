@@ -1,21 +1,16 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/minkowski_sum_3.h>
-#include <CGAL/Nef_3/Polyline_constructor.h>
 #include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel, CGAL::SNC_indexed_items>     Nef_polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
 typedef Kernel::Point_3 Point_3;
 typedef Point_3* point_iterator;
 typedef std::pair<point_iterator,point_iterator> 
   point_range;
 typedef std::list<point_range> polyline;
-typedef polyline::const_iterator polyline_iterator;
-typedef CGAL::Polyline_constructor<Nef_polyhedron, polyline_iterator>
-  Polyline_constructor;
 
 int main(int argc, char* argv[]) 
 {
@@ -32,8 +27,6 @@ int main(int argc, char* argv[])
 
   polyline poly;
   poly.push_back(point_range(pl,pl+6));
-  Nef_polyhedron N1;
-  Polyline_constructor pc(poly.begin(), poly.end());
-  N1.delegate(pc,true);
+  Nef_polyhedron N1(poly.begin(), poly.end(), Nef_polyhedron::Polylines_tag());
   Nef_polyhedron result = CGAL::minkowski_sum_3(N0, N1);
 }

@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -9,8 +8,8 @@
 #include <iostream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron;
-typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
+typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron;
+typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main() {
 
