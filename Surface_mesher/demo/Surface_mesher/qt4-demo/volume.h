@@ -149,8 +149,8 @@ public slots:
   void open(const QString& filename);
 #ifdef CGAL_USE_VTK
   void open_vtk(const QString& filename);
-  bool open_xt(const QString& filename);
 #endif
+  bool open_xt(const QString& filename);
   void opendir(const QString& dirname);
   void finish_open();
   void export_off();

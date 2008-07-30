@@ -422,6 +422,10 @@ bool Volume::open_xt(const QString& filename)
 
 #else // CGAL_USE_VTK
 void Volume::opendir(const QString&) {}
+bool Volume::open_xt(const QString&)
+{
+  return false;
+}
 #endif // CGAL_USE_VTK
 
 void Volume::open(const QString& filename)
@@ -444,17 +448,15 @@ void Volume::open(const QString& filename)
   }
   else
   {
-    if(!m_image.read(filename.toStdString().c_str()) && !open_xt(filename))
-    {
-      
-      QMessageBox::warning(mw, mw->windowTitle(),
-                           tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
-      status_message(tr("Opening of file %1 failed!").arg(filename));
-    }
-    else
+    if(m_image.read(filename.toStdString().c_str()))
     {
       status_message(tr("File %1 successfully opened.").arg(filename));
       finish_open();
+    }
+    else if(!open_xt(filename)) {
+      QMessageBox::warning(mw, mw->windowTitle(),
+			   tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
+      status_message(tr("Opening of file %1 failed!").arg(filename));
     }
   }
 }
