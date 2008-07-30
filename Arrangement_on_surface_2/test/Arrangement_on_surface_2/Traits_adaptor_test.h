@@ -61,7 +61,7 @@ public:
  */
 template <class T_Traits>
 Traits_adaptor_test<T_Traits>::Traits_adaptor_test(int argc, char * argv[]) :
-  Traits_base_test(argc, argv)
+  Traits_base_test<T_Traits>(argc, argv)
 {
   typedef T_Traits Traits;
 
@@ -112,15 +112,15 @@ ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
 {
   unsigned int id1, id2, id3;
   str_stream >> id1 >> id2 >> id3;
-  unsigned int exp_answer = get_expected_enum(str_stream);
-  std::cout << "Test: compare_y_at_x_left( " << m_xcurves[id1] << ","
-            << m_xcurves[id2] << ", " << m_points[id3]
+  unsigned int exp_answer = this->get_expected_enum(str_stream);
+  std::cout << "Test: compare_y_at_x_left( " << this->m_xcurves[id1] << ","
+            << this->m_xcurves[id2] << ", " << this->m_points[id3]
             << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    m_traits.compare_y_at_x_left_2_object()(m_xcurves[id1], m_xcurves[id2],
-                                            m_points[id3]);
-  return compare(exp_answer, real_answer);
+    this->m_traits.compare_y_at_x_left_2_object()(this->m_xcurves[id1], this->m_xcurves[id2],
+                                            this->m_points[id3]);
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -130,20 +130,22 @@ ta_is_in_x_range_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   char c;
   str_stream >> c >> id1 >> id2;
-  bool exp_answer = get_expected_boolean(str_stream);
-  std::cout << "Test: is_in_x_range( " << m_xcurves[id1] << ",";
+  bool exp_answer = this->get_expected_boolean(str_stream);
+  std::cout << "Test: is_in_x_range( " << this->m_xcurves[id1] << ",";
   if (c == 'p')
-    std::cout << m_points[id2];
+    std::cout << this->m_points[id2];
   else if (c == 'x')
-    std::cout << m_xcurves[id2];
+    std::cout << this->m_xcurves[id2];
   else
     CGAL_error();
   std::cout << " ) ? " << " ";
 
   bool real_answer = (c == 'p') ?
-    m_traits.is_in_x_range_2_object()(m_xcurves[id1], m_points[id2]) :
-    m_traits.is_in_x_range_2_object()(m_xcurves[id1], m_xcurves[id2]);
-  return compare(exp_answer, real_answer);
+    this->m_traits.is_in_x_range_2_object()(this->m_xcurves[id1],
+                                            this->m_points[id2]) :
+    this->m_traits.is_in_x_range_2_object()(this->m_xcurves[id1],
+                                            this->m_xcurves[id2]);
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -152,13 +154,14 @@ ta_compare_y_position_wrapper(std::istringstream & str_stream)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
-  unsigned int exp_answer = get_expected_enum(str_stream);
-  std::cout << "Test: compare_y_position( " << m_xcurves[id1] 
-            << "," << m_xcurves[id2] << " ) ? " << exp_answer << " ";
+  unsigned int exp_answer = this->get_expected_enum(str_stream);
+  std::cout << "Test: compare_y_position( " << this->m_xcurves[id1] 
+            << "," << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
-    m_traits.compare_y_position_2_object()(m_xcurves[id1] ,m_xcurves[id2]);
-  return compare(exp_answer, real_answer);
+    this->m_traits.compare_y_position_2_object()(this->m_xcurves[id1] ,
+                                           this->m_xcurves[id2]);
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -169,19 +172,19 @@ ta_is_between_cw_wrapper(std::istringstream & str_stream)
   //note that b_ref1 b_ref2 are outputs so they can be tested also
   bool b_ref1,b_ref2;
   str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
-  bool exp_answer = get_expected_boolean(str_stream);
-  std::cout << "Test: is_between_cw( " << m_xcurves[xcv] << " , " 
-            << (b==0?"false":"true") << " , " << m_xcurves[xcv1] << " , " 
-            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2] << " , " 
-            << (b2==0?"false":"true") << " , " << m_points[p] << " ) ? ";
+  bool exp_answer = this->get_expected_boolean(str_stream);
+  std::cout << "Test: is_between_cw( " << this->m_xcurves[xcv] << " , " 
+            << (b==0?"false":"true") << " , " << this->m_xcurves[xcv1] << " , " 
+            << (b1==0?"false":"true") << " , " << this->m_xcurves[xcv2] << " , " 
+            << (b2==0?"false":"true") << " , " << this->m_points[p] << " ) ? ";
   std::cout << exp_answer << " ";
 
   bool real_answer =
-    m_traits.is_between_cw_2_object()(m_xcurves[xcv] , (b==0?false:true), 
-                                      m_xcurves[xcv1] , (b1==0?false:true), 
-                                      m_xcurves[xcv2] , (b2==0?false:true),
-                                      m_points[p] , b_ref1 , b_ref2);
-  return compare(exp_answer, real_answer);
+    this->m_traits.is_between_cw_2_object()(this->m_xcurves[xcv], (b==0?false:true), 
+                                            this->m_xcurves[xcv1], (b1==0?false:true), 
+                                            this->m_xcurves[xcv2], (b2==0?false:true),
+                                            this->m_points[p], b_ref1, b_ref2);
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -190,20 +193,20 @@ ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
 {
   unsigned int xcv1 , b1 , xcv2 , b2 , p , b3;
   str_stream >> xcv1 >> b1 >> xcv2 >> b2 >> p >> b3;
-  unsigned int exp_answer = get_expected_enum(str_stream);
-  std::cout << "Test: compare_cw_around_point( " << m_xcurves[xcv1] << " , "
-            << (b1==0?"false":"true") << " , " << m_xcurves[xcv2] << " , "
-            << (b2==0?"false":"true") << " , " << m_points[p] << " , "
+  unsigned int exp_answer = this->get_expected_enum(str_stream);
+  std::cout << "Test: compare_cw_around_point( " << this->m_xcurves[xcv1] << " , "
+            << (b1==0?"false":"true") << " , " << this->m_xcurves[xcv2] << " , "
+            << (b2==0?"false":"true") << " , " << this->m_points[p] << " , "
             << (b3==0?"false":"true") << " ) ? ";
   std::cout << exp_answer << " ";
 
   unsigned int real_answer =
-    m_traits.compare_cw_around_point_2_object()(m_xcurves[xcv1],
+    this->m_traits.compare_cw_around_point_2_object()(this->m_xcurves[xcv1],
                                                 (b1 == 0 ? false : true),
-                                                m_xcurves[xcv2] ,
+                                                this->m_xcurves[xcv2] ,
                                                 (b2 == 0 ? false : true),
-                                                m_points[p] , b3 );
-  return compare(exp_answer, real_answer);
+                                                this->m_points[p] , b3 );
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -229,13 +232,14 @@ ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
-  bool exp_answer = get_expected_boolean(str_stream);
-  std::cout << "Test: are_mergeable( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? " << exp_answer << " ";
+  bool exp_answer = this->get_expected_boolean(str_stream);
+  std::cout << "Test: are_mergeable( " << this->m_xcurves[id1] << ", "
+            << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
   
   bool real_answer =
-    m_traits.are_mergeable_2_object()(m_xcurves[id1], m_xcurves[id2]);
-  return compare(exp_answer, real_answer);
+    this->m_traits.are_mergeable_2_object()(this->m_xcurves[id1],
+                                            this->m_xcurves[id2]);
+  return this->compare(exp_answer, real_answer);
 }
 
 template <class T_Traits>
@@ -267,11 +271,12 @@ ta_merge_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
   X_monotone_curve_2 cv;
-  std::cout << "Test: merge( " << m_xcurves[id1] << ", "
-            << m_xcurves[id2] << " ) ? " << m_xcurves[id] << " ";
+  std::cout << "Test: merge( " << this->m_xcurves[id1] << ", "
+            << this->m_xcurves[id2] << " ) ? " << this->m_xcurves[id] << " ";
 
-  m_traits.merge_2_object()(m_xcurves[id1], m_xcurves[id2], cv);
-  return compare_curves(m_xcurves[id], cv);
+  this->m_traits.merge_2_object()(this->m_xcurves[id1], this->m_xcurves[id2],
+                                  cv);
+  return this->compare_curves(this->m_xcurves[id], cv);
 }
 
 #endif

@@ -166,7 +166,8 @@ protected:
   /*! Print final results */
   void print_result(bool result)
   {
-    print_info((result) ? std::string("Passed") : std::string("Failed"), false);
+    std::string result_str((result) ? "Passed" : "Failed");
+    print_info(result_str, false);
   }
 
   /*! Print expected answer and real answer */

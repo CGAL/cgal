@@ -1028,9 +1028,9 @@ if [ $# -ne 0 ] ; then
 else
     echo "Run all tests."
 
-#     if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-# 	compile_and_run construction_test_suite_generator
-#     fi
+    if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+	compile_and_run construction_test_suite_generator
+    fi
 
     test_segment_traits
     test_non_caching_segment_traits
