@@ -10,6 +10,8 @@
 #include <QGraphicsView>
 #include <QGLWidget>
 #include <QTextStream>
+#include <QSettings>
+#include <QFileInfo>
 
 #include <CGAL/Qt/DemosMainWindow.h>
 
@@ -17,7 +19,9 @@ namespace CGAL {
 namespace Qt {
 
 DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
-  : QMainWindow(parent, flags)
+  : QMainWindow(parent, flags),
+    maxNumRecentFiles(10),
+    recentFileActs(maxNumRecentFiles)
 {
   // prepare the QLabel xycoord for inclusion in the statusBar()
   xycoord = new QLabel(" -0.00000 , -0.00000 ", this);
@@ -98,6 +102,7 @@ void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
+  view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
 }
@@ -212,6 +217,90 @@ DemosMainWindow::popupAboutDemo()
 {
   popupAboutBox(tr("About the demo..."),
                 aboutHtmlResource);
+}
+
+void
+DemosMainWindow::setMaxNumberOfRecentFiles(const unsigned int i)
+{
+  maxNumRecentFiles = i;
+  recentFileActs.resize(maxNumRecentFiles);
+}
+
+unsigned int 
+DemosMainWindow::maxNumberOfRecentFiles() const
+{
+  return maxNumRecentFiles;
+}
+
+void 
+DemosMainWindow::openRecentFile_aux()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (action)
+    emit openRecentFile(action->data().toString());
+}
+
+void 
+DemosMainWindow::addToRecentFiles(QString fileName)
+{
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+  files.removeAll(fileName);
+  files.prepend(fileName);
+  while (files.size() > maxNumberOfRecentFiles())
+    files.removeLast();
+
+  settings.setValue("recentFileList", files);
+
+  updateRecentFileActions();
+}
+
+void
+DemosMainWindow::addRecentFiles(QMenu* menu, QAction* insertBeforeAction)
+{
+  if(!insertBeforeAction) {
+    recentFilesSeparator = menu->addSeparator();
+  }
+
+  for (int i = 0; i < maxNumberOfRecentFiles(); ++i) {
+    recentFileActs[i] = new QAction(this);
+    recentFileActs[i]->setVisible(false);
+    connect(recentFileActs[i], SIGNAL(triggered()),
+            this, SLOT(openRecentFile_aux()));
+    if(insertBeforeAction)
+      menu->insertAction(insertBeforeAction, recentFileActs[i]);
+    else
+      menu->addAction(recentFileActs[i]);
+  }
+
+  if(insertBeforeAction) {
+    recentFilesSeparator = menu->insertSeparator(insertBeforeAction);
+  }
+
+  recentFilesSeparator->setVisible(false);
+
+  updateRecentFileActions();
+}
+
+void 
+DemosMainWindow::updateRecentFileActions()
+{
+  QSettings settings;
+  QStringList files = settings.value("recentFileList").toStringList();
+
+  int numRecentFiles = qMin(files.size(), (int)this->maxNumberOfRecentFiles());
+  
+  for (int i = 0; i < numRecentFiles; ++i) {
+    QString strippedName = QFileInfo(files[i]).fileName();
+    QString text = tr("&%1 %2").arg(i).arg(strippedName);
+    recentFileActs[i]->setText(text);
+    recentFileActs[i]->setData(files[i]);
+    recentFileActs[i]->setVisible(true);
+  }
+  for (int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
+    recentFileActs[j]->setVisible(false);
+  
+  recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
 } // namespace Qt
