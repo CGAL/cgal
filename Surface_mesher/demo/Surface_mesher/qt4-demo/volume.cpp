@@ -11,6 +11,8 @@
 #include "mainwindow.h"
 #include "isovalues_list.h"
 
+#include "File_XT.h" // format XT from Total/ELF
+
 #include <QApplication>
 #include <QFileDialog>
 #include <QAction>
@@ -25,6 +27,8 @@
 #include <GL/glu.h>
 
 #include <CGAL/Surface_mesher/Standard_criteria.h>
+// #include <CGAL/Surface_mesher/Image_surface_oracle_3.h>
+#include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
@@ -155,7 +159,7 @@ Volume::Volume(MainWindow* mw) :
   m_sm_angle(30),
   m_sm_radius(0),
   m_sm_distance(0),
-  m_relative_precision(0.000001),
+  m_relative_precision(0.0000001),
   m_view_surface(false),
   m_view_mc(false),
   m_triangulation_color(QColor(Qt::green)),
@@ -349,6 +353,73 @@ void Volume::open_vtk(const QString& filename)
   }
 }
 
+// Total 3D images (XT format, that is the old Inrimage format, 1994.
+bool Volume::open_xt(const QString& filename)
+{
+  mw->show_only("volume");
+
+  fileinfo.setFile(filename);
+
+  if(fileinfo.isDir())
+  {
+    return false;
+  }
+
+  if(!fileinfo.isReadable())
+  {
+    QMessageBox::warning(mw, mw->windowTitle(),
+                         tr("Cannot read file <tt>%1</tt>!").arg(filename));
+    status_message(tr("Opening of file %1 failed!").arg(filename));
+    return false;
+  }
+  else
+  {
+    long dimx, dimy, dimz;
+    long word_dim;
+    long header_size;
+    const char* filename_stl = qPrintable(filename);
+    CGAL::Total::lire_longueur_entete(filename_stl, &header_size);
+    CGAL::Total::lire_nb_octet(filename_stl, &word_dim);
+    CGAL::Total::lire_longueur_trace(filename_stl, &dimx);
+    CGAL::Total::lire_nb_trace(filename_stl, &dimy);
+    CGAL::Total::lire_nb_plan(filename_stl, &dimz);
+
+    vtkImageReader* vtk_reader = vtkImageReader::New();
+    vtk_reader->SetFileName(filename_stl);
+    switch(word_dim) {
+    case 8:
+      vtk_reader->SetDataScalarTypeToUnsignedChar();
+      break;
+    case 16:
+      vtk_reader->SetDataScalarTypeToUnsignedShort();
+      break;
+    default:
+      return false;
+    }
+    vtk_reader->SetHeaderSize(header_size);
+    vtk_reader->SetDataExtent(1, dimx, 1, dimy, 1,  dimz);
+    vtk_reader->SetDataSpacing(1., 1., 1.);
+    vtk_reader->SetFileDimensionality(3);
+    vtk_reader->Update();
+    vtk_reader->Print(std::cerr);
+    vtkImageData* vtk_image = vtk_reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    if(!m_image.read_vtk_image_data(vtk_image))
+    {
+      QMessageBox::warning(mw, mw->windowTitle(),
+                           tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
+      status_message(tr("Opening of file %1 failed!").arg(filename));
+      return false;
+    }
+    else
+    {
+      status_message(tr("File %1 successfully opened.").arg(filename));
+      finish_open();
+    }
+    return true;
+  }
+}
+
 #else // CGAL_USE_VTK
 void Volume::opendir(const QString&) {}
 #endif // CGAL_USE_VTK
@@ -373,7 +444,7 @@ void Volume::open(const QString& filename)
   }
   else
   {
-    if(!m_image.read(filename.toStdString().c_str()))
+    if(!m_image.read(filename.toStdString().c_str()) && !open_xt(filename))
     {
       
       QMessageBox::warning(mw, mw->windowTitle(),
@@ -605,6 +676,7 @@ void Volume::display_surface_mesher_result()
 
     // surface mesh traits class
     typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
+//     typedef CGAL::Surface_mesher::Image_surface_oracle_3<Kernel,
       Surface_3, 
       Classify_from_isovalue_list,
       Generate_surface_identifiers> Oracle;
@@ -655,7 +727,9 @@ void Volume::display_surface_mesher_result()
               << ", distance=" << m_sm_distance << "\n";
 
     // meshing surface
-    make_surface_mesh(c2t3, surface, oracle, criteria, CGAL::Non_manifold_tag(), 0);
+    make_surface_mesh(c2t3, surface, oracle, criteria,
+// 		      CGAL::Non_manifold_tag(), 0);
+		      CGAL::Manifold_tag(), 0);
     sm_timer.stop();
     not_busy();
 

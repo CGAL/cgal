@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.4.5)
+
 set ( prj Surface_mesher_Qt4_Demo )
 
 project ( ${prj} )
@@ -9,12 +11,12 @@ set(PACKAGE_ROOT ../../../)
 
 # Add several CGAL packages to the include and link paths,
 # if they lie in ${PACKAGE_ROOT}/.
-foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Mesh_2/include ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include ${PACKAGE_ROOT}/../Marching_cube/include ${PACKAGE_ROOT}/../CGALimageIO/include)
+foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Mesh_2/include ${PACKAGE_ROOT}/../Data_structure_for_queries_3/include ${PACKAGE_ROOT}/../Marching_cube/include ${PACKAGE_ROOT}/../CGALimageIO/include ${PACKAGE_ROOT}/../GraphicsView/include)
   if (EXISTS ${INC_DIR})
     include_directories (BEFORE ${INC_DIR})
   endif()
 endforeach()
-foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO ${PACKAGE_ROOT}/../GraphicsView/src/CGALQt4)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})
   endif()
@@ -46,7 +48,7 @@ if ( CGAL_FOUND )
       include_directories(${bimap_DIR})
       add_definitions(-DCGAL_USE_BOOST_BIMAP)
     endif()
-  endif(EXISTS ${bimap_DIR}/bimap.hpp)
+  endif(EXISTS ${bimap_DIR}/boost/bimap/bimap.hpp)
 
   if( VTK_FOUND )
 #    if( ${VTK_MAJOR_VERSION} STRGREATER "5")
@@ -97,7 +99,7 @@ if ( CGAL_FOUND )
       target_link_libraries( ${prj} CGAL CGAL-ImageIO ${CGAL_3RD_PARTY_LIBRARIES})
     endif()
     
-    target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}  ${PRJ_VTK_LIBS})
+    target_link_libraries( ${prj} CGAL-Qt4 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY}  ${PRJ_VTK_LIBS})
     
   endif()
 endif(CGAL_FOUND)
