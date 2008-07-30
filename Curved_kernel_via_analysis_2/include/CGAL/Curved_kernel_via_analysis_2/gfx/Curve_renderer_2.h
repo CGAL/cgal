@@ -1275,8 +1275,8 @@ bool get_seed_point(const Rational& seed, Pixel_2& start, int *dir,
                 Coeff vvx = NiX::substitute_xy(ffy, xx1, yy1);
                 Coeff vvy = NiX::substitute_xy(ffx, xx1, yy1); */           
     
-                typename CGAL::Coercion_traits<Rat_coercion_type, Coeff>::Cast
-                cast; 
+                //typename CGAL::Coercion_traits<Rat_coercion_type, Coeff>::Cast
+                //cast; 
 
                 NT vvx = rat2float(vx), vvy = rat2float(vy);
                 //Coeff vvx = cast(vx), vvy = cast(vy);

@@ -251,7 +251,9 @@ public:
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;
+#ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
         int res_w, res_h;
+#endif
         try {
             renderer().draw(arc, pts, end_pt1, end_pt2);
         } 
