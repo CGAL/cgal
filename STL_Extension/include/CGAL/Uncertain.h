@@ -102,6 +102,11 @@ public:
   Uncertain(T i, T s)
     : _i(i), _s(s) {}
 
+  Uncertain& operator=(T t)
+  {
+    _i = _s = t;
+    return this;
+  }
 
   T inf() const { return _i; }
   T sup() const { return _s; }
@@ -305,6 +310,9 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 
 
 // Equality operators
+
+// FIXME : these are sub-optimal :
+// {NEGATIVE, ZERO} == {POSITIVE} returns indeterminate instead of false.
 
 template < typename T >
 inline
