@@ -314,7 +314,7 @@ CGAL_END_NAMESPACE
           std::ostringstream predss ; \
           predss << CGAL_STRAIGHT_SKELETON_i_profiling::kernel_type< typename K::FT >() << " . " << pred ; \
           std::string preds = predss.str(); \
-          if ( is_indeterminate((expr)) ) \
+          if ( ! is_certain((expr)) ) \
           { \
             std::ostringstream errss  ; errss << error ; std::string errs = errss.str(); \
             register_predicate_failure(preds,errs); \

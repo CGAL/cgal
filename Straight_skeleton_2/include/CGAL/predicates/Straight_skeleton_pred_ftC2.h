@@ -130,13 +130,13 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
   Uncertain<Trisegment_collinearity> rR = Uncertain<Trisegment_collinearity>::indeterminate();
   
   Uncertain<bool> is_01 = are_edges_orderly_collinearC2(e0,e1);
-  if ( !CGAL_NTS is_indeterminate(is_01) )
+  if ( is_certain(is_01) )
   {
     Uncertain<bool> is_02 = are_edges_orderly_collinearC2(e0,e2);
-    if ( !CGAL_NTS is_indeterminate(is_02) )
+    if ( is_certain(is_02) )
     {
       Uncertain<bool> is_12 = are_edges_orderly_collinearC2(e1,e2);
-      if ( !CGAL_NTS is_indeterminate(is_12) )
+      if ( is_certain(is_12) )
       {
         if ( CGAL_NTS logical_and(is_01 , !is_02 , !is_12 ) )
           rR = make_uncertain(TRISEGMENT_COLLINEARITY_01);
@@ -189,7 +189,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( intrusive_ptr< Trisegment_2<K> > cons
     if ( t )
     {
       Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
-      if ( ! CGAL_NTS is_indeterminate(d_is_zero) )
+      if ( is_certain(d_is_zero) )
       {
         if ( !d_is_zero )
         {
@@ -421,7 +421,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
       CGAL_STSKEL_TRAITS_TRACE("sd_p_l0=" << n2str(sd_p_l0) ) ;
         
       Uncertain<bool> equal = CGAL_NTS certified_is_equal(sd_p_l0,sd_p_l1) ;   
-      if ( ! CGAL_NTS is_indeterminate(equal) )
+      if ( is_certain(equal) )
       {
         if ( equal )
         {
@@ -432,7 +432,7 @@ oriented_side_of_event_point_wrt_bisectorC2 ( intrusive_ptr< Trisegment_2<K> > c
         else
         {
           Uncertain<bool> smaller = CGAL_NTS certified_is_smaller( validate(l0.a()*l1.b()), validate(l1.a()*l0.b()) ) ;
-          if ( ! CGAL_NTS is_indeterminate(smaller) )
+          if ( is_certain(smaller) )
           {
             // Reflex bisector?
             if ( smaller )
@@ -506,7 +506,7 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
 
     Uncertain<bool> equal_times = CGAL_NTS certified_is_equal(lt,rt);
     
-    if ( ! CGAL_NTS is_indeterminate(equal_times) )
+    if ( is_certain(equal_times) )
     {
       if ( equal_times )
       {
@@ -529,6 +529,3 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
 CGAL_END_NAMESPACE
 
 #endif // CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H //
-// EOF //
-
-

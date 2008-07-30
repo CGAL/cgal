@@ -238,7 +238,7 @@ intrusive_ptr< Trisegment_2<K> > construct_trisegment ( Segment_2<K> const& e0
   
   Uncertain<Trisegment_collinearity> lCollinearity = certified_trisegment_collinearity(e0,e1,e2);
   
-  if ( !is_indeterminate(lCollinearity) ) 
+  if (is_certain(lCollinearity) ) 
        return Trisegment_2_ptr( new Trisegment_2(e0, e1, e2, lCollinearity) ) ;
   else return Trisegment_2_ptr();
 }

@@ -300,7 +300,7 @@ sign(TMC_Vertex_handle vit) const {
                     std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
       Sign result = vit->cell()->info().second->sign(vit->point());
-      if (! is_indeterminate(result))
+      if (is_certain(result))
         return result;
     }
   catch (Interval_nt_advanced::unsafe_comparison) {}
@@ -338,7 +338,7 @@ sign(const Bare_point &p, const Cell_info &info) const {
                     std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
       Sign result = sign_inexact(p,info);
-      if (! is_indeterminate(result))
+      if (is_certain(result))
         return result;
     }
   catch (Interval_nt_advanced::unsafe_comparison) {}
@@ -631,7 +631,7 @@ compare(Cell_info &info1,
       Protect_FPU_rounding<true> P;
       Sign result = CGAL_NTS sign(info1.second->value(p1) -
                                   info2.second->value(p2));
-      if (! is_indeterminate(result))
+      if (is_certain(result))
         return result;
     }
   catch (Interval_nt_advanced::unsafe_comparison) {}

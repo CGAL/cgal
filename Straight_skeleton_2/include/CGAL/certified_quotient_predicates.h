@@ -66,7 +66,7 @@ Uncertain<Sign> certified_quotient_sign(const Quotient<NT>& x)
                    && POSITIVE == static_cast<Sign>(1) 
                    );
 
-  if ( !is_indeterminate(signum) && !is_indeterminate(sigden) )
+  if ( is_certain(signum) && is_certain(sigden) )
     r = make_uncertain( static_cast<Sign>(signum * sigden) ) ;
 
   return r ;
@@ -88,10 +88,10 @@ Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, 
   Uncertain<Sign> ynumsign = CGAL_NTS certified_sign(y.num) ;
   Uncertain<Sign> ydensign = CGAL_NTS certified_sign(y.den) ;
 
-  if (  !is_indeterminate(xnumsign)
-     && !is_indeterminate(xdensign)
-     && !is_indeterminate(ynumsign)
-     && !is_indeterminate(ydensign)
+  if (  is_certain(xnumsign)
+     && is_certain(xdensign)
+     && is_certain(ynumsign)
+     && is_certain(ydensign)
      )
   {
     int xsign = xnumsign * xdensign ;
