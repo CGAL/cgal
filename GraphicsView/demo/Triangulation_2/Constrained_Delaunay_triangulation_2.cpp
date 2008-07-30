@@ -18,6 +18,8 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 
 // GraphicsView items and event filters (input classes)
 #include "TriangulationCircumcircle.h"
@@ -115,6 +117,9 @@ private:
 public:
   MainWindow();
 
+protected:
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dropEvent(QDropEvent *event);
 private:
   template <typename Iterator> 
   void insert_polyline(Iterator b, Iterator e)
@@ -184,6 +189,8 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
+  setAcceptDrops(true);
+
   // Add a GraphicItem for the CDT triangulation
   dgi = new CGAL::Qt::ConstrainedTriangulationGraphicsItem<CDT>(&cdt);
     
@@ -245,6 +252,21 @@ MainWindow::MainWindow()
 	  this, SLOT(open(QString)));
 }
 
+
+void 
+MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    event->acceptProposedAction();
+}
+
+void 
+MainWindow::dropEvent(QDropEvent *event)
+{
+  QString filename = event->mimeData()->urls().at(0).path();
+  open(filename);
+  event->acceptProposedAction();
+}
 
 void
 MainWindow::processInput(CGAL::Object o)
