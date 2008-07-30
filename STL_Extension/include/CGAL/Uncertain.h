@@ -191,7 +191,7 @@ bool is_certain(T)
 
 template < typename T >
 inline
-T extract_singleton(T t)
+T get_certain(T t)
 {
   return t;
 }
@@ -206,7 +206,7 @@ bool is_certain(Uncertain<T> a)
 
 template < typename T >
 inline
-T extract_singleton(Uncertain<T> a)
+T get_certain(Uncertain<T> a)
 {
   CGAL_assertion(is_certain(a));
   return a.inf();
@@ -245,7 +245,7 @@ inline
 bool certainly(Uncertain<bool> c)
 {
   if (is_certain(c))
-    return extract_singleton(c);
+    return get_certain(c);
   return false;
 }
 
@@ -253,7 +253,7 @@ inline
 bool possibly(Uncertain<bool> c)
 {
   if (is_certain(c))
-    return extract_singleton(c);
+    return get_certain(c);
   return true;
 }
 
