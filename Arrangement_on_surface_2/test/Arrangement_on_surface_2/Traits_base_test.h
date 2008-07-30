@@ -141,7 +141,13 @@ protected:
   std::pair<Enum_type, unsigned int>
   get_next_input(std::istringstream & str_stream);
 
-  /*! Print and error message */
+  /*! Print curve-end string */
+  const char * curve_end_str(CGAL::Arr_curve_end cv_end) const
+  {
+    return (cv_end == CGAL::ARR_MIN_END) ? "MIN_END" : "MAX_END";
+  }
+  
+  /*! Print an error message */
   void print_error(const std::string & msg)
   {
     std::cerr << "Error: " << msg.c_str() << std::endl;

@@ -23,7 +23,6 @@ int main ()
 #include "test_traits.h"
 #include "Traits_test.h"
 
-
 // Arrangement types:
 typedef CGAL::Arr_default_dcel<Traits>                  Dcel;
 typedef CGAL::Arrangement_2<Traits, Dcel>               Arr;
@@ -53,7 +52,7 @@ int main (int argc, char * argv[])
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_point(stream & is, Point_2 & p)
 {
   Rational rat_x,rat_y;
@@ -72,7 +71,7 @@ read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_point(stream & is, Point_2 & p)
 {
   Basic_number_type x, y, z;
@@ -85,7 +84,7 @@ read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
   Point_2 p1,p2;
   read_point(is, p1);
@@ -99,7 +98,7 @@ Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 {
   Point_2 p1, p2;
   read_point(is, p1);
@@ -117,7 +116,7 @@ Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
   Curve_2 tmp_cv;
   if (!read_curve(is,tmp_cv))
@@ -144,7 +143,7 @@ bool read_coefficients(stream & is,Rat_vector & coeffs)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
   Rat_vector p_coeffs, q_coeffs;
@@ -230,7 +229,7 @@ Traits_test<Traits>::read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_xcurve(stream & is,
             Traits::X_monotone_curve_2 & xcv)
 {
@@ -254,7 +253,7 @@ read_xcurve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is,
            Traits::Curve_2 & cv)
 {
@@ -280,7 +279,7 @@ read_curve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits >::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
   is >> xcv;
   return true;
@@ -289,7 +288,7 @@ Traits_test<Traits >::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::read_curve(stream & is, Curve_2 & cv)
+Traits_base_test<Traits >::read_curve(stream & is, Curve_2 & cv)
 {
   is >> cv;
   return true;
@@ -531,7 +530,7 @@ bool read_general_curve(stream & is, Curve & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::
+Traits_base_test<Traits>::
 read_xcurve(stream & is,
             X_monotone_curve_2 & xcv)
 {
@@ -546,7 +545,7 @@ read_xcurve(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is,
            Curve_2 & cv)
 {
@@ -635,7 +634,7 @@ bool read_ort_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 {
   bool ans=true;
@@ -677,7 +676,7 @@ read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is,Curve_2 & cv)
 {
   bool ans=true;
@@ -763,7 +762,7 @@ read_curve(stream & is,Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_point(stream & is, Point_2 & p)
 {
   Rational rat_x,rat_y;
@@ -777,7 +776,7 @@ read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
+Traits_base_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
   std::list<CGAL::Object>                  x_objs;
   std::list<CGAL::Object>::const_iterator  xoit;
@@ -801,7 +800,7 @@ Traits_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::read_curve(stream & is,Curve_2 & cv)
+Traits_base_test<Traits >::read_curve(stream & is,Curve_2 & cv)
 {
   is >> cv;
   return true;
@@ -924,7 +923,7 @@ Circular_kernel::Circular_arc_2 read_arc(char type,stream & is)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::
+Traits_base_test<Traits>::
 read_point(stream & is, Point_2 & p)
 {
   return read_arc_point<Traits, stream>(is, p);
@@ -934,7 +933,7 @@ read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 {
   // Get the arc type:
@@ -953,7 +952,7 @@ read_xcurve(stream & is, X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
@@ -973,7 +972,7 @@ read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::
+Traits_base_test<Traits>::
 read_point(stream & is,
            Point_2 & p)
 {
@@ -984,7 +983,7 @@ read_point(stream & is,
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 {
   // Get the arc type:
@@ -1002,7 +1001,7 @@ read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
@@ -1029,7 +1028,7 @@ read_curve(stream & is, Curve_2 & cv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits>::
+Traits_base_test<Traits>::
 read_point(stream & is, Point_2 & p)
 {
   return read_arc_point<Traits, stream>(is, p);
@@ -1039,7 +1038,7 @@ read_point(stream & is, Point_2 & p)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 {
   // Get the arc type:
@@ -1062,7 +1061,7 @@ read_xcurve(stream & is,X_monotone_curve_2 & xcv)
 template <>
 template <class stream>
 bool
-Traits_test<Traits >::
+Traits_base_test<Traits >::
 read_curve(stream & is, Curve_2 & cv)
 {
   // Get the arc type:
