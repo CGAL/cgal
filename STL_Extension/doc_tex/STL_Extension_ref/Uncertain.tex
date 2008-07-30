@@ -1,0 +1,326 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - The Reference Part
+%% -----------------------------------------------------------------------------
+%% author: Sylvain Pion
+%% -----------------------------------------------------------------------------
+%% $Id: $
+%% $URL: $
+%% =============================================================================
+
+%% +=========================================================================+
+
+\begin{ccRefClass}{Uncertain<T>}
+
+\ccDefinition
+
+An object of the class \ccClassTemplateName\ represents an uncertainty on the
+value of type \ccc{T}.  This uncertainty is represented by a non-empty range of
+values of type \ccc{T}.
+
+The idea is that sometimes you are not sure of the result of a function, and
+you would like to communicate that to the caller.  \ccc{Uncertain<T>} allows
+just that.
+
+\ccc{Uncertain<T>} is also meant to be used as a drop-in replacement for
+\ccc{T} in some template contexts, as much as possible.  This is why it
+provides overloaded operators and functions to naturally extend the Boolean
+operations for \ccc{Uncertain<bool>} for example, or the operations on
+enumeration types.
+
+\ccc{Uncertain<T>} is used in CGAL as the return type of geometric predicates
+when the number type used is interval arithmetic like \ccc{Interval_nt}.  End
+users typically do not see it, as it is hidden in the implementation of the
+filtered predicates provided by the various filtered kernels, but it is
+important that providers of predicates that are meant to be filtered by
+\ccc{Filtered_predicate}, know about it.
+
+Note concerning \cgal\ assertions: assertions checking an expression of type
+\ccc{Uncertain<bool>} will trigger an assertion failure only if the assertion
+is certainly false.  In case of an indeterminate value, the assertion is not
+triggered.  This means that we assume, in case of doubt, that there is no
+error.
+
+It can also be used in other contexts as well, as it is a general tool.
+This can be seem as support for non-deterministic programming.
+Finally, note that this class has some common points with \ccc{boost::tribool}.
+
+  \ccInclude{CGAL/Uncertain.h}
+
+  %% +-----------------------------------+
+  \ccParameters
+
+  The parameter \ccStyle{T} can either be \ccc{bool} or one of the three-valued
+  (-1, 0, 1) enumeration types: \ccc{Sign}, \ccc{Comparison_result},
+  \ccc{Orientation}, \ccc{Oriented_side}, \ccc{Bounded_side} or \ccc{Angle}.
+
+  Some functions are defined only when \ccc{T} is \ccc{bool} or alternatively
+  when it is one of the enumeration types listed previously.
+
+% TODO : the CGALi::Minmax_traits should be documented (and renamed before that).
+
+  %% +-----------------------------------+
+  \ccTypes
+  \ccSetThreeColumns{static Uncertain<T>}{l.swap( l1)xxxxxxxxxxxx;}{}
+  \ccPropagateThreeToTwoColumns
+
+  \ccNestedType{value_type}{The type \ccc{T}.}
+
+  \ccNestedType{Uncertain_conversion_exception}{The type of the exception
+  thrown for uncertain conversions.  It is a typedef to the type
+  \ccc{CGAL::Uncertain_conversion_exception} which derives from \ccc{std::range_error}.}
+
+  %% +-----------------------------------+
+  \ccCreation
+  \ccCreationVariable{u}
+
+  \ccConstructor{Uncertain();}
+  {introduces an indeterminate value.}
+
+  \ccConstructor{Uncertain(T t);}
+  {introduces a certain object with value \ccc{t}.}
+
+  \ccMethod{Uncertain& operator=(T t);}
+  {assigns the certain value \ccc{t} to \ccc{u}.}
+
+  \ccConstructor{Uncertain(T i, T s);}
+  {introduces an object representing the range with lower bound \ccc{i} and
+  upper bound \ccc{s}. \ccPrecond $ i<= s$. }
+
+  %% +-----------------------------------+
+  \ccHeading{Access Functions}
+
+  % \def\ccTagRmTrailingConst{\ccFalse}
+  \ccMethod{T inf() const;}
+  {returns the lower bound of the range represented by~\ccVar.}
+
+  \ccGlue\ccMethod{T sup() const;}
+  {returns the upper bound of the range represented by~\ccVar.}
+
+  %% +-----------------------------------+
+  \ccHeading{Uncertainty testing and conversion}
+
+  \ccMethod{bool is_certain() const;}
+  {returns \ccc{true} iff the value is certain, that is, it is unique, the range
+   is a singleton. That is, \ccc{u.inf() == u.sup()}.}
+
+  \ccMethod{T make_certain() const;}
+  {if \ccVar.\ccc{is_certain()}, then returns the certain value which is represented.
+   Otherwise, throws an exception of type \ccc{Uncertain_conversion_exception}.}
+
+  \ccMethod{operator T() const;}
+  {conversion operator to \ccc{T}.  It does and returns the same thing as
+   \ccVar.\ccc{make_certain()}.  Note that relying on the automatic conversion
+   can throw exceptions, which defeats the purpose of propagating uncertainty.
+   Nevertheless, in many cases, it is hard to avoid it, for example for the
+   \ccc{&&} and $||$ operators for \ccc{bool} (see below).}
+
+  %% +-----------------------------------+
+  \ccHeading{Static member function}
+
+  \def\ccTagRmEigenClassName{\ccFalse}
+  \ccFunction{static Uncertain<T> Uncertain<T>::indeterminate();}
+  {returns an indeterminate range, like the default constructor.}
+
+  %% +-----------------------------------+
+  \ccHeading{Free functions}
+
+  \ccFunction{template <class T> T inf(Uncertain<T> u);}
+  {returns \ccc{u.inf()}.}
+
+  \ccFunction{template <class T> T sup(Uncertain<T> u);}
+  {returns \ccc{u.sup()}.}
+
+  \ccFunction{template <class T> bool is_certain(T t);}
+  {returns \ccc{true}.}
+
+  \ccFunction{template <class T> bool is_certain(Uncertain<T> u);}
+  {returns \ccc{u}.\ccc{is_certain}().}
+
+  \ccFunction{template <class T> bool is_indeterminate(T u);}
+  {returns \ccc{false}.}
+
+  \ccFunction{template <class T> bool is_indeterminate(Uncertain<T> u);}
+  {returns \ccc{!is_certain(u)}.}
+
+  \ccFunction{template <class T> T get_certain(T t);}
+  {returns \ccc{t}.}
+
+  \ccFunction{template <class T> T get_certain(Uncertain<T> u);}
+  {returns \ccc{u}.\ccc{make_certain}().  \ccPrecond \ccc{u}.\ccc{is_certain}().}
+
+  \ccFunction{template <class T> T make_certain(T t);}
+  {returns \ccc{t}.}
+
+  \ccFunction{template <class T> T make_certain(Uncertain<T> u);}
+  {returns \ccc{u}.\ccc{make_certain}().}
+
+  \ccFunction{template <class T> Uncertain<T> make_uncertain(T t);}
+  {returns \ccc{Uncertain<T>(u)}.}
+
+  \ccFunction{template <class T> Uncertain<T> make_uncertain(Uncertain<T> u);}
+  {returns \ccc{u}.}
+
+  %% +-----------------------------------+
+  \ccHeading{Overloaded operators}
+
+  The overloaded operators and functions are defined as preserving the set-inclusion property.
+  Similarly to interval arithmetic, the returned range is guaranteed to contain
+  the result of the operation over all values of the input range(s).
+  In the following documentation we express this as the extension of the corresponding function
+  over the type \ccc{T}.
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator==(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the equality operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator==(Uncertain<T> u, T v);}
+  {returns \ccc{u == make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator==(T u, Uncertain<T> v);}
+  {returns \ccc{v == u}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator!=(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the inequality operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator!=(Uncertain<T> u, T v);}
+  {returns \ccc{u != make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator!=(T u, Uncertain<T> v);}
+  {returns \ccc{v != u}.}
+
+  %% +-----------------------------------+
+  \ccHeading{Overloaded operators for \ccc{Uncertain<bool>} only}
+
+  \ccFunction{Uncertain<bool> operator!(Uncertain<bool> u);}
+  {returns the range containing the negated values of \ccc{u}.}
+
+  \ccFunction{Uncertain<bool> operator|(Uncertain<bool> u, Uncertain<bool> v);}
+  {returns the range containing the values computed as logical or from \ccc{u} and \ccc{v}.}
+
+  \ccFunction{Uncertain<bool> operator|(Uncertain<bool> u, bool v);}
+  {returns \ccc{u | make_uncertain(v)}.}
+
+  \ccFunction{Uncertain<bool> operator|(bool u, Uncertain<bool> v);}
+  {returns \ccc{v | u}.}
+
+  \ccFunction{Uncertain<bool> operator&(Uncertain<bool> u, Uncertain<bool> v);}
+  {returns the range containing the values computed as logical and from \ccc{u} and \ccc{v}.}
+
+  \ccFunction{Uncertain<bool> operator&(Uncertain<bool> u, bool v);}
+  {returns \ccc{u & make_uncertain(v)}.}
+
+  \ccFunction{Uncertain<bool> operator&(bool u, Uncertain<bool> v);}
+  {returns \ccc{v & u}.}
+
+  Note : the logical operators $\&\&$ and $||$ are not overloaded on purpose.  The reason
+  is that, when \ccc{f() && g()} is evaluated and they return \ccc{bool}, then \ccc{g()}
+  is only evaluated when \ccc{f()} returns \ccc{true}.  One could have a dependency so
+  that \ccc{g()} has an internal precondition that implies that \ccc{f()} returns true.
+  The overloaded operators for user-defined types do not provide this short-circuiting
+  property, and so, if the overloaded operators where provided, then \ccc{g()} would
+  be evaluated, no matter the result of \ccc{f()}, which could lead to an unwanted
+  situation.  The $\&$ and $|$ operators do not have this short-circuiting property,
+  and are therefore overloaded safely.
+
+  %% +-----------------------------------+
+  \ccHeading{Overloaded operators and functions for \ccc{Uncertain<enum T>} only}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the less-than operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<(Uncertain<T> u, T v);}
+  {returns \ccc{u < make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<(T u, Uncertain<T> v);}
+  {returns \ccc{make_uncertain(u) < v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the greater-than operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>(Uncertain<T> u, T v);}
+  {returns \ccc{u > make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>(T u, Uncertain<T> v);}
+  {returns \ccc{make_uncertain(u) > v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<=(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the less-than or equal operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<=(Uncertain<T> u, T v);}
+  {returns \ccc{u <= make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator<=(T u, Uncertain<T> v);}
+  {returns \ccc{make_uncertain(u) <= v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>=(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the greater-than or equal operator over \ccc{u} and \ccc{v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>=(Uncertain<T> u, T v);}
+  {returns \ccc{u > make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<bool> operator>=(T u, Uncertain<T> v);}
+  {returns \ccc{make_uncertain(u) >= v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<T> operator*(Uncertain<T> u, Uncertain<T> v);}
+  {returns the extension of the multiplication operator over \ccc{u} and \ccc{v}.
+   This requires \ccc{T} to have a multiplication operator as well.}
+
+  \ccFunction{template <class T>
+              Uncertain<T> operator*(Uncertain<T> u, T v);}
+  {returns \ccc{u * make_uncertain(v)}.}
+
+  \ccFunction{template <class T>
+              Uncertain<T> operator<(T u, Uncertain<T> v);}
+  {returns \ccc{make_uncertain(u) * v}.}
+
+  \ccFunction{template <class T>
+              Uncertain<T> operator-(Uncertain<T> u);}
+  {returns the extension of the unary minus operator over \ccc{u}.}
+
+  \ccFunction{template <class T, class U>
+              Uncertain<T> enum_cast(Uncertain<U> u);}
+  {returns the extension of the \ccc{enum_cast<T>} function over \ccc{u}.}
+
+  %% +-----------------------------------+
+  \ccHeading{Other free functions for \ccc{Uncertain<bool>}}
+
+  \ccFunction{bool certainly(Uncertain<bool> u);}
+  {returns \ccc{true} iff \ccVar.\ccc{is_certain()}, and the \ccVar.\ccc{make_certain}()
+   returns \ccc{true}.}
+
+  \ccFunction{bool certainly(bool u);}
+  {returns \ccc{u}.}
+
+  \ccFunction{bool possibly(Uncertain<bool> u);}
+  {returns \ccc{true} iff \ccVar.\ccc{is_certain()} returns \ccc{false}, or if
+   \ccVar.\ccc{make_certain}() returns \ccc{true}.}
+
+  \ccFunction{bool possibly(bool u);}
+  {returns \ccc{u}.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Interval_nt<bool>}
+
+\end{ccRefClass}
+
+\ccParDims

@@ -26,7 +26,7 @@ generic algorithms, iterators, functor adaptors for binding and swapping
 arguments and for composition, functors for projection and creation and
 adaptor classes around iterators and circulators. See also circulators in
 Chapter~\ref{chapterCirculators}.  A class storing polymorphic objects
-is also provided.
+is also provided, as well as a class to manage the uncertainty of some values.
 
 \section{Doubly-Connected List Managing Items in Place}
 
@@ -112,3 +112,23 @@ It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
 This class is similar to \ccc{boost::any}.
 
+\section{Uncertainty management}
+
+The class \ccStyle{Uncertain<T>} represents a range of values of type \ccc{T}.
+\ccc{T} is allowed to stand for \ccc{bool}, or CGAL's enumeration types
+\ccc{Sign}, \ccc{Comparison_result}, \ccc{Orientation}, \ccc{Oriented_side},
+\ccc{Bounded_side} and \ccc{Angle}.
+
+The idea is that sometimes you are not sure of the result of a function,
+and you would like to communicate that to the caller.  \ccc{Uncertain<T>}
+allows just that.  It also provides functions to naturally extend the
+Boolean operations for \ccc{Uncertain<bool>} for example.
+
+\ccc{Uncertain<T>} is used in CGAL as the return type of geometric predicates
+when the number type used is interval arithmetic like \ccc{Interval_nt}.
+End users typically do not see it as it is hidden in the implementation
+of the filtered predicates provided by the various filtered kernels,
+but it is important that providers of predicates that are meant to be
+filtered by \ccc{Filtered_predicate}, know about it.
+
+It can also be used in other contexts as well, as it is a general tool.

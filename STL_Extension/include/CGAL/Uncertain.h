@@ -21,6 +21,7 @@
 #define CGAL_UNCERTAIN_H
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h>
 #include <CGAL/enum.h>
 #include <stdexcept>
 
@@ -76,8 +77,8 @@ public:
 };
 
 
-// Encodes an interval [min;max] of values of type T.
-// The primary template is supposed to work for enums and bool.
+// Encodes a range [inf,sup] of values of type T.
+// T can be enums or bool.
 
 template < typename T >
 class Uncertain
@@ -88,9 +89,9 @@ class Uncertain
 
 public:
 
-  typedef CGAL::Uncertain_conversion_exception  Uncertain_conversion_exception;
-
   typedef T  value_type;
+
+  typedef CGAL::Uncertain_conversion_exception  Uncertain_conversion_exception;
 
   Uncertain()
     : _i(CGALi::Minmax_traits<T>::min),
@@ -100,12 +101,12 @@ public:
     : _i(t), _s(t) {}
 
   Uncertain(T i, T s)
-    : _i(i), _s(s) {}
+    : _i(i), _s(s) { CGAL_precondition(i <= s); }
 
   Uncertain& operator=(T t)
   {
     _i = _s = t;
-    return this;
+    return *this;
   }
 
   T inf() const { return _i; }
@@ -171,13 +172,6 @@ T sup(Uncertain<T> i)
 {
   return i.sup();
 }
-
-
-// possibly() declarations (needed as used in the assertions)
-// ----------------------------------------------------------
-
-inline bool possibly(bool b);
-inline bool possibly(Uncertain<bool> c);
 
 
 // Basic functions

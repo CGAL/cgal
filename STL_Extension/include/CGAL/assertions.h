@@ -47,6 +47,13 @@ void postcondition_fail  ( const char*, const char*, int, const char* = "");
 void warning_fail( const char*, const char*, int, const char* = "");
 
 
+// The following declarations are needed first, before assertions are used.
+// ---------------------------------------------------------------------
+template < typename T > class Uncertain;
+inline bool possibly(bool b);
+inline bool possibly(Uncertain<bool> c);
+
+
 // macro definitions
 // =================
 // assertions
