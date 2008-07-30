@@ -67,7 +67,9 @@ template< class Coefficient_, class ICoeffAlgebraicCategory >
 class Polynomial_traits_d_base_icoeff_algebraic_category {    
 public:    
   typedef Null_functor    Multivariate_content;
-  typedef Null_functor    Interpolate;
+  
+  // Disabled for release 
+  // typedef Null_functor    Interpolate;
 };
 
 // Specializations
@@ -136,55 +138,56 @@ public:
         return Innermost_coefficient(1);
     }
   };
-
-  struct Interpolate{
-    typedef Polynomial<Innermost_coefficient> Polynomial_1; 
+  
+//  // Disabled for release
+//  struct Interpolate{
+//     typedef Polynomial<Innermost_coefficient> Polynomial_1; 
         
-    void operator() (
-        const Polynomial_1& m1, const Polynomial_d& u1,
-        const Polynomial_1& m2, const Polynomial_d& u2,
-        Polynomial_1& m, Polynomial_d& u) const {
-      Polynomial_1 s,t; 
+//     void operator() (
+//         const Polynomial_1& m1, const Polynomial_d& u1,
+//         const Polynomial_1& m2, const Polynomial_d& u2,
+//         Polynomial_1& m, Polynomial_d& u) const {
+//       Polynomial_1 s,t; 
             
-      CGAL::extended_euclidean_algorithm(m1,m2,s,t);
-      m = m1 * m2;
-      this->operator()(m1,m2,m,s,t,u1,u2,u);
-    }
+//       CGAL::extended_euclidean_algorithm(m1,m2,s,t);
+//       m = m1 * m2;
+//       this->operator()(m1,m2,m,s,t,u1,u2,u);
+//     }
         
-    void operator() (
-        const Polynomial_1& m1, const Polynomial_1& m2, 
-        const Polynomial_1& m, 
-        const Polynomial_1& s,  const Polynomial_1& t,  
-        Polynomial_d u1, Polynomial_d u2, 
-        Polynomial_d& u) const {
-#ifndef NDEBUG 
-      Polynomial_1 tmp,s_,t_;
-      tmp = CGAL::extended_euclidean_algorithm(m1,m2,s_,t_);
+//     void operator() (
+//         const Polynomial_1& m1, const Polynomial_1& m2, 
+//         const Polynomial_1& m, 
+//         const Polynomial_1& s,  const Polynomial_1& t,  
+//         Polynomial_d u1, Polynomial_d u2, 
+//         Polynomial_d& u) const {
+// #ifndef NDEBUG 
+//       Polynomial_1 tmp,s_,t_;
+//       tmp = CGAL::extended_euclidean_algorithm(m1,m2,s_,t_);
  
-      CGAL_precondition(tmp == Polynomial_1(1));
-      CGAL_precondition(s_ == s);
-      CGAL_precondition(t_ == t);
-#endif
+//       CGAL_precondition(tmp == Polynomial_1(1));
+//       CGAL_precondition(s_ == s);
+//       CGAL_precondition(t_ == t);
+// #endif
             
-      typename CGAL::Coercion_traits<Polynomial_1,Polynomial_d>::Cast cast;
-      typename Polynomial_traits_d<Polynomial_1>::Canonicalize canonicalize;
-      typename Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder
-        pseudo_remainder;
+//       typename CGAL::Coercion_traits<Polynomial_1,Polynomial_d>::Cast cast;
+//       typename Polynomial_traits_d<Polynomial_1>::Canonicalize canonicalize;
+//       typename Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder
+//         pseudo_remainder;
             
-      CGAL_precondition(u1.degree() < m1.degree() || u1.is_zero());
-      CGAL_precondition(u2.degree() < m2.degree() || u2.is_zero());
-      if(m1.degree() < m2.degree()){
-        Polynomial_d v = 
-          pseudo_remainder(cast(s)*(u2-u1),cast(canonicalize(m2)));
-        u = cast(m1)*v + u1;
-      }
-      else{
-        Polynomial_d v 
-          = pseudo_remainder(cast(t)*(u1-u2),cast(canonicalize(m1)));
-        u = cast(m2)*v + u2;
-      }
-    }
-  };
+//       CGAL_precondition(u1.degree() < m1.degree() || u1.is_zero());
+//       CGAL_precondition(u2.degree() < m2.degree() || u2.is_zero());
+//       if(m1.degree() < m2.degree()){
+//         Polynomial_d v = 
+//           pseudo_remainder(cast(s)*(u2-u1),cast(canonicalize(m2)));
+//         u = cast(m1)*v + u1;
+//       }
+//       else{
+//         Polynomial_d v 
+//           = pseudo_remainder(cast(t)*(u1-u2),cast(canonicalize(m1)));
+//         u = cast(m2)*v + u2;
+//       }
+//     }
+//   };
 };
 
 template< class Coefficient_ >

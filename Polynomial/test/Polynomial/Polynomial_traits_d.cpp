@@ -450,50 +450,49 @@ void test_multivariate_content(const Polynomial_traits_d&){
   std::cerr << " ok "<< std::endl; 
 }
 
-// //       Multivariate_content;
-template <class Polynomial_traits_d>
-void test_interpolate(const Polynomial_traits_d&){
-  std::cerr << "start test_interpolate "; std::cerr.flush();
-  typedef Polynomial_traits_d PT_d; 
-  typedef typename PT_d::Innermost_coefficient ICoeff;
-  typedef typename PT_d::Polynomial_d Polynomial_d;
-  typedef typename PT_d:: template Rebind<ICoeff,1>::Other PT_1;
-  typedef typename PT_1::Polynomial_d Polynomial_1;
+//template <class Polynomial_traits_d>
+//void test_interpolate(const Polynomial_traits_d&) {
+//   std::cerr << "start test_interpolate "; std::cerr.flush();
+//   typedef Polynomial_traits_d PT_d; 
+//   typedef typename PT_d::Innermost_coefficient ICoeff;
+//   typedef typename PT_d::Polynomial_d Polynomial_d;
+//   typedef typename PT_d:: template Rebind<ICoeff,1>::Other PT_1;
+//   typedef typename PT_1::Polynomial_d Polynomial_1;
     
-  typename PT_d::Interpolate interpolate;
-  typename PT_d::Evaluate eval; 
+//   typename PT_d::Interpolate interpolate;
+//   typename PT_d::Evaluate eval; 
     
-  for(int i = 0; i < 5; i++){
-    Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
+//   for(int i = 0; i < 5; i++){
+//     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
        
-    Polynomial_1 m(1); 
-    Polynomial_d u(0);
-    for (int j = 0; j <= i; j++){ 
-      Polynomial_1 m1 = m; 
-      Polynomial_d u1 = u; 
-      Polynomial_1 m2 = Polynomial_1(ICoeff(-j),ICoeff(2));
-      Polynomial_d u2 = eval(p,ICoeff(j)/ICoeff(2));
-      interpolate(m1,u1,m2,u2,m,u);
-    }
-    assert(u == p);
-  }
+//     Polynomial_1 m(1); 
+//     Polynomial_d u(0);
+//     for (int j = 0; j <= i; j++){ 
+//       Polynomial_1 m1 = m; 
+//       Polynomial_d u1 = u; 
+//       Polynomial_1 m2 = Polynomial_1(ICoeff(-j),ICoeff(2));
+//       Polynomial_d u2 = eval(p,ICoeff(j)/ICoeff(2));
+//       interpolate(m1,u1,m2,u2,m,u);
+//     }
+//     assert(u == p);
+//   }
     
-  for(int i = 0; i < 5; i++){
-    Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
+//   for(int i = 0; i < 5; i++){
+//     Polynomial_d p = generate_sparse_random_polynomial<Polynomial_d>(i);
        
-    Polynomial_1 m(1); 
-    Polynomial_d u(0);
-    for (int j = 0; j <= i; j++){ 
-      Polynomial_1 m2 = m; 
-      Polynomial_d u2 = u; 
-      Polynomial_1 m1 = Polynomial_1(ICoeff(-j),ICoeff(2));
-      Polynomial_d u1 = eval(p,ICoeff(j)/ICoeff(2));
-      interpolate(m1,u1,m2,u2,m,u);
-    }
-    assert(u == p);
-  }
-  std::cerr << " ok "<< std::endl; 
-}
+//     Polynomial_1 m(1); 
+//     Polynomial_d u(0);
+//     for (int j = 0; j <= i; j++){ 
+//       Polynomial_1 m2 = m; 
+//       Polynomial_d u2 = u; 
+//       Polynomial_1 m1 = Polynomial_1(ICoeff(-j),ICoeff(2));
+//       Polynomial_d u1 = eval(p,ICoeff(j)/ICoeff(2));
+//       interpolate(m1,u1,m2,u2,m,u);
+//     }
+//     assert(u == p);
+//   }
+//   std::cerr << " ok "<< std::endl; 
+// }
 
 // //       Shift;
 template <class Polynomial_traits_d>
@@ -1401,19 +1400,19 @@ template< class PT >
 void 
 test_ac_icoeff_functors(const PT&, CGAL::Integral_domain_without_division_tag){
   ASSERT_IS_NULL_FUNCTOR(typename PT::Multivariate_content);
-  ASSERT_IS_NULL_FUNCTOR(typename PT::Interpolate);
+  //ASSERT_IS_NULL_FUNCTOR(typename PT::Interpolate);
 }
 
 template< class PT >
 void test_ac_icoeff_functors(
     const PT& traits, CGAL::Unique_factorization_domain_tag){
   test_multivariate_content(traits);
-  ASSERT_IS_NULL_FUNCTOR(typename PT::Interpolate);
+  // ASSERT_IS_NULL_FUNCTOR(typename PT::Interpolate);
 }
 template< class PT >
 void test_ac_icoeff_functors(const PT& traits, CGAL::Field_tag){
   test_multivariate_content(traits);
-  test_interpolate(traits);
+//  test_interpolate(traits);
 }
 
 // test functors depending on the Algebraic_category of Coefficient 
