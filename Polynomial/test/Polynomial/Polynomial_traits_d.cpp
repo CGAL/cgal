@@ -1387,7 +1387,7 @@ void test_real_embeddable_functors(const PT& traits, CGAL::Tag_true){
 }
 
 template< class PT >
-void test_real_embeddable_functors(const PT& traits, CGAL::Tag_false){
+void test_real_embeddable_functors(const PT&, CGAL::Tag_false){
   // Since Innermost_coefficient is not RealEmbeddable the following functors
   // should be CGAL::Null_functor.   
   ASSERT_IS_NULL_FUNCTOR(typename PT::Sign_at);
@@ -1398,8 +1398,8 @@ void test_real_embeddable_functors(const PT& traits, CGAL::Tag_false){
 
 // test functors depending on the Algebraic_category of ICoeff
 template< class PT >
-void test_ac_icoeff_functors(
-    const PT& traits, CGAL::Integral_domain_without_division_tag){
+void 
+test_ac_icoeff_functors(const PT&, CGAL::Integral_domain_without_division_tag){
   ASSERT_IS_NULL_FUNCTOR(typename PT::Multivariate_content);
   ASSERT_IS_NULL_FUNCTOR(typename PT::Interpolate);
 }
@@ -1418,7 +1418,7 @@ void test_ac_icoeff_functors(const PT& traits, CGAL::Field_tag){
 
 // test functors depending on the Algebraic_category of Coefficient 
 template< class PT >
-void test_ac_poly_functors(const PT& traits, CGAL::Integral_domain_without_division_tag){
+void test_ac_poly_functors(const PT&, CGAL::Integral_domain_without_division_tag){
   ASSERT_IS_NULL_FUNCTOR(typename PT::Univariate_content); 
   ASSERT_IS_NULL_FUNCTOR(typename PT::Square_free_factorization); 
 }
