@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 {
   size_t d_fitting = 4;
   size_t d_monge = 4;
-  char* name_file_in = "data/in_points_d4.txt";
+  const char* name_file_in = "data/in_points_d4.txt";
   //check command line
   if (argc<4)
     {
