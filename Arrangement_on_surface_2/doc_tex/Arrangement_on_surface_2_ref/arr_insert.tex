@@ -4,20 +4,11 @@
 
 \ccDefinition
 
-The function \ccRefName{} inserts a given curve or $x$-monotone curve
-into a given arrangement, where no restrictions are made on the nature
-of the inserted curve. If the curve is not $x$-monotone curve then it
-subdivides the given curve into $x$-monotone subcurves. Each subcurve
-is in turn inserted into the arrangement by locating its left endpoint
-and computing its zone until reaching the right endpoint.
-
-A given point-location object is used for answering point-location
-queries during the insertion process (locating the left endpoints of
-the $x$-monotone curves). By default, the function uses the ``walk
-along line'' point-location strategy --- namely an instance of the
-class
-\ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel>
-  >}.
+The function \ccRefName{} inserts one or more curves or $x$-monotone curves
+into a given arrangement, where no restrictions are imposed on the inserted
+curves. If an inserted curve is not $x$-monotone curve, it is subdivided
+into $x$-monotone subcurves (and perhaps isolated points), which are
+inserted into the arrangement.
 
 %%%%
 
@@ -29,24 +20,16 @@ class
                                const Curve& c,
 			       const PointLocation& pl = walk_pl);}
 Inserts the given curve \ccc{c} into the arrangement \ccc{arr}.
+\ccc{c} is subdivided into $x$-monotone subcurves (and perhaps isolated
+points). Each subcurve is in turn inserted into the arrangement by locating
+its left endpoint and computing its zone until reaching the right endpoint.
+
+The given point-location object \ccc{pl} is used to locate the left
+endpoints of the $x$-monotone curves. By default, the function uses the
+``walk along line'' point-location strategy --- namely an instance of
+the class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
-\ccc{arr}.}
-
-%%%%
-
-\ccInclude{CGAL/Arrangement_with_history_2.h}
-
-\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
-
-\ccGlobalFunction{template<typename Traits, typename Dcel,
-                           typename PointLocation>
-            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
-            insert (Arrangement_with_history_2<Traits,Dcel>& arr,
-                    const typename Traits::Curve_2& c,
-                    const PointLocation& pl = walk_pl);}
-Inserts the given curve \ccc{c} into the arrangement with history
-\ccc{arr}, and returns a handle to the inserted curve.
-\ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
 \ccc{arr}.}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel>
@@ -62,14 +45,50 @@ from the feature represented by \ccc{obj}. As in the case above, the
 zone computation terminates, when the right endpoint is reached.
 Thus, point-location is not required. 
 
-\ccRequirements
-\begin{itemize}
-\item The instantiated \ccc{Traits} class must model the
-  \ccc{ArrangementXMonotoneTraits_2} concept.
-\item The point-location object \ccc{pl}, must model the
-  \ccc{ArrangementPointLocation_2} concept.
-\end{itemize}
-			
+%%%%
+
+\ccGlobalFunction{template<class Traits, class Dcel, class InputIterator>
+            void insert (Arrangement_2<Traits,Dcel>& arr,
+                                InputIterator first, InputIterator last);}
+Aggregately inserts the curves or $x$-monotone curves in the range
+\ccc{[first,last)} into the arrangement \ccc{arr} using the sweep-line
+framework.
+
+%%%%
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename PointLocation>
+            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
+            insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+                    const typename Traits::Curve_2& c,
+                    const PointLocation& pl = walk_pl);}
+Inserts the given curve \ccc{c} into the arrangement with history \ccc{arr},
+and returns a handle to the inserted curve. \ccc{c} is subdivided into
+$x$-monotone subcurves (and perhaps isolated points). Each subcurve is in
+turn inserted into the arrangement by locating its left endpoint and
+computing its zone until reaching the right endpoint.
+
+The given point-location object \ccc{pl} is used to locate the left
+endpoints of the $x$-monotone curves. By default, the function uses the
+``walk along line'' point-location strategy --- namely an instance of
+the class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
+\ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
+\ccc{arr}.}
+
+%%%%
+
+\ccGlobalFunction{template<class Traits, class Dcel, InputIterator>
+            void insert (Arrangement_with_history_2<Traits,Dcel>& arr,
+                         InputIterator first, InputIterator last);}
+Aggregately inserts the curves in the range \ccc{[first,last)} into the
+arrangement with history \ccc{arr} using the sweep-line framework.
+
+%%%%
 
 \ccRequirements
 \begin{itemize}

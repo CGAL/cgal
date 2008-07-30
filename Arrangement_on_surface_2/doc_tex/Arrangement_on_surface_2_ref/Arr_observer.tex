@@ -14,7 +14,7 @@
 \ccDefinition
 %============
 
-\ccClassTemplateName\ serves as an abstract base class for all observer
+\ccClassTemplateName{} serves as an abstract base class for all observer
 classes that are attached to an arrangement instance of type \ccc{Arrangement}
 and recieve notifications from the arrangement.
 This base class handles the attachment of the
@@ -27,7 +27,7 @@ overridden by the concrete observer classes that inherit from
 \ccClassTemplateName.
 
 In order to implement a concrete arrangement observer-class, one simply
-needs to derive from \ccClassTemplateName\ and override the relevant
+needs to derive from \ccClassTemplateName{} and override the relevant
 notification functions. For example, if only face-split events are of
 interest, it is sufficient to override just \ccc{before_split_face()} 
 (or just \ccc{after_split_face()}).
@@ -139,9 +139,10 @@ interest, it is sufficient to override just \ccc{before_split_face()}
                                                       Arr_curve_end ind ,
                                                       Arr_parameter_space ps_x ,
                                                       Arr_parameter_space ps_y );}
-    {issued just before a new vertex at infinity is created, cv is the curve incident
-     to the surface boundary, ind is the relevant curve-end, ps_x is the boundary
-     condition of the vertex in x and ps_y is the boundary condition of the vertex in y.}
+    {issued just before a new vertex at infinity is created, \ccc{cv} is the
+    curve incident to the surface boundary, \ccc{ind} is the relevant curve-end,
+    \ccc{ps_x} is the boundary condition of the vertex in $x$ and \ccc{ps_y}
+     is the boundary condition of the vertex in $y$.}
 \ccGlue
 \ccMethod{virtual void after_create_boundary_vertex (Vertex_handle v);}
     {issued immediately after a new vertex \ccc{v} has been created.
@@ -252,7 +253,7 @@ interest, it is sufficient to override just \ccc{before_split_face()}
 \ccGlue
 \ccMethod{virtual void after_add_inner_ccb (Ccb_halfedge_circulator h);}
     {issued immediately after a new inner ccb \ccc{h} has been created. The
-     inner_ccb always consists of a single pair of twin halfedges.}
+     inner ccb always consists of a single pair of twin halfedges.}
 
 \ccMethod{virtual void before_add_isolated_vertex (Face_handle f,
                                                    Vertex_handle v);}
