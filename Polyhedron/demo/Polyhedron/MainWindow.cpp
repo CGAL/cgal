@@ -91,17 +91,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
 
-  // recent files...
-  for (int i = 0; i < MaxRecentFiles; ++i) {
-    recentFileActs[i] = new QAction(this);
-    recentFileActs[i]->setVisible(false);
-    connect(recentFileActs[i], SIGNAL(triggered()),
-            this, SLOT(openRecentFile()));
-    ui->menuFile->insertAction(ui->actionQuit, recentFileActs[i]);
-  }
-  recentFilesSeparator = ui->menuFile->insertSeparator(ui->actionQuit);
-  recentFilesSeparator->setVisible(false);
-  updateRecentFileActions();
+  this->addRecentFiles(ui->menuFile, ui->actionQuit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(open(QString)));
 
   readSettings(); // Among other things, the column widths are stored.
 }
@@ -158,7 +150,7 @@ void MainWindow::open(QString filename)
       QSettings settings;
       settings.setValue("OFF open directory",
 			fileinfo.absoluteDir().absolutePath());
-	setCurrentFile(filename);
+	this->addToRecentFiles(filename);
       selectPolyhedron(index);
     }
   }
@@ -199,51 +191,6 @@ void MainWindow::selectionChanged()
     scene->setSelectedItem(-1);
   }
   viewer->updateGL();
-}
-
-void MainWindow::openRecentFile()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if (action)
-    open(action->data().toString());
-}
-
-void MainWindow::setCurrentFile(const QString &fileName)
-{
-  QSettings settings;
-  QStringList files = settings.value("recentFileList").toStringList();
-  files.removeAll(fileName);
-  files.prepend(fileName);
-  while (files.size() > MaxRecentFiles)
-    files.removeLast();
-
-  settings.setValue("recentFileList", files);
-
-  updateRecentFileActions();
-}
-
-QString MainWindow::strippedName(const QString &fullFileName)
-{
-  return QFileInfo(fullFileName).fileName();
-}
-
-void MainWindow::updateRecentFileActions()
-{
-  QSettings settings;
-  QStringList files = settings.value("recentFileList").toStringList();
-
-  int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
-
-  for (int i = 0; i < numRecentFiles; ++i) {
-    QString text = tr("&%1 %2").arg(i).arg(strippedName(files[i]));
-    recentFileActs[i]->setText(text);
-    recentFileActs[i]->setData(files[i]);
-    recentFileActs[i]->setVisible(true);
-  }
-  for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
-    recentFileActs[j]->setVisible(false);
-
-  recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
 void MainWindow::quit()

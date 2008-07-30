@@ -33,9 +33,6 @@ public slots:
 
 protected slots:
   void selectionChanged();
-  void openRecentFile();
-  void setCurrentFile(const QString &fileName);
-  void updateRecentFileActions();
 
   // settings
   void quit();
@@ -107,15 +104,11 @@ protected:
   Polyhedron* getSelectedPolygon();
 private:
   QString strippedName(const QString &fullFileName);
-  QAction* recentFilesSeparator;
 
   Scene* scene;
   Viewer* viewer;
   QTreeView* treeView;
   Ui::MainWindow* ui;
-
-  enum { MaxRecentFiles = 10 };
-  QAction *recentFileActs[MaxRecentFiles];
 };
 
 #endif // ifndef MAINWINDOW_H
