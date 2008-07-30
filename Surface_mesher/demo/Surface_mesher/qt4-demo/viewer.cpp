@@ -14,6 +14,12 @@ void Viewer::init()
   setBackgroundColor(Qt::white);
   glLineStipple(5, 0xaaaa);
   glDisable(GL_LINE_STIPPLE);
+
+  // anti-aliasing
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 QString Viewer::helpString() const
