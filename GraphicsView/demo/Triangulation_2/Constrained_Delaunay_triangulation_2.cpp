@@ -139,10 +139,12 @@ private:
     emit(changed());
   }
 
+protected slots:
+void open(QString);
+
 public slots:
 
   void processInput(CGAL::Object o);
-
 
   void on_actionShowDelaunay_toggled(bool checked);
 
@@ -237,6 +239,10 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Constrained_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+
+  this->addRecentFiles(this->menuFile, this->actionExit);
+  connect(this, SIGNAL(openRecentFile(QString)),
+	  this, SLOT(open(QString)));
 }
 
 
@@ -302,6 +308,20 @@ MainWindow::on_actionClear_triggered()
 }
 
 
+void 
+MainWindow::open(QString fileName)
+{
+  if(! fileName.isEmpty()){
+    if(fileName.endsWith(".poly")){
+      loadPolyConstraints(fileName);
+      this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".edg")){
+      loadEdgConstraints(fileName);
+      this->addToRecentFiles(fileName);
+    }
+  }
+}
+
 void
 MainWindow::on_actionLoadConstraints_triggered()
 {
@@ -310,13 +330,7 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  ".",
 						  tr("Edge files (*.edg)\n"
 						     "Poly files (*.poly)"));
-  if(! fileName.isEmpty()){
-    if(fileName.endsWith(".poly")){
-      loadPolyConstraints(fileName);
-    } else if(fileName.endsWith(".edg")){
-      loadEdgConstraints(fileName);
-    }
-  }
+  open(fileName);
 }
 
 void
@@ -544,6 +558,10 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
+
+  app.setOrganizationDomain("geometryfactory.com");
+  app.setOrganizationName("GeometryFactory");
+  app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
