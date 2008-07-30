@@ -20,8 +20,6 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
 int main() {
 
-  int i=0;
-  
   Polyhedron P;
   
   std::ifstream in("cube.off");
