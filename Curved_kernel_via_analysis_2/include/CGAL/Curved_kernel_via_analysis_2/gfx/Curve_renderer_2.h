@@ -805,11 +805,9 @@ bool draw(const Point_2& pt, Coord_2& coord) {
     Gfx_OUT("rasterizing point: " << CGAL::to_double(pt.x()) << std::endl);
 
     const X_coordinate_1& x0 = pt.x();
-    Rational ref_bound = 
+    Rational ref_bound = engine.pixel_w_r / 2;
 #ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        engine.pixel_w_r / CGAL_REFINE_X;
-#else
-        engine.pixel_w_r / 2;
+        ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
     while(ubound_x(x0) - lbound_x(x0) > ref_bound)
@@ -822,7 +820,7 @@ bool draw(const Point_2& pt, Coord_2& coord) {
 #endif
     ref_bound = engine.pixel_h_r / CGAL_REFINE_X;
 
-#ifdef CGAL_REFINE_DOUBLE_APPROX
+#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
     ref_bound = std::min(ref_bound, Rational(CGAL_REFINE_DOUBLE_APPROX));
 #endif
 
