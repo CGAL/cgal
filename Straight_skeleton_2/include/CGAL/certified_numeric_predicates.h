@@ -76,27 +76,27 @@ inline Uncertain<Comparison_result> certified_compare(const NT1& n1, const NT2& 
 
 inline Uncertain<bool> certified_is_smaller( Uncertain<Comparison_result> c )
 {
-  return c == make_uncertain(SMALLER);
+  return c == SMALLER;
 }
 
 inline Uncertain<bool> certified_is_equal( Uncertain<Comparison_result> c )
 {
-  return c == make_uncertain(EQUAL);
+  return c == EQUAL;
 }
 
 inline Uncertain<bool> certified_is_larger( Uncertain<Comparison_result> c )
 {
-  return c == make_uncertain(LARGER);
+  return c == LARGER;
 }
 
 inline Uncertain<bool> certified_is_smaller_or_equal( Uncertain<Comparison_result> c )
 {
-  return logical_or( c == make_uncertain(SMALLER) , c == make_uncertain(EQUAL) ) ;
+  return logical_or( c == SMALLER , c == EQUAL ) ;
 }
 
 inline Uncertain<bool> certified_is_larger_or_equal( Uncertain<Comparison_result> c )
 {
-  return logical_or( c == make_uncertain(LARGER) , c == make_uncertain(EQUAL) ) ;
+  return logical_or( c == LARGER , c == EQUAL ) ;
 }
 
 template <class NT1, class NT2>

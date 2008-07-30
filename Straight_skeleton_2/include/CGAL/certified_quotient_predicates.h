@@ -109,7 +109,7 @@ Uncertain<Comparison_result> certified_quotient_compare(const Quotient<NT1>& x, 
     }
     else
     {
-      r = make_uncertain((xsign < ysign) ? SMALLER : LARGER);
+      r = (xsign < ysign) ? SMALLER : LARGER;
     }
   }
 
