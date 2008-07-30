@@ -14,13 +14,6 @@
 #ifndef CGAL_POLYNOMIAL_TRAITS_D_H
 #define CGAL_POLYNOMIAL_TRAITS_D_H
 
-// TODO: 
-// - USE ITERATOR TRAITS IN EVALUATE 
-// - Polynomial_generator<T,d>::Type vs. Rebind 
-// - wrap up 
-// - document Rebind
-// - document Substitute 
-
 #include <CGAL/basic.h>
 #include <functional>
 
@@ -98,9 +91,9 @@ class Polynomial_traits_d_base_icoeff_algebraic_category<
   CGAL_POLYNOMIAL_TRAITS_D_BASE_TYPEDEFS
     
 public:    
-    
-  //       Multivariate_content;
-  struct Multivariate_content
+
+ 
+ struct Multivariate_content
     : public std::unary_function< Polynomial_d , Innermost_coefficient >{
     Innermost_coefficient 
     operator()(const Polynomial_d& p) const {
@@ -407,14 +400,7 @@ public:
     }
   };
     
-  struct Evaluate {        
-    template< class Input_iterator >
-    ICoeff operator()( 
-        const Polynomial_d& p, Input_iterator, Input_iterator ) {
-      //std::cerr << p << std::endl;
-      return p;
-    } 
-  };
+  typedef Null_functor Evaluate ;
     
   struct Substitute{
   public:
@@ -1037,7 +1023,6 @@ public:
     }
   };
   
-  //       Is_square_free;
   struct Is_square_free 
     : public std::unary_function< Polynomial_d, bool >{
     bool operator()( const Polynomial_d& p ) const {
@@ -1062,7 +1047,6 @@ public:
   };
 
                    
-  //       Make_square_free;
   struct Make_square_free 
     : public std::unary_function< Polynomial_d, Polynomial_d >{
     Polynomial_d
@@ -1097,7 +1081,6 @@ public:
     }
   };
     
-  //       Pseudo_division_quotient;
   struct Pseudo_division_quotient
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
         
@@ -1110,7 +1093,6 @@ public:
     }
   };
 
-  //       Pseudo_division_remainder;
   struct Pseudo_division_remainder
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
         
@@ -1123,7 +1105,6 @@ public:
     }
   };
     
-  //       Gcd_up_to_constant_factor;
   struct Gcd_up_to_constant_factor
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
@@ -1134,7 +1115,6 @@ public:
     }
   };
     
-  //       Integral_division_up_to_constant_factor;
   struct Integral_division_up_to_constant_factor
     :public std::binary_function<Polynomial_d, Polynomial_d, Polynomial_d> {
     Polynomial_d
@@ -1162,7 +1142,6 @@ public:
     }
   };
     
-  //       Univariate_content_up_to_constant_factor;
   struct Univariate_content_up_to_constant_factor
     :public std::unary_function<Polynomial_d, Coefficient> {
     Coefficient
@@ -1183,7 +1162,6 @@ public:
     }
   };
 
-  //       Square_free_factorization_up_to_constant_factor;
   struct Square_free_factorization_up_to_constant_factor {
   private:
     typedef Coefficient Coeff;
@@ -1239,7 +1217,6 @@ public:
     }
   };
 
-  //       Shift;
   struct Shift
     : public std::unary_function< Polynomial_d, Polynomial_d >{
     
@@ -1258,7 +1235,6 @@ public:
     }
   };
     
-  //       Negate;
   struct Negate
     : public std::unary_function< Polynomial_d, Polynomial_d >{
         
@@ -1277,7 +1253,6 @@ public:
     }
   };
 
-  //       Invert;
   struct Invert
     : public std::unary_function< Polynomial_d , Polynomial_d >{
     Polynomial_d operator()(Polynomial_d p, int i = (PT::d-1)) const {
@@ -1292,7 +1267,6 @@ public:
     }
   };
 
-  //       Translate;
   struct Translate
     : public std::binary_function< Polynomial_d , Polynomial_d, 
                                   Innermost_coefficient >{
@@ -1314,7 +1288,6 @@ public:
     }
   };
 
-  //       Translate_homogeneous;
   struct Translate_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
@@ -1338,7 +1311,6 @@ public:
     }
   };
 
-  //       Scale;
   struct Scale 
     : public 
     std::binary_function< Polynomial_d, Innermost_coefficient, Polynomial_d > {
@@ -1351,7 +1323,6 @@ public:
         
   };
     
-  //       Scale_homogeneous;
   struct Scale_homogeneous{
     typedef Polynomial_d result_type;
     typedef Polynomial_d first_argument_type;
@@ -1382,7 +1353,6 @@ public:
     }
   };
 
-  //       Resultant;
   struct Resultant
     : public std::binary_function<Polynomial_d, Polynomial_d, Coefficient>{
         
