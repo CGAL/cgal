@@ -26,7 +26,7 @@
 #include "volume.h"
 
 MainWindow::MainWindow(MainWindow* other_window /* = 0 */) : 
-  QMainWindow(),
+  CGAL::Qt::DemosMainWindow(),
   sharp_edges_angle_lower_bound(60.),
   sharp_edges_angle_upper_bound(180.)
 {
@@ -55,6 +55,8 @@ MainWindow::MainWindow(MainWindow* other_window /* = 0 */) :
 
   show_only("");
   surface = new Volume(this);
+
+  addAboutCGAL();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "ui_mainwindow.h"
+#include <CGAL/Qt/DemosMainWindow.h>
 
 class QDragEnterEvent;
 class QDropEvent;
@@ -10,7 +11,7 @@ class Surface;
 class QGLViewer;
 class QDoubleSpinBox;
 
-class MainWindow : public  QMainWindow, public Ui::MainWindow
+class MainWindow : public CGAL::Qt::DemosMainWindow, public Ui::MainWindow
 {
   Q_OBJECT
 public:
