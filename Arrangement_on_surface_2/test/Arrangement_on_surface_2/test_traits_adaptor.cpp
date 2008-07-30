@@ -5,20 +5,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <vector>
-
 #include "test_traits_adaptor.h"
 #include "Traits_adaptor_test.h"
-
-
-// Arrangement types:
-typedef CGAL::Arr_default_dcel<Traits>                  Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>               Arr;
-
-// Traits types:
-typedef Traits::Point_2                                 Point_2;
-typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
-typedef Traits::Curve_2                                 Curve_2;
 
 int main (int argc, char * argv[])
 {
@@ -28,49 +16,3 @@ int main (int argc, char * argv[])
   bool rc = test.start();
   return (rc) ? 0 : -1;
 }
-
-#if TEST_TRAITS == SPHERICAL_ARC_TRAITS
-
-/*! Read a point */
-
-template <>
-template <class stream>
-bool
-Traits_adaptor_test<Traits >::
-read_point(stream & is, Point_2 & p)
-{
-  Basic_number_type x, y, z;
-  is >> x >> y >> z;
-  p = Point_2(x, y, z);
-  return true;
-}
-
-/*! Read a xcurve */
-template <>
-template <class stream>
-bool
-Traits_adaptor_test<Traits>::read_xcurve(stream & is, X_monotone_curve_2 & xcv)
-{
-  Point_2 p1,p2;
-  read_point(is, p1);
-  read_point(is, p2);
-  CGAL_assertion(p1 != p2);
-  xcv = X_monotone_curve_2(p1, p2);
-  return true;
-}
-
-/*! Read a curve */
-template <>
-template <class stream>
-bool
-Traits_adaptor_test<Traits>::read_curve(stream & is, Curve_2 & cv)
-{
-  Point_2 p1, p2;
-  read_point(is, p1);
-  read_point(is, p2);
-  CGAL_assertion(p1 != p2);
-  cv = Curve_2(p1, p2);
-  return true;
-}
-
-#endif
