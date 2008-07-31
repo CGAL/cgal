@@ -24,7 +24,6 @@
 #define CGAL_QP_SOLVER_H
 
 #include <CGAL/iterator.h>
-#include <CGAL/functional.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/functors.h>
@@ -41,6 +40,10 @@
 #include <CGAL/algorithm.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
+
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <vector>
 #include <numeric>
@@ -258,8 +261,7 @@ private:
 
   typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
   A_accessor;
-  typedef  typename CGAL::Bind< A_accessor,
-				typename A_accessor::argument2_type,2>::Type
+  typedef  boost::function1<typename A_accessor::result_type, int>
   A_row_by_index_accessor;
   typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
   A_row_by_index_iterator;
@@ -1474,23 +1476,30 @@ transition( Tag_false)
   typedef  Creator_2< Index_iterator, D_pairwise_accessor,
     D_pairwise_iterator >  D_transition_creator_iterator;
 
-  typedef  Join_input_iterator_1< Index_iterator, typename Bind<
-    typename Compose< D_transition_creator_iterator,
-    Identity< Index_iterator >, typename
-    Bind< D_transition_creator_accessor, D_iterator, 1 >::Type >::Type,
-    Index_iterator, 1>::Type >
-    twice_D_transition_iterator;
-    
   // initialization of vector w and vector r_B_O:
   if (!check_tag(Is_nonnegative())) {
     init_w();                      
     init_r_B_O();
   }
 
-  inv_M_B.transition( twice_D_transition_iterator( B_O.begin(),
-						   bind_1( compose( D_transition_creator_iterator(),
-								    Identity<Index_iterator>(), bind_1(
-												       D_transition_creator_accessor(), qp_D)), B_O.begin())));
+  // here is what we need in the transition: an iterator that steps through 
+  // the basic indices, where dereferencing
+  // yields an iterator through the corresponding row of D, restricted 
+  // to the basic indices. This means that we select the principal minor of D 
+  // corresponding to the current basis.
+ 
+  // To realize this, we transform B_O.begin() via the function h where
+  //   h(i) = D_pairwise_iterator
+  //           (B_O.begin(), 
+  //            D_pairwise_accessor(qp_D, i))
+
+
+  inv_M_B.transition 
+    (boost::make_transform_iterator 
+     (B_O.begin(),
+      boost::bind 
+      (D_transition_creator_iterator(), B_O.begin(), 
+       boost::bind (D_transition_creator_accessor(), qp_D, _1))));
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // LP case
@@ -1860,7 +1869,8 @@ basis_matrix_stays_regular()
     
   if ( has_ineq && (i >= qp_n)) {	// slack variable
     new_row = slack_A[ i-qp_n].first;
-    A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+    A_row_by_index_accessor  a_accessor =
+      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());	   

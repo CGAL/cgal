@@ -1377,7 +1377,8 @@ replace_variable_slack_slack( )
     }
 
     // update basis inverse
-    A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+    A_row_by_index_accessor  a_accessor =
+      boost::bind( A_accessor( qp_A, 0, qp_n), _1, new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
@@ -1526,7 +1527,8 @@ replace_variable_original_slack( )
     }
 
     // update basis inverse
-    A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+    A_row_by_index_accessor  a_accessor =
+      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
@@ -1878,8 +1880,8 @@ leave_variable( )
 	}
 
 	// update basis inverse
-	A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n),
-					     new_row);
+	A_row_by_index_accessor  a_accessor =
+	  boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
 	std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 		   A_row_by_index_iterator( B_O.end  (), a_accessor),
 		   tmp_x.begin());
@@ -2215,7 +2217,8 @@ z_replace_variable_slack_by_original( )
     // --------------------
 
     // prepare u
-    A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+    A_row_by_index_accessor  a_accessor =
+      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
@@ -2301,7 +2304,8 @@ z_replace_variable_slack_by_slack( )
 
     // update basis inverse
     // --------------------
-    A_row_by_index_accessor  a_accessor( A_accessor( qp_A, 0, qp_n), new_row);
+    A_row_by_index_accessor  a_accessor =
+      boost::bind ( A_accessor( qp_A, 0, qp_n), _1, new_row);
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
 	       A_row_by_index_iterator( B_O.end  (), a_accessor),
 	       tmp_x.begin());
