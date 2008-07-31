@@ -58,7 +58,8 @@ void test()
 	assert(t0 == CGAL::make_certain(v));
 
 	// Exceptions
-	bool ok = false;
+	bool ok = true;
+	CGAL_assertion_code( ok = false );
 	try { CGAL::get_certain(u); }
 	catch (CGAL::Assertion_exception) { ok = true; }
 	assert(ok);
