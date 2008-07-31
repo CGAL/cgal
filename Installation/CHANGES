@@ -5,48 +5,52 @@ The following functionality has been added or changed:
 
 1- General
 
-Additional supported platforms:
- - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
- - The new macro CGAL_NO_DEPRECATED_CODE can be defined to disable deprecated code,
-   helping users discover if they rely on code that may be removed in
-   subsequent releases.
+  - Additional supported platforms:
+    - GNU g++ 4.3 supported.  Support for g++ 3.3 is dropped.
 
- - Boost version 1.33 at least is now required.
- - CGAL now depends on Boost.Threads, which implies to link against
-   a compiled part of Boost.
+  - Boost version 1.33 at least is now required.
+  - CGAL now depends on Boost.Threads, which implies to link against
+    a compiled part of Boost.
+
+  - The new macro CGAL_NO_DEPRECATED_CODE can be defined to disable deprecated code,
+    helping users discover if they rely on code that may be removed in
+    subsequent releases.
+
+  - It is not possible anymore to set the CONTINUE mode for assertion failures.
 
 2- Installation
-  - CMake now replaces install_cgal...
+
+  - install_cgal has been replaced by CMake.
 
 3- Kernels
 
-- We recommend that you use the object_cast() function instead of assign()
-  to extract an object from a CGAL::Object, for efficiency reasons.
-- The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
-- The deprecated linear kernel functors Construct_supporting_line_2 and
-  Construct_supporting_line_3 have been removed.
-- Ambiant_dimension and Feature_dimenison have been added to retrieve the
-  potentially compile-time dimension of a space or of an object.
-- barycenter() functions have been added.
+  - We recommend that you use the object_cast() function instead of assign()
+    to extract an object from a CGAL::Object, for efficiency reasons.
+  - The Kernel archetypes provided by the 2D/3D linear kernel have been removed.
+  - The deprecated linear kernel functors Construct_supporting_line_2 and
+    Construct_supporting_line_3 have been removed.
+  - Ambiant_dimension and Feature_dimenison have been added to retrieve the
+    potentially compile-time dimension of a space or of an object.
+  - barycenter() functions have been added.
 
-- The geometric object Circle_3 has been added to the kernel:
+  - The geometric object Circle_3 has been added to the kernel:
 
- - Related Predicates: Equal_3,
-                       Has_on_3:
-                          - Sphere_3, Point_3
-                          - Circle_3, Point_3
-                          - Sphere_3, Circle_3
-                          - Plane_3, Circle_3
-                          - Sphere_3, Plane_3
-                          - Sphere_3, Line_3
-                       Bounded_side_3
-                       Has_on_bounded_side_3
-                       Has_on_unbounded_side_3
-                       Do_intersect_3:
-                              - Sphere_3, Sphere_3
-                              - Sphere_3, Plane_3
+    - Related Predicates: Equal_3,
+                          Has_on_3:
+                           - Sphere_3, Point_3
+                           - Circle_3, Point_3
+                           - Sphere_3, Circle_3
+                           - Plane_3, Circle_3
+                           - Sphere_3, Plane_3
+                           - Sphere_3, Line_3
+                        Bounded_side_3
+                        Has_on_bounded_side_3
+                        Has_on_unbounded_side_3
+                        Do_intersect_3:
+                               - Sphere_3, Sphere_3
+                               - Sphere_3, Plane_3
 
- - Constructions: Construct_circle_3
+    - Constructions: Construct_circle_3
                          Construct_supporting_plane_3
                          Construct_supporting_sphere_3
                          Construct_diametral_sphere_3
@@ -60,13 +64,12 @@ Additional supported platforms:
                          Compute_approximate_area_3
                          Construct_radical_plane_3
 
-Member functions manipulating Circle_3 have been added to Plane_3 and Sphere_3 as well.
-
-Global functions: Intersections, Do_intersects and radical_plane.
-
-The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
+  - Member functions manipulating Circle_3 have been added to Plane_3 and Sphere_3 as well.
+  - Global functions: Intersections, Do_intersects and radical_plane.
+  - The missing intersection/do_intersect between Line_3 and Line_3 has been added as well.
 
 4- STL Extensions:
+
   - The functor adaptors for argument binding and composition
     (bind_*, compose, compose_shared, swap_*, negate, along with the helper
     functions set_arity_* and Arity class and Arity_tag typedefs) which were provided
@@ -82,8 +85,10 @@ The missing intersection/do_intersect between Line_3 and Line_3 has been added a
     maker functions by make_tuple.
     This way, in a further release, we will be able to switch to boost::tuple more easily.
 
-5- 3D Triangulations
+5- Triangulation_3:
+
   - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
+
 
 ----------------------------- Release 3.3.1 ----------------------------------
 The following corrections have been made:

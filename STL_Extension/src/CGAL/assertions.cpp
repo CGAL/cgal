@@ -101,7 +101,7 @@ assertion_fail( const char* expr,
                 int         line,
                 const char* msg)
 {
-    (*_error_handler)("assertion", expr, file, line, msg);
+    _error_handler("assertion", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
         std::abort();
@@ -109,10 +109,10 @@ assertion_fail( const char* expr,
         std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         std::exit(0);  // EXIT_SUCCESS
+    case CONTINUE: // The CONTINUE case should not be used anymore.
     case THROW_EXCEPTION:
+    default:
         throw Assertion_exception("CGAL", expr, file, line, msg);
-    case CONTINUE:
-        ;
     }
 }
 
@@ -122,7 +122,7 @@ precondition_fail( const char* expr,
                    int         line,
                    const char* msg)
 {
-    (*_error_handler)("precondition", expr, file, line, msg);
+    _error_handler("precondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
         std::abort();
@@ -130,10 +130,10 @@ precondition_fail( const char* expr,
         std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         std::exit(0);  // EXIT_SUCCESS
-    case THROW_EXCEPTION:
-        throw Precondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
-        ;
+    case THROW_EXCEPTION:
+    default:
+        throw Precondition_exception("CGAL", expr, file, line, msg);
     }
 }
 
@@ -143,7 +143,7 @@ postcondition_fail(const char* expr,
                    int         line,
                    const char* msg)
 {
-    (*_error_handler)("postcondition", expr, file, line, msg);
+    _error_handler("postcondition", expr, file, line, msg);
     switch (_error_behaviour) {
     case ABORT:
         std::abort();
@@ -151,10 +151,10 @@ postcondition_fail(const char* expr,
         std::exit(1);  // EXIT_FAILURE
     case EXIT_WITH_SUCCESS:
         std::exit(0);  // EXIT_SUCCESS
-    case THROW_EXCEPTION:
-        throw Postcondition_exception("CGAL", expr, file, line, msg);
     case CONTINUE:
-        ;
+    case THROW_EXCEPTION:
+    default:
+        throw Postcondition_exception("CGAL", expr, file, line, msg);
     }
 }
 
@@ -167,7 +167,7 @@ warning_fail( const char* expr,
               int         line,
               const char* msg)
 {
-    (*_warning_handler)("warning", expr, file, line, msg);
+    _warning_handler("warning", expr, file, line, msg);
     switch (_warning_behaviour) {
     case ABORT:
         std::abort();

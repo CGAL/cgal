@@ -38,9 +38,9 @@ enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
 // =====================
 // failure functions
 // -----------------
-void assertion_fail      ( const char*, const char*, int, const char* = "");
-void precondition_fail   ( const char*, const char*, int, const char* = "");
-void postcondition_fail  ( const char*, const char*, int, const char* = "");
+void assertion_fail      ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+void precondition_fail   ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
+void postcondition_fail  ( const char*, const char*, int, const char* = "") CGAL_NORETURN;
 
 // warning function
 // ----------------

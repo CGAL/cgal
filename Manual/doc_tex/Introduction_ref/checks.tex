@@ -91,7 +91,8 @@ with some exact number type.
 \subsection{Altering the Failure Behavior}
 
 As stated above, if a postcondition, precondition or assertion is
-violated, the program will abort (stop and produce a core dump).
+violated, an exception is thrown, and if nothing is done to catch it,
+the program will abort.
 This behavior can be changed by means of the following function.
 
 \ccInclude{CGAL/assertions.h}
@@ -110,6 +111,10 @@ The \ccc{THROW_EXCEPTION} value is the default, which throws an exception.
 If the \ccStyle{EXIT} value is set, the program will stop and return a value 
 indicating failure, but not dump the core. 
 The \ccc{CONTINUE} value tells the checks to go on after diagnosing the error.
+Note that since \cgal\ 3.4, \ccc{CONTINUE} has the same effect as
+\ccc{THROW_EXCEPTION} for errors (but it keeps its meaning for warnings), it is
+not possible anymore to let assertion failures simply continue (except by
+totally disabling them).
 
 \begin{ccAdvanced}
 If the \ccStyle{EXIT_WITH_SUCCESS} value is set, the program will stop and 
