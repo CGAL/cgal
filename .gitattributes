@@ -1614,6 +1614,7 @@ Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.gif
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.pdf -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/two_cubes_vertical.ps -text
 Convex_decomposition_3/examples/Convex_decomposition_3/list_of_convex_parts.cin -text
+Convex_decomposition_3/test/Convex_decomposition_3/check_decomposition.cin -text
 Convex_decomposition_3/test/Convex_decomposition_3/reflex_sedge.cpp -text
 Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj eol=crlf
