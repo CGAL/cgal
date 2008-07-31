@@ -32,21 +32,22 @@ especially for equality testing.
 
 The following types describe the return types of predicates.  They typically
 map to \ccc{bool} and CGAL kernel enum types, except when an interval arithmetic
-number type is used such as within the filtering kernels.
+number type is used such as within the filtering kernels, in which case it is
+\ccc{Uncertain<bool>} or similar.
 
-\ccNestedType{Bool_type}{typically \ccc{bool}}
+\ccNestedType{Bool_type}{\ccc{bool} or \ccc{Uncertain<bool>}}
 \ccGlue
-\ccNestedType{Sign}{typically \ccc{CGAL::Sign}}
+\ccNestedType{Sign}{\ccc{CGAL::Sign} or \ccc{Uncertain<CGAL::Sign>}}
 \ccGlue
-\ccNestedType{Comparison_result}{typically \ccc{CGAL::Comparison_result}}
+\ccNestedType{Comparison_result}{\ccc{CGAL::Comparison_result} or \ccc{Uncertain<CGAL::Comparison_result>}}
 \ccGlue
-\ccNestedType{Orientation}{typically \ccc{CGAL::Orientation}}
+\ccNestedType{Orientation}{\ccc{CGAL::Orientation} or \ccc{Uncertain<CGAL::Orientation>}}
 \ccGlue
-\ccNestedType{Oriented_side}{typically \ccc{CGAL::Oriented_side}}
+\ccNestedType{Oriented_side}{\ccc{CGAL::Oriented_side} or \ccc{Uncertain<CGAL::Oriented_side>}}
 \ccGlue
-\ccNestedType{Bounded_side}{typically \ccc{CGAL::Bounded_side}}
+\ccNestedType{Bounded_side}{\ccc{CGAL::Bounded_side} or \ccc{Uncertain<CGAL::Bounded_side>}}
 \ccGlue
-\ccNestedType{Angle}{typically \ccc{CGAL::Angle}}
+\ccNestedType{Angle}{\ccc{CGAL::Angle} or \ccc{Uncertain<CGAL::Angle>}}
 
 
 \ccHeading{Two-dimensional Kernel}
