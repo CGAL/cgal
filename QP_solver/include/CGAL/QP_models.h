@@ -30,6 +30,7 @@
 #include <iomanip>
 #include <istream>
 #include <sstream>
+#include <boost/iterator/transform_iterator.hpp>
 
 // this file defines the following models:
 // - Quadratic_program_from_iterators
@@ -435,8 +436,8 @@ private:
 
   typedef QP_model_detail::Begin
   <Sparse_vector, Sparse_vector_iterator, HowToBegin> Beginner;
-  typedef CGAL::Join_input_iterator_1 
-  <typename Sparse_matrix::const_iterator, Beginner> 
+  typedef boost::transform_iterator
+  <Beginner, typename Sparse_matrix::const_iterator>
   Sparse_matrix_iterator;
   
   // program data; we maintain the invariant that only the 
@@ -1505,7 +1506,7 @@ private:
 	i = var2_index; j = var1_index;
       }
       // rule out that we previously put a different (nonzero) value at (i,j)
-      NT old_val = this->get_d()[i][j];
+      NT old_val = (*(this->get_d()+i))[j];
       if (!CGAL::is_zero(old_val) && old_val != val)
 	return this->err3("nonsymmetric '%' section at variables '%' and '%'",
 			  D_section, var1_name->first, var2_name->first);

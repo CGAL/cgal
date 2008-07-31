@@ -244,45 +244,50 @@ private:
 
   // access to original problem by basic variable/constraint index:
   typedef  QP_vector_accessor<A_column, false, false >  A_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
+  typedef  boost::transform_iterator
+  < A_by_index_accessor,Index_const_iterator >
   A_by_index_iterator;
 
   // todo kf: following can be removed once we have all these (outdated)
   // accessors removed:
   typedef  QP_vector_accessor< B_iterator, false, false >
   B_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_const_iterator, B_by_index_accessor >
+  typedef  boost::transform_iterator
+  < B_by_index_accessor, Index_const_iterator >
   B_by_index_iterator;
 
   typedef  QP_vector_accessor< C_iterator, false, false >
   C_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_const_iterator, C_by_index_accessor >
+  typedef  boost::transform_iterator
+  <C_by_index_accessor, Index_const_iterator >
   C_by_index_iterator;
 
   typedef  QP_matrix_accessor< A_iterator, false, true, false, false>
   A_accessor;
   typedef  boost::function1<typename A_accessor::result_type, int>
   A_row_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_iterator, A_row_by_index_accessor >
+  typedef  boost::transform_iterator 
+  < A_row_by_index_accessor, Index_iterator >
   A_row_by_index_iterator;
 
   // Access to the matrix D sometimes converts to ET, and 
   // sometimes retruns the original input type
   typedef  QP_matrix_pairwise_accessor< D_iterator, ET >
   D_pairwise_accessor;
-  typedef  Join_input_iterator_1< Index_const_iterator,
-				  D_pairwise_accessor >
+  typedef boost::transform_iterator 
+  < D_pairwise_accessor, Index_const_iterator>
   D_pairwise_iterator;
   typedef  QP_matrix_pairwise_accessor< D_iterator, D_entry >
   D_pairwise_accessor_input_type;
-  typedef  Join_input_iterator_1< Index_const_iterator, 
-				  D_pairwise_accessor_input_type >
+  typedef  boost::transform_iterator
+  < D_pairwise_accessor_input_type, Index_const_iterator >
   D_pairwise_iterator_input_type;
 
   // access to special artificial column by basic constraint index:
   typedef  QP_vector_accessor< typename S_art::const_iterator, false, false>
   S_by_index_accessor;
-  typedef  Join_input_iterator_1< Index_iterator, S_by_index_accessor >
+  typedef  boost::transform_iterator
+  < S_by_index_accessor, Index_iterator >
   S_by_index_iterator;
   
 public:
@@ -298,9 +303,6 @@ public:
 
   typedef typename Base::Variable_numerator_iterator
   Variable_numerator_iterator;
-
-//   typedef typename Base::Original_index_const_iterator
-//   Original_index_const_iterator;
 
   typedef  Index_const_iterator       Basic_variable_index_iterator;
   typedef  Value_const_iterator       Basic_variable_numerator_iterator;

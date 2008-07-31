@@ -69,23 +69,23 @@ int main(const int argNr,const char **args) {
     CGAL::print_quadratic_program (cout, qp);
     cout << std::endl;
   }
-  typedef CGAL::QP_solver_impl::QP_tags<CGAL::Tag_false,CGAL::Tag_false> Tags;
+
   CGAL::Quadratic_program_options options;
   options.set_pricing_strategy(CGAL::QP_DANTZIG);
   options.set_verbosity(0);
-  typedef CGAL::QP_solver<QP, ET, Tags> Solver;
-  Solver s (qp, options);
+  typedef CGAL::Quadratic_program_solution<ET> Solution;
+  Solution s = CGAL::solve_quadratic_program (qp, ET(), options);
 
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
     // output solution:
     cout << "Objective function value: " << 
-      s.solution() << endl;     
+      s.objective_value() << endl;     
      
     cout << "Variable values:" << endl;
-    Solver::Variable_value_iterator it 
-      = s.original_variable_values_begin() ;
-    for (int i=0; i < qp.get_n(); ++it, ++i)
+    Solution::Variable_value_iterator it 
+      = s.variable_values_begin() ;
+    for (int i=0; i < qp.get_n(); it++, ++i)
       cout << "  " << qp.variable_name_by_index(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;

@@ -143,7 +143,7 @@ public:
   // (more precisely: once Join_input_iterator_1 should not use an internal
   // mutable variable 'val' anymore, you can remove the following default
   // constructor).
-  QP_matrix_pairwise_accessor() {}
+  //QP_matrix_pairwise_accessor() {}
   
   QP_matrix_pairwise_accessor( MatrixIt it, int row)
     : m (it), v (*(it + row)), r (row)                                  

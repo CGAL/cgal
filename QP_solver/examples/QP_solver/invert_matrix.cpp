@@ -61,7 +61,7 @@ int main() {
   Program::A_iterator a = lp.get_a();
   for (int i=0; i<n; ++i) {
     for (int j=0; j<n; ++j) 
-      std::cout << a[j][i] << " "; // row i 
+      std::cout << (*(a+j))[i] << " "; // row i 
     std::cout << std::endl;
   }
 
@@ -77,7 +77,7 @@ int main() {
     for (int j=0; j<n; ++j) {
       // i-th row of A times j-th column of inverse
       CGAL::Quotient<ET> val; 
-      for (int k=0; k<n; ++k) val += a[k][i] * inv_a[j][k];
+      for (int k=0; k<n; ++k) val += (*(a+k))[i] * inv_a[j][k];
       assert (val == (i == j ? 1 : 0));
     }
 

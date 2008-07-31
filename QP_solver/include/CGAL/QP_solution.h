@@ -32,6 +32,8 @@
 #include <CGAL/QP_solver/iterator.h>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <boost/iterator/counting_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -87,32 +89,32 @@ public:
   typedef Indices::const_iterator    
   Index_const_iterator;
 
-  typedef Transform_diff_const_iterator<int, Identity <int> >
-  Original_index_const_iterator; 
-
   typedef typename QP_solution_detail::Value_by_index<ET> Value_by_index;
 
-  typedef Transform_diff_const_iterator<int, Value_by_index>
+  typedef typename boost::transform_iterator
+  <Value_by_index, boost::counting_iterator<int> >
   Variable_numerator_iterator;
 
-  typedef  Join_input_iterator_1< Variable_numerator_iterator,
-				  Quotient_maker >
+  typedef boost::transform_iterator
+  <Quotient_maker, Variable_numerator_iterator>
   Variable_value_iterator;
 
   typedef typename QP_solution_detail::Unbounded_direction_by_index<ET> 
   Unbounded_direction_by_index;
 
-  typedef Transform_diff_const_iterator<int, Unbounded_direction_by_index>
+  typedef boost::transform_iterator
+  <Unbounded_direction_by_index, boost::counting_iterator<int> >
   Unbounded_direction_iterator;
 
   typedef typename QP_solution_detail::Lambda_by_index<ET> 
   Lambda_by_index;
   
-  typedef Transform_diff_const_iterator<int, Lambda_by_index>
+  typedef boost::transform_iterator
+  <Lambda_by_index, boost::counting_iterator<int> >
   Lambda_numerator_iterator;
 
-  typedef Join_input_iterator_1<Lambda_numerator_iterator,
-				Quotient_maker >
+  typedef boost::transform_iterator
+  <Quotient_maker,Lambda_numerator_iterator>
   Lambda_iterator;
 
 public:
@@ -144,13 +146,16 @@ public:
   // value type ET
   Variable_numerator_iterator
   original_variables_numerator_begin( ) const
-  { return Variable_numerator_iterator (0, Value_by_index(this));}
+  { return Variable_numerator_iterator 
+      (boost::counting_iterator<int>(0), 
+       Value_by_index(this));}
 				  
     
   Variable_numerator_iterator
   original_variables_numerator_end  ( ) const
   { return Variable_numerator_iterator 
-      (0, Value_by_index(this)) + number_of_variables();} 
+      (boost::counting_iterator<int>(number_of_variables()) , 
+       Value_by_index(this));} 
 
   // value type Quotient<ET>   
   Variable_value_iterator
@@ -192,13 +197,15 @@ public:
 
   Unbounded_direction_iterator unbounded_direction_begin() const 
   { return Unbounded_direction_iterator 
-      (0, Unbounded_direction_by_index(this));}
+      (boost::counting_iterator<int>(0), 
+       Unbounded_direction_by_index(this));}
 
   // Returns the past-the-end iterator corresponding to
   // unbounded_direction_begin().
   Unbounded_direction_iterator unbounded_direction_end() const
   { return Unbounded_direction_iterator 
-      (0, Unbounded_direction_by_index(this)) + number_of_variables();}
+      (boost::counting_iterator<int>(number_of_variables()), 
+       Unbounded_direction_by_index(this));}
 
 
   // Optimality
@@ -210,12 +217,14 @@ public:
   Lambda_numerator_iterator 
   lambda_numerator_begin() const 
   { return Lambda_numerator_iterator 
-      (0, Lambda_by_index(this));}
+      (boost::counting_iterator<int>(0), 
+       Lambda_by_index(this));}
 
   Lambda_numerator_iterator 
   lambda_numerator_end() const
   { return Lambda_numerator_iterator 
-      (0, Lambda_by_index(this)) + number_of_constraints();}
+      (boost::counting_iterator<int>(number_of_constraints()), 
+       Lambda_by_index(this));}
 
   // value type Quotient<ET>
   Lambda_iterator
