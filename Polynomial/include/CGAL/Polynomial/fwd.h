@@ -117,6 +117,15 @@ template<typename OutputIterator, typename NT> OutputIterator
                                           OutputIterator2 out_f,
                                           OutputIterator3 out_fx);
 
+// eliminates outermost variable
+template <class Coeff> 
+inline Coeff new_resultant( 
+    const CGAL::Polynomial<Coeff>&, const CGAL::Polynomial<Coeff>&);
+// eliminates innermost variable 
+template <class Coeff> 
+inline Coeff new_resultant_( 
+    const CGAL::Polynomial<Coeff>&, const CGAL::Polynomial<Coeff>&);
+  
 
 } // namespace CGALi
 

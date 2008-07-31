@@ -1145,7 +1145,7 @@ void test_compare(const Polynomial_traits_d&) {
     
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d);
     
-  typename PT::Compare compare;
+  typename PT::Compare compare; (void) compare;
     
   Polynomial_d p0(Coeff(0));
   Polynomial_d pp2(Coeff(2));
