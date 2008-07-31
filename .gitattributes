@@ -4145,6 +4145,16 @@ Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstruction.jpg
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/fig/reconstructionDetail.png -text svneol=unset#image/png
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.eps -text svneol=unset#application/postscript
 Surface_reconstruction_3/doc_tex/Surface_reconstruction_3/introduction.jpg -text svneol=unset#image/jpeg
+Surface_reconstruction_3/examples/Surface_reconstruction_3/APSS_reconstruction.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/APSS_reconstruction_vc80.vcproj eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/VC/poisson_reconstruction_vc80.vcproj eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/data/ChineseDragon-10kv.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/examples/Surface_reconstruction_3/data/polygirl.off -text svneol=unset#application/octet-stream
+Surface_reconstruction_3/examples/Surface_reconstruction_3/data/sphere_20k.xyz -text
+Surface_reconstruction_3/examples/Surface_reconstruction_3/poisson_reconstruction.cmd eol=lf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/reconstruction_vc80.sln eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.bat eol=crlf
+Surface_reconstruction_3/examples/Surface_reconstruction_3/test_all.sh eol=lf
 Surface_reconstruction_3/include/CGAL/Oriented_normal_3.h -text
 Surface_reconstruction_3/include/CGAL/average_spacing_3.h -text
 Surface_reconstruction_3/include/CGAL/smooth_jet_fitting_3.h -text
