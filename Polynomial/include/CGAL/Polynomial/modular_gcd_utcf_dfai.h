@@ -39,6 +39,7 @@
 #include <CGAL/primes.h>
 #include <CGAL/Modular.h>
 #include <CGAL/Polynomial/modular_gcd.h>
+#include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial/modular_gcd_utils.h>
 #include <CGAL/Cache.h>
@@ -48,42 +49,6 @@
 
 
 namespace CGAL {
-
-namespace CGALi_dfai{
-
-template <class UFD> 
-struct Extended_euclidean_algorithm{
-    typedef std::pair<UFD,UFD> result_type;
-    typedef std::pair<UFD,UFD> first_argument_type; 
-    result_type operator()(const first_argument_type& pq){
-        result_type result; 
-        CGAL::extended_euclidean_algorithm(
-                pq.first, pq.second,result.first, result.second);
-        return result;
-    }
-};
-
-template <class UFD> 
-struct Cached_extended_euclidean_algorithm{
-    typedef std::pair<UFD,UFD> PAIR; 
-    typedef Extended_euclidean_algorithm<UFD> FUNC;
-    typedef CGAL::Cache<PAIR,PAIR,FUNC> CACHE;
-    
-    static CACHE cache;
-    
-    void operator()(const UFD& p, const UFD& q, UFD& s, UFD& t){
-        PAIR pq(p,q);
-        PAIR result = cache(pq);
-        s = result.first;
-        t = result.second;
-    }    
-};
-
-template <class UFD> 
-typename Cached_extended_euclidean_algorithm<UFD>::CACHE 
-Cached_extended_euclidean_algorithm<UFD>::cache;
-
-} // namespace CGALi_dfai
 
 namespace CGALi{
 
@@ -304,7 +269,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_CR.start();
 #endif
-            CGALi_dfai::Cached_extended_euclidean_algorithm < Scalar > ceea;
+            CGALi::Cached_extended_euclidean_algorithm <Scalar, 2> ceea;
             ceea(q,p,s,t);
             pq =p*q; 
             chinese_remainder(q,p,pq,s,t,Gs,inv_map(mG_),Gs);

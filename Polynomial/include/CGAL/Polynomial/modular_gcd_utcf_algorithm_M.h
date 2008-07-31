@@ -38,6 +38,7 @@
 #include <CGAL/Modular.h>
 #include <CGAL/Polynomial/modular_gcd.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Cache.h>
@@ -48,45 +49,6 @@
 // algorithm M for integer polynomials, without denominator bound
 
 namespace CGAL {
-
-namespace CGALi_algorithm_M{
-
-template <class UFD> 
-struct Extended_euclidean_algorithm{
-    typedef std::pair<UFD,UFD> result_type;
-    typedef std::pair<UFD,UFD> first_argument_type; 
-    result_type operator()(const first_argument_type& pq){
-        result_type result; 
-        CGAL::extended_euclidean_algorithm(
-                pq.first, pq.second,result.first, result.second);
-        return result;
-    }
-};
-
-template <class UFD> 
-struct Cached_extended_euclidean_algorithm{
-    typedef std::pair<UFD,UFD> PAIR; 
-    typedef Extended_euclidean_algorithm<UFD> FUNC;
-    typedef CGAL::Cache<PAIR,PAIR,FUNC> CACHE;
-    
-    static CACHE cache;
-    
-    void operator()(const UFD& p, const UFD& q, UFD& s, UFD& t){
-        PAIR pq(p,q);
-        PAIR result = cache(pq);
-        s = result.first;
-        t = result.second;
-
-    }    
-};
-
-template <class UFD> 
-typename Cached_extended_euclidean_algorithm<UFD>::CACHE 
-Cached_extended_euclidean_algorithm<UFD>::cache;
-
-} // namespace CGALi_algorithm_M
-
-
 
 namespace CGALi{
 template <class NT> Polynomial<NT> gcd_utcf_UFD(Polynomial<NT>,Polynomial<NT>);
@@ -260,8 +222,8 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 #endif
 //            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);             
 //            cached_extended_euclidean_algorithm(q,p,s,t);
-            CGALi_algorithm_M::Cached_extended_euclidean_algorithm
-                <typename CRT::Scalar_type> ceea;
+            CGALi::Cached_extended_euclidean_algorithm
+              <typename CRT::Scalar_type, 1> ceea;
             ceea(q,p,s,t);
             pq =p*q;
             chinese_remainder(q,p,pq,s,t,Gs,inv_map(mG_),Gs);
