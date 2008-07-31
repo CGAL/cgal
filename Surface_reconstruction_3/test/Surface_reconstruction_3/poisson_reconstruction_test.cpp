@@ -86,6 +86,12 @@ int main(int argc, char * argv[])
     return(EXIT_FAILURE);
   }
 
+    // Surface Mesher options
+    FT sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
+    FT sm_radius = 0.1; // as suggested by LR
+    FT sm_distance = 0.002; // AG: was 0.005 (upper bound of distance to surface/Poisson)
+    FT sm_error_bound = 1e-3;
+
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
 
@@ -165,12 +171,32 @@ int main(int argc, char * argv[])
               << std::endl;
 
     //***************************************
+    // Check requirements
+    //***************************************
+
+    if (nb_vertices == 0)
+    {
+      std::cerr << "FATAL ERROR: empty file" << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    CGAL_assertion(dt.points_begin() != dt.points_end());
+    bool points_have_normals = (dt.points_begin()->normal().get_vector() != CGAL::NULL_VECTOR);
+    bool normals_are_oriented = dt.points_begin()->normal().is_oriented();
+    if ( ! (points_have_normals && normals_are_oriented) )
+    {
+      std::cerr << "FATAL ERROR: this reconstruction method requires oriented normals" << std::endl;
+      accumulated_fatal_err = EXIT_FAILURE;
+      continue;
+    }
+
+    //***************************************
     // Compute implicit function
     //***************************************
 
-    CGAL::Timer task_timer;
-    task_timer.start();
+    CGAL::Timer task_timer; task_timer.start();
 
+    // Create implicit function
     Poisson_implicit_function poisson_function(dt);
 
     /// Compute the Poisson indicator function f()
@@ -191,12 +217,6 @@ int main(int argc, char * argv[])
     //***************************************
     // Surface mesh generation
     //***************************************
-
-    // Surface mesher options
-    FT sm_angle = 20.0; // theorical guaranty if angle >= 30, but slower
-    FT sm_radius = 0.1; // as suggested by LR
-    FT sm_distance_poisson = 0.002; // AG: was 0.005 (upper bound of distance to surface/Poisson)
-    FT sm_error_bound = 1e-3;
 
     STr tr;           // 3D-Delaunay triangulation
     C2t3 c2t3 (tr);   // 2D-complex in 3D-Delaunay triangulation
@@ -226,11 +246,11 @@ int main(int argc, char * argv[])
     // defining meshing criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // lower bound of facets angles (degrees)
                                                         sm_radius*size,  // upper bound of Delaunay balls radii
-                                                        sm_distance_poisson*size); // upper bound of distance to surface
+                                                        sm_distance*size); // upper bound of distance to surface
 
 std::cerr << "Implicit_surface_3(dichotomy error="<<sm_error_bound*size << ")\n";
 std::cerr << "make_surface_mesh(sphere={center=("<<sm_sphere_center << "), radius="<<sm_sphere_radius << "},\n"
-          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance_poisson*size << "},\n"
+          << "                  criteria={angle="<<sm_angle << ", radius="<<sm_radius*size << ", distance="<<sm_distance*size << "},\n"
           << "                  Non_manifold_tag())...\n";
 
     // meshing surface
