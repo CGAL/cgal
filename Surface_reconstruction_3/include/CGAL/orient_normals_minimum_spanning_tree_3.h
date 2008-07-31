@@ -35,12 +35,12 @@
 CGAL_BEGIN_NAMESPACE
 
 
-// Test this algorithm?
-#undef CGAL_TEST
-
 // Traces?
 //#define CGAL_TRACE  printf
-#define CGAL_TRACE  if (false) printf
+
+#ifndef CGAL_TRACE
+  #define CGAL_TRACE  if (false) printf
+#endif
 
 
 /// Helper function: distance_MST().
@@ -159,7 +159,7 @@ struct propagate_normal
 {
     typedef CGAL::MST_graph<VertexIterator, VertexNormalMap> MST_graph;
     typedef boost::on_examine_edge event_filter;
-
+    
     template <class Edge>
     void operator()(const Edge& edge, const MST_graph& graph)
     {
@@ -176,22 +176,26 @@ struct propagate_normal
         vertex_descriptor vtx2 = boost::target(edge, graph);
         Normal& normal2 = get(get(boost::vertex_normal, graph), vtx2);
         Vector vec2 = normal2.get_vector();
+        
+        double dot = vec1 * vec2;
+
+        CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): dot=%1.3lf\n", 
+                   (int)vtx1, vec1.x(),vec1.y(),vec1.z(), 
+                   (int)vtx2, vec2.x(),vec2.y(),vec2.z(),
+                   dot);
 
         //           ->                 ->
         // Orient normal2 parallel to normal1
-#ifndef CGAL_TEST // regular code
-        if (vec1 * vec2 < 0) {
-            //CGAL_TRACE("    flip %d\n", (int)vtx2);
+        if (dot < 0) {
+            CGAL_TRACE("    flip %d\n", (int)vtx2);
             vec2 = -vec2;
         }
-        normal2 = Normal(vec2, true /* oriented */);
-#else
-        // TEST: flag only inverted normals as oriented to see the result in 3D rendering
-        if (vec1 * vec2 < 0) {
-            CGAL_TRACE("    flip %d\n", (int)vtx2);
-            normal2 = Normal(-vec2, true /* oriented */);
-        }
-#endif // CGAL_TEST
+        
+        // Is orientation robust?
+        //normal2 = Normal(vec2, true /* oriented */);
+        bool oriented = normal1.is_oriented() &&
+                        (std::abs(dot) > 1.0/std::sqrt(2.0)); // oriented iff angle < 45°
+        normal2 = Normal(vec2, oriented);
     }
 };
 
@@ -206,6 +210,7 @@ struct propagate_normal
 /// - VertexIndexMap is a model of boost::readable_property_map.
 /// - VertexPointMap is a model of boost::readable_property_map.
 /// - VertexNormalMap is a model of boost::lvalue_property_map.
+/// - Normals must be unit vectors.
 /// - KNN >= 2.
 
 template<class VertexIterator, class VertexPointMap, class VertexIndexMap, class VertexNormalMap>
@@ -245,15 +250,6 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
 
     // Number of input vertices
     const int num_input_vertices = distance_MST(first, beyond);
-
-#ifdef CGAL_TEST // TEST: flag only inverted normals as oriented to see the result in 3D rendering
-    for (VertexIterator it = first; it != beyond; it++)
-    {
-        Normal& normal = vertex_normal_map[it];
-        Vector vec = normal.get_vector();
-        normal = Normal(vec, false /* non oriented */);
-    }
-#endif // CGAL_TEST
 
     // Orient source normal: the normal of the vertex
     // with maximum Z is oriented towards +Z axis.
@@ -298,7 +294,7 @@ CGAL_TRACE("Call orient_normals_minimum_spanning_tree_3()\n");
     // - vertices are empty.
     // - we add the edge (i, j) if either vertex i is in the KNN-neighborhood of vertex j,
     //   or vertex j is in the KNN-neighborhood of vertex i.
-CGAL_TRACE("  Create Riemannian Graph\n");
+    CGAL_TRACE("  Create Riemannian Graph\n");
     Riemannian_graph riemannian_graph(num_input_vertices);
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     //
@@ -338,7 +334,11 @@ CGAL_TRACE("  Create Riemannian Graph\n");
                 Vector neighbour_normal_vector = vertex_normal_map[neighbour].get_vector();
                 double weight = 1.0 - std::abs(it_normal_vector * neighbour_normal_vector);
                 if (weight < 0)
-                    weight = 0;
+                    weight = 0; // safety check
+                CGAL_TRACE("    %d (%1.3lf,%1.3lf,%1.3lf) -> %d (%1.3lf,%1.3lf,%1.3lf): weight=%1.3lf\n", 
+                           (int)it_index, it_normal_vector.x(),it_normal_vector.y(),it_normal_vector.z(), 
+                           (int)neighbour_index, neighbour_normal_vector.x(),neighbour_normal_vector.y(),neighbour_normal_vector.z(),
+                           weight);
                 riemannian_graph_weight_map[e] = (float)weight;
             }
 
@@ -349,7 +349,7 @@ CGAL_TRACE("  Create Riemannian Graph\n");
     // Compute Minimum Spanning Tree.
     typedef std::vector<Riemannian_graph::vertex_descriptor> PredecessorMap;
     PredecessorMap pm(num_input_vertices);
-CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
+    CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
     boost::prim_minimum_spanning_tree(riemannian_graph, &pm[0],
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( boost::vertex(source_vertex_index, riemannian_graph) ));
@@ -358,7 +358,7 @@ CGAL_TRACE("  Call boost::prim_minimum_spanning_tree()\n");
     // - vertices are numbered like the input vertices' index.
     // - vertices contain the corresponding input vertex handle.
     // - we add the edge (pm[i], i) for each element of the predecessor map pm.
-CGAL_TRACE("  Create MST Graph\n");
+    CGAL_TRACE("  Create MST Graph\n");
     MST_graph mst_graph(vertex_normal_map);
     //
     // add vertices
@@ -384,16 +384,15 @@ CGAL_TRACE("  Create MST Graph\n");
     }
 
     // Orient normals
-CGAL_TRACE("  Call boost::breadth_first_search()\n");
+    CGAL_TRACE("  Call boost::breadth_first_search()\n");
     boost::breadth_first_search(mst_graph,
                                 boost::vertex(source_vertex_index, mst_graph), // source
                                 visitor(boost::make_bfs_visitor(propagate_normal<VertexIterator, VertexNormalMap>())));
-CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
+    CGAL_TRACE("End of orient_normals_minimum_spanning_tree_3()\n");
 }
 
 
 // Safety
-#undef CGAL_TEST
 #undef CGAL_TRACE
 
 CGAL_END_NAMESPACE

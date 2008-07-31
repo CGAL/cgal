@@ -637,19 +637,16 @@ void CPoissonDoc::OnAlgorithmsOrientNormalsWithMST()
   status_message("Orient Normals with MST...");
   CGAL::Timer task_timer; task_timer.start();
   
-  // Copy normals to select swapped ones below
-  std::vector<Normal> normals_copy(m_points.normals_begin(), m_points.normals_end());
-
   CGAL::orient_normals_minimum_spanning_tree_3(m_points.begin(), m_points.end(),
                                                get(boost::vertex_index, m_points),
                                                get(CGAL::vertex_point, m_points),
                                                get(boost::vertex_normal, m_points),
                                                m_number_of_neighbours);
                                                
-  // Select swapped normals
+  // Select non-oriented normals
   m_points.select(m_points.begin(), m_points.end(), false);
   for (int i=0; i<m_points.size(); i++)
-    if (m_points[i].normal().get_vector() * normals_copy[i].get_vector() < 0)
+    if ( ! m_points[i].normal().is_oriented() )
       m_points.select(&m_points[i]);
 
   status_message("Orient Normals with MST...done (%lf s)", task_timer.time());
