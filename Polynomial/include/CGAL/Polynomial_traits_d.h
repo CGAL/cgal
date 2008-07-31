@@ -1364,10 +1364,12 @@ public:
         const Polynomial_d& p, 
         const Polynomial_d& q,
         int i = (d-1) ) const {
-      if(i == (d-1) )
-        return resultant(p,q);
+      // make i the innermost variabl call CGALi::resultant_
+      // CGALi::resultant would eliminate the outermost variable. 
+      if(i == 0 )
+        return CGALi::resultant_(p,q);
       else
-        return resultant(Move()(p,i),Move()(q,i));
+        return CGALi::resultant_(Move()(p,i,0),Move()(q,i,0));
     }  
   };
 

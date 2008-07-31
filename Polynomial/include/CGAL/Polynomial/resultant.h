@@ -64,51 +64,51 @@ CGAL_BEGIN_NAMESPACE
 // In turn CGAL::CGALi::resultant_(F,G) eliminates the innermost variable. 
  
 // Dispatching
-// CGAL::CGALi::new_resultant_decompose applies if Coeff is a Fraction
-// CGAL::CGALi::new_resultant_modularize applies if Coeff is Modularizable
-// CGAL::CGALi::new_resultant_interpolate applies for multivairate polynomials
-// CGAL::CGALi::new_resultant_univariate selects the proper algorithm for IC 
+// CGAL::CGALi::resultant_decompose applies if Coeff is a Fraction
+// CGAL::CGALi::resultant_modularize applies if Coeff is Modularizable
+// CGAL::CGALi::resultant_interpolate applies for multivairate polynomials
+// CGAL::CGALi::resultant_univariate selects the proper algorithm for IC 
 
 namespace CGALi{
 
 template <class Coeff> 
-inline Coeff new_resultant_interpolate( 
+inline Coeff resultant_interpolate( 
     const CGAL::Polynomial<Coeff>&, const CGAL::Polynomial<Coeff>& );
 template <class Coeff> 
-inline Coeff new_resultant_modularize( 
+inline Coeff resultant_modularize( 
     const CGAL::Polynomial<Coeff>&, 
     const CGAL::Polynomial<Coeff>&, CGAL::Tag_true);
 template <class Coeff> 
-inline Coeff new_resultant_modularize( 
+inline Coeff resultant_modularize( 
     const CGAL::Polynomial<Coeff>&, 
     const CGAL::Polynomial<Coeff>&, CGAL::Tag_false);
 template <class Coeff> 
-inline Coeff new_resultant_decompose( 
+inline Coeff resultant_decompose( 
     const CGAL::Polynomial<Coeff>&, 
     const CGAL::Polynomial<Coeff>&, CGAL::Tag_true);
 template <class Coeff> 
-inline Coeff new_resultant_decompose( 
+inline Coeff resultant_decompose( 
     const CGAL::Polynomial<Coeff>&, 
     const CGAL::Polynomial<Coeff>&, CGAL::Tag_false);
 template <class Coeff> 
-inline Coeff new_resultant_( 
+inline Coeff resultant_( 
     const CGAL::Polynomial<Coeff>&, const CGAL::Polynomial<Coeff>&);
 
 template <class Coeff> 
-inline Coeff new_resultant_univariate( 
+inline Coeff resultant_univariate( 
     const CGAL::Polynomial<Coeff>& A, 
     const CGAL::Polynomial<Coeff>& B, CGAL::Integral_domain_without_division_tag){ 
   return hybrid_bezout_subresultant(A,B,0);
 }
 template <class Coeff> 
-inline Coeff new_resultant_univariate( 
+inline Coeff resultant_univariate( 
     const CGAL::Polynomial<Coeff>& A, 
     const CGAL::Polynomial<Coeff>& B, CGAL::Unique_factorization_domain_tag){
   return prs_resultant_ufd(A,B);
 }
 
 template <class Coeff> 
-inline Coeff new_resultant_univariate( 
+inline Coeff resultant_univariate( 
     const CGAL::Polynomial<Coeff>& A, 
     const CGAL::Polynomial<Coeff>& B, CGAL::Field_tag){
   return prs_resultant_field(A,B);  
@@ -121,19 +121,19 @@ namespace CGALi{
 
 template <class IC> 
 inline IC 
-new_resultant_interpolate( 
+resultant_interpolate( 
     const CGAL::Polynomial<IC>& F, 
     const CGAL::Polynomial<IC>& G){
   CGAL_precondition(CGAL::Polynomial_traits_d<CGAL::Polynomial<IC> >::d == 1);
     typedef CGAL::Algebraic_structure_traits<IC> AST_IC;
     typedef typename AST_IC::Algebraic_category Algebraic_category;
-    return CGALi::new_resultant_univariate(F,G,Algebraic_category()); 
+    return CGALi::resultant_univariate(F,G,Algebraic_category()); 
 }
 
 #if CGAL_RESULTANT_USE_INTERPOLATION
 template <class Coeff_2> 
 inline
-CGAL::Polynomial<Coeff_2>  new_resultant_interpolate(
+CGAL::Polynomial<Coeff_2>  resultant_interpolate(
         const CGAL::Polynomial<CGAL::Polynomial<Coeff_2> >& F, 
         const CGAL::Polynomial<CGAL::Polynomial<Coeff_2> >& G){
     
@@ -173,7 +173,7 @@ CGAL::Polynomial<Coeff_2>  new_resultant_interpolate(
         }
         if(degree_vector(Fat_i) ==  ev_f && degree_vector(Gat_i) ==  ev_g){
             // timer2.start();
-            Coeff_2 res_at_i = new_resultant_interpolate(Fat_i, Gat_i);
+            Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
             // timer2.stop();
             points.push_back(Point(IC(i),res_at_i));
         }      
@@ -194,7 +194,7 @@ CGAL::Polynomial<Coeff_2>  new_resultant_interpolate(
         assert(degree_vector(Gat_i) <= ev_g);
         
         if(degree_vector(Fat_i) ==  ev_f && degree_vector(Gat_i) ==  ev_g){
-            Coeff_2 res_at_i = new_resultant_interpolate(Fat_i, Gat_i);
+            Coeff_2 res_at_i = resultant_interpolate(Fat_i, Gat_i);
             points.push_back(Point(IC(i), res_at_i));
         }
     }
@@ -213,16 +213,16 @@ CGAL::Polynomial<Coeff_2>  new_resultant_interpolate(
 
 template <class Coeff> 
 inline
-Coeff new_resultant_modularize( 
+Coeff resultant_modularize( 
         const CGAL::Polynomial<Coeff>& F, 
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_false){
-    return new_resultant_interpolate(F,G);
+    return resultant_interpolate(F,G);
 };
 
 template <class Coeff> 
 inline
-Coeff new_resultant_modularize( 
+Coeff resultant_modularize( 
         const CGAL::Polynomial<Coeff>& F, 
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_true){
@@ -281,7 +281,7 @@ Coeff new_resultant_modularize(
         
         //timer_resultant.start();
         n++;
-        mR = new_resultant_interpolate(mF,mG);
+        mR = resultant_interpolate(mF,mG);
         //timer_resultant.stop();
         //timer_cr.start();
         if(n == 1){ 
@@ -308,30 +308,30 @@ Coeff new_resultant_modularize(
     //std::cout << "Time Evaluate   : " << timer_evaluate.time() << std::endl; 
     //std::cout << "Time Resultant  : " << timer_resultant.time() << std::endl; 
     //std::cout << "Time Chinese R  : " << timer_cr.time() << std::endl; 
-    // CGAL_postcondition(R == new_resultant_interpolate(F,G));
+    // CGAL_postcondition(R == resultant_interpolate(F,G));
     return R;
-    // return new_resultant_interpolate(F,G);
+    // return resultant_interpolate(F,G);
 }
 
 
 template <class Coeff> 
 inline
-Coeff new_resultant_decompose( 
+Coeff resultant_decompose( 
     const CGAL::Polynomial<Coeff>& F,
     const CGAL::Polynomial<Coeff>& G, 
     CGAL::Tag_false){
 #if CGAL_RESULTANT_USE_MODULAR_ARITHMETIC
   typedef CGAL::Polynomial<Coeff> Polynomial; 
   typedef typename Modular_traits<Polynomial>::Is_modularizable Is_modularizable; 
-  return new_resultant_modularize(F,G,Is_modularizable());
+  return resultant_modularize(F,G,Is_modularizable());
 #else
-  return  new_resultant_modularize(F,G,CGAL::Tag_false());
+  return  resultant_modularize(F,G,CGAL::Tag_false());
 #endif
 }
 
 template <class Coeff> 
 inline
-Coeff new_resultant_decompose( 
+Coeff resultant_decompose( 
         const CGAL::Polynomial<Coeff>& F, 
         const CGAL::Polynomial<Coeff>& G, 
         CGAL::Tag_true){  
@@ -350,7 +350,7 @@ Coeff new_resultant_decompose(
     Denominator c = CGAL::ipower(a, G.degree()) * CGAL::ipower(b, F.degree());
     typedef Algebraic_structure_traits<RES> AST_RES;
     typedef typename AST_RES::Algebraic_category Algebraic_category;
-    RES res0 =  CGAL::CGALi::new_resultant_(F0, G0);
+    RES res0 =  CGAL::CGALi::resultant_(F0, G0);
     typename Fraction_traits<Coeff>::Compose comp_frac;
     Coeff res = comp_frac(res0, c);
     typename Algebraic_structure_traits<Coeff>::Simplify simplify;
@@ -361,15 +361,15 @@ Coeff new_resultant_decompose(
 
 template <class Coeff> 
 inline
-Coeff new_resultant_( 
+Coeff resultant_( 
         const CGAL::Polynomial<Coeff>& F, 
         const CGAL::Polynomial<Coeff>& G){
 #if CGAL_RESULTANT_USE_DECOMPOSE
     typedef CGAL::Fraction_traits<Polynomial<Coeff > > FT;
     typedef typename FT::Is_fraction Is_fraction; 
-    return new_resultant_decompose(F,G,Is_fraction());
+    return resultant_decompose(F,G,Is_fraction());
 #else
-    return new_resultant_decompose(F,G,CGAL::Tag_false());
+    return resultant_decompose(F,G,CGAL::Tag_false());
 #endif
 }
 
@@ -377,14 +377,14 @@ Coeff new_resultant_(
 
 template <class Coeff> 
 inline
-Coeff  new_resultant( 
+Coeff  resultant( 
         const CGAL::Polynomial<Coeff>& F_, 
         const CGAL::Polynomial<Coeff>& G_){
   // make the variable to be elimnated the innermost one.
     typedef CGAL::Polynomial_traits_d<CGAL::Polynomial<Coeff> > PT;
     CGAL::Polynomial<Coeff> F = typename PT::Move()(F_, PT::d-1, 0);
     CGAL::Polynomial<Coeff> G = typename PT::Move()(G_, PT::d-1, 0);
-    return CGALi::new_resultant_(F,G);
+    return CGALi::resultant_(F,G);
 }
 
 } // namespace CGALi    
