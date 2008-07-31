@@ -303,7 +303,7 @@ sign(TMC_Vertex_handle vit) const {
       if (is_certain(result))
         return result;
     }
-  catch (Interval_nt_advanced::unsafe_comparison) {}
+  catch (Uncertain_conversion_exception) {}
   CGAL_PROFILER(std::string("NGHK: failures of : ") + 
                 std::string(CGAL_PRETTY_FUNCTION));
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -341,7 +341,7 @@ sign(const Bare_point &p, const Cell_info &info) const {
       if (is_certain(result))
         return result;
     }
-  catch (Interval_nt_advanced::unsafe_comparison) {}
+  catch (Uncertain_conversion_exception) {}
   CGAL_PROFILER(std::string("NGHK: failures of : ") + 
                 std::string(CGAL_PRETTY_FUNCTION));
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -634,7 +634,7 @@ compare(Cell_info &info1,
       if (is_certain(result))
         return result;
     }
-  catch (Interval_nt_advanced::unsafe_comparison) {}
+  catch (Uncertain_conversion_exception) {}
   CGAL_PROFILER(std::string("NGHK: failures of : ") + 
                 std::string(CGAL_PRETTY_FUNCTION));
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
@@ -698,7 +698,7 @@ locate_in_tmc(const Bare_point &p0,
       Protect_FPU_rounding<true> P;
 
       o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
       typedef Exact_predicates_exact_constructions_kernel EK;
       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;

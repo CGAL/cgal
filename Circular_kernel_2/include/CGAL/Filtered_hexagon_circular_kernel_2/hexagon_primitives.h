@@ -510,7 +510,7 @@ template < class CK, class Hexagon>
       Conv cnv;
       static const bool Protection = true;
       try{return CGALi::construct_bounding_hexagons_2<CK2>(cnv(a),res);}
-      catch (Interval_nt_advanced::unsafe_comparison)
+      catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
          return CGALi::construct_bounding_hexagons_2<CK>(a,res);
@@ -523,7 +523,7 @@ template < class CK, class Hexagon>
       Conv cnv;
       static const bool Protection = true;
       try{return CGALi::construct_bounding_hexagon_for_line_arc_2<CK2>(cnv(a));}
-      catch (Interval_nt_advanced::unsafe_comparison)
+      catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
          return CGALi::construct_bounding_hexagon_for_line_arc_2<CK>(a);
@@ -548,7 +548,7 @@ template < class CK, class Hexagon>
     { 
       static const bool Protection = true;      
       try{return CGALi::construct_bounding_hexagons_2<typename CK::AK>(a.approx(),res);}
-      catch (Interval_nt_advanced::unsafe_comparison)
+      catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
          return CGALi::construct_bounding_hexagons_2<typename CK::EK>(a.exact(),res);
@@ -560,7 +560,7 @@ template < class CK, class Hexagon>
     { 
       static const bool Protection = true;
       try{return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::AK>(a.approx());}
-      catch (Interval_nt_advanced::unsafe_comparison)
+      catch (Uncertain_conversion_exception)
       {
          CGAL::Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
          return CGALi::construct_bounding_hexagon_for_line_arc_2<typename CK::EK>(a.exact());

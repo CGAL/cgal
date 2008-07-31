@@ -161,7 +161,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(args)...);
@@ -183,7 +183,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1));
@@ -203,7 +203,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ")+ std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2));
@@ -223,7 +223,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3));
@@ -243,7 +243,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4));
@@ -264,7 +264,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5));
@@ -285,7 +285,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6));
@@ -308,7 +308,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7));
@@ -331,7 +331,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
@@ -356,7 +356,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
@@ -381,7 +381,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
       if (is_certain(res))
         return get_certain(res);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),

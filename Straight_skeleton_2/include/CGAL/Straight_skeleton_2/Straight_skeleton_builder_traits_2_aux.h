@@ -121,7 +121,7 @@ public:
       if ( fr )
         return From_Filtered(fr);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(a1)) ;
@@ -139,7 +139,7 @@ public:
       if ( fr )
         return From_Filtered(fr);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2)) ;
@@ -157,7 +157,7 @@ public:
       if ( fr )
         return From_Filtered(fr);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3)) ;
@@ -176,7 +176,7 @@ public:
       if ( fr )
         return From_Filtered(fr);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4)) ;
@@ -195,7 +195,7 @@ public:
       if ( fr )
         return From_Filtered(fr);
     }
-    catch (Interval_nt_advanced::unsafe_comparison) {}
+    catch (Uncertain_conversion_exception) {}
     
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4), To_Exact(a5)) ;

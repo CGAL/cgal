@@ -130,7 +130,7 @@ public:
 	}
       }
       
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
@@ -198,7 +198,7 @@ public:
 	}
       }
       
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
@@ -267,7 +267,7 @@ public:
 	}
       }
       
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       // TODO: Instead of using a vector, write an iterator adapter
@@ -350,7 +350,7 @@ template <typename L1>
         else {
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1));
@@ -401,7 +401,7 @@ template <typename L1>
         else {
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
-    } catch (Interval_nt_advanced::unsafe_comparison) {
+    } catch (Uncertain_conversion_exception) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));

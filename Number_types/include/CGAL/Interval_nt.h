@@ -51,7 +51,7 @@ public:
 
   typedef double      value_type;
 
-  typedef Uncertain<bool>::Uncertain_conversion_exception  unsafe_comparison;
+  typedef Uncertain_conversion_exception            unsafe_comparison;
   typedef Checked_protect_FPU_rounding<Protected>   Internal_protector;
   typedef Protect_FPU_rounding<!Protected>          Protector;
 
