@@ -1024,7 +1024,6 @@ int main( int argc, char const* argv[] )
   int lExitCode = 0 ;
   
   bool lPrintUsage                     = true ;
-  bool lContinueOnErrorAssertionFailed = false ;
 
   string lFolder ;
   
@@ -1073,7 +1072,6 @@ int main( int argc, char const* argv[] )
           case 'l' : sDumpOffsetPolygons = true ; break ;
           case 'a' : sAbortOnError = true ; break ;
           case 'p' : sAcceptNonSimpleInput = true ; break ;
-          case 'c' : lContinueOnErrorAssertionFailed = true; break ;
           case 'n' : sNoOp         = true ; break ;
           case 'g' : sValidateGeometry = true ; break ;
           
@@ -1207,9 +1205,6 @@ int main( int argc, char const* argv[] )
     
   }
   
-  if ( lContinueOnErrorAssertionFailed )
-    set_error_behaviour(CONTINUE);
-  
   if ( lDoNotUsePartialSkeleton )
    sMaxTime = 0 ;
    
@@ -1337,7 +1332,6 @@ int main( int argc, char const* argv[] )
          << endl 
          << "     -a      Abort on first error." << endl
          << "     -p      Permissive mode. Accept non-simple input polygons." << endl
-         << "     -c      Ignore errors." << endl
          << "     -e      Dumps result into an .eps file." << endl
          << "     -d      Dumps result into an .dxf file." << endl
          << "     -v      Verbose log." << endl 
