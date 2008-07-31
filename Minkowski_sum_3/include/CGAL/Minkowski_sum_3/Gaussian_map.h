@@ -157,9 +157,9 @@ class Gaussian_map :
 
   public:
       void visit(Vertex_const_handle v) {	CGAL_NEF_TRACEN( "Vertices " << v->point() );}
-      void visit(Halfedge_const_handle e) {}
-      void visit(SHalfedge_const_handle se) {}
-      void visit(SHalfloop_const_handle sl) {}
+      void visit(Halfedge_const_handle ) {}
+      void visit(SHalfedge_const_handle ) {}
+      void visit(SHalfloop_const_handle ) {}
       void visit(SFace_const_handle sf) {
 	
 	typename Nef_polyhedron_3::SHalfedge_const_handle sec = sf->sface_cycles_begin();
@@ -336,11 +336,11 @@ class Gaussian_map :
       : SM(smap), Edge2SEdge(E2SE), Facet2SVertex(F2SV), next(SE2SE), omit_facet(F2b), omit_edge(E2b) {}
       
   public:
-    void visit(Vertex_const_handle v) {}
-    void visit(Halfedge_const_handle e) {}
-    void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}
-    void visit(SFace_const_handle sf) {}
+    void visit(Vertex_const_handle ) {}
+    void visit(Halfedge_const_handle ) {}
+    void visit(SHalfedge_const_handle ) {}
+    void visit(SHalfloop_const_handle ) {}
+    void visit(SFace_const_handle ) {}
     
     void visit(Halffacet_const_handle f) {
 
@@ -461,11 +461,11 @@ class Gaussian_map :
     SFace_creator2(Sphere_map* smap, Edge2SEdge_hash& E2SE) : 
       SM(smap), Edge2SEdge(E2SE) {}
 
-      void visit(Halfedge_const_handle e) {}
-      void visit(SHalfedge_const_handle se) {}
-      void visit(SHalfloop_const_handle sl) {}
-      void visit(Halffacet_const_handle f) {}
-      void visit(Vertex_const_handle v) {}
+      void visit(Halfedge_const_handle ) {}
+      void visit(SHalfedge_const_handle ) {}
+      void visit(SHalfloop_const_handle ) {}
+      void visit(Halffacet_const_handle ) {}
+      void visit(Vertex_const_handle ) {}
 
       void visit(SFace_const_handle sf) {
 	CGAL_NEF_TRACEN( "SFace_creator2 " << sf->center_vertex()->point() );
@@ -511,11 +511,11 @@ class Gaussian_map :
     SFace_creator(const Nef_polyhedron_3& N, Sphere_map* smap, Edge2SEdge_hash& E2SE, Vertex2bool_hash& V2b, SFace2bool_hash SHELL) : 
       N3(N), SM(smap), Edge2SEdge(E2SE), omit_vertex(V2b), Shell(SHELL) {}
 
-      void visit(Halfedge_const_handle e) {}
-      void visit(SHalfedge_const_handle se) {}
-      void visit(SHalfloop_const_handle sl) {}
-      void visit(SFace_const_handle sf) {}
-      void visit(Halffacet_const_handle f) {}
+      void visit(Halfedge_const_handle ) {}
+      void visit(SHalfedge_const_handle ) {}
+      void visit(SHalfloop_const_handle ) {}
+      void visit(SFace_const_handle ) {}
+      void visit(Halffacet_const_handle ) {}
 
       void visit(Vertex_const_handle v) {
 
