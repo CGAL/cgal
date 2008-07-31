@@ -29,10 +29,16 @@
 #define CGAL_ACK_MAKE_SQUARE_FREE 0
 #endif
 
+#ifndef CGAL_ACK_USE_APPROXIMATE_ROTATION
+#define CGAL_ACK_USE_APPROXIMATE_ROTATION 1
+#endif
+
+#if !CGAL_ACK_USE_APPROXIMATE_ROTATION
 #ifndef CGAL_ACK_BASE_ANGLE
 #define CGAL_ACK_BASE_ANGLE 30
-#warning base angle is set to 30, to change this, change the appropriate flag in the header of this file, or compile with -DCGAL_ACK_BASE_ANGLE=x
 #endif
+#endif
+
 
 // What is the coefficient type of the underlying basic kernel?
 #ifndef CGAL_ACK_COEFFICIENT
@@ -134,11 +140,15 @@ int main(int argc,char** argv) {
     typedef CGAL::Get_algebraic_curve_kernel_2<Coefficient>
         ::Algebraic_curve_kernel_with_qir_and_bitstream_2
         Basic_algebraic_curve_kernel_2;
-
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+    typedef CGAL::Approximately_rotated_algebraic_curve_kernel_2
+        <Basic_algebraic_curve_kernel_2>
+        Rotated_algebraic_curve_kernel_2;
+#else
     typedef CGAL::Rotated_algebraic_curve_kernel_2
         <Basic_algebraic_curve_kernel_2,CGAL_ACK_BASE_ANGLE>
         Rotated_algebraic_curve_kernel_2;
-
+#endif
     typedef Rotated_algebraic_curve_kernel_2::Curve_analysis_2 
         Curve_analysis_2;
     typedef Basic_algebraic_curve_kernel_2::Polynomial_2 Input_polynomial_2;
@@ -241,10 +251,26 @@ int main(int argc,char** argv) {
 
         int angle = atoi(argv[3]);
 
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+        double prec;
+        if(argc>4) {
+            prec = atof(argv[4]);
+        } else {
+            prec=0.001;
+        }
+#endif
+
+
+
         overall_timer.start();
         std::cout << "*************** Analysis starts ***************" << std::endl;
-        Curve_analysis_2 algebraic_curve 
-            = Rotated_algebraic_curve_kernel_2::Construct_curve_2()(f,angle);
+        Curve_analysis_2 algebraic_curve
+#if CGAL_ACK_USE_APPROXIMATE_ROTATION
+            = Rotated_algebraic_curve_kernel_2::Construct_curve_2()
+            (f,angle,prec);
+#else
+        = Rotated_algebraic_curve_kernel_2::Construct_curve_2()(f,angle);
+#endif
 
         std::cout << "Now refine..." << std::flush;
      

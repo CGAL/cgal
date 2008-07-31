@@ -780,6 +780,17 @@ public:
     //!@}
 };
 
+template<typename Poly_int_2, typename Poly_ext_2>
+Poly_ext_2 _substitute_xy(const Poly_int_2& p, 
+                          const Poly_ext_2& x, const Poly_ext_2& y) {
+    
+    typename Poly_int_2::const_iterator rit = p.end()-1;
+    Poly_ext_2 r = rit->evaluate(x);
+    while((rit--) != p.begin())
+        r = r * y + rit->evaluate(x);
+    return r;
+}    
+
 /*!\brief
  * defines coefficient number types and polynomial rotation functions for a
  * set of fixed angles
@@ -890,17 +901,7 @@ public:
         return num;
     }
     //!@}   
-private:
-    
-    Poly_sqrt_2 _substitute_xy(const Poly_int_2& p, 
-            const Poly_sqrt_2& x, const Poly_sqrt_2& y) const {
-        
-        typename Poly_int_2::const_iterator rit = p.end()-1;
-        Poly_sqrt_2 r = rit->evaluate(x);
-        while((rit--) != p.begin())
-            r = r * y + rit->evaluate(x);
-        return r;
-  }    
+
 };
 
 /*!\brief
@@ -951,6 +952,176 @@ public:
     //Rotation_traits _m_traits;
 };
 
+template <class AlgebraicCurveKernel_2>
+struct Approximately_rotated_algebraic_curve_kernel_base
+    : AlgebraicCurveKernel_2 {
+
+    typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
+    typedef Algebraic_curve_kernel_2 Base;
+
+    typedef typename Base::Curve_analysis_2 Curve_analysis_2;
+    typedef typename Base::Polynomial_2 Polynomial_2;
+    typedef typename Base::Boundary Rational;
+    typedef typename Curve_analysis_2::Integer Integer;
+
+    typedef CGAL::Polynomial<Rational> Poly_rat_1;
+    typedef CGAL::Polynomial<Poly_rat_1> Poly_rat_2;
+
+    struct Construct_curve_2 {
+            
+        Curve_analysis_2 operator()(const Polynomial_2& f, 
+                                    int angle,
+                                    double delta) {
+            
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "delta=" << delta << std::endl;
+#endif            
+
+            bool greater_180 =(angle>180);
+            bool between_90_and_270 = (angle>=90) && (angle<=270);
+            angle %=360;
+            if(between_90_and_270) {
+                angle=180-angle;
+            }
+            if(angle<0) {
+                angle=-angle;
+            }
+            if(angle>=270) {
+                angle=360-angle;
+            }
+
+            double exact_sine_approx = sin((double)angle*M_PI/180.); 
+            
+            double x = 1./exact_sine_approx+
+                sqrt(1./(exact_sine_approx*exact_sine_approx)-1);
+
+            typename CGAL::Fraction_traits<Rational>::Compose compose;
+
+            //Euclidean algo
+            double e0=x, e1=-1.;
+            Integer p0=0, q0=1, p1=1, q1=0;
+            Rational t,sine;
+            while(true) {
+                long r = (long)floor(e0/e1);
+                double olde0=e0;
+                Integer oldp0=p0, oldq0=q0;
+                e0=e1;p0=p1;q0=q1;
+                e1=olde0-r*e1;
+                p1=oldp0-Integer(r)*p1;
+                q1=oldq0-Integer(r)*q1;
+                if(q1!=Integer(0)) {
+                    t = compose(p1,q1);
+                    sine = CGAL::abs(2/(t+1/t));
+                    if(abs(asin(CGAL::to_double(sine))/M_PI*180.-angle)
+                         < delta) {
+                        break;
+                    }
+                }
+            }
+            Rational cosine = CGAL::abs((t-1/t)/(t+1/t));
+
+            if(greater_180) {
+                sine = -sine;
+            }
+            if(between_90_and_270) {
+                cosine=-cosine;
+            }
+
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "sine=" << sine << std::endl;
+            CGAL_ACK_DEBUG_PRINT << "cosine=" << cosine << std::endl;
+#endif
+            
+            Poly_rat_2 
+                sub_x(Poly_rat_1(Rational(0), cosine), Poly_rat_1(sine)), 
+                sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
+                res;
+
+            res = _substitute_xy(f, sub_x, sub_y);
+        
+
+            // integralize polynomial
+            typedef CGAL::Fraction_traits<Poly_rat_2> FT;
+            typename FT::Denominator_type dummy;
+            Polynomial_2 num;
+            typename FT::Decompose()(res, num, dummy);
+            
+#if CGAL_ACK_DEBUG_FLAG
+            CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl;
+#endif
+            return Base::curve_cache_2()(num);
+        }
+
+/* This is an alternative, experimental solution
+        Curve_analysis_2 operator()(const Polynomial_2& f, 
+                                    double alpha,
+                                    double delta,
+                                    bool angle_greater_180_degrees=false)
+            const {
+
+
+            // TODO: Catch alpha=0,1
+
+            std::cout << "alpha=" << alpha << std::endl;
+            std::cout << "delta=" << delta << std::endl;
+            
+            bool angle_between_90_and_270_degrees = (alpha<0);
+
+            alpha = abs(alpha);
+            CGAL_precondition(1-alpha-delta>0);
+            long n = (long)ceil(sqrt(1.-alpha)/(2.*delta)*
+                                (sqrt(1-alpha-delta)*
+                                 sqrt(1.+delta-alpha*delta-alpha*alpha)+
+                                 (1.-delta-alpha)*sqrt(1.+alpha)));
+            std::cout << "n=" << n << std::endl;
+            long m = (long)ceil(n*sqrt((1+alpha)/(1-alpha)));
+            std::cout << "m=" << m << std::endl;
+            typename CGAL::Fraction_traits<Rational>::Compose compose;
+            Rational cosine = compose((m*m-n*n),(m*m+n*n));
+            CGAL::simplify(cosine);
+            std::cout << "cosine=" << cosine << std::endl;
+            Rational sine = compose(2*m*n,m*m+n*n);
+            std::cout << "sine=" << cosine << std::endl;
+            if(angle_greater_180_degrees) {
+                sine = -sine;
+            }
+            if(angle_between_90_and_270_degrees) {
+                cosine=-cosine;
+            }
+           
+            Poly_rat_2 
+                sub_x(Poly_rat_1(Rational(0), cosine), Poly_rat_1(sine)), 
+                sub_y(Poly_rat_1(Rational(0), -sine), Poly_rat_1(cosine)), 
+                res;
+
+            res = _substitute_xy(f, sub_x, sub_y);
+        
+            std::cout << "rotated poly: " << res << std::endl;
+            // integralize polynomial
+            typedef CGAL::Fraction_traits<Poly_rat_2> FT;
+            typename FT::Denominator_type dummy;
+            Polynomial_2 num;
+            typename FT::Decompose()(res, num, dummy);
+            
+            std::cout << "integralized poly: " << num << "\n\n";
+            return Base::curve_cache_2()(num);
+        }
+    
+*/
+
+
+        Curve_analysis_2 operator()(const Polynomial_2& f) const {
+            return Base::curve_cache_2()(f);
+        };
+    
+    };
+    
+    Construct_curve_2 construct_curve_2_object() const {
+        return Construct_curve_2();
+    } 
+};
+
 } // anonymous namespace
 
 /*!\brief 
@@ -964,6 +1135,24 @@ struct Rotated_algebraic_curve_kernel_2 :
     public Rotated_algebraic_kernel_base< AlgebraicCurveKernel_2,
         Normalized_angle< BaseAngle >::angle >
 { };
+
+/*!\brief 
+ *  defines \c Algebraic_curve_kernel_2 with rotation support for
+ *  approximate rotations by arbitrary angles
+ *
+ * \Todo More documentation
+ */
+template <class AlgebraicCurveKernel_2>
+struct Approximately_rotated_algebraic_curve_kernel_2   
+    : public Approximately_rotated_algebraic_curve_kernel_base
+        <AlgebraicCurveKernel_2>
+{ 
+
+    typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
+    typedef Algebraic_curve_kernel_2 Base;
+    
+};
+
 
 CGAL_END_NAMESPACE
 
