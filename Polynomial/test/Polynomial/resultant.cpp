@@ -6,7 +6,6 @@
 // These are the defaults 
 //#define CGAL_RESULTANT_USE_MODULAR_ARITHMETIC 0
 //#define CGAL_RESULTANT_USE_DECOMPOSE 1
-//#define CGAL_RESULTANT_USE_INTERPOLATE 1 
 
 #include <CGAL/basic.h>
 

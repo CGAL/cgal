@@ -30,11 +30,6 @@
 #define CGAL_RESULTANT_USE_DECOMPOSE 1
 #endif 
 
-#ifndef CGAL_RESULTANT_USE_INTERPOLATION
-#define CGAL_RESULTANT_USE_INTERPOLATION 1
-#endif 
-
-
 
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
@@ -130,7 +125,6 @@ resultant_interpolate(
     return CGALi::resultant_univariate(F,G,Algebraic_category()); 
 }
 
-#if CGAL_RESULTANT_USE_INTERPOLATION
 template <class Coeff_2> 
 inline
 CGAL::Polynomial<Coeff_2>  resultant_interpolate(
@@ -207,9 +201,6 @@ CGAL::Polynomial<Coeff_2>  resultant_interpolate(
 #endif 
     return result; 
 }
-#endif
-
-
 
 template <class Coeff> 
 inline
