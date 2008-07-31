@@ -294,8 +294,12 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_double(NT)& r)
 {
-    num += r * den;
-    return *this;
+  //num += r * den; 
+  NT r_num, r_den; 
+  Split_double<NT>()(r,r_num,r_den);
+  num = num*r_den + r_num*den;
+  den *=r_den; 
+  return *this;
 }
 
 template <class NT>
@@ -303,8 +307,12 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_double(NT)& r)
 {
-    num -= r * den;
-    return *this;
+  //num -= r * den;
+  NT r_num, r_den; 
+  Split_double<NT>()(r,r_num,r_den);
+  num =  num*r_den - r_num*den;
+  den *= r_den; 
+  return *this;
 }
 
 template <class NT>
@@ -312,8 +320,13 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_double(NT)& r)
 {
-    num *= r;
-    return *this;
+  // num *= r;
+  
+  NT r_num, r_den; 
+  Split_double<NT>()(r,r_num,r_den);
+  num *= r_num;
+  den *= r_den; 
+  return *this;
 }
 
 template <class NT>
@@ -321,9 +334,12 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_double(NT)& r)
 {
-    CGAL_precondition( r != 0 );
-    den *= r;
-    return *this;
+  CGAL_precondition( r != 0 );
+  NT r_num, r_den; 
+  Split_double<NT>()(r,r_num,r_den);
+  num *= r_den;
+  den *= r_num; 
+  return *this;
 }
 
 template <class NT>
