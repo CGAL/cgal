@@ -2005,6 +2005,7 @@ Installation/config/support/S65-LEDAWINMS -text
 Installation/config/support/S66-LEDA6X -text
 Installation/config/support/S70-OPENGL -text
 Installation/config/support/S71-OPENGL_W32 -text
+Installation/config/support/S71b-OPENGL_LEOPARD -text
 Installation/config/support/S72-DEFAULTLAPACK -text
 Installation/config/support/S74-DEFAULTLAPACKWIN -text
 Installation/config/support/S75-REFLAPACKLINUXGCC -text
