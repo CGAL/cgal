@@ -204,7 +204,7 @@ class Infimaximal_box {
   }
 
   template <typename Vertex_handle>
-  static bool is_redundant_box_vertex(Vertex_handle v) {
+  static bool is_redundant_box_vertex(Vertex_handle ) {
     return false;
   }
 
