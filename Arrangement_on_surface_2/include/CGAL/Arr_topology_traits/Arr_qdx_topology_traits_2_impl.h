@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2006,2007,2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,6 +20,10 @@
 
 #ifndef CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_IMPL_H
+
+#ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+#define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
+#endif
 
 /*! \file
  * Member-function definitions for the
@@ -192,6 +196,10 @@ void Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::init_dcel () // open
     // set not fictious
     this->f_top->set_fictitious (false);
 
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "QdX-TOP ftop: " << this->f_top << std::endl;
+#endif
+    
     // bounded or unbounded
     if (this->_m_left == CGAL::ARR_UNBOUNDED || 
         this->_m_right == CGAL::ARR_UNBOUNDED) {
@@ -340,7 +348,14 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::locate_around_boundary_vertex
             !(ps_x != CGAL::ARR_INTERIOR && ps_y != CGAL::ARR_INTERIOR)
     );
 
-    // std::cout << "locate_around_boundary_vertex()" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP locate_around_boundary_vertex\ncurve: " << cv 
+              << std::endl;
+    std::cout << "end: " << ind << std::endl;
+    std::cout << "psx: " << ps_x << std::endl;
+    std::cout << "psy: " << ps_y << std::endl;
+#endif
+
     if (ps_x == CGAL::ARR_LEFT_BOUNDARY && ind == CGAL::ARR_MIN_END) {
         CGAL_assertion(ps_y == CGAL::ARR_INTERIOR);
         CGAL_assertion(v == v_left);
@@ -374,6 +389,11 @@ _locate_around_vertex_with_boundary_at_x
 (Vertex *v,
  const X_monotone_curve_2& cv, CGAL::Arr_curve_end ind, bool& equal,
  bool allow_equal = false) const {
+
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP locate_around_vertex_x"
+              << std::endl;
+#endif
 
     // If the vertex is isolated, there is no predecssor halfedge.
     if (v->is_isolated()) {
@@ -461,6 +481,11 @@ _locate_around_vertex_on_identification(Vertex* v,
                                         const X_monotone_curve_2 & xc,
                                         CGAL::Arr_curve_end ind) const
 {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP locate_around_vertex_y"
+              << std::endl;
+#endif
+
     // If the vertex is isolated, there is no predecssor halfedge.
     if (v->is_isolated()) {
         return NULL;
@@ -484,9 +509,9 @@ _locate_around_vertex_on_identification(Vertex* v,
         _m_traits->is_between_cw_2_object();
     bool eq_curr, eq_next;
     
-#if 0
-    std::cout << "??????????????????????????????????????????" << std::endl;
-    std::cout << "search: " << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "------------------------------------------" << std::endl;
+    std::cout << "searchstart: " << std::endl;
 
     std::cout << "curr: " << curr->curve() << std::endl;
     std::cout << "dir: " << (curr->direction() == ARR_LEFT_TO_RIGHT ?
@@ -510,16 +535,14 @@ _locate_around_vertex_on_identification(Vertex* v,
         CGAL_assertion(!eq_curr && !eq_next);
         
 
-#if 0
-    std::cout << "??????????????????????????????????????????" << std::endl;
-    std::cout << "search: " << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "==========================================" << std::endl;
+    std::cout << "searchloop: " << std::endl;
 
     std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << (curr->direction() == ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << curr->direction() << std::endl;
     std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << (next->direction() == ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
+    std::cout << "dir: " << next->direction() << std::endl;
     
     std::cout << "******************************************" << std::endl;
 #endif
@@ -531,8 +554,20 @@ _locate_around_vertex_on_identification(Vertex* v,
         // locating a place for the new curve xc.
         CGAL_assertion (curr != first);
     }
+    
+    std::cout << "returned: " << next->curve() << std::endl;
+    std::cout << "dir: " << next->direction() << std::endl;
+    return next;
 
+#if 0
+    if (this->_m_traits->parameter_space_in_y_2_object()(xc, ind) ==
+        CGAL::ARR_BOTTOM_BOUNDARY) {
+        return next;
+    }
+    // else
+    
     return curr;
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -732,6 +767,10 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
      const Halfedge *prev2,
      const X_monotone_curve_2& cv) const
 {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP face_split_after_edge_insertion\ncurve: " << cv 
+              << std::endl;
+#endif
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());
     CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
@@ -742,19 +781,30 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
     // prev1's target is perimetric. If so, we split two adjacent faces.
     // If both are not perimetric, then the split face becomes a hole in the
     // original face.
-    bool    face_split = true;
+    bool face_split = true;
+
+    bool is_hole = true;
 
     Sign_of_path sign_of_path(this);
     
-    //std::cout << "Path1: " << std::endl;
-    CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
-    //std::cout << "sign1: " << sign_12 << std::endl;
-    //std::cout << "Path2: " << std::endl;
-    CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
-    //std::cout << "sign2: " << sign_21 << std::endl;
-    
-    bool is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
-    
+    if (_m_left == CGAL::ARR_UNBOUNDED && _m_right == CGAL::ARR_UNBOUNDED) {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "Path1: " << std::endl;
+#endif
+        CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "sign1: " << sign_12 << std::endl;
+        std::cout << "Path2: " << std::endl;
+#endif
+        CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "sign2: " << sign_21 << std::endl;
+#endif
+        is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
+    }
+    std::cout << "Result: face_split=" << face_split << ", is_hole=" 
+              << is_hole << std::endl;
+
     return (std::make_pair (face_split, is_hole));
 }
 
@@ -819,24 +869,17 @@ is_on_new_perimetric_face_boundary
  const Halfedge *prev2,
  const X_monotone_curve_2& cv) const
 {
-    //std::cout << "Arr_qdx_topology_traits_2::" 
-    //          << "is_on_new_perimetric_face_boundary"
-    //          << std::endl;
-    
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP is_on_new_perimetric_face_boundary\ncurve: " << cv 
+              << std::endl;
+#endif
+
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());
     CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
-    
-    // can only be possible for a paraboloid.
-    if ((_m_left == CGAL::ARR_UNBOUNDED && _m_right == CGAL::ARR_UNBOUNDED) ||
-        (_m_left == CGAL::ARR_CONTRACTION && _m_right == CGAL::ARR_CONTRACTION)
-    ) {
-        return false;
-    }
-    CGAL_assertion(_m_quadric.is_elliptic_paraboloid());
-    
-    // maintain the invariant that the upper right corner 
-    // is always in the top_face,
+
+    // maintain the invariant that the "reference point" (usually top right
+    // corner)  is always in the top_face,
     // i.e, it is the face that contains everything and has now outer ccb
     // If upper right corner is part of a ccb itself, its incident face is 
     // the face that  contains everything.
@@ -844,14 +887,34 @@ is_on_new_perimetric_face_boundary
     Sign_of_path sign_of_path(this);
     
     CGAL::Sign sign = sign_of_path(prev2, prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign: " << sign << std::endl;
+#endif
+    if (sign == CGAL::ZERO) {
+        sign = sign_of_path(prev1, prev2, cv);
+        std::cout << "sign (re): " << sign << std::endl;
+    }
     CGAL_assertion(sign != CGAL::ZERO);
     
-    if (_m_left == CGAL::ARR_CONTRACTION) {
-        return (sign == CGAL::NEGATIVE);
-    } 
-    // else
+    if ((_m_left == CGAL::ARR_UNBOUNDED && 
+         _m_right == CGAL::ARR_UNBOUNDED) ||
+        (_m_left == CGAL::ARR_CONTRACTION && 
+         _m_right == CGAL::ARR_CONTRACTION) ||
+        (_m_left == CGAL::ARR_CONTRACTION && 
+         _m_right == CGAL::ARR_UNBOUNDED)) {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "reference point: top right" << std::endl;
+        return (sign == CGAL::POSITIVE);
+#endif
+    }
+    // else 
+    CGAL_assertion(_m_quadric.is_elliptic_paraboloid());
+    CGAL_assertion(_m_left == CGAL::ARR_UNBOUNDED);
     CGAL_assertion(_m_right == CGAL::ARR_CONTRACTION);
-    return (sign == CGAL::POSITIVE);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "reference point: bottom left" << std::endl;
+#endif
+    return (sign == CGAL::NEGATIVE);
 }
 
 //-----------------------------------------------------------------------------
@@ -863,19 +926,29 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::boundaries_of_same_face
 (const Halfedge *e1,
  const Halfedge *e2) const
 {
-    //std::cout << "Arr_qdx_topology_traits_2::boundaries_of_same_face" 
-    //          << std::endl;
+
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP boundaries_of_same_face" 
+              << std::endl;
+#endif
+    
     // This predicate is only used for case 3.3.2 of the insertion process
     
     Sign_of_path sign_of_path(this);
     
-    // compute signs of path (both must be non-zero)
-    //std::cout << "Path1:" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "Path1: " << std::endl;
+#endif
     CGAL::Sign sign1 = sign_of_path(e1, e1);
-    //std::cout << "Sign1: " << sign1 << std::endl;
-    //std::cout << "Path2:" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "sign1: " << sign1 << std::endl;
+        std::cout << "Path2: " << std::endl;
+#endif
     CGAL::Sign sign2 = sign_of_path(e2, e2);
-    //std::cout << "Sign2: " << sign2 << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign2: " << sign2 << std::endl;
+#endif
+    
     CGAL_assertion(sign1 != CGAL::ZERO);
     CGAL_assertion(sign2 != CGAL::ZERO);
     
