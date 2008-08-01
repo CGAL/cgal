@@ -1,8 +1,11 @@
+#include <QApplication>
+
 #include <CGAL/Collisions/AABB_polyhedral_oracle.h>
 #include <CGAL/Collisions/AABB_tree.h>
 
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 #include <fstream>
 
 #define CGAL_SURFACE_MESHER_VERBOSE 1

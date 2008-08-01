@@ -1,5 +1,7 @@
+#include <QApplication>
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>

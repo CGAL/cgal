@@ -1,5 +1,7 @@
+#include <QApplication>
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 #include <CGAL/convex_hull_3.h>
 
 void MainWindow::on_actionConvexHull_triggered()

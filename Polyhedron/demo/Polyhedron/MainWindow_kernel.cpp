@@ -1,5 +1,7 @@
+#include <QApplication>
 #include "MainWindow.h"
 #include "Scene.h"
+#include "Polyhedron_type.h"
 #include <CGAL/Polyhedron_kernel.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/convex_hull_3.h>
