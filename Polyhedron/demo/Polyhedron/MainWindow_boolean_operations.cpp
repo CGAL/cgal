@@ -4,20 +4,14 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Polyhedron_type.h"
+#include "Nef_type.h"
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Nef_polyhedron_3.h> 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Inverse_index.h>
 #include <iostream>
 #include <fstream>
 
-// Boolean operations work only with exact kernel
-typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
-typedef CGAL::Polyhedron_3<Exact_Kernel> Exact_polyhedron;
-
 // quick hacks to convert polyhedra from exact to inexact and vice-versa
-
 template <class Polyhedron_input,
 class Polyhedron_output>
 struct Copy_polyhedron_to 
@@ -124,8 +118,6 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  typedef CGAL::Nef_polyhedron_3<Exact_Kernel> Nef_polyhedron; 
-
   Exact_polyhedron exact_polyA; 
   to_exact(*polyA,exact_polyA);
 
@@ -136,7 +128,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   QTime time;
   time.start();
   std::cout << "Convert to nef polyhedra...";
-  Nef_polyhedron n1(exact_polyA); 
+  Nef_polyhedron* n1 = new Nef_polyhedron(exact_polyA); 
   Nef_polyhedron n2(exact_polyB); 
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
@@ -146,43 +138,49 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   switch(operation)
   {
   case BOOLEAN_UNION:
-    n1 += n2;
+    (*n1) += n2;
     break;
   case BOOLEAN_INTERSECTION:
-    n1 *= n2;
+    (*n1) *= n2;
     break;
   case BOOLEAN_DIFFERENCE:
-    n1 -= n2;
+    (*n1) -= n2;
   }
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-  // save the exact resulting mesh
-  Exact_polyhedron exact_result;
-  n1.convert_to_Polyhedron(exact_result);
-
-  // reload as inexact one
-  Polyhedron *pResult = new Polyhedron;
-  from_exact(exact_result,*pResult);
-
+  QString name;
   switch(operation)
   {
   case BOOLEAN_UNION:
-    scene->addPolyhedron(pResult,
-      tr("%1 union %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
-      Qt::magenta,
-      true,
-      scene->polyhedronRenderingMode(indexA));
+    name = tr("%1 union %2");
     break;
   case BOOLEAN_INTERSECTION:
+    name = tr("%1 intersection %2");
+    break;
+  case BOOLEAN_DIFFERENCE:
+    name = tr("%1 minus %2");
+  }
+  
+  if(n1->is_simple())
+  {
+    std::cout << "Convert back to simple polyhedron...";
+    time.restart();
+    // save the exact resulting mesh
+    Exact_polyhedron exact_result;
+    n1->convert_to_Polyhedron(exact_result);
+    // reload as inexact one
+    Polyhedron *pResult = new Polyhedron;
+    from_exact(exact_result,*pResult);
+    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     scene->addPolyhedron(pResult,
-      tr("%1 intersection %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
+      name.arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
       Qt::magenta,
       true,
       scene->polyhedronRenderingMode(indexA));
-    break;
-  case BOOLEAN_DIFFERENCE:
-    scene->addPolyhedron(pResult,
-      tr("%1 minus %2").arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
+  }
+  else {
+    scene->addNefPolyhedron(n1,
+      name.arg(scene->polyhedronName(indexA),scene->polyhedronName(indexB)),
       Qt::magenta,
       true,
       scene->polyhedronRenderingMode(indexA));

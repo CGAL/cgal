@@ -248,6 +248,7 @@ Polyhedron/demo/Polyhedron/Makefile
 Polyhedron/demo/Polyhedron/Polyhedron_3
 Polyhedron/demo/Polyhedron/moc_*.h
 Polyhedron/demo/Polyhedron/qrc_*.cxx
+Polyhedron/demo/Polyhedron/snapshot.*
 Polyhedron/demo/Polyhedron/ui_*.h
 Polynomial/doc_html
 Polynomial/doc_pdf

@@ -15,6 +15,7 @@
 #include <QApplication>
 
 #include "Scene_rendering.h"
+#include "Scene_nef_rendering.h"
 
 namespace {
   void CGALglcolor(QColor c)
@@ -42,11 +43,27 @@ Scene::~Scene()
       poly_it != poly_end; ++poly_it)
   {
     Polyhedron_entry& entry = *poly_it;
-    this->destroy(entry.polyhedron_ptr);
-    glDeleteLists(entry.display_list,1);
+    destroy_entry_ptr(entry.polyhedron_ptr);
+    if(entry.display_list_built)
+      glDeleteLists(entry.display_list,1);
   }
   polyhedra.clear();
 }
+
+void
+Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
+{
+  Polyhedron** p = boost::get<Polyhedron*>(&ptr);
+  if(p) {
+    this->destroy_polyhedron(*p);
+  }
+  else {
+    Nef_polyhedron** nef_p = boost::get<Nef_polyhedron*>(&ptr);
+    CGAL_assertion(nef_p != NULL);
+    this->destroy_nef_polyhedron(*nef_p);
+  }
+}
+
 
 int
 Scene::open(QString filename)
@@ -78,7 +95,7 @@ Scene::open(QString filename)
                           tr("File %1 is not a valid OFF file.").arg(filename));
     QApplication::restoreOverrideCursor();
 		cerr << QString("\n");
-		destroy(poly);
+		destroy_polyhedron(poly);
     
     return -1;
   }
@@ -97,7 +114,11 @@ bool Scene::save(int index,
   cerr << QString("Saving file \"%1\"...").arg(filename);
 
   Polyhedron_entry entry = polyhedra[index];
-  Polyhedron* poly = entry.polyhedron_ptr;
+  Polyhedron** p = boost::get<Polyhedron*>(&entry.polyhedron_ptr);
+  if(!p) {
+    return false;
+  }
+  Polyhedron* poly = *p;
 
   QApplication::setOverrideCursor(QCursor(::Qt::WaitCursor));
 
@@ -122,11 +143,11 @@ bool Scene::save(int index,
   return true;
 }
 
-void Scene::addPolyhedron(Polyhedron* p,
-                          QString name,
-                          QColor color,
-                          bool activated,
-                          RenderingMode mode)
+void Scene::addEntry(Polyhedron_ptr p,
+		     QString name,
+		     QColor color,
+		     bool activated,
+		     RenderingMode mode)
 {
   Polyhedron_entry entry;
   entry.polyhedron_ptr = p;
@@ -142,17 +163,38 @@ void Scene::addPolyhedron(Polyhedron* p,
   QAbstractListModel::reset();
 }
 
+void Scene::addPolyhedron(Polyhedron* p,
+                          QString name,
+                          QColor color,
+                          bool activated,
+                          RenderingMode mode)
+{
+  addEntry(p, name, color, activated, mode);
+}
+
+void Scene::addNefPolyhedron(Nef_polyhedron* p,
+			     QString name,
+			     QColor color,
+			     bool activated,
+			     RenderingMode mode)
+{
+  addEntry(p, name, color, activated, mode);
+}
+
 int
 Scene::erase(int polyhedron_index)
 {
-  this->destroy(polyhedra[polyhedron_index].polyhedron_ptr);
-  polyhedra.removeAt(polyhedron_index--);
+  Polyhedron_entry& entry = polyhedra[polyhedron_index];
+  this->destroy_entry_ptr(entry.polyhedron_ptr);
+  if(entry.display_list_built)
+    glDeleteLists(entry.display_list,1);
+  polyhedra.removeAt(polyhedron_index);
 
   selected_item = -1;
   emit updated();
   QAbstractListModel::reset();
 
-  if(polyhedron_index >= 0)
+  if(--polyhedron_index >= 0)
     return polyhedron_index;
   if(!polyhedra.isEmpty())
     return 0;
@@ -163,12 +205,11 @@ int
 Scene::duplicate(int polyhedron_index)
 {
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-  Polyhedron* poly = this->copy_polyhedron(entry.polyhedron_ptr);
-
-  addPolyhedron(poly,
-                tr("%1 (copy)").arg(entry.name),
-                entry.color,
-                entry.activated);
+  Polyhedron_ptr ptr = entry.polyhedron_ptr;
+  addEntry(ptr,
+	   tr("%1 (copy)").arg(entry.name),
+	   entry.color,
+	   entry.activated);
 
   return polyhedra.size() - 1;
 }
@@ -184,7 +225,6 @@ Scene::draw(bool with_names)
     Polyhedron_entry& entry = polyhedra[index];
     if(entry.activated)
     {
-      Polyhedron* poly = entry.polyhedron_ptr;
       if(entry.rendering_mode == Fill)
       {
         ::glEnable(GL_LIGHTING);
@@ -215,13 +255,8 @@ Scene::draw(bool with_names)
 void
 Scene::draw(Polyhedron_entry& entry)
 {
-  gl_render_facets(entry.polyhedron_ptr);
-
-  /*
   if(!entry.display_list_built)
   {
-    ::glDeleteLists(entry.display_list,1);
-
     entry.display_list = ::glGenLists(1);
     if(entry.display_list == 0)
     {
@@ -231,13 +266,26 @@ Scene::draw(Polyhedron_entry& entry)
 
     // draw	the mesh in a display list
     ::glNewList(entry.display_list,GL_COMPILE_AND_EXECUTE);
-    gl_render_facets(entry.polyhedron_ptr);
+    this->gl_render_facets(entry.polyhedron_ptr);
     ::glEndList();
     entry.display_list_built = true;
   }
 
   ::glCallList(entry.display_list);
-  */
+}
+
+void Scene::gl_render_facets(Polyhedron_ptr ptr)
+{
+  if(ptr.which() == POLYHEDRON_ENTRY)
+  {
+    Polyhedron* p = boost::get<Polyhedron*>(ptr);
+    gl_render_polyhedron_facets(p);
+  }
+  else
+  {
+    Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
+    gl_render_nef_facets(p);
+  }
 }
 
 int 
@@ -281,6 +329,13 @@ Scene::data(const QModelIndex &index, int role) const
   case NameColumn:
     if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
       return polyhedra.value(index.row()).name;
+    if(role == ::Qt::FontRole && 
+       polyhedra.value(index.row()).polyhedron_ptr.which() == NEF_ENTRY)
+    {
+      QFont font;
+      font.setItalic(!font.italic());
+      return font;
+    }
     break;
   case RenderingModeColumn:
     if(role == ::Qt::DisplayRole) {
@@ -409,7 +464,36 @@ Polyhedron* Scene::polyhedron(int index) const
   if( index < 0 || index >= polyhedra.size() )
     return 0;
   else 
-    return polyhedra[index].polyhedron_ptr;
+  {
+    if(polyhedra[index].polyhedron_ptr.which() == POLYHEDRON_ENTRY) {
+      return boost::get<Polyhedron*>(polyhedra[index].polyhedron_ptr);
+    }
+    else {
+      return NULL;
+    }
+  }
+}
+
+Nef_polyhedron* Scene::nefPolyhedron(int index) const
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return 0;
+  else 
+  {
+    if(polyhedra[index].polyhedron_ptr.which() == NEF_ENTRY) {
+      return boost::get<Nef_polyhedron*>(polyhedra[index].polyhedron_ptr);
+    }
+    else {
+      return NULL;
+    }
+  }
+}
+
+Scene::Entry_type Scene::polyhedronType(int index) const
+{
+  if( index < 0 || index >= polyhedra.size() )
+    return POLYHEDRON_ENTRY;
+  return static_cast<Entry_type>(polyhedra[index].polyhedron_ptr.which());
 }
 
 QString Scene::polyhedronName(int index) const

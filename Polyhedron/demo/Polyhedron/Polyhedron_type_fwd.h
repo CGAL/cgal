@@ -3,11 +3,9 @@
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Cartesian.h>
 #include <memory>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-// typedef CGAL::Cartesian<double> Kernel;
 
 //struct Kernel;
 namespace CGAL {

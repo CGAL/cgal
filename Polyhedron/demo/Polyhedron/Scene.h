@@ -10,9 +10,11 @@
 #include <QPixmap>
 #include <QItemSelection>
 
-#include "Polyhedron_type_fwd.h"
+#include "Polyhedron_type_fwd.h" // declares Polyhedron
+#include "Nef_type_fwd.h" // declares Nef_polyhedron
 
 #include <iostream>
+#include <boost/variant.hpp>
 
 class QEvent;
 class QMouseEvent;
@@ -47,6 +49,12 @@ public:
                      bool activated = true,
                      RenderingMode mode = Fill);
 
+  void addNefPolyhedron(Nef_polyhedron* p,
+			QString name,
+			QColor color = defaultColor,
+			bool activated = true,
+			RenderingMode mode = Fill);
+
   int open(QString);  // Returns the index of the new polyhedra (-1 if
                       // error)
   bool save(int,QString); // Returns true upon successful save
@@ -59,6 +67,11 @@ public:
 
   // Accessors (getters)
   Polyhedron* polyhedron(int i) const;
+  Nef_polyhedron* nefPolyhedron(int i) const;
+  
+  enum Entry_type { POLYHEDRON_ENTRY = 0, NEF_ENTRY = 1};
+  Entry_type polyhedronType(int) const;
+
   QColor polyhedronColor(int) const;
   QString polyhedronName(int) const;
   bool isPolyhedronActivated(int) const;
@@ -138,23 +151,28 @@ private:
   QString polyhedronToolTip(int index) const;
   Polyhedron* new_polyhedron();
   Polyhedron* copy_polyhedron(Polyhedron* poly);
-  void destroy(Polyhedron*);
+  void destroy_polyhedron(Polyhedron*);
   bool load_polyhedron(Polyhedron* poly, std::istream& in); // return true
                                                             // iif the
                                                             // loading is ok.
   bool save_polyhedron(Polyhedron* poly, std::ostream& out); // return true
                                                              // iif the
                                                              // save is ok.
+  Nef_polyhedron* new_nef_polyhedron();
+  Nef_polyhedron* copy_nef_polyhedron(Nef_polyhedron* poly);
+  void destroy_nef_polyhedron(Nef_polyhedron*);
 
 private:
   static const QColor defaultColor; // defined in Scene.cpp
+
+  typedef boost::variant<Polyhedron*, Nef_polyhedron*> Polyhedron_ptr;
 
   struct Polyhedron_entry {
     Polyhedron_entry()
             : rendering_mode(Fill),
               display_list_built(false) {};
 
-    Polyhedron* polyhedron_ptr;
+    Polyhedron_ptr polyhedron_ptr;
     QString name;
     QColor color;
     bool activated;
@@ -165,7 +183,17 @@ private:
     bool display_list_built;
   };
 
+  void addEntry(Polyhedron_ptr p,
+		QString name,
+		QColor color = defaultColor,
+		bool activated = true,
+		RenderingMode mode = Fill);
+
+  void destroy_entry_ptr(Polyhedron_ptr);
+
   void draw(Polyhedron_entry& entry); // draw one entry
+  void gl_render_facets(Polyhedron_ptr);
+
 
   typedef QList<Polyhedron_entry> Polyhedra;
   Polyhedra polyhedra;
