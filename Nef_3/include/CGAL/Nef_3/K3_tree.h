@@ -367,7 +367,7 @@ public:
 	    int length = 0;	
 	    typename Traits::SHalfedge_around_facet_circulator safc(f->facet_cycles_begin()), 
 	      send(safc);
-	    while(++length < lower_limit && ++safc != send);
+	    while(++length < lower_limit && ++safc != send) ; 
 	    if(length >= lower_limit)
 	      ++s;	
 	  }
