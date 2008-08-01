@@ -33,7 +33,7 @@ qt4_add_resources ( CDT_RESOURCE_FILES ./Constrained_Delaunay_triangulation_2.qr
 qt4_generate_moc( Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc )
 
 # The executable itself.
-add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
+add_executable  ( Constrained_Delaunay_triangulation_2 Constrained_Delaunay_triangulation_2.cpp Constrained_Delaunay_triangulation_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( Constrained_Delaunay_triangulation_2 ${QT_LIBRARIES} )
@@ -56,7 +56,7 @@ qt4_add_resources ( DT_RESOURCE_FILES ./Delaunay_triangulation_2.qrc )
 qt4_generate_moc( Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc )
 
 # The executable itself.
-add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+add_executable  ( Delaunay_triangulation_2 Delaunay_triangulation_2.cpp Delaunay_triangulation_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
 # Link with Qt libraries
 target_link_libraries( Delaunay_triangulation_2 ${QT_LIBRARIES} )
