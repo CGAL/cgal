@@ -5,6 +5,12 @@
 // kernel
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#ifdef USE_FORWARD_DECL
+struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+#else
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+#endif
+
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
 

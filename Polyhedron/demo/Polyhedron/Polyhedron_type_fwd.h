@@ -2,12 +2,11 @@
 #define POLYHEDRON_TYPE_FWD_H
 
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <memory>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+#ifdef USE_FORWARD_DECL
+struct Kernel;
 
-//struct Kernel;
 namespace CGAL {
   class Polyhedron_items_3;
 
@@ -31,5 +30,8 @@ typedef CGAL::Polyhedron_3<Kernel,
                            CGAL::Polyhedron_items_3,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
+#else // USE_FORWARD_DECL
+#include "Polyhedron_type.h"
+#endif // USE_FORWARD_DECL
 
 #endif // POLYHEDRON_TYPE_FWD_H
