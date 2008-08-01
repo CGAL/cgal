@@ -110,41 +110,60 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   const int indexA = scene->selectionAindex();
   const int indexB = scene->selectionBindex();
 
+  if(indexA == indexB) return;
+
   Polyhedron* polyA = scene->polyhedron(indexA);
   Polyhedron* polyB = scene->polyhedron(indexB);
-  if(!polyA) return;
-  if(!polyB) return;
-  if(polyA == polyB) return;
+  Nef_polyhedron* nefpolyA = scene->nefPolyhedron(indexA);
+  Nef_polyhedron* nefpolyB = scene->nefPolyhedron(indexB);
+
+  if(!polyA && !nefpolyA) return;
+  if(!polyB && !nefpolyB) return;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Exact_polyhedron exact_polyA; 
-  to_exact(*polyA,exact_polyA);
+  Nef_polyhedron* n1;
+  Nef_polyhedron* n2;
 
-  Exact_polyhedron exact_polyB; 
-  to_exact(*polyB,exact_polyB);
+  if(nefpolyA) {
+    n1 = new Nef_polyhedron(*nefpolyA);
+  }
+  else {
+    QTime time;
+    time.start();
+    std::cout << "Convert polyhedron A to nef polyhedra...";
+    Exact_polyhedron exact_polyA; 
+    to_exact(*polyA,exact_polyA);
+    n1 = new Nef_polyhedron(exact_polyA); 
+    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+  }
 
-  // convert to nef polyhedra
-  QTime time;
-  time.start();
-  std::cout << "Convert to nef polyhedra...";
-  Nef_polyhedron* n1 = new Nef_polyhedron(exact_polyA); 
-  Nef_polyhedron n2(exact_polyB); 
-  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
+  if(nefpolyB) {
+    n2 = nefpolyB; // no copy, because n2 is not modified
+  }
+  else {
+    QTime time;
+    time.start();
+    std::cout << "Convert polyhedron B to nef polyhedra...";
+    Exact_polyhedron exact_polyB; 
+    to_exact(*polyB, exact_polyB);
+    n2 = new Nef_polyhedron(exact_polyB); 
+    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+  }
   // perform Boolean operation
   std::cout << "Boolean operation...";
+  QTime time;
   time.start();
   switch(operation)
   {
   case BOOLEAN_UNION:
-    (*n1) += n2;
+    (*n1) += (*n2);
     break;
   case BOOLEAN_INTERSECTION:
-    (*n1) *= n2;
+    (*n1) *= (*n2);
     break;
   case BOOLEAN_DIFFERENCE:
-    (*n1) -= n2;
+    (*n1) -= (*n2);
   }
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
@@ -163,7 +182,7 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
   
   if(n1->is_simple())
   {
-    std::cout << "Convert back to simple polyhedron...";
+    std::cout << "Convert result back to simple polyhedron...";
     time.restart();
     // save the exact resulting mesh
     Exact_polyhedron exact_result;
@@ -185,6 +204,9 @@ void MainWindow::boolean_operation(const Boolean_operation operation)
       true,
       scene->polyhedronRenderingMode(indexA));
   }
+
+  if(!nefpolyB)
+    delete n2; // destroyed n2, if it was a copy
 
   QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
