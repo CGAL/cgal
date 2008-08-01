@@ -110,7 +110,7 @@ void test_convex_parts(Nef_polyhedron_3& N)
   }
 }
 
-int main(int argc, char* argv[])
+int main()
 {
   Nef_polyhedron_3 N;
 
