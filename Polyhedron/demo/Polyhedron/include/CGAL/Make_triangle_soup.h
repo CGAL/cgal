@@ -1,6 +1,7 @@
 #ifndef _MAKE_SOUP_
 #define _MAKE_SOUP_
 
+#include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 
 template <class HDS,class Polyhedron,class Kernel,class InputIterator>

@@ -1,6 +1,8 @@
 #ifndef _AABB_NODE_
 #define _AABB_NODE_
 
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
 #include <vector>
 
