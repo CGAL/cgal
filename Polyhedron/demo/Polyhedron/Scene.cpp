@@ -47,6 +47,12 @@ Scene::~Scene()
   polyhedra.clear();
 }
 
+int
+Scene::numberOfPolyhedra() const
+{
+  return polyhedra.size();
+}
+
 void
 Scene::destroyEntry(Scene::Polyhedron_entry& entry)
 {
@@ -196,6 +202,9 @@ void Scene::addNefPolyhedron(Nef_polyhedron* p,
 int
 Scene::erase(int polyhedron_index)
 {
+  if(polyhedron_index < 0 || polyhedron_index >= polyhedra.size())
+    return -1;
+
   Polyhedron_entry& entry = polyhedra[polyhedron_index];
   this->destroyEntry(entry);
   polyhedra.removeAt(polyhedron_index);
@@ -211,11 +220,25 @@ Scene::erase(int polyhedron_index)
   return -1;
 }
 
+Scene::Polyhedron_ptr
+Scene::copy_polyhedron_ptr(Polyhedron_ptr ptr)
+{
+  if(ptr.which() == POLYHEDRON_ENTRY) {
+    return copy_polyhedron(boost::get<Polyhedron*>(ptr));
+  }
+  else {
+    return copy_nef_polyhedron(boost::get<Nef_polyhedron*>(ptr));
+  }
+}
+
 int
 Scene::duplicate(int polyhedron_index)
 {
+  if(polyhedron_index < 0 || polyhedron_index >= polyhedra.size())
+    return -1;
+
   const Polyhedron_entry& entry = polyhedra[polyhedron_index];
-  Polyhedron_ptr ptr = entry.polyhedron_ptr;
+  Polyhedron_ptr ptr = copy_polyhedron_ptr(entry.polyhedron_ptr);
   addEntry(ptr,
 	   tr("%1 (copy)").arg(entry.name),
 	   entry.color,

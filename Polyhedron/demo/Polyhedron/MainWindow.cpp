@@ -158,6 +158,9 @@ void MainWindow::open(QString filename)
 
 void MainWindow::selectPolyhedron(int i)
 {
+  if(i < 0) return;
+  if(i >= scene->numberOfPolyhedra()) return;
+
   treeView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::ClearAndSelect);
 }
@@ -280,13 +283,9 @@ void MainWindow::on_actionSaveAs_triggered()
 
 bool MainWindow::on_actionErasePolyhedron_triggered()
 {
-  if(onePolygonIsSelected()) {
-    int index = scene->erase(getSelectedPolygonIndex());
-    selectPolyhedron(index);
-    return true;
-  } else {
-    return false;
-  }
+  int index = scene->erase(getSelectedPolygonIndex());
+  selectPolyhedron(index);
+  return index >= 0;
 }
 
 void MainWindow::on_actionEraseAll_triggered()
@@ -297,10 +296,8 @@ void MainWindow::on_actionEraseAll_triggered()
 
 void MainWindow::on_actionDuplicatePolyhedron_triggered()
 {
-  if(onePolygonIsSelected()) {
-    int index = scene->duplicate(getSelectedPolygonIndex());
-    selectPolyhedron(index);
-  }
+  int index = scene->duplicate(getSelectedPolygonIndex());
+  selectPolyhedron(index);
 }
 
 void MainWindow::on_actionActivatePolyhedron_triggered()

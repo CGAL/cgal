@@ -67,6 +67,7 @@ public:
   int duplicate(int); // Returns the index of the new polyhedra
 
   // Accessors (getters)
+  int numberOfPolyhedra() const;
   Polyhedron* polyhedron(int i) const;
   Nef_polyhedron* nefPolyhedron(int i) const;
   
@@ -188,6 +189,8 @@ private:
     unsigned int display_list_for_edges;
     bool display_list_built;
   };
+
+  Polyhedron_ptr copy_polyhedron_ptr(Polyhedron_ptr);
 
   void addEntry(Polyhedron_ptr p,
 		QString name,
