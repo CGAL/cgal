@@ -42,13 +42,25 @@ Scene::~Scene()
         poly_end = polyhedra.end();
       poly_it != poly_end; ++poly_it)
   {
-    Polyhedron_entry& entry = *poly_it;
-    destroy_entry_ptr(entry.polyhedron_ptr);
-    if(entry.display_list_built)
-      glDeleteLists(entry.display_list,1);
+    this->destroyEntry(*poly_it);
   }
   polyhedra.clear();
 }
+
+void
+Scene::destroyEntry(Scene::Polyhedron_entry& entry)
+{
+  if(entry.display_list_built) {
+    ::glDeleteLists(entry.display_list,1);
+    if(entry.polyhedron_ptr.which() == NEF_ENTRY) {
+      if(::glIsList(entry.display_list_for_edges)) {
+	::glDeleteLists(entry.display_list_for_edges, 1);
+      }
+    }
+  }
+  this->destroy_entry_ptr(entry.polyhedron_ptr);
+}
+
 
 void
 Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
@@ -59,7 +71,7 @@ Scene::destroy_entry_ptr(Polyhedron_ptr ptr)
   }
   else {
     Nef_polyhedron** nef_p = boost::get<Nef_polyhedron*>(&ptr);
-    CGAL_assertion(nef_p != NULL);
+    Q_ASSERT(nef_p != NULL);
     this->destroy_nef_polyhedron(*nef_p);
   }
 }
@@ -185,9 +197,7 @@ int
 Scene::erase(int polyhedron_index)
 {
   Polyhedron_entry& entry = polyhedra[polyhedron_index];
-  this->destroy_entry_ptr(entry.polyhedron_ptr);
-  if(entry.display_list_built)
-    glDeleteLists(entry.display_list,1);
+  this->destroyEntry(entry);
   polyhedra.removeAt(polyhedron_index);
 
   selected_item = -1;
@@ -243,7 +253,13 @@ Scene::draw(bool with_names)
           CGALglcolor(entry.color.lighter(70));
         else
           CGALglcolor(entry.color.lighter(50));
-        draw(entry);
+
+	if(entry.polyhedron_ptr.which()==POLYHEDRON_ENTRY) {
+	  draw(entry);
+	}
+	else {
+	  gl_render_nef_edges(boost::get<Nef_polyhedron*>(entry.polyhedron_ptr));
+	}
       }
     }
     if(with_names) {
@@ -285,7 +301,8 @@ void Scene::gl_render_facets(Polyhedron_ptr ptr)
   {
     Nef_polyhedron* p = boost::get<Nef_polyhedron*>(ptr);
     gl_render_nef_facets(p);
-  }
+    gl_render_nef_vertices(p);
+ }
 }
 
 int 
@@ -315,9 +332,12 @@ Scene::data(const QModelIndex &index, int role) const
   if(index.row() < 0 || index.row() >= polyhedra.size())
     return QVariant();
 
-  if(role == ::Qt::ToolTipRole)
-    return polyhedronToolTip(index.row());
-
+  if(role == ::Qt::ToolTipRole) {
+    if(polyhedra[index.row()].polyhedron_ptr.which() == POLYHEDRON_ENTRY)
+      return polyhedronToolTip(index.row());
+    else
+      return nefPolyhedronToolTip(index.row());
+  }
   switch(index.column())
   {
   case ColorColumn:

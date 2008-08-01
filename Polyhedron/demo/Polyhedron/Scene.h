@@ -14,6 +14,7 @@
 #include "Nef_type_fwd.h" // declares Nef_polyhedron
 
 #include <iostream>
+#include <cmath>
 #include <boost/variant.hpp>
 
 class QEvent;
@@ -110,7 +111,7 @@ public:
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
-  // defined in Scene_polyhedron_operations.cpp
+  // defined in Scene_nef_and_polyhedron_operations.cpp
   Bbox bbox();
 
   // QAbstractItemModel functions
@@ -158,6 +159,10 @@ private:
   bool save_polyhedron(Polyhedron* poly, std::ostream& out); // return true
                                                              // iif the
                                                              // save is ok.
+
+  // functions that need to know the type Nef_polyhedron
+  // defined in Scene_nef_polyhedron_operations.cpp
+  QString nefPolyhedronToolTip(int index) const;
   Nef_polyhedron* new_nef_polyhedron();
   Nef_polyhedron* copy_nef_polyhedron(Nef_polyhedron* poly);
   void destroy_nef_polyhedron(Nef_polyhedron*);
@@ -180,6 +185,7 @@ private:
 
     // display list
     unsigned int display_list;
+    unsigned int display_list_for_edges;
     bool display_list_built;
   };
 
@@ -188,7 +194,7 @@ private:
 		QColor color = defaultColor,
 		bool activated = true,
 		RenderingMode mode = Fill);
-
+  void destroyEntry(Polyhedron_entry&);
   void destroy_entry_ptr(Polyhedron_ptr);
 
   void draw(Polyhedron_entry& entry); // draw one entry
