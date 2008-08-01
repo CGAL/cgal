@@ -555,19 +555,16 @@ _locate_around_vertex_on_identification(Vertex* v,
         CGAL_assertion (curr != first);
     }
     
-    std::cout << "returned: " << next->curve() << std::endl;
+    if (ind == CGAL::ARR_MAX_END) {
+        std::cout << "return curr: " << curr->curve() << std::endl;
+        std::cout << "dir: " << curr->direction() << std::endl;
+        return curr;
+    }
+    
+    // else 
+    std::cout << "return next: " << next->curve() << std::endl;
     std::cout << "dir: " << next->direction() << std::endl;
     return next;
-
-#if 0
-    if (this->_m_traits->parameter_space_in_y_2_object()(xc, ind) ==
-        CGAL::ARR_BOTTOM_BOUNDARY) {
-        return next;
-    }
-    // else
-    
-    return curr;
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -801,6 +798,7 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
         std::cout << "sign2: " << sign_21 << std::endl;
 #endif
         is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
+        
     }
     std::cout << "Result: face_split=" << face_split << ", is_hole=" 
               << is_hole << std::endl;
