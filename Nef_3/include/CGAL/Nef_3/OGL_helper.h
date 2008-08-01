@@ -41,6 +41,10 @@
 #endif
 
 #ifdef __APPLE__
+#  include <AvailabilityMacros.h>
+#endif
+
+#if defined __APPLE__ && !defined MAC_OS_X_VERSION_10_5
     #define CGAL_GLU_TESS_DOTS ...
 #else
     #define CGAL_GLU_TESS_DOTS
