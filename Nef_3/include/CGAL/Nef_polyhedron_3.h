@@ -1058,14 +1058,14 @@ protected:
 	return false;
 
     CGAL_NEF_TRACEN("there is no vertex with non-manifold situation");
-
+/*
     Halffacet_iterator f;
     CGAL_forall_halffacets(f,snc())
       if(!is_facet_simple(f))
 	return false;
 
     CGAL_NEF_TRACEN("there are no holes");
-
+*/
     return true;
   }
  
@@ -1717,7 +1717,7 @@ protected:
       if(!aff.is_even())
 	change_orientation();
 
-      while(cstr.erase_redundant_vertices());
+      while(cstr.erase_redundant_vertices()) ;
       cstr.correct_infibox_sedge_marks();
 
       build_external_structure();
