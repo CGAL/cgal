@@ -247,7 +247,7 @@ DemosMainWindow::addToRecentFiles(QString fileName)
   QStringList files = settings.value("recentFileList").toStringList();
   files.removeAll(fileName);
   files.prepend(fileName);
-  while (files.size() > maxNumberOfRecentFiles())
+  while (files.size() > (int)maxNumberOfRecentFiles())
     files.removeLast();
 
   settings.setValue("recentFileList", files);
@@ -262,7 +262,7 @@ DemosMainWindow::addRecentFiles(QMenu* menu, QAction* insertBeforeAction)
     recentFilesSeparator = menu->addSeparator();
   }
 
-  for (int i = 0; i < maxNumberOfRecentFiles(); ++i) {
+  for (unsigned int i = 0; i < maxNumberOfRecentFiles(); ++i) {
     recentFileActs[i] = new QAction(this);
     recentFileActs[i]->setVisible(false);
     connect(recentFileActs[i], SIGNAL(triggered()),
@@ -297,7 +297,7 @@ DemosMainWindow::updateRecentFileActions()
     recentFileActs[i]->setData(files[i]);
     recentFileActs[i]->setVisible(true);
   }
-  for (int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
+  for (unsigned int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
     recentFileActs[j]->setVisible(false);
   
   recentFilesSeparator->setVisible(numRecentFiles > 0);

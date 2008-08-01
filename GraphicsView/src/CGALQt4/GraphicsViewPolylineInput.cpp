@@ -166,10 +166,9 @@ GraphicsViewPolylineInput_non_templated_base::eventFilter(QObject *obj, QEvent *
     if(!keyPressEvent(keyEvent)) {
       return QObject::eventFilter(obj, event);
     }
-  } else{
-    // standard event processing if keyPressEvent has returned false
-    return QObject::eventFilter(obj, event);
   }
+  // standard event processing if keyPressEvent has returned false
+  return QObject::eventFilter(obj, event);
 }
 
 } // namespace Qt
