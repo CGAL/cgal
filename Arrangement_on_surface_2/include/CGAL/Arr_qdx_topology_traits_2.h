@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -20,6 +20,10 @@
 
 #ifndef CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_QDX_TOPOLOGY_TRAITS_2_H
+
+#ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+#define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
+#endif
 
 /*! \file
  * Definition of the Arr_qdx_topology_traits_2<GeomTraits> class.
@@ -758,7 +762,7 @@ public:
      */
     bool is_on_new_perimetric_face_boundary (const Halfedge *prev1,
                                              const Halfedge *prev2,
-                                             const X_monotone_curve_2& cv) 
+                                             const X_monotone_curve_2& cv)
         const;
 
     /*!
