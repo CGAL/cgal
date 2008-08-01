@@ -1,6 +1,9 @@
 #ifndef CGAL_SPHERE_3_BBOX_DO_INTERSECT_H
 #define CGAL_SPHERE_3_BBOX_DO_INTERSECT_H
 
+#include <CGAL/Sphere_3.h>
+#include <CGAL/Bbox_3.h>
+
 #include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE

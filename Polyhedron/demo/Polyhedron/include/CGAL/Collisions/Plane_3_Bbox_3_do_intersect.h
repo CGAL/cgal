@@ -1,6 +1,8 @@
 #ifndef CGAL_PLANE_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_PLANE_3_BBOX_3_DO_INTERSECT_H
 
+#include <CGAL/Plane_3.h>
+
 // Opcode like
 
 CGAL_BEGIN_NAMESPACE

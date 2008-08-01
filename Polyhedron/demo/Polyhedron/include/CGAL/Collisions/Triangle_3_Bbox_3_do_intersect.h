@@ -1,6 +1,9 @@
 #ifndef CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
 #define CGAL_TRIANGLE_3_BBOX_3_DO_INTERSECT_H
 
+#include <CGAL/Triangle_3.h>
+#include <CGAL/Bbox_3.h>
+
 // Fast Triangle-Cuboid intersection test, following Tomas Akenine-Moeller description.
 // The code looks slightly different from his code because we avoid the translation at 
 // a minimal cost (and we use C++ ;).
