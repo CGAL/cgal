@@ -164,7 +164,14 @@ void MainWindow::selectPolyhedron(int i)
 
 bool MainWindow::onePolygonIsSelected() const
 {
-  return treeView->selectionModel()->selectedRows().size() == 1;
+  QModelIndexList selectedRows = treeView->selectionModel()->selectedRows();
+  if(selectedRows.size() == 1)
+  {
+    int i = selectedRows.first().row();
+    if(scene->polyhedronType(i) == Scene::POLYHEDRON_ENTRY)
+      return true;
+  }
+  return false;
 }
 
 int MainWindow::getSelectedPolygonIndex() const
