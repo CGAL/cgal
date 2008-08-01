@@ -27,6 +27,10 @@
 #ifndef CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 #define CGAL_ARRANGEMENT_ON_SURFACE_2_IMPL_H
 
+#ifndef CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+#define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 0
+#endif
+
 /*! \file
  * Member-function definitions for the Arrangement_2<GeomTraits, TopTraits> 
  * class-template.
@@ -276,6 +280,12 @@ insert_in_face_interior(const Point_2& p, Face_handle f)
 {
   DFace          *p_f = _face (f);
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: insert_in_face_interior (interface)" << std::endl;
+    std::cout << "pt   : " << p << std::endl;
+    std::cout << "face : " << &(*f) << std::endl;
+#endif
+
   // Create a new vertex associated with the given point.
   // We assume the point has no boundary conditions.
   DVertex         *v = _create_vertex (p);
@@ -297,6 +307,13 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::Halfedge_handle
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
 {
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: insert_in_face_interior (interface)" << std::endl;
+    std::cout << "cv   : " << cv << std::endl;
+    std::cout << "face : " << &(*f) << std::endl;
+#endif
+
   DFace               *p_f = _face (f);
 
   // Check if cv's left end has boundary conditions, and obtain a vertex v1
@@ -535,6 +552,18 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::insert_from_left_vertex
     (const X_monotone_curve_2& cv,
      Halfedge_handle prev)
 {
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: insert_from_left_vertex (interface)" << std::endl;
+    std::cout << "cv   : " << cv << std::endl;
+    if (!prev->has_null_curve()) {
+        std::cout << "prev : " << prev ->curve() << std::endl;
+    } else {
+      std::cout << "prev : fictitious" << std::endl;
+  }
+  std::cout << "dir  : " << prev ->direction() << std::endl;
+#endif
+
   CGAL_precondition_code (
     const bool at_inf1 = !geom_traits->is_bounded_2_object()(cv, ARR_MIN_END));
   CGAL_precondition_msg
@@ -753,6 +782,18 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::
 insert_from_right_vertex(const X_monotone_curve_2& cv,
                          Halfedge_handle prev)
 {
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: insert_from_right_vertexs (interface)" << std::endl;
+    std::cout << "cv   : " << cv << std::endl;
+    if (!prev->has_null_curve()) {
+      std::cout << "prev : " << prev ->curve() << std::endl;
+  } else {
+      std::cout << "prev : fictitious" << std::endl;
+  }
+  std::cout << "dir  : " << prev->direction() << std::endl;
+#endif
+
   CGAL_precondition_code
     (const bool at_inf2 = !geom_traits->is_bounded_2_object()(cv, ARR_MAX_END));
   CGAL_precondition_msg 
@@ -1258,6 +1299,23 @@ insert_at_vertices(const X_monotone_curve_2& cv,
                    Halfedge_handle prev1,
                    Halfedge_handle prev2)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: insert_at_vertices (interface)" << std::endl;
+    std::cout << "cv   : " << cv << std::endl;
+    if (!prev1->has_null_curve()) {
+        std::cout << "prev1: " << prev1->curve() << std::endl;
+    } else {
+      std::cout << "prev1: fictitious" << std::endl;
+  }
+  std::cout << "dir1 : " << prev1->direction() << std::endl;
+  if (!prev2->has_null_curve()) {
+      std::cout << "prev2: " << prev2->curve() << std::endl;
+  } else {
+      std::cout << "prev2: fictitious" << std::endl;
+  }
+  std::cout << "dir2 : " << prev2->direction() << std::endl;
+#endif
+    
   // Determine which one of the given vertices (the target vertices of the
   // given halfedges) mathces the left end of the given curve.
   // Thus, we can determine the comparison result between prev1->target()
@@ -2080,6 +2138,14 @@ template<class GeomTraits, class TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _insert_isolated_vertex (DFace *f, DVertex *v)
 {
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _insert_isolated_verteex (internal)" << std::endl;
+  if (!v->has_null_point()) {
+      std::cout << "v->point: " << v->point() << std::endl;
+  }
+  std::cout << "face   : " << f << std::endl;
+#endif
+  
   Face_handle     fh (f);
   Vertex_handle   vh (v);
 
@@ -2279,6 +2345,19 @@ _insert_in_face_interior(const X_monotone_curve_2& cv,
                          DFace *f, DVertex *v1, DVertex *v2,
                          Comparison_result res)
 {
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _insert_in_face_interior (internal)" << std::endl;
+  std::cout << "cv   : " << cv << std::endl;
+  std::cout << "face   : " << f << std::endl;
+  if (!v1->has_null_point()) {
+      std::cout << "v1->point: " << v1->point() << std::endl;
+  }
+  if (!v2->has_null_point()) {
+      std::cout << "v2->point: " << v2->point() << std::endl;
+  }
+#endif
+
   // Notify the observers that we are about to create a new edge.
   _notify_before_create_edge (cv, Vertex_handle (v1), Vertex_handle (v2));
 
@@ -2340,8 +2419,24 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _insert_from_vertex(const X_monotone_curve_2& cv,
                     DHalfedge *prev, DVertex *v,
-                    Comparison_result res)
+                    Comparison_result cmp)
 {
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "Aos_2: _insert_from_vertex (internal)" << std::endl;
+    std::cout << "cv   : " << cv << std::endl;
+    if (!prev->has_null_curve()) {
+        std::cout << "prev: " << prev->curve() << std::endl;
+    } else {
+        std::cout << "prev: fictitious" << std::endl;
+    
+    }
+    if (!v->has_null_point()) {
+        std::cout << "v->point: " << v->point() << std::endl;
+    }
+    std::cout << "cmp  : " << cmp << std::endl;
+#endif
+
   // Get the incident face of the previous halfedge. Note that this will also
   // be the incident face of the two new halfedges we are about to create.
   DInner_ccb  *ic = (prev->is_on_inner_ccb()) ? prev->inner_ccb() : NULL;
@@ -2392,7 +2487,7 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
   // Set the direction of the halfedges: res indicates the direction of he2,
   // as it is the comparison result between its source and target (v).
   const Arr_halfedge_direction   dir =
-    (res == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+      (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
   he2->set_direction (dir);
 
   // Notify the observers that we have created a new edge.
@@ -2414,7 +2509,7 @@ typename Arrangement_on_surface_2<GeomTraits, TopTraits>::DHalfedge*
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _insert_at_vertices(const X_monotone_curve_2& cv,
                     DHalfedge *prev1, DHalfedge *prev2,
-                    Comparison_result res,
+                    Comparison_result cmp,
                     bool& new_face)
 {
   CGAL_precondition(prev1 != NULL);
@@ -2424,24 +2519,23 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   DVertex     *v1 = prev1->vertex();
   DVertex     *v2 = prev2->vertex();
 
-#if 0
-  std::cout << "cv: " << cv << std::endl;
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
+  
+  std::cout << "cv   : " << cv << std::endl;
   if (!prev1->has_null_curve()) {
-      std::cout << "p1: " << prev1->curve() << std::endl;
+      std::cout << "prev1: " << prev1->curve() << std::endl;
   } else {
-      std::cout << "p1: fictitious" << std::endl;
+      std::cout << "prev1: fictitious" << std::endl;
   }
-  std::cout << "dir1: " 
-            << (prev1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-            << std::endl;
+  std::cout << "dir1 : " << prev1->direction() << std::endl;
   if (!prev2->has_null_curve()) {
-      std::cout << "p2: " << prev2->curve() << std::endl;
+      std::cout << "prev2: " << prev2->curve() << std::endl;
   } else {
-      std::cout << "p2: fictitious" << std::endl;
+      std::cout << "prev2: fictitious" << std::endl;
   }
-  std::cout << "dir2: " 
-            << (prev2->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
-            << std::endl;
+  std::cout << "dir 2: " << prev2->direction() << std::endl;
+  std::cout << "cmp  : " << cmp << std::endl;
 #endif
 
   // Get the components containing the two previous halfedges and the incident
@@ -2455,7 +2549,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   CGAL_precondition_code
     (DFace       *f2 = (ic2 != NULL) ? ic2->face() : oc2->face(););
 
-#if 0
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
   std::cout << "ic1: " << ic1 << std::endl;
   std::cout << "ic2: " << ic2 << std::endl;
   std::cout << "oc1: " << oc1 << std::endl;
@@ -2508,7 +2602,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::cout << "only prev2" << std::endl;
   }
 #endif
-#endif
+#endif // CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 
   CGAL_precondition_msg
     (f == f2,
@@ -2558,7 +2652,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   // Set the direction of the halfedges: res indicates the direction of he2,
   // as it is the comparison result between its source and target.
   const Arr_halfedge_direction   dir =
-    (res == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
+    (cmp == SMALLER) ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT;
   he2->set_direction (dir);
 
   // Check the various cases of insertion (in the design document: the
@@ -2733,11 +2827,19 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     DFace       *new_f = _dcel().new_face();
     //std::cout << "New face: " << &(*new_f) << std::endl;
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "new face: " << new_f << std::endl;
+#endif
+    
     DOuter_ccb  *new_oc = _dcel().new_outer_ccb();
 
     new_face = true;
     new_f->add_outer_ccb (new_oc, he2);
     new_oc->set_face (new_f);
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "he2 (=> prev1) defines new outer CCB" << std::endl;
+#endif
 
     // Set the components of the new halfedge he2, which should be the new
     // outer comoponent of the new face.
@@ -2767,7 +2869,10 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
         // In this case, he1 lies on an inner CCB of f.
         he1->set_inner_ccb (ic1);
-
+        
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+        std::cout << "he1 (=> prev2) defines new inner CCB" << std::endl;
+#endif
         // Note that the current representative of the inner CCB may not
         // belong to the hole any more. In this case we replace the hole
         // representative by he1.
@@ -2791,6 +2896,10 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         f_oc->set_face (f);
         he1->set_outer_ccb (f_oc);
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+        std::cout << "he1 (=> prev2) defines adjacent outer CCB" << std::endl;
+#endif
+        
         // Set the component of all halfedges that used to belong to he1's
         // CCB.
         for (curr = he1->next(); curr != he1; curr = curr->next())
@@ -3671,9 +3780,10 @@ _is_inside_new_face (const DHalfedge *prev1,
   bool                          is_perimetric;
   std::pair<const DVertex*, const DHalfedge*>   find_res =
     _find_leftmost_vertex_on_open_loop (prev2, he_last, cv, is_perimetric);
-
+  std::cout << "is_inside_new_face: " << std::endl;
   if (is_perimetric)
   {
+      std::cout << "perimetric" << std::endl;
     // In this case the route from prev1's target to prev2's target is
     // perimetric. We use the topology traits to determine which halfedge
     // lies inside the hole (in case a hole is indeed created).
