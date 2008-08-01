@@ -905,7 +905,7 @@ public:
     
     //! write represenation to \c os
     void write(std::ostream& os) const { 
-        os << "Arc_2l(";
+        os << "Arc_2l@" << this->id() << "(";
         if (this->is_z_vertical()) {
             os << "Point_2(" << this->projected_point() << "), ";
             os << "MinPoint(" << this->ptr()->_m_min << "), ";

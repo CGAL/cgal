@@ -456,7 +456,7 @@ public:
     
     //! write represenation to \c os
     void write(std::ostream& os) const {
-        os << "Point_2l(";
+        os << "Point_2l@" << this->id() << "(";
         os << "Point2(" << this->projected_point() << ", loc=" 
            << this->location() << "), ";
         os << "Surface(" << this->surface() << ", ";
