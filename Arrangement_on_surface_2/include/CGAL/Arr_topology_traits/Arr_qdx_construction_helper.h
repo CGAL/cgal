@@ -265,8 +265,8 @@ public:
         // If we insert an edge whose right end has boundary condition
         // before the curve of identification
         // have to flip the order of predecessor halfegdes.
-        return (event->parameter_space_in_x() == CGAL::ARR_INTERIOR &&
-                event->parameter_space_in_y() == CGAL::ARR_RIGHT_BOUNDARY);
+        return (event->parameter_space_in_y() == CGAL::ARR_TOP_BOUNDARY &&
+                event->parameter_space_in_x() == CGAL::ARR_INTERIOR);
     }
     
     /*! Get the current top face. */
