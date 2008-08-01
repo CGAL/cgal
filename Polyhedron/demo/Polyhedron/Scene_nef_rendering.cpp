@@ -8,27 +8,27 @@
 
 inline void CGAL_GLU_TESS_CALLBACK beginCallback(GLenum which)
 { 
-  std::cerr << "glBegin(";
-  switch(which)
-  {
-    GL_MACRO(GL_POINTS);
-    GL_MACRO(GL_LINES);
-    GL_MACRO(GL_LINE_STRIP);
-    GL_MACRO(GL_LINE_LOOP);
-    GL_MACRO(GL_TRIANGLES);
-    GL_MACRO(GL_TRIANGLE_STRIP);
-    GL_MACRO(GL_TRIANGLE_FAN);
-    GL_MACRO(GL_QUADS);
-    GL_MACRO(GL_QUAD_STRIP);
-    GL_MACRO(GL_POLYGON);
-  }
-  std::cerr << ")\n";
+//   std::cerr << "glBegin(";
+//   switch(which)
+//   {
+//     GL_MACRO(GL_POINTS);
+//     GL_MACRO(GL_LINES);
+//     GL_MACRO(GL_LINE_STRIP);
+//     GL_MACRO(GL_LINE_LOOP);
+//     GL_MACRO(GL_TRIANGLES);
+//     GL_MACRO(GL_TRIANGLE_STRIP);
+//     GL_MACRO(GL_TRIANGLE_FAN);
+//     GL_MACRO(GL_QUADS);
+//     GL_MACRO(GL_QUAD_STRIP);
+//     GL_MACRO(GL_POLYGON);
+//   }
+//   std::cerr << ")\n";
   glBegin(which);
 }
 
 inline void CGAL_GLU_TESS_CALLBACK endCallback(void)
 { 
-  std::cerr << "glEnd()\n";
+//   std::cerr << "glEnd()\n";
   glEnd();
 }
 
@@ -47,14 +47,14 @@ inline void CGAL_GLU_TESS_CALLBACK vertexCallback(GLvoid* vertex,
   //    CGAL_NEF_TRACEN("vertexCallback normal "<<pu[0]<<","<<pu[1]<<","<<pu[2]);
   glNormal3dv(pu);
   glVertex3dv(pc); 
-  std::cerr << "  glNormal("
-	    << pu[0] << ", "
-	    << pu[1] << ", "
-	    << pu[2] << ")\n";
-  std::cerr << "  glVertex("
-	    << pc[0] << ", "
-	    << pc[1] << ", "
-	    << pc[2] << ")\n";
+//   std::cerr << "  glNormal("
+// 	    << pu[0] << ", "
+// 	    << pu[1] << ", "
+// 	    << pu[2] << ")\n";
+//   std::cerr << "  glVertex("
+// 	    << pc[0] << ", "
+// 	    << pc[1] << ", "
+// 	    << pc[2] << ")\n";
 }
 
 struct DPoint {
