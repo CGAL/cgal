@@ -481,7 +481,10 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
     // therefore  we use it to insert the subcurve.
     // First, we skip some halfedges around the left vertex to get the true
     // predecessor halfedge for the insertion.
-#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 
+    for (int i = 0; i < jump; i++) {
+      he_left = (he_left->next())->twin();
+    }
+#if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
       if (jump != 0) {
           std::cout << "CGAL_CSLV JUMP: " << jump << std::endl;
           if (!he_left->is_fictitious()) {
@@ -493,9 +496,6 @@ add_subcurve (const X_monotone_curve_2& cv, Subcurve* sc)
           std::cout << "he_leftfac : " << &(*he_left->face()) << std::endl;
       }
 #endif
-      
-    for (int i = 0; i < jump; i++)
-      he_left = (he_left->next())->twin();
       
     if (he_right != invalid_he) 
     {
