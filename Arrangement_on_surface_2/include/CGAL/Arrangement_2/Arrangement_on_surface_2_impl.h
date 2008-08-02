@@ -2431,6 +2431,9 @@ _insert_from_vertex(const X_monotone_curve_2& cv,
         std::cout << "prev: fictitious" << std::endl;
     
     }
+    std::cout << "pref: " << (prev->is_on_inner_ccb() ? 
+                              prev->inner_ccb()->face() :
+                              prev->outer_ccb()->face()) << std::endl;
     if (!v->has_null_point()) {
         std::cout << "v->point: " << v->point() << std::endl;
     }
@@ -2529,12 +2532,18 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::cout << "prev1: fictitious" << std::endl;
   }
   std::cout << "dir1 : " << prev1->direction() << std::endl;
+  std::cout << "pref: " << (prev1->is_on_inner_ccb() ? 
+                              prev1->inner_ccb()->face() :
+                              prev1->outer_ccb()->face()) << std::endl;
   if (!prev2->has_null_curve()) {
       std::cout << "prev2: " << prev2->curve() << std::endl;
   } else {
       std::cout << "prev2: fictitious" << std::endl;
   }
   std::cout << "dir 2: " << prev2->direction() << std::endl;
+  std::cout << "pref2: " << (prev2->is_on_inner_ccb() ? 
+                              prev2->inner_ccb()->face() :
+                              prev2->outer_ccb()->face()) << std::endl;
   std::cout << "cmp  : " << cmp << std::endl;
 #endif
 
