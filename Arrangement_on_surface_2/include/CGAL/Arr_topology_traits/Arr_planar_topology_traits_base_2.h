@@ -187,6 +187,33 @@ public:
     return (std::make_pair (true, true));
   }
 
+#if CGAL_NEW_FACE_SPLIT_STRATEGY
+    /*!
+   * Given two predecessor halfedges that belong to the same inner CCB of
+   * a face, determine what happens when we insert an edge connecting the
+   * target vertices of the two edges.
+   * \param prev1 The first predecessor halfedge.
+   * \param prev2 The second predecessor halfedge.
+   * \param cv The curve to be inserted
+   * \pre The two halfedges belong to the same inner CCB.
+   * \return A pair indicating whether the insertion will cause the face
+   *         to split (the first flag), and if so - whether the prev1 will be
+   *         incident to the split face (second flag).
+   */
+  std::pair<bool, bool>
+  face_update_upon_edge_insertion(const Halfedge *
+                                    CGAL_precondition_code(prev1),
+                                  const Halfedge *
+                                    CGAL_precondition_code(prev2),
+                                  const X_monotone_curve_2 & cv) const
+  {
+      // In case of a planar topology, connecting two vertices on the same
+      // CCB closes a new face that becomes a hole in the original face:
+      return (std::make_pair (true, true));
+  }
+#endif
+
+
   /*!
    * Determine whether the removal of the given edge will cause the creation
    * of a hole.

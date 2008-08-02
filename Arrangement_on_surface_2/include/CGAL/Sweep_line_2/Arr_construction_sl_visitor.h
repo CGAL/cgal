@@ -695,14 +695,28 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   // to prev2->target() is incident to the new face (in case a new face is
   // created).
   Halfedge_handle   res;
+#if CGAL_NEW_FACE_SPLIT_STRATEGY
+  // EBEB new strategy for splitting faces. The member also allows
+  // to decide which prev_i will be on the new outer CCB (if decision needed)
+  // Here: We use it to decide "swapping", which is actually the decision
+  //       whether prev1 or prev2 is on the new outer CCB ;-)
+  std::pair< bool, bool > update = 
+    m_top_traits->face_update_upon_edge_insertion(&(*prev1), &(*prev2), cv);
+  const bool swap_preds = update.second;
+  // TODO propagate update.first to _insert_at_vertices!
+#else
   const bool        swap_preds = 
     m_helper.swap_predecessors (this->current_event());
+#endif
+
   res = (! swap_preds) ?
+    // usually prev1 is outer of new split face (it it exists)
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev1, prev2,
                                         LARGER, new_face_created) :
+    // if swapping prev2 will becomd outer of new split face (it it exists)
     m_arr_access.insert_at_vertices_ex (_curve(cv), prev2, prev1,
                                         SMALLER, new_face_created);
-
+  
   // Map the new halfedge to the indices list of all subcurves that lie
   // below it.
   if (sc->has_halfedge_indices())
