@@ -493,7 +493,9 @@ _locate_around_vertex_on_identification(Vertex* v,
     do {
         std::cout << "curve: " << currh->curve() << std::endl;
         std::cout << "dir: " << currh->direction() << std::endl;
-        std::cout << "face: " << currh->face() << std::endl;
+        std::cout << "face: " << (currh->is_on_inner_ccb() ? 
+                                  currh->inner_ccb()->face() : 
+                                  currh->outer_ccb()->face()) << std::endl;
         std::cout << "******************************************" << std::endl;
         currh = currh->next()->opposite();
     } while (currh != firsth);
@@ -537,10 +539,15 @@ _locate_around_vertex_on_identification(Vertex* v,
         
         std::cout << "curr: " << curr->curve() << std::endl;
         std::cout << "dir: " << curr->direction() << std::endl;
-        std::cout << "face: " << curr->face() << std::endl;
+        std::cout << "face: " << (curr->is_on_inner_ccb() ? 
+                                  curr->inner_ccb()->face() : 
+                                  curr->outer_ccb()->face()) << std::endl; 
         std::cout << "next: " << next->curve() << std::endl;
         std::cout << "dir: " << next->direction() << std::endl;
-        std::cout << "face: " << next->face() << std::endl;
+        std::cout << "face: " << (next->is_on_inner_ccb() ? 
+                                  next->inner_ccb()->face() : 
+                                  next->outer_ccb()->face()) << std::endl;
+
         std::cout << "******************************************"
                   << std::endl;
 #endif
@@ -557,7 +564,9 @@ _locate_around_vertex_on_identification(Vertex* v,
     
     std::cout << "return curr: " << curr->curve() << std::endl;
     std::cout << "dir: " << curr->direction() << std::endl;
-    std::cout << "face: " << curr->face() << std::endl;
+    std::cout << "face: " << (curr->is_on_inner_ccb() ? 
+                              curr->inner_ccb()->face() : 
+                              curr->outer_ccb()->face()) << std::endl;
     return curr;
 }
 
