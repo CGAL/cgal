@@ -735,6 +735,7 @@ public:
                                      const Halfedge *prev2,
                                      const X_monotone_curve_2& cv) const;
 
+#if CGAL_NEW_FACE_SPLIT_STRATEGY
     /*!
      * Given two predecessor halfedges that belong to the same CCB of
      * a face, determine what happens when we insert an edge connecting the
@@ -745,12 +746,13 @@ public:
      * \pre The two halfedges belong to the same inner CCB.
      * \return A pair indicating whether the insertion will cause the face
      *         to split (the first flag), and if so - whether the prev1 will be
-     *         incident to the split face.
+     *         incident to the split face (second flag).
      */
     std::pair<bool, bool>
     face_update_upon_edge_insertion (const Halfedge *prev1,
-                                   const Halfedge *prev2,
-                                   const X_monotone_curve_2& cv) const;
+                                     const Halfedge *prev2,
+                                     const X_monotone_curve_2& cv) const;
+#endif
     
     /*!
      * Determine whether the removal of the given edge will cause the creation
