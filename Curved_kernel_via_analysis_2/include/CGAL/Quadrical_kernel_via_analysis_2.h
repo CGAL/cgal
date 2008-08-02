@@ -1084,6 +1084,17 @@ public:
         CERR("\nqkva_compare_y_at_x_left(cv2);\ncv1: " << cv1 << ";\ncv2: " <<
              cv2 << ";\np: " << p << "\n");
 
+
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
+        
+        if (p.location() == CGAL::ARR_TOP_BOUNDARY ||
+            p.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
+            if (sheet1 != sheet2) {
+                return -CGAL::compare(sheet1, sheet2);
+            }
+        }
+        
         if (cv1.is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
             if(cv2.is_vertical()) {
@@ -1098,13 +1109,9 @@ public:
         if (cv2.is_vertical()) {
             return CGAL::LARGER;
         }
-            
         
         CGAL::Comparison_result res = CGAL::EQUAL;
 
-        int sheet1 = cv1.sheet();
-        int sheet2 = cv2.sheet();
-        
         if (sheet1 != sheet2) {
             res = CGAL::compare(sheet1, sheet2);
         } else {
@@ -1162,9 +1169,19 @@ public:
      */
     result_type operator() (const Arc_2& cv1, const Arc_2& cv2,
                             const Point_2& p) const {
-
+        
         CERR("\nqkva_compare_y_at_x_right(cv2);\ncv1: " << cv1 
              << ";\ncv2: " << cv2 << ";\np: " << p << "\n");
+        
+        int sheet1 = cv1.sheet();
+        int sheet2 = cv2.sheet();
+        
+        if (p.location() == CGAL::ARR_TOP_BOUNDARY ||
+            p.location() == CGAL::ARR_BOTTOM_BOUNDARY) {
+            if (sheet1 != sheet2) {
+                return -CGAL::compare(sheet1, sheet2);
+            }
+        }
 
         if (cv1.is_vertical()) {
             // if both are vertical (they overlap), we return EQUAL
@@ -1182,9 +1199,6 @@ public:
         }
         
         CGAL::Comparison_result res = CGAL::EQUAL;
-        
-        int sheet1 = cv1.sheet();
-        int sheet2 = cv2.sheet();
         
         if (sheet1 != sheet2) {
             res = CGAL::compare(sheet1, sheet2);
