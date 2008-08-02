@@ -484,6 +484,19 @@ _locate_around_vertex_on_identification(Vertex* v,
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << " QdX-TOP locate_around_vertex_y"
               << std::endl;
+    
+    Halfedge * firsth = v->halfedge();
+    Halfedge * currh = firsth;
+    CGAL_assertion(currh != NULL);
+    
+    std::cout << "******************************************" << std::endl;    
+    do {
+        std::cout << "curve: " << currh->curve() << std::endl;
+        std::cout << "dir: " << currh->direction() << std::endl;
+        std::cout << "face: " << currh->face() << std::endl;
+        std::cout << "******************************************" << std::endl;
+        currh = currh->next()->opposite();
+    } while (currh != firsth);
 #endif
 
     // If the vertex is isolated, there is no predecssor halfedge.
@@ -504,67 +517,48 @@ _locate_around_vertex_on_identification(Vertex* v,
     }
     
     // Otherwise, we traverse the halfedges around v until we find the pair
-    // of adjacent halfedges between which we should insert xc.
+    // of adjacent halfedges between which we should insert xc; 
     typename Traits_adaptor_2::Is_between_cw_2 is_between_cw =
         _m_traits->is_between_cw_2_object();
     bool eq_curr, eq_next;
     
-#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
-    std::cout << "------------------------------------------" << std::endl;
-    std::cout << "searchstart: " << std::endl;
-
-    std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << (curr->direction() == ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
-    std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << (next->direction() == ARR_LEFT_TO_RIGHT ?
-                             "L2R" : "R2L") << std::endl;
-    
-    std::cout << "******************************************" << std::endl;
-#endif
-    
-    while (!is_between_cw(xc, (ind == ARR_MIN_END),
-                          curr->curve(), 
-                          (curr->direction() == ARR_RIGHT_TO_LEFT),
-                          next->curve(), 
-                          (next->direction() == ARR_RIGHT_TO_LEFT),
-                          v->point(), eq_curr, eq_next))
-    {
-        // The curve must not be equal to one of the curves 
-        // already incident to v.
-        CGAL_assertion(!eq_curr && !eq_next);
+    while (!is_between_cw(
+                   xc, (ind == CGAL::ARR_MIN_END),
+                   curr->curve(), 
+                   (curr->direction() == CGAL::ARR_RIGHT_TO_LEFT),
+                   next->curve(), 
+                   (next->direction() == CGAL::ARR_RIGHT_TO_LEFT),
+                   v->point(), eq_curr, eq_next)) {
         
-
-#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
-    std::cout << "==========================================" << std::endl;
-    std::cout << "searchloop: " << std::endl;
-
-    std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << curr->direction() << std::endl;
-    std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << next->direction() << std::endl;
-    
-    std::cout << "******************************************" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
+        std::cout << "=========================================="
+                  << std::endl;
+        std::cout << "searchloop: " << std::endl;
+        
+        std::cout << "curr: " << curr->curve() << std::endl;
+        std::cout << "dir: " << curr->direction() << std::endl;
+        std::cout << "face: " << curr->face() << std::endl;
+        std::cout << "next: " << next->curve() << std::endl;
+        std::cout << "dir: " << next->direction() << std::endl;
+        std::cout << "face: " << next->face() << std::endl;
+        std::cout << "******************************************"
+                  << std::endl;
 #endif
+        CGAL_assertion(!eq_curr && !eq_next);
+
         // Move to the next pair of incident halfedges.
         curr = next;
         next = curr->next()->opposite();
-        
-        // Make sure we have not completed a full traversal around v without
-        // locating a place for the new curve xc.
+
+        // Make sure we have not completed a full traversal around v 
+        // without locating a place for the new curve xc.
         CGAL_assertion (curr != first);
     }
     
-    if (ind == CGAL::ARR_MAX_END) {
-        std::cout << "return curr: " << curr->curve() << std::endl;
-        std::cout << "dir: " << curr->direction() << std::endl;
-        return curr;
-    }
-    
-    // else 
-    std::cout << "return next: " << next->curve() << std::endl;
-    std::cout << "dir: " << next->direction() << std::endl;
-    return next;
+    std::cout << "return curr: " << curr->curve() << std::endl;
+    std::cout << "dir: " << curr->direction() << std::endl;
+    std::cout << "face: " << curr->face() << std::endl;
+    return curr;
 }
 
 //-----------------------------------------------------------------------------
@@ -784,19 +778,20 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
 
     Sign_of_path sign_of_path(this);
     
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "Path1: " << std::endl;
+#endif
+    CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign1: " << sign_12 << std::endl;
+    std::cout << "Path2: " << std::endl;
+#endif
+    CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign2: " << sign_21 << std::endl;
+#endif
+    
     if (_m_left == CGAL::ARR_UNBOUNDED && _m_right == CGAL::ARR_UNBOUNDED) {
-#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
-        std::cout << "Path1: " << std::endl;
-#endif
-        CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
-#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
-        std::cout << "sign1: " << sign_12 << std::endl;
-        std::cout << "Path2: " << std::endl;
-#endif
-        CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
-#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
-        std::cout << "sign2: " << sign_21 << std::endl;
-#endif
         is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
         
     }
@@ -805,6 +800,70 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
 
     return (std::make_pair (face_split, is_hole));
 }
+
+
+//-----------------------------------------------------------------------------
+// Given two predecessor halfedges that belong to the same inner CCB of
+// a face, determine what happens when we insert an edge connecting the
+// target vertices of the two edges.
+//
+template < class GeomTraits, class Dcel_ >
+std::pair< bool, bool >
+Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_update_upon_edge_insertion
+    (const Halfedge *prev1,
+     const Halfedge *prev2,
+     const X_monotone_curve_2& cv) const
+{
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " QdX-TOP face_update_upon_edge_insertion\ncurve: " << cv 
+              << std::endl;
+#endif
+    //CGAL_precondition (prev1->is_on_inner_ccb());
+    //CGAL_precondition (prev2->is_on_inner_ccb());
+    //CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
+
+    bool face_split = true;
+
+    // usually prev1 will become outer of a new face
+    bool prev2_outer = false;
+    
+    Sign_of_path sign_of_path(this);
+    
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "Path1 (containing prev1): " << std::endl;
+#endif
+    CGAL::Sign sign_1 = sign_of_path(prev2, prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign1: " << sign_1 << std::endl;
+    std::cout << "Path2 (containing prev2): " << std::endl;
+#endif
+    CGAL::Sign sign_2 = sign_of_path(prev1, prev2, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign2: " << sign_2 << std::endl;
+#endif
+    
+#if 0
+    if (_m_left == CGAL::ARR_UNBOUNDED && _m_right == CGAL::ARR_UNBOUNDED) {
+        is_hole = (sign_12 == CGAL::ZERO || sign_21 == CGAL::ZERO);
+        
+    }
+#endif
+    
+    if (cv.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY) {
+        if (sign_1 != CGAL::ZERO && sign_2 == CGAL::ZERO) {
+            prev2_outer = true;
+        } else {
+            prev2_outer = (sign_1 != CGAL::ZERO && sign_2 != CGAL::ZERO);
+        }
+    }
+    
+    std::cout << "Result: face_split=" << face_split << ", prev2_outer=" 
+              << prev2_outer << std::endl;
+
+    return (std::make_pair (face_split, prev2_outer));
+}
+
+
 
 //-----------------------------------------------------------------------------
 // Determine whether the removal of the given edge will cause the creation
