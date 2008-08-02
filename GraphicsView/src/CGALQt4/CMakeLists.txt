@@ -1,4 +1,4 @@
-# src/Core/CMakeLists.txt
+# src/CGALQt4/CMakeLists.txt
 #
 # The following variables must be set from the parent script:
 # The first two cannot be empty
