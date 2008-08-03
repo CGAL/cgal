@@ -81,26 +81,24 @@ public:
         // status: move to arr
         
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
-        std::cout << "Sign_of_path(he1, he2)" << std::endl;
+        std::cout << "Sign_of_path(he1->he2)?" << std::endl;
 #endif
 
         CGAL::Sign result = CGAL::ZERO;
         
-        if (he1->next() == he2 && he2->next () == he1) {
+        if (he1->next() == he2 && he2->next() == he1) {
             return result;
         }
         
         // Start with the next of prev1:
-        const Halfedge* curr = he1->next();
+        const Halfedge* curr = he1;
+        const Halfedge* next = curr->next();
         
-        while (curr != he2) {
+        CGAL_assertion(next != he1);
+        
+        do {
             
-            //std::cout << "loop" << std::endl;
-
             CGAL_assertion(!curr->has_null_curve());
-            
-            const Halfedge* next = curr->next();
-            
             CGAL_assertion(!next->has_null_curve());
             
             CGAL::Sign tmp = _m_topology_traits->_sign_of_subpath(curr, next);
@@ -117,26 +115,11 @@ public:
             }
             
             curr = next;
-        }
-        
-        if (he1 == he2) {
-            CGAL::Sign tmp = 
-                _m_topology_traits->_sign_of_subpath(he1, he1->next());
-            
-            if (tmp != CGAL::ZERO) {
-                switch (result) {
-                case ZERO:
-                    result = tmp;
-                    break;
-                default:
-                    CGAL_assertion(result == -tmp || result == tmp);
-                    result = CGAL::ZERO;
-                }
-            }
-            
-        }
+            next = curr->next();
+        } while (curr != he2);
+
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE  
-        std::cout << "Sign_of_path(he1, he2) = " << result << std::endl;
+        std::cout << "Sign_of_path(he1->he2) = " << result << std::endl;
 #endif        
         return result;
     }
@@ -147,10 +130,13 @@ public:
                           const X_monotone_curve_2& cv) const {
         
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
-        std::cout << "Sign_of_path(he1, he2, cv)" << std::endl;
+        std::cout << "Sign_of_path(he1->he2->cv[->he1])?" << std::endl;
 #endif
         
-        CGAL::Sign result = this->operator()(he2, he1);
+        //   source(he1)->target(he1)->....
+        // ->source(he2)->target(he2)->cv[->source(he1)]
+
+        CGAL::Sign result = this->operator()(he1, he2);
 
         typename Geometry_traits_2::Parameter_space_in_x_2 
             parameter_space_in_x =
@@ -186,54 +172,53 @@ public:
                 _m_topology_traits->geometry_traits()->
                 construct_min_vertex_2_object()(cv);
             
-            CGAL::Arr_curve_end he1_trg_ind =
-                (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+            CGAL::Arr_curve_end he2_tgt_ind =
+                (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
                  CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
                 );
             
-            CGAL::Arr_parameter_space he1_trg_psx = 
-                parameter_space_in_x(he1->curve(), he1_trg_ind);
-            CGAL::Arr_parameter_space he1_trg_psy = 
-                parameter_space_in_y(he1->curve(), he1_trg_ind);
+            CGAL::Arr_parameter_space he2_tgt_psx = 
+                parameter_space_in_x(he2->curve(), he2_tgt_ind);
+            CGAL::Arr_parameter_space he2_tgt_psy = 
+                parameter_space_in_y(he2->curve(), he2_tgt_ind);
             
-            bool v1_on_boundary = 
-                (he1_trg_psx != CGAL::ARR_INTERIOR ||
-                 he1_trg_psy != CGAL::ARR_INTERIOR);
-            
+            bool he2_tgt_on_boundary = 
+                (he2_tgt_psx != CGAL::ARR_INTERIOR ||
+                 he2_tgt_psy != CGAL::ARR_INTERIOR);
+
             bool min_on_boundary = 
                 (ps_min_x != CGAL::ARR_INTERIOR || 
                  ps_min_y != CGAL::ARR_INTERIOR);
             
-            if (v1_on_boundary == min_on_boundary) {
-                if (v1_on_boundary) {
+            if (he2_tgt_on_boundary == min_on_boundary) {
+                if (he2_tgt_on_boundary) {
                     // compare at boundary
                     equalmin = 
-                        _m_topology_traits->are_equal(he1->vertex(), cv, 
-                                                      CGAL::ARR_MIN_END, 
+                        _m_topology_traits->are_equal(he2->vertex(), 
+                                                      cv, CGAL::ARR_MIN_END, 
                                                       ps_min_x, ps_min_y);
                 } else {
                     equalmin = (_m_topology_traits->geometry_traits()->
                                 compare_xy_2_object()(
-                                        he1->vertex()->point(), minp
+                                        he2->vertex()->point(), minp
                                 ) == CGAL::EQUAL);
                 }
             }
-
+            
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
             std::cout << "equalmin: " << equalmin << std::endl;
 #endif
-            if (ps_min_x != CGAL::ARR_INTERIOR || 
-                ps_min_y != CGAL::ARR_INTERIOR) {
-
+            if (he2_tgt_on_boundary) {
+                
                 CGAL::Sign tmp1 = 
                     _m_topology_traits->_sign_of_subpath(
-                            (equalmin ? he1 : he2), 
-                            true, // target!
-                            cv, CGAL::ARR_MIN_END
+                            he2, true, // target!
+                            cv, 
+                            equalmin ? CGAL::ARR_MIN_END : CGAL::ARR_MAX_END
                     );
                 
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
-                std::cout << "prev_target->cv: " << tmp1 << std::endl;
+                std::cout << "target(he2)->cv: " << tmp1 << std::endl;
 #endif
                 if (tmp1 != CGAL::ZERO) {
                     switch (result) {
@@ -247,18 +232,31 @@ public:
                 }
             }
             
-            if (ps_max_x != CGAL::ARR_INTERIOR || 
-                ps_max_y != CGAL::ARR_INTERIOR) {
+            CGAL::Arr_curve_end he1_src_ind =
+                (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+                 CGAL::ARR_MIN_END : CGAL::ARR_MAX_END
+                );
+            
+            CGAL::Arr_parameter_space he1_src_psx = 
+                parameter_space_in_x(he1->curve(), he1_src_ind);
+            CGAL::Arr_parameter_space he1_src_psy = 
+                parameter_space_in_y(he1->curve(), he1_src_ind);
+            
+            bool he1_src_on_boundary = 
+                (he1_src_psx != CGAL::ARR_INTERIOR ||
+                 he1_src_psy != CGAL::ARR_INTERIOR);
+
+            if (he1_src_on_boundary) {
                 
                 CGAL::Sign tmp2 = 
                     _m_topology_traits->_sign_of_subpath(
-                            (equalmin ? he2 : he1)->next(), 
-                            false, // source
-                            cv, CGAL::ARR_MAX_END
+                            he1, false, // source
+                            cv,
+                            equalmin ? CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
                     );
-      
+                
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE          
-                std::cout << "cv->next_src: " << tmp2 << std::endl;
+                std::cout << "cv->source(he1): " << tmp2 << std::endl;
 #endif
                 
                 if (tmp2 != CGAL::ZERO) {
@@ -275,9 +273,9 @@ public:
         }
         
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
-        std::cout << "Sign_of_path(he1, he2, cv) = " << result << std::endl;
+        std::cout << "Sign_of_path(he1->he2->cv[->he1]) = " 
+                  << result << std::endl;
 #endif
-
         return result;
     }
 

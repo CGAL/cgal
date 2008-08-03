@@ -792,12 +792,12 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_split_after_edge_insertion
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "Path1 (containing prev1): " << std::endl;
 #endif
-        CGAL::Sign sign_1 = sign_of_path(prev2, prev1, cv);
+        CGAL::Sign sign_1 = sign_of_path(prev2->next(), prev1, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "sign1: " << sign_1 << std::endl;
         std::cout << "Path2 (containing prev2): " << std::endl;
 #endif
-        CGAL::Sign sign_2 = sign_of_path(prev1, prev2, cv);
+        CGAL::Sign sign_2 = sign_of_path(prev1->next(), prev2, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "sign2: " << sign_2 << std::endl;
 #endif
@@ -841,17 +841,19 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_update_upon_edge_insertion
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "Path1 (containing prev1): " << std::endl;
 #endif
-    CGAL::Sign sign_1 = sign_of_path(prev2, prev1, cv);
+    CGAL::Sign sign_1 = sign_of_path(prev2->next(), prev1, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "sign1: " << sign_1 << std::endl;
     std::cout << "Path2 (containing prev2): " << std::endl;
 #endif
-    CGAL::Sign sign_2 = sign_of_path(prev1, prev2, cv);
+    CGAL::Sign sign_2 = sign_of_path(prev1->next(), prev2, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "sign2: " << sign_2 << std::endl;
 #endif
     
-    if (sign_2 == CGAL::ZERO) {
+    if (sign_1 == CGAL::ZERO) {
+        prev2_outer = false;
+    } else if (sign_2 == CGAL::ZERO) {
         prev2_outer = (sign_1 != CGAL::ZERO ||
                        cv.location(CGAL::ARR_MAX_END) == 
                        CGAL::ARR_TOP_BOUNDARY);
@@ -949,7 +951,7 @@ is_on_new_perimetric_face_boundary
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "Path1 (containing prev1): " << std::endl;
 #endif
-    CGAL::Sign sgn = sign_of_path(prev2, prev1, cv);
+    CGAL::Sign sgn = sign_of_path(prev2->next(), prev1, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "sign1: " << sgn << std::endl;
 #endif
@@ -957,7 +959,7 @@ is_on_new_perimetric_face_boundary
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "Path2 (containing prev2): " << std::endl;
 #endif
-        CGAL::Sign sgn = sign_of_path(prev1, prev2, cv);
+        CGAL::Sign sgn = sign_of_path(prev1->next(), prev2, cv);
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "sign2: " << sgn << std::endl;
 #endif
@@ -1693,14 +1695,14 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         
         if (he1_psy != he2_psy) {
             if (he1_psy == CGAL::ARR_BOTTOM_BOUNDARY) {
-                result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                std::cout << "SOShh:yp1" << std::endl;
-#endif
-            } else {
                 result = CGAL::NEGATIVE;
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                std::cout << "SOShh::yn1" << std::endl;
+                std::cout << "SOShh:yn1" << std::endl;
+#endif
+            } else {
+                result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh::yp1" << std::endl;
 #endif
             }
         }
