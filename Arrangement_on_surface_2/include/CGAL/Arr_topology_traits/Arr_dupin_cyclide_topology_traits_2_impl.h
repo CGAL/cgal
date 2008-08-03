@@ -477,6 +477,7 @@ locate_around_boundary_vertex (Vertex *v,
         // already incident to v.
         CGAL_assertion(!eq_curr && !eq_next);
         
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
         std::cout << "=========================================="
                   << std::endl;
         std::cout << "searchloop: " << std::endl;
@@ -493,6 +494,7 @@ locate_around_boundary_vertex (Vertex *v,
                                   next->outer_ccb()->face()) << std::endl;
 
         std::cout << "******************************************" << std::endl;
+#endif
         
         // Move to the next pair of incident halfedges.
         curr = next;
@@ -503,12 +505,13 @@ locate_around_boundary_vertex (Vertex *v,
         CGAL_assertion (curr != first);
     }
     
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
     std::cout << "return curr: " << curr->curve() << std::endl;
     std::cout << "dir: " << curr->direction() << std::endl;
     std::cout << "face: " << (curr->is_on_inner_ccb() ? 
                               curr->inner_ccb()->face() : 
                               curr->outer_ccb()->face()) << std::endl;
-    
+#endif
     return curr;
 }
 
