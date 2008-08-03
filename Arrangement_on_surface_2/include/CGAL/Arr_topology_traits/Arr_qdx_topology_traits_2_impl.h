@@ -566,11 +566,13 @@ _locate_around_vertex_on_identification(Vertex* v,
         CGAL_assertion (curr != first);
     }
     
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
     std::cout << "return curr: " << curr->curve() << std::endl;
     std::cout << "dir: " << curr->direction() << std::endl;
     std::cout << "face: " << (curr->is_on_inner_ccb() ? 
                               curr->inner_ccb()->face() : 
                               curr->outer_ccb()->face()) << std::endl;
+#endif
     return curr;
 }
 
