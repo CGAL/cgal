@@ -830,10 +830,7 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_update_upon_edge_insertion
     std::cout << " QdX-TOP face_update_upon_edge_insertion\ncurve: " << cv 
               << std::endl;
 #endif
-    //CGAL_precondition (prev1->is_on_inner_ccb());
-    //CGAL_precondition (prev2->is_on_inner_ccb());
-    //CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
-
+    // in one of the following both are NULL
     bool face_split = true;
 
     // usually prev1 will become outer of a new face
@@ -854,10 +851,13 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_update_upon_edge_insertion
     std::cout << "sign2: " << sign_2 << std::endl;
 #endif
     
-    if (sign_1 != CGAL::ZERO && sign_2 == CGAL::ZERO) {
-        prev2_outer = true;
+    if (sign_2 == CGAL::ZERO) {
+        prev2_outer = (sign_1 != CGAL::ZERO ||
+                       cv.location(CGAL::ARR_MAX_END) == 
+                       CGAL::ARR_TOP_BOUNDARY);
     } else {
-        prev2_outer = (sign_1 != CGAL::ZERO && sign_2 != CGAL::ZERO);
+        // both non-zero
+        prev2_outer = (sign_2 == CGAL::NEGATIVE);
     }
     
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
