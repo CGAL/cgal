@@ -700,8 +700,37 @@ Arr_construction_sl_visitor<Hlpr>::insert_at_vertices
   // to decide which prev_i will be on the new outer CCB (if decision needed)
   // Here: We use it to decide "swapping", which is actually the decision
   //       whether prev1 or prev2 is on the new outer CCB ;-)
-  std::pair< bool, bool > update = 
-    m_top_traits->face_update_upon_edge_insertion(&(*prev1), &(*prev2), cv);
+  std::pair< bool, bool > update(false, false);
+#if 0
+  if ((prev1->is_on_inner_ccb() && prev1->is_on_inner_ccb() &&
+       prev1->inner_ccb() == prev2->inner_ccb()) 
+      ||
+      (!prev1->is_on_inner_ccb() && prev1->is_on_inner_ccb())) {
+#else
+      // TODO improve this code!
+  Halfedge_handle curr1 = prev1->next();
+  bool found2 = false;
+  while (curr1 != prev1) {
+      if (curr1 == prev2) {
+          found2 = true;
+      }
+      curr1 = curr1->next();
+  }
+  Halfedge_handle curr2 = prev2->next();
+  bool found1 = false;
+  while (curr2 != prev2) {
+      if (curr2 == prev1) {
+          found1 = true;
+      }
+      curr2 = curr2->next();
+  }
+  if (found1 && found2) {
+#endif
+      update = 
+          m_top_traits->face_update_upon_edge_insertion(
+                  &(*prev1), &(*prev2), cv
+          );
+  }
   const bool swap_preds = update.second;
   // TODO propagate update.first to _insert_at_vertices!
 #else
