@@ -853,13 +853,15 @@ Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::face_update_upon_edge_insertion
     
     if (sign_1 == CGAL::ZERO) {
         prev2_outer = false;
-    } else if (sign_2 == CGAL::ZERO) {
-        prev2_outer = (sign_1 != CGAL::ZERO ||
-                       cv.location(CGAL::ARR_MAX_END) == 
-                       CGAL::ARR_TOP_BOUNDARY);
     } else {
-        // both non-zero
-        prev2_outer = (sign_2 == CGAL::NEGATIVE);
+        if (sign_2 == CGAL::ZERO) {
+            prev2_outer = (sign_1 != CGAL::ZERO ||
+                           cv.location(CGAL::ARR_MAX_END) == 
+                           CGAL::ARR_TOP_BOUNDARY);
+        } else {
+            // both non-zero
+            prev2_outer = (sign_2 == CGAL::NEGATIVE);
+        }
     }
     
 #if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
@@ -1620,26 +1622,16 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
          CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
     
-    typename Traits_adaptor_2::Parameter_space_in_x_2 parameter_space_in_x =
-        _m_traits->parameter_space_in_x_2_object();
     typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
         _m_traits->parameter_space_in_y_2_object();
     
-    CGAL::Arr_parameter_space he1_psx =
-        parameter_space_in_x(he1->curve(), end1);
-
     CGAL::Arr_parameter_space he1_psy =
         parameter_space_in_y(he1->curve(), end1);
     
-    CGAL::Arr_parameter_space he2_psx =
-        parameter_space_in_x(he2->curve(), end2);
-
     CGAL::Arr_parameter_space he2_psy =
         parameter_space_in_y(he2->curve(), end2);
     
-    if (he1_psx == CGAL::ARR_INTERIOR &&
-        he1_psy == CGAL::ARR_INTERIOR &&
-        he2_psx == CGAL::ARR_INTERIOR &&
+    if (he1_psy == CGAL::ARR_INTERIOR &&
         he2_psy == CGAL::ARR_INTERIOR) {
         return result;
     }
@@ -1651,44 +1643,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     std::cout << "dir2: " << he2->direction() << std::endl;
 #endif
     
-    if (he1_psx != CGAL::ARR_INTERIOR) {
-        // can influence pole
-        
-#if 0 // TODO check what to do for meeting at contraction or infinity
-        CGAL_assertion(he2_psx != CGAL::ARR_INTERIOR);
-        
-        CGAL::Object obj1 = 
-            he1->curve().curve().asymptotic_value_of_arc(
-                    he1_psx,
-                    he1->curve().arcno()
-            );
-        CGAL::Object obj2 = 
-            he2->curve().curve().asymptotic_value_of_arc(
-                    he1_psx,
-                    he2->curve().arcno()
-            );
-        
-        CGAL::Arr_parameter_space ps1, ps2;
-        
-        if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
-            if (ps1 != ps2) {
-                if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
-                    // bottom to top
-                    result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShh:xp2" << std::endl;
-#endif
-                } else {
-                    // top to bottom
-                    result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShh:xn2" << std::endl;
-#endif
-                }
-            }
-        }
-#endif // END TODO
-    } else {
+    if (he1_psy != CGAL::ARR_INTERIOR) {
         
         CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
         CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
@@ -1738,13 +1693,11 @@ _sign_of_subpath(const Halfedge* he1,
     
     // check whether cv can influence the counters
     
-    CGAL::Arr_parameter_space ps_x = 
-        parameter_space_in_x(cv2, end2);
     CGAL::Arr_parameter_space ps_y = 
         parameter_space_in_y(cv2, end2);
     
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-    if (ps_x != CGAL::ARR_INTERIOR || ps_y != CGAL::ARR_INTERIOR) {
+    if (ps_y != CGAL::ARR_INTERIOR) {
         std::cout << "he1: " << he1->curve() << std::endl;
         std::cout << "dir1: " << he1->direction() << std::endl;
         std::cout << "cv2: " << cv2 << std::endl;
@@ -1766,67 +1719,8 @@ _sign_of_subpath(const Halfedge* he1,
             );
     }
     
-    CGAL::Arr_parameter_space he1_end_ps_x = 
-        parameter_space_in_x(he1->curve(), he1_end);
     CGAL::Arr_parameter_space he1_end_ps_y = 
         parameter_space_in_y(he1->curve(), he1_end);
-    
-#if 0 // TODO check what to do for meeting at contraction or infinity
-    
-    if (he1_end_ps_x != CGAL::ARR_INTERIOR) {
-
-        if (he1_end_ps_x != ps_x) {
-            // possible jump over x
-
-            if (he1_end_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
-                result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                std::cout << "SOShcv:xp1" << std::endl;
-#endif
-            } else {
-                result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                std::cout << "SOShcv:xn1" << std::endl;
-#endif
-            }
-            
-        } else {
-            
-            CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
-
-            CGAL::Object obj1 = 
-                he1->curve().curve().asymptotic_value_of_arc(
-                        ps_x,
-                        he1->curve().arcno()
-                );
-            CGAL::Object obj2 = 
-                cv2.curve().asymptotic_value_of_arc(
-                        ps_x,
-                        cv2.arcno()
-                );
-            
-            CGAL::Arr_parameter_space ps1, ps2;
-            
-            if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
-                if (ps1 != ps2) {
-                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
-                        // bottom to top
-                        result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                        std::cout << "SOShcv:xp2" << std::endl;
-#endif
-                    } else {
-                        // top to bottom
-                        result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                        std::cout << "SOShcv:xn2" << std::endl;
-#endif
-                    }
-                }
-            }
-        }
-    } 
-#endif // END TODO
     
     if (he1_end_ps_y != CGAL::ARR_INTERIOR) {
         
