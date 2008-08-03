@@ -100,6 +100,52 @@ public:
             
             if (!curr->has_null_curve() && !next->has_null_curve()) {
                 
+#if 0
+      //           std::cout << "curr: " << curr->curve() << std::endl;
+//                 std::cout << "currd: " << curr->direction() << std::endl;
+//                 std::cout << "currf: " << (curr->is_on_inner_ccb() ?
+//                                            curr->inner_ccb()->face() :
+//                                            curr->outer_ccb()->face()) 
+//                           << std::endl;
+                
+//                 int k = 0;
+//                 const Halfedge* circ = curr;
+//                 const Halfedge* first = circ;
+//                 do {
+//                     k++;
+//                     circ = circ->next()->opposite();
+//                 } while (circ != first);
+                
+//                 if (k > 2) {
+//                     std::cout << k << " = degree > 2" << std::endl;
+//                     std::cout << "PT: " 
+//                               << curr->vertex()->point() << std::endl;
+//                     circ = curr;
+//                     first = circ;
+//                     std::cout << "******************************************" 
+//                               << std::endl;    
+//                     do {
+//                         if (!circ->has_null_curve()) {
+//                             std::cout << "ccurve: " << circ->curve() 
+//                                       << std::endl;
+//                         }
+//                         std::cout << "cdir: " << circ->direction() 
+//                                   << std::endl;
+// #if 0
+//                         if (!curr->vertex()->has_null_point()) {
+//                             std::cout << "cface: " << (circ->is_on_inner_ccb() ? 
+//                                                        circ->inner_ccb()->face() : 
+//                                                        circ->outer_ccb()->face())
+//                                       << std::endl;
+//                         }
+// #endif
+//                         std::cout << "******************************************" << std::endl;
+//                         circ = circ->next()->opposite();
+//                     } while (circ != first);
+//                 }
+#endif                
+
+
                 CGAL::Sign tmp = 
                     _m_topology_traits->_sign_of_subpath(curr, next);
                 
