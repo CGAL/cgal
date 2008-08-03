@@ -26,6 +26,10 @@
 #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 0
 #endif
 
+#ifndef CGAL_NEW_FACE_SPLIT_STRATEGY 
+#define CGAL_NEW_FACE_SPLIT_STRATEGY 0
+#endif
+
 /*!
  * Definition of the Arr_construction_sl_visitor class-template.
  */
