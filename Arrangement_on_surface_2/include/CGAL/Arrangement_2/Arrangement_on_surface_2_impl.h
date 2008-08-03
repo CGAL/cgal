@@ -38,6 +38,10 @@
 
 #include <CGAL/function_objects.h> 
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+#include <CGAL/Arr_topology_traits/Sign_of_path.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \brief initializes the boundary_types array */
@@ -2523,6 +2527,8 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
   DVertex     *v2 = prev2->vertex();
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+  typedef CGALi::Sign_of_path< GeomTraits, TopTraits > Sign_of_path;
+  
   std::cout << "Aos_2: _insert_at_vertices (internal)" << std::endl;
   
   std::cout << "cv   : " << cv << std::endl;
@@ -2587,7 +2593,9 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
       std::cout << "only prev1" << std::endl;
   }
 #endif
-  std::cout << "f2: " << &(*f2) << std::endl;
+  CGAL_precondition_code(
+          std::cout << "f2: " << &(*f2) << std::endl;
+  );
 #if 0
   curr = prev2;
   if (curr != curr->next()) {
@@ -2846,10 +2854,6 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
     new_f->add_outer_ccb (new_oc, he2);
     new_oc->set_face (new_f);
 
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-    std::cout << "he2 (=> prev1) defines new outer CCB" << std::endl;
-#endif
-
     // Set the components of the new halfedge he2, which should be the new
     // outer comoponent of the new face.
     // Note that there are several cases for setting he1's component, so we
@@ -2861,6 +2865,16 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 
     for (curr = he2->next(); curr != he2; curr = curr->next())
       curr->set_outer_ccb (new_oc);
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+    std::cout << "he2 (=> prev1) defines new outer CCB" << std::endl;
+    std::cout << "prev1->face(): " << (prev1->is_on_inner_ccb() ? 
+                                       prev1->inner_ccb()->face() :
+                                       prev1->outer_ccb()->face())
+              << std::endl;
+    Sign_of_path sign_of_path(topology_traits());
+    std::cout << "prev1sign: " << sign_of_path(prev1, prev1) << std::endl;
+#endif
 
     // Check whether the two previous halfedges lie on the same innder CCB
     // or on the same outer CCB (distinguish case 3.3 and case 3.4).
@@ -2879,14 +2893,22 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         // In this case, he1 lies on an inner CCB of f.
         he1->set_inner_ccb (ic1);
         
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-        std::cout << "he1 (=> prev2) defines new inner CCB" << std::endl;
-#endif
         // Note that the current representative of the inner CCB may not
         // belong to the hole any more. In this case we replace the hole
         // representative by he1.
         if (! ic1->halfedge()->is_on_inner_ccb())
           ic1->set_halfedge (he1);
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+        std::cout << "he1 (=> prev2) defines new inner CCB" << std::endl;
+        std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ? 
+                                           prev2->inner_ccb()->face() :
+                                           prev2->outer_ccb()->face())
+                  << std::endl;
+        Sign_of_path sign_of_path(topology_traits());
+        std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+#endif
+
       }
       else
       {
@@ -2905,15 +2927,21 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         f_oc->set_face (f);
         he1->set_outer_ccb (f_oc);
 
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
-        std::cout << "he1 (=> prev2) defines adjacent outer CCB" << std::endl;
-#endif
-        
         // Set the component of all halfedges that used to belong to he1's
         // CCB.
         for (curr = he1->next(); curr != he1; curr = curr->next())
           curr->set_outer_ccb (f_oc);
 
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
+        std::cout << "he1 (=> prev2) defines adjacent outer CCB" << std::endl;
+        std::cout << "prev2->face(): " << (prev2->is_on_inner_ccb() ? 
+                                           prev2->inner_ccb()->face() :
+                                           prev2->outer_ccb()->face())
+                  << std::endl;
+        Sign_of_path sign_of_path(topology_traits());
+        std::cout << "prev2sign: " << sign_of_path(prev2, prev2) << std::endl;
+#endif
+        
         // Notify the observers that we have added an outer CCB to f.
         _notify_after_add_outer_ccb ((Halfedge_handle (he1))->ccb());
 
