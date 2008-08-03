@@ -93,6 +93,8 @@ public:
         
         while (curr != he2) {
             
+            //std::cout << "loop" << std::endl;
+
             CGAL_assertion(!curr->has_null_curve());
             
             const Halfedge* next = curr->next();
@@ -141,8 +143,10 @@ public:
                           const X_monotone_curve_2& cv) const {
         
         //std::cout << "Sign_of_path(he1, he2, cv)" << std::endl;
-
+        
         CGAL::Sign result = this->operator()(he2, he1);
+        
+        //std::cout << "first res: " << result << std::endl;
         
         typename Geometry_traits_2::Parameter_space_in_x_2 
             parameter_space_in_x =
@@ -211,14 +215,18 @@ public:
                 }
             }
 
+            //std::cout << "equalmin: " << equalmin << std::endl;
+
             if (ps_min_x != CGAL::ARR_INTERIOR || 
                 ps_min_y != CGAL::ARR_INTERIOR) {
 
                 CGAL::Sign tmp1 = 
                     _m_topology_traits->_sign_of_subpath(
-                            (equalmin ? he1 : he2), cv, CGAL::ARR_MIN_END
+                            (equalmin ? he1 : he2)->next(), cv, CGAL::ARR_MIN_END
                     );
                 
+                //std::cout << "tmp1: " << tmp1 << std::endl;
+
                 if (tmp1 != CGAL::ZERO) {
                     switch (result) {
                     case ZERO:
@@ -236,9 +244,11 @@ public:
                 
                 CGAL::Sign tmp2 = 
                     _m_topology_traits->_sign_of_subpath(
-                            (equalmin ? he2 : he1), cv, CGAL::ARR_MAX_END
+                            (equalmin ? he2 : he1)->next(), cv, CGAL::ARR_MAX_END
                     );
                 
+                //std::cout << "tmp2: " << tmp2 << std::endl;
+
                 if (tmp2 != CGAL::ZERO) {
                     switch (result) {
                     case ZERO:
