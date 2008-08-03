@@ -1048,6 +1048,7 @@ protected:
      * \return the perimetricity of the subpath
      */
     CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
+                                const bool target,
                                 const X_monotone_curve_2& cv2,
                                 const CGAL::Arr_curve_end& end2) const;
     

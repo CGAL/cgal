@@ -1721,6 +1721,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Sign 
 Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
 _sign_of_subpath(const Halfedge* he1, 
+                 const bool target,
                  const X_monotone_curve_2& cv2,
                  const CGAL::Arr_curve_end& end2) const {
    
@@ -1749,58 +1750,44 @@ _sign_of_subpath(const Halfedge* he1,
     }
 #endif
     
-    CGAL::Arr_curve_end he1_trg_end =
-        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
-        );
+    CGAL::Arr_curve_end he1_end;
     
-    CGAL::Arr_parameter_space he1_trg_ps_x = 
-        parameter_space_in_x(he1->curve(), he1_trg_end);
-    CGAL::Arr_parameter_space he1_trg_ps_y = 
-        parameter_space_in_y(he1->curve(), he1_trg_end);
+    if (target) {
+        he1_end = 
+            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+             CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
+            );
+    } else {
+        he1_end = 
+            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+             CGAL::ARR_MIN_END : CGAL::ARR_MAX_END
+            );
+    }
     
-    if (he1_trg_ps_x != CGAL::ARR_INTERIOR) {
-        
+    CGAL::Arr_parameter_space he1_end_ps_x = 
+        parameter_space_in_x(he1->curve(), he1_end);
+    CGAL::Arr_parameter_space he1_end_ps_y = 
+        parameter_space_in_y(he1->curve(), he1_end);
+    
 #if 0 // TODO check what to do for meeting at contraction or infinity
-        if (he1_trg_ps_x != ps_x) {
+    
+    if (he1_end_ps_x != CGAL::ARR_INTERIOR) {
+
+        if (he1_end_ps_x != ps_x) {
             // possible jump over x
 
-            bool modify = true;
-            
-            // check next
-            if (he1->vertex()->halfedge() !=
-                he1->vertex()->halfedge()->opposite()->prev()) {
-                
-                const Halfedge* next1 = he1->next();
-                CGAL_assertion(!next1->has_null_curve());
-                
-                CGAL::Arr_curve_end next1_src_end =
-                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
-                
-                CGAL::Arr_parameter_space next1_src_ps_x = 
-                    parameter_space_in_x(next1->curve(), 
-                                         next1_src_end);
-                
-                CGAL_assertion(next1_src_ps_x != CGAL::ARR_INTERIOR);
-                
-                modify = (next1_src_ps_x != ps_x);
+            if (he1_end_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
+                result = CGAL::POSITIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShcv:xp1" << std::endl;
+#endif
+            } else {
+                result = CGAL::NEGATIVE;
+#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShcv:xn1" << std::endl;
+#endif
             }
             
-            if (modify) {
-                if (he1_trg_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
-                    result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:xp1" << std::endl;
-#endif
-                } else {
-                    result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:xn1" << std::endl;
-#endif
-                }
-            }
-
         } else {
             
             CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
@@ -1836,46 +1823,27 @@ _sign_of_subpath(const Halfedge* he1,
                 }
             }
         }
+    } 
 #endif // END TODO
-    } else if (he1_trg_ps_y != CGAL::ARR_INTERIOR) {
+    
+    if (he1_end_ps_y != CGAL::ARR_INTERIOR) {
         
-        if (he1_trg_ps_y != ps_y) {
-            // possible jump over y
+        CGAL_assertion(result == CGAL::ZERO);
+        
+        if (he1_end_ps_y != ps_y) {
 
-            bool modify = true;
-            
-            // check next
-            if (he1->vertex()->halfedge() !=
-                he1->vertex()->halfedge()->opposite()->prev()) {
-                
-                const Halfedge* next1 = he1->next();
-                CGAL_assertion(!next1->has_null_curve());
-                
-                CGAL::Arr_curve_end next1_src_end =
-                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
-                
-                CGAL::Arr_parameter_space next1_src_ps_y = 
-                    parameter_space_in_y(next1->curve(), 
-                                         next1_src_end);
-                
-                CGAL_assertion(next1_src_ps_y != CGAL::ARR_INTERIOR);
-                
-                modify = (next1_src_ps_y != ps_y);
-            }
-            
-            if (modify) {
-                if (he1_trg_ps_y == CGAL::ARR_BOTTOM_BOUNDARY) {
-                    result = CGAL::POSITIVE;
+            CGAL::Arr_parameter_space exp = 
+                (target ?  CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
+            if (he1_end_ps_y == exp) {
+                result = CGAL::NEGATIVE;
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:yp1" << std::endl;
+                std::cout << "SOShcv:yn1" << std::endl;
 #endif
-                } else {
-                    result = CGAL::NEGATIVE;
+            } else {
+                result = CGAL::POSITIVE;
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:yn1" << std::endl;
+                std::cout << "SOShcv:yp1" << std::endl;
 #endif
-                }
             }
         }
     }
@@ -1886,151 +1854,6 @@ _sign_of_subpath(const Halfedge* he1,
 
     return result;
 }
-
-
-#if 0
-//-----------------------------------------------------------------------------
-// Number of crossing with the curve of identification
-//
-template <class GeomTraits, class Dcel_>
-    std::pair< unsigned int, unsigned int >
-Arr_qdx_topology_traits_2<GeomTraits, Dcel_>::
-_crossings_with_identification(
-        const Halfedge* he1, const Halfedge* he2, 
-        Discontinuity_crossing& leftmost) const {
-    
-    CGAL::Arr_parameter_space thistgt_by = CGAL::ARR_INTERIOR;
-    CGAL::Arr_parameter_space nextsrc_by = CGAL::ARR_INTERIOR;
-    
-    const Halfedge *curr = he1;
-    const Vertex *leftmost_vertex = NULL;
-    
-    // we count the number of crossings with the line of disc
-    unsigned int n_crossings_before_to_after = 0;
-    unsigned int n_crossings_after_to_before = 0;
-
-    if (he2 == NULL) {
-        // also check prev()->tgt with curr->src()
-        // read the boundary_type at tgt of curr
-        thistgt_by = this->_m_traits->parameter_space_in_y_2_object()(
-                curr->prev()->curve(), 
-                (curr->prev()->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-                 CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
-        );
-        
-        // read the boundary_type at src of next
-        nextsrc_by = this->_m_traits->parameter_space_in_y_2_object()(
-                curr->curve(), 
-                (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-                 CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
-        );
-        
-        if (thistgt_by == CGAL::ARR_BOTTOM_BOUNDARY &&
-            nextsrc_by == CGAL::ARR_TOP_BOUNDARY) {
-            if (leftmost_vertex == NULL || 
-                // TASK avoid real comparisons, ask _m_vertices_on_id
-                Point_2_less(_m_traits)(curr->vertex()->point(),
-                                       leftmost_vertex->point())) {
-                leftmost_vertex = curr->vertex();
-                leftmost = AFTER_TO_BEFORE;
-            }
-            n_crossings_after_to_before++;
-        }
-        if (thistgt_by == CGAL::ARR_TOP_BOUNDARY &&
-            nextsrc_by == CGAL::ARR_BOTTOM_BOUNDARY) {
-            if (leftmost_vertex == NULL || 
-                // TASK avoid real comparisons, ask _m_vertices_on_id
-                Point_2_less(_m_traits)(curr->vertex()->point(),
-                                       leftmost_vertex->point())) {
-                leftmost_vertex = curr->vertex();
-                leftmost = BEFORE_TO_AFTER;
-            }
-            n_crossings_before_to_after++;
-        }
-    } 
-    
-    const Halfedge *last = (he2 == NULL ? he1 : he2);
-
-    do {
-        // note that boundary conditions at beginning vertex of path
-        // and at end vertex of task do not count, since they offer
-        // always possibilities to connect the path on both sides of the
-        // discontinuity. 
-
-#if 0 
-        // TASK antennas are not so critical ... 
-        // since counted an even number of times, therefore not changing the
-        // result
-        // does only make sense to avoid checking edges, but makes handling
-        // of loop more complicated
-
-        
-        // first jump over antennas (the following CODE is NOT tested)
-        // In case the current halfedge belongs to an "antenna", namely its
-        // incident face is the same as its twin's, we can simply skip it
-        // (in order not to count it twice).
-        if ((curr->in_on_inner_ccb() && 
-             curr->inner_ccb()->face() == 
-             curr->opposite()->inner_ccb()->face())
-            ||
-            (curr->in_on_outer_ccb() && 
-             curr->outer_ccb()->face() == 
-             curr->opposite()->outer_ccb()->face())) {
-            if (curr == first || curr->next() == first) {
-                break;
-            }
-            // we skip, this and the next halfedge
-            curr = curr->next()->next();
-            continue;
-        }
-#endif
-        
-        // read the boundary_type at tgt of curr
-        thistgt_by = this->_m_traits->parameter_space_in_y_2_object()(
-                curr->curve(), 
-                (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-                 CGAL::ARR_MAX_END : CGAL::ARR_MIN_END)
-        );
-        
-        // read the boundary_type at src of next
-        nextsrc_by = this->_m_traits->parameter_space_in_y_2_object()(
-                curr->next()->curve(), 
-                (curr->next()->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-                 CGAL::ARR_MIN_END : CGAL::ARR_MAX_END)
-        );
-        
-        if (thistgt_by == CGAL::ARR_BOTTOM_BOUNDARY &&
-            nextsrc_by == CGAL::ARR_TOP_BOUNDARY) {
-            if (leftmost_vertex == NULL || 
-                // TASK avoid real comparisons, ask _m_vertices_on_id
-                Point_2_less(_m_traits)(curr->vertex()->point(),
-                                       leftmost_vertex->point())) {
-                leftmost_vertex = curr->vertex();
-                leftmost = AFTER_TO_BEFORE;
-            }
-            n_crossings_after_to_before++;
-        }
-        if (thistgt_by == CGAL::ARR_TOP_BOUNDARY &&
-            nextsrc_by == CGAL::ARR_BOTTOM_BOUNDARY) {
-            if (leftmost_vertex == NULL || 
-                // TASK avoid real comparisons, ask _m_vertices_on_id
-                Point_2_less(_m_traits)(curr->vertex()->point(),
-                                       leftmost_vertex->point())) {
-                leftmost_vertex = curr->vertex();
-                leftmost = BEFORE_TO_AFTER;
-            }
-            n_crossings_before_to_after++;
-        }
-        
-        // iterate
-        curr = curr->next();
-        
-    } while (curr != last);
-    
-    return std::make_pair(n_crossings_after_to_before,
-                          n_crossings_before_to_after);
-}
-#endif
 
 CGAL_END_NAMESPACE
 
