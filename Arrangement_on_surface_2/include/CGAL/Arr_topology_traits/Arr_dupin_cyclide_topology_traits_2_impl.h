@@ -21,6 +21,10 @@
 #ifndef CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
 #define CGAL_ARR_DUPIN_CYCLIDE_TOPOLOGY_TRAITS_2_IMPL_H
 
+#ifndef CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+#define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
+#endif
+
 /*! \file
  * Member-function definitions for the
  * Arr_dupin_cyclide_topology_traits_2<GeomTraits> class.
@@ -259,6 +263,10 @@ void Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::init_dcel ()
     // create the face
     this->_m_f_top = this->_m_dcel.new_face();
     
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "RDC-TOP ftop: " << this->_m_f_top << std::endl;
+#endif
+
     // bounded
     this->_m_f_top->set_unbounded (false);   
 
@@ -407,10 +415,30 @@ locate_around_boundary_vertex (Vertex *v,
                                Arr_parameter_space ps_y) const
 {
     // status: correct
-    //std::cout << "Arr_dupin_cyclide_topology_traits_2 "
-    //          << "locate_around_boundary_vertex"  
-    //          << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " RDC-TOP locate_around_boundary_vertex\ncurve: " << cv 
+              << std::endl;
+    std::cout << "end: " << ind << std::endl;
+    std::cout << "psx: " << ps_x << std::endl;
+    std::cout << "psy: " << ps_y << std::endl;
+
+
+    Halfedge * firsth = v->halfedge();
+    Halfedge * currh = firsth;
+    CGAL_assertion(currh != NULL);
     
+    std::cout << "******************************************" << std::endl;    
+    do {
+        std::cout << "curve: " << currh->curve() << std::endl;
+        std::cout << "dir: " << currh->direction() << std::endl;
+        std::cout << "face: " << (currh->is_on_inner_ccb() ? 
+                                  currh->inner_ccb()->face() : 
+                                  currh->outer_ccb()->face()) << std::endl;
+        std::cout << "******************************************" << std::endl;
+        currh = currh->next()->opposite();
+    } while (currh != firsth);
+#endif
+
     CGAL_precondition(_valid(ps_x, ps_y));
     
     // If the vertex is isolated, there is no predecssor halfedge.
@@ -438,18 +466,6 @@ locate_around_boundary_vertex (Vertex *v,
         _m_traits->is_between_cw_2_object();
     bool eq_curr, eq_next;
     
-#if 0
-    std::cout << "??????????????????????????????????????????" << std::endl;
-    std::cout << "search: " << std::endl;
-
-    std::cout << "curr: " << curr->curve() << std::endl;
-    std::cout << "dir: " << curr->direction() << std::endl;
-    std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << next->direction() << std::endl;
-    
-    std::cout << "******************************************" << std::endl;
-#endif
-    
     while (!is_between_cw(cv, (ind == CGAL::ARR_MIN_END),
                           curr->curve(), 
                           (curr->direction() == CGAL::ARR_RIGHT_TO_LEFT),
@@ -461,18 +477,22 @@ locate_around_boundary_vertex (Vertex *v,
         // already incident to v.
         CGAL_assertion(!eq_curr && !eq_next);
         
-#if 0
-        std::cout << "circle: " << std::endl;
-        std::cout << "??????????????????????????????????????????" << std::endl;
-        std::cout << "search: " << std::endl;
+        std::cout << "=========================================="
+                  << std::endl;
+        std::cout << "searchloop: " << std::endl;
         
         std::cout << "curr: " << curr->curve() << std::endl;
         std::cout << "dir: " << curr->direction() << std::endl;
+        std::cout << "face: " << (curr->is_on_inner_ccb() ? 
+                                  curr->inner_ccb()->face() : 
+                                  curr->outer_ccb()->face()) << std::endl; 
         std::cout << "next: " << next->curve() << std::endl;
         std::cout << "dir: " << next->direction() << std::endl;
-        
+        std::cout << "face: " << (next->is_on_inner_ccb() ? 
+                                  next->inner_ccb()->face() : 
+                                  next->outer_ccb()->face()) << std::endl;
+
         std::cout << "******************************************" << std::endl;
-#endif
         
         // Move to the next pair of incident halfedges.
         curr = next;
@@ -482,21 +502,13 @@ locate_around_boundary_vertex (Vertex *v,
         // locating a place for the new curve xc.
         CGAL_assertion (curr != first);
     }
-
-#if 0
-    std::cout << "after circle: " << std::endl;
     
-    std::cout << "??????????????????????????????????????????" << std::endl;
-    std::cout << "search: " << std::endl;
-
-    std::cout << "curr: " << curr->curve() << std::endl;
+    std::cout << "return curr: " << curr->curve() << std::endl;
     std::cout << "dir: " << curr->direction() << std::endl;
-    std::cout << "next: " << next->curve() << std::endl;
-    std::cout << "dir: " << next->direction() << std::endl;
+    std::cout << "face: " << (curr->is_on_inner_ccb() ? 
+                              curr->inner_ccb()->face() : 
+                              curr->outer_ccb()->face()) << std::endl;
     
-    std::cout << "******************************************" << std::endl;
-#endif
-
     return curr;
 }
 
@@ -687,10 +699,10 @@ face_split_after_edge_insertion (const Halfedge *prev1,
                                  const X_monotone_curve_2& cv) const
 {
     // status: correct
-    //std::cout << "Arr_dupin_cyclide_topology_traits_2 face_split"  
-    //          << std::endl;
-    
-    //std::cout << "face_split cv: " << cv << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " RDC-TOP face_split_after_edge_insertion\ncurve: " << cv 
+              << std::endl;
+#endif
 
     CGAL_precondition (prev1->is_on_inner_ccb());
     CGAL_precondition (prev2->is_on_inner_ccb());
@@ -698,15 +710,21 @@ face_split_after_edge_insertion (const Halfedge *prev1,
     
     Sign_of_path sign_of_path(this);
     
-    //std::cout << "Path1: " << std::endl;
-    CGAL::Sign sign_12 = sign_of_path(prev1, prev2, cv);
-    //std::cout << "sign1: " << sign_12 << std::endl;
-    //std::cout << "Path2: " << std::endl;
-    CGAL::Sign sign_21 = sign_of_path(prev2, prev1, cv);
-    //std::cout << "sign2: " << sign_21 << std::endl;
-    
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "Path1 (containing prev1): " << std::endl;
+#endif
+    CGAL::Sign sign_1 = sign_of_path(prev2->next(), prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign1: " << sign_1 << std::endl;
+        std::cout << "Path2 (containing prev2): " << std::endl;
+#endif
+        CGAL::Sign sign_2 = sign_of_path(prev1->next(), prev2, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "sign2: " << sign_2 << std::endl;
+#endif
+
     // TODO use arr function for to check perimetry
-    bool perimetric = (sign_12 != CGAL::ZERO && sign_21 != CGAL::ZERO);
+    bool perimetric = (sign_1 != CGAL::ZERO && sign_2 != CGAL::ZERO);
     
     // on a dupin_cyclide except for one case, there is a face split
     if (perimetric) {
@@ -816,6 +834,11 @@ is_on_new_perimetric_face_boundary (const Halfedge *prev1,
                                     const Halfedge *prev2,
                                     const X_monotone_curve_2& cv) const
 {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " RDC-TOP is_on_new_perimetric_face_boundary\ncurve: " << cv 
+              << std::endl;
+#endif
+
     // status: correct
     //std::cout << "Arr_dupin_cyclide_topology_traits_2::" 
     //          << "is_on_new_perimetric_face_boundary"
@@ -832,10 +855,26 @@ is_on_new_perimetric_face_boundary (const Halfedge *prev1,
     
     Sign_of_path sign_of_path(this);
     
-    CGAL::Sign sign = sign_of_path(prev2, prev1, cv);
-    CGAL_assertion(sign != CGAL::ZERO);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "Path1 (containing prev1): " << std::endl;
+#endif
+    CGAL::Sign sgn = sign_of_path(prev2->next(), prev1, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign1: " << sgn << std::endl;
+#endif
+    if (sgn == CGAL::ZERO) {
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "Path2 (containing prev2): " << std::endl;
+#endif
+        CGAL::Sign sgn = sign_of_path(prev1->next(), prev2, cv);
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+        std::cout << "sign2: " << sgn << std::endl;
+#endif
+    }
     
-    return (sign == CGAL::NEGATIVE);
+    CGAL_assertion(sgn != CGAL::ZERO);
+    
+    return (sgn == CGAL::NEGATIVE);
 }
 
 //-----------------------------------------------------------------------------
@@ -847,9 +886,11 @@ Arr_dupin_cyclide_topology_traits_2<GeomTraits,Dcel_>::
 boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
     
     // status: correct
-    //std::cout << " Arr_dupin_cyclide_topology_traits_2::"
-    //          << "boundaries_of_same_face" 
-    //          << std::endl;
+
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << " RDC-TOP boundaries_of_same_face" 
+              << std::endl;
+#endif
     // This predicate is only used for case 3.3.2 of the insertion process
 
 #if 0    
@@ -863,13 +904,19 @@ boundaries_of_same_face (const Halfedge *e1, const Halfedge *e2) const {
 
     Sign_of_path sign_of_path(this);
 
-    // compute signs of path (both must be non-zero)
-    //std::cout << "Path1:" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "Path1 (containing e1): " << std::endl;
+#endif
     CGAL::Sign sign1 = sign_of_path(e1, e1);
-    //std::cout << "Sign1: " << sign1 << std::endl;
-    //std::cout << "Path2:" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign1: " << sign1 << std::endl;
+    std::cout << "Path2 (containing e2): " << std::endl;
+#endif
     CGAL::Sign sign2 = sign_of_path(e2, e2);
-    //std::cout << "Sign2: " << sign2 << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 
+    std::cout << "sign2: " << sign2 << std::endl;
+#endif
+    
     CGAL_assertion(sign1 != CGAL::ZERO);
     CGAL_assertion(sign2 != CGAL::ZERO);
     
@@ -954,7 +1001,9 @@ erase_redundant_vertex (Vertex *v)
     return NULL;
 }
 
+#ifndef CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE 
 #define CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE 0
+#endif
 
 //-----------------------------------------------------------------------------
 // Returns sign of "crossing" with the curve of identification
@@ -966,11 +1015,11 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     
     CGAL::Sign result = CGAL::ZERO;
     
-    CGAL::Arr_curve_end end1 = 
+    CGAL::Arr_curve_end he1_tgt_end = 
         (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
          CGAL::ARR_MAX_END : CGAL::ARR_MIN_END);
     
-    CGAL::Arr_curve_end end2 = 
+    CGAL::Arr_curve_end he2_src_end = 
         (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
          CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
     
@@ -979,22 +1028,22 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
         _m_traits->parameter_space_in_y_2_object();
     
-    CGAL::Arr_parameter_space he1_psx =
-        parameter_space_in_x(he1->curve(), end1);
+    CGAL::Arr_parameter_space he1_tgt_psx =
+        parameter_space_in_x(he1->curve(), he1_tgt_end);
 
-    CGAL::Arr_parameter_space he1_psy =
-        parameter_space_in_y(he1->curve(), end1);
+    CGAL::Arr_parameter_space he1_tgt_psy =
+        parameter_space_in_y(he1->curve(), he1_tgt_end);
     
-    CGAL::Arr_parameter_space he2_psx =
-        parameter_space_in_x(he2->curve(), end2);
+    CGAL::Arr_parameter_space he2_src_psx =
+        parameter_space_in_x(he2->curve(), he2_src_end);
 
-    CGAL::Arr_parameter_space he2_psy =
-        parameter_space_in_y(he2->curve(), end2);
+    CGAL::Arr_parameter_space he2_src_psy =
+        parameter_space_in_y(he2->curve(), he2_src_end);
     
-    if (he1_psx == CGAL::ARR_INTERIOR &&
-        he1_psy == CGAL::ARR_INTERIOR &&
-        he2_psx == CGAL::ARR_INTERIOR &&
-        he2_psy == CGAL::ARR_INTERIOR) {
+    if (he1_tgt_psx == CGAL::ARR_INTERIOR &&
+        he1_tgt_psy == CGAL::ARR_INTERIOR &&
+        he2_src_psx == CGAL::ARR_INTERIOR &&
+        he2_src_psy == CGAL::ARR_INTERIOR) {
         return result;
     }
 
@@ -1005,35 +1054,38 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     std::cout << "dir2: " << he2->direction() << std::endl;
 #endif
     
-    if (he1_psx != he2_psx) {
+    if (he1_tgt_psx != CGAL::ARR_INTERIOR) {
         
-        if (he1_psx == CGAL::ARR_RIGHT_BOUNDARY) {
-            result = CGAL::POSITIVE;
+        // left-right
+        if (he1_tgt_psx != he2_src_psx) {
+            
+            if (he1_tgt_psx == CGAL::ARR_LEFT_BOUNDARY) {
+                result = CGAL::NEGATIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-            std::cout << "SOShh:xp1" << std::endl;
+                std::cout << "SOShh:xn1" << std::endl;
 #endif
+            } else {
+                result = CGAL::POSITIVE;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh:xp1" << std::endl;
+#endif
+            }
+            
         } else {
-            result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-            std::cout << "SOShh:xn1" << std::endl;
-#endif
-        }
-        
-    } else { 
-        
-        if (he1_psx != CGAL::ARR_INTERIOR) {
+            
+            // left-left, right-right
             // can influence pole
             
-            CGAL_assertion(he2_psx != CGAL::ARR_INTERIOR);
-
+            CGAL_assertion(he1_tgt_psx != CGAL::ARR_INTERIOR);
+            
             CGAL::Object obj1 = 
                 he1->curve().curve().asymptotic_value_of_arc(
-                        he1_psx,
+                        he1_tgt_psx,
                         he1->curve().arcno()
                 );
             CGAL::Object obj2 = 
                 he2->curve().curve().asymptotic_value_of_arc(
-                        he1_psx,
+                        he2_src_psx,
                         he2->curve().arcno()
                 );
             
@@ -1041,39 +1093,44 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             
             if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
                 if (ps1 != ps2) {
-                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
                         // bottom to top
-                        result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                        std::cout << "SOShh:xp2" << std::endl;
-#endif
-                    } else {
-                        // top to bottom
                         result = CGAL::NEGATIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
                         std::cout << "SOShh:xn2" << std::endl;
 #endif
+                    } else {
+                        // top to bottom
+                        result = CGAL::POSITIVE;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+                        std::cout << "SOShh:xp2" << std::endl;
+#endif
                     }
                 }
             }
-
-        } else {
-            
-            CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
-            CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
-            
-            if (he1_psy != he2_psy) {
-                if (he1_psy == CGAL::ARR_BOTTOM_BOUNDARY) {
-                    result = CGAL::POSITIVE;
-                    //std::cout << "SOShh:yp1" << std::endl;
-                } else {
-                    result = CGAL::NEGATIVE;
-                    //std::cout << "SOShh::yn1" << std::endl;
-                }
+        }
+        
+    } else {
+        // bottom-top
+        
+        CGAL_assertion(he1_tgt_psy != CGAL::ARR_INTERIOR);
+        CGAL_assertion(he2_src_psy != CGAL::ARR_INTERIOR);
+        
+        if (he1_tgt_psy != he2_src_psy) {
+            if (he1_tgt_psy == CGAL::ARR_TOP_BOUNDARY) {
+                result = CGAL::NEGATIVE;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh:yn1" << std::endl;
+#endif
+            } else {
+                result = CGAL::POSITIVE;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+                std::cout << "SOShh::yp1" << std::endl;
+#endif
             }
         }
     }
-
+    
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
@@ -1088,6 +1145,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Sign
 Arr_dupin_cyclide_topology_traits_2<GeomTraits, Dcel_>::
 _sign_of_subpath (const Halfedge* he1,
+                  const bool target1,
                   const X_monotone_curve_2& cv2,
                   const CGAL::Arr_curve_end& end2) const {
 
@@ -1102,145 +1160,122 @@ _sign_of_subpath (const Halfedge* he1,
     
     // check whether cv can influence the counters
     
-    CGAL::Arr_parameter_space ps_x = 
+    CGAL::Arr_parameter_space psx = 
         parameter_space_in_x(cv2, end2);
-    CGAL::Arr_parameter_space ps_y = 
+    CGAL::Arr_parameter_space psy = 
         parameter_space_in_y(cv2, end2);
     
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-    if (ps_x != CGAL::ARR_INTERIOR || ps_y != CGAL::ARR_INTERIOR) {
+    if (psx != CGAL::ARR_INTERIOR || psy != CGAL::ARR_INTERIOR) {
         std::cout << "he1: " << he1->curve() << std::endl;
         std::cout << "dir1: " << he1->direction() << std::endl;
         std::cout << "cv2: " << cv2 << std::endl;
         std::cout << "end: " << end2 << std::endl;
     }
 #endif
+    CGAL::Arr_curve_end he1_end;
     
-    CGAL::Arr_curve_end he1_trg_end =
-        (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
-         CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
-        );
-    
-    CGAL::Arr_parameter_space he1_trg_ps_x = 
-        parameter_space_in_x(he1->curve(), he1_trg_end);
-    CGAL::Arr_parameter_space he1_trg_ps_y = 
-        parameter_space_in_y(he1->curve(), he1_trg_end);
-        
-    if (he1_trg_ps_x != CGAL::ARR_INTERIOR) {
-        
-        if (he1_trg_ps_x != ps_x) {
-            // possible jump over x
+    if (target1) {
+        he1_end = 
+            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+             CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
+            );
+    } else {
+        he1_end = 
+            (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
+             CGAL::ARR_MIN_END : CGAL::ARR_MAX_END
+            );
+    }
 
-            bool modify = true;
+    CGAL::Arr_parameter_space he1_end_psx = 
+        parameter_space_in_x(he1->curve(), he1_end);
+    CGAL::Arr_parameter_space he1_end_psy = 
+        parameter_space_in_y(he1->curve(), he1_end);
+    
+    if (he1_end_psx != CGAL::ARR_INTERIOR) {
+        // left-right
+        
+        if (he1_end_psx != psx) {
+            // possible jump over x
             
-            // check next
-            if (he1->vertex()->halfedge() !=
-                he1->vertex()->halfedge()->opposite()->prev()) {
-                
-                const Halfedge* next1 = he1->next();
-                CGAL_assertion(!next1->has_null_curve());
-                
-                CGAL::Arr_curve_end next1_src_end =
-                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
-                
-                CGAL::Arr_parameter_space next1_src_ps_x = 
-                    parameter_space_in_x(next1->curve(), 
-                                         next1_src_end);
-                
-                CGAL_assertion(next1_src_ps_x != CGAL::ARR_INTERIOR);
-                
-                modify = (next1_src_ps_x != ps_x);
-            }
+            CGAL::Arr_parameter_space exp = 
+                (target1 ?  
+                 CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
             
-            if (modify) {
-                if (he1_trg_ps_x == CGAL::ARR_RIGHT_BOUNDARY) {
-                    result = CGAL::POSITIVE;
+            if (he1_end_psx == exp) {
+                result = CGAL::NEGATIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:xp1" << std::endl;
+                std::cout << "SOShcv:xn1" << std::endl;
 #endif
-                } else {
-                    result = CGAL::NEGATIVE;
+            } else {
+                result = CGAL::POSITIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:xn1" << std::endl;
+                std::cout << "SOShcv:xp1" << std::endl;
 #endif
-                }
             }
             
         } else {
             
-            CGAL_assertion(ps_x != CGAL::ARR_INTERIOR);
-
+            CGAL_assertion(psx != CGAL::ARR_INTERIOR);
+            
             CGAL::Object obj1 = 
                 he1->curve().curve().asymptotic_value_of_arc(
-                        ps_x,
+                        psx,
                         he1->curve().arcno()
                 );
             CGAL::Object obj2 = 
                 cv2.curve().asymptotic_value_of_arc(
-                        ps_x,
+                        psx,
                         cv2.arcno()
                 );
             
             CGAL::Arr_parameter_space ps1, ps2;
             
+            CGAL::Arr_parameter_space exp = 
+                (target1 ?  
+                 CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
+            
             if (CGAL::assign(ps1, obj1) && CGAL::assign(ps2, obj2)) {
                 if (ps1 != ps2) {
-                    if (ps1 == CGAL::ARR_BOTTOM_BOUNDARY) {
+                    if (ps1 == exp) {
                         // bottom to top
-                        result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                        std::cout << "SOShcv:xp2" << std::endl;
-#endif
-                    } else {
-                        // top to bottom
                         result = CGAL::NEGATIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
                         std::cout << "SOShcv:xn2" << std::endl;
+#endif
+                    } else {
+                        // top to bottom
+                        result = CGAL::POSITIVE;
+#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+                        std::cout << "SOShcv:xp2" << std::endl;
 #endif
                     }
                 }
             }
         }
-    } else if (he1_trg_ps_y != CGAL::ARR_INTERIOR) {
-        
-        if (he1_trg_ps_y != ps_y) {
-            // possible jump over y
+    } 
+    
+    // bottom-top
+    if (he1_end_psy != CGAL::ARR_INTERIOR) {
 
-            bool modify = true;
+        CGAL_assertion(result == CGAL::ZERO);
+        
+        if (he1_end_psy != psy) {
             
-            // check next
-            if (he1->vertex()->halfedge() !=
-                he1->vertex()->halfedge()->opposite()->prev()) {
-                
-                const Halfedge* next1 = he1->next();
-                CGAL_assertion(!next1->has_null_curve());
-                
-                CGAL::Arr_curve_end next1_src_end =
-                    (next1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
-                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
-                
-                CGAL::Arr_parameter_space next1_src_ps_y = 
-                    parameter_space_in_y(next1->curve(), 
-                                         next1_src_end);
-                
-                CGAL_assertion(next1_src_ps_y != CGAL::ARR_INTERIOR);
-                
-                modify = (next1_src_ps_y != ps_y);
-            }
+            CGAL::Arr_parameter_space exp = 
+                (target1 ?  
+                 CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
             
-            if (modify) {
-                if (he1_trg_ps_y == CGAL::ARR_BOTTOM_BOUNDARY) {
-                    result = CGAL::POSITIVE;
+            if (he1_end_psy == exp) {
+                result = CGAL::NEGATIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:yp1" << std::endl;
+                std::cout << "SOShcv:yn1" << std::endl;
 #endif
-                } else {
-                    result = CGAL::NEGATIVE;
+            } else {
+                result = CGAL::POSITIVE;
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
-                    std::cout << "SOShcv:yn1" << std::endl;
+                std::cout << "SOShcv:yp1" << std::endl;
 #endif
-                }
             }
         }
     }
@@ -1248,7 +1283,7 @@ _sign_of_subpath (const Halfedge* he1,
 #if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
-
+    
     return result;
 }
 
