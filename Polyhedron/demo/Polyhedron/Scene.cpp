@@ -434,7 +434,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
         return tr("A/B");
         break;
       case ActivatedColumn:
-        return tr("Activated");
+        return tr("View");
         break;
       default:
         return QVariant();

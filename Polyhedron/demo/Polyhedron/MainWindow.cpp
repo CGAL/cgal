@@ -39,17 +39,20 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup the treeview: delegation and columns sizing...
   treeView->setItemDelegate(new SceneDelegate(this));
-  treeView->resizeColumnToContents(Scene::ColorColumn);
-  treeView->resizeColumnToContents(Scene::RenderingModeColumn);
-  treeView->resizeColumnToContents(Scene::ABColumn);
-  treeView->resizeColumnToContents(Scene::ActivatedColumn);
 
   treeView->header()->setStretchLastSection(false);
+  treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   treeView->header()->setResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   treeView->header()->setResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   treeView->header()->setResizeMode(Scene::ABColumn, QHeaderView::Fixed);
   treeView->header()->setResizeMode(Scene::ActivatedColumn, QHeaderView::Fixed);
+
+  treeView->resizeColumnToContents(Scene::ColorColumn);
+  treeView->resizeColumnToContents(Scene::RenderingModeColumn);
+  treeView->resizeColumnToContents(Scene::ABColumn);
+  treeView->resizeColumnToContents(Scene::ActivatedColumn);
+
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           viewer, SLOT(updateGL()));
