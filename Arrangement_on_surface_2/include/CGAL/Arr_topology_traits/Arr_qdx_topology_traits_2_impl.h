@@ -25,6 +25,10 @@
 #define CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE 0
 #endif
 
+#ifndef CGAL_ARR_SIGN_OF_PATH_VERBOSE 
+#define CGAL_ARR_SIGN_OF_PATH_VERBOSE 0
+#endif
+
 /*! \file
  * Member-function definitions for the
  * Arr_qdx_topology_traits_2<GeomTraits> class.
@@ -1636,7 +1640,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         return result;
     }
 
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "he1: " << he1->curve() << std::endl;
     std::cout << "dir1: " << he1->direction() << std::endl;
     std::cout << "he2: " << he2->curve() << std::endl;
@@ -1651,19 +1655,19 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         if (he1_tgt_psy != he2_src_psy) {
             if (he1_tgt_psy == CGAL::ARR_TOP_BOUNDARY) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh:yn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh::yp1" << std::endl;
 #endif
             }
         }
     }
     
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
 
@@ -1696,7 +1700,7 @@ _sign_of_subpath(const Halfedge* he1,
     CGAL::Arr_parameter_space psy = 
         parameter_space_in_y(cv2, end2);
     
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     if (psy != CGAL::ARR_INTERIOR) {
         std::cout << "he1: " << he1->curve() << std::endl;
         std::cout << "dir1: " << he1->direction() << std::endl;
@@ -1733,19 +1737,19 @@ _sign_of_subpath(const Halfedge* he1,
                  CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
             if (he1_end_psy == exp) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:yn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:yp1" << std::endl;
 #endif
             }
         }
     }
     
-#if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
 

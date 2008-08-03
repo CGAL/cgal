@@ -1001,8 +1001,8 @@ erase_redundant_vertex (Vertex *v)
     return NULL;
 }
 
-#ifndef CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE 
-#define CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE 0
+#ifndef CGAL_ARR_SIGN_OF_PATH_VERBOSE 
+#define CGAL_ARR_SIGN_OF_PATH_VERBOSE 0
 #endif
 
 //-----------------------------------------------------------------------------
@@ -1047,7 +1047,7 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         return result;
     }
 
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "he1: " << he1->curve() << std::endl;
     std::cout << "dir1: " << he1->direction() << std::endl;
     std::cout << "he2: " << he2->curve() << std::endl;
@@ -1061,12 +1061,12 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
             
             if (he1_tgt_psx == CGAL::ARR_LEFT_BOUNDARY) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh:xn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh:xp1" << std::endl;
 #endif
             }
@@ -1096,13 +1096,13 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
                     if (ps1 == CGAL::ARR_TOP_BOUNDARY) {
                         // bottom to top
                         result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                         std::cout << "SOShh:xn2" << std::endl;
 #endif
                     } else {
                         // top to bottom
                         result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                         std::cout << "SOShh:xp2" << std::endl;
 #endif
                     }
@@ -1119,19 +1119,19 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
         if (he1_tgt_psy != he2_src_psy) {
             if (he1_tgt_psy == CGAL::ARR_TOP_BOUNDARY) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh:yn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShh::yp1" << std::endl;
 #endif
             }
         }
     }
     
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
     
@@ -1165,7 +1165,7 @@ _sign_of_subpath (const Halfedge* he1,
     CGAL::Arr_parameter_space psy = 
         parameter_space_in_y(cv2, end2);
     
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     if (psx != CGAL::ARR_INTERIOR || psy != CGAL::ARR_INTERIOR) {
         std::cout << "he1: " << he1->curve() << std::endl;
         std::cout << "dir1: " << he1->direction() << std::endl;
@@ -1204,12 +1204,12 @@ _sign_of_subpath (const Halfedge* he1,
             
             if (he1_end_psx == exp) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:xn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:xp1" << std::endl;
 #endif
             }
@@ -1240,13 +1240,13 @@ _sign_of_subpath (const Halfedge* he1,
                     if (ps1 == exp) {
                         // bottom to top
                         result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                         std::cout << "SOShcv:xn2" << std::endl;
 #endif
                     } else {
                         // top to bottom
                         result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                         std::cout << "SOShcv:xp2" << std::endl;
 #endif
                     }
@@ -1268,26 +1268,26 @@ _sign_of_subpath (const Halfedge* he1,
             
             if (he1_end_psy == exp) {
                 result = CGAL::NEGATIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:yn1" << std::endl;
 #endif
             } else {
                 result = CGAL::POSITIVE;
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
                 std::cout << "SOShcv:yp1" << std::endl;
 #endif
             }
         }
     }
     
-#if CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#if CGAL_ARR_SIGN_OF_PATH_VERBOSE
     std::cout << "result: " << result << std::endl;
 #endif
     
     return result;
 }
 
-#undef CGAL_ARR_DUPIN_CYCLIDE_SIGN_OF_SUBPATH_VERBOSE
+#undef CGAL_ARR_SIGN_OF_SPATH_VERBOSE
 
 /*! \brief Return the face that lies before the given vertex, which lies
  * on the line of discontinuity.
