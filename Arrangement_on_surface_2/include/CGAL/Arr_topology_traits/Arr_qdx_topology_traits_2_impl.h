@@ -1614,25 +1614,25 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
 
     CGAL::Sign result = CGAL::ZERO;
     
-    CGAL::Arr_curve_end end1 = 
+    CGAL::Arr_curve_end he1_tgt_end = 
         (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
          CGAL::ARR_MAX_END : CGAL::ARR_MIN_END);
     
-    CGAL::Arr_curve_end end2 = 
+    CGAL::Arr_curve_end he2_src_end = 
         (he2->direction() == CGAL::ARR_LEFT_TO_RIGHT ?
          CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
     
     typename Traits_adaptor_2::Parameter_space_in_y_2 parameter_space_in_y =
         _m_traits->parameter_space_in_y_2_object();
     
-    CGAL::Arr_parameter_space he1_psy =
-        parameter_space_in_y(he1->curve(), end1);
+    CGAL::Arr_parameter_space he1_tgt_psy =
+        parameter_space_in_y(he1->curve(), he1_tgt_end);
     
-    CGAL::Arr_parameter_space he2_psy =
-        parameter_space_in_y(he2->curve(), end2);
+    CGAL::Arr_parameter_space he2_src_psy =
+        parameter_space_in_y(he2->curve(), he2_src_end);
     
-    if (he1_psy == CGAL::ARR_INTERIOR &&
-        he2_psy == CGAL::ARR_INTERIOR) {
+    if (he1_tgt_psy == CGAL::ARR_INTERIOR &&
+        he2_src_psy == CGAL::ARR_INTERIOR) {
         return result;
     }
 
@@ -1643,13 +1643,13 @@ _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) const {
     std::cout << "dir2: " << he2->direction() << std::endl;
 #endif
     
-    if (he1_psy != CGAL::ARR_INTERIOR) {
+    if (he1_tgt_psy != CGAL::ARR_INTERIOR) {
         
-        CGAL_assertion(he1_psy != CGAL::ARR_INTERIOR);
-        CGAL_assertion(he2_psy != CGAL::ARR_INTERIOR);
+        CGAL_assertion(he1_tgt_psy != CGAL::ARR_INTERIOR);
+        CGAL_assertion(he2_src_psy != CGAL::ARR_INTERIOR);
         
-        if (he1_psy != he2_psy) {
-            if (he1_psy == CGAL::ARR_BOTTOM_BOUNDARY) {
+        if (he1_tgt_psy != he2_src_psy) {
+            if (he1_tgt_psy == CGAL::ARR_TOP_BOUNDARY) {
                 result = CGAL::NEGATIVE;
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
                 std::cout << "SOShh:yn1" << std::endl;
@@ -1678,7 +1678,7 @@ template <class GeomTraits, class Dcel_>
 CGAL::Sign 
 Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::
 _sign_of_subpath(const Halfedge* he1, 
-                 const bool target,
+                 const bool target1,
                  const X_monotone_curve_2& cv2,
                  const CGAL::Arr_curve_end& end2) const {
    
@@ -1693,11 +1693,11 @@ _sign_of_subpath(const Halfedge* he1,
     
     // check whether cv can influence the counters
     
-    CGAL::Arr_parameter_space ps_y = 
+    CGAL::Arr_parameter_space psy = 
         parameter_space_in_y(cv2, end2);
     
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
-    if (ps_y != CGAL::ARR_INTERIOR) {
+    if (psy != CGAL::ARR_INTERIOR) {
         std::cout << "he1: " << he1->curve() << std::endl;
         std::cout << "dir1: " << he1->direction() << std::endl;
         std::cout << "cv2: " << cv2 << std::endl;
@@ -1707,7 +1707,7 @@ _sign_of_subpath(const Halfedge* he1,
     
     CGAL::Arr_curve_end he1_end;
     
-    if (target) {
+    if (target1) {
         he1_end = 
             (he1->direction() == CGAL::ARR_LEFT_TO_RIGHT ? 
              CGAL::ARR_MAX_END : CGAL::ARR_MIN_END
@@ -1719,18 +1719,19 @@ _sign_of_subpath(const Halfedge* he1,
             );
     }
     
-    CGAL::Arr_parameter_space he1_end_ps_y = 
+    CGAL::Arr_parameter_space he1_end_psy = 
         parameter_space_in_y(he1->curve(), he1_end);
     
-    if (he1_end_ps_y != CGAL::ARR_INTERIOR) {
+    if (he1_end_psy != CGAL::ARR_INTERIOR) {
         
         CGAL_assertion(result == CGAL::ZERO);
         
-        if (he1_end_ps_y != ps_y) {
+        if (he1_end_psy != psy) {
 
             CGAL::Arr_parameter_space exp = 
-                (target ?  CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
-            if (he1_end_ps_y == exp) {
+                (target1 ?  
+                 CGAL::ARR_TOP_BOUNDARY : CGAL::ARR_BOTTOM_BOUNDARY);
+            if (he1_end_psy == exp) {
                 result = CGAL::NEGATIVE;
 #if CGAL_ARR_QDX_SIGN_OF_SUBPATH_VERBOSE
                 std::cout << "SOShcv:yn1" << std::endl;
