@@ -98,19 +98,20 @@ public:
         
         do {
             
-            CGAL_assertion(!curr->has_null_curve());
-            CGAL_assertion(!next->has_null_curve());
-            
-            CGAL::Sign tmp = _m_topology_traits->_sign_of_subpath(curr, next);
-            
-            if (tmp != CGAL::ZERO) {
-                switch (result) {
-                case ZERO:
-                    result = tmp;
-                    break;
-                default:
-                    CGAL_assertion(result == -tmp || result == tmp);
-                    result = CGAL::ZERO;
+            if (!curr->has_null_curve() && !next->has_null_curve()) {
+                
+                CGAL::Sign tmp = 
+                    _m_topology_traits->_sign_of_subpath(curr, next);
+                
+                if (tmp != CGAL::ZERO) {
+                    switch (result) {
+                    case ZERO:
+                        result = tmp;
+                        break;
+                    default:
+                        CGAL_assertion(result == -tmp || result == tmp);
+                        result = CGAL::ZERO;
+                    }
                 }
             }
             
