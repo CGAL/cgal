@@ -284,6 +284,36 @@ public:
     return (false);
   }
 
+
+#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE || CGAL_NEW_FACE_SPLIT_STRATEGY
+  /*!
+   * Computes the sign of two halfedges approaching and leaving the
+   * boundary
+   * \param he1 The halfedge entering the boundary
+   * \param he2 The halfedge leaving the boundary
+   * \return the perimetricity of the subpath
+   */
+  CGAL::Sign _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) 
+    const {
+    return CGAL::ZERO;
+  }
+    
+  /*!
+   * Computes the sign of a halfedge and a curve approaching and leaving the
+   * boundary
+   * \param he1 The halfedge entering the boundary
+   * \param cv2 The curve leaving the boundary
+   * \param end2 The end of the curve leaving the boundary
+   * \return the perimetricity of the subpath
+   */
+  CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
+                              const bool target,
+                              const X_monotone_curve_2& cv2,
+                              const CGAL::Arr_curve_end& end2) const {
+    return CGAL::ZERO;
+  }
+#endif
+
   /*!
    * Determine whether the given point lies in the interior of the given face.
    * \param f The face.
