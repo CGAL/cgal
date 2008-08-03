@@ -216,11 +216,10 @@ void MainWindow::readSettings()
   settings.beginGroup("MainWindow");
   resize(settings.value("size", QSize(400, 400)).toSize());
   move(settings.value("pos", QPoint(0, 0)).toPoint());
-  settings.endGroup();
-
-  settings.beginGroup("SceneView");
-  treeView->setColumnWidth(Scene::NameColumn,
-                           settings.value("NameColumn width").toInt());
+  QByteArray mainWindowState = settings.value("state").toByteArray();
+  if(!mainWindowState.isNull()) {
+    restoreState(mainWindowState);
+  }
   settings.endGroup();
 }
 
@@ -231,11 +230,9 @@ void MainWindow::writeSettings()
   settings.beginGroup("MainWindow");
   settings.setValue("size", size());
   settings.setValue("pos", pos());
+  settings.setValue("state", saveState());
   settings.endGroup();
 
-  settings.beginGroup("SceneView");
-  settings.setValue("NameColumn width", treeView->columnWidth(Scene::NameColumn));
-  settings.endGroup();
   std::cerr << "Write setting... done.\n";
 }
 
