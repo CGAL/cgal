@@ -18,8 +18,8 @@
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
 
-#ifndef CGAL_MODULAR_TYPE_H
-#define CGAL_MODULAR_TYPE_H
+#ifndef CGAL_RESIDUE_TYPE_H
+#define CGAL_RESIDUE_TYPE_H
 
 #include <CGAL/basic.h>
 
@@ -36,13 +36,13 @@ struct Modular_arithmetic_needs_ieee_double_precision{
 };
 }
 
-class Modular;
+class Residue;
     
-Modular operator + (const Modular&);
-Modular operator - (const Modular&);
+Residue operator + (const Residue&);
+Residue operator - (const Residue&);
 
-std::ostream& operator << (std::ostream& os, const Modular& p);
-std::istream& operator >> (std::istream& is, Modular& p);
+std::ostream& operator << (std::ostream& os, const Residue& p);
+std::istream& operator >> (std::istream& is, Residue& p);
 
 /*! \ingroup CGAL_Modular_traits
  * \brief This class represents the Field Z mod p. 
@@ -55,13 +55,13 @@ std::istream& operator >> (std::istream& is, Modular& p);
  * 
  * \see Modular_traits
  */
-class Modular:
-    boost::ordered_field_operators1< Modular,
-    boost::ordered_field_operators2< Modular, int > >{
+class Residue:
+    boost::ordered_field_operators1< Residue,
+    boost::ordered_field_operators2< Residue, int > >{
     
 public:
-    typedef Modular Self;
-    typedef Modular NT;
+    typedef Residue Self;
+    typedef Residue NT;
 
 private:
     static const double  CST_CUT; 
@@ -76,7 +76,7 @@ private:
     
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
-    double MOD_round (double a){
+    double RES_round (double a){
 #ifdef CGAL_USE_LEDA 
         return ( (a + CST_CUT)  - CST_CUT); 
 #else
@@ -97,14 +97,14 @@ private:
 
     /* Big modular reduction (e.g. after multiplication) */
     static inline 
-    double MOD_reduce (double a){
-        return a - prime * MOD_round(a * prime_inv);
+    double RES_reduce (double a){
+        return a - prime * RES_round(a * prime_inv);
     }
 
 
     /* Little modular reduction (e.g. after a simple addition). */
     static inline 
-    double MOD_soft_reduce (double a){
+    double RES_soft_reduce (double a){
         double b = 2*a;
         return (b>prime) ? a-prime :
             ((b<-prime) ? a+prime : a);
@@ -112,30 +112,30 @@ private:
     
     /* -a */
     static inline 
-    double MOD_negate(double a){
-        return MOD_soft_reduce(-a);
+    double RES_negate(double a){
+        return RES_soft_reduce(-a);
     }
 
 
     /* a*b */
     static inline 
-    double MOD_mul (double a, double b){
+    double RES_mul (double a, double b){
         double c = a*b;
-        return MOD_reduce(c);
+        return RES_reduce(c);
     }
 
 
     /* a+b */
     static inline 
-    double MOD_add (double a, double b){
+    double RES_add (double a, double b){
         double c = a+b;
-        return MOD_soft_reduce(c);
+        return RES_soft_reduce(c);
     }
 
     
     /* a^-1, using Bezout (extended Euclidian algorithm). */
     static inline 
-    double MOD_inv (double ri1){
+    double RES_inv (double ri1){
         double bi = 0.0;
         double bi1 = 1.0;
         double ri = prime;
@@ -144,7 +144,7 @@ private:
         Real_embeddable_traits<double>::Abs double_abs;
         while (double_abs(ri1) != 1.0)
         {
-            p = MOD_round(ri/ri1);
+            p = RES_round(ri/ri1);
             tmp = bi - p * bi1;
             tmp2 = ri - p * ri1;
             bi = bi1;
@@ -153,13 +153,13 @@ private:
             ri1 = tmp2;
         };
 
-        return ri1 * MOD_soft_reduce(bi1);	/* Quicker !!!! */
+        return ri1 * RES_soft_reduce(bi1);	/* Quicker !!!! */
     }
     
     /* a/b */
     static inline 
-    double MOD_div (double a, double b){
-        return MOD_mul(a, MOD_inv(b));
+    double RES_div (double a, double b){
+        return RES_mul(a, RES_inv(b));
     }    
 
 public:
@@ -191,14 +191,14 @@ private:
 
 public: 
 
-    //! constructor of Modular, from int 
-    Modular(int n = 0){
-        x_= MOD_reduce(n);
+    //! constructor of Residue, from int 
+    Residue(int n = 0){
+        x_= RES_reduce(n);
     }
 
-    //! constructor of Modular, from long 
-    Modular(long n){
-        x_= MOD_reduce(n);
+    //! constructor of Residue, from long 
+    Residue(long n){
+        x_= RES_reduce(n);
     }
    
     //! Access operator for x, \c const 
@@ -207,38 +207,38 @@ public:
     double&       x()       { return x_; }                     
 
     Self& operator += (const Self& p2) { 
-        x() = MOD_add(x(),p2.x()); 
+        x() = RES_add(x(),p2.x()); 
         return (*this); 
     }
     Self& operator -= (const Self& p2){ 
-        x() = MOD_add(x(),MOD_negate(p2.x())); 
+        x() = RES_add(x(),RES_negate(p2.x())); 
         return (*this); 
     }
     Self& operator *= (const Self& p2){ 
-        x() = MOD_mul(x(),p2.x()); 
+        x() = RES_mul(x(),p2.x()); 
         return (*this); 
     }
     Self& operator /= (const Self& p2) { 
-        x() = MOD_div(x(),p2.x()); 
+        x() = RES_div(x(),p2.x()); 
         return (*this); 
     }
     // 
     Self& operator += (int p2) { 
-        x() = MOD_add(x(),Modular(p2).x()); 
+        x() = RES_add(x(),Residue(p2).x()); 
         return (*this); 
     }
     Self& operator -= (int p2){ 
-        x() = MOD_add(x(),Modular(-p2).x()); 
+        x() = RES_add(x(),Residue(-p2).x()); 
         return (*this); 
     }
 
     Self& operator *= (int p2){ 
-        x() = MOD_mul(x(),Modular(p2).x()); 
+        x() = RES_mul(x(),Residue(p2).x()); 
         return (*this); 
     }
 
     Self& operator /= (int p2) { 
-        x() = MOD_div(x(),Modular(p2).x()); 
+        x() = RES_div(x(),Residue(p2).x()); 
         return (*this); 
     }
   
@@ -246,47 +246,47 @@ public:
     friend Self operator - (const Self&);                
 };
 
-inline Modular operator + (const Modular& p1)
+inline Residue operator + (const Residue& p1)
 { return p1; }
 
-inline Modular operator - (const Modular& p1){ 
-    typedef Modular MOD;
-    Modular r; 
-    r.x() = MOD::MOD_negate(p1.x());
+inline Residue operator - (const Residue& p1){ 
+    typedef Residue RES;
+    Residue r; 
+    r.x() = RES::RES_negate(p1.x());
     return r; 
 }
 
-inline bool operator == (const Modular& p1, const Modular& p2)
+inline bool operator == (const Residue& p1, const Residue& p2)
 { return ( p1.x()==p2.x() ); }   
-inline bool operator == (const Modular& p1, int p2)
-{ return ( p1 == Modular(p2) ); }   
+inline bool operator == (const Residue& p1, int p2)
+{ return ( p1 == Residue(p2) ); }   
 
 
-inline bool operator < (const Modular& p1, const Modular& p2)
+inline bool operator < (const Residue& p1, const Residue& p2)
 { return ( p1.x() < p2.x() ); }   
-inline bool operator < (const Modular& p1, int p2)
-{ return ( p1.x() < Modular(p2).x() ); }   
+inline bool operator < (const Residue& p1, int p2)
+{ return ( p1.x() < Residue(p2).x() ); }   
 
 
 // I/O 
-inline std::ostream& operator << (std::ostream& os, const Modular& p) {   
-    typedef Modular MOD;
-    os <<"("<< int(p.x())<<"%"<<MOD::get_current_prime()<<")";
+inline std::ostream& operator << (std::ostream& os, const Residue& p) {   
+    typedef Residue RES;
+    os <<"("<< int(p.x())<<"%"<<RES::get_current_prime()<<")";
     return os;
 }
 
-inline std::istream& operator >> (std::istream& is, Modular& p) {
-    typedef Modular MOD;
+inline std::istream& operator >> (std::istream& is, Residue& p) {
+    typedef Residue RES;
     char ch;
     int prime;
 
     is >> p.x();
     is >> ch;    // read the %
     is >> prime; // read the prime
-    CGAL_precondition(prime==MOD::get_current_prime());
+    CGAL_precondition(prime==RES::get_current_prime());
     return is;
 }
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_MODULAR_TYPE_H
+#endif // CGAL_RESIDUE_TYPE_H

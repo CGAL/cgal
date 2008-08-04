@@ -17,39 +17,39 @@
 //
 // Author(s)     : Michael Hemmer
 
-/*! \file CGAL/Modular.h
-    \brief Defines the class CGAL::Modular and CGAL::Modular_traits.
+/*! \file CGAL/Residue.h
+    \brief Defines the class CGAL::Residue and CGAL::Modular_traits.
  
     Provides the \c CGAL::Modular_traits specialization for the build in number 
     types. 
 */
 
-#ifndef CGAL_MODULAR_H
-#define CGAL_MODULAR_H 1
+#ifndef CGAL_RESIDUE_H
+#define CGAL_RESIDUE_H 1
 
 #include <CGAL/basic.h>
 #include <CGAL/Coercion_traits.h>
-#include <CGAL/Modular_arithmetic/Modular_type.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 CGAL_BEGIN_NAMESPACE
 
 
-/*! \brief Specialization of CGAL::NT_traits for \c Modular, which is a model
+/*! \brief Specialization of CGAL::NT_traits for \c Residue, which is a model
  * of the \c Field concept. 
  * \ingroup CGAL_NT_traits_spec
  */
 template <>
-class Algebraic_structure_traits<Modular>
-    : public Algebraic_structure_traits_base< Modular ,Field_tag >{
+class Algebraic_structure_traits<Residue>
+    : public Algebraic_structure_traits_base< Residue ,Field_tag >{
 public: 
     typedef CGAL::Tag_true Is_exact; 
 };
 
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,CGAL::Modular)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int  ,CGAL::Modular)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long ,CGAL::Modular)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,CGAL::Residue)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int  ,CGAL::Residue)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long ,CGAL::Residue)
 
 CGAL_END_NAMESPACE
 
-#endif //#ifnedef CGAL_MODULAR_H 1
+#endif //#ifnedef CGAL_RESIDUE_H 1
  

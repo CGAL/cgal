@@ -17,23 +17,17 @@
 //
 // Author(s)     : Michael Hemmer
 
-/*! \file CGAL/Modular.h
-  \brief Defines the class CGAL::Modular and CGAL::Modular_traits.
- 
-  Provides the \c CGAL::Modular_traits specialization for the build in number 
-  types. 
-*/
 
-#include <CGAL/Modular_arithmetic/Modular_type.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL{
 
-int Modular::prime_int = 67111067;
-double Modular::prime =67111067.0;
-double Modular::prime_inv =1/67111067.0;
-const double Modular::CST_CUT = std::ldexp( 3., 51 );
+int Residue::prime_int = 67111067;
+double Residue::prime =67111067.0;
+double Residue::prime_inv =1/67111067.0;
+const double Residue::CST_CUT = std::ldexp( 3., 51 );
 
 const CGALi::Modular_arithmetic_needs_ieee_double_precision 
-Modular::modular_arithmetic_needs_ieee_double_precision 
+Residue::modular_arithmetic_needs_ieee_double_precision 
 = CGALi::Modular_arithmetic_needs_ieee_double_precision();
 }
