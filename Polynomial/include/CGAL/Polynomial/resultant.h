@@ -98,6 +98,13 @@ inline Coeff resultant_univariate(
 template <class Coeff> 
 inline Coeff resultant_univariate( 
     const CGAL::Polynomial<Coeff>& A, 
+    const CGAL::Polynomial<Coeff>& B, CGAL::Integral_domain_tag){
+  // this seems to help for for large polynomials 
+  return prs_resultant_integral_domain(A,B);
+}
+template <class Coeff> 
+inline Coeff resultant_univariate( 
+    const CGAL::Polynomial<Coeff>& A, 
     const CGAL::Polynomial<Coeff>& B, CGAL::Unique_factorization_domain_tag){
   return prs_resultant_ufd(A,B);
 }

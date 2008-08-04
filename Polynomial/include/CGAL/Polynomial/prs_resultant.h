@@ -31,6 +31,57 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class NT> inline
+NT prs_resultant_integral_domain(Polynomial<NT> A, Polynomial<NT> B) {
+    // implemented using the subresultant algorithm for resultant computation
+    // see [Cohen, 1993], algorithm 3.3.7
+
+    if (A.is_zero() || B.is_zero()) return NT(0);
+
+    int signflip;
+    if (A.degree() < B.degree()) {
+        Polynomial<NT> T = A; A = B; B = T;
+        signflip = (A.degree() & B.degree() & 1);
+    } else {
+        signflip = 0;
+    }
+    
+    typedef CGAL::Scalar_factor_traits<Polynomial<NT> > SFT;
+    typedef typename SFT::Scalar Scalar; 
+    typename SFT::Scalar_factor scalar_factor;
+    
+    Scalar a = scalar_factor(A), b = scalar_factor(B);
+    NT g(1), h(1), t = CGAL::ipower(a, B.degree()) * CGAL::ipower(b, A.degree());
+    Polynomial<NT> Q, R; NT d;
+    int delta;
+
+    A /= NT(a); B /= NT(b);
+    do {
+        signflip ^= (A.degree() & B.degree() & 1);
+        Polynomial<NT>::pseudo_division(A, B, Q, R, d);
+        delta = A.degree() - B.degree();
+        typedef typename CGAL::Algebraic_structure_traits<NT>::Is_exact
+          Is_exact;
+        CGAL_expensive_assertion(CGAL::check_tag(Is_exact()) == false
+          || d == CGAL::ipower(B.lcoeff(), delta + 1) );
+        A = B;
+        B = R / (g * CGAL::ipower(h, delta));
+        g = A.lcoeff();
+        // h = h^(1-delta) * g^delta
+        CGALi::hgdelta_update(h, g, delta);
+    } while (B.degree() > 0);
+    // h = h^(1-deg(A)) * lcoeff(B)^deg(A)
+    delta = A.degree();
+    g = B.lcoeff();
+    CGALi::hgdelta_update(h, g, delta);
+    h = signflip ? -(t*h) : t*h;
+    typename Algebraic_structure_traits<NT>::Simplify simplify;
+    simplify(h);
+    return h;
+}
+
+
+
+template <class NT> inline
 NT prs_resultant_ufd(Polynomial<NT> A, Polynomial<NT> B) {
     // implemented using the subresultant algorithm for resultant computation
     // see [Cohen, 1993], algorithm 3.3.7
