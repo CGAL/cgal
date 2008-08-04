@@ -30,10 +30,10 @@ void test_algebraic_kernel_1_tools(){
   typedef CGAL::Polynomial_traits_d<Polynomial_1> PT_1;
   
   Algebraic_kernel_1 ak; 
-  typename PT_1::Construct_polynomial construct_polynomial;
-
-  Polynomial_1 p1 = construct_polynomial(-2,0,1);
-  Polynomial_1 p2 = construct_polynomial(-3,0,1);
+  
+  Polynomial_1 x = typename PT_1::Shift()(Polynomial_1(1),1);
+  Polynomial_1 p1 = x*x-2;
+  Polynomial_1 p2 = x*x-3;
 
   typename Algebraic_kernel_1::Solve_1 solve_1 = ak.construct_solve_1_object();
   
