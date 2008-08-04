@@ -194,41 +194,13 @@ protected:
 public:
     //!\name approximation & visualization
     //!@{
-
-#ifdef CGAL_CKVA_COMPILE_RENDERER
     
+#ifdef CGAL_CKVA_COMPILE_RENDERER
+public:    
     //! sets up rendering window \c bbox and resolution \c res_w by \c res_h
     static void setup_renderer(CGAL::Bbox_2 bbox, int res_w, int res_h) {
         Curve_renderer_facade< typename Base::Projected_kernel_2 >::
             setup(bbox, res_w, res_h);
-    }
-
-    //! sets / retrieves base polynomial approximation
-    static Poly_double_3 base_poly_approx( 
-            const boost::optional< Poly_double_3 >& poly = boost::none) {
-        static Poly_double_3 _poly;
-        if(poly) 
-            _poly = *poly;
-        return _poly;
-    }
-
-    //! computes z-coordinate
-    static double compute_z(const Poly_double_1& ppt, int which_root) {
-        
-        if(ppt.degree() < 1) 
-            return 0;
-        // comparison for equality does not work for doubles
-        if(fabs(ppt[2]) < 1e-17) 
-            return -ppt[0]/ppt[1];
-
-        double d = ppt[1]*ppt[1]-4*ppt[2]*ppt[0],
-            inv = 0.5 / ppt[2], c = -ppt[1] * inv;
-        if(d <= 0)
-            return c;
-        d = std::sqrt(d) * inv;
-        if(which_root == 0) // take minimal root
-            return c + (d < 0 ? d : -d);
-        return c + (d < 0 ? -d : d);    
     }
 
     /*!\brief
@@ -261,7 +233,57 @@ public:
         result = Approximation_3(x0, y0, compute_z(ppt, this->sheet()));
         return true;
     }
-#endif // CGAL_CKVA_COMPILE_RENDERER    
+#endif // CGAL_CKVA_COMPILE_RENDERER   
+
+    // returns an non-robust approximation of the point
+    Approximation_3 to_double() const {
+        
+        std::pair< double, double > xy = 
+            this->curve().status_line_at_exact_x(this->x()).
+            algebraic_real_2(this->arcno()).to_double();
+        
+        Poly_double_1 ppt = 
+            NiX::substitute_xy(
+                    base_poly_approx(CGAL::to_double(this->surface().f())),
+                    xy.first, xy.second
+            );   
+        return Approximation_3(
+                xy.first, 
+                xy.second, 
+                compute_z(ppt, this->sheet())
+        );
+    }
+
+private:
+      //! sets / retrieves base polynomial approximation
+    static Poly_double_3 base_poly_approx( 
+            const boost::optional< Poly_double_3 >& poly = boost::none) {
+        static Poly_double_3 _poly;
+        if(poly) 
+            _poly = *poly;
+        return _poly;
+    }
+    
+    //! computes z-coordinate
+    static double compute_z(const Poly_double_1& ppt, int which_root) {
+        
+        if(ppt.degree() < 1) {
+            return 0;
+        }
+        // comparison for equality does not work for doubles
+        if(fabs(ppt[2]) < 1e-17) 
+            return -ppt[0]/ppt[1];
+
+        double d = ppt[1]*ppt[1]-4*ppt[2]*ppt[0],
+            inv = 0.5 / ppt[2], c = -ppt[1] * inv;
+        if(d <= 0)
+            return c;
+        d = std::sqrt(d) * inv;
+        if(which_root == 0) // take minimal root
+            return c + (d < 0 ? d : -d);
+        return c + (d < 0 ? -d : d);    
+    }
+    
     //!@}
     
     //! for constructint points
@@ -586,9 +608,7 @@ public:
     //!@{
 
 #ifdef CGAL_CKVA_COMPILE_RENDERER
-
-  
-
+    
     /*!\brief
      * computes arc's approximation within window \c bbox with resolution 
      * \c res_w by \c res_h
