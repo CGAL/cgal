@@ -311,8 +311,7 @@ private:
                         == CGAL::ARR_RIGHT_BOUNDARY
                 ); 
                 if (eit->curve().location(CGAL::ARR_MIN_END)
-                    == CGAL::ARR_LEFT_BOUNDARY &&
-                    _m_left == CGAL::ARR_UNBOUNDED) {
+                    == CGAL::ARR_LEFT_BOUNDARY) {
                     number_of_vertices_at_minus_inf++;
                 }
                 CGAL_precondition(
@@ -324,14 +323,13 @@ private:
                         == CGAL::ARR_RIGHT_BOUNDARY
                 ); 
                 if (eit->curve().location(CGAL::ARR_MAX_END)
-                    == CGAL::ARR_RIGHT_BOUNDARY &&
-                    _m_right == CGAL::ARR_UNBOUNDED) {
+                    == CGAL::ARR_RIGHT_BOUNDARY) {
                     number_of_vertices_at_plus_inf++;
                 }                    
             }
-
+            
             CGAL_assertion(number_of_vertices_at_minus_inf + 
-                           number_of_vertices_at_plus_inf == 4);
+                           number_of_vertices_at_plus_inf == 2);
             CGAL_assertion(number_of_vertices_at_minus_inf != 1);
             CGAL_assertion(number_of_vertices_at_plus_inf != 1);
             
