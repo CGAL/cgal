@@ -20,12 +20,6 @@
 #include <CGAL/basic.h>
 
 #include <CGAL/Polynomial.h>
-/*#include <NiX/Modular.h>
-#include <NiX/bezout_matrix.h>
-#include <NiX/determinant.h>
-#include <NiX/number_type_utils.h>
-#include <NiX/filter_tools.h>
-#include <NiX/polynomial_utils.h>*/
 
 CGAL_BEGIN_NAMESPACE
 
