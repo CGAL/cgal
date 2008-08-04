@@ -304,34 +304,33 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 
 // Equality operators
 
-// FIXME : these are sub-optimal :
-// {NEGATIVE, ZERO} == {POSITIVE} returns indeterminate instead of false.
-
 template < typename T >
 inline
 Uncertain<bool> operator==(Uncertain<T> a, Uncertain<T> b)
 {
-  if (is_indeterminate(a) || is_indeterminate(b))
-    return Uncertain<bool>::indeterminate();
-  return a.inf() == b.inf();
+  if (a.sup() < b.inf() || b.sup() < a.inf())
+    return false;
+  if (is_certain(a) && is_certain(b)) // test above implies get_certain(a) == get_certain(b)
+    return true;
+  return Uncertain<bool>::indeterminate();
 }
 
 template < typename T >
 inline
 Uncertain<bool> operator==(Uncertain<T> a, T b)
 {
-  if (is_indeterminate(a))
-    return Uncertain<bool>::indeterminate();
-  return a.inf() == b;
+  if (a.sup() < b || b < a.inf())
+    return false;
+  if (is_certain(a))
+    return true;
+  return Uncertain<bool>::indeterminate();
 }
 
 template < typename T >
 inline
 Uncertain<bool> operator==(T a, Uncertain<T> b)
 {
-  if (is_indeterminate(b))
-    return Uncertain<bool>::indeterminate();
-  return a == b.inf();
+  return b == a;
 }
 
 template < typename T >
