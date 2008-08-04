@@ -1107,21 +1107,18 @@ private:
     Status_line_1 create_event_line(Curve_analysis_2& D,int i) {
         Algebraic_real_1 xval = sh_disc_roots[i];
         Bitstream_traits traits(xval);
-        CGAL::CGALi::Backshear_descartes_tag tag;
         int number_of_events 
             = static_cast<int>(pre_vert_lines[i].event_points.size());
         int number_of_roots 
             = pre_vert_lines[i].number_of_non_event_roots+number_of_events; 
         Polynomial_2 sh_pol_with_correct_degree 
             = CGAL::CGALi::poly_non_vanish_leading_term(sh_pol,xval);
-        Bitstream_descartes descartes(tag,
+        Bitstream_descartes descartes(CGAL::CGALi::Backshear_descartes_tag(),
                                       sh_pol_with_correct_degree,
                                       number_of_roots,
                                       number_of_events,
                                       pre_vert_lines[i],
                                       traits);
-
-        
         typename Status_line_1::Arc_container arc_container;
         for(int j=0;j<descartes.number_of_real_roots();j++) {
             if(descartes.is_certainly_multiple_root(j)) {
