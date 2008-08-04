@@ -85,7 +85,6 @@ class Algebraic_structure_traits  {
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of; 
     typedef Null_functor Divides; 
-  
 };
 
 // The algebraic structure traits base class
@@ -124,6 +123,7 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
     typedef Null_functor Sqrt;
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of; 
+    typedef Null_functor Divides; 
 };
 
 //! The template specialization that is used if the number type is
