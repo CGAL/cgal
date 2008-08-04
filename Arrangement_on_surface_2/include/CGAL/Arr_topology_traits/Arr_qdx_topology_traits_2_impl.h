@@ -1346,13 +1346,14 @@ bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_unbounded
     // look for a non-concrete point
     
     // we are on a cylinder or paraboloid
-
     switch (f->number_of_outer_ccbs()) {
     case 0:
-        // if there is no edge then it must be unbounded
+        // we consider the face containing the reference points,
+        // which is always unbounded for cylinder and paraboloid
         return true;
     case 1: {
-        // check whether it contains a vertex at inf
+        // check whether the outer ccb contains a vertex at inf 
+        // (i.e., v_left or v_right)
         const Halfedge *first = *(f->outer_ccbs_begin());
         const Halfedge *curr = first;
         do {
@@ -1364,40 +1365,29 @@ bool Arr_qdx_topology_traits_2< GeomTraits, Dcel_ >::is_unbounded
             curr = curr->next();
         } while (curr != first);
         
-        // if not
         if (this->_m_quadric.is_elliptic_cylinder()) {
-            // each face consiting of a single outer_ccb that does not
-            // touch a point at inf contains a "inf" 
-            // therefore:
+            // otherwise, we have to be on a cylinder
+            // which a perimetric outer CCB which allows an unbounded face
+            Sign_of_path sign_of_path(this);
+            
+            CGAL::Sign sign = sign_of_path(first, first);
+            if (sign == CGAL::ZERO) {
+                return false; // as bounded
+            } else {
+            CGAL_assertion(sign == CGAL::NEGATIVE);
+            // the "opposite" unbounded face must have negative outer CCB
             return true;
+            }
         }
-        //CGAL_assertion(this->_m_quadric.is_elliptic_paraboloid());
-        
-        // check wether the face contains the contraction -> return false;
-        // otherwise it contains a point at infinity -> return true;
-
-        Sign_of_path sign_of_path(this);
-        
-        CGAL::Sign sign = sign_of_path(first, first);
-        CGAL_assertion(sign != CGAL::ZERO);
-        
-        if (sign == CGAL::POSITIVE) {
-            return (_m_right == CGAL::ARR_UNBOUNDED);
-        }
-        CGAL_assertion(sign == CGAL::NEGATIVE);
-        return (_m_left == CGAL::ARR_UNBOUNDED);
-        
-
-
-        
-        /* NOT REACHED */
-        CGAL_error();
+        // usually a single outer CCB indicate a bounded face
         return false;
+        break;
     }
     case 2:
         // these two outer_ccbs are perimetric and therefore the face
         // must be bounded
         return false;
+        // actually it shouldn't occur any more
     default:
         //std::cout << "More than two outer_ccbs! Not nice!" << std::endl;
         CGAL_error();
