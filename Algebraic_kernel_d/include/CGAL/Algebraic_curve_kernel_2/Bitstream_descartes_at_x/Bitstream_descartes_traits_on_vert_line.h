@@ -405,21 +405,18 @@ Integer operator() (Coefficient f, long p) {
     private:
 	Algebraic_real alpha_;
 
-        std::vector<long> coefficients_for_alpha;
-
-	int refinements_of_alpha;
-
-	bool zero_test_enabled;
-
-	int refinement_limit;
-
 	// Stores id of polynomials which are known to vanish (or not to 
 	// vanish) at alpha
 	std::vector<long> zeroes,non_zeroes;
 
+        std::vector<long> coeffs_for_alpha;
+
+        // Stores the last known approximation to ensure an improvement
+        boost::optional<Boundary> last_lower, last_upper;
+
     public:
 	Upper_bound_log2_abs_approximator(Algebraic_real alpha) 
-            : alpha_(alpha),refinements_of_alpha(0),zero_test_enabled(false)
+            : alpha_(alpha)
         {}
 
         Upper_bound_log2_abs_approximator() {};
@@ -434,48 +431,45 @@ Integer operator() (Coefficient f, long p) {
 
 	bool improve_upper_bound
         (const Coefficient f, long& ub_log2_abs,bool& is_certainly_zero) {
-            //AcX_DSTREAM("improve upper bound.." << f << std::flush);
-            if(std::find(coefficients_for_alpha.begin(),
-                         coefficients_for_alpha.end(),
-                         f.id())!=coefficients_for_alpha.end()) {
-                coefficients_for_alpha.clear();
-                //AcX_DSTREAM("refine.." << std::flush);
-                alpha_.bisect();
-                ++refinements_of_alpha;
-                if(refinements_of_alpha>=refinement_limit) {
-                    zero_test_enabled=true;
-                }
-                //AcX_DSTREAM("done.." << std::flush);
+            //std::cout << "improve upper bound.." <<  alpha_.id() << ", " << f << std::endl;
+            if(std::find(zeroes.begin(),
+                         zeroes.end(),
+                         f.id())!=zeroes.end()) {
+                //std::cout << "ZERO FROM CACHE" << std::endl;
+                is_certainly_zero=true;
+                return true;
             }
-            coefficients_for_alpha.push_back(f.id());
-            if(zero_test_enabled) {
-                if(std::find(zeroes.begin(),
-                             zeroes.end(),
-                             f.id())!=zeroes.end()) {
+            else if(std::find(non_zeroes.begin(),
+                              non_zeroes.end(),
+                              f.id())!=non_zeroes.end()) {
+                //std::cout << "NON-ZERO FROM CACHE" << std::endl;
+                is_certainly_zero=false;
+            }
+            else {
+                bool zero = CGAL::CGALi::is_root_of(alpha_,f);
+                if(zero) {
+                    //std::cout << "THAT IS ZERO!" << std::endl;
+                    zeroes.push_back(f.id());
                     is_certainly_zero=true;
                     return true;
                 }
-                else if(std::find(non_zeroes.begin(),
-                                  non_zeroes.end(),
-                                  f.id())!=non_zeroes.end()) {
+                else {
+                    //std::cout << "THAT IS NOT ZERO!" << std::endl;
+                    non_zeroes.push_back(f.id());
                     is_certainly_zero=false;
                 }
-                else {
-                    bool zero = CGAL::CGALi::is_root_of(alpha_,f);
-                    if(zero) {
-                        zeroes.push_back(f.id());
-                        is_certainly_zero=true;
-                        return true;
-                    }
-                    else {
-                        non_zeroes.push_back(f.id());
-                        is_certainly_zero=false;
-                    }
-                }
             }
-            else {
-                is_certainly_zero=false;
+            if(std::find(coeffs_for_alpha.begin(),coeffs_for_alpha.end(),f.id())!=coeffs_for_alpha.end() &&
+               last_lower && last_upper && 
+               alpha_.low()==last_lower.get() && 
+               alpha_.high()==last_upper.get()) {
+                alpha_.refine();
+                coeffs_for_alpha.clear();
             }
+            coeffs_for_alpha.push_back(f.id());
+            last_lower = alpha_.low();
+            last_upper = alpha_.high();
+            
             Boundary_interval alpha_iv(alpha_.low(),alpha_.high());
             Interval f_alpha_iv = evaluate_iv(f,alpha_iv);
             CGAL::Sign lower_sign = CGAL::sign(f_alpha_iv.lower());
@@ -520,7 +514,7 @@ Integer operator() (Coefficient f, long p) {
                 return ((ub_log2_abs - lb_log2_abs) <= 2);
             }
             else {
-                //AcX_DSTREAM("Upper: " << ub_log2_abs << std::endl);
+                //std::cout << "Upper: " << ub_log2_abs << std::endl;
                 return false;
             }
 	}
