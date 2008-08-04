@@ -83,16 +83,6 @@
 #endif
 
 /**
- * Determines the strategy how Bitstream coefficients are obtained
- * If set to 1, it uses an approach specifically for integer coefficient
- * At the moment, it seems to be more efficient than the (general) bigfloat
- * approach
- */
-#ifndef CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS
-#define CGAL_ACK_USE_NO_BFI_APPROX_IN_BITSTREAM_TRAITS 0
-#endif
-
-/**
  * If set to 1, curve pairs are not checked for coprimality. Only do this
  * if you know what you are doing!
  */

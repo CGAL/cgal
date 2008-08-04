@@ -653,7 +653,7 @@ protected:
 						      int arcs_right) 
         throw(CGAL::CGALi::Non_generic_position_exception) {
 
-        Bitstream_traits traits(alpha,true);
+        Bitstream_traits traits(alpha);
 
         if(root_of_resultant) {
 #if !CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES
