@@ -94,8 +94,7 @@ public:
   typedef CGAL::Uncertain_conversion_exception  Uncertain_conversion_exception;
 
   Uncertain()
-    : _i(CGALi::Minmax_traits<T>::min),
-      _s(CGALi::Minmax_traits<T>::max) {}
+    : _i(), _s() {}
 
   Uncertain(T t)
     : _i(t), _s(t) {}
@@ -216,7 +215,7 @@ inline
 Uncertain<T>
 Uncertain<T>::indeterminate()
 {
-  return Uncertain<T>();
+  return Uncertain<T>(CGALi::Minmax_traits<T>::min, CGALi::Minmax_traits<T>::max);
 }
 
 template < typename T >

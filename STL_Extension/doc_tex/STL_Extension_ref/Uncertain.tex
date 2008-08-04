@@ -37,12 +37,12 @@ important that providers of predicates that are meant to be filtered by
 
 Note concerning \cgal\ assertions: assertions checking an expression of type
 \ccc{Uncertain<bool>} will trigger an assertion failure only if the assertion
-is certainly false.  In case of an indeterminate value, the assertion is not
+is certainly \ccc{false}.  In case of an indeterminate value, the assertion is not
 triggered.  This means that we assume, in case of doubt, that there is no
 error.
 
 It can also be used in other contexts as well, as it is a general tool.
-This can be seem as support for non-deterministic programming.
+This can be seen as support for non-deterministic programming.
 Finally, note that this class has some common points with \ccc{boost::tribool}.
 
   \ccInclude{CGAL/Uncertain.h}
@@ -75,13 +75,13 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
   \ccCreationVariable{u}
 
   \ccConstructor{Uncertain();}
-  {introduces an indeterminate value.}
+  {introduces a certain object with value \ccc{T()}.}
 
   \ccConstructor{Uncertain(T t);}
   {introduces a certain object with value \ccc{t}.}
 
   \ccMethod{Uncertain& operator=(T t);}
-  {assigns the certain value \ccc{t} to \ccc{u}.}
+  {assigns the certain value \ccc{t} to \ccVar.}
 
   \ccConstructor{Uncertain(T i, T s);}
   {introduces an object representing the range with lower bound \ccc{i} and
@@ -99,6 +99,36 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
 
   %% +-----------------------------------+
   \ccHeading{Uncertainty testing and conversion}
+
+  There are several ways to extract the content of an \ccc{Uncertain} object.  The simplest way is to
+  rely on the implicit conversion from \ccc{Uncertain<T>} to \ccc{T}.  In this case, no special
+  code has to be written, apart from an exception handler (anywhere higher in the call stack) to manage
+  the uncertain case.  The more involved one is more efficient, but requires manual treatment
+  of the uncertain case, such as:
+
+\begin{ccExampleCode}
+  Uncertain<bool> b = ...;
+  if (is_certain(b))
+    bool cert_b = get_certain(b); // Extract the certain bool it contains
+    ...
+  else
+    ... // b is indeterminate
+\end{ccExampleCode}
+
+Another option is :
+
+\begin{ccExampleCode}
+  Uncertain<bool> b = ...;
+  if (certainly(b))
+    ... // b is certainly true
+  else if (certainly(!b))
+    ... // b is certainly false
+  else
+    ... // b is indeterminate
+\end{ccExampleCode}
+
+  There are many other handy functions which can be used for easier usage depending
+  on the context.  They are listed in the sequel.
 
   \ccMethod{bool is_certain() const;}
   {returns \ccc{true} iff the value is certain, that is, it is unique, the range
@@ -120,7 +150,7 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
 
   \def\ccTagRmEigenClassName{\ccFalse}
   \ccFunction{static Uncertain<T> Uncertain<T>::indeterminate();}
-  {returns an indeterminate range, like the default constructor.}
+  {returns an indeterminate range.}
 
   %% +-----------------------------------+
   \ccHeading{Free functions}
@@ -221,12 +251,47 @@ Finally, note that this class has some common points with \ccc{boost::tribool}.
   Note : the logical operators $\&\&$ and $||$ are not overloaded on purpose.  The reason
   is that, when \ccc{f() && g()} is evaluated and they return \ccc{bool}, then \ccc{g()}
   is only evaluated when \ccc{f()} returns \ccc{true}.  One could have a dependency so
-  that \ccc{g()} has an internal precondition that implies that \ccc{f()} returns true.
-  The overloaded operators for user-defined types do not provide this short-circuiting
+  that \ccc{g()} has an internal precondition that required that \ccc{f()} had returned \ccc{true}.
+  The overloaded operators for user-defined types can not provide this short-circuiting
   property, and so, if the overloaded operators where provided, then \ccc{g()} would
   be evaluated, no matter the result of \ccc{f()}, which could lead to an unwanted
-  situation.  The $\&$ and $|$ operators do not have this short-circuiting property,
-  and are therefore overloaded safely.
+  situation, or a performance loss.  The $\&$ and $|$ operators do not have
+  this short-circuiting property, and are therefore overloaded safely.
+
+  When translating normal code to use and propagate uncertainty, such as :
+
+\begin{ccExampleCode}
+  // Logical AND
+  if ( (p.x() == 0) && (p.y() == 0) )
+    ...
+  else
+    ...
+
+  // Logical OR
+  if ( (q.x() == 0) || (q.y() == 0) )
+    ...
+  else
+    ...
+\end{ccExampleCode}
+
+  One can do, for example :
+
+\begin{ccExampleCode}
+  // Logical AND
+  Uncertain<bool> tmp = (p.x() == 0);
+  Uncertain<bool> res = certainly(!tmp) ? false : tmp & (p.y() == 0);
+
+  ... // Use res
+
+  // Logical OR
+  Uncertain<bool> tmp = (q.x() == 0);
+  Uncertain<bool> res = certainly(tmp) ? true : tmp | (q.y() == 0);
+
+  ... // Use res
+\end{ccExampleCode}
+
+  This ensures that the first expression is not evaluated twice, and that the second is
+  evaluated only if needed.
 
   %% +-----------------------------------+
   \ccHeading{Overloaded operators and functions for \ccc{Uncertain<enum T>} only}

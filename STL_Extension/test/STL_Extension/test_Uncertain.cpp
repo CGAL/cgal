@@ -24,7 +24,8 @@ void test()
 
 	// Constructors, assignment.
 	const T t0 = static_cast<T>(0);
-	const U u;
+	const U u = U::indeterminate();
+	const U uu;
 	const U v = t0;
 	U w = U (T(), T());
 	U v2 = u;
@@ -35,6 +36,7 @@ void test()
 	t = u.sup();
 
 	assert(! u.is_certain());
+	assert( uu.is_certain());
 	assert(  v.is_certain());
 	assert(t0 == v.make_certain());
 
@@ -97,7 +99,7 @@ void test_enum()
 	T z = static_cast<T>(0);
 	T p = static_cast<T>(1);
 
-	U indet;
+	U indet = U::indeterminate();
 
 	// <, <=, >, >=
 	assert(U(n) < U(z));
@@ -151,7 +153,7 @@ void test_mult_enum()
 	T z = static_cast<T>(0);
 	T p = static_cast<T>(1);
 
-	U indet;
+	U indet = U::indeterminate();
 
 	assert(n*z == z);
 	assert(z*n == z);
@@ -179,7 +181,7 @@ void test_bool()
 
 	U utrue = true;
 	U ufalse = false;
-	U indet;
+	U indet = U::indeterminate();
 
 	assert(utrue);
 	assert(!ufalse);
