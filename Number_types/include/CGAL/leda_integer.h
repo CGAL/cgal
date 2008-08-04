@@ -42,7 +42,7 @@
 #include <LEDA/numbers/bigfloat.h>// for To_interval
 #endif
 
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -211,19 +211,19 @@ template <> class Real_embeddable_traits< leda_integer >
 
 template<>
 class Modular_traits< ::leda::integer > {
-    typedef Modular MOD;
+    typedef Residue MOD;
  public:
     typedef ::leda::integer NT;
     typedef ::CGAL::Tag_true Is_modularizable;
-    typedef MOD Modular_NT;
+    typedef MOD Residue_type;
 
     struct Modular_image{
-        Modular_NT operator()(const NT& a){
-            return Modular_NT ((a%NT(MOD::get_current_prime())).to_long());
+        Residue_type operator()(const NT& a){
+            return Residue_type ((a%NT(MOD::get_current_prime())).to_long());
         }
     };
     struct Modular_image_inv{
-        NT operator()(const Modular& x){
+        NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
     };    

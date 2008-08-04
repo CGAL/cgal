@@ -21,7 +21,7 @@
 #define CGAL_MODULAR_TRAITS_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <vector>
 
 
@@ -40,14 +40,14 @@ class Modular_traits{
 public: 
     typedef NT_ NT;
     typedef ::CGAL::Tag_false Is_modularizable;
-    typedef ::CGAL::Null_functor Modular_NT;
+    typedef ::CGAL::Null_functor Residue_type;
     typedef ::CGAL::Null_functor Modular_image;  
     typedef ::CGAL::Null_functor Modular_image_inv;    
 };
 
 template <class NT>
 inline
-typename CGAL::Modular_traits<NT>::Modular_NT 
+typename CGAL::Modular_traits<NT>::Residue_type 
 modular_image(const NT& x){
     typename CGAL::Modular_traits<NT>::Modular_image modular_image;
     return modular_image(x);
@@ -67,15 +67,15 @@ class Modular_traits<int>{
 public: 
     typedef int NT;
     typedef ::CGAL::Tag_true Is_modularizable;
-    typedef Modular Modular_NT;
+    typedef Residue Residue_type;
  
     struct Modular_image{
-        Modular_NT operator()(int i){
-            return Modular_NT(i);
+        Residue_type operator()(int i){
+            return Residue_type(i);
         }
     };    
     struct Modular_image_inv{
-        NT operator()(const Modular& x){
+        NT operator()(const Residue_type& x){
             return x.get_value();
         }
     };    
@@ -91,15 +91,15 @@ class Modular_traits<long>{
 public: 
     typedef long NT;
     typedef ::CGAL::Tag_true Is_modularizable;
-    typedef Modular Modular_NT;
+    typedef Residue Residue_type;
  
     struct Modular_image{
-        Modular_NT operator()(long i){
-            return Modular_NT(i);
+        Residue_type operator()(long i){
+            return Residue_type(i);
         }
     };   
     struct Modular_image_inv{
-        NT operator()(const Modular& x){
+        NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
     };    

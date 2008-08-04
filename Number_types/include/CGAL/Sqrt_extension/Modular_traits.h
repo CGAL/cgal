@@ -23,7 +23,7 @@
 #define CGAL_SQRT_EXTENSION_MODULAR_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -37,30 +37,30 @@ private:
     typedef Sqrt_extension<COEFF,ROOT> EXT; 
     typedef Modular_traits<COEFF> MT_COEFF;
     typedef Modular_traits<ROOT>  MT_ROOT;
-    typedef typename MT_COEFF::Modular_NT Modular_NT_coeff;
-    typedef typename MT_ROOT::Modular_NT  Modular_NT_root;
+    typedef typename MT_COEFF::Residue_type Residue_type_coeff;
+    typedef typename MT_ROOT::Residue_type  Residue_type_root;
 public:
     typedef Sqrt_extension<COEFF, ROOT > NT;
     typedef typename MT_COEFF::Is_modularizable Is_modularizable;
-    typedef Sqrt_extension<Modular_NT_coeff, Modular_NT_root> Modular_NT;
+    typedef Sqrt_extension<Residue_type_coeff, Residue_type_root> Residue_type;
     
     struct Modular_image{
-        Modular_NT operator()(const EXT& a){
+        Residue_type operator()(const EXT& a){
             typename MT_ROOT::Modular_image mod_image_root;
             typename MT_COEFF::Modular_image mod_image_coeff;
-            Modular_NT_root  root_mod = mod_image_root(a.root());
-            if(root_mod != Modular_NT_root(0)){
-                return Modular_NT(mod_image_coeff(a.a0()),
+            Residue_type_root  root_mod = mod_image_root(a.root());
+            if(root_mod != Residue_type_root(0)){
+                return Residue_type(mod_image_coeff(a.a0()),
                                   mod_image_coeff(a.a1()),
                                   root_mod);
             }else{
-                return Modular_NT(mod_image_coeff(a.a0()));
+                return Residue_type(mod_image_coeff(a.a0()));
             }
         }
     };
 
     struct Modular_image_inv{
-        NT operator()(const Modular_NT& a){
+        NT operator()(const Residue_type& a){
             typename MT_ROOT::Modular_image_inv mod_image_inv_root;
             typename MT_COEFF::Modular_image_inv mod_image_inv_coeff;
             

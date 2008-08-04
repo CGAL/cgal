@@ -42,20 +42,20 @@ public:
     typedef Polynomial<COEFF> NT;
     typedef Modular_traits<NT> Self;
     typedef typename Mtr::Is_modularizable Is_modularizable;
-    typedef Polynomial<typename Mtr::Modular_NT> Modular_NT;
+    typedef Polynomial<typename Mtr::Residue_type> Residue_type;
     
     struct Modular_image{
-        Modular_NT operator()(const NT& p){ 
-            std::vector<typename Mtr::Modular_NT> V;
+        Residue_type operator()(const NT& p){ 
+            std::vector<typename Mtr::Residue_type> V;
             typename Mtr::Modular_image modular_image;
             for(int i=0; i<=p.degree();i++)
                 V.push_back(modular_image(p[i]));
-            return Modular_NT(V.begin(),V.end());           
+            return Residue_type(V.begin(),V.end());           
         }
     };
 
     struct Modular_image_inv{ 
-        NT operator()(const Modular_NT& p) const {  
+        NT operator()(const Residue_type& p) const {  
             std::vector<COEFF> V;
             typename Mtr::Modular_image_inv modular_image_inv;
             for(int i=0; i<=p.degree();i++)

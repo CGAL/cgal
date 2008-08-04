@@ -31,7 +31,7 @@
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/primes.h>
 
@@ -77,7 +77,7 @@ template<class NT>
 void test_CR_for(const NT& f){
 
     typedef CGAL::Modular_traits<NT> MT;
-    typedef typename CGAL::Modular_traits<NT>::Modular_NT MNT;
+    typedef typename CGAL::Modular_traits<NT>::Residue_type MNT;
     typename MT::Modular_image modular_image;
     typename MT::Modular_image_inv modular_image_inv; 
     
@@ -97,7 +97,7 @@ void test_CR_for(const NT& f){
     
     // init chinese remainder
     q = current_prime = CGAL::CGALi::primes[prime_index];
-    CGAL::Modular::set_current_prime(current_prime); 
+    CGAL::Residue::set_current_prime(current_prime); 
     g_old = modular_image_inv(modular_image(f));
     pq= p = q;
     
@@ -115,7 +115,7 @@ void test_CR_for(const NT& f){
             std::cerr<<"primes in the array exhausted"<<std::endl;
             current_prime = CGAL::CGALi::get_next_lower_prime(current_prime);
         }    
-        CGAL::Modular::set_current_prime(current_prime); 
+        CGAL::Residue::set_current_prime(current_prime); 
         p = current_prime;
         
         chinese_remainder(q,g_old,p,modular_image_inv(modular_image(f)),pq,g);

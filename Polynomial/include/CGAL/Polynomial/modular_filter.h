@@ -43,7 +43,7 @@ namespace CGALi {
         
         typedef Polynomial<NT>                Polynomial_nt;
         typedef Modular_traits<Polynomial_nt> MT;
-        typedef typename MT::Modular_NT       Polynomial_mt;
+        typedef typename MT::Residue_type       Polynomial_mt;
 
         typename MT::Modular_image    modular_image;
 
@@ -100,7 +100,7 @@ bool may_have_common_factor(const Polynomial<NT>& P,
     return true;
 #endif
 
-    CGAL_precondition( Modular::get_current_prime()!=0 );
+    CGAL_precondition( Residue::get_current_prime()!=0 );
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;
@@ -123,7 +123,7 @@ bool may_have_multiple_factor_(const Polynomial<NT>& P, CGAL::Tag_true ){
     // Create modular images of p
     typedef Polynomial<NT>                Polynomial_nt;
     typedef Modular_traits<Polynomial_nt> MT;
-    typedef typename MT::Modular_NT       Polynomial_mt;
+    typedef typename MT::Residue_type       Polynomial_mt;
 
     typename MT::Modular_image    modular_image;
 
@@ -159,7 +159,7 @@ bool may_have_multiple_factor( const Polynomial<NT>& P ) {
         return false;
 
     // Modular filter
-    CGAL_precondition( Modular::get_current_prime()!=0 );
+    CGAL_precondition( Residue::get_current_prime()!=0 );
     typedef Polynomial<NT> POLY;
     typedef Modular_traits<POLY> Mtr;
     typename Mtr::Is_modularizable is_modularizable;

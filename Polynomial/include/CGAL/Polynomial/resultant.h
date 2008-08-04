@@ -40,7 +40,7 @@
 #include <CGAL/Polynomial/bezout_matrix.h>
 #include <CGAL/Polynomial/subresultants.h>
 
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/primes.h>
@@ -234,9 +234,9 @@ Coeff resultant_modularize(
     typedef typename CRT::Scalar_type Scalar;
 
 
-    typedef typename CGAL::Modular_traits<Polynomial>::Modular_NT MPolynomial; 
-    typedef typename CGAL::Modular_traits<Coeff>::Modular_NT      MCoeff; 
-    typedef typename CGAL::Modular_traits<Scalar>::Modular_NT     MScalar;  
+    typedef typename CGAL::Modular_traits<Polynomial>::Residue_type MPolynomial; 
+    typedef typename CGAL::Modular_traits<Coeff>::Residue_type      MCoeff; 
+    typedef typename CGAL::Modular_traits<Scalar>::Residue_type     MScalar;  
         
     typename CRT::Chinese_remainder chinese_remainder; 
     typename CGAL::Modular_traits<Coeff>::Modular_image_inv inv_map;
@@ -268,7 +268,7 @@ Coeff resultant_modularize(
             } else{
                 current_prime = CGALi::primes[prime_index];
             }
-            CGAL::Modular::set_current_prime(current_prime);
+            CGAL::Residue::set_current_prime(current_prime);
             
             mF = CGAL::modular_image(F);
             mG = CGAL::modular_image(G);
@@ -284,11 +284,11 @@ Coeff resultant_modularize(
         //timer_cr.start();
         if(n == 1){ 
             // init chinese remainder
-            q =  CGAL::Modular::get_current_prime(); // implicit ! 
+            q =  CGAL::Residue::get_current_prime(); // implicit ! 
             R = inv_map(mR);
         }else{
             // continue chinese remainder
-            p = CGAL::Modular::get_current_prime(); // implicit!  
+            p = CGAL::Residue::get_current_prime(); // implicit!  
             R_old  = R ;
 //            chinese_remainder(q,Gs ,p,inv_map(mG_),pq,Gs);             
 //            cached_extended_euclidean_algorithm(q,p,s,t);

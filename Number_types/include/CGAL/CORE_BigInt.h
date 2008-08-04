@@ -25,7 +25,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
 
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -138,25 +138,25 @@ template <> class Real_embeddable_traits< CORE::BigInt >
  */
 template<>
 class Modular_traits< ::CORE::BigInt > {
-    typedef Modular MOD;
+  typedef Residue RES;
  public:
     typedef ::CORE::BigInt NT;
     typedef CGAL::Tag_true Is_modularizable;
-    typedef MOD Modular_NT;
+    typedef Residue Residue_type;
 
     struct Modular_image{
-        Modular_NT operator()(const NT& a){
-            NT tmp = a % NT(MOD::get_current_prime());
+        Residue_type operator()(const NT& a){
+            NT tmp = a % NT(RES::get_current_prime());
 // TODO: reactivate this assertion
 // it fails with core_v1.6x_20040329
 //            NiX_assert(tmp.isInt());
             int mi(tmp.longValue());
-            if (mi < 0) mi += MOD::get_current_prime();
-            return Modular_NT(mi);
+            if (mi < 0) mi += RES::get_current_prime();
+            return Residue_type(mi);
         }
     };
     struct Modular_image_inv{
-        NT operator()(const Modular& x){
+        NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
     };    

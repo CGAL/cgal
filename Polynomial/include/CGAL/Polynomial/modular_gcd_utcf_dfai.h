@@ -37,7 +37,7 @@
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Algebraic_extension_traits.h>
 #include <CGAL/primes.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Polynomial/modular_gcd.h>
 #include <CGAL/Polynomial/Cached_extended_euclidean_algorithm.h>
 #include <CGAL/Polynomial.h>
@@ -90,8 +90,8 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     typedef typename CGAL::Scalar_factor_traits<Poly>  SFT;
     typedef typename SFT::Scalar Scalar;
     
-    typedef typename CGAL::Modular_traits<Poly>::Modular_NT   MPoly;
-    typedef typename CGAL::Modular_traits<Scalar>::Modular_NT MScalar;
+    typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;
+    typedef typename CGAL::Modular_traits<Scalar>::Residue_type MScalar;
     
     typedef Chinese_remainder_traits<Poly> CRT;
     typename CRT::Chinese_remainder chinese_remainder; 
@@ -179,7 +179,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
                     current_prime = CGALi::primes[prime_index];
                 }
                 CGAL_assertion(current_prime != -1);
-                CGAL::Modular::set_current_prime(current_prime);
+                CGAL::Residue::set_current_prime(current_prime);
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_image.start();
 #endif
@@ -260,11 +260,11 @@ Polynomial<NT> modular_gcd_utcf_dfai(
         typename CGAL::Modular_traits<Poly>::Modular_image_inv inv_map;
         if(n == 1){ 
             // init chinese remainder
-            q =  CGAL::Modular::get_current_prime(); // implicit ! 
+            q =  CGAL::Residue::get_current_prime(); // implicit ! 
             Gs_old  = Gs  = inv_map(mG_);
         }else{
             // continue chinese remainder
-            p = CGAL::Modular::get_current_prime(); // implicit! 
+            p = CGAL::Residue::get_current_prime(); // implicit! 
             Gs_old  = Gs ;
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_CR.start();

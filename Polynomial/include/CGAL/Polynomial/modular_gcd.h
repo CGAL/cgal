@@ -11,7 +11,7 @@
 #define CGAL_MODULAR_GCD_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>

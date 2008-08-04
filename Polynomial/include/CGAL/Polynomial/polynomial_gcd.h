@@ -40,7 +40,7 @@
 #endif
  
 #include <CGAL/basic.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Real_timer.h>

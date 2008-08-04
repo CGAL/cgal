@@ -59,7 +59,7 @@ void algebraic_real_test()
     typedef NiX::Algebraic_real<Coeff_NT,real_NT,rat_NT> ALGNUM; 
     typedef NiX::Polynomial<Coeff_NT> Poly;
     
-    ::NiX::Modular::set_current_prime(29);
+    ::NiX::Residue::set_current_prime(29);
     typename ::NiX::NT_traits<real_NT>::Sqrt real_sqrt; 
   
     // general test of comparable functionality  
@@ -461,7 +461,7 @@ void algebraic_real_test_for_set_rational(bool set_rational)
     typedef NiX::Algebraic_real<Coeff_NT,real_NT,rat_NT> ALGNUM; 
     typedef NiX::Polynomial<Coeff_NT> Poly;
     
-    ::NiX::Modular::set_current_prime(29);
+    ::NiX::Residue::set_current_prime(29);
   
     // general test of comparable functionality  
     NiX::test_real_comparable<ALGNUM>();

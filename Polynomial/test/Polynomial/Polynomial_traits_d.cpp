@@ -1618,12 +1618,12 @@ void test_AT(){
 
   std::cerr << std::endl;
   std::cerr << 
-    "Test for coefficient type CGAL::Modular" 
+    "Test for coefficient type CGAL::Residue" 
             << std::endl;
   std::cerr << 
     "----------------------------------------------------------------------"
             << std::endl;    
-  test_multiple_dimensions< CGAL::Modular >();   
+  test_multiple_dimensions< CGAL::Residue >();   
 
 
   typedef typename AT::Integer Integer;

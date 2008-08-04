@@ -15,7 +15,7 @@
 #include <CGAL/Polynomial/resultant.h>
 
 #include <CGAL/Arithmetic_kernel.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
@@ -90,7 +90,7 @@ int main(){
   test_resultant<Polynomial_2>();
   test_resultant<Polynomial_3>();
    
-  typedef CGAL::Polynomial<CGAL::Modular>  MPolynomial_1;
+  typedef CGAL::Polynomial<CGAL::Residue>  MPolynomial_1;
   typedef CGAL::Polynomial<MPolynomial_1>  MPolynomial_2;
   typedef CGAL::Polynomial<MPolynomial_2>  MPolynomial_3;
 

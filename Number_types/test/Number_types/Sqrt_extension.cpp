@@ -117,9 +117,9 @@ void other_functions_test(){
   typedef typename EXT::NT NT;
   typedef typename EXT::ROOT ROOT;
   typedef NiX::Modular_traits<EXT> MTraits;    
-  typedef typename MTraits::Modular_NT EXT_MOD;
+  typedef typename MTraits::Residue_type EXT_MOD;
 
-  NiX::Modular::set_current_prime(7);
+  NiX::Residue::set_current_prime(7);
   typename MTraits::Modular_image modular_image;
   {
   EXT a1(13,-10,4);

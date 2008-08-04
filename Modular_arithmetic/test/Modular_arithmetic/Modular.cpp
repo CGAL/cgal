@@ -1,12 +1,12 @@
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 
-/*! \file CGAL/Modular.C
+/*! \file CGAL/Residue.C
   test for number type modul 
 */
 
 #include <CGAL/basic.h>
 #include <cassert>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Arithmetic_kernel.h>
@@ -14,7 +14,7 @@
 
 int main()
 {   
-    typedef CGAL::Modular NT;
+    typedef CGAL::Residue NT;
     typedef CGAL::Field_tag Tag;
     typedef CGAL::Tag_true Is_exact;
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
@@ -85,7 +85,7 @@ int main()
     
     Integer       int_x(7);
     Integer       prime(NT::get_current_prime());
-    CGAL::Modular mod_x(7);
+    CGAL::Residue mod_x(7);
     for(int i = 0; i < 10000; i++){
         assert(mod_x == CGAL::modular_image(int_x));
         int_x *= int_x; int_x = CGAL::mod(int_x, prime);
@@ -105,10 +105,10 @@ int main()
     }
     //  CGAL::force_ieee_double_precision();
     {
-        CGAL::Modular::set_current_prime(67111043);
-        CGAL::Modular x(-33546401);
-        CGAL::Modular y(23950928);
-        CGAL::Modular q = CGAL::integral_division(x,y);
+        CGAL::Residue::set_current_prime(67111043);
+        CGAL::Residue x(-33546401);
+        CGAL::Residue y(23950928);
+        CGAL::Residue q = CGAL::integral_division(x,y);
         assert(x == q*y);
     }
 }

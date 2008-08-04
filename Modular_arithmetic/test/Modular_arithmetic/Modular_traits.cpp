@@ -1,6 +1,8 @@
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 
-/*! \file CGAL/Modular.C
+
+
+/*! \file CGAL/Residue.C
   test for number type modul 
 */
 
@@ -26,9 +28,9 @@
 template <class TESTT>
 void test_modular_traits(){
 
-        typedef CGAL::Modular Modular;
+        typedef CGAL::Residue Residue;
         typedef CGAL::Modular_traits<TESTT> MT;
-        typedef typename MT::Modular_NT Modular_NT;
+        typedef typename MT::Residue_type Residue_type;
         typedef typename MT::Modular_image Modular_image;
         typedef typename MT::Is_modularizable Is_modularizable;
         typedef typename MT::NT NT;
@@ -40,11 +42,11 @@ void test_modular_traits(){
         assert(
                 (::boost::is_same<TESTT,NT>::value));
         
-        Modular::set_current_prime(7);
+        Residue::set_current_prime(7);
         Modular_image modular_image;
-        assert(modular_image(TESTT(21)) == Modular_NT(0));   
-        assert(modular_image(TESTT(22)) == Modular_NT(1));
-        assert(modular_image(TESTT(777777722)) == Modular_NT(1));
+        assert(modular_image(TESTT(21)) == Residue_type(0));   
+        assert(modular_image(TESTT(22)) == Residue_type(1));
+        assert(modular_image(TESTT(777777722)) == Residue_type(1));
 }
 
 int main()

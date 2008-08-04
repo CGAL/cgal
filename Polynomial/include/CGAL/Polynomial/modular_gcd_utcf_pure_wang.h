@@ -39,7 +39,7 @@
 #define CGAL_MODULAR_GCD_UTCF_PURE_WANG_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>
@@ -140,8 +140,8 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
     
     // will play the role of content
     typedef typename CGAL::Scalar_factor_traits<Poly>::Scalar  Scalar;
-    typedef typename CGAL::Modular_traits<Poly>::Modular_NT   MPoly;
-    typedef typename CGAL::Modular_traits<Scalar>::Modular_NT MScalar;
+    typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;
+    typedef typename CGAL::Modular_traits<Scalar>::Residue_type MScalar;
     
     typedef Chinese_remainder_traits<Poly> CRT;
     typename CRT::Chinese_remainder chinese_remainder; 
@@ -221,7 +221,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
                 }
                 CGAL_assertion(current_prime != -1);
 		//std::cout<<current_prime<<std::endl;
-                CGAL::Modular::set_current_prime(current_prime);
+                CGAL::Residue::set_current_prime(current_prime);
 #ifdef CGAL_MODULAR_GCD_TIMER
                 timer_image.start();
 #endif
@@ -302,7 +302,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
          
         if(n == 1){ 
             // init chinese remainder and wang
-            q =  CGAL::Modular::get_current_prime(); // implicit ! 
+            q =  CGAL::Residue::get_current_prime(); // implicit ! 
             Gs  = inv_map(mG_);
 #ifdef CGAL_MODULAR_GCD_TIMER
             timer_wang.start();
@@ -318,7 +318,7 @@ Polynomial<NT> modular_gcd_utcf_pure_wang(
 
         }else{
             // continue chinese remainder
-            p = CGAL::Modular::get_current_prime(); // implicit! 
+            p = CGAL::Residue::get_current_prime(); // implicit! 
             
             // chinese remainder 
 #ifdef CGAL_MODULAR_GCD_TIMER

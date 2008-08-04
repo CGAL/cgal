@@ -31,7 +31,7 @@
 #include <CGAL/leda_coercion_traits.h>
 #include <CGAL/Interval_nt.h>
 
-#include <CGAL/Modular.h>
+#include <CGAL/Residue.h>
 #include <CGAL/Modular_traits.h>
 
 #include <CGAL/Needs_parens_as_product.h>
@@ -210,13 +210,13 @@ class Modular_traits< ::leda::rational > {
 public:
     typedef ::leda::rational NT;
     typedef ::CGAL::Tag_true Is_modularizable;
-    typedef CGAL::Modular Modular_NT;
+    typedef CGAL::Residue Residue_type;
 
     struct Modular_image{
-        Modular_NT operator()(const NT& rat){
+        Residue_type operator()(const NT& rat){
             MT_int::Modular_image int_mod;
-            Modular_NT num = int_mod(rat.numerator());
-            Modular_NT den = int_mod(rat.denominator());
+            Residue_type num = int_mod(rat.numerator());
+            Residue_type den = int_mod(rat.denominator());
             return num/den;
         }
     };

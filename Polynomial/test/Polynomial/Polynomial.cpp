@@ -1118,7 +1118,7 @@ int main() {
         typedef CGAL::Modular MOD;
         MOD::set_current_prime(7);
         typedef CGAL::Modular_traits<TESTT> MOD_traits;
-        typedef MOD_traits::Modular_NT MOD_NT;
+        typedef MOD_traits::Residue_type MOD_NT;
         MOD_traits::Modular_image MOD_image;
     
         //definition of MOD::NT
