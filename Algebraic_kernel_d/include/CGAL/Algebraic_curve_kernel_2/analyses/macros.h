@@ -31,12 +31,14 @@ CGAL_BEGIN_NAMESPACE
         typedef CGAL::Polynomial< Coefficient > Polynomial_1; \
     typedef CGAL::Polynomial< Polynomial_1 > Polynomial_2; \
     typedef typename Algebraic_kernel_1::Solve_1 Solve_1;       \
-    typedef \
-    CGAL::CGALi::Bitstream_descartes_traits_on_vert_line<Polynomial_1,   \
-                                                    Algebraic_real_1,      \
-                                                    Integer >          \
-    Bitstream_traits; \
-    typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits> \
+    typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits \
+        < CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha \
+              < typename Polynomial_traits_d<Polynomial_2>::Coefficient, \
+                Algebraic_real_1 \
+              > \
+        > \
+        Bitstream_traits; \
+    typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits>     \
         Bitstream_descartes;                                           \
     typedef CGAL::CGALi::Status_line_CA_1< Curve_analysis_2 > Status_line_1; \
 

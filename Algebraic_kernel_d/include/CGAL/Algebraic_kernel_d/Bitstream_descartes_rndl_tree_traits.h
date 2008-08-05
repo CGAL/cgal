@@ -7,30 +7,16 @@
 // $Id: $
 // 
 //
-// Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
+// Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
 // ============================================================================
-
-// TODO: The comments are all original EXACUS comments and aren't adapted. So
-//         they may be wrong now.
-
-/*! \file NiX/Bitstream_descartes_rndl_tree_traits.h
-  \brief Definition of \c NiX::Bitstream_descartes_rndl_tree_traits.
-*/
-
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_H
 #define CGAL_ALGEBRAIC_KERNEL_D_BITSTREAM_DESCARTES_RNDL_TREE_TRAITS_H
 
-#define CGAL_INTERN_USE_BFI
-
 #include <CGAL/basic.h>
-#include <CGAL/Sqrt_extension.h>
-#include <CGAL/Interval_traits.h>
-#include <CGAL/Bigfloat_interval_traits.h>
-#include <CGAL/convert_to_bfi.h>
-
-#include <CGAL/Algebraic_kernel_d/Integer_iterator.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d/Real_embeddable_extension.h>
+#include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/Algebraic_kernel_d/Float_traits.h>
 
 #include <vector>
@@ -39,244 +25,358 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-template < class NT > class Bitstream_descartes_rndl_tree_traits;
 
-// TODO: write a generic version that 
-template <class NT>
-class Bitstream_descartes_rndl_tree_traits{
-
-// typedefs
-    typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel AT;
-    typedef typename AT::Bigfloat_interval BFI;
-    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF; 
-//    typedef typename AT::Bigfloat          BF;
-    
-    typedef  CGAL::Polynomial<NT> POLY; 
-    typedef  Bitstream_descartes_rndl_tree_traits< NT > Self;
+// forward
+template <typename BitstreamCoefficientKernel> 
+class Bitstream_descartes_rndl_tree_traits;
 
 
-template <class Coeff, class OI> 
-inline 
-void convert_coeffs(const CGAL::Polynomial<Coeff>& poly ,OI it) const {
-    for(int i = 0; i <= poly.degree(); i++){
-        *it++ = convert_to_bfi(poly[i]);
-    }
-}
+template <class BitstreamCoefficientKernel> 
+class Bitstream_descartes_rndl_tree_traits_rep {
 
-template <class COEFF, class ROOT, class OI > 
-inline  
-void
-convert_coeffs(
-        const CGAL::Polynomial< Sqrt_extension<COEFF,ROOT> >& poly,
-        OI it ) const {
-    
-    BFI root(0);
-    for(int i = 0; i <= poly.degree(); i++){
-        if(poly[i].is_extended()){ 
-            root = CGAL::sqrt(convert_to_bfi(poly[i].root()));
-            break;  
-        }
-    }
-    
-    for(int i = 0; i <= poly.degree(); i++){
-        if(poly[i].is_extended()){
-            *it++ = 
-                convert_to_bfi(poly[i].a0()) + 
-                convert_to_bfi(poly[i].a1()) * root ;
-        }else{
-            *it++ = convert_to_bfi(poly[i].a0());
-        }
+public:
+
+    typedef BitstreamCoefficientKernel Bitstream_coefficient_kernel;
+
+    Bitstream_descartes_rndl_tree_traits_rep
+        (Bitstream_coefficient_kernel kernel)
+	: _m_kernel(kernel)
+    {	
     } 
-}
+
+    Bitstream_descartes_rndl_tree_traits_rep() {} 
+
+private:
+    
+    Bitstream_coefficient_kernel _m_kernel;
+
+    friend class Bitstream_descartes_rndl_tree_traits
+        <Bitstream_coefficient_kernel>;
+
+}; // end of class Bitstream_descartes_rndl_tree_traits_rep
+
+// A version that relies on a Bitstream_coefficient_kernel model
+template <typename BitstreamCoefficientKernel>
+class Bitstream_descartes_rndl_tree_traits
+    : CGAL::Handle_with_policy
+    <CGAL::CGALi::Bitstream_descartes_rndl_tree_traits_rep
+        <BitstreamCoefficientKernel> >
+{
 
 public:
-    typedef int                   Coefficient;  
-    typedef typename AT::Integer  Integer; 
-    typedef typename AT::Rational Boundary;
+    //! typedefs
+    //! @{
+    
+    typedef BitstreamCoefficientKernel Bitstream_coefficient_kernel;
 
-private:   
-//member
-    POLY polynomial;
-    mutable std::vector<BFI>          polynomial_approx; 
-    mutable long                      current_prec; 
+    typedef typename Bitstream_coefficient_kernel::Coefficient Coefficient;
+
+    typedef typename Bitstream_coefficient_kernel::Bigfloat_interval BFI;
+    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Boundary BF; 
     
-    void refine_approximation() const {
-        CGAL_precondition(current_prec > 1);
-        current_prec *= 2;
-        // std::cout <<"ALGREAL: refine approx: "<<  current_prec<<std::endl;
-        long old_prec = set_precision(BFI(),current_prec);
-        polynomial_approx.clear();
-        convert_coeffs(
-                polynomial,
-                std::back_inserter(polynomial_approx));
-        set_precision(BFI(),old_prec);
-    };
-    
+    typedef  CGAL::Polynomial<Coefficient> POLY; 
+    typedef  Bitstream_descartes_rndl_tree_traits
+        < Bitstream_coefficient_kernel > Self;
+
+    typedef CGAL::Handle_with_policy
+    <CGAL::CGALi::Bitstream_descartes_rndl_tree_traits_rep
+        <Bitstream_coefficient_kernel> >
+    Handle;
+
+    typedef typename Bitstream_coefficient_kernel::Integer  Integer; 
+    typedef typename Bitstream_coefficient_kernel::Boundary Boundary;
+
+    //! @}
+
 public:
-    typedef CGALi::Integer_iterator<int> IIterator; 
-    IIterator begin(){return IIterator(0);};
-    IIterator end()  {return IIterator(polynomial_approx.size());}
 
-    Bitstream_descartes_rndl_tree_traits(const POLY& p):polynomial(p){
-        current_prec = 60; 
-        long old_prec = set_precision(BFI(), current_prec); 
-        convert_coeffs(polynomial,std::back_inserter(polynomial_approx));
-        set_precision(BFI(),old_prec);
-    };
+    //! \name Constructors
+    //! @{
+
+    Bitstream_descartes_rndl_tree_traits(Bitstream_coefficient_kernel kernel)
+	: Handle(kernel)
+    {} 
     
-    struct Boundary_creator
-    //: public std::binary_function<Integer,long,Boundary>
-    {
-        typedef Integer first_argument_type;
-        typedef long second_argument_type;
-        typedef Boundary result_type; 
-        Boundary operator()(Integer i, long e){ 
-            Boundary power = Integer(1) << CGAL::abs(e);
-            if( e < 0 ) power = 1 / power; 
-            return Boundary(i) * power; 
-        }
-    };
-      
-    struct Lower_bound_log2_abs{             
+    Bitstream_descartes_rndl_tree_traits()    {} 
 
-      const Self* ptr;
-      
-      typedef int argument_type;
-      typedef long result_type;
-      Lower_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
-      result_type operator() (int i) {             
-        CGAL_precondition(ptr->polynomial[i] != NT(0));
-        while(CGAL::zero_in(ptr->polynomial_approx[i])){
-          ptr->refine_approximation();
-        }             
-        typename CGALi::Real_embeddable_extension<BFI>::Floor_log2_abs 
-            floor_log2_abs;
-        return floor_log2_abs(ptr->polynomial_approx[i]);
-      }
-    }; 
-    
-    struct Upper_bound_log2_abs{
-        const Self* ptr; 
-        
-        Upper_bound_log2_abs(const Self* ptr_):ptr(ptr_){};
-        
-        bool initial_upper_bound(int i,long& upper_log, bool& is_certainly_zero){
-            is_certainly_zero = CGAL::is_zero(ptr->polynomial[i]);
-            if (is_certainly_zero) return true;
- 
-            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs
-                ceil_log2_abs;
-            upper_log = ceil_log2_abs(ptr->polynomial_approx[i]);
-            return true;
-        }
-        
-        bool improve_upper_bound(int, long&, bool&){
-            CGAL_precondition_msg(false,"this call is not needed");
-            return true;
-        }
-    };
-
-
+    //! @}
 
     class Approximator {
+        
+    private:
+	
+	Bitstream_coefficient_kernel _m_kernel;
+
     public:
-        Approximator(const Self* ptr_):ptr(ptr_){};
-        const Self * ptr; 
+	Approximator
+            (const Bitstream_coefficient_kernel& kernel) 
+            : _m_kernel(kernel) {};
 
-        Integer operator() (int i, long p) { 
-#if 1
-          //std::cout << " Approximator begin  " << "Precision: " << p << std::flush;
-            typename CGALi::Real_embeddable_extension<BFI>::Ceil_log2_abs 
-                ceil_log2_abs;
-            typename CGALi::Float_traits<BF>::Get_exponent get_exp;
-            typename CGALi::Float_traits<BF>::Get_mantissa get_m;
+	Approximator() {};
+
+        Integer operator() (Coefficient f, long p) {
+
+            //std::cout << "Called approximator with f=" << f
+            //          << " and p=" << p << std::endl;
             
-            BFI approx  = ptr->polynomial_approx[i];
-            // if coeff = 0 -> fast return 
-            if (CGAL::singleton(approx) && approx == BFI(0) ) {
-              //std::cout << " Approximator end  " << std::endl;
-              return Integer(0);
+            typename CGAL::CGALi::Float_traits<BF>::Get_exponent get_exp;
+            typename CGAL::CGALi::Float_traits<BF>::Get_mantissa get_m;
+
+            long old_prec = CGAL::get_precision(BFI());
+            long prec = 4;
+
+            BFI f_alpha_bfi;
+            
+            while(true) {
+                
+                CGAL::set_precision(BFI(),prec);
+                
+                f_alpha_bfi = _m_kernel.convert_to_bfi_object()(f);
+                if(CGAL::singleton(f_alpha_bfi)) {
+                    break;
+                }
+                if(CGAL::CGALi::ceil_log2_abs(CGAL::upper(f_alpha_bfi)-
+                                              CGAL::lower(f_alpha_bfi)) <=-p) {
+                    break;
+                } else {
+                    prec*=2;
+                }
+                
             }
-            //get position of first wrong bit
-            long wbit   = ceil_log2_abs(approx) - 
-                CGAL::get_significant_bits(approx)+p;
-             // approx until pos of first wrong bit is negative
-            while( wbit >= -5 && ! CGAL::singleton(approx) ){
 
-                ptr->refine_approximation();
-                approx = ptr->polynomial_approx[i]; 
-                wbit   = ceil_log2_abs(approx) - 
-                    CGAL::get_significant_bits(approx) + p;
-            }  
-            BF lower = CGAL::lower(approx); // could take upper also 
+            BF lower = CGAL::lower(f_alpha_bfi);
+                
             long shift = - (p + get_exp(lower)); 
-            Integer m(get_m(lower)); 
-            if( shift > 0 ){
-              while(shift>63) {
-                m = (m >> 63);
-                shift-=63;
-              }
-              m = (m >> shift);
+            Integer bfi_m(get_m(lower)); 
+             if( shift > 0 ){
+                while(shift>63) {
+                    bfi_m = (bfi_m >> 63);
+                    shift-=63;
+                }
+                bfi_m = (bfi_m >> shift);
             }else{
                 // add 0 bits 
-                CGAL_precondition(CGAL::singleton(approx));
-                m = (m << -shift);   
-            }     
-            // std::cout << " Approximator end  " << std::endl;
- 
-            return m ;
-#else
-            //std::cout << " Approximator begin  " << std::endl;
-
-            BFI approx = ptr->polynomial_approx[i];
-            long shift = - (p + approx.exp()*14); 
+                bfi_m = (bfi_m << -shift);   
+            }   
+            CGAL::set_precision(BFI(),old_prec);
             
-            // std::cout <<"shift" <<  shift << std::endl;
-            // shift must remove the error in m .. if there is one 
-            while( shift  <= CORE::bitLength( approx.err())+3  
-                    && !approx.isExact() ){
-                //std::cout << prec << "," << approx.err() << std::endl;
-                ptr->refine_approximation();
-                approx = ptr->polynomial_approx[i]; 
-                shift = - (p + approx.exp()*14); 
-            }  
-            Integer m; 
-            if( shift > 0 ){
-                m = approx.m() >> shift;   
-            }else{
-                // add 0 bits 
-                CGAL_precondition(approx.isExact());
-                m = approx.m() << -shift;   
-            }     
-            //std::cout << " Approximator end  " << std::endl;
- 
-            return m ;
-#endif
+            //std::cout << "returns " << bfi_m << std::endl;
 
+            return bfi_m;
+        }
+    };
+
+    Approximator approximator_object() const {
+        return Approximator(this->ptr()->_m_kernel);
+    }
+
+
+    class Lower_bound_log2_abs {
+
+    private:
+	Bitstream_coefficient_kernel _m_kernel;
+
+    public:
+	Lower_bound_log2_abs
+        (const Bitstream_coefficient_kernel& kernel) 
+            : _m_kernel(kernel) {}
+	
+        Lower_bound_log2_abs() {};
+
+	long operator() (Coefficient f) {
+            //std::cout << "Called lower_bound_log2_abs with " 
+            //          << f << std::flush;
+          
+            CGAL_assertion(! _m_kernel.is_zero_object()(f));
+
+            long old_prec = CGAL::get_precision(BFI());
+            long prec = 4;
+
+            BFI f_alpha_iv;
+
+            long result;
+            while(true) {
+                CGAL::set_precision(BFI(),prec);
+                f_alpha_iv = _m_kernel.convert_to_bfi_object()(f);
+                CGAL::Sign lower_sign = CGAL::sign(CGAL::lower(f_alpha_iv));
+                if(CGAL::sign(CGAL::upper(f_alpha_iv))==lower_sign) {
+                    BF abs_lower, abs_upper;
+                    if(lower_sign==CGAL::POSITIVE) {
+                        abs_lower=CGAL::lower(f_alpha_iv);
+                        abs_upper=CGAL::upper(f_alpha_iv);
+                    }
+                    else {
+                        abs_lower=CGAL::abs(CGAL::upper(f_alpha_iv));
+                        abs_upper=CGAL::abs(CGAL::upper(f_alpha_iv));
+                    }
+                    long lower_bound = CGAL::CGALi::floor_log2_abs(abs_lower),
+                        upper_bound = CGAL::CGALi::ceil_log2_abs(abs_upper);
+                    CGAL_assertion(upper_bound>=lower_bound);
+                    if(upper_bound-lower_bound <=2) {
+                        result = lower_bound;
+                        break;
+                    }
+                }
+                prec*=2;
+
+            }
+
+            //std::cout << "returning " << result << std::endl;
+            CGAL::set_precision(BFI(),old_prec);
+
+            return result;
+        }
+
+    };
+    
+    Lower_bound_log2_abs lower_bound_log2_abs_object() const {
+	return Lower_bound_log2_abs(this->ptr()->_m_kernel);
+    }
+
+
+    class Upper_bound_log2_abs_approximator {
+
+    private:
+	Bitstream_coefficient_kernel _m_kernel;
+
+	// Stores id of polynomials which are known to vanish (or not to 
+	// vanish) at alpha
+	std::vector<Coefficient> zeroes,non_zeroes;
+
+        std::vector<Coefficient> coeffs_for_alpha;
+
+        // Stores the last known approximation to ensure an improvement
+        long prec;
+
+    public:
+	Upper_bound_log2_abs_approximator
+        (const Bitstream_coefficient_kernel& kernel) 
+            : _m_kernel(kernel), prec(4)
+        {}
+
+        Upper_bound_log2_abs_approximator() : prec(4) {};
+
+	bool initial_upper_bound
+        (Coefficient f, long& ub_log2_abs,bool& is_certainly_zero) {
+            return improve_upper_bound(f,ub_log2_abs,is_certainly_zero);
+	}
+
+	bool improve_upper_bound
+        (const Coefficient f, long& ub_log2_abs,bool& is_certainly_zero) {
+            //std::cout << "improve upper bound.." 
+            // << f << std::endl;
+
+            long old_prec = CGAL::get_precision(BFI());
+
+            if(std::find(zeroes.begin(),
+                         zeroes.end(),
+                         f)!=zeroes.end()) {
+                //std::cout << "ZERO FROM CACHE" << std::endl;
+                is_certainly_zero=true;
+                return true;
+            }
+            else if(std::find(non_zeroes.begin(),
+                              non_zeroes.end(),
+                              f)!=non_zeroes.end()) {
+                //std::cout << "NON-ZERO FROM CACHE" << std::endl;
+                is_certainly_zero=false;
+            }
+            else {
+                bool zero = _m_kernel.is_zero_object()(f);
+                if(zero) {
+                    //std::cout << "THAT IS ZERO!" << std::endl;
+                    zeroes.push_back(f);
+                    is_certainly_zero=true;
+                    return true;
+                }
+                else {
+                    //std::cout << "THAT IS NOT ZERO!" << std::endl;
+                    non_zeroes.push_back(f);
+                    is_certainly_zero=false;
+                }
+            }
+            if(std::find(coeffs_for_alpha.begin(),
+                         coeffs_for_alpha.end(),f)!=
+               coeffs_for_alpha.end()) {
+                prec*=2;
+                coeffs_for_alpha.clear();
+            }
+            coeffs_for_alpha.push_back(f);
+            
+            BFI f_alpha_iv = _m_kernel.convert_to_bfi_object()(f);
+            
+            BF abs_upper = std::max(CGAL::abs(CGAL::lower(f_alpha_iv)),
+                                    CGAL::abs(CGAL::upper(f_alpha_iv)));
+            
+            if(CGAL::sign(abs_upper)==CGAL::ZERO) {
+                is_certainly_zero=true;
+                CGAL::set_precision(BFI(),old_prec);
+                return true;
+            }
+
+            ub_log2_abs = CGAL::CGALi::ceil_log2_abs(abs_upper);
+
+            if(! CGAL::zero_in(f_alpha_iv) ) {
+                
+                BF abs_lower = std::min(CGAL::abs(CGAL::lower(f_alpha_iv)),
+                                        CGAL::abs(CGAL::upper(f_alpha_iv)));
+                long lb_log2_abs 
+                    = CGAL::CGALi::floor_log2_abs
+                    (CGAL::convert_to_bfi(abs_lower));
+                CGAL_assertion(ub_log2_abs >= lb_log2_abs);
+                CGAL::set_precision(BFI(),old_prec);
+                return ((ub_log2_abs - lb_log2_abs) <= 2);
+            }
+            else {
+                //std::cout << "Upper: " << ub_log2_abs << std::endl;
+                CGAL::set_precision(BFI(),old_prec);
+                return false;
+            }
         }
     };
     
-   
-    Lower_bound_log2_abs 
-    lower_bound_log2_abs_object() const {
-        return Lower_bound_log2_abs(this);
-    }
-    
-    Upper_bound_log2_abs 
-    upper_bound_log2_abs_object() const {
-        return Upper_bound_log2_abs(this);
-    }
-    
-    Approximator
-    approximator_object() const {
-        return Approximator(this);
+    Upper_bound_log2_abs_approximator 
+    upper_bound_log2_abs_approximator_object() const {
+	return Upper_bound_log2_abs_approximator(this->ptr()->_m_kernel);
     }
 
+
+    // TODO: Look whether this is best possible
+    class Boundary_creator {
+	
+    public:
+	
+	Boundary_creator() {}
+	
+	Boundary operator() (Integer x,long p) {
+            Integer num=x, denom,two(2),q,r;
+            if(p < 0) {
+                CGAL::div_mod(num,two,q,r);
+                while(r==Integer(0) && p<0) {
+                    num=q;
+                    p++;
+                    CGAL::div_mod(num,two,q,r);
+                }
+                denom = CGAL::ipower(Integer(2),-p);
+            }
+            else {
+                num*=CGAL::ipower(Integer(2),p);
+                denom=1;
+            }
+            Boundary b(num,denom);
+            CGAL::simplify(b);
+            return b;
+	} 
+    };
+    
     typedef typename CGAL::Real_embeddable_traits<Integer>::Sign Sign;
+    typedef typename CGAL::CGALi::Real_embeddable_extension<Integer>
+        ::Ceil_log2_abs Ceil_log2_abs_Integer;
+    typedef typename CGAL::CGALi::Real_embeddable_extension<long>
+        ::Ceil_log2_abs Ceil_log2_abs_long;
 
-    typedef typename CGALi::Real_embeddable_extension<Integer>::Ceil_log2_abs Ceil_log2_abs_Integer;
-    typedef typename CGALi::Real_embeddable_extension<long>::Ceil_log2_abs Ceil_log2_abs_long;
-};
+}; // end of class Bitstream_descartes_rndl_tree_traits
+    
 
 } // namespace CGALi
 

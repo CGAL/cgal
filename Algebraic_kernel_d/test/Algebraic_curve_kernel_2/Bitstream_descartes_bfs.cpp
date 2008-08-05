@@ -23,106 +23,11 @@
 
 #include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_traits_on_vert_line.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 
-// Traits class for Integer coefficients
-template <class ArithmeticKernel>
-class Bitstream_descartes_rndl_tree_traits_from_Integer_coeff {
+#include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
 
-public:
-  typedef ArithmeticKernel Arithmetic_kernel;
-
-  // input coefficients of polynomial
-  typedef typename Arithmetic_kernel::Integer Coefficient; 
-  
-  // type for internal computations
-  typedef typename Arithmetic_kernel::Integer Integer; 
-
-  // interval bdrys
-  typedef typename Arithmetic_kernel::Rational Boundary; 
-
-
-  class Boundary_creator {
-      
-  public:
-      
-    Boundary_creator() {}
-
-    Boundary operator() (Integer x,long p) {
-      Integer num=x, denom;
-      if(p <0) {
-          denom = CGAL::ipower(Integer(2),-p);
-      }
-      else {
-          num*=CGAL::ipower(Integer(2),p);
-          denom=1;
-      }
-      return Boundary(num,denom);
-    } 
-  };
-
-  Bitstream_descartes_rndl_tree_traits_from_Integer_coeff(int state = 0)
-  { }
-
-  // Integer approximation to 2^p*x with abs error <= 1  (not(!) 1/2)
-  class Approximator {
-  public:
-    Approximator() {
-    }
-    Integer operator() (Coefficient x, long p) {
-      if      (p >  0)  return x << p;
-      else if (p <  0)  return x >> -p;
-      else   /*p == 0*/ return x;
-    }
-  };
-  Approximator approximator_object() const { return Approximator(); }
-
-  // We can just take this from NT_traits, but need to supply ..._object()
-    typedef typename CGAL::CGALi::Real_embeddable_extension<Coefficient>
-    ::Floor_log2_abs Lower_bound_log2_abs;
-  Lower_bound_log2_abs lower_bound_log2_abs_object() const {
-    return Lower_bound_log2_abs();
-  }
-
-  // For the upper bound approximator, we just the NT_traits again
-  class Upper_bound_log2_abs_approximator {
-
-  public:
-
-    bool initial_upper_bound(Coefficient ai,
-			     long& ub_log2,
-			     bool& is_certainly_zero) {
-      return improve_upper_bound(ai,ub_log2,is_certainly_zero);
-    }
-    
-    bool improve_upper_bound(Coefficient ai,
-			     long& ub_log2,
-			     bool& is_certainly_zero) {
-      if(ai==Coefficient(0)) {
-	is_certainly_zero=true;
-      }
-      else {
-	is_certainly_zero=false;
-	ub_log2=CGAL::CGALi::ceil_log2_abs(ai);
-      }
-      return true;
-    }
-
-  };
-  
-  Upper_bound_log2_abs_approximator 
-  upper_bound_log2_abs_approximator_object() {
-    return Upper_bound_log2_abs_approximator();
-  }
-
-  // We can just take these from NT_traits
-  typedef typename CGAL::Real_embeddable_traits<Integer>::Sign Sign;
-    typedef typename CGAL::CGALi::Real_embeddable_extension<Integer>
-    ::Ceil_log2_abs Ceil_log2_abs_Integer;
-  typedef typename CGAL::CGALi::Real_embeddable_extension<Integer>
-    ::Ceil_log2_abs Ceil_log2_abs_long;
-};
-
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_coefficient_kernel_at_alpha.h>
 
 // A simple model of the EventRefinement concept: 
 // Uses a vector of Algebraic reals
@@ -156,9 +61,8 @@ void test_routine() {
   typedef CGAL::CGALi::Algebraic_real_pure<Integer,Rational>
       Algebraic_real;
 
-  typedef 
-    Bitstream_descartes_rndl_tree_traits_from_Integer_coeff<Arithmetic_kernel>
-    Traits;
+  typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+      <CGAL::CGALi::Bitstream_coefficient_kernel<Integer> > Traits;
   
   typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits> Bitstream_descartes;
 
@@ -869,12 +773,9 @@ void test_routine() {
   { // Another test for the square free method with tree from outside
 
     // More complicated polynomials needed - change the traits class
-    typedef 
-        CGAL::CGALi::
-        Bitstream_descartes_traits_on_vert_line<Poly_int1,
-                                                Algebraic_real,
-                                                Integer>
-      Traits_2;
+    typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+        <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
+            <Poly_int1,Algebraic_real> > Traits_2;
   
     typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> Bitstream_descartes;
 
@@ -945,12 +846,9 @@ void test_routine() {
   { // Test for the Inverse transform Descartes
    
     // More complicated polynomials needed - change the traits class
-      typedef 
-          CGAL::CGALi::
-          Bitstream_descartes_traits_on_vert_line<Poly_int1,
-                                                  Algebraic_real,
-                                                  Integer>
-          Traits_2;
+    typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+        <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
+            <Poly_int1,Algebraic_real> > Traits_2;
 
       typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> Bitstream_descartes;
 
@@ -1010,14 +908,12 @@ void test_routine() {
   { // Another test for the Inverse transform Descartes
    
     // More complicated polynomials needed - change the traits class
-      typedef 
-          CGAL::CGALi::
-          Bitstream_descartes_traits_on_vert_line<Poly_int1, 
-                                                  Algebraic_real,
-                                                  Integer>
-          Traits_2;
+    typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits
+        <CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
+            <Poly_int1,Algebraic_real> > Traits_2;
 
-      typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> Bitstream_descartes;
+      typedef CGAL::CGALi::Bitstream_descartes_bfs<Traits_2> 
+          Bitstream_descartes;
 
       std::stringstream ss("P[6(0,P[7(0,-34)(1,73)(2,-51)(3,46)(4,-46)(5,5)(6,-34)(7,82)])(1,P[6(0,-20)(1,-78)(2,-71)(3,65)(4,86)(5,25)(6,96)])(2,P[5(0,73)(1,13)(2,10)(3,-51)(4,-31)(5,-27)])(3,P[4(0,-94)(1,93)(3,60)(4,84)])(4,P[3(0,99)(1,64)(2,-62)(3,-56)])(5,P[2(0,18)(1,-70)(2,-26)])(6,P[1(0,-17)(1,-71)])]");
       

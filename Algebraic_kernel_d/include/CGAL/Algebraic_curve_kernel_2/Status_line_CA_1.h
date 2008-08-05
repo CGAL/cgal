@@ -17,8 +17,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle_with_policy.h>
 
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_traits_on_vert_line.h>
-#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_descartes_bfs.h>
+#include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
+#include <CGAL/Algebraic_curve_kernel_2/Bitstream_descartes_at_x/Bitstream_coefficient_kernel_at_alpha.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -71,10 +71,14 @@ class Status_line_CA_1_rep {
     typedef std::vector<Arc_pair> Arc_container;
 
     // Traits class for local isolator
-    typedef CGAL::CGALi::Bitstream_descartes_traits_on_vert_line
-        <typename Polynomial_traits_d<Polynomial_2>::Coefficient,
-         Algebraic_real_1 > Bitstream_traits;
-
+    typedef CGAL::CGALi::Bitstream_descartes_rndl_tree_traits 
+        < CGAL::CGALi::Bitstream_coefficient_kernel_at_alpha
+              < typename Polynomial_traits_d<Polynomial_2>::Coefficient,
+                Algebraic_real_1 
+              >
+        > 
+        Bitstream_traits;
+ 
     // Isolator type
     typedef CGAL::CGALi::Bitstream_descartes_bfs<Bitstream_traits> 
         Bitstream_descartes;

@@ -38,6 +38,8 @@
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree.h>
 #include <CGAL/Algebraic_kernel_d/Bitstream_descartes_rndl_tree_traits.h>
 
+#include <CGAL/Algebraic_kernel_d/Bitstream_coefficient_kernel.h>
+
 // TODO: Support this...
 /*#ifdef NiX_ISOLATION_TIMER
 #include <LiS/Real_timer.h>
@@ -51,7 +53,9 @@ template < class Polynomial_ ,
            class Rational_, 
            class Tree_ = Bitstream_descartes_rndl_tree
                < Bitstream_descartes_rndl_tree_traits
-                   < typename Polynomial_::NT > 
+                   < CGAL::CGALi::Bitstream_coefficient_kernel
+                      < typename Polynomial_::NT >
+                   > 
                >
          > 
 class Bitstream_descartes{
@@ -94,22 +98,22 @@ public:
         
 
         typedef typename Tree::TRAITS Traits;  
-        Traits traits(poly);
+        Traits traits;
         typename Traits::Lower_bound_log2_abs lbd = 
             traits.lower_bound_log2_abs_object();
-        typename Traits::Upper_bound_log2_abs ubd = 
-            traits.upper_bound_log2_abs_object();
+        typename Traits::Upper_bound_log2_abs_approximator ubd = 
+            traits.upper_bound_log2_abs_approximator_object();
     
+
         Tree tree(
-                Fujiwara_root_bound_log(traits.begin(),traits.end(),lbd,ubd)+1,
-                traits.begin(), traits.end(),
+                Fujiwara_root_bound_log(poly.begin(),poly.end(),lbd,ubd)+1,
+                poly.begin(), poly.end(),
                 typename Tree::Monomial_basis_tag(),
                 traits);
           
         typename Tree::Node_iterator it = tree.begin();
         typename Tree::Node_iterator chld_first, chld_beyond; 
         
-        // std::cout << " find roots " << std::endl; 
         while (it != tree.end()) {
             if (tree.max_var(it) == 1) {
                 ++it;
