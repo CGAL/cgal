@@ -198,10 +198,8 @@ public:
 // RET for mpz_class
 template<>
 class Real_embeddable_traits< mpz_class  >
-    : public Real_embeddable_traits_base< mpz_class > {
+    : public INTERN_RET::Real_embeddable_traits_base< mpz_class , CGAL::Tag_true > {
 public:
-
-    typedef mpz_class  Type;
 
     struct Is_zero: public std::unary_function< mpz_class , bool > {
         template <typename T, typename U>

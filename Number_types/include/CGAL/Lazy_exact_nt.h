@@ -1012,7 +1012,7 @@ public:
 //
 
 template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
-  : public Real_embeddable_traits_base< Lazy_exact_nt<ET> > {
+  : public INTERN_RET::Real_embeddable_traits_base< Lazy_exact_nt<ET> , CGAL::Tag_true > {
 
   // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
   BOOST_STATIC_ASSERT((::boost::is_same< typename Real_embeddable_traits< ET >

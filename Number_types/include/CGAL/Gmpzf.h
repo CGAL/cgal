@@ -85,12 +85,12 @@ public:
 // Real embeddable traits
 template <>
 class Real_embeddable_traits< Gmpzf >
-    : public Real_embeddable_traits_base< Gmpzf > {
+    : public INTERN_RET::Real_embeddable_traits_base< Gmpzf , CGAL::Tag_true > {
 
     typedef Algebraic_structure_traits<Gmpzf> AST;
 public:
-    typedef AST::Is_zero Is_zero;
-
+  typedef AST::Is_zero Is_zero;
+  
     struct Sign
         : public std::unary_function< Type, ::CGAL::Sign > {
     public:

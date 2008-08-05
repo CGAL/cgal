@@ -131,7 +131,7 @@ template <> class Algebraic_structure_traits< double >
 };
 
 template <> class Real_embeddable_traits< double >
-  : public Real_embeddable_traits_base< double > {
+  : public INTERN_RET::Real_embeddable_traits_base< double , CGAL::Tag_true> {
   public:
 
 // GCC is faster with std::fabs().
@@ -144,11 +144,6 @@ template <> class Real_embeddable_traits< double >
         }
     };
 #endif
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                  To_double;
-    typedef INTERN_RET::To_interval_by_conversion< Type >
-                                                                  To_interval;
 
 // Is_finite depends on platform
 #ifdef CGAL_CFG_IEEE_754_BUG

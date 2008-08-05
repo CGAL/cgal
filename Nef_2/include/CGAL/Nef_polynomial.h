@@ -173,7 +173,7 @@ public:
 };
 
 template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> > 
-  : public Real_embeddable_traits_base< Nef_polynomial<NT> > {
+  : public INTERN_RET::Real_embeddable_traits_base< Nef_polynomial<NT> , CGAL::Tag_true > {
   public:
     typedef Nef_polynomial<NT> Type;
     class Abs 

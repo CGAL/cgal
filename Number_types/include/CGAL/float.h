@@ -108,13 +108,8 @@ template <> class Algebraic_structure_traits< float >
 };
 
 template <> class Real_embeddable_traits< float >
-  : public Real_embeddable_traits_base< float > {
-  public:
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                  To_double;
-    typedef INTERN_RET::To_interval_by_conversion< Type >
-                                                                  To_interval;
+  : public INTERN_RET::Real_embeddable_traits_base< float , CGAL::Tag_true> {
+public:
 // Is_finite depends on platform
 #ifdef CGAL_CFG_IEEE_754_BUG
 

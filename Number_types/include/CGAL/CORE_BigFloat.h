@@ -393,9 +393,8 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
 // Real embeddable traits
 //
 template <> class Real_embeddable_traits< CORE::BigFloat >
-  : public Real_embeddable_traits_base< CORE::BigFloat > {
+  : public INTERN_RET::Real_embeddable_traits_base< CORE::BigFloat , CGAL::Tag_true  > {
   public:
-
     class Abs
       : public std::unary_function< Type, Type > {
       public:

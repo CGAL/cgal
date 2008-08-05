@@ -74,9 +74,9 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
 };
 
 template <> class Real_embeddable_traits< leda_bigfloat >
-  : public Real_embeddable_traits_base< leda_bigfloat > {
-  public:
-
+  : public INTERN_RET::Real_embeddable_traits_base< leda_bigfloat , CGAL::Tag_true > {
+public:
+  
     class Abs
       : public std::unary_function< Type, Type > {
       public:

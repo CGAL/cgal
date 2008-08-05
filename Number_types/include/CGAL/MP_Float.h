@@ -473,7 +473,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 
 // Real embeddable traits
 template <> class Real_embeddable_traits< MP_Float >
-  : public Real_embeddable_traits_base< MP_Float > {
+  : public INTERN_RET::Real_embeddable_traits_base< MP_Float , CGAL::Tag_true > {
   public:
 
     class Sign

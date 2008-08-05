@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 
 template< class COEFF, class ROOT >
 class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
-  : public INTERN_RET::Real_embeddable_traits_base_selector<
+  : public INTERN_RET::Real_embeddable_traits_base<
                   Sqrt_extension<COEFF, ROOT>,
                   typename Real_embeddable_traits<COEFF>::Is_real_embeddable > {
   public:

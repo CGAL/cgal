@@ -439,11 +439,10 @@ public:
 
 template<class RT>
 class Real_embeddable_traits<Root_of_2<RT> >
-    :public Real_embeddable_traits_base<Root_of_2<RT> >{
+    :public INTERN_RET::Real_embeddable_traits_base<Root_of_2<RT> , CGAL::Tag_true >{
     typedef Real_embeddable_traits<RT> RET_RT;
     typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
 public:
-
     typedef Root_of_2<RT> Type;
     typedef Tag_true Is_real_embeddable;
 

@@ -648,7 +648,7 @@ public:
 template<class NT> class Real_embeddable_traits_quotient_base;
 // Real embeddable traits
 template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
-  : public INTERN_RET::Real_embeddable_traits_base_selector< Quotient<NT>,
+  : public INTERN_RET::Real_embeddable_traits_base< Quotient<NT>,
                   typename Real_embeddable_traits< NT >::Is_real_embeddable > {
   public:
     typedef Quotient<NT> Type;

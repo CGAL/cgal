@@ -65,9 +65,9 @@ template <> class Algebraic_structure_traits< Gmpq >
 // RET for Gmpq-class
 
 template <> class Real_embeddable_traits< Gmpq >
-  : public Real_embeddable_traits_base< Gmpq > {
+  : public INTERN_RET::Real_embeddable_traits_base< Gmpq , CGAL::Tag_true > {
   public:
-
+  
     class Sign
       : public std::unary_function< Type, ::CGAL::Sign > {
       public:

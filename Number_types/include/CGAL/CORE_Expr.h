@@ -124,9 +124,8 @@ template <> class Algebraic_structure_traits< CORE::Expr >
 };
 
 template <> class Real_embeddable_traits< CORE::Expr >
-  : public Real_embeddable_traits_base< CORE::Expr > {
+  : public INTERN_RET::Real_embeddable_traits_base< CORE::Expr , CGAL::Tag_true > {
   public:
-
     class Abs
       : public std::unary_function< Type, Type > {
       public:

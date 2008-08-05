@@ -737,7 +737,9 @@ public:
 
 template <class NT>
 class Real_embeddable_traits<Counted_number<NT> >
-    : public Real_embeddable_traits_base <Counted_number<NT> > {
+  : public INTERN_RET::Real_embeddable_traits_base <Counted_number<NT> , 
+   typename Real_embeddable_traits<NT>::Is_real_embeddable > 
+{
     typedef Real_embeddable_traits<NT> RET_NT;
 
 public:

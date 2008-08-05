@@ -61,11 +61,8 @@ template<> class Algebraic_structure_traits< long long int >
 };
 
 template <> class Real_embeddable_traits< long long int >
-  : public Real_embeddable_traits_base< long long int > {
+  : public INTERN_RET::Real_embeddable_traits_base< long long int , CGAL::Tag_true > {
   public:
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                      To_double;
 
     class To_interval
       : public std::unary_function< Type, std::pair< double, double > > {

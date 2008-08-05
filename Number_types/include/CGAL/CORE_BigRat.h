@@ -61,7 +61,7 @@ template <> class Algebraic_structure_traits< CORE::BigRat >
 // Real embeddable traits
 //
 template <> class Real_embeddable_traits< CORE::BigRat >
-  : public Real_embeddable_traits_base< CORE::BigRat > {
+  : public INTERN_RET::Real_embeddable_traits_base< CORE::BigRat , CGAL::Tag_true > {
   public:
 
     class Abs

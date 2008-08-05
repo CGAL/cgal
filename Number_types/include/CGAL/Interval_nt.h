@@ -1102,7 +1102,7 @@ namespace INTERN_INTERVAL_NT {
 
 
 template< bool B > class Real_embeddable_traits< Interval_nt<B> >
-  : public Real_embeddable_traits_base< Interval_nt<B> > {
+  : public INTERN_RET::Real_embeddable_traits_base< Interval_nt<B> , CGAL::Tag_true> {
   public:
     typedef Interval_nt<B>  Type;
 

@@ -117,9 +117,9 @@ public:
 };
 
 template <> class Real_embeddable_traits< Gmpz >
-    : public Real_embeddable_traits_base< Gmpz > {
+    : public INTERN_RET::Real_embeddable_traits_base< Gmpz , CGAL::Tag_true > {
 public:
-
+  
     class Sign
         : public std::unary_function< Type, ::CGAL::Sign > {
     public:

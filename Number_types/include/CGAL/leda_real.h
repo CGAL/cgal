@@ -119,9 +119,8 @@ template <> class Algebraic_structure_traits< leda_real >
 };
 
 template <> class Real_embeddable_traits< leda_real >
-  : public Real_embeddable_traits_base< leda_real > {
+  : public INTERN_RET::Real_embeddable_traits_base< leda_real , CGAL::Tag_true > {
   public:
-
     class Abs
       : public std::unary_function< Type, Type > {
       public:

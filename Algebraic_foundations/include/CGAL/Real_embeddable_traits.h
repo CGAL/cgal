@@ -28,169 +28,146 @@
 
 CGAL_BEGIN_NAMESPACE
 
+namespace INTERN_RET {
 
-template< class Type_ , 
-          typename Is_real_embeddable_ = Tag_false > 
-class Real_embeddable_traits {
-  public:
-    typedef Type_  Type;
-    typedef Tag_false   Is_real_embeddable;
+template< class T, class AST_is_zero >
+struct  Is_zero_selector{ typedef AST_is_zero Type; };
 
-    typedef Null_functor Abs;
-    typedef Null_functor Sign;
-    typedef Null_functor Is_finite;
-    typedef Null_functor Is_positive;
-    typedef Null_functor Is_negative;
-    typedef Null_functor Is_zero;
-    typedef Null_functor Compare;
-    typedef Null_functor To_double;
-    typedef Null_functor To_interval;
+template< class T >
+struct Is_zero_selector< T, Null_functor >
+{
+  struct Type : public std::unary_function< T, bool >{
+    bool operator()( const T& x ) const {
+      return x == T(0);
+    }
+  }; 
 };
 
-namespace INTERN_RET {
-    template< class Type, class AST_is_zero >
-    class Is_zero_selector
-      : public std::unary_function< Type, bool > {
-      public:        
-        //! the function call.
-        bool operator()( const Type& x ) const {
-            return AST_is_zero()(x);
-        }
-    };
-    
-    template< class Type >
-    class Is_zero_selector< Type, Null_functor >
-      : public std::unary_function< Type, bool > {
-      public:        
-        //! the function call.
-        bool operator()( const Type& x ) const {
-            return x == Type(0);
-        }
-    };
-    
-} // INTERN_RET
+template < class Type_ , class Is_real_embeddable_  > 
+class Real_embeddable_traits_base{
+public:
+  typedef Type_                 Type;
+  typedef Is_real_embeddable_   Is_real_embeddable;
 
-template< class Type_ >
-class Real_embeddable_traits_base {
-  public:
-    typedef Type_  Type;
-    typedef Tag_true    Is_real_embeddable; 
-        
-    //! The generic \c Is_zero functor implementation uses one comparison
-    typedef INTERN_RET::Is_zero_selector< Type, 
-                typename Algebraic_structure_traits< Type >::Is_zero 
-                                        > Is_zero;
-    
-    //! The generic \c Is_finite functor returns true
-    class Is_finite
-      : public std::unary_function< Type, bool > {
-      public:
-        bool operator()( const Type& ) const {
-          return true;
-        }
-    };
-    //! The generic \c Abs functor implementation
-    //! uses one comparisons and the unary minus if necessary.
-    class Abs
-      : public std::unary_function< Type, Type > {
-      public:
-        //! the function call.
-        Type  operator()( const Type& x ) const {
-          return( x < Type(0) ) ? -x : x;
-        }
-    };
-    
-    //! The generic \c Sign functor implementation uses two comparisons.
-    class Sign 
-      : public std::unary_function< Type, ::CGAL::Sign > {
-      public:
-        //! the function call.
-        ::CGAL::Sign operator()( const Type& x ) const {
-          if ( x < Type(0))
-            return NEGATIVE;
-          if ( x > Type(0))
-            return POSITIVE;
-          return ZERO;
-        }
-    };
-    
-    //! The generic \c Is_positive functor implementation uses one comparison.
-    class Is_positive 
-      : public std::unary_function< Type, bool > {
-      public:        
-        //! the function call.
-        bool operator()( const Type& x ) const {
-          return x > Type(0);
-        }
-    };
-    
-    //! The generic \c Is_negative functor implementation uses one comparison.
-    class Is_negative 
-      : public std::unary_function< Type, bool > {
-      public:        
-        //! the function call.
-        bool operator()( const Type& x ) const {
-          return x < Type(0);
-        }
-    };
-        
-    //! The generic \c Compare functor implementation uses two comparisons.
-    class Compare 
-      : public std::binary_function< Type, Type, 
-                                Comparison_result > {
-      public:
-        //! the function call.
-        Comparison_result operator()( const Type& x, 
-                                            const Type& y) const {
-          if( x < y )
-            return SMALLER;
-          if( x > y )
-            return LARGER;
-         return EQUAL;
-        }
-        
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                                                      Comparison_result )
-    };
-
-    typedef Null_functor To_double;
-    typedef Null_functor To_interval;
+  typedef Null_functor Abs;
+  typedef Null_functor Sign;
+  typedef Null_functor Is_finite;
+  typedef Null_functor Is_positive;
+  typedef Null_functor Is_negative;
+  typedef Null_functor Is_zero;
+  typedef Null_functor Compare;
+  typedef Null_functor To_double;
+  typedef Null_functor To_interval;
 };
-
-// Some common functors to be used by RET specializations
-namespace INTERN_RET {
-  template< class Type, class Is_real_embeddable >
-  class Real_embeddable_traits_base_selector;
   
-  template< class Type >
-  class Real_embeddable_traits_base_selector< Type, Tag_false >
-    : public Real_embeddable_traits< Null_tag > {};
+template< class Type_ >
+class Real_embeddable_traits_base<Type_, CGAL::Tag_true> {
+public:
+  typedef Type_       Type;
+  typedef Tag_true    Is_real_embeddable; 
+  
+private:
+  typedef typename Algebraic_structure_traits< Type >::Is_zero AST_Is_zero; 
+public:
+  //! The generic \c Is_zero functor implementation uses one comparison
+  typedef typename INTERN_RET::Is_zero_selector< Type, AST_Is_zero >::Type 
+  Is_zero;
+  
+  //! The generic \c Is_finite functor returns true
+  class Is_finite : public std::unary_function< Type, bool > {
+  public:
+    bool operator()( const Type& ) const {
+      return true;
+    }
+  };
     
-  template< class Type >
-  class Real_embeddable_traits_base_selector< Type, Tag_true >
-    : public Real_embeddable_traits_base< Type > {};
-
-  template< class Type >
-  class To_double_by_conversion 
-    : public std::unary_function< Type, double > {
-    public:      
-      //! the function call.
-      double operator()( const Type& x ) const {
-        return static_cast<double>(x);
-      }
+  //! The generic \c Abs functor implementation
+  //! uses one comparisons and the unary minus if necessary.
+  class Abs
+    : public std::unary_function< Type, Type > {
+  public:
+    //! the function call.
+    Type  operator()( const Type& x ) const {
+      return( x < Type(0) ) ? -x : x;
+    }
+  };
+    
+  //! The generic \c Sign functor implementation uses two comparisons.
+  class Sign 
+    : public std::unary_function< Type, ::CGAL::Sign > {
+  public:
+    //! the function call.
+    ::CGAL::Sign operator()( const Type& x ) const {
+      if ( x < Type(0))
+        return NEGATIVE;
+      if ( x > Type(0))
+        return POSITIVE;
+      return ZERO;
+    }
+  };
+    
+  //! The generic \c Is_positive functor implementation uses one comparison.
+  class Is_positive 
+    : public std::unary_function< Type, bool > {
+  public:        
+    //! the function call.
+    bool operator()( const Type& x ) const {
+      return x > Type(0);
+    }
+  };
+    
+  //! The generic \c Is_negative functor implementation uses one comparison.
+  class Is_negative 
+    : public std::unary_function< Type, bool > {
+  public:        
+    //! the function call.
+    bool operator()( const Type& x ) const {
+      return x < Type(0);
+    }
+  };
+        
+  //! The generic \c Compare functor implementation uses two comparisons.
+  class Compare 
+    : public std::binary_function< Type, Type, 
+                                Comparison_result > {
+  public:
+    //! the function call.
+    Comparison_result operator()( const Type& x, 
+        const Type& y) const {
+      if( x < y )
+        return SMALLER;
+      if( x > y )
+        return LARGER;
+      return EQUAL;
+    }
+        
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
+        Comparison_result )
+      };
+  
+  class To_double : public std::unary_function< Type, double > {     
+  public:
+    double operator()( const Type& x ) const {
+      return static_cast<double>(x);
+    }
   };
   
-  template< class Type >
-  class To_interval_by_conversion 
-    : public std::unary_function< Type, std::pair< double, double > > {
-    public:      
-        //! the function call.
-      std::pair<double, double> operator()( const Type& x ) const {
-
-        return std::pair<double,double>( x, x );
-      }
-  };  
+  class To_interval 
+    : public std::unary_function< Type, std::pair<double,double> > {     
+  public:
+    std::pair<double,double> operator()( const Type& x ) const {
+      double dx(static_cast<double>(x));
+      return std::make_pair(dx,dx);
+    }
+  };
+};
+    
 } // INTERN_RET
+
+
+template< class Type_ > 
+class Real_embeddable_traits 
+  : public INTERN_RET::Real_embeddable_traits_base<Type_,CGAL::Tag_false> {};
 
 CGAL_END_NAMESPACE
 

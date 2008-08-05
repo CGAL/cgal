@@ -709,14 +709,13 @@ template < typename Number_type_checker, typename Is_real_embeddable >
 class NTC_RET_base;
 
 template < typename NT >
-class NTC_RET_base<NT,Tag_false>
-    :public Real_embeddable_traits<NT,Tag_false>
+class NTC_RET_base<NT,Tag_false> : public Real_embeddable_traits<NT>
 {};
 
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_RET_base
 < Number_type_checker<NT1, NT2, Cmp> , Tag_true>
-        :public Real_embeddable_traits_base< Number_type_checker< NT1, NT2, Cmp > >
+  :public INTERN_RET::Real_embeddable_traits_base< Number_type_checker< NT1, NT2, Cmp > , CGAL::Tag_true >
 {
 private:
     typedef Real_embeddable_traits<NT1> RET1;

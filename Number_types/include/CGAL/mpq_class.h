@@ -144,9 +144,8 @@ class Algebraic_structure_traits< mpq_class  >
 
 template < >
 class Real_embeddable_traits< mpq_class >
-  : public Real_embeddable_traits_base< mpq_class > {
+  : public INTERN_RET::Real_embeddable_traits_base< mpq_class , CGAL::Tag_true > {
   public:
-    typedef mpq_class  Type;
 
     struct Is_zero: public std::unary_function< mpq_class , bool > {
         template <typename T, typename U>

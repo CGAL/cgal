@@ -77,7 +77,7 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
 // Real embeddable traits
 //
 template <> class Real_embeddable_traits< CORE::BigInt >
-  : public Real_embeddable_traits_base< CORE::BigInt > {
+  : public INTERN_RET::Real_embeddable_traits_base< CORE::BigInt , CGAL::Tag_true > {
 
   public:
 

@@ -65,14 +65,7 @@ template<> class Algebraic_structure_traits< int >
 };
 
 template <> class Real_embeddable_traits< int >
-  : public Real_embeddable_traits_base< int > {
-  public:
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                      To_double;
-    typedef INTERN_RET::To_interval_by_conversion< Type >
-                                                                    To_interval;
-};
+  : public INTERN_RET::Real_embeddable_traits_base< int , CGAL::Tag_true > {};
 
 // long
 
@@ -92,14 +85,7 @@ template<> class Algebraic_structure_traits< long int >
 };
 
 template <> class Real_embeddable_traits< long int >
-  : public Real_embeddable_traits_base< long int > {
-  public:
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                      To_double;
-    typedef INTERN_RET::To_interval_by_conversion< Type >
-                                                                    To_interval;
-};
+  : public INTERN_RET::Real_embeddable_traits_base< long int , CGAL::Tag_true > {};
 
 // short
 
@@ -213,14 +199,7 @@ template<> class Algebraic_structure_traits< short int >
 };
 
 template <> class Real_embeddable_traits< short int >
-  : public Real_embeddable_traits_base< short int > {
-  public:
-
-    typedef INTERN_RET::To_double_by_conversion< Type >
-                                                                      To_double;
-    typedef INTERN_RET::To_interval_by_conversion< Type >
-                                                                    To_interval;
-};
+  : public INTERN_RET::Real_embeddable_traits_base< short int , CGAL::Tag_true > {};
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

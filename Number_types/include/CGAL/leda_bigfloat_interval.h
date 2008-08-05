@@ -166,9 +166,9 @@ public:
 };
 
 template <> class Real_embeddable_traits< leda_bigfloat_interval >
-    : public Real_embeddable_traits_base< leda_bigfloat_interval > {
+    : public INTERN_RET::Real_embeddable_traits_base< leda_bigfloat_interval , CGAL::Tag_true > {
 public:
-
+  
     class Abs
         : public std::unary_function< Type, Type > {
     public:
