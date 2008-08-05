@@ -292,7 +292,7 @@ boundary_near_x_wrapper_imp (std::istringstream & str_stream,
   std::pair<Enum_type, unsigned int> next_input = this->get_next_input(str_stream);
   // second argument can be number or text (either xcurve or curve_end)
   bool curves_op = next_input.first == Base::NUMBER;
-  CGAL::Arr_curve_end cv_end1, cv_end2;
+  CGAL::Arr_curve_end cv_end1 = CGAL::ARR_MIN_END, cv_end2 = CGAL::ARR_MIN_END;
 
   if (curves_op) {
     id2 = static_cast<unsigned int>(next_input.second);
@@ -408,7 +408,7 @@ parameter_space_x_wrapper_imp (std::istringstream & str_stream,
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
   bool curves_op = (next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end;
+  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
   if (curves_op) {
     cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
     std::cout << "Test: parameter_space_x( " << this->m_xcurves[id] << " , "
@@ -464,7 +464,7 @@ parameter_space_y_wrapper_imp (std::istringstream & str_stream,
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
   bool curves_op = (next_input.first == Base::CURVE_END);
-  CGAL::Arr_curve_end cv_end;
+  CGAL::Arr_curve_end cv_end = CGAL::ARR_MIN_END;
   if (curves_op) {
     cv_end = static_cast<CGAL::Arr_curve_end>(next_input.second);
     std::cout << "Test: parameter_space_y( " << this->m_xcurves[id] << " , "
