@@ -21,8 +21,10 @@
 
 #ifdef CGAL_USE_LEDA
 
-#include <LEDA/numbers/digit.h>
+#include <CGAL/leda_integer.h>
+#include <CGAL/leda_bigfloat.h>
 #include <CGAL/leda_bigfloat_interval.h>
+#include <LEDA/numbers/digit.h>
 
 #endif
 
