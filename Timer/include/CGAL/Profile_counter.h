@@ -29,7 +29,8 @@
 // but the counter is indexed by a value (unsigned int), and the final dump
 // is the histogram of the non-zero counters.  [TODO : to be documented]
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <iostream>
 #include <iomanip>
 #include <string>
 #include <map>
