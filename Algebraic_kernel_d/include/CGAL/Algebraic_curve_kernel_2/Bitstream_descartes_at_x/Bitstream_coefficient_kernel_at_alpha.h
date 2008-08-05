@@ -84,7 +84,8 @@ public:
             <Polynomial_1,Algebraic_real_1 > 
         > Handle;
 
-    typedef Bitstream_coefficient_kernel<Coefficient> Self;
+    typedef Bitstream_coefficient_kernel_at_alpha<Coefficient,
+                                                  Algebraic_real_1> Self;
 
     //! @}
 
