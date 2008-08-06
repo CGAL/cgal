@@ -292,8 +292,5 @@ int main(int argc, char **argv)
   for(int i=0; i<loops; ++i)
     test_side_of_oriented_sphere_3();
 
-  std::cerr << "Total number of IA failures = "
-            << CGAL::Interval_nt<false>::number_of_failures() << std::endl;
-
   return 0;
 }

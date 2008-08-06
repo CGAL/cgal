@@ -136,7 +136,9 @@ Another option is :
 
   \ccMethod{T make_certain() const;}
   {if \ccVar.\ccc{is_certain()}, then returns the certain value which is represented.
-   Otherwise, throws an exception of type \ccc{Uncertain_conversion_exception}.}
+   Otherwise, throws an exception of type \ccc{Uncertain_conversion_exception}.
+   A profile counter of the number of such exceptions thrown during the execution of
+   the program is available with \ccc{CGAL_PROFILE}.}
 
   \ccMethod{operator T() const;}
   {conversion operator to \ccc{T}.  It does and returns the same thing as

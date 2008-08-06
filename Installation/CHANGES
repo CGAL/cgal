@@ -84,10 +84,18 @@ The following functionality has been added or changed:
     by the get<i>() member function; and replace the make_triple and make_quadruple
     maker functions by make_tuple.
     This way, in a further release, we will be able to switch to boost::tuple more easily.
+  - The class CGAL::Uncertain<> has been documented.  It is typically used to report
+    uncertain results for predicates using interval arithmetic, and other filtering
+    techniques.
 
 5- Triangulation_3:
 
   - Removed the deprecated functions Cell:mirror_index() and Cell::mirror_vertex().
+
+6- Number types:
+
+  - the counter Interval_nt::number_of_failures() has been removed, replaced by
+    a profiling counter enabled with CGAL_PROFILE.
 
 
 ----------------------------- Release 3.3.1 ----------------------------------

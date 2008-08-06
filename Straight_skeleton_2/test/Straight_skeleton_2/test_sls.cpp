@@ -1278,12 +1278,6 @@ int main( int argc, char const* argv[] )
     cout << "Failed cases: " << lFailed_cases << endl ;
     cout << endl ;
 
-    if ( Uncertain<bool>::number_of_failures() > 0 )
-    {    
-      cout << "!! " << Uncertain<bool>::number_of_failures() << " uncertain conversion failures. " << endl ;
-      cout << endl ;
-    }
-
     int lTotalPred = sTotalPredFailures + sTotalPredSuccess ;  
     int lTotalCons = sTotalConsFailures + sTotalConsSuccess ;  
 

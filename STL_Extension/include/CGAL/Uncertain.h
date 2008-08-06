@@ -23,7 +23,9 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h>
 #include <CGAL/enum.h>
+#include <CGAL/Profile_counter.h>
 #include <stdexcept>
+#include <typeinfo>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -85,8 +87,6 @@ class Uncertain
 {
   T _i, _s;
 
-  static unsigned failures;   // Number of conversion failures.
-
 public:
 
   typedef T  value_type;
@@ -117,9 +117,10 @@ public:
   {
     if (is_certain())
       return _i;
-    ++Uncertain<bool>::number_of_failures();
+    CGAL_PROFILER(std::string("Uncertain_conversion_exception thrown for CGAL::Uncertain< ")
+		  + typeid(T).name() + " >");
     throw Uncertain_conversion_exception(
-                        "undecidable conversion of CGAL::Uncertain<T>");
+                  "Undecidable conversion of CGAL::Uncertain<T>");
   }
 
 #if 1 // Comment out in order to spot some unwanted conversions.
@@ -144,15 +145,8 @@ public:
   }
 #endif
 
-  static unsigned & number_of_failures() { return failures; }
-
   static Uncertain indeterminate();
 };
-
-
-template < typename T >
-unsigned
-Uncertain<T>::failures = 0;
 
 
 // Access functions

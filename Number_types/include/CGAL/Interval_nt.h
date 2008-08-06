@@ -90,9 +90,6 @@ public:
   Interval_nt(const Pair & p)
     : _inf(p.first), _sup(p.second) {}
 
-  static unsigned number_of_failures()
-  { return Uncertain<bool>::number_of_failures(); }
-
   IA operator-() const { return IA (-sup(), -inf()); }
 
   IA & operator+= (const IA &d) { return *this = *this + d; }

@@ -136,7 +136,7 @@ or \ccc{Uncertain<Sign>}, which
 can be probed for uncertainty explicitely, and which has a conversion to
 the normal type (e.g. \ccc{bool}) which throws an exception when the
 conversion is not certain.  Note that each failed conversion increments
-the counter \ccc{number_of_failures()}, and then throw the exception of
+a profiling counter (see \ccc{CGAL_PROFILE}), and then throws the exception of
 type \ccc{unsafe_comparison}.
 
 %SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}{\hspace*{8cm}}
@@ -156,10 +156,6 @@ type \ccc{unsafe_comparison}.
             compare(Interval_nt i, Interval_nt j);}{}
 \ccGlue
 \ccFunction{Uncertain<Sign> sign(Interval_nt i);}{}
-
-\ccFunction{static unsigned number_of_failures();}
-{Returns a global counter incremented at each conversion which thrown an
-exception.}
 
 \ccTypedef{typedef Interval_nt<false>  Interval_nt_advanced;}
 {This typedef (at namespace CGAL scope) exists for backward compatibility,
