@@ -28,7 +28,7 @@ CGAL_BEGIN_NAMESPACE
 // TODO: Polynomials aren't Real_embeddable! But for debugging and testing
 //       reasons, the real embeddable functors are provided.
 template< class NT > class Real_embeddable_traits< Polynomial<NT> > 
-    : public Real_embeddable_traits_base< Polynomial<NT> > {
+  : public INTERN_RET::Real_embeddable_traits_base< Polynomial<NT> , CGAL::Tag_false > {
 public:
   
     typedef Tag_false Is_real_embeddable;
