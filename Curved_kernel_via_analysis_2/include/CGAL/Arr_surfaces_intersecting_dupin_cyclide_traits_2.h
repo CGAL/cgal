@@ -754,8 +754,13 @@ private:
             Polynomial_2 w) {
         
         int i = p.degree();
-        Polynomial_2 r = NiX::substitute_xyz(p[i--],x,y,z);
-        while (i >= 0) { r *= w; r += NiX::substitute_xyz(p[i--],x,y,z); }
+        typename CGAL::Polynomial_traits_d< Polynomial_3 >::Substitute subst;
+        Polynomial_2 pp[3] = {x,y,z};
+        Polynomial_2 r = subst(p[i--], pp, pp+3);
+        while (i >= 0) { 
+            r *= w; 
+            r += subst(p[i--], pp, pp+3); 
+        }
         return r;
     }
     
