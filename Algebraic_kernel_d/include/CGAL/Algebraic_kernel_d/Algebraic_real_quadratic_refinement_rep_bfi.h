@@ -476,16 +476,14 @@ protected:
         return s;
     }        
 
+public: 
     virtual void simplify() const {
         Poly f_old = this->polynomial();
         Base::simplify();
         if(f_old != this->polynomial()) {
             f_bfi_ = boost::none;
-        }
-            
+        }      
     }
-
-    
 };
 } // namepace CGALi
 
