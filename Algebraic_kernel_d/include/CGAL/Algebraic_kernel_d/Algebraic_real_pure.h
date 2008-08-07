@@ -342,7 +342,7 @@ public:
  */
  template< class Coefficient, class Rational, class HandlePolicy, class RepClass >
  class Real_embeddable_traits< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > >
-    : public Real_embeddable_traits_base< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > > {
+   : public INTERN_RET::Real_embeddable_traits_base< CGALi::Algebraic_real_pure< Coefficient, Rational, HandlePolicy, RepClass > , CGAL::Tag_true > {
 
   public:
     
