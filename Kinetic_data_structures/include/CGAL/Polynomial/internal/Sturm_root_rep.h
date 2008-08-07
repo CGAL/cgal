@@ -948,7 +948,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class T, class I>
 class Real_embeddable_traits< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> > 
-  : public Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> > {
+  : public INTERN_RET::Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> , Tag_true > {
 public:
   typedef CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I>  Type;
   class Abs 

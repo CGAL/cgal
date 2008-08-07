@@ -146,7 +146,7 @@ template <class A, class B>			\
     return compare(o) >=0;						\
   }									\
   bool operator<=(const This &o) const {				\
-    return compare(o) <= 0;							\
+    return compare(o) <= 0;                                             \
   } 
 
 
@@ -224,7 +224,7 @@ template <class A, class B>			\
 
 #define CGAL_REAL_EMBEDDABLE_BODY					\
   class Abs								\
-    : public std::unary_function< Type, Type > {				\
+    : public std::unary_function< Type, Type > {                        \
   public:								\
     Type operator()( const Type& x ) const {				\
       if (x < Type(0)) return -x;					\
@@ -233,7 +233,7 @@ template <class A, class B>			\
   };									\
   									\
   class Sign								\
-    : public std::unary_function< Type, ::CGAL::Sign > {			\
+    : public std::unary_function< Type, ::CGAL::Sign > {                \
   public:								\
     ::CGAL::Sign operator()( const Type& x ) const {			\
       return static_cast<CGAL::Sign>(x.compare(0));			\
@@ -255,7 +255,7 @@ template <class A, class B>			\
   };									\
 									\
   class To_double							\
-    : public std::unary_function< Type, double > {				\
+    : public std::unary_function< Type, double > {                      \
   public:								\
     double operator()( const Type& x ) const {				\
       return x.approximation(.00000001);				\
@@ -273,8 +273,10 @@ template <class A, class B>			\
 
 #define CGAL_HAS_INFINITY_BODY						\
   static const bool is_specialized = true;				\
-  static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return -T::infinity();} \
-  static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return T::infinity();} \
+  static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw ()             \
+  {return -T::infinity();}                                              \
+  static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw ()             \
+  {return T::infinity();}                                               \
   static const int digits =0;						\
   static const int digits10 =0;						\
   static const bool is_signed = true;					\
@@ -307,7 +309,7 @@ template <class A, class B>			\
   CGAL_BEGIN_NAMESPACE							\
   template <class T>							\
   class Real_embeddable_traits< name<T> >				\
-    : public Real_embeddable_traits_base< name<T> > {			\
+    : public INTERN_RET::Real_embeddable_traits_base<name<T>, Tag_true>{ \
   public:								\
     typedef name<T>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY;						\
@@ -319,7 +321,7 @@ template <class A, class B>			\
   CGAL_BEGIN_NAMESPACE							\
   template <class T, class A>						\
   class Real_embeddable_traits< name<T, A> >				\
-    : public Real_embeddable_traits_base< name<T, A> > {		\
+    : public INTERN_RET::Real_embeddable_traits_base< name<T, A>, Tag_true>{ \
   public:								\
     typedef name<T, A>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY;						\
@@ -346,7 +348,7 @@ template <class A, class B>			\
   CGAL_BEGIN_NAMESPACE							\
   template <class T,class U>						\
   class Real_embeddable_traits< name<T, U> >				\
-    : public Real_embeddable_traits_base< name<T, U> > {		\
+    : public INTERN_RET::Real_embeddable_traits_base< name<T, U> , Tag_true>{ \
   public:								\
     typedef name<T, U>  Type;						\
     CGAL_REAL_EMBEDDABLE_BODY						\
@@ -364,8 +366,6 @@ template <class A, class B>			\
       CGAL_HAS_INFINITY_BODY;						\
     };									\
   };
-
-
 
 #endif
 

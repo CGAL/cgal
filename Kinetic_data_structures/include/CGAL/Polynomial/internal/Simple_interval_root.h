@@ -642,7 +642,7 @@ CGAL_BEGIN_NAMESPACE
 
 template <class T>
 class Real_embeddable_traits< CGAL::POLYNOMIAL::internal::Simple_interval_root<T> > 
-  : public Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Simple_interval_root<T> > {
+  : public INTERN_RET::Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Simple_interval_root<T> , Tag_true > {
 public:
   typedef CGAL::POLYNOMIAL::internal::Simple_interval_root<T>  Type;
   class Abs 
